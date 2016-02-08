@@ -6,6 +6,11 @@
 </script>
 
 <%= javascript_include_tag :'cdn/marketplace/freshapps_ticket_dom_helper' %>
+<script type="text/javascript">
+  Fjax.afterNextPage = function () {
+    tktDetailDom.destroy();
+  }
+</script>
 
 <%= render :partial => "/integrations/applications/pivotal_tracker_form" %>
 <% if is_application_installed?("jira")  %>
@@ -13,35 +18,35 @@
 <% jira_integrated_resource = Integrations::IntegratedResource.find_by_installed_application_id_and_local_integratable_id(installedApp, @ticket.id) %>
 
 <div class="widget dialog-widget" id="jira_issue">
-	<span id="jira_issue_icon"> 
-		<%= link_to image_tag(spacer_image_url, :width => "24px", :height => "24px"), "#", :class=> (jira_integrated_resource.nil?) ? 'integrations-jira vertical-alignment' : 'integrations-jira_color vertical-alignment' %>
-	</span>  
-	<h3 class="title lazyload" rel="freshdialog" title="<%= h(installedApp.configs_title)%>"
-		data-width="390" data-target="#jira_widget_dialog" 
-		data-lazyload="true" data-template-footer="">
-		
-		<div class="subtitle">
-			<%=t( "ticket.integrations.jira.#{jira_integrated_resource.nil? ? 'add_new' : 'existing' }")%>
-		</div>
-		<%= h(installedApp.configs_title)%>
-	</h3>
+  <span id="jira_issue_icon"> 
+    <%= link_to image_tag(spacer_image_url, :width => "24px", :height => "24px"), "#", :class=> (jira_integrated_resource.nil?) ? 'integrations-jira vertical-alignment' : 'integrations-jira_color vertical-alignment' %>
+  </span>  
+  <h3 class="title lazyload" rel="freshdialog" title="<%= h(installedApp.configs_title)%>"
+    data-width="390" data-target="#jira_widget_dialog" 
+    data-lazyload="true" data-template-footer="">
+    
+    <div class="subtitle">
+      <%=t( "ticket.integrations.jira.#{jira_integrated_resource.nil? ? 'add_new' : 'existing' }")%>
+    </div>
+    <%= h(installedApp.configs_title)%>
+  </h3>
 </div>
 <div class="hide" id="jira_widget_dialog">
-	<textarea style="display:none" rel="lazyload">
-	  <div class="content"><div class="negtive-margin">
+  <textarea style="display:none" rel="lazyload">
+    <div class="content"><div class="negtive-margin">
       <% cloud_files = [] 
         @ticket.cloud_files.each do |file|
           cloud_files.push(file.url)
         end
       %>
       <% @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => jira_integrated_resource , "cloud_files" => cloud_files.to_json } %>
-	    <% widget_code = get_app_widget_script("jira", "jira_widget", @liquid_objects) 
-	    widget_code = widget_code.gsub("}}", " | encode_html}}")
-	    %>
-	    <%= Liquid::Template.parse(widget_code).render({"ticket" => @ticket}, :filters => [Integrations::FDTextFilter]) %>
-	    <div class="sloading loading-block loading-small" id="jira_issue_loading"></div>
-	  </div></div>
-	</textarea>
+      <% widget_code = get_app_widget_script("jira", "jira_widget", @liquid_objects) 
+      widget_code = widget_code.gsub("}}", " | encode_html}}")
+      %>
+      <%= Liquid::Template.parse(widget_code).render({"ticket" => @ticket}, :filters => [Integrations::FDTextFilter]) %>
+      <div class="sloading loading-block loading-small" id="jira_issue_loading"></div>
+    </div></div>
+  </textarea>
 </div>
 <% end %>
 
@@ -52,39 +57,39 @@
       unless widget.blank?
       dip = widget.display_in_pages_option
       if dip.present? && dip.include?('helpdesk_tickets_show_page_side_bar')
-      	next if is_invoice_disabled?(installed_app)
-      	app_name = app.name
-      	liquid_objects = {"ticket" => @ticket, "requester" => @ticket.requester }
-      	if app_name == Integrations::Constants::APP_NAMES[:xero]       	
-        	liquid_objects["timesheet"] = @ticket.time_sheets.to_json
+        next if is_invoice_disabled?(installed_app)
+        app_name = app.name
+        liquid_objects = {"ticket" => @ticket, "requester" => @ticket.requester }
+        if app_name == Integrations::Constants::APP_NAMES[:xero]         
+          liquid_objects["timesheet"] = @ticket.time_sheets.to_json
         elsif Integrations::Constants::INVOICE_APPS.include? app_name or app_name == Integrations::Constants::APP_NAMES[:shopify]
-        	liquid_objects["widget_type"] = "_side_bar"
-      	end
+          liquid_objects["widget_type"] = "_side_bar"
+        end
         widget_code = widget_script(installed_app, widget, liquid_objects) %>
-        <%if app.application_type == 'freshplug' %>
-	        <div id="<%=app.name%>" class="widget">
-						<div class="content">
-								<%= widget_code %>
-						</div>
-	        </div>
+        <%if app.freshplug? %>
+          <div id="<%=app.name%>" class="widget">
+            <div class="content">
+                <%= widget_code %>
+            </div>
+          </div>
         <% else %>
-	        <div id="<%=app_name%>" class="widget inactive load_on_click ">
-	        	<h3 id="<%=app_name%>-title" class="title"><%= h(installed_app.configs_title || t(app.display_name).html_safe )%></h3>
-						<div class="content">
-						<textarea style="display:none" rel="lazyload">
-							<% unless app_name == Integrations::Constants::APP_NAMES[:google_calendar] %>
-								<div id="<%=app_name%>_side_bar_widget">
-									<div class="content"><div id="<%=app_name%>_loading" class="sloading loading-block loading-small"></div></div>
-									<div class="error"></div>
-								</div>
-						  <% end %>
-							<%= widget_code %>
-						</textarea>
-						</div>
-	        </div>
-	    <% end
-  	 end
-	end
+          <div id="<%=app_name%>" class="widget inactive load_on_click ">
+            <h3 id="<%=app_name%>-title" class="title"><%= h(installed_app.configs_title || t(app.display_name).html_safe )%></h3>
+            <div class="content">
+            <textarea style="display:none" rel="lazyload">
+              <% unless app_name == Integrations::Constants::APP_NAMES[:google_calendar] %>
+                <div id="<%=app_name%>_side_bar_widget">
+                  <div class="content"><div id="<%=app_name%>_loading" class="sloading loading-block loading-small"></div></div>
+                  <div class="error"></div>
+                </div>
+              <% end %>
+              <%= widget_code %>
+            </textarea>
+            </div>
+          </div>
+      <% end
+     end
+  end
   end
 end %>
 
@@ -93,24 +98,34 @@ end %>
 
 <!-- Marketplace Plugs -->
 <% if feature?(:marketplace) %>
-  <% installed_plugs(:ticket_details_page).try(:each) do |installed_plug| %>
-    <div id="<%= installed_plug['name'] %>" class="widget">
-      <div class="content">
-        <%= freshplug_script(installed_plug.symbolize_keys) %>
+  <% inst_plugs = installed_plugs(:ticket_details_page) %>
+
+  <% if inst_plugs.kind_of?(Hash) and inst_plugs[:error].present? %>
+    <div class="widget">
+      <div class="alert alert-error">
+        <%= t('marketplace.plugs_unavailable') %>
       </div>
     </div>
+  <% else %>
+    <% inst_plugs.try(:each) do |installed_plug| %>
+      <div id="<%= installed_plug['display_name'] %>" class="widget">
+        <div class="content">
+          <%= freshplug_script(installed_plug.symbolize_keys) %>
+        </div>
+      </div>
+    <% end %>
   <% end %>
 <% end %>
 
 <% installed_app = get_app_details(Integrations::Constants::APP_NAMES[:logmein]) %>
 <% unless installed_app.blank? %> 
-	<div id="logmein" class="widget">
-		<%
-		 @liquid_objects = {"ticket" => @ticket, "account_id" => @ticket.account_id, "installed_app_id" => installed_app.id, "requester" => @ticket.requester, "agent" => @ticket.responder, "cache" => get_cached_values(@ticket.id), "md5secret" => get_md5_secret}
-		 widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[:logmein], "logmein_widget", @liquid_objects) 
-		%>
-		<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket).html_safe %>
-	</div>
+  <div id="logmein" class="widget">
+    <%
+     @liquid_objects = {"ticket" => @ticket, "account_id" => @ticket.account_id, "installed_app_id" => installed_app.id, "requester" => @ticket.requester, "agent" => @ticket.responder, "cache" => get_cached_values(@ticket.id), "md5secret" => get_md5_secret}
+     widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[:logmein], "logmein_widget", @liquid_objects) 
+    %>
+    <%= Liquid::Template.parse(widget_code).render("ticket" => @ticket).html_safe %>
+  </div>
 <% end %>
 
 <script type="text/javascript">

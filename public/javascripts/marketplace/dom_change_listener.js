@@ -31,6 +31,8 @@ $(function(){
 
     var msg_method_map={
       "open-reply-box" : tktDetailDom.openReplyBox,
+      "open-add-note" : tktDetailDom.openNoteBox,
+      "expand-conversations" : tktDetailDom.expandConversations,
       "hide-tkt-delete" : tktDetailDom.hideTicketDelete,
       "show-tkt-delete" : tktDetailDom.showTicketDelete,
       "hide-attachments" : tktDetailDom.showAttachments,

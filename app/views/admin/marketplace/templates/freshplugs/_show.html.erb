@@ -1,30 +1,37 @@
 <script id="freshplug_details_template" type="text/x-jquery-tmpl">
 <% category = "{{if category_id}}&category_id=${category_id}{{/if}}"%>
-<% plug_type = "{{if in_dev}}&in_dev=true{{/if}}" %>
+<% install_btn_url = "{{if type == 4}}/integrations/marketplace_apps/${encodeURIComponent(name)}/install"+
+                     "{{else}}"+
+                        "/admin/installed_extensions/${extension_id}/${version_id}/new_configs?type=${type}"+
+                        "&display_name=${encodeURIComponent(display_name)}"+
+                        "{{if category_id}}&category_id=${category_id}{{/if}}"+
+                        "{{if installed }}&upgrade=true{{/if}}"+
+                      "{{/if}}" %>
+
 <div id="app-window" class="fa-container fa-bg">
   <div id="fa-nav" class="fa-sidehead">
     <div class="fa-breadcumb">
-      <a class="pull-left index_btn" href="#" data-url="/admin/extensions?type=${type}<%=category%><%=plug_type%>">
-        <span class="fsize-12 ficon-left-arrow-thick"></span> <%= t('back') %>
+      <a class="pull-left index_btn" href="#" data-url="/admin/extensions?type=${types}<%=category%>">
+        <span class="<%= font_class('left-arrow-thick', 12) %>"></span> <%= t('back') %>
       </a>
     </div>
   </div>
 
-  <div class="dtl-box">
+  <div class="dtl-box head-spacer">
     <div class="fa-hmeta">
       <div class="logo-box">
         {{if cover_art}}
-        <div class="img-helper"> 
-          <img src="${cover_art}" class="img-thumbnail" alt="${name}"/>
+        <div class="img-helper">
+          <img src="${cover_art['thumb']}" srcset="${cover_art['thumb']} 1366w, ${cover_art['thumb2x']}" class="img-thumbnail" alt="${display_name}"/>
         </div>
         {{else}}
-          <span class="ficon-puzzle fsize-48"></span>
+          <span class="<%= font_class('puzzle', 48) %>"></span>
         {{/if}}
       </div>
       <div class="info-box">
         <div id="app-intro" class="no-margin fa-desc">
           <div class="info-txt">
-            <h1>${name}</h1>
+            <h1>${display_name}</h1>
             <p>
               <span class="maker">${account}</span>,
               <span class="info-data">${published_date} ago </span>
@@ -32,24 +39,19 @@
           </div>
           <p class="clear">
             {{each categories}}
-              <a href="#" class='tag index_btn category' data-url="/admin/extensions?type=${type}&category_id=${id}<%=plug_type%>">${name}</a>
+              <a href="#" class='tag index_btn category' data-url="/admin/extensions?type=${types}&category_id=${id}">${name}</a>
             {{/each}}
           </p>
         </div>
       </div>
-      <div class="install-box">      
-        {{if installed}}
-          {{if installed_version==version_id}}
-            <button class="btn btn-large btn-primary disabled"> <%= t('marketplace.installed') %> </button>
-          {{else}} 
-            <button class="btn btn-large btn-primary install-form-btn" data-url="/admin/installed_extensions/new_configs/${version_id}?type=${type}&name=${name}&update=true<%=category%><%=plug_type%>"> <%= t('marketplace.update') %> </button>
-          {{/if}}
+      <div class="install-box">
+        {{if type == 4}}
+          <%= link_to "${install_btn_text}", "#{install_btn_url}", :method => :post, :class => "btn btn-large btn-primary ${install_btn_class}" %>
         {{else}}
-            <button class="btn btn-large btn-primary install-form-btn" data-url="/admin/installed_extensions/new_configs/${version_id}?type=${type}&name=${name}<%=category%><%=plug_type%>"> <%= t('marketplace.install') %> </button>
-        {{/if}} 
+          <a class="btn btn-large btn-primary ${install_btn_class}" data-url="<%= install_btn_url %>"> ${install_btn_text} </a>
+        {{/if}}
         <p class="info-data">
-          <span><%= t('marketplace.ver') %> ${version_number}</span>
-          <span> ${install_count} <%= t('marketplace.installs') %> </span>
+          <span><%= t('marketplace.ver') %> ${app_version} </span>
         </p>
       </div>
     </div>
@@ -69,12 +71,12 @@
           <div class="tab-pane" id="desc">
             <pre class="pre-wrap">${description}</pre>
             <table class="table">
-              {{each change_logs}}
+              {{if whats_new}}
                 <tr>
-                  <td><p><%= t('marketplace.version') %> ${version_number}</p></td>
-                  <td><p>${about}</p></td>
+                  <td><p><%= t('marketplace.version') %> ${app_version} </p></td>
+                  <td><p>${whats_new}</p></td>
                 </tr>
-              {{/each}}
+              {{/if}}
             </table>
           </div>
 
@@ -92,15 +94,10 @@
                   <!-- Carousel items -->
                   <div class="carousel-inner">
                     {{each screenshots}}
-                      {{if screenshots_no ==0 }}
-                      <div class="item active" data-slide-number="${screenshots_no}">
-                        <img src="${large}">
+                      <% active = "{{if screenshots_no ==0 }} active {{/if}}"%>
+                      <div class="item <%= active %>" data-slide-number="${screenshots_no}">
+                        <img src="${large}" srcset="${large} 1024w, ${large2x}">
                       </div>
-                      {{else}}
-                      <div class="item" data-slide-number="${screenshots_no}">
-                        <img src="${large}">
-                      </div>
-                      {{/if}}
                     {{/each}}
                   </div><!-- Carousel nav -->
                   <a class="carousel-control left" data-slide="prev" href="#screenshotsCarousel"><span>‹</span></a> 
@@ -110,15 +107,11 @@
               <div class="span2 slider-thumbs" id="slider-thumbs">
                 <ul class="thumbnails">
                   {{each screenshots}}
-                    {{if screenshots_no ==0 }}
-                    <li class="active">
-                        <a class="thumbnail" id="carousel-selector-${screenshots_no}"><img src="${thumb}" width="100"></a>
+                    <% active = "{{if screenshots_no ==0 }} active {{/if}}"%>
+                    <li class="<%= active %>">
+                        <a class="thumbnail" id="carousel-selector-${screenshots_no}">
+                        <img src="${thumb}" srcset="${thumb} 1024w, ${thumb2x}" width="100"></a>
                     </li>
-                    {{else}}
-                    <li>
-                        <a class="thumbnail" id="carousel-selector-${screenshots_no}"><img src="${thumb}" width="100"></a>
-                    </li>
-                    {{/if}}
                   {{/each}}
                 </ul>
               </div>

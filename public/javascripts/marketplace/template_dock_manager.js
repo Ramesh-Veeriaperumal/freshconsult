@@ -1,23 +1,18 @@
 var TemplateDockManager   = Class.create({
-  initialize: function(extensionsEl, customMsgs, tabName) {
+  initialize: function(extensionsEl, customMsgs, tabName, types, type_ni) {
     this.extensionsWrapper = extensionsEl;
     this.customMessages = customMsgs;
     this.progressInterval;
     this.chosenCategory = "All";
     this.tabName = tabName;
+    this.types = types;
+    this.type_ni = type_ni;
 
     this.bindTemplateEvents();
     this.setupCarousel();
-
-    jQuery(document).on( "mousewheel.tmpl_events DOMMouseScroll.tmpl_events", ".app-browser, .dtl-box, .dd-left, .install-form", function(ev){
-      if (ev.originalEvent) ev = ev.originalEvent;
-      var delta = ev.wheelDelta || -ev.detail;
-      this.scrollTop += (delta < 0 ? 1 : -1) * 20;
-      ev.preventDefault();
-    });
   },
   bindTemplateEvents: function(){
-    jQuery(document).on("click.tmpl_events", ".browse-btn,.category,.index_btn,.in-dev-apps" , this.loadApps.bindAsEventListener(this))
+    jQuery(document).on("click.tmpl_events", ".browse-btn,.category,.index_btn" , this.loadApps.bindAsEventListener(this))
                     .on("click.tmpl_events", ".fplugs-box,.backbtn, .show_btn" , this.loadAppInfo.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-btn" , this.installApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-form-btn, .update" , this.updateApp.bindAsEventListener(this))
@@ -81,7 +76,7 @@ var TemplateDockManager   = Class.create({
       type: "GET",
       beforeSend: function(){
         that.showLoader();
-        if(jQuery(el).hasClass("browse-btn") || jQuery(el).hasClass("in-dev-apps"))
+        if(jQuery(el).hasClass("browse-btn"))
           that.chosenCategory = "All";
         else if(jQuery(e.currentTarget).hasClass("category"))
           that.chosenCategory = jQuery(e.currentTarget).text();
@@ -89,6 +84,7 @@ var TemplateDockManager   = Class.create({
           that.chosenCategory = that.chosenCategory;
       },
       success: function(jqXHR, exception){
+        that.types = jqXHR.type;
         jQuery(that.extensionsWrapper).empty();
         jQuery('#freshplug_listing_template').tmpl(jqXHR).appendTo(that.extensionsWrapper);
         if(jQuery(el).hasClass("category") || jQuery(el).hasClass("index_btn")){
@@ -97,30 +93,75 @@ var TemplateDockManager   = Class.create({
         }
       },
       error: function(jqXHR, exception) {
-        jQuery(that.extensionsWrapper).empty();
-        jQuery(that.extensionsWrapper).append("<div class='alert alert-error'>"+ that.customMessages.no_connection + "</div>");
+        that.showErrorMsg();
       }
     });
+  },
+  showErrorMsg: function(){
+    var that = this;
+    jQuery(that.extensionsWrapper).empty();
+    jQuery(that.extensionsWrapper).append("<div class='alert alert-error'>"+ that.customMessages.no_connection + "</div>");
   },
   loadAppInfo: function(e){
     e.preventDefault();
     e.stopPropagation();
     var that = this;
     var el = jQuery(e.currentTarget);
-    jQuery.ajax({
-      url: jQuery(el).attr("data-url"),
-      type: "GET",
-      beforeSend: function(){
-        that.showLoader();
-      },
-      success: function(extensions){
-        jQuery(extensions.screenshots).each(function(index){
-          jQuery.extend( extensions.screenshots[index], that.getObjConstr(index) );
-        });
-        jQuery(that.extensionsWrapper).empty();
-        jQuery('#freshplug_details_template').tmpl(extensions).appendTo(that.extensionsWrapper);
-      }
-    });
+    if(jQuery(el).hasClass("closable")){
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    else{
+      jQuery.ajax({
+        url: jQuery(el).attr("data-url"),
+        type: "GET",
+        beforeSend: function(){
+          that.showLoader();
+        },
+        success: function(extensions){
+          jQuery(extensions.screenshots).each(function(index){
+            jQuery.extend( extensions.screenshots[index], that.getObjConstr(index) );
+          });
+          extensions.types = that.types; 
+
+          // install_btn_class
+          if(extensions.type != that.type_ni) {
+            extensions.install_btn_class = "install-form-btn";
+          }
+          if(extensions.installed){
+            if(extensions.installed_version == extensions.version_id){
+              extensions.install_btn_class = "disabled";
+            }
+          }
+
+          // install_btn_text
+          extensions.install_btn_text = that.customMessages.install;
+          if(extensions.installed){
+            if(extensions.installed_version == extensions.version_id){
+              extensions.install_btn_text = that.customMessages.installed;
+            }
+            else{
+              extensions.install_btn_text = that.customMessages.update;
+            }
+          }
+
+          jQuery(that.extensionsWrapper).empty();
+          jQuery('#freshplug_details_template').tmpl(extensions).appendTo(that.extensionsWrapper);
+
+          if(jQuery(el).hasClass("moreinfo-lnk")){
+            jQuery("#fa-nav").css("display", "none");
+            jQuery(".dtl-box").removeClass("head-spacer");
+          }
+          else{
+           jQuery("#fa-nav").css("display", "inline-block");
+           jQuery(".dtl-box").addClass("head-spacer");
+          }
+        },
+        error: function(jqXHR, exception) {
+          that.showErrorMsg();
+        }
+      });
+    }
   },
   installApp: function(e){
     e.preventDefault();
@@ -147,8 +188,8 @@ var TemplateDockManager   = Class.create({
           jQuery('.backbtn').attr('disabled', 'disabled');
           that.startProgress();
         },
-        success: function(install_extension){
-          if(install_extension.status == 200){
+        success: function(resp_body, statustext, resp){
+          if(resp.status == 200){
             jQuery('.install-form').remove();
             jQuery('.progress').removeClass('active');
             jQuery('.bar').css("width", "100%");
@@ -161,6 +202,9 @@ var TemplateDockManager   = Class.create({
             jQuery(".progress .bar").css("width", "0");
           }
           clearInterval(that.progressInterval);
+        },
+        error: function(jqXHR, exception) {
+          that.showErrorMsg();
         }
       });
     }else{
@@ -173,6 +217,7 @@ var TemplateDockManager   = Class.create({
     e.stopPropagation();
     var that = this;
     var el = jQuery(e.currentTarget);
+    
     jQuery.ajax({
       url: jQuery(el).attr("data-url"),
       type: jQuery(el).attr("data-method"),
@@ -186,8 +231,25 @@ var TemplateDockManager   = Class.create({
           jQuery(".install-form").hide();
           setTimeout( that.installTrigger, 1000);
         }
+
+        if(jQuery(el).hasClass("btn-settings")){
+          jQuery("#fa-nav").css("display", "none");
+          jQuery(".fa-hmeta").removeClass("head-spacer");
+
+          jQuery(".button-container .show_btn").addClass("closable");
+        }
+        else{
+         jQuery("#fa-nav").css("display", "inline-block");
+         jQuery(".fa-hmeta").addClass("head-spacer");
+         jQuery(".button-container .show_btn").removeClass("closable");
+        }
+
+      },
+      error: function(jqXHR, exception) {
+        that.showErrorMsg();
       }
     });
+    
   },
   onSearch: function(e){
     e.preventDefault();
@@ -204,6 +266,9 @@ var TemplateDockManager   = Class.create({
       success: function(extensions) {
         jQuery(that.extensionsWrapper).empty();
         jQuery('#freshplug_listing_template').tmpl(extensions).appendTo(that.extensionsWrapper);
+      },
+      error: function(jqXHR, exception) {
+        that.showErrorMsg();
       }
     });
   },

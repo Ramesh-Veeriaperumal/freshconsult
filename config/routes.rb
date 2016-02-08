@@ -892,6 +892,13 @@ Helpkit::Application.routes.draw do
       get :install
     end
 
+    resources :marketplace_apps, :only => [:edit] do
+      member do
+        post :install
+        delete :uninstall
+      end
+    end
+
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
     match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :app_oauth_install
     match '/user_credentials/oauth_install/:id' => 'user_credentials#oauth_install', :as => :custom_install_user
@@ -1194,21 +1201,22 @@ Helpkit::Application.routes.draw do
     end
 
     # Marketplace
-    resources :extensions, :only => [:index, :show] do
+    resources :extensions, :only => [:index] do
       collection do
-        get :search
+        get ':version_id', action: :show
       end
     end
 
     namespace :installed_extensions do
-      get 'new_configs/:version_id', action: 'new_configs', :as => :new_configs
-      get 'edit_configs/:version_id', action: 'edit_configs', :as => :edit_configs
-      post 'install/:version_id', action: 'install', :as => :install
-      put 'reinstall/:version_id', action: 'reinstall', :as => :reinstall
-      delete 'uninstall/:version_id', action: 'uninstall', :as => :uninstall
-      put 'enable/:version_id', action: 'enable', :as => :enable
-      put 'disable/:version_id', action: 'disable', :as => :disable
-      post 'feedback/:version_id', action: 'feedback', :as => :feedback
+      scope ':extension_id/:version_id' do
+        get :new_configs
+        get :edit_configs
+        post :install
+        put :reinstall
+        delete :uninstall
+        put :enable
+        put :disable
+      end
     end
 
     namespace :integrations do

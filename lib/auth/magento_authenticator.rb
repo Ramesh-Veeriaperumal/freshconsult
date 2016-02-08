@@ -5,6 +5,7 @@ class Auth::MagentoAuthenticator < Auth::Authenticator
   end
 
   def after_authenticate(params)
+    @current_account.make_current
     position = params["position"].to_i
     installed_app = @current_account.installed_applications.with_name(Integrations::Constants::APP_NAMES[:magento]).first
     installed_app.configs[:inputs]["shops"][position]["oauth_token"] = @omniauth.credentials.token

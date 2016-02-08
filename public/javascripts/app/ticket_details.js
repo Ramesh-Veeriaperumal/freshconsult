@@ -1177,15 +1177,24 @@ var scrollToError = function(){
 		}
 		var ticket_fields = tkt_form.find(':input');
 		var data_hash = {};
+
 		ticket_fields.each(function() {
-			if($(this).data().updated)
-			{	
+			if($(this).data().updated) {	
 				var field_name = $(this).attr('name');
+        var lbl_val;
+        
+        if($(this).attr("type") == "checkbox"){
+          lbl_val = $(this).is(":checked")
+        } else {
+          lbl_val = $(this).val()
+        }
+
 				data_hash[field_name] = {
-					value: $(this).val(), 
+					value: lbl_val, 
 					datatype: $(this).get(0).tagName.toLowerCase(),
 					type: field_name.match(/\[.*?\]/)[0] == "[custom_field]" ? "custom_field" : "default" ,
-					required: $(this).hasClass('required')
+					required: $(this).hasClass('required'),
+          name: $(this).find("option:selected").text()
 				};
 			}
 		});
