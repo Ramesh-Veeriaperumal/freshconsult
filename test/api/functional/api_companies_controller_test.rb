@@ -97,6 +97,21 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json(company_pattern(Company.last))
   end
 
+  def test_create_invalid_domains
+    params_hash = { name: Faker::Lorem.characters(20), domains: ["#{Faker::Name.name}. #{Faker::Name.name}"]}
+    post :create, construct_params({}, params_hash)
+    match_json([bad_request_error_pattern(:domains, :"Enter valid domains")])
+    assert_response 400
+  end
+
+  def test_update_invalid_domains
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    params_hash = { name: Faker::Lorem.characters(20), domains: ["#{Faker::Name.name}. #{Faker::Name.name}"]}
+    put :update, construct_params({ id: company.id }, params_hash)
+    match_json([bad_request_error_pattern(:domains, :"Enter valid domains")])
+    assert_response 400
+  end
+
   def test_update_company
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     name = Faker::Lorem.characters(10)

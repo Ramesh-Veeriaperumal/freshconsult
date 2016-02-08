@@ -439,7 +439,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_invalid_due_by_and_cc_emails_count
     cc_emails = []
-    51.times do
+    50.times do
       cc_emails << Faker::Internet.email
     end
     params = ticket_params_hash.merge(due_by: 30.days.ago.iso8601, cc_emails: cc_emails)
@@ -2108,7 +2108,7 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(per_page: 50)
     assert_response 200
     response = parse_response @response.body
-    assert_equal Helpdesk::Ticket.where(deleted: 0, spam: 0).count, response.size
+    assert_equal Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month).count, response.size
 
     Agent.any_instance.stubs(:ticket_permission).returns(3)
     get :index, controller_params
@@ -2116,7 +2116,7 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(responder_id: @agent.id)
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(responder_id: @agent.id, created_at: Time.zone.now)
     get :index, controller_params
     assert_response 200
     Agent.any_instance.unstub(:ticket_permission)
@@ -2186,6 +2186,16 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::Ticket.first.update_attributes(status: 2, responder_id: @agent.id,
                                              deleted: false, spam: false)
     get :index, controller_params(filter: 'new_and_my_open')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  end
+
+  def test_index_with_default_filter
+    Helpdesk::Ticket.update_all(created_at: 2.months.ago)
+    Helpdesk::Ticket.first.update_attributes(created_at: 1.months.ago,
+                                             deleted: false, spam: false)
+    get :index, controller_params
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -2439,7 +2449,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_link_header
     create_ticket(requester_id: @agent.id)
-    per_page = Helpdesk::Ticket.where(deleted: 0, spam: 0).count - 1
+    per_page = Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month).count - 1
     get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page

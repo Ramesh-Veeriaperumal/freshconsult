@@ -26,6 +26,7 @@ api_error_messages:
   account_suspended: "Your account has been suspended."
   invalid_multipart: "Multipart data is not properly formatted."
   method_not_allowed: "Allowed methods are %{methods}"
+  Enter valid domains: "Should have valid domain"
   internal_error: "We're sorry, but something went wrong."
   ssl_required: "SSL certificate verification failed."
   invalid_content_type: "Content-Type header should have application/json"
@@ -55,7 +56,7 @@ api_error_messages:
   "is not a valid email": "Should be a valid email address"
   not_a_valid_email: "Should be a valid email address"
   "Should be a valid Hash": "Should be a key/value pair"
-  max_count_exceeded: "List has exceeded maximum count of %{max_count}"
+  max_count_exceeded: "List should contain less than %{max_count} entries"
   user_blocked: "has been blocked. No more tickets are allowed to be created for this user"
   "Should be a valid ActionDispatch::Http::UploadedFile": "invalid_format"
   requester_id_mandatory: "One of requester_id or phone or email or twitter_id or facebook_id is mandatory"
@@ -87,3 +88,6 @@ api_error_messages:
   email_cant_be_updated: "Email cannot be updated"
   fill_a_mandatory_field: "Please fill at least 1 of email, mobile, phone, twitter_id fields."
   validation_failure: "Validation failed"
+  invalid_content_type: Content-Type header should have application/json
+  invalid_accept_header: Accept header should have application/json or */*
+  invalid_encoding: "Url query string received is %{invalid_query_string}. It should be properly encoded."
