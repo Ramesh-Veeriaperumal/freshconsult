@@ -8,7 +8,8 @@ var freshfonetimer,
 		freshfoneNotification,
 		freshfoneNetworkError,
 		freshfoneContactSearch,
-		freshfoneDialpadEvents;
+		freshfoneDialpadEvents,
+		freshfoneSupervisorCall;
 (function ($) {
 	"use strict";
 	$(document).ready(function() {
@@ -23,14 +24,16 @@ var freshfonetimer,
 		freshfoneNetworkError = new FreshfoneNetworkError();
 		freshfoneContactSearch = new FreshfoneContactSearch();
 		freshfoneDialpadEvents = new FreshfoneDialpadEvents();
+		freshfoneSupervisorCall = new FreshfoneSupervisorCall();
 
 		freshfonesocket.loadDependencies(freshfonecalls,freshfoneNetworkError);
 		freshfoneuser.loadDependencies(freshfonecalls,freshfonesocket,freshfoneNotification);
 		freshfonecalls.loadDependencies(freshfoneuser, freshfonetimer, freshfoneUserInfo);
-		freshfonewidget.loadDependencies(freshfonecalls, freshfoneuser);
+		freshfonewidget.loadDependencies(freshfonecalls, freshfoneuser, freshfoneSupervisorCall);
 		freshfoneendcall.loadDependencies(freshfonecalls, freshfoneuser, freshfonewidget);
 		freshfoneNotification.loadDependencies(freshfonecalls, freshfoneUserInfo);
 		freshfoneNetworkError.loadDependencies(freshfonewidget,freshfonecalls,freshfoneuser);
+		freshfoneSupervisorCall.loadDependencies(freshfonecalls,freshfonewidget,freshfonetimer,freshfoneuser);
 		window.ffLogger = new FreshfoneLogger();
 	});
 	// End ongoing call

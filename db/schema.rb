@@ -400,6 +400,18 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
 
   add_index "chat_widgets", ["account_id", "widget_id"], :name => "account_id_and_widget_id"
 
+  create_table "company_domains", :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "company_id",       :limit => 8
+    t.string   "domain"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "company_domains", ["account_id", "company_id"], :name => "index_for_company_domains_on_account_id_and_company_id"
+  add_index "company_domains", ["account_id", "domain"], :name => "index_for_company_domains_on_account_id_and_domain", :length => {"account_id"=>nil, "domain"=>20}
+
+
   create_table "company_field_choices", :force => true do |t|
     t.integer  "account_id",       :limit => 8
     t.integer  "company_field_id", :limit => 8
@@ -1580,6 +1592,22 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
   end
 
   add_index "freshfone_payments", ["account_id"], :name => "index_freshfone_payments_on_account_id"
+
+  create_table "freshfone_supervisor_controls", :force => true do |t|
+    t.integer  "account_id",                :limit => 8,                 :null => false
+    t.integer  "call_id",                   :limit => 8,                 :null => false
+    t.integer  "supervisor_id",             :limit => 8,                 :null => false
+    t.integer  "supervisor_control_type",                 :default => 0
+    t.string   "sid",                       :limit => 50
+    t.integer  "duration"
+    t.integer  "supervisor_control_status",               :default => 0
+    t.float    "cost"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_supervisor_controls", ["account_id"], :name => "index_freshfone_supervisor_controls_on_account_id"
+  add_index "freshfone_supervisor_controls", ["call_id"], :name => "index_freshfone_supervisor_controls_on_call_id"
 
   create_table "freshfone_usage_triggers", :force => true do |t|
     t.integer  "account_id",           :limit => 8

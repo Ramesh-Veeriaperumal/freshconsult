@@ -219,6 +219,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       where(display_id: token, account_id: account.id).first
     end
 
+    def use_index(index)
+      from("#{self.table_name} USE INDEX(#{index})")
+    end
+
     def find_all_by_param(token)
       find_all_by_display_id(token)
     end
@@ -567,18 +571,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def latest_public_comment
-    notes.visible.public.newest_first.first
+    notes.visible.exclude_source('meta').public.newest_first.first
   end
 
   def latest_private_comment
-    notes.visible.private.newest_first.first
+    notes.visible.exclude_source('meta').private.newest_first.first
   end
   
-  def liquidize_comment(comm)
+  def liquidize_comment(comm, html=true)
     if comm
-      c_descr = "#{comm.user ? comm.user.name : 'System'} : #{comm.body_html}"
-      all_attachments = comm.all_attachments
-      unless all_attachments.empty?
+      c_descr = "#{comm.user ? comm.user.name : 'System'} : #{html ? comm.body_html : comm.body}"
+      all_attachments = nil
+      if html && (all_attachments = comm.all_attachments).present?
         c_descr = "#{c_descr}\n\nAttachments :\n#{liquidize_attachments(all_attachments)}\n"
       end
       c_descr
@@ -974,6 +978,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
         conditions: ['helpdesk_tickets.updated_at >= ? AND helpdesk_tickets.spam = false', ticket_filter.try(:updated_since).try(:to_time).try(:utc)]
       }
     }
+  end
+
+  # Used update_column instead of touch because touch fires after commit callbacks from RAILS 4 onwards.
+  def update_timestamp
+    self.update_column(:updated_at, Time.zone.now) unless @touched || new_record? # update_column can't be invoked in new record.
+    @touched ||= true
+  end
+
+  def schedule_round_robin_for_agents
+    next_agent = group.next_available_agent
+
+    return if next_agent.nil? #There is no agent available to assign ticket.
+    self.responder_id = next_agent.user_id
   end
 
   private

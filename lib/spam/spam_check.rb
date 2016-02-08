@@ -16,6 +16,7 @@ module Spam
 
     def check_spam_content(content, options)
       content = CGI.unescapeHTML(content)
+      options.merge!({:account_id => Account.current.id, :content => content})
       result  = SpamResult::NO_SPAM
       urls    = parse_urls(content)
       result  = check_urls(urls) unless is_spam?(result)
@@ -33,6 +34,16 @@ module Spam
 
     def is_spam?(result)
       ((result == SpamResult::ERROR) || (result == SpamResult::NO_SPAM)) ? false : true
+    end
+
+    def has_more_redirection_links?(content, limit)
+      content = CGI.unescapeHTML(content)
+      urls    = parse_urls(content)
+      urls.each do |url|
+        result = check_spam_url(url, limit, false)
+        return true if (result == SpamResult::SPAM_TOO_MANY_REDIRECTION)
+      end
+      return false
     end
     
     private
@@ -63,7 +74,7 @@ module Spam
       return result
     end
 
-    def check_spam_url(uri_str, limit = 5)    
+    def check_spam_url(uri_str, limit = 5, notify_by_email = true)    
       begin
         uri = URI.parse(URI.encode(uri_str))
 
@@ -78,14 +89,14 @@ module Spam
         when Net::HTTPSuccess     then return SpamResult::NO_SPAM
         when Net::HTTPRedirection then return check_spam_url(response['location'], limit - 1)
         else
-          msg = "Error in check_spam_url method: response - #{response}"
-          notify_error(nil, nil, msg)
+          Rails.logger.debug "Invalid response - #{response} came while processing uri - #{uri.to_s}"
+          notify_error({ :account_id => Account.current.id, :invalid_response => response, :failed_uri => uri.to_s }, nil) if notify_by_email
           return SpamResult::ERROR
         end
       rescue Exception => e
-        msg = "Exception occurred while extracting urls"
+        msg = "Exception occurred in 'check_spam_url' method while processing URI : #{uri}"
         Rails.logger.error "#{msg} : #{e.message} - #{e.backtrace}"
-        notify_error(nil, e, msg)
+        notify_error({ :account_id => Account.current.id, :failed_uri => uri.to_s }, e) if notify_by_email
         return SpamResult::ERROR
       end
     end
@@ -111,9 +122,9 @@ module Spam
         }
         return Akismetor.spam?(request_params) ? SpamResult::SPAM_CONTENT : SpamResult::NO_SPAM
       rescue Exception => e
-        msg = "Exception occurred while checking spam content"
+        msg = "Exception occurred in 'is_spam_content' method in spam_check class"
         Rails.logger.error "#{msg}: #{e.message} - #{e.backtrace}"
-        notify_error(request_params, e, msg)
+        notify_error(request_params, e)
         return SpamResult::ERROR
       end
     end
@@ -169,12 +180,12 @@ module Spam
       ) if is_spam?(result)
     end
     
-    def notify_error(params, e, msg)
+    def notify_error(params, e)
       Object.const_get(:FreshdeskErrorsMailer).error_email(
         nil,
         params,
         e,
-        {:subject => "#{msg}", :recipients => ["mail-team@freshdesk.com"]}
+        {:subject => "Exception in ticket notifications", :recipients => ["email-team@freshdesk.com"]}
       )
     end
   end

@@ -135,12 +135,16 @@
 	}
 	.blacklist-toggle {
 		position: absolute;
-		top: 20px;
-	 	@include left(8px);
+		top: 31px;
+	 	@include left(12px);
 		z-index: 3;
-		width: 16px;
-		height: 16px;
 		display: block;
+		background-radius: 1;
+		border-radius: 8px;
+		width: 14px;
+		height: 15px;
+		padding-left: 2px;
+		padding-top: 1px;
 	}
 	.blacklist-toggle.blacklist {
 		display: none;
@@ -211,6 +215,7 @@
 		display: block;
 		font-weight: 700;
 		@include text-align(center);
+		padding-right:15px;
 		color: $ch-child-call-text;
 	}
 	.no_call_history {
@@ -221,9 +226,7 @@
 		font-weight: 200;
 	}
 	.ficon-abandoned-call {
-		font-size: 23px;
     	color: #e3acac;
-    	padding-left: 10px;
 	}
 	.call_direction {
 		width:40px;

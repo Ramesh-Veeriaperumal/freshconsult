@@ -52,6 +52,11 @@
                 <%= formated_date(call.created_at) %>
               </abbr>
             </div>
+          <div class="ff-call-element width3 join_call_btn pull_right ">
+          <% if current_account.features?(:freshfone_call_monitoring)%>
+              <a data-callid='<%= call.id %>' class='btn call_to_join <%= call.supervisor_controls.active.present? ? "supervised" : "" %>'><%= t('freshfone.dashboard.join') %></a>
+          <% end %>
+          </div>
       </li>
     <% end %>
   </ul>
@@ -84,5 +89,8 @@
       </div>
       <div class='ff-call-element width2 time_in_words call_created_at'>
       </div>
+      <div class="ff-call-element width3 join_call_btn pull_right">
+      </div>
+  </td>
   </li>
 </div>

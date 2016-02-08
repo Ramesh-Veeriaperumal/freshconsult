@@ -103,7 +103,8 @@ module Admin::RolesHelper
                   { :dom_type => "check_box", :id => "manage_dispatch_rules" },
                   { :dom_type => "check_box", :id => "manage_supervisor_rules" },
                   { :dom_type => "check_box", :id => "manage_scenario_automation_rules" },
-                  { :dom_type => "check_box", :id => "manage_email_settings" }]
+                  { :dom_type => "check_box", :id => "manage_email_settings" },
+                  { :dom_type => "hidden_field", :id => "manage_dashboard" }]
                              
              },
                              
@@ -117,6 +118,7 @@ module Admin::RolesHelper
                   { :dom_type => "hidden_field", :id => "manage_supervisor_rules" },
                   { :dom_type => "hidden_field", :id => "manage_scenario_automation_rules" },
                   { :dom_type => "hidden_field", :id => "manage_email_settings" },
+                  { :dom_type => "hidden_field", :id => "manage_dashboard" },
                   { :dom_type => "check_box",    :id => "manage_account" }]
                              
              }]

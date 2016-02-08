@@ -1,10 +1,12 @@
 <% trial_days = current_account.subscription.trial_days %>
 <% if trial_days < AppConfig['show_trail_notifier_in_days'] %>
+<div class="nd-trial-wrap">
+	<div class="widget-trial-content">
 	<% unless @details.nil? %>
 
-		<div class="details-container">
+		<div class="details-container sales-manager-notifier clearfix row-fluid">
 
-			<div class="sp-title">
+			<div class="sp-title span3">
 				<h3 class="title">
 					<%= @details[:Name].html_safe %><br>
 				</h3>
@@ -12,62 +14,66 @@
 				<div>Freshdesk</div>
 			</div>
 
-			<div class="sp-details">
-				<span class="arrow-up"></span>
-
-				<p>
-					Hi, How is it going? <br>
+			<div class="span5 sp-details">
+					<p>Hi, How is it going?</p>
 					<% if trial_days <= 0 %>
-						Your trial has expired and you need to choose a plan to continue using your Freshdesk account. If you need more time to take a look around, let me know and I can get you a trial extension.
+						<p>Your trial has expired and you need to choose a plan to continue using your Freshdesk account. If you need more time to take a look around, let me know and I can get you a trial extension.</p>
 					<% elsif trial_days <= 10 %>
-						I noticed that your Freshdesk trial is about to expire soon. 
+						<p>I noticed that your Freshdesk trial is about to expire soon.
 						If you'd like some assistance in choosing the right plan, please
-						<b><a href="http://resources.freshdesk.com/help-me-choose-a-plan.html?utm_source=freshdeskapp" 
-							onclick="window.open(this.href);return false;" target="_blank">schedule a call.</a>
-						</b>
+							<b><a href="http://resources.freshdesk.com/help-me-choose-a-plan.html?utm_source=freshdeskapp"
+								onclick="window.open(this.href);return false;" target="_blank">schedule a call.</a>
+							</b>
+						</p>
 					<% elsif trial_days <= 20 %>
-						How is your Freshdesk trial coming along? If you'd like to take a tour of the product, please 
-						<b><a href="https://freshdesk.com/demo-request"
-							onclick="window.open(this.href);return false;" target="_blank">schedule a personalized demo.</a>
-						</b>
+						<p>
+							How is your Freshdesk trial coming along? If you'd like to take a tour of the product, please
+							<b><a href="http://resources.freshdesk.com/demoRequest.html?utm_source=freshdeskapp"
+								onclick="window.open(this.href);return false;" target="_blank">schedule a personalized demo.</a>
+							</b>
+						</p>
 					<% else %>
-						I will be your account manager helping you with your evaluation. 
-						Please reach out to me if you have any questions.
+					  <p>
+							I will be your account manager helping you with your evaluation.
+							Please reach out to me if you have any questions.
+						</p>
 					<% end %>
-				</p>
 
 				<ul class="unstyled sp-details-list">
-					<li class="inline-field"> 
-						<span class="ficon-mail fsize-18 vertical-alignment pr10"></span>
+					<li class="inline-field pull-left">
+						<span class="ficon-mail fsize-14 vertical-alignment pr5"></span>
 						<span class="vertical-alignment"> <%= @details[:Email].html_safe %> </span>
 					</li>
-		  		<li class="inline-field"> 
-		  			<span class="ficon-phone fsize-18 vertical-alignment pr10"></span>
+		  		<li class="inline-field pull-left ml20 pl20">
+		  			<span class="ficon-phone fsize-14 vertical-alignment pr5"></span>
 		  			<span class="vertical-alignment"> +1 (866) 832-3090 </span>
 		  		</li>
 		  	</ul>
-		  	
+
 			</div>
 
-			<% if current_user.privilege?(:manage_account) %>
-	    		<div class="plan_and_expiry">
-					<span class="current-plan-name">
-						Current Plan: <b><%= current_account.subscription.subscription_plan.name %></b>
-					</span>
-				    <span class="select-plan">
-				    	<%= link_to("Choose a Plan >", subscription_url) %>
-				    </span>
-			    </div>
-			<% end %>
+			<div class="sp-plan-select span4">
+				<% if current_user.privilege?(:manage_account) %>
+		    		<div class="plan_and_expiry">
+							<div class="current-plan-name">
+								Current Plan: <b><%= current_account.subscription.subscription_plan.name %></b>
+							</div>
+					    <div class="select-plan trial-background mt10">
+					    	<%= link_to("Choose a Plan <b class='arrow-right'></b>".html_safe, subscription_url, :class => "") %>
+					    </div>
+				    </div>
+				<% end %>
 
-			<div class="plan_and_expiry <%= trial_days > 10 ? 'trial-alert-color' : 'trial-end-alert-color' %>">
-				<span class="expiry-details">
-					<% if trial_days > 0 %>
-      				Your trial will expire in <%= trial_days %> days.
-    			<% else %>
-      				Your trial expired.
-    			<% end %>
-    		</span>
+				<div class="plan_and_expiry <%= trial_days > 10 ? 'trial-alert-color' : 'trial-end-alert-color' %>">
+					<span class="expiry-details pt10">
+						<% if trial_days > 0 %>
+	      				Your trial will expire in <%= trial_days %> days.
+	    			<% else %>
+	      				Your trial expired.
+	    			<% end %>
+	    		</span>
+				</div>
+
 			</div>
 
 		</div>
@@ -79,4 +85,6 @@
 	  </div>
 
 	<% end %>
+</div>
+</div>
 <% end %>

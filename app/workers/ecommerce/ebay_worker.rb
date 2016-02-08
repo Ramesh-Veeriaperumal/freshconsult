@@ -17,6 +17,7 @@ module Ecommerce
           Rails.logger.debug "Notification processed with params #{args} "
         end
       rescue Exception => e
+        NewRelic::Agent.notice_error(e)
         Rails.logger.debug "ebay_worker::ERROR  => #{e.message}\n#{e.backtrace.join("\n\t")}"
       end
     end

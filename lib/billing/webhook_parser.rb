@@ -41,13 +41,13 @@ class Billing::WebhookParser
   end
 
   def invoice_generated_date
-    Time.at(content['transaction']['linked_invoices'].first['invoice_date'])
+    Time.at(content['transaction']['linked_invoices'].first['invoice_date'].to_i)
   end
 
   def invoice_transactions
     content[:invoice][:linked_transactions].map do |transaction_hash|
       {
-        :transaction_date => Time.at(transaction_hash[:applied_at]).utc,
+        :transaction_date => Time.at(transaction_hash[:applied_at].to_i).utc,
         :transaction_type => transaction_hash[:txn_type],
         :transaction_status => transaction_hash[:txn_status],
         :transaction_amount => transaction_hash[:txn_amount].to_f / 100

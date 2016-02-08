@@ -7,7 +7,8 @@ class Freshfone::Initiator
                   Freshfone::Initiator::Outgoing,
                   Freshfone::Initiator::Transfer,
                   Freshfone::Initiator::Record,
-                  Freshfone::Initiator::Sip
+                  Freshfone::Initiator::Sip,
+                  Freshfone::Initiator::Supervisor,
                ]
 
   attr_accessor :params, :call_resolver, :current_account

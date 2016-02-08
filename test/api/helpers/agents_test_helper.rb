@@ -1,4 +1,4 @@
-module Helpers::AgentsTestHelper
+module AgentsTestHelper
   def agent_pattern(expected_output = {}, agent)
     user = {
       active: agent.user.active,

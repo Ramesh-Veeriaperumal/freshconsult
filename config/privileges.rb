@@ -3,7 +3,7 @@ Authority::Authorization::PrivilegeList.build do
   # *************** TICKETS **********************
 
   manage_tickets do
-    resource :"helpdesk/dashboard", :only => [:index, :activity_list,:latest_activities,:latest_summary,:sales_manager]
+    resource :"helpdesk/dashboard", :only => [:index, :show, :activity_list,:latest_activities,:latest_summary,:sales_manager, :tickets_summary, :achievements]
     resource :"helpdesk/quest"
     resource :"helpdesk/leaderboard"
     resource :"helpdesk/note", :only => [:index, :agents_autocomplete,:public_conversation]
@@ -11,7 +11,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
     resource :"search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
-    resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets, :empty_trash, :empty_spam,
+    resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets,
                                            :user_ticket, :search_tweets, :custom_search, :export_csv, :latest_ticket_count, :add_requester, :view_ticket,
                                            :spam, :unspam, :execute_scenario, :pick_tickets,
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
@@ -68,7 +68,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/queue", :only => [:bridge]
     resource :"freshfone/addres"
     resource :"freshfone/caller"
-    resource :"freshfone/dashboard", :only => [:dashboard_stats, :calls_limit_notificaiton]
+    resource :"freshfone/dashboard", :only => [:dashboard_stats, :calls_limit_notificaiton, :mute]
 
     resource :"helpdesk/conversation", :only => [:note, :full_text]
     resource :"helpdesk/canned_response"
@@ -167,7 +167,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   delete_ticket do
-    resource :"helpdesk/ticket", :only => [:destroy, :restore, :delete_forever, :empty_trash]
+    resource :"helpdesk/ticket", :only => [:destroy, :restore, :delete_forever, :delete_forever_spam,  :empty_trash, :empty_spam]
     
     # Used for API V2
     resource :"ticket", :only => [:restore, :destroy]

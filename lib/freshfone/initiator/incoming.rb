@@ -57,10 +57,14 @@ class Freshfone::Initiator::Incoming
     @telephony.initiate_customer_conference({ :wait_url => wait_url, :available_agents => get_pinged_agents }, true)
   end
 
-  def initiate_queue
+  def initiate_queue(type=:initiated)
     # self.current_call.queued! # SpreadsheetL 45
     current_call = current_account.freshfone_calls.find_by_call_sid params[:CallSid]
-    queue_disabled_or_overloaded? ? return_non_availability : @telephony.initiate_queue
+    queue_disabled_or_overloaded? ? return_non_availability : @telephony.initiate_queue(type)
+  end
+
+  def resolve_simultaneous_call_queue(simultaneous_call)
+    simultaneous_call ? @telephony.initiate_re_queue : @telephony.initiate_queue
   end
 
   def return_non_availability(welcome_message = true)

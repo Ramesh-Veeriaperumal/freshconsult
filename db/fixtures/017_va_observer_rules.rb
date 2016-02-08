@@ -11,7 +11,7 @@ VaRule.seed_many(:account_id, :name, :rule_type, [
                     ],
         :performer => { :type => Va::Performer::AGENT },
         :conditions => [
-                          {:evaluate_on => "ticket", :value => nil, :operator => 'in', :name => 'responder_id' }
+                          {:evaluate_on => "ticket", :value => [""], :operator => 'in', :name => 'responder_id' }
                       ]
       },
       [ 

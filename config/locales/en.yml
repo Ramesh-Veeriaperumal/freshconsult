@@ -2302,6 +2302,7 @@ en:
           success: Review request has been sent successfully
           failure: There was a problem sending the review request
       empty_spam:
+        delay_delete: Please wait while we delete all tickets from spam. This might take a few minutes.
         success: All tickets in the spam folder were deleted.
       timesheet:
         timer_stopped: ticket timers has been stopped
@@ -4291,6 +4292,7 @@ en:
     active:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: "You don't have any companies with the letter '%{alphabet}'"
+    valid_comapany_domain: "Enter valid domains"
   billing_info_update: Your billing information has been updated.
   wrong_portal:
     content_not_available: The content you are looking for is, not available in this portal.
@@ -4859,6 +4861,8 @@ en:
     spam_header: Spam
     delete_forever: Delete Forever
     empty_trash: Empty Trash
+    empty_spam: Empty Spam
+    empty_view_confirmation: "All the tickets in %{current_view} will be deleted permanently. Please note that this action cannot be undone. Are you sure you want to proceed?"
     assign_to_agent: Assign to Agent
     assign_to: Assign
     select_to_agent: Select an Agent
@@ -5300,6 +5304,36 @@ en:
         title: "Reply to %{user}"
       history:
         recent_item: Recent Items
+    realtime_dashboard:
+      view_all: View all
+      ticket: Ticket
+      ticket_summary: Ticket Summary
+      filter_by: Filter by
+      all_groups: All Groups
+      unresolved: Unresolved
+      open: Open
+      on_hold: On Hold
+      due_today: Due Today
+      new: Unassigned
+      overdue: Overdue
+      unresolve_tickets: Unresolved Tickets
+      unresolved_tickets_by_status: Unresolved Tickets by Status
+      unresolved_tickets_by_type: Unresolved Tickets by Type
+      unresolved_tickets_by_group: Unresolved Tickets by Group
+      unresolved_tickets_by_priority: Unresolved Tickets by Priority
+      unresolved_tickets_by_agent: Unresolved Tickets by Agent
+      leader_Board: Leader Board
+      achievements: Achievements
+      forum_moderation: Forum Moderation
+      phone: Phone
+      global_view: Global View
+      my_view: My View
+      live_chat: Live Chat
+      in_conversation: In-conversation
+      returning_visitors: Returning Visitors
+      visitors: Visitors
+      chat_history: Chat History
+      view_group_vs_status_summary: View Group vs Status summary
     dashboard:
       agent_availability: Agent Availability
       round_robin:
@@ -7429,6 +7463,7 @@ en:
   dislikes: Dislikes
   export: Export
   helpdesk_quests:
+    view_all: View All
     see_all: See all
     available_quests: Available Quests
     all: All
@@ -7950,6 +7985,7 @@ en:
       all_calls: "All Calls"
       answered: "Answered"
       on-hold: "On Hold"
+      queued: "Queued"
       ringing_abandon: "Abandon Call (Ringing)"
       ivr_abandon: "Abandon Call (IVR)"
       queue_abandon: "Abandon Call(Queue)"
@@ -7960,15 +7996,20 @@ en:
       title: "Phone"
       in_conversation: "In-conversation"
       in_queue: "In-queue"
+      waiting: "Waiting"
       available_agents: "Available Agents"
       unavailable_agents: "Busy Agents"
-      freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please recharge to continue."
-      admin_freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please <a href='/subscription'> recharge </a> to continue."
+      freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please contact your account admin."
+      admin_freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please <a href='/subscription'> recharge </a>"
+      join: "Join"
+      leave: "Leave"
+      oncall: "OnCall"
     widget:
       ignore: "Ignore"
       accept: "Accept"
       end_call: "End Call"
       mute: "Mute"
+      unmute: "Unmute"
       hold: "Hold"
       holding: "Sorry unable to hold.. \n Please try again later..."
       hold_success: "Now call on hold"
@@ -7994,14 +8035,22 @@ en:
       ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
       add_note: "Add Notes"
       note_placeholder: "Add call notes..."
+      title: "Convert to ticket"
       new_ticket: "Save as new ticket"
       save_to_existing: "Save to an existing ticket"
       ignore_ticket: "Do not convert to Ticket"
       ignore_ticket_info: "Your recordings will be available in Call History"
-      back: "Go Back"
+      back: "Convert to ticket"
       subject: "Ticket Subject"
-      requester_name: "Requester Name"
-      requester_email: "Requester Email"
+      requester_name: "Name"
+      requester_email: "Email"
+      requester_phone: "Phone"
+      strange_number_message: "Calls from unknown number requires Email or Phone number"
+      contact_betails_blank_message: "Please enter Email or Phone number"
+      invalid_email_message: "Please enter a valid Email"
+      invalid_number_message: "Please enter a valid Phone number"
+      requester_details: "Requester details"
+      email_phone: "OR"
       save: "Save"
       saving: "Saving..."
       notes: "Notes"

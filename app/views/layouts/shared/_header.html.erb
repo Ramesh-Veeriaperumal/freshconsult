@@ -267,3 +267,10 @@
 	Helpdesk.settings = <%= email_template_settings.html_safe %>;
 	<% end %>
 <% end %>
+
+<!-- Setting DataStore values -->
+<%= javascript_tag do %>
+var current_account_id = "<%=current_account.id%>";
+var raw_store_data = <%= get_store_data.html_safe %>
+createDataStore(raw_store_data);
+<% end %>

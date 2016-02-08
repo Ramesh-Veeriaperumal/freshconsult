@@ -48,6 +48,7 @@ class Billing::BillingController < ApplicationController
   CANCELLED = "cancelled"
   NO_CARD = "no_card"
   OFFLINE = "off"
+  PAID = "paid"
 
   TRIAL = "trial"
   FREE = "free"
@@ -241,7 +242,7 @@ class Billing::BillingController < ApplicationController
       payment = @account.subscription.subscription_payments.create(payment_info(content))
       Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => @account.id, 
           :event_type => :payment_added, :invoice_id => content[:invoice][:id] })
-      store_invoice(content)
+      store_invoice(content) if @account.subscription.affiliate.nil?
     end
 
     def payment_refunded(content)
@@ -337,7 +338,7 @@ class Billing::BillingController < ApplicationController
     end
 
     def store_invoice(content)
-      if content["invoice"]["id"] and content['customer']['auto_collection'] == ONLINE_CUSTOMER
+      if content["invoice"]["id"] and content['customer']['auto_collection'] == ONLINE_CUSTOMER and content["invoice"]["status"] == PAID
         invoice_hash = Billing::WebhookParser.new(content).invoice_hash
         @account.subscription.subscription_invoices.create(invoice_hash)
       end

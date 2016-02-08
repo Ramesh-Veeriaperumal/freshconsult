@@ -89,6 +89,7 @@ module Helpkit
     # middleware for statsd
     # config.middleware.use "Statsd::Rack::Middleware", statsd
 
+    # Please check api_initializer.rb, for compatibility with the version 2 APIs, if any middleware related changes are being done.
     config.middleware.insert_before 0, "Middleware::CorsEnabler"
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction"

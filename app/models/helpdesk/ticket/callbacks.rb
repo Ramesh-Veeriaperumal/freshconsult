@@ -203,9 +203,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def pass_thro_biz_rules
-    send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
+    #Remove redis check if no issues after deployment
+    if redis_key_exists?(DISPATCHER_SIDEKIQ_ENABLED)
+      # This queue includes dispatcher_rules, auto_reply, round_robin.
+      Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?) unless (import_id or outbound_email?)
+    else
+      send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
+    end
   end
-  
+
+  #To be removed after dispatcher redis check removed
   def delayed_rule_check current_user, freshdesk_webhook
    begin
     set_account_time_zone
@@ -218,6 +225,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     save #Should move this to unless block.. by Shan
   end
 
+  #To be removed after dispatcher redis check removed
   def assign_tickets_to_agents
     #Ticket already has an agent assigned to it or doesn't have a group
     return if group.nil? || self.responder_id
@@ -242,18 +250,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     schedule_round_robin_for_agents
   end
 
-
-  def schedule_round_robin_for_agents
-    next_agent = group.next_available_agent
-
-    return if next_agent.nil? #There is no agent available to assign ticket.
-    self.responder_id = next_agent.user_id
-  end
-
   def rr_allowed_on_update?
     group and (group.round_robin_enabled? and Account.current.features?(:round_robin_on_update))
   end
 
+  #To be removed after dispatcher redis check removed
   def check_rules current_user
     evaluate_on = self
     account.va_rules.each do |vr|

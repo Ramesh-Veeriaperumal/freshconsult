@@ -99,7 +99,7 @@ class NotesController < ApiApplicationController
 
     def load_parent_ticket # Needed here in controller to find the item by display_id
       @ticket = current_account.tickets.find_by_param(params[:id], current_account)
-      head 404 unless @ticket
+      log_and_render_404 unless @ticket
       @ticket
     end
 

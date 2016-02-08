@@ -1,4 +1,4 @@
-module Helpers::TicketFieldsTestHelper
+module TicketFieldsTestHelper
   FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date' }
 
   def create_custom_field(name, type)
@@ -162,7 +162,7 @@ module Helpers::TicketFieldsTestHelper
       customers_can_edit: tf.editable_in_portal.to_s.to_bool,
       label: tf.label,
       label_for_customers: tf.label_in_portal,
-      name: tf.name,
+      name: tf.default ? tf.name : tf.name[0..-3],
       position: tf.position,
       required_for_agents: tf.required.to_s.to_bool,
       required_for_closure: tf.required_for_closure.to_s.to_bool,
@@ -183,8 +183,12 @@ module Helpers::TicketFieldsTestHelper
   end
 
   def ticket_field_nested_pattern(tf, hash = {})
+    nested_ticket_field_pattern = []
+    tf.nested_ticket_fields.each do |x|
+      nested_ticket_field_pattern << nested_ticket_fields_pattern(x)
+    end
     ticket_field_pattern(tf, hash).merge(
-      nested_ticket_fields: Array
+      nested_ticket_fields: nested_ticket_field_pattern
     )
   end
 
@@ -195,7 +199,7 @@ module Helpers::TicketFieldsTestHelper
       label: ntf.label,
       label_in_portal: ntf.label_in_portal,
       level: ntf.level,
-      name: ntf.name,
+      name: ntf.name[0..-3],
       ticket_field_id: ntf.ticket_field_id,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}

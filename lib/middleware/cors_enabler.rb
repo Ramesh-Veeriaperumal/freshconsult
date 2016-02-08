@@ -38,7 +38,8 @@ class Middleware::CorsEnabler < Rack::Cors
   end
 
   # this is to allow api request with the format being sent in query string
+  # Allow V2 api requests also.
   def api_request?(env)
-    env["ORIGINAL_FULLPATH"] =~ RESOURCE_PATH_REGEX
+    env['PATH_INFO'].starts_with?('/api/') || env["ORIGINAL_FULLPATH"] =~ RESOURCE_PATH_REGEX 
   end
 end

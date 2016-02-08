@@ -18,6 +18,9 @@ window.App = window.App || {};
     },
     initializeActiveList: function() {
       var activeListOptions = this.setListItemTemplate(false);
+      if(freshfone.isCallMonitoringMode){
+        activeListOptions.valueNames.push('join_call_btn'); 
+      }
       this.activeCallsList = new List("freshfone_active_calls", activeListOptions);
       this.toggleNoCalls(false);
     },
@@ -30,7 +33,7 @@ window.App = window.App || {};
       var itemSelector = isQueue ? "queued-call-list-template" : "active-call-list-template"
       var options = { item: itemSelector }, listOptions = this.listOptions;
       if(this.isEmptyList(isQueue)) {
-        $.extend(listOptions, options);
+        listOptions = $.extend({}, listOptions, options);
       }
       return listOptions;
     },

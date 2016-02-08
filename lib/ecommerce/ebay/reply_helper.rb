@@ -19,6 +19,7 @@ module Ecommerce::Ebay::ReplyHelper
       ebay_error('admin.ecommerce.ebay_error.note_not_added')
     end
   rescue Exception => e
+    NewRelic::Agent.notice_error(e)
     ebay_error("admin.ecommerce.ebay_error.note_not_added")
   end
 

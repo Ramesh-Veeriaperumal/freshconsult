@@ -102,6 +102,23 @@ HelpdeskReports.ReportUtil.GroupSummary = (function () {
         },
         flushEvents: function () {
             jQuery('#reports_wrapper').off('.group');
+        },
+        recordAnalytics : function(){
+
+             jQuery(document).on("script_loaded", function (ev, data) {
+                 if( HelpdeskReports.locals.report_type != undefined && HelpdeskReports.locals.report_type == "group_summary"){
+                     App.Report.Metrics.push_event("Group Summary Report Visited", {});
+                 }
+             });
+            //Ticket List Exported
+             jQuery(document).on("analytics.export_ticket_list", function (ev, data) {
+                App.Report.Metrics.push_event("Group Summary Report : Ticket List Exported",{ metric : HelpdeskReports.locals.active_metric });
+             });
+
+            //pdf export
+            jQuery(document).on("analytics.export_pdf",function(ev,data){
+                App.Report.Metrics.push_event("Group Summary Report : PDF Exported",{});
+            });    
         }
     };
     return {
@@ -111,6 +128,7 @@ HelpdeskReports.ReportUtil.GroupSummary = (function () {
                 _FD.bindEvents();
                 _FD.core.ATTACH_DEFAULT_FILTER = true;
                 _FD.setDefaultValues();
+                _FD.recordAnalytics();
         }
     };
 })();

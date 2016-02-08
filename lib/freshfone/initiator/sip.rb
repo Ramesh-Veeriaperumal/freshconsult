@@ -29,18 +29,6 @@ class Freshfone::Initiator::Sip
   end
 
 private
-    def register_outgoing_device
-      set_outgoing_device([sip_user_id]) unless sip_user_id.blank?
-    end
-
-    def reject_outgoing_call
-      if sip_user_id.present?
-        agent = current_account.freshfone_users.find_by_user_id(sip_user_id).busy!
-        Resque::enqueue(Freshfone::Jobs::BusyResolve, { :agent_id => sip_user_id })
-      end
-      telephony.reject
-    end
-
     def update_user_presence
       current_account.freshfone_users.find_by_user_id(sip_user_id).busy! if sip_user_id.present?
     end

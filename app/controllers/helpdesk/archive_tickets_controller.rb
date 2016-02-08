@@ -157,7 +157,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
     end
 
     def load_sort_order
-      params[:wf_order] = view_context.current_wf_order.eql?(:status) ? "created_at" : view_context.current_wf_order.to_s
+      params[:wf_order] = Helpdesk::ArchiveTicket.sort_fields_options_array.include?(view_context.current_wf_order) ? view_context.current_wf_order.to_s : "created_at"
       params[:wf_order_type] = view_context.current_wf_order_type.to_s
     end
 

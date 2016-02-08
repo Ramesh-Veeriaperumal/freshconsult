@@ -130,6 +130,11 @@ class Freshfone::CallActions
   	call.meta.update_external_transfer_call_response(number, response) 
   end
 
+  def update_secondary_leg_response(agent_id, number, response, call)
+    call.meta.update_pinged_agents_with_response(agent_id, response)
+    call.meta.update_external_transfer_call_response(number, response) if external_transfer?
+  end
+
   def handle_failed_incoming_call(call, agent_id)
     call_meta = call.meta
     return if call_meta.blank?
@@ -263,6 +268,10 @@ class Freshfone::CallActions
     #For incoming we already store in this form. Hence replicating the same for outgoing too.
     def set_call_sid_to_parent
       params.merge!({:CallSid => current_call.call_sid}) if current_account.features?(:freshfone_conference)
+    end
+
+    def external_transfer?
+      params[:external_transfer].present? && params[:external_number].present?
     end
 
 end

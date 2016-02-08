@@ -41,7 +41,7 @@ module DiscussionMonitorConcern
     if @monitorship
       head 204
     else
-      head 404
+      log_no_monitorship_and_render_404
     end
   end
 
@@ -67,7 +67,7 @@ module DiscussionMonitorConcern
 
     def find_monitorship
       @monitorship = get_monitorship(params).first
-      head 404 unless @monitorship
+      log_no_monitorship_and_render_404 unless @monitorship
     end
 
     def get_monitorship(params_hash)
@@ -106,5 +106,10 @@ module DiscussionMonitorConcern
 
     def not_current_user_id?
       !params[:user_id].respond_to?(:to_i) || params[:user_id].to_i != api_current_user.id
+    end
+
+    def log_no_monitorship_and_render_404
+      Rails.logger.debug "No Monitorship found for item #{params[:id]} with user id #{params[:user_id]}. controller : #{params[:controller]}"
+      head 404
     end
 end

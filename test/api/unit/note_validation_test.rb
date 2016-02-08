@@ -13,7 +13,7 @@ class NoteValidationTest < ActionView::TestCase
     item = nil
     note = NoteValidation.new(controller_params, item)
     refute note.valid?(:create)
-    assert note.errors.full_messages.include?('Body missing')
+    assert note.errors.full_messages.include?('Body required_and_data_type_mismatch')
     refute note.errors.full_messages.include?('Body html data_type_mismatch')
 
     controller_params = { 'user_id' => 1, body: '', body_html: '' }
@@ -45,7 +45,7 @@ class NoteValidationTest < ActionView::TestCase
   def test_attachment_multiple_errors
     Account.stubs(:current).returns(Account.first)
     String.any_instance.stubs(:size).returns(20_000_000)
-    Helpers::TicketsValidationHelper.stubs(:attachment_size).returns(100)
+    TicketsValidationHelper.stubs(:attachment_size).returns(100)
     controller_params = { 'user_id' => 1, attachments: ['file.png'],  body: Faker::Lorem.paragraph }
     item = nil
     note = NoteValidation.new(controller_params, item)
@@ -54,7 +54,7 @@ class NoteValidationTest < ActionView::TestCase
     assert errors.include?('Attachments data_type_mismatch')
     assert errors.count == 1
     Account.unstub(:current)
-    Helpers::TicketsValidationHelper.unstub(:attachment_size)
+    TicketsValidationHelper.unstub(:attachment_size)
   end
 
   def test_complex_fields_with_nil

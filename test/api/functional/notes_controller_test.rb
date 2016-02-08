@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class NotesControllerTest < ActionController::TestCase
-  include Helpers::NotesTestHelper
+  include NotesTestHelper
   def wrap_cname(params)
     { note: params }
   end
@@ -110,10 +110,10 @@ class NotesControllerTest < ActionController::TestCase
   def test_create_datatype_invalid
     params_hash = { notify_emails: 'x', attachments: 'x', body: true, body_html: true }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    match_json([bad_request_error_pattern('notify_emails', :data_type_mismatch, data_type: 'Array'),
-                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array'),
-                bad_request_error_pattern('body', :data_type_mismatch, data_type: 'String'),
-                bad_request_error_pattern('body_html', :data_type_mismatch, data_type: 'String')])
+    match_json([bad_request_error_pattern('notify_emails', :data_type_mismatch, data_type: Array),
+                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: Array),
+                bad_request_error_pattern('body', :data_type_mismatch, data_type: String),
+                bad_request_error_pattern('body_html', :data_type_mismatch, data_type: String)])
     assert_response 400
   end
 
@@ -147,7 +147,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_create_missing_params
     post :create, construct_params({ id: ticket.display_id }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('body', :missing_field)])
+    match_json([bad_request_error_pattern('body', :required_and_data_type_mismatch, data_type: String)])
   end
 
   def test_create_returns_location_header
@@ -362,9 +362,9 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { cc_emails: 'x', attachments: 'x', bcc_emails: 'x', body: Faker::Lorem.paragraph }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, data_type: 'Array'),
-                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array'),
-                bad_request_error_pattern('bcc_emails', :data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, data_type: Array),
+                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: Array),
+                bad_request_error_pattern('bcc_emails', :data_type_mismatch, data_type: Array)])
   end
 
   def test_reply_email_format_invalid

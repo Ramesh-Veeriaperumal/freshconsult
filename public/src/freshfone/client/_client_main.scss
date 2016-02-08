@@ -58,7 +58,7 @@
 		}
 
 	}
-	li:first-child a { 
+	li:first-child a {
 		@include border-left-radius(4px);
 	}
 	li:last-child a {
@@ -132,27 +132,27 @@
     	    font-weight: 500;
     	}
     }
-    .recent-tickets .header_text, .add_call_note .header_text{	
+    .recent-tickets .header_text, .add_call_note .header_text{
    		&.opened .triangle{
 	    	.caret-right{
 	    		display: none;
 	    	}
 	    	.caret-down{
 	    		display: block;
-	    	}	
-    	}		
-    	&.closed .triangle{		
+	    	}
+    	}
+    	&.closed .triangle{
     		.caret-right{
 	    		display: block;
 	    	}
 	    	.caret-down{
 	    		display: none;
-	    	}	
-    	}	
-    }	
-    .recent-tickets{ 	
+	    	}
+    	}
+    }
+    .recent-tickets{
     	border-bottom: 1px solid $ongoing-caller-context-bottom-border;
-    	
+
     }
     .recent-tickets-content{
     	.ticket-content{
@@ -161,7 +161,7 @@
    			padding: 0px 0px 15px 25px;
     		.ticket-subject a{
     			font-weight: 500;
-    		}		
+    		}
     	}
     	.ticket-link a {
     		font-weight: 500;
@@ -219,41 +219,7 @@
 	}
 	min-height: 120px;
 }
-.freshfone_realtime {
-	overflow: hidden;
-  	min-height: 51px;
-	.freshfone_dashboard_cells, .available_agents_cells {
-		width: 128px;
-		@include box-sizing(border-box);
-		@include float(left);
 
-		background-color: $dashboard-cells-background;
-		color: #666;
-		padding: 8px 9px 9px;
-		@include margin(0 1px 1px 0);
-
-		h4 { font-size: 15px; }
-		.dash-lbl{ font-size: 12px; }
-		&.available-agents { width: 100% }
-		&:hover{
-				background-color: #e7e7e7;
-			}
-	}
-	.available_agents_cells {
-		width: 99%;
-		.available_agents_count_cell {
-			display: inline-block;
-    		margin-right: 25px;
-		}
-		.busy_agents_count_cell {
-			display: inline-block;
-			padding-left: 13px;
-			height: 100%;
-			border-left: 1px rgba(255, 255, 255, 0.3) solid;
-		}
-	}
-
-}
 .dashboard_call_history_link{
 	display: inline-block;
 	@include box-sizing(border-box);

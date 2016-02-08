@@ -1,23 +1,23 @@
 defaults: &defaults
 
- app_id: 128260310615386
- secret_key: ab8eb7b00386bf05035b0c62031d43f3
- callback_url: http://login.freshpo.com/social/facebook
+ app_id: 725120837575289
+ secret_key: 0f949aec052448fa67f4690e1c286859
+ callback_url: http://localhost.freshdesk-dev.com:3000/social/facebook
 
 
 development:
-  app_id: "517357701656083"
-  secret_key: "801598c974b0d79e19db118d8ecdabab"
-  callback_url: http://localhost.local:3000/social/facebook
-  page_tab_app_id: 304424263028778
-  page_tab_app_secret: e40b1158a912cb05f5340da5455fc3bf
+  app_id: 725120837575289
+  secret_key: 0f949aec052448fa67f4690e1c286859
+  callback_url: http://localhost.freshdesk-dev.com:3000/social/facebook
+  page_tab_app_id: 532141443602251
+  page_tab_app_secret: 674a8844ca40fc2dd528ae1a58f67725
 
 staging:
- app_id: 177912822282439
- secret_key: 81297d69e2deaf8152a7b0b96508c161
- callback_url: http://login.freshpo.com/social/facebook
- page_tab_app_id: 433285340124104
- page_tab_app_secret: 2c3c9458bea17840b25041f1d8b18460
+  app_id: 725120837575289
+  secret_key: 0f949aec052448fa67f4690e1c286859
+  callback_url: http://localhost.freshdesk-dev.com:3000/social/facebook
+  page_tab_app_id: 532141443602251
+  page_tab_app_secret: 674a8844ca40fc2dd528ae1a58f67725
 
 slave:
  <<: *defaults
@@ -25,8 +25,8 @@ test:
  <<: *defaults
 
 production:
- app_id: 128260310615386
- secret_key: ab8eb7b00386bf05035b0c62031d43f3
- page_tab_app_id: 579951868730264
- page_tab_app_secret: 177e1a16a9f8dd4e84d6f7dcc4156237
- callback_url: http://login.freshdesk.com/social/facebook
+  app_id: 725120837575289
+  secret_key: 0f949aec052448fa67f4690e1c286859
+  callback_url: http://localhost.freshdesk-dev.com:3000/social/facebook
+  page_tab_app_id: 532141443602251
+  page_tab_app_secret: 674a8844ca40fc2dd528ae1a58f67725

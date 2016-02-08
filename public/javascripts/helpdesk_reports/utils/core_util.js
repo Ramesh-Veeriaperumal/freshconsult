@@ -18,6 +18,12 @@ HelpdeskReports.CoreUtil = {
     },
     global_disabled_filter: ["status"],
     default_available_filter : [ "agent_id","group_id","company_id" ],
+    filter_remote : [ "agent_id","tag_id","company_id"],
+    filter_remote_url : {
+            "agent_id" : "agents",
+            "company_id" : "companies",
+            "tag_id" : "tags"
+    },
     ATTACH_DEFAULT_FILTER : false,
     /* Time-outs for ajax requests in milliseconds, 
     ** set to 1 min for now. Will be handled at backend later on.
@@ -34,14 +40,25 @@ HelpdeskReports.CoreUtil = {
         jQuery("#active-report-filters div.ff_item").map(function () {
             var container  = this.getAttribute("container");
             var data_label = this.getAttribute("data-label");
-            var value;
+            var condition = this.getAttribute("condition");
+            var value = [];
 
             if (container == "nested_field") {
                 value = jQuery(this).children('select').find('option:selected').text();
             } else {
-                value = jQuery(this).find('option:selected').map(function () {
-                    return jQuery(this).text();
-                }).get();
+                //select
+                if(jQuery.inArray(condition,_this.filter_remote) != -1) {
+                    var data = jQuery(this).find(".filter_item").select2('data');
+                    if(data != undefined && data.length > 0){
+                        data.map(function(val,i){
+                            value.push(val.text); 
+                        });
+                    }
+                } else {
+                    value = jQuery(this).find('option:selected').map(function () {
+                        return jQuery(this).text();
+                    }).get();
+                }
             }
 
             if ((data_label !== null) && value && value.length && ((container !== "nested_field") || ((container === "nested_field") && (value !== "...")))) {
@@ -71,19 +88,36 @@ HelpdeskReports.CoreUtil = {
         var locals = HelpdeskReports.locals;
         locals.query_hash = [];
         locals.local_hash = [];
+        
         jQuery("#active-report-filters div.ff_item").map(function () {
             var condition = this.getAttribute("condition");
             var container = this.getAttribute("container");
             var operator  = this.getAttribute("operator");
-            var value;
+            var value = [];
+            var isAjaxSourceSelect = false;
+
+            //Store the search results in localStorage, otherwise cant populate the filter on page refresh
+            searchData = [];
+
+
+            if(jQuery.inArray(condition,_this.filter_remote) != -1){
+                isAjaxSourceSelect = true;
+            }
 
             if (container == "nested_field") {
                 value = (jQuery(this).children('select').val() === null ? "" : jQuery(this).children('select').val());
             } else if (container == "multi_select" || container == "select") {
-                value = jQuery(this).find('option:selected').map(function () {
-                    return this.value;
-                }).get();
+
+                if(isAjaxSourceSelect){
+                    value = jQuery(this).find(".filter_item").select2('val');
+                    searchData = jQuery(this).find(".filter_item").select2('data');
+                }else{
+                    value = jQuery(this).find('option:selected').map(function () {
+                        return this.value;
+                    }).get();
+                }
             }
+
             if (value.length) {
                 locals.query_hash.push({
                     condition: condition,
@@ -91,7 +125,7 @@ HelpdeskReports.CoreUtil = {
                     value: value.toString()
                 });
                 //local_hash is filters stored in localStorage for populating on load.
-                var hash = _this.getLocalHash(condition, container, operator, value);
+                var hash = _this.getLocalHash(condition, container, operator, value,searchData);
                 locals.local_hash.push(hash);
             } else {
                 //Removing fields with no values in filters by triggering click.(only for non default fields)
@@ -127,7 +161,7 @@ HelpdeskReports.CoreUtil = {
             _this.glanceGroupByFieldsInit();
         }
     },
-    getLocalHash: function (condition, container, operator, value) {
+    getLocalHash: function (condition, container, operator, value,searchData) {
         var locals =  HelpdeskReports.locals;
         var hash = {};
         if (container === 'nested_field' && locals.custom_field_hash.hasOwnProperty(condition)) {
@@ -149,6 +183,9 @@ HelpdeskReports.CoreUtil = {
             };
         }
 
+        if(searchData != undefined && searchData.length > 0){
+            hash.source = searchData;
+        }
         return hash;
     },
     /*TODO: Need to simplify following methods.
@@ -394,6 +431,7 @@ HelpdeskReports.CoreUtil = {
             setTimeout(function(){
                 btn.prop('disabled', false);
             }, timeOutSeconds*1000);
+            trigger_event("analytics.export_pdf",{});
         });
         
         _this.addIndexToFields();
@@ -648,9 +686,59 @@ HelpdeskReports.CoreUtil = {
         var _this = this;
         var tmpl = JST["helpdesk_reports/templates/multiselect_tmpl"](field_hash);
         jQuery(tmpl).appendTo('#active-report-filters');
-        jQuery("#" + field_hash.condition).select2({
+        var config = {
             maximumSelectionSize: _this.MULTI_SELECT_SELECTION_LIMIT
-        });
+        };
+
+        if(jQuery.inArray(field_hash.condition,_this.filter_remote) != -1){
+
+            config.ajax = {
+                url: "/search/autocomplete/" + _this.filter_remote_url[field_hash.condition],
+                dataType: 'json',
+                delay: 250,
+                data: function (term, page) {
+                    return {
+                        q: term, // search term
+                    };
+                },
+                results: function (data, params) {
+                      var results = [];
+                      jQuery.each(data.results, function(index, item){
+                        if(field_hash.condition == "agent_id") {
+                            results.push({
+                              id: item.user_id,
+                              text: item.value
+                            });
+                        } else {
+                            results.push({
+                              id: item.id,
+                              text: item.value
+                            });    
+                        }
+                        
+                      });
+                      return {
+                        results: results 
+                      };
+                },
+                cache: true
+              };
+              config.multiple = true ;
+              config.minimumInputLength = 2 ;
+              config.initSelection = function (element, callback) {
+
+                 if (typeof (Storage) !== "undefined" && localStorage.getItem('reports-filters') !== null) {
+                    var filter = JSON.parse(localStorage.getItem('reports-filters'));
+                    jQuery.each(filter, function(i,obj){
+                        if(obj.condition == field_hash.condition){
+                            callback(obj.source);
+                            return false;
+                        }
+                    });
+                }
+                };
+        }
+        jQuery("#" + field_hash.condition).select2(config);
         if (val.length) {
             jQuery("#" + field_hash.condition).select2('val', val.split(','));
         }
@@ -763,6 +851,8 @@ HelpdeskReports.CoreUtil = {
         }
         
         jQuery('#date_range').val(daterange);
+        jQuery('#sprout-datepicker').val(daterange);
+
         var date = jQuery('#date_range').val();
         _this.constructDateRangePicker();
 
@@ -1004,6 +1094,7 @@ HelpdeskReports.CoreUtil = {
                 }
             }
             _this.makeAjaxRequest(opts);
+            trigger_event("analytics.export_ticket_list",{});
     },
     bindExportFieldEvents : function() {
 
@@ -1084,6 +1175,7 @@ HelpdeskReports.CoreUtil = {
         if(HelpdeskReports.locals.report_type === "glance"){
             var current_params = [];
             var date = this.setReportFilters();
+            var filter = HelpdeskReports.locals.query_hash || [];
             jQuery.each(_.keys(HelpdeskReports.Constants.Glance.metrics), function (index, value) {
                 var group_by_value = HelpdeskReports.CoreUtil.setDefaultGroupByOptions(value);
                 var custom_grp_by = HelpdeskReports.locals.active_custom_field || HelpdeskReports.locals.custom_fields_group_by[0]
@@ -1092,9 +1184,9 @@ HelpdeskReports.CoreUtil = {
                 }
                 var merge_hash = {
                     date_range: date,
-                    filter: [],
                     group_by: group_by_value,
-                    metric: value
+                    metric: value,
+                    filter: filter
                 }
                 var param = jQuery.extend({}, HelpdeskReports.Constants.Glance.params, merge_hash);
                 current_params.push(param);
@@ -1107,7 +1199,8 @@ HelpdeskReports.CoreUtil = {
                                 bucket : true,
                                 bucket_conditions : bucket_conditions,
                                 reference : false,
-                                group_by : []
+                                group_by : [],
+                                filter: filter
                                 }
                     bucket_param = jQuery.extend({},param, bucket_hash);
                     current_params.push(bucket_param);

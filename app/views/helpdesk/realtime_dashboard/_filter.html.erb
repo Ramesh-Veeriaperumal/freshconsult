@@ -1,0 +1,43 @@
+<ul role="tablist" class="pull-left view-select">
+  	<li class="dropdown">
+	    <h4 class="dropdown-toggle" data-toggle="dropdown">
+	        <span id="db-filer-text">
+	        	<%=  (@global_dashboard) ? t("helpdesk.realtime_dashboard.global_view") :
+	        								t("helpdesk.realtime_dashboard.my_view") %>
+			</span>
+	        <span class="caret"></span>
+	    </h4>
+
+	    <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu" id="dashboard-filter">
+	      <li class="widget-filter <%if @global_dashboard%> active <%end %>">
+	        <a href="/helpdesk/dashboard" class="item" data-pjax="#body-container" ul_class="tick">
+	        	<%= t("helpdesk.realtime_dashboard.global_view")%> </a>
+	      </li>
+	      <li class="widget-filter <%unless @global_dashboard%> active <% end %>">
+	        <a href="/helpdesk/dashboard/show/myView" class="item" data-pjax="#body-container" ul_class="tick">
+	        	<%= t("helpdesk.realtime_dashboard.my_view") %> </a>
+	      </li>
+	    </ul>
+   </li>
+</ul>
+
+<% if @global_dashboard %>
+	<ul role="tablist" id="filter_by_group" class="group-select pull-left ml20">
+	    <li class="dropdown loading-right loading-tiny" id="filter_by_group_dropdown">
+		    <h5 class="dropdown-toggle" data-toggle="dropdown">
+		        <span class="widget-filter">
+		        	<span class="muted"><%= t("helpdesk.realtime_dashboard.filter_by") %></span>
+		        	<span id="group-filter-text"><%= t("helpdesk.realtime_dashboard.all_groups") %></span>
+		        </span>
+		        	<span class="caret"></span>
+		    </h5>
+	        <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu" style="display: none;" id="group-filter">
+	          <% accessible_groups.each.with_index do |group, index| %>
+	          <li class="widget-filter <%if(index == 0)%> active <% end %>" >
+				<a class="item db-group-filter" data-toggle="tab" ul_class="tick" href="#" data-group-id="<%= group[0] %>"> <%= group[1] %> </a>
+	          </li>
+	          <% end %>
+	        </ul>
+	    </li>
+	</ul>
+<% end %>

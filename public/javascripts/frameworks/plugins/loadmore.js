@@ -4,14 +4,16 @@
   var namespace = '.loadMore'
     , CLICK = 'click' + namespace
     , settings = { currentPage: 1
+                 , pageIncrement: false // Can Increment currentPage value by default (true) or using options (false) 
                  , params: {}
                  , url: location.href
                  , dataType: "html"
+                 , pagination: '.pagination'
                  , loadMoreHtml: '<a id="load-more" class="btn" data-loading-text="Loading...">Load more...</a>'
                  , loadMoreButton: '#load-more'
                  , end: 'this.loadMoreButton.remove()'
                  , loading: 'this.loadMoreButton.button("loading")'
-                 , complete: 'this.$el.append(data);this.loadMoreButton.button("reset")'
+                 , complete: '$this.$el.append(data);$this.loadMoreButton.button("reset")'
                  }
     , $container;
 
@@ -34,6 +36,8 @@
     this.$el = $(element);
     this.opts = $.extend(settings, options);
 
+    this.currentPage = this.opts.currentPage;
+
     this.init();
   }
 
@@ -51,6 +55,12 @@
         
         // start the listener
         this.startListener();
+      }
+
+      // for accessibility we can keep pagination links
+      // but since we have javascript enabled we remove pagination links
+      if (opts.pagination) {
+        $(opts.pagination).remove();
       }
     },
     
@@ -84,7 +94,8 @@
 
       var $this = this
       var settings = $this.opts
-      var nextPage = settings.currentPage + 1
+
+      var nextPage = ($this.opts.pageIncrement) ? ++$this.currentPage : settings.currentPage + 1;
 
       // set up ajax query params
       $.extend( settings.params

@@ -6,6 +6,7 @@ class ActionController::TestCase
   end
 
   def setup
+    SpamCounter.stubs(:count).returns(0)
     activate_authlogic
     get_agent
     @account.make_current
@@ -42,6 +43,7 @@ class ActionDispatch::IntegrationTest
   FileUtils.mkdir_p "#{Rails.root}/test/api/query_reports"
 
   def setup
+    SpamCounter.stubs(:count).returns(0)
     get_agent
     set_request_headers
     host!('localhost.freshpo.com')

@@ -17,6 +17,7 @@ class Helpdesk::Reminder < ActiveRecord::Base
   attr_accessible :body,:deleted
   
   validates_numericality_of :user_id
+  validates_presence_of :body
   validates_length_of :body, :in => 1..120
 
   before_create :set_account_id

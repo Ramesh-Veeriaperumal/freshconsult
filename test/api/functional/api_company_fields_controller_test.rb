@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 class ApiCompanyFieldsControllerTest < ActionController::TestCase
-  include Helpers::CompaniesTestHelper
+  include CompaniesTestHelper
   def wrap_cname(params)
     { api_company_field: params }
   end

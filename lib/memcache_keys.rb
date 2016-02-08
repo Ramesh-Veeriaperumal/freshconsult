@@ -1,6 +1,6 @@
 module MemcacheKeys
 
-  LEADERBOARD_MINILIST = "HELPDESK_LEADERBOARD_MINILIST:%{agent_type}:%{account_id}"
+  LEADERBOARD_MINILIST = "v2/HELPDESK_LEADERBOARD_MINILIST:%{agent_type}:%{account_id}"
 
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
 
@@ -123,6 +123,8 @@ module MemcacheKeys
   ECOMMERCE_REAUTH_CHECK = "v1/ECOMMERCE_REAUTH_CHECK:%{account_id}"
 
   ACCOUNT_PASSWORD_POLICY = "v1/ACCOUNT_PASSWORD_POLICIES:%{account_id}:%{user_type}"
+
+  LEADERBOARD_MINILIST_REALTIME = "v2/LEADERBOARD_MINILIST_REALTIME:%{account_id}:%{agent_type}"
 
   class << self
 

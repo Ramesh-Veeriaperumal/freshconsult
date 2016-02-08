@@ -66,11 +66,18 @@ defaults: &defaults
     - [update_users_company_id]
     - [update_tickets_company_id]
     - [solution_binarize_sync]
+    - [clear_tickets]
     - [email_notification_spam_queue]
     - [update_user_language]
     - [integrations]
     - [bulk_ticket_actions]
     - [bulk_ticket_reply]
+    - [api_webhook_rule]
+    - [premium_dispatcher]
+    - [dispatcher]
+    - [trial_dispatcher]
+    - [free_dispatcher]
+    - [active_dispatcher]
 
 development:
   <<: *defaults
