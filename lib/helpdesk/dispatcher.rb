@@ -1,10 +1,9 @@
   class Helpdesk::Dispatcher
-    def self.enqueue ticket_id, freshdesk_webhook
+    def self.enqueue(ticket_id, user_id, freshdesk_webhook)
       #based on account subscription, enqueue into proper queue
       account = Account.current
       job_queues = ["Premium" , "Free", "Trial" , "Active"]
-      args = {:ticket_id => ticket_id, :is_webhook => freshdesk_webhook}
-
+      args = {:ticket_id => ticket_id, :user_id => user_id, :is_webhook => freshdesk_webhook}
       job_queue = "spam" if account.spam_email?
       job_queue ||= "premium" if account.premium_email?
       job_queue ||= account.subscription.state
@@ -19,7 +18,7 @@
 
     def initialize params
       @account    = Account.current
-      @user       = User.current
+      @user       = params['user_id'].blank? ? nil : @account.all_users.find(params['user_id'])
       @ticket     = @account.tickets.find(params['ticket_id'])
       @is_webhook = params['is_webhook']
     end

@@ -189,7 +189,7 @@ var UnresolvedTickets = (function () {
 				window.localStorage.setItem('unresolved-tickets-filters', Browser.stringify(data));
 			}
 		},
-		columnDefs_des: function(data){
+		columnDefs_des: function(data, lastRow){
 			var selectedTab = jQuery("#unresolved-tab li.active").data('redirect');
 			return data.tickets_data.data.map(function(val, i){
 				return {
@@ -203,7 +203,7 @@ var UnresolvedTickets = (function () {
 							}else if(selectedTab === 'agent' && _store.find(data, 'user_id')){
 								_data = _store.find(data, 'user_id')[selectedTab]['user']['name'];
 							}
-						} else if(i === row.length - 1) {
+						} else if(i === row.length - lastRow) {
 							_data = data;
 						} else {	
 							var data_url = "<a data-id="+(row[0])+" data-status="+status_filtered_array[i][0]+" href='javascript:void(0)'>"+data+"</a>";
@@ -251,7 +251,7 @@ var UnresolvedTickets = (function () {
 						"asSorting": [ "desc", "asc" ]
 					};
 			});
-			columnDefs_des = _FD.columnDefs_des(data);
+			columnDefs_des = _FD.columnDefs_des(data, 1);
 			var unresolved_ticket = jQuery('#unresolved-tickets').dataTable({	
 				"sDom": 'f<"standard-table"t>p',
 				"bAutoWidth": false,
@@ -296,7 +296,7 @@ var UnresolvedTickets = (function () {
 					'sTitle': arrowtemplate,
 					'sClass': "center"
 			});
-			var columnDefs_des = _FD.columnDefs_des(data);
+			var columnDefs_des = _FD.columnDefs_des(data, 2);
 
 			columnDefs_des.push({
 				"targets": data.tickets_data.data.length,

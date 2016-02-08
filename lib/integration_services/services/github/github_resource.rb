@@ -29,7 +29,7 @@ module IntegrationServices::Services
         process_response(response, 200) do |parsed_response|
           next_link = parse_rel_links(response.headers)[:next]
           if next_link.present?
-            github_all_pages(next_link, options, previous_response + parsed_response)
+            get_all_pages(next_link, options, previous_response + parsed_response)
           else
             previous_response + parsed_response
           end

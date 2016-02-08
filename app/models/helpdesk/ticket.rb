@@ -219,6 +219,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       where(display_id: token, account_id: account.id).first
     end
 
+    def use_index(index)
+      from("#{self.table_name} USE INDEX(#{index})")
+    end
+
     def find_all_by_param(token)
       find_all_by_display_id(token)
     end

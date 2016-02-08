@@ -66,6 +66,10 @@ class Freshfone::QueueController < FreshfoneBaseController
     render :text => "Dequeued Call #{params[:CallSid]} from #{params[:QueueSid]}"
   end
 
+  def redirect_to_queue
+    render :xml => incoming_initiator.initiate_queue(:redirected)
+  end
+
   private
     def update_call
       current_call.update_call(params) unless BRIDGE_STATUS.include?(params[:QueueResult])

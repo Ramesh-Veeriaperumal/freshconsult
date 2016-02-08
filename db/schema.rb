@@ -1593,6 +1593,22 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
 
   add_index "freshfone_payments", ["account_id"], :name => "index_freshfone_payments_on_account_id"
 
+  create_table "freshfone_supervisor_controls", :force => true do |t|
+    t.integer  "account_id",                :limit => 8,                 :null => false
+    t.integer  "call_id",                   :limit => 8,                 :null => false
+    t.integer  "supervisor_id",             :limit => 8,                 :null => false
+    t.integer  "supervisor_control_type",                 :default => 0
+    t.string   "sid",                       :limit => 50
+    t.integer  "duration"
+    t.integer  "supervisor_control_status",               :default => 0
+    t.float    "cost"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_supervisor_controls", ["account_id"], :name => "index_freshfone_supervisor_controls_on_account_id"
+  add_index "freshfone_supervisor_controls", ["call_id"], :name => "index_freshfone_supervisor_controls_on_call_id"
+
   create_table "freshfone_usage_triggers", :force => true do |t|
     t.integer  "account_id",           :limit => 8
     t.integer  "freshfone_account_id", :limit => 8

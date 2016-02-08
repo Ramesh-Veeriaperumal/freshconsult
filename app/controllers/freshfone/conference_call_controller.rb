@@ -6,7 +6,9 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   include Freshfone::Conference::EndCallActions
   include Freshfone::Endpoints
   include Freshfone::CallsRedisMethods
+  include Freshfone::SupervisorActions
   
+  before_filter :complete_supervisor_leg, :only => [:status], :if => :supervisor_leg?
   before_filter :check_conference_feature, :only => [:status]
   before_filter :check_credit_balance, :only => [:status]
   before_filter :select_current_call, :only => [:status]

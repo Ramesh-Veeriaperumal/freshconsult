@@ -83,7 +83,7 @@ class Account < ActiveRecord::Base
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :default_survey => false, :custom_survey => false, 
-    :gamification_enable => true, :google_signin => true,
+    :gamification_enable => false, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :cascade_dispatchr => false,
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
@@ -98,7 +98,7 @@ class Account < ActiveRecord::Base
     :public_ticket_url => false, :marketplace => false, :fa_developer => false,:archive_tickets => false, :compose_email => false,
     :limit_mobihelp_results => false, :ecommerce => false, :tokenize_emoji => false, 
     :salesforce_sync => false, :round_robin_on_update => false, :freshfone_call_metrics => false, 
-    :solutions_meta_read => false, :threading_without_user_check => false, :custom_dashboard => false }
+    :solutions_meta_read => false, :threading_without_user_check => false, :custom_dashboard => false, :freshfone_call_monitoring => false }
 
 
   # This list below is for customer portal features list only to prevent from adding addition features

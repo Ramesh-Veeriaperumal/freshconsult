@@ -42,6 +42,9 @@ window.App.Freshfonedashboard = window.App.Freshfonedashboard || {};
         App.Freshfonedashboard.activeCallsList.remove('call_id',data.call_details.call_id);
         self.updateActiveCallCount();
         self.toggleActiveList();
+        if(freshfoneSupervisorCall.supervisorCallId == data.call_details.call_id){
+          freshfonecalls.hangup();
+        }
       });
     },
     addToQueueList: function(data) {
@@ -61,8 +64,17 @@ window.App.Freshfonedashboard = window.App.Freshfonedashboard || {};
         'agent_name': call.agent_group_name,
         'helpdesk_number': call.helpdesk_number,
         'call_direction': self.call_directionDom(call.direction, isQueuedCall),
-        'call_created_at': self.timestampDom(call.call_created_at)
+        'call_created_at': self.timestampDom(call.call_created_at),
+        'join_call_btn': self.joinCallBtnDom(call.call_id)
       }
+    },
+    joinCallBtnDom: function(call_id){
+      var dom=[];
+      if(freshfone.isCallMonitoringMode){
+        var disable = freshfoneSupervisorCall.isSupervisorOnCall ? 'disabled' : '';
+        dom= ["<a data-callid='",call_id , "' class='btn call_to_join ", disable ,"'>Join</a>"];
+       }
+      return dom.join('');
     },
     timestampDom: function(callTimestamp) {
       var formatedDate = moment.unix(callTimestamp).format("dddd, MMM D, h:mm A"), dom;

@@ -1474,16 +1474,16 @@ module ApplicationHelper
 
  def call_direction_class(call)
 		if call.blocked?
-			"blocked_call_icon"
+			"ficon-blocked-call"
 		elsif call.incoming?
-			(call.completed? || call.inprogress?) ? "incoming_call_icon" : abandon_or_missed_call_icon(call)
+			(call.completed? || call.inprogress?) ? "ficon-incoming-call" : abandon_or_missed_call_icon(call)
 		elsif call.outgoing?
-			(call.completed? || call.inprogress?) ? "outgoing_call_icon" : "outgoing_missed_call_icon"
+			(call.completed? || call.inprogress?) ? "ficon-outgoing-call" : "ficon-no-arrow-left"
 		end
 	end
 
   def abandon_or_missed_call_icon(call)
-    call.abandoned_call? ? "ficon-abandoned-call" : "incoming_missed_call_icon"
+    call.abandoned_call? ? "ficon-abandoned-call" : "ficon-no-arrow-right"
   end
 # helpers for fresfone callable links -- ends
 
@@ -1605,12 +1605,7 @@ module ApplicationHelper
   end
 
   def get_store_data
-    @DataStore = {}
-    @DataStore['current_user'] = current_user
-    @DataStore['current_account'] = current_account
-    @DataStore['agent'] = Account.current.agents_from_cache
-    @DataStore['group'] = Account.current.groups_from_cache
-    @DataStore.to_json
+    {:current_user => current_user, :agent => current_account.agents_from_cache, :group => current_account.groups_from_cache}.to_json
   end
 
 end

@@ -28,7 +28,7 @@ module Helpdesk::DashboardHelper
       :widgets => [# ['NAME', XSIZE, YSIZE]
         [:activity, 2, 4],
         [:todo, 1, 1],
-        [:unresolved_tickets_by_group_id, 1, 1],
+        # [:unresolved_tickets_by_group_id, 1, 1],
         [:phone, 1, 1],
         [:agent_status, 1, 1]
       ]
@@ -36,9 +36,9 @@ module Helpdesk::DashboardHelper
 
     "type2" => {
       :widgets => [# ['NAME', XSIZE, YSIZE]
-        [:activity, 2, 7],
+        [:activity, 2, 6],
         [:todo, 1, 1],
-        [:unresolved_tickets_by_group_id, 1, 1],
+        # [:unresolved_tickets_by_group_id, 1, 1],
         [:phone, 1, 1],
         [:chat, 1, 1],
         [:agent_status, 1, 1],
@@ -76,16 +76,16 @@ module Helpdesk::DashboardHelper
       :todo                               =>  true,
       :gamification                       =>  (gamification_feature?(current_account)),
       :phone                              =>  (current_account.freshfone_active?),
-      :chat                               =>  (chat_activated?),
+      :chat                               =>  (chat_activated? && current_account.chat_setting.active),
       :forum_moderation                   =>  (current_account.features?(:forums) && privilege?(:delete_topic)),
-      :agent_status                       =>  (round_robin? or current_account.freshfone_active? or chat_activated?)
+      :agent_status                       =>  (round_robin? || current_account.freshfone_active? || (chat_activated? && current_account.chat_setting.active))
     }
     privilege_object
   end
 
   def widget_list
     type = PLAN_TYPE_MAPPING[current_account.plan_name]
-    type = ALL_WIDGET_TYPE if current_account.features?(:custom_dashboard)
+    #type = ALL_WIDGET_TYPE if current_account.features?(:custom_dashboard)
     dashboard_widget = DASHBOARD_WIDGETS[type][:widgets]
 
     privilege = check_widget_privilege

@@ -12,6 +12,7 @@ class Freshfone::Providers::Twilio
     @endConferenceOnExit    = conf_params[:endConferenceOnExit]
     @recording_url          = conf_params[:recording_callback_url]
     @available_agents       = conf_params[:available_agents]
+    @muted                  = conf_params[:muted]
     @telephony              = telephony
   end
 
@@ -24,7 +25,7 @@ class Freshfone::Providers::Twilio
       @telephony.read_welcome_message(r) if welcome_message
       comment_available_agents(r)
       r.Dial time_limit do |d|
-        d.Conference @room, wait_url, recording_url,
+        d.Conference @room, wait_url, recording_url, muted,
           :beep => @beep,
           :record => @record,
           :startConferenceOnEnter => @startConferenceOnEnter, 
@@ -33,9 +34,9 @@ class Freshfone::Providers::Twilio
     end
   end
 
-  def enqueue(name, enqueue_url, quit_queue_url)
+  def enqueue(name, enqueue_url, quit_queue_url, type)
     twiml_response do |r|
-      @telephony.read_welcome_message(r)
+      @telephony.read_welcome_message(r) if type == :initiated
       r.Enqueue name, :waitUrl => enqueue_url, :action => quit_queue_url
     end
   end
@@ -177,6 +178,11 @@ class Freshfone::Providers::Twilio
     end
   end
 
+  def mute_supervisor(conference, participant_sid, isMute)
+    participant = conference.participants.get(participant_sid)
+    participant.update(:muted => isMute)
+  end
+
   def dequeue(queue_name, customer_leg, dequeue_url, account)
     queued_member = account.freshfone_subaccount.queues.get(queue_name).members.get(customer_leg)
     queued_member.dequeue(dequeue_url)
@@ -228,4 +234,7 @@ class Freshfone::Providers::Twilio
       end
     end
 
+    def muted
+      { :muted => @muted } unless @muted.nil?
+    end
 end

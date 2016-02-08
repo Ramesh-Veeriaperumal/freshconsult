@@ -25,8 +25,13 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
     telephony(conf_params).initiate_conference
   end
 
-  def initiate_queue
-    telephony.enqueue(current_account.name, enqueue_url, quit_queue_url)
+  def join_conference(conf_params={})
+    conf_params[:room] = room_name(conf_params[:sid], conf_params[:incoming_wait])
+    telephony(conf_params).initiate_conference
+  end
+
+  def initiate_queue(type)
+    telephony.enqueue(current_account.name, enqueue_url, quit_queue_url, type)
   end
 
   def initiate_voicemail(type="default")
@@ -175,6 +180,11 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
   def unmute_participants(current_call)
     conference = current_call.conference
     telephony.unmute_participants(conference)
+  end
+
+  def mute_supervisor(current_call, isMute)
+    conference = current_call.conference
+    telephony.mute_supervisor(conference, current_call.supervisor_controls.active.first.sid, isMute)
   end
 
   def disconnect_call(call_sid)

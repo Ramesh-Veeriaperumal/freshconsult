@@ -12,7 +12,8 @@ var FreshfoneTimer;
 			var seconds = parseInt($(this.timerElement).data('runningTime') || 0, 10) + 1;
 			$(this.timerElement).html(seconds.toTime()).data('runningTime', seconds);
 		},
-		startCallTimer: function () {
+		startCallTimer: function (timerEle) {
+			this.timerElement = timerEle ? timerEle : $("#call_timings");
 			this.stopTimer = false;
 			this.resetCallTimer(this.timerElement);
 			var self = this;

@@ -14,7 +14,7 @@ class Freshfone::CallCostCalculator
 	def perform
 		begin
 			set_current_call
-			calculate_cost
+			supervisor_leg.present? ? supervisor_call_cost : calculate_cost
 		rescue => exp
 			puts "Freshfone ERROR: TOTAL Call Cost :#{total_charge}:  #{exp} : \n #{exp.backtrace}"
 			FreshfoneNotifier.billing_failure(Account.current, args, current_call, exp)
@@ -37,12 +37,23 @@ class Freshfone::CallCostCalculator
 	
 	private
 
+		def supervisor_call_cost
+	    	twilio_call = get_twilio_call supervisor_leg.sid
+	   		participant_cost = no_of_pulse(supervisor_leg.duration) * pulse_rate.supervisor_leg_cost
+	   		puts "Call cost for the twilio call of #{supervisor_leg.sid}: #{twilio_call.price.to_f.abs} , Participant_cost : #{participant_cost}"
+			self.total_charge = twilio_call.price.to_f.abs + participant_cost.to_f.abs
+		end
+
+		def supervisor_leg
+			@supervisor_leg ||= current_call.supervisor_controls.recent_completed_call.first
+		end
+
 		def one_leg_calls?
 			(dial_call_sid.blank? || no_call_duration? || voicemail?)
 		end
 
 		def get_first_leg_cost
-			self.first_leg_call = get_twilio_call
+			self.first_leg_call = get_twilio_call call_sid
 			twilio_call_and_total_duration if no_call_duration?
 			puts "Call cost for the first leg of #{call_sid} : #{first_leg_call.price}"
 			self.total_charge = current_call.present? ? voicemail_cost : first_leg_call.price.to_f.abs
@@ -73,6 +84,7 @@ class Freshfone::CallCostCalculator
 			# we don't store call data for record twiml but twilio charge needs to be deducted
 			if total_charge > 0
 				current_call.update_attribute(:call_cost, total_charge) if can_update_call_record?(args)
+				supervisor_leg.update_attribute(:cost, total_charge) if supervisor_leg.present?
 				current_account.freshfone_credit.deduce(total_charge)
 				#Otherbilling for preview & Message_records
 				current_account.freshfone_other_charges.create(
@@ -118,8 +130,8 @@ class Freshfone::CallCostCalculator
 			args[:dial_call_sid] || (current_call.present? && current_call.dial_call_sid) #voicemail will not pass this arg
 		end
 		
-		def get_twilio_call
-			current_account.freshfone_subaccount.calls.get call_sid unless call_sid.blank?
+		def get_twilio_call(callsid)
+			current_account.freshfone_subaccount.calls.get callsid unless callsid.blank?
 		end
 		
 		def set_current_call
@@ -161,7 +173,7 @@ class Freshfone::CallCostCalculator
 		end
 		
 		def can_update_call_record?(args)
-			args[:billing_type].blank? and current_call.present?
+			args[:billing_type].blank? and current_call.present? and !supervisor_leg.present?
 		end
 
     def voicemail?

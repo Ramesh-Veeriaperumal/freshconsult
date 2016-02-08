@@ -162,14 +162,14 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
     def data_fields_with_metrics(t_call)
       {
         "In Business Hour" => business_hour_call(t_call),
-        "IVR Time" =>  formated_durations(t_call.call_metrics.ivr_time),
-        "Queue Time" =>  formated_durations(t_call.call_metrics.queue_wait_time),
-        "Ring Time" =>  formated_durations(t_call.call_metrics.total_ringing_time),
-        "Speed to Answer" => formated_durations(t_call.call_metrics.answering_speed),
-        "Hold Time" =>  formated_durations(t_call.call_metrics.hold_duration),
-        "Talk time (without hold time)" => formated_durations(t_call.call_metrics.talk_time),
-        "After Call Work Time" =>  formated_durations(t_call.call_metrics.call_work_time),
-        "Handle Time" =>  formated_durations(t_call.call_metrics.handle_time),
+        "IVR Time" =>  t_call.call_metrics.blank? ? "-" : formated_durations(t_call.call_metrics.ivr_time),
+        "Queue Time" => t_call.call_metrics.blank? ? "-" : formated_durations(t_call.call_metrics.queue_wait_time),
+        "Ring Time" => t_call.call_metrics.blank? ? "-" : formated_durations(t_call.call_metrics.total_ringing_time),
+        "Speed to Answer" => t_call.call_metrics.blank? ? "-" : formated_durations(t_call.call_metrics.answering_speed),
+        "Hold Time" => t_call.call_metrics.blank? ? "-" : formated_durations(t_call.call_metrics.hold_duration),
+        "Talk time (without hold time)" => t_call.call_metrics.blank? ? "-" :  formated_durations(t_call.call_metrics.talk_time),
+        "After Call Work Time" => t_call.call_metrics.blank? ? "-" : formated_durations(t_call.call_metrics.call_work_time),
+        "Handle Time" => t_call.call_metrics.blank? ? "-" : formated_durations(t_call.call_metrics.handle_time),
         "Recording Time" => t_call.call_duration.blank? ? "N/A" : formated_durations(t_call.call_duration),
         "Bill Time" => t_call.total_duration.blank? ? "N/A" : formated_durations(t_call.total_duration),
         "CallCost ($)" => t_call.call_cost.blank? ? "N/A" : t_call.call_cost.to_s,
@@ -254,6 +254,6 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
     end
 
     def call_metrics_enabled?(t_call)
-      @current_account.features?(:freshfone_call_metrics) && t_call.call_metrics.present?
+      @current_account.features?(:freshfone_call_metrics)
     end
 end

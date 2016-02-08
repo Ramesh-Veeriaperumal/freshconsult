@@ -743,6 +743,9 @@
         font-size: 13px;
         font-weight: 500;
       }
+	  .ficon-incoming-call, .ficon-outgoing-call, .ficon-no-arrow-left, .ficon-no-arrow-right, .ficon-abandoned-call, .ficon-blocked-call {
+    		font-size: 15px;
+		}
     }
     .recent_calls_time_ago {
       display: inline-block;
@@ -812,7 +815,8 @@
 	}
 	.recent_calls_direction {
 		width: 30px;
-    margin-top: 7px;
+		margin-top: 13px;
+		text-align: center;
 		display: inline-block;
 		height: 30px;
 		background-repeat: no-repeat;
