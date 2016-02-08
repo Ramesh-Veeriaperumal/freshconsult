@@ -6,6 +6,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   around_filter :select_slave_shard , :only => [:show, :features, :agents, :tickets, :portal, :user_info]
   around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on,:remove_feature,:change_account_name, :change_api_limit, :reset_login_count]
   before_filter :validate_params, :only => [ :change_api_limit ]
+  before_filter :load_account, :only => [:user_info, :reset_login_count]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
   
   def show
@@ -341,6 +342,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   private 
     def validate_params
       render :json => {:status => "error"} and return unless /^[0-9]/.match(params[:new_limit])
+    end
+
+    def load_account
+      Account.reset_current_account
+      account  = Account.find params[:account_id]
+      account.make_current
     end
 
     def load_user_record

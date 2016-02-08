@@ -1,6 +1,6 @@
 module MemcacheKeys
 
-  LEADERBOARD_MINILIST = "HELPDESK_LEADERBOARD_MINILIST:%{agent_type}:%{account_id}"
+  LEADERBOARD_MINILIST = "v2/HELPDESK_LEADERBOARD_MINILIST:%{agent_type}:%{account_id}"
 
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
 

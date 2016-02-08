@@ -77,7 +77,7 @@ window.App = window.App || {};
 			this.isGlobalView = $('#realtime-dashboard-content').data('widgetType'); //view_type;
 			
 			this.getTicketSummaryData();
-			this.getSummaryOnInterval();
+			// this.getSummaryOnInterval();
 			this.bindEvents();
 		},
 		onLeave: function (data) {
@@ -98,19 +98,19 @@ window.App = window.App || {};
 				self.getTicketSummaryData($(this).data('groupId'));
 			})
 
-			this.Utils.bindEvent('click', '.summery-filter', function (e) {
-				var queryString = $(this).attr('href').split(/[?#]/)[0];
-				var groupId = self.requestData['group_id'];
+			// this.Utils.bindEvent('click', '.summery-filter', function (e) {
+			// 	var queryString = $(this).attr('href').split(/[?#]/)[0];
+			// 	var groupId = self.requestData['group_id'];
 
-				if (self.isGlobalView){
-					queryString += ( groupId != undefined && groupId != '-' ) ? '?group=' + groupId : ''
-				} else {
+			// 	if (self.isGlobalView){
+			// 		queryString += ( groupId != undefined && groupId != '-' ) ? '?group=' + groupId : ''
+			// 	} else {
 
-					queryString += ($(this).data('origName') != "new") ? '?agent=' + DataStore.get('current_user').currentData.user.id : '?group=0' ; //current_user has took from DataStore object
-				} 
+			// 		queryString += ($(this).data('origName') != "new") ? '?agent=' + DataStore.get('current_user').currentData.user.id : '?group=0' ; //current_user has took from DataStore object
+			// 	} 
 
-				$(this).attr('href', queryString);
-			})
+			// 	$(this).attr('href', queryString);
+			// })
 
 			this.Utils.bindEvent('click', '.group_vs_status', function() {
 				var requestData = {}
@@ -156,8 +156,8 @@ window.App = window.App || {};
 		},
 		onSuccess: function () {
 			this.renderTicketSummary();
-			this.renderChartData();
-			this.checkIsSidebarViewing();
+			// this.renderChartData();
+			// this.checkIsSidebarViewing();
 			$('#filter_by_group_dropdown').removeClass('disabled sloading');
 		},
 		getAchievements: function () {
@@ -201,8 +201,10 @@ window.App = window.App || {};
 			this.Utils.renderChart('Progress', options);
 		},
 		renderTicketSummary: function () {
-			this.Utils.renderTemplate('#ticket-summary', 
+			if (!$.isEmptyObject(this.tickets_data.ticket_trend)) {
+				this.Utils.renderTemplate('#ticket-summary', 
 				'app/realtime_dashboard/template/ticket_summary', this.tickets_data.ticket_trend);
+			}
 		},
 		changeDropdownText: function (event, parentSelector, appendSelctor) {
 			$(parentSelector).removeClass('active');

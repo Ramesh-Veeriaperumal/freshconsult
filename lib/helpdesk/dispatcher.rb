@@ -18,7 +18,7 @@
 
     def initialize params
       @account    = Account.current
-      @user       = params['user_id'].blank? ? nil : @account.users.find(params['user_id'])
+      @user       = params['user_id'].blank? ? nil : @account.all_users.find(params['user_id'])
       @ticket     = @account.tickets.find(params['ticket_id'])
       @is_webhook = params['is_webhook']
     end

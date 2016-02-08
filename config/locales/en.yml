@@ -7934,6 +7934,7 @@ en:
       all_calls: "All Calls"
       answered: "Answered"
       on-hold: "On Hold"
+      queued: "Queued"
       ringing_abandon: "Abandon Call (Ringing)"
       ivr_abandon: "Abandon Call (IVR)"
       queue_abandon: "Abandon Call(Queue)"

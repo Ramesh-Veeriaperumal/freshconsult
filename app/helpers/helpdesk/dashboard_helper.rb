@@ -28,7 +28,7 @@ module Helpdesk::DashboardHelper
       :widgets => [# ['NAME', XSIZE, YSIZE]
         [:activity, 2, 4],
         [:todo, 1, 1],
-        [:unresolved_tickets_by_group_id, 1, 1],
+        # [:unresolved_tickets_by_group_id, 1, 1],
         [:phone, 1, 1],
         [:agent_status, 1, 1]
       ]
@@ -36,9 +36,9 @@ module Helpdesk::DashboardHelper
 
     "type2" => {
       :widgets => [# ['NAME', XSIZE, YSIZE]
-        [:activity, 2, 7],
+        [:activity, 2, 6],
         [:todo, 1, 1],
-        [:unresolved_tickets_by_group_id, 1, 1],
+        # [:unresolved_tickets_by_group_id, 1, 1],
         [:phone, 1, 1],
         [:chat, 1, 1],
         [:agent_status, 1, 1],
@@ -85,7 +85,7 @@ module Helpdesk::DashboardHelper
 
   def widget_list
     type = PLAN_TYPE_MAPPING[current_account.plan_name]
-    type = ALL_WIDGET_TYPE if current_account.features?(:custom_dashboard)
+    #type = ALL_WIDGET_TYPE if current_account.features?(:custom_dashboard)
     dashboard_widget = DASHBOARD_WIDGETS[type][:widgets]
 
     privilege = check_widget_privilege
