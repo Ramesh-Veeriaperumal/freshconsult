@@ -5,6 +5,7 @@ class Integrations::DynamicscrmController < Integrations::CrmAppsController
   before_filter :get_installed_app, :only =>[:widget_data,:edit,:fields_update]
   before_filter :load_settings_config, :only => [ :widget_data,:edit ]
   before_filter :load_fields, :only => [:edit]
+  before_filter :check_installed_app, :only => [:settings, :settings_update]
 
 
   def settings_update

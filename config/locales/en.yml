@@ -6436,14 +6436,15 @@ en:
         copy_settings: "Use the above Tracking ID for all portals"
     sugarcrm:
       label: "SugarCRM"
-      helptext: "<h4>Sugar CRM Integration Help</h4><p><br/> You may access SugarCRM contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, department, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
-      desc: "You can view contact information from SugarCRM in Freshdesk."
+      helptext: "<h4>SugarCRM Integration Help</h4><p><br/> You may access SugarCRM Contacts, Leads and Accounts information in the Freshdesk ticket & contact pages. <br /><br/> Select the list of fields that need to be displayed in the SugarCRM widget. You can select to a max of 10 fields.</p><p><strong>Note:</strong><br/>Name is the default field for Contacts, Leads and Accounts and it cannot be removed.</p> <br /><br/>"
+      desc: "You can view Contacts, Leads and Accounts information from SugarCRM in Freshdesk."
       form:
         domain: "SugarCRM Account URL"
-        domain_info: "For example, if your SugarCRM URL is <strong>http://mycompany.xyz/sugar/index.php?module=Administration&action=index</strong> , enter <strong> http://mycompany.xyz/sugar </strong><br /><br /> Note: The on-premise variant of SugarCRM should be connected to the internet. </span>"
+        domain_info: "Add your SugarCRM primary domain url which is generally in the format http://mycompany.com or https://mycompany.com</span>"
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+        sugarcrm_settings: "SugarCRM Settings"
         contact: "Contact Fields"
         lead: "Lead Fields"
         account: "Account Fields"
