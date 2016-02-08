@@ -6,7 +6,7 @@ var FreshfoneSupervisorCall;
 	};
 	FreshfoneSupervisorCall.prototype = {
 		init: function () {
-			self=this;
+			var self=this;
 			this.isSupervisorOnCall = false;
 			this.isSupervisorConnected = false;
 			this.supervisorCallId = null;
@@ -55,7 +55,7 @@ var FreshfoneSupervisorCall;
 			});
     	},
     	bindMute: function () {
-    		self=this;
+    		var self=this;
     		$('#unmute').click(function () { 
     			$(this).addClass('loading');
     			self.handleMute(); 
