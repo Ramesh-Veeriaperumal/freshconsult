@@ -8,9 +8,10 @@ class Tickets::ClearTickets::BaseWorker
   def perform(params)
     params.symbolize_keys!
     @account = Account.current
+    @user = User.current
     batch_params = batch_parameters(params)
     return if batch_params.nil?
-    @account.tickets.find_in_batches(batch_params) do |tickets|
+    @account.tickets.permissible(@user).find_in_batches(batch_params) do |tickets|
       tickets.each do |ticket|
         ticket.destroy
       end
