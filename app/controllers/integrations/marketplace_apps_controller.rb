@@ -7,37 +7,37 @@ class Integrations::MarketplaceAppsController <  Admin::AdminController
 
   def edit
     if (@application[:options][:direct_install].blank? || @application[:options][:configurable]) && @application[:options][:no_settings].blank?
-      redirect_to edit_integrations_installed_application_path(@installed_application.id)
+      redirect_to edit_integrations_installed_application_path(@installed_application.id) and return
     elsif @application[:options][:pre_install]
-      redirect_to integrations_app_oauth_install(@application.name)
+      redirect_to integrations_app_oauth_install(@application.name) and return
     elsif @application[:options][:edit_url].present?
-      redirect_to @application[:options][:edit_url]
+      redirect_to @application[:options][:edit_url] and return
     end
     redirect_to integrations_applications_path
   end
 
   def install
     if @application[:options][:direct_install].blank?
-      redirect_to integrations_application_path(@application.id)
+      redirect_to integrations_application_path(@application.id) and return
     else
       if @application[:options][:oauth_url].blank?
         if @application[:options][:auth_url].present?
-          redirect_to @application[:options][:auth_url]
+          redirect_to @application[:options][:auth_url] and return
         elsif @application.name.eql? Integrations::Constants::APP_NAMES[:quickbooks]
-          render :partial => '/integrations/applications/quickbooks_c2qb'
+          render :partial => '/integrations/applications/quickbooks_c2qb' and return
         elsif @application[:options][:user_specific_auth].present?
           if direct_app_install
             flash[:notice] = t(:'flash.application.install.success')
           else
             flash[:error] = t(:'flash.application.install.error')
           end
-          redirect_to integrations_applications_path
+          redirect_to integrations_applications_path and return
         end
       else
         auth_url = @application.oauth_url({ :account_id => current_account.id,
                     :portal_id => current_portal.id, :user_id => current_user.id },
                     @application[:name])
-        redirect_to auth_url
+        redirect_to auth_url  and return
       end
     end
     redirect_to integrations_applications_path
