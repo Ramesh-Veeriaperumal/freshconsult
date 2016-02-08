@@ -12,7 +12,8 @@ class Company < ActiveRecord::Base
     as_json({
               root: false,
               tailored_json: true,
-              only: [ :name, :account_id, :description, :created_at, :updated_at, :note ]
+              only: [ :name, :account_id, :created_at, :updated_at, :note ],
+              methods: [ :company_description ]
             }).merge(esv2_custom_attributes)
               .merge(domains: es_domains).to_json
   end
@@ -113,5 +114,6 @@ class Company < ActiveRecord::Base
   # Keeping it at last for defining after function defined
   #
   alias :esv2_company_field_data_columns :es_company_field_data_columns
+  alias_attribute :company_description, :description
   
 end
