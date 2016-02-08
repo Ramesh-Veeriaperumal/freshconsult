@@ -18,42 +18,31 @@ RSpec.describe Freshfone::Initiator::Outgoing do
     @account.freshfone_calls.delete_all
     @account.freshfone_callers.delete_all
     create_freshfone_user
+    @outgoing_key = FRESHFONE_OUTGOING_CALLS_DEVICE % { :account_id => @account.id }
   end
 
-  it 'should register outgoing device' do
-    @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
-                                      :call_status => 0, :call_type => 2, :agent => @agent,
-                                      :params => { :CallSid => "CA2db76c748cb6f081853f80dace462a04"})
-    @call_meta = @freshfone_call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
-              :meta_info => "+1234567890", :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
-    Freshfone::Initiator::Outgoing.any_instance.stubs(:outbound_call_agent_id).returns(@agent.id)
-    outgoing=Freshfone::Initiator::Outgoing.new(incoming_params, @account, @number)
-    outgoing.send(:register_outgoing_device).should_not be_falsey
-    Freshfone::Initiator::Outgoing.any_instance.unstub(:outbound_call_agent_id)
+  after(:each) do
+    remove_value_from_set(@outgoing_key, @agent.id)
+  end
+  
+  it 'should create outgoing call' do
+    outgoing=Freshfone::Initiator::Outgoing.new(outgoing_params, @account, @number)
+    result= outgoing.process   
+    expect(result).to match(/Response/)
+    expect(result).to match(/Dial/)
+    expect(result).to match(/Conference/)
+    @account.freshfone_calls.reload
+    @account.freshfone_calls.count.should eql 1
+    expect(remove_value_from_set(@outgoing_key,@agent.id)).to be true
   end
 
-  it 'should reject outgoing call' do
-    @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
-                                      :call_status => 0, :call_type => 2, :agent => @agent,
-                                      :params => { :CallSid => "CA2db76c748cb6f081853f80dace462a04"})
-    @call_meta = @freshfone_call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
-              :meta_info => "+1234567890", :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
-    Freshfone::Initiator::Outgoing.any_instance.stubs(:outbound_call_agent_id).returns(@agent.id)
-    outgoing=Freshfone::Initiator::Outgoing.new(incoming_params, @account, @number)
-    outgoing.send(:reject_outgoing_call).should_not be_falsey
-    Freshfone::Initiator::Outgoing.any_instance.unstub(:outbound_call_agent_id)
+  it 'should not create outgoing call if device already registred' do
+    add_to_set(@outgoing_key, @agent.id)
+    outgoing=Freshfone::Initiator::Outgoing.new(outgoing_params, @account, @number)
+    result= outgoing.process   
+    expect(result).to match(/Response/)
+    expect(result).to match(/Reject/)
+    @account.freshfone_calls.reload
+    @account.freshfone_calls.count.should eql 0
   end
-
-  it 'should return outbound call agent id' do
-    @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
-                                      :call_status => 0, :call_type => 2, :agent => @agent,
-                                      :params => { :CallSid => "CA2db76c748cb6f081853f80dace462a04"})
-    @call_meta = @freshfone_call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
-              :meta_info => "+1234567890", :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
-    Freshfone::Initiator::Outgoing.any_instance.stubs(:split_client_id).returns(nil)
-    outgoing=Freshfone::Initiator::Outgoing.new(incoming_params, @account, @number)
-    outgoing.send(:outbound_call_agent_id).should == nil
-    Freshfone::Initiator::Outgoing.any_instance.unstub(:split_client_id)
-  end
-
 end

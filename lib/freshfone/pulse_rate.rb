@@ -37,6 +37,10 @@ class Freshfone::PulseRate
 		incoming? ? FRESHFONE_CHARGES['MISSED_OR_BUSY'][:incoming].to_f : FRESHFONE_CHARGES['MISSED_OR_BUSY'][:outgoing].to_f
 	end
 
+	def supervisor_leg_cost
+		FRESHFONE_CHARGES['SUPERVISOR'][:per_participant].to_f
+	end
+
 	private
 
 		def call_forwarded?

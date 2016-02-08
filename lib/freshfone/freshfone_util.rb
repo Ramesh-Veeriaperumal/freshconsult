@@ -21,6 +21,10 @@ module Freshfone::FreshfoneUtil
     "+#{params[:To][/\d+/].to_i}"
   end
 
+  def supervisor?
+    params[:type] == 'supervisor'
+  end
+
   def host
     current_account.url_protocol + "://" + current_account.full_domain
   end
@@ -235,6 +239,32 @@ module Freshfone::FreshfoneUtil
     return if (/client/.match(params[:To]))
     device_type = call.direct_dial_number.present? ? Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial] : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:available_on_phone]
     call.meta.update_device_meta(device_type, params[:To])
+  end
+
+  def register_outgoing_device
+      agent_user_id = params[:type] == "sip" ? sip_user_id : outbound_call_agent_id
+      set_outgoing_device([agent_user_id]) unless agent_user_id.blank?
+  end
+
+  def reject_outgoing_call
+    agent_user_id = params[:type] == "sip" ? sip_user_id : outbound_call_agent_id
+    unless agent_user_id.blank?
+      agent = current_account.freshfone_users.find_by_user_id(agent_user_id).busy!
+      Resque::enqueue(Freshfone::Jobs::BusyResolve, { :agent_id => agent_user_id })
+    end
+    telephony.reject
+  end
+
+  def outbound_call_agent_id
+    split_client_id(params[:From]) || params[:agent]
+  end
+
+  def transfer_call?
+    params[:transfer_call].present? || params[:external_transfer].present?
+  end
+
+  def agent_connected?
+    current_call.user_id.present? && current_call.user_id.to_s == params[:agent_id]
   end
 
 end

@@ -20,6 +20,10 @@ module Freshfone::Endpoints
     "#{host}/freshfone/voice?caller_sid=#{call_id}&agent_id=#{agent_id}"
   end
 
+  def simultaneous_call_queue_url
+     "#{host}/freshfone/queue/redirect_to_queue"
+  end
+
   def client_status_url(call_id, agent_id)
     "#{host}/freshfone/voice?caller_sid=#{call_id}&agent_id=#{agent_id}&leg_type=disconnect"
   end

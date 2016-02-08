@@ -45,7 +45,7 @@ module Dashboard::UtilMethods
       when :group_id
         groups_list
       when :responder_id
-        agents_list
+        agents_list(true)
       when :ticket_type
         ticket_types_list
     end
@@ -71,8 +71,17 @@ module Dashboard::UtilMethods
     current_account.ticket_types_from_cache.collect { |g| [g.value, g.value]}.to_h
   end
 
-  def agents_list
+  def agents_list(from_dashboard = false)
     agents = agent_list_from_cache
+    if from_dashboard and @group_id.present?
+      groups = current_account.groups.where(:id => @group_id)
+      filtered_agent_list ={}
+      groups.each do |group|
+        filtered_agent_list.merge!(group.agents.collect {|u| [u.id, u.name] }.to_h)
+      end
+      return filtered_agent_list
+    end
+
     if @responder_id.blank?
       if current_user.assigned_ticket_permission
         {current_user.id => current_user.name}

@@ -661,6 +661,28 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             }
             bucket_param = jQuery.extend({},param, bucket_hash);
             return bucket_param;
+        },
+        recordAnalytics : function(){
+
+                jQuery(document).on("script_loaded", function (ev, data) {
+                    if( HelpdeskReports.locals.report_type != undefined && HelpdeskReports.locals.report_type == "glance"){
+                        App.Report.Metrics.push_event("Glance Report Visited", {});
+                    }
+                });
+
+                //Active Metric visited
+                jQuery('#reports_wrapper').on('click.helpdesk_reports', '#glance_sidebar ul li:not(".active"):not(".disable")', function() {
+                    App.Report.Metrics.push_event("Glance Report : Visited Metrics",{ metric : HelpdeskReports.locals.active_metric });
+                });
+
+                //Ticket List Exported
+                 jQuery(document).on("analytics.export_ticket_list", function (ev, data) {
+                    App.Report.Metrics.push_event("Glance Report : Ticket List Exported",{ metric : HelpdeskReports.locals.active_metric });
+                 });
+                //pdf export
+                jQuery(document).on("analytics.export_pdf",function(ev,data){
+                    App.Report.Metrics.push_event("Glance Report : PDF Exported",{});
+                });    
         }
     };
     return {
@@ -670,6 +692,7 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             _FD.bindEvents();
             _FD.core.ATTACH_DEFAULT_FILTER = true;
             _FD.setDefaultValues();
+            _FD.recordAnalytics();
             
         }
     };

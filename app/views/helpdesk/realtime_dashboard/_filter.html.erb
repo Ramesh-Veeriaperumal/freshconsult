@@ -10,11 +10,11 @@
 
 	    <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu" id="dashboard-filter">
 	      <li class="widget-filter <%if @global_dashboard%> active <%end %>">
-	        <a href="/helpdesk/dashboard" data-target="#global" class="item" data-pjax="#body-container" data-toggle="tab" ul_class="tick">
+	        <a href="/helpdesk/dashboard" class="item" data-pjax="#body-container" ul_class="tick">
 	        	<%= t("helpdesk.realtime_dashboard.global_view")%> </a>
 	      </li>
 	      <li class="widget-filter <%unless @global_dashboard%> active <% end %>">
-	        <a href="/helpdesk/dashboard/show/myView" class="item" data-target="#myview"  data-pjax="#body-container" data-toggle="tab" ul_class="tick">
+	        <a href="/helpdesk/dashboard/show/myView" class="item" data-pjax="#body-container" ul_class="tick">
 	        	<%= t("helpdesk.realtime_dashboard.my_view") %> </a>
 	      </li>
 	    </ul>

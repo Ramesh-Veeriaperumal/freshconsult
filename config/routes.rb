@@ -475,6 +475,7 @@ Helpkit::Application.routes.draw do
         post :trigger_voicemail
         post :trigger_non_availability
         post :hangup
+        post :redirect_to_queue
       end
     end
 
@@ -594,6 +595,7 @@ Helpkit::Application.routes.draw do
       collection do
         get :dashboard_stats
         get :calls_limit_notificaiton
+        post :mute
       end
     end
   end
@@ -2516,6 +2518,7 @@ Helpkit::Application.routes.draw do
           get :email_config
           put :add_day_passes
           put :change_api_limit
+          put :change_v2_api_limit
           put :add_feature
           put :change_url
           get :single_sign_on

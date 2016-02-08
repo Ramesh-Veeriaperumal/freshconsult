@@ -1,10 +1,10 @@
 require 'spec_helper'
 load 'spec/support/freshfone_call_spec_helper.rb'
 load 'spec/support/freshfone_spec_helper.rb'
+include Redis::RedisKeys
 
 RSpec.configure do |c|
   c.include FreshfoneCallSpecHelper
-  c.include Redis::RedisKeys
   c.include Redis::IntegrationsRedis
 end
 
@@ -96,7 +96,7 @@ RSpec.describe Freshfone::ConferenceCallController do
 
   it 'should make the agent add to the conference while a conference call is incoming' do
   	create_freshfone_call
-  	params = conference_call_params.except(*[:direct_dial_number, :agent]).merge(:CallStatus => Freshfone::Call::CALL_STATUS_HASH[:'in-progress'])
+  	params = conference_call_params.except(*[:direct_dial_number, :agent]).merge(:CallStatus => 'in-progress')
   	set_twilio_signature('freshfone/conference_call/in_call', params)
   	setup_batch
   	post :in_call, params
@@ -199,7 +199,7 @@ RSpec.describe Freshfone::ConferenceCallController do
 
   it 'should update ringing abandon status on force termination' do
     Freshfone::Number.any_instance.stubs(:working_hours?).returns(true)
-    status_call = create_freshfone_call
+    status_call = create_call_for_status_with_out_agent
     create_call_meta
     params=conference_call_params.merge(:DialCallStatus => 'no-answer',:CallStatus => 'completed')
     set_twilio_signature('freshfone/conference_call/status', params)
@@ -229,6 +229,75 @@ RSpec.describe Freshfone::ConferenceCallController do
     post :status, conference_call_params
     freshfone_call = @account.freshfone_calls.find(status_call)
     freshfone_call.abandon_state.should be_nil
+  end
+
+  describe "Supervisor Leg Ends" do
+    
+    before :each do
+      @account.freshfone_calls.destroy_all
+      @account.freshfone_callers.delete_all
+      @account.features.freshfone_call_monitoring.create
+      @freshfone_call = create_freshfone_call
+      @supervisor_control= create_supervisor_call @freshfone_call
+      @supervisor_leg_key = FRESHFONE_SUPERVISOR_LEG % { :account_id => @account.id, :user_id => @agent.id, :call_sid => @supervisor_control.sid }
+      @outgoing_key = FRESHFONE_OUTGOING_CALLS_DEVICE % { :account_id => @account.id }
+      add_to_set(@outgoing_key, @agent.id)
+    end
+
+    it 'should update supervisor control' do
+      set_twilio_signature('freshfone/conference_call/status', supervisor_call_status_params)
+      post :status, supervisor_call_status_params
+      expect(xml).to be_truthy
+      expect(xml.key?(:Response)).to be true
+      @supervisor_control.reload
+      expect(@supervisor_control.supervisor_control_status).to eq(Freshfone::SupervisorControl::CALL_STATUS_HASH[:success])
+      expect(@supervisor_control.duration).to eq(6)
+    end
+
+
+    it 'should remove outgoing_key on updating supervisor control' do
+      set_twilio_signature('freshfone/conference_call/status', supervisor_call_status_params)
+      post :status, supervisor_call_status_params
+      expect(xml).to be_truthy
+      expect(xml.key?(:Response)).to be true
+      expect(remove_value_from_set(@outgoing_key,@agent.id)).to be false
+    end
+
+    it 'should remove supervisor_leg_key on updating supervisor control' do
+      set_twilio_signature('freshfone/conference_call/status', supervisor_call_status_params)
+      post :status, supervisor_call_status_params
+      expect(xml).to be_truthy
+      expect(xml.key?(:Response)).to be true
+      get_key(@supervisor_leg_key).should be_nil
+    end
+
+    it 'should not update supervisor control when no supervisor_control with given Call sid is found' do
+      set_twilio_signature('freshfone/conference_call/status', conference_call_params)
+      post :status, conference_call_params
+      expect(xml).to be_truthy
+      expect(xml.key?(:Response)).to be true
+      @supervisor_control.reload
+      expect(@supervisor_control.supervisor_control_status).to eq(Freshfone::SupervisorControl::CALL_STATUS_HASH[:default])
+      expect(@supervisor_control.duration).to be nil
+    end
+
+    it 'should not remove outgoing redis key when supervisor control updated with wrong call sid' do
+      set_twilio_signature('freshfone/conference_call/status', conference_call_params)
+      post :status, conference_call_params
+      expect(xml).to be_truthy
+      expect(xml.key?(:Response)).to be true
+      expect(remove_value_from_set(@outgoing_key,@agent.id)).to be true
+      remove_key @supervisor_leg_key
+    end
+
+    it 'should not remove supervisor leg redis key when supervisor control updated with wrong call sid' do
+      set_twilio_signature('freshfone/conference_call/status', conference_call_params)
+      post :status, conference_call_params
+      expect(xml).to be_truthy
+      expect(xml.key?(:Response)).to be true
+      get_key(@supervisor_leg_key).should_not be_nil
+      remove_value_from_set(@outgoing_key,@agent.id)
+    end
   end
 
 end

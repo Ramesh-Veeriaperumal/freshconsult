@@ -53,14 +53,16 @@ var FreshfoneUserInfo;
 						self.requestObject.callerId = data.user_id;
 						self.requestObject.avatar = data.user_hover || false;
 						self.requestObject.callMeta = self.construct_meta(data.call_meta);
+						self.requestObject.callerCard  = data.caller_card;
 						if(data.call_meta){
 							self.requestObject.transferAgentName = data.call_meta.transfer_agent.user_name;
 							self.requestObject.ffNumberName = (data.call_meta || {}).number || "";
 						}	
-						self.setOngoingCallContext(data.caller_card);
+						
 					}
 					if (self.isOutgoing) {						
 						self.setOngoingStatusAvatar(self.requestObject.avatar || self.blankUserAvatar);
+						self.setOngoingCallContext(data.caller_card);
 					} else {
 						params.callerName = self.requestObject.callerName;
 						params.callMeta = self.requestObject.callMeta;

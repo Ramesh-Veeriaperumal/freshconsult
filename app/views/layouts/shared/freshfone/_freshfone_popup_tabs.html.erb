@@ -50,4 +50,22 @@
 			<a href="#freshfone_dialpad" class="showDialpad tooltip" data-toggle="popupbox"
 				 data-offset=12 title="<%= t('freshfone.widget.phone_icon') %>"><%= font_icon "ff-phone", :size => 16 %></a>
 		</li>
+</ul>	
+<ul class="popupbox-tabs supervisor hide">
+	<li class="no_action">
+		<div class="end_supervisor_call tooltip" title="<%= t('freshfone.widget.end_call') %>">
+			<a href="#no_popup" class="hangup_btn" >
+				<%= font_icon "hangup", :size => 24 %>
+			</a>
+			<a href="#no_popup" id="supervisor_call_timings" class="call_duration">00:00</a>
+		</div>
+	</li>
+	<li class="divider">
+	</li>
+	<li class="unmute_item">
+		<a href="#no_popup" id="unmute" class="unmute tooltip" 
+			 title="<%= t('freshfone.widget.unmute') %>"><%= font_icon "ff-mute", :size => 16 %><%= font_icon "ff-mic", :size => 16 %>
+			<div class='sloading loading-tiny ff-loader loading-align-center'></div>
+		</a>
+	</li>
 </ul>

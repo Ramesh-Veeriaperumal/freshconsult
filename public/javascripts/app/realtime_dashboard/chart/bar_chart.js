@@ -69,6 +69,7 @@
 			this.group.selectAll('text.value').attr("x",function(d) {return _self.xscale(d.value) + _self.width - 5;})
 
 			this.textEllipsis();
+			this.checkRtl();
 		},
 		calculateHeight: function () {
 			return this.data.length * 45;
@@ -178,6 +179,7 @@
 				.text( function(d) {return  d.value ;})
 
 			this.textEllipsis();
+			this.checkRtl();
 		},
 		textEllipsis: function () {
 			var self = this;
@@ -194,19 +196,42 @@
 				}
 			})
 		},
+		checkRtl: function () {
+			var self = this;
+			if(this.options.isRtl) {
+				this.group.selectAll('text.label').attr("x",function(d, i) { 
+					return this.getComputedTextLength();
+				})
+
+				this.group.selectAll('text.value').attr("x",function(d, i) { 
+					return self.width - this.getComputedTextLength();
+				})
+
+			}
+		},
 		updateChartData: function(options) {
 			this.options = $.extend({}, this.options, options);
+			this.data = this.options.data;
+
+			$(this.options.renderTo).find(".no_data_to_display").remove();
 
 			delete this.group;
 			$(this.element).find('g').remove();
 
-			this.calculateTotal();
-			this.sliceData();
-			this.calculate();
+			if( this.options.data.length > 0) {
 
-			this.createGroupe();
-			this.createBar();
-			this.createLabel();	
+				this.calculateTotal();
+				this.sliceData();
+				this.calculate();
+
+				this.createGroupe();
+				this.createBar();
+				this.createLabel();	
+
+			} else {
+				this.height = this.calculateHeight();
+				this.renderNoData();
+			}
 
 			this.svg.attr("height", this.height);
 		},
@@ -215,7 +240,7 @@
 		},
 		renderNoData: function() {
 			// Move to options in Feature
-			$(this.options.renderTo).append("<div class='no_data_to_display text-center muted'><i class='ficon-no-data fsize-72'></i></div>");
+			$(this.options.renderTo).append("<div class='no_data_to_display text-center muted mt20'><i class='ficon-no-data fsize-72'></i><div class='mt10'>No Data to Display </div></div>");
 		},
 		destroy: function () {
 			delete this.group;
