@@ -27,11 +27,6 @@ Sidekiq.configure_client do |config|
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
       "Tickets::BulkTicketReply",
-      "Admin::Dispatcher::Worker",
-      "Admin::Dispatcher::Trial",
-      "Admin::Dispatcher::Free",
-      "Admin::Dispatcher::Active",
-      "Admin::Dispatcher::Premium",
       "Tickets::ClearTickets::EmptySpam",
       "Tickets::ClearTickets::EmptyTrash"
     ]
@@ -65,11 +60,6 @@ Sidekiq.configure_server do |config|
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
       "Tickets::BulkTicketReply",
-      "Admin::Dispatcher::Worker",
-      "Admin::Dispatcher::Trial",
-      "Admin::Dispatcher::Free",
-      "Admin::Dispatcher::Active",
-      "Admin::Dispatcher::Premium",
       "Tickets::ClearTickets::EmptySpam",
       "Tickets::ClearTickets::EmptyTrash"
     ]
@@ -94,11 +84,6 @@ Sidekiq.configure_server do |config|
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
       "Tickets::BulkTicketReply",
-      "Admin::Dispatcher::Worker",
-      "Admin::Dispatcher::Trial",
-      "Admin::Dispatcher::Free",
-      "Admin::Dispatcher::Active",
-      "Admin::Dispatcher::Premium",
       "Tickets::ClearTickets::EmptySpam",
       "Tickets::ClearTickets::EmptyTrash"
     ]
