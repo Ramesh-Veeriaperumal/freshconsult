@@ -18,7 +18,7 @@ class TicketFilterValidation < FilterValidation
       request_params['requester_id'] = @requester.try(:id) if @requester
     end
     @conditions = (request_params.keys & ApiTicketConstants::INDEX_FIELDS)
-    filter_name = request_params.fetch('filter', 'default')
+    filter_name = fetch_filter(request_params)
     @conditions = @conditions - ['filter'] + [filter_name].compact
     super(request_params, item, allow_string_param)
   end
@@ -36,5 +36,10 @@ class TicketFilterValidation < FilterValidation
 
   def find_attribute
     @email ? :email : :requester_id
+  end
+
+  # if there are any filters(such as requester_id or company_id) at all in query params, fetch filter query value. else return default filter.
+  def fetch_filter(request_params)
+    @conditions.present? ? request_params[:filter] : 'default'
   end
 end
