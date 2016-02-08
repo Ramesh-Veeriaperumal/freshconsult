@@ -360,7 +360,7 @@
         font-weight: $fontWeightBold;
         &:hover{ color: #077ee3}
       }
-      .preview_pic{
+      div.preview_pic{
           @include margin-left(-48px);
           @include margin-right(0px);
           margin-top: 3px;
