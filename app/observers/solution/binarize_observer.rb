@@ -5,6 +5,7 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 	def after_commit(object)
 		return unless multilingual
 		meta(object)
+		return unless @meta
 		if object.send(:transaction_include_action?, :destroy)
 			update_available(object, false)
 		else
@@ -22,7 +23,8 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 		end
 
 		def meta(object)
-			@meta = object.parent.reload
+			@meta = "#{object.class.name}Meta".constantize.find_by_id(object.parent_id)
+			#To avoid AR Not Found errors on a MetaObject destroy.
 		end
 
 		def update_available(object, status)
