@@ -18,7 +18,7 @@
 	</div>
 </div>
 
-<% if Account.current.multilingual? %>
+<% if Account.current.multilingual? && !@article_meta.hits.zero? %>
 	<div class="show-cumulative-stats drop-right"> 
 		<%= t('solution.articles.show_all_analytics') %>
 	</div>
