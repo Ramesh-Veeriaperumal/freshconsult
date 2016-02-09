@@ -18,8 +18,8 @@ module Facebook
       
            
       def process_feed(raw_obj)
-        sandbox(raw_obj) do
-          select_shard_and_account(@fan_page.account_id) do |account|
+        select_shard_and_account(@fan_page.account_id) do |account|
+          sandbox(raw_obj) do
             if (perform_method && klass)
               if AUXILLARY_LIST.include?(klass) 
                 ("facebook/core/#{klass}").camelize.constantize.new(fan_page, feed_id).send(perform_method)
