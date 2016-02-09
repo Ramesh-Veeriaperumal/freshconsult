@@ -194,7 +194,7 @@ class Portal < ActiveRecord::Base
 
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
     def update_solutions_language
-      Community::HandleLanguageChange.perform_async
+      Community::HandleLanguageChange.perform_async unless account.multilingual?
     end
 
     def main_portal_language_changes?

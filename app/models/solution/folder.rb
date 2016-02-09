@@ -3,6 +3,7 @@ class Solution::Folder < ActiveRecord::Base
   self.primary_key = :id
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
+  include Solution::Activities
 
   concerned_with :associations
 
@@ -17,14 +18,12 @@ class Solution::Folder < ActiveRecord::Base
   before_update :clear_customer_folders, :backup_folder_changes
 
   before_save :backup_category
-  before_destroy :backup_category, :add_activity_delete
+  before_destroy :backup_category
 
   after_commit :update_search_index, on: :update, :if => :visibility_updated?
-  after_commit :set_mobihelp_solution_updated_time
+  after_commit :set_mobihelp_solution_updated_time, :if => Proc.new { |f| f.primary? }
   
   after_update :clear_cache, :if => Proc.new { |f| f.name_changed? && f.primary? }
-  
-  after_create :add_activity_new
   
   has_many :customers, :through => :customer_folders
 
@@ -203,30 +202,5 @@ class Solution::Folder < ActiveRecord::Base
       customer_ids.each do |cust_id|
         customer_folders.build({:customer_id => cust_id}) unless self.customer_ids.include?(cust_id)
       end
-    end
-
-    def add_activity_delete
-      create_activity('delete_folder')
-    end
-
-    def add_activity_new
-      create_activity('new_folder')
-    end
-  
-    def create_activity(type)
-      activities.create(
-        :description => "activities.solutions.#{type}.long",
-        :short_descr => "activities.solutions.#{type}.short",
-        :account    => account,
-        :user       => User.current,
-        :activity_data  => {
-                    :path => Rails.application.routes.url_helpers.solution_folder_path(self),
-                    :url_params => {
-                              :id => id,
-                              :path_generator => 'solution_folder_path'
-                            },
-                    :title => name.to_s
-                  }
-      )
     end
 end

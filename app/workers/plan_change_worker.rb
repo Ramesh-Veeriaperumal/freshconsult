@@ -104,6 +104,21 @@ class PlanChangeWorker
     account.smtp_mailboxes.destroy_all
   end
 
+  def drop_multi_language_data(account)
+    return unless account.features_included?(:enable_multilingual)
+    { 
+      :solution_articles => 'Solution::Article',
+      :solution_folders => 'Solution::Folder',
+      :solution_categories => 'Solution::Category'
+      
+    }.each do |solution_entity, entity_class|
+      account.send(solution_entity).where(["language_id NOT IN (?)", [Account.current.language_object.id]]).destroy_all
+    end
+    account.remove_feature(:enable_multilingual)
+    new_settings = account.account_additional_settings.additional_settings.merge(:portal_languages => [])
+    account.account_additional_settings.update_attributes(:additional_settings => new_settings)
+  end
+
 =begin
   @conditions, @batch size are created using VALUES hash that is passed
   If need to check additional conditions, pass in a where that is prepended before the where using @conditions

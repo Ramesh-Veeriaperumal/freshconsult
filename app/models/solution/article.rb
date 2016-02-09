@@ -23,6 +23,7 @@ class Solution::Article < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Solution::UrlSterilize
+  include Solution::Activities
 
   spam_watcher_callbacks
   rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
@@ -38,7 +39,7 @@ class Solution::Article < ActiveRecord::Base
     :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data, :position, :outdated
 
   after_save      :set_mobihelp_solution_updated_time, :if => :content_changed?
-  before_destroy  :set_mobihelp_solution_updated_time
+  before_destroy  :set_mobihelp_solution_updated_time, :if => Proc.new { |a| a.is_primary? }
 
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240

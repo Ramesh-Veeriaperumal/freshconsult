@@ -10,6 +10,7 @@ class Solution::Category < ActiveRecord::Base
   include Cache::Memcache::Mobihelp::Solution
   include Mobihelp::AppSolutionsUtils
   include Solution::MetaMethods
+  include Solution::Activities
 
   self.table_name =  "solution_categories"
 
@@ -18,9 +19,8 @@ class Solution::Category < ActiveRecord::Base
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
   
   after_update :clear_cache, :if => Proc.new { |c| c.name_changed? && c.primary? }
-  after_create :add_activity_new
-  after_save    :set_mobihelp_solution_updated_time
-  before_destroy :set_mobihelp_app_updated_time, :add_activity_delete
+  after_save    :set_mobihelp_solution_updated_time, :if => Proc.new { |c| c.primary? }
+  before_destroy :set_mobihelp_app_updated_time, :if => Proc.new { |c| c.primary? }
 
   concerned_with :associations
 
@@ -79,31 +79,6 @@ class Solution::Category < ActiveRecord::Base
 
     def set_mobihelp_app_updated_time
       self.update_mh_app_time
-    end
-
-    def add_activity_delete
-      create_activity('delete_solution_category')
-    end
-
-    def add_activity_new
-      create_activity('new_solution_category')
-    end
-  
-    def create_activity(type)
-      activities.create(
-        :description => "activities.solutions.#{type}.long",
-        :short_descr => "activities.solutions.#{type}.short",
-        :account    => account,
-        :user       => User.current,
-        :activity_data  => {
-                    :path => Rails.application.routes.url_helpers.solution_category_path(self),
-                    :url_params => {
-                              :id => id,
-                              :path_generator => 'solution_category_path'
-                            },
-                    :title => name.to_s
-                  }
-      )
     end
 
     def clear_cache(obj=nil)

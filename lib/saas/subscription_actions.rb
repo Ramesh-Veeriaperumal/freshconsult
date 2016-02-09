@@ -2,7 +2,7 @@ class SAAS::SubscriptionActions
 
   FEATURES = [ :customer_slas, :multiple_business_hours, :multi_product, :facebook, :twitter, 
                 :custom_domain, :multiple_emails, :css_customization, :custom_roles, 
-                :dynamic_content, :mailbox, :dynamic_sections, :custom_survey ]
+                :dynamic_content, :mailbox, :dynamic_sections, :custom_survey, :multi_language ]
 
   def change_plan(account, old_subscription, existing_addons)
     update_features(account, old_subscription, existing_addons)
