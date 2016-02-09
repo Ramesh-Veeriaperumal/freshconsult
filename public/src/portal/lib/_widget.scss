@@ -125,7 +125,7 @@ body, .feedback-wrapper{
 /* Embedded Widget styles */
 .embedded-wrapper{
 	#feedback-suggest input.special {
-		@include padding(4px 15px 4px 35px);
+		@include padding(4px 15px 4px 10px);
 		margin-top: 4px;
 		border-color: $inputBorder;
 		@include border-radius(3px);
@@ -443,7 +443,6 @@ input.date.datepicker_popover {
 
 .ui-datepicker-trigger {
 		@include left(-2px);
-		top: 0px;
 		font-size: 20px;
 		position: absolute;
 		text-indent: 0;
