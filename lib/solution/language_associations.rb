@@ -23,7 +23,8 @@ module Solution::LanguageAssociations
     end
 
     base.has_one :"current_#{base_name}",
-      :conditions => proc { { language_id: Language.for_current_account.id } },
+      :conditions => proc { Language.current? ? { language_id: Language.current.id } : 
+            { language_id: Language.for_current_account.id } },
       :class_name => base_class,
       :foreign_key => :parent_id,
       :readonly => false,
@@ -37,10 +38,6 @@ module Solution::LanguageAssociations
       :readonly => false,
       :autosave => true,
       :inverse_of => table_name
-    
-    delegation_title = base_class.constantize.column_names.include?("name") ? :name : :title
-
-    delegate delegation_title, :description, :to => :"primary_#{base_name}"
     
     def self.translation_associations
       base_name = self.name.chomp('Meta').gsub("Solution::", '').downcase

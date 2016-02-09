@@ -108,7 +108,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	end
 	
 	def to_param
-		title_param = sterilize(title[0..100])
+		title_param = sterilize(self.title[0..100])
 		id ? "#{id}-#{title_param.downcase.gsub(/[<>#%{}|()*+_\\^~\[\]`\s,=&:?;'@$"!.\/(\-\-)]+/, '-')}" : nil
 	end
 	
