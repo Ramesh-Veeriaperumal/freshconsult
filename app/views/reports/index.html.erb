@@ -6,6 +6,11 @@
           <span class="head"><%= t('helpdesk_reports.welcome_message.header')%></span>
           <%= t('helpdesk_reports.welcome_message.intro')%>
       </div>
+      <a href="#report-demo" rel="freshdialog" id="demo_link"
+        data-backdrop="static"  data-width="600" data-template-footer="false" data-title=""
+      ><%= t('helpdesk_reports.welcome_message.video_link')%>
+      </a>
+      <span class=""> | </span>
       <a href="https://support.freshdesk.com/support/solutions/folders/270450" target="_blank"><%= t('helpdesk_reports.welcome_message.link_title')%></a>
     </div>
     <div class="seperator pull-left"></div>
@@ -110,3 +115,34 @@
     </div>
   <% end %>
 </div>
+<div id="report-demo" class="hide row-fluid">
+  <iframe id="video_iframe" width="560" height="315" src="https://www.youtube.com/embed/K3Uxigoflrk" frameborder="0" allowfullscreen></iframe>
+</div>
+<script>
+jQuery(document).ready(function() {
+
+  jQuery(document).on('click',"#report-demo [data-dismiss='modal']",function(){ 
+      resetVideo(); 
+  });
+  jQuery(document).keyup(function(e) {
+      if (e.keyCode == 27) { 
+        resetVideo();   
+      }
+  });
+
+  function resetVideo(){
+      var iframe = jQuery("#video_iframe")[0];
+      var url = iframe.src;
+      iframe.src = '';
+      iframe.src = url;
+  }
+
+  if(jQuery.cookie != undefined) {
+      var demoPlayed = jQuery.cookie("reports-demo-showed");
+      if(demoPlayed == null) {
+        jQuery.cookie("reports-demo-showed","true");
+        jQuery("#demo_link").trigger('click');
+      }
+  }
+});
+</script>
