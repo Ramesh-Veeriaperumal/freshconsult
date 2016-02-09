@@ -7438,7 +7438,8 @@ en:
     welcome_message :
       header : Welcome to the brand new reports!
       intro : We have made the reports cleaner, deeper and more insightful. You will be able to locate problems more easily and act on them immediately by drilling down into the tickets that contribute to each metric. Overall we have made the experience smoother and easier. Hope you like it.
-      link_title : Read more about all the changes.
+      link_title : Read more about all the changes
+      video_link : Watch the new reports in action
     view_old_reports: View old reports
     view_new_reports: View new reports
     solution_article_text: How to read this report ?
