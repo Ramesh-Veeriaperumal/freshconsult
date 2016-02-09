@@ -52,8 +52,8 @@ module Integrations
       params = ni_latest_result.body.symbolize_keys
       params = params.merge({
                   :configs => configs,
-                  :type => Marketplace::Constants::EXTENSION_TYPE[:ni],
-                  :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled]
+                  :type => ::Marketplace::Constants::EXTENSION_TYPE[:ni],
+                  :enabled => ::Marketplace::Constants::EXTENSION_STATUS[:enabled]
                  }) if ['install', 'update'].include?(method)
       mkt_obj_ext = ::Marketplace::MarketPlaceObject.new
       ext_result = mkt_obj_ext.send("#{method}_extension", params)
