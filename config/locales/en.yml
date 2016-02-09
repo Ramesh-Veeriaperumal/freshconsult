@@ -5063,6 +5063,7 @@ en:
     language: Language
     primary_language: Primary Language
     additional_languages: Supported Languages
+    supported_portal_languages: Supported Portal Languages
     supported_languages: "Supported Languages (%{count})"
     portal_languages: "Enabled Portal Languages (%{count})"
     same_language_alert: Supported languages should not include the Portal language.

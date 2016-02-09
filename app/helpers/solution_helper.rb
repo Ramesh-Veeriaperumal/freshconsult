@@ -297,7 +297,7 @@ module SolutionHelper
 		link_to( "<span class='language_name'>#{language.short_code.capitalize}</span>
 							<span class='ficon-pencil fsize-14'></span>".html_safe, 
 							category.eql?('article') ? 
-							solution_article_version_path(solution_meta.id, language.code) :
+							solution_article_version_path(solution_meta.id, language.code, :anchor => 'edit') :
 							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id),
 							options)
 	end
