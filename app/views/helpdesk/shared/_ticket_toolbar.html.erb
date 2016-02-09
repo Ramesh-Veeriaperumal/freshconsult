@@ -38,7 +38,8 @@
           <% end %>
 
           <% if privilege?(:merge_or_split_ticket)%>
-            <a  href="#merge_freshdialog" id="merge_multiple"
+            <a  href="#merge_freshdialog"
+                data-action="merge"
                 class="btn hide_on_collapse"
                 data-width="800"
                 rel="freshdialog"
@@ -201,7 +202,7 @@
   </script>
 
 <%= javascript_tag do -%>
-  jQuery("#merge_multiple").bind("click", function(ev){
+  jQuery(document).on("click", '[data-action="merge"]', function(ev){
       var selected_tickets=[];
       var parameters=[];
       jQuery("#tickets-expanded .selector:checked").each(function(){

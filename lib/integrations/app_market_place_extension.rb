@@ -20,7 +20,7 @@ module Integrations
 
     def marketplace_app_create
       begin
-        raise "Api Failed" unless app_updates('install', application.name)
+        raise "Api Failed" unless app_updates('install', application.name, configs)
       rescue => e
         self.errors[:base] << "Marketplace Api Failed"
         raise ActiveRecord::Rollback
@@ -29,7 +29,7 @@ module Integrations
 
     def marketplace_app_update
       begin
-        raise "Api Failed" unless app_updates('update', application.name)
+        raise "Api Failed" unless app_updates('update', application.name, configs)
       rescue => e
         self.errors[:base] << "Marketplace Api Failed"
         raise ActiveRecord::Rollback

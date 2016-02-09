@@ -1230,7 +1230,6 @@ en:
         title_error_text: Survey Name has already been taken
         result_exist_msg: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers.
 
-
       new_rating:
         content_text: This Question helps access the overall satisfaction for the response provided by the agent.
                       It appears below your signature at the bottom of the email sent to the customer.

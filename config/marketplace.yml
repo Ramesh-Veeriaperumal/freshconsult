@@ -24,8 +24,8 @@ test:
 
 staging:
   <<: *defaults
-  dev_portal_url: "https://freshapps-devportal-2-280229087.us-east-1.elb.amazonaws.com"
-  admin_url: "https://freshapps-admin-2-1398437070.us-east-1.elb.amazonaws.com"
+  dev_portal_url: "https://freshappsdev.freshpo.com"
+  admin_url: "https://freshappsadmin.freshpo.com"
   api_url: "http://freshapps-global-api-2-661604820.us-east-1.elb.amazonaws.com"
   acc_api_url: "http://freshapps-account-api-2-1479636878.us-east-1.elb.amazonaws.com"
   s3_assets: "freshapps-staging1-pub/app-assets"
