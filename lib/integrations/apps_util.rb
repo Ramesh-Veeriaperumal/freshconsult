@@ -71,6 +71,6 @@ module Integrations::AppsUtil
   end
 
   def spl_char_replace company_name
-    company_name = company_name.to_s.gsub(/[&\'"+#\/]/, SPL_CHAR_ESCAPE)
+    company_name = company_name.to_s.gsub(/[&\'"+#\/\\]/, SPL_CHAR_ESCAPE)
   end
 end
