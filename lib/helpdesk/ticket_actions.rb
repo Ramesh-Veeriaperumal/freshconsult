@@ -233,14 +233,23 @@ module Helpdesk::TicketActions
                         }
   end
 
+
   def reply_to_forward
-    render(  :partial => '/helpdesk/tickets/show/form_layout', 
+    respond_to do |format|            
+            format.nmobile {
+              render :json => {:quote => quoted_text(@note)}
+            }
+            format.html {
+                render(  :partial => '/helpdesk/tickets/show/form_layout', 
                 :locals => {:params => {  :id => 'send-email', 
                               :cntid => "cnt-reply-fwd-#{@conv_id}", 
                               :note => [@ticket, Helpdesk::Note.new(:private => true)], 
                               :conv_id => @conv_id}, 
                             :page => "reply_to_forward"}
                             )
+            }            
+    end 
+ 
   end
   
   def add_requester
