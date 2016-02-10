@@ -5265,7 +5265,7 @@ en:
       ticket_summary: Ticket Summary
       filter_by: Filter by
       all_groups: All Groups
-      unresolved: Unresolved
+      unresolved: Total Unresolved
       open: Open
       on_hold: On Hold
       due_today: Due Today
@@ -5277,7 +5277,7 @@ en:
       unresolved_tickets_by_group: Unresolved Tickets by Group
       unresolved_tickets_by_priority: Unresolved Tickets by Priority
       unresolved_tickets_by_agent: Unresolved Tickets by Agent
-      leader_Board: Leader Board
+      leader_Board: Leaderboard
       achievements: Achievements
       forum_moderation: Forum Moderation
       phone: Phone
