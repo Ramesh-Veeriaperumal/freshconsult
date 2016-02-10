@@ -116,7 +116,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ country_1: :not_included, dropdown2_1: :not_included, dropdown3_1: :not_included }.sort.to_h, errors.sort.to_h)
-    assert_equal({ country_1: { list: 'Usa,india' }, dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown3_1: { list: 'first,second' } }.stringify_keys.sort.to_h, test.error_options.sort.to_h)
+    assert_equal({ country_1: { list: '...,Usa,india' }, dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown3_1: { list: 'first,second' } }.stringify_keys.sort.to_h, test.error_options.sort.to_h)
   end
 
   def test_format_validatable_fields_invalid
@@ -158,7 +158,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ country_1: :not_included }, errors)
-    assert_equal({ country_1: { list: 'Usa,india' } }.stringify_keys, test.error_options)
+    assert_equal({ country_1: { list: '...,Usa,india' } }.stringify_keys, test.error_options)
   end
 
   def test_nested_fields_invalid_second_field
@@ -183,6 +183,20 @@ class CustomFieldValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     assert_equal({ third_1: :not_included }, errors)
     assert_equal({ third_1: { list: 'abc,def' } }.stringify_keys, test.error_options)
+  end
+
+  def test_nested_fields_with_second_value_with_no_choices
+    test = TestValidation.new(attribute1: { 'country_1' => '...', 'state_1' => 'ddd', 'city_1' => '123' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ state_1: :should_be_blank }, errors)
+  end
+
+  def test_nested_fields_with_blank_second_value_with_no_choices
+    test = TestValidation.new(attribute1: { 'country_1' => '...', 'state_1' => '', 'city_1' => '123' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ state_1: :should_be_blank }, errors)
   end
 
   def test_nested_fields_same_second_level_choice_valid
@@ -229,7 +243,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ country_1: :required_and_inclusion, first_1: :required_and_inclusion, check2_1: :required_boolean, dropdown2_1: :required_and_inclusion, dropdown1_1: :required_and_inclusion, check1_1: :required_boolean, decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: :required_integer, number2_1: :required_integer, single_1: :required_string, multi_1: :required_string, phone: :required_string, dropdown3_1: :required_and_inclusion, dropdown4_1: :required_and_inclusion, check2_1: :required_boolean, check3_1: :required_boolean, decimal3_1: 'required_number', decimal4_1: 'required_number', multi2_1: :required_string, multi3_1: :required_string, number3_1: :required_integer, number4_1: :required_integer, phone_1: :required_string, phone2_1: :required_string, single2_1: :required_string, single3_1: :required_string, url1_1: 'required_format', url2_1: 'required_format', date_1: :required_date }.sort.to_h, errors.sort.to_h)
-    assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
+    assert_equal({ country_1: { list: '...,Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown3_1: { list: 'first,second' }, check2_1: { data_type: 'Boolean' }, check3_1: { data_type: 'Boolean' },
                    dropdown1_1: { list: '1st,2nd' }, dropdown4_1: { list: 'third,fourth' }, check1_1: { data_type: 'Boolean' },
                    number1_1: { data_type: :Integer }, number2_1: { data_type: :Integer }, number3_1: { data_type: :Integer },
@@ -244,7 +258,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ country_1: :required_and_inclusion, first_1: :required_and_inclusion, check2_1: :required_boolean, dropdown2_1: :required_and_inclusion, dropdown1_1: :required_and_inclusion, check1_1: :required_boolean, decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: :required_integer, number2_1: :required_integer, single_1: :required_string, multi_1: :required_string, phone: :required_string, dropdown3_1: :required_and_inclusion, dropdown4_1: :required_and_inclusion, check2_1: :required_boolean, check3_1: :required_boolean, decimal3_1: 'required_number', decimal4_1: 'required_number', multi2_1: :required_string, multi3_1: :required_string, number3_1: :required_integer, number4_1: :required_integer, phone_1: :required_string, phone2_1: :required_string, single2_1: :required_string, single3_1: :required_string, url1_1: 'required_format', url2_1: 'required_format', date_1: :required_date }.sort.to_h, errors.sort.to_h)
-    assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
+    assert_equal({ country_1: { list: '...,Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown3_1: { list: 'first,second' }, check2_1: { data_type: 'Boolean' }, check3_1: { data_type: 'Boolean' },
                    dropdown1_1: { list: '1st,2nd' }, dropdown4_1: { list: 'third,fourth' }, check1_1: { data_type: 'Boolean' },
                    number1_1: { data_type: :Integer }, number2_1: { data_type: :Integer }, number3_1: { data_type: :Integer },
@@ -257,7 +271,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   def test_nested_fields_with_changed_child_value
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     refute test.valid?
-    CustomFieldValidatorTestHelper.nested_fields_choices_by_name ={ 'country_1' => {'Usa' => {'california' =>  ['los angeles', 'san fransico', 'san diego'], 'new york' => []}, 'india' => {'tamil nadu' => ['chennai', 'trichy'], 'kerala' => [], 'andra pradesh' => ['hyderabad', 'vizag']}}, 
+    CustomFieldValidatorTestHelper.nested_fields_choices_by_name ={ 'country_1' => {'...' => {}, 'Usa' => {'california' =>  ['los angeles', 'san fransico', 'san diego'], 'new york' => []}, 'india' => {'tamil nadu' => ['chennai', 'trichy'], 'kerala' => [], 'andra pradesh' => ['hyderabad', 'vizag']}}, 
                      'first_1' =>  {"category 1"=> {"subcategory 1"=>["abc", "def"], "subcategory 2"=>["mno", "pqr"], "subcategory 3"=>[]}, "category 2"=>{"subcategory 1"=>["123", "456"]}}}
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     assert test.valid?
