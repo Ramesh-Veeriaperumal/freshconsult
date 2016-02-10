@@ -14,16 +14,17 @@ module Social
           def dynamo_sandbox(table_name, item = nil)
             exception = nil
             
-             error_params = {
+            error_params = {
               :table => table_name,
               :item  => item
             }
             
-            #Adding timeouts for all Dynamo Calls        
-            Timeout.timeout(SocialConfig::DYNAMO_TIMEOUT) do
-              return_value = yield 
-            end
-            
+            begin           
+              #Adding timeouts for all Dynamo Calls        
+              Timeout.timeout(SocialConfig::DYNAMO_TIMEOUT) do
+                return_value = yield 
+              end
+              
             rescue AWS::DynamoDB::Errors::ConditionalCheckFailedException => exception
               #An entry with the same primary key already exists, so update the entry instead of over-writing it
               #Temprorily avaoiding send of SNS for ConditionalCheckFailedException
@@ -41,12 +42,13 @@ module Social
               notify_social_dev("DynamoDB Exception In Social", error_params.merge(error: exception.message))      
               
             rescue Timeout::Error => exception
-              notify_social_dev("Dynamo Timeout Exception", error_params.merge(trace: caller[0..11]))      
+              notify_social_dev("Dynamo Timeout Exception", error_params.merge(trace: caller[0..11]))     
+            end 
        
             
             return_value = false unless exception.nil?
             
-            return return_value   
+            return_value   
             
           end
           
