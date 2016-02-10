@@ -336,7 +336,7 @@ module SolutionHelper
 		op = ""
 		parent_meta = instance_variable_get("@#{f}_meta")
 		if parent_meta && parent_meta.send("#{language.to_key}_#{f}").present?
-			op << "<div class='pt5'>"
+			op << "<div class='pt5 span12'>"
 			op << parent_meta.send("#{language.to_key}_#{f}").name
 			op << "</div>"
 		else
