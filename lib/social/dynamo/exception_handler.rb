@@ -12,7 +12,8 @@ module Social
           include Social::Util
           
           def dynamo_sandbox(table_name, item = nil)
-            exception = nil
+            return_value = nil
+            exception    = nil
             
             error_params = {
               :table => table_name,
@@ -47,7 +48,7 @@ module Social
        
             
             return_value = false unless exception.nil?
-            
+
             return_value   
             
           end
