@@ -2201,13 +2201,33 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.size
   end
 
+   def test_index_with_default_filter_order_type
+    Helpdesk::Ticket.update_all(created_at: 2.months.ago)
+    Helpdesk::Ticket.first.update_attributes(created_at: 1.months.ago,
+                                             deleted: false, spam: false)
+    get :index, controller_params(order_type: 'asc')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  end
+
+  def test_index_with_default_filter_order_by
+    Helpdesk::Ticket.update_all(created_at: 2.months.ago)
+    Helpdesk::Ticket.first(2).each {|x| x.update_attributes(created_at: 1.months.ago,
+                                             deleted: false, spam: false) }
+    get :index, controller_params(order_by: 'status')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 2, response.size
+  end
+
   def test_index_with_spam
     get :index, controller_params(filter: 'spam')
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    Helpdesk::Ticket.first.update_attributes(spam: true)
+    Helpdesk::Ticket.first.update_attributes(spam: true, created_at: 2.months.ago)
     get :index, controller_params(filter: 'spam')
     assert_response 200
     response = parse_response @response.body
@@ -2219,6 +2239,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.update_column(:deleted, true)
     t.update_column(:spam, true)
+    t.update_column(:created_at, 2.months.ago)
     tkts << t.reload
     get :index, controller_params(filter: 'deleted')
     pattern = []
@@ -2232,7 +2253,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_requester
     Helpdesk::Ticket.update_all(requester_id: User.first.id)
-    create_ticket(requester_id: User.last.id)
+    ticket = create_ticket(requester_id: User.last.id)
+    ticket.update_column(:created_at, 2.months.ago)
     get :index, controller_params(requester_id: "#{User.last.id}")
     assert_response 200
     response = parse_response @response.body
