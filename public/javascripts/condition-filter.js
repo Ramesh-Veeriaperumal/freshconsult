@@ -592,6 +592,17 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			jQuery(parentDom).find('.webhook input[name=need_authentication]')
 				.live("change", function(){	jQuery(this).parent().parent().parent().find('.credentials').slideToggle();	});
 
+			jQuery(parentDom).find('.webhook .headers_toggle')
+				.live("click", function(){	
+                    jQuery(parentDom).find('.webhook .headers_toggle').toggle();
+                    jQuery(this).parent().parent().find('.custom_headers_wrapper').slideToggle();
+				});
+
+			jQuery(parentDom).find('.webhook .headers_toggle.headers_toggle_remove')
+				.live("click", function(){	
+                    jQuery(this).parent().parent().find('.custom_headers_wrapper textarea').val('');	
+				});
+
 			jQuery(parentDom).find('.webhook .credentials_toggle')
 				.live("click", function(){
 					current_credential = jQuery(this).parent();

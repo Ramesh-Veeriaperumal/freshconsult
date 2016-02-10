@@ -215,7 +215,7 @@
           var url = jQuery('<div class="row-fluid"/>').append(jQuery('<span class="span2"/>')
                       .append(FactoryUI.label('<%= t(".url") %>', 'required_label')).append('<b class="required_star">*</b>'))
                       .append(placeholder1)
-                      .append(uri_textarea)  
+                      .append(uri_textarea)
                       // No URL validation - for allowing placeholder in URL
                       .append(FactoryUI.checkbox("<%= t('.url_req_auth') %>","need_authentication",initFeed['need_authentication'],"url_req_auth"));
           var username_password = jQuery('<div class="row-fluid user_pass_webhook"/>')
@@ -233,8 +233,40 @@
           var credentials = jQuery('<div class="row-fluid credentials"/>')
                           .append(username_password)
                           .append(api_key);
-            
-          var content_layout_radiobuttons = FactoryUI.radiobutton(content_layout_choices, "", 
+
+          var custom_headers_text = '';
+          if (initFeed['custom_headers'] != undefined) {
+            custom_headers_text = JSON.stringify(initFeed['custom_headers'])
+                                                    .replace('{','').replace('}','')
+                                                    .replace(/,/g, "\n")
+                                                    .replace(/\"/g, "");
+          }
+          var custom_headers_textarea = FactoryUI.paragraph("", "custom_headers", custom_headers_text, 'text custom_headers uri insert-placeholder-target')
+                            .data("ignorePlaceholders", 'triggered_event')
+                            .prop("rows","5")
+                            .attr("placeholder","X-Sample-Header1: ABCDE");
+
+          custom_headers_toggle = jQuery('<div class="row-fluid custom_headers_toggle"/>')
+                     .append(FactoryUI.link("<%= t('.add_custom_headers') %>", '#headers-toggle-add', 'headers_toggle headers_toggle_add'))
+          custom_headers_toggle.append(FactoryUI.link("<%= t('.remove_custom_headers') %>", '#headers-toggle-remove', 'headers_toggle headers_toggle_remove'))
+
+          var custom_headers_area = jQuery('<div class="edit1 span10"/>')
+                                    .append(custom_headers_textarea)
+                                    .append(FactoryUI.label("<%= t('.custom_headers_tip') %>", 'tip'))
+
+          var custom_headers = jQuery('<div class="row-fluid custom_headers_wrapper"/>')
+                    .append(jQuery('<span class="span2"/>')
+                      .append(FactoryUI.label('Custom Headers', 'custom_headers_label')))
+                    .append(custom_headers_area)
+
+          if(custom_headers_text === ''){
+            custom_headers.hide();
+            custom_headers_toggle.find('.headers_toggle_remove').hide();
+          }else{
+            custom_headers_toggle.find('.headers_toggle_add').hide();
+          }
+
+          var content_layout_radiobuttons = FactoryUI.radiobutton(content_layout_choices, "",
                                                       "content_layout", initFeed['content_layout']);
 
           var simple_edit = jQuery('<div class="params_div"/>');
@@ -288,7 +320,12 @@
           show_layout = initFeed['content_layout'] || 1;
           (show_layout == 1) ? advanced.hide() : simple.hide();
 
-          c_dom = jQuery('<div class="webhook"/>').append(method).append(url).append(credentials)
+          c_dom = jQuery('<div class="webhook"/>')
+                    .append(method)
+                    .append(url)
+                    .append(credentials)
+                    .append(custom_headers_toggle)
+                    .append(custom_headers)
                     .append(params);
         break;
         

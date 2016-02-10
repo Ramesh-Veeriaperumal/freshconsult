@@ -1601,6 +1601,9 @@ en:
         unchecked: is unchecked
         deselected: Deselected
     va_rules:
+      webhook:
+        custom_headers_limit_error: "You cannot set more than %{limit} custom headers"
+        custom_headers_pair_mismatch: "Kindly ensure that all headers have values"
       index:
         human_name: Dispatch’r Rule
       remember_to_save: 'After updating, please remember to save it.'
@@ -1623,11 +1626,14 @@ en:
         advanced_layout: Advanced
         webhook_usecase: Webhook Usecases
         webhook_usecase_tooltip: Check out a few examples of how you can use webhooks with the Observer
-        simple_webhook_tip: Select any of the ticket properties from the list above to be sent with the request. In case you would like to write your own API requests, please use the Advanced option.
-        advanced_webhook_tip: This section lets you write custom API requests. Click on the Insert Placeholders button to include ticket details such as Requester Name, Priority, Ticket Status etc. with your request.
+        simple_webhook_tip: "Select any of the ticket properties from the list above to be sent with the request. In case you would like to write your own API requests, please use the Advanced option."
+        custom_headers_tip: "Enter one custom header value pair per line."
+        advanced_webhook_tip: "This section lets you write custom API requests. Click on the Insert Placeholders button to include ticket details such as Requester Name, Priority, Ticket Status etc. with your request."
         how_to_use_webhook: How to use Webhooks >
         api_key?: I have API key?
         user_pass?: I have Username & Password?
+        add_custom_headers: "Add Custom Headers"
+        remove_custom_headers: "Remove Custom Headers"
         username: Username
         api_key: API Key
         password: Password
