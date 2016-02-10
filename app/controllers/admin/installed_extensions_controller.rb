@@ -1,104 +1,105 @@
 class Admin::InstalledExtensionsController <  Admin::AdminController
   include Marketplace::ApiMethods
-  include Marketplace::ApiUtil
 
-  rescue_from Exception, :with => :mkp_exception
+  after_filter :clear_installed_cache, :only => [:install, :reinstall, :uninstall, 
+                                                 :enable, :disable]
+
+  rescue_from Exception, :with => :mkp_connection_failure
 
   def new_configs
-    extn_configs = extension_configs
-    render_error_response and return if error_status?(extn_configs)
-
-    resp = extn_configs.body.blank? ? data_from_url_params : 
-                data_from_url_params.merge({:configs => extn_configs.body})
-    render :json => resp, :status => extn_configs.status
+    install_extension = extension_configs.blank? ? 
+                          data_from_url_params : 
+                          data_from_url_params.merge({:configs => extension_configs})
+    render :json => install_extension
   end
- 
+
   def edit_configs
-    extn_configs = extension_configs
-    render_error_response and return if error_status?(extn_configs)
-
-    acc_config = account_configs
-    render_error_response and return if error_status?(acc_config)
-
-    resp = account_configurations(extn_configs.body, acc_config.body).blank? ? data_from_url_params : 
-                data_from_url_params.merge({:configs => @account_configurations})
-    render :json => resp, :status => extn_configs.status
+    install_extension = account_configs.blank? ? 
+                          data_from_url_params : 
+                          data_from_url_params.merge({:configs => account_configs})
+    render :json => install_extension
   end
 
   def install
-    extn_details = extension_details
-    render_error_response and return if error_status?(extn_details)
-    
-    install_extension(install_params(extn_details.body))
-    flash[:notice] = t('marketplace.install_action.success')
-    render :nothing => true, :status => @post_api.status 
+    install_extension(install_params)
+    render :json => { 
+      :status => @post_api.code 
+    }
   end
 
   def reinstall
-    extn_details = extension_details
-    render_error_response and return if error_status?(extn_details)
-
-    update_extension(install_params(extn_details.body))
-    flash[:notice] = t('marketplace.update_action.success')
-    render :nothing => true, :status => @put_api.status
+    update_extension(install_params)
+    render :json => { 
+      :status => @put_api.code
+    }
   end
 
   def uninstall
-    uninstall_extension(uninstall_params)
-    render :nothing => true, :status => @delete_api.status
+    response = uninstall_extension
+    render :json => response.merge({ :status => @delete_api.code })
+  end
+
+  def feedback
+    feedback = post_feedback(feedback_params)
+    status_code = feedback.code
+  rescue => e
+    status_code = 500
+    Rails.logger.error("Error while submitting app feedback for version_id #{params[:version_id]} \n#{e.message}\n#{e.backtrace.join("\n")}")
+    NewRelic::Agent.notice_error(e)
+  ensure
+    respond_to do |format|
+      format.js do
+        render :partial => '/admin/marketplace/templates/installed_freshplugs/app_feedback', 
+                 :formats => [:rjs], :locals => { :version_id => params[:version_id], :status_code => status_code == 200 }
+      end
+    end
   end
 
   def enable
     update_extension(enable_params)
-    render :nothing => true, :status => @put_api.status
+    render :json => { 
+      :status => @put_api.code
+    }
   end
 
   def disable
     update_extension(disable_params)
-    render :nothing => true, :status => @put_api.status
+    render :json => {
+      :status => @put_api.code
+    }
   end
 
   private
 
-    def install_params(extn_details)
-      { :extension_id => params[:extension_id],
-        :version_id => params[:version_id],
-        :configs => params[:configs], 
-        :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled],
-        :type => extn_details['type'],
-        :options => extn_details['options'],
-      }
-    end
-
-    def uninstall_params
-      { :extension_id => params[:extension_id],
-        :version_id => params[:version_id]
+    def install_params
+      { :configs => params[:configs], 
+        :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled] 
       }
     end
 
     def enable_params
-      { :extension_id => params[:extension_id],
-        :version_id => params[:version_id],
-        :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled] }
+      { :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled] }
     end
 
     def disable_params
-      { :extension_id => params[:extension_id],
-        :version_id => params[:version_id],
-        :enabled => Marketplace::Constants::EXTENSION_STATUS[:disabled] }
+      { :enabled => Marketplace::Constants::EXTENSION_STATUS[:disabled] }
     end
 
-    def account_configurations(configs, acc_configs)
-      @account_configurations = []
-      configs.each do |config|
-        if config['field_type'] == Marketplace::Constants::FORM_FIELD_TYPE[:text]
-          config['default_value'] = acc_configs[config['name']]
-        else
-          config['default_value'].delete(acc_configs[config['name']])
-          config['default_value'].unshift(acc_configs[config['name']])
-        end
-        @account_configurations << config
+    def feedback_params
+      { 
+        :sender_name => current_user.name,
+        :sender_email => current_user.email,
+        :description => params[:description]
+      }
+    end
+
+    def clear_installed_cache
+      Marketplace::Constants::DISPLAY_PAGE.each do |page, id|
+        page_key = MemcacheKeys::INSTALLED_FRESHPLUGS % { 
+          :page => id, 
+          :account_id => current_account.id 
+        }
+        MemcacheKeys.delete_from_cache page_key
       end
-      @account_configurations
     end
 end

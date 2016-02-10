@@ -1,52 +1,43 @@
-<div class="custom-apps-list freshplugs-list tab-pane"  id="plugs">
-  <div id="freshplug-tab-content" class="tab-content clear">
-    <div class="button-bar pull-right">
-      <%= link_to t('marketplace.new_plug').html_safe, new_admin_integrations_freshplug_path, :class =>"btn" %>
-    </div>
-    <div class="no-plugs clear">
-      <p>
-        <%= t('marketplace.no_plugs') %>
-        <%= link_to t('marketplace.new_plug').html_safe, new_admin_integrations_freshplug_path, :class =>"" %>
-      </p>
-    </div>
-    <ul>
-        <!-- FRESH PLUGS -->
-        <% custom_applications.each do |application|
-          installed_app = application.installed_applications %>
-          <li class="app-custom apps-wrapper row-fluid plugs installed-listing" id="ext-<%=application.id%>">
-            <section class="fa-area ca-area clear">
-              <div class="row-fluid list-box <%= installed_app.blank? ? 'disabled-app' : '' %>">
-                <div class="switch-box pull-left">
-                  <% unless installed_app.blank? %>
-                    <% enabled_or_disabled_path = disable_admin_integrations_freshplug_path(application) %>
-                    <% toggle_path = enable_admin_integrations_freshplug_path(application) %>
-                  <% else %>
-                    <% enabled_or_disabled_path = enable_admin_integrations_freshplug_path(application) %>
-                    <% toggle_path = disable_admin_integrations_freshplug_path(application) %>
-                  <% end %>
-                  <%= check_box_tag '', !installed_app.blank?, !installed_app.blank?, "data-url" => enabled_or_disabled_path, "data-toggle" => toggle_path, :rel => "toggle",:class=>"switch", :name => "onoffswitch", :id => "pvtplug_#{ application.id }" %>
-                </div>
-                <div class="logo-box pull-left">
-                  <span class="<%= font_class('puzzle', 48, 'assets-missing') %> "></span>
-                </div>
-                <div class="desc-box pull-left">
-                  <div class="plug-data">
-                    <%= link_to application.display_name, edit_admin_integrations_freshplug_path(application.id), :class => "plug-name" %>
-                    <div class="plug-actions">
-                      <a class='btn btn-mini btn-edit tooltip' href='<%= edit_admin_integrations_freshplug_path(application.id) %>' data-placement="below" data-original-title='<%= t('application.tooltip.edit') %>' >
-                      <span class="<%= font_class('edit', 16) %>"></span></a>
+<section class="fa-area clear">
+  <!-- FRESH PLUGS -->
+	<div class="no-plugs">
+	<p>
+		<%= t('integrations.no_freshplugs') %>
+		<%= link_to t('integrations.add_new_freshplug').html_safe, new_admin_integrations_freshplug_path, :class =>"" %>
+	</p>
+	</div>
+	<% custom_applications.each do |application|
+	       installed_app = application.installed_applications %>
+	  <div class="apps-wrapper row-fluid list-box  <%= installed_app.blank? ? 'disabled-app' : '' %>" id="ext-<%=application.id%>">
+	  	<div class="switch-box pull-left">
+	  			<% unless installed_app.blank? %>
+			    	<% enabled_or_disabled_path = disable_admin_integrations_freshplug_path(application) %>
+		  			<% toggle_path = enable_admin_integrations_freshplug_path(application) %>
+		  		<% else %>
+		  			<% enabled_or_disabled_path = enable_admin_integrations_freshplug_path(application) %>
+		  			<% toggle_path = disable_admin_integrations_freshplug_path(application) %>
+		  		<% end %>
+		  			<%= check_box_tag '', !installed_app.blank?, !installed_app.blank?, "data-url" => enabled_or_disabled_path, "data-toggle" => toggle_path, :rel => "toggle",:class=>"switch", :name => "onoffswitch", :id => "pvtplug_#{ application.id }" %>
+	  	</div>
+	  	<div class="logo-box pull-left">
+	  		<span class="ficon-puzzle fsize-48 assets-missing"></span>
+	  	</div>
+	  	<div class="desc-box pull-left">
+	  		<div class="plug-data">
+	  			<%= link_to application.display_name, edit_admin_integrations_freshplug_path(application.id), :class => "plug-name" %>
+	  			<div class="plug-actions">
+	  				<a class='btn btn-mini btn-edit tooltip' href='<%= edit_admin_integrations_freshplug_path(application.id) %>' data-placement="below" data-original-title='<%= t('application.tooltip.edit') %>' >
+	  					<span class="ficon-edit fsize-16"></span>
+	  				</a>
 
-                      <a href="#toggle-confirm" rel="freshdialog" class="btn btn-mini tooltip delete-btn" title="<%= t('integrations.uninstall') %>" data-placement="below" data-original-title="<%= t('integrations.uninstall') %>" data-width="600" data-close-on-submit="true" data-show-close="true" data-destroy-on-close="true"  data-url="<%= admin_integrations_freshplug_path(application.id) %>" data-close-label="<%= t('plain_no') %>" data-submit-label="<%= t('plain_yes') %>" data-submit-class="btn btn-primary delete-confirm" data-confirm-content="<%= t('marketplace.confirm_uninstall_message', :human_name => t('marketplace.plug')) %>"> 
-                        <span class="<%= font_class('trash-o', 16) %>"></span>
-                      </a>
-                    </div>
-                  </div>
-                  <p class="desc"><%= truncate(application.description, :length => 180) %></p>
-                </div>
-              </div>
-            </section>
-      	  </li>
-      	<% end %>
-    </ul>
-  </div>
-</div>
+            <%= button_tag :type => 'button', :class => "btn btn-mini btn-delete tooltip delete-btn", "data-url" => "#{admin_integrations_freshplug_path(application.id)}", "data-placement" => "below", "data-original-title" => t('application.tooltip.delete'), :data => { :confirm => t('marketplace.plug_delete_warning').html_safe } do %>
+              <span class='ficon-trash-o fsize-16'></span>
+            <% end %>
+
+	  			</div>
+	  		</div>
+	  		<p class="desc"><%= truncate(application.description, :length => 180) %></p>
+	  	</div>
+	  </div>
+	<% end %>
+</section>

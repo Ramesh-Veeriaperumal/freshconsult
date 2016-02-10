@@ -4,7 +4,7 @@ module Integrations::Marketplace::RedirectUrlHelper
     redirect_url = Account.current.full_url
     installed_app = Account.current.installed_applications.with_name('quickbooks').first
     if params['operation'] == 'disconnect' && installed_app.present?
-      redirect_url += integrations_quickbooks_uninstall_path
+      redirect_url += uninstall_integrations_installed_application_path(installed_app)
     elsif params['operation'] == 'launch' || installed_app.present?
       redirect_url += "/helpdesk"
     else

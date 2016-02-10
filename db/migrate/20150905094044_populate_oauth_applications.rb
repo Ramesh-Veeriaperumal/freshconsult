@@ -16,7 +16,7 @@ class PopulateOauthApplications < ActiveRecord::Migration
       ),
       ('#{Marketplace::Constants::ADMIN_PORTAL_NAME}', '#{MarketplaceConfig::ADMIN_OAUTH_KEY}',
        '#{MarketplaceConfig::ADMIN_OAUTH_SECRET}',
-       '#{MarketplaceConfig::ADMIN_URL}/users/auth/freshdesk/callback', '',
+       '#{MarketplaceConfig::API_URL}/users/auth/freshdesk/callback', '',
        '#{Integrations::Constants::SYSTEM_ACCOUNT_ID}', '#{Integrations::Constants::SYSTEM_ACCOUNT_ID}',
        NOW(), NOW()
       )

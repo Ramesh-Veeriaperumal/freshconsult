@@ -15,7 +15,7 @@ class Admin::Integrations::FreshplugsController < Admin::AdminController
       Integrations::Application.create_and_install(application_params, widget_script, view_pages, current_account)
       flash[:notice] = t(:'flash.application.install.success')   
     end
-    redirect_to integrations_applications_path(:anchor => 'plugs')
+    redirect_to integrations_applications_path(:anchor => 'fresh-plugs')
   end
 
   def update
@@ -30,14 +30,14 @@ class Admin::Integrations::FreshplugsController < Admin::AdminController
       wid.save!
       flash[:notice] = t(:'flash.application.update.success')
     end
-    redirect_to integrations_applications_path(:anchor => 'plugs')
+    redirect_to integrations_applications_path(:anchor => 'fresh-plugs')
   end
 
   def destroy
     if @application.destroy
-      render :json => @app_details, :status => 200
+      render :json => @app_details.merge(:status => 200)
     else
-      render :nothing => true, :status => 500
+      render :json => { :status => 500 }
     end
   end
 
@@ -46,17 +46,17 @@ class Admin::Integrations::FreshplugsController < Admin::AdminController
                     :account_id => current_account.id,
                     :configs => {})
     if installed_app.save
-      render :nothing => true, :status => 200
+      render :json => { :status => 200 }
     else
-      render :nothing => true, :status => 500
+      render :json => { :status => 500 }
     end
   end
 
   def disable
     if @application.installed_applications.first.destroy
-      render :nothing => true, :status => 200
+      render :json => { :status => 200 }
     else
-      render :nothing => true, :status => 500
+      render :json => { :status => 500 }
     end
   end
 

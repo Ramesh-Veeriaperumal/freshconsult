@@ -3,18 +3,14 @@ module Marketplace::Constants
   PRODUCT_ID = 1
   DEV_PORTAL_NAME = 'Freshdesk Marketplace'
   ADMIN_PORTAL_NAME = 'Marketplace Admin Portal'
-  PLG_FILENAME = 'lib/index.html'
 
   EXTENSION_TYPES = [ 
     [:plug,  1],    
     [:theme,  2],
-    [:app,  3],
-    [:ni, 4]
+    [:app,  3]
   ]
 
   EXTENSION_TYPE = Hash[*EXTENSION_TYPES.map { |i| [i[0], i[1]] }.flatten]
-
-  DEFAULT_EXTENSION_TYPES = "#{EXTENSION_TYPE[:plug]},#{EXTENSION_TYPE[:ni]}"
 
   FORM_FIELD_TYPES = [
     [:text, 1],
@@ -38,7 +34,7 @@ module Marketplace::Constants
 
   EXTENSION_STATUS = Hash[*EXTENSION_STATUSES.map { |i| [i[0], i[1]] }.flatten]
 
-  API_PERMIT_PARAMS = [ :type, :category_id, :display_name, :update, :upgrade,
-                        :query, :version_id, :extension_id]
+  API_PERMIT_PARAMS = [ :type, :category_id, :in_dev, :name, :update, 
+                        :query, :version_id]
 
 end

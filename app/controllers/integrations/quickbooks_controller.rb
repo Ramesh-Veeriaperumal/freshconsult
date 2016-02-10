@@ -44,23 +44,6 @@ class Integrations::QuickbooksController < ApplicationController
 		render :json => {:error=> "#{e}"}
 	end
 
-	def uninstall
-		installed_app = Account.current.installed_applications.with_name(Integrations::Constants::APP_NAMES[:quickbooks]).first
-		begin
-      obj = installed_app.destroy
-      if obj.destroyed?
-        flash[:notice] = t(:'flash.application.uninstall.success')
-      else
-        flash[:error] = t(:'flash.application.uninstall.error')
-      end
-    rescue => e
-      Rails.logger.error "Problem in uninstalling an application. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
-      NewRelic::Agent.notice_error(e, {:description => "Problem in uninstalling an application"})
-      flash[:error] = t(:'flash.application.uninstall.error')
-    end
-    redirect_to integrations_applications_path
-	end
-
 	private
 		def get_quickbooks_access_token
 	      headers = {

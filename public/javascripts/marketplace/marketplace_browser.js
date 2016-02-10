@@ -4,14 +4,12 @@ var MarketplaceBrowser  = Class.create({
     this.customMessages = customMsgs;
 		this.isMouseInside = false; //flag for checking whether mouse is in app-browser
 		this.viewportHeight = jQuery(window).height();
-    this.deletablePlug = {};
 
 		jQuery(document).on("click.nc_apps_evt", this.settingsLinks.browseBtn , this.openAppBrowser.bindAsEventListener(this))
         						.on("keyup.nc_apps_evt", this.onPageKeyup.bindAsEventListener(this)) //doubt
          						.on("click.nc_apps_evt", this.settingsLinks.appBrowserClose, this.onCloseBtnClick.bindAsEventListener(this))
          						.on("change.nc_apps_evt", this.settingsLinks.activationSwitch, this.activationSwitchOnOFF.bindAsEventListener(this))
-                    .on("click.nc_apps_evt", this.settingsLinks.deleteBtn, this.onDeleteApp.bindAsEventListener(this))
-                    .on("click.nc_apps_evt", ".delete-confirm", this.onConfirmDelete.bindAsEventListener(this));
+                    .on("click.nc_apps_evt", this.settingsLinks.deleteBtn, this.onDeleteApp.bindAsEventListener(this));
 
 		//for closing app browser upon clicking outside on body and other than the app browser box
 		jQuery(document).on("mouseover.nc_apps_evt", this.settingsLinks.appBrowser, this.onAppBrowserHover.bindAsEventListener(this))
@@ -24,15 +22,41 @@ var MarketplaceBrowser  = Class.create({
 	},
   setupSelectedTabs: function(){
     var tabSelected = this.pageURL.split('#')[1];
-    jQuery('.nav-tabs a[href=#'+tabSelected+']').tab('show');
+    var tab = jQuery(tabSelected);
+    if(tabSelected == "fresh-plugs"){
+      jQuery('.nav-tabs a[href=#freshplugs]').tab('show');
+      jQuery('.portal-pills a[href=#fresh-plugs]').tab('show');
+    }
+    else if(tabSelected == "apps"){
+      jQuery('.nav-tabs a[href=#freshplugs]').tab('show');
+      jQuery('.portal-pills a[href=#apps]').tab('show');
+      window.history.pushState(null, null, "#apps");
+    }
+    else{
+      jQuery('.nav-tabs a[href=#'+tabSelected+']').tab('show');
+      if(tabSelected == "freshplugs"){
+        jQuery('.portal-pills a[href=#apps]').tab('show');
+      }
+    }
     jQuery('body,html').animate({scrollTop: 0}, 800);
+  },
+  feedbackStatus: function(status_code, version_id, success_msg, error_msg, submit_lbl){
+    if(status_code == 'true'){
+      console.log("Success")
+      jQuery('#feedbackModal-'+version_id+'-content').find('div.status').removeClass('error').text(success_msg).show();
+      jQuery('#feedbackModal-'+version_id+'-content').find('.feedback-form').hide();
+      jQuery('#feedbackModal-'+version_id+'-content').next('.modal-footer').hide();
+    }
+    else{
+      jQuery('#feedbackModal-'+version_id+'-content').find('div.status').addClass('error').text(error_msg).show();
+      jQuery('#feedbackModal-'+version_id+'-submit').removeAttr('disabled').removeClass('disabled').text(submit_lbl);
+    }
   },
 	activationSwitchOnOFF: function(e){		//used
 		var el = jQuery(e.target),
 				url = jQuery(el).attr("data-url"),
 				toggle_url = jQuery(el).attr("data-toggle"),
-        list_box = jQuery(el).parents(".list-box"),
-        that = this;
+        list_box = jQuery(el).parents(".list-box");
 
 		jQuery(el).parent(".onoffswitch").addClass("disabled");
 
@@ -58,9 +82,6 @@ var MarketplaceBrowser  = Class.create({
           toggle_button.removeClass("active");
         else
           toggle_button.addClass("active");
-
-        jQuery("#noticeajax").html(that.customMessages.no_connection).show().addClass("alert-danger");
-        closeableFlash('#noticeajax');
       }
     });
 	},
@@ -74,50 +95,31 @@ var MarketplaceBrowser  = Class.create({
 		appBrowser.height = this.viewportHeight;
     var app_browser = jQuery(this.settingsLinks.appBrowser);
    	
-    if (app_browser.hasClass('slide-activate')){
+    if (app_browser.hasClass('visible'))
       jQuery(this.settingsLinks.appBrowser).css('height', this.viewportHeight);
-    }
-    else {
-      jQuery(app_browser).addClass("slide-activate");
-    }
+    else 
+      app_browser.animate({"right":"0px"}, 240).addClass('visible');
 	},
   onDeleteApp: function(e){
-    e.preventDefault();
-    this.deletablePlug =  { 
-                            element: jQuery(e.currentTarget),
-                            url: jQuery(e.currentTarget).attr("data-url")
-                          };
-  },
-  onConfirmDelete: function(e) {
     var that = this;
-    var el = that.deletablePlug.element;
-    
+    var el = jQuery(e.currentTarget);
+
     jQuery.ajax({
-      url: that.deletablePlug.url,
+      url: jQuery(el).attr("data-url"),
       type: "delete",
-      success: function(resp_body, statustext, resp){
-        jQuery("#toggle-confirm").modal("hide");
-        jQuery('.twipsy').remove();
-        if(resp.status == 200){
-          jQuery(el).closest(".installed-listing").remove();
-          jQuery("#noticeajax").html(that.customMessages.delete_success).show().removeClass("alert-danger");
-          closeableFlash('#noticeajax');
-          if(jQuery(el).closest(".plugs").length > 0){
-            that.togglePlugsMessage(that.getFreshPlugsLength() == 0);
-          }else{
-            that.toggleAppsMessage(that.getAppsLength() == 0);
-          }
+      success: function(response){
+        if(response.status == 200){
+          var name = escapeHtml(response.name);
+          jQuery("#noticeajax").html(name+ " " +that.customMessages.delete_success).show();
+          if(response.classic_plug)
+            jQuery("#ext-"+response.application_id).remove();
+          else
+            jQuery("#ext-"+response.version_id).remove();
+          that.toggleNoPlugsMessage();
         }
         else {
-          jQuery("#noticeajax").html(that.customMessages.delete_error).show().addClass("alert-danger");
-          closeableFlash('#noticeajax');
+          jQuery("#noticeajax").html(that.customMessages.delete_error + " " + name);
         }     
-      },
-      error: function(){
-        jQuery("#toggle-confirm").modal("hide");
-        jQuery('.twipsy').remove();
-        jQuery("#noticeajax").html(that.customMessages.delete_error).show().addClass("alert-danger");
-        closeableFlash('#noticeajax');
       }
     });
   },
@@ -129,15 +131,15 @@ var MarketplaceBrowser  = Class.create({
   },
 	onPageKeyup: function(e){
 		//for esc close
-		if(jQuery(this.settingsLinks.appBrowser).hasClass('slide-activate')){
+		if(jQuery(this.settingsLinks.appBrowser).hasClass('visible')){
 			if (e.keyCode == 27) {
 				this.closeSlideOutDiv();
 			}
 		}
 	},
 	onBodyClick: function(e){
-	  if(!this.isMouseInside && !jQuery(e.originalEvent.target).hasClass("select2-drop-mask")){
-    	if(jQuery(this.settingsLinks.appBrowser).hasClass('slide-activate')){
+		if(!this.isMouseInside){
+    	if(jQuery(this.settingsLinks.appBrowser).hasClass('visible')){
         	this.closeSlideOutDiv();
     	}
     }
@@ -146,25 +148,14 @@ var MarketplaceBrowser  = Class.create({
 		this.closeSlideOutDiv();
 	},
 	closeSlideOutDiv: function(){
+		jQuery(this.settingsLinks.appBrowser).animate({"right":"-2000px"},'slow').removeClass('visible a-B');
 		jQuery('body').removeClass("b-OH");
 		jQuery('.header').removeClass('h-Z0');
-		jQuery(this.settingsLinks.appBrowser).removeClass("slide-activate a-B");
+		jQuery(this.settingsLinks.appBrowser).hide();
 	},
-  toggleAppsMessage: function(toggle_apps){
-    if( toggle_apps || jQuery('#apps .alert-error').length > 0){
-      jQuery('#apps .no-plugs').toggle();
-    }
-  },
-  togglePlugsMessage: function(toggle_plugs){
-    if(toggle_plugs){
-      jQuery('#plugs .no-plugs').toggle();
-    }
-  },
-  getAppsLength: function(){
-    return jQuery('#apps .apps-wrapper').length;
-  },
-  getFreshPlugsLength: function(){
-    return jQuery('#plugs .apps-wrapper').length;
+  toggleNoPlugsMessage: function(){
+    jQuery('#apps .no-plugs').toggle(jQuery('#apps .apps-wrapper').length == 0)
+    jQuery('#fresh-plugs .no-plugs').toggle(jQuery('#fresh-plugs .apps-wrapper').length == 0)
   },
 	destroy: function(){
 		jQuery("document,body").off(".nc_apps_evt");

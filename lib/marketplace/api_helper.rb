@@ -1,37 +1,21 @@
 module Marketplace::ApiHelper
   include Marketplace::ApiMethods
-  include Marketplace::ApiUtil
 
   def installed_plugs(display_page)
-    begin
-      installed_plugs = []
-      installed_extn_list = installed_plugs_list(display_page)
-      return error_message if error_status?(installed_extn_list)
-
-      installed_extn_list.body.try(:each) do |installed_plug|
-        installed_plugs << extension_details(installed_plug['version_id']).body.merge(installed_plug)
-      end
-      installed_plugs
-    rescue Exception => e
-      Rails.logger.debug "Error while fetching installed plugs: \n#{e.message}\n#{e.backtrace.join("\n")}"
-      NewRelic::Agent.notice_error(e)
-      error_message
-    end
-  end
-
-  def installed_plugs_list(display_page)
     page = Marketplace::Constants::DISPLAY_PAGE[display_page]
     key = MemcacheKeys::INSTALLED_FRESHPLUGS % { 
           :page => page, :account_id => current_account.id }
-    @installed_list ||= MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+    @installed_plugs ||= MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
       installed_extensions(installed_params(page))
     end
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e)
   end
 
   private
 
     def installed_params(page)
-      installed_params = { type: Marketplace::Constants::DEFAULT_EXTENSION_TYPES}
+      installed_params = { type: Marketplace::Constants::EXTENSION_TYPE[:plug]}
       installed_params.merge!(
         { 
           display_page: page,
@@ -51,23 +35,26 @@ module Marketplace::ApiHelper
 
     def plug_code_from_s3(version_id)
       s3_id = version_id.to_s.reverse
-      AwsWrapper::S3Object.read("#{s3_id}/#{Marketplace::Constants::PLG_FILENAME}",
+      AwsWrapper::S3Object.read("#{s3_id}/#{s3_id}.html",
         MarketplaceConfig::S3_ASSETS)
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
     end
 
     def freshplug_script(installed_plug)
-      script = plug_code_from_cache(installed_plug[:version_id])
+      script = installed_plug[:in_dev] ?
+         plug_code_from_s3(installed_plug[:version_id]) :
+         plug_code_from_cache(installed_plug[:version_id])
 
       liquid_objs = freshplug_liquids(installed_plug[:configs])
       Liquid::Template.parse(script).render(liquid_objs, 
           :filters => [Integrations::FDTextFilter],
-          :registers => { :plug_asset => installed_plug[:version_id]}).html_safe
+          :registers => { :plug_asset => installed_plug[:version_id], 
+                :in_development =>  installed_plug[:in_dev]}).html_safe
     end
 
     def freshplug_liquids(configs)
-      config_liquids = configs.blank? ? {} : {'iparam' => IparamDrop.new(configs) }
+      config_liquids = configs.blank? ? {} : {'plug' => PlugDrop.new(JSON.parse(configs)) }
       default_liquids.merge(config_liquids)
     end
 
@@ -78,9 +65,5 @@ module Marketplace::ApiHelper
       liquid_objs = @ticket ? { 'ticket' => @ticket, 'requester' => @ticket.requester} : 
                               { 'requester' => @user}
       defaults.merge(liquid_objs)
-    end
-
-    def error_message
-      { :error => "Error while fetching installed plugs" }
     end
 end

@@ -13,10 +13,6 @@
   @include right(-2000px);
   z-index:9999;
 }
-.slide-activate {
-  transition: 1s;
-  @include right(0);
-}
 
 .appbrowser-close{
   height: 35px;
@@ -29,7 +25,7 @@
   @include border-radius(5px 0 0 5px);
   box-shadow: -8px 0 32px rgba(0, 0, 0, 0.2);
   position: inherit;
-  @include cursor(pointer);
+  cursor: pointer;
   @include margin-left(-35px);
   top: 15px;
   z-index: 9999;
@@ -170,10 +166,8 @@
     overflow: auto;
     display: block;
     @include clear(both);
-    width: 100%;
-  }
-  .head-spacer{
     margin-top: 50px;
+    width: 100%;
   }
   .apptype-head{
     @include padding(0 15px);
@@ -182,11 +176,10 @@
       font-size: 20px;
       font-weight: 300;
       line-height: 50px;
-      display: inline-table;
     }
   }
   .dev-apps{
-    @include padding(17px);
+    padding: 17px;
   }
   .nmnp{
     @include margin(0);
@@ -234,13 +227,14 @@
     @include padding(0 15px);
     @include margin-right(2px);
     line-height: 34px;
+    border: 1px solid transparent;
     @include border-radius(4px 4px 0 0);
     border: 1px solid #ddd;
     background-color: #F9F9F9;
     color:#0066cc;
   }
   .content-box{
-    @include clear(both);
+    clear:both;
     height:100%;
     .applist{
       margin-bottom: 35px;
@@ -275,7 +269,7 @@
       }
     }
     .results{
-      @include padding-right(10px);
+      padding-right: 10px;
       font-weight: 300;
       font-size: 20px;
     }
@@ -320,9 +314,8 @@
     @include margin-right(20px);
     @include border-radius(3px);
     vertical-align:middle;
-    position: relative;
     .ficon-puzzle{
-      @include margin(-4px 30px);
+      margin: -4px 30px;
       position: absolute;
       &:before {
         padding-top: 30%;
@@ -331,7 +324,7 @@
       }
     }
     .img-helper{
-      @include text-align(center);
+      text-align:center;
       margin-top: 3px;
     }
     img {
@@ -347,7 +340,7 @@
   .info-box{
     @include margin(0);
     @include padding(0);
-    width: 64%;
+    width: 66%;
     @include float(left);
   }
   .info-data{
@@ -393,7 +386,6 @@
     @include text-align(center);
     @include padding(12px 0 0);
     display: inline-block;
-    @include float(right);
     .info-data{
       @include padding(6px 0 0 0);
       @include clear(both);
@@ -501,10 +493,6 @@
         bottom: 0;
         width: 160px;
         height: auto;
-        transition: all 200ms ease-out;
-        -webkit-transition: all 200ms ease-out;
-        transition-delay: 500ms;
-        -webkit-transition-delay: 500ms;
       }
       span.assets-missing{
         position: absolute;
@@ -599,16 +587,15 @@
       @include margin-left(auto);
       @include margin-right(auto);
       vertical-align: middle;
-      height: 400px;
     }
   }
   .slider-thumbs{
     li{
       display: block;
       margin-bottom: 6px;
-      @include padding(2px);
+      padding: 2px;
       border: solid 1px #BBB;
-      @include text-align(center);
+      text-align: center;
       &.active{
         border: solid 1px #aaa;
         box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);

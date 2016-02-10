@@ -23,7 +23,7 @@ RSpec.describe Admin::Integrations::FreshplugsController do
                                    :script => "<div id='sample_highrise_widget' title='Sample CRM FreshPlug'>{{ticket.requester}}</div>",
                                    :view_pages => ["helpdesk_tickets_show_page_side_bar"]
                                   }
-    response.should redirect_to "/integrations/applications#plugs"
+    response.should redirect_to "/integrations/applications#fresh-plugs"
   end
 
   it "renders the edit template of the application" do
@@ -45,7 +45,7 @@ RSpec.describe Admin::Integrations::FreshplugsController do
                   }
     application.reload
     application.widget.display_in_pages_option.should eql ["helpdesk_tickets_show_page_side_bar", "contacts_show_page_side_bar"]
-    response.should redirect_to "/integrations/applications#plugs"
+    response.should redirect_to "/integrations/applications#fresh-plugs"
   end
 
   it "should disable an application(deletes from installed application)" do
@@ -53,7 +53,8 @@ RSpec.describe Admin::Integrations::FreshplugsController do
     put :disable, :id => application.id
     application.reload
     application.installed_applications.should be_blank
-    response.status.should eql 200
+    expected_response = {"status" => 200}
+    JSON.parse(response.body).should eql expected_response
   end
 
   it "should enable an application" do
@@ -61,7 +62,8 @@ RSpec.describe Admin::Integrations::FreshplugsController do
     put :enable, :id => application.id
     application.reload
     application.installed_applications.should_not be_nil
-    response.status.should eql 200
+    expected_response = {"status" => 200}
+    JSON.parse(response.body).should eql expected_response
   end
 
   it "renders custom widget preview partial" do
@@ -77,7 +79,8 @@ RSpec.describe Admin::Integrations::FreshplugsController do
     app_details = {
                     "name" => application.display_name,
                     "application_id" => application.id,
-                    "classic_plug" => true
+                    "classic_plug" => true,
+                    "status" => 200
                   }
     JSON.parse(response.body).should eql app_details
   end

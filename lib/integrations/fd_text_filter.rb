@@ -13,7 +13,7 @@ module Integrations::FDTextFilter
   def asset_url(input)
     if plug_asset.present?
       s3_asset_id = plug_asset.to_s.reverse
-      bucket = MarketplaceConfig::CDN_STATIC_ASSETS
+      bucket = in_development ? MarketplaceConfig::S3_STATIC_ASSETS : MarketplaceConfig::CDN_STATIC_ASSETS
     end
     "//#{bucket}/#{s3_asset_id}/assets/#{input}"
   end
@@ -26,5 +26,9 @@ module Integrations::FDTextFilter
 
     def plug_asset
       @plug_asset ||= @context.registers[:plug_asset]
+    end
+
+    def in_development
+      @in_development ||= @context.registers[:in_development]
     end
 end

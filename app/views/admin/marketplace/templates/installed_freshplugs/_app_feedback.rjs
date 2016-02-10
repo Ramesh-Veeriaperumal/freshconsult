@@ -1,0 +1,6 @@
+page << "marketplaceBrowser.feedbackStatus( '#{status_code}', 
+                                            '#{version_id}', 
+                                            '#{I18n.t('marketplace.feedback_action.success')}',
+                                            '#{I18n.t('marketplace.feedback_action.error')}',
+                                            '#{I18n.t('marketplace.feedback_action.submit')}' )"
+

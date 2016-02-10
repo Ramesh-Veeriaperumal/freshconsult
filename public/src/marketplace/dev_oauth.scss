@@ -13,9 +13,9 @@
   }
   .sticky-bar{
     border-bottom: solid 1px #DADADA;
-    @include margin-left(-20px);
-    @include margin-right(-20px);
-    @include padding(10px 20px);
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 10px 20px;
     background: #FFF;
   }
   .agreement-title{
@@ -26,25 +26,25 @@
     padding-top: 20px;
   }
   .agreement-btns{
-    @include float(right);
+    float: right;
     display: inline-block;
   }
   .loader-wrapper{
     display: block;
     position: absolute;
-    @include text-align(center);
-    @include left(42%);
+    text-align: center;
+    left: 42%;
   }
   .logging-in{
-    @include float(left);
+    float: left;
     position: absolute;
     top: 40px;
-    @include left(10px);
+    left: 10px;
     width: 290px;
   }  
   .bottom-btns{
     margin-top:100px;
-    @include text-align(center);
+    text-align:center; 
     font-size:22px;
     font-weight:300; 
     height:75vh;

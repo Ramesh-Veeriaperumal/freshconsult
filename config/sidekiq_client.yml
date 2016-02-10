@@ -78,7 +78,6 @@ defaults: &defaults
     - [trial_dispatcher]
     - [free_dispatcher]
     - [active_dispatcher]
-    - [marketplace_apps]
 
 development:
   <<: *defaults
