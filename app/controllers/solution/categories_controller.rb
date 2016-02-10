@@ -149,7 +149,7 @@ class Solution::CategoriesController < ApplicationController
     def portal_check
       format = params[:format]
       if format.nil? && (current_user.nil? || current_user.customer?)
-        return redirect_to support_solutions_path
+        return redirect_to (params[:id].present? && support_solution_path(params[:id])) || support_solutions_path
       elsif !privilege?(:view_solutions)
         access_denied
       end
