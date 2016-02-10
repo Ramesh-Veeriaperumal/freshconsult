@@ -1,0 +1,23 @@
+JSON.generate(@items.map do |item|
+ response_hash = {
+      :active => item.active,
+      :address=> item.address,
+      :company_id => item.company_id,
+      :description => item.description,
+      :email => item.email, 
+      :id => item.id, 
+      :job_title => item.job_title, 
+      :language => item.language, 
+      :mobile =>item.mobile, 
+      :name => item.name, 
+      :phone => item.phone, 
+      :time_zone => item.time_zone,
+      :twitter_id => item.twitter_id,
+      :custom_fields => item.custom_fields,
+      :created_at => item.created_at,
+      :updated_at => item.updated_at
+    }
+    response_hash.merge!(deleted: item.deleted) if item.deleted
+    response_hash
+end
+)
