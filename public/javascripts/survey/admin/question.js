@@ -53,7 +53,7 @@ var SurveyQuestion = {
   //To refelect changes on the icon text as and when the question scale value changes
   updateOptionValues: function(){
       var defaultScale = jQuery("input[name=question-choice]:checked").val();
-      var choices = SurveyProtocol.content.choice.values(defaultScale,"question");
+      var choices = SurveyProtocol.content.choice.values(defaultScale,"questions");
       jQuery("div#question_rating_options").find('li input').each(function(index,value){
         if(jQuery(this).attr('value').length > 0 && jQuery(this).attr('value')!= ""){
           choices[index]["value"] = escapeHtml(jQuery(this).attr('value'));
@@ -203,7 +203,7 @@ var SurveyQuestion = {
 	},
 	resetOptions:function(){
 		var defaultScale = jQuery("input[name=question-choice]:checked").val();
-		var choices = SurveyProtocol.content.choice.values(defaultScale,"question");
+		var choices = SurveyProtocol.content.choice.values(defaultScale,"questions");
 		var ratingOptionArray = jQuery(".question-rating-option");
 		for(var r=0; r<ratingOptionArray.length;r++){
 			var optionObj = jQuery(ratingOptionArray[r]);

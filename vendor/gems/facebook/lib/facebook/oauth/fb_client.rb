@@ -110,7 +110,7 @@ module Facebook
           rest = Koala::Facebook::API.new(fan_page.access_token)
           user = rest.get_object(profile_id).symbolize_keys
           user_name = user ? "#{user[:first_name]} #{user[:last_name]}" : ""
-        rescue Exception => e
+        rescue => e
           return ""
         end
       end

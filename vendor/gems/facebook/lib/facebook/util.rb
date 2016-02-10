@@ -1,101 +1,88 @@
-module Facebook::Util
+module Facebook
+  module Util
   
-  include Gnip::Constants
-  include Facebook::Constants
-  
-  def add_as_ticket(fan_page, koala_feed, convert_args, archived_ticket = nil)
-    ticket = nil
-    can_comment = koala_feed.can_comment
+    def truncate_subject(subject, count)
+      (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
+    end
     
+    def get_koala_feed(klass, feed_id)
+      koala_obj = ("facebook/koala_wrapper/#{klass}").camelize.constantize.new(@fan_page)
+      koala_obj.fetch(feed_id)
+      koala_obj
+    end
     
-    if koala_feed.description.present? || (koala_feed.photo? || koala_feed.video? || koala_feed.link?)
-      ticket = @account.tickets.build(
-        :subject    => koala_feed.subject,
-        :requester  => facebook_user(koala_feed.requester),
-        :product_id => convert_args[:product_id],
-        :group_id   => convert_args[:group_id] ,
-        :source     => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
-        :created_at => koala_feed.created_at,
-        :fb_post_attributes => {
-          :post_id          => koala_feed.feed_id,
-          :facebook_page_id => fan_page.id,
-          :parent_id        => nil,
-          :post_attributes  => post_attributes(koala_feed.post_type, can_comment)
-        },
-        :ticket_body_attributes => {
-          :description      => koala_feed.description,
-          :description_html => koala_feed.description_html
-        }
-      )
-      
-      ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) if archived_ticket
-      if ticket.save_ticket
-        if !koala_feed.created_at.blank?
-          @fan_page.update_attribute(:fetch_since, koala_feed.created_at.to_i)
-        end
+    def get_koala_comment(comment)
+      koala_comment = Facebook::KoalaWrapper::Comment.new(@fan_page)
+      koala_comment.comment = comment
+      koala_comment.parse 
+      koala_comment
+    end
+    
+    #Parse the feed content from facebook post
+    def html_content_from_feed(feed)
+      html_content =  CGI.escapeHTML(feed[:message]) if feed[:message]
 
-      else
-        puts "error while saving the ticket:: #{ticket.errors.to_json} - #{@account.id} : #{fan_page.page_id} : #{koala_feed.feed_id}"
-        ticket = nil
+      if "video".eql?(feed[:type])
+        desc = feed[:description] || ""
+        html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{feed[:link]}\" target=\"_blank\"><img src=\"#{feed[:picture]}\"></a>
+          <div><p><a href=\"#{feed[:link]}\" target=\"_blank\"> #{feed[:name]}</a></p>
+          <p><strong>#{html_content}</strong></p>
+          <p>#{desc}</p></div></div>"
+      elsif "photo".eql?(feed[:type])
+        html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><a href=\"#{feed[:link]}\" target=\"_blank\"><img src=\"#{feed[:picture]}\"></a></p></div>"
+      elsif "link".eql?(feed[:type])
+        link_story   = "<a href=\"#{feed[:link]}\">#{feed[:story]}</a>" if feed[:story]
+        html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><#{link_story}</p></div>"
       end
+      
+      html_content
     end
-    return ticket
-  end
-  
-  def add_as_note(ticket, koala_comment)
-    comment_id = koala_comment.comment_id
-    note = @account.facebook_posts.find_by_post_id(comment_id)
-    return note if note # TODO what do we do here ? note will already be there in dynamoDB ...
     
-    parent_id = koala_comment.parent.nil? ? koala_comment.parent_post : koala_comment.parent[:id]
+    #Parse the feed content from facebook comment
+    def html_content_from_comment(feed)
+      html_content =  CGI.escapeHTML(feed[:message]) if feed[:message] 
+      
+      if feed[:attachment]        
+        attachment = feed[:attachment].symbolize_keys!     
+        if "share".eql?(attachment[:type])
+          desc = feed[:description] || ""
+          html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{attachment[:target]["url"]}\" target=\"_blank\"><img src=\"#{attachment[:media]["image"]["src"]}\"></a>
+            <div><p><a href=\"#{attachment[:url]}\" target=\"_blank\"> #{attachment[:description]}</a></p>
+            <p><strong>#{html_content}</strong></p>
+            <p>#{desc}</p></div></div>"
+        elsif "photo".eql?(attachment[:type])
+          html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><a href=\"#{attachment[:target]["url"]}\" target=\"_blank\"><img src=\"#{attachment[:media]["image"]["src"]}\"></a></p></div>"
+        end      
+      end
+      
+      html_content
+    end
     
-    parent_fb_post = @account.facebook_posts.find_by_post_id(parent_id, :select => :id)
-    requester = facebook_user(koala_comment.requester)
-    
-    unless ticket.blank? || koala_comment.comment.blank?
-      @parent_id = ticket
-      note = ticket.notes.build(
-        :note_body_attributes => {
-          :body => koala_comment.description,
-          :body_html => koala_comment.description_html
-        },
-        :private    => true ,
-        :incoming   => true,
-        :source     => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"],
-        :account_id => @fan_page.account_id,
-        :user       => requester,
-        :created_at => koala_comment.created_at,
-        :fb_post_attributes => {
-          :post_id          => koala_comment.comment_id,
-          :facebook_page_id => @fan_page.id ,
-          :parent_id        => parent_fb_post[:id],
-          :post_attributes  => post_attributes(koala_comment.post_type, koala_comment.can_comment)
-        }
-      )
-      begin
-        requester.make_current
-        if note.save_note
-          if !koala_comment.created_at.blank?
-            @fan_page.update_attribute(:fetch_since, koala_comment.created_at.to_i)
+    #Parse the feed content from facebook message
+    def html_content_from_message(message)
+      message = HashWithIndifferentAccess.new(message)
+      html_content =  CGI.escapeHTML(message[:message]) if message[:message]
+
+      if message[:attachments]
+        if message[:attachments][:data]
+          html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p>"
+          message[:attachments][:data].each do |attachment|
+            if attachment[:image_data] && attachment[:image_data][:preview_url] && attachment[:image_data][:url]
+              html_content = "#{html_content} <a href=\"#{attachment[:image_data][:url]}\" target=\"_blank\">
+                                  <img src=\"#{attachment[:image_data][:preview_url]}\"></a>"
+            end
           end
-        else
-          puts "error while saving the note #{note.errors.to_json} - #{@fan_page.account_id} : #{@fan_page.page_id} : #{koala_comment.comment_id}"
-          note = nil
+          html_content = "#{html_content} </p></div>"
         end
-      ensure
-        User.reset_current_user
       end
+      html_content
     end
-    return note
+
+    def new_data_set(data_set)
+      message_id_arr   = data_set[:data].collect{|x| x["id"]}
+      existing_msg_arr = Account.current.facebook_posts.where(:post_id => message_id_arr).pluck(:post_id)
+      data_set[:data].reject{|d| existing_msg_arr.include? d["id"]}
+    end
+    
   end
-  
-  
-  private
-  def post_attributes(post_type, can_comment)
-    post_attributes = {
-      :can_comment => can_comment,
-      :post_type   => post_type
-    }
-  end
-  
 end

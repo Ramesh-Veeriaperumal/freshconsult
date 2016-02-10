@@ -9,6 +9,11 @@ development:
     start_read_capacity: 2
     final_read_capacity: 10
     write_capacity: 5
+  unprocessed_feed:
+    suffix: dev
+    start_read_capacity: 2
+    final_read_capacity: 10
+    write_capacity: 5
 
 
 staging:
@@ -20,6 +25,11 @@ staging:
   interactions:
     suffix: staging
     start_read_capacity: 10
+    final_read_capacity: 10
+    write_capacity: 5
+  unprocessed_feed:
+    suffix: staging
+    start_read_capacity: 2
     final_read_capacity: 10
     write_capacity: 5
 
@@ -35,6 +45,11 @@ production:
     start_read_capacity: 10
     final_read_capacity: 20
     write_capacity: 25
+  unprocessed_feed:
+    suffix: production
+    start_read_capacity: 2
+    final_read_capacity: 10
+    write_capacity: 5
 
 
 test:
@@ -46,5 +61,10 @@ test:
   interactions:
     suffix: dev
     start_read_capacity: 10
+    final_read_capacity: 10
+    write_capacity: 5
+  unprocessed_feed:
+    suffix: dev
+    start_read_capacity: 2
     final_read_capacity: 10
     write_capacity: 5

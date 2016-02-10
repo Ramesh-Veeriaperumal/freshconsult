@@ -88,14 +88,17 @@ module HelpdeskReports::Helper::Ticket
   end
   
   def email_report_params
+    @query_params = params[:query_hash]
+    validate_scope
     params.merge!({
       account_id: current_account.id,
       user_id: current_user.id,
       portal_url: current_account.host,
-      date_lag_by_plan: @date_lag_by_plan
+      date_lag_by_plan: @date_lag_by_plan,
+      query_hash: @query_params
       })
-    
     params.merge!({show_options: @show_options,label_hash: @label_hash,nf_hash: @nf_hash}) if report_type == "glance"
+    
   end
   
   def pdf_locals

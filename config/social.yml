@@ -1,0 +1,16 @@
+defaults: &defaults
+
+ dynamo_timeout: 10
+
+development:
+  dynamo_timeout: 10
+
+staging:
+ dynamo_timeout: 10
+
+production:
+ dynamo_timeout: 10
+
+test:
+ <<: *defaults
+

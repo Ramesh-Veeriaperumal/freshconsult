@@ -7,8 +7,7 @@
 		background: #FFFFE1;
 	    margin-bottom: 18px;
 	    border: 1px solid #e5e5e4;
-	    box-shadow: inset 2px 2px #ffffe1;
-	    border-radius: 8px;	
+	    border-radius: 8px;
 
 		.content{
 			margin-bottom: 8px;
@@ -26,9 +25,9 @@
 			}
 	    }
 	}
-	
+
 	.welcome-message{
-		width: 84%;
+		width: 75%;
 		padding: 16px;
 		.head{
 			font-weight: bold;
@@ -59,7 +58,7 @@
 			    display: inline-block;
 			    margin-left: 6px;
 			    cursor: pointer;
-			}	
+			}
 		}
 	}
 }
@@ -89,7 +88,7 @@
 		@include margin-left(-32px);
 	}
 
-	.report_icon{	
+	.report_icon{
 			@extend .icon;
 	}
 
@@ -105,4 +104,4 @@
 	&.customer{
 		@extend .category3;
 	}
-} 
+}

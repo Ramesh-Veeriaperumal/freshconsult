@@ -25,7 +25,7 @@ module Social
     def upload_twitter_user_avatar(args)
       avatar_sandbox do
         account = Account.current
-        user = account.users.find(args['twitter_user_id'], :select => "id")
+        user = account.all_users.find(args['twitter_user_id'], :select => "id")
         {:item => user, :profile_image_url => args['prof_img_url']}
       end
     end
@@ -33,17 +33,19 @@ module Social
     def avatar_sandbox
       begin
         hash = yield
-        file = RemoteFile.new(hash[:profile_image_url]).fetch
-        if file
-          avatar = hash[:item].build_avatar({:content => file })
-          avatar.save
+        if hash[:item]
+          file = RemoteFile.new(hash[:profile_image_url])
+          if file
+            avatar = hash[:item].build_avatar({:content => file })
+            avatar.save
+          end
         end
       rescue Exception => e
         Rails.logger.debug "Exception in UploadAvatarWorker :: #{e.to_s} :: #{e.backtrace.join("\n")}"
         custom_params = {
           :description => "Exception in UploadAvatarWorker",
-          :params => hash[:item].id
         }
+        custom_params.merge!({:params => hash[:item].id}) if hash[:item]
         NewRelic::Agent.notice_error(e.to_s, :custom_params => custom_params)
       ensure
         if file

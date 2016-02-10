@@ -836,6 +836,15 @@ Helpkit::Application.routes.draw do
       post :update
     end
 
+    namespace :sugarcrm do
+      post :settings_update
+      get :edit
+      get :settings
+      post :fields_update
+      post :renew_session_id
+      post :check_session_id
+    end
+
     namespace :xero do 
       get :authorize 
       post :update_params

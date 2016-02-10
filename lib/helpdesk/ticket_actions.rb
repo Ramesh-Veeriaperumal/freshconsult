@@ -184,7 +184,7 @@ module Helpdesk::TicketActions
       Social::FbSplitTickets.perform_async({  :user_id => current_user.id,
                                               :child_fb_post_ids => @child_fb_note_ids,
                                               :comment_ticket_id => @item.id,
-                                              :source_ticket_id  => @source_ticket.id}) if (@item.fb_post and !@child_fb_note_ids.blank?)
+                                              :source_ticket_id  => @source_ticket.id}) if @item.fb_post
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     else
       puts @item.errors.to_json
@@ -233,14 +233,23 @@ module Helpdesk::TicketActions
                         }
   end
 
+
   def reply_to_forward
-    render(  :partial => '/helpdesk/tickets/show/form_layout', 
+    respond_to do |format|            
+            format.nmobile {
+              render :json => {:quote => quoted_text(@note)}
+            }
+            format.html {
+                render(  :partial => '/helpdesk/tickets/show/form_layout', 
                 :locals => {:params => {  :id => 'send-email', 
                               :cntid => "cnt-reply-fwd-#{@conv_id}", 
                               :note => [@ticket, Helpdesk::Note.new(:private => true)], 
                               :conv_id => @conv_id}, 
                             :page => "reply_to_forward"}
                             )
+            }            
+    end 
+ 
   end
   
   def add_requester

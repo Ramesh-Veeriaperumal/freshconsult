@@ -1,70 +1,90 @@
-class Facebook::KoalaWrapper::Post  
-  
-  include Facebook::Core::Util
-  include Facebook::Constants
-  include Social::Util
-
-  attr_accessor :post, :post_id, :feed_type, :requester, :description, :description_html, :subject,
-                 :created_at, :comments, :can_comment, :post_type
+module Facebook
+  module KoalaWrapper
+    class Post < Facebook::KoalaWrapper::Feed
+        
+      attr_accessor :feed_type, :description_html, :shares, :likes, :post_type,
+                :object_link, :object_message, :in_reply_to, :can_comment, :parent
                  
-  alias_attribute :feed_id, :post_id
-  
-  FIELDS = "#{POST_FIELDS}, comments.fields(#{COMMENT_FIELDS}, comments.fields(#{COMMENT_FIELDS}))"
+      alias_attribute :post,    :feed
+      alias_attribute :post_id, :feed_id
+      
+      FIELDS = "#{POST_FIELDS}, comments.fields(#{COMMENT_FIELDS}, comments.fields(#{COMMENT_FIELDS}))"
 
-  def initialize(fan_page)
-    @account  = fan_page.account
-    @fan_page = fan_page
-    @rest     = Koala::Facebook::API.new(fan_page.page_token)
-    @comments = []
-  end
+      def initialize(fan_page)
+        super(fan_page)
+        @can_comment  = true
+        @in_reply_to  = nil
+      end
+      
+      def fetch(post_id)
+        @feed = @rest.get_object(post_id, :fields => FIELDS)
+        parse if @feed
+      end
 
-  def fetch(post_id)
-    @post = @rest.get_object(post_id, :fields => FIELDS)
-    parse if @post
+      def parse
+        super
+        @feed_type         =  @feed[:type]
+        @description_html  =  html_content_from_feed(@feed)
+        @shares            =  @feed[:shares][:count] if @feed[:shares]
+        @likes             =  @feed[:likes][:data].count if @feed[:likes]
+        @object_link       =  @feed[:picture] 
+        @object_message    =  link? ? @feed[:name] : @feed[:story] 
+        @post_type         =  POST_TYPE_CODE[:post]
+      end
+      
+      #Returns a if the feed type is a post?, video? or status? or link?
+      ["photo", "video", "status", "link"].each do |object|
+        define_method("#{object}?") do
+          @feed[:type] == POST_TYPE["#{object}".to_sym]
+        end
+      end
+      
+      def fetch_post_from_db(post_id)
+        fb_post     = Account.current.facebook_posts.find_by_post_id(post_id)
+        if fb_post
+          post      = post_from_db(fb_post)    
+          
+          fb_post.children.each do |fb_comment|
+            comment = comment_from_db(fb_comment, true)    
+            fb_comment.children.each do |fb_reply|
+              parent = {:id => comment[:id]}
+              comment[:comments][:data] <<  reply_from_db(fb_reply, false, parent)
+            end  
+            post[:comments][:data] << comment          
+          end
+          
+          self.feed = post
+          parse
+        end
+      end
+      
+      def fetch_post_from_dynamo(post_id, dynamo_helper)
+        post_feeds    = dynamo_helper.fetch_feeds(post_id, @fan_page.default_stream.id)        
+        fb_post       = post_feeds.select{|feed| feed["type"][:ss][0] == POST_TYPE[:post] || feed["type"][:ss][0] == POST_TYPE[:status]}
+        fb_comments   = post_feeds.select{|feed| feed["type"][:ss][0] == POST_TYPE[:comment]}
+        fb_replies    = post_feeds.select{|feed| feed["type"][:ss][0] == POST_TYPE[:reply_to_comment]}
+        
+        post          = post_from_dynamo(fb_post[0], POST_TYPE[:comment])    
+        
+        fb_comments.each do |fb_comment|
+          comment = comment_from_dynamo(fb_comment, POST_TYPE[:comment], true)    
+          replies = fb_replies.select{|feed| feed["parent_comment"][:ss][0] == fb_comment["feed_id"][:s]}
+          replies.each do |reply|
+            parent = {:id => comment[:id]}
+            comment[:comments][:data] <<  reply_from_dynamo(reply, POST_TYPE[:reply_to_comment], false, parent)
+          end
+          post[:comments][:data] << comment          
+        end
+        
+        self.feed = post
+        parse
+      end
+    
+    end
   end
-
-  def parse
-    @post             =   @post.symbolize_keys!
-    @post[:message]   =   remove_utf8mb4_char(@post[:message])
-    @post_id          =   @post[:id]
-    @feed_type        =   @post[:type]
-    @requester        =   @post[:from] 
-    @description      =   @post[:message].to_s
-    @description_html =   html_content_from_feed(@post)
-    @subject          =   get_subject
-    @created_at       =   Time.zone.parse(@post[:created_time])
-    @comments         =   @post[:comments]["data"] if @post[:comments] && @post[:comments]["data"]
-    @can_comment      =   true
-    @post_type        =   POST_TYPE_CODE[:post]
-  end
-
-  def company_post?
-    !visitor_post?
-  end
-  
-  def visitor_post?
-    requester_fb_id != @fan_page.page_id.to_s
-  end  
-  
-  def requester_fb_id
-    @post[:from].is_a?(Hash) ? @post[:from]["id"] : @post[:from]
-  end
-  
-  def photo?
-    @post[:type] == POST_TYPE[:photo]
-  end
-  
-  def video?
-    @post[:type] == POST_TYPE[:video]
-  end
-  
-  def link?
-    @post[:type] == POST_TYPE[:link]
-  end
-  
-  private
-  def get_subject
-    @post[:name] || truncate_subject(@description, 100)
-  end
-
 end
+
+      
+        
+        
+        
