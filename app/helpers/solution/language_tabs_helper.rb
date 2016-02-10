@@ -138,6 +138,7 @@ module Solution::LanguageTabsHelper
           :include_blank => true,
           :"data-html" => true,
           :"data-article-id" => @article_meta.id,
+          :class => 'input-medium',
           :placeholder => t('solution.articles.more_languages', :count => @lang_objs.size)
         }
   end
