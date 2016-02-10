@@ -17,7 +17,7 @@ class TicketFilterValidation < FilterValidation
       @requester = Account.current.user_emails.user_for_email(@email)
       request_params['requester_id'] = @requester.try(:id) if @requester
     end
-    @conditions = (request_params.keys & ApiTicketConstants::INDEX_FIELDS)
+    @conditions = (request_params.keys & ApiTicketConstants::INDEX_FILTER_FIELDS)
     filter_name = fetch_filter(request_params)
     @conditions = @conditions - ['filter'] + [filter_name].compact
     super(request_params, item, allow_string_param)
