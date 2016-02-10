@@ -1,5 +1,8 @@
 <li>
-	<a href="/helpdesk/tickets/filter/unresolved" class="summery-filter clearfix" target="_blank">
+	<a href="/helpdesk/tickets/filter/unresolved" 
+		data-parallel-url="/helpdesk/tickets/filter_options?filter_name=unresolved" 
+		data-parallel-placeholder="#ticket-leftFilter" 
+		class="summery-filter clearfix" data-pjax="#body-container">
 		<div class="summary-count pull-left">
  			 <h4><%= renderData.unresolved.value %></h4>
 			 <p><%= renderData.unresolved.label %></p>
@@ -8,7 +11,10 @@
 </li>
 
 <li>
-	<a href="/helpdesk/tickets/filter/overdue" class="summery-filter clearfix" target="_blank">
+	<a href="/helpdesk/tickets/filter/overdue" 
+		data-parallel-url="/helpdesk/tickets/filter_options?filter_name=overdue" 
+		data-parallel-placeholder="#ticket-leftFilter" 
+		class="summery-filter clearfix" data-pjax="#body-container">
 		<div class="db-icon-wrap center pull-left"><i class="ficon-db-calendar dbicon-red"></i></div>
 		<div class="summary-count pull-left ml20">
 			<h4> <%= renderData.overdue.value %> </h4>
@@ -18,7 +24,10 @@
 </li>
 
 <li>
-	<a href="/helpdesk/tickets/filter/due_today" class="summery-filter clearfix" target="_blank">
+	<a href="/helpdesk/tickets/filter/due_today" class="summery-filter clearfix" 
+		data-parallel-url="/helpdesk/tickets/filter_options?filter_name=due_today" 
+		data-parallel-placeholder="#ticket-leftFilter" 
+		data-pjax="#body-container">
 		<div class="db-icon-wrap center pull-left"><i class="ficon-db-sand-clock dbicon-orange"></i></div>
 		<div class="summary-count pull-left ml20">
 			<h4> <%= renderData.due_today.value %> </h4>
@@ -28,7 +37,10 @@
 </li>
 
 <li>
-	<a href="/helpdesk/tickets/filter/open" class="summery-filter clearfix" target="_blank">
+	<a href="/helpdesk/tickets/filter/open" 
+		data-parallel-url="/helpdesk/tickets/filter_options?filter_name=open" 
+		data-parallel-placeholder="#ticket-leftFilter" 
+		class="summery-filter clearfix" data-pjax="#body-container">
 		<div class="db-icon-wrap center pull-left"><i class="ficon-ticket dbicon-green"></i></div>
 		<div class="summary-count pull-left ml20">
 			<h4><%= renderData.open.value %></h4>
@@ -39,8 +51,11 @@
 </li>
 
 <li>
-	<a href="/helpdesk/tickets/filter/on_hold" class="summery-filter clearfix" target="_blank">
-		<div class="db-icon-wrap center pull-left"><i class="ficon-business-hours dbicon-blue"></i></div>
+	<a href="/helpdesk/tickets/filter/on_hold" 
+		data-parallel-url="/helpdesk/tickets/filter_options?filter_name=on_hold" 
+		data-parallel-placeholder="#ticket-leftFilter" 
+		class="summery-filter clearfix" data-pjax="#body-container">
+		<div class="db-icon-wrap center pull-left"><i class="ficon-onhold dbicon-blue"></i></div>
 			<div class="summary-count pull-left ml20">
 				<h4> <%= renderData.on_hold.value %></h4>
 				<p><%= renderData.on_hold.label %></p>
@@ -51,7 +66,10 @@
 
 <% if(renderData.new != undefined) {%>
 <li>
-	<a href="/helpdesk/tickets/filter/new" target="_blank" class="summery-filter clearfix" data-orig-name="<%= renderData.new.name %>" >
+	<a href="/helpdesk/tickets/filter/new" 
+		data-parallel-url="/helpdesk/tickets/filter_options?filter_name=new" 
+		data-parallel-placeholder="#ticket-leftFilter" 
+		class="summery-filter clearfix" data-orig-name="<%= renderData.new.name %>" data-pjax="#body-container">
 		<div class="db-icon-wrap center pull-left"><i class="ficon-db-unassigned dbicon-brown"></i></div>
 		<div class="summary-count pull-left ml20">
 			 <h4><%= renderData.new.value %></h4>

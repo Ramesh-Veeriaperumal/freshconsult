@@ -31,7 +31,7 @@
 		        </span>
 		        	<span class="caret"></span>
 		    </h5>
-	        <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu" style="display: none;" id="group-filter">
+	        <ul class="dropdown-menu tick mCustomScrollbar" role="menu" aria-labelledby="dropdownMenu" style="display: none;" id="group-filter" data-mcs-theme="minimal-dark">
 	          <% accessible_groups.each.with_index do |group, index| %>
 	          <li class="widget-filter <%if(index == 0)%> active <% end %>" >
 				<a class="item db-group-filter" data-toggle="tab" ul_class="tick" href="#" data-group-id="<%= group[0] %>"> <%= group[1] %> </a>
