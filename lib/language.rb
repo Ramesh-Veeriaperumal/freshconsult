@@ -72,7 +72,7 @@ class Language
 		def set_current(params={})
 			[:url, :user, :browser, :portal, :primary].each do |meth|
 				Thread.current[:language] = send("fetch_from_#{meth}", params)
-				break if Language.current?
+				break if Language.current? && Account.current.all_language_objects.include?(Language.current)
 			end
 		end
 

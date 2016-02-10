@@ -162,7 +162,8 @@ if Rails.env.test?
     "spec/models/solution/folder_spec.rb",
     "spec/models/solution/article_spec.rb",
     "spec/models/solution/draft_spec.rb",
-    "spec/lib/solution/multilingual_spec.rb"
+    "spec/lib/solution/multilingual_spec.rb",
+    "spec/lib/solution/language_prefix_spec.rb"
   ]
 
   HelpdeskTests = [ 

@@ -243,18 +243,39 @@ class SupportController < ApplicationController
 
   private
 
+  def set_language
+    redirect_to request.fullpath if params[:url_locale].present? && !current_account.multilingual?
+    remove_locale unless supported_language?
+    Language.set_current(
+      request_language: http_accept_language.compatible_language_from(I18n.available_locales), 
+      url_locale: params[:url_locale])
+    override_default_locale unless current_user.present? || Language.current.code.to_sym == I18n.locale
+    redirect_to request.fullpath.prepend("/#{Language.current.code}") if current_account.multilingual? && params[:url_locale] != Language.current.code
+  end
+
+  def supported_language?
+    locale_in_portal_languages? || agent_supported_language? || primary_language?
+  end
+
+  def locale_in_portal_languages?
+    current_account.portal_languages && current_account.portal_languages.include?(params[:url_locale])
+  end
+
+  def agent_supported_language?
+    agent? && current_account.all_languages.include?(params[:url_locale])
+  end
+
   def agent?
     current_user && current_user.agent?
   end
 
-  def set_language
-    Language.reset_current
-    Language.set_current(
-      request_language: http_accept_language.compatible_language_from(I18n.available_locales), 
-      url_locale: params[:url_locale])
-    override_default_locale unless Language.current.code.to_sym == I18n.locale
-    redirect_to request.fullpath.prepend("/#{Language.current.code}") if 
-        params[:url_locale] && params[:url_locale] != Language.current.code
+  def primary_language?
+    current_account.language == params[:url_locale]
+  end
+
+  def remove_locale
+    return nil if params[:url_locale].nil?
+    params.delete(:url_locale)
   end
 
   def override_default_locale

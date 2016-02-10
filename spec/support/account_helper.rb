@@ -141,9 +141,13 @@ module AccountHelper
     (Language.all_codes.map{ |lang| lang.dup }.reject{ |l| (l == @account.language || l == primary_lang) }).sample(n)
   end
 
+  def pick_a_unsupported_language
+    (Language.all_codes - @account.all_languages).sample.dup
+  end
+
   def enable_multilingual
     @account.launch(:translate_solutions)
-    @account.features.enable_multilingual.create
+    create_enable_multilingual_feature
     @account.features.multi_language.create
   end
   

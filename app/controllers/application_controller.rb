@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   around_filter :select_shard
   
   prepend_before_filter :determine_pod
-  before_filter :unset_current_account, :unset_current_portal, :set_current_account
+  before_filter :unset_current_account, :unset_current_portal, :set_current_account, :reset_language
   before_filter :set_default_locale, :set_locale
   include SslRequirement
   include Authority::FreshdeskRails::ControllerHelpers
@@ -110,6 +110,10 @@ class ApplicationController < ActionController::Base
     rescue ActiveSupport::MessageVerifier::InvalidSignature
       handle_unverified_request
     end    
+  end
+
+  def reset_language
+    Language.reset_current
   end
 
   def show_password_expiry_warning
