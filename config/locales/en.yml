@@ -5259,7 +5259,7 @@ en:
       ticket_summary: Ticket Summary
       filter_by: Filter by
       all_groups: All Groups
-      unresolved: Total Unresolved
+      unresolved: Unresolved
       open: Open
       on_hold: On Hold
       due_today: Due Today
