@@ -27,7 +27,7 @@ class Solution::FoldersController < ApplicationController
     @page_title = @folder.name
     respond_to do |format|
       format.html {
-        redirect_to solution_my_drafts_path('all') if @folder.solution_category_meta.is_default?
+        redirect_to solution_my_drafts_path('all') if @folder.is_default?
       }
       format.xml  { render :xml => @folder.to_xml(:include => [:articles]) }
       format.json { render :json => @folder.as_json(:include => [:articles]) }

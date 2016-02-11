@@ -10,8 +10,7 @@ class Solution::CategoriesController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
   before_filter :set_selected_tab, :page_title
-  before_filter :load_category, :only => [:destroy]
-  before_filter :load_meta, :only => [:edit, :update]
+  before_filter :load_meta, :only => [:edit, :update, :destroy]
   before_filter :load_category_with_folders, :only => [:show]
   before_filter :find_portal, :only => [:all_categories, :new, :create, :edit, :update]
   before_filter :set_modal, :only => [:new, :edit]
@@ -110,7 +109,7 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def destroy
-    @category.destroy unless @category.is_default?
+    @category_meta.destroy unless @category_meta.is_default?
 
     respond_to do |format|
       format.html {  redirect_to :action =>"index" }
@@ -179,10 +178,6 @@ class Solution::CategoriesController < ApplicationController
       current_account.solution_category_meta
     end
 
-    def load_category
-      @category = meta_scoper.find_by_id!(params[:id])
-    end
-
     def load_meta
       @category_meta = meta_scoper.find_by_id(params[:id])
     end
@@ -192,7 +187,6 @@ class Solution::CategoriesController < ApplicationController
     end
 
     def load_category_with_folders
-      #META-READ-HACK!!
       @category = meta_scoper.includes(:solution_folder_meta).find_by_id!(params[:id])
     end
 
