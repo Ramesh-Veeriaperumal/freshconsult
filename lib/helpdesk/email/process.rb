@@ -7,6 +7,7 @@ class Helpdesk::Email::Process
   include ActionView::Helpers
   include WhiteListHelper
   include Helpdesk::ProcessByMessageId
+  include AccountConstants
 
   #All email meta data and parsing of email values are done on parse_email_data.rb. Please refer while viewing this file.
 
@@ -51,6 +52,10 @@ class Helpdesk::Email::Process
       return unless Array.wrap(wl_domain).include?(common_email_data[:from][:domain])
     end
     construct_html_param
+    if (common_email_data[:from][:email] =~ EMAIL_VALIDATOR).nil?
+      Rails.logger.debug "Invaid email address found in requester details #{common_email_data[:from][:email]}"
+      return
+    end
     self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data
     return if (user.nil? or user.blocked?)
     get_necessary_details
