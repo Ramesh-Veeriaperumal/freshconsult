@@ -96,9 +96,9 @@
   </script>
 
 	<%= yield :head %>
-
+	<% unless Rails.env.development? %>
 	<link href="<%= helpdesk_theme_url %>" media="screen" rel="stylesheet" type="text/css">
-
+	<% end %>
 	
 </head>
 
