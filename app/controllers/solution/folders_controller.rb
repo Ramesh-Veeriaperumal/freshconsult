@@ -8,7 +8,7 @@ class Solution::FoldersController < ApplicationController
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
-  before_filter :set_selected_tab, :page_title
+  before_filter :set_selected_tab
   before_filter :load_meta, :only => [:edit, :update, :show]
   # to be done!
   before_filter :validate_and_set_customers, :only => [:create, :update]
@@ -67,7 +67,7 @@ class Solution::FoldersController < ApplicationController
 
   def create
     @folder = Solution::Builder.folder(params)
-    @category_meta ||= @folder.solution_category_meta
+    @category_meta = @folder.solution_category_meta
    
     respond_to do |format|
       if @folder.errors.empty?
@@ -134,10 +134,6 @@ class Solution::FoldersController < ApplicationController
 
   def scoper #possible dead code
     eval "Solution::#{cname.classify}"
-  end
-
-  def page_title
-    @page_title = t("header.tabs.solutions")
   end
 
   def reorder_scoper
@@ -209,7 +205,7 @@ class Solution::FoldersController < ApplicationController
     end
 
     def valid_customers(customer_ids)
-      current_account.companies.where({ :id => customer_ids.split(',') }).map(&:id) if customer_ids.present?
+      current_account.companies.where({ :id => customer_ids.split(',') }).pluck(:id) if customer_ids.present?
     end
 
     def change_visibility
@@ -231,7 +227,7 @@ class Solution::FoldersController < ApplicationController
     end
 
     def bulk_update_category
-      @folders = meta_scoper.where(:id => params[:items]).readonly(false)
+      @folders = meta_scoper.where(:id => params[:items])
       @folders.map { |f| f.update_attributes(:solution_category_meta_id => params[:parent_id]) }
       @new_category.reload
       @updated_items = params[:items].map(&:to_i) & @new_category.solution_folder_metum_ids
