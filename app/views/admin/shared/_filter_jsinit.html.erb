@@ -241,7 +241,7 @@
                                                     .replace(/,/g, "\n")
                                                     .replace(/\"/g, "");
           }
-          var custom_headers_textarea = FactoryUI.paragraph("", "custom_headers", custom_headers_text, 'text custom_headers uri insert-placeholder-target')
+          var custom_headers_textarea = FactoryUI.paragraph("", "custom_headers", custom_headers_text, 'text custom_headers uri insert-placeholder-target valid_custom_headers')
                             .data("ignorePlaceholders", 'triggered_event')
                             .prop("rows","5")
                             .attr("placeholder","X-Sample-Header1: ABCDE");
