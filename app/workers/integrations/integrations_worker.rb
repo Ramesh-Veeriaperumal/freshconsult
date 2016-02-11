@@ -6,7 +6,7 @@ module Integrations
     def perform(options = {})
       options = options.symbolize_keys
       begin
-        obj = Integrations::IntegrationOperationsHandler.new
+        obj = ::Integrations::IntegrationOperationsHandler.new
         if options[:operation_name].present?
           value = options[:operation_name]
           obj.send(value, options)

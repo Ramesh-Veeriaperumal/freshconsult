@@ -47,6 +47,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                    to_email[:email], 
                                    params[:subject], 
                                    message_id)
+        if (from_email[:email] =~ EMAIL_VALIDATOR).nil?
+          Rails.logger.debug "Invaid email address found in requester details #{from_email[:email]}"
+          return
+        end
         user = existing_user(account, from_email)
         unless user
           text_part

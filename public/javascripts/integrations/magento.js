@@ -63,7 +63,7 @@ MagentoWidget.prototype= {
 
     MAGENTO_LOADING_INDICATOR: new Template("<div id='magento_loading' class='sloading loading-small loading-block'></div>"),
 
-    ORDERS_LINK: "/index.php/admin/sales_order/index",
+    ORDERS_LINK: "/sales_order/index",
 
     ERROR_MESSAGE: "Unknown error. Please contact support@freshdesk.com",
 

@@ -25,7 +25,7 @@ module Helpdesk::MergeTicketActions
 	private
 
 		def move_source_notes_to_target
-			Resque.enqueue( Workers::MergeTickets,{ :source_ticket_ids => @source_tickets.map(&:display_id),
+			MergeTickets.perform_async({ :source_ticket_ids => @source_tickets.map(&:display_id),
                                               :target_ticket_id => @target_ticket.id, 
                                               :source_note_private => params[:source][:is_private],
                                               :source_note => params[:source][:note] })
@@ -40,8 +40,10 @@ module Helpdesk::MergeTicketActions
 				:account_id => current_account.id,
 				:user_id => current_user && current_user.id
 			)
-			add_source_attachments_to_source_description(source_ticket, source_description_note)
 			source_description_note.save_note
+			MergeTicketsAttachments.perform_async({ :source_ticket_id => source_ticket.id,
+												:target_ticket_id => @target_ticket.id,	
+                                              	:source_description_note_id => source_description_note.id })
 		end
 
     def build_source_description_body_html source_ticket
@@ -50,22 +52,6 @@ module Helpdesk::MergeTicketActions
 	    <b>#{I18n.t('Subject')}:</b> #{source_ticket.subject}<br/><br/>
 	    <b>#{I18n.t('description')}:</b><br/>#{source_ticket.description_html}}
     end
-
-		def add_source_attachments_to_source_description( source_ticket , source_description_note )
-      ## handling attachemnt..need to check this
-			source_ticket.attachments.each do |attachment|      
-				url = attachment.authenticated_s3_get_url
-				io = open(url) #Duplicate code from helpdesk_controller_methods. Refactor it!
-				if io
-					def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
-				end
-				source_description_note.attachments.build(:content => io, :description => "",
-																									:account_id => source_description_note.account_id)
-			end
-			source_ticket.cloud_files.each do |cloud_file|
-	  		source_description_note.cloud_files.build({:url => cloud_file.url, :application_id => cloud_file.application_id, :filename => cloud_file.filename })
-		  end
-		end
 
 		def move_source_requesters_to_target # Possible dead code
 			cc_email_array = @source_tickets.collect{ |source| [ get_cc_email_from_hash(source), 

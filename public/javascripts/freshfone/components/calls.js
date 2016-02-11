@@ -28,6 +28,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.conferenceConn = false;
 			this.status = callStatus.NONE;
 			this.direction = callDirection.NONE;
+			this.callId = null;
 			this.callerId = null;
 			this.callerName = null;
 			this.callSid = null;
@@ -437,6 +438,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		registerCall: function (call_sid) {
 			this.call = call_sid;
 		},
+		setCallId: function(callId){
+			this.callId = callId;
+		},
 		handleHold: function () {
 			$("#failed_hold").hide();
 			if (this.tConn && this.call ) {
@@ -517,6 +521,17 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			if (freshfonecalls.freshfoneCallTransfer  instanceof FreshfoneCallTransfer) {
 				this.freshfoneCallTransfer.cleanUpTimer();	
 			}
+		},
+		saveCallQualityMetrics: function(statsObject){
+			var self = this;
+			$.ajax({
+				type: 'POST',
+				dataType: "json",
+				url: '/freshfone/conference_call/save_call_quality_metrics',
+				data: {"call_quality_metrics": statsObject, 
+					"call_id" : this.callId
+				}
+			});
 		}
 
 	};

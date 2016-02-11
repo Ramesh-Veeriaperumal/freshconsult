@@ -28,7 +28,8 @@ Sidekiq.configure_client do |config|
       "Tickets::BulkTicketActions",
       "Tickets::BulkTicketReply",
       "Tickets::ClearTickets::EmptySpam",
-      "Tickets::ClearTickets::EmptyTrash"
+      "Tickets::ClearTickets::EmptyTrash",
+      "MergeTickets"
     ]
   end
 end
@@ -61,7 +62,8 @@ Sidekiq.configure_server do |config|
       "Tickets::BulkTicketActions",
       "Tickets::BulkTicketReply",
       "Tickets::ClearTickets::EmptySpam",
-      "Tickets::ClearTickets::EmptyTrash"
+      "Tickets::ClearTickets::EmptyTrash",
+      "MergeTickets"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -85,7 +87,8 @@ Sidekiq.configure_server do |config|
       "Tickets::BulkTicketActions",
       "Tickets::BulkTicketReply",
       "Tickets::ClearTickets::EmptySpam",
-      "Tickets::ClearTickets::EmptyTrash"
+      "Tickets::ClearTickets::EmptyTrash",
+      "MergeTickets"
     ]
   end
 end

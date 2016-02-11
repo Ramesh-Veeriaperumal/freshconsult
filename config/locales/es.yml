@@ -2362,7 +2362,7 @@ es:
   import_topics: Tópicos
   assigned_to: "Asignado a"
   change: Cambiar
-  back_plans_billing: "Volver a Planes &amp;amp;amp; Facturación"
+  back_plans_billing: "Volver a Planes y Facturación"
   choose_different_plan: "Elegir un plan diferente"
   downgrade_plan: "Nota: Si bajas el plan de categoría podrías perder algunas de las características actuales."
   f_request: Sugerencias
@@ -2387,7 +2387,7 @@ es:
     realtime: "<b>La aplicación que alimenta la cadena se ha parado </b> debido a cambios que se han producido en la cuenta de Facebook <a href='%{realtime_url}' > Autoriza de nuevo y Activa </a> "
   import_user_notification: "Puedes enviar el correo de activación de usuario a los contactos importados desde la pestaña Clientes. "
   what_is_cvv: "Qué es cw?"
-  pro_details: "Todas las funciones del Plan &quot;Basico&quot; más Automatización de escenarios,SLA específicos por cliente, Horario laboral, Foros, Soporte de la comunidad &amp;amp; por correo."
+  pro_details: "Todas las funciones del Plan &quot;Basico&quot; más Automatización de escenarios,SLA específicos por cliente, Horario laboral, Foros, Soporte de la comunidad y por correo."
   open: Abierto
   zendesk_url: "URL de Zendesk"
   special_beta_offer: "Oferta especial para cuentas Beta"
@@ -2767,7 +2767,7 @@ es:
   feedbackwidget_help_title: "Botón de contacto"
   feedbackwidget_learn_more: "Más información"
   name: Nombre
-  import_user_org_text: "Se importarán todos los usuarios & organizaciones en su cuenta de Zendesk en su cuenta actual de Freshdesk como \"Contactos & Compañías\""
+  import_user_org_text: "Se importarán todos los usuarios & organizaciones en su cuenta de Zendesk en su cuenta actual de Freshdesk como \"Contactos y Compañías\""
   portal_customizer_open_solutions: "Cualquiera puede ver las soluciones públicas"
   portal_customizer_option_solutions: "Los usuarios pueden ver las soluciones públicas sin conectarse"
   portal_customizer_option_auto_suggest_solutions: "Auto-sugerir soluciones cuando el usuario cree un nuevo ticket."
@@ -4923,7 +4923,7 @@ es:
   reply_comment: "Agregar comentarios"
   create_password: "Crear Contraseña"
   retype_password: "Reingresar Contraseña"
-  feedbackwidget_defaulttitle: "Ayuda &amp;amp; Soporte"
+  feedbackwidget_defaulttitle: "Ayuda y Soporte"
   two: "2 Horas"
   set_status_as: "Cambiar estado a"
   trigger_webhook: "Disparador Webhook"
@@ -6162,7 +6162,7 @@ es:
       add_private_note_in_fd: "Agrega una nota privada en Freshdesk."
       add_public_note_in_fd: "Agrega una nota pública en Freshdesk."
     quickbooks:
-      label: "<span class='beta'>Vista previa</span> en QuickBooks"
+      label: QuickBooks
       desc: "Consulta los detalles del cliente, facturas y agrega entradas de la hoja de tiempos a la cuenta en línea de QuickBooks."
       connect_text: "La conexión con QuickBooks facilita que los agentes accedan a los datos y los actualicen desde el servicio de ayuda."
       remote_configurations:
@@ -6250,7 +6250,7 @@ es:
         google_calendar_settings: "Configuración del calendario de Google"
     batchbook:
       label: Batchbook
-      helptext: "<h4>Integración de Batchbook</h4><p><br>Enlaza tu cuenta de Batchbook con Freshdesk para mostrar la información de contacto en las páginas de Contactos y Tickets. Especifica tu clave de dominio y API en esta página para configurar la integración. <br><br>Freshdesk obtiene el nombre, título, compañía, dirección, número de teléfono y &amp; Móvil de Batchbook y la pone a disposición de los agentes.<br><br>Puedes buscar contactos de Batchbook usando sus direcciones de correo electrónico. Si existen múltiples contactos con la misma dirección, se mostrarán todos en una lista.</p><br/> "
+      helptext: "<h4>Integración de Batchbook</h4><p><br>Enlaza tu cuenta de Batchbook con Freshdesk para mostrar la información de contacto en las páginas de Contactos y Tickets. Especifica tu clave de dominio y API en esta página para configurar la integración. <br><br>Freshdesk obtiene el nombre, título, compañía, dirección, número de teléfono y Móvil de Batchbook y la pone a disposición de los agentes.<br><br>Puedes buscar contactos de Batchbook usando sus direcciones de correo electrónico. Si existen múltiples contactos con la misma dirección, se mostrarán todos en una lista.</p><br/> "
       desc: "Traiga información de contacto de su cuenta en Batchbook Freshdesk"
       detect_error: "Imposible de detectar version de Batchbook, Porfavor verifique el dominio"
       form:

@@ -439,7 +439,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_invalid_due_by_and_cc_emails_count
     cc_emails = []
-    51.times do
+    50.times do
       cc_emails << Faker::Internet.email
     end
     params = ticket_params_hash.merge(due_by: 30.days.ago.iso8601, cc_emails: cc_emails)
@@ -2108,7 +2108,7 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(per_page: 50)
     assert_response 200
     response = parse_response @response.body
-    assert_equal Helpdesk::Ticket.where(deleted: 0, spam: 0).count, response.size
+    assert_equal Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month).count, response.size
 
     Agent.any_instance.stubs(:ticket_permission).returns(3)
     get :index, controller_params
@@ -2116,7 +2116,7 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(responder_id: @agent.id)
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(responder_id: @agent.id, created_at: Time.zone.now)
     get :index, controller_params
     assert_response 200
     Agent.any_instance.unstub(:ticket_permission)
@@ -2191,13 +2191,43 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.size
   end
 
+  def test_index_with_default_filter
+    Helpdesk::Ticket.update_all(created_at: 2.months.ago)
+    Helpdesk::Ticket.first.update_attributes(created_at: 1.months.ago,
+                                             deleted: false, spam: false)
+    get :index, controller_params
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  end
+
+   def test_index_with_default_filter_order_type
+    Helpdesk::Ticket.update_all(created_at: 2.months.ago)
+    Helpdesk::Ticket.first.update_attributes(created_at: 1.months.ago,
+                                             deleted: false, spam: false)
+    get :index, controller_params(order_type: 'asc')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  end
+
+  def test_index_with_default_filter_order_by
+    Helpdesk::Ticket.update_all(created_at: 2.months.ago)
+    Helpdesk::Ticket.first(2).each {|x| x.update_attributes(created_at: 1.months.ago,
+                                             deleted: false, spam: false) }
+    get :index, controller_params(order_by: 'status')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 2, response.size
+  end
+
   def test_index_with_spam
     get :index, controller_params(filter: 'spam')
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    Helpdesk::Ticket.first.update_attributes(spam: true)
+    Helpdesk::Ticket.first.update_attributes(spam: true, created_at: 2.months.ago)
     get :index, controller_params(filter: 'spam')
     assert_response 200
     response = parse_response @response.body
@@ -2209,6 +2239,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.update_column(:deleted, true)
     t.update_column(:spam, true)
+    t.update_column(:created_at, 2.months.ago)
     tkts << t.reload
     get :index, controller_params(filter: 'deleted')
     pattern = []
@@ -2222,7 +2253,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_requester
     Helpdesk::Ticket.update_all(requester_id: User.first.id)
-    create_ticket(requester_id: User.last.id)
+    ticket = create_ticket(requester_id: User.last.id)
+    ticket.update_column(:created_at, 2.months.ago)
     get :index, controller_params(requester_id: "#{User.last.id}")
     assert_response 200
     response = parse_response @response.body
@@ -2439,7 +2471,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_link_header
     create_ticket(requester_id: @agent.id)
-    per_page = Helpdesk::Ticket.where(deleted: 0, spam: 0).count - 1
+    per_page = Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month).count - 1
     get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page

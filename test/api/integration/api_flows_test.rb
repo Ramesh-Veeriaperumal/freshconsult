@@ -808,6 +808,24 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     ApiDiscussions::CategoriesController.any_instance.unstub(:set_time_zone, :notify_new_relic_agent)
   end
 
+  def test_failed_login_count_exceeded_valid_password
+    headers = set_custom_auth_headers(@headers, @agent.email, 'test')
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1) do |original_value, new_value|
+      get 'api/discussions/categories', nil, @headers.merge(headers)
+      assert_response 403
+      assert_equal new_value, @agent.reload.failed_login_count
+      response.body.must_match_json_expression(request_error_pattern('password_lockout'))
+    end
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1) do |original_value, new_value|
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers.merge(headers)
+      assert_response 403
+      assert_equal new_value, @agent.reload.failed_login_count
+      response.body.must_match_json_expression(request_error_pattern('password_lockout'))
+    end
+  end
+
   def test_failed_login_count_exceeded_invalid_password
     headers = set_custom_auth_headers(@headers, @agent.email, 'test1234')
 
@@ -994,6 +1012,6 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert '*', response.headers['Access-Control-Allow-Origin']
     assert 'authorization', response.headers['Access-Control-Allow-Headers']
     assert 'GET, POST, PUT, DELETE, OPTIONS', response.headers['Access-Control-Allow-Methods']
-    assert 'X-Path, X-Method, X-Query-String, X-Ua-Compatible, X-Meta-Request-Version, X-Request-Id, X-Runtime', response.header['Access-Control-Expose-Headers']
+    assert 'X-Path, X-Method, X-Query-String, X-Ua-Compatible, X-Meta-Request-Version, X-Request-Id, X-Runtime, X-RateLimit-Total, X-RateLimit-Remaining, X-RateLimit-Used, X-Freshdesk-API-Version', response.header['Access-Control-Expose-Headers']
   end
 end
