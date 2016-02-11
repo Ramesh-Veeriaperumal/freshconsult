@@ -38,16 +38,11 @@ module ApiWebhooks::Methods
 
   def send_subscribe_events(event_changes)
     evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
-    if redis_key_exists?(Redis::RedisKeys::SUBSCRIBER_SIDEKIQ_ENABLED)
-      Integrations::ApiWebhookRuleWorker.perform_async(
-        {:evaluate_on_id => evaluate_on_id,
-         :current_events => event_changes, 
-         :association => map_class(self.class.name)}
-      )
-    else
-      Resque.enqueue(Workers::Subscriber, {:event_id => evaluate_on_id, :current_events => event_changes, 
-              :association => map_class(self.class.name)})
-    end
+    Integrations::ApiWebhookRuleWorker.perform_async(
+      {:evaluate_on_id => evaluate_on_id,
+       :current_events => event_changes, 
+       :association => map_class(self.class.name)}
+    )
   end
 
   def rule_exists?(constant_rule)
