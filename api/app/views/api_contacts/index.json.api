@@ -14,10 +14,9 @@ JSON.generate(@items.map do |item|
       :time_zone => item.time_zone,
       :twitter_id => item.twitter_id,
       :custom_fields => item.custom_fields,
-      :created_at => item.created_at,
-      :updated_at => item.updated_at
+      :created_at => item.created_at.try(:utc),
+      :updated_at => item.updated_at.try(:utc)
     }
-    response_hash.merge!(deleted: item.deleted) if item.deleted
     response_hash
 end
 )
