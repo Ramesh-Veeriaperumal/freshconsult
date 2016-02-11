@@ -66,7 +66,8 @@ module Redis::RedisKeys
 	FRESHFONE_CALL_NOTE = "FRESHFONE:CALL_NOTE:%{account_id}:%{call_sid}"
 	FACEBOOK_APP_RATE_LIMIT = "FACEBOOK_APP_RATE_LIMIT"
 	FACEBOOK_LIKES          = "FACEBOOK_LIKES"
-
+	FRESHFONE_CALL_QUALITY_METRICS = "FRESHFONE:CALL_QUALITY_METRICS:%{account_id}:%{dial_call_sid}"
+	
 	FRESHFONE_SUPERVISOR_LEG = "FRESHFONE:SUPERVISOR_LEG:%{account_id}:%{user_id}:%{call_sid}"
 	FRESHFONE_PREVIEW_IVR = "FRESHFONE:PREVIEW_IVR:%{account_id}:%{call_sid}"
 	REPORT_STATS_REGENERATE_KEY = "REPORT_STATS_REGENERATE:%{account_id}" # set of dates for which stats regeneration will happen

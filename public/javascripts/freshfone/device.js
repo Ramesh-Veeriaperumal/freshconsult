@@ -74,9 +74,19 @@
 			freshfonecalls.getSavedCallNotes(conn.parameters.From);
 			freshfoneuser.publishLiveCall(dontUpdateCallCount);
 			freshfonecalls.onCallStopSound();
-		});
+				if(freshfone.isCallQualityMetricsEnabled){
+					freshfonecalls.freshfone_monitor = new window.FreshfoneMonitor(conn);
+					freshfonecalls.freshfone_monitor.startLoggingWithInterval();
+				}
+			
+			});
+
+			
 
 		Twilio.Device.disconnect(function (conn) {
+			if(freshfone.isCallQualityMetricsEnabled && freshfonecalls.freshfone_monitor){
+				freshfonecalls.freshfone_monitor.stopLogging();
+			}
 			freshfoneNotification.resetJsonFix();
 			freshfoneDialpadEvents.hideContactDetails();
 			freshfonewidget.resetWidget();
@@ -162,4 +172,10 @@
 		freshfoneuser.tokenRegenerationOn = new Date();
 	}
 	});
+	$(window).on("load", function(){
+		Twilio.Connection.prototype.getMediaStream = function(){
+			return this.mediaStream;
+		}
+	});
+
 }(jQuery));
