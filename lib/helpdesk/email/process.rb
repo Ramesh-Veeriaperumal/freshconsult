@@ -53,7 +53,9 @@ class Helpdesk::Email::Process
     end
     construct_html_param
     if (common_email_data[:from][:email] =~ EMAIL_VALIDATOR).nil?
-      Rails.logger.debug "Invaid email address found in requester details #{common_email_data[:from][:email]}"
+      error_msg = "Invalid email address found in requester details - #{common_email_data[:from][:email]} for account : #{account.id}"
+      Rails.logger.debug error_msg
+      NewRelic::Agent.notice_error(Exception.new(error_msg))
       return
     end
     self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data

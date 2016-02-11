@@ -63,7 +63,7 @@ module Helpdesk::Email::ParseEmailData
 
 	def parse_reply_to_email
 		parsed_reply_to = parse_email_with_domain(params["Reply-To"])
-		self.reply_to_email = parsed_reply_to if parsed_reply_to =~ EMAIL_REGEX
+		self.reply_to_email = parsed_reply_to if parsed_reply_to[:email] =~ EMAIL_REGEX
 	end
 
 	def valid_from_email? f_email
