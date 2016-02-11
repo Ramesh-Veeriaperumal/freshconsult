@@ -29,7 +29,7 @@
           font-size: 1.3rem;
           @include micro-position(10px);
         }
-        .ficon-onhold{ font-size: 1.4em;}
+        .ficon-onhold{ font-size: 1.4rem;}
         .dbicon-red{ color: $icon-color-red;}
         .dbicon-darkred{ color: $icon-color-darkred;}
         .dbicon-orange{ color: $icon-color-orange;}
@@ -44,8 +44,11 @@
         p{ color: $grayLight; font-size: 1em;}
       }
       &:hover{
-        .db-icon-wrap{ background-color: #f2f4f5;}
-        h4{ color: $blue;}
+        .db-icon-wrap{ 
+          background-color: #f2f4f5;
+          box-shadow: inset 0px 0px 0px 1px #ccc;
+        }
+        h4{ color: $linkColor;}
       }
     }
     h4{
@@ -54,7 +57,7 @@
     }
     &:first-child{
       @include border-right(1px #ccc solid);
-      h4{ font-weight: 400;}
+      h4{ font-weight: 400; color: $black;}
       a{ padding-left: 0;}
     }
     &:last-child{
@@ -118,7 +121,8 @@
     border-radius: 30px;
     color: #06c;
     font-weight: 500;
-    margin-bottom: 5px;
+    margin: 10px 0 5px;
+    text-shadow: none;
     font-size: 12px;
     @include box-shadow(1px 2px 2px -1px rgba(204, 204, 204, 0.26));
   }
@@ -145,6 +149,11 @@
     box-sizing: border-box;
     padding-bottom: 20px;
     left: 0;
+  }
+  .widget-activity {
+    .widget-title {
+      border-bottom: 1px solid #eee;
+    }
   }
   .widget-inner{
     background-color: #fff;
@@ -183,7 +192,7 @@
     }
     #load-more{
       border: none;
-      box-shadow: none;
+      box-shadow: 1px 2px 6px #ccc;
       background: none;
       background-color: #fff;
       @extend .widget-more-link;
@@ -358,7 +367,6 @@
 
 // Activity feed
 .activityfeed-wrap{
-  border-top: 1px #f1f1f1 solid;
   overflow-y: auto;
   height: 437px;
   @include scrolling-shadows;
