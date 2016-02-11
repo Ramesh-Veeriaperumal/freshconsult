@@ -10,7 +10,7 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   def new
     @twitter_stream = scoper.new
     @twitter_stream.data = {
-      :kind => STREAM_TYPE[:custom]
+      :kind => TWITTER_STREAM_TYPE[:custom]
     }
     load_ticket_rules
   end
@@ -69,7 +69,7 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
 
 
   def destroy
-    unless @twitter_stream.data[:kind] == STREAM_TYPE[:default]
+    unless @twitter_stream.data[:kind] == TWITTER_STREAM_TYPE[:default]
       flash[:notice] = t('admin.social.flash.stream_deleted', :stream_name => @twitter_stream.name)
       @twitter_stream.destroy
       redirect_to admin_social_streams_url
@@ -97,12 +97,12 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     twitter_data   = @twitter_stream.data
     twitter_handle = @twitter_stream.twitter_handle
     default_search = twitter_handle.formatted_handle unless twitter_handle.nil?
-    if(twitter_data[:kind] == STREAM_TYPE[:default] && !twitter_stream_params[:includes].include?(default_search))
+    if(twitter_data[:kind] == TWITTER_STREAM_TYPE[:default] && !twitter_stream_params[:includes].include?(default_search))
       twitter_stream_params[:includes] << default_search
     end
 
     #check for default handle assoc
-    twitter_stream_params.merge!({:social_id => twitter_handle.id}) if twitter_data[:kind] == STREAM_TYPE[:default]
+    twitter_stream_params.merge!({:social_id => twitter_handle.id}) if twitter_data[:kind] == TWITTER_STREAM_TYPE[:default]
     
     unless twitter_stream_params[:includes].empty?
       unless @twitter_stream.update_attributes(twitter_stream_params)
@@ -178,7 +178,7 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   def gnip_data
    {
       :data => {
-        :kind => STREAM_TYPE[:custom]
+        :kind => TWITTER_STREAM_TYPE[:custom]
       }
     }
   end

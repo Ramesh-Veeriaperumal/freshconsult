@@ -201,12 +201,14 @@ if Integrations::Application.count == 0
     s.description = "integrations.sugarcrm.desc" 
     s.account_id = 0
     s.listing_order = 7
-    s.options = {
-        :keys_order => [:domain, :username, :password], 
-        :domain => { :type => :text, :required => true, :label => "integrations.sugarcrm.form.domain", :info => "integrations.sugarcrm.form.domain_info", :validator_type => "url_validator" }, 
-        :username => { :type => :text, :required => true, :label => "integrations.sugarcrm.form.username" },
-        :password => { :type => :password, :label => "integrations.sugarcrm.form.password", :encryption_type => "md5" }
-    }
+    s.options = {:direct_install => true,
+                 :auth_url => "/integrations/sugarcrm/settings",
+                 :edit_url => "/integrations/sugarcrm/edit",
+                 :default_fields => { :account => ["Name:"], 
+                                      :contact => ["Name:"],
+                                      :lead => ["Name:"]  
+                                    }
+               }
     s.application_type = "sugarcrm"
   end
 

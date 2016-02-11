@@ -1,6 +1,5 @@
 class Social::TwitterController < Social::BaseController
   include Social::Stream::Interaction
-  include Social::Dynamo::Twitter
   include Social::Twitter::Util
   include Conversations::Twitter
   include Social::Twitter::TicketActions
@@ -176,7 +175,8 @@ class Social::TwitterController < Social::BaseController
     if has_permissions?(params[:search_type], @stream_id)
       twt_handle = @stream.twitter_handle unless @stream.nil?
       @social_error_msg, favourite_status = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:favorite])
-      update_favorite_in_dynamo(@stream_id, @feed_id, 1) if @social_error_msg.nil? 
+      dynamo_helper = Social::Dynamo::Twitter.new
+      dynamo_helper.update_favorite_in_dynamo(@stream_id, @feed_id, 1) if @social_error_msg.nil? 
       if favourite_status.blank?
         flash.now[:notice] = @social_error_msg if @social_error_msg
         mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:favorite_error]
@@ -201,7 +201,8 @@ class Social::TwitterController < Social::BaseController
     if has_permissions?(params[:search_type], @stream_id)
       twt_handle = @stream.twitter_handle unless @stream.nil?
       @social_error_msg, unfavourite_status = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:unfavorite])
-      update_favorite_in_dynamo(@stream_id, @feed_id, 0) if not_valid_error?(@social_error_msg)
+      dynamo_helper = Social::Dynamo::Twitter.new
+      dynamo_helper.update_favorite_in_dynamo(@stream_id, @feed_id, 0) if not_valid_error?(@social_error_msg)
       if unfavourite_status.blank? 
         flash.now[:notice] = @social_error_msg unless not_valid_error?(@social_error_msg)
         mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:unfavorite_error]
@@ -419,7 +420,7 @@ class Social::TwitterController < Social::BaseController
           update_dynamo_for_tweet(twt, in_reply_to, params[:stream_id], nil)
         elsif params[:search_type] == SEARCH_TYPE[:custom]
           reply_params = agent_reply_params(twt, in_reply_to, nil)
-          update_custom_streams_reply(reply_params, params[:stream_id], nil)
+          Social::Dynamo::Twitter.new.update_custom_streams_reply(reply_params, params[:stream_id], nil)
         end
         MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
       else

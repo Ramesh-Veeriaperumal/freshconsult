@@ -7,7 +7,7 @@ module Social::Twitter::Constants
   GNIP_DISCONNECT_LIST = "gnip_disconnect"
 
   #Stream and Ticket Rule type
-  STREAM_TYPE = {
+  TWITTER_STREAM_TYPE = {
     :default => "Mention",
     :dm => "DM",
     :custom => "Custom"

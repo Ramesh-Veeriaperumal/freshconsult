@@ -37,7 +37,7 @@ RSpec.describe "Social::Stream::Workers::Twitter" do
       search_object = sample_search_results_object
       search_object.attrs[:statuses].first[:text] << " #{@handle.screen_name}"
       Twitter::REST::Client.any_instance.stubs(:search).returns(search_object)
-      Social::Workers::Stream::Twitter.perform({:account_id => @account.id })
+      Social::CustomTwitterWorker.new.perform
       hash_key = "#{@account.id}_#{@default_stream.id}"
       range_key = search_object.attrs[:statuses].first[:id_str]
       posted_time = search_object.attrs[:statuses].first[:created_at]

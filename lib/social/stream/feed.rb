@@ -61,8 +61,8 @@ class Social::Stream::Feed
     schema     = TABLES["feeds"][:schema]
     limit      = NUM_RECORDS_TO_DISPLAY
     results = Social::DynamoHelper.query(table_name, hash_key, range_key, schema, limit, false)
-    unless results[:member].nil?
-      stream_feeds = results[:member].inject([]) do |arr, result_data|
+    unless results.blank?
+      stream_feeds = results.inject([]) do |arr, result_data|
         if result_data["source"] and result_data["source"][:s] == SOURCE[:twitter]
           arr << Social::Stream::TwitterFeed.new(result_data.symbolize_keys!)
         end

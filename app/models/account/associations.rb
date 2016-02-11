@@ -187,6 +187,7 @@ class Account < ActiveRecord::Base
   has_many :tweets, :class_name =>'Social::Tweet'
   has_many :social_streams, :class_name => 'Social::Stream'
   has_many :twitter_streams, :class_name => 'Social::TwitterStream'
+  has_many :facebook_streams, :class_name => 'Social::FacebookStream'
 
   has_many :surveys
   has_many :survey_handles, :through => :surveys

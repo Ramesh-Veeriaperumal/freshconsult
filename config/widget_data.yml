@@ -71,12 +71,11 @@
 - options: 
     display_in_pages: 
     - contacts_show_page_side_bar
-
   script: |-
-          <script type="text/javascript">
-              CustomWidget.include_js("/javascripts/integrations/sugarcrm.js");
-              sugarcrmBundle={domain:"{{sugarcrm.domain}}", reqEmail:"{{requester.email}}", username:"{{sugarcrm.username}}", password:"{{sugarcrm.password}}"} 
-          </script>
+         <script type="text/javascript">
+             sugarcrmBundle={domain:"{{sugarcrm.domain}}", reqEmail:"{{requester.all_emails}}", reqCompanyId:"{{requester.company.id}}", account_labels:"{{sugarcrm.account_labels | escape_html}}", contact_labels:"{{sugarcrm.contact_labels | escape_html}}", lead_labels:"{{sugarcrm.lead_labels | escape_html}}", accounts:"{{sugarcrm.accounts | escape_html}}", contacts:"{{sugarcrm.contacts | escape_html}}", leads:"{{sugarcrm.leads | escape_html}}"} ;
+             Fjax.Assets.integration('sugarcrm', function() { new SugarWidget(sugarcrmBundle); });
+         </script>
   name: sugarcrm_widget
   id: 5
   description: sugarcrm.widgets.sugarcrm_widget.description

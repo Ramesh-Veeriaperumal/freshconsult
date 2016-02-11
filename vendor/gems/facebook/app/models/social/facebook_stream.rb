@@ -14,15 +14,19 @@ class Social::FacebookStream < Social::Stream
   end
   
   def import_visitor_posts?
-    self.facebook_page.import_visitor_posts if self.facebook_page and default_stream?
+     default_stream? and self.facebook_page and self.facebook_page.import_visitor_posts
   end
 
   def import_company_posts?
-    self.facebook_page.import_company_posts if self.facebook_page and default_stream?
+    default_stream? and self.facebook_page and self.facebook_page.import_company_posts
   end
 
   def default_stream?
-    self.data[:kind] == STREAM_TYPE[:default]
+    self.data[:kind] == FB_STREAM_TYPE[:default]
+  end
+  
+  def dm_stream?
+    self.data[:kind] == FB_STREAM_TYPE[:dm]
   end
   
   def check_ticket_rules(feed, allow_empty_rule = false)

@@ -1,48 +1,69 @@
-class Facebook::KoalaWrapper::Comment
+module Facebook
+  module KoalaWrapper
+    class Comment < Facebook::KoalaWrapper::Feed
 
-  include Facebook::Core::Util
-  include Facebook::Constants
-  include Social::Util
+      attr_accessor :feed_id, :feed_type, :description_html, :comments_count, :post_type,
+                :object_link, :parent, :parent_post_id, :can_comment
 
-  attr_accessor :comment, :comment_id, :requester, :feed_type, :description, :description_html, :created_at, 
-                 :parent, :subject, :parent_post, :comments, :can_comment, :post_type
+                 
+      alias_attribute :comment,     :feed
+      alias_attribute :comment_id,  :feed_id
+      alias_attribute :in_reply_to, :parent_post_id
+      
+      FIELDS = "#{COMMENT_FIELDS}, comments.fields(#{COMMENT_FIELDS})"
+      
+      def fetch(comment_id)
+        @feed = @rest.get_object(comment_id, :fields => FIELDS)
+        parse if @feed
+      end
 
-  alias_attribute :feed_id, :comment_id
-  
-  FIELDS = "#{COMMENT_FIELDS}, comments.fields(#{COMMENT_FIELDS})"
-
-
-  def initialize(fan_page)
-    @account          = fan_page.account
-    @fan_page         = fan_page
-    @rest             = Koala::Facebook::API.new(fan_page.page_token)
-    @comments         = []
-  end
-
-  def fetch(comment_id)
-    @comment = @rest.get_object(comment_id, :fields => FIELDS)
-    parse if @comment
-  end
-
-  def parse
-    @comment            =  @comment.symbolize_keys!
-    @comment[:message]  =  remove_utf8mb4_char(@comment[:message])
-    @comment_id         =  @comment[:id]
-    @requester          =  @comment[:from]
-    @feed_type          =  @comment[:attachment][:type] if @comment[:attachment]
-    @description        =  @comment[:message]
-    @description_html   =  html_content_from_comment(@comment)
-    @created_at         =  Time.zone.parse(@comment[:created_time])
-    @parent             =  @comment[:parent].symbolize_keys! if (@comment[:parent] and @comment[:parent][:id]!="0")
-    @subject            =  truncate_subject(@description, 100)
-    @comments           =  @comment[:comments]["data"] if @comment[:comments]
-    @can_comment        =  @comment[:can_comment]
-    @post_type          =  @parent.blank? ? POST_TYPE_CODE[:comment] : POST_TYPE_CODE[:reply_to_comment]
-    @parent_post        =  @comment[:object] ? "#{@fan_page.page_id}_#{@comment[:object]['id']}" : "#{@fan_page.page_id}_#{@comment[:id].split('_').first}"
-  end
-
-  def visitor_post?
-    @requester["id"] != @fan_page.page_id.to_s
+      def parse
+        super
+        @feed_type         =  @feed[:attachment][:type] if @feed[:attachment]
+        @description_html  =  html_content_from_comment(@feed)
+        @parent            =  @feed[:parent].symbolize_keys! if @feed[:parent]
+        @parent_post_id    =  @feed[:object] ? "#{@fan_page.page_id}_#{@feed[:object][:id]}" : 
+                                      "#{@fan_page.page_id}_#{@feed[:id].split('_').first}"
+        @can_comment       =  @feed[:can_comment]
+        @post_type         =  @parent.blank? ? POST_TYPE_CODE[:comment] : POST_TYPE_CODE[:reply_to_comment]
+        @object_link       =  @feed[:attachment][:media][:image][:src] if @feed[:attachment] and @feed[:attachment][:media]
+      end
+    end
+    
+    def fetch_comment_from_db(comment_id)
+      fb_comment  = Account.current.facebook_posts.find_by_post_id(comment_id)
+      if fb_comment
+        comment   = comment_from_db(fb_comment, true)    
+        
+        fb_comment.children.each do |fb_reply|
+          parent = {:id => comment[:id]}
+          comment[:comments][:data] << reply_from_db(fb_reply, false, parent)
+        end
+        
+        self.feed = comment
+        parse  
+      end
+    end
+    
+    def fetch_comment_from_dynamo(comment_id)
+      comment_feeds = dynamo_helper.fetch_feeds(comment_id, @fan_page.default_stream.id)  
+      
+      fb_comments   = comment_feeds.select{|feed| feed["type"][:ss][0] == POST_TYPE[:comment]}
+      fb_replies    = comment_feeds.select{|feed| feed["type"][:ss][0] == POST_TYPE[:reply_to_comment]}
+      
+      comment       = comment_from_dynamo(fb_comment, POST_TYPE[:comment], true)    
+      
+      replies.each do |reply|
+        parent = {:id => comment[:id]}
+        comment[:comments][:data] <<  reply_from_dynamo(reply, POST_TYPE[:reply_to_comment], false, parent)
+      end
+      comment[:comments][:data] << comment          
+      
+      self.feed = comment
+      parse  
+    end
+    
   end
 end
-  
+
+ 

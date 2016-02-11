@@ -90,7 +90,7 @@ RSpec.describe Helpdesk::ConversationsController do
         twitter_dm = Twitter::DirectMessage.new(sample_dm)
         twitter_dm_array = [twitter_dm]
         Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-        Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+        Social::TwitterWorker.new.perform
         tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
         tweet.should_not be_nil
         tweet.is_ticket?.should be true

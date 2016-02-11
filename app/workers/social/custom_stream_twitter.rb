@@ -3,8 +3,8 @@ class Social::CustomStreamTwitter
   def initialize(msg)
     account = Account.current
     twitter_streams = account.twitter_streams
-    if msg[:stream_id]
-      streams = [twitter_streams.find_by_id(msg[:stream_id])]
+    if msg['stream_id']
+      streams = [twitter_streams.find_by_id(msg['stream_id'])]
     else
       streams = select_non_gnip_streams(twitter_streams)
     end

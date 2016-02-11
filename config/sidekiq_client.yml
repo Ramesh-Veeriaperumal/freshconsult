@@ -27,6 +27,7 @@ defaults: &defaults
     - [twitter]
     - [premium_twitter]
     - [trial_facebook]
+    - [facebook_delta]
     - [trial_twitter]
     - [custom_twitter]
     - [rabbitmq_publish]
@@ -77,6 +78,8 @@ defaults: &defaults
     - [trial_dispatcher]
     - [free_dispatcher]
     - [active_dispatcher]
+    - [merge_tickets]
+    - [merge_tickets_attachments]
 
 development:
   <<: *defaults
