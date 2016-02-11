@@ -52,7 +52,10 @@ window.App = window.App || {};
 			this.onVisit(data);
 		},
 		onVisit: function (data) {
-			// Call Old Dashboard init function
+
+			if(App.namespace != "helpdesk/dashboard/index") {
+				return false;
+			}
 
 			setTimeout(function() {
 			  $('#quests-section-container, #mini-leaderboard, #Activity, #sales-manager-container, #moderation-stats').trigger('afterShow');
