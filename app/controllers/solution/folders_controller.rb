@@ -9,8 +9,7 @@ class Solution::FoldersController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
   before_filter :set_selected_tab, :page_title
-  before_filter :load_category, :only => [:new, :show, :edit, :create]
-  before_filter :load_meta, :only => [:edit, :update]
+  before_filter :load_meta, :only => [:edit, :update, :show]
   # to be done!
   before_filter :validate_and_set_customers, :only => [:create, :update]
   before_filter :set_parent_for_old_params, :only => [:create, :update]
@@ -28,7 +27,7 @@ class Solution::FoldersController < ApplicationController
     @page_title = @folder.name
     respond_to do |format|
       format.html {
-        redirect_to solution_my_drafts_path('all') if @folder.is_default?
+        redirect_to solution_my_drafts_path('all') if @folder.solution_category_meta.is_default?
       }
       format.xml  { render :xml => @folder.to_xml(:include => [:articles]) }
       format.json { render :json => @folder.as_json(:include => [:articles]) }
@@ -40,7 +39,10 @@ class Solution::FoldersController < ApplicationController
     @page_title = t("header.tabs.new_folder")
     @folder_meta = current_account.solution_folder_meta.new
     @folder = @folder_meta.solution_folders.new
-    @folder_meta.solution_category_meta_id = @category.id if params[:category_id]
+    if params[:category_id].present?
+      @category_meta = current_account.solution_category_meta.find_by_id(params[:category_id]) 
+      @folder_meta.solution_category_meta_id = (@category_meta || {})[:id]
+    end
     respond_to do |format|
       format.html { render :layout => false if @modal }
       format.xml  { render :xml => @folder }
@@ -65,7 +67,7 @@ class Solution::FoldersController < ApplicationController
 
   def create
     @folder = Solution::Builder.folder(params)
-    @category ||= @folder.solution_category_meta
+    @category_meta ||= @folder.solution_category_meta
    
     respond_to do |format|
       if @folder.errors.empty?
@@ -151,7 +153,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def load_meta
-    @folder_meta = meta_scoper.find_by_id(params[:id])
+    @folder_meta = meta_scoper.find_by_id!(params[:id])
     @category_meta = @folder_meta.solution_category_meta
   end 
   
@@ -183,17 +185,6 @@ class Solution::FoldersController < ApplicationController
 
     def portal_scoper
       current_portal.solution_categories
-    end
-
-    def load_category
-      @category = current_account.solution_category_meta.find_by_id!(params[:category_id]) if params[:category_id]
-    end
-
-    def fetch_new_category
-      if params[:solution_folder][:category_id]
-        @new_category = current_account.solution_categories.find_by_id(params[:solution_folder][:category_id])
-      end
-      @new_category ||= @category
     end
 
     def validate_and_set_customers
