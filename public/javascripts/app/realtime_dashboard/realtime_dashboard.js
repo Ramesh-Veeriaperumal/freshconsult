@@ -299,9 +299,8 @@ window.App = window.App || {};
 			this.constructChart('Bar', key, '.unresolved_tickets', this.tickets_data.widgets[key], 0);
 		},
 		scrollTopOnLoadMore: function (){
-			var $ele = $("#activity-feed");
-			
-			$ele.mCustomScrollbar("scrollTo", "bottom", 300);
+
+			$("#activityfeed").mCustomScrollbar("scrollTo","-=300");
 		},
 		destroy: function () {
 			clearInterval(this.interval);
