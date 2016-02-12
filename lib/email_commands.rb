@@ -11,7 +11,7 @@ module EmailCommands
       email_cmds_regex = get_email_cmd_regex(ticket.account)
       if email_cmds_regex && (content =~ email_cmds_regex)
         custom_ff_fields = {}
-        email_cmds = $1.gsub("\\r\\n","").gsub("\\n","").gsub(/[”“]/,'"').gsub("\r\n","") unless $1.blank?
+        email_cmds = $1.gsub("\\r\\n","").gsub("\\n","").gsub(/[”“]/,'"').gsub("\r\n","").gsub("\n", "").gsub("\r", "") unless $1.blank?
         cmds = ActiveSupport::JSON.decode("{ #{email_cmds} }")  
         Rails.logger.debug "The email commands are : #{cmds.inspect}"
         cmds.each_pair do |cmd, value|
@@ -20,7 +20,7 @@ module EmailCommands
             if respond_to?(cmd)
               send(cmd,ticket,value,user, note)
             elsif !ticket.respond_to?(cmd)
-              custom_field = ticket.account.ticket_fields.find_by_label(cmd)
+              custom_field = ticket.account.ticket_fields_with_nested_fields.find_by_label(cmd)
               custom_ff_fields[custom_field.name.to_sym] = value if custom_field.present?
             end                
           rescue Exception => e
@@ -43,6 +43,7 @@ module EmailCommands
   end
 
   def source(ticket, value, user, note)
+    value.downcase!
     ticket.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[value.to_sym] unless TicketConstants::SOURCE_KEYS_BY_TOKEN[value.to_sym].blank?    
   end
 
@@ -57,6 +58,7 @@ module EmailCommands
   end
   
   def priority(ticket, value, user, note)
+    value.downcase!
     ticket.priority = TicketConstants::PRIORITY_KEYS_BY_TOKEN[value.to_sym] unless TicketConstants::PRIORITY_KEYS_BY_TOKEN[value.to_sym].blank?
   end
   
@@ -67,6 +69,7 @@ module EmailCommands
   end
 
   def action(ticket,value,user, note)
+    value.downcase!
     if !note.nil? && (value == "note")
       note.private = true
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]

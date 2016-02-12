@@ -27,7 +27,7 @@ class Auth::MagentoAuthenticator < Auth::Authenticator
         installed_app = account.installed_applications.with_name(Integrations::Constants::APP_NAMES[:magento]).first
         env['omniauth.strategy'].options[:consumer_key] = installed_app.configs[:inputs]["shops"][shop_no]["consumer_token"]
         env['omniauth.strategy'].options[:consumer_secret] = installed_app.configs[:inputs]["shops"][shop_no]["consumer_secret"]
-        env['omniauth.strategy'].options[:client_options]["site"] = installed_app.configs[:inputs]["shops"][shop_no]["shop_url"]
+        env['omniauth.strategy'].options[:client_options]["site"] = installed_app.configs[:inputs]["shops"][shop_no]["admin_url"]
       end  
     }
   end

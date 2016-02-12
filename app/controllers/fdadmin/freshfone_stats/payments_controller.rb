@@ -1,10 +1,15 @@
-class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
+class Fdadmin::FreshfoneStats::PaymentsController < Fdadmin::DevopsMainController
+
+  include Fdadmin::FreshfoneStatsMethods
  
-  around_filter :select_slave_shard , :only => :request_csv_by_account
-  
+  around_filter :select_slave_shard , :only => [:request_csv_by_account]
   def statistics
 		stats = {}
-    stats[:payments] = cumulative_result(Sharding.run_on_all_slaves { ActiveRecord::Base.connection.execute(freshfone_payments) })
+    @promotional_credits = []
+    @refunded_credits = []
+    @other_credits = []
+    all_credits_type(Sharding.run_on_all_slaves { ActiveRecord::Base.connection.execute(freshfone_payments) })
+    stats = {:payments => @other_credits, :promotional => @promotional_credits, :refunded => @refunded_credits}
     stats[:signups] = cumulative_result(Sharding.run_on_all_slaves { ActiveRecord::Base.connection.execute(freshfone_signups) })
     respond_to do |format|
       format.json do
@@ -24,14 +29,13 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
   private
     def freshfone_payments
       #INTERVAL 1 DAY
-      "SELECT accounts.id, accounts.name, 
+      "SELECT accounts.id as 'account_id', accounts.name, 
       freshfone_payments.purchased_credit AS 'credits', freshfone_payments.created_at, freshfone_payments.status,
       freshfone_payments.status_message, freshfone_payments.id
       FROM freshfone_payments 
       JOIN accounts ON freshfone_payments.account_id = accounts.id 
-      JOIN subscriptions ON subscriptions.account_id = accounts.id 
-      WHERE freshfone_payments.created_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) AND
-      subscriptions.state = 'active' 
+      JOIN subscriptions ON subscriptions.account_id = accounts.id  AND subscriptions.state = 'active'
+      WHERE freshfone_payments.created_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY)
       ORDER BY freshfone_payments.created_at DESC LIMIT 10"
     end
 
@@ -52,9 +56,10 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
       freshfone_payments.status_message, freshfone_payments.id AS 'pay_id'
       FROM freshfone_payments 
       JOIN accounts ON freshfone_payments.account_id = accounts.id 
-      JOIN subscriptions ON subscriptions.account_id = accounts.id 
+      JOIN subscriptions ON subscriptions.account_id = accounts.id AND subscriptions.state = 'active'
       WHERE freshfone_payments.created_at >= '"+start_date+"' AND freshfone_payments.created_at <= '"+end_date+"'   
-      AND subscriptions.state = 'active'
+      AND (freshfone_payments.status_message NOT IN  ('promotional', 'refunded') 
+      OR freshfone_payments.status_message IS NULL)
       ORDER BY freshfone_payments.created_at DESC"
     end
 
@@ -70,11 +75,11 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
 
     def freshfone_call_charges_in_date_range(start_date,end_date)
       "SELECT accounts.id ,accounts.name,COUNT(*),SUM(call_cost) FROM freshfone_calls 
-       JOIN accounts ON freshfone_calls.account_id = accounts.id 
-       JOIN subscriptions ON subscriptions.account_id = accounts.id 
-       WHERE freshfone_calls.created_at >= '"+start_date+"' AND freshfone_calls.created_at <= '"+end_date+"'
-       AND subscriptions.state = 'active' 
-       GROUP BY subscriptions.account_id"
+      JOIN accounts ON freshfone_calls.account_id = accounts.id 
+      JOIN subscriptions ON subscriptions.account_id = accounts.id 
+      WHERE freshfone_calls.created_at >= '"+start_date+"' AND freshfone_calls.created_at <= '"+end_date+"'
+      AND subscriptions.state = 'active' 
+      GROUP BY subscriptions.account_id"
     end
 
     def all_accounts_results(startDate,endDate)
@@ -83,7 +88,7 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
   
         when "payments"
           payment_query = freshfone_payments_in_date_range(startDate,endDate)
-          payment_list = get_all_payments_list(payment_query)
+          payment_list = get_all_payments_list(Sharding.run_on_all_slaves { ActiveRecord::Base.connection.execute(payment_query)})
           generate_email(payment_list,payment_csv_columns)
 
          when "signups"
@@ -95,57 +100,57 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
           charges_query = freshfone_call_charges_in_date_range(startDate,endDate)
           call_cost_list  = cumulative_result(Sharding.run_on_all_slaves { ActiveRecord::Base.connection.execute(charges_query) })
           generate_email(call_cost_list,cost_csv_columns)
-
-        end
-    
+      end
     end
     
     def single_account_results(startDate, endDate)
       
       return invalid_account if account.nil?
       
+      payment_conditions = ['created_at > ? and created_at < ? and (status_message NOT in (?,?) or status_message IS NULL)', startDate, endDate,'promotional','refunded']
       conditions = ['created_at > ? and created_at < ?', startDate, endDate]
 
       case params[:export_type]
       
         when "payments"
          
-          payments = account.freshfone_payments.where(conditions) 
+          payments = account.freshfone_payments.where(payment_conditions) 
           payment_list = single_account_payment_list(payments) 
           generate_email(payment_list,payment_csv_columns)
         
         when "calldetails"  
           calls = account.freshfone_calls.where(conditions)
-
           render :json => {:call_details => { :count => calls.count , :cost => calls.sum(:call_cost).to_s  }}
-      
-      end
-    
+      end  
     end
 
-    def get_all_payments_list(payment_query, total_result = [])
-       Sharding.run_on_all_slaves {
-        results = ActiveRecord::Base.connection.execute(payment_query)
-        results.each(:as => :hash) do  |result| 
+    def get_all_payments_list(resultset, total_result = [])
+      resultset.each do |results|
+        results.each(:as => :hash) do |result| 
             total_result <<  [result['id'],
                               result['name'],
                               result['credits'],
-                              result['status'] == 1 ? "Success": "Failed" ,
+                              "#{result['status']}".to_bool ? "Success" : "Failed",
                               result['created_at'],
                               result['status_message'],
                               result['pay_id']]
-                             end
-      }
-      total_result
-    end
-
-    def cumulative_result(resultset, total_result = [])
-      resultset.each do |results|
-        results.each do |result|
-          total_result << result
         end
       end
       total_result
+    end
+
+    def all_credits_type(resultset)
+      resultset.each do |results|
+        results.each(:as => :hash) do |results|
+          if results['status_message'] == 'promotional'
+            @promotional_credits << results
+          elsif results['status_message'] == 'refunded'
+            @refunded_credits << results
+          else
+            @other_credits << results
+          end
+        end
+      end
     end
 
     def single_account_payment_list(list, payments=[])
@@ -157,37 +162,8 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
                       payment.created_at.utc,
                       payment.status_message,
                       payment.id ]
-       end
-       payments
-    end
-
-    def account
-       @account ||= Account.find_by_id(params[:account_id])     
-    end
-
-    def generate_email(list,csv_columns)
-      if list.blank?
-        render :json => {:empty => true} 
-      else
-        csv_string = generate_csv(list,csv_columns)  
-        email_csv(csv_string,params)
-
-        render :json => {:status => true}
-      end 
-    end
-
-    def generate_csv(full_list,csv_columns)
-      csv_string = CSVBridge.generate do |csv|
-        csv << csv_columns
-        list_length = full_list.length - 1
-       (0..list_length).each do |index|
-          csv<< full_list[index] 
-        end
       end
-    end
-
-    def email_csv(csv_string, mail_params)
-      FreshopsMailer.freshfone_stats_summary_csv(mail_params,csv_string)
+      payments
     end
 
     def invalid_account

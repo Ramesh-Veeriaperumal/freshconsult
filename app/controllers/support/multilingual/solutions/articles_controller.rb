@@ -20,4 +20,14 @@ class Support::Multilingual::Solutions::ArticlesController < Support::Solutions:
         end
       end
     end
+    
+    def article_visible?
+      return false unless (((current_user && current_user.agent? && privilege?(:view_solutions)) || @article.current_article.published?) and @article.visible_in?(current_portal))
+      draft_preview_agent_filter?
+    end
+    
+    def draft_preview_agent_filter?
+      return (current_user && current_user.agent? && (@article.draft.present? || !@article.current_article.published?) && privilege?(:view_solutions)) if draft_preview?
+      true
+    end
 end

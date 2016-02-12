@@ -251,4 +251,24 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
   end
+
+  def test_cc_emails_notified
+    Delayed::Job.delete_all
+    cc_emails = [Faker::Internet.email, Faker::Internet.email]
+    subject = Faker::Lorem.words(10).join(' ')
+    description = Faker::Lorem.paragraph
+    email = Faker::Internet.email
+    tags = [Faker::Name.name, Faker::Name.name]
+    @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
+    params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
+                    priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
+                    due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @create_group.id }
+    headers, params = encode_multipart(params_hash, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
+    skip_bullet do
+      post '/api/tickets', params, @headers.merge(headers)
+    end
+    assert Delayed::Job.last.handler.include?("send_cc_email")
+    10.times do Delayed::Job.reserve_and_run_one_job end
+    assert_equal 0, Delayed::Job.count
+  end
 end
