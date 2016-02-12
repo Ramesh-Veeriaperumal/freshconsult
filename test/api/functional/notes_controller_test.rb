@@ -215,7 +215,7 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_reply_with_invalid_cc_emails_count
     cc_emails = []
-    51.times do
+    50.times do
       cc_emails << Faker::Internet.email
     end
     params = reply_note_params_hash.merge(cc_emails: cc_emails, bcc_emails: cc_emails)

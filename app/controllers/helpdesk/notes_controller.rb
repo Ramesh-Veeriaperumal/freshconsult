@@ -7,7 +7,7 @@ class Helpdesk::NotesController < ApplicationController
   include HelpdeskControllerMethods
   include ParserUtil
   include Conversations::Twitter
-  include Facebook::Core::Util
+  include Facebook::TicketActions::Util
   include Helpdesk::Activities
   
   skip_before_filter :build_item, :only => [:create]

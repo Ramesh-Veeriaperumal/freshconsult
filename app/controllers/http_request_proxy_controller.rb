@@ -45,6 +45,12 @@ class HttpRequestProxyController < ApplicationController
           params[:password] = "x"
         elsif params[:build_auth_header].present?
           params[:custom_auth_header] = { "Authorization" => "#{params[:token_type]} #{installed_app.configs[:inputs]['oauth_token']}" }
+        elsif params[:app_name] == APP_NAMES[:sugarcrm]
+          company_name = ""
+          if params[:company_id].present?
+            company_name = spl_char_replace current_account.customers.find(params[:company_id]).name
+          end
+    		  params[:body] = params[:body] % { :SESSION_ID => installed_app.configs[:inputs]['session_id'], :company_name => company_name}
         else
           params[:password] = installed_app.configsdecrypt_password
         end

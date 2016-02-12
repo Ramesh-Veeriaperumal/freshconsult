@@ -113,7 +113,7 @@ module AgentsHelper
   
   def last_active_tooltip(agent)
     if agent.last_active_at
-      "class='tooltip' title='#{t('agent.last_active_at')} #{formated_date(agent.last_active_at, format: :short_day_with_week)}'"
+      "class='tooltip' title='#{t('agent.last_seen_at')} #{formated_date(agent.last_active_at, format: :short_day_with_week)}'"
     else
       "class='faded'"
     end

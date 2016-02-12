@@ -45,7 +45,7 @@ RSpec.describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+    Social::TwitterWorker.new.perform
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
@@ -68,7 +68,7 @@ RSpec.describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+    Social::TwitterWorker.new.perform
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
@@ -83,7 +83,7 @@ RSpec.describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+    Social::TwitterWorker.new.perform
 
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
@@ -107,7 +107,7 @@ RSpec.describe Social::Gnip::TwitterFeed do
     twitter_dm_array = [twitter_dm2, twitter_dm1]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
     
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+    Social::TwitterWorker.new.perform
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm1[:id])
     tweet.should_not be_nil
@@ -297,7 +297,7 @@ RSpec.describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+    Social::TwitterWorker.new.perform
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
@@ -329,7 +329,7 @@ RSpec.describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+    Social::TwitterWorker.new.perform
 
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil

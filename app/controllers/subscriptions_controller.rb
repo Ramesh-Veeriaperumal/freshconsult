@@ -64,6 +64,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def billing
+    @privacy_policy = true
     if request.post?
       if add_card_to_billing
         scoper.state = ACTIVE

@@ -20,6 +20,13 @@ class Integrations::CrmAppsController < ApplicationController
   def get_installed_app
     @installed_app = current_account.installed_applications.with_name(get_app_name).first
   end
+
+  def check_installed_app
+    if get_installed_app.present?
+      flash[:notice] = t(:'flash.application.already') 
+      redirect_to integrations_applications_path
+    end 
+  end
   
   def get_app_name
     params[:controller].split('/')[1]

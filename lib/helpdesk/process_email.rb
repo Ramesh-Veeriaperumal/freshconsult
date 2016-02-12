@@ -47,6 +47,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                    to_email[:email], 
                                    params[:subject], 
                                    message_id)
+        if (from_email[:email] =~ EMAIL_VALIDATOR).nil?
+          error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
+          Rails.logger.debug error_msg
+          NewRelic::Agent.notice_error(Exception.new(error_msg))
+          return
+        end
         user = existing_user(account, from_email)
         unless user
           text_part
@@ -199,7 +205,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def parse_reply_to_email
       if(!params[:headers].nil? && params[:headers] =~ /^Reply-[tT]o: (.+)$/)
         self.additional_emails = get_email_array($1.strip)[1..-1]
-        self.reply_to_email = parse_email($1.strip)
+        parsed_reply_to = parse_email($1.strip)
+        self.reply_to_email = parsed_reply_to if parsed_reply_to[:email] =~ EMAIL_REGEX
       end
       reply_to_email
     end

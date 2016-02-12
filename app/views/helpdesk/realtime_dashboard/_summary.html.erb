@@ -1,17 +1,23 @@
 <div class="ticket-summary row-fluid pb5">
   <div class="sidebar-dropdown db-filter clear">
+    <% if current_account.features?(:custom_dashboard) %>
       <div data-tabs="tabs">
-        <% if current_account.features?(:custom_dashboard) %>
-          <% if @manage_dashboard %>
-            <%= render :partial => "/helpdesk/realtime_dashboard/filter" %>
-          <% end %>
+        <% if @manage_dashboard %>
+          <%= render :partial => "/helpdesk/realtime_dashboard/filter" %>
+        <% else %>
+          <h3 class="pull-left lead"> <%= t("helpdesk.realtime_dashboard.ticket_summary")%> </h3>
         <% end %>
       </div>
-      <% if current_user.privilege?(:view_reports) %>
-        <div class="pull-right">
-          <a href="/helpdesk/unresolved_tickets" target="_blank" class="unresolved-ticket-link pull-right"> <%= t('helpdesk.realtime_dashboard.unresolve_tickets')%> </a>
-        </div>
+    <% else %>
+      <% unless current_account.dashboard_disabled? %>
+        <h3 class="pull-left lead"> <%= t("helpdesk.realtime_dashboard.ticket_summary")%> </h3>
       <% end %>
+    <% end %>
+    <% if current_user.privilege?(:view_reports) %>
+      <div class="pull-right">
+        <a href="/helpdesk/unresolved_tickets" data-pjax="#body-container" class="unresolved-ticket-link pull-right"> <%= t('helpdesk.realtime_dashboard.unresolve_tickets')%> </a>
+      </div>
+    <% end %>
   </div>
     <% unless current_account.dashboard_disabled? %>
         <ul class="db-summary clearfix pb20 pt20 clear" id="ticket-summary">

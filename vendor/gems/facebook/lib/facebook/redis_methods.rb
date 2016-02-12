@@ -14,4 +14,20 @@ module Facebook::RedisMethods
     redis_key_exists?(FACEBOOK_APP_RATE_LIMIT)
   end
   
+  def update_like_in_redis(field_key, like)
+    newrelic_begin_rescue do
+      $redis_others.hincrby(FACEBOOK_LIKES, field_key, like)
+    end
+  end
+  
+  def process_likes_from_redis
+    newrelic_begin_rescue do
+      likes, del_status = $redis_others.multi do |multi|
+        multi.hgetall(FACEBOOK_LIKES)
+        multi.del(FACEBOOK_LIKES)
+      end
+      Social::Dynamo::Facebook.new.update_likes_in_dynamo(likes) if del_status
+    end
+  end
+  
 end

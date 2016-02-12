@@ -26,7 +26,10 @@ Sidekiq.configure_client do |config|
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
-      "Tickets::BulkTicketReply"
+      "Tickets::BulkTicketReply",
+      "Tickets::ClearTickets::EmptySpam",
+      "Tickets::ClearTickets::EmptyTrash",
+      "MergeTickets"
     ]
   end
 end
@@ -57,7 +60,10 @@ Sidekiq.configure_server do |config|
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
-      "Tickets::BulkTicketReply"
+      "Tickets::BulkTicketReply",
+      "Tickets::ClearTickets::EmptySpam",
+      "Tickets::ClearTickets::EmptyTrash",
+      "MergeTickets"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -79,7 +85,10 @@ Sidekiq.configure_server do |config|
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
-      "Tickets::BulkTicketReply"
+      "Tickets::BulkTicketReply",
+      "Tickets::ClearTickets::EmptySpam",
+      "Tickets::ClearTickets::EmptyTrash",
+      "MergeTickets"
     ]
   end
 end

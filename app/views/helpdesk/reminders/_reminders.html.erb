@@ -5,7 +5,7 @@
     	<%= f.text_field :body, :class => "text", :autocomplete => "off" %>
   	<% end %>
   </div>
-  <div class="widget-scroll" id="db-todo-scroll">
+  <div class="widget-scroll mCustomScrollbar" id="db-todo-scroll" data-mcs-theme="minimal-dark">
     <ul id="reminderlist">
       <% reminders.visible.map do |r| %>
        <%= render :partial => "/helpdesk/reminders/reminder", :object => r, :locals => { :show_info => show_info } %>

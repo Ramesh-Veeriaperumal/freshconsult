@@ -105,7 +105,7 @@ module Social::Twitter::TicketActions
     def construct_params(twt, options)
       tweet_body = options[:tweet] ? twt[:body] : twt.text
       hash = {
-        :body         => remove_utf8mb4_char(tweet_body),
+        :body         => tweet_body.to_s.tokenize_emoji,
         :tweet_id     => options[:tweet] ? twt[:id].split(":").last.to_i : twt.id ,
         :posted_time  => options[:tweet] ? Time.at(Time.parse(twt[:postedTime]).to_i) : Time.at(twt.created_at).utc,
         :sender       => options[:tweet] ? @sender : @sender.screen_name

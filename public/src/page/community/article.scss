@@ -122,6 +122,7 @@
   .solution-content {
     overflow: hidden;
     .article-content{
+      overflow-x:auto;
       margin-top: 15px;
       margin-bottom: 15px;
       @include portal-text-formatting();

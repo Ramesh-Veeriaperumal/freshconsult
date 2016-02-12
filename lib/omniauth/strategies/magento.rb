@@ -8,7 +8,7 @@ module OmniAuth
 
       option :client_options, {
         :request_token_path => "/oauth/initiate",          
-        :authorize_path     => "/admin/oauth_authorize",          
+        :authorize_path     => "/oauth_authorize",          
         :access_token_path  => "/oauth/token"
       }            
     end

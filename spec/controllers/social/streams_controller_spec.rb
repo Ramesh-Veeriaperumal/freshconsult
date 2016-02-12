@@ -28,7 +28,7 @@ RSpec.describe Social::StreamsController do
     end
   
     it "should fetch all the streams(default/custom) on rendering the page" do
-      all_streams = @agent.visible_social_streams
+      all_streams = @agent.visible_twitter_streams
       default_streams = all_streams.select { |stream| stream.default_stream? }
       custom_streams  = all_streams.select { |stream| stream.custom_stream? }
 
@@ -87,7 +87,7 @@ RSpec.describe Social::StreamsController do
     end
     
     it "should fetch all the streams that are visible to the user" do
-      all_streams = @agent.visible_social_streams
+      all_streams = @agent.visible_twitter_streams
       default_streams = all_streams.select { |stream| stream.default_stream? }
       custom_streams  = all_streams.select { |stream| stream.custom_stream? }
 
@@ -103,7 +103,7 @@ RSpec.describe Social::StreamsController do
       @sec_default_stream.accessible.update_attributes(:access_type => 2)
       @sec_default_stream.accessible.create_group_accesses([2])
       
-      all_streams = @agent.visible_social_streams
+      all_streams = @agent.visible_twitter_streams
       default_streams = all_streams.select { |stream| stream.default_stream? }
       custom_streams  = all_streams.select { |stream| stream.custom_stream? }
 
@@ -117,7 +117,7 @@ RSpec.describe Social::StreamsController do
     
     it "should fetch all the streams that are visible to the user belonging to marketing" do# failing in master
       AgentGroup.create(:user_id =>@agent.id, :group_id => 1)
-      all_streams = @agent.visible_social_streams
+      all_streams = @agent.visible_twitter_streams
       default_streams = all_streams.select { |stream| stream.default_stream? }
       custom_streams  = all_streams.select { |stream| stream.custom_stream? }
 

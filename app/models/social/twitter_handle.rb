@@ -72,25 +72,17 @@ class Social::TwitterHandle < ActiveRecord::Base
   end
 
   def default_stream
-    streams = self.twitter_streams
-    streams.each do |stream|
-      return stream if stream.data[:kind] == STREAM_TYPE[:default]
-    end
-    return nil
+    self.twitter_streams.detect{|stream| stream.data[:kind] == TWITTER_STREAM_TYPE[:default]}
   end
 
   def dm_stream
-    streams = self.twitter_streams
-    streams.each do |stream|
-      return stream if stream.data[:kind] == STREAM_TYPE[:dm]
-    end
-    return nil
+    self.twitter_streams.detect{|stream| stream.data[:kind] == TWITTER_STREAM_TYPE[:dm]}
   end
 
   def find_custom_stream(keyword)
     streams = self.twitter_streams
     streams.each do |stream|
-      return stream if (stream.data[:kind] == STREAM_TYPE[:custom] && stream.includes.include?(keyword))
+      return stream if (stream.data[:kind] == TWITTER_STREAM_TYPE[:custom] && stream.includes.include?(keyword))
     end
     return nil
   end

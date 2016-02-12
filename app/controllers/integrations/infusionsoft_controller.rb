@@ -2,6 +2,7 @@ class Integrations::InfusionsoftController < Integrations::CrmAppsController
    include Integrations::Infusionsoft::InfusionsoftUtil
 
    before_filter :get_installed_app, :only => [:edit, :fields_update, :fetch_user]
+   before_filter :check_installed_app, :only => [:install]
    before_filter :construct_app, :only => [:install]
    before_filter :load_fields, :only => [:install, :edit]
 

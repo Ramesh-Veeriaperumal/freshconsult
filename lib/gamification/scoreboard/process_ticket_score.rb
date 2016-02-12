@@ -2,7 +2,7 @@ module Gamification
 	module Scoreboard
 		class ProcessTicketScore 
 			extend Resque::AroundPerform
-			@queue = "gamificationQueue"
+			@queue = "gamification_ticket_score"
 
 			def self.perform(args)
 				args.symbolize_keys!

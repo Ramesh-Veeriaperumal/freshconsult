@@ -19,7 +19,8 @@ class WebhookWorker < BaseWorker
     append_request_timeout(args)
     response = HttpRequestProxy.new.fetch_using_req_params(
       args[:params].symbolize_keys,
-      args[:auth_header].symbolize_keys
+      args[:auth_header].symbolize_keys,
+      args[:custom_headers]
     )
     case response[:status]
     when SUCCESS

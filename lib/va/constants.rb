@@ -61,5 +61,7 @@ module Va
     AVAILABLE_LOCALES = I18n.available_locales_with_name.map{ |a| a.reverse }
 
     AVAILABLE_TIMEZONES = ActiveSupport::TimeZone.all.map { |time_zone| [time_zone.name.to_sym, time_zone.to_s] }
+
+    MAX_CUSTOM_HEADERS = 5 
   end
 end

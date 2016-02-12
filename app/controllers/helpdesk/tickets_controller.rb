@@ -52,7 +52,7 @@ class Helpdesk::TicketsController < ApplicationController
   skip_before_filter :load_item
   alias :load_ticket :load_item
 
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by]
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward]
   before_filter :verify_ticket_permission_by_id, :only => [:component]
 
   before_filter :load_ticket, :verify_permission,

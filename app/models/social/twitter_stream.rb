@@ -76,11 +76,11 @@ class Social::TwitterStream < Social::Stream
   end
 
   def default_stream?
-    self.data[:kind] == STREAM_TYPE[:default]
+    self.data[:kind] == TWITTER_STREAM_TYPE[:default]
   end
 
   def custom_stream?
-    self.data[:kind] == STREAM_TYPE[:custom]
+    self.data[:kind] == TWITTER_STREAM_TYPE[:custom]
   end
 
   def update_volume_in_redis
@@ -110,7 +110,7 @@ class Social::TwitterStream < Social::Stream
     end
 
     def dm_stream?
-      self.data[:kind] == STREAM_TYPE[:dm]
+      self.data[:kind] == TWITTER_STREAM_TYPE[:dm]
     end
 
     def group(group_id)

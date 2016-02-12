@@ -5,6 +5,7 @@ class Freshfone::DashboardController < ApplicationController
   include Freshfone::CallHistory
 
   before_filter :load_stats_count, :only => [:dashboard_stats]
+  skip_after_filter :set_last_active_time, :only => [:dashboard_stats]
 
   def index
     @freshfone_active_calls = get_active_calls

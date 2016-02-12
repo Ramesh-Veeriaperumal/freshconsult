@@ -25,4 +25,4 @@
 //= require freshfone/components/contact_search.js
 //= require freshfone/components/call_transfer.js
 //= require freshfone/freshfone_logger.js
-
+//= require freshfone/freshfone_monitor.js
