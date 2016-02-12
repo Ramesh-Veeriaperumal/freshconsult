@@ -32,6 +32,10 @@
 			<div class="span3 manage-link">
 				<%= pjax_link_to t("accounts.multilingual_support.manage_languages"), manage_languages_path %>
 			</div>
+		<% elsif @account.features_included?(:enable_multilingual) %>
+			<div class="mt5">
+				<%= @account.language_object.name %>
+			</div>
 		<% else %>
 			<%= portal.select :language, 
 						I18n.available_locales_with_name , 
