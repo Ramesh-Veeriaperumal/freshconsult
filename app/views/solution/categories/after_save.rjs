@@ -7,5 +7,5 @@ if @category.errors.empty?
 	end
 	page << "App.Solutions.AfterSave.postCategoryAction(#{escape_javascript(@category.portal_ids.to_json)}, '#{escape_javascript( render :partial => 'category', :locals => {:category => @category})}', #{@category.id}, '#{params[:action]}');"
 else
-	page.replace_html :error_messages, "#{error_messages_for :category}"
+	page.replace_html :"error_messages_#{params[:action].eql?('create') ? 'new_category' : "#{@category_meta.id}_l#{@language.id}"}", "#{error_messages_for :category}"
 end

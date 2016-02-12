@@ -1,5 +1,5 @@
 <div class="form-horizontal">
-	<div id="error_messages"><%= f.error_messages %></div>
+	<div id="error_messages_<%= @category_meta.new_record? ? 'new_category' : "#{@category_meta.id}_l#{@language.id}"%>"><%= f.error_messages %></div>
 	<div class="control-group">
 
 		<%= f.fields_for(association, @category) do |associated_category| %>
