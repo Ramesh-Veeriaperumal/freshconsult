@@ -46,41 +46,38 @@
 									</div>
 								</div>
 								<%= f.fields_for :account_additional_settings do |settings| %>
-									<% if feature?(:dynamic_content) %>
-										<div class="control-group" id="supported_language_list">
-											<%= settings.label :supported_languages , t('account.additional_languages') , :class => "control-label caption" %>
-											<div class="controls">
-												<div class="row-fluid">
-													<%= settings.select :supported_languages, 
-																options_for_select( I18n.available_locales_with_name.reject { |lang, sym| sym == @account.main_portal.language.to_sym() }, 
-																:selected => @account.reload.supported_languages), 
-																{}, 
-																{ 
-																	:multiple => true,
-																	:class => "span7 clear-left-margin secondary-languages-field language_required",
-																	"data-placeholder"=>t('accounts.multilingual_support.add_languages'),
-																	:id => "account_supported_languages"
-																} %>
-												</div>	
-											</div>					
-										</div>
+									<div class="control-group" id="supported_language_list">
+										<%= settings.label :supported_languages , t('account.additional_languages') , :class => "control-label caption" %>
+										<div class="controls">
+											<div class="row-fluid">
+												<%= settings.select :supported_languages, 
+															options_for_select( I18n.available_locales_with_name.reject { |lang, sym| sym == @account.main_portal.language.to_sym() }, 
+															:selected => @account.reload.supported_languages), 
+															{}, 
+															{ 
+																:multiple => true,
+																:class => "span7 clear-left-margin secondary-languages-field language_required",
+																"data-placeholder"=>t('accounts.multilingual_support.add_languages'),
+																:id => "account_supported_languages"
+															} %>
+											</div>	
+										</div>					
+									</div>
 
-										<div class="control-group" id="portal_language_list">
-											<%= settings.label :supported_languages , t('account.supported_portal_languages') , :class => "control-label caption" %>
-											<div class="controls">
-												<div class="row-fluid">
-													<%= settings.fields_for :additional_settings do |additional_settings| %>
-														<%= additional_settings.hidden_field :portal_languages,
-														    :class => "span7 clear-left-margin secondary-languages-field language_required", 
-														    :id => "portal_supported_languages",
-														    :"data-placeholder" => t('accounts.multilingual_support.add_languages'),
-														    :"data-portal-languages" => "#{@account.portal_languages.to_json.html_safe}" %>
-													<% end %>
-												</div>	
-											</div>					
-										</div>
-
-									<% end %>
+									<div class="control-group" id="portal_language_list">
+										<%= settings.label :supported_languages , t('account.supported_portal_languages') , :class => "control-label caption" %>
+										<div class="controls">
+											<div class="row-fluid">
+												<%= settings.fields_for :additional_settings do |additional_settings| %>
+													<%= additional_settings.hidden_field :portal_languages,
+													    :class => "span7 clear-left-margin secondary-languages-field language_required", 
+													    :id => "portal_supported_languages",
+													    :"data-placeholder" => t('accounts.multilingual_support.add_languages'),
+													    :"data-portal-languages" => "#{@account.portal_languages.to_json.html_safe}" %>
+												<% end %>
+											</div>	
+										</div>					
+									</div>
 								<% end %>
 						</div>
 				<% end %>

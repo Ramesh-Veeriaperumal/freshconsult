@@ -1,11 +1,10 @@
-<% multilingual_flag = @account.features?(:enable_multilingual) %>
 <div class="control-group">
 	<%= portal.label :language, 
-				"#{@account.multilingual_available? && multilingual_flag ? t('account.languages') : t('account.primary_language')}", 
+				"#{@account.multilingual? ? t('account.languages') : t('account.primary_language')}", 
 				:class => "control-label"  
 	%>
 	<div class="controls">
-		<% if @account.multilingual_available? && multilingual_flag %>
+		<% if @account.multilingual? %>
 			<div class="span5 multilingual-enabled">
 				<div class="span10">
 					<div class="muted">

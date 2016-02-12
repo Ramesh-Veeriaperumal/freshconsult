@@ -38,7 +38,7 @@ class AccountsController < ApplicationController
   before_filter :validate_custom_domain_feature, :only => [:update]
   before_filter :build_signup_param, :only => [:new_signup_free, :create_account_google]
   before_filter :build_signup_contact, :only => [:new_signup_free]
-  before_filter :check_supported_languages, :only =>[:update], :if => :dynamic_content_available?
+  before_filter :check_supported_languages, :only =>[:update], :if => :multi_language_available?
   before_filter :set_native_mobile, :only => [:new_signup_free]
   before_filter :update_language_attributes, :only => [:update_languages]
   before_filter :validate_portal_language_inclusion, :only => [:update_languages]
@@ -221,7 +221,7 @@ class AccountsController < ApplicationController
 
   def update
     redirect_url = params[:redirect_url].presence || admin_home_index_path
-    @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages] if dynamic_content_available? && !@account.multilingual_available?
+    @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages] if @account.features?(:multi_language) && !@account.launched?(:translate_solutions)
     @account.account_additional_settings[:date_format] = params[:account][:account_additional_settings_attributes][:date_format] 
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]
@@ -292,8 +292,8 @@ class AccountsController < ApplicationController
   end
 
   protected
-    def dynamic_content_available?
-      current_account.features?(:dynamic_content)
+    def multi_language_available?
+      current_account.features?(:multi_language)
     end
     
     def check_supported_languages
