@@ -71,7 +71,8 @@ class Freshfone::UsersController < ApplicationController
 		respond_to do |format|
 			format.any(:json, :nmobile) { render :json => {
 				:update_status => update_presence_and_publish_call(params),
-				:call_sid => outgoing? ? current_call_sid : incoming_sid } }
+				:call_sid => current_call_sid, 
+				:call_id => current_call_id } }
 		end
 	end
 
@@ -108,12 +109,20 @@ class Freshfone::UsersController < ApplicationController
 		end
 		
 		def current_call_sid
-			(current_user.freshfone_calls.call_in_progress || {})[:call_sid]
+			outgoing? ? (current_outgoing_call || {})[:call_sid] : incoming_sid
+		end
+
+		def current_call_id
+			outgoing? ? (current_outgoing_call || {})[:id] :
+			(current_account.freshfone_calls.filter_by_call_sid(incoming_sid).first || {})[:id]
+		end
+
+		def current_outgoing_call
+			@outgoing_call ||= current_user.freshfone_calls.call_in_progress
 		end
 
 		def incoming_sid
-			return unless current_account.features?(:freshfone_conference)
-			get_browser_sid
+			@browser_sid ||= get_browser_sid
 		end
 		
 		def outgoing?

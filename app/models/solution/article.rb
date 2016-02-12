@@ -171,7 +171,7 @@ class Solution::Article < ActiveRecord::Base
 
   def as_json(options={})
     return super(options) if (options[:tailored_json].present? || 
-        Account.current.features_included?(:solutions_meta_read))
+        Account.current.launched?(:solutions_meta_read))
     options.merge!(Solution::Constants::API_OPTIONS)
     super options
   end

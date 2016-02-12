@@ -17,8 +17,8 @@ class TicketsController < ApiApplicationController
     else
       assign_ticket_status
       if @item.save_ticket
+        @ticket = @item # Dirty hack. Should revisit.
         render_201_with_location(item_id: @item.display_id)
-        @ticket = @item
         notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
       else
         render_errors(@item.errors)

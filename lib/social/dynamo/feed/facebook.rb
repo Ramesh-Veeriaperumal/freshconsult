@@ -20,10 +20,8 @@ class Social::Dynamo::Feed::Facebook < Social::Dynamo::Feed::Base
       :account_id => hash_key.split("_").first
     }
     
-    if has_parent_feed?(Time.now.utc, dynamo_keys, feed_id)
-      execute_on_table(Time.now.utc) do |table_name, time|
-        Social::DynamoHelper.update(table_name, item_hash, SCHEMA)
-      end
+    execute_on_table(Time.now.utc) do |table_name, time|
+      Social::DynamoHelper.update(table_name, item_hash, SCHEMA) if has_parent_feed?(time, dynamo_keys, feed_id)
     end
   end
   
@@ -34,7 +32,9 @@ class Social::Dynamo::Feed::Facebook < Social::Dynamo::Feed::Base
       interactions.each do |interaction|
         attributes = fd_attributes(interaction)
         item_hash  = feeds_hash(hash, interaction, "", 0, 0, attributes, SOURCE[:facebook])
-        Social::DynamoHelper.update(table_name, item_hash, SCHEMA, ['fd_link'])
+        if Social::DynamoHelper.get_item(table_name, hash, interaction, SCHEMA, [RANGE_KEY])[:item]
+          Social::DynamoHelper.update(table_name, item_hash, SCHEMA, ['fd_link'])
+        end
       end
     end    
   end

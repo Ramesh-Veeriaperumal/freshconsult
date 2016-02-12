@@ -94,7 +94,7 @@ class Account < ActiveRecord::Base
     :round_robin_revamp =>  false, :contact_merge_ui => true, :client_debugging => false, :collision_socket => false,
     :spam_dynamo => true , :saml_old_issuer => false, :forum_captcha_disable => false, :autorefresh_node => false, 
     :resource_rate_limit => false, :disable_agent_forward => false, :bi_reports => true, :es_multilang_solutions => false,
-    :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false,
+    :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false, :call_quality_metrics => false,
     :public_ticket_url => false, :marketplace => false, :fa_developer => false,:archive_tickets => false, :compose_email => false,
     :limit_mobihelp_results => false, :ecommerce => false, :tokenize_emoji => false, 
     :salesforce_sync => false, :round_robin_on_update => false, :freshfone_call_metrics => false, 

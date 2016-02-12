@@ -198,6 +198,8 @@ class Admin::EmailConfigsController < Admin::AdminController
     end
     
     def create_error #Need to refactor this code, after changing helpcard a bit.
+      @imap_mailbox = @obj.imap_mailbox
+      @smtp_mailbox = @obj.smtp_mailbox
       @products = current_account.products
       @groups = current_account.groups 
     end

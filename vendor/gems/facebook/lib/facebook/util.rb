@@ -41,17 +41,16 @@ module Facebook
     #Parse the feed content from facebook comment
     def html_content_from_comment(feed)
       html_content =  CGI.escapeHTML(feed[:message]) if feed[:message] 
-      
       if feed[:attachment]        
         attachment = feed[:attachment].symbolize_keys!     
         if "share".eql?(attachment[:type])
           desc = feed[:description] || ""
-          html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{attachment[:target]["url"]}\" target=\"_blank\"><img src=\"#{attachment[:media]["image"]["src"]}\"></a>
+          html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{attachment[:target][:url]}\" target=\"_blank\"><img src=\"#{attachment[:media][:image][:src]}\"></a>
             <div><p><a href=\"#{attachment[:url]}\" target=\"_blank\"> #{attachment[:description]}</a></p>
             <p><strong>#{html_content}</strong></p>
             <p>#{desc}</p></div></div>"
         elsif "photo".eql?(attachment[:type])
-          html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><a href=\"#{attachment[:target]["url"]}\" target=\"_blank\"><img src=\"#{attachment[:media]["image"]["src"]}\"></a></p></div>"
+          html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><a href=\"#{attachment[:target][:url]}\" target=\"_blank\"><img src=\"#{attachment[:media][:image][:src]}\"></a></p></div>"
         end      
       end
       

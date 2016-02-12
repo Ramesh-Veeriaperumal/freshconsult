@@ -82,12 +82,12 @@ describe 'Multilingual routing', :type => :controller do
     end
     
     it "should hit the articles action of solutions controller and the response must be same for v1", :skip_after do
-      @account.remove_feature(:solutions_meta_read)
+      @account.rollback(:solutions_meta_read)
       @controller = Mobihelp::SolutionsController.new
       get :articles
       normal_resp = JSON.parse(response.body)
       category_ids = controller.instance_variable_get("@category_ids")
-      @account.add_features(:solutions_meta_read)
+      @account.launch(:solutions_meta_read)
       @controller = Mobihelp::Multilingual::SolutionsController.new
       get :articles
       multilingual_resp = JSON.parse(response.body)
@@ -98,12 +98,12 @@ describe 'Multilingual routing', :type => :controller do
     
     it "should hit the articles action of solutions controller and the response must be same for v2", :skip_after do
       @request.env['X-API-Version'] = "2"
-      @account.remove_feature(:solutions_meta_read)
+      @account.rollback(:solutions_meta_read)
       @controller = Mobihelp::SolutionsController.new
       get :articles
       normal_resp = JSON.parse(response.body)
       category_ids = controller.instance_variable_get("@category_ids")
-      @account.add_features(:solutions_meta_read)
+      @account.launch(:solutions_meta_read)
       @controller = Mobihelp::Multilingual::SolutionsController.new
       get :articles
       multilingual_resp = JSON.parse(response.body)
