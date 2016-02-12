@@ -14,8 +14,7 @@ class Solution::ArticlesController < ApplicationController
 
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
-  before_filter :load_meta_objects, :only => [:show, :new, :edit, :update, :properties, :destroy, :reset_ratings]
-  before_filter :load_article, :only => [:show, :edit, :update, :destroy, :reset_ratings, :properties]
+  before_filter :load_meta_objects, :only => [:show, :edit, :update, :properties, :destroy, :reset_ratings]
   before_filter :old_folder, :only => [:move_to]
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
   before_filter :set_current_folder, :only => [:create]
@@ -31,16 +30,14 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def show
-    build_article_version unless @article
+    @article = @article_meta.send("build_#{language_scoper}") unless @article
     respond_to do |format|
       format.html {
-        if @article
-          unless @article.new_record?
-            @current_item = @article.draft || @article
-            @page_title = @current_item.title
-          else
-            @page_title = t('solutions.new_translation', :language => language.name)
-          end
+        unless @article.new_record?
+          @current_item = @article.draft || @article
+          @page_title = @current_item.title
+        else
+          @page_title = t('solutions.new_translation', :language => language.name)
         end
       }
       format.xml  { render :xml => @article_meta, :include => [:folder] }
@@ -50,7 +47,7 @@ class Solution::ArticlesController < ApplicationController
 
   def new
     @page_title = t("header.tabs.new_solution")
-    @article_meta ||= current_account.solution_article_meta.find_or_initialize_by_id(params[:id])
+    @article_meta = current_account.solution_article_meta.new
     @article = @article_meta.solution_articles.new
     set_article_folder
     respond_to do |format|
@@ -74,14 +71,14 @@ class Solution::ArticlesController < ApplicationController
   def create
     set_common_attributes
     @article_meta = Solution::Builder.article(params)
-    load_article_version
+    @article = @article_meta.send(language_scoper)
     @article.tags_changed = set_solution_tags
     @article.create_draft_from_article if save_as_draft?
     respond_to do |format|
       if @article_meta.errors.empty?
         format.html { 
           flash[:notice] = flash_message if publish?
-          redirect_to solution_article_version_path(@article_meta, @article.language.code)
+          redirect_to solution_article_version_path(@article_meta, @article.language.code) if Account.current.multilingual?
         }
         format.xml  { render :xml => @article_meta, :include => [:folder], :status => :created, :location => @article }
         format.json  { render :json => @article_meta, :include => [:folder], :status => :created, :location => @article }
@@ -94,13 +91,8 @@ class Solution::ArticlesController < ApplicationController
       end
     end
   end
-  
-  def save_and_create    
-    logger debug "Inside save and create"    
-  end
 
   def update
-    load_article_version  
     unless (UPDATE_FLAGS & params.keys.map(&:to_sym)).any?
       update_article
       return 
@@ -109,26 +101,14 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def destroy
-    redirect_path = solution_folder_path(@article_meta.solution_folder_meta_id)
     @article_meta.destroy
     
     respond_to do |format|
-      format.html { redirect_to redirect_path }
+      format.html { redirect_to solution_folder_path(@article_meta.solution_folder_meta_id) }
       format.xml  { head :ok }
       format.json { head :ok }
     end
   end
-   
-
-   def delete_tag  #possible dead code
-     logger.debug "delete_tag :: params are :: #{params.inspect} "     
-     article = current_account.solution_articles.find(params[:article_id])     
-     tag = article.tags.find_by_id(params[:tag_id])      
-     raise ActiveRecord::RecordNotFound unless tag
-     Helpdesk::TagUse.find_by_article_id_and_tag_id(article.id, tag.id).destroy
-    flash[:notice] = t(:'flash.solutions.remove_tag.success')
-    redirect_to :back    
-   end
 
   def reset_ratings
     @article.reset_ratings
@@ -195,14 +175,6 @@ class Solution::ArticlesController < ApplicationController
 
   protected
 
-    def load_article
-      @article = @article_meta.send(language_scoper)
-    end
-
-    def build_article_version
-      @article = @article_meta.send("build_#{language_scoper}")
-    end
-
     def scoper #possible dead code
       eval "Solution::#{cname.classify}"
     end
@@ -235,6 +207,7 @@ class Solution::ArticlesController < ApplicationController
       id = get_meta_id
       return if id.blank?
       @article_meta = current_account.solution_article_meta.find_by_id!(id)
+      @article = @article_meta.send(language_scoper)
       @folder_meta = @article_meta.solution_folder_meta
       @category_meta = @folder_meta.solution_category_meta
     end
@@ -484,15 +457,6 @@ class Solution::ArticlesController < ApplicationController
       end
     end
 
-    def language_code
-      lang = Language.find(params[:language_id])
-      (lang.blank? || lang.code == current_account.language) ? "primary" : lang.code
-    end
-
-    def load_article_version
-      @article = @article_meta.send(language_code.underscore + "_article")
-    end
-
     def cleanup_params_for_title
       params.slice!("id", "format", "controller", "action", "language")
     end
@@ -546,7 +510,7 @@ class Solution::ArticlesController < ApplicationController
     
   	def multilingual_article_path(article, options={})
   		current_account.multilingual? ?
-  			solution_article_version_path(article, options.slice(:anchor).merge({:language => article.language.to_key})) :
+  			solution_article_version_path(article, options.slice(:anchor).merge({:language => article.language.code})) :
   			solution_article_path(article, options.slice(:anchor))
   	end
 
