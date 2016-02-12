@@ -11,6 +11,7 @@ JSON.generate(@items.map do |item|
       :requester_id => item.requester_id, 
       :responder_id =>item.responder_id, 
       :source => item.source, 
+      :company_id => item.company_id,
       :status => item.status, 
       :subject => item.subject,
       :to_emails => item.schema_less_ticket.try(:to_emails),
