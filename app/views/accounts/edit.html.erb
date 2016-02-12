@@ -57,7 +57,7 @@
 						<%= render :partial => "languages", :locals => { :portal => portal } %>
 						
 						<%= f.fields_for :account_additional_settings do |settings| %>
-							<% if @account.features?(:multi_language) && !@account.launched?(:translate_solutions) %>
+							<% if @account.features_included?(:multi_language) && !@account.launched?(:translate_solutions) %>
 								<div class="control-group" id="supported_language_list">
 									<%= settings.label :supported_languages , 
 												t('account.additional_languages') , 

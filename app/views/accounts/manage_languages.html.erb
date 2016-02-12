@@ -9,7 +9,7 @@
 	<%= breadcrumbs %>
 </div>
 
-<% multilingual_flag = @account.features?(:enable_multilingual) %>
+<% multilingual_flag = @account.features_included?(:enable_multilingual) %>
 
 <div class="manage-languages-body">
 	<%= error_messages_for :account %>

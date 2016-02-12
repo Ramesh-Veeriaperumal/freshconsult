@@ -278,7 +278,6 @@ class AccountsController < ApplicationController
   end
 
   def manage_languages
-    @account = current_account
   end
 
   def update_languages
@@ -293,7 +292,7 @@ class AccountsController < ApplicationController
 
   protected
     def multi_language_available?
-      current_account.features?(:multi_language)
+      current_account.features_included?(:multi_language)
     end
     
     def check_supported_languages
@@ -553,7 +552,7 @@ class AccountsController < ApplicationController
     end
 
     def check_and_enable_multilingual_feature
-      return if @account.features?(:enable_multilingual)
+      return if @account.features_included?(:enable_multilingual)
       if @account.supported_languages.present?
         @account.features.enable_multilingual.create
       end
@@ -574,7 +573,6 @@ class AccountsController < ApplicationController
     end
 
     def update_language_attributes
-      @account = current_account
       portal_languages = params[:account][:account_additional_settings_attributes][:additional_settings][:portal_languages]
       @account.main_portal_attributes = params[:account][:main_portal_attributes] unless @account.features?(:enable_multilingual)
       @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages]
