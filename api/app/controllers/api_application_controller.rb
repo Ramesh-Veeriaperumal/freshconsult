@@ -640,4 +640,10 @@ class ApiApplicationController < MetalApiController
     ensure
       Time.zone = old_zone
     end
+
+    def run_on_slave
+      Sharding.run_on_slave do
+        yield
+      end
+    end
 end

@@ -5,6 +5,8 @@ class TicketsController < ApiApplicationController
   include TicketConcern
   decorate_views
 
+  around_filter :run_on_slave, :only => [:index]
+  
   before_filter :ticket_permission?, only: [:destroy]
 
   def create
