@@ -21,7 +21,7 @@ module Facebook
         select_shard_and_account(@fan_page.account_id) do |account|
           sandbox(raw_obj) do
             if (perform_method && klass)
-              if AUXILLARY_LIST.include?(klass) 
+              if AUXILLARY_LIST.include?(klass) && social_revamp_enabled?
                 ("facebook/core/#{klass}").camelize.constantize.new(fan_page, feed_id).send(perform_method)
               elsif can_process_feed?
                 ("facebook/core/#{klass}").camelize.constantize.new(fan_page, feed_id).send(perform_method, convert_to_ticket?, dynamo_feed[:item].blank?)
