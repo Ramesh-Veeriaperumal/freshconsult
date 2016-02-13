@@ -17,6 +17,8 @@ class Freshfone::CallController < FreshfoneBaseController
 	before_filter :clear_client_calls, :only => [:status]
 	before_filter :reset_outgoing_count, :only => [:status]
 	
+	skip_after_filter :set_last_active_time, :only => [:caller_data], :unless =>lambda{ params[:outgoing]}
+
 	include Freshfone::Call::CallCallbacks
 	include Freshfone::Call::BranchDispatcher
 

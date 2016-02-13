@@ -278,12 +278,12 @@ module SolutionsHelper
   
   def check_solution_portal_drop_methods(portal)
     PortalDrop::FEATURE_BASED_METHODS.each do |method|
-      @account.add_features(:solutions_meta_read)
+      @account.launch(:solutions_meta_read)
       @account.reload
       @account.make_current
       portal_drop_object = PortalDrop.new(portal)
       objects_thru_meta = portal_drop_object.send(method)
-      @account.remove_feature(:solutions_meta_read)
+      @account.rollback(:solutions_meta_read)
       @account.reload
       @account.make_current
       portal.reload

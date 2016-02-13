@@ -5,28 +5,31 @@ module Social
   
     def perform(args)
       @account = Account.current
+      @dynamo_helper = Social::Dynamo::Facebook.new
       user     = @account.users.find(args['user_id'])
       user.make_current
       set_notable_objects(args['source_ticket_id'], args['comment_ticket_id'], args['child_fb_post_ids'])
-      move_notes_to_ticket
-      update_ticket_activity
-      update_ticket_states
+      if @child_fb_notes.present?
+        move_notes_to_ticket
+        update_ticket_activity
+        update_ticket_states
+      end
+      update_dynamo_fd_links
     end
     
     
     def move_notes_to_ticket
-      child_post_ids = @child_fb_notes.map(&:id)
+      child_post_ids  = @child_fb_notes.map(&:id)
       comment_fb_post = @comment_ticket.fb_post
       
-      @account.notes.update_all( "notable_id = #{@comment_ticket.id}", [ "id IN (?)", @child_fb_notes.map(&:postable_id) ] )
+      @account.notes.update_all("notable_id = #{@comment_ticket.id}", [ "id IN (?)", @child_fb_notes.map(&:postable_id) ] )
       
       @account.facebook_posts.update_all("ancestry = #{comment_fb_post.id}", [ "id IN (?)", child_post_ids ] )
     end
 
     def update_ticket_activity
       @comment_ticket.reload
-      activities = @source_ticket.activities.find(:all, :conditions => 
-        {:description => "activities.tickets.conversation.note.long"})    
+      activities     = @source_ticket.activities.where(:description => "activities.tickets.conversation.note.long")
       child_note_ids = @child_fb_notes.map(&:postable_id)
       
       activities.each do |activity|
@@ -40,7 +43,7 @@ module Social
 
     def update_ticket_states
       @comment_ticket.reload
-      outbound_count = @comment_ticket.notes.count(:all, :conditions => ["incoming = ?", false])
+      outbound_count = @comment_ticket.notes.where(:incoming => false).count
       
       if outbound_count > 0
         @source_ticket.ticket_states.update_attributes({:outbound_count => @source_ticket.outbound_count - outbound_count})
@@ -49,9 +52,14 @@ module Social
     end
     
     def set_notable_objects(source_ticket_id, comment_ticket_id, child_post_ids)
-      @source_ticket    =  @account.tickets.find_by_id(source_ticket_id)
-      @comment_ticket   =  @account.tickets.find_by_id(comment_ticket_id)  
-      @child_fb_notes   =  @account.facebook_posts.find(:all, :conditions => {:id => child_post_ids})
+      @source_ticket  = @account.tickets.find_by_id(source_ticket_id)
+      @comment_ticket = @account.tickets.find_by_id(comment_ticket_id)  
+      @child_fb_notes = @account.facebook_posts.where(:id => child_post_ids)
+    end
+    
+    def update_dynamo_fd_links
+      fb_post       = @comment_ticket.fb_post      
+      @dynamo_helper.update_ticket_links_in_dynamo(fb_post.post_id, fb_post.facebook_page.default_stream.id)
     end
     
   end

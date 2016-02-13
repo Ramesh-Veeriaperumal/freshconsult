@@ -172,7 +172,7 @@ namespace :scheduler do
           Account.reset_current_account
           account = fb_page.account
           account.make_current
-          next if (check_if_premium?(account) or !fb_page.valid_page)
+          next if (check_if_premium?(account) or !fb_page.valid_page?)
           class_constant.perform_async({:fb_page_id => fb_page.id}) 
         end
       end
@@ -203,8 +203,8 @@ namespace :scheduler do
   
 
   def check_if_premium?(account)
-    Rails.env.production? ? PREMIUM_ACC_IDS[:production].include?(account.id) :
-      PREMIUM_ACC_IDS[:staging].include?(account.id)
+    Rails.env.production? ? PREMIUM_ACCOUNT_IDS[:production].include?(account.id) :
+      PREMIUM_ACCOUNT_IDS[:staging].include?(account.id)
   end
 
   task :supervisor, [:type] => :environment do |t,args|

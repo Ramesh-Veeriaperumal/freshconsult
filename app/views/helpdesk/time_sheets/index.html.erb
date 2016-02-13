@@ -11,7 +11,7 @@
    jQuery('#timeentry_timer_total').data('staticTotal', false);
    totalTime("#timesheetlist .time", "#timeentry_timer_total");
    jQuery('#timesheetlist .time-tracked-details:first .toggle_timer').show();
-   trigger_event("sidebar_loaded",{name: "time_sheets", dom_id: "#TimesheetTab"});
+   trigger_event("time_entry_loaded",{name: "time_sheets", dom_id: "#TimesheetTab"});
 <% end %>
 <%= javascript_include_tag :'cdn/timesheet' %>
 <div id="timeentry_apps_add" class="ui-form hide">   

@@ -55,7 +55,7 @@ RSpec.describe Helpdesk::MergeTicketsController do
                                             :billable => 1,
                                             :note => "tkt timer")
     time_sheet.save
-    Resque.inline = true
+    Sidekiq::Testing.inline! do
     post :complete_merge, { :target => { :ticket_id => @target_ticket.display_id,
                                           :note => "Tickets with ids #{@source_ticket1.display_id} and #{@source_ticket2.display_id} are merged into this ticket.",
                                           :is_private => "true"
@@ -66,7 +66,7 @@ RSpec.describe Helpdesk::MergeTicketsController do
                                         },
                             :redirect_back => "true"
                           }
-    Resque.inline = false
+    end
     flash[:notice] =~ /have been merged into the ticket/
     merged_tickets = @account.tickets.find([@target_ticket.id, @source_ticket1.id, @source_ticket2.id])
     last_target_note = merged_tickets[0].notes.last
@@ -86,7 +86,7 @@ RSpec.describe Helpdesk::MergeTicketsController do
   end
 
   it "should merge tickets with public notes" do
-    Resque.inline = true
+    Sidekiq::Testing.inline! do
     post :complete_merge, { :target => { :ticket_id => @target_ticket.display_id,
                                           :note => "Tickets with ids #{@source_ticket1.display_id} and #{@source_ticket2.display_id} are merged into this ticket.",
                                           :is_private => "false"
@@ -97,7 +97,7 @@ RSpec.describe Helpdesk::MergeTicketsController do
                                         },
                             :redirect_back => "true"
                           }
-    Resque.inline = false
+    end
     merged_tickets = @account.tickets.find([@target_ticket.id, @source_ticket1.id, @source_ticket2.id])
     last_target_note = merged_tickets[0].notes.last
     last_target_note.full_text.should be_eql("Tickets with ids #{@source_ticket1.display_id} and #{@source_ticket2.display_id} are merged into this ticket.")
@@ -113,7 +113,7 @@ RSpec.describe Helpdesk::MergeTicketsController do
   end
 
   it "should merge tickets with public notes for the source tickets" do
-    Resque.inline = true
+    Sidekiq::Testing.inline! do
     post :complete_merge, { :target => { :ticket_id => @target_ticket.display_id,
                                           :note => "Tickets with ids #{@source_ticket1.display_id} and #{@source_ticket2.display_id} are merged into this ticket.",
                                           :is_private => "true"
@@ -124,7 +124,7 @@ RSpec.describe Helpdesk::MergeTicketsController do
                                         },
                             :redirect_back => "true"
                           }
-    Resque.inline = false
+    end
     merged_tickets = @account.tickets.find([@target_ticket.id, @source_ticket1.id, @source_ticket2.id])
     last_target_note = merged_tickets[0].notes.last
     last_target_note.full_text.should be_eql("Tickets with ids #{@source_ticket1.display_id} and #{@source_ticket2.display_id} are merged into this ticket.")
@@ -147,7 +147,7 @@ RSpec.describe Helpdesk::MergeTicketsController do
                                                       :description => Faker::Lorem.characters(10)
                                                       }
                                     }, @group) 
-    Resque.inline = true
+    Sidekiq::Testing.inline! do 
     post :complete_merge, { :target => { :ticket_id => target_ticket.display_id,
                                           :note => "Tickets with ids #{@source_ticket1.display_id} and #{source_ticket2.display_id} are merged into this ticket.",
                                           :is_private => "false"
@@ -158,7 +158,7 @@ RSpec.describe Helpdesk::MergeTicketsController do
                                         },
                             :redirect_back => "true"
                           }
-    Resque.inline = false
+    end
     target_ticket.reload
     first_target_note_attachment = target_ticket.notes.exclude_source('meta').first.attachments
     note_attchment = first_target_note_attachment.first
@@ -176,7 +176,7 @@ RSpec.describe Helpdesk::MergeTicketsController do
     # Before merge
     @target_ticket.schema_less_ticket.text_tc01[:message_ids].should_not include(ids[1])
     
-    Resque.inline = true
+    Sidekiq::Testing.inline! do
     post :complete_merge, { :target => { :ticket_id => @target_ticket.display_id,
                                           :note => "Tickets with ids #{@source_ticket1.display_id} and #{@source_ticket2.display_id} are merged into this ticket.",
                                           :is_private => "false"
@@ -187,7 +187,7 @@ RSpec.describe Helpdesk::MergeTicketsController do
                                         },
                             :redirect_back => "true"
                           }
-    Resque.inline = false
+   end
 
     # Check if source_ticket2 message have been merged to target_ticket_schema(After merge)
     @target_ticket.reload

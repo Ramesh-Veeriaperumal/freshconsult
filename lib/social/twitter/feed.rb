@@ -2,14 +2,13 @@ class Social::Twitter::Feed
 
   include Gnip::Constants
   include Social::Constants
-  include Social::Dynamo::Twitter
   include Social::Twitter::Constants
   include Social::Twitter::Util
   include Social::Twitter::ErrorHandler
   include Social::Twitter::TicketActions
 
   attr_accessor :feed_id, :posted_time, :user, :body, :is_replied, :ticket_id, :user_in_db, :dynamo_posted_time,
-    :in_reply_to, :stream_id, :in_conv, :agent_name,:source, :parent_feed_id, :user_mentions
+    :in_reply_to, :stream_id, :in_conv, :agent_name,:source, :parent_feed_id, :user_mentions, :dynamo_helper
 
 
   def initialize(feed_obj)
@@ -35,6 +34,7 @@ class Social::Twitter::Feed
     @user_in_db  = false
     @in_conv     = 0
     @agent_name  = false
+    @dynamo_helper = Social::Dynamo::Twitter.new
   end
 
   def convert_to_fd_item(stream, action_data)
@@ -87,7 +87,7 @@ class Social::Twitter::Feed
       :user => self.user,
       :user_mentions => screen_names_hash 
     }
-    update_live_feed(posted_time, args, dynamo_params, self )
+    dynamo_helper.update_live_feed(posted_time, args, dynamo_params, self )
   end
 
   def self.fetch_tweets(handle, search_params, max_id, since_id, options)

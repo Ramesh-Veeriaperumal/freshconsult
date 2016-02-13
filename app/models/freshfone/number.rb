@@ -68,6 +68,7 @@ class Freshfone::Number < ActiveRecord::Base
 	MIN_RINGING_TIME = 30
 	MIN_RR_TIMEOUT = 10
 	MAX_RINGING_TIME = 999
+	PORT_STATE = {:port_in => 1, :port_away => 2}
 
 	validates_presence_of :account_id
 	validates_presence_of :number, :presence => true
@@ -85,7 +86,7 @@ class Freshfone::Number < ActiveRecord::Base
 	validates_inclusion_of :rr_timeout, :in => MIN_RR_TIMEOUT..MAX_RINGING_TIME
 	validates_inclusion_of :ringing_time, :in => MIN_RINGING_TIME..MAX_RINGING_TIME
 	validates_uniqueness_of :number, :scope => :account_id
-
+	validate :validate_port
 	scope :filter_by_number, lambda {|from, to| {
 		:conditions => ["number in (?, ?)", from, to] }
 	}
@@ -254,6 +255,10 @@ class Freshfone::Number < ActiveRecord::Base
 		ivr.ivr_message?
 	end
 
+	def self.twilio_number(number_sid, current_account)
+		current_account.freshfone_account.twilio_subaccount.incoming_phone_numbers.get(number_sid)
+	end
+
 	private
 
 		def set_renewal_date
@@ -328,5 +333,10 @@ class Freshfone::Number < ActiveRecord::Base
 
 		def validate_queue_position_message
 			errors.add(:base, "invalid queue position message") if queue_position_message.match(/\{\{queue.position\}\}/).blank?
+		end
+
+		def validate_port
+			return if !port.present?
+			PORT_STATE.values.include?(port) ? true : errors.add(:base, "invalid port state")
 		end
 end

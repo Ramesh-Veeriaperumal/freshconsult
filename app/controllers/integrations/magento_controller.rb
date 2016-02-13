@@ -10,7 +10,8 @@ class Integrations::MagentoController < Admin::AdminController
   end
 
   def edit
-    params["configs"] = @installed_app["configs"][:inputs]
+    params["configs"] = {}
+    params["configs"] = @installed_app["configs"][:inputs] if defined? @installed_app.configs[:inputs]["shops"]
     render_settings
   end
 
@@ -20,18 +21,22 @@ class Integrations::MagentoController < Admin::AdminController
     arr = @installed_app.configs[:inputs]["shops"] if defined? @installed_app.configs[:inputs]["shops"]
     arr[position.to_i] = params["configs"]["shops"][position]
     arr[position.to_i]["shop_url"] = arr[position.to_i]["shop_url"].strip
-    begin
-      uri = URI.parse(arr[position.to_i]["shop_url"]) 
-      raise "Not a valid url" unless (uri.kind_of?(URI::HTTP) || uri.kind_of?(URI::HTTPS))
-      code = validate_url(uri)
-      if code.blank? || code.to_i >= 400
-        raise "Not a valid url"
-      end
-    rescue 
-      flash[:error] = I18n.t(:'flash.application.invalid_url')
+    arr[position.to_i]["admin_url"] = arr[position.to_i]["admin_url"].strip
+    
+    response = validate_url(arr[position.to_i]["shop_url"])
+    unless response
+      flash[:error] = I18n.t(:'integrations.magento.form.invalid_shop_url')
       redirect_to integrations_magento_edit_path and return
     end
-    arr[position.to_i]["shop_url"] = "#{uri.scheme}://#{uri.host}"
+    arr[position.to_i]["shop_url"] = "#{response.scheme}://#{response.host}"
+
+    response = validate_url(arr[position.to_i]["admin_url"])
+    unless response
+      flash[:error] = I18n.t(:'integrations.magento.form.invalid_admin_url')
+      redirect_to integrations_magento_edit_path and return
+    end
+    arr[position.to_i]["admin_url"] = "#{response.scheme}://#{response.host}#{response.path.presence}"
+    
     hash = {}
     hash["shops"] = arr
     @installed_application = Integrations::Application.install_or_update(APP_NAME, current_account.id, hash)
@@ -40,7 +45,21 @@ class Integrations::MagentoController < Admin::AdminController
 
   private
 
-    def validate_url(uri)
+    def validate_url(url)
+      begin
+        uri = URI.parse(url)
+        raise "Not a valid url" unless (uri.kind_of?(URI::HTTP) || uri.kind_of?(URI::HTTPS))
+        code = url_ping(uri)
+        if code.blank? || code.to_i >= 400
+          raise "Not a valid url"
+        end
+      rescue
+        return false
+      end
+      uri
+    end
+
+    def url_ping uri
       begin
         req = Net::HTTP.new(uri.host, uri.port)
         if uri.scheme == "https"

@@ -94,6 +94,14 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.tag_names.join(', ')
 	end
 
+  def due_by_time_raw
+    in_user_time_zone(@source.due_by)
+  end
+
+  def fr_due_by_time_raw
+    in_user_time_zone(@source.frDueBy)
+  end
+
 	def due_by_time
 		in_user_time_zone(@source.due_by).strftime("%B %e %Y at %I:%M %p")
 	end

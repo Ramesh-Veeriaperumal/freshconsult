@@ -104,6 +104,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                :email_body_html => html_version,
                :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe,
                :disable_bcc_notification => e_notification.bcc_disabled?}
+      if(e_notification.notification_type == EmailNotification::NEW_TICKET_CC and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
+        params[:attachments] = ticket.attachments
+        params[:cloud_files] = ticket.cloud_files
+      end
       deliver_email_notification(params) unless receips.nil?
     end
   end

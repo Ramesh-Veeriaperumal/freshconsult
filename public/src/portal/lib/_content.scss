@@ -95,7 +95,6 @@
 	overflow-x: auto;
 	table{ 
 		@extend .table !optional; 
-		table-layout: fixed;
 	}
 }
 

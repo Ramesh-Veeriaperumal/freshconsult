@@ -16,6 +16,9 @@ class CompanyDrop < BaseDrop
     @source.note.nil? ? '' : @source.note.gsub(/\n/, '<br/>')
   end
 
+  def id
+    @source.id
+  end
 	
   def before_method(method)
     custom_fields = @source.custom_field

@@ -1230,7 +1230,6 @@ en:
         title_error_text: Survey Name has already been taken
         result_exist_msg: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers.
 
-
       new_rating:
         content_text: This Question helps access the overall satisfaction for the response provided by the agent.
                       It appears below your signature at the bottom of the email sent to the customer.
@@ -1602,6 +1601,9 @@ en:
         unchecked: is unchecked
         deselected: Deselected
     va_rules:
+      webhook:
+        custom_headers_limit_error: "You cannot set more than %{limit} custom headers"
+        custom_headers_pair_mismatch: "Kindly ensure that all headers have values"
       index:
         human_name: Dispatch’r Rule
       remember_to_save: 'After updating, please remember to save it.'
@@ -1624,11 +1626,14 @@ en:
         advanced_layout: Advanced
         webhook_usecase: Webhook Usecases
         webhook_usecase_tooltip: Check out a few examples of how you can use webhooks with the Observer
-        simple_webhook_tip: Select any of the ticket properties from the list above to be sent with the request. In case you would like to write your own API requests, please use the Advanced option.
-        advanced_webhook_tip: This section lets you write custom API requests. Click on the Insert Placeholders button to include ticket details such as Requester Name, Priority, Ticket Status etc. with your request.
+        simple_webhook_tip: "Select any of the ticket properties from the list above to be sent with the request. In case you would like to write your own API requests, please use the Advanced option."
+        custom_headers_tip: "Enter one custom header value pair per line."
+        advanced_webhook_tip: "This section lets you write custom API requests. Click on the Insert Placeholders button to include ticket details such as Requester Name, Priority, Ticket Status etc. with your request."
         how_to_use_webhook: How to use Webhooks >
         api_key?: I have API key?
         user_pass?: I have Username & Password?
+        add_custom_headers: "Add Custom Headers"
+        remove_custom_headers: "Remove Custom Headers"
         username: Username
         api_key: API Key
         password: Password
@@ -3420,7 +3425,7 @@ en:
     last_logged: Last logged in
     ago: %{time} ago.
     days_ago: "%{days} ago"
-    last_active_at: "Last active at"
+    last_seen_at: "Last seen at"
     no_recent_activity: "No recent activity"
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
@@ -3496,6 +3501,7 @@ en:
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
     browse_community: Browse Community
+    privacy_policy: "Privacy Policy"
   tkt_unattended_in_grp: Ticket Unattended in Group
   agent_solves_tkt: Agent Solves the Ticket
   zendesk_url_info: e.g:- http://acme.zendesk.com or https://acme.zendesk.com
@@ -5723,7 +5729,7 @@ en:
         time_zone: "Timezone"
         phone: "Phone"
         mobile: "Mobile"
-        last_active_at: "Last active time"
+        last_seen: "Last seen"
     fields:
       ticket_id: "Ticket Id"
       display_id: "Display Id"
@@ -6434,14 +6440,15 @@ en:
         copy_settings: "Use the above Tracking ID for all portals"
     sugarcrm:
       label: "SugarCRM"
-      helptext: "<h4>Sugar CRM Integration Help</h4><p><br/> You may access SugarCRM contact information in the Freshdesk ticket & contact pages. <br /><br /> The following data points will be accessible - name, title, company, department, contact address, phone & mobile numbers. <br /><br />Please note that you the search function is based on the email address. If there are multiple contacts with the same email address, all of them will be displayed as a list."
-      desc: "You can view contact information from SugarCRM in Freshdesk."
+      helptext: "<h4>SugarCRM Integration Help</h4><p><br/> You may access SugarCRM Contacts, Leads and Accounts information in the Freshdesk ticket & contact pages. <br /><br/> Select the list of fields that need to be displayed in the SugarCRM widget. You can select to a max of 10 fields.</p><p><strong>Note:</strong><br/>Name is the default field for Contacts, Leads and Accounts and it cannot be removed.</p> <br /><br/>"
+      desc: "You can view Contacts, Leads and Accounts information from SugarCRM in Freshdesk."
       form:
         domain: "SugarCRM Account URL"
-        domain_info: "For example, if your SugarCRM URL is <strong>http://mycompany.xyz/sugar/index.php?module=Administration&action=index</strong> , enter <strong> http://mycompany.xyz/sugar </strong><br /><br /> Note: The on-premise variant of SugarCRM should be connected to the internet. </span>"
+        domain_info: "Add your SugarCRM primary domain url which is generally in the format http://mycompany.com or https://mycompany.com</span>"
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+        sugarcrm_settings: "SugarCRM Settings"
         contact: "Contact Fields"
         lead: "Lead Fields"
         account: "Account Fields"
@@ -6539,10 +6546,14 @@ en:
         product: "Product"
         shop_url: "Shop URL"
         shop_url_info: "For example, <strong>https://my_shop_name.com</strong>."
+        admin_url: "Admin URL"
+        admin_url_info: "For example, <strong>https://my_shop_name.com/admin</strong>."
         consumer_key: "Consumer Key"
         consumer_secret: "Consumer Secret"
         add_shop: "+ Add shop"
         remove_shop: "Remove this shop"
+        invalid_shop_url: "The Shop URL entered is invalid."
+        invalid_admin_url: "The Admin URL entered is invalid."
     slack:
       label: "Slack"
       desc: "Stay up to date about Freshdesk tickets in Slack"
@@ -7436,7 +7447,8 @@ en:
     welcome_message :
       header : Welcome to the brand new reports!
       intro : We have made the reports cleaner, deeper and more insightful. You will be able to locate problems more easily and act on them immediately by drilling down into the tickets that contribute to each metric. Overall we have made the experience smoother and easier. Hope you like it.
-      link_title : Read more about all the changes.
+      link_title : Read more about all the changes
+      video_link : Watch the new reports in action
     view_old_reports: View old reports
     view_new_reports: View new reports
     solution_article_text: How to read this report ?
@@ -7493,7 +7505,7 @@ en:
       less_than_5_hrs: < 5 hrs
       5_to_10_hrs: 5-10 hrs
       10_to_15_hrs: 10-15 hrs
-      15_to_25_hrs: 15-35 hrs
+      15_to_25_hrs: 15-25 hrs
       25_to_50_hrs: 25-50 hrs
       50_to_100_hrs: 50-100 hrs
       100_to_200_hrs: 100-200 hrs
