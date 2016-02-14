@@ -31,10 +31,14 @@ module Facebook
         end
       end
       
-      def page_valid?
+      def account_and_page_validity
         select_fb_shard_and_account(page_id) do |account|    
-          @fan_page = account.facebook_pages.find_by_page_id(page_id)  
-          @fan_page.valid_page?
+          if account.present? and account.active?
+            @fan_page = account.facebook_pages.find_by_page_id(page_id)  
+            [true, @fan_page.valid_page?]
+          else
+            [false, false]
+          end
         end
       end
 

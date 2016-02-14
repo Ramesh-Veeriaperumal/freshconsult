@@ -26,7 +26,11 @@ module Sqs
     def process
       entry_changes.each do |entry_change|
         fb_feed = Facebook::Core::Feed.new(page_id, entry_change)
-        if fb_feed.page_valid?
+        valid_account, valid_page = fb_feed.account_and_page_validity
+
+        next unless valid_account
+          
+        if valid_page 
           fb_feed.process_feed(raw_obj)
         else
           #Insert feeds to the specifc Dynamo Tables if page need re-autorization
