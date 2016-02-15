@@ -5344,6 +5344,7 @@ en:
         unassigned: Unassigned
         pending: Pending
         on_hold: On Hold
+        unresolved: Unresolved
     rebranding:
       name:
         info: This will be the help desk name that is shown in the header and mail notifications.
