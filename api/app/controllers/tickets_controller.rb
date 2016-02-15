@@ -50,9 +50,9 @@ class TicketsController < ApiApplicationController
   end
 
   def show
-    if params[:include] == 'notes'
-      @notes = ticket_notes.limit(NoteConstants::MAX_INCLUDE)
-      increment_api_credit_by(1) # for embedded notes
+    if params[:include] == 'conversations'
+      @conversations = conversations.limit(ConversationConstants::MAX_INCLUDE)
+      increment_api_credit_by(1) # for embedded conversations
     end
     super
   end
@@ -94,8 +94,8 @@ class TicketsController < ApiApplicationController
       end
     end
 
-    def ticket_notes
-      # eager_loading note_old_body is unnecessary if all notes are retrieved from cache.
+    def conversations
+      # eager_loading note_old_body is unnecessary if all conversations are retrieved from cache.
       # There is no best solution for this
       @item.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
     end

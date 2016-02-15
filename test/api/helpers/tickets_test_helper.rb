@@ -1,7 +1,7 @@
-['ticket_fields_test_helper.rb', 'notes_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
+['ticket_fields_test_helper.rb', 'conversations_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 module TicketsTestHelper
   include GroupHelper
-  include NotesTestHelper
+  include ConversationsTestHelper
   include TicketFieldsTestHelper
   include EmailConfigsHelper
   include ProductsHelper
@@ -14,7 +14,7 @@ module TicketsTestHelper
   end
 
   def index_ticket_pattern(ticket)
-    ticket_pattern(ticket).except(:attachments, :notes, :tags)
+    ticket_pattern(ticket).except(:attachments, :conversations, :tags)
   end
 
   def index_deleted_ticket_pattern(ticket)
@@ -27,7 +27,7 @@ module TicketsTestHelper
       notes_pattern << index_note_pattern(n)
     end
     notes_pattern = notes_pattern.take(limit) if limit
-    ticket_pattern(ticket).merge(notes: notes_pattern.ordered!)
+    ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
 
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)

@@ -438,7 +438,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     old_v1_api_consumed_limit = get_key(api_key).to_i
     remove_key(account_key)
     id = (Helpdesk::Ticket.first || create_ticket).display_id
-    skip_bullet { get "/api/v2/tickets/#{id}?include=notes", nil, @headers }
+    skip_bullet { get "/api/v2/tickets/#{id}?include=conversations", nil, @headers }
     assert_response 200
     new_v2_api_consumed_limit = get_key(v2_api_key).to_i
     new_v1_api_consumed_limit = get_key(api_key).to_i
@@ -595,7 +595,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     get "/api/tickets/#{ticket.display_id}", nil, @headers
     assert_equal '1', response.headers['X-RateLimit-Used']
 
-    get "/api/tickets/#{ticket.display_id}?include=notes", nil, @headers
+    get "/api/tickets/#{ticket.display_id}?include=conversations", nil, @headers
     assert_equal '2', response.headers['X-RateLimit-Used']
   end
 
@@ -611,7 +611,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal old_v2_api_consumed_limit + 1, v2_api_consumed_limit
     assert_equal old_api_consumed_limit, api_consumed_limit
 
-    get "/api/tickets/#{ticket.display_id}?include=notes", nil, @headers
+    get "/api/tickets/#{ticket.display_id}?include=conversations", nil, @headers
 
     v2_api_consumed_limit = get_key(v2_api_key).to_i
     assert_equal old_v2_api_consumed_limit + 3, v2_api_consumed_limit
@@ -688,7 +688,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
     id = (Helpdesk::Ticket.first || create_ticket).display_id
     # first call after expiry
-    skip_bullet { get "/api/v2/tickets/#{id}?include=notes", nil, @headers }
+    skip_bullet { get "/api/v2/tickets/#{id}?include=conversations", nil, @headers }
     assert_response 200
 
     assert_equal 2, get_key(v2_api_key).to_i
