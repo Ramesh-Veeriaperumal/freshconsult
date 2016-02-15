@@ -1250,9 +1250,10 @@ en:
         thanks_feedback: Thank you for your valuable feedback.
         thanks_feedback_v2: Thank you. Your feedback has been submitted.
         additional_comments_feedback: Collect additional feedback
+        additional_comments_feedback_statement: Additional feedback
         comments_feedback: Add more details about customer experience.
         thanks_message_feedback: Thank you message for Feedback survey
-        thanks_message_feedback_v2: Thank you message for Additional Questions
+        thanks_message_feedback_v2: Thank you message for additional feedback
         default_question_text: Are you satisfied with our customer support experience?
         thanks_label: Message will appear after submitting the feedback survey
         thanks_label_v2: Message will appear after submitting feedback for additional questions.

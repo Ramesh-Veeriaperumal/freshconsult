@@ -15,15 +15,18 @@
 	</form>
 
 	<div id="comments" class="clearfix">
-		<input type="checkbox" name="can_comment" onchange= "javascript:SurveyQuestion.additionalComment();" <%if(can_comment){%>checked<%}%>><span> <%= surveysI18n.additional_comments_feedback %></span>
+		<% if(surveyLimit){%> 
+			<input type="checkbox" name="can_comment" onchange= "javascript:SurveyQuestion.additionalComment();" <%if(can_comment){%>checked<%}%>><span> <%= surveysI18n.additional_comments_feedback %></span>
+		<% } %>
 		<div id="feedback-thanks" <%if(!can_comment) {%>style="display:none;" <%}%>class="clearfix pt6">
-			<input class="input-comment" rel="ghostwriter" name="comments_text" placeholder= "<%=surveysI18n.comments_feedback %>" type="text" width="100%" value='<%=comments_text%>' maxlength="250">
-			<% if(surveyLimit){%> 
-			<div id="additional-thanks" style="display:none;">
-				<label class="mt10 control-label"><%= surveysI18n.thanks_message_feedback %></label>
-				<input name="feedback_response_text" class="input-comment" placeholder="<%=surveysI18n.thanks_feedback%>" rel="ghostwriter" size="24" type="text" width="100%" value='<%=feedback_response_text%>'>
-			</div>
+			<% if(!surveyLimit){ %>
+				<label class="control-label" ><%= surveysI18n.additional_comments_feedback_statement %></label>
 			<% } %>
+			<input class="input-comment" rel="ghostwriter" name="comments_text" placeholder= "<%=surveysI18n.comments_feedback %>" type="text" width="100%" value='<%=comments_text%>' maxlength="250">
+		</div>
+		<div id="additional-thanks" <%if(!can_comment) {%>style="display:none;" <%}%>>
+			<label class="mt10 control-label"><%= surveysI18n.thanks_message_feedback %></label>
+			<input name="feedback_response_text" class="input-comment" placeholder="<%=surveysI18n.thanks_feedback%>" rel="ghostwriter" size="24" type="text" width="100%" value='<%=feedback_response_text%>'>
 		</div>
 	</div>
 </div>
