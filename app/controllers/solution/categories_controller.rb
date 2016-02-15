@@ -183,7 +183,7 @@ class Solution::CategoriesController < ApplicationController
     end
 
     def find_portal
-      @portal = current_account.portals.find_by_id(params[:portal_id]) || current_portal
+      @portal = (params[:portal_id] && current_account.portals.find_by_id(params[:portal_id])) || current_portal
     end
 
     def load_category_with_folders

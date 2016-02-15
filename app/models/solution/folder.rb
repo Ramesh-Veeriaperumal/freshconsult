@@ -9,7 +9,7 @@ class Solution::Folder < ActiveRecord::Base
 
   attr_protected :category_id, :account_id
   validates_presence_of :name
-  validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
+  validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_folder_meta.new_record?"
 
   validate :name_uniqueness_validation
 
@@ -194,7 +194,7 @@ class Solution::Folder < ActiveRecord::Base
     end
     
     def clear_cache
-      account.clear_solution_categories_from_cache
+      Account.current.clear_solution_categories_from_cache
     end
 
     def add_companies(customer_ids, add_to_existing)

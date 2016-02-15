@@ -102,11 +102,11 @@ class Solution::FolderMeta < ActiveRecord::Base
 	private
 
 	def clear_cache
-		account.clear_solution_categories_from_cache
+		Account.current.clear_solution_categories_from_cache
 	end
 
 	def clear_cache_with_condition
-		account.clear_solution_categories_from_cache unless (self.changes.keys & ['solution_category_meta_id', 'position']).empty?
+		Account.current.clear_solution_categories_from_cache unless (self.changes.keys & ['solution_category_meta_id', 'position']).empty?
 	end
 
   def add_companies(customer_ids, add_to_existing)

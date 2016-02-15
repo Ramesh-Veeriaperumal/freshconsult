@@ -11,7 +11,7 @@ class Portal < ActiveRecord::Base
   attr_accessor :language_list
 
   xss_sanitize  :only => [:name,:language], :plain_sanitizer => [:name,:language]
-  validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
+  validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true, :if => :portal_url_changed?
   validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$",
   :allow_nil => true, :allow_blank => true
   validates_inclusion_of :language, :in => Language.all_codes, :if => :language_changed?
@@ -294,6 +294,6 @@ class Portal < ActiveRecord::Base
     end
 
     def clear_solution_cache(obj=nil)
-      account.clear_solution_categories_from_cache
+      Account.current.clear_solution_categories_from_cache
     end
 end

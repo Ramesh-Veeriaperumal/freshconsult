@@ -16,7 +16,7 @@ class Solution::Category < ActiveRecord::Base
 
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
-  validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
+  validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_category_meta.new_record?"
   
   after_update :clear_cache, :if => Proc.new { |c| c.name_changed? && c.primary? }
   after_save    :set_mobihelp_solution_updated_time, :if => Proc.new { |c| c.primary? }

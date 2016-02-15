@@ -119,7 +119,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	private
 
 	def clear_cache
-		account.clear_solution_categories_from_cache
+		Account.current.clear_solution_categories_from_cache
 	end
 
 	def set_default_art_type
