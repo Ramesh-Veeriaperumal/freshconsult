@@ -21,9 +21,9 @@ module Facebook
         select_shard_and_account(@fan_page.account_id) do |account|
           sandbox(raw_obj) do
             if (perform_method && klass)
-              if AUXILLARY_LIST.include?(klass) 
-                ("facebook/core/#{klass}").camelize.constantize.new(fan_page, feed_id).send(perform_method)
-              elsif can_process_feed?
+              if AUXILLARY_LIST.include?(klass)
+                ("facebook/core/#{klass}").camelize.constantize.new(fan_page, feed_id).send(perform_method) if social_revamp_enabled?
+              elsif can_process_feed? 
                 ("facebook/core/#{klass}").camelize.constantize.new(fan_page, feed_id).send(perform_method, convert_to_ticket?, dynamo_feed[:item].blank?)
               end
             end
@@ -31,10 +31,14 @@ module Facebook
         end
       end
       
-      def page_valid?
+      def account_and_page_validity
         select_fb_shard_and_account(page_id) do |account|    
-          @fan_page = account.facebook_pages.find_by_page_id(page_id)  
-          @fan_page.valid_page?
+          if account.present? and account.active?
+            @fan_page = account.facebook_pages.find_by_page_id(page_id)  
+            [true, @fan_page.valid_page?]
+          else
+            [false, false]
+          end
         end
       end
 

@@ -12,6 +12,15 @@
       </h5>
       <p><%= t('.helpcard1') %></p>
       <p><%= t('.helpcard2') %></p>
+      <p><%= t('.helpcard3') %></p>
+      <% @archive_feature = current_account.features?(:archive_tickets) %>
+      <% if @archive_feature %>
+        <p><%= font_icon("archived-ticket", :size => 16, :class => "", :id => "cm-sb-toggle").html_safe %> <%= t('helpdesk.tags.tag.archive_tickets') %> </p>
+      <% end %>
+      <p><%= font_icon("ticket", :size => 16, :class => "", :id => "cm-sb-toggle").html_safe %> 
+        <%= @archive_feature ? t('helpdesk.tags.tag.recent_tickets') : t('.tickets') %> </p>
+      <p><%= font_icon("user", :size => 16, :class => "", :id => "cm-sb-toggle").html_safe %> <%= t('helpdesk.tags.tag.contacts') %>  </p>
+      <p><%= font_icon("article", :size => 16, :class => "", :id => "cm-sb-toggle").html_safe %> <%= t('helpdesk.tags.tag.articles') %> </p>
 <% end %>
 
 <div class="list-page tag-list">
