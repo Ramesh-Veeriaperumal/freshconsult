@@ -259,7 +259,11 @@ class Account < ActiveRecord::Base
   def premium_email?
     ismember?(PREMIUM_EMAIL_ACCOUNTS, self.id)
   end
-  
+
+  def premium_webhook_throttler?
+    ismember?(PREMIUM_WEBHOOK_THROTTLER, self.id)
+  end
+
   def plan_name
     subscription.subscription_plan.canon_name
   end

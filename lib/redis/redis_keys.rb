@@ -34,6 +34,7 @@ module Redis::RedisKeys
 	WEBHOOK_THROTTLER = "WEBHOOK_THROTTLER:%{account_id}"
 	WEBHOOK_THROTTLER_LIMIT_EXCEEDED = "WEBHOOK_THROTTLER_LIMIT_EXCEEDED:%{account_id}"
 	WEBHOOK_ERROR_NOTIFICATION = "WEBHOOK_ERROR_NOTIFICATION:%{account_id}:%{rule_id}"
+	PREMIUM_WEBHOOK_THROTTLER = "PREMIUM_WEBHOOK_THROTTLER"
 	#AUTH_REDIRECT_CONFIG = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:%{auth}"
 	SSO_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:oauth"
 	APPS_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{provider}:oauth"
