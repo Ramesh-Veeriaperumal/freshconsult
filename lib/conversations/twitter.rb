@@ -1,6 +1,5 @@
 module Conversations::Twitter
 
-  include Social::Dynamo::Twitter
   include Social::Twitter::ErrorHandler
   include Social::Constants
 
@@ -29,8 +28,9 @@ module Conversations::Twitter
           if stream && stream.default_stream?
             update_dynamo_for_tweet(twt, status_id, stream_id, note)
           elsif stream && stream.custom_stream?
+            dynamo_helper = Social::Dynamo::Twitter.new
             reply_params = agent_reply_params(twt, status_id, note)
-            update_custom_streams_reply(reply_params, stream_id, note)
+            dynamo_helper.update_custom_streams_reply(reply_params, stream_id, note)
           end
         end
 
@@ -59,6 +59,7 @@ module Conversations::Twitter
 
         #update dynamo
         unless latest_tweet.stream_id.nil?
+          dynamo_helper = Social::Dynamo::Twitter.new
           stream_id = "#{current_account.id}_#{latest_tweet.stream_id}"
           reply_params = {
             :id => resp.attrs[:id_str],
@@ -66,7 +67,7 @@ module Conversations::Twitter
             :body => resp.attrs[:text],
             :posted_at => resp.attrs[:created_at]
           }
-          update_dm(stream_id, reply_params)
+          dynamo_helper.update_dm(stream_id, reply_params)
         end
 
         process_tweet note, resp, reply_handle_id, :dm
@@ -83,7 +84,7 @@ module Conversations::Twitter
 
   def update_dynamo_for_tweet(twt, status_id, stream_id, note)
     reply_params = agent_reply_params(twt, status_id, note)
-    update_brand_streams_reply(stream_id, reply_params, note)
+    Social::Dynamo::Twitter.new.update_brand_streams_reply(stream_id, reply_params, note)
   end
 
   def agent_reply_params(twt, status_id, note)

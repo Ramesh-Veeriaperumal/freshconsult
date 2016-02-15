@@ -2,11 +2,15 @@
 </h3>
 <div id="recent_activities_count" class='more-tweets more-activities'></div>
 <div id="recent_activities" class='hide'></div>
-<ul id="Pages" class="activityfeed">
-	<% @items.each_with_index do |item, i| %>
-		<%= render(:partial => "ticket_note", :object => item) %>
-	<% end %>
-</ul>
+<div class="activityfeed-wrap mCustomScrollbar" id="activity-feed" data-mcs-theme="minimal-dark">
+		<ul id="Pages" class="activityfeed">
+			<% @items.each_with_index do |item, i| %>
+				<%= render(:partial => "ticket_note", :object => item) %>
+			<% end %>
+		</ul>
+</div>
+
+
 <%= will_paginate @items %>
 
 <%= load_more({
@@ -16,6 +20,7 @@
   :container    => '.activityfeed',
   :currentPage  => 1,
   :pageIncrement => true,
+	:loadMoreAppendAfter => '#activity-feed',
   :complete     => '$this.$el.append(data);$this.loadMoreButton.button("reset");App.RealtimeDashboard.scrollTopOnLoadMore()'
    }) %>
 

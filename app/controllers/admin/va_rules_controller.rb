@@ -7,6 +7,7 @@ class Admin::VaRulesController < Admin::AdminController
   before_filter :load_config, :only => [:new, :edit, :clone_rule]
   before_filter :set_filter_data, :only => [ :create, :update ]
   before_filter :hide_password_in_webhook, :only => [:edit]
+  before_filter :parse_action_data, :only => [:create, :update]
   # TODO-RAILS3 password moved to application.rb but need to check action_data
   # filter_parameter_logging :action_data, :password
   
@@ -34,7 +35,38 @@ class Admin::VaRulesController < Admin::AdminController
   end
 
   protected
-  
+
+    def parse_action_data
+      @va_rule.action_data = params[:action_data].blank? ? [] : (ActiveSupport::JSON.decode params[:action_data])
+      if va_rules_controller? or observer_rules_controller?
+        @va_rule.action_data.each do |action|
+          if action["custom_headers"].present?
+            headers = RailsSanitizer.full_sanitizer.sanitize(action["custom_headers"])
+            headers = headers.split(/[\r\n]+/).map { |x| x.split(":", 2).map(&:strip).reject { |x| x == "" } }
+            error = false
+            action["custom_headers"] = {}
+            headers.each do |key, val|
+              if (key.blank? or val.blank?)
+                flash[:error] = t("admin.va_rules.webhook.custom_headers_pair_mismatch")
+                error = true
+                break
+              end
+              action["custom_headers"].merge!({key => val})
+            end
+            if action["custom_headers"].keys.count > MAX_CUSTOM_HEADERS
+              flash[:error] = t("admin.va_rules.webhook.custom_headers_limit_error", :limit => MAX_CUSTOM_HEADERS)
+              error = true
+            end
+            if error
+              load_config
+              edit_data
+              render :action => params[:action] == 'update' ? 'edit' : 'new'
+            end
+          end
+        end
+      end
+    end
+
     def scoper
       current_account.va_rules
     end

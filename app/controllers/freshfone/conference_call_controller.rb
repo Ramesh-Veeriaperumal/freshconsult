@@ -23,6 +23,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   before_filter :update_agent, :only => [:in_call]
   before_filter :reset_outgoing_count, :only => [:status]
   before_filter :set_abandon_state, :only => [:status]
+  before_filter :call_quality_monitoring_enabled?, :only => [:save_call_quality_metrics]
 
   def status
     begin
@@ -59,6 +60,13 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     @call_sid ||= params[:call_sid]
     render :json => { 
       :notes_saved => set_key(call_notes_key, CGI.escapeHTML(params[:call_notes]) , 600)
+    }
+  end
+
+  def save_call_quality_metrics
+    render :json => {} and return if params[:call_id].blank? 
+    render :json => {
+      :call_quality_metrics_saved => set_key(call_quality_metrics_key(params[:call_id]), params[:call_quality_metrics].to_json , 259200) 
     }
   end
 
@@ -227,6 +235,10 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       @call_notes_key ||= FRESHFONE_CALL_NOTE % { :account_id => @current_account.id, :call_sid => @call_sid }
     end
 
+    def call_quality_metrics_key(dial_call_sid)
+      @call_quality_metrics_key ||= FRESHFONE_CALL_QUALITY_METRICS % { :account_id => @current_account.id, :dial_call_sid => dial_call_sid }
+    end
+
     def set_outgoing_status
       if params[:call].present? && params[:CallStatus].present?
         params[:DialCallStatus] = params[:CallStatus] 
@@ -246,5 +258,9 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     def validate_acw
       render :json => {:status => :error} if current_call.blank? || 
         !current_account.features?(:freshfone_call_metrics)   
+    end
+    
+    def call_quality_monitoring_enabled?
+      render :json => {} unless current_account.features?(:call_quality_metrics)
     end
 end

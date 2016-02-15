@@ -7,13 +7,14 @@ class Social::Gnip::TwitterFeed
   include Social::Twitter::Constants
   include Social::Twitter::TicketActions
 
-  attr_accessor :tweet_obj, :posted_time, :tweet_id, :posted_time, :tweet_id, :in_reply_to, :twitter_user_id, :source
+  attr_accessor :tweet_obj, :posted_time, :tweet_id, :posted_time, :tweet_id, :in_reply_to, :twitter_user_id, :source, :dynamo_helper
 
   alias :feed_id :tweet_id
 
   def initialize(tweet, queue)
     begin
-      @tweet_obj = JSON.parse(tweet).symbolize_keys!
+      @tweet_obj       = JSON.parse(tweet).symbolize_keys!
+      @dynamo_helper   = Social::Dynamo::Twitter.new
       @queue  = queue
       @source = SOURCE[:twitter]
       unless @tweet_obj.nil?

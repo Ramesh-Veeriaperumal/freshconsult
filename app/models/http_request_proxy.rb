@@ -16,7 +16,7 @@ class HttpRequestProxy
     fetch_using_req_params(params, requestParams)
   end
 
-  def fetch_using_req_params(params, requestParams)
+  def fetch_using_req_params(params, requestParams, customHeaders=nil)
     response_code = 200
     content_type = params[:content_type] || "application/json"
     accept_type = params[:accept_type] || "application/json"
@@ -70,6 +70,7 @@ class HttpRequestProxy
       options[:body] = post_request_body unless post_request_body.blank?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.
       options[:headers] = {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type, "User-Agent" => user_agent}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
       options[:headers] = options[:headers].merge(params[:custom_auth_header]) unless params[:custom_auth_header].blank?
+      options[:headers] = options[:headers].merge(customHeaders) unless (customHeaders.nil? or customHeaders.empty?)
       timeout = params[:timeout].to_i
       options[:timeout] = timeout.between?(1, DEFAULT_TIMEOUT)  ? timeout : DEFAULT_TIMEOUT #Returns status code 504 on timeout expiry
       begin

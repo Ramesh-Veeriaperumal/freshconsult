@@ -25,6 +25,7 @@
 //= require frameworks/plugins/jquery.blockUI.js
 //= require app/realtime_dashboard/plugins/lodash.min.js
 //= require app/realtime_dashboard/plugins/gridstack.js
+//= require app/realtime_dashboard/plugins/jquery.mCustomScrollbar.js
 //= require frameworks/underscore-min.js
 //= require frameworks/lab.min.js
 //= require hackz.js

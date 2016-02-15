@@ -101,7 +101,7 @@ class Helpdesk::DashboardController < ApplicationController
         #   on_hold_count    = onhold_statuses.collect {|st| tickets_count[st]}.compact.sum
         # end
 
-        trends_count_hash = ticket_trends_count(["overdue", "due_today", "on_hold", "open", "unresolved"])
+        trends_count_hash = ticket_trends_count(["overdue", "due_today", "on_hold", "open", "unresolved", "new"])
         #trends_count_hash = ticket_trends_count(["overdue", "due_today"])
         #trends_count_hash.merge!({ :unresolved   => { :value => unresolved_count,  :label => t("helpdesk.realtime_dashboard.unresolved")} })
         #trends_count_hash.merge!({ :open         => { :value => open_count,        :label => t("helpdesk.realtime_dashboard.open") }})
@@ -367,12 +367,12 @@ class Helpdesk::DashboardController < ApplicationController
   def filtered_trend_count(filter_type)
     action_hash = Helpdesk::Filters::CustomTicketFilter.new.default_filter(filter_type) || []
     action_hash.push({"condition" => "group_id", "operator" => "is_in", "value" => @group_id }) if @group_id
-    unless global_dashboard?
-      action_hash.push({"condition" => "group_id", "operator" => "is_in", "value" => user_agent_groups.join(",")}) if unassigned_filter_type?(filter_type)
-    end
+    # unless global_dashboard?
+    #   action_hash.push({"condition" => "group_id", "operator" => "is_in", "value" => user_agent_groups.join(",")}) if unassigned_filter_type?(filter_type)
+    # end
 
     if current_account.launched?(:es_count_reads)
-      action_hash.push({"condition" => "responder_id", "operator" => "is_in", "value" => current_user.id}) if !unassigned_filter_type?(filter_type) and !global_dashboard?
+      #action_hash.push({"condition" => "responder_id", "operator" => "is_in", "value" => current_user.id}) if !unassigned_filter_type?(filter_type) and !global_dashboard?
       negative_conditions = [{ "condition" => "status", "operator" => "is_not", "value" => "#{RESOLVED},#{CLOSED}" }]
       Search::Filters::Docs.new(action_hash, negative_conditions).count(Helpdesk::Ticket)
     else

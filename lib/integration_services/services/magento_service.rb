@@ -18,7 +18,7 @@ module IntegrationServices::Services
       else
         orders[shop_name] = {:status => 400, :message => response[:errors]}
       end       
-      orders[shop_name]["domain"] = @payload[:domain] 
+      orders[shop_name]["domain"] = @installed_app[:configs][:inputs]["shops"][position]["admin_url"]
       orders
     end
 

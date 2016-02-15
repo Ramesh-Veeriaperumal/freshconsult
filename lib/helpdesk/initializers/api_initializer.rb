@@ -39,9 +39,6 @@ if Infra['API_LAYER']
     # Authentication
     config.middleware.delete OpenIdAuthentication
 
-    # Rerouting support and mobilhelp solution related endpoints.
-    config.middleware.delete Middleware::MultilingualSolutionRouter
-
     # Authentication
     config.middleware.delete OmniAuth::Builder
 

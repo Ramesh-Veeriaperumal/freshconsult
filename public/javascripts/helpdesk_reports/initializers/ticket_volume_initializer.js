@@ -159,7 +159,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                     data: _.values(_FD.hash_resolved[_FD.week_trend][i]),
                 });
                 var settings = {
-                    renderTo: i + '_chart',
+                    renderTo: _FD.DAY_MAPPING[i] + '_chart',
                     xAxisLabel: _.keys(_FD.hash_received[_FD.week_trend][i]),
                     chartData: day_trend_data,
                     yMax: max,
@@ -173,7 +173,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
         constructPdfTmpl: function (days,chart_id) {
             var tmpl = JST["helpdesk_reports/templates/pdf_day_trend_tmpl"]({
                 data: days,
-                id: chart_id
+                chart_div_id: chart_id
             });
             jQuery('#pdf_day_trend').html(tmpl);
         },
@@ -260,17 +260,20 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             var date_range = HelpdeskReports.locals.date_range.split('-');
             var diff = (Date.parse(date_range[1]) - Date.parse(date_range[0])) / (36e5 * 24);
             var default_day, default_hash = {}, disabled_days = [], doy_active = [];
-
-            if (date_range.length > 1 && diff >= 6) {
+            if (date_range.length > 1 && diff >7) {
 
                 default_day = _FD.WEEKDAY_MAPPING['monday'];
                 doy_active = _.values(_FD.WEEKDAY_MAPPING);
 
-            } else if (date_range.length > 1 && diff < 6) {
+            } else if (date_range.length > 1 && diff <= 7) {
 
-                default_day = (doy_active[0] === 0 && doy_active.length > 1) ? doy_active[1] : doy_active[0];
+                
                 doy_active = this.defaultDayInsideWeek(date_range);
+                if (diff == 7) {
+                    doy_active.pop();
+                }
                 disabled_days = _.difference(doy, doy_active);
+                default_day = (doy_active.indexOf(1) > -1) ? 1 : doy_active[0];
 
             } else {
                 
@@ -285,7 +288,6 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 disabled: disabled_days,
                 enabled: doy_active
             }
-
             return default_hash;
         },
         defaultDayInsideWeek: function (date_range) {
@@ -294,8 +296,6 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             for (var d = Date.parse(date_range[0]); d <= end; d.setDate(d.getDate() + 1)) {
                 daysOfYear.push(d.getDay());
             }
-            daysOfYear.sort();
-
             return daysOfYear;
         },
         dateRangeLimit: function () {
