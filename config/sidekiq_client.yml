@@ -80,6 +80,8 @@ defaults: &defaults
     - [active_dispatcher]
     - [merge_tickets]
     - [merge_tickets_attachments]
+    - [premium_webhook_throttler]
+    - [premium_webhook_worker]
 
 development:
   <<: *defaults

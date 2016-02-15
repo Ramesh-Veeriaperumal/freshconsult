@@ -18,15 +18,22 @@ module Va::Webhook::Trigger
       params[:body] = substitute_placeholders_in_format(act_on, :params, content_type)
     end
 
-    Throttler::WebhookThrottler.perform_async({
-      :args => {
-        :params => params,
-        :retry_count => 0,
-        :auth_header => auth_header,
-        :custom_headers => custom_headers,
-        :rule_id => self.va_rule.id,
-        :account_id => Account.current.id
-      }
-    })
+    throttler_args = {
+      :params => params,
+      :retry_count => 0,
+      :auth_header => auth_header,
+      :custom_headers => custom_headers,
+      :rule_id => self.va_rule.id,
+      :account_id => Account.current.id
+    }
+    if Account.current.premium_webhook_throttler?
+      Throttler::PremiumWebhookThrottler.perform_async({
+        :args => throttler_args
+      })
+    else
+      Throttler::WebhookThrottler.perform_async({
+        :args => throttler_args
+      })
+    end
   end
 end

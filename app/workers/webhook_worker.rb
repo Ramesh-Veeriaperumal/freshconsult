@@ -13,7 +13,11 @@ class WebhookWorker < BaseWorker
     :retry => 0,
     :dead => true,
     :failures => :exhausted
-  
+
+  def initialize
+    @throttler = "Throttler::WebhookThrottler".constantize
+  end
+
   def perform(args)
     args.symbolize_keys!
     append_request_timeout(args)
@@ -34,7 +38,7 @@ class WebhookWorker < BaseWorker
           :args => args, 
           :retry_after => next_retry_in(args[:retry_count]) 
         }
-        Throttler::WebhookThrottler.perform_async(throttler_args)
+        @throttler.perform_async(throttler_args)
       else
         notify_failure(args)
       end
