@@ -115,6 +115,9 @@
 	p{
 		color: #777;
 	}
+}
+
+.trial_expiry, .sales-manager-notifier{
 	.trial-background {
 		padding: 8px 12px 8px;
 		border: 1px solid rgba(0, 0, 0, 0.2);
@@ -234,9 +237,12 @@
 			}
 		}
 		li:hover, li.active{
-			background-color:#FEFEF2;
+			background-color: #f9f7f7;
 			.delete{
+				top:-2px;
+				color: $gray;
 				visibility:visible;
+				&:hover{ color: $grayDarker;}
 			}
 		}
 	}
@@ -251,14 +257,13 @@ div.addReminder{
 		background-color:#fff;
 		@include box-shadow(inset 0 2px 3px rgba(180, 180, 180, 0.1));
 		input.text{
-			color:#734e3d;
+			color:#333;
 			border:0px; background:0px;
 			@include box-shadow(none);
 			font-size:14px;
 			display:block;
 			@include margin(2px 0 0 0);
 			padding:0 5px;
-			width: 245px;
 			@include box-shadow(0 0 0 #fff);
 		}
 		input:focus{ @include box-shadow(none); @include border-radius(0); }
@@ -294,12 +299,17 @@ div.addReminder{
 //				Trial Account Salesperson details
 // -----------------------------------------------------------
 .details-container{
-	margin-bottom: -20px;
+	background-color: #ffffd5;
+	border-radius: 4px;
+	// display: table;
 }
+.sp-title, .sp-details, .sp-plan-select{
+	// display: table-cell;
+	height: 100%;
+}
+.sp-plan-select{ padding: 10px 20px 0px 0px; }
 .sp-title{
-	background-color:#fefef0;
-	margin:(-$common-padding) (-$common-padding) 0;
-	padding: $common-padding / 2 $common-padding;
+	padding: 2px $common-padding;
 	h3.title{
 		font-weight:bold;
 		line-height: 20px;
@@ -307,107 +317,64 @@ div.addReminder{
 }
 .sp-details{
 	background-color:#FEFED2;
-	margin: 0 (-$common-padding);
+	color: $grayDarker;
+	min-height: 118px;
 	padding: $common-padding / 2 $common-padding;
-	border-top: 1px solid #aaa;
+	border-right: 1px #d6d6bd solid;
+	border-left: 1px #d6d6bd solid;
 	position:relative;  // Arrow Up based this
-	.arrow-up{
-		border-bottom-color: #aaa;
-		top: -15px;
-		position: absolute;
-		&:after{
+		&:after, &:before {
+			right: 100%;
+			top: 25%;
+			border: solid transparent;
 			content: " ";
+			height: 0;
+			width: 0;
 			position: absolute;
-			border-style: solid;
-			border-color: transparent;
-			border-width: 0.6em;
-			border-bottom-color: #FEFED2;
-			border-bottom-width: 0.9em;
-			@include margin-left(-5px);
-			margin-top: -3px;
+			pointer-events: none;
 		}
-	}
+		&:after {
+			border-color: rgba(254, 254, 210, 0);
+			border-right-color: #FEFED2;
+			border-width: 8px;
+			margin-top: -8px;
+		}
+		&:before {
+			border-color: rgba(151, 151, 151, 0);
+			border-right-color: #d6d6bd;
+			border-width: 9px;
+			margin-top: -9px;
+		}
 }
+
 .sp-details-list{
 	li{padding-bottom:5px;}
 }
 .plan_and_expiry{
-	background-color:#666;
-	margin:0 (-$common-padding);
-	padding: 12px $common-padding;
+
 	.arrow-right{
     	@include border-left-color(#fff);
 	}
-	p{
-		text-align: center;
-	}
 }
 .select-plan{
-    width: 48%;
-    display: inline-block;
-    @include text-align(right);
-    vertical-align: middle;
     font-weight: 700;
-    a, a:hover{
-	    color: #fff;
-	    padding: 10px 0px;
-	    text-decoration: underline;
-    }
-    a:hover{
-    	text-decoration: none;
-    }
+		a{
+			display: block;
+			width: 100%;
+			@include text-align(left);
+			i{color: #fff; float: right}
+		}
 }
 .current-plan-name{
-    width: 50%;
-    display: inline-block;
-    vertical-align: middle;
-    color: #fff;
     word-wrap: break-word;
 }
 .expiry-details{
-	color: #fff;
 	display: block;
-	text-align: center;
 	vertical-align: middle;
 }
 .trial-alert-color{
-	background-color: #444;
+	color: #444;
 }
 .trial-end-alert-color{
-	background-color: #900;
-	span{
-		font-weight: 700;
-	}
-}
-
-// -----------------------------------------------------------
-//				Moderation Widget
-// -----------------------------------------------------------
-
-.moderation-dashboard-link {
-	li {
-		 width: 110px;
-		 @include float(left);
-		 background-color: #f2f2f2;
-		 color: #666;
-		 margin-bottom: 1px;
-		 padding: 10px;
-		 display: block;
-		 -webkit-box-shadow: -1px 0 0 0 white;
-		 -moz-box-shadow: -1px 0 0 0 white;
-		 box-shadow: -1px 0 0 0 white;
-
-		 .moderation-count {
-		 	display: block;
-		 	font-size: 15px;
-		 	color: #666;
-		 }
-
-		 .moderation-msg {
-		 	display: block;
-		 	font-size: 12px;
-		 	margin-top: 1px;
-		 	color: #666;
-		 }
-	}
+	color: #900;
 }

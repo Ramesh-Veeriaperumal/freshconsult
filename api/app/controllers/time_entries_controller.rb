@@ -25,6 +25,7 @@ class TimeEntriesController < ApiApplicationController
   end
 
   def ticket_time_entries
+    return if validate_filter_params
     @items = paginate_items(scoper.where(workable_id: @ticket.id))
     render '/time_entries/index'
   end
@@ -65,7 +66,7 @@ class TimeEntriesController < ApiApplicationController
     def load_parent_ticket
       # Load only non deleted ticket.
       @ticket = current_account.tickets.where(display_id: params[:id], deleted: false, spam: false).first
-      head 404 unless @ticket
+      log_and_render_404 unless @ticket
       @ticket
     end
 
@@ -91,12 +92,12 @@ class TimeEntriesController < ApiApplicationController
     def validate_filter_params
       params.permit(*TimeEntryConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       timeentry_filter = TimeEntryFilterValidation.new(params, nil, string_request_params?)
-      render_errors timeentry_filter.errors, timeentry_filter.error_options unless timeentry_filter.valid?
+      render_query_param_errors timeentry_filter.errors, timeentry_filter.error_options unless timeentry_filter.valid?
     end
 
     def validate_params
       @timer_running = update? ? handle_existing_timer_running : handle_default_timer_running
-      fields = get_fields("TimeEntryConstants::#{action_name.upcase}_FIELDS")
+      fields = get_fields("TimeEntryConstants::#{action_name.upcase}_FIELDS", @item, :agent_id)
       params[cname].permit(*fields)
       @time_entry_val = TimeEntryValidation.new(params[cname], @item, @timer_running)
       render_errors @time_entry_val.errors, @time_entry_val.error_options unless @time_entry_val.valid?(action_name.to_sym)
@@ -134,7 +135,7 @@ class TimeEntriesController < ApiApplicationController
 
     def handle_existing_timer_running
       # Needed in validation to validate start_time based on timer_running attribute in update action.
-      timer_running = params[cname].key?(:timer_running) ? params[cname][:timer_running] : @item.timer_running
+      params[cname].key?(:timer_running) ? params[cname][:timer_running] : @item.timer_running
     end
 
     def handle_default_timer_running
@@ -155,7 +156,7 @@ class TimeEntriesController < ApiApplicationController
       # Convert hh:mm string to seconds. Say 00:02 string to 120 seconds.
       # Preferring naive conversion because of performance.
       time_split = time_spent.to_s.split(':')
-      time = (time_split.first.to_i.hours + time_split.last.to_i.minutes).to_i
+      (time_split.first.to_i.hours + time_split.last.to_i.minutes).to_i
     end
 
     def check_privilege

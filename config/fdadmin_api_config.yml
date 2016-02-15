@@ -1,4 +1,7 @@
 secret_key: d41d8cd98f00b204e9800998ecf8427e
+timeout: 30
+accept: application/json
+content_type: application/json
 
 common: &common
   resource_import_api: "resources/import"

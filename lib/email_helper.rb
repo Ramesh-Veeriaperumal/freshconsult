@@ -58,7 +58,7 @@ module EmailHelper
     subject = "ProcessEmail :: Timeout Error - #{error}"
     Rails.logger.debug "#{error} #{e.backtrace}"
     NewRelic::Agent.notice_error(e)
-    DevNotification.publish(SNS["mailbox_notification_topic"], subject, e.backtrace)
+    DevNotification.publish(SNS["mailbox_notification_topic"], subject, e.backtrace.inspect)
     yield # Running the same code without timeout, as a temporary way. Need to handle it better
   end
 
@@ -70,7 +70,11 @@ module EmailHelper
     (msg_text.present? and Account.current.features?(:tokenize_emoji)) ? msg_text.tokenize_emoji : msg_text
   end
 
-  def reply_to_private_note?(in_reply_to)
-    in_reply_to.to_s.include? "private-notification.freshdesk.com"
+  def reply_to_private_note?(all_keys)
+    all_keys.present? and all_keys.any? { |key| key.to_s.include? "private-notification.freshdesk.com" }
+  end
+
+  def reply_to_forward(reply_to)
+    reply_to.present? && reply_to.to_s.include?("forward.freshdesk.com")
   end
 end

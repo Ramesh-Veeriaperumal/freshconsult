@@ -1,23 +1,23 @@
 require_relative '../test_helper'
 
 class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::CompaniesTestHelper
+  include CompaniesTestHelper
   def test_query_count
     skip_bullet do
       v2 = {}
       v1 = {}
       v2_expected = {
-        api_create: 7,
+        api_create: 9,
         api_show: 1,
         api_index: 2,
-        api_update: 8,
+        api_update: 11,
         api_destroy: 10,
 
-        create: 20,
-        show: 15,
-        index: 15,
-        update: 21,
-        destroy: 21
+        create: 24,
+        show: 17,
+        index: 17,
+        update: 28,
+        destroy: 23
       }
 
       # create
@@ -41,6 +41,7 @@ class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
         get("/api/v2/companies/#{id1}", nil, @headers)
         assert_response 200
       end
+      v1[:show] += 1 # trusted_ip
 
       # V2 index
       v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do

@@ -62,10 +62,10 @@ var SurveyRating = {
 		var ratingArray = jQuery(".question-rating-"+qid);
 		for(var i=0;i<ratingArray.length;i++){
 			var ratingObj = jQuery(ratingArray[i]);
+			var ratingClass = ratingObj.data("class");
+			ratingObj.addClass(ratingClass);
+			ratingObj.removeClass("none");
 			if(id == ratingObj.data("id")){
-				var ratingClass = ratingObj.data("class");
-				ratingObj.addClass(ratingClass);
-				ratingObj.removeClass("none");
 			 	break; 
 			}
 		}

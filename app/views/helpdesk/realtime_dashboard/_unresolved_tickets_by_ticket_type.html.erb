@@ -1,0 +1,23 @@
+<div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget">
+	<div class="grid-stack-item-content widget-inner">
+ 		<h3 class="widget-title">
+	        <%=t('helpdesk.realtime_dashboard.unresolved_tickets_by_type') %>
+	    </h3>
+		<div class="widget-content">
+			<div id="unresolved_tickets_by_ticket_type">
+				<div class="sloading loading-small loading-block"></div>
+			</div>
+		</div>
+		<a  href="#unresolved_tickets_by_ticket_type"
+	        class="widget-more-link view_all_link text-center hide"
+	        rel="freshdialog"
+	        data-title="<%= t('helpdesk.realtime_dashboard.unresolved_tickets_by_type') %>"
+	        data-template-footer="false"
+	        data-target="#unresolved_tickets"
+	        data-modal-type="slide"
+	        data-width = "570"
+	        data-destroy-on-close="true"
+	        data-content="unresolved_tickets_by_ticket_type"
+	        > <%=t('helpdesk.realtime_dashboard.view_all') %> </a>
+	</div>
+</div>

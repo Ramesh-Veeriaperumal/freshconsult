@@ -26,6 +26,7 @@ class Subscription < ActiveRecord::Base
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   has_one :billing_address,:class_name => 'Address',:as => :addressable,:dependent => :destroy
 
+  has_many :subscription_invoices
   has_many :subscription_addon_mappings, 
     :class_name=> "Subscription::AddonMapping"
   has_many :addons,

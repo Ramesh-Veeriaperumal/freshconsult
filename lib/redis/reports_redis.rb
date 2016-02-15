@@ -46,4 +46,8 @@ module Redis::ReportsRedis
 		newrelic_begin_rescue { $redis_reports.srem(key, value) }
 	end
 
+	def ismember?(key, value)
+		newrelic_begin_rescue { $redis_reports.sismember(key, value) }
+	end
+
 end

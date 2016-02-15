@@ -17,7 +17,7 @@ namespace :email_dynamo do
 				],
 				:provisioned_throughput => {
 	        :read_capacity_units  =>  1,
-	        :write_capacity_units => 20
+	        :write_capacity_units => 50
 	      }
 		  }
 

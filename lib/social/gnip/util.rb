@@ -1,8 +1,7 @@
 module Social::Gnip::Util
 
-  include Social::Dynamo::Twitter
-  include Social::Twitter::Constants
   include Social::Util
+  include Social::Twitter::Constants
 
   def can_convert(account, args)
     twitter_handles = account.twitter_handles
@@ -32,7 +31,7 @@ module Social::Gnip::Util
       if self_tweeted? and !self_tweeted_with_mention?
         attributes.merge!(:replied_by => "@#{@sender}")
       end
-      update_tweet(args, attributes, self, tweet_obj) #it is bad to send self
+      dynamo_helper.update_tweet(args, attributes, self, tweet_obj) #it is bad to send self
     end
   end
 
@@ -43,7 +42,7 @@ module Social::Gnip::Util
     else
       tweet_obj[:fd_counter] = tweet_obj[:fd_counter].to_i + 60
       options[:delay_seconds] = tweet_obj[:fd_counter]
-      @queue.send_message(tweet_obj.to_json, options) unless Rails.env.test?
+      $sqs_twitter.send_message(tweet_obj.to_json, options) unless Rails.env.test?
       return true
     end
   end

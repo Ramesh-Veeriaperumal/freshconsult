@@ -1,16 +1,12 @@
-require 'twitter'
-module Social
+class Social::CustomTwitterWorker < BaseWorker  
+  
+  sidekiq_options :queue => :custom_twitter, :retry => 0, :backtrace => true, :failures => :exhausted
 
-  class CustomTwitterWorker < BaseWorker  
-    
-    sidekiq_options :queue => :custom_twitter, :retry => 0, :backtrace => true, :failures => :exhausted
-
-    def perform(msg = {})
-        Social::CustomStreamTwitter.new(msg)
-      ensure
-        Account.reset_current_account
-    end
-    
-   end
-
+  def perform(msg = {})
+      Social::CustomStreamTwitter.new(msg)
+    ensure
+      Account.reset_current_account
+  end
+  
 end
+

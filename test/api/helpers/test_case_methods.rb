@@ -13,6 +13,27 @@ module TestCaseMethods
     Bullet.enable = original_value
   end
 
+  def exceed_failed_login_count(value, rewind_updated_at = false)
+    original_value = @agent.failed_login_count
+    updated_at = @agent.updated_at
+    new_updated_at = UserSession.failed_login_ban_for.seconds.ago - 1.minute
+    @agent.update_attribute(:failed_login_count, value)
+    @agent.update_column(:updated_at, new_updated_at) if rewind_updated_at
+    yield original_value, value
+  ensure
+    @agent.update_attribute(:failed_login_count, original_value) if @agent.reload.failed_login_count == value
+    @agent.update_column(:updated_at, updated_at) if rewind_updated_at && @agent.updated_at.to_s == new_updated_at
+  end
+
+  def set_password_expiry(value)
+    @agent.update_attribute(:failed_login_count, 0)
+    original_value = @agent.password_expiry
+    @agent.set_password_expiry(password_expiry_date: value)
+    yield
+  ensure
+    @agent.set_password_expiry(password_expiry_date: original_value)
+  end
+
   def stub_current_account
     Account.stubs(:current).returns(@account)
     yield
@@ -55,8 +76,8 @@ module TestCaseMethods
   def match_json(json)
     if [400, 409].include?(response.status) && json.is_a?(Array)
       json = {
-         description: ErrorConstants::ERROR_MESSAGES[:validation_failure],
-         errors: json
+        description: ErrorConstants::ERROR_MESSAGES[:validation_failure],
+        errors: json
       }
     end
     response.body.must_match_json_expression json
@@ -162,6 +183,16 @@ module TestCaseMethods
     headers['CONTENT_TYPE'] = "multipart/form-data; boundary=#{boundary}"
     [headers, body.scrub!]
   end
+end
+
+def create_whitelisted_ips(agent_only = false)
+  WhitelistedIp.destroy_all
+  @account.make_current
+  @account.reload
+  wip = @account.build_whitelisted_ip
+  wip.load_ip_info('127.0.1.1')
+  wip.update_attributes('enabled' => true, 'applies_only_to_agents' => agent_only,
+                        'ip_ranges' => [{ 'start_ip' => '127.0.1.1', 'end_ip' => '127.0.1.10' }])
 end
 
 include TestCaseMethods

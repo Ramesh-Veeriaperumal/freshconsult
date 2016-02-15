@@ -4,7 +4,8 @@ class Helpdesk::SurveysController < ApplicationController
 	before_filter :check_rating?, only: [:rate]
 
 	def index
-		survey_results = @ticket.survey_results
+		survey_results = 	current_account.new_survey_enabled? ? 
+												@ticket.custom_survey_results : @ticket.survey_results 
 		respond_to do |format|
 			format.json do 
 				render :json => survey_results
@@ -16,7 +17,7 @@ class Helpdesk::SurveysController < ApplicationController
 	end
 
 	def rate
-		@survey_result = (current_account.custom_survey_enabled) ? create_custom_survey_result : create_classic_survey_result
+		@survey_result = (current_account.new_survey_enabled?) ? create_custom_survey_result : create_classic_survey_result
 		respond_to do |format|
 			format.json do 
 				render :json =>@survey_result
@@ -32,12 +33,12 @@ class Helpdesk::SurveysController < ApplicationController
 		# For backward compatibility purpose, old rating has been mapped with custom equivalent
 		def custom_rating rating			
 			classic_vs_custom = {
-					"#{Survey::HAPPY}" => CustomSurvey::Survey::EXTREMELY_HAPPY,
-					"#{Survey::NEUTRAL}" => CustomSurvey::Survey::NEUTRAL,
-					"#{Survey::UNHAPPY}" => CustomSurvey::Survey::EXTREMELY_UNHAPPY
+				"#{Survey::HAPPY}" => CustomSurvey::Survey::EXTREMELY_HAPPY,
+				"#{Survey::NEUTRAL}" => CustomSurvey::Survey::NEUTRAL,
+				"#{Survey::UNHAPPY}" => CustomSurvey::Survey::EXTREMELY_UNHAPPY
 			}
 			if (rating.to_i<100 && rating.to_i>0)
-					rating = classic_vs_custom[rating]
+				rating = classic_vs_custom[rating]
 			end
 
 			rating
@@ -59,11 +60,11 @@ class Helpdesk::SurveysController < ApplicationController
 		def create_custom_survey_result
 			rating = custom_rating(params[:rating])
 			old_rating = CustomSurvey::Survey::old_rating rating.to_i
-			survey = current_account.survey
+			survey = current_account.survey # Need to check the use case
 			survey_result = @ticket.custom_survey_results.create({
 						      :account_id => survey.account_id,
 						      :survey_id => survey.id,
-						      :customer_id => @ticket.requester_id,
+						      :customer_id => @ticket.requester_id, #current_user will be agent as this is API
 						      :agent_id => @ticket.responder_id,
 						      :group_id => @ticket.group_id,
 						      :custom_field => {"#{survey.default_question.name}" => rating},
@@ -80,11 +81,11 @@ class Helpdesk::SurveysController < ApplicationController
 		
 		def check_rating?
 			allowed_ratings = Survey::CUSTOMER_RATINGS.collect{|c| c[0]}
-			allowed_ratings = allowed_ratings + current_account.survey.choice_names.collect{|c|c[0]} if current_account.custom_survey_enabled
+			allowed_ratings = allowed_ratings + current_account.survey.choice_names.collect{|c|c[0]} if current_account.new_survey_enabled?
 			handle_error(StandardError.new(t('helpdesk.surveys.invalid_rating',{:rating => params[:rating]}))) unless allowed_ratings.include? params[:rating].to_i
 		end
 
 		def check_feature?
-			handle_error(StandardError.new(t('non_covered_feature_error'))) unless current_account.features?(:surveys,:survey_links)
+			handle_error(StandardError.new(t('non_covered_feature_error'))) unless current_account.any_survey_feature_enabled_and_active?
 		end
 end

@@ -3,6 +3,7 @@ module Freshfone::Conference::Branches::RoundRobinHandler
   include Freshfone::Call::Branches::Bridge
   
   def handle_round_robin_calls
+    update_last_pinged_agent
     if round_robin_agents_pending?
       initiate_round_robin
     else
@@ -12,7 +13,11 @@ module Freshfone::Conference::Branches::RoundRobinHandler
         clear_batch_key(get_call_sid) 
       end
     end
+  end
 
+  def update_last_pinged_agent
+    agent = params[:agent_id] || params[:agent]
+    current_call.meta.update_agent_ringing_time agent
   end
 
   def initiate_round_robin

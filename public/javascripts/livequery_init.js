@@ -337,7 +337,11 @@ $('#Activity .activity > a').livequery(function() {
 
 $('[rel="select-choice"]').livequery(
 	function(ev) {
-		jQuery(this).select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+		var maxSelectionsize = $(this).data('maxSelectionSize') || 10;
+		jQuery(this).select2({
+														maximumSelectionSize: maxSelectionsize,
+														removeOptionOnBackspace:false
+												});
 
 		var $select_content = $(this).siblings('.select2-container'),
 			disableField = $(this).data('disableField');

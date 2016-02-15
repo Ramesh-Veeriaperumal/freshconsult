@@ -8,10 +8,9 @@ var SurveyDetail = {
 				type:'POST',
 				url:SurveyAdmin.path+id+"/test_survey",
 				success:function(data){
-					SurveyAdminUtil.showOverlay(surveysI18n.previewEnd);
-					setTimeout( function(){
-						SurveyAdminUtil.hideOverlay();
-					},1000);
+					SurveyAdminUtil.hideOverlay();
+					flash = jQuery("#noticeajax").html(surveysI18n.previewEnd).show();
+					closeableFlash(flash);
 				},
 				error:function(data){
 					SurveyAdminUtil.hideOverlay();
@@ -35,7 +34,7 @@ var SurveyDetail = {
 		}
 		
 		survey["can_comment"] = jQuery("input[name=can_comment]")[0].checked;
-		var scale = jQuery("input[name=survey-scale]");
+		var scale = jQuery("textarea[name=survey-scale]");
 		for(var i=0;i<scale.length;i++){
 			if(scale[i].value.trim().length == 0){
 				survey["choices"].push([scale[i].placeholder,jQuery(scale[i]).data('face-value')]);
@@ -51,7 +50,7 @@ var SurveyDetail = {
 		if(jsonData != ""){ jsonData = JSON.parse(jsonData); }
 		// var surveyQuestionForm = jQuery("form[name=survey_question_fields]")	;
 		var surveyQuestionForm = jQuery(obj);
-		var survey_choices = jQuery("input[name^=question-scale]");
+		var survey_choices = jQuery("textarea[name^=question-scale]");
 		var survey_question_fields = jQuery("input[name^=survey_question]");
 		var choices = [];
 		for(var i=0;i<survey_choices.length;i++){
@@ -84,23 +83,27 @@ var SurveyDetail = {
 	},
 	rating:{
 		create:function(view){
+			view.rating.surveyLimit = SurveyAdmin.fullSurvey;
 			jQuery('#survey_rating').html(JST["survey/admin/template/new_rating"](view.rating));
+			jQuery('#survey_link_scenarios').html(JST["survey/admin/template/new_send_while"](view.rating));
 			var defaultScale = (view.rating.values && view.rating.values.length>=2) ? view.rating.values.length : view.scale.default;
 			jQuery('#survey_rating_options')
 					.html(JST["survey/admin/template/new_scale_option"]({
 									"name":"survey-scale",
-									"choice":view.choice.values(defaultScale)	
+									"choice":view.choice.values(defaultScale),
+									"surveyLimit": SurveyAdmin.fullSurvey
 			}));	
 			jQuery('#survey_rating_choice')
 					.html(JST["survey/admin/template/new_rating_choice"]({
 							name:"choice",
 							"scale":view.scale,
 							"defaultScale":defaultScale
-			}));
+			}));	
 		}
 	},
 	thanks:{
 		create:function(view){
+			view.surveyLimit = SurveyAdmin.fullSurvey;
 			jQuery('#survey_thanks').html(JST["survey/admin/template/new_thanks"](view));
 		}
 	}

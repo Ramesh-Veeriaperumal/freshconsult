@@ -1,74 +1,64 @@
 class CustomSurvey::SurveyResult < ActiveRecord::Base  
-
   self.primary_key = :id
   self.table_name = :survey_results
 
   include Va::Observer::Util
   
-  concerned_with :associations
-
-  after_create :update_observer_events, :update_ticket_rating
-  after_commit :filter_observer_events, on: :create, :if => :user_present?
+  concerned_with :associations, :callbacks
 
   # Survey result types 
-  RATING = 1
-  QUESTION = 2
-  REMARKS = 3
+  RATING    = 1
+  QUESTION  = 2
+  REMARKS   = 3
+
+  RATING_ALL_URL_REF = 'r' #used in a scope
 
   def custom_form
     survey # memcache this 
   end
 
   def custom_field_aliases
-
     @custom_field_aliases ||= custom_form.survey_questions.map(&:name)
-
   end
     
-  def add_feedback(params)
-    feedback = params[:feedback]
-    if feedback.blank?
-      feedback = I18n.t('support.surveys.feedback_not_given')
-    end
-    note = surveyable.notes.build({
-      :user_id => customer_id,
-      :note_body_attributes => {:body => Helpdesk::HTMLSanitizer.plain(feedback) },
-      :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["feedback"],
-      :incoming => true,
-      :private => false
-    })
-    
-    note.account_id = account_id
-    note.save_note
-    
-    create_survey_remark({
-      :account_id => account_id,
-      :note_id => note.id
-    })
-    
-    if params[:custom_field]
-      update_attributes({:custom_field => params[:custom_field]})
-      save!
-    end         
+  def update_result_and_feedback(params)
+    feedback = survey_remark.feedback
+    feedback_text = Helpdesk::HTMLSanitizer.plain(params[:feedback])
+    feedback.attributes = {
+      :note_body_attributes => {
+        :body       => feedback_text, 
+        :body_html  => "<div>#{feedback_text}</div>"
+      }
+    }
+    feedback.save_note!
+    update_attributes({:custom_field => params[:custom_field]}) if params[:custom_field]
   end
 
   def ticket_info
-    question = survey.default_question
-    value = survey_result_data[question.column_name]
-    {  :value => value,
-        :text => survey.rating_text(value),
-        :label => question.label  }
+    default_question = survey.default_question
+    value = survey_result_data[default_question.column_name]
+    { 
+      :value  => value,
+      :text   => survey.rating_text(value),
+      :label  => default_question.label 
+    }
   end
 
   def note_details
-      {  :rating => rating , 
-          :question_values => question_values , 
-          :agent => agent.blank? ?  '' : agent.name , 
-          :survey => survey.title_text  }
+    { 
+      :rating           => rating, 
+      :question_values  => question_values, 
+      :agent            => agent.blank? ?  '' : agent.name, 
+      :survey           => survey.title_text 
+    }
   end
   
   def rating
-    self.survey_result_data[self.survey.default_question.column_name]
+    survey_result_data[default_question_column_name]
+  end
+
+  def default_question_column_name #to avoid N+1 queries
+    :cf_int01
   end
 
   def happy?
@@ -80,56 +70,71 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
   end
   
   def get_small_img_class
-        if happy?
-           return "ficon-survey-happy"
-        elsif unhappy?
-           return "ficon-survey-sad"
-        else
-           return "ficon-survey-neutral"
-        end
+    if happy?
+      "ficon-survey-happy"
+    elsif unhappy?
+      "ficon-survey-sad"
+    else
+      "ficon-survey-neutral"
+    end
   end
 
   def text 
-    return survey.rating_text(rating)
+    survey.rating_text(rating)
   end
-                                                       
+
   def as_json(options={})
     options[:except] = [:account_id]
     super options
   end
 
+  def self.remarks_json question_column
+    {:remarks => all.map{ |remark| remark.remarks_json question_column }}
+  end
+
+  def remarks_json question_column
+    options = { 
+      :only     => [:id, :created_at],
+      :include  => { 
+        :survey_remark => { 
+          :include => {
+            :feedback => {:only => [:body]}
+          }
+        },
+        :surveyable => {:only => [:display_id, :subject]},
+        :customer   => {:only => [:id, :name]},
+        :agent      => {:only => [:name]},
+        :group      => {:only => [:name]}
+      }
+    }
+    json = as_json(options)['survey_result']
+    json[:customer][:avatar] = customer.avatar_url
+    json[:survey_remark] ||= {"feedback" => {"body" => ''}}
+    json[:rating] = question_rating question_column
+    json
+  end
+
   private
 
-    def update_ticket_rating
-      return unless surveyable.is_a? Helpdesk::Ticket
-
-      surveyable.st_survey_rating= rating
-      surveyable.survey_rating_updated_at= created_at
-      surveyable.save
+    def question_rating question_column
+      survey_result_data[question_column]
     end
-    
-    # VA - Observer Rule 
-    def update_observer_events
-      return unless surveyable.instance_of? Helpdesk::Ticket
-      @model_changes = { :customer_feedback => rating }
-    end   
 
     def question_values
-        question_details = []
-        survey.feedback_questions.each do |question|
-          unless survey_result_data.blank?
-            rating_value = survey_result_data[question.column_name]
-            rating = {:label => question.label , 
-                      :choices => question.choices}
-              question.choices.each do |choice|
-                if(choice[:face_value] == rating_value)
-                    rating = rating.merge(:key => choice[:face_value], :value => choice[:value])
-                    break
-                end
-              end
-              question_details.push(rating) unless !rating.has_key?(:key)
-          end
+      survey.feedback_questions.inject([]) do |question_details, question|
+        rating_value = survey_result_data[question.column_name]
+        choice = question.choices.find{ |choice| choice[:face_value] == rating_value }  
+        if choice.present?
+          rating = {
+            :label    => question.label, 
+            :choices  => question.choices,
+            :key      => choice[:face_value], 
+            :value    => choice[:value]
+          }
+          question_details.push(rating) 
+        else
+          question_details
         end
-        question_details
+      end
     end 
 end

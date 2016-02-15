@@ -1,0 +1,5 @@
+page.replace :"user-vote", :partial => "discussions/topics/widgets/vote", :locals => { :topic => @topic }
+page << "jQuery('#topic-vote').text(\"#{t("discussions.topics.title_meta.vote_info.#{@topic.forum.type_symbol}", :count => @topic.user_votes)}\");"
+page << "App.track('Topic voted by Agent');"
+page.replace_html "vote-info-#{@topic.first_post.id}", render(:partial => 'discussions/topics/widgets/vote_info',
+                  :locals => { :first_post => @topic.first_post, :post =>@topic.first_post, :topic => @topic }).html_safe

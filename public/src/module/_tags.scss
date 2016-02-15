@@ -54,8 +54,6 @@
 }
 
 .tag-list{
-	.removetag, .edittag { display:none; }
-	.count:hover .removetag, .name:hover .edittag { display: inline-block; } 
 	#tags-merge-confirm-content input.sloading {
 	  padding: initial;
 	  @include padding-left(6px);
@@ -85,22 +83,17 @@
     top: 2px;
     position: relative;
   }
-  .removetag, .edittag{
+  .removetag{
     position: relative;
-    @include left(10px);
-    top:8px;
     i{
-      width: 25px;
+      width: 20px;
       height: 25px;
       display: inline-block;
-      margin-top: -15px;
-      @include box-shadow(0 0 10px rgba(0,0,0,0.1) inset);
-      border-radius: 100%;
-      background: #f2f2f2;
-      border: 1px solid #ddd;
+      margin-top: -7px;
+			margin: 0 2px;
       position: relative;
       vertical-align: middle;
-      color:#333;
+      color:#c60000;
       &:before{
         position: absolute;
         top: 6px;
@@ -115,7 +108,7 @@
         content: "";
         width: 15px;
         height: 15px;
-        background-color: #333;
+        background-color: #c60000;
         border-radius: 100%;
         position: absolute;
         left: 5px;
@@ -123,21 +116,15 @@
       }
     }
   }
-  .edittag{
-    @include left(5px);
-  }
   .tags-total-counter{
+    float: right;
     padding: 0 8px;
-    background: #eee;
     font-size: 90%;
     font-weight: 500;
-    color: #333;
+    color: darkgray;
     display: inline-block;
     @include border-radius(9px);
     @include text-shadow(1px 1px 0 rgba(#fff, 0.5));
-  }
-  .tag_name{
-    padding :3px;
   }
   .tag-label{
     display:inline-block;
@@ -189,4 +176,101 @@
     margin-top: -7px;
     @include margin-right(5px);
   }
+}
+
+.sidepanel{
+	p i{
+		color: #888;
+	}
+}
+// Tags revamp styles
+.tags-list{
+	.removetag{
+		visibility: hidden;
+	}
+	.oval-border{
+			display: inline-block;
+			padding: 6px 10px;
+			a{
+				font-weight: bold;
+			}
+	}
+	td:not(.name){
+		font-size: 12px;
+	}
+	td.count{
+		width: 110px;
+		padding: 12px 0;
+		&:hover{
+			.oval-border{
+					box-shadow: inset 0 0 0 1px #ddd;
+					border-radius: 30px;
+					background: #fff;
+			}
+			.removetag{
+				visibility: visible;
+			}
+		}
+	}
+
+	.archive:not(.disabled){
+		.oval-border{
+			margin-left: 30px;
+		}
+	}
+	.customers{
+		.ficon-user{
+			display: inline-block;
+			vertical-align: bottom;
+			font-size: 18px;
+		}
+	}
+	.articles .tooltip{
+		cursor: default !important;
+	}
+	.name, .edittag, .tag-name{
+		@include margin-left( 6px );
+	}
+	.name{
+			width: 40% !important;
+			padding-right: 0;
+			a.tag_name{
+				display: inline-block;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				width: 75%;
+				overflow: hidden;
+				vertical-align: bottom;
+				font-weight: bold;
+				&.hide{
+					display: none !important;
+				}
+			}
+	}
+	.ficon-article{
+		font-size: 14px;
+	}
+	.edittag{
+    .symbols-tag-edit{
+			color: #ccc;
+			&:hover{
+				color: #0066cc;
+			}
+		}
+	}
+	td{
+		i{
+			color: #888;
+		}
+		&.muted{
+			.oval-border{
+				color: #ccc;
+				@include padding-left( 40px );
+				opacity: 0.8;
+			}
+			i{
+			color: #cdcdcd;
+			}
+		}
+	}
 }

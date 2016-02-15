@@ -15,6 +15,7 @@ class Portal::Tags::Snippet < Liquid::Tag
                             # Should not be exposed in documentation
                             :reset_password_form => "/password_resets/form",
                             :activation_form => "/activations/form",
+                            :csat_survey => "/support/custom_surveys/new",
                             :ticket_add_people => "/support/tickets/add_people",
                             :ticket_reply => "/support/tickets/reply",
                             :ticket_survey => "/support/tickets/ticket_survey",

@@ -4,7 +4,7 @@ class Admin::SurveysController < Admin::AdminController
   before_filter :delta_handle
     
   def delta_handle
-   redirect_to params.merge!(:controller => "admin/custom_surveys") if current_account.features?(:custom_survey)
+   redirect_to params.merge!(:controller => "admin/custom_surveys") if current_account.new_survey_enabled?
   end
  
   def index

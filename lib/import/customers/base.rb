@@ -91,7 +91,7 @@ class Import::Customers::Base
       custom_field.keys.map do |key|
         if @cb_fields.include?(key.to_s)
           field_value = custom_field[:"#{key}"].to_s.strip.downcase
-          custom_field[:"#{key}"] = field_value == "yes" ? "true" : "false" unless field_value.blank?
+          custom_field[:"#{key}"] = ["yes","true"].include?(field_value) ? "true" : "false" unless field_value.blank?
         end
       end
     end

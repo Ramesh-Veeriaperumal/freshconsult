@@ -8,6 +8,8 @@ class Helpdesk::TicketOldBody < ActiveRecord::Base
   belongs_to_account
   belongs_to :ticket, :class_name => "Helpdesk::Ticket", :foreign_key => "ticket_id"
 
+  after_update ->(obj) { obj.ticket.update_timestamp }, :if => :changed?
+
   attr_protected :account_id
 
   #  returns false by default 

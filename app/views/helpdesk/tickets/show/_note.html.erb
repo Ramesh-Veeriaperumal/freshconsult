@@ -6,10 +6,10 @@ reply_to_fwd_id = "cnt-reply-fwd-#{note.id.to_s()}"
 edit_id = "edit-#{note.id.to_s()}"
 notable_object = @ticket || @parent
 minimizable ||= false
-kind = note.survey_remark.nil? ? note.kind : 'survey'
-if current_account.custom_survey_enabled
-kind = note.custom_survey_remark.nil? ? note.kind : 'survey'
-unless note.custom_survey_remark.blank?
+
+if current_account.new_survey_enabled?
+  kind = note.custom_survey_remark.nil? ? note.kind : 'survey'
+  unless note.custom_survey_remark.blank?
     ticket_info = note.custom_survey_remark.survey_result.ticket_info
     details = note.custom_survey_remark.survey_result.note_details 
     unless details.blank?
@@ -19,6 +19,8 @@ unless note.custom_survey_remark.blank?
       rating = details[:rating]
     end
   end
+else
+  kind = note.survey_remark.nil? ? note.kind : 'survey'
 end
 %>
 
@@ -119,10 +121,11 @@ end
 							"data-remote-url" => forward_conv_helpdesk_ticket_path({ 
 														:id => notable_object.display_id, 
 														:note_id => note.id }) %>
-			<% if current_account.features?(:custom_survey) %>
-	          <%= render :partial => '/helpdesk/tickets/show/custom_survey_note' , :formats => [:html], :locals => {:note => note , 
+
+      <% if current_account.new_survey_enabled? %>
+            <%= render :partial => '/helpdesk/tickets/show/custom_survey_note' , :formats => [:html], :locals => {:note => note , 
                 :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
-	        <% else %>
+      <% else %>
             <%= render :partial => '/helpdesk/tickets/show/survey_note' , :formats => [:html], :locals => {:note => note , 
                 :notedetails => notedetails} %>
 			<%end%>

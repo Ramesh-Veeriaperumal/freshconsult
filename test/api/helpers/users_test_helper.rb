@@ -1,9 +1,10 @@
-module Helpers::UsersTestHelper
+module UsersTestHelper
   include CompanyHelper
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    contact_custom_field = (contact.custom_field && ignore_extra_keys) ? contact.custom_field.ignore_extra_keys! : contact.custom_field
+    custom_field = contact.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v] }.to_h
+    contact_custom_field = (custom_field && ignore_extra_keys) ? custom_field.ignore_extra_keys! : custom_field
 
     if contact.avatar
       contact_avatar = {
@@ -21,7 +22,6 @@ module Helpers::UsersTestHelper
     {
       active: expected_output[:active] || contact.active,
       address: expected_output[:address] || contact.address,
-      client_manager: expected_output[:client_manager] || contact.client_manager,
       company_id: expected_output[:company_id] || contact.company_id,
       description: expected_output[:description] || contact.description,
       email: expected_output[:email] || contact.email,

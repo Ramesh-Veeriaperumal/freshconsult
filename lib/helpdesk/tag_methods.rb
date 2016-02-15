@@ -21,7 +21,7 @@ module Helpdesk::TagMethods
 
   def add_ticket_tags(tags_to_be_added, item)
     tags_to_be_added.each do |tag_string|
-      tag = current_account.tags.find_by_name(tag_string) || current_account.tags.new(:name => tag_string)
+      tag = Account.current.tags.find_by_name(tag_string) || Account.current.tags.new(:name => tag_string)
       item.tags << tag
     end
     rescue Exception => e

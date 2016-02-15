@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class ApiGroupsFlowTest < ActionDispatch::IntegrationTest
-  include Helpers::GroupsTestHelper
+  include GroupsTestHelper
   JSON_ROUTES = Rails.application.routes.routes.select do |r|
     r.path.spec.to_s.starts_with('/api/groups/') &&
     ['post', 'put'].include?(r.send(:verb).inspect.gsub(/[^0-9A-Za-z]/, '').downcase)
@@ -32,7 +32,7 @@ class ApiGroupsFlowTest < ActionDispatch::IntegrationTest
       assert group.agent_groups.count == 2
 
       put "/api/groups/#{group.id}", { agent_ids: nil }.to_json, @write_headers
-      match_json([bad_request_error_pattern('agent_ids', :data_type_mismatch, data_type: 'Array')])
+      match_json([bad_request_error_pattern('agent_ids', :data_type_mismatch, data_type: Array)])
       assert_response 400
 
       put "/api/groups/#{group.id}", { agent_ids: [] }.to_json, @write_headers

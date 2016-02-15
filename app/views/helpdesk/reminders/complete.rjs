@@ -3,3 +3,4 @@ page.insert_html :top, :compeleted_reminders, :partial => @reminder_partial, :ob
 # page["reminder_#{@item.id}"].visual_effect :highlight
 page << "jQuery('#reminder_#{@item.id}').show('highlight')"
 page << "trigger_event('todo_completed', #{@item.to_json});"
+page << "getRemainderCount();"

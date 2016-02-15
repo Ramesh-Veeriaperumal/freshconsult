@@ -6,6 +6,7 @@ class Company < ActiveRecord::Base
   after_update :map_contacts_on_update, :if => :domains_changed?
   
   before_create :check_sla_policy
+  before_validation :update_company_domains, :if => :domains_changed?
   before_update :check_sla_policy, :backup_company_changes
   before_save :format_domain, :if => :domains_changed?
   
@@ -59,4 +60,36 @@ class Company < ActiveRecord::Base
     def format_domain
       self.domains = domains_array(self.domains).join(',').prepend(",").concat(",") if self.domains
     end
+
+    def added_domains
+      domain_changes = self.changes[:domains]      
+      domains_array(domain_changes[1]) - domains_array(domain_changes[0])
+    end
+
+    def removed_domains
+      domain_changes = self.changes[:domains]     
+      domains_array(domain_changes[0]) - domains_array(domain_changes[1])
+    end
+
+    def update_company_domains
+      self.company_domains_attributes = [domain_hash_list(added_domains), domain_hash_list(removed_domains, true)].flatten.uniq
+    rescue
+      errors.add(:base,"#{I18n.t('companies.valid_comapany_domain')}")
+    end
+
+    def domain_hash_list(domains_list, destroy=false)
+      domains_list.collect do |dom|
+        dom = get_host_without_www dom
+        id = self.company_domains.find_by_domain(dom).try(:id)
+        {:id=>id, :domain=>dom, :_destroy=>destroy}
+      end
+    end
+
+    def get_host_without_www(url)
+      uri = URI.parse(url)
+      uri = URI.parse("http://#{url}") if uri.scheme.nil?
+      host = uri.host.downcase
+      host.start_with?('www.') ? host[4..-1] : host
+    end
+
 end

@@ -29,7 +29,6 @@ module HelpdeskReports
           :date_range    => date_range
         }
         options.merge!(extra_options) if extra_options
-
         if file_path.blank?
           ReportExportMailer.no_report_data(options)
         else
@@ -41,10 +40,11 @@ module HelpdeskReports
           end
           ReportExportMailer.bi_report_export(options)
         end
+      ensure
+        FileUtils.rm_f(file_path) if file_path
       end
 
       def begin_rescue(&block)
-        file_path = nil
         begin
           yield if block_given?
         rescue Exception => e
@@ -52,8 +52,6 @@ module HelpdeskReports
           subj_txt = "Reports Export exception for #{Account.current.id}"
           message  = "#{e.inspect}\n #{e.backtrace.join("\n")}"
           DevNotification.publish(SNS["reports_notification_topic"], subj_txt, message)
-        ensure
-          FileUtils.rm_f(file_path) if file_path
         end
       end
 

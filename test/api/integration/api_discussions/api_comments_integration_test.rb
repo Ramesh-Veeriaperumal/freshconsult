@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class ApiCommentsIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::DiscussionsTestHelper
+  include DiscussionsTestHelper
 
   def test_query_count
     skip_bullet do
@@ -13,8 +13,8 @@ class ApiCommentsIntegrationTest < ActionDispatch::IntegrationTest
         api_destroy: 9,
 
         create: 35,
-        update: 17,
-        destroy: 30
+        update: 19,
+        destroy: 32
       }
 
       t = create_test_topic(create_test_forum(ForumCategory.first))

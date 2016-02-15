@@ -172,6 +172,9 @@ module ApplicationHelper
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
+    if tab_name.eql?(:reports)
+      options.delete(:"data-pjax");
+    end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
 
@@ -522,6 +525,7 @@ module ApplicationHelper
                       ['{{ticket.due_by_time}}',      'Due by time',        '',          'ticket_due_by_time'],
                       ['{{ticket.tags}}',           'Tags',           '',         'ticket_tags'],
                       ['{{ticket.latest_public_comment}}',  'Last public comment',  '',         'ticket_latest_public_comment'],
+                      ['{{ticket.latest_private_comment}}', 'Last private comment', '', 'ticket_latest_private_comment'],
                       ['{{ticket.group.name}}',       'Group name',       '',          'ticket_group_name'],
                       ['{{ticket.agent.name}}',       'Agent name',       '',        'ticket_agent_name'],
                       ['{{ticket.agent.email}}',      'Agent email',        "",         'ticket_agent_email']
@@ -583,7 +587,7 @@ module ApplicationHelper
     # Survey Placeholders
     place_holders[:tickets] << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey',
                       'Includes satisfaction survey.', 'ticket_satisfaction_survey'
-                      ] if current_account.features?(:surveys, :survey_links)
+                      ] if current_account.any_survey_feature_enabled_and_active? && params[:type] != 'reply_template'
     place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
                       'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
                       ] if Integrations::SurveyMonkey.placeholder_allowed?
@@ -1259,7 +1263,7 @@ module ApplicationHelper
     (element.blank? || field_value.nil? || field_value == "" || field_value == "..." || ((field.field_type == "custom_checkbox") && !field_value))
   end
 
-  def pageless(total_pages, url, message=t("loading.items"), params = {}, data_type = "html", complete = "" )
+  def pageless(total_pages, url, message=t("loading.items"), params = {}, data_type = "html", complete = "")
     opts = {
       :totalPages   => total_pages,
       :url          => url,
@@ -1470,16 +1474,16 @@ module ApplicationHelper
 
  def call_direction_class(call)
 		if call.blocked?
-			"blocked_call_icon"
+			"ficon-blocked-call"
 		elsif call.incoming?
-			(call.completed? || call.inprogress?) ? "incoming_call_icon" : abandon_or_missed_call_icon(call)
+			(call.completed? || call.inprogress?) ? "ficon-incoming-call" : abandon_or_missed_call_icon(call)
 		elsif call.outgoing?
-			(call.completed? || call.inprogress?) ? "outgoing_call_icon" : "outgoing_missed_call_icon"
+			(call.completed? || call.inprogress?) ? "ficon-outgoing-call" : "ficon-no-arrow-left"
 		end
 	end
 
   def abandon_or_missed_call_icon(call)
-    call.abandoned_call? ? "ficon-abandoned-call" : "incoming_missed_call_icon"
+    call.abandoned_call? ? "ficon-abandoned-call" : "ficon-no-arrow-right"
   end
 # helpers for fresfone callable links -- ends
 
@@ -1598,6 +1602,10 @@ module ApplicationHelper
     end
     
     content_tag :ul, &list
+  end
+
+  def get_store_data
+    {:current_user => current_user, :agent => current_account.agents_from_cache, :group => current_account.groups_from_cache}.to_json
   end
 
 end

@@ -3108,7 +3108,7 @@ ca:
     submit_new_ticket: "... o envia un nou tiquet"
     login: "Inici de sessió"
     login_portal: "Inicia sessió al portal de suport"
-    login_details: "Enter the details below"
+    login_details: "Introdueixi els detalls a continuació"
     login_options: "... o registra't fent servir"
     reset_password: "Facilita'ns la teva adreça de correu electrònic i les instruccions per restablir la contrasenya i et serà enviada per correu electrònic."
     signup: Registra't
@@ -3154,7 +3154,7 @@ ca:
       filler_text: "Miri aquest espai per a articles relacionats amb %{folder_name}"
     topic:
       follow: Continuar
-      following: Següent
+      following: "Segueix"
       topic_title: "Títol del tema"
       post_topic: "Publiqui tema en"
       monitor_topic: "Vigilar aquest tema"

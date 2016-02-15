@@ -21,7 +21,8 @@
 			responsive: 	"",
 			widgetType: 	"popup",
 			buttonType:     "text",
-			captcha: ""
+			captcha: 		"",
+			loadOnEvent:    "windowLoad" // 'documentReady' || 'immediate' || 'onDemand'
 		},
 		widgetHeadHTML, widgetBodyHTML = null;
 		$widget_attr = {
@@ -117,6 +118,7 @@
 			class_name = locationClass[options.alignment] || "left";
 			$widget_attr.button = document.createElement('div');
 			$widget_attr.button.setAttribute('id', 'freshwidget-button');
+			$widget_attr.button.setAttribute('data-html2canvas-ignore','true');
 			$widget_attr.button.style.display = 'none';
 			$widget_attr.button.className = "freshwidget-button fd-btn-" + class_name;
 
@@ -186,10 +188,11 @@
 
 			$widget_attr.container.className = "freshwidget-container";
 			$widget_attr.container.id = "FreshWidget";
-
 			if(options.responsive == ""){
 				$widget_attr.container.className += " responsive";
 			}
+              // preventing from capturing (screenshot)
+			$widget_attr.container.setAttribute("data-html2canvas-ignore","true");
 
 			$widget_attr.container.style.display = 'none';
 
@@ -225,6 +228,9 @@
 					$widget_attr.iframeLoaded = true;
 				}
 			});
+
+			// triggering message listening event
+	 		childFrameMessage();
 		}
 	 };
 
@@ -244,28 +250,9 @@
 			body_overflow = document.body.style.overflow;
 			document.body.style.overflow='hidden'
 		}
-	 	if(Browser.Version() > 8 && options.screenshot == ""){
-	        html2canvas( [ document.body ], {
-					ignoreIds: "FreshWidget|freshwidget-button",
-					proxy:false,
-				    onrendered: function( canvas ) {
-				      	var img = canvas.toDataURL();
-				      	var message = img;
-
-						 sendMessage = setInterval(function() {
-						 	if ($widget_attr.iframeLoaded) {
-							 	document.getElementById('freshwidget-frame').contentWindow.postMessage(message, "*");
-							 	clearInterval(sendMessage);
-						 	}else {
-						 		//console.log('waiting for iframe to load');
-						 	}
-						 }, 500);
-				    }
-			});
-    	}
 	 	if(!$widget_attr.iframeLoaded) {
 	 		widgetFormUrl();
-	 	}
+	 	}	 	
 	 }
 
 	 function close(){
@@ -276,19 +263,33 @@
 		}
 	 	widgetFormUrl();
 	 }
-
 	 function initialize(params){
 		extend(params);
 
 		if(Browser.Version() > 8 && (typeof html2canvas === 'undefined') && options.screenshot == "")
 			loadjsfile(options.assetUrl+"/html2canvas.js?ver=" + version);
 
-		bind(window, 'load', function(){
-			// File name to be changed later when uploaded
-			createButton();
-			createContainer();
-		});
+		switch(options.loadOnEvent){
+			case 'windowLoad':
+				bind(window, 'load', createWidget);
+			break;
+			case 'documentReady':
+				bind(document, 'ready', createWidget);
+			break;
+			case 'immediate':
+				createWidget();
+			break;
+		}
+		
+
 		loadcssfile(options.assetUrl+"/freshwidget.css?ver=" + version);
+	 }
+
+
+	 function createWidget() {
+	 	// File name to be changed later when uploaded
+	 	createButton();
+		createContainer();
 	 }
 
 	 function updateWidget(params){
@@ -305,14 +306,41 @@
 		destroyContainer();
 		delete window.FreshWidget;
 	 }
-
+   // listening for message from child
+   function childFrameMessage() {
+   		bind(window, 'message', function(e) {
+	  		var message = e.data;
+	   		if(message=="screenshot") {
+	    		// move to screenshot function
+	    		TakeScreenShot(e);
+	    	}
+      	});
+   }
+   // taking screenshot while child frame requests
+   function TakeScreenShot(e) {
+        	if(Browser.Version() > 8 && options.screenshot == ""){
+   		html2canvas( [ document.body ], {
+			proxy:false,
+		    onrendered: function( canvas ) {
+		      	var img = canvas.toDataURL();
+		      	var message={type:'screenshot',img:img};
+				document.getElementById('freshwidget-frame').contentWindow.postMessage(message, "*");
+		    }
+		});
+		e.stopImmediatePropagation()
+   	}
+   	    
+   }
 	 // Defining Public methods
      var FreshWidget = {
 	 	init 		: function(apikey, params){
 						catchException(function(){ return initialize(params); });
 				      },
+		create      : function(){
+						catchException(function(){ return createWidget(); });
+					  },
 		show 		: function(){
-						catchException(function(){ return showContainer(); });
+						catchException(function(){return showContainer(); });
 					  },
 		close		: function(){
 						catchException(function(){ return close(); });

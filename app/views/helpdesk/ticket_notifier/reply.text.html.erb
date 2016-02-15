@@ -1,7 +1,7 @@
 <%= @body_html.html_safe %>
 
 <%=render :partial => 'cloud_files_template', :locals => { :cloud_files => @cloud_files} %>
-<%if Account.current.features?(:custom_survey)%>
+<%if Account.current.new_survey_enabled?%>
 	<%=render :partial => "custom_survey", :locals => {:ticket => @ticket, :survey_handle => @survey_handle,
 				:surveymonkey_survey => @surveymonkey_survey, :in_placeholder => false,
 				:survey_feedback_preview => false } %>

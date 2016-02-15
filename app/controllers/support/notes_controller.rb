@@ -9,7 +9,7 @@ class Support::NotesController < ApplicationController
     @ticket = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account)
     raise ActiveRecord::RecordNotFound unless @ticket
     access = (current_user && @ticket.requester_id == current_user.id) ||
-     (privilege?(:client_manager)  && @ticket.requester.company == current_user.company) ||
+     (privilege?(:client_manager)  && @ticket.company == current_user.company) ||
      (privilege?(:manage_tickets))
 
     return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless access

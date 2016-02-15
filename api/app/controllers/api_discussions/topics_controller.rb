@@ -5,7 +5,7 @@ module ApiDiscussions
 
     def create
       @item.user = api_current_user
-      post = @item.posts.build(params[cname].select { |x| DiscussionConstants::COMMENT_FIELDS.include?(x) })
+      post = @item.posts.build(params[cname].select { |x| DiscussionConstants::CREATE_COMMENT_FIELDS.flat_map(&:last).include?(x) })
       post.user = api_current_user
       assign_parent post, :topic, @item
       super
@@ -18,11 +18,13 @@ module ApiDiscussions
     end
 
     def forum_topics
+      return if validate_filter_params
       @topics = paginate_items(@item.topics.newest)
       render '/api_discussions/topics/topic_list'
     end
 
     def followed_by
+      return if validate_filter_params(DiscussionConstants::FOLLOWED_BY_FIELDS)
       @topics = paginate_items(current_account.topics.followed_by(params[:user_id]).newest)
       render '/api_discussions/topics/topic_list'
     end
@@ -35,7 +37,7 @@ module ApiDiscussions
 
       def load_forum
         @forum = current_account.forums.find_by_id(params[:id])
-        head 404 unless @forum
+        log_and_render_404 unless @forum
         @forum
       end
 
@@ -45,14 +47,14 @@ module ApiDiscussions
 
       def set_custom_errors(_item = @item)
         if @item.errors[:stamp_type].present?
-          allowed_string = get_allowed_stamp_types.join(',')
+          allowed_string = allowed_stamp_types.join(',')
           @item.errors[:stamp_type] = ErrorConstants::ERROR_MESSAGES[:allowed_stamp_type] % { list: allowed_string }
         end
         ErrorHelper.rename_error_fields({ forum: :forum_id }, @item)
         @error_options = { remove: :posts }
       end
 
-      def get_allowed_stamp_types
+      def allowed_stamp_types
         if @item.forum.forum_type == DiscussionConstants::QUESTION_FORUM_TYPE
           # if forum is of question type, the error may be because stamp_type is not included in the list 'answered, unanswered' (or)
           # 'answered' stamp_type could have been set for a topic with no answers or vice versa.
@@ -80,16 +82,8 @@ module ApiDiscussions
       end
 
       def validate_params
-        if create?
-          if !load_forum
-            return false
-          else
-            fields = DiscussionConstants::CREATE_TOPIC_FIELDS
-          end
-        else
-          fields = get_fields_from_constant(DiscussionConstants::UPDATE_TOPIC_FIELDS)
-        end
-        params[cname].permit(*(fields))
+        return false if create? && !load_forum
+        params[cname].permit(*(get_fields("DiscussionConstants::#{action_name.upcase}_TOPIC_FIELDS")))
         topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
         render_errors topic.errors, topic.error_options unless topic.valid?(action_name.to_sym)
       end

@@ -2,6 +2,7 @@ class Freshfone::CallActions
   include Freshfone::NodeNotifier
   include Freshfone::NodeEvents
   include Freshfone::FreshfoneUtil
+  include Freshfone::Conference::Branches::RoundRobinHandler
 
 	attr_accessor :params, :current_account, :current_number, :agent, :outgoing
 	
@@ -129,6 +130,11 @@ class Freshfone::CallActions
   	call.meta.update_external_transfer_call_response(number, response) 
   end
 
+  def update_secondary_leg_response(agent_id, number, response, call)
+    call.meta.update_pinged_agents_with_response(agent_id, response)
+    call.meta.update_external_transfer_call_response(number, response) if external_transfer?
+  end
+
   def handle_failed_incoming_call(call, agent_id)
     call_meta = call.meta
     return if call_meta.blank?
@@ -162,7 +168,22 @@ class Freshfone::CallActions
     notify_transfer_unanswered call
   end
 
+  def handle_failed_round_robin_call(call, agent_id)
+    notifier = Freshfone::Notifier.new(params, current_account)
+    call_meta = call.meta
+    call_meta.update_pinged_agents_with_response(agent_id.to_s, :failed)
+    params[:call] = call.id
+    if failed_round_robin_agents_pending?
+      notifier.initiate_round_robin(current_call, get_batch_agents_hash) if current_call.can_be_connected?
+    else
+      telephony.redirect_call_to_voicemail call
+      clear_batch_key(current_call.call_sid) 
+    end
+  end
 	private
+		def failed_round_robin_agents_pending?
+      		batch_agents_ids.present? && batch_agents_online.present?
+		end
 
 		def pinged_agents(performer, type)
 			return if (type != :agent)
@@ -247,6 +268,10 @@ class Freshfone::CallActions
     #For incoming we already store in this form. Hence replicating the same for outgoing too.
     def set_call_sid_to_parent
       params.merge!({:CallSid => current_call.call_sid}) if current_account.features?(:freshfone_conference)
+    end
+
+    def external_transfer?
+      params[:external_transfer].present? && params[:external_number].present?
     end
 
 end

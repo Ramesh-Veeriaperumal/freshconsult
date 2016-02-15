@@ -7,7 +7,7 @@ require 'gapps_openid'
 require File.expand_path('../../lib/facebook_routing', __FILE__)
 require "rate_limiting"
 require "rack/ssl"
-require "statsd"
+# require "statsd"
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
@@ -82,12 +82,13 @@ module Helpkit
     config.action_controller.action_on_unpermitted_parameters = :raise
 
     # Configuring middlewares -- Game begins from here ;)
-    statsd_config = YAML.load_file(File.join(Rails.root, 'config', 'statsd.yml'))[Rails.env]
+    # statsd_config = YAML.load_file(File.join(Rails.root, 'config', 'statsd.yml'))[Rails.env]
     # statsd intialization
-    statsd = Statsd::Statsd.new(statsd_config["host"], statsd_config["port"])
+    # statsd = Statsd::Statsd.new(statsd_config["host"], statsd_config["port"])
     # middleware for statsd
-    config.middleware.use "Statsd::Rack::Middleware", statsd
+    # config.middleware.use "Statsd::Rack::Middleware", statsd
 
+    # Please check api_initializer.rb, for compatibility with the version 2 APIs, if any middleware related changes are being done.
     config.middleware.insert_before 0, "Middleware::CorsEnabler"
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction"
@@ -157,7 +158,7 @@ module Helpkit
 
       oauth_keys = Integrations::OauthHelper::get_oauth_keys
       oauth_keys.map { |oauth_provider, key_hash|
-        next if ['github', 'salesforce', 'shopify'].include?(oauth_provider)
+        next if ['github', 'salesforce', 'shopify', 'slack', 'infusionsoft'].include?(oauth_provider)
       if key_hash["options"].blank?
         provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
       elsif key_hash["options"]["name"].blank?

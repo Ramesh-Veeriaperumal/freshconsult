@@ -151,6 +151,10 @@ module Helpdesk::TicketsHelper
     key_exists?(EMPTY_TRASH_TICKETS % {:account_id =>  current_account.id})
   end
 
+  def spam_in_progress?
+    key_exists?(EMPTY_SPAM_TICKETS % {:account_id =>  current_account.id})
+  end
+
   def context_check_box(text, checked_context, unchecked_context, selector = nil)
 
     checked_url = url_for(:filters => [checked_context] + (selector || current_selector))
@@ -252,6 +256,7 @@ module Helpdesk::TicketsHelper
  
     requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).get_reply_template(ticket.requester)
     if(!requester_template.nil?)
+      requester_template.gsub!('{{ticket.satisfaction_survey}}', '')
       reply_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket,'helpdesk_name' => ticket.account.portal_name)
       # Adding <p> tag for the IE9 text not shown issue
       default_reply = (signature.blank?)? "<p/><div>#{reply_email_template}</div>" : "<p/><div>#{reply_email_template}<br/>#{signature}</div>"

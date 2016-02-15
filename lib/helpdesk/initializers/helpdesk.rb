@@ -52,6 +52,7 @@ I18n.fallbacks.map('et' => 'en')
 I18n.fallbacks.map('uk' => 'en')
 I18n.fallbacks.map('he' => 'en')
 I18n.fallbacks.map('th' => 'en')
+I18n.fallbacks.map('ro' => 'en')
 
 # TODO-RAILS3 Need cross check why these files are added here
 # For importing google contacts lazily from delayed jobs and also using rails recipes.

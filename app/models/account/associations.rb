@@ -98,6 +98,7 @@ class Account < ActiveRecord::Base
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :user_credentials, :class_name => 'Integrations::UserCredential'
   has_many :companies
+  has_many :company_domains
   has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false,
@@ -186,6 +187,7 @@ class Account < ActiveRecord::Base
   has_many :tweets, :class_name =>'Social::Tweet'
   has_many :social_streams, :class_name => 'Social::Stream'
   has_many :twitter_streams, :class_name => 'Social::TwitterStream'
+  has_many :facebook_streams, :class_name => 'Social::FacebookStream'
 
   has_many :surveys
   has_many :survey_handles, :through => :surveys
@@ -193,10 +195,10 @@ class Account < ActiveRecord::Base
   has_many :survey_remarks
 
   has_many :custom_surveys, :class_name => 'CustomSurvey::Survey'
-  has_many :custom_survey_questions, :class_name => 'CustomSurvey::SurveyQuestion', :through => :custom_surveys, :source => :account
-  has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle', :through => :custom_surveys
-  has_many :custom_survey_results, :class_name => 'CustomSurvey::SurveyResult', :through => :custom_surveys
-  has_many :custom_survey_remarks, :class_name => 'CustomSurvey::SurveyRemark', :through => :custom_surveys
+  has_many :custom_survey_questions, :class_name => 'CustomSurvey::SurveyQuestion'
+  has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle'
+  has_many :custom_survey_results, :class_name => 'CustomSurvey::SurveyResult'
+  has_many :custom_survey_remarks, :class_name => 'CustomSurvey::SurveyRemark'
 
   has_many :scoreboard_ratings
   has_many :scoreboard_levels
@@ -282,5 +284,6 @@ class Account < ActiveRecord::Base
   has_many :sections, :class_name => 'Helpdesk::Section', :dependent => :destroy
   has_many :section_fields, :class_name => 'Helpdesk::SectionField', :dependent => :destroy
 
+  has_many :subscription_invoices
   has_many :user_companies
 end

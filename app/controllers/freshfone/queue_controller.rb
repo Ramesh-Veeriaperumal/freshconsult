@@ -6,9 +6,8 @@ class Freshfone::QueueController < FreshfoneBaseController
   include Freshfone::CallHistory
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
-
   
-  before_filter :load_hunt_options_for_conf, :only => [:enqueue]
+  before_filter :load_hunt_options_for_conf, :only => [:enqueue, :hangup]
   before_filter :add_caller_to_redis_queue, :only => [:enqueue]
   before_filter :cleanup_redis_on_queue_complete, 
               :only => [:hangup, :trigger_voicemail, :trigger_non_availability, :quit_queue_on_voicemail, :dequeue]
@@ -67,9 +66,14 @@ class Freshfone::QueueController < FreshfoneBaseController
     render :text => "Dequeued Call #{params[:CallSid]} from #{params[:QueueSid]}"
   end
 
+  def redirect_to_queue
+    render :xml => incoming_initiator.initiate_queue(:redirected)
+  end
+
   private
     def update_call
       current_call.update_call(params) unless BRIDGE_STATUS.include?(params[:QueueResult])
+      current_call.update_queue_duration(params[:QueueTime]) if params[:QueueTime].present?
       set_abandon_state if (params[:QueueResult] == "hangup")
     end
 

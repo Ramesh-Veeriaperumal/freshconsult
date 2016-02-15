@@ -31,22 +31,22 @@ var SurveyReport = {
                            SurveyI18N.no_overview :  SurveyI18N.no_remarks
                 jQuery('div.empty-chart').text(text);
                 SurveyReport.hideReport();
-                return true;
             }
-            return false;
+            return isEmpty;
         },
         hideReport:function(){
             jQuery('.nav.nav-pills').hide();
-            jQuery('.report-panel-left .nav.nav-tabs').hide();
+            jQuery('.report-panel-left ul').hide();
             jQuery('div#survey_report_summary').hide();
             jQuery('div#survey_overview').hide();
             jQuery('div#survey_responses').hide();
+            jQuery('div.empty-chart').show();
         },
         showReport:function(){
-            jQuery('div.empty-chart').text('');
+            jQuery('div.empty-chart').hide();
             jQuery('.nav.nav-pills').show();
             jQuery('div#survey_report_summary').show();
-            jQuery('.report-panel-left .nav.nav-tabs').show();
+            jQuery('.report-panel-left ul').show();
         },
         showLayout:function(){
             jQuery('#survey_main_layout').show();

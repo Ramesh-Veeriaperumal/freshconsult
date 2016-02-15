@@ -9,6 +9,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   around_filter :run_on_slave
   before_filter :check_feature
   
+  before_filter :get_tag_name, :only => :index
   before_filter :set_filter_options, :set_data_hash, :load_sort_order, :only => [ :index, :custom_search ]
   before_filter :load_ticket, :verify_permission, :load_reply_to_all_emails, :only => [:show, :activities, :prevnext]
   before_filter :set_date_filter, :only => [:export_csv]
@@ -129,6 +130,12 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
     @next_ticket = find_adjacent(:next)
   end
 
+  def get_tag_name
+    if params[:tag_id].present?
+      tag = Helpdesk::Tag.find_by_id(params[:tag_id])
+      params[:tag_name] = tag.name if tag
+    end
+  end
   private
     def set_filter_options
       @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false, :user_id => i.accessible.user_id} }
@@ -150,7 +157,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
     end
 
     def load_sort_order
-      params[:wf_order] = view_context.current_wf_order.eql?(:status) ? "created_at" : view_context.current_wf_order.to_s
+      params[:wf_order] = Helpdesk::ArchiveTicket.sort_fields_options_array.include?(view_context.current_wf_order) ? view_context.current_wf_order.to_s : "created_at"
       params[:wf_order_type] = view_context.current_wf_order_type.to_s
     end
 

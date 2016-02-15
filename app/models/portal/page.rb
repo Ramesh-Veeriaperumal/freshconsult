@@ -53,6 +53,7 @@ class Portal::Page < ActiveRecord::Base
 		# Password reset with perishable token
 		[:password_reset,       16,  "password_resets/edit.portal"],
 		[:activation_form,      17,  "activations/new.portal"],
+		[:csat_survey,      		21,  "support/custom_surveys/new.portal"],
 
 
 		[:facebook_home,      101,  "support/facebook/index.portal", "support_home_path"],

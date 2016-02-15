@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class NotesIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::NotesTestHelper
+  include NotesTestHelper
   def test_query_count
     skip_bullet do
       v2 = {}
@@ -15,9 +15,9 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
 
         create: 56,
         reply: 58,
-        update: 23,
-        destroy: 20,
-        ticket_notes: 16
+        update: 26,
+        destroy: 23,
+        ticket_notes: 18
       }
 
       ticket_id = Helpdesk::Ticket.first.display_id

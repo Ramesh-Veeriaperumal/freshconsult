@@ -132,7 +132,7 @@
 				
 				{% if topic.locked? %}
 				
-					<div class="list-lead lock-merge-topic-text">
+					<div class="lock-merge-topic-text">
 						{% translate portal.topic.comments_closed %}
 						{% if topic.merged? %}
 							{% translate portal.topic.merge_continue %}

@@ -11,6 +11,7 @@
 //= require freshfone/components/socket.js
 //= require freshfone/components/end_call_form.js
 //= require freshfone/components/network_error.js
+//= require freshfone/components/supervisor_call.js
 //= require freshfone/components/components_main.js
 //= require app/kissmetrics.js
 //= require freshfone/freshfone_metrics.js
@@ -24,4 +25,4 @@
 //= require freshfone/components/contact_search.js
 //= require freshfone/components/call_transfer.js
 //= require freshfone/freshfone_logger.js
-
+//= require freshfone/freshfone_monitor.js

@@ -37,7 +37,7 @@ module Facebook
       def execute(verb,*options)
         begin
           (options.blank?  ? self.send(verb) : self.send(verb,options)) if @graph
-        rescue Exception => e
+        rescue => e
           return nil
           #Handle Exception Later
         end

@@ -18,6 +18,15 @@ class DomainMapping < ActiveRecord::Base
 
 	def clear_cache
 	  key = MemcacheKeys::SHARD_BY_DOMAIN % { :domain => domain }
-      MemcacheKeys.delete_from_cache key
+    MemcacheKeys.delete_from_cache key
+    clear_global_pod_cache if Fdadmin::APICalls.non_global_pods?
 	end
+
+  def clear_global_pod_cache
+    request_parameters = {:domain => domain,:target_method => :clear_domain_mapping_cache_for_pods}
+    Fdadmin::APICalls.connect_main_pod(
+      :post,
+      request_parameters,PodConfig['pod_paths']['pod_endpoint'],
+      "#{AppConfig['freshops_subdomain']['global']}.#{AppConfig['base_domain'][Rails.env]}")
+  end
 end

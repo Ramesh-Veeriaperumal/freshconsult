@@ -1,6 +1,18 @@
-<i class="<%=className%> survey-icon"></i>
+
+<% if(dotClasses.length>0){ %>
+	<div class="pull-left">
+		<i class="<%=className%> survey-icon"></i>
+		<div class="survey_dots">
+			<% for(var i=0; i<dotClasses.length; i++){ %>
+				<i class="survey-indicator tooltip <%= dotClasses[i] %>" data-placement="below" title = "<%= dotValues[i] %>"></i>
+			<% } %>
+		</div>
+	</div>
+<% } else{ %>
+	<i class="<%=className%> survey-icon"></i>
+<% } %>
 <%if(status){%>
-	<%=percentage%>%
+	<div class="overview-percentage"><%=percentage%>%</div>
 	<div class="muted"><%=status%></div>
 <%}else{%>
 	<span class="rating-percentage"><%=percentage%>%</span>

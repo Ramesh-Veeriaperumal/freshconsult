@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class CategoriesControllerTest < ActionController::TestCase
-    include Helpers::DiscussionsTestHelper
+    include DiscussionsTestHelper
     actions = Rails.application.routes.routes.select { |x| x.defaults[:controller] == 'api_discussions/categories' }.map { |x| x.defaults[:action] }.uniq
     methods = { 'index' => :get, 'create' => :post, 'update' => :put, 'destroy' => :delete, 'show' => :get, 'forums' => :get }
 
@@ -61,9 +61,10 @@ module ApiDiscussions
 
     actions.select { |a| ['index', 'create'].exclude?(a) }.each do |action|
       define_method("test_#{action}_load_object_present") do
+        category = fc
         ForumCategory.any_instance.stubs(:destroy).returns(true)
-        send(methods[action], action, construct_params({ id: fc.id }, name: 'new'))
-        assert_equal fc.reload, assigns(:item)
+        send(methods[action], action, construct_params({ id: category.id }, name: 'new'))
+        assert_equal category.reload, assigns(:item)
       end
 
       define_method("test_#{action}_load_object_not_present") do
@@ -177,7 +178,7 @@ module ApiDiscussions
     def test_create_missing_params
       post :create, construct_params({}, {})
       pattern = [
-        bad_request_error_pattern('name', :missing_field)
+        bad_request_error_pattern('name', :required_and_data_type_mismatch, data_type: String)
       ]
       assert_response 400
       match_json(pattern)
@@ -213,12 +214,12 @@ module ApiDiscussions
 
     def test_update_with_nil_name
       put :update, construct_params({ id: fc.id }, name: nil)
-      match_json([bad_request_error_pattern('name', :"can't be blank")])
+      match_json([bad_request_error_pattern('name', :data_type_mismatch, data_type: String)])
       assert_response 400
     end
 
     def test_index
-      get :index, request_params
+      get :index, controller_params
       pattern = []
       Account.current.forum_categories.all.each do |fc|
         pattern << forum_category_response_pattern(fc.name, fc.description)
@@ -231,7 +232,7 @@ module ApiDiscussions
       controller.class.any_instance.stubs(:index).raises(StandardError)
       Rails.env.stubs(:test?).returns(false)
       @request.stubs(:ssl?).returns(true)
-      get :index, request_params
+      get :index, controller_params
       Rails.env.unstub(:test?)
       @request.unstub(:ssl?)
       assert_response 500
@@ -240,7 +241,7 @@ module ApiDiscussions
 
     def test_ensure_proper_protocol
       Rails.env.stubs(:test?).returns(false).once
-      get :index, request_params
+      get :index, controller_params
       Rails.env.unstub(:test?)
       assert_response 403
       match_json(request_error_pattern(:ssl_required))
@@ -261,25 +262,21 @@ module ApiDiscussions
       3.times do
         create_test_category
       end
-      get :index, construct_params(per_page: 1)
+      get :index, controller_params(per_page: 1)
       assert_response 200
       assert JSON.parse(response.body).count == 1
-      get :index, construct_params(per_page: 1, page: 2)
+      get :index, controller_params(per_page: 1, page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 1
-      get :index, construct_params(per_page: 1, page: 3)
+      get :index, controller_params(per_page: 1, page: 3)
       assert_response 200
       assert JSON.parse(response.body).count == 1
     end
 
     def test_index_with_pagination_exceeds_limit
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
-      get :index, construct_params(per_page: 4)
-      assert_response 200
-      assert JSON.parse(response.body).count == 3
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
+      get :index, controller_params(per_page: 101)
+      assert_response 400
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
     end
 
     def test_index_with_link_header
@@ -287,7 +284,7 @@ module ApiDiscussions
         create_test_category
       end
       per_page = ForumCategory.count - 1
-      get :index, construct_params(per_page: per_page)
+      get :index, controller_params(per_page: per_page)
       assert_response 200
       pattern = []
       Account.current.forum_categories.limit(per_page).reorder(:name).each do |fc|
@@ -297,7 +294,7 @@ module ApiDiscussions
       assert JSON.parse(response.body).count == per_page
       assert_equal "<http://#{@request.host}/api/v2/discussions/categories?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
-      get :index, construct_params(per_page: per_page, page: 2)
+      get :index, controller_params(per_page: per_page, page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 1
       assert_nil response.headers['Link']

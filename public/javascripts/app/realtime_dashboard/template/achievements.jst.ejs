@@ -1,0 +1,37 @@
+<div class="row-fluid achievements-inner">
+
+	<div class="span4 mt10 text-center achievement-chart-wrap">
+		<div class="mb10"> <%= renderData.chartData.current_level_name %> </div>
+		<div id="achievementsChart" class="mb5 pl5"></div>
+		<div class="achivement-text muted">
+
+			<% if(renderData.chartData.points == null || renderData.chartData.points == "") {%>
+				No Data
+			<% } else if(renderData.chartData.points_needed != 0) {%>
+				+ <%= renderData.chartData.points_needed %> points For <%= renderData.chartData.next_level_name %>
+			<% } else { %>
+				Congrats!
+			<% } %>
+
+		</div>
+	</div>
+
+	<div class="span8 pl10">
+		<p class="muted mt10"> Recent Badges </p>
+		<div class="row-fluid mt20">
+			<% if(renderData.badges != "") {%>
+				<% jQuery.each(renderData.badges, function(index, obj) { %>
+
+					<div class="span4 text-center">
+						<span class="badges badges-small center <%= obj.badges.classname%>">
+				        </span>
+				        <span class="label points text-center"><%= obj.badges.name %></span>
+				    </div>
+				<% }) %>
+			<%} else {%>
+				<div class="p20 muted"> No Badges achieved yet </div>
+			<%}%>
+		</div>
+	</div>
+	<a href="/helpdesk/quests" class="widget-more-link"> Available Quests </a>
+</div>

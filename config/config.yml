@@ -2,9 +2,11 @@
 app_name: Freshdesk
 from_email: support@freshdesk.com
 billing_email: billing@freshdesk.com
+reports_email: reports@freshdesk.com
 free_plan_agts: 1
 app_website: http://www.freshdesk.com
 support_url: https://support.freshdesk.com
+privacy_policy: https://freshdesk.com/privacy
 latest_shard: "shard_7"
 
 # Used in account creation (account.rb)
@@ -119,7 +121,11 @@ gateway: brain_tree
 # here will allow admin.example.com to serve the admin interface.
 admin_subdomain: admin
 
-freshops_subdomain: freshops
+freshops_subdomain:
+  global: freshopspoduseast
+  non_global:
+    - freshopspodeuwest
+    - freshopspodeuwest1
 
 partner_subdomain: partner
 

@@ -53,7 +53,7 @@
   @include left(10px);
   @include right(10px);
   width: auto;
-  margin: 0;  
+  margin: 0;
   z-index: $zindexModal;
   background-color: $white;
   border: solid 1px #999;
@@ -161,6 +161,57 @@
       font-size: 22px;
       margin-top: -3px;
       color: #fff;
+    }
+  }
+}
+
+
+// Modal slider - Refer dashbaord (Modal will popup from right to left)
+.modal.slider-modal {
+  position: fixed;
+  @include right(-300px);
+  @include left(initial);
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  border-radius: 0;
+  background-image: none;
+  border: none;
+  @include box-shadow(0px 0px 13px rgba(0,0,0,0.3));
+  &.in{
+    @include right(0);
+    transition: 0.1s linear;
+  }
+
+  .modal-header {
+    padding: 5px 20px;
+    background-color: #f5f5f5;
+    border-bottom: 1px #d6d6d6 solid;
+    .close {
+      @include right(10px);
+      @include left(initial);
+      top: 8px;
+      border: 0;
+      background-color: transparent;
+      box-shadow: none;
+      color: #aaa;
+
+      &:before {
+        color: #555;
+      }
+    }
+  }
+
+  .modal-body {
+    max-height: none;
+    height: 90%;
+  }
+
+  &.fade.in {
+    top: 0;
+    .modal-header {
+      border-bottom: 1px solid #dfdfdf;
+      border-radius: 0;
     }
   }
 }

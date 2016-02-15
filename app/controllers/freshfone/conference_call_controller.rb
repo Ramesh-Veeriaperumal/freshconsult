@@ -6,10 +6,13 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   include Freshfone::Conference::EndCallActions
   include Freshfone::Endpoints
   include Freshfone::CallsRedisMethods
+  include Freshfone::SupervisorActions
   
+  before_filter :complete_supervisor_leg, :only => [:status], :if => :supervisor_leg?
   before_filter :check_conference_feature, :only => [:status]
   before_filter :check_credit_balance, :only => [:status]
   before_filter :select_current_call, :only => [:status]
+  before_filter :validate_acw, :only => [:acw]
   before_filter :handle_blocked_numbers, :only => [:status]
   before_filter :terminate_ivr_preview, :only => [:status]
   before_filter :validate_dial_call_status, :only => [ :status ]
@@ -20,6 +23,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   before_filter :update_agent, :only => [:in_call]
   before_filter :reset_outgoing_count, :only => [:status]
   before_filter :set_abandon_state, :only => [:status]
+  before_filter :call_quality_monitoring_enabled?, :only => [:save_call_quality_metrics]
 
   def status
     begin
@@ -59,6 +63,13 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     }
   end
 
+  def save_call_quality_metrics
+    render :json => {} and return if params[:call_id].blank? 
+    render :json => {
+      :call_quality_metrics_saved => set_key(call_quality_metrics_key(params[:call_id]), params[:call_quality_metrics].to_json , 259200) 
+    }
+  end
+
   def update_recording
     call_params = {
       :RecordingUrl => params[:RecordingUrl],
@@ -72,6 +83,11 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       Rails.logger.error "Unable to update recording for the conference #{params[:ConferenceSid]}"
     end
     return empty_twiml
+  end
+
+  def acw
+    current_call_leg = current_call.missed_child? ? current_call.parent : current_call
+    render :json => {:result => current_call_leg.update_acw_duration}
   end
 
   private
@@ -219,6 +235,10 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       @call_notes_key ||= FRESHFONE_CALL_NOTE % { :account_id => @current_account.id, :call_sid => @call_sid }
     end
 
+    def call_quality_metrics_key(dial_call_sid)
+      @call_quality_metrics_key ||= FRESHFONE_CALL_QUALITY_METRICS % { :account_id => @current_account.id, :dial_call_sid => dial_call_sid }
+    end
+
     def set_outgoing_status
       if params[:call].present? && params[:CallStatus].present?
         params[:DialCallStatus] = params[:CallStatus] 
@@ -233,5 +253,14 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       dial_call_status = 'no-answer' if (!call.is_root? && call.ringing?)
       call_params =  params.merge({:DialCallStatus => dial_call_status}) # For handle_direct_dial 
       call.set_abandon_call(call_params)
+    end
+
+    def validate_acw
+      render :json => {:status => :error} if current_call.blank? || 
+        !current_account.features?(:freshfone_call_metrics)   
+    end
+    
+    def call_quality_monitoring_enabled?
+      render :json => {} unless current_account.features?(:call_quality_metrics)
     end
 end

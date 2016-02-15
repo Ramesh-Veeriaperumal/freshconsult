@@ -123,4 +123,32 @@ RSpec.describe Freshfone::CallCostCalculator do
     Freshfone::PulseRate.any_instance.unstub(:toll_free_number?)
   end
 
+  it 'should give call cost for supervisor call accurately' do
+    twilio_price = 0.020
+    @supervisor_call = create_supervisor_call @freshfone_call, 
+                                          Freshfone::SupervisorControl::CALL_STATUS_HASH[:success]
+    args = { :account_id => @account.id, :call => @freshfone_call.id }
+    @supervisor_call.update_column(:duration, CALL_DURATION)
+    twilio_call = mock
+    twilio_call.stubs(:price).returns(twilio_price)
+    Twilio::REST::Calls.any_instance.stubs(:get).returns(twilio_call)
+    Freshfone::CallCostCalculator.new(args, @account).perform
+    @supervisor_call.reload
+    expect(@supervisor_call.cost).to eq((CALL_DURATION/60) * FRESHFONE_CHARGES['SUPERVISOR'][:per_participant] + twilio_price)
+    Twilio::REST::Calls.any_instance.unstub(:get)
+  end
+
+  it 'should give call cost for supervisor call accurately when call duration is blank' do
+    twilio_price = 0.020
+    @supervisor_call = create_supervisor_call @freshfone_call, 
+                                          Freshfone::SupervisorControl::CALL_STATUS_HASH[:success]
+    args = { :account_id => @account.id, :call => @freshfone_call.id }
+    twilio_call = mock
+    twilio_call.stubs(:price).returns(twilio_price)
+    Twilio::REST::Calls.any_instance.stubs(:get).returns(twilio_call)
+    Freshfone::CallCostCalculator.new(args, @account).perform
+    @supervisor_call.reload
+    expect(@supervisor_call.cost).to eq( (1) * FRESHFONE_CHARGES['SUPERVISOR'][:per_participant] + twilio_price)
+    Twilio::REST::Calls.any_instance.unstub(:get)
+  end
 end

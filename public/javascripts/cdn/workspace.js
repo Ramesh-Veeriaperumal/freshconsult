@@ -26,8 +26,9 @@
 //= require freshfone/global.js
 //= require app/metrics.js
 //= require app/product_notifications.js
-//= require app/dashboard.js
 //= require app/admin_font_settings.js
 //= require app/merge.js
 //= require app/autosave.js
 //= require plugins/jquery.placeholder.js
+//= require i18n
+//= require i18n/translations

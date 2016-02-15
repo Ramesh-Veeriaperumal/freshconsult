@@ -63,14 +63,14 @@ $none: #eeeeee;
 }
 
 .loading{
-  background-image: url('/images/animated/ajax-loader.gif');
+  background-image: url('/assets/animated/ajax-loader.gif');
   background-repeat: no-repeat;
   background-position-x: 40%;
   background-position-y: 40%; 
   height:auto;
   min-height: 100px;
   display: none;
-  padding-top:55px;
+  padding-top:35px;
 
   .loading-text{
     padding-left: 0px;

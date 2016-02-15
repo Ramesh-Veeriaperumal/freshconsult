@@ -22,6 +22,7 @@ class Freshfone::Call < ActiveRecord::Base
   belongs_to :group
 
   has_one :meta, :class_name => 'Freshfone::CallMeta', :dependent => :destroy
+  has_one :call_metrics, :class_name => "Freshfone::CallMetric", :dependent => :destroy
 
   has_ancestry :orphan_strategy => :destroy
 
@@ -30,12 +31,15 @@ class Freshfone::Call < ActiveRecord::Base
 
   has_one :recording_audio, :as => :attachable, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
 
+  has_many :supervisor_controls, :class_name => 'Freshfone::SupervisorControl'
+
   delegate :number, :to => :freshfone_number
   delegate :name, :to => :agent, :allow_nil => true, :prefix => true
   delegate :name, :to => :customer, :allow_nil => true, :prefix => true
+  delegate :update_acw_duration, :to => :call_metrics
 
   attr_protected :account_id
-  attr_accessor :params
+  attr_accessor :params, :queue_duration
   
   VOICEMAIL_MAX_LENGTH = 180 #seconds
   RECORDING_MAX_LENGTH = 300
@@ -103,7 +107,7 @@ class Freshfone::Call < ActiveRecord::Base
   scope :active_calls, lambda {
     { :conditions => [ 'call_status = ? AND updated_at >= ?', 
         CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
-      ], :order => "created_at DESC"
+      ], :order => "created_at DESC", :include => [ :supervisor_controls] 
     }
   }
 
@@ -206,7 +210,11 @@ class Freshfone::Call < ActiveRecord::Base
   end
 
   def update_call(params)
-    update_call_details(params).save
+    update_call_details(params).save!
+  end
+
+  def update_metrics
+    call_metrics.process self 
   end
   
   def update_call_details(params)
@@ -218,6 +226,16 @@ class Freshfone::Call < ActiveRecord::Base
     set_call_duration(params) if !account.features?(:freshfone_conference) && call_duration.blank? # will set duration only for non-conf. mode here
     self.direct_dial_number = params[:direct_dial_number] if ivr_direct_dial?
     update_status(params)
+  end
+
+  def update_queue_duration(duration)
+    self.queue_duration = duration.to_i
+    save
+  end
+
+  def queue_duration=(duration)
+    attribute_will_change!("queue_duration") if @queue_duration != duration
+    @queue_duration = duration
   end
 
   def update_status(params)
@@ -284,7 +302,7 @@ class Freshfone::Call < ActiveRecord::Base
       :ticket_body_attributes => { :description_html => description_html(true) },
       :email => params[:requester_email],
       :name => requester_name,
-      :phone => caller_number,
+      :phone => params[:phone_number].present? ? params[:phone_number] : caller_number,
       :requester_id => params[:custom_requester_id] || customer_id,
       :responder => params[:agent],
       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
@@ -442,7 +460,7 @@ class Freshfone::Call < ActiveRecord::Base
   def add_to_hold_duration(duration)
     return if duration.blank? || duration == "0"
     hold_duration = 0 if hold_duration.blank?
-    self.update_attributes!(:hold_duration => hold_duration + duration.to_i)
+    self.increment!(:hold_duration, duration.to_i)
   end
 
   def set_total_duration(params)
@@ -476,6 +494,10 @@ class Freshfone::Call < ActiveRecord::Base
     busy? || noanswer? || canceled?
   end
 
+  def missed_child?
+    parent.present? && missed_or_busy? 
+  end
+
   def sip?
     return false if meta.blank?
     meta.sip?
@@ -507,6 +529,12 @@ class Freshfone::Call < ActiveRecord::Base
 
   def update_missed_abandon_status
     update_abandon_state(CALL_ABANDON_TYPE_HASH[:missed])
+  end
+
+  def call_ended?
+    [ Freshfone::Call::CALL_STATUS_HASH[:completed], Freshfone::Call::CALL_STATUS_HASH[:busy],
+          Freshfone::Call::CALL_STATUS_HASH[:'no-answer'], Freshfone::Call::CALL_STATUS_HASH[:failed],
+          Freshfone::Call::CALL_STATUS_HASH[:canceled], Freshfone::Call::CALL_STATUS_HASH[:voicemail] ].include?(self.call_status)
   end
 
   private

@@ -2,7 +2,7 @@ class SAAS::SubscriptionActions
 
   FEATURES = [ :customer_slas, :multiple_business_hours, :multi_product, :facebook, :twitter, 
                 :custom_domain, :multiple_emails, :css_customization, :custom_roles, 
-                :dynamic_content, :mailbox, :dynamic_sections ]
+                :dynamic_content, :mailbox, :dynamic_sections, :custom_survey ]
 
   def change_plan(account, old_subscription, existing_addons)
     update_features(account, old_subscription, existing_addons)
@@ -41,6 +41,14 @@ class SAAS::SubscriptionActions
         end
       end
       account.sections.destroy_all
+    end
+
+    def drop_custom_survey_data(account)
+      if account.default_survey_enabled?
+        account.custom_surveys.default.first.activate if account.active_custom_survey_from_cache.present?
+      else
+        account.custom_surveys.deactivate_active_surveys
+      end
     end
 
     def remove_chat_feature(account)

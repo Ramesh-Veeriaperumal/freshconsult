@@ -1,11 +1,14 @@
 class Account < ActiveRecord::Base
 
-	before_create :set_default_values, :set_shard_mapping, :save_route_info
+  before_create :set_default_values, :set_shard_mapping, :save_route_info
   before_update :check_default_values, :update_users_time_zone, :backup_changes
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain, :update_route_info
+  
+  before_update :update_global_pod_domain , :if => :non_global_pods?
+  
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_freshchat_url, :if => :freshchat_enabled?
   after_destroy :remove_shard_mapping, :destroy_route_info
@@ -20,6 +23,7 @@ class Account < ActiveRecord::Base
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
+  include Fdadmin::APICalls
   
   def check_default_values
     dis_max_id = get_max_display_id
@@ -56,7 +60,7 @@ class Account < ActiveRecord::Base
 
   protected
 
-  	def set_default_values
+    def set_default_values
       self.time_zone = Time.zone.name if time_zone.nil? #by Shan temp.. to_s is kinda hack.
       self.helpdesk_name = name if helpdesk_name.nil?
       self.shared_secret = generate_secret_token
@@ -71,7 +75,7 @@ class Account < ActiveRecord::Base
 
   private
 
-  	def add_to_billing
+    def add_to_billing
       Resque.enqueue(Billing::AddToBilling, { :account_id => id })
     end
 
@@ -104,6 +108,23 @@ class Account < ActiveRecord::Base
       if full_domain_changed?
         domain_mapping = DomainMapping.find_by_account_id_and_domain(id,@old_object.full_domain)
         domain_mapping.update_attribute(:domain,full_domain)
+      end
+    end
+
+    def update_global_pod_domain
+      if full_domain_changed?
+        request_parameters = {
+          :account_id => id,
+          :target_method => :change_domain_mapping_for_pod ,
+          :old_domain => @old_object.full_domain,
+          :new_domain => full_domain 
+        }
+        response = connect_main_pod(
+          :post,
+          request_parameters,
+          PodConfig["pod_paths"]["pod_endpoint"],
+          "#{AppConfig['freshops_subdomain']['global']}.#{AppConfig['base_domain'][Rails.env]}")
+        raise ActiveRecord::Rollback, "Domain Already Taken" unless response["status"]
       end
     end
 

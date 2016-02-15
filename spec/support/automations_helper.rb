@@ -20,7 +20,7 @@ module AutomationsHelper
 
     va_rule=FactoryGirl.build(:va_rule, :name=>"created by #{Faker::Name.name}", :description=>Faker::Lorem.sentence(2),
                           :action_data => [{:name=> "priority", :value=>"3"}],
-                          :filter_data => [{:name=>"ticket_type", :operator=>"is", :value=>"Question"}],
+                          :filter_data => [{:name=>"ticket_type", :operator=>"in", :value=>["Question", "Problem"]}],
                           :account_id=>params[:account_id],
                           :rule_type=>VAConfig::BUSINESS_RULE)
     va_rule.save(validate: false)
@@ -44,7 +44,7 @@ module AutomationsHelper
 
     va_rule=FactoryGirl.build(:va_rule, :name=>"created by #{Faker::Name.name}", :description=>Faker::Lorem.sentence(2),
                           :action_data => [{:name=> "priority", :value=>"3"}],
-                          :filter_data => {:events=>[{:name=>"priority", :from=>"--", :to=>"--"}],:performer=>{"type"=>"1"},:conditions=>[{:name=>"ticket_type", :operator=>"is", :value=>"Problem"}]},
+                          :filter_data => {:events=>[{:name=>"priority", :from=>"--", :to=>"--"}],:performer=>{"type"=>"1"},:conditions=>[{:name=>"ticket_type", :operator=>"in", :value=>["Problem", "Question"]}]},
                           :account_id=>params[:account_id],
                           :rule_type=>VAConfig::OBSERVER_RULE)
     va_rule.save(validate: false)

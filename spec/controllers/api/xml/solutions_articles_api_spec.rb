@@ -24,9 +24,9 @@ RSpec.describe Solution::ArticlesController do
     post :create, params.merge!(:category_id=>@solution_category.id,:folder_id=>@solution_folder.id, 
       :tags => {:name => "new"},:format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    expected = (response.status === 201) && (compare(result["solution_article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS-[ "tags", "folder"],{}).empty?)
-    expected.should be(true)
-    result["solution_article"]["status"].should be_eql(2)
+    expect(response.status).to be_eql(201)
+    expect(assert_array(result["solution_article"].keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS, [ "tags", "folder"])).to be_truthy
+    expect(result["solution_article"]["status"]).to be_eql(2)
   end
 
   it "should be able to update a solution article" do
@@ -36,17 +36,16 @@ RSpec.describe Solution::ArticlesController do
     put :update, params.merge!(:category_id=>@solution_category.id,:folder_id=>@solution_folder.id,:id=>@test_article.id,
       :tags => {:name => "new"}, :format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    puts compare(result["solution_article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS,{})
-    expected = (response.status === 201) && (compare(result["solution_article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS-[ "tags", "folder"],{}).empty?)
-    expected.should be(true)
+    expect(response.status).to be_eql(201)
+    expect(assert_array(result["solution_article"].keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS, ["tags", "folder"])).to be_truthy
   end
 it "should be able to view a solution article" do
     @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", 
       :folder_id => @solution_folder.id, :user_id => @agent.id, :status => "2", :art_type => "1" } )
     get :show, { :category_id=>@solution_category.id,:folder_id=>@solution_folder.id,:id => @test_article.id, :format => 'xml'}
     result = parse_xml(response)
-    expected = (response.status === 200)  &&  (compare(result["solution_article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS-[ "tags", "folder"],{}).empty?)
-    expected.should be(true)
+    expect(response.status).to be_eql(200)
+    expect(assert_array(result["solution_article"].keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS, [ "tags", "folder"])).to be_truthy
   end
   it "should be able to delete a solution article" do
     @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", 

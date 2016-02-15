@@ -43,14 +43,16 @@ class Helpdesk::TicketsController < ApplicationController
 
   layout :choose_layout
 
-  before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :execute_bulk_scenario]
+  before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :delete_forever_spam, :execute_bulk_scenario]
+  before_filter :scoper_ticket_actions, :only => [ :assign,:close_multiple, :pick_tickets ]
+
   before_filter :load_items, :only => [ :destroy, :restore, :spam, :unspam, :assign,
-    :close_multiple ,:pick_tickets, :delete_forever ]
+    :close_multiple ,:pick_tickets, :delete_forever, :delete_forever_spam ]
 
   skip_before_filter :load_item
   alias :load_ticket :load_item
 
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by]
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward]
   before_filter :verify_ticket_permission_by_id, :only => [:component]
 
   before_filter :load_ticket, :verify_permission,
@@ -125,6 +127,7 @@ class Helpdesk::TicketsController < ApplicationController
         end
         @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
         flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete') if @current_view == "deleted" and key_exists?(empty_trash_key)
+        flash[:notice] = t(:'flash.tickets.empty_spam.delay_delete') if @current_view == "spam" and key_exists?(empty_spam_key)
         @is_default_filter = (!is_num?(view_context.current_filter))
         # if request.headers['X-PJAX']
         #   render :layout => "maincontent"
@@ -525,6 +528,7 @@ class Helpdesk::TicketsController < ApplicationController
       item.spam = true
       req = item.requester
       req_list << req.id if req.customer?
+      store_dirty_tags(item)
       item.save
     end
 
@@ -552,7 +556,8 @@ class Helpdesk::TicketsController < ApplicationController
 
   def unspam
     @items.each do |item|
-      item.spam = false
+      item.spam = false 
+      restore_dirty_tags(item)
       item.save
       #mark_requester_deleted(item,false)
     end
@@ -570,34 +575,36 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def delete_forever
-    ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
-      st.ticket_id= t.id and st.account_id=#{current_account.id}
-      set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 where
-      t.id in (#{@items.map(&:id).join(',')}) and t.account_id=#{current_account.id}")
-    Resque.enqueue(Workers::ClearTrash,{:account_id => current_account.id} )
-    flash[:notice] = render_to_string(
-        :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))
-    respond_to do |format|
-      format.html { redirect_to :back }
-      format.nmobile { render :json => {:success => true , :success_message => render_to_string(
-        :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))}}
-    end
+    set_trashed_column
+    Tickets::ClearTickets::EmptyTrash.perform_async({
+      :ticket_ids => @items.map(&:id)
+    })
+    render_delete_forever
+  end
+
+  def delete_forever_spam
+    set_trashed_column
+    Tickets::ClearTickets::EmptySpam.perform_async({
+      :ticket_ids => @items.map(&:id)
+    })
+    render_delete_forever
   end
 
   def empty_trash
-    # ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets
-    #  st inner join helpdesk_tickets t on st.ticket_id= t.id and st.account_id=#{current_account.id}
-    #    set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1
-    #    where t.deleted=1 and t.account_id=#{current_account.id}")
     set_tickets_redis_key(empty_trash_key, true, 1.day)
-    Resque.enqueue(Workers::ClearTrash, {:account_id => current_account.id, :empty_trash => true} )
+    Tickets::ClearTickets::EmptyTrash.perform_async({
+      :clear_all => true
+    })
     flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete')
     redirect_to :back
   end
 
-  def empty_spam # Possible dead code
-    Helpdesk::Ticket.destroy_all(:spam => true)
-    flash[:notice] = t(:'flash.tickets.empty_spam.success')
+  def empty_spam
+    set_tickets_redis_key(empty_spam_key, true, 1.day)
+    Tickets::ClearTickets::EmptySpam.perform_async({
+      :clear_all => true
+    })
+    flash[:notice] = t(:'flash.tickets.empty_spam.delay_delete')
     redirect_to :back
   end
 
@@ -923,7 +930,10 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_reply_to_all_emails
     default_notes_count = "nmobile".eql?(params[:format])? 1 : 3
-    @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :cloud_files,:note_old_body])
+    includes = [:user, :attachments, :schema_less_note, :cloud_files,:note_old_body]
+    includes << (Account.current.new_survey_enabled? ? {:custom_survey_remark => 
+                  {:survey_result => [:survey_result_data, :agent, {:survey => :survey_questions}]}} : :survey_remark )
+    @ticket_notes = @ticket.conversation(nil,default_notes_count,includes)
     reply_to_all_emails
   end
 
@@ -936,6 +946,47 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   private
+
+    def set_trashed_column
+      ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
+        st.ticket_id= t.id and st.account_id=#{current_account.id} and t.account_id=#{current_account.id}
+        set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 where
+        t.id in (#{@items.map(&:id).join(',')})")
+    end
+    
+    def render_delete_forever
+      flash[:notice] = render_to_string(
+          :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))
+      respond_to do |format|
+        format.html { redirect_to :back }
+        format.nmobile { render :json => {:success => true , :success_message => render_to_string(
+          :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))}}
+      end 
+    end
+
+
+    def scoper_ticket_actions
+      # check for mobile can be removed when mobile apps perform bulk actions as background job
+      if  !mobile?  and (params[:ids] and params[:ids].length > BACKGROUND_THRESHOLD)
+        ticket_actions_background
+      end
+    end
+
+    def params_for_bulk_action
+      params.slice('ids','responder_id')
+    end
+
+    def ticket_actions_background
+      args = { :action => action_name }
+      args.merge!(params_for_bulk_action)
+      Tickets::BulkTicketActions.perform_async(args)
+      respond_to do |format|
+        format.html {
+          flash[:notice] = t('helpdesk.flash.tickets_background')
+          redirect_to helpdesk_tickets_path
+        }
+      end
+    end
 
     def find_topic
     	@topic = current_account.topics.find(:first, :conditions => {:id => params[:topic_id]}) unless params[:topic_id].nil?
@@ -1045,7 +1096,25 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def load_cached_ticket_filters
-      if custom_filter?
+      if dashboard_filter?
+        filter_params = {"unsaved_view" => true}
+        action_hash = []
+        TicketConstants::DASHBOARD_FILTER_MAPPING.each do |key,val|
+            action_hash.push({ "condition" => val, "operator" => "is_in", "value" => params[key].to_s}) if params[key].present?
+        end
+        action_hash.push({ "condition" => "status", "operator" => "is_in", "value" => 0}) if params[:status].blank? and (params[:filter_name] != "new")
+        if params[:filter_name].present?
+          custom_tkt_filter = Helpdesk::Filters::CustomTicketFilter.new
+          action_hash.push(custom_tkt_filter.default_filter(params[:filter_name])).flatten!
+        end
+        filter_params.merge!("data_hash" => action_hash.to_json)
+        set_tickets_redis_key(redis_key,filter_params.to_json,86400)
+        @cached_filter_data = get_cached_filters
+        @cached_filter_data.symbolize_keys!
+        handle_unsaved_view
+        initialize_ticket_filter
+        params.merge!(@cached_filter_data)
+      elsif custom_filter?
         @cached_filter_data = report_filter? ? report_ticket_filter : get_cached_filters
         if @cached_filter_data
           @cached_filter_data.symbolize_keys!
@@ -1053,27 +1122,6 @@ class Helpdesk::TicketsController < ApplicationController
           initialize_ticket_filter
           params.merge!(@cached_filter_data)
         end
-      elsif dashboard_filter?
-          dash_filter_value = get_others_redis_key(dashboard_filter_redis_key)
-          filter_params = {"unsaved_view" => true}
-          action_hash = [{ "condition" => "status", "operator" => "is_in", "value" => params[:filter_key].to_s }]
-          action_hash.push({ "condition" => TicketConstants::DASHBOARD_FILTER_MAPPING[params[:unassigned].to_sym], "operator" => "is_in", "value" => "-1"}) if params[:unassigned].present?
-          TicketConstants::DASHBOARD_FILTER_MAPPING.each do |key,val|
-            action_hash.push({ "condition" => val, "operator" => "is_in", "value" => params[key].to_s}) if params[key].present?
-          end
-          if dash_filter_value
-            filter_hash = JSON.parse(dash_filter_value)
-            filter_hash.each do |k,v|
-              action_hash.push({ "condition" => k.to_s, "operator" => "is_in", "value" => v })
-            end
-          end
-          filter_params.merge!("data_hash" => action_hash.to_json)
-          set_tickets_redis_key(redis_key,filter_params.to_json,86400)
-          @cached_filter_data = get_cached_filters
-          @cached_filter_data.symbolize_keys!
-          handle_unsaved_view
-          initialize_ticket_filter
-          params.merge!(@cached_filter_data)
       else
         remove_tickets_redis_key(redis_key)
       end
@@ -1127,7 +1175,8 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def dashboard_filter?
-      (params[:filter_type] == "status") and params[:filter_key].present?
+      #(params[:filter_type] == "status") and params[:filter_key].present?
+      [:agent,:status,:group,:priority,:type,:source].any? {|type| params[type].present?}
     end
 
     def is_custom_filter_ticket?
@@ -1246,6 +1295,10 @@ class Helpdesk::TicketsController < ApplicationController
 
   def empty_trash_key
     EMPTY_TRASH_TICKETS % {:account_id =>  current_account.id}
+  end
+
+  def empty_spam_key
+    EMPTY_SPAM_TICKETS % {:account_id =>  current_account.id}
   end
 
   def set_selected_tab

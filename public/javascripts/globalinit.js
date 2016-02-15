@@ -108,7 +108,7 @@ window.xhrPool = [];
     };
 
     hideActivePopovers = function (ev) {
-      $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover],[rel=more-agents-hover]').each(function(){
+      $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover],[rel=more-agents-hover],[rel=ff-alert-popover]').each(function(){
         if (ev.target != $(this).get(0))
           $(this).popover('hide');
 
@@ -175,6 +175,25 @@ window.xhrPool = [];
             hoverPopup = false;
           },1000);
       });
+    $("[rel=ff-alert-popover]").live('mouseenter',function(ev) {
+        ev.preventDefault();
+        var element = $(this);
+        // Introducing a slight delay so that the popover does not show up
+        // when just passing thru this element.
+        var timeoutDelayShow = setTimeout(function(){
+          clearTimeout(hidePopoverTimer);
+          hideActivePopovers(ev);
+          widgetPopup = element.popover('show');
+          hoverPopup = true;
+        }, 500);
+        element.data('timeoutDelayShow', timeoutDelayShow);
+
+      }).live('mouseleave',function(ev) {
+            clearTimeout($(this).data('timeoutDelayShow'));
+            hidePopoverTimer = setTimeout(function() {
+              $('.hover-card-agent').parent().remove();
+            },300);
+      });  
     $("a[rel=ff-hover-popover]").live('mouseenter',function(ev) {
           ev.preventDefault();
           if(!freshfoneuser.online){ return;}
@@ -215,7 +234,7 @@ window.xhrPool = [];
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
       $('body').on('afterShow', '[rel=remote]', function(ev) {
           var _self = $(this);
-          if(!_self.data('loaded')) {
+          if(!_self.data('loaded')) {      
             _self.append("<div class='sloading loading-small loading-block'></div>");
             _self.load(_self.data('remoteUrl'), function(){
                 _self.data('loaded', true);

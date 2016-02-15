@@ -1,11 +1,84 @@
-<% form_for :survey_handle,
-    :url  => @survey_handle.feedback_url(@rating), :html => { :method => :post } do |f| -%>
+<%= stylesheet_link_tag_with_rtl :'cdn/rating' %>
+<%= stylesheet_link_tag_with_rtl :'cdn/survey' %>
 
-	<div style="margin-left:15px;font-weight:bold;"><%=t('.thanks_info')%></div>
-	<div class="button-container">
-		<div class="floatl">
-			*&nbsp;<%=t('.feedback_optional')%>
-			<%= text_area(:survey, :feedback, :class => "text" ) %>
-			<%= f.submit t('.send'), :class => "uiButton" %>
-	</div>
+<link href="<%= helpdesk_theme_url %>" media="screen" rel="stylesheet" type="text/css">
+
+<%= javascript_include_tag :'cdn/survey'  %>
+
+<%= javascript_tag do %>
+  surveyFeedbackI18n = {};
+  surveyFeedbackI18n.thanksFeedback =  "<%= t('admin.surveys.new_thanks.thanks_feedback')%>";
+  surveyFeedbackI18n.surveyFeedback = "<%=t('admin.surveys.index.survey_feedback')%>";
+  surveyFeedbackI18n.portalMsg = "<%= t('admin.surveys.index.portal_msg') %>";
 <% end %>
+
+<script>
+	var isCommentable = <%=@survey_handle.survey.can_comment%>;
+	var isPreview = <%=@survey_handle.preview?%>
+	var hasQuestandComments = false
+	<% if @survey_handle.survey.feedback_questions.blank? && !@survey_handle.survey.can_comment? %>
+		hasQuestandComments = true
+	<% end %>
+</script>
+
+<% cache ["v1","survey",@survey_handle.portal] do %>
+	<%
+		cssText = render(:partial=>"rating_text")
+		engine = Sass::Engine.new(cssText , :syntax => :scss, :cache => true, :style => :compressed)
+	%>
+	<style>
+	<%= engine.render %>
+	</style>
+<% end %>
+<script type="text/javascript">
+	if(document.referrer.length>0){
+		Feedback.refreshTab();
+	}
+</script>
+
+<body class="single">
+	<div class="wrapper content rounded-6">
+		<div id="inner">
+			<div class="leftcontent">
+				<div class="pagearea" id="pagearea">
+					<%= form_for :survey_handle, :url  => @survey_handle.feedback_url(@rating), :html => {
+										:method => :post, :id => "survey_form", :onsubmit => "javascript:Feedback.submit(event);" } do |f| -%>
+
+						<div class="highlighter">
+								<h2><%=@survey_handle.survey.thanks_text%></h2>
+								<div class="survey-overlay center" style="display:none;"></div>
+								<div class="loading">
+									<span class='loading-text'> <%=t('admin.surveys.index.portal_msg')%> </span>
+								</div>
+						</div>
+						<div class="question" id='survey_question'>
+							<% unless @survey_handle.survey.feedback_questions.blank? %>
+								<ul class="survey-question">
+									<% @survey_handle.survey.feedback_questions.each_with_index do |question,qindex| %>
+										<li>
+											<div class="ques-desc"><%=question.label%></div>
+											<div class="ques-ans">
+												<label id="rating-label-<%=qindex%>" class="rating-label" data-selected-value="&nbsp;" data-selected-id="none" data-custom-field="<%=question.name%>">&nbsp;</label>
+												<% question.choices.each_with_index do |option, index| %>
+													<span class="survey-rating none question-rating-<%=qindex%>" id="rating_<%=index%>" data-class="<%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[option[:face_value]]%>" data-id="<%=option[:face_value]%>" data-question-id="<%=qindex%>" data-name="<%=option[:name]%>" onmouseover="javascript:SurveyRating.hover(this);" onmouseout="javascript:SurveyRating.resetLabel(this);" onclick="javascript:SurveyRating.input(this);"></span>
+												<%end%>
+											</div>
+										</li>
+									<%end%>
+								 </ul>
+							<%end%>
+							<%if @survey_handle.survey.can_comment? %>
+								<label> <%= t('.additional_comments') %> </label>
+								<input autocomplete="off" class="input-comment required" id="survey_feedback" name="feedback" rel="ghostwriter" type="text" width="100%" maxlength="200"
+									placeholder= "<%= @survey_handle.survey.comments_text %>" >
+							<% end %>
+							<% if !@survey_handle.survey.feedback_questions.blank? || @survey_handle.survey.can_comment? %>
+								<%= f.submit t('support.surveys.new.submit'), :class => "btn btn-primary btn-comment" %>
+							<% end %>
+						</div>
+					<%end%>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>

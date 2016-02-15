@@ -294,40 +294,36 @@ module DiscussionsHelper
   end
 
   def attachment_view(attached, page)
+	output = ""
+	output << %(<li class="attachment list_element" id="#{ dom_id(attached) }">)
+	output << %(<div>)
+	output << %(<span>)
+	output << link_to("",'javascript:void(0)',:class => "delete remove-attachment mr10 #{ page }", :id =>"#{attached.id.to_s}")
+	output << %(</span>)
+	scoper = page == "cloud_file" ? "cloud_file_attachments" : "ticket_attachments"
+	output <<  %(<input type="hidden" name="post[#{scoper}][][resource]" 
+	  	        value="#{attached.id}" rel="original_attachment"/>)
+  	output << attached_icon(attached, page)
+  	output << %(<div class="attach_content">)
 
-  	  output = ""
-  	  output << %(<li class="attachment list_element" id="#{ dom_id(attached) }">)
-  	  output << %(<div>)
+	if(page == "cloud_file")
+		filename = attached.filename || URI.unescape(attached.url.split('/')[-1])
+		tooltip = filename.size > 15 ? "tooltip" : ""
+		output << link_to( h(filename.truncate(15)), attached.url , :target => "_blank",
+	                       :title => h(filename), :class => "#{tooltip}")
+		output << %(<span class="file-size cloud-file"></span>)
+	else
+		size = number_to_human_size attached.content_file_size
+		tooltip = attached.content_file_name.size > 15 ? "tooltip" : "" 
+		output << content_tag( :div,link_to(h(attached.content_file_name.truncate(15)), attached, :target => "_blank", 
+	                          :title => h(attached.content_file_name), :class => "#{tooltip}"),
+	                          :class => "ellipsis")
+	    output << %(<span class="file-size">( #{size} )</span>)
+	end
 
- 	    output << %(<span>)
-	    output << link_to("",'javascript:void(0)',:class => "delete remove-attachment mr10 #{ page }", :id =>"#{attached.id.to_s}")
-	    output << %(</span>)
-  	  
-  	  output <<  %(<input type="hidden" name="post[ticket_attachments][][resource]" 
-  	  	           value="#{attached.id}" rel="original_attachment"/>)
-
-  	  output << attached_icon(attached, page)
-
-  	  output << %(<div class="attach_content">)
-
-  	  if(page == "cloud_file")
-  	    filename = attached.filename || URI.unescape(attached.url.split('/')[-1])
-  	    tooltip = filename.size > 15 ? "tooltip" : ""
-  	    output << link_to( h(filename.truncate(15)), attached.url , :target => "_blank",
-  	                       :title => h(filename), :class => "#{tooltip}")
-  	    output << %(<span class="file-size cloud-file"></span>)
-  	  else
-  	    size = number_to_human_size attached.content_file_size
-  	    tooltip = attached.content_file_name.size > 15 ? "tooltip" : "" 
-  	    output << content_tag( :div,link_to(h(attached.content_file_name.truncate(15)), attached, :target => "_blank", 
-  	                          :title => h(attached.content_file_name), :class => "#{tooltip}"),
-  	                          :class => "ellipsis")
-  	    output << %(<span class="file-size">( #{size} )</span>)
-  	  end
-
-  	  output << %(</div>)
-  	  output << %(</div>)
-  	  output << %(</li>)
-  	  output.html_safe
+	output << %(</div>)
+	output << %(</div>)
+	output << %(</li>)
+	output.html_safe
   end
 end

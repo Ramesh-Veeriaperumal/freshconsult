@@ -1,0 +1,17 @@
+<div class="widget" id="user-vote">
+<%= t("forum_shared.topic_vote.#{topic.forum.type_symbol}.vote_info_include_1") + ' ?'%>
+<% voted = @topic.voted_by_user?(current_user) %>
+
+<div class="like-toggle">
+  <%= check_box("","",{ :checked => voted, 
+              :rel => 'toggle', 
+              "data-checked-label" => t('plain_yes'), 
+              "data-unchecked-label" => t('plain_no'),
+              :onchange => remote_function( 
+                                  :url => vote_discussions_topic_path(topic.id), 
+                                  :method => :put
+                                  )
+                      }) %>
+
+</div>
+</div> 

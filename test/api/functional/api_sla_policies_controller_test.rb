@@ -1,12 +1,12 @@
 require_relative '../test_helper'
 class ApiSlaPoliciesControllerTest < ActionController::TestCase
-  include Helpers::SlaPoliciesTestHelper
+  include SlaPoliciesTestHelper
   def wrap_cname(params)
     { api_sla_policy: params }
   end
 
   def test_index_load_sla_policies
-    get :index, request_params
+    get :index, controller_params
     pattern = []
     Account.current.sla_policies.all.each do |sp|
       pattern << sla_policy_pattern(sp)
@@ -53,7 +53,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: '1,2' })
     assert_response 400
-    match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, data_type: Array)])
   end
 
   def test_update_with_empty_conditions
@@ -61,7 +61,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: {})
     assert_response 400
-    match_json([bad_request_error_pattern('company_ids', :required_and_data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('company_ids', :required_and_data_type_mismatch, data_type: Array)])
   end
 
   def test_update_with_nil_conditions
@@ -69,7 +69,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: {})
     assert_response 400
-    match_json([bad_request_error_pattern('company_ids', :required_and_data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('company_ids', :required_and_data_type_mismatch, data_type: Array)])
   end
 
   def test_update_emptying_conditions_with_blank_company_ids
@@ -107,12 +107,12 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
       quick_create_sla_policy
     end
     per_page = Account.current.sla_policies.all.count - 1
-    get :index, construct_params(per_page: per_page)
+    get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/sla_policies?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
-    get :index, construct_params(per_page: per_page, page: 2)
+    get :index, controller_params(per_page: per_page, page: 2)
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']

@@ -3,9 +3,19 @@
 max_limit ||= 3
 container ||= 'customers'
 dom_id ||= container
+include_none ||= false
+none = I18n.t("filter_options.none")
+none_value = -1
 
 hash_val = []
 if selected_values
+  if include_none and selected_values.include?(none_value)
+    selected_values.delete(none_value)
+    hash_val << "{id: '-1',
+                  value: '#{I18n.t("filter_options.none")}',
+                  text: '#{I18n.t("filter_options.none")}'}"
+  end
+
   selected_values.each do |item|
     hash_val << "{id: '#{item.id}',
                   value: '#{escape_javascript(item.name)}',
@@ -50,13 +60,20 @@ jQuery(document).ready(function() {
         url: '<%= url %>',
         dataType: 'json',
         data: function (term) {
+            searchText = term;
             return { q: term };
         },
         results: function (data) {
           var results = [];
+          var include_none = <%= include_none %>
+          var noneVal = "<%= none %>"
+
           jQuery.each(data.results, function(i, item){
             results.push({id: item.id, value: escapeHtml(item.value), info: item.details});
           });
+          if(include_none && noneVal.toLowerCase().indexOf(searchText.toLowerCase()) > -1){
+            results.push({id: -1, value: noneVal})
+          }
           return { results: results }
 
         }

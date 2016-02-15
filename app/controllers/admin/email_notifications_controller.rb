@@ -1,8 +1,9 @@
 class Admin::EmailNotificationsController < Admin::AdminController 
   include LiquidSyntaxParser
-
+  include Spam::SpamAction
+  
   before_filter :load_item, :except => :index
-  before_filter :validate_liquid, :only => :update
+  before_filter :validate_liquid, :detect_spam_action, :only => :update
   
   def index
     e_notifications = current_account.email_notifications 
@@ -18,7 +19,7 @@ class Admin::EmailNotificationsController < Admin::AdminController
   
   def update
     if @errors.present?
-      flash_msg = @errors.join("<br>")
+      flash_msg = @errors.uniq.join("<br>")
       render :json => { :success => false, :msg => flash_msg }
     else
       if params[:outdated]
@@ -33,6 +34,7 @@ class Admin::EmailNotificationsController < Admin::AdminController
         end   
       end
       if @email_notification.update_attributes(params[:email_notification])
+        template_spam_check # we should handle this at model level in future
         flash[:notice] = t(:'flash.email_notifications.update.success')
       else
         flash[:notice] = t(:'flash.email_notifications.update.failure')
@@ -82,5 +84,11 @@ class Admin::EmailNotificationsController < Admin::AdminController
     ["subject_template", "template"].each do |suffix|
       syntax_rescue(email_notfn["#{user}_#{suffix}"])
     end
+  end
+    
+  def extract_subject_and_message
+    email_notfn = params[:email_notification]
+    user = email_notfn.keys[0].include?("requester") ? "requester" : "agent"
+    return email_notfn["#{user}_subject_template"], email_notfn["#{user}_template"]
   end
 end

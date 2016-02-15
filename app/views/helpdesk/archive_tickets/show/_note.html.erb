@@ -7,7 +7,7 @@ notable_object = @ticket || @parent
 minimizable ||= false
 kind = note.survey_remark.nil? ? note.kind : 'survey'
 
-if current_account.custom_survey_enabled
+if current_account.custom_survey_enabled?
   kind = note.custom_survey_remark.nil? ? note.kind : 'survey'
   
   unless note.custom_survey_remark.blank?

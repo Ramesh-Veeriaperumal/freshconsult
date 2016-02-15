@@ -4,6 +4,9 @@
 	<%= render :partial => "discussions/topics/widgets/note" if @topic.merged_topic_id? || @topic.locked? || @topic.sticky? %>
 
 	<%= render :partial => "discussions/topics/widgets/merged_topics_list" if @topic.merged_topics.present?  %>
+	
+	<%= render :partial => 'discussions/topics/widgets/vote', 
+						:locals => { :topic => @topic } if @topic.published && !@topic.merged_topic_id.present? %>
 
 	<% if (@forum.ideas? or @forum.problems?) && !@topic.merged_topic_id.present?
 		if privilege?(:edit_topic, @topic) %>

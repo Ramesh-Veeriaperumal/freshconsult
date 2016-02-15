@@ -1,12 +1,12 @@
 module MemcacheKeys
 
-  LEADERBOARD_MINILIST = "HELPDESK_LEADERBOARD_MINILIST:%{agent_type}:%{account_id}"
+  LEADERBOARD_MINILIST = "v2/HELPDESK_LEADERBOARD_MINILIST:%{agent_type}:%{account_id}"
 
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
 
-  ACCOUNT_CUSTOM_SURVEY = "v1/ACCOUNT_CUSTOM_SURVEY:%{account_id}"
+  ACCOUNT_CUSTOM_SURVEY = "v2/ACCOUNT_CUSTOM_SURVEY:%{account_id}"
 
   ACCOUNT_TICKET_TYPES = "v3/ACCOUNT_TICKET_TYPES:%{account_id}"
 
@@ -70,7 +70,7 @@ module MemcacheKeys
 
   TWITTER_REAUTH_CHECK = "v1/TWITTER_REAUTH_CHECK:%{account_id}"
 
-  WHITELISTED_IP_FIELDS = "v1/WHITELISTED_IP_FIELDS:%{account_id}"
+  WHITELISTED_IP_FIELDS = "v3/WHITELISTED_IP_FIELDS:%{account_id}"
 
   FEATURES_LIST = "v4/FEATURES_LIST:%{account_id}"
   
@@ -123,6 +123,8 @@ module MemcacheKeys
   ECOMMERCE_REAUTH_CHECK = "v1/ECOMMERCE_REAUTH_CHECK:%{account_id}"
 
   ACCOUNT_PASSWORD_POLICY = "v1/ACCOUNT_PASSWORD_POLICIES:%{account_id}:%{user_type}"
+
+  LEADERBOARD_MINILIST_REALTIME = "v2/LEADERBOARD_MINILIST_REALTIME:%{account_id}:%{agent_type}"
 
   class << self
 

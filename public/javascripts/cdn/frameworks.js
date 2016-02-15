@@ -1,6 +1,7 @@
 //= require jquery-1.8.3.min.js
 //= require jquery_ujs.js
 //= require jquery.pjax.js
+//= require js-data-model.js
 //= require utils.js
 //= require frameworks/sprintf.js
 //= require frameworks/plugins/jquery.cookie.js
@@ -22,6 +23,9 @@
 //= require frameworks/plugins/select2.js
 //= require_tree ./../moment
 //= require frameworks/plugins/jquery.blockUI.js
+//= require app/realtime_dashboard/plugins/lodash.min.js
+//= require app/realtime_dashboard/plugins/gridstack.js
+//= require app/realtime_dashboard/plugins/jquery.mCustomScrollbar.js
 //= require frameworks/underscore-min.js
 //= require frameworks/lab.min.js
 //= require hackz.js

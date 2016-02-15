@@ -6,8 +6,7 @@ var SurveyOverview = {
             SurveyUtil.showOverlay();
             jQuery.ajax({
                 type: 'GET',
-                url: SurveyUtil.makeURL(),
-                data: {},
+                url: SurveyUtil.makeURL("aggregate_report"),
                 success:function(data){
                     SurveyUtil.hideOverlay();
                     SurveyUtil.updateData(data);
@@ -15,6 +14,11 @@ var SurveyOverview = {
                     SurveyOverview.renderContent();
                     jQuery("#survey_report_main_content").unblock();
                     SurveyReport.showLayout();
+                    SurveyReportData.questionTableData = {};
+                    SurveyTable.fetch();
+                },
+                error: function (error) {
+                    console.log(error);
                 }
              });
         },
@@ -23,12 +27,11 @@ var SurveyOverview = {
                 SurveyReport.showReport();
                 SurveyUtil.mapQuestionsResult();
                 jQuery("#survey_report_main_content").html(
-                    JST["survey/reports/template/content_layout"]({
-                                    tab:SurveyTab.isRequired()
-                    })
+                    JST["survey/reports/template/content_layout"]()
                 );
                 SurveyChart.create(SurveyUtil.whichSurvey().survey_questions[0]);
-                SurveyTab.state();
+                
             }
+            SurveyTab.renderSidebar();
         }
 }

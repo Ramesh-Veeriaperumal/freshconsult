@@ -94,6 +94,14 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.tag_names.join(', ')
 	end
 
+  def due_by_time_raw
+    in_user_time_zone(@source.due_by)
+  end
+
+  def fr_due_by_time_raw
+    in_user_time_zone(@source.frDueBy)
+  end
+
 	def due_by_time
 		in_user_time_zone(@source.due_by).strftime("%B %e %Y at %I:%M %p")
 	end
@@ -108,6 +116,10 @@ class Helpdesk::TicketDrop < BaseDrop
 
 	def fr_due_by_hrs
 		in_user_time_zone(@source.frDueBy).strftime("%I:%M %p")
+	end
+
+	def sla_policy_name
+		@source.sla_policy_name.to_s
 	end
 
 	def url
@@ -139,11 +151,19 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def latest_public_comment
-		@last_public_comment ||= @source.liquidize_comment(@source.latest_public_comment)
+		@last_public_comment ||= @source.liquidize_comment(@source.latest_public_comment, true)
 	end
 
 	def latest_private_comment
-		@last_private_comment ||= @source.liquidize_comment(@source.latest_private_comment)
+		@last_private_comment ||= @source.liquidize_comment(@source.latest_private_comment, true)
+	end
+
+	def latest_public_comment_text
+		@last_public_comment_text ||= @source.liquidize_comment(@source.latest_public_comment, false)
+	end
+
+	def latest_private_comment_text
+		@last_private_comment_text ||= @source.liquidize_comment(@source.latest_private_comment, false)
 	end
 
 	def public_comments
@@ -160,10 +180,12 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def satisfaction_survey
-		if @source.account.custom_survey_enabled
-			CustomSurvey::Survey.satisfaction_survey_html(@source)
-		else
-			Survey.satisfaction_survey_html(@source)
+		@satisfaction_survey ||= begin
+			if @source.account.new_survey_enabled?
+				CustomSurvey::Survey.satisfaction_survey_html(@source)
+			else
+				Survey.satisfaction_survey_html(@source)
+			end
 		end
 	end
 

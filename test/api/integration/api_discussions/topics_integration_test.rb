@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class TopicsIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::DiscussionsTestHelper
+  include DiscussionsTestHelper
 
   def test_query_count
     skip_bullet do
@@ -18,13 +18,13 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         api_posts: 2,
 
         create: 45,
-        show: 12,
-        update: 34,
-        destroy: 28,
-        follow: 13,
-        unfollow: 20,
-        is_following: 12,
-        posts: 13
+        show: 14,
+        update: 36,
+        destroy: 30,
+        follow: 15,
+        unfollow: 22,
+        is_following: 13,
+        posts: 15
       }
 
       forum_id = create_test_forum(ForumCategory.first).id
@@ -99,6 +99,8 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 204
       end
 
+      v2[:is_following] -= 1 # trusted_ip
+
       # unfollow
       v1[:unfollow] = count_queries do
         post("/discussions/topic/#{id2}/subscriptions/unfollow.json", nil, @write_headers)
@@ -128,5 +130,23 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         assert_equal v2_expected[key], v2[key]
       end
     end
+  end
+
+  def test_hits_not_cached
+    t = Topic.first
+    hits = t.hits
+    enable_cache do
+      get "/api/discussions/topics/#{t.id}", nil, @headers
+    end
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal hits, response['hits']
+    t.hit! # This will update only redis key
+    enable_cache do
+      get "/api/discussions/topics/#{t.id}", nil, @headers
+    end
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal hits + 1, response['hits']
   end
 end

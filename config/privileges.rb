@@ -3,7 +3,7 @@ Authority::Authorization::PrivilegeList.build do
   # *************** TICKETS **********************
 
   manage_tickets do
-    resource :"helpdesk/dashboard", :only => [:index, :activity_list,:latest_activities,:latest_summary,:sales_manager]
+    resource :"helpdesk/dashboard", :only => [:index, :show, :activity_list,:latest_activities,:latest_summary,:sales_manager, :tickets_summary, :achievements]
     resource :"helpdesk/quest"
     resource :"helpdesk/leaderboard"
     resource :"helpdesk/note", :only => [:index, :agents_autocomplete,:public_conversation]
@@ -11,7 +11,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
     resource :"search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
-    resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets, :empty_trash, :empty_spam,
+    resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets,
                                            :user_ticket, :search_tweets, :custom_search, :export_csv, :latest_ticket_count, :add_requester, :view_ticket,
                                            :spam, :unspam, :execute_scenario, :pick_tickets,
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
@@ -46,10 +46,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/pivotal_tracker"
     resource :"integrations/cti/customer_detail"
     resource :"integrations/quickbook"
-    resource :"integrations/dynamics_crm", :only => [:widget_data]
+    resource :"integrations/dynamicscrm", :only => [:widget_data]
+    resource :"integrations/infusionsoft", :only => [:fetch_user]
     resource :"integrations/xero" , :only => [ :fetch , :render_accounts, :render_currency, :fetch_create_contacts, :get_invoice,  :create_invoices , :edit, :check_item_exists]
     resource :"integrations/hootsuite/home"
     resource :"integrations/hootsuite/ticket"
+    resource :"integrations/sugarcrm", :only => [:renew_session_id, :check_session_id]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -58,7 +60,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets ]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
-    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes]
+    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :acw]
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
     resource :"freshfone/autocomplete"
@@ -67,7 +69,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/queue", :only => [:bridge]
     resource :"freshfone/addres"
     resource :"freshfone/caller"
-    resource :"freshfone/dashboard", :only => [:dashboard_stats, :calls_limit_notificaiton]
+    resource :"freshfone/dashboard", :only => [:dashboard_stats, :calls_limit_notificaiton, :mute]
 
     resource :"helpdesk/conversation", :only => [:note, :full_text]
     resource :"helpdesk/canned_response"
@@ -166,7 +168,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   delete_ticket do
-    resource :"helpdesk/ticket", :only => [:destroy, :restore, :delete_forever, :empty_trash]
+    resource :"helpdesk/ticket", :only => [:destroy, :restore, :delete_forever, :delete_forever_spam,  :empty_trash, :empty_spam]
     
     # Used for API V2
     resource :"ticket", :only => [:restore, :destroy]
@@ -260,7 +262,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"discussions/merge_topic", :owned_by => { :scoper => :topics }
     # Used for API V2
     resource :"api_discussions/topic", :only => [:update], :owned_by => { :scoper => :topics }
-    resource :"api_discussions/api_comment", :only => [:update, :destroy], :owned_by => { :scoper => :posts }
+    resource :"api_discussions/api_comment", :only => [:destroy], :owned_by => { :scoper => :posts }
   end
 
   # delete_forum_topic
@@ -421,8 +423,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/installed_application"
     resource :"integrations/google_account"
     resource :"integrations/remote_configuration"
-    resource :"integrations/dynamics_crm", :only => [:settings, :edit, :settings_update, :fields_update]
+    resource :"integrations/dynamicscrm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"integrations/marketplace/shopify", :only => [:install, :create, :landing]
+    resource :"integrations/infusionsoft", :only => [:install, :edit, :fields_update]
+    resource :"integrations/sugarcrm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"integrations/magento", :only => [:new, :edit, :update]
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"
@@ -447,6 +451,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
     resource :"integrations/github", :only => [:new, :install, :edit, :update ]
     resource :"integrations/salesforce"
+    resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
     resource :"admin/integrations/freshplug"
     resource :"admin/extension"
     resource :"admin/installed_extension"
@@ -470,6 +475,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :account_configuration
     resource :"admin/data_export"
     resource :subscription # plans and billing
+    resource :subscription_invoice
     resource :"admin/zen_import"
     # new item day passes && getting started
     resource :"admin/day_pass"

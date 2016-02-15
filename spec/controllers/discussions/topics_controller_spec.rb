@@ -306,7 +306,31 @@ describe Discussions::TopicsController do
 		topics.each do |topic|
 			@account.topics.find_by_id(topic.id).should be_nil
 		end
-	end
+	end  
+
+  it "should vote a topic on put 'vote'" do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
+    topic = create_test_topic(@forum, @agent)
+    vote_count = topic.user_votes
+
+    put :vote, :id => topic.id
+    liked_topic = @account.topics.find_by_id(topic.id)
+    liked_topic.user_votes.should be_eql(vote_count + 1)
+    vote = liked_topic.votes.find_by_user_id(@agent.id)
+    vote.should be_an_instance_of(Vote)
+    vote.voteable_id.should eql topic.id
+    vote.voteable_type.should eql "Topic"
+    response.should render_template 'discussions/topics/vote'
+
+    put :vote, :id => topic.id
+
+    unliked_topic = @account.topics.find_by_id(topic.id)
+    unliked_topic.user_votes.should be_eql(vote_count)
+    vote = unliked_topic.votes.find_by_user_id(@agent.id)
+    vote.should be_nil
+    response.should render_template 'discussions/topics/vote'
+
+  end
 
 
 	describe "User assignment" do 

@@ -388,6 +388,18 @@ span.fb_add
 		} 
 }
 
+.fresfone-call-history .blacklist-toggle.blacklist{
+	@extend .#{$font-class}block;
+	color: #999;
+	background: white;
+}
+
+.fresfone-call-history .blacklist-toggle.blacklisted{
+	@extend .#{$font-class}block;
+	color: #B44632;
+	background: white;
+}
+
 
 .recording_deleted{
 	&:before{

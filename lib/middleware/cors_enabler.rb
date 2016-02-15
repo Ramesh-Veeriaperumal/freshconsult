@@ -7,7 +7,8 @@ class Middleware::CorsEnabler < Rack::Cors
     :methods => [:get, :post, :put, :delete, :options], 
     :max_age => 86400, #allows client to cache preflight request for 24 hours
     #http://stackoverflow.com/questions/25673089/why-is-access-control-expose-headers-needed
-    :expose => ['X-Path', 'X-Method', 'X-Query-String', 'X-Ua-Compatible', 'X-Meta-Request-Version', 'X-Request-Id', 'X-Runtime'] # Should have all the custom headers that server will send else your client will not have access to those headers
+    :expose => ['X-Path', 'X-Method', 'X-Query-String', 'X-Ua-Compatible', 'X-Meta-Request-Version', 'X-Request-Id', 'X-Runtime', 'X-RateLimit-Total', 'X-RateLimit-Remaining', 'X-RateLimit-Used', 'X-Freshdesk-API-Version'] 
+    # Should have all the custom headers that server will send else your client will not have access to those headers
   }
 
   RESOURCE_PATH_REGEX = /\/.+(\.json|xml|\?(format=json|xml)|(.+)format=json|xml(.+))/
@@ -38,7 +39,8 @@ class Middleware::CorsEnabler < Rack::Cors
   end
 
   # this is to allow api request with the format being sent in query string
+  # Allow V2 api requests also.
   def api_request?(env)
-    env["ORIGINAL_FULLPATH"] =~ RESOURCE_PATH_REGEX
+    env['PATH_INFO'].starts_with?('/api/') || env["ORIGINAL_FULLPATH"] =~ RESOURCE_PATH_REGEX 
   end
 end

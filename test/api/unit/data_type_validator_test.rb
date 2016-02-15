@@ -13,7 +13,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     validates :hash, data_type: { rules: Hash, allow_nil: false }
     validates :boolean, data_type: { rules: 'Boolean', allow_nil: true }
     validates :allow_string_boolean, data_type: { rules: 'Boolean', ignore_string: :allow_string_param, allow_nil: true }
-    validates :set_boolean, data_type: { rules: 'Boolean'}
+    validates :set_boolean, data_type: { rules: 'Boolean' }
   end
 
   def test_disallow_nil
@@ -97,7 +97,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
-    assert_equal({ set_boolean: :data_type_mismatch}.sort, errors)
-    assert_equal({ set_boolean:  { data_type: 'Boolean' }}.sort, error_options)
+    assert_equal({ set_boolean: :data_type_mismatch }.sort, errors)
+    assert_equal({ set_boolean:  { data_type: 'Boolean' } }.sort, error_options)
   end
 end

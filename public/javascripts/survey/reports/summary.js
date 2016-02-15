@@ -2,28 +2,30 @@
     Module deals with activities related to summary contents.
 */
 var SurveySummary = {
-        reset:function(type,id){            
+        reset:function(type,id){        
             jQuery("#survey_report_summary").html( 
                 JST["survey/reports/template/content_summary"]({
                         data:this.create(type,id)
                 })
             );
         },
-        create:function(type,id){
+        create:function(type,id,tooltipFlag){
             var rating = SurveyState.getFilter('rating_list');
+            var question = SurveyUtil.findQuestion(SurveyUtil.findQuestionId());
+            var q_data = SurveyReportData.questionsResult[question.name] || {};
             type = (type || SurveyReportData.type.rating);
             var protocol = {
                 type: type,
                 rating: rating,
-                isRatingFilter: this.isRatingFilter(type)
+                isRatingFilter: tooltipFlag || this.isRatingFilter(type)
             };
             data = this.whichData(type,id);
             protocol.question = (data.link_text || data.label);
-            protocol.percentile = SurveyUtil.consolidatedPercentage(data);
+            protocol.percentile = SurveyUtil.consolidatedPercentage(data,tooltipFlag);
             var totalRating = protocol.percentile.happy.count+protocol.percentile.neutral.count+protocol.percentile.unhappy.count;
             protocol.answered = totalRating;
-            protocol.unanswered = SurveyReportData.unanswered;
-            if(protocol.isRatingFilter){
+            protocol.unanswered = q_data.unanswered;
+            if(!protocol.isRatingFilter){
                 var rating = 0;
                 if(data.rating){
                     rating = data.rating[protocol.rating];
@@ -37,12 +39,11 @@ var SurveySummary = {
         },
         whichData:function(type,id){
                 return (( type==SurveyReportData.type.rating || 
-                              type==SurveyReportData.type.remarks || 
-                              this.isRatingFilter(type) ) ? SurveyUtil.whichSurvey().survey_questions[0] : SurveyUtil.findQuestion(id));
+                              type==SurveyReportData.type.remarks) ? SurveyUtil.whichSurvey().survey_questions[0] : SurveyUtil.findQuestion(id));
         },
         isRatingFilter:function(type){
-            return !(type==SurveyReportData.type.rating || type==SurveyReportData.type.question || 
-                        (type==SurveyReportData.type.remarks && (!jQuery('#rating_list').find('span.reports').attr('id') || 
+            return (type==SurveyReportData.type.rating  || 
+                        ((type==SurveyReportData.type.remarks || type==SurveyReportData.type.question) && (!jQuery('#rating_list').find('span.reports').attr('id') || 
                         jQuery('#rating_list').find('span.reports').attr('id')==SurveyDropDown.rating.default.value)));
         }
     }

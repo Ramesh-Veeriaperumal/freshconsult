@@ -6,26 +6,31 @@ var SurveyChart = {
 		this.currentChart = (new Highcharts.Chart(this.data(chartRef)));
 	},
 	data: function(ref){   
+        var total = 0;
         var choices = ref.choices;
         var ratings = ref.rating;
         var protocol = {};
         var series = [];
         var categories = [];
         for(var i=0;i<choices.length;i++){
-                var data = [];
-                var key =  choices[i].face_value;
-                var name = choices[i].value;
-                for(var j=0;j<i;j++){
-                    data.push(0);
-                }
-                var rating = (ratings) ? ratings[key] : null;
-                data.push(((rating) ? rating : 0));
-                series.push({
-                    name: name,
-                    data: data,
-                    color: SurveyReportData.customerRatingsColor[key]
-                });
-                categories.push(name);
+          total += ratings[choices[i].face_value] || 0;
+        }
+        for(var i=0;i<choices.length;i++){
+          var data = [];
+          var key =  choices[i].face_value;
+          var name = choices[i].value;
+          for(var j=0;j<i;j++){
+              data.push(0);
+          }
+          var rating = (ratings) ? ratings[key] : null;
+          data.push(((rating) ? rating : 0));
+          series.push({
+              name: name,
+              data: data,
+              color: SurveyReportData.customerRatingsColor[key],
+              percent: (rating/total)*100
+          });
+          categories.push(name);
         }
         this.options.series = series;
         this.options.xAxis.categories = categories;
@@ -56,8 +61,13 @@ var SurveyChart = {
               minorGridLineWidth: 0,
               tickWidth:0,
               lineWidth:0,
+              offset: 15,
               labels: {
-                  enabled: true
+                  enabled: true,
+                  y: 4,  
+                  style: {
+                      fontSize: '12px'
+                  }
               }
           },
           yAxis: {      
@@ -72,9 +82,23 @@ var SurveyChart = {
           plotOptions: {
               series: {
                 stacking: 'normal',
-                pointWidth: 20,
-								borderWidth: 0,
-								shadow: false
+                pointWidth: 10,
+								borderWidth: 2,
+                borderRadius: 5,
+								shadow: false,
+                dataLabels: {
+                  enabled: true,
+                  align: 'right',
+                  x: 15,
+                  y: -2,
+                  style: {
+                      fontWeight: 'bold',
+                      fontSize: '12px'
+                  },
+                  formatter: function(){
+                    return (this.y>0)? this.y : null;
+                  }
+                }
               }
           },
           legend: {
@@ -101,9 +125,16 @@ var SurveyChart = {
 
           tooltip: {
               formatter: function(){
-                      return ("<b>"+this.x+" : "+this.y+"</b>");
+                      return ('<span style="color:'+ this.series.color + '"><b>'+this.x+" : "+ Highcharts.numberFormat(this.series.options.percent,2) +'%</b></span>');
                   },
-                  style: { padding: 5 }
+                  useHTML: true,
+                  backgroundColor: '#000000',
+                  borderColor: '#000000',
+                  borderRadius: 0,
+                  style: { 
+                    padding: 5
+                    
+                  }
           },
 
           series: [

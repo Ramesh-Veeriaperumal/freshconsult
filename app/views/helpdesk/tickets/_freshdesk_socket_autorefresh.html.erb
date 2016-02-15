@@ -5,6 +5,7 @@
   jQuery(document).ready(function() {
       autoRefreshData["user_permission"] = "<%= current_user.agent.ticket_permission %>";
       autoRefreshData["groups"] = <%= escape_javascript(current_user.agent_groups.pluck(:group_id).to_json) %>;
+      autoRefreshData["resolved_statuses"] = <%= Helpdesk::TicketStatus.resolved_statuses.to_json %>
       window.autoRefresh(autorefresh_server, autoRefreshData, "<%= escape_javascript(current_user.name) %>","<%=current_user.id%>");
   });
 

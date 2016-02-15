@@ -1495,6 +1495,8 @@ TICKET_DETAILS_CLEANUP = function() {
 		"ticket_view_loaded",
 		"ticket_view_unloaded",
 		"sidebar_loaded",
+		"todo_loaded",
+		"time_entry_loaded",
 		"watcher_added",
 		"watcher_removed"
 	];

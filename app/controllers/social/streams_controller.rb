@@ -1,7 +1,6 @@
 class Social::StreamsController < Social::BaseController
 
   include Social::Twitter::Util
-  include Social::Dynamo::Twitter
   include Social::Stream::Interaction
   include Mobile::Actions::Social
 
@@ -12,6 +11,7 @@ class Social::StreamsController < Social::BaseController
   before_filter :set_native_mobile, :only => [:stream_feeds, :show_old, :fetch_new, :interactions]
   before_filter :set_stream_params, :only => [:stream_feeds], :if => :is_mobile_meta_request?
   before_filter :load_reply_handles, :only => [:index, :stream_feeds, :show_old, :fetch_new, :interactions]
+  skip_after_filter :set_last_active_time, :only => [:fetch_new]
 
   def index
     set_stream_params
@@ -159,7 +159,7 @@ class Social::StreamsController < Social::BaseController
   def validate_streams(action)
     streams = params[:social_streams][:stream_id].split(",")
     return streams if (action == STREAM_FEEDS_ACTION_KEYS[:show_old] || action == STREAM_FEEDS_ACTION_KEYS[:fetch_new])
-    visible_stream_ids = current_user.visible_social_streams.map { |stream| "#{stream.id}" }
+    visible_stream_ids = current_user.visible_twitter_streams.map { |stream| "#{stream.id}" }
     streams & visible_stream_ids
   end
 

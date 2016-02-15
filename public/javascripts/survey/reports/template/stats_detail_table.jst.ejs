@@ -1,5 +1,5 @@
 <%if(table && table.length>1){%>
-	<table class="table table-striped table-bordered table-condensed" id="report_tabular_data" style="display:none;">
+	<table class="table table-bordered" id="report_tabular_data" style="display:none;">
 		<thead>
 			<tr>
 			<%	 
@@ -16,20 +16,22 @@
 			<%
 				for(var i=1;i<table.length;i++){
 			%>	
-			<tr>
+			<tr class="<% if(table[i].name == "None") {%>exclude_none <%}%>">
+				<td><%=table[i].name%></td>
 				<%
-				 	var groupInfo = table[i];
+				 	var groupInfo = table[i].choices;
 					for(var j=0;j<groupInfo.length;j++){				
 				%>
 					<td><%=groupInfo[j]%></td>
 				<%
 					}
 				%>
+				<td><%=table[i].total%></td>
 			</tr>
 			<%
 				}
 			%>		
 		</tbody>
 	</table>
-	<% setTimeout(function(){ SurveyTable.draw(); }, 0);%>
+	<% setTimeout(function(){ SurveyTable.draw(table.length); }, 0);%>
 <%}else{ SurveyTable.type.hide(); }%>

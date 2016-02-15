@@ -2,6 +2,7 @@ class HttpRequestProxy
 
   include Integrations::OauthHelper
   include HttpProxyMethods
+  include Fdadmin::ApiCallConstants
 
   DEFAULT_TIMEOUT = 30
 
@@ -15,7 +16,7 @@ class HttpRequestProxy
     fetch_using_req_params(params, requestParams)
   end
 
-  def fetch_using_req_params(params, requestParams)
+  def fetch_using_req_params(params, requestParams, customHeaders=nil)
     response_code = 200
     content_type = params[:content_type] || "application/json"
     accept_type = params[:accept_type] || "application/json"
@@ -69,6 +70,7 @@ class HttpRequestProxy
       options[:body] = post_request_body unless post_request_body.blank?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.
       options[:headers] = {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type, "User-Agent" => user_agent}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
       options[:headers] = options[:headers].merge(params[:custom_auth_header]) unless params[:custom_auth_header].blank?
+      options[:headers] = options[:headers].merge(customHeaders) unless (customHeaders.nil? or customHeaders.empty?)
       timeout = params[:timeout].to_i
       options[:timeout] = timeout.between?(1, DEFAULT_TIMEOUT)  ? timeout : DEFAULT_TIMEOUT #Returns status code 504 on timeout expiry
       begin
@@ -87,7 +89,7 @@ class HttpRequestProxy
           Rails.logger.debug "Response Body: #{proxy_response.body}"
           Rails.logger.debug "Response Code: #{proxy_response.code}"
         else
-          net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_s]
+          net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_sym]
           final_url       = encode_url ? URI.encode(remote_url) : remote_url
           proxy_request   = HTTParty::Request.new(net_http_method, final_url, options)
           Rails.logger.debug "Sending request: #{proxy_request.inspect}"
@@ -133,17 +135,5 @@ class HttpRequestProxy
     end
     return {:text=>response_body, :content_type => response_type, :status => response_code, 'x-headers' => x_headers}
   end
-
-  HTTP_METHOD_TO_CLASS_MAPPING = {
-            "get" => Net::HTTP::Get,
-            "post" => Net::HTTP::Post,
-            "put" => Net::HTTP::Put,
-            "delete" => Net::HTTP::Delete,
-            "patch" => Net::HTTP::Patch
-        }
-
-  HTTP_METHOD_TO_SYMBOL_MAPPING = {
-    "get" => :get,
-    "post" => :post
-  }
+  
 end

@@ -17,11 +17,23 @@ class ApiApplicationControllerTest < ActionController::TestCase
   end
 
   def test_api_current_user_failed_login_count_on_valid_pwd
-    auth = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token, 'X')
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.email, 'test')
+    params = ActionController::Parameters.new('format' => 'json')
+    controller.params = params
     @controller.request.env['HTTP_AUTHORIZATION'] = auth
     @agent.update_attribute(:failed_login_count, 1)
     @controller.send(:api_current_user)
     assert_equal 0, @agent.reload.failed_login_count
+  end
+
+  def test_api_current_user_failed_login_count_on_valid_api_key
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token, 'X')
+    params = ActionController::Parameters.new('format' => 'json')
+    controller.params = params
+    @controller.request.env['HTTP_AUTHORIZATION'] = auth
+    @agent.update_attribute(:failed_login_count, 1)
+    @controller.send(:api_current_user)
+    assert_equal 1, @agent.reload.failed_login_count
   end
 
   def test_invalid_field_handler_with_invalid_multi_part
@@ -115,34 +127,6 @@ class ApiApplicationControllerTest < ActionController::TestCase
     actual = controller.send(:paginate_options)
     assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] + 1, actual[:per_page]
     assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page], actual[:page]
-  end
-
-  def test_paginate_options_with_invalid_options
-    params = ActionController::Parameters.new(
-      per_page: 'x',
-      page: 'x')
-    controller.params = params
-    actual = controller.send(:paginate_options)
-    assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] + 1, actual[:per_page]
-    assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page], actual[:page]
-
-    params = ActionController::Parameters.new(
-      per_page: ['1'],
-      page: ['1'])
-    controller.params = params
-    actual = controller.send(:paginate_options)
-    assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] + 1, actual[:per_page]
-    assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page], actual[:page]
-  end
-
-  def test_paginate_options_returns_default_options_if_per_page_exceeds_limit
-    params = ActionController::Parameters.new(
-      per_page: (ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page] + 1),
-      page: Random.rand(2..11))
-    controller.params = params
-    actual = controller.send(:paginate_options)
-    assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page] + 1, actual[:per_page]
-    assert_equal params[:page], actual[:page]
   end
 
   def test_paginate_options_returns_per_page_options_if_limit_does_not_exceed

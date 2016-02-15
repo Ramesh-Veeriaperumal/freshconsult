@@ -87,4 +87,7 @@ class Billing::ChargebeeWrapper
 		ChargeBee::HostedPage.update_payment_method({:iframe_messaging => true, :embed => true, :customer => {:id => account_id}})
 	end
 
+	def retrieve_invoice_pdf_url(invoice_id)
+		ChargeBee::Invoice.pdf(invoice_id).download.download_url
+	end
 end

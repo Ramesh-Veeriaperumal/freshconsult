@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   before_filter :force_utf8_params
   before_filter :persist_user_agent
   before_filter :set_cache_buster
-  before_filter :logging_details 
+  #before_filter :logging_details 
   before_filter :remove_pjax_param 
   after_filter :set_last_active_time
 

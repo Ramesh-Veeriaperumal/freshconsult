@@ -1,3 +1,4 @@
+#Belongs to Old Slack, remove file when slackV1 is obselete.
 module Integrations::Slack::Constant
 
 	SLACK_REST_API = {

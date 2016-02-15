@@ -27,7 +27,7 @@ module Solution::DraftContext
 
 		def get_context
 			@drafts_context = $redis_others.get(solutions_draft_key).to_i || current_portal.id
-			@drafts_context_portal = current_account.portals.find(@drafts_context)
+			@drafts_context_portal = current_account.portals.find(@drafts_context) unless @drafts_context == 0
 		end
 
 		def solutions_draft_key

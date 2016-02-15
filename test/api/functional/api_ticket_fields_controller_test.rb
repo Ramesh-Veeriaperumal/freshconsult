@@ -1,17 +1,23 @@
 require_relative '../test_helper'
 
 class ApiTicketFieldsControllerTest < ActionController::TestCase
-  include Helpers::TicketFieldsTestHelper
+  include TicketFieldsTestHelper
   def wrap_cname(_params)
     remove_wrap_params
     {}
+  end
+
+  def test_index_ignores_pagination
+    get :index, controller_params(per_page: 1, page: 2)
+    assert_response 200
+    assert JSON.parse(response.body).count > 1
   end
 
   def test_index_with_choices
     pdt = Product.new(name: 'New Product')
     pdt.account_id = @account.id
     pdt.save
-    get :index, construct_params({}, {})
+    get :index, controller_params({}, {})
     assert_response 200
     pattern = []
     @account.ticket_fields.each do |field|
@@ -22,7 +28,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
         new_pattern = ticket_field_nested_pattern(field, choices: field.formatted_nested_choices)
       else
         new_pattern = ticket_field_pattern(field)
-        klass = TicketFieldDecorator.send(:ticket_field_choices, field).class
+        klass = TicketFieldDecorator.new(field, {}).ticket_field_choices.class
         new_pattern.merge!(choices: Hash) if klass == Hash
       end
       pattern << new_pattern
@@ -69,7 +75,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
                                                              value: l1_val)
       picklist_vals_l1.last.save
     end
-    get :index, construct_params({}, {})
+    get :index, controller_params({}, {})
     assert_response 200
     response = parse_response @response.body
     assert_equal 12, response.count
@@ -160,7 +166,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
         end
       end
     end
-    get :index, construct_params({}, {})
+    get :index, controller_params({}, {})
     assert_response 200
     response = parse_response @response.body
     assert_equal @account.main_portal.ticket_fields.count, response.count
@@ -177,19 +183,19 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_invalid_filter
-    get :index, construct_params({ test: 'junk' }, {})
+    get :index, controller_params({ test: 'junk' }, {})
     assert_response 400
     match_json([bad_request_error_pattern('test', :invalid_field)])
   end
 
   def test_index_with_invalid_filter_value
-    get :index, construct_params({ type: 'junk' }, {})
+    get :index, controller_params({ type: 'junk' }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('type', :"can't be blank")])
+    match_json([bad_request_error_pattern('type', :not_included, list: 'default_subject, default_requester, default_ticket_type, default_status, default_priority, default_group, default_agent, default_source, default_description, default_product, custom_text, custom_paragraph, custom_checkbox, custom_number, custom_date, custom_decimal, custom_dropdown, nested_field')])
   end
 
   def test_index_with_valid_filter
-    get :index, construct_params({ type: 'nested_field' }, {})
+    get :index, controller_params({ type: 'nested_field' }, {})
     assert_response 200
     response = parse_response @response.body
     assert_equal ['nested_field'], response.map { |x| x['type'] }.uniq

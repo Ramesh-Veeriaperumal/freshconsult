@@ -3,8 +3,7 @@ Encoding.default_external = Encoding::UTF_8
 source 'http://rubygems.org'
 
 gem "rake", "~> 10.4.0"
-gem "rack", :git =>"git://github.com/freshdesk/rack.git", :branch => 'rack_1.4.5'
-gem "rails","3.2.18"
+gem "rails","3.2.22.1"
 
 gem 'rack-cors', '~> 0.3.1'
 gem "syck", :platform => [:mri_20, :mri_21]
@@ -27,7 +26,7 @@ gem "prototype-rails", '~> 3.2.0'
 gem "dynamic_form"
 gem 'typhoeus', '0.7.3'
 gem "prototype_legacy_helper", '0.0.0', :git => "git://github.com/rails/prototype_legacy_helper.git"
-gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/sumakumardey/rack-ssl',:branch => 'ssl'
+gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/freshdesk/rack-ssl',:branch => 'ssl'
 gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
 
 gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
@@ -50,6 +49,7 @@ end
 gem "bullet", :group => [:development, :test, :staging]
 gem "mail"
 gem "i18n", "~> 0.6.0"
+gem "i18n-js", "3.0.0.rc11"
 gem "RedCloth", "4.2.9"
 gem "authlogic", "~> 3.4.2"
 gem "request_store", "~> 1.0"
@@ -69,8 +69,7 @@ gem "omniauth-quickbooks"
 gem "omniauth-salesforce", :git => "git://github.com/sathishfreshdesk/omniauth-salesforce.git", :branch => "master"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
-gem "omniauth-surveymonkey", "1.0.0"
-gem "dynamics_crm", "~> 0.4.1"
+gem "dynamics_crm", :git => 'git@github.com:TinderBox/dynamics_crm.git', :branch => "master"
 gem "nori", "1.1.4"
 gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"

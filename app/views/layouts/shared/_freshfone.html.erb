@@ -6,6 +6,9 @@
 	<%= render 'layouts/shared/freshfone/freshfone_notification' %>
 </div>
 <div class="freshfone_widget">
+  <div class="browser_alert hide">
+   <a class="alert_popup" href="#" title="phoneicon" data-placement="above" rel="ff-alert-popover"><i class="ficon-alert active fsize-20"></i></a> 
+  </div>
 	<div class="ff_desktop_notification hide tooltip" 
 		data-placement="left" title="<%= t('freshfone.widget.desktop_notification') %>">
 		<div class="desktopNotifier"><%= font_icon "bell", :size => 22 %></div>
@@ -20,6 +23,9 @@
 </div>
 <div class="freshfone-context-container hide" >
 	<%=render 'layouts/shared/freshfone/freshfone_context_container' %>
+</div>
+<div class="popupbox-content supervisor_call_details hide">
+		<%= render 'layouts/shared/freshfone/freshfone_supervisor_call_details' %>
 </div>
 <div class="grey_widget_background hide" data-freshfone=false data-chat=false></div>
 <div class="popupbox-content hide freshfone_content_container" rel="freshfone_widget">
@@ -64,6 +70,9 @@
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_index_path %>';
 	freshfone.isDebuggingMode = "<%= current_account.features?(:client_debugging)%>";
 	freshfone.isConferenceMode = <%= current_account.features?(:freshfone_conference)%>;
+	freshfone.isCallMonitoringMode = <%= current_account.features?(:freshfone_call_monitoring)%>;
+	freshfone.isCallQualityMetricsEnabled = <%= current_account.features?(:call_quality_metrics)%>;
+	
   freshfone.ringingTime = <%= current_account_freshfone_numbers.present? ?  current_account_freshfone_numbers.first.ringing_time : 30 %>;
   freshfone.isAdmin = <%= current_user.privilege?(:admin_tasks) %>
   freshfone.current_user_details = {
@@ -82,6 +91,7 @@
   });
 
   freshfone.strangeNumbers = <%= Freshfone::CallerLookup::STRANGE_NUMBERS.to_json.html_safe %>;
+  freshfone.env = "<%= Rails.env %>";
 <% end %>
 <%= javascript_include_tag :'cdn/freshfone_client' %>
 <% unless AppMetrics::FRESHFONE_METRICS.blank? %>

@@ -1,16 +1,15 @@
 class Social::FacebookPagesController < Admin::AdminController
 
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => :event_listener
   before_filter { |c| c.requires_feature :facebook }
 
   #This Controller should be refactored
-  before_filter :set_session_state , :only =>[:index, :edit, :update_page_token]
-  before_filter :fb_client , :only => [:index, :edit, :update_page_token]
+  before_filter :set_session_state ,  :only => [:index, :edit, :update_page_token]
+  before_filter :fb_client,           :only => [:index, :edit, :update_page_token]
   before_filter :fb_client_page_tab , :only => [:index, :update_page_token]
-  before_filter :add_page_tab, :only => [:edit, :update_page_token], :if => :facebook_page_tab?
-  before_filter :load_item,  :only => [:edit, :update, :destroy]
-  before_filter :load_tab, :only => [:edit, :destroy], :if => :facebook_page_tab?
-  before_filter :handle_tab, :only => :update, :if => [:tab_edited?, :facebook_page_tab?]
+  before_filter :add_page_tab,        :only => [:edit, :update_page_token], :if => :facebook_page_tab?
+  before_filter :load_item,           :only => [:edit, :update, :destroy]
+  before_filter :load_tab,            :only => [:edit, :destroy], :if => :facebook_page_tab?
+  before_filter :handle_tab,          :only => :update,           :if => [:tab_edited?, :facebook_page_tab?]
 
   #This is for the callback function for facebook realtime app
   def index
@@ -51,7 +50,6 @@ class Social::FacebookPagesController < Admin::AdminController
           page.update_attributes(page_params)
         else
           page = scoper.new(fb_page)
-          #remove the check
           page.save 
         end
       rescue Exception => e
@@ -79,17 +77,18 @@ class Social::FacebookPagesController < Admin::AdminController
   protected
 
   def enabled_facebook_pages
-    page_hash = {}
+    page_hash      = {}
     page_token_tab = true
     scoper.each do |facebook_page|
       if page_hash[facebook_page.profile_id.to_s]
         page_hash[facebook_page.profile_id.to_s]["facebook_pages"] << facebook_page
         page_hash[facebook_page.profile_id.to_s]["tab"] ||= facebook_page.existing_page_tab_user?
       else
-        page_hash[facebook_page.profile_id.to_s] = {}
-        page_hash[facebook_page.profile_id.to_s]["facebook_pages"] = [facebook_page]
-        page_hash[facebook_page.profile_id.to_s]["feature"] = facebook_page_tab?
-        page_hash[facebook_page.profile_id.to_s]["tab"] = facebook_page.existing_page_tab_user?
+        page_hash[facebook_page.profile_id.to_s] = {
+          "facebook_pages"  => [facebook_page],
+          "feature"         => facebook_page_tab?,
+          "tab"             => facebook_page.existing_page_tab_user?
+        }
       end
     end
     page_hash
@@ -106,20 +105,18 @@ class Social::FacebookPagesController < Admin::AdminController
     end
   end
 
-
   def scoper
     current_account.facebook_pages
   end
 
   def fb_client
-    @fb_client = Facebook::Oauth::FbClient.new(nil,fb_call_back_url)
+    @fb_client     = Facebook::Oauth::FbClient.new(nil,fb_call_back_url)
     @fb_client_tab = Facebook::Oauth::FbClient.new("page_tab",fb_call_back_url(params[:action]))
   end
 
   def fb_client_page_tab
     @fb_client_page_tab = Facebook::Oauth::FbClient.new("page_tab",fb_call_back_url("update_page_token"))
   end
-
 
   def load_item
     @item = current_account.facebook_pages.find(params[:id])
@@ -146,16 +143,12 @@ class Social::FacebookPagesController < Admin::AdminController
     current_account.features?(:facebook_page_tab)
   end
 
-  def fetch_fb_wall_posts fb_page 
-    Resque.enqueue(Facebook::Worker::FacebookMessage ,{:account_id => fb_page.account_id, :fb_page_id => fb_page.id})
-  end
-
   def fb_call_back_url(action="index") 
-      url_for(:host => current_account.full_domain, :action => action)
+    url_for(:host => current_account.full_domain, :action => action)
   end
 
   def set_session_state
-    session[:state] = Digest::MD5.hexdigest(Helpdesk::SECRET_3+ Time.now.to_f.to_s)
+    session[:state] = Digest::MD5.hexdigest("#{Helpdesk::SECRET_3}#{Time.now.to_f}")
   end
 
 end

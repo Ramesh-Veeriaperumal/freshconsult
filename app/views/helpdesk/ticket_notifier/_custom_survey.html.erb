@@ -1,12 +1,11 @@
 <% require 'sanitize' %>
-<% if survey_handle && ticket.requester.customer? %>
-  <div  style="width: 100%;font: 13px 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-    <hr style="height:0;border:0;margin-top:20px;border-top:1px solid #ccc;">
-    <div class="freshdesk_satisfaction_survey">
+<% if survey_handle && (survey_handle.preview? || ticket.requester.customer?) %>
+  <div class="freshdesk_satisfaction_survey" title="freshdesk_satisfaction_survey">
+    <div  style="width: 100%;font: 13px 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+      <hr style="height:0;border:0;margin-top:20px;border-top:1px solid #ccc;">
       <span style="font-family: Arial, sans-serif; color: #333;font-weight:bold;">
         <%= simple_format(survey_handle.survey.default_question.label) %>
       </span>
-    </div>    
       <table  cellspacing="0" cellpadding="0" style="table-layout:fixed; margin-top:10px;">
       <tr>
         <% JSON.parse(survey_handle.survey.choices).each do |option| %>
@@ -21,6 +20,7 @@
         <% end %>
       </tr>
     </table>
+    </div>
   </div>
 <% end %>
 <% if surveymonkey_survey %>

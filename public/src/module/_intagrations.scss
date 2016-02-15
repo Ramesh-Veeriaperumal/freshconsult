@@ -396,7 +396,7 @@ span.beta {
 		label {
 			@include float(left);
 			height: inherit;
-			width: 65px;
+			width: 80px;
 			font-size: 100%;
 			font-weight: bold; 
 			color: $default_txt_color;
@@ -489,6 +489,26 @@ span.beta {
 		font-style:italic;
 	}
 }
+
+//-------------------------------------------------------------------------------------------
+//										SugarCRM
+//-------------------------------------------------------------------------------------------
+
+#sugar-populate-custom-fields{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#sugar-crm-view{
+	float: left;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+#sugar-crm-view,#sugar-populate-custom-fields,#sugar-contact-desig{
+	margin-left: 30px;
+}
+
 
 // --------------------------------------------------------------------------------------------------
 //												Screenr
@@ -1303,6 +1323,15 @@ span.beta {
 	margin-bottom: 2px;
 	}
 }
+
+.slack-bottom{
+	clear:both;
+}
+
+
+	.slack-form {
+		min-height: 300px;
+	}
 //------------------------------------------------------------------------------------------------------
 //									Salesforce
 //------------------------------------------------------------------------------------------------------
@@ -1411,3 +1440,4 @@ span.beta {
     float: right;
     padding-top: 10px;
  }
+

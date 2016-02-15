@@ -23,7 +23,7 @@ end
       account = Account.find_by_id(account_id)
       if account
         account.make_current 
-        $statsd.increment "resque.#{@queue}.#{account.id}" 
+        # $statsd.increment "resque.#{@queue}.#{account.id}" 
       end
       TimeZone.set_time_zone
     end

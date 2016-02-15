@@ -9,37 +9,59 @@ var SurveyRemark = {
             SurveyUtil.showOverlay();
             var self = this;
             this.currentPage=1;
-            var self = this;
             jQuery.ajax({
                 type: 'GET',
                 url: self.makeURL(),
-                data: {},
                 success:function(data){
-                    SurveyUtil.hideOverlay();
-                    SurveyUtil.updateData(data.survey_report_summary);
-                    SurveyUtil.mapResults();
-                    var type = SurveyReportData.type.remarks;
-                    var id = jQuery('.report-panel-left').find('ul li.active').data('id');
-                    SurveySummary.reset(type,id);
-                    self.renderContent(data);
-                    jQuery("#survey_report_main_content").unblock();
-                    SurveyReport.showLayout();
-                    self.pageLimit = data.page_limit;
-                    self.totalPages = Math.ceil(data.total/self.pageLimit);
-                    jQuery('#survey_responses').pageless({
-                             url: self.makeURL(),
-                             totalPages: self.totalPages,
-                             currentPage: (self.currentPage++),
-                             loaderImage:"/images/animated/loading.gif",
-                             loaderMsg: SurveyI18N.loading_remarks,
-                             params:{page:self.currentPage},
-                             scrape: SurveyRemark.renderPageless
-                       });
+                    if(SurveyState.RemarksOnly){
+                        self.remarksConditionalRender(data);
+                        SurveyUtil.hideOverlay();
+                        SurveyState.RemarksOnly = false;
+                    }
+                    else{
+                        jQuery.ajax({
+                        type: 'GET',
+                        url: SurveyUtil.makeURL("aggregate_report"),
+                        success:function(aggregate_data){
+                            SurveyUtil.updateData(aggregate_data);
+                            SurveyUtil.mapResults();
+                            self.remarksConditionalRender(data);
+                            SurveyUtil.hideOverlay();
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                        });
+                    }
+                },
+                error: function (error) {
+                 console.log(error);
                 }
              });
         },
+        remarksConditionalRender:function(data){   
+            var self = this;
+            var type = SurveyReportData.type.remarks;
+            var id = jQuery('.report-panel-left').find('ul li.active').data('id');
+            SurveySummary.reset(type,id);
+            self.renderContent(data);
+            jQuery("#survey_report_main_content").unblock();
+            SurveyReport.showLayout();
+            self.pageLimit = data.page_limit;
+            self.totalPages = Math.ceil(data.total/self.pageLimit);
+            jQuery('#survey_responses').pageless({
+                 url: self.makeURL(),
+                 totalPages: self.totalPages,
+                 currentPage: (self.currentPage++),
+                 loaderImage:"/images/animated/loading.gif",
+                 loaderMsg: SurveyI18N.loading_remarks,
+                 params:{page:self.currentPage},
+                 scrape: SurveyRemark.renderPageless
+            });
+
+        },
         makeURL:function(){
-            return SurveyUtil.makeURL("remarks");
+            return SurveyUtil.makeURL("responses");
         },
         renderContent:function(data,isPageless){
             if(!SurveyReport.isEmptyChart()){
@@ -50,11 +72,11 @@ var SurveyRemark = {
                 }
                 var remarkHTML = JST["survey/reports/template/content_response_layout"]({remarks:remarks});
                 if(isPageless){ return remarkHTML; }
-                jQuery("#survey_responses").html(remarkHTML);
-                jQuery('div#survey_report_main_content .report-panel-left').html(JST["survey/reports/template/stats_tab_layout"]());
-                SurveyTab.state();
+                jQuery("#survey_responses").html(remarkHTML); 
+                jQuery("#survey_report_filter_by_component").show();
                 this.show();
-            }
+            }  
+            SurveyTab.renderSidebar();
         },
         show:function(){
             SurveyState.toggle(SurveyState.RESPONSE.type);
@@ -62,6 +84,10 @@ var SurveyRemark = {
         renderPageless:function(data){
             var html = SurveyRemark.renderContent(JSON.parse(data),true);
             return html;
+        },
+        renderFilterBy:function(){
+            jQuery('#survey_report_filter_by_component').html(JST["survey/reports/template/filter_by_component"]());
+            SurveyState.setFilter('rating_list',data.rating);
         },
         format:function(data){
             var remarks = [];

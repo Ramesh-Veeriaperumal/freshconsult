@@ -53,14 +53,16 @@ var FreshfoneUserInfo;
 						self.requestObject.callerId = data.user_id;
 						self.requestObject.avatar = data.user_hover || false;
 						self.requestObject.callMeta = self.construct_meta(data.call_meta);
+						self.requestObject.callerCard  = data.caller_card;
 						if(data.call_meta){
 							self.requestObject.transferAgentName = data.call_meta.transfer_agent.user_name;
 							self.requestObject.ffNumberName = (data.call_meta || {}).number || "";
 						}	
-						self.setOngoingCallContext(data.caller_location);
+						
 					}
 					if (self.isOutgoing) {						
 						self.setOngoingStatusAvatar(self.requestObject.avatar || self.blankUserAvatar);
+						self.setOngoingCallContext(data.caller_card);
 					} else {
 						params.callerName = self.requestObject.callerName;
 						params.callMeta = self.requestObject.callMeta;
@@ -110,17 +112,11 @@ var FreshfoneUserInfo;
 				this.unknownUserFiller();
 			}
 		},
-		setOngoingCallContext: function(callerLocation){
-			var callerName = this.requestObject.callerName;
-			var callerId = this.requestObject.callerId;
-			var params = {callerName: callerName, 
-							callerNumber: this.formattedNumber(), 
-							callerLocation: callerLocation,
-							callerId: callerId
-						};
-			var template = this.$callContext.clone();
-			freshfonewidget.callerUserId = callerId;
-			$('.caller-context-details').html(template.tmpl(params));
+		setOngoingCallContext: function(callerCard){
+			var self = this;
+			freshfonewidget.callerUserId =  this.requestObject.callerId;
+			$('.caller-context-details').html(callerCard);
+			$('.caller-number').html(self.formattedNumber());
 		},
 		formattedNumber: function () {
 			return formatInternational(this.callerLocation(), this.customerNumber)

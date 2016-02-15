@@ -1,5 +1,6 @@
 module Helpdesk::Email::ParseEmailData
 	include ParserUtil
+	include AccountConstants
 
 	attr_accessor :reply_to_email, :recipients
 
@@ -61,7 +62,8 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def parse_reply_to_email
-		self.reply_to_email = parse_email_with_domain(params["Reply-To"])
+		parsed_reply_to = parse_email_with_domain(params["Reply-To"])
+		self.reply_to_email = parsed_reply_to if parsed_reply_to[:email] =~ EMAIL_REGEX
 	end
 
 	def valid_from_email? f_email
@@ -182,3 +184,4 @@ module Helpdesk::Email::ParseEmailData
 	alias_method :parse_recipients, :parse_recipients_new
 
 end
+

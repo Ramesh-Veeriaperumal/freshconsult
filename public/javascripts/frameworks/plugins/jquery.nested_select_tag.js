@@ -13,13 +13,14 @@
             _vals = (opts.initValues || {}),
             _disable_children = opts.disable_children;
 
-         opts["default_option"] = "<option value=''>"+opts["include_blank"]+"</option>";   
-
+         opts["default_option"] = "<option value=''>"+opts["include_blank"]+"</option>";
+         if(opts["include_none"]) {
+          opts["none_option"] = "<option value='-1'>"+opts["include_none"]+"</option>";
+         }
          _category.bind("change", function(ev){
             var _items_present = false;
 
             _subcategory.html("");
-            
             (_tree.getSubcategoryList(_category.val())).each(function(pair){
               _items_present = true;
               $("<option />")
@@ -29,6 +30,9 @@
             });
 
             if(_items_present){
+              if(opts["include_none"]) {
+                _subcategory.prepend(opts.none_option);
+              }
               _subcategory.prepend(opts.default_option);
               _subcategory.val("")
             }
@@ -70,6 +74,9 @@
                   .appendTo(_item);
               });
               if(_items_present){
+                if(opts["include_none"]) {
+                  _item.prepend(opts.none_option);
+                }
                 _item.prepend(opts.default_option);
                 _item.val("")
               }

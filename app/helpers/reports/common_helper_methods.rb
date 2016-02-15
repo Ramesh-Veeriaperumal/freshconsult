@@ -59,7 +59,7 @@ HTML
 	   	elsif report_type == "timesheet_reports"
 	   	  current_account.features_included?(:timesheets) && privilege?(:view_time_entries)
 	   	elsif report_type == "satisfaction_survey"
-	   	  current_account.survey_enabled
+	   	  current_account.survey_enabled?
 	    elsif current_account.features_included?(:enterprise_reporting)
 	      ENTERPRISE_REPORTS.include?(report_type)
 	    elsif current_account.features_included?(:advanced_reporting)

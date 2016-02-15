@@ -23,7 +23,8 @@ class Freshfone::Account < ActiveRecord::Base
 	STATE = [
 		[ :active, "active", 1 ],
 		[ :suspended, "suspended", 2 ],
-		[ :closed, "closed", 3 ]
+		[ :closed, "closed", 3 ],
+		[ :expired, "expired", 4]
 	]
 	STATE_HASH = Hash[*STATE.map { |i| [i[0], i[2]] }.flatten]
 	STATE_AS_STRING = Hash[*STATE.map { |i| [i[0], i[1]] }.flatten]
@@ -79,7 +80,12 @@ class Freshfone::Account < ActiveRecord::Base
 
 	def restore
 		update_twilio_subaccount_state STATE_AS_STRING[:active]
-		update_attributes(:state => STATE_HASH[:active], :expires_on => nil)
+		update_attributes(:state => STATE_HASH[:active], :expires_on => nil, :deleted => false)
+	end
+
+	def expire
+		delete_numbers # soft deletion
+		update_attributes(:state => STATE_HASH[:expired], :deleted => true)		
 	end
 
 	def self.find_due(expires_on = Time.zone.now)
@@ -139,6 +145,14 @@ class Freshfone::Account < ActiveRecord::Base
 		update_conference_status_url
 	end
 
+	def enable_call_quality_metrics
+		account.features.call_quality_metrics.create unless account.features?(:call_quality_metrics)
+	end
+
+	def disable_call_quality_metrics
+		account.features.call_quality_metrics.destroy if account.features?(:call_quality_metrics)
+	end
+
 	def update_twilio_subaccount_state(status)
 		twilio_subaccount.update(:status => status)
 	end
@@ -155,4 +169,29 @@ class Freshfone::Account < ActiveRecord::Base
 		@app ||= twilio_subaccount.applications.get(app_id)
 	end
 
+	def global_conference_usage(startdate, enddate, list={})
+		twilio_subaccount.usage.records.list({:category => "calls-globalconference", :start_date => startdate, :end_start => enddate}).each do |record| 
+			list[:usage] = "#{record.usage} (#{record.usage_unit})"
+			list[:price] = "#{record.price} (#{record.price_unit})"
+			list[:count] = record.count
+		end
+		list
+	end
+
+	def self.global_conference_usage(startdate, enddate, list={})
+		TwilioMaster.client.usage.records.list({:category => "calls-globalconference", :start_date => startdate, :end_start => enddate}).each do |record| 
+			list[:usage] = "#{record.usage} (#{record.usage_unit})"
+			list[:price] = "#{record.price} (#{record.price_unit})"
+			list[:count] = record.count
+		end
+		list
+	end
+
+	private
+
+		def delete_numbers
+			account.freshfone_numbers.each do |number|
+				number.update_attributes(:deleted => true)
+			end
+		end
 end

@@ -34,6 +34,7 @@ module TicketsFilter
     [:on_hold,          I18n.t('helpdesk.tickets.views.on_hold'), [:visible]  ],
     [:all,              I18n.t('helpdesk.tickets.views.all_tickets'), [:visible]  ],
     
+    [:unresolved,       I18n.t('helpdesk.tickets.views.unresolved'), [:visible]  ],
     [:spam,             I18n.t('helpdesk.tickets.views.spam')  ],
     [:deleted,          I18n.t('helpdesk.tickets.views.trash')  ],
     [:tags  ,           I18n.t('helpdesk.tickets.views.tags') ],
@@ -110,8 +111,8 @@ module TicketsFilter
   SORT_ORDER_FIELDS_OPTIONS = SORT_ORDER_FIELDS.map { |i| [i[1], i[0]] }
   SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
-  DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open all_tickets raised_by_me monitored_by spam deleted )
-  DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open all_tickets raised_by_me monitored_by archived spam deleted )
+  DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by spam deleted )
+  DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by archived spam deleted )
 
   def self.default_views
     filters = if Account.current && Account.current.features?(:archive_tickets)

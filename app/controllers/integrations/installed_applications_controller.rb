@@ -3,7 +3,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   class VersionDetectionError < Exception; end
 
   include Integrations::AppsUtil
-  include Integrations::Slack::SlackConfigurationsUtil
+  include Integrations::Slack::SlackConfigurationsUtil #Belongs to Old Slack. Remove when Slack v1 is obselete.
   include Integrations::GoogleAccountsHelper
   helper Integrations::GoogleAccountsHelper
 
@@ -12,9 +12,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   before_filter :check_application_installable, :only => [:install, :update]
   before_filter :set_auth_key, :only => [:install,:update]
   before_filter :check_jira_authenticity, :only => [:install, :update]
-  before_filter :validate_configs, :only => [:update], :if => :application_is_slack?
-  after_filter  :create_or_update_slack_rule , :only => [:install, :update] , :if =>  :application_is_slack? 
-  after_filter  :destroy_all_slack_rule, :only => [:uninstall,:update], :if =>  :application_is_slack?
+  before_filter :redirect_old_slack, :only => [:update], :if => :application_is_slack? #Remove this when slackv1 is obselete.
+  after_filter  :destroy_all_slack_rule, :only => [:uninstall], :if =>  :application_is_slack? #Remove this when slackv1 is obselete.
 
 
   def install 
@@ -77,7 +76,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   end
 
   def edit
-    redirect_to :controller => "dynamics_crm", :action => "edit" if @installing_application.dynamics_crm?
     if @installed_application.blank?
       flash[:error] = t(:'flash.application.not_installed')
       redirect_to :controller=> 'applications', :action => 'index'
@@ -91,8 +89,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   def uninstall
     begin
-      success = @installed_application.destroy
-      if success
+      obj = @installed_application.destroy
+      if obj.destroyed?
         flash[:notice] = t(:'flash.application.uninstall.success')
       else
         flash[:error] = t(:'flash.application.uninstall.error')
@@ -174,7 +172,12 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     params[:configs][:domain] = params[:configs][:domain][0..-2] if !params[:configs].blank? and !params[:configs][:domain].blank? and params[:configs][:domain].ends_with?('/')
   end
 
-  def application_is_slack?
+  def redirect_old_slack #Remove when slackv1 is obselete
+    flash[:error] = t('integrations.slack_msg.uninstall_old_slack')
+    redirect_to integrations_applications_path and return
+  end
+
+  def application_is_slack? #Remove when slackv1 is obselete
     @installing_application.present? && @installing_application.slack?
   end
 end

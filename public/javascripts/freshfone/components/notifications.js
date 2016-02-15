@@ -171,6 +171,8 @@ var FreshfoneNotification;
 			this.freshfonecalls.disableCallButton();
 			this.freshfonecalls.transfered = false;
 			this.setOngoingStatusAvatar($(freshfoneConnection.avatar));
+			this.freshfoneUserInfo.customerNumber = freshfoneConnection.customerNumber;
+			this.freshfoneUserInfo.setOngoingCallContext(freshfoneConnection.callerCard); 
 		},
 
 		userInfo: function (number, freshfoneConnection) {

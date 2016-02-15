@@ -1,8 +1,8 @@
 require_relative '../test_helper'
 
 class ApiFlowsTest < ActionDispatch::IntegrationTest
-  include Helpers::DiscussionsTestHelper
-  include Helpers::TicketFieldsTestHelper
+  include DiscussionsTestHelper
+  include TicketFieldsTestHelper
 
   def test_json_format
     get '/api/discussions/categories.json', nil, @headers
@@ -58,19 +58,54 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_trusted_ip_invalid
-    Middleware::TrustedIp.any_instance.stubs(:trusted_ips_enabled?).returns(true)
-    Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
-    post '/api/discussions/categories', '{"name": "testdd"}', @write_headers.merge('rack.session' => { 'user_credentials_id' => '22' })
+    @account.features.whitelisted_ips.create
+    create_whitelisted_ips(true)
+    @account.reload
+    ip_ranges = @account.whitelisted_ip.ip_ranges.first.symbolize_keys!
+    WhitelistedIp.any_instance.stubs(:ip_ranges).returns([ip_ranges])
+    ApiDiscussions::CategoriesController.any_instance.expects(:create).never
+    Middleware::TrustedIp.any_instance.expects(:trusted_ip_applicable_to_user).never
+    post '/api/discussions/categories', '{"name": "testdd_truested_ip"}', @write_headers
+    assert_nil ForumCategory.find_by_name('testdd_truested_ip')
     assert_response 403
     response.body.must_match_json_expression(message: String)
+  ensure
+    ApiDiscussions::CategoriesController.any_instance.unstub(:create)
+    Middleware::TrustedIp.any_instance.unstub(:trusted_ip_applicable_to_user)
+    @account.features.whitelisted_ips.destroy
+  end
+
+  def test_trusted_ip_invalid_shard
+    ShardMapping.stubs(:lookup_with_domain).returns(nil)
+    Middleware::TrustedIp.any_instance.expects(:trusted_ips_enabled).never
+    post '/api/discussions/categories', { 'name' => 'testdd_truested_ip' }.to_json, @write_headers
+    assert_response 404
+  ensure
+    ShardMapping.unstub(:lookup_with_domain)
+  end
+
+  def test_trusted_ip_invalid_subdomain
+    Middleware::TrustedIp.any_instance.expects(:trusted_ips_enabled?).never
+    ApiApplicationController.any_instance.expects(:route_not_found).once
+    post '/api/discussions/categories', '{"name": "testdd_truested_ip"}', @write_headers.merge('HTTP_HOST' => 'billing.junk.com')
+    assert_nil ForumCategory.find_by_name('testdd_truested_ip')
+    assert_response 404
+  ensure
+    Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
+    ApiApplicationController.any_instance.unstub(:route_not_found)
   end
 
   def test_trusted_ip_invalid_non_api
     Middleware::TrustedIp.any_instance.stubs(:trusted_ips_enabled?).returns(true)
     Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
+    DiscussionsController.any_instance.expects(:categories).once
     get '/discussions/categories', nil, @headers.merge('rack.session' => { 'user_credentials_id' => '22' })
     assert_response 302
     assert_equal '/unauthorized.html', response.headers['Location']
+  ensure
+    Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
+    Middleware::TrustedIp.any_instance.unstub(:valid_ip)
+    DiscussionsController.any_instance.unstub(:categories)
   end
 
   def test_globally_blacklisted_ip_invalid
@@ -157,8 +192,8 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_multipart_data_with_valid_data_types
     tkt_field1 = create_custom_field('test_custom_decimal', 'decimal')
     tkt_field2 = create_custom_field('test_custom_checkbox', 'checkbox')
-    field1 = tkt_field1.name
-    field2 = tkt_field2.name
+    field1 = tkt_field1.name[0..-3]
+    field2 = tkt_field2.name[0..-3]
     headers, params = encode_multipart({  'subject' => 'Test Subject', 'description' => 'Test', 'priority' => '1', 'status' => '2', 'requester_id' => "#{@agent.id}", 'custom_fields' => { "#{field1}" => '2.34', "#{field2}" => 'false' } }, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
       post '/api/tickets', params, @headers.merge(headers)
@@ -251,13 +286,11 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_authenticating_post_request_with_consecutive_invalid_pwd
     flc = @agent.failed_login_count || 0
-    pt = @agent.perishable_token
     ApiDiscussions::CategoriesController.expects(:current_user_session).never
     @write_headers = set_custom_auth_headers(@write_headers, @agent.reload.email, 'tester')
     post '/api/discussions/categories', v2_category_payload, @write_headers
     assert_response 401
     assert_equal flc + 1, @agent.reload.failed_login_count
-    assert pt != @agent.perishable_token
 
     post '/api/discussions/categories', v2_category_payload, @write_headers
     assert_response 401
@@ -271,13 +304,11 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_authenticating_get_request_with_consecutive_invalid_pwd
     flc = @agent.failed_login_count || 0
-    pt = @agent.perishable_token
 
     @headers = set_custom_auth_headers(@headers, @agent.reload.email, 'tes')
     get '/api/discussions/categories', nil, @headers
     assert_response 401
     assert_equal flc + 1, @agent.reload.failed_login_count
-    assert pt != @agent.perishable_token
 
     get '/api/discussions/categories', nil, @headers
     assert_response 401
@@ -360,9 +391,9 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     new_v1_api_consumed_limit = get_key(api_key).to_i
     assert_equal old_v2_api_consumed_limit + 1, new_v2_api_consumed_limit
     assert_equal old_v1_api_consumed_limit, new_v1_api_consumed_limit
-    assert_equal '1000', response.headers['X-RateLimit-Total']
+    assert_equal '3000', response.headers['X-RateLimit-Total']
     assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
-    remaining_limit = 1000 - new_v2_api_consumed_limit.to_i
+    remaining_limit = 3000 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
     assert_equal '1', response.headers['X-RateLimit-Used']
   end
@@ -607,24 +638,48 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_throttled_valid_request_with_plan_api_limit_changed
-    turn_on_caching
     old_plan = @account.subscription.subscription_plan
-    subscription = @account.subscription
-    new_plan = SubscriptionPlan.find(3)
-    set_key(plan_key(3), 230, nil)
-    remove_key(account_key)
+    enable_cache do
+      new_plan = SubscriptionPlan.find(3)
+      set_key(plan_key(3), 230, nil)
+      remove_key(account_key)
+      Subscription.fetch_by_account_id(@account.id) # setting memcache key
 
+      @account.subscription.update_attribute(:subscription_plan_id, new_plan.id)
+      @account.reload.subscription.reload.subscription_plan
+
+      get '/api/v2/discussions/categories', nil, @headers
+      assert_response 200
+      assert_equal '230', response.headers['X-RateLimit-Total']
+    end
+  ensure
+    @account.subscription.update_column(:subscription_plan_id, old_plan.id)
+  end
+
+  def test_throttler_with_redis_down
+    remove_key(v2_api_key)
+    rate_limit_instance = $rate_limit
+    $rate_limit = mock('Redis Client Instance')
     get '/api/v2/discussions/categories', nil, @headers
     assert_response 200
-    assert_equal '200', response.headers['X-RateLimit-Total']
-    @account.subscription.update_attribute(:subscription_plan_id, new_plan.id)
-    @account.reload.subscription.reload.subscription_plan
+    $rate_limit = rate_limit_instance
+    assert_equal '3000', response.headers['X-RateLimit-Total']
+    assert_equal '3000', response.headers['X-RateLimit-Remaining']
+    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_nil get_key(v2_api_key)
+    assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
+  ensure
+    $rate_limit = rate_limit_instance
+  end
 
+  def test_throttler_with_expiry_not_set_properly
+    old_api_consumed_limit = get_key(v2_api_key).to_i
+    remove_key(v2_api_key)
+    set_key(v2_api_key, '5000', nil)
     get '/api/v2/discussions/categories', nil, @headers
-    assert_response 200
-    assert_equal '230', response.headers['X-RateLimit-Total']
-    subscription.update_column(:subscription_plan_id, old_plan.id)
-    turn_off_caching
+    set_key(v2_api_key, old_api_consumed_limit, nil)
+    assert_response 429
+    assert_equal '-1', response.headers['Retry-After']
   end
 
   def test_expiry_condition
@@ -633,7 +688,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
     id = (Helpdesk::Ticket.first || create_ticket).display_id
     # first call after expiry
-    skip_bullet {get "/api/v2/tickets/#{id}?include=notes", nil, @headers}
+    skip_bullet { get "/api/v2/tickets/#{id}?include=notes", nil, @headers }
     assert_response 200
 
     assert_equal 2, get_key(v2_api_key).to_i
@@ -670,5 +725,293 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response 404
     assert_equal ' ', @response.body
     ShardMapping.any_instance.unstub(:not_found?)
+  end
+
+  def test_pagination_with_invalid_datatype_string
+    get 'api/discussions/categories?page=x&per_page=x', nil, @headers
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :per_page_data_type_mismatch, max_value: 100)])
+    assert_response 400
+  end
+
+  def test_pagination_with_blank_values
+    get 'api/discussions/categories?page=&per_page=', nil, @headers
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :per_page_data_type_mismatch, max_value: 100)])
+    assert_response 400
+  end
+
+  def test_pagination_with_invalid_value
+    get 'api/discussions/categories?page=0&per_page=0', nil, @headers
+    match_json([bad_request_error_pattern('page', :invalid_number, data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+    assert_response 400
+  end
+
+  def test_pagination_with_invalid_negative_value
+    get 'api/discussions/categories?page=-1&per_page=-1', nil, @headers
+    match_json([bad_request_error_pattern('page', :invalid_number, data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+    assert_response 400
+  end
+
+  def test_pagination_with_invalid_datatype_array
+    get 'api/discussions/categories?page[]=1&per_page[]=1', nil, @headers
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :per_page_data_type_mismatch, max_value: 100)])
+    assert_response 400
+  end
+
+  def test_pagination_with_per_page_exceeding_max_value
+    get 'api/discussions/categories?page=922337203685&per_page=101', nil, @headers
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+    assert_response 400
+
+    get 'api/discussions/categories?page=9223372036854775808&per_page=100', nil, @headers
+    match_json([bad_request_error_pattern('page', :max_limit_page)])
+    assert_response 400
+
+    get 'api/discussions/categories?page=91320515216383919&per_page=100', nil, @headers
+    assert_response 200
+  end
+
+  def test_unexpected_range_error
+    Sharding.stubs(:select_shard_of).raises(RangeError)
+    get '/api/discussions/categories', nil, @headers
+    assert_response 500
+    response.body.must_match_json_expression(request_error_pattern(:internal_error))
+  end
+
+  def test_pagination_with_valid_values
+    get 'api/discussions/categories?page=1000&per_page=100', nil, @headers
+    assert_response 200
+  end
+
+  def test_invalid_domain_with_no_shard
+    ShardMapping.stubs(:lookup_with_domain).returns(nil)
+    ApiDiscussions::CategoriesController.any_instance.expects(:current_shard).once
+    post '/api/discussions/categories', { 'name' => 'testdd_truested_ip' }.to_json, @write_headers
+    assert_response 404
+  ensure
+    ShardMapping.unstub(:lookup_with_domain)
+    ApiDiscussions::CategoriesController.any_instance.unstub(:current_shard)
+  end
+
+  def test_active_record_not_found_error
+    error = ActiveRecord::RecordNotFound.new
+    error.set_backtrace(['a', 'b'])
+    ApiDiscussions::CategoriesController.any_instance.stubs(:set_time_zone).raises(error)
+    ApiDiscussions::CategoriesController.any_instance.expects(:notify_new_relic_agent).with(error, description: 'ActiveRecord::RecordNotFound error occured while processing api request').once
+    post '/api/discussions/categories', { 'name' => 'testdd_truested_ip' }.to_json, @write_headers
+    assert_response 500
+  ensure
+    ApiDiscussions::CategoriesController.any_instance.unstub(:set_time_zone, :notify_new_relic_agent)
+  end
+
+  def test_failed_login_count_exceeded_valid_password
+    headers = set_custom_auth_headers(@headers, @agent.email, 'test')
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1) do |original_value, new_value|
+      get 'api/discussions/categories', nil, @headers.merge(headers)
+      assert_response 403
+      assert_equal new_value, @agent.reload.failed_login_count
+      response.body.must_match_json_expression(request_error_pattern('password_lockout'))
+    end
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1) do |original_value, new_value|
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers.merge(headers)
+      assert_response 403
+      assert_equal new_value, @agent.reload.failed_login_count
+      response.body.must_match_json_expression(request_error_pattern('password_lockout'))
+    end
+  end
+
+  def test_failed_login_count_exceeded_invalid_password
+    headers = set_custom_auth_headers(@headers, @agent.email, 'test1234')
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1) do |original_value, new_value|
+      get 'api/discussions/categories', nil, @headers.merge(headers)
+      assert_response 403
+      assert_equal (new_value + 1), @agent.reload.failed_login_count
+      response.body.must_match_json_expression(request_error_pattern('password_lockout'))
+    end
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1) do |original_value, new_value|
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers.merge(headers)
+      assert_response 403
+      assert_equal (new_value + 1), @agent.reload.failed_login_count
+      response.body.must_match_json_expression(request_error_pattern('password_lockout'))
+    end
+  end
+
+  def test_failed_login_count_exceeded_invalid_api_key
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials(SecureRandom.base64(15).tr('+/=', '').strip.delete("\n"), 'X')
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1) do |original_value, new_value|
+      get 'api/discussions/categories', nil, @headers.merge('HTTP_AUTHORIZATION' => auth)
+      assert_response 401
+      response.body.must_match_json_expression(request_error_pattern('invalid_credentials'))
+    end
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1) do |original_value, new_value|
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers.merge('HTTP_AUTHORIZATION' => auth)
+      assert_response 401
+      response.body.must_match_json_expression(request_error_pattern('invalid_credentials'))
+    end
+  end
+
+  def test_failed_login_count_exceeded_valid_api_key
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1) do |original_value, new_value|
+      get 'api/discussions/categories', nil, @headers
+      assert_response 200
+      assert_equal new_value, @agent.reload.failed_login_count
+    end
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1) do |original_value, new_value|
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers
+      assert_response 201
+      assert_equal new_value, @agent.reload.failed_login_count
+    end
+  end
+
+  def test_failed_login_count_exceeded_valid_password_after_2_hours
+    headers = set_custom_auth_headers(@headers, @agent.email, 'test')
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1, true) do |original_value, new_value|
+      get 'api/discussions/categories', nil, @headers.merge(headers)
+      assert_response 200
+      assert_equal 0, @agent.reload.failed_login_count
+    end
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1, true) do |original_value, new_value|
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers.merge(headers)
+      assert_response 201
+      assert_equal 0, @agent.reload.failed_login_count
+    end
+  end
+
+  def test_failed_login_count_exceeded_invalid_password_after_2_hours
+    headers = set_custom_auth_headers(@headers, @agent.email, 'test1234')
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1, true) do |original_value, new_value|
+      get 'api/discussions/categories', nil, @headers.merge(headers)
+      assert_response 401
+      assert_equal 1, @agent.reload.failed_login_count
+      response.body.must_match_json_expression(request_error_pattern('invalid_credentials'))
+    end
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1, true) do |original_value, new_value|
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers.merge(headers)
+      assert_response 401
+      assert_equal 1, @agent.reload.failed_login_count
+      response.body.must_match_json_expression(request_error_pattern('invalid_credentials'))
+    end
+  end
+
+  def test_failed_login_count_exceeded_invalid_api_key_after_2_hours
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials(SecureRandom.base64(15).tr('+/=', '').strip.delete("\n"), 'X')
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1, true) do |original_value, new_value|
+      get 'api/discussions/categories', nil, @headers.merge('HTTP_AUTHORIZATION' => auth)
+      assert_response 401
+      response.body.must_match_json_expression(request_error_pattern('invalid_credentials'))
+    end
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1, true) do |original_value, new_value|
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers.merge('HTTP_AUTHORIZATION' => auth)
+      assert_response 401
+      response.body.must_match_json_expression(request_error_pattern('invalid_credentials'))
+    end
+  end
+
+  def test_failed_login_count_exceeded_valid_api_key_after_2_hours
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1, true) do |original_value, new_value|
+      set_request_headers
+      get 'api/discussions/categories', nil, @headers
+      assert_response 200
+      assert_equal new_value, @agent.reload.failed_login_count
+    end
+
+    exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1, true) do |original_value, new_value|
+      set_request_headers
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers
+      assert_response 201
+      assert_equal new_value, @agent.reload.failed_login_count
+    end
+  end
+
+  def test_password_expired_with_valid_password
+    headers = set_custom_auth_headers(@headers, @agent.email, 'test')
+
+    set_password_expiry(2.months.ago.to_s) do
+      get 'api/discussions/categories', nil, @headers.merge(headers)
+      assert_response 403
+      response.body.must_match_json_expression(request_error_pattern('password_expired'))
+    end
+
+    set_password_expiry(2.months.ago.to_s) do
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers.merge(headers)
+      assert_response 403
+      response.body.must_match_json_expression(request_error_pattern('password_expired'))
+    end
+  end
+
+  def test_password_expired_with_invalid_password
+    headers = set_custom_auth_headers(@headers, @agent.email, 'test1234')
+
+    set_password_expiry(2.months.ago.to_s) do
+      get 'api/discussions/categories', nil, @headers.merge(headers)
+      assert_response 401
+      response.body.must_match_json_expression(request_error_pattern('invalid_credentials'))
+    end
+
+    set_password_expiry(2.months.ago.to_s) do
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers.merge(headers)
+      assert_response 401
+      response.body.must_match_json_expression(request_error_pattern('invalid_credentials'))
+    end
+  end
+
+  def test_password_expired_with_invalid_api_key
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials(SecureRandom.base64(15).tr('+/=', '').strip.delete("\n"), 'X')
+
+    set_password_expiry(2.months.ago.to_s) do
+      get 'api/discussions/categories', nil, @headers.merge('HTTP_AUTHORIZATION' => auth)
+      assert_response 401
+      response.body.must_match_json_expression(request_error_pattern('invalid_credentials'))
+    end
+
+    set_password_expiry(2.months.ago.to_s) do
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers.merge('HTTP_AUTHORIZATION' => auth)
+      assert_response 401
+      response.body.must_match_json_expression(request_error_pattern('invalid_credentials'))
+    end
+  end
+
+  def test_password_expired_with_valid_api_key
+    set_password_expiry(2.months.ago.to_s) do |original_value, new_value|
+      get 'api/discussions/categories', nil, @headers
+      assert_response 200
+    end
+
+    set_password_expiry(2.months.ago.to_s) do
+      post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers
+      assert_response 201
+    end
+  end
+
+  def test_cors
+    get '/api/discussions/categories', nil, @headers.merge('HTTP_ORIGIN' => '*')
+    assert_response 200
+    assert '*', response.headers['Access-Control-Allow-Origin']
+  end
+
+  def test_cors_preflight_request
+    # one hack to test options request in 3.2.18
+    integration_session.__send__ :process, 'options', '/api/contacts', nil, @headers.except('HTTP_AUTHORIZATION').merge('HTTP_ORIGIN' => '*', 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET', 'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' => 'authorization')
+    assert '*', response.headers['Access-Control-Allow-Origin']
+    assert 'authorization', response.headers['Access-Control-Allow-Headers']
+    assert 'GET, POST, PUT, DELETE, OPTIONS', response.headers['Access-Control-Allow-Methods']
+    assert 'X-Path, X-Method, X-Query-String, X-Ua-Compatible, X-Meta-Request-Version, X-Request-Id, X-Runtime, X-RateLimit-Total, X-RateLimit-Remaining, X-RateLimit-Used, X-Freshdesk-API-Version', response.header['Access-Control-Expose-Headers']
   end
 end

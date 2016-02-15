@@ -424,3 +424,53 @@ input[type=text].input-agent-count{
 .billing-actions{
 	margin-top: 10px;
 }
+
+
+.invoice-list, .invoice-download-icon{
+	background-color: #f7f7f7;
+	text-align: center;
+	color: #7b7b7b;
+	border-radius: 3px;
+}
+
+.invoice-download-icon{
+  padding: 8px 8px 8px 10px;
+}
+
+.invoice-date{
+	text-align: right;
+  color: #AAAAAA;
+}
+
+.invoice-modal-config{
+	color: #8E8E8E;
+}
+	
+.invoice-table.table th{
+	border-top: 1px solid #535353;
+	border-bottom: 1px solid #A6A6A6;
+}
+
+.ft-wt{
+	font-weight: 500;
+}
+
+.invoice-status{
+	color:green;
+}
+
+.invoice-refund{
+	color:#D75334;	
+}
+
+.btn-primary{
+	[class*='ficon-']{ color: #fff;}
+}
+
+.table tr:hover {
+	.invoice-download-icon{
+		background-color: #DDDDDD;
+	}
+}
+
+

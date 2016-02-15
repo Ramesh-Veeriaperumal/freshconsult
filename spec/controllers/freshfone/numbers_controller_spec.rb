@@ -167,6 +167,47 @@ describe Admin::Freshfone::NumbersController do
     json.should have_key(:error_message)
   end
 
+  it 'should remove the attachment for wait message' do
+    name = Faker::Name.name
+    params = {"admin_freshfone_number"=>{"name"=>name, "record"=>"true", "voice"=>"0", 
+      "non_availability_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
+      "message"=>"unavailable"}, 
+      "max_queue_length"=>"0", "queue_wait_time"=>"2", 
+      "on_hold_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
+      "message"=>"Busy"}, "non_business_hours_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"",
+      "message"=>"not working"},
+      "wait_message" => {"message_type" => "1", "attachment_id" => ""},
+      "hold_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "voicemail_active"=>"true", 
+      "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
+      "non_business_hour_calls"=>"false", "business_calendar"=>"1","access_groups_added_list"=>"1",
+       "access_groups_removed_list"=>"2,3", "id"=>@number.id}
+    put :update, params
+   
+    @account.freshfone_numbers.find(@number).wait_message.attachment_id.should be_nil
+    @account.freshfone_numbers.find(@number).wait_message.message_type.should be_eql(1)
+  end
+
+  it 'should remove the attachment for hold message' do
+    name = Faker::Name.name
+    params = {"admin_freshfone_number"=>{"name"=>name, "record"=>"true", "voice"=>"0", 
+      "non_availability_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
+      "message"=>"unavailable"}, 
+      "max_queue_length"=>"0", "queue_wait_time"=>"2", 
+      "on_hold_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
+      "message"=>"Busy"}, "non_business_hours_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"",
+      "message"=>"not working"},
+      "wait_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "hold_message" => {"message_type" => "1", "attachment_id" => ""},
+      "voicemail_active"=>"true", 
+      "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
+      "non_business_hour_calls"=>"false", "business_calendar"=>"1","access_groups_added_list"=>"1",
+       "access_groups_removed_list"=>"2,3", "id"=>@number.id}
+    put :update, params
+  
+    @account.freshfone_numbers.find(@number).hold_message.attachment_id.should be_nil
+    @account.freshfone_numbers.find(@number).hold_message.message_type.should be_eql(1)
+  end
 
   it 'should soft delete freshfone number' do
     Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio)

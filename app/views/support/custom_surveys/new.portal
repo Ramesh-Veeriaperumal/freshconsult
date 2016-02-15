@@ -1,0 +1,3 @@
+<section id="password-reset-container" class="content-form rounded-6 main">
+  {% snippet csat_survey %}
+</section>

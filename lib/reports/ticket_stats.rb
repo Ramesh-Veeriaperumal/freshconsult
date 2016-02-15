@@ -44,8 +44,9 @@ module Reports::TicketStats
 		%( helpdesk_schema_less_tickets on helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id 
 		and helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id INNER JOIN 
 		helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and 
-		helpdesk_tickets.account_id = helpdesk_ticket_states.account_id left join 
-		customers on helpdesk_tickets.owner_id = customers.id and users.account_id = customers.account_id %s) % (
+		helpdesk_tickets.account_id = helpdesk_ticket_states.account_id INNER JOIN users 
+		on helpdesk_tickets.requester_id = users.id  and users.account_id = helpdesk_tickets.account_id 
+		left join customers on users.customer_id = customers.id and users.account_id = customers.account_id %s) % (
 		ff_cols.empty? ? "" : " INNER JOIN flexifields on helpdesk_tickets.id = flexifields.flexifield_set_id  and 
 		helpdesk_tickets.account_id = flexifields.account_id and flexifields.flexifield_set_type = 'Helpdesk::Ticket'")
 	end

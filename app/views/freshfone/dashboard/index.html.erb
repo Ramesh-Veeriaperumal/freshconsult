@@ -17,3 +17,12 @@
   </div>
 </div>
 <div class='hide' id='freshfone_dashboard_events'></div>
+
+<%= javascript_tag do %>
+    if (typeof freshfone === "undefined") { freshfone = {}; }
+    freshfone.join="<%= t('freshfone.dashboard.join') %>";
+    freshfone.leave="<%= t('freshfone.dashboard.leave') %>";
+    freshfone.oncall="<%= t('freshfone.dashboard.oncall') %>";
+    freshfone.mute="<%= t('freshfone.widget.mute') %>";
+    freshfone.unmute="<%= t('freshfone.widget.unmute') %>";
+<% end %>

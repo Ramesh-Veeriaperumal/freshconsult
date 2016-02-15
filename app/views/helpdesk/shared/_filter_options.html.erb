@@ -30,7 +30,7 @@
         value = jQuery(this).find(_selector).map(function(){ return this.value; }).get();
       }
 
-      if(value && value.length && ((container != "nested_field") || ((container == "nested_field") && (value != -1))) ) {
+      if(value && value.length && ((container != "nested_field") || ((container == "nested_field") && (value != ""))) ) {
         if(condition == "created_at" && value == "set_date"){
           value = jQuery("#created_date_range").val();
         }

@@ -9,6 +9,7 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 	before_filter :notify_freshfone_ops , :except => [:get_country_list, :fetch_usage_triggers, :fetch_conference_state, :fetch_numbers]
 
 	TRIGGER_TYPE = { :credit_overdraft => 1, :daily_credit_threshold => 2 }
+	PROMOTIONAL_CREDITS = 3
 
 	def add_credits
 		@freshfone_credit = @account.freshfone_credit
@@ -62,41 +63,51 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 		end
 	end
 
-	def port_ahead
-		result = {:account_id => @account.id , :account_name => @account.name}	
-		display_number = params[:display_number] || params[:number]
-		if @account.freshfone_account
-			freshfone_number = @account.freshfone_numbers.create(:number_sid => params[:sid],
-																													 :number => params[:number], :display_number => display_number,
-																													 :country => "US", :number_type => params[:number_type], :skip_in_twilio => true)
-			result[:status] = "success"
-		else
+	def twilio_port_in
+		result = {:account_id => @account.id , :account_name => @account.name}
+		begin
+			number = Freshfone::Number.twilio_number(params[:sid], @account)
+			if @account.freshfone_account
+				freshfone_number = @account.freshfone_numbers.create(:number_sid => params[:sid],
+					 :number => number.phone_number, 
+					 :display_number => number.friendly_name,
+					 :country => params[:country], :number_type => params[:number_type],
+					 :region => params[:region], 
+					 :skip_in_twilio => true,:port => Freshfone::Number::PORT_STATE[:port_in])
+				freshfone_number.new_record? ? result[:status] = "error" : result[:status] = "success"
+			else
+				result[:status] = "error"
+			end
+		rescue Exception => e
+			Rails.logger.error "Error while twilio porting for Account: #{@account.id}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
 			result[:status] = "error"
-		end
-		respond_to do |format|
-			format.json do
-				render :json => result
+		ensure
+			respond_to do |format|
+				format.json do
+					render :json => result
+				end
 			end
 		end
 	end
 
-	def post_twilio_port
-		result = {:account_id => @account.id , :account_name => @account.name}
+	def twilio_port_away
+		result = {:account_id => @account.id, :account_name => @account.name}
 		begin
-			freshfone_number = @account.freshfone_numbers.create(params[:number_attributes])
-			if freshfone_number.new_record?
-				error_messages = (freshfone_number.errors.any?) ?
-					freshfone_number.errors.full_messages.to_sentence : ""
-				result[:error] = "Number creation failed.... #{error_messages}"
-			else
-				result[:success] = "Freshfone number successfully created"
-			end
+			number = @account.freshfone_numbers.where({:id => params[:number_id]})
+			return if number.blank?
+
+			number.update_all({
+				:port => Freshfone::Number::PORT_STATE[:port_away],
+				:deleted => true })
+			result[:status] = "success"
 		rescue Exception => e
-			result[:notice] = "Number creation failed. #{e.message}"
-		end
-		respond_to do |format|
-			format.json do
-				render :json => result
+			Rails.logger.error "Error while freshfone port away for Account: #{@account.id}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
+			result[:status] = "error"
+		ensure
+			respond_to do |format|
+				format.json do
+					render :json => result
+				end
 			end
 		end
 	end
@@ -235,7 +246,7 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 				if params[:number_id] == 'all'
 					@account.freshfone_numbers.update_all(@timeout_and_queue_hash)
 				else
-					update_freshfone_timeout_and_queue(params)
+					@account.freshfone_numbers.where('id=?',params[:number_id]).update_all(@timeout_and_queue_hash)
 				end
 				result[:status] = 'success'
 			else
@@ -349,6 +360,24 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
   	end
   end
 
+  def enable_freshfone
+    result = {:account_id => @account.id, :account_name => @account.name}
+    begin
+      enable_status = add_freshfone_feature
+      result.merge!(enable_status)
+    rescue => e
+      Rails.logger.error "Error occurred in enabling freshfone feature for Account :: #{@account.id}\n
+                          The Exception is #{e.message}\n#{e.backtrace.join("\n\t")}"
+      result[:status] = "error"
+    ensure
+      respond_to do |format|
+        format.json do
+          render :json => result
+        end
+      end 
+    end
+  end
+
 	private
 
 	def get_country_name_list
@@ -433,17 +462,6 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 		@timeout_and_queue_hash.merge!({:queue_wait_time => params[:queue_wait_time].to_i }) if !params[:queue_wait_time].blank?
 		@timeout_and_queue_hash.merge!({:max_queue_length => params[:max_queue_length].to_i}) if !params[:max_queue_length].blank?	
 	end
-
-	def update_freshfone_timeout_and_queue(params)
-		ff_number = @account.freshfone_numbers.find(params[:number_id])
-		if ff_number.present?
-			ff_number.update_attribute(:rr_timeout, params[:rr_timeout])
-			ff_number.update_attribute(:ringing_time, params[:ringing_time])
-			ff_number.update_column(:queue_wait_time, params[:queue_wait_time])
-			ff_number.update_column(:max_queue_length, params[:max_queue_length])
-		end
-	end
-
 	def validate_timeout_and_queue
 		validate_ringing_time
 		validate_round_robin_time
@@ -472,5 +490,20 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 				render :json => {:status => "validationerror", :reason => "Maximum queue length should be less than 1000"} and return
 			end
 		end
+	end
+
+	def add_freshfone_feature
+		return {:status => "notice"} if @account.features?(:freshfone)
+		@account.features.freshfone.create
+		if @account.freshfone_credit.blank? 
+			@account.create_freshfone_credit(:available_credit => PROMOTIONAL_CREDITS)
+			@account.freshfone_payments.create(:status_message => "promotional",
+		                                  		:purchased_credit => PROMOTIONAL_CREDITS,
+		                                  		:status => true)
+			result = {:status => "success"}
+		else 
+			result = {:status => "credit_present_notice", :reason => "Freshfone feature enabled and Credits already exist"}
+		end
+		result
 	end
 end

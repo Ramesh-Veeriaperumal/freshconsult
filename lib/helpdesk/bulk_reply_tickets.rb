@@ -1,7 +1,9 @@
 class Helpdesk::BulkReplyTickets
   
-  include Conversations::Twitter
   include CloudFilesHelper
+  include Conversations::Twitter
+  include Facebook::Constants
+  include Facebook::TicketActions::Util
   attr_accessor :params, :tickets, :attachments
 
   def initialize(args)
@@ -71,8 +73,10 @@ class Helpdesk::BulkReplyTickets
     end
 
     def set_current_user
-      user = User.find_by_account_id_and_id(params[:account_id],params[:current_user_id])
-      user.make_current
+      if params[:account_id] and params[:current_user_id]
+        user = User.find_by_account_id_and_id(params[:account_id],params[:current_user_id])
+        user.make_current
+       end
     end
 
     def add_reply ticket
@@ -136,11 +140,8 @@ class Helpdesk::BulkReplyTickets
     def facebook_reply ticket, note
       fb_page = ticket.fb_post.facebook_page
       if fb_page
-        if ticket.is_fb_message?
-          Facebook::Graph::Message.new(fb_page).send_reply(ticket, note)
-        else
-          Facebook::Core::Comment.new(fb_page, nil).send_reply(ticket, note)
-        end
+        message_type = ticket.is_fb_message? ? POST_TYPE[:message] : POST_TYPE[:post]
+        Facebook::TicketActions::Util.send_reply(fan_page, ticket, note, message_type)
       end
     end
     

@@ -98,21 +98,30 @@ var SurveyProtocol = {
 					default:3,
 					click:"SurveyProtocol.content.scale.change(this)",
 					change:function(obj){
+						var ch_cur;
 						if(obj.name=="question-choice"){
+							ch_cur= SurveyProtocol.content.choice.values(obj.value,"questions");
 							SurveyProtocol.content.questions["choiceValues"] = SurveyProtocol.getChoiceValues();
 							jQuery('#question_rating_options').html(JST["survey/admin/template/new_scale_option"]({
 										"name":"question-scale",
-										"choice":SurveyProtocol.content.choice.values(obj.value,"questions")
+										"choice":ch_cur,
+										"surveyLimit": SurveyAdmin.fullSurvey
 							}));
 							SurveyQuestion.resetOptions();
+							jQuery('#survey_questions .horiz-line').removeClass('darker-line');
+							jQuery('#survey_questions input[value='+ch_cur.length+']').parent().prevAll('.horiz-line').addClass('darker-line');
 							SurveyRating.state_object = {};
 						}
 						else{
+							ch_cur= SurveyProtocol.content.choice.values(obj.value);
 							SurveyProtocol.content["choiceValues"] = SurveyProtocol.getChoiceValues();
 							jQuery('#survey_rating_options').html(JST["survey/admin/template/new_scale_option"]({
 										"name":"survey-scale",
-										"choice":SurveyProtocol.content.choice.values(obj.value)
+										"choice":ch_cur,
+										"surveyLimit": SurveyAdmin.fullSurvey
 							}));
+							jQuery('#survey_rating .horiz-line').removeClass('darker-line');
+							jQuery('#survey_rating input[value='+ch_cur.length+']').parent().prevAll('.horiz-line').addClass('darker-line');
 						}
 					}
 			},

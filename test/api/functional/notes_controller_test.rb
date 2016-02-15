@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class NotesControllerTest < ActionController::TestCase
-  include Helpers::NotesTestHelper
+  include NotesTestHelper
   def wrap_cname(params)
     { note: params }
   end
@@ -108,10 +108,12 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_create_datatype_invalid
-    params_hash = { notify_emails: 'x', attachments: 'x', body: Faker::Lorem.paragraph }
+    params_hash = { notify_emails: 'x', attachments: 'x', body: true, body_html: true }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    match_json([bad_request_error_pattern('notify_emails', :data_type_mismatch, data_type: 'Array'),
-                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('notify_emails', :data_type_mismatch, data_type: Array),
+                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: Array),
+                bad_request_error_pattern('body', :data_type_mismatch, data_type: String),
+                bad_request_error_pattern('body_html', :data_type_mismatch, data_type: String)])
     assert_response 400
   end
 
@@ -145,7 +147,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_create_missing_params
     post :create, construct_params({ id: ticket.display_id }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('body', :missing_field)])
+    match_json([bad_request_error_pattern('body', :required_and_data_type_mismatch, data_type: String)])
   end
 
   def test_create_returns_location_header
@@ -198,6 +200,29 @@ class NotesControllerTest < ActionController::TestCase
     User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_create_with_invalid_notify_emails_count
+    notify_emails = []
+    51.times do
+      notify_emails << Faker::Internet.email
+    end
+    params = create_note_params_hash.merge(notify_emails: notify_emails)
+    post :create, construct_params({ id: ticket.display_id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('notify_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}")])
+  end
+
+  def test_reply_with_invalid_cc_emails_count
+    cc_emails = []
+    50.times do
+      cc_emails << Faker::Internet.email
+    end
+    params = reply_note_params_hash.merge(cc_emails: cc_emails, bcc_emails: cc_emails)
+    post :reply, construct_params({ id: ticket.display_id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('cc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}"),
+                bad_request_error_pattern('bcc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}")])
   end
 
   def test_reply_with_ticket_trashed
@@ -337,9 +362,9 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { cc_emails: 'x', attachments: 'x', bcc_emails: 'x', body: Faker::Lorem.paragraph }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, data_type: 'Array'),
-                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array'),
-                bad_request_error_pattern('bcc_emails', :data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, data_type: Array),
+                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: Array),
+                bad_request_error_pattern('bcc_emails', :data_type_mismatch, data_type: Array)])
   end
 
   def test_reply_email_format_invalid
@@ -646,11 +671,11 @@ class NotesControllerTest < ActionController::TestCase
     4.times do
       create_note(user_id: @agent.id, ticket_id: parent_ticket.id, source: 2)
     end
-    get :ticket_notes, construct_params(id: parent_ticket.display_id)
+    get :ticket_notes, controller_params(id: parent_ticket.display_id)
     assert_response 200
     result_pattern = []
     parent_ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
-      result_pattern << note_pattern(n)
+      result_pattern << index_note_pattern(n)
     end
     match_json(result_pattern.ordered!)
   end
@@ -659,21 +684,21 @@ class NotesControllerTest < ActionController::TestCase
     parent_ticket = ticket
     create_note(user_id: @agent.id, ticket_id: parent_ticket.id, source: 2)
 
-    get :ticket_notes, construct_params(id: parent_ticket.display_id)
+    get :ticket_notes, controller_params(id: parent_ticket.display_id)
     assert_response 200
     result_pattern = []
     parent_ticket.notes.visible.exclude_source('meta').each do |n|
-      result_pattern << note_pattern(n)
+      result_pattern << index_note_pattern(n)
     end
     assert JSON.parse(response.body).count == parent_ticket.notes.visible.exclude_source('meta').count
     match_json(result_pattern)
 
     Helpdesk::Note.where(notable_id: parent_ticket.id, notable_type: 'Helpdesk::Ticket').update_all(deleted: true)
-    get :ticket_notes, construct_params(id: parent_ticket.display_id)
+    get :ticket_notes, controller_params(id: parent_ticket.display_id)
     assert_response 200
     result_pattern = []
     parent_ticket.notes.visible.exclude_source('meta').each do |n|
-      result_pattern << note_pattern(n)
+      result_pattern << index_note_pattern(n)
     end
     assert JSON.parse(response.body).count == 0
     match_json(result_pattern)
@@ -682,21 +707,21 @@ class NotesControllerTest < ActionController::TestCase
   def test_notes_without_privilege
     parent_ticket = ticket
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
-    get :ticket_notes, construct_params(id: parent_ticket.display_id)
+    get :ticket_notes, controller_params(id: parent_ticket.display_id)
     User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
   end
 
   def test_notes_invalid_id
-    get :ticket_notes, construct_params(id: 56_756_767)
+    get :ticket_notes, controller_params(id: 56_756_767)
     assert_response :missing
     assert_equal ' ', @response.body
   end
 
   def test_notes_eager_loaded_association
     parent_ticket = ticket
-    get :ticket_notes, construct_params(id: parent_ticket.display_id)
+    get :ticket_notes, controller_params(id: parent_ticket.display_id)
     assert_response 200
     assert controller.instance_variable_get(:@notes).all? { |x| x.association(:attachments).loaded? }
     assert controller.instance_variable_get(:@notes).all? { |x| x.association(:schema_less_note).loaded? }
@@ -708,22 +733,18 @@ class NotesControllerTest < ActionController::TestCase
     3.times do
       create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
     end
-    get :ticket_notes, construct_params(id: t.display_id, per_page: 1)
+    get :ticket_notes, controller_params(id: t.display_id, per_page: 1)
     assert_response 200
     assert JSON.parse(response.body).count == 1
-    get :ticket_notes, construct_params(id: t.display_id, per_page: 1, page: 2)
+    get :ticket_notes, controller_params(id: t.display_id, per_page: 1, page: 2)
     assert_response 200
     assert JSON.parse(response.body).count == 1
   end
 
   def test_notes_with_pagination_exceeds_limit
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
-    get :ticket_notes, construct_params(id: ticket.display_id, per_page: 4)
-    assert_response 200
-    assert JSON.parse(response.body).count == 3
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
+    get :ticket_notes, controller_params(id: ticket.display_id, per_page: 101)
+    assert_response 400
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
   end
 
   def test_notes_with_link_header
@@ -732,12 +753,12 @@ class NotesControllerTest < ActionController::TestCase
       create_note(user_id: @agent.id, ticket_id: parent_ticket.display_id, source: 2)
     end
     per_page = parent_ticket.notes.visible.exclude_source('meta').count - 1
-    get :ticket_notes, construct_params(id: parent_ticket.display_id, per_page: per_page)
+    get :ticket_notes, controller_params(id: parent_ticket.display_id, per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/tickets/#{parent_ticket.display_id}/notes?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
-    get :ticket_notes, construct_params(id: parent_ticket.display_id, per_page: per_page, page: 2)
+    get :ticket_notes, controller_params(id: parent_ticket.display_id, per_page: per_page, page: 2)
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
@@ -746,7 +767,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_notes_with_ticket_trashed
     parent_ticket = ticket
     Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
-    get :ticket_notes, construct_params(id: parent_ticket.display_id)
+    get :ticket_notes, controller_params(id: parent_ticket.display_id)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
@@ -755,7 +776,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_notes_without_ticket_privilege
     parent_ticket = ticket
     User.any_instance.stubs(:has_ticket_permission?).returns(false)
-    get :ticket_notes, construct_params(id: parent_ticket.display_id)
+    get :ticket_notes, controller_params(id: parent_ticket.display_id)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))

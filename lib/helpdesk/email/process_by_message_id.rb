@@ -25,10 +25,18 @@ class Helpdesk::Email::ProcessByMessageId < Struct.new(:message_id, :in_reply_to
                          86400*7) unless ticket_key.nil?
   end
 
+  def all_message_ids
+    reply_to = in_reply_to
+    all_keys = (references || "").split("\t")
+    all_keys = all_keys.collect { |key| key.scan(/<([^>]+)/) }.flatten
+    all_keys << reply_to if reply_to
+    all_keys.reverse
+  end
+
   private
 
     def parent_ticket from_email, account
-      all_keys = get_all_keys
+      all_keys = all_message_ids
       return nil if all_keys.blank?
       all_keys.each do |ticket_key|
         ticket = get_ticket_from_id(ticket_key, account)
@@ -41,7 +49,7 @@ class Helpdesk::Email::ProcessByMessageId < Struct.new(:message_id, :in_reply_to
     end
 
     def archive_parent_ticket from_email, account
-      all_keys = get_all_keys
+      all_keys = all_message_ids
       return nil if all_keys.blank?
       all_keys.each do |ticket_key|
         ticket = get_archive_ticket_from_id(ticket_key, account)
@@ -53,13 +61,6 @@ class Helpdesk::Email::ProcessByMessageId < Struct.new(:message_id, :in_reply_to
       nil
     end
 
-    def get_all_keys
-      reply_to = in_reply_to
-      all_keys = (references || "").split("\t")
-      all_keys = all_keys.collect { |key| key.scan(/<([^>]+)/) }.flatten
-      all_keys << reply_to if reply_to
-      all_keys.reverse
-    end
 
     def get_ticket_from_id ticket_key, account
       ticket_id = get_others_redis_key(message_key(account, ticket_key))

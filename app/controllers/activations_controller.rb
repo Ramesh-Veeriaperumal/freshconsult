@@ -56,6 +56,7 @@ class ActivationsController < SupportController
       @user = current_account.users.find_by_perishable_token(params[:perishable_token]) 
     end
     if @user && @user.activate!(params)
+      @user.reset_perishable_token!
       flash[:notice] = t('users.activations.success')
       @current_user = @user
       redirect_to(root_url) if grant_day_pass

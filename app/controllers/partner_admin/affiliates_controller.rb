@@ -14,6 +14,8 @@ class PartnerAdmin::AffiliatesController < ApplicationController
   #Reseller portal verifications
   before_filter :verify_timestamp, :verify_signature, :ssl_check, :authenticate_using_basic_auth,
                  :except => :add_affiliate_transaction  
+
+  skip_after_filter :set_last_active_time
   
   SUBSCRIPTION = { :account_id => :account_id, :helpdesk_name => :account_name, 
                     :domain => :account_full_domain, :admin_name => :admin_first_name, 

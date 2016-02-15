@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_75800162d2d38887288afa700bee24b1.eot");
-  src: url("../../assets/glyphs_75800162d2d38887288afa700bee24b1.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_75800162d2d38887288afa700bee24b1.woff") format("woff"),
-       url("../../assets/glyphs_75800162d2d38887288afa700bee24b1.ttf") format("truetype"),
-       url("../../assets/glyphs_75800162d2d38887288afa700bee24b1.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_aa064ac732faedf91662428df179fdff.eot");
+  src: url("../../assets/glyphs_aa064ac732faedf91662428df179fdff.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_aa064ac732faedf91662428df179fdff.woff") format("woff"),
+       url("../../assets/glyphs_aa064ac732faedf91662428df179fdff.ttf") format("truetype"),
+       url("../../assets/glyphs_aa064ac732faedf91662428df179fdff.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_75800162d2d38887288afa700bee24b1.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_aa064ac732faedf91662428df179fdff.svg#glyphs") format("svg");
   }
 }
 
@@ -143,11 +143,13 @@
 .ficon-agent-fchat-off:before,
 .ficon-agent-fchat-on:before,
 .ficon-agent-summary:before,
+.ficon-alert:before,
 .ficon-all-streams:before,
 .ficon-android:before,
 .ficon-answer-checked:before,
 .ficon-answer-unchecked:before,
 .ficon-apple:before,
+.ficon-archived-ticket:before,
 .ficon-arrow-click:before,
 .ficon-arrow-down:before,
 .ficon-arrow-down-2:before,
@@ -157,10 +159,13 @@
 .ficon-arrow-right-2:before,
 .ficon-arrow-up:before,
 .ficon-arrow-up-2:before,
+.ficon-article:before,
 .ficon-available-on-mobile:before,
 .ficon-bell:before,
 .ficon-billing:before,
 .ficon-blank-file:before,
+.ficon-block:before,
+.ficon-blocked-call:before,
 .ficon-book:before,
 .ficon-book-hollow:before,
 .ficon-bulb:before,
@@ -203,12 +208,19 @@
 .ficon-customer_satisfaction:before,
 .ficon-date:before,
 .ficon-day_pass:before,
+.ficon-db-calendar:before,
+.ficon-db-feedback:before,
+.ficon-db-interactions:before,
+.ficon-db-message:before,
+.ficon-db-sand-clock:before,
+.ficon-db-unassigned:before,
 .ficon-decimal:before,
 .ficon-deleted:before,
 .ficon-disconnected:before,
 .ficon-dislike:before,
 .ficon-dispatcher:before,
 .ficon-dots:before,
+.ficon-download:before,
 .ficon-dropbox:before,
 .ficon-dropdown_blank:before,
 .ficon-earth:before,
@@ -263,6 +275,7 @@
 .ficon-group-summary:before,
 .ficon-grouping-disable:before,
 .ficon-grouping-enable:before,
+.ficon-hangup:before,
 .ficon-help:before,
 .ficon-help-icon:before,
 .ficon-helpdesk:before,
@@ -271,6 +284,7 @@
 .ficon-ie:before,
 .ficon-ilos-icon:before,
 .ficon-import:before,
+.ficon-incoming-call:before,
 .ficon-infinity-5:before,
 .ficon-integrations:before,
 .ficon-ios:before,
@@ -309,9 +323,11 @@
 .ficon-notice-o:before,
 .ficon-number:before,
 .ficon-observer:before,
+.ficon-onhold:before,
 .ficon-open-in-new-window:before,
 .ficon-open-in-portal:before,
 .ficon-opera:before,
+.ficon-outgoing-call:before,
 .ficon-paperplane:before,
 .ficon-paragraph:before,
 .ficon-pencil:before,
@@ -410,11 +426,13 @@
 .ficon-agent-fchat-off:before { content: "\f1b0"; }
 .ficon-agent-fchat-on:before { content: "\f1b1"; }
 .ficon-agent-summary:before { content: "\f1bb"; }
+.ficon-alert:before { content: "\f201"; }
 .ficon-all-streams:before { content: "\f102"; }
 .ficon-android:before { content: "\f103"; }
 .ficon-answer-checked:before { content: "\f104"; }
 .ficon-answer-unchecked:before { content: "\f105"; }
 .ficon-apple:before { content: "\f106"; }
+.ficon-archived-ticket:before { content: "\f203"; }
 .ficon-arrow-click:before { content: "\f1b7"; }
 .ficon-arrow-down:before { content: "\f107"; }
 .ficon-arrow-down-2:before { content: "\f108"; }
@@ -424,10 +442,13 @@
 .ficon-arrow-right-2:before { content: "\f10c"; }
 .ficon-arrow-up:before { content: "\f10d"; }
 .ficon-arrow-up-2:before { content: "\f10e"; }
+.ficon-article:before { content: "\f204"; }
 .ficon-available-on-mobile:before { content: "\f1b6"; }
 .ficon-bell:before { content: "\f10f"; }
 .ficon-billing:before { content: "\f110"; }
 .ficon-blank-file:before { content: "\f111"; }
+.ficon-block:before { content: "\f20c"; }
+.ficon-blocked-call:before { content: "\f20d"; }
 .ficon-book:before { content: "\f112"; }
 .ficon-book-hollow:before { content: "\f1da"; }
 .ficon-bulb:before { content: "\f113"; }
@@ -470,12 +491,19 @@
 .ficon-customer_satisfaction:before { content: "\f1ea"; }
 .ficon-date:before { content: "\f12d"; }
 .ficon-day_pass:before { content: "\f12e"; }
+.ficon-db-calendar:before { content: "\f206"; }
+.ficon-db-feedback:before { content: "\f207"; }
+.ficon-db-interactions:before { content: "\f208"; }
+.ficon-db-message:before { content: "\f209"; }
+.ficon-db-sand-clock:before { content: "\f20a"; }
+.ficon-db-unassigned:before { content: "\f20b"; }
 .ficon-decimal:before { content: "\f1c9"; }
 .ficon-deleted:before { content: "\f1b3"; }
 .ficon-disconnected:before { content: "\f12f"; }
 .ficon-dislike:before { content: "\f130"; }
 .ficon-dispatcher:before { content: "\f131"; }
 .ficon-dots:before { content: "\f132"; }
+.ficon-download:before { content: "\f202"; }
 .ficon-dropbox:before { content: "\f133"; }
 .ficon-dropdown_blank:before { content: "\f134"; }
 .ficon-earth:before { content: "\f135"; }
@@ -530,6 +558,7 @@
 .ficon-group-summary:before { content: "\f1c1"; }
 .ficon-grouping-disable:before { content: "\f156"; }
 .ficon-grouping-enable:before { content: "\f157"; }
+.ficon-hangup:before { content: "\f20e"; }
 .ficon-help:before { content: "\f158"; }
 .ficon-help-icon:before { content: "\f1d9"; }
 .ficon-helpdesk:before { content: "\f1ca"; }
@@ -538,6 +567,7 @@
 .ficon-ie:before { content: "\f159"; }
 .ficon-ilos-icon:before { content: "\f200"; }
 .ficon-import:before { content: "\f15a"; }
+.ficon-incoming-call:before { content: "\f20f"; }
 .ficon-infinity-5:before { content: "\f15b"; }
 .ficon-integrations:before { content: "\f15c"; }
 .ficon-ios:before { content: "\f15d"; }
@@ -576,9 +606,11 @@
 .ficon-notice-o:before { content: "\f173"; }
 .ficon-number:before { content: "\f174"; }
 .ficon-observer:before { content: "\f175"; }
+.ficon-onhold:before { content: "\f211"; }
 .ficon-open-in-new-window:before { content: "\f176"; }
 .ficon-open-in-portal:before { content: "\f1e0"; }
 .ficon-opera:before { content: "\f177"; }
+.ficon-outgoing-call:before { content: "\f210"; }
 .ficon-paperplane:before { content: "\f178"; }
 .ficon-paragraph:before { content: "\f179"; }
 .ficon-pencil:before { content: "\f17a"; }
@@ -631,7 +663,7 @@
 .ficon-survey-neutral:before { content: "\f1b9"; }
 .ficon-survey-sad:before { content: "\f1ba"; }
 .ficon-survey-settings:before { content: "\f196"; }
-.ficon-tags:before { content: "\f197"; }
+.ficon-tags:before { content: "\f205"; }
 .ficon-text:before { content: "\f198"; }
 .ficon-ticket:before { content: "\f199"; }
 .ficon-ticket-fields:before { content: "\f19a"; }
@@ -671,7 +703,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (253)</h1>
+      <h1>Font Icons (269)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -733,6 +765,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-alert" class="ficon-alert"></i></span>
+        </div>
+        <div class="usage">
+          <span>alert</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-all-streams" class="ficon-all-streams"></i></span>
         </div>
         <div class="usage">
@@ -773,6 +814,15 @@
         </div>
         <div class="usage">
           <span>apple</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-archived-ticket" class="ficon-archived-ticket"></i></span>
+        </div>
+        <div class="usage">
+          <span>archived-ticket</span>
         </div>
       </div>
       
@@ -859,6 +909,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-article" class="ficon-article"></i></span>
+        </div>
+        <div class="usage">
+          <span>article</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-available-on-mobile" class="ficon-available-on-mobile"></i></span>
         </div>
         <div class="usage">
@@ -890,6 +949,24 @@
         </div>
         <div class="usage">
           <span>blank-file</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-block" class="ficon-block"></i></span>
+        </div>
+        <div class="usage">
+          <span>block</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-blocked-call" class="ficon-blocked-call"></i></span>
+        </div>
+        <div class="usage">
+          <span>blocked-call</span>
         </div>
       </div>
       
@@ -1273,6 +1350,60 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-db-calendar" class="ficon-db-calendar"></i></span>
+        </div>
+        <div class="usage">
+          <span>db-calendar</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-db-feedback" class="ficon-db-feedback"></i></span>
+        </div>
+        <div class="usage">
+          <span>db-feedback</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-db-interactions" class="ficon-db-interactions"></i></span>
+        </div>
+        <div class="usage">
+          <span>db-interactions</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-db-message" class="ficon-db-message"></i></span>
+        </div>
+        <div class="usage">
+          <span>db-message</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-db-sand-clock" class="ficon-db-sand-clock"></i></span>
+        </div>
+        <div class="usage">
+          <span>db-sand-clock</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-db-unassigned" class="ficon-db-unassigned"></i></span>
+        </div>
+        <div class="usage">
+          <span>db-unassigned</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-decimal" class="ficon-decimal"></i></span>
         </div>
         <div class="usage">
@@ -1322,6 +1453,15 @@
         </div>
         <div class="usage">
           <span>dots</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-download" class="ficon-download"></i></span>
+        </div>
+        <div class="usage">
+          <span>download</span>
         </div>
       </div>
       
@@ -1813,6 +1953,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-hangup" class="ficon-hangup"></i></span>
+        </div>
+        <div class="usage">
+          <span>hangup</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-help" class="ficon-help"></i></span>
         </div>
         <div class="usage">
@@ -1880,6 +2029,15 @@
         </div>
         <div class="usage">
           <span>import</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-incoming-call" class="ficon-incoming-call"></i></span>
+        </div>
+        <div class="usage">
+          <span>incoming-call</span>
         </div>
       </div>
       
@@ -2227,6 +2385,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-onhold" class="ficon-onhold"></i></span>
+        </div>
+        <div class="usage">
+          <span>onhold</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-open-in-new-window" class="ficon-open-in-new-window"></i></span>
         </div>
         <div class="usage">
@@ -2249,6 +2416,15 @@
         </div>
         <div class="usage">
           <span>opera</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-outgoing-call" class="ficon-outgoing-call"></i></span>
+        </div>
+        <div class="usage">
+          <span>outgoing-call</span>
         </div>
       </div>
       

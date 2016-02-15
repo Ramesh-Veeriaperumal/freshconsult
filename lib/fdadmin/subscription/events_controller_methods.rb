@@ -14,7 +14,11 @@ module Fdadmin::Subscription::EventsControllerMethods
 
   def email_csv(csv_string)
     period = DateTime.new(params[:date]["period(1i)"].to_i,params[:date]["period(2i)"].to_i).strftime("%B %Y")
-    params_for_email = {:event_type => params[:event_type],:name => params[:user_name], :period => period}
+    params_for_email = {:event_type => params[:event_type],
+                        :name => params[:user_name], 
+                        :period => period, 
+                        :region => params[:pod_info]
+                      }
     FreshopsMailer.subscription_summary_csv(params[:email],params_for_email,csv_string)
   end
 

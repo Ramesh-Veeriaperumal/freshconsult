@@ -3,14 +3,14 @@ module ApiTicketConstants
   ARRAY_FIELDS = %w(tags cc_emails attachments).freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  CREATE_FIELDS = %w(cc_emails, description description_html due_by email_config_id fr_due_by group_id priority
+  CREATE_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
-                     tags attachments).freeze | ARRAY_FIELDS.map { |x| Hash[x, [nil]] } | HASH_FIELDS
+                  ).freeze | ARRAY_FIELDS | HASH_FIELDS
   UPDATE_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
-                     tags attachments).freeze | (ARRAY_FIELDS - ['cc_emails']).map { |x| Hash[x, [nil]] } | HASH_FIELDS
+                  ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
   SHOW_FIELDS = ['include']
-  ALLOWED_INCLUDE_PARAMS = ['notes', nil]
+  ALLOWED_INCLUDE_PARAMS = ['notes']
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
   ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
@@ -31,6 +31,7 @@ module ApiTicketConstants
 
   FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s).freeze
   INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type updated_since).freeze
+  INDEX_FILTER_FIELDS = %w(filter company_id requester_id email updated_since).freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id custom_fields).freeze
 
@@ -47,6 +48,8 @@ module ApiTicketConstants
     create: [:json, :multipart_form],
     update: [:json, :multipart_form]
   }.freeze
+
+  MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT
 
   FIELD_MAPPINGS = { group: :group_id, agent: :responder_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
                      product: :product_id, ticket_type: :type }.freeze

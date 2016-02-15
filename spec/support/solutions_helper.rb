@@ -226,4 +226,83 @@ module SolutionsHelper
     test_portal.save(validate: false)
     test_portal
   end
+  
+  def hit_action_and_fetch(controller_name, object, instance_var_name, action_name = :show, meth_name = :get)
+    @controller = controller_name.constantize.new
+    send(meth_name, action_name, :id => object.id)
+    multilingual = controller_name.include?("Multilingual")
+    resp_class = multilingual ? object.meta_class : object.class
+    instance_variable_set((multilingual ? "@multilingual_resp" : "@normal_resp"), response.body)
+    resp_obj = controller.instance_variable_get("@#{instance_var_name}")
+    resp_obj.should be_an_instance_of(resp_class)
+    resp_obj
+  end
+  
+  def check_multilingual_mobihelp_voting(object, vote_type)
+    thumbs_up = object.send(vote_type)
+    article_meta = hit_action_and_fetch("Mobihelp::Multilingual::ArticlesController",
+         object, "article", vote_type, :put)
+    article = hit_action_and_fetch("Mobihelp::ArticlesController", object, 
+        "article", vote_type, :put)
+    article_meta.id.should eql(article.id)
+    article_meta.reload.send(vote_type).should eql(thumbs_up+2)
+    article.reload.send(vote_type).should eql(thumbs_up+2)
+    article_meta.send(vote_type).should eql(article.send(vote_type))
+  end
+  
+  MOBIHELP_DONT_COMPARE = ["created_at", "updated_at", "modified_at", "delta"]
+
+  def compare_mobihelp_response(normal_resp, multilingual_resp)
+    normal_resp.length.should eql(multilingual_resp.length)
+    normal_resp.zip(multilingual_resp).each do |normal, multilingual|
+      normal_folder = normal["folder"]
+      multilingual_folder = multilingual["folder"]
+      compare_hash_keys(normal_folder, multilingual_folder)
+    end
+  end
+  
+  def compare_hash_keys normal_hash, multilingual_hash
+    (normal_hash.keys - Solution::ApiDelegator::API_ALWAYS_REMOVE.map(&:to_s)).should eql(multilingual_hash.keys)
+    (normal_hash.keys - (MOBIHELP_DONT_COMPARE + Solution::ApiDelegator::API_ALWAYS_REMOVE.map(&:to_s))).each do |key|
+      if normal_hash[key].is_a?(Array) && normal_hash[key].first.is_a?(Hash)
+        normal_hash[key].zip(multilingual_hash[key]).each do |normal_assoc, multilingual_assoc|
+          compare_hash_keys(normal_assoc, multilingual_assoc)
+        end
+      elsif normal_hash[key].is_a?(Hash)
+        compare_hash_keys(normal_hash[key], multilingual_hash[key])
+      else
+        normal_hash[key].should eql(multilingual_hash[key])
+      end
+    end
+  end
+  
+  def check_solution_portal_drop_methods(portal)
+    PortalDrop::FEATURE_BASED_METHODS.each do |method|
+      @account.launch(:solutions_meta_read)
+      @account.reload
+      @account.make_current
+      portal_drop_object = PortalDrop.new(portal)
+      objects_thru_meta = portal_drop_object.send(method)
+      @account.rollback(:solutions_meta_read)
+      @account.reload
+      @account.make_current
+      portal.reload
+      portal_drop_object = PortalDrop.new(portal)
+      obj = portal_drop_object.send(method)
+      obj.sort_by!(&:modified_at).reverse! if method == :recent_articles
+      if objects_thru_meta.is_a?(Array) || objects_thru_meta.is_a?(ActiveRecord::Relation)
+        meta_class = "Solution::#{method.to_s.split('_').last.singularize.capitalize}Meta"
+        klass = meta_class.gsub("Meta", "")
+        objects_thru_meta.map { |x| x.should be_an_instance_of(meta_class.constantize) }
+        obj.map { |x| x.should be_an_instance_of(klass.constantize) }
+        if method == :recent_articles 
+          objects_thru_meta.map(&:id).sort.should eql(obj.map(&:id).sort)
+        else
+          objects_thru_meta.map(&:id).should eql(obj.map(&:id))
+        end
+      else
+        objects_thru_meta.should eql(obj)
+      end 
+    end
+  end
 end

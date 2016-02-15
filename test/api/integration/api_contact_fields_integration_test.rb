@@ -8,20 +8,20 @@ class ApiContactFieldsIntegrationTest < ActionDispatch::IntegrationTest
       v2_expected = {
         api_contact_fields: 1,
 
-        contact_fields: 14
+        contact_fields: 16
       }
 
       # contact_fields
       v2[:contact_fields], v2[:api_contact_fields], v2[:contact_fields_queries] = count_api_queries do
-        get('/api/v2/contact_fields', {}.to_json, @write_headers)
+        get('/api/v2/contact_fields', nil, @write_headers)
         assert_response 200
       end
       v1[:contact_fields] = count_queries do
-        get('/admin/contact_fields.json', {}.to_json, @write_headers)
+        get('/admin/contact_fields.json', nil, @write_headers)
         assert_response 200
       end
 
-      v1[:contact_fields] += 1 # account suspended check is done in v2 alone.
+      v1[:contact_fields] += 2 # account suspended check is done in v2 alone& trusted_ip
 
       write_to_file(v1, v2)
 

@@ -24,7 +24,12 @@ Sidekiq.configure_client do |config|
       "DevNotificationWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
-      "Tickets::BulkScenario"
+      "Tickets::BulkScenario",
+      "Tickets::BulkTicketActions",
+      "Tickets::BulkTicketReply",
+      "Tickets::ClearTickets::EmptySpam",
+      "Tickets::ClearTickets::EmptyTrash",
+      "MergeTickets"
     ]
   end
 end
@@ -53,8 +58,15 @@ Sidekiq.configure_server do |config|
       "DevNotificationWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
-      "Tickets::BulkScenario"
+      "Tickets::BulkScenario",
+      "Tickets::BulkTicketActions",
+      "Tickets::BulkTicketReply",
+      "Tickets::ClearTickets::EmptySpam",
+      "Tickets::ClearTickets::EmptyTrash",
+      "MergeTickets"
     ]
+
+    chain.add Middleware::Sidekiq::Server::JobDetailsLogger
   end
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
@@ -71,7 +83,12 @@ Sidekiq.configure_server do |config|
       "DevNotificationWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
-      "Tickets::BulkScenario"
+      "Tickets::BulkScenario",
+      "Tickets::BulkTicketActions",
+      "Tickets::BulkTicketReply",
+      "Tickets::ClearTickets::EmptySpam",
+      "Tickets::ClearTickets::EmptyTrash",
+      "MergeTickets"
     ]
   end
 end

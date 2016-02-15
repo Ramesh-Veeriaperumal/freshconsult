@@ -40,6 +40,7 @@
 		<% else %>
 			<p class="info-text left"><%= t('no_badge_achieved_label') %></p>
 		<% end %>
+        <% if privilege?(:manage_users)%>
 			<%= link_to 'reset', { :action => :reset_score, :id => @agent.id } ,:method => 'put', :id => "agent_score_reset" , :class => "hide" %>		
 			<a href='#agent-gamification-reset' 
 				id="scoreboard_start_over"
@@ -52,6 +53,7 @@
 				data-destroy-on-close="true"> 
 				<%= t('agent.reset_scores') %>
 			</a>
+		<% end %>
 	</div>
 	<%end%>
 <%- end %> 

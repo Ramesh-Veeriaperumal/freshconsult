@@ -1,8 +1,9 @@
-<div class="inline-radio">
+<div class="control-group inline-radio flexcontainer">
 	<%_.each(scale.keys,function(key){%>
+		<div class="horiz-line <% if(key==3 || key==2 ) {%>width_scale<%=key%><%}%> <% if (key<=defaultScale){%>darker-line <%}%>"></div>
 		<label class="radio">
 		  <input type="radio" name="<%=name%>" value="<%=key%>" <%if(key==defaultScale){%>checked<%}%> onclick="<%=scale.click%>" />
 		  <%=key%>
-		</label>
+		</label>	
 	<%})%>
 </div>

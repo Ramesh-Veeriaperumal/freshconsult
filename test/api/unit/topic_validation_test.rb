@@ -6,7 +6,9 @@ class TopicValidationsTest < ActionView::TestCase
     item = nil
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?(:update)
-    assert_equal ['Title missing', 'Message html missing', 'Forum required_and_numericality'], topic.errors.full_messages
+    assert topic.errors.full_messages.include?('Title required_and_data_type_mismatch')
+    assert topic.errors.full_messages.include?('Message html required_and_data_type_mismatch')
+    assert topic.errors.full_messages.include?('Forum required_and_data_type_mismatch')
   end
 
   def test_numericality_params_invalid
@@ -17,6 +19,17 @@ class TopicValidationsTest < ActionView::TestCase
     error = topic.errors.full_messages
     assert error.include?('Forum data_type_mismatch')
     assert error.include?('Stamp type data_type_mismatch')
+  end
+
+  def test_datatype_params_invalid
+    controller_params = { 'message_html' => true, 'sticky' => nil, 'locked' => nil }
+    item = nil
+    topic = ApiDiscussions::TopicValidation.new(controller_params, item)
+    refute topic.valid?
+    error = topic.errors.full_messages
+    assert error.include?('Message html data_type_mismatch')
+    assert error.include?('Sticky data_type_mismatch')
+    assert error.include?('Locked data_type_mismatch')
   end
 
   def test_inclusion_params_invalid
@@ -38,8 +51,10 @@ class TopicValidationsTest < ActionView::TestCase
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     topic.valid?
     error = topic.errors.full_messages
-    refute error.include?("Title can't be blank")
-    refute error.include?("Message html can't be blank")
+    refute error.include?('Title blank')
+    refute error.include?('Message html blank')
+    refute error.include?('Title missing')
+    refute error.include?('Message html missing')
   end
 
   def test_numericality_item_valid_only_update

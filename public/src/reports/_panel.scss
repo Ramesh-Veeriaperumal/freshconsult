@@ -1,30 +1,29 @@
 // Panel settings
 $border-color: #eee;
-$report-panel-width: 130px;
 
 // Report content panel styles
-.report-divider{
-	margin:0 -20px 15px;
-}
+
 .report-panel-wrapper{
-	@include padding-left($report-panel-width);
-	@include pie-clearfix;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background-color: #F8F8F8;
+    @include border-radius(6px); 
+    border: 1px solid $border-color;
 	.report-panel-left{
-		width: $report-panel-width;
-		@include margin-left(-($report-panel-width));
-		@include float(left);
-		position: relative;
-		left: -1px;
+		width: 200px;
+		@include left(0);
+		position: absolute;
+    	background: #F8F8F8;
 	}
 	.report-panel-content{
-		@include float(right);
-		width: 97%;
-		@include padding-left(3%);
+		@include margin-left(200px);
+    	padding: 20px;
 		@include min-height(600px);
+		background: #fff;
 		@include border-left(1px solid $border-color);
-		margin-top: -15px;
-		padding-top: 20px;
-		margin-bottom: -35px;
-		padding-bottom: 35px;
+	}
+	.no_questions{
+		@include margin-left(0);
 	}
 }

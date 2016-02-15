@@ -10,6 +10,7 @@ module Redis::RedisKeys
 	INTEGRATIONS_LOGMEIN = "INTEGRATIONS_LOGMEIN:%{account_id}:%{ticket_id}"
 	HELPDESK_TICKET_UPDATED_NODE_MSG    = "{\"account_id\":%{account_id},\"ticket_id\":%{ticket_id},\"agent\":\"%{agent_name}\",\"type\":\"%{type}\"}"
 	EMPTY_TRASH_TICKETS = "EMPTY_TRASH_TICKETS:%{account_id}"
+	EMPTY_SPAM_TICKETS = "EMPTY_SPAM_TICKETS:%{account_id}"
 
 	HELPDESK_ARCHIVE_TICKET_FILTERS = "HELPDESK_ARCHIVE_TICKET_FILTERS:%{account_id}:%{user_id}:%{session_id}"
 	HELPDESK_ARCHIVE_TICKET_ADJACENTS 			= "HELPDESK_ARCHIVE_TICKET_ADJACENTS:%{account_id}:%{user_id}:%{session_id}"
@@ -33,6 +34,7 @@ module Redis::RedisKeys
 	WEBHOOK_THROTTLER = "WEBHOOK_THROTTLER:%{account_id}"
 	WEBHOOK_THROTTLER_LIMIT_EXCEEDED = "WEBHOOK_THROTTLER_LIMIT_EXCEEDED:%{account_id}"
 	WEBHOOK_ERROR_NOTIFICATION = "WEBHOOK_ERROR_NOTIFICATION:%{account_id}:%{rule_id}"
+	PREMIUM_WEBHOOK_THROTTLER = "PREMIUM_WEBHOOK_THROTTLER"
 	#AUTH_REDIRECT_CONFIG = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:%{auth}"
 	SSO_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:oauth"
 	APPS_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{provider}:oauth"
@@ -63,11 +65,15 @@ module Redis::RedisKeys
 	FRESHFONE_PINGED_AGENTS = "FRESHFONE:PINGED_AGENTS:%{account_id}:%{call_id}"
 	FRESHFONE_CALL_NOTE = "FRESHFONE:CALL_NOTE:%{account_id}:%{call_sid}"
 	FACEBOOK_APP_RATE_LIMIT = "FACEBOOK_APP_RATE_LIMIT"
-
+	FACEBOOK_LIKES          = "FACEBOOK_LIKES"
+	FRESHFONE_CALL_QUALITY_METRICS = "FRESHFONE:CALL_QUALITY_METRICS:%{account_id}:%{dial_call_sid}"
+	
+	FRESHFONE_SUPERVISOR_LEG = "FRESHFONE:SUPERVISOR_LEG:%{account_id}:%{user_id}:%{call_sid}"
 	FRESHFONE_PREVIEW_IVR = "FRESHFONE:PREVIEW_IVR:%{account_id}:%{call_sid}"
 	REPORT_STATS_REGENERATE_KEY = "REPORT_STATS_REGENERATE:%{account_id}" # set of dates for which stats regeneration will happen
 	REPORT_STATS_EXPORT_HASH = "REPORT_STATS_EXPORT_HASH:%{account_id}" # last export date, last archive job id and last regen job id
 	ENTERPRISE_REPORTS_ENABLED = "ENTERPRISE_REPORTS_ENABLED"
+	OLD_REPORTS_DISABLED = "OLD_REPORTS_DISABLED"
 
 	CUSTOM_SSL = "CUSTOM_SSL:%{account_id}"
 	SUBSCRIPTIONS_BILLING = "SUBSCRIPTIONS_BILLING:%{account_id}"
@@ -126,6 +132,12 @@ module Redis::RedisKeys
 
 	DASHBOARD_TABLE_FILTER_KEY = "DASHBOARD_TABLE_FILTER_KEY:%{account_id}:%{user_id}"
 
+  EMAIL_TEMPLATE_SPAM_DOMAINS = "EMAIL_TEMPLATE_SPAM_DOMAINS"
+  SPAM_USER_EMAIL_DOMAINS = "SPAM_USER_EMAIL_DOMAINS"
+  SPAM_NOTIFICATION_WHITELISTED_DOMAINS_EXPIRY = "SPAM_NOTIFICATION_WHITELISTED_DOMAINS:%{account_id}"
+
+  DISPATCHER_SIDEKIQ_ENABLED = "DISPATCHER_SIDEKIQ_ENABLED"
+  
 	def newrelic_begin_rescue
 	    begin
 	      yield
