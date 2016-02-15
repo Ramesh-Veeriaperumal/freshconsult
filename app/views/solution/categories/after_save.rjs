@@ -6,6 +6,7 @@ if @category.errors.empty?
 		page << "App.Solutions.AfterSave.hide('#category-edit');"
 	end
 	page << "App.Solutions.AfterSave.postCategoryAction(#{escape_javascript(@category.portal_ids.to_json)}, '#{escape_javascript( render :partial => 'category', :locals => {:category => @category})}', #{@category.id}, '#{params[:action]}');"
+	page << "App.Solutions.NavMenu.reload()" if @category_version.primary?
 else
 	page.replace_html :"error_messages_#{params[:action].eql?('create') ? 'new_category' : "#{@category_meta.id}_l#{@language.id}"}", "#{error_messages_for :category}"
 end

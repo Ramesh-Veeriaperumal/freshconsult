@@ -73,7 +73,7 @@ class Solution::CategoriesController < ApplicationController
 
   def create
     @category = Solution::Builder.category(params)
-
+    @category_version = @category.send(language_scoper)
     respond_to do |format|
       if @category.errors.blank?
         format.html { redirect_to solution_category_path(@category) }
@@ -90,9 +90,9 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def update
-    language_scoper
     params[:solution_category][:id] = params[:id] if params[:solution_category].present?
     @category = Solution::Builder.category(params)
+    @category_version = @category.send(language_scoper)
     respond_to do |format| 
       if @category.errors.blank?
         format.html { redirect_to solution_all_categories_path }
