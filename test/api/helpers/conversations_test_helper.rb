@@ -1,4 +1,4 @@
-module NotesTestHelper
+module ConversationsTestHelper
   include NoteHelper
   include TicketHelper
 
