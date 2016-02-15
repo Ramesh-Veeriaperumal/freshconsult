@@ -12,7 +12,7 @@ module DecoratorConcern
     attr_reader :decorator_method_mapping
 
     def decorate_views(options = {})
-      custom_options = options.slice(:decorate_objects, :decorate_object)
+      custom_options = options.reverse_merge(ACTION_MAPPING).slice(:decorate_objects, :decorate_object)
       custom_method_mapping = custom_options.each_with_object(Hash.new){ |(k, v), inverse| v.each {|e| inverse[e] = k}}
       @decorator_method_mapping = DECORATOR_METHOD_MAPPING.merge(custom_method_mapping)
       alias_method_chain :render, :before_render_action 
@@ -25,7 +25,7 @@ module DecoratorConcern
   end
 
   def decorator_method
-    @decorator_method ||= self.class.decorator_method_mapping[action_name]
+    @decorator_method ||= self.class.decorator_method_mapping[action_name.to_sym]
   end
 
   def render_with_before_render_action(*options, &block)
