@@ -54,21 +54,60 @@
 <% end %>
 
 <% if current_user %>
+
+<% if  Rails.env.development? %>
+	 <script type="text/javascript" src="/widget/freshwidget.js"></script>
+<style type="text/css" media="screen, projection">
+	@import url(/widget/freshwidget.css); 
+</style> 
+	<script type="text/javascript">
+		FreshWidget.init("", {"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
+		
+		jQuery("body").on("click",'#footer_feedback_widget', function(ev){
+	    	ev.preventDefault();
+	    	if(window.widget_updated){
+	    		FreshWidget.update({"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
+	    	}
+	    	window.widget_updated = false;
+	    	FreshWidget.show();	
+	    });
+	  var APP_ENV = "<%= Rails.env %>";
+	</script>
+	<% elsif Rails.env.staging?  %>
+ <script type="text/javascript" src="https://s3.amazonaws.com/assets.freshpo.com/widget/freshwidget.js"></script>
+<style type="text/css" media="screen, projection">
+	@import url(https://s3.amazonaws.com/assets.freshpo.com/widget/freshwidget.css); 
+</style> 
+	<script type="text/javascript">
+		FreshWidget.init("", {"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
+		
+		jQuery("body").on("click",'#footer_feedback_widget', function(ev){
+	    	ev.preventDefault();
+	    	if(window.widget_updated){
+	    		FreshWidget.update({"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
+	    	}
+	    	window.widget_updated = false;
+	    	FreshWidget.show();	
+	    });
+	  var APP_ENV = "<%= Rails.env %>";
+	</script>
+<% else %>
 <script type="text/javascript" src="https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.js"></script>
 <style type="text/css" media="screen, projection">
 	@import url(https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.css); 
 </style> 
-<script type="text/javascript">
-	FreshWidget.init("", {"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
-	
-	jQuery("body").on("click",'#footer_feedback_widget', function(ev){
-    	ev.preventDefault();
-    	if(window.widget_updated){
-    		FreshWidget.update({"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
-    	}
-    	window.widget_updated = false;
-    	FreshWidget.show();	
-    });
-  var APP_ENV = "<%= Rails.env %>";
-</script>
+	<script type="text/javascript">
+		FreshWidget.init("", {"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
+		
+		jQuery("body").on("click",'#footer_feedback_widget', function(ev){
+	    	ev.preventDefault();
+	    	if(window.widget_updated){
+	    		FreshWidget.update({"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
+	    	}
+	    	window.widget_updated = false;
+	    	FreshWidget.show();	
+	    });
+	  var APP_ENV = "<%= Rails.env %>";
+	</script>
+<% end %>
 <% end %>
