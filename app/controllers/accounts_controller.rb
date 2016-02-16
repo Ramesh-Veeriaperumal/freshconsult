@@ -28,7 +28,7 @@ class AccountsController < ApplicationController
                                         :marketplace_login, :portal_login, :create_account_from_google,
                                         :associate_google_account,:associate_local_to_google]
 
-  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
+  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages]
 
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
