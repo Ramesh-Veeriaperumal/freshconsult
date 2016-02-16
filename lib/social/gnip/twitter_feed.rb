@@ -7,7 +7,10 @@ class Social::Gnip::TwitterFeed
   include Social::Twitter::Constants
   include Social::Twitter::TicketActions
 
-  attr_accessor :tweet_obj, :posted_time, :tweet_id, :posted_time, :tweet_id, :in_reply_to, :twitter_user_id, :source, :dynamo_helper
+
+  attr_accessor :tweet_obj, :posted_time, :tweet_id, :posted_time, :tweet_id, :in_reply_to, 
+                  :twitter_user_id, :source, :tag_objs, :dynamo_helper
+
 
   alias :feed_id :tweet_id
 
@@ -18,7 +21,8 @@ class Social::Gnip::TwitterFeed
       @queue  = queue
       @source = SOURCE[:twitter]
       unless @tweet_obj.nil?
-        @matching_rules = @tweet_obj[:gnip]["matching_rules"] if @tweet_obj[:gnip]
+        matching_rules =  @tweet_obj[:gnip] ? @tweet_obj[:gnip]["matching_rules"] : []
+        
         if @tweet_obj[:actor]
           @name              = @tweet_obj[:actor]["displayName"]
           @sender            = @tweet_obj[:actor]["preferredUsername"]
@@ -29,6 +33,15 @@ class Social::Gnip::TwitterFeed
         @posted_time   = @tweet_obj[:postedTime]
         @tweet_id      = @tweet_obj[:id].split(":").last.to_i if @tweet_obj[:id]
         @retweet_count = @tweet_obj[:retweetCount]
+        @tag_objs      = []
+        
+        
+        matching_rules.each do |rule|
+          tag_array  = rule["tag"].split(DELIMITER[:tags])
+          tag_array.each do |tag|
+            @tag_objs << Gnip::RuleTag.new(tag)
+          end
+        end
       end
     rescue TypeError, JSON::ParserError => e
       @tweet_obj = nil
@@ -37,21 +50,15 @@ class Social::Gnip::TwitterFeed
   end
 
   def process
-    unless @matching_rules.blank? or @matching_rules.nil?
-      @matching_rules.each do |rule|
-        tag_array = rule["tag"].to_s.split(DELIMITER[:tags])
-        tag_array.each do |tag|
-          tag_obj = Gnip::RuleTag.new(tag)
-          args = {
-            :account_id => tag_obj.account_id,
-            :stream_id  => tag_obj.stream_id
-          }
-          process_post(args) if post?
-        end
-      end
-    else
-      notify_social_dev("Received a Gnip System message", @tweet_obj)
-    end
+    notify_social_dev("Received a Gnip System message", @tweet_obj) if @tag_objs.empty?
+    
+    @tag_objs.each do |tag_obj|
+      args = {
+        :account_id => tag_obj.account_id,
+        :stream_id  => tag_obj.stream_id
+      }
+      process_post(args) if post?
+    end    
   end
 
   def feed_hash
