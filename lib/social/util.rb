@@ -3,21 +3,32 @@ module Social::Util
   include Gnip::Constants
   include Social::Constants
 
-  def select_shard_and_account(account_id)
+  def select_shard_and_account(account_id, &block)
     begin
       Sharding.select_shard_of(account_id) do
-        account = Account.find_by_id(account_id)
+        account = Account.find(account_id)
         account.make_current if account
         account = Account.current
-        yield(account)
+        yield(account) if block_given?
       end
     rescue ActiveRecord::RecordNotFound => e
       Rails.logger.debug "Could not find account with id #{account_id}"
       custom_params = {
         :account_id => account_id,
-        :description => "Could not find valid account id in DbUtil"
+        :description => "Could not find valid account id"
       }
       NewRelic::Agent.notice_error(e, :custom_params => custom_params)
+    end
+  end
+  
+  def select_fb_shard_and_account(page_id, &block)
+    mapping = Social::FacebookPageMapping.find_by_facebook_page_id(page_id)
+    account_id = mapping ? mapping.account_id : nil
+    if account_id
+      select_shard_and_account(account_id, &block)
+    else
+      Rails.logger.error "FacebookPageMapping not present for #{page_id}"
+      yield(nil) if block_given?
     end
   end
   
@@ -54,6 +65,16 @@ module Social::Util
     date = reference_date + retention*days #Valid Date
     date.strftime("%Y%m%d")
   end
+  
+  def fb_feed_info(fd_item, user, feed)
+    koala_feed = feed.koala_feed
+    attributes = fd_info(fd_item, user)
+    
+    attributes.merge!({:type           => feed.type })    
+    attributes.merge!({:parent_comment => koala_feed.parent[:id]}) if feed.instance_of?(Facebook::Core::ReplyToComment)
+    attributes.merge!({:likes          => koala_feed.likes}) if koala_feed.instance_of?(Facebook::KoalaWrapper::Post)
+    attributes
+  end
 
   def fd_info(notable, user)
     link = notable.nil? ? nil : helpdesk_ticket_link(notable)
@@ -64,16 +85,15 @@ module Social::Util
     }
   end
   
-  def remove_utf8mb4_char(ticket_content)
-    "".tap do |out_str|
-      for i in (0...ticket_content.length)
-        char = ticket_content[i]
-        char = " " if char.ord > 65535
-        out_str << char
-      end
-      out_str.squeeze!(" ")
-      out_str << "Not given" if (!ticket_content.blank? and out_str.blank?)
-    end
+  def dynamo_hash_and_range_key(stream_id)
+    {
+      :stream_id  => stream_id,
+      :account_id => Account.current.id
+    }
+  end
+  
+  def social_revamp_enabled?
+    Account.current.features?(:social_revamp)
   end
 
 end

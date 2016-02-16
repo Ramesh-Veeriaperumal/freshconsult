@@ -1,6 +1,13 @@
 class Middleware::ApiRequestInterceptor
-  CONTENT_TYPE_REQUIRED_METHODS = ['POST', 'PUT']
-  RESPONSE_HEADERS = { 'Content-Type' => 'application/json' }
+  include ErrorConstants
+
+  CONTENT_TYPE_REQUIRED_METHODS = ['POST', 'PUT'].freeze
+  RESPONSE_HEADERS = { 'Content-Type' => 'application/json' }.freeze
+  INVALID_CONTENT_TYPE = 'invalid_content_type'.freeze
+  INVALID_JSON = 'invalid_json'.freeze
+  INTERNAL_ERROR = 'internal_error'.freeze
+  INVALID_ENCODING = 'invalid_encoding'.freeze
+  INVALID_ACCEPT_HEADER = 'invalid_accept_header'.freeze
 
   # https://robots.thoughtbot.com/catching-json-parse-errors-with-custom-middleware
   def initialize(app)
@@ -22,15 +29,14 @@ class Middleware::ApiRequestInterceptor
       valid_accept_header = validate_accept_header if @accept_header 
       begin
         @status, @headers, @response = @app.call(env) if valid_content_type && valid_accept_header
+      rescue ArgumentError => error
+        # If url query string has invalid encoding like '%' symbol, argument error will be thrown from ruby side. 
+        # Hence gracefully handling this issue.
+        error.message.starts_with?("invalid %-encoding") ? invalid_encoding_error(error) : respond_500(error, env)
       rescue MultiJson::ParseError => error
-        Rails.logger.error("API MultiJson::ParseError: #{env["rack.input"].read} \n#{error.message}\n#{error.backtrace.join("\n")}")
-        message =  { code: 'invalid_json', message: "Request body has invalid json format" }
-        set_response(400, RESPONSE_HEADERS, message)
+        invalid_json_error(error, env)
       rescue StandardError => error
-        notify_new_relic_agent(error, env['REQUEST_URI'], env["action_dispatch.request_id"], { description: "Error occurred while processing API", request_method: env['REQUEST_METHOD'], request_body: env["rack.input"].gets})
-        Rails.logger.error("API StandardError: #{error.message}\n#{error.backtrace.join("\n")}")
-        message =  { code: 'internal_error', message: "We're sorry, but something went wrong." }
-        set_response(500, RESPONSE_HEADERS, message)
+        respond_500(error, env)
       end
     end
     [@status, @headers, @response]
@@ -40,10 +46,31 @@ class Middleware::ApiRequestInterceptor
     @resource.starts_with?('/api/')
   end
 
+  def invalid_json_error(error, env)
+    Rails.logger.error("API MultiJson::ParseError: #{env["rack.input"].read} \n#{error.message}\n#{error.backtrace.join("\n")}")
+    message =  { code: INVALID_JSON, message: ErrorConstants::ERROR_MESSAGES[:invalid_json] }
+    set_response(400, RESPONSE_HEADERS, message)
+  end
+
+  def respond_500(error, env)
+    notify_new_relic_agent(error, env['REQUEST_URI'], env["action_dispatch.request_id"], { description: "Error occurred while processing API", request_method: env['REQUEST_METHOD'], request_body: env["rack.input"].gets})
+    Rails.logger.error("API StandardError: #{error.message}\n#{error.backtrace.join("\n")}")
+    message =  { code: INTERNAL_ERROR, message: ErrorConstants::ERROR_MESSAGES[:internal_error] }
+    set_response(500, RESPONSE_HEADERS, message)
+  end
+
+  def invalid_encoding_error(error)
+    Rails.logger.error("API Invalid Encoding error: #{error.message}\n#{error.backtrace.join("\n")}")
+    invalid_query_string = error.message.sub("invalid %-encoding (", "").chop
+    message =  { code: INVALID_ENCODING, message: ErrorConstants::ERROR_MESSAGES[:invalid_encoding] % { invalid_query_string: invalid_query_string } }
+    set_response(400, RESPONSE_HEADERS, message)
+  end
+
   def validate_content_type
     unless  @content_type =~ /multipart\/form-data|application\/json/
       Rails.logger.error("API Un_supported content_type:#{@content_type} is sent in the request")
-      set_response(415, RESPONSE_HEADERS, message: 'Content-Type header should have application/json', code: 'invalid_content_type')
+      message = { code: INVALID_CONTENT_TYPE, message: ErrorConstants::ERROR_MESSAGES[:invalid_content_type] }
+      set_response(415, RESPONSE_HEADERS, message)
       return false
     end
     true
@@ -52,7 +79,8 @@ class Middleware::ApiRequestInterceptor
   def validate_accept_header
     unless @accept_header =~ /(application\/json)|(\*\/\*)|(application\/vnd.freshdesk.v\d)/
       Rails.logger.error("API Not_acceptable accept_header:#{@accept_header} is sent in the request")
-      set_response(406, RESPONSE_HEADERS, message: 'Accept header should have application/json or */*', code: 'invalid_accept_header')
+      message = { code: INVALID_ACCEPT_HEADER, message: ErrorConstants::ERROR_MESSAGES[:invalid_accept_header] }
+      set_response(406, RESPONSE_HEADERS, message)
       return false
     end
     true

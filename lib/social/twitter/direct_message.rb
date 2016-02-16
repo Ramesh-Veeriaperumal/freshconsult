@@ -4,7 +4,6 @@ class Social::Twitter::DirectMessage
 
   attr_accessor :twitter, :twt_handle
   include Social::Twitter::TicketActions
-  include Social::Dynamo::Twitter
   include Social::Twitter::ErrorHandler
   include Social::Constants
 
@@ -12,6 +11,7 @@ class Social::Twitter::DirectMessage
     wrapper         = TwitterWrapper.new twt_handle
     self.twitter    = wrapper.get_twitter
     self.twt_handle = twt_handle
+    @dynamo_helper = Social::Dynamo::Twitter.new
   end
 
   def process
@@ -71,7 +71,7 @@ class Social::Twitter::DirectMessage
       :body      => twt.attrs[:text],
       :posted_at => twt.attrs[:created_at]
     }
-    update_dm(stream_id, params)
+    @dynamo_helper.update_dm(stream_id, params)
   end
   
   def fetch_dms

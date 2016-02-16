@@ -6,7 +6,7 @@ var FreshfoneSupervisorCall;
 	};
 	FreshfoneSupervisorCall.prototype = {
 		init: function () {
-			self=this;
+			var self=this;
 			this.isSupervisorOnCall = false;
 			this.isSupervisorConnected = false;
 			this.supervisorCallId = null;
@@ -38,13 +38,13 @@ var FreshfoneSupervisorCall;
 	   	},
 		bindJoinCall: function () {
 			var self = this;
-      		$("#freshfone_active_calls").on('click.join_call_btn', '.call_to_join',
+      		$("body").on('click.join_call_btn', '.call_to_join',
       		function(ev){
         		return self.joinCallAsSupervisor($(this).data("callid"));
       		});
     	},
     	bindEndCall: function () {
-      		$("#freshfone_active_calls").on('click.join_call_btn', '.call_joined',
+      		$("body").on('click.join_call_btn', '.call_joined',
       		function(ev){
         		ev.preventDefault();
         		freshfonecalls.hangup();
@@ -55,7 +55,7 @@ var FreshfoneSupervisorCall;
 			});
     	},
     	bindMute: function () {
-    		self=this;
+    		var self=this;
     		$('#unmute').click(function () { 
     			$(this).addClass('loading');
     			self.handleMute(); 
@@ -105,6 +105,7 @@ var FreshfoneSupervisorCall;
 			$("#freshfone_active_calls").find('.call_to_join').removeClass("disabled");
 			this.resetCurrentSupervisorCallUI();
 			this.isSupervisorOnCall = false;
+			this.isSupervisorConnected = false;
 			this.supervisorCallId = null;
 		},
 	   	updateCurrentSupervisorCallUI : function() {

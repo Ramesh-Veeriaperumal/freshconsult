@@ -63,7 +63,7 @@ MagentoWidget.prototype= {
 
     MAGENTO_LOADING_INDICATOR: new Template("<div id='magento_loading' class='sloading loading-small loading-block'></div>"),
 
-    ORDERS_LINK: "/index.php/admin/sales_order/index",
+    ORDERS_LINK: "/sales_order/index",
 
     ERROR_MESSAGE: "Unknown error. Please contact support@freshdesk.com",
 
@@ -144,10 +144,10 @@ MagentoWidget.prototype= {
                                     created_at: $this.escapeHtmlCustom(created_at),
                                     store_currency_code: $this.escapeHtmlCustom(val.store_currency_code), 
                                     status: val.status.humanize().capitalize(), 
-                                    street: $this.escapeHtmlCustom(val.addresses[1].street), 
-                                    city: $this.escapeHtmlCustom(val.addresses[1].city), 
-                                    postcode: $this.escapeHtmlCustom(val.addresses[1].postcode),
-                                    region: $this.escapeHtmlCustom(val.addresses[1].region)
+                                    street: $this.escapeHtmlCustom(val.addresses[1] ? val.addresses[1].street : ""), 
+                                    city: $this.escapeHtmlCustom(val.addresses[1] ? val.addresses[1].city : ""), 
+                                    postcode: $this.escapeHtmlCustom(val.addresses[1] ? val.addresses[1].postcode : ""),
+                                    region: $this.escapeHtmlCustom(val.addresses[1] ? val.addresses[1].region : "")
                 });
                 jQuery.each(val.order_items,function(key1, val1) {   
                     line_items_html += $this.ORDER_LINE_ITEM.evaluate({name: $this.escapeHtmlCustom(val1.name),

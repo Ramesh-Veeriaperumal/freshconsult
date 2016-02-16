@@ -29,6 +29,7 @@
           font-size: 1.3rem;
           @include micro-position(10px);
         }
+        .ficon-onhold{ font-size: 1.4rem;}
         .dbicon-red{ color: $icon-color-red;}
         .dbicon-darkred{ color: $icon-color-darkred;}
         .dbicon-orange{ color: $icon-color-orange;}
@@ -43,8 +44,11 @@
         p{ color: $grayLight; font-size: 1em;}
       }
       &:hover{
-        .db-icon-wrap{ background-color: #f2f4f5;}
-        h4{ color: $grayLight;}
+        .db-icon-wrap{ 
+          background-color: #f2f4f5;
+          box-shadow: inset 0px 0px 0px 1px #ccc;
+        }
+        h4{ color: $linkColor;}
       }
     }
     h4{
@@ -53,7 +57,7 @@
     }
     &:first-child{
       @include border-right(1px #ccc solid);
-      h4{ font-weight: 400;}
+      h4{ font-weight: 400; color: $black;}
       a{ padding-left: 0;}
     }
     &:last-child{
@@ -64,10 +68,19 @@
 
 // Dashboard filter
 .db-filter{
+  .lead { margin-bottom: 0}
   .group-select{
+    //scroll hack
+    .mCSB_outside + .mCS-minimal.mCSB_scrollTools_vertical, .mCSB_outside + .mCS-minimal-dark.mCSB_scrollTools_vertical{
+      right: 0;
+    }
     @include micro-position(4px);
     .dropdown {
       padding-right: 30px
+    }
+    .dropdown-menu{
+      max-height: 220px;
+      overflow-y: auto;
     }
     .caret{
       @include micro-position(2px);
@@ -102,15 +115,16 @@
   background-color: #ebeff0;
   *{ box-sizing: border-box;}
   .more-activities{
-    position: absolute;
     width: 100%;
-    right: 0;
     padding: 4px 18px;
-    border-left: none;
-    border-right: none;
-    background-color: #fffbee;
-    border-radius: 0px;
-    opacity: 0.9;
+    background-color: #FFF8DF;
+    border-radius: 30px;
+    color: #06c;
+    font-weight: 500;
+    margin: 10px 0 5px;
+    text-shadow: none;
+    font-size: 12px;
+    @include box-shadow(1px 2px 2px -1px rgba(204, 204, 204, 0.26));
   }
 
   .reminders, .todo{
@@ -136,6 +150,11 @@
     padding-bottom: 20px;
     left: 0;
   }
+  .widget-activity {
+    .widget-title {
+      border-bottom: 1px solid #eee;
+    }
+  }
   .widget-inner{
     background-color: #fff;
     font-size: 12px;
@@ -158,7 +177,8 @@
 
 // View all link in widget
     .widget-more-link{
-      color: #077ee3;
+      color: #0066cc;
+      font-weight: 500;
       display: block;
       border-top: 1px #f7f7f7 solid;
       padding: 8px 0px;
@@ -172,8 +192,9 @@
     }
     #load-more{
       border: none;
-      box-shadow: none;
+      box-shadow: 1px 2px 6px #ccc;
       background: none;
+      background-color: #fff;
       @extend .widget-more-link;
       border-top: 1px #f7f7f7 solid;
     }
@@ -250,7 +271,6 @@
         padding-top: 6px;
       }
       .widget-scroll{
-        overflow: hidden;
         @include scrolling-shadows;
         height: 140px;
         overflow: auto;
@@ -346,10 +366,12 @@
 }
 
 // Activity feed
-.activityfeed{
+.activityfeed-wrap{
   overflow-y: auto;
   height: 437px;
   @include scrolling-shadows;
+}
+.activityfeed {
   .preview_pic{ position: inherit;}
   li{
       border-bottom: none;
@@ -360,7 +382,7 @@
         font-weight: $fontWeightBold;
         &:hover{ color: #077ee3}
       }
-      .preview_pic{
+      div.preview_pic{
           @include margin-left(-48px);
           @include margin-right(0px);
           margin-top: 3px;
@@ -376,11 +398,11 @@
 
 }
 
-[data-gs-height="4"] .activityfeed {
+[data-gs-height="4"] .activityfeed-wrap{
   height: 978px;
 }
 
-[data-gs-height="6"] .activityfeed {
+[data-gs-height="6"] .activityfeed-wrap {
   height: 1518px;
 }
 
@@ -523,23 +545,4 @@ $i: 0;
 
 html[dir="rtl"] .ficon-arrow-right:before{
   content: "\f109" !important;
-}
-// Chrome scroll overflow fix
-.activityfeed, .widget-scroll{
- overflow: auto;
- &::-webkit-scrollbar{
-  -webkit-appearance: none;
- }
-
- &::-webkit-scrollbar-thumb {
-     background-color: rgba(0,0,0,0.3);
-     border: 3px solid transparent;
-     border-radius: 9px;
-     background-clip: content-box;
- }
-
- &::-webkit-scrollbar-track {
-     background-color: #fff;
-     width: 12px;
- }
 }

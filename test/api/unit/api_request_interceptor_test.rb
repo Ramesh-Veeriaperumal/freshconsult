@@ -45,4 +45,14 @@ class ApiRequestInterceptorTest < ActionView::TestCase
                                            'HTTP_HOST' => 'localhost.freshpo.com'))
     end
   end
+
+  def test_invalid_encoding_error
+    test_app = ->(env) { [200, { 'HTTP_HOST' => 'localhost' }, ['OK']] }
+    api_request_interceptor = Middleware::ApiRequestInterceptor.new(test_app)
+    api_request_interceptor.instance_variable_get(:@app).stubs(:call).raises(ArgumentError.new("invalid %-encoding (%dfdgdgg)"))
+    status, headers, response = api_request_interceptor.call(env_for('http://localhost.freshpo.com/api/v2/discussions/categories?email=invalid_error',
+                                                                     'HTTP_HOST' => 'localhost.freshpo.com', 'CONTENT-TYPE' => 'application/json'))
+    assert_equal 400, status
+    response.first.must_match_json_expression(message: String, code: 'invalid_encoding')
+  end
 end

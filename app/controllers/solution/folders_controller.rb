@@ -67,6 +67,7 @@ class Solution::FoldersController < ApplicationController
 
   def create
     @folder = Solution::Builder.folder(params)
+    @folder_version = @folder.send(language_scoper)
     @category_meta = @folder.solution_category_meta
    
     respond_to do |format|
@@ -87,7 +88,7 @@ class Solution::FoldersController < ApplicationController
 
   def update
     @folder = Solution::Builder.folder(params)
-    language_scoper
+    @folder_version = @folder.send(language_scoper)
     respond_to do |format|     
       if @folder.errors.empty?
         format.html do 

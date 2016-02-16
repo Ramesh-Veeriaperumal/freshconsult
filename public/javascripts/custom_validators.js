@@ -416,4 +416,9 @@ $.validator.addMethod("portal_visibility_required", function(value, element) {
 
 $.validator.addClassRules("portal_visibility_required", { portal_visibility_required: true });
 
+$.validator.addMethod("valid_custom_headers", function(value, element) {
+  return value.split('\n').filter(Boolean).every(function(elem) {return elem.includes(":")});
+}, $.validator.format("Please type custom header in the format -  header : value"));
+$.validator.addClassRules("valid_custom_headers", { valid_custom_headers: true });
+
 })(jQuery);

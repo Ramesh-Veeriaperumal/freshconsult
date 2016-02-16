@@ -114,7 +114,7 @@ class TicketValidation < ApiValidation
   end
 
   def cc_emails_max_count
-    if cc_emails.count > ApiTicketConstants::MAX_EMAIL_COUNT
+    if cc_emails.count >= ApiTicketConstants::MAX_EMAIL_COUNT
       errors[:cc_emails] << :max_count_exceeded
       (self.error_options ||= {}).merge!(cc_emails: { max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}" })
     end

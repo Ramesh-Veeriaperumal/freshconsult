@@ -35,7 +35,7 @@ window.App = window.App || {};
 					} else {
 						$(chartOptions.renderTo).barChart(chartOptions);
 					}
-					
+
 				} else if (chartType == "Progress") {
 					$.progressChart(chartOptions)
 				}
@@ -52,13 +52,20 @@ window.App = window.App || {};
 			this.onVisit(data);
 		},
 		onVisit: function (data) {
-			// Call Old Dashboard init function
+
+			if(App.namespace != "helpdesk/dashboard/index") {
+				return false;
+			}
 
 			setTimeout(function() {
 			  $('#quests-section-container, #mini-leaderboard, #Activity, #sales-manager-container, #moderation-stats').trigger('afterShow');
 			},50);
 
-			$('#sales-manager-container').on('remoteLoaded', function(e){	
+			$('#Activity').on('remoteLoaded', function(e){
+				$(".activityfeed-wrap").mCustomScrollbar();
+			});
+
+			$('#sales-manager-container').on('remoteLoaded', function(e){
 			  if($('#sales-manager-container').find('.details-container')){
 			    $(this).show();
 			  }
@@ -72,10 +79,12 @@ window.App = window.App || {};
                 static_grid: true
             };
 
-            $('#grid-stack').gridstack(options);
+			$('#grid-stack').gridstack(options);
+
+			$(".widget-scroll").mCustomScrollbar();
 
 			this.isGlobalView = $('#realtime-dashboard-content').data('widgetType'); //view_type;
-			
+
 			this.getTicketSummaryData();
 			// this.getSummaryOnInterval();
 			this.bindEvents();
@@ -107,7 +116,7 @@ window.App = window.App || {};
 			// 	} else {
 
 			// 		queryString += ($(this).data('origName') != "new") ? '?agent=' + DataStore.get('current_user').currentData.user.id : '?group=0' ; //current_user has took from DataStore object
-			// 	} 
+			// 	}
 
 			// 	$(this).attr('href', queryString);
 			// })
@@ -130,18 +139,18 @@ window.App = window.App || {};
 								this.intervalPeriod);
 		},
 		getTicketSummaryData: function (group_id) {
-			var self = this, 
+			var self = this,
 				data = {};
-				
+
 			if (this.isGlobalView){
 				var groupId = group_id || this.requestData['group_id'];
-				
+
 				data['global'] = true;
 				if (groupId != undefined && groupId != "-") {
 					data['group_id'] = groupId;
 					data['group_by'] = "responder_id";
 				}
-			} 
+			}
 
 			this.requestData = data;
 
@@ -163,7 +172,7 @@ window.App = window.App || {};
 		getAchievements: function () {
 			var self = this;
 			$.ajax({
-               
+
                 url: self.Constants.achievementsURL,
                 success: function (response) {
                 	var badges = self.getBadges(response.badges);
@@ -202,7 +211,7 @@ window.App = window.App || {};
 		},
 		renderTicketSummary: function () {
 			if (!$.isEmptyObject(this.tickets_data.ticket_trend)) {
-				this.Utils.renderTemplate('#ticket-summary', 
+				this.Utils.renderTemplate('#ticket-summary',
 				'app/realtime_dashboard/template/ticket_summary', this.tickets_data.ticket_trend);
 			}
 		},
@@ -219,7 +228,7 @@ window.App = window.App || {};
 				sliceDataAfter: sliceData,
 				name: chartname,
 				isRtl: ($("html").attr("dir") == "rtl") ? true : false,
-				callback: function(id) { 
+				callback: function(id) {
 					var chartname = {
 						"unresolved_tickets_by_priority"	: "priority",
 						"unresolved_tickets_by_ticket_type"	: "type",
@@ -232,7 +241,7 @@ window.App = window.App || {};
 
 					if (self.isResponder) {
 						queryString += '&group=' + self.requestData['group_id'];
-					} 
+					}
 
 					if (!self.isGlobalView) {
 						queryString += '&agent=' + DataStore.get('current_user').currentData.user.id;
@@ -290,16 +299,8 @@ window.App = window.App || {};
 			this.constructChart('Bar', key, '.unresolved_tickets', this.tickets_data.widgets[key], 0);
 		},
 		scrollTopOnLoadMore: function (){
-			var ele 		 = $(".activityfeed"),
-				docTop 	     = $(ele).scrollTop(),
-				frameEle 	 = ele,
-			    frame 		 = $(frameEle).height() + docTop,
-			    percent 	 = 40,
-			    scrollTo 	 = Math.floor($(frameEle).height() * percent / 100);
 
-			   	$(ele).animate({
-			        scrollTop: (docTop + scrollTo)
-			    })
+			$("#activityfeed").mCustomScrollbar("scrollTo","-=300");
 		},
 		destroy: function () {
 			clearInterval(this.interval);

@@ -951,7 +951,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def self.filter_conditions(ticket_filter = nil, current_user = nil)
     {
       default: {
-        conditions: { spam: false }
+        conditions: ['helpdesk_tickets.created_at > ? AND helpdesk_tickets.spam = ?', created_in_last_month , false ]
       },
       spam: {
         conditions: { spam: true }
@@ -975,9 +975,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
         joins: :requester
       },
       updated_since: {
-        conditions: ['helpdesk_tickets.updated_at >= ? AND helpdesk_tickets.spam = false', ticket_filter.try(:updated_since).try(:to_time).try(:utc)]
+        conditions: ['helpdesk_tickets.updated_at >= ? AND helpdesk_tickets.spam = ?', ticket_filter.try(:updated_since).try(:to_time).try(:utc), false]
       }
     }
+  end
+ 
+  def self.created_in_last_month
+    # created in last month filter takes up user time zone info also into account.
+    in_user_time_zone { Time.zone.now.beginning_of_day.ago(1.month).utc }
+  end
+
+  def self.in_user_time_zone(&block)
+    old_zone = Time.zone
+    TimeZone.set_time_zone
+    yield
+  ensure
+    Time.zone = old_zone
   end
 
   # Used update_column instead of touch because touch fires after commit callbacks from RAILS 4 onwards.

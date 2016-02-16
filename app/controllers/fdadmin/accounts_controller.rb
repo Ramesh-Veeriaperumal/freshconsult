@@ -27,6 +27,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
     account_summary[:shard] = shard_info.shard_name
     account_summary[:pod] = shard_info.pod_info
+    account_summary[:freshfone_feature] = account.features?(:freshfone)
     respond_to do |format|
       format.json do
         render :json => account_summary

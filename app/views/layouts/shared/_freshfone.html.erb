@@ -71,6 +71,8 @@
 	freshfone.isDebuggingMode = "<%= current_account.features?(:client_debugging)%>";
 	freshfone.isConferenceMode = <%= current_account.features?(:freshfone_conference)%>;
 	freshfone.isCallMonitoringMode = <%= current_account.features?(:freshfone_call_monitoring)%>;
+	freshfone.isCallQualityMetricsEnabled = <%= current_account.features?(:call_quality_metrics)%>;
+	
   freshfone.ringingTime = <%= current_account_freshfone_numbers.present? ?  current_account_freshfone_numbers.first.ringing_time : 30 %>;
   freshfone.isAdmin = <%= current_user.privilege?(:admin_tasks) %>
   freshfone.current_user_details = {

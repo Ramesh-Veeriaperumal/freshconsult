@@ -1,0 +1,53 @@
+<% content_for :helpcard do -%>
+  <div class="helpcard">
+      <%=t("integrations.sugarcrm.helptext").html_safe%>
+  </div>
+<%- end %>
+
+	<h3 class="lead"><%=t("integrations.sugarcrm.form.sugarcrm_settings")%></h3>
+
+  <%= form_tag("/integrations/sugarcrm/settings_update", :method=> "post")  do %>
+    <ul class="ui-form">
+
+      <li class="inline-field">
+        <label class="caption">
+          <div class="logo application-logo-sugarcrm"></div>
+          <div class="logo info-data">
+            <%=t('integrations.sugarcrm.desc')%>
+          </div>
+        </label>
+
+        <div class="fields">
+          <label for="configs_domain"> <%=t('integrations.sugarcrm.form.domain')%> <span class="required_star">*</span></label><input aria-required="true" class=" required   text" id="configs_domain" name="configs[domain]" size="30" 
+          <%if defined?(configs["domain"]) %>
+            value = "<%= configs["domain"] %>"
+          <%end%>
+          type="text">
+          <div class="info-data"> <%=t('integrations.sugarcrm.form.domain_info').html_safe%> </div>
+            <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_username"> <%=t('integrations.sugarcrm.form.username')%> <span class="required_star">*</span></label><input aria-required="true" class=" required   text" id="configs_username" name="configs[username]" size="30" 
+          <%if defined?(configs["username"]) %>
+            value = "<%= configs["username"] %>"
+          <%end%>
+          type="text">
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_password"> <%=t('integrations.sugarcrm.form.password')%></label><input aria-required="true" class="text" id="configs_password" name="configs[password]" size="30" 
+          <%if defined?(configs["password"]) %>
+            value = "<%= configs["password"] %>"
+          <%end%>
+          type="password">
+          <span class="seperator"></span>
+        </div>
+      </li>
+    </ul>
+    <div class="button-container">
+      <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn floatl" %>
+      <%= submit_tag t('update'), :class => "btn btn-primary" %>
+    </div>
+  <%end%>

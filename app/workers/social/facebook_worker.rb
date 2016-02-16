@@ -2,7 +2,7 @@ module Social
   class FacebookWorker < BaseWorker
     
     include Facebook::RedisMethods
-    include Facebook::KoalaWrapper::ExceptionHandler
+    include Facebook::Exception::Handler
     
     sidekiq_options :queue => :facebook, :retry => 0, :backtrace => true, :failures => :exhausted
 
@@ -36,17 +36,17 @@ module Social
       end
 
       def fetch_fb_messages fan_page
-        sandbox(true) do
+        sandbox do
           @fan_page = fan_page
-          fb_worker = Facebook::Graph::Message.new(@fan_page)
+          fb_worker = Facebook::KoalaWrapper::DirectMessage.new(@fan_page)
           fb_worker.fetch_messages
         end
       end
 
       def fetch_fb_posts fan_page
-        sandbox(true) do      
+        sandbox do      
           @fan_page = fan_page
-          @fan_page.update_attributes(:realtime_subscription => "true") if @fan_page.account.features?(:facebook_realtime)
+          @fan_page.update_attributes(:realtime_subscription => "true")
                 
           if @fan_page.company_or_visitor?
             fb_posts = Facebook::Graph::Posts.new(@fan_page)

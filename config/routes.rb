@@ -464,6 +464,7 @@ Helpkit::Application.routes.draw do
         post :save_call_notes
         put :acw
         get :call_notes
+        post :save_call_quality_metrics
       end
     end
 
@@ -834,6 +835,15 @@ Helpkit::Application.routes.draw do
       get :new
       get :edit
       post :update
+    end
+
+    namespace :sugarcrm do
+      post :settings_update
+      get :edit
+      get :settings
+      post :fields_update
+      post :renew_session_id
+      post :check_session_id
     end
 
     namespace :xero do 
@@ -2559,8 +2569,7 @@ Helpkit::Application.routes.draw do
         collection do
           put :add_credits
           put :refund_credits
-          put :port_ahead
-          put :post_twilio_port
+          put :twilio_port_in
           put :suspend_freshfone
           put :account_closure
           put :get_country_list
@@ -2578,15 +2587,58 @@ Helpkit::Application.routes.draw do
           put :disable_conference
           put :update_timeouts_and_queue
           get :fetch_numbers
+          put :twilio_port_away
+          put :enable_freshfone
         end
       end
 
-      resources :freshfone_stats do
-        collection do
-          get :statistics
-          get :request_csv
-          get :request_csv_by_account
+      namespace :freshfone_stats do 
+        resources :usage do 
+          collection do 
+            get :global_conference_usage_csv
+            get :global_conference_usage_csv_by_account
+          end
         end
+
+        resources :renewal do 
+          collection do
+            get :renewal_backlog_csv
+            get :failed_renewal_csv
+            get :failed_renewal_csv_by_account
+            get :renewal_backlog_csv_by_account
+          end
+        end 
+
+        resources :phone_number do
+          collection do 
+            get :phone_statistics
+            get :deleted_freshfone_csv_by_account
+            get :deleted_freshfone_csv
+            get :all_freshfone_number_csv
+          end
+        end
+
+        resources :credits do 
+          collection do
+            get :request_csv
+            get :request_csv_by_account
+          end
+        end
+
+        resources :payments do
+          collection do
+            get :statistics
+            get :request_csv
+            get :request_csv_by_account
+          end
+        end
+
+        resources :call_quality_metrics do 
+          collection do 
+            get :export_csv
+          end 
+        end 
+
       end
 
       resources :freshfone_subscriptions do

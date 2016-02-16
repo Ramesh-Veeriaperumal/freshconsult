@@ -35,7 +35,7 @@
           <label for="configs_shop_url"> <%=t('integrations.magento.form.shop_url')%> 
             <span class="required_star">*</span>
           </label>
-          <input aria-required="true" 
+          <input id="magento-shop-url" autocomplete="off" aria-required="true" 
                 class="text required"
                 name="configs[shops][0][shop_url]" 
                 size="30"
@@ -44,6 +44,22 @@
                 <%end%>
                 type="text">
           <div class="info-data"> <%=t('integrations.magento.form.shop_url_info').html_safe%> </div>
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_admin_url"> <%=t('integrations.magento.form.admin_url')%> 
+            <span class="required_star">*</span>
+          </label>
+          <input id="magento-admin-url" aria-required="true" 
+                class="text required"
+                name="configs[shops][0][admin_url]" 
+                size="30"
+                <%if defined?(configs["shops"][0]["admin_url"]) %>
+                  value = "<%= configs["shops"][0]["admin_url"] %>"
+                <%end%>
+                type="text">
+          <div class="info-data"> <%=t('integrations.magento.form.admin_url_info').html_safe%> </div>
           <span class="seperator"></span>
         </div>
 
@@ -86,3 +102,13 @@
       <%= submit_tag t('update'), :class => "btn btn-primary" %>
     </div>
 <%end%>
+
+<script type="text/javascript">
+jQuery('#magento-shop-url').keyup(function(){
+  var shop_url = jQuery('#magento-shop-url').val();
+  if (shop_url.slice(-1) == '/'){
+    shop_url = shop_url.slice(0,-1);
+  }
+  jQuery('#magento-admin-url').val(shop_url + '/admin');
+});
+</script>
