@@ -143,6 +143,11 @@ class Account < ActiveRecord::Base
   def slave_queries?
     ismember?(SLAVE_QUERIES, self.id)
   end
+
+  def tag_based_article_search_enabled?
+    ismember?(TAG_BASED_ARTICLE_SEARCH, self.id)
+  end
+
   #Temporary feature check methods - using redis keys - ends here
 
   def validate_required_ticket_fields?
