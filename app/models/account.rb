@@ -10,7 +10,6 @@ class Account < ActiveRecord::Base
   include Redis::OthersRedis
   include Redis::DisplayIdRedis
   include Redis::OthersRedis
-  include Redis::RoutesRedis
   include ErrorHandle
   include AccountConstants
 
