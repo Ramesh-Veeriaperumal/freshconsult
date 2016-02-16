@@ -15,7 +15,7 @@ class Solution::Category < ActiveRecord::Base
   self.table_name =  "solution_categories"
 
   validates_presence_of :name,:account
-  validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
+  validate :name_uniqueness_validation
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_category_meta.new_record?"
   
   after_update :clear_cache, :if => Proc.new { |c| c.name_changed? && c.primary? }
@@ -71,7 +71,16 @@ class Solution::Category < ActiveRecord::Base
     present?
   end
    
-  private 
+  private
+  
+    def name_uniqueness_validation
+      return true unless new_record? || name_changed?
+      if ((Account.current.solution_categories.where(:language_id => self.language_id).pluck(:name)) - [self.name]).include?(self.name)
+        errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
+        return false
+      end
+      return true
+    end
 
     def set_mobihelp_solution_updated_time
       self.update_mh_solutions_category_time
@@ -82,6 +91,6 @@ class Solution::Category < ActiveRecord::Base
     end
 
     def clear_cache(obj=nil)
-      account.clear_solution_categories_from_cache
+      Account.current.clear_solution_categories_from_cache
     end
 end

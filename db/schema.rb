@@ -11,8 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20151221042435) do
+ActiveRecord::Schema.define(:version => 20160216071055) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2955,7 +2954,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
     t.integer  "language_id"
   end
 
-  add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
+  add_index "solution_categories", ["account_id", "language_id", "name"], :name => "index_solution_categories_on_account_id_language_id_and_name", :unique => true
   add_index "solution_categories", ["account_id", "parent_id", "language_id"], :name => "index_solution_categories_on_account_id_parent_id_and_language"
   add_index "solution_categories", ["account_id", "parent_id", "position"], :name => "index_solution_categories_on_account_id_parent_id_and_position"
 
@@ -3040,7 +3039,6 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
 
   add_index "solution_folders", ["account_id", "category_id", "position"], :name => "index_solution_folders_on_acc_cat_pos"
   add_index "solution_folders", ["account_id", "parent_id", "language_id"], :name => "index_solution_folders_on_account_id_parent_id_and_language"
-  add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
   add_index "solution_folders", ["category_id", "position"], :name => "index_solution_folders_on_category_id_and_position"
 
   create_table "subscription_addon_mappings", :force => true do |t|
