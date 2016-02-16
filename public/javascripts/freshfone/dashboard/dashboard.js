@@ -8,6 +8,7 @@ window.App = window.App || {};
     onVisit: function (data) {
       this.bindListView();
       this.LiveCallUpdate.init();
+      this.SupervisorCallUpdate.init();
     },
     bindListView: function() {
       this.listOptions = {
@@ -51,6 +52,7 @@ window.App = window.App || {};
     },
     onLeave: function(data) {
       this.LiveCallUpdate.leave();
+      this.SupervisorCallUpdate.leave();
     }
   };
 })(jQuery);
