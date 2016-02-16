@@ -242,7 +242,7 @@ class Va::Action
     def substitute_placeholders act_on, content_key     
       content = act_hash[content_key].to_s
       content = RedCloth.new(content).to_html unless content_key == :email_subject
-      Liquid::Template.parse(content).render(
+      Liquid::Template.parse(content).render( 'event_performer' => doer,
                 'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name, 'comment' => act_on.notes.visible.exclude_source('meta').last)
     end
 
