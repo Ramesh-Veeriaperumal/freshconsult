@@ -33,7 +33,7 @@ var SurveyDetail = {
 			}
 		}
 		
-		survey["can_comment"] = jQuery("input[name=can_comment]")[0].checked;
+		survey["can_comment"] = SurveyAdmin.fullSurvey ? jQuery("input[name=can_comment]")[0].checked : true;
 		var scale = jQuery("textarea[name=survey-scale]");
 		for(var i=0;i<scale.length;i++){
 			if(scale[i].value.trim().length == 0){
