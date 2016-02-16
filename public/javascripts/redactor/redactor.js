@@ -2109,21 +2109,17 @@ Redactor.prototype = {
 		}
 	},
 	
-	tagProperties: [
-		['table', {
-			"style": 'border-collapse:collapse; border:1px solid #afafaf;' ,
-			"class": "p-table"
-		}]
-	],
+	tagProperties: {
+		'TABLE': 'border-collapse:collapse; border:1px solid #afafaf;'
+	},
 	
 	// Content Class names to render style in UI
 	resetAttributes: function(container) {
-		$.each( this.tagProperties, function(index, tag){			
-			if(container.prop('tagName') === tag[0].toUpperCase()){
-				container.addClass(tag[1]['class']);
-				container.attr('inline-styles', tag[1]['style']);
-			}
-		});
+		var _styleProps = this.tagProperties[container.prop('tagName')];
+		
+		if(_styleProps){
+			container.attr('inline-styles', _styleProps);
+		}
 	},
 	
 	allowedStylesCallbacks: {
@@ -3212,7 +3208,8 @@ Redactor.prototype = {
 		var table_box = $('<div></div>');
 		
 		var tableid = Math.floor(Math.random() * 99999);
-		var table = $('<table id="table' + tableid + '" border="1" cellspacing="0" cellpadding="0"><tbody></tbody></table>');
+		
+		var table = $('<table id="table' + tableid + '" style="border-collapse:collapse; border:1px solid #afafaf;width:100%;" border="1" cellspacing="0" cellpadding="0"><tbody></tbody></table>');
 		
 		for (var i = 0; i < rows; i++)
 		{
