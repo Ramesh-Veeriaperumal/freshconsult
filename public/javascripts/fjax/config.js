@@ -35,6 +35,7 @@ window.Fjax = window.Fjax || {};
 			"/solution": 'solutions',
 
 			"/admin": 'admin',
+			"/account/manage_languages": 'admin',
 			"/account/update_languages": 'admin',
 
 			"/search": 'search',

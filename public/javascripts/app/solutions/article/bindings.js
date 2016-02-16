@@ -302,6 +302,9 @@ window.App = window.App || {};
       });
 
 
+    },
+    toggleShowMaster: function () {
+      $('#show_master_article').toggleClass('hide');
     }
   });
 }(window.jQuery));

@@ -46,6 +46,7 @@ window.App = window.App || {};
       this.dummyActionButtonTriggers();
       this.unsavedContentNotif();
       this.formValidate();
+      this.toggleShowMaster();
       this.bindForShowMaster();
     },
 
