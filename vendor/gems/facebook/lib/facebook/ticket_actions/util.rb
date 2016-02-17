@@ -14,6 +14,7 @@ module Facebook
       end      
       
       def facebook_user(profile)
+        profile ||= {}
         profile.symbolize_keys!
         profile_id   = profile[:id]
         profile_name = profile[:name]

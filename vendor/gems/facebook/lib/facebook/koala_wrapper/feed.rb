@@ -20,7 +20,7 @@ module Facebook
       def parse
         @feed            =  @feed.deep_symbolize_keys
         @feed_id         =  @feed[:id]
-        @requester       =  @feed[:from].symbolize_keys!
+        @requester       =  @feed[:from].symbolize_keys! if @feed[:from]
         @created_at      =  Time.zone.parse(@feed[:created_time])
         @feed[:message]  =  @feed[:message].to_s.tokenize_emoji
         @description     =  @feed[:message].to_s
