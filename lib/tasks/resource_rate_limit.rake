@@ -33,7 +33,7 @@ namespace :resource_rate_limit do
   def notify_admin
   	begin
   	  puts "waiting for the job..."
-      list, element = $spam_watcher.blpop(ResourceRateLimit::NOTIFY_KEYS)
+      list, element = $spam_watcher.perform_redis_op("blpop", ResourceRateLimit::NOTIFY_KEYS)
       table, account_id, user_id = element.split(":")
       puts "#{list}, #{element}"
 

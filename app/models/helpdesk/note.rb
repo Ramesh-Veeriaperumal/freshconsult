@@ -370,7 +370,7 @@ class Helpdesk::Note < ActiveRecord::Base
     # def rl_exceeded_operation
     #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
     #           :user_id => self.user_id }
-    #   $spam_watcher.rpush(ResourceRateLimit::NOTIFY_KEYS, key)
+    #   $spam_watcher.perform_redis_op("rpush", ResourceRateLimit::NOTIFY_KEYS, key)
     # end
 
     def human_note_for_ticket?
