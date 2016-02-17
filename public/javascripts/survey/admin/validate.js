@@ -13,8 +13,11 @@ var SurveyValidate = {
   					if(data.redirect_url){
               pjaxify(data.redirect_url);
   					}
-            else{
+            else if(SurveyAdmin.fullSurvey){
               SurveyAdmin.list();
+            }
+            else{
+              pjaxify(window.location.href);
             }
           }
           else{

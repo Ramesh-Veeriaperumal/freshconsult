@@ -53,7 +53,8 @@ class Admin::CustomSurveysController < Admin::AdminController
       default_question:     @survey.default_question.to_json,
       survey_result_exists: !@survey.survey_results.blank? 
     }
-    flash[:notice] = t(:'admin.surveys.new_layout.result_exist_msg') unless @survey.survey_results.blank?
+    flash[:notice] = t(:'admin.surveys.new_layout.result_exist_msg') if @survey.survey_results.present? &&
+                                                                         @account.custom_survey_enabled?
   end  
 
   def update
