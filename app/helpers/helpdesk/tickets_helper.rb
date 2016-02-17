@@ -548,6 +548,11 @@ module Helpdesk::TicketsHelper
       email_configs.collect{|x| [x.friendly_email, x.id]}
     end
   end
+
+  def archive_preload_options
+    {:archive_notes => [:attachments, :archive_note_association]}
+  end
+
   #Helper methods for compose from email drop down ends here
 
   # ITIL Related Methods starts here

@@ -119,6 +119,10 @@ class Portal < ActiveRecord::Base
     filter_fields account.ticket_fields.send(additional_scope), ticket_field_conditions
   end
 
+  def ticket_fields_including_nested_fields(additional_scope = :all)
+    filter_fields account.ticket_fields_including_nested_fields.send(additional_scope), ticket_field_conditions
+  end
+
   def customer_editable_ticket_fields
     filter_fields account.ticket_fields.customer_editable, ticket_field_conditions
   end

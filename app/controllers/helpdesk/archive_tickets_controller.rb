@@ -5,13 +5,15 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   include Support::TicketsHelper
   include ExportCsvUtil
   helper AutocompleteHelper
+  helper Helpdesk::ArchiveNotesHelper
 
   around_filter :run_on_slave
   before_filter :check_feature
   
   before_filter :get_tag_name, :only => :index
   before_filter :set_filter_options, :set_data_hash, :load_sort_order, :only => [ :index, :custom_search ]
-  before_filter :load_ticket, :verify_permission, :load_reply_to_all_emails, :only => [:show, :activities, :prevnext]
+  before_filter :load_ticket, :verify_permission, :load_reply_to_all_emails, :only => [:activities, :prevnext]
+  before_filter :load_ticket_with_notes, :verify_permission, :load_reply_to_all_emails, :only => :show
   before_filter :set_date_filter, :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :set_selected_tab  
@@ -99,15 +101,16 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
 
   def activities
     return activity_json if request.format == "application/json"
+    options = [:user => :avatar]
     if params[:since_id].present?
-      activity_records = @item.activities.archive_tickets_activity_since(params[:since_id])
+      activity_records = @item.activities.archive_tickets_activity_since(params[:since_id]).includes(options)
     elsif params[:before_id].present?
-      activity_records = @item.activities.archive_tickets_activity_before(params[:before_id])
+      activity_records = @item.activities.archive_tickets_activity_before(params[:before_id]).includes(options)
     else
-      activity_records = @item.activities.newest_first.first(3)
+      activity_records = @item.activities.newest_first.includes(options).first(3)
     end
     
-    @activities = stacked_activities(activity_records.reverse, true)
+    @activities = stacked_activities(@item, activity_records.reverse, true)
     
     # Omitting the Ticket Creation activity as in helpdesk/ticket_activities.rb
     @total_activities =  @item.activities.size - 1 
@@ -146,13 +149,24 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
     end
 
     def load_ticket
-      @ticket = @item = current_account.archive_tickets.find_by_display_id(params[:id])
+      load_or_show_error
+    end
+
+    def load_ticket_with_notes
+      load_or_show_error(true)
+    end
+
+    def load_or_show_error(load_notes = false)
+      options = load_notes ? archive_preload_options : {}
+      @ticket = @item = current_account.archive_tickets.find_by_param(params[:id], current_account, options)
+
       if @ticket and @ticket.restricted_in_helpdesk?(current_user)
         view_on_portal_msg = I18n.t('flash.agent_as_requester.view_ticket_on_portal', :support_ticket_link => @item.support_ticket_path)
         redirect_msg =  "#{I18n.t('flash.agent_as_requester.ticket_show')} #{view_on_portal_msg}".html_safe
         flash[:notice] = redirect_msg
         redirect_to helpdesk_archive_tickets_url 
       end
+
       @item || raise(ActiveRecord::RecordNotFound)
     end
 
@@ -177,7 +191,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
 
     def load_reply_to_all_emails
       default_notes_count = "nmobile".eql?(params[:format])? 1 : 3
-      @ticket_notes = @ticket.conversation(nil, default_notes_count, [:survey_remark, :user, :attachments, :schema_less_note, :cloud_files])
+      @ticket_notes = @ticket.conversation(nil, default_notes_count)
     end
 
     def set_selected_tab
@@ -207,5 +221,5 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   def run_on_slave(&block)
     Sharding.run_on_slave(&block)
   end 
-    
+
 end

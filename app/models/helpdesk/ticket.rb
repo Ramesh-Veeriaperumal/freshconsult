@@ -215,8 +215,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     end
 
-    def find_by_param(token, account)
-      where(display_id: token, account_id: account.id).first
+    def find_by_param(token, account, options = {})
+      where(display_id: token, account_id: account.id).includes(options).first
     end
 
     def use_index(index)
@@ -262,20 +262,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name")
   end
 
-  def is_twitter?
-    (tweet) and (tweet.twitter_handle) 
+  def twitter?
+    source == SOURCE_KEYS_BY_TOKEN[:twitter] and (tweet) and (tweet.twitter_handle)
   end
-  alias :is_twitter :is_twitter?
 
-  def is_facebook?
-     (fb_post) and (fb_post.facebook_page) 
+  def facebook?
+     source == SOURCE_KEYS_BY_TOKEN[:facebook] and (fb_post) and (fb_post.facebook_page)
   end
-  alias :is_facebook :is_facebook?
- 
+
+  #This is for mobile app since it expects twitter handle & facebook page and not a boolean value
+  def is_twitter
+    source == SOURCE_KEYS_BY_TOKEN[:twitter] ? (tweet and tweet.twitter_handle) : nil
+  end
+
+  def is_facebook
+    source == SOURCE_KEYS_BY_TOKEN[:facebook] ? (fb_post and fb_post.facebook_page) : nil
+  end
+
   def fb_replies_allowed?
-    is_facebook? and !fb_post.reply_to_comment?
+    facebook? and !fb_post.reply_to_comment?
   end
- 
+
   def is_fb_message?
    (fb_post) and (fb_post.facebook_page) and (fb_post.message?)
   end
@@ -379,22 +386,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def conversation(page = nil, no_of_records = 5, includes=[])
-    notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
+    includes = note_preload_options if includes.blank?
+    notes.visible.exclude_source('meta').newest_first.find(:all, :include => includes).paginate(:page => page, :per_page => no_of_records)
   end
 
   def conversation_since(since_id)
-    return notes.visible.exclude_source('meta').since(since_id)
+    notes.visible.exclude_source('meta').since(since_id).includes(note_preload_options)
   end
 
   def conversation_before(before_id)
-    includes = [:survey_remark, :user, :attachments, :schema_less_note, :cloud_files, :note_old_body]
-    notes.visible.exclude_source('meta').newest_first.before(before_id).includes(includes)
+    notes.visible.exclude_source('meta').newest_first.before(before_id).includes(note_preload_options)
   end
 
   def conversation_count(page = nil, no_of_records = 5)
     notes.visible.exclude_source('meta').size
   end
-  
+
   def latest_twitter_comment_user
     latest_tweet = notes.latest_twitter_comment.first
     reply_to_user = latest_tweet.nil? ? requester.twitter_id : latest_tweet.user.twitter_id
@@ -670,7 +677,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         end
       end
       xml.custom_field do
-        self.account.ticket_fields.custom_fields.each do |field|
+        self.account.ticket_fields_including_nested_fields.custom_fields.each do |field|
           begin
            value = send(field.name) 
            xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
@@ -782,7 +789,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :include => { :flexifield => { :only => es_flexifield_columns },
                           :attachments => { :only => [:content_file_name] },
                           :ticket_states => { :only => [ :resolved_at, :closed_at, :agent_responded_at,
-                                                         :requester_responded_at, :status_updated_at ] }
+                                                         :requester_responded_at, :status_updated_at ] },
                         }
             },
             false).to_json
@@ -889,7 +896,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # end
 
   def show_reply?
-    (self.is_twitter? or self.fb_replies_allowed? or self.from_email.present? or self.mobihelp? or self.allow_ecommerce_reply?)
+    (self.twitter? or self.fb_replies_allowed? or self.from_email.present? or self.mobihelp? or self.allow_ecommerce_reply?)
   end
 
   def search_fields_updated?
@@ -1014,6 +1021,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def send_agent_assigned_notification?
       doer_id = Thread.current[:observer_doer_id]
       @model_changes[:responder_id] && responder && responder_id != doer_id && responder != User.current
+    end
+
+    def note_preload_options
+      options = [:attachments, :note_old_body, :schema_less_note, :notable, :attachments_sharable, {:user => :avatar}, :cloud_files]
+      options << :freshfone_call if Account.current.features?(:freshfone)
+      options << (Account.current.new_survey_enabled? ? {:custom_survey_remark => 
+                    {:survey_result => [:survey_result_data, :agent, {:survey => :survey_questions}]}} : :survey_remark)
+      options << :fb_post if facebook?
+      options << :tweet if twitter?
+      options
     end
 
     # def rl_exceeded_operation

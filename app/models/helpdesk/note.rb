@@ -27,7 +27,7 @@ class Helpdesk::Note < ActiveRecord::Base
            :class_name => 'Helpdesk::SharedAttachment',
            :dependent => :destroy
 
-  has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment, :conditions => ["helpdesk_attachments.account_id=helpdesk_shared_attachments.account_id"]
+  has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
 
   delegate :to_emails, :cc_emails, :bcc_emails, :subject, :to => :schema_less_note
 
@@ -162,7 +162,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def can_split?
-    (self.incoming and self.notable) and (self.fb_post ? self.fb_post.can_comment? : true) and (self.private ? user.customer? : true) and (!self.mobihelp?) and !user.blocked? and (!self.ecommerce?)
+    (self.incoming and self.notable) and ((self.notable.facebook? and self.fb_post) ? self.fb_post.can_comment? : true) and (self.private ? user.customer? : true) and (!self.mobihelp?) and !user.blocked? and (!self.ecommerce?)
   end
 
   def as_json(options = {})
@@ -303,9 +303,9 @@ class Helpdesk::Note < ActiveRecord::Base
                         }
             }).to_json
   end
-  
+
   def fb_reply_allowed?
-    self.fb_post and self.incoming and self.notable.is_facebook? and self.fb_post.can_comment? 
+    self.notable.facebook? and self.fb_post and self.incoming and self.fb_post.can_comment? 
   end
 
   def load_note_reply_cc
