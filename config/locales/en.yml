@@ -2993,7 +2993,7 @@ en:
     product_portal_visibility: Visible in
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
-    manage_categories: Manage Categories
+    manage_categories: Manage
     more_catogories: "See all Categories"
     other_categories: "See other Categories"
     other_categories_info: "Categories that are not associated with this portal"

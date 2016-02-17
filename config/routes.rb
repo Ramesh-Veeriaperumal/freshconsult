@@ -1545,7 +1545,6 @@ Helpkit::Application.routes.draw do
       delete :delete_logo
       delete :delete_favicon
       get :new_signup_free
-      get :manage_languages
       put :update_languages
     end
   end
