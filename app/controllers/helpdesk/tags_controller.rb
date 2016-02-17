@@ -76,5 +76,8 @@ class Helpdesk::TagsController < ApplicationController
       @selected_tab = :admin
    end
 
+   def after_destroy_url
+      helpdesk_tags_url
+   end
 
 end

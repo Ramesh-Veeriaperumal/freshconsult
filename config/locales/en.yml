@@ -1250,9 +1250,10 @@ en:
         thanks_feedback: Thank you for your valuable feedback.
         thanks_feedback_v2: Thank you. Your feedback has been submitted.
         additional_comments_feedback: Collect additional feedback
+        additional_comments_feedback_statement: Additional feedback
         comments_feedback: Add more details about customer experience.
         thanks_message_feedback: Thank you message for Feedback survey
-        thanks_message_feedback_v2: Thank you message for Additional Questions
+        thanks_message_feedback_v2: Thank you message for additional feedback
         default_question_text: Are you satisfied with our customer support experience?
         thanks_label: Message will appear after submitting the feedback survey
         thanks_label_v2: Message will appear after submitting feedback for additional questions.
@@ -5172,6 +5173,7 @@ en:
         usage: Usage
         helpcard1: This page shows you a list of all tags that are currently being used in your helpdesk. By default, you can get the usage count for every tag, including the number of linked tickets, customers or solution articles at a glance by looking them up from the list. If you want to, you can also open up a complete list of tagged items by clicking on the corresponding numbers.
         helpcard2: When you want to rename them altogether, click on the tag names to update all of their instances automatically. Additionally, you can choose to merge two or more tags together by giving them the same name.
+        helpcard3: "Tag count is available for:"
         helpcard_title: Managing Tags
       tag_search_navigate:
         search: Search Tags starting with...
@@ -5190,8 +5192,9 @@ en:
       tag:
         ticket: Ticket
         tickets: Tickets
-        recent_tickets: Recent Tickets
-        archive_tickets: Archive Tickets 
+        recent_tickets: Recent tickets
+        archive_tickets: Archived tickets
+        contacts: Contacts  
         customer: Customer
         customers: Customers
         article: Article
@@ -5344,6 +5347,7 @@ en:
         unassigned: Unassigned
         pending: Pending
         on_hold: On Hold
+        unresolved: Unresolved
     rebranding:
       name:
         info: This will be the help desk name that is shown in the header and mail notifications.

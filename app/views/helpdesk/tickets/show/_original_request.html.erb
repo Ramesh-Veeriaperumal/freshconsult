@@ -78,14 +78,14 @@
 		</div>
 		<% created_by_agent_info = created_by_agent(@ticket) %>
 		<% unless created_by_agent_info.blank? %>
-      		<%= t('ticket.created_by') %> <%= created_by_agent_info %> 
+      		<%= t('ticket.created_by') %> <%= created_by_agent_info %>
       	<% end %>
-		<div class="info"> 
+		<div class="info">
 			<%= content_tag :div, multiple_emails_container(@to_emails, "To: ") unless @ticket.cc_email_hash.blank? or @to_emails.blank? %>
 			<%= content_tag :div, multiple_emails_container(@ticket.ticket_cc, "Cc: ") unless @ticket.cc_email_hash.blank? %>
-      	</div> 
+      	</div>
 	</div>
-	<div id="ticket_original_request" class="request_mail">
+	<div rel="image-enlarge" id="ticket_original_request" class="request_mail">
     	<%= @ticket.description_html.html_safe %>
 	</div>
 

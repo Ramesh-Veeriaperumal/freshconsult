@@ -13,7 +13,7 @@ Helpkit::Application.configure do
   # Show full error reports and disable caching
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
-  
+
   # Only reloading classes if dependencies files changed
   config.reload_classes_only_on_change = true
 
@@ -35,12 +35,12 @@ Helpkit::Application.configure do
 
   # Do not compress assets
   config.assets.compress = false
-  
+
   # No Digest paths for Development environment
   config.assets.digest = false
 
   # Expands the lines which load the assets
-  config.assets.debug = true
+  config.assets.debug = false
 
   config.middleware.insert_before Rails::Rack::Logger, Middleware::DisableAssetsLogger
   config.reload_plugins = true

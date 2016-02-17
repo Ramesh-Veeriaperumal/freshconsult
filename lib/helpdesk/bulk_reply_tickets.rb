@@ -141,7 +141,7 @@ class Helpdesk::BulkReplyTickets
       fb_page = ticket.fb_post.facebook_page
       if fb_page
         message_type = ticket.is_fb_message? ? POST_TYPE[:message] : POST_TYPE[:post]
-        Facebook::TicketActions::Util.send_reply(fan_page, ticket, note, message_type)
+        send_reply(fb_page, ticket, note, message_type)
       end
     end
     

@@ -48,21 +48,27 @@
 			}
 		})
 
+		$('.article-body img, .p-content img').livequery(function () {
+			$(this).wrap(function(){
+		    return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
+		  });
+		})
+
 		// Preventing default click & event handlers for disabled or active links
-		$(".pagination, .dropdown-menu") 
+		$(".pagination, .dropdown-menu")
 			.find(".disabled a, .active a")
 			.on("click", function(ev){
 				ev.preventDefault()
 				ev.stopImmediatePropagation()
 			})
-		
+
 		// Remote ajax for links
 		$(".a-link[data-remote], a[data-remote]").live("click", function(ev){
 			ev.preventDefault()
 
 			var _o_data = $(this).data(),
 				_self = $(this),
-				_post_data = { 
+				_post_data = {
 					"_method" : $(this).data("method") || "get"
 				}
 

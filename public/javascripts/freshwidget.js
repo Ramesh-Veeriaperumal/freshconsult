@@ -118,6 +118,7 @@
 			class_name = locationClass[options.alignment] || "left";
 			$widget_attr.button = document.createElement('div');
 			$widget_attr.button.setAttribute('id', 'freshwidget-button');
+			$widget_attr.button.setAttribute('data-html2canvas-ignore','true');
 			$widget_attr.button.style.display = 'none';
 			$widget_attr.button.className = "freshwidget-button fd-btn-" + class_name;
 
@@ -187,10 +188,11 @@
 
 			$widget_attr.container.className = "freshwidget-container";
 			$widget_attr.container.id = "FreshWidget";
-
 			if(options.responsive == ""){
 				$widget_attr.container.className += " responsive";
 			}
+              // preventing from capturing (screenshot)
+			$widget_attr.container.setAttribute("data-html2canvas-ignore","true");
 
 			$widget_attr.container.style.display = 'none';
 
@@ -310,15 +312,14 @@
 	  		var message = e.data;
 	   		if(message=="screenshot") {
 	    		// move to screenshot function
-	    		TakeScreenShot();
+	    		TakeScreenShot(e);
 	    	}
       	});
    }
    // taking screenshot while child frame requests
-   function TakeScreenShot() {
-   	if(Browser.Version() > 8 && options.screenshot == ""){
+   function TakeScreenShot(e) {
+        	if(Browser.Version() > 8 && options.screenshot == ""){
    		html2canvas( [ document.body ], {
-			ignoreIds: "FreshWidget|freshwidget-button",
 			proxy:false,
 		    onrendered: function( canvas ) {
 		      	var img = canvas.toDataURL();
@@ -326,7 +327,9 @@
 				document.getElementById('freshwidget-frame').contentWindow.postMessage(message, "*");
 		    }
 		});
-    }
+		e.stopImmediatePropagation()
+   	}
+   	    
    }
 	 // Defining Public methods
      var FreshWidget = {

@@ -11,16 +11,8 @@ var FreshfoneSupervisorCall;
 			this.isSupervisorConnected = false;
 			this.supervisorCallId = null;
 			this.isSupervisorMute = true;
-      		this.bindJoinCall();
-      		this.bindEndCall();
-      		this.bindMute();
-      		this.bindSocketEvents();
-      		$("#freshfone_active_calls").find(".supervised").each(function(){this.innerText = freshfone.oncall;});
-		},
-		bindSocketEvents: function()
-		{
-			this.bindDisableSupervisorCall();
-      		this.bindEnableSupervisorCall();
+			this.bindMute();
+			this.bindEndCall();
 		},
 		loadDependencies: function (freshfonecalls,freshfonewidget,freshfonetimer,freshfoneuser) {
 			this.freshfonecalls = freshfonecalls;
@@ -36,24 +28,12 @@ var FreshfoneSupervisorCall;
 		startCallTimer : function(){
 			freshfonetimer.startCallTimer( $("#supervisor_call_timings") );
 	   	},
-		bindJoinCall: function () {
-			var self = this;
-      		$("body").on('click.join_call_btn', '.call_to_join',
-      		function(ev){
-        		return self.joinCallAsSupervisor($(this).data("callid"));
-      		});
-    	},
-    	bindEndCall: function () {
-      		$("body").on('click.join_call_btn', '.call_joined',
-      		function(ev){
-        		ev.preventDefault();
-        		freshfonecalls.hangup();
-      		});
-      		$("body").on('click', '.end_supervisor_call', function (e) {
-				e.preventDefault();
-				freshfonecalls.hangup();
-			});
-    	},
+    bindEndCall: function () {
+      $("body").on('click', '.end_supervisor_call', function (e) {
+        e.preventDefault();
+        freshfonecalls.hangup();
+      });
+    },
     	bindMute: function () {
     		var self=this;
     		$('#unmute').click(function () { 
@@ -61,34 +41,25 @@ var FreshfoneSupervisorCall;
     			self.handleMute(); 
     		});
     	},
-		joinCallAsSupervisor: function(callId) {
-			if (Twilio.Device.status() !== 'busy') {
-				if (freshfoneuser.isBusy()) { return; }
-				if(Twilio.Device.activeConnection() && Twilio.Device.activeConnection().status() == 'pending')
-				{
-					freshfoneNotification.removeAllOngoingNotifications();
-				}
-				$("#freshfone_active_calls").find('.call_to_join').addClass("disabled");
-				this.isSupervisorOnCall = true;
-				this.isSupervisorMute = true;
-				this.supervisorCallId = callId;
-				var params = { PhoneNumber : freshfonecalls.number, phone_country: freshfonecalls.callerLocation(),
-						number_id: freshfonecalls.outgoingNumberId(), agent: freshfonecalls.currentUser, type: "supervisor", call: callId };
-				freshfonecalls.actionsCall(function () { Twilio.Device.connect(params); } );
-				freshfonecalls.setDirectionOutgoing();
-			} else {
-				this.resetJoinCallButton(callId);
-			}
-		},
+    connectSupervisor : function(callId){
+      this.isSupervisorOnCall = true;
+      this.supervisorCallId = callId;
+      var params = { PhoneNumber : freshfonecalls.number, phone_country: 
+        freshfonecalls.callerLocation(), number_id: freshfonecalls.outgoingNumberId(),
+        agent: freshfonecalls.currentUser, type: "supervisor", call: callId };
+      freshfonecalls.actionsCall(function () { Twilio.Device.connect(params); });
+      freshfonecalls.setDirectionOutgoing();
+    },
 		handleConnect : function() {
 			this.isSupervisorConnected = true;
-	   		this.updateCurrentSupervisorCallUI();
+			App.Freshfonedashboard.SupervisorCallUpdate.updateCurrentSupervisorCallUI();
 			freshfonewidget.handleWidgets('supervisor');
 	   	},
 	   	showWidgets: function () {
 	   		this.supervisorCallWidget.show();
 			this.populateSupervisorCallContainer();
 			this.$supervisorCallContainer.show();
+			freshfonewidget.bindPageClose();
 		},
 		hideWidgets: function () {
 	   		this.supervisorCallWidget.hide();
@@ -101,53 +72,6 @@ var FreshfoneSupervisorCall;
 			var temp = $("#supervisor_call_info_template").clone();
       		this.$supervisorCallinfo.html(temp.tmpl(selectedCallDom._values));
 		},
-		resetSupervisorCallDetails: function() {
-			$("#freshfone_active_calls").find('.call_to_join').removeClass("disabled");
-			this.resetCurrentSupervisorCallUI();
-			this.isSupervisorOnCall = false;
-			this.isSupervisorConnected = false;
-			this.supervisorCallId = null;
-		},
-	   	updateCurrentSupervisorCallUI : function() {
-	   		var self = this;
-	   		var $elm = this.getCallRow(this.supervisorCallId);
-       		if($elm != null){
-       			$elm.find('.call_to_join').each(function(){this.innerText = freshfone.leave;});
-       			$elm.find('.call_to_join').removeClass('call_to_join').addClass('call_joined').removeClass("disabled");;
-       		}
-	   	},
-	   	resetCurrentSupervisorCallUI : function() {
-	   		var self = this;
-	   		var $elm = this.getCallRow(this.supervisorCallId);
-       		if($elm != null){
-       			$elm.find('.call_joined').each(function(){this.innerText = freshfone.join ;});
-       			$elm.find('.call_joined').removeClass('call_joined').addClass('call_to_join');
-       		}
-	   	},
-	   	resetJoinCallButton : function(callId) {
-	   		var $elm = this.getCallRow(callId);
-       		if($elm != null){
-       			$elm.find('.call_to_join').removeClass('disabled');
-       		}
-	   	},
-	   	bindDisableSupervisorCall: function() {
-	   		var self = this;
-     		$("body").on('disable_supervisor_call.freshfone_dashboard', "#freshfone_dashboard_events", function(ev, data){
-     			var $elm = self.getCallRow(data.call_details.call_id);
-       			if($elm != null){
-       				$elm.find('.call_to_join').addClass('supervised').each(function(){this.innerText = freshfone.oncall;});
-       			}
-     		});
-     	},
-       	bindEnableSupervisorCall: function() {
-       		var self = this;
-     		$("body").on('enable_supervisor_call.freshfone_dashboard', "#freshfone_dashboard_events", function(ev, data){
-       			var $elm = self.getCallRow(data.call_details.call_id);
-       			if($elm != null){
-       				$elm.find('.call_to_join').removeClass('supervised').each(function(){this.innerText = freshfone.join;});;
-       			}
-     		});
-     	},
      	handleMute: function () {
      		this.isSupervisorMute = this.isSupervisorMute ? false : true ;
 			this.muteUnmuteSupervisor();
@@ -166,6 +90,7 @@ var FreshfoneSupervisorCall;
         	error: function () {
         		this.isSupervisorMute = this.isSupervisorMute ? false : true ;
         		self.updateMuteUI();
+	   		    App.Freshfonedashboard.SupervisorCallUpdate.updateCurrentSupervisorCallUI();
         	}	
          });
        	},
@@ -177,19 +102,18 @@ var FreshfoneSupervisorCall;
        	},
 	   	resetToDefaultState : function()  {
 			freshfonewidget.resetToDefaultState();
-			this.resetSupervisorCallDetails();		
+			App.Freshfonedashboard.SupervisorCallUpdate.resetSupervisorCallDetails();		
+			this.isSupervisorOnCall = false;
+			this.isSupervisorConnected = false;
+			this.supervisorCallId = null;
+			this.isSupervisorMute = true;
 			freshfoneuser.resetStatusAfterCall();
 			freshfoneuser.updatePresence();
 			freshfonecalls.init();
 			freshfoneuser.init();
 	   	},
-	   	getCallRow : function(id)	{
-	   		var callRow = App.Freshfonedashboard.activeCallsList.get('call_id', id);
-       		if(typeof callRow != "undefined" && callRow != null && callRow.elm != null ) 
-       		{
-       			return $(callRow.elm);
-       		}
-       		return null;
-	   	}
+	   	resetJoinCallButton: function(){
+	   		App.Freshfonedashboard.SupervisorCallUpdate.resetJoinCallButton();
+	   }
 	};
 }(jQuery));

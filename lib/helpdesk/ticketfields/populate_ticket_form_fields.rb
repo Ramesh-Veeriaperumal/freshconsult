@@ -4,7 +4,7 @@ module Helpdesk::Ticketfields::PopulateTicketFormFields
 
 	def form_fields_data(starting_account_id=0)
 		Sharding.execute_on_all_shards do
-			Account.find_in_batches(:batch_size => 500,
+			Account.current_pod.find_in_batches(:batch_size => 500,
 				:conditions => "id >=#{starting_account_id}") do |accounts|
 				accounts.each do |account|
 					# Resque.enqueue(Workers::PopulateTicketFormFieldsWorker, {:account_id => account.id})
