@@ -7,13 +7,17 @@ begin
   $sqs_client = AWS::SQS.new.client
   current_pod = PodConfig['CURRENT_POD']
 
-  #for sqs queue facebook
-  $sqs_facebook_global =  AWS::SQS.new.queues.named(SQS[:facebook_realtime_queue])
-  $sqs_facebook =  AWS::SQS.new.queues.named(current_pod + '_' + SQS[:facebook_realtime_queue])
+  #pod specific sqs queue facebook
+  # $sqs_facebook_global =  AWS::SQS.new.queues.named(SQS[:facebook_realtime_queue])
+  # $sqs_facebook =  AWS::SQS.new.queues.named(current_pod + '_' + SQS[:facebook_realtime_queue])
+  
+  $sqs_facebook =  AWS::SQS.new.queues.named(SQS[:facebook_realtime_queue])
 
-  # Initializing global variable polling the tweets from sqs
-  $sqs_twitter_global = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
-  $sqs_twitter = AWS::SQS.new.queues.named(current_pod + '_' + SQS[:twitter_realtime_queue])
+  # Initializing global variable polling the tweets from sqs - pod specific
+  # $sqs_twitter_global = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
+  # $sqs_twitter = AWS::SQS.new.queues.named(current_pod + '_' + SQS[:twitter_realtime_queue])
+  
+  $sqs_twitter = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
 
   # custom mailbox sqs queue
   $sqs_mailbox = AWS::SQS.new.queues.named(SQS[:custom_mailbox_realtime_queue])
