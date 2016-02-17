@@ -40,7 +40,7 @@ Helpkit::Application.configure do
   config.assets.digest = false
 
   # Expands the lines which load the assets
-  config.assets.debug = false
+  config.assets.debug = true
 
   config.middleware.insert_before Rails::Rack::Logger, Middleware::DisableAssetsLogger
   config.reload_plugins = true

@@ -25,7 +25,7 @@
 			// If diff, set the height
 			if( portal['preferences']['nonResponsive'] != "true" ) {
 				$(window).on('resize', function () {
-					$('.article-body img').each(function (i) {
+					$("[rel='image-enlarge'] img").each(function (i) {
 						if(this.style.height || this.height) {
 							var img = $(this);
 							$("<img/>")
@@ -43,17 +43,15 @@
 								  }
 						    });
 						}
+
+						$(this).wrap(function(){
+						    return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
+						});
 					});
 				}).trigger('resize');
 			}
 		})
-
-		$('.article-body img, .p-content img').livequery(function () {
-			$(this).wrap(function(){
-		    return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
-		  });
-		})
-
+	
 		// Preventing default click & event handlers for disabled or active links
 		$(".pagination, .dropdown-menu")
 			.find(".disabled a, .active a")
