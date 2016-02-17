@@ -131,5 +131,5 @@
 	jQuery("#topic_locked").click(function(ev){
 		jQuery("#monitor-topic-lable").toggle(!this.checked);
 	});
-	 jQuery('#topic_forum_id').val(<%= params[:forum_id] || @topic.forum_id %>)
+	 jQuery('#topic_forum_id').val(escape("<%= params[:forum_id] || @topic.forum_id %>"))
 <% end %>

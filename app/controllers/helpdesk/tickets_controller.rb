@@ -1184,7 +1184,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def load_ticket_filter
       return if @cached_filter_data
-      filter_name = view_context.current_filter
+      filter_name = CGI.escapeHTML(view_context.current_filter)
       if !is_num?(filter_name)
         load_default_filter(filter_name)
       else
