@@ -78,7 +78,7 @@ class Solution::ArticlesController < ApplicationController
       if @article_meta.errors.empty?
         format.html { 
           flash[:notice] = flash_message if publish?
-          redirect_to solution_article_version_path(@article_meta, @article.language.code) if Account.current.multilingual?
+          redirect_to multilingual_article_path(@article)
         }
         format.xml  { render :xml => @article_meta, :include => [:folder], :status => :created, :location => @article }
         format.json  { render :json => @article_meta, :include => [:folder], :status => :created, :location => @article }
@@ -391,7 +391,7 @@ class Solution::ArticlesController < ApplicationController
 
     def render_edit
       return if !load_draft
-      redirect_to solution_article_path(@article, :anchor => "edit")
+      redirect_to multilingual_article_path(@article, :anchor => "edit")
     end
 
     def bulk_update_folder

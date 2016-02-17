@@ -1,12 +1,12 @@
-if @category.errors.empty?
+if @category_meta.errors.empty?
 	if params[:action].eql?('create')
 		page << "App.Solutions.AfterSave.hide('#new-cat');"
 	else
-		page << "App.Solutions.AfterSave.hide('#version-#{@category.id}-l#{params[:language_id]}');"
+		page << "App.Solutions.AfterSave.hide('#version-#{@category_meta.id}-l#{params[:language_id]}');"
 		page << "App.Solutions.AfterSave.hide('#category-edit');"
 	end
-	page << "App.Solutions.AfterSave.postCategoryAction(#{escape_javascript(@category.portal_ids.to_json)}, '#{escape_javascript( render :partial => 'category', :locals => {:category => @category})}', #{@category.id}, '#{params[:action]}');"
-	page << "App.Solutions.NavMenu.reload()" if @category_version.primary?
+	page << "App.Solutions.AfterSave.postCategoryAction(#{escape_javascript(@category_meta.portal_ids.to_json)}, '#{escape_javascript( render :partial => 'category', :locals => {:category => @category_meta})}', #{@category_meta.id}, '#{params[:action]}');"
+	page << "App.Solutions.NavMenu.reload()" if @category.primary?
 else
 	page.replace_html :"error_messages_#{params[:action].eql?('create') ? 'new_category' : "#{@category_meta.id}_l#{@language.id}"}", "#{error_messages_for :category}"
 end

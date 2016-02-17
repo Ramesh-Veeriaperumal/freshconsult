@@ -72,38 +72,38 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def create
-    @category = Solution::Builder.category(params)
-    @category_version = @category.send(language_scoper)
+    @category_meta = Solution::Builder.category(params)
+    @category = @category_meta.send(language_scoper)
     respond_to do |format|
-      if @category.errors.blank?
-        format.html { redirect_to solution_category_path(@category) }
+      if @category_meta.errors.blank?
+        format.html { redirect_to solution_category_path(@category_meta) }
         format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @category, :status => :created, :location => @category.primary_category }
-        format.json { render :json => @category, :status => :created, :location => @category.primary_category }
+        format.xml  { render :xml => @category_meta, :status => :created, :location => @category_meta.primary_category }
+        format.json { render :json => @category_meta, :status => :created, :location => @category_meta.primary_category }
       else
         format.html { render :action => "new" }
         format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @category.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @category_meta.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @category_meta.errors, :status => :unprocessable_entity }
       end
     end
   end
 
   def update
     params[:solution_category][:id] = params[:id] if params[:solution_category].present?
-    @category = Solution::Builder.category(params)
-    @category_version = @category.send(language_scoper)
+    @category_meta = Solution::Builder.category(params)
+    @category = @category_meta.send(language_scoper)
     respond_to do |format| 
-      if @category.errors.blank?
+      if @category_meta.errors.blank?
         format.html { redirect_to solution_all_categories_path }
         format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @category, :status => :created, :location => @category.primary_category }     
-        format.json { render :json => @category, :status => :ok, :location => @category.primary_category }     
+        format.xml  { render :xml => @category_meta, :status => :created, :location => @category_meta.primary_category }     
+        format.json { render :json => @category_meta, :status => :ok, :location => @category_meta.primary_category }     
       else
         format.html { render :action => "edit" }
         format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @category.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @category_meta.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @category_meta.errors, :status => :unprocessable_entity }
       end
     end
   end

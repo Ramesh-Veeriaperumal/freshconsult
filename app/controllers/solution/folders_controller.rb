@@ -66,44 +66,45 @@ class Solution::FoldersController < ApplicationController
   end
 
   def create
-    @folder = Solution::Builder.folder(params)
-    @folder_version = @folder.send(language_scoper)
-    @category_meta = @folder.solution_category_meta
+    @folder_meta = Solution::Builder.folder(params)
+    @folder = @folder_meta.send(language_scoper)
+    @category_meta = @folder_meta.solution_category_meta
    
     respond_to do |format|
-      if @folder.errors.empty?
-        format.html { redirect_to solution_folder_path(@folder) }
+      if @folder_meta.errors.empty?
+        format.html { redirect_to solution_folder_path(@folder_meta) }
         format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @folder, :status => :created }
-        format.json  { render :json => @folder, :status => :created }
+        format.xml  { render :xml => @folder_meta, :status => :created }
+        format.json  { render :json => @folder_meta, :status => :created }
       else
-        @folder_meta = @folder
         format.html { render :action => "new" }
         format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @folder_meta.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @folder_meta.errors, :status => :unprocessable_entity }
       end
     end
     
   end
 
   def update
-    @folder = Solution::Builder.folder(params)
-    @folder_version = @folder.send(language_scoper)
+    @folder_meta = Solution::Builder.folder(params)
+    @folder = @folder_meta.send(language_scoper)
     respond_to do |format|     
-      if @folder.errors.empty?
+      if @folder_meta.errors.empty?
         format.html do 
-          redirect_to solution_folder_path(@folder.id)
+          redirect_to solution_folder_path(@folder_meta.id)
         end
         format.js { render 'after_save' }
-        format.xml  { render :xml => @folder, :status => :ok } 
-        format.json  { render :json => @folder, :status => :ok }     
+        format.xml  { render :xml => @folder_meta, :status => :ok } 
+        format.json  { render :json => @folder_meta, :status => :ok }     
       else
         format.html { 
           set_customers_field
           render :action => "edit" 
         }
         format.js { render 'after_save' }
-        format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @folder_meta.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @folder_meta.errors, :status => :unprocessable_entity }
       end
     end
   end

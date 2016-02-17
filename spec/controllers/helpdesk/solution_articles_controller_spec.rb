@@ -99,7 +99,7 @@ describe Solution::ArticlesController do
     }
     article = @account.solution_articles.find_by_title(name)
     article.should be_an_instance_of(Solution::Article)
-    response.should redirect_to(solution_article_version_path(article, article.language.code))
+    redirect_path_check(article)
   end
 
   it "should create a new solution article and the content must be saved in article bodies table" do
@@ -141,7 +141,7 @@ describe Solution::ArticlesController do
     name = "#{Faker::Name.name} #{(Time.now.to_f*1000).to_i.to_s}"
     art_description_text = Faker::Lorem.sentence(3)
     get :edit, :id => @test_article_meta.id
-    response.should  redirect_to("/solution/articles/#{@test_article_meta.id}-#{@test_article_meta.primary_article.title[0..100].downcase.gsub(/[^a-z0-9]+/i, '-')}#edit")
+    response.should  redirect_to("/solution/articles/#{@test_article_meta.primary_article.to_param}#edit")
     name = Faker::Name.name
     put :update, :id => @test_article_meta.id,  
       :solution_article_meta => {
@@ -456,5 +456,11 @@ describe Solution::ArticlesController do
     indexed_json["folder"]["customer_folders"].each_with_index do |cf,i|
       cf["customer_id"].should be_eql(folder_meta.customer_folders[i].customer_id)
     end
+  end
+
+  def redirect_path_check(item)
+    response.should redirect_to( 
+      Account.current.multilingual? ? solution_article_version_path(item, item.language.code) : solution_article_path(item)
+    )
   end
 end
