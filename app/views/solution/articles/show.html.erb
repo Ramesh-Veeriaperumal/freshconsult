@@ -9,7 +9,9 @@
 	<% content_for :layoutType do %><%= solution_body_classes %><% end %>
 	<% content_for :sticky_title do %>
 		<%= render :partial => "show_master" if Account.current.multilingual? && !@article.is_primary? %>
-		<%= render :partial => "language_tabs" if Account.current.multilingual? %>
+		<div class="language-tabs">
+			<%= render :partial => "language_tabs" if Account.current.multilingual? %>
+		</div>
 		<div class="solution-header draft-notif" id="solution-notification-bar">
 			<%= render :partial => 'notification_bar' %>
 		</div>
