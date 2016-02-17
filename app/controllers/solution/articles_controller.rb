@@ -160,6 +160,7 @@ class Solution::ArticlesController < ApplicationController
       next if a.is_primary?
       a.update_attributes(:outdated => true)
     end
+    @article_meta.reload
     respond_to do |format|
       format.html { render :partial => "language_tabs" }
     end
