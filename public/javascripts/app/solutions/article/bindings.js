@@ -191,6 +191,7 @@ window.App = window.App || {};
     postOutdate: function (result) {
       $('.outdate-section').addClass('hide');
       $('.language-tabs').html(result);
+      $('.lang-tab').first().addClass('selected');
       this.formatTranslationDropdown();
     },
 
