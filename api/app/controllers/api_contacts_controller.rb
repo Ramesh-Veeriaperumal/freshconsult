@@ -2,6 +2,8 @@ class ApiContactsController < ApiApplicationController
   include Helpdesk::TagMethods
   decorate_views
 
+  around_filter :run_on_slave, :only => [:index]
+
   def create
     assign_protected
     contact_delegator = ContactDelegator.new(@item)
