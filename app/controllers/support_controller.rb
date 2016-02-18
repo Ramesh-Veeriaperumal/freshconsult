@@ -250,7 +250,8 @@ class SupportController < ApplicationController
       request_language: http_accept_language.compatible_language_from(I18n.available_locales), 
       url_locale: params[:url_locale])
     override_default_locale unless current_user.present? || Language.current.code.to_sym == I18n.locale
-    redirect_to request.fullpath.prepend("/#{Language.current.code}") if current_account.multilingual? && params[:url_locale] != Language.current.code
+    redirect_to request.fullpath.prepend("/#{Language.current.code}") if current_account.multilingual? && 
+        (!facebook? && (params[:url_locale] != Language.current.code))
   end
 
   def supported_language?

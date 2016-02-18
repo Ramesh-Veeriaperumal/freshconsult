@@ -1,7 +1,6 @@
 class Support::Solutions::FoldersController < SupportController
-	before_filter :load_meta, :only => [:show]
-	before_filter :check_version_availability, :only => [:show]
 	before_filter :scoper, :check_folder_permission
+	before_filter :check_version_availability, :only => [:show]
 	before_filter :render_404, :unless => :folder_visible?, :only => :show
 	before_filter { |c| c.check_portal_scope :open_solutions }
 	
@@ -21,14 +20,11 @@ class Support::Solutions::FoldersController < SupportController
 
 	private
 
-		def load_meta
-			@solution_item = @folder_meta = current_account.solution_folder_meta.find_by_id(params[:id])
-		end
-
 		def scoper
-			@folder = @folder_meta.current_folder
-			(raise ActiveRecord::RecordNotFound and return) if @folder_meta.nil?
-			@category = @folder_meta.solution_category_meta.current_category
+			@solution_item = @folder = current_account.solution_folder_meta.find_by_id(params[:id])
+			(raise ActiveRecord::RecordNotFound and return) if @folder.nil?
+
+			@category = @folder.solution_category_meta
 		end
     
     def load_page_meta
@@ -48,10 +44,10 @@ class Support::Solutions::FoldersController < SupportController
     end
 
     def alternate_version_languages
-      @folder.solution_folder_meta.solution_folders.map { |f| f.language.code }
+      @folder.solution_folders.map { |f| f.language.code }
     end
 
     def default_url
-      support_solutions_folder_path(@folder_meta, :url_locale => current_account.language)
+      support_solutions_folder_path(@folder, :url_locale => current_account.language)
     end
 end

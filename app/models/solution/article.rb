@@ -62,6 +62,8 @@ class Solution::Article < ActiveRecord::Base
   delegate :visible?, :to => :solution_folder_meta
 
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
+  
+  SELECT_ATTRIBUTES = ["id", "thumbs_up", "thumbs_down"]
 
   def self.articles_for_portal_conditions(portal)
     { :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',
@@ -185,8 +187,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def as_json(options={})
-    return super(options) if (options[:tailored_json].present? || 
-        Account.current.features_included?(:solutions_meta_read))
+    return super(options) if (options[:tailored_json].present?)
     old_options = options.dup
     options.merge!(Solution::Constants::API_OPTIONS)
     options[:except] += (old_options[:except] || [])
@@ -197,10 +198,6 @@ class Solution::Article < ActiveRecord::Base
   # Added for portal customisation drop
   def self.filter(_per_page = self.per_page, _page = 1)
     paginate :per_page => _per_page, :page => _page
-  end
-  
-  def to_liquid
-    @solution_article_drop ||= Solution::ArticleDrop.new self
   end
   
   def article_title

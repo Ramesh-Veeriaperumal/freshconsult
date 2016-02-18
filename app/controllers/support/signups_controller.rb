@@ -6,7 +6,7 @@ class Support::SignupsController < SupportController
   before_filter :chk_for_logged_in_usr
   before_filter :initialize_user
   skip_before_filter :verify_authenticity_token
-  before_filter :set_validatable_custom_fields, :remove_noneditable_fields_in_params, :set_language,
+  before_filter :set_validatable_custom_fields, :remove_noneditable_fields_in_params, :set_user_language,
                 :set_required_fields, :only => [:create]
   
   def new
@@ -50,7 +50,7 @@ class Support::SignupsController < SupportController
                                 :error_label => :label_in_portal }
     end
 
-    def set_language
+    def set_user_language
       return unless current_account.features_included?(:multi_language)
       params[:user][:language] ||= ( http_accept_language.compatible_language_from I18n.available_locales || 
         current_portal.language || current_account.language

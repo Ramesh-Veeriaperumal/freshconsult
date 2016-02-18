@@ -7,48 +7,59 @@ module Solution::LanguageAssociations
     base::BINARIZE_COLUMNS.each do |col|
       base.binarize col, :flags => Language.all_keys
     end
-    base_class = base.name.chomp('Meta')
-    base_class_table_name = base_class.constantize.table_name
-    base_name = base_class.gsub("Solution::", '').downcase
+    child_class = base.name.chomp('Meta')
+    child_class_table_name = child_class.constantize.table_name
+    child_name = child_class.gsub("Solution::", '').downcase
     table_name = base.table_name.to_sym
     
     Language.all.each do |lang|
-      base.has_one :"#{lang.to_key}_#{base_name}",
-        :conditions => { language_id: lang.id },
-        :class_name => base_class, 
+      base.has_one :"#{lang.to_key}_#{child_name}",
+        :conditions => proc { { language_id: lang.id, 
+          account_id: Account.current.id } },
+        :class_name => child_class, 
         :foreign_key => :parent_id, 
         :readonly => false, 
         :autosave => true,
         :inverse_of => table_name
     end
 
-    base.has_one :"current_#{base_name}",
-      :conditions => proc { Language.current? ? { language_id: Language.current.id } : 
-            { language_id: Language.for_current_account.id } },
-      :class_name => base_class,
+    base.has_one :"current_#{child_name}",
+      :conditions => proc { { 
+            language_id: (Language.current? ? Language.current.id : Language.for_current_account.id), 
+            account_id: Account.current.id } },
+      :class_name => child_class,
       :foreign_key => :parent_id,
       :readonly => false,
       :autosave => true,
       :inverse_of => table_name
       
-    base.has_one :"primary_#{base_name}",
-      :conditions => proc { { language_id: Language.for_current_account.id } },
-      :class_name => base_class,
+    base.has_one :"primary_#{child_name}",
+      :conditions => proc { { language_id: Language.for_current_account.id, 
+        account_id: Account.current.id } },
+      :class_name => child_class,
       :foreign_key => :parent_id, 
       :readonly => false,
       :autosave => true,
       :inverse_of => table_name
-
-    delegation_title = base_class.constantize.column_names.include?("name") ? :name : :title
-    base.delegate delegation_title, :description, :to => :"current_#{base_name}"
+      
+    proc {
+      unless Language.current?
+        delegation_title = child_class.constantize.column_names.include?("name") ? :name : :title
+        base.delegate delegation_title, :description, :to => :"current_#{child_name}"
+      end
+    }
     
     def self.translation_associations
-      base_name = self.name.chomp('Meta').gsub("Solution::", '').downcase
-      (['primary'] | Account.current.applicable_languages).collect(&:to_sym).collect {|s| :"#{s}_#{base_name}"}
+      child_name = self.name.chomp('Meta').gsub("Solution::", '').downcase
+      (['primary'] | Account.current.applicable_languages).collect(&:to_sym).collect {|s| :"#{s}_#{child_name}"}
     end
 
     def self.short_name
       self.name.chomp('Meta').gsub("Solution::", '').downcase
+    end
+    
+    def self.child_class
+      self.name.chomp('Meta').constantize
     end
     
     scope :include_translations, lambda {
@@ -57,10 +68,19 @@ module Solution::LanguageAssociations
     
     scope :current, lambda {
       {
-        :joins => :"current_#{base_name}",
-        :select => ["`#{base_class_table_name}`.*,`#{base_class_table_name}`.id as current_child_id, `#{table_name}`.*"]
+        :joins => :"current_#{child_name}",
+        :select => [ select_string_for_query ]
       }
     }
+    
+    def self.select_string_for_query
+      select_string = "`#{child_class.table_name}`.*"
+      child_class::SELECT_ATTRIBUTES.each do |attribute|
+        select_string += ", `#{child_class.table_name}`.#{attribute} as current_child_#{attribute}"
+      end
+      select_string += ", `#{table_name}`.*"
+      select_string
+    end
 
     default_scope lambda { Language.current? ? current : unscoped }
         

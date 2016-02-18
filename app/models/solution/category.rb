@@ -31,6 +31,8 @@ class Solution::Category < ActiveRecord::Base
   alias_method :parent, :solution_category_meta
 
   include Solution::LanguageMethods
+  
+  SELECT_ATTRIBUTES = ["id"]
 
   def to_s
     name
@@ -57,10 +59,6 @@ class Solution::Category < ActiveRecord::Base
 
   def self.get_default_categories_visibility(user)
     user.customer? ? {:is_default=>false} : {}
-  end
-
-  def to_liquid
-    @solution_category_drop ||= (Solution::CategoryDrop.new self)
   end
 
   def primary?

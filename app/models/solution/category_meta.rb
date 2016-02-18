@@ -85,7 +85,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	end
 	
 	def to_liquid
-		@solution_category_meta_drop ||= (Solution::CategoryMetaDrop.new self)
+		@solution_category_drop ||= (Solution::CategoryDrop.new self)
 	end
 
 	private

@@ -41,6 +41,8 @@ class Solution::Folder < ActiveRecord::Base
 
   include Solution::MetaMethods
   include Solution::LanguageMethods
+  
+  SELECT_ATTRIBUTES = ["id"]
 
   def to_s
     name
@@ -129,10 +131,6 @@ class Solution::Folder < ActiveRecord::Base
   def as_json(options={})
     options[:except] = [:account_id,:import_id]
     super options
-  end
-
-  def to_liquid
-    @solution_folder_drop ||= Solution::FolderDrop.new self
   end
 
   def update_search_index

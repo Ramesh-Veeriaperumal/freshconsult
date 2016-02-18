@@ -71,8 +71,9 @@ class Language
 
 		def set_current(params={})
 			[:url, :user, :browser, :portal, :primary].each do |meth|
-				Thread.current[:language] = send("fetch_from_#{meth}", params)
-				break if Language.current? && Account.current.all_language_objects.include?(Language.current)
+				language = send("fetch_from_#{meth}", params)
+				Thread.current[:language] = language if Account.current.valid_portal_language?(language)
+				break if Language.current?
 			end
 		end
 
@@ -122,6 +123,9 @@ class Language
 		def for_current_user
 			return nil if User.current.blank?
 			(find_by_code(User.current.language) || for_current_account)
+			
+			# If Agent, check if the language is in Account-Supportedlist
+			# If user, check in portal list
 		end
 
 		def for_user(user)

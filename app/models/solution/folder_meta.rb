@@ -104,7 +104,7 @@ class Solution::FolderMeta < ActiveRecord::Base
   end
 	
 	def to_liquid
-		@solution_folder_meta_drop ||= Solution::FolderMetaDrop.new self
+		@solution_folder_drop ||= Solution::FolderDrop.new self
 	end
 
 	private

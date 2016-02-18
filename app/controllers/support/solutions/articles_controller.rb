@@ -4,11 +4,9 @@ class Support::Solutions::ArticlesController < SupportController
   include Solution::Feedback
   include Solution::ArticlesVotingMethods
 
-  before_filter :load_meta, :only => [:show]
-
-  before_filter :check_version_availability, :only => [:show]
-
   before_filter :load_and_check_permission, :except => [:index]
+  
+  before_filter :check_version_availability, :only => [:show]
 
   before_filter :render_404, :unless => :article_visible?, :only => [:show]
 
@@ -40,7 +38,7 @@ class Support::Solutions::ArticlesController < SupportController
   
   def show
     wrong_portal and return unless(main_portal? || 
-        (current_portal.has_solution_category?(@article_meta.solution_folder_meta.solution_category_meta_id)))
+        (current_portal.has_solution_category?(@article.solution_folder_meta.solution_category_meta_id)))
 
     respond_to do |format|
       format.html { 
@@ -52,7 +50,7 @@ class Support::Solutions::ArticlesController < SupportController
   end
 
   def hit
-    @article.hit! unless agent?
+    @article.current_article.hit! unless agent?
     render_tracker
   end
   
@@ -68,15 +66,13 @@ class Support::Solutions::ArticlesController < SupportController
 
   private
 
-    def load_meta
-      @solution_item = @article_meta = current_account.solution_article_meta.find(params[:id])
-    end
-
     def load_and_check_permission
-      @article = @article_meta.current_article
-      unless @article.visible?(current_user)    
+      @solution_item = @article = current_account.solution_article_meta.find(params[:id])
+      unless @article.visible?(current_user)
         unless logged_in?
-          session[:return_to] = solution_category_folder_article_path(@article.folder.category_id, @article.folder_id, @article.id)
+          session[:return_to] = solution_category_folder_article_path(
+              @article.solution_folder_meta.solution_category_meta_id,
+              @article.solution_folder_meta_id, @article.id)
           redirect_to login_url
         else
           flash[:warning] = t(:'flash.general.access_denied')
@@ -84,9 +80,10 @@ class Support::Solutions::ArticlesController < SupportController
         end
       end
     end
-
+    
     def article_visible?
-      return false unless (((current_user && current_user.agent? && privilege?(:view_solutions)) || @article.published?) and @article.visible_in?(current_portal))
+      return false unless (((current_user && current_user.agent? && privilege?(:view_solutions)) || 
+                    @article.current_article.published?) and @article.visible_in?(current_portal))
       draft_preview_agent_filter?
     end
     
@@ -115,7 +112,8 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def draft_preview_agent_filter?
-      return (current_user && current_user.agent? && (@article.draft.present? || !@article.published?) && privilege?(:view_solutions)) if draft_preview?
+      return (current_user && current_user.agent? && (@article.draft.present? || 
+            !@article.current_article.published?) && privilege?(:view_solutions)) if draft_preview?
       true
     end
 
@@ -152,7 +150,7 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def alternate_version_languages
-      @article.solution_article_meta.solution_articles.map{ |a| a.language.code }
+      @article.solution_articles.map{ |a| a.language.code }
     end
 
     def cleanup_params_for_title
@@ -164,7 +162,7 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def default_url
-      support_solutions_article_path(@article_meta.primary_article, :url_locale => current_account.language)
+      support_solutions_article_path(@article, :url_locale => current_account.language)
     end
 
 end

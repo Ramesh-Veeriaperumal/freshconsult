@@ -108,7 +108,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	end
 	
 	def to_liquid
-		@solution_article_meta_drop ||= (Solution::ArticleMetaDrop.new self)
+		@solution_article_drop ||= (Solution::ArticleDrop.new self)
 	end
 	
 	def current_article_body

@@ -49,14 +49,14 @@ module Cache::Memcache::Mobihelp::Solution
     def mobihelp_solution_updated_time_key(app_id)
       MOBIHELP_SOLUTION_UPDATED_TIME % { :account_id => account_id, :app_id => app_id }
     end
-
+    
     def solutions(category_id)
       MemcacheKeys.fetch(mobihelp_solutions_key_with_category_id(category_id)) {
-        category = Solution::Category.find_by_id(category_id)
+        category_meta = Solution::CategoryMeta.find_by_id(category_id)
 
-        category.to_json(:except => [:account_id, :import_id], :include => {:public_folders => 
-          {:include => {:published_articles => {:include => {:tags => {:only => :name }}, 
-          :except => [:account_id, :import_id]}}, :except => [:account_id, :import_id]}})
+        category_meta.to_json(:include => {:public_folders => 
+          {:include => {:published_articles => {:include => {:tags => {:only => :name }}}}, 
+          :except => [:account_id, :import_id]}})
       }
     end
 
