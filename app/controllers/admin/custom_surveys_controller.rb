@@ -71,6 +71,7 @@ class Admin::CustomSurveysController < Admin::AdminController
       @errors = @survey.errors
       result_set = {'errors' => @errors}
     end
+    result_set['default_survey_enabled'] = current_account.default_survey_enabled?
     flash[:notice] ||= @survey_id.blank? ? t(:'admin.surveys.successfully_created') : 
                                            t(:'admin.surveys.successfully_updated') if @errors.blank?
     render :json => result_set
