@@ -7,7 +7,7 @@ class ArticleObserver < ActiveRecord::Observer
 		remove_script_tags(article)
 		set_un_html_content(article)
 		set_art_type(article)
-		modified_date(article) if (article.article_body.changed? or article.title_changed?)
+		modify_date_and_author(article) if (article.article_body.changed? || article.title_changed?)
 		article.article_changes
 		create_draft_for_article(article)
 		article.seo_data ||= {}
@@ -36,8 +36,9 @@ private
 			article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
     end
 
-    def modified_date(article)
+    def modify_date_and_author(article)
       article.modified_at = Time.now.utc
+      article.modified_by = User.current.id
     end
 
     def handle_meta_likes(article)

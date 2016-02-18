@@ -441,4 +441,13 @@ module SolutionHelper
 	def path_url_locale
 		current_account.multilingual? ? { :url_locale => @language.code } : {}
 	end
+
+	def article_history article
+		modified_flag = article.published? && article.modified_at.present? && (article.created_at != article.modified_at)
+		time = modified_flag ? article.modified_at : article.created_at
+		op = modified_flag ? t('solution.general.last_published') : t('solution.general.created_by')
+		op << " #{modified_flag && article.modified_by.present? ? article.recent_author.name : article.user.name}, "
+		op << "<abbr data-livestamp=#{time.to_i}>#{formated_date(time)}</abbr>"
+		op.html_safe
+	end
 end

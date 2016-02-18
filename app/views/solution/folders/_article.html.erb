@@ -39,11 +39,7 @@
 					<%= pjax_link_to(h((article.primary_article.draft || article).title), solution_article_path(article)) %>
 				</div>
 				<div class="comm-item-details muted">
-					<!-- Referring to primary article to avoid error in bulk actions. -->
-					<%= t('solution.details',
-						:user_name => article.primary_article.user,
-						:created_time => article.primary_article.created_at.to_i,
-						:time_ago => formated_date(article.primary_article.created_at) ).html_safe %> 
+					<%= article_history(article.primary_article) %>
 				</div>
 			</div>
 		</div>
