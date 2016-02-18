@@ -4197,7 +4197,7 @@ en:
     title_counter_message: Best SEO pages, recommend a maximum of 72 characters for title.
     description_counter_message: Best SEO pages, recommend a maximum of 150 characters for description.
     char_count: characters
-    meta_keywords_message: Seperate keywords with comma
+    meta_keywords_message: Separate keywords with comma
     user_details: "By <span class='article-user'>%{user}</span>, %{time}"
     feedback_message_1: "Need more information"
     feedback_message_2: "Difficult to understand"
