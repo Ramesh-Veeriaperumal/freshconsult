@@ -58,7 +58,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :agents, :controller => "api_agents", :only => [:index, :show]
+    resources :agents, :controller => "api_agents", :only => [:index, :show] do
+      collection do
+        get :me
+      end
+    end
 
     resources :contact_fields, :controller => "api_contact_fields", :only => [:index]
 

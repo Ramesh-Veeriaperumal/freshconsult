@@ -372,7 +372,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by V2 API
     resource :"api_contact", :only => [:make_agent]
-    resource :"api_agent", :only => [:show, :index]
+    resource :"api_agent", :only => [:show, :index, :me]
   end
 
   manage_canned_responses do

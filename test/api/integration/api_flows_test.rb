@@ -3,6 +3,7 @@ require_relative '../test_helper'
 class ApiFlowsTest < ActionDispatch::IntegrationTest
   include DiscussionsTestHelper
   include TicketFieldsTestHelper
+  include AgentsTestHelper
 
   def test_json_format
     get '/api/discussions/categories.json', nil, @headers
@@ -1013,5 +1014,13 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert 'authorization', response.headers['Access-Control-Allow-Headers']
     assert 'GET, POST, PUT, DELETE, OPTIONS', response.headers['Access-Control-Allow-Methods']
     assert 'X-Path, X-Method, X-Query-String, X-Ua-Compatible, X-Meta-Request-Version, X-Request-Id, X-Runtime, X-RateLimit-Total, X-RateLimit-Remaining, X-RateLimit-Used, X-Freshdesk-API-Version', response.header['Access-Control-Expose-Headers']
+  end
+
+  def test_me_with_new_agent
+    sample_user = add_test_agent(@account)
+    headers = set_custom_auth_headers(@headers, sample_user.email, 'test')
+    get 'api/agents/me', nil, @headers.merge(headers)
+    assert_response 200
+    response.body.must_match_json_expression(agent_pattern(@account.all_agents.find(sample_user.agent.id)))
   end
 end
