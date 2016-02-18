@@ -46,8 +46,8 @@ class Middleware::Pod
           Rails.logger.info 'Determining login for google.'
           query = Rack::Utils.parse_nested_query(env['QUERY_STRING'])
           state_params = CGI.parse(query['state'])
-          return if state_params["full_domain"].blank?
-          shard = ShardMapping.lookup_with_domain(state_params["full_domain"])
+          return if state_params["full_domain"][0].blank?
+          shard = ShardMapping.lookup_with_domain(state_params["full_domain"][0])
           determine_pod(shard)
         when 'google_gadget'
           return
