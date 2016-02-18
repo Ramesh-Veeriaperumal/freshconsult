@@ -153,7 +153,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
     end
 
     def load_ticket_with_notes
-      load_or_show_error(true)
+      request.format.html? ? load_or_show_error : load_or_show_error(true)
     end
 
     def load_or_show_error(load_notes = false)

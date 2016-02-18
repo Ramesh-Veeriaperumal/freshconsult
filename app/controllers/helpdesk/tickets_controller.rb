@@ -1350,6 +1350,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_ticket_with_notes
+    return load_ticket if request.format.html? or request.format.nmobile? or request.format.js? 
     @ticket = @item = load_by_param(params[:id], preload_options)
     load_or_show_error(true)
   end

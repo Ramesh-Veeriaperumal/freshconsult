@@ -184,7 +184,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   def conversation(page = nil, no_of_records = 5, includes=[])
     includes = note_preload_options if includes.blank?
-    archive_notes.exclude_source('meta').newest_first.find(:all, :include => includes).paginate(:page => page, :per_page => no_of_records)
+    archive_notes.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
   end
 
   def conversation_since(since_id)
