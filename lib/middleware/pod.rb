@@ -45,9 +45,11 @@ class Middleware::Pod
         when 'google_login', 'google_gadget_login'
           Rails.logger.info 'Determining login for google.'
           host_url, portal_url = CGI.unescape(env["QUERY_STRING"]).scan(/full_domain=(.+)&portal_url=(.+)&.*/).flatten
-
+          return if host_url.blank?
           shard = ShardMapping.lookup_with_domain(host_url)
           determine_pod(shard)
+        when 'google_gadget'
+          return
         when 'twitter'
           return # For twitter redirection is based on customer portal rather than integrations url.
         else
