@@ -8,7 +8,11 @@ class Solution::Article < ActiveRecord::Base
 
   belongs_to_account
 
-  has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
+  has_many :voters, 
+    :through => :votes, 
+    :source => :user,
+    :order => "#{Vote.table_name}.id DESC",
+    :uniq => true
   
   has_many_attachments
 
@@ -19,13 +23,13 @@ class Solution::Article < ActiveRecord::Base
     :as => 'notable'
 
   has_many :tag_uses,
-    :as => :taggable,
     :class_name => 'Helpdesk::TagUse',
+    :as => :taggable,
     :dependent => :destroy
 
-  has_many :tags, 
-    :class_name => 'Helpdesk::Tag',
-    :through => :tag_uses
+  has_many :tags,
+    :through => :tag_uses,
+    :class_name => 'Helpdesk::Tag'
 
   has_many :support_scores, :as => :scorable, :dependent => :destroy
 
@@ -33,12 +37,24 @@ class Solution::Article < ActiveRecord::Base
 
   has_one :article_body, :autosave => true
   
-  has_many :tickets, :through => :article_ticket, :source => :ticketable,
-           :source_type => 'Helpdesk::Ticket', :order => 'created_at DESC'
+  has_many :tickets, 
+    :through => :article_ticket, 
+    :source => :ticketable,
+    :source_type => 'Helpdesk::Ticket', 
+    :order => 'created_at DESC'
 
-  has_many :archive_tickets, :through => :article_ticket, :source => :ticketable, :source_type => 'Helpdesk::ArchiveTicket'
+  has_many :archive_tickets, 
+    :through => :article_ticket, 
+    :source => :ticketable, 
+    :source_type => 'Helpdesk::ArchiveTicket'
 	
-	belongs_to :solution_article_meta, :class_name => "Solution::ArticleMeta", :foreign_key => "parent_id", :readonly => false
+	belongs_to :solution_article_meta,
+    :class_name => "Solution::ArticleMeta",
+    :foreign_key => "parent_id",
+    :readonly => false
 
-  has_one :solution_folder_meta, :class_name => "Solution::FolderMeta", :through => :solution_article_meta, :readonly => false
+  has_one :solution_folder_meta,
+    :through => :solution_article_meta,
+    :class_name => "Solution::FolderMeta",
+    :readonly => false
 end

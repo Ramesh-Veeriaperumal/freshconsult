@@ -20,15 +20,25 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	has_many :solution_folders, :through => :solution_folder_meta
 
-	has_many :solution_categories, :class_name => "Solution::Category", :foreign_key => "parent_id", :autosave => true, :inverse_of => :solution_category_meta, :dependent => :destroy
+	has_many :solution_categories, 
+		:inverse_of => :solution_category_meta, 
+		:class_name => "Solution::Category", 
+		:foreign_key => "parent_id", 
+		:autosave => true, 
+		:dependent => :destroy
 
-	has_many :solution_article_meta, :class_name => "Solution::ArticleMeta", :through => :solution_folder_meta
+	has_many :solution_article_meta, 
+		:through => :solution_folder_meta,
+		:class_name => "Solution::ArticleMeta"
 
-	has_many :portal_solution_categories, :class_name => 'PortalSolutionCategory',
+	has_many :portal_solution_categories, 
+		:class_name => 'PortalSolutionCategory',
 		:foreign_key => :solution_category_meta_id,
 		:dependent => :delete_all
 
-	has_many :portals, :class_name => "Portal", :through => :portal_solution_categories, 
+	has_many :portals, 
+		:through => :portal_solution_categories,
+		:class_name => "Portal",
     :after_add => :clear_cache,
     :after_remove => :clear_cache
 
@@ -38,21 +48,22 @@ class Solution::CategoryMeta < ActiveRecord::Base
 		:dependent => :destroy
 
 	has_many :mobihelp_apps,
-		:class_name => 'Mobihelp::App',
 		:through => :mobihelp_app_solutions,
+		:class_name => 'Mobihelp::App',
 		:source => :app
 
 	has_many :solution_folder_meta,
+		:order => "`solution_folder_meta`.position",
 		:class_name => "Solution::FolderMeta",
 		:foreign_key => :solution_category_meta_id,
-		:order => "`solution_folder_meta`.position",
 		:dependent => :destroy
 
 	has_many :public_folder_meta,
-		:class_name =>'Solution::FolderMeta',
-		:foreign_key => :solution_category_meta_id,
+		:conditions => ["`solution_folder_meta`.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]],
 		:order => "`solution_folder_meta`.position",
-		:conditions => ["`solution_folder_meta`.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]]
+		:class_name =>'Solution::FolderMeta',
+		:foreign_key => :solution_category_meta_id
+		
 
 	COMMON_ATTRIBUTES = ["position", "is_default", "created_at"]
 	CACHEABLE_ATTRIBUTES = ["id","name","account_id","position","is_default"]

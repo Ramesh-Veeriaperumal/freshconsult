@@ -19,29 +19,37 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta', :autosave => true
 
-	has_many :solution_folders, :class_name => "Solution::Folder", :foreign_key => "parent_id", :autosave => true, :inverse_of => :solution_folder_meta, :dependent => :destroy
+	has_many :solution_folders, 
+		:inverse_of => :solution_folder_meta,
+		:class_name => "Solution::Folder", 
+		:foreign_key => "parent_id", 
+		:autosave => true, 
+		:dependent => :destroy
 
-	has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy, :autosave => true
+	has_many :customer_folders , 
+		:class_name => 'Solution::CustomerFolder' , 
+		:autosave => true,
+		:dependent => :destroy
 
 	has_many :customers, :through => :customer_folders
 
 	has_many :solution_article_meta,
+		:order => :"solution_article_meta.position",
 		:class_name => "Solution::ArticleMeta",
 		:foreign_key => :solution_folder_meta_id,
-		:order => :"solution_article_meta.position",
 		:dependent => :destroy
 
 	has_many :solution_articles,
-		:class_name => "Solution::Article",
 		:through => :solution_article_meta,
-		:order => :"solution_article_meta.position"
+		:order => :"solution_article_meta.position",
+		:class_name => "Solution::Article"
 		
 	has_many :published_article_meta, 
-		:class_name =>'Solution::ArticleMeta',
-		:foreign_key => :solution_folder_meta_id, 
-		:order => "`solution_article_meta`.position",
  		:conditions => "`solution_articles`.status = 
-			#{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}"
+			#{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}",
+		:order => "`solution_article_meta`.position",
+		:class_name =>'Solution::ArticleMeta',
+		:foreign_key => :solution_folder_meta_id
 
 	acts_as_list :scope => :solution_category_meta
 

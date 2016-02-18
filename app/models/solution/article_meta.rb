@@ -14,17 +14,25 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	include Solution::ApiDelegator
 	include Solution::UrlSterilize
 
-	has_many :solution_articles, :class_name => "Solution::Article", :foreign_key => :parent_id, :autosave => true, :inverse_of => :solution_article_meta, :dependent => :destroy
+	has_many :solution_articles,
+		:inverse_of => :solution_article_meta,
+		:class_name => "Solution::Article",
+		:foreign_key => :parent_id,
+		:autosave => true,
+		:dependent => :destroy
 
 	belongs_to :solution_folder_meta, 
 		:class_name => "Solution::FolderMeta", 
-		:foreign_key => :solution_folder_meta_id, :autosave => true
+		:foreign_key => :solution_folder_meta_id, 
+		:autosave => true
 
 	has_one :solution_category_meta,
-		:class_name => "Solution::CategoryMeta",
-		:through => :solution_folder_meta
+		:through => :solution_folder_meta,
+		:class_name => "Solution::CategoryMeta"
 			
-	has_one :solution_folder, :class_name => "Solution::Folder", :through => :solution_folder_meta
+	has_one :solution_folder, 
+		:through => :solution_folder_meta,
+		:class_name => "Solution::Folder"
 
 	acts_as_list :scope => :solution_folder_meta
 
