@@ -44,9 +44,10 @@ class Middleware::Pod
       case provider
         when 'google_login', 'google_gadget_login'
           Rails.logger.info 'Determining login for google.'
-          host_url, portal_url = CGI.unescape(env["QUERY_STRING"]).scan(/full_domain=(.+)&portal_url=(.+)&.*/).flatten
-          return if host_url.blank?
-          shard = ShardMapping.lookup_with_domain(host_url)
+          query = Rack::Utils.parse_nested_query(env['QUERY_STRING'])
+          state_params = CGI.parse(query['state'])
+          return if state_params["full_domain"].blank?
+          shard = ShardMapping.lookup_with_domain(state_params["full_domain"])
           determine_pod(shard)
         when 'google_gadget'
           return
@@ -83,10 +84,7 @@ class Middleware::Pod
   end
 
   def integrations_url?(host)
-    Rails.logger.info "checking integrations_url for #{host}. Provided value is #{AppConfig['integrations_url'][Rails.env]}"
-    host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '') or
-     (Rails.env.development? and
-      host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '').gsub(/:3000/i,''))
+    host == ::INTEGRATION_URL
   end
 
 end
