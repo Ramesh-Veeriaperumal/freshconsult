@@ -4,7 +4,7 @@ json.set! :conversations, @conversations do |conversation|
   json.set! :body_html, conversation.body_html
 
   json.cache! CacheLib.compound_key(conversation, ApiConstants::CACHE_VERSION[:v2], params) do
-    json.extract! conversation, :id, :user_id, :support_email, :source
+    json.extract! conversation, :id, :incoming, :private, :user_id, :support_email, :source
 
     json.set! :ticket_id, @item.display_id
     json.set! :to_emails, conversation.schema_less_note.try(:to_emails)
@@ -12,7 +12,6 @@ json.set! :conversations, @conversations do |conversation|
     json.set! :cc_emails, conversation.schema_less_note.try(:cc_emails)
     json.set! :bcc_emails, conversation.schema_less_note.try(:bcc_emails)
 
-    json.partial! 'shared/boolean_format', boolean_fields: { incoming: conversation.incoming, private: conversation.private }
     json.partial! 'shared/utc_date_format', item: conversation
   end
   json.set! :attachments do
