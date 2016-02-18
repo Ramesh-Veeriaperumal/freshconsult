@@ -13,7 +13,6 @@
       <p><%= t('.helpcard1') %></p>
       <p><%= t('.helpcard2') %></p>
       <p><%= t('.helpcard3') %></p>
-      <% @archive_feature = current_account.features?(:archive_tickets) %>
       <% if @archive_feature %>
         <p><%= font_icon("archived-ticket", :size => 16, :class => "", :id => "cm-sb-toggle").html_safe %> <%= t('helpdesk.tags.tag.archive_tickets') %> </p>
       <% end %>
