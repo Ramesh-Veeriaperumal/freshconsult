@@ -1,9 +1,7 @@
 json.cache! CacheLib.key(@item, params) do
-  json.extract! @item, :id, :name, :description, :escalate_to
-  json.set! :business_hour_id, @item.business_calendar_id
-  json.unassigned_for GroupConstants::UNASSIGNED_FOR_MAP.key(@item.assign_time)
-  json.partial! 'shared/boolean_format', boolean_fields: { auto_ticket_assign: @item.ticket_assign_type } if GroupDecorator.round_robin_enabled?
-  json.partial! 'shared/utc_date_format', item: @item
+  json.extract! @item, :id, :name, :description, :escalate_to, :unassigned_for, :business_hour_id
+	json.set! :auto_ticket_assign, @item.auto_ticket_assign if @item.round_robin_enabled?
+	json.partial! 'shared/utc_date_format', item: @item
 end
 
-json.agent_ids @item.agent_groups.pluck(:user_id)
+json.set! :agent_ids, @item.agent_ids_from_db
