@@ -91,11 +91,7 @@ class Helpdesk::ConversationsController < ApplicationController
     tweet_text = params[:helpdesk_note][:note_body_attributes][:body].strip
     twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : "mention"
     
-    if twt_type.eql?"mention"
-      error_message, @tweet_body = validate_tweet(tweet_text, "#{@parent.latest_twitter_comment_user}") 
-    else
-      error_message, @tweet_body = validate_tweet(tweet_text, nil, false) 
-    end
+    error_message, @tweet_body = get_tweet_text(twt_type, @parent, tweet_text)
     if error_message.blank?
       if @item.save_note 
         error_message, reply_twt = send("send_tweet_as_#{twt_type}")
