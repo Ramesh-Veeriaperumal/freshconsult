@@ -88,7 +88,9 @@ window.App = window.App || {};
       });
 
       $('body').on('reorder.folders_articles', function () {
-        App.Solutions.NavMenu.reload();
+        if (App.namespace != "solution/folders/show") {
+          App.Solutions.NavMenu.reload();
+        }
       });
 
       $('body').on('change.folders_articles', '#move_to, #change_author', function () {
