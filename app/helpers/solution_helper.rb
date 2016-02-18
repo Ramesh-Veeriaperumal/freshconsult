@@ -335,7 +335,7 @@ module SolutionHelper
 	def dynamic_text_box(f, language, form, options = {})
 		op = ""
 		parent_meta = instance_variable_get("@#{f}_meta")
-		if parent_meta && parent_meta.send("#{language.to_key}_#{f}").present?
+		if parent_meta && parent_meta.send("#{language.to_key}_#{f}").present? && !options[:primary]
 			op << "<div class='pt5 span12'>"
 			op << parent_meta.send("#{language.to_key}_#{f}").name
 			op << "</div>"
@@ -346,7 +346,7 @@ module SolutionHelper
 	                         :autocomplete => "off",
 	                         :autofocus => true,
 	                         :disabled => options[:disabled] || false)
-			if parent_meta
+			if parent_meta && !options[:primary]
 		    op << hidden_field_tag("#{form.object_name}[id]", parent_meta.id)
 		    op << primary_preview(parent_meta.send("primary_#{f}"), :name)
 			end
@@ -420,7 +420,7 @@ module SolutionHelper
 		op << "<div class='inline-block'>"
 		f.fields_for(:solution_category_meta) do |category_fields|
 			op << dynamic_text_box(:category, @language, category_fields, 
-									{ :class => "hide", :disabled => true, :id => 'create-category-text'})
+									{ :class => "hide", :disabled => true, :id => 'create-category-text', :primary => true})
 		end
 		op << "</div>"
 		op << "<div class='inline-block'>"
