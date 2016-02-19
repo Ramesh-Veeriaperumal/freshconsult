@@ -421,7 +421,8 @@
         font-weight: bold;
         font-size: 13px;
         display: inline-block;
-        width: 50px;
+        /*chinese translation issue fix - 14889*/
+        width: 60px;
         padding-top: 12px;
         @include float(left);
       }
