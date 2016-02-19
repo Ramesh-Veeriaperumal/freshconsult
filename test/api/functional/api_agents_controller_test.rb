@@ -114,6 +114,6 @@ class ApiAgentsControllerTest < ActionController::TestCase
   def test_me
     get :me, controller_params
     assert_response 200
-    match_json(agent_pattern(@account.all_agents.find(@agent.id)))
+    match_json(agent_pattern(@account.all_agents.find(@agent.agent.id)))
   end
 end
