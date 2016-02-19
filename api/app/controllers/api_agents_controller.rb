@@ -35,7 +35,7 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def me?
-      current_action?('me')
+      @me ||= current_action?('me')
     end
 
     def allowed_to_access?
