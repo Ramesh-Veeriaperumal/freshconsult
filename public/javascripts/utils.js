@@ -881,6 +881,23 @@ function unescapeHtml(escapedStr) {
         return child ? child.nodeValue : '';
 };
 
+//Alternative to escapeHtml, also escapes quotes
+function htmlEntities(str) {
+  var entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;',
+    '`': '&#x60;',
+    '=': '&#x3D;'
+  };
+  return String(str).replace(/[&<>"'`=\/]/g, function fromEntityMap (s) {
+    return entityMap[s];
+  });
+};
+
 jQuery.scrollTo = function(element, options) {
   var defaults = {
     speed: 500,
@@ -947,6 +964,10 @@ function getFromLocalStorage(key_name) {
   return JSON.parse(localStorage.getItem(key_name))
 }
 
+function removeFromLocalStorage(key) {
+  localStorage.removeItem(key);
+}
+
 function highlight_code() {
     jQuery('[rel="highlighter"]').each(function(i,element){
         var brush, attr = jQuery(element).attr('code-brush');
@@ -1004,3 +1025,4 @@ function nativePlaceholderSupport() {
   var i = document.createElement('input');
   return i.placeholder !== undefined;
 }
+

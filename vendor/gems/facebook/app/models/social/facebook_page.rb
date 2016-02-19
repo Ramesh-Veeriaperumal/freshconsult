@@ -1,8 +1,8 @@
 class Social::FacebookPage < ActiveRecord::Base
 
-  include Cache::Memcache::Facebook
   include Social::Util
   include Facebook::Constants
+  include Cache::Memcache::Facebook
 
   self.table_name =  "social_facebook_pages"
   self.primary_key = :id
@@ -23,7 +23,7 @@ class Social::FacebookPage < ActiveRecord::Base
 
   #account_id is removed from validation check.
 
-  def valid_page
+  def valid_page?
     !self.reauth_required and self.enable_page
   end
 
@@ -65,10 +65,10 @@ class Social::FacebookPage < ActiveRecord::Base
   end
   
   def default_stream
-    streams = self.facebook_streams
-    streams.each do |stream|
-      return stream if stream.data[:kind] == STREAM_TYPE[:default]
-    end
-    return nil
+    self.facebook_streams.detect{|s| s.data[:kind] == FB_STREAM_TYPE[:default]}
+  end
+  
+  def dm_stream
+    self.facebook_streams.detect{|s| s.data[:kind] == FB_STREAM_TYPE[:dm]}
   end
 end

@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class ApiCommentsControllerTest < ActionController::TestCase
-    include Helpers::DiscussionsTestHelper
+    include DiscussionsTestHelper
 
     def wrap_cname(params)
       { api_comment: params }
@@ -24,6 +24,50 @@ module ApiDiscussions
       User.where('id != ? and helpdesk_agent = ?', @agent.id, true).first || add_test_agent
     end
 
+    def test_privilege_for_update
+      comment = quick_create_post
+      comment.update_column(:user_id, @agent.id)
+      User.any_instance.stubs(:privilege?).with(:edit_topic).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_forums).returns(true)
+      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
+      assert_response 200
+
+      comment.update_column(:user_id, 999)
+      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
+      match_json([bad_request_error_pattern('body_html', :inaccessible_field)])
+      assert_response 400
+
+      put :update, construct_params({ id: comment.id }, answer: true)
+      assert_response 200
+
+      User.any_instance.stubs(:privilege?).with(:edit_topic).returns(true)
+      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
+      assert_response 200
+
+      comment.update_column(:user_id, @agent.id)
+      User.any_instance.stubs(:privilege?).with(:view_forums).returns(false)
+      User.any_instance.stubs(:privilege?).with(:edit_topic, comment).returns(true)
+      put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
+      match_json([bad_request_error_pattern('answer', :inaccessible_field)])
+      assert_response 400
+
+      @controller.stubs(:api_current_user).returns(nil)
+      put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
+      @controller.unstub(:api_current_user)
+      match_json(request_error_pattern(:invalid_credentials))
+      assert_response 401
+
+      User.any_instance.stubs(:customer?).returns(true)
+      put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
+      match_json(request_error_pattern(:access_denied))
+      assert_response 403
+    ensure
+      User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:customer?)
+      @controller.unstub(:privilege?)
+      @controller.unstub(:api_current_user)
+    end
+
     def test_update
       comment = quick_create_post
       put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
@@ -36,7 +80,7 @@ module ApiDiscussions
       post.topic.update_column(:stamp_type, nil)
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
       assert_response 400
-      match_json([bad_request_error_pattern('answer', :invalid_field)])
+      match_json([bad_request_error_pattern('answer', :incompatible_field)])
       post.topic.update_column(:stamp_type, 6)
     end
 
@@ -109,7 +153,7 @@ module ApiDiscussions
       comment =  comment_obj
       put :update, construct_params({ id: comment.id }, body_html: nil)
       assert_response 400
-      match_json([bad_request_error_pattern('body_html', :"can't be blank")])
+      match_json([bad_request_error_pattern('body_html', :data_type_mismatch, data_type: String)])
     end
 
     def test_destroy
@@ -129,7 +173,7 @@ module ApiDiscussions
     def test_create_no_params
       post :create, construct_params({ id: topic_obj.id }, {})
       assert_response 400
-      match_json [bad_request_error_pattern('body_html', :missing_field)]
+      match_json [bad_request_error_pattern('body_html', :required_and_data_type_mismatch, data_type: String)]
     end
 
     def test_create_mandatory_params
@@ -200,7 +244,7 @@ module ApiDiscussions
       t = Topic.where('posts_count > ?', 1).first || create_test_post(topic_obj, User.first).topic
       get :topic_comments, controller_params(id: t.id, per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
     end
 
     def test_comments_with_link_header

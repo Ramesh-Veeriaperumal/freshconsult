@@ -4,6 +4,7 @@ class TimeEntryValidation < ApiValidation
   # do not change validation order
   # Common validations
   validates :billable, :timer_running, data_type: { rules: 'Boolean' }
+  validates :note, data_type: { rules: String, allow_nil: true }
   validates :executed_at, date_time: { allow_nil: true }
   validates :time_spent, format: { with: /^\d+:[0-5][0-9]$/, message: 'invalid_time_spent', allow_nil: true }
 
@@ -27,7 +28,7 @@ class TimeEntryValidation < ApiValidation
   # agent_id can't be changed in update if timer is running for the user.
   validates :agent_id, custom_absence: { allow_nil: false, message: :cant_update_user },
                        if: -> { item.timer_running && @agent_id_set && item.user_id != agent_id }, on: :update
-  validates :agent_id, custom_numericality: { allow_nil: true }
+  validates :agent_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true }
 
   # if agent_id is not a number or not set in update, to avoid query, below if condition is used.
   validate :valid_user?,  if: -> { errors[:agent_id].blank? && @agent_id_set }

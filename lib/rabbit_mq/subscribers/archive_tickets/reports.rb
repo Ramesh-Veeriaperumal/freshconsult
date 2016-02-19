@@ -8,8 +8,7 @@ module RabbitMq::Subscribers::ArchiveTickets::Reports
   
   def mq_reports_subscriber_properties(action)
     {
-      :manual_publish => true,
-      :valid_key      => Helpdesk::Activity::MIGRATION_KEYS.first
+      :manual_publish => true
     }
     # Reports ETL expects subscriber_properties to be of either model_changes or manual_publish
     # So adding manual_publish in this case       

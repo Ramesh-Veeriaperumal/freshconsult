@@ -24,20 +24,29 @@ class Helpdesk::MergeTicketsController < ApplicationController
 	end
 
 	def complete_merge
-		handle_merge
-		respond_to do |format|
-			format.html do
-				flash[:notice] = t("helpdesk.merge.bulk_merge.target_note_description3",
-										:count => @source_tickets.length, 
-										:target_ticket_id => @target_ticket.display_id, 
-										:source_tickets => @source_tickets.map(&:display_id).to_sentence)
-				redirect_to ( params[:redirect_back].eql?("true") ? :back : helpdesk_ticket_path(@target_ticket) )
+		if @source_tickets.present? && @target_ticket.present?
+			handle_merge
+			respond_to do |format|
+				format.html do
+					flash[:notice] = t("helpdesk.merge.bulk_merge.target_note_description3",
+											:count => @source_tickets.length,
+											:target_ticket_id => @target_ticket.display_id,
+											:source_tickets => @source_tickets.map(&:display_id).to_sentence)
+					redirect_to ( params[:redirect_back].eql?("true") ? :back : helpdesk_ticket_path(@target_ticket) )
+				end
+				format.nmobile { render :json => { :result => true, :count => @source_tickets.length,
+											:target_ticket_id => @target_ticket.display_id,
+											:source_tickets => @source_tickets.map(&:display_id).to_sentence }}
 			end
-			format.nmobile { render :json => { :result => true, :count => @source_tickets.length,
-										:target_ticket_id => @target_ticket.display_id,
-										:source_tickets => @source_tickets.map(&:display_id).to_sentence }}
+		else
+			respond_to do |format|
+				format.html do
+					flash[:error] = t("helpdesk.merge.bulk_merge.merge_ticket_failed")
+					redirect_to ( params[:redirect_back].eql?("true") ? :back : helpdesk_ticket_path(@target_ticket) )
+				end
+				format.nmobile { render :json => {:error => t(:'helpdesk.merge.bulk_merge.merge_ticket_failed')}, :status => :forbidden}
+			end
 		end
-    	
 	end
 
 	protected
@@ -47,11 +56,13 @@ class Helpdesk::MergeTicketsController < ApplicationController
 		# end
 
 		def load_target_ticket
-			@target_ticket = current_account.tickets.find_by_display_id(params[:target][:ticket_id])
+			@target_ticket = current_account.tickets.permissible(current_user).find_by_display_id(params[:target][:ticket_id])
 		end
 
 		def load_source_tickets
-			@source_tickets = current_account.tickets.find(:all, :conditions =>{:display_id => params[:source_tickets]},
-                                                            :order => "status, created_at DESC")
+			@source_tickets = current_account.tickets
+													.permissible(current_user)
+													.where(:display_id => params[:source_tickets])
+                          .order("status, created_at DESC")
 		end
 end

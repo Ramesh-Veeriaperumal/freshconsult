@@ -1,8 +1,8 @@
 ['ticket_fields_test_helper.rb', 'notes_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
-module Helpers::TicketsTestHelper
+module TicketsTestHelper
   include GroupHelper
-  include Helpers::NotesTestHelper
-  include Helpers::TicketFieldsTestHelper
+  include NotesTestHelper
+  include TicketFieldsTestHelper
   include EmailConfigsHelper
   include ProductsHelper
   include CompanyHelper
@@ -24,7 +24,7 @@ module Helpers::TicketsTestHelper
   def ticket_pattern_with_notes(ticket, limit = false)
     notes_pattern = []
     ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
-      notes_pattern << note_pattern(n)
+      notes_pattern << index_note_pattern(n)
     end
     notes_pattern = notes_pattern.take(limit) if limit
     ticket_pattern(ticket).merge(notes: notes_pattern.ordered!)
@@ -32,7 +32,8 @@ module Helpers::TicketsTestHelper
 
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    ticket_custom_field = (ticket.custom_field && ignore_extra_keys) ? ticket.custom_field.as_json.ignore_extra_keys! : ticket.custom_field.as_json
+    custom_field = ticket.custom_field.map { |k, v| [TicketDecorator.display_name(k), v] }.to_h
+    ticket_custom_field = (custom_field && ignore_extra_keys) ? custom_field.as_json.ignore_extra_keys! : custom_field.as_json
     expected_output[:description_html] ||= format_html(ticket, expected_output[:description]) if expected_output[:description]
 
     {

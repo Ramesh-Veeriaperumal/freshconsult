@@ -98,6 +98,7 @@ class Account < ActiveRecord::Base
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :user_credentials, :class_name => 'Integrations::UserCredential'
   has_many :companies
+  has_many :company_domains
   has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false,
@@ -186,6 +187,7 @@ class Account < ActiveRecord::Base
   has_many :tweets, :class_name =>'Social::Tweet'
   has_many :social_streams, :class_name => 'Social::Stream'
   has_many :twitter_streams, :class_name => 'Social::TwitterStream'
+  has_many :facebook_streams, :class_name => 'Social::FacebookStream'
 
   has_many :surveys
   has_many :survey_handles, :through => :surveys
@@ -282,5 +284,6 @@ class Account < ActiveRecord::Base
   has_many :sections, :class_name => 'Helpdesk::Section', :dependent => :destroy
   has_many :section_fields, :class_name => 'Helpdesk::SectionField', :dependent => :destroy
 
+  has_many :subscription_invoices
   has_many :user_companies
 end

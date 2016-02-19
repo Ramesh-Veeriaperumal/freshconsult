@@ -6,8 +6,9 @@
 
 <% if (custom_fields.indexOf(data) < 0) { %>
   <div class="chart-container">
+  <% var group_type = I18n.t(fields_hash[data].toLowerCase(),{scope: "helpdesk_reports.chart_title",defaultValue: fields_hash[data].toLowerCase()}) %>
     <div class="title">
-      <%= title_name %> by <%= fields_hash[data] %>
+      <%= I18n.t(title_name,{group_by: group_type}) %>
     </div>
     <div id="<%= metric+'_'+data %>_container" class="half-container" data-group="<%= data %>" data-report="glance-container"></div>
   </div>
@@ -15,7 +16,7 @@
   <div id="custom_field_group_by" class="chart-container">
     <div class="title">
       <span class="rep-title-sub">
-        <%= title_name %> by
+        <%= I18n.t(title_name,{group_by: ''}) %>
       </span>
       <select class="select2 dropdown" >
         <% for (j=0; j< custom_fields.length; j++) { %>

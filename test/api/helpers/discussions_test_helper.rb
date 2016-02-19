@@ -1,4 +1,4 @@
-module Helpers::DiscussionsTestHelper
+module DiscussionsTestHelper
   include CompanyHelper
   include ForumHelper
   # Patterns

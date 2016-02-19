@@ -2,12 +2,11 @@ module ApiDiscussions
   class TopicValidation < ApiValidation
     attr_accessor :title, :forum_id, :sticky, :locked,
                   :stamp_type, :message_html
-    validates :title, required: true, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
-    validates :message_html, required: true
-    validates :forum_id, required: { allow_nil: false, message: :required_and_numericality }, on: :update
+    validates :title, data_type: { rules: String, required: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
+    validates :message_html, data_type: { rules: String, required: true }
     validates :sticky, :locked, data_type: { rules: 'Boolean' }
-    validates :forum_id, custom_numericality: { allow_nil: true }, on: :update
-    validates :stamp_type, custom_numericality: { allow_nil: true }
+    validates :forum_id, custom_numericality: { only_integer: true, greater_than: 0, required: true }, on: :update
+    validates :stamp_type, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true }
 
     def initialize(request_params, item)
       @message_html = item.try(:first_post).try(:body_html) if item

@@ -30,6 +30,13 @@
 
 
 </div>
+<% unless AppMetrics::FRESHFONE_METRICS.blank? %>
+  	<%= javascript_tag do %>
+  		if(App.Kissmetrics != undefined){
+  			App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");	
+  		}	
+	<% end %>
+<% end %>
 <%= javascript_tag do %> 
 	jQuery(document).ready(function() {
 		var date_today = new Date();
@@ -53,5 +60,7 @@
 					jQuery("#report_filters").trigger("change");
 				}
 			}); 
+			full_domain = '<%= current_account.full_domain %>';
+			recordAnalytics();
 	});
 <%end%>

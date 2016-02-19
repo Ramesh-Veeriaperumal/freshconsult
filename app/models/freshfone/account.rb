@@ -145,6 +145,14 @@ class Freshfone::Account < ActiveRecord::Base
 		update_conference_status_url
 	end
 
+	def enable_call_quality_metrics
+		account.features.call_quality_metrics.create unless account.features?(:call_quality_metrics)
+	end
+
+	def disable_call_quality_metrics
+		account.features.call_quality_metrics.destroy if account.features?(:call_quality_metrics)
+	end
+
 	def update_twilio_subaccount_state(status)
 		twilio_subaccount.update(:status => status)
 	end
@@ -159,6 +167,24 @@ class Freshfone::Account < ActiveRecord::Base
 
 	def freshfone_application
 		@app ||= twilio_subaccount.applications.get(app_id)
+	end
+
+	def global_conference_usage(startdate, enddate, list={})
+		twilio_subaccount.usage.records.list({:category => "calls-globalconference", :start_date => startdate, :end_start => enddate}).each do |record| 
+			list[:usage] = "#{record.usage} (#{record.usage_unit})"
+			list[:price] = "#{record.price} (#{record.price_unit})"
+			list[:count] = record.count
+		end
+		list
+	end
+
+	def self.global_conference_usage(startdate, enddate, list={})
+		TwilioMaster.client.usage.records.list({:category => "calls-globalconference", :start_date => startdate, :end_start => enddate}).each do |record| 
+			list[:usage] = "#{record.usage} (#{record.usage_unit})"
+			list[:price] = "#{record.price} (#{record.price_unit})"
+			list[:count] = record.count
+		end
+		list
 	end
 
 	private

@@ -71,12 +71,11 @@
 - options: 
     display_in_pages: 
     - contacts_show_page_side_bar
-
   script: |-
-          <script type="text/javascript">
-              CustomWidget.include_js("/javascripts/integrations/sugarcrm.js");
-              sugarcrmBundle={domain:"{{sugarcrm.domain}}", reqEmail:"{{requester.email}}", username:"{{sugarcrm.username}}", password:"{{sugarcrm.password}}"} 
-          </script>
+         <script type="text/javascript">
+             sugarcrmBundle={domain:"{{sugarcrm.domain}}", reqEmail:"{{requester.all_emails}}", reqCompanyId:"{{requester.company.id}}", account_labels:"{{sugarcrm.account_labels | escape_html}}", contact_labels:"{{sugarcrm.contact_labels | escape_html}}", lead_labels:"{{sugarcrm.lead_labels | escape_html}}", accounts:"{{sugarcrm.accounts | escape_html}}", contacts:"{{sugarcrm.contacts | escape_html}}", leads:"{{sugarcrm.leads | escape_html}}"} ;
+             Fjax.Assets.integration('sugarcrm', function() { new SugarWidget(sugarcrmBundle); });
+         </script>
   name: sugarcrm_widget
   id: 5
   description: sugarcrm.widgets.sugarcrm_widget.description
@@ -328,8 +327,12 @@
     - contacts_show_page_side_bar
   script: |-
           <script type="text/javascript">
-            CustomWidget.include_js("/javascripts/integrations/dynamicscrm.js");
-            dynamicscrmBundle={ reqEmail:"{{requester.email}}", domain:"{{dynamicscrm.domain}}", endpoint:"{{dynamicscrm.endpoint}}"  } ;
+          dynamicscrmBundle={ 
+                              reqEmail: "{{requester.email}}", 
+                              domain: "{{dynamicscrm.domain}}", 
+                              endpoint: "{{dynamicscrm.endpoint}}" 
+                            };
+          Fjax.Assets.integration('dynamicscrm', function() { new DynamicsWidget(dynamicscrmBundle); });
           </script>
   name: dynamicscrm_widget
   id: 21
@@ -402,3 +405,29 @@
   id: 25
   description: integrations.magento.desc
   application_type: magento
+
+- options:
+    display_in_pages:
+    - contacts_show_page_side_bar
+  script: |- 
+          <script type="text/javascript">         
+            var infusionsoftBundle={ domain:"https://api.infusionsoft.com", 
+                                    reqEmail:"{{requester.all_emails}}", 
+                                    token:"{{infusionsoft.oauth_token}}", 
+                                    contactFields:"{{infusionsoft.contacts}}", 
+                                    contactLabels:"{{infusionsoft.contact_labels}}", 
+                                    accountLabels:"{{infusionsoft.account_labels}}", 
+                                    accountFields:"{{infusionsoft.accounts}}", 
+                                    reqName:"{{requester.name | make_vaild_javascript}}", 
+                                    reqCompany : "{{requester.company_name | make_vaild_javascript}}", 
+                                    accountUrl: "{{infusionsoft.account_url}}" , 
+                                    contactCustomFields: "{{infusionsoft.contact_custom_fields}}", 
+                                    contactDataTypes: "{{infusionsoft.contact_data_types}}", 
+                                    companyCustomFields: "{{infusionsoft.account_custom_fields}}", 
+                                    companyDataTypes: "{{infusionsoft.account_data_types}}" };
+            Fjax.Assets.integration('infusionsoft', function() { new InfusionsoftWidget(infusionsoftBundle); });
+          </script>
+  name: infusionsoft_widget
+  id: 23
+  description: infusionsoft.widgets.infusionsoft_widget.description
+  application_type: infusionsoft

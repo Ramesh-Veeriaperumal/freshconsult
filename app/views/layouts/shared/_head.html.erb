@@ -37,6 +37,8 @@
 	<%= stylesheet_link_tag_with_rtl :'cdn/community' %>
 	<%= stylesheet_link_tag_with_rtl :'cdn/freshfone_recording_playback' %>
 
+	<%= stylesheet_link_tag_with_rtl :'cdn/realtime_dashboard' %>
+
 	<script type="text/javascript">
 	  /* TODO-RAILS3 need to cross check this area */
 		PROFILE_BLANK_THUMB_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_thumb.jpg';
@@ -57,7 +59,8 @@
 	<%= javascript_include_tag :'cdn/pattern'  %>
 	<%= javascript_include_tag :'cdn/merge'  %>
 	<%= javascript_include_tag :'cdn/custom_widget' %>
-  <%= javascript_include_tag :'cdn/livechat_helper' %>
+  	<%= javascript_include_tag :'cdn/livechat_helper' %>
+
 
 	<% if current_account.features?(:freshfone) ||
 	  (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
@@ -75,6 +78,9 @@
 	
 	<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
 
+	<!-- for i18n-js translations -->
+  <%= javascript_include_tag :"cdn/i18n/#{I18n.locale.to_s}" %>
+
 	<script type="text/javascript">
 		Fjax.pjax_parallel_request = null;
 		$LAB.setGlobalDefaults({
@@ -83,6 +89,11 @@
 		Fjax.Assets.setup(<%= asset_manifest(:js).to_json.html_safe %>, {app:[], plugins:[]}, "", cloudfront_host_url);
 		Fjax.Manager.start();
 	</script>
+
+	<script type="text/javascript">
+    	I18n.defaultLocale = "<%= I18n.default_locale %>";
+    	I18n.locale = "<%= I18n.locale %>";
+  </script>
 
 	<%= yield :head %>
 

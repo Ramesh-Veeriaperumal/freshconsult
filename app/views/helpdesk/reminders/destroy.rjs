@@ -1,1 +1,2 @@
 page.remove "reminder_#{params[:id]}"
+page << "getRemainderCount();"

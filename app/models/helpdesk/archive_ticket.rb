@@ -118,6 +118,10 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     SORT_FIELDS.map { |i| [I18n.t(i[1]), i[0]] }
   end
 
+  def self.sort_fields_options_array 
+    SORT_FIELDS.map { |i| i[0]}
+  end
+  
   def self.load_by_param(token, account)
     find_by_display_id_and_account_id(token, account.id)
   end

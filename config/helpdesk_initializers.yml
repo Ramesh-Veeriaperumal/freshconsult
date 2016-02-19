@@ -5,6 +5,7 @@ helpdesk:
     - authlogic_patch
     - helpdesk
     - api_initializer
+    - support_initializer
     - jbuilder_cache_store
     - action_mailer_callbacks
     - action_mailer_no_tmail
@@ -57,6 +58,7 @@ helpdesk:
     - text_datastore
     - time_formats
     - twitter_config
+    - social_config
     - virtual_agent
     - white_list_formatted_content
     - will_paginate
@@ -70,5 +72,6 @@ helpdesk:
     - ebay_config
     - search/v2
     - helpdesk_reports/reports_app_config
+    - controller_log_subscriber
 
 

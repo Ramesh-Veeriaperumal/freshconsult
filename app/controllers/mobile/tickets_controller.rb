@@ -5,8 +5,10 @@ class Mobile::TicketsController < ApplicationController
   include HelpdeskControllerMethods
 
   before_filter :require_user_login, :set_mobile
+
+  before_filter :set_native_mobile , :only => [:mobile_filter_count, :get_filtered_tickets, :get_solution_url]
   
-  before_filter :set_native_mobile, :load_ticket, :load_article , :only => [:get_solution_url]
+  before_filter :load_ticket, :load_article , :only => [:get_solution_url]
 
   FILTER_NAMES = [ :new_and_my_open, :all, :monitored_by, :spam, :deleted ]
   
@@ -46,7 +48,9 @@ class Mobile::TicketsController < ApplicationController
         :count => filter_count(element, (element != :new && agent_filter))
       }
     end
-    render :json => counts_hash
+    respond_to do |format|
+      format.nmobile {render json: counts_hash} 
+    end
   end
 
   def get_filtered_tickets
@@ -54,7 +58,9 @@ class Mobile::TicketsController < ApplicationController
     params[:wf_per_page] = params[:limit].to_i > MAX_TICKET_LIMIT ? MAX_TICKET_LIMIT : params[:limit].to_i
     ticket_list = filter_tickets(agent_filter)
     tickets_json = ticket_list.map(&:to_mob_json_index)
-    render :json => { :tickets => tickets_json, :top_view => top_view }
+    respond_to do |format|
+      format.nmobile {render json: { tickets: tickets_json, top_view: top_view }} 
+    end
   end
 
   def get_solution_url

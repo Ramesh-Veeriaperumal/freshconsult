@@ -41,7 +41,7 @@ module DiscussionMonitorConcern
     if @monitorship
       head 204
     else
-      head 404
+      log_no_monitorship_and_render_404
     end
   end
 
@@ -67,7 +67,7 @@ module DiscussionMonitorConcern
 
     def find_monitorship
       @monitorship = get_monitorship(params).first
-      head 404 unless @monitorship
+      log_no_monitorship_and_render_404 unless @monitorship
     end
 
     def get_monitorship(params_hash)
@@ -99,12 +99,17 @@ module DiscussionMonitorConcern
     end
 
     def privileged_to_send_user?
-      if params[:user_id].present? && is_not_current_user_id? && !privilege?(:manage_forums)
+      if params[:user_id].present? && not_current_user_id? && !privilege?(:manage_forums)
         render_request_error(:access_denied, 403, id: params[:user_id])
       end
     end
 
-    def is_not_current_user_id?
+    def not_current_user_id?
       !params[:user_id].respond_to?(:to_i) || params[:user_id].to_i != api_current_user.id
+    end
+
+    def log_no_monitorship_and_render_404
+      Rails.logger.debug "No Monitorship found for item #{params[:id]} with user id #{params[:user_id]}. controller : #{params[:controller]}"
+      head 404
     end
 end

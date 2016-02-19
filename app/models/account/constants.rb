@@ -46,7 +46,7 @@ class Account < ActiveRecord::Base
 
     :estate => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections ],
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections],
       :inherits => [ :garden ]
     },
 
@@ -83,21 +83,22 @@ class Account < ActiveRecord::Base
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :default_survey => false, :custom_survey => false, 
-    :gamification_enable => true, :google_signin => true,
+    :gamification_enable => false, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :cascade_dispatchr => false,
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
-    :agent_collision => false, :multiple_user_emails => true, :facebook_realtime => true, :social_revamp => false,
+    :agent_collision => false, :multiple_user_emails => true, :facebook_realtime => false, :social_revamp => false,
     :moderate_all_posts => false, :moderate_posts_with_links => true, :redis_display_id => false, 
     :hide_portal_forums => false, :reports_regenerate_data => false, :updated_twilio_client => false, :chat_enable => false,
     :report_field_regenerate => false, :sort_by_customer_response => false, :no_list_view_count_query => false,
     :round_robin_revamp =>  false, :contact_merge_ui => true, :client_debugging => false, :collision_socket => false,
     :spam_dynamo => true , :saml_old_issuer => false, :forum_captcha_disable => false, :autorefresh_node => false, 
     :resource_rate_limit => false, :disable_agent_forward => false, :bi_reports => true, :es_multilang_solutions => false,
-    :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false,
+    :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false, :call_quality_metrics => false,
     :public_ticket_url => false, :marketplace => false, :fa_developer => false,:archive_tickets => false, :compose_email => false,
     :limit_mobihelp_results => false, :ecommerce => false, :tokenize_emoji => false, :es_v2_writes => false, 
-    :salesforce_sync => false, :round_robin_on_update => false }
+    :salesforce_sync => false, :round_robin_on_update => false, :freshfone_call_metrics => false, 
+    :solutions_meta_read => false, :threading_without_user_check => false, :custom_dashboard => false, :freshfone_call_monitoring => false }
 
 
   # This list below is for customer portal features list only to prevent from adding addition features

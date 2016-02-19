@@ -11,6 +11,10 @@
 			<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
 			<% end %>
 			<%= link_to(t('footer.browse_community'), "#{AppConfig['support_url']}/support/discussions", :target => "_blank") %>
+			<% if @privacy_policy %>
+				<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
+				<%= link_to(t('footer.privacy_policy'), AppConfig['privacy_policy'], :target => "_blank") %>
+			<% end %>
 		</div> 
 	</div>
 </div>

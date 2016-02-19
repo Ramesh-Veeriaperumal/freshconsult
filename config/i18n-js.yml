@@ -1,0 +1,14 @@
+# Split context in several files.
+#
+# If you want to split translations into several files or specify
+# locale contexts that will be exported, just use this file to do
+# so.
+#
+
+# Command to generate js translations
+# rake i18n:js:export
+
+fallbacks: :en
+translations:
+  - file: 'public/javascripts/cdn/i18n/%{locale}.js'
+    only: ['*.adv_reports.*', '*.helpdesk_reports.*']

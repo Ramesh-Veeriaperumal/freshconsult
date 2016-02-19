@@ -55,7 +55,7 @@ survey_list = <%=@surveys.to_json.html_safe%>;
 					<td>
 						<div class="item_actions align-right">
 							<%=link_to t('admin.surveys.index.edit'),edit_admin_custom_survey_path(survey.id),:class => "btn btn-mini"%>							
-							      <a class="btn btn-mini survey-delete" id="survey_<%=survey.id%>" 
+							      <a class="btn btn-mini survey-delete" id="survey_<%=survey.id%>" style="visibility:hidden;"
 										  <%if(survey.active?)%>
 												disabled="disabled"
 			  							  <%else%> 

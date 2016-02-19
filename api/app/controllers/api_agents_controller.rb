@@ -3,13 +3,13 @@ class ApiAgentsController < ApiApplicationController
 
     def load_object
       @item = scoper.find_by_user_id(params[:id])
-      head :not_found unless @item
+      log_and_render_404 unless @item
     end
 
     def validate_filter_params
       params.permit(*AgentConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @agent_filter = AgentFilterValidation.new(params)
-      render_errors(@agent_filter.errors, @agent_filter.error_options) unless @agent_filter.valid?
+      render_query_param_errors(@agent_filter.errors, @agent_filter.error_options) unless @agent_filter.valid?
     end
 
     def load_objects

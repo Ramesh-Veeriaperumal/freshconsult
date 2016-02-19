@@ -17,7 +17,10 @@ module Helpdesk::Email::NoteMethods
 
   def note_params
     {
-      :private => (from_fwd_emails? or reply_to_private_note?(email[:in_reply_to])),
+      :private => (
+          (from_fwd_emails? or reply_to_private_note?(header_processor.all_message_ids)) or
+          (account.features?(:threading_without_user_check) && reply_to_forward(header_processor.in_reply_to))
+        ),
       :incoming => true,
       :note_body_attributes => separate_quoted_text ,
       :user => user, #by Shan temp

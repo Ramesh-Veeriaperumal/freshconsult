@@ -3,9 +3,12 @@ module HelpdeskReports::Field::Ticket
   # Filter data for reports, Check template at the end of file
   def show_options(column_order, columns_keys_by_token, columns_option)
     
-    excluded_filters = ReportsAppConfig::EXCLUDE_FILTERS[report_type]
-    if excluded_filters
-      column_order -=  excluded_filters[Account.current.subscription.subscription_plan.name]||[]
+    #If Enterprise Addons is enabled, no need to check exclude filter
+    unless Account.current.features_included?(:enterprise_reporting)
+      excluded_filters = ReportsAppConfig::EXCLUDE_FILTERS[report_type]
+      if excluded_filters
+        column_order -=  excluded_filters[Account.current.subscription.subscription_plan.name]||[]
+      end
     end
     
     @show_options ||= begin
@@ -121,6 +124,7 @@ module HelpdeskReports::Field::Ticket
 
   #Adding None as extra options.
   def default_choices(field)
+    return [] if [:agent_id, :company_id].include?(field) # A
     none_choice = [:priority,:status,:source].include?(field) ? "" : [-1,"-None-"]
     choice_hash = get_default_choices(field)
     choice_hash.unshift(none_choice) if !choice_hash.empty? && !none_choice.empty?

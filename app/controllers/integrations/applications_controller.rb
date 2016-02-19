@@ -54,9 +54,6 @@ class Integrations::ApplicationsController < Admin::AdminController
   end
 
   def show
-    if @installing_application.dynamics_crm?
-      redirect_to :controller=> 'dynamics_crm', :action => 'settings'
-    end
   end
 
   private

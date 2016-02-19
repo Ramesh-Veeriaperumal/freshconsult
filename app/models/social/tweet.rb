@@ -1,7 +1,5 @@
 class Social::Tweet < ActiveRecord::Base
 
-  include Social::Dynamo::Twitter
-
   self.table_name =  "social_tweets"
   self.primary_key = :id
 
@@ -57,9 +55,10 @@ class Social::Tweet < ActiveRecord::Base
   end
   
   def remove_fd_link_in_dynamo
+    dynamo_twt_feed = Social::Dynamo::Twitter.new
     stream = Account.current.twitter_streams.find_by_id(self.stream_id) if self.stream_id
     return if stream.nil? or (stream && !stream.default_stream?)
-    delete_fd_link("#{self.account_id}_#{self.stream_id}", self.tweet_id)
+    dynamo_twt_feed.delete_fd_link("#{self.account_id}_#{self.stream_id}", self.tweet_id)
   end
 
 end

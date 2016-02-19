@@ -77,6 +77,8 @@ class User < ActiveRecord::Base
     c.password_expiry_timeout = { :if => :password_expiry_enabled?, 
                                   :duration => :password_expiry_duration}
 
+    c.disable_perishable_token_maintenance(true)
+
     # enable for Phase 2
     # c.periodic_logged_in_timeout = { :if => :periodic_login_enabled?, 
     #                                  :duration => :periodic_login_duration}
@@ -178,7 +180,7 @@ class User < ActiveRecord::Base
             state.eql?("deleted")]
         when "blocked"
           [ ' ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
-            true, (Time.now+5.days).to_s(:db), true, (Time.now+5.days).to_s(:db) ]
+            true, (Time.zone.now+5.days).to_s(:db), true, (Time.zone.now+5.days).to_s(:db) ]
       end
       
       conditions[0] = "#{conditions[0]} and name like '#{letter}%' " unless letter.blank?
@@ -232,9 +234,9 @@ class User < ActiveRecord::Base
           conditions: { deleted: false, active: false }
         },
         blocked: {
-          conditions: [ "blocked = true and blocked_at < ? and deleted = true and deleted_at < ?", Time.zone.now+5.days, Time.zone.now+5.days ]
+          conditions: [ "((blocked = true and blocked_at <= ?) or (deleted = true and deleted_at <= ?)) and whitelisted = false", Time.zone.now+5.days, Time.zone.now+5.days ]
         },
-        all: {
+        default: {
           conditions: { deleted: false, blocked: false }
         },
         company_id: {
@@ -672,6 +674,7 @@ class User < ActiveRecord::Base
       self.company = nil
       self.address = nil
       self.role_ids = [account.roles.find_by_name("Agent").id] 
+      self.tags.clear
       agent = build_agent()
       agent.occasional = !!args[:occasional]
       self.set_password_expiry({:password_expiry_date => 
@@ -765,26 +768,8 @@ class User < ActiveRecord::Base
     self.customer_id
   end
 
-  # failed_login_count increases for each consecutive failed login.
-  # See Authlogic::Session::BruteForceProtection and the consecutive_failed_logins_limit config option for more details.
-  def update_failed_login_count(valid_pwd, user_name = nil, ip = nil)
-    if valid_pwd
-      # reset failed_login_count only when it has changed. This is to prevent unnecessary save on user.
-      if self.failed_login_count != 0
-        self.failed_login_count = 0 
-        self.save
-      end
-      self
-    else
-      self.failed_login_count ||= 0
-      self.failed_login_count += 1
-      self.save
-      Rails.logger.error "API Unauthorized Error: Failed login attempt '#{self.failed_login_count}' for '#{user_name}' from #{ip} at #{Time.now.utc}"
-      nil
-    end
-  end
-
   private
+
     def name_part(part)
       part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"
       parsed_name[part].blank? ? name : parsed_name[part]

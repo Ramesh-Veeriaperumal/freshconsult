@@ -12,6 +12,18 @@ $grayLight:             #999 	!default;
 $grayLighter:           #eee 	!default;
 $white:                 #fff 	!default;
 
+// Icon colors
+// -------------------------
+$icon-color-red:        #df2d2d !default;
+$icon-color-darkred:    #c52020 !default;
+$icon-color-orange:     #ff9e2b !default;
+$icon-color-blue:       #2ea0f5 !default;
+$icon-color-darkyellow: #dfa118 !default;
+$icon-color-saffron:    #ff6a19 !default;
+$icon-color-green:      #96c73a !default;
+$icon-color-brown:      #af9764 !default;
+
+
 // Accent colors
 // -------------------------
 $blue:                  #049cdb !default;
@@ -52,7 +64,7 @@ $headingsColor:         inherit 						!default; 		// empty to use BS default, $t
 // Font Weights
 // ============
 $fontWeightUltralight: 	200 							!default;
-$fontWeightLight: 		300 							!default;
+$fontWeightLight: 		  300 							!default;
 $fontWeightNormal:      400 							!default;
 $fontWeightSemibold:    600 							!default;
 $fontWeightBold:        700 							!default;
@@ -63,7 +75,7 @@ $tableBackground:                   transparent  		!default; 		// overall backgr
 $tableBackgroundAccent:             #FBFBFB 			!default; 		// for striping
 $tableBackgroundHover:              #f9f9f9 			!default; 		// for hover
 $tableBorder:                       #eee 				!default; 		// table and cell border
-$tableBackgroundSelected:			#fefac3				!default; 		
+$tableBackgroundSelected:			#fefac3				!default;
 $tableBackgroundHeader:				#f6f6f6				!default;
 
 // Buttons

@@ -1,5 +1,7 @@
 module AutomationControllerMethods
 
+  include Integrations::IntegrationHelper
+
   def index
     @va_rules = all_scoper
     @va_rules
@@ -10,7 +12,6 @@ module AutomationControllerMethods
   end
 
   def create
-    @va_rule.action_data = params[:action_data].blank? ? [] : (ActiveSupport::JSON.decode params[:action_data])
     @va_rule.match_type ||= :all
     set_nested_fields_data @va_rule.action_data if @va_rule.action_data
     if @va_rule.save
@@ -29,7 +30,6 @@ module AutomationControllerMethods
   end
 
   def update
-    @va_rule.action_data = params[:action_data].blank? ? [] : (ActiveSupport::JSON.decode params[:action_data])
     set_nested_fields_data @va_rule.action_data
     if @va_rule.update_attributes(params[:va_rule])
       flash[:notice] = t(:'flash.general.update.success', :human_name => human_name)
@@ -133,7 +133,7 @@ module AutomationControllerMethods
         :condition => va_rules_controller? },
       { :name => -1, :value => "-----------------------" }
     ]
-
+    append_integration_actions action_hash
     action_hash = action_hash.select{ |action| action.fetch(:condition, true) }
     add_custom_actions action_hash
     @action_defs = ActiveSupport::JSON.encode action_hash

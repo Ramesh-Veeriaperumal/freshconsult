@@ -1,18 +1,3 @@
-<%
-	admin_choice = current_account.account_managers.inject([]) { |choice, admin| 
-							choice << "{ id : '#{escape_javascript(admin.email)}',
-	            		   				value : '#{escape_javascript(admin.email)}',
-	               						text : '#{escape_javascript(admin.email)}' }"  }
-
-	unless (emails = current_account.invoice_emails).blank?  
-	  added_invoice_emails = emails.inject([]) { |choice, email| 
-							choice << "{ id: '#{escape_javascript(email)}',
-														text: '#{escape_javascript(email)}',
-														value: '#{escape_javascript(email)}' }" }
-	end
-
-%>
-
 <% content_for :sidebar do -%>
 	
 	<div class="sidepanel">
@@ -82,17 +67,7 @@
 			  		<div class="controls">
 						<%= text_field_tag "account_configuration[contact_info][phone]", current_account.admin_phone, :id => "contact-phone",:class =>"span5", :autocomplete => "off" %>
 					</div>
-				</li>
-				<li>
-					<br/>
-					<h3 class="rebrand-head-text top-space-none"><%= t('.invoice_email_info') %></h3>
-				</li>
-				<li class="control-group">
-					<%= content_tag(:label, "#{t('.invoice_emails')}<span class='required_star'>*</span>".html_safe, :class => "control-label") %>
-					<div class="controls">
-						<%= hidden_field_tag "invoice_email_field", added_invoice_emails, :class => "required span5 clear-left-margin" %>
-					</div>
-				</li>						
+				</li>				
 			</ul>
 	  	</li>
 	</ul>
@@ -124,24 +99,6 @@
 								else { return null; } 
 				     }}
 
-
-  	jQuery("#invoice_email_field").select2({
-  			data: [ <%= admin_choice.join(",").html_safe  %> ],
-  			multiple: true,
-  			maximumSelectionSize: 1,
-
-  			initSelection : function (element, callback) {
-    			callback( [<%= added_invoice_emails.join(",").html_safe if added_invoice_emails %>] );
-  			},
-
-  			specialFormatting: true,
-  			formatResult: results,
-				formatNoMatches: function () { return "Invalid email"; },
-				formatSelectionTooBig: function(){ return "You cannot add any more emails"; },
-
-  			createSearchChoice: search_choice_validation		
-		});
-	
 		jQuery("#invoice_email_field").select2("val",[]);
 
 	});

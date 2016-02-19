@@ -6,9 +6,11 @@ class ApiApplicationController < MetalApiController
   rescue_from DomainNotReady, with: :route_not_found
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
+  rescue_from RangeError, with: :range_error
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
   rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
+  rescue_from ConsecutiveFailedLoginError, with: :login_error_handler
 
   # Check if content-type is appropriate for specific endpoints.
   # This check should be done before any app specific filter starts.
@@ -19,6 +21,7 @@ class ApiApplicationController < MetalApiController
   # App specific Before filters Starts
   # All before filters should be here. Should not be moved to concern. As the order varies for API and Web
   around_filter :select_shard
+  before_filter :current_shard # should happen first within around filter.
   prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :set_current_account
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
@@ -27,12 +30,12 @@ class ApiApplicationController < MetalApiController
   before_filter :set_time_zone, :check_day_pass_usage
   before_filter :force_utf8_params
   before_filter :set_cache_buster
-  before_filter :logging_details
   include AuthenticationSystem
   include HelpdeskSystem
-  include ControllerLogger
   include SubscriptionSystem
   # App specific Before filters Ends
+
+  include DecoratorConcern
 
   before_filter { |c| c.requires_feature feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
@@ -82,7 +85,7 @@ class ApiApplicationController < MetalApiController
 
   def destroy
     @item.destroy
-    head :no_content
+    head 204
   end
 
   def route_not_found
@@ -96,7 +99,7 @@ class ApiApplicationController < MetalApiController
       render_base_error(:method_not_allowed, 405, methods: allows.join(', '))
       response.headers['Allow'] = allows.join(', ')
     else # route not present.
-      head :not_found
+      head 404
     end
   end
 
@@ -126,6 +129,21 @@ class ApiApplicationController < MetalApiController
       render_request_error(:duplicate_value, 409)
     end
 
+    def range_error(e)
+      # http://ruby-doc.org/core-2.1.0/RangeError.html
+      # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb#L18
+      # We are rescuing the exception without validating in order to avoid manipulations in every request to validate a rare scenario.
+      if e.message.starts_with?('invalid offset') && params[:page].respond_to?(:to_i) && @per_page && ((params[:page].to_i - 1) * (@per_page + 1)) > ApiConstants::PAGE_MAX
+        # raised by will_paginate gem
+        render_errors([[:page, :max_limit_page]])
+      else
+        # unexpected exception
+        notify_new_relic_agent(e, description: 'Invalid Offset Error.')
+        render_base_error(:internal_error, 500)
+      end
+      Rails.logger.error("Invalid Offset Error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
+    end
+
     def db_query_error(e)
       notify_new_relic_agent(e, description: 'Invalid/malformed query error occured while processing api request')
       Rails.logger.error("DB Query Invalid Error: #{params.inspect} \n#{e.message} \n#{e.backtrace.join("\n")}")
@@ -133,16 +151,32 @@ class ApiApplicationController < MetalApiController
     end
 
     def record_not_found(e)
-      notify_new_relic_agent(e, description: 'ActiveRecord::RecordNotFound error occured while processing api request')
-      Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
-      head 404
+      # Render 404 if domain is not present else 500.
+      # our locally cached current_shard will be nil if specific domain doesn't belongs to any shards
+      if current_shard.nil?
+        Rails.logger.error("API V2 request for invalid host. Host: #{request.host}")
+        head 404
+      else
+        notify_new_relic_agent(e, description: 'ActiveRecord::RecordNotFound error occured while processing api request')
+        Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
+        render_base_error(:internal_error, 500)
+      end
+    end
+
+    # Caching current_shard_selection in local instance variable to find out domain not found error.
+    # As exception ensures connection to be switched to initial shard.
+    def current_shard
+      return @current_shard if defined?(@current_shard)
+      @current_shard ||= Thread.current[:shard_selection].try(:shard)
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
       return if handle_invalid_multipart_form_data(exception.params) || handle_invalid_parseable_json(exception.params)
       Rails.logger.error("API Unpermitted Parameters. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
-      invalid_fields = Hash[exception.params.map { |v| [v, :invalid_field] }]
-      render_errors invalid_fields
+      inaccessible_fields = @all_fields ? @all_fields.flat_map(&:last) & exception.params : []
+      invalid_fields = exception.params - inaccessible_fields
+      errors = Hash[invalid_fields.map { |v| [v, :invalid_field] } + inaccessible_fields.map { |v| [v, :inaccessible_field] }]
+      render_errors errors
     end
 
     def handle_invalid_multipart_form_data(exception_params)
@@ -157,9 +191,22 @@ class ApiApplicationController < MetalApiController
       true
     end
 
+    def login_error_handler(e)
+      if e.failed_login_count
+        Rails.logger.debug "API V2 #{e.message}. Attempt: #{e.failed_login_count}"
+        render_request_error :password_lockout, 403
+      else
+        Rail.logger.debug "Exception: ConsecutiveFailedLoginError, Message: #{e.message}, Backtrace: #{e.backtrace}"
+        render_base_error(:internal_error, 500)
+      end
+    end
+
     def ensure_proper_fd_domain # 404
       return true if Rails.env.development?
-      head 404 unless ApiConstants::ALLOWED_DOMAIN == request.domain && current_account.full_domain != ApiConstants::DEMOSITE_URL # API V2 not permitted on Demosites
+      unless ApiConstants::ALLOWED_DOMAIN == request.domain && current_account.full_domain != ApiConstants::DEMOSITE_URL # API V2 not permitted on Demosites
+        Rails.logger.error "API V2 request for not allowed domain. Domain: #{request.domain}"
+        head 404
+      end
     end
 
     def ensure_proper_protocol
@@ -169,11 +216,13 @@ class ApiApplicationController < MetalApiController
 
     def render_request_error(code, status, params_hash = {})
       @error = RequestError.new(code, params_hash)
+      log_error_response @error
       render '/request_error', status: status
     end
 
     def render_base_error(code, status, params_hash = {})
       @error = BaseError.new(code, params_hash)
+      log_error_response @error
       render '/base_error', status: status
     end
 
@@ -207,9 +256,7 @@ class ApiApplicationController < MetalApiController
 
     def load_object(items = scoper)
       @item = items.find_by_id(params[:id])
-      unless @item
-        head 404 # Do we need to put message inside response body for 404?
-      end
+      log_and_render_404 unless @item
     end
 
     def after_load_object
@@ -257,7 +304,7 @@ class ApiApplicationController < MetalApiController
       # The respective filter validation classes would inherit from FilterValidation to include validations on pagination options.
       params.permit(*ApiConstants::DEFAULT_INDEX_FIELDS, *additional_fields)
       @filter = FilterValidation.new(params, nil, true)
-      render_errors(@filter.errors, @filter.error_options) unless @filter.valid?
+      render_query_param_errors(@filter.errors, @filter.error_options) unless @filter.valid?
     end
 
     def validate_url_params
@@ -278,7 +325,7 @@ class ApiApplicationController < MetalApiController
       # next page exists if scoper is array & next_page is not nil or
       # next page exists if scoper is AR & collection length > per_page
       next_page_exists = paginated_items.length > @per_page || paginated_items.next_page && is_array
-      add_link_header(page: (get_page + 1)) if next_page_exists
+      add_link_header(page: (page + 1)) if next_page_exists
       paginated_items[0..(@per_page - 1)] # get paginated_collection of length 'per_page'
     end
 
@@ -333,9 +380,24 @@ class ApiApplicationController < MetalApiController
       {}
     end
 
+    def render_query_param_errors(errors, meta = nil)
+      set_query_param_errors(errors, meta)
+      render_errors(errors, meta)
+    end
+
+    def set_query_param_errors(errors, meta)
+      # this will translate generic positive_number error to specific per_page_positive_number
+      # this is being done to get different custom codes with the same error message.
+      if errors[:per_page].present?
+        errors[:per_page] = "per_page_#{errors.to_h[:per_page]}"
+        meta[:per_page].merge!(max_value: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page])
+      end
+    end
+
     def render_errors(errors, meta = nil)
       if errors.present?
         @errors = ErrorHelper.format_error(errors, meta)
+        log_error_response @errors
         render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
       else
         # before_callbacks may return false without populating the errors hash.
@@ -351,6 +413,7 @@ class ApiApplicationController < MetalApiController
 
     def access_denied
       if api_current_user
+        Rails.logger.error "API 403 Error: customer  = #{api_current_user.customer?}"
         render_request_error :access_denied, 403
       else
         render_request_error :invalid_credentials, 401
@@ -362,18 +425,34 @@ class ApiApplicationController < MetalApiController
       if get_request?
         if current_user_session # fall back to old session based auth
           @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
-          if @current_user && @current_user.failed_login_count != 0
-            @current_user.update_failed_login_count(true)
+          stale_record = current_user_session.stale_record
+          if @current_user
+            @current_user.update_failed_login_count(true) if @current_user.failed_login_count != 0 && login_via_email?
+            # to avoid query to check for password expiry. We know for sure that passowrd won't be expired if record is not nil
+            @current_user.password_expired = false
+          elsif stale_record && stale_record.password_expired
+            @current_user = stale_record # stale_record would be set in case of password expiry. record would be nil.
           end
         end
       else
         # authenticate using auth headers
         authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
           # string check for @ is used to avoid a query.
-          @current_user = username.include?('@') ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
+          @current_user = email_given?(username) ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
         end
       end
-      @current_user
+
+      # should be defined in case of invalid credentials as api_current_user gets called repeatedly.
+      @current_user ||= nil
+    end
+
+    def email_given?(username)
+      return @email_given if defined?(@email_given)
+      @email_given ||= username.try(:include?, '@')
+    end
+
+    def login_via_email?
+      email_given?(params[:k])
     end
 
     def qualify_for_day_pass? # this method is redefined because of api_current_user
@@ -384,8 +463,23 @@ class ApiApplicationController < MetalApiController
       if api_current_user.nil? || api_current_user.customer? || !allowed_to_access?
         access_denied
         return false
+      elsif verify_password_expired?
+        Rails.logger.debug 'API V2 Password expired error'
+        render_request_error :password_expired, 403
+        return false
       end
       true
+    end
+
+    def verify_password_expired?
+      return @pwd_expired if defined?(@pwd_expired)
+      @pwd_expired ||= (login_via_email? && (api_current_user.password_expired || password_expired_for_user?))
+    end
+
+    def password_expired_for_user?
+      # password_expired attribute would be nil if check was not done previously.
+      # This check is to avoid queries getting fired in password_expired? method.
+      api_current_user.password_expired.nil? && api_current_user.password_expired?
     end
 
     def allowed_to_access? # this method is redefined because of api_current_user
@@ -405,6 +499,7 @@ class ApiApplicationController < MetalApiController
       current_account.make_current
       User.current = api_current_user
     rescue ActiveRecord::RecordNotFound
+      Rails.logger.error("API V2 request for invalid account. Host: #{request.host}")
       head 404
     rescue ActiveSupport::MessageVerifier::InvalidSignature # Authlogic throw this error if signed_cookie is tampered.
       render_request_error :credentials_required, 401
@@ -430,31 +525,46 @@ class ApiApplicationController < MetalApiController
 
     def paginate_options(is_array = false)
       options = {}
-      @per_page = get_per_page # user given/defualt page number
+      @per_page = per_page # user given/defualt page number
       options[:per_page] =  is_array ? @per_page : @per_page + 1 # + 1 to find next link unless scoper is array
-      options[:offset] = @per_page * (get_page - 1) unless is_array # assign offset unless scoper is array
-      options[:page] = get_page
+      options[:offset] = @per_page * (page - 1) unless is_array # assign offset unless scoper is array
+      options[:page] = page
       options[:total_entries] = options[:page] * options[:per_page] unless is_array # To prevent paginate from firing count query unless scoper is array
       options
     end
 
-    def get_page
+    def page
       (params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]).to_i
     end
 
-    def get_per_page
+    def per_page
       (params[:per_page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).to_i
     end
 
-    def get_fields(constant_name) # retrieves fields that strong params allows by privilege.
+    def get_fields(constant_name, item = @item, owned_by_field = :user_id) # retrieves fields that strong params allows by privilege.
       constant = constant_name.constantize
-      get_fields_from_constant(constant)
+      get_fields_from_constant(constant, item, owned_by_field)
     end
 
-    def get_fields_from_constant(constant)
-      fields = constant[:all]
-      constant.except(:all).keys.each { |key| fields += constant[key] if privilege?(key) }
+    def get_fields_from_constant(constant, item, owned_by_field)
+      # all_fields is used to differentiate between junk fields and inaccessible_fields in invalid_field_handler.
+      # all_fields should not be modified as it a reference to the constant and not a separate object.
+      # item is sent to privilege to accomodate owned_by privileges.
+      @all_fields = constant
+      fields = constant[:all] || []
+      owned_by_permissions = constant.except(:all).keys & ApiConstants::PRIVILEGES_WITH_OWNEDBY
+      permissions = constant.except(:all, *owned_by_permissions).keys
+      permissions.each { |key| fields += constant[key] if privilege?(key) }
+      owned_by_permissions.each { |key| fields += constant[key] if privilege_or_owns_object?(key, item, owned_by_field) }
       fields
+    end
+
+    def privilege_or_owns_object?(key, item, owned_by_field)
+      # this method assumes that,
+      # when load_object is not called then the action is a create action,
+      # other actions using owned_by permissions is, presently a non-existent and in future also, a rare scenario
+      # when user_id parameter is not present in the request, then api_current_user.id will be assigned eventually to the record.
+      item ? privilege?(key, item) : (privilege?(key) || (params[cname] && (params[cname][owned_by_field].nil? || params[cname][owned_by_field] == api_current_user.id)))
     end
 
     def update?
@@ -506,5 +616,16 @@ class ApiApplicationController < MetalApiController
 
     def increment_api_credit_by(value)
       RequestStore.store[:extra_credits] += value
+    end
+
+    def log_error_response(errors)
+      # to get printed in the hash format, we have this manipulation.
+      hash_format = errors.is_a?(Array) ? errors.map(&:instance_values) : errors.instance_values
+      Rails.logger.debug "API V2 Error Response : #{hash_format.inspect}"
+    end
+
+    def log_and_render_404
+      Rails.logger.debug "API V2 Item not present. Id: #{params[:id]}, method: #{params[:action]}, controller: #{params[:controller]}"
+      head 404
     end
 end

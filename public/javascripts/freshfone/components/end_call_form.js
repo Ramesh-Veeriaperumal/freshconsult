@@ -17,7 +17,12 @@ var FreshfoneEndCall;
 		this.$requesterNameContainer = this.$endCall.find('.requester_name_container');
 		this.$requesterName = this.$requesterNameContainer.find("#requesterName");
 		this.$requesterEmail = this.$requesterNameContainer.find("#requesterEmail");
+		this.$requesterNumber = this.$requesterNameContainer.find("#requester_phone");
 		this.$requesterEmailDom = this.$requesterNameContainer.find("#requesterEmail_dom");	
+		this.$strangeNumberMessage = this.$requesterNameContainer.find("#strangeNumberMessage");
+		this.$invalidEmailMessage = this.$requesterNameContainer.find("#invalidEmailMessage");
+		this.$invalidNumberMessage = this.$requesterNameContainer.find("#invalidNumberMessage");
+		this.$contactDetailsBlankMessage = 	this.$requesterNameContainer.find("#contactDetailsBlankMessage");
 		this.$ticketSubject = this.$endCall.find("#ticketSubject");
 		this.$requesterTicketSearch = this.$endCall.find('.end_call_ticket_search');
 		this.$callNote = $('#call_notes');
@@ -29,7 +34,6 @@ var FreshfoneEndCall;
 			showClose: true,
 			targetId: "#end_call",
 			templateFooter: "",
-			title: "Convert to ticket",
 			toggle: "popupbox",
 			width: "480px",
 			classes: 'persistent_modal'
@@ -65,6 +69,8 @@ var FreshfoneEndCall;
 		
 		self.$endCallShowSaveTicketFormButton.bind('click', function () {
 			self.$endCallMainContent.hide();
+			self.$requesterEmailDom.hide();
+			self.hideWarnings();
 			self.$endCallNewTicketDetailsForm.show();
 			self.$ticketSubject.focus();
 			self.$requesterName.val(self.number);
@@ -103,6 +109,7 @@ var FreshfoneEndCall;
 			formatSelection: function (result) {
 				self.$requesterEmailDom.toggle(!result.id);
 				self.$requesterEmail.val(result.email);
+				self.$requesterNumber.val(result.phone);
 				self.$requesterName.data("requester_id",result.id);
 				self.$requesterName.val(escapeHtml(result.value));
 				return escapeHtml(result.value);
@@ -115,10 +122,17 @@ var FreshfoneEndCall;
 
 		self.$requesterName.on('select2-close',function(){
 			setTimeout(function(){
-				if(freshfoneendcall.$requesterName.data('requester_id'))
-						freshfoneendcall.$endCallSaveTicketButton.focus();
-					else
-						freshfoneendcall.$requesterEmail.focus();		
+				if(self.$requesterName.data('requester_id')){
+					self.hideWarnings();
+					self.$endCallSaveTicketButton.focus();
+				}
+				else if(self.$requesterName.val() != self.number){
+					self.$requesterEmail.focus();
+					if(!freshfonewidget.checkForStrangeNumbers(self.number)){
+						self.$requesterNumber.val(self.number);
+					}
+					self.$requesterEmailDom.show();
+				}
 			}, 10);
 		});
 		
@@ -133,20 +147,24 @@ var FreshfoneEndCall;
 
 		self.$endCallSaveTicketButton.bind('click', function (ev) {
 			ev.preventDefault();
-
-			self.$endCallSaveTicketButton.button('loading');
-			self.saveToExisting();
+   
+			if((self.$requesterName.val() == self.number) || !self.form_valdation()){
+				self.hideWarnings();
+				self.$requesterEmailDom.hide();
+				self.$endCallSaveTicketButton.button('loading');
+				self.saveToExisting();
+			}
 		});
 
 		// Cancel or don't save
 		self.$endCall.find('.end_call_cancel').click(function (ev) {
 			ev.preventDefault();
-
 			self.hideEndCallForm();
 		});
 
 		$(document).on('hide', '#end_call', function (ev) {
-			self.resetDefaults();
+			if(self.inCall) { self.updateCallWorkTime(); }
+      self.resetDefaults();
 		});
 	};
 	
@@ -223,7 +241,8 @@ var FreshfoneEndCall;
 					'requester_email': this.requesterEmail(),
 					'responder_id': this.agent || "", 
 					'call_history': !this.inCall,
-					'direct_dial_number': this.directDialNumber
+					'direct_dial_number': this.directDialNumber,
+					'phone_number' : this.$requesterNumber.val()
 				}
 			});
 		},
@@ -257,6 +276,8 @@ var FreshfoneEndCall;
 			return this.$ticketSubject.val();
 		},
 		resetForm: function () {
+			this.$requesterEmailDom.hide();
+			this.hideWarnings();
 			this.$ticketSearchPane.hide();
 			this.$endCallNewTicketDetailsForm.hide();
 			this.$endCallMainContent.show();
@@ -312,6 +333,59 @@ var FreshfoneEndCall;
 				}).done(function(data) {
 					self.$requesterName.select2("data",data.results[0]);
 				});
-		}
-	};
+		},
+    updateCallWorkTime: function() { 
+      var self = this;
+      if (this.callSid == "") { this.getParams(); }
+      $.ajax({
+        type: 'PUT',
+        url: '/freshfone/conference_call/acw',
+        data: { 'CallSid' : self.callSid }
+      });
+    },
+		isValidEmail: function (freshfone_email){
+			return (/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i).test(freshfone_email)
+		},
+		hideWarnings: function(){
+			this.$requesterNameContainer.find('.error_message').toggle(false);
+		},
+		form_valdation: function(){
+			this.hideWarnings();
+			return (this.detailsEmptyCheck() || this.emailFieldValidation() || this.phoneNumberFieldValidation());
+		},
+		detailsEmptyCheck: function(){
+			if(this.requesterEmail().trim() == "" && this.$requesterNumber.val() == ""){
+				var message_elem = this.selectElement();
+				if(!this.freshfonewidget.checkForStrangeNumbers(this.number)){
+					this.$requesterNumber.val(this.number); 
+				}
+				this.toggleWarning(message_elem, true);
+				return true;
+			}
+		},
+		selectElement: function(){
+			return this.freshfonewidget.checkForStrangeNumbers(this.number)	? this.$strangeNumberMessage : this.$contactDetailsBlankMessage;
+		},
+		emailFieldValidation: function(){
+			if(this.emailValidationResult()){
+				this.toggleWarning(this.$invalidEmailMessage, true);
+				return true;  
+			}
+		},
+		phoneNumberFieldValidation: function(){
+			if(this.numberValdationResult()){		 
+				this.toggleWarning(this.$invalidNumberMessage, true);
+				return true;
+			}
+		},
+		emailValidationResult: function(){
+			return this.requesterEmail().trim() != "" && !this.isValidEmail(this.$requesterEmail.val());
+		},
+		numberValdationResult: function(){
+			return this.$requesterNumber.val() != "" && !isValidNumber(this.$requesterNumber.val());
+		},
+		toggleWarning: function(elem , to_show){
+			elem.toggle(to_show);
+		},
+  };
 }(jQuery));

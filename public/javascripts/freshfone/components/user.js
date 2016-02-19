@@ -294,6 +294,7 @@ var FreshfoneUser,
 					} else {
 						self.freshfonecalls.setCallSid(data.call_sid); 
 						self.freshfonecalls.registerCall(data.call_sid); //used in conference. can be merged with above and used for both conf and non conf users
+						self.freshfonecalls.setCallId(data.call_id);
 					} 
 					ffLogger.log({'action': "Getting CallSid from in_Call ajax", 'params': data});
 				},
@@ -360,7 +361,7 @@ var FreshfoneUser,
 			});
 		},
 		chromeSSLRestriction: function(){
-			if (window.chrome && window.location.protocol === "http:") {
+			if (window.chrome && window.location.protocol === "http:" && this.validateEnvironment()) {
 				var version = $.browser.version.split(".");	
 		  	var stable = parseInt(version[0]);
 		  	var patch = parseInt(version[2]);
@@ -369,6 +370,9 @@ var FreshfoneUser,
 				}
 				return false;
 			}
+		},
+		validateEnvironment: function(){
+			return freshfone.env != "development"
 		}
 	};
 }(jQuery));

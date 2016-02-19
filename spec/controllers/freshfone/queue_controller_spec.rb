@@ -3,6 +3,7 @@ require 'spec_helper'
 RSpec.configure do |c|
   c.include FreshfoneQueueHelper
   c.include Freshfone::Queue
+  c.include FreshfoneCallMetricHelper
 end
 
 RSpec.describe Freshfone::QueueController do
@@ -30,6 +31,43 @@ RSpec.describe Freshfone::QueueController do
     post :trigger_voicemail, queue_params
     xml[:Response][:Say].should_not be_blank
   end
+
+  it 'should render queue twiml on simultaneous_call_queue from queue' do 
+    @account.freshfone_account.enable_conference unless @account.features?(:freshfone_conference)
+    set_twilio_signature('freshfone/queue/redirect_to_queue', simultaneous_call_queue_params)
+    stub_twilio_queues
+    post :redirect_to_queue, simultaneous_call_queue_params
+    xml[:Response][:Enqueue].should_not be_blank
+  end
+
+  it 'should not contain any welcome message twiml while re-queueing a simultaneous_call_queue ' do 
+    @account.freshfone_account.enable_conference unless @account.features?(:freshfone_conference)
+    set_twilio_signature('freshfone/queue/redirect_to_queue', simultaneous_call_queue_params)
+    stub_twilio_queues
+    post :redirect_to_queue, simultaneous_call_queue_params
+    xml[:Response][:Say].should be_blank
+  end
+
+  it 'should not render queue twiml on simultaneous_call_queue from queue' do 
+    @account.freshfone_account.enable_conference unless @account.features?(:freshfone_conference)
+    create_freshfone_call
+    set_twilio_signature('freshfone/queue/redirect_to_queue', simultaneous_call_queue_params)
+    @number.update_attributes({:max_queue_length => 0})
+    stub_twilio_queues
+    post :redirect_to_queue, simultaneous_call_queue_params
+    xml[:Response][:Enqueue].should be_blank
+  end
+
+  it 'should render non-availability twiml if queue is overloaded' do 
+    @account.freshfone_account.enable_conference unless @account.features?(:freshfone_conference)
+    create_freshfone_call
+    set_twilio_signature('freshfone/queue/redirect_to_queue', simultaneous_call_queue_params)
+    @number.update_attributes({:max_queue_length => 0})
+    stub_twilio_queues
+    post :redirect_to_queue, simultaneous_call_queue_params
+    xml[:Response][:Say].should_not be_blank
+  end
+
 
   it 'should render non-availability twiml on wait time expiry' do
   	@account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
@@ -145,5 +183,26 @@ RSpec.describe Freshfone::QueueController do
     freshfone_call = @account.freshfone_calls.find(freshfone_call)
     freshfone_call.should be_default
     freshfone_call.abandon_state.should be_nil
+  end
+
+  it 'should update IVR time in metrics before enqueue' do
+    set_twilio_signature('freshfone/queue/enqueue?hunt_type=&hunt_id=', queue_params)
+    create_freshfone_call('CAae09f7f2de39bd201ac9276c6f1cc66a')
+    create_call_meta
+    mock_call_metrics_attricbutes
+    post :enqueue, queue_params
+    @freshfone_call.reload
+    call_metrics = @freshfone_call.call_metrics.reload
+    expect(call_metrics.ivr_time).not_to be_nil
+  end
+
+  it 'should update IVR time in metrics on hangup' do
+    set_twilio_signature('freshfone/queue/hangup', hangup_params)
+    create_freshfone_call('CDEFAULTQUEUE')
+    set_default_queue_redis_entry
+    mock_call_metrics_attricbutes
+    post :hangup, hangup_params
+    call_metrics = @freshfone_call.call_metrics.reload
+    call_metrics.queue_wait_time.should be_eql(67)
   end
 end

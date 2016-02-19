@@ -142,7 +142,7 @@ module Cache::Memcache::Account
     # Hence DB will be queried again & again via memcache for accounts without whitelisted ip if we use self.whitelisted_ip
     # Below query will return array containing results from query self.whitelisted_ip. 
     # So that cache won't be executed again & again for accounts without whitelistedip.
-    MemcacheKeys.fetch(key) { WhitelistedIp.where(account_id: self.id).limit(1) }
+    MemcacheKeys.fetch(key) { WhitelistedIp.where(account_id: self.id).limit(1).all }
   end
 
   def agent_names_from_cache
@@ -171,8 +171,8 @@ module Cache::Memcache::Account
   
   def solution_categories_from_cache
     MemcacheKeys.fetch(ALL_SOLUTION_CATEGORIES % { :account_id => self.id }) do
-      #META-READ-HACK!!
-      self.solution_categories.all(:conditions => {:is_default => false},:include => folder_scope_with_psc).collect do |cat|
+      self.solution_categories.all(:conditions => {:is_default => false},
+      :include => [:portal_solution_categories, :folders]).collect do |cat|
         {
           :folders => cat.folders.map(&:as_cache),
           :portal_solution_categories => cat.portal_solution_categories.map(&:as_cache)
@@ -275,13 +275,4 @@ module Cache::Memcache::Account
     def password_policy_memcache_key(user_type)
       ACCOUNT_PASSWORD_POLICY % { :account_id => self.id, :user_type => user_type}
     end
-
-    #META-READ-HACK!!
-    def folder_scope_with_psc
-       unless Account.current.present? && Account.current.launched?(:meta_read)
-         return [:portal_solution_categories, :folders]
-       end
-       [ :portal_solution_categories_through_meta, :folders_through_meta ]
-    end
-    
 end

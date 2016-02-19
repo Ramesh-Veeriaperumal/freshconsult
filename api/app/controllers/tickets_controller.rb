@@ -3,6 +3,7 @@ class TicketsController < ApiApplicationController
   include Helpdesk::TagMethods
   include CloudFilesHelper
   include TicketConcern
+  decorate_views
 
   before_filter :ticket_permission?, only: [:destroy]
 
@@ -14,8 +15,8 @@ class TicketsController < ApiApplicationController
     else
       assign_ticket_status
       if @item.save_ticket
+        @ticket = @item # Dirty hack. Should revisit.
         render_201_with_location(item_id: @item.display_id)
-        @ticket = @item
         notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
       else
         render_errors(@item.errors)
@@ -60,8 +61,19 @@ class TicketsController < ApiApplicationController
 
   private
 
+    def decorator_options
+      super({ name_mapping: (@name_mapping || get_name_mapping) })
+    end
+
+    def get_name_mapping
+      # will be called only for index and show.
+      # We want to avoid memcache call to get custom_field keys and hence following below approach.
+      custom_field = index? ? @items.first.try(:custom_field) : @item.custom_field
+      custom_field.each_with_object({}) { |(name, value), hash| hash[name] = TicketDecorator.display_name(name) } if custom_field
+    end
+
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields(ApiTicketConstants::FIELD_MAPPINGS, item)
+      ErrorHelper.rename_error_fields(ApiTicketConstants::FIELD_MAPPINGS.merge(@name_mapping), item)
     end
 
     def load_objects
@@ -112,7 +124,7 @@ class TicketsController < ApiApplicationController
     def validate_filter_params
       params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @ticket_filter = TicketFilterValidation.new(params, nil, string_request_params?)
-      render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
+      render_query_param_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
     def scoper
@@ -121,14 +133,14 @@ class TicketsController < ApiApplicationController
 
     def validate_url_params
       params.permit(*ApiTicketConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
-      if ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.exclude?(params[:include])
-        errors = [[:include, :blank]]
-        render_errors errors
+      if params.key?(:include) && ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.exclude?(params[:include])
+        errors = [[:include, :not_included]]
+        render_errors errors, list: ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.join(', ')
       end
     end
 
     def sanitize_params
-      prepare_array_fields [:cc_emails, :tags, :attachments]
+      prepare_array_fields [:cc_emails, :attachments] # Tags not included as it requires more manipulation.
 
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
       cc_emails =  params[cname][:cc_emails]
@@ -140,7 +152,7 @@ class TicketsController < ApiApplicationController
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
 
       if params[cname][:custom_fields]
-        checkbox_names = Helpers::TicketsValidationHelper.custom_checkbox_names(@ticket_fields)
+        checkbox_names = TicketsValidationHelper.custom_checkbox_names(@ticket_fields)
         ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], checkbox_names)
       end
 
@@ -152,21 +164,28 @@ class TicketsController < ApiApplicationController
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
                                              type: :ticket_type }, params[cname])
 
-      @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
-      params[cname][:tags] = construct_tags(@tags) if @tags
+      # Sanitizing is required to avoid duplicate records, we are sanitizing here instead of validating in model to avoid extra query.
+      prepare_tags
 
       # build ticket body attributes from description and description_html
       build_ticket_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
     end
 
+    def prepare_tags
+      tags = Array.wrap(params[cname][:tags]).map! { |x| RailsFullSanitizer.sanitize(x.to_s.strip) }.uniq(&:downcase).reject(&:blank?) if create? || params[cname].key?(:tags)
+      params[cname][:tags] = construct_tags(tags) if tags
+    end
+
     def validate_params
+      # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
       @ticket_fields = Account.current.ticket_fields_from_cache
-      allowed_custom_fields = Helpers::TicketsValidationHelper.custom_field_names(@ticket_fields)
+      @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
-      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
+      custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
       field = "ApiTicketConstants::#{action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
+      ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert) # Using map instead of invert does not show any perf improvement.
       load_ticket_status # loading ticket status to avoid multiple queries in model.
       params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
       ticket = TicketValidation.new(params_hash, @item, string_request_params?)
@@ -189,7 +208,7 @@ class TicketsController < ApiApplicationController
       action_scopes.each_pair do |scope_attribute, value|
         item_value = @item.send(scope_attribute)
         if item_value != value
-          Rails.logger.error "Ticket display_id: #{@item.display_id} with #{scope_attribute} is #{item_value}"
+          Rails.logger.debug "Ticket display_id: #{@item.display_id} with #{scope_attribute} is #{item_value}"
           head(404)
           return false
         end
@@ -227,7 +246,7 @@ class TicketsController < ApiApplicationController
 
     def load_object
       @item = scoper.find_by_display_id(params[:id])
-      head(:not_found) unless @item
+      log_and_render_404 unless @item
     end
 
     def load_ticket_status
@@ -244,7 +263,7 @@ class TicketsController < ApiApplicationController
     end
 
     def error_options_mappings
-      ApiTicketConstants::FIELD_MAPPINGS
+      @name_mapping.merge(ApiTicketConstants::FIELD_MAPPINGS)
     end
 
     def valid_content_type?

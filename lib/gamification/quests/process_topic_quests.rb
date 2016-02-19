@@ -2,7 +2,7 @@ module Gamification
 	module Quests
 		class ProcessTopicQuests 
 			extend Resque::AroundPerform
-			@queue = "gamificationQueue"
+			@queue = "gamification_topic_quests"
 
 			def self.perform(args)
 				args.symbolize_keys!

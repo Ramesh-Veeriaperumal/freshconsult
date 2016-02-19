@@ -58,6 +58,9 @@
 					</ul>
 				  </span>
 		        </span>
+		        <% if current_account.features?(:freshfone_call_metrics) %>
+		        	<p class='export_help_text pull-right'>More metrics available in export</p>
+		       	<% end %>
 		        <!-- Call History Export End -->
 							<!-- report style end-->
 						</div>

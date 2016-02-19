@@ -179,7 +179,8 @@ module TicketConstants
     :group => "group_id",
     :priority => "priority",
     :type => "ticket_type",
-    :source => "source"
+    :source => "source",
+    :status => "status"
   }
   # CC emails count
   MAX_EMAIL_COUNT = 50
@@ -188,6 +189,16 @@ module TicketConstants
   TICKET_START_DISPLAY_ID = -100000000
   TICKET_DISPLAY_ID_MAX_LOOP = 10
   TICKET_ID_LOCK_EXPIRY = 5 #5 seconds
+
+  BACKGROUND_THRESHOLD = 5
+
+  # Used in reports ETL
+  VISIBILITY_MAPPING = {
+    :active => 1,
+    :deleted => 2,
+    :spam => 3,
+    :merged_ticket => 4
+  }
 
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])

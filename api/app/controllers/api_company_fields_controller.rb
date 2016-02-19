@@ -1,7 +1,9 @@
 class ApiCompanyFieldsController < ApiApplicationController
+  decorate_views
+
   private
 
-    def validate_filter_params(additional_fields = [])
+    def validate_filter_params
       # This method has been overridden to avoid validating pagination options.
     end
 

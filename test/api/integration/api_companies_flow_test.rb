@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
-  include Helpers::CompaniesTestHelper
+  include CompaniesTestHelper
   include CompanyHelper
   include ContactFieldsHelper
 
@@ -28,14 +28,14 @@ class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
 
   def test_empty_domains
     skip_bullet do
-      params = api_company_params.merge(domains: [Faker::Name.name])
+      params = api_company_params.merge(domains: [Faker::Lorem.characters(10)])
       post '/api/companies', params.to_json, @write_headers
       assert_response 201
       company = Company.find_by_name(params[:name])
       assert company.domains.split(',').count == 1
 
       put "/api/companies/#{company.id}", { domains: nil }.to_json, @write_headers
-      match_json([bad_request_error_pattern('domains', :data_type_mismatch, data_type: 'Array')])
+      match_json([bad_request_error_pattern('domains', :data_type_mismatch, data_type: Array)])
       assert_response 400
 
       put "/api/companies/#{company.id}", { domains: [] }.to_json, @write_headers
@@ -48,15 +48,15 @@ class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
     create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Linetext1'))
     create_company_field(company_params(type: 'paragraph', field_type: 'custom_paragraph', label: 'Testimony1'))
     company = create_company
-    turn_on_caching
-    Account.stubs(:current).returns(@account)
-    get "/api/v2/companies/#{company.id}", nil, @write_headers
-    company.update_attributes(custom_field: { 'cf_linetext1' => 'test', 'cf_testimony1' => 'test testimony' })
-    custom_field = company.custom_field
-    get "/api/v2/companies/#{company.id}", nil, @write_headers
-    turn_off_caching
-    assert_response 200
-    match_json(company_pattern({ custom_field: custom_field }, company))
+    enable_cache do
+      Account.stubs(:current).returns(@account)
+      get "/api/v2/companies/#{company.id}", nil, @write_headers
+      company.update_attributes(custom_field: { 'cf_linetext1' => 'test', 'cf_testimony1' => 'test testimony' })
+      custom_field = company.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v] }.to_h
+      get "/api/v2/companies/#{company.id}", nil, @write_headers
+      assert_response 200
+      match_json(company_pattern({ custom_field: custom_field }, company))
+    end
   ensure
     Account.unstub(:current)
   end

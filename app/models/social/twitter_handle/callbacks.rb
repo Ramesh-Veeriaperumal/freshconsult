@@ -32,8 +32,8 @@ class Social::TwitterHandle < ActiveRecord::Base
     def_stream = default_stream
     if def_stream.frozen? || def_stream.nil?
       default_stream_includes = [formatted_handle, "#{TWITTER_RULE_OPERATOR[:from]}#{self.screen_name}"] 
-      build_stream(formatted_handle, STREAM_TYPE[:default], true, default_stream_includes)
-      build_stream(screen_name, STREAM_TYPE[:dm], false, screen_name.dup)
+      build_stream(formatted_handle, TWITTER_STREAM_TYPE[:default], true, default_stream_includes)
+      build_stream(screen_name, TWITTER_STREAM_TYPE[:dm], false, screen_name.dup)
     else
       error_params = {
         :twitter_handle_id => id,
@@ -47,7 +47,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   def cleanup
     streams = twitter_streams
     streams.each do |stream|
-      if stream.data[:kind] != STREAM_TYPE[:custom]
+      if stream.data[:kind] != TWITTER_STREAM_TYPE[:custom]
         stream.destroy
       else
         stream.social_id = nil
@@ -79,20 +79,15 @@ class Social::TwitterHandle < ActiveRecord::Base
 
     def build_custom_streams
       search_keys.each do |search_key|
-        build_stream(search_key, STREAM_TYPE[:custom], false, search_key) unless search_key == formatted_handle
+        build_stream(search_key, TWITTER_STREAM_TYPE[:custom], false, search_key) unless search_key == formatted_handle
       end
     end
 
     def build_stream(name, type, subscription, search_keys)
       stream_params = construct_stream_params(name, type, subscription, search_keys)
       stream = twitter_streams.build(stream_params)
-      if stream.save && type == STREAM_TYPE[:default]
-        args_hash = {
-          :account_id => account.id, 
-          :insert_dynamo => true, 
-          :stream_id => stream.id 
-        }
-        Resque.enqueue(Social::Workers::Stream::Twitter, args_hash)
+      if stream.save && type == TWITTER_STREAM_TYPE[:default]
+        Social::CustomTwitterWorker.perform_async({:stream_id => stream.id})
       end
       stream
     end
@@ -116,7 +111,7 @@ class Social::TwitterHandle < ActiveRecord::Base
       }
       stream_params.merge!({:accessible_attributes => {
           :access_type => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
-        }}) if type == STREAM_TYPE[:default]    
+        }}) if type == TWITTER_STREAM_TYPE[:default]    
       stream_params
     end
 

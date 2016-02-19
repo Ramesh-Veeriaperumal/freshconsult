@@ -12,8 +12,8 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     validates :source, :status, :priority, :type, :group_id, :responder_id, :product_id, :subject, :description,
               :email, :phone, :mobile, :client_manager, :company_id, :tags, :address, :job_title, :twitter_id, :language, :time_zone,
               :domains, :note, default_field: {
-                required_fields: Helpers::DefaultFieldValidatorTestHelper.required_fields,
-                field_validations: Helpers::DefaultFieldValidatorTestHelper.default_field_validations
+                required_fields: DefaultFieldValidatorTestHelper.required_fields,
+                field_validations: DefaultFieldValidatorTestHelper.default_field_validations
               }
     validates :attribute1, default_field: {
       required_fields: [],
@@ -41,7 +41,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     end
 
     validates :attribute1, default_field: {
-      required_fields: [Helpers::DefaultFieldValidatorTestHelper.new(name: 'attribute1')],
+      required_fields: [DefaultFieldValidatorTestHelper.new(name: 'attribute1')],
       field_validations: { attribute1: { data_time: { allow_nil: false } } }
     }
   end
@@ -75,8 +75,8 @@ class DefaultFieldValidatorTest < ActionView::TestCase
                  errors
                 )
     assert_equal({
-      source: { list: '1,2,3,7,8,9' }, status: { list: '2,3,4,5' }, priority: { list: '1,2,3,4' }, type: { list: 'Lead,Question,Problem,Maintenance,Breakage' }, group_id: { data_type: 'Positive Integer' },
-      responder_id: { data_type: 'Positive Integer' }, product_id: { data_type: 'Positive Integer' }, client_manager: { data_type: 'Boolean' },
+      source: { list: '1,2,3,7,8,9' }, status: { list: '2,3,4,5' }, priority: { list: '1,2,3,4' }, type: { list: 'Lead,Question,Problem,Maintenance,Breakage' }, group_id: { data_type: :'Positive Integer' },
+      responder_id: { data_type: :'Positive Integer' }, product_id: { data_type: :'Positive Integer' }, client_manager: { data_type: 'Boolean' },
       tags: { data_type: Array }, language: { list: I18n.available_locales.map(&:to_s).join(',') }, time_zone: { list: ActiveSupport::TimeZone.all.map(&:name).join(',') },
       domains: { data_type: Array }, description: { data_type: String }, note: { data_type: String }
     }.sort,
@@ -98,8 +98,8 @@ class DefaultFieldValidatorTest < ActionView::TestCase
                  errors
                 )
     assert_equal({
-      source: { list: '1,2,3,7,8,9' }, status: { list: '2,3,4,5' }, priority: { list: '1,2,3,4' }, type: { list: 'Lead,Question,Problem,Maintenance,Breakage' }, group_id: { data_type: 'Positive Integer' },
-      responder_id: { data_type: 'Positive Integer' }, product_id: { data_type: 'Positive Integer' }, client_manager: { data_type: 'Boolean' },
+      source: { list: '1,2,3,7,8,9' }, status: { list: '2,3,4,5' }, priority: { list: '1,2,3,4' }, type: { list: 'Lead,Question,Problem,Maintenance,Breakage' }, group_id: { data_type: :'Positive Integer' },
+      responder_id: { data_type: :'Positive Integer' }, product_id: { data_type: :'Positive Integer' }, client_manager: { data_type: 'Boolean' },
       description: { data_type: String }, note: { data_type: String }, job_title: { data_type: String },
       tags: { data_type: Array }, language: { list: I18n.available_locales.map(&:to_s).join(',') }, time_zone: { list: ActiveSupport::TimeZone.all.map(&:name).join(',') }, domains: { data_type: Array }
     }.sort,
@@ -109,7 +109,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
 
   def test_array_length_validator
     params = {  source: '2', status: '2', priority: '1', type: 'Lead', group_id: 1, responder_id: 1, product_id: 1, subject: Faker::Name.name, description: Faker::Lorem.paragraph,
-                email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: ["#{Faker::Name.name}#{ " "* 20}#{Faker::Name.name}"], address: Faker::Lorem.paragraph,
+                email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: ["#{Faker::Name.name}#{ ' ' * 20}#{Faker::Name.name}"], address: Faker::Lorem.name,
                 job_title: Faker::Name.name, twitter_id: Faker::Name.name, language: 'en', time_zone: 'Chennai', domains: [Faker::Internet.domain_word], note: Faker::Name.name }
     test = TestValidation.new(params, true)
     refute test.valid?

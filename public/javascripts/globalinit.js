@@ -234,7 +234,7 @@ window.xhrPool = [];
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
       $('body').on('afterShow', '[rel=remote]', function(ev) {
           var _self = $(this);
-          if(!_self.data('loaded')) {
+          if(!_self.data('loaded')) {      
             _self.append("<div class='sloading loading-small loading-block'></div>");
             _self.load(_self.data('remoteUrl'), function(){
                 _self.data('loaded', true);

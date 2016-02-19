@@ -39,8 +39,9 @@ RSpec.describe Solution::FoldersController do
       :folder_id => @test_folder.id, :user_id => @agent.id, :status => "2", :art_type => "1" } )
     get :show, { :category_id => @solution_category.id, :id=>@test_folder.id, :format => 'xml'}
     result = parse_xml(response)
-    expected = (response.status === 200) &&  (compare(result["solution_folder"].keys-["articles"],APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?) && (compare(result["solution_folder"]["articles"].first.keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS-["tags", "folder"],{}).empty?)
-    expected.should be(true)
+    expect(response.status).to be_eql(200)
+    expect(assert_array(result["solution_folder"].keys, APIHelper::SOLUTION_FOLDER_ATTRIBS, ["articles"])).to be_truthy
+    expect(assert_array(result["solution_folder"]["articles"].first.keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS, ["tags", "folder"])).to be_truthy
   end
   it "should be able to delete a solution folder" do
     @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,

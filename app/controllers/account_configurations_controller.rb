@@ -8,8 +8,7 @@ class AccountConfigurationsController < ApplicationController
 		else
 			flash[:notice] = I18n.t('failure_msg')
 		end		
-
-		redirect_back_or_default account_url
+    redirect_to :back
 	end
 
 end

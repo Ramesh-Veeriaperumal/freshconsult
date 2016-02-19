@@ -1,18 +1,28 @@
-<ul id="reminderlist">
-  <% reminders.visible.map do |r| %>   
-   <%= render :partial => "/helpdesk/reminders/reminder", :object => r, :locals => { :show_info => show_info } %>
-  <% end %>
-</ul> 
-<div class="addReminder">
-	<%= form_for form_controller, :remote => true do |f| %>
-  	<%= f.label :body, t('add_to_do'), :class => "overlabel", :for => "helpdesk_reminder_body" %>
-  	<%= f.text_field :body, :class => "text", :autocomplete => "off" %>
-	<% end %>
-</div> 
-<ul id="compeleted_reminders">
-  <% reminders.logged(1.day.ago).map do |r| %>
-    <%= render :partial => "/helpdesk/reminders/reminder", :object => r, :locals => { :show_info => show_info } %>
-  <% end %>
-</ul>
+<div class="widget-content">
+  <div class="addReminder">
+  	<%= form_for form_controller, :remote => true do |f| %>
+    	<%= f.label :body, t('add_to_do'), :class => "overlabel", :for => "helpdesk_reminder_body" %>
+    	<%= f.text_field :body, :class => "text", :autocomplete => "off" %>
+  	<% end %>
+  </div>
+  <div class="widget-scroll mCustomScrollbar" id="db-todo-scroll" data-mcs-theme="minimal-dark">
+    <ul id="reminderlist">
+      <% reminders.visible.map do |r| %>
+       <%= render :partial => "/helpdesk/reminders/reminder", :object => r, :locals => { :show_info => show_info } %>
+      <% end %>
+    </ul>
+    <ul id="compeleted_reminders">
+      <% reminders.logged(1.day.ago).map do |r| %>
+        <%= render :partial => "/helpdesk/reminders/reminder", :object => r, :locals => { :show_info => show_info } %>
+      <% end %>
+    </ul>
+  </div>
+</div>
 
-
+<script type="text/javascript">
+  function getRemainderCount() {
+    var count = jQuery('#reminderlist').children().size();
+    jQuery("#reminder-list-count").text(count);
+  }
+  getRemainderCount();
+</script>

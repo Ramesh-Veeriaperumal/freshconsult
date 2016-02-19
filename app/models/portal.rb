@@ -16,7 +16,7 @@ class Portal < ActiveRecord::Base
   validates_inclusion_of :language, :in => Language.all_codes, :if => :language_changed?
   validate :validate_preferences
   before_update :backup_portal_changes , :if => :main_portal
-  after_commit :update_users_language, :update_solutions_language, on: :update, :if => :main_portal_language_changes?
+  after_commit :update_solutions_language, on: :update, :if => :main_portal_language_changes?
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
   after_save :update_chat_widget
@@ -173,11 +173,6 @@ class Portal < ActiveRecord::Base
     self.ssl_enabled? ? 'https' : 'http'
   end
 
-  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  def solution_category_ids
-    account.launched?(:meta_read) ? solution_categories_through_metum_ids : super
-  end
-
   def full_url
     main_portal ? "#{Account.current.full_url}/support/home" : "#{url_protocol}://#{portal_url}/support/home"
   end
@@ -192,10 +187,6 @@ class Portal < ActiveRecord::Base
   
 
   private
-
-    def update_users_language
-      account.all_users.update_all(:language => account.language) unless account.features.multi_language?
-    end
 
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
     def update_solutions_language
@@ -293,7 +284,7 @@ class Portal < ActiveRecord::Base
     
     def add_default_solution_category
       # Remove this method when new solution UI goes out
-      return if account.solution_categories_without_association.empty?
+      return if account.solution_categories.empty?
       default_category = account.solution_categories.find_by_is_default(true)
       self.solution_category_ids = self.solution_category_ids | [default_category.id] if default_category.present?
     end

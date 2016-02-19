@@ -22,8 +22,8 @@
 						<p class="ellipsis"><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
 					</td>
 					<td>
-						<p <%= last_login_tooltip(agent).html_safe if last_login_tooltip(agent)%>>
-							<%= agent.user.last_login_at ? t('agent.ago', :time => distance_of_time_in_words_to_now(agent.user.last_login_at)) : t('agent.never_logged_in') %><br/>
+						<p <%= last_active_tooltip(agent).html_safe %>>
+							<%= last_active_at(agent) %><br/>
               <% if agent.occasional? && agent.user.last_login_at %>
                 <%= t('agent.day_pass_used', :count => agent.user.day_pass_usages.length) %>
               <% end %>

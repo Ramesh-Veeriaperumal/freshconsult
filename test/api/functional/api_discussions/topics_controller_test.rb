@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class TopicsControllerTest < ActionController::TestCase
-    include Helpers::DiscussionsTestHelper
+    include DiscussionsTestHelper
 
     def forum_obj
       Forum.first
@@ -53,17 +53,18 @@ module ApiDiscussions
       assert_response 201
     end
 
-    def test_create_without_title
+    def test_create_without_title_and_message_html_invalid
       post :create, construct_params({ id: forum_obj.id },
-                                     message_html: 'test content')
-      match_json([bad_request_error_pattern('title', :missing_field)])
+                                     message_html: true)
+      match_json([bad_request_error_pattern('title', :required_and_data_type_mismatch, data_type: String),
+                  bad_request_error_pattern('message_html', :data_type_mismatch, data_type: String)])
       assert_response 400
     end
 
     def test_create_without_message
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title')
-      match_json([bad_request_error_pattern('message_html', :missing_field)])
+      match_json([bad_request_error_pattern('message_html', :required_and_data_type_mismatch, data_type: String)])
       assert_response 400
     end
 
@@ -219,9 +220,13 @@ module ApiDiscussions
 
     def test_update_without_edit_topic_privilege
       topic = first_topic
+      User.any_instance.stubs(:owns_object?).returns(false)
       User.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
       put :update, construct_params({ id: topic }, sticky: !topic.sticky)
       assert_response 403
+    ensure
+      User.any_instance.unstub(:owns_object?)
+      User.any_instance.unstub(:privilege?)
     end
 
     def test_update_with_email
@@ -261,6 +266,28 @@ module ApiDiscussions
       match_json(topic_pattern(topic.reload))
       match_json(topic_pattern(params, topic))
       assert_response 200
+    end
+
+    def test_update_without_manage_forums_privilege
+      forum = Forum.where(forum_type: 2).first
+      topic = first_topic
+      @controller.stubs(:privilege?).with(:manage_forums).returns(false)
+      params = { title: 'New', message_html: 'New msg',
+                 stamp_type: Topic::FORUM_TO_STAMP_TYPE[forum.forum_type].last,
+                 sticky: !topic.sticky, locked: !topic.locked, forum_id: forum.id }
+      put :update, construct_params({ id: topic.id }, params)
+      match_json([bad_request_error_pattern('forum_id', :inaccessible_field)])
+      assert_response 400
+    ensure
+      @controller.unstub(:privilege?)
+    end
+
+    def test_update_with_array_forum_id
+      topic = first_topic
+      params = { forum_id: [1] }
+      put :update, construct_params({ id: topic.id }, params)
+      match_json([bad_request_error_pattern('forum_id', :data_type_mismatch, data_type: 'Positive Integer')])
+      assert_response 400
     end
 
     def test_update_with_invalid_stamp_type
@@ -311,6 +338,15 @@ module ApiDiscussions
       assert_response 400
     end
 
+    def test_update_invalid_forum_id_for_topic_with_question_forum_previously
+      forum = create_test_forum(ForumCategory.first)
+      topic = create_test_topic(forum)
+      assert forum.forum_type == 1
+      put :update, construct_params({ id: topic.id }, forum_id: (1000 + Random.rand(11)))
+      match_json([bad_request_error_pattern('forum_id', :"can't be blank")])
+      assert_response 400
+    end
+
     def test_update_invalid_title_length
       put :update, construct_params({ id: first_topic.id }, title: Faker::Lorem.characters(300))
       match_json([bad_request_error_pattern('title', :"is too long (maximum is 255 characters)")])
@@ -329,9 +365,9 @@ module ApiDiscussions
     def test_update_with_nil_values
       put :update, construct_params({ id: first_topic.id }, forum_id: nil,
                                                             title: nil, message_html: nil)
-      match_json([bad_request_error_pattern('forum_id', :required_and_numericality),
-                  bad_request_error_pattern('title', :"can't be blank"),
-                  bad_request_error_pattern('message_html', :"can't be blank")
+      match_json([bad_request_error_pattern('forum_id', :required_and_data_type_mismatch, data_type: 'Positive Integer'),
+                  bad_request_error_pattern('title', :data_type_mismatch, data_type: String),
+                  bad_request_error_pattern('message_html', :data_type_mismatch, data_type: String)
                  ])
       assert_response 400
     end
@@ -497,7 +533,7 @@ module ApiDiscussions
     def test_topics_with_pagination_exceeds_limit
       get :forum_topics, controller_params(id: forum_obj.id, per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
     end
 
     def test_topics_with_link_header

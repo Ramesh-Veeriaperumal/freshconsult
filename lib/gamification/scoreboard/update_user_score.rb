@@ -2,7 +2,7 @@ module Gamification
 	module Scoreboard
 		class UpdateUserScore 
 			extend Resque::AroundPerform
-			@queue = "gamificationQueue"
+			@queue = "gamification_user_score"
 
 			def self.perform(args)
 				args.symbolize_keys!

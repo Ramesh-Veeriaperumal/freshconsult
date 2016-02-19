@@ -1,3 +1,4 @@
+#Remove when slackv1 is obselete.
 module Integrations::Slack::SlackConfigurationsUtil
   include Integrations::Slack::Constant
 

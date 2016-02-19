@@ -94,7 +94,8 @@ class UserNotifier < ActionMailer::Base
     end.deliver
   end
 
-  def notify_facebook_reauth(account,facebook_page)
+  def notify_facebook_reauth(facebook_page)
+    account          = Account.current
     headers = {
       :subject       => "Need Attention, Facebook app should be reauthorized",
       :to            => account.admin_email,
@@ -104,7 +105,6 @@ class UserNotifier < ActionMailer::Base
     @facebook_url    = social_facebook_index_url(:host => account.host)
     @fb_page         = facebook_page
     @admin_name      = account.admin_first_name
-    @account         = account
     mail(headers) do |part|
       part.text { render "facebook.text.plain" }
       part.html { render "facebook.text.html" }

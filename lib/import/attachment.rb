@@ -26,7 +26,7 @@ class Import::Attachment
     end
     if @item
      begin
-        file = Timeout.timeout(60) { RemoteFile.new(attach_url, username, password) }
+        file = Timeout.timeout(60) { RemoteFile.new(attach_url, username, password).fetch }
         attachment = @item.attachments.build(:content => file , :description => "", :account_id => @item.account_id)
         
         if attachment.save!

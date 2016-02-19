@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class TopicsIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::DiscussionsTestHelper
+  include DiscussionsTestHelper
 
   def test_query_count
     skip_bullet do
@@ -130,5 +130,23 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         assert_equal v2_expected[key], v2[key]
       end
     end
+  end
+
+  def test_hits_not_cached
+    t = Topic.first
+    hits = t.hits
+    enable_cache do
+      get "/api/discussions/topics/#{t.id}", nil, @headers
+    end
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal hits, response['hits']
+    t.hit! # This will update only redis key
+    enable_cache do
+      get "/api/discussions/topics/#{t.id}", nil, @headers
+    end
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal hits + 1, response['hits']
   end
 end

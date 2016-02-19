@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class ApiTicketFieldsControllerTest < ActionController::TestCase
-  include Helpers::TicketFieldsTestHelper
+  include TicketFieldsTestHelper
   def wrap_cname(_params)
     remove_wrap_params
     {}
@@ -28,7 +28,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
         new_pattern = ticket_field_nested_pattern(field, choices: field.formatted_nested_choices)
       else
         new_pattern = ticket_field_pattern(field)
-        klass = TicketFieldDecorator.send(:ticket_field_choices, field).class
+        klass = TicketFieldDecorator.new(field, {}).ticket_field_choices.class
         new_pattern.merge!(choices: Hash) if klass == Hash
       end
       pattern << new_pattern
@@ -191,7 +191,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
   def test_index_with_invalid_filter_value
     get :index, controller_params({ type: 'junk' }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('type', :"can't be blank")])
+    match_json([bad_request_error_pattern('type', :not_included, list: 'default_subject, default_requester, default_ticket_type, default_status, default_priority, default_group, default_agent, default_source, default_description, default_product, custom_text, custom_paragraph, custom_checkbox, custom_number, custom_date, custom_decimal, custom_dropdown, nested_field')])
   end
 
   def test_index_with_valid_filter

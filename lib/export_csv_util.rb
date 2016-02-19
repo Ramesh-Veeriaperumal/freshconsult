@@ -37,7 +37,7 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
   def export_customer_fields type
     return unless ["contact", "company"].include?(type)
     custom_fields = Account.current.send("#{type}_form").fields
-    custom_fields.reject!{|x| ["client_manager","tag_names"].include?(x.name)} if type.eql?("contact")
+    custom_fields.reject!{|x| ["tag_names"].include?(x.name)} if type.eql?("contact")
     custom_fields.collect { |cf| 
             { :label => cf.label, 
               :value => cf.name, 

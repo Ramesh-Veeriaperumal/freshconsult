@@ -39,6 +39,16 @@ module Freshfone::NodeEvents
     notify_socket(call_channel("dequeued_call", account), dequeued_call_message(call, account))
   end
 
+  def publish_disable_supervisor_call(call_id, supervisor_id, account = nil)
+    @account = account
+    notify_socket(call_channel("disable_supervisor_call", account), disable_supervisor_call_message(call_id,supervisor_id))
+  end
+
+  def publish_enable_supervisor_call(call_id, supervisor_id, account = nil)
+    @account = account
+    notify_socket(call_channel("enable_supervisor_call", account), enable_supervisor_call_message(call_id, supervisor_id))
+  end
+
   def publish_freshfone_presence(user, deleted=false)
     @user = user
     (!deleted and user.freshfone_user_online?) ? publish_online : check_user_offline(user)
@@ -145,7 +155,7 @@ module Freshfone::NodeEvents
           :agent_user_avatar => get_user_avatar(call.agent),
           :agent_group_name => get_agent_or_group_name(call),
           :helpdesk_number => call.direct_dial_number.present? ? call.direct_dial_number : call.freshfone_number.number,
-          :direction => call.incoming? ? "incoming_call_icon" : "outgoing_call_icon",
+          :direction => call.incoming? ? "ficon-incoming-call" : "ficon-outgoing-call",
           :call_created_at => call.created_at.to_i
         }
     end
@@ -226,6 +236,14 @@ module Freshfone::NodeEvents
 
     def active_call_end(call, account)
       { :call_details => { :call_id => call.id } }
+    end
+
+    def disable_supervisor_call_message(call_id, supervisor_id)
+      { :call_details => { :call_id => call_id, :user_id => supervisor_id} }
+    end
+
+    def enable_supervisor_call_message(call_id, supervisor_id)
+      { :call_details => { :call_id => call_id, :user_id => supervisor_id} }
     end
 
     def user_link(user)
