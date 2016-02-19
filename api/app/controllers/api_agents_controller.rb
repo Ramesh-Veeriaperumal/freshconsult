@@ -33,4 +33,12 @@ class ApiAgentsController < ApiApplicationController
     def scoper
       current_account.all_agents
     end
+
+    def me?
+      current_action?('me')
+    end
+
+    def allowed_to_access?
+      me? ? true : super
+    end
 end
