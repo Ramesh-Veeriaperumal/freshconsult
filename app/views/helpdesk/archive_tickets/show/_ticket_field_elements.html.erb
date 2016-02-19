@@ -12,7 +12,7 @@
   default_ticket_type_field = ""
   section_container = ""
 %>
-<% current_portal.ticket_fields.each do |field| 
+<% current_portal.ticket_fields_including_nested_fields.each do |field| 
   next if field.section_field?
   if field.visible_in_view_form?
     if field.is_default_field?
@@ -23,7 +23,7 @@
       field_label = (field.label).html_safe
     end
     dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
-    
+
     if(field.field_type == "nested_field" and !@ticket.new_record?)
       field_value = {}
       field.nested_levels.each do |ff|

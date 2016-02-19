@@ -10,7 +10,6 @@ class Account < ActiveRecord::Base
   include Redis::OthersRedis
   include Redis::DisplayIdRedis
   include Redis::OthersRedis
-  include Redis::RoutesRedis
   include ErrorHandle
   include AccountConstants
 
@@ -147,6 +146,11 @@ class Account < ActiveRecord::Base
   def slave_queries?
     ismember?(SLAVE_QUERIES, self.id)
   end
+
+  def tag_based_article_search_enabled?
+    ismember?(TAG_BASED_ARTICLE_SEARCH, self.id)
+  end
+
   #Temporary feature check methods - using redis keys - ends here
 
   def validate_required_ticket_fields?
@@ -263,7 +267,11 @@ class Account < ActiveRecord::Base
   def premium_email?
     ismember?(PREMIUM_EMAIL_ACCOUNTS, self.id)
   end
-  
+
+  def premium_webhook_throttler?
+    ismember?(PREMIUM_WEBHOOK_THROTTLER, self.id)
+  end
+
   def plan_name
     subscription.subscription_plan.canon_name
   end

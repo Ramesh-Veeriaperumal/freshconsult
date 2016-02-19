@@ -934,7 +934,13 @@ JiraWidget.prototype = {
 		jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][0][id]">';
 		selectOptions = "";
 		jQuery.each(fieldData["allowedValues"],function(key,data){
-			selectOptions += "<option value='"+data["id"]+"'>"+data["value"]+"</option>";
+			if(fieldData["schema"]["items"] == "component" || fieldData["schema"]["items"] == "version")
+			{
+				selectOptions += "<option value='"+data["id"]+"'>"+data["name"]+"</option>";	
+			}
+			else {
+				selectOptions += "<option value='"+data["id"]+"'>"+data["value"]+"</option>";
+			}
 		});
 		jiraWidget.fieldContainer += selectOptions+ '</select>';
 	}, 

@@ -34,7 +34,7 @@ module Social
       begin
         hash = yield
         if hash[:item]
-          file = RemoteFile.new(hash[:profile_image_url])
+          file = RemoteFile.new(hash[:profile_image_url]).fetch
           if file
             avatar = hash[:item].build_avatar({:content => file })
             avatar.save

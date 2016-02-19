@@ -139,7 +139,10 @@ var SurveyQuestion = {
 	hide:function(){
 		jQuery('div#survey_questions').hide();
 		jQuery("div#survey_questions").html("");
-		jQuery("#additional-thanks").hide();
+		if(!jQuery("input[name=can_comment").is(':checked'))
+		 {
+		 	jQuery("#additional-thanks").hide();
+		 }
     	jQuery('#addQuestion').show();
 	},
 	add:function(question,isSurveyResult){
@@ -200,6 +203,10 @@ var SurveyQuestion = {
 	},
 	additionalComment: function(){
 		jQuery('#feedback-thanks').toggle();
+		if(jQuery('#addQuestion').is(':visible'))
+		{
+			jQuery("#additional-thanks").toggle();
+		}
 	},
 	resetOptions:function(){
 		var defaultScale = jQuery("input[name=question-choice]:checked").val();

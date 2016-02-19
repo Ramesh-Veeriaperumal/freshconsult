@@ -120,11 +120,6 @@ input.disabled, select.disabled, textarea.disabled{
 	color:#777777 !important;
 }
 
-form table {
-    width: 100%;
-}
-
-
 .auto_bcc_email{
 	@include padding-left(10px !important);
 	input.text{

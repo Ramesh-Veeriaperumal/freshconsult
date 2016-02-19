@@ -9,13 +9,13 @@
 
 	<ul class="clearfix mt20 freshfone_realtime">
 		<li class="<%= 'disabled' unless freshfone_active? %>">
-			<a class="freshfone_dashboard_cells" href="/phone/dashboard/#queued_calls">
+			<a class="freshfone_dashboard_cells" href="/phone/dashboard/#queued_calls" data-pjax="#body-container">
 				<h4> <span class="live-queued-calls">0</span></h4>
 				<p class="dash-lbl muted"> <%= t('freshfone.dashboard.waiting') %> </p>
 			</a>
 		</li>
 		<li class="<%= 'disabled' unless freshfone_active? %>">
-			<a class="freshfone_dashboard_cells" href="/phone/dashboard/#active_calls">
+			<a class="freshfone_dashboard_cells" href="/phone/dashboard/#active_calls" data-pjax="#body-container">
 				<h4> <span class="live-active-calls">0</span></h4>
 				<p class="dash-lbl muted"> <%= t('freshfone.dashboard.in_conversation') %> </p>
 			</a>

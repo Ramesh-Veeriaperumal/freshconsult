@@ -28,7 +28,6 @@ class Portal < ActiveRecord::Base
   include Cache::Memcache::Portal
   include Redis::RedisKeys
   include Redis::PortalRedis
-  include Redis::RoutesRedis
 
   has_one :logo,
     :as => :attachable,
@@ -118,6 +117,10 @@ class Portal < ActiveRecord::Base
   #Yeah.. It is ugly.
   def ticket_fields(additional_scope = :all)
     filter_fields account.ticket_fields.send(additional_scope), ticket_field_conditions
+  end
+
+  def ticket_fields_including_nested_fields(additional_scope = :all)
+    filter_fields account.ticket_fields_including_nested_fields.send(additional_scope), ticket_field_conditions
   end
 
   def customer_editable_ticket_fields
@@ -273,13 +276,13 @@ class Portal < ActiveRecord::Base
         Rails.logger.info "portal_url changed #{portal_url}"
         Rails.logger.info "Old URL #{portal_url_was},  #{portal_url}, #{account_id}, #{account.full_domain}"
         destroy_route_info(portal_url_was) unless portal_url_was.blank? #delete old portal url
-        set_route_info(portal_url, account_id, account.full_domain) unless portal_url.blank? #add new portal url
+        Redis::RoutesRedis.set_route_info(portal_url, account_id, account.full_domain) unless portal_url.blank? #add new portal url
       end
     end
 
     def destroy_route_info(old_portal_url = portal_url)
       Rails.logger.info "Deleting #{old_portal_url} route."
-      delete_route_info(old_portal_url) unless old_portal_url.blank?
+      Redis::RoutesRedis.delete_route_info(old_portal_url) unless old_portal_url.blank?
     end
     
     def add_default_solution_category

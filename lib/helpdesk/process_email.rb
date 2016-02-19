@@ -18,6 +18,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
   attr_accessor :reply_to_email, :additional_emails,:archived_ticket, :start_time, :actual_archive_ticket
 
+  def determine_pod
+    to_email = parse_to_email
+    shard = ShardMapping.fetch_by_domain(to_email[:domain])
+    shard.pod_info unless shard.blank?
+  end
+
   def perform
     # from_email = parse_from_email
     self.start_time = Time.now.utc

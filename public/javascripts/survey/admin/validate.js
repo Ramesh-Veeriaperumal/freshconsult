@@ -13,6 +13,9 @@ var SurveyValidate = {
   					if(data.redirect_url){
               pjaxify(data.redirect_url);
   					}
+            else if(data.default_survey_enabled){
+              pjaxify(window.location.href);
+            }
             else{
               SurveyAdmin.list();
             }

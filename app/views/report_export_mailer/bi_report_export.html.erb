@@ -19,7 +19,7 @@ For metric: <%= @selected_metric.html_safe %>
 
 <% if @filter_to_display %>
   Filters applied:
-  <table border="1">
+  <table border="1" width="100%">
     <tr><td>Date Range</td><td><%=@date_range%></td></tr>
     <% @filters.each do |f| %>
       <tr><td><%=f["name"]%></td><td><%= f["value"] %></td></tr>

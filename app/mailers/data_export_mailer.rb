@@ -6,6 +6,7 @@ class DataExportMailer < ActionMailer::Base
     headers = {
       :to    => options[:email],
       :from  => AppConfig['from_email'],
+      :bcc   => AppConfig['reports_email'],
       :subject => "Data Export for #{options[:host]}",
       :sent_on => Time.now,
       "Reply-to" => ""
@@ -22,7 +23,7 @@ class DataExportMailer < ActionMailer::Base
       :subject   => formatted_export_subject(options),
       :to        => options[:user].email,
       :from      => AppConfig['from_email'],
-      :bcc       => "reports@freshdesk.com",
+      :bcc       => AppConfig['reports_email'],
       :sent_on   => Time.now,
       "Reply-to" => ""
     }
@@ -39,7 +40,7 @@ class DataExportMailer < ActionMailer::Base
       :subject  => "No tickets in range - #{options[:domain]}",
       :to       => options[:user][:email],
       :from     => AppConfig['from_email'],
-      :bcc      => "reports@freshdesk.com",
+      :bcc      => AppConfig['reports_email'],
       :sent_on  => Time.now,
       "Reply-to" => ""
     }
@@ -55,6 +56,7 @@ class DataExportMailer < ActionMailer::Base
       :subject => "#{options[:type].capitalize} export for #{options[:domain]}",
       :to      => options[:user].email,
       :from    => "support@freshdesk.com",
+      :bcc     => AppConfig['reports_email'],
       "Reply-to" => "",
       :sent_on   => Time.now
     }
@@ -71,8 +73,8 @@ class DataExportMailer < ActionMailer::Base
     headers = {
       :subject => "Reports Export for #{options[:range]}",
       :to      => options[:user].email,
-      :from    => "support@freshdesk.com",
-      :bcc      => "reports@freshdesk.com",
+      :from    => AppConfig['from_email'],
+      :bcc      => AppConfig['reports_email'],
       "Reply-to" => "",
       :sent_on   => Time.now
     }
@@ -88,6 +90,7 @@ class DataExportMailer < ActionMailer::Base
       :subject => "Agents List Export",
       :to      => options[:user].email,
       :from    => AppConfig['from_email'],
+      :bcc     => AppConfig['reports_email'],
       :sent_on   => Time.now
     }
     @user = options[:user]

@@ -25,10 +25,4 @@ namespace :twitter do
     end
   end
 
-  def queue_empty?(queue_name)
-    queue_length = Resque.redis.llen "queue:#{queue_name}"
-    puts "current #{queue_name} length is #{queue_length}"
-    queue_length < 1
-  end
-
 end

@@ -50,7 +50,10 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     end
     domain = DomainMapping.find_by_domain(env["HTTP_HOST"])
     @account_id = domain.account_id if domain
-    if allowed?
+    pod_info = domain.shard.pod_info if domain
+    if PodConfig['CURRENT_POD'] != pod_info
+      @status, @headers, @response = @app.call(env)
+    elsif allowed?
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
         remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?

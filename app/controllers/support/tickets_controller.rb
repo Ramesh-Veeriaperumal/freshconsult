@@ -122,7 +122,7 @@ class Support::TicketsController < SupportController
     end
 
     def load_archive_ticket
-      archive_ticket = Helpdesk::ArchiveTicket.load_by_param(params[:id], current_account)
+      archive_ticket = Helpdesk::ArchiveTicket.find_by_param(params[:id], current_account)
       raise ActiveRecord::RecordNotFound unless archive_ticket
       redirect_to support_archive_ticket_path(params[:id])
     end

@@ -44,7 +44,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="p-content" id="post-{{first_post.id}}-description">
+			<div class="p-content" rel="image-enlarge" id="post-{{first_post.id}}-description">
 				<div class="p-desc">
 					{{ first_post.body_html }}
 				</div>
@@ -78,7 +78,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="p-content" id="post-{{post.id}}-description">
+					<div class="p-content" rel="image-enlarge" id="post-{{post.id}}-description">
 						<div class="p-desc">
 							{% if post.answer? %}
 								<div>
@@ -112,7 +112,7 @@
 					<h4 class="user-name">{{ portal.user.name | h }}</h4>
 				</div>
 			</div>
-			<div class="p-content">
+			<div class="p-content" rel="image-enlarge">
 				<input type="text" class="special span12" 
 						placeholder="{% translate portal.topic.comment_placeholder %}" id="reply-form-proxy" 
 						data-proxy-for="#new-post-form" />

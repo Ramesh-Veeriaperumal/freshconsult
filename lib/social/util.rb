@@ -23,8 +23,22 @@ module Social::Util
   
   def select_fb_shard_and_account(page_id, &block)
     mapping = Social::FacebookPageMapping.find_by_facebook_page_id(page_id)
-    account_id = mapping ? mapping.account_id : nil    
-    select_shard_and_account(account_id, &block)
+    account_id = mapping ? mapping.account_id : nil
+    if account_id
+      select_shard_and_account(account_id, &block)
+    else
+      Rails.logger.error "FacebookPageMapping not present for #{page_id}"
+      yield(nil) if block_given?
+    end
+  end
+  
+  def get_tweet_text(tweet_type, ticket, twt_text)
+    if tweet_type.eql?"mention"
+      error_message, tweet_body = validate_tweet(twt_text, "#{ticket.latest_twitter_comment_user}") 
+    else
+      error_message, tweet_body = validate_tweet(twt_text, nil, false) 
+    end
+    [error_message, tweet_body]
   end
   
   def validate_tweet(tweet, twitter_id, is_reply = true)
