@@ -420,7 +420,7 @@ module SolutionHelper
 		op << "<div class='inline-block'>"
 		f.fields_for(:solution_category_meta) do |category_fields|
 			op << dynamic_text_box(:category, @language, category_fields, 
-									{ :class => "hide", :disabled => true, :id => 'create-category-text', :primary => true})
+									{ :class => "hide input-large", :disabled => true, :id => 'create-category-text', :primary => true})
 		end
 		op << "</div>"
 		op << "<div class='inline-block'>"
