@@ -1,0 +1,33 @@
+JSON.generate(@items.map do |item|
+ response_hash = {
+      :cc_emails => item.cc_email.try(:[], :cc_emails),
+      :fwd_emails=> item.cc_email.try(:[], :fwd_emails),
+      :reply_cc_emails => item.cc_email.try(:[], :reply_cc),
+      :fr_escalated => item.fr_escalated,
+      :spam => item.spam, 
+      :email_config_id => item.email_config_id, 
+      :group_id => item.group_id, 
+      :priority => item.priority, 
+      :requester_id => item.requester_id, 
+      :responder_id =>item.responder_id, 
+      :source => item.source, 
+      :company_id => item.company_id,
+      :status => item.status, 
+      :subject => item.subject,
+      :to_emails => item.schema_less_ticket.try(:to_emails),
+      :product_id => item.schema_less_ticket.try(:product_id),
+      :id => item.display_id,
+      :type => item.ticket_type,
+      :due_by => item.due_by.try(:utc),
+      :fr_due_by => item.frDueBy.try(:utc),
+      :is_escalated => item.isescalated,
+      :description => item.ticket_body.description,
+      :description_html => item.ticket_body.description_html,
+      :custom_fields => item.custom_fields,
+      :created_at => item.created_at.try(:utc),
+      :updated_at => item.updated_at.try(:utc)
+    }
+    response_hash.merge!(deleted: item.deleted) if item.deleted
+    response_hash
+end
+)

@@ -40,10 +40,15 @@ class Helpdesk::TicketField < ActiveRecord::Base
                              :dependent => :destroy, 
                              :order => "position"                  
 
-  has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', 
+  has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField',
                                   :dependent => :destroy, 
                                   :order => "level"
-    
+
+  has_many :nested_fields_with_flexifield_def_entries, :class_name => 'Helpdesk::NestedTicketField',
+                                  :include => :flexifield_def_entry,
+                                  :dependent => :destroy, 
+                                  :order => "level"
+
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
 
   has_many :section_fields, :dependent => :destroy
@@ -172,34 +177,34 @@ class Helpdesk::TicketField < ActiveRecord::Base
      case field_type
        when "custom_dropdown" then
           if(admin_pg)
-            level1_picklist_values.collect { |c| [c.value, c.value, c.id] }
+            picklist_values.collect { |c| [c.value, c.value, c.id] }
           else
-            level1_picklist_values.collect { |c| [c.value, c.value] }
+            picklist_values.collect { |c| [c.value, c.value] }
           end
        when "default_priority" then
          TicketConstants.priority_names
        when "default_source" then
          TicketConstants.source_names
        when "default_status" then
-         Helpdesk::TicketStatus.statuses_from_cache(account)
+         Helpdesk::TicketStatus.statuses_from_cache(Account.current)
        when "default_ticket_type" then
           if(admin_pg)
-            account.ticket_types_from_cache.collect { |c| [c.value, c.value, c.id] }
+            Account.current.ticket_types_from_cache.collect { |c| [c.value, c.value, c.id] }
           else
-            account.ticket_types_from_cache.collect { |c| [c.value, c.value] }
+            Account.current.ticket_types_from_cache.collect { |c| [c.value, c.value] }
           end
        when "default_agent" then
         return group_agents(ticket)
        when "default_group" then
-         account.groups_from_cache.collect { |c| [CGI.escapeHTML(c.name), c.id] }
+         Account.current.groups_from_cache.collect { |c| [CGI.escapeHTML(c.name), c.id] }
        when "default_product" then
-         account.products.collect { |e| [CGI.escapeHTML(e.name), e.id] }
+         Account.current.products.collect { |e| [CGI.escapeHTML(e.name), e.id] }
        when "nested_field" then
          picklist_values.collect { |c| [c.value, c.value] }
        else
          []
      end
-  end  
+  end
 
   def nested_choices
     self.picklist_values.collect { |c| 
@@ -209,6 +214,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     }
   end
   
+  def dropdown_choices_with_name
+    level1_picklist_values.collect { |c| [c.value, c.value] }
+  end
+
   def dropdown_choices_with_id
     level1_picklist_values.collect { |c| [c.id, c.value] }
   end
@@ -251,23 +260,23 @@ class Helpdesk::TicketField < ActiveRecord::Base
   def html_unescaped_choices(ticket = nil)
     case field_type
        when "custom_dropdown" then
-         level1_picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
+         picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
        when "default_priority" then
          TicketConstants.priority_names
        when "default_source" then
          TicketConstants.source_names
        when "default_status" then
-         Helpdesk::TicketStatus.statuses_from_cache(account).collect{|c|  [CGI.unescapeHTML(c[0]),c[1]] }
+         Helpdesk::TicketStatus.statuses_from_cache(Account.current).collect{|c|  [CGI.unescapeHTML(c[0]),c[1]] }
        when "default_ticket_type" then
-         account.ticket_types_from_cache.collect { |c| [CGI.unescapeHTML(c.value), 
-                                                        c.value, 
+         Account.current.ticket_types_from_cache.collect { |c| [CGI.unescapeHTML(c.value),
+                                                        c.value,
                                                         {"data-id" => c.id}] }
        when "default_agent" then
         return group_agents(ticket)
        when "default_group" then
-         account.groups_from_cache.collect { |c| [c.name, c.id] }
+         Account.current.groups_from_cache.collect { |c| [c.name, c.id] }
        when "default_product" then
-         account.products.collect { |e| [e.name, e.id] }
+         Account.current.products.collect { |e| [e.name, e.id] }
        when "nested_field" then
          picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
        else
@@ -393,7 +402,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def has_sections_feature?
-    account.features_included?(:dynamic_sections)
+    Account.current.features?(:dynamic_sections)
   end
 
   def has_section?
@@ -410,17 +419,17 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
     def group_agents(ticket)
       if ticket && ticket.group_id
-        agent_list = AgentGroup.where({ :group_id => ticket.group_id, :users => {:account_id => account.id , :deleted => false } }).joins(:user).select("users.id,users.name").order("users.name").collect{ |c| [c.name, c.id]}
+        agent_list = AgentGroup.where({ :group_id => ticket.group_id, :users => {:account_id => Account.current.id , :deleted => false } }).joins(:user).select("users.id,users.name").order("users.name").collect{ |c| [c.name, c.id]}
         if !ticket.responder_id || agent_list.any? { |a| a[1] == ticket.responder_id }
           return agent_list
         end
 
-        responder = account.agents_from_cache.detect { |a| a.user.id == ticket.responder_id }
+        responder = Account.current.agents.find_by_user_id(ticket.responder_id)
         agent_list += [[ responder.user.name, ticket.responder_id ]] if responder
         return agent_list
       end
       
-      account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
+      Account.current.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
     end
 
     def populate_choices

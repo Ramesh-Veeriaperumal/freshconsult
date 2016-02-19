@@ -1,8 +1,9 @@
 module Redis::RoutesRedis
 
-	def set_route_info(portal_url, account_id, full_domain)
+
+	def self.set_route_info(portal_url, account_id, full_domain)
 		# Namespace route is used to differentiate routing keys.
-		newrelic_begin_rescue { $redis_routes.hmset(
+		MemcacheKeys.newrelic_begin_rescue { $redis_routes.hmset(
 													"route:#{portal_url}", 
 													"account_id", account_id, 
 													"full_domain", full_domain, 
@@ -10,7 +11,15 @@ module Redis::RoutesRedis
 													) }
 	end
 
-	def delete_route_info portal_url
-		newrelic_begin_rescue { $redis_routes.del("route:#{portal_url}") }
+	def self.update_pod_info(portal_url, pod_info)
+		MemcacheKeys.newrelic_begin_rescue { $redis_routes.hmset(
+													"route:#{portal_url}", 
+													"pod", pod_info
+													) }
 	end
+
+	def self.delete_route_info portal_url
+		MemcacheKeys.newrelic_begin_rescue { $redis_routes.del("route:#{portal_url}") }
+	end
+
 end

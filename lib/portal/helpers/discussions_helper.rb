@@ -371,7 +371,7 @@ HTML
 				output << "</a></li>"
 			end
 			output << '</ul><span class="dropdown-toggle" data-toggle="dropdown">'
-			output << "Sorted by <a href='#'><b> #{t("portal.topic.sort_order.#{sort_by}")} </b>"
+			output << "Sorted by <a href='#'><b> #{CGI.escapeHTML(t("portal.topic.sort_order.#{sort_by}"))} </b>"
 			output << '<i class="caret"></i></a></span></span>'
 		end
 

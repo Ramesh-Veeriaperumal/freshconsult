@@ -10,10 +10,10 @@
                     <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
                         <%if scoreboard.resolution_speed < 100 %>
                             <%= fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
-                                <div class="span3">
+                                <div class="span4 game-points">
                                     <label class="label-title"> <%= t(".#{h(scoreboard.resolution_name)}").html_safe %> </label>
+                                     <span class="info_data">Pts</span>
                                     <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
-                                    <span class="info_data">Pts</span>
                                     <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
                                     <%= sb.hidden_field :id, :value => scoreboard.id %>
                                 </div>
@@ -33,10 +33,10 @@
                     <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
                         <%if scoreboard.resolution_speed > 100 %>
                             <%= fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
-                                <div class="span3"> 
+                                <div class="span4 game-points"> 
                                     <label class="label-title"><%= t(".#{scoreboard.resolution_name}") %> </label>
+                                     <span class="info_data">Pts</span>
                                     <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
-                                    <span class="info_data">Pts</span>
                                     <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
                                     <%= sb.hidden_field :id, :value => scoreboard.id %>
                                 </div>

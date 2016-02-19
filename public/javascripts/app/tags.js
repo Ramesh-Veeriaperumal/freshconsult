@@ -149,7 +149,7 @@ $(document).ready(function(){
     $('.tag-list').on('keydown.tag_index', '.tag_text', function(ev) {
         if(ev.keyCode == 13){
             ev.preventDefault();
-            $(this).trigger("change");
+            $(this).trigger("blur");
         }
     });
 
@@ -166,26 +166,10 @@ $(document).ready(function(){
         }
     })
 
-
-
-    $('.tag-list').on('focusout.tag_index', '.tag_text', function(e){
-        e.stopPropagation();
-        var this_tag_text = $(this);
-        var tag_id = this_tag_text.parents("tr").data("tagId");
-        var tag_name_id = $("#tag_name_"+tag_id)
-
-        if(this_tag_text.attr("value") == tag_name_id.data("tagName") || this_tag_text.attr("value") == "" || this_tag_text.attr("value")==null )
-        {
-            tag_name_id.removeClass("hide");
-            $("#tag_text_container_"+tag_id).addClass("hide");
-        }
-
-    });
-
     var tag_association;
     var tag_id, tag_name;
 
-    $('.tag-list').on('change.tag_index', '.tag_text', function(e) {
+    $('.tag-list').on('focusout.tag_index', '.tag_text', function(e) {
 
         var this_tag_text = $(this)
 
@@ -195,6 +179,12 @@ $(document).ready(function(){
         if(!(this_tag_text.attr("value") == tag_name_id.data("tagName") || this_tag_text.attr("value") == "" || this_tag_text.attr("value") == null))
         {
             change_tag_name(tag_id, tag_name);
+        }
+        else
+        {
+            tag_name_id.removeClass("hide");
+            $("#tag_text_container_"+tag_id).addClass("hide");
+
         }
 
     });

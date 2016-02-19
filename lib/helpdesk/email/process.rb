@@ -27,6 +27,11 @@ class Helpdesk::Email::Process
     self.to_email = parse_to_email #In parse_email_data
   end
 
+  def determine_pod
+    shard = ShardMapping.fetch_by_domain(to_email[:domain])
+    shard.pod_info unless shard.blank?
+  end
+
 	def perform
     self.start_time = Time.now.utc
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
