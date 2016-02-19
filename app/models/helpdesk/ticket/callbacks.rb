@@ -204,7 +204,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def pass_thro_biz_rules
     #Remove redis check if no issues after deployment
-    if redis_key_exists?(DISPATCHER_SIDEKIQ_ENABLED)
+    if Account.current.launched?(:sidekiq_dispatchr_feature)
       # This queue includes dispatcher_rules, auto_reply, round_robin.
       Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?) unless (import_id or outbound_email?)
     else

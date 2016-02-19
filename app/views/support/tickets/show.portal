@@ -54,7 +54,7 @@
 				</div>
 			{% endif %}
 			</div>
-			<div class="p-content">
+			<div class="p-content" rel="image-enlarge">
 				<div class="p-desc">
 					{{ ticket.description_html }}
 					{{ ticket | freshfone_audio_dom }}
@@ -77,7 +77,7 @@
 						</div>
 					</div>
 					
-					<div class="p-content">						
+					<div class="p-content" rel="image-enlarge">						
 						<div class="p-desc">
 							{{ comment.description }}
 							{{ comment | freshfone_audio_dom }}
@@ -98,7 +98,7 @@
 						<h4 class="user-name">{{ portal.user.name | h}}</h4>
 					</div>
 				</div>
-				<div class="p-content">
+				<div class="p-content" rel="image-enlarge">
 					<input type="text" class="special span12" 
 							placeholder="{% translate portal.tickets.reply_placeholder %}" id="add-note-form-proxy" 
 							data-proxy-for="#add-note-form" />

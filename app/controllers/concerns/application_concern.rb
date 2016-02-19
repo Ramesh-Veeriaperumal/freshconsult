@@ -47,7 +47,7 @@ module Concerns::ApplicationConcern
 
   def determine_pod
     shard = ShardMapping.lookup_with_domain(request.host)
-    return if shard.nil? && shard.pod_info.blank?
+    return if shard.nil? or shard.pod_info.blank?
     if shard.pod_info != PodConfig['CURRENT_POD']
       Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
       redirect_to_pod(shard)

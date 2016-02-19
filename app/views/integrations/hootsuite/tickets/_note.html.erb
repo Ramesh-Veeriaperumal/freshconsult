@@ -13,11 +13,11 @@ kind = note.kind
 	<% end %>
 	<div class="commentbox 
 					<%= (note.user.blank? or note.notable.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
-					<%= 'private-note' if note.private_note? || note.fwd_email? || is_twitter_dm?(note) || is_facebook_message?(note) %>">
+					<%= 'private-note' if note.private_note? || note.fwd_email? || is_twitter_dm?(note, ticket) || is_facebook_message?(note, ticket) %>">
 
-		<%= note_lock_icon(note) %>
+		<%= note_lock_icon(note, ticket) %>
 		
-		<% if note.fb_post and note.fb_post.post_type_present? %>
+		<% if ticket.facebook? and note.fb_post and note.fb_post.post_type_present? %>
 			<% if note.fb_post.comment? %>
 	      <span class="tooltip" data-original-title="Comment"> 
 	      	<%= content_tag(:span, "", :class => "ficon-chat-bubble fsize-21")%> 
@@ -62,9 +62,9 @@ kind = note.kind
 			    <% end %>
 	    </div>
 			<div id="note_attachments_container_<%= note.id%>">
-				<% unless note.all_attachments.empty? and note.cloud_files.empty? %>				
-						<%= render :partial => "/helpdesk/tickets/show/note_attachments", :formats => [:html], :locals => { :note => note }%>
-				<% end %>
+        <% unless note.all_attachments.empty? and note.cloud_files.empty? %>
+          <%= render :partial => "/helpdesk/tickets/show/note_attachments", :formats => [:html], :locals => { :note => note } unless minimizable %>
+        <% end %>
 			</div>
 		</div>
 	

@@ -5,7 +5,7 @@
 		 ><%= t('ticket.add_time') %></a>
 </div>
 <div id="timesheetlist">
-	<%= each_or_message "time_entry", @ticket.time_sheets, t(".no_timeentry") %>
+	<%= each_or_message "time_entry", @ticket.time_sheets_with_users, t(".no_timeentry") %>
 </div>
 <%= javascript_tag do -%> 
    jQuery('#timeentry_timer_total').data('staticTotal', false);

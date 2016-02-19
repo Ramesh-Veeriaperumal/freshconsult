@@ -1,3 +1,5 @@
+include Redis::RedisWrapper
+
 config = YAML::load_file(File.join(Rails.root, 'config', 'redis.yml'))[Rails.env]
 routes_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_routes.yml'))[Rails.env]
 rate_limit = YAML.load_file(File.join(Rails.root, 'config', 'rate_limit.yml'))[Rails.env]

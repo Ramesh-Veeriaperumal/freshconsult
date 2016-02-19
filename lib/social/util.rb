@@ -32,6 +32,15 @@ module Social::Util
     end
   end
   
+  def get_tweet_text(tweet_type, ticket, twt_text)
+    if tweet_type.eql?"mention"
+      error_message, tweet_body = validate_tweet(twt_text, "#{ticket.latest_twitter_comment_user}") 
+    else
+      error_message, tweet_body = validate_tweet(twt_text, nil, false) 
+    end
+    [error_message, tweet_body]
+  end
+  
   def validate_tweet(tweet, twitter_id, is_reply = true)
     twt_text = (is_reply and !tweet.include?(twitter_id)) ? "#{twitter_id} #{tweet}" : tweet
     tweet_length = twt_text.gsub(URL_REGEX, TWITTER_URL_LENGTH).length; 

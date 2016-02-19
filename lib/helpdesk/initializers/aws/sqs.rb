@@ -5,7 +5,7 @@ SQS = (sqs_config[Rails.env] || sqs_config).symbolize_keys
 begin
   #Global SQS client
   $sqs_client = AWS::SQS.new.client
-  current_pod = PodConfig['CURRENT_POD']
+  # current_pod = PodConfig['CURRENT_POD']
 
   #pod specific sqs queue facebook
   # $sqs_facebook_global =  AWS::SQS.new.queues.named(SQS[:facebook_realtime_queue])

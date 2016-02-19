@@ -57,7 +57,7 @@ var ticketId = <%= @ticket.display_id %>;
 				<div class="conversation_thread" id="all_notes" rel="activity_container">
 					<% all_notes = @ticket_note_all[0..-2] if @ticket_note_all.present? %>
 					<% if all_notes.present? %>
-						<%= render :partial => "note", :collection => all_notes %>
+						<%= render :partial => "note", :collection => all_notes, :locals => {:ticket => @ticket }  %>
 					<% end %>
 				</div>
 			</div>
@@ -79,9 +79,9 @@ var ticketId = <%= @ticket.display_id %>;
 					<div class='side-header'>
 		                <p class='hs_userName'> <%= t("integrations.hootsuite.header.reply")%> </p>
 					</div>
-					<% if @ticket.is_facebook? %> 
+					<% if @ticket.facebook? %> 
 						<%= render :partial => "/integrations/hootsuite/tickets/facebook_reply" %>
-					<% elsif @ticket.is_twitter? %> 
+					<% elsif @ticket.twitter? %> 
 						<%= render :partial => "/integrations/hootsuite/tickets/twitter_reply" %>
 					<% else %>
 					 <%= render :partial => "/integrations/hootsuite/tickets/email_reply" %>

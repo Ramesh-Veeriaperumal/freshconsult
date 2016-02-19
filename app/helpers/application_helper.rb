@@ -1078,7 +1078,7 @@ module ApplicationHelper
 
   def construct_section_fields(f, field, is_edit, item, required)
     section_container = ""
-    field.picklist_values.each do |picklist|
+    field.picklist_values.includes(:section).each do |picklist|
       next if picklist.section.blank?
       section_elements = ""
       picklist.section_ticket_fields.each do |section_tkt_field|
@@ -1113,7 +1113,7 @@ module ApplicationHelper
 
   def construct_new_section_fields(f, field, is_edit, item, required)
     section_container = ""
-    field.picklist_values.each do |picklist|
+    field.picklist_values.includes(:section).each do |picklist|
       next if picklist.section.blank?
       section_elements = ""
       picklist.section_ticket_fields.each do |section_tkt_field|

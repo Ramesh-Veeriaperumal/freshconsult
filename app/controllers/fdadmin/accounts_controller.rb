@@ -234,7 +234,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       result[:status] = "success" if sub.save
       Account.reset_current_account
     end
-    $spam_watcher.set("#{params[:account_id]}-","true")
+    $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
     respond_to do |format|
       format.json do
         render :json => result
@@ -260,7 +260,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       end
       Account.reset_current_account
     end
-    $spam_watcher.del("#{params[:account_id]}-")
+    $spam_watcher.perform_redis_op("del", "#{params[:account_id]}-")
     respond_to do |format|
       format.json do
         render :json => result
@@ -270,7 +270,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def whitelist
     result = {:account_id => params[:account_id]}
-    $spam_watcher.set("#{params[:account_id]}-","true")
+    $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
     result[:status] = :success
     respond_to do |format|
       format.json do
