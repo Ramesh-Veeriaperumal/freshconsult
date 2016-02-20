@@ -11,7 +11,7 @@ class ShardMapping < ActiveRecord::Base
   has_many :facebook_pages, :class_name => 'FacebookPageMapping', :dependent => :destroy, :foreign_key => :account_id
   has_one :google_domain,:class_name => 'GoogleDomain', :dependent => :destroy, :foreign_key => :account_id
 
-  after_update :clear_cache
+  after_update :clear_cache, :update_routes
   after_destroy :clear_cache
 
  def self.lookup_with_account_id(shard_key)
@@ -65,6 +65,16 @@ class ShardMapping < ActiveRecord::Base
 
 
   private
+
+    def update_routes
+      if pod_info_changed?
+        Rails.logger.info "Pod info has changed. Updating the Redis routes. Old pod_info is: #{self.pod_info_was}. New pod_info: #{self.pod_info}."
+        self.domains.each do |domain|
+          Redis::RoutesRedis.update_pod_info(domain.domain, pod_info)
+        end
+      end
+    end
+
     def update_pod_shard_condition
       # Rails.logger.info "on pod info changed."
       if pod_info_changed?

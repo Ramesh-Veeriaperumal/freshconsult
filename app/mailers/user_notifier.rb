@@ -65,6 +65,7 @@ class UserNotifier < ActionMailer::Base
       :subject                    => "#{options[:type].capitalize} Import for #{options[:user].account.full_domain}",
       :to                         => options[:user].email,
       :from                       => options[:user].account.default_friendly_email,
+      :bcc                        => AppConfig['reports_email'],
       :sent_on                    => Time.now,
       :"Reply-to"                 => "#{options[:user].account.default_friendly_email}", 
       :"Auto-Submitted"           => "auto-generated", 

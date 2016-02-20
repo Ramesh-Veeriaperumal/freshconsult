@@ -78,7 +78,7 @@ window.liveChat.conversationView = function(){
 				//Email
 				var email = jQuery.trim(this.$("#visitoremail").val());
 				if(email != ""){
-					var isEmail = email.match(/^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/);
+					var isEmail = email.match(/(^[-A-Z0-9.''_&%=~+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})$)/i);
 					if(!isEmail){
 						this.$("#visitoremail").addClass("error");
 						return false;

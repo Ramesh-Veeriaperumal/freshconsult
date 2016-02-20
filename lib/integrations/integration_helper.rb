@@ -62,4 +62,12 @@ module Integrations::IntegrationHelper
     end
     integration_actions
   end
+
+  def escape_html_entity(config_val)
+    curr_value = ActiveSupport::JSON::Encoding.escape_html_entities_in_json
+    ActiveSupport::JSON::Encoding.escape_html_entities_in_json = config_val
+    yield
+  ensure
+    ActiveSupport::JSON::Encoding.escape_html_entities_in_json = curr_value
+  end
 end

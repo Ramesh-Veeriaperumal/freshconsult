@@ -177,6 +177,12 @@
     @include margin-right(5px);
   }
 }
+
+.sidepanel{
+	p i{
+		color: #888;
+	}
+}
 // Tags revamp styles
 .tags-list{
 	.removetag{

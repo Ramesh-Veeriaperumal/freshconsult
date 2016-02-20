@@ -17,7 +17,7 @@
 					<div class="p-info">{% translate portal.reported %} {{ ticket.created_on | time_ago }}</div>
 				</div>
 			</div>
-			<div class="p-content">
+			<div class="p-content" rel="image-enlarge">
 				<div class="p-desc">
 					{{ ticket.description_html }}
 					{{ ticket | freshfone_audio_dom }}
@@ -40,7 +40,7 @@
 						</div>
 					</div>
 					
-					<div class="p-content">						
+					<div class="p-content" rel="image-enlarge">						
 						<div class="p-desc">
 							{{ comment.description }}
 							{{ comment | freshfone_audio_dom }}

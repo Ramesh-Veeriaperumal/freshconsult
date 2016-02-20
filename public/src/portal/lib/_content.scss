@@ -95,6 +95,7 @@
 	overflow-x: auto;
 	table{ 
 		@extend .table !optional; 
+		width: 100%;
 	}
 }
 

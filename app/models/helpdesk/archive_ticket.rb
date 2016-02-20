@@ -18,10 +18,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   has_one :archive_ticket_association, 
         :class_name => "Helpdesk::ArchiveTicketAssociation",
         :dependent => :destroy
-  has_many :archive_notes,
-           :class_name => "Helpdesk::ArchiveNote",
-           :dependent => :destroy
-
+  
+  has_many :archive_notes, :class_name => "Helpdesk::ArchiveNote", :dependent => :destroy
+  
   has_many :inline_attachments, :class_name => "Helpdesk::Attachment",
                                 :conditions => { :attachable_type => "ArchiveTicket::Inline" },
                                 :foreign_key => "attachable_id",
@@ -35,6 +34,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   has_many :time_sheets, :class_name => 'Helpdesk::TimeSheet',:as => 'workable',:dependent => :destroy, :order => "executed_at"
   has_many :archive_time_sheets, :class_name => 'Helpdesk::TimeSheet',:as => 'workable',:dependent => :destroy, :order => "executed_at"
+  has_many :time_sheets_with_users, :class_name => 'Helpdesk::TimeSheet',:as => 'workable', :order => "executed_at", :include => {:user => :avatar}
   has_one :tweet, :as => :tweetable, :class_name => 'Social::Tweet', :dependent => :destroy
   has_one :fb_post, :as => :postable, :class_name => 'Social::FbPost',  :dependent => :destroy
   has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable', :dependent => :destroy
@@ -115,12 +115,12 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     SORT_FIELDS.map { |i| [I18n.t(i[1]), i[0]] }
   end
 
+  def self.find_by_param(token, account, options = {})
+    where(display_id: token, account_id: account.id).includes(options).first
+  end
+
   def self.sort_fields_options_array 
     SORT_FIELDS.map { |i| i[0]}
-  end
-  
-  def self.load_by_param(token, account)
-    find_by_display_id_and_account_id(token, account.id)
   end
 
   def source_name
@@ -143,15 +143,15 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     responder ? :reply : :new
   end
 
-  def is_twitter?
-    (tweet) and (tweet.twitter_handle)
+  def twitter?
+    source == SOURCE_KEYS_BY_TOKEN[:twitter] and (tweet) and (tweet.twitter_handle)
   end
-  alias :is_twitter :is_twitter?
+  alias :is_twitter :twitter?
 
-  def is_facebook?
-     (fb_post) and (fb_post.facebook_page)
+  def facebook?
+     source == SOURCE_KEYS_BY_TOKEN[:facebook] and (fb_post) and (fb_post.facebook_page)
   end
-  alias :is_facebook :is_facebook?
+  alias :is_facebook :facebook?
 
   def is_fb_message?
    (fb_post) and (fb_post.facebook_page) and (fb_post.message?)
@@ -183,15 +183,16 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def conversation(page = nil, no_of_records = 5, includes=[])
-    archive_notes.exclude_source('meta').newest_first(:include => includes).paginate(:page => page, :per_page => no_of_records)
+    includes = note_preload_options if includes.blank?
+    archive_notes.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
   end
 
   def conversation_since(since_id)
-    archive_notes.exclude_source('meta').newest_first.since(since_id)
+    archive_notes.exclude_source('meta').newest_first.since(since_id).includes(note_preload_options)
   end
 
   def conversation_before(before_id)
-    archive_notes.exclude_source('meta').newest_first.before(before_id)
+    archive_notes.exclude_source('meta').newest_first.before(before_id).includes(note_preload_options)
   end
 
   def conversation_count(page = nil, no_of_records = 5)
@@ -460,7 +461,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
         end
       end
       xml.custom_field do
-        self.account.ticket_fields.custom_fields.each do |field|
+        self.account.ticket_fields_including_nested_fields.custom_fields.each do |field|
           begin
            value = custom_field_value(field.name)
            xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
@@ -478,5 +479,15 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
       end
      end
   end
+
+  private
+
+    def note_preload_options
+      options = [:attachments, :archive_note_association, :attachments_sharable, :cloud_files, {:user => :avatar}]
+      options << :freshfone_call if Account.current.features?(:freshfone)
+      options << :fb_post if facebook?
+      options << :tweet if twitter?
+      options
+    end
 
 end

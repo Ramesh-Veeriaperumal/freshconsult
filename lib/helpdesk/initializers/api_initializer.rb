@@ -70,6 +70,22 @@ if Infra['API_LAYER']
       end
     end
 
+    #Creating Custom API Handler with ".api" extension
+    module ActionView
+      module Template::Handlers
+        class RubyTemplate
+          cattr_accessor :default_format
+          self.default_format = Mime::JSON
+          def self.call(template)
+            template.source
+          end
+        end
+      end
+    end
+
+    #Registering the Custom API Handler to the as one of the supported views.
+    ActionView::Template.register_template_handler(:api, ActionView::Template::Handlers::RubyTemplate)
+
     module ActionController
       Parameters.class_eval do
 

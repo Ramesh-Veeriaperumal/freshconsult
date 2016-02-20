@@ -33,7 +33,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
           Timeout::timeout(SpamConstants::SPAM_TIMEOUT) do
             key = "#{current_user.account_id}-#{current_user.id}"
             value = Time.now.to_i.to_s
-            $spam_watcher.setex(key,24.hours,value)
+            $spam_watcher.perform_redis_op("setex", key, 24.hours, value)
             params["spam_key"] = "#{key}:#{value}"
           end
         rescue Exception => e

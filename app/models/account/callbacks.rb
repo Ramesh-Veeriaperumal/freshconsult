@@ -192,18 +192,18 @@ class Account < ActiveRecord::Base
     def save_route_info
       # add default route info to redis
       Rails.logger.info "Adding domain #{full_domain} to Redis routes."
-      set_route_info(full_domain, id, full_domain)
+      Redis::RoutesRedis.set_route_info(full_domain, id, full_domain)
     end
 
     def destroy_route_info
       Rails.logger.info "Removing domain #{full_domain} from Redis routes."
-      delete_route_info(full_domain)
+      Redis::RoutesRedis.delete_route_info(full_domain)
     end
 
     def update_route_info
       if full_domain_changed?
-        delete_route_info(full_domain_was)
-        set_route_info(full_domain, id, full_domain)
+        Redis::RoutesRedis.delete_route_info(full_domain_was)
+        Redis::RoutesRedis.set_route_info(full_domain, id, full_domain)
       end
     end
 end

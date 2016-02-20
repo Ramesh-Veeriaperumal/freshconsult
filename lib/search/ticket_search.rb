@@ -41,7 +41,7 @@ module Search::TicketSearch
       Account.current.nested_fields_from_cache.each do |col|
         nested_fields = []
 
-        col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
+        col.nested_fields_with_flexifield_def_entries.each do |nested_col|
           nested_fields.push({get_op_list('dropdown').to_sym => 'dropdown',
                               :condition => get_id_from_field(nested_col).to_sym ,
                               :name => nested_col.label , 
@@ -93,7 +93,7 @@ module Search::TicketSearch
   end
   
   def get_custom_choices(tf)
-    [[NONE_VALUE, I18n.t("filter_options.none")]].concat(tf.choices)
+    [[NONE_VALUE, I18n.t("filter_options.none")]].concat(tf.dropdown_choices_with_name)
   end
 
   def get_default_choices(criteria_key)

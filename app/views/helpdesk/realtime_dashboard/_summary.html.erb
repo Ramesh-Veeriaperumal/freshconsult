@@ -5,12 +5,12 @@
         <% if @manage_dashboard %>
           <%= render :partial => "/helpdesk/realtime_dashboard/filter" %>
         <% else %>
-          <h3 class="pull-left lead"> <%= t("helpdesk.realtime_dashboard.ticket_summary")%> </h3>
+          <h3 class="pull-left span3 lead"> <%= t("helpdesk.realtime_dashboard.ticket_summary")%> </h3>
         <% end %>
       </div>
     <% else %>
       <% unless current_account.dashboard_disabled? %>
-        <h3 class="pull-left lead"> <%= t("helpdesk.realtime_dashboard.ticket_summary")%> </h3>
+        <h3 class="pull-left span3 lead"> <%= t("helpdesk.realtime_dashboard.ticket_summary")%> </h3>
       <% end %>
     <% end %>
     <% if current_user.privilege?(:view_reports) %>
