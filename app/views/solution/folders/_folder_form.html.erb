@@ -8,7 +8,8 @@
 	    		<%= associated_folder.text_field :name,
 	                         :class => "required",
 	                         :autocomplete => "off",
-	                         :autofocus => true %>
+	                         :autofocus => true, 
+	                         :placeholder => t('solution.folders.enter_version_name', :language_name => @language.name) %>
 					<%= primary_preview(@primary, :name, @folder) %>
 	    	</div>
 		</li>

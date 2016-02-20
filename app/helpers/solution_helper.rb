@@ -345,7 +345,8 @@ module SolutionHelper
 	                         :id => "#{options[:id]}",
 	                         :autocomplete => "off",
 	                         :autofocus => true,
-	                         :disabled => options[:disabled] || false)
+	                         :disabled => options[:disabled] || false,
+	                         :placeholder => t("solution.#{f.to_s.pluralize}.enter_version_name", :language_name => language.name))
 			if parent_meta && !options[:primary]
 		    op << hidden_field_tag("#{form.object_name}[id]", parent_meta.id)
 		    op << primary_preview(parent_meta.send("primary_#{f}"), :name)

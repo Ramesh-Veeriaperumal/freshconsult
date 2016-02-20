@@ -9,7 +9,8 @@
 												:class => "text required",
 												:autocomplete => "off",
 												:autofocus => true,
-												:value => @category.name %>
+												:value => @category.name,
+												:placeholder => t('solution.categories.enter_version_name', :language_name => @language.name) %>
 				<%= primary_preview(@primary, :name, @category) %>
 			</div>
 		</div>

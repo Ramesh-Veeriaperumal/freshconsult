@@ -4046,10 +4046,13 @@ en:
       unsaved_content: You have unsaved content in this page.
       leave_page_que: Do you want to leave this page?
       something_wrong: Something went wrong!
+    categories:
+      enter_version_name: "Enter Category name in %{language_name}"
     folders:
       view_all: "View all folders..."
       choose_folder: Choose folder
       choose_folder_warning: Please select a folder for saving the article
+      enter_version_name: "Enter Folder name in %{language_name}"
       new:
         new_folder: Add Folder
       folder_form:
@@ -4065,6 +4068,7 @@ en:
           other: " and %{count} more companies."
       draft: "All emails sent to kbase@%{domain_name} will be stored here as drafts"
     articles:
+      enter_version_name: "Enter Article title in %{language_name}"
       search_all: Search Articles
       search_in: "Search in %{search_scope}"
       type: Article Type
