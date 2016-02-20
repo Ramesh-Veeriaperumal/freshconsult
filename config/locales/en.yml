@@ -3988,6 +3988,7 @@ en:
     anonymous_votes: "Anonymous (%{count})"
     home: Solutions Home
     all_categories: All Categories
+    manage_categories: Manage Categories
     currently_viewing: "Currently viewing %{portal_name} categories"
     add_category: New Category
     edit_category: Edit Category
