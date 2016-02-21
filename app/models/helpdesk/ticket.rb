@@ -25,7 +25,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::Services::Ticket
   include BusinessHoursCalculation
   include AccountConstants
-  include Search::V2::EsCallbacks
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 

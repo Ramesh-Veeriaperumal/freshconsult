@@ -20,7 +20,6 @@ class User < ActiveRecord::Base
   include Social::Ext::UserMethods
   include AccountConstants
   include PasswordPolicies::UserHelpers
-  include Search::V2::EsCallbacks
   
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
@@ -686,7 +685,7 @@ class User < ActiveRecord::Base
   def update_search_index
     SearchSidekiq::IndexUpdate::UserTickets.perform_async({ :user_id => id }) if ES_ENABLED
     
-    SearchV2::TicketOperations::UpdateCompany.perform_async({ :user_id => id }) if Account.current.features_included?(:es_v2_writes)
+    SearchV2::IndexOperations::UpdateTicketCompany.perform_async({ :user_id => id }) if Account.current.features_included?(:es_v2_writes)
   end
 
   def moderator_of?(forum)

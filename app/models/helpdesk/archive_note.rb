@@ -3,7 +3,6 @@ require 'digest/md5'
 
 class Helpdesk::ArchiveNote < ActiveRecord::Base
   include ParserUtil
-  include Search::V2::EsCallbacks
 
   self.primary_key = :id
   belongs_to_account
@@ -38,6 +37,10 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   accepts_nested_attributes_for :archive_note_association, :allow_destroy => true
   
   concerned_with :esv2_methods
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   SOURCES = %w{email form note status meta twitter feedback facebook forward_email phone mobihelp mobihelp_app_review}
 

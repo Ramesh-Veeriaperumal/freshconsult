@@ -7,7 +7,6 @@ class Solution::Article < ActiveRecord::Base
   
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
-  include Search::V2::EsCallbacks
 
   include Solution::MetaMethods
 
@@ -48,6 +47,10 @@ class Solution::Article < ActiveRecord::Base
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
   validate :status_in_default_folder
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
   scope :newest, lambda {|num| {:limit => num, :order => 'modified_at DESC'}}

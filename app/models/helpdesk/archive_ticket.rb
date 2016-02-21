@@ -6,7 +6,6 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   include Helpdesk::TicketCustomFields
   include Search::ElasticSearchIndex
   include ArchiveTicketExportParams
-  include Search::V2::EsCallbacks
   
   self.primary_key = :id
   belongs_to_account

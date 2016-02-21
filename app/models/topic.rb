@@ -2,7 +2,6 @@ class Topic < ActiveRecord::Base
   self.primary_key = :id
   include Search::ElasticSearchIndex
   include Mobile::Actions::Topic
-  include Search::V2::EsCallbacks
   
   include Redis::RedisKeys
   include Redis::OthersRedis
@@ -27,6 +26,10 @@ class Topic < ActiveRecord::Base
   before_validation :set_unanswered_stamp, :if => :questions?, :on => :create
   before_validation :set_unsolved_stamp, :if => :problems?, :on => :create
   before_validation :assign_default_stamps, :mark_post_as_unanswered, :if => :forum_id_changed?, :on => :update
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   has_many :merged_topics, :class_name => "Topic", :foreign_key => 'merged_topic_id', :dependent => :nullify
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"

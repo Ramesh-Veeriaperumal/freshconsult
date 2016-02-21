@@ -2,43 +2,42 @@ class SearchV2::IndexOperations
   
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :es_v2_shard1, :retry => 2, :backtrace => true, :failures => :exhausted
-
-  # Worker class to add document insert/updates to ES
-  #
-  class DocumentAdd < SearchV2::IndexOperations
+  sidekiq_options :queue => :es_v2_queue, :retry => 2, :backtrace => true, :failures => :exhausted
+  
+  class UpdateArticleFolder < SearchV2::IndexOperations
     def perform(args)
       args.symbolize_keys!
-
-      entity = args[:klass_name].constantize.find_by_account_id_and_id(args[:account_id], args[:document_id])
-
-      # All dates to be stored in UTC
-      #
-      Time.use_zone('UTC') do
-        Search::V2::IndexRequestHandler.new(
-                                              args[:type],
-                                              args[:account_id],
-                                              args[:document_id]
-                                            ).send_to_es(
-                                                          args[:version],
-                                                          args[:routing_id],
-                                                          args[:parent_id],
-                                                          entity.to_esv2_json
-                                                        ) if entity
-      end
+      folder = Account.current.folders.find(args[:folder_id])
+      folder_articles = folder.articles
+      folder_articles.each do |article|
+        article.sqs_manual_publish
+      end unless folder_articles.blank?
     end
   end
-
-  # Worker class to remove document from ES
-  #
-  class DocumentRemove < SearchV2::IndexOperations
+  
+  class UpdateTopicForum < SearchV2::IndexOperations
+    def perform(args)
+      args.symbolize_keys!
+      forum = Account.current.forums.find(args[:forum_id])
+      forum_topics = forum.topics
+      forum_topics.each do |topic|
+        topic.sqs_manual_publish
+      end unless forum_topics.blank?
+    end
+  end
+  
+  class RemoveForumTopics < SearchV2::IndexOperations
     def perform(args)
       args.symbolize_keys!
       Search::V2::IndexRequestHandler.new(
-                                            args[:type], 
-                                            args[:account_id], 
-                                            args[:document_id]
-                                          ).remove_from_es
+                                          'topic', 
+                                          Account.current.id, 
+                                          nil
+                                        ).remove_by_query({ 
+                                                            account_id: Account.current.id, 
+                                                            forum_id: args[:forum_id] 
+                                                          })
     end
   end
+
 end

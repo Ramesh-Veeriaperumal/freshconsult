@@ -16,7 +16,7 @@ class Community::HandleLanguageChange < BaseWorker
 					objects.map(&:update_es_index)
 					
 					# For ES-v2
-					objects.each { |obj| obj.send(:update_searchv2) }
+					objects.each { |obj| obj.sqs_manual_publish }
 				end
 			end
 		end

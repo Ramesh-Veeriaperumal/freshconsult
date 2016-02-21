@@ -4,9 +4,12 @@ class Helpdesk::Tag < ActiveRecord::Base
   self.primary_key = :id
   include Cache::Memcache::Helpdesk::Tag
   include Search::ElasticSearchIndex
-  include Search::V2::EsCallbacks
 
   after_commit :clear_cache
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   self.table_name =  "helpdesk_tags"
   

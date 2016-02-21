@@ -31,7 +31,7 @@ class Import::Attachment
         
         if attachment.save!
           @item.update_es_index
-          @item.send(:update_searchv2)
+          @item.sqs_manual_publish
         end
       rescue Timeout::Error => ex
         raise Timeout::Error, "Timeout on attachment import"

@@ -1,7 +1,6 @@
 class Post < ActiveRecord::Base
   
   include Juixe::Acts::Voteable
-  include Search::V2::EsCallbacks
 
   SORT_ORDER = {
     :date => 'id ASC',
@@ -53,7 +52,6 @@ class Post < ActiveRecord::Base
   has_many_cloud_files
   
   delegate :update_es_index, :to => :topic, :allow_nil => true
-  # delegate :update_searchv2, to: :topic, allow_nil: true #=> Uncomment if not using as parent-child
   
   delegate :questions?, :problems?, :to => :forum
   xss_sanitize :only => [:body_html],  :html_sanitize => [:body_html]
@@ -61,6 +59,10 @@ class Post < ActiveRecord::Base
 
   attr_protected  :topic_id , :account_id , :attachments, :published, :spam
   after_create  :monitor_topic, :if => :can_monitor?
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   SPAM_SCOPES = {
     :spam => :unpublished_spam,

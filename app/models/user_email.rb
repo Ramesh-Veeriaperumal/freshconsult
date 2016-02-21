@@ -35,13 +35,12 @@ class UserEmail < ActiveRecord::Base
   # Drop all authorizations, if the email is changed
   after_update :drop_authorization, :if => [:email_changed?, :multiple_email_feature]
   after_commit :send_activation_on_update, on: :update, :if => [:check_for_email_change?, :multiple_email_feature]
-  
-  # Search V2 callbacks
-  delegate :update_searchv2, to: :user, allow_nil: true
-  after_commit ->(obj) { obj.update_searchv2 }, on: :create
-  after_commit ->(obj) { obj.update_searchv2 }, on: :update
 
   before_destroy :drop_authorization, :if => :multiple_email_feature
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher 
 
   scope :primary, :conditions => {:primary_role => true}, :limit => 1
 
@@ -88,6 +87,10 @@ class UserEmail < ActiveRecord::Base
   def as_json(options = {})
     options.merge!(API_OPTIONS)
     super options
+  end
+
+  def esv2_fields_updated?
+    check_for_email_change?
   end
 
   protected
