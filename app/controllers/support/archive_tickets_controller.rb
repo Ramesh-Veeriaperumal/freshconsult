@@ -75,7 +75,7 @@ protected
     end
 
     def load_item
-      @ticket = @item = Helpdesk::ArchiveTicket.load_by_param(params[:id], current_account) 
+      @ticket = @item = Helpdesk::ArchiveTicket.find_by_param(params[:id], current_account) 
       # Using .dup as otherwise it references the same address quoting same values.
       @old_cc_hash = (@ticket and @ticket.cc_email_hash) ? @ticket.cc_email_hash.dup : Helpdesk::Ticket.default_cc_hash
       @item || raise(ActiveRecord::RecordNotFound)      

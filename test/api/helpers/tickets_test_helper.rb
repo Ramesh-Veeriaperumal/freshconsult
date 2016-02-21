@@ -54,6 +54,7 @@ module TicketsTestHelper
       source: expected_output[:source] || ticket.source,
       status: expected_output[:status] || ticket.status,
       subject:  expected_output[:subject] || ticket.subject,
+      company_id: expected_output[:company_id] || ticket.company_id,
       type:  expected_output[:ticket_type] || ticket.ticket_type,
       to_emails: expected_output[:to_emails] || ticket.to_emails,
       product_id:  expected_output[:product_id] || ticket.product_id,

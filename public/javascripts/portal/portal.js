@@ -25,7 +25,7 @@
 			// If diff, set the height
 			if( portal['preferences']['nonResponsive'] != "true" ) {
 				$(window).on('resize', function () {
-					$('.article-body img').each(function (i) {
+					$("[rel='image-enlarge'] img").each(function (i) {
 						if(this.style.height || this.height) {
 							var img = $(this);
 							$("<img/>")
@@ -43,26 +43,30 @@
 								  }
 						    });
 						}
+
+						$(this).wrap(function(){
+						    return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
+						});
 					});
 				}).trigger('resize');
 			}
 		})
-
+	
 		// Preventing default click & event handlers for disabled or active links
-		$(".pagination, .dropdown-menu") 
+		$(".pagination, .dropdown-menu")
 			.find(".disabled a, .active a")
 			.on("click", function(ev){
 				ev.preventDefault()
 				ev.stopImmediatePropagation()
 			})
-		
+
 		// Remote ajax for links
 		$(".a-link[data-remote], a[data-remote]").live("click", function(ev){
 			ev.preventDefault()
 
 			var _o_data = $(this).data(),
 				_self = $(this),
-				_post_data = { 
+				_post_data = {
 					"_method" : $(this).data("method") || "get"
 				}
 

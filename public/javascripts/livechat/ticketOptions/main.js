@@ -268,7 +268,7 @@
 
 			},
 			validateMail: function(mail){
-	      		var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+	      		var regex = /(^[-A-Z0-9.''_&%=~+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})$)/i
 	      		if(!regex.test(mail)){
 	        		return false;
 	      		}

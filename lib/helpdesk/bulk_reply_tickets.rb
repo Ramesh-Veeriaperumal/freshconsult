@@ -4,6 +4,7 @@ class Helpdesk::BulkReplyTickets
   include Conversations::Twitter
   include Facebook::Constants
   include Facebook::TicketActions::Util
+  include Social::Util
   attr_accessor :params, :tickets, :attachments
 
   def initialize(args)
@@ -141,13 +142,14 @@ class Helpdesk::BulkReplyTickets
       fb_page = ticket.fb_post.facebook_page
       if fb_page
         message_type = ticket.is_fb_message? ? POST_TYPE[:message] : POST_TYPE[:post]
-        Facebook::TicketActions::Util.send_reply(fan_page, ticket, note, message_type)
+        send_reply(fb_page, ticket, note, message_type)
       end
     end
     
     def twitter_reply ticket, note
       twt_type = ticket.tweet.tweet_type || :mention.to_s
-      send("send_tweet_as_#{twt_type}", ticket, note, note.body.strip)
+      error_message, tweet_body = get_tweet_text(twt_type, ticket, note.body.strip)
+      send("send_tweet_as_#{twt_type}", ticket, note, tweet_body) unless error_message
     end
 
     def mobihelp_reply ticket, note

@@ -45,6 +45,7 @@ group :development, :test do
   gem 'meta_request'
 end
 
+gem "rack-mini-profiler", :group => [:development]
 gem "bullet", :group => [:development, :test, :staging]
 gem "mail"
 gem "i18n", "~> 0.6.0"

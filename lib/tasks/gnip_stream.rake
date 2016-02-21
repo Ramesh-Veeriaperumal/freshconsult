@@ -61,10 +61,10 @@ namespace :gnip_stream do
       end
     end
   end
-
-  desc "Poll the sqs for converting tweets to tickets"
-  task :poll => :environment do
-    queue = $sqs_twitter
+  
+  desc "Poll the sqs for pushing feeds to the respective stream"
+  task :global_poll => :environment do
+    queue = $sqs_twitter_global
     attributes = Rails.env.production? ? [] : [:sent_at]
 
     queue.poll(:initial_timeout => false,
@@ -74,10 +74,46 @@ namespace :gnip_stream do
       tweet_array.each do |tweet|
         unless tweet.blank?
           gnip_msg = Social::Gnip::TwitterFeed.new(tweet, queue)
-          unless gnip_msg.nil?
-            gnip_msg.process
-            log_timeline(gnip_msg, sqs_msg.sent_at) unless Rails.env.production?
+          next if gnip_msg.blank?
+          gnip_msg.tag_objs.each do |tag_obj|
+            pod = determine_pod(tag_obj, gnip_msg.tweet_obj)
+
+            # send message to the specific queue
+            Rails.logger.info "Tweet received for POD: #{pod}."
+            AwsWrapper::SqsQueue.instance.send_message(pod + '_' + SQS[:twitter_realtime_queue], gnip_msg.tweet_obj.to_json) if pod
           end
+        end
+      end
+    end
+  end
+  
+  def determine_pod(tag_obj, tweet)
+    stream_id     = tag_obj.stream_id
+    account_id    = tag_obj.account_id
+    shard_mapping = ShardMapping.find_by_account_id(account_id)
+    if shard_mapping && shard_mapping.ok?
+      tweet[:gnip]["matching_rules"] = [{
+        "value" => "", # Since not using rule value to check, sending as empty space
+        "tag"   => "#{stream_id}_#{account_id}" 
+      }]
+      shard_mapping.pod_info
+    end
+  end
+
+  desc "Poll the sqs for converting tweets to tickets"
+  task :poll => :environment do
+    #Should be the pod specific queue
+    queue = $sqs_twitter
+    attributes = Rails.env.production? ? [] : [:sent_at]
+
+    queue.poll(:initial_timeout => false,
+               :batch_size => 10, :attributes => attributes) do |sqs_msg|
+      tweet = sqs_msg.body
+      unless tweet.blank?
+        gnip_msg = Social::Gnip::TwitterFeed.new(tweet, queue)
+        unless gnip_msg.nil?
+          gnip_msg.process
+          log_timeline(gnip_msg, sqs_msg.sent_at) unless Rails.env.production?
         end
       end
     end

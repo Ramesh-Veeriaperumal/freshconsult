@@ -170,6 +170,8 @@
 
 		jQuery('#takescreen-btn a').on("click", function(ev){
 			// sending message to the parent window
+			jQuery("#screenshot-value").hide();
+			jQuery("#screenshot-loader").show();
 			parent.postMessage('screenshot',"*");
 			ev.preventDefault();
 			screenshot_flag=0;
@@ -207,7 +209,6 @@ jQuery(window).on("message", function(e) {
     	var loaded=loadCanvas(data.img);
     if(loaded)
     {
-    	console.log('image loaded');
     	jQuery('#takescreen-btn').hide();
 			jQuery('#screenshot-wrap').show();
 			if(!jQuery.browser.msie && !jQuery.browser.opera)
@@ -217,6 +218,8 @@ jQuery(window).on("message", function(e) {
 });
 
 function remove_screenshot(){
+	jQuery("#screenshot-value").show();
+	jQuery("#screenshot-loader").hide();
 	screenshot_flag=1;
 	jQuery('.flash').hide();
 	jQuery('#screenshot-wrap').hide();

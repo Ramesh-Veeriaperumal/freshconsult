@@ -22,8 +22,7 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
            :class_name => 'Helpdesk::SharedAttachment',
            :dependent => :destroy
 
-  has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment, 
-           :conditions => ["helpdesk_attachments.account_id=helpdesk_shared_attachments.account_id"]
+  has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
   has_many_attachments
   has_many_cloud_files
 

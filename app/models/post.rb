@@ -3,9 +3,9 @@ class Post < ActiveRecord::Base
   include Juixe::Acts::Voteable
 
   SORT_ORDER = {
-    :date => 'id ASC',
+    :date => 'created_at ASC',
     :popularity => 'user_votes DESC',
-    :recency => 'id DESC'
+    :recency => 'created_at DESC'
   }
 
   acts_as_voteable

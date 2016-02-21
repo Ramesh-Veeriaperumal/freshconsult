@@ -9,9 +9,9 @@ $(".autolink").livequery(function(ev){
 
 $('.menuselector').livequery(
 	function(){
-		$(this).menuSelector() 
+		$(this).menuSelector()
 	},function(){
-		$(this).menuSelector('destroy') 
+		$(this).menuSelector('destroy')
 	}
 );
 
@@ -64,7 +64,7 @@ $("[rel=more-agents-hover]").livequery(
 				}
 			});
 		}
-	}, 
+	},
 	function(){
 		$(this).popover('destroy');
 	}
@@ -84,7 +84,7 @@ $("[rel=contact-hover]").livequery(
 				return jQuery("#"+container_id).html() || "<div class='sloading loading-small loading-block' id='"+container_id+"' rel='remote-load' data-url='"+$(this).data('contactUrl')+"'></div>";
 			}
 		});
-	}, 
+	},
 	function(){
 		$(this).popover('destroy');
 	}
@@ -93,7 +93,7 @@ $("[rel=contact-hover]").livequery(
 
 $("a[rel=hover-popover-below-left]").livequery(
 	function(){
-		$(this).popover({ 
+		$(this).popover({
 			delayOut: 300,
 			offset: 5,
 			trigger: 'manual',
@@ -105,15 +105,15 @@ $("a[rel=hover-popover-below-left]").livequery(
 				return $("#" + $(this).attr("data-widget-container")).val();
 			}
 		});
-	}, 
+	},
 	function(){
 		$(this).popover('destroy');
 	}
 );
 
 $("[rel=hover-popover]").livequery(
-	function(){ 
-		$(this).popover({ 
+	function(){
+		$(this).popover({
 			delayOut: 300,
 			trigger: 'manual',
 			offset: 5,
@@ -245,8 +245,8 @@ $("input.select2").livequery(
 $("div.request_mail").livequery(function(){ quote_text(this); });
 
 $("input.datepicker").livequery(
-	function(){ 
-		$(this).datepicker( 
+	function(){
+		$(this).datepicker(
 			$.extend( {}, $(this).data() , { dateFormat: getDateFormat('datepicker'),changeMonth: true,changeYear: true }  )
 			)
 	}
@@ -281,7 +281,7 @@ $(".image-lazy-load img").livequery(
 	function() {
 		layzr._destroy()
 	}
-); 
+);
 
 $("ul.ui-form, .cnt").livequery(function(ev){
 	$(this).not(".dont-validate").parents('form:first').validate();
@@ -317,7 +317,7 @@ validateOptions['submitHandler'] = function(form, btn) {
 		})
 	// For all other form it will be a direct page submission
 	}else{
-		setTimeout(function(){ 
+		setTimeout(function(){
 			add_csrf_token(form);
 			// Nullifies the form data changes flag, which is checked to prompt the user before leaving the page.
 			$(form).data('formChanged', false);
@@ -380,10 +380,37 @@ $("[rel=sticky]").livequery(
 );
 
 $('.btn-collapse').livequery(
-	function(){ 
-		$(this).collapseButton(); 
+	function(){
+		$(this).collapseButton();
 	}
 );
+
+
+// Image enlarger - Ticket details
+$("[rel='image-enlarge'] img").livequery(function (i) {
+  if(this.style.height || this.height) {
+    var img = $(this);
+    $("<img/>")
+      .attr("src", img.attr("src"))
+      .load(function() {
+        var originalWidth = this.width,
+          originalHeight = this.height,
+          outerWidth = img.outerWidth(),
+          outerHeight = img.outerHeight(),
+          originalAspectRatio = originalWidth / originalHeight,
+          aspectRatio = outerWidth / outerHeight;
+
+        if(aspectRatio !== originalAspectRatio) {
+          img.outerHeight(outerWidth/originalAspectRatio);
+        }
+      });
+  }
+
+  $(this).wrap(function(){
+    return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
+  });
+});
+
 
 });
 

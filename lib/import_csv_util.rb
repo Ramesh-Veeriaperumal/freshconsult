@@ -32,7 +32,7 @@ module ImportCsvUtil
     @rows = []
     csv_file = AwsWrapper::S3Object.find(file_location, S3_CONFIG[:bucket])
     CSVBridge.parse(content_of(csv_file)) do |row|
-      @rows << row
+      @rows << row.collect{|r| CGI.escapeHTML r}
       break if header && @rows.size == 2
     end
   rescue => e
