@@ -95,13 +95,6 @@ class Search::Utils
     wrap_paginate(result_set, args[:page].to_i, args[:es_offset], es_results['hits']['total'].to_i)
   end
 
-  # Used for setting the version parameter sent to ES
-  # Value is time in microsecond precision
-  #
-  def self.es_version
-    (Time.zone.now.to_f * 1000000).ceil
-  end
-
   def self.exact_match?(search_term)
     search_term.present? and (search_term.start_with?('<','"') && search_term.end_with?('>', '"'))
   end

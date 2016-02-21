@@ -16,10 +16,4 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
     def es_v2_attachments
       attachments.pluck(:content_file_name)
     end
-    
-    # Used for validating updates/deletes
-    #
-    def es_v2_valid?
-      !meta?
-    end
 end
