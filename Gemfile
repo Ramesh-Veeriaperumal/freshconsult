@@ -43,6 +43,8 @@ group :development, :test do
   gem 'pry-nav'
   gem 'binding_of_caller'
   gem 'meta_request'
+  gem 'fake_sqs'
+  gem 'fake_dynamo'
 end
 
 gem "rack-mini-profiler", :group => [:development]
