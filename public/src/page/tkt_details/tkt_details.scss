@@ -571,11 +571,19 @@ ol, ul, li{
 		width: 640px;
 	}
 }
-
+.unselect
+{
+	/*preventing user from selecting*/
+	user-select:none;
+	-moz-user-select:none;
+	-webkit-user-select:none;
+	-ms-user-select:none;
+}
 .conversation_thread.redactor{
 	border-color:#FFF;
 	margin-bottom: 30px;
 	margin-top: -30px;
+	@extend .unselect;
 	@include box-shadow(none);
 
     .avatar-wrap:before{
