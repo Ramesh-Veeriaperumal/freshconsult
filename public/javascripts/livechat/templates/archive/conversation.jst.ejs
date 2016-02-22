@@ -73,9 +73,9 @@
 							<%	var msg = messages[i].msg;
 								function linkifier(msg) {
 									var phoneRegExp  = new RegExp(/(\s|^)\b\d{9,12}(\s|$)/gi);
-									var mailRegExp  = new RegExp(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,3}/gi);
+									var mailRegExp  = new RegExp(/(^[-A-Z0-9.''_&%=~+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15}))/gi);
 									var webRegExp = new RegExp(/[-a-zA-Z0-9:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi);
-									var linkRegex = new RegExp(/([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,3})|(\s|^)\b\d{9,12}(\s|$)|([-a-zA-Z0-9:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?)/gi);
+									var linkRegex = new RegExp(/(^[-A-Z0-9.''_&%=~+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15}))|(\s|^)\b\d{9,12}(\s|$)|([-a-zA-Z0-9:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?)/gi);
 									var link = "";
 									return msg.replace(linkRegex, function(token) {
 										if(mailRegExp.test(token)){

@@ -6,7 +6,7 @@ module Social
 
       TABLE  = TABLE_NAME["unprocessed_feed"]
       SCHEMA = TABLES[TABLE][:schema]
-      RECORDS_FETCH_LIMIT = 100
+      RECORDS_FETCH_LIMIT = 50
       
       def insert_facebook_feed(hash_key, range_key, feed)
         times = [Time.now.utc, Time.now.utc + 7.days]

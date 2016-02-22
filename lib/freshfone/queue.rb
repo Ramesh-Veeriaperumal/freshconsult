@@ -82,8 +82,8 @@ module Freshfone::Queue
       hunted_group_calls = group_calls[hunted_group]
       hunted_group_calls.delete(hunted_group_calls.first)
       group_calls[hunted_group] = hunted_group_calls
+      set_key(group_queue_key, group_calls.to_json)
     end
-    set_key(group_queue_key, group_calls.to_json)
   end
 
   def check_for_priority_calls

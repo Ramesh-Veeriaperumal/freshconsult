@@ -155,7 +155,7 @@ module Helpkit
     # /auth/open_id?openid_url=https://me.yahoo.com
 
     config.middleware.use OmniAuth::Builder do
-
+      OmniAuth.config.logger = Rails.logger
 
       oauth_keys = Integrations::OauthHelper::get_oauth_keys
       oauth_keys.map { |oauth_provider, key_hash|
@@ -208,6 +208,7 @@ module Helpkit
     config.assets.initialize_on_precompile = false
 
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
+    config.middleware.insert_before "OmniAuth::Builder","Middleware::Pod"
 
     config.assets.handle_expiration = true
     config.assets.expire_after= 2.months

@@ -63,7 +63,7 @@ try {
 	Fjax.current_page = 'ticket_detail';
 	TICKET_DETAILS_DOMREADY();
 	Fjax.afterNextPage = TICKET_DETAILS_CLEANUP;
-	<% if @ticket.is_twitter? %>
+	<% if @ticket.twitter? %>
 	jQuery(document).ready(function(){
 		jQuery('#twitter_handle').change();
 	});

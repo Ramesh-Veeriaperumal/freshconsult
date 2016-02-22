@@ -53,7 +53,7 @@ jQuery(document).ready(function(){
 jQuery('#twitter_handle').change(function user_follows(){
 twitter_handle= jQuery('#twitter_handle').val();
 req_twt_id = '<%=@ticket.requester.twitter_id %>';
-istwitter = '<%=@ticket.is_twitter?%>';
+istwitter = '<%=@ticket.twitter?%>';
 if (!istwitter || req_twt_id == "" || twitter_handle == "")
 {
 return ;

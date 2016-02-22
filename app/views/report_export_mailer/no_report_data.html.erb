@@ -6,7 +6,7 @@ Seems like there is no data to display for date range <%=@date_range%> with appl
 <br/>
 <% if @filter_to_display  %>
   Filters applied:
-  <table border="1">
+  <table border="1" width="100%">
     <tr><td>Date Range</td><td><%=@date_range%></td></tr>
     <% @filters.each do |f| %>
       <tr><td><%=f["name"]%></td><td><%= f["value"] %></td></tr>

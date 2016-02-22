@@ -77,11 +77,15 @@ class Integrations::JiraWebhook
     end
   end
 
-  def update_local(installed_application)
+  def update_local(installed_application, selected_key=nil)
     notify_values = []
     comment_sync = installed_application.configs_jira_comment_sync
     status_sync = installed_application.configs_jira_status_sync
-    if self.updated_entity_type == "comment" and (self.notification_cause == "added" || self.notification_cause == "edited") && comment_sync != "none"
+
+    if selected_key && selected_key["toString"]
+      resource = installed_application.integrated_resources.find_by_remote_integratable_id(installed_application.remote_integratable_id)
+      return resource.update_attribute('remote_integratable_id',selected_key["toString"])
+    elsif self.updated_entity_type == "comment" and (self.notification_cause == "added" || self.notification_cause == "edited") && comment_sync != "none"
       self.params["installed_application_id"] = installed_application.id
       notify_values.push comment_sync
       notify_values.push "add_helpdesk_external_note_in_fd"

@@ -7,7 +7,7 @@ module Mobile::Controllers::Ticket
     is_new =  params[:id].nil?
     item = current_account.tickets.find_by_display_id(params[:id]) unless params[:id].nil?
     fields = []
-    all_fields = current_portal.ticket_fields if current_user.agent?
+    all_fields = current_portal.ticket_fields_including_nested_fields if current_user.agent?
     all_fields.each do |field|
       next if field.section_field?
       if field.visible_in_view_form? || is_new

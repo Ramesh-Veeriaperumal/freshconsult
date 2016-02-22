@@ -27,7 +27,7 @@ class ApiApplicationController < MetalApiController
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :check_account_state
-  before_filter :set_time_zone, :check_day_pass_usage
+  before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone
   before_filter :force_utf8_params
   before_filter :set_cache_buster
   include AuthenticationSystem
@@ -627,5 +627,23 @@ class ApiApplicationController < MetalApiController
     def log_and_render_404
       Rails.logger.debug "API V2 Item not present. Id: #{params[:id]}, method: #{params[:action]}, controller: #{params[:controller]}"
       head 404
+    end
+
+    def check_day_pass_usage_with_user_time_zone
+      in_user_time_zone { check_day_pass_usage }
+    end
+
+    def in_user_time_zone
+      old_zone = Time.zone
+      TimeZone.set_time_zone
+      yield
+    ensure
+      Time.zone = old_zone
+    end
+
+    def run_on_slave
+      Sharding.run_on_slave do
+        yield
+      end
     end
 end

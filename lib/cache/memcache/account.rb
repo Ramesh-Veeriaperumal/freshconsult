@@ -103,7 +103,7 @@ module Cache::Memcache::Account
   def nested_fields_from_cache
     key = ACCOUNT_NESTED_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      ticket_fields.nested_fields.find(:all, :include => [:nested_ticket_fields, :flexifield_def_entry] )
+      ticket_fields_including_nested_fields.nested_fields.all
     end
   end
 

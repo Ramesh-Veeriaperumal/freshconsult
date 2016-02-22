@@ -94,11 +94,7 @@ class Support::SearchController < SupportController
         @es_items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id, @search_lang), options do |search|
           search.query do |query|
             query.filtered do |f|
-              if SearchUtil.es_exact_match?(params[:term])
-                f.query { |q| q.match :_all, SearchUtil.es_filter_exact(params[:term]), :type => :phrase }
-              else
-                f.query { |q| q.match :_all, SearchUtil.es_filter_key(params[:term], false), :analyzer => SearchUtil.analyzer(@search_lang) }
-              end
+              search_match_query f,search_in
               f.filter :term, { :account_id => current_account.id }
               f.filter :or, { :not => { :exists => { :field => :status } } },
                             { :not => { :term => { :status => SearchUtil::DEFAULT_SEARCH_VALUE } } }
@@ -160,6 +156,39 @@ class Support::SearchController < SupportController
         @search_results = []
         @items = []
         NewRelic::Agent.notice_error(e)
+      end
+    end
+
+    def search_match_query f,search_in
+      f.query do |q|
+        q.boolean do |b|
+          exact_or_wildcard_query b
+          user_related_search_query b if search_in.include?(Solution::Article) and params[:tags].present? and current_account.tag_based_article_search_enabled?
+        end
+      end
+    end
+
+    def exact_or_wildcard_query b_query
+      if SearchUtil.es_exact_match?(params[:term])
+        query = SearchUtil.es_filter_exact(params[:term]) 
+        b_query.must { match :_all, query, :type => :phrase }
+      else
+        query = SearchUtil.es_filter_key(params[:term], false)
+        analyzer = SearchUtil.analyzer(@search_lang) 
+        b_query.must { match :_all, query, :analyzer => analyzer }
+      end
+    end
+
+    def user_related_search_query b_query
+      search_value = params[:tags].split(",").compact
+      return if search_value.empty?
+      #search_value = ["London", "UK", "North America"]
+      b_query.must do |multi_match_block|
+        multi_match_block.boolean do |mm_bool|
+          search_value.each do |mm_value|
+            mm_bool.should { match "tags.name", mm_value, :type => :phrase }
+          end
+        end
       end
     end
 

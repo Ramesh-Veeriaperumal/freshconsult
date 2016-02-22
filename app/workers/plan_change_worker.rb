@@ -93,9 +93,9 @@ class PlanChangeWorker
   end
 
   def drop_dynamic_content_data(account)
-    update_all_in_batches({ :language => account.language }){ |cond| 
-      account.all_users.where(@conditions).limit(@batch_size).update_all(cond) 
-    }
+    # update_all_in_batches({ :language => account.language }){ |cond| 
+    #   account.all_users.where(@conditions).limit(@batch_size).update_all(cond) 
+    # }
     # Below line has been intentionally commented, as we want to make sure,
     # when the customer upgrades again, he'll have all the data and config as it was before. [Solution Multilingual Feature]
     #account.account_additional_settings.update_attributes(:supported_languages => [])

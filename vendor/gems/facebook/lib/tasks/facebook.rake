@@ -33,6 +33,11 @@ namespace :facebook do
     end
   end
 
+  task :global_realtime => :environment do
+    $sqs_facebook_global.poll("Facebook::Core::Splitter","split",
+                       :batch_size => 10,
+                       :initial_timeout => false)
+  end
 
   def wait_on_poll
     subject = "APP RATE LIMIT - REACHED SKIPPING PROCESS"
@@ -41,5 +46,6 @@ namespace :facebook do
     Rails.logger.error "Sleeping the process due to APP RATE LIMT"
     sleep(APP_RATE_LIMIT_EXPIRY)
   end
+
 
 end

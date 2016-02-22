@@ -18,8 +18,9 @@
         </div>
       </h3>
       <div class="content">
-        <% if @ticket.time_sheets.present? %>
-          <% @ticket.time_sheets.each do |time_entry| %>
+        <% timesheets = @ticket.time_sheets_with_users %>
+        <% if timesheets.present? %>
+          <% timesheets.each do |time_entry| %>
             <%= render :partial => "helpdesk/archive_tickets/show/time_entry", :locals => { :time_entry => time_entry } %>
           <% end %>
         <% else %>

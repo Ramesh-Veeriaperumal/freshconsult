@@ -82,7 +82,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
       sub.save
       Account.reset_current_account
     end
-    $spam_watcher.set("#{params[:account_id]}-","true")
+    $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
     redirect_to :back
   end
 
@@ -98,12 +98,12 @@ class SubscriptionAdmin::AccountsController < ApplicationController
       sub.save
       Account.reset_current_account
     end
-    $spam_watcher.del("#{params[:account_id]}-")
+    $spam_watcher.perform_redis_op("del", "#{params[:account_id]}-")
     redirect_to :back   
   end
 
   def whitelist
-    $spam_watcher.set("#{params[:account_id]}-","true")
+    $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
     redirect_to :back
   end
 

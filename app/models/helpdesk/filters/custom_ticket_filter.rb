@@ -95,7 +95,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
       Account.current.nested_fields_from_cache.each do |col|
         defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
-        col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
+        col.nested_fields_with_flexifield_def_entries.each do |nested_col|
           defs[get_id_from_field(nested_col).to_sym] = {get_op_list('dropdown').to_sym => 'dropdown' ,:name => nested_col.label , :container => 'dropdown', :operator => get_op_list('dropdown'), :options => [] }
         end
       end

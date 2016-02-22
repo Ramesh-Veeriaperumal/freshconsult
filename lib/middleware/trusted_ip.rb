@@ -13,9 +13,8 @@ class Middleware::TrustedIp
     # Skip valid ip check if the request is from skipped subdomains
     return execute_request(env) if skipped_subdomain?(env)
     shard = ShardMapping.lookup_with_domain(env["HTTP_HOST"])
-
     # Skip valid ip check if the request is for nil shard.
-    return execute_request(env) if shard.nil? && !Rails.env.development?
+    return execute_request(env) if (shard.nil? or PodConfig['CURRENT_POD'] != shard.pod_info) && !Rails.env.development?
 
     # All requests other than api has to execute to set the user_credentials_id env var. Set by authlogic.
     # So that whitelisting can happen accordingly.
