@@ -3,6 +3,10 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 	around_filter :select_master_shard , :except => :get_country_list
 	around_filter :select_slave_shard , :only => :get_country_list
 	before_filter :load_account
+  before_filter :validate_freshfone_account, :except => [:add_credits, :get_country_list,
+                                           :country_restriction, :refund_credits,
+                                           :new_freshfone_account, :fetch_numbers, 
+                                           :enable_freshfone ]
 	before_filter :validate_triggers, :only => [:update_usage_triggers]
 	before_filter :validate_timeout_and_queue,:construct_timeout_and_queue_hash, :only => [:update_timeouts_and_queue]
 	before_filter :validate_credits, :only => [:add_credits]
@@ -66,18 +70,22 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 	def twilio_port_in
 		result = {:account_id => @account.id , :account_name => @account.name}
 		begin
-			number = Freshfone::Number.twilio_number(params[:sid], @account)
-			if @account.freshfone_account
-				freshfone_number = @account.freshfone_numbers.create(:number_sid => params[:sid],
-					 :number => number.phone_number, 
-					 :display_number => number.friendly_name,
-					 :country => params[:country], :number_type => params[:number_type],
-					 :region => params[:region], 
-					 :skip_in_twilio => true,:port => Freshfone::Number::PORT_STATE[:port_in])
-				freshfone_number.new_record? ? result[:status] = "error" : result[:status] = "success"
-			else
-				result[:status] = "error"
-			end
+			twilio_number = Freshfone::Number.twilio_number(params[:sid], @account)
+			freshfone_number = @account.freshfone_numbers.find_or_initialize_by_number_sid(number_sid: params[:sid]) do |ff_number|
+            ff_number.number = twilio_number.phone_number
+            ff_number.display_number = twilio_number.friendly_name
+            ff_number.country = params[:country]
+            ff_number.number_type = params[:number_type]
+            ff_number.region = params[:region]
+            ff_number.port = Freshfone::Number::PORT_STATE[:port_in]
+            ff_number.skip_in_twilio = true
+        end
+        if freshfone_number.new_record? 
+          freshfone_number.save
+          result[:status] = "success"
+        else
+          result[:status] = "error"
+        end
 		rescue Exception => e
 			Rails.logger.error "Error while twilio porting for Account: #{@account.id}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
 			result[:status] = "error"
@@ -114,12 +122,8 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 
 	def suspend_freshfone
 		result = {:account_id => @account.id , :account_name => @account.name}
-		if !@account.freshfone_account.blank?
-			@account.freshfone_account.suspend
-			result[:status] = 'success'
-		else
-			result[:status] = 'error'
-		end
+		@account.freshfone_account.suspend
+		result[:status] = 'success'
 		respond_to do |format|
 			format.json do
 				render :json => result
@@ -202,7 +206,8 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 
   def fetch_usage_triggers
     result = {:account_id => @account.id, :account_name => @account.name}
-    result[:triggers] = @account.freshfone_account.triggers if @account.freshfone_account.triggers.present?
+    ff_acc = @account.freshfone_account
+    result[:triggers] = ff_acc.triggers if ff_acc.triggers.present?
     result[:status] = result.has_key?(:triggers) ? "success" : "error"
     respond_to do |format|
       format.json do
@@ -506,4 +511,9 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 		end
 		result
 	end
+
+  def validate_freshfone_account
+    render :json => {:status => 'error'} if @account.freshfone_account.blank?
+  end
+  
 end
