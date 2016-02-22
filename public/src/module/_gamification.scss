@@ -539,3 +539,16 @@ li.dashboard-quest-points {
 		margin-bottom: 20px;
 	}
 }
+
+.game-points{
+	input{
+		@include float(left);
+	}
+	label.error{
+		clear: both;
+	}
+	.info_data{
+		display: inline-block;
+		margin: 3px;
+	}
+}
