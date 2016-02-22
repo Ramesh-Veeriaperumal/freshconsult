@@ -40,14 +40,18 @@
         </div> 
       </div>
       <div class="control-group">
-    	<% if feature?(:multi_language) %>
-    	  <%= content_tag(:label, t('admin.products.portal.default_portal_language'), :class => "control-label") %>
-          <div class="controls">
-            <%= f.select :language, I18n.available_locales_with_name , 
-                              {:selected =>  (!portal.blank?) ? portal.language.to_sym() : current_portal.language.to_sym() } ,
-                               :class => "select2 input-xlarge"%>
-          </div>
-    	<% end %>
+        <%= content_tag(:label, t('admin.products.portal.default_portal_language'), :class => "control-label") %>
+        <div class="controls">
+          <% if portal.main_portal? && current_account.multilingual? %>
+            <div class="mt5">
+              <%= current_account.language_object.name %>
+            </div>
+          <% elsif feature?(:multi_language) %>
+              <%= f.select :language, I18n.available_locales_with_name,
+                                {:selected =>  (!portal.blank?) ? portal.language.to_sym() : current_portal.language.to_sym() } ,
+                                 :class => "select2 input-xlarge"%>
+        	<% end %>
+        </div>
       </div>
       <div class="control-group pt10">
        <label class="control-label"><%= t("admin.products.portal.categories_visible") %></label>
