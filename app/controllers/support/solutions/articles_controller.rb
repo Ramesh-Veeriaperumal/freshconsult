@@ -154,7 +154,7 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def cleanup_params_for_title
-      params.slice!("id", "format", "controller", "action", "status", "url_locale")
+      params.slice!("id", "format", "controller", "action", "status", "url_locale", "portal_type")
     end
 
     def route_name(language)

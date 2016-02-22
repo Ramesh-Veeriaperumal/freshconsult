@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
   end
 
   def all_portal_language_objects
-    @all_portal_language_objects ||= [language_object] + portal_languages_objects
+    @all_portal_language_objects ||= ([language_object] + portal_languages_objects).uniq
   end
   
   def valid_portal_language?(language)
