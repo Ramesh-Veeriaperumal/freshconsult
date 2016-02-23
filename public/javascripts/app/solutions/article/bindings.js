@@ -202,18 +202,12 @@ window.App = window.App || {};
     },
 
     formatTranslationDropdown: function () {
-      $('#version_selection').select2({
-        formatResult: this.format,
-        dropdownAutoWidth: 'true',
-        containerCssClass: 'add-translation-link',
-        dropdownCssClass: 'add-translation-dropdown',
-        minimumResultsForSearch: 7
-      });
-    },
-
-    format: function (state) {
-      var originalOption = state.element, outdated;
-      return "<span class='language_symbol " + $(originalOption).data('state') + "'>" + "<span class='language_name'>" + $(originalOption).data('code') + "</span></span>" + "<span class='language_label'>" + state.text + "</span>";
+      $('#version_selection').select2(
+        $.extend({}, App.Solutions.traslationDropdownOpts, {
+          containerCssClass: 'add-translation-link',
+          formatResult: App.Solutions.formatLangOptions
+        })
+      );
     },
 
     showVersionDropdown: function () {

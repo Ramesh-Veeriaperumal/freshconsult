@@ -8,6 +8,12 @@ window.App = window.App || {};
   App.Solutions = {
     current_module: '',
 
+    traslationDropdownOpts: {
+      dropdownAutoWidth: 'true',
+      dropdownCssClass: 'add-translation-dropdown',
+      minimumResultsForSearch: 7
+    },
+
     onFirstVisit: function (data) {
       this.onVisit(data);
     },
@@ -61,6 +67,11 @@ window.App = window.App || {};
       if(!nativePlaceholderSupport()){
         $('.solutions input.solution-placeholder').placeholder();
       }
+    },
+
+    formatLangOptions: function (state) {
+      var originalOption = state.element, outdated;
+      return "<span class='language_symbol " + $(originalOption).data('state') + "'>" + "<span class='language_name'>" + $(originalOption).data('code') + "</span></span>" + "<span class='language_label'>" + state.text + "</span>";
     },
 
     onLeave: function (data) {

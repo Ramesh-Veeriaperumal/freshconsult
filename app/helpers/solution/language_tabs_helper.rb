@@ -143,7 +143,14 @@ module Solution::LanguageTabsHelper
         }
   end
 
-  def generate_option lang
-    [lang.name, lang.code, :"data-code" => lang.short_code.capitalize, :"data-state" => language_style(@article_meta, lang)]
+  def generate_option lang, code = true
+    [lang.name, (code ? lang.code : lang.id), :"data-code" => lang.short_code.capitalize, :"data-state" => language_style(@article_meta, lang)]
+  end
+
+  def search_versions_dropdown
+    @lang_objs ||= [Account.current.language_object] + Account.current.supported_languages_objects
+    select_tag :language_id,
+      options_for_select(@lang_objs.collect { |lang| generate_option(lang, false) }, Language.for_current_account.id),
+      { :id => 'language_select', :"data-html" => true, :class => 'input-medium' }
   end
 end

@@ -312,6 +312,7 @@ module SolutionHelper
 	end
 
 	def language_style(meta_obj, language)
+		return 'normal' unless meta_obj
     classes = []
     classes << 'unavailable' unless meta_obj.send("#{language.to_key}_available?")
     if meta_obj.is_a? Solution::ArticleMeta

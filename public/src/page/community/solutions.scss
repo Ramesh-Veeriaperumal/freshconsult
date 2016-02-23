@@ -215,6 +215,9 @@
     &.outdated{
       color: #DE3431;
     }
+    &.normal {
+      color: #888;
+    }
     &.draft {
       .language_name:before {
         content: "...";
@@ -264,6 +267,27 @@
       .language_label{
         color: #333;
       }
+    }
+  }
+}
+
+#sticky_search_wrap {
+  .select2-container {
+    .select2-chosen {
+      .language_symbol {
+        position: relative;
+        top: 4px;
+        .language_name {
+          top: -3px;
+        }
+      }
+      .language_label {
+        top: 2px;
+        margin-left: 5px;
+      }
+    }
+    .select2-choice {
+      height: 30px;
     }
   }
 }
