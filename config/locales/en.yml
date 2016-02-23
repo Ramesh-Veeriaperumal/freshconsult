@@ -3990,6 +3990,8 @@ en:
     home: Solutions Home
     all_categories: All Categories
     manage_categories: Manage Categories
+    current_context: "%{portal_name} Categories"
+    change_portal: "Change portal"
     currently_viewing: "Currently viewing %{portal_name} categories"
     add_category: New Category
     edit_category: Edit Category
