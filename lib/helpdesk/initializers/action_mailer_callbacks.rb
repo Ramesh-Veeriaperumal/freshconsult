@@ -47,14 +47,20 @@ module ActionMailerCallbacks
     end
 
     def reset_smtp_settings(mail)
-      category_id = get_category_id
+      begin
+        category_id = get_category_id
+      rescue Exception => e
+        Rails.logger.debug "Exception occurred while getting category id : #{e} - #{e.message} - #{e.backtrace}"
+        NewRelic::Agent.notice_error(e)
+        category_id = nil
+      end
       Rails.logger.debug "Fetched category : #{category_id} while email delivery"
       self.smtp_settings = read_smtp_settings(category_id)
       mail.delivery_method(:smtp, read_smtp_settings(category_id))
     end   
         
     def read_smtp_settings(category_id)
-      if !Helpdesk::EMAIL["category-#{category_id}".to_sym].nil?
+      if (!category_id.nil?) && (!Helpdesk::EMAIL["category-#{category_id}".to_sym].nil?)
         Helpdesk::EMAIL["category-#{category_id}".to_sym][Rails.env.to_sym]
       else 
         Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]

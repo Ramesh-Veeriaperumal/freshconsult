@@ -11,9 +11,12 @@ module Helpdesk::Email::OutgoingCategory
   CATEGORY_SET = CATEGORIES.map{|a| a[0]}
   
   def get_subscription
-    state = "premium" if Account.current.premium_email? 
-    state ||= Account.current.subscription.state 
-    state = "default" if !CATEGORY_SET.include?(state.to_sym)
+    state = nil
+    if Account.current
+      state = "premium" if Account.current.premium_email? 
+      state ||= Account.current.subscription.state 
+    end
+    state = "default" if (state.nil?) or (!CATEGORY_SET.include?(state.to_sym))
     return state
   end
 
