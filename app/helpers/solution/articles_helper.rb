@@ -63,10 +63,10 @@ module Solution::ArticlesHelper
 
   def user_votes_stats count, type, meta_child
     t_type = (type ==  1) ? 'like' : 'dislike'
-    content = %(<div class="votes-btn"> #{font_icon(t_type)}&nbsp; #{count} </div>)
+    content = %(<div class="votes-btn"> #{font_icon(t_type)}#{humanize_stats(count)} </div>)
     return content.html_safe if count < 1 || !meta_child
     %(
-      #{link_to( "<div class=\"votes-btn\"> #{font_icon(t_type)}&nbsp; #{count} </div>".html_safe,
+      #{link_to( "<div class=\"votes-btn\"> #{font_icon(t_type)}#{humanize_stats(count)} </div>".html_safe,
         voted_users_solution_article_path(@article_meta.id, {:vote => type, :language_id => @article.language_id}),
         :rel => "freshdialog",
         :class => "article-#{t_type}",

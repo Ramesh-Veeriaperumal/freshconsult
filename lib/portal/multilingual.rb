@@ -16,7 +16,7 @@ module Portal::Multilingual
   def language_availability(language)
     classes = ""
     classes << "active" if language == Language.current
-    classes << " disabled-link" if @solution_item && !@solution_item.send("#{language.to_key}_available?")
+    classes << " unavailable-language" if @solution_item && !@solution_item.send("#{language.to_key}_available?")
     { :class => classes } 
   end
 

@@ -22,9 +22,8 @@ class Support::Solutions::FoldersController < SupportController
 
 		def scoper
 			@solution_item = @folder = current_account.solution_folder_meta.find_by_id(params[:id])
-			(raise ActiveRecord::RecordNotFound and return) if @folder.nil?
 
-			@category = @folder.solution_category_meta
+			@category = @folder.solution_category_meta if @folder
 		end
     
     def load_page_meta

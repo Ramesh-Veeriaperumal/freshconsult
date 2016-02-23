@@ -547,7 +547,7 @@
 
       .uptodate-section {
         i {
-          color: #A3D04B;
+          color: #85b525;
         }
       }
     }
@@ -644,10 +644,16 @@
           display: inline-block;
           border: 1px solid #ccc;
           border-radius: 3px;
-          padding: 3px;
+          padding: 3px 5px;
           text-align: center;
-          width: 55px;
+          min-width: 45px;
           color: #333;
+          .ficon-like{padding-right: 4px;} 
+          .ficon-dislike{
+            padding-right: 4px;
+            position: relative;
+            top: 2px;
+          }
         }
 
         a .votes-btn:hover {

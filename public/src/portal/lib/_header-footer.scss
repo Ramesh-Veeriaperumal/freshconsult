@@ -65,10 +65,6 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 					}
 				}
       }
-      a.disabled-link{
-        color: #999;
-        pointer-events: none;
-      }
     }
     .caret {
       color: #fff;

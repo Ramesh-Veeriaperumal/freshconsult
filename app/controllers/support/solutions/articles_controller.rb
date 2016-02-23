@@ -67,8 +67,8 @@ class Support::Solutions::ArticlesController < SupportController
   private
 
     def load_and_check_permission
-      @solution_item = @article = current_account.solution_article_meta.find(params[:id])
-      unless @article.visible?(current_user)
+      @solution_item = @article = current_account.solution_article_meta.find_by_id(params[:id])
+      if @article && !@article.visible?(current_user)
         unless logged_in?
           session[:return_to] = solution_category_folder_article_path(
               @article.solution_folder_meta.solution_category_meta_id,

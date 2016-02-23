@@ -7,7 +7,7 @@
 		<h5 class="leads"><%= t('solution.articles.views') %></h5>
 		<div class="<%= 'muted' unless @article.hits > 0 %>">
 			<%= font_icon :"file-visible" if @article.hits > 0 %>
-			<%= (@article.hits > 0 ? "&nbsp;#{@article.hits}" : t('discussions.topics.title_meta.hits', :count => @article.hits)).html_safe %>
+			<%= (@article.hits > 0 ? "#{humanize_stats(@article.hits)}" : t('discussions.topics.title_meta.hits', :count => @article.hits)).html_safe %>
 		</div>
 	</div>	
 	<div class="votes-stats">
@@ -29,7 +29,7 @@
 		<h5 class="leads"><%= t('solution.articles.views') %></h5>
 		<div class="<%= 'muted' unless @article_meta.hits > 0 %>">
 			<%= font_icon :"file-visible" if @article_meta.hits > 0 %>
-			<%= (@article_meta.hits > 0 ? "&nbsp;#{@article_meta.hits}" : t('discussions.topics.title_meta.hits', :count => @article_meta.hits)).html_safe %>
+			<%= (@article_meta.hits > 0 ? "#{humanize_stats(@article_meta.hits)}" : t('discussions.topics.title_meta.hits', :count => @article_meta.hits)).html_safe %>
 		</div>
 	</div>	
 	<div class="votes-stats">

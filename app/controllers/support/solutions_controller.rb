@@ -32,7 +32,6 @@ class Support::SolutionsController < SupportController
 		def load_category
 			#TO BE CHECKED MULTILINGUAL - check why reorder('') was added 
       @solution_item = @category = current_portal.solution_category_meta.reorder('').find_by_id(params[:id])
-      (raise ActiveRecord::RecordNotFound and return) if @category.nil?
     end
 		
 		def load_customer_categories
