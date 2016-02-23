@@ -2,6 +2,7 @@ module Facebook
   module Core
     class Post
           
+      include Social::Util
       include Social::Constants
       
       include Facebook::Util
@@ -39,7 +40,7 @@ module Facebook
         
         #Case happens when process post is called from the child classes
         #Status is in Dynamo but converted to a ticket later because of a visitor comment
-        if (self.fd_item.present? && !can_dynamo_push)
+        if (social_revamp_enabled? && self.fd_item.present? && !can_dynamo_push)
           dynamo_helper.update_ticket_links_in_dynamo(self.koala_post.post_id, self.fan_page.default_stream.id) 
         end
       end
