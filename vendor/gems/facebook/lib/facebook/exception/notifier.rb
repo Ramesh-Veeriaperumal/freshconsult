@@ -29,7 +29,7 @@ module Facebook
       
       def notify_error(error)
         raise_sns_notification(error[:error_msg][0..50], error)
-        insert_facebook_feed(@fan_page.page_id, (Time.now.to_f*1000).to_i, @raw_obj) if @raw_obj
+        insert_facebook_feed(@fan_page.page_id, (Time.now.to_f*1000).to_i, @feed) if @raw_obj
       end
       
       def error_params
