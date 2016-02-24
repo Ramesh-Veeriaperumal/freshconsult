@@ -40,13 +40,16 @@
 
 								  if(aspectRatio !== originalAspectRatio) {
 								  	img.outerHeight(outerWidth/originalAspectRatio);
+
+									if(!img.parent('a').get(0)) {
+										img.wrap(function(){
+											return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
+										});
+									}
 								  }
 						    });
 						}
 
-						$(this).wrap(function(){
-						    return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
-						});
 					});
 				}).trigger('resize');
 			}
