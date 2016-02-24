@@ -25,19 +25,31 @@
 	<li class="control-group">
 		<%= f.label(:solution_category_meta_id, t('.category'), { :class => 'control-label'}) %>
 		<div class="controls">
+			<div class="row-fluid">
 			<% if @folder_meta.present? && (@primary && @primary != @folder) %>
 				<%= f.fields_for(:solution_category_meta, @category_meta) do |category_fields| %>
 					<%= dynamic_text_box(:category, @language, category_fields) %>
 				<% end %>
 			<% else %>
+				<div class="span6">
 				<%= f.select :solution_category_meta_id, current_account.solution_category_meta.includes(:primary_category).reject(&:is_default?).collect{|c|[c.name, c.id]}, 
 						{ :selected => (@folder_meta && @folder_meta.solution_category_meta_id) || params[:category_id] }, 
 						{ 
 							:class => "select2 required input-large", 
 							:name => "solution_folder_meta[solution_category_meta_id]"
 						}  %>
-				<%= category_create_new(f) if @folder_meta.new_record? %>
+				</div>
+				<div class="span6">
+					<% if @folder_meta.new_record? %>
+						<%= category_create_new(f) %>
+					<% elsif current_account.multilingual? %>
+						<span class="check-translations hide muted">
+							<%= t('solution.folders.folder_form.check_translations') %>
+						</span>
+					<% end %>
+				</div>
 			<% end %>
+			</div>
 	 	</div>
 	</li>
 	<li class="companies_select control-group">

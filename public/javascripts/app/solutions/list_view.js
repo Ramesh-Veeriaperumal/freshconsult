@@ -128,6 +128,10 @@ window.App = window.App || {};
         }
       });
 
+      $("body").on('change.folders_articles', '#solution_folder_meta_solution_category_meta_id', function () {
+        $('.check-translations').removeClass('hide');
+      });
+
       $this.bindLanguageBarLinks();
       $("body").on('click.folders_articles', '.confirm-delete' ,function (e) {
         $('.modal').modal('hide');
