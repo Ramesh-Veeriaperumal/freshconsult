@@ -129,7 +129,7 @@ window.App = window.App || {};
       });
 
       $("body").on('change.folders_articles', '#solution_folder_meta_solution_category_meta_id', function () {
-        $('.check-translations').removeClass('hide');
+        $('.check-translations').toggleClass('hide', $(this).data('originalValue') === parseInt($(this).val()));
       });
 
       $this.bindLanguageBarLinks();

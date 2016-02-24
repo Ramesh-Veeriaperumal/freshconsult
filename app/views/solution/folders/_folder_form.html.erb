@@ -32,11 +32,13 @@
 				<% end %>
 			<% else %>
 				<div class="span6">
+				<% selected_value = (@folder_meta && @folder_meta.solution_category_meta_id) || params[:category_id] %>
 				<%= f.select :solution_category_meta_id, current_account.solution_category_meta.includes(:primary_category).reject(&:is_default?).collect{|c|[c.name, c.id]}, 
-						{ :selected => (@folder_meta && @folder_meta.solution_category_meta_id) || params[:category_id] }, 
+						{ :selected => selected_value }, 
 						{ 
 							:class => "select2 required input-large", 
-							:name => "solution_folder_meta[solution_category_meta_id]"
+							:name => "solution_folder_meta[solution_category_meta_id]",
+							:"data-original-value" => selected_value
 						}  %>
 				</div>
 				<div class="span6">
