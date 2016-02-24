@@ -2969,9 +2969,9 @@ en:
     confirm_title: <b> Re-enter the %{item_type} name </b>
   delete_permanently: Delete Permanently
   deletion_titles:
-    solution_category: "solution category"
-    solution_folder: "solution folder"
-    solution_article: "solution article"
+    solution_categorymeta: "solution category"
+    solution_foldermeta: "solution folder"
+    solution_articlemeta: "solution article"
     forumcategory: "forum category"
     forum: "forum"
     topic: "topic"
