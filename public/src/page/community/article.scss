@@ -507,6 +507,15 @@
 }
 //------------- End of Article Properties Remote load Form Styles -----------------------------------------------//
 
+.solution-sidebar {
+  .not-in-portal {
+    color: #82683c;
+    background-color: #fcf8e3;
+    border-bottom: 1px solid #82683c;
+    padding: 10px 20px;
+  }
+}
+
 .solution-details{
   padding: 20px;
   .sidebar-section{
@@ -603,14 +612,6 @@
     .edited-history{
       color: #333;
       padding: 15px 0 0;
-    }
-    .portal-visible{
-      margin-top: 10px;
-      .ficon-notice-o{
-        color: #DE3431;
-        position: relative;
-        top: 2px;
-      }
     }
   }
   .feedback{

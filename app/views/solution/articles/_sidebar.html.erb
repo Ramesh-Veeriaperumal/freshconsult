@@ -1,5 +1,12 @@
-<div class="solution-details">
+<% if Account.current.multilingual? && !Account.current.all_portal_language_objects.include?(@article.language) %>
+	<div class="not-in-portal">
+		<%= t('solution.articles.language_not_in_portal') %> - 
+		<%= pjax_link_to t('solution.articles.add_language'), manage_languages_path %>
+	</div>
+<% end %>
 	
+<div class="solution-details">
+
 	<div id="sidebar-prop">
 		<%= render :partial => 'sidebar_properties' %>
 	</div>

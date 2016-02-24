@@ -4144,7 +4144,8 @@ en:
       more_languages: "%{count} more"
       show_all_analytics: See analytics for all languages
       not_in_portal: Not visible in portal
-      language_not_in_portal: This language is not visible in portal
+      language_not_in_portal: "This language is not visible to your users, once added this article will be automatically available on the portal"
+      add_language: "Add language"
     draft:
       name: Drafts
       all_drafts: All Drafts
