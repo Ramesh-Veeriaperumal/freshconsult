@@ -68,7 +68,6 @@ end
         <%end%>
       </div>
 
-    <% unless minimizable %>
       <% if current_account.features?(:custom_survey) %>
         <%= render :partial => '/helpdesk/archive_tickets/show/custom_survey_note' , :locals => {:note => note , 
               :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
@@ -76,7 +75,6 @@ end
           <%= render :partial => '/helpdesk/archive_tickets/show/survey_note' , :locals => {:note => note , 
               :notedetails => notedetails} %>
       <% end %>
-    <% end %>
 
       <%= freshfone_audio_dom(note) if current_account.features?(:freshfone) %>
 
