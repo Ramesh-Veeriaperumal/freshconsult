@@ -17,6 +17,7 @@ class TicketDelegator < SimpleDelegator
                                 required_attribute: :required
                               }
                             }
+  validate :facebook_id_exists?, if: -> { facebook_id }, on: :update
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
@@ -64,5 +65,11 @@ class TicketDelegator < SimpleDelegator
 
   def required_based_on_status?
     [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
+  end
+
+  def facebook_id_exists?
+    unless Account.current.all_users.exists?(['fb_profile_id = ?', "#{facebook_id}"])
+      errors[:facebook_id] << :invalid_facebook_id
+    end
   end
 end

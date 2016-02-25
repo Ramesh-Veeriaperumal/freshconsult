@@ -94,3 +94,4 @@ api_error_messages:
   already_taken: "%{invalid_emails} has already been taken"
   cant_add_primary_email: "Cannot add %{email} to other_emails since it is the primary email"
   require_feature_for_attribute: "The %{feature} feature is required to support %{attribute} attribute in the request"
+  invalid_facebook_id: "There is no record matching the facebook_id provided"

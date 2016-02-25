@@ -47,8 +47,9 @@ class TicketValidation < ApiValidation
   }, if: -> { attachments }
 
   # Email related validations
-  validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, if: :email_required?
-  validates :email, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? }
+  validates :email, data_type: { rules: String, allow_nil: true }
+  validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, if: -> { email && errors[:email].blank?}
+  validates :email, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:email].blank? }
   validates :cc_emails, data_type: { rules: Array }, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
 
@@ -66,7 +67,7 @@ class TicketValidation < ApiValidation
                                 ignore_string: :allow_string_param
                               }
                            }
-  validates :twitter_id, :phone, data_type: { rules: String, allow_nil: true }
+  validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
   validates :twitter_id, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:twitter_id].blank? }
   validates :phone, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:phone].blank? }
 
@@ -90,10 +91,6 @@ class TicketValidation < ApiValidation
 
   def name_required? # Name mandatory if phone number of a non existent contact is given. so that the contact will get on ticket callbacks.
     email.blank? && twitter_id.blank? && facebook_id.blank? && phone.present? && requester_id.blank?
-  end
-
-  def email_required? # Email required if twitter_id/fb_profile_id/phone/requester_id is blank.
-    email.present? && twitter_id.blank? && facebook_id.blank? && phone.blank? && requester_id.blank?
   end
 
   def due_by_gt_created_at

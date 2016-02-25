@@ -1380,10 +1380,8 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
     assert_response 200
-    assert User.count == count
+    assert User.count == count + 1
   end
 
   def test_update_with_new_twitter_id_without_nil_requester_id
@@ -1391,10 +1389,8 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
     assert_response 200
-    assert User.count == count
+    assert User.count == count + 1
   end
 
   def test_update_with_new_phone_without_nil_requester_id
@@ -1402,10 +1398,8 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
     assert_response 200
-    assert User.count == count
+    assert User.count == count + 1
   end
 
   def test_update_with_new_email_with_nil_requester_id
@@ -1490,10 +1484,10 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_new_fb_id
     t = ticket
-    params_hash = update_ticket_params_hash.merge(facebook_id: Faker::Name.name, requester_id: nil)
+    params_hash = update_ticket_params_hash.merge(facebook_id: Faker::Name.name)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :"can't be blank")])
+    match_json([bad_request_error_pattern('facebook_id', :invalid_facebook_id)])
   end
 
   def test_update_with_status_resolved_and_due_by
@@ -2559,5 +2553,27 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required) }
+  end
+
+  def test_create_with_email_array
+    post :create, construct_params({}, ticket_params_hash.except(:email).merge(email: [email: Faker::Internet.email]))
+    assert_response 400
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, { data_type: 'String' })])
+  end
+
+  def test_update_with_email_array
+    params_hash = {email: [Faker::Internet.email]}
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, { data_type: 'String' })])
+  end
+
+  def test_create_ticket_with_twitter_and_invalid_email
+    create_ticket(ticket_params_hash.except(:email).merge(twitter_id: '@test123'))
+    params = { email: Faker::Name.name, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph, twitter_id: "@test123" }
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('email', 'not_a_valid_email')])
   end
 end

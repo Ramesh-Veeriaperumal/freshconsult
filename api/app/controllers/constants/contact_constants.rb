@@ -49,7 +49,7 @@ module ContactConstants
     mobile: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
     address: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
     twitter_id: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-    email: { format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
+    email: { data_type: { rules: String }, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
     description: { data_type: { rules: String } }
   }.freeze
 

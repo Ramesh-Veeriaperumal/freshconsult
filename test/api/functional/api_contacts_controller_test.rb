@@ -853,7 +853,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     post :create, construct_params({},  name: Faker::Name.name)
     assert_response 400
-    match_json([bad_request_error_pattern('email', :missing),
+    match_json([bad_request_error_pattern('email', :required_and_data_type_mismatch, data_type: String),
                 bad_request_error_pattern('job_title', :required_and_data_type_mismatch, data_type: String),
                 bad_request_error_pattern('mobile', :required_and_data_type_mismatch, data_type: String),
                 bad_request_error_pattern('address', :required_and_data_type_mismatch, data_type: String),
@@ -909,7 +909,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                                            address: nil
                                  )
     assert_response 400
-    match_json([bad_request_error_pattern('email', :"can't be blank"),
+    match_json([bad_request_error_pattern('email', :required_and_data_type_mismatch, data_type: String),
                 bad_request_error_pattern('job_title', :data_type_mismatch, data_type: String),
                 bad_request_error_pattern('mobile', :data_type_mismatch, data_type: String),
                 bad_request_error_pattern('address', :data_type_mismatch, data_type: String),
@@ -1128,4 +1128,19 @@ class ApiContactsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:features)
   end
 
+  # Create/Update contact with email, passing an array to the email attribute
+
+  def test_create_contact_with_email_array
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: [Faker::Internet.email])
+    assert_response 400
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, { data_type: 'String' })])
+  end
+
+  def test_contact_filter_email_array
+    email = get_user_with_email.email
+    get :index, controller_params({email: [email]}, false)
+    assert_response 400
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, { data_type: 'String' })])
+  end
 end
