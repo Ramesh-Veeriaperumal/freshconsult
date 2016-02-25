@@ -3,6 +3,7 @@ class SupportController < ApplicationController
   skip_before_filter :check_privilege, :set_cache_buster
   layout :resolve_layout
   before_filter :portal_context
+  before_filter :strip_url_locale
   before_filter :set_language
   around_filter :run_on_slave , :only => [:index,:show],
     :if => proc {|controller| 
@@ -242,9 +243,13 @@ class SupportController < ApplicationController
     end
 
   private
+  
+  def strip_url_locale
+    redirect_to request.fullpath if params[:url_locale].present? && !current_account.multilingual?
+  end
 
   def set_language
-    redirect_to request.fullpath if params[:url_locale].present? && !current_account.multilingual?
+    Language.for_current_account.make_current and return unless current_account.multilingual?
     remove_locale unless supported_language?
     Language.set_current(
       request_language: http_accept_language.compatible_language_from(I18n.available_locales), 
@@ -292,5 +297,4 @@ class SupportController < ApplicationController
     flash[:warning] = @solution_item ? version_not_available_msg(controller_name.singularize) : t('wrong_portal.content_not_available')
     redirect_to support_home_path and return
   end
-  
 end

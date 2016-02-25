@@ -82,7 +82,7 @@ module Solution::LanguageAssociations
       select_string
     end
 
-    default_scope lambda { Language.current? ? current : unscoped }
+    default_scope lambda { Language.current? ? current : where(:account_id => Account.current.id) }
         
     after_find :handle_date_time
 
