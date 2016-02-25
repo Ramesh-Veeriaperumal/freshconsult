@@ -2,7 +2,8 @@ class AgentFilterValidation < FilterValidation
   attr_accessor :state, :phone, :mobile, :email, :conditions
 
   validates :state, custom_inclusion: { in: AgentConstants::STATES, allow_unset: true }
-  validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, if: -> { @email_set }
+  validates :email, data_type: { rules: String, allow_unset: true  }
+  validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, if: -> { email && errors[:email].blank? }
   validates :phone, :mobile, data_type: { rules: String, allow_unset: true }
   
   def initialize(request_params)

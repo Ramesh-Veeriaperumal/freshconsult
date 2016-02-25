@@ -38,7 +38,7 @@ class ContactFilterValidationTest < ActionView::TestCase
     refute contact_filter.valid?
     error = contact_filter.errors.full_messages
     assert error.include?('State not_included')
-    assert error.include?('Email not_a_valid_email')
+    assert error.include?('Email data_type_mismatch')
     assert error.include?('Phone data_type_mismatch')
     assert error.include?('Mobile data_type_mismatch')
     assert error.include?('Company data_type_mismatch')

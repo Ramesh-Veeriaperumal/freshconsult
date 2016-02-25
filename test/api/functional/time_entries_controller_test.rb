@@ -1228,4 +1228,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
     assert_response 200
     assert_not_nil te.time_spent
   end
+
+  def test_create_with_start_time_and_time_spent_array
+    start_time = (Time.zone.now - 10.minutes).as_json
+    freeze_time do
+      post :create, construct_params({ id: ticket.display_id }, { start_time: start_time,
+                                                                  time_spent: ['03:00'] }.merge(params_hash))
+      assert_response 400
+      match_json([bad_request_error_pattern('time_spent', :data_type_mismatch, { data_type: 'String' })])
+    end
+  end
 end

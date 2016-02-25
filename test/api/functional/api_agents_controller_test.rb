@@ -116,4 +116,13 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_response 200
     match_json(agent_pattern(@account.all_agents.find(@agent.agent.id)))
   end
+
+  # Agent email filter, passing an array to the email attribute
+
+  def test_agent_filter_email_array
+    email = sample_agent = @account.all_agents.first.user.email
+    get :index, controller_params({email: [email]}, false)
+    assert_response 400
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, { data_type: 'String' })])
+  end
 end
