@@ -583,7 +583,7 @@ ol, ul, li{
 	border-color:#FFF;
 	margin-bottom: 30px;
 	margin-top: -30px;
-	@extend .unselect;
+	// @extend .unselect;
 	@include box-shadow(none);
 
     .avatar-wrap:before{
