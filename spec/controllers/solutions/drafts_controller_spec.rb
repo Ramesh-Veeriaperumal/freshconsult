@@ -78,7 +78,8 @@ describe Solution::DraftsController do
 	  		log_in(@agent2)
 	  		@agent2.make_current
 	  		draft = @draft_article3.draft
-	  		draft.lock_for_editing!
+	  		draft.lock_for_editing
+	  		draft.save
 
 	  		log_in(@agent1)
 	  		@agent1.make_current
@@ -136,7 +137,8 @@ describe Solution::DraftsController do
 	  		log_in(@agent2)
 	  		@agent2.make_current
 	  		draft = @draft_article3.draft
-	  		draft.lock_for_editing!
+	  		draft.lock_for_editing
+	  		draft.save
 
 	  		log_in(@agent1)
 	  		@agent1.make_current
@@ -246,7 +248,8 @@ describe Solution::DraftsController do
 	  	it "should fail: Reason - Somebody else is editing the article" do
 	  		log_in(@agent2)
 	  		@agent2.make_current
-	  		@draft.lock_for_editing!
+	  		@draft.lock_for_editing
+	  		@draft.save
 
 	  		log_in(@agent1)
 	  		@agent1.make_current

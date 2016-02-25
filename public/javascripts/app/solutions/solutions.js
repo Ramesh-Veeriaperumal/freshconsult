@@ -57,6 +57,7 @@ window.App = window.App || {};
 
     bindHandlers: function () {
       $('body').on('change.solutionHome', '#solution_folder_meta_visibility', App.Solutions.Folder.setCompanyVisibility);
+      $('body').on('click.solutionHome', '.modal-footer [data-dismiss="modal"]', App.Solutions.Folder.resetFormOnCancel);
     },
 
     unBindHandlers: function () {

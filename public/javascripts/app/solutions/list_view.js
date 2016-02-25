@@ -304,14 +304,26 @@ window.App = window.App || {};
       }
     },
 
-    setCompanyVisibility: function () {
-      var visiblity = $('#solution_folder_meta_visibility').val();
-      if (parseInt(visiblity, 10) === 4) {
-        $('.company_folders').show();
+    setCompanyVisibility: function (e) {
+      var visibility = e.target.value;
+      var form = $(e.target).parents('form');
+      if (parseInt(visibility, 10) === 4) {
+        form.find('.company_folders').show();
       } else {
-        $('#customers_filter').val("");
-        $("#customers_filter").trigger("liszt:updated");
-        $('.company_folders').hide();
+        var customers_input = form.find('.autocomplete_filter [type="hidden"]');
+        customers_input.val('');
+        customers_input.trigger("liszt:updated");
+        form.find('.company_folders').hide();
+      }
+    },
+
+    resetFormOnCancel: function (e) {
+      var form = $('#' + e.target.id).parents('.modal').find('form');
+      form.resetForm();
+      form.find('.select2').trigger('change');
+      if (form.find('.company_folders').length > 0) {
+        var customers_input = form.find('.autocomplete_filter [type="hidden"]');
+        customers_input.select2('val', customers_input.data().initialValue);
       }
     }
   };

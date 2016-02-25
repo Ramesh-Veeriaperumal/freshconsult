@@ -51,9 +51,9 @@ describe Solution::Draft do
 
   end
 
-  describe "lock_for_editing! method" do
+  describe "lock_for_editing method" do
     it "should return true when locking an unlocked article" do
-      @draft.lock_for_editing!.should be_eql(true)
+      @draft.lock_for_editing.should be_eql(true)
     end
 
     it "should return false when locking an already locked article" do
@@ -62,7 +62,7 @@ describe Solution::Draft do
       @draft.save
       @agent1.make_current
       @draft.reload
-      @draft.lock_for_editing!.should be_eql(false)
+      @draft.lock_for_editing.should be_eql(false)
     end
   end
 

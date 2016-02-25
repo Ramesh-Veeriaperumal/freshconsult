@@ -84,10 +84,10 @@ class Solution::Draft < ActiveRecord::Base
     self.updated_at > (Time.now.utc - LOCKDOWN_PERIOD)
   end
 
-  def lock_for_editing!
+  def lock_for_editing
     return false if self.locked?
     self.status, self.user_id = STATUS_KEYS_BY_TOKEN[:editing], User.current.id
-    save
+    true
   end
 
   def unlock
