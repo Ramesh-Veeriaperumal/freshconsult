@@ -26,30 +26,27 @@
 			if( portal['preferences']['nonResponsive'] != "true" ) {
 				$(window).on('resize', function () {
 					$("[rel='image-enlarge'] img").each(function (i) {
-						if(this.style.height || this.height) {
-							var img = $(this);
-							$("<img/>")
-						    .attr("src", img.attr("src"))
-						    .load(function() {
-						    	var originalWidth = this.width, 
-						    		originalHeight = this.height, 
-						    		outerWidth = img.outerWidth(),
-						    		outerHeight = img.outerHeight(),
-						    		originalAspectRatio = originalWidth / originalHeight,
-						    		aspectRatio = outerWidth / outerHeight;
+						var img = $(this);
+						$("<img/>")
+					    .attr("src", img.attr("src"))
+					    .load(function() {
+					    	var originalWidth = this.width, 
+					    		originalHeight = this.height, 
+					    		outerWidth = img.outerWidth(),
+					    		outerHeight = img.outerHeight(),
+					    		originalAspectRatio = originalWidth / originalHeight,
+					    		aspectRatio = outerWidth / outerHeight;
 
-								  if(aspectRatio !== originalAspectRatio) {
-								  	img.outerHeight(outerWidth/originalAspectRatio);
+							  if(aspectRatio !== originalAspectRatio) {
+							  	img.outerHeight(outerWidth/originalAspectRatio);
 
-									if(!img.parent('a').get(0)) {
-										img.wrap(function(){
-											return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
-										});
-									}
-								  }
+								if(!img.parent('a').get(0)) {
+									img.wrap(function(){
+										return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
+									});
+								}
+							  }
 						    });
-						}
-
 					});
 				}).trigger('resize');
 			}
