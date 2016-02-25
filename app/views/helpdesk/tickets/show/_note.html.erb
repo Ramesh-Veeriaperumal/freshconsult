@@ -133,7 +133,7 @@ end
       <%= freshfone_audio_dom(note) if current_account.features?(:freshfone) %>
 
       <div id="note_attachments_container_<%= note.id%>">
-        <%= render :partial => "/helpdesk/tickets/show/note_attachments", :formats => [:html], :locals => { :note => note } unless minimizable %>
+        <%= render :partial => "/helpdesk/tickets/show/note_attachments", :formats => [:html], :locals => { :note => note } %>
       </div>
     </div>
 
