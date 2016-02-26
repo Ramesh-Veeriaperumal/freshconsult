@@ -42,13 +42,13 @@ module Solution::LanguageAssociations
       :autosave => true,
       :inverse_of => table_name
       
-    proc {
-      unless Language.current?
-        delegation_title = child_class.constantize.column_names.include?("name") ? :name : :title
-        base.delegate delegation_title, :description, :to => :"current_#{child_name}"
-      end
-    }
-    
+    delegation_title = child_class.constantize.column_names.include?("name") ? :name : :title
+
+    define_method delegation_title do
+      delegation_assoc = Language.current? ? :"current_#{child_name}" : :"primary_#{child_name}"
+      self.attributes[delegation_title.to_s] || send(delegation_assoc).send(delegation_title)
+    end
+
     def self.translation_associations
       child_name = self.name.chomp('Meta').gsub("Solution::", '').downcase
       (['primary'] | Account.current.applicable_languages).collect(&:to_sym).collect {|s| :"#{s}_#{child_name}"}
