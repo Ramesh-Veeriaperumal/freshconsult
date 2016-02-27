@@ -43,8 +43,7 @@ class TicketValidation < ApiValidation
   validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
-    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) }
-  }, if: -> { attachments }
+    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) }}
 
   # Email related validations
   validates :email, data_type: { rules: String, allow_nil: true }

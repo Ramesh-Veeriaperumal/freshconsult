@@ -193,7 +193,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
     post :create, construct_params({},  params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
-    match_json([bad_request_error_pattern('avatar', :invalid_size, max_size: '5 MB')])
+    match_json([bad_request_error_pattern('avatar', :invalid_size, max_size: '5 MB', current_size: '19.1 MB')])
     assert_response 400
   end
 

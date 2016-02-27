@@ -643,7 +643,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
   end
 
   def test_attachment_invalid_size_update
@@ -656,7 +656,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: Helpdesk::Ticket.first.id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
   end
 
   def test_create_with_nested_custom_fields_with_invalid_first_children_valid

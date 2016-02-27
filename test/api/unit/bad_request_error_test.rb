@@ -78,7 +78,7 @@ class BadRequestErrorTest < ActionView::TestCase
   end
 
   def test_invalid_size_code
-    invalid_size_messages = { invalid_size: { max_size: 78 } }
+    invalid_size_messages = { invalid_size: { max_size: 78, current_size: 79 } }
     invalid_size_messages.each do |message, params|
       test = BadRequestError.new('attribute', message, params)
       assert_equal 'invalid_size', test.code.to_s

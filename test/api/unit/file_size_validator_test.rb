@@ -30,6 +30,7 @@ class FileSizeValidatorTest < ActionView::TestCase
     refute test.valid?
     assert test.errors.count == 1
     assert_equal({ multi_error: :data_type_mismatch }, test.errors.to_h)
+    assert_equal({ multi_error: { data_type: String } }, test.error_options)
   end
 
   def test_base_size_proc_invalid
@@ -38,6 +39,7 @@ class FileSizeValidatorTest < ActionView::TestCase
     test.item_size = 100
     refute test.valid?
     assert_equal(test.errors.to_h, attribute1: :invalid_size)
+    assert_equal({ attribute1: { current_size: '101 Bytes', max_size: '100 Bytes' } }, test.error_options)
   end
 
   def test_base_size_absent
@@ -45,6 +47,7 @@ class FileSizeValidatorTest < ActionView::TestCase
     test.attribute2 = [1] * 101
     refute test.valid?
     assert_equal(test.errors.to_h, attribute2: :invalid_size)
+    assert_equal({ attribute2: { current_size: '808 Bytes', max_size: '100 Bytes' } }, test.error_options)
   end
 
   def test_min_size_invalid
@@ -52,6 +55,7 @@ class FileSizeValidatorTest < ActionView::TestCase
     test.attribute2 = []
     refute test.valid?
     assert_equal(test.errors.to_h, attribute2: :invalid_size)
+    assert_equal({ attribute2: { current_size: '0 Bytes', max_size: '100 Bytes' } }, test.error_options)
   end
 
   def test_single_attachment_valid
@@ -66,5 +70,6 @@ class FileSizeValidatorTest < ActionView::TestCase
     test.attribute2 = 'aaaaaaaaaa' * 11
     refute test.valid?
     assert_equal(test.errors.to_h, attribute2: :invalid_size)
+    assert_equal({ attribute2: { current_size: '110 Bytes', max_size: '100 Bytes' } }, test.error_options)
   end
 end

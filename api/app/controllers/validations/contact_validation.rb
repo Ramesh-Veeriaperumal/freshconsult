@@ -40,7 +40,7 @@ class ContactValidation < ApiValidation
   }
 
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
-    min: nil, max: ContactConstants::ALLOWED_AVATAR_SIZE, base_size: 0 }, if: -> { avatar }
+    min: nil, max: ContactConstants::ALLOWED_AVATAR_SIZE, base_size: 0 }
   validate :validate_avatar, if: -> { avatar && errors[:avatar].blank? }
 
   def initialize(request_params, item, allow_string_param = false)

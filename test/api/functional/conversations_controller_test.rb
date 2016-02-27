@@ -190,7 +190,7 @@ class ConversationsControllerTest < ActionController::TestCase
     post :create, construct_params({ id: ticket.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
   end
 
   def test_create_without_privilege
@@ -428,7 +428,7 @@ class ConversationsControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
   end
 
   def test_reply_with_invalid_attachment_params_format
@@ -526,7 +526,7 @@ class ConversationsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: n.id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
   end
 
   def test_update_with_invalid_attachment_params_format
