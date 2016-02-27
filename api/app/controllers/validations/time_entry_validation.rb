@@ -3,7 +3,7 @@ class TimeEntryValidation < ApiValidation
 
   # do not change validation order
   # Common validations
-  validates :billable, :timer_running, data_type: { rules: 'Boolean', allow_unset: true }
+  validates :billable, :timer_running, data_type: { rules: 'Boolean' }
   validates :note, data_type: { rules: String, allow_nil: true }
   validates :executed_at, date_time: { allow_nil: true }
 

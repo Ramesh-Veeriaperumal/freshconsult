@@ -40,7 +40,7 @@ class TicketValidation < ApiValidation
 
   # Attachment validations
   validates :attachments, presence: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
-  validates :attachments, data_type: { rules: Array, allow_unset: true, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
+  validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
     base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) }
@@ -50,16 +50,16 @@ class TicketValidation < ApiValidation
   validates :email, data_type: { rules: String, allow_nil: true }
   validates :email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email, allow_nil: true }
   validates :email, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:email].blank? }
-  validates :cc_emails, data_type: { rules: Array, allow_unset: true }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: :not_a_valid_email } }
+  validates :cc_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: :not_a_valid_email } }
 
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
 
   # Tags validations
-  validates :tags, data_type: { rules: Array, allow_unset: true }, array: { data_type: { rules: String, allow_nil: true }, length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING, message: :too_long,  allow_nil: true } }
+  validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true }, length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING, message: :too_long,  allow_nil: true } }
   validates :tags, string_rejection: { excluded_chars: [','], allow_nil: true }
 
   # Custom fields validations
-  validates :custom_fields, data_type: { rules: Hash, allow_unset: true }
+  validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields:
                               {
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },

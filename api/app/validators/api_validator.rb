@@ -35,6 +35,7 @@ class ApiValidator < ActiveModel::EachValidator
   end
 
   def skip_validation?(validator_options = options)
+    # if attribute is not set in request params and is not mandatory, all validations will be skipped irrespective of allow_nil, allow_blank options.
     errors_present? || !validator_options[:required] && (allow_unset?(validator_options) || allow_nil?(validator_options) || allow_blank?(validator_options))
   end
 
@@ -51,7 +52,7 @@ class ApiValidator < ActiveModel::EachValidator
   end
 
   def allow_unset?(validator_options)
-    validator_options[:allow_unset] && !record.instance_variable_defined?("@#{attribute}")
+    !record.instance_variable_defined?("@#{attribute}")
   end
 
   def call_block(block)

@@ -13,7 +13,7 @@ class RequiredValidatorTest < ActionView::TestCase
     test = TestValidation.new
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ name: :missing_field, title: :missing_field }, errors)
+    assert_equal({ name: :missing_field, title: :missing_field, id: :required_and_numericality }, errors)
   end
 
   def test_attribute_blank
@@ -21,7 +21,7 @@ class RequiredValidatorTest < ActionView::TestCase
     test.name = test.title = ''
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ name: :blank, title: :blank }, errors)
+    assert_equal({ name: :blank, title: :blank, id: :required_and_numericality }, errors)
   end
 
   def test_disallow_nil

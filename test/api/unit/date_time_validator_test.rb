@@ -24,6 +24,7 @@ class DateTimeValidatorTest < ActionView::TestCase
     test = TestValidation.new
     test.due_by = 'test'
     test.fr_due_by = Time.zone.now.iso8601
+    test.due_by_1 = nil
     test.valid?
     refute test.errors.empty?
     refute test.errors.full_messages.include?('Fr due by invalid_date_time')
@@ -58,6 +59,7 @@ class DateTimeValidatorTest < ActionView::TestCase
 
   def test_invalid_allow_nil
     test = TestValidation.new
+    test.due_by_1 = nil
     test.valid?
     refute test.errors.empty?
     assert_equal ['Due by 1 invalid_date_time'], test.errors.full_messages

@@ -11,6 +11,9 @@ class ArrayValidator < ApiValidator
         custom_validator = self.class.custom_validator_class_mapping[key]
         validator_class = custom_validator || "ActiveModel::Validations::#{key.to_s.camelize}Validator".constantize
         validator = validator_class.new(validator_options)
+        # when default validators are nested inside array validator, allow_nil & allow_blank options of those will be ignored.
+        # because we are not calling validate on the validator instance & validate method handles skipping validation logic.
+        # But this is not an issue as nil and blank values are rejected from array before doing validation. 
         custom_validator ? validator.validate_value(record, element_value) : validator.validate_each(record, attribute, element_value)
       end
     end

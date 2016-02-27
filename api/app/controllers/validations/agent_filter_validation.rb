@@ -1,11 +1,11 @@
 class AgentFilterValidation < FilterValidation
   attr_accessor :state, :phone, :mobile, :email, :conditions
 
-  validates :state, custom_inclusion: { in: AgentConstants::STATES, allow_unset: true }
-  validates :email, data_type: { rules: String, allow_unset: true  }
+  validates :state, custom_inclusion: { in: AgentConstants::STATES }
+  validates :email, data_type: { rules: String  }
   validates :email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email, allow_nil: true }
 
-  validates :phone, :mobile, data_type: { rules: String, allow_unset: true }
+  validates :phone, :mobile, data_type: { rules: String }
   
   def initialize(request_params)
     # Remove unwanted keys from request_params; Also remove the state filter and add the value passed as a filter

@@ -10,4 +10,8 @@ class RequiredValidator < ApiValidator
   def message
     attribute_defined? ? :blank : :missing_field
   end
+
+  def skip_validation?(validator_options = options)
+    errors_present?
+  end
 end
