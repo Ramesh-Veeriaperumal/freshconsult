@@ -1,8 +1,12 @@
 # Check if value is not present.
 
-class CustomAbsenceValidator < ActiveModel::EachValidator
-  def validate_each(record, attribute, _value)
-    message = options[:message] || :present
-    record.errors[attribute] << message if record.instance_variable_defined?("@#{attribute}")
+class CustomAbsenceValidator < ApiValidator
+
+  def message
+    :present
+  end
+
+  def invalid?
+    record.instance_variable_defined?("@#{attribute}")
   end
 end

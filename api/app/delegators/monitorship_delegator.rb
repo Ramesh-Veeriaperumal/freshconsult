@@ -1,5 +1,4 @@
-class MonitorshipDelegator < SimpleDelegator
-  include ActiveModel::Validations
+class MonitorshipDelegator < BaseDelegator
 
   validates :user, presence: true
 end

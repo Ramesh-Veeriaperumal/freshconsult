@@ -1,17 +1,19 @@
 require_relative '../unit_test_helper'
 
 class StringRejectionValidatorTest < ActionView::TestCase
-  class TestValidation
+  class TestValidation < MockTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute1, :attribute2, :attribute3, :error_options
+    attr_accessor :attribute1, :attribute2, :attribute3
+
 
     validates :attribute2, data_type: { rules: Array, allow_nil: true }
-    validates :attribute1, string_rejection: { excluded_chars: [','] }
-    validates :attribute2, string_rejection: { excluded_chars: [',', 'junk', '!', '$'] }
-    validates :attribute3, string_rejection: { excluded_chars: [6767] }
+    validates :attribute1, string_rejection: { excluded_chars: [','], allow_nil: true }
+    validates :attribute2, string_rejection: { excluded_chars: [',', 'junk', '!', '$'], allow_nil: true }
+    validates :attribute3, string_rejection: { excluded_chars: [6767], allow_nil: true }
 
     def initialize(params_hash)
+      super
       params_hash.each { |k, v| instance_variable_set("@#{k}", v) }
     end
   end

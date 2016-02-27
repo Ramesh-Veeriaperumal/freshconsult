@@ -4,7 +4,7 @@ module JsonPattern
     {
       field: "#{field}",
       message: message % params_hash,
-      code: ErrorConstants::API_ERROR_CODES_BY_VALUE[value] || ErrorConstants::DEFAULT_CUSTOM_CODE
+      code: params_hash[:code] || ErrorConstants::API_ERROR_CODES_BY_VALUE[value] || ErrorConstants::DEFAULT_CUSTOM_CODE
     }
   end
 

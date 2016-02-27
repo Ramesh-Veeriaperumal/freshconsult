@@ -1,7 +1,4 @@
-class CompanyDelegator < SimpleDelegator
-  include ActiveModel::Validations
-
-  attr_accessor :error_options
+class CompanyDelegator < BaseDelegator
 
   validates :custom_field, custom_field: { custom_field: {
     validatable_custom_fields: proc { Account.current.company_form.custom_drop_down_fields },

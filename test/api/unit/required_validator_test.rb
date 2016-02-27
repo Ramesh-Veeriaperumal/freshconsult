@@ -1,7 +1,7 @@
 require_relative '../unit_test_helper'
 
 class RequiredValidatorTest < ActionView::TestCase
-  class TestValidation
+  class TestValidation < MockTestValidation
     include ActiveModel::Validations
 
     attr_accessor :name, :id, :title
@@ -13,7 +13,7 @@ class RequiredValidatorTest < ActionView::TestCase
     test = TestValidation.new
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ name: :missing, title: :missing }, errors)
+    assert_equal({ name: :missing_field, title: :missing_field }, errors)
   end
 
   def test_attribute_blank

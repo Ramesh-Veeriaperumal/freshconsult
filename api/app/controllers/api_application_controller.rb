@@ -304,7 +304,7 @@ class ApiApplicationController < MetalApiController
       # The respective filter validation classes would inherit from FilterValidation to include validations on pagination options.
       params.permit(*ApiConstants::DEFAULT_INDEX_FIELDS, *additional_fields)
       @filter = FilterValidation.new(params, nil, true)
-      render_query_param_errors(@filter.errors, @filter.error_options) unless @filter.valid?
+      render_errors(@filter.errors, @filter.error_options) unless @filter.valid?
     end
 
     def validate_url_params
@@ -372,7 +372,7 @@ class ApiApplicationController < MetalApiController
         ErrorHelper.rename_keys(error_options_mappings, item.error_options)
         (options ||= {}).merge!(item.error_options)
       end
-      render_errors(item.errors, options)
+      render_errors(item.errors, options || {})
     end
 
     # Error options field mappings to rename the keys Say, agent in ticket error will be replaced with responder_id
@@ -380,21 +380,7 @@ class ApiApplicationController < MetalApiController
       {}
     end
 
-    def render_query_param_errors(errors, meta = nil)
-      set_query_param_errors(errors, meta)
-      render_errors(errors, meta)
-    end
-
-    def set_query_param_errors(errors, meta)
-      # this will translate generic positive_number error to specific per_page_positive_number
-      # this is being done to get different custom codes with the same error message.
-      if errors[:per_page].present?
-        errors[:per_page] = "per_page_#{errors.to_h[:per_page]}"
-        meta[:per_page].merge!(max_value: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page])
-      end
-    end
-
-    def render_errors(errors, meta = nil)
+    def render_errors(errors, meta = {})
       if errors.present?
         @errors = ErrorHelper.format_error(errors, meta)
         log_error_response @errors

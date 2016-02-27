@@ -1,15 +1,16 @@
 require_relative '../unit_test_helper'
 
 class ArrayValidatorTest < ActionView::TestCase
-  class TestValidation
+  class TestValidation < MockTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :emails, :domains, :attributes, :multi_error, :error_options
+    attr_accessor :emails, :domains, :attributes, :multi_error
+
     # traditional validator
-    validates :emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
+    validates :emails, array: { custom_format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
     # custom validator
     validates :domains, array: { data_type: { rules: String, allow_blank: true } }
-    validates :attributes, array: { numericality: true }
+    validates :attributes, array: { custom_numericality: true }
     validates :multi_error, data_type: { rules: Array }, array: { data_type: { rules: String, allow_blank: true } }, allow_blank: true
   end
 
@@ -46,7 +47,7 @@ class ArrayValidatorTest < ActionView::TestCase
     test.attributes = [nil]
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ attributes: 'is not a number' }, errors)
+    assert_equal({ attributes: :data_type_mismatch }, errors)
   end
 
   def test_attribute_with_errors

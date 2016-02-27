@@ -61,7 +61,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: Faker::Lorem.characters(5), description: Faker::Lorem.paragraph,
                                        agent_ids: ['asd', 'asd1'])
     assert_response 400
-    match_json([bad_request_error_pattern('agent_ids', :invalid_integer)])
+    match_json([bad_request_error_pattern('agent_ids', :invalid_integer, {code: :data_type_mismatch})])
   end
 
   def test_create_group_with_deleted_or_invalid_agent_id
@@ -187,7 +187,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_validate_agent_list
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, agent_ids: [''])
     assert_response 400
-    match_json([bad_request_error_pattern('agent_ids', :invalid_integer)])
+    match_json([bad_request_error_pattern('agent_ids', :invalid_integer, code: :data_type_mismatch)])
   end
 
   def test_delete_existing_agents_while_update
@@ -240,7 +240,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_groups_with_pagination_exceeds_limit
     get :index, controller_params(per_page: 101)
     assert_response 400
-    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
   end
 
   def test_update_group_with_existing_name

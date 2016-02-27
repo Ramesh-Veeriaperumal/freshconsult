@@ -6,9 +6,11 @@ class TopicValidationsTest < ActionView::TestCase
     item = nil
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?(:update)
-    assert topic.errors.full_messages.include?('Title required_and_data_type_mismatch')
-    assert topic.errors.full_messages.include?('Message html required_and_data_type_mismatch')
-    assert topic.errors.full_messages.include?('Forum required_and_data_type_mismatch')
+    assert topic.errors.full_messages.include?('Title data_type_mismatch')
+    assert topic.errors.full_messages.include?('Message html data_type_mismatch')
+    assert topic.errors.full_messages.include?('Forum data_type_mismatch')
+    assert_equal({title: {data_type: String, code: :missing_field}, message_html: {data_type: String, code: :missing_field}, 
+    forum_id: {data_type: :"Positive Integer", code: :missing_field}}, topic.error_options)
   end
 
   def test_numericality_params_invalid

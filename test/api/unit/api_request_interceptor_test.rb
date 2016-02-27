@@ -1,4 +1,5 @@
 require_relative '../unit_test_helper'
+require_relative '../helpers/json_pattern'
 
 class ApiRequestInterceptorTest < ActionView::TestCase
   def env_for(url, opts = {})

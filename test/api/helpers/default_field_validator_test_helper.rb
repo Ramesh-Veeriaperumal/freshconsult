@@ -26,7 +26,7 @@ class DefaultFieldValidatorTestHelper
         mobile: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
         address: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
         twitter_id: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-        email: { format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
+        email: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
         description:  { data_type: { rules: String } },
         note: { data_type: { rules: String } },
         domains:  { data_type: { rules: Array }, array: { data_type: { rules: String } }, string_rejection: { excluded_chars: [','] } }

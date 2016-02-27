@@ -13,8 +13,10 @@ class ConversationValidationTest < ActionView::TestCase
     item = nil
     conversation = ConversationValidation.new(controller_params, item)
     refute conversation.valid?(:create)
-    assert conversation.errors.full_messages.include?('Body required_and_data_type_mismatch')
+
+    assert conversation.errors.full_messages.include?('Body data_type_mismatch')
     refute conversation.errors.full_messages.include?('Body html data_type_mismatch')
+    assert_equal({body: {data_type: String, code: :missing_field}, user_id: {}}, conversation.error_options)
 
     controller_params = { 'user_id' => 1, body: '', body_html: '' }
     item = nil

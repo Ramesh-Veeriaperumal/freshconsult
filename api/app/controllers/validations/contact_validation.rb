@@ -15,7 +15,7 @@ class ContactValidation < ApiValidation
 
   validates :name, data_type: { rules: String, required: true }
   validates :name, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? }
-  validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
+  validates :view_all_tickets, data_type: { rules: 'Boolean', allow_unset: true,  ignore_string: :allow_string_param }
 
   validate :contact_detail_missing, on: :create
 
@@ -24,14 +24,14 @@ class ContactValidation < ApiValidation
   validate :contact_detail_missing_update, if: -> { fb_profile_id.nil? }, on: :update
 
   validate :check_contact_merge_feature, if: -> { other_emails }
-  validates :other_emails, data_type: { rules: Array }, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' } }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
+  validates :other_emails, data_type: { rules: Array, allow_unset: true }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email } }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
   validate :other_emails_max_count, if: -> { other_emails && errors[:other_emails].blank? }
   validate :check_contact_for_email_before_adding_other_emails, if: -> { other_emails }
   validate :check_other_emails_for_primary_email, if: -> { other_emails }, on: :update
 
   validates :company_name, required: { allow_nil: false, message: :company_id_required }, custom_numericality: { allow_nil: false, ignore_string: :allow_string_param },  if: -> { view_all_tickets.to_s == 'true' }
 
-  validates :custom_fields, data_type: { rules: Hash }
+  validates :custom_fields, data_type: { rules: Hash, allow_unset: true }
   validates :custom_fields, custom_field: { custom_fields: {
     validatable_custom_fields: proc { Account.current.contact_form.custom_non_dropdown_fields },
     required_attribute: :required_for_agent,

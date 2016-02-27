@@ -26,6 +26,7 @@ class ApiValidation
 
     # Allow string param based on action & content_type
     @allow_string_param = allow_string_param
+    @error_options = {}
   end
 
   # Set true for instance_variable_set if it is part of request params.

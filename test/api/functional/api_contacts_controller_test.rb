@@ -56,7 +56,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_without_name
     post :create, construct_params({},  email: Faker::Internet.email)
-    match_json([bad_request_error_pattern('name', :required_and_data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('name', :data_type_mismatch, {code: :missing_field, data_type: String})])
     assert_response 400
   end
 
@@ -279,7 +279,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email)
 
     assert_response 400
-    match_json([bad_request_error_pattern('code', :required_and_data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('code', :data_type_mismatch, {code: :missing_field, data_type: String})])
     ensure
       cf.update_attribute(:required_for_agent, false)
   end
@@ -853,18 +853,20 @@ class ApiContactsControllerTest < ActionController::TestCase
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     post :create, construct_params({},  name: Faker::Name.name)
     assert_response 400
-    match_json([bad_request_error_pattern('email', :required_and_data_type_mismatch, data_type: String),
-                bad_request_error_pattern('job_title', :required_and_data_type_mismatch, data_type: String),
-                bad_request_error_pattern('mobile', :required_and_data_type_mismatch, data_type: String),
-                bad_request_error_pattern('address', :required_and_data_type_mismatch, data_type: String),
-                bad_request_error_pattern('description', :required_and_data_type_mismatch, data_type: String),
-                bad_request_error_pattern('twitter_id', :required_and_data_type_mismatch, data_type: String),
-                bad_request_error_pattern('phone', :required_and_data_type_mismatch, data_type: String),
-                bad_request_error_pattern('tags', :required_and_data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('company_id', :missing),
-                bad_request_error_pattern('language', :required_and_inclusion,
-                                          list: I18n.available_locales.map(&:to_s).join(',')),
-                bad_request_error_pattern('time_zone', :required_and_inclusion, list: ActiveSupport::TimeZone.all.map(&:name).join(','))])
+
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, {code: :missing_field, data_type: String}),
+                bad_request_error_pattern('job_title', :data_type_mismatch, {code: :missing_field, data_type: String}),
+                bad_request_error_pattern('mobile', :data_type_mismatch, {code: :missing_field, data_type: String}),
+                bad_request_error_pattern('address', :data_type_mismatch, {code: :missing_field, data_type: String}),
+                bad_request_error_pattern('description', :data_type_mismatch, {code: :missing_field, data_type: String}),
+                bad_request_error_pattern('twitter_id', :data_type_mismatch, {code: :missing_field, data_type: String}),
+                bad_request_error_pattern('phone', :data_type_mismatch, {code: :missing_field, data_type: String}),
+                bad_request_error_pattern('tags', :data_type_mismatch, {code: :missing_field, data_type: Array}),
+                bad_request_error_pattern('company_id', :missing_field),
+                bad_request_error_pattern('language', :not_included,
+                                          {list: I18n.available_locales.map(&:to_s).join(','), code: :missing_field}),
+                bad_request_error_pattern('time_zone', :not_included, 
+                                          {list: ActiveSupport::TimeZone.all.map(&:name).join(','), code: :missing_field})])
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end
@@ -909,7 +911,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                                            address: nil
                                  )
     assert_response 400
-    match_json([bad_request_error_pattern('email', :required_and_data_type_mismatch, data_type: String),
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, {code: :missing_field, data_type: String}),
                 bad_request_error_pattern('job_title', :data_type_mismatch, data_type: String),
                 bad_request_error_pattern('mobile', :data_type_mismatch, data_type: String),
                 bad_request_error_pattern('address', :data_type_mismatch, data_type: String),

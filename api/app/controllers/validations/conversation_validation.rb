@@ -5,16 +5,17 @@ class ConversationValidation < ApiValidation
   validates :body, data_type: { rules: String, required: true }
   validates :body_html, data_type: { rules: String, allow_nil: true }
   validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0 }
-  validates :private, :incoming, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }
-  validates :notify_emails, :attachments, :cc_emails, :bcc_emails, data_type: { rules: Array }
+  validates :private, :incoming, data_type: { rules: 'Boolean', allow_unset: true, ignore_string: :allow_string_param }
+  validates :notify_emails, :attachments, :cc_emails, :bcc_emails, data_type: { rules: Array, allow_unset: true }
   validate :max_email_count
-  validates :notify_emails, :cc_emails, :bcc_emails, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
+  validates :notify_emails, :cc_emails, :bcc_emails, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: :not_a_valid_email } }
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }
 
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
-    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) }
-  }, if: -> { attachments }
+    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item)},
+    allow_nil: true 
+  }
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)

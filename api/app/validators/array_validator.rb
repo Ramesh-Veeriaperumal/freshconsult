@@ -1,32 +1,38 @@
-class ArrayValidator < ActiveModel::EachValidator
-  def validate_each(record, attribute, values)
-    return unless values.is_a? Array
-    values.each do |value|
-      # http://apidock.com/rails/v3.2.13/ActiveModel/Validations/ClassMethods/_validates_default_keys
-      # def _validates_default_keys
-      #  [ :if, :unless, :on, :allow_blank, :allow_nil ]
-      # end
-      valid_options = options.except(*record.class.send(:_validates_default_keys))
+class ArrayValidator < ApiValidator
+
+  def validate_each
+    valid_options = options.except(*record.class.send(:_validates_default_keys))
+    
+    value.each do |element_value|
       valid_options.each do |key, args|
-        next if record.errors[attribute].present?
+        return if record.errors[attribute].present?
         validator_options = { attributes: attribute }
-        validator_options.merge!(args) if args.is_a?(Hash)
-
-        next if value.nil? && validator_options[:allow_nil]
-        next if value.blank? && validator_options[:allow_blank]
-
-        validator_class_name = "#{key.to_s.camelize}Validator"
-        validator = validator_class(validator_class_name).new(validator_options)
-        validator.validate_each(record, attribute, value)
+        validator_options.merge!(args) if Hash === args
+        custom_validator = self.class.custom_validator_class_mapping[key]
+        validator_class = custom_validator || "ActiveModel::Validations::#{key.to_s.camelize}Validator".constantize
+        validator = validator_class.new(validator_options)
+        custom_validator ? validator.validate_value(record, element_value) : validator.validate_each(record, attribute, element_value)
       end
     end
   end
 
   private
 
-    def validator_class(validator_class_name)
-      validator_class_name.constantize
-    rescue NameError
-      "ActiveModel::Validations::#{validator_class_name}".constantize
+    def skip_validation?
+      super || !(Array === value)
+    end
+
+    def self.custom_validator_class_mapping
+        {
+          custom_format: CustomFormatValidator,
+          custom_absence: CustomAbsenceValidator,
+          custom_inclusion: CustomInclusionValidator,
+          custom_numericality: CustomNumericalityValidator,
+          data_type: DataTypeValidator,
+          date_time: DateTimeValidator,
+          file_size: FileSizeValidator,
+          required: RequiredValidator,
+          string_rejection: StringRejectionValidator 
+        }
     end
 end

@@ -1,10 +1,10 @@
 require_relative '../unit_test_helper'
 
 class FileSizeValidatorTest < ActionView::TestCase
-  class FileValidation
+  class FileValidation < MockTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute1, :item_size, :attribute2, :error_options, :multi_error
+    attr_accessor :attribute1, :item_size, :attribute2, :multi_error
     validates :multi_error, data_type: { rules: String, allow_nil: true }
     validates :attribute1, :multi_error, file_size:  {
       min: 0, max: 100,

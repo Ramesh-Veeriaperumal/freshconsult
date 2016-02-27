@@ -173,7 +173,7 @@ module ApiDiscussions
     def test_create_no_params
       post :create, construct_params({ id: topic_obj.id }, {})
       assert_response 400
-      match_json [bad_request_error_pattern('body_html', :required_and_data_type_mismatch, data_type: String)]
+      match_json [bad_request_error_pattern('body_html', :data_type_mismatch, {code: :missing_field, data_type: String})]
     end
 
     def test_create_mandatory_params
@@ -244,7 +244,7 @@ module ApiDiscussions
       t = Topic.where('posts_count > ?', 1).first || create_test_post(topic_obj, User.first).topic
       get :topic_comments, controller_params(id: t.id, per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
     end
 
     def test_comments_with_link_header

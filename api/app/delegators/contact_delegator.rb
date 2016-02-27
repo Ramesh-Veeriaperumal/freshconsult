@@ -1,7 +1,4 @@
-class ContactDelegator < SimpleDelegator
-  include ActiveModel::Validations
-
-  attr_accessor :error_options
+class ContactDelegator < BaseDelegator
 
   validates :company, presence: true, if: -> { company_id && changed.include?('customer_id') }
   validates :custom_field, custom_field: { custom_field: {

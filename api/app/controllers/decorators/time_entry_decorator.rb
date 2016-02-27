@@ -1,4 +1,4 @@
-class TimeEntryDecorator < SimpleDelegator
+class TimeEntryDecorator < BaseDelegator
   class << self
     def format_time_spent(time_spent)
       if time_spent.is_a? Numeric

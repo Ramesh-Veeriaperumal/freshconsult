@@ -11,6 +11,6 @@ class FilterValidationTest < ActionView::TestCase
     refute filter.valid?
     error = filter.errors.full_messages
     assert error.include?('Page data_type_mismatch')
-    assert error.include?('Per page data_type_mismatch')
+    assert error.include?('Per page per_page_invalid')
   end
 end

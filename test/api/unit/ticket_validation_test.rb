@@ -1,4 +1,5 @@
 require_relative '../unit_test_helper'
+require "#{Rails.root}/test/api/helpers/custom_field_validator_test_helper.rb"
 
 class TicketValidationTest < ActionView::TestCase
   def tear_down
@@ -126,14 +127,14 @@ class TicketValidationTest < ActionView::TestCase
     errors = ticket.errors.full_messages
     assert errors.include?('Status not_included')
     assert errors.include?('Priority not_included')
-    assert errors.include?('Source datatype_and_inclusion')
+    assert errors.include?('Source not_included')
 
     controller_params = { status: '2', priority: '2', source: '', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?
     errors = ticket.errors.full_messages
-    assert errors.include?('Status datatype_and_inclusion')
-    assert errors.include?('Priority datatype_and_inclusion')
+    assert errors.include?('Status not_included')
+    assert errors.include?('Priority not_included')
     assert errors.include?('Source not_included')
   ensure
     Account.unstub(:current)
@@ -159,9 +160,10 @@ class TicketValidationTest < ActionView::TestCase
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
-    assert ticket.errors.full_messages.include?('Description required_and_data_type_mismatch')
+    assert ticket.errors.full_messages.include?('Description data_type_mismatch')
     refute ticket.errors.full_messages.include?('Description html data_type_mismatch')
-
+    assert_equal({description: {data_type: String, code: :missing_field}, requester_id: {}}, ticket.error_options)
+    
     controller_params = { 'requester_id' => 1, ticket_fields: [], description: '' }
     item = nil
     ticket = TicketValidation.new(controller_params, item)

@@ -48,7 +48,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, description: Faker::Lorem.paragraph,
                                        domains: domain_array)
     assert_response 400
-    match_json([bad_request_error_pattern('name', :required_and_data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('name', :data_type_mismatch, {code: :missing_field, data_type: String})])
   end
 
   def test_create_company_domains_invalid
@@ -253,7 +253,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   def test_company_with_pagination_exceeds_limit
     get :index, controller_params(per_page: 101)
     assert_response 400
-    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
   end
 
   def test_create_companies_with_invalid_domains
@@ -356,7 +356,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     cf = CompanyField.find_by_label('required_linetext')
     cf.destroy
     assert_response 400
-    match_json([bad_request_error_pattern('required_linetext', :required_and_data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('required_linetext', :data_type_mismatch, {code: :missing_field, data_type: String})])
   end
 
   def test_update_array_fields_with_compacting_array
@@ -388,9 +388,9 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     post :create, construct_params({},  name: Faker::Name.name)
     assert_response 400
-    match_json([bad_request_error_pattern('description', :required_and_data_type_mismatch, data_type: String),
-                bad_request_error_pattern('domains', :required_and_data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('note', :required_and_data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('description', :data_type_mismatch, {code: :missing_field, data_type: String}),
+                bad_request_error_pattern('domains', :data_type_mismatch, {code: :missing_field, data_type: Array}),
+                bad_request_error_pattern('note', :data_type_mismatch, {code: :missing_field, data_type: String})])
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end

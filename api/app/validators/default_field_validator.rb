@@ -50,9 +50,9 @@ class DefaultFieldValidator < ActiveModel::EachValidator
       when :length
         required_validator(record, attribute) if required
         length_validator(record, options_hash) if record.errors[attribute].blank?
-      when :format
+      when :custom_format
         required_validator(record, attribute) if required
-        format_validator(record, options_hash) if record.errors[attribute].blank?
+        format_validator(record, options_hash)
       when :string_rejection
         required_validator(record, attribute) if required
         string_rejection_validator(record, options_hash)
@@ -96,7 +96,7 @@ class DefaultFieldValidator < ActiveModel::EachValidator
   end
 
   def format_validator(record, options_hash)
-    ActiveModel::Validations::FormatValidator.new(options_hash).validate(record)
+    CustomFormatValidator.new(options_hash).validate(record)
   end
 
   def data_type_validator(record, options_hash)

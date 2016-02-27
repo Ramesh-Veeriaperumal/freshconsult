@@ -3,11 +3,11 @@ class TimeEntryValidation < ApiValidation
 
   # do not change validation order
   # Common validations
-  validates :billable, :timer_running, data_type: { rules: 'Boolean' }
+  validates :billable, :timer_running, data_type: { rules: 'Boolean', allow_unset: true }
   validates :note, data_type: { rules: String, allow_nil: true }
   validates :executed_at, date_time: { allow_nil: true }
-  validates :time_spent, data_type: { rules: String, allow_nil: true }
-  validates :time_spent, data_type: { rules: String }, format: { with: /^\d+:[0-5][0-9]$/, message: 'invalid_time_spent' }, if: -> { time_spent && errors[:time_spent].blank? }
+
+  validates :time_spent, data_type: { rules: String }, custom_format: { with: /^\d+:[0-5][0-9]$/, message: :invalid_time_spent }, allow_nil: true
 
   # Start time specific validations*
   # start_time param has no meaning timer is already on in case of update.

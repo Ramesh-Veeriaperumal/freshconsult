@@ -3,11 +3,11 @@ require "#{Rails.root}/test/api/helpers/default_field_validator_test_helper.rb"
 require "#{Rails.root}/test/api/helpers/test_case_methods.rb"
 
 class DefaultFieldValidatorTest < ActionView::TestCase
-  class TestValidation
+  class TestValidation < MockTestValidation
     include ActiveModel::Validations
     attr_accessor :source, :status, :priority, :type, :group_id, :responder_id, :product_id, :subject, :description, :description_html,
                   :email, :phone, :mobile, :client_manager, :company_id, :tags, :address, :job_title, :twitter_id, :language, :time_zone,
-                  :domains, :note, :allow_string_param, :error_options, :attribute1
+                  :domains, :note, :allow_string_param, :attribute1
 
     validates :source, :status, :priority, :type, :group_id, :responder_id, :product_id, :subject, :description,
               :email, :phone, :mobile, :client_manager, :company_id, :tags, :address, :job_title, :twitter_id, :language, :time_zone,
@@ -21,6 +21,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     }
 
     def initialize(params = {}, allow_string_param = false)
+      super
       params.each do |key, value|
         send("#{key}=", value) if respond_to?("#{key}=")
       end
@@ -34,6 +35,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     attr_accessor :error_options, :allow_string_param, :attribute1
 
     def initialize(params = {}, allow_string_param = false)
+      super
       params.each do |key, value|
         send("#{key}=", value) if respond_to?("#{key}=")
       end
@@ -78,7 +80,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
       source: { list: '1,2,3,7,8,9' }, status: { list: '2,3,4,5' }, priority: { list: '1,2,3,4' }, type: { list: 'Lead,Question,Problem,Maintenance,Breakage' }, group_id: { data_type: :'Positive Integer' },
       responder_id: { data_type: :'Positive Integer' }, product_id: { data_type: :'Positive Integer' }, client_manager: { data_type: 'Boolean' },
       tags: { data_type: Array }, language: { list: I18n.available_locales.map(&:to_s).join(',') }, time_zone: { list: ActiveSupport::TimeZone.all.map(&:name).join(',') },
-      domains: { data_type: Array }, description: { data_type: String }, note: { data_type: String }
+      domains: { data_type: Array }, description: { data_type: String }, note: { data_type: String }, address: {}, company_id: {}, email: {}, job_title: {}, mobile: {}, phone: {}, subject: {}, twitter_id: {}
     }.sort,
                  error_options
                 )
@@ -90,18 +92,19 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
     assert_equal({
-      source: :required_and_inclusion, company_id: :missing, status: :required_and_inclusion, priority: :required_and_inclusion, type: :required_and_inclusion, group_id: :required_and_data_type_mismatch,
-      responder_id: :required_and_data_type_mismatch, product_id: :required_and_data_type_mismatch, email: :missing,
-      client_manager: :required_and_data_type_mismatch, tags: :required_and_data_type_mismatch, language: :required_and_inclusion, time_zone: :required_and_inclusion, domains: :required_and_data_type_mismatch,
-      subject: :missing, job_title: :required_and_data_type_mismatch, description: :required_and_data_type_mismatch, twitter_id: :missing, phone: :missing, mobile: :missing, address: :missing, note: :required_and_data_type_mismatch
+      source: :not_included, company_id: :missing_field, status: :not_included, priority: :not_included, type: :not_included, group_id: :data_type_mismatch,
+      responder_id: :data_type_mismatch, product_id: :data_type_mismatch, email: :missing_field,
+      client_manager: :data_type_mismatch, tags: :data_type_mismatch, language: :not_included, time_zone: :not_included, domains: :data_type_mismatch,
+      subject: :missing_field, job_title: :data_type_mismatch, description: :data_type_mismatch, twitter_id: :missing_field, phone: :missing_field, mobile: :missing_field, address: :missing_field, note: :data_type_mismatch
     }.sort,
                  errors
                 )
     assert_equal({
-      source: { list: '1,2,3,7,8,9' }, status: { list: '2,3,4,5' }, priority: { list: '1,2,3,4' }, type: { list: 'Lead,Question,Problem,Maintenance,Breakage' }, group_id: { data_type: :'Positive Integer' },
-      responder_id: { data_type: :'Positive Integer' }, product_id: { data_type: :'Positive Integer' }, client_manager: { data_type: 'Boolean' },
-      description: { data_type: String }, note: { data_type: String }, job_title: { data_type: String },
-      tags: { data_type: Array }, language: { list: I18n.available_locales.map(&:to_s).join(',') }, time_zone: { list: ActiveSupport::TimeZone.all.map(&:name).join(',') }, domains: { data_type: Array }
+      source: { list: '1,2,3,7,8,9', code: :missing_field }, status: { list: '2,3,4,5', code: :missing_field }, priority: { list: '1,2,3,4', code: :missing_field}, type: { list: 'Lead,Question,Problem,Maintenance,Breakage', code: :missing_field }, group_id: { data_type: :'Positive Integer', code: :missing_field },
+      responder_id: { data_type: :'Positive Integer', code: :missing_field }, product_id: { data_type: :'Positive Integer', code: :missing_field }, client_manager: { data_type: 'Boolean', code: :missing_field },
+      description: { data_type: String, code: :missing_field }, note: { data_type: String, code: :missing_field }, job_title: { data_type: String, code: :missing_field },
+      tags: { data_type: Array, code: :missing_field }, language: { list: I18n.available_locales.map(&:to_s).join(','), code: :missing_field }, time_zone: { list: ActiveSupport::TimeZone.all.map(&:name).join(','), code: :missing_field }, domains: { data_type: Array, code: :missing_field },
+      address: {}, company_id: {}, email: {}, mobile: {}, phone: {}, subject: {}, twitter_id: {}
     }.sort,
                  error_options
                 )
@@ -126,7 +129,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
     assert_equal({ tags: :special_chars_present, domains: :special_chars_present }.sort, errors)
-    assert_equal({ tags: { chars: ',' }, domains: { chars: ',' } }.sort, error_options)
+    assert_equal({ tags: { chars: ',' }, domains: { chars: ',' }, address: {}, client_manager: {}, company_id: {}, description: {}, domains: {chars: ","}, email: {}, group_id: {}, job_title: {}, language: {}, mobile: {}, note: {}, phone: {}, priority: {}, product_id: {}, responder_id: {}, source: {}, status: {}, subject: {}, tags: {chars: ","}, time_zone: {}, twitter_id: {}, type: {} }.sort, error_options)
   end
 
   def test_validator_chaining_for_email

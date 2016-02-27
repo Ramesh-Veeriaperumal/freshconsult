@@ -1,7 +1,5 @@
- class GroupDelegator < SimpleDelegator
-   include ActiveModel::Validations
-
-   attr_accessor :error_options, :agent_ids
+ class GroupDelegator < BaseDelegator
+   attr_accessor :agent_ids
 
    validate :valid_agent?, if: -> { escalate_to.present? }
    validate :valid_agent, if: -> { agent_groups.present? }

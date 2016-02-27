@@ -1,27 +1,13 @@
 # Overriding defualt validator to add custom message to presence validation.
 
-class RequiredValidator < ActiveModel::Validations::PresenceValidator
-  def validate(record)
-    attributes.each do |attribute|
-      value = record.read_attribute_for_validation(attribute)
-      next if record.errors[attribute].present? || (value.nil? && options[:allow_nil]) || (value.blank? && options[:allow_blank])
-      validate_each(record, attribute, value)
-    end
-  end
+class RequiredValidator < ApiValidator
 
-  def validate_each(record, attribute, value)
+  def invalid?
     # return if value is there or a falseclass
-    return if present_or_false?(value)
-    if record.instance_variable_defined?("@#{attribute}")
-      message = options[:message] || :blank
-    else
-      message = options[:message] || :missing
-    end
-    record.errors[attribute] << message
+    !present_or_false?
   end
 
-  # check if value is present or false class
-  def present_or_false?(value)
-    value.present? || value.is_a?(FalseClass)
+  def message
+    attribute_defined? ? :blank : :missing_field
   end
 end

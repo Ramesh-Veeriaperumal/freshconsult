@@ -1,7 +1,7 @@
 require_relative '../unit_test_helper'
 
 class CustomAbsenceValidatorTest < ActionView::TestCase
-  class TestValidation
+  class TestValidation < MockTestValidation
     include ActiveModel::Validations
 
     attr_accessor :name, :id

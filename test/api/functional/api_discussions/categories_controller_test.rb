@@ -178,7 +178,7 @@ module ApiDiscussions
     def test_create_missing_params
       post :create, construct_params({}, {})
       pattern = [
-        bad_request_error_pattern('name', :required_and_data_type_mismatch, data_type: String)
+        bad_request_error_pattern('name', :data_type_mismatch, {code: :missing_field, data_type: String})
       ]
       assert_response 400
       match_json(pattern)
@@ -276,7 +276,7 @@ module ApiDiscussions
     def test_index_with_pagination_exceeds_limit
       get :index, controller_params(per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
     end
 
     def test_index_with_link_header

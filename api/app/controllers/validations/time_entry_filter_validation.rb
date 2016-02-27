@@ -2,7 +2,7 @@ class TimeEntryFilterValidation < FilterValidation
   attr_accessor :company_id, :agent_id, :billable, :executed_after, :executed_before
 
   # Since query params in URL are always strings, we have to check with boolean strings instead of boolean values
-  validates :billable, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }
+  validates :billable, data_type: { rules: 'Boolean', allow_unset: true, ignore_string: :allow_string_param }
 
   validates :executed_after, :executed_before, date_time: { allow_unset: true }
   validates :agent_id, :company_id, custom_numericality: { only_integer: true, greater_than: 0, allow_unset: true, ignore_string: :allow_string_param, greater_than: 0 }

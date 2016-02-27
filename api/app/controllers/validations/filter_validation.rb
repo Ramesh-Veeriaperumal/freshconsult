@@ -3,5 +3,6 @@ class FilterValidation < ApiValidation
 
   validates :page, custom_numericality: { only_integer: true, greater_than: 0, allow_unset: true, ignore_string: :allow_string_param, greater_than: 0 }
   validates :per_page, custom_numericality: { only_integer: true, greater_than: 0, allow_unset: true, ignore_string: :allow_string_param,
-                                              greater_than: 0, less_than_or_equal_to: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page] }
+                                              greater_than: 0, less_than_or_equal_to: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page], 
+                                              custom_message: :per_page_invalid, message_options: {max_value: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]} }
 end

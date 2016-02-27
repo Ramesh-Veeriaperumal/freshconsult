@@ -56,7 +56,7 @@ module ApiDiscussions
     def test_create_without_title_and_message_html_invalid
       post :create, construct_params({ id: forum_obj.id },
                                      message_html: true)
-      match_json([bad_request_error_pattern('title', :required_and_data_type_mismatch, data_type: String),
+      match_json([bad_request_error_pattern('title', :data_type_mismatch, {code: :missing_field, data_type: String}),
                   bad_request_error_pattern('message_html', :data_type_mismatch, data_type: String)])
       assert_response 400
     end
@@ -64,7 +64,7 @@ module ApiDiscussions
     def test_create_without_message
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title')
-      match_json([bad_request_error_pattern('message_html', :required_and_data_type_mismatch, data_type: String)])
+      match_json([bad_request_error_pattern('message_html', :data_type_mismatch, {code: :missing_field, data_type: String})])
       assert_response 400
     end
 
@@ -374,7 +374,7 @@ module ApiDiscussions
     def test_update_with_nil_values
       put :update, construct_params({ id: first_topic.id }, forum_id: nil,
                                                             title: nil, message_html: nil)
-      match_json([bad_request_error_pattern('forum_id', :required_and_data_type_mismatch, data_type: 'Positive Integer'),
+      match_json([bad_request_error_pattern('forum_id', :data_type_mismatch, {code: :missing_field, data_type: 'Positive Integer'}),
                   bad_request_error_pattern('title', :data_type_mismatch, data_type: String),
                   bad_request_error_pattern('message_html', :data_type_mismatch, data_type: String)
                  ])
@@ -542,7 +542,7 @@ module ApiDiscussions
     def test_topics_with_pagination_exceeds_limit
       get :forum_topics, controller_params(id: forum_obj.id, per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
     end
 
     def test_topics_with_link_header

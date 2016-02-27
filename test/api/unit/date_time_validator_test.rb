@@ -1,10 +1,10 @@
 require_relative '../unit_test_helper'
 
 class DateTimeValidatorTest < ActionView::TestCase
-  class TestValidation
+  class TestValidation < MockTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :fr_due_by, :due_by, :due_by_1, :error_options, :multi_error
+    attr_accessor :fr_due_by, :due_by, :due_by_1, :multi_error
 
     validates :multi_error, data_type: { rules: Date, allow_nil: true }
     validates :due_by, :fr_due_by, :multi_error, date_time: { allow_nil: true }
@@ -63,7 +63,7 @@ class DateTimeValidatorTest < ActionView::TestCase
     assert_equal ['Due by 1 invalid_date_time'], test.errors.full_messages
   end
 
-  class TestFormat
+  class TestFormat < MockTestValidation
     include ActiveModel::Validations
     ATTRIBUTES = :attr0, :attr1, :attr2, :attr3, :attr4, :attr5, :attr6, :attr7, :attr8, :attr9, :attr10,
                  :attr11, :attr12, :attr13, :attr14, :attr15, :attr16, :attr17, :attr18, :attr19, :attr20, :attr21,
@@ -159,7 +159,7 @@ class DateTimeValidatorTest < ActionView::TestCase
     Time.zone = zone
   end
 
-  class TestDateFormat
+  class TestDateFormat < MockTestValidation
     include ActiveModel::Validations
     ATTRIBUTES = :attr0, :attr1, :attr2, :attr3, :attr4, :attr5, :attr6, :attr7, :attr8, :attr9, :attr10,
                  :attr11, :attr12, :attr13, :attr14, :attr15, :attr16, :attr17, :attr18, :attr19, :attr20, :attr21,
