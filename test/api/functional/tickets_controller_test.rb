@@ -23,16 +23,16 @@ class TicketsControllerTest < ActionController::TestCase
   }
 
   ERROR_REQUIRED_PARAMS  =  {
-    'number' => [:data_type_mismatch, {code: :missing_field, data_type: :Integer}],
-    'decimal' => [:data_type_mismatch, {code: :missing_field, data_type: :Number}],
-    'checkbox' => [:data_type_mismatch, {code: :missing_field, data_type: :Boolean}],
-    'text' => [:data_type_mismatch, {code: :missing_field, data_type: :String}],
-    'paragraph' => [:data_type_mismatch, {code: :missing_field, data_type: :String}],
-    'date' => [:invalid_date, {code: :missing_field}]
+    'number' => [:data_type_mismatch, { code: :missing_field, data_type: :Integer }],
+    'decimal' => [:data_type_mismatch, { code: :missing_field, data_type: :Number }],
+    'checkbox' => [:data_type_mismatch, { code: :missing_field, data_type: :Boolean }],
+    'text' => [:data_type_mismatch, { code: :missing_field, data_type: :String }],
+    'paragraph' => [:data_type_mismatch, { code: :missing_field, data_type: :String }],
+    'date' => [:invalid_date, { code: :missing_field }]
   }
   ERROR_CHOICES_REQUIRED_PARAMS  =  {
-    'dropdown' => [:not_included, {code: :missing_field, list: 'Get Smart,Pursuit of Happiness,Armaggedon'}],
-    'country' => [:not_included, {code: :missing_field, list: 'Australia,USA'}]
+    'dropdown' => [:not_included, { code: :missing_field, list: 'Get Smart,Pursuit of Happiness,Armaggedon' }],
+    'country' => [:not_included, { code: :missing_field, list: 'Australia,USA' }]
   }
 
   def setup
@@ -231,9 +231,9 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_inclusion_invalid_datatype
     params = ticket_params_hash.merge(requester_id: requester.id, priority: '1', status: '2', source: '9')
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('priority', :not_included, {code: :data_type_mismatch, list: '1,2,3,4'}),
-                bad_request_error_pattern('status', :not_included, {code: :data_type_mismatch, list: '2,3,4,5,6,7'}),
-                bad_request_error_pattern('source', :not_included, {code: :data_type_mismatch, list: '1,2,3,7,8,9'})])
+    match_json([bad_request_error_pattern('priority', :not_included, code: :data_type_mismatch, list: '1,2,3,4'),
+                bad_request_error_pattern('status', :not_included, code: :data_type_mismatch, list: '2,3,4,5,6,7'),
+                bad_request_error_pattern('source', :not_included, code: :data_type_mismatch, list: '1,2,3,7,8,9')])
     assert_response 400
   end
 
@@ -509,8 +509,8 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('requester_id', :requester_id_mandatory),
                 bad_request_error_pattern('subject', :data_type_mismatch, data_type: String),
                 bad_request_error_pattern('description', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('priority', :not_included, {code: :missing_field, list: '1,2,3,4'}),
-                bad_request_error_pattern('status', :not_included, {code: :missing_field, list: '2,3,4,5,6,7'})])
+                bad_request_error_pattern('priority', :not_included, code: :missing_field, list: '1,2,3,4'),
+                bad_request_error_pattern('status', :not_included, code: :missing_field, list: '2,3,4,5,6,7')])
   end
 
   def test_create_datatype_invalid
@@ -744,7 +744,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     ticket_field.update_attribute(:required, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :not_included, {code: :missing_field, list: 'New South Wales,Queensland'})])
+    match_json([bad_request_error_pattern('test_custom_state', :not_included, code: :missing_field, list: 'New South Wales,Queensland')])
   end
 
   def test_create_with_nested_custom_fields_required_without_third_level
@@ -754,7 +754,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     ticket_field.update_attribute(:required, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_city', :not_included, {code: :missing_field, list: 'Brisbane'})])
+    match_json([bad_request_error_pattern('test_custom_city', :not_included, code: :missing_field, list: 'Brisbane')])
   end
 
   def test_create_with_nested_custom_fields_required_for_closure_without_second_level
@@ -764,7 +764,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     ticket_field.update_attribute(:required_for_closure, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :not_included, {code: :missing_field, list: 'New South Wales,Queensland'})])
+    match_json([bad_request_error_pattern('test_custom_state', :not_included, code: :missing_field, list: 'New South Wales,Queensland')])
   end
 
   def test_create_with_nested_custom_fields_required_for_closure_without_third_level
@@ -774,7 +774,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     ticket_field.update_attribute(:required_for_closure, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_city', :not_included, {code: :missing_field, list: 'Brisbane'})])
+    match_json([bad_request_error_pattern('test_custom_city', :not_included, code: :missing_field, list: 'Brisbane')])
   end
 
   def test_create_notify_cc_emails
@@ -1052,7 +1052,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_nil_fr_due_by_with_due_by
     t = ticket
-    fr_due_by = Time.now
+    fr_due_by = Time.zone.now
     t.update_column(:frDueBy, fr_due_by)
     t.update_attribute(:manual_dueby, true)
     due_by = 12.days.since.utc.iso8601
@@ -1832,7 +1832,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     ticket_field.update_attribute(:required, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :not_included, {code: :missing_field, list: 'New South Wales,Queensland'})])
+    match_json([bad_request_error_pattern('test_custom_state', :not_included, code: :missing_field, list: 'New South Wales,Queensland')])
   end
 
   def test_update_with_nested_custom_fields_required_without_third_level
@@ -1843,7 +1843,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     ticket_field.update_attribute(:required, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_city', :not_included, {code: :missing_field, list: 'Brisbane'})])
+    match_json([bad_request_error_pattern('test_custom_city', :not_included, code: :missing_field, list: 'Brisbane')])
   end
 
   def test_update_with_nested_custom_fields_required_for_closure_without_second_level
@@ -1854,7 +1854,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     ticket_field.update_attribute(:required_for_closure, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :not_included, {code: :missing_field, list: 'New South Wales,Queensland'})])
+    match_json([bad_request_error_pattern('test_custom_state', :not_included, code: :missing_field, list: 'New South Wales,Queensland')])
   end
 
   def test_update_with_nested_custom_fields_required_for_closure_without_third_level
@@ -1865,7 +1865,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     ticket_field.update_attribute(:required_for_closure, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_city', :not_included, {code: :missing_field, list: 'Brisbane'})])
+    match_json([bad_request_error_pattern('test_custom_city', :not_included, code: :missing_field, list: 'Brisbane')])
   end
 
   def test_destroy
@@ -2194,7 +2194,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.size
   end
 
-   def test_index_with_default_filter_order_type
+  def test_index_with_default_filter_order_type
     Helpdesk::Ticket.update_all(created_at: 2.months.ago)
     Helpdesk::Ticket.first.update_attributes(created_at: 1.months.ago,
                                              deleted: false, spam: false)
@@ -2206,8 +2206,10 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_default_filter_order_by
     Helpdesk::Ticket.update_all(created_at: 2.months.ago)
-    Helpdesk::Ticket.first(2).each {|x| x.update_attributes(created_at: 1.months.ago,
-                                             deleted: false, spam: false) }
+    Helpdesk::Ticket.first(2).each do|x|
+      x.update_attributes(created_at: 1.months.ago,
+                          deleted: false, spam: false)
+    end
     get :index, controller_params(order_by: 'status')
     assert_response 200
     response = parse_response @response.body
@@ -2357,20 +2359,20 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_dates
-    get :index, controller_params(updated_since: Time.now.iso8601)
+    get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     tkt = Helpdesk::Ticket.first
     tkt.update_column(:created_at, 1.days.from_now)
-    get :index, controller_params(updated_since: Time.now.iso8601)
+    get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     tkt.update_column(:updated_at, 1.days.from_now)
-    get :index, controller_params(updated_since: Time.now.iso8601)
+    get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -2481,7 +2483,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     due_by = 5.hours.since.utc.iso8601
     fr_due_by = 3.hours.since.to_time.in_time_zone('Tokelau Is.')
-    t.update_attributes(manual_dueby: Time.now.iso8601)
+    t.update_attributes(manual_dueby: Time.zone.now.iso8601)
     put :update, construct_params({ id: t.display_id }, due_by: due_by.chop,
                                                         fr_due_by: fr_due_by.iso8601)
     match_json(ticket_pattern({ due_by: due_by, fr_due_by: fr_due_by.utc.iso8601 }, t.reload))
@@ -2492,15 +2494,15 @@ class TicketsControllerTest < ActionController::TestCase
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
     default_non_required_fiels.map { |x| x.toggle!(:required) }
     post :create, construct_params({},  requester_id: @agent.id)
-    match_json([bad_request_error_pattern('description', :data_type_mismatch, {code: :missing_field, data_type: String}),
-                bad_request_error_pattern('subject', :data_type_mismatch, {code: :missing_field, data_type: String}),
-                bad_request_error_pattern('group_id', :data_type_mismatch, {code: :missing_field, data_type: 'Positive Integer'}),
-                bad_request_error_pattern('responder_id', :data_type_mismatch, {code: :missing_field, data_type: 'Positive Integer'}),
-                bad_request_error_pattern('product_id', :data_type_mismatch, {code: :missing_field, data_type: 'Positive Integer'}),
-                bad_request_error_pattern('priority', :not_included, {code: :missing_field, list: '1,2,3,4'}),
-                bad_request_error_pattern('status', :not_included, {code: :missing_field, list: '2,3,4,5,6,7'}),
-                bad_request_error_pattern('type', :not_included, {code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Lead'}),
-                bad_request_error_pattern('source', :not_included, {code: :missing_field, list: '1,2,3,7,8,9'})])
+    match_json([bad_request_error_pattern('description', :data_type_mismatch, code: :missing_field, data_type: String),
+                bad_request_error_pattern('subject', :data_type_mismatch, code: :missing_field, data_type: String),
+                bad_request_error_pattern('group_id', :data_type_mismatch, code: :missing_field, data_type: 'Positive Integer'),
+                bad_request_error_pattern('responder_id', :data_type_mismatch, code: :missing_field, data_type: 'Positive Integer'),
+                bad_request_error_pattern('product_id', :data_type_mismatch, code: :missing_field, data_type: 'Positive Integer'),
+                bad_request_error_pattern('priority', :not_included, code: :missing_field, list: '1,2,3,4'),
+                bad_request_error_pattern('status', :not_included, code: :missing_field, list: '2,3,4,5,6,7'),
+                bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('source', :not_included, code: :missing_field, list: '1,2,3,7,8,9')])
     assert_response 400
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required) }
@@ -2557,20 +2559,20 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_with_email_array
     post :create, construct_params({}, ticket_params_hash.except(:email).merge(email: [email: Faker::Internet.email]))
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, { data_type: 'String' })])
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, data_type: 'String')])
   end
 
   def test_update_with_email_array
-    params_hash = {email: [Faker::Internet.email]}
+    params_hash = { email: [Faker::Internet.email] }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, { data_type: 'String' })])
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, data_type: 'String')])
   end
 
   def test_create_ticket_with_twitter_and_invalid_email
     create_ticket(ticket_params_hash.except(:email).merge(twitter_id: '@test123'))
-    params = { email: Faker::Name.name, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph, twitter_id: "@test123" }
+    params = { email: Faker::Name.name, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph, twitter_id: '@test123' }
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('email', 'not_a_valid_email')])

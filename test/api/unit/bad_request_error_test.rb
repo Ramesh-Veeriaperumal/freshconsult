@@ -27,8 +27,8 @@ class BadRequestErrorTest < ActionView::TestCase
 
   def test_missing_field_code
     missing_field_messages = { :missing_field => {}, :"Mandatory attribute missing" => {},
-                               :requester_id_mandatory => {}, :phone_mandatory => {}, :not_included => { code: :missing_field, list: '2,3' }, :data_type_mismatch => {code: :missing_field, data_type: String},
-                               :invalid_date => {code: :missing_field},  :invalid_format => {code: :missing_field} }
+                               :requester_id_mandatory => {}, :phone_mandatory => {}, :not_included => { code: :missing_field, list: '2,3' }, :data_type_mismatch => { code: :missing_field, data_type: String },
+                               :invalid_date => { code: :missing_field },  :invalid_format => { code: :missing_field } }
     missing_field_messages.each do |message, params|
       test = BadRequestError.new('attribute', message, params)
       assert_equal 'missing_field', test.code.to_s

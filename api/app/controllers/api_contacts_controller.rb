@@ -2,7 +2,7 @@ class ApiContactsController < ApiApplicationController
   include Helpdesk::TagMethods
   decorate_views
 
-  around_filter :run_on_slave, :only => [:index]
+  around_filter :run_on_slave, only: [:index]
 
   def create
     assign_protected
@@ -182,21 +182,21 @@ class ApiContactsController < ApiApplicationController
       primary_email = @email_objects[:primary_email]
 
       # old emails to be retained
-      @email_objects[:old_email_objects].each { |user_email| 
+      @email_objects[:old_email_objects].each do |user_email|
         email_attributes << { 'email' => user_email.email, 'id' => user_email.id, 'primary_role' => user_email.email == primary_email }
-      }
+      end
 
       # new emails to be added
-      @email_objects[:new_emails].each { |email|
+      @email_objects[:new_emails].each do |email|
         email_attributes << { 'email' => email, 'primary_role' => email == primary_email }
-      }
+      end
 
       # emails to be destroyed
       if update?
         emails_to_be_destroyed =  (@item.user_emails - @email_objects[:old_email_objects])
-        emails_to_be_destroyed.each { |user_email| 
+        emails_to_be_destroyed.each do |user_email|
           email_attributes << { 'email' => user_email.email, 'id' => user_email.id, '_destroy' => 1 }
-        }
+        end
       end
 
       @item.user_emails_attributes = Hash[(0...email_attributes.size).zip email_attributes]

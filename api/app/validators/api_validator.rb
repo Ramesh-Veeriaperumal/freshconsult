@@ -51,7 +51,7 @@ class ApiValidator < ActiveModel::EachValidator
     value.blank? && validator_options[:allow_blank]
   end
 
-  def allow_unset?(validator_options)
+  def allow_unset?(_validator_options)
     !record.instance_variable_defined?("@#{attribute}")
   end
 
@@ -78,7 +78,7 @@ class ApiValidator < ActiveModel::EachValidator
   end
 
   def error_options
-    # set options here that help in determining code of the error message and params passed to error_messages.yml. 
+    # set options here that help in determining code of the error message and params passed to error_messages.yml.
   end
 
   def message
@@ -88,5 +88,4 @@ class ApiValidator < ActiveModel::EachValidator
   def invalid?
     # condition that determines the validity of the record.
   end
-
 end

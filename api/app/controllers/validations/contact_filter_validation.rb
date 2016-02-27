@@ -9,7 +9,7 @@ class ContactFilterValidation < FilterValidation
   validate :check_company, if: -> { company_id && errors[:company_id].blank? }
   validates :phone, :mobile, data_type: { rules: String }
 
-  def initialize(request_params, item=nil, allow_string_param = true)
+  def initialize(request_params, item = nil, allow_string_param = true)
     @conditions = (request_params.keys & ContactConstants::INDEX_FIELDS)
     filter_name = request_params.fetch('state', 'default')
     @conditions = @conditions - ['state'] + [filter_name].compact

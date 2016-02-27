@@ -100,7 +100,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
                  errors
                 )
     assert_equal({
-      source: { list: '1,2,3,7,8,9', code: :missing_field }, status: { list: '2,3,4,5', code: :missing_field }, priority: { list: '1,2,3,4', code: :missing_field}, type: { list: 'Lead,Question,Problem,Maintenance,Breakage', code: :missing_field }, group_id: { data_type: :'Positive Integer', code: :missing_field },
+      source: { list: '1,2,3,7,8,9', code: :missing_field }, status: { list: '2,3,4,5', code: :missing_field }, priority: { list: '1,2,3,4', code: :missing_field }, type: { list: 'Lead,Question,Problem,Maintenance,Breakage', code: :missing_field }, group_id: { data_type: :'Positive Integer', code: :missing_field },
       responder_id: { data_type: :'Positive Integer', code: :missing_field }, product_id: { data_type: :'Positive Integer', code: :missing_field }, client_manager: { data_type: 'Boolean', code: :missing_field },
       description: { data_type: String, code: :missing_field }, note: { data_type: String, code: :missing_field }, job_title: { data_type: String, code: :missing_field },
       tags: { data_type: Array, code: :missing_field }, language: { list: I18n.available_locales.map(&:to_s).join(','), code: :missing_field }, time_zone: { list: ActiveSupport::TimeZone.all.map(&:name).join(','), code: :missing_field }, domains: { data_type: Array, code: :missing_field },
@@ -129,7 +129,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
     assert_equal({ tags: :special_chars_present, domains: :special_chars_present }.sort, errors)
-    assert_equal({ tags: { chars: ',' }, domains: { chars: ',' }, address: {}, client_manager: {}, company_id: {}, description: {}, domains: {chars: ","}, email: {}, group_id: {}, job_title: {}, language: {}, mobile: {}, note: {}, phone: {}, priority: {}, product_id: {}, responder_id: {}, source: {}, status: {}, subject: {}, tags: {chars: ","}, time_zone: {}, twitter_id: {}, type: {} }.sort, error_options)
+    assert_equal({ tags: { chars: ',' }, domains: { chars: ',' }, address: {}, client_manager: {}, company_id: {}, description: {}, domains: { chars: ',' }, email: {}, group_id: {}, job_title: {}, language: {}, mobile: {}, note: {}, phone: {}, priority: {}, product_id: {}, responder_id: {}, source: {}, status: {}, subject: {}, tags: { chars: ',' }, time_zone: {}, twitter_id: {}, type: {} }.sort, error_options)
   end
 
   def test_validator_chaining_for_email

@@ -9,7 +9,7 @@ class TimeEntryFilterValidation < FilterValidation
   validate :valid_user?, if: -> { agent_id && errors[:agent_id].blank? }
   validate :valid_company?, if: -> { company_id && errors[:company_id].blank? }
 
-  def initialize(filter_params, item=nil, allow_string_param = true)
+  def initialize(filter_params, item = nil, allow_string_param = true)
     super(filter_params, item, allow_string_param)
   end
 

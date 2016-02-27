@@ -40,32 +40,32 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Required validator for string field based on condition
   def validate_custom_text(record, field_name)
-    string_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required })
+    string_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required)
     DataTypeValidator.new(string_options).validate(record)
     ActiveModel::Validations::LengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long)).validate(record) if record.errors[field_name].blank?
   end
 
   # Required validator for string field based on condition
   def validate_custom_paragraph(record, field_name)
-    string_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required })
+    string_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required)
     DataTypeValidator.new(string_options).validate(record)
   end
 
   # Numericality validator for number field
   def validate_custom_number(record, field_name)
-    numericality_options = construct_options({ ignore_string: :allow_string_param, only_integer: true, attributes: field_name, allow_nil: !@is_required, required: @is_required })
+    numericality_options = construct_options(ignore_string: :allow_string_param, only_integer: true, attributes: field_name, allow_nil: !@is_required, required: @is_required)
     CustomNumericalityValidator.new(numericality_options).validate(record)
   end
 
   # Datatype validator for boolean field
   def validate_custom_checkbox(record, field_name)
-    boolean_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', required: @is_required })
+    boolean_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', required: @is_required)
     DataTypeValidator.new(boolean_options).validate(record)
   end
 
   # Numericality validator for decimal field
   def validate_custom_decimal(record, field_name)
-    numericality_options = construct_options({ force_allow_string: true, attributes: field_name, allow_nil: !@is_required, required: @is_required })
+    numericality_options = construct_options(force_allow_string: true, attributes: field_name, allow_nil: !@is_required, required: @is_required)
     CustomNumericalityValidator.new(numericality_options).validate(record)
   end
 
@@ -104,19 +104,19 @@ class CustomFieldValidator < ActiveModel::EachValidator
   # Format validator for url field
   def validate_custom_url(record, field_name)
     # REGEX is taken from jquery.validate.js
-    format_options = construct_options({ attributes: field_name, with: ApiConstants::URL_REGEX,  allow_nil: !@is_required, required: @is_required })
+    format_options = construct_options(attributes: field_name, with: ApiConstants::URL_REGEX,  allow_nil: !@is_required, required: @is_required)
     CustomFormatValidator.new(format_options).validate(record)
   end
 
   def validate_custom_phone_number(record, field_name)
-    string_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required })
+    string_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required)
     DataTypeValidator.new(string_options).validate(record)
     ActiveModel::Validations::LengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long)).validate(record) if record.errors[field_name].blank?
   end
 
   # Date validator for date field
   def validate_custom_date(record, field_name)
-    date_options = construct_options({ attributes: field_name, allow_nil: !@is_required, only_date: true, required: @is_required })
+    date_options = construct_options(attributes: field_name, allow_nil: !@is_required, only_date: true, required: @is_required)
     DateTimeValidator.new(date_options).validate(record)
   end
 

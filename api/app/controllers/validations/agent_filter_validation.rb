@@ -6,7 +6,7 @@ class AgentFilterValidation < FilterValidation
   validates :email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email, allow_nil: true }
 
   validates :phone, :mobile, data_type: { rules: String }
-  
+
   def initialize(request_params)
     # Remove unwanted keys from request_params; Also remove the state filter and add the value passed as a filter
     # Refer api_filter from user.rb

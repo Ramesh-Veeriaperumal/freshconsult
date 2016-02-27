@@ -132,7 +132,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
   def test_custom_date_utc_format
     t = ticket
-    time = Time.now.in_time_zone('Chennai')
+    time = Time.zone.now.in_time_zone('Chennai')
     Helpdesk::Ticket.any_instance.stubs(:custom_field).returns(custom_date_1: time)
 
     # without CustomFieldDecorator
@@ -267,8 +267,8 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     skip_bullet do
       post '/api/tickets', params, @headers.merge(headers)
     end
-    assert Delayed::Job.last.handler.include?("send_cc_email")
-    10.times do Delayed::Job.reserve_and_run_one_job end
+    assert Delayed::Job.last.handler.include?('send_cc_email')
+    10.times { Delayed::Job.reserve_and_run_one_job }
     assert_equal 0, Delayed::Job.count
   end
 end

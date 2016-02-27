@@ -4,7 +4,7 @@ class BaseDelegator < SimpleDelegator
   attr_accessor :error_options
 
   def initialize(record)
-  	super(record)
-  	@error_options = {}
+    super(record)
+    @error_options = {}
   end
 end

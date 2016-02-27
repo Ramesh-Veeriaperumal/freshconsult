@@ -1,5 +1,4 @@
 class ContactDelegator < BaseDelegator
-
   validates :company, presence: true, if: -> { company_id && changed.include?('customer_id') }
   validates :custom_field, custom_field: { custom_field: {
     validatable_custom_fields: proc { Account.current.contact_form.custom_drop_down_fields },
@@ -10,7 +9,7 @@ class ContactDelegator < BaseDelegator
 
   validate :user_emails_validation, if: -> { @other_emails }
 
-  def initialize(record, other_emails=[])
+  def initialize(record, other_emails = [])
     @other_emails = other_emails
     @user_id = record.id
     super(record)
@@ -27,5 +26,4 @@ class ContactDelegator < BaseDelegator
       @error_options = { other_emails: { invalid_emails: "#{invalid_emails.join(', ')}" }  }
     end
   end
-
 end

@@ -1,6 +1,5 @@
 # A big thanks to http://blog.arkency.com/2014/05/mastering-rails-validations-objectify/ !!!!
 class TicketDelegator < BaseDelegator
-
   attr_accessor :ticket_fields
   validate :group_presence, if: -> { group_id && attr_changed?('group_id') }
   validate :responder_presence, if: -> { responder_id && attr_changed?('responder_id') }

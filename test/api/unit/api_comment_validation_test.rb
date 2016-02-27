@@ -7,7 +7,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
     refute comment.valid?
     assert_equal ['Body html data_type_mismatch'], comment.errors.full_messages
-    assert_equal({body_html: {data_type: String, code: :missing_field}}, comment.error_options)
+    assert_equal({ body_html: { data_type: String, code: :missing_field } }, comment.error_options)
   end
 
   def test_inclusion_params_invalid

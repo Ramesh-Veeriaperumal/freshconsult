@@ -1,5 +1,4 @@
 class SlaPolicyDelegator < BaseDelegator
-
   validate :valid_companies?
 
   def valid_companies?

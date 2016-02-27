@@ -48,7 +48,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, description: Faker::Lorem.paragraph,
                                        domains: domain_array)
     assert_response 400
-    match_json([bad_request_error_pattern('name', :data_type_mismatch, {code: :missing_field, data_type: String})])
+    match_json([bad_request_error_pattern('name', :data_type_mismatch, code: :missing_field, data_type: String)])
   end
 
   def test_create_company_domains_invalid
@@ -98,7 +98,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_invalid_domains
-    params_hash = { name: Faker::Lorem.characters(20), domains: ["#{Faker::Name.name}. #{Faker::Name.name}"]}
+    params_hash = { name: Faker::Lorem.characters(20), domains: ["#{Faker::Name.name}. #{Faker::Name.name}"] }
     post :create, construct_params({}, params_hash)
     match_json([bad_request_error_pattern(:domains, :"Enter valid domains")])
     assert_response 400
@@ -106,7 +106,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_update_invalid_domains
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
-    params_hash = { name: Faker::Lorem.characters(20), domains: ["#{Faker::Name.name}. #{Faker::Name.name}"]}
+    params_hash = { name: Faker::Lorem.characters(20), domains: ["#{Faker::Name.name}. #{Faker::Name.name}"] }
     put :update, construct_params({ id: company.id }, params_hash)
     match_json([bad_request_error_pattern(:domains, :"Enter valid domains")])
     assert_response 400
@@ -356,7 +356,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     cf = CompanyField.find_by_label('required_linetext')
     cf.destroy
     assert_response 400
-    match_json([bad_request_error_pattern('required_linetext', :data_type_mismatch, {code: :missing_field, data_type: String})])
+    match_json([bad_request_error_pattern('required_linetext', :data_type_mismatch, code: :missing_field, data_type: String)])
   end
 
   def test_update_array_fields_with_compacting_array
@@ -388,9 +388,9 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     post :create, construct_params({},  name: Faker::Name.name)
     assert_response 400
-    match_json([bad_request_error_pattern('description', :data_type_mismatch, {code: :missing_field, data_type: String}),
-                bad_request_error_pattern('domains', :data_type_mismatch, {code: :missing_field, data_type: Array}),
-                bad_request_error_pattern('note', :data_type_mismatch, {code: :missing_field, data_type: String})])
+    match_json([bad_request_error_pattern('description', :data_type_mismatch, code: :missing_field, data_type: String),
+                bad_request_error_pattern('domains', :data_type_mismatch, code: :missing_field, data_type: Array),
+                bad_request_error_pattern('note', :data_type_mismatch, code: :missing_field, data_type: String)])
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end

@@ -31,7 +31,7 @@ class ApiValidation
 
   # Set true for instance_variable_set if it is part of request params.
   # Say if request params has forum_type, forum_type_set attribute will be set to true.
-  def check_params_set(request_params, item=nil)
+  def check_params_set(request_params, item = nil)
     if item
       item.attributes.each_pair do |field, value|
         instance_variable_set("@#{field}_set", false)

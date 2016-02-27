@@ -61,7 +61,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: Faker::Lorem.characters(5), description: Faker::Lorem.paragraph,
                                        agent_ids: ['asd', 'asd1'])
     assert_response 400
-    match_json([bad_request_error_pattern('agent_ids', :invalid_integer, {code: :data_type_mismatch})])
+    match_json([bad_request_error_pattern('agent_ids', :invalid_integer, code: :data_type_mismatch)])
   end
 
   def test_create_group_with_deleted_or_invalid_agent_id

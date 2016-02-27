@@ -38,5 +38,4 @@ class DataTypeValidator < ApiValidator
         false
       end
     end
-
 end

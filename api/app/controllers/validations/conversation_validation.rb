@@ -13,8 +13,8 @@ class ConversationValidation < ApiValidation
 
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
-    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item)},
-    allow_nil: true 
+    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) },
+    allow_nil: true
   }
 
   def initialize(request_params, item, allow_string_param = false)

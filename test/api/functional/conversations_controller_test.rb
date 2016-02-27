@@ -147,7 +147,7 @@ class ConversationsControllerTest < ActionController::TestCase
   def test_create_missing_params
     post :create, construct_params({ id: ticket.display_id }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('body', :data_type_mismatch, {code: :missing_field, data_type: String})])
+    match_json([bad_request_error_pattern('body', :data_type_mismatch, code: :missing_field, data_type: String)])
   end
 
   def test_create_returns_location_header

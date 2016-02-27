@@ -178,7 +178,7 @@ module ApiDiscussions
     def test_create_missing_params
       post :create, construct_params({}, {})
       pattern = [
-        bad_request_error_pattern('name', :data_type_mismatch, {code: :missing_field, data_type: String})
+        bad_request_error_pattern('name', :data_type_mismatch, code: :missing_field, data_type: String)
       ]
       assert_response 400
       match_json(pattern)

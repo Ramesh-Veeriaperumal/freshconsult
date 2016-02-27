@@ -73,7 +73,7 @@ module ApiDiscussions
       forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, forum_type: '1')
       assert_response 400
-      match_json([bad_request_error_pattern('forum_type', :not_included, {code: :data_type_mismatch, list: '1,2,3,4'})])
+      match_json([bad_request_error_pattern('forum_type', :not_included, code: :data_type_mismatch, list: '1,2,3,4')])
     end
 
     def test_update_invalid_forum_visibility_datatype
@@ -81,7 +81,7 @@ module ApiDiscussions
       forum = f_obj
       put :update, construct_params({ id: forum.id }, forum_visibility: '1')
       assert_response 400
-      match_json([bad_request_error_pattern('forum_visibility', :not_included, {code: :data_type_mismatch, list: '1,2,3,4'})])
+      match_json([bad_request_error_pattern('forum_visibility', :not_included, code: :data_type_mismatch, list: '1,2,3,4')])
     end
 
     def test_update_duplicate_name
@@ -173,9 +173,9 @@ module ApiDiscussions
 
     def test_create_validate_presence
       post :create, construct_params({ id: ForumCategory.first.id }, description: 'test')
-      match_json([bad_request_error_pattern('name', :data_type_mismatch, {code: :missing_field, data_type: String}),
-                  bad_request_error_pattern('forum_visibility', :not_included, {code: :missing_field, list: '1,2,3,4'}),
-                  bad_request_error_pattern('forum_type', :not_included, {code: :missing_field, list: '1,2,3,4'})])
+      match_json([bad_request_error_pattern('name', :data_type_mismatch, code: :missing_field, data_type: String),
+                  bad_request_error_pattern('forum_visibility', :not_included, code: :missing_field, list: '1,2,3,4'),
+                  bad_request_error_pattern('forum_type', :not_included, code: :missing_field, list: '1,2,3,4')])
       assert_response 400
     end
 
@@ -212,9 +212,9 @@ module ApiDiscussions
 
     def test_create_no_params
       post :create, construct_params(id: ForumCategory.first.id)
-      match_json([bad_request_error_pattern('name', :data_type_mismatch, {code: :missing_field, data_type: String}),
-                  bad_request_error_pattern('forum_visibility', :not_included, {code: :missing_field, list: '1,2,3,4'}),
-                  bad_request_error_pattern('forum_type', :not_included, {code: :missing_field, list: '1,2,3,4'})])
+      match_json([bad_request_error_pattern('name', :data_type_mismatch, code: :missing_field, data_type: String),
+                  bad_request_error_pattern('forum_visibility', :not_included, code: :missing_field, list: '1,2,3,4'),
+                  bad_request_error_pattern('forum_type', :not_included, code: :missing_field, list: '1,2,3,4')])
       assert_response 400
     end
 

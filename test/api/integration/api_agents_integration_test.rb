@@ -41,10 +41,10 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
 
     v2[:index] -= 1
 
-    # api/v2/agents/me is introduced in V2 and we can compare this with V1's show to 
+    # api/v2/agents/me is introduced in V2 and we can compare this with V1's show to
     # me
     v2[:me], v2[:api_me], v2[:me_queries] = count_api_queries do
-      get("/api/v2/agents/me", nil, @headers)
+      get('/api/v2/agents/me', nil, @headers)
       assert_response 200
     end
     v1[:me] = count_queries do

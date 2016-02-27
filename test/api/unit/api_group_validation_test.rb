@@ -20,9 +20,9 @@ class ApiGroupValidationTest < ActionView::TestCase
     assert errors.include?('Agent ids data_type_mismatch')
     assert errors.include?('Description data_type_mismatch')
     assert errors.include?('Auto ticket assign data_type_mismatch')
-    assert_equal({name: {data_type: String, code: :missing_field}, escalate_to: {data_type: :"Positive Integer"},
-      unassigned_for: {list: "30m,1h,2h,4h,8h,12h,1d,2d,3d"}, auto_ticket_assign: {data_type: "Boolean"}, 
-      agent_ids: {data_type: Array}, description: {data_type: String}}, group.error_options)
+    assert_equal({ name: { data_type: String, code: :missing_field }, escalate_to: { data_type: :"Positive Integer" },
+                   unassigned_for: { list: '30m,1h,2h,4h,8h,12h,1d,2d,3d' }, auto_ticket_assign: { data_type: 'Boolean' },
+                   agent_ids: { data_type: Array }, description: { data_type: String } }, group.error_options)
   end
 
   def test_array_nil

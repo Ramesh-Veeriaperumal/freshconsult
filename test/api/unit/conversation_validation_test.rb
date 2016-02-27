@@ -16,7 +16,7 @@ class ConversationValidationTest < ActionView::TestCase
 
     assert conversation.errors.full_messages.include?('Body data_type_mismatch')
     refute conversation.errors.full_messages.include?('Body html data_type_mismatch')
-    assert_equal({body: {data_type: String, code: :missing_field}, user_id: {}}, conversation.error_options)
+    assert_equal({ body: { data_type: String, code: :missing_field }, user_id: {} }, conversation.error_options)
 
     controller_params = { 'user_id' => 1, body: '', body_html: '' }
     item = nil

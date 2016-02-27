@@ -1235,7 +1235,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
       post :create, construct_params({ id: ticket.display_id }, { start_time: start_time,
                                                                   time_spent: ['03:00'] }.merge(params_hash))
       assert_response 400
-      match_json([bad_request_error_pattern('time_spent', :data_type_mismatch, { data_type: 'String' })])
+      match_json([bad_request_error_pattern('time_spent', :data_type_mismatch, data_type: 'String')])
     end
   end
 end

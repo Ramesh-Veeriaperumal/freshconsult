@@ -1,7 +1,6 @@
 require_relative '../unit_test_helper'
 
 class TicketFilterValidationTest < ActionView::TestCase
-  
   def tear_down
     Account.unstub(:current)
     Account.any_instance.unstub(:companies)
@@ -23,9 +22,9 @@ class TicketFilterValidationTest < ActionView::TestCase
     ActiveRecord::Relation.any_instance.stubs(:find_by_id).returns(true)
     ActiveRecord::Relation.any_instance.stubs(:where).returns([User.new])
     User.any_instance.stubs(:id).returns(1)
-    ticket_filter = TicketFilterValidation.new(filter: 'new_and_my_open', 'email' => Faker::Internet.email, 
-                                    updated_since: Time.zone.now.iso8601, company_id: 1, 
-                                    order_by: 'created_at', order_type: 'asc')
+    ticket_filter = TicketFilterValidation.new(filter: 'new_and_my_open', 'email' => Faker::Internet.email,
+                                               updated_since: Time.zone.now.iso8601, company_id: 1,
+                                               order_by: 'created_at', order_type: 'asc')
     result = ticket_filter.valid?
     assert result
   end
@@ -39,9 +38,9 @@ class TicketFilterValidationTest < ActionView::TestCase
     ActiveRecord::Relation.any_instance.stubs(:find_by_id).returns(true)
     ActiveRecord::Relation.any_instance.stubs(:where).returns([User.new])
     User.any_instance.stubs(:id).returns(1)
-    ticket_filter = TicketFilterValidation.new(filter: nil, email: nil, 
-                                    updated_since: nil, company_id: nil, 
-                                    order_by: nil, order_type: nil)
+    ticket_filter = TicketFilterValidation.new(filter: nil, email: nil,
+                                               updated_since: nil, company_id: nil,
+                                               order_by: nil, order_type: nil)
     refute ticket_filter.valid?
     error = ticket_filter.errors.full_messages
     assert error.include?('Filter not_included')

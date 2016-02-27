@@ -162,8 +162,8 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:create)
     assert ticket.errors.full_messages.include?('Description data_type_mismatch')
     refute ticket.errors.full_messages.include?('Description html data_type_mismatch')
-    assert_equal({description: {data_type: String, code: :missing_field}, requester_id: {}}, ticket.error_options)
-    
+    assert_equal({ description: { data_type: String, code: :missing_field }, requester_id: {} }, ticket.error_options)
+
     controller_params = { 'requester_id' => 1, ticket_fields: [], description: '' }
     item = nil
     ticket = TicketValidation.new(controller_params, item)

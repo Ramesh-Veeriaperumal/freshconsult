@@ -11,7 +11,7 @@ class ApiSlaPolicyValidationTest < ActionView::TestCase
     refute sla.valid?
     errors = sla.errors.full_messages
     assert errors.include?('Applicable to data_type_mismatch')
-    assert_equal({applicable_to: {data_type: "key/value pair", code: :missing_field}}, sla.error_options)
+    assert_equal({ applicable_to: { data_type: 'key/value pair', code: :missing_field } }, sla.error_options)
   end
 
   def test_applicable_to_nil

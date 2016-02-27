@@ -80,9 +80,9 @@ class ContactValidation < ApiValidation
     def check_contact_for_email_before_adding_other_emails
       # User triggers a create call with any mandatory field other than email and with other_emails
       # Consider a contact with no emails associated and the user tries to trigger an update call with only other_emails
-      if email.nil? && errors[:email].blank? 
+      if email.nil? && errors[:email].blank?
         errors[:email] << :conditional_not_blank
-        (self.error_options ||= {}).merge!(email: { child: "other_emails" })
+        (self.error_options ||= {}).merge!(email: { child: 'other_emails' })
       end
     end
 
@@ -102,7 +102,7 @@ class ContactValidation < ApiValidation
     def check_contact_merge_feature
       unless Account.current.contact_merge_enabled?
         errors[:other_emails] << :require_feature_for_attribute
-        (self.error_options ||= {}).merge!(other_emails: { feature: "Contact Merge", attribute: 'other_emails' })
+        (self.error_options ||= {}).merge!(other_emails: { feature: 'Contact Merge', attribute: 'other_emails' })
       end
     end
 end

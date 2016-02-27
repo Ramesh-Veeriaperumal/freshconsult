@@ -173,7 +173,7 @@ module ApiDiscussions
     def test_create_no_params
       post :create, construct_params({ id: topic_obj.id }, {})
       assert_response 400
-      match_json [bad_request_error_pattern('body_html', :data_type_mismatch, {code: :missing_field, data_type: String})]
+      match_json [bad_request_error_pattern('body_html', :data_type_mismatch, code: :missing_field, data_type: String)]
     end
 
     def test_create_mandatory_params

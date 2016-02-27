@@ -16,7 +16,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def get_company
-    company = Company.first 
+    company = Company.first
     return company if company
     company = Company.create(name: Faker::Name.name, account_id: @account.id)
     company.save
@@ -56,7 +56,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_without_name
     post :create, construct_params({},  email: Faker::Internet.email)
-    match_json([bad_request_error_pattern('name', :data_type_mismatch, {code: :missing_field, data_type: String})])
+    match_json([bad_request_error_pattern('name', :data_type_mismatch, code: :missing_field, data_type: String)])
     assert_response 400
   end
 
@@ -279,7 +279,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email)
 
     assert_response 400
-    match_json([bad_request_error_pattern('code', :data_type_mismatch, {code: :missing_field, data_type: String})])
+    match_json([bad_request_error_pattern('code', :data_type_mismatch, code: :missing_field, data_type: String)])
     ensure
       cf.update_attribute(:required_for_agent, false)
   end
@@ -440,7 +440,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_email_when_email_is_not_nil
     sample_user = get_user_with_email
-    email = 'sample_' + Time.now.to_i.to_s + '@sampledomain.com'
+    email = 'sample_' + Time.zone.now.to_i.to_s + '@sampledomain.com'
     params_hash = { email: email }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 200
@@ -854,19 +854,19 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Name.name)
     assert_response 400
 
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, {code: :missing_field, data_type: String}),
-                bad_request_error_pattern('job_title', :data_type_mismatch, {code: :missing_field, data_type: String}),
-                bad_request_error_pattern('mobile', :data_type_mismatch, {code: :missing_field, data_type: String}),
-                bad_request_error_pattern('address', :data_type_mismatch, {code: :missing_field, data_type: String}),
-                bad_request_error_pattern('description', :data_type_mismatch, {code: :missing_field, data_type: String}),
-                bad_request_error_pattern('twitter_id', :data_type_mismatch, {code: :missing_field, data_type: String}),
-                bad_request_error_pattern('phone', :data_type_mismatch, {code: :missing_field, data_type: String}),
-                bad_request_error_pattern('tags', :data_type_mismatch, {code: :missing_field, data_type: Array}),
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, code: :missing_field, data_type: String),
+                bad_request_error_pattern('job_title', :data_type_mismatch, code: :missing_field, data_type: String),
+                bad_request_error_pattern('mobile', :data_type_mismatch, code: :missing_field, data_type: String),
+                bad_request_error_pattern('address', :data_type_mismatch, code: :missing_field, data_type: String),
+                bad_request_error_pattern('description', :data_type_mismatch, code: :missing_field, data_type: String),
+                bad_request_error_pattern('twitter_id', :data_type_mismatch, code: :missing_field, data_type: String),
+                bad_request_error_pattern('phone', :data_type_mismatch, code: :missing_field, data_type: String),
+                bad_request_error_pattern('tags', :data_type_mismatch, code: :missing_field, data_type: Array),
                 bad_request_error_pattern('company_id', :missing_field),
                 bad_request_error_pattern('language', :not_included,
-                                          {list: I18n.available_locales.map(&:to_s).join(','), code: :missing_field}),
-                bad_request_error_pattern('time_zone', :not_included, 
-                                          {list: ActiveSupport::TimeZone.all.map(&:name).join(','), code: :missing_field})])
+                                          list: I18n.available_locales.map(&:to_s).join(','), code: :missing_field),
+                bad_request_error_pattern('time_zone', :not_included,
+                                          list: ActiveSupport::TimeZone.all.map(&:name).join(','), code: :missing_field)])
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end
@@ -911,7 +911,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                                            address: nil
                                  )
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, {code: :missing_field, data_type: String}),
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, code: :missing_field, data_type: String),
                 bad_request_error_pattern('job_title', :data_type_mismatch, data_type: String),
                 bad_request_error_pattern('mobile', :data_type_mismatch, data_type: String),
                 bad_request_error_pattern('address', :data_type_mismatch, data_type: String),
@@ -930,7 +930,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   # other_emails tests
   def test_create_with_other_emails
-    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
@@ -940,12 +940,12 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_other_emails_max_count_validation
-    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails',:max_count_exceeded, max_count: "#{ContactConstants::MAX_OTHER_EMAILS_COUNT + 1}")])
+    match_json([bad_request_error_pattern('other_emails', :max_count_exceeded, max_count: "#{ContactConstants::MAX_OTHER_EMAILS_COUNT + 1}")])
   end
 
   def test_create_with_other_emails_with_duplication
@@ -975,11 +975,11 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails','Should be a valid email address')])
+    match_json([bad_request_error_pattern('other_emails', 'Should be a valid email address')])
   end
 
   def test_create_with_other_emails_without_primary_email
-    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
     put :create, construct_params({}, name: Faker::Lorem.characters(10), other_emails: email_array)
     assert_response 400
     match_json([bad_request_error_pattern('email', :fill_a_mandatory_field)])
@@ -992,14 +992,14 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.reload
     put :update, construct_params({ id: sample_user.id }, other_emails: [email])
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :already_taken, invalid_emails: [email])])    
+    match_json([bad_request_error_pattern('other_emails', :already_taken, invalid_emails: [email])])
   end
 
   def test_create_contact_with_phone_name_and_other_emails
-    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
-    put :create, construct_params({}, name: Faker::Lorem.characters(10), phone: '5783947366',other_emails: email_array)
+    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
+    put :create, construct_params({}, name: Faker::Lorem.characters(10), phone: '5783947366', other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('email',:conditional_not_blank, child: "other_emails")])
+    match_json([bad_request_error_pattern('email', :conditional_not_blank, child: 'other_emails')])
   end
 
   def test_update_contact_with_email_and_other_emails
@@ -1007,8 +1007,8 @@ class ApiContactsControllerTest < ActionController::TestCase
     params_hash = { email: nil, phone: '1234567890' }
     sample_user.update_attributes(params_hash)
     sample_user.user_emails = []
-    email = 'sample_b_' + Time.now.to_i.to_s + '@sampledomain.com'
-    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    email = 'sample_b_' + Time.zone.now.to_i.to_s + '@sampledomain.com'
+    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
     put :update, construct_params({ id: sample_user.id },  email: email, other_emails: email_array)
     assert_response 200
     assert sample_user.reload.email = email
@@ -1017,9 +1017,9 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   # Existing { a }     Update { [y,z] }     Result  { a, [y,z] }
   def test_update_contact_with_other_emails
-    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_a_' + Time.now.to_i.to_s + '@sampledomain.com')
+    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_a_' + Time.zone.now.to_i.to_s + '@sampledomain.com')
     sample_user = User.last
-    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
     put :update, construct_params({ id: sample_user.id }, other_emails: email_array)
     assert_response 200
     assert email_array.sort == other_emails_for_test(sample_user).sort
@@ -1028,19 +1028,19 @@ class ApiContactsControllerTest < ActionController::TestCase
   # Existing { }     Update { [y,z] }     Result  { Error }
   def test_update_contact_with_other_emails_without_primary_email
     sample_user = add_new_user(@account, name: Faker::Lorem.characters(15), phone: '9948592049')
-    sample_user.update_attributes({email: nil})
+    sample_user.update_attributes(email: nil)
     email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
     put :update, construct_params({ id: sample_user.id }, other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('email',:conditional_not_blank, child: "other_emails")])
+    match_json([bad_request_error_pattern('email', :conditional_not_blank, child: 'other_emails')])
   end
 
   # Existing { a, [b,c] }     Update { x, [y,z] }     Result  { x, [y,z] }
   def test_update_contact_with_primary_and_other_emails_with_new_set_of_primary_and_other_emails
-    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_b_' + Time.now.to_i.to_s + "@sampledomain.com")
+    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_b_' + Time.zone.now.to_i.to_s + '@sampledomain.com')
     sample_user = User.last
     email = Faker::Internet.email
-    email_array = [Faker::Internet.email,Faker::Internet.email]
+    email_array = [Faker::Internet.email, Faker::Internet.email]
     put :update, construct_params({ id: sample_user.id }, email: email, other_emails: email_array)
     assert_response 200
     assert sample_user.reload.email == email
@@ -1049,9 +1049,9 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   # Existing { a, [b,c] }     Update { [y,z] }     Result  { a, [y,z] }
   def test_update_contact_with_primary_and_other_emails_with_new_set_of_other_emails
-    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_c_' + Time.now.to_i.to_s + "@sampledomain.com")
+    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_c_' + Time.zone.now.to_i.to_s + '@sampledomain.com')
     sample_user = User.last
-    email_array = [Faker::Internet.email,Faker::Internet.email]
+    email_array = [Faker::Internet.email, Faker::Internet.email]
     put :update, construct_params({ id: sample_user.id }, other_emails: email_array)
     assert_response 200
     assert email_array.sort == other_emails_for_test(sample_user).sort
@@ -1059,10 +1059,10 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   # Existing { a, [b,c] }     Update { b, [c] }       Result  { b, [c] }
   def test_update_contact_with_primary_and_other_emails_by_selecting_new_primary_email_from_other_emails_case_1
-    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_d_' + Time.now.to_i.to_s + "@sampledomain.com")
+    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_d_' + Time.zone.now.to_i.to_s + '@sampledomain.com')
     sample_user = User.last
-    email_e = 'sample_e_' + Time.now.to_i.to_s + '@sampledomain.com'
-    email_f = 'sample_f_' + Time.now.to_i.to_s + '@sampledomain.com'
+    email_e = 'sample_e_' + Time.zone.now.to_i.to_s + '@sampledomain.com'
+    email_f = 'sample_f_' + Time.zone.now.to_i.to_s + '@sampledomain.com'
     add_user_email(sample_user, email_e)
     add_user_email(sample_user, email_f)
     sample_user.reload
@@ -1075,8 +1075,8 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   # Existing { a, [b] }       Update { b, [] }        Result  { b, [] }
   def test_update_contact_with_primary_and_other_emails_by_selecting_new_primary_email_from_other_emails_case_2
-    sample_user = add_new_user(@account, name: Faker::Name.name, email: 'sample_f1_' + Time.now.to_i.to_s + "@sampledomain.com")
-    email_g = 'sample_g_' + Time.now.to_i.to_s + '@sampledomain.com'
+    sample_user = add_new_user(@account, name: Faker::Name.name, email: 'sample_f1_' + Time.zone.now.to_i.to_s + '@sampledomain.com')
+    email_g = 'sample_g_' + Time.zone.now.to_i.to_s + '@sampledomain.com'
     add_user_email(sample_user, email_g)
     put :update, construct_params({ id: sample_user.id }, email: email_g, other_emails: [])
     assert_response 200
@@ -1086,9 +1086,9 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   # Existing { a, [b] }     Update { [] }     Result  { a, [] }
   def test_update_delete_other_emails_from_contact_having_primary_and_other_emails
-    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_h_' + Time.now.to_i.to_s + "@sampledomain.com")
+    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_h_' + Time.zone.now.to_i.to_s + '@sampledomain.com')
     sample_user = User.last
-    email_i = 'sample_i_' + Time.now.to_i.to_s + '@sampledomain.com'
+    email_i = 'sample_i_' + Time.zone.now.to_i.to_s + '@sampledomain.com'
     add_user_email(sample_user, email_i)
     sample_user.reload
     put :update, construct_params({ id: sample_user.id }, other_emails: [])
@@ -1098,34 +1098,34 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   # Existing { a, [...] }     Update { [a] }     Result  { Error }
   def test_update_contact_with_other_emails_having_primary_email_as_an_element
-    sample_user = add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_j_' + Time.now.to_i.to_s + "@sampledomain.com")
+    sample_user = add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_j_' + Time.zone.now.to_i.to_s + '@sampledomain.com')
     email = sample_user.email
     put :update, construct_params({ id: sample_user.id }, other_emails: [email])
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :cant_add_primary_email, email: "#{email}")])    
+    match_json([bad_request_error_pattern('other_emails', :cant_add_primary_email, email: "#{email}")])
   end
 
-  def test_create_contact_with_other_emails_without_feature_ContactMergeUI
-    allowed_features = Account.first.features.where(' type not in (?) ',['ContactMergeUiFeature'])
+  def test_create_contact_with_other_emails_without_feature_contact_merge_ui
+    allowed_features = Account.first.features.where(' type not in (?) ', ['ContactMergeUiFeature'])
     Account.any_instance.stubs(:features).returns(allowed_features)
-    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :require_feature_for_attribute, { feature: "Contact Merge", attribute: "other_emails" })])
+    match_json([bad_request_error_pattern('other_emails', :require_feature_for_attribute, feature: 'Contact Merge', attribute: 'other_emails')])
   ensure
     Account.any_instance.unstub(:features)
   end
 
-  def test_update_contact_with_other_emails_without_feature_ContactMergeUI
-    allowed_features = Account.first.features.where(' type not in (?) ',['ContactMergeUiFeature'])
+  def test_update_contact_with_other_emails_without_feature_contact_merge_ui
+    allowed_features = Account.first.features.where(' type not in (?) ', ['ContactMergeUiFeature'])
     Account.any_instance.stubs(:features).returns(allowed_features)
     sample_user = User.last
-    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
     put :update, construct_params({ id: sample_user.id }, other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :require_feature_for_attribute, { feature: "Contact Merge", attribute: "other_emails" })])
+    match_json([bad_request_error_pattern('other_emails', :require_feature_for_attribute, feature: 'Contact Merge', attribute: 'other_emails')])
   ensure
     Account.any_instance.unstub(:features)
   end
@@ -1136,13 +1136,13 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: [Faker::Internet.email])
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, { data_type: 'String' })])
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, data_type: 'String')])
   end
 
   def test_contact_filter_email_array
     email = get_user_with_email.email
-    get :index, controller_params({email: [email]}, false)
+    get :index, controller_params({ email: [email] }, false)
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, { data_type: 'String' })])
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, data_type: 'String')])
   end
 end

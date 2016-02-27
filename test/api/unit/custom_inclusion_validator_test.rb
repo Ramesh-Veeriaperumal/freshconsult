@@ -22,7 +22,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ range_attr: :not_included }, errors)
-    assert_equal({ range_attr: { list: 'a..d' }, attribute2: {}}, error_options)
+    assert_equal({ range_attr: { list: 'a..d' }, attribute2: {} }, error_options)
   end
 
   def test_custom_message
@@ -33,7 +33,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ attribute1: 'attribute1_invalid' }, errors)
-    assert_equal({ attribute1: { list: '1,2'  }, attribute2: {}}, error_options)
+    assert_equal({ attribute1: { list: '1,2'  }, attribute2: {} }, error_options)
   end
 
   def test_attribute_not_defined

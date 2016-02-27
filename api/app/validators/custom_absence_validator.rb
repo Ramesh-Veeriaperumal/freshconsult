@@ -1,7 +1,6 @@
 # Check if value is not present.
 
 class CustomAbsenceValidator < ApiValidator
-
   def message
     :present
   end

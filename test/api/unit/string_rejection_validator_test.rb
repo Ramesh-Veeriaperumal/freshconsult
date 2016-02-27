@@ -6,7 +6,6 @@ class StringRejectionValidatorTest < ActionView::TestCase
 
     attr_accessor :attribute1, :attribute2, :attribute3
 
-
     validates :attribute2, data_type: { rules: Array, allow_nil: true }
     validates :attribute1, string_rejection: { excluded_chars: [','], allow_nil: true }
     validates :attribute2, string_rejection: { excluded_chars: [',', 'junk', '!', '$'], allow_nil: true }

@@ -10,8 +10,8 @@ class ForumValidationTest < ActionView::TestCase
     assert forum.errors.full_messages.include?('Forum category data_type_mismatch')
     assert forum.errors.full_messages.include?('Forum visibility not_included')
     assert forum.errors.full_messages.include?('Forum type not_included')
-    assert_equal({name: {data_type: String, code: :missing_field}, forum_category_id: {data_type: :"Positive Integer", 
-      code: :missing_field}, forum_visibility: {list: "1,2,3,4", code: :missing_field}, forum_type: {list: "1,2,3,4", code: :missing_field}}, forum.error_options)
+    assert_equal({ name: { data_type: String, code: :missing_field }, forum_category_id: { data_type: :"Positive Integer",
+                                                                                           code: :missing_field }, forum_visibility: { list: '1,2,3,4', code: :missing_field }, forum_type: { list: '1,2,3,4', code: :missing_field } }, forum.error_options)
   end
 
   def test_numericality_params_invalid
@@ -30,8 +30,8 @@ class ForumValidationTest < ActionView::TestCase
     error = forum.errors.full_messages
     assert error.include?('Forum visibility not_included')
     assert error.include?('Forum type not_included')
-    assert_equal({name: {data_type: String, code: :missing_field}, forum_visibility: {list: "1,2,3,4", code: :data_type_mismatch}, 
-      forum_type: {list: "1,2,3,4", code: :data_type_mismatch}}, forum.error_options)
+    assert_equal({ name: { data_type: String, code: :missing_field }, forum_visibility: { list: '1,2,3,4', code: :data_type_mismatch },
+                   forum_type: { list: '1,2,3,4', code: :data_type_mismatch } }, forum.error_options)
     assert forum.errors[:company_ids].blank?
 
     controller_params = { 'forum_type' => 'x', 'forum_visibility' => 'x', 'company_ids' => ['test'] }
@@ -50,8 +50,8 @@ class ForumValidationTest < ActionView::TestCase
     error = forum.errors.full_messages
     assert error.include?('Forum visibility not_included')
     assert error.include?('Forum type not_included')
-    assert_equal({name: {data_type: String, code: :missing_field}, forum_visibility: {list: "1,2,3,4"}, 
-      forum_type: {list: "1,2,3,4"}}, forum.error_options)
+    assert_equal({ name: { data_type: String, code: :missing_field }, forum_visibility: { list: '1,2,3,4' },
+                   forum_type: { list: '1,2,3,4' } }, forum.error_options)
     assert forum.errors[:company_ids].blank?
   end
 

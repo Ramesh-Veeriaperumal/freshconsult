@@ -21,7 +21,7 @@ class DateTimeValidator < ApiValidator
   end
 
   def error_options
-    {code: :missing_field} if required_attribute_not_defined?
+    { code: :missing_field } if required_attribute_not_defined?
   end
 
   def parse_time

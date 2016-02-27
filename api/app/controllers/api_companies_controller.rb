@@ -1,7 +1,7 @@
 class ApiCompaniesController < ApiApplicationController
   decorate_views
 
-  around_filter :run_on_slave, :only => [:index]
+  around_filter :run_on_slave, only: [:index]
 
   def create
     company_delegator = CompanyDelegator.new(@item)

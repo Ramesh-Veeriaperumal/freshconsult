@@ -11,8 +11,8 @@ class TicketFilterValidation < FilterValidation
   validates :order_by, custom_inclusion: { in: ApiTicketConstants::ORDER_BY }
   validates :order_type, custom_inclusion: { in: ApiTicketConstants::ORDER_TYPE }
 
-  def initialize(request_params, item=nil, allow_string_param=true)
-    @email = request_params.delete('email') if request_params.key?('email')# deleting email and replacing it with requester_id
+  def initialize(request_params, item = nil, allow_string_param = true)
+    @email = request_params.delete('email') if request_params.key?('email') # deleting email and replacing it with requester_id
     if @email
       @requester = Account.current.user_emails.user_for_email(@email)
       request_params['requester_id'] = @requester.try(:id) if @requester

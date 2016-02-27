@@ -5,8 +5,8 @@ class TicketsController < ApiApplicationController
   include TicketConcern
   decorate_views
 
-  around_filter :run_on_slave, :only => [:index]
-  
+  around_filter :run_on_slave, only: [:index]
+
   before_filter :ticket_permission?, only: [:destroy]
 
   def create
@@ -174,7 +174,7 @@ class TicketsController < ApiApplicationController
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
 
       unless params[cname].key?(:requester_id) && update?
-        if (params[cname].keys & ["email", "phone", "twitter_id", "facebook_id"]).present?
+        if (params[cname].keys & %w(email phone twitter_id facebook_id)).present?
           params[cname][:requester_id] = nil
         end
       end

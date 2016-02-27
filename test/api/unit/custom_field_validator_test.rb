@@ -159,7 +159,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ country_1: :not_included }, errors)
-    assert_equal({ country_1: { list: '...,Usa,india' }}.stringify_keys.merge(attribute1: {}), test.error_options)
+    assert_equal({ country_1: { list: '...,Usa,india' } }.stringify_keys.merge(attribute1: {}), test.error_options)
   end
 
   def test_nested_fields_invalid_second_field
