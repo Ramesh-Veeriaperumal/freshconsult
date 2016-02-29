@@ -122,15 +122,17 @@ class DefaultFieldValidatorTest < ActionView::TestCase
   end
 
   def test_string_rejection_validator
+    tags = [Faker::Name.name + ', Faker', Faker::Name.name]
+    domains = [Faker::Internet.domain_word + ', Faker']
     params = {  source: '2', status: '2', priority: '1', type: 'Lead', group_id: 1, responder_id: 1, product_id: 1, subject: Faker::Name.name, description: Faker::Lorem.paragraph,
-                email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: [Faker::Name.name + ', Faker', Faker::Name.name], address: Faker::Lorem.paragraph,
-                job_title: Faker::Name.name, twitter_id: Faker::Name.name, language: 'en', time_zone: 'Chennai', domains: [Faker::Internet.domain_word + ', Faker'], note: Faker::Name.name }
+                email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: tags, address: Faker::Lorem.paragraph,
+                job_title: Faker::Name.name, twitter_id: Faker::Name.name, language: 'en', time_zone: 'Chennai', domains: domains, note: Faker::Name.name }
     test = TestValidation.new(params, true)
     refute test.valid?
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
     assert_equal({ tags: :special_chars_present, domains: :special_chars_present }.sort, errors)
-    assert_equal({ tags: { chars: ',' }, domains: { chars: ',' }, address: {}, client_manager: {}, company_id: {}, description: {}, domains: { chars: ',' }, email: {}, group_id: {}, job_title: {}, language: {}, mobile: {}, note: {}, phone: {}, priority: {}, product_id: {}, responder_id: {}, source: {}, status: {}, subject: {}, tags: { chars: ',' }, time_zone: {}, twitter_id: {}, type: {} }.sort, error_options)
+    assert_equal({ tags: { chars: ',', value: tags.inspect }, domains: { chars: ',', value: domains.inspect }, address: {}, client_manager: {}, company_id: {}, description: {}, email: {}, group_id: {}, job_title: {}, language: {}, mobile: {}, note: {}, phone: {}, priority: {}, product_id: {}, responder_id: {}, source: {}, status: {}, subject: {}, time_zone: {}, twitter_id: {}, type: {} }.sort, error_options)
   end
 
   def test_validator_chaining_for_email

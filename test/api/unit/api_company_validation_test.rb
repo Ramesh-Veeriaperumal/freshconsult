@@ -18,6 +18,7 @@ class ApiCompanyValidationTest < ActionView::TestCase
     refute company.valid?(:create)
     errors = company.errors.full_messages
     assert errors.include?('Domains special_chars_present')
+    assert_equal({ domains: { value: "[\"comma,test\"]", chars: ',' }, name: {} }, company.error_options)
   end
 
   def test_domains_comma_valid

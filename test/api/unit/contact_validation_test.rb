@@ -18,6 +18,7 @@ class ContactValidationTest < ActionView::TestCase
     refute contact.valid?
     errors = contact.errors.full_messages
     assert errors.include?('Tag names special_chars_present')
+    assert_equal({ email: {}, tag_names: { value: "[\"comma,test\"]", chars: ',' }, name: {} }, contact.error_options)
   end
 
   def test_tags_comma_valid

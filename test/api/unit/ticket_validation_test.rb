@@ -46,6 +46,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
     assert errors.include?('Tags special_chars_present')
+    assert_equal({ requester_id: {}, description: { data_type: String, code: :missing_field }, tags: { value: "[\"comma,test\"]", chars: ',' } }, ticket.error_options)
     Account.unstub(:current)
   end
 

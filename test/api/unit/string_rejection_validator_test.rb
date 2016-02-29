@@ -23,7 +23,7 @@ class StringRejectionValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ attribute1: :special_chars_present }, errors)
-    assert_equal({ attribute1: { chars: ',' } }, error_options)
+    assert_equal({ attribute1: { chars: ',', value: "\"test,hell\"" } }, error_options)
   end
 
   def test_attribute_array_invalid
@@ -32,7 +32,7 @@ class StringRejectionValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ attribute2: :special_chars_present }, errors)
-    assert_equal({ attribute2: { chars: [',', 'junk', '!', '$'].join('\',\'') } }, error_options)
+    assert_equal({ attribute2: { chars: [',', 'junk', '!', '$'].join('\',\''), value: "[\"%$,test\", \"junk\"]" } }, error_options)
   end
 
   def test_attributes_with_error

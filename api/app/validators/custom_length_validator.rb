@@ -1,5 +1,4 @@
 class CustomLengthValidator < ApiValidator
-
   private
 
     def invalid?

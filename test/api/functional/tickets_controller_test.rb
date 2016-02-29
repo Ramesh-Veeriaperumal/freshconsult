@@ -166,7 +166,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_with_tags_invalid
     params = { requester_id: requester.id, tags: ['test,,,,comma', 'test'], status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',')])
+    match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',', value: "[\"test,,,,comma\", \"test\"]")])
     assert_response 400
   end
 
@@ -1283,7 +1283,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { tags: ['test,,,,comma', 'test'] }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',')])
+    match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',', value: "[\"test,,,,comma\", \"test\"]")])
   end
 
   def test_update_with_subject
