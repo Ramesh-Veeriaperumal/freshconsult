@@ -948,6 +948,15 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('other_emails', :max_count_exceeded, max_count: "#{ContactConstants::MAX_OTHER_EMAILS_COUNT}", current_count: 5)])
   end
 
+  def test_create_with_other_emails_max_length_validation
+    email_array = ["#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com"]
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        other_emails: email_array)
+    assert_response 400
+    match_json([bad_request_error_pattern('other_emails', :"Has 328 characters, it can have maximum of 255 characters")])
+  end
+
   def test_create_with_other_emails_with_duplication
     email1 = Faker::Internet.email
     email2 = Faker::Internet.email

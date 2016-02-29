@@ -24,7 +24,7 @@ class ContactValidation < ApiValidation
   validate :contact_detail_missing_update, if: -> { fb_profile_id.nil? }, on: :update
 
   validate :check_contact_merge_feature, if: -> { other_emails }
-  validates :other_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email } }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+  validates :other_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } }
   validates :other_emails, custom_length: { maximum: ContactConstants::MAX_OTHER_EMAILS_COUNT, message: :max_count_exceeded }
   validate :check_contact_for_email_before_adding_other_emails, if: -> { other_emails }
   validate :check_other_emails_for_primary_email, if: -> { other_emails }, on: :update
