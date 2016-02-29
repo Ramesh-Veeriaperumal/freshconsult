@@ -15,7 +15,7 @@ class Solution::FolderMeta < ActiveRecord::Base
   validates_inclusion_of :visibility, 
       :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
 
-  validate :name_uniqueness, :if => "new_record? || changes[:solution_category_meta_id]" 
+  validate :name_uniqueness, :if => "changes[:solution_category_meta_id]" 
 
 	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta', :autosave => true
 
@@ -125,15 +125,13 @@ class Solution::FolderMeta < ActiveRecord::Base
   end
 
   def name_uniqueness
-  	err_flag = false
   	self.solution_folders.each do |f|
   		f.name_uniqueness_validation
   		if f.errors[:name].any?
-  			err_flag = true
+  			errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
   			break
   		end
   	end
-  	errors.add(:base, I18n.t("activerecord.errors.messages.taken")) if err_flag
   end
 
   def companies_limit_check

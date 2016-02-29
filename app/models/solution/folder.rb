@@ -11,7 +11,7 @@ class Solution::Folder < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_folder_meta.new_record?"
 
-  validate :name_uniqueness_validation
+  validate :name_uniqueness_validation, :if => "new_record? || name_changed?"
 
   self.table_name =  "solution_folders"
   
@@ -26,8 +26,6 @@ class Solution::Folder < ActiveRecord::Base
   after_update :clear_cache, :if => Proc.new { |f| f.name_changed? && f.primary? }
   
   has_many :customers, :through => :customer_folders
-
-  validate :companies_limit_check
 
   alias_method :parent, :solution_folder_meta
   
@@ -151,17 +149,7 @@ class Solution::Folder < ActiveRecord::Base
     present?
   end
 
-  def companies_limit_check
-    if customer_folders.size > 250
-      errors.add(:base, I18n.t("solution.folders.visibility.companies_limit_exceeded"))
-      return false
-    else
-      return true
-    end
-  end
-
   def name_uniqueness_validation
-    return true unless new_record? || name_changed?
     if ((self.solution_folder_meta.solution_category_meta.solution_folders.where(:language_id => self.language_id)) - [self]).map(&:name).include?(self.name)
       errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
       return false
