@@ -73,7 +73,7 @@ class Solution::Category < ActiveRecord::Base
   
     def name_uniqueness_validation
       return true unless new_record? || name_changed?
-      if ((Account.current.solution_categories.where(:language_id => self.language_id).pluck(:name)) - [self.name]).include?(self.name)
+      if (Account.current.solution_categories.where(:language_id => self.language_id) - [self]).map(&:name).include?(self.name)
         errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
         return false
       end
