@@ -17,7 +17,7 @@ class TicketsControllerTest < ActionController::TestCase
     'number' => [:data_type_mismatch, data_type: 'Integer'],
     'decimal' => [:data_type_mismatch, data_type: 'Number'],
     'checkbox' => [:data_type_mismatch, data_type: 'Boolean'],
-    'text' => [:"is too long (maximum is 255 characters)"],
+    'text' => [:"Has 300 characters, it can have maximum of 255 characters"],
     'paragraph' => [:data_type_mismatch, data_type: String],
     'date' => [:invalid_date]
   }
@@ -240,10 +240,10 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_length_invalid
     params = ticket_params_hash.except(:email).merge(name: Faker::Lorem.characters(300), subject: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('subject', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('phone', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('tags', :"is too long (maximum is 32 characters)")])
+    match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
+                bad_request_error_pattern('subject', :"Has 300 characters, it can have maximum of 255 characters"),
+                bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
+                bad_request_error_pattern('tags', :"Has 34 characters, it can have maximum of 32 characters")])
     assert_response 400
   end
 
@@ -266,7 +266,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_length_invalid_twitter_id
     params = ticket_params_hash.except(:email).merge(twitter_id: Faker::Lorem.characters(300))
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('twitter_id', :"is too long (maximum is 255 characters)")])
+    match_json([bad_request_error_pattern('twitter_id', :"Has 300 characters, it can have maximum of 255 characters")])
     assert_response 400
   end
 
@@ -283,7 +283,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_length_invalid_email
     params = ticket_params_hash.merge(email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com")
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('email', :"is too long (maximum is 255 characters)")])
+    match_json([bad_request_error_pattern('email', :"Has 328 characters, it can have maximum of 255 characters")])
     assert_response 400
   end
 
@@ -445,7 +445,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(due_by: 30.days.ago.iso8601, cc_emails: cc_emails)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}"),
+    match_json([bad_request_error_pattern('cc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 50),
                 bad_request_error_pattern('due_by', :gt_created_and_now)])
   end
 
@@ -1550,10 +1550,10 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(name: Faker::Lorem.characters(300), requester_id: nil, subject: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('subject', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('phone', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('tags', :"is too long (maximum is 32 characters)")])
+    match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
+                bad_request_error_pattern('subject', :"Has 300 characters, it can have maximum of 255 characters"),
+                bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
+                bad_request_error_pattern('tags', :"Has 34 characters, it can have maximum of 32 characters")])
     assert_response 400
   end
 
@@ -1576,7 +1576,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: nil, twitter_id: Faker::Lorem.characters(300))
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json([bad_request_error_pattern('twitter_id', :"is too long (maximum is 255 characters)")])
+    match_json([bad_request_error_pattern('twitter_id', :"Has 300 characters, it can have maximum of 255 characters")])
     assert_response 400
   end
 
@@ -1595,7 +1595,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: nil, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com")
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json([bad_request_error_pattern('email', :"is too long (maximum is 255 characters)")])
+    match_json([bad_request_error_pattern('email', :"Has 328 characters, it can have maximum of 255 characters")])
     assert_response 400
   end
 

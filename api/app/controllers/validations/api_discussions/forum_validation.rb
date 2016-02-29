@@ -2,7 +2,7 @@ module ApiDiscussions
   class ForumValidation < ApiValidation
     attr_accessor :name, :forum_type, :forum_category_id, :forum_visibility, :company_ids,
                   :description, :topics_count
-    validates :name, data_type: { rules: String, required: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
+    validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
     validates :forum_category_id, custom_numericality: { only_integer: true, greater_than: 0, required: true }, on: :update
     validates :forum_visibility, custom_inclusion: { in: DiscussionConstants::FORUM_VISIBILITY, detect_type: true, required: true }
 
@@ -12,7 +12,7 @@ module ApiDiscussions
     validates :company_ids, custom_absence: { allow_nil: false, message: :incompatible_field }, if: :company_ids_not_allowed?
     # company_ids should be nil if forum has visibility other than 4.
     validates :company_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, custom_message: :invalid_integer } }, if: :company_ids_allowed?
-    validates :description, data_type: { rules: String, allow_nil: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
+    validates :description, data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
     def initialize(request_params, item)
       super(request_params, item)

@@ -6,7 +6,7 @@ class ApiCompanyValidation < ApiValidation
                                 field_validations: CompanyConstants::DEFAULT_FIELD_VALIDATIONS
                               }
   validates :name, data_type: { rules: String, required: true }
-  validates :name, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? }
+  validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
   # Shouldn't be clubbed as allow nil may have some impact on custom fields validator.
   validates :custom_fields, data_type: { rules: Hash }

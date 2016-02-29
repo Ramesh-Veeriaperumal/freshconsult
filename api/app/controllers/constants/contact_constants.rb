@@ -41,15 +41,15 @@ module ContactConstants
   }.freeze
 
   DEFAULT_FIELD_VALIDATIONS = {
-    job_title:  { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
+    job_title:  { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     language: { custom_inclusion: { in: ContactConstants::LANGUAGES } },
-    tag_names:  { data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING, message: :too_long } }, string_rejection: { excluded_chars: [','], allow_nil: true } },
+    tag_names:  { data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true } },
     time_zone: { custom_inclusion: { in: ContactConstants::TIMEZONES } },
-    phone: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-    mobile: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-    address: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-    twitter_id: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-    email: { data_type: { rules: String }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
+    phone: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    mobile: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    address: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    twitter_id: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    email: { data_type: { rules: String }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     description: { data_type: { rules: String } }
   }.freeze
 

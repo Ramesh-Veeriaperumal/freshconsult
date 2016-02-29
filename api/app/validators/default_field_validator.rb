@@ -47,7 +47,7 @@ class DefaultFieldValidator < ActiveModel::EachValidator
       when :array
         array_options = add_allow_nil_option(validator_options).merge(attributes: attribute)
         array_validator(record, array_options)
-      when :length
+      when :custom_length
         required_validator(record, attribute) if required
         length_validator(record, options_hash) if record.errors[attribute].blank?
       when :custom_format
@@ -80,7 +80,7 @@ class DefaultFieldValidator < ActiveModel::EachValidator
   end
 
   def length_validator(record, options_hash)
-    ActiveModel::Validations::LengthValidator.new(options_hash).validate(record)
+    CustomLengthValidator.new(options_hash).validate(record)
   end
 
   def custom_numericality_validator(record, options_hash)

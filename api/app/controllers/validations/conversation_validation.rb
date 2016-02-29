@@ -7,12 +7,12 @@ class ConversationValidation < ApiValidation
   validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0 }
   validates :private, :incoming, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }
   validates :notify_emails, :attachments, :cc_emails, :bcc_emails, data_type: { rules: Array }
-  validate :max_email_count
+  validates :notify_emails, :cc_emails, :bcc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message: :max_count_exceeded }
   validates :notify_emails, :cc_emails, :bcc_emails, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: :not_a_valid_email } }
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }
 
-  validates :attachments, file_size:  {
-    min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
+  validates :attachments, file_size: {
+    max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
     base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) }
   }
 
@@ -28,15 +28,5 @@ class ConversationValidation < ApiValidation
 
   def attributes_to_be_stripped
     ConversationConstants::ATTRIBUTES_TO_BE_STRIPPED
-  end
-
-  def max_email_count
-    ConversationConstants::EMAIL_FIELDS.each do |field|
-      array_elements = send(field)
-      if array_elements && errors[field].blank? && array_elements.count >= ApiTicketConstants::MAX_EMAIL_COUNT
-        errors[field] << :max_count_exceeded
-        (self.error_options ||= {}).merge!(field => { max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}" })
-      end
-    end
   end
 end

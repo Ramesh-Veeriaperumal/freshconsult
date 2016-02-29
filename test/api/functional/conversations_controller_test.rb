@@ -210,7 +210,7 @@ class ConversationsControllerTest < ActionController::TestCase
     params = create_note_params_hash.merge(notify_emails: notify_emails)
     post :create, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('notify_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}")])
+    match_json([bad_request_error_pattern('notify_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 51)])
   end
 
   def test_reply_with_invalid_cc_emails_count
@@ -221,8 +221,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params = reply_note_params_hash.merge(cc_emails: cc_emails, bcc_emails: cc_emails)
     post :reply, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}"),
-                bad_request_error_pattern('bcc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}")])
+    match_json([bad_request_error_pattern('cc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 50),
+                bad_request_error_pattern('bcc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 50)])
   end
 
   def test_reply_with_ticket_trashed

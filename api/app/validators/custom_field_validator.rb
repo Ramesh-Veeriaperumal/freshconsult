@@ -42,7 +42,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
   def validate_custom_text(record, field_name)
     string_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required)
     DataTypeValidator.new(string_options).validate(record)
-    ActiveModel::Validations::LengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long)).validate(record) if record.errors[field_name].blank?
+    CustomLengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING)).validate(record)
   end
 
   # Required validator for string field based on condition
@@ -111,7 +111,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
   def validate_custom_phone_number(record, field_name)
     string_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required)
     DataTypeValidator.new(string_options).validate(record)
-    ActiveModel::Validations::LengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long)).validate(record) if record.errors[field_name].blank?
+    CustomLengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING)).validate(record)
   end
 
   # Date validator for date field

@@ -49,7 +49,7 @@ module ApiTicketConstants
     update: [:json, :multipart_form]
   }.freeze
 
-  MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT
+  MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT - 1
 
   FIELD_MAPPINGS = { group: :group_id, agent: :responder_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
                      product: :product_id, ticket_type: :type }.freeze

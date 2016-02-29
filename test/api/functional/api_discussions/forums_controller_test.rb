@@ -156,8 +156,8 @@ module ApiDiscussions
       fc = fc_obj
       forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, name: Faker::Lorem.characters(300), description: Faker::Lorem.characters(300))
-      match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)"),
-                  bad_request_error_pattern('description', :"is too long (maximum is 255 characters)")])
+      match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
+                  bad_request_error_pattern('description', :"Has 300 characters, it can have maximum of 255 characters")])
       assert_response 400
     end
 
@@ -188,8 +188,8 @@ module ApiDiscussions
 
     def test_create_validate_length
       post :create, construct_params({ id: ForumCategory.first.id }, forum_visibility: 1, forum_type: 1, name: Faker::Lorem.characters(300), description: Faker::Lorem.characters(300))
-      match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)"),
-                  bad_request_error_pattern('description', :"is too long (maximum is 255 characters)")])
+      match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
+                  bad_request_error_pattern('description', :"Has 300 characters, it can have maximum of 255 characters")])
       assert_response 400
     end
 

@@ -86,7 +86,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   def test_create_length_invalid
     params_hash = { name: Faker::Lorem.characters(300) }
     post :create, construct_params({}, params_hash)
-    match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)")])
+    match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters")])
     assert_response 400
   end
 
@@ -183,7 +183,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     params_hash = { name: Faker::Lorem.characters(300) }
     put :update, construct_params({ id: company.id }, params_hash)
-    match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)")])
+    match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters")])
     assert_response 400
   end
 

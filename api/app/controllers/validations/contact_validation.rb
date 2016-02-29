@@ -14,7 +14,7 @@ class ContactValidation < ApiValidation
                               }
 
   validates :name, data_type: { rules: String, required: true }
-  validates :name, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? }
+  validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
 
   validate :contact_detail_missing, on: :create
@@ -24,8 +24,8 @@ class ContactValidation < ApiValidation
   validate :contact_detail_missing_update, if: -> { fb_profile_id.nil? }, on: :update
 
   validate :check_contact_merge_feature, if: -> { other_emails }
-  validates :other_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email } }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
-  validate :other_emails_max_count, if: -> { other_emails && errors[:other_emails].blank? }
+  validates :other_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email } }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+  validates :other_emails, custom_length: { maximum: ContactConstants::MAX_OTHER_EMAILS_COUNT, message: :max_count_exceeded }
   validate :check_contact_for_email_before_adding_other_emails, if: -> { other_emails }
   validate :check_other_emails_for_primary_email, if: -> { other_emails }, on: :update
 
@@ -40,7 +40,7 @@ class ContactValidation < ApiValidation
   }
 
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
-    min: nil, max: ContactConstants::ALLOWED_AVATAR_SIZE, base_size: 0 }
+    max: ContactConstants::ALLOWED_AVATAR_SIZE }
   validate :validate_avatar, if: -> { avatar && errors[:avatar].blank? }
 
   def initialize(request_params, item, allow_string_param = false)
@@ -66,13 +66,6 @@ class ContactValidation < ApiValidation
     def validate_avatar
       if ContactConstants::AVATAR_EXT.exclude?(File.extname(avatar.original_filename).downcase)
         errors[:avatar] << :upload_jpg_or_png_file
-      end
-    end
-
-    def other_emails_max_count
-      if other_emails.count > ContactConstants::MAX_OTHER_EMAILS_COUNT
-        errors[:other_emails] << :max_count_exceeded
-        (self.error_options ||= {}).merge!(other_emails: { max_count: "#{ContactConstants::MAX_OTHER_EMAILS_COUNT + 1}" })
       end
     end
 

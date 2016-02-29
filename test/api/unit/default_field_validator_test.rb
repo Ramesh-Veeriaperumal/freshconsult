@@ -58,9 +58,9 @@ class DefaultFieldValidatorTest < ActionView::TestCase
   end
 
   def test_value_invalid
-    params = { source: '23', status: '223', priority: '21', type: 'LeadTest', group_id: '1', responder_id: '1', product_id: '1', subject: Faker::Name.name + white_space, description: 123,
-               email: 'Faker::Internet.email', phone: '123455' + white_space, mobile: '12344' + white_space, client_manager: '0', company_id: '1', tags: 'Faker::Name.name, Faker::Name.name', address: Faker::Lorem.paragraph + white_space,
-               job_title: Faker::Name.name + white_space, twitter_id: Faker::Name.name + white_space,  language: 'enTest', time_zone: 'chennai-perungudi', domains: 'Faker::Internet.domain_word', note: 1234 }
+    params = { source: '23', status: '223', priority: '21', type: 'LeadTest', group_id: '1', responder_id: '1', product_id: '1', subject: Faker::Lorem.characters(10) + white_space, description: 123,
+               email: 'Faker::Internet.email', phone: '123455' + white_space, mobile: '12344' + white_space, client_manager: '0', company_id: '1', tags: 'Faker::Name.name, Faker::Name.name', address: Faker::Lorem.characters(255) + white_space,
+               job_title: Faker::Lorem.characters(10) + white_space, twitter_id: Faker::Lorem.characters(10) + white_space,  language: 'enTest', time_zone: 'chennai-perungudi', domains: 'Faker::Internet.domain_word', note: 1234 }
     test = TestValidation.new(params)
     refute test.valid?
     errors = test.errors.to_h.sort
@@ -69,10 +69,10 @@ class DefaultFieldValidatorTest < ActionView::TestCase
       source: :not_included, status: :not_included, priority: :not_included, type: :not_included, group_id: :data_type_mismatch,
       responder_id: :data_type_mismatch, product_id: :data_type_mismatch, email: 'not_a_valid_email',
       client_manager: :data_type_mismatch, tags: :data_type_mismatch, language: :not_included, time_zone: :not_included, domains: :data_type_mismatch,
-      subject: 'is too long (maximum is 255 characters)', description: :data_type_mismatch,
-      job_title: 'is too long (maximum is 255 characters)', twitter_id: 'is too long (maximum is 255 characters)',
-      phone: 'is too long (maximum is 255 characters)', mobile: 'is too long (maximum is 255 characters)',
-      address: 'is too long (maximum is 255 characters)', note: :data_type_mismatch
+      subject: :too_long, description: :data_type_mismatch,
+      job_title: :too_long, twitter_id: :too_long,
+      phone: :too_long, mobile: :too_long,
+      address: :too_long, note: :data_type_mismatch
     }.sort,
                  errors
                 )
@@ -80,7 +80,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
       source: { list: '1,2,3,7,8,9' }, status: { list: '2,3,4,5' }, priority: { list: '1,2,3,4' }, type: { list: 'Lead,Question,Problem,Maintenance,Breakage' }, group_id: { data_type: :'Positive Integer' },
       responder_id: { data_type: :'Positive Integer' }, product_id: { data_type: :'Positive Integer' }, client_manager: { data_type: 'Boolean' },
       tags: { data_type: Array }, language: { list: I18n.available_locales.map(&:to_s).join(',') }, time_zone: { list: ActiveSupport::TimeZone.all.map(&:name).join(',') },
-      domains: { data_type: Array }, description: { data_type: String }, note: { data_type: String }, address: {}, company_id: {}, email: {}, job_title: {}, mobile: {}, phone: {}, subject: {}, twitter_id: {}
+      domains: { data_type: Array }, description: { data_type: String }, note: { data_type: String }, address: { max_count: 255, current_count: 555 }, company_id: {}, email: {}, job_title: { max_count: 255, current_count: 310 }, mobile: { max_count: 255, current_count: 305 }, phone: { max_count: 255, current_count: 306 }, subject: { max_count: 255, current_count: 310 }, twitter_id: { max_count: 255, current_count: 310 }
     }.sort,
                  error_options
                 )
@@ -112,12 +112,13 @@ class DefaultFieldValidatorTest < ActionView::TestCase
 
   def test_array_length_validator
     params = {  source: '2', status: '2', priority: '1', type: 'Lead', group_id: 1, responder_id: 1, product_id: 1, subject: Faker::Name.name, description: Faker::Lorem.paragraph,
-                email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: ["#{Faker::Name.name}#{ ' ' * 20}#{Faker::Name.name}"], address: Faker::Lorem.name,
+                email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: ["#{Faker::Lorem.characters(17)}#{ ' ' * 20}#{Faker::Lorem.characters(17)}"], address: Faker::Lorem.name,
                 job_title: Faker::Name.name, twitter_id: Faker::Name.name, language: 'en', time_zone: 'Chennai', domains: [Faker::Internet.domain_word], note: Faker::Name.name }
     test = TestValidation.new(params, true)
     refute test.valid?
     errors = test.errors.to_h.sort
-    assert_equal({ tags: 'is too long (maximum is 32 characters)' }.sort, errors)
+    assert_equal({ tags: :too_long }.sort, errors)
+    assert_equal({ source: {}, status: {}, priority: {}, type: {}, group_id: {}, responder_id: {}, product_id: {}, subject: {}, description: {}, email: {}, phone: {}, mobile: {}, client_manager: {}, company_id: {}, tags: { max_count: 32, current_count: 54 }, address: {}, job_title: {}, twitter_id: {}, language: {}, time_zone: {}, domains: {}, note: {} }, test.error_options)
   end
 
   def test_string_rejection_validator
@@ -139,7 +140,8 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(params, true)
     refute test.valid?
     errors = test.errors.to_h.sort
-    assert_equal({ email: 'is too long (maximum is 255 characters)' }.sort, errors)
+    assert_equal({ email: :too_long }.sort, errors)
+    assert_equal({ source: {}, status: {}, priority: {}, type: {}, group_id: {}, responder_id: {}, product_id: {}, subject: {}, description: {}, email: { max_count: 255, current_count: 325 }, phone: {}, mobile: {}, client_manager: {}, company_id: {}, tags: {}, address: {}, job_title: {}, twitter_id: {}, language: {}, time_zone: {}, domains: {}, note: {} }, test.error_options)
   end
 
   def test_attribute_with_no_validation

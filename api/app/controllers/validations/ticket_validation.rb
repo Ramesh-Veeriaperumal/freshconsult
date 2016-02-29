@@ -19,7 +19,7 @@ class TicketValidation < ApiValidation
 
   validates :requester_id, required: { allow_nil: false, message: :requester_id_mandatory }, if: :requester_id_mandatory? # No
   validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: :name_required?  # No
-  validates :name, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? }
+  validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :description, data_type: { rules: String, required: true }
   validates :description_html, data_type: { rules: String, allow_nil: true }
 
@@ -42,19 +42,19 @@ class TicketValidation < ApiValidation
   validates :attachments, presence: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
   validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
   validates :attachments, file_size:  {
-    min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
-    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) }}
+    max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
+    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) } }
 
   # Email related validations
   validates :email, data_type: { rules: String, allow_nil: true }
   validates :email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email, allow_nil: true }
-  validates :email, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:email].blank? }
+  validates :email, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :cc_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: :not_a_valid_email } }
 
-  validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
+  validates :cc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message: :max_count_exceeded }
 
   # Tags validations
-  validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true }, length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING, message: :too_long,  allow_nil: true } }
+  validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }
   validates :tags, string_rejection: { excluded_chars: [','], allow_nil: true }
 
   # Custom fields validations
@@ -68,8 +68,8 @@ class TicketValidation < ApiValidation
                               }
                            }
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
-  validates :twitter_id, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:twitter_id].blank? }
-  validates :phone, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:phone].blank? }
+  validates :twitter_id, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+  validates :phone, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
@@ -110,13 +110,6 @@ class TicketValidation < ApiValidation
     end
   end
 
-  def cc_emails_max_count
-    if cc_emails.count >= ApiTicketConstants::MAX_EMAIL_COUNT
-      errors[:cc_emails] << :max_count_exceeded
-      (self.error_options ||= {}).merge!(cc_emails: { max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}" })
-    end
-  end
-
   def required_based_on_status?
     status.respond_to?(:to_i) && [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
   end
@@ -152,7 +145,7 @@ class TicketValidation < ApiValidation
       group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       product: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
-      subject: { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
+      subject: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } }
     }
   end
 end
