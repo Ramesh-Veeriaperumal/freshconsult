@@ -616,15 +616,8 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_day_pass_usage_with_user_time_zone
-      in_user_time_zone { check_day_pass_usage }
-    end
-
-    def in_user_time_zone
-      old_zone = Time.zone
-      TimeZone.set_time_zone
-      yield
-    ensure
-      Time.zone = old_zone
+      user_zone = TimeZone.find_time_zone
+      Time.use_zone(user_zone) { check_day_pass_usage }
     end
 
     def run_on_slave
