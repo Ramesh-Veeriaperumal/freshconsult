@@ -78,8 +78,9 @@ class ApiCommentValidationTest < ActionView::TestCase
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
     refute comment.valid?(:update)
     error = comment.errors.full_messages
-    assert error.include?('Answer incompatible_field')
+    assert error.include?('Answer cannot_set_answer')
     refute error.include?('Answer data_type_mismatch')
+    assert_equal({ answer: { value: "\"nil\"", code: :incompatible_field }, body_html: { data_type: String } }, comment.error_options)
     Account.unstub(:current)
   end
 

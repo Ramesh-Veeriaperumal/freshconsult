@@ -98,9 +98,9 @@ class TicketValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
-  def test_fr_due_by_nil_and_due_by_nil_when_status_is_closed
+  def test_fr_due_by_nil_and_due_by_nil_when_status_is_open
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], status_ids: [2, 3, 4, 5, 6], status: 5, due_by: nil, fr_due_by: nil }
+    controller_params = { 'requester_id' => 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], status_ids: [2, 3, 4, 5, 6], status: 2, due_by: nil, fr_due_by: nil }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     assert ticket.valid?(:create)
@@ -114,8 +114,10 @@ class TicketValidationTest < ActionView::TestCase
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
-    assert errors.include?('Due by incompatible_field')
-    assert errors.include?('Fr due by incompatible_field')
+    assert errors.include?('Due by cannot_set_due_by_fields')
+    assert errors.include?('Fr due by cannot_set_due_by_fields')
+    assert_equal({ status: {}, requester_id: {}, description: {}, fr_due_by: { value: "\"\"", code: :incompatible_field },
+                   due_by: { value: "\"\"", code: :incompatible_field } }, ticket.error_options)
     Account.unstub(:current)
   end
 

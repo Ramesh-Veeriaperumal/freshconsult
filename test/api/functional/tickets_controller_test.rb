@@ -360,10 +360,11 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_closed_with_nil_fr_due_by_with_due_by
-    params = ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: 12.days.since.iso8601)
+    time = 12.days.since.iso8601
+    params = ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: time)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, value: time.inspect, code: :incompatible_field)])
   end
 
   def test_create_with_nil_fr_due_by_with_due_by
@@ -1044,10 +1045,11 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_closed_with_nil_fr_due_by_with_due_by
     t = ticket
-    params = update_ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: 12.days.since.iso8601)
+    time = 12.days.since.iso8601
+    params = update_ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: time)
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, value: time.inspect, code: :incompatible_field)])
   end
 
   def test_update_with_nil_fr_due_by_with_due_by
@@ -1491,36 +1493,42 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_status_resolved_and_due_by
     t = ticket
-    params_hash = { status: 4, due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601 }
+    time1 = 12.days.since.iso8601
+    time2 = 4.days.since.iso8601
+    params_hash = { status: 4, due_by: time1, fr_due_by: time2 }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :incompatible_field),
-                bad_request_error_pattern('fr_due_by', :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, value: time1.inspect, code: :incompatible_field),
+                bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, value: time2.inspect, code: :incompatible_field)])
   end
 
   def test_update_with_status_resolved_and_only_due_by
     t = ticket
-    params_hash = { status: 4, due_by: 12.days.since.iso8601 }
+    time = 12.days.since.iso8601
+    params_hash = { status: 4, due_by: time }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, value: time.inspect, code: :incompatible_field)])
   end
 
   def test_update_with_status_closed_and_only_fr_due_by
     t = ticket
-    params_hash = { status: 5, fr_due_by: 4.days.since.iso8601 }
+    time = 4.days.since.iso8601
+    params_hash = { status: 5, fr_due_by: time }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('fr_due_by', :incompatible_field)])
+    match_json([bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, value: time.inspect, code: :incompatible_field)])
   end
 
   def test_update_with_status_closed_and_due_by
     t = ticket
-    params_hash = { status: 5, due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601 }
+    time1 = 12.days.since.iso8601
+    time2 = 4.days.since.iso8601
+    params_hash = { status: 5, due_by: time1, fr_due_by: time2 }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :incompatible_field),
-                bad_request_error_pattern('fr_due_by', :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, value: time1.inspect, code: :incompatible_field),
+                bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, value: time2.inspect, code: :incompatible_field)])
   end
 
   def test_update_numericality_invalid

@@ -80,7 +80,7 @@ module ApiDiscussions
       post.topic.update_column(:stamp_type, nil)
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
       assert_response 400
-      match_json([bad_request_error_pattern('answer', :incompatible_field)])
+      match_json([bad_request_error_pattern('answer', :cannot_set_answer, value: 'true', code: :incompatible_field)])
       post.topic.update_column(:stamp_type, 6)
     end
 

@@ -422,11 +422,12 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_create_start_time_and_timer_not_running
-    post :create, construct_params({ id: ticket.display_id }, { start_time: (Time.zone.now - 10.minutes).as_json,
+    time = (Time.zone.now - 10.minutes).as_json
+    post :create, construct_params({ id: ticket.display_id }, { start_time: time,
                                                                 timer_running: false }.merge(params_hash))
     assert_response 400
     match_json [bad_request_error_pattern('start_time',
-                                          :timer_running_false)]
+                                          :timer_running_false, value: time.inspect)]
   end
 
   def test_create_with_no_params
@@ -662,7 +663,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   note: 'test note', billable: true, agent_id: @agent.id)
     assert_response 400
     match_json([bad_request_error_pattern('timer_running', :timer_running_duplicate),
-                bad_request_error_pattern('start_time', :timer_running_false)])
+                bad_request_error_pattern('start_time', :timer_running_false, value: start_time.inspect)])
   end
 
   def test_update_timer_running_true_again
@@ -674,7 +675,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   note: 'test note', billable: true, agent_id: @agent.id)
     assert_response 400
     match_json([bad_request_error_pattern('timer_running', :timer_running_duplicate),
-                bad_request_error_pattern('start_time', :timer_running_true)])
+                bad_request_error_pattern('start_time', :timer_running_true, value: start_time.inspect, code: :incompatible_field)])
   end
 
   def test_update_agent_id_when_timer_running
@@ -684,7 +685,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id },  time_spent: '09:00', executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: user.id)
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', :cant_update_user)])
+    match_json([bad_request_error_pattern('agent_id', :cant_update_user, value: user.id.to_s, code: :incompatible_field)])
   end
 
   def test_update_agent_id_when_timer_not_running
@@ -759,7 +760,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '01:00', timer_running: false,
                                                  executed_at: executed_at, note: 'test note', billable: true, agent_id: user.id)
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', :cant_update_user)])
+    match_json([bad_request_error_pattern('agent_id', :cant_update_user, value: user.id.to_s, code: :incompatible_field)])
   end
 
   def test_update_timer_running_false_for_all_other_timers_while_creating_time_entry
@@ -797,7 +798,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time,
                                                  executed_at: executed_at, note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', :timer_running_true)])
+    match_json([bad_request_error_pattern('start_time', :timer_running_true, value: start_time.inspect, code: :incompatible_field)])
   end
 
   def test_update_start_time_when_timer_is_not_running
@@ -807,7 +808,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time,
                                                  executed_at: executed_at, note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', :timer_running_false)])
+    match_json([bad_request_error_pattern('start_time', :timer_running_false, value: start_time.inspect)])
   end
 
   def test_update_start_time_when_timer_running_is_set_to_true
@@ -831,7 +832,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time, timer_running: false,
                                                  executed_at: executed_at, note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', :timer_running_true)])
+    match_json([bad_request_error_pattern('start_time', :timer_running_true, value: start_time.inspect, code: :incompatible_field)])
   end
 
   def test_update_with_timer_running_true_valid

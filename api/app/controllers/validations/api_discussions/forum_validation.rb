@@ -7,9 +7,9 @@ module ApiDiscussions
     validates :forum_visibility, custom_inclusion: { in: DiscussionConstants::FORUM_VISIBILITY, detect_type: true, required: true }
 
     # Forum type can't be updated if the forum has any topics. Can be updated only if no topics found for forum.
-    validates :forum_type, custom_absence: { allow_nil: false, message: :incompatible_field }, if: -> { @topics_count.to_i > 0 && @forum_type_set }
+    validates :forum_type, custom_absence: { allow_nil: false, message: :cannot_set_forum_type }, if: -> { @topics_count.to_i > 0 }
     validates :forum_type, custom_inclusion: { in: DiscussionConstants::FORUM_TYPE, detect_type: true, required: true }, if: -> { @topics_count.to_i == 0 }
-    validates :company_ids, custom_absence: { allow_nil: false, message: :incompatible_field }, if: :company_ids_not_allowed?
+    validates :company_ids, custom_absence: { allow_nil: false, message: :cannot_set_company_ids }, if: :company_ids_not_allowed?
     # company_ids should be nil if forum has visibility other than 4.
     validates :company_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, custom_message: :invalid_integer } }, if: :company_ids_allowed?
     validates :description, data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }

@@ -15,13 +15,15 @@ class TimeEntryValidationTest < ActionView::TestCase
   def test_start_time_timer_not_running
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
-    controller_params = { 'timer_running' => false, 'start_time' => Time.zone.now.to_s }
+    time = Time.zone.now.to_s
+    controller_params = { 'timer_running' => false, 'start_time' => time }
     item = nil
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?
     error = time_entry.errors.full_messages
     assert error.include?('Start time timer_running_false')
     refute error.include?('User is not a number')
+    assert_equal({ timer_running: {}, start_time: { value: time.inspect, code: :incompatible_field } }, time_entry.error_options)
     Account.unstub(:current)
   end
 
@@ -93,6 +95,8 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
     assert error.include?('Agent cant_update_user')
+    assert_equal({ billable: {}, timer_running: {}, start_time: { value: "\"23/12/2001\"", code: :incompatible_field },
+                   agent_id: { value: "\"89\"", code: :incompatible_field } }, time_entry.error_options)
     Account.unstub(:current)
   end
 
@@ -105,6 +109,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
     assert error.include?('Agent cant_update_user')
+    assert_equal({ billable: {},  timer_running: {}, agent_id: { value: 'nil', code: :incompatible_field } }, time_entry.error_options)
     Account.unstub(:current)
   end
 

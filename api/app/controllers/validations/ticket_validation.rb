@@ -25,8 +25,8 @@ class TicketValidation < ApiValidation
 
   # Due by and First response due by validations
   # Both should not be present in params if status is closed or resolved
-  validates :fr_due_by, custom_absence: { allow_nil: true, message: :incompatible_field }, if: :disallow_fr_due_by?
-  validates :due_by, custom_absence: { allow_nil: true, message: :incompatible_field }, if: :disallow_due_by?
+  validates :fr_due_by, custom_absence: { allow_nil: true, message: :cannot_set_due_by_fields }, if: :disallow_fr_due_by?
+  validates :due_by, custom_absence: { allow_nil: true, message: :cannot_set_due_by_fields }, if: :disallow_due_by?
   # Either both should be present or both should be absent, cannot send one of them in params.
   validates :due_by, required: { message: :due_by_validation }, if: -> { fr_due_by && errors[:fr_due_by].blank? }
   validates :fr_due_by, required: { message: :fr_due_by_validation }, if: -> { due_by && errors[:due_by].blank? }

@@ -1,7 +1,7 @@
 module ApiDiscussions
   class ApiCommentValidation < ApiValidation
     attr_accessor :body_html, :answer
-    validates :answer, custom_absence: { allow_nil: false, message: :incompatible_field }, if: -> { @answer_set && DiscussionConstants::QUESTION_STAMPS.exclude?(@stamp_type) }, on: :update
+    validates :answer, custom_absence: { allow_nil: false, message: :cannot_set_answer }, if: -> { DiscussionConstants::QUESTION_STAMPS.exclude?(@stamp_type) }, on: :update
     validates :answer, data_type: { rules: 'Boolean' }, on: :update
     validates :body_html, data_type: { rules: String, required: true }
 

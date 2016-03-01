@@ -12,6 +12,7 @@ class CustomAbsenceValidatorTest < ActionView::TestCase
   def test_attribute_defined
     test = TestValidation.new
     test.name = 'hjhj'
+    test.instance_variable_set(:@name_set, true)
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ name: :present }, errors)
@@ -33,6 +34,7 @@ class CustomAbsenceValidatorTest < ActionView::TestCase
   def test_disallow_nil
     test = TestValidation.new
     test.name = nil
+    test.instance_variable_set(:@name_set, true)
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ name: :present }, errors)
@@ -41,6 +43,7 @@ class CustomAbsenceValidatorTest < ActionView::TestCase
   def test_custom_message
     test = TestValidation.new
     test.id = 'nnn'
+    test.instance_variable_set(:@id_set, true)
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ id: :required_and_numericality }, errors)

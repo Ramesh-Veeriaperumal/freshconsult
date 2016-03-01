@@ -103,7 +103,9 @@ class ForumValidationTest < ActionView::TestCase
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
-    assert_equal ['Forum type incompatible_field'], forum.errors.full_messages
+    assert_equal ['Forum type cannot_set_forum_type'], forum.errors.full_messages
+    assert_equal({ name: {}, forum_category_id: {}, forum_visibility: {},
+                   forum_type: { value: 'nil', code: :incompatible_field } }, forum.error_options)
   end
 
   def test_company_ids_invalid
@@ -112,21 +114,27 @@ class ForumValidationTest < ActionView::TestCase
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
-    assert_equal ['Company ids incompatible_field'], forum.errors.full_messages
+    assert_equal ['Company ids cannot_set_company_ids'], forum.errors.full_messages
+    assert_equal({ name: {}, forum_category_id: {}, forum_visibility: {},
+                   company_ids: { value: 'nil', code: :incompatible_field } }, forum.error_options)
 
     controller_params = { company_ids: 'test' }
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
-    assert_equal ['Company ids incompatible_field'], forum.errors.full_messages
+    assert_equal ['Company ids cannot_set_company_ids'], forum.errors.full_messages
+    assert_equal({ name: {}, forum_category_id: {}, forum_visibility: {},
+                   company_ids: { value: "\"test\"", code: :incompatible_field } }, forum.error_options)
 
     controller_params = { company_ids: ['test'] }
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
-    assert_equal ['Company ids incompatible_field'], forum.errors.full_messages
+    assert_equal ['Company ids cannot_set_company_ids'], forum.errors.full_messages
+    assert_equal({ name: {}, forum_category_id: {}, forum_visibility: {},
+                   company_ids: { value: "[\"test\"]", code: :incompatible_field } }, forum.error_options)
   end
 
   def test_company_ids_data_type_mismatch
