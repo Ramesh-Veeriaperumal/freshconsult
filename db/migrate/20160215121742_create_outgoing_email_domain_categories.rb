@@ -1,4 +1,4 @@
-class CreateOutgoingEmailDomainCategoriesTable < ActiveRecord::Migration
+class CreateOutgoingEmailDomainCategories < ActiveRecord::Migration
   shard :all
 
   def up
