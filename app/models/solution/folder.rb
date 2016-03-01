@@ -157,6 +157,10 @@ class Solution::Folder < ActiveRecord::Base
     return true
   end
 
+  def to_param
+    parent_id
+  end
+
   private
 
     def populate_account

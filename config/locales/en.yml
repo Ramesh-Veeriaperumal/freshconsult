@@ -2537,36 +2537,69 @@ en:
       new_article:
         short: "{{user_path}} created a new article"
         long: "{{user_path}} created a new article '{{notable_path}}'"
+      new_article_translation:
+        short: "{{user_path}} created a new article translation in {{language_name}}"
+        long: "{{user_path}} created a new article translation in {{language_name}} '{{notable_path}}'"
       published_article:
-        short: "{{user_path}}'s article has been published"
+        short: "{{user_path}} published an article"
         long: "{{user_path}} published an article '{{notable_path}}'"
+      published_article_translation:
+        short: "{{user_path}} published an article translation in {{language_name}}"
+        long: "{{user_path}} published an article translation in {{language_name}} '{{notable_path}}'"
       unpublished_article:
-        short: "{{user_path}}'s article has been unpublished"
-        long: "{{user_path}}' unpublished an article '{{notable_path}}'"
+        short: "{{user_path}} unpublished an article"
+        long: "{{user_path}} unpublished an article '{{notable_path}}'"
+      unpublished_article_translation:
+        short: "{{user_path}} unpublished an article translation in {{language_name}}"
+        long: "{{user_path}} unpublished an article translation in {{language_name}} '{{notable_path}}'"
       delete_article:
         short: "{{user_path}} has deleted an article"
         long: "{{user_path}} has deleted an article '{{notable_path}}'"
+      delete_article_translation:
+        short: "{{user_path}} has deleted an article translation in {{language_name}}"
+        long: "{{user_path}} has deleted an article translation in {{language_name}} '{{notable_path}}'"
       new_solution_category:
         short: "{{user_path}} created a new solution category"
         long: "{{user_path}} created a new solution category '{{notable_path}}'"
+      new_solution_category_translation:
+        short: "{{user_path}} created a new solution category translation in {{language_name}}"
+        long: "{{user_path}} created a new solution category translation in {{language_name}} '{{notable_path}}'"
       delete_solution_category:
         short: "{{user_path}} has deleted a solution category"
-        long: "{{user_path}} has deleted the solution category '{{notable_path}}'"
+        long: "{{user_path}} has deleted a solution category '{{notable_path}}'"
+      delete_solution_category_translation:
+        short: "{{user_path}} has deleted a solution category translation in {{language_name}}"
+        long: "{{user_path}} has deleted a solution category translation in {{language_name}} '{{notable_path}}'"
       new_folder:
         short: "{{user_path}} created a new folder"
         long: "{{user_path}} created a new folder '{{notable_path}}'"
+      new_folder_translation:
+        short: "{{user_path}} created a new folder translation in {{language_name}}"
+        long: "{{user_path}} created a new folder translation in {{language_name}} '{{notable_path}}'"
       delete_folder:
         short: "{{user_path}} has deleted a folder"
-        long: "{{user_path}} has deleted the folder '{{notable_path}}'"
+        long: "{{user_path}} has deleted a folder '{{notable_path}}'"
+      delete_folder_translation:
+        short: "{{user_path}} has deleted a folder translation in {{language_name}}"
+        long: "{{user_path}} has deleted a folder translation in {{language_name}} '{{notable_path}}'"
       new_draft:
         short: "{{user_path}} created a draft for an article"
-        long: "{{user_path}} created a draft for article '{{notable_path}}'"
+        long: "{{user_path}} created a draft for an article '{{notable_path}}'"
+      new_draft_translation:
+        short: "{{user_path}} created a draft for an article translation in {{language_name}}"
+        long: "{{user_path}} created a draft for an article translation in {{language_name}} '{{notable_path}}'"
       published_draft:
         short: "{{user_path}} published the draft of an article"
-        long: "{{user_path}} published the draft of article '{{notable_path}}'"
+        long: "{{user_path}} published the draft of an article '{{notable_path}}'"
+      published_draft_translation:  
+        short: "{{user_path}} published the draft of an article translation in {{language_name}}"
+        long: "{{user_path}} published the draft of an article translation in {{language_name}} '{{notable_path}}'"
       delete_draft:
         short: "{{user_path}} has discarded the draft of an article"
-        long: "{{user_path}} has discarded the draft of article '{{notable_path}}'"
+        long: "{{user_path}} has discarded the draft of an article '{{notable_path}}'"
+      delete_draft_translation:
+        short: "{{user_path}} has discarded the draft of an article translation"
+        long: "{{user_path}} has discarded the draft of an article translation in {{language_name}} '{{notable_path}}'"
     forums:
       new_forum_category:
         short: "{{user_path}} created a new forum category"

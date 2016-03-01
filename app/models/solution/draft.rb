@@ -170,18 +170,22 @@ class Solution::Draft < ActiveRecord::Base
     end
 
     def create_activity(type)
+      type << "_translation" if article.translation_activity?
+      path = Rails.application.routes.url_helpers.solution_article_path(article)
+      path << "/#{article.url_locale}" if article.translation_activity?
       article.activities.create(
         :description => "activities.solutions.#{type}.long",
         :short_descr => "activities.solutions.#{type}.short",
         :account    => account,
         :user       => User.current,
         :activity_data  => {
-                    :path => Rails.application.routes.url_helpers.solution_article_path(article_id),
+                    :path => path,
                     :url_params => {
                               :id => article_id,
                               :path_generator => 'solution_article_path'
                             },
-                    :title => article.to_s
+                    :title => article.to_s,
+                    'eval_args' => (article.translation_activity? ? { 'language_name' => ['language_name', article.language_id] } : nil)
                   }
       )
     end

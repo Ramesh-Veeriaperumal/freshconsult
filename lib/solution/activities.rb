@@ -13,6 +13,10 @@ module Solution::Activities
     !(!Account.current.multilingual? && self.language_id != Language.for_current_account.id)
   end
 
+  def translation_activity?
+    Account.current.multilingual? && self.language_id != Language.for_current_account.id
+  end
+
   def add_activity_delete
     create_activity("delete_#{class_short_name == 'category' ? 'solution_' : ''}#{class_short_name}")
   end
@@ -21,20 +25,27 @@ module Solution::Activities
     create_activity("new_#{class_short_name == 'category' ? 'solution_' : ''}#{class_short_name}")
   end
 
+  def url_locale
+    self.language.code
+  end
+
   def create_activity(type)
-    path = "solution_#{class_short_name}_path"
+    type << "_translation" if translation_activity?
+    path = Rails.application.routes.url_helpers.send("solution_#{class_short_name}_path", self)
+    path << "/#{url_locale}" if translation_activity? && class_short_name == 'article'
     self.activities.create(
       :description => "activities.solutions.#{type}.long",
       :short_descr => "activities.solutions.#{type}.short",
       :account => self.account,
       :user => User.current,
       :activity_data => {
-        :path => Rails.application.routes.url_helpers.send("#{path}", self.id),
+        :path => path,
         :url_params => {
-            :id => self.id,
-            :path_generator => path
-          },
-        :title => self.to_s
+          :id => self.id,
+          :path_generator => path
+        },
+        :title => self.to_s,
+        'eval_args' => (translation_activity? ? { 'language_name' => ['language_name', self.language_id] } : nil)
       }
     )
   end

@@ -68,6 +68,10 @@ class Solution::Category < ActiveRecord::Base
   def available?
     present?
   end
+
+  def to_param
+    parent_id
+  end
    
   private
   

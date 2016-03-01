@@ -170,7 +170,7 @@ describe Solution::Draft do
       @draft.discarding = true
       @draft.destroy
       @article_published.activities.last.description.should eql 'activities.solutions.delete_draft.long'
-      @article_published.activities.last.activity_data[:path].should eql Rails.application.routes.url_helpers.solution_article_path(@draft.article.id)
+      @article_published.activities.last.activity_data[:path].should eql Rails.application.routes.url_helpers.solution_article_path(@draft.article)
     end
     
     it "should create activity with the correct title in activity data" do
@@ -199,6 +199,101 @@ describe Solution::Draft do
       @draft.discarding = true
       @draft.destroy
       @article_published.activities.size.should eql 3
+    end
+  end
+
+  describe "Activities for Solution Draft translations" do
+
+    before(:all) do
+      enable_multilingual
+      @account.make_current
+      @category_meta = create_category
+      @folder_meta = create_folder({:visibility => 1, :category_id => @category_meta.id})
+      @article_lang_ver = @account.supported_languages_objects.first.to_key
+    end
+
+    before(:each) do
+      params = create_solution_article_alone(solution_default_params(:article, :title).merge({
+                :folder_id => @folder_meta.id,
+                :status => "2",
+                :lang_codes => [@article_lang_ver] + [:primary]
+               }))
+      @article_meta = Solution::Builder.article(params)
+      @article_translation = @article_meta.send("#{@article_lang_ver}_article")
+      @article_translation.create_draft_from_article({:title => "Draft for article #{Faker::Name.name}", :description => "Desc 1 : #{Faker::Lorem.sentence(4)}"})
+      @draft_translation = @article_translation.draft
+    end
+
+    it "should create activity when article translation-draft is created" do
+      @article_translation.activities.last.description.should eql 'activities.solutions.new_draft_translation.long'
+      @article_translation.activities.last.updated_at.to_date.should eql Time.now.to_date
+    end
+
+    it "should create activity when an article translation-draft is published" do
+      @draft_translation.publish!
+      @article_translation.reload
+      @article_translation.activities.last.description.should eql 'activities.solutions.published_draft_translation.long'
+      @article_translation.activities.last.updated_at.to_date.should eql Time.now.to_date
+    end
+
+    it "should create activity when an article translation-draft is deleted" do
+      @draft_translation.discarding = true
+      @draft_translation.destroy
+      @article_translation.activities.last.description.should eql 'activities.solutions.delete_draft_translation.long'
+      @article_translation.activities.last.updated_at.to_date.should eql Time.now.to_date
+    end
+
+    it "should not create a delete_draft activity when an article-draft is published" do
+      @draft_translation.publish!
+      @article_translation.reload
+      @article_translation.activities.select{|a| a["description"] == 'activities.solutions.delete_draft_translation.long'}.should eql []
+    end
+
+    it "should not create delete_draft activity when an article with an article-draft is deleted" do
+      @article_translation.destroy
+      @article_translation.activities.select{|a| a["description"] == 'activities.solutions.delete_draft_translation.long'}.should eql []
+    end
+
+    it "should create activity of Solution::Draft notable type" do
+      @draft_translation.discarding = true
+      @draft_translation.destroy
+      @article_translation.activities.last.notable_type.should eql 'Solution::Article'
+    end
+
+    it "should create activity with the correct path in activity data" do
+      url_locale = @article_translation.language.code
+      @draft_translation.discarding = true
+      @draft_translation.destroy
+      @article_translation.activities.last.description.should eql 'activities.solutions.delete_draft_translation.long'
+      @article_translation.activities.last.activity_data[:path].should eql "#{Rails.application.routes.url_helpers.solution_article_path(@draft_translation.article)}/#{url_locale}"
+    end
+    
+    it "should create activity with the correct title in activity data" do
+      @draft_translation.discarding = true
+      @draft_translation.destroy
+      @article_translation.activities.last.activity_data[:title].should eql @draft_translation.article.title.to_s
+    end
+
+    it "should create activity with the correct description" do
+      @article_translation.activities.last.description.should eql 'activities.solutions.new_draft_translation.long'
+      @draft_translation.discarding = true
+      @draft_translation.destroy
+      @article_translation.activities.last.description.should eql 'activities.solutions.delete_draft_translation.long'
+    end
+
+    it "should create activity with the correct short description" do
+      @article_translation.activities.last.short_descr.should eql 'activities.solutions.new_draft_translation.short'
+      @draft_translation.discarding = true
+      @draft_translation.destroy
+      @article_translation.activities.last.short_descr.should eql 'activities.solutions.delete_draft_translation.short'
+    end
+
+    it "should create only one activity for each action" do
+      #number of activities will be 2 because a draft as well as an article is created in article's name
+      @article_translation.activities.size.should eql 2
+      @draft_translation.discarding = true
+      @draft_translation.destroy
+      @article_translation.activities.size.should eql 3
     end
   end
 end
