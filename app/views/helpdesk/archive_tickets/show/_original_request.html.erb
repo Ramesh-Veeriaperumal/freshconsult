@@ -68,7 +68,7 @@
       <%= content_tag :div, multiple_emails_container(@ticket.ticket_cc, "Cc: ") unless @ticket.cc_email_hash.blank? %>
     </div> 
   </div>
-  <div id="ticket_original_request" class="request_archive_mail">
+  <div rel="image-enlarge" id="ticket_original_request" class="request_archive_mail">
       <%= @ticket.description_html.html_safe %>
   </div>
 
