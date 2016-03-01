@@ -123,9 +123,9 @@ module SolutionHelper
 			when :category
 				{:portal_id => params[:portal_id]} if params[:portal_id].present?
 			when :folder
-				{ :category_id => @category.id } if @category.present?
+				{ :category_id => @category_meta.id } if @category_meta.present?
 			when :article
-				@folder.present? ? ({ :folder_id => @folder.id }) : (@category.present? ? { :category_id => @category.id } : nil)
+				@folder_meta.present? ? ({ :folder_id => @folder_meta.id }) : (@category_meta.present? ? { :category_id => @category_meta.id } : nil)
 		end
 	end
 
