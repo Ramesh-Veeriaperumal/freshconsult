@@ -84,12 +84,13 @@ window.App.Solutions = window.App.Solutions || {};
     bindCreateNew: function () {
       $('#create-new-category, #cancel-create-new').on('click', function (ev) {
         ev.preventDefault();
-        var flag = $(this).attr('id') === "create-new-category"
+        var flag = $(this).attr('id') === "create-new-category";
         $('#solution_folder_meta_solution_category_meta_id').select2("enable", !flag);
         $('#solution_folder_meta_solution_category_meta_id').toggleClass('hide', flag);
         $('#create-category-text').toggleClass('hide', !flag).attr('disabled', !flag);
         $('#cancel-create-new').toggleClass('hide', !flag);
         $('#create-new-category').toggleClass('hide', flag);
+        $('.solution_folder_meta_solution_category_meta').toggleClass('hide', flag);
       });
     },
 

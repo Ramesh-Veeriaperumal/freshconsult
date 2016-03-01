@@ -418,18 +418,17 @@ module SolutionHelper
 	end
 
 	def category_create_new(f)
-		op = "<div class='inline-block'>"
-		op << link_to(t('solution.create_new'), '', :id => 'create-new-category', :class => 'inline-block ml15')
-		op << "<div class='inline-block'>"
+		op = ""
+		op << link_to(t('solution.create_new'), '', :id => 'create-new-category', :class => 'inline-block ml15 mt7')
+		op << %(<div class='inline-block'>)
 		f.fields_for(:solution_category_meta) do |category_fields|
 			op << dynamic_text_box(:category, @language, category_fields, 
 									{ :class => "hide input-large", :disabled => true, :id => 'create-category-text', :primary => true})
 		end
-		op << "</div>"
-		op << "<div class='inline-block'>"
+		op << %(</div>)
+		op << %(<div class='inline-block'>)
 		op << link_to(t('cancel'), '', :id => 'cancel-create-new', :class => 'ml15 hide')
-		op << "</div>"
-		op << "</div>"
+		op << %(</div>)
 		op.html_safe
 	end
 
