@@ -3,7 +3,7 @@ Encoding.default_external = Encoding::UTF_8
 source 'http://rubygems.org'
 
 gem "rake", "~> 10.4.0"
-gem "rails","3.2.22.1"
+gem "rails","3.2.22.2"
 
 gem 'rack-cors', '~> 0.3.1'
 gem "syck", :platform => [:mri_20, :mri_21]
