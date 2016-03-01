@@ -209,7 +209,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     previous_updated_at = ticket.updated_at
     put("/api/conversations/#{note.id}", v2_note_update_payload, @write_headers)
     assert_response 200
-    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
+    assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i > previous_updated_at.to_i
 
     # IN Web
     # previous_updated_at_for_web = ticket.updated_at
@@ -221,7 +221,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     previous_updated_at_for_api_v1 = ticket.updated_at
     put("/helpdesk/tickets/#{ticket.id}/conversations/#{note.id}.json", { helpdesk_note: { body: Faker::Lorem.paragraph } }.to_json, @write_headers)
     assert_response 200
-    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
+    assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i > previous_updated_at_for_api_v1.to_i
   end
 
   def test_updated_at_of_ticket_with_note_destroy
@@ -232,7 +232,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     sleep 1
     delete("/api/conversations/#{note.id}", nil, @headers)
     assert_response 204
-    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
+    assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i > previous_updated_at.to_i
 
     # In Web
     # note = Helpdesk::Note.exclude_source('meta').visible.first
@@ -249,7 +249,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     sleep 1
     delete("/helpdesk/tickets/#{ticket.id}/conversations/#{note.id}.json", nil, @headers)
     assert_response 200
-    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
+    assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i > previous_updated_at_for_api_v1.to_i
   end
 
   def test_cc_emails_notified

@@ -94,7 +94,7 @@ module UsersTestHelper
   end
 
   def v2_contact_params
-    comp  = Company.first || create_company
+    comp  = create_company
     {
       name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10),  phone: '1234567892',
       mobile: '1234567893', description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
