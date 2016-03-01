@@ -27,7 +27,7 @@ describe Solution::FoldersController do
 
   it "should render a show page of a folder" do
     get :show, :id => @test_folder_meta.id
-    response.body.should =~ /#{@test_folder_meta.primary_folder.name}/
+    response.body.should =~ /#{h(@test_folder_meta.primary_folder.name)}/
     response.should render_template("solution/folders/show")
   end
 

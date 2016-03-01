@@ -141,7 +141,6 @@ if Rails.env.test?
     "spec/controllers/support/solutions_controller_spec.rb",
     "spec/controllers/support/folders_controller_spec.rb",
     "spec/lib/language_spec.rb",
-    "spec/lib/solution/meta_association_switcher_spec.rb",
     "spec/lib/solution/cache_spec.rb",
     "spec/lib/solution/builder_spec.rb",
     "spec/lib/solution/binarize_spec.rb",

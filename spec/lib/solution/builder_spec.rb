@@ -12,6 +12,7 @@ RSpec.describe Solution::Builder do
       @initial_lang_list = @account.account_additional_settings.supported_languages
       @account.account_additional_settings.supported_languages = @lang_list
       @account.save
+      @agent.make_current
     end
 
     describe "category" do

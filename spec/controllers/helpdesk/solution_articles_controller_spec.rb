@@ -5,6 +5,7 @@ describe Solution::ArticlesController do
   self.use_transactional_fixtures = false
 
   before(:all) do
+    @initial_user = User.current
     @user = create_dummy_customer
     @user_1 = create_dummy_customer
     @now = (Time.now.to_f*1000).to_i
@@ -18,6 +19,7 @@ describe Solution::ArticlesController do
 
   before(:each) do
     log_in(@agent)
+    @agent.make_current
     stub_s3_writes
   end
 
@@ -462,5 +464,13 @@ describe Solution::ArticlesController do
     response.should redirect_to( 
       Account.current.multilingual? ? solution_article_version_path(item, item.language.code) : solution_article_path(item)
     )
+  end
+
+  after(:all) do
+    if @initial_user
+      @initial_user.make_current
+    else
+      User.current = nil
+    end
   end
 end
