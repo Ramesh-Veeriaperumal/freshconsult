@@ -1,16 +1,4 @@
-<% if Account.current.multilingual? && !Account.current.all_portal_language_objects.include?(@article.language) %>
-	<div class="not-in-portal">
-		<%= t('solution.articles.language_not_in_portal') %> - 
-		<% if privilege?(:admin_tasks) %>
-			<%= pjax_link_to t('solution.articles.add_language', :language_name => @article.language.name), manage_languages_path %>
-		<% else %>
-			<%= t('solution.articles.contact_admin').html_safe %>
-		<% end %>
-	</div>
-<% end %>
-	
 <div class="solution-details">
-
 	<div id="sidebar-prop">
 		<%= render :partial => 'sidebar_properties' %>
 	</div>

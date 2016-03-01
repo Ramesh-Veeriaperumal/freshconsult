@@ -4176,7 +4176,7 @@ en:
       add_primary_info: Create article in your primary language<br/>to select other language translations.
       more_languages: "%{count} more"
       show_all_analytics: See analytics for all languages
-      not_in_portal: Not visible in portal
+      not_in_portal: This language is not visible to users
       language_not_in_portal: "This article will not show up to your users on the portal until the language is enabled"
       add_language: "Add %{language_name}"
       contact_admin: "<b>Contact your admin</b>"
