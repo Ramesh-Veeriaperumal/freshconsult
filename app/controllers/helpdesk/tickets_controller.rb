@@ -25,7 +25,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_compose_feature, :only => :compose_email
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
-  around_filter :run_on_slave, :only => :user_ticket
+  around_filter :run_on_slave, :only => [:user_ticket, :activities]
   before_filter :save_article_filter, :only => :index
   around_filter :run_on_db, :only => [:custom_search, :index, :full_paginate]
 
@@ -236,10 +236,10 @@ class Helpdesk::TicketsController < ApplicationController
         render :new, :layout => "widgets/contacts"
       else
         if verify_permission
-          @ticket_notes = @ticket.conversation
+          @ticket_notes = run_on_slave { @ticket.conversation }
           @ticket_notes = @ticket_notes.take(3) if @ticket_notes.size > 3
           @ticket_notes = @ticket_notes.reverse
-          @ticket_notes_total = @ticket.conversation_count
+          @ticket_notes_total = run_on_slave { @ticket.conversation_count }
           render :layout => "widgets/contacts"
         else
           @no_auth = true
@@ -285,8 +285,8 @@ class Helpdesk::TicketsController < ApplicationController
     respond_to do |format|
       format.html  {
         @ticket_notes       = @ticket_notes.reverse
-        @ticket_notes_total = @ticket.conversation_count
-        last_public_note    = @ticket.notes.visible.last_traffic_cop_note.first
+        @ticket_notes_total = run_on_slave { @ticket.conversation_count }
+        last_public_note    = run_on_slave { @ticket.notes.visible.last_traffic_cop_note.first }
         @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
       }
       format.atom

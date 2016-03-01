@@ -34,3 +34,78 @@ outgoing:
       <<: *defaults
     staging:
       <<: *defaults
+
+category-1:
+    defaults: &defaults
+      address: smtp.sendgrid.net
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: fdstage
+      password: 45533keFi3c924T
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+
+category-2:
+    defaults: &defaults
+      address: smtp.sendgrid.net
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: fdstage
+      password: 45533keFi3c924T
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+
+category-3:
+    defaults: &defaults
+      address: smtp.sendgrid.net
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: fdstage
+      password: 45533keFi3c924T
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+
+category-4:
+    defaults: &defaults
+      address: smtp.sendgrid.net
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: fdstage
+      password: 45533keFi3c924T
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+
+category-5:
+    defaults: &defaults
+      address: smtp.sendgrid.net
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: fdstage
+      password: 45533keFi3c924T
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults

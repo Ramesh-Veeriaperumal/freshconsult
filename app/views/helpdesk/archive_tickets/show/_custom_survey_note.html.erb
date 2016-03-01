@@ -1,4 +1,4 @@
-<div class="details" id='<%= notedetails %>' data-note-id="<%= note.id %>">
+<div rel="image-enlarge" class="details" id='<%= notedetails %>' data-note-id="<%= note.id %>">
   <% unless note.custom_survey_remark.nil? || note.survey_result.nil?%>
     <div class="satisfaction-text"><%=ticket_info[:label]%></div>
   <%end%>

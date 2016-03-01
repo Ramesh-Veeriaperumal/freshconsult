@@ -148,7 +148,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def email_notification(params)
-    ActionMailer::Base.set_mailbox params[:ticket].reply_email_config.smtp_mailbox
+    ActionMailer::Base.set_email_config params[:ticket].reply_email_config
 
     bcc_email = params[:disable_bcc_notification] ? "" : validate_emails(account_bcc_email(params[:ticket]),
                                                                          params[:ticket])
@@ -217,7 +217,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def reply(ticket, note , options={})
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
-    ActionMailer::Base.set_mailbox email_config.smtp_mailbox
+    ActionMailer::Base.set_email_config email_config
 
     to_emails = validate_emails(note.to_emails, note)
     bcc_emails = validate_emails(note.bcc_emails, note)
@@ -270,7 +270,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def forward(ticket, note, options={})
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
-    ActionMailer::Base.set_mailbox email_config.smtp_mailbox
+    ActionMailer::Base.set_email_config email_config
 
     to_emails = validate_emails(note.to_emails - [note.account.kbase_email], note)
     from_email = validate_emails(note.from_email, note)
@@ -315,7 +315,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def reply_to_forward(ticket, note, options={})
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
-    ActionMailer::Base.set_mailbox email_config.smtp_mailbox
+    ActionMailer::Base.set_email_config email_config
 
     to_emails = validate_emails(note.to_emails, note)
     from_email = validate_emails(note.from_email, note)
@@ -359,7 +359,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def email_to_requester(ticket, content, sub=nil)
-    ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
+    ActionMailer::Base.set_email_config ticket.reply_email_config
 
     headers   = email_headers(ticket, nil).merge({
       :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
@@ -387,7 +387,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def internal_email(ticket, receips, content, sub=nil)
-    ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
+    ActionMailer::Base.set_email_config ticket.reply_email_config
 
     headers = email_headers(ticket, nil).merge({
       :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
@@ -415,7 +415,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def notify_outbound_email(ticket)
-    ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
+    ActionMailer::Base.set_email_config ticket.reply_email_config
 
     from_email = if ticket.account.features?(:personalized_email_replies)
       ticket.friendly_reply_email_personalize(ticket.responder_name)

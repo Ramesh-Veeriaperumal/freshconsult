@@ -122,7 +122,6 @@ end
 														:id => notable_object.display_id, 
 														:note_id => note.id }) %>
 
-      <% unless minimizable %>
         <% if current_account.new_survey_enabled? %>
           <%= render :partial => '/helpdesk/tickets/show/custom_survey_note' , :formats => [:html], :locals => {:note => note , 
                   :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
@@ -130,12 +129,11 @@ end
           <%= render :partial => '/helpdesk/tickets/show/survey_note' , :formats => [:html], :locals => {:note => note , 
                   :notedetails => notedetails} %>
         <%end%>
-      <% end %>
 
       <%= freshfone_audio_dom(note) if current_account.features?(:freshfone) %>
 
       <div id="note_attachments_container_<%= note.id%>">
-        <%= render :partial => "/helpdesk/tickets/show/note_attachments", :formats => [:html], :locals => { :note => note } unless minimizable %>
+        <%= render :partial => "/helpdesk/tickets/show/note_attachments", :formats => [:html], :locals => { :note => note } %>
       </div>
     </div>
 

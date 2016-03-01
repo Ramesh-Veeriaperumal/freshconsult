@@ -10,6 +10,7 @@ module Concerns::ApplicationConcern
     payload[:url] = request.url
     payload[:server_ip] = request.env['SERVER_ADDR']
     payload[:account_id] = Account.current ? Account.current.id : ""
+    payload[:shard_name] = Thread.current[:shard_name_payload]
   end
 
   def day_pass_expired_json

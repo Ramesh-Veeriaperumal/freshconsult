@@ -197,14 +197,14 @@ private
 
   def resolved_at_dirty_fix
     return nil if tickets.active?
-    self.update_attribute(:resolved_at , updated_at)
+    Sharding.run_on_master { self.update_attribute(:resolved_at , updated_at) }
     NewRelic::Agent.notice_error(Exception.new("resolved_at is nil. Ticket state id is #{id}"))
     resolved_at
   end
 
   def closed_at_dirty_fix
     return nil if tickets.active?
-    self.update_attribute(:closed_at, updated_at)
+    Sharding.run_on_master { self.update_attribute(:closed_at, updated_at) }
     NewRelic::Agent.notice_error(Exception.new("closed_at is nil. Ticket state id is #{id}"))
     closed_at
   end
