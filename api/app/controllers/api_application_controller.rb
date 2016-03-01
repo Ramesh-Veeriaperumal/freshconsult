@@ -565,7 +565,16 @@ class ApiApplicationController < MetalApiController
       # when load_object is not called then the action is a create action,
       # other actions using owned_by permissions is, presently a non-existent and in future also, a rare scenario
       # when user_id parameter is not present in the request, then api_current_user.id will be assigned eventually to the record.
-      item ? privilege?(key, item) : (privilege?(key) || (params[cname] && (params[cname][owned_by_field].nil? || params[cname][owned_by_field] == api_current_user.id)))
+      # # Should have either the privilege or owns the object
+      privilege?(key) || object_of_current_user?(item, owned_by_field)
+    end
+
+    def object_of_current_user?(item, owned_by_field)
+      owner_id_same_as_current_user?(owned_by_field) && (item.nil? || api_current_user.owns_object?(item))
+    end
+
+    def owner_id_same_as_current_user?(owned_by_field)
+      params[cname].try(:[], owned_by_field).nil? || params[cname][owned_by_field] == api_current_user.id
     end
 
     def update?

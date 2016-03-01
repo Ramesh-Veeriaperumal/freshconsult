@@ -1238,4 +1238,29 @@ class TimeEntriesControllerTest < ActionController::TestCase
       match_json([bad_request_error_pattern('time_spent', :data_type_mismatch, { data_type: 'String' })])
     end
   end
+
+  def test_update_time_entry_with_other_agent_id_and_no_access
+    te = create_time_entry(timer_running: false)
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+    User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(true)
+    User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false)
+    put :update, construct_params({ id: te.id }, {agent_id: other_agent.id})
+    assert_response 400
+    match_json([bad_request_error_pattern('agent_id', :inaccessible_field)])
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_update_time_entry_with_and_no_access
+    ts = sample_time_entry
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+    User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(true)
+    User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false)
+    put :update, construct_params({ id: ts.id }, {billable: true})
+    assert_response 200
+    match_json time_entry_pattern(ts.reload)
+    match_json time_entry_pattern({billable: true}, ts.reload)
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
 end

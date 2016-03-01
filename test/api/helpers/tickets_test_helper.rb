@@ -84,7 +84,7 @@ module TicketsTestHelper
   end
 
   def v2_ticket_update_payload
-    v2_ticket_params.except(:due_by, :fr_due_by, :cc_emails).to_json
+    v2_ticket_params.except(:due_by, :fr_due_by, :cc_emails, :email).to_json
   end
 
   # private

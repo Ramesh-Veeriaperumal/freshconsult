@@ -15,14 +15,14 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       v1 = {}
       v2_expected = {
         api_create: 3,
-        api_update: 5,
+        api_update: 4,
         api_show: 5,
         api_index: 2,
         api_destroy: 6,
         api_make_agent: 4,
 
         create: 37,
-        update: 38,
+        update: 36,
         show: 18,
         index: 18,
         destroy: 22,
