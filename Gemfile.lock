@@ -200,7 +200,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/xeroizer.git
-  revision: 9cd6b1091ab9230373a36b027746064fafcaa5a5
+  revision: 576818be639084010bcba03f0e7ec523a79e1211
   specs:
     xeroizer (2.15.9)
       activesupport
