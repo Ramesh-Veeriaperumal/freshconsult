@@ -14,10 +14,10 @@ module SolutionHelper
 		else
 			case page
 				when :category
-					_output << truncate(h(@category.name), :length => 120)
+					_output << truncate(h(@category_meta.name), :length => 120)
 				when :folder
-					_output << category_link(@folder, page)
-					_output << truncate(h(@folder.name), :length => 50)
+					_output << category_link(@folder_meta, page)
+					_output << truncate(h(@folder_meta.name), :length => 50)
 				when :article
 					_output << category_link(@article_meta.solution_folder_meta, page)
 					_output << folder_link(@article_meta.solution_folder_meta)
@@ -34,16 +34,16 @@ module SolutionHelper
 	def search_placeholder(page)
 		case page
 			when :category
-				t('solution.articles.search_in', :search_scope => @category.name)
+				t('solution.articles.search_in', :search_scope => @category_meta.name)
 			when :folder
-				t('solution.articles.search_in', :search_scope => @folder.name)
+				t('solution.articles.search_in', :search_scope => @folder_meta.name)
 			else
 				t('solution.articles.search_all')
 		end
 	end
 
 	def default_category?
-		((@category || (@folder.respond_to?(:solution_category_meta) ? @folder.solution_category_meta : (@article.folder.present? ? @article.folder.category : {}))) || {})[:is_default]
+		((@category_meta || (@folder.respond_to?(:solution_category_meta) ? @folder.solution_category_meta : (@article.folder.present? ? @article.folder.category : {}))) || {})[:is_default]
 	end
 
 	def folder_link folder

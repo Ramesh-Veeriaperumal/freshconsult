@@ -36,13 +36,13 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def show
-    @page_title = @category.name
+    @page_title = @category_meta.name
     respond_to do |format|
       format.html {
-        redirect_to solution_my_drafts_path('all') if @category.is_default?
+        redirect_to solution_my_drafts_path('all') if @category_meta.is_default?
       }
-      format.xml {  render :xml => @category.to_xml(:include => folder_scope) }
-      format.json  { render :json => @category.to_json(:include => folder_scope) }
+      format.xml {  render :xml => @category_meta.to_xml(:include => folder_scope) }
+      format.json  { render :json => @category_meta.to_json(:include => folder_scope) }
     end
   end
   
@@ -187,7 +187,7 @@ class Solution::CategoriesController < ApplicationController
     end
 
     def load_category_with_folders
-      @category = meta_scoper.includes(:solution_folder_meta).find_by_id!(params[:id])
+      @category_meta = meta_scoper.includes(:solution_folder_meta).find_by_id!(params[:id])
     end
 
     def set_modal

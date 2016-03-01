@@ -2,21 +2,21 @@
 <% content_for :sticky_title do %>
   <%= render :partial => 'title_bar' %>
   <div class="bulk-actions-bar">
-    <%= render :partial => 'edit_bar' if privilege?(:publish_solution) && @folder.solution_article_meta.present? %>
+    <%= render :partial => 'edit_bar' if privilege?(:publish_solution) && @folder_meta.solution_article_meta.present? %>
   </div>
 <% end %>
 <% content_for :sticky_right do %>
-  <%= preview_portal(support_solutions_folder_path(@folder, path_url_locale), @folder.solution_category_meta) %>
+  <%= preview_portal(support_solutions_folder_path(@folder_meta, path_url_locale), @folder_meta.solution_category_meta) %>
 <% end %>
 <%= render :partial => '/solution/shared/sticky', :locals => { :page => :folder, :sticky_class => "sol-sticky category-sticky",
-                      :search_url => "/search/solutions?folder_id=#{@folder.id}&term="} %>
+                      :search_url => "/search/solutions?folder_id=#{@folder_meta.id}&term="} %>
 
-<% if @folder.solution_article_meta.blank? %>
+<% if @folder_meta.solution_article_meta.blank? %>
   <div class="no-data">
     <%= t('solution.no_articles_info') %>
     <div class="mt20">
       <% if privilege?(:publish_solution) %>
-        <%= pjax_link_to(t('solution.add_article'), new_solution_article_path(:folder_id => @folder.id), :class => "btn btn-primary") %>
+        <%= pjax_link_to(t('solution.add_article'), new_solution_article_path(:folder_id => @folder_meta.id), :class => "btn btn-primary") %>
       <% end %>
     </div>
   </div>
@@ -24,12 +24,12 @@
 <% else %>
   <%= render :partial => '/solution/shared/search_container' %>
   <div class="comm-items solution-list" id="solution_sort" data-menu-hover-in='div.comm-item'>
-    <%= form_for @folder.solution_article_meta, :url => reorder_solution_articles_path(:folder_id => @folder.id), :html => { :method => :put, :class => "form-reorder" } do |f| %>
+    <%= form_for @folder_meta.solution_article_meta, :url => reorder_solution_articles_path(:folder_id => @folder_meta.id), :html => { :method => :put, :class => "form-reorder" } do |f| %>
       <input name="reorderlist" type="hidden" value="" />
-      <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @folder.solution_category_meta.id %>" />
-      <input name="folder_id" id="reorder_folder_id" type="hidden" value="<%= @folder.id %>" />
+      <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @folder_meta.solution_category_meta.id %>" />
+      <input name="folder_id" id="reorder_folder_id" type="hidden" value="<%= @folder_meta.id %>" />
       <ul class="row-fluid" rel="sortlist" id="articles_list">
-        <%= render(:partial => "article", :collection => @folder.solution_article_meta.includes(:primary_article => [:draft, :user, :recent_author])) %>
+        <%= render(:partial => "article", :collection => @folder_meta.solution_article_meta.includes(:primary_article => [:draft, :user, :recent_author])) %>
       </ul>
     <% end %>
   </div>

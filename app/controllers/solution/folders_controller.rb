@@ -23,14 +23,13 @@ class Solution::FoldersController < ApplicationController
   end
 
   def show
-    @folder = current_account.solution_folder_meta.find(params[:id])
-    @page_title = @folder.name
+    @page_title = @folder_meta.name
     respond_to do |format|
       format.html {
-        redirect_to solution_my_drafts_path('all') if @folder.is_default?
+        redirect_to solution_my_drafts_path('all') if @folder_meta.is_default?
       }
-      format.xml  { render :xml => @folder.to_xml(:include => [:articles]) }
-      format.json { render :json => @folder.as_json(:include => [:articles]) }
+      format.xml  { render :xml => @folder_meta.to_xml(:include => [:articles]) }
+      format.json { render :json => @folder_meta.as_json(:include => [:articles]) }
     end
   end
   

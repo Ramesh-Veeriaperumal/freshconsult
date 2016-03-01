@@ -2,35 +2,35 @@
 <% content_for :sticky_title do %>
 	<%= render :partial => 'title_bar' %>
 	<div class="bulk-actions-bar">
-		<%= render :partial => 'edit_bar' if privilege?(:manage_solutions) && @category.solution_folder_meta.present? %>
+		<%= render :partial => 'edit_bar' if privilege?(:manage_solutions) && @category_meta.solution_folder_meta.present? %>
 	</div>
 <% end %>
 <% content_for :sticky_right do %>
-	<%= preview_portal(support_solution_path(@category, path_url_locale), @category) %>
+	<%= preview_portal(support_solution_path(@category_meta, path_url_locale), @category_meta) %>
 <% end %>
 <%= render :partial => '/solution/shared/sticky', :locals => { :page => :category, :sticky_class => "sol-sticky category-sticky",
-												:search_url => "/search/solutions?category_id=#{@category.id}&term=" } %>
+												:search_url => "/search/solutions?category_id=#{@category_meta.id}&term=" } %>
 
 <%= render :partial => '/solution/shared/search_container' %>
 
 <div class="comm-items solution-list" id="solution_sort" data-menu-hover-in='div.comm-item'>
-	<%= form_for :solution_folder_meta, :url => reorder_solution_folders_path(:category_id => @category.id), :html => { :method => :put, :class => "form-reorder" } do |f| %>
+	<%= form_for :solution_folder_meta, :url => reorder_solution_folders_path(:category_id => @category_meta.id), :html => { :method => :put, :class => "form-reorder" } do |f| %>
 	  <input name="reorderlist" type="hidden" value="" />
-	  <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @category.id %>" />
+	  <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @category_meta.id %>" />
 	  <ul class="row-fluid" rel="sortlist" id="folders_list">
-			<%= render(:partial => "folder", :collection => @category.solution_folder_meta.includes([:primary_folder, :customers])) %>
+			<%= render(:partial => "folder", :collection => @category_meta.solution_folder_meta.includes([:primary_folder, :customers])) %>
 		</ul>
 	<% end %>
 </div>
 
-<% if @category.solution_folder_meta.blank? %>
+<% if @category_meta.solution_folder_meta.blank? %>
 	<div class="no-data">
 		<%= t('solution_category.info2') %>
 		<div class="mt20">
 			<% if privilege?(:manage_solutions) %>
 				<%= link_to(
 							t("solution.add_folder"),
-							new_solution_folder_path(:category_id => @category.id),
+							new_solution_folder_path(:category_id => @category_meta.id),
 							:class => "btn btn-primary",
 							:rel => "freshdialog",
 							:title => t("solution.add_folder"),
@@ -44,6 +44,6 @@
 
 <script type="text/javascript">
 	jQuery('body').one('assetLoaded.fjax', function() {
-		App.Solutions.AfterSave.setCurrentObject(<%= @category.id %>);
+		App.Solutions.AfterSave.setCurrentObject(<%= @category_meta.id %>);
 	});
 </script>
