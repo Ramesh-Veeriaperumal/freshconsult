@@ -11,6 +11,7 @@ class Freshfone::UsersController < ApplicationController
 	before_filter :validate_presence_from_node, :only => [:node_presence]
 	before_filter :load_or_build_freshfone_user
 	before_filter :set_native_mobile, :only => [:presence, :in_call, :refresh_token]
+	before_filter :validate_presence, :only => [:presence]
 
 	def presence
 		respond_to do |format|
@@ -178,4 +179,14 @@ class Freshfone::UsersController < ApplicationController
 			@freshfone_user.change_presence_and_preference(status) 
 			render :json => { :status => @freshfone_user.save }
 		end
+
+		def agent_in_call?
+			current_account.freshfone_calls.agent_progress_calls(
+				@freshfone_user.user_id).present?
+		end
+
+		def validate_presence
+			return render json: { update_status: false } if agent_in_call?
+		end
+
 end

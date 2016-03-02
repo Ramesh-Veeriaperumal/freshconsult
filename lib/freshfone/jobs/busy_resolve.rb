@@ -31,7 +31,7 @@ class Freshfone::Jobs::BusyResolve
     end
 
     def self.get_updated_call_status call
-      twilio_call_status = get_twilio_call_status call.call_sid
+      twilio_call_status = get_twilio_call_status(fetch_agent_sid(call))
       call.update_attributes(:call_status => twilio_call_status) unless twilio_call_status.nil? ||
         twilio_call_status == Freshfone::Call::CALL_STATUS_STR_HASH['in-progress']
     end
@@ -87,5 +87,10 @@ class Freshfone::Jobs::BusyResolve
         for account #{@account.id} and user #{@agent_id} => #{e}"
         return nil
       end
+    end
+
+    def self.fetch_agent_sid(call)
+      return (call.is_root? ? call.call_sid : call.dial_call_sid) if call.outgoing?
+      call.dial_call_sid
     end
 end
