@@ -30,6 +30,7 @@ class ApiApplicationController < MetalApiController
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone
   before_filter :force_utf8_params
   before_filter :set_cache_buster
+  before_filter :set_shard_for_payload 
   include AuthenticationSystem
   include HelpdeskSystem
   include SubscriptionSystem

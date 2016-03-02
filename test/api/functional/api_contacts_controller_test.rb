@@ -16,7 +16,10 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def get_company
-    company = Company.first || create_company
+    company = Company.first 
+    return company if company
+    company = Company.create(name: Faker::Name.name, account_id: @account.id)
+    company.save
     company
   end
 
@@ -377,7 +380,6 @@ class ApiContactsControllerTest < ActionController::TestCase
                     job_title: 'emp',
                     custom_fields: cf,
                     tags: tags }
-
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert sample_user.reload.language == 'cs'
     assert sample_user.reload.time_zone == 'Tokyo'
@@ -438,11 +440,12 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_email_when_email_is_not_nil
     sample_user = get_user_with_email
-    email = Faker::Internet.email
+    email = 'sample_' + Time.now.to_i.to_s + '@sampledomain.com'
     params_hash = { email: email }
     put :update, construct_params({ id: sample_user.id }, params_hash)
-    assert_response 400
-    match_json([bad_request_error_pattern('email', :email_cant_be_updated)])
+    assert_response 200
+    match_json(deleted_contact_pattern(sample_user.reload))
+    assert sample_user.reload.email == email
   end
 
   def test_update_email_when_email_is_nil
@@ -457,13 +460,13 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_attribute(:email, email)
   end
 
-  def test_update_the_email_of_a_contact_without_email
-    user1 = @account.all_contacts.first
+  def test_update_the_email_of_a_contact_with_user_email
+    user1 = get_user_with_email
     user2 = add_new_user_without_email(@account)
     email = user1.email
     put :update, construct_params({ id: user2.id }, email: email)
-    match_json([bad_request_error_pattern('email', :"Email has already been taken")])
     assert_response 409
+    match_json([bad_request_error_pattern('email', :"Email has already been taken")])
   end
 
   def test_update_length_invalid
@@ -922,4 +925,207 @@ class ApiContactsControllerTest < ActionController::TestCase
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end
+
+  # other_emails tests
+  def test_create_with_other_emails
+    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        other_emails: email_array)
+    assert_response 201
+    assert email_array.sort == other_emails_for_test(User.last).sort
+    match_json(deleted_contact_pattern(User.last))
+  end
+
+  def test_create_with_other_emails_max_count_validation
+    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        other_emails: email_array)
+    assert_response 400
+    match_json([bad_request_error_pattern('other_emails',:max_count_exceeded, max_count: "#{ContactConstants::MAX_OTHER_EMAILS_COUNT + 1}")])
+  end
+
+  def test_create_with_other_emails_with_duplication
+    email1 = Faker::Internet.email
+    email2 = Faker::Internet.email
+    email_array = [email1, email2, email1, email2]
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        other_emails: email_array)
+    assert_response 201
+    assert email_array.uniq.sort == other_emails_for_test(User.last).sort
+    match_json(deleted_contact_pattern(User.last))
+  end
+
+  def test_create_with_other_emails_with_nil
+    email_array = [nil]
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        other_emails: email_array)
+    assert_response 400
+    match_json([bad_request_error_pattern('other_emails', 'Should be a valid email address')])
+  end
+
+  def test_create_with_other_emails_with_invalid_emails
+    email_array = [Faker::Lorem.characters(20), Faker::Lorem.characters(20)]
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        other_emails: email_array)
+    assert_response 400
+    match_json([bad_request_error_pattern('other_emails','Should be a valid email address')])
+  end
+
+  def test_create_with_other_emails_without_primary_email
+    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    put :create, construct_params({}, name: Faker::Lorem.characters(10), other_emails: email_array)
+    assert_response 400
+    match_json([bad_request_error_pattern('email', :fill_a_mandatory_field)])
+  end
+
+  def test_create_contact_with_emails_associated_with_other_users_in_other_emails
+    sample_user = get_user_with_email
+    sample_user.user_emails = [sample_user.primary_email]
+    email = User.last.email
+    sample_user.reload
+    put :update, construct_params({ id: sample_user.id }, other_emails: [email])
+    assert_response 400
+    match_json([bad_request_error_pattern('other_emails', :already_taken, invalid_emails: [email])])    
+  end
+
+  def test_create_contact_with_phone_name_and_other_emails
+    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    put :create, construct_params({}, name: Faker::Lorem.characters(10), phone: '5783947366',other_emails: email_array)
+    assert_response 400
+    match_json([bad_request_error_pattern('email',:conditional_not_blank, child: "other_emails")])
+  end
+
+  def test_update_contact_with_email_and_other_emails
+    sample_user = get_user
+    params_hash = { email: nil, phone: '1234567890' }
+    sample_user.update_attributes(params_hash)
+    sample_user.user_emails = []
+    email = 'sample_b_' + Time.now.to_i.to_s + '@sampledomain.com'
+    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    put :update, construct_params({ id: sample_user.id },  email: email, other_emails: email_array)
+    assert_response 200
+    assert sample_user.reload.email = email
+    assert email_array.sort == other_emails_for_test(sample_user).sort
+  end
+
+  # Existing { a }     Update { [y,z] }     Result  { a, [y,z] }
+  def test_update_contact_with_other_emails
+    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_a_' + Time.now.to_i.to_s + '@sampledomain.com')
+    sample_user = User.last
+    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    put :update, construct_params({ id: sample_user.id }, other_emails: email_array)
+    assert_response 200
+    assert email_array.sort == other_emails_for_test(sample_user).sort
+  end
+
+  # Existing { }     Update { [y,z] }     Result  { Error }
+  def test_update_contact_with_other_emails_without_primary_email
+    sample_user = add_new_user(@account, name: Faker::Lorem.characters(15), phone: '9948592049')
+    sample_user.update_attributes({email: nil})
+    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
+    put :update, construct_params({ id: sample_user.id }, other_emails: email_array)
+    assert_response 400
+    match_json([bad_request_error_pattern('email',:conditional_not_blank, child: "other_emails")])
+  end
+
+  # Existing { a, [b,c] }     Update { x, [y,z] }     Result  { x, [y,z] }
+  def test_update_contact_with_primary_and_other_emails_with_new_set_of_primary_and_other_emails
+    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_b_' + Time.now.to_i.to_s + "@sampledomain.com")
+    sample_user = User.last
+    email = Faker::Internet.email
+    email_array = [Faker::Internet.email,Faker::Internet.email]
+    put :update, construct_params({ id: sample_user.id }, email: email, other_emails: email_array)
+    assert_response 200
+    assert sample_user.reload.email == email
+    assert email_array.sort == other_emails_for_test(sample_user).sort
+  end
+
+  # Existing { a, [b,c] }     Update { [y,z] }     Result  { a, [y,z] }
+  def test_update_contact_with_primary_and_other_emails_with_new_set_of_other_emails
+    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_c_' + Time.now.to_i.to_s + "@sampledomain.com")
+    sample_user = User.last
+    email_array = [Faker::Internet.email,Faker::Internet.email]
+    put :update, construct_params({ id: sample_user.id }, other_emails: email_array)
+    assert_response 200
+    assert email_array.sort == other_emails_for_test(sample_user).sort
+  end
+
+  # Existing { a, [b,c] }     Update { b, [c] }       Result  { b, [c] }
+  def test_update_contact_with_primary_and_other_emails_by_selecting_new_primary_email_from_other_emails_case_1
+    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_d_' + Time.now.to_i.to_s + "@sampledomain.com")
+    sample_user = User.last
+    email_e = 'sample_e_' + Time.now.to_i.to_s + '@sampledomain.com'
+    email_f = 'sample_f_' + Time.now.to_i.to_s + '@sampledomain.com'
+    add_user_email(sample_user, email_e)
+    add_user_email(sample_user, email_f)
+    sample_user.reload
+    email_array = [email_f]
+    put :update, construct_params({ id: sample_user.id }, email: email_e, other_emails: email_array)
+    assert_response 200
+    assert email_array.sort == other_emails_for_test(sample_user).sort
+    assert sample_user.reload.email == email_e
+  end
+
+  # Existing { a, [b] }       Update { b, [] }        Result  { b, [] }
+  def test_update_contact_with_primary_and_other_emails_by_selecting_new_primary_email_from_other_emails_case_2
+    sample_user = add_new_user(@account, name: Faker::Name.name, email: 'sample_f1_' + Time.now.to_i.to_s + "@sampledomain.com")
+    email_g = 'sample_g_' + Time.now.to_i.to_s + '@sampledomain.com'
+    add_user_email(sample_user, email_g)
+    put :update, construct_params({ id: sample_user.id }, email: email_g, other_emails: [])
+    assert_response 200
+    assert other_emails_for_test(sample_user).blank?
+    assert sample_user.reload.email == email_g
+  end
+
+  # Existing { a, [b] }     Update { [] }     Result  { a, [] }
+  def test_update_delete_other_emails_from_contact_having_primary_and_other_emails
+    add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_h_' + Time.now.to_i.to_s + "@sampledomain.com")
+    sample_user = User.last
+    email_i = 'sample_i_' + Time.now.to_i.to_s + '@sampledomain.com'
+    add_user_email(sample_user, email_i)
+    sample_user.reload
+    put :update, construct_params({ id: sample_user.id }, other_emails: [])
+    assert_response 200
+    assert other_emails_for_test(sample_user).blank?
+  end
+
+  # Existing { a, [...] }     Update { [a] }     Result  { Error }
+  def test_update_contact_with_other_emails_having_primary_email_as_an_element
+    sample_user = add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_j_' + Time.now.to_i.to_s + "@sampledomain.com")
+    email = sample_user.email
+    put :update, construct_params({ id: sample_user.id }, other_emails: [email])
+    assert_response 400
+    match_json([bad_request_error_pattern('other_emails', :cant_add_primary_email, email: "#{email}")])    
+  end
+
+  def test_create_contact_with_other_emails_without_feature_ContactMergeUI
+    allowed_features = Account.first.features.where(' type not in (?) ',['ContactMergeUiFeature'])
+    Account.any_instance.stubs(:features).returns(allowed_features)
+    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        other_emails: email_array)
+    assert_response 400
+    match_json([bad_request_error_pattern('other_emails', :require_feature_for_attribute, { feature: "Contact Merge", attribute: "other_emails" })])
+  ensure
+    Account.any_instance.unstub(:features)
+  end
+
+  def test_update_contact_with_other_emails_without_feature_ContactMergeUI
+    allowed_features = Account.first.features.where(' type not in (?) ',['ContactMergeUiFeature'])
+    Account.any_instance.stubs(:features).returns(allowed_features)
+    sample_user = User.last
+    email_array = [Faker::Internet.email,Faker::Internet.email,Faker::Internet.email,Faker::Internet.email]
+    put :update, construct_params({ id: sample_user.id }, other_emails: email_array)
+    assert_response 400
+    match_json([bad_request_error_pattern('other_emails', :require_feature_for_attribute, { feature: "Contact Merge", attribute: "other_emails" })])
+  ensure
+    Account.any_instance.unstub(:features)
+  end
+
 end

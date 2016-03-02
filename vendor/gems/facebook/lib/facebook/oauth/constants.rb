@@ -6,6 +6,7 @@ module Facebook
         "manage_pages",
         "email",
         "publish_actions",
+        "publish_pages",
         "read_page_mailboxes"
       ]
 

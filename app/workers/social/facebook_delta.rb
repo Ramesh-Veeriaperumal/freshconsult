@@ -14,6 +14,8 @@ module Social
     #sort and push to sqs need to figure it out
     def add_feeds_to_sqs(page_id, discard_feed)
       fb_page = Account.current.facebook_pages.find_by_page_id(page_id)
+      return unless fb_page
+      
       while true 
         feeds = unprocessed_facebook_feeds(page_id)
         break if feeds.blank?

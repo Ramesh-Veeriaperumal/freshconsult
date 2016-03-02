@@ -8,9 +8,8 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
 
   def log_details(payload)
     begin
-      path = log_file
       log_format = logging_format(payload)
-      controller_logger = custom_logger(path)
+      controller_logger = custom_logger(log_file)
       controller_logger.info "#{log_format}"
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while capturing controller logs for #{path}"}})
@@ -20,15 +19,15 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
   def logging_format(payload)
     payload[:db_runtime] = payload[:db_runtime].round(2) if payload[:db_runtime]
     payload[:view_runtime] = payload[:view_runtime].round(2) if payload[:view_runtime]
-    @log_file_format = "ip=#{payload[:ip]}, account_id=#{payload[:account_id]}, domain=#{payload[:domain]}, url=#{payload[:url]}, path=#{payload[:path]}, controller=#{payload[:controller]}, action=#{payload[:action]}, server_ip=#{payload[:server_ip]}, status=#{payload[:status]}, format=#{payload[:format]}, db_runtime=#{payload[:db_runtime]}, view_time=#{payload[:view_runtime]}"
+    log_file_format = "ip=#{payload[:ip]}, account_id=#{payload[:account_id]}, domain=#{payload[:domain]}, url=#{payload[:url]}, path=#{payload[:path]}, controller=#{payload[:controller]}, action=#{payload[:action]}, server_ip=#{payload[:server_ip]}, status=#{payload[:status]}, format=#{payload[:format]}, db_runtime=#{payload[:db_runtime]}, view_time=#{payload[:view_runtime]}, shard_name=#{payload[:shard_name]}"
   end
 
   def log_file
-    @log_file_path = "#{Rails.root}/log/application.log"      
+    "#{Rails.root}/log/application.log"      
   end 
   
   def custom_logger(path)
-    @custom_logger||=CustomLogger.new(path)
+    @@custom_logger ||= CustomLogger.new(path)
   end
 
 end

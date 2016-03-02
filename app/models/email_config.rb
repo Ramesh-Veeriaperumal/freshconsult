@@ -28,6 +28,8 @@ class EmailConfig < ActiveRecord::Base
   
   xss_sanitize  :only => [:to_email,:reply_email], :plain_sanitizer => [:to_email,:reply_email]
   
+  before_save :assign_category
+
   def active?
     active
   end
@@ -80,4 +82,11 @@ class EmailConfig < ActiveRecord::Base
       (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
     end      
 
+    def assign_category
+      domain_name = self.reply_email.split("@").last
+      if domain_name
+        self.category = account.outgoing_email_domain_categories.active.where('email_domain = ?', "#{domain_name.strip}").first.try(:category)
+        Rails.logger.debug "Email config - #{reply_email} is set with category - #{category}"
+      end
+    end
 end

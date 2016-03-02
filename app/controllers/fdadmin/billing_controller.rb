@@ -240,6 +240,10 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => @account.id, 
           :event_type => :payment_added, :invoice_id => content[:invoice][:id] })
       store_invoice(content) if @account.subscription.affiliate.nil?
+
+      Resque.enqueue(CRM::Freshsales::AccountActivation, { account_id: @account.id,
+                                                           collection_date: content[:invoice][:paid_on],
+                                                           auto_collection: content[:customer][:auto_collection] }) if content[:invoice][:first_invoice]
     end
 
     def payment_refunded(content)
