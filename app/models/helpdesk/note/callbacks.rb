@@ -119,18 +119,13 @@ class Helpdesk::Note < ActiveRecord::Base
         # Ticket re-opening, moved as an observer's default rule
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
-                                              notable, self) if notable.responder && e_notification.agent_notification?
+                                              notable, self) if notable.responder && e_notification.agent_notification? && replied_by_customer?
         Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if public_note? && notable.cc_email.present?
+        handle_notification_for_agent_as_req if ( !incoming && notable.agent_as_requester?(user.id))
       else    
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
         #notify the agents only for notes
-        if note? && !self.to_emails.blank? && !incoming 
-          if reply_to_forward?
-            Helpdesk::TicketNotifier.send_later(:deliver_reply_to_forward, notable, self)
-          else
-            Helpdesk::TicketNotifier.send_later(:notify_comment, self)
-          end
-        end
+        notifying_agents
         #notify the customer if it is public note
         if note? && !private && e_notification.requester_notification?
         Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
@@ -145,6 +140,34 @@ class Helpdesk::Note < ActiveRecord::Base
 
       end
     end
+
+    def handle_notification_for_agent_as_req
+      # Send the notifications to the notified agents when agent as a requester adds a note (pvt/public)
+      notifying_agents
+      # Send the replies to cc person, when agent as a requester replies from the helpdesk agent portal
+      if email? && (self.cc_emails.present? || self.bcc_emails.present?)
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.present? ,
+                :send_survey => false,
+                :quoted_text => self.quoted_text,
+                :include_surveymonkey_link => false})
+      end
+      # Forward case
+      if fwd_email?
+        Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self) unless only_kbase?
+        create_fwd_note_activity(self.to_emails)
+      end
+    end
+
+    def notifying_agents
+      if note? && !self.to_emails.blank? && !incoming 
+        if reply_to_forward?
+          Helpdesk::TicketNotifier.send_later(:deliver_reply_to_forward, notable, self)
+        else
+          Helpdesk::TicketNotifier.send_later(:notify_comment, self)
+        end
+      end
+    end
+
 
     def add_activity
       return if (!human_note_for_ticket? or zendesk_import?)
@@ -245,13 +268,24 @@ class Helpdesk::Note < ActiveRecord::Base
     # VA - Observer Rule 
     def update_observer_events
       return if user.nil? || meta? || feedback? || !(notable.instance_of? Helpdesk::Ticket)
-      if user && notable.customer_performed?(user) || !note?
+      if replied_by_customer? || replied_by_agent?
         @model_changes = {:reply_sent => :sent}
       else
         @model_changes = {:note_type => NOTE_TYPE[private]}
       end
     end
 
+    def replied_by_customer?
+      # Added the private note check when agent as a requester adds a private note should not trigger the observer rule
+      # (Should behave as a private note)
+      (user.customer? || (notable.agent_as_requester?(user.id) && (public_note? || email?)))
+    end
+
+    def replied_by_agent?
+      # Should not trigger the reply sent observer rule - when the forward/reply to forward is made
+      ( !note? && !fwd_email? && !reply_to_forward? )
+    end
+ 
     def api_webhook_note_check
       (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook?
     end
