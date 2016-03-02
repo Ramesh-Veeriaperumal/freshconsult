@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(:version => 20160215121742) do
+ActiveRecord::Schema.define(:version => 20160104125144) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2297,6 +2297,7 @@ ActiveRecord::Schema.define(:version => 20160215121742) do
   create_table "integrated_resources", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
     t.string   "remote_integratable_id"
+    t.string   "remote_integratable_type"
     t.integer  "local_integratable_id",    :limit => 8
     t.string   "local_integratable_type"
     t.integer  "account_id",               :limit => 8
@@ -2305,7 +2306,8 @@ ActiveRecord::Schema.define(:version => 20160215121742) do
   end
 
   add_index "integrated_resources", ["account_id","installed_application_id","local_integratable_id","local_integratable_type"], :name => "index_on_account_and_inst_app_and_local_int_id_and_type"
-
+  add_index "integrated_resources", ["account_id","installed_application_id","remote_integratable_id","remote_integratable_type"], :name => "index_on_account_and_inst_app_and_remote_int_id_and_type"
+  
   create_table "integrations_user_credentials", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
     t.integer  "user_id",                  :limit => 8

@@ -129,15 +129,6 @@ GIT
     prototype_legacy_helper (0.0.0)
 
 GIT
-  remote: git://github.com/sathishfreshdesk/omniauth-salesforce.git
-  revision: 2df5f2968cff74da5ff7818de4273e0ce96d991b
-  branch: master
-  specs:
-    omniauth-salesforce (1.0.3)
-      omniauth (~> 1.0)
-      omniauth-oauth2 (~> 1.0)
-
-GIT
   remote: git://github.com/stefanpenner/country_select
   revision: b25dc49d4887d79733af5baef6abcbc456fc7e56
   tag: v1.1.2
@@ -1097,7 +1088,6 @@ DEPENDENCIES
   omniauth-oauth2 (= 1.0)
   omniauth-openid
   omniauth-quickbooks
-  omniauth-salesforce!
   open_id_authentication!
   paperclip (~> 2.8.0)
   paperclip_ext!
