@@ -49,7 +49,7 @@ module Admin::Sla::Reminder
     
         response_reminder_tickets = execute_on_db {
                                       account.tickets.unresolved.visible.response_sla(account,response_reminder_overdue.to_s(:db)).
-                                      response_reminder(sla_rule_based.keys).updated_in(2.month.ago)
+                                      response_reminder(sla_rule_based.keys).updated_in(2.month.ago).all
                                     }
         response_reminder_tickets.each do |ticket|
           sla_policy = sla_rule_based[ticket.sla_policy_id]
@@ -67,7 +67,7 @@ module Admin::Sla::Reminder
       
         resolution_reminder_tickets = execute_on_db {
                                         account.tickets.unresolved.visible.resolution_sla(account,reminder_overdue_time.to_s(:db)).
-                                        resolution_reminder(sla_rule_based.keys).updated_in(2.month.ago)
+                                        resolution_reminder(sla_rule_based.keys).updated_in(2.month.ago).all
                                       }
 
         resolution_reminder_tickets.each do |ticket| 
