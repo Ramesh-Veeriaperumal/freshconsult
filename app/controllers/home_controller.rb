@@ -11,7 +11,9 @@ class HomeController < ApplicationController
       redirect_to helpdesk_dashboard_path and return
     else
       flash.keep(:notice)
-      redirect_to '/support/home' and return
+      redirect_to support_home_path(:url_locale => current_user.language) and return if 
+          current_account.multilingual? && current_user
+      redirect_to support_home_path and return
     end   
     # redirect_to login_path and return unless (allowed_in_portal?(:open_solutions) || allowed_in_portal?(:open_forums))
     

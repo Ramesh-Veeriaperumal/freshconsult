@@ -150,7 +150,7 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def alternate_version_languages
-      @article.solution_articles.map{ |a| a.language.code }
+      @article.solution_articles.visible.map{ |a| a.language.code }
     end
 
     def cleanup_params_for_title

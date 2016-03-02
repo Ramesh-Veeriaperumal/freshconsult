@@ -53,7 +53,7 @@ class Support::SolutionsController < SupportController
     end
 
     def alternate_version_languages
-      return current_account.applicable_languages unless @category
+      return current_account.all_portal_languages unless @category
       @category.solution_categories.map { |c| c.language.code}
     end
 

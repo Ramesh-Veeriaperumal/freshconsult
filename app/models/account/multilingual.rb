@@ -52,6 +52,10 @@ class Account < ActiveRecord::Base
     @all_portal_language_objects ||= ([language_object] + portal_languages_objects).uniq
   end
   
+  def all_portal_languages
+    all_portal_language_objects.map(&:code)
+  end
+  
   def valid_portal_language?(language)
     if User.current && User.current.agent?
       all_language_objects.include?(language)

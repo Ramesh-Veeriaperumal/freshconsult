@@ -2,10 +2,10 @@ require 'routing_filter/filter'
 
 module RoutingFilter
   class Locale < Filter
-
+    
     def around_recognize(path, env, &block)
-      locale = nil
-      path.sub! %r(^/([a-zA-Z]{2}|[a-zA-Z]{2}-[a-zA-Z]{2})(?=#{accepted_paths.join('|')})) do locale = $1; '' end
+      locale = @url_locale = nil
+      path.sub! %r(^/([a-zA-Z]{2}|[a-zA-Z]{2}-[a-zA-Z]{2})(?=#{accepted_paths.join('|')})) do locale = $1; '' end        
       if path.starts_with?(*accepted_paths)
         yield.tap do |params|
           params[:url_locale] = @url_locale = locale 
