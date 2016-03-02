@@ -206,6 +206,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     # In API
     note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
     ticket = note.notable
+    sleep 1
     previous_updated_at = ticket.updated_at
     put("/api/conversations/#{note.id}", v2_note_update_payload, @write_headers)
     assert_response 200
@@ -219,6 +220,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
     # In API V1
     previous_updated_at_for_api_v1 = ticket.updated_at
+    sleep 1
     put("/helpdesk/tickets/#{ticket.id}/conversations/#{note.id}.json", { helpdesk_note: { body: Faker::Lorem.paragraph } }.to_json, @write_headers)
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i > previous_updated_at_for_api_v1.to_i
@@ -247,7 +249,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     ticket = note.notable
     previous_updated_at_for_api_v1 = ticket.updated_at
     sleep 1
-    delete("/helpdesk/tickets/#{ticket.id}/conversations/#{note.id}.json", nil, @headers)
+    delete("/helpdesk/tickets/#{ticket.display_id}/notes/#{note.id}.json", nil, @headers)
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i > previous_updated_at_for_api_v1.to_i
   end
