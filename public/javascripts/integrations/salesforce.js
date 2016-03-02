@@ -340,6 +340,9 @@ SalesforceWidget.prototype= {
       var opp_fields = this.salesforceBundle.opportunityFields.split(",");
       for(i=0;i<opp_records.length;i++){
         for(j=0;j<opp_fields.length;j++){
+          if(typeof opp_records[i][opp_fields[j]] == "boolean"){
+            continue;
+          }
           opp_records[i][opp_fields[j]] = escapeHtml(this.eliminateNullValues(opp_records[i][opp_fields[j]]));
           if(opp_fields[j] == "CloseDate"){ //Converting close date to user readable format
             opp_records[i][opp_fields[j]] = new Date(opp_records[i][opp_fields[j]]).toString("dd MMM, yyyy");
