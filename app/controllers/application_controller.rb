@@ -175,10 +175,6 @@ class ApplicationController < ActionController::Base
       response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
-  def set_shard_for_payload 
-    Thread.current[:shard_name_payload] = Thread.current[:shard_selection].shard if Thread.current[:shard_selection]
-  end
-
   protected
     # Possible dead code
     def silence_logging
