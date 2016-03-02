@@ -1062,6 +1062,7 @@ ActiveRecord::Schema.define(:version => 20160211060336) do
     t.string   "activator_token"
     t.string   "name"
     t.integer  "product_id",      :limit => 8
+    t.integer  "category"
   end
 
   add_index "email_configs", ["account_id", "product_id"], :name => "index_email_configs_on_account_id_and_product_id"
@@ -2467,6 +2468,17 @@ ActiveRecord::Schema.define(:version => 20160211060336) do
   end
 
   add_index "oauth_applications", ["uid", "account_id"], :name => "index_oauth_applications_on_uid_and_account_id", :unique => true
+
+  create_table "outgoing_email_domain_categories", :force => true do |t|
+    t.integer    "account_id", :limit => 8, :null => false
+    t.string     "email_domain", :limit => 253, :null => false
+    t.integer    "category", :null => false
+    t.boolean    "enabled", :default => false
+    t.datetime   "created_at", :null => false
+    t.datetime   "updated_at", :null => false
+  end
+
+  add_index "outgoing_email_domain_categories", ["account_id", "email_domain"], :name => 'index_outgoing_email_domain_categories_on_account_id_and_domain', :unique => true
 
   create_table "password_policies", :force => true do |t|
     t.integer "account_id", :limit => 8

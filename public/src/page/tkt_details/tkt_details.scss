@@ -546,11 +546,9 @@ ol, ul, li{
 	width: 120px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	-o-text-overflow: ellipsis;
-	-webkit-text-overflow: ellipsis;
-	top: 14px;
-	position:relative;
+	@include micro-position(14px);
 	z-index: 2;
+	white-space: nowrap;
 	span{
 		padding: 0 5px 5px 5px;
 		color: #1272de;

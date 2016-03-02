@@ -9,14 +9,14 @@ module ActionMailerCallbacks
   end
 
   module ClassMethods
-    @email_config = nil
+    @email_confg = nil
         
     def set_email_config _email_config
-      @email_config = _email_config
+      @email_confg = _email_config
     end
     
     def email_config
-      @email_config
+      @email_confg
     end
     
     def set_smtp_settings(mail)
