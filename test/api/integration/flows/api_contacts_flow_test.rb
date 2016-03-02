@@ -80,7 +80,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
         assert_response 201
       end
 
-      sample_user = User.last
+      sample_user = User.where(email: params[:email]).first
       params = { view_all_tickets: true }
       put "/api/v2/contacts/#{sample_user.id}", params.to_json, @write_headers
       match_json([bad_request_error_pattern('company_id', :company_id_required)])
