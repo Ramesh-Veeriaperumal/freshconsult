@@ -51,6 +51,16 @@ class Solution::FolderMeta < ActiveRecord::Base
 		:class_name =>'Solution::ArticleMeta',
 		:foreign_key => :solution_folder_meta_id
 
+	has_many :published_articles,
+		:conditions => proc { { 
+			language_id: Language.for_current_account.id,
+			status: Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+		 } },
+		:through => :solution_article_meta,
+		:class_name => "Solution::Article",
+		:source => :solution_articles
+
+
 	acts_as_list :scope => :solution_category_meta
 
 	COMMON_ATTRIBUTES = ["visibility", "position", "is_default", "created_at"]
