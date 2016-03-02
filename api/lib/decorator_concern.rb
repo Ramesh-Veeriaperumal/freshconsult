@@ -1,36 +1,21 @@
 module DecoratorConcern
   extend ActiveSupport::Concern
 
-  included do
-    alias_method_chain :render, :before_render_action
-    define_callbacks :render
-  end
+  ACTION_MAPPING = {
+    decorate_object: [:create, :update, :show],
+    decorate_objects: [:index]
+  }
+  DECORATOR_METHOD_MAPPING = ACTION_MAPPING.each_with_object(Hash.new){ |(k, v), inverse| v.each {|e| inverse[e] = k}}
 
   module ClassMethods
-    def append_before_render_action(*names)
-      # names => [:decorate_objects, {only: <>, except: <>}]
-      # extract_options! will remove and return the last hash from names. i.e. {only: <>, except: <>}
-      options = names.extract_options!
-      normalize_callback_option(options, :only, :if)
-      normalize_callback_option(options, :except, :unless)
-      names.each do |name|
-        set_callback :render, :before, name, options
-      end
-    end
-    alias_method :before_render, :append_before_render_action
 
-    def normalize_callback_option(options, from, to)
-      if from = options[from]
-        from = Array(from).map { |o| "action_name == '#{o}'" }.join(' || ')
-        options[to] = Array(options[to]).unshift(from)
-      end
-    end
+    attr_reader :decorator_method_mapping
 
     def decorate_views(options = {})
-      options.reverse_merge!(collection: [:index], object: [:update, :create, :show])
-
-      send(:before_render, :decorate_objects, only: options[:collection]) unless options[:collection].empty?
-      send(:before_render, :decorate_object, only: options[:object]) unless options[:object].empty?
+      custom_options = ACTION_MAPPING.merge(options)
+      custom_method_mapping = custom_options.each_with_object(Hash.new){ |(k, v), inverse| v.each {|e| inverse[e] = k}}
+      @decorator_method_mapping = DECORATOR_METHOD_MAPPING.merge(custom_method_mapping)
+      alias_method_chain :render, :before_render_action 
     end
 
     def decorator_name
@@ -39,10 +24,13 @@ module DecoratorConcern
     end
   end
 
+  def decorator_method
+    @decorator_method ||= self.class.decorator_method_mapping[action_name.to_sym]
+  end
+
   def render_with_before_render_action(*options, &block)
-    run_callbacks :render, action_name do
-      render_without_before_render_action *options, &block
-    end
+    send(decorator_method) if decorator_method
+    render_without_before_render_action *options, &block
   end
 
   def decorate_objects

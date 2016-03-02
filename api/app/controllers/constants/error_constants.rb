@@ -10,7 +10,7 @@ module ErrorConstants
     datatype_mismatch: ['is not a number', 'data_type_mismatch', 'must be an integer', 'per_page_data_type_mismatch', 'datatype_and_inclusion'],
     invalid_size: ['invalid_size'],
     incompatible_field: ['incompatible_field'],
-    inaccessible_field: ['inaccessible_field']
+    inaccessible_field: ['inaccessible_field', 'require_feature_for_attribute']
   }.freeze
 
   API_HTTP_ERROR_STATUS_BY_CODE = {

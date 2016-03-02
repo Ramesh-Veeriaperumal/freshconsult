@@ -6,24 +6,28 @@ class ApiContactsController < ApiApplicationController
 
   def create
     assign_protected
-    contact_delegator = ContactDelegator.new(@item)
+    contact_delegator = ContactDelegator.new(@item, @email_objects[:old_email_objects])
     if !contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
-    elsif @item.create_contact!
-      render "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: 201
     else
-      render_custom_errors
+      build_user_emails_attributes if @email_objects.any?
+      if @item.create_contact!
+        render_201_with_location(item_id: @item.id)
+      else
+        render_custom_errors
+      end
     end
   end
 
   def update
     assign_protected
     @item.assign_attributes(params[cname].except('tag_names'))
-    contact_delegator = ContactDelegator.new(@item)
+    contact_delegator = ContactDelegator.new(@item, @email_objects[:old_email_objects])
     unless contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
       return
     end
+    build_user_emails_attributes if @email_objects.any?
     render_custom_errors unless @item.update_attributes(params[cname])
   end
 
@@ -105,9 +109,27 @@ class ApiContactsController < ApiApplicationController
         params_hash[:avatar_attributes] = { content: params_hash.delete(:avatar) }
       end
 
+      @email_objects = {}
+      construct_all_emails(params_hash) if params_hash.key?(:other_emails)
+
       ParamsHelper.assign_checkbox_value(params_hash[:custom_fields], current_account.contact_form.custom_checkbox_fields.map(&:name)) if params_hash[:custom_fields]
 
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, view_all_tickets: :client_manager }, params_hash)
+    end
+
+    def construct_all_emails(params_hash)
+      all_emails = params_hash.delete(:other_emails)
+      primary_email = params_hash.key?(:email) ? params_hash.delete(:email) : @item.email
+
+      all_emails.uniq!
+
+      if primary_email
+        @email_objects[:primary_email] = primary_email
+        all_emails << primary_email
+      end
+
+      @email_objects[:old_email_objects]  = current_account.user_emails.where(email: all_emails)
+      @email_objects[:new_emails]  = all_emails - @email_objects[:old_email_objects].collect(&:email)
     end
 
     def validate_filter_params
@@ -153,6 +175,31 @@ class ApiContactsController < ApiApplicationController
       return true if super
       allowed_content_types = ContactConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
       allowed_content_types.include?(request.content_mime_type.ref)
+    end
+
+    def build_user_emails_attributes
+      email_attributes = []
+      primary_email = @email_objects[:primary_email]
+
+      # old emails to be retained
+      @email_objects[:old_email_objects].each { |user_email| 
+        email_attributes << { 'email' => user_email.email, 'id' => user_email.id, 'primary_role' => user_email.email == primary_email }
+      }
+
+      # new emails to be added
+      @email_objects[:new_emails].each { |email|
+        email_attributes << { 'email' => email, 'primary_role' => email == primary_email }
+      }
+
+      # emails to be destroyed
+      if update?
+        emails_to_be_destroyed =  (@item.user_emails - @email_objects[:old_email_objects])
+        emails_to_be_destroyed.each { |user_email| 
+          email_attributes << { 'email' => user_email.email, 'id' => user_email.id, '_destroy' => 1 }
+        }
+      end
+
+      @item.user_emails_attributes = Hash[(0...email_attributes.size).zip email_attributes]
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
