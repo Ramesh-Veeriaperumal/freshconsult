@@ -5,6 +5,7 @@ class Solution::FoldersController < ApplicationController
   helper SolutionHelper
   helper Solution::ArticlesHelper
   include Solution::LanguageControllerMethods
+  include Solution::ControllerMethods
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
@@ -13,7 +14,6 @@ class Solution::FoldersController < ApplicationController
   # to be done!
   before_filter :validate_and_set_customers, :only => [:create, :update]
   before_filter :set_parent_for_old_params, :only => [:create, :update]
-  before_filter :set_modal, :only => [:new, :edit, :update]
   before_filter :old_category, :only => [:move_to]
   before_filter :check_new_category, :bulk_update_category, :only => [:move_to, :move_back]
   after_filter  :clear_cache, :only => [:move_to, :move_back]
@@ -24,16 +24,10 @@ class Solution::FoldersController < ApplicationController
 
   def show
     @page_title = @folder_meta.name
-    respond_to do |format|
-      format.html {
-        redirect_to solution_my_drafts_path('all') if @folder_meta.is_default?
-      }
-      format.xml  { render :xml => @folder_meta.to_xml(:include => [:articles]) }
-      format.json { render :json => @folder_meta.as_json(:include => [:articles]) }
-    end
+    
+    show_response(@folder_meta, [:articles])
   end
   
-
   def new
     @page_title = t("header.tabs.new_folder")
     @folder_meta = current_account.solution_folder_meta.new
@@ -42,10 +36,8 @@ class Solution::FoldersController < ApplicationController
       @category_meta = current_account.solution_category_meta.find_by_id(params[:category_id]) 
       @folder_meta.solution_category_meta_id = (@category_meta || {})[:id]
     end
-    respond_to do |format|
-      format.html { render :layout => false if @modal }
-      format.xml  { render :xml => @folder }
-    end
+    
+    new_response(@folder)
   end
 
   def edit
@@ -53,15 +45,8 @@ class Solution::FoldersController < ApplicationController
     @primary = @folder_meta.primary_folder
     @folder = current_account.solution_folders.new unless @folder
     @customer_id = @folder_meta.customer_folders.collect { |cf| cf.customer_id.to_s }
-    respond_to do |format|
-      if @folder_meta.is_default?
-        flash[:notice] = I18n.t('folder_edit_not_allowed')
-        format.html {redirect_to :action => "show" }
-      else
-         format.html { render :layout => false if @modal }
-      end
-      format.xml  { render :xml => @folder }
-    end
+    
+    edit_response(@folder_meta, @folder)
   end
 
   def create
@@ -69,54 +54,21 @@ class Solution::FoldersController < ApplicationController
     @folder = @folder_meta.send(language_scoper)
     @category_meta = @folder_meta.solution_category_meta
    
-    respond_to do |format|
-      if @folder_meta.errors.empty?
-        format.html { redirect_to solution_folder_path(@folder_meta) }
-        format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @folder_meta, :status => :created }
-        format.json  { render :json => @folder_meta, :status => :created }
-      else
-        format.html { render :action => "new" }
-        format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @folder_meta.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @folder_meta.errors, :status => :unprocessable_entity }
-      end
-    end
-    
+    post_response(@folder_meta, @folder)
   end
 
   def update
     @folder_meta = Solution::Builder.folder(params)
     @folder = @folder_meta.send(language_scoper)
-    respond_to do |format|     
-      if @folder_meta.errors.empty?
-        format.html do 
-          redirect_to solution_folder_path(@folder_meta.id)
-        end
-        format.js { render 'after_save' }
-        format.xml  { render :xml => @folder_meta, :status => :ok } 
-        format.json  { render :json => @folder_meta, :status => :ok }     
-      else
-        format.html { 
-          set_customers_field
-          render :action => "edit" 
-        }
-        format.js { render 'after_save' }
-        format.xml  { render :xml => @folder_meta.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @folder_meta.errors, :status => :unprocessable_entity }
-      end
-    end
+    
+    post_response(@folder_meta, @folder)
   end
 
   def destroy
     @folder = meta_scoper.where(:id => params[:id]).first
-    redirect_to_url = solution_category_url(@folder.solution_category_meta_id)
     @folder.destroy unless @folder.is_default?
-    respond_to do |format|
-      format.html { redirect_to redirect_to_url }
-      format.xml  { head :ok }
-      format.json  { head :ok }
-    end
+    
+    destroy_response(solution_category_path(@folder.solution_category_meta_id))
   end
 
   def visible_to
@@ -194,10 +146,6 @@ class Solution::FoldersController < ApplicationController
       end
       params[:solution_folder_meta][:customer_folders_attributes] = {}
       params[:solution_folder_meta][:customer_folders_attributes] = valid_customer_ids
-    end
-
-    def set_modal
-      @modal = true if request.xhr?
     end
 
     def visibility_validate?

@@ -6,6 +6,7 @@ class Solution::ArticlesController < ApplicationController
   include Solution::LanguageControllerMethods
   helper SolutionHelper
   include Solution::FlashHelper
+  include Solution::ControllerMethods
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
@@ -74,22 +75,8 @@ class Solution::ArticlesController < ApplicationController
     @article = @article_meta.send(language_scoper)
     @article.tags_changed = set_solution_tags
     @article.create_draft_from_article if save_as_draft?
-    respond_to do |format|
-      if @article_meta.errors.empty?
-        format.html { 
-          flash[:notice] = flash_message if publish?
-          redirect_to multilingual_article_path(@article)
-        }
-        format.xml  { render :xml => @article_meta, :include => [:folder], :status => :created, :location => @article }
-        format.json  { render :json => @article_meta, :include => [:folder], :status => :created, :location => @article }
-      else
-        format.html { 
-          render "new"
-        }
-        format.xml  { render :xml => @article_meta.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @article_meta.errors, :status => :unprocessable_entity }
-      end
-    end
+    
+    post_response(@article_meta, @article)
   end
 
   def update
@@ -103,11 +90,7 @@ class Solution::ArticlesController < ApplicationController
   def destroy
     @article_meta.destroy
     
-    respond_to do |format|
-      format.html { redirect_to solution_folder_path(@article_meta.solution_folder_meta_id) }
-      format.xml  { head :ok }
-      format.json { head :ok }
-    end
+    destroy_response(solution_folder_path(@article_meta.solution_folder_meta_id))
   end
 
   def reset_ratings
@@ -356,28 +339,8 @@ class Solution::ArticlesController < ApplicationController
       set_common_attributes
       @article.tags_changed = set_solution_tags
       @article_meta = Solution::Builder.article(params)
-      respond_to do |format|    
-        if @article_meta.errors.empty?
-          @article = @article.reload
-          format.html { 
-            flash[:notice] = flash_message if publish?
-            redirect_to multilingual_article_path(@article)
-          }
-          format.xml  { render :xml => @article_meta, :include => [:folder], :status => :created, :location => @article }     
-          format.json  { render :json => @article_meta, :include => [:folder], :status => :ok, :location => @article }
-          format.js {
-            flash[:notice] = t('solution.articles.prop_updated_msg')
-          }
-        else
-          format.html { render_edit }
-          format.xml  { render :xml => @article_meta.errors, :status => :unprocessable_entity }
-          format.json  { render :json => @article_meta.errors, :status => :unprocessable_entity }
-          format.js {
-            flash[:notice] = t('solution.articles.prop_updated_error')
-            render 'update_error'
-          }
-        end
-      end
+      
+      post_response(@article_meta, @article)
     end
 
     def validate_author

@@ -6,6 +6,7 @@ class Solution::CategoriesController < ApplicationController
   helper Solution::NavmenuHelper
   helper Solution::ArticlesHelper
   include Solution::LanguageControllerMethods
+  include Solution::ControllerMethods
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
@@ -13,7 +14,6 @@ class Solution::CategoriesController < ApplicationController
   before_filter :load_meta, :only => [:edit, :update, :destroy]
   before_filter :load_category_with_folders, :only => [:show]
   before_filter :find_portal, :only => [:all_categories, :new, :create, :edit, :update]
-  before_filter :set_modal, :only => [:new, :edit]
   before_filter :set_default_order, :only => :reorder
   before_filter :load_portal_solution_category_ids, :only => [:all_categories, :create, :update]
 
@@ -37,85 +37,45 @@ class Solution::CategoriesController < ApplicationController
 
   def show
     @page_title = @category_meta.name
-    respond_to do |format|
-      format.html {
-        redirect_to solution_my_drafts_path('all') if @category_meta.is_default?
-      }
-      format.xml {  render :xml => @category_meta.to_xml(:include => folder_scope) }
-      format.json  { render :json => @category_meta.to_json(:include => folder_scope) }
-    end
+    
+    show_response(@category_meta, folder_scope)
   end
   
   def new
     @page_title = t("header.tabs.new_solution_category")
     @category_meta = current_account.solution_category_meta.new
     @category = @category_meta.solution_categories.new
-    respond_to do |format|
-      format.html { render :layout => false if @modal }
-      format.xml  { render :xml => @category }
-    end
+    
+    new_response(@category)
   end
 
   def edit
     @category = @category_meta.send(language_scoper)
     @primary = @category_meta.primary_category
     @category = current_account.solution_categories.new unless @category
-    respond_to do |format|
-      if @category_meta.is_default?
-        flash[:notice] = I18n.t('category_edit_not_allowed')
-        format.html {redirect_to :action => "show" }
-      else
-        format.html { render  :layout => false if @modal }
-      end
-      format.xml  { render :xml => @category }
-    end
+    
+    edit_response(@category_meta, @category)
   end
 
   def create
     @category_meta = Solution::Builder.category(params)
     @category = @category_meta.send(language_scoper)
-    respond_to do |format|
-      if @category_meta.errors.blank?
-        format.html { redirect_to solution_category_path(@category_meta) }
-        format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @category_meta, :status => :created, :location => @category_meta.primary_category }
-        format.json { render :json => @category_meta, :status => :created, :location => @category_meta.primary_category }
-      else
-        format.html { render :action => "new" }
-        format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @category_meta.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @category_meta.errors, :status => :unprocessable_entity }
-      end
-    end
+
+    post_response(@category_meta, @category)
   end
 
   def update
     params[:solution_category][:id] = params[:id] if params[:solution_category].present?
     @category_meta = Solution::Builder.category(params)
     @category = @category_meta.send(language_scoper)
-    respond_to do |format| 
-      if @category_meta.errors.blank?
-        format.html { redirect_to solution_all_categories_path }
-        format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @category_meta, :status => :created, :location => @category_meta.primary_category }     
-        format.json { render :json => @category_meta, :status => :ok, :location => @category_meta.primary_category }     
-      else
-        format.html { render :action => "edit" }
-        format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @category_meta.errors, :status => :unprocessable_entity }
-        format.json  { render :json => @category_meta.errors, :status => :unprocessable_entity }
-      end
-    end
+
+    post_response(@category_meta, @category)
   end
 
   def destroy
     @category_meta.destroy unless @category_meta.is_default?
 
-    respond_to do |format|
-      format.html {  redirect_to :action =>"index" }
-      format.xml  { head :ok }
-      format.json { head :ok }
-    end
+    destroy_response(:action => "index")
   end
 
   def sidebar
@@ -145,6 +105,7 @@ class Solution::CategoriesController < ApplicationController
     end
 
   private
+
     def portal_check
       format = params[:format]
       if format.nil? && (current_user.nil? || current_user.customer?)
@@ -188,10 +149,6 @@ class Solution::CategoriesController < ApplicationController
 
     def load_category_with_folders
       @category_meta = meta_scoper.includes(:solution_folder_meta).find_by_id!(params[:id])
-    end
-
-    def set_modal
-      @modal = true if request.xhr?
     end
 
     def orphan_categories

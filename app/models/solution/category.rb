@@ -72,12 +72,16 @@ class Solution::Category < ActiveRecord::Base
   def to_param
     parent_id
   end
+
+  def stripped_name
+    name.downcase.strip
+  end
    
   private
   
     def name_uniqueness_validation
       return true unless new_record? || name_changed?
-      if (Account.current.solution_categories.where(:language_id => self.language_id) - [self]).map(&:name).include?(self.name)
+      if (Account.current.solution_categories.where(:language_id => self.language_id) - [self]).map(&:stripped_name).include?(self.stripped_name)
         errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
         return false
       end

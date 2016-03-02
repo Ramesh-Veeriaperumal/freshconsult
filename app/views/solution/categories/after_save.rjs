@@ -1,4 +1,5 @@
 if @category_meta.errors.empty?
+	@category_meta.reload
 	if params[:action].eql?('create')
 		page << "App.Solutions.AfterSave.hide('#new-cat');"
 	else

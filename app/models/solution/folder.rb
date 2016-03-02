@@ -149,8 +149,12 @@ class Solution::Folder < ActiveRecord::Base
     present?
   end
 
+  def stripped_name
+    name.downcase.strip
+  end
+
   def name_uniqueness_validation
-    if ((self.solution_folder_meta.solution_category_meta.solution_folders.where(:language_id => self.language_id)) - [self]).map(&:name).include?(self.name)
+    if ((self.solution_folder_meta.solution_category_meta.solution_folders.where(:language_id => self.language_id)) - [self]).map(&:stripped_name).include?(self.stripped_name)
       errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
       return false
     end
