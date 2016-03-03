@@ -241,17 +241,14 @@ class CRM::FreshsalesUtility
 
     def deal_type_and_amount_for_status_change(old_subscription, current_state)
       old_state = old_subscription[:state].to_sym
-
-      upgrade = (old_state == :suspended && current_state == :active) || (old_state == :free && current_state == :active)
-      free    = (old_state == :trial && current_state == :free) || (old_state == :suspended && current_state == :free)
+      
+      free_customer = (old_state == :trial && current_state == :free) || (old_state == :suspended && current_state == :free)
 
       (deal_type, amount) = case
-                            when upgrade 
-                              [:upgrade, @subscription.cmrr.round(2)]
-                            when free
+                            when free_customer
                               [:new_business, 0]
-                            when (old_state == :trial && current_state == :active)
-                              [:new_business, @subscription.cmrr.round(2)]
+                            when (old_state == :suspended && current_state == :active) 
+                              [:upgrade, @subscription.cmrr.round(2)]
                             when (old_state == :trial && current_state == :suspended)
                               [:downgrade, 0]
                             when (old_state == :active && current_state == :suspended)
