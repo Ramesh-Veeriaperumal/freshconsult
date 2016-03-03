@@ -1,7 +1,12 @@
 class ApiAgentsController < ApiApplicationController
+  def me
+    render "#{controller_path}/show"
+  end
+
   private
 
     def load_object
+      params[:id] = api_current_user.id if me?
       @item = scoper.find_by_user_id(params[:id])
       log_and_render_404 unless @item
     end
@@ -27,5 +32,13 @@ class ApiAgentsController < ApiApplicationController
 
     def scoper
       current_account.all_agents
+    end
+
+    def me?
+      @me ||= current_action?('me')
+    end
+
+    def allowed_to_access?
+      me? ? true : super
     end
 end

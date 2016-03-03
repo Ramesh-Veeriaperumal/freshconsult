@@ -1,8 +1,8 @@
 module ContactConstants
-  ARRAY_FIELDS = ['tags']
+  ARRAY_FIELDS = ['tags','other_emails']
   HASH_FIELDS = ['custom_fields']
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  CONTACT_FIELDS = %w(address avatar view_all_tickets company_id description email job_title language mobile name phone time_zone twitter_id).freeze | ARRAY_FIELDS | HASH_FIELDS
+  CONTACT_FIELDS = %w(address avatar view_all_tickets company_id description email job_title language mobile name other_emails phone time_zone twitter_id).freeze | ARRAY_FIELDS | HASH_FIELDS
 
   STATES = %w( verified unverified deleted blocked ).freeze
 
@@ -27,7 +27,10 @@ module ContactConstants
 
   LANGUAGES = I18n.available_locales.map(&:to_s).freeze
 
-  ATTRIBUTES_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields).freeze
+  # Max other email count excluding the primary email
+  MAX_OTHER_EMAILS_COUNT = 4
+
+  ATTRIBUTES_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields other_emails).freeze
 
   # Wrap parameters args
   WRAP_PARAMS = [:api_contact, exclude: [], format: [:json, :multipart_form]].freeze

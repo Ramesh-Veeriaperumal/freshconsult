@@ -34,7 +34,8 @@ module IntegrationServices::Services
       def get_fields
         request_url = "#{salesforce_old_rest_url}/sobjects/Contact/describe"
         response = http_get request_url
-        process_response(response, 200, &format_fields_block)
+        opt_fields = { "Address" => "Address", "Account.Name" => "Account Name" }
+        process_response(response, 200, &format_fields_block(opt_fields))
       end
 
       def get_selected_fields fields, email

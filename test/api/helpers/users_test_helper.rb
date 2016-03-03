@@ -19,7 +19,7 @@ module UsersTestHelper
       }
     end
 
-    {
+    result = {
       active: expected_output[:active] || contact.active,
       address: expected_output[:address] || contact.address,
       company_id: expected_output[:company_id] || contact.company_id,
@@ -40,6 +40,11 @@ module UsersTestHelper
       avatar: expected_output[:avatar] || contact_avatar
 
     }
+
+    if contact_merge_enabled?
+      result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role:false).map(&:email))
+    end
+    result
   end
 
   def deleted_contact_pattern(expected_output = {}, contact)
@@ -47,7 +52,7 @@ module UsersTestHelper
   end
 
   def index_contact_pattern(contact)
-    contact_pattern(contact).except(:avatar, :tags, :deleted)
+    contact_pattern(contact).except(:avatar, :tags, :deleted, :other_emails)
   end
 
   def index_deleted_contact_pattern(contact)
@@ -95,5 +100,20 @@ module UsersTestHelper
       mobile: '1234567893', description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
       language: 'en', time_zone: 'Chennai', company_id: comp.id
     }
+  end
+
+  def other_emails_for_test(contact)
+    contact.reload.emails - [contact.reload.email]
+  end
+
+  def add_user_email(contact, email, options={})
+    params = {email: email, user_id: contact.id}
+    params.merge!(options) if options.any?
+    u = UserEmail.new(params)
+    u.save
+  end
+
+  def contact_merge_enabled?
+    Account.current.contact_merge_enabled?
   end
 end

@@ -208,6 +208,9 @@
 				&:last-child{
 					width: 31%;
 				}
+				.text-info{
+					word-break: break-all;
+				}
 		}
 		.customers_selector{
 	    	@include margin-left(5px);
@@ -238,7 +241,7 @@
 		}
 		a:hover{
 			color: #369;
-		}	
+		}
 	}
 }
 #cust-list{
@@ -281,13 +284,13 @@
 }
 .contacts_sub_header{
 	@include clearfix;
-	border-bottom:1px solid #dedede;	
+	border-bottom:1px solid #dedede;
 	padding: 8px 0;
 }
 
 /* NEW STYLES */
 
-$iconColorList: "ticket" $bg_color_ticket, 
+$iconColorList: "ticket" $bg_color_ticket,
 				"forum" $bg_color_forum;
 
 .page-header-sticky {
@@ -330,7 +333,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 			display: block;
 			text-align: center;
 		}
-	} 
+	}
 	.add-contact {
 		.control-group {
 			margin-bottom: 0;
@@ -348,7 +351,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 			font-size: 18px;
 			font-weight: 300;
 			padding: 2px 0px 15px 20px;
-			display: inline-block;			
+			display: inline-block;
 			cursor: pointer;
 			z-index: 2;
 			position: relative;
@@ -609,7 +612,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 		}
 		.user_name {
 			font-weight: normal;
-			@include margin-right(-5px);			
+			@include margin-right(-5px);
 		}
 	}
 	.timeline-icon {
@@ -621,7 +624,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 		height: 30px;
 		color: #FFF;
 		@include border-radius(50%);
-		
+
 		@each $item in $iconColorList {
 			&.#{nth($item,1)} {
 				background-color: #{nth($item,2)};
@@ -632,7 +635,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 			display: block;
 		}
 	}
-}  
+}
 
 
 ul.user_list{
@@ -644,14 +647,14 @@ ul.user_list{
 	  height:100px;
 		@include float(left);
 		width:120px;
-		
+
 		@include text-align(center);
 		.preview_pic{
 			@include margin(2px 34px);
 			img{
 				padding:0;
 				border:0;
-			}	
+			}
 		}
 		&.user-item {
 			height: auto;
@@ -706,7 +709,7 @@ ul.user_list{
 				.name {
 					color: $linkColor;
 				}
-			}	
+			}
 			.avatar-text{
 				text-align: center;
 				border-radius: 10%;
@@ -720,4 +723,4 @@ ul.user_list{
 			word-wrap: break-word;
 		}
 	}
-} 
+}

@@ -17,4 +17,12 @@ class ContactDecorator < ApiDecorator
     record.custom_field.each { |k, v| custom_fields_hash[@name_mapping[k]] = v }
     custom_fields_hash
   end
+
+  def contact_merge_enabled?
+    Account.current.contact_merge_enabled?
+  end
+
+  def other_emails
+    (record.user_emails - [record.primary_email]).map(&:email)
+  end
 end

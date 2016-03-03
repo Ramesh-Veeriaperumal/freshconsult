@@ -36,8 +36,9 @@ var SurveyQuestion = {
 		jQuery("a#question-cancel").hide();
     jQuery('div#survey_question_set').find('a.delete-question').hide();
 		jQuery("div#question_rating_choice").hide();
-    jQuery('#survey_point_scale').text(surveysI18n.scale_text + " " +view.choiceValues.length+ " " +surveysI18n.scale).removeClass("spanhack");
-    jQuery('#question_point_scale').text(surveysI18n.scale_text + " " +view.questions.choiceValues.length+ " " +surveysI18n.points_scale).removeClass("spanhack");
+		console.log(view);
+    jQuery('#survey_point_scale').text(surveysI18n.scale_text + " " +SurveyProtocol.content.choices.length+ " " +surveysI18n.scale).removeClass("spanhack");
+    jQuery('#question_point_scale').text(surveysI18n.scale_text + " " +SurveyProtocol.content.question_choices.length+ " " +surveysI18n.points_scale).removeClass("spanhack");
 		jQuery(".add-srvy-ques").hide();
     jQuery('div#comments').find("input[name='can_comment']").attr('disabled',true);
 	},
