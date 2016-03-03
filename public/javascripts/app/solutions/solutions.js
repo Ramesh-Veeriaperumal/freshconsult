@@ -57,7 +57,7 @@ window.App = window.App || {};
 
     bindHandlers: function () {
       $('body').on('change.solutionHome', '#solution_folder_meta_visibility', App.Solutions.Folder.setCompanyVisibility);
-      $('body').on('click.solutionHome', '.modal-footer [data-dismiss="modal"]', App.Solutions.Folder.resetFormOnCancel);
+      $('body').on('click.solutionHome', '.modal-footer [data-dismiss="modal"]', this.resetFormOnCancel);
     },
 
     unBindHandlers: function () {
@@ -73,6 +73,17 @@ window.App = window.App || {};
     formatLangOptions: function (state) {
       var originalOption = state.element, outdated;
       return "<span class='language_symbol " + $(originalOption).data('state') + "'>" + "<span class='language_name'>" + $(originalOption).data('code') + "</span></span>" + "<span class='language_label'>" + state.text + "</span>";
+    },
+
+    resetFormOnCancel: function (e) {
+      var form = $('#' + e.target.id).parents('.modal').find('form');
+      form.resetForm();
+      form.find('.select2').trigger('change');
+      form.find('.error_messages').empty();
+      if (form.find('.company_folders').length > 0) {
+        var customers_input = form.find('.autocomplete_filter [type="hidden"]');
+        customers_input.select2('val', customers_input.data().initialValue);
+      }
     },
 
     onLeave: function (data) {

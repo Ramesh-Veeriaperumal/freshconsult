@@ -315,16 +315,6 @@ window.App = window.App || {};
         customers_input.trigger("liszt:updated");
         form.find('.company_folders').hide();
       }
-    },
-
-    resetFormOnCancel: function (e) {
-      var form = $('#' + e.target.id).parents('.modal').find('form');
-      form.resetForm();
-      form.find('.select2').trigger('change');
-      if (form.find('.company_folders').length > 0) {
-        var customers_input = form.find('.autocomplete_filter [type="hidden"]');
-        customers_input.select2('val', customers_input.data().initialValue);
-      }
     }
   };
 }(window.jQuery));

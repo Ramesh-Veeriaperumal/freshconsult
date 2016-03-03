@@ -1,3 +1,6 @@
+/*jslint browser: true */
+/*global  App */
+
 window.App = window.App || {};
 window.App.Admin = window.App.Admin || {};
 (function ($) {
