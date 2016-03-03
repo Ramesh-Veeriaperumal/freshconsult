@@ -131,7 +131,7 @@ class Solution::ArticlesController < ApplicationController
   # end
 
   def mark_as_uptodate
-    meta_scoper.find(params[:item_id]).send(Language.find(params[:language_id]).code.underscore + "_article").update_attributes(:outdated => false)
+    meta_scoper.find(params[:item_id]).send("#{language.to_key}_article").update_attributes(:outdated => false)
     respond_to do |format|
       format.json { head :ok }
     end

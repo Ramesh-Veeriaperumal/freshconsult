@@ -168,9 +168,9 @@ window.App = window.App || {};
       var $this = this;
       $('body').on('click.articles', '.outdate-uptodate', function (e) {
         var el = $(this);
-        var flag = $(e.target).is(":button")
+        var flag = $(e.target).is(":button") || $(e.target).parent().is(":button");
         if(flag) {
-          $(this).button('loading');
+          $(e.target).parent().button('loading');
         }
         $.ajax({
           url: el.data('url'),
@@ -182,22 +182,24 @@ window.App = window.App || {};
           },
           success: function (result) {
             flag ? el.button('complete') : el.remove();
-            setTimeout((el.data('actionType') === 'mark-outdated') ? $this.postOutdate(result) : $this.postUptodate(), 2000);
+            setTimeout(function(){
+              (el.data('actionType') === 'mark-outdated') ? $this.postOutdate(result) : $this.postUptodate()
+            }, 2000);
           }
         });
       });
     },
 
     postOutdate: function (result) {
-      $('.outdate-section').addClass('hide');
+      $('.outdate-section').fadeOut();
       $('.language-tabs').html(result);
       $('.lang-tab').first().addClass('selected');
       this.formatTranslationDropdown();
     },
 
     postUptodate: function () {
-      $('.update-section').addClass('hide');
-      $('.uptodate-section').removeClass('hide');
+      $('.update-section').hide();
+      $('.uptodate-section').fadeIn();
       $('.lang-tab.selected .language_symbol').removeClass('outdated');
     },
 

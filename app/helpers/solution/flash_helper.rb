@@ -27,6 +27,6 @@ module Solution::FlashHelper
         data-item-id='#{@article_meta.id}' 
         data-url='#{send("mark_as_#{action_type}_solution_articles_path")}' 
         data-language-id='#{@article.language_id}'
-      > #{t("solution.general.mark_as_#{action_type}")}</a>"
+      > #{t("solution.general.mark_as_#{action_type}.text_1")}</a> - "
   end
 end
