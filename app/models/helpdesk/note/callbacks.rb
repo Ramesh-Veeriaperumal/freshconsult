@@ -144,8 +144,8 @@ class Helpdesk::Note < ActiveRecord::Base
     def handle_notification_for_agent_as_req
       # Send the notifications to the notified agents when agent as a requester adds a note (pvt/public)
       notifying_agents
-      # Send the replies to cc person, when agent as a requester replies from the helpdesk agent portal
-      if email? && (self.cc_emails.present? || self.bcc_emails.present?)
+      # Send the replies to requester and cc person, when agent as a requester replies from the helpdesk agent portal
+      if email? && (self.to_emails.present? || self.cc_emails.present? || self.bcc_emails.present?)
         Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.present? ,
                 :send_survey => false,
                 :quoted_text => self.quoted_text,
