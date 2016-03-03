@@ -2,11 +2,7 @@
 	<div class="solution-sidebar">
 		<%= not_in_portal_notification(@article) %>
 		<% if @article.new_record? %>
-			<div class="ml20 mt20 mr20">
-				<h3 class="lead"> <%=t('solution.title').html_safe%> </h3>
-	      <p><%=t('solution.info4').html_safe%></p>
-				# Content for New Artcile Version sidebar
-			</div>
+			<!--  #TODO Sidebar content for New translation -->
 		<% else %>
 			<%= render partial: "sidebar" %>
 		<% end %>
