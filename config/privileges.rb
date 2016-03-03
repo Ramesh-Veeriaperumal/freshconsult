@@ -459,6 +459,7 @@ Authority::Authorization::PrivilegeList.build do
   	resource :"admin/ecommerce/account",:only => [:index]
     resource :"admin/ecommerce/ebay_account"
     resource :"freshfone/dashboard", :only => [:index]
+    resource :"integrations/marketplace_app"
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]

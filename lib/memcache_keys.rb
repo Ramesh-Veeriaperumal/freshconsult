@@ -116,7 +116,11 @@ module MemcacheKeys
 
   EXTENSION_CATEGORIES = "v1/FA:EXTENSION_CATEGORIES"
 
-  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}"
+  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}"
+
+  EXTENSION_VERSION_DETAILS = "v1/FA:EXTENSION:%{version_id}:%{locale_id}"
+
+  CONFIGURATION_DETAILS = "v1/FA:CONFIGURATIONS:%{version_id}:%{locale_id}"
 
   INSTALLED_CTI_APP = "v1/INSTALLED_CTI_APP:%{account_id}"
 
