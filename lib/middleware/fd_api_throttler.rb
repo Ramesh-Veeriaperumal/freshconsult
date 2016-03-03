@@ -87,7 +87,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
       remaining = [(@api_limit - @count), 0].max.to_s
       @headers = @headers.merge('X-RateLimit-Total' => @api_limit.to_s, 
                                 'X-RateLimit-Remaining' => remaining,
-                                'X-RateLimit-Used' => used_limit.to_s)
+                                'X-RateLimit-Used-CurrentRequest' => used_limit.to_s)
     end
 
     def set_version_headers
