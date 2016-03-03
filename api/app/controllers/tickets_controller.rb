@@ -70,8 +70,8 @@ class TicketsController < ApiApplicationController
     def get_name_mapping
       # will be called only for index and show.
       # We want to avoid memcache call to get custom_field keys and hence following below approach.
-      custom_field = index? ? @items.first.try(:custom_field) : @item.custom_field
-      custom_field.each_with_object({}) { |(name, value), hash| hash[name] = TicketDecorator.display_name(name) } if custom_field
+      mapping = Account.current.ticket_field_def.ff_alias_column_mapping
+      mapping.each_with_object({}) { |(ff_alias, column), hash| hash[ff_alias] = TicketDecorator.display_name(ff_alias) } if (@item || @items.present?)
     end
 
     def set_custom_errors(item = @item)
@@ -80,7 +80,7 @@ class TicketsController < ApiApplicationController
 
     def load_objects
       super tickets_filter.preload(:ticket_old_body,
-                                   :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries })
+                                   :schema_less_ticket, :flexifield)
     end
 
     def after_load_object

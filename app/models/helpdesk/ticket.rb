@@ -849,6 +849,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return nil unless @custom_field || flexifield
     @custom_field ||= retrieve_ff_values
   end
+  
+  def modified_custom_field
+    return nil unless @custom_field || flexifield
+    @custom_field ||= retrieve_modified_ff_values
+  end
 
   def custom_field= custom_field_hash
     @custom_field = new_record? ? custom_field_hash : nil
