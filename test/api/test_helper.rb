@@ -6,7 +6,6 @@ class ActionController::TestCase
   end
 
   def setup
-    SpamCounter.stubs(:count).returns(0)
     activate_authlogic
     get_agent
     @account.make_current
@@ -43,12 +42,12 @@ class ActionDispatch::IntegrationTest
   FileUtils.mkdir_p "#{Rails.root}/test/api/query_reports"
 
   def setup
-    SpamCounter.stubs(:count).returns(0)
     get_agent
     set_request_headers
     host!('localhost.freshpo.com')
     set_key(account_key, 500, nil)
     set_key(default_key, 400, nil)
+    @account.make_current
     set_key(plan_key(@account.subscription.subscription_plan_id), 200, nil)
     Bullet.add_whitelist type: :unused_eager_loading, class_name: 'ForumCategory', association: :forums
     Bullet.add_whitelist type: :n_plus_one_query, class_name: 'ForumCategory', association: :account

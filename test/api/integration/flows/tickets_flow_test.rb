@@ -134,10 +134,11 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
   def test_custom_date_utc_format
     t = ticket
     time = Time.zone.now.in_time_zone('Chennai')
-    Helpdesk::Ticket.any_instance.stubs(:modified_custom_field).returns(custom_date_1: time)
+    Helpdesk::Ticket.any_instance.stubs(:modified_custom_field).returns('custom_date_1' => time)
 
     # without CustomFieldDecorator
     TicketDecorator.any_instance.stubs(:utc_format).returns(time)
+    FlexifieldDef.any_instance.stubs(:ff_alias_column_mapping).returns("custom_date_1" => "custom_date")
     get "/api/v2/tickets/#{t.display_id}", nil, @write_headers
     parsed_response = JSON.parse(response.body)['custom_fields']
     assert_equal time.iso8601, parsed_response['custom_date']

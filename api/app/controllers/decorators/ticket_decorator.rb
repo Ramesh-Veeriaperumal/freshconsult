@@ -14,7 +14,6 @@ class TicketDecorator < ApiDecorator
   end
 
   def custom_fields
-    @name_mapping ||= modified_custom_field.each_with_object({}) { |cf, hash| hash[cf.name] = self.class.display_name(cf.name) }
     custom_fields_hash = {}
     modified_custom_field.each { |k, v| custom_fields_hash[@name_mapping[k]] = utc_format(v) }
     custom_fields_hash

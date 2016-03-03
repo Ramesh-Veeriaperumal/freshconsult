@@ -647,7 +647,7 @@ private
 
   def assign_flexifield
     build_flexifield
-    self.ff_def = FlexifieldDef.find_by_account_id_and_name(self.account_id, "Ticket_#{self.account_id}").id
+    self.flexifield_def = Account.current.ticket_field_def
     assign_ff_values custom_field
     @custom_field = nil
   end
