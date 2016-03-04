@@ -151,6 +151,10 @@ class Account < ActiveRecord::Base
     ismember?(TAG_BASED_ARTICLE_SEARCH, self.id)
   end
 
+  def classic_reports_disabled?
+    !ismember?(CLASSIC_REPORTS_ENABLED, self.id)
+  end
+
   #Temporary feature check methods - using redis keys - ends here
 
   def validate_required_ticket_fields?

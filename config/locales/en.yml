@@ -7736,6 +7736,8 @@ en:
     customer_satisfaction:
       title: Customer Satisfaction Report
   adv_reports:
+    deprecated_message : "(View classic report link will no longer be available from Fri, 18 March 2016)"
+    deprecated_header : "This report will no longer be available from Fri, 18 March 2016"
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"
     report: " Report "
