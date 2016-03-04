@@ -46,6 +46,10 @@ class Support::Solutions::FoldersController < SupportController
       @folder.solution_folders.map { |f| f.language.code }
     end
 
+		def unscoped_fetch
+			@folder = current_account.solution_folder_meta.unscoped_find(params[:id])
+		end
+
     def default_url
       support_solutions_folder_path(@folder, :url_locale => current_account.language)
     end

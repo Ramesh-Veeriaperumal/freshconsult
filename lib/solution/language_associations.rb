@@ -72,6 +72,10 @@ module Solution::LanguageAssociations
         :select => [ select_string_for_query ]
       }
     }
+
+    def self.unscoped_find(id)
+      unscoped.find_by_id_and_account_id(id, Account.current.id)
+    end
     
     def self.select_string_for_query
       select_string = "`#{child_class.table_name}`.*"

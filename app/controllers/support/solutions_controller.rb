@@ -57,6 +57,10 @@ class Support::SolutionsController < SupportController
       @category.solution_categories.map { |c| c.language.code}
     end
 
+		def unscoped_fetch
+			@category = current_portal.solution_category_meta.unscoped_find(params[:id])
+		end
+
     def default_url
       support_solution_path(@category, :url_locale => current_account.language)
     end

@@ -161,8 +161,12 @@ class Support::Solutions::ArticlesController < SupportController
       support_solutions_article_path(@solution_item.send("#{language.to_key}_article") || @solution_item, :url_locale => language.code)
     end
 
+    def unscoped_fetch
+      @article = current_account.solution_article_meta.unscoped_find(params[:id])
+    end
+
     def default_url
-      support_solutions_article_path(@article, :url_locale => current_account.language)
+      support_solutions_article_path(@article.primary_article, :url_locale => current_account.language)
     end
 
 end
