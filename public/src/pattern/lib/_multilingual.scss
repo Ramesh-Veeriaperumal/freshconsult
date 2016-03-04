@@ -1,5 +1,4 @@
 // Multilanguage Specific styles
-
 // -- Russian, German & French
 :lang(ru-RU), :lang(de), :lang(fr){
   ul.header-tabs li a {
@@ -15,7 +14,10 @@
     }
   }
 
-  //Dashboard
+}
+
+//Dashboard summary count issue - Lengthy languages [indonesian, turkish, Japanese & Russian]
+:lang(ru-RU), :lang(de), :lang(fr), :lang(id), :lang(tr), :lang(ja-JP){
   .db-summary li a{
     padding-left: 10px;
     .summary-count{
@@ -23,8 +25,8 @@
       word-break: break-word;
     }
   }
-
 }
+
 
 // Spanish
 :lang(es){
