@@ -604,6 +604,7 @@ var scrollToError = function(){
 
 		$(this).select2({
 			multiple: true,
+			minimumInputLength: 2,
 			maximumInputLength: 32,
 			data: hash_val,
 			quietMillis: 500,

@@ -4,7 +4,7 @@
   :emails_boost: 1
   :phone_boost: 1
   :mobile_boost: 1
-:company_autocompletre:
+:company_autocomplete:
   :name_boost: 1
 :requester_autocomplete: 
   :name_boost: 1

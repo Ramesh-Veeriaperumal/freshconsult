@@ -29,16 +29,15 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
         if @search_field == 'requester'
           es_params[:requester_ids] = @requester_ids
         else
-          if Search::Utils.exact_match?(@search_key)
-            es_params[:search_term] = Search::Utils.extract_term(@search_key)
-            es_params[:exact_match] = true
-          else
-            es_params[:search_term] = @search_key
-          end
+          es_params[:search_term] = @search_key
+        end
+
+        if current_user.restricted?
+          es_params[:restricted_responder_id] = current_user.id.to_i
+          es_params[:restricted_group_id]     = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
         end
         
         es_params[:size]  = @size
-
         es_params[:sort_by]         = @search_sort
         es_params[:sort_direction]  = @sort_direction
       end

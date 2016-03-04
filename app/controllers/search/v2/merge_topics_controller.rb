@@ -11,7 +11,6 @@ class Search::V2::MergeTopicsController < Search::V2::SpotlightController
   
     def construct_es_params
       params = super
-      params[:topic_locked]     = 'false'
       params[:topic_visibility] = params[:forum_visibility].to_i if params[:forum_visibility]
       params
     end

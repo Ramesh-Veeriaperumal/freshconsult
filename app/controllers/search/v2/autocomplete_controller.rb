@@ -41,7 +41,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @searchable_klass = 'Company'
     @es_params        = {
       search_term: @search_key
-    }
+    }.merge(ES_V2_BOOST_VALUES[:company_autocomplete])
 
     search.each do |document|
       @search_results[:results].push(*[{

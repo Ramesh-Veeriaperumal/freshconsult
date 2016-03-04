@@ -15,9 +15,9 @@ class User < ActiveRecord::Base
               tailored_json: true,
               only: [ :name, :created_at, :updated_at, :account_id, :active, 
                       :job_title, :phone, :mobile, :twitter_id, 
-                      :description, :time_zone, :deleted, :fb_profile_id, :language, 
+                      :time_zone, :deleted, :fb_profile_id, :language, 
                       :blocked, :address, :helpdesk_agent ], 
-              methods: [ :company_names, :emails, :company_ids, :tag_ids ]
+              methods: [ :user_description, :company_names, :emails, :company_ids, :tag_ids ]
             }, true).merge(esv2_custom_attributes).merge(tag_names: es_tag_names).to_json
   end
 
@@ -97,5 +97,6 @@ class User < ActiveRecord::Base
   #
   alias :esv2_contact_field_data_columns :es_contact_field_data_columns
   alias :esv2_columns :es_columns
+  alias_attribute :user_description, :description
 
 end
