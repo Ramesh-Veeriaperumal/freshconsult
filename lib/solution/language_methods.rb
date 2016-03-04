@@ -22,4 +22,8 @@ module Solution::LanguageMethods
 		language.name
 	end
 
+  def is_primary?
+    language == Language.for_current_account
+  end
+
 end

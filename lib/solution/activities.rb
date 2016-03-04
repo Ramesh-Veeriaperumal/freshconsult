@@ -10,7 +10,8 @@ module Solution::Activities
   end
 
   def activity_required?
-    !(!Account.current.multilingual? && self.language_id != Language.for_current_account.id)
+    # Checking if this is the Primary version/translation.
+    is_primary? || !Account.current.multilingual?
   end
 
   def translation_activity?
@@ -18,15 +19,19 @@ module Solution::Activities
   end
 
   def add_activity_delete
-    create_activity("delete_#{class_short_name == 'category' ? 'solution_' : ''}#{class_short_name}")
+    create_activity("delete_#{activity_suffix}")
   end
 
   def add_activity_new
-    create_activity("new_#{class_short_name == 'category' ? 'solution_' : ''}#{class_short_name}")
+    create_activity("new_#{activity_suffix}")
   end
 
   def url_locale
     self.language.code
+  end
+  
+  def activity_suffix
+    (class_short_name=='category') && "solution_#{class_short_name}" || class_short_name
   end
 
   def create_activity(type)

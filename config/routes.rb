@@ -2002,7 +2002,6 @@ Helpkit::Application.routes.draw do
 
     match '/articles/:id/:language' => "articles#show", :as => :article_version, :via => :get
     match '/articles/:id/:language' => "articles#update", :as => :article_version, :via => :put
-    match '/articles/new/:id/:language' => "articles#new", :as => :new_article_version
     match '/all_categories/(:portal_id)' => "categories#all_categories", :as => :all_categories, :via => :get
   end
 

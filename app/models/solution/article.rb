@@ -279,10 +279,6 @@ class Solution::Article < ActiveRecord::Base
     save
   end
 
-  def is_primary?
-    language == Language.for_current_account
-  end
-
   private
 
     def queue_quest_job
