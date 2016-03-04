@@ -52,8 +52,10 @@ module Portal::Helpers::Article
 		output << %(<div class="cs-g-c">)
 		output << %(<section class="article-list">)
 		output << %(<h3 class="list-lead">#{I18n.t('portal.article.related_articles')}</h3>)
+		url = "/support/search/articles/#{article.id}/related_articles?voting-container=#{container}&limit=#{limit}"
+		url.prepend("/#{Language.current.code}") if Account.current.multilingual?
 		output << %(<ul rel="remote" 
-			data-remote-url="/#{Language.current.code}/support/search/articles/#{article.id}/related_articles?container=#{container}&limit=#{limit}" 
+			data-remote-url="#{url}" 
 			id="related-article-list"></ul>)
 		output << %(</section></div></div>)
 		output.join("")	
