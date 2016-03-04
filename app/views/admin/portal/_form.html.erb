@@ -52,17 +52,19 @@
       <div class="control-group pt10">
        <label class="control-label"><%= t("admin.products.portal.categories_visible") %></label>
         <div class="controls category-section">
+          <% if features_included?(:forums) %>
+            <div class="pb20">
+              <%= content_tag(:div, t('header.tabs.forums'), :class => "pb5") %>
+              <input type="hidden" name="portal[forum_category_ids][]" value="" />
+              <%= f.collection_select :forum_category_ids, @forums_categories, 
+                        :id, :name, {} , 
+                        :class => "select2 input-xlarge",
+                        :id => "forums_categories",
+                        :multiple => true, 
+                        :placeholder => t("admin.products.portal.select_forum_category").html_safe %>
+            </div>
+          <% end %>
           <div>
-            <%= content_tag(:div, t('header.tabs.forums'), :class => "pb5") %>
-            <input type="hidden" name="portal[forum_category_ids][]" value="" />
-            <%= f.collection_select :forum_category_ids, @forums_categories, 
-                      :id, :name, {} , 
-                      :class => "select2 input-xlarge",
-                      :id => "forums_categories",
-                      :multiple => true, 
-                      :placeholder => t("admin.products.portal.select_forum_category").html_safe %>
-          </div>
-          <div class="pt20">
             <%= content_tag(:div, t('header.tabs.solutions'), :class => "pb5") %>
             <input type="hidden" name="portal[solution_category_ids][]" value="" />
             <%= f.collection_select :solution_category_ids, @solution_categories.reject(&:is_default?), 
