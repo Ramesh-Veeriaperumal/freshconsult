@@ -78,6 +78,7 @@ class Solution::FoldersController < ApplicationController
   def move_to
     flash[:notice] = moved_flash_msg if @updated_items.present?
     flash[:error] = error_flash_msg if @other_items.present?
+    flash[:warning] = t('solution.folders.folder_form.check_translations') if current_account.multilingual?
   end
 
   def move_back

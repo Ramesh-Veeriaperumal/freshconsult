@@ -1,0 +1,45 @@
+<div class="delete-confirm-warning">
+	<div class="delete-confirm-warning-icon delete-notice"></div>
+	<div class="delete-confirm-warning-message">
+		<%= t('solution.articles.missing_translations.info', :language_name => @language.name) %>
+	</div>
+</div>
+
+<%
+@folder_meta = @article_meta.solution_folder_meta
+@category_meta = @folder_meta.solution_category_meta
+%>
+
+<% if privilege?(:manage_solutions) %>
+	<%= form_for "", :url => translate_parents_solution_article_path(@article_meta, :language => @language.code), 
+	            :html => {
+	              :remote => true,
+	              :method => :put,
+	              :"data-type" => "script",
+	              :class => "form-horizontal"
+	            } do |f| %>
+	  <div class="control-group row-fluid">
+			<%= f.label(:solution_category_meta_id, t('.category'), { :class => 'control-label'}) %>
+			<div class="controls">
+				<%= f.fields_for(:solution_category_meta, @category_meta) do |category_fields| %>
+					<%= dynamic_text_box(:category, @language, category_fields) %>
+				<% end %>
+			</div>
+		</div>
+		<div class="control-group row-fluid">
+			<%= f.label(:solution_folder_meta_id, t('solution.folder'), { :class => 'control-label'}) %>
+			<div class="controls">
+				<%= f.fields_for(:solution_folder_meta, @folder_meta) do |folder_fields| %>
+					<%= dynamic_text_box(:folder, @language, folder_fields) %>
+				<% end %>
+			</div>
+		</div>
+		<%= f.submit t('save'), :class => "btn btn-primary add-translations-btn ml10" %>
+		<%= pjax_link_to(t('go_back'), solution_folder_path(@folder_meta.id), :class => "btn add-translations-btn") %>
+	<% end %>
+<% else %>
+	<div class="muted center permission-denied">
+		<%= t('solution.articles.missing_translations.permission_denied') %>
+	</div>
+	<%= pjax_link_to(t('go_back'), solution_folder_path(@folder_meta.id), :class => "btn add-translations-btn mr20") %>
+<% end %>

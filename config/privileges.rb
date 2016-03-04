@@ -202,6 +202,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_solutions do
     resource :"solution/category", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder, :move_to, :move_back, :visible_to]
+    resource :"solution/article", :only => [:translate_parents]
   end
 
   # ************** FORUMS **************************

@@ -1,12 +1,18 @@
-<% content_for :sidebar do %>
-	<div class="solution-sidebar">
-		<%= not_in_portal_notification(@article) %>
-		<% if @article.new_record? %>
-			<!--  #TODO Sidebar content for New translation -->
-		<% else %>
-			<%= render partial: "sidebar" %>
-		<% end %>
+<% if !@article.new_record? && missing_translations?(@article) %>
+	<div class="hide never-close" id="add-translations">
+		<%= render :partial => "add_translations" %>
 	</div>
+<% else %>
+	<% content_for :sidebar do %>
+		<div class="solution-sidebar">
+			<%= not_in_portal_notification(@article) %>
+			<% if @article.new_record? %>
+				<!--  #TODO Sidebar content for New translation -->
+			<% else %>
+				<%= render partial: "sidebar" %>
+			<% end %>
+		</div>
+	<% end %>
 <% end %>
 
 <div class="solutions">
@@ -56,8 +62,12 @@
 			somethingWrong: "<%= escape_javascript(t('solution.general.something_wrong')).html_safe %>",
 			maxInput: "<%= escape_javascript(t('solution.articles.tag_max_len')).html_safe %>",
 			articleDeleted: "<%= escape_javascript(t('solution.articles.article_deleted')).html_safe %>",
-			back: "<%= escape_javascript(t('back')).html_safe %>"
-		};
+			back: "<%= escape_javascript(t('back')).html_safe %>",
+			addTranslationsTitle: "<%= escape_javascript(t('solution.articles.missing_translations.title')).html_safe %>"
+    };
 		<%= 'App.namespace = "solution/articles/new";'.html_safe if @article_meta.present? && @article.new_record? %>
+		<% if !@article.new_record? && missing_translations?(@article) %>
+			App.Solutions.Article.triggerTranslationsModal();
+		<% end %>
 	});
 </script>

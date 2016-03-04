@@ -27,6 +27,7 @@ window.App = window.App || {};
         $this.articleTags = $this.articleTags != "" ? $this.articleTags.split(",") : "";
         $this.setTagSelector();
         $this.articleProperties();
+        $this.checkTranslations();
       });
     },
 
@@ -118,6 +119,12 @@ window.App = window.App || {};
       });
     },
 
+    checkTranslations: function () {
+      $("body").on('change.articles', '#solution_article_meta_solution_folder_meta_id', function () {
+        $('.check-translations').toggleClass('hide', $(this).data('originalValue') === parseInt($(this).val()));
+      });
+    },
+
     formValidate: function () {
       var $this = this;
       $('body').on('submit.articles', '.article-edit #article-form', function (ev) {
@@ -200,6 +207,17 @@ window.App = window.App || {};
       $('.update-section').hide();
       $('.uptodate-section').fadeIn();
       $('.lang-tab.selected .language_symbol').removeClass('outdated');
+    },
+
+    triggerTranslationsModal: function () {
+      $.freshdialog({
+        title: this.STRINGS.addTranslationsTitle,
+        targetId: "#add-translations",
+        width: "500px",
+        backdrop: 'static',
+        keyboard: "false",
+        showClose: "false"
+      });
     },
 
     formatTranslationDropdown: function () {

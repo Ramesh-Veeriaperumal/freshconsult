@@ -23,6 +23,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :validate_author, :language, :only => [:update]
   before_filter :cleanup_params_for_title, :only => [:show]
   before_filter :language_scoper, :only => [:new]
+  before_filter :check_parent_params, :only => [:translate_parents]
   
   UPDATE_FLAGS = [:save_as_draft, :publish, :cancel_draft_changes]
 
@@ -117,6 +118,7 @@ class Solution::ArticlesController < ApplicationController
   def move_to
     flash[:notice] = moved_flash_msg if @updated_items.present?
     flash[:error] = error_flash_msg if @other_items.present?
+    flash[:warning] = t('solution.articles.check_translations') if current_account.multilingual?
   end
 
   def move_back
@@ -155,6 +157,11 @@ class Solution::ArticlesController < ApplicationController
     respond_to do |format|
       format.html { render :partial => "popover_content" }
     end
+  end
+
+  def translate_parents
+    @category_meta = Solution::Builder.category(params) if params[:solution_category_meta].present?
+    @folder_meta = Solution::Builder.folder(params) if params[:solution_folder_meta].present?
   end
 
   protected
@@ -478,5 +485,16 @@ class Solution::ArticlesController < ApplicationController
   			solution_article_path(article, options.slice(:anchor))
   	end
 
+    def check_parent_params
+      @article_meta = meta_scoper.find(params[:id])
+      render_404 if incorrect_folder_meta || incorrect_category_meta
+    end
 
+    def incorrect_folder_meta
+      @article_meta.solution_folder_meta_id.to_s != params[:solution_folder_meta][:id] if params[:solution_folder_meta].present?
+    end
+
+    def incorrect_category_meta
+      @article_meta.parent.solution_category_meta_id.to_s != params[:solution_category_meta][:id] if params[:solution_category_meta].present?
+    end
 end

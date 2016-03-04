@@ -1952,6 +1952,7 @@ Helpkit::Application.routes.draw do
             put :reset_ratings
             get :properties
             get :voted_users
+            put :translate_parents
           end
           resources :tag_uses
         end
@@ -1985,6 +1986,7 @@ Helpkit::Application.routes.draw do
         get :properties
         get :voted_users
         get :show_master
+        put :translate_parents
       end
       
       resources :tag_uses

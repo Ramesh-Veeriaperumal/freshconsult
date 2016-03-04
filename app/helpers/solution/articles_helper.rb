@@ -160,5 +160,9 @@ module Solution::ArticlesHelper
       op.html_safe
     end
   end
+
+  def missing_translations? article
+    !(article.solution_folder_meta.send("#{article.language.to_key}_available?") && article.parent.solution_category_meta.send("#{article.language.to_key}_available?"))
+  end
   
 end
