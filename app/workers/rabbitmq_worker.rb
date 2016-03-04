@@ -75,6 +75,7 @@ class RabbitmqWorker
   # Tickets/Notes - Third one is for search
   # ArchiveTickets/Accounts - Second one is for search
   # ArchiveNotes/Articles/Topics/Posts/Tags/Companies/Users - First one is for search
+  # Exchange will be like tickets_0, tickets_1
   #
   def search_routing_key?(exchange, key)
     ((exchange.include?("tickets") || exchange.include?("notes")) && key[4] == "1") || 

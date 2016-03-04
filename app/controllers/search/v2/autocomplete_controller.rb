@@ -10,7 +10,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @search_context   = :agent_autocomplete
     @searchable_klass = 'User'
     @es_params        = {
-      search_term: @search_key
+      search_term: @es_search_term
     }.merge(ES_V2_BOOST_VALUES[:agent_autocomplete])
 
     search.each do |document|
@@ -27,7 +27,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @search_context   = :requester_autocomplete
     @searchable_klass = 'User'
     @es_params        = {
-      search_term: @search_key
+      search_term: @es_search_term
     }.merge(ES_V2_BOOST_VALUES[:requester_autocomplete])
 
     search.each do |document|
@@ -40,7 +40,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @search_context   = :company_autocomplete
     @searchable_klass = 'Company'
     @es_params        = {
-      search_term: @search_key
+      search_term: @es_search_term
     }.merge(ES_V2_BOOST_VALUES[:company_autocomplete])
 
     search.each do |document|
@@ -56,7 +56,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @search_context   = :tag_autocomplete
     @searchable_klass = 'Helpdesk::Tag'
     @es_params        = {
-      search_term: @search_key
+      search_term: @es_search_term
     }
 
     search.each do |document|
@@ -106,14 +106,12 @@ class Search::V2::AutocompleteController < ApplicationController
     end
 
     def initialize_search_parameters
-      @search_key       = params[:q] || ''
+      @search_key       = (params[:q] || '') #=> Raw input from user
+      @exact_match      = true if Search::Utils.exact_match?(@search_key)
+
+      @es_search_term   = Search::Utils.extract_term(@search_key, @exact_match) #=> Sanitized term sent to ES
       @records_from_db  = []
       @search_results   = { results: [] }
-
-      if Search::Utils.exact_match?(@search_key)
-        @search_key   = Search::Utils.extract_term(@search_key)
-        @exact_match  = true
-      end
     end
 
     # ESType - [model, associations] mapping

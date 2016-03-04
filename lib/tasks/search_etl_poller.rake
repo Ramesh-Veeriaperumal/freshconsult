@@ -10,7 +10,7 @@ namespace :search_v2 do
   task :etl_poller => :environment do
     puts '='*100, poller_comment, '='*100
 
-    AwsWrapper::SqsV2.poll('search_etl_queue_dev') do |msg|
+    AwsWrapper::SqsV2.poll(SQS[:search_etl_queue]) do |msg|
       begin
         decoded_json = ActiveSupport::JSON.decode(msg.body)
         search_message = JSON.parse(decoded_json)

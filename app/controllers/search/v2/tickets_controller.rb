@@ -29,7 +29,7 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
         if @search_field == 'requester'
           es_params[:requester_ids] = @requester_ids
         else
-          es_params[:search_term] = @search_key
+          es_params[:search_term] = @es_search_term
         end
 
         if current_user.restricted?
@@ -37,7 +37,7 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
           es_params[:restricted_group_id]     = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
         end
         
-        es_params[:size]  = @size
+        es_params[:size]            = @size
         es_params[:sort_by]         = @search_sort
         es_params[:sort_direction]  = @sort_direction
       end
@@ -55,19 +55,13 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
     def search_users
       begin
         user_params     = Hash.new.tap do |es_params|
-          if Search::Utils.exact_match?(@search_key)
-            es_params[:search_term] = Search::Utils.extract_term(@search_key)
-            es_params[:exact_match] = true
-          else
-            es_params[:search_term] = @search_key
-          end
-
+          es_params[:search_term]     = @es_search_term
           es_params[:sort_by]         = '_score'
           es_params[:sort_direction]  = 'desc'
         end
 
         es_results      = Search::V2::SearchRequestHandler.new(current_account.id,
-                                                                :requester_autocomplete,
+                                                                Search::Utils.template_context(:requester_autocomplete, @exact_match),
                                                                 ['user']
                                                               ).fetch(user_params.merge(ES_V2_BOOST_VALUES[:requester_autocomplete])
                                                                 )

@@ -1,7 +1,7 @@
 module RabbitMq::Subscribers::Accounts::Search
 
   def mq_search_valid(action, model)
-    (destroy_action?(action) || self.features_included?(:es_v2_writes)) && valid_esv2_model?(model) # Destroy based on feature?
+    (destroy_action?(action) || self.features?(:es_v2_writes)) && valid_esv2_model?(model) # Destroy based on feature?
   end
 
   def mq_search_account_properties(action)

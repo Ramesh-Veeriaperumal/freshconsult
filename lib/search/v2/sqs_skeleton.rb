@@ -20,7 +20,7 @@ module Search
       end
 
       def es_v2_valid?(obj, model)
-        Account.current.features_included?(:es_v2_writes) && obj.send('valid_esv2_model?', model)
+        Account.current.features?(:es_v2_writes) && obj.send('valid_esv2_model?', model)
       end
 
       # Using action create instead of update to avoid valid? check.

@@ -5,22 +5,14 @@ class Search::V2::SolutionsController < Search::V2::SpotlightController
   skip_before_filter :set_search_sort_cookie
   before_filter :load_ticket, :only => [:related_solutions, :search_solutions]
   
-  attr_accessor :search_key, :ticket, :suggest
+  attr_accessor :ticket, :suggest
     
   # Find solutions for ticket
   #
   def related_solutions
-    @search_key = @ticket.subject
+    @es_search_term = @ticket.subject
     search
-
-    respond_to do |format|
-      format.html do
-        render template: 'search/solutions/related_solutions', :layout => false
-      end
-			format.js do
-				render template: 'search/solutions/related_solutions', :layout => false
-			end
-    end
+    render template: 'search/solutions/related_solutions', :layout => false
   end
 
   # Find solutions for insert_solution search
@@ -36,7 +28,6 @@ class Search::V2::SolutionsController < Search::V2::SpotlightController
     def initialize_search_parameters
       super
       @search_context     = :agent_spotlight_solution
-      @search_key         = params[:q] || ''
       @suggest            = true
       @no_render          = true
       @searchable_klasses = ['Solution::Article']

@@ -8,7 +8,7 @@ class Search::V2::SpotlightController < ApplicationController
   before_filter :set_search_sort_cookie, :initialize_search_parameters
 
   attr_accessor :search_key, :search_sort, :result_json, :es_results, :search_results, :total_pages, 
-                :current_page, :size, :offset, :sort_direction, :search_context, :no_render
+                :current_page, :size, :offset, :sort_direction, :search_context, :no_render, :es_search_term
 
   # Unscoped spotlight search
   #
@@ -123,7 +123,7 @@ class Search::V2::SpotlightController < ApplicationController
     #
     def construct_es_params
       Hash.new.tap do |es_params|
-        es_params[:search_term] = @search_key
+        es_params[:search_term] = @es_search_term
 
         if current_user.restricted?
           es_params[:restricted_responder_id] = current_user.id.to_i
@@ -211,7 +211,10 @@ class Search::V2::SpotlightController < ApplicationController
     end
 
     def initialize_search_parameters
-      @search_key     = params[:term] || params[:search_key] || ''
+      @search_key     = (params[:term] || params[:search_key] || params[:q] || '') #=> Raw input from user
+      @exact_match    = true if Search::Utils.exact_match?(@search_key)
+
+      @es_search_term = Search::Utils.extract_term(@search_key, @exact_match) #=> Sanitized term sent to ES
       @search_sort    = params[:search_sort] || cookies[:search_sort]
       @sort_direction = 'desc'
       @size           = Search::Utils::MAX_PER_PAGE
@@ -219,11 +222,6 @@ class Search::V2::SpotlightController < ApplicationController
       @offset         = @size * (@current_page - 1)
       @result_json    = { :results => [], :current_page => Search::Utils::DEFAULT_PAGE }
       @es_results     = []
-
-      if Search::Utils.exact_match?(@search_key)
-        @search_key   = Search::Utils.extract_term(@search_key)
-        @exact_match  = true
-      end
     end
 
     # ESType - [model, associations] mapping

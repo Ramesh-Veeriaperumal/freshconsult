@@ -105,7 +105,7 @@ class Support::SearchV2::SpotlightController < SupportController
     #
     def construct_es_params
       Hash.new.tap do |es_params|
-        es_params[:search_term] = @search_key
+        es_params[:search_term] = @es_search_term
 
         if current_user
           if privilege?(:client_manager)
@@ -263,17 +263,15 @@ class Support::SearchV2::SpotlightController < SupportController
     ######################
 
     def initialize_search_parameters
-      @search_key     = params[:term] || params[:search_key] || ''
+      @search_key     = (params[:term] || params[:search_key] || '') #=> Raw input from user
+      @exact_match    = true if Search::Utils.exact_match?(@search_key)
+
+      @es_search_term = Search::Utils.extract_term(@search_key, @exact_match) #=> Sanitized term sent to ES
       @es_results     = []
       @size           = (params[:max_matches].to_i.zero? or
                         params[:max_matches].to_i < Search::Utils::MAX_PER_PAGE) ? Search::Utils::MAX_PER_PAGE : params[:max_matches]
       @page           = (params[:page].to_i.zero? ? Search::Utils::DEFAULT_PAGE : params[:page].to_i)
       @offset         = @size * (@page - 1)
-
-      if Search::Utils.exact_match?(@search_key)
-        @search_key   = Search::Utils.extract_term(@search_key)
-        @exact_match  = true
-      end
     end
 
     # ESType - [model, associations] mapping

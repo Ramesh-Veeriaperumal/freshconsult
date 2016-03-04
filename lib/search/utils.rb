@@ -99,8 +99,12 @@ class Search::Utils
     search_term.present? and (search_term.start_with?('<','"') && search_term.end_with?('>', '"'))
   end
 
-  def self.extract_term(search_term)
-    search_term.to_s.gsub(/^<?"?|"?>?$/,'').squish
+  def self.extract_term(search_term, exact_match=false)
+    # Removing <>/"" if exact match
+    term = (exact_match ? search_term.to_s.gsub(/^<?"?|"?>?$/,'').squish : search_term)
+
+    # Removing tags and spl chars from ends
+    ActionController::Base.helpers.strip_tags(term).gsub(/^[^0-9A-Za-z]|[^0-9A-Za-z]$/, '').squish
   end
 
   # Returns partial/exact match template
