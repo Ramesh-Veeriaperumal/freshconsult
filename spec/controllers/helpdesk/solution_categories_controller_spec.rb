@@ -158,8 +158,9 @@ describe Solution::CategoriesController do
           :description => "#{Faker::Lorem.sentence(3)}" 
         }
       }
-    @account.solution_categories.find_by_name(name).should be_an_instance_of(Solution::Category)    
-    response.should redirect_to(solution_all_categories_path)
+    category = @account.solution_categories.find_by_name(name)
+    category.should be_an_instance_of(Solution::Category)
+    response.should redirect_to(solution_category_path(category))
   end
 
   it "should delete a solution category" do

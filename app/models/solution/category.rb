@@ -74,7 +74,7 @@ class Solution::Category < ActiveRecord::Base
   end
 
   def stripped_name
-    name.downcase.strip
+    (name || "").downcase.strip
   end
    
   private

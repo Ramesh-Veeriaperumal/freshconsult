@@ -17,7 +17,7 @@ RSpec.describe Solution::CategoriesController do
     params = solution_category_api_params
     post :create, params.merge!(:format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    expect(response.status).to be_eql(201)
+    expect(response.status).to be_eql(200)
     expect(assert_array(result["solution_category"].keys, APIHelper::SOLUTION_CATEGORY_ATTRIBS)).to be_empty
   end
 
@@ -26,7 +26,7 @@ RSpec.describe Solution::CategoriesController do
     put :update, { :id => solution_category.id, :solution_category => {:description => Faker::Lorem.paragraph }, :format => 'xml'}
     result = parse_xml(response)
     
-    expect(response.status).to be_eql(201)
+    expect(response.status).to be_eql(200)
   end
 
   it "should be able to view a solution category" do

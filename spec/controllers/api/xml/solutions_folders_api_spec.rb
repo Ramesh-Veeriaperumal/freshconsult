@@ -23,7 +23,7 @@ RSpec.describe Solution::FoldersController do
     params = solution_folder_api_params
     post :create, params.merge!(:category_id=>@solution_category.id,:format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    expect(response.status).to be_eql(201)
+    expect(response.status).to be_eql(200)
     expect(assert_array(result["solution_folder"].keys, APIHelper::SOLUTION_FOLDER_ATTRIBS)).to be_empty
   end
 
@@ -57,7 +57,7 @@ RSpec.describe Solution::FoldersController do
     params = solution_folder_params_with_company_visibility
     post :create, params.merge!(:category_id=>@solution_category.id,:format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    expect(response.status).to be_eql(201)
+    expect(response.status).to be_eql(200)
     expect(assert_array(result["solution_folder"].keys, APIHelper::SOLUTION_FOLDER_ATTRIBS)).to be_empty
     customer_id = @account.folders.find_by_name(params["solution_folder"]["name"] ).solution_folder_meta.customer_folders.first.customer.id
     customer_id.should be(@new_company.id)

@@ -150,7 +150,7 @@ class Solution::Folder < ActiveRecord::Base
   end
 
   def stripped_name
-    name.downcase.strip
+    (name || "").downcase.strip
   end
 
   def name_uniqueness_validation

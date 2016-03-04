@@ -2,7 +2,7 @@
   <div 
       class="error_messages" 
       id="error_messages_<%= @folder_meta.new_record? ? 'new_folder' : "#{@folder_meta.id}_l#{@language.id}"%>">
-    <%= f.error_messages %>
+    <%= error_messages_for :folder_meta %>
   </div>
 
   <%= f.fields_for(association, @folder) do |associated_folder| %>

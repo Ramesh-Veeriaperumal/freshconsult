@@ -48,7 +48,7 @@ module Solution::ControllerMethods
 				reload_object
 				format.html { html_response(meta, object) }
 				format.js { js_response }
-				format.xml  { render :xml => meta, :status => :created, :location => object }     
+				format.xml  { render :xml => meta, :status => :ok, :location => object }     
 				format.json { render :json => meta, :status => :ok, :location => object }     
 			else
 				format.html { html_error_response }

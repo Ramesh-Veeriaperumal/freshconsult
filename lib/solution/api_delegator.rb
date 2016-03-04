@@ -48,7 +48,6 @@ module Solution::ApiDelegator
         :except => (options[:except] || []) + [:id] 
       })[api_root_name]
 
-    options[:include] = include_exceptions(options[:include])
     options[:except] = (options[:except] || []) + API_ALWAYS_REMOVE
     options[:methods] = (options[:methods] || []) + ["#{PARENT_ASSOCIATIONS[class_api_name].keys.first}_id"] if PARENT_ASSOCIATIONS[class_api_name]
 
@@ -56,27 +55,17 @@ module Solution::ApiDelegator
     if (options.key?(:root) && (options[:root] == false))
       final_resp
     else
-      { options[:root] || send("#{options[:to_xml]}api_root_name") => final_resp }
+      final_root_name = options[:to_xml] ? xml_api_root_name : api_root_name
+      { options[:root] || final_root_name => final_resp }
     end
   end
 
   def to_xml(options = {})
-    options[:to_xml] = 'xml_'
+    options[:to_xml] = true
     self.as_json(options.except(:builder, :root, :indent))[xml_api_root_name].to_xml( :root => xml_api_root_name)
   end
   
   private
-
-  def include_exceptions(includes = {})
-    if includes.is_a?(Array)
-      includes = includes - ((PARENT_ASSOCIATIONS[class_api_name] || {}).keys + (CHILD_ASSOCIATIONS[class_api_name] || {}).keys)
-    else
-      includes ||= {}
-      includes.except!(*PARENT_ASSOCIATIONS[class_api_name].keys) if PARENT_ASSOCIATIONS[class_api_name]
-      includes.except!(*CHILD_ASSOCIATIONS[class_api_name].keys) if CHILD_ASSOCIATIONS[class_api_name]
-    end
-    includes
-  end
   
   def json_from_parent(options={})
     parent_json = {}
@@ -103,7 +92,7 @@ module Solution::ApiDelegator
 
       child_options.merge!(:root => false)
       if options.key?(:to_xml)
-        child_options.merge!(:to_xml => 'xml_') 
+        child_options.merge!(:to_xml => true) 
         root_key = "solution-" + CHILD_ASSOCIATIONS[class_api_name].keys.first.to_s.singularize
       end
       child_options.merge!(:except => [:tags]) if (class_api_name == :folder_meta)

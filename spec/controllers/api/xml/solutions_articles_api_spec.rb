@@ -20,7 +20,7 @@ RSpec.describe Solution::ArticlesController do
     post :create, params.merge!(:category_id=>@solution_category.id,:folder_id=>@solution_folder.id, 
       :tags => {:name => "new"},:format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    expect(response.status).to be_eql(201)
+    expect(response.status).to be_eql(200)
     expect(assert_array(result["solution_article"].keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS, [ "tags", "folder"])).to be_empty
     expect(result["solution_article"]["status"]).to be_eql(2)
   end
@@ -32,7 +32,7 @@ RSpec.describe Solution::ArticlesController do
     put :update, params.merge!(:category_id=>@solution_category.id,:folder_id=>@solution_folder.id,:id=>@test_article.id,
       :tags => {:name => "new"}, :format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    expect(response.status).to be_eql(201)
+    expect(response.status).to be_eql(200)
     expect(assert_array(result["solution_article"].keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS, ["tags", "folder"])).to be_empty
   end
 

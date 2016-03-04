@@ -24,7 +24,7 @@ RSpec.describe Solution::FoldersController do
     post :create, params.merge!(:category_id=>@solution_category_meta.id,:format => 'json'), :content_type => 'application/json'
     result = parse_json(response)
 
-    expect(response.status).to be_eql(201)
+    expect(response.status).to be_eql(200)
     expect(assert_array(result["folder"].keys, APIHelper::SOLUTION_FOLDER_ATTRIBS)).to be_empty
   end
 
@@ -60,7 +60,7 @@ RSpec.describe Solution::FoldersController do
     result = parse_json(response)
     customer_id = @account.folders.find_by_name(params["solution_folder"]["name"] ).solution_folder_meta.customer_folders.first.customer.id
 
-    expect(response.status).to be_eql(201)
+    expect(response.status).to be_eql(200)
     expect(assert_array(result["folder"].keys, APIHelper::SOLUTION_FOLDER_ATTRIBS)).to be_empty
     expect(customer_id).to be_eql(@new_company.id)
   end

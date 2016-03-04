@@ -20,7 +20,7 @@ RSpec.describe Solution::CategoriesController do
     post :create, params.merge!(:format => 'json'), :content_type => 'application/json'
     result = parse_json(response)
 
-    expect(response.status).to be_eql(201)
+    expect(response.status).to be_eql(200)
     expect(assert_array(result["category"].keys, APIHelper::SOLUTION_CATEGORY_ATTRIBS)).to be_empty
   end
 
