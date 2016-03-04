@@ -222,11 +222,7 @@ window.App = window.App || {};
         var el = $('#version_selection option[value=' + this.value + ']');
         var lang = this.value;
         $('#version_selection').select2('val', '');
-        if (el.data('state') === "") {
-          window.pjaxify("/solution/articles/new/" + $(this).data('articleId') + "/" + lang);
-        } else {
-          window.pjaxify("/solution/articles/" + $(this).data('articleId') + "/" + lang);
-        }
+        window.pjaxify("/solution/articles/" + $(this).data('articleId') + "/" + lang);
       });
     },
 

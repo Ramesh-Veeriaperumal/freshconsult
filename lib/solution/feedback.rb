@@ -32,7 +32,9 @@ module Solution::Feedback
 		end
 
 		def link_to_article
-			"<a href='#{solution_article_version_url(@article.parent_id, "#{Language.current.code}")}'> #{h(@article.title)}</a>"
+      (Portal.current || Account.current).multilingual? ?
+			   "<a href='#{solution_article_version_url(@article.parent_id, "#{Language.current.code}")}'> #{h(@article.title)}</a>" :
+         "<a href='#{solution_article_url(@article.parent_id)}'> #{h(@article.title)}</a>" 
 		end
 
 		def add_watcher
