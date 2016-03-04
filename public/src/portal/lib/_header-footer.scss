@@ -37,7 +37,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	.welcome{ display: inline-block; }
 	a{ color: inherit; }
   .banner-language-selector {
-    background-color: #151515;
+    background-color: darken($header_color, 20%);
     @include padding(2px 12px 2px 10px);
     @include margin-left(10px);
     @include border-radius(0px 5px 5px 0px);
@@ -46,6 +46,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
       list-style: none;
       @include margin-left(0px);
       .dropdown-menu {
+      	background-color: $bg_color;
         min-width: 0px;
         @include right(-13px);
         top: 35px;
@@ -54,7 +55,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 					color: #444;
 					text-shadow: none;
 					&:hover{
-						background-color: #efefef;
+						background-color: darken($bg_color, 10%);
 					}
 					&.active{
 						font-weight: 500;
