@@ -90,7 +90,6 @@
 	* ======================= */
 
 	$.fn.freshdialog = function (option) {
-		debugger;
 		return this.each(function () {			
 			var $this = $(this)
 			, data = $this.data('freshdialog')

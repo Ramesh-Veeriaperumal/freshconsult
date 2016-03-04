@@ -7,7 +7,6 @@ module ApplicationHelper
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
   include ChatHelper
-  include Marketplace::ApiHelper
 
   include AttachmentHelper
   include ConfirmDeleteHelper
@@ -20,6 +19,7 @@ module ApplicationHelper
   include ReportsHelper
   include Freshfone::CallerLookup
   include DateHelper
+  include StoreHelper
   
   require "twitter"
 
@@ -1603,9 +1603,5 @@ module ApplicationHelper
     
     content_tag :ul, &list
   end
-
-  def get_store_data
-    {:current_user => current_user, :agent => current_account.agents_from_cache, :group => current_account.groups_from_cache}.to_json
-  end
-
+  
 end

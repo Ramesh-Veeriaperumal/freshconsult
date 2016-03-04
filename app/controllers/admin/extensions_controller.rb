@@ -1,22 +1,32 @@
 class Admin::ExtensionsController <  Admin::AdminController
   include Marketplace::ApiMethods
-
-  rescue_from Exception, :with => :mkp_connection_failure
+  include Marketplace::ApiUtil
+  
+  rescue_from Exception, :with => :mkp_exception
 
   def index
-    extensions = params[:in_dev] ? indev_extensions : mkp_extensions
-    extensions_list = extensions.merge(all_categories).merge(data_from_url_params)
-    render :json => extensions_list
+    extensions = mkp_extensions
+    render_error_response and return if error_status?(extensions)
+
+    categories = all_categories
+    render_error_response and return if error_status?(categories)
+
+    extensions_list = { :extensions => extensions.body.sort_by { |ext| ext['display_name'].downcase } }
+                      .merge({ :categories => categories.body})
+                      .merge(data_from_url_params)
+
+    render :json => extensions_list, :status => extensions.status
   end
 
   def show
-    extension = show_extension.merge(install_status).merge(data_from_url_params)
-    render :json => extension
+    extn_details = extension_details
+    render_error_response and return if error_status?(extn_details)
+
+    inst_status = install_status
+    render_error_response and return if error_status?(inst_status)
+
+    extension = extn_details.body.merge(inst_status.body).merge(data_from_url_params)
+    render :json => extension, :status => extn_details.status
   end
 
-  def search
-    extensions = params[:in_dev] ? indev_extensions_search : mkp_extensions_search
-    extensions_list = extensions.merge(all_categories).merge(data_from_url_params)
-    render :json => extensions_list
-  end
 end
