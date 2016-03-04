@@ -55,8 +55,7 @@ window.App = window.App || {};
     cumulativeStatsToggle: function() {
       $('body').on('click.articles', '.analytics .show-cumulative-stats', function () {
         $('.analytics .cumulative-stats').toggleClass('hide');
-        $('.analytics .show-cumulative-stats').toggleClass('drop-right');
-        $('.analytics .show-cumulative-stats').toggleClass('selected');
+        $('.analytics .show-cumulative-stats').toggleClass('drop-right selected');
       });
     },
 
