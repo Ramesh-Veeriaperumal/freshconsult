@@ -114,20 +114,6 @@ module Solution::LanguageAssociations
       end
     end
 
-    base::BINARIZE_COLUMNS.each do |meth_name|
-      define_method(meth_name) do
-        return self[meth_name] if self[meth_name]
-        columns = base::BINARIZE_COLUMNS.select{|c| self[c].blank?}
-        include_class = columns.include?(:draft_present) ? [:draft] : []
-        self.children.includes(include_class).each do |child|
-          columns.each do |col|
-            compute_assign_binarize(col, child)
-          end
-        end
-        self[meth_name]
-      end
-    end
-
     def compute_assign_binarize(col, child)
       val = self.read_attribute(col).to_i || 0
       val = val | flag_mapping(col, child.language_key) if child.send("#{col}?")
