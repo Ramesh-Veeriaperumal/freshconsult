@@ -1,1 +1,6 @@
-<%= render :partial => "solution_list" ,  :object => @ticket  %>
+<%= if params[:language_id].present?
+			render :partial => "results"
+		else
+			render :partial => "solution_list" ,  :object => @ticket
+		end
+%>

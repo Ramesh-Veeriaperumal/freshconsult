@@ -7,11 +7,7 @@ class Search::SolutionsController < Search::SearchController
 		article_suggest @ticket.description if @result_set.blank?
 		respond_to do |format|
 			format.js do
-				if params[:language_id].present?
-					render :partial => "results"
-				else
-					render :layout => false
-				end
+				render :layout => false
 			end
       format.json do
         array = []
@@ -44,11 +40,7 @@ class Search::SolutionsController < Search::SearchController
 			unless search_in.blank?
 				f.filter :term,  { 'folder.category_id' => params[:category_id] } if params[:category_id]
 				f.filter :term,  { 'folder_id' => params[:folder_id] } if params[:folder_id]
-				if @suggest
-					f.filter :term,  { 'language_id' => (params[:language_id] || Language.for_user(@ticket.requester).id) }
-				else
-					f.filter :term,  { 'language_id' => (params[:language_id] || Language.for_current_account.id) }
-				end
+				f.filter :term,  { 'language_id' => (params[:language_id] || (@suggest ? Language.for_user(@ticket.requester).id : Language.for_current_account.id)) }
 			end
 		end
 

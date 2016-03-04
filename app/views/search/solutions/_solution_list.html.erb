@@ -1,5 +1,10 @@
 <form id="searchmoreform" class="searchmoreform" action="#">
-	<%= select_tag("language_id", options_from_collection_for_select(Account.current.all_portal_language_objects, "id", "name", Language.for_user(@ticket.requester).id), {:class => "select2", :id => "language-select"}) if Account.current.multilingual? %>
+	<%= select_tag("language_id", 
+	options_from_collection_for_select(Account.current.all_portal_language_objects, "id", "name", Language.for_user(@ticket.requester).id), 
+	{ :class => "select2", 
+		:id => "language-select",
+		:"data-initial-language" => Language.for_user(@ticket.requester).id
+	}) if Account.current.multilingual? %>
 
 	  <input class="text search_text_box" name="solution[search]" id="solution_search" placeholder="Search solutions">
 	  <span class="searchicon"></span>
@@ -112,8 +117,14 @@ jQuery("div.item").live("mouseover mouseout", function(event) {
 
 jQuery('#solution_search').live('keyup', function(ev) {
 	if (this.value == '') {
-		jQuery('#default_solution_suggestions').show(); 
-		jQuery('#more_search_results').hide();
+		if (languageChanged()) {
+			var lang_id = $('language-select').value;
+			url = '/search/related_solutions/ticket/' + <%=@ticket.id%> + '?language_id=' + lang_id;
+			fetchAndDisplayResults(url);
+		} else {
+			jQuery('#default_solution_suggestions').show(); 
+			jQuery('#more_search_results').hide();
+		}
 	}
 });
 
@@ -152,5 +163,9 @@ function fetchAndDisplayResults(url){
 	jQuery('#more_search_results').load(url, function() {
 		jQuery("#more_search_results").removeClass("sloading loading-small");
 	});
+}
+
+function languageChanged(){
+	return jQuery('#language-select').length !== 0 && jQuery('#language-select').data('initial-language').toString() !== jQuery('#language-select').val();
 }
 </script>
