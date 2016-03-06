@@ -2,20 +2,15 @@
 class Support::SearchV2::SpotlightController < SupportController
 
   include ActionView::Helpers::TextHelper
-
-  before_filter :initialize_search_parameters
-
-  attr_accessor :size, :page, :current_filter, :es_results, :result_set, 
-                :search_results, :search, :pagination, :results, :no_render,
-                :related_articles, :container, :search_context
+  include Search::V2::AbstractController
 
   # Unscoped customer-side spotlight search
   #
   def all
-    @searchable_klasses = esv2_klasses
-    @current_filter     = :all
-    @search_context     = :portal_spotlight_global
-    search
+    @klasses        = esv2_klasses
+    @current_filter = :all
+    @search_context = :portal_spotlight_global
+    search(esv2_portal_models)
   end
 
   # Tickets scoped customer-side spotlight search
@@ -23,10 +18,10 @@ class Support::SearchV2::SpotlightController < SupportController
   def tickets
     require_user_login unless current_user
 
-    @searchable_klasses = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
-    @current_filter     = :tickets
-    @search_context     = :portal_spotlight_ticket
-    search
+    @klasses        = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
+    @current_filter = :tickets
+    @search_context = :portal_spotlight_ticket
+    search(esv2_portal_models)
   end
 
   # Forums scoped customer-side spotlight search
@@ -34,10 +29,10 @@ class Support::SearchV2::SpotlightController < SupportController
   def topics
     require_user_login unless forums_enabled?
 
-    @searchable_klasses = ['Topic']
-    @current_filter     = :topics
-    @search_context     = :portal_spotlight_topic
-    search
+    @klasses        = ['Topic']
+    @current_filter = :topics
+    @search_context = :portal_spotlight_topic
+    search(esv2_portal_models)
   end
 
   # Solutions scoped customer-side spotlight search
@@ -45,68 +40,29 @@ class Support::SearchV2::SpotlightController < SupportController
   def solutions
     require_user_login unless allowed_in_portal?(:open_solutions)
 
-    @searchable_klasses = ['Solution::Article']
-    @current_filter     = :solutions
-    @search_context     = :portal_spotlight_solution
-    search
+    @klasses        = ['Solution::Article']
+    @current_filter = :solutions
+    @search_context = :portal_spotlight_solution
+    search(esv2_portal_models)
   end
 
   def suggest_topic
-    @no_render          = true
-    @searchable_klasses = ['Topic']
-    @search_context     = :portal_spotlight_topic
-    search
-    @results            = @search_results
+    @no_render      = true
+    @klasses        = ['Topic']
+    @search_context = :portal_spotlight_topic
+    search(esv2_portal_models) do |results|
+      @results = results
+    end
 
     render template: '/support/search/suggest_topic', :layout => false
   end
 
   private
 
-    # Need to add provision to pass params & context
-    #
-    def search
-      begin
-        @es_results = Search::V2::SearchRequestHandler.new(current_account.id,
-                                                            Search::Utils.template_context(@search_context, @exact_match),
-                                                            searchable_types
-                                                          ).fetch(construct_es_params)
-        @result_set = Search::Utils.load_records(
-                                                  @es_results, 
-                                                  esv2_portal_models.dclone, 
-                                                  {
-                                                    current_account_id: current_account.id,
-                                                    page: @page,
-                                                    from: @offset
-                                                  }
-                                                )
-
-        process_results
-      rescue Exception => e
-        @search_results = []
-        @result_set = []
-
-        Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
-        NewRelic::Agent.notice_error(e)
-      end
-
-      handle_rendering unless @no_render
-    end
-
-    # Types to be passed to service code to scan
-    #
-    def searchable_types
-      @searchable_klasses.collect {
-        |klass| klass.demodulize.downcase
-      }
-    end
-
     # Constructing params for ES
     #
     def construct_es_params
-      Hash.new.tap do |es_params|
-        es_params[:search_term] = @es_search_term
-
+      super.tap do |es_params|
         if current_user
           if privilege?(:client_manager)
             es_params[:ticket_company_id]     = current_user.company_id
@@ -115,7 +71,7 @@ class Support::SearchV2::SpotlightController < SupportController
           end
         end
 
-        if @searchable_klasses.include?('Solution::Article')
+        if searchable_klasses.include?('Solution::Article')
           es_params[:language_id]               = Language.for_current_account.id
           es_params[:article_status]            = SearchUtil::DEFAULT_SEARCH_VALUE.to_i
           es_params[:article_visibility]        = visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN)
@@ -123,7 +79,7 @@ class Support::SearchV2::SpotlightController < SupportController
           es_params[:article_company_id]        = current_user.company_id if current_user
         end
 
-        if @searchable_klasses.include?('Topic')
+        if searchable_klasses.include?('Topic')
           es_params[:topic_visibility]          = visibility_opts(Forum::VISIBILITY_KEYS_BY_TOKEN)
           es_params[:topic_category_id]         = current_portal.portal_forum_categories.map(&:forum_category_id)
           es_params[:topic_company_id]          = current_user.company_id if current_user
@@ -148,10 +104,34 @@ class Support::SearchV2::SpotlightController < SupportController
     end
 
     def esv2_klasses
-      Array.new.tap do |model_names|
+      super.tap do |model_names|
         model_names.concat(['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']) if current_user
         model_names.push('Topic')                                           if forums_enabled?
         model_names.push('Solution::Article')                               if allowed_in_portal?(:open_solutions)
+      end
+    end
+
+    def process_results
+      @search_results = []
+      @result_set.each do |item|
+        next if item.nil?
+        result = item_based_selection(item)
+        result.merge!('source' => item) if !request.xhr?
+        @search_results << result
+      end
+      super
+    end
+
+    def item_based_selection item
+      case item.class.name
+        when 'Solution::Article'
+          solution_result(item)
+        when 'Topic'
+          topic_result(item)
+        when 'Helpdesk::Ticket'
+          ticket_result(item)
+        when 'Helpdesk::ArchiveTicket'
+          archive_ticket_result(item)
       end
     end
 
@@ -188,30 +168,6 @@ class Support::SearchV2::SpotlightController < SupportController
         :pagination => @pagination }
     end
 
-    def process_results
-      @search_results = []
-      @result_set.each do |item|
-        next if item.nil?
-        result = item_based_selection(item)
-        result.merge!('source' => item) if !request.xhr?
-        @search_results << result
-      end
-      @search_results
-    end
-
-    def item_based_selection item
-      case item.class.name
-        when 'Solution::Article'
-          solution_result(item)
-        when 'Topic'
-          topic_result(item)
-        when 'Helpdesk::Ticket'
-          ticket_result(item)
-        when 'Helpdesk::ArchiveTicket'
-          archive_ticket_result(item)
-      end
-    end
-
     ##################################
     ### Model based JSON responses ###
     ##################################
@@ -240,8 +196,6 @@ class Support::SearchV2::SpotlightController < SupportController
         'url' => support_ticket_path(ticket) }
     end
 
-    # To-do: Need to verify group and type
-    #
     def archive_ticket_result ticket
       { 'title' => ticket.es_highlight('subject').html_safe,
         'group' => 'Archived Ticket',
@@ -256,22 +210,6 @@ class Support::SearchV2::SpotlightController < SupportController
 
     def require_user_login
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-    end
-
-    ######################
-    ### Before filters ###
-    ######################
-
-    def initialize_search_parameters
-      @search_key     = (params[:term] || params[:search_key] || '') #=> Raw input from user
-      @exact_match    = true if Search::Utils.exact_match?(@search_key)
-
-      @es_search_term = Search::Utils.extract_term(@search_key, @exact_match) #=> Sanitized term sent to ES
-      @es_results     = []
-      @size           = (params[:max_matches].to_i.zero? or
-                        params[:max_matches].to_i < Search::Utils::MAX_PER_PAGE) ? Search::Utils::MAX_PER_PAGE : params[:max_matches]
-      @page           = (params[:page].to_i.zero? ? Search::Utils::DEFAULT_PAGE : params[:page].to_i)
-      @offset         = @size * (@page - 1)
     end
 
     # ESType - [model, associations] mapping

@@ -1,9 +1,7 @@
 class Search::V2::SuggestController < Search::V2::SpotlightController
 
-  attr_accessor :result_json, :search_key, :total_pages, :current_page, :search_results, :suggest
-
   def index
-    search
+    search(esv2_agent_models)
   end
 
   private

@@ -3,27 +3,25 @@
 class Search::V2::SpotlightController < ApplicationController
 
   include Search::SearchResultJson
+  include Search::V2::AbstractController
   helper Search::SearchHelper
   
-  before_filter :set_search_sort_cookie, :initialize_search_parameters
-
-  attr_accessor :search_key, :search_sort, :result_json, :es_results, :search_results, :total_pages, 
-                :current_page, :size, :offset, :sort_direction, :search_context, :no_render, :es_search_term
+  before_filter :set_search_sort_cookie
 
   # Unscoped spotlight search
   #
   def all
-    @search_context     = :agent_spotlight_global
-    @searchable_klasses = esv2_klasses
-    search
+    @search_context = :agent_spotlight_global
+    @klasses        = esv2_klasses
+    search(esv2_agent_models)
   end
 
   # Tickets scoped spotlight search
   #
   def tickets
-    @search_context     = :agent_spotlight_ticket
-    @searchable_klasses = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
-    search
+    @search_context = :agent_spotlight_ticket
+    @klasses        = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
+    search(esv2_agent_models)
   end
 
   # Customers scoped spotlight search
@@ -31,9 +29,9 @@ class Search::V2::SpotlightController < ApplicationController
   def customers
     redirect_user unless privilege?(:view_contacts)
 
-    @search_context     = :agent_spotlight_customer
-    @searchable_klasses = ['User', 'company']
-    search
+    @search_context = :agent_spotlight_customer
+    @klasses        = ['User', 'company']
+    search(esv2_agent_models)
   end
 
   # Forums scoped spotlight search
@@ -41,9 +39,9 @@ class Search::V2::SpotlightController < ApplicationController
   def forums
     redirect_user unless privilege?(:view_forums)
 
-    @search_context     = :agent_spotlight_topic
-    @searchable_klasses = ['Topic']
-    search
+    @search_context = :agent_spotlight_topic
+    @klasses        = ['Topic']
+    search(esv2_agent_models)
   end
 
   # Solutions scoped spotlight search
@@ -51,61 +49,15 @@ class Search::V2::SpotlightController < ApplicationController
   def solutions
     redirect_user unless privilege?(:view_solutions)
 
-    @search_context     = :agent_spotlight_solution
-    @searchable_klasses = ['Solution::Article']
-    search
+    @search_context = :agent_spotlight_solution
+    @klasses        = ['Solution::Article']
+    search(esv2_agent_models)
   end
 
   private
 
-    # Need to add provision to pass params & context
-    #
-    def search
-      begin
-        @es_results = Search::V2::SearchRequestHandler.new(current_account.id,
-                                                            Search::Utils.template_context(@search_context, @exact_match),
-                                                            searchable_types
-                                                          ).fetch(construct_es_params)
-        @result_set = Search::Utils.load_records(
-                                                  @es_results, 
-                                                  esv2_agent_models.dclone, 
-                                                  {
-                                                    current_account_id: current_account.id,
-                                                    page: @current_page,
-                                                    offset: @offset
-                                                  }
-                                                )
-
-        process_results
-      rescue => e
-        @search_results = []
-        @result_set = []
-
-        Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
-        NewRelic::Agent.notice_error(e)
-      end
-
-      handle_rendering unless @no_render
-    end
-
-    # Types to be passed to service code to scan
-    #
-    def searchable_types
-      searchable_klasses.collect {
-        |klass| klass.demodulize.downcase
-      }
-    end
-
-    def searchable_klasses
-      @searchable_klasses ||= esv2_klasses
-    end
-
-    ###############################################
-    ### Override in child controllers if needed ###
-    ###############################################
-
     def esv2_klasses
-      Array.new.tap do |model_names|
+      super.tap do |model_names|
         model_names.concat(['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket'])
 
         model_names.concat(['User', 'Company']) if privilege?(:view_contacts)
@@ -114,7 +66,6 @@ class Search::V2::SpotlightController < ApplicationController
       end
     end
     
-    # Params to send to ES
     # => Defaults <=
     # ticket.deleted: false
     # ticket.spam: false
@@ -122,9 +73,7 @@ class Search::V2::SpotlightController < ApplicationController
     # user.deleted: false
     #
     def construct_es_params
-      Hash.new.tap do |es_params|
-        es_params[:search_term] = @es_search_term
-
+      super.tap do |es_params|
         if current_user.restricted?
           es_params[:restricted_responder_id] = current_user.id.to_i
           es_params[:restricted_group_id]     = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
@@ -165,8 +114,6 @@ class Search::V2::SpotlightController < ApplicationController
       end.merge(ES_V2_BOOST_VALUES[@search_context])
     end
 
-    # Reconstructing ES results
-    #
     def process_results
       @result_set.each do |result|
         @result_json[:results] << send(%{#{result.class.model_name.singular}_json}, result) if result
@@ -175,10 +122,10 @@ class Search::V2::SpotlightController < ApplicationController
       @result_json[:current_page] = @current_page
       @total_pages                = (@es_results['hits']['total'].to_f / @size).ceil
       @search_results             = (@search_results.presence || []) + @result_set
+
+      super
     end
 
-    # To-do: Add other necessary formats here
-    #
     def handle_rendering
       @result_json = @result_json.to_json
       respond_to do |format|
@@ -206,22 +153,16 @@ class Search::V2::SpotlightController < ApplicationController
     ### Before filters ###
     ######################
 
-    def set_search_sort_cookie
-      cookies[:search_sort] = params[:search_sort] if params[:search_sort]
-    end
-
     def initialize_search_parameters
-      @search_key     = (params[:term] || params[:search_key] || params[:q] || '') #=> Raw input from user
-      @exact_match    = true if Search::Utils.exact_match?(@search_key)
-
-      @es_search_term = Search::Utils.extract_term(@search_key, @exact_match) #=> Sanitized term sent to ES
+      super
       @search_sort    = params[:search_sort] || cookies[:search_sort]
       @sort_direction = 'desc'
-      @size           = Search::Utils::MAX_PER_PAGE
-      @current_page   = params[:page].to_i.zero? ? Search::Utils::DEFAULT_PAGE : params[:page].to_i
-      @offset         = @size * (@current_page - 1)
-      @result_json    = { :results => [], :current_page => Search::Utils::DEFAULT_PAGE }
-      @es_results     = []
+      @size           = Search::Utils::MAX_PER_PAGE #=> Overriding just to be safe.
+      @result_json    = { :results => [], :current_page => @current_page }
+    end
+
+    def set_search_sort_cookie
+      cookies[:search_sort] = @search_sort
     end
 
     # ESType - [model, associations] mapping

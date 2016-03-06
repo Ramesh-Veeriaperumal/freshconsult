@@ -2,116 +2,78 @@
 #
 class Search::V2::AutocompleteController < ApplicationController
 
-  before_filter :initialize_search_parameters
+  include Search::V2::AbstractController
 
-  attr_accessor :search_key, :search_context, :searchable_klass, :records_from_db, :search_results
-
-  def agents
-    @search_context   = :agent_autocomplete
-    @searchable_klass = 'User'
-    @es_params        = {
-      search_term: @es_search_term
-    }.merge(ES_V2_BOOST_VALUES[:agent_autocomplete])
-
-    search.each do |document|
-      @search_results[:results].push(*[{
-        id: document.email,
-        value: document.name,
-        user_id: document.id
-      }])
-    end
-    handle_rendering
-  end
+  attr_accessor :search_results
 
   def requesters
-    @search_context   = :requester_autocomplete
-    @searchable_klass = 'User'
-    @es_params        = {
-      search_term: @es_search_term
-    }.merge(ES_V2_BOOST_VALUES[:requester_autocomplete])
+    @klasses        = ['User']
+    @search_context = :requester_autocomplete
 
-    search.each do |document|
-      @search_results[:results].push(*document.search_data)
+    search(esv2_autocomplete_models) do |results|
+      results.each do |result|
+        self.search_results[:results].push(*result.search_data)
+      end
     end
-    handle_rendering
+  end
+
+  def agents
+    @klasses        = ['User']
+    @search_context = :agent_autocomplete
+
+    search(esv2_autocomplete_models) do |results|
+      results.each do |result|
+        self.search_results[:results].push(*[{
+          id: result.email,
+          value: result.name,
+          user_id: result.id
+        }])
+      end
+    end
   end
 
   def companies
-    @search_context   = :company_autocomplete
-    @searchable_klass = 'Company'
-    @es_params        = {
-      search_term: @es_search_term
-    }.merge(ES_V2_BOOST_VALUES[:company_autocomplete])
+    @klasses        = ['Company']
+    @search_context = :company_autocomplete
 
-    search.each do |document|
-      @search_results[:results].push(*[{
-        id: document.id,
-        value: document.name
-      }])
+    search(esv2_autocomplete_models) do |results|
+      results.each do |result|
+        self.search_results[:results].push(*[{
+          id: result.id,
+          value: result.name
+        }])
+      end
     end
-    handle_rendering
   end
 
   def tags
-    @search_context   = :tag_autocomplete
-    @searchable_klass = 'Helpdesk::Tag'
-    @es_params        = {
-      search_term: @es_search_term
-    }
+    @klasses        = ['Helpdesk::Tag']
+    @search_context = :tag_autocomplete
 
-    search.each do |document|
-      @search_results[:results].push(*[{
-        value: document.name
-      }])
+    search(esv2_autocomplete_models) do |results|
+      results.each do |result|
+        self.search_results[:results].push(*[{
+          value: result.name
+        }])
+      end
     end
-    handle_rendering
   end
 
   private
 
-    # Make the search request to ES
-    #
-    def search
-      begin
-        es_results = Search::V2::SearchRequestHandler.new(current_account.id, 
-                                                            Search::Utils.template_context(@search_context, @exact_match),
-                                                            searchable_type.to_a
-                                                          ).fetch(@es_params)
-        @records_from_db = Search::Utils.load_records(
-                                                        es_results, 
-                                                        esv2_autocomplete_models.dclone, 
-                                                        {
-                                                          current_account_id: current_account.id,
-                                                          page: Search::Utils::DEFAULT_PAGE,
-                                                          from: Search::Utils::DEFAULT_OFFSET
-                                                        }
-                                                      )
-      rescue => e
-        Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
-        NewRelic::Agent.notice_error(e)
-        @records_from_db = []
-      end
-    end
-
-    # Type to be passed to service code to scan
-    #
-    def searchable_type
-      @searchable_klass.demodulize.downcase
+    def construct_es_params
+      super.merge(ES_V2_BOOST_VALUES[@search_context] || {})
     end
 
     def handle_rendering
       respond_to do |format|
-        format.json { render :json => @search_results.to_json }
+        format.json { render :json => self.search_results.to_json }
       end
     end
 
     def initialize_search_parameters
-      @search_key       = (params[:q] || '') #=> Raw input from user
-      @exact_match      = true if Search::Utils.exact_match?(@search_key)
-
-      @es_search_term   = Search::Utils.extract_term(@search_key, @exact_match) #=> Sanitized term sent to ES
-      @records_from_db  = []
-      @search_results   = { results: [] }
+      super
+      self.search_results = { results: [] }
     end
 
     # ESType - [model, associations] mapping
