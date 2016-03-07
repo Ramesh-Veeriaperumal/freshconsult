@@ -100,7 +100,8 @@ module Solution::LanguageTabsHelper
 
   def generate_tab language, path
     op = ""
-    op << "<div class='lang-tab #{'selected' if language == @language}'>"
+    op << "<div class='lang-tab #{'selected' if language == @language} #{} tooltip'
+          title='#{t('solution.articles.not_in_portal') unless Account.current.all_portal_language_objects.include?(language)}'>"
     op << pjax_link_to(language_tab_common(language), path)
     op << "</div>"
     op.html_safe
@@ -112,8 +113,7 @@ module Solution::LanguageTabsHelper
         #{language.short_code.capitalize}
       </span>
     </span>
-    <span class='language_label tooltip' 
-      title='#{t('solution.articles.not_in_portal') unless Account.current.all_portal_language_objects.include?(language)}'>
+    <span class='language_label'>
       #{language.name}
     </span>".html_safe
   end
