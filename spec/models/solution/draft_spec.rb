@@ -87,7 +87,7 @@ describe Solution::Draft do
 
   describe "updation_timestamp method" do
     it "should give that updated timestamp" do
-      @draft.updation_timestamp.should be_eql(@draft.updated_at.to_i)
+      @draft.updation_timestamp.should be_eql([@draft.updated_at.to_i, @draft.draft_body.updated_at.to_i].max)
     end
 
     it "should give the last updated timestamp" do
