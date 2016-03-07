@@ -665,6 +665,9 @@ class User < ActiveRecord::Base
   end
 
   def reset_primary_email primary
+    # Web does not allow a new email to be the primary_email for a contact, but it should be allowed via API
+    return true if primary.nil?
+    
     new_primary = self.user_emails.find(primary.to_i)
     if new_primary
       self.user_emails.update_all(:primary_role => false)

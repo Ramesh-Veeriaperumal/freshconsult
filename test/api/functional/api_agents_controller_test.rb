@@ -110,4 +110,10 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
   end
+
+  def test_me
+    get :me, controller_params
+    assert_response 200
+    match_json(agent_pattern(@account.all_agents.find(@agent.agent.id)))
+  end
 end

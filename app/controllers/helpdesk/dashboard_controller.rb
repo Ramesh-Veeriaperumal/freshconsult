@@ -361,7 +361,7 @@ class Helpdesk::DashboardController < ApplicationController
   def ticket_trends_count(trends)
     trends.inject({}) do |type, counter_type|
       translated_key = (counter_type == "new") ? "unassigned" : counter_type
-      type.merge!({:"#{counter_type}" => {:value => filtered_trend_count(counter_type), :label => t("helpdesk.dashboard.summary.#{translated_key}"), :name => counter_type}})
+      type.merge!({:"#{counter_type}" => {:value => filter_count(counter_type.to_sym,true), :label => t("helpdesk.dashboard.summary.#{translated_key}"), :name => counter_type}})
     end
   end
 

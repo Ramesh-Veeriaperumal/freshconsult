@@ -13,7 +13,7 @@ class BadRequestErrorTest < ActionView::TestCase
       datatype_mismatch: ['is not a number', 'data_type_mismatch', 'must be an integer', 'per_page_data_type_mismatch', 'datatype_and_inclusion'],
       invalid_size: ['invalid_size'],
       incompatible_field: ['incompatible_field'],
-      inaccessible_field: ['inaccessible_field']
+      inaccessible_field: ['inaccessible_field', 'require_feature_for_attribute']
     }
 
     assert_equal error_codes, ErrorConstants::API_ERROR_CODES

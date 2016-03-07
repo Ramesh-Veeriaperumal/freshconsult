@@ -22,6 +22,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   #before_filter :logging_details 
   before_filter :remove_pjax_param 
+  before_filter :set_shard_for_payload 
   after_filter :set_last_active_time
 
   after_filter :remove_rails_2_flash_after

@@ -19,7 +19,7 @@ module IntegrationServices::Services
        access_token = OAuth2::AccessToken.from_hash(client, token_hash)
      end
 
-     def format_fields_block
+     def format_fields_block(opt_fields={})
       fields_block = lambda do |fields_hash|
         fields_hash = fields_hash["fields"]
         field_labels = Hash.new
@@ -27,11 +27,12 @@ module IntegrationServices::Services
          field_label = CGI.escapeHTML(RailsFullSanitizer.sanitize(field["label"]))
          field_labels[field["name"]] = field_label if field_label.present?
         end
-        field_labels.merge!("Address"=>"Address")
+        field_labels.merge!(opt_fields) if opt_fields.present?
+        field_labels
       end
      end
 
-      def format_selected_fields fields,address_fields
+      def format_selected_fields fields,address_fields = []
         fields_array = fields.split(",")
         fields_array.push("Id")
         if fields_array.include?("Address")

@@ -62,6 +62,8 @@ var SurveyProtocol = {
 				return choices;
 			}
 			this.content["choiceValues"] = this.getChoiceValues();
+			this.content["choices"] = [],
+			this.content["question_choices"] = [],
 			this.content["action"]="new",
 			this.content["isSurveyResult"] = false,
 			this.content["isDefault"] = false,
@@ -102,6 +104,7 @@ var SurveyProtocol = {
 						if(obj.name=="question-choice"){
 							ch_cur= SurveyProtocol.content.choice.values(obj.value,"questions");
 							SurveyProtocol.content.questions["choiceValues"] = SurveyProtocol.getChoiceValues();
+							SurveyProtocol.mapChoices(SurveyProtocol.content.questions["choiceValues"],SurveyProtocol.content.question_choices);
 							jQuery('#question_rating_options').html(JST["survey/admin/template/new_scale_option"]({
 										"name":"question-scale",
 										"choice":ch_cur,
@@ -115,6 +118,7 @@ var SurveyProtocol = {
 						else{
 							ch_cur= SurveyProtocol.content.choice.values(obj.value);
 							SurveyProtocol.content["choiceValues"] = SurveyProtocol.getChoiceValues();
+							SurveyProtocol.mapChoices(SurveyProtocol.content["choiceValues"],SurveyProtocol.content.choices);
 							jQuery('#survey_rating_options').html(JST["survey/admin/template/new_scale_option"]({
 										"name":"survey-scale",
 										"choice":ch_cur,
@@ -199,6 +203,7 @@ var SurveyProtocol = {
 			var protocol = jQuery.extend({},SurveyProtocol.content);
 			var default_question = JSON.parse(data.default_question).survey_question;
 			var choices = default_question.choices;	
+			this.content.choices = choices;
 			protocol.action = data.action;
 			protocol.id = survey.id;
 			protocol.title = survey.title_text || protocol.rating.title;
@@ -208,7 +213,6 @@ var SurveyProtocol = {
 			protocol.rating.question_id = default_question.id;
 			protocol.active = survey.active || false;
 			protocol.isDefault = survey.default || false;
-			protocol.choiceValues = protocol.choice.values(choices.length) || [];
 			protocol.can_comment = survey.can_comment;
 			protocol.comments_text = survey.comments_text;
 			protocol.feedback_response_text = survey.feedback_response_text;
@@ -220,10 +224,10 @@ var SurveyProtocol = {
 					survey_questions[i] = survey_questions[i].survey_question;
 				}
 				if(survey_questions.length){
-					protocol.questions.choices = survey_questions[0].choices;	
+					protocol.questions.choices = survey_questions[0].choices;
+					this.content.question_choices = survey_questions[0].choices;	
 					protocol.questions.choiceValues = SurveyProtocol.getChoiceValues();
-					protocol.questions.choiceValues = protocol.choice.values(protocol.questions.choices.length,"questions") || [];
-                            this.mapChoices(protocol.questions.choiceValues,survey_questions[0].choices);
+                    this.mapChoices(protocol.questions.choiceValues,survey_questions[0].choices);
 				}
 				
 				_.each(survey_questions,function(question){					

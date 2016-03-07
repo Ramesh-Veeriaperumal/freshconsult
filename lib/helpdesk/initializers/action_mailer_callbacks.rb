@@ -5,21 +5,23 @@ module ActionMailerCallbacks
 
   def self.included(base)
     base.extend ClassMethods
+    base.extend Helpdesk::Email::OutgoingCategory
   end
 
   module ClassMethods
-    @mailbox = nil
-
-    def set_mailbox _mailbox
-      @mailbox = _mailbox
+    @email_confg = nil
+        
+    def set_email_config _email_config
+      @email_confg = _email_config
     end
-
-    def smtp_mailbox
-      @mailbox
+    
+    def email_config
+      @email_confg
     end
     
     def set_smtp_settings(mail)
-      if smtp_mailbox
+      if (email_config && email_config.smtp_mailbox)
+        smtp_mailbox = email_config.smtp_mailbox
         smtp_settings = {
           :tls                  => smtp_mailbox.use_ssl,
           :enable_starttls_auto => true,
@@ -30,18 +32,40 @@ module ActionMailerCallbacks
           :authentication       => smtp_mailbox.authentication,
           :domain               => smtp_mailbox.domain
         }
+        Rails.logger.debug "Used SMTP mailbox : #{email_config.smtp_mailbox.user_name} in email config : #{email_config.id} while email delivery"
         self.smtp_settings = smtp_settings
         mail.delivery_method(:smtp, smtp_settings)
+      elsif (email_config && email_config.category)
+        Rails.logger.debug "Used EXISTING category : #{email_config.category} in email config : #{email_config.id} while email delivery"
+        category_id = email_config.category
+        self.smtp_settings = read_smtp_settings(category_id)
+        mail.delivery_method(:smtp, read_smtp_settings(category_id))
       else
         reset_smtp_settings(mail)
       end
-      @mailbox = nil
+      @email_confg = nil
     end
 
     def reset_smtp_settings(mail)
-      self.smtp_settings = Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
-      mail.delivery_method(:smtp, Helpdesk::EMAIL[:outgoing][Rails.env.to_sym])
+      begin
+        category_id = get_category_id
+      rescue Exception => e
+        Rails.logger.debug "Exception occurred while getting category id : #{e} - #{e.message} - #{e.backtrace}"
+        NewRelic::Agent.notice_error(e)
+        category_id = nil
+      end
+      Rails.logger.debug "Fetched category : #{category_id} while email delivery"
+      self.smtp_settings = read_smtp_settings(category_id)
+      mail.delivery_method(:smtp, read_smtp_settings(category_id))
     end   
+        
+    def read_smtp_settings(category_id)
+      if (!category_id.nil?) && (!Helpdesk::EMAIL["category-#{category_id}".to_sym].nil?)
+        Helpdesk::EMAIL["category-#{category_id}".to_sym][Rails.env.to_sym]
+      else 
+        Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
+      end
+    end
   end
 end
 

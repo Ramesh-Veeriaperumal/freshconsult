@@ -37,7 +37,7 @@
 				<div id="contact_info_<%=crm_app%>" class='requester_tab'>
 
 		<%
-		@liquid_objects = {"requester" => @ticket.requester, "widget_type" => "_contacts"}
+		@liquid_objects = {"requester" => @ticket.requester, "widget_type" => "_contacts", "ticket" => @ticket}
 		widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[crm_app], "#{crm_app}_widget", @liquid_objects) 
 		%>
 		<textarea class="hide"><div id="<%=crm_app%>">

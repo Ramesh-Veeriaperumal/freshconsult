@@ -49,7 +49,7 @@ module Facebook
         return if realtime_feed["value"].blank?
         action = realtime_feed["value"]["verb"].downcase
         if ITEM_ACTIONS[action]
-          verb = ITEM_ACTIONS[action].include?(klass) ? action : nil
+          ITEM_ACTIONS[action].include?(klass) ? action : nil
         else
           Rails.logger.debug("Invalid action verb from facebook : #{action}")
           nil

@@ -6490,6 +6490,8 @@ en:
         contact: "Contact Fields"
         lead: "Lead Fields"
         account: "Account Fields"
+        opportunity: "Opportunity Fields"
+        opportunity_settings: "Agents can create/link or unlink opportunities from the ticket"
     nimble:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."
