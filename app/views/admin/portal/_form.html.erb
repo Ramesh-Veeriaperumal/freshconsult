@@ -52,7 +52,7 @@
       <div class="control-group pt10">
        <label class="control-label"><%= t("admin.products.portal.categories_visible") %></label>
         <div class="controls category-section">
-          <% if features_included?(:forums) %>
+          <% if current_account.features_included?(:forums) %>
             <div class="pb20">
               <%= content_tag(:div, t('header.tabs.forums'), :class => "pb5") %>
               <input type="hidden" name="portal[forum_category_ids][]" value="" />
