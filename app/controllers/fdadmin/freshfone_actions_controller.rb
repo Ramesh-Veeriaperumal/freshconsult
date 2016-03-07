@@ -6,7 +6,7 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
   before_filter :validate_freshfone_account, :except => [:add_credits, :get_country_list,
                                            :country_restriction, :refund_credits,
                                            :new_freshfone_account, :fetch_numbers, 
-                                           :enable_freshfone ]
+                                           :enable_freshfone, :launch_feature]
 	before_filter :validate_triggers, :only => [:update_usage_triggers]
 	before_filter :validate_timeout_and_queue,:construct_timeout_and_queue_hash, :only => [:update_timeouts_and_queue]
 	before_filter :validate_credits, :only => [:add_credits]
@@ -386,11 +386,7 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
   def activate_trial
     result = { account_id: @account.id, account_name: @account.name }
     freshfone_account = @account.freshfone_account
-    if freshfone_account.blank?
-      result[:status] = 'phone_absent'
-    else
-      result[:status] = freshfone_account.activate
-    end
+    result[:status] = freshfone_account.activate
   rescue => e
     result[:status] = 'error'
     Rails.logger.error "Error while activating trial for the Phone of
