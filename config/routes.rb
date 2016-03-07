@@ -394,6 +394,7 @@ Helpkit::Application.routes.draw do
         post :direct_dial_success
         get :inspect_call
         get :caller_data
+        get :trial_warnings
         post :external_transfer_success
         post :call_transfer_success
         get :caller_recent_tickets
@@ -2588,6 +2589,8 @@ Helpkit::Application.routes.draw do
           get :fetch_numbers
           put :twilio_port_away
           put :enable_freshfone
+          put :activate_trial
+          put :launch_feature
         end
       end
 
@@ -2636,7 +2639,15 @@ Helpkit::Application.routes.draw do
           collection do 
             get :export_csv
           end 
-        end 
+        end
+
+        resources :subscriptions do
+          collection do
+            get :stats_by_account
+            get :stats_csv
+            get :recent_stats
+          end
+        end
 
       end
 

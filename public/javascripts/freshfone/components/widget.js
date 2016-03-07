@@ -199,12 +199,16 @@ var FreshfoneWidget;
 			this.hideAlert();
 		},
 		displayAlert: function () {
-			this.$freshfone_alert.removeClass('hide');
-			this.$freshfone_realtime.addClass('hide');
+			if(freshfone.isAdmin){
+				this.$freshfone_alert.removeClass('hide');
+				this.$freshfone_realtime.addClass('hide');
+			}
 		},
 		hideAlert: function () {
-			this.$freshfone_alert.addClass('hide');
-			this.$freshfone_realtime.removeClass('hide');
+			if(freshfone.isAdmin){
+				this.$freshfone_alert.addClass('hide');
+				this.$freshfone_realtime.removeClass('hide');
+			}
 		},
 		hideAllWidgets: function () {
 			if (this.isWidgetUninitialized) { this.initializeWidgets(); }

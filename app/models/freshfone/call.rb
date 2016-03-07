@@ -72,6 +72,11 @@ class Freshfone::Call < ActiveRecord::Base
     CALL_STATUS_HASH[:'connecting'],
     CALL_STATUS_HASH[:queued]
   ]
+
+  COMPLETED_CALL_STATUS = [ CALL_STATUS_HASH[:completed], CALL_STATUS_HASH[:busy],
+          CALL_STATUS_HASH[:'no-answer'], CALL_STATUS_HASH[:failed],
+          CALL_STATUS_HASH[:canceled], CALL_STATUS_HASH[:voicemail] ]
+
   CALL_TYPE = [
     [ :incoming,  'incoming', 1 ],
     [ :outgoing,  'outgoing', 2 ]
@@ -363,6 +368,12 @@ class Freshfone::Call < ActiveRecord::Base
     INTERMEDIATE_CALL_STATUS, from, to ])
   end
 
+  def self.inprogress_trial_calls(call_type, from = 1.hour.ago, to = Time.zone.now)
+    find(:all, :conditions =>
+      ['call_status IN (?) and (updated_at > ? AND updated_at < ? ) AND call_type = ?',
+        INTERMEDIATE_CALL_STATUS, from, to, call_type])
+  end
+
   def calculate_cost
     if parent.blank?
       calculator = Freshfone::CallCostCalculator.new({
@@ -523,6 +534,11 @@ class Freshfone::Call < ActiveRecord::Base
     child_call.canceled? ?  self : child_call
   end
 
+  def self.calls_count(type, from, to, include_transfer = false)
+    count(:all, :conditions => ["call_type = ? AND created_at > ? AND created_at < ? #{'AND ancestry IS NULL' unless include_transfer}",
+      type, from, to])
+  end
+
   def abandoned_call?
     abandon_state.present? && (abandon_state != CALL_ABANDON_TYPE_HASH[:missed])
   end
@@ -530,13 +546,12 @@ class Freshfone::Call < ActiveRecord::Base
   def update_missed_abandon_status
     update_abandon_state(CALL_ABANDON_TYPE_HASH[:missed])
   end
-
+  
   def call_ended?
-    [ Freshfone::Call::CALL_STATUS_HASH[:completed], Freshfone::Call::CALL_STATUS_HASH[:busy],
-          Freshfone::Call::CALL_STATUS_HASH[:'no-answer'], Freshfone::Call::CALL_STATUS_HASH[:failed],
-          Freshfone::Call::CALL_STATUS_HASH[:canceled], Freshfone::Call::CALL_STATUS_HASH[:voicemail] ].include?(self.call_status)
+    COMPLETED_CALL_STATUS.include?(call_status) &&
+      COMPLETED_CALL_STATUS.exclude?(call_status_was)
   end
-
+  
   private
     def called_agent(params)
       agent_scoper.find_by_id(params[:agent]) if 
@@ -659,7 +674,7 @@ class Freshfone::Call < ActiveRecord::Base
     def delete_twilio_recording(user_id)
       begin
         recording_sid = File.basename(self.recording_url)
-        recording = account.freshfone_subaccount.recordings.get(recording_sid)
+        recording = account.freshfone_account.twilio_subaccount.recordings.get(recording_sid)
         recording.delete if recording.present?
       rescue Exception => e
         date = (Time.now.utc.ago 7.days)
@@ -680,24 +695,24 @@ class Freshfone::Call < ActiveRecord::Base
       params[:transfer_call].present? || params[:external_transfer].present?
     end
 
-  def not_abandon_call?
-    outgoing? || voicemail? || !business_hour_call || abandon_state.present?
-  end
+    def not_abandon_call?
+      outgoing? || voicemail? || !business_hour_call || abandon_state.present?
+    end
 
-  def hangup_by_customer?(params)
-    (params[:CallStatus] == 'completed' && params[:DialCallStatus] == 'no-answer' )
-  end
+    def hangup_by_customer?(params)
+      (params[:CallStatus] == 'completed' && params[:DialCallStatus] == 'no-answer' )
+    end
 
-  def ivr_abandon?
-    freshfone_number.ivr_enabled? && user_id.blank? && group_id.blank? && direct_dial_number.blank?
-  end
+    def ivr_abandon?
+      freshfone_number.ivr_enabled? && user_id.blank? && group_id.blank? && direct_dial_number.blank?
+    end
 
-  def abandon_status
-    return Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ivr_abandon] if ivr_abandon?
-    Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ringing_abandon]
-  end
+    def abandon_status
+      return Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ivr_abandon] if ivr_abandon?
+      Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ringing_abandon]
+    end
 
-  def hangup_in_ivr?(params)
+    def hangup_in_ivr?(params)
       return false if account.features?(:freshfone_conference)
       (params[:force_termination] &&  params[:CallStatus] == 'completed')
     end

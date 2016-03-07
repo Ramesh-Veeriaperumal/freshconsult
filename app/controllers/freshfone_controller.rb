@@ -5,7 +5,6 @@ class FreshfoneController < FreshfoneBaseController
 	include Freshfone::NumberMethods
 	include Freshfone::CallValidator
 	include Freshfone::Response
-	include Freshfone::CallerLookup
 
 	attr_accessor :freshfone_users
 	before_filter :indian_number_incoming_fix, :only => [:voice, :ivr_flow]

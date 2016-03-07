@@ -263,6 +263,7 @@ class Account < ActiveRecord::Base
   has_many :freshfone_users, :class_name => "Freshfone::User"
   has_many :freshfone_other_charges, :class_name => "Freshfone::OtherCharge"
   has_many :freshfone_blacklist_numbers, :class_name => "Freshfone::BlacklistNumber"
+  has_one  :freshfone_subscription, :class_name => "Freshfone::Subscription"
 
   has_many :freshfone_callers, :class_name => "Freshfone::Caller"
 

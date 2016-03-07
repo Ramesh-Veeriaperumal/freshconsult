@@ -18,6 +18,7 @@ module ApplicationHelper
   include TabHelper
   include ReportsHelper
   include Freshfone::CallerLookup
+  include Freshfone::SubscriptionsHelper
   include DateHelper
   include StoreHelper
   
@@ -1461,11 +1462,16 @@ module ApplicationHelper
  end
 
  def freshfone_presence_status_class
-  return "ficon-phone-disable" if current_user.freshfone_user_offline?
+  return "ficon-phone-disable" if current_user.freshfone_user_offline? ||
+    !freshfone_active_or_trial?
   presence_class = (current_user.freshfone_user && current_user.freshfone_user.available_on_phone?) ?
                        "ficon-ff-via-phone" : "ficon-ff-via-browser"
   presence_class + " ff-busy" unless current_user.freshfone_user_online?
   return presence_class
+ end
+
+ def phone_disabled?
+  'disabled' unless freshfone_active_or_trial?
  end
 
   def freshfone_non_conference_class

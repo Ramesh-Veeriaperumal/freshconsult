@@ -8,23 +8,29 @@ class Freshfone::Account < ActiveRecord::Base
 						:dependent => :delete_all, :foreign_key => :freshfone_account_id
   has_many :freshfone_addresses, :class_name => "Freshfone::Address",
   					:dependent => :delete_all, :foreign_key => :freshfone_account_id
+  has_one :subscription, :class_name => "Freshfone::Subscription",
+  				:dependent => :delete, :foreign_key => :freshfone_account_id
+
 	alias_attribute :token, :twilio_subaccount_token
 	alias_attribute :app_id, :twilio_application_id
 	attr_protected :account_id
 	attr_accessor :suspend_with_expiry
 
 	TRIGGER_LEVELS = [
-			[:first_level, 75],
+			[:first_level,   75],
 			[:second_level, 200]
 	]
 	TRIGGER_LEVELS_HASH = Hash[*TRIGGER_LEVELS.map { |i| [i[0], i[1]] }.flatten]
 	TRIGGER_LEVELS_REVERSE_HASH = Hash[*TRIGGER_LEVELS.map { |i| [i[1], i[0]] }.flatten]
 
 	STATE = [
-		[ :active, "active", 1 ],
-		[ :suspended, "suspended", 2 ],
-		[ :closed, "closed", 3 ],
-		[ :expired, "expired", 4]
+		[ :active,          "active",          1 ],
+		[ :suspended,       "suspended",       2 ],
+		[ :closed,          "closed",          3 ],
+		[ :expired,         "expired",         4 ],
+		[ :trial,           "trial",           5 ],
+		[ :trial_exhausted, "trial_exhausted", 6 ],
+		[ :trial_expired,   "trial_expired",   7 ]
 	]
 	STATE_HASH = Hash[*STATE.map { |i| [i[0], i[2]] }.flatten]
 	STATE_AS_STRING = Hash[*STATE.map { |i| [i[0], i[1]] }.flatten]
@@ -33,20 +39,30 @@ class Freshfone::Account < ActiveRecord::Base
 		define_method("#{key}?") do
 			self.state == value
 		end
-	end 
+	end
+
+	TRIAL_STATES = [
+		STATE_HASH[:trial],
+		STATE_HASH[:trial_exhausted],
+		STATE_HASH[:trial_expired]
+	]
+
+	INTERMEDIATE_TRIAL_STATES = TRIAL_STATES - [STATE_HASH[:trial_expired]]
 
 	#validates_presence_of :twilio_subaccount_id, :twilio_subaccount_token, :queue, :friendly_name
 	validates_presence_of :account_id
 	validates_inclusion_of :state, :in => STATE_HASH.values,
 		:message => "%{value} is not a valid state"
 
-	scope :filter_by_due, lambda { |expires_on|
+	scope :filter_by_due, lambda { |expires_on, state|
 		{
 			:include => :account, 
-			:conditions => { :state => STATE_HASH[:suspended],
+			:conditions => { :state => state,
 											 :expires_on => (expires_on.beginning_of_day .. expires_on.end_of_day) }
 		}
 	}
+
+	scope :trial_states, where(state: TRIAL_STATES)
 
 	def freshfone_subaccount
 		unless account.freshfone_account.blank?
@@ -88,8 +104,34 @@ class Freshfone::Account < ActiveRecord::Base
 		update_attributes(:state => STATE_HASH[:expired], :deleted => true)		
 	end
 
-	def self.find_due(expires_on = Time.zone.now)
-		self.filter_by_due(expires_on)
+	def trial_expire
+		update_twilio_subaccount_state STATE_AS_STRING[:suspended]
+		update_attributes(:state => STATE_HASH[:trial_expired], :expires_on => 10.days.from_now)
+	end
+
+	def trial_exhaust
+		update_attributes(:state => STATE_HASH[:trial_exhausted]) unless trial_expired? # checking trial expired (edge case)
+	end
+
+	def self.find_due(expires_on = Time.zone.now, state = STATE_HASH[:suspended])
+		self.filter_by_due(expires_on, state)
+	end
+
+	def active_or_trial?
+		self.active? || self.trial?
+	end
+
+	def self.trial_due(expires_on = Time.zone.now)
+		joins(:subscription)
+		.where(state: INTERMEDIATE_TRIAL_STATES)
+		.where(freshfone_subscriptions: {
+			expiry_on: expires_on.beginning_of_day..expires_on.end_of_day })
+	end
+
+	def self.trial_to_expire(created_on = 12.days.ago)
+		joins(:subscription).where(state: INTERMEDIATE_TRIAL_STATES)
+		.where(freshfone_subscriptions:
+			{ created_at: created_on.beginning_of_day..created_on.end_of_day })
 	end
 
 	def process_subscription
@@ -186,7 +228,17 @@ class Freshfone::Account < ActiveRecord::Base
 		end
 		list
 	end
+	def activate
+		return 'phone_closed' if closed?
+		return 'not_trial' unless in_trial_states?
+		update_twilio_subaccount_state STATE_AS_STRING[:active] if trial_expired?
+		update_attributes(state: STATE_HASH[:active], expires_on: nil)
+		'success'
+	end
 
+	def in_trial_states?(account_state = state)
+		TRIAL_STATES.include?(account_state)
+	end
 	private
 
 		def delete_numbers

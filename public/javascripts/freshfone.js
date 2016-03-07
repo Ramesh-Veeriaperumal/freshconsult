@@ -8,6 +8,7 @@
         numeric_search_results,
         toll_free_search_results,
         $buyNumberContainer = $('.twilio-buy-numbers'),
+        $subscription=$('#ff_subscription'),
         $localSearchResults = $('#local_search_results'),
         $localSearchResultsContainer = $localSearchResults.parent(),
         $tollfreeSearchResults = $('#toll_free_search_results'),
@@ -57,7 +58,8 @@
             url: '/admin/phone/available_numbers',
             data: {
                 "search_options": search_options,
-                "country": $supportedCountries.val()
+                "country": $supportedCountries.val(),
+                "subscription": $subscription.val()
             },
             success: function (data) {
                 numeric_search_results = data;
@@ -81,7 +83,8 @@
             url: '/admin/phone/available_numbers',
             data: {
                 "search_options": search_options,
-                "country": $('#toll_free_supported_countries').val()
+                "country": $('#toll_free_supported_countries').val(),
+                "subscription": $subscription.val()
             },
             success: function (data) {
                 toll_free_search_results = data;

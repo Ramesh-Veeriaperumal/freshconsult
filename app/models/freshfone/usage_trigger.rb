@@ -7,17 +7,14 @@ class Freshfone::UsageTrigger < ActiveRecord::Base
   belongs_to_account
   belongs_to :freshfone_account, :class_name => "Freshfone::Account"
 
-  TRIGGER_TYPE = { :credit_overdraft => 1, :daily_credit_threshold => 2 }
+  TRIGGER_TYPE = { :credit_overdraft => 1, :daily_credit_threshold => 2, :calls_inbound => 3, :calls_outbound => 4 }
   TRIGGER_TYPE_BY_VALUE = TRIGGER_TYPE.invert
+
+  TRIAL_TRIGGERS = [:calls_inbound, :calls_outbound]
 
   TRIGGER_DAILY_CREDIT_OPTIONS = { :trigger_type => :daily_credit_threshold,
     :usage_category => 'totalprice',
     :recurring => 'daily' }
-
-  scope :previous, lambda { |type| { 
-    :conditions => ["trigger_type = ?", Freshfone::UsageTrigger::TRIGGER_TYPE[type.to_sym]], 
-    :limit => 1,
-    :order => "created_at DESC" } }
 
   def trigger_type
     TRIGGER_TYPE_BY_VALUE[read_attribute(:trigger_type)]
@@ -64,6 +61,14 @@ class Freshfone::UsageTrigger < ActiveRecord::Base
     end
   end
 
+  def self.create_trial_call_usage_trigger(type, account_id, value)
+    Resque.enqueue(Freshfone::Jobs::UsageTrigger,
+      :account_id     => account_id,
+      :trigger_type   => type,
+      :usage_category => type.to_s.gsub('_', '-'),
+      :trigger_value  => value)
+  end
+
   def self.remove_daily_threshold_with_level(freshfone_account, level)
     return unless freshfone_account.present? && level.present?
     Freshfone::UsageTrigger.where(
@@ -103,4 +108,19 @@ class Freshfone::UsageTrigger < ActiveRecord::Base
       :trigger_type => TRIGGER_TYPE[:daily_credit_threshold])
   end
 
+  def self.remove_calls_usage_triggers(freshfone_account, types = [TRIGGER_TYPE[:calls_inbound], TRIGGER_TYPE[:calls_outbound]])
+    return if freshfone_account.blank?
+    Freshfone::UsageTrigger.destroy_all(
+      :account_id           => freshfone_account.account_id, 
+      :freshfone_account_id => freshfone_account.id,
+      :trigger_type         => types)
+  end
+
+  def self.fetch_triggers_by_type(types = [], freshfone_account)
+    freshfone_account.freshfone_usage_triggers.where(:trigger_type => types) if freshfone_account.present?
+  end
+
+  def self.trial_triggers_present?(freshfone_account)
+    self.fetch_triggers_by_type(TRIAL_TRIGGERS.map { |trigger| TRIGGER_TYPE[trigger] }, freshfone_account).present?
+  end
 end

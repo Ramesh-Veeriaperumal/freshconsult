@@ -2,6 +2,11 @@
     <div class="grid-stack-item-content widget-inner freshfone_dashboard">
         <div class="widget-title">
             <%= t('helpdesk.realtime_dashboard.phone') %>
+            <% if show_indicator? %>
+              <div class="indicator pull-right <%= freshfone_indicator_class %>" data-placement="above" data-html="true" title="<%= freshfone_warnings %>">
+                <%= freshfone_warning_msg %>
+              </div>
+            <% end %>
         </div>
         <div class="widget-content">
             <%= render :partial => "/freshfone/freshfone_dashboard" %>

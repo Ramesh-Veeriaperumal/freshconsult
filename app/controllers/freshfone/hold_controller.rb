@@ -51,7 +51,7 @@ class Freshfone::HoldController < FreshfoneBaseController
   def remove
     begin
       if current_call.onhold?
-        telephony.initiate_unhold(current_call)
+        telephony.initiate_unhold
         render :json => {:status => :unhold_initiated}
       else
         render :json => {:status => :error}
@@ -64,7 +64,7 @@ class Freshfone::HoldController < FreshfoneBaseController
 
   def unhold
     begin
-      telephony.unmute_participants(current_call)
+      telephony.unmute_participants
       #Adding back to the original conference
       current_call.inprogress!
       notifier.notify_call_unhold(current_call)
@@ -99,7 +99,7 @@ class Freshfone::HoldController < FreshfoneBaseController
   def transfer_fallback_unhold
     begin
       notifier.notify_transfer_reconnected(current_call)
-      telephony.unmute_participants(current_call)
+      telephony.unmute_participants
       render :xml => telephony.initiate_customer_conference({
                       :sid => conference_room_name_sid,
                       :moderation_params => {:beep => true, :startConferenceOnEnter => true} })
@@ -115,7 +115,7 @@ class Freshfone::HoldController < FreshfoneBaseController
     def initialize_hold
       params[:customer] = current_call.customer
       current_call.update_attributes(:hold_queue => params[:QueueSid])
-      telephony.mute_participants(current_call)
+      telephony.mute_participants
     end
 
     def update_child_leg
@@ -123,7 +123,7 @@ class Freshfone::HoldController < FreshfoneBaseController
     end
     
     def telephony
-      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number)
+      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number, current_call)
     end
 
     def notifier

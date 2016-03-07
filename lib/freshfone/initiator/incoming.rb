@@ -1,4 +1,5 @@
 class Freshfone::Initiator::Incoming
+  include Freshfone::SubscriptionsUtil
   include Freshfone::FreshfoneUtil
   include Freshfone::CallValidator
   include Freshfone::Endpoints
@@ -21,7 +22,6 @@ class Freshfone::Initiator::Incoming
     self.current_number  = current_number
     self.freshfone_users = current_account.freshfone_users
     @call_actions        = Freshfone::CallActions.new(params, current_account, current_number)
-    @telephony           = Freshfone::Telephony.new(params, current_account, current_number)
   end
 
   def process
@@ -30,7 +30,7 @@ class Freshfone::Initiator::Incoming
     return block_call if blacklisted?
     
     self.current_call ||= @call_actions.register_incoming_call
-    return @telephony.return_non_business_hour_call if current_number.present? && !current_number.working_hours?
+    return telephony.return_non_business_hour_call if current_number.present? && !current_number.working_hours?
     ivr.ivr_message? ? trigger_ivr_flow : regular_incoming
   end
 
@@ -54,23 +54,23 @@ class Freshfone::Initiator::Incoming
   end
 
   def initiate_incoming
-    @telephony.initiate_customer_conference({ :wait_url => wait_url, :available_agents => get_pinged_agents }, true)
+    telephony.initiate_customer_conference({ :wait_url => wait_url, :available_agents => get_pinged_agents }, true)
   end
 
   def initiate_queue(type=:initiated)
     # self.current_call.queued! # SpreadsheetL 45
     current_call = current_account.freshfone_calls.find_by_call_sid params[:CallSid]
-    queue_disabled_or_overloaded? ? return_non_availability : @telephony.initiate_queue(type)
+    queue_disabled_or_overloaded? ? return_non_availability : telephony.initiate_queue(type)
   end
 
   def resolve_simultaneous_call_queue(simultaneous_call)
-    simultaneous_call ? @telephony.initiate_re_queue : @telephony.initiate_queue
+    simultaneous_call ? telephony.initiate_re_queue : telephony.initiate_queue
   end
 
   def return_non_availability(welcome_message = true)
     current_call ||= current_account.freshfone_calls.find_by_call_sid(params[:CallSid])
     current_call.update_missed_abandon_status unless (current_call.present? && current_number.voicemail_active)
-    @telephony.return_non_availability(welcome_message)
+    telephony.return_non_availability(welcome_message)
   end
 
   def call_users_in_group(group_id)
@@ -84,28 +84,29 @@ class Freshfone::Initiator::Incoming
   end
 
   def call_user_with_number(number)
+    return restricted_call('Trial Restriction') if trial?
     return restricted_call if !authorized?(number)
     return return_non_availability(false) if direct_dialled_number_busy?(number)
 
     current_call = @call_actions.register_direct_dial(number)
-    @telephony.initiate_customer_conference({ :wait_url => direct_dial_wait_url }, true)
+    telephony.initiate_customer_conference({ :wait_url => direct_dial_wait_url }, true)
   end
 
   def dequeue(agent_id)
     load_agent agent_id
-    @telephony.initiate_customer_conference({
+    telephony.initiate_customer_conference({
       :wait_url => wait_url
     })
   end
 
   def block_call
     @call_actions.register_blocked_call
-    @telephony.block_incoming_call
+    telephony.block_incoming_call
   end
 
-  def restricted_call
+  def restricted_call(reason = nil)
     @call_actions.set_status_restricted
-    @telephony.reject
+    telephony.reject(reason)
   end
 
   private
@@ -114,7 +115,7 @@ class Freshfone::Initiator::Incoming
     end
 
     def agent_call_leg
-      Freshfone::Initiator::AgentCallLeg.new(params, current_account, current_number, @call_actions, @telephony)
+      Freshfone::Initiator::AgentCallLeg.new(params, current_account, current_number, @call_actions, telephony)
     end
 
     def agent_leg_of_incoming?
@@ -163,5 +164,10 @@ class Freshfone::Initiator::Incoming
       queue_sid = current_account.freshfone_account.queue
       queue = current_account.freshfone_subaccount.queues.get(queue_sid)
       queue.present? and (queue.current_size >= max_queue_size)
+    end
+
+    def telephony
+      current_call ||= current_account.freshfone_calls.find_by_call_sid(params[:CallSid])
+      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number, current_call)
     end
 end
