@@ -82,6 +82,9 @@ window.App.Solutions = window.App.Solutions || {};
 				$('#cancel-create-new').toggleClass('hide', !flag);
 				$('#create-new-category').toggleClass('hide', flag);
 				$('.solution_folder_meta_solution_category_meta').toggleClass('hide', flag);
+				if (flag) {
+					$('#create-category-text').focus();
+				}
 			});
 		},
 

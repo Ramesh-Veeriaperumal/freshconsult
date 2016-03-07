@@ -36,7 +36,12 @@
 		<div class="category-details span7 <%= 'ml0' unless privilege?(:manage_solutions) %>">
 			<h2 class="list-title ellipsis <%= 'tooltip' if @category_meta.name.length > 55 %>" title="<%= h(@category_meta.name)  if @category_meta.name.length > 55 %>"><%= h(@category_meta.name) %></h2>
 			<div class="sol-visibility muted">
-				<span class="muted sol-visibility-label"><%= t('solution_category.product_portal_visibility') %>:</span><%= portals_for_category(@category_meta) %>
+				<% if @category_meta.portal_solution_categories.size > 0 %>
+					<span class="muted sol-visibility-label">
+						<%= t('solution_category.product_portal_visibility') %>:
+					</span>
+				<% end %>
+				<%= portals_for_category(@category_meta) %>
 			</div>
 		</div>
 	</div>
