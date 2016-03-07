@@ -103,7 +103,7 @@ module ApiDiscussions
 
     def test_update_with_blank_name
       put :update, construct_params({ id: fc.id }, name: '')
-      match_json([bad_request_error_pattern('name', :"can't be blank")])
+      match_json([bad_request_error_pattern('name', :blank)])
       assert_response 400
     end
 
@@ -178,7 +178,7 @@ module ApiDiscussions
     def test_create_missing_params
       post :create, construct_params({}, {})
       pattern = [
-        bad_request_error_pattern('name', :data_type_mismatch, code: :missing_field, data_type: String)
+        bad_request_error_pattern('name', :data_type_mismatch, code: :missing_field, expected_data_type: String)
       ]
       assert_response 400
       match_json(pattern)
@@ -196,7 +196,7 @@ module ApiDiscussions
     def test_create_blank_name
       post :create, construct_params({}, 'name' => '')
       pattern = [
-        bad_request_error_pattern('name', :"can't be blank")
+        bad_request_error_pattern('name', :blank)
       ]
       assert_response 400
       match_json(pattern)
@@ -214,7 +214,7 @@ module ApiDiscussions
 
     def test_update_with_nil_name
       put :update, construct_params({ id: fc.id }, name: nil)
-      match_json([bad_request_error_pattern('name', :data_type_mismatch, data_type: String)])
+      match_json([bad_request_error_pattern('name', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type')])
       assert_response 400
     end
 

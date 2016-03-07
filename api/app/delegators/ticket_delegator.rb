@@ -33,7 +33,7 @@ class TicketDelegator < BaseDelegator
     ticket_product_id = schema_less_ticket.product_id
     product = Account.current.products_from_cache.detect { |x| ticket_product_id == x.id }
     if product.nil?
-      errors[:product_id] << :blank
+      errors[:product_id] << :"can't be blank"
     else
       schema_less_ticket.product = product
     end
@@ -42,7 +42,7 @@ class TicketDelegator < BaseDelegator
   def group_presence # this is a custom validate method so that group cache can be used.
     group = Account.current.groups_from_cache.detect { |x| group_id == x.id }
     if group.nil?
-      errors[:group] << :blank
+      errors[:group] << :"can't be blank"
     else
       self.group = group
     end
@@ -51,7 +51,7 @@ class TicketDelegator < BaseDelegator
   def responder_presence #
     responder = Account.current.agents_from_cache.detect { |x| x.user_id == responder_id }.try(:user)
     if responder.nil?
-      errors[:responder] << :blank
+      errors[:responder] << :"can't be blank"
     else
       self.responder = responder
     end

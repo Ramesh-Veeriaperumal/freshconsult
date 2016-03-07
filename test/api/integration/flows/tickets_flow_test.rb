@@ -26,7 +26,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       post '/api/tickets', { 'ticket' => { 'email' => 'test@abc.com', 'attachments' => 's', 'subject' => 'Test Subject', 'description' => 'Test', 'priority' => '1', 'status' => '2' } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
     end
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: Array)])
+    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, prepend_msg: :input_received, given_data_type: String, expected_data_type: Array)])
   end
 
   def test_create_with_empty_attachment_array
@@ -34,7 +34,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       post '/api/tickets', { 'ticket' => { 'email' => 'test@abc.com',  'subject' => 'Test Subject', 'description' => 'Test', 'priority' => '1', 'status' => '2', 'attachments' => [''] } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
     end
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'valid format')])
+    match_json([bad_request_error_pattern('attachments', :array_data_type_mismatch, expected_data_type: 'valid file format')])
   end
 
   def test_multipart_create_ticket_with_all_params
@@ -105,7 +105,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       assert ticket.cc_email[:cc_emails].count == 1
 
       put "/api/tickets/#{ticket.id}", { tags: nil }.to_json, @write_headers
-      match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array)])
+      match_json([bad_request_error_pattern('tags', :data_type_mismatch, prepend_msg: :input_received, given_data_type: 'Null Type', expected_data_type: Array)])
       assert_response 400
 
       put "/api/tickets/#{ticket.id}", { tags: [] }.to_json, @write_headers
@@ -138,7 +138,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
     # without CustomFieldDecorator
     TicketDecorator.any_instance.stubs(:utc_format).returns(time)
-    FlexifieldDef.any_instance.stubs(:ff_alias_column_mapping).returns("custom_date_1" => "custom_date")
+    FlexifieldDef.any_instance.stubs(:ff_alias_column_mapping).returns('custom_date_1' => 'custom_date')
     get "/api/v2/tickets/#{t.display_id}", nil, @write_headers
     parsed_response = JSON.parse(response.body)['custom_fields']
     assert_equal time.iso8601, parsed_response['custom_date']

@@ -71,7 +71,7 @@ class TicketsController < ApiApplicationController
       # will be called only for index and show.
       # We want to avoid memcache call to get custom_field keys and hence following below approach.
       mapping = Account.current.ticket_field_def.ff_alias_column_mapping
-      mapping.each_with_object({}) { |(ff_alias, column), hash| hash[ff_alias] = TicketDecorator.display_name(ff_alias) } if (@item || @items.present?)
+      mapping.each_with_object({}) { |(ff_alias, column), hash| hash[ff_alias] = TicketDecorator.display_name(ff_alias) } if @item || @items.present?
     end
 
     def set_custom_errors(item = @item)

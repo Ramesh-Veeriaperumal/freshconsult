@@ -1,11 +1,15 @@
 module JsonPattern
   def bad_request_error_pattern(field, value, params_hash = {})
-    message = ErrorConstants::ERROR_MESSAGES.key?(value.to_sym) ? ErrorConstants::ERROR_MESSAGES[value.to_sym].to_s : value.to_s
+    message = retrieve_message(params_hash[:prepend_msg]) + retrieve_message(value) + retrieve_message(params_hash[:append_msg])
     {
       field: "#{field}",
       message: message % params_hash,
       code: params_hash[:code] || ErrorConstants::API_ERROR_CODES_BY_VALUE[value] || ErrorConstants::DEFAULT_CUSTOM_CODE
     }
+  end
+
+  def retrieve_message(value)
+    !value.nil? && ErrorConstants::ERROR_MESSAGES.key?(value.to_sym) ? ErrorConstants::ERROR_MESSAGES[value.to_sym].to_s : value.to_s
   end
 
   def too_many_request_error_pattern

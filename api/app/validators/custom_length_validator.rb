@@ -20,7 +20,7 @@ class CustomLengthValidator < ApiValidator
     end
 
     def error_options
-      { max_count: options[:maximum], current_count: value.length }
+      { max_count: options[:maximum], current_count: value.length, entities: :characters }
     end
 
     def skip_validation?

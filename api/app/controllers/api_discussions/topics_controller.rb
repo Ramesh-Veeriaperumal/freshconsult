@@ -50,7 +50,7 @@ module ApiDiscussions
       def set_custom_errors(_item = @item)
         if @item.errors[:stamp_type].present?
           allowed_string = allowed_stamp_types.join(',')
-          @item.errors[:stamp_type] = ErrorConstants::ERROR_MESSAGES[:allowed_stamp_type] % { list: allowed_string }
+          @item.errors[:stamp_type] = ErrorConstants::ERROR_MESSAGES[:not_included] % { list: allowed_string }
         end
         ErrorHelper.rename_error_fields({ forum: :forum_id }, @item)
         @error_options = { remove: :posts }

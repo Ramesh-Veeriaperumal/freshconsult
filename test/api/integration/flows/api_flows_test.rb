@@ -41,7 +41,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_method_not_allowed
     post '/api/discussions/categories/1', '{"name": "true"}', @write_headers
     assert_response 405
-    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET, PUT, DELETE'))
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET, PUT, DELETE', fired_method: 'POST'))
     assert_equal 'GET, PUT, DELETE', response.headers['Allow']
   end
 
@@ -730,42 +730,42 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_pagination_with_invalid_datatype_string
     get 'api/discussions/categories?page=x&per_page=x', nil, @headers
-    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, prepend_msg: :input_received, given_data_type: String, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :per_page_invalid, prepend_msg: :input_received, given_data_type: String, max_value: 100)])
     assert_response 400
   end
 
   def test_pagination_with_blank_values
     get 'api/discussions/categories?page=&per_page=', nil, @headers
-    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, prepend_msg: :input_received, given_data_type: String, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :per_page_invalid, prepend_msg: :input_received, given_data_type: String, max_value: 100)])
     assert_response 400
   end
 
   def test_pagination_with_invalid_value
     get 'api/discussions/categories?page=0&per_page=0', nil, @headers
-    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer', code: :invalid_value),
-                bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, expected_data_type: 'Positive Integer', code: :invalid_value),
+                bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100, code: :invalid_value)])
     assert_response 400
   end
 
   def test_pagination_with_invalid_negative_value
     get 'api/discussions/categories?page=-1&per_page=-1', nil, @headers
-    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer', code: :invalid_value),
-                bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, expected_data_type: 'Positive Integer', code: :invalid_value),
+                bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100, code: :invalid_value)])
     assert_response 400
   end
 
   def test_pagination_with_invalid_datatype_array
     get 'api/discussions/categories?page[]=1&per_page[]=1', nil, @headers
-    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, prepend_msg: :input_received, given_data_type: Array, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :per_page_invalid, prepend_msg: :input_received, given_data_type: Array, max_value: 100)])
     assert_response 400
   end
 
   def test_pagination_with_per_page_exceeding_max_value
     get 'api/discussions/categories?page=922337203685&per_page=101', nil, @headers
-    match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid, code: :invalid_value, max_value: 100)])
     assert_response 400
 
     get 'api/discussions/categories?page=9223372036854775808&per_page=100', nil, @headers
@@ -816,14 +816,14 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
       get 'api/discussions/categories', nil, @headers.merge(headers)
       assert_response 403
       assert_equal new_value, @agent.reload.failed_login_count
-      response.body.must_match_json_expression(request_error_pattern('password_lockout'))
+      response.body.must_match_json_expression(request_error_pattern('password_lockout', max_count: 10))
     end
 
     exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1) do |original_value, new_value|
       post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers.merge(headers)
       assert_response 403
       assert_equal new_value, @agent.reload.failed_login_count
-      response.body.must_match_json_expression(request_error_pattern('password_lockout'))
+      response.body.must_match_json_expression(request_error_pattern('password_lockout', max_count: 10))
     end
   end
 
@@ -834,14 +834,14 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
       get 'api/discussions/categories', nil, @headers.merge(headers)
       assert_response 403
       assert_equal (new_value + 1), @agent.reload.failed_login_count
-      response.body.must_match_json_expression(request_error_pattern('password_lockout'))
+      response.body.must_match_json_expression(request_error_pattern('password_lockout', max_count: 10))
     end
 
     exceed_failed_login_count(UserSession.consecutive_failed_logins_limit + 1) do |original_value, new_value|
       post 'api/discussions/categories', { 'name' => Faker::Name.name }.to_json, @write_headers.merge(headers)
       assert_response 403
       assert_equal (new_value + 1), @agent.reload.failed_login_count
-      response.body.must_match_json_expression(request_error_pattern('password_lockout'))
+      response.body.must_match_json_expression(request_error_pattern('password_lockout', max_count: 10))
     end
   end
 

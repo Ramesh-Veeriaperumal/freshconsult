@@ -10,7 +10,11 @@ class CustomFormatValidator < ApiValidator
     value !~ regexp
   end
 
+  def error_code
+    :missing_field if required_attribute_not_defined?
+  end
+
   def error_options
-    { code: :missing_field } if required_attribute_not_defined?
+    { accepted: options[:accepted] || 'accepted #{attribute}' }
   end
 end

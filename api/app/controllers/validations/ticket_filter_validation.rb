@@ -26,12 +26,12 @@ class TicketFilterValidation < FilterValidation
   def verify_requester
     # This validation will not query again if @email is set
     requester = @email ? @requester : Account.current.all_users.where(id: @requester_id).first
-    errors[find_attribute] << :blank unless requester
+    errors[find_attribute] << :"can't be blank" unless requester
   end
 
   def verify_company
     company = Account.current.companies.find_by_id(@company_id)
-    errors[:company_id] << :blank unless company
+    errors[:company_id] << :"can't be blank" unless company
   end
 
   def find_attribute

@@ -79,7 +79,7 @@ class Middleware::ApiRequestInterceptor
   def validate_accept_header
     unless @accept_header =~ /(application\/json)|(\*\/\*)|(application\/vnd.freshdesk.v\d)/
       Rails.logger.error("API Not_acceptable accept_header:#{@accept_header} is sent in the request")
-      message = { code: INVALID_ACCEPT_HEADER, message: ErrorConstants::ERROR_MESSAGES[:invalid_accept_header] }
+      message = { code: INVALID_ACCEPT_HEADER, message: ErrorConstants::ERROR_MESSAGES[:invalid_accept_header] % {accept_header: @accept_header} }
       set_response(406, RESPONSE_HEADERS, message)
       return false
     end

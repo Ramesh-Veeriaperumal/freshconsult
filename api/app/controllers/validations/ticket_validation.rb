@@ -17,7 +17,7 @@ class TicketValidation < ApiValidation
 
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0  }
 
-  validates :requester_id, required: { allow_nil: false, message: :requester_id_mandatory }, if: :requester_id_mandatory? # No
+  validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No
   validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: :name_required?  # No
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :description, data_type: { rules: String, required: true }
@@ -47,11 +47,11 @@ class TicketValidation < ApiValidation
 
   # Email related validations
   validates :email, data_type: { rules: String, allow_nil: true }
-  validates :email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email, allow_nil: true }
+  validates :email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :"valid email address", allow_nil: true }
   validates :email, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
-  validates :cc_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: :not_a_valid_email } }
+  validates :cc_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, accepted: :"valid email address" } }
 
-  validates :cc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message: :max_count_exceeded }
+  validates :cc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message_options: {entities: :values} }
 
   # Tags validations
   validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }

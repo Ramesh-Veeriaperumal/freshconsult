@@ -14,21 +14,21 @@ class TicketsControllerTest < ActionController::TestCase
   UPDATE_CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  3_543_534, 'date' => '2015-09-09T09:00' }
 
   ERROR_PARAMS =  {
-    'number' => [:data_type_mismatch, data_type: 'Integer'],
-    'decimal' => [:data_type_mismatch, data_type: 'Number'],
-    'checkbox' => [:data_type_mismatch, data_type: 'Boolean'],
-    'text' => [:"Has 300 characters, it can have maximum of 255 characters"],
-    'paragraph' => [:data_type_mismatch, data_type: String],
-    'date' => [:invalid_date]
+    'number' => [:data_type_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String],
+    'decimal' => [:data_type_mismatch, expected_data_type: 'Number', prepend_msg: :input_received, given_data_type: String],
+    'checkbox' => [:data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String],
+    'text' => [:"Has 300 characters, it can have maximum of 255 characters" ],
+    'paragraph' => [:data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer],
+    'date' => [:invalid_format, accepted: 'yyyy-mm-dd']
   }
 
   ERROR_REQUIRED_PARAMS  =  {
-    'number' => [:data_type_mismatch, { code: :missing_field, data_type: :Integer }],
-    'decimal' => [:data_type_mismatch, { code: :missing_field, data_type: :Number }],
-    'checkbox' => [:data_type_mismatch, { code: :missing_field, data_type: :Boolean }],
-    'text' => [:data_type_mismatch, { code: :missing_field, data_type: :String }],
-    'paragraph' => [:data_type_mismatch, { code: :missing_field, data_type: :String }],
-    'date' => [:invalid_date, { code: :missing_field }]
+    'number' => [:data_type_mismatch, { code: :missing_field, expected_data_type: :Integer }],
+    'decimal' => [:data_type_mismatch, { code: :missing_field, expected_data_type: :Number }],
+    'checkbox' => [:data_type_mismatch, { code: :missing_field, expected_data_type: :Boolean }],
+    'text' => [:data_type_mismatch, { code: :missing_field, expected_data_type: :String }],
+    'paragraph' => [:data_type_mismatch, { code: :missing_field, expected_data_type: :String }],
+    'date' => [:invalid_format, { code: :missing_field, accepted: 'yyyy-mm-dd' }]
   }
   ERROR_CHOICES_REQUIRED_PARAMS  =  {
     'dropdown' => [:not_included, { code: :missing_field, list: 'Get Smart,Pursuit of Happiness,Armaggedon' }],
@@ -166,7 +166,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_with_tags_invalid
     params = { requester_id: requester.id, tags: ['test,,,,comma', 'test'], status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',', value: "[\"test,,,,comma\", \"test\"]")])
+    match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',')])
     assert_response 400
   end
 
@@ -210,11 +210,11 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_numericality_invalid
     params = ticket_params_hash.merge(requester_id: 'yu', responder_id: 'io', product_id: 'x', email_config_id: 'x', group_id: 'g')
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('requester_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('responder_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('product_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('email_config_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('group_id', :data_type_mismatch, data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('requester_id', :data_type_mismatch, expected_data_type: 'Positive Integer', given_data_type: String, prepend_msg: :input_received),
+                bad_request_error_pattern('responder_id', :data_type_mismatch, expected_data_type: 'Positive Integer', given_data_type: String, prepend_msg: :input_received),
+                bad_request_error_pattern('product_id', :data_type_mismatch, expected_data_type: 'Positive Integer', given_data_type: String, prepend_msg: :input_received),
+                bad_request_error_pattern('email_config_id', :data_type_mismatch, expected_data_type: 'Positive Integer', given_data_type: String, prepend_msg: :input_received),
+                bad_request_error_pattern('group_id', :data_type_mismatch, expected_data_type: 'Positive Integer', given_data_type: String, prepend_msg: :input_received)])
     assert_response 400
   end
 
@@ -231,9 +231,9 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_inclusion_invalid_datatype
     params = ticket_params_hash.merge(requester_id: requester.id, priority: '1', status: '2', source: '9')
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('priority', :not_included, code: :data_type_mismatch, list: '1,2,3,4'),
-                bad_request_error_pattern('status', :not_included, code: :data_type_mismatch, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('source', :not_included, code: :data_type_mismatch, list: '1,2,3,7,8,9')])
+    match_json([bad_request_error_pattern('priority', :not_included, code: :data_type_mismatch, list: '1,2,3,4', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('status', :not_included, code: :data_type_mismatch, list: '2,3,4,5,6,7', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('source', :not_included, code: :data_type_mismatch, list: '1,2,3,7,8,9', prepend_msg: :input_received, given_data_type: String)])
     assert_response 400
   end
 
@@ -243,7 +243,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('subject', :"Has 300 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('tags', :"Has 34 characters, it can have maximum of 32 characters")])
+                bad_request_error_pattern('tags', :"Should only contain elements that have maximum of 32 characters")])
     assert_response 400
   end
 
@@ -301,7 +301,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :requester_id_mandatory)])
+    match_json([bad_request_error_pattern('requester_id', :fill_a_mandatory_field, field_names: 'requester_id, phone, email, twitter_id, facebook_id')])
   end
 
   def test_create_presence_name_invalid
@@ -315,25 +315,25 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(email: 'test@', cc_emails: ['the@'])
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('email', 'is not a valid email'),
-                bad_request_error_pattern('cc_emails', 'is not a valid email')])
+    match_json([bad_request_error_pattern('email', "Should be in the valid email address format"),
+                bad_request_error_pattern('cc_emails', "Should contain elements that are in the valid email address format")])
   end
 
   def test_create_data_type_invalid
     cc_emails = "#{Faker::Internet.email},#{Faker::Internet.email}"
     params = ticket_params_hash.merge(cc_emails: cc_emails, tags: 'tag1,tag2', custom_fields: [1])
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('custom_fields', :data_type_mismatch, data_type: 'key/value pair')])
+    match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, expected_data_type: Array, given_data_type: String, prepend_msg: :input_received),
+                bad_request_error_pattern('tags', :data_type_mismatch, expected_data_type: Array, given_data_type: String, prepend_msg: :input_received),
+                bad_request_error_pattern('custom_fields', :data_type_mismatch, expected_data_type: 'key/value pair', given_data_type: Array, prepend_msg: :input_received)])
     assert_response 400
   end
 
   def test_create_date_time_invalid
     params = ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('due_by', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
-                bad_request_error_pattern('fr_due_by', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
+    match_json([bad_request_error_pattern('due_by', :invalid_format, accepted: :"combined date and time ISO8601"),
+                bad_request_error_pattern('fr_due_by', :invalid_format, accepted: :"combined date and time ISO8601")])
     assert_response 400
   end
 
@@ -364,7 +364,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: time)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, value: time.inspect, code: :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
   def test_create_with_nil_fr_due_by_with_due_by
@@ -446,7 +446,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(due_by: 30.days.ago.iso8601, cc_emails: cc_emails)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 50),
+    match_json([bad_request_error_pattern('cc_emails', :too_long, entities: :values, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 50),
                 bad_request_error_pattern('due_by', :gt_created_and_now)])
   end
 
@@ -507,9 +507,9 @@ class TicketsControllerTest < ActionController::TestCase
     params = {}
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :requester_id_mandatory),
-                bad_request_error_pattern('subject', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('description', :data_type_mismatch, data_type: String),
+    match_json([bad_request_error_pattern('requester_id', :fill_a_mandatory_field, field_names: 'requester_id, phone, email, twitter_id, facebook_id'),
+                bad_request_error_pattern('subject', :data_type_mismatch, expected_data_type: String),
+                bad_request_error_pattern('description', :data_type_mismatch, expected_data_type: String),
                 bad_request_error_pattern('priority', :not_included, code: :missing_field, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, code: :missing_field, list: '2,3,4,5,6,7')])
   end
@@ -517,8 +517,8 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_datatype_invalid
     post :create, construct_params({}, ticket_params_hash.merge(description: true, description_html: true))
     assert_response 400
-    match_json([bad_request_error_pattern('description', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('description_html', :data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('description', :data_type_mismatch, expected_data_type: String, given_data_type: 'Boolean', prepend_msg: :input_received),
+                bad_request_error_pattern('description_html', :data_type_mismatch, expected_data_type: String, given_data_type: 'Boolean', prepend_msg: :input_received)])
   end
 
   def test_create_with_existing_user
@@ -550,7 +550,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(facebook_id:  Faker::Name.name)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :"can't be blank")])
+    match_json([bad_request_error_pattern('requester_id', :"should be a valid email address")])
   end
 
   def test_create_with_existing_fb_user
@@ -619,14 +619,14 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge('attachments' => [1, 2])
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'valid format')])
+    match_json([bad_request_error_pattern('attachments', :array_data_type_mismatch, expected_data_type: 'valid file format')])
   end
 
   def test_create_with_invalid_attachment_type
     params = ticket_params_hash.merge('attachments' => 'test')
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: Array)])
+    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, expected_data_type: Array, given_data_type: String, prepend_msg: :input_received)])
   end
 
   def test_create_with_invalid_empty_attachment
@@ -997,7 +997,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge('attachments' => [1, 2])
     put :update, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'valid format')])
+    match_json([bad_request_error_pattern('attachments', :array_data_type_mismatch, expected_data_type: 'valid file format')])
   end
 
   def test_update
@@ -1049,7 +1049,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: time)
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, value: time.inspect, code: :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
   def test_update_with_nil_fr_due_by_with_due_by
@@ -1285,7 +1285,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { tags: ['test,,,,comma', 'test'] }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',', value: "[\"test,,,,comma\", \"test\"]")])
+    match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',')])
   end
 
   def test_update_with_subject
@@ -1498,8 +1498,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { status: 4, due_by: time1, fr_due_by: time2 }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, value: time1.inspect, code: :incompatible_field),
-                bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, value: time2.inspect, code: :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field),
+                bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
   def test_update_with_status_resolved_and_only_due_by
@@ -1508,7 +1508,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { status: 4, due_by: time }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, value: time.inspect, code: :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
   def test_update_with_status_closed_and_only_fr_due_by
@@ -1517,7 +1517,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { status: 5, fr_due_by: time }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, value: time.inspect, code: :incompatible_field)])
+    match_json([bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
   def test_update_with_status_closed_and_due_by
@@ -1527,8 +1527,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { status: 5, due_by: time1, fr_due_by: time2 }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, value: time1.inspect, code: :incompatible_field),
-                bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, value: time2.inspect, code: :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field),
+                bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
   def test_update_numericality_invalid
@@ -1536,11 +1536,11 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(requester_id: 'yu', responder_id: 'io', product_id: 'x', email_config_id: 'x', group_id: 'g')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('responder_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('product_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('email_config_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('group_id', :data_type_mismatch, data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('requester_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('responder_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('product_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('email_config_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('group_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_update_inclusion_invalid
@@ -1561,7 +1561,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('subject', :"Has 300 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('tags', :"Has 34 characters, it can have maximum of 32 characters")])
+                bad_request_error_pattern('tags', :"Should only contain elements that have maximum of 32 characters")])
     assert_response 400
   end
 
@@ -1622,7 +1622,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(requester_id: nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :requester_id_mandatory)])
+    match_json([bad_request_error_pattern('requester_id', :fill_a_mandatory_field, field_names: 'requester_id, phone, email, twitter_id, facebook_id')])
   end
 
   def test_update_presence_name_invalid
@@ -1638,7 +1638,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(email: 'test@', requester_id: nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('email', 'not_a_valid_email')])
+    match_json([bad_request_error_pattern('email', :invalid_format, accepted: 'valid email address')])
   end
 
   def test_update_data_type_invalid
@@ -1646,8 +1646,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(tags: 'tag1,tag2', custom_fields: [1])
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('custom_fields', :data_type_mismatch, data_type: 'key/value pair')])
+    match_json([bad_request_error_pattern('tags', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('custom_fields', :data_type_mismatch, expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: Array)])
   end
 
   def test_update_date_time_invalid
@@ -1655,8 +1655,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
-                bad_request_error_pattern('fr_due_by', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
+    match_json([bad_request_error_pattern('due_by', :invalid_format, accepted: :"combined date and time ISO8601"),
+                bad_request_error_pattern('fr_due_by', :invalid_format, accepted: :"combined date and time ISO8601")])
   end
 
   def test_update_extra_params_invalid
@@ -2160,8 +2160,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params_type
     get :index, controller_params(company_id: 'a', requester_id: 'b')
-    pattern = [bad_request_error_pattern('company_id', :data_type_mismatch, data_type: 'Positive Integer')]
-    pattern << bad_request_error_pattern('requester_id', :data_type_mismatch, data_type: 'Positive Integer')
+    pattern = [bad_request_error_pattern('company_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)]
+    pattern << bad_request_error_pattern('requester_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)
     assert_response 400
     match_json pattern
   end
@@ -2459,7 +2459,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash
     t = create_ticket
     put :update, construct_params({ id: t.display_id }, tags: [1, 2], custom_fields: {})
-    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('tags', :array_data_type_mismatch, expected_data_type: String)])
     assert_response 400
   end
 
@@ -2502,11 +2502,11 @@ class TicketsControllerTest < ActionController::TestCase
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
     default_non_required_fiels.map { |x| x.toggle!(:required) }
     post :create, construct_params({},  requester_id: @agent.id)
-    match_json([bad_request_error_pattern('description', :data_type_mismatch, code: :missing_field, data_type: String),
-                bad_request_error_pattern('subject', :data_type_mismatch, code: :missing_field, data_type: String),
-                bad_request_error_pattern('group_id', :data_type_mismatch, code: :missing_field, data_type: 'Positive Integer'),
-                bad_request_error_pattern('responder_id', :data_type_mismatch, code: :missing_field, data_type: 'Positive Integer'),
-                bad_request_error_pattern('product_id', :data_type_mismatch, code: :missing_field, data_type: 'Positive Integer'),
+    match_json([bad_request_error_pattern('description', :data_type_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('subject', :data_type_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('group_id', :data_type_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('responder_id', :data_type_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('product_id', :data_type_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
                 bad_request_error_pattern('priority', :not_included, code: :missing_field, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, code: :missing_field, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Lead'),
@@ -2550,11 +2550,11 @@ class TicketsControllerTest < ActionController::TestCase
                                                       source: nil,
                                                       type: nil
                                  )
-    match_json([bad_request_error_pattern('description',  :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('subject',  :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('group_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('responder_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('product_id', :data_type_mismatch, data_type: 'Positive Integer'),
+    match_json([bad_request_error_pattern('description',  :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('subject',  :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('group_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('responder_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('product_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
                 bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Lead'),
@@ -2567,7 +2567,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_with_email_array
     post :create, construct_params({}, ticket_params_hash.except(:email).merge(email: [email: Faker::Internet.email]))
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, data_type: 'String')])
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
   end
 
   def test_update_with_email_array
@@ -2575,7 +2575,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, data_type: 'String')])
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
   end
 
   def test_create_ticket_with_twitter_and_invalid_email
@@ -2583,6 +2583,6 @@ class TicketsControllerTest < ActionController::TestCase
     params = { email: Faker::Name.name, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph, twitter_id: '@test123' }
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('email', 'not_a_valid_email')])
+    match_json([bad_request_error_pattern('email', :invalid_format, accepted: 'valid email address')])
   end
 end

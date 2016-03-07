@@ -17,11 +17,16 @@ class DateTimeValidator < ApiValidator
   end
 
   def message
-    options[:only_date] ? :invalid_date : :invalid_date_time
+    :invalid_format
   end
 
   def error_options
-    { code: :missing_field } if required_attribute_not_defined?
+    accepted = options[:only_date] ? :'yyyy-mm-dd' : :'combined date and time ISO8601'
+    { accepted: accepted }
+  end
+
+  def error_code
+    :missing_field if required_attribute_not_defined?
   end
 
   def parse_time

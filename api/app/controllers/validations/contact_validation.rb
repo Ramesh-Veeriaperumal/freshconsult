@@ -24,8 +24,8 @@ class ContactValidation < ApiValidation
   validate :contact_detail_missing_update, if: -> { fb_profile_id.nil? }, on: :update
 
   validate :check_contact_merge_feature, if: -> { other_emails }
-  validates :other_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, message: :not_a_valid_email }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } }
-  validates :other_emails, custom_length: { maximum: ContactConstants::MAX_OTHER_EMAILS_COUNT, message: :max_count_exceeded }
+  validates :other_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :"valid email address" }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } }
+  validates :other_emails, custom_length: { maximum: ContactConstants::MAX_OTHER_EMAILS_COUNT, message_options: {entities: :values} }
   validate :check_contact_for_email_before_adding_other_emails, if: -> { other_emails }
   validate :check_other_emails_for_primary_email, if: -> { other_emails }, on: :update
 
@@ -58,14 +58,17 @@ class ContactValidation < ApiValidation
     def contact_detail_missing
       if [:email, :mobile, :phone, :twitter_id].all? { |x| send(x).blank? && errors[x].blank? }
         errors[:email] << :fill_a_mandatory_field
+        error_options[:email] = { field_names: 'email, mobile, phone, twitter_id' }
       end
     end
 
     alias_method :contact_detail_missing_update, :contact_detail_missing
 
     def validate_avatar
-      if ContactConstants::AVATAR_EXT.exclude?(File.extname(avatar.original_filename).downcase)
+      ext = File.extname(avatar.original_filename).downcase
+      if ContactConstants::AVATAR_EXT.exclude?(ext)
         errors[:avatar] << :upload_jpg_or_png_file
+        error_options[:avatar] = { current_extension: ext }
       end
     end
 

@@ -15,11 +15,11 @@ class TimeEntryFilterValidation < FilterValidation
 
   def valid_user?
     user = Account.current.agents_from_cache.detect { |x| x.user_id == @agent_id.to_i }
-    errors[:agent_id] << :blank unless user
+    errors[:agent_id] << :"can't be blank" unless user
   end
 
   def valid_company?
     user = Account.current.companies.find_by_id(@company_id)
-    errors[:company_id] << :blank unless user
+    errors[:company_id] << :"can't be blank" unless user
   end
 end

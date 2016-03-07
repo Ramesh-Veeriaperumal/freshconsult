@@ -45,9 +45,15 @@ class TicketFilterValidationTest < ActionView::TestCase
     error = ticket_filter.errors.full_messages
     assert error.include?('Filter not_included')
     assert error.include?('Email data_type_mismatch')
-    assert error.include?('Updated since invalid_date_time')
+    assert error.include?('Updated since invalid_format')
     assert error.include?('Company data_type_mismatch')
     assert error.include?('Order by not_included')
     assert error.include?('Order type not_included')
+    assert_equal({ company_id: { expected_data_type: :"Positive Integer", prepend_msg: :input_received, given_data_type: 'Null Type' },
+                   email: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'},
+                   filter: { list: 'new_and_my_open,watching,spam,deleted' },
+                   updated_since: { accepted: :"combined date and time ISO8601" },
+                   order_by: { list: 'due_by,created_at,updated_at,status' },
+                   order_type: { list: 'asc,desc' } }, ticket_filter.error_options)
   end
 end

@@ -35,7 +35,7 @@ class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
       assert company.domains.split(',').count == 1
 
       put "/api/companies/#{company.id}", { domains: nil }.to_json, @write_headers
-      match_json([bad_request_error_pattern('domains', :data_type_mismatch, data_type: Array)])
+      match_json([bad_request_error_pattern('domains', :data_type_mismatch, expected_data_type: Array, given_data_type: 'Null Type', prepend_msg: :input_received)])
       assert_response 400
 
       put "/api/companies/#{company.id}", { domains: [] }.to_json, @write_headers

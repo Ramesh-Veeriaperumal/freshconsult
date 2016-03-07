@@ -53,7 +53,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: '1,2' })
     assert_response 400
-    match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, data_type: Array)])
+    match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_update_with_empty_conditions
@@ -61,7 +61,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: {})
     assert_response 400
-    match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, code: :missing_field, data_type: Array)])
+    match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, code: :missing_field, expected_data_type: Array)])
   end
 
   def test_update_with_nil_conditions
@@ -69,7 +69,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: {})
     assert_response 400
-    match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, code: :missing_field, data_type: Array)])
+    match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, code: :missing_field, expected_data_type: Array)])
   end
 
   def test_update_emptying_conditions_with_blank_company_ids
@@ -77,7 +77,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = create_sla_policy_with_only_company_ids
     put :update, construct_params({ id: sla_policy.id }, applicable_to: nil)
     assert_response 400
-    match_json([bad_request_error_pattern('applicable_to', :data_type_mismatch, data_type: 'key/value pair')])
+    match_json([bad_request_error_pattern('applicable_to', :data_type_mismatch, expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null Type')])
   end
 
   def test_update_default_sla_policy
@@ -99,7 +99,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: [1, 2])
     assert_response 400
-    match_json([bad_request_error_pattern('applicable_to', :data_type_mismatch, data_type: 'key/value pair')])
+    match_json([bad_request_error_pattern('applicable_to', :data_type_mismatch, expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: Array)])
   end
 
   def test_index_with_link_header

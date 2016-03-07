@@ -7,7 +7,7 @@ class TimeEntryValidation < ApiValidation
   validates :note, data_type: { rules: String, allow_nil: true }
   validates :executed_at, date_time: { allow_nil: true }
 
-  validates :time_spent, data_type: { rules: String }, custom_format: { with: /^\d+:[0-5][0-9]$/, message: :invalid_time_spent }, allow_nil: true
+  validates :time_spent, data_type: { rules: String }, custom_format: { with: /^\d+:[0-5][0-9]$/, accepted: 'hh:mm' }, allow_nil: true
 
   # Start time specific validations*
   # start_time param has no meaning timer is already on in case of update.
@@ -47,7 +47,7 @@ class TimeEntryValidation < ApiValidation
 
     def valid_user?
       user = Account.current.agents_from_cache.find { |x| x.user_id == @agent_id } if @agent_id_set
-      errors[:agent_id] << :blank unless user
+      errors[:agent_id] << :"can't be blank" unless user
     end
 
     def disallow_reset_timer_value

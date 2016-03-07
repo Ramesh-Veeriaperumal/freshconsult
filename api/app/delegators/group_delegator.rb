@@ -8,7 +8,7 @@
 
      def valid_agent?
        invalid_user = invalid_users [] << escalate_to
-       errors[:escalate_to] << :blank if invalid_user.present?
+       errors[:escalate_to] << :"can't be blank" if invalid_user.present?
      end
 
      def valid_agent

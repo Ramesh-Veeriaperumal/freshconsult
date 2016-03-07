@@ -56,15 +56,15 @@ module ApiDiscussions
     def test_create_without_title_and_message_html_invalid
       post :create, construct_params({ id: forum_obj.id },
                                      message_html: true)
-      match_json([bad_request_error_pattern('title', :data_type_mismatch, code: :missing_field, data_type: String),
-                  bad_request_error_pattern('message_html', :data_type_mismatch, data_type: String)])
+      match_json([bad_request_error_pattern('title', :data_type_mismatch, code: :missing_field, expected_data_type: String),
+                  bad_request_error_pattern('message_html', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean')])
       assert_response 400
     end
 
     def test_create_without_message
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title')
-      match_json([bad_request_error_pattern('message_html', :data_type_mismatch, code: :missing_field, data_type: String)])
+      match_json([bad_request_error_pattern('message_html', :data_type_mismatch, code: :missing_field, expected_data_type: String)])
       assert_response 400
     end
 
@@ -83,15 +83,15 @@ module ApiDiscussions
     def test_create_validate_numericality
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title', message_html: 'test content', stamp_type: 'hj')
-      match_json([bad_request_error_pattern('stamp_type', :data_type_mismatch, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('stamp_type', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
       assert_response 400
     end
 
     def test_create_validate_inclusion
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title', message_html: 'test content',  sticky: 'junk', locked: 'junk2')
-      match_json([bad_request_error_pattern('locked', :data_type_mismatch, data_type: 'Boolean'),
-                  bad_request_error_pattern('sticky', :data_type_mismatch, data_type: 'Boolean')])
+      match_json([bad_request_error_pattern('locked', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                  bad_request_error_pattern('sticky', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
       assert_response 400
     end
 
@@ -295,7 +295,7 @@ module ApiDiscussions
       topic = first_topic
       params = { forum_id: [1] }
       put :update, construct_params({ id: topic.id }, params)
-      match_json([bad_request_error_pattern('forum_id', :data_type_mismatch, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('forum_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: Array)])
       assert_response 400
     end
 
@@ -306,7 +306,7 @@ module ApiDiscussions
       allowed_string = allowed.join(',')
       allowed_string += 'null' if allowed.include?(nil)
       put :update, construct_params({ id: first_topic.id }, stamp_type: 78)
-      match_json([bad_request_error_pattern('stamp_type', :allowed_stamp_type, list: allowed_string)])
+      match_json([bad_request_error_pattern('stamp_type', :not_included, list: allowed_string)])
       assert_response 400
     end
 
@@ -319,25 +319,25 @@ module ApiDiscussions
         post.update_column(:answer, true)
       end
       put :update, construct_params({ id: topic.id }, stamp_type: 7)
-      match_json([bad_request_error_pattern('stamp_type', :allowed_stamp_type, list: '6')])
+      match_json([bad_request_error_pattern('stamp_type', :not_included, list: '6')])
       assert_response 400
 
       topic.posts.update_all(answer: false)
       put :update, construct_params({ id: topic.id }, stamp_type: 6)
-      match_json([bad_request_error_pattern('stamp_type', :allowed_stamp_type, list: '7')])
+      match_json([bad_request_error_pattern('stamp_type', :not_included, list: '7')])
       assert_response 400
     end
 
     def test_update_without_title
       put :update, construct_params({ id: first_topic.id }, title: '')
-      match_json([bad_request_error_pattern('title', :"can't be blank")])
+      match_json([bad_request_error_pattern('title', :blank)])
       assert_response 400
     end
 
     def test_update_without_message
       put :update, construct_params({ id: first_topic.id }, forum_id: forum_obj.id,
                                                             message_html: '')
-      match_json([bad_request_error_pattern('message_html', :"can't be blank")])
+      match_json([bad_request_error_pattern('message_html', :blank)])
       assert_response 400
     end
 
@@ -374,9 +374,9 @@ module ApiDiscussions
     def test_update_with_nil_values
       put :update, construct_params({ id: first_topic.id }, forum_id: nil,
                                                             title: nil, message_html: nil)
-      match_json([bad_request_error_pattern('forum_id', :data_type_mismatch, code: :missing_field, data_type: 'Positive Integer'),
-                  bad_request_error_pattern('title', :data_type_mismatch, data_type: String),
-                  bad_request_error_pattern('message_html', :data_type_mismatch, data_type: String)
+      match_json([bad_request_error_pattern('forum_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
+                  bad_request_error_pattern('title', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                  bad_request_error_pattern('message_html', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type')
                  ])
       assert_response 400
     end
@@ -419,7 +419,7 @@ module ApiDiscussions
     def test_followed_by_non_numeric_id
       get :followed_by, controller_params(user_id: 'test')
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('user_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
     end
 
     def test_followed_by_without_user_id
@@ -490,7 +490,7 @@ module ApiDiscussions
     def test_is_following_non_numeric_user_id
       get :is_following, controller_params(user_id: 'test', id: first_topic.id)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('user_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
     end
 
     def test_is_following_unexpected_fields

@@ -7,7 +7,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
     refute comment.valid?
     assert_equal ['Body html data_type_mismatch'], comment.errors.full_messages
-    assert_equal({ body_html: { data_type: String, code: :missing_field } }, comment.error_options)
+    assert_equal({ body_html: { expected_data_type: String, code: :missing_field } }, comment.error_options)
   end
 
   def test_inclusion_params_invalid
@@ -47,6 +47,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     error = comment.errors.full_messages
     refute error.include?('Topic data_type_mismatch')
     refute error.include?('User is not a number')
+
     Account.unstub(:current)
   end
 
@@ -72,7 +73,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
     assert comment.valid?(:update)
 
-    controller_params = { 'answer' => 'nil' }
+    controller_params = { 'answer' => 'nil', 'body_html' => 'test' }
     topic.stubs(:stamp_type).returns(nil)
     item.stubs(:topic).returns(topic)
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
@@ -80,7 +81,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     error = comment.errors.full_messages
     assert error.include?('Answer cannot_set_answer')
     refute error.include?('Answer data_type_mismatch')
-    assert_equal({ answer: { value: "\"nil\"", code: :incompatible_field }, body_html: { data_type: String } }, comment.error_options)
+    assert_equal({ answer: { code: :incompatible_field }, body_html: {} }, comment.error_options)
     Account.unstub(:current)
   end
 

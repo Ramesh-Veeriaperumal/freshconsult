@@ -30,7 +30,7 @@ class FileSizeValidatorTest < ActionView::TestCase
     refute test.valid?
     assert test.errors.count == 1
     assert_equal({ multi_error: :data_type_mismatch }, test.errors.to_h)
-    assert_equal({ multi_error: { data_type: String } }, test.error_options)
+    assert_equal({ multi_error: { expected_data_type: String, prepend_msg: :input_received, given_data_type: Array} }, test.error_options)
   end
 
   def test_base_size_proc_invalid

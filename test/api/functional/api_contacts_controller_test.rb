@@ -56,19 +56,19 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_without_name
     post :create, construct_params({},  email: Faker::Internet.email)
-    match_json([bad_request_error_pattern('name', :data_type_mismatch, code: :missing_field, data_type: String)])
+    match_json([bad_request_error_pattern('name', :data_type_mismatch, code: :missing_field, expected_data_type: String)])
     assert_response 400
   end
 
   def test_create_contact_tags_with_comma
     post :create, construct_params({},  email: Faker::Internet.email, name: Faker::Lorem.characters(10), tags: ['test,,,,comma', 'test'])
-    match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',', value: "[\"test,,,,comma\", \"test\"]")])
+    match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',')])
     assert_response 400
   end
 
   def test_create_contact_without_any_contact_detail
     post :create, construct_params({},  name: Faker::Lorem.characters(10))
-    match_json([bad_request_error_pattern('email', :fill_a_mandatory_field)])
+    match_json([bad_request_error_pattern('email', :fill_a_mandatory_field, field_names: 'email, mobile, phone, twitter_id')])
     assert_response 400
   end
 
@@ -95,7 +95,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         view_all_tickets: 'String',
                                         company_id: comp.id)
-    match_json([bad_request_error_pattern('view_all_tickets', :data_type_mismatch, data_type: 'Boolean')])
+    match_json([bad_request_error_pattern('view_all_tickets', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
     assert_response 400
   end
 
@@ -152,7 +152,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         company_id: comp.id,
                                         language: 'en',
                                         tags: 'tag1, tag2, tag3')
-    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array)])
+    match_json([bad_request_error_pattern('tags', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
     assert_response 400
   end
 
@@ -165,7 +165,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 language: 'en',
                 avatar: Faker::Internet.email }
     post :create, construct_params({},  params)
-    match_json([bad_request_error_pattern('avatar', :data_type_mismatch, data_type: 'valid format')])
+    match_json([bad_request_error_pattern('avatar', :data_type_mismatch, expected_data_type: 'valid file format', prepend_msg: :input_received, given_data_type: String)])
     assert_response 400
   end
 
@@ -181,7 +181,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :create, construct_params({},  params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
-    match_json([bad_request_error_pattern('avatar', :upload_jpg_or_png_file)])
+    match_json([bad_request_error_pattern('avatar', :upload_jpg_or_png_file, current_extension: '.txt')])
     assert_response 400
   end
 
@@ -268,8 +268,8 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         custom_fields: { 'sample_url' => 'aaaa', 'sample_date' => '2015-09-09T08:00' })
     assert_response 400
-    match_json([bad_request_error_pattern('sample_date', :invalid_date),
-                bad_request_error_pattern('sample_url', 'invalid_format')])
+    match_json([bad_request_error_pattern('sample_date', :invalid_format, accepted: 'yyyy-mm-dd'),
+                bad_request_error_pattern('sample_url', :invalid_format, accepted: 'valid URL')])
   end
 
   def test_create_contact_without_required_custom_fields
@@ -279,7 +279,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email)
 
     assert_response 400
-    match_json([bad_request_error_pattern('code', :data_type_mismatch, code: :missing_field, data_type: String)])
+    match_json([bad_request_error_pattern('code', :data_type_mismatch, code: :missing_field, expected_data_type: String)])
     ensure
       cf.update_attribute(:required_for_agent, false)
   end
@@ -296,8 +296,8 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         language: 'en',
                                         custom_fields: { 'check_me' => 'aaa', 'doj' => 2010 })
     assert_response 400
-    match_json([bad_request_error_pattern('check_me', :data_type_mismatch, data_type: 'Boolean'),
-                bad_request_error_pattern('doj', :invalid_date)])
+    match_json([bad_request_error_pattern('check_me', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('doj', :invalid_format, accepted: 'yyyy-mm-dd')])
   end
 
   def test_create_contact_with_invalid_dropdown_field
@@ -329,7 +329,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('email', :"Has 328 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('twitter_id', :"Has 300 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('tags', :"Has 34 characters, it can have maximum of 32 characters")])
+                bad_request_error_pattern('tags', :"Should only contain elements that have maximum of 32 characters")])
     assert_response 400
   end
 
@@ -347,13 +347,13 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_attribute(:phone, '1234567890')
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('name', :"can't be blank")])
+    match_json([bad_request_error_pattern('name', :blank)])
   end
 
   def test_update_contact_tags_with_comma
     params_hash = { tags: ['test,,,,comma', 'test'] }
     put :update, construct_params({ id: get_user.id }, params_hash)
-    match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',', value: "[\"test,,,,comma\", \"test\"]")])
+    match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',')])
     assert_response 400
   end
 
@@ -365,7 +365,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_attribute(:email, nil)
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('email', :fill_a_mandatory_field)])
+    match_json([bad_request_error_pattern('email', :fill_a_mandatory_field, field_names: 'email, mobile, phone, twitter_id')])
     sample_user.update_attribute(:email, email)
   end
 
@@ -481,7 +481,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('email', :"Has 328 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('twitter_id', :"Has 300 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('tags', :"Has 34 characters, it can have maximum of 32 characters")])
+                bad_request_error_pattern('tags', :"Should only contain elements that have maximum of 32 characters")])
     assert_response 400
     sample_user.update_attribute(:email, email)
   end
@@ -672,7 +672,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.first.update_column(:customer_id, comp.id)
     get :index, controller_params(company_id: 'a')
     assert_response 400
-    match_json [bad_request_error_pattern('company_id', :data_type_mismatch, data_type: 'Positive Integer')]
+    match_json [bad_request_error_pattern('company_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)]
   end
 
   def test_contact_blocked_in_future_should_not_be_listed_in_the_index
@@ -729,7 +729,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user_with_email
     put :make_agent, construct_params(id: sample_user.id)
     assert_response 403
-    match_json(request_error_pattern(:max_agents_reached))
+    match_json(request_error_pattern(:max_agents_reached, max_count: 1))
   end
 
   def test_make_agent_fails_in_user_validation
@@ -817,7 +817,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         company_id: comp.id,
                                         language: 'en',
                                         tags: [1, 2, 3])
-    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('tags', :array_data_type_mismatch, expected_data_type: String)])
     assert_response 400
   end
 
@@ -844,7 +844,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_update_invalid_format_custom_field
     sample_user = get_user_with_email
     put :update, construct_params({ id: sample_user.id }, custom_fields: [1, 2])
-    match_json([bad_request_error_pattern(:custom_fields, :data_type_mismatch, data_type: 'key/value pair')])
+    match_json([bad_request_error_pattern(:custom_fields, :data_type_mismatch, expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: Array)])
     assert_response 400
   end
 
@@ -854,14 +854,14 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Name.name)
     assert_response 400
 
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, code: :missing_field, data_type: String),
-                bad_request_error_pattern('job_title', :data_type_mismatch, code: :missing_field, data_type: String),
-                bad_request_error_pattern('mobile', :data_type_mismatch, code: :missing_field, data_type: String),
-                bad_request_error_pattern('address', :data_type_mismatch, code: :missing_field, data_type: String),
-                bad_request_error_pattern('description', :data_type_mismatch, code: :missing_field, data_type: String),
-                bad_request_error_pattern('twitter_id', :data_type_mismatch, code: :missing_field, data_type: String),
-                bad_request_error_pattern('phone', :data_type_mismatch, code: :missing_field, data_type: String),
-                bad_request_error_pattern('tags', :data_type_mismatch, code: :missing_field, data_type: Array),
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('job_title', :data_type_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('mobile', :data_type_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('address', :data_type_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('description', :data_type_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('twitter_id', :data_type_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('phone', :data_type_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('tags', :data_type_mismatch, code: :missing_field, expected_data_type: Array),
                 bad_request_error_pattern('company_id', :missing_field),
                 bad_request_error_pattern('language', :not_included,
                                           list: I18n.available_locales.map(&:to_s).join(','), code: :missing_field),
@@ -911,16 +911,16 @@ class ApiContactsControllerTest < ActionController::TestCase
                                                            address: nil
                                  )
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, code: :missing_field, data_type: String),
-                bad_request_error_pattern('job_title', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('mobile', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('address', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('description', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('view_all_tickets', :data_type_mismatch, data_type: 'Boolean'),
-                bad_request_error_pattern('twitter_id', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('phone', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('company_id', :"can't be blank"),
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, code: :missing_field, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('job_title', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('mobile', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('address', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('description', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('view_all_tickets', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('twitter_id', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('phone', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('tags', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('company_id', :blank),
                 bad_request_error_pattern('language', :not_included,
                                           list: I18n.available_locales.map(&:to_s).join(',')),
                 bad_request_error_pattern('time_zone', :not_included, list: ActiveSupport::TimeZone.all.map(&:name).join(','))])
@@ -945,7 +945,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :max_count_exceeded, max_count: "#{ContactConstants::MAX_OTHER_EMAILS_COUNT}", current_count: 5)])
+    match_json([bad_request_error_pattern('other_emails', :too_long, entities: :values, max_count: "#{ContactConstants::MAX_OTHER_EMAILS_COUNT}", current_count: 5)])
   end
 
   def test_create_with_other_emails_max_length_validation
@@ -954,7 +954,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :"Has 328 characters, it can have maximum of 255 characters")])
+    match_json([bad_request_error_pattern('other_emails', :"Should only contain elements that have maximum of 255 characters")])
   end
 
   def test_create_with_other_emails_with_duplication
@@ -975,7 +975,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', 'Should be a valid email address')])
+    match_json([bad_request_error_pattern('other_emails', 'Should contain elements that are in the valid email address format')])
   end
 
   def test_create_with_other_emails_with_invalid_emails
@@ -984,14 +984,14 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', 'Should be a valid email address')])
+    match_json([bad_request_error_pattern('other_emails', 'Should contain elements that are in the valid email address format')])
   end
 
   def test_create_with_other_emails_without_primary_email
     email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
     put :create, construct_params({}, name: Faker::Lorem.characters(10), other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('email', :fill_a_mandatory_field)])
+    match_json([bad_request_error_pattern('email', :fill_a_mandatory_field, field_names: 'email, mobile, phone, twitter_id')])
   end
 
   def test_create_contact_with_emails_associated_with_other_users_in_other_emails
@@ -1145,13 +1145,13 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: [Faker::Internet.email])
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, data_type: 'String')])
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
   end
 
   def test_contact_filter_email_array
     email = get_user_with_email.email
     get :index, controller_params({ email: [email] }, false)
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, data_type: 'String')])
+    match_json([bad_request_error_pattern('email', :data_type_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
   end
 end

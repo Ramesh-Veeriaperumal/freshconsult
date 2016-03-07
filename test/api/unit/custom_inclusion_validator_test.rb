@@ -115,5 +115,6 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     refute test.valid?
     assert test.errors.to_h.keys.count == 1
     assert_equal({ multi_error: :data_type_mismatch }, test.errors.to_h)
+    assert_equal({ attribute2: {}, multi_error: { expected_data_type: :Number, prepend_msg: :input_received, given_data_type: String } }, test.error_options)
   end
 end

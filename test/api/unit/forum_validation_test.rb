@@ -10,8 +10,8 @@ class ForumValidationTest < ActionView::TestCase
     assert forum.errors.full_messages.include?('Forum category data_type_mismatch')
     assert forum.errors.full_messages.include?('Forum visibility not_included')
     assert forum.errors.full_messages.include?('Forum type not_included')
-    assert_equal({ name: { data_type: String, code: :missing_field }, forum_category_id: { data_type: :"Positive Integer",
-                                                                                           code: :missing_field }, forum_visibility: { list: '1,2,3,4', code: :missing_field }, forum_type: { list: '1,2,3,4', code: :missing_field } }, forum.error_options)
+    assert_equal({ name: {  expected_data_type: String, code: :missing_field }, forum_category_id: {  expected_data_type: :"Positive Integer",
+                                                                                                      code: :missing_field }, forum_visibility: { list: '1,2,3,4', code: :missing_field }, forum_type: { list: '1,2,3,4', code: :missing_field } }, forum.error_options)
   end
 
   def test_numericality_params_invalid
@@ -20,6 +20,10 @@ class ForumValidationTest < ActionView::TestCase
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
     assert forum.errors.full_messages.include?('Forum category data_type_mismatch')
+    assert_equal({ name: { expected_data_type: String, code: :missing_field },
+                   forum_category_id: { expected_data_type: :"Positive Integer", prepend_msg: :input_received, given_data_type: String },
+                   forum_visibility: { list: '1,2,3,4', code: :missing_field },
+                   forum_type: { list: '1,2,3,4', code: :missing_field } }, forum.error_options)
   end
 
   def test_inclusion_params_invalid
@@ -30,8 +34,8 @@ class ForumValidationTest < ActionView::TestCase
     error = forum.errors.full_messages
     assert error.include?('Forum visibility not_included')
     assert error.include?('Forum type not_included')
-    assert_equal({ name: { data_type: String, code: :missing_field }, forum_visibility: { list: '1,2,3,4', code: :data_type_mismatch },
-                   forum_type: { list: '1,2,3,4', code: :data_type_mismatch } }, forum.error_options)
+    assert_equal({ name: {  expected_data_type: String, code: :missing_field }, forum_visibility: { list: '1,2,3,4', code: :data_type_mismatch, prepend_msg: :input_received, given_data_type: String },
+                   forum_type: { list: '1,2,3,4', code: :data_type_mismatch, prepend_msg: :input_received, given_data_type: String } }, forum.error_options)
     assert forum.errors[:company_ids].blank?
 
     controller_params = { 'forum_type' => 'x', 'forum_visibility' => 'x', 'company_ids' => ['test'] }
@@ -50,7 +54,7 @@ class ForumValidationTest < ActionView::TestCase
     error = forum.errors.full_messages
     assert error.include?('Forum visibility not_included')
     assert error.include?('Forum type not_included')
-    assert_equal({ name: { data_type: String, code: :missing_field }, forum_visibility: { list: '1,2,3,4' },
+    assert_equal({ name: {  expected_data_type: String, code: :missing_field }, forum_visibility: { list: '1,2,3,4' },
                    forum_type: { list: '1,2,3,4' } }, forum.error_options)
     assert forum.errors[:company_ids].blank?
   end
@@ -105,7 +109,7 @@ class ForumValidationTest < ActionView::TestCase
     refute forum.valid?(:update)
     assert_equal ['Forum type cannot_set_forum_type'], forum.errors.full_messages
     assert_equal({ name: {}, forum_category_id: {}, forum_visibility: {},
-                   forum_type: { value: 'nil', code: :incompatible_field } }, forum.error_options)
+                   forum_type: { code: :incompatible_field } }, forum.error_options)
   end
 
   def test_company_ids_invalid
@@ -116,7 +120,7 @@ class ForumValidationTest < ActionView::TestCase
     refute forum.valid?(:update)
     assert_equal ['Company ids cannot_set_company_ids'], forum.errors.full_messages
     assert_equal({ name: {}, forum_category_id: {}, forum_visibility: {},
-                   company_ids: { value: 'nil', code: :incompatible_field } }, forum.error_options)
+                   company_ids: { code: :incompatible_field } }, forum.error_options)
 
     controller_params = { company_ids: 'test' }
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
@@ -125,7 +129,7 @@ class ForumValidationTest < ActionView::TestCase
     refute forum.valid?(:update)
     assert_equal ['Company ids cannot_set_company_ids'], forum.errors.full_messages
     assert_equal({ name: {}, forum_category_id: {}, forum_visibility: {},
-                   company_ids: { value: "\"test\"", code: :incompatible_field } }, forum.error_options)
+                   company_ids: { code: :incompatible_field } }, forum.error_options)
 
     controller_params = { company_ids: ['test'] }
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
@@ -134,7 +138,7 @@ class ForumValidationTest < ActionView::TestCase
     refute forum.valid?(:update)
     assert_equal ['Company ids cannot_set_company_ids'], forum.errors.full_messages
     assert_equal({ name: {}, forum_category_id: {}, forum_visibility: {},
-                   company_ids: { value: "[\"test\"]", code: :incompatible_field } }, forum.error_options)
+                   company_ids: { code: :incompatible_field } }, forum.error_options)
   end
 
   def test_company_ids_data_type_mismatch
@@ -144,5 +148,6 @@ class ForumValidationTest < ActionView::TestCase
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
     assert_equal ['Company ids data_type_mismatch'], forum.errors.full_messages
+    assert_equal({ name: {}, forum_visibility: {}, forum_category_id: {}, company_ids: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type'} }, forum.error_options)
   end
 end

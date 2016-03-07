@@ -104,7 +104,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
   # Format validator for url field
   def validate_custom_url(record, field_name)
     # REGEX is taken from jquery.validate.js
-    format_options = construct_options(attributes: field_name, with: ApiConstants::URL_REGEX,  allow_nil: !@is_required, required: @is_required)
+    format_options = construct_options(attributes: field_name, with: ApiConstants::URL_REGEX,  allow_nil: !@is_required, required: @is_required, accepted: 'valid URL')
     CustomFormatValidator.new(format_options).validate(record)
   end
 

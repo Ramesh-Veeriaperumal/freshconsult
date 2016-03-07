@@ -25,13 +25,24 @@ class CustomInclusionValidator < ApiValidator
   end
 
   def error_options
-    error_options = { list: values[:list].map(&:to_s).uniq.join(',') } unless options[:exclude_list]
-    code = required_attribute_not_defined? ? :missing_field : error_code
-    error_options.merge!(code: code) if code
+    error_options = add_input_info? ? { prepend_msg: :input_received, given_data_type: String } : {}
+    error_options.merge!(list: values[:list].map(&:to_s).uniq.join(',')) unless options[:exclude_list]
     error_options
   end
 
+  def add_input_info?
+    data_type_mismatch? && values[:array].nil?
+  end
+
   def error_code
-    :data_type_mismatch if options[:detect_type] && !values[:allow_string] && values[:list].any? { |x| x.to_s == value }
+    if required_attribute_not_defined?
+      :missing_field
+    elsif values[:data_type_mismatch]
+      :data_type_mismatch
+    end
+  end
+
+  def data_type_mismatch?
+    values[:data_type_mismatch] = options[:detect_type] && !values[:allow_string] && values[:list].any? { |x| x.to_s == value }
   end
 end

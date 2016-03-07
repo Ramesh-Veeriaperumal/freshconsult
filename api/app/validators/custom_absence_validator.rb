@@ -9,8 +9,8 @@ class CustomAbsenceValidator < ApiValidator
     record.instance_variable_defined?("@#{attribute}")
   end
 
-  def error_options
-    { value: value.inspect, code: :incompatible_field }
+  def error_code
+    :incompatible_field
   end
 
   def allow_unset?(_options)

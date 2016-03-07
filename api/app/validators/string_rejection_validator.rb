@@ -20,6 +20,6 @@ class StringRejectionValidator < ApiValidator
     end
 
     def error_options
-      { value: value.inspect, chars: options[:excluded_chars].join('\',\'') }
+      { chars: options[:excluded_chars].join('\',\'') }
     end
 end

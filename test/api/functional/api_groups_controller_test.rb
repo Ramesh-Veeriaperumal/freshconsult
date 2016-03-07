@@ -28,7 +28,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_restrict_group_creation_without_name
     post :create, construct_params({}, name: '', description: Faker::Lorem.paragraph)
     assert_response 400
-    match_json([bad_request_error_pattern('name', :"can't be blank")])
+    match_json([bad_request_error_pattern('name', :blank)])
   end
 
   def test_create_group_with_invalid_fields
@@ -45,10 +45,10 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                        name: Faker::Lorem.characters(300), description: Faker::Lorem.paragraph,
                                        auto_ticket_assign: Faker::Lorem.characters(5))
     assert_response 400
-    match_json([bad_request_error_pattern('escalate_to', :data_type_mismatch, data_type: 'Positive Integer'),
+    match_json([bad_request_error_pattern('escalate_to', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
                 bad_request_error_pattern('unassigned_for', :not_included, list: '30m,1h,2h,4h,8h,12h,1d,2d,3d'),
                 bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('auto_ticket_assign', :data_type_mismatch, data_type: 'Boolean')])
+                bad_request_error_pattern('auto_ticket_assign', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_create_group_with_valid_with_trailing_spaces
@@ -61,7 +61,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: Faker::Lorem.characters(5), description: Faker::Lorem.paragraph,
                                        agent_ids: ['asd', 'asd1'])
     assert_response 400
-    match_json([bad_request_error_pattern('agent_ids', :invalid_integer, code: :data_type_mismatch)])
+    match_json([bad_request_error_pattern('agent_ids', :array_data_type_mismatch, expected_data_type: :'Positive Integer')])
   end
 
   def test_create_group_with_deleted_or_invalid_agent_id
@@ -139,7 +139,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, name: '')
     assert_response 400
-    match_json([bad_request_error_pattern('name', :"can't be blank")])
+    match_json([bad_request_error_pattern('name', :blank)])
   end
 
   def test_update_group_with_invalid_field_values
@@ -149,10 +149,10 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                                     name: Faker::Lorem.characters(300), description: Faker::Lorem.paragraph,
                                                     auto_ticket_assign: Faker::Lorem.characters(5))
     assert_response 400
-    match_json([bad_request_error_pattern('escalate_to', :data_type_mismatch, data_type: 'Positive Integer'),
+    match_json([bad_request_error_pattern('escalate_to', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
                 bad_request_error_pattern('unassigned_for', :not_included, list: '30m,1h,2h,4h,8h,12h,1d,2d,3d'),
                 bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('auto_ticket_assign', :data_type_mismatch, data_type: 'Boolean')])
+                bad_request_error_pattern('auto_ticket_assign', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_update_group_with_deleted_or_invalid_agent_id
@@ -187,7 +187,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_validate_agent_list
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, agent_ids: [''])
     assert_response 400
-    match_json([bad_request_error_pattern('agent_ids', :invalid_integer, code: :data_type_mismatch)])
+    match_json([bad_request_error_pattern('agent_ids', :array_data_type_mismatch, expected_data_type: :'Positive Integer')])
   end
 
   def test_delete_existing_agents_while_update

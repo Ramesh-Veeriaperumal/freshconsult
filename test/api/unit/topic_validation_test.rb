@@ -9,8 +9,8 @@ class TopicValidationsTest < ActionView::TestCase
     assert topic.errors.full_messages.include?('Title data_type_mismatch')
     assert topic.errors.full_messages.include?('Message html data_type_mismatch')
     assert topic.errors.full_messages.include?('Forum data_type_mismatch')
-    assert_equal({ title: { data_type: String, code: :missing_field }, message_html: { data_type: String, code: :missing_field },
-                   forum_id: { data_type: :"Positive Integer", code: :missing_field } }, topic.error_options)
+    assert_equal({ title: {  expected_data_type: String, code: :missing_field  }, message_html: {  expected_data_type: String, code: :missing_field },
+                   forum_id: {  expected_data_type: :"Positive Integer", code: :missing_field } }, topic.error_options)
   end
 
   def test_numericality_params_invalid
@@ -21,6 +21,10 @@ class TopicValidationsTest < ActionView::TestCase
     error = topic.errors.full_messages
     assert error.include?('Forum data_type_mismatch')
     assert error.include?('Stamp type data_type_mismatch')
+    assert_equal({ title: { expected_data_type: String, code: :missing_field },
+                   message_html: { expected_data_type: String, code: :missing_field },
+                   forum_id: { expected_data_type: :"Positive Integer", prepend_msg: :input_received, given_data_type: String },
+                   stamp_type: { expected_data_type: :"Positive Integer", prepend_msg: :input_received, given_data_type: String } }, topic.error_options)
   end
 
   def test_datatype_params_invalid
@@ -32,6 +36,10 @@ class TopicValidationsTest < ActionView::TestCase
     assert error.include?('Message html data_type_mismatch')
     assert error.include?('Sticky data_type_mismatch')
     assert error.include?('Locked data_type_mismatch')
+    assert_equal({ title: { expected_data_type: String, code: :missing_field },
+                   message_html: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean'},
+                   sticky: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type'},
+                   locked: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type'} }, topic.error_options)
   end
 
   def test_inclusion_params_invalid
@@ -42,6 +50,9 @@ class TopicValidationsTest < ActionView::TestCase
     error = topic.errors.full_messages
     assert error.include?('Locked data_type_mismatch')
     refute error.include?('Sticky data_type_mismatch')
+    assert_equal({ title: { expected_data_type: String, code: :missing_field },
+                   message_html: { expected_data_type: String, code: :missing_field }, sticky: {},
+                   locked: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String} }, topic.error_options)
   end
 
   def test_presence_item_valid

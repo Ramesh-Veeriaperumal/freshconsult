@@ -15,7 +15,7 @@ class ConversationsFlowTest < ActionDispatch::IntegrationTest
       enable_cache do
         get "/api/v2/tickets/#{parent_ticket.display_id}/conversations", nil, @write_headers
         @account.make_current
-        note.update_note_attributes(note_body_attributes: {:body => 'Test update note body'})
+        note.update_note_attributes(note_body_attributes: { body: 'Test update note body' })
         get "/api/v2/tickets/#{parent_ticket.display_id}/conversations", nil, @write_headers
         assert_response 200
         parsed_response = JSON.parse(response.body)

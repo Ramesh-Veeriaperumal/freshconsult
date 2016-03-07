@@ -1,12 +1,9 @@
 module ErrorConstants
   API_ERROR_CODES = {
-    missing_field: ['missing_field', 'Mandatory attribute missing', 'requester_id_mandatory',
-                    'phone_mandatory',
-                    'fill_a_mandatory_field', 'company_id_required'],
+    missing_field: %w(missing_field phone_mandatory fill_a_mandatory_field company_id_required),
     duplicate_value: ['has already been taken', 'already exists in the selected category', 'Email has already been taken'],
-    invalid_value: ["can't be blank", 'is not included in the list', 'invalid_user'],
-    invalid_field: ['invalid_field', "Can't update user when timer is running"],
-    data_type_mismatch: ['is not a number', 'data_type_mismatch', 'must be an integer', 'per_page_invalid'],
+    invalid_field: ['invalid_field'],
+    data_type_mismatch: %w(data_type_mismatch per_page_invalid array_data_type_mismatch),
     invalid_size: ['invalid_size'],
     incompatible_field: ['incompatible_field'],
     inaccessible_field: ['inaccessible_field', 'require_feature_for_attribute']

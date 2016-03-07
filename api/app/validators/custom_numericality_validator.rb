@@ -1,4 +1,6 @@
 class CustomNumericalityValidator < ApiValidator
+  include ErrorOptions
+
   NOT_A_NUMBER = 'is not a number'
   NOT_AN_INTEGER = 'is not an integer'
   MUST_BE_GREATER_THAN = 'must be greater than'
@@ -25,20 +27,20 @@ class CustomNumericalityValidator < ApiValidator
   private
 
     def error_options
-      error_options = (options[:message_options] || {})
-      error_options.merge!(data_type: data_type)
-      code = error_code
-      error_options.merge!(code: code) if code
+      error_options = { expected_data_type: expected_data_type }
+      error_options.merge!(prepend_msg: :input_received, given_data_type: infer_data_type(value)) unless skip_input_info?
       error_options
     end
 
+    def skip_input_info?
+      required_attribute_not_defined? || !values[:data_type_mismatch] || values[:array]
+    end
+
     def error_code
-      if required_attribute_not_defined?
+      if values[:req_attr_ndef]
         :missing_field
-      elsif values[:data_type_mismatch]
-        :data_type_mismatch if options[:custom_message]
       else
-        :invalid_value
+        :invalid_value unless values[:data_type_mismatch]
       end
     end
 
@@ -67,7 +69,7 @@ class CustomNumericalityValidator < ApiValidator
       values[:data_type_mismatch] = !(error.starts_with?(MUST_BE_GREATER_THAN) || error.starts_with?(MUST_BE_LESS_THAN))
     end
 
-    def data_type
+    def expected_data_type
       # it is assumed that greater_than will always mean greater_than 0, when this assumption is invalidated, we have to revisit this method
       if options[:only_integer]
         options[:greater_than] ? :'Positive Integer' : :Integer

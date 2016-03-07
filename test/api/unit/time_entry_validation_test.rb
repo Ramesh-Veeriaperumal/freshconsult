@@ -23,7 +23,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     error = time_entry.errors.full_messages
     assert error.include?('Start time timer_running_false')
     refute error.include?('User is not a number')
-    assert_equal({ timer_running: {}, start_time: { value: time.inspect, code: :incompatible_field } }, time_entry.error_options)
+    assert_equal({ timer_running: {}, start_time: { code: :incompatible_field } }, time_entry.error_options)
     Account.unstub(:current)
   end
 
@@ -35,7 +35,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?
     error = time_entry.errors.full_messages
-    assert error.include?('Time spent invalid_time_spent')
+    assert error.include?('Time spent invalid_format')
     Account.unstub(:current)
   end
 
@@ -47,7 +47,8 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?
     error = time_entry.errors.full_messages
-    assert error.include?('Time spent invalid_time_spent')
+    assert error.include?('Time spent invalid_format')
+    assert_equal({ timer_running: {}, time_spent: { accepted: 'hh:mm' } }, time_entry.error_options)
     Account.unstub(:current)
   end
 
@@ -95,8 +96,8 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
     assert error.include?('Agent cant_update_user')
-    assert_equal({ billable: {}, timer_running: {}, start_time: { value: "\"23/12/2001\"", code: :incompatible_field },
-                   agent_id: { value: "\"89\"", code: :incompatible_field } }, time_entry.error_options)
+    assert_equal({ billable: {}, timer_running: {}, start_time: { code: :incompatible_field },
+                   agent_id: { code: :incompatible_field } }, time_entry.error_options)
     Account.unstub(:current)
   end
 
@@ -109,7 +110,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
     assert error.include?('Agent cant_update_user')
-    assert_equal({ billable: {},  timer_running: {}, agent_id: { value: 'nil', code: :incompatible_field } }, time_entry.error_options)
+    assert_equal({ billable: {},  timer_running: {}, agent_id: { code: :incompatible_field } }, time_entry.error_options)
     Account.unstub(:current)
   end
 

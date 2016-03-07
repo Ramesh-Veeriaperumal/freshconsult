@@ -23,7 +23,8 @@ class TicketValidationTest < ActionView::TestCase
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?
     errors = ticket.errors.full_messages
-    assert errors.include?('Email not_a_valid_email')
+    assert errors.include?('Email invalid_format')
+    assert_equal({ description: { expected_data_type: String, code: :missing_field }, email: { accepted: :"valid email address" } }, ticket.error_options)
     Account.unstub(:current)
   end
 
@@ -34,7 +35,8 @@ class TicketValidationTest < ActionView::TestCase
            ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?
     errors = ticket.errors.full_messages
-    assert errors.include?('Cc emails not_a_valid_email')
+    assert errors.include?('Cc emails array_invalid_format')
+    assert_equal({ description: { expected_data_type: String, code: :missing_field }, email: {}, cc_emails: { accepted: :"valid email address" } }, ticket.error_options)
     Account.unstub(:current)
   end
 
@@ -46,7 +48,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
     assert errors.include?('Tags special_chars_present')
-    assert_equal({ requester_id: {}, description: { data_type: String, code: :missing_field }, tags: { value: "[\"comma,test\"]", chars: ',' } }, ticket.error_options)
+    assert_equal({ requester_id: {}, description: {  expected_data_type: String, code: :missing_field }, tags: { chars: ',' } }, ticket.error_options)
     Account.unstub(:current)
   end
 
@@ -68,7 +70,8 @@ class TicketValidationTest < ActionView::TestCase
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?
     errors = ticket.errors.full_messages
-    assert errors.include?('Attachments data_type_mismatch')
+    assert errors.include?('Attachments array_data_type_mismatch')
+    assert_equal({ requester_id: {}, description: {}, attachments: { expected_data_type: 'valid file format'} }, ticket.error_options)
     assert errors.count == 1
     Account.unstub(:current)
     TicketsValidationHelper.unstub(:attachment_size)
@@ -82,6 +85,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
     assert errors.include?('Tags data_type_mismatch')
+    assert_equal({ requester_id: {}, description: {}, tags: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String} }, ticket.error_options)
     Account.unstub(:current)
   end
 
@@ -94,6 +98,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
     assert errors.include?('Custom fields data_type_mismatch')
+    assert_equal({ requester_id: {}, description: {}, custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: String} }, ticket.error_options)
     TicketsValidationHelper.unstub(:data_type_validatable_custom_fields)
     Account.unstub(:current)
   end
@@ -116,8 +121,8 @@ class TicketValidationTest < ActionView::TestCase
     errors = ticket.errors.full_messages
     assert errors.include?('Due by cannot_set_due_by_fields')
     assert errors.include?('Fr due by cannot_set_due_by_fields')
-    assert_equal({ status: {}, requester_id: {}, description: {}, fr_due_by: { value: "\"\"", code: :incompatible_field },
-                   due_by: { value: "\"\"", code: :incompatible_field } }, ticket.error_options)
+    assert_equal({ status: {}, requester_id: {}, description: {}, fr_due_by: { code: :incompatible_field },
+                   due_by: { code: :incompatible_field } }, ticket.error_options)
     Account.unstub(:current)
   end
 
@@ -154,6 +159,9 @@ class TicketValidationTest < ActionView::TestCase
     assert errors.include?('Custom fields data_type_mismatch')
     assert errors.include?('Cc emails data_type_mismatch')
     assert errors.include?("Attachments can't be blank")
+    assert_equal({ requester_id: {}, description: {}, cc_emails: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type'},
+                   tags: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type'},
+                   custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null Type'} }, ticket.error_options)
     Account.unstub(:current)
   end
 
@@ -165,7 +173,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:create)
     assert ticket.errors.full_messages.include?('Description data_type_mismatch')
     refute ticket.errors.full_messages.include?('Description html data_type_mismatch')
-    assert_equal({ description: { data_type: String, code: :missing_field }, requester_id: {} }, ticket.error_options)
+    assert_equal({ description: {  expected_data_type: String, code: :missing_field }, requester_id: {} }, ticket.error_options)
 
     controller_params = { 'requester_id' => 1, ticket_fields: [], description: '' }
     item = nil
@@ -173,6 +181,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:create)
     assert ticket.errors.full_messages.include?('Description blank')
     refute ticket.errors.full_messages.include?('Description html data_type_mismatch')
+    assert_equal({ requester_id: {}, description: { expected_data_type: String } }, ticket.error_options)
 
     controller_params = { 'requester_id' => 1, ticket_fields: [], description: true, description_html: true }
     item = nil
@@ -180,6 +189,8 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:create)
     assert ticket.errors.full_messages.include?('Description data_type_mismatch')
     assert ticket.errors.full_messages.include?('Description html data_type_mismatch')
+    assert_equal({ requester_id: {}, description: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean'},
+                   description_html: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean'} }, ticket.error_options)
     Account.unstub(:current)
   end
 end

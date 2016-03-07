@@ -29,10 +29,15 @@ class TimeEntryFilterValidationTest < ActionView::TestCase
                                                       executed_after: nil, executed_before: nil)
     refute time_entry_filter.valid?
     error = time_entry_filter.errors.full_messages
-    assert error.include?('Executed after invalid_date_time')
+    assert error.include?('Executed after invalid_format')
     assert error.include?('Agent data_type_mismatch')
-    assert error.include?('Executed before invalid_date_time')
+    assert error.include?('Executed before invalid_format')
     assert error.include?('Company data_type_mismatch')
     assert error.include?('Billable data_type_mismatch')
+    assert_equal({ billable: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type'},
+                   executed_after: { accepted: :"combined date and time ISO8601" },
+                   executed_before: { accepted: :"combined date and time ISO8601" },
+                   agent_id: { expected_data_type: :"Positive Integer", prepend_msg: :input_received, given_data_type: 'Null Type' },
+                   company_id: { expected_data_type: :"Positive Integer", prepend_msg: :input_received, given_data_type: 'Null Type' } }, time_entry_filter.error_options)
   end
 end

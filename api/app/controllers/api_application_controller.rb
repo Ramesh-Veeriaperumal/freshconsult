@@ -96,7 +96,7 @@ class ApiApplicationController < MetalApiController
       match[:action] != 'route_not_found'
     end.map(&:upcase)
     if allows.present? # route is present, but method is not allowed.
-      render_base_error(:method_not_allowed, 405, methods: allows.join(', '))
+      render_base_error(:method_not_allowed, 405, methods: allows.join(', '), fired_method: env['REQUEST_METHOD'])
       response.headers['Allow'] = allows.join(', ')
     else # route not present.
       head 404
@@ -194,7 +194,7 @@ class ApiApplicationController < MetalApiController
     def login_error_handler(e)
       if e.failed_login_count
         Rails.logger.debug "API V2 #{e.message}. Attempt: #{e.failed_login_count}"
-        render_request_error :password_lockout, 403
+        render_request_error :password_lockout, 403, max_count: UserSession.consecutive_failed_logins_limit
       else
         Rail.logger.debug "Exception: ConsecutiveFailedLoginError, Message: #{e.message}, Backtrace: #{e.backtrace}"
         render_base_error(:internal_error, 500)
@@ -242,7 +242,7 @@ class ApiApplicationController < MetalApiController
 
     def validate_content_type
       unless get_request? || request.delete? || valid_content_type?
-        render_request_error :invalid_content_type, 415
+        render_request_error :invalid_content_type, 415, content_type: request.content_type
       end
     end
 

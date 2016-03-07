@@ -1,16 +1,25 @@
 class DataTypeValidator < ApiValidator
+  include ErrorOptions
+
   # Introduced this as the error message should show layman terms.
-  # Should have error_options attribute for a class to use this validator
-  DATA_TYPE_MAPPING = { Hash => 'key/value pair', ActionDispatch::Http::UploadedFile => 'valid format' }
+  DATA_TYPE_MAPPING = { Hash => 'key/value pair', ActionDispatch::Http::UploadedFile => 'valid file format', NilClass => NULL_TYPE, TrueClass => 'Boolean', FalseClass => 'Boolean' }
 
   private
 
     def invalid?
-      blank_when_required? || !valid_type?
+      !valid_type? || blank_when_required?
     end
 
     def message
-      valid_type? && values[:blank_when_required] ? :blank : :data_type_mismatch
+      if valid_type? && values[:blank_when_required]
+        :blank
+      else
+        :data_type_mismatch
+      end
+    end
+
+    def error_code
+      :missing_field if values[:req_attr_ndef]
     end
 
     def blank_when_required?
@@ -18,10 +27,17 @@ class DataTypeValidator < ApiValidator
     end
 
     def error_options
-      data_type = DATA_TYPE_MAPPING[options[:rules]] || options[:rules]
-      error_options = { data_type: data_type }
-      error_options.merge!(code: :missing_field) if required_attribute_not_defined?
+      error_options = { expected_data_type: expected_data_type }
+      error_options.merge!(given_data_type: infer_data_type(value), prepend_msg: :input_received) unless skip_input_info?
       error_options
+    end
+
+    def skip_input_info?
+      required_attribute_not_defined? || values[:blank_when_required] || values[:array]
+    end
+
+    def expected_data_type
+      DATA_TYPE_MAPPING[options[:rules]] || options[:rules]
     end
 
     # check if value class is same as type. case & when uses === operator which compares the type first.
