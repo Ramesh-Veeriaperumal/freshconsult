@@ -1232,8 +1232,8 @@ var scrollToError = function(){
 		changeStatusTo(TICKET_CONSTANTS.statuses.closed);
 		if($('#custom_ticket_form').valid())
 		{
-			var action_attr = $('#custom_ticket_form').attr("action"),
-				isSilentClose = ev.shiftKey || false,
+			var action_attr = $('#custom_ticket_form').attr("action").split("?")[0];
+			var isSilentClose = ev.shiftKey || false,
 				disable_notification = isSilentClose ? "?disable_notification=" + isSilentClose + "&redirect=true" : "?redirect=true";
 
 			$('#custom_ticket_form').attr("action", action_attr + disable_notification);
