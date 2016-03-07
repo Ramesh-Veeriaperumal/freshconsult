@@ -42,7 +42,7 @@
 	.Message-alert{
 		padding: 6px 0;
 		@include text-align(center);
-		@include margin-left(150px);		
+		@include margin-left(150px);
 	}
 	.freshfone-controls {
 		.select2-container { @include margin-left(0); }
@@ -99,9 +99,9 @@
   	}
   }
 
-  .settings-label { 
+  .settings-label {
   	max-width: 185px;
-  	font-weight: normal; 
+  	font-weight: normal;
   }
   .controls {
   	margin-left: 160px;
@@ -116,7 +116,7 @@
 		 label{
 			display:inline-block;
 			vertical-align: bottom;
-		}	
+		}
 	}
 }
 

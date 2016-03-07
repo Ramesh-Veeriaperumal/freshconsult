@@ -1,0 +1,84 @@
+// Multilanguage Specific styles
+
+// -- Russian, German & French
+:lang(ru-RU), :lang(de), :lang(fr){
+
+  ul.header-tabs li a {
+    padding: 8px 13px;
+  }
+  #toggle-note-visibility{
+    width: 32%;
+  }
+  .conversation_thread {
+    .btn-toolbar { width: 68%;}
+    .ui-form li.inline-field.cc_fields .email_container{
+      padding: 0 140px 0 80px;
+    }
+  }
+  //Solution
+  .solutions .article-sticky .edit-container{
+    width: 200px;
+  }
+  .list-page.group-management table td:first-child{
+    width: 75%;
+  }
+  //SLA Policies
+  .sla_policy_form{
+    .grid table.sla_policies tr.escalations td.escalations-time-holder{
+      width: 335px;
+    }
+  }
+  //Roles
+  .new-role{
+    #admin .lead-sub{
+      word-break: break-all;
+      line-height: 1.2;
+    }
+  }
+  //Canned Response
+  .recently_used{
+    .pick-response-header h3{
+      width: 170px;
+    }
+  }
+  
+  //admin/products 
+  #multi-product-list{
+  .product_send_act{
+     width: 40%;
+     word-break: break-all;
+     word-break: break-word;
+   }
+   table tr td, .list-page .list-page-body table tr th{
+     padding: 5px;
+   }
+  }
+  
+}
+
+
+//Dashboard summary count issue - Lengthy languages
+//[Russian, German, French, indonesian, turkish & Japanese]
+:lang(ru-RU), :lang(de), :lang(fr), :lang(id), :lang(tr), :lang(ja-JP){
+  .db-summary li a{
+    padding-left: 10px;
+    .summary-count{
+      width: 60%;
+      word-break: break-word;
+    }
+  }
+}
+
+//German
+:lang(de){
+  .sla_policy_form{
+    .grid table.sla_policies tr.escalations td.escalations-time-holder{
+      width: 230px;
+    }
+  }
+}
+
+// Spanish
+:lang(es){
+
+}
