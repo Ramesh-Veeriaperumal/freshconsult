@@ -1010,10 +1010,10 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_cors_preflight_request
     # one hack to test options request in 3.2.18
     integration_session.__send__ :process, 'options', '/api/contacts', nil, @headers.except('HTTP_AUTHORIZATION').merge('HTTP_ORIGIN' => '*', 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET', 'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' => 'authorization')
-    assert '*', response.headers['Access-Control-Allow-Origin']
-    assert 'authorization', response.headers['Access-Control-Allow-Headers']
-    assert 'GET, POST, PUT, DELETE, OPTIONS', response.headers['Access-Control-Allow-Methods']
-    assert 'X-Path, X-Method, X-Query-String, X-Ua-Compatible, X-Meta-Request-Version, X-Request-Id, X-Runtime, X-RateLimit-Total, X-RateLimit-Remaining, X-RateLimit-Used-CurrentRequest, X-Freshdesk-API-Version', response.header['Access-Control-Expose-Headers']
+    assert_equal '*', response.headers['Access-Control-Allow-Origin']
+    assert_equal 'authorization', response.headers['Access-Control-Allow-Headers']
+    assert_equal 'GET, POST, PUT, DELETE, OPTIONS', response.headers['Access-Control-Allow-Methods']
+    assert_equal 'X-Path, X-Method, X-Query-String, X-Ua-Compatible, X-Meta-Request-Version, X-Request-Id, X-Runtime, X-RateLimit-Total, X-RateLimit-Remaining, X-RateLimit-Used-CurrentRequest, X-Freshdesk-API-Version', response.header['Access-Control-Expose-Headers']
   end
 
   def test_me_with_new_agent
