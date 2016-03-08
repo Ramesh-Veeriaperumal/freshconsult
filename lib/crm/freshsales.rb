@@ -66,7 +66,7 @@ class CRM::Freshsales
         old_subscription = prepare_old_subscription(subscription, args[:previous_changes])
   
         case
-        when (upgrade?(subscription, old_subscription) && !trial_or_free_to_active?(subscription))
+        when upgrade?(subscription, old_subscription)
           freshsales.account_upgrade(old_subscription)
         when downgrade?(subscription, old_subscription)
           freshsales.account_downgrade(old_subscription)
@@ -77,10 +77,6 @@ class CRM::Freshsales
         NewRelic::Agent.notice_error(e, { description: "Error occured while pushing SubscriptionTracking to Freshsales 
           Account:: #{Account.current.id} args:: #{args.inspect}" })
       end
-    end
-
-    def self.trial_or_free_to_active?(subscription)
-      subscription.subscription_payments.count == 0
     end
 
     def self.state_changed?(subscription, old_subscription)
