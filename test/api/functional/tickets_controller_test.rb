@@ -550,7 +550,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(facebook_id:  Faker::Name.name)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('facebook_id', :invalid_facebook_id )])
+    match_json([bad_request_error_pattern('facebook_id', :invalid_facebook_id)])
   end
 
   def test_create_with_existing_fb_user
