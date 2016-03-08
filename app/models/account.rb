@@ -276,6 +276,10 @@ class Account < ActiveRecord::Base
     ismember?(PREMIUM_WEBHOOK_THROTTLER, self.id)
   end
 
+  def premium_gamification_account?
+    ismember?(PREMIUM_GAMIFICATION_ACCOUNT, self.id)
+  end
+
   def plan_name
     subscription.subscription_plan.canon_name
   end
