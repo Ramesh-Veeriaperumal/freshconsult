@@ -144,7 +144,7 @@ GIT
 
 GIT
   remote: git://github.com/thanashyam/binarize.git
-  revision: ec072a83262c43aaad33eb2365236d3ca8ed931d
+  revision: 2c71c9d949db1351377d42e4db5085d560a46b8c
   specs:
     binarize (0.1.4)
       activerecord (>= 3)
