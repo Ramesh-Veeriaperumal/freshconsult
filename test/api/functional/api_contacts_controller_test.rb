@@ -422,7 +422,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 400
     assert sample_user.reload.company_id.nil?
-    match_json([bad_request_error_pattern('company_id', :"can't be blank")])
+    match_json([bad_request_error_pattern('company_id', :invalid_value, resource: :company, attribute: :company_id)])
   end
 
   def test_update_client_manager_with_already_invalid_company_id
@@ -996,12 +996,10 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_with_emails_associated_with_other_users_in_other_emails
     sample_user = get_user_with_email
-    sample_user.user_emails = [sample_user.primary_email]
     email = User.last.email
-    sample_user.reload
     put :update, construct_params({ id: sample_user.id }, other_emails: [email])
-    assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :already_taken, invalid_emails: [email])])
+    match_json([bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: [email])])
+    assert_response 409
   end
 
   def test_create_contact_with_phone_name_and_other_emails

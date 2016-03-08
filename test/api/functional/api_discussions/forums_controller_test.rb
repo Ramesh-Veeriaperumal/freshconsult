@@ -117,7 +117,7 @@ module ApiDiscussions
       put :update, construct_params({ id: forum.id }, forum_category_id: fc.reload.id)
       fc.update_column(:account_id, @account.id)
       assert_response 400
-      match_json([bad_request_error_pattern('forum_category_id', :"can't be blank")])
+      match_json([bad_request_error_pattern('forum_category_id', :invalid_value, resource: :category, attribute: :forum_category_id)])
     end
 
     def test_update_invalid_customer_id
@@ -471,7 +471,7 @@ module ApiDiscussions
     def test_follow_user_id_invalid
       post :follow, construct_params({ id: f_obj.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user_id', :"can't be blank")]
+      match_json [bad_request_error_pattern('user_id', :invalid_value, resource: :contact, attribute: :user_id)]
     end
 
     def test_new_monitor_follow_user_id_valid
@@ -485,7 +485,7 @@ module ApiDiscussions
     def test_new_monitor_follow_user_id_invalid
       post :follow, construct_params({ id: f_obj.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user_id', :"can't be blank")]
+      match_json [bad_request_error_pattern('user_id', :invalid_value, resource: :contact, attribute: :user_id)]
     end
 
     def test_is_following_without_user_id

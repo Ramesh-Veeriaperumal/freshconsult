@@ -25,7 +25,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = [test.errors.to_h.sort, test.error_options.to_h.sort]
     assert_equal([{ hash: :data_type_mismatch, array: :data_type_mismatch }.sort, { hash: {  expected_data_type: 'key/value pair',
-                    given_data_type: 'Null Type', :prepend_msg=>:input_received}, array: {  expected_data_type: Array, given_data_type: 'Null Type', :prepend_msg=>:input_received}, multi_error: {}, required_param: {} }.sort], errors)
+                                                                                             given_data_type: 'Null Type', prepend_msg: :input_received }, array: {  expected_data_type: Array, given_data_type: 'Null Type', prepend_msg: :input_received }, multi_error: {}, required_param: {} }.sort], errors)
   end
 
   def test_valid_values
@@ -85,7 +85,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
     assert_equal({ array: :data_type_mismatch, hash: :data_type_mismatch, boolean: :data_type_mismatch, allow_string_boolean: :data_type_mismatch, multi_error: :missing_field, required_param: :data_type_mismatch }.sort, errors)
-    assert_equal({ allow_string_boolean: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String}, array: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'key/value pair'}, boolean: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String}, hash: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: Array}, multi_error: {}, required_param: { expected_data_type: Array, code: :missing_field } }.sort, error_options)
+    assert_equal({ allow_string_boolean: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, array: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'key/value pair' }, boolean: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, hash: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: Array }, multi_error: {}, required_param: { expected_data_type: Array, code: :missing_field } }.sort, error_options)
   end
 
   def test_allow_unset

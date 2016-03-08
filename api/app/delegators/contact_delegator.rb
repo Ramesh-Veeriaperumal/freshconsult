@@ -22,7 +22,7 @@ class ContactDelegator < BaseDelegator
     # Find out the emails that are not associated to the current user
     invalid_emails = @other_emails.map { |x| x.email if id != x.user_id }.compact
     if invalid_emails.any?
-      errors[:other_emails] << :already_taken
+      errors[:other_emails] << :email_already_taken
       @error_options = { other_emails: { invalid_emails: "#{invalid_emails.join(', ')}" }  }
     end
   end

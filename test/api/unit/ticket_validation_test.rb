@@ -71,7 +71,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?
     errors = ticket.errors.full_messages
     assert errors.include?('Attachments array_data_type_mismatch')
-    assert_equal({ requester_id: {}, description: {}, attachments: { expected_data_type: 'valid file format'} }, ticket.error_options)
+    assert_equal({ requester_id: {}, description: {}, attachments: { expected_data_type: 'valid file format' } }, ticket.error_options)
     assert errors.count == 1
     Account.unstub(:current)
     TicketsValidationHelper.unstub(:attachment_size)
@@ -85,7 +85,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
     assert errors.include?('Tags data_type_mismatch')
-    assert_equal({ requester_id: {}, description: {}, tags: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String} }, ticket.error_options)
+    assert_equal({ requester_id: {}, description: {}, tags: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String } }, ticket.error_options)
     Account.unstub(:current)
   end
 
@@ -98,7 +98,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
     assert errors.include?('Custom fields data_type_mismatch')
-    assert_equal({ requester_id: {}, description: {}, custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: String} }, ticket.error_options)
+    assert_equal({ requester_id: {}, description: {}, custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: String } }, ticket.error_options)
     TicketsValidationHelper.unstub(:data_type_validatable_custom_fields)
     Account.unstub(:current)
   end
@@ -158,10 +158,10 @@ class TicketValidationTest < ActionView::TestCase
     assert errors.include?('Tags data_type_mismatch')
     assert errors.include?('Custom fields data_type_mismatch')
     assert errors.include?('Cc emails data_type_mismatch')
-    assert errors.include?("Attachments can't be blank")
-    assert_equal({ requester_id: {}, description: {}, cc_emails: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type'},
-                   tags: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type'},
-                   custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null Type'} }, ticket.error_options)
+    assert errors.include?('Attachments blank')
+    assert_equal({ requester_id: {}, description: {}, attachments: {}, cc_emails: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type' },
+                   tags: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type' },
+                   custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null Type' } }, ticket.error_options)
     Account.unstub(:current)
   end
 
@@ -189,8 +189,8 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:create)
     assert ticket.errors.full_messages.include?('Description data_type_mismatch')
     assert ticket.errors.full_messages.include?('Description html data_type_mismatch')
-    assert_equal({ requester_id: {}, description: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean'},
-                   description_html: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean'} }, ticket.error_options)
+    assert_equal({ requester_id: {}, description: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean' },
+                   description_html: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean' } }, ticket.error_options)
     Account.unstub(:current)
   end
 end

@@ -54,7 +54,7 @@ class ConversationValidationTest < ActionView::TestCase
     refute conversation.valid?
     errors = conversation.errors.full_messages
     assert errors.include?('Attachments array_data_type_mismatch')
-    assert_equal({ body: {}, user_id: {}, attachments: { expected_data_type: 'valid file format'} }, conversation.error_options)
+    assert_equal({ body: {}, user_id: {}, attachments: { expected_data_type: 'valid file format' } }, conversation.error_options)
     assert errors.count == 1
     Account.unstub(:current)
     TicketsValidationHelper.unstub(:attachment_size)

@@ -285,7 +285,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
     assert_response 400
     match_json([bad_request_error_pattern('agt_count', :data_type_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('date', :invalid_format, accepted: 'yyyy-mm-dd' ),
+                bad_request_error_pattern('date', :invalid_format, accepted: 'yyyy-mm-dd'),
                 bad_request_error_pattern('show_all_ticket', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 

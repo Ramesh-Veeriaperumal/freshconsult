@@ -39,7 +39,7 @@ class TicketValidation < ApiValidation
   validate :due_by_gt_fr_due_by, if: -> { (@due_by_set || @fr_due_by_set) && due_by && fr_due_by && errors[:due_by].blank? && errors[:fr_due_by].blank? }
 
   # Attachment validations
-  validates :attachments, presence: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
+  validates :attachments, required: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
   validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
   validates :attachments, file_size:  {
     max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
@@ -51,7 +51,7 @@ class TicketValidation < ApiValidation
   validates :email, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :cc_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, accepted: :"valid email address" } }
 
-  validates :cc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message_options: {entities: :values} }
+  validates :cc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message_options: { entities: :values } }
 
   # Tags validations
   validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }

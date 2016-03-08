@@ -204,8 +204,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_model_params
     get :index, controller_params(company_id: 8989, agent_id: 678_567_567, billable: 'true', executed_after: 23.days.ago.iso8601, executed_before: 2.days.ago.iso8601)
-    pattern = [bad_request_error_pattern('agent_id', :"can't be blank")]
-    pattern << bad_request_error_pattern('company_id', :"can't be blank")
+    pattern = [bad_request_error_pattern('agent_id', :invalid_value, resource: :agent, attribute: :agent_id)]
+    pattern << bad_request_error_pattern('company_id', :invalid_value, resource: :company, attribute: :company_id)
     assert_response 400
     match_json pattern
   end
@@ -978,11 +978,11 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_toggle_invalid_record
     ts = Helpdesk::TimeSheet.first
     Helpdesk::TimeSheet.any_instance.stubs(:update_attributes).returns(false)
-    Helpdesk::TimeSheet.any_instance.stubs(:errors).returns([['user', :"can't be blank"]])
+    Helpdesk::TimeSheet.any_instance.stubs(:errors).returns([[:user_id, :"can't be blank"]])
     put :toggle_timer, construct_params({ id: ts.id }, {})
     Helpdesk::TimeSheet.any_instance.unstub(:update_attributes, :errors)
     assert_response 400
-    match_json([bad_request_error_pattern('user', :"can't be blank")])
+    match_json([bad_request_error_pattern('user_id', :invalid_value, attribute: :user_id, resource: :contact)])
   end
 
   def test_toggle_timer_with_ticket_trashed

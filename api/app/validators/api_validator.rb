@@ -29,7 +29,7 @@ class ApiValidator < ActiveModel::EachValidator
       @value = value
       next if skip_validation?
       record.error_options[attribute] ||= {}
-      @values = {array: true}
+      @values = { array: true }
       validate_each_value
     end
   end

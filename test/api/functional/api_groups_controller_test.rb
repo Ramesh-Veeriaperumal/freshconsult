@@ -161,7 +161,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     post :update, construct_params({ id: group.id }, escalate_to: 898_989, agent_ids: [agent_id])
     assert_response 400
     match_json([bad_request_error_pattern('agent_ids', :invalid_list, list: agent_id.to_s),
-                bad_request_error_pattern('escalate_to', :"can't be blank")])
+                bad_request_error_pattern('escalate_to', :invalid_value, resource: :agent, attribute: :escalate_to)])
   end
 
   def test_update_group_valid_with_trailing_spaces

@@ -41,7 +41,7 @@ class StringRejectionValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ attribute2: :data_type_mismatch }, errors)
-    assert_equal({ attribute2: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String} }, test.error_options)
+    assert_equal({ attribute2: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String } }, test.error_options)
     assert errors.count == 1
   end
 

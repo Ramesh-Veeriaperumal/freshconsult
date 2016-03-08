@@ -15,7 +15,7 @@ class TicketDelegator < BaseDelegator
                                 required_attribute: :required
                               }
                             }
-  validate :facebook_id_exists?, if: -> { facebook_id }, on: :update
+  validate :facebook_id_exists?, if: -> { facebook_id }
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]

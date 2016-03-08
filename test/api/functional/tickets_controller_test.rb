@@ -17,7 +17,7 @@ class TicketsControllerTest < ActionController::TestCase
     'number' => [:data_type_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String],
     'decimal' => [:data_type_mismatch, expected_data_type: 'Number', prepend_msg: :input_received, given_data_type: String],
     'checkbox' => [:data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String],
-    'text' => [:"Has 300 characters, it can have maximum of 255 characters" ],
+    'text' => [:"Has 300 characters, it can have maximum of 255 characters"],
     'paragraph' => [:data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer],
     'date' => [:invalid_format, accepted: 'yyyy-mm-dd']
   }
@@ -137,7 +137,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = { requester_id: requester.id, email_config_id: email_config.reload.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     email_config.update_column(:account_id, @account.id)
-    match_json([bad_request_error_pattern('email_config_id', :"can't be blank")])
+    match_json([bad_request_error_pattern('email_config_id', :invalid_value, resource: :email_config, attribute: :email_config_id)])
     assert_response 400
   end
 
@@ -148,7 +148,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
     email_config.update_column(:account_id, @account.id)
-    match_json([bad_request_error_pattern('email_config_id', :"can't be blank")])
+    match_json([bad_request_error_pattern('email_config_id', :invalid_value, resource: :email_config, attribute: :email_config_id)])
     assert_response 400
   end
 
@@ -315,8 +315,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(email: 'test@', cc_emails: ['the@'])
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('email', "Should be in the valid email address format"),
-                bad_request_error_pattern('cc_emails', "Should contain elements that are in the valid email address format")])
+    match_json([bad_request_error_pattern('email', 'Should be in the valid email address format'),
+                bad_request_error_pattern('cc_emails', 'Should contain elements that are in the valid email address format')])
   end
 
   def test_create_data_type_invalid
@@ -469,10 +469,10 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(custom_fields: { 'test_custom_country' => 'rtt', 'test_custom_dropdown' => 'ddd' }, group_id: 89_089, product_id: 9090, email_config_id: 89_789, responder_id: 8987, requester_id: user.id)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('group_id', :"can't be blank"),
-                bad_request_error_pattern('responder_id', :"can't be blank"),
-                bad_request_error_pattern('email_config_id', :"can't be blank"),
-                bad_request_error_pattern('product_id', :"can't be blank"),
+    match_json([bad_request_error_pattern('group_id', :invalid_value, resource: :group, attribute: :group_id),
+                bad_request_error_pattern('responder_id', :invalid_value, resource: :agent, attribute: :responder_id),
+                bad_request_error_pattern('email_config_id', :invalid_value, resource: :email_config, attribute: :email_config_id),
+                bad_request_error_pattern('product_id', :invalid_value, resource: :product, attribute: :product_id),
                 bad_request_error_pattern('requester_id', :user_blocked),
                 bad_request_error_pattern('test_custom_country', :not_included, list: 'Australia,USA'),
                 bad_request_error_pattern('test_custom_dropdown', :not_included, list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
@@ -493,7 +493,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(requester_id: 898_999)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', 'should be a valid email address')])
+    match_json([bad_request_error_pattern('requester_id', :invalid_value, attribute: :requester_id, resource: :contact)])
   end
 
   def test_create_extra_params_invalid
@@ -550,7 +550,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(facebook_id:  Faker::Name.name)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :"should be a valid email address")])
+    match_json([bad_request_error_pattern('facebook_id', :invalid_facebook_id )])
   end
 
   def test_create_with_existing_fb_user
@@ -633,7 +633,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge('attachments' => [])
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :"can't be blank")])
+    match_json([bad_request_error_pattern('attachments', :blank)])
   end
 
   def test_attachment_invalid_size_create
@@ -1185,11 +1185,11 @@ class TicketsControllerTest < ActionController::TestCase
     t.update_column(:requester_id, nil)
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('group_id', :"can't be blank"),
-                bad_request_error_pattern('responder_id', :"can't be blank"),
-                bad_request_error_pattern('email_config_id', :"can't be blank"),
+    match_json([bad_request_error_pattern('group_id', :invalid_value, resource: :group, attribute: :group_id),
+                bad_request_error_pattern('responder_id', :invalid_value, resource: :agent, attribute: :responder_id),
+                bad_request_error_pattern('email_config_id', :invalid_value, resource: :email_config, attribute: :email_config_id),
                 bad_request_error_pattern('requester_id', :user_blocked),
-                bad_request_error_pattern('product_id', :"can't be blank"),
+                bad_request_error_pattern('product_id', :invalid_value, resource: :product, attribute: :product_id),
                 bad_request_error_pattern('test_custom_country', :not_included, list: 'Australia,USA'),
                 bad_request_error_pattern('test_custom_dropdown', :not_included, list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
   end
@@ -2145,15 +2145,15 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 999, requester_id: '999', filter: 'x')
     pattern = [bad_request_error_pattern('filter', :not_included, list: 'new_and_my_open,watching,spam,deleted')]
-    pattern << bad_request_error_pattern('company_id', :"can't be blank")
-    pattern << bad_request_error_pattern('requester_id', :"can't be blank")
+    pattern << bad_request_error_pattern('company_id', :invalid_value, resource: :company, attribute: :company_id)
+    pattern << bad_request_error_pattern('requester_id', :invalid_value, resource: :contact, attribute: :requester_id)
     assert_response 400
     match_json pattern
   end
 
   def test_index_with_invalid_email_in_params
     get :index, controller_params(email: Faker::Internet.email)
-    pattern = [bad_request_error_pattern('email', :"can't be blank")]
+    pattern = [bad_request_error_pattern('email', :invalid_value, resource: :contact, attribute: :email)]
     assert_response 400
     match_json pattern
   end
