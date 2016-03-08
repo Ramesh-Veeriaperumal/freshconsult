@@ -1,20 +1,26 @@
 <div class="innerbox">
 	<%if show_activate? %>
 		<div class="freshfone_alert alert center" rel="permanent">
-			<% unless freshfone_activation_requested? %>
-				<%= t('freshfone.dashboard.trial.activate').html_safe %>
-				<div id="ff_feature_request"></div>
+			<% if current_user.privilege?(:admin_tasks) %>
+				<% unless freshfone_activation_requested? %>
+					<%= t('freshfone.dashboard.trial.activate').html_safe %>
+					<div id="ff_feature_request"></div>
+				<% else %>
+						<%= t('freshfone.admin.trial.requested_activation').html_safe%>
+				<% end %>
 			<% else %>
-				<%= t('freshfone.admin.trial.requested_activation').html_safe %>
+				<%=  t('freshfone.admin.trial.contact_admin_for_expired') %>
 			<% end %>
 		</div>
 	<% end %>
-	<% if current_user.privilege?(:admin_tasks) %>
-		<div class="freshfone_alert alert alert-danger center hide"
+	<div class="freshfone_alert alert alert-danger center <%=credit_low_toggle%>"
 		rel="permanent">
-				<%= t('freshfone.dashboard.admin_freshfone_recharge_alert_new').html_safe %>
-		</div>
-	<% end %>
+		<% if current_user.privilege?(:admin_tasks) %>
+			<%= t('freshfone.dashboard.admin_freshfone_recharge_alert_new').html_safe %>
+		<% else %>
+			<%=  t('freshfone.admin.trial.contact_admin_for_expired') %>
+		<% end %>
+	</div>
 
 	<% unless show_activate? %>
 	<ul class="clearfix mt20 freshfone_realtime">

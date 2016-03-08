@@ -257,11 +257,15 @@ module Helpdesk::DashboardHelper
 	end
 
 	def show_activate?
-		current_user.privilege?(:admin_tasks) && (freshfone_trial_expired? ||
+		(freshfone_trial_expired? ||
 			(freshfone_trial? && freshfone_subscription.trial_limits_breached?))
 	end
 
 	def pending_minutes_helper(pending_minutes)
 		(pending_minutes > 0) ? pending_minutes : 0
 	end
+
+  def credit_low_toggle
+    'hide' unless (!freshfone_trial_states? && freshfone_below_threshold?)
+  end
 end

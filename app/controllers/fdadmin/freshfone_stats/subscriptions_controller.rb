@@ -58,7 +58,7 @@ module Fdadmin
 
         def recent_subscriptions
           Freshfone::Account.joins(:account, :subscription)
-          .joins("INNER JOIN subscriptions ON subscriptions.id = accounts.id AND
+          .joins("INNER JOIN subscriptions ON subscriptions.account_id = accounts.id AND
             subscriptions.state != 'suspended'")
           .includes(:account)
           .trial_states
