@@ -12,14 +12,16 @@
               </h5>
                 <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
                   <li class="widget-filter active">
-                    <a class="item feedbacks-filter-me" href="#feedbacks-me" 
-                       data-hash-url="false" data-toggle="tab" ul_class="tick">
+                    <a class="item feedbacks-filter-me" href="#feedbacks-me"
+                        data-container="feedbacks-filter"
+                        data-hash-url="false" data-toggle="tab" ul_class="tick">
                       <%=t('solution.sidebar.feedbacks.my_articles')%>
                     </a>
                   </li>
-                  <li class="widget-filter feedbacks-filter-all">
-                    <a class="item" href="#feedbacks-all" data-hash-url="false" 
-                       data-toggle="tab" ul_class="tick">
+                  <li class="widget-filter">
+                    <a class="item feedbacks-filter-all" href="#feedbacks-all" data-hash-url="false"
+                        data-container="feedbacks-filter"
+                        data-toggle="tab" ul_class="tick">
                       <%=t('solution.sidebar.feedbacks.all_articles')%>
                     </a>
                   </li>
