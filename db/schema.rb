@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160216071055) do
+ActiveRecord::Schema.define(:version => 20160303122805) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2387,7 +2387,7 @@ ActiveRecord::Schema.define(:version => 20160216071055) do
   create_table "mobihelp_app_solutions", :force => true do |t|
     t.integer  "account_id",  :limit => 8, :null => false
     t.integer  "app_id",      :limit => 8, :null => false
-    t.integer  "category_id", :limit => 8, :null => false
+    t.integer  "category_id", :limit => 8
     t.integer  "position",                 :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
