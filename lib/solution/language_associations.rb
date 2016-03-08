@@ -42,7 +42,7 @@ module Solution::LanguageAssociations
       :autosave => true,
       :inverse_of => table_name
       
-    delegation_title = child_class.constantize.column_names.include?("name") ? :name : :title
+    delegation_title = child_class.constantize.table_exists? && child_class.constantize.column_names.include?("name") ? :name : :title
 
     define_method delegation_title do
       delegation_assoc = Language.current? ? :"current_#{child_name}" : :"primary_#{child_name}"
