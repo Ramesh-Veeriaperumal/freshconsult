@@ -503,6 +503,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     email_config ? email_config.name : account.primary_email_config.name
   end
 
+  def tag_names= updated_tag_names
+    unless updated_tag_names.nil? # Check only nil so that empty string will remove all the tags.
+      updated_tag_names = updated_tag_names.split(",").map(&:strip).reject(&:empty?)
+      self.tags = account.tags.assign_tags(updated_tag_names)
+    end    
+  end
+
   #Some hackish things for virtual agent rules.
   def tag_names
     tags.collect { |tag| tag.name }
