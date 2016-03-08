@@ -27,7 +27,7 @@ module Solution::ApiDelegator
   
   CHILD_ASSOCIATIONS = {
     :category_meta => { :folders => :solution_folder_meta, :public_folders => :public_folder_meta },
-    :folder_meta => { :articles => :solution_article_meta, :published_articles => :published_article_meta },
+    :folder_meta => { :articles => :solution_article_meta},
     :article_meta => { :tags => :tags }
   }
   

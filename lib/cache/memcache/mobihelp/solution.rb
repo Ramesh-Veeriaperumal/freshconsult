@@ -55,7 +55,8 @@ module Cache::Memcache::Mobihelp::Solution
         category_meta = Solution::CategoryMeta.find_by_id(category_id)
 
         category_meta.to_json(:include => {:public_folders => 
-          {:include => {:published_articles => {:include => {:tags => {:only => :name }}}}, 
+          {:include => {:published_articles => {:include => {:tags => {:only => :name }}, 
+          :except => Solution::Article::API_OPTIONS[:except]}}, 
           :except => [:account_id, :import_id]}})
       }
     end
