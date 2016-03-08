@@ -71,6 +71,9 @@
 				<div class="row-fluid">
 		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, { :selected => @folder_meta && @folder_meta.visibility }, { :class => "select select2 input-large" } %>
 	    	</div>
+	    	<div class="muted mt4">
+	    		<%= t('solutions.visibility.help_text') %>
+	    	</div>
 	    	<br>
 	    	<div class="row-fluid company_folders <%= 'hide' if @folder_meta.visibility != Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users] %>">
 					<%= render_autocomplete({
