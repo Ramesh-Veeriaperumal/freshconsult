@@ -1,0 +1,34 @@
+// Multilanguage Specific styles
+// -- Russian, German & French
+:lang(ru-RU), :lang(de), :lang(fr){
+  ul.header-tabs li a {
+    padding: 8px 13px;
+  }
+  #toggle-note-visibility{
+    width: 32%;
+  }
+  .conversation_thread {
+    .btn-toolbar { width: 68%;}
+    .ui-form li.inline-field.cc_fields .email_container{
+      padding: 0 140px 0 80px;
+    }
+  }
+
+}
+
+//Dashboard summary count issue - Lengthy languages [indonesian, turkish, Japanese & Russian]
+:lang(ru-RU), :lang(de), :lang(fr), :lang(id), :lang(tr), :lang(ja-JP){
+  .db-summary li a{
+    padding-left: 10px;
+    .summary-count{
+      width: 60%;
+      word-break: break-word;
+    }
+  }
+}
+
+
+// Spanish
+:lang(es){
+
+}

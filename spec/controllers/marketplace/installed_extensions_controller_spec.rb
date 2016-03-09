@@ -20,75 +20,66 @@ describe Admin::InstalledExtensionsController do
 
   describe "GET new_configs" do
     it "gets the extension configs" do
-      url_params = { version_id: "1" }
+      url_params = { extension_id: "1", version_id: "1"}
       controller.stubs(:extension_configs).returns(configs)
       get :new_configs, url_params
-      expected_response = selecte_params(url_params).merge({configs: configs}).to_json
-      expect(response.body).to eq(expected_response)
+      expected_response = selecte_params(url_params).merge({configs: configs.body}).stringify_keys
+      expect(JSON.parse(response.body)).to eq(expected_response)
     end
   end
 
   describe "GET edit_configs" do
     it "gets the account configs" do
-      url_params = { version_id: "1" }
+      url_params = { extension_id: "1", version_id: "1" }
+      controller.stubs(:extension_configs).returns(configs)
       controller.stubs(:account_configs).returns(configs)
+      controller.stubs(:account_configurations).returns(configs)
+      controller.instance_variable_set("@account_configurations", configs.body)
       get :edit_configs, url_params
-      expected_response = selecte_params(url_params).merge({configs: configs}).to_json
-      expect(response.body).to eq(expected_response)
+      expected_response = selecte_params(url_params).merge({configs: configs.body}).stringify_keys
+      expect(JSON.parse(response.body)).to eq(expected_response)
     end
   end
 
   describe "POST install" do
     it "installs the extension" do
       controller.stubs(:install_extension).returns(status)
-      controller.instance_variable_set("@post_api", OpenStruct.new({code: 200}))
-      post :install, { version_id: 1, configs: nil }
-      expect(response.body).to eq(status.to_json)
+      controller.stubs(:extension_details).returns(extension_details)
+      post :install, { extension_id: "1", version_id: 1, configs: nil }
+      response.body.should be_blank
     end
   end
 
   describe "PUT reinstall" do
     it "reinstalls the extension" do
       controller.stubs(:update_extension).returns(status)
-      controller.instance_variable_set("@put_api", OpenStruct.new({code: 200}))
-      put :reinstall, { version_id: 1, configs: nil }
-      expect(response.body).to eq(status.to_json)
+      controller.stubs(:extension_details).returns(extension_details)
+      put :reinstall, { extension_id: "1", version_id: 1, configs: nil }
+      response.body.should be_blank
     end
   end
 
   describe "PUT enable" do
     it "reinstalls the extension" do
       controller.stubs(:update_extension).returns({})
-      controller.instance_variable_set("@put_api", OpenStruct.new({code: 200}))
-      put :enable, { version_id: 1 }
-      expect(response.body).to eq(status.to_json)
+      put :enable, { extension_id: "1", version_id: 1 }
+      response.body.should be_blank
     end
   end
 
   describe "PUT disable" do
     it "reinstalls the extension" do
       controller.stubs(:update_extension).returns({})
-      controller.instance_variable_set("@put_api", OpenStruct.new({code: 200}))
-      put :disable, { version_id: 1 }
-      expect(response.body).to eq(status.to_json)
-    end
-  end
-
-  describe "POST feedback" do
-    it "post the feedback" do
-      controller.stubs(:post_feedback).returns(OpenStruct.new({code: 200}))
-      xhr :post, :feedback, { version_id: 1 }
-      expect(response.code).to eq("200")
-      response.should render_template("/admin/marketplace/templates/installed_freshplugs/_app_feedback")
+      put :disable, { extension_id: "1", version_id: 1 }
+      response.body.should be_blank
     end
   end
 
   describe "DELETE uninstall" do
     it "deletes the extension" do
       controller.stubs(:uninstall_extension).returns({})
-      controller.instance_variable_set("@delete_api", OpenStruct.new({code: 200}))
-      delete :uninstall, { version_id: 1 }
-      expect(response.body).to eq(status.to_json)
+      delete :uninstall, { extension_id: "1", version_id: 1 }
+      response.body.should be_blank
     end
   end
 

@@ -53,12 +53,18 @@
 		.toggle-button{
       @include margin-left(0);
 		}
+    &.disabled{
+      .toggle-button{
+        opacity: .3;
+        pointer-events: none;
+      }
+    }
 	}
 	.logo-box{
 		position: relative;
     width: 140px;
     height: 70px;
-    border: solid 1px #aaa;
+    border: solid 1px #D6D6D6;
     @include padding(2px);
     @include margin-right(16px);
     @include text-align(center);
@@ -101,7 +107,7 @@
 			line-height: 12px;
       @include margin-right(8px);
       margin-top: 2px;
-      cursor: default;
+      @include cursor(default);
 		}
 		.plug-name{
 			font-size: 14px;
@@ -151,6 +157,7 @@
 .apps-wrapper{
   width: 100%;
   border: solid #f0f0f0;
+  display: table;
   @include border-width(0px 0px 1px 0px);
   &:first-child {
     @include border-width(1px 0px 1px 0px);
@@ -195,7 +202,6 @@
   @include padding-left(15px);
   @include padding-right(15px);
   .app-custom{
-    display: table;
     .intro{ 
       margin-top:10px;
     }

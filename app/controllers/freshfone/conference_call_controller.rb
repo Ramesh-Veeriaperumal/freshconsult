@@ -10,7 +10,6 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   
   before_filter :complete_supervisor_leg, :only => [:status], :if => :supervisor_leg?
   before_filter :check_conference_feature, :only => [:status]
-  before_filter :check_credit_balance, :only => [:status]
   before_filter :select_current_call, :only => [:status]
   before_filter :validate_acw, :only => [:acw]
   before_filter :handle_blocked_numbers, :only => [:status]
@@ -145,7 +144,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
 
     def telephony
       current_number = current_call.freshfone_number
-      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number)
+      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number, current_call)
     end
     
     def conference_notifier
@@ -221,10 +220,6 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
 
     def get_device_id
       current_call.sip? ? sip_user : split_client_id(params[:From])
-    end
-
-    def check_credit_balance
-      render :xml => comment_twiml("Credits Below Threshold") and return if current_account.freshfone_credit.below_calling_threshold? 
     end
 
     def handle_blocked_numbers

@@ -2,14 +2,17 @@ module Freshfone::AccountUtil
 
   def create_freshfone_account(account = nil)
     account = current_account if defined?(current_account) && account.blank?
-    Freshfone::SubAccount.new(account).create 
+    Freshfone::SubAccount.new(account, params).create 
   end
 
   class Freshfone::SubAccount
-    attr_accessor :account
+    include Freshfone::SubscriptionsUtil
 
-    def initialize(account)
+    attr_accessor :account, :params
+
+    def initialize(account, params = {})
       self.account = account
+      self.params = params
     end
 
     def create
@@ -38,20 +41,21 @@ module Freshfone::AccountUtil
       end
 
       def create_freshfone_account
-        account.create_freshfone_account({
+        account_options = {
           :twilio_subaccount_id => sub_account.sid,
           :twilio_subaccount_token => sub_account.auth_token,
           :twilio_application_id => twilio_app.sid,
           :queue => queue.sid,
           :friendly_name => sub_account.friendly_name,
-          :triggers => Freshfone::Account::TRIGGER_LEVELS_HASH.clone
-        })
+          :triggers => Freshfone::Account::TRIGGER_LEVELS_HASH.clone     
+        }
+        account_options[:state] = Freshfone::Account::STATE_HASH[:trial] if trial_params?
+        account.create_freshfone_account(account_options)
       end
 
       def sub_account
         @sub_account ||= TwilioMaster.client.accounts.create({ :friendly_name => subaccount_name })
       end
-
 
       def twilio_app
         @application ||= sub_account.applications.create({

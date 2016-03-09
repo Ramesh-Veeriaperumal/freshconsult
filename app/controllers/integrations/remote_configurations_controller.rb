@@ -20,6 +20,7 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
     if domain_mapping
       Sharding.select_shard_of(domain) do
         if(params["app"] == "seoshop")
+          Account.find(domain_mapping.account_id).make_current
           process_seoshop(domain, domain_mapping.account_id)
         end
       end

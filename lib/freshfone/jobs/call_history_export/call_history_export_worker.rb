@@ -9,7 +9,7 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
     Rails.logger.debug "CallHistoryExport ::: Started Call History Export for #{export_params[:account_id]}"
     prepare_params
     @current_account = Account.current
-    @current_account.freshfone_account.present? && @current_account.freshfone_account.active? ?
+    @current_account.freshfone_account.present? ?
       set_current_user : raise("The user #{export_params[:account_id]} doesn't have an active freshfone account")
     begin
       check_and_create_export EXPORT_TYPE

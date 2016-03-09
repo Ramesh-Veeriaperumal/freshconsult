@@ -1,11 +1,5 @@
 module Helpdesk::TagMethods
 
-  def create_tags(tag_list,item)
-    add_tag_list= tag_list.split(",").map { |tag| tag.strip}
-    add_ticket_tags(add_tag_list,item)
-    # update_ticket_in_es(item) #=> Ticket ID won't be available as save not happened. Skip this scenario until phase-1?
-  end
-
   def update_tags(tag_list, remove_tags, item)
     new_tag_list= tag_list.split(",").map { |tag| tag.strip}
     old_tag_list = item.tags.map{|tag| tag.name.strip }

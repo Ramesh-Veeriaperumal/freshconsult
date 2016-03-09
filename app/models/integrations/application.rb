@@ -14,7 +14,8 @@ class Integrations::Application < ActiveRecord::Base
 
   scope :freshplugs, lambda {|account_id| 
     where(:account_id => account_id , 
-          :application_type => 'freshplug') }
+          :application_type => Integrations::Constants::FRESHPLUG)
+    .includes([:installed_applications]) }
 
   has_many :app_business_rules, 
     :class_name => 'Integrations::AppBusinessRule',
@@ -37,10 +38,10 @@ class Integrations::Application < ActiveRecord::Base
   end
 
   def widget
-    if self.account_id == 0
-      Integrations::NativeWidget.find_by(:application_type,self.application_type) #+ self.widgets_data
-    else
+    if self.freshplug?
       self.custom_widget
+    else
+      Integrations::NativeWidget.find_by(:application_type, self.application_type)
     end
   end
 
@@ -51,6 +52,11 @@ class Integrations::Application < ActiveRecord::Base
     else
       self.name
     end
+  end
+
+  def freshplug?
+    self.account_id != Integrations::Constants::SYSTEM_ACCOUNT_ID && 
+      self.application_type == Integrations::Constants::FRESHPLUG
   end
 
   def user_specific_auth?
@@ -92,11 +98,11 @@ class Integrations::Application < ActiveRecord::Base
   def self.example_app()
     example_app = Integrations::Application.new
     example_app.name = "custom_application"  
-    example_app.display_name = "Sample CRM FreshPlug"
-    example_app.description = "This is a sample FreshPlug. You can use the script here to understand how FreshPlugs work."
+    example_app.display_name = "Sample CRM Plug"
+    example_app.description = "This is a sample Plug. You can use the script here to understand how Plugs work."
     script = %{
 
-<div id="sample_highrise_widget" title="Sample CRM FreshPlug">
+<div id="sample_highrise_widget" title="Sample CRM Plug">
   <div class="content"></div>
   <div class="error"></div>
 </div>

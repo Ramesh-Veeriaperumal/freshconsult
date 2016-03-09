@@ -20,7 +20,8 @@
 			<% if current_user then %>  
 			  	<div class="header-link-wrapper">
 			  		<% if current_account.freshfone_active? %>
-							<a href="#" id="freshfone-presence-toggle" class="tooltip"
+							<a href="#" id="freshfone-presence-toggle" class="tooltip 
+								<%= phone_disabled? %>"
 								data-placement="below"  
 								rel = "ff-hover-popover"
 							 	title="<%= current_user.freshfone_user_online? ? "Accepting calls" : "Not accepting calls" %>" data-html="true">
@@ -100,16 +101,18 @@
 					<div id="product_notify_header" class="header-notification-wrapper" rel="remote-load" 
 			    		data-url="/notification/product_notification">
 			    </div>
-			    <div class="ff_presence_options hide" id="FreshfonePresenceOptions">
-  					<div class="availabilityOnPhone" data-to_phone='false' id="availableOnBrowser">
-  						<i class="ficon-ff-on-browser fsize-20 <%= 'active' unless current_user.available_on_phone? %>"></i>
-  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_browser')%></span>
-  					</div>
-  					<div class="availabilityOnPhone" data-to_phone='true' id="availableOnPhone">
-  						<i class="ficon-ff-on-mobile fsize-20  <%= 'active' if current_user.available_on_phone? %>"></i>
-  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_phone')%></span>
-  					</div>
-  				</div>
+			    <% unless freshfone_trial? || freshfone_trial_expired? %>
+				    <div class="ff_presence_options hide" id="FreshfonePresenceOptions">
+	  					<div class="availabilityOnPhone" data-to_phone='false' id="availableOnBrowser">
+	  						<i class="ficon-ff-on-browser fsize-20 <%= 'active' unless current_user.available_on_phone? %>"></i>
+	  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_browser')%></span>
+	  					</div>
+	  					<div class="availabilityOnPhone" data-to_phone='true' id="availableOnPhone">
+	  						<i class="ficon-ff-on-mobile fsize-20  <%= 'active' if current_user.available_on_phone? %>"></i>
+	  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_phone')%></span>
+	  					</div>
+	  				</div>
+  				<%end%>
 		    	<% end %>
 			<% end %>
 		</div>

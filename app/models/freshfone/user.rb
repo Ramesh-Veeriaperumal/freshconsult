@@ -48,8 +48,10 @@ class Freshfone::User < ActiveRecord::Base
 		}
 	}
 
-	scope :agents_by_last_call_at, lambda { |order_type| order_type = "ASC" if order_type.blank?
-		{:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", 
+	scope :agents_by_last_call_at, lambda { |order_type|
+		order_type = "ASC" if order_type.blank?
+		{:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)
+			#{' AND `freshfone_users`.`available_on_phone` = 0' if trial?}",
 		PRESENCE[:online], PRESENCE[:offline], 1.hour.ago], :include => :user, :order => "freshfone_users.last_call_at #{order_type}" } }
 
 	def set_presence(status)
@@ -196,5 +198,9 @@ class Freshfone::User < ActiveRecord::Base
 
 		def can_dial_agent_number?
 			@agent_number.national_string != GlobalPhone.parse(@current_number).national_string
+		end
+
+		def self.trial?
+			::Account.current.freshfone_account.trial?
 		end
 end
