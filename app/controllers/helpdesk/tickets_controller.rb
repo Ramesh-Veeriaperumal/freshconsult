@@ -82,6 +82,7 @@ class Helpdesk::TicketsController < ApplicationController
     :unless => lambda { |controller|
       controller.request.format.xml? or controller.request.format.json? or controller.request.format.mobile? }
   before_filter :load_note_reply_cc, :only => [:reply_to_forward]
+  before_filter :load_note_reply_from_email, :only => [:reply_to_forward]
   before_filter :show_password_expiry_warning, :only => [:index, :show]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
@@ -942,6 +943,16 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_by_param(id, options = {}, archived = false)
     archived ? current_account.archive_tickets.find_by_param(id, current_account, options) : current_account.tickets.find_by_param(id, current_account, options)
+  end
+
+  def load_note_reply_from_email
+    from_emails = @note.load_note_reply_from_email
+    @selected_from_email_addr = nil
+    from_emails.each do|from_email| 
+      @selected_from_email_addr = @reply_emails.find { |email_config| from_email == parse_email_text(email_config[1])[:email].downcase }
+        break if @selected_from_email_addr
+    end
+    @from_emails = @reply_emails
   end
 
   private
