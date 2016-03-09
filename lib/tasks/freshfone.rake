@@ -127,17 +127,194 @@ namespace :freshfone do
 		end
 	end
 
-	desc "Delete freshfone recordings in Twilio"
-	task :freshfone_call_twilio_recording_delete => :environment do
-		Sharding.execute_on_all_shards do
-			Freshfone::Account.current_pod.all.each do |account|
-					Freshfone::Cron::CallRecordingAttachmentDelete.delete_twilio_recordings(account)
-			end
-		end
-	end
+  desc "phone trial day 7"
+  task :trial_day_7 => :environment do
+    Sharding.execute_on_all_shards do
+      Freshfone::Account.current_pod.trial_to_expire(
+        7.days.ago).each do |ff_account|
+        next unless valid_shard?(ff_account.account_id)
+        begin
+          account = ff_account.account
+          account.make_current
+          FreshfoneNotifier.deliver_phone_trial_half_way(account)
+        rescue => e
+          FreshfoneNotifier.deliver_freshfone_ops_notifier(
+            account,
+            subject: "Exception while performing Trial Day 7 reminder ::
+              #{ff_account.account_id}",
+            message: "Account:: #{ff_account.account_id}
+              <br/>Exception Message::
+              #{e.message}<br/>Exception Stacktrace ::
+              #{e.backtrace.join('\n\t')}")
+        ensure
+          ::Account.reset_current_account
+        end
+      end
+    end
+  end
 
-	def valid_shard?(account_id)
-		shard = ShardMapping.lookup_with_account_id(account_id)
-		shard.present? && shard.shard_name == ActiveRecord::Base.current_shard_selection.shard
-	end
+  desc "phone trial to expire in 2 days"
+  task :phone_trial_to_expire => :environment do
+    Sharding.execute_on_all_shards do
+      Freshfone::Account.current_pod.trial_to_expire.each do |ff_account|
+        next unless valid_shard?(ff_account.account_id)
+        begin
+          account = ff_account.account
+          account.make_current
+          FreshfoneNotifier.deliver_phone_trial_about_to_expire(account)
+        rescue => e
+          FreshfoneNotifier.deliver_freshfone_ops_notifier(
+            account,
+            subject: "Exception while performing Phone About to Expire ::
+              #{ff_account.account_id}",
+            message: "Account:: #{ff_account.account_id}
+              <br/>Exception Message::
+              #{e.message}<br/>Exception Stacktrace ::
+              #{e.backtrace.join('\n\t')}")
+        ensure
+          ::Account.reset_current_account
+        end
+      end
+    end
+  end
+
+  desc "phone trial expires today"
+  task :phone_trial_expiry_reminder => :environment do
+    Sharding.execute_on_all_shards do
+      Freshfone::Account.current_pod.trial_due(
+        1.day.from_now).each do |ff_account|
+        next unless valid_shard?(ff_account.account_id)
+        begin
+          account = ff_account.account
+          account.make_current
+          FreshfoneNotifier.deliver_phone_trial_expire(account)
+        rescue => e
+          FreshfoneNotifier.deliver_freshfone_ops_notifier(
+            account,
+            subject: "Exception while performing Trial Expiry Reminder ::
+              #{ff_account.account_id}",
+            message: "Account:: #{ff_account.account_id}
+              <br/>Exception Message::
+              #{e.message}<br/>Exception Stacktrace ::
+              #{e.backtrace.join('\n\t')}")
+        ensure
+          ::Account.reset_current_account
+        end
+      end
+    end
+  end
+
+  desc 'Freshfone Trial Accounts Expiry'
+  task :set_phone_trial_expired => :environment do
+    Sharding.execute_on_all_shards do
+      Freshfone::Account.current_pod.trial_due.each do |ff_account|
+        next unless valid_shard?(ff_account.account_id)
+        begin
+          account = ff_account.account
+          account.make_current
+          account.freshfone_account.trial_expire
+          FreshfoneNotifier.deliver_freshfone_ops_notifier(
+            account,
+            message: "Phone Trial has been expired for Account :: #{ff_account.account_id}")
+        rescue => e
+          FreshfoneNotifier.deliver_freshfone_ops_notifier(
+            account,
+            subject: "Error On Setting Trial Expire for Freshfone Trial Account For Account :: #{ff_account.account_id}",
+            message: "Account :: #{ff_account.account_id}<br>Exception Message :: #{e.message}<br>Exception Stacktrace ::#{e.backtrace.join('\n\t')}")
+        ensure
+          ::Account.reset_current_account
+        end
+      end
+    end
+  end
+
+  desc 'Trial Expired Numbers will be deleted reminder: 5 days to go'
+  task :trial_expired_5_days_left => :environment do
+    Sharding.execute_on_all_shards do
+      Freshfone::Account.current_pod.find_due(
+        6.days.from_now,
+        Freshfone::Account::STATE_HASH[:trial_expired]).each do |ff_account|
+        next unless valid_shard?(ff_account.account_id)
+        begin
+          account = ff_account.account
+          account.make_current
+          FreshfoneNotifier.deliver_trial_number_deletion_reminder(account)
+        rescue => e
+          FreshfoneNotifier.deliver_freshfone_ops_notifier(
+            account,
+            subject: "Error while Sending 5 days Phone Trial reminder for Freshdesk Account :: #{ff_account.account_id}",
+            message: "Account :: #{ff_account.account_id}<br>Exception Message :: #{e.message}<br>Exception Stacktrace :: #{e.backtrace.join('\n\t')}")
+        ensure
+          ::Account.reset_current_account
+        end
+      end
+    end
+  end
+
+  desc 'Trial Expired Numbers will be deleted reminder : 1 day to go'
+  task :trial_expired_1_day_left => :environment do
+    Sharding.execute_on_all_shards do
+      Freshfone::Account.current_pod.find_due(
+        1.day.from_now,
+        Freshfone::Account::STATE_HASH[:trial_expired]).each do |ff_account|
+        next unless valid_shard?(ff_account.account_id)
+        begin
+          account = ff_account.account
+          account.make_current
+          FreshfoneNotifier.deliver_trial_number_deletion_reminder_last_day(account)
+        rescue => e
+          FreshfoneNotifier.deliver_freshfone_ops_notifier(
+            account,
+            subject: "Error while Sending 1 day to go Phone Trial Number deletion reminder for Freshdesk Account :: #{ff_account.account_id}",
+            message: "Account :: #{ff_account.account_id}<br> Exception Message :: #{e.message}<br>Exception Stacktrace :: #{e.backtrace.join('\n\t')}")
+        ensure
+          ::Account.reset_current_account
+        end
+      end
+    end
+  end
+
+  desc 'Expire Trial expired Freshfone Accounts'
+  task :expire_trial_expired_accounts => :environment do
+    Sharding.execute_on_all_shards do
+      Freshfone::Account.current_pod.find_due(
+        Time.zone.now,
+        Freshfone::Account::STATE_HASH[:trial_expired]).each do |ff_account|
+        next unless valid_shard?(ff_account.account_id)
+        begin
+          account = ff_account.account
+          next if account.blank?
+          account.make_current
+          ff_account.expire
+          account.rollback(:freshfone_onboarding) if
+            account.launched?(:freshfone_onboarding)
+          FreshfoneNotifier.deliver_freshfone_ops_notifier(
+            account, message: "Freshfone Account Expired For Account ::
+            #{ff_account.account_id} after Trial Expired")
+        rescue => e
+          FreshfoneNotifier.deliver_freshfone_ops_notifier(
+            account,
+            subject: "Error On Setting Expiry for Trial Expired Freshfone Account For Account :: #{ff_account.account_id}",
+            message: "Account :: #{ff_account.account_id}<br> Exception Message :: #{e.message}<br>Exception Stacktrace :: #{e.backtrace.join('\n\t')}")
+        ensure
+          ::Account.reset_current_account
+        end
+      end
+    end
+  end
+
+  desc "Delete freshfone recordings in Twilio"
+  task :freshfone_call_twilio_recording_delete => :environment do
+    Sharding.execute_on_all_shards do
+      Freshfone::Account.current_pod.all.each do |account|
+        Freshfone::Cron::CallRecordingAttachmentDelete.delete_twilio_recordings(account)
+      end
+    end
+  end
+
+  def valid_shard?(account_id)
+    shard = ShardMapping.lookup_with_account_id(account_id)
+    shard.present? &&
+      shard.shard_name == ActiveRecord::Base.current_shard_selection.shard
+  end
 end

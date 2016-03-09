@@ -165,7 +165,7 @@ class Freshfone::Number < ActiveRecord::Base
 	def renew
 		begin
 			next_renewal = self.next_renewal_at.advance(:months => 1) - 1.day
-			account.freshfone_credit.renew_number(rate, id)
+			deduce_credit
 			update_attributes(:next_renewal_at => next_renewal)
 		rescue Exception => e
 			puts "Number Renewal failed for Account : #{account.id} : \n #{e}"
@@ -305,6 +305,7 @@ class Freshfone::Number < ActiveRecord::Base
 		end
 
 		def validate_purchase
+			return validate_trial if account.freshfone_account.trial?
 			if invalid_credit_and_country
 				errors.add(:base,I18n.t('freshfone.admin.numbers.failure_purchase'))
 				return false
@@ -338,5 +339,29 @@ class Freshfone::Number < ActiveRecord::Base
 		def validate_port
 			return if !port.present?
 			PORT_STATE.values.include?(port) ? true : errors.add(:base, "invalid port state")
+		end
+		
+		def validate_trial
+			number_country = Freshfone::Cost::NUMBERS[self.country]
+			number_rate = (number_country || {})[Freshfone::Number::TYPE_STR_REVERSE_HASH[number_type]]
+			if number_country.blank? || number_rate.blank?
+				errors.add :base, I18n.t('freshfone.admin.numbers.failure_purchase')
+				return false
+			elsif validate_trial_number_restrictions(number_rate)
+				errors.add :base, I18n.t('freshfone.admin.trial.request_activation_msg')
+				return false
+			end
+		end
+
+		def validate_trial_number_restrictions(number_rate)
+			number_count = Freshfone::Subscription.fetch_number_count(account)
+			number_credit = Freshfone::Subscription.fetch_number_credit(account)
+			((account.freshfone_numbers.count + 1) > number_count) || (number_rate > number_credit)
+		end
+
+		def deduce_credit
+			return account.freshfone_subscription.add_to_others_usage(rate) if
+				account.freshfone_account.in_trial_states?
+			account.freshfone_credit.renew_number(rate, id)
 		end
 end

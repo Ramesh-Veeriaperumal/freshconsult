@@ -1,6 +1,4 @@
-json.extract! @item, :id, :name, :description, :escalate_to
-json.set! :business_hour_id, @item.business_calendar_id
-json.unassigned_for GroupConstants::UNASSIGNED_FOR_MAP.key(@item.assign_time)
-json.agent_ids Array.wrap params[:api_group][:agent_ids]
-json.partial! 'shared/boolean_format', boolean_fields: { auto_ticket_assign: @item.ticket_assign_type } if GroupDecorator.round_robin_enabled?
+json.extract! @item, :id, :name, :description, :escalate_to, :unassigned_for, :business_hour_id
+json.set! :agent_ids, Array.wrap(params[:api_group][:agent_ids])
+json.set! :auto_ticket_assign, @item.auto_ticket_assign if @item.round_robin_enabled?
 json.partial! 'shared/utc_date_format', item: @item

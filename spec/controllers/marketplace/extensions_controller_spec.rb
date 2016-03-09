@@ -15,7 +15,7 @@ describe Admin::ExtensionsController do
   end
 
   before(:each) do
-    login_admin
+    login_admin 
   end
 
   describe "GET index" do
@@ -24,48 +24,19 @@ describe Admin::ExtensionsController do
       controller.stubs(:mkp_extensions).returns(extensions)
       controller.stubs(:all_categories).returns(all_categories)
       get :index, url_params
-      expected_response = extensions.merge(all_categories).merge(selecte_params(url_params)).to_json
-      expect(response.body).to eq(expected_response)
-    end
-
-    it "renders the in development extensions listing template" do
-      url_params = { type: "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", in_dev: true }
-      controller.stubs(:indev_extensions).returns(extensions)
-      controller.stubs(:all_categories).returns(all_categories)
-      get :index, url_params
-      expected_response = extensions.merge(all_categories).merge(selecte_params(url_params)).to_json
-      expect(response.body).to eq(expected_response)
+      expected_response = { "extensions" => extensions.body }.merge( {"categories" => all_categories.body}).merge(selecte_params(url_params)).stringify_keys
+      expect(JSON.parse(response.body)).to eq(expected_response)
     end
   end
 
   describe "GET show" do
     it "renders the extension show page" do
-      url_params = { type: "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", id: '1' }
-      controller.stubs(:show_extension).returns(show_extension)
+      url_params = { type: "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", version_id: '1' }
+      controller.stubs(:extension_details).returns(extension_details)
       controller.stubs(:install_status).returns(install_status)
       get :show, url_params
-      expected_response = show_extension.merge(install_status).merge(selecte_params(url_params)).to_json
-      expect(response.body).to eq(expected_response)
-    end
-  end
-
-  describe "GET search" do
-    it "renders the extensions listing template with search query" do
-      url_params = { type: "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", query: "Plug" }
-      controller.stubs(:mkp_extensions_search).returns(extensions)
-      controller.stubs(:all_categories).returns(all_categories)
-      get :search, url_params
-      expected_response = extensions.merge(all_categories).merge(selecte_params(url_params)).to_json
-      expect(response.body).to eq(expected_response)
-    end
-
-    it "renders the in development extensions listing template with search query" do
-      url_params = { type: "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", in_dev: true, query: "Plug" }
-      controller.stubs(:indev_extensions_search).returns(extensions)
-      controller.stubs(:all_categories).returns(all_categories)
-      get :search, url_params
-      expected_response = extensions.merge(all_categories).merge(selecte_params(url_params)).to_json
-      expect(response.body).to eq(expected_response)
+      expected_response = extension_details.body.merge(install_status.body).merge(selecte_params(url_params)).stringify_keys
+      expect(JSON.parse(response.body)).to eq(expected_response)
     end
   end
 

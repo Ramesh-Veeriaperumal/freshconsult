@@ -61,7 +61,7 @@ module DiscussionsTestHelper
       forum_id: expected_output[:forum_id] || topic.forum_id,
       user_id: expected_output[:user_id] || topic.user_id,
       locked: (expected_output[:locked] || topic.locked).to_s.to_bool,
-      sticky: (expected_output[:sticky] || topic.sticky).to_s.to_bool,
+      sticky: decorate_boolean((expected_output[:sticky] || topic.sticky)),
       published: (expected_output[:published] || topic.published).to_s.to_bool,
       stamp_type: expected_output[:stamp_type] || topic.stamp_type,
       replied_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
@@ -157,5 +157,11 @@ module DiscussionsTestHelper
     u = User.includes(:monitorships).find { |x| x.id != @agent.id && x.monitorships.blank? } || add_new_user(@account) # changed as it should have user without any monitorship
     u.update_column(:email, Faker::Internet.email)
     u.reload
+  end
+
+  def decorate_boolean(value)
+    value ? value.to_s.to_bool : value
+  rescue ArgumentError => ex
+    value
   end
 end

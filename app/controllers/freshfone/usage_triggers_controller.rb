@@ -29,13 +29,6 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
 
   private
 
-    def credit_overdraft
-      if freshfone_account.active? && overdraft?
-        # freshfone_account.suspend
-        @alert_message = "SUSPEND FRESHFONE ACCOUNT. #{alert_message}"
-      end
-      @ops_notifier.message = @alert_message
-    end
 
     def daily_credit_threshold
       triggers = freshfone_account.triggers.invert
@@ -51,15 +44,29 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
       end
     end
 
+    def calls_inbound
+      Rails.logger.info "Inbound Calls Limit Exceeded, for Account Id :: #{freshfone_account.account_id}"
+      Rails.logger.info "Params :: #{params}"
+      subscription.inbound_will_change!
+      subscription.inbound_usage_exceeded!
+    end
+
+    def calls_outbound
+      Rails.logger.info "Outbound Calls Limit Exceeded, for Account Id :: #{freshfone_account.account_id}"
+      Rails.logger.info "Params :: #{params}"
+      subscription.outbound_will_change!
+      subscription.outbound_usage_exceeded!
+    end
+
     def overdraft?
       current_account.freshfone_credit.zero_balance? || 
-        Freshfone::Payment.find(:first, :conditions => ["created_at > ? AND status = ?", 
-          trigger.created_at, true]).blank?
+      Freshfone::Payment.find(:first, :conditions => ["created_at > ? AND status = ?", 
+        trigger.created_at, true]).blank?
     end
 
     def alert_message
       @alert_message ||= "Freshfone #{trigger.trigger_type} alert for account #{current_account.id}. 
-        Available balance #{current_account.freshfone_credit.available_credit}."
+      Available balance #{current_account.freshfone_credit.available_credit}."
     end
 
     def recurring?
@@ -68,7 +75,7 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
 
     def load_trigger
       @trigger ||= 
-        freshfone_account.freshfone_usage_triggers.find_by_sid(params[:UsageTriggerSid])
+      freshfone_account.freshfone_usage_triggers.find_by_sid(params[:UsageTriggerSid])
       head :ok if trigger.blank?
     end
 
@@ -97,6 +104,10 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
       freshfone_account.suspend
     end
 
+    def subscription
+      freshfone_account.subscription
+    end
+
     def second_level_message
       @ops_notifier.message = "Freshfone #{trigger.trigger_type} alert for Account #{current_account.id}.\n 
       The Trigger Value is #{trigger.trigger_value} & The Current Value of the account is #{params[:CurrentValue]}"
@@ -112,4 +123,4 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
     		head :ok
     	end
     end
-end
+  end

@@ -317,6 +317,20 @@ class Helpdesk::Note < ActiveRecord::Base
       [[], []]
     end
   end
+
+  def load_note_reply_from_email
+    email_addrs = []
+    if (self.fwd_email? || self.reply_to_forward?)
+      parsed_email = parse_email_text(self.from_email)
+      email_addrs = parsed_email[:email].downcase.to_a
+    elsif self.third_party_response?
+      to_emails = self.to_emails.map{ |email| parse_email_text(email)[:email].downcase }
+      email_addrs = to_emails
+      cc_emails = self.cc_emails.map{ |email| parse_email_text(email)[:email].downcase }
+      email_addrs += cc_emails
+    end
+    email_addrs
+  end
   
   # Instance level spam watcher condition
   # def rl_enabled?

@@ -67,14 +67,16 @@ var UnresolvedTickets = (function () {
 		showTickets: function(evt){
 			var _currentData = jQuery(evt.currentTarget).data(),
 				currentTab = jQuery("#unresolved-tab li.active").data('redirect'),
-				metricurl, filteredData = _FD.getFilterData();
+				metricurl, filteredData = _FD.getFilterData(), filterData;
 			if( _currentData.id === 'unassigned' ){
 				//Marking it as -1 as its per norm in custom ticket filter for unassigned.
 				metricurl = currentTab+"=-1"+"&status="+_currentData.status;
 			}else{
 				var agentQuery = (filteredData.agent.length ? "&agent="+Array.prototype.slice.call(filteredData.agent).join(',') : '');
 				var groupQuery = (filteredData.group.length ? "&group="+Array.prototype.slice.call(filteredData.group).join(',') : '');
-				metricurl = ( agentQuery.length === 0 && groupQuery.length === 0 ) ? (currentTab+"="+_currentData.id+"&status="+_currentData.status) : ("status="+_currentData.status+agentQuery+groupQuery)
+				// metricurl = ( agentQuery.length === 0 && groupQuery.length === 0 ) ? (currentTab+"="+_currentData.id+"&status="+_currentData.status) : ("status="+_currentData.status+agentQuery+groupQuery)
+				filterData = (currentTab === 'agent') ? groupQuery : agentQuery;
+				metricurl = "status="+_currentData.status+"&"+currentTab+"="+_currentData.id+filterData
 			}
 			window.open(CONST.ticketlist_url+metricurl, '_blank');
 		},
@@ -198,11 +200,9 @@ var UnresolvedTickets = (function () {
 						if(i === 0) {
 							var _store = DataStore.get(selectedTab),
 							_data = jQuery.capitalize(data);
-							if(selectedTab === 'group' && _store.findById(data)){
-								_data = _store.findById(data)[selectedTab]['name'];
-							}else if(selectedTab === 'agent' && _store.find(data, 'user_id')){
-								_data = _store.find(data, 'user_id')[selectedTab]['user']['name'];
-							}
+							if(_store.findById(data)['name']){
+								_data = _store.findById(data)['name'];
+							}	
 						} else if(i === row.length - lastRow) {
 							_data = data;
 						} else {	

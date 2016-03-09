@@ -7,6 +7,6 @@ json.set! :updated_at, item.updated_at.try(:utc)
 
 if defined?(add)
   add.each_pair do |field, display_field| # if other date fields are present
-    json.set! display_field.to_s, item.send(field).try(:utc) if item.respond_to?(field)
+    json.set! display_field.to_s, item.send(field).try(:utc)
   end
 end

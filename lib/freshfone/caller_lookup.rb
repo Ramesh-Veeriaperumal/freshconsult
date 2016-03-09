@@ -1,11 +1,12 @@
 module Freshfone::CallerLookup
 
   STRANGE_NUMBERS = {
-    :"7378742833" => 'RESTRICTED',
-    :"2562533"    => 'BLOCKED',
-    :"8656696"    => 'UNKNOWN',
-    :"266696687"  => 'ANONYMOUS',
-    :""           => 'UNKNOWN'
+    :"7378742833"  => 'RESTRICTED',
+    :"2562533"     => 'BLOCKED',
+    :"8656696"     => 'UNKNOWN',
+    :"266696687"   => 'ANONYMOUS',
+    :"86282452253" => 'UNAVAILABLE',
+    :""            => 'UNKNOWN'
   }
   
   def remove_country_code(number)

@@ -3,162 +3,91 @@
 <% content_for :helpcard do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-<h3 class="title"><%=t('application.title')%></h3>
-<div class="intro"><%=t('application.desc')%><%= t('marketplace.freshplug_intro').html_safe %></div>
+
+<!-- TITLE -->
+<% if feature?(:marketplace) %>
+  <h3 class="title"><%=t('marketplace.apps')%></h3>
+  <div class="intro"><%=t('marketplace.app_description')%></div>
+<% else %>
+  <h3 class="title"><%=t('application.title')%></h3>
+  <div class="intro"><%=t('application.desc')%></div>
+<% end %>
+
 <div id="integrations-list">
   <div>
     <ul class="tabs nav-tabs sleek-tab" id="myTab">
       <li class="active">
-        <a href="#native-apps" data-toggle="tab"><%= t('integrations.native_integrations') %></a>
+        <% if feature?(:marketplace) %>
+          <a href="#apps" data-toggle="tab"><%= t('marketplace.apps').html_safe %></a>
+        <% else %>
+          <a href="#native-apps" data-toggle="tab"><%= t('integrations.native_integrations') %></a>
+        <% end %>
       </li>
       <li>
-        <a href="#freshplugs" data-toggle="tab"><%= t('integrations.freshplugs_title') %></a>
+        <a href="#plugs" data-toggle="tab"><%= t('marketplace.plugs') %></a>
       </li>
     </ul>
 
     <div id="myTabContent" class="tab-content">
-
-      <div class="native-apps-list tab-pane active"  id="native-apps">
-        <ul class="table-list" id="table-list">
-          <% disp_header = 0
-          no_custom_app = true
-          @applications.each do |application| %>
-          <% # Remove the below if block when old slack is removed from applications table. %>
-          <% if application.name == "slack" %> 
-            <% next if exists_in_installed_apps?(application, @installed_applications).blank? %>
-          <% end %>
-          <%next if (!feature?(:timesheets) && (application.name == 'harvest' or application.name == 'workflow_max'))%>
-            <% if application.system_app? %>
-              <li class="app-native">
-                <div class="application">
-                <span class="logo application-logo-<%= application.name %>"></span>
-                  <div class="actions">
-                    <% i_app_index=@installed_applications.index { |i_app| true if(i_app.application == application) }
-
-                    if i_app_index.nil?
-                      #use direct_install option in applications to install the application directly from the "Enable" in applications menu.
-                      if application[:options][:direct_install].blank? %>
-                        <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>
-                      <% else
-                        if application[:options][:oauth_url].blank? %>
-                          <!-- Custom logic to call the installed_applications "Enable" directly from applications list when direct_install is provided and oauth_url is empty -->
-                          <%if application[:options][:auth_url].present? %>
-                            <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, application.options[:auth_url] , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>  
-                          <% elsif application.name.eql? Integrations::Constants::APP_NAMES[:quickbooks] %>
-                            <%= render :partial => "quickbooks_c2qb" %>    
-                          <% else %>
-                            <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, 
-                            "/integrations/installed_applications/#{application.id}/install", :method => :put,:class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>
-                          <% end %>
-                        <% else
-                           auth_url = application.oauth_url({:account_id => current_account.id, :portal_id => current_portal.id, :user_id => current_user.id},application[:name]) %>
-                           <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>
-                        <% end %>
-                      <% end %>
-
-                    <% else
-                    if (application[:options][:direct_install].blank? or application[:options][:configurable]) and
-                      application[:options][:no_settings].blank?  %>
-                          <%= link_to "Edit",
-                              edit_integrations_installed_application_path(@installed_applications[i_app_index]),
-                              :class => "btn tooltip", :title => t("application.configure_addon") %>
-
-                        <%elsif application[:options][:pre_install]%>
-
-                              <% auth_url="/integrations/applications/oauth_install/#{application.name}" %>
-                           <%= link_to "Edit", auth_url , :class => "btn tooltip", :title => t("application.configure_addon") %>
-                        <%elsif application[:options][:edit_url].present?%>
-                          <%=link_to "Edit", application[:options][:edit_url], :class => "btn tooltip", :title => t("application.configure_addon") %>
-                        <% end %>
-                        <%= link_to (t('application.enabled') + "<span></span>").html_safe, uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable").html_safe, :title => t("application.click_to_disable") %>
-                    <%end%>
-                  </div>
-                  <div class="col-center">
-                    <%if i_app_index.nil? or !application[:options][:direct_install].blank?%>
-                      <%= content_tag(:h2, t(application.display_name).html_safe) %>
-                    <%else%>
-                      <%= content_tag(:h2, link_to(t(application.display_name),edit_integrations_installed_application_path(@installed_applications[i_app_index]), :title => t("application.configure_addon") )) %>
-                    <%end%>
-                    <div class="info-data"><%= t(application.description) %></div>
-                  </div>
-                </div>
-              </li>
-            <% end %>
-          <% end %>
-        </ul>
-      </div>
-      <div class="custom-apps-list freshplugs-list tab-pane"  id="freshplugs">
-        <div class="button-bar pull-right">
-          <% if feature?(:marketplace) %>
-            <a class="browse-btn btn btn-flat" href="" data-url="<%= admin_extensions_path %>?type=<%= Marketplace::Constants::EXTENSION_TYPE[:plug]%>"><span class="ficon-puzzle"></span> <%= t('marketplace.get_more_apps') %></a>
-          <% end %>
-          <%= link_to t('integrations.new_freshplug').html_safe, new_admin_integrations_freshplug_path, :class =>"btn" %>
-        </div>
-
-        <ul data-tabs="tabs" class="pills nav-pills portal-pills">
-          <% if feature?(:marketplace) %>
-          <li class="<%= !feature?(:marketplace) || @installed_plugs.blank? ? '' : 'active' %>">
-            <a href="#apps" data-toggle="tab"><%= t('marketplace.apps').html_safe %></a>
-          </li>
-          <li class="<%= !feature?(:marketplace) || @installed_plugs.blank? ? 'active' : '' %>">
-            <a href="#fresh-plugs" data-toggle="tab"><%= t('integrations.freshplugs_title').html_safe %></a>
-          </li>
-          <% end %>
-        </ul>
-
-        <div id="freshplug-tab-content" class="tab-content clear">
-
-          <% if feature?(:marketplace) %>
-          <div id="apps" class="tab-pane <%= !feature?(:marketplace) || @installed_plugs.blank? ? '' : 'active'%>">
-            <ul id="installed_freshplugs">
-              <%= render :partial => '/admin/marketplace/templates/installed_freshplugs/index', :locals => { :installed_extensions => @installed_plugs } %>
-            </ul>
-          </div>
-          <% end %>
-
-          <div id="fresh-plugs" class="tab-pane <%= !feature?(:marketplace) ||@installed_plugs.blank? ? 'active' : '' %>">
-            <ul>
-              <%= render :partial => '/admin/marketplace/installed_custom_applications', :locals => { 
-                :custom_applications => @custom_applications } %>
-            </ul>
-          </div>
-        </div>
-      </div>
-
       <% if feature?(:marketplace) %>
-        <div class="app-browser" style="display:none;">
-          <button type="button" class="appbrowser-close"><span class="ficon-cross fsize-20"></button>
-          <%= render :partial => "/admin/marketplace/freshplugs" %>
-        </div>
+        <%= render :partial => '/admin/marketplace/marketplace_apps', :locals => { 
+                   :installed_plugs => @installed_plugs } %>
+      <% else %>
+       <%= render :partial => 'native_integrations', :locals => { :applications => @applications, 
+                  :installed_applications => @installed_applications } %>
       <% end %>
-
+      <%= render :partial => '/admin/marketplace/installed_custom_applications', :locals => { 
+                 :custom_applications => @custom_applications } %>
     </div>
+
+    <div id="toggle-confirm" style="display:none;">
+    </div>
+
   </div>
 </div>
 
 <%= javascript_include_tag :'cdn/marketplace/fa_marketplace_browser' %>
 <script type="text/javascript">
     var settingsLinks = { appBrowser: ".app-browser",
-                appBrowserClose: ".appbrowser-close",
-                browseBtn: ".browse-btn, .moreinfo-lnk, .in-dev-apps, .update",
+                appBrowserClose: ".appbrowser-close, .closable",
+                browseBtn: ".browse-btn, .moreinfo-lnk, .update",
                 activationSwitch: ".switch",
-                deleteBtn: ".delete-btn",
-                feedbackForm: "form.feedback-form",
-                feedbackClose: ".feedback-close"
+                deleteBtn: ".delete-btn"
               }
     var customMessages  = {
                             delete_success: "<%= I18n.t('marketplace.delete_action.success') %>",
                             delete_error: "<%= I18n.t('marketplace.delete_action.error') %>",
-                            feedback_success: "<%= I18n.t('marketplace.feedback_action.success') %>",
-                            feedback_error: "<%= I18n.t('marketplace.feedback_action.error') %>",
+                            no_connection: "<%= I18n.t('marketplace.no_connection') %>"
                           };
     var marketplaceBrowser = new MarketplaceBrowser(settingsLinks, customMessages);
 
-    marketplaceBrowser.toggleNoPlugsMessage();
+    marketplaceBrowser.toggleAppsMessage(marketplaceBrowser.getAppsLength() > 0 );
+    marketplaceBrowser.togglePlugsMessage(marketplaceBrowser.getFreshPlugsLength() > 0 );
 
     Fjax.afterNextPage = function () {
        marketplaceBrowser.destroy();
     }
 
-</script>
+    jQuery(document).ready(function(){
+      jQuery(jQuery('#myTab > li.active > a').attr('href')).addClass('active');
+      var selectedTab = jQuery('a[href=' + window.location.hash + ']', jQuery("#myTab"));
+      if(selectedTab.length > 0) 
+        jQuery(selectedTab).click();
 
+      jQuery(".modal").livequery(function(){
+        jQuery(this).on('shown', function(e) {
+          jQuery(".twipsy").hide();
+        });
+      });
+    });
+
+    jQuery(document).on("click", "a[href=#toggle-confirm]", function(ev) {
+      ev.preventDefault();
+      var target = jQuery(this).attr("data-confirm-content");
+      jQuery("#toggle-confirm .modal-body").empty().append("<p>"+ target + "</p>");
+    });
+
+    jQuery(document).on('hide.bs.modal','#toggle-confirm', function () {
+       jQuery("#toggle-confirm .modal-body").empty();
+    });
+</script>

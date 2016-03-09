@@ -1,10 +1,12 @@
 page << "var loading_div = jQuery('#agent_invite_status');"
 page << "var status_box = loading_div.find('#status_update');"
-if @responseObj[:reached_limit]
+if @responseObj[:reached_limit] == :true
   page << "Loading.updateStatus(status_box,'failure', '"+t('admin.getting_started.index.agent_limit_reached')+"');"
-else
+elsif @responseObj[:reached_limit] == :false
   page << "Loading.updateStatus(status_box,'success', '"+t('admin.getting_started.index.successfully_sent')+"');"
+else
+  page << "Loading.updateStatus(status_box,'failure', '"+t('admin.getting_started.index.bulk_invite_blocked')+"');"
 end
 
-page << "loading_div.delay(1000).hide(1);"
+page << "loading_div.delay(2000).hide(1);"
 page << "jQuery('#agents_invite_email').val('')"

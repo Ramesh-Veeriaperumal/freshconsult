@@ -40,4 +40,23 @@ describe Admin::FreshfoneController do
     get :toggle_freshfone
     response.should redirect_to('/admin/phone/numbers')
   end
+
+  it 'should render index page when onboarding feature is not enabled' do
+    @account.freshfone_numbers.destroy_all
+    @account.features.freshfone.destroy
+    @account.features.freshfone_conference.destroy
+    get :index
+    expect(response).to render_template(:index)
+  end
+
+  it 'should render index page when onboarding feature is not enabled' do
+    @account.freshfone_numbers.destroy_all
+    @account.features.freshfone.destroy
+    @account.features.freshfone_conference.destroy
+    @account.launch(:freshfone_onboarding)
+    get :index
+    expect(response).to render_template(:index)
+    @account.rollback(:freshfone_onboarding)
+  end
+
 end

@@ -7,6 +7,7 @@ development:
   helpdesk_reports_export_queue: helpdesk_reports_export_dev
   reports_etl_msg_queue: reports_etl_msgs_dev
   reports_service_export_queue: reports_service_export_dev
+  freshfone_call_tracker: freshfone_call_tracker_development
 staging:
   twitter_realtime_queue: social_gnip_tweet_staging1
   facebook_realtime_queue: social_fb_feed_staging
@@ -16,6 +17,7 @@ staging:
   helpdesk_reports_export_queue: helpdesk_reports_export_staging
   reports_etl_msg_queue: reports_etl_msgs_staging
   reports_service_export_queue: reports_service_export_staging
+  freshfone_call_tracker: freshfone_call_tracker_staging
 production:
   twitter_realtime_queue: social_gnip_tweet_production
   facebook_realtime_queue: social_fb_feed_production
@@ -25,6 +27,7 @@ production:
   helpdesk_reports_export_queue: helpdesk_reports_export_production
   reports_etl_msg_queue: reports_etl_msgs_production
   reports_service_export_queue: reports_service_export_production
+  freshfone_call_tracker: freshfone_call_tracker_production
 test:
   twitter_realtime_queue: social_gnip_tweet_test
   facebook_realtime_queue: social_fb_feed_test
@@ -34,3 +37,4 @@ test:
   helpdesk_reports_export_queue: helpdesk_reports_export_test
   reports_etl_msg_queue: reports_etl_msgs_test
   reports_service_export_queue: reports_service_export_test
+  freshfone_call_tracker: freshfone_call_tracker_test

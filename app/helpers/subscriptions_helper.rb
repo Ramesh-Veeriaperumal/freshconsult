@@ -132,4 +132,8 @@ module SubscriptionsHelper
     output.join("").html_safe
   end
 
+  def freshfone_allowed?
+    feature?(:freshfone) && !freshfone_trial_states?
+  end
+
  end
