@@ -3,7 +3,7 @@
 		<%= render :partial => 'sidebar_properties' %>
 	</div>
 		
-	<% if @article.tickets.unresolved.present? %>
+	<% if current_user.can_view_all_tickets? && @article.tickets.unresolved.present? %>
 		<div class="sidebar-section feedback">
 			<div class="title-wrapper">
 				<p class="leads span2"><%= t('solution.general.feedback') %></p>
