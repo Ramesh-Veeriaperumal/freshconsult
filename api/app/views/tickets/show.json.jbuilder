@@ -21,7 +21,7 @@ json.extract! @item, :description, :description_html, :custom_fields
 
 json.set! :tags, @item.tag_names # does not have timestamps, hence no caching
 
-json.partial! 'show_notes' if @notes
+json.partial! 'show_conversations' if @conversations
 
 json.set! :attachments do
   json.array! @item.attachments do |att|

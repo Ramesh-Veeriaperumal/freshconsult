@@ -1,9 +1,9 @@
 require_relative '../test_helper'
 
-class NotesControllerTest < ActionController::TestCase
-  include NotesTestHelper
+class ConversationsControllerTest < ActionController::TestCase
+  include ConversationsTestHelper
   def wrap_cname(params)
-    { note: params }
+    { conversation: params }
   end
 
   def ticket
@@ -158,7 +158,7 @@ class NotesControllerTest < ActionController::TestCase
     match_json(note_pattern({}, Helpdesk::Note.last))
     result = parse_response(@response.body)
     assert_equal true, response.headers.include?('Location')
-    assert_equal "http://#{@request.host}/api/v2/notes/#{result['id']}", response.headers['Location']
+    assert_equal "http://#{@request.host}/api/v2/conversations/#{result['id']}", response.headers['Location']
   end
 
   def test_create_with_attachment
@@ -403,7 +403,7 @@ class NotesControllerTest < ActionController::TestCase
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     result = parse_response(@response.body)
     assert_equal true, response.headers.include?('Location')
-    assert_equal "http://#{@request.host}/api/v2/notes/#{result['id']}", response.headers['Location']
+    assert_equal "http://#{@request.host}/api/v2/conversations/#{result['id']}", response.headers['Location']
   end
 
   def test_reply_with_attachment
@@ -666,12 +666,12 @@ class NotesControllerTest < ActionController::TestCase
     match_json(request_error_pattern(:access_denied))
   end
 
-  def test_notes
+  def test_ticket_conversations
     parent_ticket = ticket
     4.times do
       create_note(user_id: @agent.id, ticket_id: parent_ticket.id, source: 2)
     end
-    get :ticket_notes, controller_params(id: parent_ticket.display_id)
+    get :ticket_conversations, controller_params(id: parent_ticket.display_id)
     assert_response 200
     result_pattern = []
     parent_ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
@@ -680,11 +680,11 @@ class NotesControllerTest < ActionController::TestCase
     match_json(result_pattern.ordered!)
   end
 
-  def test_notes_return_only_non_deleted_notes
+  def test_ticket_conversations_return_only_non_deleted_notes
     parent_ticket = ticket
     create_note(user_id: @agent.id, ticket_id: parent_ticket.id, source: 2)
 
-    get :ticket_notes, controller_params(id: parent_ticket.display_id)
+    get :ticket_conversations, controller_params(id: parent_ticket.display_id)
     assert_response 200
     result_pattern = []
     parent_ticket.notes.visible.exclude_source('meta').each do |n|
@@ -694,7 +694,7 @@ class NotesControllerTest < ActionController::TestCase
     match_json(result_pattern)
 
     Helpdesk::Note.where(notable_id: parent_ticket.id, notable_type: 'Helpdesk::Ticket').update_all(deleted: true)
-    get :ticket_notes, controller_params(id: parent_ticket.display_id)
+    get :ticket_conversations, controller_params(id: parent_ticket.display_id)
     assert_response 200
     result_pattern = []
     parent_ticket.notes.visible.exclude_source('meta').each do |n|
@@ -704,79 +704,79 @@ class NotesControllerTest < ActionController::TestCase
     match_json(result_pattern)
   end
 
-  def test_notes_without_privilege
+  def test_ticket_conversations_without_privilege
     parent_ticket = ticket
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
-    get :ticket_notes, controller_params(id: parent_ticket.display_id)
+    get :ticket_conversations, controller_params(id: parent_ticket.display_id)
     User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
   end
 
-  def test_notes_invalid_id
-    get :ticket_notes, controller_params(id: 56_756_767)
+  def test_ticket_conversations_invalid_id
+    get :ticket_conversations, controller_params(id: 56_756_767)
     assert_response :missing
     assert_equal ' ', @response.body
   end
 
-  def test_notes_eager_loaded_association
+  def test_ticket_conversations_eager_loaded_association
     parent_ticket = ticket
-    get :ticket_notes, controller_params(id: parent_ticket.display_id)
+    get :ticket_conversations, controller_params(id: parent_ticket.display_id)
     assert_response 200
-    assert controller.instance_variable_get(:@notes).all? { |x| x.association(:attachments).loaded? }
-    assert controller.instance_variable_get(:@notes).all? { |x| x.association(:schema_less_note).loaded? }
-    assert controller.instance_variable_get(:@notes).all? { |x| x.association(:note_old_body).loaded? }
+    assert controller.instance_variable_get(:@ticket_conversations).all? { |x| x.association(:attachments).loaded? }
+    assert controller.instance_variable_get(:@ticket_conversations).all? { |x| x.association(:schema_less_note).loaded? }
+    assert controller.instance_variable_get(:@ticket_conversations).all? { |x| x.association(:note_old_body).loaded? }
   end
 
-  def test_notes_with_pagination
+  def test_ticket_conversations_with_pagination
     t = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2).notable
     3.times do
       create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
     end
-    get :ticket_notes, controller_params(id: t.display_id, per_page: 1)
+    get :ticket_conversations, controller_params(id: t.display_id, per_page: 1)
     assert_response 200
     assert JSON.parse(response.body).count == 1
-    get :ticket_notes, controller_params(id: t.display_id, per_page: 1, page: 2)
+    get :ticket_conversations, controller_params(id: t.display_id, per_page: 1, page: 2)
     assert_response 200
     assert JSON.parse(response.body).count == 1
   end
 
-  def test_notes_with_pagination_exceeds_limit
-    get :ticket_notes, controller_params(id: ticket.display_id, per_page: 101)
+  def test_ticket_conversations_with_pagination_exceeds_limit
+    get :ticket_conversations, controller_params(id: ticket.display_id, per_page: 101)
     assert_response 400
     match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
   end
 
-  def test_notes_with_link_header
+  def test_ticket_conversations_with_link_header
     parent_ticket = ticket
     3.times do
       create_note(user_id: @agent.id, ticket_id: parent_ticket.display_id, source: 2)
     end
     per_page = parent_ticket.notes.visible.exclude_source('meta').count - 1
-    get :ticket_notes, controller_params(id: parent_ticket.display_id, per_page: per_page)
+    get :ticket_conversations, controller_params(id: parent_ticket.display_id, per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
-    assert_equal "<http://#{@request.host}/api/v2/tickets/#{parent_ticket.display_id}/notes?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+    assert_equal "<http://#{@request.host}/api/v2/tickets/#{parent_ticket.display_id}/conversations?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
-    get :ticket_notes, controller_params(id: parent_ticket.display_id, per_page: per_page, page: 2)
+    get :ticket_conversations, controller_params(id: parent_ticket.display_id, per_page: per_page, page: 2)
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
   end
 
-  def test_notes_with_ticket_trashed
+  def test_ticket_conversations_with_ticket_trashed
     parent_ticket = ticket
     Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
-    get :ticket_notes, controller_params(id: parent_ticket.display_id)
+    get :ticket_conversations, controller_params(id: parent_ticket.display_id)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
   end
 
-  def test_notes_without_ticket_privilege
+  def test_ticket_conversations_without_ticket_privilege
     parent_ticket = ticket
     User.any_instance.stubs(:has_ticket_permission?).returns(false)
-    get :ticket_notes, controller_params(id: parent_ticket.display_id)
+    get :ticket_conversations, controller_params(id: parent_ticket.display_id)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))

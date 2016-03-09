@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
-class NotesIntegrationTest < ActionDispatch::IntegrationTest
-  include NotesTestHelper
+class ConversationsIntegrationTest < ActionDispatch::IntegrationTest
+  include ConversationsTestHelper
   def test_query_count
     skip_bullet do
       v2 = {}
@@ -11,13 +11,13 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
         api_reply: 2,
         api_update: 6,
         api_destroy: 9,
-        api_ticket_notes: 5,
+        api_conversations: 5,
 
         create: 56,
         reply: 58,
         update: 26,
         destroy: 23,
-        ticket_notes: 18
+        conversations: 18
       }
 
       ticket_id = Helpdesk::Ticket.first.display_id
@@ -34,12 +34,12 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
       id1 = Helpdesk::Note.last(2).first.id
       id2 = Helpdesk::Note.last.id
 
-      # notes
-      v2[:ticket_notes], v2[:api_ticket_notes], v2[:ticket_notes_queries] = count_api_queries do
-        get("/api/tickets/#{ticket_id}/notes", nil, @headers)
+      # conversations
+      v2[:conversations], v2[:api_conversations], v2[:conversations_queries] = count_api_queries do
+        get("/api/tickets/#{ticket_id}/conversations", nil, @headers)
         assert_response 200
       end
-      v1[:ticket_notes] = count_queries do
+      v1[:conversations] = count_queries do
         get("/helpdesk/tickets/#{ticket_id}.json", nil, @headers)
         assert_response 200
       end
@@ -47,7 +47,7 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
 
       # update
       v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
-        put("/api/notes/#{id1}", v2_note_update_payload, @write_headers)
+        put("/api/conversations/#{id1}", v2_note_update_payload, @write_headers)
         assert_response 200
       end
       # No public API to update a note in v1. Hence using a private one.
@@ -58,7 +58,7 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
 
       # delete
       v2[:destroy], v2[:api_destroy], v2[:destroy_queries] = count_api_queries do
-        delete("/api/notes/#{id1}", nil, @headers)
+        delete("/api/conversations/#{id1}", nil, @headers)
         assert_response 204
       end
       # No public API to update a note in v1. Hence using a private one.

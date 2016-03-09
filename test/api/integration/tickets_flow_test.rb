@@ -118,14 +118,14 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
       ticket.update_column(:deleted, false)
       enable_cache do
-        get "/api/v2/tickets/#{ticket.display_id}", { include: 'notes' }, @write_headers
+        get "/api/v2/tickets/#{ticket.display_id}", { include: 'conversations' }, @write_headers
         note.note_body.body = 'Test update note body'
         note.save
-        get "/api/v2/tickets/#{ticket.display_id}", { include: 'notes' }, @write_headers
-        parsed_response = JSON.parse(response.body)['notes']
-        notes = parsed_response.select { |n| n['id'] = note.id } if parsed_response
+        get "/api/v2/tickets/#{ticket.display_id}", { include: 'conversations' }, @write_headers
+        parsed_response = JSON.parse(response.body)['conversations']
+        conversations = parsed_response.select { |n| n['id'] = note.id } if parsed_response
         assert_response 200
-        assert_equal 'Test update note body', notes[0]['body']
+        assert_equal 'Test update note body', conversations[0]['body']
       end
     end
   end
@@ -207,7 +207,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
     ticket = note.notable
     previous_updated_at = ticket.updated_at
-    put("/api/notes/#{note.id}", v2_note_update_payload, @write_headers)
+    put("/api/conversations/#{note.id}", v2_note_update_payload, @write_headers)
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
 
@@ -219,7 +219,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
     # In API V1
     previous_updated_at_for_api_v1 = ticket.updated_at
-    put("/helpdesk/tickets/#{ticket.id}/notes/#{note.id}.json", { helpdesk_note: { body: Faker::Lorem.paragraph } }.to_json, @write_headers)
+    put("/helpdesk/tickets/#{ticket.id}/conversations/#{note.id}.json", { helpdesk_note: { body: Faker::Lorem.paragraph } }.to_json, @write_headers)
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
   end
@@ -230,7 +230,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     ticket = note.notable
     previous_updated_at = ticket.updated_at
     sleep 1
-    delete("/api/notes/#{note.id}", nil, @headers)
+    delete("/api/conversations/#{note.id}", nil, @headers)
     assert_response 204
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
 
@@ -247,7 +247,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     ticket = note.notable
     previous_updated_at_for_api_v1 = ticket.updated_at
     sleep 1
-    delete("/helpdesk/tickets/#{ticket.id}/notes/#{note.id}.json", nil, @headers)
+    delete("/helpdesk/tickets/#{ticket.id}/conversations/#{note.id}.json", nil, @headers)
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
   end

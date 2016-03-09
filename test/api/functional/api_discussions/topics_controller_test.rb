@@ -212,6 +212,15 @@ module ApiDiscussions
       assert_response 200
     end
 
+    def test_show_with_invalid_boolean_value
+      topic = create_test_topic(forum_obj)
+      topic.update_column(:sticky, 213)
+      get :show, construct_params(id: topic.id)
+      result_pattern = topic_pattern(topic)
+      match_json(result_pattern)
+      assert_response 200
+    end
+
     def test_show_invalid_id
       get :show, construct_params(id: (1000 + Random.rand(11)))
       assert_response :missing

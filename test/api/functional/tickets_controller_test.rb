@@ -2067,9 +2067,9 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, ticket))
   end
 
-  def test_show_with_notes
+  def test_show_with_conversations
     ticket.update_column(:deleted, false)
-    get :show, controller_params(id: ticket.display_id, include: 'notes')
+    get :show, controller_params(id: ticket.display_id, include: 'conversations')
     assert_response 200
     match_json(ticket_pattern_with_notes(ticket))
   end
@@ -2078,14 +2078,14 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: '')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'notes')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations')])
   end
 
   def test_show_with_invalid_param_value
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'test')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'notes')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations')])
   end
 
   def test_show_with_invalid_params
@@ -2395,18 +2395,18 @@ class TicketsControllerTest < ActionController::TestCase
     Time.zone = old_time_zone
   end
 
-  def test_show_with_notes_exceeding_limit
+  def test_show_with_conversations_exceeding_limit
     ticket.update_column(:deleted, false)
     4.times do
       create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
     end
-    stub_const(NoteConstants, 'MAX_INCLUDE', 3) do
-      get :show, controller_params(id: ticket.display_id, include: 'notes')
+    stub_const(ConversationConstants, 'MAX_INCLUDE', 3) do
+      get :show, controller_params(id: ticket.display_id, include: 'conversations')
     end
     match_json(ticket_pattern_with_notes(ticket, 3))
     assert_response 200
     response = parse_response @response.body
-    assert_equal 3, response['notes'].size
+    assert_equal 3, response['conversations'].size
     assert ticket.reload.notes.visible.exclude_source('meta').size > 3
   end
 

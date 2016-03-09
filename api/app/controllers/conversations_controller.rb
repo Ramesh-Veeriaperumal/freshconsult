@@ -1,4 +1,4 @@
-class NotesController < ApiApplicationController
+class ConversationsController < ApiApplicationController
   include TicketConcern
   include CloudFilesHelper
   include Conversations::Email
@@ -35,14 +35,14 @@ class NotesController < ApiApplicationController
     head 204
   end
 
-  def ticket_notes
+  def ticket_conversations
     return if validate_filter_params
-    notes = scoper.visible.exclude_source('meta').where(notable_id: @ticket.id).preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
-    @notes = paginate_items(notes)
+    ticket_conversations = scoper.visible.exclude_source('meta').where(notable_id: @ticket.id).preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
+    @ticket_conversations = paginate_items(ticket_conversations)
   end
 
   def self.wrap_params
-    NoteConstants::WRAP_PARAMS
+    ConversationConstants::WRAP_PARAMS
   end
 
   private
@@ -116,18 +116,18 @@ class NotesController < ApiApplicationController
     end
 
     def validate_params
-      field = "NoteConstants::#{action_name.upcase}_FIELDS".constantize
+      field = "ConversationConstants::#{action_name.upcase}_FIELDS".constantize
       params[cname].permit(*(field))
-      @note_validation = NoteValidation.new(params[cname], @item, string_request_params?)
-      valid = @note_validation.valid?
-      render_errors @note_validation.errors, @note_validation.error_options unless valid
+      @conversation_validation = ConversationValidation.new(params[cname], @item, string_request_params?)
+      valid = @conversation_validation.valid?
+      render_errors @conversation_validation.errors, @conversation_validation.error_options unless valid
       valid
     end
 
     def sanitize_params
-      prepare_array_fields "NoteConstants::#{action_name.upcase}_ARRAY_FIELDS".constantize
+      prepare_array_fields "ConversationConstants::#{action_name.upcase}_ARRAY_FIELDS".constantize
       # set source only for create/reply action not for update action. Hence TYPE_FOR_ACTION is checked.
-      params[cname][:source] = NoteConstants::TYPE_FOR_ACTION[action_name] if NoteConstants::TYPE_FOR_ACTION.keys.include?(action_name)
+      params[cname][:source] = ConversationConstants::TYPE_FOR_ACTION[action_name] if ConversationConstants::TYPE_FOR_ACTION.keys.include?(action_name)
 
       # only note can have choices for private field. others will be set to false always.
       params[cname][:private] = false unless params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
@@ -148,7 +148,7 @@ class NotesController < ApiApplicationController
       return false unless super # break if there is no enough privilege.
 
       # load ticket and return 404 if ticket doesn't exists in case of APIs which has ticket_id in url
-      return false if (create? || reply? || ticket_notes?) && !load_parent_ticket
+      return false if (create? || reply? || ticket_conversations?) && !load_parent_ticket
       verify_ticket_permission(api_current_user, @ticket) if @ticket
     end
 
@@ -156,8 +156,8 @@ class NotesController < ApiApplicationController
       @reply ||= current_action?('reply')
     end
 
-    def ticket_notes?
-      @ticket_notes ||= current_action?('ticket_notes')
+    def ticket_conversations?
+      @ticket_conversation_action ||= current_action?('ticket_conversations')
     end
 
     def build_note_body_attributes
@@ -173,7 +173,7 @@ class NotesController < ApiApplicationController
 
     def valid_content_type?
       return true if super
-      allowed_content_types = NoteConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
+      allowed_content_types = ConversationConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
       allowed_content_types.include?(request.content_mime_type.ref)
     end
 
