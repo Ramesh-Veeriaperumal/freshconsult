@@ -57,7 +57,21 @@ salesforce:
        consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
        consumer_secret : "8034737126137452216"
        access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
-       access_secret : "2336849265765064476"   
+       access_secret : "2336849265765064476"
+
+freshsales:
+    development:
+      authentication_token: "jxpnk1mNjMvj47mdXBKKVg"
+      portal_url: "https://fdadmintest.freshmarketeer.com"
+    test:
+      authentication_token: "jxpnk1mNjMvj47mdXBKKVg"
+      portal_url: "https://fdadmintest.freshmarketeer.com"
+    staging:
+      authentication_token: "jxpnk1mNjMvj47mdXBKKVg"
+      portal_url: "https://fdadmintest.freshmarketeer.com"
+    production:
+      authentication_token: "1uzGOM_zc-27E1jjJUoTGw"
+      portal_url: "https://freshdesknew.freshsales.io"
 
 marketo:
   development:

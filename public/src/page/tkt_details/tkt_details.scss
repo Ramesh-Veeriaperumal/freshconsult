@@ -577,11 +577,18 @@ ol, ul, li{
 	-webkit-user-select:none;
 	-ms-user-select:none;
 }
+/*content editable for safari*/
+.redactor_editor{
+	user-select:text !important;
+	-webkit-user-select:text !important;
+	-moz-user-select:text !important;
+	-ms-user-select:text !important;
+}
 .conversation_thread.redactor{
 	border-color:#FFF;
 	margin-bottom: 30px;
 	margin-top: -30px;
-	// @extend .unselect;
+	@extend .unselect;
 	@include box-shadow(none);
 
     .avatar-wrap:before{

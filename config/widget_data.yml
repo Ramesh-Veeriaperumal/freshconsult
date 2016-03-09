@@ -97,7 +97,7 @@
 
   script: |-
           <script type="text/javascript">
-            var salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", contactLabels:"{{salesforce.contact_labels}}", leadLabels:"{{salesforce.lead_labels}}", reqName:"{{requester.name | make_vaild_javascript}}" , accountLabels:"{{salesforce.account_labels}}", accountFields:"{{salesforce.account_fields}}" , reqCompany : "{{requester.company_name | make_vaild_javascript}}" } ;
+            var salesforceBundle={domain:"{{salesforce.instance_url}}", ticket_id:"{{ticket.raw_id}}", ticket_company:"{{ticket.company.name | make_vaild_javascript}}", reqEmail:"{{requester.email}}", contactFields:"{{salesforce.contact_fields}}", opportunityFields:"{{salesforce.opportunity_fields}}", opportunityLabels:"{{salesforce.opportunity_labels}}", leadFields:"{{salesforce.lead_fields}}", contactLabels:"{{salesforce.contact_labels}}", leadLabels:"{{salesforce.lead_labels}}", reqName:"{{requester.name | make_vaild_javascript}}" , accountLabels:"{{salesforce.account_labels}}", accountFields:"{{salesforce.account_fields}}" , reqCompany : "{{requester.company_name | make_vaild_javascript}}", reqEmails: "{{requester.all_emails}}", opportunityView: "{{salesforce.opportunity_view}}", agentSettings: "{{salesforce.agent_settings}}", opportunity_stage: {{installed_app.configs_opportunity_stage_choices}} } ;
             Fjax.Assets.integration('salesforce', function () {
               new SalesforceWidget(salesforceBundle);
             });
