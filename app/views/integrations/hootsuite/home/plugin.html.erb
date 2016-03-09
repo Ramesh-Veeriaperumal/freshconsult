@@ -2,7 +2,7 @@
   <head>
   </head>
   <body>
-    <script src="https://d2l6uygi1pgnys.cloudfront.net/jsapi/0-6/hsp.js"></script>
+    <script src="https://d2l6uygi1pgnys.cloudfront.net/jsapi/2-0/hsp.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script>
 
@@ -10,8 +10,10 @@ function pasrseMessage(message){
   var messageString = '';
   var separator = '---------\n';
   if(message.post){
-    messageString = 'View on '+message.post.network + '\n';
-    messageString = messageString+message.post.href+'\n\n'+separator;
+    if (message.post.href){
+      messageString = 'View on '+message.post.network + '\n';
+      messageString = messageString+message.post.href+'\n\n'+separator;
+    }
     messageString = messageString+message.post.user.username+' said on '+message.post.datetime+'\n';
     if(message.post.content){
        messageString = messageString+message.post.content.body + '\n\n';
@@ -39,30 +41,46 @@ function sendToAppHandler(message) {
   sub = sub + trunc(message.post.content.body,100,"...");
   var desc = pasrseMessage(message);
   desc = trunc(desc,500,"...");
-  var description = encodeURIComponent(desc);
-  var subject = "&subject=" + encodeURIComponent(sub);
+  var description = desc;
+  var subject = sub;
+  var data = {
+    "description" : description,
+    "subject" : subject,
+    "twitter" : {},
+    "facebook" : {},
+  }
   var twitter="";var facebook="";
-  if(message.post.network=="twitter") twitter = "&twitter_id="+message.post.user.username+"&tweet_id="+message.post.id+"&image="+message.profile.profile_image_url_https;
-  else if(message.post.network=="facebook") facebook = "&post_id="+message.post.id+"&fb_profile_id="+message.post.user.userid+"&user_name="+message.post.user.username;
+  if(message.post.network=="twitter") {
+    data.twitter = { 
+      "twitter_id" :message.post.user.username, 
+      "tweet_id" : message.post.id, 
+      "image" : message.profile.profile_image_url_https 
+    };
+    twitter = "&tweet_id="+message.post.id;
+  }
+  else if(message.post.network=="facebook") {
+    data.facebook = { 
+      "post_id" : message.post.id, 
+      "fb_profile_id" : message.post.user.userid, 
+      "user_name" : message.post.user.username
+    };
+    twitter = "&post_id="+message.post.id;
+  }
 
-  var uid = '<%= params[:uid]%>';
-  var ts = '<%= params[:ts]%>';
-  var token = '<%= params[:token]%>';
-  var pid = '<%= params[:pid]%>';
-  var args = "&uid="+uid+"&ts="+ts+"&token="+token+"&pid="+pid;
-  var handler = 'https://'+'<%= @freshdesk_domain %>'+'/integrations/hootsuite/home/handle_plugin?description=' + description + subject + twitter + facebook + args;
+  hsp.saveData(data);
+  
 
+  var args = "uid="+'<%= params[:uid]%>'+"&ts="+'<%= params[:ts]%>'+"&token="+'<%= params[:token]%>'+"&pid="+'<%= params[:pid]%>'+"&channel="+message.post.network+"&is_plugin=1"+twitter + facebook;
+  var handler = "<%= AppConfig['integrations_url'][Rails.env]%>" + "<%= integrations_hootsuite_home_plugin_url_path %>" + "?is_plugin=1&"+args
   hsp.showCustomPopup(handler, 'Freshdesk', '700', '500');
 }
 
-  $(document).ready(function() {
+  jQuery(document).ready(function() {
     hsp.init({
-		    apiKey: '<%= ThirdPartyAppConfig["hootsuite"]["api_key"] %>',
-		    receiverPath: location.origin + '/my_receiver.html'
 		  });
     hsp.bind('sendtoapp', function(message){
-    sendToAppHandler(message);
-	    });
+      sendToAppHandler(message);
+	  });
   });
 </script>
   </body>

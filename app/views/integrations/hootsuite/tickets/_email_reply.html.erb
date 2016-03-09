@@ -1,11 +1,11 @@
-<% bcc_email = bcc_drop_box_email.map {|x| x[1]} %>
+<% bcc_email = bcc_drop_box_email %>
 <div class='from-to-wrapper'>
 	<span> To: </span>
 	<span> <%= @ticket.requester.email %> </span>
 </div>
 <div class='from-to-wrapper'>
 	<span> From: </span>
-	<span class='from-mail'> <%= @ticket.selected_reply_email %> </span>
+	<span class='from-mail'> <%= select("reply_email", "id", options_for_select(@reply_emails, @selected_reply_email)) %> </span>
 </div>
 <div class='mail-options'>
 	<a href='#' class='option'> <%= t("integrations.hootsuite.cc_bcc")%> </a>

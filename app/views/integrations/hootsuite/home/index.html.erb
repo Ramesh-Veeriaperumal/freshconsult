@@ -2,7 +2,7 @@
 	<head>
 	</head>
 	<body>
-		<script src="https://d2l6uygi1pgnys.cloudfront.net/jsapi/0-6/hsp.js"></script>
+		<script src="https://d2l6uygi1pgnys.cloudfront.net/jsapi/2-0/hsp.js"></script>
 		<%= stylesheet_link_tag_with_rtl :'cdn/hootsuite' %>
 		<%= javascript_include_tag :'cdn/hootsuite' %>
 		<script>
@@ -12,50 +12,49 @@
 		}
 		jQuery(document).ready(function(){
 			hsp.init({
-				apiKey: '<%= ThirdPartyAppConfig["hootsuite"]["api_key"] %>',
-				receiverPath: location.origin+'/my_receiver.html'
 			});
 			hsp.updatePlacementSubtitle('<%= current_user.name %>');
-			
+			var redirect_url = window.location.origin + "/integrations/hootsuite/home/index" + args;
+  		sendEventToOtherFrames("user_loggedin",redirect_url);
 			hsp.bind('refresh', function() {
 				if(jQuery(window).scrollTop() < 20){
-					hs_refresh();
+					hs_refresh(false);
 				}
 			});
 		});
 		</script>
 	<div class="hs_stream">
 		<%= render 'integrations/hootsuite/home/top_bar' %>
-		<% if @tickets.blank?%>
-			<div class="hs_error">
-				<p><%= t("integrations.hootsuite.no_ticket_msg")%></p>
-			</div>
-		<%end%>
+		<div class="hs_error <%= 'hide' if @tickets.present? %>">
+			<p><%= t("integrations.hootsuite.no_ticket_msg")%></p>
+		</div>
 		<div id="loaderFD" class="hide"><img src="/images/animated/ajax-loader.gif"/></div>
 		<div id='Pages'>
 			<%= render :partial => 'integrations/hootsuite/home/ticket', :collection => @tickets %>
 		</div>
 
-		<% opts = params.merge(:uid => params[:uid],
-						:ts => params[:ts],
-						:token => params[:token],
-						:pid => params[:pid]
-					) %>
+			<% opts = {
+					:uid => params[:uid],:ts => params[:ts],:token => params[:token],:pid => params[:pid],:search_text => params[:search_text],:search_type => params[:search_type],:ticket_status => params[:ticket_status],:ticket_priority => params[:ticket_priority],:active => params[:active]
+					}
+			%>
 		<%= pageless(@total_pages, url_for(:controller => 'integrations/hootsuite/home', :action => 'index'), "", opts	) unless @tickets.empty?%>
 	</div>
 
 	<script type="text/javascript">
-		function hs_refresh(){
+		function hs_refresh(reset){
+			var url = '<%= url_for(params.merge(:action => "refresh").except(:clear,:active)).html_safe %>';
+			if(reset) url = url + "&clear=1";
 			jQuery.ajax({
 			type: 'GET',
-			url: '/integrations/hootsuite/home/refresh'+args,
+			url: url,
 			contentType: 'application/json',
 			beforeSend: function (argument) {
 				jQuery("#Pages").empty();
 				jQuery("#loaderFD").show();
 			},
 			});
-	}
+		}
+		listenHootsuiteEvent("user_loggedout");
 	</script>
 </body>
 </html>

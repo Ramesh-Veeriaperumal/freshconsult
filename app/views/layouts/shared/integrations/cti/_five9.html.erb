@@ -7,7 +7,7 @@
 	cti_user.current_account = <%= current_account.id%>;
 	cti_user.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';
 	cti_user.email = '<%= current_user.email %>';
-	var integrations_url="<%= AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '') %>";
+	var integrations_url="<%= INTEGRATION_URI.host %>";
 	cti_user.add_note_as_private = <%= app_config[:add_note_as_private] || 0 %>;
 	cti_user.hide_dont_convert = <%= app_config[:convert_to_ticket] || 0 %>;
 <% end %>

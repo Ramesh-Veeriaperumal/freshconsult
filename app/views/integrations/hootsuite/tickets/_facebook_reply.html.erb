@@ -1,4 +1,4 @@
-<%= form_for [@ticket, @note], :url => facebook_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true,  :id => "social_reply_form" } do |f| %>
+<%= form_for [@ticket, @note], :url => facebook_helpdesk_ticket_conversations_path(@ticket), :html => {:id => "social_reply_form" } do |f| %>
     <%= f.error_messages %>
     <%= hidden_field_tag(:ticket_requester_name, @ticket.requester.name, :id => "ticket_requester_name")%>
     <%= hidden_field_tag(:parent_post, "", :id => "parent_post_id")%>

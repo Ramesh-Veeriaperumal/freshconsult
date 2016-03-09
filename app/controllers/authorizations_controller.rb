@@ -80,9 +80,7 @@ class AuthorizationsController < ApplicationController
   end
 
   def origin_required?
-    request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '') or
-     (Rails.env.development? and
-      request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '').gsub(/:3000/i,''))
+    request.host == INTEGRATION_URI.host
   end
 
   def create_for_oauth1(provider, params)
