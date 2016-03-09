@@ -29,7 +29,7 @@
 	<% end %>
 	<% if current_account.portals.count > 1 %>
 	<div class="control-group">
-		<label class="control-label"><%= t("solution_category.product_portal_visibility").html_safe %></label>
+		<label class="control-label"><%= t("solution_category.visibile_in_portal").html_safe %></label>
 		<div class="controls">
 			<% if @primary && @primary != @category %>
 				<div class="pt5">
@@ -43,6 +43,9 @@
 																}, 
 																:class => "select2 input-xlarge portal_visibility_required", :multiple => true, 
 																:placeholder => t("solution_category.select_solution_category").html_safe %>
+				<div class="muted mt4"> 
+					<%= t('solution.categories.visibility_help_text') %>
+				</div>
 			<% end %>
 		</div>
 	</div>
