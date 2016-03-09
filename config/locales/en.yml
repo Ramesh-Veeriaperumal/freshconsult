@@ -1438,6 +1438,7 @@ en:
             agent_email_partial: Partially successful.
             agent_email_sending: Sending Invites...
             agent_email_required: Email ID required to send invite.
+            bulk_invite_blocked: "You can add up to 25 agents from this page. You can add more from the admin section later."
     day_passes:
       helpnote:
         title: Day Pass
