@@ -78,30 +78,6 @@
             hoverPopup = false;
           },1000);
       });
-
-      $('.freshdesk_quote').live('click', function(){
-        var _container = jQuery(this).parents('.details');
-        var _fd_quote = jQuery(this);
-        if (_fd_quote.data('remoteQuote')){
-          var _note_id = _container.data('note-id');
-          var _messageDiv = _container.find('div:first');
-          var options = {"force_quote": true};
-          jQuery.ajax({
-            url: '/integrations/hootsuite/tickets/full_text'+args,
-            data: { id: ticketId, note_id: _note_id },
-            success: function(response){
-              if(response!=""){
-                _messageDiv.html(response);
-
-                quote_text(_messageDiv, options);
-              }
-              else {
-                _container.find('div.freshdesk_quote').remove();
-              }
-            }
-          });
-        }
-      });
   
    });
     

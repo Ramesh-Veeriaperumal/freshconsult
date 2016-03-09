@@ -85,7 +85,7 @@ class Middleware::Pod
   end
 
   def integrations_url?(host)
-    host == ::INTEGRATION_URI.host
+    host == ::INTEGRATION_URL
   end
 
 end

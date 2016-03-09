@@ -4,7 +4,6 @@ jQuery.noConflict();
 
 	Hootsuite = {
 		initialize: function () {
-      this.bindClearFilterEvent();
       this.bindHsEvents();
       this.bindGroupChangeEvent();
       this.bindUpdateTicketEvent();
@@ -13,7 +12,6 @@ jQuery.noConflict();
       this.bindAddReplyEvent();
       this.bindAddNoteEvent();
       this.openLinksInNewTab();
-      this.bindLogoutEvent();
      },
 
     add_note: function(isPrivate,body){
@@ -40,7 +38,7 @@ jQuery.noConflict();
 			bcc = bcc.split(",");
 			var cc = $(".cc-input")[0].value;
 			cc = cc.split(",");
-			var from = $("#reply_email_id option:selected").text();
+			var from = $(".from-mail").text();
 			var json_data = { "message": body,"id": window["ticketId"],"bcc": bcc,"cc": cc,"from": from,"authenticity_token": $('meta[name="csrf-token"]').attr("content"), "since_id": TICKET_DETAILS_DATA['last_note_id']};
 			$('#alert').hide();
 			$.ajax({
@@ -72,7 +70,6 @@ jQuery.noConflict();
 			var hs = this;
 			$(document).on('click.hootsuite', '#add_ticket_note', function(ev){
 			var body = $('#note_body').val();
-			if(!body.trim()) return;
 			var isPrivate = !($("#helpdesk_ticket_private").prop('checked'));
 			$(this).text('Please wait...').addClass('disabled');
 			hs.add_note(isPrivate,body);
@@ -83,7 +80,6 @@ jQuery.noConflict();
 			var hs = this;
 			$(document).on('click.hootsuite', '#add_ticket_reply', function(ev){
 			var body = $('#msg_body').val();
-			if(!body.trim()) return;
 			$(this).text('Please wait...').addClass('disabled');
 			hs.add_reply(body);
 			});
@@ -140,7 +136,6 @@ jQuery.noConflict();
 			// Top bar controls and drop downs
 			$(document).on('click.hootsuite', '.hs_topBarControlsBtn', function(e) {
 				e.preventDefault();
-				e.stopImmediatePropagation();
 
 				var $this = $(this);
 				var $previousButton = $('.hs_topBarControlsBtn').filter('.active');
@@ -163,20 +158,6 @@ jQuery.noConflict();
 					if (dropdownDataValue == 'Search' || dropdownDataValue == 'WriteMessage') {
 						$currentDropdown.find('input[type="text"]').first().focus();
 					}
-				}
-			});
-
-			$(document).on('click.hootsuite', '.hs_topBarContent:not(.hs_topBarControlsBtn), #Pages', function(e) {
-				e.preventDefault();
-
-				var $this = $(this);
-				var $previousButton = $('.hs_topBarControlsBtn').filter('.active');
-				var $previousDropdown = $('.hs_topBarDropdown').filter('.active');
-
-				// Hide the previous drop down
-				if ($previousDropdown.length) {
-					$previousDropdown.hide().removeClass('active');               
-					$previousButton.removeClass('active');
 				}
 			});
 		},
@@ -228,20 +209,12 @@ jQuery.noConflict();
 		bindHsEvents: function(){
 			$(document).on('click.hootsuite', '.search_type', function(){
 				var val = $(this).data('text');
-				$('.hs_searchWrapper #hs_searchInputExample').attr('placeholder', val);
+				$('.hs_dropdownSearch #hs_searchInputExample').attr('placeholder', val);
 			})
 
 			
 			// Any object with class custom-tip will be given a different tool tip
 			$(".tooltip").twipsy({ live: true, placement: 'below' });	
-		},
-
-		bindClearFilterEvent: function(){
-			$(document).on('click.hootsuite', '.clear_filter', function(ev){
-				ev.preventDefault();
-				$(".hs_topBarTitle").trigger("click");
-				hs_refresh(true);
-			});
 		},
 
 	 destroy: function () {
@@ -253,22 +226,8 @@ jQuery.noConflict();
 				var link = $(this);
 				var href = $.trim(link.attr("href"));
 				if(href.indexOf("javascript:") == 0 || href=="#") return;
-				var url;
-				if (href.indexOf('http://') === 0 ||href.indexOf('https://') === 0) {
-					url = href;
-				}
-				else {
-					url = domain + href;
-				}
-				window.open(url,"_blank");
+				window.open(href,"_blank");
 				ev.preventDefault();
-			});
-		},
-
-		bindLogoutEvent: function(){
-			$(document).on('click.hootsuite', '#log_out', function(ev){
-				var redirect_url = $(this).data("integrationsUrl");
-  			sendEventToOtherFrames("user_loggedout",redirect_url);
 			});
 		}
 	};
@@ -319,63 +278,5 @@ jQuery.noConflict();
 	  $('#msg-body').unbind();
 	  
 	  $('#msg-body').NobleCount('#SendTweetCounter', { on_negative : show_error , on_positive : hide_error, max_chars : max_chars });
-	 }
-
-	  prefillCreateTicketForm = function(data){
-	 	$("#ticket_description").val(data.description);
-    $("#ticket_subject").val(data.subject);
-    if(data.facebook) {
-    	var $fbForm = $("#fb_requeter_form");
-    	$fbForm.find("#requester_name").val(data.facebook.user_name);
-    	$fbForm.find("#fb_profile_id").val(data.facebook.fb_profile_id);
-    	$fbForm.find("#fb_post_id").val(data.facebook.post_id);
-    	$fbForm.find("#fb_profile_name").val(data.facebook.user_name);
-    }
-    if(data.twitter) {
-    	var $twitterForm = $("#twitter_requeter_form");
-    	$twitterForm.find("#requester_twitter_id").val(data.twitter.twitter_id);
-    	$twitterForm.find("#requester_tweet_id").val(data.twitter.tweet_id);
-    	$fb_post_id = $twitterForm.find("#image_url").val(data.twitter.image);
-    }
-	 }
-
-	 hideSearchFilters = function(){
-	 	$(".x-filter").css("opacity",".5");
-	 	$(".hs_dropdownFilterOptions select,input").css("opacity",".7");
-	 	$(".clear_filter").hide();
-	 }
-
-	 sendEventToOtherFrames = function(type,url){
-	  for (var i=0;i<window.parent.frames.length;i++) {
-      var frame = window.parent.frames[i];
-      if(self == frame) continue;
-      try{
-        var msg = {
-          type : type,
-          url : url
-        };
-        frame.postMessage(JSON.stringify(msg),"*");
-      }
-      catch(err) {
-      }
-  	}
-	 }
-
-	 listenHootsuiteEvent = function(type,cb){
-	 	var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-		var eventer = window[eventMethod];
-		var messageEvent = eventMethod == "attchEvent" ? "onmessage" : "message";
-		eventer(messageEvent,function(e){
-		  var data = JSON.parse(e.data);
-		  if(data.type == type){
-		  	if(typeof(cb)=="function") {
-		  		cb(data);
-		  	}
-		  	else {
-			  	var url = data.url;
-		  		window.location.replace(url);
-		  	}
-		  }
-		},false);
 	 }
 })(jQuery);

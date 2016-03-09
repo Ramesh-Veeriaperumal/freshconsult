@@ -5,8 +5,14 @@
             <li class="hs_topBarControlsBtn" data-dropdown="FilterOptions" title="Filter Options">
                 <span class="icon-app-dir x-filter"></span>
             </li>
+            <li class="hs_topBarControlsBtn" data-dropdown="Search" title="Search">
+                <span class="icon-app-dir x-search"></span>
+            </li>
             <li class="hs_topBarControlsBtn" data-dropdown="Settings" title="Settings">
                 <span class="icon-app-dir x-settings"></span>
+            </li>
+            <li class="hs_topBarControlsBtn" data-dropdown="MenuList" title="More">
+                <span class="icon-app-dir x-ellipsis"></span>
             </li>
         </ul>
         <!--Left-Side Title-->
@@ -16,26 +22,9 @@
       <!--Drop Downs-->
       <!--Filter Options-->
     <div class="hs_topBarDropdown hs_dropdownFilterOptions hs_form" data-dropdown="FilterOptions">
-        <%= form_tag(params.merge(:controller => "home", :action => "search").except(:ticket_status,:ticket_priority,:search_type,:search_text,:active,:clear)) do %>
-            <%= hidden_field_tag 'active', "1" %>
+        <%= form_tag(params.merge(:controller => "home", :action => "search").except(:ticket_status,:ticket_priority,:search_type)) do %>
             <input id="hs_searchInputExample" type="hidden" name="search_type" value="filter"></input>
-            
-            <div class="search_type_wrap">
-                <div class="inline-block">
-                    <label for="keyword" class="inline-block search_type" data-text="<%= t("integrations.hootsuite.search.placeholder_keyword") %>">
-                        <input type="radio" name="search_type" class="inline-block first_radio" id="keyword" value="keyword" checked/><%= t("integrations.hootsuite.search.keyword") %>
-                    </label>
-                    <label for="ticket" class="inline-block search_type" data-text="<%= t("integrations.hootsuite.search.placeholder_ticket_id") %>">
-                        <input type="radio" name="search_type" class="inline-block second_radio" id="ticket" value="ticket" /><%= t("integrations.hootsuite.search.ticket_id") %>
-                    </label>
-                </div>
-            </div>
-
-            <div class="hs_searchWrapper">
-                <input id="hs_searchInputExample" type="text" name="search_text" class="search_text" placeholder="<%= t("integrations.hootsuite.search.placeholder_keyword") %>"></input>
-            </div>
-
-            <div class="control-group hs_filter">
+            <div class="control-group">
                 <label for="ticket_status"><%= t("integrations.hootsuite.filter.status") %></label>
                 <div class="controls">
                     <select id="filter_type" name="ticket_status">
@@ -48,7 +37,7 @@
                     </select>
                 </div>
             </div>
-            <div class="control-group hs_filter">
+            <div class="control-group">
                 <label for="ticket_status"><%= t("integrations.hootsuite.filter.priority") %></label>
                 <div class="controls">
                     <select id="filter_type_priority" name="ticket_priority">
@@ -61,37 +50,42 @@
                     </select>
                 </div>
             </div>
-
-
-
             <div class="button-container hs_searchWrapper">
                 <button class="hs_btnCtaSml hs_btnTypeSubmit"><%= t("integrations.hootsuite.submit") %></button>
             </div>
-            <% if show_clear_filter %>
-                <button class="hs_btnCtaSml hs_btnTypeSubmit hs_reset clear_filter"><%= t("integrations.hootsuite.reset") %></button>
-            <% end %>
+        <% end %> 
+    </div>
+
+    <!--Search -->
+    <div class="hs_topBarDropdown hs_dropdownSearch" data-dropdown="Search">
+        <%= form_tag(params.merge(:controller => "home", :action => "search").except(:search_type,:search_text)) do %>
+            <div class="hs_searchWrapper">
+                <input id="hs_searchInputExample" type="text" name="search_text" class="search_text" placeholder="<%= t("integrations.hootsuite.search.placeholder_keyword") %>"></input>
+            </div>
+            <div class="search_type_wrap">
+                <div class="inline-block">
+                    <label for="keyword" class="inline-block search_type" data-text="<%= t("integrations.hootsuite.search.placeholder_keyword") %>">
+                        <input type="radio" name="search_type" class="inline-block first_radio" id="keyword" value="keyword" checked/><%= t("integrations.hootsuite.search.keyword") %>
+                    </label>
+                    <label for="ticket" class="inline-block search_type" data-text="<%= t("integrations.hootsuite.search.placeholder_ticket_id") %>">
+                        <input type="radio" name="search_type" class="inline-block second_radio" id="ticket" value="ticket" /><%= t("integrations.hootsuite.search.ticket_id") %>
+                    </label>
+                </div>
+                <button class="hs_btnCtaSml hs_btnTypeSubmit" type="submit"><%= t("integrations.hootsuite.submit") %></button>
+          </div>
         <% end %>
-        
     </div>
 
     <!--Settings-->
     <div class="hs_topBarDropdown hs_dropdownSettings" data-dropdown="Settings">
-        <div class="signout_text"><%= t("integrations.hootsuite.logged_in_message",:user_name => truncate(current_user.name, length: 9)).html_safe %></div>
-        <%= button_to t('header.signout'), params.merge(:controller => "home", :action => "destroy"),:class => "hs_btnCtaSml hs_btnTypeSubmit", :method => :delete, :id => "log_out", "data-integrations-url" => logout_redirect_url %>
+        <div class="signout_text"><%= t("integrations.hootsuite.logged_in_message",:user_name => current_user.name).html_safe %></div>
+        <%= button_to t('header.signout'), params.merge(:controller => "home", :action => "destroy"),:class => "hs_btnCtaSml hs_btnTypeSubmit", :method => :delete %>
     </div>
 
+    <!--Menu List-->
+    <ul class="hs_topBarDropdown hs_dropdownMenuList" data-dropdown="MenuList">
+        <li class="hs_dropdownMenuListItem"><a href="https://freshdesk.com" target='_blank'><%= t("integrations.hootsuite.more.help") %></a></li>
+        <li class="hs_dropdownMenuListItem"><a href="https://freshdesk.com" target='_blank'><%= t("integrations.hootsuite.more.feedback") %></a></li>
+        <li class="hs_dropdownMenuListItem"><a href="https://freshdesk.com" target='_blank'><%= t("integrations.hootsuite.more.freshdesk") %></a></li>
+    </ul>
 </div>
-<script>
-var status = '<%= params[:ticket_status]%>';
-var priority = '<%= params[:ticket_priority]%>';
-var searchText = '<%= params[:search_text] %>';
-var searchType = '<%= params[:search_type] %>';
-var active = '<%= params[:active] %>';
-jQuery(document).ready(function(){
-    jQuery("#filter_type").val(status);
-    jQuery("#filter_type_priority").val(priority);
-    jQuery(".search_text").val(searchText);
-    if(searchType == "ticket") jQuery("#ticket").trigger('click');
-    if(!active) hideSearchFilters();
-});
-</script>

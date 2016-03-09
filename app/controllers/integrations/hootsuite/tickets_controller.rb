@@ -6,7 +6,7 @@ class Integrations::Hootsuite::TicketsController < Integrations::Hootsuite::Hoot
   include Social::Twitter::Common
 
   before_filter :build_ticket, :only => [:create]
-  before_filter :load_object, :only => [:show,:add_note,:add_reply,:append_social_reply,:update,:full_text]
+  before_filter :load_object, :only => [:show,:add_note,:add_reply,:append_social_reply,:update]
 
   def show
     @ticket_notes_total = @ticket.conversation_count
@@ -18,13 +18,11 @@ class Integrations::Hootsuite::TicketsController < Integrations::Hootsuite::Hoot
     end
     @show_reply = (@ticket.twitter?) || (@ticket.facebook?) || (@ticket.from_email.present?)
     @ticket_fields = hs_ticket_fields
-    @reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails.map {|x| [x[1],x[0]]}
-    @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email.map {|x| [x[1],x[0]]}
   end
 
   def create
     if @ticket.save_ticket
-      @path = helpdesk_ticket_url(@ticket,:host => current_account.full_domain)
+      @path = helpdesk_ticket_url(@ticket)
       render(:partial => "integrations/hootsuite/home/ticket_link_page",:locals => {:already_exist => false})
     else
       @error = true
@@ -87,11 +85,6 @@ class Integrations::Hootsuite::TicketsController < Integrations::Hootsuite::Hoot
     respond_to do |format|
       format.js { render "note" }
     end
-  end
-
-  def full_text
-    note = @ticket.notes.find_by_id(params[:note_id])
-    render :text => note.full_text_html.to_s.html_safe
   end
 
   private

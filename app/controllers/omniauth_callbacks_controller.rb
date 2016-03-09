@@ -1,5 +1,7 @@
 class OmniauthCallbacksController < ApplicationController
 
+  INTEGRATION_URL = URI.parse(AppConfig['integrations_url'][Rails.env]).host
+
   skip_before_filter :check_privilege, :verify_authenticity_token
   skip_before_filter :set_current_account, :redactor_form_builder, :check_account_state, :set_time_zone,
                      :check_day_pass_usage, :set_locale, :only => [:complete, :failure]
@@ -56,7 +58,7 @@ class OmniauthCallbacksController < ApplicationController
   end
 
   def origin_required?
-    request.host == INTEGRATION_URI.host
+    request.host == INTEGRATION_URL
   end
 
   def origin_account

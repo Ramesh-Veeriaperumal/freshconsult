@@ -1,0 +1,28 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/hootsuite' %>
+<%= form_tag params.merge(:action => "create_login_session").except(:user_session,:authenticity_token), {:class => "hs_form hs_login"} do %>
+	<%if @error.present? %><div class="alert alert-error login-error" id="alert">
+		<%= t("integrations.hootsuite.login.login_error") %>
+	</div>
+	<% end %>
+	<div class="control-group">
+		<label><%= t("integrations.hootsuite.login.email") %></label>
+		<div class="controls">
+			<%= text_field_tag 'user_session[email]', nil, {:class => 'hs_demoInput'} %>
+		</div>
+	</div>
+	<div class="control-group">
+		<label><%= t("integrations.hootsuite.login.password") %></label>
+		<div class="controls">
+			<%= password_field_tag 'user_session[password]', nil, {:class => 'hs_demoInput'} %>
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<%= check_box_tag "user_session[remember_me]","1",false,:class => 'remember_me' %>
+			<%= t('user_sessions.new.remember') %>
+		</div>
+	</div>
+	<div class="button-container">
+		<%= submit_tag  t("integrations.hootsuite.login.login") , :class => "hs_btnCtaSml hs_btnTypeSubmit" %>
+	</div>
+<% end %>

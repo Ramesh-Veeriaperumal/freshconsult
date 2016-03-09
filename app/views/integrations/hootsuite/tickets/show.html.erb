@@ -21,16 +21,15 @@ TICKET_CONSTANTS = {
 		jQuery(".show_all").hide();
 	}
 var ticketId = <%= @ticket.display_id %>;
-var domain = '<%= current_account.full_url%>';
 </script>
 <div class="hs-stream">
 	<div class="ticket-header clearfix">
 		<a href='<%=helpdesk_ticket_url(@ticket) %>' target='_blank'>
 			<span class="<%= font_class('freshdesk', nil, 'pull-left') %>"></span>
-			<p class='tkt-title'>#<%= @ticket.display_id%> <%=truncate(h(@ticket.subject), :length => 90).html_safe %></p>
+			<p class='tkt-title'>#<%= @ticket.display_id%> <%=truncate(@ticket.subject, :length => 90).html_safe %></p>
 		</a>
 		<ul class='ticket-options'>
-			<li class='view-icon'><a class="<%= font_class('open-in-new-window', nil, 'tooltip') %>" title='View on Freshdesk' href='<%=helpdesk_ticket_url(@ticket, :host => current_account.full_domain) %>' target='_blank'></a></li>
+			<li class='view-icon'><a class="<%= font_class('open-in-new-window', nil, 'tooltip') %>" title='View on Freshdesk' href='<%=helpdesk_ticket_url(@ticket) %>' target='_blank'></a></li>
 			<li class='line-separator'></li>
 			<% if @show_reply %>
 				<li class='widget-top active' data-show="reply"> <span class="<%= font_class('reply', nil, 'tooltip') %>" title='Reply'></span></li>
@@ -66,7 +65,7 @@ var domain = '<%= current_account.full_url%>';
 				<div class="conversation_thread" id="last_notes" rel="activity_container">
 					<% last_note = @ticket_note_all.last(1) if @ticket_note_all.present? %>
 					<% if last_note.present? %>
-						<%= render :partial => "note", :collection => last_note, :locals => {:ticket => @ticket } %>
+						<%= render :partial => "note", :collection => last_note %>
 					<% end %>
 				</div>
 			</div>

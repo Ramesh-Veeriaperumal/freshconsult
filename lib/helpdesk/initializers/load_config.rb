@@ -1,6 +1,6 @@
 AppConfig = YAML.load_file(File.join(Rails.root, 'config', 'config.yml'))
 
-INTEGRATION_URI = URI.parse(AppConfig['integrations_url'][Rails.env]).freeze
+INTEGRATION_URL = URI.parse(AppConfig['integrations_url'][Rails.env]).host
 
 FreshopsSubdomains =  AppConfig['freshops_subdomain'].map { |k,v| v }.flatten
 

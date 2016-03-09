@@ -49,7 +49,9 @@ class GoogleLoginController < AccountsController
     end
 
     def integrations_url?
-      request.host == INTEGRATION_URI.host
+      request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '') or
+       (Rails.env.development? and
+        request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '').gsub(/:3000/i,''))
     end
 
     def auth_hash
