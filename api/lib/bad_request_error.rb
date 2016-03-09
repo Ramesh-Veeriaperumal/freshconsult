@@ -2,8 +2,8 @@ class BadRequestError < BaseError
   attr_accessor :code, :field, :http_code
 
   MODEL_ERROR_MAP = {
-    :"can't be blank" => :invalid_value,
-    :"should be a valid email address" => :invalid_value
+    :"can't be blank" => :absent_in_db ,
+    :"should be a valid email address" => :absent_in_db
   }
 
   ATTRIBUTE_RESOURCE_MAP = {

@@ -39,7 +39,7 @@ class ApiContactsController < ApiApplicationController
   def make_agent
     if @item.email.blank?
       render_request_error :inconsistent_state, 409
-    elsif !current_account.subscription.agent_limit.nil? && agent_limit_reached?
+    elsif (@agent_limit = current_account.subscription.agent_limit) && agent_limit_reached?
       render_request_error :max_agents_reached, 403, max_count: @agent_limit
     else
       if @item.make_agent
@@ -168,8 +168,7 @@ class ApiContactsController < ApiApplicationController
     end
 
     def agent_limit_reached?
-      @agent_limit = current_account.subscription.agent_limit
-      current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= current_account.subscription.agent_limit
+      current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= @agent_limit
     end
 
     def valid_content_type?

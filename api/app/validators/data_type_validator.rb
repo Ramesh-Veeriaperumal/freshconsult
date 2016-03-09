@@ -11,7 +11,7 @@ class DataTypeValidator < ApiValidator
     end
 
     def message
-      if valid_type? && values[:blank_when_required]
+      if valid_type? && blank_when_required?
         :blank
       else
         :data_type_mismatch
@@ -19,21 +19,22 @@ class DataTypeValidator < ApiValidator
     end
 
     def error_code
-      :missing_field if values[:req_attr_ndef]
+      :missing_field if required_attribute_not_defined?
     end
 
     def blank_when_required?
-      values[:blank_when_required] = options[:rules] == String && options[:required] && !present_or_false?
+      return internal_values[:blank_when_required] if internal_values.key?(:blank_when_required)
+      internal_values[:blank_when_required] = valid_type? && options[:rules] == String && options[:required] && !present_or_false?
     end
 
-    def error_options
+    def custom_error_options
       error_options = { expected_data_type: expected_data_type }
       error_options.merge!(given_data_type: infer_data_type(value), prepend_msg: :input_received) unless skip_input_info?
       error_options
     end
 
     def skip_input_info?
-      required_attribute_not_defined? || values[:blank_when_required] || values[:array]
+      required_attribute_not_defined? || blank_when_required? || array_value?
     end
 
     def expected_data_type
@@ -43,7 +44,8 @@ class DataTypeValidator < ApiValidator
     # check if value class is same as type. case & when uses === operator which compares the type first.
     # Faster than is_a? check
     def valid_type?(type = options[:rules])
-      case value
+      return internal_values[:valid_type] if internal_values.key?(:valid_type)
+      internal_values[:valid_type] = case value
       when type
         true
       when TrueClass, FalseClass

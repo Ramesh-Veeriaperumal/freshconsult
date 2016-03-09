@@ -1,4 +1,5 @@
 class StringRejectionValidator < ApiValidator
+  
   private
 
     def invalid?
@@ -19,7 +20,7 @@ class StringRejectionValidator < ApiValidator
       :special_chars_present
     end
 
-    def error_options
+    def custom_error_options
       { chars: options[:excluded_chars].join('\',\'') }
     end
 end

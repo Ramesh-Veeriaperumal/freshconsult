@@ -7,6 +7,10 @@ class ApiSlaPolicyValidation < ApiValidation
 
   def initialize(request_params, item)
     super(request_params, item)
-    @company_ids = applicable_to[:company_ids] if Hash === applicable_to && applicable_to.key?(:company_ids)
+    @company_ids = applicable_to[:company_ids] if can_set_company_ids?
+  end
+
+  def can_set_company_ids?
+  	applicable_to.is_a?(Hash) && applicable_to.key?(:company_ids)
   end
 end

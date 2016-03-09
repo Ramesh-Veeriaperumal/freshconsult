@@ -422,7 +422,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 400
     assert sample_user.reload.company_id.nil?
-    match_json([bad_request_error_pattern('company_id', :invalid_value, resource: :company, attribute: :company_id)])
+    match_json([bad_request_error_pattern('company_id', :absent_in_db, resource: :company, attribute: :company_id)])
   end
 
   def test_update_client_manager_with_already_invalid_company_id
@@ -945,7 +945,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :too_long, entities: :values, max_count: "#{ContactConstants::MAX_OTHER_EMAILS_COUNT}", current_count: 5)])
+    match_json([bad_request_error_pattern('other_emails', :too_long, element_type: :values, max_count: "#{ContactConstants::MAX_OTHER_EMAILS_COUNT}", current_count: 5)])
   end
 
   def test_create_with_other_emails_max_length_validation

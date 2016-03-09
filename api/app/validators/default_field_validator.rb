@@ -28,78 +28,80 @@ class DefaultFieldValidator < ActiveModel::EachValidator
       @default_field_validations = []
   end
 
-  # Call validators for each validation in field_validation array.
-  def call_validators(record, attribute, field_validation, required)
-    field_validation.each do |validator, validator_options|
-      # return if attribute has alread
-      next if record.errors[attribute].present?
+  private
 
-      # merge required & allow_nil option if the field is required
-      options_hash = { required: required, attributes: attribute, allow_nil: !required }.merge(validator_options)
+    # Call validators for each validation in field_validation array.
+    def call_validators(record, attribute, field_validation, required)
+      field_validation.each do |validator, validator_options|
+        # return if attribute has alread
+        next if record.errors[attribute].present?
 
-      case validator
-      when :custom_inclusion
-        inclusion_validator(record, options_hash)
-      when :custom_numericality
-        custom_numericality_validator(record, options_hash)
-      when :data_type
-        data_type_validator(record, options_hash)
-      when :array
-        array_options = add_allow_nil_option(validator_options).merge(attributes: attribute)
-        array_validator(record, array_options)
-      when :custom_length
-        required_validator(record, attribute) if required
-        length_validator(record, options_hash) if record.errors[attribute].blank?
-      when :custom_format
-        required_validator(record, attribute) if required
-        format_validator(record, options_hash)
-      when :string_rejection
-        required_validator(record, attribute) if required
-        string_rejection_validator(record, options_hash)
-      else
-        fail ArgumentError.new("No validator with this #{validator} name exists in #{self.class}")
+        # merge required & allow_nil option if the field is required
+        options_hash = { required: required, attributes: attribute, allow_nil: !required }.merge(validator_options)
+
+        case validator
+        when :custom_inclusion
+          inclusion_validator(record, options_hash)
+        when :custom_numericality
+          custom_numericality_validator(record, options_hash)
+        when :data_type
+          data_type_validator(record, options_hash)
+        when :array
+          array_options = add_allow_nil_option(validator_options).merge(attributes: attribute)
+          array_validator(record, array_options)
+        when :custom_length
+          required_validator(record, attribute) if required
+          length_validator(record, options_hash)
+        when :custom_format
+          required_validator(record, attribute) if required
+          format_validator(record, options_hash)
+        when :string_rejection
+          required_validator(record, attribute) if required
+          string_rejection_validator(record, options_hash)
+        else
+          fail ArgumentError.new("No validator with this #{validator} name exists in #{self.class}")
+        end
       end
     end
-  end
 
-  # Add allow nil option for the array element validators
-  def add_allow_nil_option(options_hash)
-    options_hash.map { |key, value| [key, (value.is_a?(Hash) ? value.merge(allow_nil: true) : value)] }.to_h
-  end
+    # Add allow nil option for the array element validators
+    def add_allow_nil_option(options_hash)
+      options_hash.map { |key, value| [key, (value.is_a?(Hash) ? value.merge(allow_nil: true) : value)] }.to_h
+    end
 
-  def proc_to_object(proc, record = nil)
-    proc.respond_to?(:call) ? proc.call(record) : proc
-  end
+    def proc_to_object(proc, record = nil)
+      proc.respond_to?(:call) ? proc.call(record) : proc
+    end
 
-  def required_validator(record, attribute, options_hash = options)
-    RequiredValidator.new(options_hash.merge(attributes: attribute, allow_nil: false, allow_blank: false)).validate(record)
-  end
+    def required_validator(record, attribute, options_hash = options)
+      RequiredValidator.new(options_hash.merge(attributes: attribute, allow_nil: false, allow_blank: false)).validate(record)
+    end
 
-  def inclusion_validator(record, options_hash)
-    CustomInclusionValidator.new(options_hash).validate(record)
-  end
+    def inclusion_validator(record, options_hash)
+      CustomInclusionValidator.new(options_hash).validate(record)
+    end
 
-  def length_validator(record, options_hash)
-    CustomLengthValidator.new(options_hash).validate(record)
-  end
+    def length_validator(record, options_hash)
+      CustomLengthValidator.new(options_hash).validate(record)
+    end
 
-  def custom_numericality_validator(record, options_hash)
-    CustomNumericalityValidator.new(options_hash).validate(record)
-  end
+    def custom_numericality_validator(record, options_hash)
+      CustomNumericalityValidator.new(options_hash).validate(record)
+    end
 
-  def string_rejection_validator(record, options_hash)
-    StringRejectionValidator.new(options_hash).validate(record)
-  end
+    def string_rejection_validator(record, options_hash)
+      StringRejectionValidator.new(options_hash).validate(record)
+    end
 
-  def array_validator(record, options_hash)
-    ArrayValidator.new(options_hash).validate(record)
-  end
+    def array_validator(record, options_hash)
+      ArrayValidator.new(options_hash).validate(record)
+    end
 
-  def format_validator(record, options_hash)
-    CustomFormatValidator.new(options_hash).validate(record)
-  end
+    def format_validator(record, options_hash)
+      CustomFormatValidator.new(options_hash).validate(record)
+    end
 
-  def data_type_validator(record, options_hash)
-    DataTypeValidator.new(options_hash).validate(record)
-  end
+    def data_type_validator(record, options_hash)
+      DataTypeValidator.new(options_hash).validate(record)
+    end
 end

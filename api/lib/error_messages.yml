@@ -1,8 +1,8 @@
 api_error_messages:  
   invalid_size: "Total attachment(s) size is %{current_size}, it should not exceed %{max_size}"
   should_be_blank: "This field should not be set"
-  too_long: "Has %{current_count} %{entities}, it can have maximum of %{max_count} %{entities}"
-  array_too_long: "Should only contain elements that have maximum of %{max_count} %{entities}"
+  too_long: "Has %{current_count} %{element_type}, it can have maximum of %{max_count} %{element_type}"
+  array_too_long: "Should only contain elements that have maximum of %{max_count} %{element_type}"
   input_received: "Value set is of type %{given_data_type}." 
   data_type_mismatch: "It should be a/an %{expected_data_type}"
   array_data_type_mismatch: "Should contain elements of type %{expected_data_type} only"
@@ -70,7 +70,7 @@ api_error_messages:
   "has already been taken": "Should be a unique value"
   "Email has already been taken": "Should be a unique value"
   "already exists in the selected category": "Should be a unique value within a category"
-  invalid_value: "There is no %{resource} matching the given %{attribute}"
+  absent_in_db: "There is no %{resource} matching the given %{attribute}"
   Enter valid domains: "Should be in the valid domain format"
 
 

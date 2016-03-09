@@ -12,40 +12,40 @@ class DateTimeValidator < ApiValidator
   DATE_TIME_REGEX        = /^\d{4}-\d{2}-\d{2}/
   DATE_REGEX             = /^\d{4}-\d{2}-\d{2}$/
 
-  def invalid?
-    !parse_time
-  end
-
-  def message
-    :invalid_format
-  end
-
-  def error_options
-    accepted = options[:only_date] ? :'yyyy-mm-dd' : :'combined date and time ISO8601'
-    { accepted: accepted }
-  end
-
-  def error_code
-    :missing_field if required_attribute_not_defined?
-  end
-
-  def parse_time
-    # We will accept dates only only in the iso8601 format.This is to avoid cases were other formats may behave unexpectedly.
-    # iso8601 expects date to follow the yyyy-mm-ddThh:mm:ss+dddd format, but it does not raise error, if say for "2000"
-    # parse is more strict, but it accepts a wide variety of formats say, 3rd Feb 2001 04:05:06 PM
-    # Hence we are using both, but still both of them do not handle seconds: 60, hours: 24 and invalid time zones, hence manipulation is done.
-    # yyyy-mm-dd, yyyy-mm-ddThh:mm, yyyy-mm-ddThh:mm:ss, yyyy-mm-ddThh:mm:ssZ, yyyy-mm-ddThh:mm:ssz,
-    # yyyy-mm-ddThh:mm:ss+hh, yyyy-mm-ddThh:mm:ss-hh, yyyy-mm-ddThh:mm:ss+hhmm, yyyy-mm-ddThh:mm:ss-hhmm
-    # yyyy-mm-ddThh:mm:ss+hh:mm, yyyy-mm-ddThh:mm:ss-hh:mm
-    DateTime.iso8601(value) && DateTime.parse(value) && iso8601_format
-    parse_sec_hour_and_zone(get_time_and_zone) if time_info? # avoid extra call if only date is present
-    return true
-    rescue => e
-      Rails.logger.error("API Parse Time Error Value: #{value} Exception: #{e.class} Exception Message: #{e.message}")
-      return false
-  end
-
   private
+
+    def invalid?
+      !parse_time
+    end
+
+    def message
+      :invalid_format
+    end
+
+    def custom_error_options
+      accepted = options[:only_date] ? :'yyyy-mm-dd' : :'combined date and time ISO8601'
+      { accepted: accepted }
+    end
+
+    def error_code
+      :missing_field if required_attribute_not_defined?
+    end
+
+    def parse_time
+      # We will accept dates only only in the iso8601 format.This is to avoid cases were other formats may behave unexpectedly.
+      # iso8601 expects date to follow the yyyy-mm-ddThh:mm:ss+dddd format, but it does not raise error, if say for "2000"
+      # parse is more strict, but it accepts a wide variety of formats say, 3rd Feb 2001 04:05:06 PM
+      # Hence we are using both, but still both of them do not handle seconds: 60, hours: 24 and invalid time zones, hence manipulation is done.
+      # yyyy-mm-dd, yyyy-mm-ddThh:mm, yyyy-mm-ddThh:mm:ss, yyyy-mm-ddThh:mm:ssZ, yyyy-mm-ddThh:mm:ssz,
+      # yyyy-mm-ddThh:mm:ss+hh, yyyy-mm-ddThh:mm:ss-hh, yyyy-mm-ddThh:mm:ss+hhmm, yyyy-mm-ddThh:mm:ss-hhmm
+      # yyyy-mm-ddThh:mm:ss+hh:mm, yyyy-mm-ddThh:mm:ss-hh:mm
+      DateTime.iso8601(value) && DateTime.parse(value) && iso8601_format
+      parse_sec_hour_and_zone(get_time_and_zone) if time_info? # avoid extra call if only date is present
+      return true
+      rescue => e
+        Rails.logger.error("API Parse Time Error Value: #{value} Exception: #{e.class} Exception Message: #{e.message}")
+        return false
+    end
 
     def iso8601_format
       fail(ArgumentError, FORMAT_EXCEPTION_MSG) unless value =~ date_time_regex_for_value

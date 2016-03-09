@@ -12,6 +12,5 @@ class AgentFilterValidation < FilterValidation
     # Refer api_filter from user.rb
     @conditions = (request_params.keys & AgentConstants::INDEX_FIELDS) - ['state'] + [request_params['state']].compact
     super(request_params, nil, true)
-    check_params_set(request_params)
   end
 end

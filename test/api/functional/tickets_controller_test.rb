@@ -137,7 +137,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = { requester_id: requester.id, email_config_id: email_config.reload.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     email_config.update_column(:account_id, @account.id)
-    match_json([bad_request_error_pattern('email_config_id', :invalid_value, resource: :email_config, attribute: :email_config_id)])
+    match_json([bad_request_error_pattern('email_config_id', :absent_in_db, resource: :email_config, attribute: :email_config_id)])
     assert_response 400
   end
 
@@ -148,7 +148,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
     email_config.update_column(:account_id, @account.id)
-    match_json([bad_request_error_pattern('email_config_id', :invalid_value, resource: :email_config, attribute: :email_config_id)])
+    match_json([bad_request_error_pattern('email_config_id', :absent_in_db, resource: :email_config, attribute: :email_config_id)])
     assert_response 400
   end
 
@@ -446,7 +446,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(due_by: 30.days.ago.iso8601, cc_emails: cc_emails)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', :too_long, entities: :values, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 50),
+    match_json([bad_request_error_pattern('cc_emails', :too_long, element_type: :values, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 50),
                 bad_request_error_pattern('due_by', :gt_created_and_now)])
   end
 
@@ -469,10 +469,10 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(custom_fields: { 'test_custom_country' => 'rtt', 'test_custom_dropdown' => 'ddd' }, group_id: 89_089, product_id: 9090, email_config_id: 89_789, responder_id: 8987, requester_id: user.id)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('group_id', :invalid_value, resource: :group, attribute: :group_id),
-                bad_request_error_pattern('responder_id', :invalid_value, resource: :agent, attribute: :responder_id),
-                bad_request_error_pattern('email_config_id', :invalid_value, resource: :email_config, attribute: :email_config_id),
-                bad_request_error_pattern('product_id', :invalid_value, resource: :product, attribute: :product_id),
+    match_json([bad_request_error_pattern('group_id', :absent_in_db, resource: :group, attribute: :group_id),
+                bad_request_error_pattern('responder_id', :absent_in_db, resource: :agent, attribute: :responder_id),
+                bad_request_error_pattern('email_config_id', :absent_in_db, resource: :email_config, attribute: :email_config_id),
+                bad_request_error_pattern('product_id', :absent_in_db, resource: :product, attribute: :product_id),
                 bad_request_error_pattern('requester_id', :user_blocked),
                 bad_request_error_pattern('test_custom_country', :not_included, list: 'Australia,USA'),
                 bad_request_error_pattern('test_custom_dropdown', :not_included, list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
@@ -493,7 +493,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(requester_id: 898_999)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :invalid_value, attribute: :requester_id, resource: :contact)])
+    match_json([bad_request_error_pattern('requester_id', :absent_in_db, attribute: :requester_id, resource: :contact)])
   end
 
   def test_create_extra_params_invalid
@@ -1185,11 +1185,11 @@ class TicketsControllerTest < ActionController::TestCase
     t.update_column(:requester_id, nil)
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('group_id', :invalid_value, resource: :group, attribute: :group_id),
-                bad_request_error_pattern('responder_id', :invalid_value, resource: :agent, attribute: :responder_id),
-                bad_request_error_pattern('email_config_id', :invalid_value, resource: :email_config, attribute: :email_config_id),
+    match_json([bad_request_error_pattern('group_id', :absent_in_db, resource: :group, attribute: :group_id),
+                bad_request_error_pattern('responder_id', :absent_in_db, resource: :agent, attribute: :responder_id),
+                bad_request_error_pattern('email_config_id', :absent_in_db, resource: :email_config, attribute: :email_config_id),
                 bad_request_error_pattern('requester_id', :user_blocked),
-                bad_request_error_pattern('product_id', :invalid_value, resource: :product, attribute: :product_id),
+                bad_request_error_pattern('product_id', :absent_in_db, resource: :product, attribute: :product_id),
                 bad_request_error_pattern('test_custom_country', :not_included, list: 'Australia,USA'),
                 bad_request_error_pattern('test_custom_dropdown', :not_included, list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
   end
@@ -2145,15 +2145,15 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 999, requester_id: '999', filter: 'x')
     pattern = [bad_request_error_pattern('filter', :not_included, list: 'new_and_my_open,watching,spam,deleted')]
-    pattern << bad_request_error_pattern('company_id', :invalid_value, resource: :company, attribute: :company_id)
-    pattern << bad_request_error_pattern('requester_id', :invalid_value, resource: :contact, attribute: :requester_id)
+    pattern << bad_request_error_pattern('company_id', :absent_in_db, resource: :company, attribute: :company_id)
+    pattern << bad_request_error_pattern('requester_id', :absent_in_db, resource: :contact, attribute: :requester_id)
     assert_response 400
     match_json pattern
   end
 
   def test_index_with_invalid_email_in_params
     get :index, controller_params(email: Faker::Internet.email)
-    pattern = [bad_request_error_pattern('email', :invalid_value, resource: :contact, attribute: :email)]
+    pattern = [bad_request_error_pattern('email', :absent_in_db, resource: :contact, attribute: :email)]
     assert_response 400
     match_json pattern
   end

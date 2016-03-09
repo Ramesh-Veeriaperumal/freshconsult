@@ -120,7 +120,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_unsupported_media_type_invalid_content_type
     post '/api/discussions/categories', '{"category": {"name": "true"}}', @headers.merge('CONTENT_TYPE' => 'text/plain')
     assert_response 415
-    response.body.must_match_json_expression(un_supported_media_type_error_pattern)
+    response.body.must_match_json_expression(un_supported_media_type_error_pattern.merge(message: 'Content-Type header is set to text/plain. It should be set to application/json'))
   end
 
   def test_unsupported_media_type_invalid_content_type_with_no_body

@@ -15,6 +15,6 @@ module ErrorOptions
   end
 
   def detect_data_type(*types, value)
-    types.detect { |type| type === value }
+    types.detect { |type| value.is_a?(type) }
   end
 end

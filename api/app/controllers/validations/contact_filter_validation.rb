@@ -14,7 +14,6 @@ class ContactFilterValidation < FilterValidation
     filter_name = request_params.fetch('state', 'default')
     @conditions = @conditions - ['state'] + [filter_name].compact
     super(request_params, item, allow_string_param)
-    check_params_set(request_params, item)
   end
 
   def check_company

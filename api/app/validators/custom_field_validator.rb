@@ -38,89 +38,89 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
   end
 
-  # Required validator for string field based on condition
-  def validate_custom_text(record, field_name)
-    string_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required)
-    DataTypeValidator.new(string_options).validate(record)
-    CustomLengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING)).validate(record)
-  end
-
-  # Required validator for string field based on condition
-  def validate_custom_paragraph(record, field_name)
-    string_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required)
-    DataTypeValidator.new(string_options).validate(record)
-  end
-
-  # Numericality validator for number field
-  def validate_custom_number(record, field_name)
-    numericality_options = construct_options(ignore_string: :allow_string_param, only_integer: true, attributes: field_name, allow_nil: !@is_required, required: @is_required)
-    CustomNumericalityValidator.new(numericality_options).validate(record)
-  end
-
-  # Datatype validator for boolean field
-  def validate_custom_checkbox(record, field_name)
-    boolean_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', required: @is_required)
-    DataTypeValidator.new(boolean_options).validate(record)
-  end
-
-  # Numericality validator for decimal field
-  def validate_custom_decimal(record, field_name)
-    numericality_options = construct_options(force_allow_string: true, attributes: field_name, allow_nil: !@is_required, required: @is_required)
-    CustomNumericalityValidator.new(numericality_options).validate(record)
-  end
-
-  # Inclusion validator for nested field level 0
-  def validate_nested_field_level_0(record, field_name)
-    choices = get_choices(record, field_name, nil, nil, 0)
-    CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
-  end
-
-  # Inclusion validator for nested field level 2
-  # will not be validated if parent value (i.e., level 0 value) is nil
-  def validate_nested_field_level_2(record, field_name)
-    return unless @parent[:value]
-    choices = get_choices(record, @parent[:name], @parent[:value], nil, 2)
-    unless choices.nil?
-      CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
-    end
-  end
-
-  # Inclusion validator for nested field level 3
-  # will not be validated if parent value (i.e., level 1 value) or ancestor value (i.e., level 0 value) is nil
-  def validate_nested_field_level_3(record, field_name)
-    return unless @parent[:value] && @parent[:ancestor_value]
-    choices = get_choices(record, @parent[:name], @parent[:value], @parent[:ancestor_value], 3)
-    unless choices.nil?
-      CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
-    end
-  end
-
-  # Inclusion validator for dropdown field
-  def validate_custom_dropdown(record, field_name)
-    choices = proc_to_object(@drop_down_choices, record)
-    CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices[field_name], allow_nil: !@is_required, required: @is_required)).validate(record)
-  end
-
-  # Format validator for url field
-  def validate_custom_url(record, field_name)
-    # REGEX is taken from jquery.validate.js
-    format_options = construct_options(attributes: field_name, with: ApiConstants::URL_REGEX,  allow_nil: !@is_required, required: @is_required, accepted: 'valid URL')
-    CustomFormatValidator.new(format_options).validate(record)
-  end
-
-  def validate_custom_phone_number(record, field_name)
-    string_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required)
-    DataTypeValidator.new(string_options).validate(record)
-    CustomLengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING)).validate(record)
-  end
-
-  # Date validator for date field
-  def validate_custom_date(record, field_name)
-    date_options = construct_options(attributes: field_name, allow_nil: !@is_required, only_date: true, required: @is_required)
-    DateTimeValidator.new(date_options).validate(record)
-  end
-
   private
+
+    # Required validator for string field based on condition
+    def validate_custom_text(record, field_name)
+      string_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required)
+      DataTypeValidator.new(string_options).validate(record)
+      CustomLengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING)).validate(record)
+    end
+
+    # Required validator for string field based on condition
+    def validate_custom_paragraph(record, field_name)
+      string_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required)
+      DataTypeValidator.new(string_options).validate(record)
+    end
+
+    # Numericality validator for number field
+    def validate_custom_number(record, field_name)
+      numericality_options = construct_options(ignore_string: :allow_string_param, only_integer: true, attributes: field_name, allow_nil: !@is_required, required: @is_required)
+      CustomNumericalityValidator.new(numericality_options).validate(record)
+    end
+
+    # Datatype validator for boolean field
+    def validate_custom_checkbox(record, field_name)
+      boolean_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', required: @is_required)
+      DataTypeValidator.new(boolean_options).validate(record)
+    end
+
+    # Numericality validator for decimal field
+    def validate_custom_decimal(record, field_name)
+      numericality_options = construct_options(force_allow_string: true, attributes: field_name, allow_nil: !@is_required, required: @is_required)
+      CustomNumericalityValidator.new(numericality_options).validate(record)
+    end
+
+    # Inclusion validator for nested field level 0
+    def validate_nested_field_level_0(record, field_name)
+      choices = get_choices(record, field_name, nil, nil, 0)
+      CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
+    end
+
+    # Inclusion validator for nested field level 2
+    # will not be validated if parent value (i.e., level 0 value) is nil
+    def validate_nested_field_level_2(record, field_name)
+      return unless @parent[:value]
+      choices = get_choices(record, @parent[:name], @parent[:value], nil, 2)
+      unless choices.nil?
+        CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
+      end
+    end
+
+    # Inclusion validator for nested field level 3
+    # will not be validated if parent value (i.e., level 1 value) or ancestor value (i.e., level 0 value) is nil
+    def validate_nested_field_level_3(record, field_name)
+      return unless @parent[:value] && @parent[:ancestor_value]
+      choices = get_choices(record, @parent[:name], @parent[:value], @parent[:ancestor_value], 3)
+      unless choices.nil?
+        CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
+      end
+    end
+
+    # Inclusion validator for dropdown field
+    def validate_custom_dropdown(record, field_name)
+      choices = proc_to_object(@drop_down_choices, record)
+      CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices[field_name], allow_nil: !@is_required, required: @is_required)).validate(record)
+    end
+
+    # Format validator for url field
+    def validate_custom_url(record, field_name)
+      # REGEX is taken from jquery.validate.js
+      format_options = construct_options(attributes: field_name, with: ApiConstants::URL_REGEX,  allow_nil: !@is_required, required: @is_required, accepted: 'valid URL')
+      CustomFormatValidator.new(format_options).validate(record)
+    end
+
+    def validate_custom_phone_number(record, field_name)
+      string_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required)
+      DataTypeValidator.new(string_options).validate(record)
+      CustomLengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING)).validate(record)
+    end
+
+    # Date validator for date field
+    def validate_custom_date(record, field_name)
+      date_options = construct_options(attributes: field_name, allow_nil: !@is_required, only_date: true, required: @is_required)
+      DateTimeValidator.new(date_options).validate(record)
+    end
 
     def assign_options(attribute)
       @validatable_custom_fields = options[attribute][:validatable_custom_fields] || []

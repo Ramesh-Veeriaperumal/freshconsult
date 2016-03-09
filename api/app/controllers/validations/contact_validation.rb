@@ -1,4 +1,18 @@
 class ContactValidation < ApiValidation
+  
+  DEFAULT_FIELD_VALIDATIONS = {
+    job_title:  { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    language: { custom_inclusion: { in: ContactConstants::LANGUAGES } },
+    tag_names:  { data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true } },
+    time_zone: { custom_inclusion: { in: ContactConstants::TIMEZONES } },
+    phone: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    mobile: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    address: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    twitter_id: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    email: { data_type: { rules: String }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :"valid email address" }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    description: { data_type: { rules: String } }
+  }.freeze
+
   attr_accessor :avatar, :view_all_tickets, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
                 :language, :mobile, :name, :other_emails, :phone, :tag_names, :time_zone, :twitter_id, :address, :description
 
@@ -10,7 +24,7 @@ class ContactValidation < ApiValidation
   validates :email, :phone, :mobile, :company_name, :tag_names, :address, :job_title, :twitter_id, :language, :time_zone, :description, :other_emails, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
-                                field_validations: ContactConstants::DEFAULT_FIELD_VALIDATIONS
+                                field_validations: DEFAULT_FIELD_VALIDATIONS
                               }
 
   validates :name, data_type: { rules: String, required: true }
@@ -25,7 +39,7 @@ class ContactValidation < ApiValidation
 
   validate :check_contact_merge_feature, if: -> { other_emails }
   validates :other_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :"valid email address" }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } }
-  validates :other_emails, custom_length: { maximum: ContactConstants::MAX_OTHER_EMAILS_COUNT, message_options: { entities: :values } }
+  validates :other_emails, custom_length: { maximum: ContactConstants::MAX_OTHER_EMAILS_COUNT, message_options: { element_type: :values } }
   validate :check_contact_for_email_before_adding_other_emails, if: -> { other_emails }
   validate :check_other_emails_for_primary_email, if: -> { other_emails }, on: :update
 

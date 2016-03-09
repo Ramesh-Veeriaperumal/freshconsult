@@ -185,7 +185,7 @@ module ApiDiscussions
     def test_follow_user_id_invalid
       post :follow, construct_params({ id: first_topic.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user_id', :invalid_value, resource: :contact, attribute: :user_id)]
+      match_json [bad_request_error_pattern('user_id', :absent_in_db, resource: :contact, attribute: :user_id)]
     end
 
     def test_new_monitor_follow_user_id_valid
@@ -201,7 +201,7 @@ module ApiDiscussions
     def test_new_monitor_follow_user_id_invalid
       post :follow, construct_params({ id: first_topic.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user_id', :invalid_value, resource: :contact, attribute: :user_id)]
+      match_json [bad_request_error_pattern('user_id', :absent_in_db, resource: :contact, attribute: :user_id)]
     end
 
     def test_show
@@ -343,7 +343,7 @@ module ApiDiscussions
 
     def test_update_invalid_forum_id
       put :update, construct_params({ id: first_topic.id }, forum_id: (1000 + Random.rand(11)))
-      match_json([bad_request_error_pattern('forum_id', :invalid_value, resource: :forum, attribute: :forum_id)])
+      match_json([bad_request_error_pattern('forum_id', :absent_in_db, resource: :forum, attribute: :forum_id)])
       assert_response 400
     end
 
@@ -352,7 +352,7 @@ module ApiDiscussions
       topic = create_test_topic(forum)
       assert forum.forum_type == 1
       put :update, construct_params({ id: topic.id }, forum_id: (1000 + Random.rand(11)))
-      match_json([bad_request_error_pattern('forum_id', :invalid_value, resource: :forum, attribute: :forum_id)])
+      match_json([bad_request_error_pattern('forum_id', :absent_in_db, resource: :forum, attribute: :forum_id)])
       assert_response 400
     end
 
