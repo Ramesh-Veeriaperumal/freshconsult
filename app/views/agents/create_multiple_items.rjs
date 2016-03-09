@@ -8,5 +8,5 @@ else
   page << "Loading.updateStatus(status_box,'failure', '"+t('admin.getting_started.index.bulk_invite_blocked')+"');"
 end
 
-page << "loading_div.delay(2000).hide(1);"
+page << "loading_div.delay(3000).hide(1);"
 page << "jQuery('#agents_invite_email').val('')"
