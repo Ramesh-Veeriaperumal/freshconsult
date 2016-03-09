@@ -1,7 +1,5 @@
 class Portal < ActiveRecord::Base
 
-	FEATURE_BASED_METHODS = [:solution_categories]
-
 	has_many :portal_solution_categories,
 		:class_name => 'PortalSolutionCategory',
 		:foreign_key => :portal_id,

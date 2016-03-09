@@ -37,7 +37,6 @@ class Solution::Folder < ActiveRecord::Base
   delegate :visible?, :to => :solution_folder_meta
   delegate :visible_in?, :to => :solution_folder_meta
 
-  include Solution::MetaMethods
   include Solution::LanguageMethods
   
   SELECT_ATTRIBUTES = ["id"]

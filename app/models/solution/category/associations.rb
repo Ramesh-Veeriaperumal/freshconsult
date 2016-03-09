@@ -2,9 +2,6 @@ class Solution::Category < ActiveRecord::Base
 
 	belongs_to_account
 
-	FEATURE_BASED_METHODS = [:folders, :public_folders, :portal_solution_categories, :portals,
-    :published_articles, :articles, :user_folders, :mobihelp_app_solutions]
-
 	has_many :folders, :order => "position", :class_name =>'Solution::Folder'
 
   has_many :solution_folders, :order => "position", :class_name =>'Solution::Folder'

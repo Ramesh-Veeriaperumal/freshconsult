@@ -9,7 +9,6 @@ class Solution::Category < ActiveRecord::Base
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
   include Mobihelp::AppSolutionsUtils
-  include Solution::MetaMethods
   include Solution::Activities
 
   self.table_name =  "solution_categories"

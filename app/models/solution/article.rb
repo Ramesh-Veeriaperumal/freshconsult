@@ -8,8 +8,6 @@ class Solution::Article < ActiveRecord::Base
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
 
-  include Solution::MetaMethods
-
   belongs_to :recent_author, :class_name => 'User', :foreign_key => "modified_by"
   has_one :draft, :dependent => :destroy
 
@@ -214,6 +212,10 @@ class Solution::Article < ActiveRecord::Base
 
   def article_changes
     @article_changes ||= self.changes.clone
+  end
+
+  def meta_class
+    "Solution::ArticleMeta".constantize
   end
 
   VOTE_TYPES.each do |method|

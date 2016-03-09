@@ -1,7 +1,5 @@
 class Solution::Article < ActiveRecord::Base
 
-	FEATURE_BASED_METHODS = [:folder]
-
 	belongs_to :folder, :class_name => 'Solution::Folder'
 
   belongs_to :user, :class_name => 'User'
