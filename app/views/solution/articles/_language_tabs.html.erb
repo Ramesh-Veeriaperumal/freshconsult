@@ -9,12 +9,12 @@
 
 	<%= extra_tab if @lang_objs.length == 1 %>
 	<% if @lang_objs.present? %>
-		<div class="inline-block">
+    <div class="version_select_parent">
 			<div class="version_select_container tooltip">
-				<%= t('solution.articles.more_languages', :count => @lang_objs.size) %>
+				<%= t('solution.articles.translate', :count => @lang_objs.size) %>
 				<i class="ficon-caret-down fsize-14 ml5" size="14"></i>
 			</div>
 			<%= article_versions_dropdown %>
-		</div>
+    </div>
 	<% end %>
 <% end %>

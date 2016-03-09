@@ -495,6 +495,6 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def incorrect_category_meta
-      @article_meta.parent.solution_category_meta_id.to_s != params[:solution_category_meta][:id] if params[:solution_category_meta].present?
+      @article_meta.solution_folder_meta.solution_category_meta_id.to_s != params[:solution_category_meta][:id] if params[:solution_category_meta].present?
     end
 end

@@ -480,7 +480,7 @@ body.community.moderation.cs-always-show {
 		}
 
 		.add-translations-btn {
-			float: right;
+			@include float(right);
 		}
 	}
 	.modal-footer {

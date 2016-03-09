@@ -3992,7 +3992,7 @@ en:
     plain_new: New
     plain_edit: Edit
     show_languages: Show languages
-    hide_languages: Hide languages
+    show_analytics: Show analytics
     create_new: Create New
     show_master: Show Master
     language_label_titles:
@@ -4180,7 +4180,7 @@ en:
         confirm_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
       add_translation: Add Translation
       add_primary_info: Create article in your primary language<br/>to select other language translations.
-      more_languages: "%{count} more"
+      translate: "Translate"
       show_all_analytics: See analytics for all languages
       not_in_portal: This language is not visible to users
       language_not_in_portal: "This article will not show up to your users on the portal until the language is enabled"

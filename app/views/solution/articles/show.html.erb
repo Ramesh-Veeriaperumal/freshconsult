@@ -22,6 +22,7 @@
 		<%= render :partial => "show_master" if Account.current.multilingual? && !@article.is_primary? %>
 		<div class="language-tabs">
 			<%= render :partial => "language_tabs" if Account.current.multilingual? %>
+      <div class="clearfix"></div>
 		</div>
 		<div class="solution-header draft-notif" id="solution-notification-bar">
 			<%= render :partial => 'notification_bar' %>
