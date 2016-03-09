@@ -30,6 +30,7 @@ gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/freshdesk/rack
 gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
 
 gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
+gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'v10'
 
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.2', :platform => [:mri_20, :mri_21]

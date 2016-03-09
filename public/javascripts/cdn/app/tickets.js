@@ -2,3 +2,4 @@
 //= require app/merge_tickets.js
 //= require app/compose.js
 //= require app/scenario.js
+//= require app/watcher.js

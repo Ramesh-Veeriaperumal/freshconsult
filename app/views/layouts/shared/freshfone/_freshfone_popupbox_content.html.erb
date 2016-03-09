@@ -1,5 +1,8 @@
 <div class="tab-pane hide" id="freshfone_dialpad">
 	<input type="hidden" id="lastDial">
+	<% if freshfone_trial_states? %>
+		<%= render :partial => 'layouts/shared/freshfone/trial_activate' %>
+	<%end%>
 	<%= render :partial => 'layouts/shared/freshfone/freshfone_dialpad' %>
 	<div id="recent_calls"></div>
 	<div class="dialpad_icon">

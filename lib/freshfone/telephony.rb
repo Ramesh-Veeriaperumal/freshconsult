@@ -2,15 +2,16 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
   include Freshfone::FreshfoneUtil
   include Freshfone::Endpoints
   include Freshfone::NumberMethods
+  include Freshfone::SubscriptionsUtil
   
   attr_accessor :params, :current_account, :current_number, :current_call, 
                 :initiator, :routing_type, :provider
 
-  def initialize(params={}, current_account=nil, current_number=nil, initiator=nil)
+  def initialize(params={}, current_account=nil, current_number=nil, current_call = nil)
     self.params          = params
     self.current_account = current_account
     self.current_number  = current_number
-    self.initiator       = initiator
+    self.current_call    = current_call
     #below: initializing Twilio directly now. inject the dependency when having multiple providers
     self.provider        = Freshfone::Providers::Twilio
   end
@@ -132,7 +133,7 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
   end
   alias_method :redirect_call, :redirect_call_to_conference
 
-  def initiate_outgoing(current_call)
+  def initiate_outgoing
     outgoing_params = {
       :url             => outgoing_accept_url(current_call.id),
       :status_callback => outgoing_status_url(current_call.id,current_call.user_id), # SpreadsheetL 57,58,59
@@ -153,31 +154,31 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
     telephony.redirect_call(customer_sid, initiate_hold_url(customer_sid, transfer_options), current_account)
   end
 
-  def initiate_unhold(current_call)
+  def initiate_unhold
     hold_queue = current_call.hold_queue    
     customer_leg = outgoing_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
     telephony.dequeue(hold_queue, customer_leg, unhold_url(current_call.id), current_account)
   end
 
-  def initiate_transfer_on_unhold(current_call) #Can be merged with intiate_unhold action
+  def initiate_transfer_on_unhold #Can be merged with intiate_unhold action
     params[:child_sid] = current_call.children.last.dial_call_sid || params[:CallSid]
     hold_queue = current_call.hold_queue
     customer_leg = outgoing_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
     telephony.dequeue(hold_queue, customer_leg, transfer_on_unhold_url(current_call.id), current_account) 
   end
 
-  def initiate_transfer_fall_back(current_call)
+  def initiate_transfer_fall_back
     hold_queue = current_call.hold_queue
     customer_leg = current_call.hold_leg_sid
     telephony.dequeue(hold_queue, customer_leg, transfer_fall_back_url(current_call.id), current_account)
   end
 
-  def mute_participants(current_call)
+  def mute_participants
     conference = current_call.conference
     telephony.mute_participants(conference)
   end
 
-  def unmute_participants(current_call)
+  def unmute_participants
     conference = current_call.conference
     telephony.unmute_participants(conference)
   end
@@ -228,7 +229,7 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
     end
 
     def time_limit
-      current_account.freshfone_credit.call_time_limit
+      ::Freshfone::Credit.call_time_limit(current_account, current_call)
     end
 
     def room_name(call_sid=nil, incoming_wait = false)

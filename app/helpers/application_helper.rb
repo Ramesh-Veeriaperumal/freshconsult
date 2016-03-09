@@ -7,7 +7,6 @@ module ApplicationHelper
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
   include ChatHelper
-  include Marketplace::ApiHelper
 
   include AttachmentHelper
   include ConfirmDeleteHelper
@@ -19,7 +18,9 @@ module ApplicationHelper
   include TabHelper
   include ReportsHelper
   include Freshfone::CallerLookup
+  include Freshfone::SubscriptionsHelper
   include DateHelper
+  include StoreHelper
   
   require "twitter"
 
@@ -1461,11 +1462,16 @@ module ApplicationHelper
  end
 
  def freshfone_presence_status_class
-  return "ficon-phone-disable" if current_user.freshfone_user_offline?
+  return "ficon-phone-disable" if current_user.freshfone_user_offline? ||
+    !freshfone_active_or_trial?
   presence_class = (current_user.freshfone_user && current_user.freshfone_user.available_on_phone?) ?
                        "ficon-ff-via-phone" : "ficon-ff-via-browser"
   presence_class + " ff-busy" unless current_user.freshfone_user_online?
   return presence_class
+ end
+
+ def phone_disabled?
+  'disabled' unless freshfone_active_or_trial?
  end
 
   def freshfone_non_conference_class
@@ -1603,9 +1609,5 @@ module ApplicationHelper
     
     content_tag :ul, &list
   end
-
-  def get_store_data
-    {:current_user => current_user, :agent => current_account.agents_from_cache, :group => current_account.groups_from_cache}.to_json
-  end
-
+  
 end

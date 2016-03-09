@@ -7,7 +7,7 @@ end
 
 RSpec.describe Freshfone::UsageTrigger do 
   self.use_transactional_fixtures = false
-  
+
   before(:each) do
     create_test_freshfone_account
     @freshfone_account = @account.freshfone_account
@@ -36,11 +36,7 @@ RSpec.describe Freshfone::UsageTrigger do
     params = { :first => '75', :second => '300' }
     Resque.inline = true
     Freshfone::Jobs::UsageTrigger.stubs(:delete_usage_trigger)
-    twilio_trigger = mock
-    twilio_trigger.stubs(:sid).returns('SidUT')
-    twilio_trigger.stubs(:current_value).returns('50')
-    twilio_trigger.stubs(:trigger_value).returns('300')
-    Twilio::REST::Triggers.any_instance.stubs(:create).returns(twilio_trigger)
+    Twilio::REST::Triggers.any_instance.stubs(:create).returns(twilio_mock_helper('SidUT','50',"300"))
     Freshfone::UsageTrigger.update_triggers(@freshfone_account, params)
     ut_trigger = @freshfone_account.freshfone_usage_triggers.where({:sid => 'SidUT'}).first
     expect(ut_trigger.sid).to eq('SidUT')
@@ -48,5 +44,21 @@ RSpec.describe Freshfone::UsageTrigger do
     Resque.inline = false
     Twilio::REST::Triggers.any_instance.unstub(:create)
     Freshfone::Jobs::UsageTrigger.unstub(:delete_usage_trigger)
+  end
+
+  it 'should create trial usage triggers when a call`s total duration is updated' do
+    @account.freshfone_account.freshfone_usage_triggers.destroy_all
+    load_freshfone_trial
+    @calls_usage = @account.freshfone_account.subscription.calls_usage[:minutes][:incoming]
+    @freshfone_call = @account.freshfone_calls.create(:freshfone_number_id => @number.id,
+      :call_type => 1, :agent => @agent, :params => {:CallSid => "CA2db76c748cb6f081853f80dace462a04"})
+    Freshfone::Jobs::UsageTrigger.stubs(:delete_usage_trigger)
+    twilio_mock_helper('SidUT','05',"#{@calls_usage+10}")
+    Resque.inline = true
+    @freshfone_call.update_attributes(total_duration: 10)
+    expect(Freshfone::UsageTrigger.trial_triggers_present?(@account.freshfone_account)).to be true
+    Twilio::REST::Triggers.any_instance.unstub(:create)
+    Freshfone::Jobs::UsageTrigger.unstub(:delete_usage_trigger)
+    Resque.inline = false
   end
 end

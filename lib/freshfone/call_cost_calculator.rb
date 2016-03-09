@@ -1,6 +1,8 @@
 class Freshfone::CallCostCalculator
 	include Redis::RedisKeys
 	include Redis::IntegrationsRedis
+	include Freshfone::SubscriptionsUtil
+
 	attr_accessor :args, :current_account, :first_leg_call, :total_charge, :current_call
 	delegate :outgoing?, :to => :current_call, :allow_nil => true
 	DEFAULT_CALL_COST = -1.0
@@ -45,6 +47,8 @@ class Freshfone::CallCostCalculator
 		end
 
 		def supervisor_leg
+			return if current_call.blank?
+			return unless current_account.features?(:freshfone_call_monitoring)
 			@supervisor_leg ||= current_call.supervisor_controls.recent_completed_call.first
 		end
 
@@ -85,7 +89,7 @@ class Freshfone::CallCostCalculator
 			if total_charge > 0
 				current_call.update_attribute(:call_cost, total_charge) if can_update_call_record?(args)
 				supervisor_leg.update_attribute(:cost, total_charge) if supervisor_leg.present?
-				current_account.freshfone_credit.deduce(total_charge)
+				deduce(total_charge)
 				#Otherbilling for preview & Message_records
 				current_account.freshfone_other_charges.create(
 					:debit_payment => total_charge,
@@ -184,13 +188,23 @@ class Freshfone::CallCostCalculator
     	current_account.features?(:freshfone_conference)
     end
 
-    def pick_duration_for_call
-    	conference? ? duration_for_conference_call : duration_for_call
-    end
+		def pick_duration_for_call
+			conference? ? duration_for_conference_call : duration_for_call
+		end
 
-    def twilio_call_and_total_duration
-    	return if current_call.blank?
-      current_call.call_duration = self.first_leg_call.duration if current_call.call_duration.blank?
-      current_call.total_duration = self.first_leg_call.duration if conference? && current_call.total_duration.blank?
-    end
+		def twilio_call_and_total_duration
+			return if current_call.blank?
+			current_call.call_duration = self.first_leg_call.duration if current_call.call_duration.blank?
+			current_call.total_duration = self.first_leg_call.duration if conference? && current_call.total_duration.blank?
+		end
+
+		def deduce(total_charge)
+			return current_account.freshfone_credit.deduce(total_charge) unless trial?
+			deduce_trial_call_cost
+		end
+
+		def deduce_trial_call_cost
+			return freshfone_subscription.add_to_others_usage(total_charge) if args[:billing_type].present?
+			freshfone_subscription.add_to_calls_usage(total_charge)
+		end
 end

@@ -330,9 +330,8 @@ class Helpdesk::TicketsController < ApplicationController
   def update
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
     build_attachments @item, :helpdesk_ticket
+    params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     if @item.update_ticket_attributes(params[nscname])
-
-      update_tags(params[:helpdesk][:tags], true, @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       respond_to do |format|
         format.html {
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -371,8 +370,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def update_ticket_properties
+    params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     if @item.update_ticket_attributes(params[nscname])
-      update_tags(params[:helpdesk][:tags], true, @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       if(params[:redirect] && params[:redirect].to_bool)
         flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice', :formats => [:html], :handlers => [:erb] ).html_safe
       end
@@ -705,9 +704,9 @@ class Helpdesk::TicketsController < ApplicationController
     @item.display_id = params[:helpdesk_ticket][:display_id]
     @item.email = params[:helpdesk_ticket][:email]
     @item.group = current_account.groups.find_by_id(params[:helpdesk_ticket][:group_id]) if params[:helpdesk_ticket][:group_id]
+    @item.tag_names = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
 
     build_attachments @item, :helpdesk_ticket
-    create_tags(params[:helpdesk][:tags], @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     persist_states_for_api
     if @item.save_ticket
       post_persist

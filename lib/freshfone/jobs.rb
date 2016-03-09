@@ -19,6 +19,14 @@ module Freshfone::Jobs
 		end
 		# VVERBOSE=1 QUEUE=FRESHFONE_QUEUE rake resque:work
 	end
+
+	class CallQueuing < FoneJobs
+		@queue = 'freshfone_queue_wait'
+		def self.perform_job(args)
+			queue_worker = Freshfone::Jobs::CallQueueWorker.new
+			queue_worker.perform(args)
+		end
+	end
 	
 	class AttachmentsDelete < FoneJobs
 		@queue = QUEUE

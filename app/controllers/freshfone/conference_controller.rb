@@ -46,7 +46,7 @@ class Freshfone::ConferenceController < FreshfoneBaseController
 
   def agent_wait #Outgoing call
     begin
-      telephony.initiate_outgoing(current_call)
+      telephony.initiate_outgoing
       render :xml => telephony.play_agent_wait_music
     rescue Exception => e
       Rails.logger.error "Error in conference incoming caller wait for #{current_account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
@@ -67,7 +67,7 @@ class Freshfone::ConferenceController < FreshfoneBaseController
   private
     def telephony
       current_number ||= current_call.freshfone_number
-      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number)
+      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number, current_call)
     end
 
     def notifier

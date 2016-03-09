@@ -182,7 +182,8 @@ module Freshfone::Queue
 
     def add_to_call_queue_worker(async = false, user_id = current_user.id, params = params)
       return Freshfone::CallQueueWorker.perform_async(params.merge(:account_id => ::Account.current.id), user_id) if async
-      Freshfone::CallQueueWorker.perform_in(10.seconds, params.merge(:account_id => ::Account.current.id), user_id)
+      Resque.enqueue_at(10.seconds.from_now, Freshfone::Jobs::CallQueuing,
+          params.merge(account_id: ::Account.current.id, agent: user_id))
     end
 
     def read_queue_position_message(xml_builder)
