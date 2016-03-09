@@ -385,32 +385,32 @@ $('.btn-collapse').livequery(
 	}
 );
 
-
-// Image enlarger - Ticket details
-$("[rel='image-enlarge'] img").livequery(function (i) {
-  if(this.style.height || this.height) {
+	// Image enlarger - Ticket details
+	$("[rel='image-enlarge'] img").livequery(function () {			
     var img = $(this);
-    $("<img/>")
-      .attr("src", img.attr("src"))
-      .load(function() {
-        var originalWidth = this.width,
-          originalHeight = this.height,
-          outerWidth = img.outerWidth(),
-          outerHeight = img.outerHeight(),
-          originalAspectRatio = originalWidth / originalHeight,
-          aspectRatio = outerWidth / outerHeight;
+  	$("<img/>")
+    .attr("src", img.attr("src"))
+    .load(function() {
 
-        if(aspectRatio !== originalAspectRatio) {
-          img.outerHeight(outerWidth/originalAspectRatio);
-        }
-      });
-  }
+      var originalWidth = this.width,
+        originalHeight = this.height,
+        outerWidth = $(img).actual('width'),  // outerWidth/outerHeight will be 0 for hidden element.So we are user jQuery.actual.min.js to get width/height
+        outerHeight = $(img).actual('height'),
+        originalAspectRatio = originalWidth / originalHeight,
+        aspectRatio = outerWidth / outerHeight;
 
-  $(this).wrap(function(){
-    return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
-  });
-});
+      if(aspectRatio !== originalAspectRatio) {
+        img.outerHeight(outerWidth/originalAspectRatio);
+        
+        if(!img.parent('a').get(0)) {
+			  	img.wrap(function(){
+				    return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
+				  });
+			  }
+      }
 
+    });
+	});
 
 });
 

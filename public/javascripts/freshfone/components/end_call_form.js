@@ -382,7 +382,7 @@ var FreshfoneEndCall;
 			return this.requesterEmail().trim() != "" && !this.isValidEmail(this.$requesterEmail.val());
 		},
 		numberValdationResult: function(){
-			return this.$requesterNumber.val() != "" && !isValidNumber(this.$requesterNumber.val());
+			return !this.$requesterName.data('requester_id') && this.$requesterNumber.val() != "" && !isValidNumber(this.$requesterNumber.val());
 		},
 		toggleWarning: function(elem , to_show){
 			elem.toggle(to_show);

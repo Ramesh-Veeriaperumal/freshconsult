@@ -191,7 +191,8 @@ module FreshdeskCore::Model
                         "smtp_mailboxes",
                         "ticket_form_fields",
                         "user_companies",
-                        "whitelist_users"
+                        "whitelist_users",
+                        "outgoing_email_domain_categories"
                     ]
 
   STATUS = {

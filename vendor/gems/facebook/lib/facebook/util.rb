@@ -41,7 +41,9 @@ module Facebook
     #Parse the feed content from facebook comment
     def html_content_from_comment(feed)
       html_content =  CGI.escapeHTML(feed[:message]) if feed[:message] 
-      if feed[:attachment]        
+      return html_content unless feed[:attachment]        
+      
+      begin
         attachment = feed[:attachment].symbolize_keys!     
         if "share".eql?(attachment[:type])
           desc = feed[:description] || ""
@@ -51,8 +53,10 @@ module Facebook
             <p>#{desc}</p></div></div>"
         elsif "photo".eql?(attachment[:type])
           html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><a href=\"#{attachment[:target][:url]}\" target=\"_blank\"><img src=\"#{attachment[:media][:image][:src]}\"></a></p></div>"
-        end      
-      end
+        end  
+      rescue => e
+        Rails.logger.debug("Error while parsing attachment in comment:: #{feed[:id]} :: #{feed[:attachment]}")
+      end    
       
       html_content
     end

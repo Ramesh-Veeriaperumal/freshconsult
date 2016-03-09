@@ -10,6 +10,7 @@ Helpkit::Application.routes.draw do
         post :time_entries, to: 'time_entries#create'
       end
     end
+
     resources :conversations, except: [:new, :edit, :show, :index, :create]
 
     resources :ticket_fields, controller: :api_ticket_fields, only: [:index]

@@ -14,7 +14,7 @@ module Facebook
       end
       
       def fetch_latest_posts
-        posts = @rest.get_connections('me', 'feed', {:fields => "id, from"})
+        posts = @rest.get_connections('me', 'feed', {:fields => "id, from, updated_time"})
         unless posts.blank?
           process_graph_feeds(posts)
           updated_time = Time.zone.parse(posts.first[:updated_time])       
@@ -30,7 +30,7 @@ module Facebook
           next if @account.facebook_posts.find_by_post_id(post[:id])
           clazz     = post_type(post[:from]["id"])
           core_post = ("facebook/core/#{clazz}").camelize.constantize.new(@fan_page, post[:id])
-          core_post.process(push_to_dynamo?(post[:id]), convert_to_ticket?(clazz))
+          core_post.process(convert_to_ticket?(clazz), push_to_dynamo?(post[:id]))
         end
       end
        
@@ -43,6 +43,7 @@ module Facebook
       end
       
       def push_to_dynamo?(post_id)
+        return false unless Account.current.features?(:social_revamp)
         dynamo_keys  = dynamo_hash_and_range_key(@fan_page.default_stream.id)
         !@dynamo_helper.has_parent_feed?(Time.now.utc, dynamo_keys, post_id)
       end

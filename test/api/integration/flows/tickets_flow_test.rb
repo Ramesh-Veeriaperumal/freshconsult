@@ -223,6 +223,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     # In API V1
     previous_updated_at_for_api_v1 = ticket.updated_at
     sleep 1
+
     put("/helpdesk/tickets/#{ticket.id}/conversations/#{note.id}.json", { helpdesk_note: { body: Faker::Lorem.paragraph } }.to_json, @write_headers)
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i > previous_updated_at_for_api_v1.to_i

@@ -3,7 +3,7 @@ Encoding.default_external = Encoding::UTF_8
 source 'http://rubygems.org'
 
 gem "rake", "~> 10.4.0"
-gem "rails","3.2.22.1"
+gem "rails","3.2.22.2"
 
 gem 'rack-cors', '~> 0.3.1'
 gem "syck", :platform => [:mri_20, :mri_21]
@@ -67,7 +67,6 @@ gem "omniauth-google"
 gem "omniauth-google-oauth2"
 gem "omniauth-facebook"
 gem "omniauth-quickbooks"
-gem "omniauth-salesforce", :git => "git://github.com/sathishfreshdesk/omniauth-salesforce.git", :branch => "master"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "dynamics_crm", :git => 'git@github.com:TinderBox/dynamics_crm.git', :branch => "master"

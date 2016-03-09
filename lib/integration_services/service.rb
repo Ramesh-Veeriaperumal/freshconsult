@@ -20,6 +20,9 @@ module IntegrationServices
 
 
     attr_reader :event_method
+    
+
+    attr_reader :installed_app
 
     # Public: Gets the configuration data for this Service instance.
     #
