@@ -89,6 +89,17 @@ class ApiAgentsControllerTest < ActionController::TestCase
     match_json(agent_pattern(sample_agent))
   end
 
+  def test_show_agent_with_view_contact_privilege_only
+    User.any_instance.stub(:privilege?).with(:view_contacts).return(true)
+    User.any_instance.stub(:privilege?).with(:manage_users).return(false)
+    sample_agent = @account.all_agents.first
+    get :show, construct_params(id: sample_agent.user.id)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
   def test_show_missing_agent
     get :show, construct_params(id: 60_000)
     assert_response :missing
