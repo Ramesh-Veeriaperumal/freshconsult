@@ -75,7 +75,6 @@ class Solution::ArticleMeta < ActiveRecord::Base
       	}
 	}
 
-	delegate :draft, :status, :user, :to => :primary_article
 	delegate :visible_in?, :to => :solution_folder_meta
 	delegate :visible?, :to => :solution_folder_meta
 	delegate :description, :desc_un_html, :to => :current_article_body

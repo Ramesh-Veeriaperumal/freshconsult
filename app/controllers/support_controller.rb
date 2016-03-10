@@ -28,7 +28,7 @@ class SupportController < ApplicationController
     controller.send('flash').keys.blank?
   }, 
   :cache_path => proc { |c| 
-    Digest::SHA1.hexdigest("#{c.send(:current_portal).cache_prefix}#{c.request.original_fullpath}#{params[:portal_type]}")
+    Digest::SHA1.hexdigest("#{c.send(:current_portal).cache_prefix}#{c.request.env["REQUEST_PATH"]}#{params[:portal_type]}")
   }
   
   def cache_enabled?
@@ -141,7 +141,7 @@ class SupportController < ApplicationController
                        :keywords => @page_keywords,
                        :canonical => @page_canonical }
                        
-      @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{@current_path}"
+      @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{request.env['REQUEST_PATH']}"
       multilingual_meta(page_token)
 
       @meta = HashDrop.new( @page_meta )
