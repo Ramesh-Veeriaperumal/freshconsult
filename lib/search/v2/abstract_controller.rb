@@ -84,7 +84,10 @@ module Search::V2::AbstractController
       # _Note_: Define in inheriting class
       #
       def construct_es_params
-        { search_term: @es_search_term }
+        { 
+          search_term: @es_search_term,
+          request_id: request.try(:uuid)
+        }
       end
 
       # Reconstruction of AR result set to JSON, etc if any

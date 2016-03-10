@@ -17,7 +17,7 @@ module RabbitMq::Subscribers::Accounts::Search
   end
 
   def sqs_manual_publish
-    Search::V2::SqsSkeleton.manual_publish(self)
+    RabbitMq::Subscribers::Search::SqsUtils.manual_publish(self)
   end
 
   private

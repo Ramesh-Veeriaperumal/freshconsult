@@ -30,11 +30,6 @@ begin
 
   # Reports helpkit Export
   $sqs_reports_helpkit_export = AWS::SQS.new.queues.named(SQS[:helpdesk_reports_export_queue])  
-
-  # AWS SDK V2 SQS Client
-  $sqs_v2_client = (Rails.env.development? || Rails.env.test?) ? 
-    Aws::SQS::Client.new(endpoint: 'http://localhost:4568', access_key_id: 'dummy', secret_access_key: 'dummy') : 
-    Aws::SQS::Client.new(region: S3_CONFIG[:region],access_key_id: S3_CONFIG[:access_key_id],secret_access_key: S3_CONFIG[:secret_access_key])
   
 rescue => e
   puts "AWS::SQS connection establishment failed."

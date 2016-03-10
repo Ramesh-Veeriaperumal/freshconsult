@@ -12,13 +12,12 @@ namespace :search_v2 do
 
     AwsWrapper::SqsV2.poll(SQS[:search_etl_queue]) do |msg|
       begin
-        decoded_json = ActiveSupport::JSON.decode(msg.body)
-        search_message = JSON.parse(decoded_json)
+        search_message = JSON.parse(msg.body)
         args = search_message["#{search_message['object']}_properties"].merge({
           'version' => (search_message['action_epoch'] * 1000000).ceil
         })
 
-        puts args.inspect, "\n", search_message.inspect, "\n"
+        puts "\n", search_message.inspect, "\n"
 
         # # Account + Create => EnableSearch
         # # Account + Destroy => DisableSearch

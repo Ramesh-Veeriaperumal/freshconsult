@@ -10,12 +10,13 @@ module Search
 
         attr_accessor :method, :path, :payload, :logger, :response, :log_data
 
-        def initialize(method, path, payload=nil, log_data=nil)
-          @method    = method.to_sym
-          @path      = path
-          @payload   = payload
-          @logger    = EsLogger.new
-          @log_data  = log_data
+        def initialize(method, path, payload=nil, log_data=nil, request_uuid=nil)
+          @method     = method.to_sym
+          @path       = path
+          @payload    = payload
+          @uuid       = request_uuid
+          @logger     = EsLogger.new(@uuid)
+          @log_data   = log_data
           
           es_request
         end

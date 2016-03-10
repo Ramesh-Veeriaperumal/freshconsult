@@ -5,23 +5,23 @@ module Search
       class Data
         include Singleton
 
-        TENANT_TABLE = (Rails.env.test? ? 'tenant_info_test' : 'tenant_info')
+        TENANT_TABLE = ES_V2_DYNAMO_TABLES[:tenant]
 
         # Get tenant info from cache/data store
         def tenant_info(tenant_id)
           Cache.instance.fetch(Cache::TENANT_INFO % { tenant_id: tenant_id }) do
-            $dynamo_client.get_item(table_name: TENANT_TABLE, key: { tenant_id: tenant_id }).item
+            DYNAMO_V2_CLIENT.get_item(table_name: TENANT_TABLE, key: { tenant_id: tenant_id }).item
           end
         end
 
         # Store the tenant config in data store
         def store_config(tenant_id)
-          $dynamo_client.put_item(table_name: TENANT_TABLE, item: config(tenant_id))
+          DYNAMO_V2_CLIENT.put_item(table_name: TENANT_TABLE, item: config(tenant_id))
         end
 
         # Remove the tenant config from data store
         def remove_config(tenant_id)
-          $dynamo_client.delete_item(table_name: TENANT_TABLE, key: { tenant_id: tenant_id })
+          DYNAMO_V2_CLIENT.delete_item(table_name: TENANT_TABLE, key: { tenant_id: tenant_id })
         end
 
         private

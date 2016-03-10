@@ -32,6 +32,9 @@ class Search::V2::Operations::EnableSearch
         account.topics.find_in_batches(:batch_size => 300) do |topics|
           update_in_es(topics)
         end
+        account.posts.find_in_batches(:batch_size => 300) do |posts|
+          update_in_es(posts)
+        end
         account.companies.find_in_batches(:batch_size => 300) do |companies|
           update_in_es(companies)
         end

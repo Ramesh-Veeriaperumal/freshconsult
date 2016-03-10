@@ -4,7 +4,7 @@ class Post < ActiveRecord::Base
     as_json({
         root: false,
         tailored_json: true,
-        only: [ :body ]
+        only: [ :body, :account_id ]
       }).merge(attachments: es_v2_attachments).to_json
   end
 

@@ -14,10 +14,13 @@ module Search
       # Search for hits in ES and send response
       #
       def fetch(search_params)
+        request_uuid = search_params.delete(:request_id)
+
         Utils::EsClient.new(:get, 
                             (@template_name? template_query_path : search_path), 
                             construct_payload(search_params),
-                            Search::Utils::SEARCH_LOGGING[:request]
+                            Search::Utils::SEARCH_LOGGING[:request],
+                            request_uuid
                           ).response
       end
 
