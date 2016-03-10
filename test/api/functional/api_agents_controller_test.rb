@@ -90,8 +90,8 @@ class ApiAgentsControllerTest < ActionController::TestCase
   end
 
   def test_show_agent_with_view_contact_privilege_only
-    User.any_instance.stub(:privilege?).with(:view_contacts).return(true)
-    User.any_instance.stub(:privilege?).with(:manage_users).return(false)
+    User.any_instance.stubs(:privilege?).with(:view_contacts).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
     sample_agent = @account.all_agents.first
     get :show, construct_params(id: sample_agent.user.id)
     assert_response 403
