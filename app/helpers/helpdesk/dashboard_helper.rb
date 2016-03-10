@@ -193,4 +193,79 @@ module Helpdesk::DashboardHelper
   def achivements_memcache_key
     MemcacheKeys.memcache_local_key(LEADERBOARD_MINILIST_REALTIME)
   end
+
+	def freshfone_indicator_class
+		load_warnings
+		return 'expired ficon-warning' if freshfone_trial_expired?
+		return 'low_credit ficon-warning' if !freshfone_trial_states? && freshfone_below_threshold?
+		return 'normal' unless @show_warnings
+		'warning tooltip ficon-warning'
+	end
+
+	def load_warnings
+		@show_warnings = freshfone_subscription.present? && freshfone_subscription.trial_warnings? && freshfone_trial?
+	end
+
+	def freshfone_warnings
+		return unless @show_warnings
+		"#{freshfone_trial_incoming_warning}
+		#{freshfone_trial_outgoing_warning}
+		#{freshfone_trial_period_warning}".html_safe
+	end
+
+	def freshfone_warning_msg
+		return t('freshfone.dashboard.trial.expired_title') if freshfone_trial_expired?
+		return t('freshfone.dashboard.trial.title') if freshfone_trial?
+		t('freshfone.dashboard.low_credit') if freshfone_below_threshold?
+	end
+
+	def freshfone_trial_incoming_warning
+		return "#{t('freshfone.dashboard.trial.inbound_minutes_left.other', minutes: 0) }<br/>" if
+			freshfone_subscription.inbound_usage_exceeded?
+		return unless freshfone_subscription.incoming_warning?
+		mins_left = pending_minutes_helper(
+				freshfone_subscription.pending_incoming_minutes)
+		return "#{t('freshfone.dashboard.trial.inbound_minutes_left.one')}<br/>" if
+			mins_left == 1 # for singulartiy
+		"#{t('freshfone.dashboard.trial.inbound_minutes_left.other',
+			minutes: mins_left)}<br/>"
+	end
+
+	def freshfone_trial_outgoing_warning
+		return "#{t('freshfone.dashboard.trial.outbound_minutes_left.other', minutes: 0)}<br/>" if
+			freshfone_subscription.outbound_usage_exceeded?
+		return unless freshfone_subscription.outgoing_warning?
+		mins_left = pending_minutes_helper(
+				freshfone_subscription.pending_outgoing_minutes)
+		return "#{t('freshfone.dashboard.trial.outbound_minutes_left.one')}<br/>" if
+			mins_left == 1 # for singularity
+		"#{t('freshfone.dashboard.trial.outbound_minutes_left.other',minutes: mins_left)}<br/>"
+	end
+
+	def freshfone_trial_period_warning
+		return "#{t('freshfone.dashboard.trial.trial_days_left.other', days: 0)}<br/>" if
+			freshfone_subscription.trial_expired? || freshfone_trial_expired? # for edge case
+		return unless freshfone_subscription.about_to_expire?
+		days_left = freshfone_subscription.trial_period_left
+		return "#{t('freshfone.dashboard.trial.trial_days_left.one')}<br/>" if
+			days_left == 1 # for singularity
+		"#{t('freshfone.dashboard.trial.trial_days_left.other', days: days_left)}<br/>"
+	end
+
+	def show_indicator?
+		freshfone_trial_states? || freshfone_below_threshold?
+	end
+
+	def show_activate?
+		(freshfone_trial_expired? ||
+			(freshfone_trial? && freshfone_subscription.trial_limits_breached?))
+	end
+
+	def pending_minutes_helper(pending_minutes)
+		(pending_minutes > 0) ? pending_minutes : 0
+	end
+
+  def credit_low_toggle
+    'hide' unless (!freshfone_trial_states? && freshfone_below_threshold?)
+  end
 end

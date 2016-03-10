@@ -236,6 +236,83 @@ class FreshfoneNotifier < ActionMailer::Base
   	end.deliver
   end
 
+  def phone_trial_reminder(account, days_left)
+     headers = {
+      :subject => "Phone Trial will End within #{days_left} days for your Freshdesk Account",
+      :to      => account.admin_email,
+      :from    => AppConfig['billing_email'],
+      :sent_on => Time.now,
+      'Reply-to' => '',
+      'Auto-Submitted' => 'auto-generated',
+      'X-Auto-Response-Suppress' => 'DR, RN, OOF, AutoReply'
+    }
+    @account = account
+    @days_left = days_left
+    mail(headers) do |part|
+      part.html { render "phone_trial_expiry_reminder", :formats => [:html] }
+    end.deliver
+  end
+
+  def customer_mailer(account, subject, partial)
+    headers = {
+      :subject => subject,
+      :to      => account.admin_email,
+      :from    => AppConfig['billing_email'],
+      :sent_on  => Time.now,
+      'Reply-to' => '',
+      'Auto-Submitted' => 'auto-generated',
+      'X-Auto-Response-Suppress' => 'DR, RN, OOF, AutoReply'
+    }
+    @account = account
+    mail(headers) do |part|
+      part.html { render partial, :formats => [:html] }
+    end.deliver
+  end
+
+  def phone_trial_initiated(account)
+    customer_mailer(
+      account,
+      'Enjoy your free phone trial!',
+      'phone_trial_initiated')
+  end
+
+  def phone_trial_half_way(account)
+    customer_mailer(
+      account,
+      'Do you need help with your phone trial?',
+      'phone_trial_half_way')
+  end
+
+  def phone_trial_about_to_expire(account)
+    customer_mailer(
+      account,
+      'Your phone trial is about to expire!',
+      'phone_trial_about_to_expire')
+  end
+
+  def phone_trial_expire(account)
+    attachments.inline['request_activation.gif'] = File.read(
+      "#{Rails.root}/public/images/freshfone/request_for_activation.gif")
+    customer_mailer(
+      account,
+      'Your phone trial will expire today',
+      'phone_trial_expire')
+  end
+
+  def trial_number_deletion_reminder(account)
+    customer_mailer(
+      account,
+      'Your phone number will be deleted in 5 days',
+      'phone_trial_number_deletion_reminder')
+  end
+
+  def trial_number_deletion_reminder_last_day(account)
+    customer_mailer(
+      account,
+      'Your phone number will be deleted today',
+      'phone_trial_number_deletion_reminder_last_day')
+  end
+
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
   # Keep this include at end
   include MailerDeliverAlias

@@ -44,7 +44,8 @@
 	freshfone.user_phone = "<%= current_user.available_number %>";
 	freshfone.current_status = "<%= current_user.freshfone_user_incoming_preference ||
 												Freshfone::User::PRESENCE[:offline] %>";
-	freshfone.below_threshold = <%= freshfone_below_threshold? %>;
+  <% freshfone_account = current_account.freshfone_account %>
+	freshfone.below_threshold = <%= !freshfone_trial_states? && freshfone_below_threshold? %>;
 	freshfone.available_on_phone = <%= current_user.available_on_phone? || false %>;
 	freshfone.recent_calls_path = "<%= recent_calls_freshfone_call_history_index_path %>";
 	freshfone.transfer_list_path = "<%= available_agents_freshfone_call_transfer_index_path %>";
@@ -89,11 +90,20 @@
 	  });
 	  freshfone.networkErrorSound.load();
   });
-
+  freshfone.isActiveOrTrial = <%= freshfone_active_or_trial? %>;
   freshfone.strangeNumbers = <%= Freshfone::CallerLookup::STRANGE_NUMBERS.to_json.html_safe %>;
   freshfone.env = "<%= Rails.env %>";
+  <% if freshfone_trial_states? %>
+    freshfone.request_success_message = "<%= t('freshfone.admin.feature_request_content.success')%>" ;
+    freshfone.request_error_message = "<%= t('freshfone.admin.feature_request_content.error_message')%>" ;
+    freshfone.trialOutgoingExhausted = <%= freshfone_account.subscription.outbound_usage_exceeded? %>
+    freshfone.isTrial = true;
+    freshfone.trialExpired = <%= freshfone_account.trial_expired? %>;
+    freshfone.activationRequested = <%= freshfone_activation_requested? %>;
+  <% end %>
 <% end %>
 <%= javascript_include_tag :'cdn/freshfone_client' %>
+<%= javascript_include_tag :'cdn/freshfone_subscription' if freshfone_trial_states? %>
 <% unless AppMetrics::FRESHFONE_METRICS.blank? %>
   <%= javascript_tag do %>	
   App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");

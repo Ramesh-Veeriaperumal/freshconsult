@@ -12,6 +12,7 @@ module Helpdesk::TicketsHelper
   include Helpdesk::TicketsHelperMethods
   include MetaHelperMethods
   include Helpdesk::TicketFilterMethods
+  include Marketplace::ApiHelper
   
   include HelpdeskAccessMethods
   

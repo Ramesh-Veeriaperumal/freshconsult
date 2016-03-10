@@ -4,6 +4,7 @@ class AgentsController < ApplicationController
   include UserHelperMethods
   include APIHelperMethods
   include ExportCsvUtil
+  include Spam::SpamAction
   
   include Gamification::GamificationUtil
   include MemcacheKeys
@@ -130,10 +131,12 @@ class AgentsController < ApplicationController
   end
   
   def create_multiple_items
-    @agent_emails = params[:agents_invite_email]
+    @agent_emails = params[:agents_invite_email].reject {|e| e.empty?}
 
     @responseObj = {}
-    if current_account.can_add_agents?(@agent_emails.length)
+    if !account_whitelisted? && current_account.subscription.agent_limit.nil? && (@agent_emails.length > 25)
+      @responseObj[:reached_limit] = :blocked
+    elsif current_account.can_add_agents?(@agent_emails.length)
       @existing_users = [];
       @new_users = [];
       @agent_emails.each do |agent_email|
@@ -153,9 +156,9 @@ class AgentsController < ApplicationController
         end        
       end      
             
-      @responseObj[:reached_limit] = false
+      @responseObj[:reached_limit] = :false
     else      
-      @responseObj[:reached_limit] = true
+      @responseObj[:reached_limit] = :true
     end              
   end
   

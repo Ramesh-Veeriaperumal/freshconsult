@@ -480,7 +480,7 @@ class Subscription < ActiveRecord::Base
       end
     ensure
       Resque.enqueue_at(15.minutes.from_now, CRM::Freshsales::TrackSubscription, { account_id: account_id, subscription_id: id, 
-                                                           previous_changes: changes })
+                                                           old_subscription: @old_subscription.attributes })
     end
 
     def update_reseller_subscription

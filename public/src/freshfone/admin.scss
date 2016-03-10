@@ -293,12 +293,49 @@
 #purchase-confirmation-content {
   padding: 10px 20px 7px;
 }
+.freshfone_alert{
+  @include margin-left(0px);
+  @include margin-right(0px);
+}
 .content_footer {
   font-size: 14px;
   margin-bottom: 30px;
   margin-top: 20px;
 }
+.content_container{
+  margin-top:42px;
+}
+
+.trial_content {
+  position: relative;
+  &:first-child{
+    @include border-right(1px solid #ccc);
+  }
+  .freshfone_trial_request{
+    font-weight:bold;
+    font-size:13px;
+    @include padding(6px 55px);
+  }
+  .circle_divider{
+    position: absolute;
+    padding: 6px;
+    @include right(-15px);
+    top: 10px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    border-radius: 50px;
+    background-color: #f6f6f6;
+    font-size: 10px;
+  }
+  .disclaimer{
+    @include padding(10px 65px 0 60px);
+  }
+}
+
 .freshfone_admin_content {
+  p{
+    font-size: 13px;
+  }
   .info-data {
     font-size: 15px;
     li {
@@ -321,6 +358,9 @@
   position: relative;
   margin-top: 10px;
 }
+.after_request{
+  height: 100px;
+}
 .success_flash, .error_flash {
   text-align: center;
   padding: 5px 10px 4px;
@@ -342,7 +382,11 @@
   color: #888;
 }
 .freshfone_video {
-  @include margin (50px 50px 10px 60px);
+  @include margin (50px 50px 10px 50px);
+  &.trial {
+    margin-top: 10px;
+    @include margin-left(60px);
+  }
   display: inline-block;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -354,14 +398,16 @@
     text-align: center;
   }
 }
+.ff_welcome_details{
+  height: 280px;
+}
 .ff_seperator {
-  position: absolute;
+  position: relative;
   width: 100%;
   left: 0;
   right: 0;
-  top: 310px;
   border-bottom: 1px solid #ccc;
 }
 .ff_welcome_page {
-  @include margin(20px 0 20px 30px);
+  @include margin(20px 0 20px 0px);
 }

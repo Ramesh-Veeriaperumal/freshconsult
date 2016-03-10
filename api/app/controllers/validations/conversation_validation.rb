@@ -1,4 +1,4 @@
-class NoteValidation < ApiValidation
+class ConversationValidation < ApiValidation
   attr_accessor :body, :body_html, :private, :user_id, :incoming, :notify_emails,
                 :attachments, :cc_emails, :bcc_emails, :item
 
@@ -27,11 +27,11 @@ class NoteValidation < ApiValidation
   end
 
   def attributes_to_be_stripped
-    NoteConstants::ATTRIBUTES_TO_BE_STRIPPED
+    ConversationConstants::ATTRIBUTES_TO_BE_STRIPPED
   end
 
   def max_email_count
-    NoteConstants::EMAIL_FIELDS.each do |field|
+    ConversationConstants::EMAIL_FIELDS.each do |field|
       array_elements = send(field)
       if array_elements && errors[field].blank? && array_elements.count >= ApiTicketConstants::MAX_EMAIL_COUNT
         errors[field] << :max_count_exceeded

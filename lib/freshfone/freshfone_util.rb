@@ -1,5 +1,6 @@
 module Freshfone::FreshfoneUtil
   include Freshfone::NodeEvents
+  include Freshfone::CallerLookup
 
   def default_client
     current_user.id
@@ -40,8 +41,11 @@ module Freshfone::FreshfoneUtil
     }.text
   end
   
-  def reject_twiml
-    Twilio::TwiML::Response.new { |r| r.Reject }.text
+  def reject_twiml(comment = nil)
+    Twilio::TwiML::Response.new { |r| 
+      r.comment! comment if comment.present?
+      r.Reject
+    }.text
   end
 
 
@@ -267,4 +271,16 @@ module Freshfone::FreshfoneUtil
     current_call.user_id.present? && current_call.user_id.to_s == params[:agent_id]
   end
 
+  private
+    def invalid_number_incoming_fix
+      return if params[:From].blank? || sip_call? || supervisor?
+      if !outgoing? && invalid_number?(params[:From]) && !strange_number?(params[:From])
+        Rails.logger.info "Number :: #{params[:From]} is an Invalid Number, of CallSid :: #{params[:CallSid]} for Account :: #{current_account.id}"
+        params[:From] = "+#{STRANGE_NUMBERS.invert['ANONYMOUS'].to_s}"
+      end
+    end
+
+    def outgoing?
+      current_account.features?(:freshfone_conference) ? params[:From].present? && params[:PhoneNumber].present? && params[:From].match(/(client:)/) : params[:To].blank? 
+    end
 end

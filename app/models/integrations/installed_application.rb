@@ -24,6 +24,8 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   after_commit :after_commit_on_destroy_customize, :on => :destroy
   after_commit :after_commit_customize
 
+  include ::Integrations::AppMarketPlaceExtension
+
   scope :with_name, lambda { |app_name| where("applications.name = ?", app_name ).joins(:application).select('installed_applications.*')}
   delegate :oauth_url, :to => :application 
   scope :with_type_cti, -> { where("applications.application_type = 'cti_integration'").includes(:application) }
@@ -45,6 +47,11 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       self.configs[:inputs] = self.configs[:inputs].merge(inputs_hash)
     end
   end
+
+  def is_freshplug?
+    self.application && self.application.freshplug?
+  end
+
 
   def method_missing(meth_name, *args, &block)
     matched = /configs([^_]*)_([^=]*)(=?)/.match(meth_name.to_s)

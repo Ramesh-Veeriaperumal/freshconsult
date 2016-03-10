@@ -6,7 +6,7 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
   before_filter :validate_freshfone_account, :except => [:add_credits, :get_country_list,
                                            :country_restriction, :refund_credits,
                                            :new_freshfone_account, :fetch_numbers, 
-                                           :enable_freshfone ]
+                                           :enable_freshfone, :launch_feature]
 	before_filter :validate_triggers, :only => [:update_usage_triggers]
 	before_filter :validate_timeout_and_queue,:construct_timeout_and_queue_hash, :only => [:update_timeouts_and_queue]
 	before_filter :validate_credits, :only => [:add_credits]
@@ -383,6 +383,47 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
     end
   end
 
+  def activate_trial
+    result = { account_id: @account.id, account_name: @account.name }
+    freshfone_account = @account.freshfone_account
+    result[:status] = freshfone_account.activate
+  rescue => e
+    result[:status] = 'error'
+    Rails.logger.error "Error while activating trial for the Phone of
+    Account #{@account.id}\n
+    Params:#{params.inspect}\nException Message: #{e.message}\n
+    Exception Stacktrace: #{e.backtrace.join('\n\t')}"
+  ensure
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
+  def launch_feature
+    result = {
+      account_id: @account.id, account_name: @account.name,
+      feature: params[:feature].to_s.titleize }
+    if @account.launched?(params[:feature])
+      result[:status] = 'notice'
+    else
+      @account.launch(params[:feature])
+      result[:status] = 'success'
+    end
+  rescue => e
+    result[:status] = 'error'
+    Rails.logger.error "Error while lauching feature
+    #{params[:feature].to_s.titleize} for Account : #{@account.id}\n
+    Params : #{params.inspect}\n Exception Message :: #{e.message}\n
+    Exception Stacktrace :: #{e.backtrace.join('\n\t')}"
+  ensure
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
 	private
 
 	def get_country_name_list
@@ -498,7 +539,7 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 	end
 
 	def add_freshfone_feature
-		return {:status => "notice"} if @account.features?(:freshfone)
+		return {:status => "notice"} if @account.features?(:freshfone) || @account.launched?(:freshfone_onboarding)
 		@account.features.freshfone.create
 		if @account.freshfone_credit.blank? 
 			@account.create_freshfone_credit(:available_credit => PROMOTIONAL_CREDITS)

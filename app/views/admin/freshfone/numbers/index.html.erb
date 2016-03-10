@@ -12,19 +12,20 @@
 	<div class="list-page-header"	>
 		<div class="row-fluid">
 			<div class="span6"><h3 class="title"><%= t('freshfone.admin.freshfone_numbers_title') %></h3></div>
-			<div class="span6 pull-right pagination-right header_buttons align-right" >
-				<% if @numbers.any? %>
-			 		<%# form_tag(toggle_freshfone_admin_freshfone_path, 
-			 					{:class => "toggle_freshfone_form", :method => :put}) do %>
-						<%#= check_box_tag :toggle_freshfone, 1, feature?(:freshfone), :class => 'toggle_freshfone' %>
-					<%# end %>
-					<%= link_to t('freshfone.admin.numbers.buy'), search_admin_freshfone_index_path, 
-								:class => "btn btn-primary" if feature?(:freshfone) %>
-				<% end %>
-	    </div>
+			<% unless freshfone_trial_states? && trial_number_limit_exceeded? %>
+				<div class="span6 pull-right pagination-right header_buttons align-right" >
+					<% if @numbers.any? %>
+				 		<%# form_tag(toggle_freshfone_admin_freshfone_path, 
+				 					{:class => "toggle_freshfone_form", :method => :put}) do %>
+							<%#= check_box_tag :toggle_freshfone, 1, feature?(:freshfone), :class => 'toggle_freshfone' %>
+						<%# end %>
+						<%= buy_number_link_helper %>
+					<% end %>
+	    	</div>
+	    <% end %>
 		</div>
 	</div>
-	
+	<%= render :partial => "/admin/freshfone/numbers/trial_usage"  if freshfone_trial_states? %>
 	<%= render :partial => "/admin/freshfone/numbers/purchased_numbers", :locals => {:purchased_numbers => @numbers} %>
 </div>
 

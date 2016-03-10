@@ -56,6 +56,8 @@ class Billing::BillingController < ApplicationController
   SUSPENDED = "suspended"              
 
   ONLINE_CUSTOMER = "on"
+
+  TRUE = "true"
   
   def trigger
     if not_api_source? or sync_for_all_sources?
@@ -244,9 +246,9 @@ class Billing::BillingController < ApplicationController
           :event_type => :payment_added, :invoice_id => content[:invoice][:id] })
       store_invoice(content) if @account.subscription.affiliate.nil?
 
-      Resque.enqueue(CRM::Freshsales::AccountActivation, { account_id: @account.id,
+      Resque.enqueue_at(1.minute.from_now, CRM::Freshsales::AccountActivation, { account_id: @account.id,
                                                            collection_date: content[:invoice][:paid_on],
-                                                           auto_collection: content[:customer][:auto_collection] }) if content[:invoice][:first_invoice]
+                                                           auto_collection: content[:customer][:auto_collection] }) if content[:invoice][:first_invoice].to_s == TRUE
     end
 
     def payment_refunded(content)

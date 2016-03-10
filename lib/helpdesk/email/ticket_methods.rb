@@ -4,29 +4,22 @@ module Helpdesk::Email::TicketMethods
   include ParserUtil
   include AccountConstants
   include EmailHelper
+  include Helpdesk::ProcessAgentForwardedEmail
 
   def get_original_user
     email_from_text = account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text
     unless email_from_text.blank?
       self.original_sender = email_from_text[:email]
+      email_from_text[:cc_emails].reject!{ |cc_email| kbase_email?(cc_email) or requester_email?(cc_email) }
+      email[:cc].concat(email_from_text[:cc_emails]).uniq!
+      email[:to_emails].concat(email_from_text[:cc_emails])
       get_user(email_from_text , email[:email_config], email[:text])
     end
   end
 
   def orig_email_from_text #To process mails fwd'ed from agents
-    @orig_user ||= begin
-      content = email[:text] || email[:description_html]
-      if (content && (content.gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
-                            content.gsub("\r\n", "\n") =~ /^\s*From:\s(.*)\s+\[mailto:(.*)\]/ or  
-                            content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
-        name = $1
-        email = $2
-        if email =~ EMAIL_REGEX
-          return { :name => name, :email => $1 }
-        end
-      end
-      {}
-    end
+    content = email[:text] || email[:description_html]
+    identify_original_requestor(content)
   end
 
   def current_agent?
@@ -138,5 +131,4 @@ module Helpdesk::Email::TicketMethods
     additional_to_emails    = email[:to_emails].reject{|mail| email[:to][:email].include?(mail) or sup_emails.include?(mail.downcase)}
     @global_cc ||= additional_to_emails.push(email[:cc]).flatten.compact.uniq 
   end
-  
 end
