@@ -14,7 +14,7 @@ class DataTypeValidator < ApiValidator
       if valid_type? && blank_when_required?
         :blank
       else
-        :data_type_mismatch
+        :datatype_mismatch
       end
     end
 

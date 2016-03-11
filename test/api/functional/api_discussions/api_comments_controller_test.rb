@@ -120,7 +120,7 @@ module ApiDiscussions
       put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: 90)
       Topic.any_instance.unstub(:stamp_type)
       assert_response 400
-      match_json([bad_request_error_pattern('answer', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: Integer)])
+      match_json([bad_request_error_pattern('answer', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: Integer)])
     end
 
     def test_update_with_user_id
@@ -153,7 +153,7 @@ module ApiDiscussions
       comment =  comment_obj
       put :update, construct_params({ id: comment.id }, body_html: nil)
       assert_response 400
-      match_json([bad_request_error_pattern('body_html', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type')])
+      match_json([bad_request_error_pattern('body_html', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type')])
     end
 
     def test_destroy
@@ -173,7 +173,7 @@ module ApiDiscussions
     def test_create_no_params
       post :create, construct_params({ id: topic_obj.id }, {})
       assert_response 400
-      match_json [bad_request_error_pattern('body_html', :data_type_mismatch, code: :missing_field, expected_data_type: String)]
+      match_json [bad_request_error_pattern('body_html', :datatype_mismatch, code: :missing_field, expected_data_type: String)]
     end
 
     def test_create_mandatory_params

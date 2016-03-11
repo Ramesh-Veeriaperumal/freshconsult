@@ -16,7 +16,7 @@ class CustomNumericalityValidator < ApiValidator
     if (!options[:ignore_string].nil? && record.send(options[:ignore_string])) || options[:force_allow_string]
       @default_validator_instance.validate_each(record, attribute, value)
       if record.errors[attribute].present?
-        default_data_type_mismatch?
+        default_datatype_mismatch?
         record_error
       end
     else
@@ -33,25 +33,25 @@ class CustomNumericalityValidator < ApiValidator
     end
 
     def skip_input_info?
-      required_attribute_not_defined? || !data_type_mismatch? || array_value?
+      required_attribute_not_defined? || !datatype_mismatch? || array_value?
     end
 
     def error_code
       if required_attribute_not_defined?
         :missing_field
       else
-        :invalid_value unless data_type_mismatch?
+        :invalid_value unless datatype_mismatch?
       end
     end
 
     def invalid?
-      data_type_mismatch? || invalid_value?
+      datatype_mismatch? || invalid_value?
     end
 
-    def data_type_mismatch?
-      return internal_values[:data_type_mismatch] if internal_values.key?(:data_type_mismatch)
+    def datatype_mismatch?
+      return internal_values[:datatype_mismatch] if internal_values.key?(:datatype_mismatch)
       klass = options[:only_integer] ? Integer : Numeric
-      internal_values[:data_type_mismatch] = !value.is_a?(klass)
+      internal_values[:datatype_mismatch] = !value.is_a?(klass)
     end
 
     def invalid_value?
@@ -61,14 +61,14 @@ class CustomNumericalityValidator < ApiValidator
     end
 
     def message
-      options[:custom_message] || :data_type_mismatch
+      options[:custom_message] || :datatype_mismatch
     end
 
-    def default_data_type_mismatch?
+    def default_datatype_mismatch?
       # numericality validator will add a error message like, "must be greater than.." if that particular constraint fails
-      return internal_values[:data_type_mismatch] if internal_values.key?(:data_type_mismatch)
+      return internal_values[:datatype_mismatch] if internal_values.key?(:datatype_mismatch)
       error = record.errors[attribute].first
-      internal_values[:data_type_mismatch] = !(error.starts_with?(MUST_BE_GREATER_THAN) || error.starts_with?(MUST_BE_LESS_THAN))
+      internal_values[:datatype_mismatch] = !(error.starts_with?(MUST_BE_GREATER_THAN) || error.starts_with?(MUST_BE_LESS_THAN))
     end
 
     def expected_data_type

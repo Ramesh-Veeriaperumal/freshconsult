@@ -56,7 +56,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_without_name
     post :create, construct_params({},  email: Faker::Internet.email)
-    match_json([bad_request_error_pattern('name', :data_type_mismatch, code: :missing_field, expected_data_type: String)])
+    match_json([bad_request_error_pattern('name', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
     assert_response 400
   end
 
@@ -95,7 +95,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         view_all_tickets: 'String',
                                         company_id: comp.id)
-    match_json([bad_request_error_pattern('view_all_tickets', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
+    match_json([bad_request_error_pattern('view_all_tickets', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
     assert_response 400
   end
 
@@ -152,7 +152,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         company_id: comp.id,
                                         language: 'en',
                                         tags: 'tag1, tag2, tag3')
-    match_json([bad_request_error_pattern('tags', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
+    match_json([bad_request_error_pattern('tags', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
     assert_response 400
   end
 
@@ -165,7 +165,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 language: 'en',
                 avatar: Faker::Internet.email }
     post :create, construct_params({},  params)
-    match_json([bad_request_error_pattern('avatar', :data_type_mismatch, expected_data_type: 'valid file format', prepend_msg: :input_received, given_data_type: String)])
+    match_json([bad_request_error_pattern('avatar', :datatype_mismatch, expected_data_type: 'valid file format', prepend_msg: :input_received, given_data_type: String)])
     assert_response 400
   end
 
@@ -279,7 +279,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email)
 
     assert_response 400
-    match_json([bad_request_error_pattern('code', :data_type_mismatch, code: :missing_field, expected_data_type: String)])
+    match_json([bad_request_error_pattern('code', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
     ensure
       cf.update_attribute(:required_for_agent, false)
   end
@@ -296,7 +296,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         language: 'en',
                                         custom_fields: { 'check_me' => 'aaa', 'doj' => 2010 })
     assert_response 400
-    match_json([bad_request_error_pattern('check_me', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+    match_json([bad_request_error_pattern('check_me', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
                 bad_request_error_pattern('doj', :invalid_format, accepted: 'yyyy-mm-dd')])
   end
 
@@ -672,7 +672,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.first.update_column(:customer_id, comp.id)
     get :index, controller_params(company_id: 'a')
     assert_response 400
-    match_json [bad_request_error_pattern('company_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)]
+    match_json [bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)]
   end
 
   def test_contact_blocked_in_future_should_not_be_listed_in_the_index
@@ -817,7 +817,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         company_id: comp.id,
                                         language: 'en',
                                         tags: [1, 2, 3])
-    match_json([bad_request_error_pattern('tags', :array_data_type_mismatch, expected_data_type: String)])
+    match_json([bad_request_error_pattern('tags', :array_datatype_mismatch, expected_data_type: String)])
     assert_response 400
   end
 
@@ -844,7 +844,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_update_invalid_format_custom_field
     sample_user = get_user_with_email
     put :update, construct_params({ id: sample_user.id }, custom_fields: [1, 2])
-    match_json([bad_request_error_pattern(:custom_fields, :data_type_mismatch, expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: Array)])
+    match_json([bad_request_error_pattern(:custom_fields, :datatype_mismatch, expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: Array)])
     assert_response 400
   end
 
@@ -854,14 +854,14 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Name.name)
     assert_response 400
 
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('job_title', :data_type_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('mobile', :data_type_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('address', :data_type_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('description', :data_type_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('twitter_id', :data_type_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('phone', :data_type_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('tags', :data_type_mismatch, code: :missing_field, expected_data_type: Array),
+    match_json([bad_request_error_pattern('email', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('job_title', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('mobile', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('address', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('description', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('twitter_id', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('phone', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('tags', :datatype_mismatch, code: :missing_field, expected_data_type: Array),
                 bad_request_error_pattern('company_id', :missing_field),
                 bad_request_error_pattern('language', :not_included,
                                           list: I18n.available_locales.map(&:to_s).join(','), code: :missing_field),
@@ -911,15 +911,15 @@ class ApiContactsControllerTest < ActionController::TestCase
                                                            address: nil
                                  )
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, code: :missing_field, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('job_title', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('mobile', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('address', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('description', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('view_all_tickets', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('twitter_id', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('phone', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('tags', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type'),
+    match_json([bad_request_error_pattern('email', :datatype_mismatch, code: :missing_field, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('job_title', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('mobile', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('address', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('view_all_tickets', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('twitter_id', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('phone', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('tags', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type'),
                 bad_request_error_pattern('company_id', :blank),
                 bad_request_error_pattern('language', :not_included,
                                           list: I18n.available_locales.map(&:to_s).join(',')),
@@ -1143,13 +1143,13 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: [Faker::Internet.email])
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
+    match_json([bad_request_error_pattern('email', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
   end
 
   def test_contact_filter_email_array
     email = get_user_with_email.email
     get :index, controller_params({ email: [email] }, false)
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
+    match_json([bad_request_error_pattern('email', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
   end
 end

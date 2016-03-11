@@ -129,9 +129,9 @@ class CustomFieldValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     assert_equal(
       {
-        check1_1: :data_type_mismatch, single_1: :data_type_mismatch, multi_1: :data_type_mismatch, phone: :data_type_mismatch, check2_1: :data_type_mismatch, decimal1_1: :data_type_mismatch,
-        decimal2_1: :data_type_mismatch, number1_1: :data_type_mismatch,
-        number2_1: :data_type_mismatch, url1_1: :invalid_format, url2_1: :invalid_format
+        check1_1: :datatype_mismatch, single_1: :datatype_mismatch, multi_1: :datatype_mismatch, phone: :datatype_mismatch, check2_1: :datatype_mismatch, decimal1_1: :datatype_mismatch,
+        decimal2_1: :datatype_mismatch, number1_1: :datatype_mismatch,
+        number2_1: :datatype_mismatch, url1_1: :invalid_format, url2_1: :invalid_format
       },
       errors)
     assert_equal({ 'single_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Array }, 'check1_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, 'check2_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, 'decimal1_1' => { expected_data_type: :Number, prepend_msg: :input_received, given_data_type: String }, 'decimal2_1' => { expected_data_type: :Number, prepend_msg: :input_received, given_data_type: String }, 'number1_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: Float }, 'number2_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: String }, 'multi_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'phone' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'url1_1' => { accepted: 'valid URL' }, 'url2_1' => { accepted: 'valid URL' } }.stringify_keys.merge(attribute2: {}), test.error_options)
@@ -230,7 +230,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(attribute1: 'Junk string 1', attribute2: 'junk string 2')
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ attribute1: :data_type_mismatch, attribute2: :data_type_mismatch }, errors)
+    assert_equal({ attribute1: :datatype_mismatch, attribute2: :datatype_mismatch }, errors)
     assert errors.count == 2
   end
 
@@ -238,15 +238,15 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = RequiredTestValidation.new
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ check1_1: :data_type_mismatch, check2_1: :data_type_mismatch, check3_1: :data_type_mismatch,
-                   country_1: :not_included, date_1: :invalid_format, decimal1_1: :data_type_mismatch,
-                   decimal2_1: :data_type_mismatch, decimal3_1: :data_type_mismatch, decimal4_1: :data_type_mismatch,
+    assert_equal({ check1_1: :datatype_mismatch, check2_1: :datatype_mismatch, check3_1: :datatype_mismatch,
+                   country_1: :not_included, date_1: :invalid_format, decimal1_1: :datatype_mismatch,
+                   decimal2_1: :datatype_mismatch, decimal3_1: :datatype_mismatch, decimal4_1: :datatype_mismatch,
                    dropdown1_1: :not_included, dropdown2_1: :not_included, dropdown3_1: :not_included,
-                   dropdown4_1: :not_included, first_1: :not_included, multi2_1: :data_type_mismatch,
-                   multi3_1: :data_type_mismatch, multi_1: :data_type_mismatch, number1_1: :data_type_mismatch,
-                   number2_1: :data_type_mismatch, number3_1: :data_type_mismatch, number4_1: :data_type_mismatch,
-                   phone: :data_type_mismatch, phone2_1: :data_type_mismatch, phone_1: :data_type_mismatch,
-                   single2_1: :data_type_mismatch, single3_1: :data_type_mismatch, single_1: :data_type_mismatch,
+                   dropdown4_1: :not_included, first_1: :not_included, multi2_1: :datatype_mismatch,
+                   multi3_1: :datatype_mismatch, multi_1: :datatype_mismatch, number1_1: :datatype_mismatch,
+                   number2_1: :datatype_mismatch, number3_1: :datatype_mismatch, number4_1: :datatype_mismatch,
+                   phone: :datatype_mismatch, phone2_1: :datatype_mismatch, phone_1: :datatype_mismatch,
+                   single2_1: :datatype_mismatch, single3_1: :datatype_mismatch, single_1: :datatype_mismatch,
                    url1_1: :invalid_format, url2_1: :invalid_format }, errors)
     assert_equal({ country_1: { list: '...,Usa,india', code: :missing_field }, first_1: { list: 'category 1,category 2', code: :missing_field }, dropdown1_1: { list: '1st,2nd', code: :missing_field }, dropdown2_1: { list: 'first11,second22,third33,four44', code: :missing_field }, dropdown3_1: { list: 'first,second', code: :missing_field }, dropdown4_1: { list: 'third,fourth', code: :missing_field }, single_1: { expected_data_type: String, code: :missing_field }, single2_1: { expected_data_type: String, code: :missing_field }, single3_1: { expected_data_type: String, code: :missing_field }, check1_1: { expected_data_type: 'Boolean', code: :missing_field }, check2_1: { expected_data_type: 'Boolean', code: :missing_field }, check3_1: { expected_data_type: 'Boolean', code: :missing_field }, decimal1_1: { expected_data_type: :Number, code: :missing_field }, decimal2_1: { expected_data_type: :Number, code: :missing_field }, decimal3_1: { expected_data_type: :Number, code: :missing_field }, decimal4_1: { expected_data_type: :Number, code: :missing_field }, number1_1: { expected_data_type: :Integer, code: :missing_field }, number2_1: { expected_data_type: :Integer, code: :missing_field }, number3_1: { expected_data_type: :Integer, code: :missing_field }, number4_1: { expected_data_type: :Integer, code: :missing_field }, multi_1: { expected_data_type: String, code: :missing_field }, multi2_1: { expected_data_type: String, code: :missing_field }, multi3_1: { expected_data_type: String, code: :missing_field }, phone: { expected_data_type: String, code: :missing_field }, phone_1: { expected_data_type: String, code: :missing_field }, phone2_1: { expected_data_type: String, code: :missing_field }, url1_1: { accepted: 'valid URL', code: :missing_field }, url2_1: { accepted: 'valid URL', code: :missing_field }, date_1: { accepted: :'yyyy-mm-dd', code: :missing_field } }.stringify_keys, test.error_options)
   end
@@ -255,15 +255,15 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = RequiredClosureTestValidation.new(closed_status: true)
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ check1_1: :data_type_mismatch, check2_1: :data_type_mismatch, check3_1: :data_type_mismatch,
-                   country_1: :not_included, date_1: :invalid_format, decimal1_1: :data_type_mismatch,
-                   decimal2_1: :data_type_mismatch, decimal3_1: :data_type_mismatch, decimal4_1: :data_type_mismatch,
+    assert_equal({ check1_1: :datatype_mismatch, check2_1: :datatype_mismatch, check3_1: :datatype_mismatch,
+                   country_1: :not_included, date_1: :invalid_format, decimal1_1: :datatype_mismatch,
+                   decimal2_1: :datatype_mismatch, decimal3_1: :datatype_mismatch, decimal4_1: :datatype_mismatch,
                    dropdown1_1: :not_included, dropdown2_1: :not_included, dropdown3_1: :not_included,
-                   dropdown4_1: :not_included, first_1: :not_included, multi2_1: :data_type_mismatch,
-                   multi3_1: :data_type_mismatch, multi_1: :data_type_mismatch, number1_1: :data_type_mismatch,
-                   number2_1: :data_type_mismatch, number3_1: :data_type_mismatch, number4_1: :data_type_mismatch,
-                   phone: :data_type_mismatch, phone2_1: :data_type_mismatch, phone_1: :data_type_mismatch,
-                   single2_1: :data_type_mismatch, single3_1: :data_type_mismatch, single_1: :data_type_mismatch,
+                   dropdown4_1: :not_included, first_1: :not_included, multi2_1: :datatype_mismatch,
+                   multi3_1: :datatype_mismatch, multi_1: :datatype_mismatch, number1_1: :datatype_mismatch,
+                   number2_1: :datatype_mismatch, number3_1: :datatype_mismatch, number4_1: :datatype_mismatch,
+                   phone: :datatype_mismatch, phone2_1: :datatype_mismatch, phone_1: :datatype_mismatch,
+                   single2_1: :datatype_mismatch, single3_1: :datatype_mismatch, single_1: :datatype_mismatch,
                    url1_1: :invalid_format, url2_1: :invalid_format }, errors)
     assert_equal({ country_1: { list: '...,Usa,india', code: :missing_field }, first_1: { list: 'category 1,category 2', code: :missing_field }, dropdown1_1: { list: '1st,2nd', code: :missing_field }, dropdown2_1: { list: 'first11,second22,third33,four44', code: :missing_field }, dropdown3_1: { list: 'first,second', code: :missing_field }, dropdown4_1: { list: 'third,fourth', code: :missing_field }, single_1: { expected_data_type: String, code: :missing_field }, single2_1: { expected_data_type: String, code: :missing_field }, single3_1: { expected_data_type: String, code: :missing_field }, check1_1: { expected_data_type: 'Boolean', code: :missing_field }, check2_1: { expected_data_type: 'Boolean', code: :missing_field }, check3_1: { expected_data_type: 'Boolean', code: :missing_field }, decimal1_1: { expected_data_type: :Number, code: :missing_field }, decimal2_1: { expected_data_type: :Number, code: :missing_field }, decimal3_1: { expected_data_type: :Number, code: :missing_field }, decimal4_1: { expected_data_type: :Number, code: :missing_field }, number1_1: { expected_data_type: :Integer, code: :missing_field }, number2_1: { expected_data_type: :Integer, code: :missing_field }, number3_1: { expected_data_type: :Integer, code: :missing_field }, number4_1: { expected_data_type: :Integer, code: :missing_field }, multi_1: { expected_data_type: String, code: :missing_field }, multi2_1: { expected_data_type: String, code: :missing_field }, multi3_1: { expected_data_type: String, code: :missing_field }, phone: { expected_data_type: String, code: :missing_field }, phone_1: { expected_data_type: String, code: :missing_field }, phone2_1: { expected_data_type: String, code: :missing_field }, url1_1: { accepted: 'valid URL', code: :missing_field }, url2_1: { accepted: 'valid URL', code: :missing_field }, date_1: { accepted: :'yyyy-mm-dd', code: :missing_field } }.stringify_keys, test.error_options)
   end

@@ -96,24 +96,24 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = { user_id: 'x', body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('user_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
+    match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_create_inclusion_invalid
     params_hash = { private: 'x', incoming: 'x', body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('incoming', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('private', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
+    match_json([bad_request_error_pattern('incoming', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('private', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_create_datatype_invalid
     params_hash = { notify_emails: 'x', attachments: 'x', body: true, body_html: true }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    match_json([bad_request_error_pattern('notify_emails', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('attachments', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('body', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean'),
-                bad_request_error_pattern('body_html', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean')])
+    match_json([bad_request_error_pattern('notify_emails', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('attachments', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('body', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean'),
+                bad_request_error_pattern('body_html', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean')])
     assert_response 400
   end
 
@@ -147,7 +147,7 @@ class ConversationsControllerTest < ActionController::TestCase
   def test_create_missing_params
     post :create, construct_params({ id: ticket.display_id }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('body', :data_type_mismatch, code: :missing_field, expected_data_type: String)])
+    match_json([bad_request_error_pattern('body', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
   end
 
   def test_create_returns_location_header
@@ -179,7 +179,7 @@ class ConversationsControllerTest < ActionController::TestCase
     params = create_note_params_hash.merge('attachments' => [1, 2])
     post :create, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :array_data_type_mismatch, expected_data_type: 'valid file format')])
+    match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
   end
 
   def test_attachment_invalid_size_create
@@ -355,16 +355,16 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = { user_id: 'x', body: Faker::Lorem.paragraph }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('user_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
+    match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_reply_datatype_invalid
     params_hash = { cc_emails: 'x', attachments: 'x', bcc_emails: 'x', body: Faker::Lorem.paragraph }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('attachments', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('bcc_emails', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
+    match_json([bad_request_error_pattern('cc_emails', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('attachments', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('bcc_emails', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_reply_email_format_invalid
@@ -435,7 +435,7 @@ class ConversationsControllerTest < ActionController::TestCase
     params = reply_note_params_hash.merge('attachments' => [1, 2])
     post :reply, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :array_data_type_mismatch, expected_data_type: 'valid file format')])
+    match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
   end
 
   def test_reply_without_privilege
@@ -533,7 +533,7 @@ class ConversationsControllerTest < ActionController::TestCase
     params = update_note_params_hash.merge('attachments' => [1, 2])
     put :update, construct_params({ id: note.id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :array_data_type_mismatch, expected_data_type: 'valid file format')])
+    match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
   end
 
   def test_update_without_privilege

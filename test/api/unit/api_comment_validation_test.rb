@@ -6,7 +6,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     item = nil
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
     refute comment.valid?
-    assert_equal ['Body html data_type_mismatch'], comment.errors.full_messages
+    assert_equal ['Body html datatype_mismatch'], comment.errors.full_messages
     assert_equal({ body_html: { expected_data_type: String, code: :missing_field } }, comment.error_options)
   end
 
@@ -19,7 +19,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
     refute comment.valid?(:update)
     error = comment.errors.full_messages
-    assert error.include?('Answer data_type_mismatch')
+    assert error.include?('Answer datatype_mismatch')
   end
 
   def test_presence_item_valid
@@ -45,7 +45,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
     refute comment.valid?(:update)
     error = comment.errors.full_messages
-    refute error.include?('Topic data_type_mismatch')
+    refute error.include?('Topic datatype_mismatch')
     refute error.include?('User is not a number')
 
     Account.unstub(:current)
@@ -60,7 +60,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
     comment.valid?(:update)
     error = comment.errors.full_messages
-    refute error.include?('Answer data_type_mismatch')
+    refute error.include?('Answer datatype_mismatch')
   end
 
   def test_answer_is_incompatible
@@ -80,7 +80,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     refute comment.valid?(:update)
     error = comment.errors.full_messages
     assert error.include?('Answer cannot_set_answer')
-    refute error.include?('Answer data_type_mismatch')
+    refute error.include?('Answer datatype_mismatch')
     assert_equal({ answer: { code: :incompatible_field }, body_html: {} }, comment.error_options)
     Account.unstub(:current)
   end

@@ -34,19 +34,19 @@ class CustomInclusionValidator < ApiValidator
     end
 
     def add_input_info?
-      data_type_mismatch? && !array_value?
+      datatype_mismatch? && !array_value?
     end
 
     def error_code
       if required_attribute_not_defined?
         :missing_field
-      elsif data_type_mismatch?
-        :data_type_mismatch
+      elsif datatype_mismatch?
+        :datatype_mismatch
       end
     end
 
-    def data_type_mismatch?
-      return internal_values[:data_type_mismatch] if internal_values.key?(:data_type_mismatch)
-      internal_values[:data_type_mismatch] = options[:detect_type] && !allow_string? && inclusion_list.any? { |x| x.to_s == value }
+    def datatype_mismatch?
+      return internal_values[:datatype_mismatch] if internal_values.key?(:datatype_mismatch)
+      internal_values[:datatype_mismatch] = options[:detect_type] && !allow_string? && inclusion_list.any? { |x| x.to_s == value }
     end
 end

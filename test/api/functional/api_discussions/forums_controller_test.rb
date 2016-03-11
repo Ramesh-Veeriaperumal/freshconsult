@@ -73,7 +73,7 @@ module ApiDiscussions
       forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, forum_type: '1')
       assert_response 400
-      match_json([bad_request_error_pattern('forum_type', :not_included, code: :data_type_mismatch, list: '1,2,3,4', prepend_msg: :input_received, given_data_type: String)])
+      match_json([bad_request_error_pattern('forum_type', :not_included, code: :datatype_mismatch, list: '1,2,3,4', prepend_msg: :input_received, given_data_type: String)])
     end
 
     def test_update_invalid_forum_visibility_datatype
@@ -81,7 +81,7 @@ module ApiDiscussions
       forum = f_obj
       put :update, construct_params({ id: forum.id }, forum_visibility: '1')
       assert_response 400
-      match_json([bad_request_error_pattern('forum_visibility', :not_included, code: :data_type_mismatch, list: '1,2,3,4', prepend_msg: :input_received, given_data_type: String)])
+      match_json([bad_request_error_pattern('forum_visibility', :not_included, code: :datatype_mismatch, list: '1,2,3,4', prepend_msg: :input_received, given_data_type: String)])
     end
 
     def test_update_duplicate_name
@@ -173,7 +173,7 @@ module ApiDiscussions
 
     def test_create_validate_presence
       post :create, construct_params({ id: ForumCategory.first.id }, description: 'test')
-      match_json([bad_request_error_pattern('name', :data_type_mismatch, code: :missing_field, expected_data_type: String),
+      match_json([bad_request_error_pattern('name', :datatype_mismatch, code: :missing_field, expected_data_type: String),
                   bad_request_error_pattern('forum_visibility', :not_included, code: :missing_field, list: '1,2,3,4'),
                   bad_request_error_pattern('forum_type', :not_included, code: :missing_field, list: '1,2,3,4')])
       assert_response 400
@@ -212,7 +212,7 @@ module ApiDiscussions
 
     def test_create_no_params
       post :create, construct_params(id: ForumCategory.first.id)
-      match_json([bad_request_error_pattern('name', :data_type_mismatch, code: :missing_field, expected_data_type: String),
+      match_json([bad_request_error_pattern('name', :datatype_mismatch, code: :missing_field, expected_data_type: String),
                   bad_request_error_pattern('forum_visibility', :not_included, code: :missing_field, list: '1,2,3,4'),
                   bad_request_error_pattern('forum_type', :not_included, code: :missing_field, list: '1,2,3,4')])
       assert_response 400
@@ -314,7 +314,7 @@ module ApiDiscussions
       customer = company
       params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: Faker::Name.name, company_ids: "#{customer.id}" }
       post :create, construct_params({ id: ForumCategory.first.id }, params)
-      match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
+      match_json([bad_request_error_pattern('company_ids', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
       assert_response 400
     end
 
@@ -323,7 +323,7 @@ module ApiDiscussions
       forum = f_obj
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: 4, company_ids: "#{customer.id}")
-      match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
+      match_json([bad_request_error_pattern('company_ids', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
       assert_response 400
     end
 
@@ -344,8 +344,8 @@ module ApiDiscussions
       forum = create_test_forum(fc_obj)
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: nil, forum_type: nil, forum_category_id: nil, name: nil)
-      pattern = [bad_request_error_pattern('name', :data_type_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                 bad_request_error_pattern('forum_category_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
+      pattern = [bad_request_error_pattern('name', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                 bad_request_error_pattern('forum_category_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
                  bad_request_error_pattern('forum_visibility', :not_included, list: '1,2,3,4'),
                  bad_request_error_pattern('forum_type', :not_included, list: '1,2,3,4')]
       match_json(pattern)
@@ -514,7 +514,7 @@ module ApiDiscussions
     def test_is_following_without_privilege_invalid_user_id
       get :is_following, controller_params({ user_id: ['1'], id: f_obj.id }, false)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: Array)])
+      match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: Array)])
     end
 
     def test_is_following_without_privilege_valid
@@ -528,7 +528,7 @@ module ApiDiscussions
     def test_is_following_non_numeric_user_id
       get :is_following, controller_params(user_id: 'test', id: f_obj.id)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
+      match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
     end
 
     def test_is_following_invalid_topic_id

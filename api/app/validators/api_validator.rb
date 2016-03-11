@@ -1,6 +1,6 @@
 class ApiValidator < ActiveModel::EachValidator
   ARRAY_MESSAGE_MAP = {
-    data_type_mismatch: :array_data_type_mismatch,
+    datatype_mismatch: :array_datatype_mismatch,
     too_long: :array_too_long,
     invalid_format: :array_invalid_format
   }

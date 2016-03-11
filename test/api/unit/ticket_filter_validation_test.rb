@@ -44,9 +44,9 @@ class TicketFilterValidationTest < ActionView::TestCase
     refute ticket_filter.valid?
     error = ticket_filter.errors.full_messages
     assert error.include?('Filter not_included')
-    assert error.include?('Email data_type_mismatch')
+    assert error.include?('Email datatype_mismatch')
     assert error.include?('Updated since invalid_format')
-    assert error.include?('Company data_type_mismatch')
+    assert error.include?('Company datatype_mismatch')
     assert error.include?('Order by not_included')
     assert error.include?('Order type not_included')
     assert_equal({ company_id: { expected_data_type: :"Positive Integer", prepend_msg: :input_received, given_data_type: 'Null Type' },

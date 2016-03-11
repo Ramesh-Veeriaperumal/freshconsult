@@ -40,7 +40,7 @@ class ApiCompanyValidationTest < ActionView::TestCase
     company = ApiCompanyValidation.new(controller_params, item)
     refute company.valid?(:create)
     errors = company.errors.full_messages
-    assert errors.include?('Domains data_type_mismatch')
+    assert errors.include?('Domains datatype_mismatch')
     assert errors.count == 1
   end
 
@@ -53,8 +53,8 @@ class ApiCompanyValidationTest < ActionView::TestCase
     company = ApiCompanyValidation.new(controller_params, item)
     refute company.valid?(:create)
     errors = company.errors.full_messages
-    assert errors.include?('Domains data_type_mismatch')
-    assert errors.include?('Custom fields data_type_mismatch')
+    assert errors.include?('Domains datatype_mismatch')
+    assert errors.include?('Custom fields datatype_mismatch')
     Account.unstub(:current)
   end
 end

@@ -134,6 +134,6 @@ class ApiAgentsControllerTest < ActionController::TestCase
     email = sample_agent = @account.all_agents.first.user.email
     get :index, controller_params({ email: [email] }, false)
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
+    match_json([bad_request_error_pattern('email', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
   end
 end

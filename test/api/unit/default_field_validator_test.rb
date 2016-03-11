@@ -66,13 +66,13 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
     assert_equal({
-      source: :not_included, status: :not_included, priority: :not_included, type: :not_included, group_id: :data_type_mismatch,
-      responder_id: :data_type_mismatch, product_id: :data_type_mismatch, email: :invalid_format,
-      client_manager: :data_type_mismatch, tags: :data_type_mismatch, language: :not_included, time_zone: :not_included, domains: :data_type_mismatch,
-      subject: :too_long, description: :data_type_mismatch,
+      source: :not_included, status: :not_included, priority: :not_included, type: :not_included, group_id: :datatype_mismatch,
+      responder_id: :datatype_mismatch, product_id: :datatype_mismatch, email: :invalid_format,
+      client_manager: :datatype_mismatch, tags: :datatype_mismatch, language: :not_included, time_zone: :not_included, domains: :datatype_mismatch,
+      subject: :too_long, description: :datatype_mismatch,
       job_title: :too_long, twitter_id: :too_long,
       phone: :too_long, mobile: :too_long,
-      address: :too_long, note: :data_type_mismatch
+      address: :too_long, note: :datatype_mismatch
     }.sort,
                  errors
                 )
@@ -94,10 +94,10 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
     assert_equal({
-      source: :not_included, company_id: :missing_field, status: :not_included, priority: :not_included, type: :not_included, group_id: :data_type_mismatch,
-      responder_id: :data_type_mismatch, product_id: :data_type_mismatch, email: :missing_field,
-      client_manager: :data_type_mismatch, tags: :data_type_mismatch, language: :not_included, time_zone: :not_included, domains: :data_type_mismatch,
-      subject: :missing_field, job_title: :data_type_mismatch, description: :data_type_mismatch, twitter_id: :missing_field, phone: :missing_field, mobile: :missing_field, address: :missing_field, note: :data_type_mismatch
+      source: :not_included, company_id: :missing_field, status: :not_included, priority: :not_included, type: :not_included, group_id: :datatype_mismatch,
+      responder_id: :datatype_mismatch, product_id: :datatype_mismatch, email: :missing_field,
+      client_manager: :datatype_mismatch, tags: :datatype_mismatch, language: :not_included, time_zone: :not_included, domains: :datatype_mismatch,
+      subject: :missing_field, job_title: :datatype_mismatch, description: :datatype_mismatch, twitter_id: :missing_field, phone: :missing_field, mobile: :missing_field, address: :missing_field, note: :datatype_mismatch
     }.sort,
                  errors
                 )

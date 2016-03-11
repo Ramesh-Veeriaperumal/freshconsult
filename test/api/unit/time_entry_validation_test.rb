@@ -8,7 +8,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry = TimeEntryValidation.new(controller_params, item, true)
     time_entry.valid?(:create)
     error = time_entry.errors.full_messages
-    assert error.include?('Agent data_type_mismatch')
+    assert error.include?('Agent datatype_mismatch')
     Account.unstub(:current)
   end
 
@@ -122,7 +122,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
-    assert error.include?('Billable data_type_mismatch')
+    assert error.include?('Billable datatype_mismatch')
   end
 
   def test_billable_allows_nil_true_and_false

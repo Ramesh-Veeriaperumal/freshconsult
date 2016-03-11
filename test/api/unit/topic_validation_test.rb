@@ -6,9 +6,9 @@ class TopicValidationsTest < ActionView::TestCase
     item = nil
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?(:update)
-    assert topic.errors.full_messages.include?('Title data_type_mismatch')
-    assert topic.errors.full_messages.include?('Message html data_type_mismatch')
-    assert topic.errors.full_messages.include?('Forum data_type_mismatch')
+    assert topic.errors.full_messages.include?('Title datatype_mismatch')
+    assert topic.errors.full_messages.include?('Message html datatype_mismatch')
+    assert topic.errors.full_messages.include?('Forum datatype_mismatch')
     assert_equal({ title: {  expected_data_type: String, code: :missing_field  }, message_html: {  expected_data_type: String, code: :missing_field },
                    forum_id: {  expected_data_type: :"Positive Integer", code: :missing_field } }, topic.error_options)
   end
@@ -19,8 +19,8 @@ class TopicValidationsTest < ActionView::TestCase
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?(:update)
     error = topic.errors.full_messages
-    assert error.include?('Forum data_type_mismatch')
-    assert error.include?('Stamp type data_type_mismatch')
+    assert error.include?('Forum datatype_mismatch')
+    assert error.include?('Stamp type datatype_mismatch')
     assert_equal({ title: { expected_data_type: String, code: :missing_field },
                    message_html: { expected_data_type: String, code: :missing_field },
                    forum_id: { expected_data_type: :"Positive Integer", prepend_msg: :input_received, given_data_type: String },
@@ -33,9 +33,9 @@ class TopicValidationsTest < ActionView::TestCase
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?
     error = topic.errors.full_messages
-    assert error.include?('Message html data_type_mismatch')
-    assert error.include?('Sticky data_type_mismatch')
-    assert error.include?('Locked data_type_mismatch')
+    assert error.include?('Message html datatype_mismatch')
+    assert error.include?('Sticky datatype_mismatch')
+    assert error.include?('Locked datatype_mismatch')
     assert_equal({ title: { expected_data_type: String, code: :missing_field },
                    message_html: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean' },
                    sticky: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type' },
@@ -48,8 +48,8 @@ class TopicValidationsTest < ActionView::TestCase
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?
     error = topic.errors.full_messages
-    assert error.include?('Locked data_type_mismatch')
-    refute error.include?('Sticky data_type_mismatch')
+    assert error.include?('Locked datatype_mismatch')
+    refute error.include?('Sticky datatype_mismatch')
     assert_equal({ title: { expected_data_type: String, code: :missing_field },
                    message_html: { expected_data_type: String, code: :missing_field }, sticky: {},
                    locked: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String } }, topic.error_options)
@@ -77,9 +77,9 @@ class TopicValidationsTest < ActionView::TestCase
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?
     error = topic.errors.full_messages
-    refute error.include?('Forum data_type_mismatch')
+    refute error.include?('Forum datatype_mismatch')
     refute error.include?('User is not a number')
-    refute error.include?('Stamp Type data_type_mismatch')
+    refute error.include?('Stamp Type datatype_mismatch')
   end
 
   def test_inclusion_item_valid
@@ -88,8 +88,8 @@ class TopicValidationsTest < ActionView::TestCase
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     topic.valid?
     error = topic.errors.full_messages
-    refute error.include?('Locked data_type_mismatch')
-    refute error.include?('Sticky data_type_mismatch')
+    refute error.include?('Locked datatype_mismatch')
+    refute error.include?('Sticky datatype_mismatch')
   end
 
   def test_topic_validation_valid_params

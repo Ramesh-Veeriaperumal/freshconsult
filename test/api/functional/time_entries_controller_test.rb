@@ -193,9 +193,9 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 't', agent_id: 'er', billable: '78', executed_after: '78/34', executed_before: '90/12')
-    pattern = [bad_request_error_pattern('billable', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)]
-    pattern << bad_request_error_pattern('agent_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)
-    pattern << bad_request_error_pattern('company_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)
+    pattern = [bad_request_error_pattern('billable', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)]
+    pattern << bad_request_error_pattern('agent_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)
+    pattern << bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)
     pattern << bad_request_error_pattern('executed_after', :invalid_format, accepted: :"combined date and time ISO8601")
     pattern << bad_request_error_pattern('executed_before', :invalid_format, accepted: :"combined date and time ISO8601")
     assert_response 400
@@ -596,7 +596,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: 'yu')
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
+    match_json([bad_request_error_pattern('agent_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_update_presence_invalid
@@ -607,7 +607,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: '7878')
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', :data_type_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
+    match_json([bad_request_error_pattern('agent_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_update_date_time_invalid
@@ -628,8 +628,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: '89', executed_at: executed_at,
                                                   note: 'test note', billable: '12')
     assert_response 400
-    match_json([bad_request_error_pattern('timer_running', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('billable', :data_type_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
+    match_json([bad_request_error_pattern('timer_running', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('billable', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_update_format_invalid
@@ -1236,7 +1236,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
       post :create, construct_params({ id: ticket.display_id }, { start_time: start_time,
                                                                   time_spent: ['03:00'] }.merge(params_hash))
       assert_response 400
-      match_json([bad_request_error_pattern('time_spent', :data_type_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
+      match_json([bad_request_error_pattern('time_spent', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
     end
   end
 
