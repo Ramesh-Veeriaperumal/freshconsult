@@ -1,5 +1,7 @@
 module ApiDiscussions
   class ApiCommentValidation < ApiValidation
+    CHECK_PARAMS_SET_FIELDS = %w(answer).freeze
+
     attr_accessor :body_html, :answer
     validates :answer, custom_absence: { allow_nil: false, message: :cannot_set_answer }, if: -> { DiscussionConstants::QUESTION_STAMPS.exclude?(@stamp_type) }, on: :update
     validates :answer, data_type: { rules: 'Boolean' }, on: :update
@@ -7,7 +9,6 @@ module ApiDiscussions
 
     def initialize(request_params, item)
       super(request_params, item)
-      check_params_set(request_params, item)
       @stamp_type = item.topic.stamp_type if item
     end
   end

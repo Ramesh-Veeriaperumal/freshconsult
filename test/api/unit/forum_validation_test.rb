@@ -102,7 +102,7 @@ class ForumValidationTest < ActionView::TestCase
   end
 
   def test_update_forum_type_invalid
-    controller_params = { forum_type: nil }
+    controller_params = { forum_type: nil }.stringify_keys!
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
@@ -113,7 +113,7 @@ class ForumValidationTest < ActionView::TestCase
   end
 
   def test_company_ids_invalid
-    controller_params = { company_ids: nil }
+    controller_params = { company_ids: nil }.stringify_keys!
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
@@ -122,7 +122,7 @@ class ForumValidationTest < ActionView::TestCase
     assert_equal({ name: {}, forum_category_id: {}, forum_visibility: {},
                    company_ids: { code: :incompatible_field } }, forum.error_options)
 
-    controller_params = { company_ids: 'test' }
+    controller_params = { company_ids: 'test' }.stringify_keys!
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
@@ -131,7 +131,7 @@ class ForumValidationTest < ActionView::TestCase
     assert_equal({ name: {}, forum_category_id: {}, forum_visibility: {},
                    company_ids: { code: :incompatible_field } }, forum.error_options)
 
-    controller_params = { company_ids: ['test'] }
+    controller_params = { company_ids: ['test'] }.stringify_keys!
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)

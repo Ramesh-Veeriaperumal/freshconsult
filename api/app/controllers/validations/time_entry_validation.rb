@@ -1,4 +1,5 @@
 class TimeEntryValidation < ApiValidation
+  CHECK_PARAMS_SET_FIELDS = %w(start_time agent_id timer_running).freeze
   attr_accessor :billable, :executed_at, :time_spent, :agent_id, :user, :note, :item, :request_params, :timer_running, :start_time
 
   # do not change validation order
@@ -36,7 +37,6 @@ class TimeEntryValidation < ApiValidation
 
   def initialize(request_params, item, timer_running)
     super(request_params, item)
-    check_params_set(request_params, item)
     @request_params = request_params
     @item = item
     @time_spent = request_params['time_spent']

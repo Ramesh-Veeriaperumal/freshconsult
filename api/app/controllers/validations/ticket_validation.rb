@@ -1,4 +1,8 @@
 class TicketValidation < ApiValidation
+  MANDATORY_FIELD_ARRAY = [:requester_id, :phone, :email, :twitter_id, :facebook_id].freeze
+  MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
+  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(fr_due_by due_by)).freeze
+
   attr_accessor :id, :cc_emails, :description, :description_html, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :status_ids, :ticket_fields
@@ -17,7 +21,8 @@ class TicketValidation < ApiValidation
 
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0  }
 
-  validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No
+  validate :requester_detail_missing, if: :requester_id_mandatory?
+  # validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No
   validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: :name_required?  # No
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :description, data_type: { rules: String, required: true }
@@ -75,10 +80,16 @@ class TicketValidation < ApiValidation
     @request_params = request_params
     super(request_params, item, allow_string_param)
     @description = request_params[:description_html] if should_set_description?(request_params)
-    check_params_set(request_params, item)
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
     @due_by ||= item.try(:due_by).try(:iso8601) if item
     @item = item
+  end
+
+  def requester_detail_missing
+    field = MANDATORY_FIELD_ARRAY.detect { |x| instance_variable_defined?("@#{x}_set") }
+    field ? error_options[field] = { code: :invalid_value } : field = :requester_id
+    errors[field] = :fill_a_mandatory_field
+    (error_options[field] ||= {}).merge!(field_names: MANDATORY_FIELD_STRING)
   end
 
   def should_set_description?(request_params)
@@ -86,7 +97,7 @@ class TicketValidation < ApiValidation
   end
 
   def requester_id_mandatory? # requester_id is must if any one of email/twitter_id/fb_profile_id/phone is not given.
-    email.blank? && twitter_id.blank? && phone.blank? && facebook_id.blank?
+    MANDATORY_FIELD_ARRAY.all? { |x| send(x).blank? && errors[x].blank? }
   end
 
   def name_required? # Name mandatory if phone number of a non existent contact is given. so that the contact will get on ticket callbacks.

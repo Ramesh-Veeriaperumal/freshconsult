@@ -1,5 +1,6 @@
 module ApiDiscussions
   class ForumValidation < ApiValidation
+    CHECK_PARAMS_SET_FIELDS = %w(forum_type company_ids).freeze
     attr_accessor :name, :forum_type, :forum_category_id, :forum_visibility, :company_ids,
                   :description, :topics_count
     validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
@@ -16,7 +17,6 @@ module ApiDiscussions
 
     def initialize(request_params, item)
       super(request_params, item)
-      check_params_set(request_params, item)
       @topics_count = item.topics_count.to_i if item
       @forum_type = request_params['forum_type'] if request_params.key?('forum_type')
     end

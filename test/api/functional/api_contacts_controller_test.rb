@@ -365,7 +365,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_attribute(:email, nil)
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('email', :fill_a_mandatory_field, field_names: 'email, mobile, phone, twitter_id')])
+    match_json([bad_request_error_pattern('mobile', :fill_a_mandatory_field, code: :invalid_value, field_names: 'email, mobile, phone, twitter_id')])
     sample_user.update_attribute(:email, email)
   end
 

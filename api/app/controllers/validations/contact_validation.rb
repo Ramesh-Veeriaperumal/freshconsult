@@ -1,5 +1,4 @@
 class ContactValidation < ApiValidation
-  
   DEFAULT_FIELD_VALIDATIONS = {
     job_title:  { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     language: { custom_inclusion: { in: ContactConstants::LANGUAGES } },
@@ -12,6 +11,10 @@ class ContactValidation < ApiValidation
     email: { data_type: { rules: String }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :"valid email address" }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     description: { data_type: { rules: String } }
   }.freeze
+
+  MANDATORY_FIELD_ARRAY = [:email, :mobile, :phone, :twitter_id].freeze
+  CHECK_PARAMS_SET_FIELDS = MANDATORY_FIELD_ARRAY.map(&:to_s).freeze
+  MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
 
   attr_accessor :avatar, :view_all_tickets, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
                 :language, :mobile, :name, :other_emails, :phone, :tag_names, :time_zone, :twitter_id, :address, :description
@@ -31,11 +34,11 @@ class ContactValidation < ApiValidation
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
 
-  validate :contact_detail_missing, on: :create
+  validate :contact_detail_missing, if: :email_mandatory?, on: :create
 
   # Explicitly added since the users created (via web) using fb_profile_id will not have other contact info
   # During the update action, ensure that any one of the contact detail exist including fb_profile_id
-  validate :contact_detail_missing_update, if: -> { fb_profile_id.nil? }, on: :update
+  validate :contact_detail_missing_update, if: -> { fb_profile_id.nil? && email_mandatory? }, on: :update
 
   validate :check_contact_merge_feature, if: -> { other_emails }
   validates :other_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :"valid email address" }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } }
@@ -69,11 +72,15 @@ class ContactValidation < ApiValidation
 
   private
 
+    def email_mandatory?
+      MANDATORY_FIELD_ARRAY.all? { |x| send(x).blank? && errors[x].blank? }
+    end
+
     def contact_detail_missing
-      if [:email, :mobile, :phone, :twitter_id].all? { |x| send(x).blank? && errors[x].blank? }
-        errors[:email] << :fill_a_mandatory_field
-        error_options[:email] = { field_names: 'email, mobile, phone, twitter_id' }
-      end
+      field = MANDATORY_FIELD_ARRAY.detect { |x| instance_variable_defined?("@#{x}_set") }
+      field ? error_options[field] = { code: :invalid_value } : field = :email
+      errors[field] = :fill_a_mandatory_field
+      (error_options[field] ||= {}).merge!(field_names: MANDATORY_FIELD_STRING)
     end
 
     alias_method :contact_detail_missing_update, :contact_detail_missing

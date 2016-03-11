@@ -5,6 +5,7 @@ class ApiValidation
 
   before_validation :trim_attributes
   FORMATTED_TYPES = [ActiveSupport::TimeWithZone]
+  CHECK_PARAMS_SET_FIELDS = []
 
   # Set instance variables of validation class from request params or items. so that manual assignment is not needed.
   def initialize(request_params, item = nil, allow_string_param = false)
@@ -27,16 +28,12 @@ class ApiValidation
     # Allow string param based on action & content_type
     @allow_string_param = allow_string_param
     @error_options = {}
+    check_params_set(request_params.slice(*self.class::CHECK_PARAMS_SET_FIELDS)) if self.class::CHECK_PARAMS_SET_FIELDS.any?
   end
 
   # Set true for instance_variable_set if it is part of request params.
   # Say if request params has forum_type, forum_type_set attribute will be set to true.
-  def check_params_set(request_params, item = nil)
-    if item
-      item.attributes.each_pair do |field, value|
-        instance_variable_set("@#{field}_set", false)
-      end
-    end
+  def check_params_set(request_params)
     request_params.each_pair do |key, value|
       instance_variable_set("@#{key}_set", true)
     end

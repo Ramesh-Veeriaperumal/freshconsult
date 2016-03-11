@@ -68,7 +68,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
     item = Helpdesk::TimeSheet.new(timer_running: true, user_id: 2)
-    controller_params = { start_time: '' }
+    controller_params = { start_time: '' }.stringify_keys!
     time_entry = TimeEntryValidation.new(controller_params, item, true)
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
@@ -79,7 +79,7 @@ class TimeEntryValidationTest < ActionView::TestCase
   def test_start_time_when_timer_running_is_false
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
-    controller_params = { start_time: '', timer_running: false }
+    controller_params = { start_time: '', timer_running: false }.stringify_keys!
     time_entry = TimeEntryValidation.new(controller_params, nil, false)
     time_entry.valid?
     error = time_entry.errors.full_messages
