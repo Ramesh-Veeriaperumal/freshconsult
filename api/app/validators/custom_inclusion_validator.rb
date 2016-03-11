@@ -1,7 +1,6 @@
 # Overriding default validator to add custom message to inclusion validation.
 
 class CustomInclusionValidator < ApiValidator
-
   private
 
     def message

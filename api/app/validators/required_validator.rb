@@ -1,7 +1,6 @@
 # Overriding defualt validator to add custom message to presence validation.
 
 class RequiredValidator < ApiValidator
-
   private
 
     def invalid?

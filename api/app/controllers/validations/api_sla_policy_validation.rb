@@ -11,6 +11,6 @@ class ApiSlaPolicyValidation < ApiValidation
   end
 
   def can_set_company_ids?
-  	applicable_to.is_a?(Hash) && applicable_to.key?(:company_ids)
+    applicable_to.is_a?(Hash) && applicable_to.key?(:company_ids)
   end
 end

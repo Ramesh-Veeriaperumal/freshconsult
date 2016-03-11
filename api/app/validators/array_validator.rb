@@ -6,7 +6,7 @@ class ArrayValidator < ApiValidator
       valid_options.each do |key, args|
         return if record.errors[attribute].present?
         validator_options = { attributes: attribute }
-        validator_options.merge!(args) if args.is_a?(Hash) 
+        validator_options.merge!(args) if args.is_a?(Hash)
         custom_validator = self.class.custom_validator_class_mapping[key]
         validator_class = custom_validator || self.class.default_validator_class_mapping(key)
         validator = validator_class.new(validator_options)

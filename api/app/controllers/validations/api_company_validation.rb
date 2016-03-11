@@ -1,5 +1,4 @@
 class ApiCompanyValidation < ApiValidation
-  
   DEFAULT_FIELD_VALIDATIONS = {
     description:  { data_type: { rules: String } },
     note: { data_type: { rules: String } },

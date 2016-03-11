@@ -1,5 +1,4 @@
 class StringRejectionValidator < ApiValidator
-  
   private
 
     def invalid?

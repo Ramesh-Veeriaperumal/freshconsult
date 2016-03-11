@@ -25,4 +25,3 @@ class GroupDecorator < ApiDecorator
     to_bool(:ticket_assign_type)
   end
 end
-
