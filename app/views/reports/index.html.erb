@@ -1,23 +1,22 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <div class="report-home report ">
-  <div class="admin-header report-head welcome" data-scroll-top="true">
-    <div class="pull-left welcome-message">
-      <div class="content">
-          <span class="head"><%= t('helpdesk_reports.welcome_message.header')%></span>
-          <%= t('helpdesk_reports.welcome_message.intro')%>
+  <div class="admin-header">
+    <div class="report-head report">
+      <div class="report-link-block pull-right">
+        <a href="#report-demo" rel="freshdialog" id="demo_link"
+          data-backdrop="static"  data-width="600" data-template-footer="false" data-title=""
+        ><%= t('helpdesk_reports.reports_in_action')%>
+        </a>
+        <% unless current_account.disabled_old_reports_ui? %>
+          <span class="seperator_reports"> | </span>
+          <a class="report-link" href="<%=old_reports_url%>"><%= t('helpdesk_reports.view_old_reports')%></a>
+          <% unless current_account.old_reports_enabled? %>
+              <div class="deprecate-message"><%=t('helpdesk_reports.deprecated_message')%></div>
+          <% end %>
+        <% end %>
       </div>
-      <a href="#report-demo" rel="freshdialog" id="demo_link"
-        data-backdrop="static"  data-width="600" data-template-footer="false" data-title=""
-      ><%= t('helpdesk_reports.welcome_message.video_link')%>
-      </a>
-      <span class=""> | </span>
-      <a href="https://support.freshdesk.com/support/solutions/folders/270450" target="_blank"><%= t('helpdesk_reports.welcome_message.link_title')%></a>
+      <div class="clear"></div>
     </div>
-    <div class="seperator pull-left"></div>
-    <div class="report-link-block pull-right">
-      <a class="report-link" href="<%=old_reports_url%>"><%= t('helpdesk_reports.view_old_reports')%> <span class="view-all-arrow"></span></a>
-    </div>
-    <div class="clear"></div>
   </div>
   <% if feature?(:advanced_reporting) || feature?(:enterprise_reporting) %>
     <div class="report_category odd ataglance ">

@@ -15,6 +15,7 @@
 </h3>
 
 <% content_for :sidebar do %>
+<div class="empty-holder"></div>
 <div class="sidepanel">
   <h4 class="title"><%= t('reports.select_time_period')%></h4>
 	<form id="report_search">
@@ -58,7 +59,17 @@ jQuery(document).ready(function() {
 		ev.preventDefault();
 		return false;
 	});
-});     
+
+	//Deprecated message
+	  var show_disabled = <%= current_account.old_reports_enabled? %>;
+	  if(show_disabled){
+	      jQuery(".empty-holder").hide();
+	  } else{
+	      var message = '<div class="deprecated-header"><div class="message"><%=t('helpdesk_reports.deprecated_header')%></div></div>';
+		  jQuery(".leftcontent").prepend(message);
+	  }
+
+	});     
 <% end %>
 <% end %>
 

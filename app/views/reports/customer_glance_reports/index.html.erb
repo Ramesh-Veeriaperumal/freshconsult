@@ -2,6 +2,7 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %> 
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <%= javascript_include_tag :'cdn/reports'  %>
+<%= render :partial => "reports/shared/deprecation_head" unless current_account.old_reports_enabled? %>
 <div id="loading-box"> <div class="sloading loading-left loading-small reports-loading">Generating Report...</div> </div>
 <!-- select model for agent start-->
 <%= render :partial => "reports/helpdesk_glance_reports/glance_model_dialog", :locals => {:select_option=>'customer_id',:dialog_box_title=>"#{t('adv_reports.customer_at_a_glance')} #{t('adv_reports.report')}",:field_title=> t('adv_reports.glance.select_customer_msg'),
