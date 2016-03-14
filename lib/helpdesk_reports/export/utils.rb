@@ -50,16 +50,5 @@ module HelpdeskReports::Export::Utils
     max_size_allowed   = size_from_redis ? size_from_redis.to_i : HelpdeskReports::Constants::Export::MAIL_ATTACHMENT_LIMIT_IN_BYTES
     @attachment_via_s3 = File.size(file_path) > max_size_allowed
   end
-
-  def generate_csv_string(objects, index = 0)
-    return if objects.blank?
-    csv_headers = headers.collect {|header| csv_hash[header]}
-    CSVBridge.generate do |csv|
-      csv << csv_headers if index && index.zero?
-      objects.each do |object|
-        csv << object
-      end
-    end
-  end
   
 end

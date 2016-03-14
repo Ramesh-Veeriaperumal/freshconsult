@@ -50,7 +50,11 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
                 metric: data.metric
             }
 
-            var main_condition = _FD.constructMainListCondition(data.label);
+            var main_condition = {
+                    condition : 'company_id',
+                    operator: 'eql',
+                    value: data.id
+                };
 
             if(!jQuery.isEmptyObject(main_condition)) {
                 list_hash.list_conditions.push(main_condition);
@@ -74,26 +78,6 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
             var hash = jQuery.extend({},_FD.constants.params, list_hash);
             list_params.push(hash);
             _FD.core.fetchTickets(list_params);
-        },
-        constructMainListCondition: function (label) {
-            var list_hash = {};
-            var hash_values = {};
-            var company_options = HelpdeskReports.locals.report_field_hash['company_id'].options;
-
-            _.map(company_options, function(val){                     
-                hash_values[val[1]] = val[0]; 
-            });
-
-            if (hash_values.hasOwnProperty(label)) {
-                var string_val = hash_values[label].toString();
-
-                list_hash = {
-                    condition : 'company_id',
-                    operator: 'eql',
-                    value: string_val
-                }
-            }    
-            return list_hash;
         },
         setDefaultValues: function () {
             var current_params = [];

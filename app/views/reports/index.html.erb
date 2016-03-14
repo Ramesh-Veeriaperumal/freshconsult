@@ -143,12 +143,5 @@ jQuery(document).ready(function() {
       iframe.src = video_url;
   });
 
-  if(jQuery.cookie != undefined) {
-      var demoPlayed = jQuery.cookie("reports-demo-showed");
-      if(demoPlayed == null) {
-        jQuery.cookie("reports-demo-showed","true");
-        jQuery("#demo_link").trigger('click');
-      }
-  }
 });
 </script>
