@@ -113,14 +113,14 @@ class Helpdesk::TicketsController < ApplicationController
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
     tkt = current_account.tickets.permissible(current_user)
-    @items = fetch_tickets(tkt) unless is_native_mobile?
+    @items = fetch_tickets unless is_native_mobile?
     respond_to do |format|
       format.html  do
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
         #For api calls(json/xml), the redirection is ignored, to use as indication of last page.
         if (@items.length < 1) && !params[:page].nil? && params[:page] != '1'
           params[:page] = '1'
-          @items = fetch_tickets(tkt)
+          @items = fetch_tickets
         end
         @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false, :user_id => i.accessible.user_id} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
@@ -1412,11 +1412,7 @@ class Helpdesk::TicketsController < ApplicationController
     if es_tickets_enabled? and params[:html_format]
       tickets_from_es(params)
     else
-      if tkt.present?
-        tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-      else
-        current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-      end
+      current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     end
   end
 
