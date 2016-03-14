@@ -6,6 +6,7 @@ class ActionController::TestCase
   end
 
   def setup
+    begin_gc_deferment
     activate_authlogic
     get_agent
     @account.make_current
@@ -22,10 +23,12 @@ class ActionController::TestCase
   end
 
   def teardown
+    reconsider_gc_deferment
     @controller.instance_variables.each do |ivar|
       @controller.instance_variable_set(ivar, nil)
     end
     super
+    clear_instance_variables
   end
   ActiveRecord::Base.logger.level = 1
   self.use_transactional_fixtures = false
@@ -42,6 +45,7 @@ class ActionDispatch::IntegrationTest
   FileUtils.mkdir_p "#{Rails.root}/test/api/query_reports"
 
   def setup
+    begin_gc_deferment
     get_agent
     set_request_headers
     host!('localhost.freshpo.com')
@@ -53,6 +57,12 @@ class ActionDispatch::IntegrationTest
     Bullet.add_whitelist type: :n_plus_one_query, class_name: 'ForumCategory', association: :account
     # To prevent DynamoDB errors.
     SpamCounter.stubs(:count).returns(0)
+  end
+
+  def teardown
+    reconsider_gc_deferment
+    super
+    clear_instance_variables
   end
 
   ActiveRecord::Base.logger.level = 1
