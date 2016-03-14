@@ -1,12 +1,12 @@
 class MergeTickets < BaseWorker
   sidekiq_options :queue => :merge_tickets, :retry => 0, :backtrace => true, :failures => :exhausted
   STATES_TO_BE_MOVED = ["first_response_time", "requester_responded_at", "agent_responded_at"]
-  TICKET_STATE_COLLECTION = {}
   ACTIVITIES_TO_BE_DISCARDED = ["activities.tickets.new_ticket.long", "activities.tickets.status_change.long"]
 
   def perform(args)
     args.symbolize_keys!
     account = Account.current
+    tkt_states_hash = {}
     source_tickets = account.tickets.where(:display_id => args[:source_ticket_ids] )
     target_ticket = account.tickets.find(args[:target_ticket_id])
     source_ticket_note_ids = []
@@ -19,13 +19,13 @@ class MergeTickets < BaseWorker
       source_ticket.time_sheets.update_all("workable_id = #{args[:target_ticket_id]}", [ "account_id = ?", 
                                                                                 account.id ] )
       STATES_TO_BE_MOVED.each do |state|
-        TICKET_STATE_COLLECTION[state] = (TICKET_STATE_COLLECTION[state] || []).push(source_ticket.send(state))
+        tkt_states_hash[state] = (tkt_states_hash[state] || []).push(source_ticket.send(state))
       end
       add_note_to_source_ticket(source_ticket, args[:source_note_private], args[:source_note])
       remove_ecommerce_mapping(source_ticket) if source_ticket.ecommerce?
       update_merge_activity(source_ticket,target_ticket)
     end
-    update_target_ticket_states(target_ticket)
+    update_target_ticket_states(target_ticket, tkt_states_hash)
     # notes are added to the target ticket via update_all. This wont trigger callback
     # So sending it manually
     update_target_ticket_notes_to_reports(target_ticket, source_ticket_note_ids.flatten)
@@ -47,9 +47,9 @@ class MergeTickets < BaseWorker
     source_note.save_note
   end
 
-  def update_target_ticket_states(target_ticket)
+  def update_target_ticket_states(target_ticket, tkt_states_hash)
     STATES_TO_BE_MOVED.each do |state| 
-      current_state_collection = TICKET_STATE_COLLECTION[state].push(target_ticket.send(state))
+      current_state_collection = tkt_states_hash[state].push(target_ticket.send(state))
       operator = ( state == 'first_response_time' ? 'min' : 'max' )
       target_ticket.ticket_states.send("#{state}=",current_state_collection.compact.send(operator))
     end
