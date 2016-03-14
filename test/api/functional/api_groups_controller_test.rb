@@ -12,8 +12,8 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_create_group_with_existing_name
-    post :create, construct_params({}, name: 'TestGroups1', description: Faker::Lorem.paragraph)
-    post :create, construct_params({}, name: 'TestGroups1', description: Faker::Lorem.paragraph)
+    existing_group = Group.first || create_group(@account)
+    post :create, construct_params({}, name: existing_group.name, description: Faker::Lorem.paragraph)
     assert_response 409
     match_json([bad_request_error_pattern('name', :"has already been taken")])
   end
@@ -83,6 +83,14 @@ class ApiGroupsControllerTest < ActionController::TestCase
     end
     assert_response 200
     match_json(pattern.ordered!)
+  end
+
+  def test_show_with_invalid_boolean_value
+    group = create_group(@account)
+    group.update_column(:ticket_assign_type, 213)
+    get :show, construct_params(id: group.id)
+    assert_response 200
+    match_json(group_pattern(Group.find(group.id)))
   end
 
   def test_show_group

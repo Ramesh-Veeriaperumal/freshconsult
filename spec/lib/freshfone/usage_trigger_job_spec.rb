@@ -20,47 +20,6 @@ RSpec.describe 'UsageTrigger' do
     Freshfone::UsageTrigger.delete_all
   end
 
-  it 'should create a new credit_overdraft trigger with 15% of available credit' do
-    Twilio::REST::Trigger.any_instance.stubs(:delete)
-    Account.any_instance.stubs(:full_url).returns("http://play.ngrok.com")
-    trigger = mock
-    trigger.stubs(:sid).returns('UTSid')
-    trigger.stubs(:current_value).returns("#{@account.freshfone_credit.available_credit}")
-    trigger.stubs(:trigger_value).returns('100')
-    trigger.stubs(:present?).returns(true)
-    Twilio::REST::Triggers.any_instance.stubs(:create).returns(trigger)
-    Twilio::REST::Triggers.any_instance.stubs(:get).returns(trigger)
-    Freshfone::Jobs::UsageTrigger.perform({:trigger_type => "credit_overdraft", :usage_category => "totalprice"})
-    twilio_ut = Freshfone::Jobs::UsageTrigger.get_trigger trigger.sid
-    twilio_ut.should be_present
-    twilio_ut.trigger_value.to_i.should be_eql(trigger.trigger_value.to_i)
-    Twilio::REST::Trigger.any_instance.unstub(:delete)
-    Account.any_instance.unstub(:full_url)
-    Twilio::REST::Triggers.any_instance.unstub(:create)
-    Twilio::REST::Triggers.any_instance.unstub(:get)
-    Twilio::REST::Trigger.any_instance.unstub(:delete)
-  end
-
-  it 'should create a new credit_overdraft trigger with 15% of purchased credit' do
-    Twilio::REST::Trigger.any_instance.stubs(:delete)
-    Account.any_instance.stubs(:full_url).returns("http://play.ngrok.com")
-    trigger = mock
-    Twilio::REST::Triggers.any_instance.stubs(:create).returns(trigger)
-    Twilio::REST::Triggers.any_instance.stubs(:get).returns(trigger)
-    trigger.stubs(:sid).returns('TRIGR')
-    trigger.stubs(:trigger_value).returns("100")
-    trigger.stubs(:present?).returns(true)
-    trigger.stubs(:current_value).returns('10')
-    Freshfone::Jobs::UsageTrigger.perform({:trigger_type => "credit_overdraft", :purchased_credit => 10, :usage_category => "totalprice"})
-    credit_overdraft = Account.current.freshfone_account.freshfone_usage_triggers.previous("credit_overdraft").first
-    twilio_ut = Freshfone::Jobs::UsageTrigger.get_trigger credit_overdraft.sid
-    twilio_ut.should be_present
-    twilio_ut.trigger_value.to_i.should be_eql(credit_overdraft.trigger_value.to_i)
-    Twilio::REST::Trigger.any_instance.unstub(:delete)
-    Account.any_instance.unstub(:full_url)
-    Twilio::REST::Triggers.any_instance.stubs(:create)
-    Twilio::REST::Triggers.any_instance.stubs(:get)
-  end
  	it 'should remove second level daily threshold triggers upon security whitelisting' do
 		freshfone_account = @account.freshfone_account
 		trigger = mock

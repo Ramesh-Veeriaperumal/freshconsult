@@ -17,7 +17,12 @@ QUEUE_WATCHER_RULE = {
         "free_sla_worker" => 25000,
         "trail_sla_worker" => 25000
     } ,
-    :except => ["supervisor_worker"]
+    :except => ["supervisor_worker",
+              "gamification_ticket_quests",
+              "gamification_ticket_score",
+              "helpdesk_note_body_queue",
+              "gamification_user_score"
+            ]
 }
 
 

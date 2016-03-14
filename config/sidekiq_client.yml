@@ -9,6 +9,8 @@ defaults: &defaults
     - [select_all_batcher]
     - [freshfone_notifications]
     - [freshfone_node]
+    - [freshfone_trial_worker]
+    - [natero_worker]
     - [merge_contacts]
     - [sla]
     - [free_sla]
@@ -83,6 +85,7 @@ defaults: &defaults
     - [merge_tickets_attachments]
     - [premium_webhook_throttler]
     - [premium_webhook_worker]
+    - [marketplace_apps]
 
 development:
   <<: *defaults

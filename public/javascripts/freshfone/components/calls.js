@@ -218,13 +218,21 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 	   				success: function (outcome) {
 							if(outcome.code == 1001){
 								balance_available = false;  
-							}else if(outcome.code == 1002){
+							} else if(outcome.code == 1002){
 								country_enabled = false;
 							}
-					}
+							else if(outcome.code == 1003){
+								freshfone.trialExpired = true;
+							}
+							else if(outcome.code == 1004){
+								freshfone.trialOutgoingExhausted = true;
+							}
+						}
 			});
 			if (!balance_available) { this.$infoText().show(); }
 			if (!country_enabled) { this.$restrictedCountryText().show(); }  
+			if (freshfone.trialOutgoingExhausted || freshfone.trialExpired) { 
+				freshfonewidget.showOutgoing(); freshfonewidget.showDialPad(); }
 			return (balance_available && country_enabled);
 		},
 		addDialCode: function(number){ 

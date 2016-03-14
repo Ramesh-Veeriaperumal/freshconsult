@@ -157,3 +157,38 @@
   margin: 20px 0 10px 0;
   border-bottom: 1px solid #ccc;
 }
+.ff_numbers_trial_usage {
+  border: 1px solid #EEE;
+  background: #FFE;
+  padding: 11px;
+  margin-bottom: 10PX;
+  border-radius: 5px;
+  height: 90px;
+  .trial_msg {
+    height:36px; 
+    margin:4px;
+    .usage_container{
+      width:30px;
+      @include margin-right(10px);
+    }
+    .usage_info {
+      width: 120px;
+      .error{
+        color: #A90329;
+      }
+    }
+  }
+  .error{
+    color: #A90329;
+  }
+  .content{
+    width: 70%;
+  }
+  .graph{
+    width: 27%;
+  }
+  .btn {
+    margin-top:10px;
+    width: 137px;
+  }
+}

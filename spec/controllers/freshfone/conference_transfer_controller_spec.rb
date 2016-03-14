@@ -153,5 +153,17 @@ RSpec.describe Freshfone::ConferenceTransferController  do
     Freshfone::Notifier.any_instance.unstub(:terminate_api_call)
   end
 
+  it 'should reject any attempt to make external transfer when calling from trial' do
+    @account.freshfone_calls.destroy_all
+    request.env["HTTP_ACCEPT"] = "application/json"
+    log_in(@agent)
+    create_freshfone_call
+    load_freshfone_trial
+    @account.freshfone_account.reload
+    post :initiate_transfer, { :CallSid => @freshfone_call.call_sid, :external_number => '+19919919919' }
+    expect(json).to be_truthy
+    expect(json[:status]).to eql('error')
+  end
+
 
 end

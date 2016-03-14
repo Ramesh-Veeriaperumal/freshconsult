@@ -84,8 +84,13 @@ class SupportScore < ActiveRecord::Base
 protected
   
   def update_agents_score
-    Resque.enqueue(Gamification::Scoreboard::UpdateUserScore, { :id => user.id, 
-                    :account_id => user.account_id })
+    acc = user.account
+    args = { :id => user.id, :account_id => acc.id }
+    if acc.premium_gamification_account?
+      Resque.enqueue(Gamification::Scoreboard::UpdateUserScore::PremiumQueue, args)
+    else
+      Resque.enqueue(Gamification::Scoreboard::UpdateUserScore, args)
+    end
   end
 
 end

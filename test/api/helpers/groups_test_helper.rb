@@ -4,7 +4,7 @@ module GroupsTestHelper
   # Patterns
   def group_pattern(expected_output = {}, group)
     group_json = group_json(expected_output, group)
-    group_json[:auto_ticket_assign] = (expected_output[:auto_ticket_assign] || group.ticket_assign_type).to_s.to_bool
+    group_json[:auto_ticket_assign] = decorate_boolean((expected_output[:auto_ticket_assign] || group.ticket_assign_type))
     group_json[:agent_ids] = group.agent_groups.pluck(:user_id)
     group_json
   end
@@ -34,6 +34,12 @@ module GroupsTestHelper
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+  end
+
+  def decorate_boolean(value)
+    value ? value.to_s.to_bool : value
+  rescue ArgumentError => ex
+    value
   end
 
   # Helpers

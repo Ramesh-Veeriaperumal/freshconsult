@@ -173,6 +173,8 @@ module FreshdeskCore::Model
                         "freshfone_other_charges",
                         "freshfone_payments",
                         "freshfone_whitelist_countries",
+                        "freshfone_subscriptions",
+                        "freshfone_supervisor_controls",
 
                         "survey_questions",
                         "survey_question_choices",

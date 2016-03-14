@@ -56,17 +56,15 @@ class CRM::Freshsales
 
     include Subscription::Events::AssignEventCode
 
-    TRACK_FIELDS = [:amount, :state, :agent_limit, :subscription_plan_id, :renewal_period]
-
     def self.handle_data_sync(freshsales, args)
       begin
-        args[:previous_changes].symbolize_keys!
+        args[:old_subscription].symbolize_keys!
 
         subscription = Subscription.find_by_account_id_and_id(Account.current.id, args[:subscription_id])
-        old_subscription = prepare_old_subscription(subscription, args[:previous_changes])
+        old_subscription = prepare_old_subscription(args[:old_subscription])
   
         case
-        when (upgrade?(subscription, old_subscription) && !trial_or_free_to_active?(subscription))
+        when upgrade?(subscription, old_subscription)
           freshsales.account_upgrade(old_subscription)
         when downgrade?(subscription, old_subscription)
           freshsales.account_downgrade(old_subscription)
@@ -79,20 +77,13 @@ class CRM::Freshsales
       end
     end
 
-    def self.trial_or_free_to_active?(subscription)
-      subscription.subscription_payments.count == 0
-    end
-
     def self.state_changed?(subscription, old_subscription)
       !old_subscription[:state].eql?(subscription.state)
     end
 
-    def self.prepare_old_subscription(subscription, previous_changes)
-      old_subscription = TRACK_FIELDS.inject({}) { |hash, field|
-            hash.merge({ field => previous_changes[field].try(:first) || subscription.send(field) })}
-
-      old_subscription[:amount] = old_subscription[:amount].to_f if old_subscription
-      old_subscription
+    def self.prepare_old_subscription(old_subscription_args)
+      old_subscription_args[:amount] = old_subscription_args[:amount].to_f
+      old_subscription_args
     end
   end
 

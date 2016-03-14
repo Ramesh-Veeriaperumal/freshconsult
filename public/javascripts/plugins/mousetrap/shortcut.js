@@ -189,13 +189,13 @@
             var $el = $('#watcher_toggle'),
                 watching = $el.data('watching'),
                 ticket_id = TICKET_DETAILS_DATA.displayId,
-                cur_user = $el.data('currentuserid');
+                cur_user = DataStore.get('current_user').currentData.user.id;
 
             if (watching) {
                 $('.unwatch').trigger('click');
             } else {
                 $('#ids').select2('val', cur_user);
-                add_watcher();
+                App.Tickets.Watcher.addWatcher();
             }
 
             _highlightElement($el.data('watching', !watching));

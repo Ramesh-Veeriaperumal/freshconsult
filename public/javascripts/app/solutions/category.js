@@ -19,33 +19,15 @@ window.App.Solutions = window.App.Solutions || {};
         $this.normalizeHeight(false);
       })
 
-      $("body").on('click.solutionCategory', '.feedbacks-filter-all', function (e) {
-        $this.changeAllFilterSettings(e,'.feedbacks-filter');
-      });
-
-      $("body").on('click.solutionCategory', '.drafts-filter-all', function (e) {
-        $this.changeAllFilterSettings(e,'.drafts-filter');
-      });
-
-      $("body").on('click.solutionCategory', '.feedbacks-filter-me', function (e) {
-        $this.changeMyFilterSettings(e,'.feedbacks-filter');
-      });
-
-      $("body").on('click.solutionCategory', '.drafts-filter-me', function (e) {
-        $this.changeMyFilterSettings(e,'.drafts-filter');  
+      $("body").on('click.solutionCategory', '.feedbacks-filter-all, .feedbacks-filter-me, .drafts-filter-all, .drafts-filter-me', function (e) {
+        $this.changeFilterSettings($(this),'.feedbacks-filter');
       });
     },
 
-    changeAllFilterSettings: function (e,container) {
-      $(container+'-title').text($(e.target).text());
-      $(container+'-all').parent().addClass('active');
-      $(container+'-me').parent().removeClass('active');
-    },
-
-    changeMyFilterSettings: function (e,container) {
-      $(container+'-title').text($(e.target).text());
-      $(container+'-me').parent().addClass('active');
-      $(container+'-all').parent().removeClass('active');
+    changeFilterSettings: function (target) {
+      $('.' + target.data('container') + '-title').text(target.text());
+      target.parent().parent().find('.widget-filter').removeClass('active');
+      target.parent().addClass('active');
     },
 
     bindHandlers: function () {

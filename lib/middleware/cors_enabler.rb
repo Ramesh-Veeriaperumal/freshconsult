@@ -7,7 +7,7 @@ class Middleware::CorsEnabler < Rack::Cors
     :methods => [:get, :post, :put, :delete, :options], 
     :max_age => 86400, #allows client to cache preflight request for 24 hours
     #http://stackoverflow.com/questions/25673089/why-is-access-control-expose-headers-needed
-    :expose => ['X-Path', 'X-Method', 'X-Query-String', 'X-Ua-Compatible', 'X-Meta-Request-Version', 'X-Request-Id', 'X-Runtime', 'X-RateLimit-Total', 'X-RateLimit-Remaining', 'X-RateLimit-Used', 'X-Freshdesk-API-Version'] 
+    :expose => ['X-Path', 'X-Method', 'X-Query-String', 'X-Ua-Compatible', 'X-Meta-Request-Version', 'X-Request-Id', 'X-Runtime', 'X-RateLimit-Total', 'X-RateLimit-Remaining', 'X-RateLimit-Used-CurrentRequest', 'X-Freshdesk-API-Version'] 
     # Should have all the custom headers that server will send else your client will not have access to those headers
   }
 

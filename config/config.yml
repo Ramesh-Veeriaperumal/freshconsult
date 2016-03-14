@@ -115,6 +115,11 @@ reseller_portal:
     staging: "partners.freshpo.com/freshdesk_webhooks"
     production: "partners.freshdesk.com/freshdesk_webhooks"
 
+natero:
+  production:
+    url: 'https://api.natero.com/api/v2/accounts'
+    api_key: 'icieauqsnc5tdtkz6pbkup5sg8aouptd'
+
 client_debugging:
   bugsnag:
     development:

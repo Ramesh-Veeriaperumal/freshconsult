@@ -124,6 +124,10 @@ class ApplicationController < ActionController::Base
       flash[:notice] = t('flash.password_expiry', :time_in_words => time_ago_in_words((time_to_expiry).seconds.from_now)) if time_to_expiry < 60.minutes && time_to_expiry > 0
     end
   end
+  
+  def run_on_slave(&block)
+    Sharding.run_on_slave(&block)
+  end
 
   def render_404
      # NewRelic::Agent.notice_error(ActionController::RoutingError,{:uri => request.url,

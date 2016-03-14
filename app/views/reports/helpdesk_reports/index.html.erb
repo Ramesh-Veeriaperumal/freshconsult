@@ -6,6 +6,7 @@
 <%= javascript_include_tag :'cdn/report_date'  %>
 
 <% content_for :sidebar do %>
+    <div class="empty-holder"></div>
 	<%= render :partial => "/reports/helpdesk_reports/sidebar" %>
 <%end%>
 
@@ -17,4 +18,13 @@
   	ev.preventDefault();
   	return false;
   });
+
+  //Deprecated message
+  var show_disabled = <%= current_account.classic_reports_disabled? %>;
+  if(show_disabled){
+  	  var message = '<div class="deprecated-header"><div class="message"><%=t('adv_reports.deprecated_header')%></div></div>';
+	  jQuery(".leftcontent").prepend(message);
+  } else{
+  	 jQuery(".empty-holder").hide();
+  }
 <% end %>

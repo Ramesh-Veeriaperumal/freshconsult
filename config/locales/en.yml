@@ -1440,6 +1440,7 @@ en:
             agent_email_partial: Partially successful.
             agent_email_sending: Sending Invites...
             agent_email_required: Email ID required to send invite.
+            bulk_invite_blocked: "You can add up to 25 agents from this page. You can add more from the admin section later."
     day_passes:
       helpnote:
         title: Day Pass
@@ -6084,9 +6085,6 @@ en:
     tooltip:
       edit: Edit
       settings: Settings
-      update: Update
-      delete: Delete
-      write_feedback: Write Feedback
   home:
       mobile_index:
         email: Email
@@ -6113,16 +6111,18 @@ en:
     terms_of_use_link: "http://freshdesk.com/terms#marketplace"
     get_more_apps: Get more Apps
     your_plugs: Your Plugs
-    freshplug_intro: " And you can customize and personalize your Freshdesk using Freshplugs."
-    app_feedback: "App Feedback for "
-    app_feedback_desc: "Reach out to the developer for any questions or comments about this App."
-    app_delete_warning: "Are you sure you want to delete this App?"
-    plug_delete_warning: "Are you sure you want to delete this Plug?"
+    confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
+    app: app
+    plug: plug
     app_gallery: App Gallery
+    app_description: "Apps allow you to integrate with other applications to make your Freshdesk experience more awesome. They also enable you to customize and personalize your Freshdesk portal."
     apps: Apps
-    in_dev_apps: In-Development Apps
+    plugs: Plugs
+    new_plug: New Plug
+    no_plugs: "You have no plugs installed. Create and Install a new Plug by clicking "
     all: All
     settings: Settings
+    coming_soon: Coming Soon
     install: Install
     update: Update
     installing_text: "Please wait..."
@@ -6130,7 +6130,7 @@ en:
     no_mktp_apps: "You have no Apps installed. Browse and Install Apps from the App Gallery by clicking "
     go_to_dev_portal: Go to Developer Portal
     developer_shortcuts: Developer Shortcuts
-    plug_info: "Did you know, now there is a better way to write and manage and even share your freshplugs to all of freshdesk community."
+    plug_info: "Did you know, now there is a better way to write and manage and even share your plugs to all of freshdesk community."
     needs_developer_text: Needs Developer Account
     write_a_plug: Write a Plug
     description: Description
@@ -6143,26 +6143,28 @@ en:
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
-    no_connection: "Sorry, Service unavailable. Please try after sometime. Please contact us, if the problem persists."
+    no_connection: "The app gallery is currently unavailable. Please try again later. Please contact us, if the issue persists."
+    plugs_unavailable: "Certain apps could not be rendered.Please try again after a few seconds.Please contact us if the issue persists."
+    installed_plugs_unavailable: "The listing of installed apps is currently unavailable.Please try again later.Please contact us if the issue persists."
     install_error: "Error while installing the App. Please try again."
     results: results
     field_blank: Please fill all the fields.
     installed: Installed
+    helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get more Apps” button."
+    helpnote2: "In addition to the apps, you can bring in data from any other third party solution, legacy system or database into the tickets and contacts pages with Plugs. You can customize your Plug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS, and Javascript."
     delete_action:
-      success: " was deleted successfully"
-      error: "Error while deleting "
-    feedback_action:
-      success: "Thank you for your feedback. The developer will get back to you soon."
-      error: "Error while submitting Feedback. Please try after sometime."
-      submit: Submit
-      submitting: Submitting...
+      success: "App deleted successfully"
+      error: "Error while deleting the App"
+    install_action:
+      success: "App installed successfully."
+    update_action:
+      success: "App updated successfully."
   integrations:
     native_integrations: Native Integrations
-    freshplugs_title: FreshPlugs
     cti_app_title: CTI Integrations
-    new_freshplug: New FreshPlug
-    no_freshplugs: "You have no FreshPlugs installed. Create and Install a new FreshPlug by clicking "
-    add_new_freshplug: New FreshPlug
+    uninstall: Uninstall
+    deprecated_message: This app is no longer supported. Please install the latest version.
+    no_timesheet_feature: This app can only be installed for accounts with Time Tracking enabled.
     freshplugs:
       refresh: Refresh
       custom_widget_preview: Custom Widget Preview
@@ -6170,11 +6172,11 @@ en:
       hide_preview: Hide Preview
       show_widget_in_ticket_view_page: Show the widget in ticket view page.
       show_the_widget_in_contact_view_page: Show the widget in contact view page.
-      freshplug_preview: Freshplug Preview
+      plug_preview: Plug Preview
       preview_helptext: This integration will appear in the sidebar
       ticket_detail_page: Ticket detail page
       contact_detail_page: Contact detail page
-      freshplug_used_in: Freshplug displayed on
+      plug_used_in: Plug displayed on
     whmcs:
       label: "WHMCS"
       products: "Products"
@@ -6754,11 +6756,10 @@ en:
       description: "Description"
       script: "Script"
       label: "Custom Widget"
-      new_freshplug: "New Freshplug"
-      edit_freshplug: "Edit Freshplug"
+      new_plug: "New Plug"
+      edit_plug: "Edit Plug"
       desc: "You can add a custom widget to display any detail using your own custom script."
-      helptext: "<h4>FreshPlugs</h4><p><br/> You can develop your own FreshPlug using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a FreshPlug, first give it a name and description. Then enter your code in the  ‘Script’ area. You can pass any ticket or requestor field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about FreshPlugs."
-      small_help_text: "You can develop your own FreshPlug using HTML,CSS and JavaScript."
+      helpnote: "<h4>Plugs</h4><p><br/> You can develop your own Plug using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a Plug, first give it a name and description. Then enter your code in the  ‘Script’ area. You can pass any ticket or requestor field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about Plugs."
       form:
         widget_title: "Widget Name"
         widget_script: "Widget code snippet"
@@ -7846,6 +7847,8 @@ en:
     customer_satisfaction:
       title: Customer Satisfaction Report
   adv_reports:
+    deprecated_message : "(View classic report link will no longer be available from Fri, 18 March 2016)"
+    deprecated_header : "This report will no longer be available from Fri, 18 March 2016"
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"
     report: " Report "
@@ -8069,6 +8072,7 @@ en:
     general:
       suspended_account_msg: "Your phone channel is currently suspended. Please enable phone to make and receive calls."
       suspended_on_low_balance_msg: "Your phone channel has been suspended due to low balance. Please recharge to activate."
+      trial_expired: "Your phone channel trial is expired. Please activate to make and receive calls."
     dashboard:
       title: "Phone"
       in_conversation: "In-conversation"
@@ -8078,12 +8082,28 @@ en:
       unavailable_agents: "Busy Agents"
       freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please contact your account admin."
       admin_freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please <a href='/subscription'> recharge </a>"
+      low_credit: "CREDIT LOW"
+      trial:
+        title: "TRIAL"
+        expired_title: "TRIAL EXPIRED"
+        inbound_minutes_left:
+          one:  "Incoming : 1 min left"
+          other:  "Incoming : %{minutes} mins left"
+        outbound_minutes_left:
+          one: "Outgoing : 1 min left"
+          other:  "Outgoing : %{minutes} mins left"
+        trial_days_left:
+          one: "1 day left in your trial"
+          other: "%{days} days left in your trial"
+        activate: "<div data-removable='true'>To continue using phone channel, please <a href='#' id='freshfone_feature_request'>activate</a> your phone account</div>"
       join: "Join"
       leave: "Leave"
       oncall: "OnCall"
     widget:
       ignore: "Ignore"
       accept: "Accept"
+      answer: "Answer"
+      answering: "Answering..."
       end_call: "End Call"
       mute: "Mute"
       unmute: "Unmute"
@@ -8262,6 +8282,52 @@ en:
       number:
         simultaneous: "Call all agents"
         round_robin: "Call idle agent first"
+      trial:
+        request_activation_msg: You can choose to use only one number from a limited set of countries during phone trial period.<br> However, you can purchase multiple numbers from 41 countries when you activate the full version
+        activate_btn_text: Request for activation
+        requested_activation: We have received your request for activation<br>It's under progress
+        expired: Your Phone trial has expired
+        activate_to_call_expired: "Please activate your phone account to make or receive calls"
+        activate_to_call_outgoing: "Please activate your phone account to make calls"
+        contact_admin_for_expired: "Please contact your admin to continue making or receiving calls"
+        contact_admin_for_call_outgoing: "Please contact your admin to continue making calls"
+        period_to_expire: Your phone trial will expire
+        incoming_minutes_to_exhaust:
+          one: "<span class='min_left error hide'>1</span> free incoming minute left"
+          other:  "<span class='min_left error hide'></span> free incoming minutes left"
+        outgoing_minutes_to_exhaust:
+          one:  "<span class='min_left error hide'>1</span> free outgoing minute left"
+          other: "<span class='min_left error hide'></span> free outgoing minutes left"
+        outgoing_minutes_to_exhaust:
+          one:  "<span class='min_left error hide'>1</span> free outgoing minute left"
+          other: "<span class='min_left error hide'></span> free outgoing minutes left"
+        outbound_usage_exhausted: Free outgoing minutes exhausted
+        get_more_credits: To get more credits, you need to activate your account
+        minutes_usage_exhausted: Your phone trial minutes has been exhausted
+        days_left:
+          one: "in <span class='days_left error hide'>1</span> day"
+          other: "in <span class='days_left error hide'></span> days"
+        numbers:
+          delete_not_allowed: Deleting numbers on Phone Trial is not permitted
+          normal_trial_usage: You are currently using the trial version of the phone channel with limited features
+          activate_to_use_all: please activate your phone account to buy more numbers and use all the features
+          incoming_minutes_exhausted: You have exhausted your free incoming minutes
+          incoming_minutes_exhausted_description: Please activate your phone account and purchase credits to receive incoming calls
+          outgoing_minutes_exhausted: You have exhausted your free outgoing minutes
+          outgoing_minutes_exhausted_description: Please activate your phone account and purchase credits to make outgoing calls
+          free_minutes_exhausted: You have exhausted your free minutes
+          cannot_make_or_receive_calls: Please activate your phone account and purchase credits to make or receive calls
+          used_minutes: "%{used} of %{total} mins used"
+          purchase_limit: "On Phone Trial only %{limit} number(s) are allowed for purchase"
+          purchase_warning_expired: "Searching Numbers are not allowed on Phone Trial Expiry"
+          expired: Your Phone trial period has expired
+          ivr:
+            direct_dial: "Call to Number option not allowed in Trial"
+          search:
+            after_activation_request: "You have requested for phone channel activation <br> We will get back to you within 2 business days."
+            buy_button: "Yes"
+            can_use_after_activation: "You can continue using this number when you activate the phone channel."
+            buy_confirmation: "Are you sure you want to pick this number?"
       number_settings:
         title_text: "Managing your call center"
         info_content: "<b>Assigning phone calls to agents and groups</b></br>You can set up an interactive voice response system (IVR) and route calls to different groups or agents in your team. For example, you could have your customers calls forwarded to your Support team when they press 1, and to somebody from Sales when they press 2.<br/>Additionally, you can also customize the messages that will be played back to your customers by recording your voice, uploading a file or using the text-to-speech feature.<br><br><b>Customizing your number</b><br>You could also configure each and every phone number separately and let it have it’s own set of customizations. This includes basic settings such as the maximum number of people on the queue and maximum waiting time for your customers. Once either of them are reached, a non-availability message will be played to your customers automatically.<br/>When you enable call recording, every phone call across your helpdesk is recorded and attached to your tickets, and the recording can be publicly available to customers or kept private. You can also restrict your phone channel from taking calls during non-business hours. For example, you could set up two support lines, one of which will be available to take calls only during working hours, and another high-priority helpline that will be available 24x7.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Read more about customizing your number</a>"
@@ -8322,7 +8388,7 @@ en:
         queue_position_enable: "ON"
         queue_position_disable: "OFF"
       numbers:
-        sidebar_title: "Freshdesk’s built-in phone channel"
+        sidebar_title: "Phone channel"
         sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Read more about what you can do with phone</a>."
         purchase_number: "Purchase Number"
         purchase_phone_number: "Buy Number (%{number})"
@@ -8393,6 +8459,7 @@ en:
       feature_request_content:
         title_text: "Phone"
         heading_text: "Support your customers using the phone channel"
+        trial_description: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary."
         number_info: "Purchase local and toll-free numbers from across the globe"
         ivr_info: "Route calls to the right agent and group using IVR"
         recording_info: "Record and convert calls to tickets, just like your emails"
@@ -8403,8 +8470,16 @@ en:
         success: "We will get back to you within two business days."
         error_message: "Sorry we can not make your request right now. Try again later."
         additional_info: "You will be able to purchase numbers, make and take calls once the phone channel is enabled in your account"
-        button_text: "Request for phone"
+        button_text: "Request for Activation"
         video_title: "Watch the video to find out what you can do with the phone channel"
+        trial_version_disclaimer: "You can use limited features for 15 days for free"
+        activation_disclaimer: "You can use all the features for unlimited period"
+        trial_version_numbers: "Choose only specific numbers"
+        trial_version_calls: "Limited incoming and outgoing calls"
+        trial_version_number_purchse: "Can buy only one number"
+        trial_button_text: "Enable free trial version"
+        trial_or: "OR"
+        compare_trial_and_full: "Compare full and free trial version"
   freshchat:
     feature_request:
       title: "Welcome to Live Chat"
@@ -9110,7 +9185,7 @@ en:
     record_not_found: Resource not found.
   doorkeeper:
     authorizations:
-      new:
+      new_form:
         go_to_portal: "Authorize &amp; Goto %{portal_name} Portal"
         later: Later
         authorize_text1: Authorize
@@ -9120,7 +9195,7 @@ en:
         spinner_text: "Logging into %{portal_name} Portal"
         dev_portal: Developer
         admin_portal: Admin
-      error:
+      error_form:
         authorize_failure: You are not allowed to access this page
   password_policy:
     alphanumeric: "Password must be alphanumeric"
