@@ -37,7 +37,8 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	.welcome{ display: inline-block; }
 	a{ color: inherit; }
   .banner-language-selector {
-    background-color: darken($header_color, 20%);
+    background-color: none;
+    cursor: pointer;
     @include padding(2px 12px 2px 10px);
     @include margin-left(10px);
     @include border-radius(0px 5px 5px 0px);
