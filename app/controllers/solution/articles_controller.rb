@@ -118,7 +118,6 @@ class Solution::ArticlesController < ApplicationController
   def move_to
     flash[:notice] = moved_flash_msg if @updated_items.present?
     flash[:error] = error_flash_msg if @other_items.present?
-    flash[:warning] = t('solution.articles.check_translations') if current_account.multilingual?
   end
 
   def move_back
@@ -399,7 +398,7 @@ class Solution::ArticlesController < ApplicationController
 
     def moved_flash_msg
       render_to_string(
-      :inline => t("solution.flash.articles_move_to_success",
+      :inline => t("solution.flash.articles_move_to_success#{'_multilingual' if current_account.multilingual?}",
                       :count => @updated_items.count - 1,
                       :folder_name => h(@new_folder.name.truncate(30)),
                       :article_name => h(meta_scoper.find(@updated_items.first).title.truncate(30)),
