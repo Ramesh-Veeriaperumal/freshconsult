@@ -329,7 +329,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('email', :"Has 328 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('twitter_id', :"Has 300 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('tags', :"Should only contain elements that have maximum of 32 characters")])
+                bad_request_error_pattern('tags', :"It should only contain elements that have maximum of 32 characters")])
     assert_response 400
   end
 
@@ -481,7 +481,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('email', :"Has 328 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('twitter_id', :"Has 300 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('tags', :"Should only contain elements that have maximum of 32 characters")])
+                bad_request_error_pattern('tags', :"It should only contain elements that have maximum of 32 characters")])
     assert_response 400
     sample_user.update_attribute(:email, email)
   end
@@ -954,7 +954,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :"Should only contain elements that have maximum of 255 characters")])
+    match_json([bad_request_error_pattern('other_emails', :"It should only contain elements that have maximum of 255 characters")])
   end
 
   def test_create_with_other_emails_with_duplication
@@ -975,7 +975,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', 'Should contain elements that are in the valid email address format')])
+    match_json([bad_request_error_pattern('other_emails', 'It should contain elements that are in the valid email address format')])
   end
 
   def test_create_with_other_emails_with_invalid_emails
@@ -984,7 +984,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', 'Should contain elements that are in the valid email address format')])
+    match_json([bad_request_error_pattern('other_emails', 'It should contain elements that are in the valid email address format')])
   end
 
   def test_create_with_other_emails_without_primary_email

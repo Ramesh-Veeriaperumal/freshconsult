@@ -243,7 +243,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('subject', :"Has 300 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('tags', :"Should only contain elements that have maximum of 32 characters")])
+                bad_request_error_pattern('tags', :"It should only contain elements that have maximum of 32 characters")])
     assert_response 400
   end
 
@@ -315,8 +315,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(email: 'test@', cc_emails: ['the@'])
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('email', 'Should be in the valid email address format'),
-                bad_request_error_pattern('cc_emails', 'Should contain elements that are in the valid email address format')])
+    match_json([bad_request_error_pattern('email', 'It should be in the valid email address format'),
+                bad_request_error_pattern('cc_emails', 'It should contain elements that are in the valid email address format')])
   end
 
   def test_create_data_type_invalid
@@ -1561,7 +1561,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('subject', :"Has 300 characters, it can have maximum of 255 characters"),
                 bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('tags', :"Should only contain elements that have maximum of 32 characters")])
+                bad_request_error_pattern('tags', :"It should only contain elements that have maximum of 32 characters")])
     assert_response 400
   end
 
