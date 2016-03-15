@@ -26,6 +26,13 @@ class Fdadmin::FreshfoneStats::PaymentsController < Fdadmin::DevopsMainControlle
     single_account_results(params[:startDate],params[:endDate])
   end
 
+  def active_accounts_csv
+    params.merge!(export_type: 'All active accounts')
+    active_accounts = Sharding.run_on_all_slaves { all_active_accounts_stats }
+    csv_values = construct_data(active_accounts)
+    generate_email(csv_values, all_active_accounts_csv_columns)
+  end
+
   private
     def freshfone_payments
       #INTERVAL 1 DAY
@@ -80,6 +87,12 @@ class Fdadmin::FreshfoneStats::PaymentsController < Fdadmin::DevopsMainControlle
       WHERE freshfone_calls.created_at >= '"+start_date+"' AND freshfone_calls.created_at <= '"+end_date+"'
       AND subscriptions.state = 'active' 
       GROUP BY subscriptions.account_id"
+    end
+
+    def all_active_accounts_stats
+      Freshfone::Account.joins(account: [:all_freshfone_numbers, :subscription])
+        .group('accounts.id')
+        .having('SUM(freshfone_numbers.deleted = false) > 0').all
     end
 
     def all_accounts_results(startDate,endDate)
@@ -166,6 +179,38 @@ class Fdadmin::FreshfoneStats::PaymentsController < Fdadmin::DevopsMainControlle
       payments
     end
 
+    def construct_data(data_list)
+      csv_array = []
+      data_list.each do |ff_account|
+        Sharding.select_shard_of ff_account.account_id do
+          Sharding.run_on_slave do
+            begin
+              next if ff_account.account.blank?
+              account = ff_account.account
+              account.make_current
+              subscription = account.subscription
+              all_numbers = account.all_freshfone_numbers.select(:deleted)
+              csv_array << [
+                account.id,
+                account.name,
+                subscription.state,
+                Freshfone::Account::STATE_REVERSE_HASH[ff_account.state],
+                all_numbers.select { |num| num.deleted.blank? }.count,
+                all_numbers.select { |num| num.deleted.present? }.count]
+            rescue => e
+              Rails.logger.error "Exception Message :: #{e.message} \n
+                account :: #{account.id} \n
+                Exception Stacktrace :: #{e.backtrace.join('\n\t')}"
+              next
+            ensure
+              ::Account.reset_current_account
+            end
+          end
+        end
+      end
+      csv_array
+    end
+
     def invalid_account
       render :json => {:status => false}
     end
@@ -182,4 +227,8 @@ class Fdadmin::FreshfoneStats::PaymentsController < Fdadmin::DevopsMainControlle
       ["Account ID", "Account Name", "Calls Count", "Call Charges"]
     end
 
+    def all_active_accounts_csv_columns
+      ['Account ID', 'Account Name', 'Freshdesk State', 'Freshfone State',
+       'Number of active numbers', 'Number of deleted numbers']
+    end
 end

@@ -2646,6 +2646,7 @@ Helpkit::Application.routes.draw do
             get :statistics
             get :request_csv
             get :request_csv_by_account
+            get :active_accounts_csv
           end
         end
 
