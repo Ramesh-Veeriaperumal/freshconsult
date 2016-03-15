@@ -4004,7 +4004,7 @@ en:
       supporting_new: "Add %{name} translation"
       supporting_edit: "Edit %{name} translation"
     unassociated_category: "Unassociated Category"
-    unassociated_category_info: "This category will not be visible to your users, edit<br />the category to associate it with the required portals"
+    unassociated_category_info: "This category will not be visible to your users<br />as it is not associated with any portal"
     sidebar:
       orphan: "Orphan Categories"
       unassociated: "Unassociated Categories"
