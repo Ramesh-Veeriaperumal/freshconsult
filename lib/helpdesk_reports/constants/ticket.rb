@@ -77,18 +77,6 @@ module HelpdeskReports::Constants::Ticket
   DEFAULT_COLUMNS_OPTIONS       = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
   DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
 
-  REPORT_TYPE = [
-    [ :GLANCE,                       101],
-    [ :TICKET_VOLUME,                102],
-    [ :PERFORMANCE_DISTRIBUTION,     104],
-    [ :AGENT_SUMMARY,                105],
-    [ :GROUP_SUMMARY,                106],
-    [ :CUSTOMER_REPORT,              107]
-  ]
-  
-  REPORT_TYPE_BY_NAME = REPORT_TYPE.map { |i| i[0].to_s.downcase }   
-  REPORT_TYPE_BY_KEY  = Hash[*REPORT_TYPE.map { |i| [i[0], i[1]] }.flatten]
-  
   REQUIRED_PARAMS = [:model, :metric, :date_range, :reference, :bucket, :time_trend, :list]
   
   FORMATTING_REQUIRED = [:glance, :agent_summary, :group_summary, :customer_report]

@@ -21,8 +21,10 @@ module HelpdeskReports::Export::Utils
   end
   
   def build_file file_string, format, export_type
-    report_name = REPORTS_NAME_MAPPING[report_type].gsub(" ","_").underscore
-    file_name   = "#{report_name}-#{Time.now.utc.strftime("%b-%d-%Y-%H:%M")}-#{SecureRandom.urlsafe_base64(4)}.#{format}"
+    report_name = REPORTS_NAME_MAPPING[report_type]
+    filter_name = filter_name ? (report_name+"_"+filter_name) : report_name 
+    filter_name = filter_name.gsub(" ","_").underscore
+    file_name   = "#{filter_name}-#{Time.now.utc.strftime("%b-%d-%Y-%H:%M")}-#{SecureRandom.urlsafe_base64(4)}.#{format}"
     file_path   = generate_file_path("bi_reports", file_name)
 
     write_file(file_string, file_path)

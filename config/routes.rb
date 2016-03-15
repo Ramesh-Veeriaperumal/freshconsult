@@ -1288,6 +1288,9 @@ Helpkit::Application.routes.draw do
   match "/reports/v2/:report_type/export_tickets",    :controller => 'reports/v2/tickets/reports', :action => 'export_tickets', :method => :post
   match "/reports/v2/:report_type/export_report",     :controller => 'reports/v2/tickets/reports', :action => 'export_report', :method => :post
   match "/reports/v2/:report_type/email_reports",     :controller => 'reports/v2/tickets/reports', :action => 'email_reports', :method => :post
+  match "/reports/v2/:report_type/save_reports_filter",    :controller => 'reports/v2/tickets/reports', :action => 'save_reports_filter', :method => :post
+  match "/reports/v2/:report_type/delete_reports_filter",  :controller => 'reports/v2/tickets/reports', :action => 'delete_reports_filter', :method => :post
+  match "/reports/v2/:report_type/update_reports_filter",  :controller => 'reports/v2/tickets/reports', :action => 'update_reports_filter', :method => :post
   match "/reports/v2/download_file/:report_export/:type/:date/:file_name", :controller => 'reports/v2/tickets/reports', :action => 'download_file', :method => :get
   # END
   
@@ -1409,6 +1412,9 @@ Helpkit::Application.routes.draw do
         collection do
           post :generate
           post :export_csv
+          post :save_reports_filter
+          post :update_reports_filter
+          post :delete_reports_filter
         end
       end
     end
@@ -1417,6 +1423,9 @@ Helpkit::Application.routes.draw do
       resources :summary_reports, :controller => 'summary_reports' do
         collection do
           post :generate
+          post :save_reports_filter
+          post :update_reports_filter
+          post :delete_reports_filter
         end
       end
     end
@@ -1436,6 +1445,9 @@ Helpkit::Application.routes.draw do
       post :report_filter
       post :export_csv
       post :generate_pdf
+      post :save_reports_filter
+      post :update_reports_filter
+      post :delete_reports_filter
     end
   end
 
@@ -1460,7 +1472,9 @@ Helpkit::Application.routes.draw do
   match '/custom_survey/reports/group_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#group_wise_report', :as => :custom_survey_group_wise_report
   match '/custom_survey/reports/agent_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#agent_wise_report', :as => :custom_survey_agent_wise_report
   match '/custom_survey/reports/responses/:survey_id/:group_id/:agent_id/:survey_question_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_remarks
-
+  match '/custom_survey/reports/save_reports_filter' =>  'reports/custom_survey_reports#save_reports_filter', :as => :custom_survey_save_reports_filter
+  match '/custom_survey/reports/update_reports_filter' =>  'reports/custom_survey_reports#update_reports_filter', :as => :custom_survey_update_reports_filter
+  match '/custom_survey/reports/delete_reports_filter' =>  'reports/custom_survey_reports#delete_reports_filter', :as => :custom_survey_delete_reports_filter
 
   namespace :social do
 

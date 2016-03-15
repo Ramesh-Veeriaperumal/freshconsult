@@ -97,6 +97,29 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
         },
         flushEvents: function () {
             jQuery('#reports_wrapper').off('.cust');
+        },
+        recordAnalytics : function(){
+            
+            jQuery(document).on("script_loaded", function (ev, data) {
+                if( HelpdeskReports.locals.report_type != undefined && HelpdeskReports.locals.report_type == "customer_report"){
+                    App.Report.Metrics.push_event("Customer Analysis Report Visited", {});
+                }
+            });
+            
+            //Ticket List Exported
+             jQuery(document).on("analytics.export_ticket_list", function (ev, data) {
+                App.Report.Metrics.push_event("Customer Analysis : Ticket List Exported",{});
+             });
+
+            //pdf export
+            jQuery(document).on("analytics.export_pdf",function(ev,data){
+                App.Report.Metrics.push_event("Customer Analysis : PDF Exported",{});
+            });
+
+            //
+            jQuery('#reports_wrapper').on('click.helpdesk_reports', "[data-action='reports-submit']", function () {
+                App.Report.Metrics.push_event("Customer Analysis Report: Filtered",{ DateRange : HelpdeskReports.locals.date_range });
+            });
         }
     };
     return {
@@ -106,6 +129,7 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
             _FD.bindEvents();
             _FD.core.ATTACH_DEFAULT_FILTER = false;
             _FD.setDefaultValues();
+            _FD.recordAnalytics();
         }
     };
 })();

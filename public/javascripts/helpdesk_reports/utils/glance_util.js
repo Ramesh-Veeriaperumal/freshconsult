@@ -112,8 +112,8 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 }
             });
 
-            jQuery(document).on("glance_empty_default_view.helpdesk_reports", function (ev, data) {
-                     var el = jQuery('#glance_sidebar ul li[data-metric="RECEIVED_TICKETS"]');
+            jQuery(document).on("set_active_view.helpdesk_reports", function (ev, data) {
+                     var el = jQuery('#glance_sidebar ul li[data-metric="'+ HelpdeskReports.locals.active_metric +'"]');
                     _FD.actions.submitActiveMetric(el);
             });
 

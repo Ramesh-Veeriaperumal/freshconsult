@@ -5,7 +5,7 @@ module HelpdeskReports
       include ::Export::Util
       include HelpdeskReports::Export::Utils
             
-      attr_accessor :params, :report_type, :date_range     
+      attr_accessor :params, :report_type, :date_range, :filter_name    
 
       def initialize(args)
         args.symbolize_keys!
@@ -19,6 +19,7 @@ module HelpdeskReports
         @report_type = args[:report_type]
         @date_range  = args[:date_range]
         @today       = DateTime.now.utc.strftime('%d-%m-%Y')
+        @filter_name = params[:filter_name]
       end
 
       def send_email( extra_options, file_path, export_type )
@@ -26,7 +27,8 @@ module HelpdeskReports
           :user          => User.current,
           :domain        => params[:portal_url],
           :report_type   => report_type,
-          :date_range    => date_range
+          :date_range    => date_range,
+          :filter_name   => filter_name,
         }
         options.merge!(extra_options) if extra_options
         if file_path.blank?

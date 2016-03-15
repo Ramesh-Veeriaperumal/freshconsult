@@ -85,6 +85,7 @@ defaults: &defaults
     - [premium_webhook_throttler]
     - [premium_webhook_worker]
     - [marketplace_apps]
+    - [agent_destroy_cleanup]
 
 development:
   <<: *defaults

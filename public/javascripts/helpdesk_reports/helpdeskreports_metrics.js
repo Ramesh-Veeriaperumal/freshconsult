@@ -13,7 +13,6 @@ window.App.Report = window.App.Report || {};
 				this.recordIdentity();
     			_kmq.push(['record',event,property]);	
 			}
-			
 		}
 	};
 }(jQuery));
