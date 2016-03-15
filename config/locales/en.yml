@@ -4253,10 +4253,10 @@ en:
     info19: "Article type can be either <b>permanent</b> or <b>workaround</b>."
     info20: "You can attach <b>tags</b> to your articles, which is useful for categorizing articles of a similar kind."
     info21: "Agents can mail solution articles to <b>kbase@defaultportal.com</b> which will be shown under drafts section."
-    info22: "Draft articles will be visible only to agents and can be searched only at the agent side."
-    info23: "<b>My Drafts</b> will list all articles which you last edited and saved as draft."
-    info24: "<b>All Drafts</b> will list all the articles in draft status. In the case of multiple portal setup, you can filter draft articles from any specific portal by selecting the dropdown. "
-    kbase_email_info: "All emails sent by agents to <b>%{email}</b> will be stored here as drafts."
+    info25: "Draft articles will be visible only to agents."
+    info26: "<b>My Drafts</b> lists all articles which you last edited and saved as a draft."
+    info27: "<b>All Drafts</b> lists all the articles in draft status. If you have multiple portals set up, you can filter draft articles from any specific portal by selecting the option in the dropdown list."
+    kbase_email_msg: "All emails sent by agents to <b>%{email}</b> will be stored as a draft here."
     folder: Folder
     solution_meta: Meta tags for search engines
     solution_meta_title: Title Tag
