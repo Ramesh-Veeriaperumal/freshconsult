@@ -72,6 +72,7 @@ api_error_messages:
   invalid_agent_emails: "Accepts only agents' emails. There are no agents present with the emails, %{invalid_emails}"
   absent_in_db: "There is no %{resource} matching the given %{attribute}"
   Enter valid domains: "It should be in the valid domain format"
+  immutable_resource: "This action is not permitted in merged topic. You can either delete (or) check if user is following (or) create a comment (or) list all the comments (or) view this topic."
 
 
 

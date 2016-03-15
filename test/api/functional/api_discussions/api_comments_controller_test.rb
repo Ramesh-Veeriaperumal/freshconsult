@@ -268,5 +268,28 @@ module ApiDiscussions
       assert JSON.parse(response.body).count == 1
       assert_nil response.headers['Link']
     end
+
+    def test_topic_comments_in_merged_topic
+      f = Forum.first
+      source = create_test_topic(f)
+      target = create_test_topic(f)
+      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      create_test_post(source, User.first)
+      get :topic_comments, controller_params(id: source.id)
+      assert_response 200
+    ensure
+      source.try(:destroy)
+    end
+
+    def test_create_in_merged_topic
+      f = Forum.first
+      source = create_test_topic(f)
+      target = create_test_topic(f)
+      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      post :create, construct_params({ id: source.id }, body_html: 'test')
+      assert_response 201
+    ensure
+      source.try(:destroy)
+    end
   end
 end

@@ -560,5 +560,76 @@ module ApiDiscussions
       assert JSON.parse(response.body).count == 1
       assert_nil response.headers['Link']
     end
+
+    def test_update_merged_source_topic
+      source = create_test_topic(forum_obj)
+      target = create_test_topic(forum_obj)
+      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      put :update, construct_params({ id: source.id }, {locked: false})
+      assert_response 403
+      match_json(request_error_pattern('immutable_resource'))
+    end
+
+    def test_follow_merged_source_topic
+      source = create_test_topic(forum_obj)
+      target = create_test_topic(forum_obj)
+      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      post :follow, construct_params({ id: source.id })
+      assert_response 403
+      match_json(request_error_pattern('immutable_resource'))
+    end
+
+    def test_unfollow_merged_source_topic
+      source = create_test_topic(forum_obj)
+      target = create_test_topic(forum_obj)
+      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      delete :unfollow, construct_params({ id: source.id })
+      assert_response 403
+      match_json(request_error_pattern('immutable_resource'))
+    end
+
+    def test_allowed_memeber_actions_in_merged_topic
+      f = forum_obj
+      source = create_test_topic(f)
+      target = create_test_topic(f)
+      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      get :show, construct_params({ id: source.id })
+      assert_response 200
+
+      monitor_topic(source, @agent, 1)
+      get :is_following, controller_params({ id: source.id })
+      assert_response 204
+
+      delete :destroy, construct_params(id: source.id)
+      assert_equal ' ', @response.body
+      assert_response 204
+    end
+
+    def test_allowed_collection_actions_in_merged_topic
+      f = forum_obj
+      source = create_test_topic(f)
+      target = create_test_topic(f)
+      monitor_topic(source, @agent, 1)
+      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      get :followed_by, controller_params
+      assert_response 200
+      result = JSON.parse(response.body)
+      assert result.detect{|x| x["id"] == source.id}.present?
+
+      get :forum_topics, controller_params({ id: f.id })
+      assert_response 200
+      result = JSON.parse(response.body)
+      assert result.detect{|x| x["id"] == source.id}.present?
+    ensure
+      source.try(:destroy)
+    end
+
+    def test_update_merged_target_topic
+      source = create_test_topic(forum_obj)
+      target = create_test_topic(forum_obj)
+      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      put :update, construct_params({ id: target.id }, {title: Faker::Name.name})
+      assert_response 200
+    end
   end
 end
