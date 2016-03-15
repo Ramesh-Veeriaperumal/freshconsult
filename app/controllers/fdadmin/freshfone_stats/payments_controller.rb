@@ -182,12 +182,12 @@ class Fdadmin::FreshfoneStats::PaymentsController < Fdadmin::DevopsMainControlle
     def construct_data(data_list)
       csv_array = []
       data_list.each do |ff_account|
-        Sharding.select_shard_of ff_account.account_id do
-          Sharding.run_on_slave do
-            begin
-              next if ff_account.account.blank?
-              account = ff_account.account
-              account.make_current
+        begin
+          Sharding.select_shard_of ff_account.account_id do
+            Sharding.run_on_slave do
+              account = ::Account.find(ff_account.account_id)
+              next if account.blank?
+              account.make_current  
               subscription = account.subscription
               all_numbers = account.all_freshfone_numbers.select(:deleted)
               csv_array << [
@@ -197,15 +197,14 @@ class Fdadmin::FreshfoneStats::PaymentsController < Fdadmin::DevopsMainControlle
                 Freshfone::Account::STATE_REVERSE_HASH[ff_account.state],
                 all_numbers.select { |num| num.deleted.blank? }.count,
                 all_numbers.select { |num| num.deleted.present? }.count]
-            rescue => e
-              Rails.logger.error "Exception Message :: #{e.message} \n
-                account :: #{account.id} \n
-                Exception Stacktrace :: #{e.backtrace.join('\n\t')}"
-              next
-            ensure
-              ::Account.reset_current_account
             end
           end
+        rescue => e
+            Rails.logger.error "Exception Message :: #{e.message} \n
+              account :: #{ff_account.account_id} \n
+              Exception Stacktrace :: #{e.backtrace.join('\n\t')}"
+        ensure
+          ::Account.reset_current_account
         end
       end
       csv_array
