@@ -13,7 +13,7 @@ class Agent < ActiveRecord::Base
   accepts_nested_attributes_for :user
   before_update :create_model_changes
   after_commit :enqueue_round_robin_process, on: :update
-  after_commit :nullify_tickets, :destroy_agent_canned_responses, :agent_destroy_cleanup, on: :destroy
+  after_commit :nullify_tickets, :destroy_agent_canned_responses, :destroy_agent_scenarios, :agent_destroy_cleanup, on: :destroy
   
   validates_presence_of :user_id
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
