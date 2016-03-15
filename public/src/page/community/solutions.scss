@@ -283,24 +283,32 @@
 }
 
 #sticky_search_wrap {
-  .select2-container {
-    .select2-chosen {
-      .language_symbol {
-        position: relative;
-        top: 4px;
-        .language_name {
-          top: -3px;
-        }
-      }
-      .language_label {
-        top: 2px;
-        @include margin-left(5px);
+  .search-lang {
+    .select2-container-active {
+      .select2-choice {
+        box-shadow: none;
+        -webkit-box-shadow:none;
       }
     }
-    .select2-choice {
-      height: 30px;
+    .select2-container {
+      border-right: 1px solid #bbb;
+      @include padding-right(10px);
+      @include margin-right(5px);
+      .select2-choice {
+        height: 30px;
+        border: none;
+        text-align: right;
+        background: none;
+      }
     }
   }
+}
+
+.solutions .language-select-solution-search {
+  padding-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin: 5px 0px 0px -32px;
 }
 
 body.community #sticky_header.category-sticky.is_stuck {
