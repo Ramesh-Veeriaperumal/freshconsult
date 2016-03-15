@@ -65,7 +65,9 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
   def test_multipart_create_note_with_all_params
     body = Faker::Lorem.paragraph
-    email = [Faker::Internet.email, Faker::Internet.email]
+    agent_email1 = @agent.email
+    agent_email2 = User.find{ |x| x.email != agent_email1 && x.helpdesk_agent == true }.try(:email)  || add_test_agent(@account, role: Role.find_by_name('Agent').id).email
+    email = [agent_email2, agent_email1]
     params_hash = { body: body, notify_emails: email, private: true, user_id: @agent.id }
     parent_ticket = Helpdesk::Ticket.last
     previous_updated_at = parent_ticket.updated_at

@@ -6,8 +6,13 @@ class ConversationsController < ApiApplicationController
   before_filter :can_send_user?, only: [:create, :reply]
 
   def create
-    is_success = create_note
-    render_response(is_success)
+    conversation_delegator = ConversationDelegator.new(@item)
+    if conversation_delegator.valid?
+      is_success = create_note
+      render_response(is_success)
+    else
+      render_custom_errors(conversation_delegator, true)
+    end
   end
 
   def reply

@@ -30,7 +30,9 @@ class ConversationsControllerTest < ActionController::TestCase
 
   def create_note_params_hash
     body = Faker::Lorem.paragraph
-    email = [Faker::Internet.email, Faker::Internet.email]
+    agent_email1 = Agent.last.user.email
+    agent_email2 = Agent.find{|x| x.user.email != agent_email1}.try(:user).try(:email) || add_test_agent(@account, role: Role.find_by_name('Agent').id).email
+    email = [agent_email1, agent_email2]
     params_hash = { body: body, notify_emails: email, private: true }
     params_hash
   end
@@ -786,6 +788,15 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert_response 201
+  end
+
+  def test_non_agent_email_id_in_note_creation
+    non_agent_emails = [Faker::Internet.email, Faker::Internet.email]
+    notify_emails = non_agent_emails | [@agent.email]
+    params_hash = create_note_params_hash.merge(notify_emails: notify_emails)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    match_json([bad_request_error_pattern('notify_emails', :invalid_agent_emails, invalid_emails: "#{non_agent_emails.join(', ')}")])
+    assert_response 400
   end
 
   def test_create_datatype_nil_array_fields

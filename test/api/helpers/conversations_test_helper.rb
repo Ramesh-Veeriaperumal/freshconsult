@@ -53,7 +53,9 @@ module ConversationsTestHelper
   end
 
   def v2_note_payload
-    { body: Faker::Lorem.paragraph, notify_emails: [Faker::Internet.email, Faker::Internet.email], private: true }.to_json
+    agent_email1 = @agent.email
+    agent_email2 = User.find{ |x| x.email != agent_email1 && x.helpdesk_agent == true }.try(:email) || add_test_agent(@account, role: Role.find_by_name('Agent').id).email || add_test_agent(@account, role: Role.find_by_name('Agent').id).email
+    { body: Faker::Lorem.paragraph, notify_emails: [agent_email1, agent_email2], private: true }.to_json
   end
 
   def v2_note_update_payload
