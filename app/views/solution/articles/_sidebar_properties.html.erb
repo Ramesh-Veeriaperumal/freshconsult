@@ -82,7 +82,12 @@
 					<% if @article_meta.solution_folder_meta.solution_category_meta.portals.present? %>
 						<%= t('solution_category.product_portal_visibility') %>: <%= @article_meta.solution_folder_meta.solution_category_meta.portals.map(&:name).join(", ") %>
 					<% else %>
-						<span class="red"><%= t('solution.orphan_category_info') %></span>
+						<%= t('solution.unassociated_category') %>
+						<span class="tooltip"
+									data-html="true"
+									title="<%= t('solution.unassociated_category_info') %>">
+							<i class="ficon-unverified fsize-16 ml2 unassociated-category"></i>
+						</span>
 					<% end %>
 				</p>
 			</div>

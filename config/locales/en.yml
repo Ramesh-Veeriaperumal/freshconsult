@@ -4003,7 +4003,8 @@ en:
       primary_edit: "Edit %{name}"
       supporting_new: "Add %{name} translation"
       supporting_edit: "Edit %{name} translation"
-    orphan_category_info: "This category is not associated with any portal"
+    unassociated_category: "Unassociated Category"
+    unassociated_category_info: "This category will not be visible to your users, edit<br />the category to associate it with the required portals"
     sidebar:
       orphan: "Orphan Categories"
       unassociated: "Unassociated Categories"

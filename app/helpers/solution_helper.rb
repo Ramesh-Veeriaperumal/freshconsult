@@ -171,8 +171,15 @@ module SolutionHelper
 		else
 			content << %{
 				<span
-					class="orphan-cat-info">
-				#{t('solution.orphan_category_info')}</span>
+					class="muted">
+				#{t('solution.unassociated_category')}</span>
+				<span
+					class="tooltip"
+					data-html="true"
+					data-placement="right"
+					title="#{t('solution.unassociated_category_info')}">
+					<i class="ficon-unverified fsize-16 ml2 unassociated-category"></i>
+				</span>
 			}
 			content.html_safe
 		end
