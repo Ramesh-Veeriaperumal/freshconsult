@@ -242,12 +242,10 @@ class TicketsController < ApiApplicationController
     end
 
     def build_ticket_body_attributes
-      if params[cname][:description] || params[cname][:description_html]
-        ticket_body_hash = { ticket_body_attributes: { description: params[cname][:description],
-                                                       description_html: params[cname][:description_html] } }
+      if params[cname][:description]
+        ticket_body_hash = { ticket_body_attributes: { description_html: params[cname][:description] } }
         params[cname].merge!(ticket_body_hash).tap do |t|
           t.delete(:description) if t[:description]
-          t.delete(:description_html) if t[:description_html]
         end
       end
     end

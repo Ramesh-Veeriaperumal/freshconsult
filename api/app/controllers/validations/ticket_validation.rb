@@ -3,7 +3,7 @@ class TicketValidation < ApiValidation
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
   CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(fr_due_by due_by)).freeze
 
-  attr_accessor :id, :cc_emails, :description, :description_html, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
+  attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :status_ids, :ticket_fields
 
@@ -13,7 +13,7 @@ class TicketValidation < ApiValidation
   alias_attribute :responder_id, :agent
 
   # Default fields validation
-  validates :source, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
+  validates :description, :source, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
@@ -25,8 +25,6 @@ class TicketValidation < ApiValidation
   # validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No
   validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: :name_required?  # No
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
-  validates :description, data_type: { rules: String, required: true }
-  validates :description_html, data_type: { rules: String, allow_nil: true }
 
   # Due by and First response due by validations
   # Both should not be present in params if status is closed or resolved
@@ -79,7 +77,6 @@ class TicketValidation < ApiValidation
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
     super(request_params, item, allow_string_param)
-    @description = request_params[:description_html] if should_set_description?(request_params)
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
     @due_by ||= item.try(:due_by).try(:iso8601) if item
     @item = item
@@ -90,10 +87,6 @@ class TicketValidation < ApiValidation
     field ? error_options[field] = { code: :invalid_value } : field = :requester_id
     errors[field] = :fill_a_mandatory_field
     (error_options[field] ||= {}).merge!(field_names: MANDATORY_FIELD_STRING)
-  end
-
-  def should_set_description?(request_params)
-    request_params[:description].nil? && request_params[:description_html].present?
   end
 
   def requester_id_mandatory? # requester_id is must if any one of email/twitter_id/fb_profile_id/phone is not given.
@@ -156,7 +149,8 @@ class TicketValidation < ApiValidation
       group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       product: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
-      subject: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } }
+      subject: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+      description: { data_type: { rules: String }}
     }
   end
 end

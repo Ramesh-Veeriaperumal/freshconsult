@@ -54,6 +54,15 @@ module JsonPattern
     }
   end
 
+  def format_ticket_html(ticket, body)
+    html_doc = Nokogiri::HTML(body)
+    unless html_doc.at_css('body').blank?
+      html_doc.xpath('//del').each { |div|  div.name = 'span'; }
+      html_doc.xpath('//p').each { |div|  div.name = 'div'; }
+    end
+    Rinku.auto_link(html_doc.at_css('body').inner_html, :urls)
+  end
+
   def format_html(ticket, body)
     body_html = Rinku.auto_link(body) { |text| truncate(text, length: 100) }
     textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [:hard_breaks])

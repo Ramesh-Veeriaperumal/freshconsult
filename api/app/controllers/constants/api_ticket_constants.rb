@@ -3,10 +3,10 @@ module ApiTicketConstants
   ARRAY_FIELDS = %w(tags cc_emails attachments).freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  CREATE_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority
+  CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
                   ).freeze | ARRAY_FIELDS | HASH_FIELDS
-  UPDATE_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority
+  UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
                   ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
   SHOW_FIELDS = ['include']

@@ -24,7 +24,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?
     errors = ticket.errors.full_messages
     assert errors.include?('Email invalid_format')
-    assert_equal({ description: { expected_data_type: String, code: :missing_field }, email: { accepted: :"valid email address" } }, ticket.error_options)
+    assert_equal({ email: { accepted: :"valid email address" } }, ticket.error_options)
     Account.unstub(:current)
   end
 
@@ -36,7 +36,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?
     errors = ticket.errors.full_messages
     assert errors.include?('Cc emails array_invalid_format')
-    assert_equal({ description: { expected_data_type: String, code: :missing_field }, email: {}, cc_emails: { accepted: :"valid email address" } }, ticket.error_options)
+    assert_equal({ email: {}, cc_emails: { accepted: :"valid email address" } }, ticket.error_options)
     Account.unstub(:current)
   end
 
@@ -48,7 +48,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
     assert errors.include?('Tags special_chars_present')
-    assert_equal({ requester_id: {}, description: {  expected_data_type: String, code: :missing_field }, tags: { chars: ',' } }, ticket.error_options)
+    assert_equal({ requester_id: {}, tags: { chars: ',' } }, ticket.error_options)
     Account.unstub(:current)
   end
 
@@ -167,30 +167,31 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_description
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, ticket_fields: [] }
+    desc_field = mock("desc_field")
+    desc_field.stubs(:required).returns(true)
+    desc_field.stubs(:default).returns(true)
+    desc_field.stubs(:name).returns('description')
+    controller_params = { 'requester_id' => 1, ticket_fields: [desc_field] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
     assert ticket.errors.full_messages.include?('Description datatype_mismatch')
-    refute ticket.errors.full_messages.include?('Description html datatype_mismatch')
     assert_equal({ description: {  expected_data_type: String, code: :missing_field }, requester_id: {} }, ticket.error_options)
 
-    controller_params = { 'requester_id' => 1, ticket_fields: [], description: '' }
+    controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], description: '' }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
     assert ticket.errors.full_messages.include?('Description blank')
-    refute ticket.errors.full_messages.include?('Description html datatype_mismatch')
     assert_equal({ requester_id: {}, description: { expected_data_type: String } }, ticket.error_options)
 
-    controller_params = { 'requester_id' => 1, ticket_fields: [], description: true, description_html: true }
+    controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], description: true }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
     assert ticket.errors.full_messages.include?('Description datatype_mismatch')
-    assert ticket.errors.full_messages.include?('Description html datatype_mismatch')
-    assert_equal({ requester_id: {}, description: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean' },
-                   description_html: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean' } }, ticket.error_options)
+    assert_equal({ requester_id: {}, description: { expected_data_type: String, prepend_msg: :input_received, 
+        given_data_type: 'Boolean' }}, ticket.error_options)
     Account.unstub(:current)
   end
 end
