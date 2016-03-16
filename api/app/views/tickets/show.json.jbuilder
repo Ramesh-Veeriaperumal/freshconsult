@@ -5,8 +5,6 @@ json.cache! CacheLib.compound_key(@item, ApiConstants::CACHE_VERSION[:v3], param
 
   json.extract! @item, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id,  :responder_id, :source, :spam, :status, :subject, :company_id
 
-  json.set! :description, @item.description_html
-  json.set! :description_text, @item.description
   json.set! :id, @item.display_id
   json.set! :type, @item.ticket_type
   json.set! :to_emails, @item.schema_less_ticket.try(:to_emails)
@@ -18,6 +16,9 @@ json.cache! CacheLib.compound_key(@item, ApiConstants::CACHE_VERSION[:v3], param
 
   json.set! :is_escalated, @item.isescalated
 end
+
+json.set! :description, @item.description_html
+json.set! :description_text, @item.description
 
 json.extract! @item, :custom_fields
 
