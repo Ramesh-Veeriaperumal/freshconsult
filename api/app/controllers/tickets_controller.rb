@@ -173,7 +173,7 @@ class TicketsController < ApiApplicationController
       build_ticket_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
 
-      # During update manually nil the requester_id if it is absent and any of the contact detail is present
+      # During update set requester_id to nil if it is not a part of params and if any of the contact detail is given in the params
       if update? && !params[cname].key?(:requester_id) && (params[cname].keys & ["email", "phone", "twitter_id", "facebook_id"]).present?
         params[cname][:requester_id] = nil
       end
