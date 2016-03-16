@@ -20,7 +20,7 @@ class ConversationsFlowTest < ActionDispatch::IntegrationTest
         assert_response 200
         parsed_response = JSON.parse(response.body)
         conversations = parsed_response.detect { |n| n['id'] == note.id }
-        assert_equal 'Test update note body', conversations['body']
+        assert_equal 'Test update note body', conversations['body_text']
       end
     end
   end

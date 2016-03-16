@@ -96,7 +96,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create
-    params = ticket_params_hash.merge(custom_fields: {})
+    params = ticket_params_hash.merge(custom_fields: {}, description: '<b>test</b>')
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
@@ -108,6 +108,8 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal true, response.headers.include?('Location')
     assert_equal "http://#{@request.host}/api/v2/tickets/#{result['id']}", response.headers['Location']
     assert_response 201
+    assert_equal '<b>test</b>', Helpdesk::Ticket.last.description_html
+    assert_equal 'test', Helpdesk::Ticket.last.description
   end
 
   def test_create_with_email
@@ -497,10 +499,10 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_extra_params_invalid
-    params = ticket_params_hash.merge(junk: 'test')
+    params = ticket_params_hash.merge(junk: 'test', description_html: "test")
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('junk', :invalid_field)])
+    match_json([bad_request_error_pattern('junk', :invalid_field), bad_request_error_pattern('description_html', :invalid_field)])
   end
 
   def test_create_empty_params
@@ -515,10 +517,9 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_datatype_invalid
-    post :create, construct_params({}, ticket_params_hash.merge(description: true, description_html: true))
+    post :create, construct_params({}, ticket_params_hash.merge(description: true))
     assert_response 400
-    match_json([bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, given_data_type: 'Boolean', prepend_msg: :input_received),
-                bad_request_error_pattern('description_html', :datatype_mismatch, expected_data_type: String, given_data_type: 'Boolean', prepend_msg: :input_received)])
+    match_json([bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, given_data_type: 'Boolean', prepend_msg: :input_received)])
   end
 
   def test_create_with_existing_user
@@ -987,8 +988,8 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     response_params = params.except(:tags, :attachments)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert ticket.attachments.count == 2
   end
@@ -1012,8 +1013,8 @@ class TicketsControllerTest < ActionController::TestCase
     t.schema_less_ticket.update_column(:product_id, nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
     params_hash[:custom_fields]['test_custom_date'] = params_hash[:custom_fields]['test_custom_date'].to_time.iso8601
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert_nil t.product_id
     portal.update_column(:product_id, nil)
@@ -1024,8 +1025,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.except(:fr_due_by).merge(status: 5, due_by: nil)
     put :update, construct_params({ id: t.display_id }, params)
     t = Helpdesk::Ticket.last
-    match_json(ticket_pattern(params, t))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     t.update_column(:status, 2)
     assert_not_nil t.due_by && t.frDueBy
@@ -1036,8 +1037,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.except(:due_by).merge(status: 5, fr_due_by: nil)
     put :update, construct_params({ id: t.display_id }, params)
     t = Helpdesk::Ticket.last
-    match_json(ticket_pattern(params, t))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     t.update_column(:status, 2)
     assert_not_nil t.due_by && t.frDueBy
@@ -1060,8 +1061,8 @@ class TicketsControllerTest < ActionController::TestCase
     due_by = 12.days.since.utc.iso8601
     params = update_ticket_params_hash.merge(fr_due_by: nil, due_by: due_by)
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert_equal fr_due_by.utc.iso8601, t.reload.frDueBy.iso8601
     assert_equal due_by, t.due_by.iso8601
@@ -1072,8 +1073,8 @@ class TicketsControllerTest < ActionController::TestCase
     fr_due_by = 2.days.since.utc.iso8601
     params = update_ticket_params_hash.merge(due_by: nil, fr_due_by: fr_due_by)
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     t.update_column(:status, 2)
     assert_not_nil t.reload.due_by
@@ -1084,8 +1085,8 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params = update_ticket_params_hash.merge(status: 5, due_by: nil, fr_due_by: nil)
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     t.update_column(:status, 2)
     assert_not_nil t.due_by && t.frDueBy
@@ -1095,8 +1096,8 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params = update_ticket_params_hash.merge(due_by: nil, fr_due_by: nil)
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert_not_nil t.due_by && t.frDueBy
   end
@@ -1162,8 +1163,8 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.update_attribute(:due_by, (t.created_at - 10.days).iso8601)
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
   end
 
@@ -1172,8 +1173,8 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.update_attribute(:frDueBy, (t.created_at - 10.days).iso8601)
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
   end
 
@@ -1204,7 +1205,7 @@ class TicketsControllerTest < ActionController::TestCase
     t.schema_less_ticket.reload
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 200
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
   end
 
   def test_update_with_responder_id_not_in_group
@@ -1212,8 +1213,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = { responder_id: @agent.id, group_id: group.id }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
   end
 
@@ -1223,7 +1224,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_equal t.reload.email_config_id, params_hash[:email_config_id]
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
   end
 
@@ -1233,7 +1234,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_equal t.reload.email_config_id, product.primary_email_config.id
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
   end
 
@@ -1247,7 +1248,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 200
     assert_equal t.reload.email_config_id, product.primary_email_config.id
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
   end
 
   def test_update_with_product_id_and_same_email_config_id
@@ -1258,7 +1259,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_equal t.reload.email_config_id, params_hash[:email_config_id]
     assert_equal t.product_id, params_hash[:product_id]
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
   end
 
@@ -1267,7 +1268,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.priority == 1
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1275,7 +1276,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { type: 'Incident' }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert t.reload.ticket_type == 'Incident'
   end
@@ -1294,7 +1295,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.subject == subject
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1304,7 +1305,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.description == description
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1315,7 +1316,7 @@ class TicketsControllerTest < ActionController::TestCase
     group = t.group
     group.agent_groups.create(user_id: responder_id, group_id: group.id)
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert t.reload.responder_id == responder_id
   end
@@ -1326,7 +1327,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.requester_id == requester_id
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1336,7 +1337,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { group_id: group_id }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.group_id == group_id
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1344,7 +1345,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { source: 2 }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert t.reload.source == 2
   end
@@ -1355,7 +1356,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.tag_names == tags
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1364,7 +1365,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.status == 5
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1372,7 +1373,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { status: 4 }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert t.reload.status == 4
   end
@@ -1410,8 +1411,8 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == (count + 1)
     assert User.find(t.requester_id).email == email
@@ -1423,8 +1424,8 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == (count + 1)
     assert User.find(t.reload.requester_id).twitter_id == twitter_id
@@ -1437,8 +1438,8 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == (count + 1)
     assert User.find(t.reload.requester_id).phone == phone
@@ -1452,8 +1453,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { fr_due_by: 2.hours.since.iso8601, due_by: 100.days.since.iso8601 }
     Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert t.reload.due_by == params_hash[:due_by]
     assert t.reload.frDueBy == params_hash[:fr_due_by]
@@ -1465,8 +1466,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { due_by: 100.days.since.iso8601 }
     Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert t.reload.due_by != previous_due_by
   end
@@ -1477,8 +1478,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { fr_due_by: 2.hours.since.iso8601 }
     Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert t.reload.frDueBy != previous_fr_due_by
   end
@@ -1571,8 +1572,8 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     params_hash[:tags].each(&:strip!)
     result = params_hash.each { |x, y| y.strip! if [:name, :subject, :phone].include?(x) }
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert_equal t.reload.requester.name, result[:name]
     assert_equal t.reload.requester.phone, result[:phone]
@@ -1592,8 +1593,8 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: nil, twitter_id: Faker::Lorem.characters(20) + white_space)
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert_equal t.reload.requester.twitter_id, params_hash[:twitter_id].strip
     match_json(ticket_pattern({}, t.reload))
@@ -1611,8 +1612,8 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: nil, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space)
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert_equal t.reload.requester.email, params_hash[:email].strip
   end
@@ -1661,10 +1662,10 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_extra_params_invalid
     t = ticket
-    params_hash = update_ticket_params_hash.merge(junk: 'test')
+    params_hash = update_ticket_params_hash.merge(junk: 'test', description_html: "test")
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('junk', :invalid_field)])
+    match_json([bad_request_error_pattern('junk', :invalid_field), bad_request_error_pattern('description_html', :invalid_field)])
   end
 
   def test_update_empty_params
@@ -1681,8 +1682,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(facebook_id: user.fb_profile_id, requester_id: nil)
     count = User.count
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == count
   end
@@ -1693,8 +1694,8 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == count
     assert User.find(t.reload.requester_id).twitter_id == user.twitter_id
@@ -1706,8 +1707,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(phone: user.phone, name: Faker::Name.name, requester_id: nil)
     count = User.count
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == count
     assert User.find(t.reload.requester_id).phone == user.phone
@@ -1719,8 +1720,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(email: user.email, requester_id: nil)
     count = User.count
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == count
     assert User.find(t.reload.requester_id).email == user.email
@@ -1795,8 +1796,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_state' => 'Queensland', 'test_custom_city' => 'Brisbane' })
     put :update, construct_params({ id: t.display_id }, params)
     t = Helpdesk::Ticket.find(t.id)
-    match_json(ticket_pattern(params, t))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert_equal t.custom_field["test_custom_state_#{@account.id}"], 'Queensland'
     assert_equal t.custom_field["test_custom_city_#{@account.id}"], 'Brisbane'
@@ -1807,8 +1808,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_state' => 'Queensland' })
     put :update, construct_params({ id: t.display_id }, params)
     t = Helpdesk::Ticket.find(t.id)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert_equal t.custom_field["test_custom_state_#{@account.id}"], 'Queensland'
   end
@@ -1818,8 +1819,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_city' => 'Brisbane' })
     put :update, construct_params({ id: t.display_id }, params)
     t = Helpdesk::Ticket.find(t.id)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert_equal t.custom_field["test_custom_city_#{@account.id}"], 'Brisbane'
   end
@@ -2494,7 +2495,7 @@ class TicketsControllerTest < ActionController::TestCase
     t.update_attributes(manual_dueby: Time.zone.now.iso8601)
     put :update, construct_params({ id: t.display_id }, due_by: due_by.chop,
                                                         fr_due_by: fr_due_by.iso8601)
-    match_json(ticket_pattern({ due_by: due_by, fr_due_by: fr_due_by.utc.iso8601 }, t.reload))
+    match_json(update_ticket_pattern({ due_by: due_by, fr_due_by: fr_due_by.utc.iso8601 }, t.reload))
     assert_response 200
   end
 

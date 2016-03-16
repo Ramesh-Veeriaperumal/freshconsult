@@ -15,22 +15,19 @@ class ConversationValidationTest < ActionView::TestCase
     refute conversation.valid?(:create)
 
     assert conversation.errors.full_messages.include?('Body datatype_mismatch')
-    refute conversation.errors.full_messages.include?('Body html datatype_mismatch')
     assert_equal({ body: {  expected_data_type: String, code: :missing_field }, user_id: {} }, conversation.error_options)
 
-    controller_params = { 'user_id' => 1, body: '', body_html: '' }
+    controller_params = { 'user_id' => 1, body: '' }
     item = nil
     conversation = ConversationValidation.new(controller_params, item)
     refute conversation.valid?(:create)
     assert conversation.errors.full_messages.include?('Body blank')
-    refute conversation.errors.full_messages.include?('Body html datatype_mismatch')
 
-    controller_params = { 'user_id' => 1, body: true, body_html: true }
+    controller_params = { 'user_id' => 1, body: true }
     item = nil
     conversation = ConversationValidation.new(controller_params, item)
     refute conversation.valid?(:create)
     assert conversation.errors.full_messages.include?('Body datatype_mismatch')
-    assert conversation.errors.full_messages.include?('Body html datatype_mismatch')
   end
 
   def test_emails_validation_invalid

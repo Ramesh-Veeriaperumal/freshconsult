@@ -128,7 +128,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
         parsed_response = JSON.parse(response.body)['conversations']
         conversations = parsed_response.select { |n| n['id'] = note.id } if parsed_response
         assert_response 200
-        assert_equal 'Test update note body', conversations[0]['body']
+        assert_equal 'Test update note body', conversations[0]['body_text']
       end
     end
   end
@@ -186,7 +186,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     ticket = create_ticket(requested_id: @agent.id)
     previous_updated_at = ticket.updated_at
     skip_bullet do
-      put "/api/tickets/#{ticket.id}", { description: ticket.description }.to_json, @write_headers
+      put "/api/tickets/#{ticket.id}", { description: ticket.description_html }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
@@ -200,7 +200,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
     # IN API V1
     skip_bullet do
-      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description: ticket.description, description_html: ticket.description_html } } }.to_json, @write_headers
+      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description: ticket.description } } }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i

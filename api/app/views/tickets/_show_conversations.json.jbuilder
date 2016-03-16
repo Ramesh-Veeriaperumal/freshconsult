@@ -1,7 +1,7 @@
 json.set! :conversations, @conversations do |conversation|
   # Not caching the body as it has a bigger impact for conversations having huge body
-  json.set! :body, conversation.body
-  json.set! :body_html, conversation.body_html
+  json.set! :body, conversation.body_html
+  json.set! :body_text, conversation.body
 
   json.cache! CacheLib.compound_key(conversation, ApiConstants::CACHE_VERSION[:v2], params) do
     json.extract! conversation, :id, :incoming, :private, :user_id, :support_email, :source

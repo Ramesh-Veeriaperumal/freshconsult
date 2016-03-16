@@ -110,12 +110,11 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_create_datatype_invalid
-    params_hash = { notify_emails: 'x', attachments: 'x', body: true, body_html: true }
+    params_hash = { notify_emails: 'x', attachments: 'x', body: true }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     match_json([bad_request_error_pattern('notify_emails', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
                 bad_request_error_pattern('attachments', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('body', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean'),
-                bad_request_error_pattern('body_html', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean')])
+                bad_request_error_pattern('body', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean')])
     assert_response 400
   end
 
@@ -127,20 +126,20 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_create_invalid_ticket_id
-    params_hash = { body_html: 'test' }
+    params_hash = { body: 'test' }
     post :create, construct_params({ id: 789_789_789 }, params_hash)
     assert_response :missing
   end
 
   def test_create_invalid_model
-    params_hash = { body_html: 'test', user_id: 789_789_789 }
+    params_hash = { body: 'test', user_id: 789_789_789 }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('user_id', :absent_in_db, resource: :contact, attribute: :user_id)])
   end
 
   def test_create_extra_params
-    params_hash = { body_html: 'test', junk: 'test' }
+    params_hash = { body: 'test', junk: 'test' }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('junk', :invalid_field)])
@@ -384,7 +383,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_invalid_model
-    params_hash = { body_html: 'test', user_id: 789_789_789 }
+    params_hash = { body: 'test', user_id: 789_789_789 }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('user_id', :absent_in_db, resource: :contact, attribute: :user_id)])
@@ -394,7 +393,7 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = { body_html: 'test', junk: 'test' }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('junk', :invalid_field)])
+    match_json([bad_request_error_pattern('junk', :invalid_field), bad_request_error_pattern('body_html', :invalid_field)])
   end
 
   def test_reply_returns_location_header
@@ -474,8 +473,8 @@ class ConversationsControllerTest < ActionController::TestCase
     n = note
     put :update, construct_params({ id: n.id }, params)
     assert_response 200
-    match_json(note_pattern(params, n.reload))
-    match_json(note_pattern({}, n.reload))
+    match_json(update_note_pattern(params, n.reload))
+    match_json(update_note_pattern({}, n.reload))
   end
 
   def test_update_deleted
@@ -512,8 +511,8 @@ class ConversationsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 200
     response_params = params.except(:attachments)
-    match_json(note_pattern(params, n.reload))
-    match_json(note_pattern({}, n.reload))
+    match_json(update_note_pattern(params, n.reload))
+    match_json(update_note_pattern({}, n.reload))
     assert n.attachments.count == 2
   end
 
@@ -557,8 +556,8 @@ class ConversationsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: n.id }, params)
     User.any_instance.unstub(:privilege?)
     assert_response 200
-    match_json(note_pattern(params, n.reload))
-    match_json(note_pattern({}, n.reload))
+    match_json(update_note_pattern(params, n.reload))
+    match_json(update_note_pattern({}, n.reload))
   end
 
   def test_update_reply
