@@ -13,11 +13,12 @@ class Agent < ActiveRecord::Base
   accepts_nested_attributes_for :user
   before_update :create_model_changes
   after_commit :enqueue_round_robin_process, on: :update
+
   after_commit :nullify_tickets, :destroy_agent_canned_responses, :destroy_agent_scenarios, :agent_destroy_cleanup, on: :destroy
   
   validates_presence_of :user_id
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
-  
+
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
     :scoreboard_level_id, :user_attributes, :group_ids
 
@@ -38,6 +39,12 @@ class Agent < ActiveRecord::Base
 
   def signature_htm
     self.signature_html
+  end
+
+  def change_points score
+  	# Assign points to agent if no point have been given before
+  	# Else increment the existing points total by the given amount
+  	self.update_attributes(:points => points.to_i + score)
   end
 
   #for user_emails

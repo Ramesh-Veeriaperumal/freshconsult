@@ -98,7 +98,7 @@ class Account < ActiveRecord::Base
     :public_ticket_url => false, :marketplace => false, :fa_developer => false,:archive_tickets => false, :compose_email => false,
     :limit_mobihelp_results => false, :ecommerce => false, :tokenize_emoji => false, 
     :salesforce_sync => false, :round_robin_on_update => false, :freshfone_call_metrics => false, 
-    :solutions_meta_read => false, :threading_without_user_check => false, :custom_dashboard => false, :freshfone_call_monitoring => false }
+    :solutions_meta_read => false, :threading_without_user_check => false, :custom_dashboard => false, :freshfone_call_monitoring => false, :gamification_perf => false }
 
 
   # This list below is for customer portal features list only to prevent from adding addition features
