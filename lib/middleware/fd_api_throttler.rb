@@ -85,9 +85,9 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def set_rate_limit_headers # Rate Limit headers are not set when status is 429
       remaining = [(@api_limit - @count), 0].max.to_s
-      @headers = @headers.merge('X-RateLimit-Total' => @api_limit.to_s, 
+      @headers = @headers.merge('X-RateLimit-Total' => @api_limit.to_s,
                                 'X-RateLimit-Remaining' => remaining,
-                                'X-RateLimit-Used' => used_limit.to_s)
+                                'X-RateLimit-Used-CurrentRequest' => used_limit.to_s)
     end
 
     def set_version_headers
@@ -150,13 +150,13 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def handle_exception
       # similar to newrelic_begin_rescue, additionally logs and sends more info to newrelic.
-        yield
-      rescue Exception => e
-        options_hash =  { uri: @request.env['REQUEST_URI'], custom_params: @request.env["action_dispatch.request_id"], 
-          description: "Error occurred while accessing Redis", request_method: @request.env['REQUEST_METHOD'], 
-          request_body: @request.env["rack.input"].gets }
-        Rails.logger.error("FdApiThrottler :: Redis Exception, Host: #{@host}, Exception: #{e.message}\n#{e.class}\n#{e.backtrace.join("\n")}")
-        NewRelic::Agent.notice_error(e, options_hash)
-        return
+      yield
+    rescue Exception => e
+      options_hash =  { uri: @request.env['REQUEST_URI'], custom_params: @request.env['action_dispatch.request_id'],
+                        description: 'Error occurred while accessing Redis', request_method: @request.env['REQUEST_METHOD'],
+                        request_body: @request.env['rack.input'].gets }
+      Rails.logger.error("FdApiThrottler :: Redis Exception, Host: #{@host}, Exception: #{e.message}\n#{e.class}\n#{e.backtrace.join("\n")}")
+      NewRelic::Agent.notice_error(e, options_hash)
+      return
     end
 end

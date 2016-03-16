@@ -60,7 +60,7 @@ RSpec.describe Freshfone::ForwardController do
     create_call_meta(@parent_call.children.last)
     create_pinged_agents(false,@parent_call.children.last)
     @parent_call.update_column(:call_status, Freshfone::Call::CALL_STATUS_HASH[:'on-hold'])
-    params = { :CallSid => @parent_call.call_sid, :CallStatus => Freshfone::Call::CALL_STATUS_HASH[:answered] }
+    params = { :CallSid => @parent_call.call_sid, :CallStatus => 'answered' }
     set_twilio_signature("freshfone/forward/transfer_complete", params)
     post :transfer_complete, params
     expect(xml).to be_truthy
@@ -304,6 +304,16 @@ RSpec.describe Freshfone::ForwardController do
     post :transfer_wait, params
     @freshfone_call.reload
     expect(get_pinged_agent(@agent.id)[:ringing_at]).not_to be_nil
+  end
+
+
+  it 'should not allow forwarding while in trial' do
+    create_freshfone_call
+    load_freshfone_trial
+    params = { :call => @freshfone_call.id, :agent_id => @agent.id }
+    set_twilio_signature("freshfone/forward/initiate?call=#{@freshfone_call.id}&agent_id=#{@agent.id}")
+    post :initiate, params
+    expect(xml).to be_truthy
   end
 
 end

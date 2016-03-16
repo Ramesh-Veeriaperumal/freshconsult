@@ -68,7 +68,6 @@ end
         <%end%>
       </div>
 
-    <% unless minimizable %>
       <% if current_account.features?(:custom_survey) %>
         <%= render :partial => '/helpdesk/archive_tickets/show/custom_survey_note' , :locals => {:note => note , 
               :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
@@ -76,12 +75,11 @@ end
           <%= render :partial => '/helpdesk/archive_tickets/show/survey_note' , :locals => {:note => note , 
               :notedetails => notedetails} %>
       <% end %>
-    <% end %>
 
       <%= freshfone_audio_dom(note) if current_account.features?(:freshfone) %>
 
       <div id="note_attachments_container_<%= note.id%>">
-        <% if !minimizable and (note.all_attachments.present? or note.cloud_files.present?) %>
+        <% if note.all_attachments.present? or note.cloud_files.present? %>
             <span class="seperator"></span> 
             <div class="attachments-wrap clearfix">
               <h5 id="note_attachments_title_<%= note.id %>"><strong><%= pluralize(note.all_attachments.size + note.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>

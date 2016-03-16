@@ -6,6 +6,7 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
   include Freshfone::Conference::EndCallActions
   include Freshfone::Conference::TransferMethods
 
+  before_filter :validate_trial, :only => [:initiate_transfer], :if => :trial?
   before_filter :set_group_transfer_param, :only => [:initiate_transfer]
   before_filter :initialize_transfer, :only => [:initiate_transfer]
   before_filter :update_conference_sid, :only => [:transfer_agent_wait]
@@ -22,7 +23,7 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
   end
 
   def transfer_agent_wait
-    telephony.initiate_transfer_on_unhold(current_call.parent)
+    telephony(current_call.parent).initiate_transfer_on_unhold
     render :xml => telephony.play_unhold_message  
   end
 
@@ -44,7 +45,7 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
   def complete_transfer
     notifier.notify_transfer_success(current_call)
     current_call.disconnect_source_agent
-    telephony.initiate_transfer_on_unhold(current_call)
+    telephony.initiate_transfer_on_unhold
     current_call.completed!
     render :json => {:status => :success}
   end
@@ -63,14 +64,14 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
     current_call.canceled!
     parent_call.inprogress!
     notifier.cancel_other_agents(current_call)
-    telephony.initiate_transfer_fall_back(parent_call)
+    telephony(parent_call).initiate_transfer_fall_back
     render :json => {:status => :unhold_initiated}
   end
  
   def resume_transfer
     parent_call = current_call.parent
     render :json => {:status => :error} and return unless (parent_call.present? && parent_call.onhold?)
-    telephony.initiate_transfer_fall_back(parent_call)
+    telephony(parent_call).initiate_transfer_fall_back
     parent_call.inprogress!
     render :json => {:status => :unhold_initiated}
   end
@@ -151,5 +152,9 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
 
     def get_agent_id
       split_client_id(params[:To])      
+    end
+
+    def validate_trial
+      return render :json => { :status => :error } if params[:external_number].present?
     end
 end

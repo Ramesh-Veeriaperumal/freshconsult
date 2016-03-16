@@ -2,7 +2,7 @@ module ApiDiscussions
   class TopicValidation < ApiValidation
     attr_accessor :title, :forum_id, :sticky, :locked,
                   :stamp_type, :message_html
-    validates :title, data_type: { rules: String, required: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
+    validates :title, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
     validates :message_html, data_type: { rules: String, required: true }
     validates :sticky, :locked, data_type: { rules: 'Boolean' }
     validates :forum_id, custom_numericality: { only_integer: true, greater_than: 0, required: true }, on: :update

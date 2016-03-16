@@ -128,8 +128,9 @@ module Search::TicketSearch
     end
 
     if criteria_key == "helpdesk_schema_less_tickets.product_id"
-      products = [[NONE_VALUE, I18n.t("filter_options.none")]]
-      return products.concat(Account.current.products_from_cache.collect { |au| [au.id, CGI.escapeHTML(au.name)] })
+      products = Account.current.products_from_cache
+      products_list = products.present? ? [[NONE_VALUE, I18n.t("filter_options.none")]] : []
+      return products_list.concat(products.collect { |au| [au.id, CGI.escapeHTML(au.name)] })
     end
 
     if criteria_key == :due_by

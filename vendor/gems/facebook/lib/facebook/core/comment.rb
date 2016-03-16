@@ -55,7 +55,7 @@ module Facebook
         
         #Comments are pushed to dynamo if its not pushed in via the parent classes already
         dynamo_push_comments = !push_post_tree_to_dynamo && can_dynamo_push
-        insert_to_dynamo_and_process_replies(convert_comment, dynamo_push_comments)
+        insert_to_dynamo_and_process_replies(self.fd_item.present?, dynamo_push_comments)
       end
       
       alias :add :process

@@ -14,18 +14,28 @@
 
   <!-- Menu -->
   <div class="transfer-call-header">
-        <div type="button" id='transfer-icon-menu' class="btn btn-default dropdown-toggle transfer-dropdown-button" data-toggle="dropdown" data-menu='transfer-agent-icon' aria-expanded="false">
-        	<div id='transfer-menu-btn'><i class="ficon-ff-group fsize-16"></i></div><span class="caret transfer-caret"></span>
-        </div>
-       <!-- toggle menu list -->
-        <ul id='transfer-menu-items' class="dropdown-menu transfer-menu-list" role="menu">
-          <li class="hide transfer-agent-icon">
-          	<a href="#"><i id='transfer-agent-list' class="ficon-ff-group fsize-16"></i></a>
-          </li>
-          <li class='transfer-number-icon' id='external-number-menu'>
-          	<a href="#"><i id='transfer-number-list' class="ficon-ff-dialpad fsize-14"></i></a>
-          </li>
-        </ul>
+    <div type="button" id='transfer-icon-menu' class="<%='btn btn-default dropdown-toggle' unless freshfone_trial_states?%>
+      transfer-dropdown-button"
+    <%unless freshfone_trial_states? %> 
+      data-toggle="dropdown"
+    <%end%>
+    data-menu='transfer-agent-icon' aria-expanded="false">
+    	<div id='transfer-menu-btn'><i class="ficon-ff-group fsize-16"></i></div>
+      <%unless freshfone_trial_states? %>
+        <span class="caret transfer-caret"></span>
+      <%end%>
+    </div>
+    <!-- toggle menu list -->
+    <ul id='transfer-menu-items' class="dropdown-menu transfer-menu-list" role="menu">
+      <li class="hide transfer-agent-icon">
+      	<a href="#"><i id='transfer-agent-list' class="ficon-ff-group fsize-16"></i></a>
+      </li>
+      <%unless freshfone_trial_states? %>
+        <li class='transfer-number-icon' id='external-number-menu'>
+          <a href="#"><i id='transfer-number-list' class="ficon-ff-dialpad fsize-14"></i></a>
+        </li>
+      <%end%>
+    </ul>
 
     <!--- ListJS  -->
 
@@ -64,41 +74,42 @@
     </div>
    
 
-
-    <div id='external-numbers-list' class="hide transfer-number-icon">
-      <div class='list-component'>
-        <input class="search" id='search-external' placeholder="<%= t('freshfone.widget.transfer_numbers') %>" />
-        <ul class="available_numbers_list"></ul>
-        
-        <ul class="search-number-label" id='new_external_number' class='hide'>
-          <li id='external-number' class='transfer-active'>
+    <% unless freshfone_trial_states? %>
+      <div id='external-numbers-list' class="hide transfer-number-icon">
+        <div class='list-component'>
+          <input class="search" id='search-external' placeholder="<%= t('freshfone.widget.transfer_numbers') %>" />
+          <ul class="available_numbers_list"></ul>
+          
+          <ul class="search-number-label" id='new_external_number' class='hide'>
+            <li id='external-number' class='transfer-active'>
+                 <span class="transfer-phone-icons">
+                   <i class="ficon-ff-group fsize-16"></i>
+                 </span>
+                  <span class="transfer-onover-icons">
+                   <i class="ficon-arrow-right-2 fsize-12"></i>
+                 </span>
+                 <p class="available_agents_name name" id="external_number_label"></p>
+            </li>
+          </ul>
+           <!--template -->
+          <div class="hide">
+            <li id="numbers-item" >
                <span class="transfer-phone-icons">
                  <i class="ficon-ff-group fsize-16"></i>
                </span>
-                <span class="transfer-onover-icons">
-                 <i class="ficon-arrow-right-2 fsize-12"></i>
+               <p class="available_agents_name name external_number"></p>
+               <span class="transfer-onover-icons">
+                 <i id='transfer-call-icon' class="ficon-arrow-right-2 fsize-12"></i>
                </span>
-               <p class="available_agents_name name" id="external_number_label"></p>
-          </li>
-        </ul>
-         <!--template -->
-        <div class="hide">
-          <li id="numbers-item" >
-             <span class="transfer-phone-icons">
-               <i class="ficon-ff-group fsize-16"></i>
-             </span>
-             <p class="available_agents_name name external_number"></p>
-             <span class="transfer-onover-icons">
-               <i id='transfer-call-icon' class="ficon-arrow-right-2 fsize-12"></i>
-             </span>
-             <span class="hide id"></span>
-          </li>
-        </div>
-        <div class="no_available_numbers hide">
-          <%= t('freshfone.widget.no_transfers') %>
+               <span class="hide id"></span>
+            </li>
+          </div>
+          <div class="no_available_numbers hide">
+            <%= t('freshfone.widget.no_transfers') %>
+          </div>
         </div>
       </div>
-    </div>
+    <% end %>
    
 </div>
   </div>

@@ -439,6 +439,7 @@ HelpdeskReports.CoreUtil = {
         _this.customFieldHash();
         _this.scrollTop();
         _this.actions.setTicketListFlag();
+        _this.adjustFilterButton();
     },
     actions : {
         closeFilterMenu: function () {
@@ -1267,6 +1268,15 @@ HelpdeskReports.CoreUtil = {
     scrollTop: function () {
         var body = jQuery("html, body");
         body.stop().animate({scrollTop:0}, '500', 'swing');
+    },
+    adjustFilterButton : function() {
+        if(HelpdeskReports.locals.is_non_sprout_plan == "true") {
+            var lang = jQuery("html").attr("lang");
+            if(lang && lang == "zh-TW") {
+                jQuery(".edit-filter").removeClass('span1').addClass('span2');
+                jQuery(".filter-type").removeClass('span11').addClass('span10');
+            }
+        }
     },
     scrollToReports: function () {
         var body = jQuery("html, body");

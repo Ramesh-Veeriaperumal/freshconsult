@@ -18,6 +18,7 @@ class ContactValidationTest < ActionView::TestCase
     refute contact.valid?
     errors = contact.errors.full_messages
     assert errors.include?('Tag names special_chars_present')
+    assert_equal({ email: {}, tag_names: { chars: ',' }, name: {} }, contact.error_options)
   end
 
   def test_tags_comma_valid
@@ -39,7 +40,8 @@ class ContactValidationTest < ActionView::TestCase
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?
     errors = contact.errors.full_messages
-    assert errors.include?('Tag names data_type_mismatch')
+    assert errors.include?('Tag names datatype_mismatch')
+    assert_equal({ email: {}, tag_names: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String }, name: {} }, contact.error_options)
     assert errors.count == 1
   end
 
@@ -53,7 +55,8 @@ class ContactValidationTest < ActionView::TestCase
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?
     errors = contact.errors.full_messages
-    assert errors.include?('Avatar data_type_mismatch')
+    assert errors.include?('Avatar datatype_mismatch')
+    assert_equal({ email: {}, name: {}, avatar: { expected_data_type: 'valid file format', prepend_msg: :input_received, given_data_type: String } }, contact.error_options)
     assert errors.count == 1
   end
 
@@ -66,8 +69,9 @@ class ContactValidationTest < ActionView::TestCase
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?
     errors = contact.errors.full_messages
-    assert errors.include?('Tag names data_type_mismatch')
-    assert errors.include?('Custom fields data_type_mismatch')
+    assert errors.include?('Tag names datatype_mismatch')
+    assert errors.include?('Custom fields datatype_mismatch')
+    assert_equal({ email: {}, tag_names: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type' }, name: {}, custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null Type' } }, contact.error_options)
     Account.unstub(:current)
   end
 
@@ -92,6 +96,7 @@ class ContactValidationTest < ActionView::TestCase
     refute contact.valid?(:update)
     errors = contact.errors.full_messages
     assert errors.include?('Email fill_a_mandatory_field')
+    assert_equal({ name: {}, email: { field_names: 'email, mobile, phone, twitter_id' } }, contact.error_options)
     Account.unstub(:current)
   end
 end

@@ -1,12 +1,28 @@
 <div class="innerbox">
-	<div class="freshfone_alert alert alert-danger hide" rel="permanent">
-		<% if current_user.privilege?(:manage_account) %>
+	<%if show_activate? %>
+		<div class="freshfone_alert alert center" rel="permanent">
+			<% if current_user.privilege?(:admin_tasks) %>
+				<% unless freshfone_activation_requested? %>
+					<%= t('freshfone.dashboard.trial.activate').html_safe %>
+					<div id="ff_feature_request"></div>
+				<% else %>
+						<%= t('freshfone.admin.trial.requested_activation').html_safe%>
+				<% end %>
+			<% else %>
+				<%=  t('freshfone.admin.trial.contact_admin_for_expired') %>
+			<% end %>
+		</div>
+	<% end %>
+	<div class="freshfone_alert alert alert-danger center <%=credit_low_toggle%>"
+		rel="permanent">
+		<% if current_user.privilege?(:admin_tasks) %>
 			<%= t('freshfone.dashboard.admin_freshfone_recharge_alert_new').html_safe %>
 		<% else %>
-			<%= t('freshfone.dashboard.freshfone_recharge_alert_new') %>
+			<%=  t('freshfone.admin.trial.contact_admin_for_expired') %>
 		<% end %>
 	</div>
 
+	<% unless show_activate? %>
 	<ul class="clearfix mt20 freshfone_realtime">
 		<li class="<%= 'disabled' unless freshfone_active? %>">
 			<a class="freshfone_dashboard_cells" href="/phone/dashboard/#queued_calls" data-pjax="#body-container">
@@ -21,6 +37,7 @@
 			</a>
 		</li>
 	</ul>
+	<% end %>
 
 </div>
 <%= link_to 'Call History', freshfone_call_history_index_path,

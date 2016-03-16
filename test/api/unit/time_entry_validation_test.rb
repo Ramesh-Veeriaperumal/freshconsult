@@ -8,20 +8,22 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry = TimeEntryValidation.new(controller_params, item, true)
     time_entry.valid?(:create)
     error = time_entry.errors.full_messages
-    assert error.include?('Agent data_type_mismatch')
+    assert error.include?('Agent datatype_mismatch')
     Account.unstub(:current)
   end
 
   def test_start_time_timer_not_running
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
-    controller_params = { 'timer_running' => false, 'start_time' => Time.zone.now.to_s }
+    time = Time.zone.now.to_s
+    controller_params = { 'timer_running' => false, 'start_time' => time }
     item = nil
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?
     error = time_entry.errors.full_messages
     assert error.include?('Start time timer_running_false')
     refute error.include?('User is not a number')
+    assert_equal({ timer_running: {}, start_time: { code: :incompatible_field } }, time_entry.error_options)
     Account.unstub(:current)
   end
 
@@ -33,7 +35,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?
     error = time_entry.errors.full_messages
-    assert error.include?('Time spent invalid_time_spent')
+    assert error.include?('Time spent invalid_format')
     Account.unstub(:current)
   end
 
@@ -45,7 +47,8 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?
     error = time_entry.errors.full_messages
-    assert error.include?('Time spent invalid_time_spent')
+    assert error.include?('Time spent invalid_format')
+    assert_equal({ timer_running: {}, time_spent: { accepted: 'hh:mm' } }, time_entry.error_options)
     Account.unstub(:current)
   end
 
@@ -65,7 +68,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
     item = Helpdesk::TimeSheet.new(timer_running: true, user_id: 2)
-    controller_params = { start_time: '' }
+    controller_params = { start_time: '' }.stringify_keys!
     time_entry = TimeEntryValidation.new(controller_params, item, true)
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
@@ -76,7 +79,7 @@ class TimeEntryValidationTest < ActionView::TestCase
   def test_start_time_when_timer_running_is_false
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
-    controller_params = { start_time: '', timer_running: false }
+    controller_params = { start_time: '', timer_running: false }.stringify_keys!
     time_entry = TimeEntryValidation.new(controller_params, nil, false)
     time_entry.valid?
     error = time_entry.errors.full_messages
@@ -93,6 +96,8 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
     assert error.include?('Agent cant_update_user')
+    assert_equal({ billable: {}, timer_running: {}, start_time: { code: :incompatible_field },
+                   agent_id: { code: :incompatible_field } }, time_entry.error_options)
     Account.unstub(:current)
   end
 
@@ -105,6 +110,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
     assert error.include?('Agent cant_update_user')
+    assert_equal({ billable: {},  timer_running: {}, agent_id: { code: :incompatible_field } }, time_entry.error_options)
     Account.unstub(:current)
   end
 
@@ -116,7 +122,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
-    assert error.include?('Billable data_type_mismatch')
+    assert error.include?('Billable datatype_mismatch')
   end
 
   def test_billable_allows_nil_true_and_false

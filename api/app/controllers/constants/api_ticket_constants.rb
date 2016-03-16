@@ -3,19 +3,19 @@ module ApiTicketConstants
   ARRAY_FIELDS = %w(tags cc_emails attachments).freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  CREATE_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority
+  CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
                   ).freeze | ARRAY_FIELDS | HASH_FIELDS
-  UPDATE_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority
+  UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
                   ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
   SHOW_FIELDS = ['include']
-  ALLOWED_INCLUDE_PARAMS = ['notes']
+  ALLOWED_INCLUDE_PARAMS = ['conversations']
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
   ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
   DEFAULT_ORDER_TYPE = TicketsFilter::DEFAULT_SORT_ORDER
-  DELEGATOR_ATTRIBUTES = [:group_id, :responder_id, :product_id, :email_config_id, :custom_field, :requester_id, :status].freeze
+  DELEGATOR_ATTRIBUTES = [:group_id, :responder_id, :product_id, :email_config_id, :custom_field, :requester_id, :status, :facebook_id].freeze
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze
   SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :chat, :mobihelp, :feedback_widget).values.freeze
 
@@ -49,7 +49,7 @@ module ApiTicketConstants
     update: [:json, :multipart_form]
   }.freeze
 
-  MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT
+  MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT - 1
 
   FIELD_MAPPINGS = { group: :group_id, agent: :responder_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
                      product: :product_id, ticket_type: :type }.freeze

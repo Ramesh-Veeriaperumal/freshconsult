@@ -2,6 +2,7 @@ module Facebook
   module Core
     class Post
           
+      include Social::Util
       include Social::Constants
       
       include Facebook::Util
@@ -35,11 +36,11 @@ module Facebook
         insert_post_in_dynamo if can_dynamo_push
         
         #Process comments only either if it has to be converted to a ticket or pushed to Dynamo
-        process_comments(convert_to_ticket, can_dynamo_push) if (convert_to_ticket || can_dynamo_push)
+        process_comments(self.fd_item.present?, can_dynamo_push) if (self.fd_item.present? || can_dynamo_push)
         
         #Case happens when process post is called from the child classes
         #Status is in Dynamo but converted to a ticket later because of a visitor comment
-        if (convert_to_ticket && !can_dynamo_push)
+        if (social_revamp_enabled? && self.fd_item.present? && !can_dynamo_push)
           dynamo_helper.update_ticket_links_in_dynamo(self.koala_post.post_id, self.fan_page.default_stream.id) 
         end
       end

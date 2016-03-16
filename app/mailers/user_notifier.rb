@@ -4,17 +4,17 @@ class UserNotifier < ActionMailer::Base
   layout "email_font"
 
   def user_activation(user, params, reply_email_config)
-    ActionMailer::Base.set_mailbox reply_email_config.smtp_mailbox
+    ActionMailer::Base.set_email_config reply_email_config
     send_the_mail(user, params[:subject], params[:email_body], params[:reply_email])
   end
 
   def email_activation(email_id, params, reply_email_config)
-    ActionMailer::Base.set_mailbox reply_email_config.smtp_mailbox
+    ActionMailer::Base.set_email_config reply_email_config
     send_the_mail(email_id, params[:subject], params[:email_body], params[:reply_email])
   end
 
   def password_reset_instructions(user, params, reply_email_config)  
-    ActionMailer::Base.set_mailbox reply_email_config.smtp_mailbox  
+    ActionMailer::Base.set_email_config reply_email_config  
     send_the_mail(user, params[:subject], params[:email_body], params[:reply_email])
   end
   

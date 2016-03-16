@@ -3,14 +3,16 @@ class Freshfone::UsersController < ApplicationController
 	include Freshfone::Presence
 	include Freshfone::NodeEvents
 	include Freshfone::CallsRedisMethods
+	include Freshfone::SubscriptionsUtil
 
 	EXPIRES = 3600
 	before_filter { |c| c.requires_feature :freshfone }
-	before_filter :validate_freshfone_state
+	before_filter :validate_freshfone_state, :only => [:availability_on_phone, :refresh_token]
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:node_presence]
 	before_filter :validate_presence_from_node, :only => [:node_presence]
 	before_filter :load_or_build_freshfone_user
 	before_filter :set_native_mobile, :only => [:presence, :in_call, :refresh_token]
+	before_filter :validate_presence, :only => [:presence]
 
 	def presence
 		respond_to do |format|
@@ -40,6 +42,7 @@ class Freshfone::UsersController < ApplicationController
 	end
 
 	def availability_on_phone
+		return render(json: { error: "In Trial" }, status: 403) if in_trial_states?
 		@freshfone_user.available_on_phone = params[:available_on_phone]
 		if @freshfone_user.save
 			publish_agent_device(@freshfone_user,current_user)
@@ -85,7 +88,7 @@ class Freshfone::UsersController < ApplicationController
 	private
 		def validate_freshfone_state
 			render :json => { :update_status => false } and return if
-				current_account.freshfone_account.blank? || !current_account.freshfone_account.active?
+				current_account.freshfone_account.blank? || ( !current_account.freshfone_account.active? && !current_account.freshfone_account.trial? )
 		end
 
 		def load_or_build_freshfone_user
@@ -178,4 +181,14 @@ class Freshfone::UsersController < ApplicationController
 			@freshfone_user.change_presence_and_preference(status) 
 			render :json => { :status => @freshfone_user.save }
 		end
+
+		def agent_in_call?
+			current_account.freshfone_calls.agent_progress_calls(
+				@freshfone_user.user_id).present?
+		end
+
+		def validate_presence
+			return render json: { update_status: false } if agent_in_call?
+		end
+
 end

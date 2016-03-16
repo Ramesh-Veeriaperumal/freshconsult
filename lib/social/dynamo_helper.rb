@@ -40,29 +40,33 @@ module Social::DynamoHelper
       wait_for_table_resource(name, "CREATING")
     end
   end
-
-
-  def self.update_rw_table(name, hash, range, start_read, final_read, write)
-    dynamo_sandbox(name) do
-      current_read = start_read
-
-      while current_read < final_read
-        current_read = current_read*2
-        if current_read > final_read
-          current_read = final_read
-        end
-
-        table_options = {
-          :table_name => name,
-          :provisioned_throughput => {
-            :read_capacity_units  => current_read,
-            :write_capacity_units => write
-          }
-        }
-
-        table = $social_dynamoDb.update_table(table_options)
-        wait_for_table_resource(name, "UPDATING")
+  
+  def self.increase_rw_table(name, start_read, final_read, write)
+    current_read = start_read
+ 
+    while current_read < final_read
+      current_read = current_read * 2
+      if current_read > final_read
+        current_read = final_read
       end
+      update_rw_table(name, current_read, write)
+    end
+    
+  end
+
+
+  def self.update_rw_table(name, read, write)
+    dynamo_sandbox(name) do
+      table_options = {
+        :table_name => name,
+        :provisioned_throughput => {
+          :read_capacity_units  => read,
+          :write_capacity_units => write
+        }
+      }
+
+      $social_dynamoDb.update_table(table_options)
+      wait_for_table_resource(name, "UPDATING")
     end
   end
 

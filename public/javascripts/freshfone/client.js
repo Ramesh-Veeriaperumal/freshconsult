@@ -17,11 +17,16 @@ var globalconn;
 		$('#hangup_call').click(function () { freshfonecalls.hangup(); });
 		$("#freshfone-presence-toggle").click(function () { freshfoneuser.toggleUserPresence(); });
 		$widget.find('.availabilityOnPhone').click(function () {
-			freshfoneuser.toggleAvailabilityOnPhone(false);
+			if (!freshfone.isTrial){
+				freshfoneuser.toggleAvailabilityOnPhone(false);
+			}
 		});
 		
 		// Recent Calls show
 		$widget.find('[href="#freshfone_dialpad"]').on('shown', function (e) {
+			if (freshfone.isTrial && freshfoneSubscription.showDialpadWarnings()){
+				return;
+			}
 			freshfoneDialpadEvents.showDialpadElem();
 			$recentCalls.addClass('loading-small sloading');
 			$recentCallsContainer.hide();

@@ -10,9 +10,9 @@ class Fdadmin::FreshfoneStats::RenewalController < Fdadmin::DevopsMainController
 
   def renewal_backlog_csv_by_account(backlog_list = [])
     params.merge!(:export_type => "Renewal Backlog for Account :: #{params["account_id"]}")
-    suspended_ff_account = account.freshfone_account
-    if suspended_ff_account.state == Freshfone::Account::STATE_HASH[:suspended] && suspended_ff_account.expires_on.present?
-      renewal_backlog_condition = ['action_type=? and created_at >= ?',Freshfone::OtherCharge::ACTION_TYPE_HASH[:number_renew], suspended_ff_account.updated_at] 
+    ff_account = account.freshfone_account
+    if ff_account.suspended? && ff_account.expires_on.present?
+      renewal_backlog_condition = ['action_type=? and created_at >= ?',Freshfone::OtherCharge::ACTION_TYPE_HASH[:number_renew], ff_account.updated_at] 
       backlog = account.freshfone_other_charges.where(renewal_backlog_condition).group('freshfone_number_id').sum('debit_payment')
       backlog_list = single_account_renewal_backlog(backlog)     
     end
@@ -25,11 +25,14 @@ class Fdadmin::FreshfoneStats::RenewalController < Fdadmin::DevopsMainController
     generate_email(failed_renewal_list, failed_renewal_csv_columns)
   end
 
-  def failed_renewal_csv_by_account
+  def failed_renewal_csv_by_account(failed_renewal_list = [])
     params.merge!(:export_type => "Failed Renewal for Account :: #{params["account_id"]}")
-    failed_renewal_condition = ['next_renewal_at <= ?', Time.zone.now.to_s(:db)]
-    failed_renewal_numbers = account.freshfone_numbers.where(failed_renewal_condition)
-    failed_renewal_list = single_account_failed_renewal(failed_renewal_numbers)
+    ff_account = account.freshfone_account
+    if ff_account.suspended? || ff_account.active?
+      failed_renewal_numbers = account.freshfone_numbers.where([
+        'next_renewal_at <= ?', Time.zone.now.to_s(:db)])
+      failed_renewal_list = single_account_failed_renewal(failed_renewal_numbers)
+    end
     generate_email(failed_renewal_list, failed_renewal_by_account_csv_columns)
   end
 
@@ -49,6 +52,10 @@ class Fdadmin::FreshfoneStats::RenewalController < Fdadmin::DevopsMainController
       "SELECT accounts.id, accounts.name, count(freshfone_numbers.number)
       FROM freshfone_numbers JOIN accounts
       ON freshfone_numbers.account_id = accounts.id
+      JOIN freshfone_accounts 
+      ON freshfone_accounts.account_id = accounts.id
+      AND freshfone_accounts.state 
+      IN (#{Freshfone::Account::STATE_HASH[:suspended]}, #{Freshfone::Account::STATE_HASH[:active]})  
       WHERE freshfone_numbers.next_renewal_at <= UTC_TIMESTAMP()
       AND freshfone_numbers.deleted = false
       GROUP BY accounts.id DESC"

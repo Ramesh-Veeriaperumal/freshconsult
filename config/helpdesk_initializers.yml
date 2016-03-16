@@ -37,7 +37,6 @@ helpdesk:
     - memcached
     - mime_types
     - new_rails_defaults
-    - omniauth
     - pdf_executable_path
     - portal_init
     - query_trace
@@ -70,6 +69,7 @@ helpdesk:
     - marketplace_config
     - doorkeeper
     - ebay_config
+    - doorkeeper_extension
     - helpdesk_reports/reports_app_config
     - controller_log_subscriber
 

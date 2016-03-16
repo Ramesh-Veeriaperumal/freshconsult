@@ -1,7 +1,7 @@
-['ticket_fields_test_helper.rb', 'notes_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
+['ticket_fields_test_helper.rb', 'conversations_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 module TicketsTestHelper
   include GroupHelper
-  include NotesTestHelper
+  include ConversationsTestHelper
   include TicketFieldsTestHelper
   include EmailConfigsHelper
   include ProductsHelper
@@ -14,7 +14,7 @@ module TicketsTestHelper
   end
 
   def index_ticket_pattern(ticket)
-    ticket_pattern(ticket).except(:attachments, :notes, :tags)
+    ticket_pattern(ticket).except(:attachments, :conversations, :tags)
   end
 
   def index_deleted_ticket_pattern(ticket)
@@ -27,21 +27,21 @@ module TicketsTestHelper
       notes_pattern << index_note_pattern(n)
     end
     notes_pattern = notes_pattern.take(limit) if limit
-    ticket_pattern(ticket).merge(notes: notes_pattern.ordered!)
+    ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
 
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
     custom_field = ticket.custom_field.map { |k, v| [TicketDecorator.display_name(k), v] }.to_h
     ticket_custom_field = (custom_field && ignore_extra_keys) ? custom_field.as_json.ignore_extra_keys! : custom_field.as_json
-    expected_output[:description_html] ||= format_html(ticket, expected_output[:description]) if expected_output[:description]
+    description_html = format_ticket_html(ticket, expected_output[:description]) if expected_output[:description]
 
     {
       cc_emails: expected_output[:cc_emails] || ticket.cc_email[:cc_emails],
       fwd_emails: expected_output[:fwd_emails] || ticket.cc_email[:fwd_emails],
       reply_cc_emails:  expected_output[:reply_cc_emails] || ticket.cc_email[:reply_cc],
-      description:  expected_output[:description] || ticket.description,
-      description_html: expected_output[:description_html] || ticket.description_html,
+      description:  description_html || ticket.description_html,
+      description_text:  ticket.description,
       id: expected_output[:display_id] || ticket.display_id,
       fr_escalated:  (expected_output[:fr_escalated] || ticket.fr_escalated).to_s.to_bool,
       is_escalated:  (expected_output[:is_escalated] || ticket.isescalated).to_s.to_bool,
@@ -68,6 +68,11 @@ module TicketsTestHelper
     }
   end
 
+  def update_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
+    description = expected_output[:description] || ticket.description_html
+    ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(description: description)
+  end
+
   # Helpers
   def v1_ticket_payload
     { helpdesk_ticket: v1_ticket_params, helpdesk: { tags: "#{Faker::Name.name}, #{Faker::Name.name}" },
@@ -84,7 +89,7 @@ module TicketsTestHelper
   end
 
   def v2_ticket_update_payload
-    v2_ticket_params.except(:due_by, :fr_due_by, :cc_emails).to_json
+    v2_ticket_params.except(:due_by, :fr_due_by, :cc_emails, :email).to_json
   end
 
   # private

@@ -116,7 +116,11 @@ module MemcacheKeys
 
   EXTENSION_CATEGORIES = "v1/FA:EXTENSION_CATEGORIES"
 
-  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}"
+  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}"
+
+  EXTENSION_VERSION_DETAILS = "v1/FA:EXTENSION:%{version_id}:%{locale_id}"
+
+  CONFIGURATION_DETAILS = "v1/FA:CONFIGURATIONS:%{version_id}:%{locale_id}"
 
   INSTALLED_CTI_APP = "v1/INSTALLED_CTI_APP:%{account_id}"
 
@@ -165,14 +169,22 @@ module MemcacheKeys
       newrelic_begin_rescue { $memcache.delete(key) }
     end
 
+    def set_null(value)
+      value.nil? ? NullObject.instance : value
+    end
+
+    def unset_null(value)
+      value.is_a?(NullObject) ? nil : value
+    end
+
     def fetch(key, expiry=0,&block)
       key = ActiveSupport::Cache.expand_cache_key(key) if key.is_a?(Array)
       cache_data = get_from_cache(key)
       if cache_data.nil?
         Rails.logger.debug "Cache hit missed :::::: #{key}"
-        cache(key, (cache_data = block.call), expiry)
+        cache(key, (cache_data = set_null(block.call)), expiry)
       end
-      cache_data
+      unset_null(cache_data)
     end
   end
   

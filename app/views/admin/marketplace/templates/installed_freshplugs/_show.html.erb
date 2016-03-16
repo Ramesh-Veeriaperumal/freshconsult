@@ -6,13 +6,12 @@
 
       <div id="fa-nav" class="fa-sidehead">
         <div class="fa-breadcumb">
-          <% plug_type = "{{if in_dev}}&in_dev=true{{/if}}" %>
           <% category = "{{if category_id}}&category_id=${category_id}{{/if}}"%>
-          <a class="backbtn" href="#" data-url="/admin/extensions/${version_id}?type=${type}<%=category%><%=plug_type%>"><span class="ficon-left-arrow-thick fsize-12"></span> <%= t('back') %> </a>
+          <a class="backbtn" href="#" data-url="/admin/extensions/${version_id}?type=${type}<%=category%>"><span class="<%= font_class('left-arrow-thick', 12) %>"></span> <%= t('back') %> </a>
         </div>
       </div>
 
-      <div class="fa-hmeta">
+      <div class="fa-hmeta head-spacer">
         <h3 class="app-name">
           <span class="status">
             {{if update}}
@@ -21,7 +20,7 @@
               <%= t('marketplace.install') %>:
             {{/if}}
           </span>
-          <span> ${name}</span>
+          <span> ${display_name}</span>
         </h3>
         <div class="progress progress-striped active" style="display:none;">
           <div class="bar bar-success" style="width:20%;"></div>
@@ -71,17 +70,20 @@
         {{/if}}
 
           <div class="button-container text-left">
-              {{if update}}
-                <button class="col-md-6 btn btn-primary install-btn" data-url="/admin/installed_extensions/reinstall/${version_id}" data-method="PUT">
-                <%= t('marketplace.update') %></button>
+              {{if upgrade}}
+                  <button class="col-md-6 btn btn-primary install-btn" data-url="/admin/installed_extensions/${extension_id}/${version_id}/reinstall" data-method="PUT">
+                  <%= t('marketplace.update') %></button>
+              {{else update}}
+                  <button class="col-md-6 btn btn-primary install-btn" data-url="/admin/installed_extensions/${extension_id}/${version_id}/reinstall" data-method="PUT">
+                  <%= t('save') %></button>
               {{else}}
                 <p class="install-note"><%= t('marketplace.app_installation_agreement') %>
                   <a href="<%= t('marketplace.terms_of_use_link') %>" target="_blank" class="read-more"><%= t('marketplace.terms_of_use') %></a>.
                 </p>
-                <button class="col-md-6 btn btn-primary install-btn" data-url="/admin/installed_extensions/install/${version_id}" data-method="POST">
+                <button class="col-md-6 btn btn-primary install-btn" data-url="/admin/installed_extensions/${extension_id}/${version_id}/install" data-method="POST">
                 <%= t('marketplace.install') %></button>
               {{/if}}
-              <button class="show_btn btn btn-default" style="margin-left: 10px;" data-url="/admin/extensions/${version_id}?type=${type}<%=category%><%=plug_type%>"><%= t('cancel') %></button>
+              <button class="show_btn btn btn-default" style="margin-left: 10px;" data-url="/admin/extensions/${version_id}?type=${type}<%=category%>"><%= t('cancel') %></button>
           </div> 
 
         </div>

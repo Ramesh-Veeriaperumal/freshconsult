@@ -67,4 +67,8 @@ module Integrations::Constants
   CAMPAIGN_APPS = [:mailchimp, :icontact, :constantcontact, :campaignmonitor]
 
   TIMESHEET_APPS = [APP_NAMES[:freshbooks], APP_NAMES[:harvest], APP_NAMES[:workflow_max], APP_NAMES[:quickbooks]]
+
+  FRESHPLUG = 'freshplug'
+
+  NON_EDITABLE_APPS = ["mailchimp", "constantcontact", "nimble", "google_calendar", "shopify", "box", "onedrive"]
 end

@@ -25,7 +25,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_compose_feature, :only => :compose_email
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
-  around_filter :run_on_slave, :only => :user_ticket
+  around_filter :run_on_slave, :only => [:user_ticket, :activities]
   before_filter :save_article_filter, :only => :index
   around_filter :run_on_db, :only => [:custom_search, :index, :full_paginate]
 
@@ -236,10 +236,10 @@ class Helpdesk::TicketsController < ApplicationController
         render :new, :layout => "widgets/contacts"
       else
         if verify_permission
-          @ticket_notes = @ticket.conversation
+          @ticket_notes = run_on_slave { @ticket.conversation }
           @ticket_notes = @ticket_notes.take(3) if @ticket_notes.size > 3
           @ticket_notes = @ticket_notes.reverse
-          @ticket_notes_total = @ticket.conversation_count
+          @ticket_notes_total = run_on_slave { @ticket.conversation_count }
           render :layout => "widgets/contacts"
         else
           @no_auth = true
@@ -285,8 +285,8 @@ class Helpdesk::TicketsController < ApplicationController
     respond_to do |format|
       format.html  {
         @ticket_notes       = @ticket_notes.reverse
-        @ticket_notes_total = @ticket.conversation_count
-        last_public_note    = @ticket.notes.visible.last_traffic_cop_note.first
+        @ticket_notes_total = run_on_slave { @ticket.conversation_count }
+        last_public_note    = run_on_slave { @ticket.notes.visible.last_traffic_cop_note.first }
         @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
       }
       format.atom
@@ -330,9 +330,8 @@ class Helpdesk::TicketsController < ApplicationController
   def update
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
     build_attachments @item, :helpdesk_ticket
+    params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     if @item.update_ticket_attributes(params[nscname])
-
-      update_tags(params[:helpdesk][:tags], true, @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       respond_to do |format|
         format.html {
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -371,8 +370,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def update_ticket_properties
+    params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     if @item.update_ticket_attributes(params[nscname])
-      update_tags(params[:helpdesk][:tags], true, @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       if(params[:redirect] && params[:redirect].to_bool)
         flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice', :formats => [:html], :handlers => [:erb] ).html_safe
       end
@@ -705,9 +704,9 @@ class Helpdesk::TicketsController < ApplicationController
     @item.display_id = params[:helpdesk_ticket][:display_id]
     @item.email = params[:helpdesk_ticket][:email]
     @item.group = current_account.groups.find_by_id(params[:helpdesk_ticket][:group_id]) if params[:helpdesk_ticket][:group_id]
+    @item.tag_names = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
 
     build_attachments @item, :helpdesk_ticket
-    create_tags(params[:helpdesk][:tags], @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     persist_states_for_api
     if @item.save_ticket
       post_persist

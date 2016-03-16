@@ -4,7 +4,7 @@ class Freshfone::Initiator::Sip
   include Freshfone::CallsRedisMethods
   
   attr_accessor :params, :current_account, :current_number, 
-                :call_actions, :call_handler, :telephony
+                :call_actions, :call_handler
   
 
   def self.match?(params)
@@ -16,7 +16,6 @@ class Freshfone::Initiator::Sip
     self.current_account = current_account
     self.current_number  = current_number
     self.call_actions    = Freshfone::CallActions.new(params, current_account, current_number)
-    self.telephony       = Freshfone::Telephony.new(params, current_account, current_number)
   end
 
   def process
@@ -31,5 +30,9 @@ class Freshfone::Initiator::Sip
 private
     def update_user_presence
       current_account.freshfone_users.find_by_user_id(sip_user_id).busy! if sip_user_id.present?
+    end
+
+    def telephony
+      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number, current_call)
     end
 end

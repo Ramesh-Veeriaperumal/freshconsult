@@ -7,10 +7,14 @@ class Integrations::ApplicationsController < Admin::AdminController
   before_filter :load_object, :only => [:show]
   before_filter :handle_google_contacts, :only => [:oauth_install]
   def index
-    @applications = Integrations::Application.available_apps(current_account)
-    @installed_applications = get_installed_apps
+    if feature?(:marketplace)
+      @installed_plugs = installed_plugs(:integrations_list)
+    else
+      @applications = Integrations::Application.available_apps(current_account)
+      @installed_applications = get_installed_apps
+    end
+
     @custom_applications = Integrations::Application.freshplugs(current_account)
-    installed_plugs(:integrations_list) if feature?(:marketplace)
   end
 
   def oauth_install

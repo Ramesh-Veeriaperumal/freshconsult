@@ -11,7 +11,8 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   has_many :app_business_rules, :class_name =>'Integrations::AppBusinessRule', :dependent => :destroy
   has_many :va_rules, through: :app_business_rules
   attr_protected :application_id
-
+  
+  validate :check_existing_app, :on => :create
   before_destroy :before_destroy_customize
   after_destroy :delete_google_accounts, :after_destroy_customize
   before_save :before_save_customize
@@ -22,6 +23,8 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   after_commit :after_commit_on_update_customize, :on => :update
   after_commit :after_commit_on_destroy_customize, :on => :destroy
   after_commit :after_commit_customize
+
+  include ::Integrations::AppMarketPlaceExtension
 
   scope :with_name, lambda { |app_name| where("applications.name = ?", app_name ).joins(:application).select('installed_applications.*')}
   delegate :oauth_url, :to => :application 
@@ -44,6 +47,11 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       self.configs[:inputs] = self.configs[:inputs].merge(inputs_hash)
     end
   end
+
+  def is_freshplug?
+    self.application && self.application.freshplug?
+  end
+
 
   def method_missing(meth_name, *args, &block)
     matched = /configs([^_]*)_([^=]*)(=?)/.match(meth_name.to_s)
@@ -170,5 +178,12 @@ class Integrations::InstalledApplication < ActiveRecord::Base
     def sanitize_value(value)
       value.is_a?(Array) ? sanitize_array_values(value) : ( value.is_a?(Hash) ?
           sanitize_hash_values(value) : RailsFullSanitizer.sanitize(value) )
+    end
+
+    def check_existing_app
+      ext_app = self.class.where(:account_id => Account.current.id, :application_id => self.application_id).any?
+      if ext_app
+        self.errors[:base] << t(:'flash.application.already') and return false
+      end
     end
 end

@@ -1,6 +1,8 @@
 module ApiDiscussions
   class TopicsController < ApiApplicationController
     include DiscussionMonitorConcern
+    decorate_views(decorate_objects: [:followed_by, :forum_topics])
+
     before_filter :forum_exists?, only: [:forum_topics]
 
     def create
@@ -19,13 +21,13 @@ module ApiDiscussions
 
     def forum_topics
       return if validate_filter_params
-      @topics = paginate_items(@item.topics.newest)
+      @items = paginate_items(@item.topics.newest)
       render '/api_discussions/topics/topic_list'
     end
 
     def followed_by
       return if validate_filter_params(DiscussionConstants::FOLLOWED_BY_FIELDS)
-      @topics = paginate_items(current_account.topics.followed_by(params[:user_id]).newest)
+      @items = paginate_items(current_account.topics.followed_by(params[:user_id]).newest)
       render '/api_discussions/topics/topic_list'
     end
 
@@ -33,6 +35,16 @@ module ApiDiscussions
 
       def forum_exists?
         load_object current_account.forums
+      end
+
+      def after_load_object
+        # merged source topic could only be shown or deleted.
+        # Other actions allowed on this topic are: is_following, topic_comments, adding a new comment.
+        render_request_error(:immutable_resource, 403) if !allowed_actions_on_merged_topic? && @item.merged_topic_id.present? && @item.locked?
+      end
+
+      def allowed_actions_on_merged_topic?
+        show? || destroy?
       end
 
       def load_forum
@@ -48,7 +60,7 @@ module ApiDiscussions
       def set_custom_errors(_item = @item)
         if @item.errors[:stamp_type].present?
           allowed_string = allowed_stamp_types.join(',')
-          @item.errors[:stamp_type] = ErrorConstants::ERROR_MESSAGES[:allowed_stamp_type] % { list: allowed_string }
+          @item.errors[:stamp_type] = ErrorConstants::ERROR_MESSAGES[:not_included] % { list: allowed_string }
         end
         ErrorHelper.rename_error_fields({ forum: :forum_id }, @item)
         @error_options = { remove: :posts }

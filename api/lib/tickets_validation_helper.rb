@@ -23,7 +23,7 @@ class TicketsValidationHelper
     end
 
     def custom_nested_field_choices
-      nested_fields = Account.current.nested_fields_from_cache.collect { |x| [x.name, x.formatted_nested_choices] }.to_h
+      Account.current.nested_fields_from_cache.collect { |x| [x.name, x.formatted_nested_choices] }.to_h
     end
 
     # compute the size of attachments associated with the record.

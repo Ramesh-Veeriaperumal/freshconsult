@@ -5,8 +5,8 @@ class TicketsController < ApiApplicationController
   include TicketConcern
   decorate_views
 
-  around_filter :run_on_slave, :only => [:index]
-  
+  around_filter :run_on_slave, only: [:index]
+
   before_filter :ticket_permission?, only: [:destroy]
 
   def create
@@ -50,9 +50,9 @@ class TicketsController < ApiApplicationController
   end
 
   def show
-    if params[:include] == 'notes'
-      @notes = ticket_notes.limit(NoteConstants::MAX_INCLUDE)
-      increment_api_credit_by(1) # for embedded notes
+    if params[:include] == 'conversations'
+      @conversations = conversations.limit(ConversationConstants::MAX_INCLUDE)
+      increment_api_credit_by(1) # for embedded conversations
     end
     super
   end
@@ -94,8 +94,8 @@ class TicketsController < ApiApplicationController
       end
     end
 
-    def ticket_notes
-      # eager_loading note_old_body is unnecessary if all notes are retrieved from cache.
+    def conversations
+      # eager_loading note_old_body is unnecessary if all conversations are retrieved from cache.
       # There is no best solution for this
       @item.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
     end
@@ -126,7 +126,7 @@ class TicketsController < ApiApplicationController
     def validate_filter_params
       params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @ticket_filter = TicketFilterValidation.new(params, nil, string_request_params?)
-      render_query_param_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
+      render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
     def scoper
@@ -172,6 +172,11 @@ class TicketsController < ApiApplicationController
       # build ticket body attributes from description and description_html
       build_ticket_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
+
+      # During update set requester_id to nil if it is not a part of params and if any of the contact detail is given in the params
+      if update? && !params[cname].key?(:requester_id) && (params[cname].keys & ["email", "phone", "twitter_id", "facebook_id"]).present?
+        params[cname][:requester_id] = nil
+      end
     end
 
     def prepare_tags
@@ -236,12 +241,10 @@ class TicketsController < ApiApplicationController
     end
 
     def build_ticket_body_attributes
-      if params[cname][:description] || params[cname][:description_html]
-        ticket_body_hash = { ticket_body_attributes: { description: params[cname][:description],
-                                                       description_html: params[cname][:description_html] } }
+      if params[cname][:description]
+        ticket_body_hash = { ticket_body_attributes: { description_html: params[cname][:description] } }
         params[cname].merge!(ticket_body_hash).tap do |t|
           t.delete(:description) if t[:description]
-          t.delete(:description_html) if t[:description_html]
         end
       end
     end

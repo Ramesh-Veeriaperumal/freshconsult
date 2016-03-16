@@ -1,5 +1,7 @@
-<% @my_feedbacks = @feedbacks.article_tickets_by_user(current_user)
-   @my_feedbacks_count = @my_feedbacks.size 
+<% 
+@my_article_ids = current_account.solution_articles.by_user(current_user).pluck(:id)
+@my_feedbacks = @my_article_ids.present? ? @feedbacks.for_user_articles(@my_article_ids) : []
+@my_feedbacks_count = @my_feedbacks.size
 %>
 
 <% if @my_feedbacks_count < 1 %>

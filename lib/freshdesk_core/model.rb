@@ -173,6 +173,8 @@ module FreshdeskCore::Model
                         "freshfone_other_charges",
                         "freshfone_payments",
                         "freshfone_whitelist_countries",
+                        "freshfone_subscriptions",
+                        "freshfone_supervisor_controls",
 
                         "survey_questions",
                         "survey_question_choices",
@@ -191,7 +193,8 @@ module FreshdeskCore::Model
                         "smtp_mailboxes",
                         "ticket_form_fields",
                         "user_companies",
-                        "whitelist_users"
+                        "whitelist_users",
+                        "outgoing_email_domain_categories"
                     ]
 
   STATUS = {

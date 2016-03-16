@@ -36,19 +36,24 @@ class GamificationScoreObserver < ActiveRecord::Observer
 
 	def process_ticket_score_on_update(ticket)
 		if (ticket.reopened_now? or (ticket.ticket_changes.key?(:deleted) && ticket.deleted?))
-        	Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => ticket.id, 
-                :account_id => ticket.account_id, :remove_score => true })
+			args = { :id => ticket.id, :account_id => ticket.account_id, :remove_score => true }
+			if ticket.account.premium_gamification_account?
+				Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore::PremiumQueue, args)
+			else
+				Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, args)
+			end
     elsif ticket.resolved_now?
       		add_support_score(ticket)
     end
 	end
 
 	def add_support_score(ticket)
-		Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => ticket.id, 
-                :account_id => ticket.account_id,
-                :fcr =>  ticket.first_call_resolution?,
-                :resolved_at_time => ticket.resolved_at,
-                :remove_score => false }) unless (ticket.resolved_at.nil? or ticket.responder.nil?)
+		args = { :id => ticket.id, :account_id => ticket.account_id, :fcr =>  ticket.first_call_resolution?, :resolved_at_time => ticket.resolved_at, :remove_score => false }
+		if ticket.account.premium_gamification_account?
+			Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore::PremiumQueue, args) unless (ticket.resolved_at.nil? or ticket.responder.nil?)
+		else
+			Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, args) unless (ticket.resolved_at.nil? or ticket.responder.nil?)
+		end
 	end
 
   private 

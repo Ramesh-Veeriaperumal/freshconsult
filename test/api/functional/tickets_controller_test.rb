@@ -14,25 +14,25 @@ class TicketsControllerTest < ActionController::TestCase
   UPDATE_CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  3_543_534, 'date' => '2015-09-09T09:00' }
 
   ERROR_PARAMS =  {
-    'number' => [:data_type_mismatch, data_type: 'Integer'],
-    'decimal' => [:data_type_mismatch, data_type: 'number'],
-    'checkbox' => [:data_type_mismatch, data_type: 'Boolean'],
-    'text' => [:"is too long (maximum is 255 characters)"],
-    'paragraph' => [:data_type_mismatch, data_type: String],
-    'date' => [:invalid_date]
+    'number' => [:datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String],
+    'decimal' => [:datatype_mismatch, expected_data_type: 'Number', prepend_msg: :input_received, given_data_type: String],
+    'checkbox' => [:datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String],
+    'text' => [:'Has 300 characters, it can have maximum of 255 characters'],
+    'paragraph' => [:datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer],
+    'date' => [:invalid_date, accepted: 'yyyy-mm-dd']
   }
 
   ERROR_REQUIRED_PARAMS  =  {
-    'number' => [:required_integer],
-    'decimal' => [:required_number],
-    'checkbox' => [:required_boolean],
-    'text' => [:required_string],
-    'paragraph' => [:required_string],
-    'date' => [:required_date]
+    'number' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :Integer }],
+    'decimal' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :Number }],
+    'checkbox' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :Boolean }],
+    'text' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }],
+    'paragraph' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }],
+    'date' => [:invalid_date, { code: :missing_field, accepted: 'yyyy-mm-dd' }]
   }
   ERROR_CHOICES_REQUIRED_PARAMS  =  {
-    'dropdown' => [:required_and_inclusion, list: 'Get Smart,Pursuit of Happiness,Armaggedon'],
-    'country' => [:required_and_inclusion, list: 'Australia,USA']
+    'dropdown' => [:not_included, { code: :missing_field, list: 'Get Smart,Pursuit of Happiness,Armaggedon' }],
+    'country' => [:not_included, { code: :missing_field, list: 'Australia,USA' }]
   }
 
   def setup
@@ -96,7 +96,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create
-    params = ticket_params_hash.merge(custom_fields: {})
+    params = ticket_params_hash.merge(custom_fields: {}, description: '<b>test</b>')
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
@@ -108,6 +108,8 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal true, response.headers.include?('Location')
     assert_equal "http://#{@request.host}/api/v2/tickets/#{result['id']}", response.headers['Location']
     assert_response 201
+    assert_equal '<b>test</b>', Helpdesk::Ticket.last.description_html
+    assert_equal 'test', Helpdesk::Ticket.last.description
   end
 
   def test_create_with_email
@@ -137,7 +139,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = { requester_id: requester.id, email_config_id: email_config.reload.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     email_config.update_column(:account_id, @account.id)
-    match_json([bad_request_error_pattern('email_config_id', :"can't be blank")])
+    match_json([bad_request_error_pattern('email_config_id', :absent_in_db, resource: :email_config, attribute: :email_config_id)])
     assert_response 400
   end
 
@@ -148,7 +150,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
     email_config.update_column(:account_id, @account.id)
-    match_json([bad_request_error_pattern('email_config_id', :"can't be blank")])
+    match_json([bad_request_error_pattern('email_config_id', :absent_in_db, resource: :email_config, attribute: :email_config_id)])
     assert_response 400
   end
 
@@ -210,11 +212,11 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_numericality_invalid
     params = ticket_params_hash.merge(requester_id: 'yu', responder_id: 'io', product_id: 'x', email_config_id: 'x', group_id: 'g')
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('requester_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('responder_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('product_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('email_config_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('group_id', :data_type_mismatch, data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('requester_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: String, prepend_msg: :input_received),
+                bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: String, prepend_msg: :input_received),
+                bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: String, prepend_msg: :input_received),
+                bad_request_error_pattern('email_config_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: String, prepend_msg: :input_received),
+                bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: String, prepend_msg: :input_received)])
     assert_response 400
   end
 
@@ -231,19 +233,19 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_inclusion_invalid_datatype
     params = ticket_params_hash.merge(requester_id: requester.id, priority: '1', status: '2', source: '9')
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('priority', :datatype_and_inclusion, list: '1,2,3,4'),
-                bad_request_error_pattern('status', :datatype_and_inclusion, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('source', :datatype_and_inclusion, list: '1,2,3,7,8,9')])
+    match_json([bad_request_error_pattern('priority', :not_included, code: :datatype_mismatch, list: '1,2,3,4', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('status', :not_included, code: :datatype_mismatch, list: '2,3,4,5,6,7', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('source', :not_included, code: :datatype_mismatch, list: '1,2,3,7,8,9', prepend_msg: :input_received, given_data_type: String)])
     assert_response 400
   end
 
   def test_create_length_invalid
     params = ticket_params_hash.except(:email).merge(name: Faker::Lorem.characters(300), subject: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('subject', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('phone', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('tags', :"is too long (maximum is 32 characters)")])
+    match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('subject', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('phone', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('tags', :'It should only contain elements that have maximum of 32 characters')])
     assert_response 400
   end
 
@@ -266,7 +268,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_length_invalid_twitter_id
     params = ticket_params_hash.except(:email).merge(twitter_id: Faker::Lorem.characters(300))
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('twitter_id', :"is too long (maximum is 255 characters)")])
+    match_json([bad_request_error_pattern('twitter_id', :'Has 300 characters, it can have maximum of 255 characters')])
     assert_response 400
   end
 
@@ -283,7 +285,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_length_invalid_email
     params = ticket_params_hash.merge(email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com")
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('email', :"is too long (maximum is 255 characters)")])
+    match_json([bad_request_error_pattern('email', :'Has 328 characters, it can have maximum of 255 characters')])
     assert_response 400
   end
 
@@ -301,7 +303,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :requester_id_mandatory)])
+    match_json([bad_request_error_pattern('requester_id', :fill_a_mandatory_field, field_names: 'requester_id, phone, email, twitter_id, facebook_id')])
   end
 
   def test_create_presence_name_invalid
@@ -315,25 +317,25 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(email: 'test@', cc_emails: ['the@'])
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('email', 'is not a valid email'),
-                bad_request_error_pattern('cc_emails', 'is not a valid email')])
+    match_json([bad_request_error_pattern('email', 'It should be in the valid email address format'),
+                bad_request_error_pattern('cc_emails', 'It should contain elements that are in the valid email address format')])
   end
 
   def test_create_data_type_invalid
     cc_emails = "#{Faker::Internet.email},#{Faker::Internet.email}"
     params = ticket_params_hash.merge(cc_emails: cc_emails, tags: 'tag1,tag2', custom_fields: [1])
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('custom_fields', :data_type_mismatch, data_type: 'key/value pair')])
+    match_json([bad_request_error_pattern('cc_emails', :datatype_mismatch, expected_data_type: Array, given_data_type: String, prepend_msg: :input_received),
+                bad_request_error_pattern('tags', :datatype_mismatch, expected_data_type: Array, given_data_type: String, prepend_msg: :input_received),
+                bad_request_error_pattern('custom_fields', :datatype_mismatch, expected_data_type: 'key/value pair', given_data_type: Array, prepend_msg: :input_received)])
     assert_response 400
   end
 
   def test_create_date_time_invalid
     params = ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('due_by', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
-                bad_request_error_pattern('fr_due_by', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
+    match_json([bad_request_error_pattern('due_by', :invalid_date, accepted: :'combined date and time ISO8601'),
+                bad_request_error_pattern('fr_due_by', :invalid_date, accepted: :'combined date and time ISO8601')])
     assert_response 400
   end
 
@@ -360,10 +362,11 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_closed_with_nil_fr_due_by_with_due_by
-    params = ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: 12.days.since.iso8601)
+    time = 12.days.since.iso8601
+    params = ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: time)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
   def test_create_with_nil_fr_due_by_with_due_by
@@ -445,7 +448,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(due_by: 30.days.ago.iso8601, cc_emails: cc_emails)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}"),
+    match_json([bad_request_error_pattern('cc_emails', :too_long, element_type: :values, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 50),
                 bad_request_error_pattern('due_by', :gt_created_and_now)])
   end
 
@@ -468,10 +471,10 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(custom_fields: { 'test_custom_country' => 'rtt', 'test_custom_dropdown' => 'ddd' }, group_id: 89_089, product_id: 9090, email_config_id: 89_789, responder_id: 8987, requester_id: user.id)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('group_id', :"can't be blank"),
-                bad_request_error_pattern('responder_id', :"can't be blank"),
-                bad_request_error_pattern('email_config_id', :"can't be blank"),
-                bad_request_error_pattern('product_id', :"can't be blank"),
+    match_json([bad_request_error_pattern('group_id', :absent_in_db, resource: :group, attribute: :group_id),
+                bad_request_error_pattern('responder_id', :absent_in_db, resource: :agent, attribute: :responder_id),
+                bad_request_error_pattern('email_config_id', :absent_in_db, resource: :email_config, attribute: :email_config_id),
+                bad_request_error_pattern('product_id', :absent_in_db, resource: :product, attribute: :product_id),
                 bad_request_error_pattern('requester_id', :user_blocked),
                 bad_request_error_pattern('test_custom_country', :not_included, list: 'Australia,USA'),
                 bad_request_error_pattern('test_custom_dropdown', :not_included, list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
@@ -492,32 +495,31 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(requester_id: 898_999)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', 'should be a valid email address')])
+    match_json([bad_request_error_pattern('requester_id', :absent_in_db, attribute: :requester_id, resource: :contact)])
   end
 
   def test_create_extra_params_invalid
-    params = ticket_params_hash.merge(junk: 'test')
+    params = ticket_params_hash.merge(junk: 'test', description_html: "test")
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('junk', :invalid_field)])
+    match_json([bad_request_error_pattern('junk', :invalid_field), bad_request_error_pattern('description_html', :invalid_field)])
   end
 
   def test_create_empty_params
     params = {}
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :requester_id_mandatory),
-                bad_request_error_pattern('subject', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('description', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('priority', :required_and_inclusion, list: '1,2,3,4'),
-                bad_request_error_pattern('status', :required_and_inclusion, list: '2,3,4,5,6,7')])
+    match_json([bad_request_error_pattern('requester_id', :fill_a_mandatory_field, field_names: 'requester_id, phone, email, twitter_id, facebook_id'),
+                bad_request_error_pattern('subject', :datatype_mismatch, expected_data_type: String),
+                bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String),
+                bad_request_error_pattern('priority', :not_included, code: :missing_field, list: '1,2,3,4'),
+                bad_request_error_pattern('status', :not_included, code: :missing_field, list: '2,3,4,5,6,7')])
   end
 
   def test_create_datatype_invalid
-    post :create, construct_params({}, ticket_params_hash.merge(description: true, description_html: true))
+    post :create, construct_params({}, ticket_params_hash.merge(description: true))
     assert_response 400
-    match_json([bad_request_error_pattern('description', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('description_html', :data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, given_data_type: 'Boolean', prepend_msg: :input_received)])
   end
 
   def test_create_with_existing_user
@@ -549,7 +551,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(facebook_id:  Faker::Name.name)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :"can't be blank")])
+    match_json([bad_request_error_pattern('facebook_id', :invalid_facebook_id)])
   end
 
   def test_create_with_existing_fb_user
@@ -618,21 +620,21 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge('attachments' => [1, 2])
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'valid format')])
+    match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
   end
 
   def test_create_with_invalid_attachment_type
     params = ticket_params_hash.merge('attachments' => 'test')
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: Array)])
+    match_json([bad_request_error_pattern('attachments', :datatype_mismatch, expected_data_type: Array, given_data_type: String, prepend_msg: :input_received)])
   end
 
   def test_create_with_invalid_empty_attachment
     params = ticket_params_hash.merge('attachments' => [])
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :"can't be blank")])
+    match_json([bad_request_error_pattern('attachments', :blank)])
   end
 
   def test_attachment_invalid_size_create
@@ -643,7 +645,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
   end
 
   def test_attachment_invalid_size_update
@@ -656,7 +658,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: Helpdesk::Ticket.first.id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
   end
 
   def test_create_with_nested_custom_fields_with_invalid_first_children_valid
@@ -744,7 +746,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     ticket_field.update_attribute(:required, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :required_and_inclusion, list: 'New South Wales,Queensland')])
+    match_json([bad_request_error_pattern('test_custom_state', :not_included, code: :missing_field, list: 'New South Wales,Queensland')])
   end
 
   def test_create_with_nested_custom_fields_required_without_third_level
@@ -754,7 +756,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     ticket_field.update_attribute(:required, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_city', :required_and_inclusion, list: 'Brisbane')])
+    match_json([bad_request_error_pattern('test_custom_city', :not_included, code: :missing_field, list: 'Brisbane')])
   end
 
   def test_create_with_nested_custom_fields_required_for_closure_without_second_level
@@ -764,7 +766,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     ticket_field.update_attribute(:required_for_closure, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :required_and_inclusion, list: 'New South Wales,Queensland')])
+    match_json([bad_request_error_pattern('test_custom_state', :not_included, code: :missing_field, list: 'New South Wales,Queensland')])
   end
 
   def test_create_with_nested_custom_fields_required_for_closure_without_third_level
@@ -774,7 +776,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     ticket_field.update_attribute(:required_for_closure, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_city', :required_and_inclusion, list: 'Brisbane')])
+    match_json([bad_request_error_pattern('test_custom_city', :not_included, code: :missing_field, list: 'Brisbane')])
   end
 
   def test_create_notify_cc_emails
@@ -986,8 +988,8 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     response_params = params.except(:tags, :attachments)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert ticket.attachments.count == 2
   end
@@ -996,7 +998,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge('attachments' => [1, 2])
     put :update, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'valid format')])
+    match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
   end
 
   def test_update
@@ -1011,8 +1013,8 @@ class TicketsControllerTest < ActionController::TestCase
     t.schema_less_ticket.update_column(:product_id, nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
     params_hash[:custom_fields]['test_custom_date'] = params_hash[:custom_fields]['test_custom_date'].to_time.iso8601
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert_nil t.product_id
     portal.update_column(:product_id, nil)
@@ -1023,8 +1025,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.except(:fr_due_by).merge(status: 5, due_by: nil)
     put :update, construct_params({ id: t.display_id }, params)
     t = Helpdesk::Ticket.last
-    match_json(ticket_pattern(params, t))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     t.update_column(:status, 2)
     assert_not_nil t.due_by && t.frDueBy
@@ -1035,8 +1037,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.except(:due_by).merge(status: 5, fr_due_by: nil)
     put :update, construct_params({ id: t.display_id }, params)
     t = Helpdesk::Ticket.last
-    match_json(ticket_pattern(params, t))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     t.update_column(:status, 2)
     assert_not_nil t.due_by && t.frDueBy
@@ -1044,22 +1046,23 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_closed_with_nil_fr_due_by_with_due_by
     t = ticket
-    params = update_ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: 12.days.since.iso8601)
+    time = 12.days.since.iso8601
+    params = update_ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: time)
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
   def test_update_with_nil_fr_due_by_with_due_by
     t = ticket
-    fr_due_by = Time.now
+    fr_due_by = Time.zone.now
     t.update_column(:frDueBy, fr_due_by)
     t.update_attribute(:manual_dueby, true)
     due_by = 12.days.since.utc.iso8601
     params = update_ticket_params_hash.merge(fr_due_by: nil, due_by: due_by)
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert_equal fr_due_by.utc.iso8601, t.reload.frDueBy.iso8601
     assert_equal due_by, t.due_by.iso8601
@@ -1070,8 +1073,8 @@ class TicketsControllerTest < ActionController::TestCase
     fr_due_by = 2.days.since.utc.iso8601
     params = update_ticket_params_hash.merge(due_by: nil, fr_due_by: fr_due_by)
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     t.update_column(:status, 2)
     assert_not_nil t.reload.due_by
@@ -1082,8 +1085,8 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params = update_ticket_params_hash.merge(status: 5, due_by: nil, fr_due_by: nil)
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     t.update_column(:status, 2)
     assert_not_nil t.due_by && t.frDueBy
@@ -1093,8 +1096,8 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params = update_ticket_params_hash.merge(due_by: nil, fr_due_by: nil)
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert_not_nil t.due_by && t.frDueBy
   end
@@ -1160,8 +1163,8 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.update_attribute(:due_by, (t.created_at - 10.days).iso8601)
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
   end
 
@@ -1170,8 +1173,8 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.update_attribute(:frDueBy, (t.created_at - 10.days).iso8601)
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
   end
 
@@ -1183,11 +1186,11 @@ class TicketsControllerTest < ActionController::TestCase
     t.update_column(:requester_id, nil)
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('group_id', :"can't be blank"),
-                bad_request_error_pattern('responder_id', :"can't be blank"),
-                bad_request_error_pattern('email_config_id', :"can't be blank"),
+    match_json([bad_request_error_pattern('group_id', :absent_in_db, resource: :group, attribute: :group_id),
+                bad_request_error_pattern('responder_id', :absent_in_db, resource: :agent, attribute: :responder_id),
+                bad_request_error_pattern('email_config_id', :absent_in_db, resource: :email_config, attribute: :email_config_id),
                 bad_request_error_pattern('requester_id', :user_blocked),
-                bad_request_error_pattern('product_id', :"can't be blank"),
+                bad_request_error_pattern('product_id', :absent_in_db, resource: :product, attribute: :product_id),
                 bad_request_error_pattern('test_custom_country', :not_included, list: 'Australia,USA'),
                 bad_request_error_pattern('test_custom_dropdown', :not_included, list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
   end
@@ -1202,7 +1205,7 @@ class TicketsControllerTest < ActionController::TestCase
     t.schema_less_ticket.reload
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 200
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
   end
 
   def test_update_with_responder_id_not_in_group
@@ -1210,8 +1213,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = { responder_id: @agent.id, group_id: group.id }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
   end
 
@@ -1221,7 +1224,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_equal t.reload.email_config_id, params_hash[:email_config_id]
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
   end
 
@@ -1231,7 +1234,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_equal t.reload.email_config_id, product.primary_email_config.id
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
   end
 
@@ -1245,7 +1248,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 200
     assert_equal t.reload.email_config_id, product.primary_email_config.id
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
   end
 
   def test_update_with_product_id_and_same_email_config_id
@@ -1256,7 +1259,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_equal t.reload.email_config_id, params_hash[:email_config_id]
     assert_equal t.product_id, params_hash[:product_id]
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
   end
 
@@ -1265,7 +1268,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.priority == 1
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1273,7 +1276,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { type: 'Incident' }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert t.reload.ticket_type == 'Incident'
   end
@@ -1292,7 +1295,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.subject == subject
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1302,7 +1305,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.description == description
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1313,7 +1316,7 @@ class TicketsControllerTest < ActionController::TestCase
     group = t.group
     group.agent_groups.create(user_id: responder_id, group_id: group.id)
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert t.reload.responder_id == responder_id
   end
@@ -1324,7 +1327,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.requester_id == requester_id
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1334,7 +1337,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { group_id: group_id }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.group_id == group_id
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1342,7 +1345,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { source: 2 }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert t.reload.source == 2
   end
@@ -1353,7 +1356,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.tag_names == tags
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1362,7 +1365,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert t.reload.status == 5
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
 
@@ -1370,7 +1373,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { status: 4 }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert t.reload.status == 4
   end
@@ -1380,10 +1383,9 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
     assert_response 200
-    assert User.count == count
+    assert User.count == count + 1
+    assert t.reload.requester_id == User.last.id
   end
 
   def test_update_with_new_twitter_id_without_nil_requester_id
@@ -1391,10 +1393,9 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
     assert_response 200
-    assert User.count == count
+    assert User.count == count + 1
+    assert t.reload.requester_id == User.last.id
   end
 
   def test_update_with_new_phone_without_nil_requester_id
@@ -1402,10 +1403,9 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
     assert_response 200
-    assert User.count == count
+    assert User.count == count + 1
+    assert t.reload.requester_id == User.last.id
   end
 
   def test_update_with_new_email_with_nil_requester_id
@@ -1414,8 +1414,8 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == (count + 1)
     assert User.find(t.requester_id).email == email
@@ -1427,8 +1427,8 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == (count + 1)
     assert User.find(t.reload.requester_id).twitter_id == twitter_id
@@ -1441,8 +1441,8 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == (count + 1)
     assert User.find(t.reload.requester_id).phone == phone
@@ -1453,12 +1453,11 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     previous_fr_due_by = t.frDueBy
     previous_due_by = t.due_by
-    p t.attributes
     params_hash = { fr_due_by: 2.hours.since.iso8601, due_by: 100.days.since.iso8601 }
     Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert t.reload.due_by == params_hash[:due_by]
     assert t.reload.frDueBy == params_hash[:fr_due_by]
@@ -1470,8 +1469,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { due_by: 100.days.since.iso8601 }
     Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert t.reload.due_by != previous_due_by
   end
@@ -1482,52 +1481,58 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { fr_due_by: 2.hours.since.iso8601 }
     Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert t.reload.frDueBy != previous_fr_due_by
   end
 
   def test_update_with_new_fb_id
     t = ticket
-    params_hash = update_ticket_params_hash.merge(facebook_id: Faker::Name.name, requester_id: nil)
+    params_hash = update_ticket_params_hash.merge(facebook_id: Faker::Name.name)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :"can't be blank")])
+    match_json([bad_request_error_pattern('facebook_id', :invalid_facebook_id)])
   end
 
   def test_update_with_status_resolved_and_due_by
     t = ticket
-    params_hash = { status: 4, due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601 }
+    time1 = 12.days.since.iso8601
+    time2 = 4.days.since.iso8601
+    params_hash = { status: 4, due_by: time1, fr_due_by: time2 }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :incompatible_field),
-                bad_request_error_pattern('fr_due_by', :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field),
+                bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
   def test_update_with_status_resolved_and_only_due_by
     t = ticket
-    params_hash = { status: 4, due_by: 12.days.since.iso8601 }
+    time = 12.days.since.iso8601
+    params_hash = { status: 4, due_by: time }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
   def test_update_with_status_closed_and_only_fr_due_by
     t = ticket
-    params_hash = { status: 5, fr_due_by: 4.days.since.iso8601 }
+    time = 4.days.since.iso8601
+    params_hash = { status: 5, fr_due_by: time }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('fr_due_by', :incompatible_field)])
+    match_json([bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
   def test_update_with_status_closed_and_due_by
     t = ticket
-    params_hash = { status: 5, due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601 }
+    time1 = 12.days.since.iso8601
+    time2 = 4.days.since.iso8601
+    params_hash = { status: 5, due_by: time1, fr_due_by: time2 }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :incompatible_field),
-                bad_request_error_pattern('fr_due_by', :incompatible_field)])
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field),
+                bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
   def test_update_numericality_invalid
@@ -1535,11 +1540,11 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(requester_id: 'yu', responder_id: 'io', product_id: 'x', email_config_id: 'x', group_id: 'g')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('responder_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('product_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('email_config_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('group_id', :data_type_mismatch, data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('requester_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('email_config_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_update_inclusion_invalid
@@ -1557,10 +1562,10 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(name: Faker::Lorem.characters(300), requester_id: nil, subject: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('subject', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('phone', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('tags', :"is too long (maximum is 32 characters)")])
+    match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('subject', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('phone', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('tags', :'It should only contain elements that have maximum of 32 characters')])
     assert_response 400
   end
 
@@ -1570,8 +1575,8 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     params_hash[:tags].each(&:strip!)
     result = params_hash.each { |x, y| y.strip! if [:name, :subject, :phone].include?(x) }
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert_equal t.reload.requester.name, result[:name]
     assert_equal t.reload.requester.phone, result[:phone]
@@ -1583,7 +1588,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: nil, twitter_id: Faker::Lorem.characters(300))
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json([bad_request_error_pattern('twitter_id', :"is too long (maximum is 255 characters)")])
+    match_json([bad_request_error_pattern('twitter_id', :'Has 300 characters, it can have maximum of 255 characters')])
     assert_response 400
   end
 
@@ -1591,8 +1596,8 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: nil, twitter_id: Faker::Lorem.characters(20) + white_space)
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert_equal t.reload.requester.twitter_id, params_hash[:twitter_id].strip
     match_json(ticket_pattern({}, t.reload))
@@ -1602,7 +1607,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: nil, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com")
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json([bad_request_error_pattern('email', :"is too long (maximum is 255 characters)")])
+    match_json([bad_request_error_pattern('email', :'Has 328 characters, it can have maximum of 255 characters')])
     assert_response 400
   end
 
@@ -1610,8 +1615,8 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: nil, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space)
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert_equal t.reload.requester.email, params_hash[:email].strip
   end
@@ -1621,7 +1626,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(requester_id: nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', :requester_id_mandatory)])
+    match_json([bad_request_error_pattern('requester_id', :fill_a_mandatory_field, field_names: 'requester_id, phone, email, twitter_id, facebook_id')])
   end
 
   def test_update_presence_name_invalid
@@ -1637,7 +1642,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(email: 'test@', requester_id: nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('email', 'not_a_valid_email')])
+    match_json([bad_request_error_pattern('email', :invalid_format, accepted: 'valid email address')])
   end
 
   def test_update_data_type_invalid
@@ -1645,8 +1650,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(tags: 'tag1,tag2', custom_fields: [1])
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('custom_fields', :data_type_mismatch, data_type: 'key/value pair')])
+    match_json([bad_request_error_pattern('tags', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('custom_fields', :datatype_mismatch, expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: Array)])
   end
 
   def test_update_date_time_invalid
@@ -1654,16 +1659,16 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
-                bad_request_error_pattern('fr_due_by', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
+    match_json([bad_request_error_pattern('due_by', :invalid_date, accepted: :'combined date and time ISO8601'),
+                bad_request_error_pattern('fr_due_by', :invalid_date, accepted: :'combined date and time ISO8601')])
   end
 
   def test_update_extra_params_invalid
     t = ticket
-    params_hash = update_ticket_params_hash.merge(junk: 'test')
+    params_hash = update_ticket_params_hash.merge(junk: 'test', description_html: "test")
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('junk', :invalid_field)])
+    match_json([bad_request_error_pattern('junk', :invalid_field), bad_request_error_pattern('description_html', :invalid_field)])
   end
 
   def test_update_empty_params
@@ -1680,8 +1685,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(facebook_id: user.fb_profile_id, requester_id: nil)
     count = User.count
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == count
   end
@@ -1692,8 +1697,8 @@ class TicketsControllerTest < ActionController::TestCase
     count = User.count
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == count
     assert User.find(t.reload.requester_id).twitter_id == user.twitter_id
@@ -1705,8 +1710,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(phone: user.phone, name: Faker::Name.name, requester_id: nil)
     count = User.count
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == count
     assert User.find(t.reload.requester_id).phone == user.phone
@@ -1718,8 +1723,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(email: user.email, requester_id: nil)
     count = User.count
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json(ticket_pattern(params_hash, t.reload))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert User.count == count
     assert User.find(t.reload.requester_id).email == user.email
@@ -1794,8 +1799,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_state' => 'Queensland', 'test_custom_city' => 'Brisbane' })
     put :update, construct_params({ id: t.display_id }, params)
     t = Helpdesk::Ticket.find(t.id)
-    match_json(ticket_pattern(params, t))
-    match_json(ticket_pattern({}, t))
+    match_json(update_ticket_pattern(params, t))
+    match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert_equal t.custom_field["test_custom_state_#{@account.id}"], 'Queensland'
     assert_equal t.custom_field["test_custom_city_#{@account.id}"], 'Brisbane'
@@ -1806,8 +1811,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_state' => 'Queensland' })
     put :update, construct_params({ id: t.display_id }, params)
     t = Helpdesk::Ticket.find(t.id)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert_equal t.custom_field["test_custom_state_#{@account.id}"], 'Queensland'
   end
@@ -1817,8 +1822,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_city' => 'Brisbane' })
     put :update, construct_params({ id: t.display_id }, params)
     t = Helpdesk::Ticket.find(t.id)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t.reload))
+    match_json(update_ticket_pattern(params, t.reload))
+    match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
     assert_equal t.custom_field["test_custom_city_#{@account.id}"], 'Brisbane'
   end
@@ -1839,7 +1844,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     ticket_field.update_attribute(:required, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :required_and_inclusion, list: 'New South Wales,Queensland')])
+    match_json([bad_request_error_pattern('test_custom_state', :not_included, code: :missing_field, list: 'New South Wales,Queensland')])
   end
 
   def test_update_with_nested_custom_fields_required_without_third_level
@@ -1850,7 +1855,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     ticket_field.update_attribute(:required, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_city', :required_and_inclusion, list: 'Brisbane')])
+    match_json([bad_request_error_pattern('test_custom_city', :not_included, code: :missing_field, list: 'Brisbane')])
   end
 
   def test_update_with_nested_custom_fields_required_for_closure_without_second_level
@@ -1861,7 +1866,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     ticket_field.update_attribute(:required_for_closure, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :required_and_inclusion, list: 'New South Wales,Queensland')])
+    match_json([bad_request_error_pattern('test_custom_state', :not_included, code: :missing_field, list: 'New South Wales,Queensland')])
   end
 
   def test_update_with_nested_custom_fields_required_for_closure_without_third_level
@@ -1872,7 +1877,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     ticket_field.update_attribute(:required_for_closure, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_city', :required_and_inclusion, list: 'Brisbane')])
+    match_json([bad_request_error_pattern('test_custom_city', :not_included, code: :missing_field, list: 'Brisbane')])
   end
 
   def test_destroy
@@ -2067,9 +2072,9 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, ticket))
   end
 
-  def test_show_with_notes
+  def test_show_with_conversations
     ticket.update_column(:deleted, false)
-    get :show, controller_params(id: ticket.display_id, include: 'notes')
+    get :show, controller_params(id: ticket.display_id, include: 'conversations')
     assert_response 200
     match_json(ticket_pattern_with_notes(ticket))
   end
@@ -2078,14 +2083,14 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: '')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'notes')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations')])
   end
 
   def test_show_with_invalid_param_value
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'test')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'notes')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations')])
   end
 
   def test_show_with_invalid_params
@@ -2144,23 +2149,23 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 999, requester_id: '999', filter: 'x')
     pattern = [bad_request_error_pattern('filter', :not_included, list: 'new_and_my_open,watching,spam,deleted')]
-    pattern << bad_request_error_pattern('company_id', :"can't be blank")
-    pattern << bad_request_error_pattern('requester_id', :"can't be blank")
+    pattern << bad_request_error_pattern('company_id', :absent_in_db, resource: :company, attribute: :company_id)
+    pattern << bad_request_error_pattern('requester_id', :absent_in_db, resource: :contact, attribute: :requester_id)
     assert_response 400
     match_json pattern
   end
 
   def test_index_with_invalid_email_in_params
     get :index, controller_params(email: Faker::Internet.email)
-    pattern = [bad_request_error_pattern('email', :"can't be blank")]
+    pattern = [bad_request_error_pattern('email', :absent_in_db, resource: :contact, attribute: :email)]
     assert_response 400
     match_json pattern
   end
 
   def test_index_with_invalid_params_type
     get :index, controller_params(company_id: 'a', requester_id: 'b')
-    pattern = [bad_request_error_pattern('company_id', :data_type_mismatch, data_type: 'Positive Integer')]
-    pattern << bad_request_error_pattern('requester_id', :data_type_mismatch, data_type: 'Positive Integer')
+    pattern = [bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)]
+    pattern << bad_request_error_pattern('requester_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)
     assert_response 400
     match_json pattern
   end
@@ -2201,7 +2206,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.size
   end
 
-   def test_index_with_default_filter_order_type
+  def test_index_with_default_filter_order_type
     Helpdesk::Ticket.update_all(created_at: 2.months.ago)
     Helpdesk::Ticket.first.update_attributes(created_at: 1.months.ago,
                                              deleted: false, spam: false)
@@ -2213,8 +2218,10 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_default_filter_order_by
     Helpdesk::Ticket.update_all(created_at: 2.months.ago)
-    Helpdesk::Ticket.first(2).each {|x| x.update_attributes(created_at: 1.months.ago,
-                                             deleted: false, spam: false) }
+    Helpdesk::Ticket.first(2).each do|x|
+      x.update_attributes(created_at: 1.months.ago,
+                          deleted: false, spam: false)
+    end
     get :index, controller_params(order_by: 'status')
     assert_response 200
     response = parse_response @response.body
@@ -2364,20 +2371,20 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_dates
-    get :index, controller_params(updated_since: Time.now.iso8601)
+    get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     tkt = Helpdesk::Ticket.first
     tkt.update_column(:created_at, 1.days.from_now)
-    get :index, controller_params(updated_since: Time.now.iso8601)
+    get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     tkt.update_column(:updated_at, 1.days.from_now)
-    get :index, controller_params(updated_since: Time.now.iso8601)
+    get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -2395,18 +2402,18 @@ class TicketsControllerTest < ActionController::TestCase
     Time.zone = old_time_zone
   end
 
-  def test_show_with_notes_exceeding_limit
+  def test_show_with_conversations_exceeding_limit
     ticket.update_column(:deleted, false)
     4.times do
       create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
     end
-    stub_const(NoteConstants, 'MAX_INCLUDE', 3) do
-      get :show, controller_params(id: ticket.display_id, include: 'notes')
+    stub_const(ConversationConstants, 'MAX_INCLUDE', 3) do
+      get :show, controller_params(id: ticket.display_id, include: 'conversations')
     end
     match_json(ticket_pattern_with_notes(ticket, 3))
     assert_response 200
     response = parse_response @response.body
-    assert_equal 3, response['notes'].size
+    assert_equal 3, response['conversations'].size
     assert ticket.reload.notes.visible.exclude_source('meta').size > 3
   end
 
@@ -2456,7 +2463,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash
     t = create_ticket
     put :update, construct_params({ id: t.display_id }, tags: [1, 2], custom_fields: {})
-    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('tags', :array_datatype_mismatch, expected_data_type: String)])
     assert_response 400
   end
 
@@ -2488,10 +2495,10 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     due_by = 5.hours.since.utc.iso8601
     fr_due_by = 3.hours.since.to_time.in_time_zone('Tokelau Is.')
-    t.update_attributes(manual_dueby: Time.now.iso8601)
+    t.update_attributes(manual_dueby: Time.zone.now.iso8601)
     put :update, construct_params({ id: t.display_id }, due_by: due_by.chop,
                                                         fr_due_by: fr_due_by.iso8601)
-    match_json(ticket_pattern({ due_by: due_by, fr_due_by: fr_due_by.utc.iso8601 }, t.reload))
+    match_json(update_ticket_pattern({ due_by: due_by, fr_due_by: fr_due_by.utc.iso8601 }, t.reload))
     assert_response 200
   end
 
@@ -2499,15 +2506,15 @@ class TicketsControllerTest < ActionController::TestCase
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
     default_non_required_fiels.map { |x| x.toggle!(:required) }
     post :create, construct_params({},  requester_id: @agent.id)
-    match_json([bad_request_error_pattern('description', :required_and_data_type_mismatch, data_type: String),
-                bad_request_error_pattern('subject', :required_and_data_type_mismatch, data_type: String),
-                bad_request_error_pattern('group_id', :required_and_data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('responder_id', :required_and_data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('product_id', :required_and_data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('priority', :required_and_inclusion, list: '1,2,3,4'),
-                bad_request_error_pattern('status', :required_and_inclusion, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :required_and_inclusion, list: 'Question,Incident,Problem,Feature Request,Lead'),
-                bad_request_error_pattern('source', :required_and_inclusion, list: '1,2,3,7,8,9')])
+    match_json([bad_request_error_pattern('description', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('subject', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('group_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('responder_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('product_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('priority', :not_included, code: :missing_field, list: '1,2,3,4'),
+                bad_request_error_pattern('status', :not_included, code: :missing_field, list: '2,3,4,5,6,7'),
+                bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('source', :not_included, code: :missing_field, list: '1,2,3,7,8,9')])
     assert_response 400
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required) }
@@ -2547,11 +2554,11 @@ class TicketsControllerTest < ActionController::TestCase
                                                       source: nil,
                                                       type: nil
                                  )
-    match_json([bad_request_error_pattern('description',  :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('subject',  :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('group_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('responder_id', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('product_id', :data_type_mismatch, data_type: 'Positive Integer'),
+    match_json([bad_request_error_pattern('description',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('subject',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
                 bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Lead'),
@@ -2559,5 +2566,27 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required) }
+  end
+
+  def test_create_with_email_array
+    post :create, construct_params({}, ticket_params_hash.except(:email).merge(email: [email: Faker::Internet.email]))
+    assert_response 400
+    match_json([bad_request_error_pattern('email', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
+  end
+
+  def test_update_with_email_array
+    params_hash = { email: [Faker::Internet.email] }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('email', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
+  end
+
+  def test_create_ticket_with_twitter_and_invalid_email
+    create_ticket(ticket_params_hash.except(:email).merge(twitter_id: '@test123'))
+    params = { email: Faker::Name.name, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph, twitter_id: '@test123' }
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('email', :invalid_format, accepted: 'valid email address')])
   end
 end
