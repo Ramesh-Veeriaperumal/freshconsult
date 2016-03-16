@@ -10,6 +10,7 @@ var chatReport = function(){
 						};
 
 	var constructFilter = function(date){
+		var select_hash = [];
 		var filters = "<li>"+freshchat_i18n.filter_title+": </li><li>"+freshchat_i18n.time_period+": <strong>"+date+"</strong></li>";
 		filters += "<li>"+freshchat_i18n.widget+": <strong>"+$("#widget_id option:selected").text()+"</strong></li>";
 		var $group = $("#group_id option:selected");
@@ -19,9 +20,24 @@ var chatReport = function(){
 				values.push($(this).text());
 			});
 			filters += "<li>"+freshchat_i18n.group+": <strong>"+values.join(", ")+"</strong></li>";
+			select_hash.push({
+				name : freshchat_i18n.group,
+				value : values.join(", ")
+			});
 		}
 		filters += "<li>"+freshchat_i18n.type+": <strong>"+$("#chat_type option:selected").text()+"</strong></li>";
 		$("#filter_container").html(filters);
+
+		
+		select_hash.push({
+			name : freshchat_i18n.widget,
+			value : $("#widget_id option:selected").text()
+		});
+		select_hash.push({
+			name : freshchat_i18n.type,
+			value : $("#chat_type option:selected").text()
+		});
+		Helpkit.select_hash = select_hash;
 	}
 
 	var groupBy = function(data, group_key){
@@ -183,28 +199,28 @@ var chatReport = function(){
 		return '<small><span class="'+CLASSES[icon_class]+'"></span>'+Math.abs(percentage_val)+'%</small>';
 	}
 
-var TimeFormat = function(milliseconds){
-	//format will be hrs:mins:sec
-	var duration_formatted = '00:00:00';
-	var duration = moment.duration(milliseconds, 'milliseconds');
-	var mins = Math.floor(duration.asMinutes());
-	var sec = Math.floor(duration.asSeconds());
-	if(mins > 60){
-		var hours = Math.floor(duration.asHours());
-		duration_formatted = (hours >= 10 ? hours : '0'+hours) + ':';
-		mins -= hours*60;
-		mins >= 1 ? mins : 0;
-		sec -= (((hours)*60)+mins)*60;
-		sec < 0 ? sec : 0;
-		duration_formatted = duration_formatted + (mins >= 10 ? mins : '0'+mins) + ':' + (sec >= 10 ? sec : '0'+sec);
-	}else{
-		duration_formatted = '00:'+(mins >= 10 ? mins : '0'+mins) + ':';
-		sec = sec - (mins*60);
-		sec >= 1 ? sec : 0;
-		duration_formatted = duration_formatted + (sec >= 10 ? sec : '0'+sec);
+	var TimeFormat = function(milliseconds){
+		//format will be hrs:mins:sec
+		var duration_formatted = '00:00:00';
+		var duration = moment.duration(milliseconds, 'milliseconds');
+		var mins = Math.floor(duration.asMinutes());
+		var sec = Math.floor(duration.asSeconds());
+		if(mins > 60){
+			var hours = Math.floor(duration.asHours());
+			duration_formatted = (hours >= 10 ? hours : '0'+hours) + ':';
+			mins -= hours*60;
+			mins >= 1 ? mins : 0;
+			sec -= (((hours)*60)+mins)*60;
+			sec < 0 ? sec : 0;
+			duration_formatted = duration_formatted + (mins >= 10 ? mins : '0'+mins) + ':' + (sec >= 10 ? sec : '0'+sec);
+		}else{
+			duration_formatted = '00:'+(mins >= 10 ? mins : '0'+mins) + ':';
+			sec = sec - (mins*60);
+			sec >= 1 ? sec : 0;
+			duration_formatted = duration_formatted + (sec >= 10 ? sec : '0'+sec);
+		}
+		return duration_formatted ;
 	}
-	return duration_formatted ;
-}
 
 	var showMetrics = function(data, chatType){
 		var current = data.current;
@@ -410,7 +426,11 @@ var TimeFormat = function(milliseconds){
 			success: function(resp){
 				showMetrics(resp, chatType);
 				agentSummary(resp);
-				}
+				if(savedReportUtil.filterChanged) {
+                     savedReportUtil.save_util.controls.hideDeleteAndEditOptions();
+                     savedReportUtil.save_util.controls.showSaveOptions(savedReportUtil.last_applied_saved_report_index); 
+                }
+			}
 		});
 	}
 
@@ -468,16 +488,26 @@ var TimeFormat = function(milliseconds){
 			earliestDate: Date.parse('12/01/2014'),
 			latestDate: new Date(),
 			presetRanges: [
-				{text: freshchat_i18n.this_week, dateStart: 'Today-8', dateEnd: 'Today-1' },
-				{text: freshchat_i18n.this_month, dateStart: 'Today-31', dateEnd: 'Today-1'},
-				{text: freshchat_i18n.three_months, dateStart: 'Today-91',  dateEnd: 'Today-1'}
+				{text: freshchat_i18n.today, dateStart: 'Today', dateEnd: 'Today' },
+  			{text: freshchat_i18n.yesterday, dateStart: 'Today-1', dateEnd: 'Today-1' },
+  			{text: freshchat_i18n.this_week, dateStart: 'Today-6', dateEnd: 'Today' },
+  			{text: freshchat_i18n.this_month, dateStart: 'Today-29', dateEnd: 'Today'},
+  			{text: freshchat_i18n.three_months, dateStart: 'Today-89',  dateEnd: 'Today'}
 			],
 			presets: {
 				dateRange: freshchat_i18n.custom_days
 			},
 			dateFormat: getDateFormat('datepicker'),
-			closeOnSelect: true
+			closeOnSelect: true,
+			onChange : function() {
+                trigger_event("filter_changed",{});
+            },
+            presetRangesCallback : true
 		});
+
+		jQuery(document).on("presetRangesSelected", function(event,status) {
+            Helpkit.presetRangesSelected = status;
+        });
 
 		$("#cancel, #filter-close-icon").on('click', function(){
 			$('#sliding').click();
@@ -512,6 +542,216 @@ var TimeFormat = function(milliseconds){
 		return (version == 8 || version == 9);
 	}
 	
+	var savedReportUtil = (function() {
+		
+		var _FD = {
+	   		last_applied_saved_report_index : -1,
+		    CONST: {
+		        base_url : "/reports/freshchat/summary_reports",
+		        save_report   : "/save_reports_filter",
+		        delete_report : "/delete_reports_filter",
+		        update_report : "/update_reports_filter"
+		    },
+		    save_util : Helpkit.commonSavedReportUtil,
+		    filterChanged : false,
+		   	bindSavedReportEvents : function() {
+		        var _this = this;
+		        jQuery(document).on('change', '.filter_item,.ff_item', function () { 
+		             _this.filterChanged = true;
+		        });
+
+		        jQuery(document).on("save.report",function() {
+		          _this.saveReport();
+		        });
+		        jQuery(document).on("delete.report",function() { 
+		          _this.deleteSavedReport();
+		        })
+		        jQuery(document).on("edit.report",function(ev,data) {
+		          _this.updateSavedReport(data.isNameUpdate);
+		        });
+		        jQuery(document).on("discard_changes.report",function() {
+		          _this.discardChanges();
+		        });
+		        jQuery(document).on("apply.report",function(ev,data) {
+		          jQuery('[data-action="pop-report-type-menu"]').trigger('click');
+		          _this.applySavedReport(data.index);
+		        });
+		        jQuery(document).on("filter_changed",function(ev,data){
+	        		_this.filterChanged = true;
+	        	});
+		    },
+		    saveReport : function() {
+		          var _this = this;
+		          var opts = {
+		              url: _this.CONST.base_url + _this.CONST.save_report,
+		              callbacks : {	
+	              		 success: function () {
+		                      //update the last applied filter
+		                      _this.last_applied_saved_report_index = this.new_id;
+		                      _this.filterChanged = false;
+	                 	 },error: function () {}
+		              },
+		              params : _this.getParams()
+		             };
+		              
+		          _this.save_util.saveHelper(opts);
+		    },
+		    getParams : function() {
+		    	  var _this = this;
+		    	  var params = {};
+		          params.data_hash = {};
+		        
+		          var dateRange = $("#date_range").val();
+				  var widget_id = $("#widget_id option:selected").val();
+				  var chatType = $("#chat_type option:selected").val();
+
+		          params.data_hash.date = {};
+		          if(Helpkit.presetRangesSelected) {
+		        	params.data_hash.date.date_range = _this.save_util.dateRangeDiff(dateRange);
+		        	params.data_hash.date.presetRange = true;
+		          } else {
+		        	params.data_hash.date.date_range = dateRange;
+		        	params.data_hash.date.presetRange = false;
+		          }		                
+		          params.data_hash.report_filters = [];
+
+		          params.data_hash.report_filters.push({
+		          		name : "widget_id",
+		          		value : widget_id
+		          });
+		          params.data_hash.report_filters.push({
+		          		name : "chat_type",
+		          		value : chatType
+		          });
+		          params.data_hash.select_hash = Helpkit.select_hash;
+		          return params;
+		    },
+		    updateSavedReport : function(isUpdateTitle) {
+		          var _this = this;
+		          
+		          var current_selected_index = parseInt(jQuery(".reports-menu li.active a").attr('data-index'));
+		          var params = _this.getParams();
+
+		          if(isUpdateTitle) {
+		            params.filter_name =  _this.save_util.escapeString(jQuery("#filter_name_edit").val());
+		          } else {
+		            params.filter_name = Helpkit.report_filter_data[current_selected_index].report_filter.filter_name;
+		          }
+		          params.id = Helpkit.report_filter_data[current_selected_index].report_filter.id;
+
+		          var opts = {
+		          	  current_selected_index : current_selected_index,
+		              url: _this.CONST.base_url + _this.CONST.update_report,
+		              callbacks : {
+	              		 success: function () {
+	                      _this.filterChanged = false
+	             		 },
+			             error: function (data) {
+			              }
+		              },
+		              params : params
+		          };
+		          _this.save_util.updateHelper(opts);
+		    },
+		    deleteSavedReport : function() {
+		          var _this = this;
+		          var current_selected_index = parseInt(jQuery(".reports-menu li.active a").attr('data-index'));
+		          _this.flushAppliedFilters();
+
+		          var opts = {
+		          	  current_selected_index : current_selected_index,
+		              url: _this.CONST.base_url + _this.CONST.delete_report,
+		              callbacks : {
+		              	success: function (resp) {
+		                  _this.applySavedReport(-1);
+		                },
+			            error: function (data){}
+		              }
+		          };
+		          _this.save_util.deleteHelper(opts);
+		    },
+		    discardChanges : function() {
+		      this.applySavedReport(this.last_applied_saved_report_index);
+		      this.save_util.controls.hideSaveOptions(); 
+		    },
+		    applySavedReport : function(index) {
+
+		        var hash = Helpkit.report_filter_data;
+		        var _this = this;
+		        var invalid_params_found = false;
+
+		        _this.flushAppliedFilters();
+		        _this.last_applied_saved_report_index = index;
+
+		        if(index != -1) {
+
+		            var filter_hash = hash[index].report_filter;
+
+		            //Set the date range from saved range
+		            var date_hash = filter_hash.data_hash.date;
+		            var daterange;
+		            //Set the date range from saved range
+		            if(date_hash.presetRange) {
+		            	daterange = _this.save_util.convertDateDiffToDate(date_hash.date_range);
+		            } else {
+		            	daterange = date_hash.date_range;
+		            }
+		            jQuery('#date_range').val(daterange);
+		            
+		            if(filter_hash.data_hash.report_filters != null) {
+		               
+		                jQuery.each(filter_hash.data_hash.report_filters, function(index, filter_row) {
+
+		                  var condition = filter_row.name;
+		                  //populate the value
+		                  var is_saved_param_valid = _this.checkValidityOfSavedParams(condition,filter_row.value);
+		                  
+		                  if (is_saved_param_valid) {
+		                     jQuery('#' + condition).select2('val',filter_row.value);
+		                  } else {
+		                    filter_hash.data_hash.report_filters.splice(index,1);
+		                    invalid_params_found = true;
+		                  }
+		              });
+		            }
+		        } else {
+		             var default_date_range = _this.save_util.convertDateDiffToDate(7);
+		             jQuery('#date_range').val(default_date_range);
+		         }
+
+		        _this.save_util.setActiveSavedReport(jQuery(".reports-menu li a[data-index=" + index +"]"));
+		        _this.save_util.cacheLastAppliedReport(index);
+		         _this.filterChanged = false;
+		        jQuery("#submit").trigger('click');
+
+		        _this.save_util.controls.hideSaveOptions();
+		        if(index != -1) {
+		            _this.save_util.controls.showDeleteAndEditOptions();
+		        } else{
+		          _this.save_util.controls.hideDeleteAndEditOptions();
+		        }
+		        if(invalid_params_found) {
+		          //update the filter , removing the invalid params done in above loop
+		          _this.updateSavedReport(false);
+		        }
+		    },
+		    checkValidityOfSavedParams : function() {
+		        return true;
+		    },
+		    flushAppliedFilters : function() {
+		    	jQuery("#widget_id").val(CURRENT_ACCOUNT.widget_id);
+		        jQuery("#chat_type").val("0");
+		        
+		    },
+		    initSavedReports : function(){
+		       _FD.bindSavedReportEvents();
+		       _FD.save_util.init();
+		       _FD.save_util.applyLastCachedReport();
+		    }
+		}
+	    return _FD;
+	})();
+
 	return {
 
 		initializeReport : function(CHAT_ENV, URL, FC_HTTP_ONLY){
@@ -526,6 +766,7 @@ var TimeFormat = function(milliseconds){
 
 			init();
 			generateReport();
+			savedReportUtil.initSavedReports();
 		}
 	}
 }();

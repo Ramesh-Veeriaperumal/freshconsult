@@ -1,15 +1,21 @@
 class Reports::TimesheetReportsController < ApplicationController
   
   include Reports::TimesheetReport
-  include ReadsToSlave
+  include Reports::CommonHelperMethods
   helper AutocompleteHelper
   
-  before_filter :check_permission, :set_selected_tab
+  before_filter :check_permission, :set_selected_tab, :set_report_type
+  before_filter :report_filter_data_hash, :only => [:index]
   before_filter :build_item ,  :only => [:index,:export_csv,:report_filter,:time_sheet_list, :generate_pdf]
   before_filter :time_sheet_list, :only => [:index,:report_filter, :generate_pdf]
   before_filter :time_sheet_for_export, :only => [:export_csv]
+  before_filter :max_limit?, :only => [:save_reports_filter]
+  before_filter :construct_filters,        :only => [:save_reports_filter,:update_reports_filter]
 
-  
+  around_filter :run_on_slave , :except => [:save_reports_filter,:update_reports_filter,:delete_reports_filter]
+
+  attr_accessor :report_type
+
   def report_filter
     render :partial => "time_sheet_list"
   end
@@ -74,7 +80,49 @@ class Reports::TimesheetReportsController < ApplicationController
     end
   end
 
+  def save_reports_filter
+    report_filter = current_user.report_filters.build(
+      :report_type => @report_type_id,
+      :filter_name => @filter_name,
+      :data_hash   => @data_map
+    )
+    report_filter.save
+    
+    render :json => {:text=> "success", 
+                     :status=> "ok",
+                     :id => report_filter.id,
+                     :filter_name=> @filter_name,
+                     :data=> @data_map }.to_json
+  end
+
+  def update_reports_filter
+    id = params[:id].to_i
+    report_filter = current_user.report_filters.find(id)
+    report_filter.update_attributes(
+      :report_type => @report_type_id,
+      :filter_name => @filter_name,
+      :data_hash   => @data_map
+    )
+    render :json => {:text=> "success", 
+                     :status=> "ok",
+                     :id => report_filter.id,
+                     :filter_name=> @filter_name,
+                     :data=> @data_map }.to_json
+  end
+
+  def delete_reports_filter
+    id = params[:id].to_i
+    report_filter = current_user.report_filters.find(id)
+    report_filter.destroy 
+    render json: "success", status: :ok
+  end
+
+
   private
+
+  def run_on_slave(&block)
+    Sharding.run_on_slave(&block)
+  end 
 
   def set_time_range(prev_time = false)
     @start_time = prev_time ? previous_start : start_date
@@ -143,5 +191,4 @@ class Reports::TimesheetReportsController < ApplicationController
   end
 
   #******** Archive method ends here ********#
-
 end

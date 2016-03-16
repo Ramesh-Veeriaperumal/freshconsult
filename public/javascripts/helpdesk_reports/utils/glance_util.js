@@ -112,8 +112,8 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 }
             });
 
-            jQuery(document).on("glance_empty_default_view.helpdesk_reports", function (ev, data) {
-                     var el = jQuery('#glance_sidebar ul li[data-metric="RECEIVED_TICKETS"]');
+            jQuery(document).on("set_active_view.helpdesk_reports", function (ev, data) {
+                     var el = jQuery('#glance_sidebar ul li[data-metric="'+ HelpdeskReports.locals.active_metric +'"]');
                     _FD.actions.submitActiveMetric(el);
             });
 
@@ -632,7 +632,15 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             HelpdeskReports.locals.default_params = current_params.slice();
             HelpdeskReports.locals.visited_metrics = [];
 
-            _FD.actions.submitReports();
+            if (typeof (Storage) !== "undefined" && localStorage.getItem(HelpdeskReports.locals.report_type) !== null) {
+                var index = JSON.parse(localStorage.getItem(HelpdeskReports.locals.report_type));
+                 HelpdeskReports.SavedReportUtil.applySavedReport(index,false);
+            } else {
+                 HelpdeskReports.SavedReportUtil.applySavedReport(-1,false);
+            }
+           
+         _FD.actions.submitReports();
+            
         },
         setActiveMetric: function (metric) {
             HelpdeskReports.locals.active_metric = metric;

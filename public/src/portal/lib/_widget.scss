@@ -125,7 +125,7 @@ body, .feedback-wrapper{
 /* Embedded Widget styles */
 .embedded-wrapper{
 	#feedback-suggest input.special {
-		@include padding(4px 15px 4px 10px);
+		@include padding(4px 15px 4px 30px);
 		margin-top: 4px;
 		border-color: $inputBorder;
 		@include border-radius(3px);

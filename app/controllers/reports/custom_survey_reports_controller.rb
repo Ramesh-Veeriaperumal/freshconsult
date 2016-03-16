@@ -2,11 +2,16 @@ class Reports::CustomSurveyReportsController < ApplicationController
 
   before_filter { |c| current_account.new_survey_enabled? }
 
-  before_filter :set_selected_tab, :only => :index
+  before_filter :set_report_type
+  before_filter :set_selected_tab, :report_filter_data_hash, :only => :index
+  before_filter :max_limit?,                   :only => [:save_reports_filter]
+  before_filter :construct_filters,                          :only => [:save_reports_filter,:update_reports_filter]
 
   include ReadsToSlave
   include Reports::CustomSurveyReport
   include ApplicationHelper
+
+  attr_accessor :report_type
   
   AGENT_ALL_URL_REF = 'a'
   GROUP_ALL_URL_REF = 'g'
@@ -14,7 +19,6 @@ class Reports::CustomSurveyReportsController < ApplicationController
 
   def index
     @surveys = surveys_json
-    @report_type = 'satisfaction_survey'
     @agents = agents
     @groups = groups
     @default_all_values = {:agent => AGENT_ALL_URL_REF, :group => GROUP_ALL_URL_REF, :rating => RATING_ALL_URL_REF}
@@ -45,11 +49,52 @@ class Reports::CustomSurveyReportsController < ApplicationController
     render :json => result_json
   end
 
+  def save_reports_filter
+    report_filter = current_user.report_filters.build(
+      :report_type => @report_type_id,
+      :filter_name => @filter_name,
+      :data_hash   => @data_map
+    )
+    report_filter.save
+    
+    render :json => {:text=> "success", 
+                     :status=> "ok",
+                     :id => report_filter.id,
+                     :filter_name=> @filter_name,
+                     :data=> @data_map }.to_json
+  end
+
+  def update_reports_filter
+    id = params[:id].to_i
+    report_filter = current_user.report_filters.find(id)
+    report_filter.update_attributes(
+      :report_type => @report_type_id,
+      :filter_name => @filter_name,
+      :data_hash   => @data_map
+    )
+    render :json => {:text=> "success", 
+                     :status=> "ok",
+                     :id => report_filter.id,
+                     :filter_name=> @filter_name,
+                     :data=> @data_map }.to_json
+  end
+
+  def delete_reports_filter
+    id = params[:id].to_i
+    report_filter = current_user.report_filters.find(id)
+    report_filter.destroy 
+    render json: "success", status: :ok
+  end
+
   private
 
     def set_selected_tab
       @selected_tab = :reports
     end 
+
+    def set_report_type
+      @report_type = "satisfaction_survey"
+    end
 
     def page_limit
       10

@@ -46,7 +46,7 @@ class VaRule < ActiveRecord::Base
     :helpdesk_ticket_states => " inner join helpdesk_ticket_states on 
           helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
           and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
-    :customers => "left join customers on helpdesk_tickets.owner_id = 
+    :customers => " left join customers on helpdesk_tickets.owner_id = 
           customers.id",
     :users => " inner join users on 
           helpdesk_tickets.requester_id = users.id  and users.account_id = 

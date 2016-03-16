@@ -8,12 +8,14 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   
   before_filter :check_account_state, :ensure_report_type_or_redirect, 
                 :date_lag_constraint, :ensure_ticket_list,              :except => [:download_file]              
-  before_filter :pdf_export_config,                                     :only   => [:index, :fetch_metrics]
+  before_filter :pdf_export_config, :report_filter_data_hash,           :only   => [:index, :fetch_metrics]
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index, :export_report, :email_reports]
   before_filter :normalize_params, :validate_params, :validate_scope, 
-                :only_ajax_request,                                     :except => [:index, :configure_export, :export_report, :download_file]
+                :only_ajax_request,                                     :except => [:index, :configure_export, :export_report, :download_file,
+                                                                                    :save_reports_filter, :delete_reports_filter]
   before_filter :pdf_params,                                            :only   => [:export_report]
-  skip_before_filter :verify_authenticity_token,                        :except => [:index]
+  before_filter :max_limit?,                                            :only   => [:save_reports_filter]
+  before_filter :construct_filters,                                     :only   => [:save_reports_filter,:update_reports_filter]
   
   wrap_parameters false
   
@@ -56,7 +58,6 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     @query_params[:report_type] = report_type
     @query_params[:portal_url]  = main_portal? ? current_account.host : current_portal.portal_url
     @query_params[:query_hash]  = request_object.fetch_req_params
-    @query_params[:export]      = "tickets_export"
     
     if generate_data_exports_id
       status_code = :ok
@@ -81,6 +82,44 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     HelpdeskReports::Workers::Export.perform_async(params)
     render json: nil, status: :ok
   end
+
+  def save_reports_filter
+    report_filter = current_user.report_filters.build(
+      :report_type => @report_type_id,
+      :filter_name => @filter_name,
+      :data_hash   => @data_map
+    )
+    report_filter.save
+    
+    render :json => {:text=> "success", 
+                     :status=> "ok",
+                     :id => report_filter.id,
+                     :filter_name=> @filter_name,
+                     :data=> @data_map }.to_json
+  end
+
+  def update_reports_filter
+    id = params[:id].to_i
+    report_filter = current_user.report_filters.find(id)
+    report_filter.update_attributes(
+      :report_type => @report_type_id,
+      :filter_name => @filter_name,
+      :data_hash   => @data_map
+    )
+    render :json => {:text=> "success", 
+                     :status=> "ok",
+                     :id => report_filter.id,
+                     :filter_name=> @filter_name,
+                     :data=> @data_map }.to_json
+  end
+
+  def delete_reports_filter
+    id = params[:id].to_i
+    report_filter = current_user.report_filters.find(id)
+    report_filter.destroy 
+    render json: "success", status: :ok
+  end
+
   
   def download_file
     path = "data/helpdesk/#{params[:report_export]}/#{params[:type]}/#{Rails.env}/#{current_user.id}/#{params[:date]}/#{params[:file_name]}.#{params[:format]}"
@@ -255,5 +294,16 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       return false
     end
   end
+
+  def has_scope?(report_type)
+    if current_account.features_included?(:enterprise_reporting)
+      ENTERPRISE_REPORTS.include?(report_type)
+    elsif current_account.features_included?(:advanced_reporting)
+      ADVANCED_REPORTS.include?(report_type)
+    else
+      DEFAULT_REPORTS.include?(report_type)
+    end 
+  end
   
 end
+

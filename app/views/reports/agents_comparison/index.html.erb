@@ -5,6 +5,7 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <%= javascript_include_tag :'cdn/reports'  %>
 <div id="loading-box"> <div class="sloading loading-left loading-small reports-loading">Generating Report...</div> </div>
+<%= render :partial => "reports/shared/deprecation_head"  unless current_account.old_reports_enabled? %>
 <!-- select model for agent start-->
 <a href="#dialog-select" class="hide" data-backdrop="static" 
 		data-show-close="false" title="Agents Comparison Report" rel="freshdialog" id="select-opt" data-width="500"></a>

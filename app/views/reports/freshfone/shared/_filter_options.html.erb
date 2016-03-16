@@ -47,9 +47,9 @@ jQuery(document).ready(function() {
     presetRanges: [
       {text: '<%= t('reports.date_ranges.today') %>', dateStart: 'Today', dateEnd: 'Today' },
       {text: '<%= t('reports.date_ranges.yesterday') %>', dateStart: 'Today-1', dateEnd: 'Today-1' },
-      {text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-8', dateEnd: 'Today-1' },
-      {text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-31', dateEnd: 'Today-1'},
-      {text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-91',  dateEnd: 'Today-1'}
+      {text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-6', dateEnd: 'Today' },
+      {text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-29', dateEnd: 'Today'},
+      {text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-89',  dateEnd: 'Today'}
     ],
     presets: {
       dateRange: '<%= t('reports.date_ranges.custom') %>'
@@ -57,7 +57,8 @@ jQuery(document).ready(function() {
     dateFormat: getDateFormat('datepicker'),
     closeOnSelect: true,
     earliestDate: Date.parse('t - 6 m'),
-    rangeDurationMonths: parseInt('<%=Reports::FreshfoneReport::MAX_ALLOWED_MONTHS%>')
+    rangeDurationMonths: parseInt('<%=Reports::FreshfoneReport::MAX_ALLOWED_MONTHS%>'),
+    presetRangesCallback : true
   });
   
 

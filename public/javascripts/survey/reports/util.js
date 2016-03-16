@@ -74,6 +74,9 @@ var SurveyUtil = {
             urlData['group_id'] = groupObj.val();
             urlData['agent_id'] = agentObj.val();
             urlData['survey_question_id'] = SurveyUtil.findQuestionId();
+            urlData['date'] = {};
+            urlData['date']['presetRange'] = false;
+            urlData['date']['date_range'] = SurveyDateRange.convertDateToTimestamp(jQuery("#survey_date_range").val());
             return urlData;
         },
         getDataName:function(id,type){
@@ -89,7 +92,6 @@ var SurveyUtil = {
         },
         makeURL:function(root){
             var urlData = SurveyUtil.getUrlData();
-            var timestamp = SurveyDateRange.convertDateToTimestamp(jQuery("#survey_date_range").val());
             var url = urlData.survey_id+"/"+urlData.group_id+"/"+urlData.agent_id;
             if(root!="aggregate_report"){
                 url += "/"+ urlData.survey_question_id;
@@ -98,7 +100,7 @@ var SurveyUtil = {
                     url += "/"+ ratingVal;
                 }
             }
-            url = SurveyState.path+root+"/"+url+"/"+timestamp;
+            url = SurveyState.path+root+"/"+url+"/"+urlData.date.date_range;
             
             return url;
         },  

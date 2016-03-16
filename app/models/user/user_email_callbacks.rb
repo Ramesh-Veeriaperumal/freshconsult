@@ -30,7 +30,6 @@ class User < ActiveRecord::Base
   #------User email callbacks ends here------------------------------
 
   before_update :make_inactive, :if => :email_changed?
-  after_update :drop_authorization , :if => [:email_changed?, :no_multiple_user_emails]
   after_commit :send_activation_email, on: :update, :if => [:email_updated?]
 
   def drop_authorization
@@ -156,14 +155,6 @@ class User < ActiveRecord::Base
   end
 
     #feature checks
-
-    def no_multiple_user_emails
-      !has_multiple_user_emails?
-    end
-
-    def has_multiple_user_emails?
-      self.account.features_included?(:multiple_user_emails) 
-    end
 
     def no_contact_merge
       !has_contact_merge?

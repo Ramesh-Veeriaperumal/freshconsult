@@ -61,10 +61,20 @@ class ShardMapping < ActiveRecord::Base
     domains.each {|d| d.clear_cache }
     key = MemcacheKeys::SHARD_BY_ACCOUNT_ID % { :account_id => account_id }
     MemcacheKeys.delete_from_cache key
+    clear_global_shard_cache(domains) if Fdadmin::APICalls.non_global_pods?
   end
 
 
   private
+    # * * * POD Operation Methods Begin * * *
+    def clear_global_shard_cache(domains)
+      request_parameters = {:domains => domains.pluck(:domain) ,
+        :target_method => :clear_domain_mapping_cache_for_pods,
+        :account_id => account_id
+      }
+      response = Fdadmin::APICalls.connect_main_pod(request_parameters)
+      PodDnsUpdate.perform_async(request_parameters) unless response
+    end
 
     def update_routes
       if pod_info_changed?
@@ -143,5 +153,5 @@ class ShardMapping < ActiveRecord::Base
         condition_row.save!
       end
     end
-
+    # * * * POD Operation Methods Ends * * * 
 end

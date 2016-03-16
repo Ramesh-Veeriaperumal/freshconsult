@@ -83,6 +83,7 @@ class Solution::DraftsController < ApplicationController
 
 		def load_attachment
 			@assoc = params[:attachment_type].pluralize.to_sym
+			render_404 unless [:attachments, :cloud_files].include?(@assoc)
 			@attachment = @article.send(@assoc).find(params[:attachment_id])
 		end
 

@@ -110,7 +110,7 @@ include GoogleLoginHelper
   def opensocial_google
     begin
       Account.reset_current_account
-      cert_file  = "#{Rails.root}/config/cert/#{params['xoauth_public_key']}"
+      cert_file  = "#{Rails.root}/config/cert/pub.1210278512.2713152949996518384.cer"
       cert = OpenSSL::X509::Certificate.new( File.read(cert_file) )
       public_key = OpenSSL::PKey::RSA.new(cert.public_key)
       container = params['opensocial_container']

@@ -4,9 +4,11 @@
  
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <%= javascript_include_tag :'cdn/reports'  %>
+<%= javascript_include_tag :'cdn/timesheet_reports'  %>
 	<div id="loading-box">
 	 <div class="sloading loading-left loading-small reports-loading">Generating Report...</div> 
 	 </div>
+	 
 <!--report header-->
 <div class="row-fluid">
 	<div class="span12 report-breadcrum-wrapper">
@@ -20,6 +22,7 @@
 	  		</ul>
 	  	<% end %>
 	</div>
+	<%= render :partial => "reports/shared/dialog"%>
 </div>
  <!--end report header-->
 <!-- report content -->
@@ -63,4 +66,7 @@
 			full_domain = '<%= current_account.full_domain %>';
 			recordAnalytics();
 	});
+	var Helpkit = Helpkit || {};
+	Helpkit.report_filter_data = <%= @report_filter_data.to_json.html_safe %>;
+	Helpkit.report_type = "<%= @report_type %>";
 <%end%>

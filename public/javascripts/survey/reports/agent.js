@@ -6,7 +6,7 @@ var SurveyAgent = {
       SurveyUtil.updateState();
       var agentId = jQuery(obj).val();
       var surveyId = SurveyUtil.whichSurvey().id;
-      var label = jQuery(obj).find("option:selected").text();
-      SurveyState.fetch(label);
+      SurveyState.filterChanged = true;
+      SurveyState.fetch();
     }
 }

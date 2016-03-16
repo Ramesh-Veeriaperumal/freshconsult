@@ -260,18 +260,13 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             var date_range = HelpdeskReports.locals.date_range.split('-');
             var diff = (Date.parse(date_range[1]) - Date.parse(date_range[0])) / (36e5 * 24);
             var default_day, default_hash = {}, disabled_days = [], doy_active = [];
-            if (date_range.length > 1 && diff >7) {
+            if (date_range.length > 1 && diff >6) {
 
                 default_day = _FD.WEEKDAY_MAPPING['monday'];
                 doy_active = _.values(_FD.WEEKDAY_MAPPING);
 
-            } else if (date_range.length > 1 && diff <= 7) {
-
-                
+            } else if (date_range.length > 1 && diff <= 6) {
                 doy_active = this.defaultDayInsideWeek(date_range);
-                if (diff == 7) {
-                    doy_active.pop();
-                }
                 disabled_days = _.difference(doy, doy_active);
                 default_day = (doy_active.indexOf(1) > -1) ? 1 : doy_active[0];
 

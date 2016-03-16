@@ -4,6 +4,31 @@ module Reports::CommonHelperMethods
 	ADVANCED_REPORTS    = DEFAULT_REPORTS + ["glance"]
   	ENTERPRISE_REPORTS  = ADVANCED_REPORTS + ["ticket_volume", "performance_distribution","customer_report"] 
 
+  	SAVE_REPORTS_LIMIT = {
+	    SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_classic] => 25,
+	    SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom] => 25,
+	    SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic] => 25,
+	    SubscriptionPlan::SUBSCRIPTION_PLANS[:garden] => 25,
+	    SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic] => 50,
+	    SubscriptionPlan::SUBSCRIPTION_PLANS[:estate] => 50,
+	    SubscriptionPlan::SUBSCRIPTION_PLANS[:forest] => 50
+	}
+
+	REPORT_TYPE_BY_KEY = {
+	    "glance"                       => 1001,
+	    "ticket_volume"                => 1002,
+	    "performance_distribution"     => 1003,
+	    "agent_summary"                => 1004,
+	    "group_summary"                => 1005,
+	    "customer_report"              => 1006,
+	    "chat_summary"                 => 1007,
+	    "phone_summary"                => 1008,
+	    "timesheet_reports"            => 1009,
+	    "satisfaction_survey"          => 1010,
+	}
+  	
+	REPORT_TYPE_BY_NAME = REPORT_TYPE_BY_KEY.keys.freeze
+ 
 	REPORT_MAPPING = [
 			["/reports/v2/glance", 					 "glance", 				     "helpdesk_at_glance" ,               "analysis"],
 			["/reports/v2/ticket_volume", 			 "ticket_volume", 	         "ticket-volume" , 	     			  "analysis"],
@@ -68,5 +93,51 @@ HTML
 	      DEFAULT_REPORTS.include?(report_type)
 	    end 
   	end
+
+    def report_filter_data_hash
+      report_type_id  = REPORT_TYPE_BY_KEY[report_type]
+      r_f = current_user.report_filters.by_report_type(report_type_id).order_by_latest
+      r_f.inject({}) do |r, h|
+        r[h[:id]] = {:name => h[:filter_name], :data => h[:data_hash]}
+        r
+      end
+      @report_filter_data = r_f
+    end
+
+    def construct_filters
+      @data_map = {}
+      unless params[:data_hash].blank?
+	      params[:data_hash].each do |key, value| 
+	      	@data_map[escape_keys(key)] = {}
+	      	@data_map[escape_keys(key)] = escape_keys(value) 
+	      end 
+	  end
+      @report_type_id, @filter_name = REPORT_TYPE_BY_KEY[report_type], CGI.escapeHTML(params[:filter_name])
+    end  
+
+    def escape_keys(value)
+    	case 
+	    when value.is_a?(Array)
+			value.map { |obj| escape_keys(obj) }
+	   	when value.is_a?(Hash)
+	   		new_hash = {}
+	   		value.each do |k,v| 
+	   		   new_hash[escape_keys(k)] = {}	
+	   		   new_hash[escape_keys(k)] = escape_keys(v) 
+	   		end
+	   		new_hash
+	   	when value.is_a?(String)
+	   		CGI::escapeHTML(value)
+	    else
+	        value
+	 	end
+  	end
+
+    def max_limit?
+      max_limit = SAVE_REPORTS_LIMIT[Account.current.subscription.subscription_plan.name] || 25
+      if current_user.report_filters.count > max_limit
+        render json: "#{max_limit}", status: :unprocessable_entity
+      end
+    end
 
 end

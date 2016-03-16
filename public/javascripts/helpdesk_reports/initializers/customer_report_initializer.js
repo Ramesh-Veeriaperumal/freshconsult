@@ -84,11 +84,16 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
         renderCommonChart: function (current_hash, options, metric) {
             var constants = _FD.constants;
             var current_value_array = [];
-            
+            var id_value_hash = {};
+
             _.each(_.values(current_hash), function(i) {
                 current_value_array.push(i.value);
             });
-            
+
+            _.each(current_hash, function( values, key ) {
+                id_value_hash[key] = values.id
+            }); 
+           
             var values    = current_value_array; //_.values(current_hash);
             var labels    = _.keys(current_hash);
             var color     = constants.percentage_metrics.indexOf(metric) > -1 ? REPORT_COLORS["barChartPercent"] : REPORT_COLORS['barChartReal'];
@@ -108,7 +113,7 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                     events: {
                         click: function () {
                             var ev = this;
-                            _FD.clickEventForTicketList(ev);
+                            _FD.clickEventForTicketList(ev,id_value_hash);
                         }
                     }
                 },
@@ -128,10 +133,11 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
             var barCharts = new barChart(settings);
             barCharts.barChartGraph();
         },
-        clickEventForTicketList: function (el) {
+        clickEventForTicketList: function (el,id_value_hash) {
                 var data = {};
                 data.label = el.category;
                 data.y = el.y;
+                data.id = id_value_hash[data.label];
                 var container = el.series.chart.container;
                 data.metric = jQuery(container).closest('[data-report="customer-report-container"]').data('metric');
                             
