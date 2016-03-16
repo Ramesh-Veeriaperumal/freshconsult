@@ -23,7 +23,7 @@
 <div id="drafts-section">
 
 	<% unless (@drafts.size == 0) %>
-		<div class="solution-drafts">
+		<div class="solution-drafts <%= "view-links" unless edit_privilege?(:article) %>">
 			<%= render :partial => 'draft', :collection => @drafts %>
 		</div>
 		<%= will_paginate @drafts, :renderer => BootstrapPaginationRenderer,

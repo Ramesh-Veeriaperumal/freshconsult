@@ -280,7 +280,7 @@ module SolutionHelper
 		content << "<div class='span5 pull-right mt8 #{"language-bar" if article_flag} #{'view-links' unless edit}'>"
 		content << '<span class="pull-right">'
 		([Account.current.language_object] + Account.current.supported_languages_objects).each do |language|
-			content << (edit ? language_icon(solution_meta, language) : version_view_icon(solution_meta, language))
+			content << language_icon(solution_meta, language)
 		end
 		content << '</span>'
 		content << '</div>'
@@ -289,6 +289,7 @@ module SolutionHelper
 
 	def language_icon(solution_meta, language)
 		category = solution_meta.class.short_name
+		return version_view_icon(solution_meta, language) unless edit_privilege?(category)
 		options = { 
 			:class => "language_icon #{language_style(solution_meta, language)} tooltip",
 			:title => language_label_title(language, solution_meta.send("#{language.to_key}_available?")),
@@ -329,11 +330,13 @@ module SolutionHelper
 	end
 
 	def edit_privilege?(category)
-		case category.to_sym
-		when :category, :folder
-			privilege?(:manage_solutions)
-		when :article
-			privilege?(:publish_solution)
+		@edit_privilege ||= begin
+			case category.to_sym
+			when :category, :folder
+				privilege?(:manage_solutions)
+			when :article
+				privilege?(:publish_solution)
+			end
 		end
 	end
 

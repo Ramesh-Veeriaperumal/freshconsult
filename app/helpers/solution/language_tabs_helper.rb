@@ -18,6 +18,7 @@ module Solution::LanguageTabsHelper
   def initialize_variables
     @lang_objs = Account.current.supported_languages_objects
     @version_languages = @lang_objs.select { |l| @article_meta.send("#{l.to_key}_available?") }
+    @lang_objs = @version_languages unless edit_privilege?(:article)
     @tab_count = 0
   end
 
