@@ -146,7 +146,7 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => {:errors => @response_errors}.to_json
         else
           array = []
-          @items.each { |tic|
+          @items.preload(:ticket_old_body,:schema_less_ticket,:flexifield => :flexifield_def).each { |tic|
             array << tic.as_json({}, false)['helpdesk_ticket']
           }
           render :json => array
@@ -1412,7 +1412,7 @@ class Helpdesk::TicketsController < ApplicationController
     if es_tickets_enabled? and params[:html_format]
       tickets_from_es(params)
     else
-      current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      current_account.tickets.preload(requester: [:avatar,:company]).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     end
   end
 

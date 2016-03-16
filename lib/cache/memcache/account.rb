@@ -47,7 +47,7 @@ module Cache::Memcache::Account
 
   def agents_from_cache
     key = agents_memcache_key
-    MemcacheKeys.fetch(key) { self.agents.find(:all, :include => :user) }
+    MemcacheKeys.fetch(key) { self.agents.find(:all, :include => [:user,:agent_groups]) }
   end
 
   def groups_from_cache
