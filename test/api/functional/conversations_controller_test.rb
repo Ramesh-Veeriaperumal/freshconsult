@@ -30,7 +30,9 @@ class ConversationsControllerTest < ActionController::TestCase
 
   def create_note_params_hash
     body = Faker::Lorem.paragraph
-    email = [Faker::Internet.email, Faker::Internet.email]
+    agent_email1 = Agent.last.user.email
+    agent_email2 = Agent.find{|x| x.user.email != agent_email1}.try(:user).try(:email) || add_test_agent(@account, role: Role.find_by_name('Agent').id).email
+    email = [agent_email1, agent_email2]
     params_hash = { body: body, notify_emails: email, private: true }
     params_hash
   end
@@ -96,49 +98,48 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = { user_id: 'x', body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_create_inclusion_invalid
     params_hash = { private: 'x', incoming: 'x', body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('incoming', :data_type_mismatch, data_type: 'Boolean'),
-                bad_request_error_pattern('private', :data_type_mismatch, data_type: 'Boolean')])
+    match_json([bad_request_error_pattern('incoming', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('private', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_create_datatype_invalid
-    params_hash = { notify_emails: 'x', attachments: 'x', body: true, body_html: true }
+    params_hash = { notify_emails: 'x', attachments: 'x', body: true }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    match_json([bad_request_error_pattern('notify_emails', :data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('body', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('body_html', :data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('notify_emails', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('attachments', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('body', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean')])
     assert_response 400
   end
 
   def test_create_email_format_invalid
     params_hash = { notify_emails: ['tyt@'], body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    match_json([bad_request_error_pattern('notify_emails', 'not_a_valid_email')])
+    match_json([bad_request_error_pattern('notify_emails', :array_invalid_format, accepted: 'valid email address')])
     assert_response 400
   end
 
   def test_create_invalid_ticket_id
-    params_hash = { body_html: 'test' }
+    params_hash = { body: 'test' }
     post :create, construct_params({ id: 789_789_789 }, params_hash)
     assert_response :missing
   end
 
   def test_create_invalid_model
-    params_hash = { body_html: 'test', user_id: 789_789_789 }
+    params_hash = { body: 'test', user_id: 789_789_789 }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('user_id', :"can't be blank")])
+    match_json([bad_request_error_pattern('user_id', :absent_in_db, resource: :contact, attribute: :user_id)])
   end
 
   def test_create_extra_params
-    params_hash = { body_html: 'test', junk: 'test' }
+    params_hash = { body: 'test', junk: 'test' }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('junk', :invalid_field)])
@@ -147,7 +148,7 @@ class ConversationsControllerTest < ActionController::TestCase
   def test_create_missing_params
     post :create, construct_params({ id: ticket.display_id }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('body', :required_and_data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('body', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
   end
 
   def test_create_returns_location_header
@@ -179,7 +180,7 @@ class ConversationsControllerTest < ActionController::TestCase
     params = create_note_params_hash.merge('attachments' => [1, 2])
     post :create, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'valid format')])
+    match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
   end
 
   def test_attachment_invalid_size_create
@@ -190,7 +191,7 @@ class ConversationsControllerTest < ActionController::TestCase
     post :create, construct_params({ id: ticket.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
   end
 
   def test_create_without_privilege
@@ -210,7 +211,7 @@ class ConversationsControllerTest < ActionController::TestCase
     params = create_note_params_hash.merge(notify_emails: notify_emails)
     post :create, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('notify_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}")])
+    match_json([bad_request_error_pattern('notify_emails', :too_long, element_type: :values, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 51)])
   end
 
   def test_reply_with_invalid_cc_emails_count
@@ -221,8 +222,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params = reply_note_params_hash.merge(cc_emails: cc_emails, bcc_emails: cc_emails)
     post :reply, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}"),
-                bad_request_error_pattern('bcc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}")])
+    match_json([bad_request_error_pattern('cc_emails', :too_long, element_type: :values, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 50),
+                bad_request_error_pattern('bcc_emails', :too_long, element_type: :values, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 50)])
   end
 
   def test_reply_with_ticket_trashed
@@ -355,24 +356,24 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = { user_id: 'x', body: Faker::Lorem.paragraph }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_reply_datatype_invalid
     params_hash = { cc_emails: 'x', attachments: 'x', bcc_emails: 'x', body: Faker::Lorem.paragraph }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('bcc_emails', :data_type_mismatch, data_type: Array)])
+    match_json([bad_request_error_pattern('cc_emails', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('attachments', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('bcc_emails', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_reply_email_format_invalid
     params_hash = { cc_emails: ['tyt@'], bcc_emails: ['hj#'], body: Faker::Lorem.paragraph }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', 'not_a_valid_email'),
-                bad_request_error_pattern('bcc_emails', 'not_a_valid_email')])
+    match_json([bad_request_error_pattern('cc_emails', :array_invalid_format, accepted: 'valid email address'),
+                bad_request_error_pattern('bcc_emails', :array_invalid_format, accepted: 'valid email address')])
   end
 
   def test_reply_invalid_id
@@ -382,17 +383,17 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_invalid_model
-    params_hash = { body_html: 'test', user_id: 789_789_789 }
+    params_hash = { body: 'test', user_id: 789_789_789 }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('user_id', :"can't be blank")])
+    match_json([bad_request_error_pattern('user_id', :absent_in_db, resource: :contact, attribute: :user_id)])
   end
 
   def test_reply_extra_params
     params_hash = { body_html: 'test', junk: 'test' }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('junk', :invalid_field)])
+    match_json([bad_request_error_pattern('junk', :invalid_field), bad_request_error_pattern('body_html', :invalid_field)])
   end
 
   def test_reply_returns_location_header
@@ -428,14 +429,14 @@ class ConversationsControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
   end
 
   def test_reply_with_invalid_attachment_params_format
     params = reply_note_params_hash.merge('attachments' => [1, 2])
     post :reply, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'valid format')])
+    match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
   end
 
   def test_reply_without_privilege
@@ -472,8 +473,8 @@ class ConversationsControllerTest < ActionController::TestCase
     n = note
     put :update, construct_params({ id: n.id }, params)
     assert_response 200
-    match_json(note_pattern(params, n.reload))
-    match_json(note_pattern({}, n.reload))
+    match_json(update_note_pattern(params, n.reload))
+    match_json(update_note_pattern({}, n.reload))
   end
 
   def test_update_deleted
@@ -510,8 +511,8 @@ class ConversationsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 200
     response_params = params.except(:attachments)
-    match_json(note_pattern(params, n.reload))
-    match_json(note_pattern({}, n.reload))
+    match_json(update_note_pattern(params, n.reload))
+    match_json(update_note_pattern({}, n.reload))
     assert n.attachments.count == 2
   end
 
@@ -526,14 +527,14 @@ class ConversationsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: n.id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
   end
 
   def test_update_with_invalid_attachment_params_format
     params = update_note_params_hash.merge('attachments' => [1, 2])
     put :update, construct_params({ id: note.id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'valid format')])
+    match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
   end
 
   def test_update_without_privilege
@@ -555,8 +556,8 @@ class ConversationsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: n.id }, params)
     User.any_instance.unstub(:privilege?)
     assert_response 200
-    match_json(note_pattern(params, n.reload))
-    match_json(note_pattern({}, n.reload))
+    match_json(update_note_pattern(params, n.reload))
+    match_json(update_note_pattern({}, n.reload))
   end
 
   def test_update_reply
@@ -564,7 +565,6 @@ class ConversationsControllerTest < ActionController::TestCase
     params = update_note_params_hash
     put :update, construct_params({ id: n.id }, params)
     assert_response 405
-    match_json(base_error_pattern('method_not_allowed', methods: 'DELETE'))
   end
 
   def test_update_not_note_or_reply
@@ -572,7 +572,6 @@ class ConversationsControllerTest < ActionController::TestCase
     params = update_note_params_hash
     put :update, construct_params({ id: n.id }, params)
     assert_response 405
-    match_json(base_error_pattern('method_not_allowed', methods: 'DELETE'))
   end
 
   def test_delete_not_note_or_reply
@@ -744,7 +743,7 @@ class ConversationsControllerTest < ActionController::TestCase
   def test_ticket_conversations_with_pagination_exceeds_limit
     get :ticket_conversations, controller_params(id: ticket.display_id, per_page: 101)
     assert_response 400
-    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
   end
 
   def test_ticket_conversations_with_link_header
@@ -788,6 +787,15 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert_response 201
+  end
+
+  def test_non_agent_email_id_in_note_creation
+    non_agent_emails = [Faker::Internet.email, Faker::Internet.email]
+    notify_emails = non_agent_emails | [@agent.email]
+    params_hash = create_note_params_hash.merge(notify_emails: notify_emails)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    match_json([bad_request_error_pattern('notify_emails', :invalid_agent_emails, invalid_emails: "#{non_agent_emails.join(', ')}")])
+    assert_response 400
   end
 
   def test_create_datatype_nil_array_fields

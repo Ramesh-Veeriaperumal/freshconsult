@@ -42,7 +42,7 @@ module UsersTestHelper
     }
 
     if contact_merge_enabled?
-      result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role:false).map(&:email))
+      result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role: false).map(&:email))
     end
     result
   end
@@ -106,8 +106,8 @@ module UsersTestHelper
     contact.reload.emails - [contact.reload.email]
   end
 
-  def add_user_email(contact, email, options={})
-    params = {email: email, user_id: contact.id}
+  def add_user_email(contact, email, options = {})
+    params = { email: email, user_id: contact.id }
     params.merge!(options) if options.any?
     u = UserEmail.new(params)
     u.save

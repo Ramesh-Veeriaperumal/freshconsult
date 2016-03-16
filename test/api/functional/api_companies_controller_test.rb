@@ -48,7 +48,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, description: Faker::Lorem.paragraph,
                                        domains: domain_array)
     assert_response 400
-    match_json([bad_request_error_pattern('name', :required_and_data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('name', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
   end
 
   def test_create_company_domains_invalid
@@ -62,8 +62,8 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: Faker::Number.number(10).to_i, description: Faker::Number.number(10).to_i,
                                        domains: domain_array)
     assert_response 400
-    match_json([bad_request_error_pattern('name', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('description', :data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('name', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
+                bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer)])
   end
 
   def test_create_company_with_invalid_custom_fields
@@ -80,13 +80,13 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: name, description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10))
     assert_response 409
-    match_json([bad_request_error_pattern('name', :"has already been taken")])
+    match_json([bad_request_error_pattern('name', :'has already been taken')])
   end
 
   def test_create_length_invalid
     params_hash = { name: Faker::Lorem.characters(300) }
     post :create, construct_params({}, params_hash)
-    match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)")])
+    match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters')])
     assert_response 400
   end
 
@@ -98,17 +98,17 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_invalid_domains
-    params_hash = { name: Faker::Lorem.characters(20), domains: ["#{Faker::Name.name}. #{Faker::Name.name}"]}
+    params_hash = { name: Faker::Lorem.characters(20), domains: ["#{Faker::Name.name}. #{Faker::Name.name}"] }
     post :create, construct_params({}, params_hash)
-    match_json([bad_request_error_pattern(:domains, :"Enter valid domains")])
+    match_json([bad_request_error_pattern(:domains, :'Enter valid domains')])
     assert_response 400
   end
 
   def test_update_invalid_domains
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
-    params_hash = { name: Faker::Lorem.characters(20), domains: ["#{Faker::Name.name}. #{Faker::Name.name}"]}
+    params_hash = { name: Faker::Lorem.characters(20), domains: ["#{Faker::Name.name}. #{Faker::Name.name}"] }
     put :update, construct_params({ id: company.id }, params_hash)
-    match_json([bad_request_error_pattern(:domains, :"Enter valid domains")])
+    match_json([bad_request_error_pattern(:domains, :'Enter valid domains')])
     assert_response 400
   end
 
@@ -133,7 +133,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     name = Faker::Lorem.characters(10)
     put :update, construct_params({ id: company.id }, custom_fields: [1, 2])
-    match_json([bad_request_error_pattern(:custom_fields, :data_type_mismatch, data_type: 'key/value pair')])
+    match_json([bad_request_error_pattern(:custom_fields, :datatype_mismatch, expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: Array)])
     assert_response 400
   end
 
@@ -143,7 +143,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                       note: Faker::Lorem.characters(10), domains: domain_array,
                                                       custom_fields: { 'linetext' => Faker::Lorem.characters(10) })
     assert_response 400
-    match_json([bad_request_error_pattern('name', :"can't be blank")])
+    match_json([bad_request_error_pattern('name', :blank)])
   end
 
   def test_update_company_with_invalid_id
@@ -166,8 +166,8 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     put :update, construct_params({ id:  company.id }, name: Faker::Number.number(10).to_i, description: Faker::Number.number(10).to_i,
                                                        domains: domain_array)
     assert_response 400
-    match_json([bad_request_error_pattern('name', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('description', :data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('name', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
+                bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer)])
   end
 
   def test_update_company_with_invalid_custom_field
@@ -183,7 +183,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     params_hash = { name: Faker::Lorem.characters(300) }
     put :update, construct_params({ id: company.id }, params_hash)
-    match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)")])
+    match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters')])
     assert_response 400
   end
 
@@ -253,14 +253,14 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   def test_company_with_pagination_exceeds_limit
     get :index, controller_params(per_page: 101)
     assert_response 400
-    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
   end
 
   def test_create_companies_with_invalid_domains
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: Faker::Lorem.characters(10).to_i, note: Faker::Lorem.characters(10))
     assert_response 400
-    match_json([bad_request_error_pattern('domains', :data_type_mismatch, data_type: Array)])
+    match_json([bad_request_error_pattern('domains', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: Integer)])
   end
 
   def test_create_companies_with_empty_domains
@@ -274,7 +274,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: [Faker::Lorem.characters(10).to_i, Faker::Lorem.characters(10)], note: Faker::Lorem.characters(10))
     assert_response 400
-    match_json([bad_request_error_pattern('domains', :data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('domains', :array_datatype_mismatch, expected_data_type: String)])
   end
 
   def test_create_company_with_invalid_custom_field_values
@@ -284,9 +284,9 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                         'show_all_ticket' => Faker::Number.number(5) })
 
     assert_response 400
-    match_json([bad_request_error_pattern('agt_count', :data_type_mismatch, data_type: 'Integer'),
-                bad_request_error_pattern('date', :invalid_date),
-                bad_request_error_pattern('show_all_ticket', :data_type_mismatch, data_type: 'Boolean')])
+    match_json([bad_request_error_pattern('agt_count', :datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('date', :invalid_date, accepted: 'yyyy-mm-dd'),
+                bad_request_error_pattern('show_all_ticket', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_create_company_with_invalid_custom_dropdown_field_values
@@ -317,10 +317,10 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                       custom_fields: { 'agt_count' => 'abc', 'date' => 'test_date',
                                                                        'show_all_ticket' => Faker::Number.number(5), 'file_url' =>  'test_url' })
     assert_response 400
-    match_json([bad_request_error_pattern('agt_count', :data_type_mismatch, data_type: 'Integer'),
-                bad_request_error_pattern('date', :invalid_date),
-                bad_request_error_pattern('show_all_ticket', :data_type_mismatch, data_type: 'Boolean'),
-                bad_request_error_pattern('file_url', 'invalid_format')])
+    match_json([bad_request_error_pattern('agt_count', :datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('date', :invalid_date, accepted: 'yyyy-mm-dd'),
+                bad_request_error_pattern('show_all_ticket', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('file_url', :invalid_format, accepted: 'valid URL')])
   end
 
   def test_update_company_with_invalid_custom_dropdown_field_values
@@ -336,7 +336,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company2 = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: company2.id }, name: company1.name)
     assert_response 409
-    match_json([bad_request_error_pattern('name', :"has already been taken")])
+    match_json([bad_request_error_pattern('name', :'has already been taken')])
   end
 
   def test_update_delete_existing_domains
@@ -356,7 +356,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     cf = CompanyField.find_by_label('required_linetext')
     cf.destroy
     assert_response 400
-    match_json([bad_request_error_pattern('required_linetext', :required_and_data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('required_linetext', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
   end
 
   def test_update_array_fields_with_compacting_array
@@ -388,9 +388,9 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     post :create, construct_params({},  name: Faker::Name.name)
     assert_response 400
-    match_json([bad_request_error_pattern('description', :required_and_data_type_mismatch, data_type: String),
-                bad_request_error_pattern('domains', :required_and_data_type_mismatch, data_type: Array),
-                bad_request_error_pattern('note', :required_and_data_type_mismatch, data_type: String)])
+    match_json([bad_request_error_pattern('description', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('domains', :datatype_mismatch, code: :missing_field, expected_data_type: Array),
+                bad_request_error_pattern('note', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end
@@ -415,9 +415,9 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                        description: nil,
                                                        note: nil)
     assert_response 400
-    match_json([bad_request_error_pattern('note', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('description', :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('domains', :"can't be blank")])
+    match_json([bad_request_error_pattern('note', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+                bad_request_error_pattern('domains', :blank)])
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end

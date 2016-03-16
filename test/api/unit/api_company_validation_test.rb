@@ -18,6 +18,7 @@ class ApiCompanyValidationTest < ActionView::TestCase
     refute company.valid?(:create)
     errors = company.errors.full_messages
     assert errors.include?('Domains special_chars_present')
+    assert_equal({ domains: { chars: ',' }, name: {} }, company.error_options)
   end
 
   def test_domains_comma_valid
@@ -39,7 +40,7 @@ class ApiCompanyValidationTest < ActionView::TestCase
     company = ApiCompanyValidation.new(controller_params, item)
     refute company.valid?(:create)
     errors = company.errors.full_messages
-    assert errors.include?('Domains data_type_mismatch')
+    assert errors.include?('Domains datatype_mismatch')
     assert errors.count == 1
   end
 
@@ -52,8 +53,8 @@ class ApiCompanyValidationTest < ActionView::TestCase
     company = ApiCompanyValidation.new(controller_params, item)
     refute company.valid?(:create)
     errors = company.errors.full_messages
-    assert errors.include?('Domains data_type_mismatch')
-    assert errors.include?('Custom fields data_type_mismatch')
+    assert errors.include?('Domains datatype_mismatch')
+    assert errors.include?('Custom fields datatype_mismatch')
     Account.unstub(:current)
   end
 end

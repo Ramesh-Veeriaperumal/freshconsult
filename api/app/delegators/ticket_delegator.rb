@@ -1,8 +1,6 @@
 # A big thanks to http://blog.arkency.com/2014/05/mastering-rails-validations-objectify/ !!!!
-class TicketDelegator < SimpleDelegator
-  include ActiveModel::Validations
-
-  attr_accessor :error_options, :ticket_fields
+class TicketDelegator < BaseDelegator
+  attr_accessor :ticket_fields
   validate :group_presence, if: -> { group_id && attr_changed?('group_id') }
   validate :responder_presence, if: -> { responder_id && attr_changed?('responder_id') }
   validates :email_config, presence: true, if: -> { email_config_id && attr_changed?('email_config_id') }
@@ -17,25 +15,18 @@ class TicketDelegator < SimpleDelegator
                                 required_attribute: :required
                               }
                             }
-  validate :facebook_id_exists?, if: -> { facebook_id }, on: :update
+  validate :facebook_id_exists?, if: -> { facebook_id }
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
     super record
   end
 
-  def attr_changed?(att, record = self)
-    # changed_attributes gives a hash, that is already constructed when the attributes are assigned.
-    # in Rails 3.2 changed_attributes is a Hash, hence exact strings are required.
-    # Faster than using changed(changed_attributes.keys), would have been faster if changed_attributes were a HashWithIndifferentAccess
-    record.changed_attributes.key? att
-  end
-
   def product_presence
     ticket_product_id = schema_less_ticket.product_id
     product = Account.current.products_from_cache.detect { |x| ticket_product_id == x.id }
     if product.nil?
-      errors[:product_id] << :blank
+      errors[:product_id] << :"can't be blank"
     else
       schema_less_ticket.product = product
     end
@@ -44,7 +35,7 @@ class TicketDelegator < SimpleDelegator
   def group_presence # this is a custom validate method so that group cache can be used.
     group = Account.current.groups_from_cache.detect { |x| group_id == x.id }
     if group.nil?
-      errors[:group] << :blank
+      errors[:group] << :"can't be blank"
     else
       self.group = group
     end
@@ -53,7 +44,7 @@ class TicketDelegator < SimpleDelegator
   def responder_presence #
     responder = Account.current.agents_from_cache.detect { |x| x.user_id == responder_id }.try(:user)
     if responder.nil?
-      errors[:responder] << :blank
+      errors[:responder] << :"can't be blank"
     else
       self.responder = responder
     end

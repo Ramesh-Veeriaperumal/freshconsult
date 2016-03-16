@@ -30,7 +30,7 @@ class ApiApplicationController < MetalApiController
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone
   before_filter :force_utf8_params
   before_filter :set_cache_buster
-  before_filter :set_shard_for_payload 
+  before_filter :set_shard_for_payload
   include AuthenticationSystem
   include HelpdeskSystem
   include SubscriptionSystem
@@ -97,7 +97,7 @@ class ApiApplicationController < MetalApiController
       match[:action] != 'route_not_found'
     end.map(&:upcase)
     if allows.present? # route is present, but method is not allowed.
-      render_base_error(:method_not_allowed, 405, methods: allows.join(', '))
+      render_base_error(:method_not_allowed, 405, methods: allows.join(', '), fired_method: env['REQUEST_METHOD'])
       response.headers['Allow'] = allows.join(', ')
     else # route not present.
       head 404
@@ -195,7 +195,7 @@ class ApiApplicationController < MetalApiController
     def login_error_handler(e)
       if e.failed_login_count
         Rails.logger.debug "API V2 #{e.message}. Attempt: #{e.failed_login_count}"
-        render_request_error :password_lockout, 403
+        render_request_error :password_lockout, 403, max_count: UserSession.consecutive_failed_logins_limit
       else
         Rail.logger.debug "Exception: ConsecutiveFailedLoginError, Message: #{e.message}, Backtrace: #{e.backtrace}"
         render_base_error(:internal_error, 500)
@@ -243,7 +243,7 @@ class ApiApplicationController < MetalApiController
 
     def validate_content_type
       unless get_request? || request.delete? || valid_content_type?
-        render_request_error :invalid_content_type, 415
+        render_request_error :invalid_content_type, 415, content_type: request.content_type
       end
     end
 
@@ -305,7 +305,7 @@ class ApiApplicationController < MetalApiController
       # The respective filter validation classes would inherit from FilterValidation to include validations on pagination options.
       params.permit(*ApiConstants::DEFAULT_INDEX_FIELDS, *additional_fields)
       @filter = FilterValidation.new(params, nil, true)
-      render_query_param_errors(@filter.errors, @filter.error_options) unless @filter.valid?
+      render_errors(@filter.errors, @filter.error_options) unless @filter.valid?
     end
 
     def validate_url_params
@@ -373,7 +373,7 @@ class ApiApplicationController < MetalApiController
         ErrorHelper.rename_keys(error_options_mappings, item.error_options)
         (options ||= {}).merge!(item.error_options)
       end
-      render_errors(item.errors, options)
+      render_errors(item.errors, options || {})
     end
 
     # Error options field mappings to rename the keys Say, agent in ticket error will be replaced with responder_id
@@ -381,21 +381,7 @@ class ApiApplicationController < MetalApiController
       {}
     end
 
-    def render_query_param_errors(errors, meta = nil)
-      set_query_param_errors(errors, meta)
-      render_errors(errors, meta)
-    end
-
-    def set_query_param_errors(errors, meta)
-      # this will translate generic positive_number error to specific per_page_positive_number
-      # this is being done to get different custom codes with the same error message.
-      if errors[:per_page].present?
-        errors[:per_page] = "per_page_#{errors.to_h[:per_page]}"
-        meta[:per_page].merge!(max_value: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page])
-      end
-    end
-
-    def render_errors(errors, meta = nil)
+    def render_errors(errors, meta = {})
       if errors.present?
         @errors = ErrorHelper.format_error(errors, meta)
         log_error_response @errors

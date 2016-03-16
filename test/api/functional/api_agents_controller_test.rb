@@ -38,7 +38,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
   def test_agent_filter_with_invalid_email
     get :index, controller_params(email: '!@#$%')
     assert_response 400
-    match_json([bad_request_error_pattern('email', :not_a_valid_email)])
+    match_json([bad_request_error_pattern('email', :invalid_format, accepted: 'valid email address')])
   end
 
   def test_agent_filter_mobile
@@ -132,8 +132,8 @@ class ApiAgentsControllerTest < ActionController::TestCase
 
   def test_agent_filter_email_array
     email = sample_agent = @account.all_agents.first.user.email
-    get :index, controller_params({email: [email]}, false)
+    get :index, controller_params({ email: [email] }, false)
     assert_response 400
-    match_json([bad_request_error_pattern('email', :data_type_mismatch, { data_type: 'String' })])
+    match_json([bad_request_error_pattern('email', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
   end
 end

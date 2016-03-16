@@ -37,6 +37,16 @@ module ApiDiscussions
         load_object current_account.forums
       end
 
+      def after_load_object
+        # merged source topic could only be shown or deleted.
+        # Other actions allowed on this topic are: is_following, topic_comments, adding a new comment.
+        render_request_error(:immutable_resource, 403) if !allowed_actions_on_merged_topic? && @item.merged_topic_id.present? && @item.locked?
+      end
+
+      def allowed_actions_on_merged_topic?
+        show? || destroy?
+      end
+
       def load_forum
         @forum = current_account.forums.find_by_id(params[:id])
         log_and_render_404 unless @forum
@@ -50,7 +60,7 @@ module ApiDiscussions
       def set_custom_errors(_item = @item)
         if @item.errors[:stamp_type].present?
           allowed_string = allowed_stamp_types.join(',')
-          @item.errors[:stamp_type] = ErrorConstants::ERROR_MESSAGES[:allowed_stamp_type] % { list: allowed_string }
+          @item.errors[:stamp_type] = ErrorConstants::ERROR_MESSAGES[:not_included] % { list: allowed_string }
         end
         ErrorHelper.rename_error_fields({ forum: :forum_id }, @item)
         @error_options = { remove: :posts }

@@ -17,7 +17,10 @@ json.cache! CacheLib.compound_key(@item, ApiConstants::CACHE_VERSION[:v3], param
   json.set! :is_escalated, @item.isescalated
 end
 
-json.extract! @item, :description, :description_html, :custom_fields
+json.set! :description, @item.description_html
+json.set! :description_text, @item.description
+
+json.extract! @item, :custom_fields
 
 json.set! :tags, @item.tag_names # does not have timestamps, hence no caching
 

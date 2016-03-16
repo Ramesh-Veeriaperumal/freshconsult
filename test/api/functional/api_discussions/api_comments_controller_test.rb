@@ -80,7 +80,7 @@ module ApiDiscussions
       post.topic.update_column(:stamp_type, nil)
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
       assert_response 400
-      match_json([bad_request_error_pattern('answer', :incompatible_field)])
+      match_json([bad_request_error_pattern('answer', :cannot_set_answer, code: :incompatible_field)])
       post.topic.update_column(:stamp_type, 6)
     end
 
@@ -111,7 +111,7 @@ module ApiDiscussions
       comment = comment_obj
       put :update, construct_params({ id: comment.id }, body_html: '')
       assert_response 400
-      match_json([bad_request_error_pattern('body_html', :"can't be blank")])
+      match_json([bad_request_error_pattern('body_html', :blank)])
     end
 
     def test_update_invalid_answer
@@ -120,7 +120,7 @@ module ApiDiscussions
       put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: 90)
       Topic.any_instance.unstub(:stamp_type)
       assert_response 400
-      match_json([bad_request_error_pattern('answer', :data_type_mismatch, data_type: 'Boolean')])
+      match_json([bad_request_error_pattern('answer', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: Integer)])
     end
 
     def test_update_with_user_id
@@ -153,7 +153,7 @@ module ApiDiscussions
       comment =  comment_obj
       put :update, construct_params({ id: comment.id }, body_html: nil)
       assert_response 400
-      match_json([bad_request_error_pattern('body_html', :data_type_mismatch, data_type: String)])
+      match_json([bad_request_error_pattern('body_html', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type')])
     end
 
     def test_destroy
@@ -173,7 +173,7 @@ module ApiDiscussions
     def test_create_no_params
       post :create, construct_params({ id: topic_obj.id }, {})
       assert_response 400
-      match_json [bad_request_error_pattern('body_html', :required_and_data_type_mismatch, data_type: String)]
+      match_json [bad_request_error_pattern('body_html', :datatype_mismatch, code: :missing_field, expected_data_type: String)]
     end
 
     def test_create_mandatory_params
@@ -244,7 +244,7 @@ module ApiDiscussions
       t = Topic.where('posts_count > ?', 1).first || create_test_post(topic_obj, User.first).topic
       get :topic_comments, controller_params(id: t.id, per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
     end
 
     def test_comments_with_link_header
@@ -267,6 +267,29 @@ module ApiDiscussions
       assert_response 200
       assert JSON.parse(response.body).count == 1
       assert_nil response.headers['Link']
+    end
+
+    def test_topic_comments_in_merged_topic
+      f = Forum.first
+      source = create_test_topic(f)
+      target = create_test_topic(f)
+      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      create_test_post(source, User.first)
+      get :topic_comments, controller_params(id: source.id)
+      assert_response 200
+    ensure
+      source.try(:destroy)
+    end
+
+    def test_create_in_merged_topic
+      f = Forum.first
+      source = create_test_topic(f)
+      target = create_test_topic(f)
+      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      post :create, construct_params({ id: source.id }, body_html: 'test')
+      assert_response 201
+    ensure
+      source.try(:destroy)
     end
   end
 end

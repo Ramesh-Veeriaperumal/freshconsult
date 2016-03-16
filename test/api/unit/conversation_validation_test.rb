@@ -13,22 +13,21 @@ class ConversationValidationTest < ActionView::TestCase
     item = nil
     conversation = ConversationValidation.new(controller_params, item)
     refute conversation.valid?(:create)
-    assert conversation.errors.full_messages.include?('Body required_and_data_type_mismatch')
-    refute conversation.errors.full_messages.include?('Body html data_type_mismatch')
 
-    controller_params = { 'user_id' => 1, body: '', body_html: '' }
+    assert conversation.errors.full_messages.include?('Body datatype_mismatch')
+    assert_equal({ body: {  expected_data_type: String, code: :missing_field }, user_id: {} }, conversation.error_options)
+
+    controller_params = { 'user_id' => 1, body: '' }
     item = nil
     conversation = ConversationValidation.new(controller_params, item)
     refute conversation.valid?(:create)
     assert conversation.errors.full_messages.include?('Body blank')
-    refute conversation.errors.full_messages.include?('Body html data_type_mismatch')
 
-    controller_params = { 'user_id' => 1, body: true, body_html: true }
+    controller_params = { 'user_id' => 1, body: true }
     item = nil
     conversation = ConversationValidation.new(controller_params, item)
     refute conversation.valid?(:create)
-    assert conversation.errors.full_messages.include?('Body data_type_mismatch')
-    assert conversation.errors.full_messages.include?('Body html data_type_mismatch')
+    assert conversation.errors.full_messages.include?('Body datatype_mismatch')
   end
 
   def test_emails_validation_invalid
@@ -37,9 +36,9 @@ class ConversationValidationTest < ActionView::TestCase
     conversation = ConversationValidation.new(controller_params, item)
     refute conversation.valid?
     errors = conversation.errors.full_messages
-    assert errors.include?('Cc emails not_a_valid_email')
-    assert errors.include?('Bcc emails not_a_valid_email')
-    assert errors.include?('Notify emails not_a_valid_email')
+    assert errors.include?('Cc emails array_invalid_format')
+    assert errors.include?('Bcc emails array_invalid_format')
+    assert errors.include?('Notify emails array_invalid_format')
   end
 
   def test_attachment_multiple_errors
@@ -51,7 +50,8 @@ class ConversationValidationTest < ActionView::TestCase
     conversation = ConversationValidation.new(controller_params, item)
     refute conversation.valid?
     errors = conversation.errors.full_messages
-    assert errors.include?('Attachments data_type_mismatch')
+    assert errors.include?('Attachments array_datatype_mismatch')
+    assert_equal({ body: {}, user_id: {}, attachments: { expected_data_type: 'valid file format' } }, conversation.error_options)
     assert errors.count == 1
     Account.unstub(:current)
     TicketsValidationHelper.unstub(:attachment_size)
@@ -63,10 +63,10 @@ class ConversationValidationTest < ActionView::TestCase
     conversation = ConversationValidation.new(controller_params, item)
     refute conversation.valid?
     errors = conversation.errors.full_messages
-    assert errors.include?('Notify emails data_type_mismatch')
-    assert errors.include?('Bcc emails data_type_mismatch')
-    assert errors.include?('Cc emails data_type_mismatch')
-    assert errors.include?('Attachments data_type_mismatch')
+    assert errors.include?('Notify emails datatype_mismatch')
+    assert errors.include?('Bcc emails datatype_mismatch')
+    assert errors.include?('Cc emails datatype_mismatch')
+    assert errors.include?('Attachments datatype_mismatch')
     Account.unstub(:current)
   end
 end

@@ -5,8 +5,8 @@ class TicketsController < ApiApplicationController
   include TicketConcern
   decorate_views
 
-  around_filter :run_on_slave, :only => [:index]
-  
+  around_filter :run_on_slave, only: [:index]
+
   before_filter :ticket_permission?, only: [:destroy]
 
   def create
@@ -126,7 +126,7 @@ class TicketsController < ApiApplicationController
     def validate_filter_params
       params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @ticket_filter = TicketFilterValidation.new(params, nil, string_request_params?)
-      render_query_param_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
+      render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
     def scoper
@@ -241,12 +241,10 @@ class TicketsController < ApiApplicationController
     end
 
     def build_ticket_body_attributes
-      if params[cname][:description] || params[cname][:description_html]
-        ticket_body_hash = { ticket_body_attributes: { description: params[cname][:description],
-                                                       description_html: params[cname][:description_html] } }
+      if params[cname][:description]
+        ticket_body_hash = { ticket_body_attributes: { description_html: params[cname][:description] } }
         params[cname].merge!(ticket_body_hash).tap do |t|
           t.delete(:description) if t[:description]
-          t.delete(:description_html) if t[:description_html]
         end
       end
     end

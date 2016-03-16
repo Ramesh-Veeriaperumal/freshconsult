@@ -1,4 +1,5 @@
 class TimeEntryValidation < ApiValidation
+  CHECK_PARAMS_SET_FIELDS = %w(start_time agent_id timer_running).freeze
   attr_accessor :billable, :executed_at, :time_spent, :agent_id, :user, :note, :item, :request_params, :timer_running, :start_time
 
   # do not change validation order
@@ -6,16 +7,16 @@ class TimeEntryValidation < ApiValidation
   validates :billable, :timer_running, data_type: { rules: 'Boolean' }
   validates :note, data_type: { rules: String, allow_nil: true }
   validates :executed_at, date_time: { allow_nil: true }
-  validates :time_spent, data_type: { rules: String, allow_nil: true }
-  validates :time_spent, data_type: { rules: String }, format: { with: /^\d+:[0-5][0-9]$/, message: 'invalid_time_spent' }, if: -> { time_spent && errors[:time_spent].blank? }
+
+  validates :time_spent, data_type: { rules: String }, custom_format: { with: /^\d+:[0-5][0-9]$/, accepted: 'hh:mm' }, allow_nil: true
 
   # Start time specific validations*
   # start_time param has no meaning timer is already on in case of update.
-  validates :start_time, custom_absence: { allow_nil: true, message: :timer_running_true }, if: -> { item.timer_running && @start_time_set }, on: :update
+  validates :start_time, custom_absence: { allow_nil: true, message: :timer_running_true }, if: -> { item.timer_running }, on: :update
 
   # start_time param has no meaning when timer is off.
   validates :start_time, custom_absence: { allow_nil: true, message: :timer_running_false },
-                         if: -> { @start_time_set && errors[:start_time].blank? && errors[:timer_running].blank? && !timer_running }
+                         if: -> { errors[:timer_running].blank? && !timer_running }
   validates :start_time, date_time: { allow_nil: true }
 
   # start_time should be lesser than current_time to avoid negative time_spent values.
@@ -28,7 +29,7 @@ class TimeEntryValidation < ApiValidation
   # User specific validations
   # agent_id can't be changed in update if timer is running for the user.
   validates :agent_id, custom_absence: { allow_nil: false, message: :cant_update_user },
-                       if: -> { item.timer_running && @agent_id_set && item.user_id != agent_id }, on: :update
+                       if: -> { item.timer_running && item.user_id != agent_id }, on: :update
   validates :agent_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true }
 
   # if agent_id is not a number or not set in update, to avoid query, below if condition is used.
@@ -36,7 +37,6 @@ class TimeEntryValidation < ApiValidation
 
   def initialize(request_params, item, timer_running)
     super(request_params, item)
-    check_params_set(request_params, item)
     @request_params = request_params
     @item = item
     @time_spent = request_params['time_spent']
@@ -47,7 +47,7 @@ class TimeEntryValidation < ApiValidation
 
     def valid_user?
       user = Account.current.agents_from_cache.find { |x| x.user_id == @agent_id } if @agent_id_set
-      errors[:agent_id] << :blank unless user
+      errors[:agent_id] << :"can't be blank" unless user
     end
 
     def disallow_reset_timer_value

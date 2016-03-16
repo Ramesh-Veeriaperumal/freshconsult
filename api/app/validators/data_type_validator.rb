@@ -1,55 +1,59 @@
-class DataTypeValidator < ActiveModel::EachValidator
+class DataTypeValidator < ApiValidator
+  include ErrorOptions
+
   # Introduced this as the error message should show layman terms.
-  # Should have error_options attribute for a class to use this validator
-  DATA_TYPE_MAPPING = { Hash => 'key/value pair', ActionDispatch::Http::UploadedFile => 'valid format' }
-
-  def validate_each(record, attribute, values)
-    return if record.errors[attribute].present?
-
-    message = options[:message]
-    message ||= required_attribute_not_defined?(record, attribute, values) ? :required_and_data_type_mismatch : :data_type_mismatch
-
-    if valid_type?(options[:rules], values, record, attribute)
-      record.errors[attribute] = :blank if options[:required] && !present_or_false?(values)
-    else
-      record.errors[attribute] << message
-      data_type = DATA_TYPE_MAPPING.key?(options[:rules]) ? DATA_TYPE_MAPPING[options[:rules]] : options[:rules]
-      (record.error_options ||= {}).merge!(attribute => { data_type: data_type })
-    end
-  end
+  DATA_TYPE_MAPPING = { Hash => 'key/value pair', ActionDispatch::Http::UploadedFile => 'valid file format', NilClass => NULL_TYPE, TrueClass => 'Boolean', FalseClass => 'Boolean' }
 
   private
 
+    def invalid?
+      !valid_type? || blank_when_required?
+    end
+
+    def message
+      if valid_type? && blank_when_required?
+        :blank
+      else
+        :datatype_mismatch
+      end
+    end
+
+    def error_code
+      :missing_field if required_attribute_not_defined?
+    end
+
+    def blank_when_required?
+      return internal_values[:blank_when_required] if internal_values.key?(:blank_when_required)
+      internal_values[:blank_when_required] = valid_type? && options[:rules] == String && options[:required] && !present_or_false?
+    end
+
+    def custom_error_options
+      error_options = { expected_data_type: expected_data_type }
+      error_options.merge!(given_data_type: infer_data_type(value), prepend_msg: :input_received) unless skip_input_info?
+      error_options
+    end
+
+    def skip_input_info?
+      required_attribute_not_defined? || blank_when_required? || array_value?
+    end
+
+    def expected_data_type
+      DATA_TYPE_MAPPING[options[:rules]] || options[:rules]
+    end
+
     # check if value class is same as type. case & when uses === operator which compares the type first.
     # Faster than is_a? check
-    def valid_type?(type, value, record, attribute)
-      case value
-      when NilClass
-        allow_unset?(type) && !record.instance_variable_defined?("@#{attribute}")
+    def valid_type?(type = options[:rules])
+      return internal_values[:valid_type] if internal_values.key?(:valid_type)
+      internal_values[:valid_type] = case value
       when type
         true
       when TrueClass, FalseClass
         type == 'Boolean'
       when 'true', 'false'
-        type == 'Boolean' && allow_string?(record)
+        type == 'Boolean' && allow_string?
       else
         false
       end
-    end
-
-    def required_attribute_not_defined?(record, attribute, _value)
-      options[:required] && !record.instance_variable_defined?("@#{attribute}")
-    end
-
-    def allow_string?(record)
-      !options[:ignore_string].nil? && record.send(options[:ignore_string])
-    end
-
-    def allow_unset?(type)
-      !options[:required] && ([Hash, Array, 'Boolean'].include?(type) || options[:allow_unset])
-    end
-
-    def present_or_false?(value)
-      value.present? || value.is_a?(FalseClass)
     end
 end
