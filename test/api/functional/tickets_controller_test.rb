@@ -1382,6 +1382,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 200
     assert User.count == count + 1
+    assert t.reload.requester_id == User.last.id
   end
 
   def test_update_with_new_twitter_id_without_nil_requester_id
@@ -1391,6 +1392,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 200
     assert User.count == count + 1
+    assert t.reload.requester_id == User.last.id
   end
 
   def test_update_with_new_phone_without_nil_requester_id
@@ -1400,6 +1402,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 200
     assert User.count == count + 1
+    assert t.reload.requester_id == User.last.id
   end
 
   def test_update_with_new_email_with_nil_requester_id
