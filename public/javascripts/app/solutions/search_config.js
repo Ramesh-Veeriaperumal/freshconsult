@@ -68,8 +68,7 @@ window.App.Solutions = window.App.Solutions || {};
     formatTranslationDropdown: function () {
       $('#language_select').select2(
         $.extend({}, App.Solutions.traslationDropdownOpts, {
-          formatSelection: App.Solutions.formatLangOptions,
-          formatResult: App.Solutions.formatLangOptions
+          dropdownCssClass: "language-select-solution-search"
         })
       );
     },
