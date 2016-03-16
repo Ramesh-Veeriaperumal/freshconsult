@@ -4192,11 +4192,11 @@ en:
         dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
         count: "%{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero."
         confirm_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
-      add_translation: Add Translation
-      add_primary_info: Create article in your primary language<br/>to select other language translations.
-      translate: "Translate"
-      show_all_analytics: See analytics for all languages
-      not_in_portal: This language is not visible to users
+      add_translation: "Add Translation"
+      add_primary_info: "You can't create other language translations <br />until you create the article in %{primary_language}"
+      translations: "Translations"
+      show_all_analytics: "See analytics for all languages"
+      not_in_portal: "This language is not visible to users"
       language_not_in_portal: "This article will not show up to your users on the portal until the language is enabled"
       add_language: "Add %{language_name}"
       contact_admin: "<b>Contact your admin</b>"

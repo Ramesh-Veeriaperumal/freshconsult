@@ -247,6 +247,10 @@
       display: none;
     }
   }
+  
+  .warning-icon {
+    color: #C51616;
+  }
 
   .solutions .multilingual_draft .language_icon {
     @include margin-right(0);
