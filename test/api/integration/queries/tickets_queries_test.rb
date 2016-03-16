@@ -14,7 +14,7 @@ class TicketsQueriesTest < ActionDispatch::IntegrationTest
         api_destroy: 5,
         api_restore: 6,
 
-        create: 88,
+        create: 89,
         show: 20,
         update: 38,
         index: 20,

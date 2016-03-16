@@ -51,7 +51,6 @@ class ActionDispatch::IntegrationTest
     host!('localhost.freshpo.com')
     set_key(account_key, 500, nil)
     set_key(default_key, 400, nil)
-    @account.make_current
     set_key(plan_key(@account.subscription.subscription_plan_id), 200, nil)
     Bullet.add_whitelist type: :unused_eager_loading, class_name: 'ForumCategory', association: :forums
     Bullet.add_whitelist type: :n_plus_one_query, class_name: 'ForumCategory', association: :account
