@@ -275,11 +275,12 @@ module SolutionHelper
 
 	def language_flags(solution_meta, article_flag = false)
 		return "" unless current_account.multilingual?
+		edit = edit_privilege?(solution_meta.class.short_name)
 		content = ""
-		content << "<div class='span5 pull-right mt8 #{"language-bar" if article_flag}'>"
+		content << "<div class='span5 pull-right mt8 #{"language-bar" if article_flag} #{'view-links' unless edit}'>"
 		content << '<span class="pull-right">'
 		([Account.current.language_object] + Account.current.supported_languages_objects).each do |language|
-			content << language_icon(solution_meta, language)
+			content << (edit ? language_icon(solution_meta, language) : version_view_icon(solution_meta, language))
 		end
 		content << '</span>'
 		content << '</div>'
@@ -308,6 +309,32 @@ module SolutionHelper
 							solution_article_version_path(solution_meta.id, language.code, :anchor => 'edit') :
 							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id),
 							options)
+	end
+
+	def version_view_icon(solution_meta, language)
+		category = solution_meta.class.short_name
+		options = { 
+			:class => "language_symbol #{language_style(solution_meta, language)} tooltip",
+			:title => language.name,
+			:id => "version-#{solution_meta.id}-#{language.id}",
+		}
+		if category.eql?('article')
+			options.merge!({:"data-pjax" => "#body-container"})
+			link_to("<span class='language_name'>#{language.short_code.capitalize}</span>".html_safe, 
+								solution_article_version_path(solution_meta.id, language.code),
+								options)
+		else
+			content_tag(:span, "<span class='language_name'>#{language.short_code.capitalize}</span>".html_safe, options)
+		end
+	end
+
+	def edit_privilege?(category)
+		case category.to_sym
+		when :category, :folder
+			privilege?(:manage_solutions)
+		when :article
+			privilege?(:publish_solution)
+		end
 	end
 
 	def language_label_title language, flag

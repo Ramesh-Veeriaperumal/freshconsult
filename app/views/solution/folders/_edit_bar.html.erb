@@ -1,4 +1,5 @@
 <div class="list-query-panel">
+	<% if privilege?(:publish_solution) %>
 	<ul>
 		<li class="lf-item">
 			<div class="item-checkbox"><input type="checkbox" id="fa_item-select-all" /></div>
@@ -36,6 +37,7 @@
 			<%# end %>
 		</li>
 	</ul>
+	<% end %>
 	<% if Account.current.multilingual? %>
 		<span id="language-toggle">
 			<%= link_to t('solution.show_languages'), '', :id => 'show-link'%>

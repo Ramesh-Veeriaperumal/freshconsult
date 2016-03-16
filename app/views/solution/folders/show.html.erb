@@ -2,7 +2,7 @@
 <% content_for :sticky_title do %>
   <%= render :partial => 'title_bar' %>
   <div class="bulk-actions-bar">
-    <%= render :partial => 'edit_bar' if privilege?(:publish_solution) && @folder_meta.solution_article_meta.present? %>
+    <%= render :partial => 'edit_bar' if @folder_meta.solution_article_meta.present? %>
   </div>
 <% end %>
 <% content_for :sticky_right do %>
