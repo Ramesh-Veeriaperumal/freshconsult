@@ -52,11 +52,11 @@ module HelpdeskReports::Helper::Ticket
   def report_specific_constraints pdf_export
     res = {report_type: report_type}
 
-    if [:agent_summary,:group_summary].include?(report_type.to_sym)
+    if ["agent_summary","group_summary"].include?(report_type)
         group_ids, agent_ids = []
         param = @query_params[0]
         param[:filter].each do |f|
-          if report_type == :agent_summary 
+          if report_type == "agent_summary" 
             agent_ids = f["value"].split(",") if f["condition"] == "agent_id"
             group_ids = f["value"] == "-1" ? nil : f["value"].split(",").select{|elem| elem != "-1"} if f["condition"] == "group_id"
           else
@@ -66,7 +66,7 @@ module HelpdeskReports::Helper::Ticket
         end
         res.merge!(group_ids: group_ids.map{|grp_id| grp_id.to_i }) if !group_ids.nil?
         res.merge!(agent_ids: agent_ids.map{|agt_id| agt_id.to_i }) if !agent_ids.nil?
-    elsif report_type.to_sym == :glance
+    elsif report_type == "glance"
       res.merge!(pdf_export: pdf_export)
     end
     
@@ -212,8 +212,8 @@ module HelpdeskReports::Helper::Ticket
   def validate_time_trend param
     report_duration = date_range_diff(param[:date_range])
     
-    if report_duration.present? && report_type != "performance_distribution"
-      allowed_time_trend = TIME_TREND
+    if report_duration.present? && report_type == "ticket_volume"
+      allowed_time_trend = param[:time_trend_conditions]
       TIME_TREND.each{ |trend| allowed_time_trend.delete(trend) if report_duration > MAX_DATE_RANGE_FOR_TREND[trend]}
       param[:time_trend_conditions] = allowed_time_trend
     end
