@@ -18,7 +18,7 @@ class BadRequestErrorTest < ActionView::TestCase
   end
 
   def test_duplicate_code
-    duplicate_code_messages = [:"has already been taken", :"already exists in the selected category", :"Email has already been taken"]
+    duplicate_code_messages = [:'has already been taken', :'already exists in the selected category', :'Email has already been taken']
     duplicate_code_messages.each do |message|
       test = BadRequestError.new('attribute', message)
       assert_equal 'duplicate_value', test.code.to_s
@@ -28,7 +28,7 @@ class BadRequestErrorTest < ActionView::TestCase
   end
 
   def test_invalid_value_code
-    invalid_code_messages = { :"can't be blank" => {}, :junk_message => {}, :"is not included in the list" => { list: '1,2' }, :invalid_user => { id: 1, name: 'name' } }
+    invalid_code_messages = { :"can't be blank" => {}, :junk_message => {}, :'is not included in the list' => { list: '1,2' }, :invalid_user => { id: 1, name: 'name' } }
     invalid_code_messages.each do |message, params|
       test = BadRequestError.new('attribute', message, params)
       assert_equal 'invalid_value', test.code.to_s

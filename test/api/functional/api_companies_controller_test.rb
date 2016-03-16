@@ -80,13 +80,13 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: name, description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10))
     assert_response 409
-    match_json([bad_request_error_pattern('name', :"has already been taken")])
+    match_json([bad_request_error_pattern('name', :'has already been taken')])
   end
 
   def test_create_length_invalid
     params_hash = { name: Faker::Lorem.characters(300) }
     post :create, construct_params({}, params_hash)
-    match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters")])
+    match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters')])
     assert_response 400
   end
 
@@ -100,7 +100,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   def test_create_invalid_domains
     params_hash = { name: Faker::Lorem.characters(20), domains: ["#{Faker::Name.name}. #{Faker::Name.name}"] }
     post :create, construct_params({}, params_hash)
-    match_json([bad_request_error_pattern(:domains, :"Enter valid domains")])
+    match_json([bad_request_error_pattern(:domains, :'Enter valid domains')])
     assert_response 400
   end
 
@@ -108,7 +108,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     params_hash = { name: Faker::Lorem.characters(20), domains: ["#{Faker::Name.name}. #{Faker::Name.name}"] }
     put :update, construct_params({ id: company.id }, params_hash)
-    match_json([bad_request_error_pattern(:domains, :"Enter valid domains")])
+    match_json([bad_request_error_pattern(:domains, :'Enter valid domains')])
     assert_response 400
   end
 
@@ -183,7 +183,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     params_hash = { name: Faker::Lorem.characters(300) }
     put :update, construct_params({ id: company.id }, params_hash)
-    match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters")])
+    match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters')])
     assert_response 400
   end
 
@@ -285,7 +285,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
     assert_response 400
     match_json([bad_request_error_pattern('agt_count', :datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('date', :invalid_format, accepted: 'yyyy-mm-dd'),
+                bad_request_error_pattern('date', :invalid_date, accepted: 'yyyy-mm-dd'),
                 bad_request_error_pattern('show_all_ticket', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 
@@ -318,7 +318,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                                        'show_all_ticket' => Faker::Number.number(5), 'file_url' =>  'test_url' })
     assert_response 400
     match_json([bad_request_error_pattern('agt_count', :datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('date', :invalid_format, accepted: 'yyyy-mm-dd'),
+                bad_request_error_pattern('date', :invalid_date, accepted: 'yyyy-mm-dd'),
                 bad_request_error_pattern('show_all_ticket', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
                 bad_request_error_pattern('file_url', :invalid_format, accepted: 'valid URL')])
   end
@@ -336,7 +336,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company2 = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: company2.id }, name: company1.name)
     assert_response 409
-    match_json([bad_request_error_pattern('name', :"has already been taken")])
+    match_json([bad_request_error_pattern('name', :'has already been taken')])
   end
 
   def test_update_delete_existing_domains

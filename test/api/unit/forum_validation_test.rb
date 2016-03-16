@@ -10,7 +10,7 @@ class ForumValidationTest < ActionView::TestCase
     assert forum.errors.full_messages.include?('Forum category datatype_mismatch')
     assert forum.errors.full_messages.include?('Forum visibility not_included')
     assert forum.errors.full_messages.include?('Forum type not_included')
-    assert_equal({ name: {  expected_data_type: String, code: :missing_field }, forum_category_id: {  expected_data_type: :"Positive Integer",
+    assert_equal({ name: {  expected_data_type: String, code: :missing_field }, forum_category_id: {  expected_data_type: :'Positive Integer',
                                                                                                       code: :missing_field }, forum_visibility: { list: '1,2,3,4', code: :missing_field }, forum_type: { list: '1,2,3,4', code: :missing_field } }, forum.error_options)
   end
 
@@ -21,7 +21,7 @@ class ForumValidationTest < ActionView::TestCase
     refute forum.valid?(:update)
     assert forum.errors.full_messages.include?('Forum category datatype_mismatch')
     assert_equal({ name: { expected_data_type: String, code: :missing_field },
-                   forum_category_id: { expected_data_type: :"Positive Integer", prepend_msg: :input_received, given_data_type: String },
+                   forum_category_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: String },
                    forum_visibility: { list: '1,2,3,4', code: :missing_field },
                    forum_type: { list: '1,2,3,4', code: :missing_field } }, forum.error_options)
   end

@@ -50,9 +50,9 @@ class TicketValidation < ApiValidation
 
   # Email related validations
   validates :email, data_type: { rules: String, allow_nil: true }
-  validates :email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :"valid email address", allow_nil: true }
+  validates :email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address', allow_nil: true }
   validates :email, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
-  validates :cc_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, accepted: :"valid email address" } }
+  validates :cc_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, accepted: :'valid email address' } }
 
   validates :cc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message_options: { element_type: :values } }
 

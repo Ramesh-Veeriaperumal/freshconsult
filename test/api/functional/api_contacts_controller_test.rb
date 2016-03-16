@@ -77,7 +77,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: email)
-    match_json([bad_request_error_pattern('email', :"Email has already been taken")])
+    match_json([bad_request_error_pattern('email', :'Email has already been taken')])
     assert_response 409
   end
 
@@ -268,7 +268,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         custom_fields: { 'sample_url' => 'aaaa', 'sample_date' => '2015-09-09T08:00' })
     assert_response 400
-    match_json([bad_request_error_pattern('sample_date', :invalid_format, accepted: 'yyyy-mm-dd'),
+    match_json([bad_request_error_pattern('sample_date', :invalid_date, accepted: 'yyyy-mm-dd'),
                 bad_request_error_pattern('sample_url', :invalid_format, accepted: 'valid URL')])
   end
 
@@ -297,7 +297,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         custom_fields: { 'check_me' => 'aaa', 'doj' => 2010 })
     assert_response 400
     match_json([bad_request_error_pattern('check_me', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('doj', :invalid_format, accepted: 'yyyy-mm-dd')])
+                bad_request_error_pattern('doj', :invalid_date, accepted: 'yyyy-mm-dd')])
   end
 
   def test_create_contact_with_invalid_dropdown_field
@@ -322,14 +322,14 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_length_invalid
     post :create, construct_params({}, name: Faker::Lorem.characters(300), job_title: Faker::Lorem.characters(300), mobile: Faker::Lorem.characters(300), address: Faker::Lorem.characters(300), email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com", twitter_id: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
-    match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('job_title', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('mobile', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('address', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('email', :"Has 328 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('twitter_id', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('tags', :"It should only contain elements that have maximum of 32 characters")])
+    match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('job_title', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('mobile', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('address', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('email', :'Has 328 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('twitter_id', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('phone', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('tags', :'It should only contain elements that have maximum of 32 characters')])
     assert_response 400
   end
 
@@ -466,7 +466,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     email = user1.email
     put :update, construct_params({ id: user2.id }, email: email)
     assert_response 409
-    match_json([bad_request_error_pattern('email', :"Email has already been taken")])
+    match_json([bad_request_error_pattern('email', :'Email has already been taken')])
   end
 
   def test_update_length_invalid
@@ -474,14 +474,14 @@ class ApiContactsControllerTest < ActionController::TestCase
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
     put :update, construct_params({ id: sample_user.id }, name: Faker::Lorem.characters(300), job_title: Faker::Lorem.characters(300), mobile: Faker::Lorem.characters(300), address: Faker::Lorem.characters(300), email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com", twitter_id: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
-    match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('job_title', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('mobile', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('address', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('email', :"Has 328 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('twitter_id', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('tags', :"It should only contain elements that have maximum of 32 characters")])
+    match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('job_title', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('mobile', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('address', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('email', :'Has 328 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('twitter_id', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('phone', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('tags', :'It should only contain elements that have maximum of 32 characters')])
     assert_response 400
     sample_user.update_attribute(:email, email)
   end
@@ -954,7 +954,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :"It should only contain elements that have maximum of 255 characters")])
+    match_json([bad_request_error_pattern('other_emails', :'It should only contain elements that have maximum of 255 characters')])
   end
 
   def test_create_with_other_emails_with_duplication

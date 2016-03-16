@@ -90,7 +90,7 @@ module ApiDiscussions
       another_forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, name: another_forum.name)
       assert_response 409
-      match_json([bad_request_error_pattern('name', :"already exists in the selected category")])
+      match_json([bad_request_error_pattern('name', :'already exists in the selected category')])
     end
 
     def test_update_unexpected_fields
@@ -156,8 +156,8 @@ module ApiDiscussions
       fc = fc_obj
       forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, name: Faker::Lorem.characters(300), description: Faker::Lorem.characters(300))
-      match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
-                  bad_request_error_pattern('description', :"Has 300 characters, it can have maximum of 255 characters")])
+      match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
+                  bad_request_error_pattern('description', :'Has 300 characters, it can have maximum of 255 characters')])
       assert_response 400
     end
 
@@ -188,8 +188,8 @@ module ApiDiscussions
 
     def test_create_validate_length
       post :create, construct_params({ id: ForumCategory.first.id }, forum_visibility: 1, forum_type: 1, name: Faker::Lorem.characters(300), description: Faker::Lorem.characters(300))
-      match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
-                  bad_request_error_pattern('description', :"Has 300 characters, it can have maximum of 255 characters")])
+      match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
+                  bad_request_error_pattern('description', :'Has 300 characters, it can have maximum of 255 characters')])
       assert_response 400
     end
 
@@ -377,7 +377,7 @@ module ApiDiscussions
       fc = fc_obj
       forum = create_test_forum(fc)
       post :create, construct_params({ id: fc.id }, forum_visibility: 1, forum_type: 1, name: forum.name)
-      match_json([bad_request_error_pattern('name', :"already exists in the selected category")])
+      match_json([bad_request_error_pattern('name', :'already exists in the selected category')])
       assert_response 409
     end
 

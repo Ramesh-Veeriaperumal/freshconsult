@@ -2,7 +2,7 @@ require_relative '../unit_test_helper'
 
 class ErrorHelperTest < ActionView::TestCase
   def test_format_error
-    error_array = { 'requester_id' => :duplicate_value, 'email' => :"has already been taken", 'error_field' => :invalid_field }
+    error_array = { 'requester_id' => :duplicate_value, 'email' => :'has already been taken', 'error_field' => :invalid_field }
     @errors = ErrorHelper.format_error(error_array)
     assert_equal @errors.count, error_array.count
     @errors.each.with_index do |error, i|
@@ -16,7 +16,7 @@ class ErrorHelperTest < ActionView::TestCase
 
   def test_find_http_error_code
     errors = []
-    [:"can't be blank", :"has already been taken"].each do |value|
+    [:"can't be blank", :'has already been taken'].each do |value|
       errors << BadRequestError.new('name', value)
     end
     code = ErrorHelper.find_http_error_code(errors)

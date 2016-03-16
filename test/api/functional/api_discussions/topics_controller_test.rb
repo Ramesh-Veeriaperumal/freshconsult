@@ -98,7 +98,7 @@ module ApiDiscussions
     def test_create_validate_length
       post :create, construct_params({ id: forum_obj.id },
                                      title: Faker::Lorem.characters(300), message_html: 'test content')
-      match_json([bad_request_error_pattern('title', :"Has 300 characters, it can have maximum of 255 characters")])
+      match_json([bad_request_error_pattern('title', :'Has 300 characters, it can have maximum of 255 characters')])
       assert_response 400
     end
 
@@ -358,7 +358,7 @@ module ApiDiscussions
 
     def test_update_invalid_title_length
       put :update, construct_params({ id: first_topic.id }, title: Faker::Lorem.characters(300))
-      match_json([bad_request_error_pattern('title', :"Has 300 characters, it can have maximum of 255 characters")])
+      match_json([bad_request_error_pattern('title', :'Has 300 characters, it can have maximum of 255 characters')])
       assert_response 400
     end
 

@@ -19,7 +19,7 @@ class DateTimeValidator < ApiValidator
     end
 
     def message
-      :invalid_format
+      :invalid_date
     end
 
     def custom_error_options

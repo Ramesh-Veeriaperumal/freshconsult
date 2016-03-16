@@ -196,8 +196,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
     pattern = [bad_request_error_pattern('billable', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)]
     pattern << bad_request_error_pattern('agent_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)
     pattern << bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)
-    pattern << bad_request_error_pattern('executed_after', :invalid_format, accepted: :"combined date and time ISO8601")
-    pattern << bad_request_error_pattern('executed_before', :invalid_format, accepted: :"combined date and time ISO8601")
+    pattern << bad_request_error_pattern('executed_after', :invalid_date, accepted: :'combined date and time ISO8601')
+    pattern << bad_request_error_pattern('executed_before', :invalid_date, accepted: :'combined date and time ISO8601')
     assert_response 400
     match_json pattern
   end
@@ -616,8 +616,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: '89/12',
                                                   note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', :invalid_format, accepted: :"combined date and time ISO8601"),
-                bad_request_error_pattern('executed_at', :invalid_format, accepted: :"combined date and time ISO8601")])
+    match_json([bad_request_error_pattern('start_time', :invalid_date, accepted: :'combined date and time ISO8601'),
+                bad_request_error_pattern('executed_at', :invalid_date, accepted: :'combined date and time ISO8601')])
   end
 
   def test_update_inclusion_invalid

@@ -175,7 +175,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     # IN API V1
     previous_updated_at_for_api_v1 = ticket.updated_at
     skip_bullet do
-      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description: Faker::Lorem.paragraph } } }.to_json, @write_headers
+      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description_html: Faker::Lorem.paragraph } } }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
@@ -200,7 +200,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
     # IN API V1
     skip_bullet do
-      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description: ticket.description } } }.to_json, @write_headers
+      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description_html: ticket.description } } }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
@@ -226,7 +226,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     previous_updated_at_for_api_v1 = ticket.updated_at
     sleep 1
 
-    put("/helpdesk/tickets/#{ticket.id}/conversations/#{note.id}.json", { helpdesk_note: { body: Faker::Lorem.paragraph } }.to_json, @write_headers)
+    put("/helpdesk/tickets/#{ticket.id}/conversations/#{note.id}.json", { helpdesk_note: { body_html: Faker::Lorem.paragraph } }.to_json, @write_headers)
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i > previous_updated_at_for_api_v1.to_i
   end

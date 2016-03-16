@@ -31,7 +31,7 @@ class ArrayValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ emails: :array_invalid_format, domains: :array_datatype_mismatch }, errors)
-    assert_equal({ emails: { accepted: :"valid email address" }, domains: { expected_data_type: String }, attributes: {} }, test.error_options)
+    assert_equal({ emails: { accepted: :'valid email address' }, domains: { expected_data_type: String }, attributes: {} }, test.error_options)
   end
 
   def test_array_valid_values

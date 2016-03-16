@@ -5,8 +5,6 @@ class ApiValidator < ActiveModel::EachValidator
     invalid_format: :array_invalid_format
   }
 
-  EMPTY_HASH = {}.freeze
-
   attr_reader :record, :attribute, :value, :internal_values
 
   def validate(record)
@@ -97,7 +95,7 @@ class ApiValidator < ActiveModel::EachValidator
     end
 
     def base_error_options
-      error_options = (options[:message_options] || EMPTY_HASH).dup
+      error_options = (options[:message_options] ? options[:message_options].dup : {})
       code = error_code
       error_options.merge!(code: code) if code
       error_options

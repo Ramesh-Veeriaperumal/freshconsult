@@ -3,7 +3,7 @@ class AgentFilterValidation < FilterValidation
 
   validates :state, custom_inclusion: { in: AgentConstants::STATES }
   validates :email, data_type: { rules: String  }
-  validates :email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :"valid email address", allow_nil: true }
+  validates :email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address', allow_nil: true }
 
   validates :phone, :mobile, data_type: { rules: String }
 

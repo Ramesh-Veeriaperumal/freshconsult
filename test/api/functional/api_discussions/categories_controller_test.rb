@@ -77,7 +77,7 @@ module ApiDiscussions
     def test_create_length_invalid
       params_hash = { name: Faker::Lorem.characters(300) }
       post :create, construct_params({}, params_hash)
-      match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters")])
+      match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters')])
       assert_response 400
     end
 
@@ -110,14 +110,14 @@ module ApiDiscussions
     def test_update_with_invalid_model
       new_fc = create_test_category
       put :update, construct_params({ id: fc.id }, name: new_fc.name)
-      match_json([bad_request_error_pattern('name', :"has already been taken")])
+      match_json([bad_request_error_pattern('name', :'has already been taken')])
       assert_response 409
     end
 
     def test_update_length_invalid
       new_fc = create_test_category
       put :update, construct_params({ id: fc.id }, name: Faker::Lorem.characters(300))
-      match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters")])
+      match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters')])
       assert_response 400
     end
 
@@ -206,7 +206,7 @@ module ApiDiscussions
       fc = create_test_category
       post :create, construct_params({}, 'name' => fc.name)
       pattern = [
-        bad_request_error_pattern('name', :"has already been taken")
+        bad_request_error_pattern('name', :'has already been taken')
       ]
       assert_response 409
       match_json(pattern)

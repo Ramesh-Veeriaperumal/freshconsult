@@ -239,7 +239,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ check1_1: :datatype_mismatch, check2_1: :datatype_mismatch, check3_1: :datatype_mismatch,
-                   country_1: :not_included, date_1: :invalid_format, decimal1_1: :datatype_mismatch,
+                   country_1: :not_included, date_1: :invalid_date, decimal1_1: :datatype_mismatch,
                    decimal2_1: :datatype_mismatch, decimal3_1: :datatype_mismatch, decimal4_1: :datatype_mismatch,
                    dropdown1_1: :not_included, dropdown2_1: :not_included, dropdown3_1: :not_included,
                    dropdown4_1: :not_included, first_1: :not_included, multi2_1: :datatype_mismatch,
@@ -256,7 +256,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ check1_1: :datatype_mismatch, check2_1: :datatype_mismatch, check3_1: :datatype_mismatch,
-                   country_1: :not_included, date_1: :invalid_format, decimal1_1: :datatype_mismatch,
+                   country_1: :not_included, date_1: :invalid_date, decimal1_1: :datatype_mismatch,
                    decimal2_1: :datatype_mismatch, decimal3_1: :datatype_mismatch, decimal4_1: :datatype_mismatch,
                    dropdown1_1: :not_included, dropdown2_1: :not_included, dropdown3_1: :not_included,
                    dropdown4_1: :not_included, first_1: :not_included, multi2_1: :datatype_mismatch,

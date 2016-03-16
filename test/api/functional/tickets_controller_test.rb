@@ -17,9 +17,9 @@ class TicketsControllerTest < ActionController::TestCase
     'number' => [:datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String],
     'decimal' => [:datatype_mismatch, expected_data_type: 'Number', prepend_msg: :input_received, given_data_type: String],
     'checkbox' => [:datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String],
-    'text' => [:"Has 300 characters, it can have maximum of 255 characters"],
+    'text' => [:'Has 300 characters, it can have maximum of 255 characters'],
     'paragraph' => [:datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer],
-    'date' => [:invalid_format, accepted: 'yyyy-mm-dd']
+    'date' => [:invalid_date, accepted: 'yyyy-mm-dd']
   }
 
   ERROR_REQUIRED_PARAMS  =  {
@@ -28,7 +28,7 @@ class TicketsControllerTest < ActionController::TestCase
     'checkbox' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :Boolean }],
     'text' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }],
     'paragraph' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }],
-    'date' => [:invalid_format, { code: :missing_field, accepted: 'yyyy-mm-dd' }]
+    'date' => [:invalid_date, { code: :missing_field, accepted: 'yyyy-mm-dd' }]
   }
   ERROR_CHOICES_REQUIRED_PARAMS  =  {
     'dropdown' => [:not_included, { code: :missing_field, list: 'Get Smart,Pursuit of Happiness,Armaggedon' }],
@@ -242,10 +242,10 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_length_invalid
     params = ticket_params_hash.except(:email).merge(name: Faker::Lorem.characters(300), subject: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('subject', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('tags', :"It should only contain elements that have maximum of 32 characters")])
+    match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('subject', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('phone', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('tags', :'It should only contain elements that have maximum of 32 characters')])
     assert_response 400
   end
 
@@ -268,7 +268,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_length_invalid_twitter_id
     params = ticket_params_hash.except(:email).merge(twitter_id: Faker::Lorem.characters(300))
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('twitter_id', :"Has 300 characters, it can have maximum of 255 characters")])
+    match_json([bad_request_error_pattern('twitter_id', :'Has 300 characters, it can have maximum of 255 characters')])
     assert_response 400
   end
 
@@ -285,7 +285,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_length_invalid_email
     params = ticket_params_hash.merge(email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com")
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('email', :"Has 328 characters, it can have maximum of 255 characters")])
+    match_json([bad_request_error_pattern('email', :'Has 328 characters, it can have maximum of 255 characters')])
     assert_response 400
   end
 
@@ -334,8 +334,8 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_date_time_invalid
     params = ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('due_by', :invalid_format, accepted: :"combined date and time ISO8601"),
-                bad_request_error_pattern('fr_due_by', :invalid_format, accepted: :"combined date and time ISO8601")])
+    match_json([bad_request_error_pattern('due_by', :invalid_date, accepted: :'combined date and time ISO8601'),
+                bad_request_error_pattern('fr_due_by', :invalid_date, accepted: :'combined date and time ISO8601')])
     assert_response 400
   end
 
@@ -1559,10 +1559,10 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(name: Faker::Lorem.characters(300), requester_id: nil, subject: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json([bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('subject', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('phone', :"Has 300 characters, it can have maximum of 255 characters"),
-                bad_request_error_pattern('tags', :"It should only contain elements that have maximum of 32 characters")])
+    match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('subject', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('phone', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('tags', :'It should only contain elements that have maximum of 32 characters')])
     assert_response 400
   end
 
@@ -1585,7 +1585,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: nil, twitter_id: Faker::Lorem.characters(300))
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json([bad_request_error_pattern('twitter_id', :"Has 300 characters, it can have maximum of 255 characters")])
+    match_json([bad_request_error_pattern('twitter_id', :'Has 300 characters, it can have maximum of 255 characters')])
     assert_response 400
   end
 
@@ -1604,7 +1604,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: nil, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com")
     put :update, construct_params({ id: t.display_id }, params_hash)
-    match_json([bad_request_error_pattern('email', :"Has 328 characters, it can have maximum of 255 characters")])
+    match_json([bad_request_error_pattern('email', :'Has 328 characters, it can have maximum of 255 characters')])
     assert_response 400
   end
 
@@ -1656,8 +1656,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :invalid_format, accepted: :"combined date and time ISO8601"),
-                bad_request_error_pattern('fr_due_by', :invalid_format, accepted: :"combined date and time ISO8601")])
+    match_json([bad_request_error_pattern('due_by', :invalid_date, accepted: :'combined date and time ISO8601'),
+                bad_request_error_pattern('fr_due_by', :invalid_date, accepted: :'combined date and time ISO8601')])
   end
 
   def test_update_extra_params_invalid

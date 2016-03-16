@@ -8,7 +8,7 @@ class ContactValidation < ApiValidation
     mobile: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     address: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     twitter_id: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
-    email: { data_type: { rules: String }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :"valid email address" }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    email: { data_type: { rules: String }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     description: { data_type: { rules: String } }
   }.freeze
 
@@ -41,7 +41,7 @@ class ContactValidation < ApiValidation
   validate :contact_detail_missing_update, if: -> { fb_profile_id.nil? && email_mandatory? }, on: :update
 
   validate :check_contact_merge_feature, if: -> { other_emails }
-  validates :other_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :"valid email address" }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } }
+  validates :other_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } }
   validates :other_emails, custom_length: { maximum: ContactConstants::MAX_OTHER_EMAILS_COUNT, message_options: { element_type: :values } }
   validate :check_contact_for_email_before_adding_other_emails, if: -> { other_emails }
   validate :check_other_emails_for_primary_email, if: -> { other_emails }, on: :update

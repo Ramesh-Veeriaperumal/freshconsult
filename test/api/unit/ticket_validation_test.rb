@@ -24,7 +24,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?
     errors = ticket.errors.full_messages
     assert errors.include?('Email invalid_format')
-    assert_equal({ email: { accepted: :"valid email address" } }, ticket.error_options)
+    assert_equal({ email: { accepted: :'valid email address' } }, ticket.error_options)
     Account.unstub(:current)
   end
 
@@ -36,7 +36,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?
     errors = ticket.errors.full_messages
     assert errors.include?('Cc emails array_invalid_format')
-    assert_equal({ email: {}, cc_emails: { accepted: :"valid email address" } }, ticket.error_options)
+    assert_equal({ email: {}, cc_emails: { accepted: :'valid email address' } }, ticket.error_options)
     Account.unstub(:current)
   end
 

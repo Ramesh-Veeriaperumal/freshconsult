@@ -15,7 +15,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     existing_group = Group.first || create_group(@account)
     post :create, construct_params({}, name: existing_group.name, description: Faker::Lorem.paragraph)
     assert_response 409
-    match_json([bad_request_error_pattern('name', :"has already been taken")])
+    match_json([bad_request_error_pattern('name', :'has already been taken')])
   end
 
   def test_create_group_with_all_fields
@@ -47,7 +47,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('escalate_to', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
                 bad_request_error_pattern('unassigned_for', :not_included, list: '30m,1h,2h,4h,8h,12h,1d,2d,3d'),
-                bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
+                bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
                 bad_request_error_pattern('auto_ticket_assign', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 
@@ -151,7 +151,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('escalate_to', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
                 bad_request_error_pattern('unassigned_for', :not_included, list: '30m,1h,2h,4h,8h,12h,1d,2d,3d'),
-                bad_request_error_pattern('name', :"Has 300 characters, it can have maximum of 255 characters"),
+                bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
                 bad_request_error_pattern('auto_ticket_assign', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 
@@ -248,7 +248,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     group2 = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group2.id }, name: group1.name)
     assert_response 409
-    match_json([bad_request_error_pattern('name', :"has already been taken")])
+    match_json([bad_request_error_pattern('name', :'has already been taken')])
   end
 
   def test_index_with_link_header
