@@ -69,10 +69,10 @@ api_error_messages:
   "has already been taken": "It should be a unique value"
   "Email has already been taken": "It should be a unique value"
   "already exists in the selected category": "It should be a unique value within a category"
-  invalid_agent_emails: "Accepts only agents' emails. There are no agents present with the emails, %{invalid_emails}"
+  invalid_agent_emails: "Accepts only emails of agents"
   absent_in_db: "There is no %{resource} matching the given %{attribute}"
   Enter valid domains: "It should be in the valid domain format"
-  immutable_resource: "This action is not permitted in merged topic. You can either delete (or) check if user is following (or) create a comment (or) list all the comments (or) view this topic."
+  immutable_resource: "This action is not permitted in merged topic"
 
 
 
