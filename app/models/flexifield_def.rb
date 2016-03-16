@@ -42,10 +42,6 @@ class FlexifieldDef < ActiveRecord::Base
   def ff_aliases
     flexifield_def_entries.nil? ? [] : flexifield_def_entries.map(&:flexifield_alias)
   end
-
-  def ff_alias_column_mapping
-    @mapping ||= flexifield_def_entries.each_with_object({}) { |ff_def_entry, hash| hash[ff_def_entry.flexifield_alias] = ff_def_entry.flexifield_name }
-  end
   
   def non_text_ff_aliases
     flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_alias)                                                   
