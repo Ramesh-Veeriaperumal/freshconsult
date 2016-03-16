@@ -46,7 +46,7 @@ module Solution::Feedback
 		end
 
 		def add_to_article_ticket
-			article_ticket = @ticket.build_article_ticket(:article_id => @article.id)
+			article_ticket = @ticket.build_article_ticket(:article_id => @article.current_article.id)
 			article_ticket.save
 		end
 
