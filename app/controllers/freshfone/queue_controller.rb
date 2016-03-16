@@ -63,7 +63,7 @@ class Freshfone::QueueController < FreshfoneBaseController
     return empty_twiml unless params[:Digits] == '*'
     queued_member = current_account.freshfone_subaccount.queues.get(params[:QueueSid]).members.get(params[:CallSid])
     queued_member.dequeue("#{host}/freshfone/queue/trigger_voicemail")
-    render :text => "Dequeued Call #{params[:CallSid]} from #{params[:QueueSid]}"
+    render :text => "Dequeued Call #{CGI.escapeHTML(params[:CallSid])} from #{CGI.escapeHTML(params[:QueueSid])}"
   end
 
   def redirect_to_queue

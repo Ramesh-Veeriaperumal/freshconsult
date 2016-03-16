@@ -958,10 +958,13 @@ class Helpdesk::TicketsController < ApplicationController
   private
 
     def set_trashed_column
-      ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
-        st.ticket_id= t.id and st.account_id=#{current_account.id} and t.account_id=#{current_account.id}
-        set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 where
-        t.id in (#{@items.map(&:id).join(',')})")
+      sql_array = ["update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
+                    st.ticket_id= t.id and st.account_id=%s and t.account_id=%s
+                    set st.%s = 1 where t.id in (%s)", 
+                    current_account.id, current_account.id, Helpdesk::SchemaLessTicket.trashed_column, @items.map(&:id).join(',')]
+      sql = ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
+
+      ActiveRecord::Base.connection.execute(sql)
     end
     
     def render_delete_forever

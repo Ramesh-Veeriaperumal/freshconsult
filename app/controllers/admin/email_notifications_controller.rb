@@ -4,6 +4,7 @@ class Admin::EmailNotificationsController < Admin::AdminController
   
   before_filter :load_item, :except => :index
   before_filter :validate_liquid, :detect_spam_action, :only => :update
+  before_filter :validate_params, :only => :edit
   
   def index
     e_notifications = current_account.email_notifications 
@@ -90,5 +91,11 @@ class Admin::EmailNotificationsController < Admin::AdminController
     email_notfn = params[:email_notification]
     user = email_notfn.keys[0].include?("requester") ? "requester" : "agent"
     return email_notfn["#{user}_subject_template"], email_notfn["#{user}_template"]
+  end
+
+  def validate_params
+    if ['agent_template','requester_template', 'cc_notification', 'reply_template'].exclude? params[:type] #temp fix, if templates are added move to a constant
+      redirect_to admin_email_notifications_path, :flash => { :error => t('email_notifications.page_not_found') }
+    end
   end
 end

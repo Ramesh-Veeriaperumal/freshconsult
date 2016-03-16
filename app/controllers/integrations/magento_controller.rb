@@ -64,7 +64,7 @@ class Integrations::MagentoController < Admin::AdminController
         req = Net::HTTP.new(uri.host, uri.port)
         if uri.scheme == "https"
           req.use_ssl = true
-          req.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          req.verify_mode = OpenSSL::SSL::VERIFY_PEER
         end
         res = req.request_head(uri.path.presence || '/')
         return res.code

@@ -13,13 +13,17 @@ module PerformTablePartition
   
   def self.add_auto_increment
     PARTITION_TABLES.each do |table_name|
-      ActiveRecord::Base.connection.execute("alter table #{table_name} MODIFY COLUMN id bigint(20) NOT NULL AUTO_INCREMENT;")
+      sql_array = ["alter table %s MODIFY COLUMN id bigint(20) NOT NULL AUTO_INCREMENT;", table_name]
+      sql = ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
+      ActiveRecord::Base.connection.execute(sql)
     end
   end
   
   def self.process
     PARTITION_TABLES.each do |table_name|
-      ActiveRecord::Base.connection.execute("alter table #{table_name} partition by hash(#{PARTITION_COLUMN}) partitions #{PARTITION_SIZE};")
+      sql_array = ["alter table %s partition by hash(%s) partitions %s;", table_name, PARTITION_COLUMN, PARTITION_SIZE]
+      sql = ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
+      ActiveRecord::Base.connection.execute(sql)
     end
   end
   

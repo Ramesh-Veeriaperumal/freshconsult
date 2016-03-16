@@ -60,17 +60,17 @@ Helpkit::Application.routes.draw do
 
   constraints(lambda {|req| req.subdomain == AppConfig['admin_subdomain'] }) do
 
-    root :to => 'subscription_admin/subscriptions#index'
+    # root :to => 'subscription_admin/subscriptions#index'
 
-    match '/plans' => 'subscription_admin/subscription_plans#index', :as => :plans
-    match '/affiliates' => 'subscription_admin/subscription_affiliates#index', :as => :affiliates
-    match '/customers' => 'subscription_admin/subscriptions#customers', :as => :customers
-    match '/resque' => 'subscription_admin/resque/home#index', :as => :home
-    match '/resque/failed/:queue_name/show' => 'subscription_admin/resque/failed#show', :as => :failed_show
-    match '/resque/failed/destroy_all' => 'subscription_admin/resque/failed#destroy_all', :as => :failed_destroy_all
-    match '/resque/failed/requeue_all' => 'subscription_admin/resque/failed#requeue_all', :as => :failed_requeue_all
-    match '/resque/failed/:id' => 'subscription_admin/resque/failed#destroy', :as => :failed_destroy
-    match '/resque/failed/:id/requeue' => 'subscription_admin/resque/failed#requeue', :as => :failed_requeue
+    # match '/plans' => 'subscription_admin/subscription_plans#index', :as => :plans
+    # match '/affiliates' => 'subscription_admin/subscription_affiliates#index', :as => :affiliates
+    # match '/customers' => 'subscription_admin/subscriptions#customers', :as => :customers
+    # match '/resque' => 'subscription_admin/resque/home#index', :as => :home
+    # match '/resque/failed/:queue_name/show' => 'subscription_admin/resque/failed#show', :as => :failed_show
+    # match '/resque/failed/destroy_all' => 'subscription_admin/resque/failed#destroy_all', :as => :failed_destroy_all
+    # match '/resque/failed/requeue_all' => 'subscription_admin/resque/failed#requeue_all', :as => :failed_requeue_all
+    # match '/resque/failed/:id' => 'subscription_admin/resque/failed#destroy', :as => :failed_destroy
+    # match '/resque/failed/:id/requeue' => 'subscription_admin/resque/failed#requeue', :as => :failed_requeue
 
     namespace :resque do
       resources :failed, :controller => '/subscription_admin/resque/failed' do
@@ -78,23 +78,23 @@ Helpkit::Application.routes.draw do
     end
 
     namespace :subscription_admin, :as => 'admin' do
-      resources :subscriptions do
-        collection do
-          get :deleted_customers
-          get :customers_csv
-        end
-      end
+      # resources :subscriptions do
+      #   collection do
+      #     get :deleted_customers
+      #     get :customers_csv
+      #   end
+      # end
 
-      resources :accounts do
-        member do
-          post :add_day_passes
-        end
-        collection do
-          get :agents
-          get :tickets
-          get :renewal_csv
-        end
-      end
+      # resources :accounts do
+      #   member do
+      #     post :add_day_passes
+      #   end
+      #   collection do
+      #     get :agents
+      #     get :tickets
+      #     get :renewal_csv
+      #   end
+      # end
 
       resources :subscription_affiliates do
         collection do
@@ -108,7 +108,7 @@ Helpkit::Application.routes.draw do
 
       resources :subscription_payments, :as => 'payments'
       resources :subscription_announcements, :as => 'announcements'
-      resources :conversion_metrics, :as => 'metrics'
+      # resources :conversion_metrics, :as => 'metrics'
 
       resources :account_tools, :as => 'tools' do
         collection do
@@ -150,7 +150,7 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :currencies, :as => 'currency'
+      # resources :currencies, :as => 'currency'
 
       resources :admin_sessions, :only => [:create, :destroy]
 
