@@ -344,7 +344,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		    	var hash = HelpdeskReports.locals.report_filter_data;
 
 		    	if(index == -1) {
-		    		_FD.core.resetAndGenerate();
+		    		jQuery("[data-action='reports-submit']").click();
 		    		return;
 		    	}
 		    	var hash = hash[index].report_filter.data_hash;
