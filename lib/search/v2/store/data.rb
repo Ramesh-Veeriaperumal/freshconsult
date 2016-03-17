@@ -10,18 +10,18 @@ module Search
         # Get tenant info from cache/data store
         def tenant_info(tenant_id)
           Cache.instance.fetch(Cache::TENANT_INFO % { tenant_id: tenant_id }) do
-            DYNAMO_V2_CLIENT.get_item(table_name: TENANT_TABLE, key: { tenant_id: tenant_id }).item
+            $dynamo_v2_client.get_item(table_name: TENANT_TABLE, key: { tenant_id: tenant_id }).item
           end
         end
 
         # Store the tenant config in data store
         def store_config(tenant_id)
-          DYNAMO_V2_CLIENT.put_item(table_name: TENANT_TABLE, item: config(tenant_id))
+          $dynamo_v2_client.put_item(table_name: TENANT_TABLE, item: config(tenant_id))
         end
 
         # Remove the tenant config from data store
         def remove_config(tenant_id)
-          DYNAMO_V2_CLIENT.delete_item(table_name: TENANT_TABLE, key: { tenant_id: tenant_id })
+          $dynamo_v2_client.delete_item(table_name: TENANT_TABLE, key: { tenant_id: tenant_id })
         end
 
         private

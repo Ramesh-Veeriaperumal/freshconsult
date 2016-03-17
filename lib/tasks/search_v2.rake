@@ -23,7 +23,7 @@ namespace :search_v2 do
 
   desc 'Create SQS queues for Search V2'
   task create_sqs_queues: :environment do
-    SQS_V2_CLIENT.create_queue(
+    $sqs_v2_client.create_queue(
       queue_name: SQS[:search_etl_queue],
       attributes: {
         'MessageRetentionPeriod'  => '1209600',
@@ -34,14 +34,14 @@ namespace :search_v2 do
 
   desc 'Delete SQS queues for Search V2'
   task delete_sqs_queues: :environment do
-    SQS_V2_CLIENT.delete_queue(queue_name: SQS[:search_etl_queue])
+    $sqs_v2_client.delete_queue(queue_name: SQS[:search_etl_queue])
   end
 
   desc 'Create dynamoDB tables for Search V2'
   task create_dynamo_tables: :environment do
     # ES_V2_DYNAMO_TABLES.values.each do |dynamo_table|
     dynamo_table = ES_V2_DYNAMO_TABLES[:tenant] #=> Remove line and uncomment block if more than 1 table.
-    DYNAMO_V2_CLIENT.create_table(
+    $dynamo_v2_client.create_table(
       table_name: dynamo_table,
       key_schema: [{ attribute_name: 'tenant_id', key_type: 'HASH' }],
       attribute_definitions: [{ attribute_name: 'tenant_id', attribute_type: 'N' }],
@@ -54,7 +54,7 @@ namespace :search_v2 do
   task delete_dynamo_tables: :environment do
     # ES_V2_DYNAMO_TABLES.values.each do |dynamo_table|
     dynamo_table = ES_V2_DYNAMO_TABLES[:tenant] #=> Remove line and uncomment block if more than 1 table.
-    DYNAMO_V2_CLIENT.delete_table(table_name: dynamo_table)
+    $dynamo_v2_client.delete_table(table_name: dynamo_table)
     # end
   end
 end

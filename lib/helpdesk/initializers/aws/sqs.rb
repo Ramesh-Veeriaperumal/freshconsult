@@ -2,6 +2,12 @@ sqs_config = YAML::load(ERB.new(File.read("#{Rails.root}/config/sqs.yml")).resul
 
 SQS = (sqs_config[Rails.env] || sqs_config).symbolize_keys
 
+# Add loop if more queues
+#
+SQS_V2_QUEUE_URLS = {
+  SQS[:search_etl_queue] => AwsWrapper::SqsV2.queue_url(SQS[:search_etl_queue])
+}
+
 begin
   #Global SQS client
   $sqs_client = AWS::SQS.new.client

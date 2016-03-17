@@ -1,19 +1,19 @@
 --- 
-:sqs: 
-  :development: 
-    :endpoint: http://localhost:4568
-    :access_key_id: dummy
-    :secret_access_key: dummy
-  :test: 
-    :endpoint: http://localhost:4568
-    :access_key_id: dummy
-    :secret_access_key: dummy
-:dynamo: 
-  :development: 
+:development: 
+  :dynamo: 
     :endpoint: http://localhost:4569
     :access_key_id: dummy
     :secret_access_key: dummy
-  :test: 
+  :sqs: 
+    :endpoint: http://localhost:4568
+    :access_key_id: dummy
+    :secret_access_key: dummy
+:test:
+  :dynamo: 
     :endpoint: http://localhost:4569
+    :access_key_id: dummy
+    :secret_access_key: dummy
+  :sqs: 
+    :endpoint: http://localhost:4568
     :access_key_id: dummy
     :secret_access_key: dummy

@@ -9,8 +9,8 @@ module AwsWrapper
     # visibility_timeout      => Can get from Queue by default
     
     def self.send_message(queue_name, message_body, delay_seconds = 0, options = {})
-      SQS_V2_CLIENT.send_message(
-        queue_url: queue_url(queue_name),
+      $sqs_v2_client.send_message(
+        queue_url: SQS_V2_QUEUE_URLS[queue_name],
         message_body: message_body,
         delay_seconds: delay_seconds
       )
@@ -19,7 +19,7 @@ module AwsWrapper
     # Polls in intervals of time
     #
     def self.long_poll(queue_name, options = {}, &block)
-      poller = Aws::SQS::QueuePoller.new(queue_url(queue_name), client: SQS_V2_CLIENT)
+      poller = Aws::SQS::QueuePoller.new(SQS_V2_QUEUE_URLS[queue_name], client: $sqs_v2_client)
       poll_options = queue_attributes(queue_name).merge(options).merge(max_number_of_messages: 10)
       poller.poll(poll_options) do |messages|
         messages.each do |msg| 
@@ -31,7 +31,7 @@ module AwsWrapper
     # Polls incessantly
     #
     def self.poll(queue_name, options={}, &block)
-      poller = Aws::SQS::QueuePoller.new(queue_url(queue_name), client: SQS_V2_CLIENT)
+      poller = Aws::SQS::QueuePoller.new(SQS_V2_QUEUE_URLS[queue_name], client: $sqs_v2_client)
       poll_options = queue_attributes(queue_name).merge(options).merge(wait_time_seconds: nil, max_number_of_messages: 10)
       poller.poll(poll_options) do |messages|
         messages.each do |msg| 
@@ -43,12 +43,12 @@ module AwsWrapper
     private
       
       def self.queue_url(queue_name)
-        SQS_V2_CLIENT.get_queue_url(queue_name: queue_name).queue_url
+        $sqs_v2_client.get_queue_url(queue_name: queue_name).queue_url
       end
 
       def self.queue_attributes(queue_name)
-        attributes = SQS_V2_CLIENT.get_queue_attributes(
-          queue_url: queue_url(queue_name), 
+        attributes = $sqs_v2_client.get_queue_attributes(
+          queue_url: SQS_V2_QUEUE_URLS[queue_name], 
           attribute_names: ['VisibilityTimeout','ReceiveMessageWaitTimeSeconds']
         ).attributes
 
