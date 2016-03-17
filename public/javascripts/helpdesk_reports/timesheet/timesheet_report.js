@@ -108,8 +108,10 @@ var savedReportUtil = (function() {
         filterChanged : false,
         bindSavedReportEvents : function() {
             var _this = this;
-            jQuery(document).on('change', '#customers_filter,.filter_item,.ff_item', function () { 
-                 _this.filterChanged = true;
+            jQuery(document).on('change', '#customers_filter,.filter_item,.ff_item', function (ev) { 
+                 if(ev.target && ev.target.id != "group_by_field"){
+                    _this.filterChanged = true; 
+                 }
             });
 
             jQuery(document).on("save.report",function() {
