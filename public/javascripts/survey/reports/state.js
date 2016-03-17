@@ -182,7 +182,11 @@ var SurveyState = {
         SurveyState.applySavedReport(SurveyState.last_applied_saved_report_index);
     },
     applySavedReport : function(index) {
-        SurveyState.save_util.cacheLastAppliedReport(index);
+        var id = -1;
+        if(index != -1){
+           id = Helpkit.report_filter_data[index].report_filter.id;
+        }
+        SurveyState.save_util.cacheLastAppliedReport(id);
         if(index != -1) {
             var hash = Helpkit.report_filter_data;
             SurveyState.last_applied_saved_report_index = index;

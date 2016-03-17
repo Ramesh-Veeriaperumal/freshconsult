@@ -252,11 +252,12 @@ var savedReportUtil = (function() {
 
             _this.flushAppliedFilters();
             _this.last_applied_saved_report_index = index;
+            var id = -1;
 
             if(index != -1) {
 
                 var filter_hash = hash[index].report_filter;
-
+                id = filter_hash.id;
                 //Set the date range from saved range
                 var date_hash = filter_hash.data_hash.date;
                 var daterange;
@@ -301,7 +302,7 @@ var savedReportUtil = (function() {
             _this.save_util.setActiveSavedReport(jQuery(".reports-menu li a[data-index=" + index +"]"));
             _this.filterChanged = false;
             jQuery("#submit").trigger('click');
-            _this.save_util.cacheLastAppliedReport(index);
+            _this.save_util.cacheLastAppliedReport(id);
             
             _this.save_util.controls.hideSaveOptions();
             if(index != -1) {
