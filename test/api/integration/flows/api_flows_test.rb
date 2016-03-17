@@ -730,15 +730,15 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_pagination_with_invalid_datatype_string
     get 'api/discussions/categories?page=x&per_page=x', nil, @headers
-    match_json([bad_request_error_pattern('page', :datatype_mismatch, prepend_msg: :input_received, given_data_type: String, expected_data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :per_page_invalid, prepend_msg: :input_received, given_data_type: String, max_value: 100)])
+    match_json([bad_request_error_pattern('page', :datatype_mismatch, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
     assert_response 400
   end
 
   def test_pagination_with_blank_values
     get 'api/discussions/categories?page=&per_page=', nil, @headers
-    match_json([bad_request_error_pattern('page', :datatype_mismatch, prepend_msg: :input_received, given_data_type: String, expected_data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :per_page_invalid, prepend_msg: :input_received, given_data_type: String, max_value: 100)])
+    match_json([bad_request_error_pattern('page', :datatype_mismatch, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
     assert_response 400
   end
 

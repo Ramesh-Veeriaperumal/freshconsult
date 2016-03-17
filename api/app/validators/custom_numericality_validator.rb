@@ -13,7 +13,7 @@ class CustomNumericalityValidator < ApiValidator
   end
 
   def validate_each
-    if (!options[:ignore_string].nil? && record.send(options[:ignore_string])) || options[:force_allow_string]
+    if allow_string?
       @default_validator_instance.validate_each(record, attribute, value)
       if record.errors[attribute].present?
         default_datatype_mismatch?
@@ -26,14 +26,8 @@ class CustomNumericalityValidator < ApiValidator
 
   private
 
-    def custom_error_options
-      error_options = { expected_data_type: expected_data_type }
-      error_options.merge!(prepend_msg: :input_received, given_data_type: infer_data_type(value)) unless skip_input_info?
-      error_options
-    end
-
     def skip_input_info?
-      required_attribute_not_defined? || !datatype_mismatch? || array_value?
+      required_attribute_not_defined? || !datatype_mismatch? || array_value? || string_input_and_allow_string?
     end
 
     def error_code
@@ -72,11 +66,12 @@ class CustomNumericalityValidator < ApiValidator
     end
 
     def expected_data_type
+      return internal_values[:expected_data_type] if internal_values.key?(:expected_data_type)
       # it is assumed that greater_than will always mean greater_than 0, when this assumption is invalidated, we have to revisit this method
       if options[:only_integer]
-        options[:greater_than] ? :'Positive Integer' : :Integer
+        internal_values[:expected_data_type] = options[:greater_than] ? :'Positive Integer' : :Integer
       else
-        options[:greater_than] ? :'Positive Number' : :Number
+        internal_values[:expected_data_type] = options[:greater_than] ? :'Positive Number' : :Number
       end
     end
 end

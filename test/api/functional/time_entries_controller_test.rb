@@ -193,9 +193,9 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 't', agent_id: 'er', billable: '78', executed_after: '78/34', executed_before: '90/12')
-    pattern = [bad_request_error_pattern('billable', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)]
-    pattern << bad_request_error_pattern('agent_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)
-    pattern << bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)
+    pattern = [bad_request_error_pattern('billable', :datatype_mismatch, expected_data_type: 'Boolean')]
+    pattern << bad_request_error_pattern('agent_id', :datatype_mismatch, expected_data_type: 'Positive Integer')
+    pattern << bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer')
     pattern << bad_request_error_pattern('executed_after', :invalid_date, accepted: :'combined date and time ISO8601')
     pattern << bad_request_error_pattern('executed_before', :invalid_date, accepted: :'combined date and time ISO8601')
     assert_response 400

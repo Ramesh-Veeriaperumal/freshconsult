@@ -15,7 +15,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   ERROR_PARAMS =  {
     'number' => [:datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String],
-    'decimal' => [:datatype_mismatch, expected_data_type: 'Number', prepend_msg: :input_received, given_data_type: String],
+    'decimal' => [:datatype_mismatch, expected_data_type: 'Number'],
     'checkbox' => [:datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String],
     'text' => [:'Has 300 characters, it can have maximum of 255 characters'],
     'paragraph' => [:datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer],
@@ -317,8 +317,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(email: 'test@', cc_emails: ['the@'])
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('email', 'It should be in the valid email address format'),
-                bad_request_error_pattern('cc_emails', 'It should contain elements that are in the valid email address format')])
+    match_json([bad_request_error_pattern('email',"It should be in the 'valid email address' format"),
+                bad_request_error_pattern('cc_emails',"It should contain elements that are in the 'valid email address' format")])
   end
 
   def test_create_data_type_invalid
@@ -2164,8 +2164,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params_type
     get :index, controller_params(company_id: 'a', requester_id: 'b')
-    pattern = [bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)]
-    pattern << bad_request_error_pattern('requester_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)
+    pattern = [bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer')]
+    pattern << bad_request_error_pattern('requester_id', :datatype_mismatch, expected_data_type: 'Positive Integer')
     assert_response 400
     match_json pattern
   end
