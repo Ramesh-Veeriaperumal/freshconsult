@@ -67,7 +67,7 @@ module Helpdesk::TicketsHelperMethods
       when RESOLVED
         return {:title => "#{status_name}", :method => "resolved_at_dirty"}
       when PENDING
-        return {:title =>  "#{status_name}", :method => "pending_since"}
+        return {:title =>  "#{status_name}", :method => "pending_since_dirty"}
       when CLOSED
         return {:title => "#{status_name}", :method => "closed_at_dirty"}
       else
