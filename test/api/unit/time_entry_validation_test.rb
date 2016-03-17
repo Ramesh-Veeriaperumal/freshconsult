@@ -48,7 +48,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     time_entry.valid?
     error = time_entry.errors.full_messages
     assert error.include?('Time spent invalid_format')
-    assert_equal({ timer_running: {}, time_spent: { accepted: 'hh:mm' } }, time_entry.error_options)
+    assert_equal({ timer_running: {}, time_spent: { accepted: :'hh:mm' } }, time_entry.error_options)
     Account.unstub(:current)
   end
 

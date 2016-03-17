@@ -975,7 +975,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', 'It should contain elements that are in the valid email address format')])
+    match_json([bad_request_error_pattern('other_emails', "It should contain elements that are in the 'valid email address' format")])
   end
 
   def test_create_with_other_emails_with_invalid_emails
@@ -984,7 +984,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', 'It should contain elements that are in the valid email address format')])
+    match_json([bad_request_error_pattern('other_emails', "It should contain elements that are in the 'valid email address' format")])
   end
 
   def test_create_with_other_emails_without_primary_email
