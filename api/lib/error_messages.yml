@@ -8,7 +8,7 @@ api_error_messages:
   array_datatype_mismatch: "It should contain elements of type %{expected_data_type} only"
   invalid_format: "It should be in the '%{accepted}' format"
   invalid_date: "It should be a valid date in the '%{accepted}' format"
-  array_invalid_format: "It should contain elements that are in the '%{accepted}'' format"
+  array_invalid_format: "It should contain elements that are in the '%{accepted}' format"
   not_included: "It should be one of these values: '%{list}'"
   max_agents_reached: "You have reached the maximum number of agents %{max_count} your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents."
   special_chars_present: "It should not have strings containing the special characters: '%{chars}'"
