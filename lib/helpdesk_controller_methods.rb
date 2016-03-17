@@ -141,32 +141,6 @@ module HelpdeskControllerMethods
     end
   end
 
-  def store_dirty_tags item
-    if item.is_a?(Helpdesk::Ticket)
-      item.dirty_attributes[:tag_attributes] = {}
-      item.tags.each do |tag|
-        item.dirty_attributes[:tag_attributes].merge!(tag.id => tag.name)
-      end
-      item.tags = []
-    end
-  end
-
-  def restore_dirty_tags item 
-    if item.is_a?(Helpdesk::Ticket)
-      unless item.deleted? or item.spam?
-        item.dirty_attributes[:tag_attributes].each do |key, value|
-            tag = current_account.tags.find_by_id(key)
-            if tag 
-              item.tags << tag 
-            else
-              item.tags << current_account.tags.new(:name => value, :tag_uses_count => 1)
-            end
-          end
-          item.dirty_attributes[:tag_attributes] = {}
-      end
-    end
-  end
-
   def autocomplete #Ideally account scoping should go to autocomplete_scoper -Shan (POSSIBLE DEAD CODE)
     items = autocomplete_scoper.find(
       :all,
