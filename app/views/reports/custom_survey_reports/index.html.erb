@@ -1,4 +1,5 @@
 
+<%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %>  
 <%= stylesheet_link_tag_with_rtl :'cdn/custom_survey_reports'  %>
 
 <%= render :partial => '/admin/custom_surveys/constants' %>
@@ -46,7 +47,13 @@
 		no_overview: "<%= t('reports.survey_reports.main.no_overview') %>",
 		view_report_by: "<%= t('reports.survey_reports.main.view_report_by')%>",
 		overall_rating: "<%= t('reports.survey_reports.main.overall_rating') %>",
-    allResponse: "<%= t('reports.survey_reports.main.all_responses') %>"
+    		allResponse: "<%= t('reports.survey_reports.main.all_responses') %>",
+    		today: "<%= t('reports.date_ranges.today') %>",
+    		yesterday: "<%= t('reports.date_ranges.yesterday') %>",
+    		last_7_days: "<%= t('reports.date_ranges.last_7_days') %>",
+    		last_30_days: "<%= t('reports.date_ranges.last_30_days') %>",
+    		last_90_days: "<%= t('reports.date_ranges.last_90_days') %>",
+    		custom_daterange: "<%= t('reports.date_ranges.custom') %>"
 	};
 	var dateRange = "<%=date_range%>";
 <% end %>
@@ -72,11 +79,13 @@
 				<%= graph_icon(@report_type) %>
 			</span>
 			<span class="report-title-block" onclick= "SurveyUtil.surveyNavigate(event);">
+				<span class="unsaved_star vertical-alignment hide">*</span>
 				<span id="report-title">
 					<%=t("helpdesk_reports.#{@report_type}.title").html_safe %>
 				</span>
 				<span class="grey-arrow-down title-dropdown"></span>
 			</span>
+			<%= render :partial => "reports/shared/save_report_controls"%>
 		</div>
 		<div class="survey-rep-filter custom-select2">
 			<ul>
@@ -108,14 +117,15 @@
 		  	</ul>
 		</div>
 		<div class="reports-menu hide" id="reports_type_menu">
-			<ul>
-				<%=reports_sub_menu %>
-			</ul>
+
 		</div>
 	</div>
 </div>
-
+<%= render :partial => "reports/shared/dialog" %> 
 <script type="text/javascript">
+var Helpkit = Helpkit || {};
+Helpkit.report_filter_data = <%= @report_filter_data.to_json.html_safe %>;
+Helpkit.report_type = "satisfaction_survey";
 jQuery(document).ready(function(){
 	jQuery('#survey_main_layout').append(JST["survey/reports/template/main_content"]());
 	jQuery('#survey_main_layout').on('click.survey_reports', function(){

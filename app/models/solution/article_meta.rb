@@ -27,7 +27,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	scope :published, lambda {
 		{
 			:joins => :current_article,
-			:conditions => ["`solution_articles`.status = #{STATUS_KEYS_BY_TOKEN[:published]}"]
+			:conditions => ["`solution_articles`.status = ?", STATUS_KEYS_BY_TOKEN[:published]]
 		}
 	}
 

@@ -146,7 +146,7 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => {:errors => @response_errors}.to_json
         else
           array = []
-          @items.each { |tic|
+          @items.preload(:ticket_old_body,:schema_less_ticket,:flexifield => :flexifield_def).each { |tic|
             array << tic.as_json({}, false)['helpdesk_ticket']
           }
           render :json => array
@@ -958,10 +958,13 @@ class Helpdesk::TicketsController < ApplicationController
   private
 
     def set_trashed_column
-      ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
-        st.ticket_id= t.id and st.account_id=#{current_account.id} and t.account_id=#{current_account.id}
-        set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 where
-        t.id in (#{@items.map(&:id).join(',')})")
+      sql_array = ["update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
+                    st.ticket_id= t.id and st.account_id=%s and t.account_id=%s
+                    set st.%s = 1 where t.id in (%s)", 
+                    current_account.id, current_account.id, Helpdesk::SchemaLessTicket.trashed_column, @items.map(&:id).join(',')]
+      sql = ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
+
+      ActiveRecord::Base.connection.execute(sql)
     end
     
     def render_delete_forever
@@ -1412,7 +1415,7 @@ class Helpdesk::TicketsController < ApplicationController
     if es_tickets_enabled? and params[:html_format]
       tickets_from_es(params)
     else
-      current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      current_account.tickets.preload(requester: [:avatar,:company]).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     end
   end
 

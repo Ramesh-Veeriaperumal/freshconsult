@@ -11,7 +11,7 @@
 				<%= I18n.t(title_name,{group_by: group_type}) %>
 			</div>
 		<div id="<%= data %>_container" class="half-container" data-group="<%= data %>" data-report="glance-container"></div>
-		<span class="view-more" data-container="view-more" data-group-container="<%= data %>">View more...</span>
+		<span class="view-more" data-container="view-more" data-group-container="<%= data %>"><%= I18n.t('helpdesk_reports.view_more') %></span>
 	</div>
 <% } else { %>
 	<div id="custom_field_group_by" class="chart-container">

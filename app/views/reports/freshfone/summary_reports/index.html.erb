@@ -29,12 +29,16 @@
             <i class="fsize-36 ficon-phone_summary"></i>
         </span>
         <span class="report-title-block" data-action="pop-report-type-menu" >
+          <span class="unsaved_star vertical-alignment hide">*</span>
           <span id="report-title">
             <%=t('helpdesk_reports.phone_summary.title')%>
           </span>
           <span class="grey-arrow-down title-dropdown"></span>
           <p class="muted" id="report_header_date"></p>
         </span>
+        <% if current_account.subscription.non_sprout_plan? %>
+          <%= render :partial => "reports/shared/save_report_controls"%>
+        <% end %>
       </div>
       <div class="reports-filter span12" id="report-filter-details">
         <div class="span1 edit-filter report-filter-slide-btn">
@@ -47,10 +51,8 @@
           <!-- report filter name if any -->
         </div>
         <div class="reports-menu hide" id="reports_type_menu">
-            <ul>
-              <%= reports_sub_menu %>
-            </ul>
-          </div>
+          <!-- Saved reports menu -->   
+        </div>
       </div>
     </div>
       <%= render :partial => "call_list" %> 
@@ -65,6 +67,7 @@
   </div>
 <!--end report content-->
 </div>
+<%= render :partial => "reports/shared/dialog"%>
 <%= javascript_tag do %> 
   jQuery(window).on("load", function () {
       App.Phone.Metrics.recordSource("REPORTS_LOAD");
@@ -80,8 +83,8 @@
     freshfoneReports.business_hours_cache = <%= business_hours_cache.blank? ? 0 : business_hours_cache %>
    });
 
-    jQuery(function(){
-     jQuery('#report-page').on('click.helpdesk_reports', '[data-action="pop-report-type-menu"]', function (event) {
+  jQuery(function(){
+    jQuery('#report-page').on('click.helpdesk_reports', '[data-action="pop-report-type-menu"]',  function (event) {
                 event.stopImmediatePropagation();
                var menu = jQuery('#reports_type_menu');
                 if (!menu.is(':visible')) {
@@ -90,5 +93,9 @@
                     menu.addClass('hide');
                 }
           });
-    });
+  });
+  
+  var Helpkit = Helpkit || {};
+  Helpkit.report_filter_data = <%= @report_filter_data.to_json.html_safe %>;
+  Helpkit.report_type = "phone_summary"
 <%end%>

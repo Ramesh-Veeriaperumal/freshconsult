@@ -50,7 +50,11 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
                 metric: data.metric
             }
 
-            var main_condition = _FD.constructMainListCondition(data.label);
+            var main_condition = {
+                    condition : 'company_id',
+                    operator: 'eql',
+                    value: data.id
+                };
 
             if(!jQuery.isEmptyObject(main_condition)) {
                 list_hash.list_conditions.push(main_condition);
@@ -75,26 +79,6 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
             list_params.push(hash);
             _FD.core.fetchTickets(list_params);
         },
-        constructMainListCondition: function (label) {
-            var list_hash = {};
-            var hash_values = {};
-            var company_options = HelpdeskReports.locals.report_field_hash['company_id'].options;
-
-            _.map(company_options, function(val){                     
-                hash_values[val[1]] = val[0]; 
-            });
-
-            if (hash_values.hasOwnProperty(label)) {
-                var string_val = hash_values[label].toString();
-
-                list_hash = {
-                    condition : 'company_id',
-                    operator: 'eql',
-                    value: string_val
-                }
-            }    
-            return list_hash;
-        },
         setDefaultValues: function () {
             var current_params = [];
             var date = _FD.core.setReportFilters();
@@ -109,10 +93,34 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
 
             });
             HelpdeskReports.locals.params = current_params.slice();
+            HelpdeskReports.SavedReportUtil.applyLastCachedReport();
             _FD.actions.submitReports();
         },
         flushEvents: function () {
             jQuery('#reports_wrapper').off('.cust');
+        },
+        recordAnalytics : function(){
+            
+            jQuery(document).on("script_loaded", function (ev, data) {
+                if( HelpdeskReports.locals.report_type != undefined && HelpdeskReports.locals.report_type == "customer_report"){
+                    App.Report.Metrics.push_event("Customer Analysis Report Visited", {});
+                }
+            });
+            
+            //Ticket List Exported
+             jQuery(document).on("analytics.export_ticket_list", function (ev, data) {
+                App.Report.Metrics.push_event("Customer Analysis : Ticket List Exported",{});
+             });
+
+            //pdf export
+            jQuery(document).on("analytics.export_pdf",function(ev,data){
+                App.Report.Metrics.push_event("Customer Analysis : PDF Exported",{});
+            });
+
+            //
+            jQuery('#reports_wrapper').on('click.helpdesk_reports', "[data-action='reports-submit']", function () {
+                App.Report.Metrics.push_event("Customer Analysis Report: Filtered",{ DateRange : HelpdeskReports.locals.date_range });
+            });
         }
     };
     return {
@@ -122,6 +130,7 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
             _FD.bindEvents();
             _FD.core.ATTACH_DEFAULT_FILTER = false;
             _FD.setDefaultValues();
+            _FD.recordAnalytics();
         }
     };
 })();

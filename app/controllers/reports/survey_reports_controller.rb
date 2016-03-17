@@ -9,7 +9,7 @@ class Reports::SurveyReportsController < ApplicationController
   LIST_LIMIT = 90 
       
   def delta_handle
-     redirect_to params.merge!(:controller => "reports/custom_survey_reports") if current_account.new_survey_enabled?
+    redirect_to params.merge!(:controller => "reports/custom_survey_reports", :only_path => true) if current_account.new_survey_enabled?
   end
 
   def index
