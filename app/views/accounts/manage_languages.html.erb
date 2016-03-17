@@ -14,7 +14,7 @@
 <div class="manage-languages-body">
 	<%= error_messages_for :account %>
 	<span class="multilingual-warning mt5">
-		<i class="ficon-warning fsize-15 mr5"></i>
+		<%= font_icon('warning', :size => 15, :class => 'mr5') %>
 		<b><%= t('accounts.multilingual_support.important') %></b>
 		<div class="mt5"><%= simple_format(t('accounts.multilingual_support.warning_msg')) %></div>
 	</span>

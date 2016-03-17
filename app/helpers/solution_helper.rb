@@ -178,7 +178,7 @@ module SolutionHelper
 					data-html="true"
 					data-placement="right"
 					title="#{t('solution.unassociated_category_info')}">
-					<i class="ficon-unverified fsize-16 ml2 unassociated-category"></i>
+					#{ font_icon('unverified', :size => 16, :class => 'ml2 unassociated-category') }
 				</span>
 			}
 			content.html_safe
@@ -304,7 +304,7 @@ module SolutionHelper
 		}}) unless category.eql?('article')
 		options.merge!({:"data-pjax" => "#body-container"}) if category.eql?('article')
 		link_to( "<span class='language_name'>#{language.short_code.capitalize}</span>
-							<span class='ficon-#{solution_meta.send("#{language.to_key}_available?") ? 'pencil' : 'plus'} fsize-14'>
+							#{ font_icon( (solution_meta.send("#{language.to_key}_available?") ? 'pencil' : 'plus'), :size => 14) }
 							</span>".html_safe, 
 							category.eql?('article') ? 
 							solution_article_version_path(solution_meta.id, language.code, :anchor => 'edit') :

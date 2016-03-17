@@ -53,7 +53,7 @@
 					</button>
 				</div>
 				<div class="uptodate-section <%= 'hide' if @article.outdated %>">
-					<i class="ficon-checkmark-round-o fsize-20 mr5"></i>
+					<%= font_icon('checkmark-round-o', :size => 20, :class => 'mr5') %>
 					<%= t('solution.general.uptodate') %>
 				</div>
 			<% end %>
@@ -86,7 +86,7 @@
 						<span class="tooltip"
 									data-html="true"
 									title="<%= t('solution.unassociated_category_info') %>">
-							<i class="ficon-unverified fsize-16 ml2 warning-icon"></i>
+							<%= font_icon('unverified', :size => 16, :class => 'ml2 warning-icon') %>
 						</span>
 					<% end %>
 				</p>

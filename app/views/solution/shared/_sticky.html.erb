@@ -10,13 +10,13 @@ toolbar ||= false
 
   <% unless defined?(search_url).nil?  %>
     <div class="sticky_search_wrap" id="sticky_search_wrap">
-      <i class="ficon-search"></i>
+      <%= font_icon('search') %>
       <div class="sticky_search">
         <input class="community-search solution-placeholder" data-search-url="<%=search_url%>" placeholder="<%= search_placeholder(page) %>" type='text'>
       </div>
       <span class="search-lang" id="search-hide">
         <%= search_versions_dropdown if current_account.multilingual? %>
-        <span class="search-hide ficon-cross"></span>
+        <%= font_icon('cross', :class => 'search-hide') %>
       </span>
     </div>
   <% end %>
@@ -41,7 +41,7 @@ toolbar ||= false
       <% unless defined?(search_url).nil?  %>
         <% extra_padding = page == :home ? 'pt5' : '' %>
         <div class="pull-right <%= extra_padding %>">
-          <i class="ficon-search tooltip" id="search-show" title="Search Articles"></i>
+          <%= font_icon('search', :class => 'tooltip', :title => t('solution.articles.search_all'), :id => "search-show") %>
         </div>
       <% end %>
   	</div>
