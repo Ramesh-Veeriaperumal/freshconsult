@@ -68,7 +68,7 @@ class Support::Solutions::ArticlesController < SupportController
 
     def load_and_check_permission
       @solution_item = @article = current_account.solution_article_meta.find_by_id(params[:id])
-      render_404 and return unless parent_exists?
+      render_404 and return unless @article.present? && parent_exists?
       if @article && !@article.visible?(current_user)
         unless logged_in?
           session[:return_to] = solution_category_folder_article_path(
