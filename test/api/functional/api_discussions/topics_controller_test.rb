@@ -419,7 +419,7 @@ module ApiDiscussions
     def test_followed_by_non_numeric_id
       get :followed_by, controller_params(user_id: 'test')
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
+      match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer')])
     end
 
     def test_followed_by_without_user_id
@@ -490,7 +490,7 @@ module ApiDiscussions
     def test_is_following_non_numeric_user_id
       get :is_following, controller_params(user_id: 'test', id: first_topic.id)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
+      match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer')])
     end
 
     def test_is_following_unexpected_fields

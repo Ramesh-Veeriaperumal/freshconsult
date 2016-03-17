@@ -199,7 +199,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
     # IN API V1
     skip_bullet do
-      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description_html: ticket.description } } }.to_json, @write_headers
+      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description_html: ticket.description_html } } }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i

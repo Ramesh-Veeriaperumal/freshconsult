@@ -3,7 +3,6 @@ class ConversationValidation < ApiValidation
                 :attachments, :cc_emails, :bcc_emails, :item
 
   validates :body, data_type: { rules: String, required: true }
-  validates :body_html, data_type: { rules: String, allow_nil: true }
   validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0 }
   validates :private, :incoming, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }
   validates :notify_emails, :attachments, :cc_emails, :bcc_emails, data_type: { rules: Array }

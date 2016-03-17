@@ -672,7 +672,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.first.update_column(:customer_id, comp.id)
     get :index, controller_params(company_id: 'a')
     assert_response 400
-    match_json [bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)]
+    match_json [bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer')]
   end
 
   def test_contact_blocked_in_future_should_not_be_listed_in_the_index
