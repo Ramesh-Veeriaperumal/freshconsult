@@ -1,4 +1,4 @@
-<% if !@article.new_record? && missing_translations?(@article) %>
+<% if missing_translations?(@article) && (!@article.new_record?  or !privilege?(:manage_solutions)) %>
 	<div class="hide never-close" id="add-translations">
 		<%= render :partial => "add_translations" %>
 	</div>
@@ -67,7 +67,7 @@
 			addTranslationsTitle: "<%= escape_javascript(t('solution.articles.missing_translations.title')).html_safe %>"
     };
 		<%= 'App.namespace = "solution/articles/new";'.html_safe if @article_meta.present? && @article.new_record? %>
-		<% if !@article.new_record? && missing_translations?(@article) %>
+		<% if missing_translations?(@article) && (!@article.new_record?  or !privilege?(:manage_solutions)) %>
 			App.Solutions.Article.triggerTranslationsModal();
 		<% end %>
 	});

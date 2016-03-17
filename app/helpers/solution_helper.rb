@@ -141,7 +141,7 @@ module SolutionHelper
 		_op << %(<a href="#" class="btn" id="reorder_btn">
 	             #{font_icon "reorder", :size => 13}
 	             #{t('reorder')}
-					   </a>) if privilege?(:manage_solutions)
+					   </a>)
 		_op.html_safe
 	end
 	
@@ -471,9 +471,11 @@ module SolutionHelper
 
 	def folder_create_new
 		op = t('solution.folder')
-		op << "<span id='create-new'> - "
-		op << link_to(t('solution.create_new'), new_solution_folder_path((btn_default_params(:folder) || {}).merge({ :article => true })), new_btn_opts(:folder))
-		op << "</span>"
+		if privilege?(:manage_solutions)
+			op << "<span id='create-new'> - "
+			op << link_to(t('solution.create_new'), new_solution_folder_path((btn_default_params(:folder) || {}).merge({ :article => true })), new_btn_opts(:folder))
+			op << "</span>"
+		end
 		op.html_safe
 	end
 

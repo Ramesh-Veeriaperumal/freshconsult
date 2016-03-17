@@ -35,11 +35,11 @@
 			</div>
 		</div>
 		<%= f.submit t('save'), :class => "btn btn-primary add-translations-btn ml10" %>
-		<%= pjax_link_to(t('go_back'), solution_folder_path(@folder_meta.id), :class => "btn add-translations-btn") %>
+		<%= pjax_link_to(t('go_back'), :back, :class => "btn add-translations-btn") %>
 	<% end %>
 <% else %>
 	<div class="muted center permission-denied">
 		<%= t('solution.articles.missing_translations.permission_denied') %>
 	</div>
-	<%= pjax_link_to(t('go_back'), solution_folder_path(@folder_meta.id), :class => "btn add-translations-btn mr20") %>
+	<%= pjax_link_to(t('go_back'), :back, :class => "btn add-translations-btn mr20") %>
 <% end %>
