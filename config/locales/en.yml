@@ -2870,6 +2870,17 @@ en:
       portal_languages_validity: "should be a subset of supported languages"
       portal_language_inclusion: "Supported languages should not include the portal language"
       more_languages: ", <span class='more-languages'>%{count} more</span>"
+      helpcard:
+        title: "Speak in Your Customer's Language"
+        info1: "Provide a seamless support experience to your customers from different parts of the world."
+        supported_languages: 
+          title: "<b>What is 'Supported Languages'?</b><br/>"
+          info1: "The languages in which you would like to create knowledge base articles and email notification to support your customers.<br /><br />"
+          info2: "<i>For example: Adding French to the list will enable you to start writing knowledge base articles and creating email notifications in French.</i>"
+        portal_languages:
+          title: "<b>What is 'Languages visible to users'?</b><br />"
+          info1: "The languages which will be available to your users on the portal. It is recommended to add languages to this list in which the required knowledge base articles are translated.<br /><br />"
+          info2: "<i>For example: Adding French in this list will allow your users to access the French portal and the available articles in French.</i>"
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   account_configuration:
