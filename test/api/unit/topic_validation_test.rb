@@ -7,9 +7,9 @@ class TopicValidationsTest < ActionView::TestCase
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?(:update)
     assert topic.errors.full_messages.include?('Title datatype_mismatch')
-    assert topic.errors.full_messages.include?('Message html datatype_mismatch')
+    assert topic.errors.full_messages.include?('Message datatype_mismatch')
     assert topic.errors.full_messages.include?('Forum datatype_mismatch')
-    assert_equal({ title: {  expected_data_type: String, code: :missing_field  }, message_html: {  expected_data_type: String, code: :missing_field },
+    assert_equal({ title: {  expected_data_type: String, code: :missing_field  }, message: {  expected_data_type: String, code: :missing_field },
                    forum_id: {  expected_data_type: :'Positive Integer', code: :missing_field } }, topic.error_options)
   end
 
@@ -22,22 +22,22 @@ class TopicValidationsTest < ActionView::TestCase
     assert error.include?('Forum datatype_mismatch')
     assert error.include?('Stamp type datatype_mismatch')
     assert_equal({ title: { expected_data_type: String, code: :missing_field },
-                   message_html: { expected_data_type: String, code: :missing_field },
+                   message: { expected_data_type: String, code: :missing_field },
                    forum_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: String },
                    stamp_type: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: String } }, topic.error_options)
   end
 
   def test_datatype_params_invalid
-    controller_params = { 'message_html' => true, 'sticky' => nil, 'locked' => nil }
+    controller_params = { 'message' => true, 'sticky' => nil, 'locked' => nil }
     item = nil
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?
     error = topic.errors.full_messages
-    assert error.include?('Message html datatype_mismatch')
+    assert error.include?('Message datatype_mismatch')
     assert error.include?('Sticky datatype_mismatch')
     assert error.include?('Locked datatype_mismatch')
     assert_equal({ title: { expected_data_type: String, code: :missing_field },
-                   message_html: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean' },
+                   message: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean' },
                    sticky: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type' },
                    locked: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type' } }, topic.error_options)
   end
@@ -51,7 +51,7 @@ class TopicValidationsTest < ActionView::TestCase
     assert error.include?('Locked datatype_mismatch')
     refute error.include?('Sticky datatype_mismatch')
     assert_equal({ title: { expected_data_type: String, code: :missing_field },
-                   message_html: { expected_data_type: String, code: :missing_field }, sticky: {},
+                   message: { expected_data_type: String, code: :missing_field }, sticky: {},
                    locked: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String } }, topic.error_options)
   end
 
@@ -65,9 +65,9 @@ class TopicValidationsTest < ActionView::TestCase
     topic.valid?
     error = topic.errors.full_messages
     refute error.include?('Title blank')
-    refute error.include?('Message html blank')
+    refute error.include?('Message blank')
     refute error.include?('Title missing')
-    refute error.include?('Message html missing')
+    refute error.include?('Message missing')
   end
 
   def test_numericality_item_valid_only_update
@@ -94,7 +94,7 @@ class TopicValidationsTest < ActionView::TestCase
 
   def test_topic_validation_valid_params
     item = Topic.new({})
-    params = { 'title' => 'test', 'message_html' => 'test', 'forum_id' => 1, 'user_id' => 1, 'locked' => false,
+    params = { 'title' => 'test', 'message' => 'test', 'forum_id' => 1, 'user_id' => 1, 'locked' => false,
                'published' => false, 'sticky' => false }
     topic = ApiDiscussions::TopicValidation.new(params, item)
     assert topic.valid?

@@ -7,7 +7,7 @@ module ApiDiscussions
 
     def create
       @item.user = api_current_user
-      post = @item.posts.build(params[cname].select { |x| DiscussionConstants::CREATE_COMMENT_FIELDS.flat_map(&:last).include?(x) })
+      post = @item.posts.build(params[cname].select { |x| DiscussionConstants::TOPIC_COMMENT_CREATE_FIELDS.flat_map(&:last).include?(x) })
       post.user = api_current_user
       assign_parent post, :topic, @item
       super
@@ -77,7 +77,7 @@ module ApiDiscussions
       end
 
       def sanitize_params
-        params[cname][:body_html] = params[cname].delete(:message_html) if params[cname].key?(:message_html)
+        params[cname][:body_html] = params[cname].delete(:message) if params[cname].key?(:message)
       end
 
       def assign_parent(item, parent, value)

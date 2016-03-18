@@ -1,5 +1,5 @@
 class ConversationValidation < ApiValidation
-  attr_accessor :body, :body_html, :private, :user_id, :incoming, :notify_emails,
+  attr_accessor :body, :private, :user_id, :incoming, :notify_emails,
                 :attachments, :cc_emails, :bcc_emails, :item
 
   validates :body, data_type: { rules: String, required: true }
@@ -17,12 +17,8 @@ class ConversationValidation < ApiValidation
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
+    @body = item.body_html if !request_params.key?(:body) && item
     @item = item
-    @body = request_params[:body_html] if should_set_body?(request_params)
-  end
-
-  def should_set_body?(request_params)
-    request_params[:body].nil? && request_params[:body_html].present?
   end
 
   def attributes_to_be_stripped

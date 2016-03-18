@@ -377,7 +377,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_invalid_id
-    params_hash = { body_html: 'test' }
+    params_hash = { body: 'test' }
     post :reply, construct_params({ id: '6786878' }, params_hash)
     assert_response :missing
   end

@@ -112,6 +112,23 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 'test', Helpdesk::Ticket.last.description
   end
 
+  def test_description_html_only_tags
+    params = ticket_params_hash.merge(custom_fields: {}, description: '<b></b>')
+    CUSTOM_FIELDS.each do |custom_field|
+      params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    post :create, construct_params({}, params)
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+    result = parse_response(@response.body)
+    assert_equal true, response.headers.include?('Location')
+    assert_equal "http://#{@request.host}/api/v2/tickets/#{result['id']}", response.headers['Location']
+    assert_response 201
+    assert_equal '<b></b>', Helpdesk::Ticket.last.description_html
+    assert_equal '', Helpdesk::Ticket.last.description
+  end
+
   def test_create_with_email
     params = { email: Faker::Internet.email, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)

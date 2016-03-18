@@ -28,7 +28,6 @@ module DiscussionsTestHelper
       name: forum.name,
       description: forum.description,
       position: forum.position,
-      description_html: forum.description_html,
       forum_category_id: forum.forum_category_id,
       forum_type: forum.forum_type,
       forum_visibility: forum.forum_visibility,
@@ -43,7 +42,6 @@ module DiscussionsTestHelper
       name: hash[:name] || f.name,
       description: hash[:description] || f.description,
       position: hash[:position] || f.position,
-      description_html: hash[:description_html] || f.description_html,
       forum_category_id: hash[:forum_category_id] || f.forum_category_id,
       forum_type: hash[:forum_type] || f.forum_type,
       forum_visibility: hash[:forum_visibility] || f.forum_visibility,
@@ -80,8 +78,8 @@ module DiscussionsTestHelper
     expected_output[:ignore_updated_at] ||= true
     {
       id: Fixnum,
-      body: expected_output[:body] || post.body,
-      body_html: expected_output[:body_html] || post.body_html,
+      body_text: post.body,
+      body: expected_output[:body] || post.body_html,
       topic_id: expected_output[:topic_id] || post.topic_id,
       forum_id: expected_output[:forum_id] || post.forum_id,
       user_id: expected_output[:user_id] || post.user_id,
@@ -120,11 +118,11 @@ module DiscussionsTestHelper
   end
 
   def v2_topics_payload(_f = nil)
-    topic_params.merge(message_html: Faker::Lorem.characters).to_json
+    topic_params.merge(message: Faker::Lorem.characters).to_json
   end
 
   def v2_update_topics_payload(_f = nil)
-    topic_params.merge(message_html: Faker::Lorem.characters, forum_id: Forum.first.id).to_json
+    topic_params.merge(message: Faker::Lorem.characters, forum_id: Forum.first.id).to_json
   end
 
   def v1_post_payload(t)
@@ -132,7 +130,7 @@ module DiscussionsTestHelper
   end
 
   def v2_post_payload(t)
-    post_params(t).to_json
+    v2_post_params.to_json
   end
 
   # private
@@ -147,6 +145,10 @@ module DiscussionsTestHelper
 
   def topic_params
     { title: Faker::Name.name }
+  end
+
+  def v2_post_params
+    { body: Faker::Lorem.characters }
   end
 
   def post_params(_t)

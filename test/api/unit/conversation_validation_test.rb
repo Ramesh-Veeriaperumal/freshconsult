@@ -23,6 +23,13 @@ class ConversationValidationTest < ActionView::TestCase
     refute conversation.valid?(:create)
     assert conversation.errors.full_messages.include?('Body blank')
 
+    controller_params = { 'user_id' => 1 }
+    item = Helpdesk::Note.new
+    item.body = ""
+    item.body_html = "test"
+    conversation = ConversationValidation.new(controller_params, item)
+    assert conversation.valid?(:update)
+
     controller_params = { 'user_id' => 1, body: true }
     item = nil
     conversation = ConversationValidation.new(controller_params, item)
