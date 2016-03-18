@@ -5,3 +5,6 @@ development:
 test: 
   :tenant: tenant_info_test
   :cluster: cluster_info_test
+staging: 
+  :tenant: tenant_info_staging
+  :cluster: cluster_info_staging
