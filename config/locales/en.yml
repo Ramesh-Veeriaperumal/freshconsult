@@ -7481,23 +7481,23 @@ en:
     view_all_compliant_tickets: View all compliant tickets
     view_all_violated_tickets: View all violated tickets
     saved_report: 
-        title : Report Title
-        dialog_header : Save as
-        edit_dialog_header : Edit Report
-        delete_dialog_header : Delete Report
-        dialog_sub_header : This report will be visible only to you
-        error_missing_title : Title is required
-        error_title_unavailable : This title already exists
-        delete_cnfm_message : Are you sure you want to delete this saved report?
-        deleted_message : Report has been deleted successfully!
-        deleted_failed_message : Report deletion failed.Try Again later.
-        updated_message : Report has been updated successfully!
-        update_failed_message : Report updation failed.Try Again later.
-        saved_message : Report has been saved successfully!
-        save_failed_message : Report saving failed.Try Again later.
-        limit_exceeded_message: You have exceeded the maximum limit. You are allowed to create %{count} saved filters per report
-    deprecated_message : "The old reports will no longer be available after 30th March, 2016"
-    deprecated_header : "This report will no longer be available after 30th March, 2016"
+      title: Report Title
+      dialog_header: Save as
+      edit_dialog_header: Edit Report
+      delete_dialog_header: Delete Report
+      dialog_sub_header: This report will be visible only to you
+      error_missing_title: Title is required
+      error_title_unavailable: This title already exists
+      delete_cnfm_message: Are you sure you want to delete this saved report?
+      deleted_message: Report has been deleted successfully!
+      deleted_failed_message: Report deletion failed.Try Again later.
+      updated_message: Report has been updated successfully!
+      update_failed_message: Report updation failed.Try Again later.
+      saved_message: Report has been saved successfully!
+      save_failed_message: Report saving failed.Try Again later.
+      limit_exceeded_message: You have exceeded the maximum limit. You are allowed to create %{count} saved filters per report
+    deprecated_message: "The old reports will no longer be available after 30th March, 2016"
+    deprecated_header: "This report will no longer be available after 30th March, 2016"
     deprecated_header_index: "These reports will no longer be available after 30th March, 2016"
     agent: Agent
     priority: Priority
@@ -7730,18 +7730,14 @@ en:
       agent: Agent
     customer_report:
       title:  Top Customer Analysis
-      received_tickets: Tickets Submitted
-      resolved_tickets: Tickets Resolved
-      response_violated: Response SLA Violations %
-      resolution_violated: Resolution SLA Violations %
-      customer_interactions: Customer Responses
-      agent_interactions: Agent Responses
       received_tickets: Tickets submitted
       resolved_tickets: Tickets resolved
       response_violated: Response SLA violations %
       resolution_violated: Resolution SLA violations %
       customer_interactions: Customer responses
       agent_interactions: Agent responses
+      top_5: Top 5
+      bottom_5: Bottom 5
     timesheet_reports:
       title: Time Sheet Summary
     phone_summary:
