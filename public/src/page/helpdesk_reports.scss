@@ -1453,6 +1453,43 @@
 				   	}
 				}
 			}
+			.pdf-chart-container{
+				width: 96% !important;
+				margin-top: 2%;
+				margin-bottom: 3%;
+				.title{
+					font-size: 15px;
+					color: #333333;
+					padding:3px 10px 7px;
+					font-weight: 500;
+					.toggle-icon{
+						padding: 0 15px 0 20px;
+						display: inline-block;
+						vertical-align: top;
+						float: right;
+						cursor: pointer;
+					}
+				}
+				.pdf-title-holder{
+					width: 100%;
+					margin-top: 2%;
+					.left-title{
+						width: 50%;
+						display: inline-block;
+						margin-left: 1%;
+					}
+				}
+				.pdf-chart-holder{
+					display: flex;
+					width: 100%;
+				}
+				.half-container{
+					border-top: 2px solid #B7B7B7;
+					display: inline-block;
+					width: 47% !important;
+					margin: 1%;
+				}
+			}
 		}
 	}
 }
