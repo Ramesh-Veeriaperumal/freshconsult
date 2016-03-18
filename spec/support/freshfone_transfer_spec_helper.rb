@@ -54,7 +54,7 @@ module FreshfoneTransferSpecHelper
     call.create_meta(  :account_id => @account, :call_id => call.id,
               :transfer_by_agent => @agent.id,
               :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
-              :meta_info => '+919876543210')
+              :meta_info => { :agent_info => '+919876543210'})
   end
 
   def stub_twilio_call_with_parent(update_return_value = true)

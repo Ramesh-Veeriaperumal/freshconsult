@@ -73,7 +73,7 @@ class Freshfone::PulseRate
 		end
 
 		def forwarded_number
-			call.meta.meta_info unless call.meta.blank?
+			(call.meta.meta_info.is_a?(Hash) ? call.meta.meta_info[:agent_info] : call.meta.meta_info) unless call.meta.blank?
 		end
 
 		# MaxLength of the existing numbers  
