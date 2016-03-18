@@ -113,7 +113,7 @@ class Freshfone::Initiator::AgentCallLeg
     end
 
     def simultaneous_call?
-      disconnect_leg? && all_agents_busy?
+      disconnect_leg? && (all_agents_busy? || invalid_call? )
     end
 
     def all_agents_busy?
@@ -126,6 +126,13 @@ class Freshfone::Initiator::AgentCallLeg
       Rails.logger.debug "Call redirected to queue : Account : #{current_account.id} : agent : 
                           #{params[:agent_id]} : call : #{current_call.call_sid}"
       Rails.logger.debug "Redirected call #{current_call.call_sid} :: #{busy_agents.map(&:id)}"
+    end
+
+    def invalid_call? 
+    # Edge case: To prevent incoming call for an agent with a call (bug #15531)
+      return if (available_agents.length != 1)
+      user_id = available_agents.first.user_id
+      current_account.freshfone_calls.agent_progress_calls(user_id).present?
     end
 
     def telephony
