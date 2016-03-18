@@ -5,8 +5,6 @@ class Fdadmin::DevopsMainController < Fdadmin::MetalApiController
   before_filter :check_freshops_subdomain
 
 
-  include Fdadmin::PodHelperMethods
-
   include Fdadmin::APICalls
   private
     def verify_signature

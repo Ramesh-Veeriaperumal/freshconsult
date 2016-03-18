@@ -5,4 +5,3 @@
 //= require_tree ../helpdesk_reports/templates
 //= require ../app/kissmetrics.js
 //= require ../helpdesk_reports/helpdeskreports_metrics.js
-//= require ../helpdesk_reports/timesheet/timesheet_report.js

@@ -22,6 +22,12 @@ class String
   end
 end
 
+class NullObject < Struct.new(nil)
+  def self.instance
+    @@null_object ||= NullObject.new
+  end
+end
+
 # module StringExt
 #   def brackets_with_translation(*args)
 #     args = [underscore.tr(' ', '_').to_sym] if args.empty?

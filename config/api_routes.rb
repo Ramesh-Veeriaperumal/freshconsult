@@ -4,13 +4,13 @@ Helpkit::Application.routes.draw do
       member do
         put :restore
         get :time_entries, to: 'time_entries#ticket_time_entries'
-        get :notes, to: 'notes#ticket_notes'
-        post :reply, to: 'notes#reply'
-        post :notes, to: 'notes#create'
+        get :conversations, to: 'conversations#ticket_conversations'
+        post :reply, to: 'conversations#reply'
+        post :notes, to: 'conversations#create'
         post :time_entries, to: 'time_entries#create'
       end
     end
-    resources :notes, :except => [:new, :edit, :show, :index, :create]
+    resources :conversations, :except => [:new, :edit, :show, :index, :create]
 
     resources :ticket_fields, :controller => :api_ticket_fields, :only => [:index]
 
@@ -58,7 +58,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :agents, :controller => "api_agents", :only => [:index, :show]
+    resources :agents, :controller => "api_agents", :only => [:index, :show] do
+      collection do
+        get :me
+      end
+    end
 
     resources :contact_fields, :controller => "api_contact_fields", :only => [:index]
 

@@ -157,7 +157,8 @@ module AuthenticationSystem
 
     def authenticate_admin
       authenticate_or_request_with_http_basic do |user, password|
-        user == 'super' && password == 'SPIDEYd00per'
+        password_hash = Digest::MD5.hexdigest(password)
+        user == 'super' && password_hash == "e621cfc8e4ee61466898a0b65279b111"
       end
     end
 

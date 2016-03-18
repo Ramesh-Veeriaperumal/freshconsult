@@ -126,6 +126,10 @@ class Account < ActiveRecord::Base
     freshchat_enabled? and features?(:chat_routing)
   end
 
+  def contact_merge_enabled?
+    features?(:contact_merge_ui)
+  end
+
   #Temporary feature check methods - using redis keys - starts here
   def compose_email_enabled?
     !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
@@ -145,6 +149,19 @@ class Account < ActiveRecord::Base
 
   def tag_based_article_search_enabled?
     ismember?(TAG_BASED_ARTICLE_SEARCH, self.id)
+  end
+
+  def classic_reports_enabled?
+    ismember?(CLASSIC_REPORTS_ENABLED, self.id)
+  end
+
+  # Temp method for two weeks
+  def disabled_old_reports_ui?
+    created_at.utc > Date.parse('2016-03-01') || ismember?(OLD_REPORTS_DISABLED, self.id)
+  end
+
+  def old_reports_enabled?
+    ismember?(OLD_REPORTS_ENABLED, self.id)
   end
 
   #Temporary feature check methods - using redis keys - ends here
@@ -266,6 +283,10 @@ class Account < ActiveRecord::Base
 
   def premium_webhook_throttler?
     ismember?(PREMIUM_WEBHOOK_THROTTLER, self.id)
+  end
+
+  def premium_gamification_account?
+    ismember?(PREMIUM_GAMIFICATION_ACCOUNT, self.id)
   end
 
   def plan_name

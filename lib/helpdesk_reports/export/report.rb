@@ -89,6 +89,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
         :template => 'sections/generate_report_pdf.pdf.erb',
       :locals => {
         report_type: report_type,
+        filter_name: filter_name,
         data: @data,
         date_range: date_range,
         date_lag_by_plan: params[:date_lag_by_plan],

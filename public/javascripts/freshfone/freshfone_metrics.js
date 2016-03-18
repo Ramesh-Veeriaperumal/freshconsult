@@ -118,6 +118,10 @@ window.App.Phone = window.App.Phone || {};
 				self.resetConvertedToTicket();
     	}); 
 
+    	$('body').on('click', '#freshfone_feature_request , #freshfone_feature_request_widget', function(ev){
+    		self.recordSource('ACTIVATE_PHONE_FROM_TRIAL');
+    		self.push_event();
+    	});
    
 		},
 

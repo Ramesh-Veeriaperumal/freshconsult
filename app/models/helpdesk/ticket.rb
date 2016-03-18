@@ -147,22 +147,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :limit => 1000
     } 
   }
-
-  #META-READ-HACK!!
-  # Check this while doing Meta Write Phase.
-  # See if the Tickets can be fetched properly from Articles.
-  # As of now Tickets are associated directly with Articles (not thru Meta)
-  # It is better this way, but we'll have to make sure there are no new problems when we complete Multilingual feature.
-  scope :article_tickets_by_user, lambda { |user| {
-       :include => [:article, :requester, :ticket_status],
-       :conditions => ["helpdesk_tickets.id = article_tickets.ticketable_id and solution_articles.user_id = ? and article_tickets.ticketable_type = ?", user.id, 'Helpdesk::Ticket']
-     }
-   }
-
   scope :all_article_tickets,
-    :include => [:article, :requester, :ticket_status],
-    :conditions => ["helpdesk_tickets.id = article_tickets.ticketable_id and article_tickets.ticketable_type = ?", 'Helpdesk::Ticket'],
-    :order => "`helpdesk_tickets`.`created_at` DESC"
+          :joins => [:article_ticket],
+          :order => "`article_tickets`.`id` DESC"
+  
+  # The below scope "for_user_articles" HAS to be used along with "all_article_tickets"
+  # Otherwise, the condition and hence the query would fail.
+  
+  scope :for_user_articles, lambda { |article_ids| {
+          :conditions => ["`article_tickets`.`article_id` IN (?)", article_ids]
+        }
+  }
 
   scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {
     :conditions => ["display_id > (?)",display_id],
@@ -505,6 +500,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def reply_name
     email_config ? email_config.name : account.primary_email_config.name
+  end
+
+  def tag_names= updated_tag_names
+    unless updated_tag_names.nil? # Check only nil so that empty string will remove all the tags.
+      updated_tag_names = updated_tag_names.split(",").map(&:strip).reject(&:empty?)
+      self.tags = account.tags.assign_tags(updated_tag_names)
+    end    
   end
 
   #Some hackish things for virtual agent rules.

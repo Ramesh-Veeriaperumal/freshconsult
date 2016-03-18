@@ -2,7 +2,15 @@ module Fdadmin::APICalls
 
   include Fdadmin::ApiCallConstants
 
-  def connect_main_pod(request_type,url_params,path_key,domain)
+  def connect_main_pod(request_parameters)
+    make_api_request_to_global(
+      :post,
+      request_parameters,
+      PodConfig['pod_paths']['pod_endpoint'],
+    "#{AppConfig['freshops_subdomain']['global']}.#{AppConfig['base_domain'][Rails.env]}")
+  end
+
+  def self.make_api_request_to_global(request_type,url_params,path_key,domain)
     options = Hash.new
     options[:timeout] = AdminApiConfig['timeout']
     options[:headers] = {"Accept" => AdminApiConfig['accept'], "Content-Type" => AdminApiConfig['content_type'] }
@@ -16,11 +24,14 @@ module Fdadmin::APICalls
       request_url = "https://#{domain}#{path_key}"
     end
     request = HTTParty::Request.new(req_type, request_url, options)
+    Rails.logger.debug "Initiating API Request Connecting to Global POD URL: #{request_url} with params:: #{url_params.inspect}"
     begin
       response = request.perform
+      Rails.logger.debug "Response for #{request_url} : : : : #{response} "
     rescue Exception => e
-      Rails.logger.debug "Exception in performing API call: #{e}"
+      Rails.logger.debug "Exception in Response for #{request_url} : : : : #{e.inspect} "
       NewRelic::Agent.notice_error(e,{:description => "POD api call failed :#{url_params}"})
+      raise e
     end
     return response
   end

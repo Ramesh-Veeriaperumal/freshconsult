@@ -4,7 +4,7 @@
 <%= render :partial => "layouts/report/v2/shared/pdf_files", :formats => [:html], :locals => {} %>
 <div class="reports-main">
   <div class="reports-header row-fluid">
-     <%= render :partial => "layouts/report/v2/shared/header", :formats => [:html], :locals => {report_type: report_type}  %> 
+     <%= render :partial => "layouts/report/v2/shared/header", :formats => [:html], :locals => {report_type: report_type, filter_name: filter_name }  %> 
   </div>
   <div class="customer-report"> 
     <div class="customer-chart-wrapper" id="customer_report_chart_wrapper">

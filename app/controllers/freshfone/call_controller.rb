@@ -8,7 +8,6 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::Call::EndCallActions
 	
 	include Freshfone::Search
-	include Freshfone::CallerLookup
 	before_filter :load_user_by_phone, :only => [:caller_data]
 	before_filter :set_native_mobile, :only => [:caller_data]
 	before_filter :populate_call_details, :only => [:status]
@@ -16,6 +15,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	before_filter :force_termination, :only => [:status]
 	before_filter :clear_client_calls, :only => [:status]
 	before_filter :reset_outgoing_count, :only => [:status]
+	before_filter :validate_trial, :only => [:trial_warnings]
 	
 	skip_after_filter :set_last_active_time, :only => [:caller_data], :unless =>lambda{ params[:outgoing]}
 
@@ -68,7 +68,15 @@ class Freshfone::CallController < FreshfoneBaseController
       				:include => [:ticket_status])
 		end
     render :partial => 'freshfone/caller/caller_recent_tickets'
-	end 
+	end
+
+	def trial_warnings
+		respond_to do |format|
+			format.json do
+				render :json => trial_warnings_meta
+			end
+		end
+	end
 
 	private
 		def load_user_by_phone
@@ -188,5 +196,15 @@ class Freshfone::CallController < FreshfoneBaseController
 		def set_abandon_state
 			return unless current_call.present? 
 			current_call.set_abandon_call(params)
+		end
+
+		def validate_trial
+			return head :no_content unless params[:CallSid].present? && trial?
+		end
+
+		def trial_warnings_meta
+			return {} if current_call.blank?
+			return freshfone_subscription.incoming_trial_warnings if current_call.incoming?
+			freshfone_subscription.outgoing_trial_warnings
 		end
 end

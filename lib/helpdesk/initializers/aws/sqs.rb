@@ -36,7 +36,12 @@ begin
 
   # Reports helpkit Export
   $sqs_reports_helpkit_export = AWS::SQS.new.queues.named(SQS[:helpdesk_reports_export_queue])  
+
+  $sqs_es_migration_queue = AWS::SQS.new.queues.named("es_etl_migration_queue_#{Rails.env}") 
   
+  #Freshfone Call Tracker
+  $sqs_freshfone_tracker = AWS::SQS.new.queues.named(SQS[:freshfone_call_tracker])
+
 rescue => e
   puts "AWS::SQS connection establishment failed."
 end

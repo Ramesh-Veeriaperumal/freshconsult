@@ -3,6 +3,12 @@ CURRENT_POD: poduseast # values can be poduseast, podeu. This should exactly mat
 
 GLOBAL_POD: poduseast
 
+CURRENT_REGION: "us-east-1"
+
 pod_paths:
   pod_endpoint: "/fdadmin/freshops_pod/pod_endpoint"
+
+access_key_id: ""
+secret_access_key: ""
+region: "us-east-1"
 

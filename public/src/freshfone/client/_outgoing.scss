@@ -54,6 +54,33 @@
 		border: 1px solid $popup-content-border;
 		border-bottom: 4px solid #444;
 		border-radius: 4px;
+		.ff-trial-activate{
+			background-color: #ffffff;
+			height: 430px;
+			.content{
+				font-size: 14px;
+				.activation_requested{
+					@include padding(15px 30px 0px);
+				}
+				.info{
+					padding: 10px;
+					div{
+						padding-top:5px;
+					}
+				}
+				.error{
+					padding-top: 80px;
+					font-size: 14px;
+				}
+				.btn{
+					margin-top: 20px;
+					height: 20px;
+					padding-top: 9px;
+					background-color: #ffffff;
+					color: #034FC9;
+				}
+			}
+		}
 	}
   #recent_calls_cont{
     height:200px;
@@ -692,7 +719,7 @@
 		@include box-sizing(border-box);
 
 		height: 35px;
-		font-size: 16px;
+		font-size: 14px;
 		margin: 35px 0 0 15px;
 		
 		@include padding-right(35px);

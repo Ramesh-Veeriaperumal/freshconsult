@@ -3,6 +3,7 @@ require_relative '../test_helper'
 class ApiFlowsTest < ActionDispatch::IntegrationTest
   include DiscussionsTestHelper
   include TicketFieldsTestHelper
+  include AgentsTestHelper
 
   def test_json_format
     get '/api/discussions/categories.json', nil, @headers
@@ -395,7 +396,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
     remaining_limit = 3000 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
-    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_equal '1', response.headers['X-RateLimit-Used-CurrentRequest']
   end
 
   def test_throttled_valid_request_with_default_api_limit
@@ -412,7 +413,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal '400', response.headers['X-RateLimit-Total']
     remaining_limit = 400 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
-    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_equal '1', response.headers['X-RateLimit-Used-CurrentRequest']
     assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
   end
 
@@ -429,7 +430,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal '200', response.headers['X-RateLimit-Total']
     remaining_limit = 200 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
-    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_equal '1', response.headers['X-RateLimit-Used-CurrentRequest']
     assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
   end
 
@@ -438,7 +439,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     old_v1_api_consumed_limit = get_key(api_key).to_i
     remove_key(account_key)
     id = (Helpdesk::Ticket.first || create_ticket).display_id
-    skip_bullet { get "/api/v2/tickets/#{id}?include=notes", nil, @headers }
+    skip_bullet { get "/api/v2/tickets/#{id}?include=conversations", nil, @headers }
     assert_response 200
     new_v2_api_consumed_limit = get_key(v2_api_key).to_i
     new_v1_api_consumed_limit = get_key(api_key).to_i
@@ -447,7 +448,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal '200', response.headers['X-RateLimit-Total']
     remaining_limit = 200 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
-    assert_equal '2', response.headers['X-RateLimit-Used']
+    assert_equal '2', response.headers['X-RateLimit-Used-CurrentRequest']
     assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
   end
 
@@ -464,7 +465,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal '200', response.headers['X-RateLimit-Total']
     remaining_limit = 200 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
-    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_equal '1', response.headers['X-RateLimit-Used-CurrentRequest']
     response.headers.exclude?('X-Freshdesk-API-Version')
   end
 
@@ -481,7 +482,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal '200', response.headers['X-RateLimit-Total']
     remaining_limit = 200 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
-    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_equal '1', response.headers['X-RateLimit-Used-CurrentRequest']
     response.headers.exclude?('X-Freshdesk-API-Version')
   end
 
@@ -526,7 +527,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal 500.to_s, response.headers['X-RateLimit-Total']
     remaining_limit = 500 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
-    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_equal '1', response.headers['X-RateLimit-Used-CurrentRequest']
     assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
   end
 
@@ -540,7 +541,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal 500, new_api_consumed_limit
     assert_equal 500.to_s, response.headers['X-RateLimit-Total']
     assert_equal '0', response.headers['X-RateLimit-Remaining']
-    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_equal '1', response.headers['X-RateLimit-Used-CurrentRequest']
     assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
   end
 
@@ -593,10 +594,10 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_used_api_limit
     ticket = Helpdesk::Ticket.last || create_ticket(email: 'test@abc.com')
     get "/api/tickets/#{ticket.display_id}", nil, @headers
-    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_equal '1', response.headers['X-RateLimit-Used-CurrentRequest']
 
-    get "/api/tickets/#{ticket.display_id}?include=notes", nil, @headers
-    assert_equal '2', response.headers['X-RateLimit-Used']
+    get "/api/tickets/#{ticket.display_id}?include=conversations", nil, @headers
+    assert_equal '2', response.headers['X-RateLimit-Used-CurrentRequest']
   end
 
   def test_v2_incremented_api_limit
@@ -611,7 +612,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal old_v2_api_consumed_limit + 1, v2_api_consumed_limit
     assert_equal old_api_consumed_limit, api_consumed_limit
 
-    get "/api/tickets/#{ticket.display_id}?include=notes", nil, @headers
+    get "/api/tickets/#{ticket.display_id}?include=conversations", nil, @headers
 
     v2_api_consumed_limit = get_key(v2_api_key).to_i
     assert_equal old_v2_api_consumed_limit + 3, v2_api_consumed_limit
@@ -665,7 +666,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     $rate_limit = rate_limit_instance
     assert_equal '3000', response.headers['X-RateLimit-Total']
     assert_equal '3000', response.headers['X-RateLimit-Remaining']
-    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_equal '1', response.headers['X-RateLimit-Used-CurrentRequest']
     assert_nil get_key(v2_api_key)
     assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
   ensure
@@ -688,7 +689,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
     id = (Helpdesk::Ticket.first || create_ticket).display_id
     # first call after expiry
-    skip_bullet { get "/api/v2/tickets/#{id}?include=notes", nil, @headers }
+    skip_bullet { get "/api/v2/tickets/#{id}?include=conversations", nil, @headers }
     assert_response 200
 
     assert_equal 2, get_key(v2_api_key).to_i
@@ -1009,9 +1010,17 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_cors_preflight_request
     # one hack to test options request in 3.2.18
     integration_session.__send__ :process, 'options', '/api/contacts', nil, @headers.except('HTTP_AUTHORIZATION').merge('HTTP_ORIGIN' => '*', 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET', 'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' => 'authorization')
-    assert '*', response.headers['Access-Control-Allow-Origin']
-    assert 'authorization', response.headers['Access-Control-Allow-Headers']
-    assert 'GET, POST, PUT, DELETE, OPTIONS', response.headers['Access-Control-Allow-Methods']
-    assert 'X-Path, X-Method, X-Query-String, X-Ua-Compatible, X-Meta-Request-Version, X-Request-Id, X-Runtime, X-RateLimit-Total, X-RateLimit-Remaining, X-RateLimit-Used, X-Freshdesk-API-Version', response.header['Access-Control-Expose-Headers']
+    assert_equal '*', response.headers['Access-Control-Allow-Origin']
+    assert_equal 'authorization', response.headers['Access-Control-Allow-Headers']
+    assert_equal 'GET, POST, PUT, DELETE, OPTIONS', response.headers['Access-Control-Allow-Methods']
+    assert_equal 'X-Path, X-Method, X-Query-String, X-Ua-Compatible, X-Meta-Request-Version, X-Request-Id, X-Runtime, X-RateLimit-Total, X-RateLimit-Remaining, X-RateLimit-Used-CurrentRequest, X-Freshdesk-API-Version', response.header['Access-Control-Expose-Headers']
+  end
+
+  def test_me_with_new_agent
+    sample_user = add_test_agent(@account)
+    headers = set_custom_auth_headers(@headers, sample_user.email, 'test')
+    get 'api/agents/me', nil, @headers.merge(headers)
+    assert_response 200
+    response.body.must_match_json_expression(agent_pattern(@account.all_agents.find(sample_user.agent.id)))
   end
 end

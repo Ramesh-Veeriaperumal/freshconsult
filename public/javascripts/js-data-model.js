@@ -91,7 +91,7 @@ var DataModel = {
 	},
 	_pluck: function(key){
 		return this.currentData.map(function(val){
-			return val[this.currentObj][key || this.key] ? val[this.currentObj][key || this.key] : null;
+			return val[key || this.key] ? val[key || this.key] : null;
 		}.bind(this));
 	}
 }

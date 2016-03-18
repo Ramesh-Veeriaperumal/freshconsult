@@ -7,9 +7,11 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
     v2_expected = {
       api_show: 2,
       api_index: 2,
+      api_me: 2,
 
       show: 13,
-      index: 13
+      index: 13,
+      me: 13
     }
 
     id = Agent.first.user.id
@@ -38,6 +40,20 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
     end
 
     v2[:index] -= 1
+
+    # api/v2/agents/me is introduced in V2 and we can compare this with V1's show to 
+    # me
+    v2[:me], v2[:api_me], v2[:me_queries] = count_api_queries do
+      get("/api/v2/agents/me", nil, @headers)
+      assert_response 200
+    end
+    v1[:me] = count_queries do
+      get("/agents/#{id}.json", nil, @headers)
+      assert_response 200
+    end
+
+    v2[:me] -= 1
+    v1[:me] += 1 # account suspended check is done in v2 alone.
 
     write_to_file(v1, v2)
 

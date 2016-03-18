@@ -22,6 +22,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   #before_filter :logging_details 
   before_filter :remove_pjax_param 
+  before_filter :set_shard_for_payload 
   after_filter :set_last_active_time
 
   after_filter :remove_rails_2_flash_after
@@ -33,7 +34,7 @@ class ApplicationController < ActionController::Base
   
   include AuthenticationSystem
   include HelpdeskSystem  
-  include ControllerLogger
+  #include ControllerLogger
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
   include ActionView::Helpers::DateHelper
@@ -118,6 +119,10 @@ class ApplicationController < ActionController::Base
       time_to_expiry = (current_user.password_expiry - Time.now.utc).ceil
       flash[:notice] = t('flash.password_expiry', :time_in_words => time_ago_in_words((time_to_expiry).seconds.from_now)) if time_to_expiry < 60.minutes && time_to_expiry > 0
     end
+  end
+  
+  def run_on_slave(&block)
+    Sharding.run_on_slave(&block)
   end
 
   def render_404

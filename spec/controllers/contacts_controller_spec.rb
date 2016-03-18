@@ -29,10 +29,6 @@ describe ContactsController do
                 cf.update_attributes(:required_for_agent => false) unless cf.field_type == :default_name}
   end
 
-  after(:each) do
-    @account.features.multiple_user_emails.destroy
-  end
-
   #A few exceptions have been missed and agent failures couldnt be reproduced
 
   it "should create a new contact" do

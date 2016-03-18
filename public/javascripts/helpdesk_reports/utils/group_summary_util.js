@@ -98,6 +98,7 @@ HelpdeskReports.ReportUtil.GroupSummary = (function () {
                 current_params.push(param);
             });
             HelpdeskReports.locals.params = current_params.slice();
+            HelpdeskReports.SavedReportUtil.applyLastCachedReport();
             _FD.actions.submitReports();
         },
         flushEvents: function () {

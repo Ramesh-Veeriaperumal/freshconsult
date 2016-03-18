@@ -1,9 +1,9 @@
 module Freshfone
   class NotificationWorker < BaseWorker
     include Freshfone::FreshfoneUtil
-    include Freshfone::CallerLookup
     include Freshfone::Endpoints
     include Freshfone::CallsRedisMethods
+    include Freshfone::SubscriptionsUtil
 
     sidekiq_options :queue => :freshfone_notifications, :retry => 0, :backtrace => true, :failures => :exhausted
 
@@ -59,7 +59,7 @@ module Freshfone
         :from            => browser_caller_id(params[:caller_id]),
         :to              => "client:#{agent}",
         :timeout         => current_number.ringing_time,
-        :timeLimit       => current_account.freshfone_credit.call_time_limit
+        :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call)
       }
 
       begin
@@ -87,7 +87,7 @@ module Freshfone
           :from            => get_caller_id(current_call),
           :to              => to_number(from, to, agent),
           :timeout         => current_number.ringing_time,
-          :timeLimit       => current_account.freshfone_credit.call_time_limit,
+          :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call),
           :if_machine      => "hangup"
         }
         agent_call = telephony.make_call(call_params)   
@@ -111,7 +111,7 @@ module Freshfone
         :status_callback => transfer_status_url(current_call.children.last.id, agent),
         :to              => "client:#{agent}",
         :from            => browser_caller_id(current_call.caller_number),
-        :timeLimit       => current_account.freshfone_credit.call_time_limit,
+        :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call),
         :timeout         => current_number.ringing_time
       }
       begin
@@ -142,7 +142,7 @@ module Freshfone
           :to              => to_number(from, to, agent),
           :from            => get_caller_id(current_call),
           :timeout         => current_number.ringing_time,
-          :timeLimit       => current_account.freshfone_credit.call_time_limit,
+          :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call),
           :if_machine      => "hangup"
         }
         agent_call = telephony.make_call(call_params)
@@ -168,7 +168,7 @@ module Freshfone
           :timeout         => current_number.ringing_time,
           :to              => to_number(from, to),
           :from            => get_caller_id(current_call),
-          :timeLimit       => current_account.freshfone_credit.call_time_limit
+          :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call)
         }
         agent_call = telephony.make_call(call_params)
       rescue => e
@@ -196,7 +196,7 @@ module Freshfone
           :from            => browser_agent? ? browser_caller_id(params[:caller_id]) : get_caller_id(current_call),
           :to              => browser_agent? ? "client:#{agent['id']}" : to_number(from, to, agent["id"]),
           :timeout         => current_number.ringing_duration,
-          :timeLimit       => current_account.freshfone_credit.call_time_limit
+          :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call)
         }
         call_params.merge!(:if_machine => 'hangup') unless browser_agent?
         agent_call = telephony.make_call(call_params)

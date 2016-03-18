@@ -3,7 +3,7 @@ Encoding.default_external = Encoding::UTF_8
 source 'http://rubygems.org'
 
 gem "rake", "~> 10.4.0"
-gem "rails","3.2.22.1"
+gem "rails","3.2.22.2"
 
 gem 'rack-cors', '~> 0.3.1'
 gem "syck", :platform => [:mri_20, :mri_21]
@@ -29,6 +29,7 @@ gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/freshdesk/rack
 gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
 
 gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
+gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'v10'
 
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.2', :platform => [:mri_20, :mri_21]
@@ -48,6 +49,7 @@ group :development, :test do
 end
 
 gem "rack-mini-profiler", :group => [:development]
+gem "brakeman", :require => false, :group => [:development]
 gem "bullet", :group => [:development, :test, :staging]
 gem "mail"
 gem "i18n", "~> 0.6.0"
@@ -68,7 +70,6 @@ gem "omniauth-google"
 gem "omniauth-google-oauth2"
 gem "omniauth-facebook"
 gem "omniauth-quickbooks"
-gem "omniauth-salesforce", :git => "git://github.com/sathishfreshdesk/omniauth-salesforce.git", :branch => "master"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "dynamics_crm", :git => 'git@github.com:TinderBox/dynamics_crm.git', :branch => "master"

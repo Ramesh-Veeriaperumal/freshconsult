@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(:version => 20160211060336) do
+ActiveRecord::Schema.define(:version => 20160104125144) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1062,6 +1062,7 @@ ActiveRecord::Schema.define(:version => 20160211060336) do
     t.string   "activator_token"
     t.string   "name"
     t.integer  "product_id",      :limit => 8
+    t.integer  "category"
   end
 
   add_index "email_configs", ["account_id", "product_id"], :name => "index_email_configs_on_account_id_and_product_id"
@@ -1385,6 +1386,7 @@ ActiveRecord::Schema.define(:version => 20160211060336) do
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"
   add_index "freshfone_accounts", ["account_id"], :name => "index_freshfone_accounts_on_account_id", :unique => true
+  add_index "freshfone_accounts", ["state"], :name => "index_freshfone_accounts_on_state"
 
   create_table "freshfone_blacklist_numbers", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -1566,6 +1568,7 @@ ActiveRecord::Schema.define(:version => 20160211060336) do
     t.text     "hold_message"
     t.boolean  "queue_position_preference",                                               :default => false
     t.string   "queue_position_message"
+    t.integer  "port",                       :limit => 1
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -1609,6 +1612,23 @@ ActiveRecord::Schema.define(:version => 20160211060336) do
   add_index "freshfone_supervisor_controls", ["account_id"], :name => "index_freshfone_supervisor_controls_on_account_id"
   add_index "freshfone_supervisor_controls", ["call_id"], :name => "index_freshfone_supervisor_controls_on_call_id"
 
+    create_table "freshfone_subscriptions", :force => true do |t|
+    t.integer  "account_id",           :limit => 8,                                                 :null => false
+    t.integer  "freshfone_account_id", :limit => 8
+    t.text     "inbound"
+    t.text     "outbound"
+    t.text     "numbers"
+    t.text     "calls_usage"
+    t.decimal  "numbers_usage",                     :precision => 6,  :scale => 2, :default => 0.0
+    t.decimal  "others_usage",                      :precision => 10, :scale => 4, :default => 0.0
+    t.datetime "expiry_on"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "freshfone_subscriptions", ["account_id"], :name => "index_on_freshfone_subscriptions_on_account_id", :unique => true
+  add_index "freshfone_subscriptions", ["freshfone_account_id"], :name => "index_on_freshfone_subscriptions_on_freshfone_account_id", :unique => true
+  
   create_table "freshfone_usage_triggers", :force => true do |t|
     t.integer  "account_id",           :limit => 8
     t.integer  "freshfone_account_id", :limit => 8
@@ -2295,6 +2315,7 @@ ActiveRecord::Schema.define(:version => 20160211060336) do
   create_table "integrated_resources", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
     t.string   "remote_integratable_id"
+    t.string   "remote_integratable_type"
     t.integer  "local_integratable_id",    :limit => 8
     t.string   "local_integratable_type"
     t.integer  "account_id",               :limit => 8
@@ -2303,7 +2324,8 @@ ActiveRecord::Schema.define(:version => 20160211060336) do
   end
 
   add_index "integrated_resources", ["account_id","installed_application_id","local_integratable_id","local_integratable_type"], :name => "index_on_account_and_inst_app_and_local_int_id_and_type"
-
+  add_index "integrated_resources", ["account_id","installed_application_id","remote_integratable_id","remote_integratable_type"], :name => "index_on_account_and_inst_app_and_remote_int_id_and_type"
+  
   create_table "integrations_user_credentials", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
     t.integer  "user_id",                  :limit => 8
@@ -2466,6 +2488,17 @@ ActiveRecord::Schema.define(:version => 20160211060336) do
   end
 
   add_index "oauth_applications", ["uid", "account_id"], :name => "index_oauth_applications_on_uid_and_account_id", :unique => true
+
+  create_table "outgoing_email_domain_categories", :force => true do |t|
+    t.integer    "account_id", :limit => 8, :null => false
+    t.string     "email_domain", :limit => 253, :null => false
+    t.integer    "category", :null => false
+    t.boolean    "enabled", :default => false
+    t.datetime   "created_at", :null => false
+    t.datetime   "updated_at", :null => false
+  end
+
+  add_index "outgoing_email_domain_categories", ["account_id", "email_domain"], :name => 'index_outgoing_email_domain_categories_on_account_id_and_domain', :unique => true
 
   create_table "password_policies", :force => true do |t|
     t.integer "account_id", :limit => 8

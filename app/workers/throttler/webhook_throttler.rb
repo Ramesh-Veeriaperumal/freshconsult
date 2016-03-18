@@ -19,7 +19,7 @@ class Throttler::WebhookThrottler < Throttler::BaseWorker
     end
 
     def throttle_limit
-      1000
+      100000
     end
 
     def limit_exceeded_callback(throttle_expiration, throttler_args)

@@ -53,6 +53,8 @@ class CRM::AddToCRM
 
     def self.perform_job(crm, item)
       crm.update_admin_info(item)
+    ensure
+      Resque.enqueue(CRM::Freshsales::AdminUpdate, { :account_id => Account.current.id })
     end
   end
 

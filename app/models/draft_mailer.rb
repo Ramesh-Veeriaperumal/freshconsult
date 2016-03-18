@@ -11,7 +11,7 @@ class DraftMailer < ActionMailer::Base
 
   def discard_email(draft, article, current_author, current_user, portal)
     mail_config = portal.primary_email_config || current_user.account.primary_email_config
-    self.class.set_mailbox mail_config.smtp_mailbox
+    self.class.set_email_config mail_config
 
     headers = {
       :to        => current_author.email,

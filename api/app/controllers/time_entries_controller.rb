@@ -168,7 +168,7 @@ class TimeEntriesController < ApiApplicationController
     end
 
     def ticket_time_entries?
-      @ticket_notes ||= current_action?('ticket_time_entries')
+      @ticket_time_entries ||= current_action?('ticket_time_entries')
     end
 
     def update_running_timer(user_id)

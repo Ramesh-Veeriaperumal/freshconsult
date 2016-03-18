@@ -5,7 +5,8 @@ module IntegrationServices::Services
       def get_fields
         request_url = "#{salesforce_old_rest_url}/sobjects/Lead/describe"
         response = http_get request_url
-        process_response(response, 200, &format_fields_block)
+        opt_fields = { "Address" => "Address" }
+        process_response(response, 200, &format_fields_block(opt_fields))
       end
 
       def get_selected_fields fields, email

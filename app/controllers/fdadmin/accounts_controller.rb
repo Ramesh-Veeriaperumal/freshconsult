@@ -27,7 +27,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
     account_summary[:shard] = shard_info.shard_name
     account_summary[:pod] = shard_info.pod_info
-    account_summary[:freshfone_feature] = account.features?(:freshfone)
+    account_summary[:freshfone_feature] = account.features?(:freshfone) || account.launched?(:freshfone_onboarding)
     respond_to do |format|
       format.json do
         render :json => account_summary
@@ -298,11 +298,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       :new_domain => params[:new_url], 
       :target_method => :check_domain_availability
     }
-    response = connect_main_pod(
-      :post,request_parameters,
-      PodConfig["pod_paths"]["pod_endpoint"],
-      "#{AppConfig['freshops_subdomain']['global']}.#{AppConfig['base_domain'][Rails.env]}")
-    render :json => { status: "notice"} and return if response["status"]
+    response = Fdadmin::APICalls.connect_main_pod(request_parameters)
+    render :json => { status: "notice"} and return if response["account_id"]
   end
 
   def user_info

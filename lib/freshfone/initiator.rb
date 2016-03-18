@@ -1,6 +1,7 @@
 class Freshfone::Initiator
   include Freshfone::CallValidator
   include Freshfone::FreshfoneUtil
+  include Freshfone::SubscriptionsUtil
 
   CALL_TYPES = [ 
                   Freshfone::Initiator::Incoming, 
@@ -25,7 +26,8 @@ class Freshfone::Initiator
   end
 
   def resolve_call
-    return telephony.reject unless preconditions?
+    validation_error = validate_call
+    return telephony.reject(validation_error) if validation_error
     call_resolver = CALL_TYPES.detect { |type| type.match?(params) }.new(params, current_account, @current_number)
     return call_resolver.process
   end
@@ -37,7 +39,7 @@ class Freshfone::Initiator
 
   private
     def telephony
-      @telephony ||= Freshfone::Telephony.new(params, current_account, @current_number)
+      @telephony ||= Freshfone::Telephony.new(params, current_account, @current_number, @current_call)
     end
 
     def outgoing?

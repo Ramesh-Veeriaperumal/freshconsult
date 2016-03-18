@@ -3,7 +3,7 @@ module Redis::PortalRedis
 		newrelic_begin_rescue { $redis_portal.get(key) }
 	end
 
-	def set_portal_redis_key(key, value, expires = 86400)
+	def set_portal_redis_key(key, value, expires = 7776000)
 		newrelic_begin_rescue do
 			$redis_portal.set(key, value)
 			$redis_portal.expire(key,expires) if expires

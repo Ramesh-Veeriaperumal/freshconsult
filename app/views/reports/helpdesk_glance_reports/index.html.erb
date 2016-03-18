@@ -5,7 +5,7 @@
 <div id="loading-box"> 
 	<div id="loading-box"> <div class="sloading reports-loading loading-left loading-small">Generating Report...</div> </div>
 </div>
-
+<%= render :partial => "reports/shared/deprecation_head"  unless current_account.old_reports_enabled? %>
 <div class="row-fluid">
 	<div class="span12 report-breadcrum-wrapper">
 		<ul class="breadcrumb span8">

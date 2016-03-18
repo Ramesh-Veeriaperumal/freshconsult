@@ -16,17 +16,17 @@ module Spam
 
     def check_spam_content(content, options)
       content = CGI.unescapeHTML(content)
-      options.merge!({:account_id => Account.current.id, :content => content})
       result  = SpamResult::NO_SPAM
       urls    = parse_urls(content)
       result  = check_urls(urls) unless is_spam?(result)
-      result  = is_spam_content(
-                  content,  
-                  options[:user_id], 
-                  options[:remote_ip], 
-                  options[:user_agent], 
-                  options[:referrer]
-                ) unless is_spam?(result)
+      # result  = is_spam_content(
+      #             content,  
+      #             options[:user_id], 
+      #             options[:remote_ip], 
+      #             options[:user_agent], 
+      #             options[:referrer]
+      #           ) unless is_spam?(result)
+      options.merge!({:account_id => Account.current.id, :spam_result => result, :content => content})
       Rails.logger.debug "Spam check result is #{result} for params #{options}"
       notify_spam(result, options)
       return result
@@ -68,10 +68,15 @@ module Spam
     def check_urls(urls)
       result = SpamResult::NO_SPAM
       urls.each do |url|
-        result = check_spam_url url
+        limit = (is_paying_account? ? 5 : 2)
+        result = check_spam_url(url, limit)
         return result unless ((result == SpamResult::ERROR) || (result == SpamResult::NO_SPAM))
       end
       return result
+    end
+
+    def is_paying_account?
+      (Account.current.created_at < 5.months.ago) and (Account.current.subscription.paid_account?)
     end
 
     def check_spam_url(uri_str, limit = 5, notify_by_email = true)    

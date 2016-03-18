@@ -43,7 +43,7 @@ module Admin::Sla::Escalation
         account = Account.current
         overdue_tickets =  execute_on_db {
                             account.tickets.unresolved.visible.resolution_sla(account,Time.zone.now.to_s(:db)).
-                            updated_in(2.month.ago)
+                            updated_in(2.month.ago).all
                           }
         overdue_tickets.each do |ticket|
           sla_policy = sla_rule_based[ticket.sla_policy_id] || sla_default
@@ -57,7 +57,7 @@ module Admin::Sla::Escalation
       
         froverdue_tickets = execute_on_db {
                               account.tickets.unresolved.visible.response_sla(account,Time.zone.now.to_s(:db)).
-                              updated_in(2.month.ago)
+                              updated_in(2.month.ago).all
                             }
         froverdue_tickets.each do |fr_ticket|
           fr_sla_policy = sla_rule_based[fr_ticket.sla_policy_id] || sla_default

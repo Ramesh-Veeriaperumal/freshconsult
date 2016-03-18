@@ -87,7 +87,7 @@ class Account < ActiveRecord::Base
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :cascade_dispatchr => false,
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
-    :agent_collision => false, :multiple_user_emails => true, :facebook_realtime => false, :social_revamp => false,
+    :agent_collision => false, :multiple_user_emails => false, :facebook_realtime => false, :social_revamp => false,
     :moderate_all_posts => false, :moderate_posts_with_links => true, :redis_display_id => false, 
     :hide_portal_forums => false, :reports_regenerate_data => false, :updated_twilio_client => false, :chat_enable => false,
     :report_field_regenerate => false, :sort_by_customer_response => false, :no_list_view_count_query => false,
@@ -98,7 +98,7 @@ class Account < ActiveRecord::Base
     :public_ticket_url => false, :marketplace => false, :fa_developer => false,:archive_tickets => false, :compose_email => false,
     :limit_mobihelp_results => false, :ecommerce => false, :tokenize_emoji => false, :es_v2_writes => false, 
     :salesforce_sync => false, :round_robin_on_update => false, :freshfone_call_metrics => false, 
-    :solutions_meta_read => false, :threading_without_user_check => false, :custom_dashboard => false, :freshfone_call_monitoring => false }
+    :solutions_meta_read => false, :threading_without_user_check => false, :custom_dashboard => false, :freshfone_call_monitoring => false, :gamification_perf => false }
 
 
   # This list below is for customer portal features list only to prevent from adding addition features

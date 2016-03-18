@@ -58,7 +58,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
     resource :"freshfone/ivr"
     resource :"freshfone/user"
-    resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets ]
+    resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings ]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
     resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :acw]
@@ -104,7 +104,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used for API V2
     resource :"ticket", :only => [:show, :create, :index]
-    resource :"note", only: [:create, :ticket_notes]
+    resource :"conversation", only: [:create, :ticket_conversations]
 	end
 
   reply_ticket do
@@ -120,7 +120,7 @@ Authority::Authorization::PrivilegeList.build do
       :only => [:create_fd_item, :reply, :retweet, :post_tweet, :favorite, :unfavorite, :followers, :follow, :unfollow]
     
     # Used for API V2
-    resource :"note", :only => [:reply]
+    resource :"conversation", :only => [:reply]
   end
 
   forward_ticket do
@@ -146,14 +146,14 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/note", :only => [:destroy, :restore]
 
     # Used for API V2
-    resource :note, only: [:destroy]
+    resource :conversation, only: [:destroy]
   end
 
   edit_note do
     resource :"helpdesk/note", :only => [:edit, :update], :owned_by => { :scoper => :notes }
     
     # Used for API V2
-    resource :"note", only: [:update], :owned_by => { :scoper => :notes }
+    resource :"conversation", only: [:update], :owned_by => { :scoper => :notes }
   end
 
   view_time_entries do
@@ -469,6 +469,7 @@ Authority::Authorization::PrivilegeList.build do
   	resource :"admin/ecommerce/account",:only => [:index]
     resource :"admin/ecommerce/ebay_account"
     resource :"freshfone/dashboard", :only => [:index]
+    resource :"integrations/marketplace_app"
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]

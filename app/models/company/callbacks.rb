@@ -63,12 +63,16 @@ class Company < ActiveRecord::Base
 
     def added_domains
       domain_changes = self.changes[:domains]      
-      domains_array(domain_changes[1]) - domains_array(domain_changes[0])
+      get_hosts_list(domain_changes[1]) - get_hosts_list(domain_changes[0])
     end
 
     def removed_domains
       domain_changes = self.changes[:domains]     
-      domains_array(domain_changes[0]) - domains_array(domain_changes[1])
+      get_hosts_list(domain_changes[0]) - get_hosts_list(domain_changes[1])
+    end
+
+    def get_hosts_list(domains)
+      domains_array(domains).collect {|dom| get_host_without_www(dom)}
     end
 
     def update_company_domains
@@ -79,7 +83,6 @@ class Company < ActiveRecord::Base
 
     def domain_hash_list(domains_list, destroy=false)
       domains_list.collect do |dom|
-        dom = get_host_without_www dom
         id = self.company_domains.find_by_domain(dom).try(:id)
         {:id=>id, :domain=>dom, :_destroy=>destroy}
       end

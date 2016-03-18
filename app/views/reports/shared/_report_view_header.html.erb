@@ -1,7 +1,7 @@
 <div class="row-fluid report-header">
   <div class="row-fluid">
     <div class="span12 report-header-content">
-      <div class="span7">
+      <div class="span5">
         <% unless defined?(is_pdf) %>
           <i class="vertical-alignment report-header-icon reports-icon-report"></i>
         <%end%>
@@ -14,7 +14,11 @@
         if(report_for == 'helpdesk' || report_for == 'customer')
           old_report_link = (report_for == 'helpdesk') ? helpdesk_activity_url : customer_activity_url
           %>
-          <div class="span5 report-user-details muted"> Note: This report shows data after <%= formated_date(Time.parse("April 1, 2013"),{:include_year => true})%><br/><a href="<%=old_report_link%>">View classic report</a></div>
+          <div class="span7 report-user-details muted"> Note: This report shows data after <%= formated_date(Time.parse("April 1, 2013"),{:include_year => true})%><br/>
+             <% if current_account.classic_reports_enabled? %>
+              <a href="<%=old_report_link%>">View classic report</a>
+             <% end %>
+            </div>
         <%end
       end%>
     </div>

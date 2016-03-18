@@ -16,16 +16,16 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
   scope :remarks , lambda { |condition|
     preload([{:survey_remark => { :feedback => [:note_old_body]} }, :surveyable, :survey_result_data,
       {:customer => :avatar}, :agent, :group]).
-          where("survey_results.survey_id=#{condition[:survey_id]}  
-            and survey_results.created_at between '#{condition[:start_date]}' 
-              and '#{condition[:end_date]}'").order("survey_results.created_at DESC")
+          where("survey_results.survey_id= ? 
+            and survey_results.created_at between ? and ?", 
+            condition[:survey_id], condition[:start_date], condition[:end_date]).order("survey_results.created_at DESC")
   }
 
   scope :total_remarks , lambda { |condition| {
     :select => "count(*) as total",
-    :conditions => ["survey_results.survey_id=#{condition[:survey_id]}  
-                      and survey_results.created_at between '#{condition[:start_date]}' 
-                        and '#{condition[:end_date]}'"]
+    :conditions => ["survey_results.survey_id= ?  
+                      and survey_results.created_at between ? and ?", 
+                      condition[:survey_id], condition[:start_date], condition[:end_date]]
   }}
 
   scope :rating_filter, lambda { |condition| 
@@ -39,11 +39,11 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
   }
 
   scope :agent_filter, lambda { |agent_id| { 
-      :conditions =>  ["survey_results.agent_id=#{agent_id}"]
+      :conditions =>  ["survey_results.agent_id = ?", agent_id]
   }}
 
   scope :group_filter, lambda { |group_id| { 
-      :conditions =>  ["survey_results.group_id=#{group_id}"]
+      :conditions =>  ["survey_results.group_id = ?", group_id]
   }}
 
   scope :aggregate, lambda { |condition| {
@@ -54,9 +54,9 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
                     `survey_result_data`.`account_id` = `survey_results`.`account_id`",
       :group => "survey_result_data.#{condition[:column_name]}",
       :order => "survey_result_data.#{condition[:column_name]}",
-      :conditions => ["survey_results.survey_id=#{condition[:survey_id]} 
-                        and survey_results.created_at between '#{condition[:start_date]}'
-                          and '#{condition[:end_date]}'"]
+      :conditions => ["survey_results.survey_id = ? 
+                        and survey_results.created_at between ? and ?", 
+                        condition[:survey_id], condition[:start_date], condition[:end_date]]
   }}
 
   scope :group_wise, lambda { |condition| { 
@@ -67,9 +67,9 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
                     `survey_result_data`.`account_id` = `survey_results`.`account_id`",
       :group => "survey_results.group_id, survey_result_data.#{condition[:column_name]}",
       :order => "survey_result_data.#{condition[:column_name]}",
-      :conditions => ["survey_results.survey_id=#{condition[:survey_id]} 
-                          and survey_results.created_at between '#{condition[:start_date]}' 
-                          and '#{condition[:end_date]}'"]
+      :conditions => ["survey_results.survey_id = ? 
+                          and survey_results.created_at between ? and ?", 
+                          condition[:survey_id], condition[:start_date], condition[:end_date]]
   }}
 
   scope :agent_wise, lambda {|condition| { 
@@ -80,9 +80,9 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
                     `survey_result_data`.`account_id` = `survey_results`.`account_id`",
       :group => "survey_results.agent_id, survey_result_data.#{condition[:column_name]}",
       :order => "survey_result_data.#{condition[:column_name]}",
-      :conditions => ["survey_results.survey_id=#{condition[:survey_id]} 
-                        and survey_results.created_at between '#{condition[:start_date]}' 
-                          and '#{condition[:end_date]}'"]
+      :conditions => ["survey_results.survey_id = ? 
+                        and survey_results.created_at between ? and ?", 
+                        condition[:survey_id], condition[:start_date], condition[:end_date]]
 
   }}
 end

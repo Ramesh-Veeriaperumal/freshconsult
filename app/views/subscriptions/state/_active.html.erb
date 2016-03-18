@@ -28,6 +28,7 @@
         </li>
         <li>
           <%= t('subscribed_billing', :billing_cycle => SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period]) %>
+          <br />
           <a href="#" data-plan="<%= plan.name %>" 
                       data-plan-id = "<%= plan.id %>" 
                       class="plan-button edit-plan" 
