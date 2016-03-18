@@ -48,6 +48,10 @@ class Language
 		def all_keys
 			all.map(&:to_key)
 		end
+		
+		def all_ids
+			all.map(&:id)
+		end
 
 		def find(id)
 			all.detect { |lang| lang.id == id.to_i}
@@ -129,7 +133,8 @@ class Language
 		end
 
 		def for_user(user)
-			find_by_code(user.language) || for_current_account
+			(Account.current.multilingual? && Account.current.supported_languages.include?(user.language)) ? 
+						find_by_code(user.language) : for_current_account
 		end
 		
 		def default

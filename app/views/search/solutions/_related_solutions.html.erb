@@ -1,26 +1,31 @@
-<form id="searchmoreform" class="searchmoreform" action="#">
-	<%= select_tag("language_id", 
-	options_from_collection_for_select(Account.current.all_portal_language_objects, "id", "name", Language.for_user(@ticket.requester).id), 
-	{ :class => "select2", 
-		:id => "language-select",
-		:"data-initial-language" => Language.for_user(@ticket.requester).id
-	}) if Account.current.multilingual? %>
-
-	  <input class="text search_text_box" name="solution[search]" id="solution_search" placeholder="Search solutions">
-	  <span class="searchicon"></span>
-</form>
-<div class="dialog-well links" id="all_suggestions">
-  <div id="default_solution_suggestions" class="request_well article-list">
-  	<%= render :partial => "results" %>
+<div id="related_solutions">
+  <form id="searchmoreform" class="searchmoreform" action="#">
+  	<%= select_tag("language_id", 
+  	options_from_collection_for_select(Account.current.all_portal_language_objects, "id", "name", Language.for_user(@ticket.requester).id), 
+  	{ :class => "select2", 
+  		:id => "language-select",
+  		:"data-initial-language" => Language.for_user(@ticket.requester).id
+  	}) if Account.current.multilingual? %>
+      <input class="text search_text_box" name="solution[search]" id="solution_search" placeholder="Search solutions">
+  	  <span class="searchicon"></span>
+  </form>
+  <div class="dialog-well links" id="all_suggestions">
+    <div id="more_search_results" class="article-list"></div>
   </div>
-  <div id="more_search_results" class="article-list"></div>
 </div>
 <script type="text/javascript">
 
-jQuery('#searchmoreform')
-	.parentsUntil('.modal')
-	.siblings('.modal-header')
-	.append(jQuery('#searchmoreform').detach());
+
+jQuery('body').on("shown","#related_solutions", function(){
+  if (jQuery('[id ^= "default_solution_suggestions"]').length == 0){
+    jQuery('#searchmoreform')
+    	.parentsUntil('.modal')
+    	.siblings('.modal-header')
+    	.append(jQuery('#searchmoreform').detach());
+    var url = "/search/related_solutions/ticket/<%= @ticket.id %>?language_id=<%= Language.for_user(@ticket.requester).id %>"
+    fetchAndDisplayDefaultResults(url, <%= Language.for_user(@ticket.requester).id %>)
+  }
+})
 
 jQuery('.searchicon').on('click', function(){ jQuery('#searchmoreform').submit() });
 
@@ -107,7 +112,7 @@ function restoreCaretPosition(element_id){
 	document.getSelection().addRange(range);
 }
 
-jQuery("div.item").live("mouseover mouseout", function(event) {
+jQuery("div.item").on("mouseover mouseout", function(event) {
 	if ( event.type == "mouseover" ) {
 		jQuery(this).find(".item-menu").show();
 	} else {
@@ -115,17 +120,12 @@ jQuery("div.item").live("mouseover mouseout", function(event) {
 	}
 });
 
-jQuery('#solution_search').live('keyup', function(ev) {
+jQuery('#solution_search').on('keyup', function(ev) {
 	if (this.value == '') {
-		if (languageChanged()) {
-			var lang_id = $('language-select').value;
-			url = '/search/related_solutions/ticket/' + <%=@ticket.id%> + '?language_id=' + lang_id;
-			fetchAndDisplayDefaultResults(url, lang_id);
-		} else {
-			jQuery('.request_well').hide();
-			jQuery('#default_solution_suggestions').show(); 
-			jQuery('#more_search_results').hide();
-		}
+    var lang_select = jQuery('#language-select');
+  	var lang_id = ((lang_select.length == 0) ? <%= Language.for_current_account.id %> : lang_select.val());
+  	url = '/search/related_solutions/ticket/' + <%=@ticket.id%> + '?language_id=' + lang_id;
+  	fetchAndDisplayDefaultResults(url, lang_id);
 	}
 });
 
@@ -144,7 +144,7 @@ jQuery('#language-select').on('change', function(ev){
 	return false;
 })
 
-jQuery("#searchmoreform").submit(function(ev){
+jQuery("#searchmoreform").on("submit", function(ev){
 	ev.preventDefault();
 	var query = $('solution_search').value;
 	if(query.length>0) {
@@ -169,20 +169,13 @@ function fetchAndDisplayResults(url){
 function fetchAndDisplayDefaultResults(url, lang_id){
 	jQuery('.request_well').hide();
 	jQuery('#more_search_results').hide();
-	if (languageChanged()){
-		if (jQuery('#default_solution_suggestions_' + lang_id).length === 0){
-			jQuery('#all_suggestions').append("<div id='default_solution_suggestions_" + lang_id + "' class='request_well article-list'></div>")
-			jQuery('#default_solution_suggestions_' + lang_id).html('<div class="m20 p20"> </div>').addClass("sloading loading-small").load(url, function() {
-				jQuery(this).removeClass("sloading loading-small");
-			});
-		}
-		jQuery('#default_solution_suggestions_' + lang_id).show();
-	} else {
-		jQuery('#default_solution_suggestions').show();
+	if (jQuery('#default_solution_suggestions_' + lang_id).length === 0){
+		jQuery('#all_suggestions').append("<div id='default_solution_suggestions_" + lang_id + "' class='request_well article-list'></div>")
+		jQuery('#default_solution_suggestions_' + lang_id).html('<div class="m20 p20"> </div>').addClass("sloading loading-small").load(url, function() {
+			jQuery(this).removeClass("sloading loading-small");
+		});
 	}
+	jQuery('#default_solution_suggestions_' + lang_id).show();
 }
 
-function languageChanged(){
-	return jQuery('#language-select').length !== 0 && jQuery('#language-select').data('initial-language').toString() !== jQuery('#language-select').val();
-}
 </script>
