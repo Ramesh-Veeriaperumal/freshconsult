@@ -130,7 +130,7 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 
     def external_numbers
     	external_caller_scoper.map { |call|
-    		call.meta.meta_info
+    		call.meta.meta_info[:agent_info]
     	}.uniq
     end
 

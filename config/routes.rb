@@ -463,7 +463,7 @@ Helpkit::Application.routes.draw do
         post :in_call
         post :update_recording
         post :save_call_notes
-        put :acw
+        put :wrap_call
         get :call_notes
         post :save_call_quality_metrics
       end
