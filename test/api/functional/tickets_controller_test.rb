@@ -334,8 +334,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(email: 'test@', cc_emails: ['the@'])
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('email',"It should be in the 'valid email address' format"),
-                bad_request_error_pattern('cc_emails',"It should contain elements that are in the 'valid email address' format")])
+    match_json([bad_request_error_pattern('email', "It should be in the 'valid email address' format"),
+                bad_request_error_pattern('cc_emails', "It should contain elements that are in the 'valid email address' format")])
   end
 
   def test_create_data_type_invalid
@@ -516,7 +516,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_extra_params_invalid
-    params = ticket_params_hash.merge(junk: 'test', description_html: "test")
+    params = ticket_params_hash.merge(junk: 'test', description_html: 'test')
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('junk', :invalid_field), bad_request_error_pattern('description_html', :invalid_field)])
@@ -1682,7 +1682,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_extra_params_invalid
     t = ticket
-    params_hash = update_ticket_params_hash.merge(junk: 'test', description_html: "test")
+    params_hash = update_ticket_params_hash.merge(junk: 'test', description_html: 'test')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('junk', :invalid_field), bad_request_error_pattern('description_html', :invalid_field)])

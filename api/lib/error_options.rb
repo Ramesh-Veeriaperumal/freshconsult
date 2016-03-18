@@ -11,6 +11,7 @@ module ErrorOptions
   def string_input_and_allow_string?
     allow_string? && expected_simple_type? && given_string_type?
   end
+
   def expected_simple_type?
     expected_data_type != Array && expected_data_type != Hash
   end
@@ -18,6 +19,7 @@ module ErrorOptions
   def given_string_type?
     infer_data_type(value, internal_values) == String
   end
+
   def infer_data_type(value, internal_values = {})
     return internal_values[:given_type] if internal_values.key?(:given_type)
     internal_values[:given_type] = simple_types(value) || DataTypeValidator::DATA_TYPE_MAPPING[formatted_types(value)] || UNIDENTIFIED_TYPE

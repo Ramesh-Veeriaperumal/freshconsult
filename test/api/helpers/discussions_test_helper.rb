@@ -129,7 +129,7 @@ module DiscussionsTestHelper
     { post: post_params(t) }.to_json
   end
 
-  def v2_post_payload(t)
+  def v2_post_payload(_t)
     v2_post_params.to_json
   end
 

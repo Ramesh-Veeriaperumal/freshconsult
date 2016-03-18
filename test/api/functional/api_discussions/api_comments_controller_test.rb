@@ -273,7 +273,7 @@ module ApiDiscussions
       f = Forum.first
       source = create_test_topic(f)
       target = create_test_topic(f)
-      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      source.update_attributes(locked: 1, merged_topic_id: target.id)
       create_test_post(source, User.first)
       get :topic_comments, controller_params(id: source.id)
       assert_response 200
@@ -285,7 +285,7 @@ module ApiDiscussions
       f = Forum.first
       source = create_test_topic(f)
       target = create_test_topic(f)
-      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      source.update_attributes(locked: 1, merged_topic_id: target.id)
       post :create, construct_params({ id: source.id }, body: 'test')
       assert_response 201
     ensure

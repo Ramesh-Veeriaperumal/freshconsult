@@ -111,8 +111,8 @@ class ApiCommentValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.new)
     controller_params = {}
     item = Post.new('answer' => '1')
-    item.body = ""
-    item.body_html = "test"
+    item.body = ''
+    item.body_html = 'test'
     topic = mock('topic')
     topic.stubs(:stamp_type).returns(nil)
     item.stubs(:topic).returns(topic)
@@ -120,8 +120,8 @@ class ApiCommentValidationTest < ActionView::TestCase
     comment.valid?(:update)
     refute comment.errors.full_messages.include?('Body blank')
 
-    item.body = "test"
-    item.body_html = ""
+    item.body = 'test'
+    item.body_html = ''
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
     comment.valid?(:update)
     assert comment.errors.full_messages.include?('Body blank')

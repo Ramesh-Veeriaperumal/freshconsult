@@ -25,8 +25,8 @@ class ConversationValidationTest < ActionView::TestCase
 
     controller_params = { 'user_id' => 1 }
     item = Helpdesk::Note.new
-    item.body = ""
-    item.body_html = "test"
+    item.body = ''
+    item.body_html = 'test'
     conversation = ConversationValidation.new(controller_params, item)
     assert conversation.valid?(:update)
 

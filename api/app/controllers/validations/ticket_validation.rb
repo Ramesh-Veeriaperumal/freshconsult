@@ -151,7 +151,7 @@ class TicketValidation < ApiValidation
       agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       product: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       subject: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
-      description: { data_type: { rules: String }}
+      description: { data_type: { rules: String } }
     }
   end
 end
