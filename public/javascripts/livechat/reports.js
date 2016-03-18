@@ -290,8 +290,8 @@ var chatReport = function(){
 			prev_avg = Math.floor(prev_avg/pavg_count);
 		}
 
-		cur_transfer_count = cur_transfer.length - $.unique(cur_transfer).length;
-		prev_transfer_count = prev_transfer.length - $.unique(prev_transfer).length;
+		cur_transfer_count = cur_transfer.length - _.unique(cur_transfer, function(chat){ return chat.transfer_id}).length;
+		prev_transfer_count = prev_transfer.length - _.unique(prev_transfer, function(chat){ return chat.transfer_id}).length;
 
 		cur_answered = current.length - cur_missed - cur_transfer_count;
 		prev_answered = previous.length - prev_missed - prev_transfer_count;
