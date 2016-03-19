@@ -913,7 +913,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_custom_fields_required_for_closure_with_status_closed
-    t = ticket
+    t = create_ticket
     params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 5)
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: true)
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -927,7 +927,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_custom_fields_required_for_closure_with_status_resolved
-    t = ticket
+    t = create_ticket
     params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4)
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: true)
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -942,7 +942,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_custom_fields_required
     params_hash = update_ticket_params_hash
-    t = ticket
+    t = create_ticket
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
     put :update, construct_params({ id: t.display_id }, params_hash)
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
@@ -952,6 +952,21 @@ class TicketsControllerTest < ActionController::TestCase
       pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
+  end
+
+  def test_update_with_custom_fields_required_which_is_already_present
+    params_hash = update_ticket_params_hash.except(:description)
+    params = ticket_params_hash.except(:description).merge(custom_field: {})
+    CUSTOM_FIELDS.each do |custom_field|
+      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    t = create_ticket(params)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+    match_json(update_ticket_pattern(params.merge(params_hash), t.reload))
+    match_json(update_ticket_pattern({}, t))
+    assert_response 200
   end
 
   def test_update_with_choices_custom_fields_required_for_closure_with_status_closed
