@@ -1387,7 +1387,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { tags: tags }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    assert t.reload.tag_names == tags
+    assert t.reload.tag_names == tags.map(&:downcase)
     match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end

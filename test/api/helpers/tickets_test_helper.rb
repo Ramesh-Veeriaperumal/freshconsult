@@ -35,6 +35,7 @@ module TicketsTestHelper
     custom_field = ticket.custom_field.map { |k, v| [TicketDecorator.display_name(k), v] }.to_h
     ticket_custom_field = (custom_field && ignore_extra_keys) ? custom_field.as_json.ignore_extra_keys! : custom_field.as_json
     description_html = format_ticket_html(ticket, expected_output[:description]) if expected_output[:description]
+    expected_tags = expected_output[:tags] ? expected_output[:tags].map(&:downcase) : nil
 
     {
       cc_emails: expected_output[:cc_emails] || ticket.cc_email[:cc_emails],
@@ -59,7 +60,7 @@ module TicketsTestHelper
       to_emails: expected_output[:to_emails] || ticket.to_emails,
       product_id:  expected_output[:product_id] || ticket.product_id,
       attachments: Array,
-      tags:  expected_output[:tags] || ticket.tag_names,
+      tags:  expected_tags || ticket.tag_names,
       custom_fields:  expected_custom_field || ticket_custom_field,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},

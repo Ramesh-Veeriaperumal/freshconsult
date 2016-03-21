@@ -384,7 +384,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert sample_user.reload.language == 'cs'
     assert sample_user.reload.time_zone == 'Tokyo'
     assert sample_user.reload.job_title == 'emp'
-    assert sample_user.reload.tag_names.split(', ').sort == tags.sort
+    assert sample_user.reload.tag_names.split(', ').sort == tags.map(&:downcase).sort
     assert sample_user.reload.custom_field['cf_city'] == 'Chennai'
     match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
