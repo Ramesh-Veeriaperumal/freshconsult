@@ -84,7 +84,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   end
 
   def wrap_call
-    render :json => { :result => :failure } if current_call.blank?
+    return render :json => { :result => :failure } if current_call.blank?
     acw if call_metrics_enabled?
     current_call.meta.update_feedback(params) if current_call.meta.present?
     render :json => { :result => true }
