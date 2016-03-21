@@ -5,7 +5,7 @@
 <div class="reports-wrapper" id="reports_wrapper">
   <div class="reports-main">
     <div class="reports-header row-fluid">
-     <%= render :partial => "layouts/report/v2/shared/header", :formats => [:html], :locals => {report_type: report_type}  %> 
+     <%= render :partial => "layouts/report/v2/shared/header.html.erb", :formats => [:html], :locals => {report_type: report_type, filter_name: filter_name}  %> 
     </div>
     <div class="helpkit-glance glance-pdf">
       <div class="glance-chart-wrapper" id="glance_chart_wrapper" style="margin-left:0px">

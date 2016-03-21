@@ -53,7 +53,7 @@ module Fdadmin
                 { subscription: :currency },
                 :account_configuration, :freshfone_numbers])
             .where('subscriptions.state != "suspended" ')
-            .trial_states.group('accounts.id')
+            .trial_states.group('accounts.id').all
         end
 
         def recent_subscriptions
@@ -62,7 +62,7 @@ module Fdadmin
             subscriptions.state != 'suspended'")
           .includes(:account)
           .trial_states
-          .order('freshfone_accounts.created_at DESC').limit(10)
+          .order('freshfone_accounts.created_at DESC').limit(10).all
         end
 
         def freshfone_account

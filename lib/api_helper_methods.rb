@@ -31,7 +31,7 @@ module APIHelperMethods
   end
 
   # def fix_for_multiple_emails(conditions)
-  #   conditions[0] = (current_account.features_included?(:multiple_user_emails) ? "user_emails.email" : "users.email")
+  #   conditions[0] = "user_emails.email"
   # end
 
   #white listed colums.

@@ -15,7 +15,7 @@ module Freshfone
     INBOUND = [
       [:call_duration,      110], # in seconds
       [:exceeded,         false], # bool
-      [:minutes,             15],
+      [:minutes,             25],
       [:trigger, :calls_inbound]
     ]
 

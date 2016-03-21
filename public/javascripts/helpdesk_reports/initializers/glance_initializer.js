@@ -38,7 +38,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 if(metric != 'RECEIVED_TICKETS'){
                     HelpdeskReports.locals.active_metric = 'RECEIVED_TICKETS';
                     //Trigger event for refresh
-                    trigger_event("glance_empty_default_view.helpdesk_reports",{});
+                    trigger_event("set_active_view.helpdesk_reports",{});
                 }
                 jQuery('#glance_sidebar ul li[data-metric="RECEIVED_TICKETS"]').addClass('active');
             }else{

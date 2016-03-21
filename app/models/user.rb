@@ -693,7 +693,7 @@ class User < ActiveRecord::Base
   
   def make_agent(args = {})
     ActiveRecord::Base.transaction do
-      self.user_emails = [self.primary_email] if has_multiple_user_emails?
+      self.user_emails = [self.primary_email]
       self.deleted = false
       self.helpdesk_agent = true
       self.company = nil
@@ -861,15 +861,10 @@ class User < ActiveRecord::Base
     #This is the current login method. It is fed to authlogic in user_sessions.rb
 
     def self.find_by_user_emails(login)
-      if !Account.current.features_included?(:multiple_user_emails)
-        user = User.find_by_email(login)
-        user if user.present? and user.active? and !user.blocked?
-      else
-        # Without using select will results in making the user object readonly.
-        # http://stackoverflow.com/questions/639171/what-is-causing-this-activerecordreadonlyrecord-error
-        user = User.select("`users`.*").joins("INNER JOIN `user_emails` ON `user_emails`.`user_id` = `users`.`id` AND `user_emails`.`account_id` = `users`.`account_id`").where(account_id: Account.current.id, user_emails: {email: login}).first
-        user if user and user.active? and !user.blocked?
-      end
+      # Without using select will results in making the user object readonly.
+      # http://stackoverflow.com/questions/639171/what-is-causing-this-activerecordreadonlyrecord-error
+      user = User.select("`users`.*").joins("INNER JOIN `user_emails` ON `user_emails`.`user_id` = `users`.`id` AND `user_emails`.`account_id` = `users`.`account_id`").where(account_id: Account.current.id, user_emails: {email: login}).first
+      user if user and user.active? and !user.blocked?
     end
 
     def process_api_options default_options, current_options

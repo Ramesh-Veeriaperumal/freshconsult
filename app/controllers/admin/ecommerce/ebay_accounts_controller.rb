@@ -78,7 +78,15 @@ class Admin::Ecommerce::EbayAccountsController < Admin::Ecommerce::AccountsContr
     begin
       if params["Envelope"] && params["Envelope"]["Body"]
         ebay_reomte_user = Ecommerce::EbayRemoteUser.find_by_remote_id(params["Envelope"]["Body"]["#{params['Envelope']['Body'].keys.first}"]["EIASToken"])
-        send("ebay_#{params["Envelope"]["Body"].keys.first.underscore}", { "account_id" => ebay_reomte_user.account_id, "body" => params["Envelope"]["Body"] }) if ebay_reomte_user
+        if ebay_reomte_user
+          method = params["Envelope"]["Body"].keys.first.underscore
+          args = { "account_id" => ebay_reomte_user.account_id, "body" => params["Envelope"]["Body"] }
+          if method == 'get_item_transactions_response'
+            ebay_get_item_transactions_response(args)
+          elsif method == 'get_my_messages_response'
+            ebay_get_my_messages_response(args)
+          end
+        end
       end
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured due to unknown ebay subscription #{params['Envelope']['Body'].keys} for ebay 

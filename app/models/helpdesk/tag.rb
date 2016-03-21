@@ -115,7 +115,7 @@ class Helpdesk::Tag < ActiveRecord::Base
     return [] if tag_list.blank?
 
     associated_tags = self.where(name: tag_list).all
-    missing_tags    = tag_list - associated_tags.map(&:name)
+    missing_tags    = tag_list.map(&:downcase) - associated_tags.map(&:name).map(&:downcase)
     missing_tags.each { |tag_name| associated_tags.push(self.create(name: tag_name)) }
 
     associated_tags

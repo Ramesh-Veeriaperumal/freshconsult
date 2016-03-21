@@ -64,7 +64,7 @@ class ScenarioAutomation < VaRule
 
   def validate_name
    if (visibility_not_myself? && (self.name_changed? || access_type_changed?))
-    scenario = Account.current.scn_automations.all_managed_scenarios(User.current).where("va_rules.name='#{self.name}'")
+    scenario = Account.current.scn_automations.all_managed_scenarios(User.current).where("va_rules.name = ?", self.name)
     scenario= scenario.select{|scn| scn.id!=self.id} if !self.new_record?
     unless scenario.empty?
       self.errors.add(:base,I18n.t('automations.duplicate_title'))

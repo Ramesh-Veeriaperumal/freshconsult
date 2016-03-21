@@ -1,6 +1,6 @@
-class CreateRemoteIntegrationsMappings < ActiveRecord::Migration
-	shard :none
-
+class CreateRemoteIntegrationsMapping < ActiveRecord::Migration
+  shard :none
+  
   def migrate(direction)
     self.send(direction)
   end

@@ -3,7 +3,7 @@ module Community::MailerHelper
   def notify_new_follower(object, user, monitorship)
     @portal = monitorship.get_portal
     mail_config = @portal.primary_email_config || user.account.primary_email_config
-    self.class.set_mailbox mail_config.smtp_mailbox
+    self.class.set_email_config mail_config
     sender = monitorship.sender_and_host[0]
     headers = {
       :to        => monitorship.user.email,

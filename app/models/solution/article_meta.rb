@@ -27,7 +27,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	scope :published, lambda {
 		{
 			:joins => :current_article,
-			:conditions => ["`solution_articles`.status = #{STATUS_KEYS_BY_TOKEN[:published]}"]
+			:conditions => ["`solution_articles`.status = ?", STATUS_KEYS_BY_TOKEN[:published]]
 		}
 	}
 
@@ -53,9 +53,14 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	delegate :visible_in?, :to => :solution_folder_meta
 	delegate :visible?, :to => :solution_folder_meta
-	delegate :description, :desc_un_html, :to => :current_article_body
 	
 	after_find :deserialize_attr
+	
+	Solution::Article::BODY_ATTRIBUTES.each do |attrib|
+		define_method "#{attrib}" do
+			self[attrib] || current_article_body.send("#{attrib}")
+		end
+	end
 
 	def hit_key
 		SOLUTION_META_HIT_TRACKER % {:account_id => account_id, :article_meta_id => id }

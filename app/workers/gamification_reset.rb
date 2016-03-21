@@ -3,7 +3,12 @@ class GamificationReset < BaseWorker
   sidekiq_options :queue => :reset_gamification_score, :retry => 0, :backtrace => true, :failures => :exhausted
 
   def perform(args={})
-    args["agent_id"].nil? ? reset_all_agents_score : reset_agent_score(args["agent_id"])
+  	Thread.current[:gamification_reset] = true
+  	begin
+	    args["agent_id"].nil? ? reset_all_agents_score : reset_agent_score(args["agent_id"])
+	  ensure
+	  	Thread.current[:gamification_reset] = nil
+	  end	
   end
 
   private

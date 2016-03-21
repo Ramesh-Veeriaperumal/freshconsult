@@ -15,10 +15,6 @@ RSpec.describe ContactsController do
     @sample_contact.save
   end
 
-  after(:each) do
-    @account.features.multiple_user_emails.destroy
-  end
-
   it "should not create a new contact without an email" do
     post :create, :user => { :name => Faker::Name.name, :email => "" }
     response.body.should =~ /Email is invalid/
@@ -86,12 +82,10 @@ RSpec.describe ContactsController do
   it "should fail user creation MUE feature enabled" do
     user = add_new_user(@account)
     @user_count = @user_count + 1
-    @account.features.multiple_user_emails.create
     test_email = user.email
     post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }
     @account.users.all.size.should eql @user_count
     response.body.should =~ /Email has already been taken/
-    @account.features.multiple_user_emails.destroy
   end
 
   it "should unblock an user" do

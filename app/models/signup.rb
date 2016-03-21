@@ -7,6 +7,8 @@ class Signup < ActivePresenter::Base
   attr_accessor :contact_first_name, :contact_last_name
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone, :build_password_policy
+  
+  before_validation :create_global_shard
 
   after_save :make_user_current, :populate_seed_data
 
@@ -24,8 +26,7 @@ class Signup < ActivePresenter::Base
     account.conversion_metric_attributes = metrics_obj if metrics_obj
   end
 
-  private                  
-
+  private
     def build_primary_email
       account.build_primary_email_config(
         :to_email => support_email,
@@ -128,4 +129,47 @@ class Signup < ActivePresenter::Base
     def support_email
       "support@#{account.full_domain}"
     end
+
+    # * * * POD Operation Methods Begin * * *
+    def create_global_shard 
+      if Fdadmin::APICalls.non_global_pods? && account.valid?
+        shard_record = construct_shard_parameters 
+        begin
+        global_pod_response = Fdadmin::APICalls.connect_main_pod(construct_shard_parameters)
+        rescue Exception => e
+          message = 'Unable to create your domain, Please contact support or try again later'
+        end
+        if global_pod_response && global_pod_response["account_id"] 
+          create_nonglobal_shard(global_pod_response["account_id"],shard_record[:shard])
+        else
+          account.errors[:Sorry] << (message or 'Domain is not available!') 
+          return false   
+        end
+      end
+    end
+
+    def construct_shard_parameters
+      return {
+        :domain => account.full_domain,
+        :target_method => :set_shard_mapping_for_pods,
+        :shard => build_shard
+        }
+    end
+
+    def build_shard
+      {
+        :shard_name => ShardMapping.latest_shard,
+        :status => ShardMapping::STATUS_CODE[:ok], 
+        :pod_info => PodConfig['CURRENT_POD'],
+        :region => PodConfig['CURRENT_REGION']
+      }
+    end    
+
+    def create_nonglobal_shard(shard_mapping_id,shard_record)
+      shard_mapping = ShardMapping.new(shard_record.merge(:status => 404))
+      shard_mapping.domains.build({:domain => account.full_domain}) 
+      shard_mapping.id = shard_mapping_id
+      shard_mapping.save!
+    end
+    # * * * POD Operation Methods Ends * * * 
 end

@@ -13,3 +13,12 @@ opts = {
 }
 page << "jQuery('#Pages').pageless(#{opts.to_json});"
 page << "jQuery('#loaderFD').hide();"
+if @tickets.blank?
+	page << "jQuery('.hs_error').show();"
+else
+	page << "jQuery('.hs_error').hide();"
+end
+
+if params[:active].blank?
+	page << 'hideSearchFilters();'
+end

@@ -139,22 +139,13 @@ class Search::AutocompleteController < ApplicationController
     end
 
     def agent_sql
-      if current_account.features_included?(:multiple_user_emails)
-        items = current_account.users.technicians.find(
-        :all, 
-        :select => ["users.id as `id` , users.name as `name`, user_emails.email as `email_found`"],
-        :joins => ["INNER JOIN user_emails ON user_emails.user_id = users.id AND user_emails.account_id = users.account_id"],
-        :conditions => ["(users.name like ? or user_emails.email like ?) and users.deleted = 0", "%#{params[:q]}%", "%#{params[:q]}%"], 
-        :limit => 1000)
-        result = {:results => items.map {|i| {:id => i.email_found, :value => i.name, :user_id => i.id }}}
-      else
-        items = current_account.users.technicians.find(
-        :all, 
-        :conditions => ["email is not null and name like ? or email like ?", "%#{params[:q]}%", "%#{params[:q]}%"], 
-        :limit => 1000)
-        result = {:results => items.map {|i| {:id => i.email, :value => i.name, :user_id => i.id }}}
-      end
-      return result
+      items = current_account.users.technicians.find(
+      :all, 
+      :select => ["users.id as `id` , users.name as `name`, user_emails.email as `email_found`"],
+      :joins => ["INNER JOIN user_emails ON user_emails.user_id = users.id AND user_emails.account_id = users.account_id"],
+      :conditions => ["(users.name like ? or user_emails.email like ?) and users.deleted = 0", "%#{params[:q]}%", "%#{params[:q]}%"], 
+      :limit => 1000)
+      {:results => items.map {|i| {:id => i.email_found, :value => i.name, :user_id => i.id }}}
     end
 
   	def results

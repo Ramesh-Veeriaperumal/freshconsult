@@ -18,7 +18,7 @@
 	<div class="control-group">
 		<%= form.label :forum_category_id, t('forum.category'), :class => "control-label" %>
 		<div class="controls">
-			<%= form.select :forum_category_id, current_account.forum_categories.collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-xlarge" } %>
+			<%= form.select :forum_category_id, current_account.forum_categories.collect{|c|[c.name, c.id]}, { :selected => @forum.forum_category_id }, { :class => "select2 required input-xlarge" } %>
 		</div>
 	</div>
 	<% unless @forum.topics_count > 0 %>
@@ -69,6 +69,5 @@
 			}
 		};
   	show_hide_customers();
-  	jQuery("#forum_forum_category_id").val(<%= params[:forum_category_id] || @forum.forum_category_id %>)
 	});
 <% end %>

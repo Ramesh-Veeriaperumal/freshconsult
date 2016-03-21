@@ -21,8 +21,8 @@ module Middleware
           else
             yield
           end
-          # rescue DomainNotReady => e
-          #   puts "Just ignoring the DomainNotReady , #{e.inspect}"
+        rescue DomainNotReady => e
+            puts "Just ignoring the DomainNotReady , #{e.inspect}"
           # rescue Exception => e
           #   NewRelic::Agent.notice_error(e)
         end

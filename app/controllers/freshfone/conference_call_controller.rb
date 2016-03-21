@@ -11,7 +11,6 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   before_filter :complete_supervisor_leg, :only => [:status], :if => :supervisor_leg?
   before_filter :check_conference_feature, :only => [:status]
   before_filter :select_current_call, :only => [:status]
-  before_filter :validate_acw, :only => [:acw]
   before_filter :handle_blocked_numbers, :only => [:status]
   before_filter :terminate_ivr_preview, :only => [:status]
   before_filter :validate_dial_call_status, :only => [ :status ]
@@ -84,9 +83,16 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     return empty_twiml
   end
 
+  def wrap_call
+    render :json => { :result => :failure } if current_call.blank?
+    acw if call_metrics_enabled?
+    current_call.meta.update_feedback(params) if current_call.meta.present?
+    render :json => { :result => true }
+  end
+
   def acw
     current_call_leg = current_call.missed_child? ? current_call.parent : current_call
-    render :json => {:result => current_call_leg.update_acw_duration}
+    current_call_leg.update_acw_duration
   end
 
   private
@@ -250,11 +256,10 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       call.set_abandon_call(call_params)
     end
 
-    def validate_acw
-      render :json => {:status => :error} if current_call.blank? || 
-        !current_account.features?(:freshfone_call_metrics)   
+    def call_metrics_enabled?
+      current_account.features?(:freshfone_call_metrics)
     end
-    
+   
     def call_quality_monitoring_enabled?
       render :json => {} unless current_account.features?(:call_quality_metrics)
     end

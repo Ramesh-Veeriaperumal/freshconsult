@@ -116,6 +116,7 @@ class HelpdeskReports::Formatter::Ticket::Glance
     result[group_by_metric].each do |gp_by, values|
       values = values.to_a
       next if gp_by == :general 
+      next if values.is_a?(Hash) && values[:error]
       values = values.sort_by{|i| i.second[:value]}.reverse!
       result[group_by_metric][gp_by] = values.to_h
     end

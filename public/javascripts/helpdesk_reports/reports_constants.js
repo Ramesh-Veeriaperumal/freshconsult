@@ -268,5 +268,13 @@ HelpdeskReports.Constants = {
             time_trend_conditions : [],
             sorting               : true,             
         }
+    },
+    icons : {
+        'customer_report' : 'ficon-customer_reports',
+        'glance' : 'ficon-helpdesk_at_glance',
+        'ticket_volume' : 'ficon-ticket-volume',
+        'agent_summary' : 'ficon-agent-summary',
+        'group_summary' : 'ficon-group-summary',
+        'performance_distribution' : 'ficon-performance-distribution'
     }  
 }

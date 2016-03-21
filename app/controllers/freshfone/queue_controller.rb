@@ -10,11 +10,12 @@ class Freshfone::QueueController < FreshfoneBaseController
   before_filter :load_hunt_options_for_conf, :only => [:enqueue, :hangup]
   before_filter :add_caller_to_redis_queue, :only => [:enqueue]
   before_filter :cleanup_redis_on_queue_complete, 
-              :only => [:hangup, :trigger_voicemail, :trigger_non_availability, :quit_queue_on_voicemail, :dequeue]
+              :only => [:hangup, :trigger_voicemail, :trigger_non_availability, :dequeue]
   before_filter :remove_wait_job,
-              :only => [:hangup, :quit_queue_on_voicemail, :dequeue]
+              :only => [:hangup, :dequeue]
   after_filter :update_call, :only => :hangup
   before_filter :invalid_number_incoming_fix, :only=> :dequeue
+  before_filter :cleanup_queue_wait, :only => [:quit_queue_on_voicemail], :if => :valid_key_press?
   
   def enqueue
     current_call.queued!
@@ -60,10 +61,10 @@ class Freshfone::QueueController < FreshfoneBaseController
   end
 
   def quit_queue_on_voicemail
-    return empty_twiml unless params[:Digits] == '*'
+    return empty_twiml  unless params[:Digits] == '*'
     queued_member = current_account.freshfone_subaccount.queues.get(params[:QueueSid]).members.get(params[:CallSid])
     queued_member.dequeue("#{host}/freshfone/queue/trigger_voicemail")
-    render :text => "Dequeued Call #{params[:CallSid]} from #{params[:QueueSid]}"
+    render :text => "Dequeued Call #{CGI.escapeHTML(params[:CallSid])} from #{CGI.escapeHTML(params[:QueueSid])}"
   end
 
   def redirect_to_queue
@@ -71,6 +72,16 @@ class Freshfone::QueueController < FreshfoneBaseController
   end
 
   private
+
+    def valid_key_press?
+      params[:Digits] == '*'
+    end
+
+    def cleanup_queue_wait
+      cleanup_redis_on_queue_complete
+      remove_wait_job
+    end
+
     def update_call
       current_call.update_call(params) unless BRIDGE_STATUS.include?(params[:QueueResult])
       current_call.update_queue_duration(params[:QueueTime]) if params[:QueueTime].present?

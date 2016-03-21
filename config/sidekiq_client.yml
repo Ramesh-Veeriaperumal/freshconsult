@@ -85,6 +85,8 @@ defaults: &defaults
     - [premium_webhook_throttler]
     - [premium_webhook_worker]
     - [marketplace_apps]
+    - [pod_route_update]
+    - [agent_destroy_cleanup]
 
 development:
   <<: *defaults

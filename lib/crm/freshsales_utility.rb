@@ -242,7 +242,9 @@ class CRM::FreshsalesUtility
         custom_field: {
           cf_number_of_agents: @subscription.agent_limit,
           cf_plan: @subscription.plan_name,
-          cf_customer_status: CUSTOMER_STATUS[@subscription.state.to_sym]
+          cf_customer_status: CUSTOMER_STATUS[@subscription.state.to_sym],
+          cf_domain_name: @account.full_domain,
+          cf_signup_date: @subscription.created_at.strftime("%Y-%m-%d")
         }
       }
     end

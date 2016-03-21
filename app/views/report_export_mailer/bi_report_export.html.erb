@@ -12,6 +12,13 @@ Hi <%=@user.name%>,
 
 <% if @selected_metric %>
 For metric: <%= @selected_metric.html_safe %>
+<br/>
+<br/>
+<% end %> 
+
+
+<% if @filter_name %>
+Report Name: <%= @filter_name.html_safe %>
 <% end %> 
 
 <br/>
