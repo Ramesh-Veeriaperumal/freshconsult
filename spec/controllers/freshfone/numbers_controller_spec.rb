@@ -13,7 +13,7 @@ describe Admin::Freshfone::NumbersController do
   it 'should return all freshfone numbers on index' do
     number = @account.freshfone_numbers.first
     get :index
-    assigns[:account].app_id.should be_eql(@account.freshfone_account.app_id)
+    # assigns[:account].app_id.should be_eql(@account.freshfone_account.app_id)
     assigns[:numbers].map(&:number).should include number.number
     response.should render_template "admin/freshfone/numbers/index"
   end
@@ -26,6 +26,48 @@ describe Admin::Freshfone::NumbersController do
     post :purchase, params
     assigns[:purchased_number].number.should be_eql(@num)
     flash[:notice].should be_eql("Successfully purchased phone number.")
+  end
+
+  it 'should allow only one number for purchase on phone trial' do
+    @account.freshfone_numbers.destroy_all
+    load_freshfone_trial
+    @num = Faker::PhoneNumber.phone_number
+    Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio)
+    params = { :phone_number => @num, :formatted_number => @num,
+               :region => "Texas", :country => "US", :type => "local", :number_sid => "PNUMBER", :subscription => "trial" }
+    post :purchase, params
+    expect(assigns[:purchased_number].number).to eq(@num)
+    expect(flash[:notice]).to eq(I18n.t('flash.freshfone.number.successful_purchase'))
+
+    @num = Faker::PhoneNumber.phone_number
+    Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio)
+    params = { :phone_number => @num, :formatted_number => @num,
+               :region => "Texas", :country => "US", :type => "local", :number_sid => "PNUMBER", :subscription => "trial" }
+    post :purchase, params
+    expect(flash[:notice]).to eq(I18n.t('freshfone.admin.trial.request_activation_msg'))
+  end
+
+  it 'should not allow numbers whose rate are more than 1$ in trial' do
+    @account.freshfone_numbers.destroy_all
+    load_freshfone_trial
+    @num = Faker::PhoneNumber.phone_number
+    Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio)
+    params = { :phone_number => @num, :formatted_number => @num, 
+               :region => "Texas", :country => "US", :type => 'toll_free', :number_sid => "PNUMBER" }
+    post :purchase, params
+    expect(flash[:notice]).to eq(I18n.t('freshfone.admin.trial.request_activation_msg'))
+  end
+
+  it 'should allow numbers whose rate are of 2$ if configured in trial' do
+    @account.freshfone_numbers.destroy_all
+    @account.freshfone_account.update_column(:state, Freshfone::Account::STATE_HASH[:trial])
+    create_test_freshfone_subscription(number_credit: 2)
+    @num = Faker::PhoneNumber.phone_number
+    Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio)
+    params = { :phone_number => @num, :formatted_number => @num,
+      :region => "Texas", :country => "US", :type => "toll_free", :number_sid => "PNUMBER"}
+    post :purchase, params
+    expect(flash[:notice]).to eq(I18n.t('flash.freshfone.number.successful_purchase'))
   end
 
   it 'should create a new address required number on purchase' do

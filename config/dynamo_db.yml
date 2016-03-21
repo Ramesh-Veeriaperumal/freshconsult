@@ -47,9 +47,9 @@ production:
     write_capacity: 25
   unprocessed_feed:
     suffix: production
-    start_read_capacity: 2
-    final_read_capacity: 10
-    write_capacity: 5
+    start_read_capacity: 10
+    final_read_capacity: 20
+    write_capacity: 25
 
 
 test:

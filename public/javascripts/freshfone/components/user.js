@@ -12,8 +12,9 @@ var FreshfoneUser,
 		this.cached = {};
 		this.newTokenGenerated = false;
 		this.tokenRegenerationOn = null;
-		if (this.online) { this.updateUserPresence(); }
-		if (!freshfone.user_phone) { this.toggleAvailabilityOnPhone(true); }
+		if (freshfone.isActiveOrTrial && this.online) { this.updateUserPresence(); }
+		if (!freshfone.user_phone && !freshfone.isTrial && freshfone.isActiveOrTrial) 
+			{ this.toggleAvailabilityOnPhone(true); }
 		this.bindUserPresenceHover();
 		if(this.chromeSSLRestriction()){
 			//From "47.0.2526.80" Chrome version, SSL is mandated. So, giving alerts temporarily
@@ -48,6 +49,9 @@ var FreshfoneUser,
 			return this.status === userStatus.BUSY;
 		},
 		toggleUserPresence: function () {
+			if(!freshfone.isActiveOrTrial)
+				return;
+
 			if(this.online  && this.freshfoneNotification.canAllowUserPresenceChange()) {
 				return;
 			}
@@ -179,8 +183,9 @@ var FreshfoneUser,
 					self.toggleAvailabilityOnPhoneClass();
 				},
 				error: function (data) { self.availableOnPhone = !self.availableOnPhone; 
-					self.$userPresenceImage().removeClass('header-spinner'); 
-					self.toggleAvailabilityOnPhoneClass();
+					self.$userPresenceImage().removeClass('header-spinner');
+					if(data.status != 403)
+						self.toggleAvailabilityOnPhoneClass();
 				}
 			});
 		},
@@ -208,6 +213,7 @@ var FreshfoneUser,
 						self.userPresenceDomChanges(data.availability_on_phone);
 					} else {
 						self.status = self.previous_status;
+						self.userPresenceDomChanges();
 					}
 				},
 				error: function (data) {
@@ -279,6 +285,8 @@ var FreshfoneUser,
 		publishLiveCall: function (dontUpdateCallCount) {
 			var self = this;
 			self.setStatus(userStatus.BUSY);
+			if(freshfone.isTrial)
+				freshfoneSubscription.hideTrialWarnings();
 			$.ajax({
 				type: 'POST',
         dataType: "json",
@@ -295,6 +303,8 @@ var FreshfoneUser,
 						self.freshfonecalls.setCallSid(data.call_sid); 
 						self.freshfonecalls.registerCall(data.call_sid); //used in conference. can be merged with above and used for both conf and non conf users
 						self.freshfonecalls.setCallId(data.call_id);
+						if(freshfone.isTrial)
+							freshfoneSubscription.loadWarningsTimer();
 					} 
 					ffLogger.log({'action': "Getting CallSid from in_Call ajax", 'params': data});
 				},
@@ -316,6 +326,7 @@ var FreshfoneUser,
 				var	to_phone = $(this).data('to_phone');
 				self.updateAvailability(to_phone, this);
 			});
+			if(freshfone.isTrial) { return; }
 			$("a[rel=ff-hover-popover]").livequery(function(){
 				$(this).popover({ 
 				  delayOut: 300,
@@ -339,7 +350,8 @@ var FreshfoneUser,
 		},
 		updateAvailability: function(to_phone, element){
 			if(this.availableOnPhone == to_phone) {return;}
-			this.toggleAvailabilityOnPhone(false);
+			if(!freshfone.isTrial)
+				this.toggleAvailabilityOnPhone(false);
 			this.updateAvailabilityDomChange(element);
 		},
 		updateAvailabilityDomChange: function (element) {

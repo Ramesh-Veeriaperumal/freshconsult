@@ -19,8 +19,9 @@ def initiate_conference_transfer
           :call => current_call.id })
   end
 
-  def telephony
-    current_number ||= current_call.freshfone_number
-    @telephony ||= Freshfone::Telephony.new(params, current_account, current_number)
+  def telephony(call = nil)
+    call ||= current_call
+    current_number = call.freshfone_number
+    @telephony = Freshfone::Telephony.new(params, current_account, current_number, call)
   end
 end

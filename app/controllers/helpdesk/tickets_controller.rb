@@ -25,7 +25,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_compose_feature, :only => :compose_email
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
-  around_filter :run_on_slave, :only => :user_ticket
+  around_filter :run_on_slave, :only => [:user_ticket, :activities]
   before_filter :save_article_filter, :only => :index
   around_filter :run_on_db, :only => [:custom_search, :index, :full_paginate]
 
@@ -56,9 +56,11 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :verify_ticket_permission_by_id, :only => [:component]
 
   before_filter :load_ticket, :verify_permission,
-    :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print,
-      :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext,
-      :activities, :status, :update_ticket_properties ]
+    :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, 
+              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities]
+  
+  before_filter :load_ticket_with_notes, :verify_permission, :only => [:show]
+
   before_filter :check_outbound_permission, :only => [:edit, :update]
 
   skip_before_filter :build_item, :only => [:create, :compose_email]
@@ -80,6 +82,7 @@ class Helpdesk::TicketsController < ApplicationController
     :unless => lambda { |controller|
       controller.request.format.xml? or controller.request.format.json? or controller.request.format.mobile? }
   before_filter :load_note_reply_cc, :only => [:reply_to_forward]
+  before_filter :load_note_reply_from_email, :only => [:reply_to_forward]
   before_filter :show_password_expiry_warning, :only => [:index, :show]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
@@ -110,14 +113,14 @@ class Helpdesk::TicketsController < ApplicationController
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
     tkt = current_account.tickets.permissible(current_user)
-    @items = fetch_tickets(tkt) unless is_native_mobile?
+    @items = fetch_tickets unless is_native_mobile?
     respond_to do |format|
       format.html  do
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
         #For api calls(json/xml), the redirection is ignored, to use as indication of last page.
         if (@items.length < 1) && !params[:page].nil? && params[:page] != '1'
           params[:page] = '1'
-          @items = fetch_tickets(tkt)
+          @items = fetch_tickets
         end
         @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false, :user_id => i.accessible.user_id} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
@@ -143,7 +146,7 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => {:errors => @response_errors}.to_json
         else
           array = []
-          @items.each { |tic|
+          @items.preload(:ticket_old_body,:schema_less_ticket,:flexifield => :flexifield_def).each { |tic|
             array << tic.as_json({}, false)['helpdesk_ticket']
           }
           render :json => array
@@ -226,7 +229,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def view_ticket
     if params['format'] == 'widget'
-      @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
+      @ticket = load_by_param(params[:id], preload_options)
       @item = @ticket
       if @ticket.nil?
         @item = @ticket = Helpdesk::Ticket.new
@@ -234,10 +237,10 @@ class Helpdesk::TicketsController < ApplicationController
         render :new, :layout => "widgets/contacts"
       else
         if verify_permission
-          @ticket_notes = @ticket.conversation
+          @ticket_notes = run_on_slave { @ticket.conversation }
           @ticket_notes = @ticket_notes.take(3) if @ticket_notes.size > 3
           @ticket_notes = @ticket_notes.reverse
-          @ticket_notes_total = @ticket.conversation_count
+          @ticket_notes_total = run_on_slave { @ticket.conversation_count }
           render :layout => "widgets/contacts"
         else
           @no_auth = true
@@ -283,8 +286,8 @@ class Helpdesk::TicketsController < ApplicationController
     respond_to do |format|
       format.html  {
         @ticket_notes       = @ticket_notes.reverse
-        @ticket_notes_total = @ticket.conversation_count
-        last_public_note    = @ticket.notes.visible.last_traffic_cop_note.first
+        @ticket_notes_total = run_on_slave { @ticket.conversation_count }
+        last_public_note    = run_on_slave { @ticket.notes.visible.last_traffic_cop_note.first }
         @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
       }
       format.atom
@@ -309,8 +312,8 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!({:last_forward => bind_last_conv(@ticket, @signature, true)})
         hash.merge!({:ticket_properties => ticket_props})
         hash.merge!({:reply_template => parsed_reply_template(@ticket,nil)})
-        hash.merge!({:default_twitter_body_val => default_twitter_body_val(@ticket)}) if @item.is_twitter?
-        hash.merge!({:twitter_handles_map => twitter_handles_map}) if @item.is_twitter?
+        hash.merge!({:default_twitter_body_val => default_twitter_body_val(@ticket)}) if @item.twitter?
+        hash.merge!({:twitter_handles_map => twitter_handles_map}) if @item.twitter?
         hash.merge!(@ticket_notes[0].to_mob_json) unless @ticket_notes[0].nil?
         render :json => hash
       }
@@ -328,9 +331,8 @@ class Helpdesk::TicketsController < ApplicationController
   def update
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
     build_attachments @item, :helpdesk_ticket
+    params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     if @item.update_ticket_attributes(params[nscname])
-
-      update_tags(params[:helpdesk][:tags], true, @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       respond_to do |format|
         format.html {
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -369,8 +371,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def update_ticket_properties
+    params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     if @item.update_ticket_attributes(params[nscname])
-      update_tags(params[:helpdesk][:tags], true, @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       if(params[:redirect] && params[:redirect].to_bool)
         flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice', :formats => [:html], :handlers => [:erb] ).html_safe
       end
@@ -703,9 +705,9 @@ class Helpdesk::TicketsController < ApplicationController
     @item.display_id = params[:helpdesk_ticket][:display_id]
     @item.email = params[:helpdesk_ticket][:email]
     @item.group = current_account.groups.find_by_id(params[:helpdesk_ticket][:group_id]) if params[:helpdesk_ticket][:group_id]
+    @item.tag_names = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
 
     build_attachments @item, :helpdesk_ticket
-    create_tags(params[:helpdesk][:tags], @item) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     persist_states_for_api
     if @item.save_ticket
       post_persist
@@ -824,15 +826,16 @@ class Helpdesk::TicketsController < ApplicationController
 
   def activities
     return activity_json if request.format == "application/json"
+    options = [:user => :avatar]
     if params[:since_id].present?
-      activity_records = @item.activities.activity_since(params[:since_id])
+      activity_records = @item.activities.activity_since(params[:since_id]).includes(options)
     elsif params[:before_id].present?
-      activity_records = @item.activities.activity_before(params[:before_id])
+      activity_records = @item.activities.activity_before(params[:before_id]).includes(options)
     else
-      activity_records = @item.activities.newest_first.first(3)
+      activity_records = @item.activities.newest_first.includes(options).first(3)
     end
 
-    @activities = stacked_activities(activity_records.reverse)
+    @activities = stacked_activities(@item, activity_records.reverse)
     @total_activities =  @item.activities_count
     if params[:since_id].present? or params[:before_id].present?
       render :partial => "helpdesk/tickets/show/activity.html.erb", :collection => @activities
@@ -930,10 +933,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_reply_to_all_emails
     default_notes_count = "nmobile".eql?(params[:format])? 1 : 3
-    includes = [:user, :attachments, :schema_less_note, :cloud_files,:note_old_body]
-    includes << (Account.current.new_survey_enabled? ? {:custom_survey_remark => 
-                  {:survey_result => [:survey_result_data, :agent, {:survey => :survey_questions}]}} : :survey_remark )
-    @ticket_notes = @ticket.conversation(nil,default_notes_count,includes)
+    @ticket_notes = @ticket.conversation(nil,default_notes_count)
     reply_to_all_emails
   end
 
@@ -941,17 +941,30 @@ class Helpdesk::TicketsController < ApplicationController
     @to_cc_emails, @to_email = @note.load_note_reply_cc
   end
 
-  def load_by_param(id)
-    current_account.tickets.find_by_param(id,current_account)
+  def load_by_param(id, options = {}, archived = false)
+    archived ? current_account.archive_tickets.find_by_param(id, current_account, options) : current_account.tickets.find_by_param(id, current_account, options)
+  end
+
+  def load_note_reply_from_email
+    from_emails = @note.load_note_reply_from_email
+    @selected_from_email_addr = nil
+    from_emails.each do|from_email| 
+      @selected_from_email_addr = @reply_emails.find { |email_config| from_email == parse_email_text(email_config[1])[:email].downcase }
+        break if @selected_from_email_addr
+    end
+    @from_emails = @reply_emails
   end
 
   private
 
     def set_trashed_column
-      ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
-        st.ticket_id= t.id and st.account_id=#{current_account.id} and t.account_id=#{current_account.id}
-        set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 where
-        t.id in (#{@items.map(&:id).join(',')})")
+      sql_array = ["update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
+                    st.ticket_id= t.id and st.account_id=%s and t.account_id=%s
+                    set st.%s = 1 where t.id in (%s)", 
+                    current_account.id, current_account.id, Helpdesk::SchemaLessTicket.trashed_column, @items.map(&:id).join(',')]
+      sql = ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
+
+      ActiveRecord::Base.connection.execute(sql)
     end
     
     def render_delete_forever
@@ -963,7 +976,6 @@ class Helpdesk::TicketsController < ApplicationController
           :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))}}
       end 
     end
-
 
     def scoper_ticket_actions
       # check for mobile can be removed when mobile apps perform bulk actions as background job
@@ -1185,7 +1197,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def load_ticket_filter
       return if @cached_filter_data
-      filter_name = view_context.current_filter
+      filter_name = CGI.escapeHTML(view_context.current_filter)
       if !is_num?(filter_name)
         load_default_filter(filter_name)
       else
@@ -1231,8 +1243,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def set_required_fields # validation
       if current_account.validate_required_ticket_fields?
-        @item.required_fields = { :fields => current_account.ticket_fields.agent_required_fields.
-                                    preload([:nested_ticket_fields, :picklist_values]),
+        @item.required_fields = { :fields => current_account.ticket_fields_including_nested_fields.agent_required_fields,
                                   :error_label => :label }
       end
     end
@@ -1348,17 +1359,26 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_ticket
     @ticket = @item = load_by_param(params[:id])
-    return redirect_to support_ticket_url(@ticket) if @ticket and current_user.customer?
-
-    helpdesk_restricted_access_redirection(@ticket, 'flash.agent_as_requester.ticket_show') if @ticket and @ticket.restricted_in_helpdesk?(current_user)
-
-    load_archive_ticket unless @ticket
+    load_or_show_error
   end
 
-  def load_archive_ticket
+  def load_ticket_with_notes
+    return load_ticket if request.format.html? or request.format.nmobile? or request.format.js? 
+    @ticket = @item = load_by_param(params[:id], preload_options)
+    load_or_show_error(true)
+  end
+
+  def load_or_show_error(load_notes = false)
+    return redirect_to support_ticket_url(@ticket) if @ticket and current_user.customer?
+    helpdesk_restricted_access_redirection(@ticket, 'flash.agent_as_requester.ticket_show') if @ticket and @ticket.restricted_in_helpdesk?(current_user)
+    load_archive_ticket(load_notes) unless @ticket
+  end
+
+  def load_archive_ticket(load_notes = false)
     raise ActiveRecord::RecordNotFound unless current_account.features?(:archive_tickets)
 
-    archive_ticket = Helpdesk::ArchiveTicket.load_by_param(params[:id], current_account)
+    options = load_notes ? archive_preload_options : {}
+    archive_ticket = load_by_param(params[:id], options, true)
     raise ActiveRecord::RecordNotFound unless archive_ticket
 
     # Temporary fix to redirect /helpdesk URLs to /support for archived tickets
@@ -1369,6 +1389,12 @@ class Helpdesk::TicketsController < ApplicationController
     else
       redirect_to helpdesk_archive_ticket_path(params[:id])
     end
+  end
+
+  def preload_options
+    options = [:attachments, :note_old_body, :schema_less_note]
+    include_options = {:notes => options}
+    include_options
   end
 
   ### Methods for loading tickets from ES ###
@@ -1389,11 +1415,7 @@ class Helpdesk::TicketsController < ApplicationController
     if es_tickets_enabled? and params[:html_format]
       tickets_from_es(params)
     else
-      if tkt.present?
-        tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-      else
-        current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-      end
+      current_account.tickets.preload(requester: [:avatar,:company]).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     end
   end
 
@@ -1419,4 +1441,5 @@ class Helpdesk::TicketsController < ApplicationController
       }
     end
   end
+
 end

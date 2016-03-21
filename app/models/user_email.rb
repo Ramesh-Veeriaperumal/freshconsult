@@ -24,19 +24,19 @@ class UserEmail < ActiveRecord::Base
   before_save :restrict_domain, :if => :email_changed?
   
   # Make the verified as false if the email is changed
-  before_update :change_email_status, :if => [:email_changed?, :multiple_email_feature]
+  before_update :change_email_status, :if => [:email_changed?]
   # Set new perishable token for activation after email is changed
   before_update :set_token, :if => [:email_changed?, :contact_merge_ui_feature]
   before_update :save_model_changes
 
   before_create :set_token, :set_verified
-  # after_commit :send_activation_on_create, on: :create, :if => :multiple_email_feature  
+  # after_commit :send_activation_on_create, on: :create
 
   # Drop all authorizations, if the email is changed
-  after_update :drop_authorization, :if => [:email_changed?, :multiple_email_feature]
-  after_commit :send_activation_on_update, on: :update, :if => [:check_for_email_change?, :multiple_email_feature]
+  after_update :drop_authorization, :if => [:email_changed?]
+  after_commit :send_activation_on_update, on: :update, :if => [:check_for_email_change?]
 
-  before_destroy :drop_authorization, :if => :multiple_email_feature
+  before_destroy :drop_authorization
 
   scope :primary, :conditions => {:primary_role => true}, :limit => 1
 
@@ -55,12 +55,8 @@ class UserEmail < ActiveRecord::Base
   end
 
   def self.user_for_email(email)
-    if !Account.current.features_included?(:multiple_user_emails)
-      Account.current.all_users.find_by_email(email)
-    else
-      user_email = find_by_email(email)
-      user_email ? user_email.user : nil
-    end
+    user_email = find_by_email(email)
+    user_email ? user_email.user : nil
   end
 
   def reset_perishable_token
@@ -111,10 +107,6 @@ class UserEmail < ActiveRecord::Base
 
     def save_model_changes
       @ue_changes = self.changes.clone
-    end
-
-    def multiple_email_feature
-      self.account.features_included?(:multiple_user_emails)
     end
 
     def contact_merge_ui_feature

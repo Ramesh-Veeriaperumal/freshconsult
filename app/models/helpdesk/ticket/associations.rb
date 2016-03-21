@@ -85,6 +85,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy,
     :order => "executed_at"
 
+  has_many :time_sheets_with_users, :class_name => 'Helpdesk::TimeSheet', :as => 'workable',
+    :order => "executed_at", :include => {:user => :avatar}
+
   has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable'
 
   has_one :mobihelp_ticket_info, :class_name => 'Mobihelp::TicketInfo' , :dependent => :destroy

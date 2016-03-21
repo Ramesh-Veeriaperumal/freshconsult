@@ -55,19 +55,20 @@ module ApiWebhooks::PlaceholderMethods
 
   def user_placeholder
     place_holders = [
-     ['{{user.id}}','user_id'],
-     ['{{user.address}}','user_address'],
-     ['{{user.is_agent}}','user_agent'],
-     ['{{user.first_name}}','user_firstname'],
-     ['{{user.last_name}}','user_lastname'],
-     ['{{user.company_name}}','user_company_name'],
-     ['{{user.email}}','user_email'],
-     ['{{user.active}}','user_active'],
-     ['{{user.job_title}}','user_job_title'],
-     ['{{user.phone}}','user_phone_number'],
-     ['{{user.mobile}}','user_mobile_number'],
-     ['{{user.description}}','user_description'],
-     ['{{user.address}}','user_address']
+      ['{{user.to_json}}', 'user']
+     # ['{{user.id}}','user_id'],
+     # ['{{user.address}}','user_address'],
+     # ['{{user.is_agent}}','user_agent'],
+     # ['{{user.first_name}}','user_firstname'],
+     # ['{{user.last_name}}','user_lastname'],
+     # ['{{user.company_name}}','user_company_name'],
+     # ['{{user.email}}','user_email'],
+     # ['{{user.active}}','user_active'],
+     # ['{{user.job_title}}','user_job_title'],
+     # ['{{user.phone}}','user_phone_number'],
+     # ['{{user.mobile}}','user_mobile_number'],
+     # ['{{user.description}}','user_description'],
+     # ['{{user.address}}','user_address']
     ]
     place_holders
   end

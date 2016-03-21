@@ -40,9 +40,10 @@ module HelpdeskReports::Helper::Ticket
   
   def date_lag_constraint
     # Used to restrict date range in UI according to subscription plan
-    @date_lag_by_plan = DATE_LAG_CONSTRAINT[Account.current.subscription.subscription_plan.name] || 1
+    @account_time_zone = ActiveSupport::TimeZone::MAPPING[Account.current.time_zone]
+    @date_lag_by_plan = DATE_LAG_CONSTRAINT[Account.current.subscription.subscription_plan.name] || 1 
   end
-  
+
   def ensure_ticket_list
     disabled_plans = ReportsAppConfig::DISABLE_TICKET_LIST[report_type] || []
     @enable_ticket_list_by_plan = !disabled_plans.include?(Account.current.subscription.subscription_plan.name)
@@ -51,11 +52,11 @@ module HelpdeskReports::Helper::Ticket
   def report_specific_constraints pdf_export
     res = {report_type: report_type}
 
-    if [:agent_summary,:group_summary].include?(report_type.to_sym)
+    if ["agent_summary","group_summary"].include?(report_type)
         group_ids, agent_ids = []
         param = @query_params[0]
         param[:filter].each do |f|
-          if report_type == :agent_summary 
+          if report_type == "agent_summary" 
             agent_ids = f["value"].split(",") if f["condition"] == "agent_id"
             group_ids = f["value"] == "-1" ? nil : f["value"].split(",").select{|elem| elem != "-1"} if f["condition"] == "group_id"
           else
@@ -65,7 +66,7 @@ module HelpdeskReports::Helper::Ticket
         end
         res.merge!(group_ids: group_ids.map{|grp_id| grp_id.to_i }) if !group_ids.nil?
         res.merge!(agent_ids: agent_ids.map{|agt_id| agt_id.to_i }) if !agent_ids.nil?
-    elsif report_type.to_sym == :glance
+    elsif report_type == "glance"
       res.merge!(pdf_export: pdf_export)
     end
     
@@ -153,7 +154,7 @@ module HelpdeskReports::Helper::Ticket
     error_list = error_list.flatten.uniq.compact.reject(&:blank?)
     if error_list.any?
       Rails.logger.info "INVALID REPORT PARAMS #{error_list}"
-      @filter_err = error_list.uniq
+      @filter_err = error_list
       render_charts
     end
   end
@@ -210,8 +211,11 @@ module HelpdeskReports::Helper::Ticket
 
   def validate_time_trend param
     report_duration = date_range_diff(param[:date_range])
-    if report_duration.present? && REPORT_TYPE_BY_KEY[report_type.upcase.to_sym] != 104
-       TIME_TREND.each{ |trend| (param[:time_trend_conditions]||[]).delete(trend) if report_duration > MAX_DATE_RANGE_FOR_TREND[trend]}
+    
+    if report_duration.present? && report_type == "ticket_volume"
+      allowed_time_trend = param[:time_trend_conditions]
+      TIME_TREND.each{ |trend| allowed_time_trend.delete(trend) if report_duration > MAX_DATE_RANGE_FOR_TREND[trend]}
+      param[:time_trend_conditions] = allowed_time_trend
     end
     
     (param[:time_trend_conditions] || []).inject([]) do |errors, tt|
@@ -247,9 +251,9 @@ module HelpdeskReports::Helper::Ticket
     (param[:filter] || []).inject([]) do |errors, filter|
       value_count = filter["value"].split(",").length
       if value_count == 0
-        errors << "multi select 0 for #{filter["condition"]}"
+        errors << "Multi select 0 for #{filter["condition"]}"
       elsif value_count > MULTI_SELECT_LIMIT
-        errors << "multi select count exceeded for #{filter["condition"]}"
+        errors << "Multi select count exceeded for #{filter["condition"]}"
       end
       errors
     end
@@ -262,7 +266,8 @@ module HelpdeskReports::Helper::Ticket
     case scope
     when :group_tickets
       scoped_group_ids = current_user.agent.agent_groups.collect(&:group_id)
-      validate_filter "group_id", scoped_group_ids
+      scoped_group_ids.present? ? validate_filter("group_id", scoped_group_ids)
+                                : validate_filter("agent_id", [current_user.id])
     when :assigned_tickets
       validate_filter "agent_id", [current_user.id]
     end
@@ -275,7 +280,9 @@ module HelpdeskReports::Helper::Ticket
       elsif filter?(param[:filter], filter_type)
         check_permissible_values(param[:filter], filter_type, scoped_values)
       else
-        param[:filter] << add_default_filter(filter_type, scoped_values)
+        new_filter = [add_default_filter(filter_type, scoped_values)]
+        new_filter.push(param[:filter])
+        param[:filter] = new_filter.flatten
       end
     end
   end

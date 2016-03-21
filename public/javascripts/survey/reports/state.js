@@ -2,6 +2,7 @@
     Module captures generic elements for making a
     request to fetch and parse data & maintains the URL state as well
 */
+
 var SurveyState = {
     path: '/custom_survey/reports/',
     isRating:false,
@@ -10,6 +11,9 @@ var SurveyState = {
     OVERVIEW:{type:1,tab:"survey_overview_link",container:"survey_overview",disable:"survey_responses_link"},
     RESPONSE:{type:2,tab:"survey_responses_link",container:"survey_responses",disable:"survey_overview_link"},
     init:function(){
+        SurveyState.save_util.init();
+        SurveyState.save_util.applyLastCachedReport();
+        SurveyState.bindSavedReportEvents();
         jQuery(window).bind( "hashchange", function(e) {
             SurveyReport.hideLayout();
             var state = jQuery.bbq.getState();
@@ -25,6 +29,11 @@ var SurveyState = {
                 SurveyState.makeRequest(state);
             }else{
                SurveyOverview.fetch();
+            }
+
+            if(SurveyState.filterChanged) {
+                 SurveyState.save_util.controls.hideDeleteAndEditOptions();
+                 SurveyState.save_util.controls.showSaveOptions(SurveyState.last_applied_saved_report_index); 
             }
         });
         jQuery(window).trigger("hashchange");
@@ -84,17 +93,16 @@ var SurveyState = {
       });
       return data;
     },
-    fetch:function(label){
+    fetch:function(savedData){
         var root = jQuery(".report-panel-content").find('li.active').data('container').split("_")[1];
-        var urlData = SurveyUtil.getUrlData();
-        var timestamp = SurveyDateRange.convertDateToTimestamp(jQuery("#survey_date_range").val());
+        var urlData = savedData || SurveyUtil.getUrlData();
         var rating = "all";
         var url = "/"+root+"/"+urlData.survey_id+"/"+urlData.group_id+"/"+urlData.agent_id;
         if(root=="responses"){
             var ratingVal = (SurveyState.isRating) ? SurveyState.getFilter('rating_list') : SurveyReportData.defaultAllValues.rating;
             url = url+"/"+urlData.survey_question_id+"/"+ratingVal;
         }
-        url = url+"/"+timestamp;
+        url = url+"/"+urlData.date.date_range;
         jQuery.bbq.pushState(url,2);
     },
     makeRequest:function(state){
@@ -127,5 +135,120 @@ var SurveyState = {
             jQuery('#'+divId).find('i').removeClass().addClass('survey-indicator '+SurveyConstants.iconClass[id]+'');            
         }
         SurveyState.setFilter(divId,{'id':id ,'value':value});
-    }
+    },
+
+    // Saved Reports Functionalities
+
+    last_applied_saved_report_index : -1,
+    CONST: {
+        base_url : '/custom_survey/reports',
+        save_report   : "/save_reports_filter",
+        delete_report : "/delete_reports_filter",
+        update_report : "/update_reports_filter"
+    },
+    save_util : Helpkit.commonSavedReportUtil,
+    filterChanged : false,
+    bindSavedReportEvents: function(){
+        jQuery(document).on("save.report",function() {
+          SurveyState.saveReport();
+        });
+        jQuery(document).on("delete.report",function() { 
+          SurveyState.deleteSavedReport();
+        });
+        jQuery(document).on("edit.report",function(ev,data) {
+          SurveyState.updateSavedReport(data.isNameUpdate);
+        });
+        jQuery(document).on("apply.report",function(ev,data) {
+          SurveyState.applySavedReport(data.index);
+        });
+        jQuery(document).on("discard_changes.report",function() {
+          SurveyState.discardChanges();
+        });
+        jQuery(document).on("presetRangesSelected", function(event,status) {
+            Helpkit.presetRangesSelected = status;
+        });
+    },
+    formatFilterData: function(){
+        var params = {};
+        params.data_hash = SurveyUtil.getUrlData();
+        if(Helpkit.presetRangesSelected) {
+                var date_range = SurveyDateRange.convertTimestampToDateEn(params.data_hash.date.date_range);
+               params.data_hash.date.date_range = SurveyState.save_util.dateRangeDiff(date_range);
+               params.data_hash.date.presetRange = true;
+          } 
+        return params;
+    },
+    discardChanges : function() {
+        SurveyState.applySavedReport(SurveyState.last_applied_saved_report_index);
+    },
+    applySavedReport : function(index) {
+        SurveyState.save_util.cacheLastAppliedReport(index);
+        if(index != -1) {
+            var hash = Helpkit.report_filter_data;
+            SurveyState.last_applied_saved_report_index = index;
+            var data_hash = jQuery.extend(true,{},hash[index].report_filter.data_hash);
+             if(data_hash.date.presetRange) {
+              data_hash.date.date_range  = SurveyDateRange.convertDiffToTimestamp(data_hash.date.date_range);
+            } 
+            SurveyState.save_util.setActiveSavedReport(jQuery(".reports-menu li a[data-index=" + index +"]"));
+            SurveyState.filterChanged = false;
+            SurveyState.save_util.controls.hideSaveOptions();
+            SurveyState.save_util.controls.showDeleteAndEditOptions();
+            SurveyState.fetch(data_hash);
+        }
+        else{
+            window.location.href = SurveyState.CONST.base_url;
+        }
+    },
+    saveReport : function() {
+          var opts = {
+              url: SurveyState.CONST.base_url + SurveyState.CONST.save_report,
+              callbacks : {
+                success: function () {
+                    //update the last applied filter
+                    SurveyState.last_applied_saved_report_index = this.new_id;
+                    SurveyState.filterChanged = false;
+
+                }
+              },
+              params : SurveyState.formatFilterData()
+          };
+          SurveyState.save_util.saveHelper(opts);
+    },
+    deleteSavedReport : function() {
+          var current_selected_index = parseInt(jQuery(".reports-menu li.active a").attr('data-index'));
+          var opts = {
+              current_selected_index : current_selected_index,
+              url: SurveyState.CONST.base_url + SurveyState.CONST.delete_report,
+              callbacks : {
+                success: function (resp) {
+                  SurveyState.applySavedReport(-1);
+                }
+              }
+          };
+          SurveyState.save_util.deleteHelper(opts);
+    },
+    updateSavedReport : function(isUpdateTitle) {
+          var current_selected_index = parseInt(jQuery(".reports-menu li.active a").attr('data-index'));
+          var params = SurveyState.formatFilterData();
+
+          if(isUpdateTitle) {
+            params.filter_name = jQuery("#filter_name_edit").val();
+          } else {
+            params.filter_name = Helpkit.report_filter_data[current_selected_index].report_filter.filter_name;
+          }
+          params.id = Helpkit.report_filter_data[current_selected_index].report_filter.id;
+
+          var opts = {
+              current_selected_index : current_selected_index,
+              url: SurveyState.CONST.base_url + SurveyState.CONST.update_report,
+              callbacks : {
+                 success: function () {
+                    SurveyState.filterChanged = false
+               }
+              },
+              params : params
+          };
+          SurveyState.save_util.updateHelper(opts);
+    },
 }

@@ -91,7 +91,7 @@
 		<div id="topic_forum" class="control-group">
 	  		<label for="topic_forum_id" class="control-label"><%= t('forum.title') %></label>
 	  		<div class="controls">
-	  			<%= form.select :forum_id, grouped_options_for_select(forum_options), {},
+	  			<%= form.select :forum_id, grouped_options_for_select(forum_options, @topic.forum_id), {},
 	  							{:class => "select2 input-xlarge"} %>
 	  		</div>
 		</div>
@@ -131,5 +131,4 @@
 	jQuery("#topic_locked").click(function(ev){
 		jQuery("#monitor-topic-lable").toggle(!this.checked);
 	});
-	 jQuery('#topic_forum_id').val(<%= params[:forum_id] || @topic.forum_id %>)
 <% end %>

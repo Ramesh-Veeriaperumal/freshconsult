@@ -93,6 +93,60 @@ module IntegrationServices::Services
       account_resource.get_fields
     end
 
+    def receive_opportunity_fields
+      opportunity_resource.get_fields
+    end
+
+    def receive_opportunity_stage_field
+      opportunity_resource.stage_name_picklist_values
+    end
+
+    def receive_create_opportunity
+      begin
+        integrated_local_resource = receive_integrated_resource
+        return { :error => "Link failed.This ticket is already linked to an opportunity", :remote_id => integrated_local_resource["remote_integratable_id"] } unless integrated_local_resource.blank?
+        @payload.delete(:ticket_id)
+        opportunity_resource.create @payload
+      rescue RemoteError => e
+        return error(e.to_s, { :exception => e.status_code })
+      end
+    end
+
+    def receive_link_opportunity
+      begin
+        integrated_local_resource = receive_integrated_resource
+        return { :error => "Link failed.This ticket is already linked to an opportunity", :remote_id => integrated_local_resource["remote_integratable_id"] } unless integrated_local_resource.blank?
+        @installed_app.integrated_resources.create(
+          :remote_integratable_id => @payload[:remote_id],
+          :remote_integratable_type => "opportunity",
+          :local_integratable_id => @payload[:ticket_id],
+          :local_integratable_type => "Helpdesk::Ticket",
+          :account_id => @installed_app.account
+        )
+      rescue Exception => e
+        return error("Error in linking the ticket with the salesforce opportunity", { :exception => e })
+      end
+    end
+
+    def receive_unlink_opportunity
+      begin
+        integrated_resource = @installed_app.integrated_resources.where(
+          :local_integratable_id => @payload[:ticket_id],
+          :remote_integratable_id => @payload[:remote_id], 
+          :remote_integratable_type => "opportunity"
+        ).first
+        return { :error => "The opportunity is already unlinked from the ticket", :remote_id => "" } if integrated_resource.blank?
+        integrated_resource.destroy
+      rescue Exception => e
+        return error("Error in unlinking the ticket with the salesforce opportunity", { :exception => e })
+      end
+    end
+
+    def receive_integrated_resource
+      return {} if @payload[:ticket_id].blank?
+      super
+    end
+
     def receive_fetch_user_selected_fields
       send("#{@payload[:type]}_resource").get_selected_fields(@installed_app.send("configs_#{@payload[:type]}_fields"), @payload[:value])
     end
@@ -104,6 +158,15 @@ module IntegrationServices::Services
         x.save
       end
       @installed_app.save!
+    end
+
+    def error(msg, error_params = {})
+      exception = error_params[:exception]
+      web_meta[:status] = error_params[:status] || :not_found
+      if exception.present?
+        NewRelic::Agent.notice_error(exception,{:custom_params => {:description => "Problem in salesforce service : #{exception.message}"}})
+      end
+      return { :message => msg }
     end
 
     private
@@ -126,6 +189,10 @@ module IntegrationServices::Services
 
     def lead_resource
       @lead_resource ||= IntegrationServices::Services::Salesforce::SalesforceLeadResource.new(self)
+    end
+
+    def opportunity_resource
+      @opportunity_resource ||= IntegrationServices::Services::Salesforce::SalesforceOpportunityResource.new(self)
     end
 
     def custom_object_resource

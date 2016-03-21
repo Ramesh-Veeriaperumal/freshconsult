@@ -53,7 +53,13 @@
   	a{ color:#999; }
     a:hover{ color:#336699; }
   }
-  .infoblock{ @include padding-left(35px); }
+  .infoblock{
+    @include padding-left(35px);
+    .user_name a{
+      word-break: break-all;
+      display: inline-block;
+    }
+  }
 }
 
 .requester-details .hover-contact-box{

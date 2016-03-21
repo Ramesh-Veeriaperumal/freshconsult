@@ -1,9 +1,9 @@
-json.cache! CacheLib.compound_key(@item, ApiConstants::CACHE_VERSION[:v2], params) do # ticket caching
+json.cache! CacheLib.compound_key(@item, ApiConstants::CACHE_VERSION[:v3], params) do # ticket caching
   json.set! :cc_emails, @item.cc_email.try(:[], :cc_emails)
   json.set! :fwd_emails, @item.cc_email.try(:[], :fwd_emails)
   json.set! :reply_cc_emails, @item.cc_email.try(:[], :reply_cc)
 
-  json.extract! @item, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id,  :responder_id, :source, :spam, :status, :subject
+  json.extract! @item, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id,  :responder_id, :source, :spam, :status, :subject, :company_id
 
   json.set! :id, @item.display_id
   json.set! :type, @item.ticket_type
@@ -21,7 +21,7 @@ json.extract! @item, :description, :description_html, :custom_fields
 
 json.set! :tags, @item.tag_names # does not have timestamps, hence no caching
 
-json.partial! 'show_notes' if @notes
+json.partial! 'show_conversations' if @conversations
 
 json.set! :attachments do
   json.array! @item.attachments do |att|

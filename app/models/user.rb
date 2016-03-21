@@ -654,6 +654,9 @@ class User < ActiveRecord::Base
   end
 
   def reset_primary_email primary
+    # Web does not allow a new email to be the primary_email for a contact, but it should be allowed via API
+    return true if primary.nil?
+    
     new_primary = self.user_emails.find(primary.to_i)
     if new_primary
       self.user_emails.update_all(:primary_role => false)
@@ -678,7 +681,7 @@ class User < ActiveRecord::Base
   
   def make_agent(args = {})
     ActiveRecord::Base.transaction do
-      self.user_emails = [self.primary_email] if has_multiple_user_emails?
+      self.user_emails = [self.primary_email]
       self.deleted = false
       self.helpdesk_agent = true
       self.company = nil
@@ -726,11 +729,11 @@ class User < ActiveRecord::Base
   end
 
   def custom_field_aliases
-    @custom_field_aliases ||= (helpdesk_agent? || account.blank?) ? [] : custom_form.custom_contact_fields.map(&:name)
+    @custom_field_aliases ||= (helpdesk_agent? || (Account.current || account).blank?) ? [] : custom_form.custom_contact_fields.map(&:name)
   end
 
   def custom_field_types
-    @custom_field_types ||= (helpdesk_agent? || account.blank?) ? {} : custom_form.custom_contact_fields.inject({}) { |types,field| types.merge(field.name => field.field_type) }
+    @custom_field_types ||= (helpdesk_agent? || (Account.current || account).blank?) ? {} : custom_form.custom_contact_fields.inject({}) { |types,field| types.merge(field.name => field.field_type) }
   end
 
   def self.search_by_name search_by, account_id, options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
@@ -846,15 +849,10 @@ class User < ActiveRecord::Base
     #This is the current login method. It is fed to authlogic in user_sessions.rb
 
     def self.find_by_user_emails(login)
-      if !Account.current.features_included?(:multiple_user_emails)
-        user = User.find_by_email(login)
-        user if user.present? and user.active? and !user.blocked?
-      else
-        # Without using select will results in making the user object readonly.
-        # http://stackoverflow.com/questions/639171/what-is-causing-this-activerecordreadonlyrecord-error
-        user = User.select("`users`.*").joins("INNER JOIN `user_emails` ON `user_emails`.`user_id` = `users`.`id` AND `user_emails`.`account_id` = `users`.`account_id`").where(account_id: Account.current.id, user_emails: {email: login}).first
-        user if user and user.active? and !user.blocked?
-      end
+      # Without using select will results in making the user object readonly.
+      # http://stackoverflow.com/questions/639171/what-is-causing-this-activerecordreadonlyrecord-error
+      user = User.select("`users`.*").joins("INNER JOIN `user_emails` ON `user_emails`.`user_id` = `users`.`id` AND `user_emails`.`account_id` = `users`.`account_id`").where(account_id: Account.current.id, user_emails: {email: login}).first
+      user if user and user.active? and !user.blocked?
     end
 
     def process_api_options default_options, current_options

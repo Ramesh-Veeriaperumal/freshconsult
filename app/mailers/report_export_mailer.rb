@@ -15,6 +15,7 @@ class ReportExportMailer < ActionMailer::Base
     @filters = options[:filters]
     @date_range  = options[:date_range]
     @report_type = report_name(options[:report_type])
+    @filter_name = options[:filter_name]
     @ticket_export   = options[:ticket_export].present? ? "ticket" : ""
     @selected_metric = options[:selected_metric] if options[:selected_metric]
     @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])

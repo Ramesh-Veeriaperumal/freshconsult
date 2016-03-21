@@ -13,4 +13,7 @@ class Helpdesk::ReportFilter < ActiveRecord::Base
   scope :by_report_type, lambda { |report_type|
     { :conditions => {:report_type => report_type}}
   }
+
+  scope :order_by_latest, :order => 'updated_at DESC'
+  
 end

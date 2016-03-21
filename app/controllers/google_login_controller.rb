@@ -3,9 +3,16 @@ class GoogleLoginController < AccountsController
 	include GoogleOauth
 
   around_filter :select_shard
+
+  skip_filter :select_latest_shard #Nothing here needs to execute on latest shard. Around filter of select_shard should do.
+  skip_before_filter :determine_pod, :set_current_account, :redactor_form_builder, 
+                      :check_account_state, :set_time_zone,
+                      :check_day_pass_usage, :set_locale, 
+                      :only =>[:create_account_from_google] #gets called only as part of OAuth callback
   skip_before_filter :check_privilege
+
   before_filter :login_account, :only =>[:create_account_from_google]
-  before_filter :ensure_proper_protocol
+  before_filter :ensure_proper_protocol, :except =>[:create_account_from_google] #gets called only as part of OAuth callback
 
   def marketplace_login
     redirect_to construct_google_auth_url('', 'google_oauth2')

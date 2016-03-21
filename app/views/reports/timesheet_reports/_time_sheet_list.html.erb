@@ -9,12 +9,15 @@
 					<% end %>
 				</span>
 				<span class="report-title-block" data-action="pop-report-type-menu" >
+					<span class="unsaved_star vertical-alignment hide">*</span>
 					<span id="report-title">
 						<%=t('helpdesk_reports.timesheet_reports.title')%>
 					</span>
 					<span class="grey-arrow-down title-dropdown"></span>
-					<p class="muted" id="report_header_date"><%=@report_date%></p>
 				</span>
+				<% if current_account.subscription.non_sprout_plan? %>
+					<%= render :partial => "reports/shared/save_report_controls.html.erb"%>
+				<% end %>
 				<!-- PDF link -->
 			</div>
 			<div class="reports-filter span12" id="report-filter-details">
@@ -28,11 +31,10 @@
 						<li><%=t('reports.time_sheets.filter_by_title')%>:</li>
 						<li><%=t('reports.time_sheets.time_period')%> : <strong><%= @report_date.blank? ? date_range_val((Time.zone.now.ago 30.day),Time.zone.now) :  @report_date%></strong></li>
 					</ul>
+					<ul id="filter_text_others"></ul>
 				</div>
 				<div class="reports-menu hide" id="reports_type_menu">
-					<ul>
-						<%= reports_sub_menu %>
-					</ul>
+
 				</div>
 			</div><!-- New Header-->
 		</div>
@@ -40,7 +42,7 @@
       <div>
       			<h3 class="header-lead"><span><%=t('adv_reports.summary')%> </span></h3>
 	 			<div class="row-fluid report-summary-wrapper">
-					<%=render :partial =>"time_sheets_metric.html.erb" %>
+					<%=render :partial =>"reports/timesheet_reports/time_sheets_metric.html.erb" %>
 				</div>
 			</div>
 			<% grp_data = Helpdesk::TimeSheet.group_by_options.collect {|grp| grp[1] if !(@headers.include?(grp[1])) } %>
@@ -77,7 +79,7 @@
 							</tr>
 							
 					 	<% if @time_sheets.size > 0 %>
-							<%= render :partial => "time_sheet.html.erb", :object => @time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data} %>
+							<%= render :partial => "reports/timesheet_reports/time_sheet.html.erb", :object => @time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data} %>
 					    <%else%>
 						    <tr>
 						    	<td colspan="<%=(colspan+1)%>">		    		
@@ -95,7 +97,7 @@
 		<% unless generate_pdf_action? %>
 			<div class="report-left-filter" id="report-filter-edit">
 				<div class="left-filter">    
-					<%= render :partial => "reports/timesheet_reports/filter_options"%>
+					<%= render :partial => "reports/timesheet_reports/filter_options.html.erb"%>
 				</div>
 			</div>			
 		<% end %>
@@ -136,7 +138,9 @@
 	   		jQuery("#loading-box").show(); 
 	   		jQuery("#time_sheet_report").css('opacity','0.2'); 
 	   		jQuery("#loading-box").css('background','transparent'); 
-	   		jQuery(".reports-loading").css('margin-top','330px'); 
+	   		jQuery(".reports-loading").css('margin-top','330px');
+	   		setFilterText();
+
     		jQuery.ajax({
 		        url: '<%=report_filter_timesheet_reports_url%>',
 		        type: "POST",
@@ -145,7 +149,16 @@
 		      	 		jQuery("#loading-box").hide(); 
 		      	 		jQuery("#time_sheet_report").css('opacity','1'); 
 		      	 		jQuery("#time_sheet_report").removeClass('slide-shadow');
+		      	 		//Markup replaced on submit so copy and re insert
+		      	 		var save_menu = jQuery('#reports_type_menu').html();
+		      	 		var title_block = jQuery('#report-title').html();
+		      	 		var filter_block = jQuery("#filter_text_others").html();
+
 		      	 		jQuery("#time_sheet_report").html(data);
+		      	 		jQuery('#reports_type_menu').html(save_menu);
+		      	 		jQuery('#report-title').html(title_block);
+		      	 		jQuery("#filter_text_others").html(filter_block);
+		      	 		trigger_event("report_refreshed",{});
 		        	}
 				});
 

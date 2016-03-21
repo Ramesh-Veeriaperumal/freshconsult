@@ -1,6 +1,6 @@
 module Helpdesk::Activities
 
-def stacked_activities(activities, archived = false)
+  def stacked_activities(ticket, activities, archived = false)
 		activity_stack = []
 		notes_to_fetch = []
 		activity = {}
@@ -43,14 +43,16 @@ def stacked_activities(activities, archived = false)
 		end
 
 		activity_stack << combine(activity, previous_activity_meta) unless activity.blank?
-		archived ? prefetch_archive_notes(notes_to_fetch) : prefetch_notes(notes_to_fetch)
+    if notes_to_fetch.present?
+      archived ? prefetch_archive_notes(ticket, notes_to_fetch) : prefetch_notes(ticket, notes_to_fetch)
+    end
 		activity_stack
-	end
+  end
 
 	def activity_json
 		Sharding.run_on_slave do
 			activity_records = @item.activities.newest_first(100)
-			activities = stacked_activities(activity_records.reverse)
+      activities = stacked_activities(@item, activity_records.reverse)
 			result = []
 			activities.each do |activity|
 				performer = []
@@ -162,14 +164,24 @@ private
 		types_importance.sort! { |x,y| x[:index] <=> y[:index]}.first[:type]
 	end
 
-	def prefetch_notes(note_ids)
-		notes = Helpdesk::Note.find(note_ids, :include => :user)
-		@prefetched_notes = Hash[*notes.map { |note| [note.id, note] }.flatten]
-	end
+  def prefetch_notes(ticket, note_ids)
+    options = [{:user => :avatar}, :notable, :schema_less_note, :note_old_body]
+    options << (Account.current.new_survey_enabled? ? {:custom_survey_remark =>
+                  {:survey_result => [:survey_result_data, :agent, {:survey => :survey_questions}]}} : :survey_remark)
+    options << :fb_post if ticket.facebook?
+    options << :tweet if ticket.twitter?
 
-	def prefetch_archive_notes(note_ids)
-		notes = Helpdesk::ArchiveNote.includes(:user).where("note_id in (?)", note_ids)
-		@prefetched_notes = Hash[*notes.map { |note| [note.note_id, note] }.flatten]
-	end
+    notes = Helpdesk::Note.includes(options).where(:id => note_ids)
+    @prefetched_notes = Hash[*notes.map { |note| [note.id, note] }.flatten]
+  end
+
+  def prefetch_archive_notes(ticket, note_ids)
+    options = [{:user => :avatar}, :archive_note_association]
+    options << :fb_post if ticket.facebook?
+    options << :tweet if ticket.twitter?
+
+    notes = Helpdesk::ArchiveNote.includes(options).where(:note_id => note_ids)
+    @prefetched_notes = Hash[*notes.map { |note| [note.note_id, note] }.flatten]
+  end
 
 end

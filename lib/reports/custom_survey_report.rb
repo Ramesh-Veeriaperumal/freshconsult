@@ -20,7 +20,8 @@ module Reports::CustomSurveyReport
   
   def parse_to_date
     unless params[:date_range].blank?
-      toDate = params[:date_range].split("-")[1]
+      dateArray = params[:date_range].split("-")
+      toDate = dateArray[1] || dateArray[0]
       return (toDate[0,2] + "-" + toDate[2,2] + "-" + toDate[4,4])
     end
   end

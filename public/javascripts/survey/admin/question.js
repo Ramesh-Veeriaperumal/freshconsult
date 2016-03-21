@@ -36,8 +36,8 @@ var SurveyQuestion = {
 		jQuery("a#question-cancel").hide();
     jQuery('div#survey_question_set').find('a.delete-question').hide();
 		jQuery("div#question_rating_choice").hide();
-    jQuery('#survey_point_scale').text(surveysI18n.scale_text + " " +view.choiceValues.length+ " " +surveysI18n.scale).removeClass("spanhack");
-    jQuery('#question_point_scale').text(surveysI18n.scale_text + " " +view.questions.choiceValues.length+ " " +surveysI18n.points_scale).removeClass("spanhack");
+    jQuery('#survey_point_scale').text(surveysI18n.scale_text + " " +SurveyProtocol.content.choices.length+ " " +surveysI18n.scale).removeClass("spanhack");
+    jQuery('#question_point_scale').text(surveysI18n.scale_text + " " +SurveyProtocol.content.question_choices.length+ " " +surveysI18n.points_scale).removeClass("spanhack");
 		jQuery(".add-srvy-ques").hide();
     jQuery('div#comments').find("input[name='can_comment']").attr('disabled',true);
 	},
@@ -139,7 +139,10 @@ var SurveyQuestion = {
 	hide:function(){
 		jQuery('div#survey_questions').hide();
 		jQuery("div#survey_questions").html("");
-		jQuery("#additional-thanks").hide();
+		if(!jQuery("input[name=can_comment").is(':checked'))
+		 {
+		 	jQuery("#additional-thanks").hide();
+		 }
     	jQuery('#addQuestion').show();
 	},
 	add:function(question,isSurveyResult){
@@ -200,6 +203,10 @@ var SurveyQuestion = {
 	},
 	additionalComment: function(){
 		jQuery('#feedback-thanks').toggle();
+		if(jQuery('#addQuestion').is(':visible'))
+		{
+			jQuery("#additional-thanks").toggle();
+		}
 	},
 	resetOptions:function(){
 		var defaultScale = jQuery("input[name=question-choice]:checked").val();

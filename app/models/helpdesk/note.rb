@@ -27,7 +27,7 @@ class Helpdesk::Note < ActiveRecord::Base
            :class_name => 'Helpdesk::SharedAttachment',
            :dependent => :destroy
 
-  has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment, :conditions => ["helpdesk_attachments.account_id=helpdesk_shared_attachments.account_id"]
+  has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
 
   delegate :to_emails, :cc_emails, :bcc_emails, :subject, :to => :schema_less_note
 
@@ -162,7 +162,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def can_split?
-    (self.incoming and self.notable) and (self.fb_post ? self.fb_post.can_comment? : true) and (self.private ? user.customer? : true) and (!self.mobihelp?) and !user.blocked? and (!self.ecommerce?)
+    (self.incoming and self.notable) and ((self.notable.facebook? and self.fb_post) ? self.fb_post.can_comment? : true) and (self.private ? user.customer? : true) and (!self.mobihelp?) and !user.blocked? and (!self.ecommerce?)
   end
 
   def as_json(options = {})
@@ -303,9 +303,9 @@ class Helpdesk::Note < ActiveRecord::Base
                         }
             }).to_json
   end
-  
+
   def fb_reply_allowed?
-    self.fb_post and self.incoming and self.notable.is_facebook? and self.fb_post.can_comment? 
+    self.notable.facebook? and self.fb_post and self.incoming and self.fb_post.can_comment? 
   end
 
   def load_note_reply_cc
@@ -316,6 +316,20 @@ class Helpdesk::Note < ActiveRecord::Base
     else
       [[], []]
     end
+  end
+
+  def load_note_reply_from_email
+    email_addrs = []
+    if (self.fwd_email? || self.reply_to_forward?)
+      parsed_email = parse_email_text(self.from_email)
+      email_addrs = parsed_email[:email].downcase.to_a
+    elsif self.third_party_response?
+      to_emails = self.to_emails.map{ |email| parse_email_text(email)[:email].downcase }
+      email_addrs = to_emails
+      cc_emails = self.cc_emails.map{ |email| parse_email_text(email)[:email].downcase }
+      email_addrs += cc_emails
+    end
+    email_addrs
   end
   
   # Instance level spam watcher condition
@@ -370,7 +384,7 @@ class Helpdesk::Note < ActiveRecord::Base
     # def rl_exceeded_operation
     #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
     #           :user_id => self.user_id }
-    #   $spam_watcher.rpush(ResourceRateLimit::NOTIFY_KEYS, key)
+    #   $spam_watcher.perform_redis_op("rpush", ResourceRateLimit::NOTIFY_KEYS, key)
     # end
 
     def human_note_for_ticket?

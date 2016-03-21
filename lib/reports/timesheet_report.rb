@@ -89,6 +89,10 @@ module Reports::TimesheetReport
   def set_selected_tab
     @selected_tab = :reports
   end
+
+  def set_report_type
+    @report_type = "timesheet_reports"
+  end
   
   def build_item
     @start_date = start_date

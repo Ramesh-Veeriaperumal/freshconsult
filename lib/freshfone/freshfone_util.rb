@@ -1,5 +1,6 @@
 module Freshfone::FreshfoneUtil
   include Freshfone::NodeEvents
+  include Freshfone::CallerLookup
 
   def default_client
     current_user.id
@@ -40,8 +41,11 @@ module Freshfone::FreshfoneUtil
     }.text
   end
   
-  def reject_twiml
-    Twilio::TwiML::Response.new { |r| r.Reject }.text
+  def reject_twiml(comment = nil)
+    Twilio::TwiML::Response.new { |r| 
+      r.comment! comment if comment.present?
+      r.Reject
+    }.text
   end
 
 
@@ -79,7 +83,7 @@ module Freshfone::FreshfoneUtil
     end
     call_meta = Freshfone::CallMeta.new( :account_id => current_account.id, :call_id => call.id,
               :transfer_by_agent => transfering_agent_id(call),
-              :meta_info => user_agent )
+              :meta_info => { :agent_info => user_agent })
     call_meta.device_type = is_native_mobile? ? mobile_device(user_agent) : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser]
     call_meta.save
   end
@@ -92,7 +96,7 @@ module Freshfone::FreshfoneUtil
     call.meta = Freshfone::CallMeta.new( :account_id => current_account.id, :call_id => call.id) if call.meta.blank?
     call_meta = call.meta
     call_meta.transfer_by_agent = transfering_agent_id(call) if call_meta.transfer_by_agent.blank?
-    call_meta.meta_info = user_agent if call_meta.meta_info.blank?
+    call_meta.meta_info = {:agent_info => user_agent} if call_meta.meta_info.blank?
     call_meta.device_type = (is_native_mobile? ? mobile_device(user_agent) : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser]) if call_meta.device_type.blank?
     call_meta.save
   end
@@ -267,4 +271,16 @@ module Freshfone::FreshfoneUtil
     current_call.user_id.present? && current_call.user_id.to_s == params[:agent_id]
   end
 
+  private
+    def invalid_number_incoming_fix
+      return if params[:From].blank? || sip_call? || supervisor?
+      if !outgoing? && invalid_number?(params[:From]) && !strange_number?(params[:From])
+        Rails.logger.info "Number :: #{params[:From]} is an Invalid Number, of CallSid :: #{params[:CallSid]} for Account :: #{current_account.id}"
+        params[:From] = "+#{STRANGE_NUMBERS.invert['ANONYMOUS'].to_s}"
+      end
+    end
+
+    def outgoing?
+      current_account.features?(:freshfone_conference) ? params[:From].present? && params[:PhoneNumber].present? && params[:From].match(/(client:)/) : params[:To].blank? 
+    end
 end

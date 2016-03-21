@@ -34,18 +34,12 @@ end
   <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
   <% end %>
   <div class="commentbox 
-          <%= (note.user.blank? or note.archive_ticket.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
-          <%= 'private-note' if note.private_note? || is_twitter_dm?(note) || is_facebook_message?(note) %>">
-    <% if note.private_note? %>
-      <%= content_tag(:span, "", :class => "comment-lock") %>
-    <% elsif is_twitter_dm?(note) %>
-      <%= content_tag(:span, "", :class => "ficon-twitter-lock fsize-21 muted") %>
-    <% elsif is_facebook_message?(note) %>
-      <%= content_tag(:span, "", :class => "ficon-facebook-lock fsize-21 muted") %>
-    <% end %>
-    
-    
-    <% if note.fb_post and note.fb_post.post_type_present? %>
+          <%= (note.user.blank? or notable_object.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
+          <%= 'private-note' if note.private_note? || is_twitter_dm?(note, notable_object) || is_facebook_message?(note, notable_object) %>">
+
+    <%= note_lock_icon(note, notable_object) %>
+
+    <% if notable_object.facebook? and  note.fb_post and note.fb_post.post_type_present? %>
       <% if note.fb_post.comment? %>
         <span class="tooltip" data-original-title="Comment"> 
           <%= content_tag(:span, "", :class => "ficon-chat-bubble fsize-21")%> 
@@ -59,11 +53,8 @@ end
     <% else %>
       <% clazz = "helpdesk_note"%> 
     <% end %>
-    
 
     <div class="<%= clazz %>">
-      
-
       <div class="author-mail-detail cc_bcc_info">
         <% kind %>
         <%= t("helpdesk.tickets.note.created_on_live.#{kind}", 
@@ -76,19 +67,19 @@ end
             <%unless agent_name.blank? %><%= t("helpdesk.tickets.note.survey_response_to",{:agent => agent_name})%><%end%></b>
         <%end%>
       </div>
-      
+
       <% if current_account.features?(:custom_survey) %>
         <%= render :partial => '/helpdesk/archive_tickets/show/custom_survey_note' , :locals => {:note => note , 
               :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
         <% else %>
           <%= render :partial => '/helpdesk/archive_tickets/show/survey_note' , :locals => {:note => note , 
               :notedetails => notedetails} %>
-      <%end%>
+      <% end %>
 
-      <%= freshfone_audio_dom(note) %>
+      <%= freshfone_audio_dom(note) if current_account.features?(:freshfone) %>
 
       <div id="note_attachments_container_<%= note.id%>">
-        <% unless note.all_attachments.empty? and note.cloud_files.empty? %>        
+        <% if note.all_attachments.present? or note.cloud_files.present? %>
             <span class="seperator"></span> 
             <div class="attachments-wrap clearfix">
               <h5 id="note_attachments_title_<%= note.id %>"><strong><%= pluralize(note.all_attachments.size + note.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>

@@ -46,17 +46,11 @@ var FreshfoneCallTransfer
                 "outgoing": this.freshfone_call.isOutgoing(),
                 "type": this.getTransferType() },
         error: function () {
-          self.resetTransferState();
-          freshfonewidget.toggleWidgetInactive(false);
-          self.$transferList.show();
-          // self.transferResponseFlash("Call transfer was failed!");
-          ffLogger.logIssue("Call Transfer Failure",{
-            'call_sid': self.freshfone_call.getCallSid(), 
-            "outgoing": self.freshfone_call.isOutgoing() 
-          });
-          self.disableAllOtherControlles();
+          self.errorTransfer();
         },
-        success: function () {
+        success: function (data) {
+          if((freshfone.isConferenceMode && data.status == 'error') || data.call == 'failure')
+            return self.errorTransfer();
           self.freshfone_call.transfered = true;
           var ringingTime = (freshfone.ringingTime || 30 )* 1000; // sec to milisec 
           self.resumeFallback = setTimeout(function(){ 
@@ -326,6 +320,18 @@ var FreshfoneCallTransfer
       clearTimeout(this.resumeTimeout);
       this.resumeFallback = undefined;
       this.resumeTimeout = undefined;
+    },
+    errorTransfer: function(){
+      this.resetTransferState();
+      freshfonewidget.toggleWidgetInactive(false);
+      this.$transferList.show();
+      // self.transferResponseFlash("Call transfer was failed!");
+      ffLogger.logIssue("Call Transfer Failure",{
+        'call_sid': this.freshfone_call.getCallSid(), 
+        "outgoing": this.freshfone_call.isOutgoing() 
+      });
+      //this.disableAllOtherControlles();
     }
-  } 
+
+  }; 
 }(jQuery));

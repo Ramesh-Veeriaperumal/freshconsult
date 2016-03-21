@@ -112,6 +112,9 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     closed_at || closed_at_dirty_fix
   end
 
+  def pending_since_dirty
+    pending_since || pending_since_dirty_fix
+  end
 
   def set_first_response_time(time, created_time = nil)
     created_time ||= self.created_at
@@ -197,18 +200,25 @@ private
 
   def resolved_at_dirty_fix
     return nil if tickets.active?
-    self.update_attribute(:resolved_at , updated_at)
+    Sharding.run_on_master { self.update_attribute(:resolved_at , updated_at) }
     NewRelic::Agent.notice_error(Exception.new("resolved_at is nil. Ticket state id is #{id}"))
     resolved_at
   end
 
   def closed_at_dirty_fix
     return nil if tickets.active?
-    self.update_attribute(:closed_at, updated_at)
+    Sharding.run_on_master { self.update_attribute(:closed_at, updated_at) }
     NewRelic::Agent.notice_error(Exception.new("closed_at is nil. Ticket state id is #{id}"))
     closed_at
   end
 
+  def pending_since_dirty_fix
+    Sharding.run_on_master do
+      self.update_attribute(:pending_since, updated_at)
+    end
+    NewRelic::Agent.notice_error(Exception.new("pending_since is nil. Ticket state id is #{id}"))
+    pending_since
+  end
   def update_ticket_state_changes
     @ticket_state_changes = self.changes.clone
   end

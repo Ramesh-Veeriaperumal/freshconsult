@@ -48,7 +48,12 @@ module Facebook
       def perform_method
         return if realtime_feed["value"].blank?
         action = realtime_feed["value"]["verb"].downcase
-        verb   = ITEM_ACTIONS[action].include?(klass) ? action : nil
+        if ITEM_ACTIONS[action]
+          ITEM_ACTIONS[action].include?(klass) ? action : nil
+        else
+          Rails.logger.debug("Invalid action verb from facebook : #{action}")
+          nil
+        end
       end
       
       #Returns one of the core classes - Post, Status, Comment, Reply to Comment

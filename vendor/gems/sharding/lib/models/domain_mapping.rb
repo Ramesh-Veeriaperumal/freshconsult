@@ -6,8 +6,10 @@ class DomainMapping < ActiveRecord::Base
     
     validates_uniqueness_of :domain
 
-    after_update :clear_cache
-  	after_destroy :clear_cache
+    after_update :clear_cache, :update_route53 , :if => :domain_changed?
+  	after_destroy :clear_cache,:delete_route_53
+
+    after_commit :create_route_53 , :on => :create
 
 	belongs_to :shard, :class_name => 'ShardMapping',:foreign_key => :account_id
 
@@ -22,11 +24,27 @@ class DomainMapping < ActiveRecord::Base
     clear_global_pod_cache if Fdadmin::APICalls.non_global_pods?
 	end
 
-  def clear_global_pod_cache
-    request_parameters = {:domain => domain,:target_method => :clear_domain_mapping_cache_for_pods}
-    Fdadmin::APICalls.connect_main_pod(
-      :post,
-      request_parameters,PodConfig['pod_paths']['pod_endpoint'],
-      "#{AppConfig['freshops_subdomain']['global']}.#{AppConfig['base_domain'][Rails.env]}")
+  # * * * POD Operation Methods Begin * * *
+  def update_route53
+    update_route_53({ :action => 'UPDATE', :old_domain => domain_was }) if Fdadmin::APICalls.non_global_pods?
   end
+
+  def create_route_53
+    update_route_53({:action => 'CREATE'}) if Fdadmin::APICalls.non_global_pods?
+  end
+
+  def delete_route_53
+    update_route_53({:action => 'DELETE'}) if Fdadmin::APICalls.non_global_pods?
+  end
+
+  def update_route_53(options)
+    domain_config = {:domain_name => domain, :region => "podeuwest1" }.merge(options)
+    PodDnsUpdate.perform_async(domain_config)
+  end
+
+  def clear_global_pod_cache
+    request_parameters = {:domain => [domain],:target_method => :clear_domain_mapping_cache_for_pods}
+    Fdadmin::APICalls.connect_main_pod(request_parameters)
+  end
+  # * * * POD Operation Methods Ends * * * 
 end

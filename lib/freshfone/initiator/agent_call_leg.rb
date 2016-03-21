@@ -25,7 +25,7 @@ class Freshfone::Initiator::AgentCallLeg
   def process
     begin
       self.current_call ||= current_account.freshfone_calls.find(params[:caller_sid] || params[:call])
-      return @telephony.no_action unless current_call
+      return telephony.no_action unless current_call
       return process_agent_leg if connect_leg?
       return resolve_simultaneous_calls if simultaneous_call?
       return initiate_disconnect if disconnect_leg? || not_in_progress?
@@ -41,13 +41,13 @@ class Freshfone::Initiator::AgentCallLeg
     rescue Exception => e
       Rails.logger.error "Error in processing incoming for #{current_account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       current_call.cleanup_and_disconnect_call
-      @telephony.no_action
+      telephony.no_action
     end
   end
 
   def initiate_agent_leg
-    @telephony.redirect_call_to_conference(params[:CallSid], "#{connect_agent_url}#{forward_params}")
-    @telephony.no_action
+    telephony.redirect_call_to_conference(params[:CallSid], "#{connect_agent_url}#{forward_params}")
+    telephony.no_action
   end
 
   def process_agent_leg
@@ -56,8 +56,8 @@ class Freshfone::Initiator::AgentCallLeg
         process_call_accept_callbacks
         notifier.cancel_other_agents(current_call)
       
-        @telephony.current_number = current_call.freshfone_number
-        @telephony.initiate_agent_conference({
+        telephony.current_number = current_call.freshfone_number
+        telephony.initiate_agent_conference({
           :wait_url => "", 
           :sid => current_call.call_sid })
       else
@@ -66,7 +66,7 @@ class Freshfone::Initiator::AgentCallLeg
     rescue Exception => e
       Rails.logger.error "Error in conference incoming agent wait for #{current_account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       current_call.cleanup_and_disconnect_call
-      @telephony.no_action
+      telephony.no_action
     end
   end
   
@@ -74,11 +74,11 @@ class Freshfone::Initiator::AgentCallLeg
     def handle_simultaneous_answer
       Rails.logger.info "Handle Simultaneous Answer For Account Id :: #{current_account.id}, Call Id :: #{current_call.id}, CallSid :: #{params[:CallSid]}, AgentId :: #{params[:agent_id]}"
       return incoming_answered unless intended_agent?
-      current_call.noanswer? ? @telephony.incoming_missed : incoming_answered
+      current_call.noanswer? ? telephony.incoming_missed : incoming_answered
     end
 
     def incoming_answered
-      @telephony.incoming_answered(current_call.agent)
+      telephony.incoming_answered(current_call.agent)
     end
 
     def process_call_accept_callbacks
@@ -108,12 +108,12 @@ class Freshfone::Initiator::AgentCallLeg
 
     def resolve_simultaneous_calls
       log_simultaneous_call
-      @telephony.redirect_call(current_call.call_sid, simultaneous_call_queue_url)
-      @telephony.no_action
+      telephony.redirect_call(current_call.call_sid, simultaneous_call_queue_url)
+      telephony.no_action
     end
 
     def simultaneous_call?
-      disconnect_leg? && all_agents_busy?
+      disconnect_leg? && (all_agents_busy? || invalid_call? )
     end
 
     def all_agents_busy?
@@ -126,6 +126,19 @@ class Freshfone::Initiator::AgentCallLeg
       Rails.logger.debug "Call redirected to queue : Account : #{current_account.id} : agent : 
                           #{params[:agent_id]} : call : #{current_call.call_sid}"
       Rails.logger.debug "Redirected call #{current_call.call_sid} :: #{busy_agents.map(&:id)}"
+    end
+
+    def invalid_call? 
+    # Edge case: To prevent incoming call for an agent with a call (bug #15531)
+      return if (available_agents.length != 1)
+      user_id = available_agents.first.user_id
+      current_account.freshfone_calls.agent_progress_calls(user_id).present?
+    end
+
+    def telephony
+      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number, current_call)
+      @telephony.current_call ||= current_call
+      @telephony
     end
 
 end

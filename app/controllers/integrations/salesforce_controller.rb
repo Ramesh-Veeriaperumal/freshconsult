@@ -89,8 +89,27 @@ class Integrations::SalesforceController < Admin::AdminController
     config_hash['contact_labels'] = params['contact_labels']
     config_hash['lead_labels'] = params['lead_labels']
     config_hash['account_labels'] = params['account_labels']
+    config_hash = get_opportunity_params config_hash
     if current_account.features?(:salesforce_sync)
       config_hash['salesforce_sync_option'] = params["salesforce_sync_option"]["value"]
+    end
+    config_hash
+  end
+
+  def get_opportunity_params(config_hash)
+    config_hash['opportunity_view'] = params["opportunity_view"]["value"]
+    if config_hash['opportunity_view'].to_bool
+      config_hash['opportunity_fields'] = params[:opportunities].join(",") unless params[:opportunities].nil?
+      config_hash['opportunity_labels'] = params['opportunity_labels']
+      config_hash['agent_settings'] = params["agent_settings"]["value"]
+      if config_hash['agent_settings'].to_bool
+        config_hash["opportunity_stage_choices"] = service_obj.receive(:opportunity_stage_field)
+      else
+        @installed_app.configs[:inputs].delete("opportunity_stage_choices")
+      end
+    else
+      opportunity_configs = [ "opportunity_fields", "opportunity_labels", "agent_settings", "opportunity_stage_choices" ]
+      @installed_app.configs[:inputs] = @installed_app.configs[:inputs].except(*opportunity_configs)
     end
     config_hash
   end
@@ -109,6 +128,7 @@ class Integrations::SalesforceController < Admin::AdminController
     #added content for field mapping
     salesforce_config['fd_company'] = get_freshdesk_fields_hash(current_account.company_form.fields)
     salesforce_config['fd_contact'], salesforce_config['fd_contact_types'] = get_freshdesk_contact_fields_hash(current_account.contact_form.all_fields)
+    salesforce_config['opportunity_fields'] = service_obj.receive(:opportunity_fields)
     salesforce_config
   end
 

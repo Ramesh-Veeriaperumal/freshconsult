@@ -74,7 +74,7 @@ class Integrations::JiraIssueController < ApplicationController
       if @installed_app.blank?
         Rails.logger.info "Linked ticket not found for remote JIRA app with params #{params.inspect}"
       else
-        jira_webhook.update_local(@installed_app)
+        jira_webhook.update_local(@installed_app,@selected_key)
       end
     end
     render :nothing => true
@@ -82,9 +82,14 @@ class Integrations::JiraIssueController < ApplicationController
 
   private
 
+  def issue_changes
+    @selected_key = params["changelog"].present? && params["changelog"]["items"].detect{ |changes| changes["field"] == "Key"}
+  end
+
   def validate_request
-     if(params["issue"] && params["issue"]["key"] && params["auth_key"])
-       remote_integratable_id = params["issue"]["key"]
+     old_issue_id = issue_changes && @selected_key["fromString"]
+     if(params["issue"] && (old_issue_id || params["issue"]["key"]) && params["auth_key"])
+       remote_integratable_id = old_issue_id || params["issue"]["key"]
        auth_key = params["auth_key"]
        # TODO:  Costly query.  Needs to revisit and index the integrated_resources table and/or split the quries.
        @installed_app = Integrations::InstalledApplication.with_name(APP_NAMES[:jira]).first(:select=>["installed_applications.*,integrated_resources.local_integratable_id,integrated_resources.local_integratable_type,integrated_resources.remote_integratable_id"],

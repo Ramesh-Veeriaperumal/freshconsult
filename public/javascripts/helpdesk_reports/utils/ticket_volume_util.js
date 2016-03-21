@@ -74,10 +74,40 @@ HelpdeskReports.ReportUtil.TicketVolume = (function () {
                 current_params.push(param);
             });
             HelpdeskReports.locals.params = current_params.slice();
+            if (typeof (Storage) !== "undefined" && localStorage.getItem(HelpdeskReports.locals.report_type) !== null) {
+                var index = JSON.parse(localStorage.getItem(HelpdeskReports.locals.report_type));
+                 HelpdeskReports.SavedReportUtil.applySavedReport(index,false);
+            } else {
+                 HelpdeskReports.SavedReportUtil.applySavedReport(-1,false);
+            }
+            
             _FD.actions.submitReports();
         },
         flushEvents: function () {
             jQuery('#reports_wrapper').off('.vol');
+        },
+        recordAnalytics : function(){
+            
+            jQuery(document).on("script_loaded", function (ev, data) {
+                if( HelpdeskReports.locals.report_type != undefined && HelpdeskReports.locals.report_type == "ticket_volume"){
+                    App.Report.Metrics.push_event("Ticket Volume Report Visited", {});
+                }
+            });
+            
+            //Ticket List Exported
+             jQuery(document).on("analytics.export_ticket_list", function (ev, data) {
+                App.Report.Metrics.push_event("Ticket Volume : Ticket List Exported",{});
+             });
+
+            //pdf export
+            jQuery(document).on("analytics.export_pdf",function(ev,data){
+                App.Report.Metrics.push_event("Ticket Volume : PDF Exported",{});
+            });
+
+            //
+            jQuery('#reports_wrapper').on('click.helpdesk_reports', "[data-action='reports-submit']", function () {
+                App.Report.Metrics.push_event("Ticket Volume Report: Filtered",{ DateRange : HelpdeskReports.locals.date_range });
+            });
         }
     };
     return {
@@ -88,7 +118,7 @@ HelpdeskReports.ReportUtil.TicketVolume = (function () {
             _FD.bindEvents();
             _FD.core.ATTACH_DEFAULT_FILTER = true;
             _FD.setDefaultValues();
-            
+            _FD.recordAnalytics();   
         }
     };
 })();

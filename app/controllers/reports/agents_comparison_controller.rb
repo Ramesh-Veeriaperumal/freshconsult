@@ -5,6 +5,7 @@ class Reports::AgentsComparisonController < ApplicationController
   include Reports::HelpdeskReportControllerMethods
   
   before_filter { |c| c.requires_feature :enterprise_reporting }
+  before_filter { redirect_to reports_path if current_account.disabled_old_reports_ui? }
   before_filter :parse_wf_params,:set_selected_tab, :set_time_range,
                 :only => [:generate,:generate_pdf,:send_report_email]
   before_filter :filter_data,:set_selected_tab,:saved_reports, :only => [:index]

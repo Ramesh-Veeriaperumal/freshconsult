@@ -12,14 +12,16 @@
           </h5>
             <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
               <li class="widget-filter active">
-                <a class="item drafts-filter-me" href="#drafts-me" 
-                   data-hash-url="false" data-toggle="tab" ul_class="tick">
+                <a class="item drafts-filter-me" href="#drafts-me"
+                    data-container="drafts-filter"
+                    data-hash-url="false" data-toggle="tab" ul_class="tick">
                 <%= t('solution.sidebar.drafts.me').html_safe %>
                 </a>
               </li>
-              <li class="widget-filter drafts-filter-all">
-                <a class="item" href="#drafts-all" 
-                   data-hash-url="false" data-toggle="tab"  ul_class="tick" >
+              <li class="widget-filter">
+                <a class="item drafts-filter-all" href="#drafts-all"
+                    data-container="drafts-filter"
+                    data-hash-url="false" data-toggle="tab"  ul_class="tick" >
                   <%= t('solution.sidebar.drafts.all').html_safe %>
                 </a>
               </li>

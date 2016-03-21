@@ -5,6 +5,11 @@ RSpec.describe Freshfone::Call do
   
   before(:each) do
     create_test_freshfone_account
+    Freshfone::TrackerWorker.any_instance.stubs(:perform)
+  end
+
+  after(:each) do
+    Freshfone::TrackerWorker.any_instance.unstub(:perform)
   end
 
   it 'should create a new freshfone call' do
@@ -177,6 +182,26 @@ RSpec.describe Freshfone::Call do
                                       :call_status => 0, :agent => @agent,
                                       :params => { :CallSid => "CA2db76c748cb6f081853f80dace462a04" })
     @freshfone_call.save.should be false
-  end  
+  end
+
+  it 'should create trial usage triggers when a call is completed' do
+    @account.freshfone_account.freshfone_usage_triggers.destroy_all
+    load_freshfone_trial
+    @calls_usage = @account.freshfone_calls.calls_usage(1.month.ago, Time.zone.now)
+    @freshfone_call = @account.freshfone_calls.create(:freshfone_number_id => @number.id,
+      :call_type => 1, :agent => @agent, :params => {:CallSid => "CA2db76c748cb6f081853f80dace462a04"}, :total_duration => 10)
+    Sidekiq::Testing.inline! do
+      Resque.inline = true
+      Freshfone::Jobs::UsageTrigger.stubs(:delete_usage_trigger)
+      Freshfone::CallCostCalculator.any_instance.stubs(:perform)
+      twilio_mock_helper('SidUT','05',"#{@calls_usage+10}")
+      @freshfone_call.completed!
+      expect(Freshfone::UsageTrigger.trial_triggers_present?(@account.freshfone_account)).to be true
+      Twilio::REST::Triggers.any_instance.unstub(:create)
+      Freshfone::CallCostCalculator.unstub(:perform)
+      Freshfone::Jobs::UsageTrigger.unstub(:delete_usage_trigger)
+      Resque.inline = false
+    end
+  end
 
 end

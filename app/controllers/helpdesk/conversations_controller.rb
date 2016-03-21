@@ -29,6 +29,7 @@ class Helpdesk::ConversationsController < ApplicationController
   before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp, :ecommerce]
   before_filter :check_for_public_notes, :only => [:note]
   before_filter :validate_ecommerce_reply, :only => :ecommerce
+  around_filter :run_on_slave, :only => [:update_activities, :has_unseen_notes, :traffic_cop_warning]
 
   TICKET_REDIRECT_MAPPINGS = {
     "helpdesk_ticket_index" => "/helpdesk/tickets"
@@ -91,11 +92,7 @@ class Helpdesk::ConversationsController < ApplicationController
     tweet_text = params[:helpdesk_note][:note_body_attributes][:body].strip
     twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : "mention"
     
-    if twt_type.eql?"mention"
-      error_message, @tweet_body = validate_tweet(tweet_text, "#{@parent.latest_twitter_comment_user}") 
-    else
-      error_message, @tweet_body = validate_tweet(tweet_text, nil, false) 
-    end
+    error_message, @tweet_body = get_tweet_text(twt_type, @parent, tweet_text)
     if error_message.blank?
       if @item.save_note 
         error_message, reply_twt = send("send_tweet_as_#{twt_type}")
@@ -267,7 +264,7 @@ class Helpdesk::ConversationsController < ApplicationController
       def update_activities
         if params[:showing] == 'activities'
           activity_records = @parent.activities.activity_since(params[:since_id])
-          @activities = stacked_activities(activity_records.reverse)
+          @activities = stacked_activities(@parent, activity_records.reverse)
         end
       end
 
@@ -323,4 +320,8 @@ class Helpdesk::ConversationsController < ApplicationController
       def check_for_public_notes
         traffic_cop_warning unless params[:helpdesk_note][:private].to_s.to_bool
       end
+
+      def run_on_slave(&block)
+        Sharding.run_on_slave(&block)
+      end 
 end

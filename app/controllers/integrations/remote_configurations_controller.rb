@@ -20,6 +20,7 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
     if domain_mapping
       Sharding.select_shard_of(domain) do
         if(params["app"] == "seoshop")
+          Account.find(domain_mapping.account_id).make_current
           process_seoshop(domain, domain_mapping.account_id)
         end
       end
@@ -104,5 +105,18 @@ private
 
   def partial_link(app)
     render :template => "integrations/applications/remote_login", :locals => {:page => app}, :layout => 'remote_configurations'
+  end
+
+  def determine_pod
+    if params[:domain]
+      domain = params[:domain].partition('://').last.sub('/', '')
+      shard = ShardMapping.lookup_with_domain(domain)
+      if PodConfig['CURRENT_POD'] != shard.pod_info
+        Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
+        redirect_to_pod(shard) and return #defined in application_controller
+      end
+    else
+      super #fallback to the default if domain is not defined
+    end
   end
 end

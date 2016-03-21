@@ -64,7 +64,7 @@ module FreshfoneSpecHelper
 
   def create_freshfone_call_meta(call,external_number)
     @call_meta = call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
-              :meta_info => external_number, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
+              :meta_info => {:agent_info => external_number}, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
   end
 
   def create_supervisor_call(call=@freshfone_call, call_status = Freshfone::SupervisorControl::CALL_STATUS_HASH[:default])
@@ -371,6 +371,22 @@ module FreshfoneSpecHelper
     @freshfone_call.dial_call_sid = 'DDSid'
     @freshfone_call.sneaky_save
   end
+  
+  def create_test_freshfone_subscription(options = {})
+    @freshfone_subscription = Freshfone::Subscription.create(
+      account: @account,
+      freshfone_account: @account.freshfone_account,
+      inbound: Freshfone::Subscription::INBOUND_HASH.except(:trigger),
+      outbound: Freshfone::Subscription::OUTBOUND_HASH.except(:trigger),
+      numbers: Freshfone::Subscription::NUMBERS_HASH.merge(credit: options[:number_credit], count: options[:number_count]),
+      calls_usage: Freshfone::Subscription::DEFAULT_CALLS_USAGE_HASH,
+      expiry_on: 15.days.from_now)
+  end
+
+  def load_freshfone_trial(create_options={})
+    create_test_freshfone_subscription(create_options)
+    @account.freshfone_account.update_column(:state, Freshfone::Account::STATE_HASH[:trial])
+  end
 
   def get_pinged_agent(agent_id, call = @freshfone_call)
     call.meta.reload
@@ -381,7 +397,15 @@ module FreshfoneSpecHelper
 
   def update_ringing_at_in_pinged_agents(agent_id, call = @freshfone_call)
     call.meta.reload
-    call.meta.update_agent_ringing_at(agent_id, "#{2.minutes.ago(Time.now.utc)}")
+    call.meta.update_agent_ringing_time(agent_id)
+  end
+
+  def twilio_mock_helper(sid, current_value, trigger_value)
+    twilio_trigger = mock
+    twilio_trigger.stubs(:sid).returns(sid)
+    twilio_trigger.stubs(:current_value).returns(current_value)
+    twilio_trigger.stubs(:trigger_value).returns(trigger_value)
+    Twilio::REST::Triggers.any_instance.stubs(:create).returns(twilio_trigger)
   end
 
 end

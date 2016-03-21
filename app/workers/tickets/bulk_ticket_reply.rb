@@ -15,7 +15,7 @@ class Tickets::BulkTicketReply < BaseWorker
       begin
         Timeout::timeout(SpamConstants::SPAM_TIMEOUT) do
           key,value = args["spam_key"].split(":")
-          $spam_watcher.del(key) if value == $spam_watcher.get(key)
+          $spam_watcher.perform_redis_op("del", key) if value == $spam_watcher.perform_redis_op("get", key)
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e,{:description => "error occured while deleting a bulk reply key"})

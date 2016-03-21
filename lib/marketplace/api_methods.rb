@@ -2,146 +2,188 @@ module Marketplace::ApiMethods
   include Marketplace::Constants
   include Marketplace::ApiUtil
 
+  FRESH_REQUEST_EXP = [ FreshRequest::NetworkError, FreshRequest::CBError, FreshRequest::ParseError ]
+
   private
 
     # Global API's
     def mkp_extensions
-      category = params[:category_id] ? params[:category_id] : 'ALL'
-      key = MemcacheKeys::MKP_EXTENSIONS % { :category_id => category }
-      MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
-        payload = payload(
-          Marketplace::ApiEndpoint::ENDPOINT_URL[:mkp_extensions] %
-                { :product_id => PRODUCT_ID},
-          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:mkp_extensions] )
-        { :extensions => get_api(payload) }
+      begin
+        category = params[:category_id] ? params[:category_id] : 'ALL'
+        key = MemcacheKeys::MKP_EXTENSIONS % { 
+          :category_id => category, :type => params[:type], :locale_id => curr_user_language }
+
+        api_payload = payload(
+                           Marketplace::ApiEndpoint::ENDPOINT_URL[:mkp_extensions] %
+                           { :product_id => PRODUCT_ID },
+                           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:mkp_extensions] 
+                        )
+
+        MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+          get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT) 
+        end
+
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
       end
     end
 
-    def mkp_extensions_search
-      payload = payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:extensions_search] %
-              { :product_id => PRODUCT_ID},
-        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:extensions_search] )
-      get_api(payload)
-    end
-
-    def show_extension
-      payload = payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:show_extension]  % 
-                { :product_id => PRODUCT_ID,
-                  :version_id => params[:id] },
-        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:show_extension] )
-      get_api(payload)
+    def extension_details(version_id = params[:version_id])
+      begin
+        key = MemcacheKeys::EXTENSION_VERSION_DETAILS % { 
+          :version_id => version_id, :locale_id => curr_user_language }
+        api_payload = payload(
+                            Marketplace::ApiEndpoint::ENDPOINT_URL[:extension_details]  % 
+                            { 
+                              :product_id => PRODUCT_ID,
+                              :version_id => version_id 
+                            },
+                            Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:extension_details] 
+                          )
+        MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+          get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
+        end
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
     end
 
     def all_categories
-      MemcacheKeys.fetch(MemcacheKeys::EXTENSION_CATEGORIES) do
-        payload = payload(
-          Marketplace::ApiEndpoint::ENDPOINT_URL[:all_categories] % 
-                { :product_id => PRODUCT_ID },
-          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:all_categories] )
-        { :categories => get_api(payload) }
+      begin
+        api_payload = payload(
+                            Marketplace::ApiEndpoint::ENDPOINT_URL[:all_categories] % 
+                            { :product_id => PRODUCT_ID },
+                            Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:all_categories] 
+                          )
+        MemcacheKeys.fetch(MemcacheKeys::EXTENSION_CATEGORIES) do
+          get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT) 
+        end
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
       end
     end
 
     def extension_configs
-      payload = payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:extension_configs] %
-              { :product_id => PRODUCT_ID,
-                :version_id => params[:version_id]},
-        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:extension_configs] )
-      get_api(payload)
+      begin
+        key = MemcacheKeys::CONFIGURATION_DETAILS % { 
+          :version_id => params[:version_id], :locale_id => curr_user_language }
+        api_payload = payload(
+                          Marketplace::ApiEndpoint::ENDPOINT_URL[:extension_configs] %
+                                { :product_id => PRODUCT_ID,
+                                  :version_id => params[:version_id]},
+                          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:extension_configs] 
+                          )
+        @extension_configs ||= MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+          get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
+        end
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
+
+    def ni_latest_details(name)
+      begin
+        api_payload = payload(
+                            Marketplace::ApiEndpoint::ENDPOINT_URL[:ni_latest_details] %
+                                  { :product_id => PRODUCT_ID,
+                                    :app_name => name },
+                            Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:ni_latest_details] 
+                          )
+        get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
     end
 
     # Account API's
-    def indev_extensions
-      payload = payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:indev_extension]  % 
-              { :product_id => PRODUCT_ID, 
-                :account_id => current_account.id
-              },
-        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:indev_extension] )
-      { :extensions => get_api(payload) }
-    end
-
-    def indev_extensions_search
-      payload = payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:indev_extensions_search]  % 
-              { :product_id => PRODUCT_ID, 
-                :account_id => current_account.id
-              },
-        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:indev_extensions_search] )
-      get_api(payload)
-    end
-
     def install_status
-      payload = payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:install_status]  % 
-              { :product_id => PRODUCT_ID, 
-                :account_id => current_account.id,
-                :version_id => params[:id]
-              },
-        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:install_status] )
-      get_api(payload)
+      begin
+        extn_details = extension_details
+        return extn_details if error_status?(extn_details)
+
+        api_payload = account_payload(
+          Marketplace::ApiEndpoint::ENDPOINT_URL[:install_status]  % 
+                { :product_id => PRODUCT_ID, 
+                  :account_id => Account.current.id,
+                  :extension_id => extn_details.body['extension_id']
+                },
+          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:install_status] )
+        get_api(api_payload, MarketplaceConfig::ACC_API_TIMEOUT)
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
     end
 
     def account_configs
-      payload = payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:account_configs] %
-              { :product_id => PRODUCT_ID,
-                :account_id => current_account.id,
-                :version_id => params[:version_id] },
-        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:account_configs] )
-      get_api(payload)
+      begin
+        api_payload = account_payload(
+          Marketplace::ApiEndpoint::ENDPOINT_URL[:account_configs] %
+                { :product_id => PRODUCT_ID,
+                  :account_id => Account.current.id,
+                  :version_id => params[:version_id] },
+          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:account_configs] )
+         @account_configs ||= get_api(api_payload, MarketplaceConfig::ACC_API_TIMEOUT)
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
     end
 
     def install_extension(post_params)
-      payload = payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:install_extension] %
-              { :product_id => PRODUCT_ID,
-                :account_id => current_account.id,
-                :version_id => params[:version_id] },
-        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:install_extension] )
-      post_api(payload, post_params)
+      begin
+        api_payload = account_payload(
+          Marketplace::ApiEndpoint::ENDPOINT_URL[:install_extension] %
+                { :product_id => PRODUCT_ID,
+                  :account_id => Account.current.id,
+                  :extension_id => post_params[:extension_id],
+                  :version_id => post_params[:version_id] },
+          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:install_extension] )
+        post_api(api_payload, post_params, MarketplaceConfig::ACC_API_TIMEOUT)
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
     end
 
     def update_extension(put_params)
-      payload = payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:update_extension] %
-              { :product_id => PRODUCT_ID,
-                :account_id => current_account.id,
-                :version_id => params[:version_id] },
-        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:update_extension] )
-      put_api(payload, put_params)
+      begin
+        api_payload = account_payload(
+          Marketplace::ApiEndpoint::ENDPOINT_URL[:update_extension] %
+                { :product_id => PRODUCT_ID,
+                  :account_id => Account.current.id,
+                  :extension_id => put_params[:extension_id],
+                  :version_id => put_params[:version_id] },
+          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:update_extension] )
+        put_api(api_payload, put_params, MarketplaceConfig::ACC_API_TIMEOUT)
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
     end
 
-    def uninstall_extension
-      payload = payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:uninstall_extension] %
-              { :product_id => PRODUCT_ID,
-                :account_id => current_account.id,
-                :version_id => params[:version_id] },
-        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:uninstall_extension] )
-      delete_api(payload)
-    end
-
-    def post_feedback(post_params)
-      payload = payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:feedbacks] %
-              { :product_id => PRODUCT_ID,
-                :account_id => current_account.id,
-                :version_id => params[:version_id] },
-        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:feedbacks] )
-      post_api(payload, post_params)
+    def uninstall_extension(delete_params)
+      begin
+        api_payload = account_payload(
+          Marketplace::ApiEndpoint::ENDPOINT_URL[:uninstall_extension] %
+                { :product_id => PRODUCT_ID,
+                  :account_id => Account.current.id,
+                  :extension_id => delete_params[:extension_id],
+                  :version_id => delete_params[:version_id] },
+          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:uninstall_extension] )
+        delete_api(api_payload, MarketplaceConfig::ACC_API_TIMEOUT)
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
     end
 
     def installed_extensions(optional_params = {})
-      payload = payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:installed_extensions] %
-              { :product_id => PRODUCT_ID,
-                :account_id => current_account.id},
-        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:installed_extensions],
-        optional_params )
-      get_api(payload)
+      begin
+        api_payload = account_payload(
+          Marketplace::ApiEndpoint::ENDPOINT_URL[:installed_extensions] %
+                { :product_id => PRODUCT_ID,
+                  :account_id => Account.current.id},
+          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:installed_extensions],
+          optional_params )
+        get_api(api_payload, MarketplaceConfig::ACC_API_TIMEOUT)
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
     end
 end

@@ -90,7 +90,7 @@ class Helpdesk::NotesController < ApplicationController
 
       if params[:showing] == 'activities'
         activity_records = @parent.activities.activity_since(params[:since_id])
-        @activities = stacked_activities(activity_records.reverse)
+        @activities = stacked_activities(@parent, activity_records.reverse)
       end
   
       post_persist

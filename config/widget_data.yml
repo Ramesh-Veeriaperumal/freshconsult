@@ -57,7 +57,6 @@
             {{jira.jira_note}}
            </pre>
           <script type="text/javascript">
-            CustomWidget.include_js("/javascripts/integrations/atlassian-jira.js");
             jiraBundle={domain:"{{jira.domain}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.id}}", ticket_url:"{{ticket.public_url}}",ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | make_vaild_javascript}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}", username:"{{jira.username}}", custom_field_id:"{{jira.customFieldId}}", attachments: {{cloud_files}} } ;
             Fjax.Assets.integration('jira', function () {
               new JiraWidget(jiraBundle);
@@ -98,7 +97,7 @@
 
   script: |-
           <script type="text/javascript">
-            var salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", contactLabels:"{{salesforce.contact_labels}}", leadLabels:"{{salesforce.lead_labels}}", reqName:"{{requester.name | make_vaild_javascript}}" , accountLabels:"{{salesforce.account_labels}}", accountFields:"{{salesforce.account_fields}}" , reqCompany : "{{requester.company_name | make_vaild_javascript}}" } ;
+            var salesforceBundle={domain:"{{salesforce.instance_url}}", ticket_id:"{{ticket.raw_id}}", ticket_company:"{{ticket.company.name | make_vaild_javascript}}", reqEmail:"{{requester.email}}", contactFields:"{{salesforce.contact_fields}}", opportunityFields:"{{salesforce.opportunity_fields}}", opportunityLabels:"{{salesforce.opportunity_labels}}", leadFields:"{{salesforce.lead_fields}}", contactLabels:"{{salesforce.contact_labels}}", leadLabels:"{{salesforce.lead_labels}}", reqName:"{{requester.name | make_vaild_javascript}}" , accountLabels:"{{salesforce.account_labels}}", accountFields:"{{salesforce.account_fields}}" , reqCompany : "{{requester.company_name | make_vaild_javascript}}", reqEmails: "{{requester.all_emails}}", opportunityView: "{{salesforce.opportunity_view}}", agentSettings: "{{salesforce.agent_settings}}", opportunity_stage: {{installed_app.configs_opportunity_stage_choices}} } ;
             Fjax.Assets.integration('salesforce', function () {
               new SalesforceWidget(salesforceBundle);
             });

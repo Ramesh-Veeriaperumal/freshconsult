@@ -11,7 +11,7 @@ class ShardMapping < ActiveRecord::Base
   has_many :facebook_pages, :class_name => 'FacebookPageMapping', :dependent => :destroy, :foreign_key => :account_id
   has_one :google_domain,:class_name => 'GoogleDomain', :dependent => :destroy, :foreign_key => :account_id
 
-  after_update :clear_cache
+  after_update :clear_cache, :update_routes
   after_destroy :clear_cache
 
  def self.lookup_with_account_id(shard_key)
@@ -61,10 +61,30 @@ class ShardMapping < ActiveRecord::Base
     domains.each {|d| d.clear_cache }
     key = MemcacheKeys::SHARD_BY_ACCOUNT_ID % { :account_id => account_id }
     MemcacheKeys.delete_from_cache key
+    clear_global_shard_cache(domains) if Fdadmin::APICalls.non_global_pods?
   end
 
 
   private
+    # * * * POD Operation Methods Begin * * *
+    def clear_global_shard_cache(domains)
+      request_parameters = {:domains => domains.pluck(:domain) ,
+        :target_method => :clear_domain_mapping_cache_for_pods,
+        :account_id => account_id
+      }
+      response = Fdadmin::APICalls.connect_main_pod(request_parameters)
+      PodDnsUpdate.perform_async(request_parameters) unless response
+    end
+
+    def update_routes
+      if pod_info_changed?
+        Rails.logger.info "Pod info has changed. Updating the Redis routes. Old pod_info is: #{self.pod_info_was}. New pod_info: #{self.pod_info}."
+        self.domains.each do |domain|
+          Redis::RoutesRedis.update_pod_info(domain.domain, pod_info)
+        end
+      end
+    end
+
     def update_pod_shard_condition
       # Rails.logger.info "on pod info changed."
       if pod_info_changed?
@@ -133,5 +153,5 @@ class ShardMapping < ActiveRecord::Base
         condition_row.save!
       end
     end
-
+    # * * * POD Operation Methods Ends * * * 
 end

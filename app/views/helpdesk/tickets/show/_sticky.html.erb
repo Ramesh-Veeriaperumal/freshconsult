@@ -35,9 +35,8 @@
 					<div id="watcher_toggle" class="btn monitor_div tooltip" data-placement = "below"
 						title='<%= "#{t('helpdesk.tickets.add_watcher.toggle_watch')}" %>' 
 						data-hotkey='<%="#{shortcut('ticket_detail.toggle_watcher')}" %>'
-						data-watching="<%= @ticket.subscriptions.map(&:user_id).include? current_user.id %>" 
-						data-currentuserid="<%= current_user.id %>">
-						<span id="monitor">
+						data-watching="<%= @ticket.subscriptions.map(&:user_id).include? current_user.id %>" >
+						<span id="monitor" data-remote-url = "/helpdesk/tickets/<%= @ticket.display_id %>/subscriptions/">
 							<%= render :partial => "/helpdesk/subscriptions/monitor" %>
 						</span>
 					</div>
@@ -48,11 +47,11 @@
 				
 				<li class="ticket-btns">
 					<div class="btn-group">
-						<% if privilege?(:reply_ticket)  && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @ticket.mobihelp? or @ticket.allow_ecommerce_reply?) %>
+						<% if privilege?(:reply_ticket)  && (@ticket.twitter? or @ticket.facebook? or @item.from_email.present? or @ticket.mobihelp? or @ticket.allow_ecommerce_reply?) %>
 					  	<a class="btn tooltip btn-collapse" title='<%= t('ticket.reply_to') %>' data-placement = "below" 
 					  		rel="note-button" data-note-type="reply" id="ReplyButton"  data-keybinding="<%= shortcut('ticket_detail.reply') %>" 
 					  		data-highlight="true" 
-					  		data-replyto-handle="<%= @ticket.is_twitter? ? default_twitter_body_val(@ticket) : "" %>" >
+							data-replyto-handle="<%= @ticket.twitter? ? default_twitter_body_val(@ticket) : "" %>" >
 					  		<span class="reply-inner"></span>
 				    		<%= t('ticket.reply_to')  %>
 				    	</a>

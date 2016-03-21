@@ -1,7 +1,4 @@
-# Copyright © 2014 Freshdesk Inc. All Rights Reserved.
 class Reports::Freshfone::SummaryReportsController < ApplicationController
-
-  include ReadsToSlave
 
   include Reports::FreshfoneReport
   #Added for export csv, call to methods using send
@@ -11,11 +8,18 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
   include Redis::OthersRedis
 
   before_filter :access_denied, :unless => :freshfone_reports?
-  before_filter :load_cached_filters, :only => [:index]
+  before_filter :set_report_type
+  before_filter :load_cached_filters, :report_filter_data_hash, :only => [:index]
   before_filter :set_cached_filters, :only => [:generate]
   before_filter :set_selected_tab, :build_criteria
-  before_filter :set_filter ,:only => [:index, :generate]
+  before_filter :set_filter, :only => [:index, :generate]
+  before_filter :max_limit?, :only => [:save_reports_filter]
+  before_filter :construct_filters,        :only => [:save_reports_filter,:update_reports_filter]
 
+  around_filter :run_on_slave , :except => [:save_reports_filter,:update_reports_filter,:delete_reports_filter]
+
+
+  attr_accessor :report_type
 
   def index
     #Render default index erb
@@ -32,11 +36,51 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
             :disposition => "attachment; filename=phone_summary_report.csv"
   end
 
+  def save_reports_filter
+    report_filter = current_user.report_filters.build(
+      :report_type => @report_type_id,
+      :filter_name => @filter_name,
+      :data_hash   => @data_map
+    )
+    report_filter.save
+    
+    render :json => {:text=> "success", 
+                     :status=> "ok",
+                     :id => report_filter.id,
+                     :filter_name=> @filter_name,
+                     :data=> @data_map }.to_json
+  end
+
+  def update_reports_filter
+    id = params[:id].to_i
+    report_filter = current_user.report_filters.find(id)
+    report_filter.update_attributes(
+      :report_type => @report_type_id,
+      :filter_name => @filter_name,
+      :data_hash   => @data_map
+    )
+    render :json => {:text=> "success", 
+                     :status=> "ok",
+                     :id => report_filter.id,
+                     :filter_name=> @filter_name,
+                     :data=> @data_map }.to_json
+  end
+
+  def delete_reports_filter
+    id = params[:id].to_i
+    report_filter = current_user.report_filters.find(id)
+    report_filter.destroy 
+    render json: "success", status: :ok
+  end
+
 
   private 
+  
+    def run_on_slave(&block)
+      Sharding.run_on_slave(&block)
+    end 
 
     def set_filter
-      @report_type = "phone_summary"
       @calls = filter(@start_date,@end_date)
       previous_time_range #setting the date range to previous time period 
       @old_calls = filter(@prev_start_time,@prev_end_time)
@@ -74,6 +118,10 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
 
     def set_selected_tab
       @selected_tab = :reports
+    end
+
+    def set_report_type
+      @report_type = "phone_summary"
     end
 
     def date_time_fields

@@ -112,6 +112,12 @@ class Freshfone::Credit < ActiveRecord::Base
     below_safe_threshold? ? 900 : 1800
   end
 
+  def self.call_time_limit(account, current_call)
+    freshfone_account = account.freshfone_account
+    return freshfone_account.subscription.call_duration(current_call.call_type) if freshfone_account.trial?
+    account.freshfone_credit.call_time_limit
+  end
+
 	private
 
 		def failed_purchase(selected_credit, error)

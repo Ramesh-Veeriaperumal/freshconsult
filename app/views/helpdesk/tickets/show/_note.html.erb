@@ -30,13 +30,13 @@ end
 	<% if note.user %>
 	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
 	<% end %>
-	<div class="commentbox 
-					<%= (note.user.blank? or note.notable.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
-					<%= 'private-note' if note.private_note? || note.fwd_email? || is_twitter_dm?(note) || is_facebook_message?(note) %>">
+  <div class="commentbox 
+      <%= (note.user.blank? or notable_object.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
+      <%= 'private-note' if note.private_note? || note.fwd_email? || (is_twitter_dm?(note, notable_object)) || is_facebook_message?(note, notable_object) %>">
 
-		<%= note_lock_icon(note) %>
-		
-		<% if note.fb_post and note.fb_post.post_type_present? %>
+    <%= note_lock_icon(note, notable_object) %>
+
+    <% if notable_object.facebook? and note.fb_post and note.fb_post.post_type_present? %>
 			<% if note.fb_post.comment? %>
 	      <span class="tooltip" data-original-title="Comment"> 
 	      	<%= content_tag(:span, "", :class => "ficon-chat-bubble fsize-21")%> 
@@ -122,19 +122,21 @@ end
 														:id => notable_object.display_id, 
 														:note_id => note.id }) %>
 
-      <% if current_account.new_survey_enabled? %>
-            <%= render :partial => '/helpdesk/tickets/show/custom_survey_note' , :formats => [:html], :locals => {:note => note , 
-                :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
-      <% else %>
-            <%= render :partial => '/helpdesk/tickets/show/survey_note' , :formats => [:html], :locals => {:note => note , 
-                :notedetails => notedetails} %>
-			<%end%>
+        <% if current_account.new_survey_enabled? %>
+          <%= render :partial => '/helpdesk/tickets/show/custom_survey_note' , :formats => [:html], :locals => {:note => note , 
+                  :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
+        <% else %>
+          <%= render :partial => '/helpdesk/tickets/show/survey_note' , :formats => [:html], :locals => {:note => note , 
+                  :notedetails => notedetails} %>
+        <%end%>
 
-			<%= freshfone_audio_dom(note) %>
-			<div id="note_attachments_container_<%= note.id%>">
-						<%= render :partial => "/helpdesk/tickets/show/note_attachments", :formats => [:html], :locals => { :note => note }%>
-			</div>
-		</div>
+      <%= freshfone_audio_dom(note) if current_account.features?(:freshfone) %>
+
+      <div id="note_attachments_container_<%= note.id%>">
+        <%= render :partial => "/helpdesk/tickets/show/note_attachments", :formats => [:html], :locals => { :note => note } %>
+      </div>
+    </div>
+
 		<%= remote_note_forward_form({  :id => forward_note_id,
 									:path => forward_conv_helpdesk_ticket_path({
 									:id => notable_object.display_id, 

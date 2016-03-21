@@ -5,6 +5,8 @@ class TicketsController < ApiApplicationController
   include TicketConcern
   decorate_views
 
+  around_filter :run_on_slave, :only => [:index]
+  
   before_filter :ticket_permission?, only: [:destroy]
 
   def create
@@ -39,18 +41,20 @@ class TicketsController < ApiApplicationController
 
   def destroy
     @item.update_attribute(:deleted, true)
+    store_dirty_tags(@item) #Storing tags whenever ticket is deleted. So that tag count is in sync with DB.
     head 204
   end
 
   def restore
     @item.update_attribute(:deleted, false)
+    restore_dirty_tags(@item) 
     head 204
   end
 
   def show
-    if params[:include] == 'notes'
-      @notes = ticket_notes.limit(NoteConstants::MAX_INCLUDE)
-      increment_api_credit_by(1) # for embedded notes
+    if params[:include] == 'conversations'
+      @conversations = conversations.limit(ConversationConstants::MAX_INCLUDE)
+      increment_api_credit_by(1) # for embedded conversations
     end
     super
   end
@@ -92,8 +96,8 @@ class TicketsController < ApiApplicationController
       end
     end
 
-    def ticket_notes
-      # eager_loading note_old_body is unnecessary if all notes are retrieved from cache.
+    def conversations
+      # eager_loading note_old_body is unnecessary if all conversations are retrieved from cache.
       # There is no best solution for this
       @item.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
     end

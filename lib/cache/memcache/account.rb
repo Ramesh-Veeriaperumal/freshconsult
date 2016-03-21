@@ -47,7 +47,7 @@ module Cache::Memcache::Account
 
   def agents_from_cache
     key = agents_memcache_key
-    MemcacheKeys.fetch(key) { self.agents.find(:all, :include => :user) }
+    MemcacheKeys.fetch(key) { self.agents.find(:all, :include => [:user,:agent_groups]) }
   end
 
   def groups_from_cache
@@ -103,7 +103,7 @@ module Cache::Memcache::Account
   def nested_fields_from_cache
     key = ACCOUNT_NESTED_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      ticket_fields.nested_fields.find(:all, :include => [:nested_ticket_fields, :flexifield_def_entry] )
+      ticket_fields_including_nested_fields.nested_fields.all
     end
   end
 

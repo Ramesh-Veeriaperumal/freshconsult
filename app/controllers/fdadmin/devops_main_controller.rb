@@ -4,6 +4,7 @@ class Fdadmin::DevopsMainController < Fdadmin::MetalApiController
   before_filter :verify_signature
   before_filter :check_freshops_subdomain
 
+
   include Fdadmin::APICalls
   private
     def verify_signature
@@ -16,7 +17,7 @@ class Fdadmin::DevopsMainController < Fdadmin::MetalApiController
       if sha_signature != params[:digest]
         Rails.logger.debug(": : : SIGNATURE VERIFICATION FAILED : : :")
         head 401
-        render :json => {:message => "Authorization failed"} and return
+        render :json => {:message => "Authorization head failed"} and return
       end
       Rails.logger.debug(": : : -> SHA SIGNATURE VERIFIED <- : : :")
     end

@@ -1,70 +1,92 @@
 
 //This also used in dynamics CRM integration
+@mixin int-select-after {
+  content: "+";
+  background:green;
+  @include border-radius(100%);
+  color: #fff;
+  position: absolute;
+  bottom: 8px;
+  @include right(7px);
+  @include padding(1px 5px 4px 5px);
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 14px;
+  @include box-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
+  font-weight: bold;
+}
+
 .salesforce-wrapper{
-//	@include float(right);
-//	width: 75%;
-	.select2-choices{
-		background:none;
-		@include border-radius(5px);
-		border: 1px solid #c9c9c9;
-		background: #fff;
-		.select2-search-field{
-			padding: 4px;
-		}
-		.select2-search-choice-close{
-			background:none;
-			@include float(right);
-			width:auto;
-			&:after{
-				content: "-";
-				background:#d30000;
-				@include border-radius(100%);
-				color: #fff;
-				position: absolute;
-				top: 3px;
-				@include right(7px);
-				padding: 2px 10px 4px 7px;
-				font-size: 16px;
-				font-weight: bold;
-				line-height: 14px;
-				@include box-shadow(1px 1px 1px rgba(0,0,0,0.2));
-				letter-spacing: -3px;
+  // @include float(right);
+  // width: 75%;
+  .select2-choices{
+    background:none;
+    @include border-radius(5px);
+    border: 1px solid #c9c9c9;
+    background: #fff;
+    .select2-search-field{
+      padding: 4px;
+    }
+    .select2-search-choice-close{
+      background:none;
+      @include float(right);
+      width:auto;
+      &:after{
+        content: "-";
+        background:#d30000;
+        @include border-radius(100%);
+        color: #fff;
+        position: absolute;
+        top: 3px;
+        @include right(7px);
+        padding: 2px 10px 4px 7px;
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 14px;
+        @include box-shadow(1px 1px 1px rgba(0,0,0,0.2));
+        letter-spacing: -3px;
 
-			}
-		}
-		.select2-search-choice{
-		    border: 0;
-		    background: 0;
-		    padding: 10px;
-		    border-bottom:1px solid rgba(#ccc, 0.3);
-		    margin:0;
-		    width: 96%;
+      }
+    }
+    .select2-search-choice{
+        border: 0;
+        background: 0;
+        padding: 10px;
+        border-bottom:1px solid rgba(#ccc, 0.3);
+        margin:0;
+        width: 96%;
+    }
+  }
+  .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover::after{
+    color:#fff;
+  }
+  .int-select{
+    border:0;
+    @include border-radius(0);
+    width:99.8%;
+    &:after{
+      @include int-select-after;
 		}
 	}
-	.select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover::after{
-		color:#fff;
-	}
-	.int-select{
-		border:0;
-		@include border-radius(0);
-		width:99.8%;
-		&:after{
-			content: "+";
-			background:green;
-			@include border-radius(100%);
-			color: #fff;
-			position: absolute;
-			bottom: 8px;
-		 @include right(7px);
-			@include padding(1px 5px 4px 5px);
-			font-size: 16px;
-			font-weight: bold;
-			line-height: 14px;
-			@include box-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
-			font-weight: bold;
 
-		}
-	}
+  .salesforce-int-select {
+    border:0;
+    @include border-radius(0);
+    width:99.8%;
+    &:after{
+      @include int-select-after;
+      @include right(9px);
+    }
+  }
+
+  .salesforce-disable-select {
+    &:after{
+      @include int-select-after;
+      @include right(9px);
+      background: #ccc;
+    }
+  }
+
 	.contact-fields, .lead-fields, .account-fields{
 		display:inline-block;
 		vertical-align: top;
@@ -86,54 +108,130 @@
 			}
 		}
 	}
+	
+  .sf-settings-widget{
+    width:100%;
+    margin-top: 20px;
+    h3{
+      font-size: 1.2em;
+      margin-bottom: 5px;
+      font-weight: 200;
+    }
+  }
+ 
 
+  #xeroitems, #xeroaccounts{
+    .select2-search-choice{
+      div{
+        width:92%;
+      }
+    }
+  }
+
+  span.seperator{
+    margin-top:15px;
+  }
+
+  .checkbox_label {
+    vertical-align: middle
+  }
+}
+
+.ticket_sync {
+  display:inline-block;
+  margin-left:40px;
+  margin-top:10px;
+}
+
+.opportunity-header {
+  display: inline-block;
+}
+
+.salesforce-new-block {
+  .select2-choices{
+    padding: 0px;
+    .select2-search-choice{
+        border: 0;
+        background: 0;
+        padding: 10px;
+        border-bottom:1px solid rgba(#ccc, 0.3);
+        margin:0;
+        width: 97%;
+        border-radius: 0px;
+    }
+  }
 }
 // ------------------------------------------------------------------------------------------------------------
-//												Salesforce 
+//                        Salesforce 
 // ------------------------------------------------------------------------------------------------------------
 .salesforce_contacts_widget_bg{
-	ul{
-		list-style:disc inside;
-		@include margin-left(1px);
-		margin-top:5px;
-		color:#ccc;
-		li{
-			padding:5px 0 0;
-			color:inherit;
-		}
-	}
+  ul{
+    list-style:disc inside;
+    @include margin-left(1px);
+    margin-top:5px;
+    color:#ccc;
+    li{
+      padding:5px 0 0;
+      color:inherit;
+    }
+  }
 
-	.sales-title{
-		font-weight: bold;
-	}
-	.search-back{
-		display: inline-block;
-		border: 1px solid #ccc;
-		@include border-radius(4px);
-		padding: 0 5px;
-		@include margin-right(10px);
-		.arrow-left{
-			font-size: 6px;
-			margin-top: -2px;
-			@include margin-left(-2px);
-		}
-		&.hide{
-			display: none;
-		}
-		.contact-search-result-type {
-			@include border-radius(16px);
-			font-size:9px;
-			padding:3px 8px;
-			line-height: 100%;
-			font-weight: bold;
-			text-transform: uppercase;
-			display:inline-block;
-			white-space:nowrap;
-			@include box-shadow(1px 1px 0 white);
-			background: #eee;
-			color:#333;
-		}
-	}
+  .view_filters {
+    .link_item {
+      font-size: 13px;
+      color: #ccc;
+      .nav-trigger {
+        color: #333;
+        font-weight: bold;
+      }
+    }
+  }
+  
+  .opportunity_create{ margin-top: -15px;}
+
+  .opp-flag{
+    display: inline-block;
+    background-color: #dadada;
+    padding: 2px 4px;
+    margin-top: -5px;
+    vertical-align: middle;
+    border-radius: 3px;
+    font-size: 11px;
+    color: #7B7878;
+    float: right;
+  }
+
+  .sales-title{
+    font-weight: bold;
+  }
+  .search-back{
+    display: inline-block;
+    border: 1px solid #ccc;
+    @include border-radius(4px);
+    padding: 0 5px;
+    @include margin-right(10px);
+    .arrow-left{
+      font-size: 6px;
+      margin-top: -2px;
+      @include margin-left(-2px);
+    }
+    &.hide{
+      display: none;
+    }
+    .contact-search-result-type {
+      @include border-radius(16px);
+      font-size:9px;
+      padding:3px 8px;
+      line-height: 100%;
+      font-weight: bold;
+      text-transform: uppercase;
+      display:inline-block;
+      white-space:nowrap;
+      @include box-shadow(1px 1px 0 white);
+      background: #eee;
+      color:#333;
+    }
+  }
 }
 
 .salesforce-tooltip{
@@ -145,6 +243,15 @@
   white-space: nowrap;
 }
 
+.salesforce-opportunity-tooltip{
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  vertical-align: middle;
+  white-space: nowrap;
+  max-width: 45%;
+}
+
 .sf-tooltip-span{
   float: none;
   vertical-align: middle;
@@ -152,23 +259,77 @@
 }
 
 .salesforce-widget{
-	@include clear(both);
-	div{
-		@include clear(both);
-		display: block;
-		span{
-			@include float(left);
-			width:49%;
-			@include margin-right(1%);
-			font-weight: 500;
-		}
-		label{
-			@include float(left);
-			width:50%;
-			font-weight: 400;
-		}
-	}
-	&:last-child{margin-bottom:5px;};
+  @include clear(both);
+  div{
+    @include clear(both);
+    display: block;
+    > span {
+      @include float(left);
+      width:49%;
+      @include margin-right(1%);
+      font-weight: 500;
+      &.q-para-span{
+        @include float(right);
+      }
+    }
+    label{
+      @include float(left);
+      line-height: 16px;
+      padding: 0px 0px 6px 0px;
+      width:50%;
+      font-weight: 400;
+      word-break: break-all;
+    }
+    &.clearfix{
+      overflow:hidden;
+      .q-marker-more {
+        display: inline-block;
+        cursor: pointer;
+        letter-spacing: -4px;
+        text-align: center;
+        font-size: 14px;
+        font-family: monospace;
+        color: #333;
+        margin-top:0px;
+        line-height:0px;
+        border-radius:0px;
+        border:0px;
+        background-color: #999;
+        padding: 2px 4px 9px 3px;
+        &:before{
+          content: "...";
+          text-align: center;
+          margin-left: -3px;
+          color: #fff;
+        }
+        &:hover {
+          background-color: #999;
+        }
+      }
+      .q-marker-less {
+        @extend .q-marker-more;
+        border:1px solid #dfdfdf;
+        background-color: #efefef;
+        &:before{
+          color: #555;
+        }
+        &:hover {
+          background-color: #efefef;
+        }
+      }
+    }
+  }
+  &:last-child{margin-bottom:5px;};
+  .para-min-lines {
+    max-height:42px;
+    overflow:hidden;
+    word-break:break-word;
+  }
+  .para-max-lines {
+    width:100%;
+    margin-top: 5px;
+    word-break:break-word;
+  }
 }
 
 .infusionsoft-contacts{
@@ -179,4 +340,33 @@
 
 #infusionsoft-contacts-search-results{
     color:#808080;
+}
+
+.opportunity_details {
+  div {
+    span {
+      font-weight: 400;
+      color: #868282;
+    }
+    &.more-info {
+      margin-top: -5px;
+    }
+  }
+}
+
+.opportunity-form-contents {
+  label {
+    padding-top: 3px;
+  }
+  .datefield {
+    input {
+      width:118px !important;
+    }
+    button {
+      position:absolute;
+      i {
+        color:#999;
+      }
+    }
+  }
 }

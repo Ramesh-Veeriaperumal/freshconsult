@@ -16,13 +16,13 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       v2_expected = {
         api_create: 3,
         api_update: 5,
-        api_show: 3,
+        api_show: 5,
         api_index: 2,
         api_destroy: 6,
         api_make_agent: 4,
 
         create: 37,
-        update: 37,
+        update: 38,
         show: 18,
         index: 18,
         destroy: 22,
@@ -79,6 +79,10 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
 
       # Queries that will be part of the User attributes 'avatar' and 'tags'.
       # These attributes are introduced in V2, hence subtracting it
+      v2[:show] -= 2
+
+      # Queries that will be part of the 'user_emails'
+      # other_emails attribute is introduced in V2, hence subtracting it
       v2[:show] -= 2
 
       # index

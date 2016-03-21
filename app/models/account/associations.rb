@@ -163,6 +163,9 @@ class Account < ActiveRecord::Base
   has_many :ticket_fields_without_choices, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:flexifield_def_entry], :order => "helpdesk_ticket_fields.position"   
 
+  has_many :ticket_fields_including_nested_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
+    :include => [:picklist_values, :flexifield_def_entry, :nested_ticket_fields], :order => "helpdesk_ticket_fields.position"
+
   # added below mapping for multiform phase1 only
   has_many :ticket_fields_with_nested_fields, :class_name => 'Helpdesk::TicketField'
 
@@ -260,6 +263,7 @@ class Account < ActiveRecord::Base
   has_many :freshfone_users, :class_name => "Freshfone::User"
   has_many :freshfone_other_charges, :class_name => "Freshfone::OtherCharge"
   has_many :freshfone_blacklist_numbers, :class_name => "Freshfone::BlacklistNumber"
+  has_one  :freshfone_subscription, :class_name => "Freshfone::Subscription"
 
   has_many :freshfone_callers, :class_name => "Freshfone::Caller"
 
@@ -286,4 +290,5 @@ class Account < ActiveRecord::Base
 
   has_many :subscription_invoices
   has_many :user_companies
+  has_many :outgoing_email_domain_categories, :dependent => :destroy
 end

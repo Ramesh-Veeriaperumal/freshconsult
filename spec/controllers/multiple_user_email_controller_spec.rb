@@ -15,7 +15,6 @@ describe ContactsController do
     @account.reload
     @key_state = mue_key_state(@account)
     enable_mue_key(@account)
-    @account.features.multiple_user_emails.create
     @account.features.contact_merge_ui.create
     @account.reload
     @sample_contact = FactoryGirl.build(:user, :account => @acc, :phone => "23423423434", :email => Faker::Internet.email,
@@ -28,7 +27,6 @@ describe ContactsController do
 
   after(:all) do
     @account.features.contact_merge_ui.destroy
-    @account.features.multiple_user_emails.destroy
     disable_mue_key(@account) unless @key_state
   end  
 

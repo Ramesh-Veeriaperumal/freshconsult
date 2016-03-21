@@ -140,16 +140,20 @@ class Va::Action
 
   def add_a_cc(act_on)
     unless value.blank? and act_on.cc_email.blank?
-      
-      ticket_cc_emails = act_on.cc_email[:cc_emails].collect { |email| (parse_email_text email.downcase)[:email] }
+      cc_emails        = act_on.cc_email[:cc_emails].collect { |email| (parse_email_text email.downcase)[:email] }
+      ticket_cc_emails = act_on.cc_email[:tkt_cc].collect { |email| (parse_email_text email.downcase)[:email] }
       reply_cc_emails  = act_on.cc_email[:reply_cc].collect { |email| (parse_email_text email.downcase)[:email] }
       cc_email_value   = value.downcase.strip
       
       act_on.cc_email[:reply_cc]  << cc_email_value unless reply_cc_emails.include?(cc_email_value)
       
-      unless ticket_cc_emails.include?(cc_email_value)
+      unless cc_emails.include?(cc_email_value)
         act_on.cc_email[:cc_emails] << cc_email_value 
-              Helpdesk::TicketNotifier.send_later(:send_cc_email, act_on, nil, {:cc_emails => cc_email_value.to_a })
+        Helpdesk::TicketNotifier.send_later(:send_cc_email, act_on, nil, {:cc_emails => cc_email_value.to_a })
+      end
+
+      unless ticket_cc_emails.include?(cc_email_value)
+        act_on.cc_email[:tkt_cc] << cc_email_value 
       end
     end
   end
@@ -242,7 +246,7 @@ class Va::Action
     def substitute_placeholders act_on, content_key     
       content = act_hash[content_key].to_s
       content = RedCloth.new(content).to_html unless content_key == :email_subject
-      Liquid::Template.parse(content).render(
+      Liquid::Template.parse(content).render( 'event_performer' => doer,
                 'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name, 'comment' => act_on.notes.visible.exclude_source('meta').last)
     end
 

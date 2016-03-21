@@ -7,6 +7,7 @@ class Freshfone::ForwardController < FreshfoneBaseController
   include Freshfone::Endpoints
   include Freshfone::Conference::EndCallActions
 
+  before_filter :validate_trial, :if => :trial?
   before_filter :set_dial_call_sid, :only => [:complete, :direct_dial_accept]
   before_filter :update_conference_sid, :only => [:direct_dial_wait]
   before_filter :set_tranfer_call, :only => [:transfer_complete]
@@ -231,8 +232,12 @@ class Freshfone::ForwardController < FreshfoneBaseController
       return update_call_meta_for_forward_calls(call) if call.meta.present?
       return if (/client/.match(params[:To]))
       Freshfone::CallMeta.create( :account_id => current_account.id,
-        :call_id => call.id, :meta_info => params[:To],
+        :call_id => call.id, :meta_info => {:agent_info => params[:To]},
         :device_type => call.direct_dial_number.present? ?
         Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial] : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:available_on_phone])
+    end
+
+    def validate_trial
+      return render :xml => telephony.reject('Trial Restriction')
     end
 end

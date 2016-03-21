@@ -40,7 +40,7 @@ module Delayed
     self.max_priority = nil
     
     JobPodConfig = YAML.load_file(File.join('config', 'pod_info.yml'))
-    # default_scope :conditions => ["pod_info = ?", "#{JobPodConfig['CURRENT_POD']}"]
+    default_scope :conditions => ["pod_info = ?", "#{JobPodConfig['CURRENT_POD']}"]
 
     # When a worker is exiting, make sure we don't have any locked jobs.
     def self.clear_locks!
@@ -83,7 +83,9 @@ module Delayed
     # Uses an exponential scale depending on the number of failed attempts.
     def reschedule(message, backtrace = [], time = nil)
       if self.attempts < MAX_ATTEMPTS
-        time ||= Job.db_time_now + (attempts ** 4) + 5
+        reschedule_timespan = (attempts ** 4) + 5
+        reschedule_timespan = 4.hours if (reschedule_timespan > 4.hours) 
+        time ||= Job.db_time_now + reschedule_timespan
 
         self.attempts    += 1
         self.run_at       = time
@@ -154,7 +156,9 @@ module Delayed
         job_queue = "Delayed" if ( !JOB_QUEUES.include?(job_queue) || Rails.env.development? || Rails.env.test? )
       end
 
-      if smtp_mailboxes.any?
+      #Note: Right now if any smtp_mailbox for the current account is active ,it is added to
+      #mailbox::Job queue. In Future we should check each individual smtp_mailbox based on the ticket and change the queue. 
+      if smtp_mailboxes.any?{|smtp_mailbox| smtp_mailbox.enabled?}
         Mailbox::Job.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
       else
         Object.const_get("#{job_queue}::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)

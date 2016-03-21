@@ -44,18 +44,21 @@ module Search::ElasticSearchIndex
       ### Write methods for count cluster ###
 
       def add_to_es_count
-        SearchSidekiq::TicketActions::DocumentAdd.perform_async({ 
-                                                    :klass_name => self.class.name, 
-                                                    :id => self.id,
-                                                    :version_value => Search::Job.es_version
-                                                  }) if Account.current.launched?(:es_count_writes)
+        args =  { :klass_name => self.class.name, :id => self.id, :version_value => Search::Job.es_version }
+        SearchSidekiq::TicketActions::DocumentAdd.perform_async(args) if Account.current.launched?(:es_count_writes)
+        if Account.current.launched?(:es_etl_migration)
+          args[:action] = "create"
+          $sqs_es_migration_queue.send_message(args.to_json)
+        end
       end
 
       def remove_from_es_count
-        SearchSidekiq::TicketActions::DocumentRemove.perform_async({ 
-                                                    :klass_name => self.class.name, 
-                                                    :id => self.id 
-                                                  }) if Account.current.launched?(:es_count_writes)
+        args = { :klass_name => self.class.name, :id => self.id }
+        SearchSidekiq::TicketActions::DocumentRemove.perform_async(args) if Account.current.launched?(:es_count_writes)
+        if Account.current.launched?(:es_etl_migration)
+          args[:action] = "delete"
+          $sqs_es_migration_queue.send_message(args.to_json)
+        end
       end
       
     end

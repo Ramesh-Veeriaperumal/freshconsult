@@ -5,9 +5,13 @@ class Reports::HelpdeskReportsController < ApplicationController
   
   
   before_filter { |c| c.requires_feature :advanced_reporting }
+  before_filter :check_accessibility
   before_filter :set_selected_tab
   before_filter :set_default_values
 
+  def check_accessibility
+    redirect_to reports_helpdesk_glance_reports_url unless current_account.classic_reports_enabled?
+  end
 
 
   def generate

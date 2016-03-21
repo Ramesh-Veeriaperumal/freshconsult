@@ -121,11 +121,14 @@
 
   .solution-content {
     overflow: hidden;
-    .article-content{
-      overflow-x:auto;
-      margin-top: 15px;
-      margin-bottom: 15px;
-      @include portal-text-formatting();
+  }
+  .article-content{
+    overflow-x:auto;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    @include portal-text-formatting();
+    table {
+      width: 100%;
     }
   }
 
@@ -203,7 +206,6 @@
           &.info-data {
             position: relative;
             top: 6px;
-            @include left(-15px);
           }
 
           &.info-cloud-data {

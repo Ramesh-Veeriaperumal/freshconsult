@@ -11,7 +11,7 @@
 							 <%= t('freshfone.admin.ivr.action') %>
 				</label>
 				<%= select_tag "#{name_prefix}[options][${optionId}][performer]", 
-											options_for_select(Freshfone::Option::PERFORMER_TYPE_OPTIONS),  
+											 options_for_select(modify_options_for_trial(Freshfone::Option::PERFORMER_TYPE_OPTIONS)),
 											 :class => "select2 span3 action-type", :rel => :performer, 
 											 :id => "#{id_prefix}_options_${optionId}_performer",
 											 :"data-selected" => "${performerType}",

@@ -1,0 +1,69 @@
+
+<div class="native-apps-list tab-pane" id="native-apps">
+  <ul class="table-list" id="table-list">
+    <% disp_header = 0
+    no_custom_app = true
+    applications.each do |application| %>
+      <% if application.name == "slack" %>
+        <% next if exists_in_installed_apps?(application, @installed_applications).blank? %>
+      <% end %>
+      <%next if (!feature?(:timesheets) && (application.name == 'harvest' or application.name == 'workflow_max'))%>
+        <% if application.system_app? %>
+          <li class="app-native">
+            <div class="application">
+              <span class="logo application-logo-<%= application.name %>"></span>
+                <div class="actions">
+                  <% i_app_index=installed_applications.index { |i_app| true if(i_app.application == application) }
+
+                  if i_app_index.nil?
+                    #use direct_install option in applications to install the application directly from the "Enable" in applications menu.
+                    if application[:options][:direct_install].blank? %>
+                      <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>
+                    <% else
+                      if application[:options][:oauth_url].blank? %>
+                        <!-- Custom logic to call the installed_applications "Enable" directly from applications list when direct_install is provided and oauth_url is empty -->
+                        <%if application[:options][:auth_url].present? %>
+                          <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, application.options[:auth_url] , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>  
+                        <% elsif application.name.eql? Integrations::Constants::APP_NAMES[:quickbooks] %>
+                          <%= render :partial => "quickbooks_c2qb" %>    
+                        <% else %>
+                          <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, 
+                            "/integrations/installed_applications/#{application.id}/install", :method => :put,:class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>
+                        <% end %>
+                      <% else
+                        auth_url = application.oauth_url({:account_id => current_account.id, :portal_id => current_portal.id, :user_id => current_user.id},application[:name]) %>
+                        <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>
+                      <% end %>
+                    <% end %>
+
+                  <% else
+                    if (application[:options][:direct_install].blank? or application[:options][:configurable]) and
+                      application[:options][:no_settings].blank?  %>
+                      <%= link_to "Edit",
+                              edit_integrations_installed_application_path(installed_applications[i_app_index]),
+                              :class => "btn tooltip", :title => t("application.configure_addon") %>
+
+                    <%elsif application[:options][:pre_install]%>
+
+                      <% auth_url="/integrations/applications/oauth_install/#{application.name}" %>
+                      <%= link_to "Edit", auth_url , :class => "btn tooltip", :title => t("application.configure_addon") %>
+                    <%elsif application[:options][:edit_url].present?%>
+                      <%=link_to "Edit", application[:options][:edit_url], :class => "btn tooltip", :title => t("application.configure_addon") %>
+                    <% end %>
+                    <%= link_to (t('application.enabled') + "<span></span>").html_safe, uninstall_integrations_installed_application_path(installed_applications[i_app_index]), :method => :delete, :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable").html_safe, :title => t("application.click_to_disable") %>
+                  <%end%>
+                </div>
+                <div class="col-center">
+                  <%if i_app_index.nil? or !application[:options][:direct_install].blank?%>
+                    <%= content_tag(:h2, t(application.display_name).html_safe) %>
+                  <%else%>
+                    <%= content_tag(:h2, link_to(t(application.display_name),edit_integrations_installed_application_path(installed_applications[i_app_index]), :title => t("application.configure_addon") )) %>
+                  <%end%>
+                  <div class="info-data"><%= t(application.description) %></div>
+                </div>
+            </div>
+          </li>
+      <% end %>
+    <% end %>
+  </ul>
+</div>

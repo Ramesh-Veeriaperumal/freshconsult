@@ -220,7 +220,7 @@ module SolutionHelper
 	def sidebar_feedbacks_list(feedbacks, container_id, active='')
 		filter = (container_id == 'feedbacks-me') ? 'my_article_feedback' : 'article_feedback'
 		content = %{<div class='tab-pane sidebar-list #{active}' id="#{container_id}"><ul>}
-    feedbacks.to_a.first(3).each do |feedback|
+    feedbacks.first(3).each do |feedback|
       content << article_feedback(feedback)
     end
     content << %{</ul>}

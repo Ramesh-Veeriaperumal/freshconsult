@@ -10,7 +10,7 @@ module MemcacheKeys
 
   ACCOUNT_TICKET_TYPES = "v3/ACCOUNT_TICKET_TYPES:%{account_id}"
 
-  ACCOUNT_AGENTS = "v3/ACCOUNT_AGENTS:%{account_id}"
+  ACCOUNT_AGENTS = "v4/ACCOUNT_AGENTS:%{account_id}"
 
   ACCOUNT_SUBSCRIPTION = "ACCOUNT_SUBSCRIPTION:%{account_id}"
 
@@ -37,7 +37,7 @@ module MemcacheKeys
 
   ACCOUNT_CUSTOM_DROPDOWN_FIELDS = "v2/ACCOUNT_CUSTOM_DROPDOWN_FIELDS:%{account_id}"
 
-  ACCOUNT_NESTED_FIELDS = "v2/ACCOUNT_NESTED_FIELDS:%{account_id}"
+  ACCOUNT_NESTED_FIELDS = "v3/ACCOUNT_NESTED_FIELDS:%{account_id}"
 
   ACCOUNT_EVENT_FIELDS = "v1/ACCOUNT_EVENT_FIELDS:%{account_id}"
 
@@ -116,7 +116,11 @@ module MemcacheKeys
 
   EXTENSION_CATEGORIES = "v1/FA:EXTENSION_CATEGORIES"
 
-  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}"
+  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}"
+
+  EXTENSION_VERSION_DETAILS = "v1/FA:EXTENSION:%{version_id}:%{locale_id}"
+
+  CONFIGURATION_DETAILS = "v1/FA:CONFIGURATIONS:%{version_id}:%{locale_id}"
 
   INSTALLED_CTI_APP = "v1/INSTALLED_CTI_APP:%{account_id}"
 
@@ -165,14 +169,22 @@ module MemcacheKeys
       newrelic_begin_rescue { $memcache.delete(key) }
     end
 
+    def set_null(value)
+      value.nil? ? NullObject.instance : value
+    end
+
+    def unset_null(value)
+      value.is_a?(NullObject) ? nil : value
+    end
+
     def fetch(key, expiry=0,&block)
       key = ActiveSupport::Cache.expand_cache_key(key) if key.is_a?(Array)
       cache_data = get_from_cache(key)
       if cache_data.nil?
         Rails.logger.debug "Cache hit missed :::::: #{key}"
-        cache(key, (cache_data = block.call), expiry)
+        cache(key, (cache_data = set_null(block.call)), expiry)
       end
-      cache_data
+      unset_null(cache_data)
     end
   end
   

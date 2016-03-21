@@ -11,7 +11,10 @@ HelpdeskReports.CoreUtil = {
         tickets_url : "/fetch_ticket_list",
         configure_export_url : "/configure_export",
         export_url : "/export_tickets",
-        email_reports: "/email_reports"
+        email_reports: "/email_reports",
+        save_report : "/save_reports_filter",
+        delete_report : "/delete_reports_filter",
+        update_report : "/update_reports_filter"
     },
     reports_specific_disabled_filter:{
         "customer_report":["agent_id","group_id","company_id"]
@@ -78,6 +81,7 @@ HelpdeskReports.CoreUtil = {
                 data: HelpdeskReports.locals.select_hash 
             });
             jQuery("#filter_text").html(tmpl);
+            trigger_event("report_refreshed",{});
         } else{
             jQuery(".date-value").html(jQuery("#date_range").val());
         }
@@ -144,14 +148,20 @@ HelpdeskReports.CoreUtil = {
         var _this  = this;
         var locals = HelpdeskReports.locals;
         
-        jQuery.each(locals.params, function (index) {
-            locals.params[index]['filter'] = locals.query_hash;
-        });
-
+        if(locals.params != undefined) {
+            jQuery.each(locals.params, function (index) {
+                locals.params[index]['filter'] = locals.query_hash;
+            });    
+        }
         // TODO: Consider mode this to a cache util.
         // Cache.get(key) / Cache.set(key, data)
         if (typeof (Storage) !== "undefined") {
+            //Storing filters in localstorage
             window.localStorage.setItem('reports-filters', locals.local_hash.toJSON());
+            //Storing the index of visited report to retain it.
+            /*
+            var current_selected_index = parseInt(jQuery(".reports-menu li.active a").attr('data-index'));
+            window.localStorage.setItem(HelpdeskReports.locals.report_type,current_selected_index); */
         }
 
         _this.getFilterDisplayData();
@@ -277,14 +287,16 @@ HelpdeskReports.CoreUtil = {
     dateChanged: function () {
         var locals    = HelpdeskReports.locals;
         var date      = jQuery('#date_range').val();
-        var preRanges = locals.presetRangesSelected;
+        //var preRanges = locals.presetRangesSelected;
         locals.date_range = date;
-        
-        jQuery.each(locals.params, function (index) {
-            locals.params[index]['date_range'] = date;
-        });
-       
-        if (typeof (Storage) !== "undefined") {
+        if(locals.params != undefined) {
+            jQuery.each(locals.params, function (index) {
+                locals.params[index]['date_range'] = date;
+            });
+        }
+            
+       /* 
+       if (typeof (Storage) !== "undefined") {
             switch(preRanges){
                 case true:
                     window.localStorage.setItem('reports-date-diff',this.dateRangeDiff().toJSON());
@@ -298,7 +310,8 @@ HelpdeskReports.CoreUtil = {
                     break;
             }
         }
-        HelpdeskReports.locals.presetRangesSelected = false;
+        HelpdeskReports.locals.presetRangesSelected = false;*/
+
     },
     refreshReports: function () {
         var _this = this;
@@ -389,8 +402,8 @@ HelpdeskReports.CoreUtil = {
         jQuery('#reports_wrapper').on('keypress.helpdesk_reports keyup.helpdesk_reports keydown.helpdesk_reports', "#date_range", function (ev) {
             _this.actions.disableKeyPress(ev);
         });
-        jQuery('#reports_wrapper').on("presetRangesSelected", function(event) {
-            HelpdeskReports.locals.presetRangesSelected = true;
+        jQuery(document).on("presetRangesSelected", function(event,status) {
+            HelpdeskReports.locals.presetRangesSelected = status;
         });
         jQuery('#reports_wrapper').on('mousemove.helpdesk_reports', '.report-filters-container', function(event) {
             event.preventDefault();
@@ -439,6 +452,7 @@ HelpdeskReports.CoreUtil = {
         _this.customFieldHash();
         _this.scrollTop();
         _this.actions.setTicketListFlag();
+        _this.adjustFilterButton();
     },
     actions : {
         closeFilterMenu: function () {
@@ -686,25 +700,34 @@ HelpdeskReports.CoreUtil = {
         var _this = this;
         var tmpl = JST["helpdesk_reports/templates/multiselect_tmpl"](field_hash);
         jQuery(tmpl).appendTo('#active-report-filters');
-        var config = {
+
+        var config = {};
+        if(jQuery.inArray(field_hash.condition,_this.filter_remote) != -1){
+            config = _this.getRemoteFilterConfig(field_hash.condition,false);
+        }
+        jQuery("#" + field_hash.condition).select2(config);
+        if (val.length) {
+            jQuery("#" + field_hash.condition).select2('val', val.split(','));
+        }
+    },
+    getRemoteFilterConfig : function(condition,initFromSavedReportData,initData){
+         var _this = this;
+         var config = {
             maximumSelectionSize: _this.MULTI_SELECT_SELECTION_LIMIT
         };
-
-        if(jQuery.inArray(field_hash.condition,_this.filter_remote) != -1){
-
-            config.ajax = {
-                url: "/search/autocomplete/" + _this.filter_remote_url[field_hash.condition],
-                dataType: 'json',
-                delay: 250,
-                data: function (term, page) {
-                    return {
-                        q: term, // search term
-                    };
-                },
-                results: function (data, params) {
+         config.ajax = {
+            url: "/search/autocomplete/" + _this.filter_remote_url[condition],
+            dataType: 'json',
+            delay: 250,
+            data: function (term, page) {
+                return {
+                    q: term, // search term
+                };
+            },
+            results: function (data, params) {
                       var results = [];
                       jQuery.each(data.results, function(index, item){
-                        if(field_hash.condition == "agent_id") {
+                        if(condition == "agent_id") {
                             results.push({
                               id: item.user_id,
                               text: item.value
@@ -720,28 +743,29 @@ HelpdeskReports.CoreUtil = {
                       return {
                         results: results 
                       };
-                },
-                cache: true
-              };
-              config.multiple = true ;
-              config.minimumInputLength = 2 ;
-              config.initSelection = function (element, callback) {
-
-                 if (typeof (Storage) !== "undefined" && localStorage.getItem('reports-filters') !== null) {
-                    var filter = JSON.parse(localStorage.getItem('reports-filters'));
-                    jQuery.each(filter, function(i,obj){
-                        if(obj.condition == field_hash.condition){
-                            callback(obj.source);
-                            return false;
-                        }
-                    });
+            },
+            cache: true
+          };
+          config.multiple = true ;
+          config.minimumInputLength = 2 ;
+          config.initSelection = function (element, callback) {
+                if(initFromSavedReportData){
+                    callback(initData);
+                } else {
+                    if (typeof (Storage) !== "undefined" && localStorage.getItem('reports-filters') !== null) {
+                        var filter = JSON.parse(localStorage.getItem('reports-filters'));
+                        jQuery.each(filter, function(i,obj){
+                            if(obj.condition == condition){
+                                if(obj.source != undefined) {
+                                    callback(obj.source);    
+                                }
+                                return false;
+                            }
+                        });
+                    }   
                 }
-                };
-        }
-        jQuery("#" + field_hash.condition).select2(config);
-        if (val.length) {
-            jQuery("#" + field_hash.condition).select2('val', val.split(','));
-        }
+            };
+        return config;
     },
     nestedFieldInitValues: function (val) {
         var init = {
@@ -794,6 +818,7 @@ HelpdeskReports.CoreUtil = {
         if (typeof (Storage) !== "undefined" && localStorage.getItem('reports-filters') !== null) {
             filter = JSON.parse(localStorage.getItem('reports-filters'));
         }
+        /* Code to populate the daterange from localstorage
         if (typeof (Storage) !== "undefined" && localStorage.getItem('reports-presetRangesSelected') !== null) {
             if(JSON.parse(localStorage.getItem('reports-presetRangesSelected'))){
                 if (typeof (Storage) !== "undefined" && localStorage.getItem('reports-date-diff') !== null) {
@@ -807,7 +832,8 @@ HelpdeskReports.CoreUtil = {
             }
         }else{
             daterange = this.convertDateDiffToDate(dateDiff);   
-        }
+        }*/
+        daterange = this.convertDateDiffToDate(dateDiff); 
 
         //Each report will decide, whether to add default filters or not to active menu ( agent,group,customer)
         if(_this.ATTACH_DEFAULT_FILTER) {
@@ -835,7 +861,7 @@ HelpdeskReports.CoreUtil = {
                     });
                 }
                 if(filter_contains_default){
-                    _this.constructReportField(el,filter_value);
+                    _this.constructReportField(el);//,filter_value);
                 } else {
                      _this.constructReportField(el);
                 }
@@ -845,57 +871,61 @@ HelpdeskReports.CoreUtil = {
         if (filter.length) {
             jQuery(filter).each(function (index, hash) {
                 if (HelpdeskReports.locals.report_field_hash.hasOwnProperty(hash.condition) && _this.global_disabled_filter.indexOf(hash.condition) < 0 && (_this.reports_specific_disabled_filter[HelpdeskReports.locals.report_type] || []).indexOf(hash.condition) < 0) {
-                    _this.constructReportField(hash.condition, hash.value);
+                    _this.constructReportField(hash.condition)//,hash.value);
                 }
             });
         }
         
         jQuery('#date_range').val(daterange);
         jQuery('#sprout-datepicker').val(daterange);
-
         var date = jQuery('#date_range').val();
         _this.constructDateRangePicker();
 
+        HelpdeskReports.SavedReportUtil.init(-1);
         return date;
     },
     convertDateDiffToDate: function (dateDiff) {
-        var dateFormat = getDateFormat('mediumDate')   
+        var dateFormat = getDateFormat('mediumDate').toUpperCase();   
         var date_lag   = HelpdeskReports.locals.date_lag;
-        var today      = new Date();
-        var endDate    = new Date(today.setDate(today.getDate()-date_lag));
-        var startDate  = new Date(today.setDate(today.getDate()-(dateDiff+date_lag) ));
-        if (dateDiff == 0){
-            return endDate.toString(dateFormat);
+        moment.lang('en');
+        var endDate    = moment.tz(new Date(),HelpdeskReports.locals.account_time_zone).subtract(date_lag,"days").format(dateFormat);
+        var startDate  = moment.tz(new Date(),HelpdeskReports.locals.account_time_zone).subtract((dateDiff + date_lag),"days").format(dateFormat);
+        if(dateDiff == 0 ){
+            finaldate = endDate;
+        }else if(dateDiff == 1){
+            finaldate = startDate;
+        }else{
+            finaldate = startDate + " - " + endDate;    
         }
-        else {
-            return startDate.toString(dateFormat) + " - " + endDate.toString(dateFormat);
-        }
+        return finaldate;
     },   
     calculateDateLag: function () {
         var date_lag = HelpdeskReports.locals.date_lag;
-        var date = {};
-
+        date = {};
         if (date_lag === undefined) {
             date_lag = 0;   
         }
-
+        moment.lang('en');
         date = {
-            7:       'Today-' + (6  + date_lag),
-            30:      'Today-' + (29 + date_lag),
-            90:      'Today-' + (89 + date_lag),
-            endDate: 'Today-' + date_lag
+            1:       moment.tz(new Date(),HelpdeskReports.locals.account_time_zone).subtract((1   + date_lag),"days").format("MM-DD-YYYY"), 
+            7:       moment.tz(new Date(),HelpdeskReports.locals.account_time_zone).subtract((6   + date_lag),"days").format("MM-DD-YYYY"),
+            30:      moment.tz(new Date(),HelpdeskReports.locals.account_time_zone).subtract((29  + date_lag),"days").format("MM-DD-YYYY"),
+            90:      moment.tz(new Date(),HelpdeskReports.locals.account_time_zone).subtract((89  + date_lag),"days").format("MM-DD-YYYY"),
+            endDate:  moment.tz(new Date(),HelpdeskReports.locals.account_time_zone).subtract(date_lag,"days").format("MM-DD-YYYY")
         }
-        
+        HelpdeskReports.locals.endDate = date.endDate;
+
         return date;
     },
     constructDateRangePicker: function () {
 
         var date = this.calculateDateLag();
         var previous_value = jQuery("#date_range").val(); //saved filter
-        var config = {
-                earliestDate: Date.parse('01/01/2010'),
-                latestDate: Date.parse(date.endDate),
-                presetRanges: [{
+        var presetRanges = [{
+                    text: I18n.t('helpdesk_reports.yesterday'),
+                    dateStart: date[1],
+                    dateEnd: date[1]
+                },{
                     text: I18n.t('helpdesk_reports.last_num_days',{ num: 7 }),
                     dateStart: date[7],
                     dateEnd: date.endDate
@@ -907,7 +937,19 @@ HelpdeskReports.CoreUtil = {
                     text: I18n.t('helpdesk_reports.last_num_days',{ num: 90 }),
                     dateStart: date[90],
                     dateEnd: date.endDate
-                }],
+                }];
+
+            if(HelpdeskReports.locals.date_lag == 0){
+                presetRanges.unshift({
+                    text: I18n.t('helpdesk_reports.today'),
+                    dateStart: date.endDate,
+                    dateEnd: date.endDate
+                });
+            }
+        var config = {
+                earliestDate: Date.parse('01/01/2010'),
+                latestDate: Date.parse(date.endDate),
+                presetRanges: presetRanges,
                 presets: {
                     dateRange: I18n.t('helpdesk_reports.date_range')
                 },
@@ -922,6 +964,9 @@ HelpdeskReports.CoreUtil = {
 
         //Different date pickers for sprout plan & others
         if(HelpdeskReports.locals.is_non_sprout_plan == 'true'){
+            config.onChange = function() {
+                trigger_event("filter_changed",{});
+            };
             jQuery("#date_range").daterangepicker(config);
         } else{
             //Hide the appliced filter details as there is only date for sprout plan
@@ -1057,6 +1102,11 @@ HelpdeskReports.CoreUtil = {
         export_options.query_hash = HelpdeskReports.locals.list_params[0];
         export_options.date_range = HelpdeskReports.locals.date_range,
         export_options.select_hash = HelpdeskReports.locals.select_hash;
+        
+        if(parseInt(jQuery(".reports-menu li.active a").attr('data-index')) > -1){
+            export_options.filter_name = jQuery('#report-title').text().trim();    
+        }
+        
         //Add the metric title and value to the request payload
         export_options.metric_title = jQuery(".title_wrapper .metric_title").html().trim();
         export_options.metric_value = jQuery(".title_wrapper .metric_value").html().trim();
@@ -1146,8 +1196,7 @@ HelpdeskReports.CoreUtil = {
                     }
                 });
     },
-    
-                    /* End of Export Section */              
+                    /* End of Export Section */    
     generatePdfAsync: function (){
         var _this = this;
         var params = _this.pdfParams();
@@ -1174,7 +1223,7 @@ HelpdeskReports.CoreUtil = {
         var pdf_params;
         if(HelpdeskReports.locals.report_type === "glance"){
             var current_params = [];
-            var date = this.setReportFilters();
+            var date = HelpdeskReports.locals.date_range;
             var filter = HelpdeskReports.locals.query_hash || [];
             jQuery.each(_.keys(HelpdeskReports.Constants.Glance.metrics), function (index, value) {
                 var group_by_value = HelpdeskReports.CoreUtil.setDefaultGroupByOptions(value);
@@ -1220,11 +1269,15 @@ HelpdeskReports.CoreUtil = {
             custom_field: HelpdeskReports.locals.custom_fields_group_by,
             trend: trend_args
         }; 
+        if(parseInt(jQuery(".reports-menu li.active a").attr('data-index')) > -1){
+            pdf_args.filter_name = jQuery('#report-title').text().trim();    
+        }
         return pdf_args; 
     },
     showResponseMessage: function(message){
         jQuery("#email_reports_msg").remove();
         var msg_dom = jQuery("#noticeajax");
+        msg_dom.empty();
         msg_dom.prepend(message);
         msg_dom.show();
         jQuery("<a />").addClass("close").attr("href", "#").appendTo(msg_dom).on('click.helpdesk_reports', function(){
@@ -1234,7 +1287,7 @@ HelpdeskReports.CoreUtil = {
         setTimeout(function() {    
             jQuery("#noticeajax a").trigger( "click" );  
             msg_dom.find("a").remove();
-        }, 20700);
+        }, 1200);
         
     },
     getTrendArgs: function(){
@@ -1267,6 +1320,15 @@ HelpdeskReports.CoreUtil = {
     scrollTop: function () {
         var body = jQuery("html, body");
         body.stop().animate({scrollTop:0}, '500', 'swing');
+    },
+    adjustFilterButton : function() {
+        if(HelpdeskReports.locals.is_non_sprout_plan == "true") {
+            var lang = jQuery("html").attr("lang");
+            if(lang && lang == "zh-TW") {
+                jQuery(".edit-filter").removeClass('span1').addClass('span2');
+                jQuery(".filter-type").removeClass('span11').addClass('span10');
+            }
+        }
     },
     scrollToReports: function () {
         var body = jQuery("html, body");
@@ -1329,6 +1391,8 @@ HelpdeskReports.CoreUtil = {
         var date_range = HelpdeskReports.locals.date_range.split('-');
         if (date_range.length == 2){
             diff = (Date.parse(date_range[1]) - Date.parse(date_range[0])) / (36e5 * 24);
+        }else{
+            diff = (Date.parse(HelpdeskReports.locals.endDate)-Date.parse(date_range[0])) / (36e5 * 24);
         }
         return diff;
     }

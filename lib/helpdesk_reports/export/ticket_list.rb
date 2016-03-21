@@ -17,27 +17,27 @@ module HelpdeskReports
 
       def perform
         begin_rescue do
-          ticket_data = []
           if s3_path
-            fetch_ticket_ids do |objects, index|
-              ticket_data << generate_csv_string(objects, index)
+            csv_headers = headers.collect {|header| csv_hash[header]}
+            ticket_data = CSVBridge.generate do |csv|
+              csv << csv_headers
+              fetch_tickets_data(csv)
             end
+            file_path = build_file(ticket_data, TYPES[:csv], TICKET_EXPORT_TYPE ) if ticket_data.present?
+            options   = build_options_for_email
+            send_email( options, file_path, TICKET_EXPORT_TYPE )
           end
-          file_path = build_file(ticket_data, TYPES[:csv], TICKET_EXPORT_TYPE ) if ticket_data.present?
-          options   = build_options_for_email
-          send_email( options, file_path, TICKET_EXPORT_TYPE )
         end
       end
 
       private
 
-      def fetch_ticket_ids(&block)
+      def fetch_tickets_data(tickets = [])
         s3_objects.each_with_index do |object, index|
           ticket_ids          = ticket_ids_from_s3(object.key)
           next if ticket_ids.blank?
-          non_archive_tickets = ticket_ids[:non_archive].empty? ? [] : generate_ticket_data(non_archive_tickets(ticket_ids[:non_archive]),false)
-          archive_tickets     = ticket_ids[:archive].empty? ?     [] : generate_ticket_data(archive_tickets(ticket_ids[:archive]),true)
-          yield(non_archive_tickets + archive_tickets, index) if block_given?
+          generate_ticket_data(tickets, non_archive_tickets(ticket_ids[:non_archive]),false) unless ticket_ids[:non_archive].empty?
+          generate_ticket_data(tickets, archive_tickets(ticket_ids[:archive]),true) unless ticket_ids[:archive].empty?
         end
       end
       

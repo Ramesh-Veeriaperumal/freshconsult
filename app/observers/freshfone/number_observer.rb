@@ -2,6 +2,7 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 	observe Freshfone::Number
 	
 	include Freshfone::FreshfoneUtil
+	include Freshfone::SubscriptionsUtil
 
 	def before_validation(freshfone_number)
     unless freshfone_number.new_record?
@@ -21,9 +22,25 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 		set_number_config(freshfone_number, account)
 	end
 
+	def after_commit(number)
+		return unless number.send(:transaction_include_action?, :create) && trial?
+		if number.account.freshfone_numbers.count == 1 # for first number in trial
+			NateroWorker.perform_async(
+					custom_options: {
+							custom_label_dimensions: [{
+									key: 'phone_trial_enabled',
+									value: 'Yes'
+							}]
+					})
+		end
+	end
+
 	def after_create(freshfone_number)
 		account = freshfone_number.account
-		update_freshfone_credit(freshfone_number, account)
+		Freshfone::Subscription.create_or_update_trial_subscription(
+				account,
+				numbers_usage: freshfone_number.rate) if trial?
+		update_freshfone_credit(freshfone_number, account) unless trial?
 	end
 
 	def before_update(freshfone_number)

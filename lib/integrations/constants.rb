@@ -450,4 +450,7 @@ module Integrations::Constants
   ]
 }
 
+  FRESHPLUG = 'freshplug'
+
+  NON_EDITABLE_APPS = ["mailchimp", "constantcontact", "nimble", "google_calendar", "shopify", "box", "onedrive"]
 end

@@ -13,6 +13,8 @@ class Solution::CategoriesController < ApplicationController
   before_filter :load_category_with_folders, :only => [:show]
   before_filter :set_modal, :only => [:new, :edit]
   before_filter :set_default_order, :only => :reorder
+  
+  around_filter :run_on_slave, :only => :sidebar
 
   def index
     @categories = current_portal.solution_categories.includes(:folders)
@@ -105,7 +107,9 @@ class Solution::CategoriesController < ApplicationController
   def sidebar
     @drafts = current_account.solution_drafts.preload(:article)
     @my_drafts = current_account.solution_drafts.by_user(current_user).preload(:article)
-    @feedbacks = nil #current_account.tickets.all_article_tickets.unresolved
+    @feedbacks = current_account.
+                    tickets.all_article_tickets.unresolved.
+                    preload(:requester, :ticket_status, :article) if current_account.launched?(:solution_home_feedbacks) && current_user.agent.all_ticket_permission
     @orphan_categories = orphan_categories
     render :partial => "/solution/categories/sidebar"
   end

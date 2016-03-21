@@ -25,44 +25,48 @@
 			// If diff, set the height
 			if( portal['preferences']['nonResponsive'] != "true" ) {
 				$(window).on('resize', function () {
-					$('.article-body img').each(function (i) {
-						if(this.style.height || this.height) {
-							var img = $(this);
-							$("<img/>")
-						    .attr("src", img.attr("src"))
-						    .load(function() {
-						    	var originalWidth = this.width, 
-						    		originalHeight = this.height, 
-						    		outerWidth = img.outerWidth(),
-						    		outerHeight = img.outerHeight(),
-						    		originalAspectRatio = originalWidth / originalHeight,
-						    		aspectRatio = outerWidth / outerHeight;
+					$("[rel='image-enlarge'] img").each(function (i) {
+						var img = $(this);
+						$("<img/>")
+					    .attr("src", img.attr("src"))
+					    .load(function() {
+					    	var originalWidth = this.width, 
+					    		originalHeight = this.height, 
+					    		outerWidth = img.outerWidth(),
+					    		outerHeight = img.outerHeight(),
+					    		originalAspectRatio = originalWidth / originalHeight,
+					    		aspectRatio = outerWidth / outerHeight;
 
-								  if(aspectRatio !== originalAspectRatio) {
-								  	img.outerHeight(outerWidth/originalAspectRatio);
-								  }
+							  if(aspectRatio !== originalAspectRatio) {
+							  	img.outerHeight(outerWidth/originalAspectRatio);
+
+								if(!img.parent('a').get(0)) {
+									img.wrap(function(){
+										return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
+									});
+								}
+							  }
 						    });
-						}
 					});
 				}).trigger('resize');
 			}
 		})
-
+	
 		// Preventing default click & event handlers for disabled or active links
-		$(".pagination, .dropdown-menu") 
+		$(".pagination, .dropdown-menu")
 			.find(".disabled a, .active a")
 			.on("click", function(ev){
 				ev.preventDefault()
 				ev.stopImmediatePropagation()
 			})
-		
+
 		// Remote ajax for links
 		$(".a-link[data-remote], a[data-remote]").live("click", function(ev){
 			ev.preventDefault()
 
 			var _o_data = $(this).data(),
 				_self = $(this),
-				_post_data = { 
+				_post_data = {
 					"_method" : $(this).data("method") || "get"
 				}
 

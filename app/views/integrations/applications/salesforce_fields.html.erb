@@ -4,51 +4,50 @@
   </div>
 <%- end %>
 
-	<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
-  <% method_type = (@action == "install") ? "post" : "put" %>
-  <%= form_tag("/integrations/cloud_elements/crm/#{@action}", :method => method_type)  do %>
-  <%= hidden_field_tag  'state', params[:state] %>
+<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
+<% method_type = (@action == "install") ? "post" : "put" %>
+<%= form_tag("/integrations/cloud_elements/crm/#{@action}", :method => method_type)  do %>
+<%= hidden_field_tag  'state', params[:state] %>
 
-  <div class="well">
-    <div class="tab-content row-fluid">
-      <label class="caption span3">
-        <div class="logo application-logo-salesforce"></div>
-        <div class="logo info-data">
-          <%=t('integrations.salesforce.desc')%>
+<div class="well">
+  <div class="tab-content row-fluid">
+    <label class="caption span3">
+      <div class="logo application-logo-salesforce"></div>
+      <div class="logo info-data">
+        <%=t('integrations.salesforce.desc')%>
+      </div>
+    </label>
+
+        <div class="tab-pane span9 active" id="field-mapping-tab">
+
+          <% existing_companies = @element_config['existing_companies']
+             existing_contacts = @element_config['existing_contacts']
+             existing_companies = @installed_app.configs_companies unless @installed_app.nil?
+             existing_contacts = @installed_app.configs_contacts unless @installed_app.nil? 
+          %>
+          <%= render :partial => "/integrations/applications/salesforce/mapping",
+                     :locals => { :existing_companies => existing_companies, :existing_contacts => existing_contacts } %>   
         </div>
-      </label>
-
-          <div class="tab-pane span9 active" id="field-mapping-tab">
-
-            <% existing_companies = @element_config['existing_companies']
-               existing_contacts = @element_config['existing_contacts']
-               existing_companies = @installed_app.configs_companies unless @installed_app.nil?
-               existing_contacts = @installed_app.configs_contacts unless @installed_app.nil? 
-            %>
-            <%= render :partial => "/integrations/applications/salesforce/mapping",
-                       :locals => { :existing_companies => existing_companies, :existing_contacts => existing_contacts } %>   
-          </div>
-          <div class="tab-pane span9" id="field-visibility-tab">
-             <%= render :partial => "/integrations/applications/salesforce/visibility" %>
-          </div>
-          
-    </div>
+        <div class="tab-pane span9" id="field-visibility-tab">
+           <%= render :partial => "/integrations/applications/salesforce/visibility" %>
+        </div>
+        
   </div>
+</div>
 
-  <div class="button-container">
-    <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
-    <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
-  </div>
-
-  <%end%>
-
+<div class="button-container">
+  <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
+  <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
+</div>
+<%end%>
 
 <script type="text/javascript">
 
 function fillLabels(){
    var selectedValues = []; 
    var leadValues =[];   
-   var accountValues =[];   
+   var accountValues =[]; 
+   var opportunityValues = [];  
     jQuery("#contacts :selected").each(function(){
         selectedValues.push(jQuery(this).text()); 
     });
@@ -63,13 +62,24 @@ function fillLabels(){
         accountValues.push(jQuery(this).text()); 
     });
     jQuery('#account_labels').val(accountValues);
+    jQuery("#opportunities :selected").each(function(){
+        opportunityValues.push(jQuery(this).text()); 
+    });
+    jQuery('#opportunity_labels').val(opportunityValues);
     return true;
 }
+
+  jQuery("#salesforce_sync_option_value").itoggle();
+
+  jQuery("#opportunity_view_value").itoggle({buttonClass:"toggle-button toggle_child_on_click"});
+
   jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
 
   jQuery("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
 
   jQuery("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+
+  jQuery("#opportunities").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
 
   //setting the Name as default field(can't be removed.)
   jQuery("#sfcontacts ul .select2-search-choice div").each(function(index,element){
@@ -89,6 +99,43 @@ jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
     value = jQuery(element).text();
     if(value =="Account Name"){
       jQuery(element).next("a").remove();
+    }
+  });
+
+
+  //setting Name, Stage and Close Date as default opportunity fields(can't be removed.)
+  jQuery("#sfopportunities ul .select2-search-choice div").each(function(index,element){
+    value = jQuery(element).text();
+    if(value =="Name" || value == "Stage" || value == "Close Date"){
+      jQuery(element).next("a").remove();
+    }
+  });
+
+// This event will turn the plus select icon to grey on reaching the maximum selection size
+  jQuery(".select2-fields").on('change',function(){
+    var list_elements = jQuery(this).prev(".select2-container-multi").children().children();
+    var list_size = list_elements.length - 1;
+    if(list_size == 10){
+      jQuery(this).addClass('salesforce-disable-select');
+    }
+    else{
+      if(jQuery(this).hasClass('salesforce-disable-select')){
+        jQuery(this).removeClass('salesforce-disable-select');
+      }
+    }
+  });
+
+  jQuery('body').on('click', '.toggle_child_on_click', function() {
+    var div = jQuery(this).parent().data('child');
+    var input = jQuery('#agent_settings.' + div).find('input');
+    input.attr('disabled', !input.attr('disabled'));
+    jQuery('.' + div).slideToggle();
+  });
+
+  jQuery('body').on('click', '.checkbox_label', function(ev) {
+    if (!jQuery(ev.target).is('input[type=checkbox]')) {
+      var checkbox = jQuery(this).prev("input[type=checkbox]");
+      checkbox.prop('checked', !checkbox.prop('checked'));
     }
   });
 
