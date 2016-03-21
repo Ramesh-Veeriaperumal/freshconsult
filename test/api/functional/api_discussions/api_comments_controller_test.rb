@@ -29,36 +29,36 @@ module ApiDiscussions
       comment.update_column(:user_id, @agent.id)
       User.any_instance.stubs(:privilege?).with(:edit_topic).returns(false)
       User.any_instance.stubs(:privilege?).with(:view_forums).returns(true)
-      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
+      put :update, construct_params({ id: comment.id }, body: 'test reply 2', answer: true)
       assert_response 200
 
       comment.update_column(:user_id, 999)
-      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
-      match_json([bad_request_error_pattern('body_html', :inaccessible_field)])
+      put :update, construct_params({ id: comment.id }, body: 'test reply 2', answer: true)
+      match_json([bad_request_error_pattern('body', :inaccessible_field)])
       assert_response 400
 
       put :update, construct_params({ id: comment.id }, answer: true)
       assert_response 200
 
       User.any_instance.stubs(:privilege?).with(:edit_topic).returns(true)
-      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
+      put :update, construct_params({ id: comment.id }, body: 'test reply 2', answer: true)
       assert_response 200
 
       comment.update_column(:user_id, @agent.id)
       User.any_instance.stubs(:privilege?).with(:view_forums).returns(false)
       User.any_instance.stubs(:privilege?).with(:edit_topic, comment).returns(true)
-      put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
+      put :update, construct_params({ id: comment.id }, answer: true, body: 'test reply 2')
       match_json([bad_request_error_pattern('answer', :inaccessible_field)])
       assert_response 400
 
       @controller.stubs(:api_current_user).returns(nil)
-      put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
+      put :update, construct_params({ id: comment.id }, answer: true, body: 'test reply 2')
       @controller.unstub(:api_current_user)
       match_json(request_error_pattern(:invalid_credentials))
       assert_response 401
 
       User.any_instance.stubs(:customer?).returns(true)
-      put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
+      put :update, construct_params({ id: comment.id }, answer: true, body: 'test reply 2')
       match_json(request_error_pattern(:access_denied))
       assert_response 403
     ensure
@@ -70,15 +70,15 @@ module ApiDiscussions
 
     def test_update
       comment = quick_create_post
-      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
+      put :update, construct_params({ id: comment.id }, body: 'test reply 2', answer: true)
       assert_response 200
-      match_json(comment_pattern({ body_html: 'test reply 2', answer: true }, comment.reload))
+      match_json(comment_pattern({ body: 'test reply 2', answer: true }, comment.reload))
     end
 
     def test_update_answer_non_question
       post = quick_create_post
       post.topic.update_column(:stamp_type, nil)
-      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
+      put :update, construct_params({ id: post.id }, body: 'test reply 2', answer: true)
       assert_response 400
       match_json([bad_request_error_pattern('answer', :cannot_set_answer, code: :incompatible_field)])
       post.topic.update_column(:stamp_type, 6)
@@ -87,20 +87,20 @@ module ApiDiscussions
     def test_update_post_answer
       post = quick_create_post
       assert_equal 7, post.topic.stamp_type
-      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
+      put :update, construct_params({ id: post.id }, body: 'test reply 2', answer: true)
       match_json(comment_pattern({ answer: true }, post.reload))
       assert_response 200
       assert_equal 6, post.topic.reload.stamp_type
       assert post.reload.answer
 
       other_post = post.topic.posts.create(user_id: @agent.id, body_html: 'test', forum_id: post.topic.forum_id)
-      put :update, construct_params({ id: other_post.id }, body_html: 'test reply 2', answer: true)
+      put :update, construct_params({ id: other_post.id }, body: 'test reply 2', answer: true)
       assert_response 200
       match_json(comment_pattern({ answer: true }, other_post.reload))
       refute post.reload.answer
       assert other_post.reload.answer
 
-      put :update, construct_params({ id: other_post.id }, body_html: 'test reply 2', answer: false)
+      put :update, construct_params({ id: other_post.id }, body: 'test reply 2', answer: false)
       match_json(comment_pattern({ answer: false }, other_post.reload))
       assert_response 200
       assert_equal 7, post.topic.reload.stamp_type
@@ -109,15 +109,15 @@ module ApiDiscussions
 
     def test_update_blank_message
       comment = comment_obj
-      put :update, construct_params({ id: comment.id }, body_html: '')
+      put :update, construct_params({ id: comment.id }, body: '')
       assert_response 400
-      match_json([bad_request_error_pattern('body_html', :blank)])
+      match_json([bad_request_error_pattern('body', :blank)])
     end
 
     def test_update_invalid_answer
       comment = comment_obj
       Topic.any_instance.stubs(:stamp_type).returns(6)
-      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: 90)
+      put :update, construct_params({ id: comment.id }, body: 'test reply 2', answer: 90)
       Topic.any_instance.unstub(:stamp_type)
       assert_response 400
       match_json([bad_request_error_pattern('answer', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: Integer)])
@@ -125,14 +125,14 @@ module ApiDiscussions
 
     def test_update_with_user_id
       comment =  comment_obj
-      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', user_id: User.first)
+      put :update, construct_params({ id: comment.id }, body: 'test reply 2', user_id: User.first)
       assert_response 400
       match_json([bad_request_error_pattern('user_id', :invalid_field)])
     end
 
     def test_update_with_topic_id
       comment =  comment_obj
-      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', topic_id: topic_obj)
+      put :update, construct_params({ id: comment.id }, body: 'test reply 2', topic_id: topic_obj)
       assert_response 400
       match_json([bad_request_error_pattern('topic_id', :invalid_field)])
     end
@@ -151,9 +151,9 @@ module ApiDiscussions
 
     def test_update_with_nil_values
       comment =  comment_obj
-      put :update, construct_params({ id: comment.id }, body_html: nil)
+      put :update, construct_params({ id: comment.id }, body: nil)
       assert_response 400
-      match_json([bad_request_error_pattern('body_html', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type')])
+      match_json([bad_request_error_pattern('body', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type')])
     end
 
     def test_destroy
@@ -173,24 +173,24 @@ module ApiDiscussions
     def test_create_no_params
       post :create, construct_params({ id: topic_obj.id }, {})
       assert_response 400
-      match_json [bad_request_error_pattern('body_html', :datatype_mismatch, code: :missing_field, expected_data_type: String)]
+      match_json [bad_request_error_pattern('body', :datatype_mismatch, code: :missing_field, expected_data_type: String)]
     end
 
     def test_create_mandatory_params
       topic = topic_obj
-      post :create, construct_params({ id: topic.id }, body_html: 'test')
+      post :create, construct_params({ id: topic.id }, body: 'test')
       assert_response 201
       match_json(comment_pattern(Post.last))
-      match_json(comment_pattern({ body_html: 'test', topic_id: topic.id,
+      match_json(comment_pattern({ body: 'test', topic_id: topic.id,
                                    user_id: @agent.id }, Post.last))
     end
 
     def test_create_returns_location_header
       topic = topic_obj
-      post :create, construct_params({ id: topic.id }, body_html: 'test')
+      post :create, construct_params({ id: topic.id }, body: 'test')
       assert_response 201
       match_json(comment_pattern(Post.last))
-      match_json(comment_pattern({ body_html: 'test', topic_id: topic.id,
+      match_json(comment_pattern({ body: 'test', topic_id: topic.id,
                                    user_id: @agent.id }, Post.last))
       result = parse_response(@response.body)
       assert_equal true, response.headers.include?('Location')
@@ -198,12 +198,12 @@ module ApiDiscussions
     end
 
     def test_create_invalid_model
-      post :create, construct_params({ id: 34_234_234 }, body_html: 'test')
+      post :create, construct_params({ id: 34_234_234 }, body: 'test')
       assert_response :missing
     end
 
     def test_create_invalid_user_field
-      post :create, construct_params({ id: topic_obj.id }, :body_html => 'test',
+      post :create, construct_params({ id: topic_obj.id }, :body => 'test',
                                                            'user_id' => 999, 'answer' => true)
       assert_response 400
       match_json([bad_request_error_pattern('user_id', :invalid_field),
@@ -273,7 +273,7 @@ module ApiDiscussions
       f = Forum.first
       source = create_test_topic(f)
       target = create_test_topic(f)
-      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
+      source.update_attributes(locked: 1, merged_topic_id: target.id)
       create_test_post(source, User.first)
       get :topic_comments, controller_params(id: source.id)
       assert_response 200
@@ -285,8 +285,8 @@ module ApiDiscussions
       f = Forum.first
       source = create_test_topic(f)
       target = create_test_topic(f)
-      source.update_attributes(:locked => 1, :merged_topic_id => target.id)
-      post :create, construct_params({ id: source.id }, body_html: 'test')
+      source.update_attributes(locked: 1, merged_topic_id: target.id)
+      post :create, construct_params({ id: source.id }, body: 'test')
       assert_response 201
     ensure
       source.try(:destroy)

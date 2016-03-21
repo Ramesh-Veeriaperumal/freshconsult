@@ -27,20 +27,14 @@ class DataTypeValidator < ApiValidator
       internal_values[:blank_when_required] = valid_type? && options[:rules] == String && options[:required] && !present_or_false?
     end
 
-    def custom_error_options
-      error_options = { expected_data_type: expected_data_type }
-      error_options.merge!(given_data_type: infer_data_type(value), prepend_msg: :input_received) unless skip_input_info?
-      error_options
+    def expected_data_type
+      return internal_values[:expected_data_type] if internal_values.key?(:expected_data_type)
+      internal_values[:expected_data_type] = DATA_TYPE_MAPPING[options[:rules]] || options[:rules]
     end
 
     def skip_input_info?
-      required_attribute_not_defined? || blank_when_required? || array_value?
+      required_attribute_not_defined? || blank_when_required? || array_value? || string_input_and_allow_string?
     end
-
-    def expected_data_type
-      DATA_TYPE_MAPPING[options[:rules]] || options[:rules]
-    end
-
     # check if value class is same as type. case & when uses === operator which compares the type first.
     # Faster than is_a? check
     def valid_type?(type = options[:rules])

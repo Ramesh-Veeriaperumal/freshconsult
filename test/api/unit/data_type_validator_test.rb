@@ -25,7 +25,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = [test.errors.to_h.sort, test.error_options.to_h.sort]
     assert_equal([{ hash: :datatype_mismatch, array: :datatype_mismatch }.sort, { hash: {  expected_data_type: 'key/value pair',
-                                                                                             given_data_type: 'Null Type', prepend_msg: :input_received }, array: {  expected_data_type: Array, given_data_type: 'Null Type', prepend_msg: :input_received }, multi_error: {}, required_param: {} }.sort], errors)
+                                                                                           given_data_type: 'Null Type', prepend_msg: :input_received }, array: {  expected_data_type: Array, given_data_type: 'Null Type', prepend_msg: :input_received }, multi_error: {}, required_param: {} }.sort], errors)
   end
 
   def test_valid_values

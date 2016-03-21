@@ -11,6 +11,7 @@ class DateTimeValidator < ApiValidator
   DATE_TIME_FORMAT       = 'yyyy-mm-ddThh:mm:ss±hh:mm'
   DATE_TIME_REGEX        = /^\d{4}-\d{2}-\d{2}/
   DATE_REGEX             = /^\d{4}-\d{2}-\d{2}$/
+  DB_VALUE_TYPES        = [ActiveSupport::TimeWithZone]
 
   private
 
@@ -88,6 +89,11 @@ class DateTimeValidator < ApiValidator
         zone = tz_value.split(ZONE_MINUS_PREFIX).last
       end
       zone.nil? || validate_zone(zone)
+    end
+
+    # skip validation if it is of value from db
+    def skip_validation?(validator_options = options)
+      DB_VALUE_TYPES.include?(value.class) || super 
     end
 
     def validate_zone(zone)

@@ -31,7 +31,7 @@ class ConversationsControllerTest < ActionController::TestCase
   def create_note_params_hash
     body = Faker::Lorem.paragraph
     agent_email1 = Agent.last.user.email
-    agent_email2 = Agent.find{|x| x.user.email != agent_email1}.try(:user).try(:email) || add_test_agent(@account, role: Role.find_by_name('Agent').id).email
+    agent_email2 = Agent.find { |x| x.user.email != agent_email1 }.try(:user).try(:email) || add_test_agent(@account, role: Role.find_by_name('Agent').id).email
     email = [agent_email1, agent_email2]
     params_hash = { body: body, notify_emails: email, private: true }
     params_hash
@@ -377,7 +377,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_invalid_id
-    params_hash = { body_html: 'test' }
+    params_hash = { body: 'test' }
     post :reply, construct_params({ id: '6786878' }, params_hash)
     assert_response :missing
   end

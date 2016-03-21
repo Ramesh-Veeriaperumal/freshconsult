@@ -77,9 +77,19 @@ class TicketValidation < ApiValidation
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
     super(request_params, item, allow_string_param)
+    @description = item.description_html if !request_params.key?(:description) && item
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
     @due_by ||= item.try(:due_by).try(:iso8601) if item
     @item = item
+    fill_custom_fields if item && item.custom_field.present?
+  end
+
+  def fill_custom_fields
+    if !request_params.key?(:custom_fields)
+      @custom_fields = @item.custom_field.reject{|k, v| v.nil?}
+    elsif request_params[:custom_fields].is_a?(Hash)
+      @custom_fields = @item.custom_field.reject{|k, v| v.nil?}.merge(request_params[:custom_fields])
+    end
   end
 
   def requester_detail_missing
@@ -150,7 +160,7 @@ class TicketValidation < ApiValidation
       agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       product: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       subject: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
-      description: { data_type: { rules: String }}
+      description: { data_type: { rules: String } }
     }
   end
 end

@@ -6,8 +6,8 @@ class ApiCommentValidationTest < ActionView::TestCase
     item = nil
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
     refute comment.valid?
-    assert_equal ['Body html datatype_mismatch'], comment.errors.full_messages
-    assert_equal({ body_html: { expected_data_type: String, code: :missing_field } }, comment.error_options)
+    assert_equal ['Body datatype_mismatch'], comment.errors.full_messages
+    assert_equal({ body: { expected_data_type: String, code: :missing_field } }, comment.error_options)
   end
 
   def test_inclusion_params_invalid
@@ -65,7 +65,7 @@ class ApiCommentValidationTest < ActionView::TestCase
 
   def test_answer_is_incompatible
     Account.stubs(:current).returns(Account.new)
-    controller_params = { 'answer' => true, 'body_html' => 'test' }
+    controller_params = { 'answer' => true, body: 'test' }
     item = Post.new
     topic = mock('topic')
     topic.stubs(:stamp_type).returns(6)
@@ -73,7 +73,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
     assert comment.valid?(:update)
 
-    controller_params = { 'answer' => 'nil', 'body_html' => 'test' }
+    controller_params = { 'answer' => 'nil', body: 'test' }
     topic.stubs(:stamp_type).returns(nil)
     item.stubs(:topic).returns(topic)
     comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
@@ -81,7 +81,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     error = comment.errors.full_messages
     assert error.include?('Answer cannot_set_answer')
     refute error.include?('Answer datatype_mismatch')
-    assert_equal({ answer: { code: :incompatible_field }, body_html: {} }, comment.error_options)
+    assert_equal({ answer: { code: :incompatible_field }, body: {} }, comment.error_options)
     Account.unstub(:current)
   end
 
@@ -90,7 +90,7 @@ class ApiCommentValidationTest < ActionView::TestCase
     topic.stubs(:stamp_type).returns(nil)
     item = Post.new({})
     item.stubs(:topic).returns(topic)
-    params = { 'body_html' => 'test', 'topic_id' => 1, 'user_id' => 1 }
+    params = { body: 'test', 'topic_id' => 1, 'user_id' => 1 }
     comment = ApiDiscussions::ApiCommentValidation.new(params, item)
     assert comment.valid?
   end
@@ -104,6 +104,27 @@ class ApiCommentValidationTest < ActionView::TestCase
     item.topic_id = 1
     comment = ApiDiscussions::ApiCommentValidation.new({}, item)
     assert comment.valid?
+    Account.unstub(:current)
+  end
+
+  def test_body
+    Account.stubs(:current).returns(Account.new)
+    controller_params = {}
+    item = Post.new('answer' => '1')
+    item.body = ''
+    item.body_html = 'test'
+    topic = mock('topic')
+    topic.stubs(:stamp_type).returns(nil)
+    item.stubs(:topic).returns(topic)
+    comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
+    comment.valid?(:update)
+    refute comment.errors.full_messages.include?('Body blank')
+
+    item.body = 'test'
+    item.body_html = ''
+    comment = ApiDiscussions::ApiCommentValidation.new(controller_params, item)
+    comment.valid?(:update)
+    assert comment.errors.full_messages.include?('Body blank')
     Account.unstub(:current)
   end
 end
