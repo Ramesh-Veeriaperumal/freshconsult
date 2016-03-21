@@ -41,9 +41,17 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                     jQuery('#customer_report_main').append(tmpl);
                     if(jQuery.isEmptyObject(hash[metrics[i]])){
                         var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
-                        var div = [metrics[i] + '_container'];
                         jQuery("[data-chart='"+ metrics[i] +"']").hide();
-                        HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+                        if(type == 'pdf'){
+                            var div = [metrics[i] + '_desc_container'];
+                            HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+                            div = [metrics[i] + '_asc_container'];
+                            HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+                        }
+                        else{
+                            var div = [metrics[i] + '_container'];
+                            HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+                        }
                     }else if(!jQuery.isEmptyObject(hash[metrics[i]]['error'])){
                         var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                         var div = [metrics[i] + '_container'];
