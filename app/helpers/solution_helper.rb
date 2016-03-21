@@ -304,8 +304,7 @@ module SolutionHelper
 		}}) unless category.eql?('article')
 		options.merge!({:"data-pjax" => "#body-container"}) if category.eql?('article')
 		link_to( "<span class='language_name'>#{language.short_code.capitalize}</span>
-							#{ font_icon( (solution_meta.send("#{language.to_key}_available?") ? 'pencil' : 'plus'), :size => 14) }
-							</span>".html_safe, 
+							#{ font_icon( (solution_meta.send("#{language.to_key}_available?") ? 'pencil' : 'plus'), :size => 14) }".html_safe, 
 							category.eql?('article') ? 
 							solution_article_version_path(solution_meta.id, language.code, :anchor => 'edit') :
 							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id),
