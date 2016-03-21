@@ -11,7 +11,7 @@ class Account < ActiveRecord::Base
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_freshchat_url, :if => :freshchat_enabled?
 
-  after_destroy :remove_global_shard_mapping 
+  after_destroy :remove_global_shard_mapping, :remove_from_slave_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
 
   after_commit :add_to_billing, :enable_elastic_search, on: :create
@@ -56,6 +56,7 @@ class Account < ActiveRecord::Base
   def populate_features
     add_features_of subscription.subscription_plan.name.downcase.to_sym
     SELECTABLE_FEATURES.each { |key,value| features.send(key).create  if value}
+    add_member_to_redis_set(SLAVE_QUERIES, self.id)
   end
 
   protected
@@ -165,6 +166,10 @@ class Account < ActiveRecord::Base
       shard_mapping = ShardMapping.find_by_account_id(id)
       shard_mapping.status = ShardMapping::STATUS_CODE[:not_found]
       shard_mapping.save
+    end
+
+    def remove_from_slave_queries
+      remove_member_from_redis_set(SLAVE_QUERIES,self.id)
     end
 
     def delete_reports_archived_data
