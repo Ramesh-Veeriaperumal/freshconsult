@@ -1152,4 +1152,13 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('email', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
   end
+
+  def test_update_with_custom_fields_required_which_is_already_present
+    cf_sample_field = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'SampleField', editable_in_signup: 'true', required_for_agent: true))
+    user = add_new_user(@account, custom_fields: {"cf_samplefield" => "test value"})
+    put :update, construct_params({ id: user.id }, {name: "Sample User 1"})
+    assert_response 200
+  ensure
+    cf_sample_field.update_attribute(:required_for_agent, false)
+  end
 end

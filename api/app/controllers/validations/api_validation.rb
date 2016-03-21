@@ -39,6 +39,14 @@ class ApiValidation
     end
   end
 
+  def fill_custom_fields(request_params, item)
+    if !request_params.key?(:custom_fields)
+      @custom_fields = item.custom_field.reject{|k, v| v.nil?}
+    elsif request_params[:custom_fields].is_a?(Hash)
+      @custom_fields = item.custom_field.reject{|k, v| v.nil?}.merge(request_params[:custom_fields])
+    end
+  end
+
   def format_value(value)
     (FORMATTED_TYPES.include?(value.class) ? value.iso8601 : value)
   end

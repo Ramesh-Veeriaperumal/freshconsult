@@ -422,6 +422,19 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end
 
+  def test_update_with_custom_fields_required_which_is_already_present
+    company = create_company(name: Faker::Lorem.characters(10))
+    field = { type: 'text', field_type: 'custom_text', label: 'required_linetext', required_for_agent: true }
+    params = company_params(field)
+    cf_sample_field = create_company_field params
+    clear_contact_field_cache
+    company.update_attributes(custom_field: {"cf_required_linetext" => "test value"})
+    put :update, construct_params({ id: company.id }, {name: "Sample Company"})
+    assert_response 200
+  ensure
+    cf_sample_field.update_attribute(:required_for_agent, false)
+  end
+
   def clear_contact_field_cache
     key = MemcacheKeys::COMPANY_FORM_FIELDS % { account_id: @account.id, company_form_id: @account.company_form.id }
     MemcacheKeys.delete_from_cache key
