@@ -6817,7 +6817,7 @@ en:
         requester: "Requester"
         already_converted: "This message is already converted to ticket"
         successfully_converted: "Ticket has been successfully created"
-        twitter_limit_exceed: "Your Tweet is over 140 characters. You'll have to be more clever."
+        twitter_limit_exceed: "You have exceeded Twitter's character limit. You'll have to modify your response."
         plugin_error: "Please login to Freshdesk stream to use this plugin"
       note:
         human_name: "note"
