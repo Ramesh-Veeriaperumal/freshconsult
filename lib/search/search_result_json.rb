@@ -2,6 +2,7 @@ module Search::SearchResultJson
 
 	include ApplicationHelper
 	include ActionView::Helpers::DateHelper
+	include HumanizeHelper
 
 	def helpdesk_ticket_json ticket
 		return ticket_search_json(ticket) if @search_by_field
@@ -186,9 +187,9 @@ module Search::SearchResultJson
 			:user_name => h(article.user.name),
 			:user_path => user_path(article.user),
 			:info => %{#{time_ago_in_words(article.created_at)} #{t('search.ago')}},
-			:views => article.hits,
-			:up_votes => article.thumbs_up,
-			:down_votes =>article.thumbs_down
+			:views => humanize_stats(article.hits),
+			:up_votes => humanize_stats(article.thumbs_up),
+			:down_votes => humanize_stats(article.thumbs_down)
 		}
 	end
 

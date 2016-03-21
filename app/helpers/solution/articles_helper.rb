@@ -1,7 +1,7 @@
 module Solution::ArticlesHelper
 
-  include ActionView::Helpers::NumberHelper
   include Solution::LanguageTabsHelper
+  include HumanizeHelper
   
   def language_tabs
     %{<div class="tab">
@@ -136,14 +136,6 @@ module Solution::ArticlesHelper
       <span class="pull-right">
         #{link_to t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview", path_url_locale),:target => "draft-"+@article.id.to_s}
       </span>).html_safe
-  end
-
-  def humanize_stats number
-    opts = number >= 1000 ? { :class => 'tooltip', :title => number_with_delimiter(number) } : {}
-    content_tag(:span, number_to_human(number, 
-                                    :units => Solution::Constants::HUMANIZE_STATS, 
-                                    :precision => 1, 
-                                    :significant => false).delete(' '), opts)
   end
 
   def not_in_portal_notification article
