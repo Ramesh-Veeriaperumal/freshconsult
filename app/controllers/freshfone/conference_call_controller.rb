@@ -257,7 +257,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     end
 
     def call_metrics_enabled?
-      current_account.features?(:call_quality_metrics)
+      current_account.features?(:freshfone_call_metrics)
     end
    
     def call_quality_monitoring_enabled?

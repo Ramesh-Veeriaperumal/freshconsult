@@ -71,14 +71,14 @@ es:
   datetime:
     distance_in_words:
       about_x_hours:
-        one: "en torno a %{count} años"
-        other: "en torno a %{count} horas"
+        one: "torno a 1 hora"
+        other: "torno a %{count} horas"
       about_x_months:
-        one: "en torno a 1 mes"
-        other: "en torno a %{count} meses"
+        one: "torno a 1 mes"
+        other: "torno a %{count} meses"
       about_x_years:
-        one: "en torno a 1 año"
-        other: "en torno a %{count} años"
+        one: "torno a 1 año"
+        other: "torno a %{count} años"
       almost_x_years:
         one: "al menos 1 año"
         other: "al menos %{count} años"
