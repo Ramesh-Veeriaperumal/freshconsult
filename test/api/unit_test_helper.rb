@@ -1,7 +1,7 @@
 ENV['RAILS_ENV'] = 'test'
 require File.expand_path('../../../test/api/helpers/simple_cov_setup', __FILE__)
 require File.expand_path('../../../config/environment', __FILE__)
-
+require File.expand_path('../../../test/api/helpers/mock_test_validation', __FILE__)
 require 'rails/test_help'
 require 'minitest/rails'
 require 'minitest/reporters'

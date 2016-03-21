@@ -1,12 +1,18 @@
 class ApiCompanyValidation < ApiValidation
+  DEFAULT_FIELD_VALIDATIONS = {
+    description:  { data_type: { rules: String } },
+    note: { data_type: { rules: String } },
+    domains:  { data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String } }, string_rejection: { excluded_chars: [','], allow_nil: true } }
+  }.freeze
+
   attr_accessor :name, :description, :domains, :note, :custom_fields, :custom_field_types
   validates :description, :domains, :note, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
-                                field_validations: CompanyConstants::DEFAULT_FIELD_VALIDATIONS
+                                field_validations: DEFAULT_FIELD_VALIDATIONS
                               }
   validates :name, data_type: { rules: String, required: true }
-  validates :name, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? }
+  validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
   # Shouldn't be clubbed as allow nil may have some impact on custom fields validator.
   validates :custom_fields, data_type: { rules: Hash }
@@ -19,6 +25,7 @@ class ApiCompanyValidation < ApiValidation
   def initialize(request_params, item)
     super(request_params, item)
     @domains = item.domains.to_s.split(',') if item && !request_params.key?(:domains)
+    fill_custom_fields(request_params, item) if item && item.custom_field.present?
   end
 
   def attributes_to_be_stripped

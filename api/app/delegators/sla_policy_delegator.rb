@@ -1,8 +1,4 @@
-class SlaPolicyDelegator < SimpleDelegator
-  include ActiveModel::Validations
-
-  attr_accessor :error_options
-
+class SlaPolicyDelegator < BaseDelegator
   validate :valid_companies?
 
   def valid_companies?

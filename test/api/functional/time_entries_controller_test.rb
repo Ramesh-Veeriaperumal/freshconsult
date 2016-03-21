@@ -188,24 +188,24 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_pagination_exceeds_limit
     get :index, controller_params(billable: false, per_page: 101)
     assert_response 400
-    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
   end
 
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 't', agent_id: 'er', billable: '78', executed_after: '78/34', executed_before: '90/12')
-    pattern = [bad_request_error_pattern('billable', :data_type_mismatch, data_type: 'Boolean')]
-    pattern << bad_request_error_pattern('agent_id', :data_type_mismatch, data_type: 'Positive Integer')
-    pattern << bad_request_error_pattern('company_id', :data_type_mismatch, data_type: 'Positive Integer')
-    pattern << bad_request_error_pattern('executed_after', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm')
-    pattern << bad_request_error_pattern('executed_before', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm')
+    pattern = [bad_request_error_pattern('billable', :datatype_mismatch, expected_data_type: 'Boolean')]
+    pattern << bad_request_error_pattern('agent_id', :datatype_mismatch, expected_data_type: 'Positive Integer')
+    pattern << bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer')
+    pattern << bad_request_error_pattern('executed_after', :invalid_date, accepted: :'combined date and time ISO8601')
+    pattern << bad_request_error_pattern('executed_before', :invalid_date, accepted: :'combined date and time ISO8601')
     assert_response 400
     match_json pattern
   end
 
   def test_index_with_invalid_model_params
     get :index, controller_params(company_id: 8989, agent_id: 678_567_567, billable: 'true', executed_after: 23.days.ago.iso8601, executed_before: 2.days.ago.iso8601)
-    pattern = [bad_request_error_pattern('agent_id', :"can't be blank")]
-    pattern << bad_request_error_pattern('company_id', :"can't be blank")
+    pattern = [bad_request_error_pattern('agent_id', :absent_in_db, resource: :agent, attribute: :agent_id)]
+    pattern << bad_request_error_pattern('company_id', :absent_in_db, resource: :company, attribute: :company_id)
     assert_response 400
     match_json pattern
   end
@@ -422,11 +422,12 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_create_start_time_and_timer_not_running
-    post :create, construct_params({ id: ticket.display_id }, { start_time: (Time.zone.now - 10.minutes).as_json,
+    time = (Time.zone.now - 10.minutes).as_json
+    post :create, construct_params({ id: ticket.display_id }, { start_time: time,
                                                                 timer_running: false }.merge(params_hash))
     assert_response 400
     match_json [bad_request_error_pattern('start_time',
-                                          :timer_running_false)]
+                                          :timer_running_false, code: :incompatible_field)]
   end
 
   def test_create_with_no_params
@@ -595,7 +596,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: 'yu')
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', :data_type_mismatch, data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('agent_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_update_presence_invalid
@@ -606,7 +607,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: '7878')
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', :data_type_mismatch, data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('agent_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_update_date_time_invalid
@@ -615,8 +616,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: '89/12',
                                                   note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
-                bad_request_error_pattern('executed_at', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
+    match_json([bad_request_error_pattern('start_time', :invalid_date, accepted: :'combined date and time ISO8601'),
+                bad_request_error_pattern('executed_at', :invalid_date, accepted: :'combined date and time ISO8601')])
   end
 
   def test_update_inclusion_invalid
@@ -627,8 +628,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: '89', executed_at: executed_at,
                                                   note: 'test note', billable: '12')
     assert_response 400
-    match_json([bad_request_error_pattern('timer_running', :data_type_mismatch, data_type: 'Boolean'),
-                bad_request_error_pattern('billable', :data_type_mismatch, data_type: 'Boolean')])
+    match_json([bad_request_error_pattern('timer_running', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('billable', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_update_format_invalid
@@ -639,7 +640,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: @agent.id)
     assert_response 400
-    match_json([bad_request_error_pattern('time_spent', 'invalid_time_spent')])
+    match_json([bad_request_error_pattern('time_spent', :invalid_format, accepted: 'hh:mm')])
   end
 
   def test_update_start_time_greater_than_current_time
@@ -662,7 +663,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   note: 'test note', billable: true, agent_id: @agent.id)
     assert_response 400
     match_json([bad_request_error_pattern('timer_running', :timer_running_duplicate),
-                bad_request_error_pattern('start_time', :timer_running_false)])
+                bad_request_error_pattern('start_time', :timer_running_false, code: :incompatible_field)])
   end
 
   def test_update_timer_running_true_again
@@ -674,7 +675,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   note: 'test note', billable: true, agent_id: @agent.id)
     assert_response 400
     match_json([bad_request_error_pattern('timer_running', :timer_running_duplicate),
-                bad_request_error_pattern('start_time', :timer_running_true)])
+                bad_request_error_pattern('start_time', :timer_running_true, code: :incompatible_field)])
   end
 
   def test_update_agent_id_when_timer_running
@@ -684,7 +685,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id },  time_spent: '09:00', executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: user.id)
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', :cant_update_user)])
+    match_json([bad_request_error_pattern('agent_id', :cant_update_user, code: :incompatible_field)])
   end
 
   def test_update_agent_id_when_timer_not_running
@@ -759,7 +760,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '01:00', timer_running: false,
                                                  executed_at: executed_at, note: 'test note', billable: true, agent_id: user.id)
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', :cant_update_user)])
+    match_json([bad_request_error_pattern('agent_id', :cant_update_user, code: :incompatible_field)])
   end
 
   def test_update_timer_running_false_for_all_other_timers_while_creating_time_entry
@@ -797,7 +798,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time,
                                                  executed_at: executed_at, note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', :timer_running_true)])
+    match_json([bad_request_error_pattern('start_time', :timer_running_true, code: :incompatible_field)])
   end
 
   def test_update_start_time_when_timer_is_not_running
@@ -807,7 +808,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time,
                                                  executed_at: executed_at, note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', :timer_running_false)])
+    match_json([bad_request_error_pattern('start_time', :timer_running_false, code: :incompatible_field)])
   end
 
   def test_update_start_time_when_timer_running_is_set_to_true
@@ -831,7 +832,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time, timer_running: false,
                                                  executed_at: executed_at, note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', :timer_running_true)])
+    match_json([bad_request_error_pattern('start_time', :timer_running_true, code: :incompatible_field)])
   end
 
   def test_update_with_timer_running_true_valid
@@ -977,11 +978,11 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_toggle_invalid_record
     ts = Helpdesk::TimeSheet.first
     Helpdesk::TimeSheet.any_instance.stubs(:update_attributes).returns(false)
-    Helpdesk::TimeSheet.any_instance.stubs(:errors).returns([['user', :"can't be blank"]])
+    Helpdesk::TimeSheet.any_instance.stubs(:errors).returns([[:user_id, :"can't be blank"]])
     put :toggle_timer, construct_params({ id: ts.id }, {})
     Helpdesk::TimeSheet.any_instance.unstub(:update_attributes, :errors)
     assert_response 400
-    match_json([bad_request_error_pattern('user', :"can't be blank")])
+    match_json([bad_request_error_pattern('user_id', :absent_in_db, attribute: :user_id, resource: :contact)])
   end
 
   def test_toggle_timer_with_ticket_trashed
@@ -1075,7 +1076,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_ticket_time_entries_with_pagination_exceeds_limit
     get :ticket_time_entries, controller_params(id: ticket.display_id, per_page: 101)
     assert_response 400
-    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
   end
 
   def test_ticket_time_entries_with_ticket_trashed
@@ -1227,5 +1228,40 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :toggle_timer, construct_params({ id: te.id }, {})
     assert_response 200
     assert_not_nil te.time_spent
+  end
+
+  def test_create_with_start_time_and_time_spent_array
+    start_time = (Time.zone.now - 10.minutes).as_json
+    freeze_time do
+      post :create, construct_params({ id: ticket.display_id }, { start_time: start_time,
+                                                                  time_spent: ['03:00'] }.merge(params_hash))
+      assert_response 400
+      match_json([bad_request_error_pattern('time_spent', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
+    end
+  end
+
+  def test_update_time_entry_with_other_agent_id_and_no_access
+    te = create_time_entry(timer_running: false)
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+    User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(true)
+    User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false)
+    put :update, construct_params({ id: te.id }, agent_id: other_agent.id)
+    assert_response 400
+    match_json([bad_request_error_pattern('agent_id', :inaccessible_field)])
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_update_time_entry_with_and_no_access
+    ts = sample_time_entry
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+    User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(true)
+    User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false)
+    put :update, construct_params({ id: ts.id }, billable: true)
+    assert_response 200
+    match_json time_entry_pattern(ts.reload)
+    match_json time_entry_pattern({ billable: true }, ts.reload)
+  ensure
+    User.any_instance.unstub(:privilege?)
   end
 end

@@ -1,19 +1,19 @@
 require_relative '../unit_test_helper'
 
 class DataTypeValidatorTest < ActionView::TestCase
-  class TestValidation
+  class TestValidation < MockTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :array, :hash, :error_options, :allow_unset_param, :allow_string_param, :required_param, :allow_string_boolean, :boolean, :multi_error, :set_boolean
+    attr_accessor :array, :hash, :allow_unset_param, :allow_string_param, :required_param, :allow_string_boolean, :boolean, :multi_error, :set_boolean
 
     validates :multi_error, required: true
     validates :allow_unset_param, data_type: { rules: String, allow_unset: true }
     validates :required_param, data_type: { rules: Array, required: true }
-    validates :array, :multi_error, data_type: { rules: Array, allow_nil: false }
-    validates :hash, data_type: { rules: Hash, allow_nil: false }
+    validates :array, :multi_error, data_type: { rules: Array, allow_nil: false, allow_unset: true }
+    validates :hash, data_type: { rules: Hash, allow_nil: false, allow_unset: true }
     validates :boolean, data_type: { rules: 'Boolean', allow_nil: true }
     validates :allow_string_boolean, data_type: { rules: 'Boolean', ignore_string: :allow_string_param, allow_nil: true }
-    validates :set_boolean, data_type: { rules: 'Boolean' }
+    validates :set_boolean, data_type: { rules: 'Boolean', allow_unset: true }
   end
 
   def test_disallow_nil
@@ -24,7 +24,8 @@ class DataTypeValidatorTest < ActionView::TestCase
     test.multi_error = [1, 2]
     refute test.valid?
     errors = [test.errors.to_h.sort, test.error_options.to_h.sort]
-    assert_equal([{ hash: :data_type_mismatch, array: :data_type_mismatch }.sort, { hash: { data_type: 'key/value pair' }, array: { data_type: Array } }.sort], errors)
+    assert_equal([{ hash: :datatype_mismatch, array: :datatype_mismatch }.sort, { hash: {  expected_data_type: 'key/value pair',
+                                                                                           given_data_type: 'Null Type', prepend_msg: :input_received }, array: {  expected_data_type: Array, given_data_type: 'Null Type', prepend_msg: :input_received }, multi_error: {}, required_param: {} }.sort], errors)
   end
 
   def test_valid_values
@@ -59,8 +60,9 @@ class DataTypeValidatorTest < ActionView::TestCase
     test.required_param = [1, 2, 3]
     test.allow_string_boolean = 'false'
     refute test.valid?
-    assert_equal({ allow_unset_param: :data_type_mismatch }, test.errors.to_h)
-    assert_equal({ allow_unset_param: { data_type: String } },  test.error_options.to_h)
+    assert_equal({ allow_unset_param: :datatype_mismatch }, test.errors.to_h)
+    assert_equal({ allow_unset_param: {  expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type',
+                                         prepend_msg: :input_received }, boolean: {}, allow_string_boolean: {}, multi_error: {}, required_param: {} },  test.error_options.to_h)
   end
 
   def test_attributes_multiple_error
@@ -69,7 +71,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     test.required_param = [1, 2, 3]
     refute test.valid?
     assert test.errors.count == 1
-    assert_equal({ multi_error: :missing }, test.errors.to_h)
+    assert_equal({ multi_error: :missing_field }, test.errors.to_h)
   end
 
   def test_valid_values_invalid
@@ -82,8 +84,8 @@ class DataTypeValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
-    assert_equal({ array: :data_type_mismatch, hash: :data_type_mismatch, boolean: :data_type_mismatch, allow_string_boolean: :data_type_mismatch, multi_error: :missing, required_param: :required_and_data_type_mismatch }.sort, errors)
-    assert_equal({ array: { data_type: Array }, hash:  { data_type: 'key/value pair' }, boolean:  { data_type: 'Boolean' }, allow_string_boolean:  { data_type: 'Boolean' }, required_param:  { data_type: Array } }.sort, error_options)
+    assert_equal({ array: :datatype_mismatch, hash: :datatype_mismatch, boolean: :datatype_mismatch, allow_string_boolean: :datatype_mismatch, multi_error: :missing_field, required_param: :datatype_mismatch }.sort, errors)
+    assert_equal({ allow_string_boolean: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, array: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'key/value pair' }, boolean: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, hash: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: Array }, multi_error: {}, required_param: { expected_data_type: Array, code: :missing_field } }.sort, error_options)
   end
 
   def test_allow_unset
@@ -97,7 +99,8 @@ class DataTypeValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
-    assert_equal({ set_boolean: :data_type_mismatch }.sort, errors)
-    assert_equal({ set_boolean:  { data_type: 'Boolean' } }.sort, error_options)
+    assert_equal({ set_boolean: :datatype_mismatch }.sort, errors)
+    assert_equal({ set_boolean:  {  expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type',
+                                    prepend_msg: :input_received }, boolean: {}, array: {}, hash: {}, multi_error: {}, required_param: {} }.sort, error_options)
   end
 end

@@ -1,6 +1,6 @@
 class ErrorHelper
   class << self
-    def format_error(errors, meta = nil)
+    def format_error(errors, meta = {})
       formatted_errors = []
       errors.to_h.each do |att, val|
         formatted_errors << bad_request_error(att, val.to_sym, meta)

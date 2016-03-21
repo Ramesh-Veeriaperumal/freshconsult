@@ -2,7 +2,7 @@ class ApiContactsController < ApiApplicationController
   include Helpdesk::TagMethods
   decorate_views
 
-  around_filter :run_on_slave, :only => [:index]
+  around_filter :run_on_slave, only: [:index]
 
   def create
     assign_protected
@@ -39,8 +39,8 @@ class ApiContactsController < ApiApplicationController
   def make_agent
     if @item.email.blank?
       render_request_error :inconsistent_state, 409
-    elsif !current_account.subscription.agent_limit.nil? && agent_limit_reached?
-      render_request_error :max_agents_reached, 403
+    elsif (@agent_limit = current_account.subscription.agent_limit) && agent_limit_reached?
+      render_request_error :max_agents_reached, 403, max_count: @agent_limit
     else
       if @item.make_agent
         @agent = Agent.find_by_user_id(@item.id)
@@ -135,7 +135,7 @@ class ApiContactsController < ApiApplicationController
     def validate_filter_params
       params.permit(*ContactConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @contact_filter = ContactFilterValidation.new(params, nil, string_request_params?)
-      render_query_param_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
+      render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
     end
 
     def load_objects
@@ -168,7 +168,7 @@ class ApiContactsController < ApiApplicationController
     end
 
     def agent_limit_reached?
-      current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= current_account.subscription.agent_limit
+      current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= @agent_limit
     end
 
     def valid_content_type?
@@ -182,21 +182,21 @@ class ApiContactsController < ApiApplicationController
       primary_email = @email_objects[:primary_email]
 
       # old emails to be retained
-      @email_objects[:old_email_objects].each { |user_email| 
+      @email_objects[:old_email_objects].each do |user_email|
         email_attributes << { 'email' => user_email.email, 'id' => user_email.id, 'primary_role' => user_email.email == primary_email }
-      }
+      end
 
       # new emails to be added
-      @email_objects[:new_emails].each { |email|
+      @email_objects[:new_emails].each do |email|
         email_attributes << { 'email' => email, 'primary_role' => email == primary_email }
-      }
+      end
 
       # emails to be destroyed
       if update?
         emails_to_be_destroyed =  (@item.user_emails - @email_objects[:old_email_objects])
-        emails_to_be_destroyed.each { |user_email| 
+        emails_to_be_destroyed.each do |user_email|
           email_attributes << { 'email' => user_email.email, 'id' => user_email.id, '_destroy' => 1 }
-        }
+        end
       end
 
       @item.user_emails_attributes = Hash[(0...email_attributes.size).zip email_attributes]
