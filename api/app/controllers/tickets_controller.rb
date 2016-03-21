@@ -40,14 +40,16 @@ class TicketsController < ApiApplicationController
   end
 
   def destroy
-    @item.update_attribute(:deleted, true)
+    @item.deleted = true
     store_dirty_tags(@item) #Storing tags whenever ticket is deleted. So that tag count is in sync with DB.
+    @item.save
     head 204
   end
 
   def restore
-    @item.update_attribute(:deleted, false)
-    restore_dirty_tags(@item) 
+    @item.deleted = false
+    restore_dirty_tags(@item)
+    @item.save
     head 204
   end
 
