@@ -631,15 +631,8 @@ HelpdeskReports.ReportUtil.Glance = (function () {
 
             HelpdeskReports.locals.default_params = current_params.slice();
             HelpdeskReports.locals.visited_metrics = [];
-
-            if (typeof (Storage) !== "undefined" && localStorage.getItem(HelpdeskReports.locals.report_type) !== null) {
-                var index = JSON.parse(localStorage.getItem(HelpdeskReports.locals.report_type));
-                 HelpdeskReports.SavedReportUtil.applySavedReport(index,false);
-            } else {
-                 HelpdeskReports.SavedReportUtil.applySavedReport(-1,false);
-            }
-           
-         _FD.actions.submitReports();
+            HelpdeskReports.SavedReportUtil.applyLastCachedReport();
+            _FD.actions.submitReports();
             
         },
         setActiveMetric: function (metric) {

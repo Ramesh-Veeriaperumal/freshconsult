@@ -63,6 +63,16 @@ jQuery(document).ready(function() {
 		ev.preventDefault();
 		return false;
 	});
+
+	//Deprecated message
+	  var show_disabled = <%= current_account.old_reports_enabled? %>;
+	  if(show_disabled){
+	      jQuery(".empty-holder").hide();
+	  } else{
+	      var message = "<div class='deprecated-header'><div class='message'><%=t('helpdesk_reports.deprecated_header')%></div></div>";
+		  jQuery(".leftcontent").prepend(message);
+	  }
+
 	recordAnalytics();
 });     
 
@@ -91,17 +101,9 @@ function recordAnalytics() {
 		App.Report.Metrics.push_event(report_label,event_prop);
 	});
 }
-	//Deprecated message
-	  var show_disabled = <%= current_account.old_reports_enabled? %>;
-	  if(show_disabled){
-	      jQuery(".empty-holder").hide();
-	  } else{
-	      var message = '<div class="deprecated-header"><div class="message"><%=t('helpdesk_reports.deprecated_header')%></div></div>';
-		  jQuery(".leftcontent").prepend(message);
-	  }
 
-	});     
 <% end %>
+	    
 <% end %>
 
 <div class="grid report" id="agent_ticket_summary">	

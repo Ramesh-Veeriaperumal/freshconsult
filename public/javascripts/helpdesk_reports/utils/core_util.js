@@ -1104,7 +1104,7 @@ HelpdeskReports.CoreUtil = {
         export_options.select_hash = HelpdeskReports.locals.select_hash;
         
         if(parseInt(jQuery(".reports-menu li.active a").attr('data-index')) > -1){
-            export_options.filter_name = jQuery('#report-title').text().trim();    
+            export_options.filter_name = jQuery(".reports-menu li.active a").attr('data-original-title'); 
         }
         
         //Add the metric title and value to the request payload
@@ -1270,7 +1270,7 @@ HelpdeskReports.CoreUtil = {
             trend: trend_args
         }; 
         if(parseInt(jQuery(".reports-menu li.active a").attr('data-index')) > -1){
-            pdf_args.filter_name = jQuery('#report-title').text().trim();    
+            pdf_args.filter_name = jQuery(".reports-menu li.active a").attr('data-original-title');
         }
         return pdf_args; 
     },

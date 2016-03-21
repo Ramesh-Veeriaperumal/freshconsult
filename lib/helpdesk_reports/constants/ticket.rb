@@ -123,9 +123,9 @@ module HelpdeskReports::Constants::Ticket
   
   # Constraint on date_range by subscription plan (Restrict query to x days from today)
   DATE_LAG_CONSTRAINT = {
-    SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic] => 0,
-    SubscriptionPlan::SUBSCRIPTION_PLANS[:estate] => 0,
-    SubscriptionPlan::SUBSCRIPTION_PLANS[:forest] => 0
+    "Estate Classic" => 0,
+    "Estate" => 0,
+    "Forest" => 0
   }
 
   DEFAULT_TIME_ZONE = "Pacific Time (US & Canada)"   
