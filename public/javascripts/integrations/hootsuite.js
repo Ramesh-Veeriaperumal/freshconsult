@@ -85,7 +85,8 @@ jQuery.noConflict();
 			$(document).on('click.hootsuite', '#social_reply', function(ev){
 			ev.preventDefault();
 			var rem = parseInt (jQuery("#SendTweetCounter").text());
-			if(rem<0){
+			var body = jQuery('#msg-body').val().trim();
+			if(rem<0 || body==""){
 				return;
 			}
 			$('#alert').hide();
