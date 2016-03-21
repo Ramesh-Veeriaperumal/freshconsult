@@ -6776,7 +6776,7 @@ en:
       auth_error: "Error: It appears that you are not loading this page from inside a HootSuite stream"
       agent_error: "You should be an agent to view the tickets"
       no_ticket_msg: "You don't have any tickets for this filter selection"
-      signup_message: "Not a Freshdesk customer yet? SignUp"
+      signup_message: "Not a Freshdesk customer yet? Sign Up"
       header:
         tickets: "Your tickets"
         reply: "Reply"
@@ -6787,11 +6787,12 @@ en:
         priority: "Priority"
         all: "All"
       submit: "Submit"
+      reset: "Reset"
       search:
         keyword: "Keyword"
         ticket_id: "Ticket ID"
-        placeholder_keyword: "Enter Keyword"
-        placeholder_ticket_id: "Enter Ticket ID"
+        placeholder_keyword: "Search tickets by Keyword"
+        placeholder_ticket_id: "Search tickets by ticket id"
       logged_in_message: "Logged in as %{user_name}"
       domain:
         domain_message: "Please enter helpdesk URL"
@@ -6817,6 +6818,7 @@ en:
         already_converted: "This message is already converted to ticket"
         successfully_converted: "Ticket has been successfully created"
         twitter_limit_exceed: "Your Tweet is over 140 characters. You'll have to be more clever."
+        plugin_error: "Please login to Freshdesk stream to use this plugin"
       note:
         human_name: "note"
       ticket:

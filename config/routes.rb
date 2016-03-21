@@ -868,8 +868,12 @@ Helpkit::Application.routes.draw do
       resources :tickets, :only => [:update,:create,:show] do
         collection do
           post :add_note
+          post :twitter
+          post :facebook
           post :add_reply
-          get :append_social_reply
+          get :full_text
+          get :user_following
+          get :group_agents
         end
       end
 
@@ -879,15 +883,13 @@ Helpkit::Application.routes.draw do
         post :verify_domain
         get :handle_plugin
         delete :destroy
-        get :log_out
+        get :destroy
         post :uninstall
         get :index
         get :refresh
         post :iframe_page
         post :search
-        delete :delete_hootsuite_user
-        get :hootsuite_login
-        post :create_login_session
+        get :plugin_url
       end
     end
 	
