@@ -10,7 +10,7 @@ module MemcacheKeys
 
   ACCOUNT_TICKET_TYPES = "v3/ACCOUNT_TICKET_TYPES:%{account_id}"
 
-  ACCOUNT_AGENTS = "v3/ACCOUNT_AGENTS:%{account_id}"
+  ACCOUNT_AGENTS = "v4/ACCOUNT_AGENTS:%{account_id}"
 
   ACCOUNT_SUBSCRIPTION = "ACCOUNT_SUBSCRIPTION:%{account_id}"
 

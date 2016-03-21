@@ -1,0 +1,6 @@
+hosted_zone: "Z3I92TFIW8B4PN"
+CNAME:
+  ttl: 600
+  value:
+    podeuwest1: "podeuwest1local.freshpo.com"
+    podeuwest2: "podeuwest2local.freshpo.com"

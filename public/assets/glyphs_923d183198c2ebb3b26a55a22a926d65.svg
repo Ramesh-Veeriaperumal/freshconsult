@@ -1,13 +1,13 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!--
-2016-2-19: Created with FontForge (http://fontforge.org)
+2016-3-21: Created with FontForge (http://fontforge.org)
 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
 <metadata>
-Created by FontForge 20141231 at Fri Feb 19 11:41:50 2016
- By Saranyaa
-Copyright (c) 2016, Saranyaa
+Created by FontForge 20150504 at Mon Mar 21 15:07:26 2016
+ By Sravya
+Copyright (c) 2016, Sravya
 </metadata>
 <defs>
 <font id="glyphs" horiz-adv-x="412" >
@@ -22,7 +22,7 @@ Copyright (c) 2016, Saranyaa
     bbox="-0.5 -65 1343 448.392"
     underline-thickness="25.6"
     underline-position="-51.2"
-    unicode-range="U+F100-F212"
+    unicode-range="U+F100-F213"
   />
     <missing-glyph />
     <glyph glyph-name="uniF11F" unicode="&#xf11f;" horiz-adv-x="499" 
@@ -942,6 +942,8 @@ l-1 -1c-26 -26 -86 -88 103 -278c90 -90 161 -136 214 -136v0c13 0 26 3 37 9c12 6 2
     <glyph glyph-name="uniF146" unicode="&#xf146;" horiz-adv-x="500" 
 d="M130 298l83 -83l-83 -83c-8 -8 -19 -8 -27 0s-8 19 0 27l35 36h-118c-5 0 -10 2 -14 6s-6 9 -6 14c0 11 9 19 20 19h118l-35 36c-8 8 -8 20 0 28s19 8 27 0zM465 341c20 0 35 -15 35 -35v-178c0 -20 -15 -36 -35 -36h-94v-23h7c4 0 7 -3 7 -7v-16c0 -4 -3 -7 -7 -7h-90
 c-4 0 -7 3 -7 7v16c0 4 3 7 7 7h7v23h-94c-20 0 -36 16 -36 36v15l37 37v-50h261v174h-261v-55l-37 37v20c0 20 16 35 36 35h264z" />
+    <glyph glyph-name="uniF213" unicode="&#xf213;" horiz-adv-x="439" 
+d="M220 412c121 0 219 -99 219 -220s-98 -220 -219 -220s-220 99 -220 220s99 220 220 220z" />
     <glyph glyph-name="uniF1CB" unicode="&#xf1cb;" horiz-adv-x="489" 
 d="M313 192l-40 -5c-3 -13 -8 -25 -15 -36l26 -36l-29 -29l-35 26c-11 -7 -24 -13 -36 -16l-4 -40h-47l-4 40c-12 3 -25 9 -36 16l-35 -26l-29 29l26 36c-7 11 -12 23 -15 36l-40 5v47l40 5c3 13 8 25 15 36l-26 36l29 29l36 -26c11 7 23 12 35 15l5 41h46l4 -41
 c12 -3 25 -8 36 -15l35 26l29 -29l-26 -36c7 -11 12 -23 15 -36l40 -5v-47zM199 172c24 24 24 63 0 87c-23 24 -62 24 -85 0s-23 -63 0 -87s62 -24 85 0zM488 135l-23 -12c1 -8 2 -18 0 -26l24 -15l-11 -25l-27 7c-5 -7 -11 -12 -18 -17l7 -26l-28 -11l-12 23

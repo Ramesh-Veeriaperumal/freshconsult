@@ -113,14 +113,14 @@ class Helpdesk::TicketsController < ApplicationController
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
     tkt = current_account.tickets.permissible(current_user)
-    @items = fetch_tickets(tkt) unless is_native_mobile?
+    @items = fetch_tickets unless is_native_mobile?
     respond_to do |format|
       format.html  do
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
         #For api calls(json/xml), the redirection is ignored, to use as indication of last page.
         if (@items.length < 1) && !params[:page].nil? && params[:page] != '1'
           params[:page] = '1'
-          @items = fetch_tickets(tkt)
+          @items = fetch_tickets
         end
         @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false, :user_id => i.accessible.user_id} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
@@ -146,7 +146,7 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => {:errors => @response_errors}.to_json
         else
           array = []
-          @items.each { |tic|
+          @items.preload(:ticket_old_body,:schema_less_ticket,:flexifield => :flexifield_def).each { |tic|
             array << tic.as_json({}, false)['helpdesk_ticket']
           }
           render :json => array
@@ -958,10 +958,13 @@ class Helpdesk::TicketsController < ApplicationController
   private
 
     def set_trashed_column
-      ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
-        st.ticket_id= t.id and st.account_id=#{current_account.id} and t.account_id=#{current_account.id}
-        set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 where
-        t.id in (#{@items.map(&:id).join(',')})")
+      sql_array = ["update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
+                    st.ticket_id= t.id and st.account_id=%s and t.account_id=%s
+                    set st.%s = 1 where t.id in (%s)", 
+                    current_account.id, current_account.id, Helpdesk::SchemaLessTicket.trashed_column, @items.map(&:id).join(',')]
+      sql = ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
+
+      ActiveRecord::Base.connection.execute(sql)
     end
     
     def render_delete_forever
@@ -1412,11 +1415,7 @@ class Helpdesk::TicketsController < ApplicationController
     if es_tickets_enabled? and params[:html_format]
       tickets_from_es(params)
     else
-      if tkt.present?
-        tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-      else
-        current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-      end
+      current_account.tickets.preload(requester: [:avatar,:company]).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     end
   end
 

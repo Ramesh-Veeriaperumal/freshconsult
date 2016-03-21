@@ -298,11 +298,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       :new_domain => params[:new_url], 
       :target_method => :check_domain_availability
     }
-    response = connect_main_pod(
-      :post,request_parameters,
-      PodConfig["pod_paths"]["pod_endpoint"],
-      "#{AppConfig['freshops_subdomain']['global']}.#{AppConfig['base_domain'][Rails.env]}")
-    render :json => { status: "notice"} and return if response["status"]
+    response = Fdadmin::APICalls.connect_main_pod(request_parameters)
+    render :json => { status: "notice"} and return if response["account_id"]
   end
 
   def user_info

@@ -1,0 +1,17 @@
+<%
+	var trimTitle = function(title){
+		var unescaped_title = unescapeHtml(title);
+		if(unescaped_title && unescaped_title.length > 50){
+			unescaped_title =  unescaped_title.substring(0,50) + "...";
+		}
+		return escapeHtml(unescaped_title).replace(/'/g, '&apos;');
+	}
+%>
+<li>
+	<a href="javascript:void(0)" data-action="select-saved-report" data-index='<%= index %>' data-title='<%= trimTitle(title) %>' data-original-title='<%= title %>' >          
+	<span class="pull-left"><i class="ficon-dot fsize-8" size="8"></i></span>
+  	<span class="pull-left report_title">
+  		<%= trimTitle(title) %>
+  	</span>
+	</a>
+</li>

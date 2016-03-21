@@ -140,66 +140,6 @@ class AccountsController < ApplicationController
 	  end
 	   logger.debug "here is the retrieved data: #{data.inspect}"
  end
-
-  def associate_google_account
-    @google_domain = params[:account][:google_domain]
-    @call_back_url = params[:call_back]
-    @full_domain = get_full_domain_for_google
-    if @full_domain.blank?      
-      #set_account_values
-      flash.now[:error] = t(:'flash.g_app.no_subdomain')
-      render :signup_google and return
-    end
-    Sharding.select_shard_of(@full_domain) do
-      @account = Account.find_by_full_domain(@full_domain)
-      @account.make_current if @account
-      open_id_user = verify_open_id_user @account
-      unless open_id_user.blank?
-        if open_id_user.privilege?(:manage_account)
-         if @account.update_attribute(:google_domain,@google_domain)     
-            @rediret_url = @call_back_url+"&EXTERNAL_CONFIG=true" unless @call_back_url.blank?
-            @rediret_url = "https://www.google.com/a/cpanel/"+@google_domain if @rediret_url.blank?
-            render "thank_you"          
-         end        
-       else
-         flash.now[:error] = t(:'flash.general.insufficient_privilege.admin')
-         render :associate_google         
-       end
-      else      
-        render :associate_google
-      end
-    end
-  end
-  
- 
-  def associate_local_to_google
-    @google_domain = params[:account][:google_domain]
-    @call_back_url = params[:call_back]    
-    @full_domain = get_full_domain_for_google  
-    Sharding.select_shard_of(@full_domain) do
-    @account = Account.find_by_full_domain(@full_domain)
-    @account.make_current if @account
-    @check_session = @account.user_sessions.new(params[:user_session])
-    if @check_session.save
-       logger.debug "The session is :: #{@check_session.user}"
-        if @check_session.user.privilege?(:manage_account)
-         if @account.update_attribute(:google_domain,@google_domain)
-            @check_session.destroy
-            rediret_url = @call_back_url+"&EXTERNAL_CONFIG=true" unless @call_back_url.blank?
-            rediret_url = "https://www.google.com/a/cpanel/"+@google_domain if rediret_url.blank?
-            redirect_to rediret_url
-         end        
-       else
-         @check_session.destroy         
-         flash[:notice] = t(:'flash.general.insufficient_privilege.admin')
-         render :associate_google         
-       end     
-    else       
-      flash[:notice] = t(:'flash.login.verify_credentials')
-      render :associate_google
-    end 
-   end
-  end
   
   def create    
     @account.affiliate = SubscriptionAffiliate.find_by_token(cookies[:affiliate]) unless cookies[:affiliate].blank?

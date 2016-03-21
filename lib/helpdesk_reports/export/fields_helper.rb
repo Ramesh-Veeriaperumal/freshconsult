@@ -30,8 +30,7 @@ module HelpdeskReports
         [ {:flexifield => [:flexifield_def]}, {:requester => [:company] }, :archive_ticket_association, :ticket_status, :group, :responder, :tags]
       end
 
-      def generate_ticket_data(list_of_tickets, archive_status)
-        records = []
+      def generate_ticket_data(tickets = [], list_of_tickets, archive_status)
         custom_field_names = Account.current.ticket_fields.custom_fields.map(&:name)
         date_format = Account.current.date_type(:short_day_separated)
 
@@ -39,6 +38,7 @@ module HelpdeskReports
           record = []
           headers.each do |val|
             data = archive_status ? fetch_field_value(item, val) : item.send(val)
+            data = handling_deleted_field(data,val)
             if data.present?
               if DATE_TIME_PARSE.include?(val.to_sym)
                 data = parse_date(data)
@@ -48,11 +48,22 @@ module HelpdeskReports
             end
             record << escape_html(data)
           end
-          records << record
+          tickets << record
         end
-        records
       end
 
+      def handling_deleted_field(value,field)
+        case field
+        when "ticket_type"
+          unless value.blank?
+            pick_list = Account.current.ticket_type_values.all.detect{|x| x.value == value}
+            pick_list ? value : ""
+          end
+        else
+          value
+        end
+      end 
+      
       def fetch_field_value(item, field)
         item.respond_to?(field) ? item.send(field) : item.custom_field_value(field)
       end

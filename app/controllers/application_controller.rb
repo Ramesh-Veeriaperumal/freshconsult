@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
   
   include AuthenticationSystem
   include HelpdeskSystem  
-  include ControllerLogger
+  #include ControllerLogger
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
   include ActionView::Helpers::DateHelper

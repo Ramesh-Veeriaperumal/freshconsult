@@ -7,12 +7,10 @@ describe ActivationsController do
   before(:all) do
     @key_state = mue_key_state(@account)
     enable_mue_key(@account)
-    @account.features.multiple_user_emails.create
     @user2 = add_user_with_multiple_emails(@account, 4)
   end
 
   after(:all) do
-    @account.features.multiple_user_emails.destroy
     disable_mue_key(@account) unless @key_state
   end
 
