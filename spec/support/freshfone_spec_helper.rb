@@ -64,7 +64,7 @@ module FreshfoneSpecHelper
 
   def create_freshfone_call_meta(call,external_number)
     @call_meta = call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
-              :meta_info => external_number, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
+              :meta_info => {:agent_info => external_number}, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
   end
 
   def create_supervisor_call(call=@freshfone_call, call_status = Freshfone::SupervisorControl::CALL_STATUS_HASH[:default])

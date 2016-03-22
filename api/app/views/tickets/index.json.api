@@ -21,8 +21,8 @@ JSON.generate(@items.map do |item|
       :due_by => item.due_by.try(:utc),
       :fr_due_by => item.frDueBy.try(:utc),
       :is_escalated => item.isescalated,
-      :description => item.ticket_body.description,
-      :description_html => item.ticket_body.description_html,
+      :description => item.ticket_body.description_html,
+      :description_text => item.ticket_body.description,
       :custom_fields => item.custom_fields,
       :created_at => item.created_at.try(:utc),
       :updated_at => item.updated_at.try(:utc)

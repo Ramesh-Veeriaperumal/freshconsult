@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(:version => 20160104125144) do
+ActiveRecord::Schema.define(:version => 20160321135811) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2670,9 +2670,11 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.text     "configs"
     t.datetime "created_at",              :null => false
     t.datetime "updated_at",              :null => false
+    t.integer  "user_id", "bigint unsigned"
   end
 
   add_index "remote_integrations_mappings", ["remote_id", "type"], :name => "index_remote_integrations_mappings_on_remote_id_and_type", :unique => true
+  add_index "remote_integrations_mappings", ["account_id", "user_id", "type"], :name => "index_on_account_id_user_id_type"
 
   create_table "report_filters", :force => true do |t|
     t.integer  "report_type"

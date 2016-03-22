@@ -13,6 +13,14 @@ window.liveChat.adminSettings= function($){
 
 			$('#chat_enable').itoggle();
 			$('.toggle_widget').itoggle();
+			if(window.fc_cobrowsing == true){
+				$("#chat_cobrowsing").prop('checked', true);
+				$(".chat_cobrowsing").show(); 
+			}else{
+				$("#chat_cobrowsing").prop('checked', false);
+				$(".chat_cobrowsing").hide();
+			}
+			$('#chat_cobrowsing').itoggle();	
 		},
 
 		initializeWidget: function(widget){
@@ -51,6 +59,17 @@ window.liveChat.adminSettings= function($){
 				  }
 				}
 	    });
+
+			$('#chat_cobrowsing').on('change', function (){
+				if($("#chat_enable").is(":checked")){
+					var status = $(this).is(":checked") ? true : false;
+					if (status == window.fc_cobrowsing){
+						return;
+					}
+					window.fc_cobrowsing = status;
+					window.liveChat.mainSettings.toggleCobrowsing(status);
+				}
+			});
 			window.liveChat.mainSettings.bindMaxChatEvents();
 		}
 	}

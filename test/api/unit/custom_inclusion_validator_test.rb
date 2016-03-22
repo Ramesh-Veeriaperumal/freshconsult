@@ -1,10 +1,10 @@
 require_relative '../unit_test_helper'
 
 class CustomInclusionValidatorTest < ActionView::TestCase
-  class TestValidation
+  class TestValidation < MockTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute1, :attribute2, :attribute3, :error_options, :allow_string_param, :attribute4, :multi_error, :range_attr
+    attr_accessor :attribute1, :attribute2, :attribute3, :allow_string_param, :attribute4, :multi_error, :range_attr
     validates :attribute1, custom_inclusion: { in: [1, 2], message: 'attribute1_invalid', allow_nil: true }
     validates :attribute2, custom_inclusion: { in: [1, 2], required: true }
     validates :attribute3, custom_inclusion: { in: [1, 2], exclude_list: true, allow_blank: true }
@@ -22,7 +22,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ range_attr: :not_included }, errors)
-    assert_equal({ range_attr: { list: 'a..d' } }, error_options)
+    assert_equal({ range_attr: { list: 'a..d' }, attribute2: {} }, error_options)
   end
 
   def test_custom_message
@@ -33,7 +33,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ attribute1: 'attribute1_invalid' }, errors)
-    assert_equal({ attribute1: { list: '1,2' } }, error_options)
+    assert_equal({ attribute1: { list: '1,2'  }, attribute2: {} }, error_options)
   end
 
   def test_attribute_not_defined
@@ -41,8 +41,8 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute2: :required_and_inclusion }, errors)
-    assert_equal({ attribute2: { list: '1,2' } }, error_options)
+    assert_equal({ attribute2: :not_included }, errors)
+    assert_equal({ attribute2: { list: '1,2', code: :missing_field } }, error_options)
   end
 
   def test_attribute_defined
@@ -55,18 +55,6 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     assert_equal({ attribute2: { list: '1,2' } }, error_options)
   end
 
-  def test_error_options_not_defined
-    test = TestValidation.new
-    test.stubs(:methods).returns([])
-    test.attribute2 = 4
-    refute test.valid?
-    errors = test.errors.to_h
-    error_options = test.error_options.to_h
-    assert_equal({ attribute2: :not_included }, errors)
-    assert_equal({}, error_options)
-    test.unstub(:methods)
-  end
-
   def test_exclude_list_option_present
     test = TestValidation.new
     test.attribute2 = 1
@@ -75,7 +63,6 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ attribute3: :not_included }, errors)
-    assert_equal({}, error_options)
   end
 
   def test_disallow_nil
@@ -117,8 +104,8 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute1: 'attribute1_invalid', attribute2: :required_and_inclusion, attribute4: :not_included }, errors)
-    assert_equal({ attribute1: { list: '1,2' }, attribute2: { list: '1,2' }, attribute4: { list: '1,2' } }, error_options)
+    assert_equal({ attribute1: 'attribute1_invalid', attribute2: :not_included, attribute4: :not_included }, errors)
+    assert_equal({ attribute1: { list: '1,2' }, attribute2: { list: '1,2', code: :missing_field }, attribute3: {}, attribute4: { list: '1,2' } }, error_options)
   end
 
   def test_attributes_with_errors
@@ -127,6 +114,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     test.multi_error = '78'
     refute test.valid?
     assert test.errors.to_h.keys.count == 1
-    assert_equal({ multi_error: :data_type_mismatch }, test.errors.to_h)
+    assert_equal({ multi_error: :datatype_mismatch }, test.errors.to_h)
+    assert_equal({ attribute2: {}, multi_error: { expected_data_type: :Number, prepend_msg: :input_received, given_data_type: String } }, test.error_options)
   end
 end

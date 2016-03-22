@@ -4,10 +4,11 @@ class Reports::CustomSurveyReportsController < ApplicationController
 
   before_filter :set_report_type
   before_filter :set_selected_tab, :report_filter_data_hash, :only => :index
-  before_filter :max_limit?,                   :only => [:save_reports_filter]
+  before_filter :max_limit?,                                 :only => [:save_reports_filter]
   before_filter :construct_filters,                          :only => [:save_reports_filter,:update_reports_filter]
-
-  include ReadsToSlave
+  
+  around_filter :run_on_slave,                             :except => [:save_reports_filter,:update_reports_filter,:delete_reports_filter]
+  
   include Reports::CustomSurveyReport
   include ApplicationHelper
 

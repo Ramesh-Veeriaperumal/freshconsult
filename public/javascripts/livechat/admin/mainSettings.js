@@ -8,6 +8,15 @@ window.liveChat.mainSettings = function($){
       window.liveChat.jsonpRequest(request, function (resp){
         if(resp.status == "success"){
           $('.fc-mxc-count span').html(resp.result.site.max_chat);
+          if(resp.result.site.cobrowsing){
+            window.fc_cobrowsing = resp.result.site.cobrowsing;
+            $("#chat_cobrowsing").prop('checked', true);  
+            $("#chat_cobrowsing").trigger('change'); 
+          }else{
+            window.fc_cobrowsing = false;
+            $("#chat_cobrowsing").prop('checked', false);
+            $("#chat_cobrowsing").trigger('change');
+          }
         }
        });
     },
@@ -55,6 +64,26 @@ window.liveChat.mainSettings = function($){
             }
           }
         }
+      });
+    },
+
+    toggleCobrowsing: function(toggledState){
+      var self = this;
+      var data = {  
+        "siteId"    : window.SITE_ID, 
+        "domain"    : CURRENT_ACCOUNT.domain, 
+        "url"       : window.location.hostname , 
+        "protocol"  : window.location.protocol,
+        "status"    : toggledState,
+        "userId"    : CURRENT_USER.id,
+        "token"     : LIVECHAT_TOKEN
+      };
+      $.ajax({
+        type: "POST",
+        url: window.liveChat.URL + "/sites/updatecobrowsing",
+        data: data,
+        dataType: "json",
+        success: function(response){}
       });
     },
 

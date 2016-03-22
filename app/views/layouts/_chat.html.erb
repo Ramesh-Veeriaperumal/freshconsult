@@ -40,7 +40,8 @@ window.liveChat.URL = _url;
             'product_id' : '<%=current_portal.product ? current_portal.product.id : ""%>',
             'chat_enabled': <%=current_account.chat_setting.active%>,
             'widget_id'  : '<%=current_chat_widget.widget_id%>',
-            'chat_routing': <%=feature?(:chat_routing)%>
+            'chat_routing': <%=feature?(:chat_routing)%>,
+            'cobrowsing': <%=feature?(:cobrowsing)%>
     };
 
     jQuery(document).ready(function(){

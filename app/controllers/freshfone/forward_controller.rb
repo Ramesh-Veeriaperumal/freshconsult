@@ -232,7 +232,7 @@ class Freshfone::ForwardController < FreshfoneBaseController
       return update_call_meta_for_forward_calls(call) if call.meta.present?
       return if (/client/.match(params[:To]))
       Freshfone::CallMeta.create( :account_id => current_account.id,
-        :call_id => call.id, :meta_info => params[:To],
+        :call_id => call.id, :meta_info => {:agent_info => params[:To]},
         :device_type => call.direct_dial_number.present? ?
         Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial] : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:available_on_phone])
     end

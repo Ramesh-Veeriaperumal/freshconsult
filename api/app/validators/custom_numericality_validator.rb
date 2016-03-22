@@ -1,80 +1,77 @@
-class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValidator
+class CustomNumericalityValidator < ApiValidator
+  include ErrorOptions
+
   NOT_A_NUMBER = 'is not a number'
   NOT_AN_INTEGER = 'is not an integer'
   MUST_BE_GREATER_THAN = 'must be greater than'
   MUST_BE_LESS_THAN = 'must be less than'
 
-  def validate_each(record, attribute, value)
-    return if record.errors[attribute].present? || allow_unset?(record, attribute)
+  def initialize(options = {})
+    validator_options = options.dup # options would get modified and frozen in the next step.
+    super(options)
+    @default_validator_instance = ActiveModel::Validations::NumericalityValidator.new(validator_options)
+  end
 
-    message = options[:message]
-
-    # if ignore_string is present and true, proceed with numericality validator.
-    # else fall back to custom numericality which will not allow numbers in string representation say "1".
-    if !options[:ignore_string].nil? && record.send(options[:ignore_string])
-      super(record, attribute, value)
-    else
-      validate_numeric(record, attribute, value, message)
-    end
-
-    if record.errors[attribute].present?
-      if message
-        record.errors[attribute] = message
-      else
-        # if message is sent, it is not possible to distinguish between datatype_mismatch and invalid_value in custom_code,
-        # custom message has to either be handled in controller(eg. per_page) or should use single custom_code(eg. array numericality)
-        record.errors[attribute] = error_msg(record, attribute, value)
+  def validate_each
+    if allow_string?
+      @default_validator_instance.validate_each(record, attribute, value)
+      if record.errors[attribute].present?
+        default_datatype_mismatch?
+        record_error
       end
-      (record.error_options ||= {}).merge!(attribute => { data_type: data_type(options[:greater_than], options[:only_integer]) })
+    else
+      super
     end
   end
 
   private
 
-    def validate_numeric(record, attribute, value, _message)
-      if options[:only_integer]
-        record.errors[attribute] = NOT_AN_INTEGER and return unless value.is_a?(Integer)
+    def skip_input_info?
+      required_attribute_not_defined? || !datatype_mismatch? || array_value? || string_input_and_allow_string?
+    end
+
+    def error_code
+      if required_attribute_not_defined?
+        :missing_field
       else
-        record.errors[attribute] = NOT_A_NUMBER and return unless value.is_a?(Numeric) # not using Kernel.Float as Rails does as exception handling has to be done. Have to investigate further when an actual usecase arises.
-      end
-
-      if gt_value = options[:greater_than]
-        record.errors[attribute] = MUST_BE_GREATER_THAN and return if (value <= gt_value)
-      end
-
-      if lt_value = options[:less_than]
-        record.errors[attribute] = MUST_BE_LESS_THAN and return if (value >= lt_value)
+        :invalid_value unless datatype_mismatch?
       end
     end
 
-    def invalid_value_error(record, attribute)
+    def invalid?
+      datatype_mismatch? || invalid_value?
+    end
+
+    def datatype_mismatch?
+      return internal_values[:datatype_mismatch] if internal_values.key?(:datatype_mismatch)
+      klass = options[:only_integer] ? Integer : Numeric
+      internal_values[:datatype_mismatch] = !value.is_a?(klass)
+    end
+
+    def invalid_value?
+      gt_value = options[:greater_than]
+      lt_value = options[:less_than]
+      (gt_value && value <= gt_value) || (lt_value && value >= lt_value)
+    end
+
+    def message
+      options[:custom_message] || :datatype_mismatch
+    end
+
+    def default_datatype_mismatch?
       # numericality validator will add a error message like, "must be greater than.." if that particular constraint fails
-      record.errors[attribute].first.starts_with?(MUST_BE_GREATER_THAN) || record.errors[attribute].first.starts_with?(MUST_BE_LESS_THAN)
+      return internal_values[:datatype_mismatch] if internal_values.key?(:datatype_mismatch)
+      error = record.errors[attribute].first
+      internal_values[:datatype_mismatch] = !(error.starts_with?(MUST_BE_GREATER_THAN) || error.starts_with?(MUST_BE_LESS_THAN))
     end
 
-    def error_msg(record, attribute, value)
-      required = required_attribute_not_defined?(record, attribute, value)
-      if invalid_value_error(record, attribute)
-        record.errors[attribute] = required ? :required_and_invalid_number : :invalid_number
-      else # numericality validator will add a error message like, is not a number (or) must be an integer
-        record.errors[attribute] = required ? :required_and_data_type_mismatch : :data_type_mismatch
-      end
-    end
-
-    def data_type(greater_than, only_integer)
+    def expected_data_type
+      return internal_values[:expected_data_type] if internal_values.key?(:expected_data_type)
       # it is assumed that greater_than will always mean greater_than 0, when this assumption is invalidated, we have to revisit this method
-      if only_integer
-        greater_than ? :'Positive Integer' : :Integer
+      if options[:only_integer]
+        internal_values[:expected_data_type] = options[:greater_than] ? :'Positive Integer' : :Integer
       else
-        greater_than ? :'Positive Number' : :Number
+        internal_values[:expected_data_type] = options[:greater_than] ? :'Positive Number' : :Number
       end
-    end
-
-    def required_attribute_not_defined?(record, attribute, _value)
-      options[:required] && !record.instance_variable_defined?("@#{attribute}")
-    end
-
-    def allow_unset?(record, attribute)
-      options[:allow_unset] && !record.instance_variable_defined?("@#{attribute}")
     end
 end
