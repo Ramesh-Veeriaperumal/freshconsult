@@ -222,12 +222,13 @@ module SolutionHelper
 
 	def sidebar_drafts_list(drafts, container_id, active='')
 		content = %{<div class='tab-pane sidebar-list #{active}' id="#{container_id}"><ul>}
-    drafts.for_sidebar.first(3).each do |draft|
+    drafts_array = drafts.for_sidebar.first(4)
+    drafts_array.first(3).each do |draft|
       content << sidebar_drafts(draft)
     end
     content << %{</ul>}
     content << pjax_link_to( t('solution.sidebar.view_all'),
-    												drafts_path(container_id), { :class => "view-all"}) if drafts.size > 3
+    												drafts_path(container_id), { :class => "view-all"}) if drafts_array.length > 3
 		content << %{</div>}
 		content.html_safe
 	end
@@ -245,7 +246,8 @@ module SolutionHelper
 	def sidebar_feedbacks_list(feedbacks, container_id, active='')
 		filter = (container_id == 'feedbacks-me') ? 'my_article_feedback' : 'article_feedback'
 		content = %{<div class='tab-pane sidebar-list #{active}' id="#{container_id}"><ul>}
-    feedbacks.first(3).each do |feedback|
+    feedbacks_array = feedbacks.first(4)
+    feedbacks_array.first(3).each do |feedback|
       content << article_feedback(feedback)
     end
     content << %{</ul>}
@@ -255,7 +257,7 @@ module SolutionHelper
     												  	:class => "view-all",
     												  	:"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=#{filter}",
     												  	:"data-parallel-placeholder" => "#ticket-leftFilter"
-    												  }) if feedbacks.size > 3
+    												  }) if feedbacks_array.length > 3
 
 		content << %{</div>}
 		content.html_safe

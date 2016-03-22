@@ -85,7 +85,7 @@ class Solution::CategoriesController < ApplicationController
     @my_drafts = current_account.solution_drafts.by_user(current_user).preload({:article => :solution_article_meta})
     @feedbacks = current_account.
                     tickets.all_article_tickets.unresolved.
-                    preload(:requester, :ticket_status, :article) if current_account.launched?(:solution_home_feedbacks) && current_user.agent.all_ticket_permission
+                    preload(:requester, :ticket_status, :article) if current_user.agent.all_ticket_permission
     @orphan_categories = orphan_categories
     render :partial => "/solution/categories/sidebar", :formats => [:html]
   end
