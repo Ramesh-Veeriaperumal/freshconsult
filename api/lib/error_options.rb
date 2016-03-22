@@ -1,6 +1,6 @@
 module ErrorOptions
   UNIDENTIFIED_TYPE = 'Unidentified Type'
-  NULL_TYPE = 'Null Type'
+  NULL_TYPE = 'Null'
 
   def custom_error_options
     error_options = { expected_data_type: expected_data_type }

@@ -33,7 +33,7 @@ class ApiSlaPolicyValidationTest < ActionView::TestCase
     refute sla.valid?
     errors = sla.errors.full_messages
     assert errors.include?('Company ids datatype_mismatch')
-    assert_equal({ applicable_to: {}, company_ids: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type' } }, sla.error_options)
+    assert_equal({ applicable_to: {}, company_ids: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null'  } }, sla.error_options)
   end
 
   def test_company_ids_invalid_data_type

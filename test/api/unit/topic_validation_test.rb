@@ -38,8 +38,8 @@ class TopicValidationsTest < ActionView::TestCase
     assert error.include?('Locked datatype_mismatch')
     assert_equal({ title: { expected_data_type: String, code: :missing_field },
                    message: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Boolean' },
-                   sticky: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type' },
-                   locked: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type' } }, topic.error_options)
+                   sticky: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null'  },
+                   locked: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null'  } }, topic.error_options)
   end
 
   def test_inclusion_params_invalid

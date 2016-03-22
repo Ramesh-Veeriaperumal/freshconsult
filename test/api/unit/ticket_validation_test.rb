@@ -159,9 +159,9 @@ class TicketValidationTest < ActionView::TestCase
     assert errors.include?('Custom fields datatype_mismatch')
     assert errors.include?('Cc emails datatype_mismatch')
     assert errors.include?('Attachments blank')
-    assert_equal({ requester_id: {}, description: {}, attachments: {}, cc_emails: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type' },
-                   tags: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type' },
-                   custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null Type' } }, ticket.error_options)
+    assert_equal({ requester_id: {}, description: {}, attachments: {}, cc_emails: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null'  },
+                   tags: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null'  },
+                   custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null'  } }, ticket.error_options)
     Account.unstub(:current)
   end
 
