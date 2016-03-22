@@ -32,7 +32,7 @@ class ApiGroupsFlowTest < ActionDispatch::IntegrationTest
       assert group.agent_groups.count == 2
 
       put "/api/groups/#{group.id}", { agent_ids: nil }.to_json, @write_headers
-      match_json([bad_request_error_pattern('agent_ids', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type')])
+      match_json([bad_request_error_pattern('agent_ids', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null' )])
       assert_response 400
 
       put "/api/groups/#{group.id}", { agent_ids: [] }.to_json, @write_headers

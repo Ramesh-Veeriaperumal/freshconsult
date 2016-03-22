@@ -77,7 +77,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = create_sla_policy_with_only_company_ids
     put :update, construct_params({ id: sla_policy.id }, applicable_to: nil)
     assert_response 400
-    match_json([bad_request_error_pattern('applicable_to', :datatype_mismatch, expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null Type')])
+    match_json([bad_request_error_pattern('applicable_to', :datatype_mismatch, expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null' )])
   end
 
   def test_update_default_sla_policy

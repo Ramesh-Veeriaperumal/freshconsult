@@ -23,7 +23,7 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     error_options = test.error_options.to_h
     assert_equal({ attribute2: :datatype_mismatch }, errors)
     assert_equal({ attribute2: {  expected_data_type: :'Positive Integer', prepend_msg: :input_received,
-                                  given_data_type: 'Null Type' } }, error_options)
+                                  given_data_type: 'Null'  } }, error_options)
   end
 
   def test_allow_nil
