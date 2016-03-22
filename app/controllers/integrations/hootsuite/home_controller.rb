@@ -43,8 +43,7 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
               UserEmail.where(:email => params[:user_session][:username], :account_id => domain_mapping.account_id).first.user_id 
           end
           Integrations::HootsuiteRemoteUser.create(
-          :user_id => user_id,
-          :configs => {:pid => params[:pid]},
+          :configs => {:pid => params[:pid],:freshdesk_user_id => user_id},
           :account_id => domain_mapping.account_id,
           :remote_id => params[:uid])
           action = params[:is_plugin].present? ? "handle_plugin" : "index"

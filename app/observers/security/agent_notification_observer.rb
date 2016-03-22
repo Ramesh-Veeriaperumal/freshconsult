@@ -16,7 +16,6 @@ class Security::AgentNotificationObserver < ActiveRecord::Observer
         changed_attributes = user.previous_changes.keys & USER_ATTRIBUTES.keys
         unless changed_attributes.empty?
           return if skip_notification?(user.previous_changes)
-          Integrations::HootsuiteRemoteUser.where(:account_id => Account.current.id, :user_id => user.id).delete_all
           changed_attributes_names = changed_attributes.map{ |i| USER_ATTRIBUTES[i] }
           subject = "Your #{changed_attributes_names.to_sentence} in #{user.account.name} has been updated"
           SecurityEmailNotification.send_later(:deliver_agent_alert_mail, user, subject, changed_attributes_names)
