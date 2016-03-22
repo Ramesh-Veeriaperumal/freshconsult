@@ -3,6 +3,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
   self.primary_key = :id
 
   belongs_to_account
+  serialize :meta_info, Hash
   belongs_to :freshfone_call, :class_name => "Freshfone::Call"
   belongs_to :group
   
@@ -33,6 +34,23 @@ class Freshfone::CallMeta < ActiveRecord::Base
     :number => 2,
     :simple_routing => 3
   }
+
+  ISSUE_TYPE = [
+    ['imperfect_audio', :imperfect_audio],
+    ['dropped_call', :dropped_call],
+    ['audio_latency', :audio_latency],
+    ['one_way_audio', :one_way_audio],
+    ['other_issues', :other]
+  ]
+
+  RATING_TYPE = [
+    ['good', :good],
+    ['bad', :bad]
+  ]
+
+  ISSUE_TYPE_HASH = Hash[*ISSUE_TYPE.map { |i| [i[0], i[1]] }.flatten]
+
+  RATING_TYPE_HASH = Hash[*RATING_TYPE.map { |i| [i[0], i[1]] }.flatten]
 
   HUNT_TYPE_HASH = Hash[*HUNT_TYPE.map { |i| [i[0], i[1]] }.flatten]
   HUNT_TYPE_REVERSE_HASH = Hash[*HUNT_TYPE.map { |i| [i[1], i[0]] }.flatten]
@@ -131,7 +149,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   def update_device_meta(device_type, meta_info)
     self.device_type = device_type
-    self.meta_info = meta_info
+    self.meta_info[:agent_info] = meta_info
     save
   end
 
@@ -140,5 +158,20 @@ class Freshfone::CallMeta < ActiveRecord::Base
       agent[:response] == PINGED_AGENT_RESPONSE_HASH[:accepted]
     end.present?
   end
+
+  def update_feedback(params)
+    meta_info[:quality_feedback] = build_feedback_params(params)
+    save!
+  end
+
+  private
+
+    def build_feedback_params(params)
+      result = {}
+      result[:rating] = RATING_TYPE_HASH[params[:rating]] if params[:rating].present?
+      result[:issue] = ISSUE_TYPE_HASH[params[:issue]] if params[:issue].present?
+      result[:comment] = CGI::escapeHTML(params[:comment]) if params[:comment].present?
+      result
+    end
 
 end

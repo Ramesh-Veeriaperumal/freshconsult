@@ -1,4 +1,4 @@
-class CustomFieldDecorator < SimpleDelegator
+class CustomFieldDecorator < BaseDelegator
   class << self
     def display_name(name)
       "#{name[3..-1]}"

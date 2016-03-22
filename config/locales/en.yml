@@ -6776,7 +6776,7 @@ en:
       auth_error: "Error: It appears that you are not loading this page from inside a HootSuite stream"
       agent_error: "You should be an agent to view the tickets"
       no_ticket_msg: "You don't have any tickets for this filter selection"
-      signup_message: "Not a Freshdesk customer yet? SignUp"
+      signup_message: "Not a Freshdesk customer yet? Sign Up"
       header:
         tickets: "Your tickets"
         reply: "Reply"
@@ -6787,11 +6787,12 @@ en:
         priority: "Priority"
         all: "All"
       submit: "Submit"
+      reset: "Reset"
       search:
         keyword: "Keyword"
         ticket_id: "Ticket ID"
-        placeholder_keyword: "Enter Keyword"
-        placeholder_ticket_id: "Enter Ticket ID"
+        placeholder_keyword: "Search tickets by Keyword"
+        placeholder_ticket_id: "Search tickets by ticket id"
       logged_in_message: "Logged in as %{user_name}"
       domain:
         domain_message: "Please enter helpdesk URL"
@@ -6816,7 +6817,8 @@ en:
         requester: "Requester"
         already_converted: "This message is already converted to ticket"
         successfully_converted: "Ticket has been successfully created"
-        twitter_limit_exceed: "Your Tweet is over 140 characters. You'll have to be more clever."
+        twitter_limit_exceed: "You have exceeded Twitter's character limit. You'll have to modify your response."
+        plugin_error: "Please login to Freshdesk stream to use this plugin"
       note:
         human_name: "note"
       ticket:
@@ -7481,23 +7483,23 @@ en:
     view_all_compliant_tickets: View all compliant tickets
     view_all_violated_tickets: View all violated tickets
     saved_report: 
-        title : Report Title
-        dialog_header : Save as
-        edit_dialog_header : Edit Report
-        delete_dialog_header : Delete Report
-        dialog_sub_header : This report will be visible only to you
-        error_missing_title : Title is required
-        error_title_unavailable : This title already exists
-        delete_cnfm_message : Are you sure you want to delete this saved report?
-        deleted_message : Report has been deleted successfully!
-        deleted_failed_message : Report deletion failed.Try Again later.
-        updated_message : Report has been updated successfully!
-        update_failed_message : Report updation failed.Try Again later.
-        saved_message : Report has been saved successfully!
-        save_failed_message : Report saving failed.Try Again later.
-        limit_exceeded_message: You have exceeded the maximum limit. You are allowed to create %{count} saved filters per report
-    deprecated_message : "The old reports will no longer be available after 30th March, 2016"
-    deprecated_header : "This report will no longer be available after 30th March, 2016"
+      title: Report Title
+      dialog_header: Save as
+      edit_dialog_header: Edit Report
+      delete_dialog_header: Delete Report
+      dialog_sub_header: This report will be visible only to you
+      error_missing_title: Title is required
+      error_title_unavailable: This title already exists
+      delete_cnfm_message: Are you sure you want to delete this saved report?
+      deleted_message: Report has been deleted successfully!
+      deleted_failed_message: Report deletion failed.Try Again later.
+      updated_message: Report has been updated successfully!
+      update_failed_message: Report updation failed.Try Again later.
+      saved_message: Report has been saved successfully!
+      save_failed_message: Report saving failed.Try Again later.
+      limit_exceeded_message: You have exceeded the maximum limit. You are allowed to create %{count} saved filters per report
+    deprecated_message: "The old reports will no longer be available after 30th March, 2016"
+    deprecated_header: "This report will no longer be available after 30th March, 2016"
     deprecated_header_index: "These reports will no longer be available after 30th March, 2016"
     agent: Agent
     priority: Priority
@@ -7730,18 +7732,14 @@ en:
       agent: Agent
     customer_report:
       title:  Top Customer Analysis
-      received_tickets: Tickets Submitted
-      resolved_tickets: Tickets Resolved
-      response_violated: Response SLA Violations %
-      resolution_violated: Resolution SLA Violations %
-      customer_interactions: Customer Responses
-      agent_interactions: Agent Responses
       received_tickets: Tickets submitted
       resolved_tickets: Tickets resolved
       response_violated: Response SLA violations %
       resolution_violated: Resolution SLA violations %
       customer_interactions: Customer responses
       agent_interactions: Agent responses
+      top_5: Top 5
+      bottom_5: Bottom 5
     timesheet_reports:
       title: Time Sheet Summary
     phone_summary:
@@ -8059,6 +8057,16 @@ en:
       email_phone: "OR"
       save: "Save"
       saving: "Saving..."
+      call_quality: "Call quality"
+      imperfect_audio: "Imperfect Audio"
+      dropped_call: "Dropped call"
+      audio_latency: "Audio Latency"
+      one_way_audio: "One-way audio"
+      other_issues: "Other issues"
+      select_issue: "Select issue"
+      good_call: "Good"
+      bad_call: "Bad"
+      additional_comments: "Describe the issue"
       notes: "Notes"
       add_note_text: "Add Note"
       edit_note_text: "Edit Note"
@@ -8593,6 +8601,20 @@ en:
     date_range: "Date Range"
     date_invalid: Invalid date
     joining_chat: "Joining chat"
+    cobrowse_request : "Waiting for visitor to accept your request"
+    visitor_cobrowse_request : "Can agent control your current screen? "
+    cobrowsing_start_msg : "Your screenshare session has started"
+    cobrowsing_stop_msg : "Your screensharing session has ended" 
+    cobrowsing_deny_msg : "Your request was declined"
+    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"
+    cobrowsing_controlling_screen : "You are controlling the visitor’s screen"
+    cobrowsing_request_control : "Request visitor for control"
+    cobrowsing_stop_request : "End your screensharing session"
+    cobrowsing_request_control_rejected : "Your request was declined"
+    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"
+    cb_viewing_screen_vi : "Agent can view your screen "
+    cb_controlling_screen_vi : "Agent can control your screen"
+    cb_give_control_vi :  "Allow agent to control your screen"
     agent_joined_msg: "{{agent_name}} has joined the chat"
     agent_transfered_msg: "Your chat has been transferred to {{agent_name}}"
     agent_reopen_chat_msg: "{{agent_name}} reopened the chat"
@@ -8616,7 +8638,7 @@ en:
     everyone: "Everyone"
     portal_desc: "Support your customers in real-time within your Freshdesk portal."
     portal_option_info: "Show chat widget for"
-    maximum_chat_title: "Maximum Number Of Visitor Chats"
+    maximum_chat_title: "Maximum number of visitor chats"
     maximum_change_label: "Edit"
     maximum_chat_desc: "Set the limit for the number of chats an agent can handle simultaneously. When an agent reaches this limit, they will not receive any new chat notifications."
     maximum_chat_error: "You have reached the maximum chat limit."
@@ -8633,6 +8655,8 @@ en:
     widget_option_info: "If feedback widget not available, new ticket page will be opened"
     no_matching_agents: "No matching agents"
     chat_enabled_label: "Enable Chat"
+    cobrowsing : "Screenshare"
+    cobrowsing_info : "Guide your customers more effectively during your chat conversations by having an option to view and control their screen."
     routing: "Chat routing"
     routing_info: "Route all incoming chats to specific groups"
     dropdown_based_routing: "Dropdown based routing"

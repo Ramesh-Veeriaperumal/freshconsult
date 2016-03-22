@@ -53,12 +53,12 @@ window.liveChat.widgetCode = function($){
 
 			var url1 		= asset_url.cloudfront;
 			var code 		= "var fc_CSS=document.createElement('link');fc_CSS.setAttribute('rel','stylesheet');"+
-					"var isSecured = (window.location && window.location.protocol == 'https:');"+
-					"var lang = document.getElementsByTagName('html')[0].getAttribute('lang'); var rtlLanguages = ['ar','he']; var rtlSuffix = (rtlLanguages.indexOf(lang) >= 0) ? '-rtl' : '';"+
-					"fc_CSS.setAttribute('type','text/css');fc_CSS.setAttribute('href',((isSecured)? '"+url1+"':'"+asset_url.css+
-					"')+'/css/visitor'+rtlSuffix+'.css');"+"document.getElementsByTagName('head')[0].appendChild(fc_CSS);"+
+					"var fc_isSecured = (window.location && window.location.protocol == 'https:');"+
+					"var fc_lang = document.getElementsByTagName('html')[0].getAttribute('lang'); var fc_rtlLanguages = ['ar','he']; var fc_rtlSuffix = (fc_rtlLanguages.indexOf(fc_lang) >= 0) ? '-rtl' : '';"+
+					"fc_CSS.setAttribute('type','text/css');fc_CSS.setAttribute('href',((fc_isSecured)? '"+url1+"':'"+asset_url.css+
+					"')+'/css/visitor'+fc_rtlSuffix+'.css');"+"document.getElementsByTagName('head')[0].appendChild(fc_CSS);"+
 					"var fc_JS=document.createElement('script'); fc_JS.type='text/javascript'; fc_JS.defer=true;"+
-					"fc_JS.src=((isSecured)?'"+url1+"':'"+asset_url.js+"')+'/js/visitor.js';"+
+					"fc_JS.src=((fc_isSecured)?'"+url1+"':'"+asset_url.js+"')+'/js/visitor.js';"+
 					"(document.body?document.body:document.getElementsByTagName('head')[0]).appendChild(fc_JS);"+
 					"window.freshchat_setting= '"+Base64.encode(JSON.stringify(_widget))+"';";
 

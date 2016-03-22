@@ -110,7 +110,7 @@ class Freshfone::CallActions
 		current_call.direct_dial_number = performer
 		current_call.create_meta(:account => current_account,
 		:hunt_type => Freshfone::CallMeta::HUNT_TYPE[:number],
-		:meta_info => performer, 
+		:meta_info => {:agent_info => performer}, 
 		:transfer_by_agent => transfer_by_agent,
 		:device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
 		:pinged_agents => [ { :number => performer, :device_type => :external} ])
@@ -144,7 +144,7 @@ class Freshfone::CallActions
 
   def handle_failed_direct_dial_call(call)
     call.meta ||= current_account.freshfone_calls.find(call.id).create_meta(
-      :meta_info => call.direct_dial_number, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial])
+      :meta_info => {:agent_info => call.direct_dial_number}, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial])
     call.failed!
     telephony.redirect_call_to_voicemail call
   end

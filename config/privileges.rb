@@ -60,7 +60,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings ]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
-    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :acw]
+    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :wrap_call]
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
     resource :"freshfone/autocomplete"
@@ -288,7 +288,6 @@ Authority::Authorization::PrivilegeList.build do
     # Used by V2 API
     resource :"api_contact", :only => [:index, :show]
     resource :"api_company", :only => [:index, :show]
-    resource :"api_agent", :only => [:show]
   end
 
   # add_or_edit_contact

@@ -14,18 +14,18 @@ class ApiGroupValidationTest < ActionView::TestCase
                                      agent_ids: 123 }, nil)
     refute group.valid?
     errors = group.errors.full_messages
-    assert errors.include?('Name required_and_data_type_mismatch')
+    assert errors.include?('Name datatype_mismatch')
     assert errors.include?('Unassigned for not_included')
-    assert errors.include?('Escalate to data_type_mismatch')
-    assert errors.include?('Agent ids data_type_mismatch')
-    assert errors.include?('Description data_type_mismatch')
-    assert errors.include?('Auto ticket assign data_type_mismatch')
+    assert errors.include?('Escalate to datatype_mismatch')
+    assert errors.include?('Agent ids datatype_mismatch')
+    assert errors.include?('Description datatype_mismatch')
+    assert errors.include?('Auto ticket assign datatype_mismatch')
   end
 
   def test_array_nil
     group = ApiGroupValidation.new({ name: Faker::Name.name, agent_ids: nil }, nil)
     refute group.valid?
     errors = group.errors.full_messages
-    assert errors.include?('Agent ids data_type_mismatch')
+    assert errors.include?('Agent ids datatype_mismatch')
   end
 end

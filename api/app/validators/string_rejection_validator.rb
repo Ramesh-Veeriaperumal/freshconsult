@@ -1,22 +1,25 @@
-class StringRejectionValidator < ActiveModel::EachValidator
-  def validate_each(record, attribute, value)
-    return if record.errors[attribute].present?
-    excluded_chars = options[:excluded_chars] || []
-    case value
-    when Array
-      joined_array = value.join
-      reject_special_chars(record, attribute, joined_array, excluded_chars)
-    when String
-      reject_special_chars(record, attribute, value, excluded_chars)
-    end
-  end
-
+class StringRejectionValidator < ApiValidator
   private
 
-    def reject_special_chars(record, attribute, value, excluded_chars)
-      if excluded_chars.any? { |x| value.include?(x) }
-        record.errors[attribute] << :special_chars_present
-        (record.error_options ||= {}).merge!(attribute => { chars: excluded_chars.join('\',\'') })
+    def invalid?
+      field_value = formatted_value
+      options[:excluded_chars].any? { |x| field_value.include?(x) } if field_value
+    end
+
+    def formatted_value
+      case value
+      when Array
+        value.join
+      when String
+        value
       end
+    end
+
+    def message
+      :special_chars_present
+    end
+
+    def custom_error_options
+      { chars: options[:excluded_chars].join('\',\'') }
     end
 end

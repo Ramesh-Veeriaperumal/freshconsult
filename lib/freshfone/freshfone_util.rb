@@ -83,7 +83,7 @@ module Freshfone::FreshfoneUtil
     end
     call_meta = Freshfone::CallMeta.new( :account_id => current_account.id, :call_id => call.id,
               :transfer_by_agent => transfering_agent_id(call),
-              :meta_info => user_agent )
+              :meta_info => { :agent_info => user_agent })
     call_meta.device_type = is_native_mobile? ? mobile_device(user_agent) : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser]
     call_meta.save
   end
@@ -96,7 +96,7 @@ module Freshfone::FreshfoneUtil
     call.meta = Freshfone::CallMeta.new( :account_id => current_account.id, :call_id => call.id) if call.meta.blank?
     call_meta = call.meta
     call_meta.transfer_by_agent = transfering_agent_id(call) if call_meta.transfer_by_agent.blank?
-    call_meta.meta_info = user_agent if call_meta.meta_info.blank?
+    call_meta.meta_info = {:agent_info => user_agent} if call_meta.meta_info.blank?
     call_meta.device_type = (is_native_mobile? ? mobile_device(user_agent) : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser]) if call_meta.device_type.blank?
     call_meta.save
   end
