@@ -28,7 +28,8 @@ class SupportController < ApplicationController
     controller.send('flash').keys.blank?
   }, 
   :cache_path => proc { |c| 
-    Digest::SHA1.hexdigest("#{c.send(:current_portal).cache_prefix}#{c.request.original_fullpath}#{params[:portal_type]}")
+    cache_path = c.request.original_fullpath.gsub(/\?.*/, '')
+    Digest::SHA1.hexdigest("#{c.send(:current_portal).cache_prefix}#{cache_path}#{params[:portal_type]}")
   }
   
   def cache_enabled?
