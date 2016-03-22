@@ -59,7 +59,7 @@ class Integrations::Hootsuite::HootsuiteController < ApplicationController
   end
 
   def hootsuite_current_user
-    hootsuite_user.present? ? Account.current.users.find(hootsuite_user.user_id) : nil
+    hootsuite_user.present? ? Account.current.users.find(hootsuite_user.configs[:freshdesk_user_id]) : nil
   end
 end
   
