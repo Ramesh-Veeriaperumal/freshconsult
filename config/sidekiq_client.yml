@@ -87,7 +87,10 @@ defaults: &defaults
     - [marketplace_apps]
     - [pod_route_update]
     - [agent_destroy_cleanup]
-
+    - [helpdesk_ticket_body_queue]
+    - [helpdesk_note_body_queue]
+    - [helpdesk_update_ticket_body_queue]
+    - [helpdesk_update_note_body_queue]
 development:
   <<: *defaults
 
