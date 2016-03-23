@@ -8,7 +8,7 @@ window.App = window.App || {};
   App.Solutions = {
     current_module: '',
 
-    traslationDropdownOpts: {
+    translationDropdownOpts: {
       dropdownAutoWidth: 'true',
       dropdownCssClass: 'add-translation-dropdown',
       minimumResultsForSearch: 7

@@ -169,14 +169,7 @@
   .add-folder-link {
     font-size: 12px;
   }
-
-  .version_select_container {
-    padding: 3px 0;
-    @include float(left);
-    @include border-left(solid 1px #CCC);
-    @include padding-left(10px);
-  }
-
+  
   .add-translation-link {
     visibility: hidden;
     display: block;
@@ -186,70 +179,6 @@
     border-radius: 5px;
     border: 1px solid rgba(0,0,0,0.3);
     margin-top: 5px;
-  }
-
-  .language_icon, .language_symbol{
-    border: 1px solid;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 500;
-    color: #85b525;
-    text-align: center;
-    .language_name{
-      font-size: 10px;
-      font-weight: 600;
-      top: 1px;
-      position: relative;
-      text-transform:capitalize;
-    }
-    .ficon-pencil, .ficon-plus{
-      color: #FFF;
-      display: none;
-      position: relative;
-      top: 3px;
-    }
-    &.unpublished, &.unavailable{
-      color: #ccc;
-    }
-    &.outdated{
-      color: #DE3431;
-    }
-    &.normal {
-      color: #888;
-    }
-    &.draft {
-      .language_name:before {
-        content: "...";
-        position: absolute;
-        top: 10px;
-        @include left(1px);
-      }
-    }
-  }
-  .language_icon{
-    @include margin(0 10px 10px 0);
-    &:hover{
-      background-color: #666;
-      border: none;
-      width: 22px;
-      height: 22px;
-      .language_name{
-        display: none;
-      }
-      .ficon-pencil, .ficon-plus{
-        display: block;
-      }
-    }
-    &.disabled-links{
-      pointer-events: none;
-      cursor: default;
-    }
-    .language_name:hover{
-      display: none;
-    }
   }
   
   .warning-icon {
@@ -266,35 +195,6 @@
 
   .solutions .multilingual_draft .language_icon {
     @include margin-right(0);
-  }
-
-  .language-item {
-    margin: 5px;
-  }
-  .language_label{
-    position: relative;
-    top: 3px;
-    @include padding-left(2px);
-  }
-  
-  .language-tabs {
-    overflow: hidden;
-  }
-  .lang-tab{
-    @include float(left);
-    @include margin-right(15px);
-    padding-bottom: 8px;
-    border-bottom: 2px solid transparent;
-    &.selected{
-      border-bottom: 2px solid #CCC;
-      .language_label{
-        color: #333;
-      }
-    }
-    
-  }
-  .version_select_parent {
-    @include float(left);
   }
 }
 

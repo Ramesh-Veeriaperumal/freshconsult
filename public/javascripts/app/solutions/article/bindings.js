@@ -222,7 +222,7 @@ window.App = window.App || {};
 
     formatTranslationDropdown: function () {
       $('#version_selection').select2(
-        $.extend({}, App.Solutions.traslationDropdownOpts, {
+        $.extend({}, App.Solutions.translationDropdownOpts, {
           containerCssClass: 'add-translation-link',
           formatResult: App.Solutions.formatLangOptions
         })
