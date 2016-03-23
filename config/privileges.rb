@@ -367,7 +367,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
-    resource :user, :only => [:assume_identity]
+    resource :user, :only => [:assume_identity, :assumable_agents]
 
     # Used by V2 API
     resource :"api_contact", :only => [:make_agent]

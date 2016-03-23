@@ -605,6 +605,7 @@ Helpkit::Application.routes.draw do
   resources :users do
     collection do
       get :revert_identity
+      get :assumable_agents
     end
     member do
       delete :delete_avatar
