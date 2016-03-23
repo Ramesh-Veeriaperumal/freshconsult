@@ -67,7 +67,7 @@ window.App.Solutions = window.App.Solutions || {};
 
     formatTranslationDropdown: function () {
       $('#language_select').select2(
-        $.extend({}, App.Solutions.traslationDropdownOpts, {
+        $.extend({}, App.Solutions.translationDropdownOpts, {
           dropdownCssClass: "language-select-solution-search"
         })
       );
