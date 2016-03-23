@@ -2862,10 +2862,7 @@ en:
       manage_languages: "Manage Languages"
       title: "Multilingual Support"
       add_languages: "Add languages"
-      important: "Important"
-      warning_msg: |
-                    Primary language CANNOT be changed
-                    when multilingual support is enabled
+      warning_msg: "Note : Primary Languages cannot be changed once the supported languages are added."
       supported_languages_validity: "should be valid"
       portal_languages_validity: "should be a subset of supported languages"
       portal_language_inclusion: "Supported languages should not include the portal language"
@@ -5160,6 +5157,9 @@ en:
     change_favicon: "Change favicon"
     use_default: "Use default"
     last_published: "Portal was last published %{last_published} ago"
+    visible_in_portal: Visible in Portal
+    hidden_on_portal: Hidden on Portal
+    add_more_languages_msg: Add other languages that you support customers in here. You can then customize email notification templates for each supported language separately.
   lead: Lead
   comments: Comments
   forum_confirm_msg1: Are you sure you want to delete this category?

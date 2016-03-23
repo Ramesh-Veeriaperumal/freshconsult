@@ -416,12 +416,6 @@ $.validator.addMethod("portal_visibility_required", function(value, element) {
 
 $.validator.addClassRules("portal_visibility_required", { portal_visibility_required: true });
 
-$.validator.addMethod("supported_languages_required", function(value, element) {
-    return value != undefined;
-  }, 'Select atleast one supported language.');
-
-$.validator.addClassRules("supported_languages_required", { supported_languages_required: true });
-
 $.validator.addMethod("valid_custom_headers", function(value, element) {
   return value.split('\n').filter(Boolean).every(function(elem) {return elem.includes(":")});
 }, $.validator.format("Please type custom header in the format -  header : value"));
