@@ -7,12 +7,9 @@
           data-backdrop="static"  data-width="600" data-template-footer="false" data-title=""
         ><%= t('helpdesk_reports.reports_in_action')%>
         </a>
-        <% unless current_account.disabled_old_reports_ui? %>
+        <% if current_account.old_reports_enabled? %>
           <span class="seperator_reports"> | </span>
           <a class="report-link" href="<%=old_reports_url%>"><%= t('helpdesk_reports.view_old_reports')%></a>
-          <% unless current_account.old_reports_enabled? %>
-              <div class="deprecate-message"><%=t('helpdesk_reports.deprecated_message')%></div>
-          <% end %>
         <% end %>
       </div>
       <div class="clear"></div>

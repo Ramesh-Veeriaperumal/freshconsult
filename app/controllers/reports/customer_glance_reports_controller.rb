@@ -6,7 +6,7 @@ class Reports::CustomerGlanceReportsController < ApplicationController
   include Reports::GlanceReportControllerMethods
   
   before_filter { |c| c.requires_feature :advanced_reporting }
-  before_filter { redirect_to reports_path if current_account.disabled_old_reports_ui? }
+  before_filter { redirect_to reports_path unless current_account.old_reports_enabled? }
   before_filter :parse_wf_params,:set_selected_tab,
                 :only => [:generate,:generate_pdf,:send_report_email,:fetch_activity_ajax,:fetch_metrics]
   before_filter :filter_data,:set_selected_tab,:saved_reports, :only => [:index]
