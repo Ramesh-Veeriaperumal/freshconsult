@@ -73,10 +73,9 @@
 		jQuery('.tab-pane').each(function() {
 			var tab_pane = jQuery(this);
 			if(tab_pane.find('.common-icon-outdated').length) {
-				jQuery('#' + tab_pane.data('lang') + '-tab' + ' i').addClass('common-icon-outdated');
-			} else {
-				if(tab_pane.find('.common-icons-updated').length)
-					jQuery('#' + tab_pane.data('lang') + '-tab' + ' i').addClass('common-icons-updated');
+				jQuery('#' + tab_pane.data('lang') + '-tab' + ' .language_symbol').addClass('outdated');
+			} else if(tab_pane.find('.common-icons-updated').length < 1) {
+        jQuery('#' + tab_pane.data('lang') + '-tab' + ' .language_symbol').addClass('unavailable');
 			}
 			
 		});
@@ -206,13 +205,23 @@
 	<ul class="tabs nav-tabs" id="language-tab">
 		<li class="active" >
 			<a id="default-tab" href="#default" class="vertical-alignment" data-lang="default" data-content-id="description_default" data-toggle="tab">
+        <span class="language_symbol">
+          <span class="language_name">
+            <%= Language.for_current_account.short_code %>
+          </span>
+        </span>
 				<%= I18n.available_locales_with_name.select{ |val| val.last == @default_language.to_sym}.flatten.first%>
 			</a>
 		</li>
 		<% @supported_languages.each do |lang| %>
 			<li >
 				<a id="<%=lang%>-tab" href="#<%=lang%>" class="other_language_tabs" data-lang="<%=lang%>" data-content-id="description_<%=lang%>"  data-toggle="tab">
-					<i></i> <%= I18n.available_locales_with_name.select{ |val| val.last == lang.to_sym}.flatten.first%> </a>
+          <span class="language_symbol">
+            <span class="language_name">
+              <%= Language.find_by_code(lang).short_code %>
+            </span>
+          </span>
+					<%= I18n.available_locales_with_name.select{ |val| val.last == lang.to_sym}.flatten.first%> </a>
 			</li>
 		<%end%>	
 		<li class="default-lang">
