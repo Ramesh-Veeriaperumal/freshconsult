@@ -69,6 +69,8 @@ class Solution::FolderMeta < ActiveRecord::Base
 	after_create :clear_cache
 	after_destroy :clear_cache
 	after_update :clear_cache_with_condition
+	before_update :clear_customer_folders, :backup_folder_changes
+	after_commit :update_search_index, on: :update, :if => :visibility_updated?
 
 	validate :companies_limit_check
 
@@ -84,15 +86,8 @@ class Solution::FolderMeta < ActiveRecord::Base
 	  end).with_indifferent_access
 	end
 
-	def visible?(user)
-	  return true if (user and user.privilege?(:view_solutions))
-	  return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
-	  return true if (user and (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
-	  return true if (user && (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && user.company  && customer_folders.map(&:customer_id).include?(user.company.id))
-	end
-
-	def visible_in? portal
-	  solution_category_meta.portal_ids.include?(portal.id)
+	def visibility_type
+	  VISIBILITY_NAMES_BY_KEY[self.visibility]
 	end
 
   def customer_folders_attributes=(cust_attr)
@@ -115,6 +110,14 @@ class Solution::FolderMeta < ActiveRecord::Base
 	
 	def to_liquid
 		@solution_folder_drop ||= Solution::FolderDrop.new self
+	end
+
+	def update_search_index
+	  SearchSidekiq::IndexUpdate::FolderArticles.perform_async({ :folder_id => id }) if ES_ENABLED
+	end
+
+	def clear_customer_folders
+	  customer_folders.destroy_all if (visibility_changed? and visibility_was == VISIBILITY_KEYS_BY_TOKEN[:company_users])
 	end
 
 	private
@@ -191,4 +194,13 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def visible_in? portal
 	  solution_category_meta.portal_ids.include?(portal.id)
 	end
+
+	def backup_folder_changes
+	  @all_changes = self.changes.clone
+	end
+
+	def visibility_updated?
+	  @all_changes.has_key?(:visibility)
+	end
+
 end
