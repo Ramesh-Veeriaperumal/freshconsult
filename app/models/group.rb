@@ -7,7 +7,6 @@ class Group < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
   include BusinessCalendarExt::Association
-  include AccountOverrider
 
   after_commit :clear_cache
   after_commit  :create_round_robin_list, on: :create, :if => :round_robin_enabled?
