@@ -53,4 +53,7 @@ module ApiTicketConstants
 
   FIELD_MAPPINGS = { group: :group_id, agent: :responder_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
                      product: :product_id, ticket_type: :type }.freeze
+
+  SEARCH_ALLOWED_DEFAULT_FIELDS = ['status'].freeze
+
 end.freeze

@@ -98,8 +98,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"profile"
 
     # Used for API V2
-    resource :"ticket", :only => [:show, :create, :index]
     resource :"conversation", only: [:create, :ticket_conversations]
+    resource :"ticket", :only => [:show, :create, :index, :search]
 	end
 
   reply_ticket do
