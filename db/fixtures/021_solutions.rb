@@ -39,12 +39,14 @@
     end
   )
 
-  folder_metas = Solution::FolderMeta.all
+  all_folder_metas = account.solution_folder_meta.all
+  default_folder_meta = all_folder_metas.select(&:is_default).first
+  folder_metas = all_folder_metas.select { |fm| !fm.is_default }
   
   Solution::Folder.seed_many(:parent_id, :name, [
       ["FAQ", folder_metas[0]],
       ["Getting Started", folder_metas[1]],
-      [I18n.t('default_folder'), folder_metas[2]]
+      [I18n.t('default_folder'), default_folder_meta]
     ].map do |f|
       {
         :account_id => account.id,
@@ -54,4 +56,3 @@
       }
     end
   )
-  
