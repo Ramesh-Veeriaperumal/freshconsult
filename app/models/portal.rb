@@ -82,8 +82,8 @@ class Portal < ActiveRecord::Base
     account.forums.in_categories(forum_category_ids)
   end
 
-  def has_solution_category? category_id
-    return true unless portal_solution_categories.find_by_solution_category_id(category_id).nil?
+  def has_solution_category? category_meta_id
+    return true unless portal_solution_categories.find_by_solution_category_meta_id(category_meta_id).nil?
   end
   
   def has_forum_category? category

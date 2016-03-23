@@ -716,7 +716,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def solution_article_host article
-    (self.product && !self.product.portal_url.blank? && (self.product.portal.has_solution_category?(article.folder.category_id))) ? self.product.portal_url : account.host
+    (self.product && !self.product.portal_url.blank? && (self.product.portal.has_solution_category?(article.solution_folder_meta.solution_category_meta_id))) ? self.product.portal_url : account.host
   end
   
   def portal_name
