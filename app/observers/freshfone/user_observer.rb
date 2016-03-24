@@ -8,9 +8,9 @@ class Freshfone::UserObserver < ActiveRecord::Observer
   end
 
   def after_commit(freshfone_user)
+    check_for_queued_calls(freshfone_user) if freshfone_user.previous_changes[:presence].present?
     publish_capability_token(freshfone_user.user, freshfone_user.get_capability_token) unless
         freshfone_user.previous_changes[:capability_token_hash]
-    check_for_queued_calls(freshfone_user) if freshfone_user.previous_changes[:presence].present?
   end
 
   def after_destroy(freshfone_user)
