@@ -122,9 +122,9 @@ module Mobile::Actions::Push_Notifier
   def publish_to_mobile_channel message, channel_id
 	  channel = MOBILE_NOTIFICATION_MESSAGE_CHANNEL % {:channel_id => channel_id}
 	  Rails.logger.debug "DEBUG :: pushing to channel : #{channel}"
-      newrelic_begin_rescue do
-          $redis_mobile.publish(channel, message)
-      end
+    newrelic_begin_rescue do
+      $redis_mobile.perform_redis_op("publish", channel, message)
+    end
   end
 
   

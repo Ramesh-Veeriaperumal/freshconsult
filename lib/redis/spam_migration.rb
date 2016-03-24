@@ -3,8 +3,8 @@ module Redis::SpamMigration
 
 	def set_key(key)
 		newrelic_begin_rescue do
-			$redis_others.set(key, Time.now.utc.to_i)
-			$redis_others.expire(key, 60.days.seconds.to_i)
+			$redis_others.perform_redis_op("set", key, Time.now.utc.to_i)
+			$redis_others.perform_redis_op("expire", key, 60.days.seconds.to_i)
 		end 
 	end
 
