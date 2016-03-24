@@ -63,7 +63,7 @@ class TicketsController < ApiApplicationController
   end
 
   def show
-    embed_associations if @include_validation.include_array.present?
+    sideload_associations if @include_validation.include_array.present?
     super
   end
 
@@ -73,7 +73,7 @@ class TicketsController < ApiApplicationController
 
   private
 
-    def embed_associations 
+    def sideload_associations 
       @include_validation.include_array.each do |association|
         instance_variable_set("@#{association}", send(association))
         increment_api_credit_by(1) # for embedded associations
