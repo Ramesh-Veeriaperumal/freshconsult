@@ -137,7 +137,8 @@ class Solution::FoldersController < ApplicationController
     end
 
     def validate_and_set_customers
-      customer_ids = params[:customers] || ((params[nscname] || {})[:customer_folders_attributes] || {})[:customer_id] || []
+      customer_ids = params[:customers] || ((params[nscname] || {})[:customer_folders_attributes] || {})[:customer_id]
+      return if customer_ids.nil?
       customer_ids = customer_ids.join(',') if customer_ids.kind_of?(Array)
       valid_customer_ids = valid_customers(customer_ids) || []
       if params[nscname].present?

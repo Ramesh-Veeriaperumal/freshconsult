@@ -11,8 +11,6 @@ class Solution::Folder < ActiveRecord::Base
     :order => "position",
     :class_name =>'Solution::Article'
 
-  has_many :customer_folders , :class_name => 'Solution::CustomerFolder'
-
   belongs_to :solution_folder_meta, :class_name => 'Solution::FolderMeta', :foreign_key => 'parent_id'
 
   has_many :solution_article_meta, :through => :solution_folder_meta, :class_name => 'Solution::ArticleMeta'
