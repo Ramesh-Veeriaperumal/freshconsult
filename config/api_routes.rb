@@ -1,6 +1,9 @@
 Helpkit::Application.routes.draw do
   api_routes = proc do
     resources :tickets, except: [:new, :edit] do
+      collection do
+        post :outbound_email, to: 'tickets#compose_email'
+      end
       member do
         put :restore
         get :time_entries, to: 'time_entries#ticket_time_entries'

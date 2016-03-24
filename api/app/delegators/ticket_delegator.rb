@@ -3,7 +3,8 @@ class TicketDelegator < BaseDelegator
   attr_accessor :ticket_fields
   validate :group_presence, if: -> { group_id && attr_changed?('group_id') }
   validate :responder_presence, if: -> { responder_id && attr_changed?('responder_id') }
-  validates :email_config, presence: true, if: -> { email_config_id && attr_changed?('email_config_id') }
+  validate :email_config_presence,  if: :outbound_email?
+  validates :email_config, presence: true, if: -> { errors[:email_config_id].blank? && email_config_id && attr_changed?('email_config_id') }
   validate :product_presence, if: -> { product_id && attr_changed?('product_id', schema_less_ticket) }
   validate :user_blocked?, if: -> { requester_id && errors[:requester].blank? && attr_changed?('requester_id') }
   validates :custom_field,  custom_field: { custom_field:
@@ -48,6 +49,15 @@ class TicketDelegator < BaseDelegator
     else
       self.responder = responder
     end
+  end
+
+  def email_config_presence
+    if !Account.current.restricted_compose_enabled? || User.current.can_view_all_tickets?
+      email_config = Account.current.email_configs.where(id: email_config_id).first
+    elsif (User.current.group_ticket_permission || User.current.assigned_ticket_permission)
+      email_config = Account.current.email_configs.where("id = ? AND (group_id is NULL or group_id in (?))", email_config_id, User.current.agent_groups.pluck(:group_id)).first
+    end
+    errors[:email_config_id] << :"can't be blank" unless email_config
   end
 
   def user_blocked?

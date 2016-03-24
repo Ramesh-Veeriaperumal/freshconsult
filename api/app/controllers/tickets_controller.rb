@@ -3,11 +3,12 @@ class TicketsController < ApiApplicationController
   include Helpdesk::TagMethods
   include CloudFilesHelper
   include TicketConcern
-  decorate_views
+  decorate_views({decorate_object: [:show, :create, :update, :compose_email]})
 
   around_filter :run_on_slave, only: [:index]
 
   before_filter :ticket_permission?, only: [:destroy]
+  before_filter :check_compose_feature?, only: [:compose_email]
 
   def create
     assign_protected
@@ -19,11 +20,21 @@ class TicketsController < ApiApplicationController
       if @item.save_ticket
         @ticket = @item # Dirty hack. Should revisit.
         render_201_with_location(item_id: @item.display_id)
-        notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
+        notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank? || compose_email?
       else
         render_errors(@item.errors)
       end
     end
+  end
+
+  def compose_email
+    # by default, outbound tickets will be created as closed tickets.
+    params[cname][:status] = ApiTicketConstants::CLOSED unless params[cname].key?(:status) 
+    proceed_filter = true
+    [:validate_params, :sanitize_params, :before_build_object, :build_object].each do |filter|
+      proceed_filter = send(filter) unless performed? || proceed_filter.is_a?(FalseClass)
+    end
+    create unless performed? || proceed_filter.is_a?(FalseClass)
   end
 
   def update
@@ -65,6 +76,10 @@ class TicketsController < ApiApplicationController
         instance_variable_set("@#{association}", send(association))
         increment_api_credit_by(1) # for embedded associations
       end
+    end
+
+    def check_compose_feature?
+      render_request_error(:require_feature, 403, feature: "compose_email".titleize) unless Account.current.compose_email_enabled?
     end
 
     def decorator_options
@@ -206,10 +221,11 @@ class TicketsController < ApiApplicationController
       field = "ApiTicketConstants::#{action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert) # Using map instead of invert does not show any perf improvement.
+      params[cname][:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email] if compose_email?
       load_ticket_status # loading ticket status to avoid multiple queries in model.
       params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
       ticket = TicketValidation.new(params_hash, @item, string_request_params?)
-      render_custom_errors(ticket, true) unless ticket.valid?
+      render_custom_errors(ticket, true) unless ticket.valid?(action_name.to_sym)
     end
 
     def assign_protected
@@ -278,6 +294,10 @@ class TicketsController < ApiApplicationController
 
     def restore?
       @restore ||= current_action?('restore')
+    end
+
+    def compose_email?
+      @compose_email ||= current_action?('compose_email')
     end
 
     def error_options_mappings
