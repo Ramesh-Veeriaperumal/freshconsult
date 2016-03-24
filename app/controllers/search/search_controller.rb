@@ -4,6 +4,8 @@ class Search::SearchController < ApplicationController
 
 	include Search::SearchResultJson
 	
+	before_filter :privilege_check, :only => :index , :if => :is_native_mobile?
+
 	before_filter :set_search_sort_cookie, :only => :index
 
 	before_filter :initialize_search_parameters
@@ -196,7 +198,7 @@ class Search::SearchController < ApplicationController
         array = []
         @result_set.each do |item|
           next if item.is_a?(Helpdesk::ArchiveTicket)
-          array << item.to_mob_json_search
+          array << item.to_mob_json_search if item
         end
         render :json => array
       end
@@ -243,4 +245,9 @@ class Search::SearchController < ApplicationController
 		def set_result_json
 			@result_json = @result_json.to_json
 		end
+
+		def privilege_check 
+			access_denied if params[:search_class].to_s.eql?("customer") && !privilege?(:view_contacts)
+			access_denied if params[:search_class].to_s.eql?("solutions") && !privilege?(:view_solutions)
+		end	
 end
