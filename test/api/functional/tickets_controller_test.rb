@@ -2111,18 +2111,47 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern_with_notes(ticket))
   end
 
+  def test_show_with_requester
+    ticket.update_column(:deleted, false)
+    get :show, controller_params(id: ticket.display_id, include: 'requester')
+    assert_response 200
+    match_json(ticket_pattern_with_association(ticket, false, false, true, false))
+  end
+
+  def test_show_with_company
+    ticket.update_column(:deleted, false)
+    get :show, controller_params(id: ticket.display_id, include: 'company')
+    assert_response 200
+    match_json(ticket_pattern_with_association(ticket, false, false, false, true))
+  end
+
+  def test_show_with_all_associations
+    show_ticket = ticket
+    show_ticket.update_column(:deleted, false)
+    get :show, controller_params(id: show_ticket.display_id, include: 'conversations,requester,company')
+    assert_response 200
+    match_json(ticket_pattern_with_association(show_ticket))
+  end
+
   def test_show_with_empty_include
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: '')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company')])
+  end
+
+  def test_show_with_wrong_type_include
+    ticket.update_column(:deleted, false)
+    get :show, controller_params(id: ticket.display_id, include: ['test'])
+    assert_response 400
+    match_json([bad_request_error_pattern('include', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: 'Array')])
   end
 
   def test_show_with_invalid_param_value
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'test')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company')])
   end
 
   def test_show_with_invalid_params

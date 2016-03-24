@@ -30,6 +30,42 @@ module TicketsTestHelper
     ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
 
+  def ticket_pattern_with_association(ticket, limit=false, notes=true, requester=true, company=true)
+    result_pattern = ticket_pattern(ticket)
+    if notes 
+      notes_pattern = []
+      ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
+        notes_pattern << index_note_pattern(n)
+      end
+      notes_pattern = notes_pattern.take(10) if limit
+      result_pattern.merge!(conversations: notes_pattern.ordered!)
+    end
+    if requester && ticket.requester
+      result_pattern.merge!(requester: requester_pattern(ticket.requester))
+    end
+    if company && ticket.company
+      result_pattern.merge!(company: company_pattern(ticket.company))
+    end
+    result_pattern
+  end
+
+  def requester_pattern(requester)
+    {
+      id: requester.id,
+      name: requester.name,
+      email: requester.email,
+      mobile: requester.mobile,
+      phone: requester.phone
+    }
+  end
+
+  def company_pattern(company)
+    {
+      id: company.id,
+      name: company.name
+    }
+  end
+
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
     custom_field = ticket.custom_field.map { |k, v| [TicketDecorator.display_name(k), v] }.to_h

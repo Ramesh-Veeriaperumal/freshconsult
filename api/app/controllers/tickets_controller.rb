@@ -50,10 +50,7 @@ class TicketsController < ApiApplicationController
   end
 
   def show
-    if params[:include] == 'conversations'
-      @conversations = conversations.limit(ConversationConstants::MAX_INCLUDE)
-      increment_api_credit_by(1) # for embedded conversations
-    end
+    embed_associations if @include_validation.include_array.present?
     super
   end
 
@@ -62,6 +59,13 @@ class TicketsController < ApiApplicationController
   end
 
   private
+
+    def embed_associations 
+      @include_validation.include_array.each do |association|
+        instance_variable_set("@#{association}", send(association))
+        increment_api_credit_by(1) # for embedded associations
+      end
+    end
 
     def decorator_options
       super({ name_mapping: (@name_mapping || get_name_mapping) })
@@ -94,10 +98,21 @@ class TicketsController < ApiApplicationController
       end
     end
 
+    # needed for side loading association
     def conversations
       # eager_loading note_old_body is unnecessary if all conversations are retrieved from cache.
       # There is no best solution for this
-      @item.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
+      @item.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at).limit(ConversationConstants::MAX_INCLUDE)
+    end
+
+    # used in side loading association 
+    def requester     
+      @item.requester
+    end
+
+    # used in side loading association 
+    def company
+      @item.company
     end
 
     def paginate_options(is_array = false)
@@ -135,10 +150,8 @@ class TicketsController < ApiApplicationController
 
     def validate_url_params
       params.permit(*ApiTicketConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
-      if params.key?(:include) && ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.exclude?(params[:include])
-        errors = [[:include, :not_included]]
-        render_errors errors, list: ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.join(', ')
-      end
+      @include_validation = TicketIncludeValidation.new(params)
+      render_errors @include_validation.errors, @include_validation.error_options unless @include_validation.valid?
     end
 
     def sanitize_params
