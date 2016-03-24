@@ -4,15 +4,13 @@ class Freshfone::UserObserver < ActiveRecord::Observer
   include Freshfone::NodeEvents
 
   def after_save(freshfone_user)
-    if freshfone_user.presence_changed?
-      publish_presence(freshfone_user)
-      check_for_queued_calls(freshfone_user)
-    end
+    publish_presence(freshfone_user) if freshfone_user.presence_changed?
   end
 
   def after_commit(freshfone_user)
     publish_capability_token(freshfone_user.user, freshfone_user.get_capability_token) unless
         freshfone_user.previous_changes[:capability_token_hash]
+    check_for_queued_calls(freshfone_user) if freshfone_user.previous_changes[:presence].present?
   end
 
   def after_destroy(freshfone_user)
@@ -33,7 +31,7 @@ class Freshfone::UserObserver < ActiveRecord::Observer
     def check_for_queued_calls(freshfone_user)
       return unless freshfone_user.online?
       add_to_call_queue_worker(
-        freshfone_user.presence_was == Freshfone::User::PRESENCE[:busy],
+        freshfone_user.previous_changes[:presence].first == Freshfone::User::PRESENCE[:busy],
         freshfone_user.user_id, {})
     end
 end
