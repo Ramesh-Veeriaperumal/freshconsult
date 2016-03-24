@@ -1,5 +1,5 @@
 notes = @ticket.conversation_since(params[:since_id]).reverse
-page.insert_html :bottom, 'last_notes', render(:partial => "note", :collection => notes)
+page.insert_html :bottom, 'last_notes', render(:partial => "note", :collection => notes, :locals =>{:ticket => @ticket })
 last_note = notes.last
 page << "jQuery('.leftcontent').animate({
         	'scrollTop' : jQuery('#helpdesk_note_"+last_note.id.to_s+"').position().top

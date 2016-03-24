@@ -46,5 +46,9 @@ module ApiDiscussions
       def scoper
         current_account.posts
       end
+
+      def sanitize_params
+        ParamsHelper.assign_and_clean_params({ body: :body_html }, params[cname])
+      end
   end
 end

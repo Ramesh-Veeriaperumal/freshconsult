@@ -2,8 +2,10 @@ json.set! :cc_emails, @item.cc_email[:cc_emails]
 json.set! :fwd_emails, @item.cc_email[:fwd_emails]
 json.set! :reply_cc_emails, @item.cc_email[:reply_cc]
 
-json.extract! @item, :description, :description_html, :fr_escalated, :spam, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :company_id, :custom_fields
+json.extract! @item, :fr_escalated, :spam, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :company_id, :custom_fields
 
+json.set! :description, @item.description_html
+json.set! :description_text, @item.description
 json.set! :to_emails, @item.schema_less_ticket.to_emails
 json.set! :product_id, @item.schema_less_ticket.product_id
 json.set! :id, @item.display_id

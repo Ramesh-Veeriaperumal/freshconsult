@@ -38,7 +38,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
   def test_agent_filter_with_invalid_email
     get :index, controller_params(email: '!@#$%')
     assert_response 400
-    match_json([bad_request_error_pattern('email', :not_a_valid_email)])
+    match_json([bad_request_error_pattern('email', :invalid_format, accepted: 'valid email address')])
   end
 
   def test_agent_filter_mobile
@@ -89,6 +89,17 @@ class ApiAgentsControllerTest < ActionController::TestCase
     match_json(agent_pattern(sample_agent))
   end
 
+  def test_show_agent_with_view_contact_privilege_only
+    User.any_instance.stubs(:privilege?).with(:view_contacts).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    sample_agent = @account.all_agents.first
+    get :show, construct_params(id: sample_agent.user.id)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
   def test_show_missing_agent
     get :show, construct_params(id: 60_000)
     assert_response :missing
@@ -115,5 +126,14 @@ class ApiAgentsControllerTest < ActionController::TestCase
     get :me, controller_params
     assert_response 200
     match_json(agent_pattern(@account.all_agents.find(@agent.agent.id)))
+  end
+
+  # Agent email filter, passing an array to the email attribute
+
+  def test_agent_filter_email_array
+    email = sample_agent = @account.all_agents.first.user.email
+    get :index, controller_params({ email: [email] }, false)
+    assert_response 400
+    match_json([bad_request_error_pattern('email', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
   end
 end

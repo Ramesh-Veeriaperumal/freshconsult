@@ -26,6 +26,7 @@ class Discussions::TopicsController < ApplicationController
 
 	def new
 		@topic = current_account.topics.new
+		@topic.forum_id = params[:forum_id]
 		populate_topic if params[:ticket_id]
 	end
 

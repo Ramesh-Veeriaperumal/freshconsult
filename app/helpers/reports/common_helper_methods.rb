@@ -95,14 +95,9 @@ HTML
   	end
 
     def report_filter_data_hash
-      report_type_id  = REPORT_TYPE_BY_KEY[report_type]
-      r_f = current_user.report_filters.by_report_type(report_type_id).order_by_latest
-      r_f.inject({}) do |r, h|
-        r[h[:id]] = {:name => h[:filter_name], :data => h[:data_hash]}
-        r
-      end
-      @report_filter_data = r_f
-    end
+		report_type_id = REPORT_TYPE_BY_KEY[report_type]
+		@report_filter_data = current_user.report_filters.by_report_type(report_type_id).order_by_latest.select("id,filter_name,data_hash")
+	end
 
     def construct_filters
       @data_map = {}

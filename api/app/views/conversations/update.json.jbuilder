@@ -1,5 +1,7 @@
-json.extract! @item, :body, :body_html, :id, :incoming, :private, :user_id, :support_email
+json.extract! @item, :id, :incoming, :private, :user_id, :support_email
 
+json.set! :body, @item.body_html
+json.set! :body_text, @item.body
 json.set! :ticket_id, @item.notable.display_id
 json.set! :to_emails, @item.schema_less_note.try(:to_emails)
 

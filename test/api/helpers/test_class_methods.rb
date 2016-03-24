@@ -1,4 +1,9 @@
 module TestClassMethods
+  @@last_gc_run = Time.now
+  RESERVED_IVARS = %w(@loaded_fixtures @test_passed @fixture_cache @method_name @_assertion_wrapped @_result @__name__ @account).map(&:to_sym)
+  @@reserved_ivars = RESERVED_IVARS
+  DEFERRED_GC_THRESHOLD = (ENV['DEFER_GC'] || 1.0).to_f
+
   def get_agent
     create_test_account
     @account = Account.first
@@ -9,6 +14,26 @@ module TestClassMethods
     session = UserSession.create!(@agent)
     session.save
     set_request_auth_headers
+  end
+
+  def clear_instance_variables
+    (instance_variables - @@reserved_ivars).each do |ivar|
+      instance_variable_set(ivar, nil)
+    end
+  end
+
+  def begin_gc_deferment
+    GC.disable if DEFERRED_GC_THRESHOLD > 0
+  end
+
+  def reconsider_gc_deferment
+    if DEFERRED_GC_THRESHOLD > 0 && Time.now - @@last_gc_run >= DEFERRED_GC_THRESHOLD
+      GC.enable
+      GC.start
+      GC.disable
+
+      @@last_gc_run = Time.now
+    end
   end
 
   def set_request_params

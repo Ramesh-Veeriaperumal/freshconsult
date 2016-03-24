@@ -56,10 +56,12 @@ kind = note.kind
 				</div>
 			<% end %>
 			<div class="details" id='<%= notedetails %>' data-note-id="<%= note.id %>">
-	        <%= note.body_html.html_safe %>
-      		<% if note.fwd_email? %>
-			      <div class="freshdesk_quote" data-remote-quote=true></div>
-			    <% end %>
+	        <div class="quoted-text-container">
+	        	<%= note.body_html.html_safe %>
+      			<% if note.fwd_email? %>
+			      	<div class="freshdesk_quote" data-remote-quote=true></div>
+			    	<% end %>
+			    </div>
 	    </div>
 			<div id="note_attachments_container_<%= note.id%>">
         <% unless note.all_attachments.empty? and note.cloud_files.empty? %>

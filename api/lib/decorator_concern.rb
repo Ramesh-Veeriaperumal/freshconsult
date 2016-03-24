@@ -5,17 +5,16 @@ module DecoratorConcern
     decorate_object: [:create, :update, :show],
     decorate_objects: [:index]
   }
-  DECORATOR_METHOD_MAPPING = ACTION_MAPPING.each_with_object(Hash.new){ |(k, v), inverse| v.each {|e| inverse[e] = k}}
+  DECORATOR_METHOD_MAPPING = ACTION_MAPPING.each_with_object({}) { |(k, v), inverse| v.each { |e| inverse[e] = k } }
 
   module ClassMethods
-
     attr_reader :decorator_method_mapping
 
     def decorate_views(options = {})
       custom_options = ACTION_MAPPING.merge(options)
-      custom_method_mapping = custom_options.each_with_object(Hash.new){ |(k, v), inverse| v.each {|e| inverse[e] = k}}
+      custom_method_mapping = custom_options.each_with_object({}) { |(k, v), inverse| v.each { |e| inverse[e] = k } }
       @decorator_method_mapping = DECORATOR_METHOD_MAPPING.merge(custom_method_mapping)
-      alias_method_chain :render, :before_render_action 
+      alias_method_chain :render, :before_render_action
     end
 
     def decorator_name
@@ -30,7 +29,7 @@ module DecoratorConcern
 
   def render_with_before_render_action(*options, &block)
     send(decorator_method) if decorator_method
-    render_without_before_render_action *options, &block
+    render_without_before_render_action(*options, &block)
   end
 
   def decorate_objects

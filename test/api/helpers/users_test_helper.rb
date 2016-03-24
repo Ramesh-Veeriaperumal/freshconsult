@@ -19,6 +19,8 @@ module UsersTestHelper
       }
     end
 
+    expected_tags = expected_output[:tags] ? expected_output[:tags].map(&:downcase) : nil
+
     result = {
       active: expected_output[:active] || contact.active,
       address: expected_output[:address] || contact.address,
@@ -31,7 +33,7 @@ module UsersTestHelper
       mobile: expected_output[:mobile] || contact.mobile,
       name: expected_output[:name] || contact.name,
       phone: expected_output[:phone] || contact.phone,
-      tags: expected_output[:tags] || contact.tags.map(&:name),
+      tags: expected_tags || contact.tags.map{|x| x.name.downcase},
       time_zone: expected_output[:time_zone] || contact.time_zone,
       twitter_id: expected_output[:twitter_id] || contact.twitter_id,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
@@ -42,7 +44,7 @@ module UsersTestHelper
     }
 
     if contact_merge_enabled?
-      result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role:false).map(&:email))
+      result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role: false).map(&:email))
     end
     result
   end
@@ -94,7 +96,7 @@ module UsersTestHelper
   end
 
   def v2_contact_params
-    comp  = Company.first || create_company
+    comp  = create_company
     {
       name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10),  phone: '1234567892',
       mobile: '1234567893', description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
@@ -106,8 +108,8 @@ module UsersTestHelper
     contact.reload.emails - [contact.reload.email]
   end
 
-  def add_user_email(contact, email, options={})
-    params = {email: email, user_id: contact.id}
+  def add_user_email(contact, email, options = {})
+    params = { email: email, user_id: contact.id }
     params.merge!(options) if options.any?
     u = UserEmail.new(params)
     u.save

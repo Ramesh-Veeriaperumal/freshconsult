@@ -13,6 +13,12 @@
 		box-shadow: inset 0 0 5px rgba(255,140,0,1); 
 	}
 }
+.quality_feedback_modal_body{
+	.modal-body {
+  		max-height: 510px;
+  		padding: 10px 20px 22px;
+  }
+}
 
 .ongoing {
 	margin: 1px 1px;
@@ -576,6 +582,44 @@
 	 font-weight: 300;
 	 color: #000;
 	 margin-top: -4px;
+}
+.quality_feedback_container{
+	 background-color: #f8f8f8;
+	 margin: 10px -20px -20px -20px;
+}
+.call_quality_button{
+	 border-radius: 18px;
+	 &.active{ 
+	 		background-color: #fff;
+	 	 	box-shadow: inset 0 2px 5px -1px rgba(0,0,0,0.4);
+	 }
+	 &.good_call{
+	 	color: #82af56;
+	 	&.active{
+	 		 border-color: #82af56;
+	 	}
+	 }
+	 &.bad_call{
+	 	color: #ee715e;
+	 	&.active{ 
+	 		 border-color: #ee715e;
+	 	}
+	 }
+}
+.call_quality_icon{
+	 font-size: 21px;
+	 margin-left: -4px;
+	 position: relative;
+	 top: 1px;
+}
+.quality_feedback_text{
+	 position: relative;
+	 top: -2px;
+	 color: #585858;
+}
+.call_quality_text{
+	 text-align: right;
+	 width: 16.5%;
 }
 
 .ffone-end-call {

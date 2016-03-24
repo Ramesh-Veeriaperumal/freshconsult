@@ -20,7 +20,8 @@ class MonitorValidationsTest < ActionView::TestCase
     monitor = ApiDiscussions::MonitorValidation.new(controller_params, nil, false)
     refute monitor.valid?
     error = monitor.errors.full_messages
-    assert error.include?('User data_type_mismatch')
+    assert error.include?('User datatype_mismatch')
+    assert_equal({ user_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: String } }, monitor.error_options)
   end
 
   def test_numericality_params_absent
