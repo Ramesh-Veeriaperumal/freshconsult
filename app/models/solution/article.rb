@@ -281,6 +281,10 @@ class Solution::Article < ActiveRecord::Base
     save
   end
 
+  def to_liquid
+    @solution_article_drop ||= Solution::ArticleVersionDrop.new self
+  end
+
   private
 
     def queue_quest_job

@@ -277,7 +277,7 @@ class Support::SearchController < SupportController
 
     def solution_result article
       { 'title' => article.es_highlight('title').html_safe, 
-        'group' => h(article.folder.name), 
+        'group' => h(article.solution_folder_meta.name), 
         'desc' => article.es_highlight('desc_un_html').html_safe,
         'type' => "ARTICLE",
         'url' => support_solutions_article_path(article) }
