@@ -48,7 +48,8 @@ module ApiTicketConstants
 
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {
     create: [:json, :multipart_form],
-    update: [:json, :multipart_form]
+    update: [:json, :multipart_form],
+    compose_email: [:json, :multipart_form]
   }.freeze
 
   MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT - 1

@@ -2700,7 +2700,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_compose_with_attachment
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
-    params = ticket_params_hash.except(:source).merge('attachments' => [file, file2], status: '2', priority: '2')
+    params = ticket_params_hash.except(:source).merge('attachments' => [file, file2], status: '2', priority: '2', email_config_id: "#{fetch_email_config.id}")
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
     post :compose_email, construct_params({}, params)
