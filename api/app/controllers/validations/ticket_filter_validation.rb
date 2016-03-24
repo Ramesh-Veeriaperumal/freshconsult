@@ -11,7 +11,7 @@ class TicketFilterValidation < FilterValidation
   validates :order_by, custom_inclusion: { in: ApiTicketConstants::ORDER_BY, allow_unset: true }
   validates :order_type, custom_inclusion: { in: ApiTicketConstants::ORDER_TYPE, allow_unset: true }
   validates :status, array: { custom_inclusion: { in: proc { |x| x.account_statuses }, ignore_string: :allow_string_param, detect_type: true } }
-  validate :verify_cf_data_type
+  validate :verify_cf_data_type, if: -> { cf.present? }
 
   def initialize(request_params, item = nil, allow_string_param = true)
     @email = request_params.delete('email') if request_params.key?('email') # deleting email and replacing it with requester_id
