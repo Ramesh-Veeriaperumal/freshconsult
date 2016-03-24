@@ -12,6 +12,7 @@ module ApiTicketConstants
                   ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
   SHOW_FIELDS = ['include']
   ALLOWED_INCLUDE_PARAMS = ['conversations', 'requester', 'company']
+  SIDE_LOADING = ['requester']
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
   ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
@@ -32,7 +33,7 @@ module ApiTicketConstants
   FILTER = %w( new_and_my_open watching spam deleted ).freeze
 
   FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s).freeze
-  INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type updated_since).freeze
+  INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type updated_since include).freeze
   INDEX_FILTER_FIELDS = %w(filter company_id requester_id email updated_since).freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id custom_fields).freeze

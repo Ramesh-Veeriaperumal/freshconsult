@@ -1,6 +1,6 @@
 class TicketFilterValidation < FilterValidation
   attr_accessor :filter, :company_id, :requester_id, :email, :updated_since,
-                :order_by, :order_type, :conditions, :requester
+                :order_by, :order_type, :conditions, :requester, :include, :include_array
 
   validates :company_id, :requester_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 }
   validate :verify_requester, if: -> { errors[:requester_id].blank? && (requester_id || email) }
@@ -10,6 +10,8 @@ class TicketFilterValidation < FilterValidation
   validates :updated_since, date_time: true
   validates :order_by, custom_inclusion: { in: ApiTicketConstants::ORDER_BY }
   validates :order_type, custom_inclusion: { in: ApiTicketConstants::ORDER_TYPE }
+  validates :include, data_type: { rules: String }
+  validate :validate_include, if: -> { errors[:include].blank? && include }
 
   def initialize(request_params, item = nil, allow_string_param = true)
     @email = request_params.delete('email') if request_params.key?('email') # deleting email and replacing it with requester_id
@@ -42,4 +44,12 @@ class TicketFilterValidation < FilterValidation
   def fetch_filter(request_params)
     @conditions.present? ? request_params[:filter] : 'default'
   end
+
+  def validate_include
+    @include_array = include.split(',').map!(&:strip)
+    unless @include_array.present? && (@include_array - ApiTicketConstants::SIDE_LOADING).blank?
+      errors[:include] << :not_included
+      (self.error_options ||= {}).merge!(include: { list: ApiTicketConstants::SIDE_LOADING.join(', ') })
+    end
+  end 
 end

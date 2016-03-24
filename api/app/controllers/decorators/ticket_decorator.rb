@@ -21,6 +21,18 @@ class TicketDecorator < ApiDecorator
     custom_fields_hash
   end
 
+  def requester
+    if record.association(:requester).loaded?
+      {
+        id: record.requester.id,
+        name: record.requester.name,
+        email: record.requester.email,
+        mobile: record.requester.mobile,
+        phone: record.requester.phone
+      }
+    end
+  end
+  
   class << self
     def display_name(name)
       name[0..(-Account.current.id.to_s.length - 2)]

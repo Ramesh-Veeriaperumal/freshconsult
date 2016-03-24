@@ -98,8 +98,16 @@ class TicketsController < ApiApplicationController
     end
 
     def load_objects
-      super tickets_filter.preload(:ticket_old_body,
-                                   :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries })
+      super tickets_filter.preload(conditional_preload_options)
+    end
+
+    def conditional_preload_options
+      preload_options = [:ticket_old_body, :schema_less_ticket, :flexifield => { flexifield_def: :flexifield_def_entries }]
+      @ticket_filter.include_array.each do |assoc|
+        preload_options << assoc
+        increment_api_credit_by(1)
+      end
+      preload_options
     end
 
     def after_load_object
