@@ -6,9 +6,9 @@
     <p class="pull-right">
       <%= link_to( 
               t('solution.articles.view_draft'), 
-              support_draft_preview_path(@article, "preview", path_url_locale), 
+              draft_portal_preview, 
               :class => "pull-right preview-draft-link", 
-              :target => "draft-#{@article.id}") %>
+              :target => "draft-#{@article.id}") unless orphan_category? %>
     </p>
   </div>
 <% end %>

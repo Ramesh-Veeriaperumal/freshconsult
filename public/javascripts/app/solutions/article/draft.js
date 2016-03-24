@@ -103,7 +103,7 @@ window.App = window.App || {};
         },
         previewDrafts: function () {
           var data = $('#article-form').data();
-          if(data) {
+          if(data && !data.orphanCategory) {
             return $('<span />').attr('class', 'pull-right')
                   .html($('<a>').attr('href', data.previewPath).attr('target', "draft-" + data.articleId)
                   .text(data.previewText));

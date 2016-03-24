@@ -55,9 +55,10 @@ module Solution::ArticlesHelper
       :timestamp => @article.draft.present? ? @article.draft.updation_timestamp : false,
       :"default-folder" => @article.solution_folder_meta.is_default,
       :"draft-discard-url" => solution_draft_delete_path(@article.parent_id, @article.language_id),
-      :"preview-path" => support_draft_preview_path(@article, 'preview', path_url_locale),
+      :"preview-path" => draft_portal_preview,
       :"preview-text" =>  t('solution.articles.view_draft'),
-      :"article-id" => @article.id
+      :"article-id" => @article.id,
+      :"orphan-category" => orphan_category?
     }
   end
 
@@ -134,7 +135,7 @@ module Solution::ArticlesHelper
     %(<span> #{t('solution.draft.autosave.save_success')} </span>
       <span title="#{formated_date(@article.draft.updated_at)}" class="tooltip" data-livestamp="#{@article.draft.updation_timestamp}"></span>
       <span class="pull-right">
-        #{link_to t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview", path_url_locale),:target => "draft-"+@article.id.to_s}
+        #{link_to t('solution.articles.view_draft'), draft_portal_preview, :target => "draft-"+@article.id.to_s unless orphan_category?}
       </span>).html_safe
   end
 
@@ -157,5 +158,13 @@ module Solution::ArticlesHelper
     return false unless Account.current.multilingual?
     !(article.solution_folder_meta.send("#{article.language.to_key}_available?") && article.parent.solution_category_meta.send("#{article.language.to_key}_available?"))
   end
-  
+
+  def draft_portal_preview
+    portal_preview_path(support_draft_preview_path(@article, "preview", path_url_locale), @article.solution_folder_meta.solution_category_meta, true)
+  end
+
+  def orphan_category?
+    category = @article.solution_folder_meta.solution_category_meta
+    return true if category.present? && category.portal_ids.empty?
+  end
 end

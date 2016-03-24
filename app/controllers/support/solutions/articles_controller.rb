@@ -118,6 +118,10 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def draft_preview_agent_filter?
+      if !current_user && params[:different_portal]
+        session[:return_to] = request.original_fullpath
+        redirect_to support_login_path and return true
+      end
       return (current_user && current_user.agent? && (@article.draft.present? || 
             !@article.current_article.published?) && privilege?(:view_solutions)) if draft_preview?
       true
