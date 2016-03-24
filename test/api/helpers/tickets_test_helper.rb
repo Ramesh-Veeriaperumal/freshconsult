@@ -17,6 +17,10 @@ module TicketsTestHelper
     ticket_pattern(ticket).except(:attachments, :conversations, :tags)
   end
 
+  def index_ticket_pattern_with_associations(ticket, requester=true)
+    ticket_pattern_with_association(ticket, false, false, requester, false).except(:attachments, :conversations, :tags)
+  end
+
   def index_deleted_ticket_pattern(ticket)
     index_ticket_pattern(ticket).merge(deleted: ticket.deleted.to_s.to_bool)
   end

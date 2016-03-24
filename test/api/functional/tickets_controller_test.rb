@@ -2502,6 +2502,34 @@ class TicketsControllerTest < ActionController::TestCase
     Time.zone = old_time_zone
   end
 
+   def test_index_with_requester
+    get :index, controller_params(include: 'requester')
+    assert_response 200
+    response = parse_response @response.body
+    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month)
+    assert_equal tkts.count, response.size
+    pattern = tkts.map { |tkt| index_ticket_pattern_with_associations(tkt) }
+    match_json(pattern)
+  end
+
+  def test_index_with_empty_include
+    get :index, controller_params(include: '')
+    assert_response 400
+    match_json([bad_request_error_pattern('include', :not_included, list: 'requester')])
+  end
+
+  def test_index_with_wrong_type_include
+    get :index, controller_params(include: ['test'])
+    assert_response 400
+    match_json([bad_request_error_pattern('include', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: 'Array')])
+  end
+
+  def test_index_with_invalid_param_value
+    get :index, controller_params(include: 'test')
+    assert_response 400
+    match_json([bad_request_error_pattern('include', :not_included, list: 'requester')])
+  end
+
   def test_show_with_conversations_exceeding_limit
     ticket.update_column(:deleted, false)
     4.times do
