@@ -91,6 +91,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	end
 
   def customer_folders_attributes=(cust_attr)
+    return if cust_attr.nil?
     customer_folders.destroy_all
     company_ids = cust_attr.kind_of?(Array) ? cust_attr : cust_attr[:customer_id]
     company_ids.each do |cust_id|
