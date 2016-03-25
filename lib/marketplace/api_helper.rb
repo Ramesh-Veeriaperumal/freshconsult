@@ -42,7 +42,7 @@ module Marketplace::ApiHelper
 
     def plug_code_from_cache(version_id)
       key = MemcacheKeys::FRESHPLUG_CODE % { :version_id => version_id }
-      mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+      MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
         plug_code_from_s3(version_id)
       end
     rescue Exception => e
