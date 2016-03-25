@@ -1,171 +1,160 @@
-<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
-    <% method_type = (@action == "install") ? "post" : "put" %>
-    <%= form_tag("/integrations/salesforce/#{@action}", :method => method_type)  do %>
-
-    <% default_fields = ["Name"]%>
-    <ul class="ui-form">
-      <li class="inline-field">
-        <label class="caption">
-          <div class="logo application-logo-salesforce"></div>
-          <div class="logo info-data">
-            <%=t('integrations.salesforce.desc')%>
-          </div>
-        </label>
-        <% divider_class = "hidden" %>
-        <% if current_account.features?(:salesforce_sync) %>
-          <% divider_class = "" %>
-          <div class="ticket_sync">
-            <% sync_checked = false%>
-            <%unless @installed_app.blank? %>
-              <% installed_sync_checked = @installed_app.configs_salesforce_sync_option %>
-              <% sync_checked = installed_sync_checked.to_bool if installed_sync_checked.present? %>
-            <%end%>
-            <%= content_tag(:span, "Sync tickets to salesforce") %>
-            <%= check_box(:salesforce_sync_option, "value", :checked => sync_checked) %>
-          </div>  
-        <% end%>
-        <div class="salesforce-wrapper salesforce-new-block">
-          <span class="seperator <%= divider_class %>"></span>
-          <div class="row-fluid">
-            <div class="sf-contact-fields sf-settings-widget"> 
-              <h3 class="leftselect2"><%=t("integrations.salesforce.form.contact")%></h3>
-              <div id='sfcontacts'>
-                <span>
-                  <div id="contactslist">
-                    <ul>
-                      <%selected_fields = default_fields.collect{|x| x} %>
-                      <%unless @installed_app.blank? %>
-                        <%selected_fields.push(@installed_app.configs_contact_fields.split(",").collect!{ |x| next if  default_fields.include?(x);
-                           x
-                          })%>
-                      <%end%>
-                    </ul>
-                  </div>
-                  <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
-                  <%data =selected_fields.join(",").html_safe%>
-                  <% contact_fields = @salesforce_config['contact_fields'] %>
-                  <% # order the fields in such a way so that default fields come at the top
-                    contact_fields_list = []
-                    default_fields.each { |field| contact_fields_list.push([contact_fields[field],field]) } 
-                    @salesforce_config['contact_fields'].keys.collect{|field|
-                      contact_fields_list.push([contact_fields[field],field]) if not default_fields.include?(field); 
-                    }
-                  %>
-                  <%=hidden_field_tag :contact_labels %>
-                  <%= select_tag :contacts, 
-                          options_for_select(contact_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
-                </span>
+<ul class="ui-form">
+  <li class="inline-field">
+    <% divider_class = "hidden" %>
+    <% if current_account.features?(:salesforce_sync) %>
+      <% divider_class = "" %>
+      <div class="ticket_sync">
+        <% sync_checked = false%>
+        <%unless @installed_app.blank? %>
+          <% installed_sync_checked = @installed_app.configs_salesforce_sync_option %>
+          <% sync_checked = installed_sync_checked.to_bool if installed_sync_checked.present? %>
+        <%end%>
+        <%= content_tag(:span, "Sync tickets to salesforce") %>
+        <%= check_box(:salesforce_sync_option, "value", :checked => sync_checked) %>
+      </div>  
+    <% end%>
+    <div class="salesforce-wrapper salesforce-new-block">
+      <span class="seperator <%= divider_class %>"></span>
+      <div class="row-fluid">
+        <div class="sf-contact-fields sf-settings-widget"> 
+          <h3 class="leftselect2"><%=t("integrations.salesforce.form.contact")%></h3>
+          <div id='sfcontacts'>
+            <span>
+              <div id="contactslist">
+                <ul>
+                  <%selected_fields = default_fields.collect{|x| x} %>
+                  <%unless @installed_app.blank? %>
+                    <%selected_fields.push(@installed_app.configs_contact_fields.split(",").collect!{ |x| next if  default_fields.include?(x);
+                       x
+                      })%>
+                  <%end%>
+                </ul>
               </div>
-            </div>
-            <div class="sf-lead-fields sf-settings-widget">
-              <h3><%=t("integrations.salesforce.form.lead")%></h3>   
-              <div id="sfleads">
-                <span>
-                  <div id="leadslist">
-                    <ul>
-                      <%selected_lead_fields = default_fields.collect{|x| x} # use a copy to not change default fields %>
-                      <%unless @installed_app.blank? %>
-                        <%selected_lead_fields.push(@installed_app.configs_lead_fields.split(",").collect!{ |x| next if default_fields.include?(x);
-                         x
-                         })%>
-                      <%end%>
-                    </ul>
-                  </div>
-                  <%data =selected_lead_fields.join(",").html_safe%>
-                  <% lead_fields = @salesforce_config['lead_fields'] %>
-                  <% # order the fields in such a way so that default fields come at the top
-                    lead_fields_list = []
-                    default_fields.each { |field| lead_fields_list.push([lead_fields[field],field]) } 
-                    @salesforce_config['lead_fields'].keys.collect{|field|
-                      lead_fields_list.push([lead_fields[field],field]) if not default_fields.include?(field); 
-                    }
-                    %>
-                  <%=hidden_field_tag :lead_labels %>
-                  <%= select_tag :leads, 
-                            options_for_select(lead_fields_list,data.split(",")),{:multiple=>true, :class=>"select2-fields salesforce-int-select","data-placeholder" => " "} %><!-- space in placeholder to add an empty option -->
-                </span>
-              </div>
-            </div>
-            <div class="sf-account-fields sf-settings-widget"> 
-              <h3 class="leftselect2"><%=t("integrations.salesforce.form.account")%></h3>
-              <div id='sfaccounts'>
-                <span>
-                  <div id="accountslist">
-                    <ul>
-                      <%selected_fields = default_fields.collect{|x| x} %>
-                      <%unless @installed_app.blank? %> 
-                        <%config_account_fields = @installed_app.configs[:inputs]['account_fields'] ? @installed_app.configs[:inputs]['account_fields'] : ""%>
-                        <%selected_fields.push(config_account_fields.split(",").collect!{ |x| next if  default_fields.include?(x);
-                           x
-                          })%>
-                      <%end%>
-                    </ul>
-                  </div>
-                  <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
-                  <%data =selected_fields.join(",").html_safe%>
-                  <% account_fields = @salesforce_config['account_fields'] %>
-                  <% # order the fields in such a way so that default fields come at the top
-                    account_fields_list = []
-                    default_fields.each { |field| account_fields_list.push([account_fields[field],field]) } 
-                    @salesforce_config['account_fields'].keys.collect{|field|
-                      account_fields_list.push([account_fields[field],field]) if not default_fields.include?(field); 
-                    }
-                  %>
-                  <%=hidden_field_tag :account_labels %>
-                  <%= select_tag :accounts, 
-                          options_for_select(account_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
-                </span>
-              </div>
-            </div>
-            <div class="sf-opportunity-fields sf-settings-widget">
-              <% opportunity_view = false %>
-              <% agent_settings = false %> 
-              <%unless @installed_app.blank? %>
-                <% installed_opp_view = @installed_app.configs_opportunity_view %>
-                <% opportunity_view = installed_opp_view.to_bool if installed_opp_view.present? %>
-                <% installed_agent_settings = @installed_app.configs_agent_settings %>
-                <% agent_settings = installed_agent_settings.to_bool if installed_agent_settings.present? %>
-              <%end%>
-              <div id="opportunity-info" data-child="opportunity-settings">
-                <%=content_tag(:h3, t("integrations.salesforce.form.opportunity"), :class => 'opportunity-header') %>
-                <%= check_box(:opportunity_view, "value", :checked => opportunity_view) %>
-                <% hide =  opportunity_view ? "" : "hide" %>
-                <% disabled = !opportunity_view %>
-              </div>
-              <div id='sfopportunities' class="opportunity-settings mt5 <%=hide%>">
-                <span>
-                  <div id="opportunitieslist">
-                    <ul>
-                      <%opportunity_default_fields = ["Name", "StageName", "CloseDate"] %>
-                      <%selected_fields = opportunity_default_fields.collect{|x| x} %>
-                      <%unless @installed_app.blank? %>
-                        <%selected_fields.push(@installed_app.configs_opportunity_fields.split(",").collect!{ |x| next if  opportunity_default_fields.include?(x);
-                           x
-                          }) if @installed_app.configs_opportunity_fields.present? %>
-                      <%end%>
-                    </ul>
-                  </div>
-                  <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
-                  <%data = selected_fields.join(",").html_safe%>
-                  <% opportunity_fields = @salesforce_config['opportunity_fields'] %>
-                  <% # order the fields in such a way so that default fields come at the top
-                    opportunity_fields_list = []
-                    opportunity_default_fields.each { |field| opportunity_fields_list.push([opportunity_fields[field],field]) } 
-                    @salesforce_config['opportunity_fields'].keys.collect{|field|
-                      opportunity_fields_list.push([opportunity_fields[field],field]) if not opportunity_default_fields.include?(field); 
-                    }
-                  %>
-                  <%=hidden_field_tag :opportunity_labels %>
-                  <%= select_tag :opportunities, 
-                          options_for_select(opportunity_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
-                </span>
-              </div>
-              <div class="opportunity-settings mt8 <%= hide %>" id="agent_settings">
-                <%= check_box(:agent_settings, "value", :checked => agent_settings, :disabled => disabled) %>
-                <%= content_tag(:span, t("integrations.salesforce.form.opportunity_settings"), :class => 'checkbox_label') %>
-              </div>
-            </div>
+              <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+              <%data =selected_fields.join(",").html_safe%>
+              <% contact_fields = @element_config['contact_fields'] %>
+              <% # order the fields in such a way so that default fields come at the top
+                contact_fields_list = []
+                default_fields.each { |field| contact_fields_list.push([contact_fields[field],field]) } 
+                @element_config['contact_fields'].keys.collect{|field|
+                  contact_fields_list.push([contact_fields[field],field]) if not default_fields.include?(field); 
+                }
+              %>
+              <%=hidden_field_tag :contact_labels %>
+              <%= select_tag :contacts, 
+                      options_for_select(contact_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
+            </span>
           </div>
         </div>
-      </li>
-    </ul>
+        <div class="sf-lead-fields sf-settings-widget">
+          <h3><%=t("integrations.salesforce.form.lead")%></h3>   
+          <div id="sfleads">
+            <span>
+              <div id="leadslist">
+                <ul>
+                  <%selected_lead_fields = default_fields.collect{|x| x} # use a copy to not change default fields %>
+                  <%unless @installed_app.blank? %>
+                    <%selected_lead_fields.push(@installed_app.configs_lead_fields.split(",").collect!{ |x| next if default_fields.include?(x);
+                     x
+                     })%>
+                  <%end%>
+                </ul>
+              </div>
+              <%data =selected_lead_fields.join(",").html_safe%>
+              <% lead_fields = @element_config['lead_fields'] %>
+              <% # order the fields in such a way so that default fields come at the top
+                lead_fields_list = []
+                default_fields.each { |field| lead_fields_list.push([lead_fields[field],field]) } 
+                @element_config['lead_fields'].keys.collect{|field|
+                  lead_fields_list.push([lead_fields[field],field]) if not default_fields.include?(field); 
+                }
+                %>
+              <%=hidden_field_tag :lead_labels %>
+              <%= select_tag :leads, 
+                        options_for_select(lead_fields_list,data.split(",")),{:multiple=>true, :class=>"select2-fields salesforce-int-select","data-placeholder" => " "} %><!-- space in placeholder to add an empty option -->
+            </span>
+          </div>
+        </div>
+        <div class="sf-account-fields sf-settings-widget"> 
+          <h3 class="leftselect2"><%=t("integrations.salesforce.form.account")%></h3>
+          <div id='sfaccounts'>
+            <span>
+              <div id="accountslist">
+                <ul>
+                  <%selected_fields = default_fields.collect{|x| x} %>
+                  <%unless @installed_app.blank? %> 
+                    <%config_account_fields = @installed_app.configs[:inputs]['account_fields'] ? @installed_app.configs[:inputs]['account_fields'] : ""%>
+                    <%selected_fields.push(config_account_fields.split(",").collect!{ |x| next if  default_fields.include?(x);
+                       x
+                      })%>
+                  <%end%>
+                </ul>
+              </div>
+              <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+              <%data =selected_fields.join(",").html_safe%>
+              <% account_fields = @element_config['account_fields'] %>
+              <% # order the fields in such a way so that default fields come at the top
+                account_fields_list = []
+                default_fields.each { |field| account_fields_list.push([account_fields[field],field]) } 
+                @element_config['account_fields'].keys.collect{|field|
+                  account_fields_list.push([account_fields[field],field]) if not default_fields.include?(field); 
+                }
+              %>
+              <%=hidden_field_tag :account_labels %>
+              <%= select_tag :accounts, 
+                      options_for_select(account_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
+            </span>
+          </div>
+        </div>
+        <div class="sf-opportunity-fields sf-settings-widget">
+          <% opportunity_view = false %>
+          <% agent_settings = false %> 
+          <%unless @installed_app.blank? %>
+            <% installed_opp_view = @installed_app.configs_opportunity_view %>
+            <% opportunity_view = installed_opp_view.to_bool if installed_opp_view.present? %>
+            <% installed_agent_settings = @installed_app.configs_agent_settings %>
+            <% agent_settings = installed_agent_settings.to_bool if installed_agent_settings.present? %>
+          <%end%>
+          <div id="opportunity-info" data-child="opportunity-settings">
+            <%=content_tag(:h3, t("integrations.salesforce.form.opportunity"), :class => 'opportunity-header') %>
+            <%= check_box(:opportunity_view, "value", :checked => opportunity_view) %>
+            <% hide =  opportunity_view ? "" : "hide" %>
+            <% disabled = !opportunity_view %>
+          </div>
+          <div id='sfopportunities' class="opportunity-settings mt5 <%=hide%>">
+            <span>
+              <div id="opportunitieslist">
+                <ul>
+                  <%opportunity_default_fields = ["Name", "StageName", "CloseDate"] %>
+                  <%selected_fields = opportunity_default_fields.collect{|x| x} %>
+                  <%unless @installed_app.blank? %>
+                    <%selected_fields.push(@installed_app.configs_opportunity_fields.split(",").collect!{ |x| next if  opportunity_default_fields.include?(x);
+                       x
+                      }) if @installed_app.configs_opportunity_fields.present? %>
+                  <%end%>
+                </ul>
+              </div>
+              <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+              <%data = selected_fields.join(",").html_safe%>
+              <% opportunity_fields = @element_config['opportunity_fields'] %>
+              <% # order the fields in such a way so that default fields come at the top
+                opportunity_fields_list = []
+                opportunity_default_fields.each { |field| opportunity_fields_list.push([opportunity_fields[field],field]) } 
+                @element_config['opportunity_fields'].keys.collect{|field|
+                  opportunity_fields_list.push([opportunity_fields[field],field]) if not opportunity_default_fields.include?(field); 
+                }
+              %>
+              <%=hidden_field_tag :opportunity_labels %>
+              <%= select_tag :opportunities, 
+                      options_for_select(opportunity_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
+            </span>
+          </div>
+          <div class="opportunity-settings mt8 <%= hide %>" id="agent_settings">
+            <%= check_box(:agent_settings, "value", :checked => agent_settings, :disabled => disabled) %>
+            <%= content_tag(:span, t("integrations.salesforce.form.opportunity_settings"), :class => 'checkbox_label') %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>

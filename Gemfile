@@ -180,7 +180,7 @@ gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/cust
 
 gem "jwt", "1.0.0" #could not use latest gem version(1.2.0) since twilio-ruby gem is using 1.0.0
 
-group :production,:test,:staging do
+group :production,:test,:staging,:development do
   gem "tire", :git => "git@github.com:freshdesk/retire.git"
 end
 
@@ -223,6 +223,7 @@ group :development, :test do
   gem 'webrick', '1.3.1'
   gem 'thin'
   gem 'jasmine'
+  gem 'puma'
 end
 
 group :test do

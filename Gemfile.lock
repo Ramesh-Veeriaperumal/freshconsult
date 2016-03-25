@@ -763,6 +763,7 @@ GEM
     pry-byebug (3.2.0)
       byebug (~> 5.0)
       pry (~> 0.10)
+    puma (3.2.0)
     rack (1.4.7)
     rack-cache (1.2)
       rack
@@ -1143,6 +1144,7 @@ DEPENDENCIES
   prototype_legacy_helper (= 0.0.0)!
   pry
   pry-byebug
+  puma
   rack-cors (~> 0.3.1)
   rack-mini-profiler
   rack-openid!

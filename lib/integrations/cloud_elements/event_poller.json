@@ -20,12 +20,12 @@
 
      "url": "/hubs/helpdesk/accounts",
 
-     "idField": "customer.id",
+     "idField": "id",
 
      "datesConfiguration": {
-          "updatedDateField": "user.updated_at",
+          "updatedDateField": "updated_at",
           "updatedDateFormat": "yyyy-MM-dd'T'HH:mm:ssX",
-          "createdDateField": "user.created_at",
+          "createdDateField": "created_at",
           "createdDateFormat": "yyyy-MM-dd'T'HH:mm:ssX"
       },
 

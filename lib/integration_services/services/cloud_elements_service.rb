@@ -33,6 +33,14 @@ module IntegrationServices::Services
       lead_resource.get_fields
     end
 
+    def receive_opportunity_metadata
+      opportunity_resource.get_fields
+    end
+
+    def receive_opportunity_stage_field
+      opportunity_resource.stage_name_picklist_values
+    end
+
     def receive_create_instance_object_definition
         object_resource.create_instance_level_object_definition
     end
@@ -89,6 +97,10 @@ module IntegrationServices::Services
 
       def lead_resource
         @lead_resource ||= IntegrationServices::Services::CloudElements::Hub::Crm::LeadResource.new(self)
+      end
+
+      def opportunity_resource
+        @opportunity_resource ||= IntegrationServices::Services::CloudElements::Hub::Crm::OpportunityResource.new(self)
       end
 
   end

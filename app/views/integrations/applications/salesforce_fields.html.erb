@@ -3,42 +3,53 @@
       <%=t("integrations.salesforce.helptext").html_safe%>
   </div>
 <%- end %>
-
-<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
-<% method_type = (@action == "install") ? "post" : "put" %>
-<%= form_tag("/integrations/cloud_elements/crm/#{@action}", :method => method_type)  do %>
-<%= hidden_field_tag  'state', params[:state] %>
-
-<div class="well">
-  <div class="tab-content row-fluid">
-    <label class="caption span3">
-      <div class="logo application-logo-salesforce"></div>
-      <div class="logo info-data">
-        <%=t('integrations.salesforce.desc')%>
-      </div>
-    </label>
-
-        <div class="tab-pane span9 active" id="field-mapping-tab">
-
-          <% existing_companies = @element_config['existing_companies']
-             existing_contacts = @element_config['existing_contacts']
-             existing_companies = @installed_app.configs_companies unless @installed_app.nil?
-             existing_contacts = @installed_app.configs_contacts unless @installed_app.nil? 
-          %>
-          <%= render :partial => "/integrations/applications/salesforce/mapping",
-                     :locals => { :existing_companies => existing_companies, :existing_contacts => existing_contacts } %>   
-        </div>
-        <div class="tab-pane span9" id="field-visibility-tab">
-           <%= render :partial => "/integrations/applications/salesforce/visibility" %>
-        </div>
         
+	<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
+  <% method_type = (@action == "install") ? "post" : "put" %>
+  <%= form_tag("/integrations/cloud_elements/crm/#{@action}", :method => method_type)  do %>
+  <%= hidden_field_tag  'state', params[:state] %>
+
+  <ul class="nav nav-pills">
+    <li class="active">
+      <a id="field-visibility-btn" href="#field-visibility-tab" data-toggle="tab">Field Visibility</a>
+    </li>
+    <li>
+      <a href="#field-mapping-tab" data-toggle="tab">Field Mapping</a>
+    </li>
+  </ul>
+
+  <div class="well">
+    <div class="tab-content row-fluid">
+      <label class="caption span3">
+        <div class="logo application-logo-salesforce"></div>
+        <div class="logo info-data">
+          <%=t('integrations.salesforce.desc')%>
+        </div>
+      </label>
+
+          <div class="tab-pane span9" id="field-mapping-tab">
+
+            <% existing_companies = @element_config['existing_companies']
+               existing_contacts = @element_config['existing_contacts']
+               existing_companies = @installed_app.configs_companies unless @installed_app.nil?
+               existing_contacts = @installed_app.configs_contacts unless @installed_app.nil? 
+            %>
+            <%= render :partial => "/integrations/applications/salesforce/mapping",
+                       :locals => { :existing_companies => existing_companies, :existing_contacts => existing_contacts } %>   
+          </div>
+          <div class="tab-pane active span9" id="field-visibility-tab">
+             <%= render :partial => "/integrations/applications/salesforce/visibility",
+                       :locals => { :default_fields => @element_config['default_fields'] }%>
+          </div>
+          
+    </div>
   </div>
-</div>
 
 <div class="button-container">
   <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
   <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
 </div>
+
 <%end%>
 
 <script type="text/javascript">
@@ -167,17 +178,10 @@ jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
       change();
     }
     jQuery('#enble_sync').prop('checked', "<%= @element_config['enble_sync'] %>");
-    jQuery('input[name="crm_sync_type"][value="' + "<%= @element_config['crm_sync_type'] %>" + '"]').attr('checked', true);
   });
 
   function change(){ 
     jQuery('#field-wrap').toggleClass('field-disable');
-    if(jQuery('.field-disable').length > 0){
-      jQuery("#field-mapping-tab #submit-sync").text("Skip Syncing >>>");
-    }else{
-      jQuery("#field-mapping-tab #submit-sync").text("Done Syncing >>>");
-    }
-
   }
 
   jQuery(document).on('click','.sync-radio-btn', function(){

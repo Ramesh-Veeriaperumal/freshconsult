@@ -8,7 +8,7 @@ module Integrations::CloudElements
     }
 
     CRM_TO_HELPDESK_FORMULA_ID = {
-        :sfdc => '758',
+        :sfdc => '1098',
         :dynamicscrm => '758'
     }
 
@@ -17,15 +17,15 @@ module Integrations::CloudElements
         :dynamicscrm => '760'
     }
 
-    CRM_SYNC_TYPE = {
-      :import => "sf_to_fd",
-      :export => "fd_to_sf",
-      :bidirectional => "both sf and fd"
-    }
+    # CRM_SYNC_TYPE = {
+    #   :import => "sf_to_fd",
+    #   :export => "fd_to_sf",
+    #   :bidirectional => "both sf and fd"
+    # }
     
     API_KEY = '3MVG9ZL0ppGP5UrC7ycgr9IfYGKWrOe3Ke9gOzfPife6xgS.XNFCXko7jC.mpUNeF84vm9aGmEk2DOKAtSkfG'
     API_SECRET = '98436661440156758'
-    CALLBACK_URL = 'https://jagdamba.ngrok.io/integrations/cloud_elements/crm/instances'
+    CALLBACK_URL = 'https://localhost:3000/integrations/cloud_elements/crm/instances'
     
   end
 end

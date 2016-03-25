@@ -8,6 +8,10 @@ class Integrations::CloudElementsController < ApplicationController
     response = service_obj({}, metadata).receive(:oauth_url)
     redirect_url = response['oauthUrl']
     redirect_to redirect_url
+  rescue => e
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
+    flash[:error] = t(:'flash.application.install.error')
+    redirect_to integrations_applications_path
   end
 
   private

@@ -13,7 +13,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     set_redis_keys({ :element_token => el_response['token'], :element_instance_id => el_response['id'], :fd_instance_id => fd_response['id']})
     fetch_metadata_fields(el_response['token'])
     default_mapped_fields
-    @sync_type = Integrations::CloudElements::Crm::Constant::CRM_SYNC_TYPE
     @action = 'install'
     @installed_app = nil
     render_settings
@@ -37,10 +36,8 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
   def edit
     @action = 'update'
-    @sync_type = Integrations::CloudElements::Crm::Constant::CRM_SYNC_TYPE
     fetch_metadata_fields(@app_config['element_token'])
     @element_config['enble_sync'] = @app_config['enble_sync']
-    @element_config['crm_sync_type'] = @app_config['crm_sync_type']
     default_mapped_fields
     construct_synced_contacts
     render_settings
@@ -80,7 +77,9 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       json_payload = JSON.parse(File.read("lib/integrations/cloud_elements/freshdesk.json"))
       event_poller_config = File.read("lib/integrations/cloud_elements/event_poller.json")
       json_payload['configuration']['event.poller.configuration'] = event_poller_config
-      JSON.generate(json_payload) % {:api_key => 'WMhJrGqFy1qNxMdDLT', :subdomain => 'sumitjagdambacom', :fd_instance_name => "freshdesk_#{element}_#{current_account.id}" }
+      api_key = current_user.single_access_token
+      subdomain = current_account.domain
+      JSON.generate(json_payload) % {:api_key => api_key, :subdomain => "jagdamba", :fd_instance_name => "freshdesk_#{element}_#{current_account.id}" }
     end
 
     def instance_hash
@@ -119,7 +118,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def fd_metadata_fields
-      binding.pry
       contact_metadata = current_account.contact_form.fields
       company_metadata = current_account.company_form.fields
       contact_hash = fd_fields_hash( contact_metadata )
@@ -225,7 +223,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       arr = Array.new
       obj_synced.each do |obj|
         arr.push({
-          'path' => "FD_#{obj['fd_field']}",
+          'path' => "FD_slave_#{obj['fd_field']}",
           'type' => 'string'      
         })
       end
@@ -237,7 +235,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       arr = Array.new
       obj_synced.each do |obj|
         arr.push({
-          "path" => "FD_#{obj['fd_field']}",
+          "path" => "FD_slave_#{obj['fd_field']}",
           "vendorPath" => obj['sf_field']
         })
       end
@@ -248,7 +246,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       arr = Array.new
       obj_synced.each do |obj|
         arr.push({
-          "path" => "FD_#{obj['fd_field']}",
+          "path" => "FD_slave_#{obj['fd_field']}",
           "vendorPath" => "#{fd_obj}.#{obj['fd_field']}"
         })
       end
@@ -262,17 +260,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def formula_instance
-      sync_type = params[:crm_sync_type]
-      crm_sync_types = Integrations::CloudElements::Crm::Constant::CRM_SYNC_TYPE
-      case sync_type
-      when crm_sync_types[:import]
-        crm_to_helpdesk_formula_instance unless @app_config['crm_to_helpdesk_formula_instance'].present?
-      when crm_sync_types[:export]
-        helpdesk_to_crm_formula_instance unless @app_config['helpdesk_to_crm_formula_instance'].present?
-      else
-        crm_to_helpdesk_formula_instance unless @app_config['crm_to_helpdesk_formula_instance'].present?
-        helpdesk_to_crm_formula_instance unless @app_config['helpdesk_to_crm_formula_instance'].present?
-      end
+      crm_to_helpdesk_formula_instance unless @app_config['crm_to_helpdesk_formula_instance'].present?
     end
 
     def formula_instance_payload instance_name, source, target
@@ -292,30 +280,36 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       redirect_to integrations_applications_path and return 
     end
 
-    def helpdesk_to_crm_formula_instance
-      formula_id = Integrations::CloudElements::Crm::Constant::HELPDESK_TO_CRM_FORMULA_ID[params[:state].to_sym]
-      metadata = @metadata.merge({:formula_id => formula_id})
-      payload = formula_instance_payload( "freshdesk=>#{element}:#{current_account.id}", @app_config['fd_instance_id'], @app_config['element_instance_id'])
-      response = create_formula_instance(payload, metadata)
-      @app_config['helpdesk_to_crm_formula_instance'] = response['id']
-    rescue => e
-      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
-      flash[:error] = t(:'flash.application.install.error')
-      redirect_to integrations_applications_path
-    end
-
     def get_metadata_fields
       config_hash = Hash.new 
       config_hash['enble_sync'] = params[:enble_sync]
-      config_hash['crm_sync_type'] = params[:crm_sync_type]
       config_hash['contact_fields'] = params[:contacts].join(",") unless params[:contacts].nil?
       config_hash['lead_fields'] = params[:leads].join(",") unless params[:leads].nil?
       config_hash['account_fields'] = params[:accounts].join(",") unless params[:accounts].nil?
       config_hash['contact_labels'] = params['contact_labels']
       config_hash['lead_labels'] = params['lead_labels']
       config_hash['account_labels'] = params['account_labels']
+      config_hash = get_opportunity_params config_hash
       config_hash['companies'] = get_selected_field_arrays(params[:inputs][:companies])
       config_hash['contacts'] = get_selected_field_arrays(params[:inputs][:contacts])
+      config_hash
+    end
+
+    def get_opportunity_params(config_hash)
+      config_hash['opportunity_view'] = params[:opportunity_view][:value]
+      if config_hash['opportunity_view'].to_bool
+        config_hash['opportunity_fields'] = params[:opportunities].join(",") unless params[:opportunities].nil?
+        config_hash['opportunity_labels'] = params[:opportunity_labels]
+        config_hash['agent_settings'] = params[:agent_settings][:value]
+        if config_hash['agent_settings'].to_bool
+          config_hash["opportunity_stage_choices"] = service_obj.receive(:opportunity_stage_field)
+        else
+          @installed_app.configs[:inputs].delete("opportunity_stage_choices")
+        end
+      else
+        opportunity_configs = [ "opportunity_fields", "opportunity_labels", "agent_settings", "opportunity_stage_choices" ]
+        @installed_app.configs[:inputs] = @installed_app.configs[:inputs].except(*opportunity_configs)
+      end
       config_hash
     end
 

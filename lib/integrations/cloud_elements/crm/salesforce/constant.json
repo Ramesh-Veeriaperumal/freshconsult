@@ -1,6 +1,6 @@
 
 {
-    "objects" : {"contact" : "Contact", "account" : "Account", "lead" : "Lead" },
+    "objects" : {"contact" : "Contact", "account" : "Account", "lead" : "Lead", "opportunity" : "Opportunity" },
 
     "parameters" : ["code"],
 

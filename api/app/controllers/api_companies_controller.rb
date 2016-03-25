@@ -36,10 +36,10 @@ class ApiCompaniesController < ApiApplicationController
       # preload(:flexifield) will avoid n + 1 query to company field data.
       super scoper.preload(:flexifield).order(:name)
       # includes(:flexifield) will avoid n + 1 query to company field data.
-      super company_filter(scoper).includes(:flexifield).order(:name)
+      super companies_filter(scoper).includes(:flexifield).order(:name)
     end
 
-    def company_filter(companies)
+    def companies_filter(companies)
       @company_filter.conditions.each do |key|
         clause = companies.company_filter(@company_filter)[key.to_sym] || {}
         companies = companies.where(clause[:conditions]).joins(clause[:joins])

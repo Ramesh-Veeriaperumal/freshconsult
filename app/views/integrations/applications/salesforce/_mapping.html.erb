@@ -1,37 +1,9 @@
-<div class="sf-title-wrapper floatr">
+<div class="sf-title-wrapper">
   <label for="enble_sync"> Salesforce Sync </label> 
   <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @element_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">
 </div>
 <div class="field-mapping">
   <div id="field-wrap"></div>
-  <div class="row-fluid" id="sync-setting-list">
-    <div class="radio-btn-wrapper pl18 mt10 mb20 ml5 span6">
-      <div class="radio-btn-title"> Sync contact and company... </div>
-
-      <div class="radio-btn">
-        <input type="radio" checked=checked class="sync-radio-btn" id="crm_sync_type_1" name="crm_sync_type" value="<%=@sync_type[:import]%>">  
-        <a class="sync-icon"><%= font_icon "left-direction", { :size => 12 } %></a>
-        <label for="crm_sync_type_1"> from Salesforce to freshdesk </label>   
-      </div>
-
-      <div class="radio-btn">
-        <input type="radio" class="sync-radio-btn" id="crm_sync_type_2" name="crm_sync_type"  value="<%=@sync_type[:export]%>"> 
-        <a class="sync-icon"><%= font_icon "right-direction", { :size => 12 } %></a> 
-        <label for="crm_sync_type_2"> from Freshdesk to salesforce</label> 
-      </div>
-
-      <div class="radio-btn">
-        <input type="radio" class="sync-radio-btn" id="crm_sync_type_3" name="crm_sync_type"  value="<%=@sync_type[:bidirectional]%>"> 
-        <a class="sync-icon"><%= font_icon "left-direction", { :size => 12 } %></a> 
-        <label for="crm_sync_type_3"> Two way sync </label> 
-      </div>
-    </div>
-  </div>
-
-  <div class="sf-title-wrapper mb10 mt10">
-    <span> Field Mapping </span>
-  </div>
-
   <div class="row-fluid" id="rule-list">
       <ul class="nav nav-flat">
         <li class="active">
@@ -69,11 +41,6 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="button-container">
-    <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
-    <a id="submit-sync" href="#field-visibility-tab" data-toggle="tab" class="btn btn-primary">Done Syncing >>></a>
   </div>
 </div>
 
@@ -122,13 +89,9 @@
     fdContactLabelTypes = <%=raw @element_config['fd_contact_types'].to_json%>;    
     sfContactLabelTypes = {};
     sfContactLabelTypes = <%=raw @element_config['contact_fields_types'].to_json%>;
-    jQuery('#submit-sync').on("click", function(e){
-      jQuery('#submit-sync').addClass("loading-fb");
-      jQuery('#submit-sync').addClass("disabled");
+    jQuery('#field-visibility-btn').on("click", function(e){
 
       if(!validateFields()){
-        jQuery('#submit-sync').removeClass("loading-fb");
-        jQuery('#submit-sync').removeClass("disabled");
         return false;
       }
       else{
@@ -141,8 +104,10 @@
         jQuery('#s2id_contacts .select2-choices').remove();
         jQuery("#contacts option").each(function(){
           var contactField = jQuery(this).text();
-          if(selectedContacts.indexOf(contactField) != -1){
-            jQuery(this).remove();
+          if( contactField !== 'Name' && contactField !== 'Email' && contactField !== 'MobilePhone') {
+            if(selectedContacts.indexOf(contactField) != -1){
+              jQuery(this).remove();
+            }
           }
         })
         jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
@@ -161,7 +126,6 @@
           }
         })
         jQuery("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
-
       }
     })
 
