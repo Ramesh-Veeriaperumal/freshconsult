@@ -4610,6 +4610,8 @@ en:
     expand: "Expand"
     view_ticket: "View Ticket"
     insert: "Insert"
+    auto_delete_notification: 'Tickets in %{current_view} for more than 30 days will be automatically deleted'
+
     compose:
       choose_email: Pick a From Address
       properties: Properties
