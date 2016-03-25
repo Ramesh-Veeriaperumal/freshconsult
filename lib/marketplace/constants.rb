@@ -38,7 +38,7 @@ module Marketplace::Constants
 
   EXTENSION_STATUS = Hash[*EXTENSION_STATUSES.map { |i| [i[0], i[1]] }.flatten]
 
-  API_PERMIT_PARAMS = [ :type, :category_id, :display_name, :update, :upgrade,
+  API_PERMIT_PARAMS = [ :type, :category_id, :display_name, :installation_type,
                         :query, :version_id, :extension_id]
 
 end

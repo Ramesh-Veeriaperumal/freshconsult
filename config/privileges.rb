@@ -452,8 +452,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/salesforce"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
     resource :"admin/integrations/freshplug"
-    resource :"admin/extension"
-    resource :"admin/installed_extension"
+    resource :"admin/marketplace/extension"
+    resource :"admin/marketplace/installed_extension"
     resource :"doorkeeper/authorization"
   	resource :"admin/ecommerce/account",:only => [:index]
     resource :"admin/ecommerce/ebay_account"

@@ -23,7 +23,7 @@ module Marketplace::ApiHelper
     page = Marketplace::Constants::DISPLAY_PAGE[display_page]
     key = MemcacheKeys::INSTALLED_FRESHPLUGS % { 
           :page => page, :account_id => current_account.id }
-    @installed_list ||= MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+    @installed_list ||= mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
       installed_extensions(installed_params(page))
     end
   end
@@ -42,7 +42,7 @@ module Marketplace::ApiHelper
 
     def plug_code_from_cache(version_id)
       key = MemcacheKeys::FRESHPLUG_CODE % { :version_id => version_id }
-      MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+      mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
         plug_code_from_s3(version_id)
       end
     rescue Exception => e
@@ -51,8 +51,7 @@ module Marketplace::ApiHelper
 
     def plug_code_from_s3(version_id)
       s3_id = version_id.to_s.reverse
-      AwsWrapper::S3Object.read("#{s3_id}/#{Marketplace::Constants::PLG_FILENAME}",
-        MarketplaceConfig::S3_ASSETS)
+      open("https://#{MarketplaceConfig::CDN_STATIC_ASSETS}/#{s3_id}/#{Marketplace::Constants::PLG_FILENAME}").read
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
     end

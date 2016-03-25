@@ -1216,21 +1216,25 @@ Helpkit::Application.routes.draw do
     end
 
     # Marketplace
-    resources :extensions, :only => [:index] do
-      collection do
-        get ':version_id', action: :show
+    namespace :marketplace do
+      resources :extensions, :only => [:index] do
+        collection do
+          get :search
+          get :auto_suggest
+          get '/:version_id', :action => :show, :as => 'show'
+        end
       end
-    end
 
-    namespace :installed_extensions do
-      scope ':extension_id/:version_id' do
-        get :new_configs
-        get :edit_configs
-        post :install
-        put :reinstall
-        delete :uninstall
-        put :enable
-        put :disable
+      namespace :installed_extensions do
+        scope ':extension_id/:version_id' do
+          get :new_configs
+          get :edit_configs
+          post :install
+          put :reinstall
+          delete :uninstall
+          put :enable
+          put :disable
+        end
       end
     end
 

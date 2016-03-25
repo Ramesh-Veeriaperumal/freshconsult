@@ -1,0 +1,94 @@
+<form accept-charset="UTF-8" id="install-form" method="post"> 
+
+  <div id="app-window" class="container fa-installer fa-bg">
+
+    <div id="fa-nav" class="fa-sidehead">
+      <div class="fa-breadcumb">
+        <a class="backbtn" href="#" data-url="<%= back_url %>"><span class="ficon-left-arrow-thick fsize-12"></span></a>
+      </div>
+    </div>
+
+    <div class="fa-hmeta head-spacer">
+      <h3 class="app-name">
+        <span class="status">
+          <% if(installation_type == "settings") { %>
+            <%= translate.get('install_setting') %>:
+          <% } else { %>
+            <%= translate.get('install_txt') %>:
+          <% } %>
+        </span>
+        <span> <%- display_name %></span>
+      </h3>
+      <div class="progress progress-striped active" style="display:none;">
+        <div class="bar bar-success" style="width:20%;"></div>
+      </div>
+    </div>
+
+
+
+    <div id="install-error" style="display:none;" class="alert alert-danger">
+    </div>
+    <div id="install-success" style="display:none;" class="alert alert-notice">
+    </div>
+
+    <div class="row-fluid fa-settings installing-text" style="display:none;">
+      <div class="span12">
+        <h4 class="status text-center"><%= translate.get('installing_text') %> </h4>
+      </div>
+    </div>
+
+    
+
+     <div class="row-fluid fa-settings install-form">
+        <% if (configs && configs.length > 0) { %>
+          <div class="span10 fa-info">
+            <% if (installation_type != "settings") { %>
+              <h4 class="install-status"><%= translate.get('install_almost_done') %></h4>
+            <% } %>
+
+            <ul class="installer-form">
+              
+              <% for(var i=0; i < configs.length; i++) { %>
+                <li class="field">
+                  <label class="form-lbl"> <%- configs[i].label %> </label>           
+                  
+                  <% if (configs[i].field_type == 1) { %>
+                    <input type="text" class="fa-textip required" name="[configs][<%- configs[i].name %>]" value="<%- configs[i].default_value %>">
+                  <% } else { %>
+                    <select name="[configs][<%- configs[i].name %>]" class="select2" style="width:200px;">
+                      <% for(var j=0; j < configs[i].default_value.length; j++){ %>
+                        <option value="<%- configs[i].default_value[j] %>"><%- configs[i].default_value[j] %></option>
+                      <% } %>
+                    </select>
+                  <% } %>
+
+                  <% if (configs[i].description) { %>
+                    <p class="help-text"> <%- configs[i].description %> </p>
+                  <% } %>
+                </li>
+              <% } %>
+
+            </ul>
+          </div> 
+        <% } else { %>
+          <p> <%= translate.get('no_configs') %> </p>
+        <% } %>
+
+
+        <div class="button-container text-left">
+        <!-- TODO: Show Terms of use after 2.0 launch
+          <% if (installation_type == 'install') { %>
+            <p class="install-note"><%= translate.get('marketplace_agree') %>
+              <a href="<%= translate.get('marketplace_terms') %>" target="_blank" class="read-more"><%= translate.get('mkp_terms_of_use') %></a>.
+            </p>
+          <% } %>
+         -->
+          <button class="col-md-6 btn btn-primary install-btn" data-url="<%= install_btn['url'] %>" data-method="<%= install_btn['method'] %>"> <%= install_btn['text'] %></button>
+          <button class="show_btn btn btn-default" style="margin-left: 10px;" data-url="<%= back_url %>"><%= translate.get('cancel') %></button>
+        </div> 
+
+      </div>
+
+  </div>
+
+</form>

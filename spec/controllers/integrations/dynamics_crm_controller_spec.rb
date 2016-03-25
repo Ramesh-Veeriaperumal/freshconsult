@@ -97,7 +97,7 @@ describe Integrations::DynamicscrmController do
                           :lead_labels => "Job Title,Telephone,Mobile Phone,Address,Owner",
                           :leads => ["attributes.jobtitle", "attributes.telephone1", "attributes.mobilephone", "attributes.address1_composite", "attributes.ownerid['Name']"]
                         }
-    flash[:notice].should eql "The integration has been enabled successfully!"
+    flash[:notice].should eql "App installed successfully."
     response.status.should eql 302
   end
 

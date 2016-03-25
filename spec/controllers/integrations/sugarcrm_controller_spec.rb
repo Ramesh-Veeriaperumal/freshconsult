@@ -62,7 +62,7 @@ before(:all) do
                           :lead_labels => "Name:",  
                           :leads => ["full_name"]
                         }
-    flash[:notice].should eql "The integration has been enabled successfully!"
+    flash[:notice].should eql "App installed successfully."
     response.status.should eql 302
   end
 
