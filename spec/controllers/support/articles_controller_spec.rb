@@ -211,7 +211,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     
   it "should create ticket and update article_tickets while submitting feedback form for non logged in users" do
     agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => 1, :role => 1 })
-    test_article_meta = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @public_folder.id, 
+    test_article_meta = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @public_folder_meta.id, 
       :status => "2", :art_type => "1" , :user_id => "#{agent.user_id}"} )
     test_article = test_article_meta.primary_article
     description = Faker::Lorem.paragraph
@@ -234,7 +234,7 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   it "should not create ticket while submitting feedback form for non logged in users with invalid email" do
 		agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => 1, :role => 1 })
-		test_article_meta = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @public_folder.id, 
+		test_article_meta = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @public_folder_meta.id, 
 		 :status => "2", :art_type => "1" , :user_id => "#{agent.user_id}"} )
     test_article = test_article_meta.primary_article
 		user_count = @account.users.count
@@ -252,7 +252,7 @@ RSpec.describe Support::Solutions::ArticlesController do
   it "should show a published article to user" do
     log_in(@user)
     name = Faker::Name.name
-    article_meta = create_article( {:title => "#{name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
+    article_meta = create_article( {:title => "#{name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder_meta1.id, 
       :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
     get 'show', id: article_meta.id
     response.body.should =~ /#{name}/    
@@ -373,12 +373,12 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   describe "Hits and likes should reflect in meta" do
     before(:all) do
-      @test_article_for_hits_meta = create_article({ :folder_id => @test_folder1.id, :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"})
+      @test_article_for_hits_meta = create_article({ :folder_id => @test_folder_meta1.id, :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"})
       @test_article_for_hits = @test_article_for_hits_meta.primary_article
       @user1 = create_dummy_customer
       @user2 = create_dummy_customer
       @meta_object = @test_article_for_hits.solution_article_meta
-      @test_article_without_meta_meta = create_article({:folder_id => @test_folder1.id, :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"})
+      @test_article_without_meta_meta = create_article({:folder_id => @test_folder_meta1.id, :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"})
       @test_article_without_meta = @test_article_without_meta_meta.primary_article
     end
 
@@ -428,7 +428,7 @@ RSpec.describe Support::Solutions::ArticlesController do
 
     it "should increment thumbs down and decrement thumbs up for logged in user's second vote if existing vote is a like" do
       log_in(@user1)
-      test_article_for_decr_meta = create_article({:folder_id => @test_folder1.id, :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"})
+      test_article_for_decr_meta = create_article({:folder_id => @test_folder_meta1.id, :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"})
       test_article_for_decr = test_article_for_decr_meta.primary_article
       meta_object = test_article_for_decr.reload.solution_article_meta
       put :thumbs_up, :id => test_article_for_decr.id
@@ -468,5 +468,6 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   after(:all) do
     @account.rollback(:meta_read)
+    Language.reset_current
   end
 end
