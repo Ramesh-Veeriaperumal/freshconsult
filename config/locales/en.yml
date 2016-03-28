@@ -2862,7 +2862,7 @@ en:
       manage_languages: "Manage Languages"
       title: "Multilingual Support"
       add_languages: "Add languages"
-      warning_msg: "Note : Primary Languages cannot be changed once the supported languages are added."
+      warning_msg: "Note : Primary Language cannot be changed once the supported languages are added."
       supported_languages_validity: "should be valid"
       portal_languages_validity: "should be a subset of supported languages"
       portal_language_inclusion: "Supported languages should not include the portal language"
