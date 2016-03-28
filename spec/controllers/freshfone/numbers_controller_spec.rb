@@ -285,5 +285,43 @@ describe Admin::Freshfone::NumbersController do
     flash[:notice].should be_eql("Your phone channel is currently suspended. Please enable phone to make and receive calls.")
     response.should redirect_to("/admin/phone/numbers")
   end
+  
+  it 'should update outgoing caller for the number' do
+    create_freshfone_outgoing_caller
+    Freshfone::Number.any_instance.stubs(:unused_attachments).returns(@account.freshfone_numbers)
+    params = {"admin_freshfone_number"=>{"record"=>"true", "voice"=>"0", 
+      "non_availability_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
+      "message"=>"unavailable"}, "max_queue_length"=>"3", "queue_wait_time"=>"2", 
+      "on_hold_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
+      "message"=>"Busy"}, "non_business_hours_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"",
+      "message"=>"not working"},
+      "wait_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "hold_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "voicemail_active"=>"true", 
+      "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
+      "non_business_hour_calls"=>"true", "business_calendar"=>"1",  "access_groups_added_list"=>"2,3",
+       "access_groups_removed_list"=>"1", "id"=>@number.id, :callmask_active => "true", :caller_id => @outgoing_caller.id}
+    put :update, params
+    Freshfone::Number.find_by_caller_id(@outgoing_caller.id).should_not == nil
+  end
+
+  it 'should not update outgoing caller for the number' do
+    create_freshfone_outgoing_caller
+    Freshfone::Number.any_instance.stubs(:unused_attachments).returns(@account.freshfone_numbers)
+    params = {"admin_freshfone_number"=>{"record"=>"true", "voice"=>"0", 
+      "non_availability_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
+      "message"=>"unavailable"}, "max_queue_length"=>"3", "queue_wait_time"=>"2", 
+      "on_hold_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
+      "message"=>"Busy"}, "non_business_hours_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"",
+      "message"=>"not working"},
+      "wait_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "hold_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "voicemail_active"=>"true", 
+      "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
+      "non_business_hour_calls"=>"true", "business_calendar"=>"1",  "access_groups_added_list"=>"2,3",
+       "access_groups_removed_list"=>"1", "id"=>@number.id}
+    put :update, params
+    Freshfone::Number.find_by_caller_id(@outgoing_caller.id).should == nil
+  end
 
 end

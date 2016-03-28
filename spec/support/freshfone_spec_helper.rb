@@ -132,6 +132,11 @@ module FreshfoneSpecHelper
     customer
   end
 
+  def create_freshfone_outgoing_caller(number = "+1234567890", number_sid = "PN2ba4c66ed6a57e8311eb0f14d5aa2d88")
+    @outgoing_caller = @account.freshfone_caller_id.create({:number => number,
+                                                        :number_sid => number_sid })
+  end
+
   def set_twilio_signature(path, params = {}, master=false)
     @request.env['HTTP_X_TWILIO_SIGNATURE'] = build_signature_for(path, params, master)
     controller.request.stubs(:url).returns @url

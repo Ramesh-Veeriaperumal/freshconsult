@@ -138,6 +138,30 @@ var FreshfoneMessage;
 			$("#defaultGroupAccess").toggle(true);
 		}
 	});
+
+  $(".call_mask_toggle").itoggle({checkedLabel: 'Yes', uncheckedLabel: 'No'}).change(function() {
+			toggleCallerContainer($(this).prop('checked'));
+	
+	});
+
+	function toggleCallerContainer(toggled){
+		if(toggled){
+			$('.common-mask').show();
+			if($("#caller_id option").length <= 0){
+				$('.no-number-added').show();
+				$('.caller_id_container').hide();
+			}
+			else{
+				$('.no-number-added').hide();
+				$('.caller_id_container').show();
+			}
+		}
+		else{
+			$('.common-mask').hide();
+		}
+
+	}
+
 	function setGroupIds () {
 		var new_list = [], 
 				added_agents=[], 
