@@ -155,7 +155,7 @@ module Solution::ArticlesHelper
   end
 
   def missing_translations? article
-    return false if !Account.current.multilingual? || article.is_primary?
+    return false unless Account.current.multilingual?
     !(article.solution_folder_meta.send("#{article.language.to_key}_available?") && article.parent.solution_category_meta.send("#{article.language.to_key}_available?"))
   end
 
