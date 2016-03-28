@@ -384,7 +384,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert sample_user.reload.language == 'cs'
     assert sample_user.reload.time_zone == 'Tokyo'
     assert sample_user.reload.job_title == 'emp'
-    assert sample_user.reload.tag_names.split(', ').sort == tags.map(&:downcase).sort
+    assert sample_user.reload.tag_names.split(', ').sort == tags.sort
     assert sample_user.reload.custom_field['cf_city'] == 'Chennai'
     match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
@@ -713,7 +713,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_out_of_a_user_without_email
-    @account.subscription.update_attribute(:agent_limit, nil)
+    @account.subscription.update_column(:agent_limit, nil)
     sample_user = get_user
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
@@ -725,7 +725,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_out_of_a_user_beyond_agent_limit
-    @account.subscription.update_attribute(:agent_limit, 1)
+    @account.subscription.update_column(:agent_limit, 1)
     sample_user = get_user_with_email
     put :make_agent, construct_params(id: sample_user.id)
     assert_response 403

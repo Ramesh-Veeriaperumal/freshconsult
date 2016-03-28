@@ -16,9 +16,9 @@ class CategoriesQueriesTest < ActionDispatch::IntegrationTest
 
       create: 22,
       show: 14,
-      update: 19,
+      update: 18,
       index: 14,
-      destroy: 22,
+      destroy: 21,
       forums: 15
     }
 
