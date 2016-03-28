@@ -9,7 +9,7 @@ module Wf::FilterHelper
   def prep_ticket
     @account.ticket_fields_with_nested_fields.custom_fields.each &:destroy # should remove once test cases for custom fields are written
     3.times do # populating objects
-      @company = @account.customers.create(FactoryGirl.attributes_for(:company))
+      @company = @account.companies.create(FactoryGirl.attributes_for(:company))
       @group = @account.groups.create(FactoryGirl.attributes_for(:group))
       @requester = @account.users.create(FactoryGirl.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
       @product = @account.products.create(FactoryGirl.attributes_for(:product))
