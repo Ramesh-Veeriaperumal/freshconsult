@@ -76,7 +76,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def retry_after
-      handle_exception { return $rate_limit.perform_redis_op("INCRBY", "ttl", key) }
+      handle_exception { return $rate_limit.perform_redis_op("ttl", key) }
     end
 
     def extra_credits
