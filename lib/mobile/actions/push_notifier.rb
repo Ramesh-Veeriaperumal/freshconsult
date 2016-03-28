@@ -63,6 +63,13 @@ module Mobile::Actions::Push_Notifier
       end
 
     elsif action == :response then
+
+        # Fix for - mobihelp/hotline agent not receiving push notification  
+        if self.mobihelp?
+          current_user_id   = notable.requester ? notable.requester.id : ""
+          current_user_name = notable.requester ? notable.requester.name : ""
+        end
+        
         user_ids = notable.subscriptions.pluck(:user_id)
         unless incoming || self.to_emails.blank? || self.source != Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] then
           notified_agent_emails =  self.to_emails.map { |email| parse_email_text(email)[:email] }
@@ -71,13 +78,6 @@ module Mobile::Actions::Push_Notifier
 		user_ids.delete(current_user_id)
 
         user_ids.push(notable.responder_id) unless notable.responder_id.blank? || notable.responder_id == current_user_id || user_ids.include?(notable.responder_id)
-
-        #Fix for - mobihelp/hotline agent not receiving push notification  
-        if self.mobihelp?
-          user_ids.push(current_user_id)
-          current_user_id   = notable.requester ? notable.requester.id : ""
-          current_user_name = notable.requester ? notable.requester.name : ""
-        end
 
   		notification_types = {NOTIFCATION_TYPES[:NEW_RESPONSE] => user_ids} unless user_ids.empty?
 
