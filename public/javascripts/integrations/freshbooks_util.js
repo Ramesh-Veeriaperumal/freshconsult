@@ -99,7 +99,8 @@ FreshbooksUtility.prototype = {
 		var client_list_response=XmlUtil.extractEntities(resData.responseXML,"client");
 		$this.loadClientDetails(client_list_response);
 		total_pages = $this.fetchMultiPages(resData,"clients",$this.CLIENT_LIST_REQ,$this.loadFreshbooksClients);
-		if($this.curr_page == $this.tot_pages && $this.client_page == $this.tot_pages){
+		// Request will be completed on finishing all ajax client pagination calls or for empty response
+		if($this.client_page == $this.tot_pages || $this.tot_pages == 0){
 			$this.request_status="Completed";
 			$this.handleRequest($this.current_callback,$this.widgetname);
 		}
