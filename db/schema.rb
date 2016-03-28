@@ -1388,7 +1388,6 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"
   add_index "freshfone_accounts", ["account_id"], :name => "index_freshfone_accounts_on_account_id", :unique => true
-  add_index "freshfone_accounts", ["state"], :name => "index_freshfone_accounts_on_state"
 
   create_table "freshfone_blacklist_numbers", :force => true do |t|
     t.integer  "account_id", :limit => 8

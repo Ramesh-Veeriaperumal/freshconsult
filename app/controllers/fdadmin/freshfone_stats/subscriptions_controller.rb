@@ -50,8 +50,7 @@ module Fdadmin
           Freshfone::Account.joins(:account, :subscription)
             .includes(
               :subscription, account: [
-                { subscription: :currency },
-                :account_configuration, :freshfone_numbers])
+                :subscription, :account_configuration, :freshfone_numbers])
             .where('subscriptions.state != "suspended" ')
             .trial_states.group('accounts.id').all
         end
@@ -152,7 +151,7 @@ module Fdadmin
                   first_number = account.freshfone_numbers.min(&:created_at)
                   ff_subscription = ff_account.subscription
                   csv_data << [
-                    account.id, account.full_url,
+                    account.id, account.full_domain,
                     account.admin_email,
                     account.subscription.state, account.subscription.cmrr,
                     first_number.present? ? first_number.created_at.utc : nil,
