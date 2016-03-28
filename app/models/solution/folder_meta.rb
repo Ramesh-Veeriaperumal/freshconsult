@@ -71,6 +71,9 @@ class Solution::FolderMeta < ActiveRecord::Base
 	after_update :clear_cache_with_condition
 	before_update :clear_customer_folders, :backup_folder_changes
 	after_commit :update_search_index, on: :update, :if => :visibility_updated?
+	after_commit :set_mobihelp_solution_updated_time, :if => :valid_change?
+	before_save :backup_category
+	before_destroy :backup_category
 
 	validate :companies_limit_check
 
@@ -203,5 +206,18 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def visibility_updated?
 	  @all_changes.has_key?(:visibility)
 	end
-
+	
+	def backup_category
+		@category_obj = solution_category_meta
+	end
+	
+	def set_mobihelp_solution_updated_time
+		@category_obj.update_mh_solutions_category_time
+	end
+	
+	def valid_change?
+		return true if transaction_include_action?(:destroy)
+		(previous_changes.except(*(BINARIZE_COLUMNS + [:updated_at])).present? || 
+			primary_folder.previous_changes.present?)
+	end
 end

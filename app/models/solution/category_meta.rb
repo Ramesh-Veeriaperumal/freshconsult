@@ -73,6 +73,9 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	after_create :clear_cache
 	after_destroy :clear_cache
+	
+	after_save :update_mh_solutions_category_time, :if => :valid_change?
+	before_destroy :update_mh_app_time
 
 	alias_method :children, :solution_categories
 	
@@ -89,6 +92,11 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	end
 
 	private
+	
+	def valid_change?
+		previous_changes.except(*(BINARIZE_COLUMNS + [:updated_at])).present? || 
+			primary_category.previous_changes.present?
+	end
 
 	def clear_cache(args = nil)
 		Account.current.clear_solution_categories_from_cache

@@ -75,7 +75,7 @@ class Solution::ArticlesController < ApplicationController
     set_common_attributes
     @article_meta = Solution::Builder.article(params)
     @article = @article_meta.send(language_scoper)
-    @article.tags_changed = set_solution_tags
+    params[:solution_article_meta][language_scoper.to_sym][:tags_changed] = set_solution_tags
     @article.create_draft_from_article if save_as_draft?
     
     post_response(@article_meta, @article)
@@ -344,7 +344,7 @@ class Solution::ArticlesController < ApplicationController
 
     def update_article
       set_common_attributes
-      @article.tags_changed = set_solution_tags
+      params[:solution_article_meta][language_scoper.to_sym][:tags_changed] = set_solution_tags
       @article_meta = Solution::Builder.article(params)
       
       post_response(@article_meta, @article)

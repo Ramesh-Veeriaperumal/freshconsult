@@ -8,7 +8,6 @@ class Solution::Category < ActiveRecord::Base
   self.primary_key = :id
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
-  include Mobihelp::AppSolutionsUtils
   include Solution::Activities
 
   self.table_name =  "solution_categories"
@@ -18,8 +17,6 @@ class Solution::Category < ActiveRecord::Base
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_category_meta.new_record?"
   
   after_update :clear_cache, :if => Proc.new { |c| c.name_changed? && c.primary? }
-  after_save    :set_mobihelp_solution_updated_time, :if => Proc.new { |c| c.primary? }
-  before_destroy :set_mobihelp_app_updated_time, :if => Proc.new { |c| c.primary? }
 
   concerned_with :associations
 
@@ -28,7 +25,7 @@ class Solution::Category < ActiveRecord::Base
   scope :customer_categories, {:conditions => {:is_default=>false}}
 
   alias_method :parent, :solution_category_meta
-
+  
   include Solution::LanguageMethods
   
   SELECT_ATTRIBUTES = ["id"]
@@ -85,14 +82,6 @@ class Solution::Category < ActiveRecord::Base
         return false
       end
       return true
-    end
-
-    def set_mobihelp_solution_updated_time
-      self.update_mh_solutions_category_time
-    end
-
-    def set_mobihelp_app_updated_time
-      self.update_mh_app_time
     end
 
     def clear_cache(obj=nil)

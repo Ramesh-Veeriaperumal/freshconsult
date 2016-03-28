@@ -36,9 +36,6 @@ class Solution::Article < ActiveRecord::Base
   attr_accessible :title, :description, :user_id, :folder_id, :status, :art_type, 
     :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data, :position, :outdated
 
-  after_save      :set_mobihelp_solution_updated_time, :if => :content_changed?
-  before_destroy  :set_mobihelp_solution_updated_time, :if => Proc.new { |a| a.is_primary? }
-
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
@@ -58,7 +55,7 @@ class Solution::Article < ActiveRecord::Base
 
   delegate :visible_in?, :to => :solution_folder_meta
   delegate :visible?, :to => :solution_folder_meta
-
+  
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
   
   SELECT_ATTRIBUTES = ["id", "thumbs_up", "thumbs_down"]
@@ -278,7 +275,9 @@ class Solution::Article < ActiveRecord::Base
 
   def publish!
     set_status(true)
-    save
+    published = save
+    solution_article_meta.set_mobihelp_solution_updated_time if (is_primary? && published)
+    published
   end
 
   def to_liquid
@@ -290,17 +289,6 @@ class Solution::Article < ActiveRecord::Base
     def queue_quest_job
       Resque.enqueue(Gamification::Quests::ProcessSolutionQuests, { :id => self.id, 
         :account_id => self.account_id })
-    end
-
-    def set_mobihelp_solution_updated_time
-      self.reload
-      solution_folder_meta.solution_category_meta.update_mh_solutions_category_time
-    end
-
-    def content_changed?
-      all_fields = [:modified_at, :status, :position]
-      changed_fields = self.changes.symbolize_keys.keys
-      (changed_fields & all_fields).any? or tags_changed
     end
 
     def status_in_default_folder

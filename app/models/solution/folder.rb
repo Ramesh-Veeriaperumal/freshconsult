@@ -14,11 +14,6 @@ class Solution::Folder < ActiveRecord::Base
   validate :name_uniqueness_validation, :if => "new_record? || name_changed?"
 
   self.table_name =  "solution_folders"
-
-  before_save :backup_category
-  before_destroy :backup_category
-
-  after_commit :set_mobihelp_solution_updated_time, :if => Proc.new { |f| f.primary? }
   
   after_update :clear_cache, :if => Proc.new { |f| f.name_changed? && f.primary? }
   
@@ -93,14 +88,6 @@ class Solution::Folder < ActiveRecord::Base
 
     def populate_account
       self.account = category.account
-    end
-
-    def backup_category
-      @category_obj = solution_category_meta
-    end
-    
-    def set_mobihelp_solution_updated_time
-      @category_obj.update_mh_solutions_category_time
     end
     
     def clear_cache

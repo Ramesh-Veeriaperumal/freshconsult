@@ -46,6 +46,9 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	after_update :clear_cache, :if => :solution_folder_meta_id_changed?
 	after_find :deserialize_attr
 
+	after_save :set_mobihelp_solution_updated_time, :if => :valid_change?
+	before_destroy :set_mobihelp_solution_updated_time
+
 	alias_method :children, :solution_articles
 
 	scope :published, lambda {
@@ -138,4 +141,14 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		self.art_type ||= Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]
 	end
 
+	def set_mobihelp_solution_updated_time
+		self.reload
+		solution_folder_meta.solution_category_meta.update_mh_solutions_category_time
+	end
+	
+	def valid_change?
+		self.previous_changes.slice(:position).present? || 
+			(primary_article.previous_changes.slice(*[:modified_at, :status]).present? || 
+			primary_article.tags_changed)
+	end
 end
