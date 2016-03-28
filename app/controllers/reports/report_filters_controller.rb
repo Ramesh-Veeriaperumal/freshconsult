@@ -3,7 +3,7 @@ class Reports::ReportFiltersController < ApplicationController
   include ReadsToSlave
 
   before_filter { |c| c.requires_feature :advanced_reporting }
-  before_filter { redirect_to reports_path if current_account.disabled_old_reports_ui? }
+  before_filter { redirect_to reports_path unless current_account.old_reports_enabled? }
   before_filter :set_data_map, :only => [:create]
   before_filter :load_report_filter , :only => [:destroy]
   skip_filter :run_on_slave , :only =>[:create,:destroy]

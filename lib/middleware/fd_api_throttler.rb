@@ -76,7 +76,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def retry_after
-      handle_exception { return $rate_limit.ttl(key) }
+      handle_exception { return $rate_limit.perform_redis_op("INCRBY", "ttl", key) }
     end
 
     def extra_credits
@@ -125,15 +125,15 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def increment_redis(key, used)
-      handle_exception { return $rate_limit.INCRBY(key, used) }
+      handle_exception { return $rate_limit.perform_redis_op("INCRBY", key, used) }
     end
 
     def set_redis_expiry(key, expires)
-      handle_exception { $rate_limit.expire(key, expires) }
+      handle_exception { $rate_limit.perform_redis_op("expire", key, expires) }
     end
 
     def get_multiple_redis_keys(*keys)
-      handle_exception { $rate_limit.mget(*keys) }
+      handle_exception { $rate_limit.perform_redis_op("mget", *keys) }
     end
 
     def key

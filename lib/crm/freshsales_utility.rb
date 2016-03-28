@@ -22,13 +22,15 @@ class CRM::FreshsalesUtility
                             downgrade: 'Existing Business-Downgrade', 
                             renewal: 'Existing Business-Renewal' }
 
-  ACTIVE                = 'active'
-
   OFFLINE               = 'off'
 
-  def initialize(account)
-    @account = account
-    @subscription = account.subscription
+  ZERO                  = 0
+
+  def initialize(data)
+    @account = data[:account]
+    @subscription = data[:subscription]
+    @cmrr = data[:cmrr]
+    
     @deal_product_id = get_entity_id('deal_products', :name, PRODUCT_NAME)
   end
 
@@ -40,17 +42,18 @@ class CRM::FreshsalesUtility
     contact = result[:contacts].first
 
     if contact
-      create_lead_with_same_owner(contact[:owner_id])
+      create_lead_with_same_owner(contact[:owner_id], contact[:updated_at])
     elsif lead
       create_or_update_lead(lead, result[:lead_stages])
     else
       sales_account = search_accounts_by_name(@account.name, 'owner')[:sales_accounts].first
       if sales_account
-        create_lead_with_same_owner(sales_account[:owner_id])
+        create_lead_with_same_owner(sales_account[:owner_id], sales_account[:updated_at])
       else
         company_leads = search_leads_by_company_name(@account.name, 'owner')[:leads]
         company_lead  = recent_lead_of_same_product(company_leads)
-        company_lead  ? create_lead_with_same_owner(company_lead[:owner_id]) : fs_create('lead', new_lead_params)
+        company_lead  ? create_lead_with_same_owner(company_lead[:owner_id], company_lead[:updated_at]) : 
+                        fs_create('lead', new_lead_params)
       end
     end
   end
@@ -73,23 +76,23 @@ class CRM::FreshsalesUtility
       company_lead  = recent_lead_of_same_product(company_leads)
       if company_lead
         (company_lead[:email] == @account.admin_email) ? fs_update('lead', company_lead[:id], admin_basic_info) :
-                                                         create_lead_with_same_owner(company_lead[:owner_id])
+                                          create_lead_with_same_owner(company_lead[:owner_id], company_lead[:updated_at])
       else
         fs_create('lead', new_lead_params)
       end
     end
   end
 
-  def account_upgrade(old_subscription)
-    Rails.logger.debug "In FreshsalesUtility :: account_upgrade :: #{old_subscription.inspect}"
+  def account_upgrade(old_cmrr)
+    Rails.logger.debug "In FreshsalesUtility :: account_upgrade"
     deal_type = :upgrade
-    amount    = calculate_deal_amount(old_subscription)
+    amount    = calculate_deal_amount(@cmrr, old_cmrr)
     result    = search_deals_by_cf_account_id(@account.id, 'sales_account,deal_stage,deal_product')
 
     if result[:deals].any?
       open_deal = recent_open_deal(@account.id, result[:deals], result[:deal_stages])
       if open_deal
-        mark_deal_as_closed_won(open_deal, { amount: amount })
+        mark_deal_as_closed_won(open_deal, { deal_type: deal_type, amount: amount })
       else
         deal_account = result[:sales_accounts].find{ |acc| acc[:id] == result[:deals].first[:sales_account_id] }
         account_result = search_accounts_by_name(deal_account[:name], 'owner,contacts')
@@ -99,14 +102,17 @@ class CRM::FreshsalesUtility
                                 deal_type: deal_type, amount: amount })
       end
     else
-      create_lead_and_convert_and_close_deal({ deal_type: deal_type, amount: amount })
+      leads = search_leads_by_email(@account.admin_email)[:leads]
+      lead  = recent_lead_of_same_product(leads)
+      lead  ? convert_lead_and_close_deal(lead, { deal_type: deal_type, amount: amount }) :
+              create_lead_and_convert_and_close_deal({ deal_type: deal_type, amount: amount })  
     end
   end
 
-  def account_downgrade(old_subscription)
-    Rails.logger.debug "In FreshsalesUtility :: account_downgrade :: #{old_subscription.inspect}"
+  def account_downgrade(old_cmrr)
+    Rails.logger.debug "In FreshsalesUtility :: account_downgrade"
     deal_type = :downgrade
-    amount    = calculate_deal_amount(old_subscription)
+    amount    = calculate_deal_amount(@cmrr, old_cmrr)
     result    = search_deals_by_cf_account_id(@account.id, 'sales_account,deal_stage,deal_product')
 
     if result[:deals].any?
@@ -117,29 +123,34 @@ class CRM::FreshsalesUtility
       create_deal_and_close({ sales_account: account_result[:sales_accounts].first, contact: account_contact, 
                               deal_type: deal_type, amount: amount })
     else
-      create_lead_and_convert_and_close_deal({ deal_type: deal_type, amount: amount })
+      leads = search_leads_by_email(@account.admin_email)[:leads]
+      lead  = recent_lead_of_same_product(leads)
+      lead  ? convert_lead_and_close_deal(lead, { deal_type: deal_type, amount: amount }) :
+              create_lead_and_convert_and_close_deal({ deal_type: deal_type, amount: amount })
     end
   end
 
   def account_activation(payment_info)
     Rails.logger.debug "In FreshsalesUtility :: account_activation :: #{payment_info.inspect}"
     deal_type       = :new_business
-    amount          = @subscription.cmrr.round(2)
+    amount          = @cmrr.round(2)
     collection_date = (payment_info[:auto_collection] == OFFLINE && payment_info[:collection_date].present?) ? 
                                             Time.at(payment_info[:collection_date]).to_datetime.utc : nil
-    result          = search_deals_by_cf_account_id(@account.id, 'sales_account,deal_stage,deal_product')
+    result          = search_deals_by_cf_account_id(@account.id, 'sales_account,deal_stage,deal_product,deal_type')
 
     if result[:deals].any?
       open_deal = recent_open_deal(@account.id, result[:deals], result[:deal_stages])
       if open_deal
-        mark_deal_as_closed_won(open_deal, { amount: amount, collection_date: collection_date })
+        mark_deal_as_closed_won(open_deal, { deal_type: deal_type, amount: amount, collection_date: collection_date }) 
       else
-        deal_account = result[:sales_accounts].find{ |acc| acc[:id] == result[:deals].first[:sales_account_id] }
-        account_result = search_accounts_by_name(deal_account[:name], 'owner,contacts')
-        account_contact = account_result[:contacts].find{ |cont| cont[:email] == @account.admin_email }
-
-        create_deal_and_close({ sales_account: account_result[:sales_accounts].first, contact: account_contact, 
-                                deal_type: deal_type, amount: amount, collection_date: collection_date })
+        unless new_business_deal_exists?(result[:deals])
+          deal_account = result[:sales_accounts].find{ |acc| acc[:id] == result[:deals].first[:sales_account_id] }
+          account_result = search_accounts_by_name(deal_account[:name], 'owner,contacts')
+          account_contact = account_result[:contacts].find{ |cont| cont[:email] == @account.admin_email }
+   
+          create_deal_and_close({ sales_account: account_result[:sales_accounts].first, contact: account_contact, 
+                                  deal_type: deal_type, amount: amount, collection_date: collection_date })
+        end
       end
     else
       leads = search_leads_by_email(@account.admin_email)[:leads]
@@ -149,30 +160,53 @@ class CRM::FreshsalesUtility
     end
   end
 
-  def update_customer_status(old_subscription)
-    current_state       = @subscription.state.to_sym
-    (deal_type, amount) = deal_type_and_amount_for_status_change(old_subscription, current_state)
-    Rails.logger.debug "In FreshsalesUtility :: update_customer_status :: deal_type ::#{deal_type} :: amount :: #{amount}"
+  def subscription_state_change(old_cmrr, old_state, payments_count)
+    current_state       = @subscription[:state].to_sym
+
+    (deal_type, amount) = deal_type_and_amount_for_state_change(old_state, old_cmrr, current_state, @cmrr, payments_count)
+    Rails.logger.debug "In FreshsalesUtility :: subscription_state_change :: deal_type ::#{deal_type} :: amount :: #{amount} 
+                                                  :::: old_state ::#{old_state} ::: current_state ::#{current_state}"
 
     if deal_type.present? && amount.present?
-      customer_status = (current_state == :suspended && @subscription.subscription_payments.count > 0) ? 
-                                    CUSTOMER_STATUS[:no_payment_suspended] : CUSTOMER_STATUS[current_state]
-
-      result = search_deals_by_cf_account_id(@account.id, 'sales_account')
+      customer_status = get_customer_status(current_state, payments_count)
+      result          = search_deals_by_cf_account_id(@account.id, 'sales_account,deal_stage,deal_product')
 
       if result[:deals].any?
-        deal_account = result[:sales_accounts].find{ |acc| acc[:id] == result[:deals].first[:sales_account_id] }
-        account_result = search_accounts_by_name(deal_account[:name], 'owner,contacts')
-        account_contact = account_result[:contacts].find{ |cont| cont[:email] == @account.admin_email }
+        open_deal = recent_open_deal(@account.id, result[:deals], result[:deal_stages])
+        if open_deal
+          mark_deal_as_closed_won(open_deal, { deal_type: deal_type, amount: amount })
+        else
+          deal_account = result[:sales_accounts].find{ |acc| acc[:id] == result[:deals].first[:sales_account_id] }
+          account_result = search_accounts_by_name(deal_account[:name], 'owner,contacts')
+          account_contact = account_result[:contacts].find{ |cont| cont[:email] == @account.admin_email }
 
-        create_deal_and_close({ sales_account: account_result[:sales_accounts].first, contact: account_contact, 
-                                deal_type: deal_type, amount: amount })
+          create_deal_and_close({ sales_account: account_result[:sales_accounts].first, contact: account_contact, 
+                                  deal_type: deal_type, amount: amount })
+        end
         mark_deals_status(result[:deals], customer_status)
       else
         leads = search_leads_by_email(@account.admin_email)[:leads]
         lead  = recent_lead_of_same_product(leads)
         lead  ? convert_lead_and_close_deal(lead, { deal_type: deal_type, amount: amount, customer_status: customer_status }) :
                 create_lead_and_convert_and_close_deal({ deal_type: deal_type, amount: amount, customer_status: customer_status })
+      end
+    end
+  end
+
+  def account_trial_expiry
+    Rails.logger.debug "In FreshsalesUtility :: account_trial_expiry"
+    result    = search_deals_by_cf_account_id(@account.id, 'deal_stage')
+
+    if result[:deals].any?
+      mark_deals_status(result[:deals], CUSTOMER_STATUS[@subscription[:state].to_sym])
+    else
+      leads = search_leads_by_email(@account.admin_email)[:leads]
+      lead  = recent_lead_of_same_product(leads)
+      if lead
+        status_info = {
+          custom_field: { cf_customer_status: CUSTOMER_STATUS[@subscription[:state].to_sym] }
+        }      
+        fs_update('lead', lead[:id], status_info)
       end
     end
   end
@@ -205,13 +239,13 @@ class CRM::FreshsalesUtility
     def new_lead_subscription_params
       {
         custom_attrs: {
-          cf_agent_count: @subscription.agent_limit, 
-          cf_customer_status: CUSTOMER_STATUS[@subscription.state.to_sym],
-          cf_signup_date: @subscription.created_at.strftime("%Y-%m-%d")
+          cf_agent_count: @subscription[:agent_limit], 
+          cf_customer_status: CUSTOMER_STATUS[@subscription[:state].to_sym],
+          cf_signup_date: @subscription[:created_at].strftime("%Y-%m-%d")
         },
         deal_attrs: {
           name: deal_name(@account.full_domain, :new_business),
-          amount: @subscription.cmrr.round(2),
+          amount: @cmrr.round(2),
           deal_product_id: @deal_product_id
         }
       }
@@ -240,11 +274,11 @@ class CRM::FreshsalesUtility
         deal_stage_id: get_entity_id('deal_stages', :forecast_type, WON_DEAL_STAGE),
         deal_payment_status_id: payment_status_id,
         custom_field: {
-          cf_number_of_agents: @subscription.agent_limit,
-          cf_plan: @subscription.plan_name,
-          cf_customer_status: CUSTOMER_STATUS[@subscription.state.to_sym],
+          cf_number_of_agents: @subscription[:agent_limit],
+          cf_plan: SubscriptionPlan.find_by_id(@subscription[:subscription_plan_id]).try(:name),
+          cf_customer_status: CUSTOMER_STATUS[@subscription[:state].to_sym],
           cf_domain_name: @account.full_domain,
-          cf_signup_date: @subscription.created_at.strftime("%Y-%m-%d")
+          cf_signup_date: @subscription[:created_at].strftime("%Y-%m-%d")
         }
       }
     end
@@ -258,30 +292,48 @@ class CRM::FreshsalesUtility
       "#{domain} - #{DEAL_TYPES[type.to_sym]}" 
     end
 
-    def deal_type_and_amount_for_status_change(old_subscription, current_state)
-      old_state = old_subscription[:state].to_sym
-      
+    def deal_type_and_amount_for_state_change(old_state, old_cmrr, current_state, cmrr, payments_count)
       (deal_type, amount) = case
-                            when (old_state.in?([:trial, :suspended]) && current_state == :free)
-                              [:new_business, 0]
-                            when (old_state == :suspended && current_state == :active)
-                              [:upgrade, @subscription.cmrr.round(2)]
-                            when (old_state == :trial && current_state == :suspended)
-                              [:downgrade, 0]
+                            when !old_state.eql?(:free) && free_plan_selected?(current_state, cmrr) && !paid_customer?(payments_count)
+                              [:new_business, ZERO]
+                            when reactivation?(old_state, current_state, payments_count)
+                              [:upgrade, cmrr.round(2)]
                             when (old_state == :active && current_state == :suspended)
-                              amount = (@subscription.amount = 0) ? calculate_deal_amount(old_subscription) : 
-                                                                    -@subscription.cmrr.round(2)
+                              amount = (@subscription[:amount] == ZERO) ? calculate_deal_amount(cmrr, old_cmrr) : 
+                                                                          -cmrr.round(2)
                               [:downgrade, amount]
                             else
                               [nil, nil]
                             end
     end
 
-    def payment_status_id
-      return nil if @subscription.amount == 0
+    def free_plan_selected?(current_state, cmrr)
+      current_state == :free || (current_state == :active && cmrr == ZERO)
+    end
 
-      status = @subscription.card_number.blank? ? :offline : :online
+    def paid_customer?(payments_count)
+      payments_count > ZERO
+    end
+
+    def reactivation?(old_state, current_state, payments_count)
+      paid_customer?(payments_count) && old_state.in?([:trial, :suspended]) && (current_state == :active)
+    end
+
+    def get_customer_status(state, payments_count)
+      (state == :suspended && paid_customer?(payments_count)) ? 
+                                CUSTOMER_STATUS[:no_payment_suspended] : CUSTOMER_STATUS[state]
+    end
+
+    def payment_status_id
+      return nil if @subscription[:amount] == ZERO
+
+      status = @subscription[:card_number].blank? ? :offline : :online
       get_entity_id('deal_payment_statuses', :name, PAYMENT_STATUS[status])
+    end
+
+    def new_business_deal_exists?(deals)
+      type_id = get_entity_id('deal_types', :name, "New Business")
+      deals.find{ |deal| deal[:deal_type_id] == type_id }.present?
     end
 
     def create_or_update_lead(lead, stages)
@@ -295,7 +347,7 @@ class CRM::FreshsalesUtility
           }
           fs_update('lead', lead[:id], deal_info)
         else
-          create_lead_with_same_owner(lead[:owner_id])
+          create_lead_with_same_owner(lead[:owner_id], lead[:updated_at])
         end
       end
     end
@@ -305,9 +357,15 @@ class CRM::FreshsalesUtility
       stage_name.in?(NEGATIVE_LEAD_STAGES)
     end
 
-    def create_lead_with_same_owner(owner_id) 
-      lead_info = new_lead_params.merge({ owner_id: owner_id })
+    def create_lead_with_same_owner(owner_id, updated_at) 
+      lead_info = new_lead_params     
+      lead_info.merge!({ owner_id: owner_id }) if updated_in_last_90_days?(updated_at)
+
       fs_create('lead', lead_info)
+    end
+
+    def updated_in_last_90_days?(updated_at)
+      ((DateTime.now.utc.to_f - DateTime.parse(updated_at).to_f).to_i / 1.day) < 90
     end
 
     def associate_deals_to_contact(account_id, contact_id, deals)
@@ -364,24 +422,23 @@ class CRM::FreshsalesUtility
     end
 
     def convert_lead_and_close_deal(lead, options)
-      lead[:custom_field].merge!({ cf_customer_status: options[:customer_status] }) if options[:customer_status]
+      lead[:custom_field].merge!({ cf_customer_status: options[:customer_status] }) if options[:customer_status].present?
       lead[:custom_field].merge!({ cf_collection_date: options[:collection_date]}) if options[:collection_date].present?
 
-      status, response = convert_lead(lead)
+      status, response = convert_lead(lead, options)
       return unless status.eql?(200)
 
       status, response = fs_get('contact', response[:contact][:id], 'deals')
       if status.eql?(200)
         open_deal = recent_open_deal(@account.id, response[:deals], response[:deal_stages])
-        mark_deal_as_closed_won(open_deal, { deal_type: options[:deal_type],
-                                             amount: options[:amount] })
+        mark_deal_as_closed_won(open_deal, { deal_type: options[:deal_type] })
       end
     end
 
-    def convert_lead(lead)
+    def convert_lead(lead, options)
       data = { last_name: lead[:last_name], email: lead[:email],
                company: { name: lead[:company][:name] },
-               deal: { name: lead[:deal].try(:[], :name), amount: lead[:deal].try(:[], :amount) }
+               deal: { name: deal_name(@account.full_domain, options[:deal_type]), amount: options[:amount] }
              }
       config = { rest_url: "/leads/#{lead[:id]}/convert", method: 'post', body: { 'lead' => data } }
       request_freshsales(config)
@@ -395,17 +452,14 @@ class CRM::FreshsalesUtility
         attributes.merge!({ deal_type_id: deal_type_id })
       end
 
-      attributes.merge!({ amount: options[:amount] })
+      attributes.merge!({ amount: options[:amount] }) if options[:amount].present?
       attributes[:custom_field].merge!({cf_collection_date: options[:collection_date]}) if options[:collection_date].present?
 
       fs_update('deal', open_deal[:id], attributes)
     end
 
-    def calculate_deal_amount(old_subscription)
-      old_subscription = Subscription.new({ amount: old_subscription[:amount], 
-                                            renewal_period: old_subscription[:renewal_period],
-                                            subscription_currency_id: @subscription.subscription_currency_id })
-      (@subscription.cmrr - old_subscription.cmrr).round(2)
+    def calculate_deal_amount(cmrr, old_cmrr)
+      (cmrr - old_cmrr).round(2)
     end
 
     def mark_deals_status(deals, status)

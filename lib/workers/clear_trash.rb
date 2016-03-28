@@ -25,7 +25,7 @@ class Workers::ClearTrash
     ensure
       if args[:empty_trash]
         key = "EMPTY_TRASH_TICKETS:#{account.id}" 
-        $redis_tickets.del key
+        $redis_tickets.perform_redis_op("del", key)
       end
     end
   end

@@ -98,8 +98,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"profile"
 
     # Used for API V2
-    resource :"ticket", :only => [:show, :create, :index]
     resource :"conversation", only: [:create, :ticket_conversations]
+    resource :"ticket", :only => [:show, :create, :index, :search]
 	end
 
   reply_ticket do
@@ -367,7 +367,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
-    resource :user, :only => [:assume_identity]
+    resource :user, :only => [:assume_identity, :assumable_agents]
 
     # Used by V2 API
     resource :"api_contact", :only => [:make_agent]
@@ -452,8 +452,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/salesforce"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
     resource :"admin/integrations/freshplug"
-    resource :"admin/extension"
-    resource :"admin/installed_extension"
+    resource :"admin/marketplace/extension"
+    resource :"admin/marketplace/installed_extension"
     resource :"doorkeeper/authorization"
   	resource :"admin/ecommerce/account",:only => [:index]
     resource :"admin/ecommerce/ebay_account"

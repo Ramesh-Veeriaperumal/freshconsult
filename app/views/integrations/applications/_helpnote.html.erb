@@ -8,14 +8,12 @@
     </ul>
   </div>
 <% end %>
+
+<h3 class="title"><%=t('marketplace.apps')%></h3>
 <% if feature?(:marketplace) %>
-  <h3 class="title"><%=t('marketplace.apps')%></h3>
   <p><%= t('marketplace.helpnote1')%></p>
-  <h3 class="title"><%=t('marketplace.plugs')%></h3>
-  <p><%= t('marketplace.helpnote2')%></p>
 <% else %>
-  <h3 class="title"><%=t('integration.helpcard.title1')%></h3>
   <p><%= t('integration.helpcard.info1')%></p>
-  <h3 class="title"><%=t('integration.helpcard.title2')%></h3>
-  <p><%= t('integration.helpcard.info2')%></p>
 <% end %>
+<h3 class="title"><%=t('marketplace.plugs')%></h3>
+<p><%= t('marketplace.helpnote2')%></p>

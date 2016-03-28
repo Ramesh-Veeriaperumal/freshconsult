@@ -4,7 +4,6 @@ class EmailNotification < ActiveRecord::Base
   belongs_to_account
   attr_protected  :account_id
   before_create :set_default_version
-  include AccountOverrider
 
   xss_sanitize  :only => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template], :decode_calm_sanitizer => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template]
 

@@ -32,7 +32,7 @@ describe Integrations::InfusionsoftController do
                           :contact_data_types => "type1",
                           :account_data_types => "type2"
                         }
-    flash[:notice].should eql "The integration has been enabled successfully!"
+    flash[:notice].should eql "App installed successfully."
     response.should redirect_to "/integrations/applications"
   end
 

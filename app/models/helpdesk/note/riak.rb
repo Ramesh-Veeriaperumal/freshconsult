@@ -13,7 +13,7 @@ class Helpdesk::Note < ActiveRecord::Base
       Helpdesk::Riak::Note::Body.store_in_riak(key,value)
     rescue Exception => e
       # push into redis
-      $redis_tickets.rpush(Redis::RedisKeys::RIAK_FAILED_NOTE_CREATION,"#{self.account_id}/#{self.id}")
+      $redis_tickets.perform_redis_op("rpush", Redis::RedisKeys::RIAK_FAILED_NOTE_CREATION,"#{self.account_id}/#{self.id}")
       NewRelic::Agent.notice_error(e,{:description => "error occured while saving note into riak"})
     end
   end
@@ -39,7 +39,7 @@ class Helpdesk::Note < ActiveRecord::Base
     begin
       $note_body.delete("#{account_id}/#{self.id}")
     rescue Exception => e
-      $redis_tickets.rpush(Redis::RedisKeys::RIAK_FAILED_NOTE_DELETION,"#{self.account_id}/#{self.id}")
+      $redis_tickets.perform_redis_op("rpush", Redis::RedisKeys::RIAK_FAILED_NOTE_DELETION,"#{self.account_id}/#{self.id}")
       NewRelic::Agent.notice_error(e,{:description => "error occured while deleting note from riak"})
     end
   end

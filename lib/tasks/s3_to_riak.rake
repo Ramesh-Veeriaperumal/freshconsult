@@ -7,7 +7,7 @@ namespace :s3_to_riak do
     while(true) do
       begin
         puts "inside creation"
-        ticket = $redis_tickets.lpop(Redis::RedisKeys::RIAK_FAILED_TICKET_CREATION)
+        ticket = $redis_tickets.perform_redis_op("lpop", Redis::RedisKeys::RIAK_FAILED_TICKET_CREATION)
         break unless ticket
         account_id, ticket_id = ticket.split("/")
         ticket_body = {}
@@ -27,7 +27,7 @@ namespace :s3_to_riak do
     while(true) do
       begin
         puts "inside deletion"
-        ticket = $redis_tickets.lpop(Redis::RedisKeys::RIAK_FAILED_TICKET_DELETION)
+        ticket = $redis_tickets.perform_redis_op("lpop", Redis::RedisKeys::RIAK_FAILED_TICKET_DELETION)
         break unless ticket
         $ticket_body.delete(ticket)
       rescue Exception => e
@@ -42,7 +42,7 @@ namespace :s3_to_riak do
     while(true) do
       begin
         puts "inside creation note"
-        note = $redis_tickets.lpop(Redis::RedisKeys::RIAK_FAILED_NOTE_CREATION)
+        note = $redis_tickets.perform_redis_op("lpop", Redis::RedisKeys::RIAK_FAILED_NOTE_CREATION)
         break unless note
         account_id, note_id = note.split("/")
         note_body = {}
@@ -62,7 +62,7 @@ namespace :s3_to_riak do
   	while(true) do
       begin
         puts "inside deletion note"
-        note = $redis_tickets.lpop(Redis::RedisKeys::RIAK_FAILED_NOTE_DELETION)
+        note = $redis_tickets.perform_redis_op("lpop", Redis::RedisKeys::RIAK_FAILED_NOTE_DELETION)
         break unless note
         $note_body.delete(note)
       rescue Exception => e

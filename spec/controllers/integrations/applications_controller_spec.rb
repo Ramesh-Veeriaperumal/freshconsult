@@ -103,7 +103,7 @@ RSpec.describe Integrations::ApplicationsController do
     set_redis_key(provider, salesforce_params(provider))
     post 'oauth_install', :id => provider, :install => true, :contacts => "Account_Id"
     response.should redirect_to "/integrations/applications"
-    error_flash = {:error=>"Error in enabling the integration."}
+    error_flash = {:error=>"Error while installing the app."}
     request.flash[:error].should eql error_flash[:error]
   end
 
