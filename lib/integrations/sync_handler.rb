@@ -2,7 +2,7 @@ module Integrations
   class SyncHandler
     def execute(data, configs)
       service_name = configs.delete(:service)
-      return if data.spam || data.deleted
+      return if data.spam_or_deleted?
       service_class = IntegrationServices::Service.get_service_class(service_name)      
       if service_class.present?
         event = configs.delete(:event)

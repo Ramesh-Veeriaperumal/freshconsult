@@ -15,14 +15,14 @@ class ApiWebhooksController < ApplicationController
                 :http_code => Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]}
     else
       result = {:message => "error", 
-                :http_code => Rack::Utils::SYMBOL_TO_STATUS_CODE[:unprocessable_entity]}
+                :http_code => Rack::Utils::SYMBOL_TO_STATUS_CODE[:conflict]}
     end
     api_responder(result)
   end
 
   def destroy
-    @obj = subscribe_scoper.find(params[:id])
-    if @obj.destroy
+    vr = subscribe_scoper.find(params[:id]).destroy
+    if vr.destroyed?
       result = {:message => "success", :http_code => Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok]}
     else
       result = {:message => "error", :http_code => Rack::Utils::SYMBOL_TO_STATUS_CODE[:bad_request]}
@@ -50,6 +50,7 @@ class ApiWebhooksController < ApplicationController
     end
 
     def check_rule_type_exists?
+      throw_error if WHITELISTED_DOMAIN.exclude?(URI.parse(params["url"]).host)
       current_account.api_webhooks_rules_from_cache.each do |va|
         throw_error(va["id"]) if va.action_data.first[:url] == params["url"] && 
                                 va.filter_data[:events].first["name"] == params["event_data"].first["name"] && 
@@ -113,13 +114,14 @@ class ApiWebhooksController < ApplicationController
     end
 
     def api_responder(respond_hash)
+      status = respond_hash[:http_code]
       respond_to do |format|
         format.json{
-          render :json => respond_hash
+          render :json => respond_hash, :status => status
         }
         format.xml {
           render :xml => respond_hash.to_xml(:root => :message, :dasherize => false, 
-                                             :skip_instruct => true,)
+                                             :skip_instruct => true,), :status => status
         }
       end
     end

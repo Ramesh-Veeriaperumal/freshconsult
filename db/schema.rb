@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.integer  "date_format",                       :default => 1
     t.text     "additional_settings"
     t.text     "resource_rlimit_conf"
+    t.integer  "webhook_limit",                      :default => 1000
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
@@ -907,6 +908,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
   end
 
   add_index "customers", ["account_id", "name"], :name => "index_customers_on_account_id_and_name", :unique => true
+  add_index "customers", ["account_id", "updated_at"], :name => "index_customers_on_account_id_and_updated_at"
 
   create_table "data_exports", :force => true do |t|
     t.integer  "account_id", :limit => 8
