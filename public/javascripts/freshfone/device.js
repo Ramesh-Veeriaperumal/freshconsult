@@ -172,11 +172,11 @@
 				freshfoneConnection.incomingAlert();
 			}
         });
-		function deviceWithActiveConnection() {
-			var activeConnection = Twilio.Device.activeConnection();
-			return (activeConnection && 
-				activeConnection.status()=="open");
-		}
+	}
+	function deviceWithActiveConnection() {
+		var activeConnection = Twilio.Device.activeConnection();
+		return (activeConnection && 
+			activeConnection.status()=="open");
 	}
 	function regenerateToken () {
 		freshfoneuser.getCapabilityToken();

@@ -159,6 +159,13 @@ class Freshfone::Call < ActiveRecord::Base
     CALL_STATUS_HASH[:queued], 1.hours.ago.to_s(:db)
   ]
 
+  scope :agent_active_calls, lambda { |user_id|
+    {:conditions => ["user_id = ? and (call_status in (?) and created_at > ? and created_at < ?)",
+          user_id, [ CALL_STATUS_HASH[:'in-progress'], CALL_STATUS_HASH[:'on-hold'], CALL_STATUS_HASH[:connecting]], 4.hours.ago.to_s(:db), Time.zone.now.to_s(:db)
+        ], :order => "created_at DESC"
+    }
+  }
+
   def self.filter_call(call_sid)
     call = filter_by_call_sid(call_sid).first
     call.blank? ? filter_by_dial_call_sid(call_sid).first : call

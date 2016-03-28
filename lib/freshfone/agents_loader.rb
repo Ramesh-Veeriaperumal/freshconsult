@@ -13,9 +13,7 @@ module Freshfone::AgentsLoader
   end
 
   def load_agent(agent_id, freshfone_user=nil)
-    freshfone_user = freshfone_users.find_by_user_id(agent_id) if freshfone_user.blank?
-    initialize_agents({ :available_agents => freshfone_user && freshfone_user.online? ? [freshfone_user] : [],
-                        :busy_agents      => freshfone_user && freshfone_user.busy? ? [freshfone_user] : [] })
+    load_agent_hunt(agent_id, freshfone_user)
     @call_actions.save_conference_meta(:agent, agent_id)
   end
 
@@ -30,7 +28,18 @@ module Freshfone::AgentsLoader
 
   def check_available_and_busy_agents
      load_agents(current_number, current_number.group_id) and return if current_number.group.present?
+     load_agent_hunt(current_call.user_id) and return if agent_hunt?
      load_agents(current_number)
+  end
+
+  def load_agent_hunt(agent_id, freshfone_user=nil)
+    freshfone_user = freshfone_users.find_by_user_id(agent_id) if freshfone_user.blank?
+    initialize_agents({ :available_agents => freshfone_user && freshfone_user.online? ? [freshfone_user] : [],
+                        :busy_agents      => freshfone_user && freshfone_user.busy? ? [freshfone_user] : [] })
+  end
+
+  def agent_hunt?
+    current_call.meta.agent_hunt?
   end
 
 end

@@ -132,7 +132,7 @@ class Freshfone::Initiator::AgentCallLeg
     # Edge case: To prevent incoming call for an agent with a call (bug #15531)
       return if (available_agents.length != 1)
       user_id = available_agents.first.user_id
-      current_account.freshfone_calls.agent_progress_calls(user_id).present?
+      current_account.freshfone_calls.agent_active_calls(user_id).present?
     end
 
     def telephony

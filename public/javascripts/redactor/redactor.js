@@ -1984,7 +1984,7 @@ Redactor.prototype = {
 	// PASTE CLEANUP
 	pasteCleanUp: function(html) {
 		if(this.textPaste == false) {		
-			html = this.onPasteFromWord(html);	
+			html = this.onPasteFromWord(html);
 			html = this.sanitizeContent(html);
 			html = this.normalizeContent(html).html();
 			this.execCommand('inserthtml', html);
@@ -2013,12 +2013,12 @@ Redactor.prototype = {
 			html = html.replace(/<img(.*?)v:shapes=(.*?)>/gi, '');
 			html = html.replace(/src="file\:\/\/(.*?)"/, 'src=""');
 
-			// list
-			html = html.replace(/<p(.*?)class=MsoListParagraphCxSpFirst ([\w\W]*?)<\/p>/gi, this.removeIndentForList);
-			html = html.replace(/<p(.*?)class=MsoListParagraphCxSpMiddle ([\w\W]*?)<\/p>/gi, this.removeIndentForList);
-			html = html.replace(/<p(.*?)class=MsoListParagraphCxSpLast ([\w\W]*?)<\/p>/gi, this.removeIndentForList);
+			// list 
+			html = html.replace(/p(.*?)class=MsoListParagraphCxSpFirst ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpFirst" ([\w\W]*?)\/p/gi, this.removeIndentForList);
+			html = html.replace(/p(.*?)class=MsoListParagraphCxSpMiddle ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpMiddle" ([\w\W]*?)\/p/gi, this.removeIndentForList);
+			html = html.replace(/p(.*?)class=MsoListParagraphCxSpLast ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpLast" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 			// one line
-			html = html.replace(/<p(.*?)class=MsoListParagraph ([\w\W]*?)<\/p>/gi, this.removeIndentForList);
+			html = html.replace(/p(.*?)class="MsoListParagraph" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 
 			// remove ms word tags
 			html = html.replace(/<o:p(.*?)>([\w\W]*?)<\/o:p>/gi, '$2');
