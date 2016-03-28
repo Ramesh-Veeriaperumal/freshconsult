@@ -11,12 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20160317132324) do
-=======
-
 ActiveRecord::Schema.define(:version => 20160104125144) do
->>>>>>> origin/rails3-phase2
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
