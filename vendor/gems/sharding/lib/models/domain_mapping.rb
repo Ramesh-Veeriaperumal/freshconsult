@@ -9,7 +9,7 @@ class DomainMapping < ActiveRecord::Base
     after_update :clear_cache, :update_route53 , :if => :domain_changed?
   	after_destroy :clear_cache,:delete_route_53
 
-    after_commit :create_route_53 , :on => :create
+    after_commit :clear_cache, :create_route_53 , :on => :create
 
 	belongs_to :shard, :class_name => 'ShardMapping',:foreign_key => :account_id
 

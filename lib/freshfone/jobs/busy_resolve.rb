@@ -71,7 +71,7 @@ class Freshfone::Jobs::BusyResolve
 
     def self.is_device_set? key
       begin
-        return $redis_integrations.sismember key, @agent_id
+        return $redis_integrations.perform_redis_op("sismember", key, @agent_id)
       rescue => e
         Rails.logger.debug "SMEMBERS Redis method error in BusyResolve
         for account #{@account.id} and user #{@agent_id} => #{e}"
@@ -81,7 +81,7 @@ class Freshfone::Jobs::BusyResolve
 
     def self.remove_agent_from_redis_set key
       begin
-        return $redis_integrations.srem key, @agent_id
+        return $redis_integrations.perform_redis_op("srem", key, @agent_id)
       rescue => e
         Rails.logger.debug "SREM Redis method error in BusyResolve
         for account #{@account.id} and user #{@agent_id} => #{e}"

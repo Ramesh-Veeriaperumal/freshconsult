@@ -1,8 +1,8 @@
 module MarketplaceHelper
 
   def extensions
-    body =  [{ "name" => "Plug 1",
-                 "display_name" => "Plug 1",
+    body =  [{ "name" => "google_plug",
+                 "display_name" => "Google Plug",
                  "description" => "desc",
                  "version_id" => 3,
                  "categories" => ["Agent Productivity"],
@@ -39,7 +39,7 @@ module MarketplaceHelper
               "version_id" => 3,
               "latest_version" => 2,
               "name" => "Plug 1",
-              "display_name" => "Plug 1",
+              "display_name" => "Google Plug",
               "description" => "desc",
               "install_count" => 2,
               "app_version" => "2.0",
@@ -64,14 +64,45 @@ module MarketplaceHelper
     FreshRequest::Response.new(Response.new(body))
   end
 
-  def configs
-    body = [{ "name" => "UserName", "label" => "User Name", "description" => "Enter your User Name", 
-       "default_value" => "ABCD", "field_type" => 1}]
+  def ext_configs
+    body = [
+        { 
+          "name" => "UserName", "label" => "User Name", "description" => "Enter your User Name", 
+          "default_value" => "ABCD", "field_type" => 1
+        },
+        {
+          "name" => "Country", "label" => "Country", "description" => "Enter your Country", 
+          "default_value" => ["US", "UK", "IN"], "field_type" => 2
+        }
+      ]
     FreshRequest::Response.new(Response.new(body))
   end
 
-  def status
-    body = { :status => 200 }
+  def account_configs
+    body = { "UserName" => "User's Name", "Country" => "IN"}
+    FreshRequest::Response.new(Response.new(body))
+  end
+
+  def account_configurations
+    [
+      { 
+        "name" => "UserName", "label" => "User Name", "description" => "Enter your User Name", 
+        "default_value" => "User's Name", "field_type" => 1
+      },
+      {
+        "name" => "Country", "label" => "Country", "description" => "Enter your Country", 
+        "default_value" => ["IN", "US", "UK"], "field_type" => 2
+      }
+    ]
+  end
+
+  def success_response
+    body = " "
+    FreshRequest::Response.new(Response.new(body))
+  end
+
+  def auto_suggestion
+    body = [{ suggest_term: "Google Plug", version_id: 1 }]
     FreshRequest::Response.new(Response.new(body))
   end
 

@@ -175,6 +175,7 @@ module FreshdeskCore::Model
                         "freshfone_whitelist_countries",
                         "freshfone_subscriptions",
                         "freshfone_supervisor_controls",
+                        "freshfone_caller_ids",
 
                         "survey_questions",
                         "survey_question_choices",

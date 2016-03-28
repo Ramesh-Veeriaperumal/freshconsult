@@ -12,6 +12,7 @@ module IntegrationServices::Services
       end
 
       def process_response(response, *success_codes, &block)
+        @logger.debug("Slack Logger : STATUS=#{response.status} BODY=#{response.body} ")
         if success_codes.include?(response.status) && response.body.present?
             temp_response = parse(response.body)
             yield temp_response if temp_response["ok"]

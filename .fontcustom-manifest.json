@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "3094f0fc198eb3e686d99a4f3b4b32cf1b4b92fcc0dfaf87d4ab72cb149bbc13",
-    "current": "3094f0fc198eb3e686d99a4f3b4b32cf1b4b92fcc0dfaf87d4ab72cb149bbc13"
+    "previous": "4763bdc492155e7af4177b52f835bb2ac67a6ea1f0f830284e4b7b10985f3a9f",
+    "current": "4763bdc492155e7af4177b52f835bb2ac67a6ea1f0f830284e4b7b10985f3a9f"
   },
   "fonts": [
-    "public/assets/glyphs_3094f0fc198eb3e686d99a4f3b4b32cf.ttf",
-    "public/assets/glyphs_3094f0fc198eb3e686d99a4f3b4b32cf.svg",
-    "public/assets/glyphs_3094f0fc198eb3e686d99a4f3b4b32cf.woff",
-    "public/assets/glyphs_3094f0fc198eb3e686d99a4f3b4b32cf.eot"
+    "public/assets/glyphs_4763bdc492155e7af4177b52f835bb2a.ttf",
+    "public/assets/glyphs_4763bdc492155e7af4177b52f835bb2a.svg",
+    "public/assets/glyphs_4763bdc492155e7af4177b52f835bb2a.woff",
+    "public/assets/glyphs_4763bdc492155e7af4177b52f835bb2a.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -57,6 +57,10 @@
     "apple": {
       "codepoint": 61702,
       "source": "public/glyphs/vectors/apple.svg"
+    },
+    "apps": {
+      "codepoint": 61971,
+      "source": "public/glyphs/vectors/apps.svg"
     },
     "archived-ticket": {
       "codepoint": 61955,
@@ -254,6 +258,10 @@
       "codepoint": 61737,
       "source": "public/glyphs/vectors/cross.svg"
     },
+    "cross-round": {
+      "codepoint": 61972,
+      "source": "public/glyphs/vectors/cross-round.svg"
+    },
     "crown": {
       "codepoint": 61738,
       "source": "public/glyphs/vectors/crown.svg"
@@ -321,6 +329,10 @@
     "decimal": {
       "codepoint": 61897,
       "source": "public/glyphs/vectors/decimal.svg"
+    },
+    "delete": {
+      "codepoint": 61973,
+      "source": "public/glyphs/vectors/delete.svg"
     },
     "deleted": {
       "codepoint": 61875,
@@ -609,10 +621,6 @@
     "infinity-5": {
       "codepoint": 61787,
       "source": "public/glyphs/vectors/infinity-5.svg"
-    },
-    "integrations": {
-      "codepoint": 61788,
-      "source": "public/glyphs/vectors/integrations.svg"
     },
     "ios": {
       "codepoint": 61789,

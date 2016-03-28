@@ -136,12 +136,16 @@ class Mobile::TicketsController < ApplicationController
   end
 
   def filter_count(selector, agent_filter=false)
-    if Account.current.launched?(:es_count_reads)
+    if current_account.launched?(:es_count_reads)
       TicketsFilter.es_filter_count(selector, true, agent_filter)
     else
       Sharding.run_on_slave do
         tickets = filter_tickets(agent_filter,selector)
-        tickets.unresolved.count
+        if current_account.launched?(:force_index_tickets)
+          tickets.use_index("index_helpdesk_tickets_status_and_account_id").unresolved.count
+        else
+          tickets.unresolved.count
+        end
       end
     end
   end

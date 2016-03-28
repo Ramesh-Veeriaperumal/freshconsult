@@ -11,9 +11,8 @@ module Redis::RedisWrapper
 	    begin	    	
 	      self.send(operator, *args)
 	    rescue Exception => e
-	      NewRelic::Agent.notice_error(e)
-	      puts e
-	      return
+	    	NewRelic::Agent.notice_error(e)
+	    	return
 	    end
 	  end
 	end

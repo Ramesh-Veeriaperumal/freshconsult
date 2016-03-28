@@ -117,7 +117,7 @@
         :url                           =>   "/admin/email_commands_settings",
         :privilege                     =>   privilege?(:manage_email_settings)
       },
-      :integrations                    =>   {
+      :apps                            =>   {
         :url                           =>   "/integrations/applications",
         :privilege                     =>   privilege?(:admin_tasks)
       },
@@ -196,7 +196,7 @@
       :"general-settings"       =>    ["helpdesk-settings", "ticket-fields", "customer-fields", "agent", "group", "role", "security", "sla",
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response",
-                                          "survey-settings", "gamification-settings", "email_commands_setting", "integrations"],
+                                          "survey-settings", "gamification-settings", "email_commands_setting", "apps"],
       :"account-settings"       =>    ["account", "billing", "import", "day_pass"]
     }
 
@@ -281,8 +281,8 @@
       :"gamification-settings"    =>      {
           :open_keywords          =>      [:gamification]
       },
-      :integrations               =>      {
-          :open_keywords          =>      [:list_all_integrations]
+      :apps                       =>      {
+          :open_keywords          =>      [:integrations, :list_all_apps, :plugs, :freshplugs]
       },
       :account                    =>      {
           :open_keywords          =>      [:invoice_emails, :export_data],

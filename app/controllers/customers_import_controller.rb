@@ -1,6 +1,7 @@
 class CustomersImportController < ApplicationController
    include ImportCsvUtil
-
+   include Redis::RedisKeys
+   include Redis::OthersRedis
    before_filter :set_selected_tab
    before_filter :validate_customer_type
    before_filter :validate_params, :only => [:map_fields, :create]
@@ -22,8 +23,18 @@ class CustomersImportController < ApplicationController
   def create
     if fields_mapped?
       current_account.send(:"create_#{params[:type]}_import",{:status => 1})
-      params[:type].eql?("company") ? Resque.enqueue(Workers::Import::Company, customer_params) : 
-                  Resque.enqueue(Workers::Import::Contact, customer_params)
+      if key_exists?(IMPORT_SIDEKIQ_ENABLED)
+        import_worker = params[:type].eql?("company") ?
+          "Import::CompanyWorker" :
+          "Import::ContactWorker"
+          import_worker.constantize.perform_async(customer_params)
+      else
+        if params[:type].eql?("company")
+          Resque.enqueue(Workers::Import::Company, customer_params)
+        else
+          Resque.enqueue(Workers::Import::Contact, customer_params)
+        end
+      end
       redirect_to "/#{params[:type].pluralize}", :flash =>{ :notice => t(:'flash.import.success')}
     else
       redirect_to "/imports/#{params[:type]}"

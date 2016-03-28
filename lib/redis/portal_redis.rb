@@ -1,21 +1,19 @@
 module Redis::PortalRedis
 	def get_portal_redis_key key
-		newrelic_begin_rescue { $redis_portal.get(key) }
+		$redis_portal.perform_redis_op("get", key)
 	end
 
 	def set_portal_redis_key(key, value, expires = 7776000)
-		newrelic_begin_rescue do
-			$redis_portal.set(key, value)
-			$redis_portal.expire(key,expires) if expires
-	  end
+		$redis_portal.perform_redis_op("set", key, value)
+		$redis_portal.perform_redis_op("expire", key, expires) if expires
 	end
 
 	def remove_portal_redis_key key
-		newrelic_begin_rescue { $redis_portal.del(key) }
+		$redis_portal.perform_redis_op("del", key)
 	end
 
 	def increment_portal_redis_version(key)
-		newrelic_begin_rescue { $redis_portal.INCR(key) }
+		$redis_portal.perform_redis_op("INCR", key)
 	end
 
 end

@@ -24,9 +24,14 @@ module Va::Webhook::Trigger
       :auth_header => auth_header,
       :custom_headers => custom_headers,
       :rule_id => self.va_rule.id,
-      :account_id => Account.current.id
+      :account_id => Account.current.id,
+      :webhook_created_at => Time.now.utc.to_f,
+      :webhook_limit => Account.current.account_additional_settings_from_cache.webhook_limit
     }
-    if Account.current.premium_webhook_throttler?
+    
+    if redis_key_exists?(WEBHOOK_V1_ENABLED)
+      ::WebhookV1Worker.perform_async(throttler_args)
+    elsif Account.current.premium_webhook_throttler?
       Throttler::PremiumWebhookThrottler.perform_async({
         :args => throttler_args
       })

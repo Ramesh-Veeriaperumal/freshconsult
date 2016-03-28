@@ -287,7 +287,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
  
     def api_webhook_note_check
-      (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook?
+      (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook? && !notable.spam_or_deleted?
     end
     
     ##### ****** Methods related to reports starts here ******* #####

@@ -4,7 +4,6 @@
  
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <%= javascript_include_tag :'cdn/reports'  %>
-<%= render :partial => "reports/shared/deprecation_head" unless current_account.old_reports_enabled? %>
 
 <div class="row-fluid">
 	<div class="span12 report-breadcrum-wrapper">

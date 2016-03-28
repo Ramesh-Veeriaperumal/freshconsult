@@ -1935,7 +1935,7 @@ en:
         agent: Agents
         feedback: Feedback widget
         freshchat: Live Chat
-        integrations: "Integrations"
+        apps: Apps
         dispatcher: Dispatch'r
         supervisor: Supervisor
         observer: Observer
@@ -2046,7 +2046,6 @@ en:
         predefined_responses: "Predefined responses"
         customer_survey: "Customer Survey"
         gamification: "Gamification"
-        list_all_integrations: "List of all integrations"
         invoice_emails: "Invoice Emails"
         export_data: "Export Data"
         cancel_service: "Cancel Service"
@@ -2061,6 +2060,10 @@ en:
         trusted_ip_meta: Private Helpdesk
         custom_mailbox: Custom Mail Server
         custom_mailbox_meta: Custom Mailboxes
+        integrations: "Integrations"
+        list_all_apps: "List of all apps"
+        plugs: Plugs
+        freshplugs: Freshplugs
     placeholders:
       tickets: Tickets
       ticket_fields: Ticket Fields
@@ -2140,20 +2143,20 @@ en:
     facebook:
       updated: Facebook setting has been updated
     application:
-      already: "Integration is already installed."
+      already: "App is already installed."
       uninstall:
-        success: "The integration has been disabled successfully!"
-        error: "Error in disabling the integration."
+        success: "App deleted successfully."
+        error: "Error while deleting the app."
       install:
-        success: "The integration has been enabled successfully!"
-        error: "Error in enabling the integration."
-        cti_error: "Multiple integrations of type CTI can not be enabled."
-        freshfone_alert: "CTI integration cannot be enabled when your phone channel is enabled."
+        success: "App installed successfully."
+        error: "Error while installing the app."
+        cti_error: "Multiple CTI apps can not be enabled."
+        freshfone_alert: "CTI app cannot be enabled when your phone channel is enabled."
       update:
-        success: "The integration has been updated successfully!"
-        error: "Error in configuring the integration."
-      not_installed: "This integration is not yet installed."
-      setting_saved: "Integration settings have been saved successfully."
+        success: "App updated successfully."
+        error: "Error while updating the app."
+      not_installed: "This app is not yet installed."
+      setting_saved: "App settings have been saved successfully."
       invalid_url: "The url entered is invalid."
     filter:
       delete_success: "View has been deleted successfully!"
@@ -4607,6 +4610,8 @@ en:
     expand: "Expand"
     view_ticket: "View Ticket"
     insert: "Insert"
+    auto_delete_notification_spam: 'Tickets in spam for more than 30 days will be automatically deleted'
+    auto_delete_notification_trash: 'Tickets in trash for more than 30 days will be automatically deleted'
     compose:
       choose_email: Pick a From Address
       properties: Properties
@@ -4989,10 +4994,10 @@ en:
   badges_achieved_label: Badges achieved
   integration:
     helpcard:
-      title1: Integrations
-      info1: Integrations in Freshdesk let you share data with third party applications and services that you use regularly. Freshdesk offers several native integrations out-of-the-box. To start using a native integration, click on the corresponding “Enable” button.
-      title2: FreshPlug Widgets
-      info2: In addition to the built-in integrations, you can bring in data from any other third party application, legacy system or database into the tickets and contact pages with FreshPlugs. You can customize your FreshPlug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS and Javascript.
+      title1: Apps
+      info1: Apps in Freshdesk let you share data with third party applications and services that you use regularly. Freshdesk offers several native apps out-of-the-box. To start using a app, click on the corresponding “Enable” button.
+      title2: Plugs
+      info2: In addition to the built-in apps, you can bring in data from any other third party application, legacy system or database into the tickets and contact pages with Plugs. You can customize your Plug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS and Javascript.
   account:
     name: Account Name
     cancel: Cancel
@@ -5961,17 +5966,14 @@ en:
     activities: Loading more activities
     items: Loading more items
   application:
-    new: Create New Application
-    desc: Integrate with other Apps to make your Freshdesk experience more awesome.
-    title: Integrations
     disabled: Disabled
     enabled: Enabled
     configure: Configure
     enable: Enable
-    click_to_disable: Disable integration
-    click_to_enable: Enable integration
-    confirm_disable: "Are you sure you want to disable this integration?"
-    configure_addon: "Configure this integration"
+    click_to_disable: Disable app
+    click_to_enable: Enable app
+    confirm_disable: "Are you sure you want to disable this app?"
+    configure_addon: "Configure this app"
     configure_custom_addon: "Configure this widget"
     tooltip:
       edit: Edit
@@ -6011,7 +6013,7 @@ en:
     plugs: Plugs
     new_plug: New Plug
     no_plugs: "You have no plugs installed. Create and Install a new Plug by clicking "
-    all: All
+    all_categories: All categories
     settings: Settings
     coming_soon: Coming Soon
     install: Install
@@ -6035,23 +6037,28 @@ en:
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
     no_connection: "The app gallery is currently unavailable. Please try again later. Please contact us, if the issue persists."
-    plugs_unavailable: "Certain apps could not be rendered.Please try again after a few seconds.Please contact us if the issue persists."
-    installed_plugs_unavailable: "The listing of installed apps is currently unavailable.Please try again later.Please contact us if the issue persists."
-    install_error: "Error while installing the App. Please try again."
+    plugs_unavailable: "Certain apps could not be rendered. Please try again later. Please contact us if the issue persists."
+    installed_plugs_unavailable: "The listing of installed apps is currently unavailable. Please try again later. Please contact us if the issue persists."
+    api_error: "We could not process your request. Please try after sometime."
     results: results
     field_blank: Please fill all the fields.
     installed: Installed
     helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get more Apps” button."
     helpnote2: "In addition to the apps, you can bring in data from any other third party solution, legacy system or database into the tickets and contacts pages with Plugs. You can customize your Plug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS, and Javascript."
+    no_configs: "This app does not require any configs."
+    search: "Search"
+    search_language_warning: "Search available in English only"
     delete_action:
-      success: "App deleted successfully"
-      error: "Error while deleting the App"
+      success: "App deleted successfully."
+      error: "Error while deleting the App."
     install_action:
       success: "App installed successfully."
     update_action:
       success: "App updated successfully."
+    help_and_support: "Help and Support"
+    developed_by: "By "
+    time_ago: "ago"
   integrations:
-    native_integrations: Native Integrations
     cti_app_title: CTI Integrations
     uninstall: Uninstall
     deprecated_message: This app is no longer supported. Please install the latest version.
@@ -6064,7 +6071,7 @@ en:
       show_widget_in_ticket_view_page: Show the widget in ticket view page.
       show_the_widget_in_contact_view_page: Show the widget in contact view page.
       plug_preview: Plug Preview
-      preview_helptext: This integration will appear in the sidebar
+      preview_helptext: This plug will appear in the sidebar
       ticket_detail_page: Ticket detail page
       contact_detail_page: Contact detail page
       plug_used_in: Plug displayed on
@@ -6077,7 +6084,7 @@ en:
     cti:
       convert_to_ticket: "Convert all call recordings into a ticket at the end of the call"
       add_note_as_private: "Mark in call notes as a private"
-      cti_error: "No Integration of type cti enabled for this account"
+      cti_error: "No app of type cti enabled for this account"
     czentrix:
       label: "C-Zentrix"
       desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
@@ -6609,8 +6616,8 @@ en:
       status_update: "Status update"
     slack_msg:
       wrong_channel: ERROR converting channel transcript into Ticket :Ticket can be created only in direct channel group
-      deprecation_notice: "A new release of Freshdesk Slack integration is now available. This version is now obsolete. Please follow this <a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'>solution article</a>  for detailed steps on how to migrate to the new implementation."
-      uninstall_old_slack: Integration is deprecated and updates are ceased. Install Slack V2 for more powerful features.
+      deprecation_notice: "A new release of Freshdesk Slack app is now available. This version is now obsolete. Please follow this <a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'>solution article</a>  for detailed steps on how to migrate to the new implementation."
+      uninstall_old_slack: App is deprecated and updates are ceased. Install Slack V2 for more powerful features.
       invalid_api_key: ERROR :Invalid Freshdesk Api key
       notify_on_ticket_update: "Status updated for  "
       notify_on_ticket_create: "Ticket created by "
@@ -7151,6 +7158,7 @@ en:
   assume_identity_button: "Assume Identity"
   revert_identity_link_msg: "Revert Identity"
   swith_agent_msg: "Switch Agent"
+  agent_loading_msg: "Loading agents..."
   switch_heading: "Switch Agent"
   email_notifications_agent_selection_msg: "Select agents to notify"
   on_hold: "On Hold"
@@ -8332,6 +8340,30 @@ en:
         setup:
           title_text: "Setting up a call center"
           info_text: "In order to start using the phone channel, you will first need to purchase a call-in number to offer your customers. You can purchase a local number in any <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a>. If your customers will be calling you from the US, UK or Canada, you can also offer them a Toll-free dial in number.<br/><br/>You can purchase multiple phone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk. Check out the <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>call rates here</a>.<br/><br/> Once you have purchased a phone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically."
+        caller_id:
+          manage_caller_id : "Manage Caller ID "  
+          add_another : "/ Add another"
+          enter_code : "Pick up your phone and enter the validation code"
+          enter_number : "Enter the number you want to add as caller id"
+          verify_number : "Verify this number"
+          another_caller : "Add another"
+          delete : "Delete"
+          number_added : "Number Added"
+          no_number_added : "No caller id added"
+          ok : "OK"
+          add_new : "Add New"
+          add_new_caller_id : "Add new Caller ID"
+          wait : "Please wait..."
+          error_message : "Sorry! There was some issue. Please try again"
+          simultaneous_verification_error : "Sorry! already verifying number"
+          invalid_number : "Invalid phone number!"
+          calling : "Calling "
+          call_id_mask : "Mask this number"
+          twilio_errors : 
+            not_allowed : "Sorry there was an issue while adding this number as caller ID. Please try again. If the issue persists contact us at <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>"
+            invalid_number : "Sorry it seems that the number is invalid. Please try again. If the issue persists contact us at <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>"
+            already_verified : "Phone number already verified for your account!"
+
       invalid_attachment: "Attachment '%{name}' is not a valid audio file/ its size is greater than 5MB"
       ivr:
         simple_message_title: "Simple Message"

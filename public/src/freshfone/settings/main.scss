@@ -192,3 +192,24 @@
     width: 137px;
   }
 }
+
+.caller_id {
+  width : 190px;
+}
+
+.call_id_mask{
+  @include micro-position(7px);
+  .toggle-button{
+    margin-left: 0px;
+    float: left;
+    top: -2px;
+  }
+  .caller_id_container{
+    @include micro-position(-5px);
+  }
+}
+
+.no-number-added{
+  color: #888;
+}
+

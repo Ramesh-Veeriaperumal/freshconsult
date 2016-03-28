@@ -19,12 +19,20 @@
 				 					{:class => "toggle_freshfone_form", :method => :put}) do %>
 							<%#= check_box_tag :toggle_freshfone, 1, feature?(:freshfone), :class => 'toggle_freshfone' %>
 						<%# end %>
+						<% if current_account.launched?(:freshfone_caller_id_masking) %>
+							<a id="verify-outgoing-caller" href="#" class="mr10"><%=t('freshfone.admin.numbers.caller_id.manage_caller_id')%></a>
+						<% end %>
 						<%= buy_number_link_helper %>
 					<% end %>
 	    	</div>
 	    <% end %>
 		</div>
 	</div>
+
+	<% if current_account.launched?(:freshfone_caller_id_masking) %>
+		<%= render :partial => "/freshfone/outgoing_callers_id", :locals => { :settings => false } %>
+	<% end %>
+	
 	<%= render :partial => "/admin/freshfone/numbers/trial_usage"  if freshfone_trial_states? %>
 	<%= render :partial => "/admin/freshfone/numbers/purchased_numbers", :locals => {:purchased_numbers => @numbers} %>
 </div>

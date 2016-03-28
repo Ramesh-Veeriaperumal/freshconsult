@@ -1073,7 +1073,7 @@ Freshdesk.CRMWidget = Class.create(Freshdesk.Widget, {
 
 var UIUtil = {
 
-	constructDropDown:function(data, type, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
+	constructDropDown:function(data, type, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries,searchAttr) {
 		foundEntity = "";
 		dropDownBox = $(dropDownBoxId);
 		if (!keepOldEntries) dropDownBox.innerHTML = "";
@@ -1101,7 +1101,7 @@ var UIUtil = {
 
 			var newEntityOption = new Element("option");
 			entityIdValue = parser.getNodeValueStr(entitiesArray[i], entityId);
-			entityEmailValue = parser.getNodeValueStr(entitiesArray[i], "email");
+			entityEmailValue = (!searchAttr) ? parser.getNodeValueStr(entitiesArray[i], "email") :  parser.getNodeValueStr(entitiesArray[i], searchAttr).toLowerCase();
 			if (searchTerm != null && searchTerm != '') {
 				if (entityEmailValue == searchTerm) {
 					foundEntity = entitiesArray[i];

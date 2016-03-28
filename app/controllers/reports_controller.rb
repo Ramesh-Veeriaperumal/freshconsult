@@ -43,7 +43,7 @@ class ReportsController < ApplicationController
   end
 
   def check_old_reports_visibility
-    redirect_to reports_path if current_account.disabled_old_reports_ui?
+    redirect_to reports_path unless current_account.old_reports_enabled?
   end
   
 end
