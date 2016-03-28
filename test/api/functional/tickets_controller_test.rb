@@ -229,15 +229,16 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_duplicate_tags
     @account.tags.create(name: 'existing')
-    params = { requester_id: requester.id, tags: ['new', '<1>new', 'existing', '<2>existing', 'Existing', 'NEW'],
+    @account.tags.create(name: 'TestCaps')
+    params = { requester_id: requester.id, tags: ['new', '<1>new', 'existing', 'testcaps', '<2>existing', 'Existing', 'NEW'],
                status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     assert_difference 'Helpdesk::Tag.count', 1 do # only new should be inserted.
-      assert_difference 'Helpdesk::TagUse.count', 2 do # duplicates should be rejected
+      assert_difference 'Helpdesk::TagUse.count', 3 do # duplicates should be rejected
         post :create, construct_params({}, params)
       end
     end
     assert_response 201
-    params[:tags] = ['new', 'existing']
+    params[:tags] = ['new', 'existing', 'TestCaps']
     t = Helpdesk::Ticket.last
     match_json(ticket_pattern(params, t))
     match_json(ticket_pattern({}, t))
@@ -1425,7 +1426,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { tags: tags }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    assert t.reload.tag_names == tags.map(&:downcase)
+    assert t.reload.tag_names == tags
     match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end

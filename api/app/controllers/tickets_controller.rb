@@ -201,7 +201,7 @@ class TicketsController < ApiApplicationController
     end
 
     def prepare_tags
-      tags = Array.wrap(params[cname][:tags]).map! { |x| RailsFullSanitizer.sanitize(x.to_s.strip) }.uniq(&:downcase).reject(&:blank?) if create? || params[cname].key?(:tags)
+      tags = sanitize_tags(params[cname][:tags]) if create? || params[cname].key?(:tags)
       params[cname][:tags] = construct_tags(tags) if tags
     end
 

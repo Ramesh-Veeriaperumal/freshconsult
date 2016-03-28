@@ -340,6 +340,23 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 201
   end
 
+  def test_create_duplicate_tags
+    @account.tags.create(name: 'existingtag')
+    @account.tags.create(name: 'TestCapsTag')
+    params = { name: Faker::Lorem.characters(20), tags: ['newtag', '<1>newtag', 'existingtag', 'testcapstag', '<2>existingtag', 'ExistingTag', 'NEWTAG'],
+               email: Faker::Internet.email }
+    assert_difference 'Helpdesk::Tag.count', 1 do # only new should be inserted.
+      assert_difference 'Helpdesk::TagUse.count', 3 do # duplicates should be rejected
+        post :create, construct_params({}, params)
+      end
+    end
+    params[:tags] = ['newtag', 'existingtag', 'TestCapsTag']
+    u = User.last
+    match_json(deleted_contact_pattern(params, u))
+    match_json(deleted_contact_pattern({}, u))
+    assert_response 201
+  end
+
   # Update user
   def test_update_user_with_blank_name
     params_hash  = { name: '' }
