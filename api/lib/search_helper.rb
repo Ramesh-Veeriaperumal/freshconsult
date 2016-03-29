@@ -5,7 +5,7 @@ module SearchHelper
     flexilookup = searchable_text_ff_fields
     (params.keys & (flexilookup.keys | ApiTicketConstants::SEARCH_ALLOWED_DEFAULT_FIELDS)).each do |field|
       search_key = flexilookup[field] || field
-      set_search_conditions(search_key, params[field].split(","))
+      set_search_conditions(search_key, params[field].to_s.split(","))
     end
   end
 

@@ -38,7 +38,7 @@ class Users::UpdateCompanyId < BaseWorker
   end
 
   def create_user_companies(users, company_id)
-    users.includes(:user_companies).each do |user|
+    users.preload(:user_companies).each do |user|
       user.user_companies.create(:company_id => company_id) unless user.user_companies.present?
     end
   end

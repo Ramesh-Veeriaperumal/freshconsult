@@ -942,7 +942,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_by_param(id, options = {}, archived = false)
-    archived ? current_account.archive_tickets.permissible(current_user).find_by_param(id, current_account, options) : current_account.tickets.permissible(current_user).find_by_param(id, current_account, options)
+    tkt = archived ? current_account.archive_tickets.find_by_param(id, current_account, options) : current_account.tickets.find_by_param(id, current_account, options)
+    tkt && tkt.accessible_in_helpdesk?(current_user) ? tkt : nil
   end
 
   def load_note_reply_from_email

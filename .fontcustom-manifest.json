@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "4763bdc492155e7af4177b52f835bb2ac67a6ea1f0f830284e4b7b10985f3a9f",
-    "current": "4763bdc492155e7af4177b52f835bb2ac67a6ea1f0f830284e4b7b10985f3a9f"
+    "previous": "ff6de99008ed2214afcb1d634816a99121610ee764f16a7bd32eb123e196ebc0",
+    "current": "ff6de99008ed2214afcb1d634816a99121610ee764f16a7bd32eb123e196ebc0"
   },
   "fonts": [
-    "public/assets/glyphs_4763bdc492155e7af4177b52f835bb2a.ttf",
-    "public/assets/glyphs_4763bdc492155e7af4177b52f835bb2a.svg",
-    "public/assets/glyphs_4763bdc492155e7af4177b52f835bb2a.woff",
-    "public/assets/glyphs_4763bdc492155e7af4177b52f835bb2a.eot"
+    "public/assets/glyphs_ff6de99008ed2214afcb1d634816a991.ttf",
+    "public/assets/glyphs_ff6de99008ed2214afcb1d634816a991.svg",
+    "public/assets/glyphs_ff6de99008ed2214afcb1d634816a991.woff",
+    "public/assets/glyphs_ff6de99008ed2214afcb1d634816a991.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -622,6 +622,10 @@
       "codepoint": 61787,
       "source": "public/glyphs/vectors/infinity-5.svg"
     },
+    "integrations": {
+      "codepoint": 61974,
+      "source": "public/glyphs/vectors/integrations.svg"
+    },
     "ios": {
       "codepoint": 61789,
       "source": "public/glyphs/vectors/ios.svg"
@@ -1118,6 +1122,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",

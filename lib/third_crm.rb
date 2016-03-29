@@ -46,10 +46,8 @@ class ThirdCRM
   private
 
     def add_lead_to_crm(lead_record)
-      response = RestClient.post AUTOPILOT_TOKENS['contact_url'], lead_record.to_json, {"autopilotapikey" => AUTOPILOT_TOKENS['access_key'], "Content-Type" => 'application/json'}
-      person_id = JSON.parse(response)['contact_id']
-      trigger_url = AUTOPILOT_TOKENS['trigger_url']  % {:trigger_code => AUTOPILOT_TOKENS['trigger_code'], :person_id => person_id}
-      RestClient.post trigger_url,{} , {"autopilotapikey" => AUTOPILOT_TOKENS['access_key'], "Content-Type" => 'application/json'}
+      trigger_url = AUTOPILOT_TOKENS['contact_with_trigger_url']  % {:trigger_code => AUTOPILOT_TOKENS['trigger_code']}
+      RestClient.post trigger_url, lead_record.to_json, {"autopilotapikey" => AUTOPILOT_TOKENS['access_key'], "Content-Type" => 'application/json'}
     end
 
     def user_info(account)

@@ -73,6 +73,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_search_with_feature_enabled
     @account.launch :es_count_writes
+    Sidekiq::Testing::inline!
     params = ticket_params_hash.except(:description).merge(custom_field: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
@@ -81,9 +82,10 @@ class TicketsControllerTest < ActionController::TestCase
     @account.launch :api_search_beta
     get :search, controller_params({:status => "2,3", "test_custom_text" => params[:custom_field]["test_custom_text_#{@account.id}"]})
     assert_response 200
-    pattern = []
-    [t].each { |tkt| pattern << index_ticket_pattern(tkt) }
-    match_json(pattern)
+    results = parse_response(@response.body)
+    results.each do |r|
+      assert_equal params[:custom_field]["test_custom_text_#{@account.id}"], r["custom_fields"]["test_custom_text"]
+    end
   end
 
   def test_search_with_feature_enabled_and_invalid_params
@@ -95,6 +97,18 @@ class TicketsControllerTest < ActionController::TestCase
     t = create_ticket(params)
     @account.launch :api_search_beta
     get :search, controller_params({:status => "2,3", :priority => 4, "test_custom_text" => params[:custom_field]["test_custom_text_#{@account.id}"]})
+    assert_response 400
+  end
+
+  def test_search_with_feature_enabled_and_invalid_value
+    @account.launch :es_count_writes
+    params = ticket_params_hash.except(:description).merge(custom_field: {})
+    CUSTOM_FIELDS.each do |custom_field|
+      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    t = create_ticket(params)
+    @account.launch :api_search_beta
+    get :search, controller_params({:status => "2,3,test1", "test_custom_text" => params[:custom_field]["test_custom_text_#{@account.id}"]})
     assert_response 400
   end
 
