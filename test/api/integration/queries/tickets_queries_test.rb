@@ -8,9 +8,9 @@ class TicketsQueriesTest < ActionDispatch::IntegrationTest
       v1 = {}
       v2_expected = {
         api_create: 1,
-        api_show: 3,
+        api_show: 4,
         api_update: 4,
-        api_index: 6,
+        api_index: 5,
         api_destroy: 5,
         api_restore: 6,
 
