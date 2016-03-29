@@ -7,9 +7,8 @@ describe 'Language prefix', :type => :request do
   before(:all) do
   	RoutingFilter.active = true
   	ActionController::Base.allow_forgery_protection = true
-  	@new_agent = add_new_user(@account, :user_role => 1)
+  	@new_agent = add_test_agent(@account,  {:role => @account.roles.first.id})
     @new_agent.password = "test1234"
-    @new_agent.helpdesk_agent = 1
     @new_agent.save
     Language.reset_current
     @test_category_meta = create_category
@@ -95,17 +94,24 @@ describe 'Language prefix', :type => :request do
       post "http://#{@account.full_domain}/#{@account.language}/support/login", :user_session => { :email => @new_agent.email, :password => "test1234", :remember_me => "0" }
       url_locale = @account.supported_languages.first
       get "http://#{@account.full_domain}/#{url_locale}/support/articles/#{@public_article_meta.id}"
-      Language.current.code.should be_eql(url_locale)
-      response.should redirect_to "http://#{@account.full_domain}/#{url_locale}/support/home"
+      response.code.should be_eql("404")
     end
 
     it "should render solution article page with url locale as language prefix if multilingual is enabled, logged in user is an agent and url locale is a supported language and article in that language is available" do
       post "http://#{@account.full_domain}/#{@account.language}/support/login", :user_session => { :email => @new_agent.email, :password => "test1234", :remember_me => "0" }
       @account.make_current
+      @agent.make_current
+      language_code = @account.supported_languages.first
+      @category_version = @test_category_meta.solution_categories.new({ :name => "#{Faker::Lorem.sentence(3)}" })
+      @category_version.language_id = Language.find_by_code(language_code).id
+      @category_version.save
+      @folder_version = @public_folder_meta.solution_folders.new({ :name => "#{Faker::Lorem.sentence(3)}" })
+      @folder_version.language_id = Language.find_by_code(language_code).id
+      @folder_version.save
       @article_version = @article_meta.solution_articles.new({ :title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :user_id => @new_agent.id })
-      @article_version.language_id = Language.find_by_code(@account.supported_languages.first).id
+      @article_version.language_id = Language.find_by_code(language_code).id
     	@article_version.save
-      url_locale = @article_version.language.code
+      url_locale = language_code
       get "http://#{@account.full_domain}/#{url_locale}/support/articles/#{@article_meta.id}"
       Language.current.code.should be_eql(url_locale)
       response.code.should be_eql("200") 
@@ -159,6 +165,10 @@ describe 'Language prefix', :type => :request do
     it "should render solution folder page with url locale as language prefix if multilingual is enabled, logged in user is an agent and url locale is a supported language and folder in that language is available" do
       post "http://#{@account.full_domain}/#{@account.language}/support/login", :user_session => { :email => @new_agent.email, :password => "test1234", :remember_me => "0" }
       @account.make_current
+      @agent.make_current
+      @category_version = @test_category_meta.solution_categories.new({ :name => "#{Faker::Lorem.sentence(3)}" })
+      @category_version.language_id = Language.find_by_code(@account.supported_languages.first).id
+      @category_version.save
       @folder_version = @folder_meta.solution_folders.new({ :name => "#{Faker::Lorem.sentence(3)}" })
       @folder_version.language_id = Language.find_by_code(@account.supported_languages.first).id
     	@folder_version.save
