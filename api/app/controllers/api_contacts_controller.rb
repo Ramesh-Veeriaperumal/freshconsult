@@ -96,7 +96,7 @@ class ApiContactsController < ApiApplicationController
 
     def sanitize_params
       params_hash = params[cname]
-      params_hash[:tag_names] = sanitize_tags(params_hash[:tags]).join(',') if create? || params_hash.key?(:tags)
+      params_hash[:tag_names] = sanitize_tags(params_hash.delete(:tags)).join(',') if create? || params_hash.key?(:tags)
 
       # Making the view_all_tickets as the last entry in the params_hash, since company_id
       # has to be initialised first for making a contact as a view_all_tickets
