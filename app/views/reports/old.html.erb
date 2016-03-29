@@ -80,15 +80,3 @@
     </div>
   <%end%>
 </div>
-<script>
-  jQuery(document).ready(function($) {
-      //Deprecated message
-    var show_msg = <%= current_account.old_reports_enabled? %>
-    if(show_msg){
-    }
-    else{
-      var message = '<div class="deprecated-header"><div class="message"><%=t('helpdesk_reports.deprecated_header_index')%></div></div>';
-      jQuery(".leftcontent").prepend(message);
-    }
-  }); 
-</script>

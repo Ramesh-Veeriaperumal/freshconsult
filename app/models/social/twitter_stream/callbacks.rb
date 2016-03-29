@@ -24,7 +24,7 @@ class Social::TwitterStream < Social::Stream
   end
 
   def clear_volume_in_redis
-    newrelic_begin_rescue { $redis_others.del(stream_volume_redis_key) }
+    newrelic_begin_rescue { $redis_others.perform_redis_op("del", stream_volume_redis_key) }
   end
 
   def previous_changes

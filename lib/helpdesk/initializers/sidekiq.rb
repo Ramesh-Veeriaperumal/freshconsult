@@ -22,6 +22,7 @@ Sidekiq.configure_client do |config|
       "Throttler::WebhookThrottler",
       "Throttler::PremiumWebhookThrottler",
       "WebhookWorker",
+      "WebhookV1Worker",
       "PremiumWebhookWorker",
       "DevNotificationWorker",
       "PodDnsUpdate"
@@ -59,6 +60,7 @@ Sidekiq.configure_server do |config|
       "Throttler::WebhookThrottler",
       "Throttler::PremiumWebhookThrottler",
       "WebhookWorker",
+      "WebhookV1Worker",
       "PremiumWebhookWorker",
       "DevNotificationWorker",
       "PodDnsUpdate"
@@ -73,6 +75,7 @@ Sidekiq.configure_server do |config|
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
+    chain.add Middleware::Sidekiq::Server::Throttler, :required_classes => ["WebhookV1Worker"]
   end
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
@@ -87,6 +90,7 @@ Sidekiq.configure_server do |config|
       "Throttler::WebhookThrottler",
       "Throttler::PremiumWebhookThrottler",
       "WebhookWorker",
+      "WebhookV1Worker",
       "PremiumWebhookWorker",
       "DevNotificationWorker"
     ]

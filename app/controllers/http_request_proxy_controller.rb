@@ -48,7 +48,7 @@ class HttpRequestProxyController < ApplicationController
         elsif params[:app_name] == APP_NAMES[:sugarcrm]
           company_name = ""
           if params[:company_id].present?
-            company_name = spl_char_replace current_account.customers.find(params[:company_id]).name
+            company_name = spl_char_replace current_account.companies.find(params[:company_id]).name
           end
     		  params[:body] = params[:body] % { :SESSION_ID => installed_app.configs[:inputs]['session_id'], :company_name => company_name}
         else

@@ -2,7 +2,7 @@ SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
 SPAM_CONVERSATIONS_THRESHOLD = 50
 
 def get_redis_values(key)
-  $redis_others.get("#{key}")
+  $redis_others.perform_redis_op("get", "#{key}")
 end
 
 
@@ -27,7 +27,7 @@ namespace :spam_watcher do
   
 
   task :clear_spam_tickets => :environment do
-    account_ids = $redis_others.smembers("SPAM_CLEARABLE_ACCOUNTS")
+    account_ids = $redis_others.perform_redis_op("smembers", "SPAM_CLEARABLE_ACCOUNTS")
     return unless account_ids
     accounts = Account.active_accounts.find(:all,:conditions => ["accounts.id in (?)",account_ids])
     accounts.each { |account| Resque.enqueue Workers::ClearSpam }
@@ -97,7 +97,7 @@ def check_for_spam(table,column_name, id_limit, threshold,shard_name)
         account = Account.find(account_id)  
         account.make_current    
         puts "::::account->#{account}"
-        $redis_others.sadd("SPAM_CLEARABLE_ACCOUNTS",account.id)
+        $redis_others.perform_redis_op("sadd", "SPAM_CLEARABLE_ACCOUNTS",account.id)
         puts "deleted_users 1::::::::->#{deleted_users.inspect}"
         deleted_users = account_ids[account_id]
         unless deleted_users.empty?

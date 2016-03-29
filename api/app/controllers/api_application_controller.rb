@@ -583,6 +583,10 @@ class ApiApplicationController < MetalApiController
       @index ||= current_action?('index')
     end
 
+    def search?
+      @search ||= current_action?('search')
+    end
+
     def current_action?(action)
       action_name.to_s == action
     end

@@ -81,7 +81,7 @@ include GoogleLoginHelper
       else
         @current_user.name =  params[:name]
         @current_user.phone = params[:phone] unless params[:phone].blank?
-        @current_user.customer_id = current_account.customers.find_or_create_by_name(params[:company]).id unless params[:company].blank?
+        @current_user.customer_id = current_account.companies.find_or_create_by_name(params[:company]).id unless params[:company].blank?
         @current_user.active = true
         saved = @current_user.save
       end
@@ -402,10 +402,10 @@ include GoogleLoginHelper
       time_in_utc = get_time_in_utc
       if ![:name, :email, :hash].all? {|key| params[key].present?}
         flash[:notice] = t(:'flash.login.sso.expected_params')
-        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+        redirect_to login_normal_url
       elsif !params[:timestamp].blank? and !params[:timestamp].to_i.between?((time_in_utc - SSO_ALLOWED_IN_SECS),( time_in_utc + SSO_CLOCK_DRIFT ))
         flash[:notice] = t(:'flash.login.sso.invalid_time_entry')
-        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)  
+        redirect_to login_normal_url
       end
     end
 
@@ -446,7 +446,7 @@ include GoogleLoginHelper
       @contact = account.users.new
       @contact.name = options[:name] unless options[:name].blank?
       @contact.phone = options[:phone] unless options[:phone].blank?
-      @contact.customer_id = current_account.customers.find_or_create_by_name(options[:company]).id unless options[:company].blank?
+      @contact.customer_id = current_account.companies.find_or_create_by_name(options[:company]).id unless options[:company].blank?
       @contact.email = email
       @contact.helpdesk_agent = false
       @contact.language = current_portal.language

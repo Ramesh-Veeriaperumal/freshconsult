@@ -86,11 +86,11 @@ class Social::TwitterStream < Social::Stream
   def update_volume_in_redis
     hash_key = select_valid_date(Time.now)
     newrelic_begin_rescue do
-      incr_value = $redis_others.hincrby(stream_volume_redis_key, hash_key, 1)
+      incr_value = $redis_others.perform_redis_op("hincrby", stream_volume_redis_key, hash_key, 1)
       if incr_value == 1
         stale_date = Time.now - STREAM_VOLUME_RETENION_PERIOD
         stale_key  = select_valid_date(stale_date)
-        $redis_others.hdel(stream_volume_redis_key, stale_key)
+        $redis_others.perform_redis_op("hdel", stream_volume_redis_key, stale_key)
       end
       raise_threshold_alert(incr_value, hash_key) if ((incr_value > MAX_FEEDS_THRESHOLD) && (incr_value % 100 == 0))
     end

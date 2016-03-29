@@ -37,7 +37,7 @@ RSpec.describe Integrations::GithubController do
       post :install, { :configs => {:repositories => repositories, :can_set_milestones => "1", :github_status_sync => "open", :freshdesk_comment_sync => 1 } }
 
       installed_app = @account.installed_applications.with_name("github").first
-      expect(flash[:notice]).to eql "The integration has been enabled successfully!"
+      expect(flash[:notice]).to eql "App installed successfully."
       expect(installed_app).to be_present
       installed_app.destroy
     end
@@ -61,7 +61,7 @@ RSpec.describe Integrations::GithubController do
 
     it "updates the installed app collectly when updated" do
       post :update, { :configs => {:repositories => repositories, :can_set_milestones => "0", :github_status_sync => "none", :freshdesk_comment_sync => "1" } }
-      expect(flash[:notice]).to eql "The integration has been updated successfully!"
+      expect(flash[:notice]).to eql "App updated successfully."
       installed_app = @account.installed_applications.with_name("github").first
       expect(installed_app.configs_can_set_milestones).to eql "0"
       expect(installed_app.configs_webhooks["orgshreyas2/test1"]).to eql 123142452342
@@ -69,7 +69,7 @@ RSpec.describe Integrations::GithubController do
 
     it "removes the webhook for deleted repositories" do
       post :update, { :configs => {:repositories => ["org1/adad"], :can_set_milestones => "0", :github_status_sync => "none", :freshdesk_comment_sync => "1" } }
-      expect(flash[:notice]).to eql "The integration has been updated successfully!"
+      expect(flash[:notice]).to eql "App updated successfully."
       installed_app = @account.installed_applications.with_name("github").first
       expect(installed_app.configs_webhooks["orgshreyas2/test1"]).to be_nil
       expect(installed_app.configs_webhooks["org1/adad"]).to eql 123142452342

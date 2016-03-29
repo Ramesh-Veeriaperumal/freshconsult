@@ -13,7 +13,6 @@
     }
     a{
       transition-property: none;
-      font-size: 13px;
       &:hover, &:focus, &:active{
         color: #333;
         border-bottom: solid 4px #a0a0a0;
@@ -26,7 +25,7 @@
 	border: solid 1px #ececec;
 	height: 100px;
 	width: 100%;
-	background: #fafafa;
+	background: #fffbee;
   @include text-align(center);
 	position: relative;
 	display: block;
@@ -36,6 +35,15 @@
 		font-weight: 300;
 		font-size: 15px;
 	}
+}
+.tab-actions{
+  padding-right: 15px;
+  .browse-apps, .create-new{
+    margin-top: 5px;
+  }
+}
+.native-apps-list{
+  margin-top: -10px;
 }
 .list-box{
 	width: 96% !important;
@@ -49,7 +57,8 @@
     @include border-width(1px 0px 1px 0px);
 	}
 	.switch-box{
-		width: 82px;
+		width: 70px;
+    margin-top: 2px;
 		.toggle-button{
       @include margin-left(0);
 		}
@@ -62,13 +71,15 @@
 	}
 	.logo-box{
 		position: relative;
-    width: 140px;
-    height: 70px;
+    width: 130px;
+    height: 60px;
     border: solid 1px #D6D6D6;
     @include padding(2px);
     @include margin-right(16px);
     @include text-align(center);
     vertical-align: middle;
+    border-radius: 3px;
+    background: #fff;
 		.plug-logo{
 			width: 88%;
 			height: 100%;
@@ -82,16 +93,16 @@
 			}
 		}
 		img{
-			height: 70px;
+			height: 60px;
 		}
     .ficon-puzzle{
       margin-top: 10px;
       display: inline-block;
-      opacity: 0.7;
+      opacity: 0.5;
     }
 	}
 	.desc-box{
-		width:calc(100% - 245px);
+		width:calc(100% - 156px);
 	}
 	.plug-data{
 		height: 22px;
