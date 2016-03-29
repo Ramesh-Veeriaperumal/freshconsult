@@ -61,6 +61,10 @@ module IntegrationServices::Services
       formula_resource.create_instance
     end
 
+    def receive_update_formula_instance
+      formula_resource.update_instance
+    end
+
     def receive_delete_formula_instance
       formula_resource.delete_instance
     end

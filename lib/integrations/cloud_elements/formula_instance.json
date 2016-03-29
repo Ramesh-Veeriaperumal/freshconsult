@@ -4,7 +4,7 @@
     
     "name" : "%{formula_instance}",
 
-    "active" : true,
+    "active" : "%{active}",
 
     "configuration" : {
         "element.source" : "%{source}", 

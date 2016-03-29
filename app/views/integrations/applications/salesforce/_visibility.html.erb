@@ -22,9 +22,9 @@
             <span>
               <div id="contactslist">
                 <ul>
-                  <%selected_fields = default_fields.collect{|x| x} %>
+                  <%selected_fields = default_fields['contact'].collect{|x| x} %>
                   <%unless @installed_app.blank? %>
-                    <%selected_fields.push(@installed_app.configs_contact_fields.split(",").collect!{ |x| next if  default_fields.include?(x);
+                    <%selected_fields.push(@installed_app.configs_contact_fields.split(",").collect!{ |x| next if  default_fields['contact'].include?(x);
                        x
                       })%>
                   <%end%>
@@ -35,9 +35,9 @@
               <% contact_fields = @element_config['contact_fields'] %>
               <% # order the fields in such a way so that default fields come at the top
                 contact_fields_list = []
-                default_fields.each { |field| contact_fields_list.push([contact_fields[field],field]) } 
+                default_fields['contact'].each { |field| contact_fields_list.push([contact_fields[field],field]) } 
                 @element_config['contact_fields'].keys.collect{|field|
-                  contact_fields_list.push([contact_fields[field],field]) if not default_fields.include?(field); 
+                  contact_fields_list.push([contact_fields[field],field]) if not default_fields['contact'].include?(field); 
                 }
               %>
               <%=hidden_field_tag :contact_labels %>
@@ -52,9 +52,9 @@
             <span>
               <div id="leadslist">
                 <ul>
-                  <%selected_lead_fields = default_fields.collect{|x| x} # use a copy to not change default fields %>
+                  <%selected_lead_fields = default_fields['lead'].collect{|x| x} # use a copy to not change default fields %>
                   <%unless @installed_app.blank? %>
-                    <%selected_lead_fields.push(@installed_app.configs_lead_fields.split(",").collect!{ |x| next if default_fields.include?(x);
+                    <%selected_lead_fields.push(@installed_app.configs_lead_fields.split(",").collect!{ |x| next if default_fields['lead'].include?(x);
                      x
                      })%>
                   <%end%>
@@ -64,9 +64,9 @@
               <% lead_fields = @element_config['lead_fields'] %>
               <% # order the fields in such a way so that default fields come at the top
                 lead_fields_list = []
-                default_fields.each { |field| lead_fields_list.push([lead_fields[field],field]) } 
+                default_fields['lead'].each { |field| lead_fields_list.push([lead_fields[field],field]) } 
                 @element_config['lead_fields'].keys.collect{|field|
-                  lead_fields_list.push([lead_fields[field],field]) if not default_fields.include?(field); 
+                  lead_fields_list.push([lead_fields[field],field]) if not default_fields['lead'].include?(field); 
                 }
                 %>
               <%=hidden_field_tag :lead_labels %>
@@ -81,10 +81,10 @@
             <span>
               <div id="accountslist">
                 <ul>
-                  <%selected_fields = default_fields.collect{|x| x} %>
+                  <%selected_fields = default_fields['account'].collect{|x| x} %>
                   <%unless @installed_app.blank? %> 
                     <%config_account_fields = @installed_app.configs[:inputs]['account_fields'] ? @installed_app.configs[:inputs]['account_fields'] : ""%>
-                    <%selected_fields.push(config_account_fields.split(",").collect!{ |x| next if  default_fields.include?(x);
+                    <%selected_fields.push(config_account_fields.split(",").collect!{ |x| next if  default_fields['account'].include?(x);
                        x
                       })%>
                   <%end%>
@@ -95,9 +95,9 @@
               <% account_fields = @element_config['account_fields'] %>
               <% # order the fields in such a way so that default fields come at the top
                 account_fields_list = []
-                default_fields.each { |field| account_fields_list.push([account_fields[field],field]) } 
+                default_fields['account'].each { |field| account_fields_list.push([account_fields[field],field]) } 
                 @element_config['account_fields'].keys.collect{|field|
-                  account_fields_list.push([account_fields[field],field]) if not default_fields.include?(field); 
+                  account_fields_list.push([account_fields[field],field]) if not default_fields['account'].include?(field); 
                 }
               %>
               <%=hidden_field_tag :account_labels %>
@@ -106,6 +106,55 @@
             </span>
           </div>
         </div>
+        <div class="sf-opportunity-fields sf-settings-widget">
+          <% opportunity_view = false %>
+          <% agent_settings = false %> 
+          <%unless @installed_app.blank? %>
+            <% installed_opp_view = @installed_app.configs_opportunity_view %>
+            <% opportunity_view = installed_opp_view.to_bool if installed_opp_view.present? %>
+            <% installed_agent_settings = @installed_app.configs_agent_settings %>
+            <% agent_settings = installed_agent_settings.to_bool if installed_agent_settings.present? %>
+          <%end%>
+          <div id="opportunity-info" data-child="opportunity-settings">
+            <%=content_tag(:h3, t("integrations.salesforce.form.opportunity"), :class => 'opportunity-header') %>
+            <%= check_box(:opportunity_view, "value", :checked => opportunity_view) %>
+            <% hide =  opportunity_view ? "" : "hide" %>
+            <% disabled = !opportunity_view %>
+          </div>
+          <div id='sfopportunities' class="opportunity-settings mt5 <%=hide%>">
+            <span>
+              <div id="opportunitieslist">
+                <ul>
+                  <%opportunity_default_fields = ["Name", "StageName", "CloseDate"] %>
+                  <%selected_fields = opportunity_default_fields.collect{|x| x} %>
+                  <%unless @installed_app.blank? %>
+                    <%selected_fields.push(@installed_app.configs_opportunity_fields.split(",").collect!{ |x| next if  opportunity_default_fields.include?(x);
+                       x
+                      }) if @installed_app.configs_opportunity_fields.present? %>
+                  <%end%>
+                </ul>
+              </div>
+              <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+              <%data = selected_fields.join(",").html_safe%>
+              <% opportunity_fields = @element_config['opportunity_fields'] %>
+              <% # order the fields in such a way so that default fields come at the top
+                opportunity_fields_list = []
+                opportunity_default_fields.each { |field| opportunity_fields_list.push([opportunity_fields[field],field]) } 
+                @element_config['opportunity_fields'].keys.collect{|field|
+                  opportunity_fields_list.push([opportunity_fields[field],field]) if not opportunity_default_fields.include?(field); 
+                }
+              %>
+              <%=hidden_field_tag :opportunity_labels %>
+              <%= select_tag :opportunities, 
+                      options_for_select(opportunity_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
+            </span>
+          </div>
+          <div class="opportunity-settings mt8 <%= hide %>" id="agent_settings">
+            <%= check_box(:agent_settings, "value", :checked => agent_settings, :disabled => disabled) %>
+            <%= content_tag(:span, t("integrations.salesforce.form.opportunity_settings"), :class => 'checkbox_label') %>
+          </div>
+        </div>
+      </div>
     </div>
   </li>
 </ul>

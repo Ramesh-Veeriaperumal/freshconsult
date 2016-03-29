@@ -6,7 +6,7 @@
         "username" : "%{api_key}",
         "password" : "X",
         "subdomain" : "%{subdomain}",
-        "event.notification.enabled" : "true",
+        "event.notification.enabled" : "false",
         "event.poller.refresh_interval": "5",
         "event.poller.configuration": " "
       },

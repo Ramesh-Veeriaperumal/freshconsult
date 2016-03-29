@@ -6,9 +6,11 @@
 
     "existing_companies" : [{"fd_field" : "name", "sf_field" : "Name"}],
 
-    "existing_contacts" : [{"fd_field" : "name", "sf_field" : "Name"}, {"fd_field" : "email", "sf_field" : "Email"}, {"fd_field" : "mobile", "sf_field" : "MobilePhone"}],
+    "existing_contacts" : [{"fd_field" : "name", "sf_field" : "Name"}, {"fd_field" : "email", "sf_field" : "Email"}, {"fd_field" : "mobile", "sf_field" : "MobilePhone"}, {"fd_field" : "phone", "sf_field" : "Phone"}],
 
-    "default_fields" : ["Name"]
+    "default_fields" : {"contact": ["Name"], "account" : ["Name"], "lead" : ["Name"]},
+
+    "default_labels" : {"contact": "Full Name", "account": "Account Name", "lead": "Full Name"}
 
 }
 

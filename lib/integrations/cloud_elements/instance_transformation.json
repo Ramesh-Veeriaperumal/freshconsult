@@ -11,7 +11,7 @@
         "type" : "passThrough",
         "properties" : {
           "fromVendor" : true,
-          "toVendor" : false
+          "toVendor" : true
         }
       }
     ]

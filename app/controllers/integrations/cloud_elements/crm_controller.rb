@@ -2,17 +2,19 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
   before_filter :verify_authenticity, :only => [:instances, :install, :edit, :update]
   before_filter :build_installed_app, :only => [:instances, :install]
-  before_filter :get_app_configs, :create_obj_transformation, :only => [:install]
-  before_filter :load_installed_app, :only => [:edit, :update]
+  before_filter :load_installed_app, :only => [:install, :edit, :update]
+  before_filter :create_obj_transformation, :only => [:install]
   before_filter :update_obj_transformation, :only => [:update]
-  before_filter :formula_instance, :only => [:install, :update]
+  before_filter :update_formula_inst, :only => [:install, :update]
   
   def instances
     el_response = create_element_instance( crm_payload, @metadata )
     fd_response = create_element_instance( fd_payload, @metadata )
-    set_redis_keys({ :element_token => el_response['token'], :element_instance_id => el_response['id'], :fd_instance_id => fd_response['id']})
     fetch_metadata_fields(el_response['token'])
-    default_mapped_fields
+    formula_resp = create_formula_inst(el_response['id'], fd_response['id'])
+    app_configs = get_app_configs(el_response['token'], el_response['id'], fd_response['id'], formula_resp['id'])
+    @installed_app.configs[:inputs] = app_configs
+    @installed_app.save!
     @action = 'install'
     @installed_app = nil
     render_settings
@@ -50,7 +52,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
   def update
     @installed_app.set_configs get_metadata_fields
     @installed_app.save!
-    flash[:notice] = t(:'flash.application.install.succes')
+    flash[:notice] = t(:'flash.application.install.success')
     redirect_to integrations_applications_path
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in updating the application : #{e.message}"}})
@@ -158,16 +160,28 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       redirect_to integrations_applications_path
     end
 
-    def get_app_configs
-      key_options = { :account_id => current_account.id, :provider => app.name}
-      kv_store = Redis::KeyValueStore.new(Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options))
-      kv_store.group = :integration
-      app_config = kv_store.get_key
-      if app_config.blank?
-        flash[:error] = t(:'flash.application.install.error')
-        redirect_to integrations_applications_path and return
-      end
-      @app_config = JSON.parse(app_config)
+    def get_app_configs( element_token, element_instance_id, fd_instance_id, formula_instance_id )
+      element_config = default_mapped_fields
+      config_hash = Hash.new
+      config_hash['element_token'] = element_token
+      config_hash['element_instance_id'] = element_instance_id
+      config_hash['fd_instance_id'] = fd_instance_id
+      config_hash['crm_to_helpdesk_formula_instance'] = formula_instance_id
+      config_hash['enble_sync'] = nil
+      config_hash['contact_fields'] = element_config['default_fields']['contact'].join(",")
+      config_hash['account_fields'] = element_config['default_fields']['account'].join(",")
+      config_hash['lead_fields'] = element_config['default_fields']['lead'].join(",")
+      config_hash['contact_labels'] = element_config['default_labels']['contact']
+      config_hash['account_labels'] = element_config['default_labels']['account']
+      config_hash['lead_labels'] = element_config['default_labels']['lead']
+      config_hash['opportunity_view'] = "0"
+      config_hash['companies'] = get_selected_field_arrays(element_config['existing_companies'])
+      config_hash['contacts'] = get_selected_field_arrays(element_config['existing_contacts'])
+      config_hash
+    end
+
+    def create_app_configs
+
     end
 
     def get_synced_objects
@@ -259,25 +273,32 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       JSON.generate(json_payload) % {:object_name => obj_name}
     end
 
-    def formula_instance
-      crm_to_helpdesk_formula_instance unless @app_config['crm_to_helpdesk_formula_instance'].present?
-    end
-
-    def formula_instance_payload instance_name, source, target
-      json_payload = File.read("lib/integrations/cloud_elements/formula_instance.json")
-      json_payload % {:formula_instance => instance_name, :source => source ,:target => target}
-    end
-
-    def crm_to_helpdesk_formula_instance
-      formula_id = Integrations::CloudElements::Crm::Constant::CRM_TO_HELPDESK_FORMULA_ID[params[:state].to_sym]
+    def create_formula_inst( element_instance_id, fd_instance_id )
+      formula_id = Integrations::CloudElements::Crm::Constant::CRM_TO_HELPDESK_FORMULA_ID[element.to_sym]
       metadata = @metadata.merge({:formula_id => formula_id})
-      payload = formula_instance_payload( "#{element}=>freshdesk:#{current_account.id}", @app_config['element_instance_id'], @app_config['fd_instance_id'])
-      response = create_formula_instance(payload, metadata)
-      @app_config['crm_to_helpdesk_formula_instance'] = response['id']
+      payload = formula_instance_payload( "#{element}=>freshdesk:#{current_account.id}", element_instance_id, fd_instance_id )
+      create_formula_instance(payload, metadata)
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
       flash[:error] = t(:'flash.application.install.error')
       redirect_to integrations_applications_path and return 
+    end
+
+    def update_formula_inst
+      formula_id = Integrations::CloudElements::Crm::Constant::CRM_TO_HELPDESK_FORMULA_ID[element.to_sym]
+      metadata = @metadata.merge({:formula_id => formula_id, :formula_instance_id => @app_config['crm_to_helpdesk_formula_instance']})
+      payload = formula_instance_payload( "#{element}=>freshdesk:#{current_account.id}", @app_config['element_instance_id'], @app_config['fd_instance_id'])
+      update_formula_instance(payload, metadata)
+    rescue => e
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
+      flash[:error] = t(:'flash.application.install.error')
+      redirect_to integrations_applications_path and return 
+    end
+
+    def formula_instance_payload instance_name, source, target
+      json_payload = File.read("lib/integrations/cloud_elements/formula_instance.json")
+      active = params[:enble_sync] == "on"
+      json_payload % {:formula_instance => instance_name, :source => source ,:target => target, :active => active}
     end
 
     def get_metadata_fields
@@ -286,9 +307,9 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       config_hash['contact_fields'] = params[:contacts].join(",") unless params[:contacts].nil?
       config_hash['lead_fields'] = params[:leads].join(",") unless params[:leads].nil?
       config_hash['account_fields'] = params[:accounts].join(",") unless params[:accounts].nil?
-      config_hash['contact_labels'] = params['contact_labels']
-      config_hash['lead_labels'] = params['lead_labels']
-      config_hash['account_labels'] = params['account_labels']
+      config_hash['contact_labels'] = params['contact_labels'] unless params[:contacts].nil?
+      config_hash['lead_labels'] = params['lead_labels'] unless params[:leads].nil?
+      config_hash['account_labels'] = params['account_labels'] unless params[:accounts].nil?
       config_hash = get_opportunity_params config_hash
       config_hash['companies'] = get_selected_field_arrays(params[:inputs][:companies])
       config_hash['contacts'] = get_selected_field_arrays(params[:inputs][:contacts])
@@ -301,11 +322,12 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
         config_hash['opportunity_fields'] = params[:opportunities].join(",") unless params[:opportunities].nil?
         config_hash['opportunity_labels'] = params[:opportunity_labels]
         config_hash['agent_settings'] = params[:agent_settings][:value]
-        if config_hash['agent_settings'].to_bool
-          config_hash["opportunity_stage_choices"] = service_obj.receive(:opportunity_stage_field)
-        else
-          @installed_app.configs[:inputs].delete("opportunity_stage_choices")
-        end
+        # if config_hash['agent_settings'].to_bool
+        #   metadata = @metadata.merge({ :object => 'Opportunity' })
+        #   config_hash["opportunity_stage_choices"] = service_obj({}, metadata).receive(:opportunity_stage_field)
+        # else
+        #   @installed_app.configs[:inputs].delete("opportunity_stage_choices")
+        # end
       else
         opportunity_configs = [ "opportunity_fields", "opportunity_labels", "agent_settings", "opportunity_stage_choices" ]
         @installed_app.configs[:inputs] = @installed_app.configs[:inputs].except(*opportunity_configs)
@@ -353,6 +375,21 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       @element_config['existing_companies'] = file['existing_companies']
       @element_config['existing_contacts'] = file['existing_contacts']
       @element_config['default_fields'] = file['default_fields']
+      @element_config['default_labels'] = file['default_labels']
+      @element_config
+    end
+
+    def self.destroy_ce_instances( installed_app, user_agent )
+      installed_app_configs = installed_app.configs[:inputs]
+      element_instance_id = installed_app_configs['element_instance_id']
+      fd_instance_id = installed_app_configs['fd_instance_id']
+      formula_instance_id = installed_app_configs['crm_to_helpdesk_formula_instance']
+      app_name = installed_app.application.name
+      formula_id = Integrations::CloudElements::Crm::Constant::CRM_TO_HELPDESK_FORMULA_ID[app_name.to_sym]
+      metadata = {:user_agent => user_agent}
+      Integrations::CloudElementsController.delete_formula_instance(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
+      Integrations::CloudElementsController.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => element_instance_id }))
+      Integrations::CloudElementsController.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => fd_instance_id }))
     end
 
 end

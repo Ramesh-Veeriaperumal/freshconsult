@@ -34,8 +34,9 @@ class Integrations::CloudElementsController < ApplicationController
       service_obj(payload, metadata).receive(:create_element_instance)
     end
 
-    def delete_element_instance payload, metadata
-      service_obj(payload, metadata).receive(:delete_element_instance)
+    def self.delete_element_instance installed_app, payload, metadata
+      service_obj = IntegrationServices::Services::CloudElementsService.new( installed_app, payload, metadata)
+      service_obj.receive(:delete_element_instance)
     end
 
     def instance_object_definition payload, metadata
@@ -58,8 +59,13 @@ class Integrations::CloudElementsController < ApplicationController
       service_obj(payload, metadata).receive(:create_formula_instance)
     end
 
-    def delete_formula_instance payload, metadata
-      service_obj(payload, metadata).receive(:delete_formula_instance)
+    def update_formula_instance payload, metadata
+      service_obj(payload, metadata).receive(:update_formula_instance)
+    end
+
+    def self.delete_formula_instance installed_app, payload, metadata
+      service_obj = IntegrationServices::Services::CloudElementsService.new( installed_app, payload, metadata)
+      service_obj.receive(:delete_formula_instance)
     end
 
     def verify_authenticity
