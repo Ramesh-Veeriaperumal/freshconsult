@@ -73,4 +73,10 @@ class Flexifield < ActiveRecord::Base
     end || {}
   end
 
+  def retrieve_modified_ff_values
+    Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) do |(aliass, column_name), ff_values|
+      ff_values[aliass] = read_attribute(column_name)
+    end
+  end
+
 end
