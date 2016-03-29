@@ -680,9 +680,13 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     remove_key(v2_api_key)
     set_key(v2_api_key, '5000', nil)
     get '/api/v2/discussions/categories', nil, @headers
-    set_key(v2_api_key, old_api_consumed_limit, nil)
     assert_response 429
-    assert_equal '-1', response.headers['Retry-After']
+    assert_equal '1', response.headers['Retry-After']
+
+    get '/api/v2/discussions/categories', nil, @headers
+    assert_response 200
+    assert_equal 1, get_key(v2_api_key).to_i
+    set_key(v2_api_key, old_api_consumed_limit, nil)
   end
 
   def test_expiry_condition

@@ -36,9 +36,10 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
         set_rate_limit_headers if @count
         Rails.logger.debug("FdApiThrottler :: Throttled :: Host: #{@host}, Count: (#{@count})")
       else
-        @status, @headers, @response = [429, { 'Retry-After' => retry_after.to_s, 'Content-Type' => 'application/json' },
+        retry_value = handle_expiry_not_set
+        @status, @headers, @response = [429, { 'Retry-After' => retry_value.to_s, 'Content-Type' => 'application/json' },
                                         LIMIT_EXCEEDED_MESSAGE]
-        Rails.logger.error("API 429 Error :: Time: #{Time.now}, Host: #{@host}, Count: #{@count}}")
+        Rails.logger.error("API 429 Error :: Host: #{@host}, Time: #{Time.now}, Count: #{@count}}")
       end
     else
       @status, @headers, @response = @app.call(@request.env)
@@ -49,6 +50,16 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
   end
 
   private
+
+    def handle_expiry_not_set
+      retry_value = retry_after.to_i
+      if retry_value.to_i < 0
+        Rails.logger.error("API Expiry not set properly :: Host: #{@host}, Retry Value: #{retry_value}, Time: #{Time.now}, Count: #{@count}}")
+        retry_value = 1
+        set_redis_expiry(key, retry_value)
+      end
+      retry_value
+    end
 
     def account_id
       @shard.try(:account_id)
