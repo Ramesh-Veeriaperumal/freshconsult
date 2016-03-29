@@ -71,9 +71,7 @@ class Support::Solutions::ArticlesController < SupportController
       render_404 and return unless @article.present? && parent_exists?
       if @article && !@article.visible?(current_user)
         unless logged_in?
-          session[:return_to] = solution_category_folder_article_path(
-              @article.solution_folder_meta.solution_category_meta_id,
-              @article.solution_folder_meta_id, @article.id)
+          store_location
           redirect_to login_url
         else
           flash[:warning] = t(:'flash.general.access_denied')
@@ -119,7 +117,7 @@ class Support::Solutions::ArticlesController < SupportController
 
     def draft_preview_agent_filter?
       if !current_user && params[:different_portal]
-        session[:return_to] = request.original_fullpath
+        store_location
         redirect_to support_login_path and return true
       end
       return (current_user && current_user.agent? && (@article.draft.present? || 
