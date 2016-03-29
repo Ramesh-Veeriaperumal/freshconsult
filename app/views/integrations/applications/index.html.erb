@@ -5,8 +5,13 @@
 <% end %>
 
 <!-- TITLE -->
-<h3 class="title"><%=t('marketplace.apps')%></h3>
-<div class="intro"><%=t('marketplace.app_description')%></div>
+<% if feature?(:marketplace) %>
+  <h3 class="title"><%=t('marketplace.apps')%></h3>
+  <div class="intro"><%=t('marketplace.app_description')%></div>
+<% else %>
+  <h3 class="title"><%=t('application.title')%></h3>
+  <div class="intro"><%=t('application.desc')%></div>
+<% end %>
 
 <div id="integrations-list">
   <div>
@@ -25,7 +30,7 @@
         <% if feature?(:marketplace) %>
           <a href="#apps" class="mkt-apps" data-toggle="tab"><%= t('marketplace.apps').html_safe %></a>
         <% else %>
-          <a href="#native-apps" class="nat-apps" data-toggle="tab"><%= t('marketplace.apps') %></a>
+          <a href="#native-apps" class="nat-apps" data-toggle="tab"><%= t('integrations.native_integrations') %></a>
         <% end %>
       </li>
       <li>
