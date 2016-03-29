@@ -69,7 +69,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   end
 
   def validate_portal_languages
-    if ((self.additional_settings[:portal_languages] || []) - self.supported_languages).present?
+    if ((self.additional_settings[:portal_languages] || []) - (self.supported_languages || [])).present?
       errors.add(:portal_languages, I18n.t('accounts.multilingual_support.portal_languages_validity'))
       return false
     end

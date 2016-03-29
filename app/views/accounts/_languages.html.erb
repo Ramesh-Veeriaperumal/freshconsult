@@ -35,6 +35,9 @@
 		<% elsif @account.features_included?(:enable_multilingual) %>
 			<div class="mt5">
 				<%= @account.language_object.name %>
+				<span class="ml20">
+					<%= pjax_link_to t("admin.products.portal.enable_multilingual"), manage_languages_path if @account.multilingual_available? && !@account.supported_languages.present? %>
+				</span>
 			</div>
 		<% else %>
 			<%= portal.select :language, 
