@@ -11,7 +11,8 @@ class Language
 	end
 
 	LANGUAGES = (AVAILABLE_LOCALES_WITH_ID.each.inject([]) do |arr, (code, lang)| 
-					arr << self.new(:code => code, :id => lang.first, 
+					# added code.dup as string keys of a hash are frozen by default
+					arr << self.new(:code => code.dup, :id => lang.first, 
 									:name => lang.last) 
 					arr
 				end)
@@ -33,6 +34,10 @@ class Language
 
 	def short_code
 		code[0..1]
+	end
+	
+	def to_liquid
+		@language_drop ||= LanguageDrop.new self
 	end
 
 	class << self

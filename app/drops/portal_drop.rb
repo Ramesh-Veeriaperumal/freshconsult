@@ -222,6 +222,14 @@ class PortalDrop < BaseDrop
     Forum::RecentTopicsDrop.new(self.source)
   end
   
+  def languages
+    source.account.all_portal_language_objects
+  end
+  
+  def current_language
+    Language.current
+  end
+  
   private
     def load_tabs
       tabs = [  [ support_home_path,        :home,		    true ],
