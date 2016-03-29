@@ -681,6 +681,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response 429
     assert_equal '1', response.headers['Retry-After']
 
+    sleep 1
     get '/api/v2/discussions/categories', nil, @headers
     assert_response 200
     assert_equal 1, get_key(v2_api_key).to_i
