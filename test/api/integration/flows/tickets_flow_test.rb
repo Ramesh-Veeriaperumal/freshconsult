@@ -105,6 +105,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       assert_response 201
       assert ticket.tags.count == 1
       assert ticket.cc_email[:cc_emails].count == 1
+      assert ticket.cc_email[:tkt_cc].count == 1
 
       put "/api/tickets/#{ticket.id}", { tags: nil }.to_json, @write_headers
       match_json([bad_request_error_pattern('tags', :datatype_mismatch, prepend_msg: :input_received, given_data_type: 'Null Type', expected_data_type: Array)])

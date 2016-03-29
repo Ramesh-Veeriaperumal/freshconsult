@@ -184,7 +184,7 @@ class TicketsController < ApiApplicationController
       cc_emails =  params[cname][:cc_emails]
 
       # Using .dup as otherwise its stored in reference format(&id0001 & *id001).
-      @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup } unless cc_emails.nil?
+      @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup, tkt_cc: cc_emails.dup } unless cc_emails.nil?
 
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
