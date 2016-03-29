@@ -106,55 +106,6 @@
             </span>
           </div>
         </div>
-        <div class="sf-opportunity-fields sf-settings-widget">
-          <% opportunity_view = false %>
-          <% agent_settings = false %> 
-          <%unless @installed_app.blank? %>
-            <% installed_opp_view = @installed_app.configs_opportunity_view %>
-            <% opportunity_view = installed_opp_view.to_bool if installed_opp_view.present? %>
-            <% installed_agent_settings = @installed_app.configs_agent_settings %>
-            <% agent_settings = installed_agent_settings.to_bool if installed_agent_settings.present? %>
-          <%end%>
-          <div id="opportunity-info" data-child="opportunity-settings">
-            <%=content_tag(:h3, t("integrations.salesforce.form.opportunity"), :class => 'opportunity-header') %>
-            <%= check_box(:opportunity_view, "value", :checked => opportunity_view) %>
-            <% hide =  opportunity_view ? "" : "hide" %>
-            <% disabled = !opportunity_view %>
-          </div>
-          <div id='sfopportunities' class="opportunity-settings mt5 <%=hide%>">
-            <span>
-              <div id="opportunitieslist">
-                <ul>
-                  <%opportunity_default_fields = ["Name", "StageName", "CloseDate"] %>
-                  <%selected_fields = opportunity_default_fields.collect{|x| x} %>
-                  <%unless @installed_app.blank? %>
-                    <%selected_fields.push(@installed_app.configs_opportunity_fields.split(",").collect!{ |x| next if  opportunity_default_fields.include?(x);
-                       x
-                      }) if @installed_app.configs_opportunity_fields.present? %>
-                  <%end%>
-                </ul>
-              </div>
-              <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
-              <%data = selected_fields.join(",").html_safe%>
-              <% opportunity_fields = @element_config['opportunity_fields'] %>
-              <% # order the fields in such a way so that default fields come at the top
-                opportunity_fields_list = []
-                opportunity_default_fields.each { |field| opportunity_fields_list.push([opportunity_fields[field],field]) } 
-                @element_config['opportunity_fields'].keys.collect{|field|
-                  opportunity_fields_list.push([opportunity_fields[field],field]) if not opportunity_default_fields.include?(field); 
-                }
-              %>
-              <%=hidden_field_tag :opportunity_labels %>
-              <%= select_tag :opportunities, 
-                      options_for_select(opportunity_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
-            </span>
-          </div>
-          <div class="opportunity-settings mt8 <%= hide %>" id="agent_settings">
-            <%= check_box(:agent_settings, "value", :checked => agent_settings, :disabled => disabled) %>
-            <%= content_tag(:span, t("integrations.salesforce.form.opportunity_settings"), :class => 'checkbox_label') %>
-          </div>
-        </div>
-      </div>
     </div>
   </li>
 </ul>

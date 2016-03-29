@@ -518,6 +518,16 @@
             })
             return data;
         }
+        // removeVisibilityValues: function(values){
+        //     var objects = this.inputArea["dropdown"]["dropdown_2"];
+        //     for(var i in objects){
+        //         if(values.indexOf(objects[i].id) != -1){
+        //             objects[i].disabled =true;
+        //         }else{
+        //             objects[i].disabled =false;
+        //         }
+        //     }
+        // }
     }
 
     $.fn.syncConstructRules = function(option){

@@ -3,7 +3,6 @@
       <%=t("integrations.salesforce.helptext").html_safe%>
   </div>
 <%- end %>
-        
 	<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
   <% method_type = (@action == "install") ? "post" : "put" %>
   <%= form_tag("/integrations/cloud_elements/crm/#{@action}", :method => method_type)  do %>
@@ -11,10 +10,10 @@
 
   <ul class="nav nav-pills">
     <li class="active">
-      <a id="field-visibility-btn" href="#field-visibility-tab" data-toggle="tab">Field Visibility</a>
+      <a href="#field-visibility-tab" id="field-visibility-btn" data-toggle="tab">Field Visibility</a>
     </li>
     <li>
-      <a href="#field-mapping-tab" data-toggle="tab">Field Mapping</a>
+      <a href="#field-mapping-tab" id="field-mapping-btn" data-toggle="tab">Field Mapping</a>
     </li>
   </ul>
 
@@ -77,18 +76,25 @@ function fillLabels(){
         opportunityValues.push(jQuery(this).text()); 
     });
     jQuery('#opportunity_labels').val(opportunityValues);
-    return true;
+
+    // The mapping validations
+
+    if(validateFields()){
+      return true; 
+    }else{
+      return false;
+    }
 }
 
   jQuery("#salesforce_sync_option_value").itoggle();
 
   jQuery("#opportunity_view_value").itoggle({buttonClass:"toggle-button toggle_child_on_click"});
 
-  jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+  jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
 
-  jQuery("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+  jQuery("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
 
-  jQuery("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+  jQuery("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
 
   jQuery("#opportunities").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
 
@@ -150,29 +156,6 @@ jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
     }
   });
 
-  jQuery("#field_mapping").click(function(){
-    jQuery("#field_mapping_div").show();
-    jQuery("#field_visiblity_div").hide();
-    jQuery("#company_div").show();
-  });
-
-  jQuery("#field-visibility").click(function(){
-      jQuery("#field-mapping").hide();
-      jQuery("#field-visibility").show();
-      jQuery("#company_div").hide();
-      jQuery("#contact_div").hide();
-  });
-
-  jQuery("#contact").click(function(){
-    jQuery("#contact_div").show();
-    jQuery("#company_div").hide();
-  });
-
-  jQuery("#company").click(function(){
-    jQuery("#company_div").show();
-    jQuery("#contact_div").hide();
-  });
-
   jQuery(document).ready(function(){
     if(!jQuery('#enble_sync').is(':checked')){
       change();
@@ -187,6 +170,6 @@ jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
   jQuery(document).on('click','.sync-radio-btn', function(){
     var clone_element = jQuery(this).siblings('.sync-icon').children().clone();
     jQuery('.center-icon').html('').html(clone_element);
-  })
-
+  });
+  
 </script>

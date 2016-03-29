@@ -7,10 +7,10 @@
   <div class="row-fluid" id="rule-list">
       <ul class="nav nav-flat">
         <li class="active">
-          <a href="#company-mapping-tab" data-toggle="tab">Company</a>
+          <a href="#company-mapping-tab" id="company-mapping-btn" data-toggle="tab">Company</a>
         </li>
         <li>
-          <a href="#contact-mapping-tab" data-toggle="tab">Contact</a>
+          <a href="#contact-mapping-tab" id="contact-mapping-btn"data-toggle="tab">Contact</a>
         </li>
       </ul>
 
@@ -63,125 +63,213 @@
 </script> 
 
 <script>
-    fdContactTypeValidator = {
+    var fdContactTypeValidator = {
                  "text": ["text", "string", "textarea", "paragraph"],
                  "paragraph": ["text", "string", "textarea", "paragraph"],
                  "email": ["email", "string"],
                  "phone_number": ["string", "number", "phonenumber", "mobilenumber"]
-                }
-    sfContactTypeValidator ={
+                };
+
+    var sfContactTypeValidator ={
                   "string": ["text", "paragraph", "email"],
                   "date": ["custom_date"],
                   "number": ["phone_number"],
                   "boolean": ["checkbox"]
-                }
-    maximumSelectionSizeContact = 10;
-    maximumSelectionSizeAccount = 10;
-    fdCompanyTypeValidator ={}                
-    sfCompanyTypeValidator ={}
+                };
+
+    var maximumSelectionSizeContact = 10;
+    var fdCompanyTypeValidator ={};         
+    var sfCompanyTypeValidator ={};
+    var maximumSelectionSizeAccount = 10;
 
     jQuery(function(){
-      jQuery('[rel="construct_contact_rules"]').syncConstructRules({fdContactTypeValidator, sfContactTypeValidator, maximumSelectionSizeContact});
-      jQuery('[rel="construct_company_rules"]').syncConstructRules({fdCompanyTypeValidator, sfCompanyTypeValidator, maximumSelectionSizeAccount});
-    })
+     jQuery('[rel="construct_contact_rules"]').syncConstructRules({fdContactTypeValidator, sfContactTypeValidator, maximumSelectionSizeContact});
+     jQuery('[rel="construct_company_rules"]').syncConstructRules({fdCompanyTypeValidator, sfCompanyTypeValidator, maximumSelectionSizeAccount});
+    });
   
-    fdContactLabelTypes = {};
-    fdContactLabelTypes = <%=raw @element_config['fd_contact_types'].to_json%>;    
-    sfContactLabelTypes = {};
-    sfContactLabelTypes = <%=raw @element_config['contact_fields_types'].to_json%>;
-    jQuery('#field-visibility-btn').on("click", function(e){
+    // fdContactLabelTypes = {};
+    // fdContactLabelTypes = <%=raw @element_config['fd_contact_types'].to_json%>;    
+    // sfContactLabelTypes = {};
+    // sfContactLabelTypes = <%=raw @element_config['contact_fields_types'].to_json%>;
 
+    jQuery('#company-mapping-btn, #contact-mapping-btn').on('click', function(){
+      if(validateFields()){
+        return true;
+      }else{
+        return false;
+      }
+    });
+
+    jQuery('#field-visibility-btn').on("click", function(e){
       if(!validateFields()){
         return false;
       }
-      else{
-        //removing those contact fields that are selected in the sync from the view
-        var selectedContacts = [];
-        jQuery('#construct_contact_rule .dropdown_2 .select2-chosen').each(function(){
-          selectedContacts.push(jQuery(this).text());
-        })
+      // else{
+      //   //disabling those contact fields that are selected in the sync from the view
+      //   var selectedSyncedContactFields = []; 
+      //   jQuery('#construct_contact_rule .dropdown_2 .select2-chosen').each(function(){
+      //     selectedSyncedContactFields.push(jQuery(this).text());
+      //   });
 
-        jQuery('#s2id_contacts .select2-choices').remove();
-        jQuery("#contacts option").each(function(){
-          var contactField = jQuery(this).text();
-          if( contactField !== 'Name' && contactField !== 'Email' && contactField !== 'MobilePhone') {
-            if(selectedContacts.indexOf(contactField) != -1){
-              jQuery(this).remove();
-            }
-          }
-        })
-        jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+      //   var selectedViewContactFields = [];
+      //   jQuery('#contacts :selected').each(function(){
+      //     selectedViewContactFields.push(jQuery(this).val());
+      //   });
 
-        //removing those account fields that are selected in the sync from the view
-        var selectedAccounts = [];
-        jQuery('#construct_company_rule .dropdown_2 .select2-chosen').each(function(){
-          selectedAccounts.push(jQuery(this).text());
-        })
+      //   jQuery("#contacts option").each(function(){
+      //     var contactField = jQuery(this).text();
+      //     if( contactField != 'Full Name') {
+      //       if(selectedSyncedContactFields.indexOf(contactField) != -1){
+      //         jQuery(this).attr("disabled", true);
+      //       }else{
+      //         //removing the disabled and selected attribute before creating select2
+      //         jQuery(this).removeAttr("disabled");
+      //         jQuery(this).removeAttr("selected");
+      //       }
+      //     }
 
-        jQuery('#s2id_accounts .select2-choices').remove();
-        jQuery("#accounts option").each(function(){
-          var accountField = jQuery(this).text();
-          if(selectedAccounts.indexOf(accountField) != -1){
-            jQuery(this).remove();
-          }
-        })
-        jQuery("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
-      }
-    })
+      //     if(selectedViewContactFields.indexOf(jQuery(this).val()) != -1){
+      //       //preselecting already selected values before doing select2
+      //       jQuery(this).attr("selected", "selected")
+      //     }
+      //   });
+
+      //   jQuery('#s2id_contacts .select2-choices').remove();
+      //   jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+      //   jQuery("#sfcontacts .select2-search-choice-close").first().remove();
+
+      //   //disabling those account fields that are selected in the sync from the view
+      //   var selectedSyncedAccountFields = [];
+      //   jQuery('#construct_company_rule .dropdown_2 .select2-chosen').each(function(){
+      //     selectedSyncedAccountFields.push(jQuery(this).text());
+      //   })
+
+      //   var selectedViewAccountFields = [];
+      //   jQuery('#accounts :selected').each(function(){
+      //     selectedViewAccountFields.push(jQuery(this).val());
+      //   });
+
+      //   jQuery("#accounts option").each(function(){
+      //     var accountField = jQuery(this).text();
+      //     if(accountField != 'Account Name'){
+      //       if(selectedSyncedAccountFields.indexOf(accountField) != -1){
+      //         jQuery(this).attr("disabled", true);
+      //       }else{
+      //         //removing the disabled and selected attribute before creating select2
+      //         jQuery(this).removeAttr("disabled");
+      //         jQuery(this).removeAttr("selected");
+      //       }
+      //     }
+
+      //     if(selectedViewAccountFields.indexOf(jQuery(this).val()) != -1){
+      //       //preselecting already selected values before doing select2
+      //       jQuery(this).attr("selected", "selected")
+      //     }
+      //   });
+
+      //   jQuery('#s2id_accounts .select2-choices').remove();
+      //   jQuery("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+      //   jQuery("#sfaccounts .select2-search-choice-close").first().remove();
+      // }
+    });
 
     function validateFields(){
-      var errorLog=[];
-      jQuery("#error-log").html("");
+      var valid = true;
+      //checking for error in contact mapping fields
+      jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').find('.error').remove();
       jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
         var FDContactSelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
         var SFContactSelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
-        if(FDContactSelected.toLowerCase() == "select" || SFContactSelected.toLowerCase() == "select" ){
-          errorLog.push([index+1, "select all the values"]);
-          return true;
-        }
-         var fdDataType = fdContactLabelTypes[FDContactSelected];
-         var sfDataType = sfContactLabelTypes[SFContactSelected];
-         debugger
-         if(sfDataType == undefined || sfDataType == null){
-          errorLog.push([index+1, "Cannot sync '"+ SFContactSelected +"' field"]);
-          return true;
-         }
+        if(FDContactSelected.toLowerCase() == "select"){
 
-         if(fdContactTypeValidator[fdDataType].indexOf(sfDataType) == -1){
-          errorLog.push([index+1, "Cannot sync a '"+ fdDataType +"' with '"+ sfDataType+ "'"]);
-         }
-      })
-      if(errorLog.length==0){
-        return true;
-      }
-      else{
-        var errorString = "<div id='error-log'>";
-        for(var i=0; i<errorLog.length; i++){          
-          errorString += "<label>" + errorLog[i][0] + " : " + errorLog[i][1] + "</label>";
+          jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>select this value </p>");
+          valid = false;
+          return false;
+        } 
+        if(SFContactSelected.toLowerCase() == "select" ){
+          jQuery(this).find('[data-refer-key=sf_field]').after("<p class='error'>select this value </p>");
+          valid = false;
+          return false;
         }
-        errorString += "</div>";
-        jQuery('#contact-mapping-tab').after(errorString);
+      });
+      //checking for error in company mapping fields
+      jQuery('#construct_company_rule .rules_list_wrapper .list').not('.overlay').find('.error').remove();
+      if(valid){
+        jQuery('#construct_company_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
+          var FDCompanySelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
+          var SFCompanySelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
+          if(FDCompanySelected.toLowerCase() == "select"){
+
+            jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
+            valid = false;
+            return false;
+          } 
+          if(SFCompanySelected.toLowerCase() == "select" ){
+            jQuery(this).find('[data-refer-key=sf_field]').after("<p class='error'>Field is required. </p>");
+            valid = false;
+            return false;
+          }
+        });
+      }
+
+      if(valid){
+        return true;
+      }else{
         return false;
       }
     }
-
     jQuery(document).ready(function(){
       //setting first 3 contact fields as compulsary and  disabled
-      jQuery('#construct_contact_rule .rules_list_wrapper .list').slice(0,3).each(function(){
-          jQuery(this).find('.list-icon').remove();
-          jQuery(this).find('.select2-choice').addClass('disabled');
-          jQuery(this).addClass('overlay');
-        })
-
+      jQuery('#construct_contact_rule .rules_list_wrapper .list').slice(0,4).each(function(){
+        jQuery(this).find('.list-icon').remove();
+        jQuery(this).find('.select2-choice').addClass('disabled');
+        jQuery(this).addClass('overlay');
+      });
       //setting the first field of account as compulsary and  disabled
       jQuery('#construct_company_rule .rules_list_wrapper .list').slice(0,1).each(function(){
-          jQuery(this).find('.list-icon').remove();
-          jQuery(this).find('.select2-choice').addClass('disabled');
-          jQuery(this).addClass('overlay');
-      })
-  })
-  //jQuery('#field-mapping-tab').on('click','.add_new_list .list-data', (function(ev){
-  //     ev.preventDefault();
-  //     jQuery(document).find('.dropdown_2 a').addClass('disabled');
-  // }));
+        jQuery(this).find('.list-icon').remove();
+        jQuery(this).find('.select2-choice').addClass('disabled');
+        jQuery(this).addClass('overlay');
+      });
+    });
+
+  // jQuery('body').on('click', '#field-mapping-btn', function(){    
+
+  //   var selectedviewContactFields = [], selectedSyncedContactFields = [];
+  //   jQuery("#contacts :selected").each(function(){
+  //     selectedviewContactFields.push(jQuery(this).val()); 
+  //   });  
+
+  //   jQuery('#construct_contact_rule .dropdown_2 .select2-chosen').each(function(){
+  //     selectedSyncedContactFields.push(jQuery(this).text());
+  //   });
+
+  //   jQuery("#contacts option").each(function(){
+  //     if(selectedSyncedContactFields.indexOf(jQuery(this).text()) != -1){
+  //       selectedviewContactFields.push(jQuery(this).val());
+  //     }  
+  //   });
+
+  //   var syncContact = constructContact.data("syncConstructRules");
+  //   syncContact.removeVisibilityValues(selectedviewContactFields);
+
+  //   var selectedviewAccountFields =[], selectedSyncedAccountFields =[];
+  //   jQuery("#accounts :selected").each(function(){
+  //     selectedviewAccountFields.push(jQuery(this).val());
+  //   });
+
+  //   jQuery('#construct_company_rule .dropdown_2 .select2-chosen').each(function(){
+  //     selectedSyncedAccountFields.push(jQuery(this).text());
+  //   });
+
+  //   jQuery("#accounts option").each(function(){
+  //     if(selectedSyncedAccountFields.indexOf(jQuery(this).text()) != -1){
+  //       selectedviewAccountFields.push(jQuery(this).val());
+  //     }  
+  //   });
+
+  //   var syncCompany = constructCompany.data("syncConstructRules");
+  //   syncCompany.removeVisibilityValues(selectedviewAccountFields);
+  // });
+  
 </script>
