@@ -1935,6 +1935,7 @@ en:
         agent: Agents
         feedback: Feedback widget
         freshchat: Live Chat
+        integrations: "Integrations"
         apps: Apps
         dispatcher: Dispatch'r
         supervisor: Supervisor
@@ -2046,6 +2047,7 @@ en:
         predefined_responses: "Predefined responses"
         customer_survey: "Customer Survey"
         gamification: "Gamification"
+        list_all_integrations: "List of all integrations"
         invoice_emails: "Invoice Emails"
         export_data: "Export Data"
         cancel_service: "Cancel Service"
@@ -4994,10 +4996,10 @@ en:
   badges_achieved_label: Badges achieved
   integration:
     helpcard:
-      title1: Apps
-      info1: Apps in Freshdesk let you share data with third party applications and services that you use regularly. Freshdesk offers several native apps out-of-the-box. To start using a app, click on the corresponding “Enable” button.
+      title1: Integrations
+      info1: Integrations in Freshdesk let you share data with third party applications and services that you use regularly. Freshdesk offers several native integrations out-of-the-box. To start using a native integration, click on the corresponding “Enable” button.
       title2: Plugs
-      info2: In addition to the built-in apps, you can bring in data from any other third party application, legacy system or database into the tickets and contact pages with Plugs. You can customize your Plug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS and Javascript.
+      info2: In addition to the built-in integrations, you can bring in data from any other third party application, legacy system or database into the tickets and contact pages with Plugs. You can customize your Plug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS and Javascript.
   account:
     name: Account Name
     cancel: Cancel
@@ -5966,6 +5968,8 @@ en:
     activities: Loading more activities
     items: Loading more items
   application:
+    desc: Integrate with other Apps to make your Freshdesk experience more awesome.
+    title: Integrations
     disabled: Disabled
     enabled: Enabled
     configure: Configure
@@ -6059,6 +6063,7 @@ en:
     developed_by: "By "
     time_ago: "ago"
   integrations:
+    native_integrations: Native Integrations
     cti_app_title: CTI Integrations
     uninstall: Uninstall
     deprecated_message: This app is no longer supported. Please install the latest version.
