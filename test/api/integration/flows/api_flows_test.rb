@@ -598,6 +598,12 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
     get "/api/tickets/#{ticket.display_id}?include=conversations", nil, @headers
     assert_equal '2', response.headers['X-RateLimit-Used-CurrentRequest']
+
+    get "/api/tickets/#{ticket.display_id}?include=conversations,requester,company", nil, @headers
+    assert_equal '4', response.headers['X-RateLimit-Used-CurrentRequest']
+
+    get "/api/tickets?include=requester", nil, @headers
+    assert_equal '2', response.headers['X-RateLimit-Used-CurrentRequest']
   end
 
   def test_v2_incremented_api_limit
@@ -616,6 +622,16 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
     v2_api_consumed_limit = get_key(v2_api_key).to_i
     assert_equal old_v2_api_consumed_limit + 3, v2_api_consumed_limit
+
+    get "/api/tickets/#{ticket.display_id}?include=conversations,requester,company", nil, @headers
+
+    v2_api_consumed_limit = get_key(v2_api_key).to_i
+    assert_equal old_v2_api_consumed_limit + 7, v2_api_consumed_limit
+
+    get "/api/tickets?include=requester", nil, @headers
+
+    v2_api_consumed_limit = get_key(v2_api_key).to_i
+    assert_equal old_v2_api_consumed_limit + 9, v2_api_consumed_limit
   end
 
   def test_cache_store_nil_jbuilder
