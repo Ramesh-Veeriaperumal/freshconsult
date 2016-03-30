@@ -463,6 +463,8 @@ module ApplicationHelper
   end
 
   def language_name id
+    # This method might seem unnecessary, but this is being used while displaying activities,
+    # Where eval_args will have a key :language_name
     Language.find(id).name
   end
 

@@ -251,6 +251,7 @@ module SolutionHelper
 		filter = (container_id == 'feedbacks-me') ? 'my_article_feedback' : 'article_feedback'
 		content = %{<div class='tab-pane sidebar-list #{active}' id="#{container_id}"><ul>}
     feedbacks_array = feedbacks.first(4)
+    # Fetching the first 4, instead of doing a count query
     feedbacks_array.first(3).each do |feedback|
       content << article_feedback(feedback)
     end

@@ -31,12 +31,8 @@ module AccountsHelper
 	    }
 	end
 
-	def populate_language_list list
-		output = []
-		list.each do |lang|
-			output << "<div>#{h(lang)}</div>"
-		end
-		output.join.html_safe
-	end
+  def populate_language_list list
+    list.collect { |lang| "<div>#{h(lang)}</div>" }.join.html_safe
+  end
   
 end
