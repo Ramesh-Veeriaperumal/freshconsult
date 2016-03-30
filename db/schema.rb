@@ -1580,7 +1580,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.boolean  "queue_position_preference",                                               :default => false
     t.string   "queue_position_message"
     t.integer  "port",                       :limit => 1
-    t.integer  "caller_id"
+    t.integer  "caller_id",                  :limit => 8
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
