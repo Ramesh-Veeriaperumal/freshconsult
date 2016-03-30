@@ -9,10 +9,6 @@ class Support::SolutionsController < SupportController
         load_agent_actions(solution_categories_path, :view_solutions)
         set_portal_page :solution_home 
       }
-      format.json {
-        load_customer_categories
-        render :json => @categories.to_json(:include=>:public_folders)
-      }
     end
   end
 
@@ -32,16 +28,6 @@ class Support::SolutionsController < SupportController
 		def load_category
 			#TO BE CHECKED MULTILINGUAL - check why reorder('') was added 
       @solution_item = @category = current_portal.solution_category_meta.reorder('').find_by_id(params[:id])
-    end
-		
-		def load_customer_categories
-      @categories=[]
-      solution_category_meta = @current_portal.solution_category_meta
-      if solution_category_meta and solution_category_meta.respond_to?(:customer_categories)
-        @categories = solution_category_meta.customer_categories.all(:include=>:public_folder_meta)
-      else
-        @categories = solution_category_meta; # in case of portal only selected solution is available.
-      end
     end
     
     def load_page_meta
