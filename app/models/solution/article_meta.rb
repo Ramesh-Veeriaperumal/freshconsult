@@ -148,7 +148,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	
 	def valid_change?
 		self.previous_changes.slice(:position).present? || 
-			(primary_article.previous_changes.slice(*[:modified_at, :status]).present? || 
-			(primary_article && primary_article.tags_changed))
+			(primary_article && (primary_article.previous_changes.slice(*[:modified_at, :status]).present? || 
+			primary_article.tags_changed))
 	end
 end
