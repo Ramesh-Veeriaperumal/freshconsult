@@ -142,7 +142,8 @@ class SupportController < ApplicationController
                        :keywords => @page_keywords,
                        :canonical => @page_canonical }
                        
-      @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{request.original_fullpath}"
+      canonical_path = request.original_fullpath.gsub(/\?.*/, '')
+      @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{canonical_path}"
       multilingual_meta(page_token)
 
       @meta = HashDrop.new( @page_meta )
@@ -246,6 +247,9 @@ class SupportController < ApplicationController
   private
   
   def strip_url_locale
+    # request.fullpath will return the current path without the url_locale
+    # We are redirecting to fullpath here cos users shouldn't be able to access language specific urls when ... 
+    # multilingual feature is not enabled.
     redirect_to request.fullpath if params[:url_locale].present? && !current_account.multilingual?
   end
 
@@ -286,6 +290,8 @@ class SupportController < ApplicationController
   end
 
   def override_default_locale
+    #We are doing this for non-logged in users as it's better we show them everything(not only solutions) 
+    # in the current locale i.e Language.current instead of the account's language.
     I18n.locale = Language.current.code.to_sym
   end
 

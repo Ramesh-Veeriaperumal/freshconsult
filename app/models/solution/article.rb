@@ -276,6 +276,8 @@ class Solution::Article < ActiveRecord::Base
   def publish!
     set_status(true)
     published = save
+    # Triggering mobihelp callback manually as this update won't trigger article_meta's callbacks.
+    # We do it only for the primary article as we don't support multilingual functionality in mobihelp right now
     solution_article_meta.set_mobihelp_solution_updated_time if (is_primary? && published)
     published
   end
