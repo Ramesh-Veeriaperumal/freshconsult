@@ -28,9 +28,11 @@ module Facebook
                          
             elsif client_error?
               if app_rate_limit_exceeded?
-                throttle_fb_feed_processing 
+                throttle_processing unless app_rate_limit_reached?
                 notify_error(error_params)
               elsif user_rate_limit_exceeded?
+                throttle_page_processing(@fan_page.page_id)
+                error_params.merge!({:api_hit_count => fb_api_hit_count(@fan_page.page_id)})
                 update_error_and_notify(error_params)
               elsif permission_error?
                 IGNORED_ERRORS.include?(@exception.fb_error_code) ? 
@@ -51,6 +53,8 @@ module Facebook
             
           rescue => @exception
             raise_newrelic_error(page_info)
+          ensure
+            @fan_page.log_api_hits 
           end
           
           @exception.nil? ? return_value : false

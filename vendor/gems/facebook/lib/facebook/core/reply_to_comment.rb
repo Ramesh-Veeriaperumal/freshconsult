@@ -58,6 +58,8 @@ module Facebook
       
       #Post is a ticket but the parent comment is not converted to a note
       def fetch_and_process_comment(can_dynamo_push)
+        #Explicitly logging second call made within the exception handler
+        self.fan_page.log_api_hits
         Facebook::Core::Comment.new(self.fan_page, in_reply_to).process(true, can_dynamo_push)
       end
       

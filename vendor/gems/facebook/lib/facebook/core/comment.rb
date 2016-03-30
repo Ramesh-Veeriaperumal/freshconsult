@@ -136,6 +136,8 @@ module Facebook
         elsif parent_post.present?
           self.koala_post.fetch_post_from_db(post_id)
         else
+          #Explicitly logging second call made within the exception handler
+          self.fan_page.log_api_hits
           self.koala_post.fetch(post_id)
         end
       end
