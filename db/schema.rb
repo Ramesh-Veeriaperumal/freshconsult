@@ -3462,6 +3462,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.string   "happy_text",                          :default => "Awesome"
     t.string   "neutral_text",                        :default => "Neutral"
     t.string   "unhappy_text",                        :default => "Not Good"
+    t.boolean  "deleted",                             :default => false
   end
 
   add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"

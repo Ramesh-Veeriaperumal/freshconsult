@@ -457,7 +457,9 @@ en:
         subject: Test mail for survey - %{title}
         survey_preview_ticket_message: "This is a sample ticket created during preview of customer satisfaction survey"
         title: "Customer survey"
+        title_v2: Satisfaction Rating
         rating_sub_title: "You have rated us"
+        rating_sub_title_v2: Your ratings as
         survey_title: How well did our customer service representative answer your question
                       or solve your problem?
         survey_question_title: How well did our customer service representative answer your question
@@ -470,6 +472,8 @@ en:
         cancel: Cancel
         back: Back
         loading_feedback: Loading Feedback
+        load_questions: More Questions
+        comments: Comments
     login:
       form:
         email: Email
@@ -1144,6 +1148,8 @@ en:
       survey_not_found: The survey you are trying to access is not present.
       successfully_created: Customer Satisfaction settings has been successfully created.
       successfully_updated: Customer Satisfaction settings has been successfully updated.
+      successfully_created_v2: Survey has been successfully created.
+      successfully_updated_v2: Survey has been successfully updated.
       successfully_deleted: Survey has been successfully deleted.
       error_updated: Error while updating survey settings.
       custom_helptext: "<p><b>Enabling Satisfaction Surveys</b> <br>
@@ -1229,7 +1235,7 @@ en:
         title: Survey Name
         title_error_text: Survey Name has already been taken
         result_exist_msg: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers.
-
+        result_exist_msg_v2: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can rephrase the questions and answer choices.
       new_rating:
         content_text: This Question helps access the overall satisfaction for the response provided by the agent.
                       It appears below your signature at the bottom of the email sent to the customer.
@@ -1296,6 +1302,7 @@ en:
         disabled: Disabled
         save_survey: Save
         default_survey: Default Survey
+        active_delete_tooltip: Cannot delete active survey
         delete_survey: Delete Survey
         delete_msg: Are you sure you want to delete this survey?
         survey_help_msg: Selecting a rating above will link off to the page below
@@ -3926,6 +3933,7 @@ en:
       mark_closed: Mark ticket as closed
       add_people: Add people
       reply_placeholder: "Click here to reply to this ticket"
+      comments: Comments
       details: Ticket details
       add_or_remove_emails: "Add or remove emails that need to be copied when a notification for this ticket is sent."
       add_people_title: Add people to conversation
@@ -4329,7 +4337,8 @@ en:
   tag:
     title: Tags
   email_notifications:
-    preview_email_verification: "<p>Hi {{ticket.requester.firstname}},<br/><br/>This email is to give a preview of how customer satisfaction survey feedback is done.<br/><br/></p>"
+    preview_email_verification: "<p>Hi %{name},<br/><br/>This email is to give a preview of how customer satisfaction survey feedback is done.<br/><br/></p>"
+    preview_email_verification_plain_text: "Hi %{name},\nThis email is to give a preview of how customer satisfaction survey feedback is done."
     default_font: "Default Font : "
     customize_email: Customize Email
     edit_reply_template: Edit Template
@@ -5576,6 +5585,7 @@ en:
         survey_response: Survey response for %{survey_name}
         survey_response_to: to %{agent}
         survey_satisfaction: How would you rate your overall satisfaction for the resolution provided by the agent?
+        comments: Comments
     merge:
       merge:
         merge_into: Merge into?
@@ -7009,6 +7019,7 @@ en:
             view_report_by: View by
             overall_rating: Rating
             all_responses: All Responses
+            deleted_list: DELETED SURVEYS
         index:
             agent_list_loading: Fetching agent list
         feedbacks:

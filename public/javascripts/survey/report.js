@@ -35,18 +35,14 @@ var SurveyReport = {
             return isEmpty;
         },
         hideReport:function(){
-            jQuery('.nav.nav-pills').hide();
-            jQuery('.report-panel-left ul').hide();
-            jQuery('div#survey_report_summary').hide();
-            jQuery('div#survey_overview').hide();
-            jQuery('div#survey_responses').hide();
             jQuery('div.empty-chart').show();
+            jQuery('div.report-panel-content').hide();
+            jQuery('div.report-panel-left').hide();
         },
         showReport:function(){
             jQuery('div.empty-chart').hide();
-            jQuery('.nav.nav-pills').show();
-            jQuery('div#survey_report_summary').show();
-            jQuery('.report-panel-left ul').show();
+            jQuery('div.report-panel-content').show();
+            jQuery('div.report-panel-left').show();
         },
         showLayout:function(){
             jQuery('#survey_main_layout').show();

@@ -37,7 +37,7 @@
                 <% end %>
         <div id="survey-feedback" class="<%= form_display %>">        
             <p><%=h(t('support.tickets.ticket_survey.survey_title'))%></p>
-            <div class="survey-buttons">
+            <div class="survey-buttons-old">
                 <a href="#" id="happy_tab" data-rating="<%=Survey::HAPPY%>">
                     <i class="icon-smiley-happy-small"></i>
                     <%=h(current_account.survey.happy_text)%>

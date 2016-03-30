@@ -1,35 +1,19 @@
-$strongly-disagree: #e7340f;
-$some-what-disagree: #ff8c00;
-$disagree: #ffc400;
-$neutral: #f1db15;
-$agree: #a9d340;
-$some-what-agree: #6bb437;
-$strongly-agree: #4e8d00;
-$none: #eeeeee;
+@import "portal/lib/rtl-mixins";
+$none: #efefef;
+$options-color: (strongly-disagree: #e7340f,some-what-disagree: #ff8c00,disagree: #ffc400,satisfaction-neutral: #f1db15,agree: #a9d340,some-what-agree: #6bb437,strongly-agree: #4e8d00);
+@each $opt,$col in $options-color{
+  #{'.'+$opt}{
+    background-color: #{$col};
+  }
+  .border-#{$opt}{
+    @include border-left(3px solid #{$col}); 
+    @include padding-left(10px);
+    margin: 6px 3px;
+  }
+}
 
-.strongly-disagree{
-  background-color:$strongly-disagree; 
-}
-.some-what-disagree{
-  background-color:$some-what-disagree; 
-}
-.disagree{
-  background-color:$disagree; 
-}
-.satisfaction-neutral{
-  background-color:$neutral; 
-}
-.agree{
-  background-color:$agree; 
-}
-.some-what-agree{
-  background-color:$some-what-agree; 
-}
-.strongly-agree{
-  background-color:$strongly-agree; 
-}
 .none{
-  background-color:$none;   
+  background-color: $none;   
    box-shadow: inset 0px 1px 1px #ccc;
 }
 
@@ -65,7 +49,7 @@ $none: #eeeeee;
 .loading{
   background-image: url('/assets/animated/ajax-loader.gif');
   background-repeat: no-repeat;
-  background-position-x: 40%;
+  background-position-x: 36%;
   background-position-y: 40%; 
   height:auto;
   min-height: 100px;

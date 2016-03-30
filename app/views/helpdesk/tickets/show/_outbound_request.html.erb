@@ -24,10 +24,18 @@
     <% end %>
 
     <%
-        customer_opinion = ""                                
-        unless @ticket.survey_results.nil? || @ticket.survey_results.last.nil?
-          customer_opinion = ["<div class='customer-opinion ", @ticket.survey_results.last.get_small_img_class ,"'></div>"].join.html_safe
-        end  
+      customer_opinion = "" 
+      survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
+      unless @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil?
+        if Account.current.new_survey_enabled? 
+          rating_class_value = " color-" + CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[@ticket.send(survey_association).last.ticket_info[:value]] + "' title='" + @ticket.send(survey_association).last.ticket_info[:text]
+          tooltip_class = "tooltip "
+        else
+          rating_class_value = ""
+          tooltip_class = ""
+        end 
+        customer_opinion = ["<div class='customer-opinion ",tooltip_class, @ticket.send(survey_association).last.get_small_img_class, rating_class_value, "'></div>"].join.html_safe
+      end     
     %>        
     <%=customer_opinion%>                 
 

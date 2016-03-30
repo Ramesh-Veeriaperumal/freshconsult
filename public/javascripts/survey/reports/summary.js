@@ -35,6 +35,7 @@ var SurveySummary = {
                 protocol.ratingSmiley = SurveyUtil.findSmiley(protocol.rating);
                 protocol.ratingCount = rating ? rating : 0 ;
             }
+            SurveyRemark.total_remarks = (protocol.isRatingFilter) ? protocol.answered : protocol.ratingCount;
             return protocol;
         },
         whichData:function(type,id){

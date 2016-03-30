@@ -1,0 +1,10 @@
+<%= I18n.t('email_notifications.preview_email_verification', :name => @user.name).html_safe %>
+
+<%= render  :partial => "helpdesk/ticket_notifier/custom_survey",
+            :locals => {
+              :ticket => nil,
+              :survey_handle => @survey_handle, 
+              :surveymonkey_survey => @surveymonkey_survey, 
+              :in_placeholder => false,
+              :survey_feedback_preview => @survey_feedback_preview 
+            } %>

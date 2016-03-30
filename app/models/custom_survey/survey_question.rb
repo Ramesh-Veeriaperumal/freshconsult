@@ -15,12 +15,12 @@ class CustomSurvey::SurveyQuestion < ActiveRecord::Base
                     :field_data_class => 'CustomSurvey::SurveyResultData',
                     :field_choices_class => 'CustomSurvey::SurveyQuestionChoice'
 
-  validates :name, uniqueness: {scope: [:account_id, :survey_id], message: I18n.t('admin.surveys.thanks_contents.question_error_text')}
+  validates :name, uniqueness: {scope: [:account_id, :survey_id, :deleted], message: I18n.t('admin.surveys.thanks_contents.question_error_text')}
   validates_presence_of :name , :label
 
   acts_as_list scope: [:account_id, :survey_id]
 
-  attr_accessible :survey_id, :name, :column_name, :label, :position, :field_type, :default, :custom_field_choices_attributes  
+  attr_accessible :survey_id, :name, :label, :position, :field_type, :default, :custom_field_choices_attributes  
 
   scope :default, :conditions => {:default  => true}
   scope :feedback, :conditions => {:default => false}
