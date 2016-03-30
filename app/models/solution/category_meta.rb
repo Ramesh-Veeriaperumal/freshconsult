@@ -95,7 +95,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	
 	def valid_change?
 		previous_changes.except(*(BINARIZE_COLUMNS + [:updated_at])).present? || 
-			primary_category.previous_changes.present?
+			(primary_category && primary_category.previous_changes.present?)
 	end
 
 	def clear_cache(args = nil)

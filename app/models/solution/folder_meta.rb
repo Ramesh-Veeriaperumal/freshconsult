@@ -218,6 +218,6 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def valid_change?
 		return true if transaction_include_action?(:destroy)
 		(previous_changes.except(*(BINARIZE_COLUMNS + [:updated_at])).present? || 
-			primary_folder.previous_changes.present?)
+			(primary_folder && primary_folder.previous_changes.present?))
 	end
 end
