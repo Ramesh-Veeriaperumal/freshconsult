@@ -286,7 +286,7 @@ module SolutionHelper
 		content = ""
 		content << "<div class='span5 pull-right mt8 #{"language-bar" if article_flag} #{'view-links' unless edit}'>"
 		content << '<span class="pull-right">'
-		([Account.current.language_object] + Account.current.supported_languages_objects).each do |language|
+		Account.current.all_language_objects.each do |language|
 			content << language_icon(solution_meta, language)
 		end
 		content << '</span>'
