@@ -1,7 +1,7 @@
 class Integrations::CloudElements::CrmController < Integrations::CloudElementsController
-
+  include Integrations::CloudElements::Crm::Constant
   before_filter :verify_authenticity, :only => [:instances, :install, :edit, :update]
-  before_filter :build_installed_app, :only => [:instances, :install]
+  before_filter :build_installed_app, :only => [:instances]
   before_filter :load_installed_app, :only => [:install, :edit, :update]
   before_filter :create_obj_transformation, :only => [:install]
   before_filter :update_obj_transformation, :only => [:update]
@@ -17,6 +17,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     @installed_app.save!
     @action = 'install'
     @installed_app = nil
+    flash[:notice] = t(:'flash.application.install.success')
     render_settings
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
@@ -25,7 +26,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
   end
 
   def install
-    @installed_app.configs[:inputs] = @app_config
     @installed_app.set_configs get_metadata_fields
     @installed_app.save!
     flash[:notice] = t(:'flash.application.install.success')
@@ -67,7 +67,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
   private
 
     def element
-      Integrations::CloudElements::Crm::Constant::APP_NAMES[params[:state].to_sym]
+      APP_NAMES[params[:state].to_sym]
     end
   
     def crm_payload
@@ -94,12 +94,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       hash
     end
 
-    def set_redis_keys(config_params, expire_time = nil)
-      key_options = { :account_id => current_account.id, :provider => app.name}
-      key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
-      Redis::KeyValueStore.new(key_spec, config_params.to_json, {:group => :integration, :expire => expire_time || 900}).set_key
-    end
-
     def fetch_metadata_fields(element_token)
       crm_element_metadata_fields(element_token)
       fd_metadata_fields
@@ -108,8 +102,10 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     def crm_element_metadata_fields(element_token)
       @element_config = Hash.new
       @element_config['features']= current_account.features?(:cloud_elements_crm_sync)
+      @element_config['element'] = element
       metadata = @metadata.merge({ :element_token => element_token })
       constant_file = JSON.parse(File.read("lib/integrations/cloud_elements/crm/#{element}/constant.json"))
+      @element_config['element_validator'] = constant_file['validator']
       constant_file['objects'].each do |key, obj|
         metadata[:object] = obj
         element_metadata = service_obj({},metadata).receive("#{key}_metadata".to_sym)
@@ -128,6 +124,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       @element_config['fd_contact_types'] = contact_hash['data_type_hash']
       @element_config['fd_company'] = account_hash['fields_hash']
       @element_config['fd_company_types'] = account_hash['data_type_hash']
+      @element_config['fd_validator'] = FD_VALIDATOR
     end
 
     def map_fields(metadata)
@@ -142,18 +139,18 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def fd_fields_hash(object)
-      contact_data_types = Integrations::CloudElements::Constant::CONTACT_TYPES
+      contact_data_types = CONTACT_TYPES
       fields_hash = {}
       data_type_hash = {}
       object.each do |field|
         fields_hash[field[:name]] = field[:label]
-        data_type_hash[field[:label]] = contact_data_types[field[:field_type]]
+        data_type_hash[field[:label]] = contact_data_types[field[:field_type].to_s]
       end
       {'fields_hash' => fields_hash, 'data_type_hash' => data_type_hash }
     end
 
     def render_settings
-      render :template => "integrations/applications/salesforce_fields"
+      render :template => "integrations/applications/crm_fields"
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
       flash[:error] = t(:'flash.application.install.error')
@@ -178,10 +175,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       config_hash['companies'] = get_selected_field_arrays(element_config['existing_companies'])
       config_hash['contacts'] = get_selected_field_arrays(element_config['existing_contacts'])
       config_hash
-    end
-
-    def create_app_configs
-
     end
 
     def get_synced_objects
@@ -274,7 +267,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def create_formula_inst( element_instance_id, fd_instance_id )
-      formula_id = Integrations::CloudElements::Crm::Constant::CRM_TO_HELPDESK_FORMULA_ID[element.to_sym]
+      formula_id = CRM_TO_HELPDESK_FORMULA_ID[element.to_sym]
       metadata = @metadata.merge({:formula_id => formula_id})
       payload = formula_instance_payload( "#{element}=>freshdesk:#{current_account.id}", element_instance_id, fd_instance_id )
       create_formula_instance(payload, metadata)
@@ -285,7 +278,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def update_formula_inst
-      formula_id = Integrations::CloudElements::Crm::Constant::CRM_TO_HELPDESK_FORMULA_ID[element.to_sym]
+      formula_id = CRM_TO_HELPDESK_FORMULA_ID[element.to_sym]
       metadata = @metadata.merge({:formula_id => formula_id, :formula_instance_id => @app_config['crm_to_helpdesk_formula_instance']})
       payload = formula_instance_payload( "#{element}=>freshdesk:#{current_account.id}", @app_config['element_instance_id'], @app_config['fd_instance_id'])
       update_formula_instance(payload, metadata)
@@ -385,7 +378,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       fd_instance_id = installed_app_configs['fd_instance_id']
       formula_instance_id = installed_app_configs['crm_to_helpdesk_formula_instance']
       app_name = installed_app.application.name
-      formula_id = Integrations::CloudElements::Crm::Constant::CRM_TO_HELPDESK_FORMULA_ID[app_name.to_sym]
+      formula_id = CRM_TO_HELPDESK_FORMULA_ID[app_name.to_sym]
       metadata = {:user_agent => user_agent}
       Integrations::CloudElementsController.delete_formula_instance(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
       Integrations::CloudElementsController.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => element_instance_id }))

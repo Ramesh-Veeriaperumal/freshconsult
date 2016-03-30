@@ -1,0 +1,259 @@
+<% content_for :helpcard do -%>
+  <div class="helpcard">
+      <%=t("integrations.#{@element_config["element"]}.helptext").html_safe%>
+  </div>
+<%- end %>
+	<h3 class="lead"><%=t("integrations.salesforce.form.#{@element_config["element"]}_settings")%></h3>
+  <% method_type = (@action == "install") ? "post" : "put" %>
+  <%= form_tag("/integrations/cloud_elements/crm/#{@action}", :method => method_type)  do %>
+  <%= hidden_field_tag  'state', params[:state] %>
+
+  <ul class="nav nav-pills">
+    <li class="active">
+      <a href="#field-visibility-tab" id="field-visibility-btn" data-toggle="tab">Field Visibility</a>
+    </li>
+    <li>
+      <a href="#field-mapping-tab" id="field-mapping-btn" data-toggle="tab">Field Mapping</a>
+    </li>
+  </ul>
+
+  <div class="well">
+    <div class="tab-content row-fluid">
+      <label class="caption span3">
+        <%case @element_config["element"]%>
+        <%when "salesforce"%>
+          <div class="logo application-logo-salesforce"></div>
+        <%end%>
+        <div class="logo info-data">
+          <%=t("integrations.#{@element_config["element"]}.desc")%>
+        </div>
+      </label>
+
+          <div class="tab-pane span9" id="field-mapping-tab">
+
+            <% existing_companies = @element_config['existing_companies']
+               existing_contacts = @element_config['existing_contacts']
+               existing_companies = @installed_app.configs_companies unless @installed_app.nil?
+               existing_contacts = @installed_app.configs_contacts unless @installed_app.nil? 
+            %>
+            <%= render :partial => "/integrations/applications/crm/mapping",
+                       :locals => { :existing_companies => existing_companies, :existing_contacts => existing_contacts } %>   
+          </div>
+          <div class="tab-pane active span9" id="field-visibility-tab">
+             <%= render :partial => "/integrations/applications/crm/visibility",
+                       :locals => { :default_fields => @element_config['default_fields'] }%>
+          </div>
+          
+    </div>
+  </div>
+
+<div class="button-container">
+  <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
+  <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
+</div>
+
+<%end%>
+
+<script type="text/javascript">
+
+function fillLabels(){
+   var selectedValues = []; 
+   var leadValues =[];   
+   var accountValues =[]; 
+   var opportunityValues = [];  
+    jQuery("#contacts :selected").each(function(){
+        selectedValues.push(jQuery(this).text()); 
+    });
+    jQuery('#contact_labels').val(selectedValues);
+
+    jQuery("#leads :selected").each(function(){
+        leadValues.push(jQuery(this).text()); 
+    });
+    jQuery('#lead_labels').val(leadValues);
+
+    jQuery("#accounts :selected").each(function(){
+        accountValues.push(jQuery(this).text()); 
+    });
+    jQuery('#account_labels').val(accountValues);
+    jQuery("#opportunities :selected").each(function(){
+        opportunityValues.push(jQuery(this).text()); 
+    });
+    jQuery('#opportunity_labels').val(opportunityValues);
+
+    // The mapping validations
+
+    if(validateFields()){
+      return true; 
+    }else{
+      return false;
+    }
+}
+
+  jQuery("#salesforce_sync_option_value").itoggle();
+
+  jQuery("#opportunity_view_value").itoggle({buttonClass:"toggle-button toggle_child_on_click"});
+
+  jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+
+  jQuery("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+
+  jQuery("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+
+  jQuery("#opportunities").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+
+  //setting the Name as default field(can't be removed.)
+  jQuery("#sfcontacts ul .select2-search-choice div").each(function(index,element){
+    value = jQuery(element).text();
+    if(value =="Full Name"){
+      jQuery(element).next("a").remove();
+    }
+  });
+
+jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
+    value = jQuery(element).text();
+    if(value =="Full Name"){
+      jQuery(element).next("a").remove();
+    }
+  });
+  jQuery("#sfaccounts ul .select2-search-choice div").each(function(index,element){
+    value = jQuery(element).text();
+    if(value =="Account Name"){
+      jQuery(element).next("a").remove();
+    }
+  });
+
+
+  //setting Name, Stage and Close Date as default opportunity fields(can't be removed.)
+  jQuery("#sfopportunities ul .select2-search-choice div").each(function(index,element){
+    value = jQuery(element).text();
+    if(value =="Name" || value == "Stage" || value == "Close Date"){
+      jQuery(element).next("a").remove();
+    }
+  });
+
+// This event will turn the plus select icon to grey on reaching the maximum selection size
+  jQuery(".select2-fields").on('change',function(){
+    var list_elements = jQuery(this).prev(".select2-container-multi").children().children();
+    var list_size = list_elements.length - 1;
+    if(list_size == 10){
+      jQuery(this).addClass('salesforce-disable-select');
+    }
+    else{
+      if(jQuery(this).hasClass('salesforce-disable-select')){
+        jQuery(this).removeClass('salesforce-disable-select');
+      }
+    }
+  });
+
+  jQuery('body').on('click', '.toggle_child_on_click', function() {
+    var div = jQuery(this).parent().data('child');
+    var input = jQuery('#agent_settings.' + div).find('input');
+    input.attr('disabled', !input.attr('disabled'));
+    jQuery('.' + div).slideToggle();
+  });
+
+  jQuery('body').on('click', '.checkbox_label', function(ev) {
+    if (!jQuery(ev.target).is('input[type=checkbox]')) {
+      var checkbox = jQuery(this).prev("input[type=checkbox]");
+      checkbox.prop('checked', !checkbox.prop('checked'));
+    }
+  });
+
+  jQuery(document).ready(function(){
+    if(!jQuery('#enble_sync').is(':checked')){
+      change();
+    }
+    jQuery('#enble_sync').prop('checked', "<%= @element_config['enble_sync'] %>");
+  });
+
+  function change(){ 
+    jQuery('#field-wrap').toggleClass('field-disable');
+  }
+
+  jQuery(document).on('click','.sync-radio-btn', function(){
+    var clone_element = jQuery(this).siblings('.sync-icon').children().clone();
+    jQuery('.center-icon').html('').html(clone_element);
+  });
+  var fdContactTypeValidator= <%= raw @element_config['fd_validator'].to_json%>;
+  var sfContactTypeValidator= <%= raw @element_config['element_validator'].to_json%>;
+  var maximumSelectionSizeContact = 10;
+
+  jQuery(function(){
+   jQuery('[rel="construct_contact_rules"]').syncConstructRules({fdContactTypeValidator, sfContactTypeValidator, maximumSelectionSizeContact});
+   jQuery('[rel="construct_company_rules"]').syncConstructRules({fdContactTypeValidator, sfContactTypeValidator, maximumSelectionSizeContact});
+  });
+
+  jQuery('#company-mapping-btn, #contact-mapping-btn').on('click', function(){
+    if(validateFields()){
+      return true;
+    }else{
+      return false;
+    }
+  });
+
+  jQuery('#field-visibility-btn').on("click", function(e){
+    if(!validateFields()){
+      return false;
+    }
+  });
+
+  function validateFields(){
+    var valid = true;
+    //checking for error in contact mapping fields
+    jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').find('.error').remove();
+    jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
+      var FDContactSelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
+      var SFContactSelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
+      if(FDContactSelected.toLowerCase() == "select"){
+
+        jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>select this value </p>");
+        valid = false;
+        return false;
+      } 
+      if(SFContactSelected.toLowerCase() == "select" ){
+        jQuery(this).find('[data-refer-key=sf_field]').after("<p class='error'>select this value </p>");
+        valid = false;
+        return false;
+      }
+    });
+    //checking for error in company mapping fields
+    jQuery('#construct_company_rule .rules_list_wrapper .list').not('.overlay').find('.error').remove();
+    if(valid){
+      jQuery('#construct_company_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
+        var FDCompanySelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
+        var SFCompanySelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
+        if(FDCompanySelected.toLowerCase() == "select"){
+
+          jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
+          valid = false;
+          return false;
+        } 
+        if(SFCompanySelected.toLowerCase() == "select" ){
+          jQuery(this).find('[data-refer-key=sf_field]').after("<p class='error'>Field is required. </p>");
+          valid = false;
+          return false;
+        }
+      });
+    }
+
+    if(valid){
+      return true;
+    }else{
+      return false;
+    }
+  }
+  jQuery(document).ready(function(){
+    //setting first 3 contact fields as compulsary and  disabled
+    jQuery('#construct_contact_rule .rules_list_wrapper .list').slice(0,4).each(function(){
+      jQuery(this).find('.list-icon').remove();
+      jQuery(this).find('.select2-choice').addClass('disabled');
+      jQuery(this).addClass('overlay');
+    });
+    //setting the first field of account as compulsary and  disabled
+    jQuery('#construct_company_rule .rules_list_wrapper .list').slice(0,1).each(function(){
+      jQuery(this).find('.list-icon').remove();
+      jQuery(this).find('.select2-choice').addClass('disabled');
+      jQuery(this).addClass('overlay');
+    });
+  });
+</script>

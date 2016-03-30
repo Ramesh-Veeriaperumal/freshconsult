@@ -10,7 +10,8 @@
 
     "default_fields" : {"contact": ["Name"], "account" : ["Name"], "lead" : ["Name"]},
 
-    "default_labels" : {"contact": "Full Name", "account": "Account Name", "lead": "Full Name"}
+    "default_labels" : {"contact": "Full Name", "account": "Account Name", "lead": "Full Name"},
 
+    "validator": {"string": ["text", "paragraph", "email", "url"], "date": ["date"], 
+    				 "number": ["phone_number", "number"], "boolean": ["checkbox"] }
 }
-
