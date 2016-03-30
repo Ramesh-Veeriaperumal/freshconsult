@@ -23,7 +23,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     @shard        = ShardMapping.lookup_with_domain(@host)
 
     if @shard.try(:not_found?)
-      Rails.logger.debug "FdApiThrottler :: Domain Not Found :: #{@host}"
+      Rails.logger.debug "Domain Not Found while throttling :: Host: #{@host}"
       @status, @headers, @response = NOT_FOUND_RESPONSE
     elsif throttle?
       @api_limit = api_limit
@@ -34,12 +34,12 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
         # In order to avoid a 'get' and an 'incrby' call to redis for every request, 'incrby' is being called twice conditionally.
         increment_redis_key(extra_credits) unless extra_credits == 0
         set_rate_limit_headers if @count
-        Rails.logger.debug("FdApiThrottler :: Throttled :: Host: #{@host}, Count: (#{@count})")
+        Rails.logger.debug("Throttled :: Host: #{@host}, Time: #{Time.now}, Count: (#{@count})")
       else
         retry_value = handle_expiry_not_set
         @status, @headers, @response = [429, { 'Retry-After' => retry_value.to_s, 'Content-Type' => 'application/json' },
                                         LIMIT_EXCEEDED_MESSAGE]
-        Rails.logger.error("API 429 Error :: Host: #{@host}, Time: #{Time.now}, Count: #{@count}}")
+        Rails.logger.error("429 Error :: Host: #{@host}, Time: #{Time.now}, Count: #{@count}}")
       end
     else
       @status, @headers, @response = @app.call(@request.env)
@@ -53,8 +53,8 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def handle_expiry_not_set
       retry_value = retry_after.to_i
-      if retry_value.to_i < 0
-        Rails.logger.error("API Expiry not set properly :: Host: #{@host}, Retry Value: #{retry_value}, Time: #{Time.now}, Count: #{@count}}")
+      if retry_value < 0
+        Rails.logger.error("Expiry not set properly :: Host: #{@host}, Retry Value: #{retry_value}, Time: #{Time.now}, Count: #{@count}}")
         retry_value = 1
         set_redis_expiry(key, retry_value)
       end
@@ -73,7 +73,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def throttle?
-      Rails.logger.debug "SOURCE IP :: #{@request.env['HTTP_X_REAL_IP']}, DOMAIN :: #{@host}"
+      Rails.logger.error "Inside throttle? method :: Host: #{@host}, SOURCE IP: #{@request.env['HTTP_X_REAL_IP']}"
       !skipped_domain? && account_id
     end
 
@@ -130,7 +130,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
         Subscription.fetch_by_account_id(account_id).try(:plan_id)
       end
     rescue Exception => e
-      Rails.logger.error "Exception on FdApiThrottler ::: #{e.message}"
+      Rails.logger.error "Exception while fetching subscription_plan_id :: Host: #{@host}, Message: #{e.message}, Time: #{Time.now}"
       NewRelic::Agent.notice_error(e, custom_params: { description: 'Freshdesk API Throttler Error',
                                                        domain: @host, account_id: account_id })
     end
@@ -166,7 +166,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
       options_hash =  { uri: @request.env['REQUEST_URI'], custom_params: @request.env['action_dispatch.request_id'],
                         description: 'Error occurred while accessing Redis', request_method: @request.env['REQUEST_METHOD'],
                         request_body: @request.env['rack.input'].gets }
-      Rails.logger.error("FdApiThrottler :: Redis Exception, Host: #{@host}, Exception: #{e.message}\n#{e.class}\n#{e.backtrace.join("\n")}")
+      Rails.logger.error("Redis Exception :: Host: #{@host}, Exception: #{e.message}\n#{e.class}\n#{e.backtrace.join("\n")}")
       NewRelic::Agent.notice_error(e, options_hash)
       return
     end
