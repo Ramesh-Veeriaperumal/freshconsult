@@ -131,6 +131,11 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		paginate :per_page => _per_page, :page => _page
 	end
 
+	def set_mobihelp_solution_updated_time
+		self.reload
+		solution_folder_meta.solution_category_meta.update_mh_solutions_category_time
+	end
+
 	private
 
 	def clear_cache
@@ -139,11 +144,6 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	def set_default_art_type
 		self.art_type ||= Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]
-	end
-
-	def set_mobihelp_solution_updated_time
-		self.reload
-		solution_folder_meta.solution_category_meta.update_mh_solutions_category_time
 	end
 	
 	def valid_change?

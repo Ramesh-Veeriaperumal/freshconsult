@@ -20,7 +20,11 @@ module Solution::FlashHelper
 
   def view_on_portal_link
     unless language_visible_in_portal? @article
-      publish_link_html(support_solutions_article_path(@article, view_context.path_url_locale), t('solution.view_on_portal'))
+      relative_path = support_solutions_article_path(@article, view_context.path_url_locale)
+      publish_link_html(
+        view_context.portal_preview_path(relative_path, @article_meta.solution_folder_meta.solution_category_meta),
+        t('solution.view_on_portal')
+      )
     else
       portal_add_language_link @article
     end

@@ -83,7 +83,9 @@ class Portal < ActiveRecord::Base
   end
 
   def has_solution_category? category_meta_id
-    return true unless portal_solution_categories.find_by_solution_category_meta_id(category_meta_id).nil?
+    Account.current.solution_categories_from_cache.select { |c|  
+      c[:id] == category_meta_id && c["portal_solution_categories"].map{ |pc| pc["portal_id"] }.include?(self.id)
+    }.present?
   end
   
   def has_forum_category? category

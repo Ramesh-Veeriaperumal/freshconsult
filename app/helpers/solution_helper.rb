@@ -24,7 +24,7 @@ module SolutionHelper
 				else
 			end
 		end
-		"<div class='breadcrumb'>#{_output.map{ |bc| "<li>#{bc}</li>" }.join("")}</div>".html_safe
+		"<div class='breadcrumb'>#{_output.map{ |bc| "<li>#{bc}</li>" }.join}</div>".html_safe
 	end
 
 	def new_article_check?
@@ -43,7 +43,11 @@ module SolutionHelper
 	end
 
 	def default_category?
-		((@category_meta || (@folder.respond_to?(:solution_category_meta) ? @folder.solution_category_meta : (@article.folder.present? ? @article.folder.category : {}))) || {})[:is_default]
+		category = @category_meta || 
+				(@folder_meta && @folder_meta.solution_category_meta) ||
+				(@article_meta && @article_meta.solution_folder_meta && @article_meta.solution_folder_meta.solution_category_meta) ||
+				{}
+		category[:is_default]
 	end
 
 	def folder_link folder
