@@ -93,13 +93,19 @@ class Support::Solutions::ArticlesController < SupportController
     
     def load_agent_actions      
       @agent_actions = []
-      @agent_actions <<   { :url => solution_article_version_path(@article.parent_id, Language.current.code, :anchor => 'edit'),
+      @agent_actions <<   { :url => multilingual_article_path(@article, :anchor => "edit"),
                             :label => t('portal.preview.edit_article'),
                             :icon => "edit" } if privilege?(:manage_solutions)
-      @agent_actions <<   { :url => solution_article_version_path(@article.parent_id, Language.current.code),
+      @agent_actions <<   { :url => multilingual_article_path(@article),
                             :label => t('portal.preview.view_on_helpdesk'),
                             :icon => "preview" } if privilege?(:view_solutions)
       @agent_actions
+    end
+
+    def multilingual_article_path(article, options={})
+      current_account.multilingual? ?
+        solution_article_version_path(article, options.slice(:anchor).merge({:language => article.language.code})) :
+        solution_article_path(article, options.slice(:anchor))
     end
     
     def load_page_meta
