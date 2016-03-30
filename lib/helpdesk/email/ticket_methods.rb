@@ -104,7 +104,8 @@ module Helpdesk::Email::TicketMethods
       end
       
     rescue ActiveRecord::RecordInvalid => e
-      FreshdeskErrorsMailer.error_email(ticket,email,e)
+      # FreshdeskErrorsMailer.error_email(ticket,email,e)
+      NewRelic::Agent.notice_error(e)
     end
     cleanup_attachments ticket
     create_redis_key_for_ticket(ticket_message_id) unless ticket_message_id.nil?

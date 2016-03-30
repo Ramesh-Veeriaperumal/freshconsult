@@ -33,7 +33,7 @@
 
   <form action="<%= search_url %>" id="extension-search-form" class="span4 pull-right search-form">
     <div class="appsearch-box ui-widget">
-      <input id="query" name="query" class="search-query" required type="text" placeholder="<%= search_placeholder %>" value="<% if(search_term) { %> <%- search_term %> <% } %>" data-url="<%= auto_suggest_url %>">
+      <input id="query" name="query" class="search-query" required type="text" placeholder="<%= search_placeholder %>" value="<% if(search_term) { %><%- search_term %><% } %>" data-url="<%= auto_suggest_url %>">
       <div class="sloading loading-small search-loader" style="display:none;"></div>
       <button class="remove-query" type="reset"><span class="ficon-cross fsize-16"></span></button>
       <input style="display:none" type="submit" id="search-btn">

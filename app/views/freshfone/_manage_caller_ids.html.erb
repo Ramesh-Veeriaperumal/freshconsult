@@ -1,0 +1,22 @@
+<div class="outgoing-callers">
+    
+    <ul class="caller-id-list" id="caller-id-list">
+      <% outgoing_callers.each do |caller| %>
+     
+      <li class ="caller-number" id ="caller-list-item<%= caller.id %>" >
+        <div class = "caller-list clearfix" id="caller-number<%= caller.id %>">
+          <a href="#" class="ficon-delete active caller-delete-icon pull-left" data-id ="<%= caller.id %>"></a>
+          <div class="pull-left pl10 caller-id-number"><%= caller.number %></div> 
+          <div id ="caller-delete<%= caller.id %>" class="caller-delete pull-right ">
+            <span><%=t('freshfone.admin.numbers.caller_id.delete')%></span> 
+            <a href="#" class="ficon-cross-round active cancel-icon-wrap text-center" data-id ="<%= caller.id %>"></a>
+            <a href="#" class="ficon-checkmark-round active tick-icon-wrap text-center" data-number-sid ="<%= caller.number_sid %>" data-id ="<%= caller.id %>">
+            </a>
+          </div>
+        </div>
+      </li>
+      
+      <% end %>
+    </ul>
+
+</div>

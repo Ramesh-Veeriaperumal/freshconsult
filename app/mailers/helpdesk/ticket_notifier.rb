@@ -30,6 +30,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                 'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
       plain_version = r_plain_template.render('ticket' => ticket, 
                 'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+
       params = { :ticket => ticket,
              :notification_type => notification_type,
              :receips => ticket.from_email,
@@ -114,14 +115,18 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def self.send_cc_email(ticket, comment=nil, options={})
     if comment
-      cc_emails_string = ticket.cc_email[:reply_cc].join(",") if (ticket.cc_email.present? && ticket.cc_email[:reply_cc].present?)
+      cc_emails = ticket.cc_email[:reply_cc] if (ticket.cc_email.present? && ticket.cc_email[:reply_cc].present?)
       e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
     else
-      cc_emails_string = options[:cc_emails].join(",") if (options && options[:cc_emails])
+      cc_emails = options[:cc_emails] if (options && options[:cc_emails])
       e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::NEW_TICKET_CC)
     end
-    return if cc_emails_string.blank?
-    cc_emails = get_email_array cc_emails_string
+
+    cc_emails.concat(options[:additional_emails]) if options[:additional_emails].present?
+    cc_emails = fetch_valid_emails(cc_emails, {:ignore_emails => options[:ignore_emails]}) if options[:ignore_emails].present?
+    
+    return if cc_emails.to_a.count == 0
+    cc_emails = get_email_array cc_emails.join(",")
     db_users = ticket.account.users.where(:email => cc_emails)
     db_users_email = db_users.map(&:email).map(&:downcase)
     non_db_user_ccs = cc_emails - db_users_email
@@ -280,7 +285,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
     
-    headers = email_headers(ticket, message_id, false).merge({
+    headers = email_headers(ticket, message_id, false, true).merge({
       :subject    =>  fwd_formatted_subject(ticket),
       :to         =>  to_emails,
       :cc         =>  cc_emails,
@@ -288,7 +293,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :from       =>  from_email,
       "Reply-To"  =>  "#{from_email}"
     })
-
     inline_attachments = []
     @ticket = ticket
     @body = note.full_text

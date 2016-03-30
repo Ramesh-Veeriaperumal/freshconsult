@@ -601,6 +601,17 @@ Helpkit::Application.routes.draw do
       end
     end
   end
+
+  namespace :freshfone, :path => "phone" do
+    resources :caller_id do
+      collection do
+        post :validation
+        post :verify
+        post :add
+        post :delete
+      end
+    end
+  end
   
   resources :users do
     collection do

@@ -170,7 +170,7 @@ class TicketsController < ApiApplicationController
       custom_fields = name_mapping_txt_fields.empty? ? [nil] : name_mapping_txt_fields.keys
       params.permit(*ApiTicketConstants::SEARCH_ALLOWED_DEFAULT_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS, *custom_fields)
       @ticket_filter = TicketFilterValidation.new(params.merge(cf: custom_fields))
-      render_query_param_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
+      render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
     def scoper

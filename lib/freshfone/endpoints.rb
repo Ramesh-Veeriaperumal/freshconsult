@@ -183,6 +183,10 @@ module Freshfone::Endpoints
     "&forward=#{params[:forward]}"
   end
 
+  def caller_id_status_verification_url
+    "#{host}/phone/caller_id/add"
+  end
+
   private 
     def call_params
       "caller_id=#{CGI.escape(params[:From])}&timeout=#{incoming_timeout}"
