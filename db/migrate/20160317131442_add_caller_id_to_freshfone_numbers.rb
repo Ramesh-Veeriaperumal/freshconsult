@@ -3,7 +3,7 @@ class AddCallerIdToFreshfoneNumbers < ActiveRecord::Migration
 
   def up
     Lhm.change_table :freshfone_numbers, :atomic_switch => true do |t|
-      t.add_column :caller_id, "integer(8)"
+      t.add_column :caller_id, "bigint(20) unsigned DEFAULT NULL"
     end
   end
 
