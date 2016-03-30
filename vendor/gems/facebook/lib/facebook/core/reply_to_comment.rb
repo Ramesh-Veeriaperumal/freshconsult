@@ -17,7 +17,7 @@ module Facebook
         #Reply is not converted to a note as yet
         if self.fd_item.nil?
           fb_post    = fd_post_obj(self.koala_comment.parent_post_id) 
-          fb_comment = fd_post_obj(self.koala_comment.parent[:id]) 
+          fb_comment = fd_post_obj(self.koala_comment.parent[:id]) if self.koala_comment.parent
           
           #Parent comment is an fd_item
           if fb_comment
