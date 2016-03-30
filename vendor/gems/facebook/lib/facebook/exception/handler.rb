@@ -21,7 +21,6 @@ module Facebook
           begin
             return_value = yield
           rescue Koala::Facebook::APIError => @exception
-            raise_newrelic_error(error_params)
             
             if auth_error?
               update_error_and_notify(error_params)
@@ -38,6 +37,8 @@ module Facebook
                 IGNORED_ERRORS.include?(@exception.fb_error_code) ? 
                     raise_sns_notification(error_params[:error_msg][0..50], error_params) : 
                     update_error_and_notify(error_params)
+              else
+                raise_sns_notification(error_params[:error_msg][0..50], error_params)
               end
             
             elsif server_error?
@@ -45,7 +46,7 @@ module Facebook
                 update_error_and_notify(error_params)
               else
                 Sqs::Message.new("{}").requeue(JSON.parse(@raw_obj)) if @raw_obj
-                raise_sns_notification("Server Error", {:error => "Server Error"})
+                raise_sns_notification("Server Error", {:exception => "#{@exception}"})
               end
             else
               raise_sns_notification(error_params[:error_msg][0..50], error_params)
