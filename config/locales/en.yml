@@ -2556,9 +2556,6 @@ en:
       delete_article:
         short: "{{user_path}} has deleted an article"
         long: "{{user_path}} has deleted an article '{{notable_path}}'"
-      delete_article_translation:
-        short: "{{user_path}} has deleted an article translation in {{language_name}}"
-        long: "{{user_path}} has deleted an article translation in {{language_name}} '{{notable_path}}'"
       new_solution_category:
         short: "{{user_path}} created a new solution category"
         long: "{{user_path}} created a new solution category '{{notable_path}}'"
@@ -2568,9 +2565,6 @@ en:
       delete_solution_category:
         short: "{{user_path}} has deleted a solution category"
         long: "{{user_path}} has deleted a solution category '{{notable_path}}'"
-      delete_solution_category_translation:
-        short: "{{user_path}} has deleted a solution category translation in {{language_name}}"
-        long: "{{user_path}} has deleted a solution category translation in {{language_name}} '{{notable_path}}'"
       new_folder:
         short: "{{user_path}} created a new folder"
         long: "{{user_path}} created a new folder '{{notable_path}}'"
@@ -2580,9 +2574,6 @@ en:
       delete_folder:
         short: "{{user_path}} has deleted a folder"
         long: "{{user_path}} has deleted a folder '{{notable_path}}'"
-      delete_folder_translation:
-        short: "{{user_path}} has deleted a folder translation in {{language_name}}"
-        long: "{{user_path}} has deleted a folder translation in {{language_name}} '{{notable_path}}'"
       new_draft:
         short: "{{user_path}} created a draft for an article"
         long: "{{user_path}} created a draft for an article '{{notable_path}}'"
