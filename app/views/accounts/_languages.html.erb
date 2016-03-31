@@ -40,18 +40,20 @@
 				</span>
 			</div>
 		<% else %>
-			<%= portal.select :language, 
-						I18n.available_locales_with_name , 
-						{
-							:selected =>  @account.main_portal.language.to_sym() 
-						},
-						{
-							:class => "select2 input-medium"
-						}
-			%>
-			<span class="ml10">
+			<div class="span3">
+				<%= portal.select :language, 
+							I18n.available_locales_with_name , 
+							{
+								:selected =>  @account.main_portal.language.to_sym() 
+							},
+							{
+								:class => "select2 input-medium"
+							}
+				%>
+			</div>
+			<div class="span4 mt5">
 				<%= pjax_link_to t("admin.products.portal.enable_multilingual"), manage_languages_path if @account.multilingual_available? %>
-			</span>
+			</div>
 		<% end %>
 	</div>
 </div>
