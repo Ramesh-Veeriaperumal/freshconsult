@@ -114,6 +114,22 @@ module TicketsTestHelper
   end
 
   # Helpers
+  def v2_outbound_payload
+    product = (Product.first || create_product)
+    email_config = product.primary_email_config
+    v2_ticket_params.except(:source, :fr_due_by, :due_by, :status).merge(email_config_id: email_config.id, product_id: product.id).to_json
+  end
+
+  def v1_outbound_payload
+    product = (Product.first || create_product)
+    email_config = product.primary_email_config
+    {
+      helpdesk_ticket: v1_ticket_params.except(:fr_due_by, :due_by, :status, :source).merge(source: 10, status: 5, email_config_id: email_config.id, product_id: product.id),
+      helpdesk: { tags: "#{Faker::Name.name}, #{Faker::Name.name}" },
+      cc_emails: "#{Faker::Internet.email}, #{Faker::Internet.email}"  
+    }.to_json
+  end
+
   def v1_ticket_payload
     { helpdesk_ticket: v1_ticket_params, helpdesk: { tags: "#{Faker::Name.name}, #{Faker::Name.name}" },
       cc_emails: "#{Faker::Internet.email}, #{Faker::Internet.email}" }.to_json
