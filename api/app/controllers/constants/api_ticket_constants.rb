@@ -6,7 +6,6 @@ module ApiTicketConstants
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
                   ).freeze | ARRAY_FIELDS | HASH_FIELDS
-  COMPOSE_EMAIL_FIELDS = CREATE_FIELDS - ['source']
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
                   ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
@@ -21,7 +20,6 @@ module ApiTicketConstants
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze
   SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :chat, :mobihelp, :feedback_widget).values.freeze
 
-  LOAD_OBJECT_EXCEPT = [:compose_email].freeze
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, spam: false },
     'restore' => { deleted: true, spam: false },
@@ -49,8 +47,7 @@ module ApiTicketConstants
 
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {
     create: [:json, :multipart_form],
-    update: [:json, :multipart_form],
-    compose_email: [:json, :multipart_form]
+    update: [:json, :multipart_form]
   }.freeze
 
   MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT - 1

@@ -131,7 +131,7 @@ class TicketValidationTest < ActionView::TestCase
     controller_params = { status: true, priority: true, source: '3', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
-    refute ticket.valid?(:create)
+    refute ticket.valid?
     errors = ticket.errors.full_messages
     assert errors.include?('Status not_included')
     assert errors.include?('Priority not_included')
@@ -139,7 +139,7 @@ class TicketValidationTest < ActionView::TestCase
 
     controller_params = { status: '2', priority: '2', source: '', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
     ticket = TicketValidation.new(controller_params, item)
-    refute ticket.valid?(:create)
+    refute ticket.valid?
     errors = ticket.errors.full_messages
     assert errors.include?('Status not_included')
     assert errors.include?('Priority not_included')
@@ -200,22 +200,6 @@ class TicketValidationTest < ActionView::TestCase
     assert ticket.errors.full_messages.include?('Description datatype_mismatch')
     assert_equal({ requester_id: {}, description: { expected_data_type: String, prepend_msg: :input_received,
                                                     given_data_type: 'Boolean' } }, ticket.error_options)
-    Account.unstub(:current)
-  end
-
-  def test_outbound_ticket_update
-    Account.stubs(:current).returns(Account.first)
-    Account.any_instance.stubs(:compose_email_enabled?).returns(true)
-    controller_params = {  'subject' => Faker::Lorem.paragraph, 'description' => Faker::Lorem.paragraph,  ticket_fields: [], status_ids: [2, 3, 4, 5, 6] }
-    item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
-    ticket = TicketValidation.new(controller_params, item)
-    refute ticket.valid?(:update)
-    errors = ticket.errors.full_messages
-    assert errors.include?('Subject outbound_email_field_restriction')
-    assert errors.include?('Description outbound_email_field_restriction')
-    assert errors.include?('Email config field_validation_for_outbound')
-  ensure
-    Account.any_instance.unstub(:compose_email_enabled?)
     Account.unstub(:current)
   end
 end
