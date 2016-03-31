@@ -104,7 +104,7 @@ class Search::Utils
     term = (exact_match ? search_term.to_s.gsub(/^<?"?|"?>?$/,'').squish : search_term)
 
     # Removing tags and spl chars from ends
-    ActionController::Base.helpers.strip_tags(term).gsub(/^[^0-9A-Za-z]|[^0-9A-Za-z]$/, '').squish
+    ActionController::Base.helpers.strip_tags(term).gsub(/^\*|\*$/, '').squish
   end
 
   # Returns partial/exact match template
