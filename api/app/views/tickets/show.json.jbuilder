@@ -20,9 +20,9 @@ end
 json.set! :description, @item.description_html
 json.set! :description_text, @item.description
 
-json.partial! 'show_requester' if @requester
+json.partial! 'show_requester' if defined?(@requester)
 
-json.partial! 'show_company' if @company
+json.partial! 'show_company' if defined?(@company)
 
 json.extract! @item, :custom_fields
 

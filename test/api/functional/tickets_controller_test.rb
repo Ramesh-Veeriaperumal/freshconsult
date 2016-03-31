@@ -2172,7 +2172,10 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_show_with_company
-    ticket.update_column(:deleted, false)
+    t = ticket
+    t.update_column(:deleted, false)
+    company = create_company
+    t.update_column(:owner_id, company.id)
     get :show, controller_params(id: ticket.display_id, include: 'company')
     assert_response 200
     match_json(ticket_pattern_with_association(ticket, false, false, false, true))
@@ -2372,7 +2375,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
-  def test_index_with_requester
+  def test_index_with_requester_filter
     Helpdesk::Ticket.update_all(requester_id: User.first.id)
     ticket = create_ticket(requester_id: User.last.id)
     ticket.update_column(:created_at, 2.months.ago)
