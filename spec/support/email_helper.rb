@@ -8,7 +8,7 @@ module EmailHelper
 
 	def new_email options={}
 		set_essentials(options)
-		mail_main = Faker::Lorem.paragraphs(5).join(" ")
+		mail_main = Faker::Lorem.paragraphs(2).join(" ")
 		generate_attachments(options[:attachments], options[:inline], options[:large]) if options[:attachments]
 		{
 			:from => from,
@@ -29,7 +29,7 @@ module EmailHelper
 	def set_essentials options
 		self.from = random_email
 		self.to = generate_emails(rand(5), options[:email_config], options[:include_to])
-		self.cc = generate_emails(rand(10), options[:include_cc])
+		self.cc = generate_emails(rand(10), options[:email_config], options[:include_cc])
 		# self.mail_main = Faker::Lorem.paragraphs(5).join(" ")
 		self.reply_to = options[:reply]
 	end

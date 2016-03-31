@@ -55,8 +55,7 @@ describe CompaniesController do
     id = @account.companies.find_by_name(@comp.name).id
     fake_a_company
     put :update, @params.merge!({ :id => id, :format => 'xml' })
-    { :company => company_attributes(@account.companies.find(id), SKIPPED_KEYS) }.
-                                                                    should be_eql(@company_params)
+    company_attributes(@account.companies.find(id), SKIPPED_KEYS).should be_eql(@company_params[:company])
   end
 
   it "should delete a company using the API" do

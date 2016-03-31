@@ -77,7 +77,7 @@ describe CustomSurvey::SurveyResult do
   it "should include group wise report" do
       group_name= []
       survey = @account.custom_surveys.first
-      groups = @account.groups.find(:all)
+      groups = @account.groups
       groups.each do |group|
         survey_handle= CustomSurvey::SurveyHandle.create_handle_for_notification(@ticket,
                       EmailNotification::PREVIEW_EMAIL_VERIFICATION,survey.id,true,false)
@@ -85,7 +85,7 @@ describe CustomSurvey::SurveyResult do
         group_name.push(group.name)
       end
       
-      survey_reports = @ticket.survey_results.find(:all , :select => 'id,survey_id')
+      survey_reports = @ticket.survey_results
       group_report = Hash.new
       survey_reports.each_with_index do |report,index|
         key = report[:id]
@@ -108,7 +108,7 @@ describe CustomSurvey::SurveyResult do
   it "should include agent wise report" do
       agent_name= []
       survey = @account.custom_surveys.first
-      agents = @account.agents.find(:all)
+      agents = @account.agents
       agents.each do |agent|
         survey_handle= CustomSurvey::SurveyHandle.create_handle_for_notification(@ticket,
                        EmailNotification::PREVIEW_EMAIL_VERIFICATION,survey.id,true,false)
@@ -116,7 +116,7 @@ describe CustomSurvey::SurveyResult do
         agent_name.push(agent.user.name)
       end
       
-      survey_reports = @ticket.survey_results.find(:all , :select => 'id,survey_id')
+      survey_reports = @ticket.survey_results
       agent_report = Hash.new
       survey_reports.each_with_index do |report,index|
         key = report[:id]

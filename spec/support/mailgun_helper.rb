@@ -9,7 +9,7 @@ module MailgunHelper
 	def new_mailgun_email options={}
 		set_essentials(options)
 		env = get_m_envelope(options[:email_config], options[:another_config])
-		email_body = Faker::Lorem.paragraphs(5).join(" ")
+		email_body = Faker::Lorem.paragraphs(2).join(" ")
 		generate_mailgun_attachments(options[:attachments], options[:inline], options[:large]) if options[:attachments]
 		{
 			:from => from,
@@ -38,7 +38,6 @@ module MailgunHelper
 		self.from = random_email
 		self.to = generate_emails(rand(5), options[:email_config], options[:include_to])
 		self.cc = generate_emails(rand(10), options[:include_cc])
-		# self.email_body = Faker::Lorem.paragraphs(5).join(" ")
 		self.reply_to = options[:reply]
 	end
 

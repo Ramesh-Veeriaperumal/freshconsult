@@ -20,7 +20,7 @@ describe Helpdesk::CannedResponsesController do
 
 		it "should go to insert CR index page" do
 			get :index
-			response.should render_template("helpdesk/tickets/components/_ticket_canned_responses.html.erb")
+      response.should render_template(:partial => "helpdesk/tickets/components/_ticket_canned_responses")
 		end
 
 		it "should search the canned responses" do

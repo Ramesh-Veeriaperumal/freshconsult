@@ -44,6 +44,8 @@ describe CustomersController do
     post :create, company
     created_company = @account.companies.find_by_name(@company_name)
     created_company.should be_an_instance_of(Company)
+
+    company[:customer][:domains] = ",#{company[:customer][:domains]},"
     company_attributes(created_company, SKIPPED_KEYS).should be_eql(company[:customer])
   end
 
@@ -54,6 +56,8 @@ describe CustomersController do
 
     updated_company = @account.companies.find_by_name(@company_name)
     updated_company.should be_an_instance_of(Company)
+
+    another_company[:customer][:domains] = ",#{another_company[:customer][:domains]},"
     company_attributes(updated_company, SKIPPED_KEYS).should be_eql(another_company[:customer])
   end
 

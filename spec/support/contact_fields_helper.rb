@@ -109,7 +109,7 @@ module ContactFieldsHelper
 
   def destroy_custom_fields
     Resque.inline = true
-    contact_custom_field = @account.contact_form.all_fields.find(:all,:conditions=> ["column_name != ?", "default"])
+    contact_custom_field = @account.contact_form.all_fields.where("column_name != ?", "default")
     contact_custom_field.each { |field| field.delete_field }
     Resque.inline = false
   end

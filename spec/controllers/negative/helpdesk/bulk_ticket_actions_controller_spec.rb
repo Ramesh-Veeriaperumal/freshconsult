@@ -29,7 +29,7 @@ describe Helpdesk::BulkTicketActionsController do
     log_in(restricted_user)
     ticket_reply_notes=Faker::Lorem.paragraph
     @request.env['HTTP_REFERER'] = 'sessions/new'
-    Resque.inline = true
+    Sidekiq::Testing.inline!
     initial_count = global_agent_ticket.notes.count
     put :update_multiple, { :helpdesk_note => { :note_body_attributes => { :body_html => "<p> #{ticket_reply_notes} <p>" },
                                                 :private => "0",
@@ -42,7 +42,7 @@ describe Helpdesk::BulkTicketActionsController do
                                                 :group_id => group_id
                                               },
                             :ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id] }
-    Resque.inline = false
+    Sidekiq::Testing.disable!
     global_ticket=@account.tickets.find(global_agent_ticket.id)
     global_ticket.status.should be_eql(2)
     global_ticket.ticket_type.should be_eql(global_agent_ticket.ticket_type)
@@ -82,7 +82,7 @@ describe Helpdesk::BulkTicketActionsController do
     log_in(group_user)
     ticket_reply_notes=Faker::Lorem.paragraph
     @request.env['HTTP_REFERER'] = 'sessions/new'
-    Resque.inline = true
+    Sidekiq::Testing.inline!
     put :update_multiple, { :helpdesk_note => { :note_body_attributes => { :body_html => "<p> #{ticket_reply_notes} <p>" },
                                                 :private => "0",
                                                 :user_id => group_user.id,
@@ -94,7 +94,7 @@ describe Helpdesk::BulkTicketActionsController do
                                                 :group_id => group_id
                                               },
                             :ids => [global_agent_ticket.display_id,restricted_agent_ticket.display_id,group_agent_ticket.display_id] }
-    Resque.inline = false
+    Sidekiq::Testing.disable!
     global_ticket=@account.tickets.find(global_agent_ticket.id)
     global_ticket.status.should be_eql(2)
     global_ticket.ticket_type.should be_eql(global_agent_ticket.ticket_type)

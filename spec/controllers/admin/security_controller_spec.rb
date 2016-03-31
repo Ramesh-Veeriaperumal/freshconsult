@@ -6,6 +6,9 @@ RSpec.describe Admin::SecurityController do
 
   before(:all) do
     @account.features.whitelisted_ips.create
+    currency = Subscription::Currency.find_by_name "USD"
+    @account.subscription.currency = currency
+    @account.subscription.save
   end
 
   before(:each) do
