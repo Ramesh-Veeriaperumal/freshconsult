@@ -91,8 +91,7 @@ module Fdadmin
           ff_number.port = Freshfone::Number::PORT_STATE[:port_in]
           ff_number.skip_in_twilio = true
         end
-        if freshfone_number.new_record?
-          freshfone_number.save
+        if freshfone_number.new_record? && freshfone_number.save
           result[:status] = 'success'
         else
           result[:status] = 'error'
