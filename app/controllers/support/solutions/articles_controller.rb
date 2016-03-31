@@ -37,9 +37,6 @@ class Support::Solutions::ArticlesController < SupportController
   end
   
   def show
-    wrong_portal and return unless(main_portal? || 
-        (current_portal.has_solution_category?(@article.solution_folder_meta.solution_category_meta_id)))
-
     respond_to do |format|
       format.html { 
         draft_preview? ? adapt_article : load_page_meta

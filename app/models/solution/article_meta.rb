@@ -39,6 +39,8 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	COMMON_ATTRIBUTES = ["art_type", "position", "created_at"]
 
 	HITS_CACHE_THRESHOLD = 100
+	
+	attr_accessor :current_article_body
 
 	before_save :set_default_art_type
 	after_create :clear_cache
@@ -119,7 +121,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	end
 	
 	def current_article_body
-		Account.current.solution_article_bodies.find_by_article_id(current_child_id)
+		@current_article_body ||= Account.current.solution_article_bodies.find_by_article_id(current_child_id)
 	end
 	
 	def to_param
