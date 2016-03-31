@@ -10,7 +10,6 @@ describe 'Language prefix', :type => :request do
   	@new_agent = add_test_agent(@account,  {:role => @account.roles.first.id})
     @new_agent.password = "test1234"
     @new_agent.save
-    Language.reset_current
     @test_category_meta = create_category
     @public_folder_meta  = create_folder({ :visibility => 1, :category_id => @test_category_meta.id })
     @folder_meta  = create_folder({ :visibility => 1, :category_id => @test_category_meta.id })
@@ -19,7 +18,6 @@ describe 'Language prefix', :type => :request do
   end
 
   before(:each) do
-    Language.reset_current
   	@account.reload
   	enable_multilingual
   end
@@ -94,7 +92,8 @@ describe 'Language prefix', :type => :request do
       post "http://#{@account.full_domain}/#{@account.language}/support/login", :user_session => { :email => @new_agent.email, :password => "test1234", :remember_me => "0" }
       url_locale = @account.supported_languages.first
       get "http://#{@account.full_domain}/#{url_locale}/support/articles/#{@public_article_meta.id}"
-      response.code.should be_eql("404")
+      Language.current.code.should be_eql(url_locale)
+      response.should redirect_to "http://#{@account.full_domain}/#{url_locale}/support/home"
     end
 
     it "should render solution article page with url locale as language prefix if multilingual is enabled, logged in user is an agent and url locale is a supported language and article in that language is available" do
