@@ -40,8 +40,6 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	HITS_CACHE_THRESHOLD = 100
 	
-	attr_accessor :current_article_body
-
 	before_save :set_default_art_type
 	after_create :clear_cache
 	after_destroy :clear_cache

@@ -10,7 +10,7 @@ module SolutionBuilderHelper
   def create_solution_category_alone(params = {})
     {
       :solution_category_meta => {
-        :id => params[:id] || nil,
+        :id => params[:id] || nil      
       }.merge(solution_lang_ver_hash(:category, params[:lang_codes], params.except(:lang_codes, :id)))
     }.deep_symbolize_keys
   end

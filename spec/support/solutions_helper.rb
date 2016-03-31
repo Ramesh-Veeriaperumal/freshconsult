@@ -1,4 +1,6 @@
 module SolutionsHelper
+  
+  CREATE_METHODS = ["create_category", "create_folder", "create_article"]
 
   def create_category(params = {})
     c_params = create_solution_category_alone(solution_default_params(:category, :name, {
@@ -6,6 +8,7 @@ module SolutionsHelper
       :description => params[:description]
     }))
     c_params[:solution_category_meta][:is_default] = params[:is_default] if params[:is_default].present?
+    c_params[:solution_category_meta][:portal_ids] = params[:portal_ids] if params[:portal_ids].present?
     category_meta = Solution::Builder.category(c_params)
     category_meta
   end
@@ -22,7 +25,7 @@ module SolutionsHelper
     folder_meta
   end
 
-  def create_article(params = {})    
+  def create_article(params = {})
     params = create_solution_article_alone(solution_default_params(:article, :title, {
       :title => params[:title],
       :description => params[:description]
@@ -33,8 +36,24 @@ module SolutionsHelper
         :user_id => params[:user_id] || @agent.id,
         :attachments => params[:attachments]
       }))
+    current_user_present = User.current.present?
+    Account.current.users.find(params[:user_id] || @agent.id).make_current unless current_user_present
     article_meta = Solution::Builder.article(params.deep_symbolize_keys)
+    User.reset_current_user unless current_user_present
     article_meta
+  end
+  
+  CREATE_METHODS.each do |meth|
+    define_method "#{meth}_with_language_reset" do |params = {}|
+      return send("#{meth}_without_language_reset", params) unless Language.current?
+      current_lang = Language.current
+      Language.reset_current
+      solution_obj = send("#{meth}_without_language_reset", params)
+      current_lang.make_current
+      solution_obj
+    end
+    
+    alias_method_chain meth.to_sym, :language_reset
   end
 
   def create_customer_folders(folder_meta)
