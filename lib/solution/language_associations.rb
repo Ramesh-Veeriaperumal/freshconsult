@@ -118,6 +118,11 @@ module Solution::LanguageAssociations
       end
     end
 
+    def portal_available_versions
+      language_keys = in_available & Account.current.all_portal_language_objects.map(&:to_key)
+      language_keys.map{ |l| Language.find_by_key(l) }
+    end
+
     def compute_assign_binarize(col, child)
       val = self.read_attribute(col).to_i || 0
       val = val | flag_mapping(col, child.language_key) if child.send("#{col}?")

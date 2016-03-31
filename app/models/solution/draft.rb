@@ -41,7 +41,7 @@ class Solution::Draft < ActiveRecord::Base
   
   scope :by_user, lambda { |user|
      { 
-       :conditions => ["user_id = ?", user.id ]
+       :conditions => ["solution_drafts.user_id = ?", user.id ]
      }
   }
 
@@ -50,6 +50,13 @@ class Solution::Draft < ActiveRecord::Base
       :conditions => {
         :category_meta_id => portal.portal_solution_categories.map(&:solution_category_meta_id)
       }
+    }
+  }
+
+  scope :in_applicable_languages, lambda {
+    {
+      :joins => [:article],
+      :conditions => ['solution_articles.language_id in (?)', Account.current.all_language_ids]
     }
   }
 

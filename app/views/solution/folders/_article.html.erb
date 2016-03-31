@@ -25,7 +25,7 @@
 						<%= humanize_stats(article.thumbs_down) %>
 					</span>
 				</div>
-				<% if article.any_supported_draft_present? %>
+				<% if article.any_supported_draft_present? || article.draft.present? %>
 					<div class="span2 pull-right mt9 text-center article-info">
 						<%= draft_label_popover(article) %>
 					</div>

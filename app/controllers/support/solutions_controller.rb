@@ -38,11 +38,6 @@ class Support::SolutionsController < SupportController
       }
     end
 
-    def alternate_version_languages
-      return current_account.all_portal_languages unless @category
-      @category.solution_categories.map { |c| c.language.code}
-    end
-
 		def unscoped_fetch
 			@category = current_portal.solution_category_meta.unscoped_find(params[:id])
 		end

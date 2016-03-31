@@ -42,10 +42,6 @@ class Support::Solutions::FoldersController < SupportController
       @folder.visible_in?(current_portal)
     end
 
-    def alternate_version_languages
-      @folder.solution_folders.map { |f| f.language.code }
-    end
-
 		def unscoped_fetch
 			@folder = current_account.solution_folder_meta.unscoped_find(params[:id])
 		end

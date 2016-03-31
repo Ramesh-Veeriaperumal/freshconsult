@@ -1,8 +1,8 @@
 module Portal::Helpers::SolutionsHelper
 
-  def alternate_version_url(lang_code,path,portal=nil)
+  def alternate_version_url(language,portal=nil)
     portal = current_portal unless portal
-    "#{portal.url_protocol}://#{portal.host}/#{lang_code}#{path}" 
+    "#{portal.url_protocol}://#{portal.host}#{route_name(language)}"
   end
 
   def multilingual_meta_tags(meta)

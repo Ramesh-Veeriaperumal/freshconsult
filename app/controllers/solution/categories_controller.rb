@@ -81,8 +81,8 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def sidebar
-    @drafts = current_account.solution_drafts.preload({:article => :solution_article_meta})
-    @my_drafts = current_account.solution_drafts.by_user(current_user).preload({:article => :solution_article_meta})
+    @drafts = current_account.solution_drafts.in_applicable_languages.preload({:article => :solution_article_meta})
+    @my_drafts = current_account.solution_drafts.by_user(current_user).in_applicable_languages.preload({:article => :solution_article_meta})
     @feedbacks = current_account.
                     tickets.all_article_tickets.unresolved.
                     preload(:requester, :ticket_status, :article) if current_user.agent.all_ticket_permission

@@ -14,7 +14,7 @@ class Solution::DraftsController < ApplicationController
   before_filter :language, :only => [:publish, :attachments_delete]
 
   def index
-    @drafts = drafts_scoper.as_list_view.paginate(:page => params[:page], :per_page => 10)
+    @drafts = drafts_scoper.in_applicable_languages.as_list_view.paginate(:page => params[:page], :per_page => 10)
   end
 
   def destroy

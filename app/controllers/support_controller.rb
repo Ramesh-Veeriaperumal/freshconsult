@@ -144,15 +144,15 @@ class SupportController < ApplicationController
                        
       canonical_path = request.original_fullpath.gsub(/\?.*/, '')
       @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{canonical_path}"
-      multilingual_meta(page_token)
+      multilingual_meta(page_token) if current_portal.multilingual? 
 
       @meta = HashDrop.new( @page_meta )
     end
 
     def multilingual_meta page_token
       return unless [ :solution_home, :solution_category, :article_list, :article_view ].include?(page_token)
-      @page_meta[:multilingual_meta] = alternate_version_languages.inject({}) do |result,lang_code|
-        result[lang_code] = alternate_version_url(lang_code,@current_path)
+      @page_meta[:multilingual_meta] = alternate_version_languages.inject({}) do |result,language|
+        result[language.code] = alternate_version_url(language) unless language == Language.current
         result
       end
     end
@@ -296,7 +296,8 @@ class SupportController < ApplicationController
   end
 
   def alternate_version_languages
-    []
+    return current_account.all_portal_language_objects unless @solution_item
+    @solution_item.portal_available_versions
   end
 
   def check_version_availability

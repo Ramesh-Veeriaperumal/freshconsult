@@ -65,7 +65,7 @@ class Support::Solutions::ArticlesController < SupportController
 
     def load_and_check_permission
       @solution_item = @article = current_account.solution_article_meta.find_by_id(params[:id])
-      render_404 and return unless @article.present? && parent_exists?
+      render_404 and return if @article && !parent_exists?
       if @article && !@article.visible?(current_user)
         unless logged_in?
           store_location
@@ -158,10 +158,6 @@ class Support::Solutions::ArticlesController < SupportController
     
     def no_error
       !@ticket.errors.any?
-    end
-
-    def alternate_version_languages
-      @article.solution_articles.visible.map{ |a| a.language.code }
     end
 
     def cleanup_params_for_title
