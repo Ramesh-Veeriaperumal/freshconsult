@@ -380,7 +380,7 @@ module SolutionHelper
 	def dynamic_text_box(f, language, form, options = {})
 		op = ""
 		parent_meta = instance_variable_get("@#{f}_meta")
-		if parent_meta && parent_meta.send("#{language.to_key}_#{f}").present? && !options[:primary]
+		if parent_meta && !options[:primary] && parent_meta.send("#{language.to_key}_available?")
 			op << "<div class='pt5 span12'>"
 			op << parent_meta.send("#{language.to_key}_#{f}").name
 			op << "</div>"
