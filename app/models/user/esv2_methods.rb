@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
                       :job_title, :phone, :mobile, :twitter_id, 
                       :time_zone, :deleted, :fb_profile_id, :language, 
                       :blocked, :address, :helpdesk_agent ], 
-              methods: [ :user_description, :company_names, :emails, :company_ids, :tag_ids ]
+              methods: [ :user_description, :company_names, :emails, :company_ids, :tag_ids, :parent_id ]
             }, true).merge(esv2_custom_attributes).merge(tag_names: es_tag_names).to_json
   end
 

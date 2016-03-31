@@ -11,6 +11,11 @@
   :emails_boost: 1
   :phone_boost: 1
   :mobile_boost: 1
+:contact_merge: 
+  :name_boost: 1
+  :emails_boost: 1
+  :phone_boost: 1
+  :mobile_boost: 1
 :tag_autocomplete:
   :name_boost: 1
 :display_id_merge:

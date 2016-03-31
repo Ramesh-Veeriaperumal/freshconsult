@@ -311,6 +311,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/autocomplete", :only => [:companies]
     resource :customers_import
     resource :contact_merge
+    resource :"search/v2/merge_contact", :only => [:index]
     resource :user_email
     resource :"segment/identify"
     resource :"segment/group"

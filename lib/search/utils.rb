@@ -20,6 +20,8 @@ class Search::Utils
     portal_spotlight_topic:           'portalSpotlightTopic',
     portal_spotlight_topic_exact:     'portalSpotlightTopicExact',
     portal_related_articles:          'portalRelatedArticles',
+    contact_merge:                    'contactMerge',
+    contact_merge_exact:              'contactMergeExact',
     agent_autocomplete:               'agentAutocomplete',
     agent_autocomplete_exact:         'agentAutocompleteExact',
     requester_autocomplete:           'requesterAutocomplete',

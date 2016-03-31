@@ -301,16 +301,6 @@ Helpkit::Application.routes.draw do
   match '/integrations/segment' => 'segment/identify#create', :constraints => lambda{|req| req.request_parameters["type"] == "identify"}
   match '/integrations/segment' => 'segment/group#create', :constraints => lambda{|req| req.request_parameters["type"] != "identify"}
 
-
-  resources :contact_merge do
-    collection do
-      get :search
-      post :new
-      post :confirm
-      post :merge
-    end
-  end
-
   match '/contacts/filter/:state(/*letter)' => 'contacts#index', :format => false
   resources :groups do
     collection do
@@ -1260,7 +1250,8 @@ Helpkit::Application.routes.draw do
     match '/search/autocomplete/agents',       to: 'search/v2/autocomplete#agents',              via: :get
     match '/search/autocomplete/companies',    to: 'search/v2/autocomplete#companies',           via: :get
     match '/search/autocomplete/tags',         to: 'search/v2/autocomplete#tags',                via: :get
-    match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post    
+    match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post
+    match '/contact_merge/search',             to: 'search/v2/merge_contacts#index',             via: :get
     
     match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js)/ }
     match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js)/ }
@@ -1305,6 +1296,7 @@ Helpkit::Application.routes.draw do
           post :search_topics
         end
       end
+      resources :merge_contacts, :only => :index
     end
 
     resources :home, :only => :index do
@@ -1352,6 +1344,18 @@ Helpkit::Application.routes.draw do
   match "/reports/v2/:report_type/update_reports_filter",  :controller => 'reports/v2/tickets/reports', :action => 'update_reports_filter', :method => :post
   match "/reports/v2/download_file/:report_export/:type/:date/:file_name", :controller => 'reports/v2/tickets/reports', :action => 'download_file', :method => :get
   # END
+
+
+  # Keep this below search to override contact_merge_search_path
+  #
+  resources :contact_merge do
+    collection do
+      get :search
+      post :new
+      post :confirm
+      post :merge
+    end
+  end
   
   
   namespace :reports do
