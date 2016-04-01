@@ -67,9 +67,15 @@ describe Support::Solutions::FoldersController do
   it "should add meta tags for alterante language versions" do 
     log_in(@user)
     get 'show', id: @test_folder_meta1.id, url_locale: 'en'
-    supported_languages = @test_folder_meta1.solution_folder_meta.solution_folders.map { |c| c.language.code}
+    supported_languages = @test_folder_meta1.solution_folder_meta.portal_available_versions
     supported_languages.each do |lang|
-      version_url = alternate_version_url(lang, support_solutions_folder_path(@test_folder_meta1), @account.main_portal)
+      params = { 
+                  :id=> @test_folder_meta1.id, 
+                  :controller => "support/solutions/folders", 
+                  :action => "show", 
+                  :url_locale => "en"
+                }
+      version_url = alternate_version_url(lang, @account.main_portal)
       response.body.should =~ /hreflang="#{lang}" href="#{version_url}"/
     end
   end

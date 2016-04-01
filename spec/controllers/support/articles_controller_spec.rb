@@ -459,9 +459,15 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   it "should add meta tags for alterante language versions" do 
     get 'show', id: @public_article1.id, url_locale: 'en'
-    supported_languages = @public_article1.solution_article_meta.solution_articles.map { |c| c.language.code}
+    supported_languages = @public_article1.solution_article_meta.portal_available_versions
     supported_languages.each do |lang|
-      version_url = alternate_version_url(lang,support_solutions_article_path(@public_article1),@account.main_portal)
+      params = { 
+                  :id=> @public_article1.id, 
+                  :controller => "support/solutions/articles", 
+                  :action => "show", 
+                  :url_locale => "en"
+                }
+      version_url = alternate_version_url(lang, @account.main_portal)
       response.body.should =~ /hreflang="#{lang}" href="#{version_url}"/
     end
   end
