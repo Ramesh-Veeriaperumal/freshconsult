@@ -39,6 +39,8 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	COMMON_ATTRIBUTES = ["art_type", "position", "created_at"]
 
 	HITS_CACHE_THRESHOLD = 100
+
+	AGGREGATED_COLUMNS = [:hits, :thumbs_up, :thumbs_down]
 	
 	before_save :set_default_art_type
 	after_create :clear_cache
@@ -86,6 +88,13 @@ class Solution::ArticleMeta < ActiveRecord::Base
 			self[attrib] || current_article_body.send("#{attrib}")
 		end
 	end
+
+	AGGREGATED_COLUMNS.each do |col|
+		define_method "aggregated_#{col}" do
+			return self[col] if Account.current.multilingual?
+			primary_article.send(col)
+		end
+	end	
 
 	def hit_key
 		SOLUTION_META_HIT_TRACKER % {:account_id => account_id, :article_meta_id => id }
