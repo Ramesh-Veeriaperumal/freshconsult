@@ -95,7 +95,7 @@ class Fdadmin::FreshfoneStats::CallQualityMetricsController < Fdadmin::DevopsMai
     end 
 
     def key(id) 
-    	$redis_integrations.keys("FRESHFONE:CALL_QUALITY_METRICS:#{params[:account_id]}:#{id}")
+    	$redis_integrations.perform_redis_op("keys", "FRESHFONE:CALL_QUALITY_METRICS:#{params[:account_id]}:#{id}")
     end
 
     def last_ten_call_records

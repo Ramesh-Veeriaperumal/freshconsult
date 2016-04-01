@@ -1,6 +1,6 @@
 module Admin
   class MarketplaceAppsWorker < ::BaseWorker
-    include Marketplace::ApiMethods
+    include ::Marketplace::ApiMethods
 
     RETRY_COUNT = 10
 
@@ -17,8 +17,8 @@ module Admin
         params = result.body.symbolize_keys
         params = params.merge({ 
                   :configs => args[:configs], 
-                  :type => Marketplace::Constants::EXTENSION_TYPE[:ni],
-                  :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled]
+                  :type => ::Marketplace::Constants::EXTENSION_TYPE[:ni],
+                  :enabled => ::Marketplace::Constants::EXTENSION_STATUS[:enabled]
                  }) if ['install', 'update'].include?(args[:method])
         ext_result = send("#{args[:method]}_extension", params)
         if error_status?(ext_result)

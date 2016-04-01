@@ -1615,5 +1615,9 @@ module ApplicationHelper
     
     content_tag :ul, &list
   end
+
+  def outgoing_callers
+    current_account.freshfone_caller_id
+  end
   
 end

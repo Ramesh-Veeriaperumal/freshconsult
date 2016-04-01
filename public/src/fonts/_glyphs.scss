@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_d898541696e0f6963b38eebc0ac7abb7.eot");
-  src: font-url("glyphs_d898541696e0f6963b38eebc0ac7abb7.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_d898541696e0f6963b38eebc0ac7abb7.woff") format("woff"),
-       font-url("glyphs_d898541696e0f6963b38eebc0ac7abb7.ttf") format("truetype"),
-       font-url("glyphs_d898541696e0f6963b38eebc0ac7abb7.svg#glyphs") format("svg");
+  src: font-url("glyphs_4f189458a2218e294fe99a339aec201c.eot");
+  src: font-url("glyphs_4f189458a2218e294fe99a339aec201c.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_4f189458a2218e294fe99a339aec201c.woff") format("woff"),
+       font-url("glyphs_4f189458a2218e294fe99a339aec201c.ttf") format("truetype"),
+       font-url("glyphs_4f189458a2218e294fe99a339aec201c.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_d898541696e0f6963b38eebc0ac7abb7.svg#glyphs") format("svg");
+    src: font-url("glyphs_4f189458a2218e294fe99a339aec201c.svg#glyphs") format("svg");
   }
 }
 
@@ -35,6 +35,7 @@
 .ficon-answer-checked:before,
 .ficon-answer-unchecked:before,
 .ficon-apple:before,
+.ficon-apps:before,
 .ficon-archived-ticket:before,
 .ficon-arrow-click:before,
 .ficon-arrow-down:before,
@@ -85,6 +86,7 @@
 .ficon-compose-email:before,
 .ficon-conversation:before,
 .ficon-cross:before,
+.ficon-cross-round:before,
 .ficon-crown:before,
 .ficon-cube:before,
 .ficon-customer-fields:before,
@@ -102,6 +104,7 @@
 .ficon-db-sand-clock:before,
 .ficon-db-unassigned:before,
 .ficon-decimal:before,
+.ficon-delete:before,
 .ficon-deleted:before,
 .ficon-disconnected:before,
 .ficon-dislike:before,
@@ -322,6 +325,7 @@
 .ficon-answer-checked:before { content: "\f104"; }
 .ficon-answer-unchecked:before { content: "\f105"; }
 .ficon-apple:before { content: "\f106"; }
+.ficon-apps:before { content: "\f215"; }
 .ficon-archived-ticket:before { content: "\f204"; }
 .ficon-arrow-click:before { content: "\f1b7"; }
 .ficon-arrow-down:before { content: "\f107"; }
@@ -372,6 +376,7 @@
 .ficon-compose-email:before { content: "\f1c8"; }
 .ficon-conversation:before { content: "\f128"; }
 .ficon-cross:before { content: "\f129"; }
+.ficon-cross-round:before { content: "\f216"; }
 .ficon-crown:before { content: "\f12a"; }
 .ficon-cube:before { content: "\f1dd"; }
 .ficon-customer-fields:before { content: "\f12b"; }
@@ -389,6 +394,7 @@
 .ficon-db-sand-clock:before { content: "\f20d"; }
 .ficon-db-unassigned:before { content: "\f20e"; }
 .ficon-decimal:before { content: "\f1c9"; }
+.ficon-delete:before { content: "\f217"; }
 .ficon-deleted:before { content: "\f1b3"; }
 .ficon-disconnected:before { content: "\f12f"; }
 .ficon-dislike:before { content: "\f130"; }

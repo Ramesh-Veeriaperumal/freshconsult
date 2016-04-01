@@ -1,4 +1,4 @@
-class Admin::InstalledExtensionsController <  Admin::AdminController
+class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminController
   include Marketplace::ApiMethods
   include Marketplace::ApiUtil
 
@@ -7,10 +7,8 @@ class Admin::InstalledExtensionsController <  Admin::AdminController
   def new_configs
     extn_configs = extension_configs
     render_error_response and return if error_status?(extn_configs)
-
-    resp = extn_configs.body.blank? ? data_from_url_params : 
-                data_from_url_params.merge({:configs => extn_configs.body})
-    render :json => resp, :status => extn_configs.status
+    @configs = extn_configs.body
+    render 'admin/marketplace/installed_extensions/configs', :status => extn_configs.status
   end
  
   def edit_configs
@@ -20,9 +18,8 @@ class Admin::InstalledExtensionsController <  Admin::AdminController
     acc_config = account_configs
     render_error_response and return if error_status?(acc_config)
 
-    resp = account_configurations(extn_configs.body, acc_config.body).blank? ? data_from_url_params : 
-                data_from_url_params.merge({:configs => @account_configurations})
-    render :json => resp, :status => extn_configs.status
+    @configs = account_configurations(extn_configs.body, acc_config.body)
+    render 'admin/marketplace/installed_extensions/configs', :status => extn_configs.status
   end
 
   def install

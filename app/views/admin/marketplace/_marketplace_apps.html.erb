@@ -1,13 +1,10 @@
 <div class="custom-apps-list freshplugs-list tab-pane"  id="apps">
   <div id="freshplug-tab-content" class="tab-content clear">
-      <div class="button-bar pull-right">
-        <a class="browse-btn btn btn-flat" href="" data-url="<%= admin_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><span class="ficon-puzzle"></span> <%= t('marketplace.get_more_apps') %></a>
-      </div>
 
       <div class="no-plugs clear">
         <p>
           <%= t('marketplace.no_mktp_apps') %>
-          <a href="" class="browse-btn" data-url="<%= admin_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><%= t('marketplace.get_more_apps') %></a>
+          <a href="" class="browse-btn" data-url="<%= admin_marketplace_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><%= t('marketplace.get_more_apps') %></a>
         </p>
       </div>
     <% if installed_plugs.kind_of?(Hash) and installed_plugs[:error].present?%>
@@ -22,7 +19,9 @@
   </div>
 </div>
 
+<% content_for :pagefixed do %>
 <div class="app-browser" style="display:none;">
   <button type="button" class="appbrowser-close"><span class="ficon-cross fsize-20"></button>
   <%= render :partial => "/admin/marketplace/freshplugs" %>
 </div>
+<% end %>

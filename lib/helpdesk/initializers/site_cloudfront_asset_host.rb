@@ -1,6 +1,6 @@
 CLOUDFRONT_VERSION = Time.now.to_i #Currently used in Integrations Javascripts, NEEDS TO BE REFACTORED - #TODO
 # unless Rails.env.development?
-#   CLOUDFRONT_VERSION = git_version = $redis_portal.get("cloudfront_version")
+#   CLOUDFRONT_VERSION = git_version = $redis_portal.perform_redis_op("get", "cloudfront_version")
 #   Jammit.instance_variable_set(:@package_path, "packages/#{git_version}")
 # end
 

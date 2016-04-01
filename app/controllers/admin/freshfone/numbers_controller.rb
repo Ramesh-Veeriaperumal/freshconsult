@@ -10,7 +10,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 	before_filter :check_active_account, :only => :edit
 	before_filter :load_number, :except => [ :index, :purchase ]
 	before_filter :load_ivr, :only => :edit
-	before_filter :build_attachments, :set_business_calendar,
+	before_filter :build_attachments, :set_business_calendar, :set_caller_id,
 							  :only => :update
 	before_filter :verify_address, :only => [:purchase], :if => :address_required?
 	before_filter :add_freshfone_address, :only => [:purchase], :if => :address_required?
@@ -34,7 +34,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 				Rails.logger.debug "Account #{current_account.id} provided an invalid local address for #{params[:country]}.\nParams:\n#{params.to_json}"
 				flash[:notice] = t('flash.freshfone.number.unsuccessful_purchase')
 				render :json => { :success => false, 
-					:errors => [t('flash.freshfone.number.invalide_address_error', {country: PostOffice.country_name(params[:country].downcase.to_sym)})] } and return
+					:errors => [t('flash.freshfone.number.invalide_address_error', {country: country_name})] } and return
 			end
 			flash[:notice] = t('flash.freshfone.number.unsuccessful_purchase')
 			Rails.logger.debug "Error purchasing number for account#{current_account.id}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
@@ -136,6 +136,18 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 			current_account.business_calendar.default.first
 		end
 
+		def set_caller_id
+			if params[:callmask_active] && params[:caller_id].present?
+				@number.freshfone_caller_id = freshfone_outgoing_caller 
+			else
+				@number.freshfone_caller_id = nil
+			end
+		end
+
+		def freshfone_outgoing_caller
+			current_account.freshfone_caller_id.find(params[:caller_id])
+		end
+
 		def build_attachments
 			@number.attachments_hash = build_attachments_hash
 			params[nscname].reject!{ |k,v| k == "attachments"}
@@ -210,10 +222,10 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
     end
 
     def verify_address
-      if PostOffice.validate_postcode(params[:postal_code], params[:country].downcase.to_sym).blank?
+      if PostOffice.validate_postcode(params[:postal_code], country_for_postcode).blank?
       	flash[:notice] = t('flash.freshfone.number.unsuccessful_purchase')
 				render :json => { :success => false, 
-					:errors => [t('flash.freshfone.number.invalide_address_error', {country: PostOffice.country_name(params[:country].downcase.to_sym)})] } and return
+					:errors => [t('flash.freshfone.number.invalide_address_error', {country: country_name})] } and return
       end
     end
 
@@ -230,5 +242,18 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 			trial_modifications
 			requires_feature(:freshfone)
 			create_freshfone_account
+		end
+
+		def country_for_postcode
+			return :cn if hong_kong? # Returning China for HK, to be removed when postoffice gem includes Hong Kong
+			params[:country].downcase.to_sym
+		end
+
+		def country_name
+			Freshfone::Cost::NUMBERS[params[:country]]['name']
+		end
+
+		def hong_kong?
+			params[:country] == 'HK'
 		end
 end

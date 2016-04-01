@@ -356,6 +356,14 @@ label.overlabel{
 	.info{
 		padding:12px 24px;
 	}
+	.info.switch_agent{
+		padding: 12px 12px 12px 24px;
+		color:#999;
+		border-top:1px solid #e0e0e0;
+	}
+	.load_agent{
+		line-height:2;
+	}
 	.user{
 		padding:2px 18px 18px;
 	}

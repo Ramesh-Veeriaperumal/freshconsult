@@ -37,9 +37,15 @@
 			  				availabilty_tooltip = t('header.user_not_available').html_safe
 			  			end
 			  		%>
-				  		<a href="#" id="availabilty-toggle" class="tooltip" data-placement="below"  
-				  		title="<%= availabilty_tooltip %>" data-html="true">
-				  			<img alt="" height="35px" src="<%= spacer_image_url %>" class="header-icons-agent-roundrobin-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggleAgent()">
+				  		<a href="#" id="availabilty-toggle" class="tooltip" title="<%= availabilty_tooltip %>" 
+              	 data-placement="below" 
+              	 data-html="true" 
+              	 data-assign-on="<%= t('header.user_not_available').html_safe %>"
+              	 data-assign-off="<%= t('header.user_available').html_safe %>">
+				  			<img alt="" height="35px" src="<%= spacer_image_url %>" 
+                  class="header-icons-agent-roundrobin-<%= current_user.available? ? "on" : "off" %>" 
+                  id="available_icon" 
+                  data-remote-url = "<%= toggle_availability_agent_path(current_user.id) %>">
 				  		</a>
 				  	<% end %>
 					<a href="#" class="nav-trigger" menuid="#LoggedOptions" id="header-profile-avatar">
@@ -62,25 +68,22 @@
 					<div class="link custom">
 						<span><%= t('header.toggle_shortcuts').html_safe %></span>
 						<span class="pull-right">
-							<%= check_box_tag(:toggle_shortcut, 0, shortcuts_enabled?, {:rel => "toggle"}) %>
+							<%= check_box_tag(:toggle_shortcut, 0, shortcuts_enabled?, {:rel => "toggle", :"data-remote-url" => toggle_shortcuts_agent_path(current_user.agent) }) %>
 						</span>
 						<span class="shorcuts-info description">
 							<%= t('header.shortcuts_info').html_safe %>
 						</span>
 					</div>
 					<% if is_assumed_user? %>
-						<%= link_to t('revert_identity_link_msg').html_safe, revert_identity_users_path, :class => "link" %>			
-					<% elsif privilege?(:manage_users) && !current_user.agent.assumable_agents.blank? %>  			
 						<span class="seperator"></span>
-						<div class="info">
-							<input type="hidden" id="assumed_select_id" class="header-agent-select"
-							data-placeholder = "<%= t("swith_agent_msg") %>" onchange="assume_identity_url()"/>
-							<%= javascript_tag do%>
-							  function assume_identity_url() {
-							    window.location = '/users/'+$('assumed_select_id').value+'/assume_identity';
-							  }
-							<%end%>
-						</div>
+						<%= link_to t('revert_identity_link_msg').html_safe, revert_identity_users_path, :class => "link" %>			
+					<% elsif privilege?(:manage_users) %>  			
+						<div class="info switch_agent" id="switch_agent_container">
+              <div id="agt_loading" class="link load_agent"><span><%= t("agent_loading_msg") %></span></div>
+              <select id="assumed_select_id" data-placeholder="<%= t("swith_agent_msg") %>" class="header-agent-select hide">
+                <option></option>
+              </select>
+            </div>
 					<% end %>     
 					<div class="tone-customize hide" >
 						<span class="seperator"></span>
@@ -184,98 +187,15 @@
 		</div>
 	</div>
 </div>
+
 <%  if logged_in? and current_user.agent?  %>
-<script type="text/javascript">
-	jQuery(document).ready(function() {
-	<%
-		assume_agent = []
-		if privilege?(:manage_users)
-			@allowed_to_assume = current_user.agent.assumable_agents
-
-			if @allowed_to_assume
-				@allowed_to_assume.each do |req|
-					assume_agent << "{id: '#{req.id}',
-		                  value: '#{escape_javascript(req.name)}',
-		                  text: '#{escape_javascript(req.name)}'}"
-				end
-			end
-		end
-	%>
-		jQuery("#assumed_select_id").select2("val",[]);
-
-		jQuery('#assumed_select_id').select2({
-		multiple: false,
-		data: [<%=assume_agent.join(",").html_safe%>]
-
-	});
-  
-  jQuery('#toggle_shortcut').bind('change', function(){
-    var that = this;
-    jQuery(this).attr('disabled', 'disabled')
-    jQuery.ajax({
-      type: "PUT",
-      dataType:"json",
-      url: "<%= toggle_shortcuts_agent_path(current_user.agent) %>",
-      success: function (response) {
-        jQuery(that).removeAttr('disabled');
-        if (response.shortcuts_enabled) {
-          if(window.shortcuts !== undefined){
-            jQuery(document).trigger("shortcuts:invoke");
-          } else {
-            Fjax.Assets.plugin('shortcut');
-          }
-        } else {
-          jQuery(document).trigger("shortcuts:destroy");
-        }
-      }
-    });
-  });
-
-	jQuery('#shortcuts_info').bind('click', function(ev){
-		ev.preventDefault();
-		jQuery('#shortcut_help_chart').trigger('click');
-	});	
-});
-
-
-</script>
-	<%= javascript_tag do %>
-	 function toggleAgent() {
-		var user_id = '<%= current_user.id %>'
-	  	var value = ( jQuery("#available_icon").attr("class") == "header-icons-agent-roundrobin-on" )
-
-	  	new Ajax.Request("<%= toggle_availability_agent_path(current_user.id) %>",
-	                   { parameters: {value: !value, id: user_id},
-	                      onLoading: function() {
-	                        jQuery('#available_icon').addClass('header-spinner')
-	                      },
-	                      onSuccess: function(response) {
-	                       //change the icon class.
-	                      jQuery('#available_icon').removeClass('header-spinner')
-	                      if (jQuery('#available_icon').hasClass('header-icons-agent-roundrobin-on'))
-	                      {
-	                        jQuery('#available_icon').removeClass('header-icons-agent-roundrobin-on').addClass('header-icons-agent-roundrobin-off')
-	                        jQuery('#availabilty-toggle')
-	                        	.attr('title',"<%= t('header.user_not_available').html_safe %>")
-	                      }
-	                      else{
-	                        jQuery('#available_icon').removeClass('header-icons-agent-roundrobin-off').addClass('header-icons-agent-roundrobin-on')
-	                        jQuery('#availabilty-toggle')
-	                        	.attr('title',"<%= t('header.user_available').html_safe %>")
-	                      }
-
-
-	                     } });
-
-	}
-
-	Helpdesk.settings = <%= email_template_settings.html_safe %>;
-	<% end %>
-<% end %>
-
-<!-- Setting DataStore values -->
-<%= javascript_tag do %>
-var current_account_id = "<%=current_account.id%>";
-var raw_store_data = <%= get_store_data.html_safe %>
-createDataStore(raw_store_data);
-<% end %>
+  <script type="text/javascript">
+    jQuery(document).ready(function() {
+      App.Header.init(<%= is_assumed_user? %>);
+    })
+    var current_account_id = "<%=current_account.id%>";
+		var raw_store_data = <%= get_store_data.html_safe %>
+		createDataStore(raw_store_data);
+    Helpdesk.settings = <%= email_template_settings.html_safe %>;
+  </script>
+<% end %> 

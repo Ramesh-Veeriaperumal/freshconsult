@@ -155,11 +155,6 @@ class Account < ActiveRecord::Base
     ismember?(CLASSIC_REPORTS_ENABLED, self.id)
   end
 
-  # Temp method for two weeks
-  def disabled_old_reports_ui?
-    created_at.utc > Date.parse('2016-03-01') || ismember?(OLD_REPORTS_DISABLED, self.id)
-  end
-
   def old_reports_enabled?
     ismember?(OLD_REPORTS_ENABLED, self.id)
   end

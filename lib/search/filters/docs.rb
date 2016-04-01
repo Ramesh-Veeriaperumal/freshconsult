@@ -54,7 +54,7 @@ class Search::Filters::Docs
     
     records         = model_class.constantize.where(account_id: Account.current.id, id: record_ids)
                                               .order("#{options[:order_entity]} #{options[:order_sort]}")
-                                              .preload([:ticket_states, :ticket_status, :responder,:requester])
+                                              .preload([:schema_less_ticket, :ticket_states, :ticket_status, :responder,:requester, flexifield: { flexifield_def: :flexifield_def_entries }])
     
     # Search::Filters::Docs::Results - Wrapper for pagination
     #_Note_: Cannot do query chaining with this, as superclass is Array

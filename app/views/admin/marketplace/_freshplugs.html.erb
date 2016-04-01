@@ -8,9 +8,8 @@
   </div>
 </div>
 
-<%= render :partial => '/admin/marketplace/templates/freshplugs/index' %>
-<%= render :partial => '/admin/marketplace/templates/freshplugs/show' %>
-<%= render :partial => '/admin/marketplace/templates/installed_freshplugs/show' %>
+<%= stylesheet_link_tag_with_rtl :'cdn/marketplace_installer' %>
+<%= javascript_include_tag :'cdn/marketplace/fa_marketplace_list' %>
 
 <%= javascript_include_tag :'cdn/marketplace/fa_template_dock_manager' %>
 <script type="text/javascript">
@@ -19,15 +18,37 @@
   var customMessages =  {
                           no_connection: "<%= I18n.t('marketplace.no_connection') %>",
                           installing: "<%= I18n.t('marketplace.installing') %>",
-                          install_error : "<%= I18n.t('marketplace.install_error') %>",
-                          field_blank: "<%= I18n.t('marketplace.field_blank') %>",
-                          install: "<%= I18n.t('marketplace.install') %>",
-                          installed: "<%= I18n.t('marketplace.installed') %>",
-                          update: "<%= I18n.t('marketplace.update') %>"
+                          api_error : "<%= I18n.t('marketplace.api_error') %>",
+                          field_blank: "<%= I18n.t('marketplace.field_blank') %>"
                         }
-  var types = "<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES %>";
-  var type_ni = "<%= Marketplace::Constants::EXTENSION_TYPE[:ni] %>";
-  var templateDockManager = new TemplateDockManager(extensionsWrapper, customMessages, tabName, types, type_ni);
+  var templateDockManager = new TemplateDockManager(extensionsWrapper, customMessages, tabName);
+
+  tf_lang = {
+    app_gallery         : "<%= t('marketplace.app_gallery') %>",
+    marketplace_no_apps : "<%= t('marketplace.no_apps') %>",
+    marketplace_ver     : "<%= t('marketplace.ver') %>",
+    marketplace_screens : "<%= t('marketplace.screenshots') %>",
+    marketplace_desc    : "<%= t('marketplace.description') %>",
+    marketplace_instr   : "<%= t('marketplace.instructions') %>",
+    marketplace_VERSION : "<%= t('marketplace.version') %>",
+    install_setting     : "<%= t('marketplace.settings') %>",
+    install_txt         : "<%= t('marketplace.install') %>",
+    installing_txt      : "<%= t('marketplace.installing_text') %>",
+    mkp_terms_of_use    : "<%= t('marketplace.terms_of_use') %>",
+    marketplace_terms   : "<%= t('marketplace.terms_of_use_link') %>",
+    marketplace_agree   : "<%= t('marketplace.app_installation_agreement') %>",
+    cancel              : "<%= t('cancel') %>",
+    install_almost_done : "<%= t('marketplace.almost_done') %>",
+    no_configs          : "<%= t('marketplace.no_configs') %>",
+    help_and_support    : "<%= t('marketplace.help_and_support') %>",
+    developed_by        : "<%= t('marketplace.developed_by') %>",
+    time_ago            : "<%= t('marketplace.time_ago') %>"
+  };
+
+  window['translate'] = {}; 
+  translate.get = function(name){
+    return tf_lang[name] || "";
+  };
 
   Fjax.afterNextPage = function() {
     templateDockManager.destroy();

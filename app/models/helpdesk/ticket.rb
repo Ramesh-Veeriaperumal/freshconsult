@@ -539,6 +539,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def subject_or_description
     [subject, description]
   end
+
+  def spam_or_deleted?
+    self.spam || self.deleted
+  end
   
   def from_email
     (account.features_included?(:contact_merge_ui) and self.sender_email.present?) ? self.sender_email : requester.email

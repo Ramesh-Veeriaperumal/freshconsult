@@ -26,6 +26,7 @@
 //= require report/date.js
 //= require freshfone/global.js
 //= require app/metrics.js
+//= require app/header.js
 //= require app/product_notifications.js
 //= require app/admin_font_settings.js
 //= require app/merge.js

@@ -65,6 +65,7 @@ defaults: &defaults
     - [github]
     - [webhook_throttler]
     - [webhook_worker]
+    - [webhook_v1_worker]
     - [report_export_queue]
     - [update_users_company_id]
     - [update_tickets_company_id]
@@ -88,7 +89,12 @@ defaults: &defaults
     - [marketplace_apps]
     - [pod_route_update]
     - [agent_destroy_cleanup]
-
+    - [helpdesk_ticket_body_queue]
+    - [helpdesk_note_body_queue]
+    - [helpdesk_update_ticket_body_queue]
+    - [helpdesk_update_note_body_queue]
+    - [contact_import]
+    - [company_import]
 development:
   <<: *defaults
 

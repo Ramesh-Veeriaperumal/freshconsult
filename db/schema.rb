@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20160303122805) do
     t.integer  "date_format",                       :default => 1
     t.text     "additional_settings"
     t.text     "resource_rlimit_conf"
+    t.integer  "webhook_limit",                      :default => 1000
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
@@ -906,6 +907,7 @@ ActiveRecord::Schema.define(:version => 20160303122805) do
   end
 
   add_index "customers", ["account_id", "name"], :name => "index_customers_on_account_id_and_name", :unique => true
+  add_index "customers", ["account_id", "updated_at"], :name => "index_customers_on_account_id_and_updated_at"
 
   create_table "data_exports", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -1385,7 +1387,6 @@ ActiveRecord::Schema.define(:version => 20160303122805) do
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"
   add_index "freshfone_accounts", ["account_id"], :name => "index_freshfone_accounts_on_account_id", :unique => true
-  add_index "freshfone_accounts", ["state"], :name => "index_freshfone_accounts_on_state"
 
   create_table "freshfone_blacklist_numbers", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -1415,6 +1416,17 @@ ActiveRecord::Schema.define(:version => 20160303122805) do
   end
 
   add_index "freshfone_call_metrics", ["account_id", "call_id"], :name => "index_freshfone_call_metrics_on_account_id_and_call_id"
+  
+  create_table "freshfone_caller_ids", :force => true do |t|
+    t.integer  "account_id", :limit => 8,  :null => false
+    t.string   "name",       :limit => 20
+    t.string   "number_sid", :limit => 50, :null => false
+    t.string   "number",     :limit => 20, :null => false
+    t.datetime "created_at",               :null => false
+    t.datetime "updated_at",               :null => false
+  end
+
+  add_index "freshfone_caller_ids", ["account_id"], :name => "index_freshfone_caller_ids_on_account_id"
 
   create_table "freshfone_callers", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -1568,6 +1580,7 @@ ActiveRecord::Schema.define(:version => 20160303122805) do
     t.boolean  "queue_position_preference",                                               :default => false
     t.string   "queue_position_message"
     t.integer  "port",                       :limit => 1
+    t.integer  "caller_id",                  :limit => 8
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
