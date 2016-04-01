@@ -75,7 +75,7 @@ class Solution::ArticlesController < ApplicationController
     set_common_attributes
     @article_meta = Solution::Builder.article(params)
     @article = @article_meta.send(language_scoper)
-    params[:solution_article_meta][language_scoper.to_sym][:tags_changed] = set_solution_tags
+    set_tags_changed
     @article.create_draft_from_article if save_as_draft?
     
     post_response(@article_meta, @article)
@@ -248,6 +248,12 @@ class Solution::ArticlesController < ApplicationController
     def set_tags_input
       @tags_input = get_tags[:name].split(',').map(&:strip).uniq   
     end
+    
+    def set_tags_changed
+      params_hash = (params.key?(:solution_article_meta) ? 
+            params[:solution_article_meta][language_scoper.to_sym] : params[:solution_article])
+      params_hash[:tags_changed] = set_solution_tags
+    end
 
     def tags_changed?
       !(@tags_input.sort == @article.tags.map(&:name).sort)
@@ -344,7 +350,7 @@ class Solution::ArticlesController < ApplicationController
 
     def update_article
       set_common_attributes
-      params[:solution_article_meta][language_scoper.to_sym][:tags_changed] = set_solution_tags
+      set_tags_changed
       @article_meta = Solution::Builder.article(params)
       
       post_response(@article_meta, @article)
