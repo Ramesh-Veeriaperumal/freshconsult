@@ -8,7 +8,7 @@ class Admin::CustomSurveysMailer < ActionMailer::Base
     survey = Account.current.custom_surveys.find_by_id(options[:survey_id])
     @user = Account.current.users.find_by_id(options[:user_id])
     email_config = Account.current.primary_email_config
-    ActionMailer::Base.set_mailbox email_config.smtp_mailbox
+    ActionMailer::Base.set_email_config email_config
 
     @survey_handle = CustomSurvey::SurveyHandle.create_handle_for_preview(survey.id, survey.send_while)
 
