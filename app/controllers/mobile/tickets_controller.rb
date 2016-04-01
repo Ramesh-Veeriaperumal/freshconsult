@@ -84,7 +84,7 @@ class Mobile::TicketsController < ApplicationController
       #filter tickets in my array
       #each_with_object insead of inject
       recent_tickets = items.inject([]) do |t, item|
-        t << item.to_mob_json_index['ticket']
+        t << item.to_mob_json_index
       end
       respond_to do |format|
         format.nmobile {render json: { tickets: recent_tickets}} 
