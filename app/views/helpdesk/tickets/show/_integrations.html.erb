@@ -4,6 +4,7 @@
                           raw @item.as_json({}, false).to_json 
                         }
                     %>;
+  dom_helper_data.helpdesk_ticket.tag_list = tag_list;
   current_user = <%= raw current_user.to_json %>;
   requester = <%= raw @ticket.requester.to_json %>;
 </script>
