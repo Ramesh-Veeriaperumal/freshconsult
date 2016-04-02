@@ -8,10 +8,15 @@
 
     "existing_contacts" : [{"fd_field" : "name", "sf_field" : "Name"}, {"fd_field" : "email", "sf_field" : "Email"}, {"fd_field" : "mobile", "sf_field" : "MobilePhone"}, {"fd_field" : "phone", "sf_field" : "Phone"}],
 
-    "default_fields" : {"contact": ["Name"], "account" : ["Name"], "lead" : ["Name"]},
+    "default_fields" : {"contact": ["Name"], "account" : ["Name"], "lead" : ["Name"], 
+    					"opportunity": ["Name", "StageName", "CloseDate"]},
 
-    "default_labels" : {"contact": "Full Name", "account": "Account Name", "lead": "Full Name"},
+    "default_labels" : {"contact": ["Full Name"], "account": ["Account Name"], "lead": ["Full Name"] , 
+    					"opportunity": ["Name", "Stage", "Close Date"]},
 
-    "validator": {"string": ["text", "paragraph", "email", "url"], "date": ["date"], 
-    				 "number": ["phone_number", "number"], "boolean": ["checkbox"] }
+    "validator": {"string": ["text", "paragraph", "phone_number"],"date": ["date"], "number": ["number"], 
+    			  "boolean": ["checkbox"], "unknown": [] }
+
 }
+
+

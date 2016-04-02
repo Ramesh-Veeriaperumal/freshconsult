@@ -8,7 +8,7 @@ module Integrations::CloudElements
     }
 
     CRM_TO_HELPDESK_FORMULA_ID = {
-        :salesforce => '1098',
+        :salesforce => '1312',
         :dynamicscrm => '758'
     }
 
@@ -19,7 +19,7 @@ module Integrations::CloudElements
     
     API_KEY = '3MVG9ZL0ppGP5UrC7ycgr9IfYGKWrOe3Ke9gOzfPife6xgS.XNFCXko7jC.mpUNeF84vm9aGmEk2DOKAtSkfG'
     API_SECRET = '98436661440156758'
-    CALLBACK_URL = 'https://localhost:3000/integrations/cloud_elements/crm/instances'
+    CALLBACK_URL = 'http://localhost:3000/integrations/cloud_elements/crm/instances'
     
     CONTACT_TYPES = { "1" => "text", "2" => "text", "3" => "email", "4" => "phone_number", "5" => "phone_number", 
         "6"=> "text", "7" => "text", "8" => "checkbox", "9" => "paragraph", "10" => "dropdown", "11" => "dropdown", 
@@ -28,16 +28,16 @@ module Integrations::CloudElements
         "1008" => "paragraph", "1009" => "url"}
 
     FD_VALIDATOR = { 
-        "text"=> ["text", "string", "textarea", "paragraph"],
-        "email"=> ["email", "string"],
-        "phone_number"=> ["string", "number", "phonenumber", "mobilenumber"],
-        "checkbox"=> [],
-        "paragraph"=> ["text", "string", "textarea", "paragraph"],
-        "dropdown"=> [],
-        "number"=> [],
+        "text"=> ["string"],
+        "email"=> [],
+        "phone_number"=> ["string"],
+        "checkbox"=> ["boolean"],
+        "paragraph"=> ["string"],
+        "dropdown"=> [], #????? string
+        "number"=> ["number"],
         "survey_radio"=> [],
-        "date"=> [],
-        "url"=> []
+        "date"=> ["date"],
+        "url"=> [] #????? string
     }
 
   end

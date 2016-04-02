@@ -2149,6 +2149,7 @@ en:
         error: "Error in enabling the integration."
         cti_error: "Multiple integrations of type CTI can not be enabled."
         freshfone_alert: "CTI integration cannot be enabled when your phone channel is enabled."
+        cloud_element_success: "The integration has been enabled with default configuration"
       update:
         success: "The integration has been updated successfully!"
         error: "Error in configuring the integration."

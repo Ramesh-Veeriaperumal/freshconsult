@@ -98,7 +98,7 @@ marketo:
 
 
 integrations_url:
-    development: "http://localhost:3000"
+    development: "http://localhost:3000"#"http://localhost.freshdesk-dev.com:3000"
     test: "https://login.freshpo.com"
     production: "https://login.freshdesk.com"
     # staging: "https://login.freshbugs.com"

@@ -203,7 +203,7 @@
 
         },
         onChangeSelect2: function(element){
-
+            jQuery(element).next('.error').remove();
             var select2_data = $(element).select2('data');
             var old_value = $(element).data('oldValue');
             var object = this.inputArea[$(element).attr('rel')][$(element).data('current-type')];

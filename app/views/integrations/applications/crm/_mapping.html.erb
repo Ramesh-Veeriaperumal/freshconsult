@@ -1,5 +1,5 @@
 <div class="sf-title-wrapper">
-  <label for="enble_sync"> Salesforce Sync </label> 
+  <label for="enble_sync"> <%= @element_config["element"].capitalize%> Sync </label> 
   <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @element_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">
 </div>
 <div class="field-mapping">
@@ -7,39 +7,38 @@
   <div class="row-fluid" id="rule-list">
       <ul class="nav nav-flat">
         <li class="active">
-          <a href="#company-mapping-tab" id="company-mapping-btn" data-toggle="tab">Company</a>
-        </li>
-        <li>
           <a href="#contact-mapping-tab" id="contact-mapping-btn"data-toggle="tab">Contact</a>
         </li>
+        <li>
+          <a href="#company-mapping-tab" id="company-mapping-btn" data-toggle="tab">Company</a>
+        </li>        
       </ul>
 
     <div class="tab-content">
-      <div class="tab-pane active" id="company-mapping-tab">
-        <div class="contact-wrapper">
-          <div class="contact-tabel-head">
-            <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Fields </span> </div>
-            <div class="contact-tabel-data field-2">
-              <a class="center-icon"><%= font_icon "left-direction", { :size => 20 } %></a>
-            </div>
-            <div class="contact-tabel-data field-3"> <span> Salesforce Account Fields </span> </div>
-          </div>
-          <div rel="construct_company_rules" id="construct_company_rule" class="rules_wrapper" data-render-template = '.construct_company' ></div>
-        </div>
-      </div>
-
-      <div class="tab-pane" id="contact-mapping-tab">
+      <div class="tab-pane active" id="contact-mapping-tab">
         <div class="contact-wrapper">
           <div class="contact-tabel-head">
             <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Fields </span> </div>
             <div class="contact-tabel-data field-2"> 
               <a class="center-icon"><%= font_icon "left-direction", { :size => 20 } %></a>
             </div>
-            <div class="contact-tabel-data field-3"> <span> Salesforce Contact Fields </span> </div>
+            <div class="contact-tabel-data field-3"> <span> <%= @element_config["element"].capitalize%> Contact Fields </span> </div>
           </div>
           <div rel="construct_contact_rules" id="construct_contact_rule" class="rules_wrapper" data-render-template = '.construct_contact' ></div>
         </div>
       </div>
+      <div class="tab-pane" id="company-mapping-tab">
+        <div class="contact-wrapper">
+          <div class="contact-tabel-head">
+            <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Fields </span> </div>
+            <div class="contact-tabel-data field-2">
+              <a class="center-icon"><%= font_icon "left-direction", { :size => 20 } %></a>
+            </div>
+            <div class="contact-tabel-data field-3"> <span> <%= @element_config["element"].capitalize%> Account Fields </span> </div>
+          </div>
+          <div rel="construct_company_rules" id="construct_company_rule" class="rules_wrapper" data-render-template = '.construct_company' ></div>
+        </div>
+      </div>    
     </div>
   </div>
 </div>

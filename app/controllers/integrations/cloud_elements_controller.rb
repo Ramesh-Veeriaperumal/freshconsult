@@ -1,17 +1,21 @@
 class Integrations::CloudElementsController < ApplicationController
-
   skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter :verify_authenticity, :build_installed_app, :only => [:oauth_url]
 
   def oauth_url
-    metadata = @metadata.merge({:element => params[:state]})
-    response = service_obj({}, metadata).receive(:oauth_url)
-    redirect_url = response['oauthUrl']
-    redirect_to redirect_url
-  rescue => e
-    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
-    flash[:error] = t(:'flash.application.install.error')
-    redirect_to integrations_applications_path
+    unless current_account.features?(:cloud_elements_crm_sync)
+      element = Integrations::CloudElements::Constant::APP_NAMES[params[:state].to_sym]
+      redirect_to "/auth/#{element}?origin=id=#{current_account.id}"
+    else
+      metadata = @metadata.merge({:element => params[:state]})
+      response = service_obj({}, metadata).receive(:oauth_url)
+      redirect_url = response['oauthUrl']
+      redirect_to redirect_url
+    end
+    rescue => e
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
+      flash[:error] = t(:'flash.application.install.error')
+      redirect_to integrations_applications_path
   end
 
   private

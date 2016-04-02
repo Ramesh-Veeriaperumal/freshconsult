@@ -3,7 +3,7 @@
       <%=t("integrations.#{@element_config["element"]}.helptext").html_safe%>
   </div>
 <%- end %>
-	<h3 class="lead"><%=t("integrations.salesforce.form.#{@element_config["element"]}_settings")%></h3>
+	<h3 class="lead"><%=t("integrations.#{@element_config["element"]}.form.#{@element_config["element"]}_settings")%></h3>
   <% method_type = (@action == "install") ? "post" : "put" %>
   <%= form_tag("/integrations/cloud_elements/crm/#{@action}", :method => method_type)  do %>
   <%= hidden_field_tag  'state', params[:state] %>
@@ -46,6 +46,7 @@
           
     </div>
   </div>
+  <div id="no-display" class="alert notice error">Please resolve the errors in the form before proceeding!!</div>
 
 <div class="button-container">
   <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
@@ -57,79 +58,97 @@
 <script type="text/javascript">
 
 function fillLabels(){
-   var selectedValues = []; 
-   var leadValues =[];   
-   var accountValues =[]; 
-   var opportunityValues = [];  
+
+  if(validateFields()){
+
+    var selectedValues = []; 
     jQuery("#contacts :selected").each(function(){
-        selectedValues.push(jQuery(this).text()); 
+      selectedValues.push(jQuery(this).text()); 
     });
     jQuery('#contact_labels').val(selectedValues);
-
-    jQuery("#leads :selected").each(function(){
+    <%if @element_config["objects"].include? "lead"%>
+      var leadValues =[];
+      jQuery("#leads :selected").each(function(){
         leadValues.push(jQuery(this).text()); 
-    });
-    jQuery('#lead_labels').val(leadValues);
-
+      });
+      jQuery('#lead_labels').val(leadValues);
+    <%end%>
+    
+    var accountValues =[]; 
     jQuery("#accounts :selected").each(function(){
-        accountValues.push(jQuery(this).text()); 
+      accountValues.push(jQuery(this).text()); 
     });
     jQuery('#account_labels').val(accountValues);
-    jQuery("#opportunities :selected").each(function(){
-        opportunityValues.push(jQuery(this).text()); 
+    <%if @element_config["objects"].include? "opportunity"%>
+      var opportunityValues = [];  
+      jQuery("#opportunities :selected").each(function(){
+          opportunityValues.push(jQuery(this).text()); 
+      });
+      jQuery('#opportunity_labels').val(opportunityValues);
+    <%end%>
+
+    return true; 
+  }else{
+
+    jQuery("#no-display").slideDown(function() {
+      setTimeout(function() {
+        jQuery("#no-display").slideUp();
+      }, 3000);
     });
-    jQuery('#opportunity_labels').val(opportunityValues);
 
-    // The mapping validations
-
-    if(validateFields()){
-      return true; 
-    }else{
-      return false;
-    }
+    return false;
+  }
 }
 
   jQuery("#salesforce_sync_option_value").itoggle();
+  var default_labels = <%= raw @element_config["default_labels"].to_json %>;
 
-  jQuery("#opportunity_view_value").itoggle({buttonClass:"toggle-button toggle_child_on_click"});
-
+  var contact_default =  default_labels["contact"];
   jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
-
-  jQuery("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
-
-  jQuery("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
-
-  jQuery("#opportunities").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
-
   //setting the Name as default field(can't be removed.)
   jQuery("#sfcontacts ul .select2-search-choice div").each(function(index,element){
     value = jQuery(element).text();
-    if(value =="Full Name"){
+    if(contact_default.indexOf(value) != -1){ //"Full Name"
       jQuery(element).next("a").remove();
     }
   });
 
-jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
-    value = jQuery(element).text();
-    if(value =="Full Name"){
-      jQuery(element).next("a").remove();
-    }
-  });
+  var account_default = default_labels["account"];
+  jQuery("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+  //setting the Name as default field(can't be removed.)
   jQuery("#sfaccounts ul .select2-search-choice div").each(function(index,element){
     value = jQuery(element).text();
-    if(value =="Account Name"){
+    if(account_default.indexOf(value) != -1){ //"Account Name"
       jQuery(element).next("a").remove();
     }
   });
 
+  <%if @element_config["objects"].include? "lead"%>
+    var lead_default = default_labels["lead"];
+    jQuery("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+    //setting the Name as default field(can't be removed.)
+    jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
+      value = jQuery(element).text();
+      if(lead_default.indexOf(value) != -1){ //"Full Name"
+        jQuery(element).next("a").remove();
+      }
+    });
+  <%end%>
 
-  //setting Name, Stage and Close Date as default opportunity fields(can't be removed.)
-  jQuery("#sfopportunities ul .select2-search-choice div").each(function(index,element){
-    value = jQuery(element).text();
-    if(value =="Name" || value == "Stage" || value == "Close Date"){
-      jQuery(element).next("a").remove();
-    }
-  });
+  <%if @element_config["objects"].include? "opportunity"%>
+    var opportunity_default = default_labels["opportunity"];
+    jQuery("#opportunity_view_value").itoggle({buttonClass:"toggle-button toggle_child_on_click"});
+    jQuery("#opportunities").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+    //setting Name, Stage and Close Date as default opportunity fields(can't be removed.)
+    jQuery("#sfopportunities ul .select2-search-choice div").each(function(index,element){
+      value = jQuery(element).text();
+      if(opportunity_default.indexOf(value) != -1 ){ //value =="Name" || value == "Stage" || value == "Close Date"
+        jQuery(element).next("a").remove();
+      }
+    });
+  <%end%>
+
+  
 
 // This event will turn the plus select icon to grey on reaching the maximum selection size
   jQuery(".select2-fields").on('change',function(){
@@ -174,6 +193,10 @@ jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
     var clone_element = jQuery(this).siblings('.sync-icon').children().clone();
     jQuery('.center-icon').html('').html(clone_element);
   });
+
+  /*
+      content for field mapping starts here.
+  */
   var fdContactTypeValidator= <%= raw @element_config['fd_validator'].to_json%>;
   var sfContactTypeValidator= <%= raw @element_config['element_validator'].to_json%>;
   var maximumSelectionSizeContact = 10;
@@ -193,6 +216,11 @@ jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
 
   jQuery('#field-visibility-btn').on("click", function(e){
     if(!validateFields()){
+      jQuery("#no-display").slideDown(function() {
+        setTimeout(function() {
+          jQuery("#no-display").slideUp();
+        }, 3000);
+      });
       return false;
     }
   });
@@ -206,12 +234,12 @@ jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
       var SFContactSelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
       if(FDContactSelected.toLowerCase() == "select"){
 
-        jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>select this value </p>");
+        jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
         valid = false;
         return false;
       } 
       if(SFContactSelected.toLowerCase() == "select" ){
-        jQuery(this).find('[data-refer-key=sf_field]').after("<p class='error'>select this value </p>");
+        jQuery(this).find('[data-refer-key=sf_field]').after("<p class='error'>Field is required. </p>");
         valid = false;
         return false;
       }

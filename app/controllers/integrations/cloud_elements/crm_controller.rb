@@ -17,46 +17,50 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     @installed_app.save!
     @action = 'install'
     @installed_app = nil
-    flash[:notice] = t(:'flash.application.install.success')
+    flash[:notice] = t(:'flash.application.install.cloud_element_success')
     render_settings
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
-    flash[:error] = t(:'flash.application.install.error')
+    flash[:error] = t(:'flash.application.update.error')
     redirect_to integrations_applications_path
   end
 
   def install
     @installed_app.set_configs get_metadata_fields
     @installed_app.save!
-    flash[:notice] = t(:'flash.application.install.success')
+    flash[:notice] = t(:'flash.application.update.success')
     redirect_to integrations_applications_path
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
-    flash[:error] = t(:'flash.application.install.error')
+    flash[:error] = t(:'flash.application.update.error')
     redirect_to integrations_applications_path
   end
 
   def edit
-    @action = 'update'
-    fetch_metadata_fields(@app_config['element_token'])
-    @element_config['enble_sync'] = @app_config['enble_sync']
-    default_mapped_fields
-    construct_synced_contacts
-    render_settings
+    unless current_account.features?(:cloud_elements_crm_sync)
+      redirect_to "/integrations/#{element}/edit"
+    else
+      @action = 'update'
+      fetch_metadata_fields(@app_config['element_token'])
+      @element_config['enble_sync'] = @app_config['enble_sync']
+      default_mapped_fields
+      construct_synced_contacts
+      render_settings
+    end
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
-    flash[:error] = t(:'flash.application.install.error')
+    flash[:error] = t(:'flash.application.update.error')
     redirect_to integrations_applications_path
   end
 
   def update
     @installed_app.set_configs get_metadata_fields
     @installed_app.save!
-    flash[:notice] = t(:'flash.application.install.success')
+    flash[:notice] = t(:'flash.application.update.success')
     redirect_to integrations_applications_path
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in updating the application : #{e.message}"}})
-    flash[:error] = t(:'flash.application.install.error')
+    flash[:error] = t(:'flash.application.update.error')
     redirect_to integrations_applications_path
   end
 
@@ -81,7 +85,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       json_payload['configuration']['event.poller.configuration'] = event_poller_config
       api_key = current_user.single_access_token
       subdomain = current_account.domain
-      JSON.generate(json_payload) % {:api_key => api_key, :subdomain => "jagdamba", :fd_instance_name => "freshdesk_#{element}_#{current_account.id}" }
+      JSON.generate(json_payload) % {:api_key => api_key, :subdomain => "balaji", :fd_instance_name => "freshdesk_#{element}_#{current_account.id}" }
     end
 
     def instance_hash
@@ -105,7 +109,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       @element_config['element'] = element
       metadata = @metadata.merge({ :element_token => element_token })
       constant_file = JSON.parse(File.read("lib/integrations/cloud_elements/crm/#{element}/constant.json"))
-      @element_config['element_validator'] = constant_file['validator']
+
       constant_file['objects'].each do |key, obj|
         metadata[:object] = obj
         element_metadata = service_obj({},metadata).receive("#{key}_metadata".to_sym)
@@ -113,13 +117,20 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
         @element_config["#{key}_fields"] = hash['fields_hash']
         @element_config["#{key}_fields_types"] = hash['data_type_hash']
       end
+      if element == "salesforce"
+        #removing the custom fields that we will be syncing from the customers view
+        @element_config["contact_fields"].delete("FD_ContactId__c")
+        @element_config["contact_fields_types"].delete("FD_ContactId")
+        @element_config["account_fields"].delete("FD_AccountId__c")
+        @element_config["contact_fields_types"].delete("FD_AccountId")
+      end
     end
 
     def fd_metadata_fields
       contact_metadata = current_account.contact_form.fields
       company_metadata = current_account.company_form.fields
       contact_hash = fd_fields_hash( contact_metadata )
-      account_hash = fd_fields_hash( company_metadata )
+      account_hash = fd_fields_hash( company_metadata )  
       @element_config['fd_contact'] = contact_hash['fields_hash']
       @element_config['fd_contact_types'] = contact_hash['data_type_hash']
       @element_config['fd_company'] = account_hash['fields_hash']
@@ -142,9 +153,13 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       contact_data_types = CONTACT_TYPES
       fields_hash = {}
       data_type_hash = {}
+      #To remove those custom fields that we will be syncing from the customers view
+      custom_fields = ["cf_sf_accountid", "cf_sf_contactid"]
       object.each do |field|
-        fields_hash[field[:name]] = field[:label]
-        data_type_hash[field[:label]] = contact_data_types[field[:field_type].to_s]
+        unless custom_fields.include? field[:name]
+          fields_hash[field[:name]] = field[:label]
+          data_type_hash[field[:label]] = contact_data_types[field[:field_type].to_s]
+        end
       end
       {'fields_hash' => fields_hash, 'data_type_hash' => data_type_hash }
     end
@@ -153,7 +168,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       render :template => "integrations/applications/crm_fields"
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
-      flash[:error] = t(:'flash.application.install.error')
+      flash[:error] = t(:'flash.application.update.error')
       redirect_to integrations_applications_path
     end
 
@@ -168,9 +183,9 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       config_hash['contact_fields'] = element_config['default_fields']['contact'].join(",")
       config_hash['account_fields'] = element_config['default_fields']['account'].join(",")
       config_hash['lead_fields'] = element_config['default_fields']['lead'].join(",")
-      config_hash['contact_labels'] = element_config['default_labels']['contact']
-      config_hash['account_labels'] = element_config['default_labels']['account']
-      config_hash['lead_labels'] = element_config['default_labels']['lead']
+      config_hash['contact_labels'] = element_config['default_labels']['contact'].join(",")
+      config_hash['account_labels'] = element_config['default_labels']['account'].join(",")
+      config_hash['lead_labels'] = element_config['default_labels']['lead'].join(",")
       config_hash['opportunity_view'] = "0"
       config_hash['companies'] = get_selected_field_arrays(element_config['existing_companies'])
       config_hash['contacts'] = get_selected_field_arrays(element_config['existing_contacts'])
@@ -190,7 +205,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       freshdesk_object_transformation
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
-      flash[:error] = t(:'flash.application.install.error')
+      flash[:error] = t(:'flash.application.update.error')
       redirect_to integrations_applications_path
     end
 
@@ -202,7 +217,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       freshdesk_object_transformation
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in updating the application : #{e.message}"}})
-      flash[:error] = t(:'flash.application.install.error')
+      flash[:error] = t(:'flash.application.update.error')
       redirect_to integrations_applications_path
     end
 
@@ -284,7 +299,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       update_formula_instance(payload, metadata)
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
-      flash[:error] = t(:'flash.application.install.error')
+      flash[:error] = t(:'flash.application.update.error')
       redirect_to integrations_applications_path and return 
     end
 
@@ -369,6 +384,8 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       @element_config['existing_contacts'] = file['existing_contacts']
       @element_config['default_fields'] = file['default_fields']
       @element_config['default_labels'] = file['default_labels']
+      @element_config['element_validator'] = file['validator']
+      @element_config['objects']= file['objects'].keys
       @element_config
     end
 

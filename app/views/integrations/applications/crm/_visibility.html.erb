@@ -1,7 +1,7 @@
 <ul class="ui-form">
   <li class="inline-field">
     <% divider_class = "hidden" %>
-    <% if current_account.features?(:salesforce_sync) %>
+    <% if @element_config["element"] == "salesforce" and current_account.features?(:salesforce_sync) %>
       <% divider_class = "" %>
       <div class="ticket_sync">
         <% sync_checked = false%>
@@ -13,11 +13,11 @@
         <%= check_box(:salesforce_sync_option, "value", :checked => sync_checked) %>
       </div>  
     <% end%>
-    <div class="salesforce-wrapper salesforce-new-block">
+    <div class="salesforce-wrapper salesforce-new-block cloud-elements">
       <span class="seperator <%= divider_class %>"></span>
       <div class="row-fluid">
         <div class="sf-contact-fields sf-settings-widget"> 
-          <h3 class="leftselect2"><%=t("integrations.salesforce.form.contact")%></h3>
+          <h3 class="leftselect2"><%=t("integrations.#{@element_config["element"]}.form.contact")%></h3>
           <div id='sfcontacts'>
             <span>
               <div id="contactslist">
@@ -46,8 +46,9 @@
             </span>
           </div>
         </div>
+        <%if @element_config["objects"].include? "lead"%>
         <div class="sf-lead-fields sf-settings-widget">
-          <h3><%=t("integrations.salesforce.form.lead")%></h3>   
+          <h3><%=t("integrations.#{@element_config["element"]}.form.lead")%></h3>   
           <div id="sfleads">
             <span>
               <div id="leadslist">
@@ -75,8 +76,9 @@
             </span>
           </div>
         </div>
+        <%end%>
         <div class="sf-account-fields sf-settings-widget"> 
-          <h3 class="leftselect2"><%=t("integrations.salesforce.form.account")%></h3>
+          <h3 class="leftselect2"><%=t("integrations.#{@element_config["element"]}.form.account")%></h3>
           <div id='sfaccounts'>
             <span>
               <div id="accountslist">
@@ -106,6 +108,7 @@
             </span>
           </div>
         </div>
+        <%if @element_config["objects"].include? "opportunity"%>
         <div class="sf-opportunity-fields sf-settings-widget">
           <% opportunity_view = false %>
           <% agent_settings = false %> 
@@ -116,7 +119,7 @@
             <% agent_settings = installed_agent_settings.to_bool if installed_agent_settings.present? %>
           <%end%>
           <div id="opportunity-info" data-child="opportunity-settings">
-            <%=content_tag(:h3, t("integrations.salesforce.form.opportunity"), :class => 'opportunity-header') %>
+            <%=content_tag(:h3, t("integrations.#{@element_config["element"]}.form.opportunity"), :class => 'opportunity-header') %>
             <%= check_box(:opportunity_view, "value", :checked => opportunity_view) %>
             <% hide =  opportunity_view ? "" : "hide" %>
             <% disabled = !opportunity_view %>
@@ -125,7 +128,7 @@
             <span>
               <div id="opportunitieslist">
                 <ul>
-                  <%opportunity_default_fields = ["Name", "StageName", "CloseDate"] %>
+                  <%opportunity_default_fields = default_fields["opportunity"]%> 
                   <%selected_fields = opportunity_default_fields.collect{|x| x} %>
                   <%unless @installed_app.blank? %>
                     <%selected_fields.push(@installed_app.configs_opportunity_fields.split(",").collect!{ |x| next if  opportunity_default_fields.include?(x);
@@ -151,9 +154,10 @@
           </div>
           <div class="opportunity-settings mt8 <%= hide %>" id="agent_settings">
             <%= check_box(:agent_settings, "value", :checked => agent_settings, :disabled => disabled) %>
-            <%= content_tag(:span, t("integrations.salesforce.form.opportunity_settings"), :class => 'checkbox_label') %>
+            <%= content_tag(:span, t("integrations.#{@element_config["element"]}.form.opportunity_settings"), :class => 'checkbox_label') %>
           </div>
         </div>
+        <%end%>
       </div>
     </div>
   </li>
