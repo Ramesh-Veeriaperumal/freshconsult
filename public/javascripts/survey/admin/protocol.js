@@ -169,6 +169,9 @@ var SurveyProtocol = {
 							}
 						}
 					}
+					for(var i=0; i<choices.length;i++){
+						choices[i].value  =  choices[i].value || choices[i].text;
+					}
 					return choices;
 				}
 		},
