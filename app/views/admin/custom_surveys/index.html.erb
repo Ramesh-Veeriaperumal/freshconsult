@@ -55,9 +55,10 @@ survey_list = <%=@surveys.to_json.html_safe%>;
 					<td>
 						<div class="item_actions align-right">
 							<%=link_to t('admin.surveys.index.edit'),edit_admin_custom_survey_path(survey.id),:class => "btn btn-mini"%>							
-							      <a class="btn btn-mini survey-delete" id="survey_<%=survey.id%>" style="visibility:hidden;"
+							      <a class="btn btn-mini tooltip survey-delete" id="survey_<%=survey.id%>" 
 										  <%if(survey.active?)%>
 												disabled="disabled"
+												data-toggle="tooltip" title= "<%= t('admin.surveys.index.active_delete_tooltip') %>"
 			  							  <%else%> 
 												onclick=SurveyList.destroy("<%=survey.id%>",false) 
 		  								<%end%> 

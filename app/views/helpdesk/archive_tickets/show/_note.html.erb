@@ -63,12 +63,13 @@ end
             :timestamp => note.created_at.to_i 
           ).html_safe %><br>
         <%unless survey_name.blank? %>
-          <b><%= t("helpdesk.tickets.note.survey_response",{:survey_name => survey_name})%>
-            <%unless agent_name.blank? %><%= t("helpdesk.tickets.note.survey_response_to",{:agent => agent_name})%><%end%></b>
+          <div class="author-mail-detail">
+            <%= t("helpdesk.tickets.note.survey_response",{:survey_name => survey_name})%>
+            <%unless agent_name.blank? %><%= t("helpdesk.tickets.note.survey_response_to",{:agent => agent_name})%><%end%>
+          </div>
         <%end%>
       </div>
-
-      <% if current_account.features?(:custom_survey) %>
+      <% if current_account.new_survey_enabled? %>
         <%= render :partial => '/helpdesk/archive_tickets/show/custom_survey_note' , :locals => {:note => note , 
               :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
         <% else %>

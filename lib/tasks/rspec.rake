@@ -239,13 +239,13 @@ if Rails.env.test?
     "spec/controllers/admin/supervisor_rules_controller_spec.rb"
   ]
     
-  UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
+  UnitTests = [ APITests, BillingTests, EmailTests,  ForumTests, FunctionalTests,
                 GnipTests, HelpdeskTests,MiddlewareSpecs, MobihelpTests, MobileAppTests, ModelTests, 
-                TwitterTests, XssTests, FreshfoneReportsTests, ChatTests, IntegrationTests, VaRulesTests]
+                 XssTests, ChatTests, IntegrationTests, VaRulesTests, TwitterTests]
 
   UnitTests.flatten!.uniq!
 
-  AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]
+  AllTests = [UnitTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]
   AllTests.flatten!.uniq!
 
   # Don't load rspec if running "rake gems:*"

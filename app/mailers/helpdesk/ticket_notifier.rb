@@ -178,14 +178,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @ticket              = params[:ticket]
     @body                = params[:email_body_plain]
     @cloud_files           = params[:cloud_files]
-    if(params[:notification_type] == EmailNotification::PREVIEW_EMAIL_VERIFICATION)
-      @survey_feedback_preview = true
-    else
-      @survey_feedback_preview = false
-    end
 
     if params[:ticket].account.new_survey_enabled?
-      @survey_handle = CustomSurvey::SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type], params[:survey_id], @survey_feedback_preview)
+      @survey_handle = CustomSurvey::SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type], params[:survey_id])
     else
       @survey_handle = SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type])
     end

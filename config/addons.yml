@@ -41,4 +41,5 @@ Round Robin:
   - :round_robin
 Whitelisted Ips:
   - :whitelisted_ips
-
+Custom Surveys:
+  - :custom_surveys

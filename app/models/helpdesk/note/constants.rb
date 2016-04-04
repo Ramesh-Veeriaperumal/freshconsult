@@ -29,7 +29,8 @@ class Helpdesk::Note < ActiveRecord::Base
     :agent_public_response => 3,
     :third_party_response => 4,
     :meta_response => 5,
-    :reply_to_forward => 6  # Used for conversation with third party
+    :reply_to_forward => 6,  # Used for conversation with third party
+    :customer_feedback => 7
   }
 	
 end

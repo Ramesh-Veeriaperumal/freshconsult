@@ -9,7 +9,8 @@ window.App.Header  = window.App.Header || {};
 	
 	App.Header = {
 		assumable_loaded: 0,
-		init: function () {
+		init: function (is_assumed_user) {
+			this.assumed_identity = is_assumed_user;
 			this.bindEvent();
 		},
 		bindEvent: function() {
@@ -20,9 +21,9 @@ window.App.Header  = window.App.Header || {};
 			$('#assumed_select_id').on('change', this.assumeIdentityUrl.bind(this));
 		},
 		loadAssumableAgents: function() {
-			if(!this.assumable_loaded){
-				var self = this,
-						select  = jQuery("#assumed_select_id");
+			if(!this.assumable_loaded && !this.assumed_identity){
+				var self    = this;
+				var select  = jQuery("#assumed_select_id");
 
 	      jQuery.ajax({
 	        url: "/users/assumable_agents",
@@ -30,12 +31,11 @@ window.App.Header  = window.App.Header || {};
 	        success: function(agent_list){
 	          if(agent_list.size() == 0){
 	            jQuery("#switch_agent_container").remove();
-	          }
-	          else{
-	            for (var agent of agent_list){
-	              select.append("<option id='" + agent.id + "' value='" + agent.id + "'>" + agent.value + "</option>");
-	            }
-	            select.select2().show();
+	          } else{
+							$.each(agent_list, function(index, agent){
+								select.append("<option id='" + agent.id + "' value='" + agent.id + "'>" + agent.value + "</option>");
+							})
+							select.select2().show();
 	          }
 	          jQuery("#agt_loading").remove();
 	          self.assumable_loaded = 1;

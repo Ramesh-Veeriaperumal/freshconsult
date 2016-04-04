@@ -44,7 +44,6 @@ class Reports::CustomSurveyReportsController < ApplicationController
     remarks = remarks.paginate(:page => current_page, :per_page => page_limit)
     result_json = remarks.remarks_json(question_column_name)
     if current_page==1
-      result_json[:total] = total_remarks
       result_json[:page_limit] = page_limit
     end
     render :json => result_json
@@ -127,12 +126,6 @@ class Reports::CustomSurveyReportsController < ApplicationController
     
     def default_params
       {:survey_id => which_survey, :start_date => start_date, :end_date => end_date}
-    end
-
-    def total_remarks # avoid this query - used only for pageless plugin
-      remarks = survey.survey_results.total_remarks(default_params)
-      remarks = filter remarks
-      remarks[0].total
     end
 
     def aggregate_report_data

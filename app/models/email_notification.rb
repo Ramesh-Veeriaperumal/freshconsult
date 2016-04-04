@@ -4,6 +4,7 @@ class EmailNotification < ActiveRecord::Base
   belongs_to_account
   attr_protected  :account_id
   before_create :set_default_version
+  include AccountOverrider
 
   xss_sanitize  :only => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template], :decode_calm_sanitizer => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template]
 
@@ -40,7 +41,6 @@ class EmailNotification < ActiveRecord::Base
   RESOLUTION_TIME_SLA_VIOLATION = 13
   PASSWORD_RESET                = 14
   ADDITIONAL_EMAIL_VERIFICATION = 17
-  PREVIEW_EMAIL_VERIFICATION    = 18 #won't be in DB, check def self.preview_email_verification
   NEW_TICKET_CC                 = 19
   PUBLIC_NOTE_CC                = 20
   NOTIFY_COMMENT                = 21
@@ -110,8 +110,7 @@ class EmailNotification < ActiveRecord::Base
     [:additional_email_verification,  ADDITIONAL_EMAIL_VERIFICATION,  VISIBILITY[:REQUESTER_ONLY]     ],
     [:notify_comment,                 NOTIFY_COMMENT,                 VISIBILITY[:AGENT_ONLY]         ],
     [:new_ticket_cc,                  NEW_TICKET_CC,                  VISIBILITY[:CC_NOTIFICATION]    ],
-    [:public_note_cc,                 PUBLIC_NOTE_CC,                 VISIBILITY[:CC_NOTIFICATION]    ],
-    [:preview_email_verification,     PREVIEW_EMAIL_VERIFICATION,     VISIBILITY[:AGENT_ONLY]         ]
+    [:public_note_cc,                 PUBLIC_NOTE_CC,                 VISIBILITY[:CC_NOTIFICATION]    ]
   ]
   
   # List of notfications to agents which cannot be turned off
@@ -124,20 +123,8 @@ class EmailNotification < ActiveRecord::Base
 
   BCC_DISABLED_NOTIFICATIONS = [NOTIFY_COMMENT, PUBLIC_NOTE_CC, NEW_TICKET_CC]
 
-  PREVIEW_EMAIL_VERIFICATION_PARAMS = {
-    :notification_type        => EmailNotification::PREVIEW_EMAIL_VERIFICATION,
-    :requester_notification   => false, 
-    :agent_notification       => true,
-    :agent_subject_template   => '{{ticket.subject}}'
-  } #Need to move this out of EmailNotifications as a hardcoded email
-
   scope :response_sla_reminder, :conditions => { :notification_type => RESPONSE_SLA_REMINDER } 
   scope :resolution_sla_reminder, :conditions => { :notification_type => RESOLUTION_SLA_REMINDER }
-
-  def self.preview_email_verification # call as account.email_notifications.preview_email_verification for assigning account_id
-    new PREVIEW_EMAIL_VERIFICATION_PARAMS.merge(
-      :agent_template => I18n.t('email_notifications.preview_email_verification'))
-  end
 
   def token
     TOKEN_BY_KEY[self.notification_type]

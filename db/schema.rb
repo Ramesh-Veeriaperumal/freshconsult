@@ -1580,7 +1580,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.boolean  "queue_position_preference",                                               :default => false
     t.string   "queue_position_message"
     t.integer  "port",                       :limit => 1
-    t.integer  "caller_id"
+    t.integer  "caller_id",                  :limit => 8
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -3462,6 +3462,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.string   "happy_text",                          :default => "Awesome"
     t.string   "neutral_text",                        :default => "Neutral"
     t.string   "unhappy_text",                        :default => "Not Good"
+    t.boolean  "deleted",                             :default => false
   end
 
   add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"

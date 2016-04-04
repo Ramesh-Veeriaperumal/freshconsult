@@ -37,43 +37,55 @@ body {
   margin:-20px;
   margin-bottom: 0;
 }
+
 //--------------------------------------------------------------------------------
-//                                  Survey question list
+//                                Custom Survey question list
 //--------------------------------------------------------------------------------
-.question{
-  margin:0 25px;
-  font-weight: 500;
+
+.cust-survey-wrapper{
+  background-color: #f9f9f9;
+  border:1px solid #dbdbdb;
+  word-break:break-word;
+  .highlighter{
+    background-color: #f9f9f9;
+    margin:auto;
+    width:70%;
+  }
+  .rating-label{
+    display:inline-block;
+    @include margin-left(10px)
+  }
 }
-.survey-question{
-  list-style: inside decimal;
+
+.survey_question_list{
+  margin: auto;
+  font-weight: 500;
+  width:70%
+}
+.survey_question_wrapper{ 
+  border:1px solid #dbdbdb;
+  background-color: #fff;
+  @include border-radius(5px);
   .input-survy-ques{
     width:440px;
     @include margin-right(15px);
   }
-  li{
+  .survey-question{
     vertical-align: middle;
     width: 100%;
-    border-bottom: 1px solid #e2e2e2;
-    padding: 10px 0;
-    &:last-child{
-      border:0;
-      margin-bottom:10px;
+    padding: 15px;
+    &:nth-child(even){
+      background-color: #f9f9f9;
+    }
+    .ques-desc, .ques-ans{
+      @include margin-left(20px);
+    }
+    .ques-ans{
+      padding-top: 5px;
+      cursor: default;
     }
   }
 
-}
-
-.ques-desc, .ques-ans{
-  display: inline-block;
-  vertical-align: middle;
-  padding: 10px 5px;
-}
-.ques-desc{
-  width: 70%
-}
-.ques-ans{
-  width:20%;
-  label{padding-bottom: 5px}
 }
 
 //--------------------------------------------------------------------------------
@@ -120,19 +132,19 @@ label{display: block;}
   padding-left: 20px;
   padding-right: 20px;
 }
-input[type='text'].input-comment{
+textarea.input-comment{
     width: 100%;
-    padding: 10px 16px;
+    padding: 15px 16px;
     box-sizing: border-box;
     margin: 10px 0;
-    height: 40px;
+    height: 80px;
 }
 .additional-comment-wrap{ margin-top: 40px;}
 .btn-comment-wrap{ margin-top: 20px;}
 .btn-comment{
-  padding: 10px 25px;
+  padding: 6px 50px;
   text-align: center;
-  margin: 0 auto;
+  margin: 10px auto;
   display: block
 }
 
@@ -161,4 +173,26 @@ input[type='text']{
 
 .survey-header-child{
 	height: 60px;
+}
+
+//--------------------------------------------------------------------------------
+//                      Responsive Survey Styles
+//--------------------------------------------------------------------------------
+
+@include at-breakpoint($media-mobile){
+  body{
+    min-width: inherit;
+  }
+  .cust-survey-wrapper{
+    .survey_question_list, .highlighter{
+      width: 100%;
+    }
+    .rating-label{
+        margin: 0px;
+        display:block;
+    }
+    .btn-comment{
+      width:100%;
+    }
+  }
 }

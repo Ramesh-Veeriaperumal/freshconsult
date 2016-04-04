@@ -219,6 +219,7 @@ class Helpdesk::Note < ActiveRecord::Base
       return if schema_less_note.category
       schema_less_note.category = CATEGORIES[:meta_response]
       return unless human_note_for_ticket?
+      return schema_less_note.category = CATEGORIES[:customer_feedback] if self.feedback?
 
       if notable.customer_performed?(user)
         schema_less_note.category = case 

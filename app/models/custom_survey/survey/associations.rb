@@ -5,7 +5,8 @@ class CustomSurvey::Survey < ActiveRecord::Base
   has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle', :foreign_key => :survey_id, :dependent => :destroy
   has_many :survey_results, :class_name => 'CustomSurvey::SurveyResult', :foreign_key => :survey_id, :dependent => :destroy
   has_many :custom_survey_results, :class_name => 'CustomSurvey::SurveyResult', :foreign_key => :survey_id, :dependent => :destroy
-  has_many :survey_questions, :class_name => 'CustomSurvey::SurveyQuestion', :foreign_key => :survey_id, :dependent => :destroy, :include => [:custom_field_choices], :order => "position"
+  has_many :survey_questions, :class_name => 'CustomSurvey::SurveyQuestion', :foreign_key => :survey_id,
+            :conditions => {:deleted => false}, :include => [:custom_field_choices], :order => "position"
 
   acts_as_custom_form :custom_field_class => 'CustomSurvey::SurveyQuestion', :custom_fields_cache_method => :survey_questions
 
@@ -15,8 +16,10 @@ class CustomSurvey::Survey < ActiveRecord::Base
   scope :active, :conditions => { :active => true }
   scope :default, :conditions => { :default => true }
   scope :custom,  :conditions => { :default => false }
+  scope :deleted, :conditions => { :deleted => true }
+  scope :undeleted, :conditions => { :deleted => false }
   
-  validates :title_text, uniqueness: {scope: :account_id, message: I18n.t('admin.surveys.new_layout.title_error_text')}
+  validates :title_text, uniqueness: {scope: [:account_id, :deleted], message: I18n.t('admin.surveys.new_layout.title_error_text')}
 
   validates_length_of :title_text , :maximum => TITLE_TEXT_LIMIT
 

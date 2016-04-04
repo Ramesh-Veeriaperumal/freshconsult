@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'sidekiq/testing'
 
 
 describe Social::UploadAvatar do
@@ -24,7 +25,9 @@ describe Social::UploadAvatar do
       handle_data = sample_twitter_user(sender1)
       Twitter::REST::Client.any_instance.stubs(:user).returns(handle_data)
       Twitter::User.any_instance.stubs(:profile_image_url).returns(@img_url)
-      Social::UploadAvatar.perform_async({:account_id => @account.id, :twitter_handle_id => @handle.id})
+      Sidekiq::Testing.inline! do
+        Social::UploadAvatar.perform_async({:account_id => @account.id, :twitter_handle_id => @handle.id})
+      end
       @handle.avatar.should_not be_nil
     end
   end
@@ -36,7 +39,9 @@ describe Social::UploadAvatar do
         :twitter_user_id  => @twitter_user.id,
         :prof_img_url     => @img_url
       }
-      Social::UploadAvatar.perform_async(args)
+      Sidekiq::Testing.inline! do
+        Social::UploadAvatar.perform_async(args)
+      end
       @twitter_user.avatar.should_not be_nil
     end
   end
