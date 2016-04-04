@@ -158,7 +158,7 @@ module MemcacheKeys
     end
 
     def get_from_cache(key, raw=false)
-      newrelic_begin_rescue { $memcache.get(key, raw) }
+      MemoizeMemcache.get_from_memoized_cache(key, raw) || newrelic_begin_rescue { $memcache.get(key, raw) }
     end
 
     def cache(key,value,expiry=0, raw=false)
@@ -166,6 +166,7 @@ module MemcacheKeys
     end
 
     def delete_from_cache(key)
+      MemoizeMemcache.delete_from_memoized_cache(key)
       newrelic_begin_rescue { $memcache.delete(key) }
     end
 

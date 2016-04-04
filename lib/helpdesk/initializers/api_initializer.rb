@@ -3,6 +3,7 @@ Infra = YAML.load_file(File.join(Rails.root, 'config', 'infra_layer.yml'))
 if Infra['API_LAYER']
   Helpkit::Application.configure do
     config.middleware.delete 'Middleware::ApiThrottler'
+    config.middleware.insert_before ActionDispatch::ParamsParser, "Middleware::ApiRequestInterceptor"
 
     # API layer uses new verison API throttler. Hence deleted the above middleware and inserted new.
     config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000
