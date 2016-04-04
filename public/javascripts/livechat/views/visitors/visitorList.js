@@ -169,13 +169,10 @@ liveChat.visitorListView = function(){
       }
       this.filteredCollection.remove(visitor_id);
       if(jQuery("#visitor_list_"+visitor_id).length>0){
-        // jQuery("#visitor_list_"+visitor_id).remove();
-        // if(CURRENT_USER.id == agentId ){
-          // jQuery('a[data-id ^="visitor"]').addClass('visitor_chatnow');
-        // }
+        jQuery("#visitor_list_"+visitor_id).remove();
       }
       if(this.filteredCollection.length == 0 ){
-        // this.addEmptyMessage();
+        this.addEmptyMessage();
       }
     },
     addEmptyMessage : function (){
