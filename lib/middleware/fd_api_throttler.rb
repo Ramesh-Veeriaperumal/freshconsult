@@ -28,11 +28,15 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     elsif throttle?
       @api_limit = api_limit
       increment_redis_key(DEFAULT_USED_LIMIT)
+      expiry_set = set_redis_expiry(key, THROTTLE_PERIOD) if @count <= used_limit # Setting expiry for first time.
 
       if allowed?
         @status, @headers, @response = @app.call(@request.env)
         # In order to avoid a 'get' and an 'incrby' call to redis for every request, 'incrby' is being called twice conditionally.
-        increment_redis_key(extra_credits) unless extra_credits == 0
+        unless extra_credits == 0
+          increment_redis_key(extra_credits)
+          set_redis_expiry(key, THROTTLE_PERIOD) if !expiry_set && (@count <= used_limit) # Avoiding expiry when it is already set in the current request.
+        end
         set_rate_limit_headers if @count
         Rails.logger.debug("Throttled :: Host: #{@host}, Time: #{Time.now}, Count: (#{@count})")
       else
@@ -79,7 +83,6 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def increment_redis_key(used)
       @count = increment_redis(key, used).to_i
-      set_redis_expiry(key, THROTTLE_PERIOD) if @count <= used_limit # Setting expiry for first time.
     end
 
     def allowed?
