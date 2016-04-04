@@ -19,7 +19,7 @@ $redis_routes = Redis.new(:host => routes_config["host"], :port => routes_config
 $redis_display_id = Redis.new(:host => display_id_config["host"], :port => display_id_config["port"], :timeout => 0.5)
 
 mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.yml'))[Rails.env]
-$redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"], :timeout => 0.5)
+$redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"], :timeout => 2)
 
 Redis.class_eval {add_method_tracer :set}
 Redis.class_eval {add_method_tracer :get}

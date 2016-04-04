@@ -9,7 +9,7 @@ module FormBuilders::Redactor
         :convertDivs => false,
         :imageUpload => "/forums_uploaded_images",
         :clipboardImageUpload => "/forums_uploaded_images/create_file",
-        :allowedTags => ["a", "div", "b", "i", "iframe", "br", "p", "img", "strong", "em" , "u", "span","pre"],
+        :allowedTags => ["a", "div", "b", "i", "iframe", "br", "p", "img", "strong", "em" , "u", "span", "pre", "table", "th", "td", "tr", "tbody", "thead", "tfoot"],
         :allowTagsInCodeSnippet => true,
         :buttons => ['bold','italic','underline', 'deleted','|','unorderedlist', 'orderedlist',  
                       '|','fontcolor', 'backcolor', '|' ,'link','image', 'video','codeEditor']

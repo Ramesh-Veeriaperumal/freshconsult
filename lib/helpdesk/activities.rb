@@ -44,7 +44,7 @@ module Helpdesk::Activities
 
 		activity_stack << combine(activity, previous_activity_meta) unless activity.blank?
     if notes_to_fetch.present?
-      archived ? prefetch_archive_notes(ticket, notes_to_fetch) : prefetch_notes(ticket, notes_to_fetch)
+      @prefetched_notes = (archived ? prefetch_archive_notes(ticket, notes_to_fetch) : prefetch_notes(ticket, notes_to_fetch))
     end
 		activity_stack
   end
@@ -64,11 +64,14 @@ module Helpdesk::Activities
 												:performed_time => activity[:time] }})
 					next
 				end
-				if activity[:is_note]
-					result.push({ :ticket_activity => { :performer => performer, :activity => "Added a note",
-												:note_content => @prefetched_notes[activity[:stack].first.note_id].body,
-												:private => @prefetched_notes[activity[:stack].first.note_id].private,
-												:performed_time => activity[:time] }})
+        if activity[:is_note]
+          #Activity might not have got deleted when a note is split as a new ticket
+          if @prefetched_notes[activity[:stack].first.note_id].present?
+            result.push({ :ticket_activity => { :performer => performer, :activity => "Added a note",
+                        :note_content => @prefetched_notes[activity[:stack].first.note_id].body,
+                        :private => @prefetched_notes[activity[:stack].first.note_id].private,
+                        :performed_time => activity[:time] }})
+          end
 				else
 					stack = activity[:stack].map{ |act| 
 													Liquid::Template.parse(
@@ -172,7 +175,7 @@ private
     options << :tweet if ticket.twitter?
 
     notes = Helpdesk::Note.includes(options).where(:id => note_ids)
-    @prefetched_notes = Hash[*notes.map { |note| [note.id, note] }.flatten]
+    Hash[*notes.map { |note| [note.id, note] }.flatten]
   end
 
   def prefetch_archive_notes(ticket, note_ids)
@@ -181,7 +184,7 @@ private
     options << :tweet if ticket.twitter?
 
     notes = Helpdesk::ArchiveNote.includes(options).where(:note_id => note_ids)
-    @prefetched_notes = Hash[*notes.map { |note| [note.note_id, note] }.flatten]
+    Hash[*notes.map { |note| [note.note_id, note] }.flatten]
   end
 
 end

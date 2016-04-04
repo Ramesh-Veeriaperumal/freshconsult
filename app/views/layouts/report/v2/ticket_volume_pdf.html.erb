@@ -44,7 +44,7 @@
     HelpdeskReports.locals.metric = HelpdeskReports.Constants.TicketVolume.metric
     HelpdeskReports.locals.trend = "<%= trend %>";
     HelpdeskReports.locals.pdf = true;
-    HelpdeskReports.locals.is_non_sprout_plan = '<%= Account.current.subscription.non_sprout_plan? %>';
+    HelpdeskReports.locals.is_non_sprout_plan = '<%= Account.current.subscription.non_sprout_plan? || feature?(:advanced_reporting) %>';
     
     var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
     var locals = HelpdeskReports.locals;
