@@ -352,7 +352,7 @@ class Account < ActiveRecord::Base
   end
   
    def language
-    main_portal_from_cache.language
+    main_portal.language
    end
   
   #Sentient things start here, can move to lib some time later - Shan

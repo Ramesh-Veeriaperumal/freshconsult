@@ -38,7 +38,7 @@ describe Solution::Cache do
       stubs(:current_account).returns(@current_account)
       @portals.each do |portal|
         @category_collection = nil
-        portal.solution_categories.where(:is_default => false).count.should eql category_collection(portal)[:current].count
+        portal.solution_category_meta.where(:is_default => false).count.should eql category_collection(portal)[:current].count
         others_count = @current_account.solution_category_meta.where(:is_default => false).count - category_collection(portal)[:current].count
         category_collection(portal)[:others].count.should eql others_count
       end
