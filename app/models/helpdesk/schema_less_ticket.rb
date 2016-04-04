@@ -74,7 +74,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	def set_first_assign_bhrs(created_at_time, first_assigned, group)
 		return if reports_hash.has_key?("first_assign_in_bhrs")
 		first_assign_by_bhrs = nil
-		BusinessCalendar.execute(self.ticket, self.ticket.try(:current_time_zone)) {
+		BusinessCalendar.execute(self.ticket) {
 			first_assign_by_bhrs = calculate_time_in_bhrs(created_at_time, first_assigned, group)
 		}
   	self.reports_hash.merge!("first_assign_by_bhrs" => first_assign_by_bhrs)

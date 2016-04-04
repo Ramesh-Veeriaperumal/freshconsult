@@ -116,7 +116,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   def set_first_response_time(time, created_time = nil)
     created_time ||= self.created_at
     self.first_response_time ||= time
-    BusinessCalendar.execute(self.tickets, self.tickets.try(:current_time_zone)) { 
+    BusinessCalendar.execute(self.tickets) { 
       if self.first_resp_time_by_bhrs
         self.first_resp_time_by_bhrs
       else

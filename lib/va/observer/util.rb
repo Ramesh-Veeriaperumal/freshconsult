@@ -26,9 +26,9 @@ module Va::Observer::Util
 
 			#if observer rules changed the ticket group, Round Robin should be based on those changes
 			prev_changes.delete(:responder_id) if changelist.has_key?(:group_id)
-			changelist.merge!(prev_changes.symbolize_keys) { |key, v1, v2| v1 }
+			changelist.merge!(prev_changes) { |key, v1, v2| v1 }
 
-			changelist
+			changelist.symbolize_keys
 		end
 
 		def filter_event filtered, change_key, change_value
