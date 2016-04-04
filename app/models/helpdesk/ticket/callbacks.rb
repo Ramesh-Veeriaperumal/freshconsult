@@ -2,7 +2,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_tickets'] }, :if => lambda{|obj| obj.rl_enabled? }
 
-	before_validation :populate_requester, :set_default_values
+	before_validation :populate_requester, :load_ticket_status, :set_default_values
   before_validation :assign_flexifield, :on => :create
 
   before_create :set_outbound_default_values, :if => :outbound_email?
@@ -17,7 +17,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :assign_outbound_agent, :if => :outbound_email?
 
-  before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy, :load_ticket_status
+  before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
   before_update :update_sender_email
 
@@ -77,7 +77,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def set_default_values
-    self.status       = OPEN if (!Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
     self.source       = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type  = nil if self.ticket_type.blank?
 
@@ -121,8 +120,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def update_ticket_states 
     process_agent_and_group_changes
     process_status_changes
-    ticket_states.save
-    schema_less_ticket.save
+    ticket_states.save if ticket_states.changed?
+    schema_less_ticket.save if schema_less_ticket.changed?
   end
   
   def process_agent_and_group_changes 
@@ -171,7 +170,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def refresh_display_id #by Shan temp
-      self.display_id = Helpdesk::Ticket.find_by_id(id).display_id  if display_id.nil? #by Shan hack need to revisit about self as well.
+      self.display_id = Helpdesk::Ticket.select(:display_id).where(id: id).first.display_id  if display_id.nil? #by Shan hack need to revisit about self as well.
   end
 
   def create_meta_note
@@ -324,7 +323,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
   def set_sla_time(ticket_status_changed)
     if self.new_record? || priority_changed? || changed_condition? || status_changed? || ticket_status_changed
-      sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
+      sla_detail = self.sla_policy.sla_details.where(priority: priority).first
       set_dueby_on_priority_change(sla_detail) if (self.new_record? || priority_changed? || changed_condition?)      
       set_dueby_on_status_change(sla_detail) if !self.new_record? && (status_changed? || ticket_status_changed)
       Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
@@ -450,9 +449,9 @@ private
   end
 
   def load_ticket_status
-    if !self.new_record? && status_changed?
-      self.ticket_status = Helpdesk::TicketStatus.status_objects_from_cache(account).find {|x| x.status_id == status }
-    end
+    ticket_statuses = Helpdesk::TicketStatus.status_objects_from_cache(Account.current)
+    ticket_status = ticket_statuses.find {|x| x.status_id == status } if status
+    self.ticket_status = !ticket_status || ticket_status.deleted? ? ticket_statuses.first : ticket_status
   end
 
   def update_company_id
