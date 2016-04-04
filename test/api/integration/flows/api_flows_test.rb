@@ -646,6 +646,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
       remove_key(account_key)
       Subscription.fetch_by_account_id(@account.id) # setting memcache key
 
+      Subscription.any_instance.stubs(:currency_exchange_rate).returns(1.0)
       @account.subscription.update_attribute(:subscription_plan_id, new_plan.id)
       @account.reload.subscription.reload.subscription_plan
 
@@ -655,6 +656,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     end
   ensure
     @account.subscription.update_column(:subscription_plan_id, old_plan.id)
+    Subscription.any_instance.unstub(:currency_exchange_rate)
   end
 
   def test_throttler_with_redis_down
@@ -681,6 +683,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response 429
     assert_equal '1', response.headers['Retry-After']
 
+    sleep 1
     get '/api/v2/discussions/categories', nil, @headers
     assert_response 200
     assert_equal 1, get_key(v2_api_key).to_i

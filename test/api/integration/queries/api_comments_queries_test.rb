@@ -14,7 +14,7 @@ class ApiCommentsQueriesTest < ActionDispatch::IntegrationTest
 
         create: 35,
         update: 19,
-        destroy: 32
+        destroy: 30
       }
 
       t = create_test_topic(create_test_forum(ForumCategory.first))
