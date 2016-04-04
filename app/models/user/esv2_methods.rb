@@ -20,6 +20,20 @@ class User < ActiveRecord::Base
               methods: [ :user_description, :company_names, :emails, :company_ids, :tag_ids, :parent_id ]
             }, true).merge(esv2_custom_attributes).merge(tag_names: es_tag_names).to_json
   end
+  
+  # V2 columns to be observed for changes
+  #
+  def esv2_columns
+    @@esv2_columns ||= [:account_id, :active, :address, :blocked, :deleted, :description, :email, :fb_profile_id, :helpdesk_agent, :job_title, :language, :mobile, :name, :phone, :string_uc04, :time_zone, :twitter_id].concat(esv2_contact_field_data_columns)
+  end
+  
+  # V2 custom field columns
+  #
+  def esv2_contact_field_data_columns
+    @@esv2_contact_field_data_columns ||= ContactFieldData.column_names.select{
+                                            |column_name| column_name =~ /^cf_/
+                                          }.map(&:to_sym)
+  end
 
   # Flexifield denormalized
   #
@@ -62,7 +76,6 @@ class User < ActiveRecord::Base
   end
   
   # _Note_: Will be deprecated and remove in near future
-  # Rename to v2 & remove alias if not changed
   #
   def es_columns
     @@es_columns ||= [:name, :email, :description, :job_title, :phone, :mobile, :twitter_id, 
@@ -70,7 +83,6 @@ class User < ActiveRecord::Base
   end
 
   # _Note_: Will be deprecated and remove in near future
-  # Rename to v2 & remove alias if not changed
   #
   def es_contact_field_data_columns
     @@es_contact_field_data_columns ||= ContactFieldData.column_names.select{ |column_name| 
@@ -92,11 +104,6 @@ class User < ActiveRecord::Base
            ).to_json
   end
 
-  # Remove alias and define if different for V2
-  # Keeping it at last for defining after function defined
-  #
-  alias :esv2_contact_field_data_columns :es_contact_field_data_columns
-  alias :esv2_columns :es_columns
   alias_attribute :user_description, :description
 
 end

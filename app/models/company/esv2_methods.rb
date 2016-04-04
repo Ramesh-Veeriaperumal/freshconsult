@@ -21,7 +21,15 @@ class Company < ActiveRecord::Base
   # V2 columns to be observed for changes
   #
   def esv2_columns
-    @@esv2_columns ||= [:name, :note, :description, :domains].concat(esv2_company_field_data_columns)
+    @@esv2_columns ||= [:description, :domains, :name, :note].concat(esv2_company_field_data_columns)
+  end
+  
+  # V2 custom field columns
+  #
+  def esv2_company_field_data_columns
+    @@esv2_company_field_data_columns ||= CompanyFieldData.column_names.select{ 
+                                            |column_name| column_name =~ /^cf_/
+                                          }.map(&:to_sym)
   end
 
   # Flexifield denormalized
@@ -110,10 +118,6 @@ class Company < ActiveRecord::Base
     search_results
   end
 
-  # Remove alias and define if different for V2
-  # Keeping it at last for defining after function defined
-  #
-  alias :esv2_company_field_data_columns :es_company_field_data_columns
   alias_attribute :company_description, :description
   
 end
