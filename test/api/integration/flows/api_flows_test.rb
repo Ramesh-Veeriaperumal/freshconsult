@@ -703,6 +703,13 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     get '/api/v2/discussions/categories', nil, @headers
     assert_response 200
     assert_equal 1, get_key(v2_api_key).to_i
+
+    remove_key(v2_api_key)
+    Middleware::FdApiThrottler.stubs(:extra_credits).returns(10)
+    get "/api/v2/discussions/categories", nil, @headers
+    assert_equal 1, get_key(v2_api_key).to_i
+    assert $rate_limit.ttl(v2_api_key).to_i > 3000
+
     set_key(v2_api_key, old_api_consumed_limit, nil)
   end
 

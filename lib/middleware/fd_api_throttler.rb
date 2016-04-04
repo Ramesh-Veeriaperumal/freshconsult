@@ -79,7 +79,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def increment_redis_key(used)
       @count = increment_redis(key, used).to_i
-      set_redis_expiry(key, THROTTLE_PERIOD) if @count == used_limit # Setting expiry for first time.
+      set_redis_expiry(key, THROTTLE_PERIOD) if @count <= used_limit # Setting expiry for first time.
     end
 
     def allowed?
