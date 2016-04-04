@@ -202,7 +202,7 @@ class Mobile::TicketsController < ApplicationController
    rescue ArgumentError
     false
    else
-    trueas
+    true
   end
 
   def scoper
