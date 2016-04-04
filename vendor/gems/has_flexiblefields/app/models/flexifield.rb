@@ -45,9 +45,8 @@ class Flexifield < ActiveRecord::Base
       raise ArgumentError, "Flexifield alias: #{ff_alias} not found in flexifeld def mapping"
     end
   end
-  
-  def set_ff_value ff_alias, ff_value
-    ff_field = to_ff_field ff_alias    
+
+  def set_ff_value ff_alias, ff_field, ff_value
     if ff_field       
       ff_value = nil if ff_value.blank?
       write_attribute ff_field, ff_value
@@ -60,8 +59,9 @@ class Flexifield < ActiveRecord::Base
     unless args_hash.is_a? Hash
       raise ArgumentError, "Method argument must be a hash"
     end
+    mapping = Account.current.ticket_field_def.ff_alias_column_mapping
     args_hash.each do |ffalias, ffvalue|
-      set_ff_value ffalias, ffvalue
+      set_ff_value ffalias, mapping[ffalias], ffvalue
     end
     # save
   end
