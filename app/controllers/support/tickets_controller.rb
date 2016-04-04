@@ -99,6 +99,7 @@ class Support::TicketsController < SupportController
     if cc_params.length <= TicketConstants::MAX_EMAIL_COUNT
       @ticket.cc_email[:cc_emails] = cc_params.delete_if {|x| !valid_email?(x)}
       update_reply_cc @ticket.cc_email, @old_cc_hash
+      @ticket.trigger_cc_changes(@old_cc_hash)
       @ticket.save
       flash[:notice] = "Email(s) successfully added to CC."
     else

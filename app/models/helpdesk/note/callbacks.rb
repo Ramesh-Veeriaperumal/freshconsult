@@ -109,7 +109,8 @@ class Helpdesk::Note < ActiveRecord::Base
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
       notable.updated_at = created_at
       add_cc_email  if (email_conversation? and !user.customer?) || reply_to_forward?
-      notable.cc_email_will_change! if notable_cc_email_updated?(@prev_cc_email, notable.cc_email)
+      # notable.cc_email_will_change! if notable_cc_email_updated?(@prev_cc_email, notable.cc_email)
+      notable.trigger_cc_changes(@prev_cc_email)
       notable.save
     end
 

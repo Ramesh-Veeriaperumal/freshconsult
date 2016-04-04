@@ -974,6 +974,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.responder_id = next_agent.user_id
   end
 
+  # Moved here from note.rb
+  def trigger_cc_changes(old_cc)
+    new_cc      = self.cc_email.dup
+    cc_changed  = if old_cc.nil?
+      !old_cc.eql?(new_cc) 
+    else
+      [:cc_emails, :fwd_emails].any? { |f| !(old_cc[f].uniq.sort.eql?(new_cc[f].uniq.sort)) }
+    end
+
+    self.cc_email_will_change! if cc_changed
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?
