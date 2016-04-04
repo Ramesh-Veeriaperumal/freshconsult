@@ -86,14 +86,14 @@ class TicketValidation < ApiValidation
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
     @due_by ||= item.try(:due_by).try(:iso8601) if item
     @item = item
-    fill_custom_fields if item && item.custom_field_via_mapping.present?
+    fill_custom_fields if item && item.custom_field.present?
   end
 
   def fill_custom_fields
     if !request_params.key?(:custom_fields)
-      @custom_fields = @item.custom_field_via_mapping.reject{|k, v| v.nil?}
+      @custom_fields = @item.custom_field.reject{|k, v| v.nil?}
     elsif request_params[:custom_fields].is_a?(Hash)
-      @custom_fields = @item.custom_field_via_mapping.reject{|k, v| v.nil?}.merge(request_params[:custom_fields])
+      @custom_fields = @item.custom_field.reject{|k, v| v.nil?}.merge(request_params[:custom_fields])
     end
   end
 

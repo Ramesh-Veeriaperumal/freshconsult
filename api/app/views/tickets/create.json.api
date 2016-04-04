@@ -20,22 +20,24 @@ response_hash = {
       :due_by => @item.due_by.try(:utc),
       :fr_due_by => @item.frDueBy.try(:utc),
       :is_escalated => @item.isescalated,
-      :description => @item.ticket_body.description_html,
-      :description_text => @item.ticket_body.description,
+      :description => @item.ticket_body.description,
+      :description_html => @item.ticket_body.description_html,
       :custom_fields => @item.custom_fields,
       :created_at => @item.created_at.try(:utc),
-      :updated_at => @item.updated_at.try(:utc),
-      :tags => @item.tag_names,
-      :attachments => @item.attachments.map do |a|
-        {
-            :id => a.id,
-            :content_type => a.content_content_type,
-            :size => a.content_file_size,
-            :name => a.content_file_name,
-            :attachment_url => a.attachment_url_for_api,
-            :created_at => a.created_at.try(:utc),
-            :updated_at => a.updated_at.try(:utc)
-        }
-      end
+      :updated_at => @item.updated_at.try(:utc)
     }
+    attachments_hash = {
+    :attachments => @item.attachments.map do |a|
+    {
+        :id => a.id,
+        :content_type => a.content_type,
+        :size => a.content_file_size,
+        :name => a.content_file_name,
+        :attachment_url => a.attachment_url_for_api
+    }
+    end
+    }
+    response_hash.merge(attachments_hash)
+    response_hash.merge!(deleted: @item.deleted) if @item.deleted
+    response_hash
 JSON.generate(response_hash)
