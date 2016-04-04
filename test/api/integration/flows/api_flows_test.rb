@@ -713,6 +713,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_expiry_condition
     # expiring the expiry key: one hour has passed
+    $rate_limit.expects(:expire).with(v2_api_key, 1.hour).once.returns(true)
     remove_key(v2_api_key)
 
     id = (Helpdesk::Ticket.first || create_ticket).display_id
@@ -721,6 +722,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response 200
 
     assert_equal 2, get_key(v2_api_key).to_i
+    remove_key(v2_api_key)
   end
 
   def test_skipped_subdomains
