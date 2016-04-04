@@ -78,7 +78,8 @@
 <script type="text/javascript">
 
  jQuery(document).ready(function(){
-	SurveyAdmin.setFullSurvey(<%= !@account.default_survey_enabled? %>);
+ 	SurveyAdmin.fullSurvey = <%= !@account.default_survey_enabled? %>;
+ 	SurveyAdmin.hasLayoutCustomization = <%= @account.features?(:layout_customization) %>;
  });
 
 </script>

@@ -1327,6 +1327,7 @@ en:
       thanks_contents:
         title_text: Thank you message for Customer satisfaction rating
         title_text_v2: Thank you message for Customer Satisfaction Survey
+        solution_article_link_text: Your portal layout will be applied to this page. <a target='_blank' href='https://support.freshdesk.com/solution/articles/217757-customizing-your-thank-you-page'>How to change it?</a>
         message_text: Thank you for your valuable feedback.
         label_text: Add a feedback survey
         label_text_v2: Additional Survey Questions

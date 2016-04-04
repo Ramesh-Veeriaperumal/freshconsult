@@ -3,10 +3,9 @@
 */
 var SurveyAdmin = {	
 		fullSurvey: true,
+		hasLayoutCustomization: false,
 		path: "/admin/custom_surveys/",
-		setFullSurvey: function(defaultSurveyFlag){
-			SurveyAdmin.fullSurvey = defaultSurveyFlag;
-		},
+
 		render:function(view){
 			SurveyDetail.rating.create(view);
 			SurveyDetail.thanks.create(view);
