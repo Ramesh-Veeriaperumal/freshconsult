@@ -202,10 +202,10 @@ class User < ActiveRecord::Base
       
       #return self.find(options[:id]) if options.key?(:id)
       return UserEmail.user_for_email(options[:email]) if options.key?(:email)
-      return self.where(twitter_id: options[:twitter_id]).first if options.key?(:twitter_id)
-      return self.where(fb_profile_id: options[:fb_profile_id]).first if options.key?(:fb_profile_id)
-      return self.where(external_id: options[:external_id]).first if options.key?(:external_id)
-      return self.where(phone: options[:phone]).first if options.key?(:phone)
+      return self.find_by_twitter_id(options[:twitter_id]) if options.key?(:twitter_id)
+      return self.find_by_fb_profile_id(options[:fb_profile_id]) if options.key?(:fb_profile_id)
+      return self.find_by_external_id(options[:external_id]) if options.key?(:external_id)
+      return self.find_by_phone(options[:phone]) if options.key?(:phone)
     end 
 
     def update_posts_count
