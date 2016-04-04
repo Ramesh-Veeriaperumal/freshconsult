@@ -8764,6 +8764,7 @@ en:
     via_widget: "via"
     reported: "reported"
     view_ticket: "view ticket"
+    agent_parallel_accept_error: "You have already initiated a chat, please try after a few seconds."
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"
