@@ -237,6 +237,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   end
 
+  def current_time_zone
+    @current_time_zone ||= BusinessCalendar.current_time_zone(self)
+  end
+
   def to_param 
     display_id ? display_id.to_s : nil
   end 

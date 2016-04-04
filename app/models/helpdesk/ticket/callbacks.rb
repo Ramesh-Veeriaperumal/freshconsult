@@ -48,6 +48,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
 
+  def time_zone_now
+    @time_zone_now ||= Time.zone.now
+  end
 
   def set_outbound_default_values
     if email_config
@@ -82,28 +85,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.ticket_type  = nil if self.ticket_type.blank?
 
     self.subject    ||= ''
-    self.group_id   ||= email_config.group_id unless email_config.nil?
+    self.group_id   ||= email_config.try(:group_id)
     self.priority   ||= PRIORITY_KEYS_BY_TOKEN[:low]
     self.created_at ||= Time.now.in_time_zone(account.time_zone)
     
-    build_ticket_body(:description_html => self.description_html,
-      :description => self.description) unless ticket_body    
+    build_ticket_body(:description_html => read_attribute(:description_html),
+      :description => read_attribute(:description)) unless ticket_body    
   end
 
   def save_ticket_states
     self.ticket_states                = self.ticket_states || Helpdesk::TicketState.new
     ticket_states.tickets             = self
     ticket_states.created_at          = ticket_states.created_at || created_at
-    ticket_states.account_id          = account_id
-    ticket_states.assigned_at         = Time.zone.now if responder_id
-    ticket_states.first_assigned_at   = Time.zone.now if responder_id
     ticket_states.pending_since       = Time.zone.now if (status == PENDING)
 
     ticket_states.set_resolved_at_state(created_at) if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
     ticket_states.resolved_at ||= ticket_states.set_closed_at_state(created_at) if (status == CLOSED)
 
-    ticket_states.status_updated_at    = created_at || Time.zone.now
-    ticket_states.sla_timer_stopped_at = Time.zone.now if (ticket_status.stop_sla_timer?)
+    ticket_states.account_id          = account_id
+    ticket_states.assigned_at         = ticket_states.first_assigned_at = time_zone_now if responder_id
+    ticket_states.status_updated_at    = created_at || time_zone_now
+    ticket_states.sla_timer_stopped_at = time_zone_now if (ticket_status.stop_sla_timer?)
     #Setting inbound as 0 and outbound as 1 for outbound emails as its agent initiated
     if outbound_email?
       ticket_states.inbound_count = 0 
@@ -130,14 +132,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if (@model_changes.key?(:responder_id) && responder)
       if @model_changes[:responder_id][0].nil?
         unless ticket_states.first_assigned_at 
-          ticket_states.first_assigned_at = Time.zone.now 
+          ticket_states.first_assigned_at = time_zone_now 
           schema_less_ticket.set_first_assign_bhrs(self.created_at, ticket_states.first_assigned_at, self.group)
         end
       else
         schema_less_ticket.update_agent_reassigned_count("create")
       end
       schema_less_ticket.set_agent_assigned_flag
-      ticket_states.assigned_at=Time.zone.now
+      ticket_states.assigned_at=time_zone_now
     end
     
     if (@model_changes.key?(:group_id) && group)
@@ -150,21 +152,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def process_status_changes
     return unless @model_changes.key?(:status)
     
-    ticket_states.status_updated_at = Time.zone.now
+    ticket_states.status_updated_at = time_zone_now
     
     ticket_states.pending_since = nil if @model_changes[:status][0] == PENDING  
-    ticket_states.pending_since=Time.zone.now if (status == PENDING)
+    ticket_states.pending_since=time_zone_now if (status == PENDING)
     ticket_states.set_resolved_at_state if (status == RESOLVED)
     ticket_states.set_closed_at_state if closed?
     
     if(ticket_status.stop_sla_timer)
-      ticket_states.sla_timer_stopped_at ||= Time.zone.now 
+      ticket_states.sla_timer_stopped_at ||= time_zone_now 
     else
       ticket_states.sla_timer_stopped_at = nil
     end 
     
     if reopened_now?
-      ticket_states.opened_at=Time.zone.now
+      ticket_states.opened_at=time_zone_now
       ticket_states.reset_tkt_states
       schema_less_ticket.update_reopened_count("create")
     end
@@ -192,8 +194,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def add_created_by_meta
-    if User.current and User.current.id != requester.id and import_id.blank?
-      meta_info = { "created_by" => User.current.id, "time" => Time.zone.now }
+    if User.current and User.current.id != requester.id and import_id.nil?
+      meta_info = { "created_by" => User.current.id, "time" => time_zone_now }
       if self.meta_data.blank?
         self.meta_data = meta_info
       elsif self.meta_data.is_a?(Hash)
@@ -311,13 +313,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_dueby(ticket_status_changed=false)
     Rails.logger.info "Created at::: #{self.created_at}"
-    BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
+    BusinessCalendar.execute(self, current_time_zone) { set_sla_time(ticket_status_changed) }
     #Hack - trying to recalculte again if it gives a wrong value on ticket creation.
     if self.new_record? and ((due_by < created_at) || (frDueBy < created_at))
       old_time_zone = Time.zone
       TimeZone.set_time_zone
       NewRelic::Agent.notice_error(Exception.new("Wrong SLA calculation:: Account::: #{account.id}, Old timezone ==> #{old_time_zone}, Now ===> #{Time.zone}"))
-      BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
+      BusinessCalendar.execute(self, current_time_zone) { set_sla_time(ticket_status_changed) }
     end
   end
 
@@ -482,7 +484,7 @@ private
 
   def create_requester
     if can_add_requester?
-      portal = self.product.portal if self.product
+      portal = self.product.try(:portal)
       language = portal.language if (portal and self.source!=SOURCE_KEYS_BY_TOKEN[:email]) #Assign languages only for non-email tickets
       requester = account.users.new
       requester.account = account
@@ -529,11 +531,11 @@ private
 
   def assign_email_config_and_product
     if email_config
-      self.product = email_config.product
+      self.product_id = email_config.product_id
     elsif self.product
+    self.group_id ||= email_config.try(:group_id)
       self.email_config = self.product.primary_email_config
     end
-    self.group_id ||= email_config.group_id unless email_config.nil?
   end
 
   def assign_email_config
@@ -573,7 +575,7 @@ private
   end
 
   def set_dueby_on_priority_change(sla_detail)
-    created_time = self.created_at.in_time_zone(Time.zone.name) || Time.zone.now
+    created_time = self.created_at.in_time_zone(Time.zone.name) || time_zone_now
     business_calendar = Group.default_business_calendar(group)
     self.due_by = sla_detail.calculate_due_by_time_on_priority_change(created_time, business_calendar)      
     self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time, business_calendar) 
@@ -615,7 +617,7 @@ private
   end
 
   def update_ticket_state_sla_timer
-    ticket_states.sla_timer_stopped_at = Time.zone.now
+    ticket_states.sla_timer_stopped_at = time_zone_now
     ticket_states.save
   end
 
@@ -660,7 +662,7 @@ private
   end
   
   def build_reports_hash
-    current_action_time = created_at || Time.zone.now
+    current_action_time = created_at || time_zone_now
     if responder_id
       schema_less_ticket.set_first_assign_bhrs(current_action_time, ticket_states.first_assigned_at, self.group)
       schema_less_ticket.set_agent_assigned_flag

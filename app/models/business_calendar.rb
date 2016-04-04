@@ -78,9 +78,9 @@ class BusinessCalendar < ActiveRecord::Base
   end
   
   # setting correct timezone and business_calendar based on the context of the ticket getting updated
-  def self.execute(groupable)
+  def self.execute(groupable, zone = nil)
     begin
-      zone = current_time_zone(groupable)
+      zone = zone || current_time_zone(groupable)
       Time.use_zone(zone) {
         Rails.logger.debug "Timezone:: #{zone}"
         yield

@@ -169,7 +169,7 @@ class Group < ActiveRecord::Base
   end
 
   def round_robin_enabled?
-    (ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin]) and self.account.features_included?(:round_robin)
+    (ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin]) and Account.current.features?(:round_robin)
   end
 
   def round_robin_queue
