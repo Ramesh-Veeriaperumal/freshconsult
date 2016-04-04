@@ -29,10 +29,7 @@ class Middleware::ApiRequestInterceptor
       end
       valid_accept_header = validate_accept_header if @accept_header
       begin
-        if valid_content_type && valid_accept_header
-          RequestStore.store[:request_id] = env['action_dispatch.request_id'] # Storing request_id to be accessed later in memoize_memcache.
-          @status, @headers, @response = @app.call(env)
-        end
+        @status, @headers, @response = @app.call(env) if valid_content_type && valid_accept_header
       rescue ArgumentError => error
         # If url query string has invalid encoding like '%' symbol, argument error will be thrown from ruby side.
         # Hence gracefully handling this issue.
