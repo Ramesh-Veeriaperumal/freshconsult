@@ -68,8 +68,8 @@
 
 .search-inputs-location{
   display: none;
-  .search-phrase{ 
-    @include margin(13px 0 0 0); 
+  .search-phrase{
+    @include margin(13px 0 0 0);
   }
 }
 
@@ -83,7 +83,7 @@
 }
 
 .phone-search-results{
-  .search-caption{  
+  .search-caption{
     display: inline-block;
     margin-top: 10px;
   }
@@ -267,7 +267,7 @@
   .ui-dialog-title{
     font-size: 24px;
   }
-  
+
 }
 #purchase-confirmation{
     .number-message{
@@ -382,16 +382,13 @@
   color: #888;
 }
 .freshfone_video {
-  @include margin (50px 50px 10px 50px);
-  &.trial {
-    margin-top: 10px;
-    @include margin-left(60px);
-  }
-  display: inline-block;
+  display: block;
   border: 1px solid #ccc;
   border-radius: 4px;
   @include padding (0px 10px 10px 10px);
   background: #eee;
+  margin: 30px auto;
+  width: 560px;
   .title {
     @include padding(10px 10px 10px 2px);
     display: block;
@@ -402,10 +399,6 @@
   height: 280px;
 }
 .ff_seperator {
-  position: relative;
-  width: 100%;
-  left: 0;
-  right: 0;
   border-bottom: 1px solid #ccc;
 }
 .ff_welcome_page {

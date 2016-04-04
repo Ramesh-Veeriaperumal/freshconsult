@@ -42,7 +42,7 @@
 	.Message-alert{
 		padding: 6px 0;
 		@include text-align(center);
-		@include margin-left(150px);		
+		@include margin-left(150px);
 	}
 	.freshfone-controls {
 		.select2-container { @include margin-left(0); }
@@ -99,9 +99,9 @@
   	}
   }
 
-  .settings-label { 
+  .settings-label {
   	max-width: 185px;
-  	font-weight: normal; 
+  	font-weight: normal;
   }
   .controls {
   	margin-left: 160px;
@@ -116,7 +116,7 @@
 		 label{
 			display:inline-block;
 			vertical-align: bottom;
-		}	
+		}
 	}
 }
 
@@ -157,11 +157,12 @@
   margin: 20px 0 10px 0;
   border-bottom: 1px solid #ccc;
 }
+
 .ff_numbers_trial_usage {
   border: 1px solid #EEE;
   background: #FFE;
   padding: 11px;
-  margin-bottom: 10PX;
+  margin-bottom: 10px;
   border-radius: 5px;
   height: 90px;
   .trial_msg {
