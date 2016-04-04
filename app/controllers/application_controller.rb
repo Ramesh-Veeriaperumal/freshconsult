@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   around_filter :select_shard
   
   prepend_before_filter :determine_pod
-  before_filter :unset_current_account, :unset_current_portal, :set_current_account, :unset_shard_for_payload
+  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account
   before_filter :set_shard_for_payload
   before_filter :set_default_locale, :set_locale
   include SslRequirement
