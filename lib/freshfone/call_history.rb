@@ -8,9 +8,17 @@ module Freshfone::CallHistory
 	def update_call_status
 		current_call.update_status(params).save unless current_call.blank?
 	end
+
+	def update_call_details
+    current_call.update_call params
+  end
+
+  def update_conference_sid
+    current_call.update_attributes(:conference_sid => params[:ConferenceSid])
+  end
 	
 	def current_call
-		@current_call ||= ( current_call_by_id || current_call_by_filter || current_call_by_parent_call_sid )
+		@current_call ||= ( current_call_by_call_param || current_call_by_id || current_call_by_filter || current_call_by_parent_call_sid )
 	end
 
 	def set_current_call(call)
@@ -27,6 +35,10 @@ module Freshfone::CallHistory
 
 		def freshfone_calls_scoper
 			current_account.freshfone_calls
+		end
+
+		def current_call_by_call_param #Should be removed ######################################
+			freshfone_calls_scoper.find_by_id(params[:call]) if params[:call].present?
 		end
 	
 		def current_call_by_id

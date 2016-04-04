@@ -1,10 +1,11 @@
 require 'spec_helper'
-load 'spec/support/freshfone_spec_helper.rb'
-include FreshfoneSpecHelper
 include Redis::RedisKeys
-include Redis::IntegrationsRedis
 
-describe Freshfone::CallFlow do
+RSpec.configure do |c|
+  c.include Redis::IntegrationsRedis
+end
+
+RSpec.describe Freshfone::CallFlow do
   self.use_transactional_fixtures = false
   
   before(:all) do
@@ -14,10 +15,13 @@ describe Freshfone::CallFlow do
 
   before(:each) do
     create_test_freshfone_account
+    @account.freshfone_calls.delete_all
+    @account.freshfone_callers.delete_all
     create_freshfone_user
   end
 
-  it 'should render non availability message if all users in the group are offline' do
+
+  it 'should render non availability message if all users in the group are offline' do# failing in master
     group = create_group @account, {:name => "Freshfone Group"}
     call = create_freshfone_call
     @freshfone_user.update_attributes(:presence => 0)
@@ -31,7 +35,9 @@ describe Freshfone::CallFlow do
     group = create_group @account, {:name => "Freshfone Online Group"}
     call = create_freshfone_call
     create_online_freshfone_user
-    AgentGroup.new(:user_id => @agent.id , :account_id => @account.id, :group_id => group.id).save!
+    ag = AgentGroup.new(:user_id => @agent.id, :group_id => group.id)
+    ag.account_id = @account.id
+    ag.save
     call_flow = Freshfone::CallFlow.new({:CallSid => call.call_sid}, @account, @number, @agent)
     
     twiml = twimlify call_flow.call_users_in_group(group.id)
@@ -67,6 +73,8 @@ describe Freshfone::CallFlow do
   end
 
   it 'should render twiml for an outgoing call' do
+  	@number.freshfone_number_groups.delete_all
+  	@number.freshfone_number_groups.reload
     number = Faker::Base.numerify('(###)###-####')
     outgoing_key = FRESHFONE_OUTGOING_CALLS_DEVICE % { :account_id => @account.id }
     remove_value_from_set(outgoing_key, @agent.id)
@@ -87,6 +95,6 @@ describe Freshfone::CallFlow do
 
   # it 'should return false on non business hour check before calls' do
   #   call_flow = Freshfone::CallFlow.new({}, @account, @number, @agent)
-  #   call_flow.send(:within_business_hours?).should be_false
+  #   call_flow.send(:within_business_hours?).should be_falsey
   # end
 end

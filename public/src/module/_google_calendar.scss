@@ -52,6 +52,7 @@
 }
 
 .gcal-content-body{
+	@include padding-right (10px);
 	max-height: 400px;
 	overflow-y: auto;
 	overflow: -moz-scrollbars-vertical; 
@@ -120,8 +121,6 @@ div.past-event{
 }
 	
 div#google_calendar_add_event_modal{
-
-	margin-top: 10px;
 	
 	.field-label{
 		position: relative;

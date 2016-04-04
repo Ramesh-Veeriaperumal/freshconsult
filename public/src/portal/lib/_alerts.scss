@@ -52,6 +52,18 @@
   color: $infoText;
 }
 
+.errorExplanation.alert-danger-dark {
+  background-color: #B56463;
+  border-color: #9B4A49;
+  color: #FFF;
+}
+
+.errorExplanation.credentialError ul {
+  list-style:none;
+  text-align:center;
+  text-shadow:none;
+}
+
 // Block alerts
 // ------------------------
 .alert-block {

@@ -1,4 +1,4 @@
-<% form_for :zendesk, 
+<%= form_for :zendesk, 
 			:url=>{:controller=>"admin/zen_import", :action=>"import_data"}, 
 			:html => { :multipart => true, :class =>"form-horizontal", :rel => 'validate' } do |f| -%>
 <div class="row-fluid cnt left-aligned">

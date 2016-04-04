@@ -200,6 +200,7 @@
 		},
 		updateRecording: function (data) {
 			var url = (data || {}).url;
+			url = escapeHtml(url);
 			this.$clientRecord
 				.removeClass('active-record mute stop-recording')
 				.button('reset');

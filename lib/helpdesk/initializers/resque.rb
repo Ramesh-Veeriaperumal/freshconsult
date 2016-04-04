@@ -28,3 +28,40 @@ Resque::Plugins::Status::Hash.expire_in = (7 * 24 * 60 * 60) # 1 week in seconds
 
 # Resque::Failure::MultipleWithRetrySuppression.classes = [Resque::Failure::Redis]
 # Resque::Failure.backend = Resque::Failure::MultipleWithRetrySuppression
+
+# Dirty hack to reduce the meta queries for each resque.
+# http://ablogaboutcode.com/2012/03/08/reducing-metadata-queries-in-resque/
+Resque.before_first_fork do
+  Sharding.all_shards.each do |shard|
+    Sharding.run_on_shard(shard) do
+      ActiveRecord::Base.send(:subclasses).each do |model|
+        next if model.abstract_class?
+        begin
+          ActiveRecord::Base.connection.schema_cache.columns_hash[model.table_name]
+          ActiveRecord::Base.connection.schema_cache.primary_keys[model.table_name]
+        rescue
+        end
+      end
+    end
+    Sharding.run_on_shard(shard) do
+      Sharding.run_on_slave do
+        ActiveRecord::Base.send(:subclasses).each do |model|
+          next if model.abstract_class?
+          begin
+            ActiveRecord::Base.connection.schema_cache.columns_hash[model.table_name]
+            ActiveRecord::Base.connection.schema_cache.primary_keys[model.table_name]
+          rescue
+          end
+        end
+      end
+    end
+  end
+end
+
+# Resque.before_fork do
+#   if defined?(GC)
+#     t0 = Time.now
+#     GC.start
+#     puts "Out-Of-Bound GC finished in #{Time.now - t0} sec"
+#   end
+# end

@@ -8,6 +8,7 @@
         numeric_search_results,
         toll_free_search_results,
         $buyNumberContainer = $('.twilio-buy-numbers'),
+        $subscription=$('#ff_subscription'),
         $localSearchResults = $('#local_search_results'),
         $localSearchResultsContainer = $localSearchResults.parent(),
         $tollfreeSearchResults = $('#toll_free_search_results'),
@@ -54,10 +55,11 @@
             search_freshfone.abort();
         }
         search_freshfone = $.ajax({
-            url: '/admin/freshfone/available_numbers',
+            url: '/admin/phone/available_numbers',
             data: {
                 "search_options": search_options,
-                "country": $supportedCountries.val()
+                "country": $supportedCountries.val(),
+                "subscription": $subscription.val()
             },
             success: function (data) {
                 numeric_search_results = data;
@@ -78,10 +80,11 @@
             search_freshfone.abort();
         }
         search_freshfone = $.ajax({
-            url: '/admin/freshfone/available_numbers',
+            url: '/admin/phone/available_numbers',
             data: {
                 "search_options": search_options,
-                "country": $('#toll_free_supported_countries').val()
+                "country": $('#toll_free_supported_countries').val(),
+                "subscription": $subscription.val()
             },
             success: function (data) {
                 toll_free_search_results = data;
@@ -184,11 +187,11 @@
             ev.preventDefault();
             $(this).button("loading");
             $buy_numbers_form = $this.parents('form');
-            if($this.data('addressRequired')){
-              $('#freshfone_address_form').submit();
-            } else {
-              $this.parents('form').submit();  
-            }
+          if (address_required) {
+            $('#freshfone_address_form').submit();  
+          } else {
+            $this.parents('form').submit();
+          }
         });
         resetErrorMessages();
         
@@ -201,8 +204,9 @@
 
     });
 
-    $('#freshfone_address_form').submit( function() {
-        var valuesToSubmit = $(this).serialize();
+    $('#freshfone_address_form').submit( function(ev) {
+        ev.preventDefault();
+        var valuesToSubmit = $(this).serialize()+ '&' + $buy_numbers_form.serialize();
         $(".ajaxerrorExplanation").toggle(false);
         $.ajax({
             type: "POST",
@@ -212,8 +216,8 @@
             success: function(data){
                 if(data.success) {
                     $('.purchaseErrorExplanation').toggle(false);
-                    $buy_numbers_form.submit();  
-                } else {
+                    window.location.href = data.redirect_url;
+                } else{
                     resetErrorMessages();
                     $('.purchaseErrorExplanation').toggle(true);
                     populateErrorMessage(data.errors);
@@ -226,7 +230,7 @@
                 resetPurchaseButton();
             }
         });
-        return false;
+        // return false;
     });
     function populateErrorMessage(formErrors) {
       $.map(formErrors, function(error){

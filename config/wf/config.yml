@@ -78,6 +78,9 @@ defaults: &defaults
          int:                [numeric, numeric_delimited]
          bigint:             [numeric, numeric_delimited]
          varchar:            [text]
+         float:              [numeric, numeric_range]
+         text:               [text]
+         tinyint:            [nil, boolean]
 
   operators:              # operators precedence
     is:                   100

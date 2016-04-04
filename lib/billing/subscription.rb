@@ -68,13 +68,9 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     update_subscription_estimate(attributes)
   end
 
-  def store_card(card, address, subscription)
-    card_info = card_info(card).merge(billing_address(address))
-    add_card(subscription.account.id, card_info)    
-  end 
-
-  def activate_subscription(subscription)
+  def activate_subscription(subscription, address_details)
     data = subscription_data(subscription).merge( :trial_end => TRIAL_END )
+    data = data.merge(address_details)
     ChargeBee::Subscription.update(subscription.account_id, data)
   end 
 
@@ -212,7 +208,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     end
 
     def extend_trial(subscription)
-      return retrieve_subscription(subscription.account_id).subscription.trial_end if subscription.trial? and subscription.next_renewal_at > Time.now
+      return retrieve_subscription(subscription.account_id).subscription.trial_end if subscription.trial?
         
       1.hour.from_now.to_i if subscription.suspended? and subscription.card_number.blank?
     end

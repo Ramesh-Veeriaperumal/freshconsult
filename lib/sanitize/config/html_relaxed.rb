@@ -61,7 +61,7 @@ class Sanitize
         'img'        => {'src'  => ['http', 'https', :relative]},
         'ins'        => {'cite' => ['http', 'https', :relative]},
         'q'          => {'cite' => ['http', 'https', :relative]},
-        'source'     => {'src'	=> ['http']},
+        'source'     => {'src'	=> ['http', 'https']},
         'iframe'     => {'src'  => ['http', 'https', :relative]}
       }
     }

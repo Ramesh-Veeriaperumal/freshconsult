@@ -2,7 +2,6 @@ require 'spec_helper'
 #include ActionController::TestProcess
 
 describe Helpdesk::AttachmentsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -96,7 +95,7 @@ describe Helpdesk::AttachmentsController do
   end
 
   it "should show a data export's attachment" do
-    data_export = Factory.build(:data_export, :account_id => @account.id, :user_id => @agent.id)
+    data_export = FactoryGirl.build(:data_export, :account_id => @account.id, :user_id => @agent.id)
     data_export.create_attachment(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                                   :description => Faker::Lorem.characters(10), 
                                   :account_id => @account.id)
@@ -124,7 +123,7 @@ describe Helpdesk::AttachmentsController do
     now = (Time.now.to_f*1000).to_i
     canned_response = create_response( {:title => "Recent Canned_Responses Hepler #{now}",:content_html => Faker::Lorem.paragraph,
       :visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents],
-      :attachments => { :resource => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
+      :attachments => { :resource => fixture_file_upload('files/attachment.txt', 'text/plain', :binary), 
         :description => Faker::Lorem.characters(10)
       }
     })

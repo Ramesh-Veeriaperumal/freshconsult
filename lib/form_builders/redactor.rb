@@ -9,14 +9,14 @@ module FormBuilders::Redactor
         :convertDivs => false,
         :imageUpload => "/forums_uploaded_images",
         :clipboardImageUpload => "/forums_uploaded_images/create_file",
-        :allowedTags => ["a", "div", "b", "i", "iframe", "br", "p", "img", "strong", "em" , "u", "span","pre"],
+        :allowedTags => ["a", "div", "b", "i", "iframe", "br", "p", "img", "strong", "em" , "u", "span", "pre", "table", "th", "td", "tr", "tbody", "thead", "tfoot"],
         :allowTagsInCodeSnippet => true,
         :buttons => ['bold','italic','underline', 'deleted','|','unorderedlist', 'orderedlist',  
                       '|','fontcolor', 'backcolor', '|' ,'link','image', 'video','codeEditor']
       }
 
       REDACTOR_SOLUTION_EDITOR = {
-        :autoresize => false,
+        :autoresize => true,
         :tabindex => 2,
         :convertDivs => false,
         :allowTagsInCodeSnippet => true,
@@ -37,6 +37,18 @@ module FormBuilders::Redactor
                       '|','fontcolor', 'backcolor', '|' ,'link', 'image']
       }
 
+      REDACTOR_EMAIL_NOTIFICATION_EDITOR = {
+        :focus => false,
+        :autoresize => false,
+        :tabindex => 2,
+        :convertDivs => false,
+        :setFontSettings => true,
+        :imageUpload => "/email_notification_uploaded_images",
+        :clipboardImageUpload => "/email_notification_uploaded_images/create_file",
+        :buttons => ['bold','italic','underline','|','unorderedlist', 'orderedlist',  
+                      '|','fontcolor', 'backcolor', '|', 'image','link', 'removeFormat']
+      }
+
       REDACTOR_DEFAULT_EDITOR = {
         :focus => true,
         :autoresize => false,
@@ -54,7 +66,7 @@ module FormBuilders::Redactor
 
       def rich_editor_tag(name, content = nil, options = {})
         id = options[:id] = options[:id] || field_id( name )
-        content = options[:value] if options[:value].present?
+        content = options[:value] unless options[:value].nil?
 
         redactor_opts = redactor_type options['editor-type']
 
@@ -90,6 +102,8 @@ module FormBuilders::Redactor
             REDACTOR_FORUM_EDITOR
           when :ticket then
             REDACTOR_TICKET_EDITOR
+          when :email_notification then
+            REDACTOR_EMAIL_NOTIFICATION_EDITOR
           else
             REDACTOR_DEFAULT_EDITOR
         end

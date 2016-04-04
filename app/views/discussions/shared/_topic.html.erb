@@ -1,4 +1,4 @@
-<% post = topic.last_post %>
+<% post = topic.last_post || topic.posts.last %>
 <% post_type = topic.posts_count < 2 ? 'new_topic' : 'reply' %>
 <div class="comm-item span12 row-fluid clear-left-margin comm-item-post" id="post_<%= post.id %>">
 	<div class="pull-left ml5">

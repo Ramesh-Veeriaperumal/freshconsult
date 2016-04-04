@@ -54,7 +54,7 @@
 	<% end %>
 </div>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery("#topic_locked").click(function(ev){
 		jQuery("#monitor-topic-lable").toggle(!this.checked);
 	});
@@ -65,7 +65,7 @@
   <tr>
     <td class="remove">
       <a href="" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">
-        <%= image_tag("helpdesk/delete.png") %>
+        <i class="rounded-minus-icon"></i>
       </a>
     </td>
     <td class="name">${name}</td>

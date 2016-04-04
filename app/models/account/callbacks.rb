@@ -1,20 +1,30 @@
 class Account < ActiveRecord::Base
 
-	before_create :set_default_values, :set_shard_mapping, :save_route_info
+  before_create :set_default_values, :set_shard_mapping, :save_route_info
   before_update :check_default_values, :update_users_time_zone, :backup_changes
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain, :update_route_info
+  before_update :update_global_pod_domain 
+
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_freshchat_url, :if => :freshchat_enabled?
+
+  after_destroy :remove_global_shard_mapping, :remove_from_slave_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
 
-  after_commit_on_create :add_to_billing, :enable_elastic_search
-  after_commit_on_update :clear_cache, :clear_api_limit_cache, :update_redis_display_id
-  after_commit_on_destroy :clear_cache, :delete_reports_archived_data
+  after_commit :add_to_billing, :enable_elastic_search, on: :create
+  after_commit :clear_api_limit_cache, :update_redis_display_id, on: :update
+  after_commit :delete_reports_archived_data, on: :destroy
+  after_commit ->(obj) { obj.clear_cache }, on: :update
+  after_commit ->(obj) { obj.clear_cache }, on: :destroy
 
 
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher 
+  
   def check_default_values
     dis_max_id = get_max_display_id
     if self.ticket_display_id.blank? or (self.ticket_display_id < dis_max_id)
@@ -40,17 +50,18 @@ class Account < ActiveRecord::Base
   end
 
   def enable_elastic_search
-    Resque.enqueue(Search::CreateAlias, { :account_id => self.id, :sign_up => true })
+    SearchSidekiq::CreateAlias.perform_async({ :sign_up => true }) if ES_ENABLED
   end
 
   def populate_features
     add_features_of subscription.subscription_plan.name.downcase.to_sym
     SELECTABLE_FEATURES.each { |key,value| features.send(key).create  if value}
+    add_member_to_redis_set(SLAVE_QUERIES, self.id)
   end
 
   protected
 
-  	def set_default_values
+    def set_default_values
       self.time_zone = Time.zone.name if time_zone.nil? #by Shan temp.. to_s is kinda hack.
       self.helpdesk_name = name if helpdesk_name.nil?
       self.shared_secret = generate_secret_token
@@ -61,30 +72,36 @@ class Account < ActiveRecord::Base
     def backup_changes
       @old_object = Account.find(id)
       @all_changes = self.changes.clone
-      @all_changes.symbolize_keys!
     end
 
   private
 
-  	def add_to_billing
+    def add_to_billing
       Resque.enqueue(Billing::AddToBilling, { :account_id => id })
     end
 
     def create_shard_mapping
-      shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:not_found],
+      if Fdadmin::APICalls.non_global_pods? && domain_mapping = DomainMapping.find_by_domain(full_domain) 
+        self.id = domain_mapping.account_id
+        populate_google_domain(domain_mapping.shard) if google_account?
+      else
+        shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard,:status => ShardMapping::STATUS_CODE[:not_found],
                                                :pod_info => PodConfig['CURRENT_POD']})
-      shard_mapping.domains.build({:domain => full_domain})  
-      populate_google_domain(shard_mapping) if google_account?
-      shard_mapping.save!                            
-      self.id = shard_mapping.id
+        shard_mapping.domains.build({:domain => full_domain})  
+        populate_google_domain(shard_mapping) if google_account?
+        shard_mapping.save!                            
+        self.id = shard_mapping.id
+      end
     end
 
     def set_shard_mapping
       begin
         create_shard_mapping
-       rescue
+       rescue => e
+        Rails.logger.error e.message
+        Rails.logger.error e.backtrace.join("\n\t")
         Rails.logger.info "Shard mapping exception caught"
-        errors.add_to_base("Domain is not available!")
+        errors[:base] << "Domain is not available!"
         return false
       end
     end
@@ -97,6 +114,19 @@ class Account < ActiveRecord::Base
       if full_domain_changed?
         domain_mapping = DomainMapping.find_by_account_id_and_domain(id,@old_object.full_domain)
         domain_mapping.update_attribute(:domain,full_domain)
+      end
+    end
+
+    def update_global_pod_domain
+      if Fdadmin::APICalls.non_global_pods? and full_domain_changed?
+        request_parameters = {
+          :account_id => id,
+          :target_method => :change_domain_mapping_for_pod ,
+          :old_domain => @old_object.full_domain,
+          :new_domain => full_domain 
+        }
+        response = Fdadmin::APICalls.connect_main_pod(request_parameters)
+        raise ActiveRecord::Rollback, "Domain Already Taken" unless response && response["account_id"]
       end
     end
 
@@ -125,10 +155,21 @@ class Account < ActiveRecord::Base
       shard_mapping.destroy
     end
 
+    def remove_global_shard_mapping
+      if Fdadmin::APICalls.non_global_pods?
+        request_parameters = {:account_id => id,:target_method => :remove_shard_mapping_for_pod }
+        PodDnsUpdate.perform_async(request_parameters)
+      end
+    end
+
     def make_shard_mapping_inactive
       shard_mapping = ShardMapping.find_by_account_id(id)
       shard_mapping.status = ShardMapping::STATUS_CODE[:not_found]
       shard_mapping.save
+    end
+
+    def remove_from_slave_queries
+      remove_member_from_redis_set(SLAVE_QUERIES,self.id)
     end
 
     def delete_reports_archived_data
@@ -164,18 +205,18 @@ class Account < ActiveRecord::Base
     def save_route_info
       # add default route info to redis
       Rails.logger.info "Adding domain #{full_domain} to Redis routes."
-      set_route_info(full_domain, id, full_domain)
+      Redis::RoutesRedis.set_route_info(full_domain, id, full_domain)
     end
 
     def destroy_route_info
       Rails.logger.info "Removing domain #{full_domain} from Redis routes."
-      delete_route_info(full_domain)
+      Redis::RoutesRedis.delete_route_info(full_domain)
     end
 
     def update_route_info
       if full_domain_changed?
-        delete_route_info(full_domain_was)
-        set_route_info(full_domain, id, full_domain)
+        Redis::RoutesRedis.delete_route_info(full_domain_was)
+        Redis::RoutesRedis.set_route_info(full_domain, id, full_domain)
       end
     end
 end

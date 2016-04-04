@@ -1,15 +1,23 @@
 # encoding: utf-8
 class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
+  helper SolutionHelper
+  helper AutocompleteHelper
+  helper Solution::NavmenuHelper
+  helper Solution::ArticlesHelper
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:edit, :update, :destroy]
   before_filter :load_category_with_folders, :only => [:show]
+  before_filter :set_modal, :only => [:new, :edit]
+  before_filter :set_default_order, :only => :reorder
+  
+  around_filter :run_on_slave, :only => :sidebar
 
   def index
-    @categories = current_portal.solution_categories
+    @categories = current_portal.solution_categories.includes(:folders)
 
     respond_to do |format|
       format.html { @page_canonical = solution_categories_url }# index.html.erb
@@ -18,46 +26,52 @@ class Solution::CategoriesController < ApplicationController
                                                          :include => folder_scope) }
     end
   end
+  
+  def navmenu
+    render :partial=> '/solution/shared/navmenu_content'
+  end
 
   def show
+    @page_title = @category.name
     respond_to do |format|
-      format.html { @page_canonical = solution_category_url(@item) }# index.html.erb
-      format.xml {  render :xml => @item.to_xml(:include => folder_scope) }
-      format.json  { render :json => @item.to_json(:except => [:account_id,:import_id],
+      format.html {
+        redirect_to solution_my_drafts_path('all') if @category.is_default?
+      }
+      format.xml {  render :xml => @category.to_xml(:include => folder_scope) }
+      format.json  { render :json => @category.to_json(:except => [:account_id,:import_id],
                                                   :include => folder_scope) }
     end
   end
   
   def new
+    @page_title = t("header.tabs.new_solution_category")
     @category = current_account.solution_categories.new
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html { render :layout => false if @modal }
       format.xml  { render :xml => @category }
     end
   end
 
   def edit
+    @page_title = @category.name
     respond_to do |format|
       if @category.is_default?
         flash[:notice] = I18n.t('category_edit_not_allowed')
         format.html {redirect_to :action => "show" }
       else
-        format.html # edit.html.erb
+        format.html { render :layout => false if @modal }
       end
       format.xml  { render :xml => @category }
     end
   end
 
   def create
-    @category = current_account.solution_categories.new(params[nscname]) 
-     
-    redirect_to_url = solution_categories_url
-    redirect_to_url = new_solution_category_path unless params[:save_and_create].nil?
+    @category = current_account.solution_categories.build(params[nscname])
     
     respond_to do |format|
       if @category.save
-        format.html { redirect_to redirect_to_url }
+        format.html { redirect_to solution_category_path(@category) }
         format.xml  { render :xml => @category, :status => :created, :location => @category }
         format.json { render :json => @category, :status => :created, :location => @category }
       else
@@ -70,7 +84,7 @@ class Solution::CategoriesController < ApplicationController
   def update
     respond_to do |format| 
       if @category.update_attributes(params[nscname])       
-        format.html { redirect_to :action =>"index" }
+        format.html { redirect_to :action =>"show" }
         format.xml  { render :xml => @category, :status => :created, :location => @category }     
         format.json { render :json => @category, :status => :ok, :location => @category }     
       else
@@ -88,6 +102,16 @@ class Solution::CategoriesController < ApplicationController
       format.xml  { head :ok }
       format.json { head :ok }
     end
+  end
+
+  def sidebar
+    @drafts = current_account.solution_drafts.preload(:article)
+    @my_drafts = current_account.solution_drafts.by_user(current_user).preload(:article)
+    @feedbacks = current_account.
+                    tickets.all_article_tickets.unresolved.
+                    preload(:requester, :ticket_status, :article) if current_account.launched?(:solution_home_feedbacks) && current_user.agent.all_ticket_permission
+    @orphan_categories = orphan_categories
+    render :partial => "/solution/categories/sidebar"
   end
 
   protected
@@ -130,19 +154,42 @@ class Solution::CategoriesController < ApplicationController
       @selected_tab = :solutions
     end
     
-    def folder_scope #possible dead code
-      :folders
+    def folder_scope
+      { :folders => { :except => [:account_id,:import_id] }}
     end
 
-    def portal_scoper
-      current_portal.solution_categories
+    def account_scoper
+      current_account.solution_categories
     end
 
     def load_category
-      @category = portal_scoper.find_by_id!(params[:id])
+      @category = account_scoper.find_by_id!(params[:id])
     end
 
     def load_category_with_folders
-      @item = portal_scoper.find_by_id!(params[:id], :include => :folders)
+      @category = account_scoper.find_by_id!(params[:id], :include => { :folders => [:customers]})
+    end
+
+    def set_modal
+      @modal = true if request.xhr?
+    end
+
+    def orphan_categories
+      current_account.solution_categories_from_cache.select { |cat| cat['portal_solution_categories'].empty?}
+    end
+
+    def set_default_order
+      reorder_params_in_json = ActiveSupport::JSON.decode(params[:reorderlist])
+      reorder_params_in_json[default_category.id.to_s] = reorder_params_in_json.length + 1
+      params[:reorderlist] = reorder_params_in_json.to_json
+    end
+
+    def default_category
+      current_account.solution_categories.where(:is_default => true).first
+    end
+
+    def all_drafts
+      current_account.solution_articles.all_drafts.includes(
+        {:folder => {:category => :portals}})
     end
 end

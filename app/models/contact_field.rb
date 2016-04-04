@@ -1,5 +1,7 @@
 class ContactField < ActiveRecord::Base
 
+  self.primary_key = :id
+  
   serialize :field_options
 
   belongs_to_account
@@ -9,8 +11,8 @@ class ContactField < ActiveRecord::Base
 
   validates_uniqueness_of :name, :scope => [:account_id, :contact_form_id]
 
-  named_scope :customer_visible, :conditions => { :visible_in_portal => true }
-  named_scope :customer_editable, :conditions => { :editable_in_portal => true }
+  scope :customer_visible, :conditions => { :visible_in_portal => true }
+  scope :customer_editable, :conditions => { :editable_in_portal => true }
   
   DEFAULT_FIELD_PROPS = {
     :default_name           => { :type => 1,  :dom_type => :text, :label => 'user.full_name' },
@@ -48,7 +50,7 @@ class ContactField < ActiveRecord::Base
   # after_commit :clear_contact_fields_cache # Clearing cache in ContactFieldsController#update action
   # Can't clear cache on every ContactField or ContactFieldChoices save
 
-  def default_contact_form
+  def default_contact_form dummy_contact_form_id
     (Account.current || account).contact_form
   end
 

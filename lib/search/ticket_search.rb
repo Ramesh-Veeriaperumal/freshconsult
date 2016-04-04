@@ -1,6 +1,8 @@
 # encoding: utf-8
 module Search::TicketSearch
-  
+
+  NONE_VALUE = -1
+
   def show_options ( column_order = TicketConstants::DEFAULT_COLUMNS_ORDER,
    columns_keys_by_token = TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN,
     columns_option = TicketConstants::DEFAULT_COLUMNS_OPTIONS)
@@ -39,7 +41,7 @@ module Search::TicketSearch
       Account.current.nested_fields_from_cache.each do |col|
         nested_fields = []
 
-        col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
+        col.nested_fields_with_flexifield_def_entries.each do |nested_col|
           nested_fields.push({get_op_list('dropdown').to_sym => 'dropdown',
                               :condition => get_id_from_field(nested_col).to_sym ,
                               :name => nested_col.label , 
@@ -91,16 +93,18 @@ module Search::TicketSearch
   end
   
   def get_custom_choices(tf)
-    choice_array = tf.choices
+    [[NONE_VALUE, I18n.t("filter_options.none")]].concat(tf.dropdown_choices_with_name)
   end
 
   def get_default_choices(criteria_key)
     if criteria_key == :status
-      return Helpdesk::TicketStatus.status_names_from_cache(Account.current)
+      statuses = [[0, I18n.t("filter_options.unresolved")]]
+      return statuses.concat(Helpdesk::TicketStatus.status_names_from_cache(Account.current))
     end
 
     if criteria_key == :ticket_type
-      return Account.current.ticket_types_from_cache.collect { |tt| [tt.value, tt.value] }
+      types = [[NONE_VALUE, I18n.t("filter_options.none")]]
+      return types.concat(Account.current.ticket_types_from_cache.collect { |tt| [tt.value, tt.value] })
     end
 
     if criteria_key == :source
@@ -112,38 +116,38 @@ module Search::TicketSearch
     end
 
     if criteria_key == :responder_id
-      agents = []
-      agents.push([0, I18n.t("helpdesk.tickets.add_watcher.me") ])
-      agents.concat(Account.current.agents_from_cache.collect { |au| [au.user.id, au.user.name] })
-      agents.push([-1, I18n.t("filter_options.unassigned") ])
-      return agents
+      agents = [[0, I18n.t("helpdesk.tickets.add_watcher.me")]]
+      agents.concat(Account.current.agents_from_cache.collect { |au| [au.user.id, au.user.name] })      
+      return agents.push([NONE_VALUE, I18n.t("filter_options.unassigned")])
     end
 
     if criteria_key == :group_id
-      groups = []
-      groups.push([0, I18n.t('filter_options.mygroups') ])
+      groups = [[0, I18n.t('filter_options.mygroups')]]
       groups.concat(Account.current.groups_from_cache.collect { |g| [g.id, CGI.escapeHTML(g.name)]})
-      groups.push([-1, I18n.t("filter_options.unassigned") ])
-      return groups
+      return groups.push([NONE_VALUE, I18n.t("filter_options.unassigned")])
     end
 
     if criteria_key == "helpdesk_schema_less_tickets.product_id"
-      return Account.current.products_from_cache.collect { |au| [au.id, CGI.escapeHTML(au.name)] }
+      products = Account.current.products_from_cache
+      products_list = products.present? ? [[NONE_VALUE, I18n.t("filter_options.none")]] : []
+      return products_list.concat(products.collect { |au| [au.id, CGI.escapeHTML(au.name)] })
     end
 
     if criteria_key == :due_by
-       return TicketConstants.due_by_list
+      return TicketConstants.due_by_list
     end
 
     if criteria_key == "helpdesk_tags.name"
       return Account.current.tags_from_cache.collect { |au| [au.name, CGI.escapeHTML(au.name)] }
     end
 
-    if criteria_key == "users.customer_id"
-      if @current_options && @current_options.has_key?("users.customer_id")
-        company_id = @current_options["users.customer_id"].split(',')
+    if criteria_key == :owner_id
+      if @current_options && @current_options.has_key?("owner_id")
+        company_id = @current_options["owner_id"].split(',').map(&:to_i)
       end
-      @selected_companies = Account.current.companies_from_cache.reject { |c| !company_id.include?(c.id.to_s) } if company_id
+      @selected_companies = Account.current.companies.find_all_by_id(company_id) if company_id
+      @selected_companies << NONE_VALUE if company_id and company_id.include?(NONE_VALUE)
+
       return @selected_companies || [[1,""]]
     end
 
@@ -153,7 +157,7 @@ module Search::TicketSearch
       elsif @current_options && @current_options.has_key?("requester_id")
         requester_id = @current_options["requester_id"].split(',')
       end
-      @selected_requesters = Account.current.users.find(requester_id) if requester_id
+      @selected_requesters = Account.current.users.find_all_by_id(requester_id) if requester_id
       return @selected_requesters || [[1,""]]
     end
 

@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-include GnipHelper
-include DynamoHelper
-include Social::Twitter::Constants
-include Social::Dynamo::Twitter
-include Social::Util
+RSpec.configure do |c|
+  c.include GnipHelper
+  c.include DynamoHelper
+  c.include Social::Twitter::Constants
+  c.include Social::Util
+end
 
-describe Social::TwitterController do
-  integrate_views
+RSpec.describe Social::TwitterController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -69,7 +69,7 @@ describe Social::TwitterController do
       tweet_id = fd_item_params[:item][:feed_id]
       tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
-      tweet.is_ticket?.should be_true
+      tweet.is_ticket?.should be_truthy
       
       if GNIP_ENABLED
         feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
@@ -85,7 +85,7 @@ describe Social::TwitterController do
       tweet_id = fd_item_params[:item][:feed_id]
       tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
-      tweet.is_ticket?.should be_true
+      tweet.is_ticket?.should be_truthy
       
       #Covering exception
       post :create_fd_item, fd_item_params   
@@ -101,7 +101,7 @@ describe Social::TwitterController do
       tweet_id = fd_item_params[:item][:feed_id]
       tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
-      tweet.is_ticket?.should be_true
+      tweet.is_ticket?.should be_truthy
       ticket = tweet.tweetable
       
       @stream_id = "#{@account.id}_#{@custom_stream.id}"
@@ -110,14 +110,15 @@ describe Social::TwitterController do
       reply_tweet_id = twitter_feed[:id]
       twitter_feed[:in_reply_to_status_id_str] = tweet_id
       twitter_feed = Social::Twitter::Feed.new(twitter_feed)
-      Social::Workers::Stream::Twitter.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
+      Social::CustomStreamTwitter.new({}).send("process_stream_feeds", [twitter_feed], stream, reply_tweet_id)
       
       tweet = @account.tweets.find_by_tweet_id(reply_tweet_id)
       tweet.should_not be_nil
-      tweet.is_note?.should be_true
+      tweet.is_note?.should be_truthy
       
       #Covering exception
-      Social::Workers::Stream::Twitter.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
+      Social::CustomStreamTwitter..new({}).send("process_stream_feeds", [twitter_feed], stream, reply_tweet_id)
+      tweet.is_note?.should be_truthy
     end
   end
   
@@ -141,7 +142,7 @@ describe Social::TwitterController do
       tweet_id = fd_item_params[:item][:feed_id]
       tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
-      tweet.is_ticket?.should be_true
+      tweet.is_ticket?.should be_truthy
       ticket = tweet.tweetable
       
       #Stubing reply call
@@ -210,7 +211,7 @@ describe Social::TwitterController do
       tweet_id = fd_item_params[:item][:feed_id]
       tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
-      tweet.is_ticket?.should be_true
+      tweet.is_ticket?.should be_truthy
       ticket = tweet.tweetable
       
       if GNIP_ENABLED
@@ -369,7 +370,7 @@ describe Social::TwitterController do
       tweet_id = fd_item_params[:item][:feed_id]
       tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
-      tweet.is_ticket?.should be_true
+      tweet.is_ticket?.should be_truthy
       ticket = tweet.tweetable
       
       if GNIP_ENABLED
@@ -433,7 +434,7 @@ describe Social::TwitterController do
                       }
                   
                   
-      user_interactions = response.template_objects["interactions"][:others]
+      user_interactions = assigns[:interactions][:others]
       user_interactions.length.should eql(2)
       user_interactions.map{|t| t.feed_id}.should include("#{tweet_id1}", "#{tweet_id2}")
     end
@@ -466,8 +467,8 @@ describe Social::TwitterController do
                           }
     Rails.logger.info response
     Rails.logger.info "%"*100
-    Rails.logger.info response.template_objects["recent_search"].inspect                        
-    recent_search = response.template_objects["recent_search"]
+    Rails.logger.info assigns[:recent_search].inspect  
+    recent_search = assigns[:recent_search]
     recent_search.first["query"].should eql(["hello world"])
     recent_search.second["query"].should eql(["4"])
     recent_search.third["query"].should eql(["3"])
@@ -477,7 +478,7 @@ describe Social::TwitterController do
 
   it "should return older results on  live search" do
       Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
-      
+      request.env["HTTP_ACCEPT"] = "application/javascript"
       get :show_old, {
                               :search => {
                                 :q => ["show old"], 
@@ -487,12 +488,12 @@ describe Social::TwitterController do
                               }
                             }
                             
-      response.should render_template("social/twitter/show_old.rjs")
+      response.should render_template("social/twitter/show_old")
   end
   
   it "should newer results on  live search" do
     Twitter::REST::Client.any_instance.stubs(:search).returns(sample_search_results_object)
-    
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     get :fetch_new, {
                             :search => {
                               :q => ["new results"], 
@@ -501,28 +502,29 @@ describe Social::TwitterController do
                               :refresh_url => ""
                             }
                           }
-    response.should render_template("social/twitter/fetch_new.rjs")
+    response.should render_template("social/twitter/fetch_new")
   end  
   
   it "should fetch retweet when retweeting a particular tweet" do
     Twitter::REST::Client.any_instance.stubs(:retweet).returns("")
-    
+     request.env["HTTP_ACCEPT"] = "application/javascript"
       get :retweet, {
           :tweet => {
             :feed_id => "#{(Time.now.utc.to_f*100000).to_i}"
           }
         }
         
-    response.should render_template("social/twitter/retweet.rjs")
+    response.should render_template("social/twitter/retweet")
   end
   
   it "should fetch retweets from twitter when clicking on a particular tweet" do
     Twitter::REST::Client.any_instance.stubs(:status).returns(sample_twitter_tweet_object)
     Twitter::REST::Client.any_instance.stubs(:retweets).returns([sample_twitter_tweet_object])
+    request.env["HTTP_ACCEPT"] = "application/javascript"
       get :retweets, {
           :retweeted_id => "472324358761750530"
         }
-    response.should render_template("social/twitter/retweets.rjs")
+    response.should render_template("social/twitter/retweets")
   end
   
   it "should post a tweet to twitter" do
@@ -538,6 +540,7 @@ describe Social::TwitterController do
   
   it "should retrieve all user info on clicking on the user link" do
     Twitter::REST::Client.any_instance.stubs(:users).returns([sample_twitter_user((Time.now.utc.to_f*100000).to_i)])
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     get :user_info, {
         :user => {
           :name => "GnipTesting", 
@@ -545,7 +548,7 @@ describe Social::TwitterController do
           :normal_img_url => "https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png"
         }
     }
-    response.should render_template("social/twitter/user_info.rjs")
+    response.should render_template("social/twitter/user_info")
   end
   
   it "should favorite the tweet on clicking the favorite icon" do
@@ -573,6 +576,7 @@ describe Social::TwitterController do
         
     feed_id = tweet_id
     Twitter::REST::Client.any_instance.stubs(:favorite).returns([feed_id])
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     post :favorite, {
        :item => {
         :stream_id => "#{@account.id}_#{@default_stream.id}",
@@ -586,7 +590,7 @@ describe Social::TwitterController do
       feed_entry["favorite"][:n].first.should eql("1")
     end  
     
-    response.should render_template("social/twitter/favorite.rjs")
+    response.should render_template("social/twitter/favorite")
   end
   
   it "should unfavorite the tweet on clicking the unfavorite icon" do
@@ -630,6 +634,7 @@ describe Social::TwitterController do
     
     feed_id = tweet_id
     Twitter::REST::Client.any_instance.stubs(:unfavorite).returns([feed_id])
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     post :unfavorite, {
        :item => {
         :stream_id => "#{@account.id}_#{@default_stream.id}",
@@ -637,7 +642,7 @@ describe Social::TwitterController do
        },
        :search_type => SEARCH_TYPE[:saved]
     }
-    response.should render_template("social/twitter/unfavorite.rjs")
+    response.should render_template("social/twitter/unfavorite")
     
     if GNIP_ENABLED
       feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
@@ -648,36 +653,50 @@ describe Social::TwitterController do
   
   it "should get all the followers of the given screen name among the handles" do
     Twitter::REST::Client.any_instance.stubs(:follower_ids).returns(sample_follower_ids)
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     post :followers, {
        :screen_name => "Testing"
     }
-    response.template_objects["follow_hash"].should eql({@handle.screen_name => true})
-    response.should render_template("social/twitter/followers.rjs")
+    assigns['follow_hash'].should eql({@handle.screen_name => true})
+    response.should render_template("social/twitter/followers")
   end
 
   it "should follow the handle on clicking the follow icon" do
     user_id = get_social_id
     Twitter::REST::Client.any_instance.stubs(:follow).returns([user_id])
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     post :follow, {
       :user => {
         :to_follow => "Testing",
         :screen_name => "Test"
       }
     }
-    response.should render_template("social/twitter/follow.rjs")
+    response.should render_template("social/twitter/follow")
   end
   
   it "should follow the handle on clicking the unfollow icon" do
     user_id = get_social_id
     Twitter::REST::Client.any_instance.stubs(:unfollow).returns([user_id])
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     post :unfollow, {
       :user => {
         :to_follow => "Testing",
         :screen_name => "Test"
       }
     }
-    response.should render_template("social/twitter/unfollow.rjs")
+    response.should render_template("social/twitter/unfollow")
   end
+  
+  it "should check if the user who is responding follows the accout to which being replyed to" do
+    twt_handler = create_test_twitter_handle(@account)
+    
+    Twitter::REST::Client.any_instance.stubs(:friendship?).returns(true)
+    
+    post :user_following, {
+                            :twitter_handle => twt_handler.id, 
+                            :req_twt_id => "TestingTwitter", 
+                          }
+  end 
 
   after(:all) do
     #Destroy the twitter handle

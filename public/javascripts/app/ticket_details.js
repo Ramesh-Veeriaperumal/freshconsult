@@ -1,9 +1,9 @@
 (function($) {
 
-var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval;
+var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval, currentStatus;
 var MAX_EMAILS = 50;
 // ----- SAVING REPLIES AS DRAFTS -------- //
-save_draft = function(content) {
+save_draft = function(content, cc_email_list, bcc_email_list) {
 	if ($.trim(content) != '') {
 		$(".ticket_show #reply-draft").show().addClass('saving');
 		$(".ticket_show #reply-draft").parent().addClass('draft_saved');
@@ -13,7 +13,9 @@ save_draft = function(content) {
 		$.ajax({
 			url: TICKET_DETAILS_DATA['draft']['save_path'],
 			type: 'POST',
-			data: {draft_data: content},
+			data: {draft_data: content,
+			       draft_cc: cc_email_list,
+			       draft_bcc: bcc_email_list},
 			success: function(response) {
 				$(".ticket_show #draft-save")
 					.text(TICKET_DETAILS_DATA['draft']['saved_text'])
@@ -30,8 +32,21 @@ autosaveDraft = function() {
 	if(dontSaveDraft == 0 && TICKET_DETAILS_DATA['draft']['hasChanged']) {
 		var content = $('#cnt-reply-body').getCode();
 
-		if ($.trim(content) != '') 
-			save_draft(content);
+		var cc_email_list = "";
+		$("#cc-form-container-cnt-reply input[name='helpdesk_note[cc_emails][]']").each(function(idx,elem){
+						cc_email_list = cc_email_list + elem.value + ';'
+					});
+		if (cc_email_list.length > 0)
+			cc_email_list = cc_email_list.substr(0, cc_email_list.length - 1) ;
+
+		var bcc_email_list = "";
+		$("#bcc-form-container-cnt-reply input[name='helpdesk_note[bcc_emails][]']").each(function(idx,elem){
+						bcc_email_list = bcc_email_list + elem.value + ';'
+					});
+		if(bcc_email_list.length > 0)
+		  bcc_email_list = bcc_email_list.substr(0,bcc_email_list.length - 1);
+		if ($.trim(content) != '' || cc_email_list.length > 0 || bcc_email_list.length > 0)
+			save_draft(content, cc_email_list, bcc_email_list);
 	}
 
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
@@ -192,7 +207,8 @@ insertIntoConversation = function(value,element_id){
 	$('#canned_responses').modal('hide');
 
 	if($element){
-		if(element_id == "send-tweet-cnt-reply-body" || element_id == "send-fb-post-cnt-reply-body" || element_id == "send-mobihelp-chat-cnt-reply-body"){
+		if(element_id == "send-tweet-cnt-reply-body" || element_id == "send-fb-post-cnt-reply-body" || element_id == "send-mobihelp-chat-cnt-reply-body" || 
+				element_id == "send-ecommerce-post-cnt-reply-body" ){
 			var textValue = jQuery("<div />").html(value).text();
 			$element.focus();
 			insertTextAtCursor($element.get(0), textValue);
@@ -236,23 +252,6 @@ TICKET_DETAILS_DOMREADY = function() {
 
 activeForm = null, savingDraft = false, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
 $('#ticket_original_request *').css({position: ''}); //Resetting the Position
-$('body').on("change.ticket_details", '#helpdesk_ticket_group_id' , function(e){
-	$('#TicketProperties .default_agent')
-		.addClass('loading-right');
-
-	var group_id = $('#helpdesk_ticket_group_id').val();
-	$.ajax({type: 'POST',
-		url: '/helpdesk/commons/group_agents/' + group_id,
-		contentType: 'application/text',
-		success: function(data){
-			$('#TicketProperties .default_agent select')
-				.html(data)
-				.trigger('change');
-
-			$('#TicketProperties .default_agent').removeClass('loading-right');
-		  }
-	});
-});
 
 $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() {
 	var hasMoment = $(this).attr('data-moment');
@@ -260,6 +259,10 @@ $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() 
 	if(hasMoment && moment){
 	  $(this).attr('title', moment(hasMoment).fromNow());
 	}
+});
+
+$('body').on('mouseover.ticket_details', ".conversation", function() {
+	$(this).find('.note-label').remove();
 });
 
 // Attach file button click action
@@ -467,17 +470,6 @@ var scrollToError = function(){
 // End of Due-by time JS
 
 
-//Show alert on sending a reply to DM as a tweet
-	$('body').on('click.ticket_details', '#tweet-reply-btn', function(e) {
-		tweet_type = $(this).data('tweet-type');
-    if(tweet_type == 'dm' && jQuery("#tweet_type_selector").is(':hidden')){
-      confirm_message = $(this).data('confirm-message');
-      if(!confirm(confirm_message)){
-      	e.stopImmediatePropagation();
-      }
-    }
-	});
-
 	if (jQuery('.requester-info-sprite').length < 2) {
 		jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
 	}
@@ -528,11 +520,15 @@ var scrollToError = function(){
 
 
 	$("body").on('change.ticket_details', '#helpdesk_ticket_group_id', function(e){
+		// get the current selected agent if any
+		var select_agent = $('#TicketProperties .default_agent select')[0];
+		var prev_val = select_agent.options[select_agent.selectedIndex].value;
+
 		$('#TicketProperties .default_agent')
 			.addClass('sloading loading-small loading-right');
 
-		$.ajax({type: 'POST',
-			url: '/helpdesk/commons/group_agents/'+this.value,
+		$.ajax({type: 'GET',
+			url: prev_val == "" ? '/helpdesk/commons/group_agents/'+this.value : '/helpdesk/commons/group_agents/'+this.value+"?agent="+prev_val,
 			contentType: 'application/text',
 			success: function(data){
 				$('#TicketProperties .default_agent select')
@@ -544,7 +540,7 @@ var scrollToError = function(){
 		});
 	});
 
-	
+
 	$("body").on('click.ticket_details', '.widget.load_on_click.inactive', function(ev){
 		var widget_code = $(this).find('textarea');
 		$(this).find('.content').append(widget_code.val());
@@ -556,7 +552,7 @@ var scrollToError = function(){
 		$(this).children('.content').trigger('afterShow');
 		$(this).removeClass('inactive load_remote');
 	});
-	
+
 	$("body").on('click.ticket_details', '.widget:not(.load_remote, .load_on_click, .dialog-widget) > h3', function(ev){
 		$(this).parent().toggleClass('inactive');
 	});
@@ -608,6 +604,7 @@ var scrollToError = function(){
 
 		$(this).select2({
 			multiple: true,
+			maximumInputLength: 32,
 			data: hash_val,
 			quietMillis: 500,
 			ajax: { 
@@ -629,6 +626,8 @@ var scrollToError = function(){
 	    initSelection : function (element, callback) {
 	      callback(hash_val);
 	    },
+	    formatInputTooLong: function () { 
+      	return MAX_TAG_LENGTH_MSG; },
 		  createSearchChoice:function(term, data) { 
 		  	//Check if not already existing & then return
         if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
@@ -641,30 +640,56 @@ var scrollToError = function(){
 	// For Twitter Replybox
 	$("body").on("change.ticket_details", '#twitter_handle', function (){
 		twitter_handle= $('#twitter_handle').val();
-		req_twt_id = $('#requester_twitter_handle').val();
+		tweet_type = $('#tkt_tweet_type').val();
+		in_reply_to = $('#in_reply_to_handle').val();
+		
 		istwitter = $('#cnt-reply').data('isTwitter');
-		if (!istwitter || req_twt_id == "" || twitter_handle == "")        
+		if (!istwitter || in_reply_to == "" || twitter_handle == "" || tweet_type == 'dm')        
 			return ;
 
 		$.ajax({   
-			type: 'POST',
-			url: '/social/twitters/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+req_twt_id,
+			type: 'GET',
+			url: '/social/twitter/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+in_reply_to,
 			contentType: 'application/text',
 			success: function(data){ 
 				if (data.user_follows == true)
 				{
-					$('#tweet_type_selector').show();
 					$('#not_following_message').hide();
 				}
 				else
 				{
-					$('#tweet_type_selector').hide();
-					$('#tweet_type').val(':mention');
+					$('#not_following_message').html(data.user_follows)
 					$('#not_following_message').show();
 				}
 			}
 		});
-	}); 
+	});  
+	
+	 // For Twitter Replybox
+	$("body").on("change.ticket_details", '#tweet_type', function (){
+	  var istwitter = $('#cnt-reply').data('isTwitter');
+	  
+	  if (!istwitter) return ;
+	   
+	  getTweetTypeAndBind();
+	});  
+
+	function getTweetTypeAndBind(){
+		var reply_type = $('#tweet_type').val(),
+	  		count = (reply_type == 'dm') ? 10000 : 140;
+	  
+	  bindNobleCount(count);
+	}
+
+	function bindNobleCount(max_chars){
+	  $('#send-tweet-cnt-reply-body').unbind();
+	  
+	  $('#send-tweet-cnt-reply-body').NobleCount('#SendTweetCounter', { on_negative : "error", max_chars : max_chars }); 
+	  
+	  var char_val = $("#SendTweetCounter").text();
+	  $('#send-tweet-cnt-reply-body').data("tweet-count", char_val);
+	 }
+
 
 	//End of Twitter Replybox JS
 
@@ -689,6 +714,7 @@ var scrollToError = function(){
 		} else {
 			$('#' + $(this).data('toggle-checkbox')).prop('checked', true);
 		}
+		$(this).trigger('cleared.emailField');
 	});
 
 
@@ -784,16 +810,30 @@ var scrollToError = function(){
 		if (btn.data('cntId') == "cnt-reply") {
 			$('#cnt-reply-body').val(TICKET_DETAILS_DATA['draft']['default_reply']);
 		}
+		
+		if(_form.attr('rel') == 'tweet_form'){
+			getTweetTypeAndBind();
+		}
 
 		if (_form.attr('rel') == 'forward_form')  {
 			//Remove To Address
 			_form.find('.forward_email li.choice').remove();
 		}
-
+		$('#response_added_alert').remove();
 	});
 
-	$('body').on('click.ticket_details', '#time_integration .app-logo input:checkbox', function(ev) {
-		$(this).parent().siblings('.integration_container').toggle($(this).prop('checked'));
+	// More Event bindings for Draft Saving
+	$('body').on("added.Autocompleter removed.Autocompleter cleared.emailField", function(ev) {
+		if (typeof(TICKET_DETAILS_DATA) !== 'undefined') {
+			if (typeof(TICKET_DETAILS_DATA['draft']['clearingDraft']) === 'undefined' || !TICKET_DETAILS_DATA['draft']['clearingDraft']) {
+				isDirty=true;
+				TICKET_DETAILS_DATA['draft']['hasChanged'] = true;
+			} else {
+				TICKET_DETAILS_DATA['draft']['clearingDraft'] = false;
+			}
+		} else {
+			isDirty=true;
+		}
 	});
 
 	function seperateQuoteText(_form){
@@ -808,11 +848,11 @@ var scrollToError = function(){
 	}
 
 	$('body').on('submit.ticket_details', ".conversation_thread .request_panel form", function(ev) {
-
+		
 		var _form = $(this);
 		if (_form.valid()) {
 
-			if (_form.attr('rel') == 'forward_form')  {
+			if (_form.attr('rel') == 'forward_form' || _form.attr('rel') == 'reply_to_forward_form')  {
 				//Check for To Addresses.              
 				if (_form.find('input[name="helpdesk_note[to_emails][]"]').length == 0 )
 				{
@@ -830,7 +870,6 @@ var scrollToError = function(){
 				return false;
 			}
 
-
 			if (_form.find('input[name="helpdesk_note[bcc_emails][]"]').length >= MAX_EMAILS) {
 				alert('You can add upto ' + MAX_EMAILS + ' BCC emails');
 				return false;
@@ -838,36 +877,42 @@ var scrollToError = function(){
 
 			_form.find('input[type=submit]').prop('disabled', true);
 
-			var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
-			if(statusChangeField.val() != undefined && statusChangeField.val() != "") {
+			var statusChangeField = $('#send_and_set');
+			if(statusChangeField.data('val') != undefined && statusChangeField.data('val') != "") {
 
 				var propertiesForm = $("#custom_ticket_form");
 				if(propertiesForm.valid()) {
 
-					if($.browser.msie) {
-						handleIEReply(_form);
-						submitTicketProperties();
-						return true;
-					}
-					ev.preventDefault();
-					blockConversationForm(_form);
-					if(propertiesForm.data('updated')) {
-		      			submitTicketProperties(function() {
-		      				submitNewConversation(_form, ev);
-		      			})
-		      		}	
+					if($.browser.msie || $.browser.edge) {
+						if(eligibleForReply(_form)){
+							handleIEReply(_form);
+							submitTicketProperties();
+							return true;
+						}
+						changeStatusTo(currentStatus);
+						statusChangeField.data('val', '');
+						return false;
+					} else {
+						ev.preventDefault();
+						blockConversationForm(_form);
+						submitNewConversation(_form, ev, submitTicketProperties);
+		      }
 				} else {
 					ev.preventDefault();
 					scrollToError();
 				}
 			} else {
-				if($.browser.msie) {
-					handleIEReply(_form);
-					return true;
+				if($.browser.msie || $.browser.edge) {
+					if(eligibleForReply(_form)){
+						handleIEReply(_form);
+						return true;
+					}
+					return false;
+				} else {
+					ev.preventDefault();
+					blockConversationForm(_form);
+					submitNewConversation(_form, ev, afterTktPropertiesUpdate);
 				}
-				ev.preventDefault();
-				blockConversationForm(_form);
-				submitNewConversation(_form, ev, afterTktPropertiesUpdate);
 			}
 			
 		} else {
@@ -895,9 +940,35 @@ var scrollToError = function(){
 		}
 	}
 
+	var eligibleForReply = function(_form) {
+		var replyStatus;
+		$('#response_added_alert').remove();
+		if(_form.data('cntId') == 'cnt-fwd' || jQuery(_form).find('#helpdesk_note_private[type=checkbox]').is(':checked')){
+			return true;
+		}
+		$.ajax({
+			type: 'GET',
+			url: "/helpdesk/tickets/"+TICKET_DETAILS_DATA['displayId']+"/conversations/traffic_cop",
+			dataType: 'script',
+			async: false,
+			data: { last_note_id: $('.last_note_id').val(), since_id: TICKET_DETAILS_DATA['last_note_id'] },
+			success: function(data) {
+				if($('#response_added_alert').length > 0){
+					replyStatus = false;
+				} else {
+					replyStatus = true;
+				}
+			}
+		});
+		return replyStatus;
+	}
+
 	var blockConversationForm = function(_form) {
-		if (_form.data('panel')) {
-			$('#' + _form.data('panel')).block({
+		var panel = _form.data('panel');
+		if (panel) {
+			var form_el = $('#' + panel);
+			form_el = _form.data("form") ? form_el.find(".commentbox") : form_el;
+			form_el.block({
 				message: " <h1>...</h1> ",
 				css: {
 					display: 'none',
@@ -936,20 +1007,35 @@ var scrollToError = function(){
 
 			},
 			success: function(response, statusCode, xhr) {
-				if($.trim(response).length){
-					var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
-					if(statusChangeField.length) {
-						if(statusChangeField.val() != '') {
-							refreshStatusBox();
-							if(statusChangeField.val() == TICKET_CONSTANTS.statuses.resolved || statusChangeField.val() == TICKET_CONSTANTS.statuses.closed) {
-								$('[rel=link_ticket_list]').click();
-							}
-							statusChangeField.val('')
-						}
-					}
-
+				var statusChangeField = $('#send_and_set');
+								
+				if($('#response_added_alert').length > 0 && _form.parents('#all_notes').length < 1){
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
+					}
+					if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+						triggerDraftSaving();
+					}
+
+					_form.trigger('focusin.keyboard_shortcuts');
+
+					if(statusChangeField.data('val') != undefined && statusChangeField.data('val') != ""){
+						changeStatusTo(currentStatus);
+						statusChangeField.data('val','');
+						$('.ticket_details #helpdesk_ticket_status').data('updated',false);
+					}
+				}else if($.trim(response).length){
+					if (_form.data('panel')) {
+
+						if(_form.data("form")){
+							var $form = $('#' + _form.data('panel')),
+								form_container = $form.find(".commentbox");
+
+							form_container.unblock();
+						} else {
+							$('#' + _form.data('panel')).unblock();
+						}
+
 						$('#' + _form.data('panel')).hide();
 						$('#' + _form.data('panel')).trigger('visibility');
 					}
@@ -1006,7 +1092,11 @@ var scrollToError = function(){
 						triggerDraftSaving();
 					}
 				}
-
+				
+				if(_form.attr('rel') == 'tweet_form'){
+					getTweetTypeAndBind();
+				}
+				
 			},
 			error: function(response) {
 				
@@ -1052,6 +1142,16 @@ var scrollToError = function(){
 				{
 					$('[rel=link_ticket_list]').click();
 				} else {
+					var statusChangeField = $('#send_and_set');
+					if(statusChangeField.length) {
+						if(statusChangeField.data('val') != '') {
+							refreshStatusBox();
+							if(statusChangeField.data('val') == TICKET_CONSTANTS.statuses.resolved || statusChangeField.data('val') == TICKET_CONSTANTS.statuses.closed) {
+								$('[rel=link_ticket_list]').click();
+							}
+							statusChangeField.data('val', '');
+						}
+					}
 					afterTktPropertiesUpdate();
 				}
 
@@ -1077,15 +1177,24 @@ var scrollToError = function(){
 		}
 		var ticket_fields = tkt_form.find(':input');
 		var data_hash = {};
+
 		ticket_fields.each(function() {
-			if($(this).data().updated)
-			{	
+			if($(this).data().updated) {	
 				var field_name = $(this).attr('name');
+        var lbl_val;
+        
+        if($(this).attr("type") == "checkbox"){
+          lbl_val = $(this).is(":checked")
+        } else {
+          lbl_val = $(this).val()
+        }
+
 				data_hash[field_name] = {
-					value: $(this).val(), 
+					value: lbl_val, 
 					datatype: $(this).get(0).tagName.toLowerCase(),
 					type: field_name.match(/\[.*?\]/)[0] == "[custom_field]" ? "custom_field" : "default" ,
-					required: $(this).hasClass('required')
+					required: $(this).hasClass('required'),
+          name: $(this).find("option:selected").text()
 				};
 			}
 		});
@@ -1094,12 +1203,23 @@ var scrollToError = function(){
 		}
 		ticket_fields.data('updated', false);
 
+		$("#send_and_set").removeData("val");
+		$("#send_and_set").prop('disabled', true);
+
 		if(postProcess) {
-			$('.ticket_details .source-badge-wrap .source')
+			var source_badge = $('.ticket_details .source-badge-wrap .source')
+			var is_refreshed = true;
+			if(source_badge.hasClass("collision_refresh")){
+				is_refreshed = false;
+			}
+			source_badge
 					.attr('class','')
 					.addClass('source ')
 					.addClass('priority_color_' + $('.ticket_details #helpdesk_ticket_priority').val())
 					.addClass('status_' + $('.ticket_details #helpdesk_ticket_status').val());
+			if(!is_refreshed){
+				source_badge.addClass('collision_refresh');
+			}
 
 			$('.ticket_details .source-badge-wrap .source span')
 					.attr('class','')
@@ -1112,8 +1232,8 @@ var scrollToError = function(){
 		changeStatusTo(TICKET_CONSTANTS.statuses.closed);
 		if($('#custom_ticket_form').valid())
 		{
-			var action_attr = $('#custom_ticket_form').attr("action"),
-				isSilentClose = ev.shiftKey || false,
+			var action_attr = $('#custom_ticket_form').attr("action").split("?")[0];
+			var isSilentClose = ev.shiftKey || false,
 				disable_notification = isSilentClose ? "?disable_notification=" + isSilentClose + "&redirect=true" : "?redirect=true";
 
 			$('#custom_ticket_form').attr("action", action_attr + disable_notification);
@@ -1174,7 +1294,8 @@ var scrollToError = function(){
 		ev.preventDefault();
 		$('#canned_response_show').data('editorId', $(this).data('editorId'));
 		var editorId = $('#canned_response_show').data('editorId');
-		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body'){
+		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body' &&
+			editorId != 'send-ecommerce-post-cnt-reply-body' ){
 			$('#'+editorId).data('redactor').saveSelection();
 		}
 		$('#canned_response_show').trigger('click');
@@ -1184,7 +1305,8 @@ var scrollToError = function(){
 		ev.preventDefault();
 		$('#suggested_solutions_show').data('editorId', $(this).data('editorId'));
 		var editorId = $('#suggested_solutions_show').data('editorId');
-		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body'){
+		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body' && 
+			editorId != 'send-ecommerce-post-cnt-reply-body'){
 			$('#'+editorId).data('redactor').saveSelection();
 		}
 		$('#suggested_solutions_show').trigger('click');
@@ -1210,15 +1332,21 @@ var scrollToError = function(){
     $('body').on('click.ticket_details', '[rel=custom-reply-status]', function(ev){
       ev.preventDefault();
       ev.stopPropagation();
-      jQuery('#reply_ticket_status_' + jQuery(this).data('cntId')).val(jQuery(this).data('statusVal'));
+      currentStatus = $('#helpdesk_ticket_status').val();
       jQuery('body').click();
 
-      var new_status = jQuery(this).data('statusVal'); 
+      var new_status	= $(this).data('statusVal'),
+      		noteForm	= $(this).parents('form'); 
       changeStatusTo(new_status);
-      $(this).parents('form').trigger('submit');
-
+      handleSendAndSet(new_status);
+      $('#send_and_set').data('val', ($(this).data('statusVal')));
+      noteForm.trigger('submit');
     });
 
+  function handleSendAndSet(statusVal){
+  	var resolved_or_closed = [TICKET_CONSTANTS.statuses.resolved, TICKET_CONSTANTS.statuses.closed].include(statusVal);
+  	$("#send_and_set").prop('disabled', !resolved_or_closed);
+  }
 
 	// Scripts for ToDo List
 	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {
@@ -1226,6 +1354,10 @@ var scrollToError = function(){
 			ev.preventDefault();
 			if(trim($(this).val()) != '') $(this).parents('form').submit();
 		}
+	});
+
+	$('body').on('click', '.reminder_check', function () {
+		$(this).parent().addClass('disabled');
 	});
 
 	//Binding the Reply/Forward/Add Note buttons
@@ -1252,7 +1384,7 @@ var scrollToError = function(){
 	if (updateShowMore()) updatePagination();
 
 	//Previous Next Buttons request
-	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
+	$.getScript("/helpdesk/tickets/" + TICKET_DETAILS_DATA['displayId'] + "/prevnext");
 
 	$('#twitter_handle').change();
 
@@ -1372,6 +1504,8 @@ TICKET_DETAILS_CLEANUP = function() {
 		"ticket_view_loaded",
 		"ticket_view_unloaded",
 		"sidebar_loaded",
+		"todo_loaded",
+		"time_entry_loaded",
 		"watcher_added",
 		"watcher_removed"
 	];

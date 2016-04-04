@@ -1,0 +1,28 @@
+
+/* 
+*  
+*  @css : Jquery Fixed Header Custom css
+*  @Datatable_version_supported : 1.10.9
+*/
+
+@import "../settings/settings";
+
+.fixedHead{
+	position: fixed;
+	z-index: 10;
+	top : 0;
+	display: none;
+	
+	.fixedColumns{
+		position: absolute;
+		top : 0px;
+		@include left(0px);
+		&.dataTable{
+			@include border-right(1px solid #e5e4e4);
+		}
+	}
+
+	.dataTables_scrollHead th:last-child{
+		@include border-right(1px solid #e5e4e4);	
+	}
+}

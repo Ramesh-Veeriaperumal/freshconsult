@@ -24,8 +24,7 @@
 class Wf::FilterController < ApplicationController
   include AccessibleControllerMethods
 
-  skip_before_filter :check_privilege, :verify_authenticity_token
-  before_filter :chk_usr_permission, :verify_authenticity_token, :only => [:delete_filter,:update_filter]
+  before_filter :chk_usr_permission, :only => [:delete_filter,:update_filter]
   
   def index
     @edit_filters = []
@@ -66,6 +65,12 @@ class Wf::FilterController < ApplicationController
   
   def save_filter
     params.delete(:wf_id)
+    params[:custom_ticket_filter][:visibility][:user_id] = current_user.id
+    unless privilege?(:manage_users)
+      params[:custom_ticket_filter][:visibility][:visibility] = \
+        Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] 
+      params[:custom_ticket_filter][:visibility][:group_id] = nil
+    end  
     
     wf_filter = Helpdesk::Filters::CustomTicketFilter.deserialize_from_params(params)
     wf_filter.visibility = params[:custom_ticket_filter][:visibility]

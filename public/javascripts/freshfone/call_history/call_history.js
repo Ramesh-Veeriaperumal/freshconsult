@@ -9,9 +9,17 @@ window.App = window.App || {};
       this.CallLogs.load();
       this.CallBlock.start();
       this.CallFilter.start();
+      this.bindFreshfonePlayer();
     },
     bindHandlers: function() {
 
+    },
+    bindFreshfonePlayer: function() {
+      if ( Fjax.Assets.alreadyLoaded('360player', 'plugins') ) {
+        freshfonePlayerSettings();  
+      } else {
+        Fjax.Assets.plugin('360player');
+      }
     },
     onLeave: function (data) {
       this.CallLogs.leave();

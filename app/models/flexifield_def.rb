@@ -1,6 +1,8 @@
 class FlexifieldDef < ActiveRecord::Base
+  self.primary_key = :id
   
-  belongs_to :account
+  belongs_to_account
+  belongs_to :survey
   
   attr_protected  :account_id
 
@@ -10,11 +12,14 @@ class FlexifieldDef < ActiveRecord::Base
     
   has_many :flexifield_picklist_vals, :class_name => 'FlexifieldPicklistVal',:through =>:flexifield_def_entries
 
-  named_scope :default_form, :conditions => ["product_id is NULL and module='Ticket'"]
+  scope :default_form, :conditions => ["product_id is NULL and module='Ticket'"]
   
   validates_presence_of :name
   
   # after_update :save_entries
+  
+  TEXT_COL_TYPES  = ["text",    "paragraph"]
+  NUM_COL_TYPES   = ["number",  "decimal"]
 
   def to_ff_field ff_alias
     idx = nil
@@ -38,10 +43,26 @@ class FlexifieldDef < ActiveRecord::Base
     flexifield_def_entries.nil? ? [] : flexifield_def_entries.map(&:flexifield_alias)
   end
 
+  def ff_alias_column_mapping
+    @mapping ||= flexifield_def_entries.each_with_object({}) { |ff_def_entry, hash| hash[ff_def_entry.flexifield_alias] = ff_def_entry.flexifield_name }
+  end
+  
+  def non_text_ff_aliases
+    flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_alias)                                                   
+  end
+
   def ff_fields
     flexifield_def_entries.nil? ? [] : flexifield_def_entries.map(&:flexifield_name)
   end
   
+  def non_text_ff_fields
+    flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_name)
+  end
+  
+  def text_and_number_ff_fields
+    flexifield_def_entries.nil? ? [] : text_and_number_fields.map(&:flexifield_name)
+  end
+
   def unassigned_flexifield_names # Dead code, returns wrong result
     Flexifield.flexiblefield_names - ff_fields
   end
@@ -52,5 +73,13 @@ class FlexifieldDef < ActiveRecord::Base
     flexifield_def_entries.each do |entry|
       entry.save false
     end
+  end
+  
+  def non_text_fields
+    flexifield_def_entries.select {|field| !TEXT_COL_TYPES.include?(field.flexifield_coltype)}
+  end
+
+  def text_and_number_fields
+    flexifield_def_entries.select {|field| (TEXT_COL_TYPES + NUM_COL_TYPES).include?(field.flexifield_coltype)}
   end
 end

@@ -1,9 +1,9 @@
-<% content_for :layoutType do %>community<% end %>
+<% content_for :layoutType do %>community forms<% end %>
 <div class="row-fluid hamburger">
 	<%= sidebar_toggle("mt4") %>
 	<h3 class="lead"><%= t('forum.new') %></h3>
 </div>
-<% form_for :forum, :url => discussions_forums_path do |f| -%>
+<%= form_for :forum, :url => discussions_forums_path do |f| -%>
 	<%= render :partial => "form", :object => f %>
 	<div class="button-container">
 		<%= pjax_link_to(t('cancel'), discussions_path, :class => "btn" ) -%>

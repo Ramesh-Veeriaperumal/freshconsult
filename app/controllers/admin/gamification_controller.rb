@@ -39,6 +39,12 @@ class Admin::GamificationController < Admin::AdminController
     redirect_back_or_default '/admin/gamification'
   end
 
+  def reset_arcade
+    GamificationReset.perform_async()
+    flash[:notice] = I18n.t('gamification.score_reset_successfull')
+    redirect_to :back
+  end
+
   protected
     def scoper
       current_account.quests

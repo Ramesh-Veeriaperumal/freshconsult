@@ -7,7 +7,7 @@
 	* ============================== */
 
 	var Confirmdelete = function (element) {
-		if (element === null) {
+		if (element === null || element.attr('disabled')) {
 			return false;
 		}
 
@@ -108,7 +108,7 @@
 		},
 
 		checkTitle: function(){
-			return this.text_input.val().substring(0,5).toLowerCase() == this.data.itemTitle.substring(0,5).toLowerCase();
+			return this.text_input.val().substring(0,5).toLowerCase() == this.data.itemTitle.toString().substring(0,5).toLowerCase();
 		},
 
 		show: function() {

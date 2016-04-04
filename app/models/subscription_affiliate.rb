@@ -1,4 +1,5 @@
 class SubscriptionAffiliate < ActiveRecord::Base
+  self.primary_key = :id
   not_sharded
   
   has_many :subscriptions
@@ -122,7 +123,7 @@ class SubscriptionAffiliate < ActiveRecord::Base
         account.subscription.save!
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
-        FreshdeskErrorsMailer.deliver_error_email(nil, nil, e,
+        FreshdeskErrorsMailer.error_email(nil, nil, e,
           { :subject => "Error attaching affiliate to the subscription" })
       end
     end

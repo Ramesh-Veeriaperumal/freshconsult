@@ -1,0 +1,20 @@
+<li class="fc-item <%=dom_class%>" data-action="<%=dom_action%>" id="<%=short_code_id%>">
+  <div class="fc-shortcode">
+    <span class="code_view"><%=code%></span>
+    <div class="fc-input">
+      <input type="text" class="short_code_key" value="<%=code%>" placeholder="<%=i18n.code%>">
+    </div>
+  </div>
+  <div class="fc-sc-desc">
+    <span class="message_view"><%=escapeHtml(message)%></span>
+    <div class="fc-input">
+      <input type="text" class="short_code_message" value="<%=message%>" placeholder="<%=i18n.message%>">
+    </div>
+  </div>
+  <div class="fc-sc-options">
+    <span class="fc-sc-edit"><i class="ficon-edit fsize-18 " size="18"></i></span>
+    <span class="fc-sc-delete"><i class="ficon-trash-o fsize-18 " size="18"></i></span>
+    <span class="fc-sc-save"><i class="ficon-save fsize-18 " size="18"></i></span>
+    <span class="fc-sc-discard"><i class="ficon-cross fsize-18 " size="18"></i></span>
+  </div>
+</li>

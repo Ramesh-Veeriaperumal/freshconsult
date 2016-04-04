@@ -1,0 +1,10 @@
+<div class="survey-report table">
+	  <div class="column">
+		Filter by :
+		<%= JST["survey/reports/template/dropdown_component"]({
+					name: "survey_report_filter_by",
+					options: SurveyUtil.rating.choice(),
+					handler: "SurveyUtil.rating.filter(this);"
+				})%>
+	  </div>
+</div>

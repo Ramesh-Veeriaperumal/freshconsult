@@ -1,12 +1,12 @@
 class Social::TwitterController < Social::BaseController
   include Social::Stream::Interaction
-  include Social::Dynamo::Twitter
   include Social::Twitter::Util
   include Conversations::Twitter
   include Social::Twitter::TicketActions
   include Social::Twitter::Constants
   include Mobile::Actions::Social
   include Social::Util
+  include Social::Constants
 
   before_filter :fetch_live_feeds, :only => [:twitter_search, :show_old, :fetch_new]
   before_filter :set_screen_names, :only => [:reply, :retweet, :create_fd_item]
@@ -104,6 +104,18 @@ class Social::TwitterController < Social::BaseController
       format.js
     end
   end
+  
+  #Following method will check requester is a follower of responding twitter Id
+  def user_following
+    user_follows = false
+    reply_handle = current_account.twitter_handles.find(params[:twitter_handle])
+    unless reply_handle.nil?
+      @social_error_msg , user_follows = Social::Twitter::Feed.following?(reply_handle, params[:req_twt_id])
+    end
+    
+    user_following = @social_error_msg.blank? ? (user_follows ? user_follows : t('ticket.tweet_form.user_not_following')): t('twitter.not_authorized')
+    render :json => {:user_follows => user_following }.to_json
+  end
 
   def reply
     @interactions = {
@@ -163,7 +175,8 @@ class Social::TwitterController < Social::BaseController
     if has_permissions?(params[:search_type], @stream_id)
       twt_handle = @stream.twitter_handle unless @stream.nil?
       @social_error_msg, favourite_status = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:favorite])
-      update_favorite_in_dynamo(@stream_id, @feed_id, 1) if @social_error_msg.nil? 
+      dynamo_helper = Social::Dynamo::Twitter.new
+      dynamo_helper.update_favorite_in_dynamo(@stream_id, @feed_id, 1) if @social_error_msg.nil? 
       if favourite_status.blank?
         flash.now[:notice] = @social_error_msg if @social_error_msg
         mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:favorite_error]
@@ -188,7 +201,8 @@ class Social::TwitterController < Social::BaseController
     if has_permissions?(params[:search_type], @stream_id)
       twt_handle = @stream.twitter_handle unless @stream.nil?
       @social_error_msg, unfavourite_status = Social::Twitter::Feed.twitter_action(twt_handle, @feed_id, TWITTER_ACTIONS[:unfavorite])
-      update_favorite_in_dynamo(@stream_id, @feed_id, 0) if not_valid_error?(@social_error_msg)
+      dynamo_helper = Social::Dynamo::Twitter.new
+      dynamo_helper.update_favorite_in_dynamo(@stream_id, @feed_id, 0) if not_valid_error?(@social_error_msg)
       if unfavourite_status.blank? 
         flash.now[:notice] = @social_error_msg unless not_valid_error?(@social_error_msg)
         mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:unfavorite_error]
@@ -397,7 +411,7 @@ class Social::TwitterController < Social::BaseController
         :in_reply_to_id => in_reply_to
       }
       reply_handle = current_account.twitter_handles.find_by_id(params[:twitter_handle_id])
-      @sandbox_error_msg, return_value = twt_sandbox(reply_handle) {
+      @sandbox_error_msg, return_value = twt_sandbox(reply_handle, TWITTER_TIMEOUT[:reply]) {
         twt = tweet_to_twitter(reply_handle, tweet_params)
         @interactions[:current] << recent_agent_reply(twt, nil) if twt
       }
@@ -406,7 +420,7 @@ class Social::TwitterController < Social::BaseController
           update_dynamo_for_tweet(twt, in_reply_to, params[:stream_id], nil)
         elsif params[:search_type] == SEARCH_TYPE[:custom]
           reply_params = agent_reply_params(twt, in_reply_to, nil)
-          update_custom_streams_reply(reply_params, params[:stream_id], nil)
+          Social::Dynamo::Twitter.new.update_custom_streams_reply(reply_params, params[:stream_id], nil)
         end
         MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
       else

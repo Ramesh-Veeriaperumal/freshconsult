@@ -26,6 +26,10 @@ window.App = window.App || {};
 			case 'helpdesk/tickets/show':
 				this.current_module = 'Merge_tickets';
 				break;
+				
+			case 'helpdesk/tickets/compose_email':
+				this.current_module = 'Compose';
+				break;
 			}
 		},
 

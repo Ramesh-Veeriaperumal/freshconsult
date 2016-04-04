@@ -1,4 +1,4 @@
-page.insert_html :bottom, "timesheetlist", :partial => "time_entry", :object => @time_entry
+page.insert_html :top, "timesheetlist", :partial => "time_entry", :object => @time_entry
 
 pushToTimesheetIntegratedApps page, @time_entry
 
@@ -14,5 +14,5 @@ clear_view_timers page, @time_entry, @time_cleared
 page << "jQuery('#new_timeentry [data-submit=modal]').button('start');"
 page << 'totalTime("#timesheetlist .time", "#timeentry_timer_total");'
 page << "jQuery('#timesheetlist .time-tracked-details:not(.time_running) .toggle_timer').hide();"
-page << "jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();"
+page << "jQuery('#timesheetlist .time-tracked-details:first .toggle_timer').show();"
 page << "trigger_event('time_entry_created', #{@time_entry.to_json} );"

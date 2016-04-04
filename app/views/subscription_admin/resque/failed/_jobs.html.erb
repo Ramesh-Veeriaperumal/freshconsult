@@ -19,8 +19,8 @@
       </td>
       <td>
         <input type="button" class="show_trace" value="Show Stacktrace" />
-        <%= link_to t('remove'), destroy_admin_resque_failed_path(id), { :method => :delete }  %>
-        <%= link_to 'Retry', requeue_admin_resque_failed_path(id), { :method => :put } if job['retried_at'].blank? %>
+        <%= link_to t('remove'), resque_failed_path(id), { :method => :delete }  %>
+        <%= link_to 'Retry', failed_requeue_path(id), { :method => :put } if job['retried_at'].blank? %>
       </td>
     </tr>
     <tr style="display:none">

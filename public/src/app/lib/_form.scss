@@ -120,11 +120,6 @@ input.disabled, select.disabled, textarea.disabled{
 	color:#777777 !important;
 }
 
-form table {
-    width: 100%;
-}
-
-
 .auto_bcc_email{
 	@include padding-left(10px !important);
 	input.text{
@@ -160,27 +155,6 @@ ul.ui-form .ui-form-inline{
 	@include text-indent(-9999px);
 }
 
-a.addchoice{
-	padding:5px;
-	color:#999999;
-	border:1px solid #cfcfcf;
-	border-width:1px 0;
-	text-decoration:none;
-	cursor:pointer;
-	@include padding(8px 10px 8px 28px);
-	font-weight:bold;
-	@include link-colors(#333333, #336699, #333333, #333333, #333333);
-	display:block;
-	background-image:url('/images/add.png');
-	background-repeat: no-repeat;
-	background-position: 8px 7px;
-	background-color:#f2f2f2;
-} 
-
-a.addchoice:hover{
-	background-color:#e8e8e8;
-}	
-
 .colsets{ 
 	fieldset{
 		@include pie-clearfix;
@@ -214,11 +188,10 @@ a.addchoice:hover{
 			@include margin(5px 12px 0 5px);
 			cursor: pointer;
 		}
-		.deleteChoice{
+		.rounded-minus-icon{
 			@include float(left);
 			@include margin(5px 12px 0 5px);
 			cursor: pointer;			
-			width:16px; height:16px;
 		}
 	}
 	a.addchoice{
@@ -468,13 +441,6 @@ a.addchoice:hover{
 			}	
 
 			&.addchoice{ 
-				img{	
-				 @include left(13px);
-					opacity: 0.85;
-				}
-				p{
-					@include padding-left(31px);
-				}
 				@include padding(8px 0 8px 4px);
 				border-bottom: 1px solid #DDD;
 				@include border-radius(0px);
@@ -496,23 +462,26 @@ a.addchoice:hover{
 
 			label.error, label.warning{
 			   @include clear(left);
-			}
+			}/*
 			.add, .delete{
 				position:absolute;
 				margin:0;
 				padding:0;
 				cursor:pointer;
-			 @include right(10px);
+			 	@include right(10px);
 				top:10px;
 			}
 			.add{
 			 @include left(3px);
-			}
-			.delete {
+			}*/
+			.rounded-minus-icon {
 				position:relative;
-			 @include right(-10px);
+			 	@include right(-10px);
 				top:8px;
-				opacity:0.5;
+				margin:0;
+			}
+			.rounded-add-icon{
+				@include margin-left(10px) 
 			}
 			div.controls{
 					width:95%;
@@ -531,6 +500,7 @@ a.addchoice:hover{
 			}
 			
 			input.text{
+				margin-left:7px;
 				width:280px;
 				height:18px;
 				font-size:10pt;
@@ -548,6 +518,7 @@ a.addchoice:hover{
 			.radiolabel{@include margin-right(10px);}
 			.webhook{
 				@include margin(20px 0 10px 0px);
+				width: 100%;
 				.credentials{@include padding-left(15.2%); box-sizing: border-box; -moz-box-sizing: border-box;}
 				>div{
 					margin: 2px 0;
@@ -559,12 +530,17 @@ a.addchoice:hover{
 					.change_password{margin-top: 7px; @include margin-left(15px);}
 					.checkbox_label{height:25px; min-height:0; margin:0; padding-top: 8px;}
 					.content_label{margin-top:33px; @include margin-left(0);}
-					input[type="text"], input[type="password"]{width:42.3%;}
-					input[type="text"].api_key{width:87%;}
+					input[type="text"], input[type="password"]{width:42.3%;margin-bottom:30px;}
+					input[type="text"].api_key{width:87%;margin-bottom:30px;}
 					.select2-container{@include left(1px);}	
 					.required_star{top: 15px; margin: 0;}
 					textarea.uri{width: 57%; @include padding-right(17.3%); @include margin-left(0.8%);}
 					.credentials_toggle{@include float(right); @include margin-right(10%); margin-top:-25px; display:inline-block;}
+					.headers_toggle{
+						float: right;
+					    @include margin-right(8.4%);
+					    margin-top: -23px;
+					}
 					.username{height:18px;}
 					.params_div{
 						width: 90.5%; height: 158px; border-color: lightgray;
@@ -783,11 +759,17 @@ li.nested_field{
 				}
 				.close{
 					position:absolute;
-					background:image-url("btn_close_icon.png") no-repeat;
 					width:18px;
 					height:18px;
-				 @include left(5px);
+				 	@include left(5px);
 					top:-2px;
+					cursor: pointer;
+					&:before{
+						content: '\00d7';
+						padding: 2px;
+						color: #000;
+						font-weight: bold;
+					}
 				}
 			}
 		}
@@ -809,7 +791,10 @@ li.nested_field{
 	display:inline-block;
 	padding: 0 10px;
 	position: relative;
-	top: 3px
+	top: 3px;
+	@if $rtl {
+		direction:ltr; //For text to display correct order
+	}
 	
 }
 #duration .error{ padding:0 10px; }
@@ -1175,6 +1160,11 @@ input.search{
 
 .sidepanel{
 	.close{ @include right(14px); }
+	.invoice-emails{
+		display: block;
+		width: 100%;
+		word-break: break-all;
+	}
 }
 
 .ui-dialog-form{
@@ -1859,14 +1849,6 @@ ul.ui-form .inputs-list{
 				color: #404040;
 				position: relative;
 				@include inline-block;
-				span{
-					position: absolute;
-				 @include left(0px);
-					top: 4px;
-					background: url("/images/email_config_add.png") no-repeat;
-					width: 25px;
-					height: 25px;
-				}
 			}
 		}
 		.configure-portal{
@@ -1917,17 +1899,6 @@ ul.ui-form .inputs-list{
 					}
 				}
 			}
-			.deleteChoice{
-				cursor: pointer;
-				background: url(/images/email_config_delete.png) no-repeat;	
-				width: 25px; 
-				height: 25px;
-				position: absolute;
-			 @include right(-28px);
-				&.disabled{
-					background: url(/images/email_config_delete_disabled.png) no-repeat;
-				}
-			}
 		}
 	}
 }
@@ -1963,7 +1934,6 @@ ul.ui-form .inputs-list{
 	padding: 8px;
 }
 #reset_pasword_body{	padding-top: 6px; }
-#reset_password_buttons{ margin-top: 35px; }
 	#reset_password_template{
  display:none;}
 
@@ -2228,7 +2198,7 @@ input[type="text"]{
 
 // for Integrations
 .field.custom_app_preview {
-	margin-top: -14px;
+	margin-top: 0px;
 }
 
 .button-container #loader{
@@ -2376,10 +2346,10 @@ input[type="text"]{
 div.db-chooser{
 	label{ @include margin-right(50%); }
 	.dropbox_button{
-		background: url("/images/dropbox-attach.png") no-repeat left -11px #f3f2f2;
+		background-color: #f3f2f2;
 	    height: 26px;
-	    @include padding-left(90px);
-	    border:1px solid #d6d6d6;
+	    @include padding-left(25px);
+	    border: 1px solid #d6d6d6;
 	    @include border-radius(4px);
 		cursor:pointer;
 		@include text-shadow(1px 1px 0px #fff);

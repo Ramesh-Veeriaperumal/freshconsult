@@ -1,12 +1,13 @@
 class Discussions::ModerationController < ApplicationController
-
+	# TODO !COMMUNITY ForumModeration
+	# This controller can be removed. No more used.
 	helper DiscussionsHelper
 
 	include Community::ModerationCount
 
 	before_filter :set_selected_tab
 
-	before_filter :dynamo_feature_check, :only => :index
+	before_filter :dynamo_redirect, :only => :index
 
 	before_filter :fetch_counts_mysql, :only => :index
 	before_filter :default_scope, :only => :index
@@ -119,8 +120,7 @@ class Discussions::ModerationController < ApplicationController
 			})
 		end
 
-		def dynamo_feature_check
-			return unless current_account.features_included?(:spam_dynamo)
+		def dynamo_redirect
 			redirect_to request.path.gsub('/discussions/moderation', '/discussions/unpublished')
 		end
 end

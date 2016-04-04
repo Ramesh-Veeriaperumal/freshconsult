@@ -15,7 +15,8 @@ class Integrations::LogmeinController < ApplicationController
       ticket_id = redis_val[2]
       account_id = redis_val[1]
       Rails.logger.debug "Adding logging session. Redis Key #{redis_key}"
-      acc_ticket = JSON.parse(get_integ_redis_key(redis_key))
+      redis_key_string = get_integ_redis_key(redis_key)
+      acc_ticket = JSON.parse(redis_key_string) unless redis_key_string.nil?
       unless acc_ticket.blank?
         if (acc_ticket["md5secret"] == secret)
           note_head = '<b>' + t("integrations.logmein.note.header") + ' </b> <br />'
@@ -26,7 +27,7 @@ class Integrations::LogmeinController < ApplicationController
           note_body += t("integrations.logmein.note.tech_email") + " : " + params["TechEmail"] + "<br /><br />"
           note_body += t("integrations.logmein.note.platform") + " : " + params["Platform"] + "<br />"
           note_body += t("integrations.logmein.note.work_time") + " : " + params["WorkTime"] + "<br /><br />"
-          note_body += "<b>" + t("integrations.logmein.note.chatlog")+ "</b>" + ("<div class = 'logmein_chatlog'>" + chatlog + "</div>")
+          note_body += "<b>" + t("integrations.logmein.note.chatlog")+ "</b>" + ("<div class = 'logmein_chatlog'>" + chatlog + "</div>") unless params['ChatLog'].blank?
           note_body += ("<b>" +  t("integrations.logmein.note.tech_notes") + "</b>" + ("<div class = 'logmein_technotes'>" + tech_notes + "</div>")) unless tech_notes.blank?
           ticket = Helpdesk::Ticket.find_by_id_and_account_id(ticket_id, account_id)
           unless ticket.blank?

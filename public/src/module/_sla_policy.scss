@@ -45,7 +45,7 @@
 	}
 	select {
 		width:auto;
-		height: 25px;
+		height: 30px;
 		line-height: 25px;
 	}
 	label {
@@ -69,7 +69,7 @@
 		z-index:2;
 		content:"";
 		top: -6px;
-	 @include left(25px);
+	 	@include left(25px);
 	}
 
 	.open > .dropdown-menu:after {
@@ -78,7 +78,7 @@
 		z-index:3;
 		content:"";
 		top: -5px;
-	 @include left(26px);
+		@include left(26px);
 	}
 
 	.ui-form li.seperator {
@@ -91,6 +91,24 @@
 	.ui-form {
 		background-color: white;
 	}
+	
+	.sla_remainder{
+		font-size: 13px;
+	    font-weight: 500;
+	    color: #06c;
+	    margin: 10px 0;
+	    cursor: pointer;
+
+	    .sla-noitfy-icon{
+	    	vertical-align: middle;
+    		color: #06C;
+	    }
+    }
+
+    .sla_reminder_text {
+    	padding: 20px 0px
+    }
+
 	.escalate_to {
 		padding: 4px 8px 10px;
 		border: 1px solid #CCC;
@@ -122,6 +140,7 @@
 		}
 		table {
 			border-bottom: 0;
+			width: 100%;
 			td {
 				border: 0;
 				background: none;
@@ -158,6 +177,7 @@
 
 						.select2-container {
 							width: 99%;
+							margin-bottom: 8px;
 						}
 						&.level-holder{
 							width:30px;
@@ -167,6 +187,15 @@
 						}
 						&.escalations-time-holder {
 							width:210px;
+
+							.select2-container {
+								width: 150px;
+
+							}
+
+							.select2-choice{
+								padding-bottom: 2px;
+							}
 						}
 						ul {
 							@include border-radius(4px);
@@ -201,14 +230,13 @@
 						}@else{
 							padding-right: 4px;						
 						}
-						width: 16px;
-						height: 16px;
 						position: absolute;
 					}
 				}
 			}
 		}
 	}
+
 
 	li.select2-search-choice, li.select2-search-field {
 		width: auto !important;
@@ -250,7 +278,6 @@
 	.sla_policy_conditions_container {
 		border:1px solid #CFCFCF;
 		@include margin-right(3px);
-		margin-top: 15px;
 		@include border-radius(4px);
 		.condition {
 			background-color:#F6F6F6;
@@ -259,8 +286,6 @@
 			.delete_conditions {
 				@include opacity(0.7);
 				margin-top:7px;
-				width: 16px;
-				height: 16px;
 				position: absolute;
 			}
 			.condition_autocompleter {
@@ -324,12 +349,20 @@
 				@include float(right);
 				@include hide-text();
 				@include padding(2px 3px 2px 7px !important);
-				background: image-url("select2/select2.png") right top no-repeat !important;
 				width: 12px;
 				height: 8px;
-			 @include left(-2px);
+				@include left(-2px);
 				&:hover {
-					background-position: right -11px;
+					color: #363636;
+				}
+				&::after {
+					color: #999;
+					content: "\00d7";
+					position: absolute;
+					top: 1px;
+					@include right(1px);
+					font-size: 17px;
+					font-weight: bold;
 				}
 			}
 			&:hover {
@@ -386,6 +419,10 @@
 }
 /* end of SLA policy */
 
+.select2-search-hide .select2-search {
+    display: none !important;
+}
+
 
 //------------------------------------------------------------------------------------
 //								sla policy page start
@@ -394,6 +431,9 @@
 	th, td{
 		border:0;
 		&:first-child{@include padding-left(0);}
+	}
+	label {
+		padding: 6px 0px 6px 0;
 	}
 	.sla-time-col{
 		position:relative;

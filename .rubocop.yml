@@ -1,0 +1,9 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  RunRailsCops: true
+  Exclude:
+    - 'test/api/query_reports/*'
+
+Metrics/LineLength:
+  Enabled: false

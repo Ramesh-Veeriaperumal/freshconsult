@@ -4,7 +4,7 @@
 
 <h3 class="lead itil-hide"><%=t('.title')%></h3> 
 <hr>
-<% form_for :va_rule, @va_rule, :url => { :action => "create" }, :html => { :method => :post , :id => "ObserverForm" } do |f| %>
-	<%= generate_breadcrumbs(params, f, :extra_buttons_html => '<input type="hidden" name="save_json" id="savejson" value="" />'.html_safe) %>
-	<%= render :partial => "rule_form", :locals => { :f => f } %>
+<%= form_for @va_rule, :url => { :action => "create" }, :html => { :method => :post , :id => "ObserverForm" }, :object_name => :va_rule do |f| %>
+  <%= generate_breadcrumbs(params, f, :extra_buttons_html => '<input type="hidden" name="save_json" id="savejson" value="" />'.html_safe) %>
+  <%= render :partial => "rule_form", :locals => { :f => f } %>
 <% end %>

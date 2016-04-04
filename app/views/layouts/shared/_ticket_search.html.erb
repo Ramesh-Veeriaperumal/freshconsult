@@ -23,7 +23,7 @@
 	<div class="subject_results ticket_search_results hide"></div>
 </div>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	var search_container = jQuery('.' + '<%= container %>' || "search_container")
 												.freshTicketSearch({ className: '<%= container %>' });
 <% end %>

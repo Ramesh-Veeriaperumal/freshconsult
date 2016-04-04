@@ -1,0 +1,3 @@
+page << "jQuery('.bulk-actions-bar').removeClass('hide')" if @updated_items
+page.replace_html "articles_list", :partial => "solution/folders/article", :collection => @new_folder.articles
+page << "App.Solutions.Reorder.toggleReorderButton()"

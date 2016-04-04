@@ -43,11 +43,23 @@ window.App = window.App || {};
 				this.current_module = 'Category';
 				break;
 
+			case 'discussions/topics/new':
+				this.current_module = 'NewTopic';
+				break;
 			}
 		},
 
 		bindHandlers: function () {
+			this.bindDeleteConfirm();
+		},
 
+		bindDeleteConfirm: function () {
+			if($('#del') !== undefined){
+				var submit_btn_id = $('#del').data('target') + '-submit';
+				$(submit_btn_id).live('click', function () {
+					$('#delete_object').trigger('click');
+				})
+			}
 		},
 
 		bindShortcuts: function () {

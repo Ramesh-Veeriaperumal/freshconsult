@@ -1,0 +1,12 @@
+Hi <%=@user.name%>,
+<br/>
+<br/>
+The reports export you had requested is complete. You can download the file from <a href=<%= @export_url %>>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:
+<br/>
+<br/>
+<%=  @export_url %>
+<br/>
+<br/>
+Regards,
+<br/>
+<%= @user.account.helpdesk_name %> Support

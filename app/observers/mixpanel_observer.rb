@@ -3,7 +3,7 @@ class MixpanelObserver < ActiveRecord::Observer
   include MixpanelWrapper
 
   observe Account, Admin::DataImport, Agent, DataExport, EmailConfig, Integrations::InstalledApplication, 
-    Mobihelp::App, Product, Social::TwitterHandle, Subscription, VARule
+    Mobihelp::App, Product, Social::TwitterHandle, Subscription, VaRule
 
   MODELS = {
     :subscription => "Subscription",
@@ -18,36 +18,36 @@ class MixpanelObserver < ActiveRecord::Observer
   }
 
   EVENTS = {
-    :count => ["Social::TwitterHandle", "Agent", "EmailConfig", "Product", "VARule",
+    :count => ["Social::TwitterHandle", "Agent", "EmailConfig", "Product", "VaRule",
       "Mobihelp::App"]
   }
   
   
-  def after_commit_on_create(model)
-    send_account_created_event(model) if model.class.name.eql?(MODELS[:account])
-    send_model_event(model)
+  def after_commit(model)
+    if model.send(:transaction_include_action?, :create)
+      send_account_created_event(model) if model.class.name.eql?(MODELS[:account])
+      send_model_event(model)
+    elsif model.send(:transaction_include_action?, :destroy)
+      if model.class.name == MODELS[:integrations]
+        ::MixpanelWrapper.send_to_mixpanel(model.class.name, {:enabled => false})
+      end
+    end
   end
 
   def after_update(model)
     send_plan_update_event(model) if model.class.name.eql?(MODELS[:subscription])
   end
 
-  def after_commit_on_destroy(model)
-    if model.class.name == MODELS[:integrations]
-      send_to_mixpanel(model.class.name, {:enabled => false})
-    end
-  end
-
   private
     def send_account_created_event(model)
       data = { :email => model.admin_email, :domain => model.full_domain,
        :plan => model.subscription.subscription_plan.name, :state => model.subscription.state } 
-      send_to_mixpanel(model.class.name, data)
+      ::MixpanelWrapper.send_to_mixpanel(model.class.name, data)
     end
 
     def send_model_event(model)
       if !check_valid_model(model) 
-        send_to_mixpanel(model.class.name, fetch_data(model))
+        ::MixpanelWrapper.send_to_mixpanel(model.class.name, fetch_data(model))
       end
     end
 
@@ -68,13 +68,13 @@ class MixpanelObserver < ActiveRecord::Observer
 
     def send_zendesk_import_event(model)
       if model.source == IMPORT[:zendesk]
-        send_to_mixpanel(model.class.name)
+        ::MixpanelWrapper.send_to_mixpanel(model.class.name)
       end
     end
 
     def send_plan_update_event(model)
       data = {:subscription => model.attributes.to_json, :changes => model.changes.clone}
-      send_to_mixpanel(model.class.name, data)
+      ::MixpanelWrapper.send_to_mixpanel(model.class.name, data)
     end
 
     add_method_tracer :send_account_created_event, 'Custom/Mixpanel/account_event'

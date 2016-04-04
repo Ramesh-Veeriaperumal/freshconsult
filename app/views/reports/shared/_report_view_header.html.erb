@@ -1,9 +1,9 @@
 <div class="row-fluid report-header">
   <div class="row-fluid">
     <div class="span12 report-header-content">
-      <div class="span7">
+      <div class="span5">
         <% unless defined?(is_pdf) %>
-          <img src="/images/reports/report-icon.png" alt="<%= t('adv_reports.report')%>" class="vertical-alignment report-header-icon"/>
+          <i class="vertical-alignment report-header-icon reports-icon-report"></i>
         <%end%>
         <div class="vertical-alignment report-inner-heading">
           <h1 class="lead" id="report_header_title"><%=@report_title%></h1>
@@ -14,7 +14,11 @@
         if(report_for == 'helpdesk' || report_for == 'customer')
           old_report_link = (report_for == 'helpdesk') ? helpdesk_activity_url : customer_activity_url
           %>
-          <div class="span5 report-user-details muted"> Note: This report shows data after <%= formated_date(Time.parse("April 1, 2013"),{:include_year => true})%><br/><a href="<%=old_report_link%>">View classic report</a></div>
+          <div class="span7 report-user-details muted"> Note: This report shows data after <%= formated_date(Time.parse("April 1, 2013"),{:include_year => true})%><br/>
+             <% if current_account.classic_reports_enabled? %>
+              <a href="<%=old_report_link%>">View classic report</a>
+             <% end %>
+            </div>
         <%end
       end%>
     </div>
@@ -30,9 +34,11 @@
         <div class="filter-container">
           <ul class="inline" id="filter_container">
             <li>Filtered by:</li>
-            <%@filter_data.each do |obj|%>
-              <li><%=obj["name"]%> : <strong><%=h(obj["value"])%></strong></li>
-            <%end%>
+            <% if @filter_data %>
+              <%@filter_data.each do |obj|%>
+                <li><%=obj["name"]%> : <strong><%=h(obj["value"])%></strong></li>
+              <%end%>
+            <% end %>
             <li>Time Period: <strong><%=@report_date%></strong></li>
           </ul>
         </div>

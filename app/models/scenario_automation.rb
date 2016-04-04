@@ -1,9 +1,12 @@
-class ScenarioAutomation < VARule
+class ScenarioAutomation < VaRule
 
   include Search::ElasticSearchIndex
   include Helpdesk::Accessible::ElasticSearchMethods
   
   attr_protected :account_id
+  belongs_to_account
+  
+  default_scope { where(:rule_type => VAConfig::SCENARIO_AUTOMATION) }
 
   has_one :accessible,
     :class_name => 'Helpdesk::Access',
@@ -16,10 +19,10 @@ class ScenarioAutomation < VARule
 
   delegate :groups, :users, :visible_to_me?,:visible_to_only_me?, :to => :accessible
 
-  before_validation :validate_name, on: [:create, :update]
+  before_validation :validate_name
   before_save :set_active
 
-  named_scope :all_managed_scenarios, lambda { |user|
+  scope :all_managed_scenarios, lambda { |user|
     {
       :joins => %(JOIN helpdesk_accesses acc ON
                   acc.accessible_id = va_rules.id AND
@@ -32,7 +35,7 @@ class ScenarioAutomation < VARule
     }
   }
 
-  named_scope :only_me, lambda { |user|
+  scope :only_me, lambda { |user|
     {
       :joins => %(JOIN helpdesk_accesses acc ON
                   acc.accessible_id = va_rules.id AND
@@ -49,23 +52,25 @@ class ScenarioAutomation < VARule
   }
 
   def to_indexed_json
-    to_json({
-      :root =>"scenario_automation", 
-      :tailored_json => true, 
-      :only => [:account_id, :name, :rule_type, :active],
-      :methods => [:es_access_type, :es_group_accesses, :es_user_accesses],
-      })
+   as_json({
+     :root =>"scenario_automation", 
+     :tailored_json => true, 
+     :only => [:account_id, :name, :rule_type, :active],
+     :methods => [:es_access_type, :es_group_accesses, :es_user_accesses],
+     }).to_json
   end
 
   private
 
   def validate_name
    if (visibility_not_myself? && (self.name_changed? || access_type_changed?))
-    scenario = Account.current.scn_automations.all_managed_scenarios(User.current).find_by_name(self.name)
-    unless scenario.nil?
-      self.errors.add_to_base("Duplicate scenario. Name already exists")
+    scenario = Account.current.scn_automations.all_managed_scenarios(User.current).where("va_rules.name = ?", self.name)
+    scenario= scenario.select{|scn| scn.id!=self.id} if !self.new_record?
+    unless scenario.empty?
+      self.errors.add(:base,I18n.t('automations.duplicate_title'))
       return false
     end
+    true
    end
    true
   end

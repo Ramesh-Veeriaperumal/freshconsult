@@ -1,9 +1,10 @@
 require 'spec_helper'
 
-include FacebookHelper
+RSpec.configure do |c|
+  c.include FacebookHelper
+end
 
-describe Social::FacebookPagesController do
-  integrate_views
+RSpec.describe Social::FacebookPagesController do
   setup :activate_authlogic
   
   self.use_transactional_fixtures = false
@@ -15,7 +16,7 @@ describe Social::FacebookPagesController do
   describe "#GET index" do
     it "should render the index page to add a new facebook page when no pages are configured" do
       get :index
-      response.should render_template("social/facebook_pages/index.html.erb")
+      response.should render_template("social/facebook_pages/index")
     end
     
     
@@ -35,8 +36,8 @@ describe Social::FacebookPagesController do
         get :index, {
           :code => "CODE123"
         }
-        response.should render_template("social/facebook_pages/index.html.erb")
-        response.template_objects["new_fb_pages"].should_not be_nil
+        response.should render_template("social/facebook_pages/index")
+        assigns(:new_fb_pages).should_not be_nil
     end
   end
   

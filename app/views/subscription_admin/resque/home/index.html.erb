@@ -1,7 +1,7 @@
 
 <div class="queues-wrapper">
 	<h1 class='wi'>Queues</h1>
-	<% javascript_tag do -%>
+	<%= javascript_tag do -%>
 	  jQuery('.header').hide();
 	<% end %>
 	
@@ -17,11 +17,11 @@
 		    <tr>
 		      <td class='queue'><%= queue %></td>
 		      <td class='size'><%= Resque.size queue %></td>
-		      <td class="failed_inqueue"> <%= link_to "Failed" , admin_resque_failed_show_path(:queue_name => queue) %> - (<%=failed_queue_count(queue)%>)</td>
+		      <td class="failed_inqueue"> <%= link_to "Failed" , failed_show_path(:queue_name => queue) %> - (<%=failed_queue_count(queue)%>)</td>
 		    </tr>
 	    <% end %>
 	    <tr class="<%= Resque::Failure.count.zero? ? "failed" : "failure" %>">
-	      <td class='queue failed'><%= link_to "Failed" , admin_resque_failed_index_path() %></td>
+	      <td class='queue failed'><%= link_to "Failed" , resque_failed_index_path() %></td>
 	      <td class='size'><%= Resque::Failure.count %></td>
 	      <td></td>
 	    </tr>

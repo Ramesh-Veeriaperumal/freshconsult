@@ -1,0 +1,16 @@
+<div class="twt-list-item" id="tweet_div_<%= feed_id %>">
+  <div class="social-feed row-fluid">
+    <div class="preview-pic span1"><img src="<%= user.image.mini %>" alt=""/></div>
+    <div class="tweet-box span11">
+      <p class="twh">
+        <span class="link"><%= user.name %></span>
+        <span class="tw-handle">@<%= user.screen_name %></span>
+      </p>
+      <p class="tweet-msg"><%= body %></p>
+      <div class="info-data">
+        <i class="social-twitter-grey all-social-icons"></i>
+        <span data-livestamp="<%= posted_time %>" title="<%= posted_time %>"></span>
+      </div>
+    </div>
+  </div>
+</div>

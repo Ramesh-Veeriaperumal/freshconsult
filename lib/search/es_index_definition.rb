@@ -1,6 +1,9 @@
 class Search::EsIndexDefinition
 
-  CLUSTER_ARR = [DEFAULT_CLUSTER = "fd_es_index_1", "fd_es_index_2", "fd_es_index_3"]
+  CLUSTER_ARR = [DEFAULT_CLUSTER = "fd_es_index_1", "fd_es_index_2", "fd_es_index_3", "fd_es_index_4"]
+
+  # Need this to route to only supported locale-based indices
+  SUPPORTED_INDEX_LOCALES = %w(ja-JP ko ru-RU zh-CN)
 
 	class << self
 		include ErrorHandle
@@ -13,7 +16,7 @@ class Search::EsIndexDefinition
 
   # Used for new model migrations
   def additional_models
-    [:scenario_automations]
+    [:admin_canned_responses, :scenario_automations]
   end
 
   def index_hash(pre_fix = DEFAULT_CLUSTER, is_additional_model=false)
@@ -166,6 +169,7 @@ class Search::EsIndexDefinition
                 :user_id => { :type => :long, :include_in_all => false },
                 :folder_id => { :type => :long, :include_in_all => false },
                 :status => { :type => :integer, :include_in_all => false },
+                :language_id => { :type => :integer, :include_in_all => false },
                 :account_id => { :type => :long, :include_in_all => false },
                 :folder => { :type => "object", 
                              :properties => { 
@@ -244,7 +248,13 @@ class Search::EsIndexDefinition
           :account_id => { :type => :long },
           :active => { :type => :boolean  },
           :rule_type => { :type => :long },
-          :name => { :type => :string },
+          :name => {
+            :type => :multi_field,
+            :fields => {
+              :name => {:type => :string},
+              :raw_name => {:type => :string, :analyzer => :case_insensitive}
+            }
+          },
           :es_group_accesses => { :type => :long },
           :es_user_accesses => { :type => :long },
           :es_access_type => { :type => :long }
@@ -262,7 +272,13 @@ class Search::EsIndexDefinition
           :es_group_accesses => { :type => :long },
           :es_user_accesses => { :type => :long },
           :es_access_type => { :type => :long },
-          :title => { :type => :string }
+          :title => {
+            :type => :multi_field,
+            :fields => {
+              :title => {:type => :string},
+              :raw_title => {:type => :string, :analyzer => :case_insensitive}
+            }
+          },
         }
       }
     }
@@ -289,7 +305,8 @@ class Search::EsIndexDefinition
               },
               :analyzer => {
                 :default => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase" ] },
-                :include_stop => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase", "stop" ] }
+                :include_stop => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase", "stop" ] },
+                :case_insensitive => { :type => "custom", :tokenizer => "keyword", :filter => [ "lowercase" ] }
               }
             }
           },
@@ -301,16 +318,29 @@ class Search::EsIndexDefinition
 
   # Will return an array of alias names for the classes provided
   # parameters: search_in (Array of class objects not just names) and account_id
-  def searchable_aliases(search_in, account_id)
+  def searchable_aliases(search_in, account_id, opts={})
     res_aliases = []
     search_in.each do |klass|
-      if klass == ScenarioAutomation
+      if klass == Solution::Article
+        res_aliases << solution_alias(klass.table_name, account_id, opts)
+      elsif klass == ScenarioAutomation
         res_aliases << "scenario_automations_#{account_id}"
       else
         res_aliases << "#{klass.table_name}_#{account_id}"
       end
     end
     res_aliases
+  end
+
+  # Hack for multilingual solutions
+  # Alias: solution_articles_it_1/solution_articles_zh_cn_1
+  def solution_alias(table_name, account_id, opts={})
+    locale = opts.try(:[], :language).to_s
+    if locale.present? and SUPPORTED_INDEX_LOCALES.include?(locale)
+      return "#{table_name}_#{locale.underscore.downcase}_#{account_id}"
+    else
+      return "#{table_name}_#{account_id}"
+    end
   end
 
   def create_aliases(account_id, is_additional_model=false)
@@ -363,11 +393,7 @@ class Search::EsIndexDefinition
   end
 
   def es_cluster(account_id)
-    index = case account_id
-            when 1..55000      then 0
-            when 55001..180000 then 1
-            else                    2
-            end
+    index = es_cluster_pos(account_id)
     # index = (account_id <= 55000) ? 0 : 1
     Tire.configure { url Es_aws_urls[index] }
     CLUSTER_ARR[index]
@@ -378,6 +404,41 @@ class Search::EsIndexDefinition
       return Tire.configure { url Es_aws_urls[i] } if index_prefix.include? prefix
     end
   end
+
+  def es_cluster_pos(account_id)
+    # temperory commit until elasticsearch cluster determination is moved to table
+    return 0 if PodConfig['CURRENT_POD'] == "podeuwest1"
+    case account_id.to_i
+    when 110962           then 3 #Pinnacle sports is in Cluster-4
+    when 1..55000         then 0
+    when 55001..180000    then 1
+    when 180000..238931   then 2
+    else                       3
+    end
+  end
+
+
+  ### Methods to bypass thread-safety issues for ES ###
+
+  # Checking if alias is present in cluster
+  def index_exists?(index_name, account_id)
+    Tire::Configuration.client.head(index_url(index_name, account_id)).success?
+  end
+
+  def document_url(account_id, index_name, doc_klass, doc_id)
+    doc_klass = "Customer" if (doc_klass == "Company") #Hack for company alone as type in es is customer
+    [index_url(index_name, account_id), u(doc_klass.underscore), doc_id].join('/')
+  end
+
+  # For getting the index path
+  def index_url(index_name, account_id)
+    [cluster_url(account_id), index_name].join('/')
+  end
+
+  # For getting the cluster path
+  def cluster_url(account_id)
+    Es_aws_urls[es_cluster_pos(account_id)]
+  end  
 
 end
 end

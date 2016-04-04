@@ -1,6 +1,6 @@
 class WhitelistedIp < ActiveRecord::Base
+  self.primary_key = :id
 
-	include ArExtensions
 	include Cache::Memcache::WhitelistedIp
 
 	belongs_to_account
@@ -12,7 +12,7 @@ class WhitelistedIp < ActiveRecord::Base
 
 	before_validation :valid_ips?, :if => :enabled
 	validate :valid_range?, :current_ip_present_in_range?, :if => :enabled
-
+  
 	def load_ip_info(current_ip)
 		@current_ip = IPAddress current_ip
 		@current_ip_version = @current_ip.ipv4? ? "ipv4?" : "ipv6?"
@@ -22,14 +22,14 @@ class WhitelistedIp < ActiveRecord::Base
 
 	def valid_ips?
 		unless ip_ranges.all? { |ip| valid_ipv4_address?(ip) || valid_ipv6_address?(ip) }
-			errors.add_to_base("#{I18n.t('admin.security.index.valid_ip_address')}")
+			errors.add(:base,"#{I18n.t('admin.security.index.valid_ip_address')}")
 			return false
 		end
 	end
 
 	def valid_range?
 		unless ip_ranges.all? { |ip| (IPAddress ip["start_ip"]) <= (IPAddress ip["end_ip"]) }
-			errors.add_to_base("#{I18n.t('admin.security.index.invalid_ip_range')}")
+			errors.add(:base,"#{I18n.t('admin.security.index.invalid_ip_range')}")
 		end
 	end
 
@@ -43,7 +43,7 @@ class WhitelistedIp < ActiveRecord::Base
        	end
       end
 		end
-		errors.add_to_base("#{I18n.t('admin.security.index.current_ip_not_in_range')}")
+		errors.add(:base,"#{I18n.t('admin.security.index.current_ip_not_in_range')}")
 	end
 
 	# ip --> A Hash. 

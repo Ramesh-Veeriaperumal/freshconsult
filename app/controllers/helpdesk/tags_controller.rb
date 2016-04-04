@@ -1,7 +1,7 @@
 class Helpdesk::TagsController < ApplicationController
-  helper 'helpdesk/tickets'
+  helper Helpdesk::TicketsHelper
 
-  before_filter :set_selected_tab
+  before_filter :set_selected_tab, :check_admin_user_privilege
 
   include HelpdeskControllerMethods
 
@@ -9,7 +9,7 @@ class Helpdesk::TagsController < ApplicationController
 
     tag_id = params[:tag_id].present? ? [params[:tag_id]] : :all
     sort_order = params[:sort] || cookies[:tag_sort_key] || :activity_desc 
-    
+    @archive_feature = current_account.features?(:archive_tickets)
     @tags = Helpdesk::Tag.sort_tags(sort_order).tag_search(params["name"]).find(tag_id).paginate(
         :page => params[:page],
         :include => [:tag_uses],
@@ -63,6 +63,12 @@ class Helpdesk::TagsController < ApplicationController
     end
   end
 
+  def check_admin_user_privilege
+    if !(current_user and  current_user.privilege?(:admin_tasks))
+      flash[:notice] = t('flash.general.access_denied')
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+    end
+  end 
 
   protected
   
@@ -70,5 +76,8 @@ class Helpdesk::TagsController < ApplicationController
       @selected_tab = :admin
    end
 
+   def after_destroy_url
+      helpdesk_tags_url
+   end
 
 end

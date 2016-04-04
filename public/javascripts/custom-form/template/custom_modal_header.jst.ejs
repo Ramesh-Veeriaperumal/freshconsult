@@ -1,0 +1,15 @@
+<h3 class="ellipsis modal-title pull-left">
+			<% icon = 'ficon-'+(
+									(dom_type=='email') ? 
+										'mail' : 
+										(dom_type=='requester') ?
+											'text' :
+											dom_type
+								) %>
+			<span class= '<%= icon %> dom-icon tooltip' title='<%= translate.get(dom_type) %>'></span>
+			<%= translate.get('formTitle') + " : " %> 
+			<span class='field-label'><%= label %></span>
+		</h3>
+		<% if (isDefault) { %>
+			<span class='label label-light pull-right default-tag'> <%= translate.get('default') %> </span>
+		<%  } %>

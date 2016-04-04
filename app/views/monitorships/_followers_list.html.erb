@@ -1,0 +1,34 @@
+
+<% addtional_style = parent.is_a?(Forum) ? 'forum-follower-list' : '' %>
+
+<% if parent.monitors.technicians.count > 0 %> 
+  <div id="followerlist" class="<%= addtional_style %>">
+    <ul class="trans-bg">
+      <% order_followers(parent).each do |monitor| %>
+        <li>
+          <div class="user_image clearfix">
+            <%= user_avatar(monitor, :thumb, "preview_pic circle small" , 
+                            { :width => "36px", :height => "36px" })  %>
+          </div>
+          <% if monitor.id == current_user.id %>
+            <div class="unfollow" title="<%=t('monitorships.unfollow_title')%>" >
+              <i class="rounded-minus-icon"></i>
+            </div>
+            <div class="follower_list">
+              <b><%= t('helpdesk.tickets.add_watcher.me') %></b>&nbsp;
+              <span class="agent_name" title="<%=current_user.name%>"> 
+                (<%= current_user.name %>)
+              </span>
+            </div>
+          <% else %>
+            <div class="follower_list">
+              <span class="agent_name" title="<%=monitor.name%>"> 
+                <%= monitor.name %> 
+              </span>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

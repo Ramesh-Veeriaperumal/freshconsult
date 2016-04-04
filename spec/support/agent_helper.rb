@@ -3,10 +3,10 @@ module AgentHelper
   def add_agent_to_account(account, options={})
     available = options[:available] || 1
     options[:email] = options[:email] || Faker::Internet.email
-    new_agent = Factory.build(:agent, :signature => "Regards, #{options[:name]}", 
+    new_agent = FactoryGirl.build(:agent, :signature => "Regards, #{options[:name]}", 
                                       :account_id => account.id, 
                                       :available => available)
-    new_user = Factory.build(:user, :account => account,
+    new_user = FactoryGirl.build(:user, :account_id => account.id,
                                     :name => options[:name], 
                                     :email => options[:email],
                                     :time_zone => "Chennai", 
@@ -15,7 +15,7 @@ module AgentHelper
                                     :active => options[:active], 
                                     :user_role => options[:role], 
                                     :delta => 1, 
-                                    :language => "en") 
+                                    :language => "en")  
     new_user.agent = new_agent
     new_user.roles = [account.roles.second]
     new_user.save
@@ -27,7 +27,7 @@ module AgentHelper
                               :group_id => options[:group_id])
       ag_grp.save!
     end
-    @acc.users << new_user
+    account.users << new_user
     new_agent
   end
 end

@@ -23,6 +23,7 @@ class ActivationsController < SupportController
       flash[:notice] = t('users.activations.code_expired')
       return redirect_to new_password_reset_path
     end
+    load_password_policy
     set_portal_page :activation_form
   end  
 
@@ -34,7 +35,9 @@ class ActivationsController < SupportController
     else
       if !@email.user.active? or @email.user.crypted_password.blank?
         @user = @email.user
-        set_portal_page :activation_form and return
+        load_password_policy
+        set_portal_page :activation_form 
+        return
       else
         if @email.verified?
           flash[:notice] = t('merge_contacts.email_activated')
@@ -53,10 +56,13 @@ class ActivationsController < SupportController
       @user = current_account.users.find_by_perishable_token(params[:perishable_token]) 
     end
     if @user && @user.activate!(params)
+      @user.reset_perishable_token!
       flash[:notice] = t('users.activations.success')
       @current_user = @user
       redirect_to(root_url) if grant_day_pass
     else
+      load_password_policy
+      set_portal_page :activation_form
       render :action => :new
     end
   end
@@ -69,5 +75,10 @@ class ActivationsController < SupportController
 
     def scoper
       current_account.users #possible dead code
+    end
+
+  private
+    def load_password_policy
+      @password_policy = @user.agent? ? current_account.agent_password_policy : current_account.contact_password_policy
     end
 end

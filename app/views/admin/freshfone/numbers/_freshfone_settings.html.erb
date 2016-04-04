@@ -2,7 +2,7 @@
 	<%= render :partial => "/admin/freshfone/numbers/message_select" %>
 </script>
 
-<% form_for :admin_freshfone_number, @number,
+<%= form_for @number,   :as => :admin_freshfone_number,
 			:url => admin_freshfone_number_path(@number),
 			:html => { :class => "form-horizontal number-settings",
 				:multipart => true,
@@ -23,7 +23,7 @@
 <% content_for :sidebar do %>
 	<div class="sidepanel">
 		<i class="common-icon-help"></i>
-		<h3 class="lead"><%=t('freshfone.admin.number_settings.title')%></h3>
-		<p><%= t('freshfone.admin.number_settings.info').html_safe %></p>
+		<h3 class="lead"><%=t('freshfone.admin.number_settings.title_text')%></h3>
+		<p><%= t('freshfone.admin.number_settings.info_content').html_safe %></p>
 	</div>
 <% end %>

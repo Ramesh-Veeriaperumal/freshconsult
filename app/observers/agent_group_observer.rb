@@ -8,15 +8,18 @@ class AgentGroupObserver < ActiveRecord::Observer
     set_account_id(agent_group)
   end
 
-  def after_commit_on_create(agent_group)
+  def after_commit(agent_group)
     #enqueue in resque to avoid duplicate when list is created in group callback
-    group = agent_group.group
-    if group.round_robin_enabled?
-      Resque.enqueue(Helpdesk::AddAgentToRoundRobin, 
-            { :account_id => agent_group.account_id,
-              :user_id => agent_group.user_id,
-              :group_id => agent_group.group_id }) #maintain state for new key
+    if agent_group.send(:transaction_include_action?, :create)
+      group = agent_group.group
+      if group.round_robin_enabled?
+        Resque.enqueue(Helpdesk::AddAgentToRoundRobin, 
+              { :account_id => agent_group.account_id,
+                :user_id => agent_group.user_id,
+                :group_id => agent_group.group_id }) #maintain state for new key
+      end
     end
+    true
   end
 
   def after_destroy(agent_group)
@@ -29,7 +32,7 @@ class AgentGroupObserver < ActiveRecord::Observer
   private
 
     def set_account_id(agent_group)
-      agent_group.account_id = agent_group.user.account_id
+      agent_group.account_id = agent_group.user.account_id unless agent_group.user.blank?
     end
 
     def auto_refresh_key(agent_group)

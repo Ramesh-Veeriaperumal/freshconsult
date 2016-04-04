@@ -22,53 +22,35 @@
 		jQuery("#customers-select-all")
 			.prop('checked', jQuery('.customers_selector:checked').length == jQuery('.customers_selector').length);
 	});
-
-	jQuery('.send-activation').one("click", function(ev) {
-    	ev.preventDefault();
-    	jQuery(this).button("loading")
-    	var _o_data = jQuery(this).data(),
-    	    _href = jQuery(this).data("url"),
-			_self = jQuery(this),
-			_post_data = { 
-				"_method" : jQuery(this).data("method")
-			}
-		jQuery.ajax({
-			type: 'POST',
-			url: _href,
-			data: _post_data,
-			dataType: "json",
-			success: function(data){		
-				if(data.access_denied){ 
-					_self.button("reset").html("Access denied")
-				}
-
-				if(data.activation_sent)
-					_self.button("complete")
-					setTimeout(function(){
-						_self.addClass("disabled")
-					}, 10);
-			}
-		})
-	});
+	jQuery('.send-activation').on('ajax:success', function (ev, data) {
+		var _self = jQuery(this);
+		console.log(data.activation_sent);
+		if(data.access_denied){ 
+			_self.html("Access denied");
+		}
+		setTimeout(function(){
+			_self.addClass("disabled");
+		}, 10);
+	})
 <% end %>
-<div class="list-page-header"	>
+<div class="list-page-header">
 	<div class="row-fluid">
-		<div class="span6"><h3 class="lead"><%= @page_title = t('customers') %></h3></div>
-		 <div class="span6 pull-right pagination-right header_buttons align-right" >
+		<div class="span4"><h3 class="lead"><%= @page_title = t('customers') %></h3></div>
+		 <div class="span8 pull-right pagination-right header_buttons align-right" >
 			<%= link_to t('export'), {:action => "configure_export"}, 
 				:rel => "freshdialog", 
 				"data-submit-label" => t('export'),
 				"data-width" => "550",
 				"data-title" => t('contacts.export_title', :type => type.capitalize.pluralize),
 				:title => t('contacts.export_title', :type => type.capitalize.pluralize),
+				"data-close-label" =>  t('cancel') ,
 				"data-submit-loading" => t('please_wait'),
 				"data-target"=>"#customer_export" %>
 			<% if privilege?(:manage_contacts) %>
 				&middot;  
-  		 	<%= link_to(t('import'), csv_contact_import_path, :title => t("contacts.import_csv"), :class => " margin-right", :id => "contacts_import") %>
-  			<div style="display:none;"><%= link_to(t('contacts.import_google'), google_contact_import_path, :class => "uiButton grey") %></div>
-  			<%= link_to t('company.new'), new_company_path, :class => "btn" %>			
-  			<%= link_to(t('contacts.new'), new_contact_url, :class => "btn") %>
+	  		 	<%= link_to(t('import'), "/imports/#{type}", :'data-pjax' => "#body-container", :title => t('customer_import.import_csv', :type => type.pluralize.capitalize), :class => " margin-right", :id => "customers_import") %>
+	  			<%= link_to t('company.new'), new_company_path, :class => "btn", :'data-pjax' => "#body-container" %>			
+	  			<%= link_to(t('contacts.new'), new_contact_url, :class => "btn", :'data-pjax' => "#body-container") %>
 			<% end %>      
         </div>
 	</div>

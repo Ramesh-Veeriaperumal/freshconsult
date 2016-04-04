@@ -12,7 +12,7 @@
 			</div>
 			<div class="buy_available_number">
 				<%# number_class = number_element_identifier(number[:phone_number]) %>
-				<% form_tag({:action => 'purchase', :controller => "admin/freshfone/numbers"}, 
+				<%= form_tag({:action => 'purchase', :controller => "admin/freshfone/numbers"}, 
 										{:class => "buy_number"}) do %>
 					<%= hidden_field_tag "phone_number", number[:phone_number] %>
 					<%= hidden_field_tag "formatted_number", number[:phone_number_formatted] %>
@@ -20,6 +20,7 @@
 					<%= hidden_field_tag "country", number[:iso_country] %>
 					<%= hidden_field_tag "type", number[:type] %>
 					<%= hidden_field_tag("address_required", number[:address_required]) if number[:address_required] %>
+					<%= hidden_field_tag("subscription", 'trial') if trial_search? %>
 					<%= link_to t('freshfone.admin.numbers.buy_button_text'), "#", :class => "purchase_number btn",
 																:'data-address-required' => number[:address_required],
 																:'data-rate' => number_to_currency(rate),

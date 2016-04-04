@@ -4,7 +4,7 @@ class RabbitMqController < ApplicationController
 
   def index
     if params[:secret_key] && params[:secret_key] == $rabbitmq_config["secret_key"]
-      exchanges = $rabbitmq_shards.map { |exchange| exchange.name}
+      exchanges = $rabbitmq_model_exchange.map { |key, exchange| exchange.name}
       render :json => { :available_exchanges => exchanges }
     else
       render :json => { :error => "page not found" }, :status => 404

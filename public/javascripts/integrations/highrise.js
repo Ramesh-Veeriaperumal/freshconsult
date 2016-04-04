@@ -2,9 +2,9 @@ var HighriseWidget = Class.create();
 HighriseWidget.prototype= {
 
   initialize:function(highrise_options){
-    jQuery("#highrise_widget").addClass('loading-fb');
+    jQuery("#highrise_contacts_widget").addClass('loading-fb');
     highrise_options.app_name = "Highrise";
-    highrise_options.widget_name = "highrise_widget";
+    highrise_options.widget_name = "highrise_contacts_widget";
     highrise_options.ssl_enabled = true;
     highrise_options.username = highrise_options.k;
     this.highrise_options = highrise_options;

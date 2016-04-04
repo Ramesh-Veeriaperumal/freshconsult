@@ -1,4 +1,4 @@
-<% form_for :email_config, @email_config, :url => admin_email_config_path, :html => { :method => :put, :id => "editEmailConfigForm"} do |f| %>
+<%= form_for @email_config, :url => admin_email_config_path, :object_name => :email_config , :html => { :method => :put, :id => "editEmailConfigForm"} do |f| %>
 <%= f.error_messages %>
 <h3 class="lead"><%=t('email_configs.title')%></h3>
 <ul class="unstyled form-horizontal row-fluid">
@@ -26,7 +26,7 @@
 		<div class="controls">
 	</li>
 
-	<% if feature?(:multi_product) && !@products.empty? %> 
+	<% if feature?(:multi_product) && !@products.empty? && !@email_config.primary_role %> 
 		<li class="control-group">
 			<label class="control-label" ><%=t('email_configs.assign_to_product_msg').html_safe%></label>
 			<div class="controls">
@@ -62,10 +62,10 @@
 		</div>
 
 		<div class="hide" id="CustomMailbox">
-			<% f.fields_for :imap_mailbox, @imap_mailbox do |imap_mailbox| %>
+			<%= f.fields_for :imap_mailbox, @imap_mailbox do |imap_mailbox| %>
 				<%= render :partial => "edit_imap_mailbox", :locals => {:imap_mailbox => imap_mailbox} %>
 			<% end %>
-			<% f.fields_for :smtp_mailbox, @smtp_mailbox do |smtp_mailbox| %>
+			<%= f.fields_for :smtp_mailbox, @smtp_mailbox do |smtp_mailbox| %>
 				<%= render :partial => "edit_smtp_mailbox", :locals => {:smtp_mailbox => smtp_mailbox} %>
 			<% end %>
 		</div>

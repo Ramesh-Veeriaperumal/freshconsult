@@ -4,9 +4,7 @@ module Search::SearchHelper
 	def search_sort_menu
 		@search_sort = @search_sort || 'relevance'
 		sort_menu = ["relevance", "created_at", "updated_at"].each_with_index.map do |s, i|
-						[ 	t("search.sort_by.#{s}"), 
-							{:controller => %{search/#{current_filter}}, :action => 'index', 
-								:term => @search_key, :search_sort => s},
+						[ 	t("search.sort_by.#{s}"), send("search_#{current_filter}_path", {:term => @search_key, :search_sort => s}),
 							(@search_sort.to_s == s) ]
 					end
 		
@@ -14,7 +12,7 @@ module Search::SearchHelper
 				<b>#{t("search.sort_by.#{@search_sort}")}</b><b class="caret"></b>
 			</a>
 			#{dropdown_menu sort_menu, 
-			{'data-remote' => "true", 'data-loading-box' => "#result-wrapper", 'data-response-type' => "script"}}).html_safe
+			{:remote => true, 'data-loading' => "result-wrapper", 'data-loading-classes' => "sloading loading-small", 'data-type' => "script", "data-hide-before" => "#search-page-results"}}).html_safe
 	end
 
 	def search_filter_tabs

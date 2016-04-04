@@ -4,6 +4,7 @@
 	 	 locationClass = { 1: "top", 2: "right", 3: "bottom", 4: "left", top: "top", right: "right", bottom: "bottom", left: "left"},
 		 urlWithScheme = /^[a-zA-Z]+:\/\//,
 		 version  	   = 2,
+		 body_overflow,
 		 options = {
 			widgetId:		0,
 			buttonText: 	"Support",
@@ -19,7 +20,9 @@
 			formHeight: 	"500px",
 			responsive: 	"",
 			widgetType: 	"popup",
-			buttonType:     "text"
+			buttonType:     "text",
+			captcha: 		"",
+			loadOnEvent:    "windowLoad" // 'documentReady' || 'immediate' || 'onDemand'
 		},
 		widgetHeadHTML, widgetBodyHTML = null;
 		$widget_attr = {
@@ -32,8 +35,8 @@
 			"closeButton"   : null,
 			"mobileCloseButton" : null
 		}
-		
-	 // Utility methods for FreshWidget	
+
+	 // Utility methods for FreshWidget
 	 function catchException(fn) {
 		try {
 			return fn();
@@ -115,6 +118,7 @@
 			class_name = locationClass[options.alignment] || "left";
 			$widget_attr.button = document.createElement('div');
 			$widget_attr.button.setAttribute('id', 'freshwidget-button');
+			$widget_attr.button.setAttribute('data-html2canvas-ignore','true');
 			$widget_attr.button.style.display = 'none';
 			$widget_attr.button.className = "freshwidget-button fd-btn-" + class_name;
 
@@ -140,6 +144,7 @@
 				link.className 			   = "freshwidget-customimage";
 				text = document.createElement("img");
 				text.src = options.backgroundImage;
+				text.alt = options.buttonText;
 				text = useFilterforIE(text);
 			}
 
@@ -183,10 +188,11 @@
 
 			$widget_attr.container.className = "freshwidget-container";
 			$widget_attr.container.id = "FreshWidget";
-
 			if(options.responsive == ""){
 				$widget_attr.container.className += " responsive";
 			}
+              // preventing from capturing (screenshot)
+			$widget_attr.container.setAttribute("data-html2canvas-ignore","true");
 
 			$widget_attr.container.style.display = 'none';
 
@@ -194,10 +200,10 @@
 
 			$widget_attr.container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
 						'<div class="freshwidget-dialog" id="freshwidget-dialog">' +
-						' <img id="freshwidget-close" class="widget-close" src="'+options.assetUrl+'/widget_close.png?ver='+ version +'" />' +
+						' <img alt="Close Feedback Form" id="freshwidget-close" class="widget-close" src="'+options.assetUrl+'/widget_close.png?ver='+ version +'" />' +
 						'<div class="mobile-widget-close" id="mobile-widget-close"></div>'+
 						' <div class="frame-container">' +
-						' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" style="height: '+options.formHeight+'"/>' +
+						' 	<iframe title="Feedback Form" id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" style="height: '+options.formHeight+'"/>' +
 						' </div>'
 						'</div>';
 
@@ -222,6 +228,9 @@
 					$widget_attr.iframeLoaded = true;
 				}
 			});
+
+			// triggering message listening event
+	 		childFrameMessage();
 		}
 	 };
 
@@ -238,52 +247,49 @@
 	 	$widget_attr.container.style.display = 'block';
 
 		if(!options.responsive){
+			body_overflow = document.body.style.overflow;
 			document.body.style.overflow='hidden'
 		}
-	 	if(Browser.Version() > 8 && options.screenshot == ""){
-	        html2canvas( [ document.body ], {
-					ignoreIds: "FreshWidget|freshwidget-button",
-					proxy:false,
-				    onrendered: function( canvas ) {
-				      	var img = canvas.toDataURL();
-				      	var message = img;
-
-						 sendMessage = setInterval(function() {
-						 	if ($widget_attr.iframeLoaded) {
-							 	document.getElementById('freshwidget-frame').contentWindow.postMessage(message, "*");
-							 	clearInterval(sendMessage);
-						 	}else {
-						 		//console.log('waiting for iframe to load');
-						 	}
-						 }, 500);
-				    }
-			});
-    	}
 	 	if(!$widget_attr.iframeLoaded) {
 	 		widgetFormUrl();
-	 	}
+	 	}	 	
 	 }
 
 	 function close(){
 	 	$widget_attr.container.style.display = 'none';
 	 	if(!options.responsive){
-			document.body.style.overflow='auto'
+			document.body.style.overflow= body_overflow || "auto";
+
 		}
 	 	widgetFormUrl();
 	 }
-
 	 function initialize(params){
 		extend(params);
 
 		if(Browser.Version() > 8 && (typeof html2canvas === 'undefined') && options.screenshot == "")
 			loadjsfile(options.assetUrl+"/html2canvas.js?ver=" + version);
 
-		bind(window, 'load', function(){
-			// File name to be changed later when uploaded
-			createButton();
-			createContainer();
-		});
+		switch(options.loadOnEvent){
+			case 'windowLoad':
+				bind(window, 'load', createWidget);
+			break;
+			case 'documentReady':
+				bind(document, 'ready', createWidget);
+			break;
+			case 'immediate':
+				createWidget();
+			break;
+		}
+		
+
 		loadcssfile(options.assetUrl+"/freshwidget.css?ver=" + version);
+	 }
+
+
+	 function createWidget() {
+	 	// File name to be changed later when uploaded
+	 	createButton();
+		createContainer();
 	 }
 
 	 function updateWidget(params){
@@ -300,14 +306,41 @@
 		destroyContainer();
 		delete window.FreshWidget;
 	 }
-
+   // listening for message from child
+   function childFrameMessage() {
+   		bind(window, 'message', function(e) {
+	  		var message = e.data;
+	   		if(message=="screenshot") {
+	    		// move to screenshot function
+	    		TakeScreenShot(e);
+	    	}
+      	});
+   }
+   // taking screenshot while child frame requests
+   function TakeScreenShot(e) {
+        	if(Browser.Version() > 8 && options.screenshot == ""){
+   		html2canvas( [ document.body ], {
+			proxy:false,
+		    onrendered: function( canvas ) {
+		      	var img = canvas.toDataURL();
+		      	var message={type:'screenshot',img:img};
+				document.getElementById('freshwidget-frame').contentWindow.postMessage(message, "*");
+		    }
+		});
+		e.stopImmediatePropagation()
+   	}
+   	    
+   }
 	 // Defining Public methods
      var FreshWidget = {
 	 	init 		: function(apikey, params){
 						catchException(function(){ return initialize(params); });
 				      },
+		create      : function(){
+						catchException(function(){ return createWidget(); });
+					  },
 		show 		: function(){
-						catchException(function(){ return showContainer(); });
+						catchException(function(){return showContainer(); });
 					  },
 		close		: function(){
 						catchException(function(){ return close(); });

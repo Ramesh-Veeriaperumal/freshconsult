@@ -3,7 +3,10 @@ module Freshfone::Call::Branches::Missed
   def handle_missed_calls
     if missed_call?
       current_call.update_call(params)
+      render :xml => telephony.non_availability(false) and return if conference?
       call_initiator.missed_call = true
+      add_cost_job 
+      params[:cost_added] = true
       render :xml =>  call_initiator.non_availability
     end
   end
@@ -15,4 +18,7 @@ module Freshfone::Call::Branches::Missed
           !current_call.outgoing? and !call_transferred?
     end
 
+    def conference?
+      current_account.features?(:freshfone_conference)
+    end
 end

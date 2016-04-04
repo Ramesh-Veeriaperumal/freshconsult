@@ -20,14 +20,12 @@
 						<%= t(".replies", :count => @topic.reply_count) %>
 					</li>
 
-					<% unless @forum.announcement? %>
 						<li class="meta-component <%= 'faded' if @topic.user_votes == 0 %>">
 							<%= font_icon "like" %>
 							<span id="topic-vote">
 								<%= t(".vote_info.#{@forum.type_symbol}", :count => @topic.user_votes) %>
 							</span>
 						</li>
-					<% end %>
 
 					<li class="meta-component <%= 'faded' if @topic.hits == 0 %>">
 						<%= font_icon "file-visible" %>

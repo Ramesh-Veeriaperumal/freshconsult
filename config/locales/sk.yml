@@ -1188,7 +1188,6 @@ sk:
       changeplan_instead_of_cancel: "Namiesto zrušenia účtu by ste možno chceli len zmeniť Vašu licenciu."
       intro: "Chcete zrušit Váš účet. Tak ale <strong> natrvalo zmažete všetky Vaše dáta</strong>."
       cancel_account: "Zrušiť Freshdesk účet"
-      goback: "&#x2190; Spät do nastavenia účtu"
       delete_my_account: "Zmazať môj účet"
       confirm_and_cancel_my_account: "Potvrdzujem, že chcem zrušiť môj účet a zmazať všetky moje dáta..."
       you_must_confirm: "Musíte potvrdiť Vašu žiadosť o zrušenie"
@@ -1748,8 +1747,6 @@ sk:
   import: Import
   contains: Obsah
   import_solution_article_info: "Poznámka: Neukládáme komentáre k fóram"
-  no_anonymous_tickets: "Pre odoslanie tiketu sa <a href={{signup}}><b>zaregistrujte</b></a> ako nový užívateľ alebo sa <a href={{login}}><b>prihláste</b></a>."
-  no_signup: "Pro odoslanie tiketu sa, prosím, <a href={{login}}><b>prihláste</b></a>."
   register: Registrovať
   by: podľa
   portal: 
@@ -2062,7 +2059,7 @@ sk:
     inactive_info1: "Všetky Vaše emaily pre podporu sú ešte nepotvrdené; musíte potvrdiť aspoň jeden e-mail"
     info14: "Každý email odoslaný na túto adresu sa zmení na tiket"
     info4: "<strong>POZNÁMKA:</strong> Pokiaľ máte viac emailových adries k podpore viacerých produktov, <a href='{{products_path}}'> môžete ich sem pridať</a>."
-    spf_info: "Doručené emaily z Freshdesku automaticky používajú príslušné ID emailov podpory z emailovej adresy. Vytvorenie <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\"> SPF záznamu </a> v súbore zóny DNS zaistí riadne doručenie emailov."
+    spf_info: "Doručené emaily z Freshdesku automaticky používajú príslušné ID emailov podpory z emailovej adresy. Vytvorenie <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\"> SPF záznamu </a> v súbore zóny DNS zaistí riadne doručenie emailov."
     reply_email: "Váš email podpory"
     unverified_info1: "Na tento email bola odoslaná správa s overovacím odkazom. Tento email pre podporu bude aktivny až po overení."
     inactive_info2: "Od teraz bude štandardný email \"%{default_email}\" použitý ako email pre odpoveď."
@@ -2070,8 +2067,8 @@ sk:
     helpcard: 
       tour1: "Pomôžte mi nastaviť môj email podpory"
       tour2: "Pomôžte mi nakonfigurovať viacnásobné emailové schránky"
-      info5: "Vaša predvolená emailová adresa podpory je<a target=\"_blank\" href=\"https://{{solution_url}}\"></a>{{solution_url}}. Každý sem adresovaný email sa zmení na Tiket."
-      info19: "You can configure your Freshdesk account to use a support email in your own domain, like support@mycompany.com by forwarding emails from this address to <a target=\"_blank\" href=\"https://{{solution_url}}\"> {{solution_url}}</a>. To create a new support email box, click “Edit” under global email settings."
+      info5: "Vaša predvolená emailová adresa podpory je<a target=\"_blank\" href=\"https://%{solution_url}\"></a>%{solution_url}. Každý sem adresovaný email sa zmení na Tiket."
+      info19: "You can configure your Freshdesk account to use a support email in your own domain, like support@mycompany.com by forwarding emails from this address to <a target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. To create a new support email box, click “Edit” under global email settings."
       info21: "You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com, sales@yourcompany.com, etc.) in your helpdesk. You can even setup Freshdesk to automatically assign emails from each mailbox to a specific group."
     primary_supp_email: "Hlavná emailová adresa podpory"
     info16: "Tikety budú priradené k"
@@ -2084,7 +2081,7 @@ sk:
     info18: "Automatická adresa Bcc vkladaná do odpovedí na tikete"
     email_added_succ_msg: "Email bol pridaný"
     assign_to_product_msg: "Prepojiť tento email podpory s produktom"
-    assign_to_product_info: "Ak chcete najskôr prepojit email s novým produktom <a href='{{products_path}}'>, pridajte produkt </a>"
+    assign_to_product_info: "Ak chcete najskôr prepojit email s novým produktom <a href='%{products_path}'>, pridajte produkt </a>"
     new_support_email: "Nový Email Podpory"
     global_support_emails: "Globálny Email Podpory"
     support_email: "Email Podpory"

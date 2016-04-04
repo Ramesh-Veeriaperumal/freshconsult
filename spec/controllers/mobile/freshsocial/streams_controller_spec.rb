@@ -3,7 +3,7 @@ require 'spec_helper'
 include GnipHelper
 include DynamoHelper
 include Social::Twitter::Constants
-include Social::Dynamo::Twitter
+#include Social::Dynamo::Twitter
 include Social::Util
 
 describe Social::StreamsController do
@@ -37,7 +37,7 @@ describe Social::StreamsController do
 
   describe "#stream_feeds" do
     it "should fetch all the streams and also meta_data" do
-      all_streams = @agent.visible_social_streams
+      all_streams = @agent.visible_twitter_streams
       default_streams = all_streams.select { |stream| stream.default_stream? }
       custom_streams  = all_streams.select { |stream| stream.custom_stream? }
       get :stream_feeds, { :format => "json", :send_meta_data => "true" }
@@ -49,7 +49,7 @@ describe Social::StreamsController do
     end
 
     it "should fetch only the streams" do
-      all_streams = @agent.visible_social_streams
+      all_streams = @agent.visible_twitter_streams
       default_streams = all_streams.select { |stream| stream.default_stream? }
       custom_streams  = all_streams.select { |stream| stream.custom_stream? }
       get :stream_feeds, {

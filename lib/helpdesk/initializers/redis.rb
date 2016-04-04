@@ -1,22 +1,25 @@
-config = YAML::load_file(File.join(RAILS_ROOT, 'config', 'redis.yml'))[RAILS_ENV]
+include Redis::RedisWrapper
+
+config = YAML::load_file(File.join(Rails.root, 'config', 'redis.yml'))[Rails.env]
 routes_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_routes.yml'))[Rails.env]
-rate_limit = YAML.load_file(File.join(RAILS_ROOT, 'config', 'rate_limit.yml'))[RAILS_ENV]
-display_id_config = YAML::load_file(File.join(RAILS_ROOT, 'config', 'redis_display_id.yml'))[RAILS_ENV]
+rate_limit = YAML.load_file(File.join(Rails.root, 'config', 'rate_limit.yml'))[Rails.env]
+display_id_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_display_id.yml'))[Rails.env]
 #$redis = Redis.new(:host => config["host"], :port => config["port"])
 
 #$redis_secondary = Redis.new(:host => config["host"], :port => config["port"])
 
-$redis_tickets = Redis.new(:host => config["host"], :port => config["port"])
-$redis_reports = Redis.new(:host => config["host"], :port => config["port"])
-$redis_integrations = Redis.new(:host => config["host"], :port => config["port"])
-$redis_portal = Redis.new(:host => config["host"], :port => config["port"])
-$redis_others = Redis.new(:host => config["host"], :port => config["port"])
-$spam_watcher = Redis.new(:host => rate_limit["host"], :port => rate_limit["port"])
-$redis_routes = Redis.new(:host => routes_config["host"], :port => routes_config["port"])
-$redis_display_id = Redis.new(:host => display_id_config["host"], :port => display_id_config["port"])
+$redis_tickets = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
+$redis_reports = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
+$redis_integrations = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
+$redis_portal = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
+$redis_others = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
+$spam_watcher = Redis.new(:host => rate_limit["host"], :port => rate_limit["port"], :timeout => 0.5)
+$rate_limit = Redis.new(:host => rate_limit["host"], :port => rate_limit["port"], :timeout => 0.5) # Used by fd_api_throttler.
+$redis_routes = Redis.new(:host => routes_config["host"], :port => routes_config["port"], :timeout => 5)
+$redis_display_id = Redis.new(:host => display_id_config["host"], :port => display_id_config["port"], :timeout => 5)
 
 mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.yml'))[Rails.env]
-$redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"])
+$redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"], :timeout => 5)
 
 Redis.class_eval {add_method_tracer :set}
 Redis.class_eval {add_method_tracer :get}
@@ -41,3 +44,4 @@ Redis.class_eval {add_method_tracer :lrem}
 Redis::Client.class_eval {add_method_tracer :read}
 Redis::Client.class_eval {add_method_tracer :process}
 Redis::Client.class_eval {add_method_tracer :connect}
+LaunchParty.configure(:redis => Redis::Namespace.new(:launchparty, :redis => $redis_others))

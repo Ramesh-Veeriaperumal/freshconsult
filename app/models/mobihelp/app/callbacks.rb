@@ -4,6 +4,7 @@ class Mobihelp::App < ActiveRecord::Base
   after_initialize    :fix_config
   before_validation   :remove_white_space
   after_commit        :clear_app_cache
+  after_commit        :clear_app_solution_category_ids
 
   private
 

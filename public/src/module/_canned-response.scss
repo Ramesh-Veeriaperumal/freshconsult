@@ -58,12 +58,6 @@
 	@include box-shadow(0 0 10px rgba(107, 107, 107, 0.4));
 }
 
-.list-toolbar{
-	background:url('/images/ticket_list_head_bg.png');
-	@include padding(5px 8px 8px 10px);
-	border-bottom:1px solid #dfdfdf;
-}
-
 #list-table [disabled]{
 	@include opacity(0.4);
 	cursor: default;
@@ -183,6 +177,10 @@
 	.dropdown {
 		@include float(left);
 	}
+}
+
+.new_canned_response {
+	@include padding-left(5px);
 }
 
 #folders-panel {
@@ -348,6 +346,12 @@ p.imp{
     	margin-top: 10px;
     }
     display: none;
+    & ul.small-list-right{
+    	max-height: 260px;
+    	@include float(left);
+    	overflow-x: hidden;
+    	overflow-y: auto;
+    }
 }
 
 #recently_used_list{
@@ -373,7 +377,8 @@ p.imp{
     }
     #resp-text{
     	display: block;
-    	@include padding-left(27px);
+    	word-break: break-all;
+    	@include padding-left(25px);
     }
 }
 
@@ -404,29 +409,34 @@ p.imp{
 .canned-icons{
     margin-bottom: 5px;
     position: relative;
-
     input[type="text"]{
-    width: 187px;
-    @include clear(both);
-	@include margin(0 0 3px 0);
-	@include padding-right(18px)}
+	    width: 187px;
+	    @include clear(both);
+			@include margin(0 0 3px 0);
+			@include padding-right(18px)
+		}
 }
 
 .clear-search{
-	background: url(/images/close-search.png) no-repeat;
 	position: absolute;
-	top: 9px;
- @include right(14px);
+	top: 7px;
+ 	@include right(14px);
 	display: none;
 	@include float(left);
 	width: 12px;
 	height: 10px;
 	background-color: white;
+	&:before{
+		content: '\00d7';
+		font-size: 18px;
+		font-weight: bold;
+		line-height: 0;
+	}
 }
 
 #bulk_canned_response_holder #clear-search {
-	top: 9px;
- @include right(14px);
+	top: 7px;
+	@include right(14px);
 }
 
 .canned-icons a{
@@ -517,12 +527,11 @@ p.imp{
     #resp-text{
     	display: block;
     	width: 150px;
+    	word-break: break-all;
     }
 }
 
 #resp-icon{
-	height: 17px;
-	width:17px;
 	@include margin-right(10px);
 	@include float(left);
 }
@@ -750,6 +759,9 @@ height: auto;
 .canned_create_folder{
 	height: 40px;
 	overflow: hidden;
+	.controls{
+		@include margin-left(160px);
+	}
 }
 
 .ca-response-move-options {

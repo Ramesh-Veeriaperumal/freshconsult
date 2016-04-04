@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Discussions::ForumsController do
 
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -40,7 +39,7 @@ describe Discussions::ForumsController do
 																:forum_type => 1,
 																:forum_visibility => 1
 															}
-			response.body.should =~ /Name can&#39;t be blank./
+			response.body.should =~ /Name can&#x27;t be blank/
 		end
 
 		it "should not create a new forum without a forum category" do 
@@ -50,7 +49,7 @@ describe Discussions::ForumsController do
 																:forum_type => 1,
 																:forum_visibility => 1
 															}
-			response.should redirect_to 'discussions'
+			response.should redirect_to '/discussions'
 		end
 
 		it "should not create a new forum without a forum type" do 
@@ -61,7 +60,7 @@ describe Discussions::ForumsController do
 																:forum_category_id => @forum_category.id, 
 																:forum_visibility => 1
 															}
-			response.body.should =~ /Forum type can&#39;t be blank./
+			response.body.should =~ /Forum type can&#x27;t be blank/
 		end
 
 		it "should not create a new forum without forum visibility" do 
@@ -119,7 +118,7 @@ describe Discussions::ForumsController do
 			fetched_topics_from_controller = controller.instance_variable_get("@topics")
 			topics = @forum.topics.newest
 			topics = topics.published.find(:all, :include => :votes).sort_by { |u| 
-																	[-u.sticky,-u.votes.size] }.paginate(:page => params[:page],:per_page => 10)
+																	[-u.sticky,-u.votes.size] }.paginate(:page => controller.params[:page],:per_page => 10)
 			fetched_topics_from_controller.should =~ topics
 		end
 
@@ -140,7 +139,7 @@ describe Discussions::ForumsController do
 			fetched_topics_from_controller = controller.instance_variable_get("@topics")
 			topics = @forum.topics.popular(3.months.ago)
 			topics = topics.published.find(:all, :include => :votes).sort_by { |u| 
-																	[-u.sticky,-u.votes.size] }.paginate(:page => params[:page],:per_page => 10)
+																	[-u.sticky,-u.votes.size] }.paginate(:page => controller.params[:page],:per_page => 10)
 			fetched_topics_from_controller.should =~ topics
 		end
 
@@ -162,8 +161,8 @@ describe Discussions::ForumsController do
 			response.should render_template 'discussions/forums/show'
 			fetched_topics_from_controller = controller.instance_variable_get("@topics")
 			topics = @forum.topics.newest
-			topics = topics.published.find(:all,:conditions => ["stamp_type IN (?)", stamp_types]).paginate(
-																																	:page => params[:page],:per_page => 10)
+			topics = topics.published.where("stamp_type IN (?)", stamp_types).paginate(
+																																	:page => controller.params[:page],:per_page => 10)
 			fetched_topics_from_controller.should =~ topics
 		end
 	end
@@ -183,7 +182,7 @@ describe Discussions::ForumsController do
 			end
 			response.code.should be_eql("200")
 			put :reorder, "reorderlist" => reorder_hash.to_json
-			response.should redirect_to(discussions_path)	
+			response.should redirect_to('/discussions')	
 		end
 	end
 
@@ -209,4 +208,12 @@ describe Discussions::ForumsController do
 			response.should redirect_to(support_discussions_forum_path(@forum))
 		end
 	end	
+
+	it "should render followers list" do 
+		forum_category = create_test_category
+		forum = create_test_forum(forum_category)
+		get :followers, :id => forum.id
+		response.should render_template('discussions/forums/followers')
+	end
+
 end

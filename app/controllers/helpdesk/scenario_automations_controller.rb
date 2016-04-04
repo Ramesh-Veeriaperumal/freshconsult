@@ -161,7 +161,7 @@ class Helpdesk::ScenarioAutomationsController < ApplicationController
 
   def reset_accessible_attributes
     accessible=@va_rule.accessible
-    @new_va_rule = @va_rule.clone
+    @new_va_rule = @va_rule.dup
     @new_va_rule.accessible=current_account.accesses.new(:access_type=>accessible.access_type)
     if (accessible.access_type == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups])
       @new_va_rule.accessible.groups=accessible.groups

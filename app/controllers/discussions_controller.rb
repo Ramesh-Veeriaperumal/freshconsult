@@ -73,12 +73,17 @@ class DiscussionsController < ApplicationController
 	end
 
 	def categories
-		@forum_categories = portal_scoper.all(:include => :portals)
 		@topics_count = current_account.topics.count
     respond_to do |format|
-      format.html
-      format.xml  { render :xml => @forum_categories }
-      format.json  { render :json => @forum_categories }
+      format.html {
+      	@forum_categories = portal_scoper.all(:include => :portals)
+      }
+      format.any(:json, :xml)  { 
+      	# To remove unused eager loading in API request. Temp HACK
+      	@forum_categories = portal_scoper.all
+      	render request.format.to_sym => @forum_categories 
+      }
+      
     end
 	end
 
@@ -99,8 +104,7 @@ class DiscussionsController < ApplicationController
 		end
 
 		def portal_scoper
-			# Has to be checked when we introduce the ability to remove the categories from the main portal
-			current_account.main_portal.forum_categories
+			current_account.forum_categories
 		end
 
 		def scoper
@@ -108,7 +112,7 @@ class DiscussionsController < ApplicationController
 		end
 
 		def reorder_scoper
-			current_account.main_portal.portal_forum_categories
+			current_portal.portal_forum_categories
 		end
 
 		def reorder_redirect_url

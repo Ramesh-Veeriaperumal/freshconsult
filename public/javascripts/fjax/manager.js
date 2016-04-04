@@ -1,6 +1,17 @@
 /*jslint browser: true, regexp: true, indent: 2, devel: true */
 /*global  Fjax, App */
 
+String.prototype.asClassName = function () {
+	"use strict";
+	return this
+		.toLowerCase()
+		.split('_')
+		.collect(function (str) {
+			return str.charAt(0).toUpperCase() + str.substring(1);
+		})
+		.join('');
+};
+
 window.App = window.App || {};
 window.Fjax = window.Fjax || {};
 
@@ -29,20 +40,18 @@ window.Fjax = window.Fjax || {};
 			}
 			
 			this.current = asset;
-
-			if (!Fjax.Assets.alreadyLoaded(asset)) {
-				Fjax.Assets.serve(asset);
-			}
+			Fjax.Assets.serve(asset);
 		},
 
 		className: function (asset) {
-			return asset.camelize().capitalize();
+			return asset.asClassName();
 		},
 
 		assetForPath: function (given_path) {
 			var path;
 			for (path in Fjax.Config.paths) {
 				if (Fjax.Config.paths.hasOwnProperty(path) && given_path.startsWith(path)) {
+					//console.log("About to load", Fjax.Config.paths[path]);
 					return Fjax.Config.paths[path];
 				}
 			}
@@ -88,7 +97,7 @@ window.Fjax = window.Fjax || {};
 					} else {
 						if (this.count > Fjax.Config.LOADING_WAIT * 10) {
 							clearInterval(waitingForAsset);
-							console.log('Error trying to load ', this.current);
+							console.log('Error trying to load ', $this.current);
 							$this.current = '';
 						}
 					}

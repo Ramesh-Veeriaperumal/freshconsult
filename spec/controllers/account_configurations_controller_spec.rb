@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe AccountConfigurationsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -22,7 +21,7 @@ describe AccountConfigurationsController do
                               }
     }
     @account.reload
-    response.session[:flash][:notice].should eql "Account settings updated successfully!"
+    session[:flash][:notice].should eql "Account settings updated successfully!"
     @account.account_configuration.contact_info[:first_name].should eql "#{@test_name}"
     @account.account_configuration.contact_info[:phone].should eql "23888880"
   end
@@ -35,7 +34,7 @@ describe AccountConfigurationsController do
                               }
     }
     @account.reload
-    response.session[:flash][:notice].should eql "Failed to update Account Settings!"
+    session[:flash][:notice].should eql "Failed to update Account Settings!"
     @account.account_configuration.contact_info[:last_name].should_not eql "MinHo"
     @account.account_configuration.contact_info[:phone].should_not eql "23881880"
     @account.account_configuration.contact_info[:first_name].should eql "#{@test_name}"

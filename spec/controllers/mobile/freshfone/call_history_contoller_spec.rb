@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Freshfone::CallHistoryController do
+RSpec.describe Freshfone::CallHistoryController do
 	self.use_transactional_fixtures = false
 	before(:each) do
 		create_test_freshfone_account
@@ -16,7 +16,7 @@ describe Freshfone::CallHistoryController do
     		result.should include("call")
     		result["call"].should include("id","call_cost","call_duration","call_sid","call_type","call_status","currency","recording_url","location","created_at","children_count","caller_number","agent")
     		result["call"]["agent"].should include("id","name")
-    		result["call"]["customer"].should include("name")
+        result["call"]["customer"].should include("name")
     	end
     	json_response["freshfone_numbers"][0].should include("number")
     	json_response["freshfone_numbers"][0]["number"].should include("id","display_number")

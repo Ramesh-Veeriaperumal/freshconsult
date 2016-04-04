@@ -1,9 +1,11 @@
 class Helpdesk::SubscriptionsController < ApplicationController
 
   include ActionView::Helpers::TextHelper
+  include Helpdesk::Permissions
 
-  before_filter :load_parent_ticket , :except => :unwatch_multiple
+  before_filter :load_parent_ticket, :verify_permission , :except => :unwatch_multiple
   before_filter :set_native_mobile, :only => [:create_watchers, :unwatch,:index]
+
   def index
     @ticket = @parent
     respond_to do |format|
@@ -22,18 +24,20 @@ class Helpdesk::SubscriptionsController < ApplicationController
       subscription = @ticket.subscriptions.build(:user_id => params[:user_id])
       if subscription.save
         if current_user.id != subscription.user_id
-          Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
+          Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher,
                                                @ticket, 
                                                subscription, 
                                                "#{current_user.name}")
         end
 	    respond_to do |format|
-    	    format.html{render :nothing => true}
+    	    format.html{render :partial => "helpdesk/subscriptions/ticket_watcher_list"}
         	format.nmobile {render :json => { :success => true }.to_json }
     	end
       else
         render :json => { :success => false } 
       end
+    else
+      render :json => { :success => false } 
     end
   end
 
@@ -76,5 +80,9 @@ class Helpdesk::SubscriptionsController < ApplicationController
     def load_parent_ticket
       @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account) 
       raise ActiveRecord::RecordNotFound unless @parent
+    end
+
+    def verify_permission
+      verify_ticket_permission(@parent)
     end
 end

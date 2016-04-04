@@ -7,18 +7,24 @@ class Social::Gnip::TwitterFeed
   include Social::Twitter::Constants
   include Social::Twitter::TicketActions
 
-  attr_accessor :tweet_obj, :posted_time, :tweet_id, :posted_time, :tweet_id, :in_reply_to, :twitter_user_id, :source
+
+  attr_accessor :tweet_obj, :posted_time, :tweet_id, :posted_time, :tweet_id, :in_reply_to, 
+                  :twitter_user_id, :source, :tag_objs, :dynamo_helper
+
 
   alias :feed_id :tweet_id
 
   def initialize(tweet, queue)
     begin
-      @tweet_obj = JSON.parse(tweet).symbolize_keys!
+      @tweet_obj       = JSON.parse(tweet).symbolize_keys!
+      @dynamo_helper   = Social::Dynamo::Twitter.new
       @queue  = queue
       @source = SOURCE[:twitter]
       unless @tweet_obj.nil?
-        @matching_rules = @tweet_obj[:gnip]["matching_rules"] if @tweet_obj[:gnip]
+        matching_rules =  @tweet_obj[:gnip] ? @tweet_obj[:gnip]["matching_rules"] : []
+        
         if @tweet_obj[:actor]
+          @name              = @tweet_obj[:actor]["displayName"]
           @sender            = @tweet_obj[:actor]["preferredUsername"]
           @profile_image_url = @tweet_obj[:actor]["image"]
           @twitter_user_id   = @tweet_obj[:actor]["id"].split(":").last.to_i if @tweet_obj[:actor]["id"]
@@ -27,6 +33,15 @@ class Social::Gnip::TwitterFeed
         @posted_time   = @tweet_obj[:postedTime]
         @tweet_id      = @tweet_obj[:id].split(":").last.to_i if @tweet_obj[:id]
         @retweet_count = @tweet_obj[:retweetCount]
+        @tag_objs      = []
+        
+        
+        matching_rules.each do |rule|
+          tag_array  = rule["tag"].split(DELIMITER[:tags])
+          tag_array.each do |tag|
+            @tag_objs << Gnip::RuleTag.new(tag)
+          end
+        end
       end
     rescue TypeError, JSON::ParserError => e
       @tweet_obj = nil
@@ -35,21 +50,15 @@ class Social::Gnip::TwitterFeed
   end
 
   def process
-    unless @matching_rules.blank? or @matching_rules.nil?
-      @matching_rules.each do |rule|
-        tag_array = rule["tag"].to_s.split(DELIMITER[:tags])
-        tag_array.each do |tag|
-          tag_obj = Gnip::RuleTag.new(tag)
-          args = {
-            :account_id => tag_obj.account_id,
-            :stream_id  => tag_obj.stream_id
-          }
-          process_post(args) if post?
-        end
-      end
-    else
-      notify_social_dev("Received a Gnip System message", @tweet_obj)
-    end
+    notify_social_dev("Received a Gnip System message", @tweet_obj) if @tag_objs.empty?
+    
+    @tag_objs.each do |tag_obj|
+      args = {
+        :account_id => tag_obj.account_id,
+        :stream_id  => tag_obj.stream_id
+      }
+      process_post(args) if post?
+    end    
   end
 
   def feed_hash
@@ -68,11 +77,17 @@ class Social::Gnip::TwitterFeed
       user = set_user if convert_args[:convert]
       
       if reply?
-        tweet = account.tweets.find_by_tweet_id(@in_reply_to)
+        db_stream = args[:stream_id].gsub(TAG_PREFIX, "")
+        tweet = account.tweets.find(:all, :conditions => ["tweet_id = ? AND stream_id =?", @in_reply_to, db_stream]).first
         unless tweet.blank?
           ticket  = tweet.get_ticket
-          user = set_user unless user
-          notable = add_as_note(@tweet_obj, @twitter_handle, :mention, ticket, user, convert_args) if @twitter_handle
+          if ticket
+            user = set_user unless user
+            notable = add_as_note(@tweet_obj, @twitter_handle, :mention, ticket, user, convert_args) if @twitter_handle
+          else 
+            archive_ticket  = tweet.get_archive_ticket
+            notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args,archive_ticket) if convert_args[:convert] && archive_ticket
+          end
         else
           if convert_args[:convert]
             tweet_requeued = requeue(@tweet_obj)
@@ -103,7 +118,7 @@ class Social::Gnip::TwitterFeed
   end
 
   def set_user
-    user = get_twitter_user(@sender, @profile_image_url)
+    user = get_twitter_user(@sender, @profile_image_url,  @name)
     user.make_current
   end
 end

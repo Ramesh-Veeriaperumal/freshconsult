@@ -1,8 +1,0 @@
-<div class="dropdown pull-right">
-  <%= t('helpdesk.dashboard.round_robin.showing') %>: <a role="button" class="dropdown-toggle" id="sorting_dropdown" data-toggle="dropdown" href="#">
-  <b>
-    <%= @group.nil? ? t('helpdesk.dashboard.round_robin.all_agents') : @group.name %></b><b class="caret">
-  </b>
-  </a>
-  <%= group_list_filter %>
-</div>

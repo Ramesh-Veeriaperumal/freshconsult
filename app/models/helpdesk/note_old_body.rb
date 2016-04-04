@@ -2,7 +2,8 @@
 # New notes created should not be stored in this table, they should be stored in riak
 
 class Helpdesk::NoteOldBody < ActiveRecord::Base
-  set_table_name "helpdesk_note_bodies"
+  self.table_name =  "helpdesk_note_bodies"
+  self.primary_key = :id
 
   belongs_to_account
   belongs_to :note, :class_name => 'Helpdesk::Note', :foreign_key => 'note_id'

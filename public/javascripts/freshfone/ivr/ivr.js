@@ -83,7 +83,7 @@ var Ivr;
 			var self = this;
 			$(menu_json).each(function () {
 				var menu = new IvrMenu(self, this).build();
-				$(JSON.parse(this.options)).each(function () {
+				$((this.options)).each(function () {
 					this.menuId = menu.menuId;
 					new IvrOption(self, menu, this).build();
 				});
@@ -141,9 +141,15 @@ var Ivr;
 			isVisible ? element.show() : element.hide();
 		},
 		anyErrorInIvrForm: function () {
-			var self = this, error=false, element;
+			var self = this, error=false, element, val, formattedNum;
 			$(".number_performer_input:visible").each(function () { 
 				element = $(this);
+				val = element.val();
+				if(val) {
+					formattedNum = formatE164(countryForE164Number(val), val);
+					if(formattedNum && formattedNum != val)
+						element.val(formattedNum);
+				}
 				if ( !isValidNumber(element.val()) ) {
 					self.toggleInvalidNumberError(true, element.next());
 					error = true;

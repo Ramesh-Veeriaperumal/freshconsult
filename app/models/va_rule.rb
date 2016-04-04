@@ -1,5 +1,6 @@
- class VARule < ActiveRecord::Base
+class VaRule < ActiveRecord::Base
 
+  self.primary_key = :id
   include Cache::Memcache::VARule
 
   TICKET_CREATED_EVENT = { :ticket_action => :created }
@@ -22,19 +23,21 @@
   attr_writer :conditions, :actions, :events, :performer
   attr_accessor :triggered_event
 
+  attr_accessible :name, :description, :match_type, :active, :filter_data, :action_data, :rule_type, :position
+
   belongs_to :account
   
-  has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule'
+  has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule', :dependent => :destroy
+  has_one :installed_application, :class_name => 'Integrations::InstalledApplication', through: :app_business_rule
+  scope :active, :conditions => { :active => true }
+  scope :inactive, :conditions => { :active => false }
+  scope :slack_destroy,:conditions => ["name in (?)",['slack_create', 'slack_update','slack_note']]
 
-  named_scope :active, :conditions => { :active => true }
-  named_scope :inactive, :conditions => { :active => false }
-  named_scope :slack_destroy,:conditions => ["name in (?)",['slack_create', 'slack_update','slack_note']]
-
-  named_scope :observer_biz_rules, :conditions => { 
+  scope :observer_biz_rules, :conditions => { 
     "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], 
     "va_rules.active" => true }, :order => "va_rules.position"
 
-  acts_as_list
+  acts_as_list :scope => 'account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}'
 
   JOINS_HASH = {
     :helpdesk_schema_less_tickets => " inner join helpdesk_schema_less_tickets on 
@@ -43,9 +46,7 @@
     :helpdesk_ticket_states => " inner join helpdesk_ticket_states on 
           helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
           and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
-    :customers => " inner join users on 
-          helpdesk_tickets.requester_id = users.id  and users.account_id = 
-          helpdesk_tickets.account_id left join customers on users.customer_id = 
+    :customers => " left join customers on helpdesk_tickets.owner_id = 
           customers.id",
     :users => " inner join users on 
           helpdesk_tickets.requester_id = users.id  and users.account_id = 
@@ -54,11 +55,6 @@
           flexifields.flexifield_set_id  and helpdesk_tickets.account_id = 
           flexifields.account_id and flexifields.flexifield_set_type = 'Helpdesk::Ticket'"
   }
-  
-  # scope_condition for acts_as_list
-  def scope_condition
-    "account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}"
-  end
   
   def filter_data
     (observer_rule? || api_webhook_rule?) ? read_attribute(:filter_data).symbolize_keys : read_attribute(:filter_data)
@@ -82,7 +78,7 @@
   
   def deserialize_action(act_hash)
     act_hash.symbolize_keys!
-    Va::Action.new(act_hash)
+    Va::Action.new(act_hash, self)
   end
 
   def check_events doer, evaluate_on, current_events
@@ -92,7 +88,7 @@
   end
 
   def event_matches? current_events, evaluate_on
-    Rails.logger.debug "INSIDE event_matches? WITH evaluate_on : #{evaluate_on.inspect}, va_rule #{self}"
+    Rails.logger.debug "INSIDE event_matches? WITH evaluate_on : #{evaluate_on.inspect}, va_rule #{self.inspect}"
     events.each do  |e|
       if e.event_matches?(current_events, evaluate_on)
         @triggered_event = {e.name => current_events[e.name]}
@@ -117,13 +113,16 @@
     to_ret = false
     conditions.each do |c|
       current_evaluate_on = custom_eval(evaluate_on, c.evaluate_on_type)
-      to_ret = !current_evaluate_on.nil? ? c.matches(current_evaluate_on, actions) : false
-      
+      to_ret = !current_evaluate_on.nil? ? c.matches(current_evaluate_on, actions) : negation_operator?(c.operator)
       return true if to_ret && (s_match == :any)
       return false if !to_ret && (s_match == :all) #by Shan temp
     end
     
     return to_ret
+  end
+
+  def negation_operator?(operator)
+    Va::Constants::NOT_OPERATORS.include?(operator)
   end
 
   def custom_eval(evaluate_on, key)
@@ -133,17 +132,22 @@
     when "requester"
       evaluate_on.requester
     when "company"
-      evaluate_on.requester.company
+      evaluate_on.company
     else
       evaluate_on # for backward compatibility
     end
   end
   
   def trigger_actions(evaluate_on, doer=nil)
-    Va::Action.initialize_activities
+    Va::ScenarioFlashMessage.initialize_activities if automation_rule?
     return false unless check_user_privilege
     @triggered_event ||= TICKET_CREATED_EVENT
     actions.each { |a| a.trigger(evaluate_on, doer, triggered_event) }
+  end
+
+  def fetch_actions_for_flash_notice(doer)
+    Va::ScenarioFlashMessage.initialize_activities
+    actions.each { |a| a.record_action_for_bulk(doer) }
   end
   
   def filter_query
@@ -198,6 +202,7 @@
     return unless dispatchr_rule? || observer_rule? || api_webhook_rule?
     from_action_data, to_action_data = action_data_change
     webhook_action = nil
+
     
     to_action_data.each do |action_data|
       action_data.symbolize_keys!
@@ -246,20 +251,58 @@
   def self.cascade_dispatchr_option
     CASCADE_DISPATCHR_DATA.map { |i| [I18n.t(i[1]), i[2]] }
   end
+  
+  # Used for sending webhook failure notifications
+  def rule_type_desc
+    if dispatchr_rule?
+      I18n.t('admin.home.index.dispatcher')
+    elsif observer_rule?
+      I18n.t('admin.home.index.observer')
+    elsif supervisor_rule?
+      I18n.t('admin.home.index.supervisor')
+    end
+  end
+
+  def rule_path
+    if observer_rule?
+      Rails.application.routes.url_helpers.edit_admin_observer_rule_url(self.id, 
+                                                        host: Account.current.host, 
+                                                        protocol: Account.current.url_protocol)
+    elsif dispatchr_rule?
+      Rails.application.routes.url_helpers.edit_admin_va_rule_url(self.id, 
+                                                        host: Account.current.host, 
+                                                        protocol: Account.current.url_protocol)
+    else
+      I18n.t('not_available')
+    end
+  end
+
+  def check_user_privilege
+    return true unless automation_rule?
+    
+    actions.each do |action|
+      if Va::Action::ACTION_PRIVILEGE.key?(action.action_key.to_sym)
+        return false unless
+          User.current.privilege?(Va::Action::ACTION_PRIVILEGE[action.action_key.to_sym])
+      end
+    end
+    true
+  end
+
 
   private
     def has_events?
       return unless observer_rule? || api_webhook_rule?
-      errors.add_to_base(I18n.t("errors.events_empty")) if(filter_data[:events].blank?)
+      errors.add(:base,I18n.t("errors.events_empty")) if(filter_data[:events].blank?)
     end
     
     def has_conditions?
       return unless supervisor_rule?
-      errors.add_to_base(I18n.t("errors.conditions_empty")) if(filter_data.blank?)
+      errors.add(:base,I18n.t("errors.conditions_empty")) if(filter_data.blank?)
     end
     
     def has_actions?
-      errors.add_to_base(I18n.t("errors.actions_empty")) if(action_data.blank?)
+      errors.add(:base,I18n.t("errors.actions_empty")) if(action_data.blank?)
     end
 
     def filter_array
@@ -270,18 +313,6 @@
       public_key = OpenSSL::PKey::RSA.new(File.read("config/cert/public.pem"))
       Base64.encode64(public_key.public_encrypt(data))
     end  
-
-    def check_user_privilege
-      return true unless automation_rule?
-      
-      actions.each do |action|
-        if Va::Action::ACTION_PRIVILEGE.key?(action.action_key.to_sym)
-          return false unless
-            User.current.privilege?(Va::Action::ACTION_PRIVILEGE[action.action_key.to_sym])
-        end
-      end
-      true
-    end
 
     def negatable_conditions
       conditions = []

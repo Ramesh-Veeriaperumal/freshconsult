@@ -24,7 +24,6 @@ module FreshdeskCore::Model
                         "data_exports", 
                         "day_pass_configs",              
                         "day_pass_usages", 
-                        "day_pass_usages",              
                         "email_configs", 
                         "email_notification_agents",    
                         "email_notifications", 
@@ -105,13 +104,22 @@ module FreshdeskCore::Model
                           "solution_folders",
                           "portal_solution_categories",
                           "solution_articles",
+                          "solution_drafts",
+                          "solution_draft_bodies",
+                          "solution_article_bodies",
+                          "solution_category_meta",
+                          "solution_folder_meta",
+                          "solution_article_meta",
                          
                         "subscriptions",
 
                         "surveys",
+                          "survey_questions",
+                          "survey_question_choices",
                           "survey_handles",
-                          "survey_results", 
-                          "survey_remarks", 
+                          "survey_results",
+                          "survey_result_data",
+                          "survey_remarks",
                         
                         "topics",
                           "ticket_topics",
@@ -137,7 +145,57 @@ module FreshdeskCore::Model
 
                         "mobihelp_apps", 
                         "mobihelp_devices",
-                        "mobihelp_ticket_infos"
+                        "mobihelp_ticket_infos",
+                        "oauth_applications",
+                        "oauth_access_grants",
+                        "oauth_access_tokens",
+                        "archive_tickets",
+                        "archive_ticket_associations",
+                        "archive_notes",
+                        "archive_note_associations",
+                        "archive_childs",
+
+                        "password_policies",
+                        "chat_widgets",
+                        "chat_settings",
+                        "freshfone_blacklist_numbers",
+                        "freshfone_calls",
+                        "freshfone_callers",
+                        "freshfone_ivrs",
+                        "freshfone_numbers",
+                        "freshfone_usage_triggers",
+                        "freshfone_users",
+                        "freshfone_accounts",
+                        "freshfone_number_addresses",
+                        "freshfone_calls_meta",
+                        "freshfone_credits",
+                        "freshfone_number_groups",
+                        "freshfone_other_charges",
+                        "freshfone_payments",
+                        "freshfone_whitelist_countries",
+                        "freshfone_subscriptions",
+                        "freshfone_supervisor_controls",
+                        "freshfone_caller_ids",
+
+                        "survey_questions",
+                        "survey_question_choices",
+                        "survey_result_data",
+                        "day_pass_purchases", 
+                        "ecommerce_accounts", 
+                        "ebay_questions",
+                        "remote_integrations_mappings",
+                        "form_ticket_field_values",
+                        "helpdesk_sections",
+                        "helpdesk_section_fields",
+                        "section_picklist_value_mappings",
+                        "imap_mailboxes",
+                        "app_business_rules",
+                        "mobihelp_app_solutions",
+                        "smtp_mailboxes",
+                        "ticket_form_fields",
+                        "user_companies",
+                        "whitelist_users",
+                        "outgoing_email_domain_categories"
                     ]
 
   STATUS = {
@@ -156,7 +214,6 @@ module FreshdeskCore::Model
     remove_mobile_registrations(account.id)
     remove_addon_mapping(account)
     remove_card_info(account)
-    $redis_others.srem(USER_EMAIL_MIGRATED, account.id) #for contact merge delta
     
     delete_data_from_tables(account.id)
     account.destroy

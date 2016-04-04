@@ -1,10 +1,14 @@
 class Freshfone::NumberObserver < ActiveRecord::Observer
 	observe Freshfone::Number
 	
-	include Freshfone::FreshfoneHelper
+	include Freshfone::FreshfoneUtil
+	include Freshfone::SubscriptionsUtil
 
-	def before_validation_on_update(freshfone_number)
-		build_message_hash(freshfone_number) if freshfone_number.message_changed?
+	def before_validation(freshfone_number)
+    unless freshfone_number.new_record?
+      build_message_hash(freshfone_number) if freshfone_number.message_changed?
+    end
+    freshfone_number
 	end
 
 	def before_save(freshfone_number)
@@ -13,16 +17,30 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 
 	def before_create(freshfone_number)
 		account = freshfone_number.account
-		create_subaccount(account) if new_freshfone_account?(account)
 		build_ivr_for_number(freshfone_number, account)
 		add_number_to_twilio(freshfone_number, account) unless freshfone_number.skip_in_twilio
 		set_number_config(freshfone_number, account)
 	end
 
+	def after_commit(number)
+		return unless number.send(:transaction_include_action?, :create) && trial?
+		if number.account.freshfone_numbers.count == 1 # for first number in trial
+			NateroWorker.perform_async(
+					custom_options: {
+							custom_label_dimensions: [{
+									key: 'phone_trial_enabled',
+									value: 'Yes'
+							}]
+					})
+		end
+	end
+
 	def after_create(freshfone_number)
 		account = freshfone_number.account
-		update_freshfone_credit(freshfone_number, account) if active_freshfone_account?(account)
-		address_certification_request(freshfone_number, account) if active_freshfone_account?(account)
+		Freshfone::Subscription.create_or_update_trial_subscription(
+				account,
+				numbers_usage: freshfone_number.rate) if trial?
+		update_freshfone_credit(freshfone_number, account) unless trial?
 	end
 
 	def before_update(freshfone_number)
@@ -74,22 +92,12 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 				:freshfone_number_id => freshfone_number.id)
 		end
 		
-		def address_certification_request(freshfone_number, account)
-			return unless freshfone_number.address_required
-			FreshfoneNotifier.send_later(:deliver_address_certification, account, freshfone_number)
-		end
-		
-		def active_freshfone_account?(account)
-			#Currently checks only active SUBSCRIPTION. should check for freshfone trial as well when implemented.
-			account.subscription.active?
-		end
-		
 		def build_message_hash(freshfone_number)
-			Freshfone::Number::MESSAGE_FIELDS.each do |msg_type|
+			message_fields(freshfone_number).each do |msg_type|
 				message = freshfone_number[msg_type] || {}
 				freshfone_number[msg_type] = Freshfone::Number::Message.new({
 					:attachment_id => message["attachment_id"].blank? ? nil : message["attachment_id"].to_i,
-					:message => CGI::escapeHTML(message["message"]),
+					:message => CGI::escapeHTML(message["message"] || ""), # Hold and wait message does not have message params
 					:message_type => message["message_type"].to_i,
 					:recording_url => message["recording_url"],
 					:type => msg_type
@@ -102,11 +110,21 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 				freshfone_number[msg_type] = Freshfone::Number::Message.new({
 					:attachment_id => nil,
 					:message => Freshfone::Number::Message::DEFAULT_MESSAGE[msg_type],
-					:message_type => Freshfone::Number::Message::MESSAGE_TYPES[:transcript],
+					:message_type => Freshfone::Number::Message::MESSAGE_TYPES[default_message_type(msg_type)],
 					:recording_url => "",
 					:type => msg_type
 				})
 			end
 		end
 
+		def message_fields(freshfone_number)
+			freshfone_number.account.features?(:freshfone_conference) ? 
+			Freshfone::Number::MESSAGE_FIELDS : Freshfone::Number::MESSAGE_FIELDS.reject{ |msg_type| 
+				[:wait_message, :hold_message].include? msg_type }
+		end
+
+		def default_message_type(msg_type)
+			([:wait_message, :hold_message].include? msg_type) ? 
+			 :uploaded_audio : :transcript
+		end
 end

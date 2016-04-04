@@ -1,0 +1,91 @@
+<% content_for :onload_script do %> 
+  jQuery('body').on('click', '.dropdown-menu .item', function(e) {
+    e.preventDefault();
+    jQuery('.conv-menu .sub-info').text(jQuery(this).text());
+  });
+<% end %>
+
+<div id="tickets-expanded" class="contact_tickets row-fluid">
+  <div class="detailed_view">
+    
+    <% if current_account.features?(:archive_tickets)
+      list = [ [ t('contacts.conversations.recent_tickets'), '#conv_tickets', true, {:id => 'conv_tickets-tab', :'data-hash-url' => false }] ]
+      list << [ :divider ]
+      list << [ t('contacts.conversations.archive_tickets'), '#conv_archive_tickets', false, {:id => 'conv_archive_tickets-tab', :'data-hash-url' => false } ]
+
+      options = {'data-toggle' => 'tab', 'class' => 'item', 'ul_class' => 'tick'} %>
+
+      <div data-tabs='tabs'>
+        <ul role='tablist'>
+          <li class="dropdown active">
+            <h1 class='conv-title conv-menu dropdown-toggle' data-toggle="dropdown">
+              <span class='sub-info'><%= t('contacts.conversations.recent_tickets') %></span>
+              <span class='caret'></span>
+            </h1>
+            <%= dropdown_menu(list, options) %>
+          </li>
+        </ul>
+      </div>
+    <% else %>
+      <h1 class='conv-title'>
+        <span class='sub-info'><%= t('contacts.conversations.recent_tickets') %></span>
+      </h1>
+    <% end %>
+
+    <div class="tab-content"> 
+      <div class='tab-pane active' id='conv_tickets'> 
+        <p class='muted'> <%= t('contacts.conversations.company_all') %> </p>
+        <div class='timeline' id='timeline'>
+          <ul class='timeline-list'>
+            <% no_tickets_shown = 0 %>
+            <% @company_tickets.each do |item| %>
+              <li class='timeline-item'>
+                <% no_tickets_shown = no_tickets_shown + 1 %>
+                <%= ticket_activity(item, true) %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+
+        <% if @total_company_tickets.length > 10 %>
+          <div class='contact_tickets'>
+            <div class="more_results">
+              <%= link_to t('contacts.view_all').html_safe, helpdesk_company_filter_path(:company_id => @company.id) , :id => "show_more" %>
+            </div>
+          </div>
+        <% end %>
+        <% if @company_tickets.empty? %>
+          <p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
+        <% end %>
+      </div>
+
+      <% if current_account.features?(:archive_tickets) %>
+        <div class='tab-pane' id='conv_archive_tickets'> 
+          <div class='timeline' id='timeline'>
+            <ul class='timeline-list'>
+              <% no_tickets_shown = 0 %>
+              <% @total_company_archive_tickets.each do |item| %>
+                <li class='timeline-item'>
+                  <% no_tickets_shown = no_tickets_shown + 1 %>
+                  <%= ticket_activity(item, true) %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+
+          <% if @total_company_archive_tickets.length > 10 %>
+            <div class='contact_tickets'>
+              <div class="more_results">
+                <%= link_to t('contacts.view_all_archived').html_safe, helpdesk_archive_company_filter_path(:company_id => @company.id) , :id => "show_more" %>
+              </div>
+            </div>
+          <% end %>
+          <% if @company_archive_tickets.empty? %>
+            <p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
+          <% end %>
+
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,6 @@
 class SpamAnalysis
-
+	# TODO !COMMUNITY ForumModeration
+	# This file can be removed. No more used.
 	def self.push post, additional_info = {}
 		begin
 			$sqs_spam_analysis.send_message(post_json(post,additional_info))

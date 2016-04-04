@@ -1,4 +1,4 @@
 <div class ="alert-message block-message announcement" id = "site-announcements">
  	<p><%= announcement.message %></p>
-	<%= link_to_remote("Hide this message", { :url => "/javascripts/hide_announcement.js" }, :class => "btn") %>
+	<%= link_to "Hide this message", "/javascripts/hide_announcement.js" , :class => "btn", :remote => true %>
 </div>

@@ -1,8 +1,8 @@
 class Forum::PostDrop < BaseDrop
   
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   
-  liquid_attributes << :body << :body_html
+  self.liquid_attributes += [:body, :body_html]
   
   def initialize(source)
     super source
@@ -34,6 +34,10 @@ class Forum::PostDrop < BaseDrop
 
   def cloud_files
     source.cloud_files
+  end
+
+  def votes
+    source.user_votes
   end
 
   def url

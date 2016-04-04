@@ -8,8 +8,8 @@ module ControllerHelper
   end
 
   def login_admin()
-    agent = get_admin
-    log_in(agent)
+    @agent = get_admin
+    log_in(@agent)
   end
 
   def get_admin()
@@ -29,7 +29,7 @@ module ControllerHelper
                                     :active => true, 
                                     :primary_role => true, 
                                     :name => "Test Account"})
-      ec.save(false)
+      ec.save(:validate => false)
       @account.reload
     end
   end

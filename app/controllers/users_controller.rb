@@ -10,7 +10,7 @@ class UsersController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:revert_identity, :profile_image]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit ]
-  before_filter :load_multiple_items, :only => :block
+  before_filter :load_items, :only => :block
 
   ##redirect to contacts
   def index
@@ -79,7 +79,7 @@ class UsersController < ApplicationController
 
   def profile_image
     load_object
-    redirect_to (@user.avatar.nil? ? "/images/fillers/profile_blank_thumb.gif" : 
+    redirect_to (@user.avatar.nil? ? "/images/misc/profile_blank_thumb.jpg" : 
       @user.avatar.expiring_url(:thumb, 300))
   end
   
@@ -98,6 +98,16 @@ class UsersController < ApplicationController
       flash[:notice] = I18n.t("assuming_identity_not_allowed_msg")
     end
     redirect_to "/"
+  end
+
+  def assumable_agents
+    assumable_agents = current_user.agent.assumable_agents.inject([]) do |result, agent|
+      result  <<  {id: "#{agent.id}", value: "#{agent.name}", text: "#{agent.name}"}
+    end
+
+    respond_to do |format|
+      format.json { render :json => assumable_agents }
+    end
   end
 
   def revert_identity

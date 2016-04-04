@@ -1,10 +1,10 @@
-<% if @ticket.present? %>
-	<% form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket), 
+<% if helpdesk_ticket?(@ticket) %>
+	<%= form_for Helpdesk::Note.new, :url => support_ticket_notes_path(@ticket), 
 			:html => { :rel => "validate", :multipart => true }  do |f| %>
 		<%= f.error_messages %>  	
 	  	<div class="row-fluid">
 			<p class="span12">
-				<% f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
+				<%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
 	  				<%= ff.rich_editor :body_html, "editor-type" => :ticket, :class=>"required", :height => "150px", 
 	  				:id => "helpdesk_note_note_body_attributes_body_html" %>
 	  			<% end %>
@@ -20,6 +20,16 @@
 			  <br />
 		  	<% end %>
 		</div>
+    
+    <% if is_application_installed?(Integrations::Constants::APP_NAMES[:ilos]) %>
+      <% ilos_app_config = get_app_config(Integrations::Constants::APP_NAMES[:ilos]) %>
+      <% if ilos_app_config[:visible_portal_ticket].to_bool %>
+        <%= stylesheet_link_tag :"cdn/ilos_video" %>
+        <div class="ilos-widget pull-right" id="ilos-widget-portal">
+          <%= ilos_widget(@ticket.display_id, "portal_ticket") %>
+        </div>
+      <% end %>
+    <% end %>
 
 		<%= f.submit t("ticket.support.#{@ticket.closed? ? '.reply_and_open' : '.reply'}" ), {:class => "btn btn-primary"} %>
 		<a href="#" data-hide-dom="#add-note-form" data-show-dom="#add-note-form-proxy" class="btn"><%= t('cancel') %></a>

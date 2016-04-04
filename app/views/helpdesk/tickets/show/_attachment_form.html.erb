@@ -2,14 +2,18 @@
   attach_id ||= "ticket" 
   nsc_param = nsc_param || "helpdesk_ticket"
   original_attachments ||= {:regular => [], :cloud_files => []}
+  max_attachment ||= nil
+  max_size ||= 15
 %>
 <div class="attach-wrapper row-fluid new-attach">
   <div class="span8">   
     <div class="attachments-list-form" id="<%= attach_id %>-container">
       <% total_attachments = original_attachments[:regular].size + original_attachments[:cloud_files].size if original_attachments.present? %>
-      <div><b><span class="a-count"><%= total_attachments || 0 %></span> <%= t('attachments')%>: </b></div>
+      <% if total_attachments.to_i > 0 %><div><b><span class="a-count"><%= total_attachments || 0 %></span> <%= t('attachments')%>: </b></div><% end %>
       <div class="attachment_contents">
         <div id="<%= attach_id %>-attachments" class="attachments-wrap shared_attachment_list">
+
+        <% #original_attachments is to be used only for Forward forms %>
         <% if original_attachments.present? %>
           <% original_attachments[:regular].each do |attachment| %>
             <div class="item" rel="original_attachment" id="<%= dom_id(attachment) %>">
@@ -38,7 +42,7 @@
         </div>
       </div>
     </div>  
-    <% if cloud_files_installed?  %>
+    <% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %>
       <div class="dropdown dropup">        
         <a class="dropdown-toggle attach-link" data-toggle="dropdown" href="#">
           <i class="wicon-paper-clip"></i><%=I18n.t('attach')%><b class="caret"></b>
@@ -58,8 +62,9 @@
                 </div>
             </a>
           </li>
-          <%= render :partial => "integrations/applications/box", :locals => {:attach_id => attach_id} %>
-          <%= render :partial => "integrations/applications/dropbox", :locals => {:attach_id => attach_id} %>
+          <% get_enabled_cloud_files_app.each do |c_f| %>
+            <%= render :partial => "integrations/applications/#{c_f}", :formats => [:html], :locals => {:attach_id => attach_id} %>
+          <% end %>
         </ul>      
       </div>
     <% else %>      
@@ -71,7 +76,9 @@
                     nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
                     fileContainer="<%=attach_id%>-container" 
                     fileList="<%=attach_id%>-attachments"
-                    sendFocusTo="<%=attach_id%>-body" />
+                    sendFocusTo="<%=attach_id%>-body" 
+                    max_size="<%=max_size%>"
+                    max_attachment= "<%=max_attachment%>" />
       </div>
     <% end %>    
   </div>

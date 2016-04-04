@@ -42,7 +42,7 @@ CapsuleWidget = {
     renderContact: function(contact) {
         // clear search result div
         $('cap-search-result').update("");
-        $('cap-contact-summary').className = "user-details"; 
+        $('cap-contact-summary').className = "capsule-user-details"; 
         var summary = '';
  
         if (contact.firstName || contact.lastName) {
@@ -341,16 +341,16 @@ CapsuleWidget = {
 }
 
 capsuleResourceOptions = {
-	widget_name: "capsule_widget",
+	widget_name: "capsule_crm_contacts_widget",
     app_name:"Capsule CRM",
-	domain: $('capsule_widget').getAttribute('domain').escapeHTML(),
+	domain: capsuleBundle.domain.escapeHTML(),
 	ssl_enabled: true,
 	content_type: "application/xml",
 	enable_resource_cache: false,
 	application_html: function() {
 		var content = '<div class="negtive-margin"><h5 id="capsule-title" class="lead sloading loading-small loading-right">';
 		content += '<span class="searchicon" onclick="$(\'cap-search\').toggle()"></span>';
-		content += $('capsule_widget').getAttribute('title').escapeHTML() + '</h3>';
+		content += capsuleBundle.title.escapeHTML() + '</h3>';
 	   content += '<div id="capsule-content" class="content">';
 		content += '<form style="display:none;" id="cap-search" onsubmit="CapsuleWidget.searchContacts(this,capsuleResource); return false;">';
 		content += '<input placeholder="Search Capsule" type="text" name="q" value=""/>';
@@ -368,10 +368,14 @@ capsuleResourceOptions = {
 };
 
    if (typeof(capsuleBundle) != 'undefined' && capsuleBundle.t) {
+    jQuery("#capsule_crm_contacts_widget .error").remove();
+    jQuery("#capsule_crm_contacts_widget").removeClass("integration_widget crm_contact_widget");
    	capsuleResourceOptions.username = capsuleBundle.t;
    	capsuleResourceOptions.password = "x";
    	capsuleResource = new Freshdesk.Widget(capsuleResourceOptions);
    } else {
+    jQuery("#capsule_crm_contacts_widget .error").remove();
+    jQuery("#capsule_crm_contacts_widget").removeClass("integration_widget crm_contact_widget");
    	capsuleResourceOptions.login_html = function() {
    		return '<form onsubmit="capsuleResource.login(this); return false;" class="form">' + '<label>Authentication Key</label><input type="password" id="username"/>' + '<input type="hidden" id="password" value="X"/>' + '<input type="submit" value="Login" id="submit">' + '</form>';
    	};

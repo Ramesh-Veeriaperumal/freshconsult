@@ -32,14 +32,29 @@ window.Fjax = window.Fjax || {};
 	Fjax.Config = {
 		paths: {
 			"/discussions": 'discussions',
+			"/solution": 'solutions',
+
 			"/admin": 'admin',
-			"/freshfone/call_history": 'freshfonecallhistory',
-			"/reports/freshfone/summary_reports": 'freshfonereports',
+
+			"/search": 'search',
+
+			"/phone/call_history": 'freshfonecallhistory',
+			"/phone/dashboard": 'freshfonedashboard',
+
+			"/reports/phone/summary_reports": 'freshfonereports',
+			"/reports/v2": 'helpdeskreports',
+
 			"/contacts": 'contacts',
 			"/users": 'contacts',
 			"/companies": 'companies',
+
+			"/helpdesk/tickets/archived/": "archiveticketdetails",			
 			"/helpdesk/tickets": 'tickets',
-			"/search": 'search'
+			"/helpdesk/agent_status": 'freshfoneagents',
+			"/helpdesk/tickets/compose_email": 'tickets',
+			"/helpdesk/unresolved_tickets": 'unresolvedtickets',
+
+			"/helpdesk" : 'realtime_dashboard' 
 		},
 		LOADING_WAIT: 60
 	};

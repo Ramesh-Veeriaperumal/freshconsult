@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::AccountAdditionalSettingsController do
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -22,18 +21,19 @@ describe Admin::AccountAdditionalSettingsController do
 		}
 		@account.reload
 		@account.account_additional_settings.bcc_email.should eql(test_email)
-		response.session[:flash][:notice].should eql "Successfully updated Bcc email"
-		response.redirected_to.should eql "/admin/email_configs"
+		session[:flash][:notice].should eql "Successfully updated Bcc email"
+		response.should redirect_to("/admin/email_configs")
 	end
 
 	it "should update the font settings in account_additional_settings" do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
 		put :update_font, {
 			"font-family" => 'times new roman, serif'
 		}
 		@account.reload
 		@email_template = @account.account_additional_settings.email_template_settings
 		@email_template["font-family"].should be_eql('times new roman, serif')
-		response.should render_template("admin/email_notifications/_fontsettings.rjs")
+		response.should render_template("admin/email_notifications/_fontsettings")
 	end
 
 	it "should not update the account_additional_settings without emailId" do
@@ -43,8 +43,8 @@ describe Admin::AccountAdditionalSettingsController do
 		}
 		@account.reload
 		@account.account_additional_settings.bcc_email.should_not eql(text)
-		response.session[:flash][:notice].should eql "Failed to update Bcc email"
-		response.redirected_to.should eql "/admin/email_configs"
+		session[:flash][:notice].should eql "Failed to update Bcc email"
+		response.should redirect_to("/admin/email_configs")
 	end
 	
 	context "For Dynamic Content feature" do
@@ -68,9 +68,10 @@ describe Admin::AccountAdditionalSettingsController do
 			}
 			@account.reload
 			@account.account_additional_settings.supported_languages.should eql(changed_languages)
-			@account.dynamic_notification_templates.find_by_language(@template_eng.language).active.should be_false
-			@account.dynamic_notification_templates.find_by_language(@template_ca.language).active.should be_true
-			response.redirected_to.should eql "/admin/email_configs"
+			@account.dynamic_notification_templates.find_by_language(@template_eng.language).active.should be false
+			@account.dynamic_notification_templates.find_by_language(@template_ca.language).active.should be true
+			
+      expect(response).to redirect_to("/admin/email_configs")
 		end
 	end
 end

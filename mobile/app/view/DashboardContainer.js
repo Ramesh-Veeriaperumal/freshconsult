@@ -30,9 +30,9 @@ Ext.define('Freshdesk.view.DashboardContainer', {
             rows: 1,
             title: 'Dashboard',
             cells: [
-                { id: 'tickets', label: 'Tickets', icon: 'resources/images/spacer.gif',iconCls:'tickets' },
-                { id: 'contacts', label: 'Contacts', icon: 'resources/images/spacer.gif' ,iconCls:'contacts' },
-                { id: 'settings', label: 'Settings', icon: 'resources/images/spacer.gif' ,iconCls:'settings' }
+                { id: 'tickets', label: 'Tickets', icon: 'resources/images/misc/spacer.gif',iconCls:'tickets' },
+                { id: 'contacts', label: 'Contacts', icon: 'resources/images/misc/spacer.gif' ,iconCls:'contacts' },
+                { id: 'settings', label: 'Settings', icon: 'resources/images/misc/spacer.gif' ,iconCls:'settings' }
             ],
             tpl: '<img src="{icon}" title="{label}" class="{iconCls}" /><div class="label">{label}</div>'
         };

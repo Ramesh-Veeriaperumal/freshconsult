@@ -1,0 +1,27 @@
+<div class="custom-apps-list freshplugs-list tab-pane"  id="apps">
+  <div id="freshplug-tab-content" class="tab-content clear">
+
+      <div class="no-plugs clear">
+        <p>
+          <%= t('marketplace.no_mktp_apps') %>
+          <a href="" class="browse-btn" data-url="<%= admin_marketplace_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><%= t('marketplace.get_more_apps') %></a>
+        </p>
+      </div>
+    <% if installed_plugs.kind_of?(Hash) and installed_plugs[:error].present?%>
+      <div class="alert alert-error clear" style="margin:0;">
+        <%= t('marketplace.installed_plugs_unavailable') %>
+      </div>
+    <%else%>
+      <ul id="installed_freshplugs">
+        <%= render :partial => '/admin/marketplace/templates/installed_freshplugs/index', :locals => { :installed_extensions => installed_plugs } %>
+      </ul>
+    <%end%>
+  </div>
+</div>
+
+<% content_for :pagefixed do %>
+<div class="app-browser" style="display:none;">
+  <button type="button" class="appbrowser-close"><span class="ficon-cross fsize-20"></button>
+  <%= render :partial => "/admin/marketplace/freshplugs" %>
+</div>
+<% end %>

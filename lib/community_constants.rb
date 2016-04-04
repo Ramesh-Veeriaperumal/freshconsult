@@ -5,4 +5,7 @@ module CommunityConstants
 		:moderate_all_posts => 2
 	}
 
+	MONITORABLE_TYPES = ["Topic", "Forum"]
+	VOTEABLE_TYPES = ["Topic", "Post", "Solution::Article"]
+
 end

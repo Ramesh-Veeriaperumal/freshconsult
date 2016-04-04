@@ -1,0 +1,26 @@
+<div class="form">
+	<div class="logo">
+		<i class="remote-configurations-freshdesk-logo"></i><i class="remote-configurations-arrow"></i><i class="remote-configurations-quickbooks-logo"></i>
+	</div>
+	<div class="input_box"><%= t(:'flash.application.install.success') %></div>
+</div>
+
+<script type="text/javascript">
+	if (window.opener) {
+		try {
+			if (window.opener.location.pathname == '/integrations/applications') {
+				window.opener.location = "<%= edit_integrations_installed_application_path(@installed_app) %>";
+				window.close();
+			}
+			else {
+				window.location = "<%= edit_integrations_installed_application_path(@installed_app) %>";
+			}
+		}
+		catch (e) {
+			window.location = "<%= edit_integrations_installed_application_path(@installed_app) %>";
+		}
+	}
+	else {
+		window.location = "<%= edit_integrations_installed_application_path(@installed_app) %>";
+	}
+</script>

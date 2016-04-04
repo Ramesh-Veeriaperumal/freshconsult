@@ -1,8 +1,8 @@
 class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   include Helpdesk::Ticketfields::TicketStatus
   include ExportCsvUtil
+  include Rails.application.routes.url_helpers
   include Export::Util
-  include ActionController::UrlWriter
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
   
   # Temporary workaround for '.' in values
@@ -21,6 +21,14 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
                           :time_sheets
                         ]
 
+  PRELOAD_ARCHIVE_TICKET_ASSOCIATIONS = [
+                          { :flexifield => { :flexifield_def => :flexifield_def_entries }},
+                          # { :requester => :user_emails },
+                          # { :responder => :user_emails },
+                          :ticket_status,
+                          :time_sheets
+                        ]
+
   def perform
     begin
       initialize_params
@@ -31,7 +39,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
         send_no_ticket_email
       else
         build_file(file_string, "ticket", export_params[:format]) 
-        DataExportMailer.deliver_ticket_export({:user => User.current, 
+        DataExportMailer.ticket_export({:user => User.current, 
                                                 :domain => export_params[:portal_url],
                                                 :url => hash_url(export_params[:portal_url]),
                                                 :export_params => export_params})
@@ -85,8 +93,15 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     @no_tickets = true
     # Initializing for CSV with Record headers.
     @records = records
-    Account.current.tickets.find_in_batches(export_query) do |items|
-      add_to_records(headers, items)  
+
+    if export_params[:archived_tickets]
+      Account.current.archive_tickets.permissible(User.current).find_in_batches(archive_export_query) do |items|
+        add_to_records(headers, items)  
+      end
+    else
+      Account.current.tickets.permissible(User.current).find_in_batches(export_query) do |items|
+        add_to_records(headers, items)  
+      end
     end
     @records
   end
@@ -102,20 +117,37 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   def add_to_records(headers, items)
     @no_tickets = false
     @records ||= []
+    custom_field_names = Account.current.ticket_fields.custom_fields.map(&:name)
+    date_format = Account.current.date_type(:short_day_separated)
 
     # Temporary workaround for '.' in values
     # Need to check and remove with better fix after Rails 3 migration
-    Helpdesk::Ticket.send :preload_associations, items, PRELOAD_ASSOCIATIONS
+
+    if export_params[:archived_tickets]
+      ActiveRecord::Associations::Preloader.new(items, PRELOAD_ARCHIVE_TICKET_ASSOCIATIONS).run
+    else
+      ActiveRecord::Associations::Preloader.new(items, PRELOAD_ASSOCIATIONS).run
+    end
 
     items.each do |item|
       record = []
       headers.each do |val|
-        data = item.send(val)
-        data = parse_date(data) if DATE_TIME_PARSE.include?(val.to_sym) and data.present?
+        data = export_params[:archived_tickets] ? fetch_field_value(item, val) : item.send(val)
+        if data.present?
+          if DATE_TIME_PARSE.include?(val.to_sym)
+            data = parse_date(data)
+          elsif custom_field_names.include?(val) && data.is_a?(Time)
+            data = data.utc.strftime(date_format)
+          end
+        end
         record << escape_html(data)
       end
       @records << record
     end
+  end
+
+  def fetch_field_value(item, field)
+    item.respond_to?(field) ? item.send(field) : item.custom_field_value(field)
   end
 
   def allowed_fields
@@ -132,7 +164,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   end
 
   def delete_invisible_fields
-    headers = export_params[:export_fields].keys.sort
+    headers = export_params[:export_fields].keys
     headers.delete_if{|header_key|
       !allowed_fields.include?(header_key)
     }
@@ -183,11 +215,44 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   end
 
   def send_no_ticket_email
-    DataExportMailer.deliver_no_tickets({
+    DataExportMailer.no_tickets({
                                           :user => User.current,
                                           :domain => export_params[:portal_url]
                                         })
     @data_export.destroy
+  end
+
+  # Archive queries
+  def archive_export_query
+    {
+      :select =>  archive_select_query,
+      :conditions => archive_sql_conditions, 
+      :joins => archive_joins
+    }
+  end
+
+  def archive_select_query
+    select = "archive_tickets.* "
+    select = "DISTINCT(archive_tickets.id) as 'unique_id' , #{select}" if sql_conditions[0].include?("helpdesk_tags.name")
+    select
+  end
+
+  def archive_sql_conditions    
+    @index_filter = Helpdesk::Filters::ArchiveTicketFilter.new.deserialize_from_params(export_params)
+    sql_conditions = @index_filter.sql_conditions
+    sql_conditions[0].present? ? sql_conditions[0].concat("and #{archive_date_conditions}") : 
+                              (sql_conditions = [archive_date_conditions])
+    @sql_conditions = sql_conditions
+  end
+
+  def archive_joins
+    @index_filter.get_joins(archive_sql_conditions)
+  end
+
+  def archive_date_conditions
+    %(archive_tickets.#{export_params[:ticket_state_filter]} 
+       between '#{export_params[:start_date]}' and '#{export_params[:end_date]}'
+      )
   end
 
 end

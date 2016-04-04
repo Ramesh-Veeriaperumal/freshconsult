@@ -1,21 +1,22 @@
 jQuery(document).ready(function(){
 	var currentactive,
       position   		= -1, 
-      insideSearch 	= false;
+      insideSearch 	= false,
+      focusedOnSearch = true,
       currentString = "";
       
 	callbackToSearch = function(string, search_url){
-		$J('#SearchBar').addClass('sloading loading-small loading-right');
+		jQuery('#SearchBar').addClass('sloading loading-small loading-right');
 		jQuery('.results').hide().find('li.spotlight_result').remove();
   	    jQuery.ajax({ url: search_url+string,
   	    				dataType: 'json', 
 						success: function(data){
 							if(string == encodeURIComponent($("header_search").value)) {
-								$J("#SearchResultsBar").css("display", "inline"); 
+								jQuery("#SearchResultsBar").css("display", "inline"); 
 								position   = -1;
 								appendResults(data);
                 			}
-							$J('#SearchBar').removeClass('sloading loading-small loading-right');    
+							jQuery('#SearchBar').removeClass('sloading loading-small loading-right');    
 						}});
     }
 
@@ -30,7 +31,7 @@ jQuery(document).ready(function(){
     		if(result){
     			var result_type = result.result_type
     			resultHtml[result_type] = (typeof(resultHtml[result_type]) == "undefined" ? "" : resultHtml[result_type] ) + 
-									    	JST["spotlight_result"](result)
+									    	JST["app/search/templates/spotlight_result"](result)
     		}
 		}
     	
@@ -53,6 +54,7 @@ jQuery(document).ready(function(){
 		var hideSearchBar = function() {
 			$J("#SearchResultsBar").hide();
 			$J("#SearchBar").removeClass("active");
+			$J("#header_search").attr("placeholder", "");
 		}
 
 			$J("#SearchResultsBar a").die('hover');
@@ -70,6 +72,7 @@ jQuery(document).ready(function(){
         mouseenter:
            function()
            {
+           	focusedOnSearch = false
            	insideSearch = true;
            },
         mouseleave:
@@ -80,14 +83,18 @@ jQuery(document).ready(function(){
        });
 			
 			$J("#header_search").bind("focusout", function(ev){ 
+				focusedOnSearch = false;
 				if(!insideSearch){
 					hideSearchBar();					
 				}
 			});
 			
 			$J("#header_search").bind("focusin", function(ev){
+				focusedOnSearch = true;
 				searchString = this.value.replace(/^\s+|\s+$/g, "");
 				$J("#SearchBar").addClass("active");
+				$J("#header_search").attr("placeholder", "Search");
+				$J('#SearchBar').twipsy('hide')
 				if(searchString != '' && jQuery('#SearchResultsBar li').hasClass('spotlight_result')){
 					$J("#SearchResultsBar").css("display", "inline");
 				}
@@ -101,6 +108,7 @@ jQuery(document).ready(function(){
 			};
 			
 			var executeAction = function (keyCode){
+				focusedOnSearch = false;
 				 switch (keyCode) {
 					case 40:
 						move(1);
@@ -109,6 +117,7 @@ jQuery(document).ready(function(){
 						move(-1);
 						break;
 					case 13:
+						focusedOnSearch = true
 						$J(currentactive).trigger("click");
 						break; 
 				}
@@ -142,6 +151,11 @@ jQuery(document).ready(function(){
 				}
 			});
       jQuery('body').on('submit', '.nav_search', function(ev){ 
-        ev.preventDefault(); handleFullSearch();
+      	if(!focusedOnSearch){
+      		return false;
+      	} else {
+      		ev.preventDefault(); handleFullSearch();
+      	}
+        
       });
 })

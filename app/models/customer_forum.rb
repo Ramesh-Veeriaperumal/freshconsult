@@ -1,5 +1,6 @@
 class CustomerForum < ActiveRecord::Base
-	set_table_name "customer_forums"
+	self.table_name =  "customer_forums"
+  self.primary_key = :id
 
 
 	before_validation :set_account_id
@@ -10,16 +11,16 @@ class CustomerForum < ActiveRecord::Base
 
 	attr_protected :account_id , :forum_id 
 
-	validates_presence_of :customer_id
+	validates :customer, :presence => true
 
 	delegate :update_search_index, :to => :forum, :allow_nil => true
 	
-	after_commit_on_create :update_search_index
+	after_commit :update_search_index, on: :create
 
 	protected 
 
 	def set_account_id
-		self.account_id = customer.account_id
+		self.account_id = customer.account_id if customer
 	end
 
 end

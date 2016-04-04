@@ -2,6 +2,7 @@ class Support::Discussions::ForumsController < SupportController
 
 	include SupportDiscussionsControllerMethods
 
+  before_filter :check_forums_access
 	before_filter { |c| c.requires_feature :forums }
 	before_filter :check_forums_state
 	before_filter { |c| c.check_portal_scope :open_forums }
@@ -32,7 +33,7 @@ private
     @page_meta ||= {
       :title => @forum.name,
       :description => @forum.description,
-      :canonical => support_discussions_forum_url(@forum)
+      :canonical => support_discussions_forum_url(@forum, :host => current_portal.host)
     }
   end
 end

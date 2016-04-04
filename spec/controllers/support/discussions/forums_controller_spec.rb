@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Support::Discussions::ForumsController do
-	integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -23,7 +22,7 @@ describe Support::Discussions::ForumsController do
 	it "should show the forum on get 'show'" do
 		get :show, :id => @forum.id
 
-		response.should render_template "support/discussions/forums/show.portal"
+		response.should render_template "support/discussions/forums/show"
 	end
 
 	it "should render 404 on get 'show' if forum is not available" do
@@ -32,8 +31,9 @@ describe Support::Discussions::ForumsController do
 		forum.destroy
 
 		get :show, :id => forum_id
-
-		response.should render_template "#{Rails.root}/public/404.html"
+    
+		response.should render_template(:file => "#{Rails.root}/public/404.html")
+    response.status.should eql(404)
 	end
 
 
@@ -56,6 +56,18 @@ describe Support::Discussions::ForumsController do
 	 	response.should redirect_to "/support/home"	
 
 	 	@account.features.hide_portal_forums.destroy
+	end
+
+
+	it "should render 404 for accounts without forum feature" do
+		@account.remove_feature(:forums)
+		@account.reload
+
+		get :show, :id => @forum.id
+		response.status.should eql(404)
+
+		@account.add_features(:forums)
+		@account.reload
 	end
 
 end

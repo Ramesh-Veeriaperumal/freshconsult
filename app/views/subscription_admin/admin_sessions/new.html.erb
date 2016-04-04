@@ -1,7 +1,7 @@
 <%= error_messages_for :admin_session %>
 <fieldset>
   <legend>Login</legend>
-  <% form_for @admin_session, :url => {:controller => 'admin_sessions', :action => 'create'}  do |f| %>
+  <%= form_for @admin_session, :url => {:action => 'create'}, :html => { :method => "post" }  do |f| %>
   
     <label for="session_name">Email</label><br />
     <%= f.text_field :email %><br />

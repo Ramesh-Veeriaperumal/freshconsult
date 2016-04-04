@@ -1,5 +1,0 @@
-require "gnip/constants"
-require "gnip/replay_client"
-require "gnip/rule_client"
-require "gnip/rule_helper"
-require "gnip/rule_tag"

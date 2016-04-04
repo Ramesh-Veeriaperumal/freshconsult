@@ -16,6 +16,7 @@
             color: inherit;
         }
     }
+
     .list-page-body{
         border:1px solid #eee; /* depands upon bootstrap table variable $tableBorder  */
         @include box-sizing(border-box);
@@ -31,11 +32,9 @@
             margin-top:10px;
           }
         }
-        .preview_pic{
-            img{
-                width: 30px;
-                height: 30px;
-            }
+        
+        .fb-select-all-label{
+          display:inline;
         }
 
         .list-page-table-header{
@@ -49,8 +48,8 @@
             margin:0;
             border-bottom: 1px solid $tableBorder;
             //Its need for animation effects
-            td{ 
-              background-color:#fff; 
+            td{
+              background-color:#fff;
             }
             thead{
                 tr{
@@ -78,19 +77,19 @@
                 vertical-align: middle;
                 word-wrap: break-word;
                 padding: 12px;
-            }           
-        }  
+            }
+        }
         .item_actions, .item-actions{
             @include padding-right(5px);
         }
         .pagination{
-            //border-top:1px solid $tableBorder; 
-            margin:0px;  
-            padding:10px; 
+            //border-top:1px solid $tableBorder;
+            margin:0px;
+            padding:10px;
             padding-bottom:0px;
-            line-height:0;    
-        }  
-        .list-page-avatar 
+            line-height:0;
+        }
+        .list-page-avatar
         {
             div.preview_pic{
             border: 2px solid #CCC;
@@ -100,31 +99,40 @@
             }
             img{
                 width:30px;
-                height:30px;  
-                @include border-radius(100%);     
+                height:30px;
+                @include border-radius(100%);
             }
         }
         .btn-mini{
             background-image:none;
-            background-color:#fdfdfd; 
+            background-color:#fdfdfd;
             &:hover{
-              background-color:#f1f1f1;  
-            }        
-        } 
-        .cust-list-avatar 
+              background-color:#f1f1f1;
+            }
+        }
+        .cust-list-avatar
         {
             div.preview_pic{
-            border: 2px solid #CCC;
-            @include border-radius(100%);
-            width: 30px;
-            height: 30px;
+                @include border-radius(100%);
             }
             img{
-                width:30px;
-                height:30px;  
-                @include border-radius(100%);     
+                @include border-radius(100%);
             }
-        }  
+        }
+    }
+    // Override class for new list UI - (Refer Agent Status page)
+    .list-page-body-sleek{
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      background: transparent;
+      tr:first-child{
+        td{border-top: none}
+      }
+      tr:last-child{
+        td{border-bottom: none}
+      }
+      table{ border-bottom: none}
     }
 }
 
@@ -136,6 +144,51 @@
         }
     }
 }
+.canned-response-tabs{
+    @include margin(0 -20px 20px);
+    @include padding(0 20px);
+    li > a{
+        border: none;
+        background: none;
+        border-bottom: 4px solid transparent;
+        @include transition(none);
+        &:hover{
+            background:none;
+            border-color:transparent;
+        }
+    }
+    li.active{
+        > a{
+            border: none;
+            background: none;
+            border-bottom: 4px solid #ccc;
+            padding: 10px 0;
+            margin-left: 10px;
+            &:hover{
+                border: none;
+                background: none;
+                border-bottom: 4px solid #ccc;
+            }
+        }
+    }
+}
+.cr-tab-actions{
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    @include right(20px);
+    top: 25px;
+    .btn-primary,
+    .btn-primary:hover{
+        &.disabled,
+        &[disabled]{
+            color: #000;
+        }
+    }
+}
+// ------ Chat Shortcodes Page
+@import "chat/chat-shortcodes";
+// ------ END Chat Shortcodes Page
 
 .facebook-list{
     .list-page-body table{
@@ -154,7 +207,7 @@
         }
 
         td.fb_list_pic{
-                @include padding(1px);
+                @include padding(5px);
         }
     }
 }
@@ -188,7 +241,7 @@
   }
 }
 // -------------------------------------------------------------------------------------------
-//                                      Twitter List Page 
+//                                      Twitter List Page
 // -------------------------------------------------------------------------------------------
 .twitter-list{
     td{
@@ -198,7 +251,7 @@
     }
 }
 // -------------------------------------------------------------------------------------------
-//                                      Group Management 
+//                                      Group Management
 // -------------------------------------------------------------------------------------------
 .list-page.group-management{
     table{
@@ -209,35 +262,33 @@
     }
 }
 // -------------------------------------------------------------------------------------------
-//                                      E-Mail Configuration 
+//                                      E-Mail Configuration
 // -------------------------------------------------------------------------------------------
+
 .list-page .list-page-body .email-config-styled-table{
     table-layout:fixed;
     tr td{
         vertical-align: top;
         width:28%;
         &:first-child{
-            width:3%;
+            width:4%;
         }
         &:last-child{
             width:13%;
         }
         &.primaryRole{
-            padding-top: 16px;
-            .primary, .secondary{
-                display: block;
+            padding-top: 15px;
+            padding-left: 15px;
+            .primary{
+              color: #ffcc66;
+              font-size:1.5em;
             }
-            .primary:before{
-                content: url(/images/star_on.png) "";
-            }
-            .secondary:before{
-                content: url(/images/star_off.png) "";
-            }
-            .secondary:hover{
-                display: block;
-                &::before{
-                    content: url(/images/star_hover.png) "";
-                }
+            .secondary{
+              color: #dfdfdf;
+              font-size:1.5em;
+              &:hover{
+                color: darken(#ffcc66, 10%);
+              }
             }
         }
         &.support-email{
@@ -264,7 +315,7 @@
                     width:70px;
                     padding: 3px;
             }
-            width:70%; 
+            width:70%;
             &:last-child{
                     width:20%;
             }
@@ -274,11 +325,31 @@
         }
   }
 }
+// -------------------------------------------------------------------------------------------
+//                        Customer Satisfaction Settings(Survey)
+// -------------------------------------------------------------------------------------------
+.cust-satisfaction{
+    table{
+        table-layout: fixed;
+        tr td{
+            &:first-child{ width:70px; padding: 3px; }
+            width:70%;
+            &:last-child{ width:20%; }
+            form{ margin:0; }
+        }
+    }
+    a{
+        cursor:pointer;
+    }
+    .lead{
+        font-weight: 400;
+    }
+}
 
 // -------------------------------------------------------------------------------------------
-//                                     Mobihelp Apps 
+//                                     Mobihelp Apps
 // -------------------------------------------------------------------------------------------
-.list-page.mobihelp-apps{  
+.list-page.mobihelp-apps{
    .open {
         .dropdown-toggle{
             color: #FFFFFF;
@@ -297,24 +368,98 @@
 // -------------------------------------------------------------------------------------------
 //                                     Round robin dashboard page
 // -------------------------------------------------------------------------------------------
+.availabilty-status{
+    .list-page-header{
+        overflow: visible;
+    }
+    a.dropdown-toggle{ display: inline-block;}
+}
 .agent-status{
-    .list-page-header{margin: 20px 0 -30px}
     table{
         table-layout: fixed;
-        tr td:first-child{ width:275px;}
+        tr td:first-child{
+          width:70px;
+          a{@include margin-left(0);}
+        }
+        tr td:last-child{ width:200px;}
     }
-    table.available-agents{
-        border-bottom:1px solid rgba(0,0,0,0.3)
-    }
-    .active_since{@include margin-left(10px);}
 }
 .agents-list-round-robin {
     clear: both;
-    text-align: center;
+}
+.roundrobin-tabs{
+    padding-top: 25px;
+	li{
+		@include margin(0 10px);
+		a,
+		a:hover{
+			border: 0;
+			border-bottom: 2px solid transparent;
+			background: none;
+			@include padding(10px 0);
+		}
+		&.active{
+			a,
+			a:hover{
+				border: 0;
+				border-bottom: 2px solid #aaa;
+			}
+		}
+	}
+}
+ul.ffone-minimal-swap li, ul.ticket-minimal-swap li, ul.lc-minimal-swap li{
+  display: inline-block;
+  padding: 4px 15px;
+  border-radius: 20px;
+  border: 1px #ddd solid;
+  cursor: pointer;
+  @include margin-right(5px);
+  &.current{
+    background-color: #888; color: $white ;
+    border: 1px #888 solid;
+    &:hover{ background-color: #888; }
+  }
+  &:hover{ background-color: #fafafa;
+    border: 1px solid #888;
+  }
+}
+.ffone-minimal-tab, .ticket-minimal-tab{
+ display: none;
+ &.current{display: table;}
+ td{ line-height: 24px;}
+}
+
+.lc-minimal-tab{
+  display: none;
+  &.current{display: table;}
+  td{ line-height: 24px;}
+  .lc-offline-agents{
+   text-align: left;
+   list-style: none;
+   padding: 10px 10px 10px 35px;
+   border-top: 1px solid #C6C6C6;
+   color:#3a3a3a;
+   &:before {
+     content: "";
+     display: inline-block;
+     border-top: 5px solid transparent;
+     border-left: 5px solid #555;
+     border-bottom: 5px solid transparent;
+     position: relative;
+     left: -15px;
+     @include transition(0.3s ease);
+     @include border-radius(3px);
+   }
+   &.toggle{
+     &:before {
+       @include transform(rotate(90deg));
+     }
+   }
+  }
 }
 
 // -------------------------------------------------------------------------------------------
-//                                     Email Notification 
+//                                     Email Notification
 // -------------------------------------------------------------------------------------------
 
 .font-setting-wrapper{
@@ -346,7 +491,7 @@
         display: none;
         top:21px;
         width: 130px;
-        padding:0; 
+        padding:0;
     }
     .sloading{
         position: absolute;
@@ -354,3 +499,72 @@
         right: 20px;
     }
 }
+
+ul.ffone-minimal-swap li, ul.ticket-minimal-swap li{
+  display: inline-block;
+  padding: 4px 15px;
+  border-radius: 20px;
+  border: 1px #ddd solid;
+  cursor: pointer;
+  @include margin-right(5px);
+  &.current{
+    background-color: #888; color: $white ;
+    border: 1px #888 solid;
+    &:hover{ background-color: #888; }
+  }
+  &:hover{ background-color: #fafafa;
+    border: 1px solid #888;
+  }
+}
+
+.ffone-minimal-tab, .ticket-minimal-tab{
+ display: none;
+ &.current{display: table;}
+ td{ line-height: 24px;}
+}
+.lc-offline{
+  opacity: 0.5;
+}
+.lc-offline-agents{
+ text-align: left;
+ list-style: none;
+ padding: 10px 10px 10px 35px;
+ border-top: 1px solid #C6C6C6;
+ color:#3a3a3a;
+ &:before {
+   content: "";
+   display: inline-block;
+   border-top: 5px solid transparent;
+   border-left: 5px solid #555;
+   border-bottom: 5px solid transparent;
+   position: relative;
+   left: -15px;
+   @include transition(0.3s ease);
+   @include border-radius(3px);
+ }
+ &.toggle{
+   &:before {
+     @include transform(rotate(90deg));
+   }
+ }
+}
+
+// --- Agent Availability CSS
+.lc-minimal-tab {
+	.available_avatar_image {
+    line-height: 9px;
+    img{
+  		width: 25px;
+  		height: 25px;
+  	}
+  }
+}
+
+/*Min width for agent name in agents landing table*/
+.agent-list-page {
+  .text-info{
+    min-width: 75px;
+    width: auto;
+  }
+}
+

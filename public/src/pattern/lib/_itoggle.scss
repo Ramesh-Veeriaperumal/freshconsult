@@ -1,7 +1,5 @@
-@import "compass/css3/pie";
 
 .toggle-button{
-  @include pie;
   text-transform:uppercase;    
   font-size:13px;  
   position:relative;
@@ -41,7 +39,6 @@
     @include left(50%);    
     span{
       @include inline-block;
-      @include pie;
       border:1px solid rgba(0, 0, 0, 0.5); 
       width:18px;
       height:18px;              
@@ -71,7 +68,6 @@
     @include float(left);
     width:50%;
     height:100%;
-    @include pie;
     @include border-radius(16px);
     line-height:0;
     font-weight: 200;

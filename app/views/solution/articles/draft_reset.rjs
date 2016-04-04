@@ -1,0 +1,5 @@
+show_ajax_flash(page)
+timestamp = @article.draft.present? ? @article.draft.updation_timestamp : false
+page <<	"App.Solutions.Article.autoSave.opts.extraParams.timestamp = #{timestamp};"
+page << "jQuery('#article-form').data().timestamp = #{timestamp};"
+page << "jQuery('#last-updated-at').val(#{timestamp});"

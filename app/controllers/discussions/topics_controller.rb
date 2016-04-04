@@ -2,6 +2,7 @@ class Discussions::TopicsController < ApplicationController
 
 	include CloudFilesHelper
 	helper DiscussionsHelper
+	include Community::Voting
 
 	rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
@@ -12,42 +13,43 @@ class Discussions::TopicsController < ApplicationController
 	before_filter :fetch_monitorship, :only => :show
 	before_filter :set_page, :only => :show
 	before_filter :after_destroy_path, :only => :destroy
+	before_filter :verify_ticket_permission, :redirect_for_ticket , :only => [:new, :create]
 
 	before_filter { |c| c.requires_feature :forums }
 	before_filter { |c| c.check_portal_scope :open_forums }
 
 	before_filter :set_selected_tab
+	before_filter :fetch_vote, :toggle_vote, :only => [:vote]
 
 	COMPONENTS = [:voted_users, :participating_users, :following_users]
 	POSTS_PER_PAGE = 10
 
 	def new
 		@topic = current_account.topics.new
+		@topic.forum_id = params[:forum_id]
+		populate_topic if params[:ticket_id]
 	end
 
 	def create
-		topic_saved, post_saved = false, false
 		# this is icky - move the topic/first post workings into the topic model?
-		Topic.transaction do
-			forum = current_account.forums.find(params[:topic][:forum_id])
-			@topic  = forum.topics.build(topic_param)
-			assign_protected
-			@post       = @topic.posts.build(post_param)
-			@post.topic = @topic
-			if privilege?(:view_admin)
-				@post.user = (topic_param[:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
-			end
-			@post.user  ||= current_user
-			@post.account_id = current_account.id
-			@post.portal = current_portal.id
-			# only save topic if post is valid so in the view topic will be a new record if there was an error
-			@topic.body_html = @post.body_html # incase save fails and we go back to the form
-			build_attachments
-			topic_saved = @topic.save if @post.valid?
-			post_saved = @post.save if topic_saved
-		end
+		forum = current_account.forums.find(params[:topic][:forum_id])
+		@topic  = forum.topics.build(topic_param)
+		assign_protected
+		@post       = @topic.posts.build(post_param)
+		@post.topic = @topic
+		
+		associate_ticket if @topic_ticket
+		
+		@topic.user = assign_user
+		@post.user = assign_user
+		
+		@post.account_id = current_account.id
+		@post.portal = current_portal.id
+		# only save topic if post is valid so in the view topic will be a new record if there was an error
+		@topic.body_html = @post.body_html # incase save fails and we go back to the form
+		build_attachments
 
-		if topic_saved && post_saved
+		if @topic.save
 			respond_to do |format|
 				format.html { redirect_to discussions_topic_path(@topic) }
 				format.xml  { render  :xml => @topic }
@@ -57,7 +59,7 @@ class Discussions::TopicsController < ApplicationController
 			respond_to do |format|
 				format.html { render :action => "new" }
 				format.xml  { render  :xml => @topic.errors }
-				format.json  { render  :json => @topic.errors }
+				format.json  { render  :json => @topic.errors.fd_json }
 			end
 		end
 	end
@@ -72,19 +74,14 @@ class Discussions::TopicsController < ApplicationController
 	end
 
 	def update
-		topic_saved, post_saved = false, false
-		Topic.transaction do
-			@topic.attributes = topic_param
-			assign_protected
-			@post = @topic.posts.first
-			@post.attributes = post_param
-			@topic.body_html = @post.body_html
-			build_attachments
-			topic_saved = @topic.save
-			post_saved = @post.save
-		end
-
-		if topic_saved && post_saved
+		@topic.attributes = topic_param
+		assign_protected
+		@post = @topic.first_post
+		@post.attributes = post_param
+		@topic.body_html = @post.body_html
+		build_attachments
+		
+		if @topic.save
 			respond_to do |format|
 				format.html { redirect_to discussions_topic_path(@topic) }
 				format.xml  {head :ok}
@@ -165,6 +162,9 @@ class Discussions::TopicsController < ApplicationController
 			format.json  { head 200 }
 		end
 	end
+	
+	def vote
+	end
 
 
 	def update_stamp
@@ -181,7 +181,7 @@ class Discussions::TopicsController < ApplicationController
 				format.js
 				format.html { redirect_to discussions_topic_path(@topic) }
 				format.xml  { render :xml => result.to_xml, :status => :bad_request }
-				format.json  { render :json => result.to_json, :status => :bad_request }
+				format.json  { render :json => result.fd_json, :status => :bad_request }
 			end
 		end
 	end
@@ -190,31 +190,11 @@ class Discussions::TopicsController < ApplicationController
 		render :layout => false
 	end
 
-	def vote
-		unless @topic.voted_by_user?(current_user)
-			@vote = Vote.new(:vote => params[:vote] == "for")
-			@vote.user_id = current_user.id
-			@topic.votes << @vote
-			@topic.reload
-		end
-		respond_to do |format|
-			format.js
-			format.html { redirect_to discussions_topic_path(@topic) }
-			format.xml  { head 200 }
-		end
+	def users_voted
+		@object = @topic
+		render :partial => 'discussions/shared/users_voted'
 	end
-
-	def destroy_vote
-		@votes = @topic.votes.find(:all, :conditions => ["user_id = ?", current_user.id] )
-		@votes.first.destroy
-		@topic.reload
-		respond_to do |format|
-			format.js { render "vote.rjs" }
-			format.html { redirect_to discussions_topic_path(@topic) }
-			format.xml  { head 200 }
-		end
-	end
-
+	
 	def reply
 		if current_user.agent?
 			path = discussions_topic_path(params[:id])
@@ -228,20 +208,10 @@ class Discussions::TopicsController < ApplicationController
 	private
 
 		def load_posts
-			if current_account.features_included?(:spam_dynamo)
-				@posts = @topic.posts.published.find(:all, :include => [:attachments, :user]).paginate :page => params[:page], :per_page => POSTS_PER_PAGE
-			else
-				@posts = @topic.posts.find(:all, :include => [:attachments, :user]).paginate :page => params[:page], :per_page => POSTS_PER_PAGE
-			end
+			@posts = @topic.posts.published.find(:all, :include => [:attachments, :user]).paginate :page => params[:page], :per_page => POSTS_PER_PAGE
 		end
 
 		def assign_protected
-			if @topic.new_record?
-				if privilege?(:view_admin)
-					@topic.user = (topic_param[:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
-				end
-				@topic.user ||= current_user
-			end
 			@topic.account_id = current_account.id
 			# admins and moderators can sticky and lock topics
 			return unless privilege?(:edit_topic, @topic)
@@ -249,6 +219,22 @@ class Discussions::TopicsController < ApplicationController
 			# only admins can move
 			return unless privilege?(:manage_forums)
 			@topic.forum_id = params[:topic][:forum_id] if params[:topic][:forum_id]
+		end
+
+		def assign_user
+			@creating_user ||= begin
+				user = nil
+				if privilege?(:view_admin)
+					unless (topic_param[:import_id].blank? && params[:email].blank?)
+						user = current_account.all_users.where(email: params[:email]).first
+					end
+					unless  params[:topic][:user_id].blank?
+						user = current_account.all_users.where(:id => params[:topic][:user_id]).first
+					end
+				end
+				user = @topic_ticket.requester if @topic_ticket
+				user || current_user
+			end
 		end
 
 		def build_attachments
@@ -268,9 +254,13 @@ class Discussions::TopicsController < ApplicationController
 		end
 
 		def find_topic
-			@topic = current_account.topics.find(params[:id], :include => [:user, :forum])
+			@topic = current_account.topics.find(params[:id]) 
 			@forum = @topic.forum
 			@category = @forum.forum_category
+		end
+		
+		def vote_parent
+			@topic
 		end
 
 		def portal_check
@@ -307,10 +297,54 @@ class Discussions::TopicsController < ApplicationController
 		end
 
 		def topic_param
-			@topic_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:body_html].include? k }
+			@topic_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:body_html,:forum_id,:display_id,:user_id].include? k }
 		end
 
 		def post_param
-			@post_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:title,:sticky,:locked].include? k }
+			@post_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:title,:sticky,:locked,:display_id,:user_id].include? k }
+		end
+
+		def populate_topic
+			@topic_ticket = nil unless @topic_ticket.requester.active?
+			return if @topic_ticket.nil?
+			@topic.title = @topic_ticket.subject
+		  	@topic.posts.build(body_html: @topic_ticket.description_html)
+		end
+
+		def associate_ticket
+			@topic.build_ticket_topic(ticketable_id: @topic_ticket.id, ticketable_type: 'Helpdesk::Ticket')
+			add_ticket_attachments if ( params[:post] and (params[:post][:ticket_attachments] or params[:post][:cloud_file_attachments]))
+			@topic.published = true
+			@post.published = true
+		end
+
+		def add_ticket_attachments
+			ticket_attachments = params[:post][:ticket_attachments]
+			ticket_attachments.each do |a|
+				attachment = Helpdesk::Attachment.find_by_id(a[:resource])
+				next unless attachment
+				@topic.posts.first.attachments.build(:content => attachment.content, :description => attachment.description)
+			end
+
+			params[:post][:cloud_file_attachments].each do |c|
+				attach = Helpdesk::CloudFile.find_by_id(c[:resource])
+				next unless attach
+				@topic.posts.first.cloud_files.build({:url => attach.url, :application_id => attach.application_id, :filename => attach.filename })
+			end
+		end
+
+		def verify_ticket_permission
+			params[:ticket_id] = params[:topic][:display_id] if params[:topic]
+			return true unless (params[:ticket_id])
+			@topic_ticket = current_account.tickets.where(:display_id => params[:ticket_id]).first
+			unless current_user && current_user.has_ticket_permission?(@topic_ticket) && !@topic_ticket.trashed
+			  flash[:notice] = t("flash.general.access_denied")
+			  redirect_to helpdesk_tickets_url 
+			end
+			true
+		end
+		
+		def redirect_for_ticket
+			redirect_to discussions_topic_path(@topic_ticket.ticket_topic.topic_id) if @topic_ticket && @topic_ticket.ticket_topic.present?
 		end
 end

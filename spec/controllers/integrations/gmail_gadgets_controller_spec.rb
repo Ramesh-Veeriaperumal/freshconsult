@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Integrations::GmailGadgetsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -10,15 +9,15 @@ describe Integrations::GmailGadgetsController do
   end
 
   after(:each) do
-    if @env.respond_to?(:development?)
+    if Rails.env.development?
       class << @env
         remove_method(:development?)
       end
-    elsif @env.respond_to?(:staging?)
+    elsif Rails.env.staging?
       class << @env
         remove_method(:staging?)
       end
-    elsif @env.respond_to?(:production?)
+    elsif Rails.env.production?
       class << @env
         remove_method(:production?)
       end
@@ -35,7 +34,8 @@ describe Integrations::GmailGadgetsController do
       true;
     end
     get :spec, :format => "xml"
-    response.body.should have_tag("Module", /script/)
+    result = parse_xml(response)
+    result.has_key?('Module').should eql(true)
   end
 
   it "should get correct spec for staging environment" do
@@ -43,7 +43,8 @@ describe Integrations::GmailGadgetsController do
       true;
     end
     get :spec, :format => "xml"
-    response.body.should have_tag("Module", /script/)
+    result = parse_xml(response)
+    result.has_key?('Module').should eql(true)
   end
 
   it "should get correct spec for production environment" do
@@ -52,7 +53,8 @@ describe Integrations::GmailGadgetsController do
     end
     @account.update_attributes(:ssl_enabled => false)
     get :spec, :format => "xml"
-    response.body.should have_tag("Module", /script/)
+    result = parse_xml(response)
+    result.has_key?('Module').should eql(true)
   end
 end
 

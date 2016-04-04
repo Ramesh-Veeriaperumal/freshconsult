@@ -1,5 +1,10 @@
 module Helpdesk::NotifierFormattingMethods
 
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+  include AccountConstants
+  include EmailParser
+
   REPLY_PREFIX = "Re:"
   FWD_PREFIX  = "Fwd:"
 
@@ -25,10 +30,10 @@ module Helpdesk::NotifierFormattingMethods
     subject.blank? ? default_reply_subject(ticket) : subject
   end
 
-  def generate_body_html(html, inline_attachments, account)
+  def generate_body_html(html)
     html_part = Nokogiri::HTML(html)
     if html_part.at_css('img.inline-image')
-      build_body_html_with_inline_attachments(html_part, inline_attachments, account)
+      html_part.at_css("body").inner_html.html_safe
     else
       html.html_safe
     end
@@ -39,31 +44,33 @@ module Helpdesk::NotifierFormattingMethods
   end
 
   def generate_email_references(ticket)
-    references = (ticket.header_info && ticket.header_info[:message_ids]) ? "<#{ticket.header_info[:message_ids].join(">,<")}>" : ""
+    ticket.header_info_present? ? "<#{ticket.header_info[:message_ids].join(">,<")}>" : ""
   end
 
-  def build_body_html_with_inline_attachments(html_part, inline_attachments, account)
-    TMail::HeaderField::FNAME_TO_CLASS.delete 'content-id'
+  def in_reply_to(ticket)
+    ret_val = ""
+    if ticket.header_info_present?
+      message_id = ticket.header_info[:message_ids].first
+      message_key = EMAIL_TICKET_ID % { :account_id => ticket.account_id, 
+                                        :message_id => message_id }
+      value = get_others_redis_key(message_key)
+      ret_val = (value =~ /:(.+)/) ? "<#{$1}>" : "<#{message_id}>"
+    end
+    ret_val
+  end
+
+  def handle_inline_attachments(inline_attachments, html, account)
+    html_part = Nokogiri::HTML(html)
     html_part.xpath('//img[@class="inline-image"]').each do |inline|
       inline_attachment = account.attachments.find_by_id(inline['data-id'])
       if inline_attachment
-        cid = ActiveSupport::SecureRandom.hex(8)
-        inline_attachments.push({ :cid => cid, :attachment => inline_attachment})
-        inline.set_attribute('src', "cid:#{cid}")
+        inline.set_attribute('src', inline_attachments.inline[inline_attachment.content_file_name].url)
         inline.set_attribute('height', inline['data-height']) unless inline['data-height'].blank?
       end
     end
-    return html_part.at_css("body").inner_html.html_safe
   end
 
-  def handle_inline_attachments(inline_attachments)
-    inline_attachments.each do |inline_attachment|
-      attachment  :content_type => inline_attachment[:attachment].content_content_type, 
-              :headers => { 'Content-ID' => "<#{inline_attachment[:cid]}>",
-                            'Content-Disposition' => "inline; filename=\"#{inline_attachment[:attachment].content_file_name}\"",
-                            'X-Attachment-Id' => inline_attachment[:cid] },
-                  :body => File.read(inline_attachment[:attachment].content.to_file.path), 
-                  :filename => inline_attachment[:attachment].content_file_name
-    end   
+  def validate_emails(addresses, model)
+    parse_addresses(addresses)[:emails]
   end
 end

@@ -1,0 +1,15 @@
+<div id="SurveyConfirmModal" class="SurveyConfirmModal modal hide fade" role="dialog" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    <h3><%= surveysI18n.confirm_text %></h3>
+  </div>
+  <div class="modal-body">
+  	<div>
+      <%=message%>
+    </div>
+  </div>
+  <div class="alignright modal-footer"> 
+    <input type="button" value="<%= surveysI18n.cancel %>" class="btn" data-dismiss="modal">
+    <input id="SurveyActivateBtn" onclick="javascript:SurveyStatus.confirmHandler(<%=id%>,'<%=confirm_type%>')" type="button" value="<%= confirm %>" class="btn btn-primary">
+  </div>
+</div>

@@ -21,10 +21,20 @@ module Utils
     end
 
     def body_html_with_formatting(body)
-      body_html = Rinku.auto_link(body) { |text| truncate(text, 100) }
+      body_html = Rinku.auto_link(body) { |text| truncate(text, :length => 100) }
       textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [ :hard_breaks ])
       textilized.hard_breaks = true if textilized.respond_to?("hard_breaks=")
       white_list(textilized.to_html)
     end
+
+    def body_html_with_tags_renamed(html_string)
+      html_doc = Nokogiri::HTML(html_string)
+      unless html_doc.at_css("body").blank?
+        html_doc.xpath("//del").each { |div|  div.name= "span";}
+        html_doc.xpath("//p").each { |div|  div.name= "div";}
+      end
+      Rinku.auto_link(html_doc.at_css("body").inner_html, :urls)
+    end
+
   end
 end

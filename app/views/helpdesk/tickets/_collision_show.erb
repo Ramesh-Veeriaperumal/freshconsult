@@ -16,7 +16,7 @@
 </div>
 
 <% content_for :pagefixed do %>
-<% javascript_tag do %>
+<%= javascript_tag do %>
     var socket = null;
     var agents = { viewing:[], replying:[] };
     var init_params = {};

@@ -6,7 +6,7 @@ window.freshChat.mini_dashboardView = function(){
   var mini_dashboard =  Backbone.View.extend({
             initialize : function(){
                 this.setElement('#chat-dashboard');
-                this.dashboardTemplate = window.JST['dashboard/dashboard_template'];
+                this.dashboardTemplate = window.JST['freshchat/dashboard/dashboard_template'];
                 this.render();
                 this.listenToCollection();
                 this.listenToEvents();

@@ -1,5 +1,9 @@
 AppConfig = YAML.load_file(File.join(Rails.root, 'config', 'config.yml'))
 
+INTEGRATION_URL = URI.parse(AppConfig['integrations_url'][Rails.env]).host
+
+FreshopsSubdomains =  AppConfig['freshops_subdomain'].map { |k,v| v }.flatten
+
 NodeConfig = YAML.load_file(File.join(Rails.root, 'config', 'node_js.yml'))[Rails.env]
 
 FreshfoneConfig = YAML.load_file(File.join(Rails.root, 'config', 'freshfone.yml'))[Rails.env]
@@ -22,3 +26,6 @@ AdminApiConfig = YAML.load_file(File.join(Rails.root,'config','fdadmin_api_confi
 
 PodConfig = YAML.load_file(File.join(Rails.root, 'config', 'pod_info.yml'))
 
+AutoIncrementId = YAML.load_file(File.join(Rails.root,'config','auto_increment_ids.yml'))[Rails.env]
+
+ThirdPartyAppConfig = YAML::load_file File.join(Rails.root, 'config', 'third_party_app_config.yml')

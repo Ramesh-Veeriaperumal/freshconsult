@@ -19,8 +19,8 @@
 			<div class="tab-pane active" id="whats-new">
 			  	<div class="content-head header-border"><%= t('notification.whats_new_in_freshdesk') %></div>
 			  	<div id="content-notify" class="content-notify row-fluid">
-				  	<% object.each do |announcement| %>
-						<div class="content-notify-list <% if announcement.updated_at.utc < 2.weeks.ago.utc %> older_notification  <% end %>" data-time-stamp="<%= announcement.created_at.utc %>">
+				  	<% @object.each do |announcement| %>
+						<div class="content-notify-list <% if announcement.updated_at.utc < 2.weeks.ago.utc %> older_notification  <% end %>" data-time-stamp="<%= announcement.updated_at.utc %>">
 							<a href="<%= announcement.url.to_s %>" target="_blank">
 								<p class="notify-title"> <%= announcement.title.to_s %></p>
 								<p class="notify-content" > <%= truncate(announcement.message.to_s, :length => 90) %> </p>

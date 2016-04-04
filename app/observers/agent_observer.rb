@@ -9,17 +9,16 @@ class AgentObserver < ActiveRecord::Observer
   def before_update(agent)
     update_agents_level(agent)
   end
-
-  def after_commit_on_create(agent)
-    update_crm(agent)
+  
+  def after_commit(agent)
+    if agent.send(:transaction_include_action?, :create)
+      update_crm(agent) 
+    end
+    true
   end
 
   def after_save(agent)
     update_agent_levelup(agent)
-  end
-
-  def after_commit_on_update(agent)
-    clear_auto_refresh_cache(agent) if agent.account.features?(:auto_refresh)
   end
 
   protected
@@ -49,20 +48,10 @@ class AgentObserver < ActiveRecord::Observer
     def auto_refresh_key(agent)
       AUTO_REFRESH_AGENT_DETAILS % { :account_id => agent.account_id, :user_id => agent.user_id }
     end
-
-    def clear_auto_refresh_cache(agent)
-
-      body = {
-        "cacheKey"    => "AUTO_REFRESH_DETAILS:#{agent.account_id}:#{agent.user_id}",
-        "messageType" => "clearCache"
-      }.to_json
-
-      $sqs_autorefresh.send_message(body) unless Rails.env.test?
-    end
       
     def update_crm(agent)
       if agent.account.full_time_agents.count > 1
-        Resque.enqueue(CRM::AddToCRM::UpdateTrialAccounts, { :account_id => agent.account_id })
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateTrialAccounts, { :account_id => agent.account_id })
       end
     end
 end

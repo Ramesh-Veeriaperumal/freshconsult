@@ -13,23 +13,25 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
     update_freshfone_account_state(freshfone_credit, account)
     notify_low_balance(freshfone_credit, account)
     trigger_auto_recharge(freshfone_credit) if auto_recharge_threshold_reached?(freshfone_credit)
+    freshfone_credit
   end
 
   private
     def notify_low_balance(freshfone_credit, account)
       if credit_limit_on_disabled_auto_recharge?(freshfone_credit, account)
         # notify_freshfone_admin_dashboard
-        FreshfoneNotifier.deliver_low_balance(account, freshfone_credit.available_credit) 
+        FreshfoneNotifier.low_balance(account, freshfone_credit.available_credit) 
       end
       reset_low_credit_account(account) if !freshfone_credit.recharge_alert?
     end
 
     def update_freshfone_account_state(freshfone_credit, account)
-      if account.freshfone_account.suspended?
+      freshfone_account = account.freshfone_account
+      if freshfone_account.suspended? || freshfone_account.expired?
         restore_freshfone_account_state(freshfone_credit, account)
       elsif freshfone_credit.zero_balance?
         suspend_freshfone_account(account)
-        FreshfoneNotifier.deliver_suspended_account(account)
+        FreshfoneNotifier.suspended_account(account)
       end
     end
 
@@ -65,7 +67,7 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
       # freshfone_credit.send_later(:perform_auto_recharge)
       set_integ_redis_key(autorecharge_key(freshfone_credit.account_id), "true", 1800) #Key will be expire in 30 mins
       Resque::enqueue(Freshfone::Jobs::AutoRecharge, {:id => freshfone_credit.id})
-      Rails.logger.debug "Auto-Recharge triggered for account #{freshfone_credit.account_id}"
+      Rails.logger.info "Auto-Recharge triggered for account #{freshfone_credit.account_id}"
     end
     
     def restore_freshfone_account_state(freshfone_credit, account)

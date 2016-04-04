@@ -1,0 +1,4 @@
+<label id="rating-label-<%=count%>" data-selected-value="&nbsp;" data-selected-id="none" class="pb0 muted rating-label">&nbsp;</label>
+<% for(var i=0;i<choices.length;i++){%>
+	<span class="survey-rating none question-rating-<%=count%>" id="rating_<%=i%>" data-class="<%=choices[i].className%>" data-id="<%=choices[i].id%>" data-question-id="<%=count%>"  onmouseover="javascript:SurveyRating.hover(this);" onmouseout="javascript:SurveyRating.resetLabel(this);" onclick="javascript:SurveyRating.input(this,true);" data-name="<%- choices[i].value%>"></span>
+<%}%>

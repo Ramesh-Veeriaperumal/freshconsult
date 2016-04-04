@@ -1,0 +1,100 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %>
+<%= stylesheet_link_tag_with_rtl :'cdn/helpdesk_reports' %>
+
+<div class="loading-box" id="loading-box"> 
+	<div class="reports-loading sloading loading-small loading-left repo generate-hd-reports"><%=t('helpdesk_reports.loading_text') %></div> 
+</div>
+
+<div class="reports-wrapper hide" id="reports_wrapper">
+	<div class="reports-main">
+		<div class="top-links">
+				<ul class="pull-left breadcrumb span8">
+				  <li><a href="<%=reports_url%>"><%=t('adv_reports.glance.all_reports')%></a> <span class="divider">/</span></li>
+				  <li><%=t('adv_reports.glance.report_view')%></li>
+				</ul>
+				<div class="pull-right solution-link">
+					<% if @report_type == 'ticket_volume'%>
+						<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/213203"><%=t('helpdesk_reports.solution_article_text') %></a>
+					<% end %>
+					<% if @report_type == 'performance_distribution'%>
+						<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/213226"><%=t('helpdesk_reports.solution_article_text') %></a>
+					<% end %>
+					<% if @report_type == 'agent_summary'%>
+						<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/213169"><%=t('helpdesk_reports.solution_article_text') %></a>
+					<% end %>
+					<% if @report_type == 'group_summary'%>
+						<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/213172"><%=t('helpdesk_reports.solution_article_text') %></a>
+					<% end %>
+					<% if @report_type == 'customer_report'%>
+						<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/214629"><%=t('helpdesk_reports.solution_article_text') %></a>
+					<% end %>
+				</div>
+				<div class="clear"></div>
+		</div>
+	 	<div class="reports-header row-fluid">
+		 	<%= render :partial => "reports/v2/tickets/reports/shared/reports_header" %>	
+		</div>
+		<div class="reports-container" id="reports_container"></div>
+	</div>
+
+	<%= render :partial => "reports/v2/tickets/reports/shared/filter" %>
+
+</div>
+
+<% content_for :dialogs do %>
+	
+	<%= render :partial => "reports/v2/tickets/reports/shared/tickets" %>
+
+	<% if @report_type == 'glance'%>
+		<div class="view-more-metrics hide" id="view_more_wrapper">
+			<div class="title">
+				<span id="view_title" class="view_title"></span>
+				<span class="close" data-action="close-view-all"> 
+					<i class="ficon-cross fsize-20 " size="20"></i> 
+				</span>	
+			</div>
+			<div id="view_all_container" class="view_all_container" data-report="glance-container"></div> 
+		</div>
+		<div class="custom-field-metrics" id="custom_field_wrapper">
+			<div class="title">
+				<span class="back" data-action="nav-drill-down"> 
+					<i class="ficon-arrow-left fsize-20" size="20"></i> 
+				</span>
+				<span id="view_title_custom" class="view_title"></span>
+				<span class="close" data-action="close-drill-down"> 
+					<i class="ficon-cross fsize-20 " size="20"></i> 
+				</span>	
+			</div>
+			<div id="custom_field_container" class="custom_field_container" data-report="glance-container"></div> 
+		</div>
+	<% end %>
+
+<% end %>
+
+<% unless AppMetrics::FRESHFONE_METRICS.blank? %>
+  	<%= javascript_tag do %>
+  	jQuery(document).ready(function(){
+  		if(App.Kissmetrics != undefined){	
+	 		App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");
+	 	}
+	 });
+	<% end %>
+<% end %>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	window.HelpdeskReports = window.HelpdeskReports || {};
+	HelpdeskReports.locals = HelpdeskReports.locals || {};
+	HelpdeskReports.locals.report_type = "<%= @report_type %>";
+	HelpdeskReports.locals.report_field_hash = <%= @show_options.to_json.html_safe %>;
+	HelpdeskReports.locals.field_name_mapping = <%= @label_hash.to_json.html_safe %>;
+	HelpdeskReports.locals.date_lag = <%= @date_lag_by_plan %>;
+	HelpdeskReports.locals.account_time_zone = '<%= @account_time_zone %>';
+	HelpdeskReports.locals.enable_ticket_list = <%= @enable_ticket_list_by_plan %>;
+	HelpdeskReports.locals.report_options_hash = <%= @nf_hash.to_json.html_safe %>;
+	HelpdeskReports.locals.base_task_list_title = "<%=t('helpdesk_reports.tickets') %>";
+	HelpdeskReports.locals.is_non_sprout_plan = '<%= current_account.subscription.non_sprout_plan? || feature?(:advanced_reporting) %>';
+	full_domain = '<%= current_account.full_domain %>';
+	HelpdeskReports.locals.report_filter_data = <%=  @report_filter_data.to_json.html_safe %>;
+	
+});
+</script>

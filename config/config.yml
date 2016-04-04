@@ -2,10 +2,12 @@
 app_name: Freshdesk
 from_email: support@freshdesk.com
 billing_email: billing@freshdesk.com
+reports_email: reports@freshdesk.com
 free_plan_agts: 1
 app_website: http://www.freshdesk.com
 support_url: https://support.freshdesk.com
-latest_shard: "shard_6"
+privacy_policy: https://freshdesk.com/privacy
+latest_shard: "shard_7"
 
 # Used in account creation (account.rb)
 base_domain: 
@@ -51,6 +53,25 @@ salesforce:
        consumer_secret : "8034737126137452216"
        access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
        access_secret : "2336849265765064476"
+    test:
+       consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
+       consumer_secret : "8034737126137452216"
+       access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
+       access_secret : "2336849265765064476"
+
+freshsales:
+    development:
+      authentication_token: "jxpnk1mNjMvj47mdXBKKVg"
+      portal_url: "https://fdadmintest.freshmarketeer.com"
+    test:
+      authentication_token: "jxpnk1mNjMvj47mdXBKKVg"
+      portal_url: "https://fdadmintest.freshmarketeer.com"
+    staging:
+      authentication_token: "jxpnk1mNjMvj47mdXBKKVg"
+      portal_url: "https://fdadmintest.freshmarketeer.com"
+    production:
+      authentication_token: "1uzGOM_zc-27E1jjJUoTGw"
+      portal_url: "https://freshdesknew.freshsales.io"
 
 marketo:
   development:
@@ -94,6 +115,11 @@ reseller_portal:
     staging: "partners.freshpo.com/freshdesk_webhooks"
     production: "partners.freshdesk.com/freshdesk_webhooks"
 
+natero:
+  production:
+    url: 'https://api.natero.com/api/v2/accounts'
+    api_key: 'icieauqsnc5tdtkz6pbkup5sg8aouptd'
+
 client_debugging:
   bugsnag:
     development:
@@ -114,7 +140,11 @@ gateway: brain_tree
 # here will allow admin.example.com to serve the admin interface.
 admin_subdomain: admin
 
-freshops_subdomain: freshops
+freshops_subdomain:
+  global: freshopspoduseast
+  non_global:
+    - freshopspodeuwest
+    - freshopspodeuwest1
 
 partner_subdomain: partner
 

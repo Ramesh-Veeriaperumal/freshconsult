@@ -32,21 +32,3 @@
 	@if $rtl{ margin: -2px 5px 0 8px; }
 	@else{ margin: -2px 5px 0 -8px; }
 }
-
-.btn-google:before{ @extend .icon-sign-in-google; }
-.btn-facebook:before{ @extend .icon-sign-in-facebook; }
-.btn-twitter:before{ @extend .icon-sign-in-twitter; }
-
-@if $nonResponsive == false {
-	@include at-breakpoint($media-mobile){
-		.btn-signup, .btn-newticket, .btn-login{ width: 100%; }
-		.btn-login{ @include float(none); margin-top: 4px; margin-bottom: 4px; }
-		.login-form{ max-width: none; }
-		.alt-login-button{ 
-			@include border-left(0); 
-			@include padding-left(0); 
-			@include box-shadow(none); 
-		}
-		.login-form, .alt-login-button{ width:auto; @include float(none); }
-	}
-}

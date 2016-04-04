@@ -1,0 +1,44 @@
+<% content_for :layoutType do %>community solutions<% end %>
+
+<% content_for :sticky_left do %>
+		<%= pjax_link_to t('solution.draft.my_drafts'), solution_drafts_path, 
+					{ :class => "heading item #{'active' unless (params[:type] == 'all')}" } %>
+		<%= pjax_link_to t('solution.draft.all_drafts'), solution_my_drafts_path('all'), 
+					{ :class => "heading item #{'active' if (params[:type] == 'all')}" } %>
+	<%= render :partial => 'drafts_context' %>
+<% end %>
+
+<% content_for :sticky_right do %>
+	<% if privilege?(:publish_solution) %>
+		<ul>
+			<li class="list-default-btns">
+				<%= new_solutions_button(:article) %>
+			</li>
+		</ul>
+	<% end %>
+<% end %>
+
+<%= render :partial => '/solution/shared/sticky', :locals => { :page => :folder, :sticky_class => "draft-listing-header sol-sticky" } %>
+
+<div id="drafts-section">
+
+	<% unless (@drafts.size == 0) %>
+		<div class="solution-drafts">
+			<%= render :partial => 'draft', :collection => @drafts %>
+		</div>
+		<%= will_paginate @drafts, :renderer => BootstrapPaginationRenderer,
+															:previous_label => "<b class='arrow-left'></b>",
+															:next_label => "<b class='arrow-right'></b>",
+															:class => "pagination pagination-centered" %>
+	<% else %>
+		<div class="solution-drafts">
+			<div class="draft_info_data"><%= t("solutions.drafts.empty") %></div>
+		</div>
+	<% end %>
+</div>
+
+<% content_for :helpcard do %>
+	<h3 class="lead"><%= t('solution.draft.name').html_safe %></h3>
+	<%= helpcard_content([22, 23, 24], 'solution.info' ) %>
+	<%= t('solution.kbase_email_info', :email => current_account.kbase_email).html_safe %>
+<% end %>

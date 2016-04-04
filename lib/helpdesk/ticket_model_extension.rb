@@ -12,6 +12,7 @@ module Helpdesk::TicketModelExtension
       {:label => I18n.t("export_data.fields.company"), :value => "company_name", :selected => false},
       {:label => I18n.t("export_data.fields.requester_name"), :value => "requester_name", :selected => false},
       {:label => I18n.t("export_data.fields.requester_email"), :value => "requester_info", :selected => true},
+      {:label => I18n.t("export_data.fields.requester_phone"), :value => "requester_phone", :selected => false},
       {:label => I18n.t("export_data.fields.fb_profile_id"), :value => "requester_fb_profile_id", :selected => false},
       {:label => I18n.t("export_data.fields.agent"), :value => "responder_name", :selected => false},
       {:label => I18n.t("export_data.fields.group"), :value => "group_name", :selected => false},

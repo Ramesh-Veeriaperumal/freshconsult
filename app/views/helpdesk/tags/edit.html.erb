@@ -14,7 +14,7 @@
 
 <% content_for :main_panel_content  do %>
 
-  <% form_for @item do |f| %>
+  <%= form_for @item do |f| %>
     <%= f.error_messages %>
     <%= f.label :name, "Tag Name" %>
     <%= f.text_field :name %>

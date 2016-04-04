@@ -5,10 +5,12 @@ TEST_HASH_KEY = Faker::Lorem.words.first
 TEST_HASH_VALUE = rand(1..1000)
 TEST_INCR_VALUE = rand(1..100)
 
-describe Redis::ZenImportRedis do
+RSpec.configure do |c|
+  c.include Redis::RedisKeys
+  c.include Redis::ZenImportRedis
+end
 
-  include Redis::RedisKeys
-  include Redis::ZenImportRedis
+RSpec.describe Redis::ZenImportRedis do
 
   before(:each) do
     $redis_others.del TEST_REDIS_KEY

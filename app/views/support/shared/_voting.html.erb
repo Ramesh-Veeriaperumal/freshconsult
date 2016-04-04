@@ -1,15 +1,17 @@
   
 	Was this article useful?  
-				<%= link_to_remote 'Yes',  
-						:update=> "article_voting",
-						:url => thumbs_up_support_article_path(article.id),
-						:method => :put 
+				<%= link_to 'Yes',  
+								   thumbs_up_support_article_path(article.id),
+								   :'data-update'=> "article_voting",
+								   :method => :put,
+								   :remote => true 
 						
 				%>
 				or
-					 <%= link_to_remote 'No',  
-						:update=> "article_voting",
-						:url => thumbs_down_support_article_path(article.id),
-						:method => :put 
+					 <%= link_to 'No',  
+								 thumbs_down_support_article_path(article.id),
+								 :"data-update"=> "article_voting",
+								 :method => :put,
+								 :remote => true 
 				%>
  

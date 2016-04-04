@@ -1,8 +1,9 @@
 class Freshfone::Credit < ActiveRecord::Base
+  self.primary_key = :id
 	include ActionView::Helpers::NumberHelper
 	
 	belongs_to_account
-	set_table_name :freshfone_credits
+	self.table_name =  :freshfone_credits
 	alias_attribute :credit, :last_purchased_credit
 
 	CREDIT_LIMIT = {
@@ -35,9 +36,9 @@ class Freshfone::Credit < ActiveRecord::Base
         :status => true,
         :purchased_credit => selected_credit
       )
-      FreshfoneNotifier.deliver_recharge_success(account, selected_credit, available_credit)
-     else
-     	FreshfoneNotifier.deliver_recharge_failure(account, selected_credit, available_credit)
+      FreshfoneNotifier.recharge_success(account, selected_credit, available_credit)
+    else
+     	FreshfoneNotifier.recharge_failure(account, selected_credit, available_credit)
     end
     response
 	end
@@ -57,6 +58,10 @@ class Freshfone::Credit < ActiveRecord::Base
 	def deduce(rate)
 		update_credit(-rate)
 	end
+
+  def add_credit(rate)
+    update_credit(rate)
+  end
 
 	def renew_number(rate, freshfone_number_id)
 		if deduce(rate)
@@ -87,7 +92,7 @@ class Freshfone::Credit < ActiveRecord::Base
 	end
 
 	def auto_recharge_threshold_reached?
-		available_credit <= CREDIT_LIMIT[:auto_recharge_threshold]
+		available_credit <= auto_recharge_threshold
 	end
 
 	def recharge_alert?
@@ -97,6 +102,21 @@ class Freshfone::Credit < ActiveRecord::Base
 	def valid_recharge_amount?
 		selected_credit >= RECHARGE_THRESHOLD
 	end
+
+  def call_time_limit
+    #15 mins for a throttled call. else 4 hours
+    below_safe_threshold? ? 900 : 14400
+  end
+
+  def direct_dial_time_limit
+    below_safe_threshold? ? 900 : 1800
+  end
+
+  def self.call_time_limit(account, current_call)
+    freshfone_account = account.freshfone_account
+    return freshfone_account.subscription.call_duration(current_call.call_type) if freshfone_account.trial?
+    account.freshfone_credit.call_time_limit
+  end
 
 	private
 
@@ -110,7 +130,7 @@ class Freshfone::Credit < ActiveRecord::Base
 
 	  def valid_auto_recharge?
 	  	credit = Freshfone::Credit.find_by_account_id(account_id)
-	  	credit.available_credit <= CREDIT_LIMIT[:auto_recharge_threshold]
+	  	credit.available_credit <= credit.auto_recharge_threshold
 	  end
 
 	  def update_credit(credits)

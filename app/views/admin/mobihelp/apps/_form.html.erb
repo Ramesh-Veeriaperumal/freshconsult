@@ -1,5 +1,5 @@
 <% content_for :pagefixed do -%>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     jQuery(function() {
       jQuery("#push_notification").bind("change",
             function(ev){
@@ -16,7 +16,7 @@
       showItemsInOrder(<%=@app.category_ids.to_json%>, "mobihelp_app_solution_categories");
     });
   <%- end %>
-  <%= include_cloudfront_js :mobihelp %>
+  <%= javascript_include_tag :'cdn/mobihelp' %>
 <%- end %>
 
 <% content_for :helpcard do -%>
@@ -52,7 +52,7 @@
             <%= content_tag( :div, t("admin.mobihelp.apps.form.solution_categories_info"), :class => "info-data span12" ) %>
           </div>
         </div>
-      <% f.fields_for :config do |c| %>
+      <%= f.fields_for :config do |c| %>
         <% if @app.platform == Mobihelp::App::PLATFORM_ID_BY_KEY[:ios] %>
           <div class="row-fluid">
             <div class="app-fields">
@@ -86,7 +86,7 @@
 
       <div class="button-container">
         <%= link_to t('cancel'), admin_mobihelp_apps_path, :class => "btn" %>
-        <%= f.submit t('save'), :class => "btn btn-primary" %>
+        <%= f.submit t('save'), :class => "btn btn-primary", "data-loading-text" => "#{t('admin.mobihelp.apps.form.saving')}" %>
       </div>
     </div>
   </div>

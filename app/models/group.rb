@@ -1,16 +1,18 @@
 class Group < ActiveRecord::Base
+  self.primary_key = :id
   
   xss_sanitize  :only => [:name, :description], :plain_sanitizer => [:name, :description]
   belongs_to_account
   include Cache::Memcache::Group
   include Redis::RedisKeys
   include Redis::OthersRedis
-  include BusinessCalendar::Association
+  include BusinessCalendarExt::Association
+  include AccountOverrider
 
   after_commit :clear_cache
-  after_commit_on_create  :create_round_robin_list, :if => :round_robin_enabled?
-  after_commit_on_update  :update_round_robin_list
-  after_commit_on_destroy :delete_round_robin_list
+  after_commit  :create_round_robin_list, on: :create, :if => :round_robin_enabled?
+  after_commit  :update_round_robin_list, on: :update
+  after_commit  :delete_round_robin_list, :nullify_tickets, on: :destroy
   before_save :create_model_changes
 
   after_destroy :remove_group_from_chat_routing
@@ -21,7 +23,7 @@ class Group < ActiveRecord::Base
    
    has_many :agents, :through => :agent_groups, :source => :user , :conditions => ["users.deleted=?", false]
 
-   has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :nullify
+   has_many :tickets, :class_name => 'Helpdesk::Ticket'
    has_many :email_configs, :dependent => :nullify
    
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
@@ -29,13 +31,25 @@ class Group < ActiveRecord::Base
    
    has_and_belongs_to_many :accesses, 
     :class_name => 'Helpdesk::Access',
-    :join_table => 'group_accesses'
-    
+    :join_table => 'group_accesses',
+    :insert_sql => proc { |record|
+      %{
+        INSERT INTO group_accesses (account_id, group_id, access_id) VALUES
+        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
+     }
+    }
+  
+   has_many :freshfone_number_groups, :class_name => "Freshfone::NumberGroup",
+              :foreign_key => "group_id", :dependent => :delete_all
+
+   has_many   :ecommerce_accounts, :class_name => 'Ecommerce::Account', :dependent => :nullify
+
    attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
-                   :ticket_assign_type, :business_calendar_id
+                   :ticket_assign_type, :business_calendar_id,
+                   :added_list, :removed_list, :agent_groups_attributes
    
    accepts_nested_attributes_for :agent_groups
-   named_scope :active_groups_in_account, lambda { |account_id|
+   scope :active_groups_in_account, lambda { |account_id|
      { :joins => "inner join agent_groups on agent_groups.account_id = #{account_id} and
                    agent_groups.group_id = groups.id and groups.account_id = #{account_id}
                    inner join users ON agent_groups.account_id = #{account_id} and
@@ -45,7 +59,7 @@ class Group < ActiveRecord::Base
     }
    liquid_methods :name
 
-   named_scope :round_robin_groups, :conditions => { :ticket_assign_type => true}
+   scope :round_robin_groups, :conditions => { :ticket_assign_type => true}
 
   API_OPTIONS = {
     :except  => [:account_id,:email_on_assign,:import_id],
@@ -123,7 +137,7 @@ class Group < ActiveRecord::Base
     super(options)
   end
 
-  def to_json(options = {})
+  def as_json(options = {})
     options.merge!(API_OPTIONS)
     super options
   end
@@ -201,7 +215,7 @@ class Group < ActiveRecord::Base
   end
 
   def create_model_changes
-    @model_changes = self.changes.clone
+    @model_changes = self.changes.to_hash
     @model_changes.symbolize_keys!
   end 
 
@@ -220,6 +234,10 @@ class Group < ActiveRecord::Base
     if account.features?(:chat) && siteId
       Resque.enqueue(Workers::Livechat, {:worker_method => "remove_group_from_routing", :siteId => siteId, :group_id => id})
     end
+  end
+
+  def nullify_tickets
+    Helpdesk::ResetGroup.perform_async({:group_id => self.id })
   end
 
 end

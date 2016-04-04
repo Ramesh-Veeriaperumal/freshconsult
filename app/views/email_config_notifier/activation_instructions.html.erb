@@ -1,0 +1,11 @@
+<div>
+  Hi,<div><br></div>
+  <div>This email has been added as your support email address in <%= AppConfig['app_name'] %>. Click the URL below to activate your support email.</div>
+  <div><br></div>
+  <div><%= @activation_url %></div>
+  <div><br></div>
+  <div>If the above URL does not work, try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.</div>
+  <div><br></div>
+  <div>Regards,</div>
+  <div><%= @email_config.account.portal_name %></div>
+</div>

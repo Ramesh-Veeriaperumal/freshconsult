@@ -1,5 +1,5 @@
-<% content_for :sidebar do -%><%- end %>
-<%= include_cloudfront_js :observer_event %>
+<% content_for :sidebar do -%>&nbsp;<%- end %>
+<%= javascript_include_tag :'cdn/observer_event' %>
 <%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "observer", :placeholders => ticket_placeholders.merge(event_placeholders) } %>
 <%= f.error_messages :object_name => 'rule' %>
 <input type="hidden" name="id"   value="" />
@@ -29,8 +29,8 @@
 		<div class="conditionset" id="eventDOM">
 		<div id="EventList" class="rule_list"></div>
 			<fieldset class="addchoice">
+				<i class="rounded-add-icon"></i>
 		   		<p><%=t('admin.observer_rules.add_new_event')%></p> 
-		   		<img alt="<%=t('admin.observer_rules.add_new_event')%>" class="add" src="/images/add.png" />
 		  </fieldset>			
 		</div>
 	</li>
@@ -38,7 +38,7 @@
 	<li>
 		<h3 class="lead"><%=t('admin.observer_rules.performed_by')%></h3>
 		<div class="doer">
-			<% fields_for :performer_data do |s| %>
+			<%= fields_for :performer_data do |s| %>
 				<div class="choicelist">	
 					<%	Va::Performer::TYPE_CHECK.each do |number, type|	%>
 						<%= s.radio_button  :type, number, :class => "radio", :checked => (@va_rule.new_record? ? false : @va_rule.performer.type == number) %> 
@@ -65,8 +65,8 @@
 		<div class="conditionset" id="filterDOM">
 		<div id="RuleList" class="rule_list"></div>
 		<fieldset class="addchoice">
-	      <p><%=t('dispatch.add_condition')%></p>
-	      <img alt="<%=t('dispatch.add_new_choice')%>" class="add" src="/images/add.png" />
+			<i class="rounded-add-icon"></i>
+      <p><%=t('dispatch.add_condition')%></p>
 	  </fieldset>			
 		</div>
 	</li>
@@ -75,8 +75,8 @@
 		<div class="conditionset" id="actionDOM">
 			<div id="ActionList" class="rule_list"></div>
 			<fieldset class="addchoice">
-	        <p><%=t('dispatch.add_new_action')%></p>
-	        <img alt="<%=t('dispatch.add_new_action')%>" class="add" src="/images/add.png" />
+				<i class="rounded-add-icon"></i>
+        <p><%=t('dispatch.add_new_action')%></p>
 	   	</fieldset>		
 		</div>
 	</li>
@@ -84,10 +84,9 @@
 
 <div class="hide">
 	<div id="webhook_usecase">
-		<%= render :partial=> 'admin/shared/advanced_webhook_usecase.html.erb' %>
+		<%= render :partial=> 'admin/shared/advanced_webhook_usecase' %>
 	</div>
 </div>
-<%= link_to(t('clone'), clone_rule_admin_observer_rule_path(@va_rule.id), :class => "pull-left btn btn-flat") if params[:action] == "edit"%>
 <div class="button-container pull-right itil-hide">
 	<input type="hidden" name="save_json" id="savejson" value="" />
 	<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>

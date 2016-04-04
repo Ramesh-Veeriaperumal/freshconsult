@@ -15,9 +15,17 @@ module ApplicationHelper
   include Integrations::Util
   include Integrations::IntegrationHelper
   include CommunityHelper
+  include TabHelper
+  include ReportsHelper
+  include Freshfone::CallerLookup
+  include Freshfone::SubscriptionsHelper
+  include DateHelper
+  include StoreHelper
+  
   require "twitter"
 
-  ASSETIMAGE = { :help => "/images/helpimages" }
+  ASSETIMAGE = { :help => "/assets/helpimages" }
+  ASSET_MANIFEST = {}
 
   def open_html_tag
     html_conditions = [ ["lt IE 7", "ie6"],
@@ -34,6 +42,10 @@ module ApplicationHelper
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{
           language }" dir="#{current_direction?}" data-date-format="#{date_format}">#{h[2] ? '<!--' : ''}<![endif]-->)
     }.to_s.html_safe
+  end
+
+  def spacer_image_url
+    "#{asset_host_url}/assets/misc/spacer.gif"
   end
 
   def trial_expiry_title(trial_days)
@@ -71,13 +83,9 @@ module ApplicationHelper
   end
   
 
-  def include_cloudfront_js_langs(locale_key = :"lang_#{I18n.locale.to_s.downcase}")
-    include_cloudfront_js locale_key unless Jammit.configuration[:javascripts][locale_key].blank?
-  end
-
   def logo_url(portal = current_portal)
     MemcacheKeys.fetch(["v7","portal","logo",portal],30.days.to_i) do
-        portal.logo.nil? ? "/images/logo.png?721013" :
+        portal.logo.nil? ? "/assets/misc/logo.png?721014" :
         AwsWrapper::S3Object.url_for(portal.logo.content.path(:logo),portal.logo.content.bucket_name,
                                           :expires => 30.days, :secure => true)
     end
@@ -85,7 +93,7 @@ module ApplicationHelper
 
   def fav_icon_url(portal = current_portal)
     MemcacheKeys.fetch(["v7","portal","fav_ico",portal]) do
-      portal.fav_icon.nil? ? '/images/favicon.ico?123456' :
+      portal.fav_icon.nil? ? '/assets/misc/favicon.ico?123457' :
             AwsWrapper::S3Object.url_for(portal.fav_icon.content.path(:fav_icon),portal.fav_icon.content.bucket_name,
                                           :expires => 30.days, :secure => true)
     end
@@ -164,6 +172,9 @@ module ApplicationHelper
     options = current_user && current_user.agent? ? {:"data-pjax" => "#body-container", :"data-keybinding" => shortcut("app_nav.#{strip_tags(title).downcase}")} : {}
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
+    end
+    if tab_name.eql?(:reports)
+      options.delete(:"data-pjax");
     end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
@@ -259,12 +270,37 @@ module ApplicationHelper
           output << %(<li class="divider"></li>)
         else
           li_opts = (item[3].present?) ? options.merge(item[3]) : options
-          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
+          output << %(<li>#{"<span class='icon ticksymbol'></span>" if item[2]}#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
         end
       end
     end
     output << %(</ul>)
     output.html_safe
+  end
+
+  def render_placeholders(placeholders_list)
+    category_titles=""
+    category_placeholders=""
+    placeholders_list.each do |category, placeholders|
+      if placeholders.length > 0
+        category_titles << content_tag(:li,
+                              content_tag(:a,
+                                t("admin.placeholders.#{category}"),
+                                :class => "placeholder-category-title",
+                                :"data-toggle" => "tab",
+                                :"href" => "##{category}-list"
+                                 ).html_safe,
+                              :class => '',
+                              :"data-category" => category).html_safe
+        category_placeholders  <<  content_tag(:div,
+                              placeholder_list(placeholders) ,
+                              :id => "#{category}-list",
+                              :class => "tab-pane fade placeholder-category-list #{category}-list",
+                              :"data-category"=>category).html_safe
+      end
+    end
+
+    content_tag(:ul, category_titles.html_safe, :class => 'nav nav-tabs vertical placeholder-category-title-container').html_safe + content_tag(:div, category_placeholders.html_safe, :class => ' tab-content placeholder-category-list-container', :"rel" => "mouse-wheel", :"data-scroll-speed" => "10").html_safe
   end
 
   def placeholder_list(fields)
@@ -280,19 +316,7 @@ module ApplicationHelper
 													:class => 'btn-group').html_safe, 
                         :class => 'ph-item', :id => "placeholder-btn-#{field[3]}")
     end
-
-    add_show_more_less_buttons(ph_button_list)
     content_tag(:ul, ph_button_list.html_safe, :class => 'ph-list').html_safe
-  end
-
-  def add_show_more_less_buttons ph_button_list
-  	[:more, :less].each do |toggle_val|
-  		ph_button_list << content_tag(:li, 
-													content_tag(:button, "",
-														:class => "btn btn-flat tooltip ficon-ellipsis ph-#{toggle_val}",
-														:title => "Show #{toggle_val.capitalize}").html_safe, 
-												:class => 'ph-more-less')
-	  end
   end
 
   def nested_ph_menu nested_data
@@ -323,7 +347,7 @@ module ApplicationHelper
       ['/helpdesk/dashboard',  :dashboard,    privilege?(:manage_tickets)],
       ['/helpdesk/tickets',    :tickets,      privilege?(:manage_tickets)],
       social_tab,
-      solutions_tab,
+      ['/solution/categories', :solutions,   privilege?(:view_solutions)],
       ['/discussions',        :forums,       forums_visibility?],
       ['/contacts',           :customers,    privilege?(:view_contacts)],
       ['/support/tickets',     :checkstatus, !privilege?(:manage_tickets)],
@@ -345,7 +369,12 @@ module ApplicationHelper
     navigation = tabs.map do |s|
       next unless s[2]
       active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
-      tab(s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active, s[1] ).html_safe
+      tab(
+        s[3] || t("header.tabs.#{s[1].to_s}") ,
+        s[0] ,
+        active && :active, 
+        s[1] 
+      ).html_safe
     end
     navigation.to_s.html_safe
   end
@@ -353,7 +382,7 @@ module ApplicationHelper
   def subscription_tabs
     tabs = [
       [customers_admin_subscriptions_path, :customers, "Customers" ],
-      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
+      [admin_affiliates_path, :affiliates, "Affiliates" ],
       [admin_subscription_payments_path, :payments, "Payments" ],
       [admin_subscription_announcements_path, :announcements, "Announcements" ]
     ]
@@ -420,13 +449,21 @@ module ApplicationHelper
 
   #Liquid template parsing methods used in Dashboard and Tickets view page
   def eval_activity_data(data)
-    unless data['eval_args'].nil?
+    if data['eval_args'].nil?
+      data.each_pair do |k,v|
+        data[k] = h v
+      end
+    else
       data['eval_args'].each_pair do |k, v|
         data[k] = send(v[0].to_sym, v[1])
       end
     end
 
     data
+  end
+
+  def formatted_dueby_for_activity(time_in_seconds)
+    "#{formated_date(Time.zone.at(time_in_seconds))}".tap do |f_t| f_t.gsub!(' at', ',') end
   end
 
   def target_topic_path(topic_id)
@@ -448,6 +485,10 @@ module ApplicationHelper
 
   def reply_path(args_hash)
     comment_path(args_hash, t('activities.reply'))
+  end
+
+  def ecommerce_path(args_hash)
+    comment_path(args_hash, t('activities.ecommerce'))
   end
 
   def fwd_path(args_hash)
@@ -481,11 +522,11 @@ module ApplicationHelper
                       ['{{ticket.subject}}',          'Subject',          '',        'ticket_subject'],
                       ['{{ticket.description}}',      'Description',        '',         'ticket_description'],
                       ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.',         'ticket_url'],
-                      ['{{ticket.public_url}}',          'Public Ticket URL' ,            'URL for accessing the tickets without login',          'ticket_public_url'],
                       ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.',          'ticket_portal_url'],
                       ['{{ticket.due_by_time}}',      'Due by time',        '',          'ticket_due_by_time'],
                       ['{{ticket.tags}}',           'Tags',           '',         'ticket_tags'],
                       ['{{ticket.latest_public_comment}}',  'Last public comment',  '',         'ticket_latest_public_comment'],
+                      ['{{ticket.latest_private_comment}}', 'Last private comment', '', 'ticket_latest_private_comment'],
                       ['{{ticket.group.name}}',       'Group name',       '',          'ticket_group_name'],
                       ['{{ticket.agent.name}}',       'Agent name',       '',        'ticket_agent_name'],
                       ['{{ticket.agent.email}}',      'Agent email',        "",         'ticket_agent_email']
@@ -501,10 +542,15 @@ module ApplicationHelper
                       ['{{ticket.requester.firstname}}' , 'Requester first name', '',          'ticket_requester_firstname'],
                       ['{{ticket.requester.lastname}}' , 'Requester last name', '',           'ticket_requester_lastname'],
                       ['{{ticket.from_email}}',    'Requester email',      "",         'ticket_requester_email'],
-                      requester_company,
                       ['{{ticket.requester.phone}}', 'Requester phone number',   "",       'ticket_requester_phone'],
                       # ['{{ticket.requester.email}}', 'Contact Primary email', "", 'contact_primary_email'],
                       ['{{ticket.requester.address}}', 'Requester address',   "",       'ticket_requester_address']
+                    ],
+      :company => [
+                      ['{{ticket.company.name}}',     'Company name',       '',         'ticket_company_name'],
+                      ['{{ticket.company.description}}',     'Company description',       '',         'ticket_company_description'],
+                      ['{{ticket.company.note}}',     'Company note',       '',         'ticket_company_note'],
+                      ['{{ticket.company.domains}}',     'Company domains',       '',         'ticket_company_domains']
                     ],
       :helpdesk => [
                       ['{{helpdesk_name}}', 'Helpdesk name', '',         'helpdesk_name'],
@@ -524,20 +570,41 @@ module ApplicationHelper
       name = custom_field.name[0..custom_field.name.rindex('_')-1]
       place_holders[:ticket_fields] << ["{{ticket.#{name}}}", custom_field.label, "", "ticket_#{name}", { :nested => nested_vals }]
     }
+    
+    # Contact Custom Field Placeholders
+    current_account.contact_form.custom_contact_fields.each { |custom_field|
+      name = custom_field.name[3..-1]
+      #date fields disabled till db fix
+      place_holders[:requester] <<  ["{{ticket.requester.#{name}}}", "Requester #{custom_field.label}", "", "ticket_requester_#{name}"]
+    }
+
+    # Company Custom Field Placeholders
+    current_account.company_form.custom_company_fields.each { |custom_field|
+      name = custom_field.name[3..-1]
+      #date fields disabled till db fix
+      place_holders[:company] <<  ["{{ticket.company.#{name}}}", "Company #{custom_field.label}", "", "ticket_requester_company_#{name}"]
+    }
 
     # Survey Placeholders
     place_holders[:tickets] << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey',
                       'Includes satisfaction survey.', 'ticket_satisfaction_survey'
-                      ] if current_account.features?(:surveys, :survey_links)
+                      ] if current_account.any_survey_feature_enabled_and_active? && params[:type] != 'reply_template'
     place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
                       'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
-                      ] if Integrations::SurveyMonkey.placeholder_allowed?(current_account)
+                      ] if Integrations::SurveyMonkey.placeholder_allowed?
+    
+
+    # Ticket Public URL placeholder
+    place_holders[:tickets] << ['{{ticket.public_url}}', 'Public Ticket URL' , 
+                      'URL for accessing the tickets without login', 'ticket_public_url'
+                      ] if current_account.features?(:public_ticket_url)
+
     place_holders
   end
 
 
   def group_avatar
-    content_tag( :div, image_tag("/images/fillers/group-icon.png",{:onerror => "imgerror(this)",:size_type => :thumb} ), :class => "image-lazy-load", :size_type => :thumb )
+    content_tag( :div, image_tag("/assets/fillers/group-icon.png",{:onerror => "imgerror(this)",:size_type => :thumb} ), :class => "image-lazy-load", :size_type => :thumb )
   end
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user
@@ -545,25 +612,55 @@ module ApplicationHelper
     #Hack. prod issue. ticket: 55851. Until we find root cause. It was not rendering view at all.
     #Remove once found the cause.
     user = User.new if user.nil?
-    img_tag_options = { :onerror => "imgerror(this)", :alt => user.name, :size_type => profile_size }
-    if options.include?(:width)
-      img_tag_options[:width] = options.fetch(:width)
-      img_tag_options[:height] = options.fetch(:height)
-    end 
-    avatar_content = MemcacheKeys.fetch(["v11","avatar",profile_size,user],30.days.to_i) do
-      img_tag_options[:"data-src"] = user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
-      content_tag( :div, image_tag("/images/fillers/profile_blank_#{profile_size}.gif", img_tag_options), :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
+    if user.avatar
+      img_url = avatar_cached_url(user, profile_size)
+      img_tag_options = {
+          :onerror => "imgerror(this)", 
+          :alt => user.name, 
+          :size_type => profile_size,
+          :data => {
+            :src => img_url,
+            :"src-retina" => img_url
+            },
+          :class => profile_size
+        }
+      avatar_image_generator(img_tag_options, profile_size, profile_class)
+    elsif is_user_social(user, profile_size).present?
+        img_tag_options = {
+          :onerror => "imgerror(this)", 
+          :alt => user.name, 
+          :size_type => profile_size,
+          :data => {
+            :src => is_user_social(user, profile_size),
+            :"src-retina" => is_user_social(user, profile_size)
+            },
+          :class => profile_size
+        }
+      avatar_image_generator(img_tag_options, profile_size, profile_class)
+    else
+        avatar_generator(user.name, profile_size, profile_class, options)
     end
-    avatar_content
   end
 
+  def avatar_image_generator(img_tag_options, profile_size, profile_class)
+      ActionController::Base.helpers.content_tag(:div,
+          ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options), 
+          :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
+  end
+
+  def avatar_cached_url(user, profile_size)
+    MemcacheKeys.fetch(["v16","avatar",profile_size ,user],30.days.to_i) do
+      user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
+    end
+  end
+  
   def unknown_user_avatar( profile_size = :thumb, profile_class = "preview_pic", options = {} )
     img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture') }
     if options.include?(:width)
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end
-    content_tag( :div, (image_tag "/images/fillers/profile_blank_#{profile_size}.gif", img_tag_options ), :class => profile_class, :size_type => profile_size )
+    content_tag( :div, (image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options ), :class => profile_class, :size_type => profile_size )
   end
 
   def user_avatar_url(user, profile_size = :thumb)
@@ -574,18 +671,42 @@ module ApplicationHelper
     user_avatar(user,:thumb,"preview_pic",{:expiry => expiry, :width => 36, :height => 36})
   end
 
-  def is_user_social( user, profile_size )
+  def is_user_social( user, profile_size)
     if user.fb_profile_id
       profile_size = (profile_size == :medium) ? "large" : "square"
       facebook_avatar(user.fb_profile_id, profile_size)
-    else
-      "/images/fillers/profile_blank_#{profile_size}.gif"
+    else 
+      false
     end
+  end
+
+  def avatar_generator( username, profile_size = :thumb, profile_class, opt )
+    img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => [profile_size, profile_class] }
+    username = username.lstrip
+    if username.present? && isalpha(username[0]).present?
+       ActionController::Base.helpers.content_tag( :div, username[0], :class => "#{profile_class} avatar-text text-center #{profile_size} bg-#{unique_code(username)}" )
+    else
+       ActionController::Base.helpers.content_tag( :div, (ActionController::Base.helpers.image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options ), :class => profile_class, :size_type => profile_size )
+    end
+  end
+
+  def unique_code(username)
+    images = Dir.glob(Rails.root+"public/images/avatar/background/1x/*.*")
+    hash = 0
+    username.each_byte do |c|        
+      hash = c + ((hash << 5) - hash);
+    end
+    unique_code = hash % (images.length)
+    unique_code
+  end
+
+  def isalpha(str)
+    str.match(/[^!@#,\$%\^\&\*\(\)\+_\-\?\<\>:"';\.\d ]$/)
   end
 
   def s3_twitter_avatar(handle, profile_size = "thumb")
     handle_avatar = MemcacheKeys.fetch(["v2","twt_avatar", profile_size, handle], 30.days.to_i) do
-      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/images/fillers/profile_blank_#{profile_size}.gif"
+      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/assets/misc/profile_blank_#{profile_size}.jpg"
     end
     handle_avatar
   end
@@ -604,7 +725,7 @@ module ApplicationHelper
                        "data-contact-id" => user.id,
                        "data-contact-url" => hover_card_contact_path(user)  }
 
-      link_to(options[:avatar] ? user_avatar(user) : h(user), user, default_opts.merge(options))
+      pjax_link_to(options[:avatar] ? user_avatar(user) : h(user), user, default_opts.merge(options))
       # link_to(h(user.display_name), user, options)
     else
       content_tag(:strong, h(user.display_name), options)
@@ -615,12 +736,17 @@ module ApplicationHelper
     default_options = {
       :format => :short_day_with_time,
       :include_year => false,
+      :include_weekday => true,
       :translate => true
     }
     options = default_options.merge(options)
     time_format = (current_account.date_type(options[:format]) if current_account) || "%a, %-d %b, %Y at %l:%M %p"
     unless options[:include_year]
       time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
+    end
+    
+    unless options[:include_weekday]
+      time_format = time_format.gsub(/\A(%a|A),\s/, "")
     end
     final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
   end
@@ -656,8 +782,12 @@ module ApplicationHelper
  end
 
  def get_total_time time_sheets
-   total_time_in_sec = time_sheets.collect{|t| t.running_time}.sum
-   return get_time_in_hours(total_time_in_sec)
+   total_time_in_sec = total_time_in_seconds(time_sheets)
+   get_time_in_hours(total_time_in_sec)
+ end
+
+ def total_time_in_seconds time_sheets
+  time_sheets.collect{|t| t.running_time}.sum
  end
 
   def get_app_config(app_name)
@@ -666,8 +796,7 @@ module ApplicationHelper
   end
 
   def is_application_installed?(app_name)
-    installed_app = get_app_details(app_name)
-    return !(installed_app.blank?)
+    get_app_details(app_name).present?
   end
 
   def get_app_details(app_name)
@@ -686,7 +815,15 @@ module ApplicationHelper
   end
 
   def cloud_files_installed?
-    dropbox_app_key || installed_apps[:box]
+    dropbox_app_key || installed_apps[:box] || installed_apps[:onedrive]
+  end
+
+  def get_enabled_cloud_files_app
+    array = []
+    [:box, :dropbox, :onedrive].each do |c_f|
+      array << c_f if installed_apps[c_f]
+    end
+    array
   end
 
   def get_app_widget_script(app_name, widget_name, liquid_objs)
@@ -751,19 +888,21 @@ module ApplicationHelper
     element.html_safe
   end
 
-  def construct_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
+  def construct_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
+    element_class  += " section_field" if field.section_field?
     field_label    += '<span class="required_star">*</span>'.html_safe if required
     field_label    += "#{add_requester_field}".html_safe if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name.html_safe : field_name.html_safe
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }".html_safe
-    label = label_tag object_name+"_"+field.field_name, field_label.html_safe
-    choices = field.choices
+    label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id : 
+                                     object_name+"_"+field.field_name), 
+                      field_label.html_safe
     case dom_type
       when "requester" then
-        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_path }))  
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :formats => [:html], :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_index_path }))
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
         element+= label_tag("", "#{add_requester_field}".html_safe,:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'
@@ -790,28 +929,231 @@ module ApplicationHelper
                                               {:include_blank => "...", :selected => field_value},
                                               {:class => element_class})
       when "nested_field" then
-        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal, required)
+        element = label + nested_field_tag(object_name, 
+                                            field_name, 
+                                            field, 
+                                            { :include_blank => "...", 
+                                              :selected => field_value, 
+                                              :pl_value_id => pl_value_id}, 
+                                            {:class => element_class}, 
+                                            field_value, 
+                                            in_portal, 
+                                            required)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        checkbox_element = ( required ? ( check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, { :class => element_class } )) :
-                                                                   ( check_box(object_name, field_name, :class => element_class, :checked => field_value ) ) )
+        check_box_html = { :class => element_class }
+        if pl_value_id
+          id = gsub_id object_name+"_"+field_name+"_"+pl_value_id
+          check_box_html.merge!({:id => id})
+        end
+        checkbox_element = ( required ? ( check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?,  check_box_html)) :
+                                          ( check_box(object_name, field_name, check_box_html.merge!({:checked => field_value}) ) ) )
         element = content_tag(:div, (checkbox_element + label).html_safe)
       when "html_paragraph" then
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
             element = label + builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
         end
+      when "date" then
+      element = label + content_tag(:div, construct_date_field(field_value, 
+                                                                 object_name, 
+                                                                 field_name, 
+                                                                 element_class).html_safe,
+                                            :class => "controls input-date-field")
     end
-    content_tag :li, element.html_safe, :class => " #{ dom_type } #{ field.field_type } field"
+    element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
+    content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class
+  end
+
+  def construct_new_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
+    dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
+    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    element_class  += " required_closure" if (field.required_for_closure && !field.required)
+    element_class  += " section_field" if field.section_field?
+    field_label    += '<span class="required_star">*</span>'.html_safe if required
+    field_label    += "#{add_requester_field}".html_safe if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
+    field_name      = (field_name.blank?) ? field.field_name.html_safe : field_name.html_safe
+    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }".html_safe
+    label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id : 
+                                     object_name+"_"+field.field_name), 
+                      field_label.html_safe
+    choices = field.choices
+    description = field.description
+    case dom_type
+      when "old_requester" then
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :formats => [:html], :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_index_path }))
+        element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
+        element+= label_tag("", "#{add_requester_field}".html_safe,:class => 'hidden') if is_edit
+        unless is_edit or params[:format] == 'widget'
+          element = add_cc_field_tag element, field
+        end
+      when "requester" then
+         search_req =   "#{add_requester_field}".html_safe #if (!is_edit)
+        unless is_edit or params[:format] == 'widget'
+          show_cc = show_cc_field  field
+        end
+            element = render(:partial => "/helpdesk/tickets/ticket_widget/requester", :formats => [:html], :locals => {:search_req => search_req , :placeholder => description, :show_cc => show_cc, :is_edit => is_edit})
+            element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
+      when "email" then
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+        element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
+        element += add_name_field if !is_edit and !current_user
+      when "text", "number", "decimal" then
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+      when "paragraph" then
+        element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
+      when "dropdown" then
+        if (['default_priority','default_source','default_status'].include?(field.field_type) )
+          element = label + select(object_name, field_name, field.html_unescaped_choices, {:selected => field_value},{:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
+          #Just avoiding the include_blank here.
+        else
+          element = label + select(object_name, field_name, field.html_unescaped_choices, { :include_blank => "...", :selected => field_value},{:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
+        end
+      when "dropdown_blank" then
+        element = label + select(object_name, field_name,
+                                              field.html_unescaped_choices(@ticket),
+                                              {:include_blank => "...", :selected => field_value},
+                                              {:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
+      when "nested_field" then
+        element =  new_nested_field_tag(label, object_name, 
+                                            field_name, 
+                                            field, 
+                                            { :include_blank => "...", 
+                                              :selected => field_value, 
+                                              :pl_value_id => pl_value_id}, 
+                                            {:class => element_class + " select2"}, 
+                                            field_value, 
+                                            in_portal, 
+                                            required)
+      when "hidden" then
+        element = hidden_field(object_name , field_name , :value => field_value)
+      when "checkbox" then
+        check_box_html = { :class => element_class }
+        if pl_value_id
+          id = gsub_id object_name+"_"+field_name+"_"+pl_value_id
+          check_box_html.merge!({:id => id})
+        end
+        checkbox_element = ( required ? ( check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?,  check_box_html)) :
+                                          ( check_box(object_name, field_name, check_box_html.merge!({:checked => field_value}) ) ) )
+        element = content_tag(:div, (checkbox_element + label).html_safe, :class => "checkbox-wrapper")
+      when "html_paragraph" then
+         element = label 
+         redactor_wrapper = ""
+        form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
+            redactor_wrapper = builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
+        end
+            redactor_wrapper += render(:partial => "/helpdesk/tickets/ticket_widget/new_ticket_attachment", :formats => [:html])
+            element += content_tag(:div, redactor_wrapper, :class => "redactor_wrapper")
+      when "date" then
+        element = label + content_tag(:div, construct_date_field(field_value, 
+                                                                 object_name, 
+                                                                 field_name, 
+                                                                 element_class).html_safe,
+                                            :class => "controls input-date-field")
+        
+    end
+    element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
+    content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class
+  end
+
+  def show_cc_field field
+      if current_user && current_user.agent?
+      element  = true
+    elsif current_user && current_user.customer? && field.all_cc_in_portal?
+      element  = true
+    else
+      element = false
+    end
+    return element
+  end
+
+  def construct_date_field(field_value, object_name, field_name, element_class)
+    date_format = AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]
+    field_value = formatted_date(field_value) if field_value.present?
+    text_field_tag("#{object_name}[#{field_name}]", field_value, 
+              {:class => "#{element_class} datepicker_popover", 
+                :readonly => true,
+                :'data-show-image' => "true",
+                :'data-date-format' => AccountConstants::DATA_DATEFORMATS[date_format][:datepicker] })
+  end
+
+  def construct_section_fields(f, field, is_edit, item, required)
+    section_container = ""
+    field.picklist_values.includes(:section).each do |picklist|
+      next if picklist.section.blank?
+      section_elements = ""
+      picklist.section_ticket_fields.each do |section_tkt_field|
+        if is_edit || required
+          section_field_value = item.is_a?(Helpdesk::Ticket) ? item.send(section_tkt_field.field_name) :
+            item.custom_field_value(section_tkt_field.field_name)
+          section_field_value = nested_ticket_field_value(item, 
+                                  section_tkt_field) if section_tkt_field.field_type == "nested_field"
+        elsif !params[:topic_id].blank?
+          section_field_value = item[section_tkt_field.field_name]
+        end
+        field_label = (section_tkt_field.label).html_safe
+        section_elements += construct_ticket_element(f, :helpdesk_ticket, 
+                                                        section_tkt_field, 
+                                                        field_label,
+                                                        section_tkt_field.dom_type, 
+                                                        section_tkt_field.required, 
+                                                        section_field_value, 
+                                                        "", 
+                                                        false, 
+                                                        is_edit,
+                                                        picklist.id.to_s)
+      end
+      section_container += text_area_tag "", content_tag(:ul, section_elements.html_safe.gsub("</textarea>", "&lt/textarea&gt"), 
+                                                               :class => "ticket_section"),
+                                            :id => "picklist_section_#{picklist.id}",
+                                            :disabled => true,
+                                            :class => "hide"
+    end
+    section_container
+  end
+
+  def construct_new_section_fields(f, field, is_edit, item, required)
+    section_container = ""
+    field.picklist_values.includes(:section).each do |picklist|
+      next if picklist.section.blank?
+      section_elements = ""
+      picklist.section_ticket_fields.each do |section_tkt_field|
+        if is_edit || required
+          section_field_value = item.is_a?(Helpdesk::Ticket) ? item.send(section_tkt_field.field_name) :
+            item.custom_field_value(section_tkt_field.field_name)
+          section_field_value = nested_ticket_field_value(item, 
+                                  section_tkt_field) if section_tkt_field.field_type == "nested_field"
+        elsif !params[:topic_id].blank?
+          section_field_value = item[section_tkt_field.field_name]
+        end
+        field_label = (section_tkt_field.label).html_safe
+        section_elements += construct_new_ticket_element(f, :helpdesk_ticket, 
+                                                        section_tkt_field, 
+                                                        field_label,
+                                                        section_tkt_field.dom_type, 
+                                                        section_tkt_field.required, 
+                                                        section_field_value, 
+                                                        "", 
+                                                        false, 
+                                                        is_edit,
+                                                        picklist.id.to_s)
+      end
+      section_container += text_area_tag "", content_tag(:ul, section_elements.html_safe.gsub("</textarea>", "&lt/textarea&gt"), 
+                                                               :class => "ticket_section"),
+                                            :id => "picklist_section_#{picklist.id}",
+                                            :disabled => true,
+                                            :class => "hide"
+    end
+    section_container
   end
 
   def add_cc_field_tag element , field
     if current_user && current_user.agent?
-      element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html"))
+      element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all", :formats => [:html]))
     elsif current_user && current_user.customer? && field.all_cc_in_portal?
-      element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html"))
+      element  = element + content_tag(:div, render(:partial => "/shared/cc_email_all", :formats => [:html]))
     else
-      element  = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.company)
+      element  = element + content_tag(:div, render(:partial => "/shared/cc_email", :formats => [:html])) if (current_user && field.company_cc_in_portal? && current_user.company)
     end
     return element
   end
@@ -828,22 +1170,65 @@ module ApplicationHelper
   # The field_value(init value) for the nested field should be in the the following format
   # { :category_val => "", :subcategory_val => "", :item_val => "" }
   def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false, required)
-    _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
-    _javascript_opts = {
+  _javascript_opts = {
       :data_tree => _field.nested_choices,
       :initValues => _field_values,
       :disable_children => false
     }.merge!(_opt)
-    _field.nested_levels.each do |l|
-      _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = (_name +"_"+ l[:name]).gsub('[','_').gsub(']','')
-      _category += content_tag :div, content_tag(:label, (nested_field_label(l[(!in_portal)? :label : :label_in_portal],required))) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
-    end
-    (_category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")).html_safe
+    if _opt[:pl_value_id].present?
+      _htmlopts.merge!({:id => gsub_id("#{_name}_#{_fieldname}_#{_opt[:pl_value_id]}")})
+      _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
+      _field.nested_levels.each do |l|
+        _htmlopts.merge!({:id => gsub_id("#{_name}_#{l[:name]}_#{_opt[:pl_value_id]}")})
+        _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = gsub_id(_name +"_"+ l[:name]+"_"+_opt[:pl_value_id])
+        _category += content_tag :div, content_tag(:label, (nested_field_label(l[(!in_portal)? :label : :label_in_portal],required)).html_safe) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+      end
+      (_category + javascript_tag("jQuery('##{gsub_id(_name +"_"+ _fieldname+"_"+_opt[:pl_value_id])}').nested_select_tag(#{_javascript_opts.to_json});")).html_safe
+    else
+      _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
+      _field.nested_levels.each do |l|
+        _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = gsub_id(_name +"_"+ l[:name])
+        _category += content_tag :div, content_tag(:label, (nested_field_label(l[(!in_portal)? :label : :label_in_portal],required)).html_safe) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+      end
+      (_category + javascript_tag("jQuery('##{gsub_id(_name +"_"+ _fieldname)}').nested_select_tag(#{_javascript_opts.to_json});")).html_safe
+      end
+  end
 
+   def new_nested_field_tag(label, _name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false, required)
+  _javascript_opts = {
+      :data_tree => _field.nested_choices,
+      :initValues => _field_values,
+      :disable_children => false
+    }.merge!(_opt)
+    if _opt[:pl_value_id].present?
+      _htmlopts.merge!({:id => gsub_id("#{_name}_#{_fieldname}_#{_opt[:pl_value_id]}")})
+      _main_field = content_tag :div, label + select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts), :class => "main_field"
+      # _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
+      _category =  _main_field
+      _field.nested_levels.each do |l|
+        _htmlopts.merge!({:id => gsub_id("#{_name}_#{l[:name]}_#{_opt[:pl_value_id]}")})
+        _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = gsub_id(_name +"_"+ l[:name]+"_"+_opt[:pl_value_id])
+        _category += content_tag :div, content_tag(:label, (nested_field_label(l[(!in_portal)? :label : :label_in_portal],required)).html_safe) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+      end
+      (_category + javascript_tag("jQuery('##{gsub_id(_name +"_"+ _fieldname+"_"+_opt[:pl_value_id])}').nested_select_tag(#{_javascript_opts.to_json});")).html_safe
+    else
+      _main_field = content_tag :div, label + select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts), :class => "main_field"
+      # _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
+       _category =  _main_field
+      _field.nested_levels.each do |l|
+        _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = gsub_id(_name +"_"+ l[:name])
+        _category += content_tag :div, content_tag(:label, (nested_field_label(l[(!in_portal)? :label : :label_in_portal],required)).html_safe) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+      end
+      (_category + javascript_tag("jQuery('##{gsub_id(_name +"_"+ _fieldname)}').nested_select_tag(#{_javascript_opts.to_json});")).html_safe
+      end
+  end
+
+  def gsub_id(text)
+    text.gsub('[','_').gsub(']','')
   end
 
   def nested_field_label(label, required)
-    field_label = label.html_safe
+    field_label = label
     field_label += '<span class="required_star">*</span>'.html_safe if required
     return field_label
   end
@@ -879,7 +1264,7 @@ module ApplicationHelper
     (element.blank? || field_value.nil? || field_value == "" || field_value == "..." || ((field.field_type == "custom_checkbox") && !field_value))
   end
 
-  def pageless(total_pages, url, message=t("loading.items"), params = {}, data_type = "html", complete = "" )
+  def pageless(total_pages, url, message=t("loading.items"), params = {}, data_type = "html", complete = "")
     opts = {
       :totalPages   => total_pages,
       :url          => url,
@@ -927,7 +1312,7 @@ module ApplicationHelper
     unless @account.main_portal.logo.blank?
       return @account.main_portal.logo.content.url(:logo)
     end
-    return "/images/logo.png?721013"
+    return "/assets/logo.png?721013"
   end
 
   def get_base_domain
@@ -935,25 +1320,6 @@ module ApplicationHelper
   end
 
   private
-    def solutions_tab
-      if !current_portal.solution_categories.empty?
-        ['/solution/categories', :solutions, solutions_visibility?]
-      else
-        ['#', :solutions, false]
-      end
-    end
-
-    def forums_tab
-      if !current_portal.forum_categories.empty?
-        ['/discussions', :forums,  forums_visibility?]
-      else
-        ['#', :forums, false]
-      end
-    end
-
-    def solutions_visibility?
-      allowed_in_portal?(:open_solutions) && privilege?(:view_solutions)
-    end
 
     def forums_visibility?
       feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
@@ -975,9 +1341,9 @@ module ApplicationHelper
       feature?(:twitter) && privilege?(:manage_tickets)
     end
 
-    def additional_settings?
+    def social_enabled?
       settings = current_account.account_additional_settings.additional_settings
-      settings.blank? || settings[:enable_social]
+      settings.blank? || settings[:enable_social].nil? || settings[:enable_social]
     end
 
     def handles_associated?
@@ -985,7 +1351,7 @@ module ApplicationHelper
     end
 
     def can_view_welcome_page?
-      privilege?(:view_admin) && can_view_social? && additional_settings?
+      privilege?(:view_admin) && can_view_social? && social_enabled?
     end
 
   def tour_button(text, tour_id)
@@ -995,9 +1361,7 @@ module ApplicationHelper
   def check_fb_reauth_required
     fb_page = current_account.fb_reauth_check_from_cache
     if fb_page
-      return content_tag(:div, "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible.
-        It looks like username, password, or permission has been changed recently.Kindly
-        <a href='/social/facebook' target='_blank'> fix </a> it.  ".html_safe, :class =>
+      return content_tag('div', "<a href='javascript:void(0)'></a> #{t('facebook_reauth')} <a href='/social/facebook' target='_blank'> #{t('reauthorize_facebook')} </a>".html_safe, :class =>
         "alert-message block-message warning full-width")
     end
     return
@@ -1005,20 +1369,29 @@ module ApplicationHelper
 
   def check_twitter_reauth_required
     twt_handle= current_account.twitter_reauth_check_from_cache
-    link = "<a href='/admin/social/streams' target='_blank'>"
     if twt_handle
-      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible.
-        It looks like username or password has been changed recently. Kindly
-        #{link} fix </a> it.  ".html_safe, :class =>
+      return content_tag('div', "<a href='javascript:void(0)'></a> #{t('twitter_reauth')} <a href='/admin/social/streams' target='_blank'> #{t('reauthorize_twitter')} </a>".html_safe, :class =>
         "alert-message block-message warning full-width")
     end
     return
+  end
+  
+  def social_reauth_required
+    fb_reauth = current_account.fb_reauth_check_from_cache
+    twitter_reauth = current_account.twitter_reauth_check_from_cache
+    if fb_reauth or twitter_reauth
+      reauth_alert = "<div class ='alert-message block-message warning full-width'>"
+      reauth_alert = "#{reauth_alert} <div><a href='/admin/social/streams' target='_blank'>Reauthorize your twitter account</a></div>" if twitter_reauth
+      reauth_alert = "#{reauth_alert} <div><a href='/social/facebook' target='_blank'>Reauthorize your facebook account</a></div>" if fb_reauth
+      reauth_alert = "#{reauth_alert} </div>"
+      reauth_alert.html_safe
+    end
   end
 
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank'>
+      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank' data-pjax='#body-container'>
           <span class='emphasize'>#{h(ticket.requester.display_name)}</span>
        </a>".html_safe
     else
@@ -1034,9 +1407,6 @@ module ApplicationHelper
   def will_paginate(collection_or_options = nil, options = {})
     if collection_or_options.is_a? Hash
       options, collection_or_options = collection_or_options, nil
-    end
-    unless options[:renderer]
-      options = options.merge :renderer => DefaultPaginationRenderer
     end
     super *[collection_or_options, options].compact
   end
@@ -1058,44 +1428,69 @@ module ApplicationHelper
   end
 # helpers for fresfone callable links -- starts
 	def can_make_phone_calls(number, freshfone_number_id=nil)
-		can_make_calls(number, 'phone-icons', freshfone_number_id)
+		can_make_calls(number, 'phone-icons', freshfone_number_id, true)
 	end
 
 	def can_make_mobile_calls(number, freshfone_number_id=nil)
-		can_make_calls(number, 'mobile-icons', freshfone_number_id)
+		can_make_calls(number, 'mobile-icons', freshfone_number_id, true)
 	end
 
-	def can_make_calls(number, class_name=nil, freshfone_number_id=nil)
+	def can_make_calls(number, class_name=nil, freshfone_number_id=nil, can_show_number = false)
 		#link_to h(number), "tel:#{number}", { :'data-phone-number' => "#{number}",
 		#																	 :'data-freshfone-number-id' => freshfone_number_id,
     #																	 :class => "can-make-calls #{class_name}" }
-    content_tag(:span , number, { :'data-phone-number' => "#{number}",
+    content_tag(:span , can_show_number ? number : nil, { :'data-phone-number' => "#{number}",
                                   :'data-freshfone-number-id' => freshfone_number_id,
                                   :class => "can-make-calls #{class_name}" })
 
 	end
 
 	def current_account_freshfone_numbers
-		@current_account_freshfone_numbers ||= current_account.freshfone_numbers.map{|n| [n.number, n.id]}
+		@current_account_freshfone_numbers ||= current_account.freshfone_numbers.accessible_freshfone_numbers(current_user)
 	end
 
+  def current_account_freshfone_number_hash
+     @current_account_freshfone_number_hash ||= current_account_freshfone_numbers.map{|n| [n.number, n.id]}
+  end
+
   def current_account_freshfone_names
-      @current_account_freshfone_names ||= current_account.freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : n.name] }
+      @current_account_freshfone_names ||= current_account_freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : CGI.escapeHTML(n.name)] }
   end
   
  def current_account_freshfone_details
-    @current_account_freshfone_details ||= current_account.freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{n.name} #{n.number}", n.id] }
+    @current_account_freshfone_details ||= current_account_freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{CGI.escapeHTML(n.name)} #{n.number}", n.id] }
  end
- 
+
+ def freshfone_presence_status_class
+  return "ficon-phone-disable" if current_user.freshfone_user_offline? ||
+    !freshfone_active_or_trial?
+  presence_class = (current_user.freshfone_user && current_user.freshfone_user.available_on_phone?) ?
+                       "ficon-ff-via-phone" : "ficon-ff-via-browser"
+  presence_class + " ff-busy" unless current_user.freshfone_user_online?
+  return presence_class
+ end
+
+ def phone_disabled?
+  'disabled' unless freshfone_active_or_trial?
+ end
+
+  def freshfone_non_conference_class
+    current_account.features?(:freshfone_conference) ? "" : "non-conference"
+  end  
+
  def call_direction_class(call)
 		if call.blocked?
-			"blocked_call_icon"
+			"ficon-blocked-call"
 		elsif call.incoming?
-			(call.completed? || call.inprogress?) ? "incoming_call_icon" : "incoming_missed_call_icon"
+			(call.completed? || call.inprogress?) ? "ficon-incoming-call" : abandon_or_missed_call_icon(call)
 		elsif call.outgoing?
-			(call.completed? || call.inprogress?) ? "outgoing_call_icon" : "outgoing_missed_call_icon"
+			(call.completed? || call.inprogress?) ? "ficon-outgoing-call" : "ficon-no-arrow-left"
 		end
 	end
+
+  def abandon_or_missed_call_icon(call)
+    call.abandoned_call? ? "ficon-abandoned-call" : "ficon-no-arrow-right"
+  end
 # helpers for fresfone callable links -- ends
 
   def screenr_visible_in?(current_page, allowed_pages)
@@ -1106,6 +1501,14 @@ module ApplicationHelper
     return false
 
     location=="agent_ticket" && configs_hash[:visible_agent_ticket]=="1"
+  end
+
+  def ilos_widget( entity_id, location)
+    ilos_id = (location == "portal_ticket" || location == "portal_forum") ? "ilos-btn-portal" : "ilos-btn-agent"
+    ilos_widget_html =  
+      %Q{<a class='btn btn-flat' href='#{integrations_ilos_popupbox_path}?ilos_entity_id=#{entity_id}&location=#{location}' title='#{t('integrations.ilos.messages.recording_details')}' id='#{ilos_id}' rel='freshdialog' data-target='#ilos-video-recorder' data-width='430' data-submit-label='#{t('integrations.ilos.messages.start_recording')}' data-close-label='#{t('integrations.ilos.messages.cancel_recording')}'><img id='ilos-image' src='/glyphs/vectors/ilos-icon.svg' alt='ilos'>#{t('integrations.ilos.messages.record_screen')}</a>}
+
+    ilos_widget_html.html_safe
   end
 
   def shortcut(key)
@@ -1155,11 +1558,60 @@ module ApplicationHelper
   def generate_breadcrumbs(params, form=nil, *opt)
     ""
   end
-
-  def requester_company
-    ['{{ticket.requester.company_name}}', 'Requester company name',   "",          'ticket_requester_company_name'] #??? should it be requester.company.name?!
+  
+  def load_manifest
+    ASSET_MANIFEST.replace({ 
+      :js => AssetLoader.js_assets, 
+      # :css => AssetLoader.css_assets
+      :css => {}
+    })
+  end
+  
+  def asset_manifest(type = :js)
+    return {} unless [:js, :css].include?(type)
+    load_manifest if ASSET_MANIFEST.blank? and !Rails.env.development?
+    Rails.env.development? ? AssetLoader.send("#{type}_assets") : ASSET_MANIFEST[type]
+  end
+  
+  def asset_host_url
+    return "" if Rails.env.development? || Rails.env.test?
+    ActionController::Base.asset_host.yield
   end
 
   # ITIL Related Methods ends here
 
+  #Helper method for rendering only base error messages
+  def base_error_messages obj
+    if obj.errors.present?
+      error_list = obj.errors[:base].collect{ |msg| content_tag('li', msg)}.join(" ").html_safe
+      content_tag('div', content_tag('ul', error_list), :id => "errorExplanation", :class => "errorExplanation")
+    end
+  end
+
+  def tabs_for( *options, &block )
+    raise ArgumentError, "Missing block" unless block_given?
+    raw TabHelper::TabsRenderer.new( *options, &block ).render
+  end
+
+  def password_policies_for_popover
+    return "" if (@password_policy.nil? or @password_policy.new_record?)
+    list = Proc.new do
+      @password_policy.policies.collect do |policy|
+        case policy
+        when :minimum_characters
+          concat(content_tag :li, t("admin.security.password_policy_popover.#{policy.to_s}", :count => @password_policy.configs[policy.to_s]) )
+        when :cannot_contain_user_name, :atleast_an_alphabet_and_number,
+          :have_mixed_case, :have_special_character, :cannot_be_same_as_past_passwords
+          concat(content_tag :li, t("admin.security.password_policy_popover.#{policy.to_s}") )
+        end
+      end
+    end
+    
+    content_tag :ul, &list
+  end
+
+  def outgoing_callers
+    current_account.freshfone_caller_id
+  end
+  
 end

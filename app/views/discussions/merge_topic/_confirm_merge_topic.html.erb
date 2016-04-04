@@ -1,4 +1,4 @@
-<% form_tag confirm_discussions_merge_topic_path do |f| %>
+<%= form_tag confirm_discussions_merge_topic_index_path do |f| %>
   <div class="contact-special">
     <br>
     <div id="primary-contact">
@@ -45,6 +45,6 @@
   </div>
 <% end %>
 
-<% javascript_tag do %>  
+<%= javascript_tag do %>  
   	App.Discussions.Merge.activateRedactor('<%= escape_javascript(t("discussions.topic_merge.add_note")).html_safe %>');
 <% end %>

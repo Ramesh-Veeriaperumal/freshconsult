@@ -1,8 +1,10 @@
 require 'spec_helper'
-include GnipHelper
-include DynamoHelper
 
-describe Social::Twitter::Feed do
+RSpec.configure do |c|
+  c.include GnipHelper
+end
+
+RSpec.describe Social::Twitter::Feed do
 
   self.use_transactional_fixtures = false
 
@@ -34,7 +36,7 @@ describe Social::Twitter::Feed do
     sample_feed = Social::Twitter::Feed.new(sample_feed)
 
     sample_feed_array = [sample_feed]
-    Social::Workers::Stream::Twitter.process_stream_feeds(sample_feed_array, @custom_stream, "#{get_social_id}")
+    Social::CustomStreamTwitter.new({}).send("process_stream_feeds", sample_feed_array, @custom_stream, "#{get_social_id}")
 
     tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should be_nil
@@ -53,11 +55,11 @@ describe Social::Twitter::Feed do
 
 
     sample_feed_array = [sample_feed]
-    Social::Workers::Stream::Twitter.process_stream_feeds(sample_feed_array, @custom_stream, "#{get_social_id}")
+    Social::CustomStreamTwitter.new({}).send("process_stream_feeds", sample_feed_array, @custom_stream, "#{get_social_id}")
 
     tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be_truthy
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_feed.body)
     ticket = tweet.tweetable
@@ -78,11 +80,11 @@ describe Social::Twitter::Feed do
     sample_feed = Social::Twitter::Feed.new(sample_feed)
 
     sample_feed_array = [sample_feed]
-    Social::Workers::Stream::Twitter.process_stream_feeds(sample_feed_array, @custom_stream, "#{get_social_id}")
+    Social::CustomStreamTwitter.new({}).send("process_stream_feeds", sample_feed_array, @custom_stream, "#{get_social_id}")
 
     tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be_truthy
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_feed.body)
     ticket = tweet.tweetable
@@ -104,11 +106,11 @@ describe Social::Twitter::Feed do
 
 
     sample_feed_array = [sample_feed]
-    Social::Workers::Stream::Twitter.process_stream_feeds(sample_feed_array, @custom_stream, "#{get_social_id}")
+    Social::CustomStreamTwitter.new({}).send("process_stream_feeds", sample_feed_array, @custom_stream, "#{get_social_id}")
 
     tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be_truthy
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_feed.body)
     ticket = tweet.tweetable

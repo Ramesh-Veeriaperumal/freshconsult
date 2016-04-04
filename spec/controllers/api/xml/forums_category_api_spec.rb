@@ -1,9 +1,8 @@
 require 'spec_helper'
 
-describe ForumCategoriesController do
+RSpec.describe ForumCategoriesController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   before(:each) do
     request.host = @account.full_domain
@@ -15,21 +14,21 @@ describe ForumCategoriesController do
     post :create, params.merge!(:format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
 
-    expected = (response.status === "201 Created")  && (compare(result["forum_category"].keys,APIHelper::FORUM_CATEGORY_ATTRIBS,{}).empty?)
+    expected = (response.status === 201)  && (compare(result["forum_category"].keys,APIHelper::FORUM_CATEGORY_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
   it "should be able to update a forum category" do
     forum_category = create_test_category
     put :update, { :id => forum_category.id, :forum_category => {:description => Faker::Lorem.paragraph }, :format => 'xml'}
 
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
   it "should be able to view a forum category" do
     forum_category = create_test_category
     get :show, { :id => forum_category.id, :format => 'xml'}
     result = parse_xml(response)
 
-    expected = (response.status === "200 OK") &&  (compare(result["forum_category"].keys-["forums"],APIHelper::FORUM_CATEGORY_ATTRIBS,{}).empty?)
+    expected = (response.status === 200) &&  (compare(result["forum_category"].keys-["forums"],APIHelper::FORUM_CATEGORY_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
   it "should be able to view all forum categories" do
@@ -38,20 +37,20 @@ describe ForumCategoriesController do
     get :index, {:format => 'xml'}
     result = parse_xml(response)
 
-    expected = (response.status === "200 OK")  && (compare(result["forum_categories"].first.keys,APIHelper::FORUM_CATEGORY_ATTRIBS,{}).empty?)
+    expected = (response.status === 200)  && (compare(result["forum_categories"].first.keys,APIHelper::FORUM_CATEGORY_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
   it "should be able to delete a forum category" do
     forum_category = create_test_category
     delete :destroy, { :id => forum_category.id, :format => 'xml'}
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
   #negative condition check.
   it "should not create a forum category without a name" do
     post :create, {:forum_category => { :description=>Faker::Lorem.paragraph },:format => 
     'json'}, :content_type => 'application/xml'
     #currently no error handling for json. change this once its implemented.
-    response.status.should =~ /406 Not Acceptable/
+    response.status.should == 406
   end
 
     def create_forum_category

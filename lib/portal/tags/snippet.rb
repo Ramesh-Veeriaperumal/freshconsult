@@ -15,13 +15,19 @@ class Portal::Tags::Snippet < Liquid::Tag
                             # Should not be exposed in documentation
                             :reset_password_form => "/password_resets/form",
                             :activation_form => "/activations/form",
+                            :csat_survey => "/support/custom_surveys/new",
                             :ticket_add_people => "/support/tickets/add_people",
                             :ticket_reply => "/support/tickets/reply",
                             :ticket_survey => "/support/tickets/ticket_survey",
                             :ticket_details => "/support/tickets/ticket_details",
                             :ticket_edit => "/support/tickets/ticket_edit",
                             :ticket_list => "/support/tickets/ticket_list",
-                            :ticket_filters => "/support/tickets/filters"  }
+                            :ticket_filters => "/support/tickets/filters",
+                            :archive_ticket_survey => "/support/archive_tickets/archive_ticket_survey",
+                            :archive_ticket_details => "/support/archive_tickets/archive_ticket_details",
+                            :archive_ticket_list => "/support/archive_tickets/archive_ticket_list",
+                            :archive_ticket_filters => "/support/archive_tickets/filters",
+                              }
 
   def initialize(tag_name, markup, tokens)
     super
@@ -35,7 +41,7 @@ class Portal::Tags::Snippet < Liquid::Tag
   end
 
   def render_erb(context, file_name, locals = {})
-    context.registers[:controller].send(:render_to_string, :partial => file_name, :locals => locals)
+    context.registers[:controller].send(:render_to_string, :partial => file_name, :locals => locals, :formats => :html)
   end
 
   def file_path file_name

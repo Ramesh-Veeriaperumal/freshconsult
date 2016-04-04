@@ -475,7 +475,7 @@ hu:
         associate_account: "Associate a Facebook page with <b> %{account_name} </b> and respond to customer comments and wall posts directly from Freshdesk. You can also add your solutions and community forums within your Facebook page."
         add_facebook: "Facebook oldal hozzáadása"
       form:
-        direct_messages_info: "Freshdesk will convert all direct messages on this Facebook page as tickets. if you are enabling this first time you may need to <a href='{{reauth_url}}'>Reauthorize with Facebook</a>"
+        direct_messages_info: "Freshdesk will convert all direct messages on this Facebook page as tickets. if you are enabling this first time you may need to <a href='%{reauth_url}'>Reauthorize with Facebook</a>"
     twitter_handles:
       index:
         search: Keresés
@@ -734,7 +734,7 @@ hu:
         error: "Hiba lépett fel a Google fiók törlésekor."
     jira:
       label: "Atlassian JIRA"
-      helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.2 upto the latest version - JIRA 5.<br/><br/> To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/> To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
+      helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.2 upto the latest version - JIRA 5.<br/><br/> To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <i class='integrations-jira vertical-alignment'></i><br/><br/> To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
       form:
         domain: Domain
         domain_info: "Enter the complete JIRA account URL with https/http. Ex. https://example.atlassian.net. <br /><span class='italics'> Note: The on-premise variants of JIRA should be exposed to the internet. </span>"
@@ -1662,13 +1662,13 @@ hu:
     updated: "Tárolt válasz mappa sikeresen frissítve!"
     deleted: "Tárolt válasz mappa sikeresen törölve."
     no_folders: "Nem található tárolt válasz"
-    folder_update: "A kiválasztott válasz áthelyezve a következő mappába: {{folder_name}}"
+    folder_update: "A kiválasztott válasz áthelyezve a következő mappába: %{folder_name}"
     update: "Tárolt válasz sikeresen frissítve."
     created: "Tárolt válasz sikeresen létrehozva."
     delete_multiple: "A kiválaszott tárolt válasz törölve!"
     no_delete: "Alapértelmezett mappa nem törölhető!"
     create_new: "Új létrehozása"
-    no_response_admin: "Nincs tároltválasz a mappában <a href={{link}} id='new_resp'>Új létrehozása</a>"
+    no_response_admin: "Nincs tároltválasz a mappában <a href=%{link} id='new_resp'>Új létrehozása</a>"
     select_folder: "Mappa kiválasztása"
   portalcss:
     publish_changes: "Mentés és publikálás"
@@ -2812,8 +2812,6 @@ hu:
   incident: Eset
   import: Importálás
   import_solution_article_info: "Megjegyzés: fórum hozzászólások nincsenek elmentve"
-  no_anonymous_tickets: "Kérelem létrehozásához, kérjük <a href={{signup}}><b>Regisztráljon</b></a>új ügyfélként vagy <a href={{login}}><b>Lépjen be</b></a>"
-  no_signup: "Kérelem létrehozásához kérjük <a href={{login}}><b>Lépjen be</b></a>."
   portal:
     cookie:
       cookie_policy: "Cookie használat"
@@ -3136,11 +3134,11 @@ hu:
     send_verification_email: "Aktiváció elküldése"
     unverified: "Nem érvényesített email"
     info4: "<strong>MEGJEGYZÉS:</strong> If you have multiple email addresses to support multiple products, <a href='{{products_path}}'>you can add them here</a>."
-    spf_info: "Freshdeskben a válasz emailek a releváns ügyfélszolgálati email címről fognak kimenni. Nagyon hasznos, ha egy <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF rekordot</a> állít be a DNS zónájába, hogy emailjei maradéktalanul megérkezzenek."
+    spf_info: "Freshdeskben a válasz emailek a releváns ügyfélszolgálati email címről fognak kimenni. Nagyon hasznos, ha egy <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">SPF rekordot</a> állít be a DNS zónájába, hogy emailjei maradéktalanul megérkezzenek."
     helpcard:
       tour1: "Email cím beállításához segítség"
-      info5: "Az Ön alapértelmezett ügyfélszolgálati email címe: <a target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Minden emailt, amit erre a címre küldenek, átkonvertáljuk kérelemmé."
-      info19: "Beállíthatja úgy Freshdesk fiókját, hogy saját email címét használja, pl. support@mycompany.com. Nem kell mást tennie, mint továbbítania erről az email címről a leveleket ide: <a target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Új email fiók létrehozásához kattintson a szerkesztés gombra az általános email beállításoknál."
+      info5: "Az Ön alapértelmezett ügyfélszolgálati email címe: <a target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Minden emailt, amit erre a címre küldenek, átkonvertáljuk kérelemmé."
+      info19: "Beállíthatja úgy Freshdesk fiókját, hogy saját email címét használja, pl. support@mycompany.com. Nem kell mást tennie, mint továbbítania erről az email címről a leveleket ide: <a target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Új email fiók létrehozásához kattintson a szerkesztés gombra az általános email beállításoknál."
       info20: "Több email fiók használata"
       info21: "Annyi bejövő és kimenő email címet használhat, amennyit csak akar (pl. info@yourcompany.com, sales@yourcompany.com) Azt is beállíthatja, hogy a rendszer automatikusan egy bizonyos csoportba küldje a bejövő emaileket."
     info16: "Kérelmek hozzárendelve lesznek"

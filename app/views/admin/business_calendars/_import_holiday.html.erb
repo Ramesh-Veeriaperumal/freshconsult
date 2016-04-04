@@ -1,6 +1,6 @@
 <% content_for :dialogs do %>
 <div id="importholiday" class="hide">
-	<% form_for :import_holiday, @business_calendar, :url => { :controller => "business_calendars", :action => "holidays_list" }, :html => { :id => "holiday_import" } do |f| %>
+	<%= form_for @business_calendar, :url => { :controller => "business_calendars", :action => "holidays_list" }, :html => { :id => "holiday_import" } do |f| %>
 		<div class="row-fluid">
 			<%= select "import_holiday", "import_holiday",GoogleClient::calendars, 
 													{}, { :class => "select2 span12", :id => "import_holiday" } %>

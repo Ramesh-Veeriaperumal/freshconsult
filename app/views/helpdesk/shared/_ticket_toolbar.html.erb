@@ -1,41 +1,50 @@
-  <table class="tickets" width="100%">
+  <table class="tickets btn-collapse" width="100%" data-show-by-default="false" data-class-for-btn-wrapper="inline-block" data-calc-parent-width-on=".bulk_action_buttons" data-button-text="<%= t("more") %>">
 	  <thead>
 	  	<tr>
         <th class="priority-border"></th>
 				<th class="check">
 					<input type="checkbox" id="helpdesk-select-all" data-keybinding="<%= shortcut('ticket_list.select_all') %>" />
 				</th>
-		    <th class="bulk_action_buttons"> 
-         <% if @current_view != "deleted" && @current_view != "spam" %>
-          <input class="btn tooltip" title='<%= t('ticket.pick_up') %>' 
-              onclick="helpdesk_submit('/helpdesk/tickets/multiple/pick_tickets', 'put');" type="button" 
-              value="<%=t('ticket.pick_up')%>" disabled="disabled" 
+		    <th class="bulk_action_buttons collapse-content">
+
+        <% unless ["deleted", "spam"].include?(@current_view) %>
+          <input class="btn tooltip" title='<%= t('ticket.pick_up') %>'
+              onclick="helpdesk_submit('/helpdesk/tickets/multiple/pick_tickets', 'put');" type="button"
+              value="<%=t('ticket.pick_up')%>" disabled="disabled"
               data-keybinding="<%= shortcut('ticket_list.pickup') %>" data-highlight="true">
           <% if privilege?(:edit_ticket_properties) %>
-            <button class="btn dialog2" data-url="/helpdesk/tickets/assign_to_agent" 
-                data-width="360" title="<%=t('ticket.assign_to_agent')%>" 
-                disabled="disabled"><%=t('ticket.assign_to_agent')%></button>
-
-            <input id="close_ticket_btn" class="btn tooltip" title="<%= t('ticket.close_without_notification') %>" 
-                onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);" 
-                type="button" value="<%=t('close')%>" disabled="disabled">
+          <a  href="/helpdesk/tickets/assign_to_agent"
+            class="btn p0"
+            rel="freshdialog"
+            data-title="<%=t('ticket.assign_to_agent')%>"
+            disabled="disabled"
+            data-width = "360"
+            data-template-footer="false"
+            data-target="#assign_to_agent"
+            >
+            <div title="<%=t('ticket.assign_to_agent')%>" class="tooltip btn_with_freshdialog"><%=t('ticket.assign_to')%></div>
+          </a>
+            <input id="close_ticket_btn" class="btn tooltip" title="<%= t('ticket.close_without_notification') %>"
+                onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);"
+                type="button" value="<%=t('close')%>" disabled="disabled" data-domhelper-name="ticket-close-button">
           <% end %>
 
           <% if privilege?(:edit_ticket_properties) || privilege?(:reply_ticket) %>
-            <a href="/helpdesk/tickets/update_multiple_tickets" 
-                data-target="#bulk" rel="freshdialog" data-width="709px" disabled="disabled" 
-                class="btn" title="<%=t('bulk_actions')%>" 
-                data-submit-label="<%= t('update') %>" data-submit-loading="<%= t('ticket.updating')%>..." 
+            <a href="/helpdesk/tickets/update_multiple_tickets"
+                data-target="#bulk" rel="freshdialog" data-width="709px" disabled="disabled"
+                class="btn hide_on_collapse" title="<%=t('bulk_actions')%>" data-destroy-on-close="true"
+                data-submit-label="<%= t('update') %>" data-submit-loading="<%= t('ticket.updating')%>..."
                 data-close-label="<%= t('cancel') %>" ><%= t('bulk_actions') %></a>
           <% end %>
 
-          <% if privilege?(:merge_or_split_ticket)%>    
-            <a  href="#merge_freshdialog" id="merge_multiple" 
-                class="btn" 
-                data-width="800" 
+          <% if privilege?(:merge_or_split_ticket)%>
+            <a  href="#merge_freshdialog"
+                data-action="merge"
+                class="btn hide_on_collapse"
+                data-width="800"
                 rel="freshdialog"
-                data-title="<%=t('ticket.merge_title')%>" 
-                disabled="disabled" 
+                data-title="<%=t('ticket.merge_title')%>"
+                disabled="disabled"
                 data-template-footer="false"
                 data-target="#merge_freshdialog"
                 >
@@ -43,66 +52,128 @@
             </a>
           <% end %>
 
-          <input class="btn tooltip" title='<%= t('ticket.flag_spam') %>' 
-              onclick="helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');" type="button" 
-              value="<%=t('ticket.flag_spam')%>" disabled="disabled" 
+          <input class="btn tooltip" title='<%= t('ticket.flag_spam') %>'
+              onclick="helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');" type="button"
+              value="<%=t('ticket.spam_header')%>" disabled="disabled"
               data-keybinding="<%= shortcut('ticket_list.spam') %>" data-highlight="true">
-          
+
           <div id="merge_freshdialog" class="hide">
             <span class="loading-block sloading loading-small">
             </span>
           </div>
           <% if @current_view == "monitored_by" %>
-          <input class="btn tooltip" onclick="helpdesk_submit('/helpdesk/tickets/multiple/subscriptions/unwatch_multiple', 'delete');" 
-              type="button" value="<%=t('ticket.unwatch')%>" 
-              disabled="disabled" title="<%= t('ticket.unwatch') %>" 
+          <input class="btn tooltip" onclick="helpdesk_submit('/helpdesk/tickets/multiple/subscriptions/unwatch_multiple', 'delete');"
+              type="button" value="<%=t('ticket.unwatch')%>"
+              disabled="disabled" title="<%= t('ticket.unwatch') %>"
               data-keybinding="<%= shortcut('ticket_list.unwatch') %>" data-highlight="true">
           <% end %>
         <% end %>
-        <% if privilege?(:delete_ticket) %>
-		    	<% if @current_view == "deleted" %>
-            <input class="btn tooltip" title="<%=t('undelete')%>" 
-                onclick="helpdesk_submit('/helpdesk/tickets/multiple/restore', 'put');" 
-                type="button" value="<%=t('undelete')%>" disabled="disabled">
 
-            <input class="btn tooltip" title='<%= t('ticket.delete_forever') %>' 
-                onclick="helpdesk_submit('/helpdesk/tickets/delete_forever', 'delete');" 
-                type="button" value="<%=t('ticket.delete_forever')%>" 
-                disabled="disabled" data-keybinding="<%= shortcut('ticket_list.delete') %>" 
+        <% if privilege?(:delete_ticket) %>
+		    	<% if @current_view == "deleted"%>
+            <input class="btn tooltip" title="<%=t('undelete')%>"
+                onclick="helpdesk_submit('/helpdesk/tickets/multiple/restore', 'put');"
+                type="button" value="<%=t('undelete')%>" disabled="disabled">
+            <input class="btn tooltip" title='<%= t('ticket.delete_forever') %>'
+                onclick="helpdesk_submit('/helpdesk/tickets/delete_forever', 'delete');"
+                type="button" value="<%=t('ticket.delete_forever')%>"
+                disabled="disabled" data-keybinding="<%= shortcut('ticket_list.delete') %>"
                 data-highlight="true">
+          <% elsif @current_view == "spam" %>
+            <input class="btn tooltip" title='<%= t('ticket.unflag_spam') %>' 
+                onclick="helpdesk_submit('/helpdesk/tickets/multiple/unspam', 'put');" type="button" 
+                value="<%=t('ticket.unflag_spam')%>" disabled="disabled" 
+                data-keybinding="<%= shortcut('ticket_list.spam') %>" data-highlight="true">
+                <input class="btn tooltip" title='<%= t('ticket.delete_forever') %>' 
+                    onclick="helpdesk_submit('/helpdesk/tickets/delete_forever_spam', 'delete');" 
+                    type="button" value="<%=t('ticket.delete_forever')%>" 
+                    disabled="disabled" data-keybinding="<%= shortcut('ticket_list.delete') %>"
+                    data-highlight="true">
     			<% else %>
             <input class="btn tooltip" title='<%= t('delete') %>' 
                 onclick="helpdesk_submit('/helpdesk/tickets/multiple', 'delete');" type="button"
-                value="<%=t('delete')%>" disabled="disabled" 
+                value="<%=t('delete')%>" disabled="disabled"
                 data-keybinding="<%= shortcut('ticket_list.delete') %>" data-highlight="true">
     			<% end %>
         <% end %>
-        
-  			<% if @current_view == "spam" %>
-          <input class="btn tooltip" title='<%= t('ticket.unflag_spam') %>' 
-              onclick="helpdesk_submit('/helpdesk/tickets/multiple/unspam', 'put');" type="button" 
-              value="<%=t('ticket.unflag_spam')%>" disabled="disabled" 
-              data-keybinding="<%= shortcut('ticket_list.spam') %>" data-highlight="true"> 
-  			<% end %>     
-			
-    		 
+
+        <% unless ["deleted", "spam"].include?(@current_view) %>
+          <a  href="/helpdesk/tickets/bulk_scenario" id="scenario"
+            class="btn p0"
+            rel="freshdialog"
+            data-title="<%=t('ticket.execute_scenario')%>"
+            disabled="disabled"
+            data-template-footer="false"
+            data-target="#execute_scenario"
+            data-backdrop="false"
+            data-classes="slider"
+            >
+            <div data-hotkey='<%="#{shortcut('ticket_list.scenario')}"%>' title="<%=t('ticket.execute_scenario')%>" class="tooltip btn_with_freshdialog"><%=t('ticket.scenarios')%></div>
+          </a>
+        <% end %>
+
         </th>
-      	<th class="toolbar_right">
+        <%= render :partial => "/helpdesk/shared/select_all_toolbar" %>
+        <% if @current_view == "deleted" || @current_view == "spam" %>
+          <th class="toolbar_right_spam_trash">        
+        <% else %>
+      	 <th class="toolbar_right">
+        <% end %>
           <% if @current_view == "deleted" %>
-            <%= link_to t('ticket.empty_trash'),empty_trash_helpdesk_tickets_path, 
-                :method => 'delete', :class => 'padding6 tooltip', :title => t('ticket.empty_trash'), 
-                :id => 'empty_trash' if privilege?(:delete_ticket) %>
+            <span class="pl3 muted"> <%= t('ticket.auto_delete_notification_trash') %></span>
+            <% if privilege?(:delete_ticket) and !trash_in_progress? && @items.length > 0 %>
+              <span class="muted"> - </span>
+              <a href="#empty-trash-confirmation"
+                rel="freshdialog"
+                data-title="<%= t('ticket.empty_trash') %>"
+                class="padding6"
+                data-submit-label="<%= t('ticket.delete_forever') %>"
+                data-width="400px"
+                data-close-on-submit="true"
+                data-close-label=<%=t('cancel')%>>
+                <%= t('ticket.empty_trash') %>
+              </a>
+              <div id="empty-trash-confirmation" class="hide">
+                <%=t('ticket.empty_view_confirmation', :current_view => "trash")%>
+              </div>
+              <input id="empty_trash" class="hide"  
+                  onclick="helpdesk_submit('<%= empty_trash_helpdesk_tickets_path %>', 'delete');"
+                  type="button" value="Delete" />
+            <% end %>
+          <% elsif @current_view == "spam" %>
+            <span class="pl3 muted"> <%= t('ticket.auto_delete_notification_spam') %></span>
+            <%if privilege?(:delete_ticket) and !spam_in_progress? && @items.length > 0 %>
+              <span class="muted"> - </span>
+              <a href="#empty-spam-confirmation"
+                rel="freshdialog"
+                data-title="<%= t('ticket.empty_spam') %>"
+                class="padding6"
+                data-submit-label="<%= t('ticket.delete_forever') %>"
+                data-width="400px"
+                data-close-on-submit="true"
+                data-close-label=<%=t('cancel')%>>
+                <%= t('ticket.empty_spam') %>
+              </a>
+              <div id="empty-spam-confirmation" class="hide">
+                <%=t('ticket.empty_view_confirmation', :current_view => "spam")%>
+              </div>
+              <input id="empty_spam" class="hide"  
+                  onclick="helpdesk_submit('<%= empty_spam_helpdesk_tickets_path %>', 'delete');"
+                  type="button" value="Delete" />
+            <% end %>
           <% elsif @current_view != "spam" %>
-            <a href="/helpdesk/tickets/configure_export" data-target="#export"  rel="freshdialog"  
-                class="padding6" title='<%= t("ticket.export_tickets") %>' data-submit-label="<%= t('export') %>" 
-                data-submit-loading="<%= t('ticket.exporting')%>..." data-width="650px" id='export_tickets' 
+            <a href="/helpdesk/tickets/configure_export" data-target="#export"  rel="freshdialog"
+                class="padding6" title='<%= t("ticket.export_tickets") %>' data-submit-label="<%= t('export') %>"
+                data-submit-loading="<%= t('ticket.exporting')%>..." data-width="650px" id='export_tickets'
                 data-close-label="<%= t('cancel') %>"><%= t('ticket.export')%></a>
+
           <% end %>
 
           <ul id="ticket_view_choices">
             <li class="icon active"><a class="ticket-view-detail ticket-view-choice"></a></li>
             <li class="icon right"><a class="ticket-view-list ticket-view-choice"></a></li>
           </ul>
+          
         </th>
       </tr>
     </thead>
@@ -114,10 +185,30 @@
       jQuery('.check input').hide();
     }
   });
+  jQuery('#ticket-close-all-confirmation-submit').live("click", function(){
+    jQuery('#close_all_ticket_btn').trigger('click');
+  });
+
+  jQuery('#ticket-spam-all-confirmation-submit').live("click", function(){
+    jQuery('#spam_all_ticket_btn').trigger('click');
+  });
+
+  jQuery('#ticket-delete-all-confirmation-submit').live("click", function(){
+    jQuery('#delete_all_ticket_btn').trigger('click');
+  });
+
+  jQuery('#empty-spam-confirmation-submit').live("click", function(){
+    jQuery('#empty_spam').trigger('click');
+  });
+
+  jQuery('#empty-trash-confirmation-submit').live("click", function(){
+    jQuery('#empty_trash').trigger('click');
+  });
+
   </script>
 
-<% javascript_tag do -%>
-  jQuery("#merge_multiple").bind("click", function(ev){
+<%= javascript_tag do -%>
+  jQuery(document).on("click", '[data-action="merge"]', function(ev){
       var selected_tickets=[];
       var parameters=[];
       jQuery("#tickets-expanded .selector:checked").each(function(){
@@ -132,6 +223,36 @@
                            }
      });
   });
+
+  setExportCreatedRange = function(){
+  var startDate, endDate;
+    if(jQuery('#created_date_range').is(':visible')){
+        jQuery("#date_filter").val(<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]%>);
+        var dateFormat = getDateFormat('mediumDate');
+        var createdDateRange = jQuery('#created_date_range').val().split(' - ');
+        startDate = (new Date(createdDateRange[0])).toString(dateFormat);
+        endDate = (new Date(createdDateRange[1])).toString(dateFormat);
+    }else{
+      jQuery("#date_filter").val(<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:thirt_days]%>);
+      startDate = "<%= formated_date(1.month.ago, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
+      endDate = "<%= formated_date(Time.now, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
+    }
+    jQuery("#date_filter").trigger('change');
+    jQuery('#start_date').val(startDate);
+    jQuery('#end_date').val(endDate);
+  };
+
+  jQuery('#export_tickets').click(function(){
+    if(jQuery('#exportFilter').length > 0){
+      setExportCreatedRange();
+    }
+  });
+
+  jQuery(document).on('click','.tooltip', function(){
+    jQuery(this).twipsy('hide');
+  });
+
+  jQuery(document).ready(function(){
+    jQuery('#ticket-toolbar .bulk_action_buttons .btn').addClass('disabled').prop('disabled', true).attr("disabled","disabled");
+  });
 <%- end %>
-
-

@@ -1,8 +1,6 @@
 require 'spec_helper'
-load 'spec/support/freshfone_spec_helper.rb'
-include FreshfoneSpecHelper
 
-describe FreshfoneController do
+RSpec.describe FreshfoneController do
 	self.use_transactional_fixtures = false
 
 	before(:all) do
@@ -24,6 +22,6 @@ describe FreshfoneController do
 	   post :create_ticket, params
 	   json_response.should include("success","ticket")
 	   json_response["ticket"].should include("display_id","subject","status_name","priority")
-	   json_response["success"].should be_true
+	   json_response["success"].should be true
 	end
 end

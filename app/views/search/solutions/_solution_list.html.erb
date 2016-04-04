@@ -35,6 +35,8 @@ function insertLink(url, title){
 	jQuery('#related_solutions').modal('hide');
 
 	if($redactor){
+		$redactor.restoreSelection();
+	
 		var userSelection = $redactor.getSelection(),
 				selectedText = userSelection.toString ? userSelection.toString() : userSelection.text;
 		

@@ -8,7 +8,7 @@ module SupportNoteControllerMethods
   def update_cc_list
     cc_email_hash_value = @ticket.cc_email_hash
     if cc_email_hash_value.nil?
-      cc_email_hash_value = {:cc_emails => [], :fwd_emails => [], :reply_cc => []}
+      cc_email_hash_value = Helpdesk::Ticket.default_cc_hash
     end
     cc_array = cc_email_hash_value[:cc_emails]
     cc_email_hash_value[:reply_cc] = cc_array.dup unless cc_email_hash_value[:reply_cc]

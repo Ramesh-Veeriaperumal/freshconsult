@@ -3,12 +3,12 @@ require 'spec_helper'
 describe "CreditInfo" do
 
 	before(:each) do
-		@call = Factory.build(:freshfone_call)
-		@call.freshfone_number = Factory.build(:freshfone_number)
-		account = Factory.build(:account)
-		account.freshfone_account = Factory.build(:freshfone_account)
+		@call = FactoryGirl.build(:freshfone_call)
+		@call.freshfone_number = FactoryGirl.build(:freshfone_number)
+		account = FactoryGirl.build(:account)
+		account.freshfone_account = FactoryGirl.build(:freshfone_account)
 		@call.account = account
-		@call.agent = Factory.build(:user)
+		@call.agent = FactoryGirl.build(:user)
 	end
 
 	describe "Checking Outgoing cost" do
@@ -84,6 +84,7 @@ describe "CreditInfo" do
 					Freshfone::Call.any_instance.stubs(:caller_number).returns("+77213987654")
 					pulse_rate = Freshfone::PulseRate.new(@call, true)
 					pulse_rate.pulse_charge.should eql(0.273)
+          Freshfone::Call.any_instance.unstub(:caller_number)
 				end
 			end
 		end

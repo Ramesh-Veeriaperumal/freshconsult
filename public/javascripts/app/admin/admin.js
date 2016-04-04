@@ -23,7 +23,15 @@ window.App = window.App || {};
 			switch (App.namespace) {
 
 			case 'admin/portal/index':
+			case 'admin/portal/edit':
+			case 'admin/portal/enable':
+			case 'admin/portal/create':
+			case 'admin/portal/update':
 				this.current_module = 'Portal';
+				break;
+
+			case 'admin/portal/settings':
+				this.current_module = 'PortalSettings';
 				break;
 			}
 		},

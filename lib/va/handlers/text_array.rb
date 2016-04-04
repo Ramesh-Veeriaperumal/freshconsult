@@ -1,6 +1,10 @@
 class Va::Handlers::TextArray < Va::RuleHandler
 
   private
+    def non_blank_values(arr)
+      arr.reject{|s| s.blank?}
+    end
+
     def is(evaluate_on_value)
       evaluate_on_value.each do |ev|
         return true if ev.casecmp(value) == 0
@@ -13,20 +17,32 @@ class Va::Handlers::TextArray < Va::RuleHandler
       !is(evaluate_on_value)
     end
 
+    def in(evaluate_on_value)
+      (evaluate_on_value.map(&:downcase) & [*value].map(&:downcase)).size > 0
+    end
+
+    def not_in(evaluate_on_value)
+      (evaluate_on_value.map(&:downcase) & [*value].map(&:downcase)).size == 0
+    end
+
     def contains(evaluate_on_value)
-      evaluate_the_op(:include?, evaluate_on_value)
+      evaluate_on_values = non_blank_values(evaluate_on_value)
+      value.present? && evaluate_on_values.present? && evaluate_the_op(:include?, evaluate_on_values)
     end
 
     def does_not_contain(evaluate_on_value)
-      !contains(evaluate_on_value)
+      evaluate_on_values = non_blank_values(evaluate_on_value)
+      value.present? && evaluate_on_values.present? && !evaluate_the_op(:include?, evaluate_on_values)
     end
 
     def starts_with(evaluate_on_value)
-      evaluate_the_op(:starts_with?, evaluate_on_value)
+      evaluate_on_values = non_blank_values(evaluate_on_value)
+      value.present? && evaluate_on_values.present? && evaluate_the_op(:starts_with?, evaluate_on_values)
     end
 
     def ends_with(evaluate_on_value)
-      evaluate_the_op(:ends_with?, evaluate_on_value)
+      evaluate_on_values = non_blank_values(evaluate_on_value)
+      value.present? && evaluate_on_values.present? && evaluate_the_op(:ends_with?, evaluate_on_values)
     end
 
     def evaluate_the_op(operator, evaluate_on_value)

@@ -149,7 +149,7 @@ class Integrations::GoogleContactsImporter
         if options[:send_email]
           email_params = {:email => options[:email], :domain => options[:domain], :status =>  status}
           Rails.logger.info "Sending google import mail with params #{email_params}"
-          Admin::DataImportMailer.deliver_google_contacts_import_email(email_params)
+          Admin::DataImportMailer.google_contacts_import_email(email_params)
         end
       rescue => e
         Rails.logger.error "ERROR: NOT ABLE SEND GOOGLE CONTACTS IMPORT MAIL.  \n#{e.message}\n#{e.backtrace.join("\n\t")}"
@@ -160,7 +160,7 @@ class Integrations::GoogleContactsImporter
       begin
         if options[:send_email]
           email_params = {:email => options[:email], :domain => options[:domain], :status =>  status}
-          Admin::DataImportMailer.deliver_google_contacts_import_error_email(email_params)
+          Admin::DataImportMailer.google_contacts_import_error_email(email_params)
         end
       rescue => e
         Rails.logger.error "ERROR: NOT ABLE SEND GOOGLE CONTACTS ERROR IMPORT MAIL.  \n#{e.message}\n#{e.backtrace.join("\n\t")}"

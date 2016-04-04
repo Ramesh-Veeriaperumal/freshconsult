@@ -5,11 +5,10 @@ require 'spec_helper'
 include GnipHelper
 include DynamoHelper
 include Social::Twitter::Constants
-include Social::Dynamo::Twitter
+#include Social::Dynamo::Twitter
 include Social::Util
 
 describe Social::StreamsController do
-  integrate_views
   setup :activate_authlogic
   
   self.use_transactional_fixtures = false

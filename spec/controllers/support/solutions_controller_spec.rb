@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Support::SolutionsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -29,7 +28,7 @@ describe Support::SolutionsController do
   it "should show folder without logging in" do
     get 'index'
     response.body.should =~ /folder1/
-    response.should render_template("support/solutions/index.portal")
+    response.should render_template("support/solutions/index")
   end
 
   it "should not show folder without logging in while open solution feature is disabled" do
@@ -56,42 +55,42 @@ describe Support::SolutionsController do
     log_in(@user)
     get 'index'
     response.body.should =~ /category/
-    response.should render_template("support/solutions/index.portal")
+    response.should render_template("support/solutions/index")
   end
 
   it "should show folder" do
     log_in(@user)
     get 'index'
     response.body.should =~ /folder1/
-    response.should render_template("support/solutions/index.portal")
+    response.should render_template("support/solutions/index")
   end
 
   it "should show folder visible to logged in customers" do
     log_in(@user)
     get 'index'
     response.body.should =~ /folder3 visible to logged in customers/
-    response.should render_template("support/solutions/index.portal")
+    response.should render_template("support/solutions/index")
   end
 
   it "should show article" do
     log_in(@user)
     get 'index'
     response.body.should =~ /article1/
-    response.should render_template("support/solutions/index.portal")
+    response.should render_template("support/solutions/index")
   end
 
   it "should not show folder visible to agents" do
     log_in(@user)
     get 'index'
     response.body.should_not =~ /folder2 visible to agents/
-    response.should render_template("support/solutions/index.portal")
+    response.should render_template("support/solutions/index")
   end
 
   it "should not show article with status as draft" do
     log_in(@user)
     get 'index'
     response.body.should_not =~ /article2 with status as draft/
-    response.should render_template("support/solutions/index.portal")
+    response.should render_template("support/solutions/index")
   end
 
   it "should render show page of test category" do 
@@ -99,7 +98,15 @@ describe Support::SolutionsController do
     get 'show', :id => @test_category.id
     response.body.should =~ /#{@test_category.name}/
     response.body.should_not =~ /#{@test_category2.name}/
-    response.should render_template("support/solutions/show.portal")
+    response.should render_template("support/solutions/show")
+  end
+
+  it "should render 404 for default category" do
+    log_in(@user)
+    default_category = create_category( {:name => "category #{Faker::Name.name}",
+                       :description => "#{Faker::Lorem.sentence(3)}", :is_default => true} )
+    get 'show', id: default_category.id
+    response.status.should eql(404)
   end
 
 end

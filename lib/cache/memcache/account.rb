@@ -31,14 +31,23 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.main_portal }
   end
 
+  def active_custom_survey_from_cache
+    @active_custom_survey_from_cache ||= begin
+      key = ACCOUNT_CUSTOM_SURVEY % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        custom_surveys.active.with_questions_and_choices.first
+      end
+    end
+  end
+
   def ticket_types_from_cache
     key = ticket_types_memcache_key
-    MemcacheKeys.fetch(key) { ticket_type_values }
+    MemcacheKeys.fetch(key) { ticket_type_values.all }
   end
 
   def agents_from_cache
     key = agents_memcache_key
-    MemcacheKeys.fetch(key) { self.agents.find(:all, :include => :user) }
+    MemcacheKeys.fetch(key) { self.agents.find(:all, :include => [:user,:agent_groups]) }
   end
 
   def groups_from_cache
@@ -84,18 +93,17 @@ module Cache::Memcache::Account
     key = FB_REAUTH_CHECK % {:account_id => self.id }
     MemcacheKeys.fetch(key) { self.facebook_pages.reauth_required.present? }
   end
-
   def custom_dropdown_fields_from_cache
     key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      ticket_fields.custom_dropdown_fields.find(:all, :include => :flexifield_def_entry )
+      ticket_fields_without_choices.custom_dropdown_fields.find(:all, :include => [:flexifield_def_entry,:level1_picklist_values] )
     end
   end
 
   def nested_fields_from_cache
     key = ACCOUNT_NESTED_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      ticket_fields.nested_fields.find(:all, :include => [:nested_ticket_fields, :flexifield_def_entry] )
+      ticket_fields_including_nested_fields.nested_fields.all
     end
   end
 
@@ -113,6 +121,13 @@ module Cache::Memcache::Account
     end
   end
 
+  def ticket_fields_from_cache
+    key = ACCOUNT_TICKET_FIELDS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      ticket_fields_with_nested_fields.all
+    end
+  end
+
   def observer_rules_from_cache
     key = ACCOUNT_OBSERVER_RULES % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
@@ -122,7 +137,12 @@ module Cache::Memcache::Account
 
    def whitelisted_ip_from_cache
     key = WHITELISTED_IP_FIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { self.whitelisted_ip }
+
+    # fetch won't know the difference between nils from query block and key not present.
+    # Hence DB will be queried again & again via memcache for accounts without whitelisted ip if we use self.whitelisted_ip
+    # Below query will return array containing results from query self.whitelisted_ip. 
+    # So that cache won't be executed again & again for accounts without whitelistedip.
+    MemcacheKeys.fetch(key) { WhitelistedIp.where(account_id: self.id).limit(1).all }
   end
 
   def agent_names_from_cache
@@ -135,20 +155,37 @@ module Cache::Memcache::Account
   def api_webhooks_rules_from_cache
     key = ACCOUNT_API_WEBHOOKS_RULES % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      api_webhook_rules.find(:all)
+      api_webhook_rules.all
     end
   end
 
   def forum_categories_from_cache
     key = FORUM_CATEGORIES % { :account_id => self.id }
-    # Has to be checked when we introduce the ability to remove the categories from the main portal
-    MemcacheKeys.fetch(key) { self.main_portal.forum_categories.find(:all, :include => [ :forums ]) }
+    MemcacheKeys.fetch(key) { self.forum_categories.find(:all, :include => [ :forums ]) }
   end
 
   def clear_forum_categories_from_cache
     key = FORUM_CATEGORIES % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)
   end
+  
+  def solution_categories_from_cache
+    MemcacheKeys.fetch(ALL_SOLUTION_CATEGORIES % { :account_id => self.id }) do
+      self.solution_categories.all(:conditions => {:is_default => false},
+      :include => [:portal_solution_categories, :folders]).collect do |cat|
+        {
+          :folders => cat.folders.map(&:as_cache),
+          :portal_solution_categories => cat.portal_solution_categories.map(&:as_cache)
+        }.merge(cat.as_cache).with_indifferent_access
+      end
+    end
+  end
+
+  def clear_solution_categories_from_cache
+    key = ALL_SOLUTION_CATEGORIES % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+  
 
   def sales_manager_from_cache
     if self.created_at > Time.now.utc - 3.days # Logic to handle sales manager change
@@ -161,6 +198,53 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key,expiry) do
       CRM::Salesforce.new.account_owner(self.id)
     end
+  end
+
+  def account_additional_settings_from_cache
+    key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { self.account_additional_settings }
+  end
+
+  def clear_account_additional_settings_from_cache
+    key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+
+  def cti_installed_app_from_cache
+    key = INSTALLED_CTI_APP % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      self.installed_applications.with_type_cti.first ? self.installed_applications.with_type_cti.first : false
+    end
+  end
+
+  def clear_cti_installed_app_from_cache
+    key = INSTALLED_CTI_APP % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+
+  def ecommerce_reauth_check_from_cache
+    key = ECOMMERCE_REAUTH_CHECK % {:account_id => self.id }
+    MemcacheKeys.fetch(key) { self.ecommerce_accounts.reauth_required.present? }
+  end
+
+  def contact_password_policy_from_cache
+    key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:contact])
+    MemcacheKeys.fetch(key) { self.contact_password_policy }
+  end
+
+  def agent_password_policy_from_cache
+    key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:agent])
+    MemcacheKeys.fetch(key) { self.agent_password_policy }
+  end
+
+  def clear_contact_password_policy_from_cache
+    key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:contact])
+    MemcacheKeys.delete_from_cache(key)
+  end
+
+  def clear_agent_password_policy_from_cache
+    key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:agent])
+    MemcacheKeys.delete_from_cache(key)
   end
 
   private
@@ -188,5 +272,7 @@ module Cache::Memcache::Account
       ACCOUNT_TWITTER_HANDLES % { :account_id => self.id }
     end
 
-
+    def password_policy_memcache_key(user_type)
+      ACCOUNT_PASSWORD_POLICY % { :account_id => self.id, :user_type => user_type}
+    end
 end

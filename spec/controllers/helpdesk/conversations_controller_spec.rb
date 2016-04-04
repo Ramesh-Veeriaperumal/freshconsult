@@ -1,10 +1,8 @@
 require 'spec_helper'
 
-describe Helpdesk::ConversationsController do
-  integrate_views
+RSpec.describe Helpdesk::ConversationsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   context "For Web requests" do
     before(:all) do
@@ -21,7 +19,7 @@ describe Helpdesk::ConversationsController do
       now = (Time.now.to_f*1000).to_i
       cc_email = Faker::Internet.email
       bcc_email = Faker::Internet.email
-      Resque.inline = true
+      Sidekiq::Testing.inline!
       post :reply, { :reply_email => { :id => "support@#{@account.full_domain}" },
                      :helpdesk_note => { :note_body_attributes =>{ :body_html => "<div>#{now}</div>",
                                                                 :full_text_html =>"<div>#{now}</div>"},
@@ -38,8 +36,8 @@ describe Helpdesk::ConversationsController do
                      :since_id => "197",
                      :ticket_id => @test_ticket.display_id
                     }
-      Resque.inline = false
-      response.should render_template "helpdesk/notes/create.rjs"
+      Sidekiq::Testing.disable!
+      response.should render_template "helpdesk/notes/create"
       replied_ticket = @account.tickets.find(@test_ticket.id)
       replied_ticket.responder_id.should be_eql(@agent.id)
       ticket_reply = replied_ticket.notes.last
@@ -66,72 +64,8 @@ describe Helpdesk::ConversationsController do
                      :since_id => "197",
                      :ticket_id => @test_ticket.display_id
                     }
-      response.should render_template "helpdesk/notes/create.rjs"
+      response.should render_template "helpdesk/notes/create"
       @account.tickets.find(@test_ticket.id).notes.last.full_text_html.should be_eql("<div>#{now}</div>")
-    end
-
-    it "should forward a ticket with attachment" do
-      now = (Time.now.to_f*1000).to_i
-      new_ticket = create_ticket({:status => 2,
-                                  :attachments => {:resource => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary),
-                                                    :description => Faker::Lorem.characters(10)
-                                                  }
-                                    }, @group)
-      attachment = @account.attachments.find_by_attachable_id(new_ticket.id)
-      attachment.should_not be_nil
-      attachment.attachable_type.should eql "Helpdesk::Ticket"
-      post :forward, {:reply_email => { :id => "support@#{@account.full_domain}" },
-                      :helpdesk_note => { :note_body_attributes =>{ :body_html => "<div>#{now}</div>",
-                                                                    :full_text_html =>"<div>#{now}</div>"},
-                                          :attachments => [{:resource => "#{attachment.id}",:description => "<div>note_attachment</div>"}], 
-                                          :cc_emails => "",
-                                          :bcc_emails => "",
-                                          :private => "true",
-                                          :source => "8",
-                                          :to_emails => Faker::Internet.email,
-                                          :from_email => "support@#{@account.full_domain}"
-                                        },
-                     :ticket_status => "",
-                     :format => "js",
-                     :showing => "notes",
-                     :since_id => "197",
-                     :ticket_id => new_ticket.display_id
-                    }
-      new_ticket.reload
-      new_note = new_ticket.notes.first
-      new_note.should_not be_nil
-      item = @account.attachments.find_by_attachable_id(new_note.id)
-      item.should_not be_nil
-      item.attachable_type.should eql "Helpdesk::Note"
-      response.should render_template "helpdesk/notes/create.rjs"
-      @account.tickets.find(new_ticket.id).notes.last.full_text_html.should be_eql("<div>#{now}</div>")
-    end
-
-    it "should not forward a ticket with attachment_resource nil" do
-      now = (Time.now.to_f*1000).to_i
-      test_ticket = create_ticket({ :status => 2 }, @groups)
-      begin
-        post :forward, { :reply_email => { :id => "support@#{@account.full_domain}" },
-                         :helpdesk_note => { :note_body_attributes =>{:body_html => "<div>#{now}</div>",
-                                                                      :full_text_html =>"<div>#{now}</div>"},
-                                            :cc_emails => "",
-                                            :attachments => [{:resource => ""}],
-                                            :bcc_emails => "",
-                                            :private => "true",
-                                            :source => "8",
-                                            :to_emails => Faker::Internet.email,
-                                            :from_email => "support@#{@account.full_domain}"
-                                          },
-                         :ticket_status => "",
-                         :format => "js",
-                         :showing => "notes",
-                         :since_id => "197",
-                         :ticket_id => test_ticket.display_id
-        }
-      rescue Exception => e
-        test_ticket.reload
-        test_ticket.notes.should be_empty
-      end
     end
 
     it "should add a private note to a ticket" do
@@ -147,10 +81,10 @@ describe Helpdesk::ConversationsController do
                      :since_id => "197",
                      :ticket_id => @test_ticket.display_id
                     }
-      response.should render_template "helpdesk/notes/create.rjs"
+      response.should render_template "helpdesk/notes/create"
       private_note = @account.tickets.find(@test_ticket.id).notes.last
       private_note.full_text_html.should be_eql("<div>#{now}</div>")
-      private_note.private.should be_true
+      private_note.private.should be_truthy
     end
     
     it "should add a private note to a ticket and change the status when showing activities" do
@@ -166,10 +100,10 @@ describe Helpdesk::ConversationsController do
                      :since_id => "197",
                      :ticket_id => test_tkt.display_id
                     }
-      response.should render_template "helpdesk/notes/create.rjs"
+      response.should render_template "helpdesk/notes/create"
       private_note = @account.tickets.find(test_tkt.id).notes.last
       private_note.full_text_html.should be_eql("<div>#{note_body}</div>")
-      private_note.private.should be_true
+      private_note.private.should be_truthy
       test_tkt.status.eql?(6)
     end
 
@@ -221,6 +155,68 @@ describe Helpdesk::ConversationsController do
       topic.last_post.body.strip.should be_eql(body)
     end
 
+    it "should add a post to forum topic with attachment" do
+      test_ticket = create_ticket({:status => 2 })
+      category = create_test_category
+      forum = create_test_forum(category)
+      topic = create_test_topic(forum)
+      create_ticket_topic_mapping(topic,test_ticket)
+      now = (Time.now.to_f*1000).to_i
+      body = "ticket topic note #{now}"
+      post :reply , { :reply_email => { :id => "support@#{@account.full_domain}"},
+                     :helpdesk_note => { :cc_emails => "", 
+                                         :note_body_attributes => {:body_html => "<div>#{body}</div>",
+                                                                   :full_text_html => "<div>#{body}</div>"},
+                                         :private => "0",
+                                         :source => "0",
+                                         :to_emails => "#{@agent.email}",
+                                         :from_email => "support@#{@account.full_domain}",
+                                         :bcc_emails => "",
+                                         :attachments => [{:resource => fixture_file_upload('/files/attachment.txt', 'plain/text', :binary), 
+                                          :description => Faker::Lorem.characters(10)}]
+                                        },
+                     :ticket_status => "",
+                     :ticket_id => test_ticket.display_id,
+                     :since_id => "-1",
+                     :post_forums => "1",
+                     :showing => "notes"
+                   } 
+      topic.reload
+      topic.last_post.body.strip.should be_eql(body)
+      topic.last_post.attachments.should_not eql []
+    end
+
+    it "should add a post to forum topic with cloud file attachment" do
+      test_ticket = create_ticket({:status => 2 })
+      category = create_test_category
+      forum = create_test_forum(category)
+      topic = create_test_topic(forum)
+      create_ticket_topic_mapping(topic,test_ticket)
+      now = (Time.now.to_f*1000).to_i
+      body = "ticket topic note #{now}"
+      post :reply , { :reply_email => { :id => "support@#{@account.full_domain}"},
+                     :helpdesk_note => { :cc_emails => "", 
+                                         :note_body_attributes => {:body_html => "<div>#{body}</div>",
+                                                                   :full_text_html => "<div>#{body}</div>"},
+                                         :private => "0",
+                                         :source => "0",
+                                         :to_emails => "#{@agent.email}",
+                                         :from_email => "support@#{@account.full_domain}",
+                                         :bcc_emails => ""
+                                        },
+                     :cloud_file_attachments => [{:link => "https://www.dropbox.com/s/7d3z51nidxe358m/Getting%20Started.pdf?dl=0",
+                                    :name => "Getting Started.pdf",:provider => "dropbox"}.to_json],
+                     :ticket_status => "",
+                     :ticket_id => test_ticket.display_id,
+                     :since_id => "-1",
+                     :post_forums => "1",
+                     :showing => "notes"
+                   } 
+      topic.reload
+      topic.last_post.body.strip.should be_eql(body)
+      topic.last_post.cloud_files.should_not eql []
+    end
+
     # Keep this last as ticket_cc is being changed
     it "should add a reply and alter reply_cc" do
       @test_ticket.cc_email = { :cc_emails => ["superman@justiceleague.com"], :fwd_emails => [], :reply_cc => ["superman@justiceleague.com"] }
@@ -261,7 +257,7 @@ describe Helpdesk::ConversationsController do
       }
       post :note, note_params.merge!({:format => 'json', :ticket_id => ticket_id }),:content_type => 'application/json'
       note_result = parse_json(response)
-      expected = (response.status =~ /200 OK/) && compare(note_result['note'].keys,APIHelper::NOTE_ATTRIBS,{}).empty?
+      expected = (response.status == 200) && compare(note_result['note'].keys,APIHelper::NOTE_ATTRIBS,{}).empty?
       expected.should be(true)
     end
   end
@@ -287,10 +283,10 @@ describe Helpdesk::ConversationsController do
                      :quoted_text_html => "",
                      :ticket_id => @mobihelp_ticket.display_id
                     }
-      response.should render_template "helpdesk/notes/create.rjs"
+      response.should render_template "helpdesk/notes/create"
       mobihelp_reply = @account.tickets.find(@mobihelp_ticket.id).notes.last
       mobihelp_reply.full_text_html.should be_eql("<div>#{now}</div>")
-      mobihelp_reply.private.should be_false
+      mobihelp_reply.private.should eql(false)
     end
 
     it "should not reply to a mobihelp ticket if the source is invalid" do
@@ -307,8 +303,76 @@ describe Helpdesk::ConversationsController do
                      :quoted_text_html => "",
                      :ticket_id => @mobihelp_ticket.display_id
                     }
-      mobihelp_reply = @account.tickets.find(@mobihelp_ticket.id).notes.last
-      mobihelp_reply.should be_nil
+      assigns['note'].errors.messages[:source].should include("is not included in the list")
     end
+
   end
+  
+   describe "Reply to ecommerce Ticket" do
+      before(:each) do
+        @ebay_account = @account.ebay_accounts.new(:name => "Test account #{Time.now}",:configs => {},:status => 2,:reauth_required => false ,:external_account_id=>"#{Time.now}")
+        @ebay_account.save
+        @ecommerce_ticket = create_ticket({:status => 2, :source => 10, :subject => "Details about item: testuser_priyo456 sent a message about item #110162958894"})
+        @ecommerce_ticket.requester.external_id = "bssmb_us_03"
+        @ecommerce_ticket.requester.save
+        @ecommerce_ticket.build_ebay_question(:user_id => @ecommerce_ticket.requester.id, :item_id => "110162958894", :ebay_account_id => @ebay_account.id, :account_id => @account.id, :message_id => "82321455326753")
+        @ecommerce_ticket.ebay_question.save
+        log_in(@agent)
+      end
+
+      it "should reply to ecommerce ticket" do 
+        Sidekiq::Testing.inline!
+        sent_messages = [{:sender=>"testuser_priyo456", :sending_user_id=>"133055377", :recipient_user_id=>"testuser_priyo456", 
+          :send_to_name=>"bssmb_us_06", :subject=>"Details about item: testuser_priyo456 sent a message about item #110162958894", 
+          :message_id=>"5879180", :external_message_id=>"11364210101", :flagged=>"false", :read=>"true", :receive_date=>"2015-06-22T12:33:59.000Z", 
+          :expiration_date=>"2016-06-21T12:33:59.000Z", :item_id=>"110162958894", :response_details=>{:response_enabled=>"false"}, :folder=>{:folder_id=>"1"}, 
+          :message_type=>"AskSellerQuestion", :replied=>"false", :item_end_time=>"2015-07-04T12:03:00.000Z", :item_title=>"固定价刊登范本US-yzy"}, 
+          {:sender=>"testuser_priyo456", :sending_user_id=>"133055377", :recipient_user_id=>"testuser_priyo456", :send_to_name=>"bssmb_us_03", 
+          :subject=>"Details about item: testuser_priyo456 sent a message about 3D Transparent Water drop Raindrop Slim Case Cover For iPhone 5 New Hot Yell #110146234712",
+          :message_id=>"5879110", :external_message_id=>"11364130410", :flagged=>"false", :read=>"true", :receive_date=>"2015-06-22T10:42:33.000Z", 
+          :expiration_date=>"2016-06-21T10:42:33.000Z", :response_details=>{:response_enabled=>"false"}, 
+          :folder=>{:folder_id=>"1"}, :message_type=>"AskSellerQuestion", :replied=>"false", :item_end_time=>"2015-06-25T13:44:14.000Z", 
+          :item_title=>"3D Transparent Water drop Raindrop Slim Case Cover For iPhone 5 New Hot Yell"}]
+        Helpdesk::ConversationsController.any_instance.stubs(:ebay_call).returns({:ack => "Success", :timestamp => Time.now})
+        Ecommerce::Ebay::Message.any_instance.stubs(:sent_folder_messages).returns(sent_messages)
+        note_body = "<div>#{(Time.now.to_f*1000).to_i}</div>"
+         post :ecommerce, {
+                     :helpdesk_note =>  { :note_body_attributes =>{:body_html => note_body},
+                                        :private => "true",
+                                        :source => "12"
+                                        },
+                     :ticket_status => "",
+                     :format => "js",
+                     :showing => "notes",
+                     :since_id => "1",
+                     :quoted_text_html => "",
+                     :ticket_id => @ecommerce_ticket.display_id
+                    }
+          ecommerce_reply = @account.tickets.find(@ecommerce_ticket.id).notes.last
+          ecommerce_reply.body_html.should be_eql(note_body)
+          Sidekiq::Testing.disable!
+      end
+
+      it "should reply to ecommerce ticket" do 
+        Helpdesk::ConversationsController.any_instance.stubs(:ebay_call).returns(false)
+        note_body = "<div>#{(Time.now.to_f*1000).to_i}</div>"
+         post :ecommerce, {
+                     :helpdesk_note =>  { :note_body_attributes =>{:body_html => note_body},
+                                        :private => "true",
+                                        :source => "12"
+                                        },
+                     :ticket_status => "",
+                     :format => "js",
+                     :showing => "notes",
+                     :since_id => "1",
+                     :quoted_text_html => "",
+                     :ticket_id => @ecommerce_ticket.display_id
+                    }
+          ecommerce_reply = @account.tickets.find(@ecommerce_ticket.id).notes.last
+          ecommerce_reply.body_html.should be_eql(note_body)
+          Sidekiq::Testing.disable!
+      end
+
+    end
+
 end

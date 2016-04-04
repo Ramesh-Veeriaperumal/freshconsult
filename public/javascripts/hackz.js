@@ -82,3 +82,38 @@ jQuery(document).ready(function ($) {
         $(this).tooltip();
     });
 });
+
+
+// Calling the Default browser implemenation as prototype is overwriting JSON.stringify method
+// TODO: To be removed when we remove prototypeJs
+var Browser = {
+    stringify: function(content){
+        var arrayToJson = Array.prototype.toJSON;
+        delete Array.prototype.toJSON;
+        content = JSON.stringify(content);
+        Object.defineProperty(Array.prototype, "toJSON", {
+            enumerable: false,
+            value: arrayToJson,
+            configurable:true
+        });        
+        return content;
+    }
+};
+
+// Get scroll bar heigth and width in IE
+var measureScrollbar = function(){
+    var $c = jQuery("<div style='position:absolute; top:-10000px; left:-10000px; width:100px; height:100px; overflow:scroll;'></div>").appendTo("body");
+    var dim = {
+        width: $c.width() - $c[0].clientWidth,
+        height: $c.height() - $c[0].clientHeight
+    };
+    $c.remove();
+    return dim;
+};
+
+// Capitalize
+jQuery.fn.extend(jQuery, { 
+    capitalize: function() {
+        return jQuery.camelCase("-"+arguments[0]); 
+    } 
+});

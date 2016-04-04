@@ -4,6 +4,6 @@ module Mobile::Actions::Portal
       :only => [ :name, :preferences ],
       :methods => [ :logo_url, :fav_icon_url ]
     }
-    to_json options
+    as_json options
   end
 end

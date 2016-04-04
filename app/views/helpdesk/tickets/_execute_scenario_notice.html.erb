@@ -1,7 +1,8 @@
-<%= t(".execute_the_scenario", :rule_name => h(rule_name)).html_safe%>
+<% bulk_scenario ||=false %>
+<%= t((bulk_scenario ? ".bulk_execute_scenario" : ".execute_the_scenario"), :rule_name => h(rule_name)).html_safe%>
 <%= link_to_function t(".view_details"), "jQuery('#scenario_actions_performed').slideDown(300); $(this).hide()" %>
 <div class='list' id="scenario_actions_performed" style="display:none;">
-  <h4 class='title'><%= t(".actions_performed") %></h4>
+  <h4 class='title'><%= (bulk_scenario ? t(".bulk_actions_perform",{:count => count}) : t(".actions_performed")) %></h4>
   <ul>
     <% actions_executed.each do |a| %>
       <%= content_tag :li, a %>

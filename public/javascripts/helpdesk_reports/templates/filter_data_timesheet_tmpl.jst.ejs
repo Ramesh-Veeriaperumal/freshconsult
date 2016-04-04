@@ -1,0 +1,5 @@
+<% if (data && data.length) { %>
+	<% for (i = 0; i < data.length; i++) { %>
+        <li> <%= data[i].label %> : <strong> <%= escapeHtml(data[i].text) %> </strong></li>
+    <% } %>
+<%  } %>

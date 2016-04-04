@@ -3,6 +3,19 @@
     margin-top: 0;
     .modal-body{
         max-height: 460px;
+        padding: 10px 20px;
+    }
+    .admin_bulk_actions_notification{
+        @include margin(5px 4px 0 0);
+        @include border-radius(5px);
+        line-height: 21px;
+        .admin_select_all_notification_list {
+            @include margin(0 0 8px 30px);
+            li{
+                line-height: 21px;
+            }
+        }
+
     }
 }
 
@@ -61,12 +74,6 @@
     #bulkreplycheck{
         margin-bottom:0;
     }
-    #bulkreplyform{
-        .ui-form{
-            min-height: 250px;
-        }
-    }
-
     .bulk_add_tags{
       width: 95%;
       padding-bottom: 11px;
@@ -107,6 +114,7 @@
     #replymultiple{
         margin-bottom: 0;
     }
+
 }
 
 #cnt-reply-multiple{
@@ -174,6 +182,57 @@
     @include float(left);
     width: 667px;
     @include margin-right(32px);
+    .bulk-reply{
+        background: #fff;
+        border: 1px solid #ddd;
+        .reply-content-container{
+            padding: 0px;
+        }
+        .attachments-container label{
+            font-weight: bold;
+        }
+        .shared_attachment_list{
+            @include padding(5px 10px);
+            .item{
+                border: 0;
+                .attachment-type{
+                    @include padding-left(3px);
+                }
+                a{
+                    color: #000;
+                    cursor: default;
+                }
+            }
+            span{
+                @include float(left);
+                word-wrap: break-word;
+            }
+            .attachment-type {
+                @include padding-left(0);
+                @include margin-left(-10px);
+            }
+        }
+        .attachments-list-form span{
+            @include padding-left(10px);
+        }
+        li {
+            .email-config-from{
+                @include float(left);
+                padding: 5px 10px;
+                font-weight: 500;
+            }
+            border-bottom: 1px solid #f2f2f2;
+            .redactor_box{
+                border: 0;
+                .redactor_toolbar{
+                    background: none;
+                }
+            }
+            .email-config a{
+                border: 0;
+            }
+        }
+    }
 }
 
 #bulkfull{
@@ -183,6 +242,14 @@
 
 #bulkcontent{
     overflow: hidden;
+    .button-container{
+        float: right;
+        width: 100%;
+        #bulk_back{
+            @include float(left);
+            @include margin-left(5px);
+        }
+    }
 }
 
 #canned_show{
@@ -199,3 +266,5 @@
     cursor: pointer;
     text-decoration: none;
 }
+
+

@@ -1,41 +1,55 @@
-# Settings specified here will take precedence over those in config/environment.rb
+Helpkit::Application.configure do
+  # Settings specified here will take precedence over those in config/application.rb
 
-# The test environment is used exclusively to run your application's
-# test suite.  You never need to work with it otherwise.  Remember that
-# your test database is "scratch space" for the test suite and is wiped
-# and recreated between test runs.  Don't rely on the data there!
+  # The test environment is used exclusively to run your application's
+  # test suite. You never need to work with it otherwise. Remember that
+  # your test database is "scratch space" for the test suite and is wiped
+  # and recreated between test runs. Don't rely on the data there!
+  config.cache_classes = true
 
-require 'yaml'
-YAML::ENGINE.yamler = 'syck'
+  # Configure static asset server for tests with Cache-Control for performance
+  config.serve_static_assets = true
+  config.static_cache_control = "public, max-age=3600"
 
-config.cache_classes = true
+  # Log error messages when you accidentally call methods on nil
+  config.whiny_nils = true
 
-# Log error messages when you accidentally call methods on nil.
-config.whiny_nils = true
+  # Show full error reports and disable caching
+  config.consider_all_requests_local       = false
+  config.action_controller.perform_caching = false
 
-# Show full error reports and disable caching
-config.action_controller.consider_all_requests_local = true
-config.action_controller.perform_caching             = false
+  # Raise exceptions instead of rendering exception templates
+  config.action_dispatch.show_exceptions = false
 
-# Disable request forgery protection in test environment
-config.action_controller.allow_forgery_protection    = false
+  # Disable request forgery protection in test environment
+  config.action_controller.allow_forgery_protection    = false
 
-# Tell Action Mailer not to deliver emails to the real world.
-# The :test delivery method accumulates sent emails in the
-# ActionMailer::Base.deliveries array.
-config.action_mailer.delivery_method = :test
-config.action_mailer.perform_deliveries = false
-config.middleware.insert_before "ActionController::Session::CookieStore","Rack::SSL"
-config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
-  r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 10,:per_ip => true ,:per_url => true )
-  store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"])
-  r.set_cache(store) if store.present?
+  # Tell Action Mailer not to deliver emails to the real world.
+  # The :test delivery method accumulates sent emails in the
+  # ActionMailer::Base.deliveries array.
+  config.action_mailer.delivery_method = :test
+
+  config.action_mailer.perform_deliveries = false
+
+  # Raise exception on mass assignment protection for Active Record models
+  config.active_record.mass_assignment_sanitizer = :logger
+
+  # Print deprecation notices to the stderr
+  config.active_support.deprecation = :stderr
+  config.after_initialize do
+    Bullet.enable         = true
+    Bullet.bullet_logger  = true
+    Bullet.rails_logger   = true
+    Bullet.raise          = true # raise an error if n+1 query occurs
+    Bullet.unused_eager_loading_enable = false
+    # Other options can be found here: https://github.com/flyerhzm/bullet#configuration
+  end
 end
 
-# config.gem "thoughtbot-shoulda", :lib => 'shoulda', :source => "http://gems.github.com"
-
-# config.gem 'rspec-rails', :version => '>= 1.3.2', :lib => false unless File.directory?(File.join(Rails.root, 'vendor/plugins/rspec-rails'))
-
-# config.gem 'factory_girl', :version => '1.2.3'
-
-
+if defined?(PhusionPassenger)
+  PhusionPassenger.on_event(:starting_worker_process) do |forked|
+    if forked
+       RabbitMq::Init.start
+    end
+  end
+end

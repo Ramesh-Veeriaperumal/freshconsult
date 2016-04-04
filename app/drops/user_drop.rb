@@ -1,11 +1,11 @@
 class UserDrop < BaseDrop	
 
-	include ActionController::UrlWriter
+	include Rails.application.routes.url_helpers
 	include Integrations::AppsUtil
+	include DateHelper
 
-	liquid_attributes << :name  << :first_name << :last_name << :email << :phone << :mobile << 
-						:job_title  << :time_zone << :twitter_id << :external_id << :language << :address << 
-						:description << :active
+	self.liquid_attributes += [:name, :first_name, :last_name, :email, :phone, :mobile, 
+						:job_title, :time_zone, :twitter_id, :external_id, :language, :address, :description, :active]
 
 	def initialize(source)
 		super source
@@ -32,15 +32,14 @@ class UserDrop < BaseDrop
 	end
 
 	def firstname
-		name_part("given")
-	end
-
+   		source.first_name
+   	end	
+   	
 	def lastname
-		name_part("family")
-	end
-
+		source.last_name
+	end	
 	def all_emails
-		source.user_emails.collect(&:email)
+		source.user_emails.pluck("email").join(",")
 	end
 
 	def recent_tickets
@@ -61,18 +60,23 @@ class UserDrop < BaseDrop
 	end
 
 	# !TODO This may be deprecated on a later release
+	# Removed reference from placeholders UI
 	def company_name
 		@company_name ||= @source.company.name if @source.company
 	end
 
+	def before_method(method)
+		custom_fields = @source.custom_field
+		field_types =  @source.custom_field_types
+		if(custom_fields["cf_#{method}"] || field_types["cf_#{method}"])
+	    unless custom_fields["cf_#{method}"].blank?
+	      return custom_fields["cf_#{method}"].gsub(/\n/, '<br/>') if field_types["cf_#{method}"] == :custom_paragraph
+	      return formatted_date(custom_fields["cf_#{method}"]) if field_types["cf_#{method}"] == :custom_date
+	    end
+	    custom_fields["cf_#{method}"] 
+	  else
+	    super
+	  end
+	end
 
-	private
-		def name_part(part)
-			part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"
-			parsed_name[part].blank? ? @source.name : parsed_name[part]
-		end
-
-		def parsed_name
-			@parsed_name ||= Namae::Name.parse(@source.name)
-		end
 end

@@ -16,8 +16,8 @@ module Reports
 					folder, staging_table =  s3_folder(date,hour), staging_table_name(date,hour)
 					merge_delete_query, merge_data_query = delete_regenerated_data(staging_table),merge_staging_to_base_table(staging_table) 
 					regenerate_benchmark = {"s3_folder" => folder }
-					bucket = AWS::S3::Bucket.new(S3_CONFIG[:reports_bucket])
-					files_arr = bucket.objects.with_prefix(folder)
+					
+					files_arr = AwsWrapper::S3.list(S3_CONFIG[:reports_bucket], folder, false)
 					return if files_arr.count == 0
 
 					begin
@@ -31,7 +31,7 @@ module Reports
 							query = %(COPY #{staging_table}(#{REDSHIFT_COLUMNS.join(", ")})
 								from 's3://#{S3_CONFIG[:reports_bucket]}/#{folder}/redshift_' 
 								credentials 'aws_access_key_id=#{S3_CONFIG[:access_key_id]};aws_secret_access_key=#{S3_CONFIG[:secret_access_key]}' 
-								delimiter '|' IGNOREHEADER 1 ROUNDEC REMOVEQUOTES MAXERROR 100000;)
+								gzip delimiter '|' IGNOREHEADER 1 ROUNDEC REMOVEQUOTES MAXERROR 100000;)
 							execute_redshift_query(query).clear
 						}
 
@@ -45,6 +45,9 @@ module Reports
 						regenerate_benchmark["\n merge_delete_query=> "] = merge_delete_query
 						regenerate_benchmark["\n merge_data_query=> "] = merge_data_query
 						report_notification("Report regenerate data benchmark",regenerate_benchmark.to_s)
+						# delete_all method is not there in aws-sdk version 2. When the below code is uncommented, use
+						# AwsWrapper::S3.batch_delete to delete multiple files
+						# Refer to load_data_redshift.rb
 						# files_arr.delete_all
 					rescue => e
 						subject = "Error occured while loading regenerated data for folder =#{folder}"

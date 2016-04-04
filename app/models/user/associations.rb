@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
 
   belongs_to :company, :foreign_key => 'customer_id'
+  has_many :user_companies, :class_name => 'UserCompany', :dependent => :destroy
   belongs_to :parent, :class_name =>'User', :foreign_key => :string_uc04
 
   has_many :authorizations, :dependent => :destroy
@@ -22,9 +23,12 @@ class User < ActiveRecord::Base
   
   has_and_belongs_to_many :roles,
     :join_table => "user_roles",
-    :insert_sql => 
-      'INSERT INTO user_roles (account_id, user_id, role_id) VALUES
-       (#{account_id}, #{id}, #{ActiveRecord::Base.sanitize(record.id)})',
+    :insert_sql => proc { |record|
+      %{
+        INSERT INTO user_roles (account_id, user_id, role_id) VALUES
+        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
+     }
+    },
     :after_add => :touch_role_change,
     :after_remove => :touch_role_change,
     :autosave => true
@@ -65,6 +69,7 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Reminder',:dependent => :destroy
     
   has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id" 
+  has_many :archive_tickets , :class_name => 'Helpdesk::ArchiveTicket' ,:foreign_key => "requester_id" 
   has_many :notes, :class_name => 'Helpdesk::Note'
   has_many :activities, :class_name => 'Helpdesk::Activity'
   
@@ -109,9 +114,17 @@ class User < ActiveRecord::Base
 
   has_and_belongs_to_many :accesses,  
     :class_name => 'Helpdesk::Access',
-    :join_table => 'user_accesses'
+    :join_table => 'user_accesses',
+    :insert_sql => proc { |record|
+      %{
+        INSERT INTO user_accesses (account_id, user_id, access_id) VALUES
+        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
+     }
+    }
 
   has_many :mobihelp_devices, :class_name => 'Mobihelp::Device', :dependent => :destroy
 
   has_one :forum_moderator , :class_name => 'ForumModerator' , :foreign_key => "moderator_id", :dependent => :destroy
+
+  has_many :ebay_questions, :class_name => 'Ecommerce::EbayQuestion'
 end

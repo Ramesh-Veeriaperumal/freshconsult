@@ -1,13 +1,12 @@
 require 'spec_helper'
 
 describe Admin::BusinessCalendarsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
-    business_hours = Factory.build(:business_calendars,:name=>"created by #{Faker::Name.name}", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
-    business_hours.save(false)
+    business_hours = FactoryGirl.build(:business_calendars,:name=>"created by #{Faker::Name.name}", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
+    business_hours.save(validate: false)
     @test_business_hours=business_hours
   end
 
@@ -17,13 +16,13 @@ describe Admin::BusinessCalendarsController do
 
   it "should go to the index page" do
     get 'index'
-    response.should render_template "admin/business_calendars/index.html.erb"
+    response.should render_template "admin/business_calendars/index"
     response.body.should =~ /Business Hours/
   end
 
   it "should go to new business hours page" do
     get 'new'
-    response.should render_template "admin/business_calendars/new.html.erb"
+    response.should render_template "admin/business_calendars/new"
     response.body.should =~ /Business Hours/
   end
 
@@ -50,7 +49,7 @@ describe Admin::BusinessCalendarsController do
 
   it "should go to edit page of business hours" do
     get 'edit', :id=>@test_business_hours.id
-    response.should render_template "admin/business_calendars/edit.html.erb"
+    response.should render_template "admin/business_calendars/edit"
     response.body.should =~ /Business Hours/
   end
 
@@ -75,8 +74,8 @@ describe Admin::BusinessCalendarsController do
   end
 
   it "should delete the business calendar" do
-    business_hours = Factory.build(:business_calendars,:name=>"created by #{Faker::Name.name}", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
-    business_hours.save(false)
+    business_hours = FactoryGirl.build(:business_calendars,:name=>"created by #{Faker::Name.name}", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
+    business_hours.save(validate: false)
     delete :destroy, {:id=>business_hours.id}
     @account.business_calendar.find_by_id(business_hours.id).should be_nil
   end
@@ -101,7 +100,7 @@ describe Admin::BusinessCalendarsController do
 
   it "should not destroy default business hour" do
     delete :destroy, {:id=>@account.business_calendar.default.first.id}
-    response.session["flash"][:notice].should eql "The Business Calendar could not be deleted"
+    session["flash"][:notice].should eql "The Business Calendar could not be deleted"
     response.should redirect_to('/admin/business_calendars')
   end
 

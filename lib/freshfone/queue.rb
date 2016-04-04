@@ -8,14 +8,16 @@ module Freshfone::Queue
     twiml = Twilio::TwiML::Response.new do |r|
       current_number.read_queue_message(r)
       r.Gather :action => "#{host}/freshfone/queue/quit_queue_on_voicemail", :numDigits => '1' do |g|
-        g.Play "http://com.twilio.music.guitars.s3.amazonaws.com/Pitx_-_A_Thought.mp3"
+        read_queue_position_message(g) if current_number.queue_position_preference
+        (current_number.wait_message.present? && current_number.wait_message.message_url.present?) ? 
+        current_number.play_wait_message(g) : play_default_music(g)
       end
     end
     render :xml => twiml.text
   end
 
   def bridge_queued_call(agent = nil)
-    @available_agent = (agent or default_client).to_s
+    @available_agent ||= (agent or default_client).to_s # if @available_agent.blank?
     @priority_call = nil
     if queued_members.list.any?
       check_for_priority_calls
@@ -80,8 +82,8 @@ module Freshfone::Queue
       hunted_group_calls = group_calls[hunted_group]
       hunted_group_calls.delete(hunted_group_calls.first)
       group_calls[hunted_group] = hunted_group_calls
+      set_key(group_queue_key, group_calls.to_json)
     end
-    set_key(group_queue_key, group_calls.to_json)
   end
 
   def check_for_priority_calls
@@ -150,6 +152,14 @@ module Freshfone::Queue
       @queued_members ||= current_account.freshfone_subaccount.queues.get(queue_sid).members
     end
 
+    def load_hunt_options_for_conf
+      call_meta = current_call.meta
+      if current_account.features?(:freshfone_conference) && current_call.priority_queued_call?
+        params[:hunt_id]   = (call_meta.agent_hunt? ? current_call.user_id : current_call.group_id).to_s
+        params[:hunt_type] = Freshfone::CallMeta::HUNT_TYPE_REVERSE_HASH[call_meta.hunt_type].to_s if params[:hunt_id].present?
+      end
+    end
+
     def default_queue_key
       FRESHFONE_QUEUED_CALLS % { :account_id => current_account.id }
     end
@@ -166,5 +176,32 @@ module Freshfone::Queue
       FRESHFONE_QUEUE_WAIT % {:account_id => current_account.id, :call_sid => params[:CallSid]}
     end
 
+    def play_default_music(xml_builder)
+      xml_builder.Play Freshfone::Number::DEFAULT_QUEUE_MUSIC, :loop => 50
+    end
+
+    def add_to_call_queue_worker(async = false, user_id = current_user.id, params = params)
+      return Freshfone::CallQueueWorker.perform_async(params.merge(:account_id => ::Account.current.id), user_id) if async
+      Resque.enqueue_at(10.seconds.from_now, Freshfone::Jobs::CallQueuing,
+          params.merge(account_id: ::Account.current.id, agent: user_id))
+    end
+
+    def read_queue_position_message(xml_builder)
+      return if current_number.queue_position_message.blank?
+      queue_values = { "position" => params['QueuePosition']}
+      text = Liquid::Template.parse(current_number.queue_position_message).render("queue" => queue_values)
+      xml_builder.Say "#{text}", { :voice => current_number.voice_type }
+    end
+
+    def load_freshfone_user
+      current_user ||= current_account.technicians.visible.find(params[:agent] || params[:agent_id])
+      @freshfone_user ||= current_user.freshfone_user if current_user.present?
+    end
+
+    def check_for_queued_calls
+      load_freshfone_user
+      return unless @freshfone_user.present? && @freshfone_user.online?
+      add_to_call_queue_worker(true, @freshfone_user.user_id) if params[:CallStatus].present? && Freshfone::CallMeta::MISSED_RESPONSE_HASH.key?(params[:CallStatus].to_sym)
+    end
 
 end

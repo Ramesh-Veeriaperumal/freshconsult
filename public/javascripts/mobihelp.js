@@ -8,14 +8,16 @@ jQuery(function($){
 });
 
 function showItemsInOrder(category_ids, id) {
-  jQuery.each(category_ids, function() {
-    var $selection = jQuery("#"+id+"[rel=ordered_dropdown]");
-    var $cat_option = $selection.find("select option[value="+this+"]");
-    $cat_option.appendTo($selection.find("select"));
-    $selection.find("ul li").each(function(){
-      if(jQuery(this).find("div").html() == $cat_option.html()){
-        jQuery(this).insertBefore($selection.find("ul li:last"));
-      }
-    });
-  })
+  jQuery(function($){
+    jQuery.each(category_ids, function() {
+      var $selection = jQuery("#"+id+"[rel=ordered_dropdown]");
+      var $cat_option = $selection.find("select option[value="+this+"]");
+      $cat_option.appendTo($selection.find("select"));
+      $selection.find("ul.select2-choices li").each(function(){
+        if(jQuery(this).find("div").html() == $cat_option.html()){
+          jQuery(this).insertBefore($selection.find("ul.select2-choices li:last"));
+        }
+      });
+    })
+  });
 }

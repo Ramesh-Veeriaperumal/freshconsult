@@ -86,7 +86,7 @@ def handle_error
      enable_notification(@current_account)
      delete_zip_file
      email_params = {:user => @current_user, :domain => params[:domain]}
-     Admin::DataImportMailer.deliver_import_error_email(email_params)
+     Admin::DataImportMailer.import_error_email(email_params)
      FileUtils.remove_dir(@out_dir,true)  
      @current_account.zendesk_import.destroy   
 end
@@ -95,7 +95,7 @@ def handle_format_error
      enable_notification(@current_account)
      delete_zip_file
      email_params = {:user => @current_user, :domain => params[:domain]}
-     Admin::DataImportMailer.deliver_import_format_error_email(email_params)
+     Admin::DataImportMailer.import_format_error_email(email_params)
      FileUtils.remove_dir(@out_dir,true)  
      @current_account.zendesk_import.destroy   
 end
@@ -104,7 +104,7 @@ def send_success_email
     puts "sending success email"
     email = "shihab@freshdesk.com" # Right now we are sending the mail to shihab to monitor
     email_params = {:email => email, :domain => params[:domain]}
-    Admin::DataImportMailer.deliver_import_email(email_params)
+    Admin::DataImportMailer.import_email(email_params)
 end
    
 def delete_import_files base_dir

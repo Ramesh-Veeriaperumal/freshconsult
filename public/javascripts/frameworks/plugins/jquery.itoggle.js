@@ -16,7 +16,7 @@
             _offLabel = $("<span />", { 'class': 'off-label'}).html("<span>"+opts.uncheckedLabel+"</span>"),
             _container = $("<span />", { 'class': 'toggle-container' }),
             _handle = $("<span />", { 'class': 'toggle-handle' }).append("<span></span>"),
-            _proxy = $("<p />").html((opts.checkedLabel.length > opts.uncheckedLabel.length) ? opts.checkedLabel : opts.uncheckedLabel)
+            _proxy = $("<p />").html((opts.checkedLabel.length > opts.uncheckedLabel.length) ? opts.checkedLabel : opts.uncheckedLabel),
             _invert = opts.inverted ? !_checkbox.prop('checked') : _checkbox.prop('checked'),
             _ibutton = $("<a />", {
               'href': "#",

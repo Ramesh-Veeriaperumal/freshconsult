@@ -1,8 +1,6 @@
 module Helpdesk::Email::ParseEmailData
 	include ParserUtil
-	include ActionView::Helpers::TagHelper
-	include ActionView::Helpers::TextHelper
-	include ActionView::Helpers::UrlHelper
+	include AccountConstants
 
 	attr_accessor :reply_to_email, :recipients
 
@@ -33,9 +31,9 @@ module Helpdesk::Email::ParseEmailData
 			:stripped_html => params["stripped-html"] || params["body-html"],
 			:stripped_text => params["stripped-text"] || params["body-plain"],
 			:headers => params["message-headers"],
-			:message_id => params["Message-Id"],
+			:message_id => params["Message-Id"] || "",
 			:references => params["References"],
-			:in_reply_to => params["In-Reply-To"]
+			:in_reply_to => params["In-Reply-To"] || ""
 		}
 	end
 
@@ -64,7 +62,8 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def parse_reply_to_email
-		self.reply_to_email = parse_email_with_domain(params["Reply-To"])
+		parsed_reply_to = parse_email_with_domain(params["Reply-To"])
+		self.reply_to_email = parsed_reply_to if parsed_reply_to[:email] =~ EMAIL_REGEX
 	end
 
 	def valid_from_email? f_email
@@ -77,6 +76,10 @@ module Helpdesk::Email::ParseEmailData
 
 	def parse_recipients
 		self.recipients ||= params[:recipient].split(',')
+	end
+
+	def parse_recipients_new
+		self.recipients ||= fetch_valid_emails(params[:recipient])
 	end
 
 	def check_for_kbase_email
@@ -116,7 +119,7 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def body_html_with_formatting(body,email_cmds_regex)
-	  body_html = auto_link(body) { |text| truncate(text, 100) }
+	  body_html = auto_link(body) { |text| truncate(text, :length => 100) }
 	  line_break_body = body_html.gsub(/(\n|\r)/, '<br />')
 	  white_list(line_break_body)
 	end
@@ -125,17 +128,28 @@ module Helpdesk::Email::ParseEmailData
 		account.email_configs.find_by_to_email(to_email[:email])
 	end
 
-	def get_user from_email, email_config, email_body
-		self.user = account.all_users.find_by_email(from_email[:email])
-	    unless user
-	      self.user = account.contacts.new
-	      signup_status = user.signup!({:user => user_params(from_email), :email_config => email_config},
-	      															get_portal(email_config))
-	      detect_user_language(signup_status, email_body)
-	    end
-	    user.make_current
-	  user
-	end
+  def get_user from_email, email_config, email_body
+    existing_user(from_email)
+    unless user
+      create_new_user from_email, email_config, email_body
+    end
+    set_current_user
+  end
+
+  def existing_user from_email
+    self.user = account.user_emails.user_for_email(from_email[:email])
+  end
+
+  def create_new_user from_email, email_config, email_body
+    self.user = account.contacts.new
+    signup_status = user.signup!({:user => user_params(from_email), :email_config => email_config},
+                                  get_portal(email_config))
+    detect_user_language(signup_status, email_body)
+  end
+
+  def set_current_user
+    user.make_current
+  end
 
 	def user_params from_email
 		{
@@ -152,17 +166,22 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def detect_user_language signup_status, email_body
-		args = [user, text_for_detection(email_body)]  
-		Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if user.language.nil? and signup_status
+		text = text_for_detection(email_body)
+		args = [user, text]
+		Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if user.language.nil? and signup_status
+		#Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if user.language.nil? and signup_status
 	end
 
 	def text_for_detection email_body
-	  text = email_body[0..100]
-	  text.gsub("\n","").squeeze(" ").split(" ")[0..5].join(" ")
+	  text = email_body[0..200]
+	  text.squish.split.first(15).join(" ")
 	end
 
 	def get_portal email_config
 		(email_config && email_config.product) ? email_config.product.portal : account.main_portal
 	end
 
+	alias_method :parse_recipients, :parse_recipients_new
+
 end
+

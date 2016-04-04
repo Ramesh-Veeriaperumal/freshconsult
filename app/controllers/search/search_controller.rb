@@ -4,6 +4,8 @@ class Search::SearchController < ApplicationController
 
 	include Search::SearchResultJson
 	
+	before_filter :privilege_check, :only => :index , :if => :is_native_mobile?
+
 	before_filter :set_search_sort_cookie, :only => :index
 
 	before_filter :initialize_search_parameters
@@ -30,7 +32,7 @@ class Search::SearchController < ApplicationController
 		begin
 			if privilege?(:manage_tickets)
 				Search::EsIndexDefinition.es_cluster(current_account.id)
-				items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id), options do |search|
+				items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id, @search_lang), options do |search|
 					search.query do |query|
 						query.filtered do |f|
 							search_query f
@@ -70,10 +72,13 @@ class Search::SearchController < ApplicationController
 		def exact_or_wildcard_query b_query
 			if SearchUtil.es_exact_match?(@search_key)
 				query = SearchUtil.es_filter_exact(@search_key) #Initializing into a variable as inaccessible inside block
-				b_query.must { text :_all, query, :type => :phrase }
+				
+				#_Note_: Text query deprecated and renamed to match query.
+				b_query.must { match :_all, query, :type => :phrase }
 			else
-				query = SearchUtil.es_filter_key(@search_key) #Initializing into a variable as inaccessible inside block
-				b_query.must { string query, :analyzer => "include_stop" }
+				query = SearchUtil.es_filter_key(@search_key, !@search_lang.present?) #Initializing into a variable as inaccessible inside block
+				analyzer = SearchUtil.analyzer(@search_lang) #Initializing into a variable as inaccessible inside block
+				b_query.must { string query, :analyzer => analyzer }
 			end
 		end
 
@@ -96,8 +101,11 @@ class Search::SearchController < ApplicationController
 											{ :term => { :notable_spam => false } }
 			end
 			unless search_in.blank?
-				f.filter :term,  { 'folder.category_id' => params[:category_id] } if 
-																		params[:category_id] && search_in.include?(Solution::Article)
+				if search_in.include?(Solution::Article)
+					f.filter :term,  { 'folder.category_id' => params[:category_id] } if params[:category_id]
+					f.filter :or, { :not => { :exists => { :field => :language_id } } },
+											{ :term => { :language_id => Language.for_current_account.id } }
+				end
 				f.filter :term,  { 'forum.forum_category_id' => params[:category_id] } if 
 																		params[:category_id] && search_in.include?(Topic)
 			end
@@ -117,7 +125,7 @@ class Search::SearchController < ApplicationController
 
 		def process_results search_in, options
 			@result_set.each_with_hit do |result,hit|
-				next if([Helpdesk::Ticket, Helpdesk::Note].include?(result.class) and result_discarded?(result))
+				next if([Helpdesk::Ticket, Helpdesk::Note,Helpdesk::ArchiveTicket,Helpdesk::ArchiveNote].include?(result.class) and result_discarded?(result))
 				@results[result.class.name] ||= []
 				result = SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
 				@results[result.class.name] << result
@@ -146,7 +154,15 @@ class Search::SearchController < ApplicationController
 		end
 
 		def result_discarded? result
-			parent_ticket_id = (result.class == Helpdesk::Ticket) ? result.id : result.notable_id
+			if(result.class == Helpdesk::Ticket) 
+			  parent_ticket_id = result.id
+			elsif(result.class == Helpdesk::ArchiveTicket)
+			  parent_ticket_id = result.ticket_id	
+			elsif(result.class == Helpdesk::ArchiveNote)
+			  parent_ticket_id =  result.notable_id
+			else
+			  parent_ticket_id = result.notable_id	
+			end
 			if @searched_ticket_ids.include?(parent_ticket_id)
 				@result_set.results.delete(result) and return true
 			end
@@ -173,21 +189,19 @@ class Search::SearchController < ApplicationController
 				end
 			end
 			format.js do 
-				render :partial => 'search/search_sort.rjs'
+				render :partial => 'search/search_sort'
 			end
 			format.json do
 				render :json => @result_json
 			end
-			format.nmobile do
-				json="[" 
-				sep=""
-				@result_set.each { |item|
-				  json << sep+"#{item.to_mob_json_search}"
-				  sep = ","
-				}
-				json << "]"
-				render :json => json
-			end
+      format.nmobile do
+        array = []
+        @result_set.each do |item|
+          next if item.is_a?(Helpdesk::ArchiveTicket)
+          array << item.to_mob_json_search if item
+        end
+        render :json => array
+      end
 			unless ["forums", "solutions"].include?(controller_name)
 				format.xml do
 					render_404
@@ -231,4 +245,9 @@ class Search::SearchController < ApplicationController
 		def set_result_json
 			@result_json = @result_json.to_json
 		end
+
+		def privilege_check 
+			access_denied if params[:search_class].to_s.eql?("customer") && !privilege?(:view_contacts)
+			access_denied if params[:search_class].to_s.eql?("solutions") && !privilege?(:view_solutions)
+		end	
 end

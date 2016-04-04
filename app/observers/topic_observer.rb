@@ -1,16 +1,18 @@
 class TopicObserver < ActiveRecord::Observer
 
-  include ActionController::UrlWriter
+  include CloudFilesHelper
 
 	def before_create(topic)
 		set_default_replied_at_and_sticky(topic)
+    #setting replied_by needed for API else api has to do item reloads while rendering the response
+    topic.replied_by = topic.user_id 
     topic.posts_count = 1 #Default count
-    topic.published ||= (topic.user.agent? || topic.import_id?) #Agent Topics are approved by default.
+    topic.published = true
+    topic
 	end
 
   def before_update(topic)
     check_for_changing_forums(topic)
-    assign_default_stamps(topic) if topic.changes.key?("forum_id")
   end
 
 	def before_save(topic)
@@ -39,6 +41,7 @@ class TopicObserver < ActiveRecord::Observer
 
   def after_publishing(topic)
     monitor_topic(topic)
+    create_ticket(topic) if topic.forum.convert_to_ticket? and !topic.user.agent?
     create_activity(topic, 'new_topic')
   end
 
@@ -46,25 +49,59 @@ class TopicObserver < ActiveRecord::Observer
     send_later(:send_monitorship_emails, topic)
   end
 
+  def create_ticket topic
+    ticket_params = {
+      :subject => topic.title, 
+      :requester => topic.user,
+      :ticket_body_attributes => {
+        :description => topic.posts.first.body,
+        :description_html => topic.posts.first.body_html
+      },
+      :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
+    }
+    ticket = topic.account.tickets.build(ticket_params)
+    ticket.build_ticket_topic(:topic_id => topic.id)
+    copy_attachment(topic, ticket)
+    ticket.save_ticket
+  end
+
+  def copy_attachment(topic, ticket)
+    topic.first_post.attachments.each do |attachment|      
+      url = attachment.authenticated_s3_get_url
+      io = open(url) 
+      if io
+        def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
+      end
+      ticket.attachments.build(:content => io, :description => attachment.description, :account_id => ticket.account_id)
+    end
+    
+    topic.first_post.cloud_files.each do |cloud_file|
+      ticket.cloud_files.build({:url => cloud_file.url, :application_id => cloud_file.application_id, :filename => cloud_file.filename })
+    end
+  end
+
   def send_monitorship_emails topic
     topic.forum.monitorships.active_monitors.all(:include => :portal).each do |monitor|
       next if monitor.user.email.blank? or (topic.user_id == monitor.user_id)
-      TopicMailer.deliver_monitor_email!(monitor.user.email, topic, topic.user, monitor.portal, *monitor.sender_and_host)
+      TopicMailer.monitor_email(monitor.user.email, topic, topic.user, monitor.portal, *monitor.sender_and_host)
     end
   end
 
   def send_stamp_change_notification(topic, forum_type, current_stamp, current_user_id)
-    topic.monitorships.active_monitors.all(:include => :portal).each do |monitor|
+    topic.monitorships.active_monitors.all(:include => [:portal, :user]).each do |monitor|
       next if monitor.user.email.blank? or (current_user_id == monitor.user_id)
-      TopicMailer.deliver_stamp_change_email(monitor.user.email, topic, topic.user, current_stamp, forum_type, monitor.portal, *monitor.sender_and_host)
+      TopicMailer.stamp_change_email(monitor.user.email, topic, topic.user, current_stamp, forum_type, monitor.portal, *monitor.sender_and_host)
     end
+  end
+  
+  def before_destroy(topic)
+    create_activity(topic, 'delete_topic', User.current) unless topic.trash
   end
 
 	def after_destroy(topic)
-    topic.account.clear_forum_categories_from_cache
+		topic.account.clear_forum_categories_from_cache
 		update_forum_counter_cache(topic)
-    create_activity(topic, 'delete_topic', User.current) unless topic.trash
-    delete_spam_posts(topic) if topic.account.features_included?(:spam_dynamo)
+		delete_spam_posts(topic)
 	end
 
 private
@@ -80,32 +117,28 @@ private
       true
   end
 
-  def assign_default_stamps(topic)
-    topic.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[topic.forum.reload.forum_type]
-  end
-
   def update_forum_counter_cache(topic)
-      # Forum Sidebar Cache is cleared from here
-      # As forum callbacks will not be fired from here.
-      topic.account.clear_forum_categories_from_cache if topic.published_changed? || topic.forum_id_changed?
-      forum_conditions = ['topics_count = ?', Topic.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})]
-      # if the topic moved forums
-      if !topic.frozen? && @old_forum_id && @old_forum_id != topic.forum_id
-        Post.update_all ['forum_id = ?', topic.forum_id], ['topic_id = ?', topic.id]
-        Forum.update_all ['topics_count = ?, posts_count = ?',
-          Topic.count(:id, :conditions => {:forum_id => @old_forum_id, :published => true }),
-          Post.count(:id,  :conditions => {:forum_id => @old_forum_id, :published => true })], ['id = ?', @old_forum_id]
-      end
-      # if the topic moved forums or was deleted
-      if topic.frozen? || (@old_forum_id && @old_forum_id != topic.forum_id)
-        forum_conditions.first << ", posts_count = ?"
-        forum_conditions       << Post.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})
-      end
-      # User doesn't have update_posts_count method in SB2, as reported by Ryan
-      # @voices.each &:update_posts_count if @voices
-      Forum.update_all forum_conditions, ['id = ?', topic.forum_id]
-      @old_forum_id = @voices = nil
+    # Forum Sidebar Cache is cleared from here
+    # As forum callbacks will not be fired from here.
+    topic.account.clear_forum_categories_from_cache if topic.published_changed? || topic.forum_id_changed?
+    forum_conditions = ['topics_count = ?', Topic.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})]
+    # if the topic moved forums
+    if !topic.frozen? && @old_forum_id && @old_forum_id != topic.forum_id
+      Post.update_all ['forum_id = ?', topic.forum_id], ['topic_id = ?', topic.id]
+      Forum.update_all ['topics_count = ?, posts_count = ?',
+        Topic.count(:id, :conditions => {:forum_id => @old_forum_id, :published => true }),
+        Post.count(:id,  :conditions => {:forum_id => @old_forum_id, :published => true })], ['id = ?', @old_forum_id]
     end
+    # if the topic moved forums or was deleted
+    if topic.frozen? || (@old_forum_id && @old_forum_id != topic.forum_id)
+      forum_conditions.first << ", posts_count = ?"
+      forum_conditions       << Post.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})
+    end
+    # User doesn't have update_posts_count method in SB2, as reported by Ryan
+    # @voices.each &:update_posts_count if @voices
+    Forum.update_all forum_conditions, ['id = ?', topic.forum_id]
+    @old_forum_id = @voices = nil
+  end
 
   def update_post_user_counts(topic)
       @voices = topic.voices.to_a
@@ -118,7 +151,7 @@ private
       :account       => topic.account,
       :user          => user,
       :activity_data => {
-                          :path        => discussions_topic_path(topic.id),
+                          :path        => Rails.application.routes.url_helpers.discussions_topic_path(topic.id),
                           'forum_name' => h(topic.forum.to_s),
                           :url_params  => {
                                             :topic_id => topic.id,
@@ -132,12 +165,13 @@ private
 
   def delete_spam_posts(topic)
     Post::SPAM_SCOPES_DYNAMO.each do |k, klass|
+      next if SpamCounter.count(topic.id, k).zero?
       Resque.enqueue(Workers::Community::DeleteTopicSpam, 
-                            {
-                              :account_id => topic.account.id,
-                              :topic_id => topic.id,
-                              :klass => klass.to_s  
-                            })
+                      {
+                        :account_id => topic.account.id,
+                        :topic_id => topic.id,
+                        :klass => klass.to_s  
+                      })
     end
   end
 

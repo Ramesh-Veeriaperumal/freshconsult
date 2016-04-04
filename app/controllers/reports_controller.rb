@@ -2,7 +2,9 @@ class ReportsController < ApplicationController
 
   include ReadsToSlave
 
-  before_filter :report_list,:set_selected_tab, :only => [ :index, :show ]
+  before_filter :check_old_reports_visibility, :only => [:old, :show]
+  before_filter :report_list,:set_selected_tab, :only => [ :index, :show, :old ]
+
 
   include Reports::ConstructReport
   include Reports::ReportTimes
@@ -38,6 +40,10 @@ class ReportsController < ApplicationController
 
   def set_selected_tab
     @selected_tab = :reports
+  end
+
+  def check_old_reports_visibility
+    redirect_to reports_path unless current_account.old_reports_enabled?
   end
   
 end

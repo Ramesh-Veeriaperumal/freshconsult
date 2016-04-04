@@ -3,89 +3,42 @@ var active_email_body = null;
 (function($){
 	$.fn.groupPlaceholders = function(options) {
 		var defaults = {
-			groupingParent : '.placeholder-category',
-			maxHeight : 75,
-			toggleClass : '.ph-more-less',
-			showMoreClass : '.ph-more',
-			showLessClass : '.ph-less',
+			groupingParent : '.placeholder-category-list',
 			btnPrefix : 'placeholder-btn-',
+			tabContainer : '.placeholder-category-title-container',
 			ignorePhs : "",
-			truncateItems : true,
-			onShowMore : function() { onShowMore.call(this) },
-			onShowLess : function() { onShowLess.call(this) }
+			activateTab : function() { activateTab.call(this) }
 		};
 		var settings = $.extend({},defaults, options);
-		var formatPlaceholders = function(options) {
-			options = $.extend({}, settings, options);
-			groupedElements = options.groupingParent;
-			if(options.selectedGroup) groupedElements = options.selectedGroup;
-			$.each($(groupedElements), function() {
-				var self = this,
-					height = $(self).outerHeight();
-
-				if(options.truncateItems && height > options.maxHeight) {
-					$(self).find(options.toggleClass).hide();
-					height = $(self).outerHeight();
-					if(height > options.maxHeight) {
-						$(self).find(options.toggleClass).show();
-						$.each($(this).find('li:not('+options.toggleClass+'):visible').get().reverse(), function() {
-							height = $(self).outerHeight();
-							if(height > options.maxHeight) {
-								$(this).hide();
-							}
-						});
-						$(self).find(options.showMoreClass).parent().show();
-					}
-					$(self).find(options.showLessClass).parent().hide();
-				}
-				else if($(self).find(options.showMoreClass).is(':visible') && $(self).find(options.showLessClass).is(':not(:visible)')) {
-					// Do nothing
-				}
-				else {
-					$(self).find(options.toggleClass).hide();
-				}
-			});
-		};
 		var ignorePlaceholders = function(options) {
-			options = $.extend({}, settings, options);
-			groupedElements = options.groupingParent;
-			if(options.selectedGroup) groupedElements = options.selectedGroup;
-
-			$(groupedElements).show();
-			$(groupedElements).find('li').show();	
+			options = $.extend({}, settings, options);	
+			//toggle automations -> webhooks/email placeholders & tabs
+            $(options.tabContainer).find('li').show();
+			$(options.groupingParent).find('li').removeClass('hidden');
 		 	options.ignorePhs.split(",").each(function(item){
 		 		var element = "#"+ options.btnPrefix + item;
-		 		$(element).hide();
-		 		if($(element).parent().children(':not('+ options.toggleClass +'):visible').length == 0) {
+		 		$(element).addClass('hidden');
+		 		if($(element).parent().children('li:not(.hidden)').length == 0) {
 		 			var parent = $(element).parents(options.groupingParent);
-		 			$(parent).hide();
+		 			var category = $(parent).data("category");
+		 			var categoryTab = $(options.tabContainer+' li[data-category="'+category+'"]');
+		 			$(categoryTab).hide();
 		 		}
 		 	});
+		 	settings.activateTab();
 		};
 
-		var onShowMore = function() {
-			var ph_more_parent = $(this).parent();
-			$(ph_more_parent).parent().find('li:not(:visible)').show();		// Shows the Extra icons & Show Less Icon
-			ignorePlaceholders({
-				'selectedGroup' : $(this).parents(settings.groupingParent).get(0),
-				'ignorePhs' : jQuery(active_email_body).data('ignorePlaceholders') || ""
-			});
-			$(ph_more_parent).hide();
-		};
-
-		var onShowLess = function() {
-			var element = $(this).parents(settings.groupingParent);
-			formatPlaceholders({'selectedGroup': $(this).parents(settings.groupingParent).get(0)});
-			$(this).parents(settings.groupingParent).find(settings.showMoreClass).parent().show();
+		var activateTab = function(options) {
+			if($(settings.tabContainer).children("li.active:visible").length==0) {
+			    $(settings.tabContainer+" li:first-child a").tab("show");
+			}  
 		};
 
 		this.init = function() {
 			ignorePlaceholders({
-				'ignorePhs' : jQuery(active_email_body).data('ignorePlaceholders') || ""
+			 	'ignorePhs' : jQuery(active_email_body).data('ignorePlaceholders') || ""
 			});
-			formatPlaceholders();
-			$(settings.showMoreClass).on('click', settings.onShowMore);
-			$(settings.showLessClass).on('click', settings.onShowLess);
+			settings.activateTab();
 			return this;
 		}
 		return this.init();
@@ -97,12 +50,12 @@ var active_email_body = null;
 jQuery(document).ready(function(){
 	jQuery('body').on('focus',".insert-placeholder-target", function(){
 		active_email_body = jQuery(this);
-		jQuery('#place-dialog').groupPlaceholders({'truncateItems': false});
+		jQuery('#place-dialog').groupPlaceholders();
 	});
 
 	jQuery('.redactor_editor').live('click', function(){
 		active_email_body = jQuery(this).siblings('textarea');	
-		jQuery('#place-dialog').groupPlaceholders({'truncateItems': false});
+		jQuery('#place-dialog').groupPlaceholders();
     });
 	
 	jQuery(".placeholder-list button, .placeholder-list a.ph-btn").click(function(ev){  

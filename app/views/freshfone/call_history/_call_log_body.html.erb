@@ -1,5 +1,5 @@
 <% unless calls.blank? %>
-	<table class="table table-striped">
+	<table class="table table-striped" id="calls-expanded">
 		<%= render :partial => "call_logs",
 		:collection => calls,
 		:as => :call,

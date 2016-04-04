@@ -1,15 +1,16 @@
 module DiscussionsHelper
 	include Helpdesk::TicketsHelperMethods
+	include Community::MonitorshipHelper
 
 	def discussions_breadcrumb(page = :home)
 		_output = []
 		_output << pjax_link_to(t('discussions.all_categories'), categories_discussions_path)
 		case page
 			when :category
-				_output << truncate(h(@forum_category.name), :length => 120)
+				_output << h(truncate(@forum_category.name, :length => 120))
 			when :forum
 				_output << category_link(@forum, page)
-				_output << truncate(h(@forum.name), :length => 50)
+				_output << h(truncate(@forum.name, :length => 50))
 			when :topic
 				_output << category_link(@forum, page)
 				_output << forum_link(@forum)
@@ -78,11 +79,13 @@ module DiscussionsHelper
 	end
 
 	def moderation_count(counts)
-		if (counts[:waiting] || counts[:unpublished]) > 0
-			return pjax_link_to t('discussions.moderation.index.waiting') + " (#{counts[:waiting] || counts[:unpublished]}) ", moderation_index_path(:waiting), :class => 'mini-link mr20'
-		elsif counts[:spam] > 0
-			return pjax_link_to t('discussions.moderation.index.title') + " (#{@counts[:spam]}) ", moderation_index_path(:spam), :class => 'mini-link mr20'
-		end
+		return moderation_link(:unpublished, counts[:unpublished]) if counts[:unpublished] > 0
+		return moderation_link(:spam, counts[:spam]) if counts[:spam] > 0
+		""
+	end
+
+	def moderation_link(type, count)
+		pjax_link_to t("discussions.unpublished.index.#{type}") + " (#{count}) ", discussions_unpublished_filter_path(type), :class => 'mini-link mr20'
 	end
 
 	def moderation_enabled?
@@ -249,16 +252,6 @@ module DiscussionsHelper
 		op
 	end
 
-	def mark_as_spam_path(post)
-		current_account.features_included?(:spam_dynamo) ? 
-			mark_as_spam_discussions_unpublished_path(post) : mark_as_spam_discussions_moderation_path(post)
-	end
-
-	def moderation_index_path(filter)
-		current_account.features_included?(:spam_dynamo) ? 
-			discussions_unpublished_filter_path(filter.eql?(:spam) ? :spam : :unpublished) : discussions_moderation_filter_path(filter)
-	end
-
   def display_topic_icons(topic)
 		output = ""
   	output << content_tag(:span, font_icon('lock-2', :class => 'widget-icon-list').html_safe, {
@@ -289,5 +282,48 @@ module DiscussionsHelper
 
   def display_count(count)
   	"(#{count})" if count > 0
+  end
+  
+  def populate_vote_list_content object
+    return "" unless User.current.present?
+    output = object.voters.all(:limit => 5).collect(&:name).map do |name|
+    					h(name.size > 20 ? name.truncate(20) : name)
+    				 end
+    output << "..." if object.user_votes > 5
+    output.join("<br>").html_safe
+  end
+
+  def attachment_view(attached, page)
+	output = ""
+	output << %(<li class="attachment list_element" id="#{ dom_id(attached) }">)
+	output << %(<div>)
+	output << %(<span>)
+	output << link_to("",'javascript:void(0)',:class => "delete remove-attachment mr10 #{ page }", :id =>"#{attached.id.to_s}")
+	output << %(</span>)
+	scoper = page == "cloud_file" ? "cloud_file_attachments" : "ticket_attachments"
+	output <<  %(<input type="hidden" name="post[#{scoper}][][resource]" 
+	  	        value="#{attached.id}" rel="original_attachment"/>)
+  	output << attached_icon(attached, page)
+  	output << %(<div class="attach_content">)
+
+	if(page == "cloud_file")
+		filename = attached.filename || URI.unescape(attached.url.split('/')[-1])
+		tooltip = filename.size > 15 ? "tooltip" : ""
+		output << link_to( h(filename.truncate(15)), attached.url , :target => "_blank",
+	                       :title => h(filename), :class => "#{tooltip}")
+		output << %(<span class="file-size cloud-file"></span>)
+	else
+		size = number_to_human_size attached.content_file_size
+		tooltip = attached.content_file_name.size > 15 ? "tooltip" : "" 
+		output << content_tag( :div,link_to(h(attached.content_file_name.truncate(15)), attached, :target => "_blank", 
+	                          :title => h(attached.content_file_name), :class => "#{tooltip}"),
+	                          :class => "ellipsis")
+	    output << %(<span class="file-size">( #{size} )</span>)
+	end
+
+	output << %(</div>)
+	output << %(</div>)
+	output << %(</li>)
+	output.html_safe
   end
 end

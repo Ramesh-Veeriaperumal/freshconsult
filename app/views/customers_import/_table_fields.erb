@@ -1,0 +1,17 @@
+<label class="control-label"><%= CGI.unescapeHTML(key) %></label>
+
+<div class="controls">
+	<div>
+		<%
+			extra_classes = "table_header select2 span4 "
+			extra_classes << "required " if (type.eql?("company") && key == t("company.name")) || key == t("user.email")
+		%>
+
+		<%= select nil, "fields[#{value}]", options_for_select(@headers), {:include_blank => "-"}, 
+			{:class => extra_classes } %>
+		
+	</div>
+	<%= content_tag(:span, "", 
+		:title => t("customer_import.sample_data") ,
+		:class => "sample_value_#{value} italics muted tooltip sample_values ellipsis")%>
+</div>

@@ -16,15 +16,28 @@ module Helpdesk::TicketActivities
         :activity_data => activity_data
       ) if user
     end
+
+    def destroy_activity(description, note_id)
+      activity = activities.where({'description' => description}).detect{ |a| a.note_id == note_id }
+      activity.destroy unless activity.blank?
+    end
   
     def create_initial_activity
+      return if self.disable_activities
       unless spam?
-        create_activity(requester, 'activities.tickets.new_ticket.long', {},
-                              'activities.tickets.new_ticket.short')
+        if outbound_email?
+          base_text =  'new_outbound' 
+          who = responder
+        else
+          base_text =  'new_ticket' 
+          who = requester
+        end
+        create_activity(who, "activities.tickets.#{base_text}.long", {}, "activities.tickets.#{base_text}.short") 
       end
     end
 
 	  def update_activity
+      return if self.disable_activities
       @model_changes.each_key do |attr|
         send(ACTIVITY_HASH[attr.to_sym()]) if ACTIVITY_HASH.has_key?(attr.to_sym())
       end
@@ -92,6 +105,17 @@ module Helpdesk::TicketActivities
               {'id' => responder.id, 'name' => responder.name}]}}, 
             'activities.tickets.assigned.short')
       end
+    end
+
+    def create_due_by_activity
+      create_activity(User.current, 'activities.tickets.due_date_updated.long',
+        {'eval_args' => {'due_date_updated' => ['formatted_dueby_for_activity', self.due_by.to_i]}}, 
+          'activities.tickets.due_date_updated.short') if self.schema_less_ticket.manual_dueby && self.due_by
+    end
+
+    def create_scenario_activity(scenario_name)
+      create_activity(User.current, 'activities.tickets.execute_scenario.long', 
+        { 'scenario_name' => scenario_name }, 'activities.tickets.execute_scenario.short') if scenario_name.present?
     end
 
     def all_activities(page = 1, no_of_records = 50)

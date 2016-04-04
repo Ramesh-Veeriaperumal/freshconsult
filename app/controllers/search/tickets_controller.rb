@@ -13,7 +13,7 @@ class Search::TicketsController < Search::SearchController
 		if @search_by_field
 			search([Helpdesk::Ticket], { :size => 1000, 
 					:load => { Helpdesk::Ticket => { :include => [:requester, :ticket_states, {:flexifield => :flexifield_def}] }},
-					:preference => :_primary_first, :page => 1}) if TICKET_SEARCH_FIELDS.include?(params[:search_field])
+					:preference => :_primary_first, :page => 1, :without_archive => true}) if TICKET_SEARCH_FIELDS.include?(params[:search_field])
 			respond_to do |format|
 				format.json { render :json => @result_json }
 				format.nmobile {
@@ -46,7 +46,7 @@ class Search::TicketsController < Search::SearchController
 		def search_query f
 			if @search_by_field
 				if SearchUtil.es_exact_match?(@search_key) and (params[:search_field] != "requester")
-					f.query { |q| q.text params[:search_field].to_sym, SearchUtil.es_filter_exact(@search_key), :type => :phrase }				
+					f.query { |q| q.match params[:search_field].to_sym, SearchUtil.es_filter_exact(@search_key), :type => :phrase }				
 				else
 					case params[:search_field]
 					when "display_id"

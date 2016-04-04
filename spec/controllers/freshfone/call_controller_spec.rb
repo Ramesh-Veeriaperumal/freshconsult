@@ -1,11 +1,12 @@
 require 'spec_helper'
-load 'spec/support/freshfone_spec_helper.rb'
 load 'spec/support/freshfone_call_spec_helper.rb'
 include FreshfoneCallSpecHelper
-include APIHelper
 
-describe Freshfone::CallController do
-  integrate_views
+RSpec.configure do |c|
+  c.include APIHelper
+end
+
+RSpec.describe Freshfone::CallController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -13,20 +14,40 @@ describe Freshfone::CallController do
     @request.host = @account.full_domain
     create_test_freshfone_account
     create_freshfone_user
+    @account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
+    @account.reload
   end
 
   after(:each) do
     @account.freshfone_users.find(@freshfone_user).destroy
-    @account.freshfone_calls.destroy_all
+    @account.freshfone_calls.delete_all
+    @account.freshfone_callers.delete_all
+    @account.freshfone_calls.reload
   end
 
   it 'should retrieve caller data for the phone number' do
     log_in(@agent)
     setup_caller_data
 
-    get :caller_data, { :PhoneNumber => @caller_number, :format => "js" }
-    call_meta = json[:call_meta].reject{|k,v| v.blank?}
-    call_meta.keys.should be_eql([:number, :group])
+    get :caller_data, { :PhoneNumber => @caller_number, :format => "json" }
+    call_meta = json[:call_meta]
+    call_meta.keys.should be_eql([:number, :ringing_time, :transfer_agent, :group, :company_name])
+  end
+
+  it 'should retrieve caller name accordingly for the strange number' do
+    log_in(@agent)
+    @caller_number = "+17378742833"
+    get :caller_data, {:PhoneNumber => @caller_number, :format => "json"}
+    user_name = json[:user_name]
+    user_name.should be_eql("RESTRICTED")
+  end
+
+  it 'should retrieve caller name accordingly for the strange number' do
+    log_in(@agent)
+    @caller_number = "+17378742833"
+    get :caller_data, {:PhoneNumber => @caller_number, :format => "json"}
+    user_name = json[:user_name]
+    user_name.should be_eql("RESTRICTED")
   end
 
   it 'should update call status and user presence' do
@@ -51,6 +72,19 @@ describe Freshfone::CallController do
     freshfone_call = @account.freshfone_calls.find_by_call_sid("CDIRECT")
     freshfone_call.should be_inprogress
     freshfone_call.direct_dial_number.should be_eql("9994269753")
+    xml.should be_eql({:Response=>nil})
+  end
+
+  it 'should update call status on direct dial success callback' do 
+    set_twilio_signature("/freshfone/call/external_transfer_success?direct_dial_number=919876543210&source_agent=@agent.id&call_back=false&outgoing=", 
+      external_transfer_success_params.except("direct_dial_number"))
+    create_freshfone_call("CTRANSFER")
+    create_freshfone_call_meta(@freshfone_call,'+919876543210')
+     @freshfone_user.update_attributes(:presence => 2)
+
+    post :external_transfer_success, external_transfer_success_params.merge({"call_back"=>"false", "source_agent" => @agent.id, "outgoing"=>""})
+    freshfone_call = @account.freshfone_calls.find_by_call_sid("CTRANSFER")
+    expect(freshfone_call.direct_dial_number).to be_eql("+919876543210")
     xml.should be_eql({:Response=>nil})
   end
 
@@ -91,11 +125,12 @@ describe Freshfone::CallController do
     set_twilio_signature('freshfone/call/status', status_params)
     set_active_call_in_redis({:answered_on_mobile => true})
     status_call = create_call_for_status
-    
+    stub_twilio_queues
     post :status, status_params
     freshfone_call = @account.freshfone_calls.find(status_call)
     freshfone_call.should be_completed
     xml.should be_eql({:Response => nil})
+    Twilio::REST::Queues.any_instance.unstub(:get)
   end
 
   it 'should populate call details for normal end call' do  
@@ -109,11 +144,12 @@ describe Freshfone::CallController do
   end
 
   it 'should update call status on force termination' do
-    set_twilio_signature('freshfone/call/status?force_termination=true', status_params)
+    call_params = status_params.merge("CallStatus" => 'completed')
+    set_twilio_signature('freshfone/call/status?force_termination=true', call_params)
     status_call = create_call_for_status
     key = "FRESHFONE_ACTIVE_CALL:#{@account.id}:CA2db76c748cb6f081853f80dace462a04"
     controller.set_key(key, {:agent => @agent.id}.to_json)
-    post :status, status_params.merge(:force_termination => true)
+    post :status, call_params.merge(:force_termination => true)
     freshfone_call = @account.freshfone_calls.find(status_call)
     freshfone_call.should be_completed
   end
@@ -125,23 +161,29 @@ describe Freshfone::CallController do
     setup_batch
     post :status, status_params.merge({:batch_call => true, :outgoing => "false", "DialCallStatus" => 'busy'}) 
     tear_down BATCH_KEY
-    xml[:Response][:Dial][:Client].should be_eql(@dummy_users.map{|u| u.id.to_s}.reverse)
+    (xml[:Response][:Dial][:Client].sort).should be_eql(@dummy_users.map{|u| u.id.to_s}.sort)
   end
 
   it 'should clear any batch key for non batched calls' do
+  	@account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
+ 		@account.features.reload
     controller.stubs(:call_transferred?).returns(false)
     set_twilio_signature('freshfone/call/status?batch_call=true', status_params.merge({"DialCallStatus" => 'busy'}))
     status_call = create_call_for_status
     post :status, status_params.merge({:batch_call => true, "DialCallStatus" => 'busy'}) 
-    xml[:Response][:Say].should_not be_blank
+    xml.should have_key(:Response)
+    @account.features.freshfone_conference.create
+    @account.features.reload
   end
 
   it 'should render non availability message for missed calls' do
+  	@account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
+    @account.features.reload
     controller.stubs(:call_transferred?).returns(false)
     set_twilio_signature('freshfone/call/status', status_params.merge({"DialCallStatus" => 'busy'}))
     status_call = create_call_for_status
     post :status, status_params.merge({"DialCallStatus" => 'busy'})
-    xml[:Response][:Say].should_not be_blank
+    xml.should have_key(:Response)
   end
 
   it 'should update agent presence and call status on successful call transfer' do 
@@ -182,4 +224,33 @@ describe Freshfone::CallController do
     json.should be_eql({:can_accept => 1})
   end
 
+
+  it 'should update call ringing abandon status on force termination' do
+    call_params = status_params.merge({"DialCallStatus" => 'no-answer', "CallStatus" => 'completed'})
+    set_twilio_signature('freshfone/call/status?force_termination=true', call_params)
+    status_call = create_call_for_status
+    post :status, call_params.merge(:force_termination => true)
+    freshfone_call = @account.freshfone_calls.find(status_call)
+    ringing_state = Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ringing_abandon]
+    freshfone_call.abandon_state.should be_eql(ringing_state)
+  end
+
+  it 'should update call IVR abandon status on force termination' do
+    call_params = status_params.merge({"DialCallStatus" => 'no-answer', "CallStatus" => 'completed'})
+    set_twilio_signature('freshfone/call/status?force_termination=true', call_params)
+    status_call = create_call_for_status_with_out_agent
+    Freshfone::Number.any_instance.stubs(:ivr_enabled?).returns(true)
+    post :status, call_params.merge(:force_termination => true)
+    freshfone_call = @account.freshfone_calls.find(status_call)
+    ringing_state = Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ivr_abandon]
+    freshfone_call.abandon_state.should be_eql(ringing_state)
+  end
+
+  it 'should not update call abandon status on force termination for answered call' do
+    set_twilio_signature('freshfone/call/status?force_termination=true', status_params)
+    status_call = create_call_for_status
+    post :status, status_params.merge(:force_termination => true)
+    freshfone_call = @account.freshfone_calls.find(status_call)
+    freshfone_call.abandon_state.should be_nil
+  end
 end

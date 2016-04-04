@@ -5,6 +5,13 @@ var FreshfoneEndCall;
 		this.$widget = $('.freshfone_widget');
 		this.$contentContainer = $('.freshfone_content_container');
 		this.$endCall = this.$contentContainer.find('#end_call');
+		this.$endCallQualityFeedbackContainer = this.$endCall.find('.quality_feedback_container');
+		this.$feedbackComment = this.$endCall.find('#feedback_comment');
+		this.$commentInput = this.$endCall.find('#bad_call_comment_box');
+		this.$feedbackDropdown = this.$endCallQualityFeedbackContainer.find('#feedback_dropdown');
+		this.$feedbackSelect = this.$endCallQualityFeedbackContainer.find('#feedback_select');
+		this.$goodCallQuality = this.$endCallQualityFeedbackContainer.find('#good_rating');
+		this.$badCallQuality = this.$endCallQualityFeedbackContainer.find('#bad_rating');
 		this.$endCallAddToExistingButton = this.$endCall.find('.save_to_existing');
 		this.$endCallMainContent = this.$endCall.find('.main_content');
 		this.$endCallTicketSearch = this.$endCall.find('.end_call_ticket_search');
@@ -12,11 +19,17 @@ var FreshfoneEndCall;
 		this.$endCallSaveTicketButton = this.$endCall.find('.save_ticket');
 		this.$endCallNewTicketDetailsForm = this.$endCall.find('.new_ticket_details_form');
 		this.$ticketSearchPane = this.$contentContainer.find('.ticket_search_pane');
+		this.$ticketSearchType = this.$ticketSearchPane.find('#s2id_ticket-search-type');
 		this.$endCallNote = $('#end_call_notes');
 		this.$requesterNameContainer = this.$endCall.find('.requester_name_container');
 		this.$requesterName = this.$requesterNameContainer.find("#requesterName");
 		this.$requesterEmail = this.$requesterNameContainer.find("#requesterEmail");
+		this.$requesterNumber = this.$requesterNameContainer.find("#requester_phone");
 		this.$requesterEmailDom = this.$requesterNameContainer.find("#requesterEmail_dom");	
+		this.$strangeNumberMessage = this.$requesterNameContainer.find("#strangeNumberMessage");
+		this.$invalidEmailMessage = this.$requesterNameContainer.find("#invalidEmailMessage");
+		this.$invalidNumberMessage = this.$requesterNameContainer.find("#invalidNumberMessage");
+		this.$contactDetailsBlankMessage = 	this.$requesterNameContainer.find("#contactDetailsBlankMessage");
 		this.$ticketSubject = this.$endCall.find("#ticketSubject");
 		this.$requesterTicketSearch = this.$endCall.find('.end_call_ticket_search');
 		this.$callNote = $('#call_notes');
@@ -28,10 +41,9 @@ var FreshfoneEndCall;
 			showClose: true,
 			targetId: "#end_call",
 			templateFooter: "",
-			title: "Convert to ticket",
 			toggle: "popupbox",
 			width: "480px",
-			classes: 'persistent_modal'
+			classes: 'persistent_modal quality_feedback_modal_body'
 		};
 		this.init();
 		var self = this;
@@ -42,6 +54,7 @@ var FreshfoneEndCall;
 
 			self.$endCallMainContent.hide();
 			self.$ticketSearchPane.show();
+			self.$ticketSearchType.select2('focus');
 		});
 
 		self.$ticketSearchPane.find('.back').bind('click', function (ev) {
@@ -49,6 +62,7 @@ var FreshfoneEndCall;
 
 			self.$ticketSearchPane.hide();
 			self.$endCallMainContent.show();
+			self.$endCallAddToExistingButton.focus();
 		});
 		
 		self.$endCallNewTicketDetailsForm.find('.back, .cancel').bind('click', function (ev) {
@@ -56,18 +70,34 @@ var FreshfoneEndCall;
 			self.$requesterName.select2('data',null);
 			self.$endCallNewTicketDetailsForm.hide();
 			self.$endCallMainContent.show();
+			self.$endCallShowSaveTicketFormButton.focus();
 		});
 		
 		
 		self.$endCallShowSaveTicketFormButton.bind('click', function () {
 			self.$endCallMainContent.hide();
+			self.$requesterEmailDom.hide();
+			self.hideWarnings();
 			self.$endCallNewTicketDetailsForm.show();
+			self.$ticketSubject.focus();
+			self.$requesterName.val(self.number);
 			self.initRequesterValue();
 
 		});
+
+		//Call quality feedback
+		$(".good_call, .bad_call").on('click', function(){
+			var rating = this.id == "good_rating" ? "good" : "bad";
+			self.bindQualityActions(rating);
+		});
+
+		self.$feedbackSelect.on('select2-close', function (ev) {
+			self.showCommentBar((self.$feedbackSelect.val() == "other_issues"));
+		});
+
 		// Requeser Field in new ticket form -- end call form
 		self.$requesterName.select2({
-			placeholder: 'Requester',
+			placeholder: 'Search or Add Requester',
 			minimumInputLength: 1,
 			multiple: false,
 			ajax: {
@@ -75,7 +105,7 @@ var FreshfoneEndCall;
 				quietMillis: 1000,
 				data: function (term) { 
 					return {
-						q: term
+						q: escapeHtml(term)
 					};
 				},
 				results: function (data, page, query) {
@@ -85,22 +115,47 @@ var FreshfoneEndCall;
 			},
 			formatResult: function (result) {
 				var userDetails = result.email || result.mobile || result.phone;
-				if(userDetails && $(userDetails).trim != "") {
+				if(userDetails && (userDetails).trim() != "") {
 					userDetails = "(" + userDetails + ")";
 				} else {
 					if (!result.id) { userDetails = freshfone.new_requester;}
 				}
 
-				return "<b>"+ result.value + "</b><br><span class='select2_list_detail'>" + 
+				return "<b>"+ escapeHtml(result.value) + "</b><br><span class='select2_list_detail'>" + 
 								(userDetails) + "</span>"; 
 			},
 			formatSelection: function (result) {
 				self.$requesterEmailDom.toggle(!result.id);
 				self.$requesterEmail.val(result.email);
+				self.$requesterNumber.val(result.phone);
 				self.$requesterName.data("requester_id",result.id);
-				self.$requesterName.val(result.value);
-				return result.value;
+				self.$requesterName.val(escapeHtml(result.value));
+				return escapeHtml(result.value);
 			}
+		});
+
+		self.$feedbackSelect.select2({
+			minimumResultsForSearch: -1
+		});
+	
+		$(document).on('shown', '#end_call', function(){
+			freshfoneendcall.$endCallNote.focus();
+		});
+
+		self.$requesterName.on('select2-close',function(){
+			setTimeout(function(){
+				if(self.$requesterName.data('requester_id')){
+					self.hideWarnings();
+					self.$endCallSaveTicketButton.focus();
+				}
+				else if(self.$requesterName.val() != self.number){
+					self.$requesterEmail.focus();
+					if(!freshfonewidget.checkForStrangeNumbers(self.number)){
+						self.$requesterNumber.val(self.number);
+					}
+					self.$requesterEmailDom.show();
+				}
+			}, 10);
 		});
 		
 		// Action to perform after selecting ticket from search result Save to ticket
@@ -114,18 +169,23 @@ var FreshfoneEndCall;
 
 		self.$endCallSaveTicketButton.bind('click', function (ev) {
 			ev.preventDefault();
-
-			self.saveToExisting();
+   
+			if((self.$requesterName.val() == self.number) || !self.form_valdation()){
+				self.hideWarnings();
+				self.$requesterEmailDom.hide();
+				self.$endCallSaveTicketButton.button('loading');
+				self.saveToExisting();
+			}
 		});
 
 		// Cancel or don't save
 		self.$endCall.find('.end_call_cancel').click(function (ev) {
 			ev.preventDefault();
-
 			self.hideEndCallForm();
 		});
 
 		$(document).on('hide', '#end_call', function (ev) {
+			if(self.inCall) { self.updateCallWorkTime(); }
 			self.resetDefaults();
 		});
 	};
@@ -140,6 +200,7 @@ var FreshfoneEndCall;
 			this.number = null;
 			this.date = null;
 			this.inCall = true;
+			this.callRating = null;
 			this.convertedToTicket = false;
 			this.directDialNumber = "";
 			this.resetForm();
@@ -150,20 +211,22 @@ var FreshfoneEndCall;
 			this.freshfonewidget = freshfonewidget;
 		},
 		saveNewTicket: function () {
+			trigger_event('saveticket');
 			this.saveTicket(false);
 			this.hideEndCallForm();
 		},
 		
 		saveToExisting: function () {
+			trigger_event('saveticket');
 			this.saveTicket(true);
 			this.hideEndCallForm();
+			this.$endCallSaveTicketButton.button('reset');
 		},
 		resetDefaults: function () {
 			if (this.inCall) {
 				this.freshfoneuser.resetStatusAfterCall();
 				if (!this.convertedToTicket) { this.freshfoneuser.updatePresence(); }
 
-				this.freshfoneuser.bridgeQueuedCalls();
 				this.freshfonewidget.resetToDefaultState();
 				this.freshfonecalls.init();
 				this.freshfoneuser.init();
@@ -174,10 +237,14 @@ var FreshfoneEndCall;
 		
 		saveTicket: function (is_ticket) {
 			this.convertedToTicket = true;
-			this.ticket_notes = this.$endCallNote.val();
+			this.ticket_notes = this.formatNotes(this.$endCallNote.val());
 
 			if (this.inCall) { this.getParams(); }
 			is_ticket ? this.createTicket() : this.createNote();
+		},
+		formatNotes: function(text){
+			var formatted_text = text.replace(/\n/g,"<br>");
+			return formatted_text.replace(/\s/g,"&nbsp;");
 		},
 		getParams: function () {
 			this.callSid = this.freshfonecalls.getCallSid();
@@ -197,7 +264,8 @@ var FreshfoneEndCall;
 					'requester_email': this.requesterEmail(),
 					'responder_id': this.agent || "", 
 					'call_history': !this.inCall,
-					'direct_dial_number': this.directDialNumber
+					'direct_dial_number': this.directDialNumber,
+					'phone_number' : this.$requesterNumber.val()
 				}
 			});
 		},
@@ -216,7 +284,7 @@ var FreshfoneEndCall;
 					'call_history': !this.inCall
 				}
 			});
-		},
+		},	
 		custom_requester_id: function () {
 			return this.$requesterName.data('requester_id');
 		},
@@ -231,6 +299,9 @@ var FreshfoneEndCall;
 			return this.$ticketSubject.val();
 		},
 		resetForm: function () {
+			this.$requesterEmailDom.hide();
+			this.initQualityFeedbackContainer();
+			this.hideWarnings();
 			this.$ticketSearchPane.hide();
 			this.$endCallNewTicketDetailsForm.hide();
 			this.$endCallMainContent.show();
@@ -247,7 +318,10 @@ var FreshfoneEndCall;
 			if (!$('#end_call').data('modal')) { $.freshdialog(this.freshdialogOption); }
 			$('#end_call').modal('show');
 			
-			if (this.inCall) { this.$endCallNote.focus(); this.copyCallNotes(); }
+			if (this.inCall) { 
+				this.copyCallNotes();
+				this.$endCallQualityFeedbackContainer.show();
+			}
 			var callerId = (this.inCall) ? this.freshfonecalls.callerId : this.callerId;
 			this.number = this.number || this.freshfonecalls.number;
 			this.callerName = this.callerName || this.freshfonecalls.callerName;
@@ -271,12 +345,15 @@ var FreshfoneEndCall;
 			return countryForE164Number(this.number);
 		},
 		hideEndCallForm: function () {
+			App.Phone.Metrics.push_event();
+			this.hideFeedbackBoxes();
 			if (!$('#end_call').data('modal')) { $.freshdialog(this.freshdialogOption); }
 			$('#end_call').modal('hide');
 		},
 		initRequesterValue: function () {
+			this.$requesterName.removeData('requester_id');
 			var initData = this.$requesterName.val(),self = this;
-				if(initData.blank()) { return;}
+				if(initData.blank() || freshfonewidget.checkForStrangeNumbers(initData)) { return;}
 				$.ajax({
 				url: freshfone.requester_autocomplete_path,
 				quietMillis: 1000,
@@ -284,6 +361,97 @@ var FreshfoneEndCall;
 				}).done(function(data) {
 					self.$requesterName.select2("data",data.results[0]);
 				});
-		}
-	};
+		},
+    updateCallWorkTime: function() { 
+      var self = this;
+      if (this.callSid == "") { this.getParams(); }
+      $.ajax({
+        type: 'PUT',
+        url: '/freshfone/conference_call/wrap_call',
+        data: {
+					'CallSid': self.callSid,
+					'rating': self.callRating,
+					'issue' : self.$feedbackSelect.val(),
+					'comment': self.$commentInput.val()
+				}
+      });
+    },
+		isValidEmail: function (freshfone_email){
+			return (/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i).test(freshfone_email)
+		},
+		hideWarnings: function(){
+			this.$requesterNameContainer.find('.error_message').toggle(false);
+		},
+		form_valdation: function(){
+			this.hideWarnings();
+			return (this.detailsEmptyCheck() || this.emailFieldValidation() || this.phoneNumberFieldValidation());
+		},
+		detailsEmptyCheck: function(){
+			if(this.requesterEmail().trim() == "" && this.$requesterNumber.val() == ""){
+				var message_elem = this.selectElement();
+				if(!this.freshfonewidget.checkForStrangeNumbers(this.number)){
+					this.$requesterNumber.val(this.number); 
+				}
+				this.toggleWarning(message_elem, true);
+				return true;
+			}
+		},
+		selectElement: function(){
+			return this.freshfonewidget.checkForStrangeNumbers(this.number)	? this.$strangeNumberMessage : this.$contactDetailsBlankMessage;
+		},
+		emailFieldValidation: function(){
+			if(this.emailValidationResult()){
+				this.toggleWarning(this.$invalidEmailMessage, true);
+				return true;  
+			}
+		},
+		phoneNumberFieldValidation: function(){
+			if(this.numberValdationResult()){		 
+				this.toggleWarning(this.$invalidNumberMessage, true);
+				return true;
+			}
+		},
+		emailValidationResult: function(){
+			return this.requesterEmail().trim() != "" && !this.isValidEmail(this.$requesterEmail.val());
+		},
+		numberValdationResult: function(){
+			return !this.$requesterName.data('requester_id') && this.$requesterNumber.val() != "" && !isValidNumber(this.$requesterNumber.val());
+		},
+		toggleWarning: function(elem , to_show){
+			elem.toggle(to_show);
+		},
+		showCommentBar: function(to_show){
+			this.$feedbackComment.toggle(to_show);
+		},
+		bindQualityActions: function(rating){
+			rating == "good" ? this.goodCallActions() : this.badCallActions();
+		},
+		goodCallActions: function(){
+			this.callRating = "good";
+			this.hideFeedbackBoxes();
+			this.$feedbackSelect.select2('data', null);
+			this.toggleButtonClasses(this.$goodCallQuality, this.$badCallQuality);
+		},
+		badCallActions: function(){
+			this.callRating = "bad";
+			this.$feedbackDropdown.show();
+			this.toggleButtonClasses(this.$badCallQuality, this.$goodCallQuality);
+		},
+		initQualityFeedbackContainer: function(){
+			this.$endCallQualityFeedbackContainer.hide();
+			this.hideFeedbackBoxes();
+			this.$feedbackSelect.select2('data', null);
+			this.$goodCallQuality.removeClass("active");
+			this.$badCallQuality.removeClass("active");
+		},
+		hideFeedbackBoxes: function(){
+			this.$feedbackDropdown.hide();
+			this.$feedbackComment.hide();
+		},
+		toggleButtonClasses :function(selected, previous){
+			selected.addClass("active");
+			previous.removeClass("active");
+			selected.blur();
+		},
+  };
 }(jQuery));

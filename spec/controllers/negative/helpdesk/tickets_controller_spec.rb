@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::TicketsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -20,7 +19,7 @@ describe Helpdesk::TicketsController do
     Redis.any_instance.stubs(:send).raises(Exception)
     get 'index'
     Redis.any_instance.unstub(:send)
-    response.should render_template "helpdesk/tickets/index.html.erb"
+    response.should render_template "helpdesk/tickets/index"
     response.body.should =~ /Filter Tickets/
   end
 
@@ -362,7 +361,7 @@ describe Helpdesk::TicketsController do
     tkt1 = create_ticket({ :status => 2, :subject => "Open ticket to test view generated for non existing filter name" }, @group)
     tkt2 = create_ticket({ :status => 5, :subject => "Closed ticket to test view generated for non existing filter name" }, @group)
     get :index, :filter_name => "no_viu_xists"
-    response.should render_template "helpdesk/tickets/index.html.erb"
+    response.should render_template "helpdesk/tickets/index"
     response.body.should =~ /Filter Tickets/
     response.body.should =~ /#{tkt1.subject}/
     response.body.should_not =~ /#{tkt2.subject}/

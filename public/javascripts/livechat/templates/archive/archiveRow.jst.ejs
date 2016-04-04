@@ -1,0 +1,59 @@
+<td class="user-profile span3">
+	<div ><img src="<%=(modelJson.type === "visitor")? "/images/fillers/profile_blank_thumb.gif" : "/users/"+modelJson.participant_id+"/profile_image"%>"></div> 
+<strong class="text-wrap tooltip" data-original-title="<%=(modelJson.title.length > 15) ? modelJson.title: ''%>">
+	<%=modelJson.title%></strong>
+</td>
+<td class="connection span1">
+	<span class="tooltip" >
+		<span class="<% if(modelJson.missed === true ) { 
+								print ("ficon-no-arrow-right");
+							} else if(parseInt(modelJson.initiated_by) === 2){ 
+								print("ficon-arrow-left-2")
+							} else{
+								print("ficon-arrow-right-2")
+							}%> fsize-18"></span>
+	</span>
+</td>
+<td class="user-profile span3">
+	<div ><img src="<%=(window._.isEmpty(modelJson.agent_id) )? "/images/fillers/profile_blank_thumb.gif" : "/users/"+modelJson.agent_id+"/profile_image"%>"></div>
+	<% 
+	  	var widgetName = window.CURRENT_ACCOUNT.name;
+	  	if(modelJson.widget_id && window.liveChat.widgetList[modelJson.widget_id]){
+	  		widgetName = window.liveChat.widgetList[modelJson.widget_id];
+	  	}
+  %> 
+	<%if(modelJson.missed === true ) { %>
+			<strong class="text-wrap tooltip" data-original-title="<%=(widgetName.length > 15) ? widgetName : '' %>" > <%=widgetName%></strong>
+	<% } else {%> 
+		<% var agentName = window.userCollection.getTitle(parseInt(modelJson.agent_id)); %>
+		<strong class="text-wrap tooltip" data-original-title="<%=(agentName.length > 15 )? agentName : ''%>"><%=agentName%></strong>
+	<% } %>
+</td>
+<td class="info span3">
+	<div class="to">To: <%= widgetName %></div>
+	<span class="status tooltip" data-original-title ="<%= moment(modelJson.created_at).format('MMMM Do YYYY, h:mm:ss a') %>"> <%=(modelJson.inConversation === true)? "In Conversation" : moment(modelJson.created_at).fromNow() %>
+	</span>
+</td>
+<td class="location span3" >
+	<span class="ficon-map-marker fsize-14"></span> 
+	<% var visitor_location = modelJson.visitor_location == null ? "Unknown": modelJson.visitor_location %>
+	<span class="text-wrap tooltip" data-original-title ="<%=(modelJson.visitor_location && modelJson.visitor_location.length > 15 ) ? visitor_location : '' %>"><%= visitor_location %></span>
+</td>
+<td class="options span3">
+	<% if(modelJson.type==="visitor"){
+		 if(modelJson.external_id != null) {
+			if(modelJson.inConversation !== true && modelJson.closed !== true && modelJson.last_msg_at) { %>
+		<a id ="add-note" href="#" class="btn btn-default btn-round" data-chat-id="<%=modelJson.id%>" title=<%= CHAT_I18n.add_note %>  >
+			<span class="ficon-file-edit fsize-14"></span>
+		</a>
+		<% } %>
+		<a id="ticket-link" href="/helpdesk/tickets/<%=modelJson.external_id%>" target="_blank" class="btn btn-default btn-round" title="<%= CHAT_I18n.view_ticket %> #<%=modelJson.external_id%>">
+			<span class="ficon-ticket fsize-14"></span>
+		</a>
+	<% }else if(modelJson.inConversation !== true && modelJson.spam !== true){ %>
+		<a href="#" id="convert-ticket" class="btn btn-default btn-round" data-chat-id="<%=modelJson.id%>" 
+			title ="<%= CHAT_I18n.convert_to_ticket %>" >
+			<span class="ficon-plus fsize-16"></span>
+		</a>
+	<% } }%>
+</td>

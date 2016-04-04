@@ -1,0 +1,98 @@
+<%
+	date_range = date_range_val((Time.zone.now.ago 30.day),Time.zone.now,{:format => :short_day})
+%>
+<%= javascript_include_tag :'cdn/report_date'  %>
+<%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %>  
+
+<div class="sidepanel">
+ 	<%= form_for survey_list_path,
+ 				:url => survey_list_url,
+ 				:method => :post, :html => {
+ 					:id => 'report_filters', 
+ 					"data-update" => "report_list",
+ 					"data-loading-class" => "sloading loading-small loading-block",
+ 					"data-loading" => "report_list loading-small loading-block"
+ 				}  do %>
+ 		<ul>
+    	   <li class="control-group">
+				<label class="control-label"><%=t('.filter_by')%></label>
+				<div class="controls">
+					<%
+						selected_option = :agent;
+						selected_option = :group if params[:category]== CustomSurvey::Survey::GROUP
+						selected_option = :company if params[:category]== CustomSurvey::Survey::OVERALL
+					%>
+					<%=select_tag :category , options_for_select(CustomSurvey::Survey::FILTER_BY_ARR, selected_option) ,{ :multiple => false, :class => "select2 input-large filter_item"}%>
+					<%=hidden_field_tag :sort, sort_option %>
+				</div>
+		   </li>	
+    	   <li class="control-group">
+					<label class="control-label"><%=t('.view_report_date')%></label>
+					<div class="controls">
+						<%= text_field_tag :date_range, date_range, :class => "required input-large"%>
+					</div>
+			</li>
+			<li class="control-group">
+				<%= submit_tag t('reports.summary_report.show_report'), :class => "btn" %>
+			</li>
+		</ul>
+	<% end %>
+</div>
+
+<div class="sidepanel helpcard">
+	<p>	<%= t('.helptext').html_safe %> </p>
+</div>
+
+<%= javascript_tag do %>
+
+
+	jQuery(document).ready(function() {
+		jQuery("#report_filters").on('change submit', function(){
+			
+			var category =  jQuery("#category").val(),
+				date_range =  jQuery("#date_range").serialize();
+			if(category == "company"){
+				location.href = encodeURI("/survey/reports/"+category+"/details?"+date_range);
+			} else {
+				jQuery("#report_list").html("<div class='sloading loading-small loading-block'></div>");
+				jQuery.ajax({
+					url: '<%=survey_list_url%>',
+					type: "POST",
+					data: jQuery(this).serializeArray(),
+					success: function(data){ 
+						jQuery("#report_list").hide().html(data).fadeIn(300);
+					}
+				});
+			}
+			
+			return false;
+		});
+
+			    
+
+
+		jQuery("#date_range").daterangepicker({
+		earliestDate: Date.parse('1/1/2009'),
+		latestDate: new Date(),
+		presetRanges: [
+			{text: '<%= t('reports.date_ranges.today') %>', dateStart: 'Today', dateEnd: 'Today' },
+			{text: '<%= t('reports.date_ranges.yesterday') %>', dateStart: 'Today-1', dateEnd: 'Today-1' },
+			{text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-7', dateEnd: 'Today-1' },
+			{text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-30', dateEnd: 'Today-1'},
+			{text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-90',  dateEnd: 'Today-1'}
+		],
+		presets: {
+			dateRange: '<%= t('reports.date_ranges.custom') %>'
+		},
+		dateFormat: getDateFormat('datepicker_escaped'),
+		closeOnSelect: true
+	});   
+
+	jQuery("#date_range").bind('keypress keyup keydown', function(ev) {
+		ev.preventDefault();
+		return false;
+	});
+
+	});	
+
+<%end%>

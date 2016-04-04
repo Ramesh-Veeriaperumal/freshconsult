@@ -1,8 +1,10 @@
 require 'spec_helper'
-include GnipHelper
 include Social::Twitter::Constants
+RSpec.configure do |c|
+  c.include GnipHelper
+end
 
-describe Social::TwitterHandle do
+RSpec.describe Social::TwitterHandle do
 
   self.use_transactional_fixtures = false
 
@@ -73,6 +75,7 @@ describe Social::TwitterHandle do
 
   it "should delete the default gnip rule and the default streams if account is suspended" do
     GnipRule::Client.any_instance.stubs(:list).returns([GnipRule::Rule.new(@rule[:value],@rule[:tag])])
+       
     Resque.inline = true
     @handle.account.subscription.update_attributes(:state => "trial") 
     @handle.reload
@@ -150,7 +153,7 @@ describe Social::TwitterHandle do
     #Ensure the handle has been deleted
     handle = Social::TwitterHandle.find_by_id(handle_id)
     handle.should be_nil
-    custom_streams = Social::TwitterStream.find(:all).map{|stream| stream.social_id if stream.data[:kind] == STREAM_TYPE[:custom]}.compact
+    custom_streams = Social::TwitterStream.find(:all).map{|stream| stream.social_id if stream.data[:kind] == TWITTER_STREAM_TYPE[:custom]}.compact
     custom_streams.should_not include(handle_id) 
     Resque.inline = false   
   end

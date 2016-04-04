@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Wf::FilterController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -56,8 +55,6 @@ describe Wf::FilterController do
     delete :delete_filter, :id => filter.id
     flash[:notice].should be_eql(I18n.t(:'flash.general.access_denied'))
   end
-#Negative
-  it "should not update a filter with errors" # need to fix the controller first
 
   it "should not save a new filter with errors" do
     params = WfFilterHelper::PARAMS1.merge('filter_name' => nil)

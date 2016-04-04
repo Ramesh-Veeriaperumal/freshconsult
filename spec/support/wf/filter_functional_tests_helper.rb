@@ -5,25 +5,25 @@ module Wf::FilterFunctionalTestsHelper
   DROPDOWN  = { :field_type=>"custom_dropdown", :label=>Faker::Name.name, :label_in_portal=>"Dropdown", :description=>"", :position=>115, :active=>true, :required=>false, :required_for_closure=>false, :visible_in_portal=>true, :editable_in_portal=>true, :required_in_portal=>false, :choices=>[["First Choice", "First Choice"], ["Second Choice", "Second Choice"]], :picklist_values_attributes => [{:value => "First Choice"}, {:value => "Second Choice"}], :levels=>nil, :field_options=>nil, :type=>"dropdown"  }
 
   def before_all
-    #@account = create_test_account
+    @account = create_test_account
     @user = add_test_agent(@account)
     @user.make_current
   end
 
   def prep_a_ticket
-    @company = @account.companies.create(Factory.attributes_for(:company))
-    @group = @account.groups.create(Factory.attributes_for(:group))
-    @requester = @account.users.create(Factory.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
-    @product = @account.products.create(Factory.attributes_for(:product))
-    @tag = @account.tags.create(Factory.attributes_for(:tag))
+    @company = @account.companies.create(FactoryGirl.attributes_for(:company))
+    @group = @account.groups.create(FactoryGirl.attributes_for(:group))
+    @requester = @account.users.create(FactoryGirl.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
+    @product = @account.products.create(FactoryGirl.attributes_for(:product))
+    @tag = @account.tags.create(FactoryGirl.attributes_for(:tag))
     @test_agent = add_test_agent(@account)
-    @ticket = @account.tickets.create(Factory.attributes_for(:ticket, :requester_id => @requester.id, :responder_id => @test_agent.id, :group_id => @group.id, :product_id => @product.id, :created_at => 4.days.from_now))
+    @ticket = @account.tickets.create(FactoryGirl.attributes_for(:ticket, :requester_id => @requester.id, :responder_id => @test_agent.id, :group_id => @group.id, :product_id => @product.id, :created_at => 4.days.from_now))
     @ticket.tags = [@tag]
     @ticket.due_by = [2.days.ago, 10.minutes.from_now, (8*60 + 10).minutes.from_now, 1.days.from_now].sample #[overdue, due within next 8 hrs, today, tomorrow]
     populate_custom_fields # for now hardcoding
     @ticket.save
   end
-
+  
   def populate_custom_fields
     populate_dropdown
     populate_nested_field

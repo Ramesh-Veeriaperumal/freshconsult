@@ -1,10 +1,13 @@
 module AgentsHelper
-  TOOLBAR_LINK_OPTIONS = {  "data-remote" => true, 
-                            "data-method" => :get,
-                            "data-response-type" => "script",
-                            "data-loading-box" => "#agents-list" }
+  TOOLBAR_LINK_OPTIONS = {  :remote => true, 
+                            :"data-method" => 'get',
+                            :"data-type" => 'script',
+                            :"data-hide-before" => '.list-page-body',
+                            :"data-loading" => 'agents-list',
+                            :"data-loading-classes" => 'sloading loading-small'
+                          }
 
-  AGENT_SORT_ORDER_COLUMN = [:name, :last_login_at, :created_at]
+  AGENT_SORT_ORDER_COLUMN = [:name, :last_active_at, :created_at]
   AGENT_SORT_ORDER_TYPE = [:ASC, :DESC]
   
   def check_agents_limit
@@ -108,12 +111,32 @@ module AgentsHelper
     cookies[type] = (params[type] ? params[type] : ( (!cookies[type].blank?) ? cookies[type] : default_value )).to_sym
   end
   
-  def last_login_tooltip(agent)
-    if agent.user.last_login_at
-      "class='tooltip' title='#{formated_date(agent.user.last_login_at)}'"
+  def last_active_tooltip(agent)
+    if agent.last_active_at
+      "class='tooltip' title='#{t('agent.last_seen_at')} #{formated_date(agent.last_active_at, format: :short_day_with_week)}'"
+    else
+      "class='faded'"
     end
-  end
-  
+  end 
+
+  def last_active_at(agent)
+    if agent.last_active_at
+      last_active_in_words(agent)
+    else
+      t('agent.no_recent_activity')
+    end  
+  end  
+
+  def last_active_in_words(agent)
+    if agent.last_active_at.today?
+      t('today')
+    elsif agent.last_active_at.to_date == Date.yesterday
+      t('yesterday')
+    else
+      t('agent.days_ago', :days => distance_of_time_in_words_to_now(agent.last_active_at))
+    end   
+  end   
+
   def ticket_permission(id)
     ticket_permission_mapper[id]
   end

@@ -1,7 +1,10 @@
 require 'spec_helper'
-include MemcacheKeys
 
-describe SsoController do
+RSpec.configure do |c|
+  c.include MemcacheKeys
+end
+
+RSpec.describe SsoController do
   self.use_transactional_fixtures = false
 
   before(:all) do
@@ -22,8 +25,7 @@ describe SsoController do
     kv_store.group = :integration
     kv_store.get_key.should be_nil
     response.should redirect_to @account.full_url
-    response.header["Set-Cookie"][0].should include("mobile_access_token")
-    response.header["Set-Cookie"][0].should include(@agent.single_access_token)
+    response.cookies['mobile_access_token'].should eql(@agent.single_access_token)
   end
 
 end

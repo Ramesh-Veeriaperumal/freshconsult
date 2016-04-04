@@ -1,11 +1,12 @@
 require 'spec_helper'
-include GnipHelper
-include DynamoHelper
-include Social::Util
 
-#Test specifically for checking default stream insert into dynamo
+RSpec.configure do |c|
+  c.include GnipHelper
+  c.include DynamoHelper
+  c.include Social::Util
+end
 
-describe "Social::Stream::Workers::Twitter" do 
+RSpec.describe "Social::Stream::Workers::Twitter" do 
   self.use_transactional_fixtures = false
   before(:all) do
     Resque.inline = true
@@ -36,7 +37,7 @@ describe "Social::Stream::Workers::Twitter" do
       search_object = sample_search_results_object
       search_object.attrs[:statuses].first[:text] << " #{@handle.screen_name}"
       Twitter::REST::Client.any_instance.stubs(:search).returns(search_object)
-      Social::Workers::Stream::Twitter.perform({:account_id => @account.id })
+      Social::CustomTwitterWorker.new.perform
       hash_key = "#{@account.id}_#{@default_stream.id}"
       range_key = search_object.attrs[:statuses].first[:id_str]
       posted_time = search_object.attrs[:statuses].first[:created_at]
@@ -44,7 +45,7 @@ describe "Social::Stream::Workers::Twitter" do
   
       tweet = @account.tweets.find_by_tweet_id(range_key)
       tweet.should_not be_nil
-      tweet.is_ticket?.should be_true
+      tweet.is_ticket?.should be_truthy
       
       if GNIP_ENABLED
         dynamo_entry.should_not be_nil

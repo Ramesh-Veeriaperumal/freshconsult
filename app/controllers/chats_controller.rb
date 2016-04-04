@@ -1,15 +1,17 @@
 class ChatsController < ApplicationController
 
+  include ApplicationHelper
   include ChatHelper
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :activate, :widget_activate, :site_toggle, :widget_toggle, :chat_note]
-  before_filter :verify_chat_token , :only => [:activate, :widget_activate, :site_toggle, :widget_toggle, :chat_note]
-  before_filter  :load_ticket, :only => [:add_note, :chat_note]
+  
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :activate, :widget_activate, :site_toggle, :widget_toggle, :chat_note, :missed_chat]
+  before_filter :verify_chat_token , :only => [:activate, :widget_activate, :site_toggle, :widget_toggle, :chat_note, :missed_chat]
+  before_filter  :load_ticket, :only => [:add_note, :chat_note, :missed_chat]
  
   def index
     if chat_activated?
       widget_values = current_account.chat_widgets.reject{|c| c.widget_id ==nil}.collect {|c| [c.widget_id,(c.product.blank? ? current_account.name : c.product.name)]}
       @selected_tab = :dashboard
-      @widgets = widget_values.map{ |i| [i[0], i[1]] }.to_h.to_json.html_safe
+      @widgets = Hash[widget_values.map{ |i| [i[0], i[1]] }].to_json.html_safe
       @widgetsSelectOption = widget_values.map{ |i| [i[1], i[0]] }
       @agentsAvailable = current_account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
       @dateRange = "#{30.days.ago.strftime("%d %b, %Y")} - #{0.days.ago.strftime("%d %b, %Y")}"
@@ -23,10 +25,13 @@ class ChatsController < ApplicationController
     ticket_params = {
                       :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],
                       :email  => params[:ticket][:email],
+                      :phone  => params[:ticket][:phone],
                       :subject  => params[:ticket][:subject],
                       :requester_name => params[:ticket][:name],
-                      :ticket_body_attributes => { :description_html => params[:ticket][:content] },
-                      :responder_id => params[:ticket][:agent_id]
+                      :ticket_body_attributes => { :description_html => params[:ticket][:content], :description => Helpdesk::HTMLSanitizer.plain(params[:ticket][:content].gsub(/(\s{3,})/,"")).gsub(/\n\t/, "\n") },
+                      :responder_id => params[:ticket][:agent_id],
+                      :created_at => params[:ticket][:chat_created_at],
+                      :cc_email => Helpdesk::Ticket.default_cc_hash
                     }
     widget = current_account.chat_widgets.find_by_widget_id(params[:ticket][:widget_id])
     group = current_account.groups.find_by_id(params[:ticket][:group_id]) if params[:ticket][:group_id]
@@ -36,7 +41,7 @@ class ChatsController < ApplicationController
     @ticket = current_account.tickets.build(ticket_params) 
     status = @ticket.save_ticket
 
-    render :json => { :ticket_id=> @ticket.display_id , :status => status }
+    render :json => { :external_id => @ticket.display_id , :status => status }
   end
 
   def get_groups
@@ -53,14 +58,14 @@ class ChatsController < ApplicationController
       if params[:chatOwnerId]
         ticket.responder_id = params[:chatOwnerId]
         params[:userId] = params[:chatOwnerId]
-      else        
+      else  
         ticket.responder_id = current_user.id
         params[:userId] = current_user.id
       end
       ticket.save_ticket
     end
     status = create_note
-    render :json => { :ticket_id=> @note.notable.display_id , :status => status }
+    render :json => { :external_id=> @note.notable.display_id , :status => status }
   end
 
   def agents
@@ -164,15 +169,39 @@ class ChatsController < ApplicationController
   #######
 
   def chat_note
-    if params[:updateAgent] == "true" 
-      ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
-      if ticket
-        ticket.responder_id = params[:userId]
-        ticket.save_ticket
-      end
-    end
+    params[:userId] = @ticket.requester_id if params[:userId].blank?
+    params[:note] = add_style JSON.parse(params[:messages])
     status = create_note
     render :json => { :ticket_id=> @note.notable.display_id , :status => status }
+  end
+
+  def missed_chat
+    subject = t("freshchat.offline_chat_subject", :visitor_name => params[:name], 
+                  :date => formated_date(Time.now(), {:format => :short_day_with_week, :include_year => true}))
+    if params[:type] == "offline"
+      desc = t("freshchat.offline_chat_content", :visitor_name => params[:name])
+    else
+      desc = t("freshchat.missed_chat_content", :visitor_name => params[:name])
+    end
+    if params[:messages]
+      message = add_style JSON.parse(params[:messages])
+      desc = desc + "<br>" + message
+    end
+    ticket_params = {
+                      :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],
+                      :email  => params[:email],
+                      :subject  => subject,
+                      :requester_name => params[:name],
+                      :ticket_body_attributes => { :description_html => desc }
+                    }
+    widget = current_account.chat_widgets.find_by_widget_id(params[:widget_id])
+    group = current_account.groups.find_by_id(params[:group_id]) if params[:group_id]
+    ticket_params[:product_id] = widget.product.id if widget && widget.product
+    ticket_params[:group_id] = group.id if group
+
+    @ticket = current_account.tickets.build(ticket_params) 
+    status = @ticket.save_ticket
+    render :json => { :external_id=> @ticket.display_id , :status => status }
   end
 
   def visitor
@@ -191,7 +220,7 @@ class ChatsController < ApplicationController
                 :user_id => params[:userId],
                 :account_id => current_account.id,
                 :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
-                :note_body_attributes => { :body_html => params[:note] }
+                :note_body_attributes => { :body_html => params[:note], :body => Helpdesk::HTMLSanitizer.plain(params[:note].gsub(/(\s{3,})/,"")).gsub(/\n\t/, "\n")}
             )
     @note.save_note
   end

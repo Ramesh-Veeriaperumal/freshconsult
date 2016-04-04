@@ -9,7 +9,7 @@ css_selector: .ficon-{{glyph}}
 preprocessor_path: ""
 autowidth: true
 no_hash: false
-force: false
+force: true
 debug: false
 quiet: false
 
@@ -28,7 +28,7 @@ input:
 # --------------------------------------------------------------------------- #
 
 output:
-  fonts: public/fonts                              # required
+  fonts: public/assets                             # required
   css: public/src/fonts
   # preview: public/styleguide
   # freshdesk_preview.html: public/styleguide
@@ -42,5 +42,5 @@ output:
 
 templates:
  - scss
- # - preview
+ - _glyphs-variables.scss
  - index.html

@@ -1,7 +1,7 @@
 <% if is_application_installed?("pivotal_tracker") %>
 <% installedApp = get_app_details("pivotal_tracker") %>
 <% pivotal_integrated_resource = Integrations::IntegratedResource.find(:all,:conditions => {
-	:installed_application_id => installedApp.id, :local_integratable_id => @ticket.display_id}) %>
+	:installed_application_id => installedApp.id, :local_integratable_id => @ticket.id}) %>
 	<div class="widget inactive load_on_click" id="pivotal_tracker">
 		<h3 ><%= t('integrations.pivotal_tracker.label') %></h3>
 		<div class="content">

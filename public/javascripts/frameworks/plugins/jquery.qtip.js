@@ -760,7 +760,7 @@ function QTip(target, options, id, attr)
 			{
 				case 'dimensions':
 					result = {
-						height: tooltip.outerHeight(), width: tooltip.outerWidth()
+						height: tooltip.outerHeight(true), width: tooltip.outerWidth(true)
 					};
 				break;
 
@@ -1017,8 +1017,8 @@ function QTip(target, options, id, attr)
 				my = posOptions.my, 
 				at = posOptions.at,
 				adjust = posOptions.adjust,
-				elemWidth = tooltip.outerWidth(),
-				elemHeight = tooltip.outerHeight(),
+				elemWidth = tooltip.outerWidth(true),
+				elemHeight = tooltip.outerHeight(true),
 				targetWidth = 0,
 				targetHeight = 0,
 				callback = $.Event('tooltipmove'),
@@ -1132,8 +1132,8 @@ function QTip(target, options, id, attr)
 				}
 
 				else {
-					targetWidth = target.outerWidth();
-					targetHeight = target.outerHeight();
+					targetWidth = target.outerWidth(true);
+					targetHeight = target.outerHeight(true);
 
 					position = PLUGINS.offset(target, posOptions.container);
 				}

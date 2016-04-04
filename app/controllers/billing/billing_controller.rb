@@ -1,19 +1,26 @@
 class Billing::BillingController < ApplicationController
-  
-  skip_before_filter :check_privilege, :verify_authenticity_token
-  before_filter :login_from_basic_auth, :ssl_check
 
-  skip_before_filter :set_current_account, :set_time_zone, :set_locale, 
+  skip_before_filter :check_privilege, :verify_authenticity_token,
+                      :set_current_account, :set_time_zone, :set_locale, 
                       :check_account_state, :ensure_proper_protocol,
                       :check_day_pass_usage, :redirect_to_mobile_url
 
+  skip_after_filter :set_last_active_time
+
+  # Authentication, SSL and Events to be tracked or not. This must be the last prepend_before_filter
+  # for this controller 
+  prepend_before_filter :event_monitored, :ssl_check, :login_from_basic_auth
+
   before_filter :ensure_right_parameters, :retrieve_account, 
-                :load_subscription_info, :if => :monitored_event_not_from_api?
+                :load_subscription_info
  
   
   EVENTS = [ "subscription_changed", "subscription_activated", "subscription_renewed", 
               "subscription_cancelled", "subscription_reactivated", "card_added", 
-              "card_updated", "payment_succeeded", "payment_refunded", "card_deleted" ]          
+              "card_updated", "payment_succeeded", "payment_refunded", "card_deleted", "customer_changed"]          
+
+  LIVE_CHAT_EVENTS = [ "subscription_activated", "subscription_renewed", "subscription_cancelled", 
+                        "subscription_reactivated", "subscription_changed"]
 
   # Events to be synced for all sources including API.
   SYNC_EVENTS_ALL_SOURCE = [ "payment_succeeded", "payment_refunded", "subscription_reactivated" ]
@@ -41,16 +48,35 @@ class Billing::BillingController < ApplicationController
   CANCELLED = "cancelled"
   NO_CARD = "no_card"
   OFFLINE = "off"
+  PAID = "paid"
 
   TRIAL = "trial"
   FREE = "free"
   ACTIVE = "active"  
   SUSPENDED = "suspended"              
 
+  ONLINE_CUSTOMER = "on"
+
+  TRUE = "true"
   
   def trigger
-    if event_monitored? and not_api_source? or sync_for_all_sources?
+    if not_api_source? or sync_for_all_sources?
       send(params[:event_type], params[:content])
+    end
+
+    if LIVE_CHAT_EVENTS.include? params[:event_type]
+      retrieve_account unless @account
+      if @account && @account.chat_setting && @account.subscription && @account.chat_setting.display_id
+        Resque.enqueue(Workers::Livechat, 
+          {
+            :worker_method => "update_site", 
+            :siteId        => @account.chat_setting.display_id, 
+            :attributes    => { :expires_at => @account.subscription.next_renewal_at.utc,
+                                :suspended => !@account.active?
+                               }
+          }
+        )
+      end
     end
 
     Account.reset_current_account
@@ -80,8 +106,13 @@ class Billing::BillingController < ApplicationController
       render :json => ArgumentError, :status => 500 if (Rails.env.production? and !request.ssl?)
     end
 
-    def event_monitored?
-      EVENTS.include?(params[:event_type])
+    def event_monitored
+      unless EVENTS.include?(params[:event_type])
+        respond_to do |format|
+          format.xml { head 200 }
+          format.json  { head 200 }
+        end
+      end
     end
 
     def not_api_source?
@@ -90,11 +121,7 @@ class Billing::BillingController < ApplicationController
 
     def sync_for_all_sources?
       SYNC_EVENTS_ALL_SOURCE.include?(params[:event_type])
-    end
-
-    def monitored_event_not_from_api?
-      event_monitored? and not_api_source? or sync_for_all_sources?  
-    end    
+    end   
 
     def ensure_right_parameters
       if ((params[:event_type].blank?) or (params[:content].blank?) or params[:content][:customer].blank?)
@@ -104,8 +131,18 @@ class Billing::BillingController < ApplicationController
 
     def retrieve_account
       @account = Account.find_by_id(params[:content][:customer][:id])      
-      return render :json => ActiveRecord::RecordNotFound, :status => 404 unless @account
-      @account.make_current
+      if @account
+        @account.make_current
+      else
+        if params[:event_type] == "subscription_cancelled"
+          respond_to do |format|
+            format.xml { head 200 }
+            format.json  { head 200 }
+          end
+        else
+          return render :json => ActiveRecord::RecordNotFound, :status => 404 
+        end
+      end
     end
 
     #Subscription info
@@ -157,11 +194,12 @@ class Billing::BillingController < ApplicationController
     #Events
     def subscription_changed(content)
       plan = subscription_plan(@billing_data.subscription.plan_id)      
-      @old_subscription = @account.subscription.clone
-      @existing_addons = @account.addons.clone
+      @old_subscription = @account.subscription.dup
+      @existing_addons = @account.addons.dup
       
       @account.subscription.update_attributes(@subscription_data.merge(plan_info(plan)))
       update_addons(@account.subscription, @billing_data.subscription)
+
       update_features if update_features?
     end
 
@@ -193,17 +231,36 @@ class Billing::BillingController < ApplicationController
     def card_deleted(content)
       @account.subscription.clear_billing_info
       @account.subscription.save
+      auto_collection_off_trigger
+    end
+
+    def customer_changed(content)
+      if content['customer'] and content['customer']['auto_collection'] and content['customer']['auto_collection'] == OFFLINE
+        auto_collection_off_trigger 
+      end
     end
 
     def payment_succeeded(content)
       payment = @account.subscription.subscription_payments.create(payment_info(content))
       Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => @account.id, 
           :event_type => :payment_added, :invoice_id => content[:invoice][:id] })
+      store_invoice(content) if @account.subscription.affiliate.nil?
+
+      Resque.enqueue_at(15.minute.from_now, CRM::Freshsales::AccountActivation,
+                               {  account_id: @account.id,
+                                  subscription: @account.subscription.attributes, 
+                                  cmrr:  @account.subscription.cmrr,
+                                  collection_date: content[:invoice][:paid_on],
+                                  auto_collection: content[:customer][:auto_collection] }) if content[:invoice][:first_invoice].to_s == TRUE
     end
 
     def payment_refunded(content)
       @account.subscription.subscription_payments.create(
               :account => @account, :amount => -(content[:transaction][:amount]/100))
+      invoice_hash = Billing::WebhookParser.new(content).invoice_hash
+      invoice =  @account.subscription.subscription_invoices.find_by_chargebee_invoice_id(invoice_hash[:chargebee_invoice_id])
+      
+      invoice.update_attributes(invoice_hash) if invoice.present?
     end
 
     #Plans, addons & features
@@ -249,7 +306,7 @@ class Billing::BillingController < ApplicationController
     def payment_info(content)
       {
         :account => @account,
-        :amount => (content[:transaction][:amount]/100 * @account.subscription.currency_exchange_rate.to_f),
+        :amount => (content[:transaction][:amount].to_f/100 * @account.subscription.currency_exchange_rate.to_f),
         :transaction_id => content[:transaction][:id_at_gateway], 
         :misc => recurring_invoice?(content[:invoice]),
         :meta_info => build_meta_info(content[:invoice])
@@ -289,4 +346,15 @@ class Billing::BillingController < ApplicationController
       redirect_to redirect_url
     end
 
+    def store_invoice(content)
+      if content["invoice"]["id"] and content['customer']['auto_collection'] == ONLINE_CUSTOMER and content["invoice"]["status"] == PAID
+        invoice_hash = Billing::WebhookParser.new(content).invoice_hash
+        @account.subscription.subscription_invoices.create(invoice_hash)
+      end
+    end
+
+    def auto_collection_off_trigger
+      Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => @account.id, 
+          :event_type => :auto_collection_off })
+    end
 end

@@ -1,18 +1,16 @@
 <div class="static_content">
-	<ul>
-		
+	<ul>		
 		<li>
 			<strong><%= t('admin.webhook.jira_hook_title') %></strong>:
 			<%= t('admin.webhook.jira_hook_description') %>
-			<img src="/images/jira.png" alt="<%= t('admin.webhook.jira_hook_alt') %>" 
-						height="700" width="700">
+			<%= image_tag "#{asset_host_url}/assets/helpimages/jira.png", 
+							:alt => t('admin.webhook.jira_hook_alt'), :width => "700" %>
 		</li>
 		<li>
 			<strong><%= t('admin.webhook.hipchat_hook_title') %></strong>:
 			<%= t('admin.webhook.hipchat_hook_description') %>
-			<img src="/images/hipchat.png" alt="<%= t('admin.webhook.hipchat_hook_alt') %>" 
-						height="300" width="700">
+			<%= image_tag "#{asset_host_url}/assets/helpimages/hipchat.png", 
+							:alt => t('admin.webhook.hipchat_hook_alt'), :width => "700" %>
 		</li>
-
 	</ul>
 </div>

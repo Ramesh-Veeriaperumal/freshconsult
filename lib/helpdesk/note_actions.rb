@@ -4,7 +4,7 @@ module Helpdesk::NoteActions
 
   def conversation_info(note)
     return "" if (note.schema_less_note.nil? or note.to_emails.blank?)
-    conv_type = note.fwd_email? ? t("forwarded_to") : (note.outbound_email? ? t("replied_to") : 
+    conv_type = note.fwd_email? ? t("forwarded_to") : ((note.outbound_email? || note.reply_to_forward?) ? t("replied_to") : 
       (note.note? ? t("notified_to") : t("to")))
     t("conv_contacts_info", :conv_type_msg => conv_type, 
       :to_emails => parse_to_comma_sep_emails(note.to_emails),
@@ -14,14 +14,14 @@ module Helpdesk::NoteActions
 
   def bcc_drop_box_email
     capsule_config = get_app_config('capsule_crm') 
-    bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /).map{|item|[item, item]}
-    fixed_bcc = (current_account.bcc_email.blank?) ? [] : current_account.bcc_email.split( /,* /).map{|item|[item, item]}
+    bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /)
+    fixed_bcc = (current_account.bcc_email.blank?) ? [] : current_account.bcc_email.split( /,* /)
     bcc_drop_box_email += fixed_bcc
   end
 
   def conversation_popover_details(note)
     return "" if (note.schema_less_note.nil? or note.to_emails.blank?)
-    content_tag :div, (content_tag :dl, conv_details(note)), :class => "email-details"
+    content_tag :div, (content_tag :dl, conv_details(note).html_safe), :class => "email-details"
   end
 
   def conv_details note

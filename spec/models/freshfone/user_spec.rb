@@ -1,8 +1,6 @@
 require 'spec_helper'
-load 'spec/support/freshfone_spec_helper.rb'
-include FreshfoneSpecHelper
 
-describe Freshfone::User do 
+RSpec.describe Freshfone::User do 
   self.use_transactional_fixtures = false
   
   before(:each) do
@@ -29,6 +27,6 @@ describe Freshfone::User do
     number = GlobalPhone.parse(Faker::Base.numerify('(###)###-####')).international_string
     @freshfone_user.user.update_attributes!({:phone => number})
     @freshfone_user.reload
-    @freshfone_user.send(:vaild_phone_number?, @number).should be_true
+    @freshfone_user.send(:vaild_phone_number?, @number).should be true
   end
 end

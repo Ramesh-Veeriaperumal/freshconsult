@@ -64,6 +64,11 @@ class Discussions::PostsController < ApplicationController
 		render :layout => false
 	end
 
+	def users_voted
+		@object = @post
+		render :partial => "discussions/shared/users_voted"
+	end
+
 	private
 
 	def find_post

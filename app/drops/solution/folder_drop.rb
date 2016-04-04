@@ -1,8 +1,8 @@
 class Solution::FolderDrop < BaseDrop
   
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   
-  liquid_attributes << :name << :description << :visibility
+  self.liquid_attributes += [:name , :description , :visibility]
 
   def context=(current_context)    
     current_context['paginate_url'] = support_solutions_folder_path(source)

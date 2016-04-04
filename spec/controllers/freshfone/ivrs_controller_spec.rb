@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Freshfone::IvrsController do
+RSpec.describe Freshfone::IvrsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -10,10 +10,14 @@ describe Freshfone::IvrsController do
     log_in(@agent)
   end
 
+  after(:each) do
+    @account.freshfone_numbers.delete_all
+  end
+
   it 'should render the number for ivr on show' do
     ivr = @number.ivr
     get :show, {:id => ivr.id}
-    response.should redirect_to("admin/freshfone/numbers/#{@number.id}/edit")
+    response.should redirect_to("/admin/phone/numbers/#{@number.id}/edit")
   end
 
   it 'should return all ivrs for the account' do
@@ -44,7 +48,7 @@ describe Freshfone::IvrsController do
     ivr = @number.ivr
     put :update, params
     @account.ivrs.find(ivr.id).menus.first.message.should be_eql(message)
-    response.should redirect_to("admin/freshfone/numbers/#{@number.id}")
+    response.should redirect_to("/admin/phone/numbers/#{@number.id}")
   end
 
   it 'should not update the welcome message on preview' do
@@ -76,14 +80,14 @@ describe Freshfone::IvrsController do
   end
 
   it 'should enable ivr on successful activate action' do
-    ivr = @number.ivr
+    ivr = @number.ivr.reload
     ivr.update_attributes(:active => false)
     post :activate, {:id => @number.ivr.id, :active => true}
     @account.ivrs.find(ivr.id).should be_active
   end
 
   it 'should not enable ivr on unsuccessful activate action' do
-    ivr = @number.ivr
+    ivr = @number.ivr.reload
     ivr.update_attributes(:active => false)
     Freshfone::Ivr.any_instance.stubs(:update_attributes).returns(false)
     post :activate, {:id => @number.ivr.id, :active => true}
@@ -98,7 +102,7 @@ describe Freshfone::IvrsController do
   end
 
   it 'should not disable ivr on unsuccessful deactivate action' do
-    ivr = @number.ivr
+    ivr = @number.ivr.reload
     ivr.update_attributes(:active => true)
     Freshfone::Ivr.any_instance.stubs(:update_attributes).returns(false)
     post :deactivate, {:id => @number.ivr.id, :active => false}

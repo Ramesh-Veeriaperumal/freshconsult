@@ -63,6 +63,10 @@ module Helpdesk::SlaPoliciesHelper
 		Helpdesk::SlaDetail.sla_options
 	end
 
+	def reminder_time_options
+   		Helpdesk::SlaPolicy::REMINDER_TIME_OPTIONS
+  	end
+
 	# ITIL Related Methods starts here
 
 	def form_partial(form_object)

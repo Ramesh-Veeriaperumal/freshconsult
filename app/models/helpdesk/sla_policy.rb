@@ -1,14 +1,17 @@
 class Helpdesk::SlaPolicy < ActiveRecord::Base
   
-  set_table_name "sla_policies"
+  self.table_name =  "sla_policies"
+  self.primary_key = :id
 
   serialize :escalations, Hash
   serialize :conditions, Hash
   
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id
+  
+  before_save :standardize_and_validate
 
-  def before_save 
+  def standardize_and_validate
     standardize_escalations(self.escalations) if escalations_changed?
     standardize_conditions if conditions_changed? 
     validate_conditions?
@@ -19,15 +22,16 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   has_many :sla_details , :class_name => "Helpdesk::SlaDetail", :foreign_key => "sla_policy_id", 
     :dependent => :destroy 
   
-  attr_accessible :name,:description, :is_default, :conditions, :escalations, :active, :datatype
+  attr_accessible :name,:description, :is_default, :conditions, :escalations, :active, :datatype, 
+    :sla_details_attributes, :position
   
   accepts_nested_attributes_for :sla_details
 
-  named_scope :rule_based, :conditions => { :is_default => false }
-  named_scope :default, :conditions => { :is_default => true }
+  scope :rule_based, :conditions => { :is_default => false }
+  scope :default, :conditions => { :is_default => true }
 
-  named_scope :active, :conditions => {:active => true }
-  named_scope :inactive, :conditions => {:active => false }
+  scope :active, :conditions => {:active => true }
+  scope :inactive, :conditions => {:active => false }
 
   default_scope :order => "is_default, position"
   
@@ -70,16 +74,51 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
                                                                       a[1] <=> b[1] } 
 
   ESCALATION_TYPES = [:resolution, :response]
+  REMINDER_TYPES = [:reminder_response,:reminder_resolution]
 
-  acts_as_list
+  REMINDER_TIME = [
+    [ :eight, I18n.t('before_eight'),  -28800],
+    [ :four, I18n.t('before_four'),  -14400],
+    [ :two, I18n.t('before_two'),  -7200],
+    [ :one, I18n.t('before_one'),  -3600],
+    [ :half, I18n.t('before_half'),  -1800]
+  ]
 
-  def scope_condition
-    "account_id = #{account_id}"
-  end
-  
+  REMINDER_TIME_OPTIONS = REMINDER_TIME.map { |i| [i[1], i[2]] }
+  SLA_WORKER_INTERVAL = 840 #Rake task interval (14 Minutes)
+
+  CUSTOM_USERS = [
+    [:assigned_agent, -1]
+  ]
+
+  API_OPTIONS = {
+    :except => [:account_id]
+  }
+  acts_as_list :scope => 'account_id = #{account_id}'
+
   def matches?(evaluate_on)
     return false if va_conditions.empty?
     va_conditions.all? { |c| c.matches(evaluate_on) }
+  end
+
+#sla_resolution_reminder / sla_response_reminder
+
+  def escalate_response_reminder ticket
+    response_reminder = escalations[:reminder_response]["1"]
+
+    if response_reminder && escalate_to_agents(ticket, response_reminder, EmailNotification::RESPONSE_SLA_REMINDER, :frDueBy)
+      ticket.update_attribute(:sla_response_reminded ,true)
+    end
+
+  end
+
+  def escalate_resolution_reminder ticket
+    resolution_reminder = escalations[:reminder_resolution]["1"]
+
+    if resolution_reminder && escalate_to_agents(ticket, resolution_reminder, EmailNotification::RESOLUTION_SLA_REMINDER, :due_by)
+      ticket.update_attribute(:sla_resolution_reminded, true)
+    end
+
   end
 
   def escalate_resolution_overdue(ticket)
@@ -136,7 +175,34 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     sla.empty? ? company.account.sla_policies.default : sla 
   end
 
+  def self.custom_users_value_by_type
+    CUSTOM_USERS.inject({}) {|hash, item| hash[item[0].to_sym] = I18n.t("sla_policy.#{item[0]}.text"); hash}
+  end
+
+  def as_json(options={})
+    options.merge!(API_OPTIONS)
+    super options.merge(:root => 'helpdesk_sla_policy')
+  end
+
+  def self.custom_users_id_by_type
+    CUSTOM_USERS.inject({}) {|hash, item| hash[item[0].to_sym] = item[1]; hash}
+  end
+
+  def self.custom_users_desc_by_type
+    CUSTOM_USERS.inject({}) {|hash, item| hash[item[0].to_sym] = I18n.t("sla_policy.#{item[0]}.description"); hash}
+  end
+  
+  def to_xml(options={})
+    options.merge!(API_OPTIONS)
+    super options.merge(:root => 'helpdesk_sla_policy')
+  end
+
   private
+
+    # def is_the_condition_valid? ticket, reminder_time
+    #   return reminder_time[:time].seconds.since(ticket.due_by) >= ticket.created_at
+    # end
+
 
     def va_conditions
       @va_conditions ||= deserialize_conditions
@@ -146,7 +212,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
       to_return = []
       conditions.each_pair do |k, v| #each_pair
         to_return << (Va::Condition.new({:name => k, :value => v, 
-                        :operator => "in"} , account))
+                        :operator => "in"} , Account.current))
       end if conditions
       to_return
     end
@@ -156,9 +222,19 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     end
 
     def escalate_to_agents(ticket, escalation, type, due_by)
-      if escalation[:time].seconds.since(ticket.send(due_by)) <= Time.zone.now
-        unless escalation[:agents_id].blank? ||
-        (agents = account.users.technicians.visible.find(:all, :conditions => ["id in (?)", escalation[:agents_id]])).blank?
+      notify_time_interval = escalation[:time].seconds.since(ticket.send(due_by))
+
+      if type == EmailNotification::RESPONSE_SLA_REMINDER || EmailNotification::RESOLUTION_SLA_REMINDER 
+        return false if notify_time_interval <= ticket.created_at
+        notify_time_interval -= SLA_WORKER_INTERVAL
+      end
+
+      if notify_time_interval <= Time.zone.now
+        assigned_agent_id = Helpdesk::SlaPolicy.custom_users_id_by_type[:assigned_agent]
+        responder_id = ticket.responder_id
+        agent_ids = escalation[:agents_id].map {|x| (x == assigned_agent_id && responder_id) ? responder_id : x }
+        unless agent_ids.blank? ||
+        (agents = account.users.technicians.visible.find(:all, :conditions => ["id in (?)", agent_ids])).blank?
           SlaNotifier.send_email(ticket, agents, type)
         end
         return true

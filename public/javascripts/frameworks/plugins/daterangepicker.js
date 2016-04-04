@@ -8,7 +8,7 @@
 */
 !function ($) {
 
-    var DateRangePicker = function (element, options, cb) {
+    var BootstrapDateRangePicker = function (element, options, cb) {
 
         // by default, the daterangepicker element is placed at the bottom of HTML body
         this.parentEl = 'body';
@@ -91,9 +91,9 @@
 
     };
 
-    DateRangePicker.prototype = {
+    BootstrapDateRangePicker.prototype = {
 
-        constructor: DateRangePicker,
+        constructor: BootstrapDateRangePicker,
 
         setOptions: function(options, callback) {
 
@@ -463,8 +463,8 @@
             
             if (this.opens == 'left') {
                 this.container.css({
-                    top: this.element.offset().top + this.element.outerHeight() - parentOffset.top,
-                    right: $(window).width() - this.element.offset().left - this.element.outerWidth() - parentOffset.left,
+                    top: this.element.offset().top + this.element.outerHeight(true) - parentOffset.top,
+                    right: $(window).width() - this.element.offset().left - this.element.outerWidth(true) - parentOffset.left,
                     left: 'auto'
                 });
                 if (this.container.offset().left < 0) {
@@ -475,11 +475,11 @@
                 }
             } else {
                 this.container.css({
-                    top: this.element.offset().top + this.element.outerHeight() - parentOffset.top,
+                    top: this.element.offset().top + this.element.outerHeight(true) - parentOffset.top,
                     left: this.element.offset().left - parentOffset.left,
                     right: 'auto'
                 });
-                if (this.container.offset().left + this.container.outerWidth() > $(window).width()) {
+                if (this.container.offset().left + this.container.outerWidth(true) > $(window).width()) {
                     this.container.css({
                         left: 'auto',
                         right: 0
@@ -976,18 +976,18 @@
 
             this.container.remove();
             this.element.off('.daterangepicker');
-            this.element.removeData('daterangepicker');
+            this.element.removeData('bootstrapdaterangepicker');
 
         }
 
     };
 
-    $.fn.daterangepicker = function (options, cb) {
+    $.fn.bootstrapDaterangepicker = function (options, cb) {
         this.each(function () {
             var el = $(this);
-            if (el.data('daterangepicker'))
-                el.data('daterangepicker').remove();
-            el.data('daterangepicker', new DateRangePicker(el, options, cb));
+            if (el.data('bootstrapdaterangepicker'))
+                el.data('bootstrapdaterangepicker').remove();
+            el.data('bootstrapdaterangepicker', new BootstrapDateRangePicker(el, options, cb));
         });
         return this;
     };

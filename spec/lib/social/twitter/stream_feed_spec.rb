@@ -1,8 +1,11 @@
 require 'spec_helper'
-include GnipHelper
-include DynamoHelper
 
-describe Social::Gnip::TwitterFeed do
+RSpec.configure do |c|
+  c.include GnipHelper
+  c.include DynamoHelper
+end
+
+RSpec.describe Social::Gnip::TwitterFeed do
 
   self.use_transactional_fixtures = false
 
@@ -42,11 +45,11 @@ describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+    Social::TwitterWorker.new.perform
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be_truthy
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm[:text])
     # tweet.tweetable.destroy
@@ -65,11 +68,11 @@ describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+    Social::TwitterWorker.new.perform
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be_truthy
     ticket = tweet.tweetable
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm[:text])
@@ -80,11 +83,11 @@ describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+    Social::TwitterWorker.new.perform
 
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
-    tweet.is_note?.should be_true
+    tweet.is_note?.should be_truthy
     ticket.notes.first.id.should eql tweet.tweetable.id
     note_body = tweet.tweetable.note_body.body
     note_body.should eql(sample_dm[:text])
@@ -104,18 +107,18 @@ describe Social::Gnip::TwitterFeed do
     twitter_dm_array = [twitter_dm2, twitter_dm1]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
     
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+    Social::TwitterWorker.new.perform
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm1[:id])
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be_truthy
     ticket = tweet.tweetable
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm1[:text])
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm2[:id])
     tweet.should_not be_nil
-    tweet.is_note?.should be_true
+    tweet.is_note?.should be_truthy
     note_body = tweet.tweetable.note_body.body
     note_body.should eql(sample_dm2[:text])
     # ticket.destroy
@@ -126,7 +129,7 @@ describe Social::Gnip::TwitterFeed do
     tweet = send_tweet_and_wait(feed)
 
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be_truthy
     tweet.stream_id.should_not be_nil
 
     tweet_body = feed["body"]
@@ -141,7 +144,7 @@ describe Social::Gnip::TwitterFeed do
     ticket_tweet = send_tweet_and_wait(ticket_feed)
 
     ticket_tweet.should_not be_nil
-    ticket_tweet.is_ticket?.should be_true
+    ticket_tweet.is_ticket?.should be_truthy
     ticket_tweet.stream_id.should_not be_nil
     dynamo_feed_for_tweet(@handle, ticket_feed, true) if GNIP_ENABLED
 
@@ -151,7 +154,7 @@ describe Social::Gnip::TwitterFeed do
     reply_tweet = send_tweet_and_wait(reply_feed)
 
     reply_tweet.should_not be_nil
-    reply_tweet.is_note?.should be_true
+    reply_tweet.is_note?.should be_truthy
     reply_tweet.stream_id.should_not be_nil
 
     reply_body = reply_feed["body"]
@@ -176,7 +179,7 @@ describe Social::Gnip::TwitterFeed do
     reply_tweet = wait_for_tweet(reply_tweet_id, reply_feed, fd_counter)
 
     reply_tweet.should_not be_nil
-    reply_tweet.is_ticket?.should be_true
+    reply_tweet.is_ticket?.should be_truthy
     reply_tweet.stream_id.should_not be_nil
     dynamo_feed_for_tweet(@handle, reply_feed, true) if GNIP_ENABLED
 
@@ -211,11 +214,11 @@ describe Social::Gnip::TwitterFeed do
 
     #Reply tweet should be converted to a note
     reply_tweet.should_not be_nil
-    reply_tweet.is_note?.should be_true
+    reply_tweet.is_note?.should be_truthy
     reply_tweet.stream_id.should_not be_nil
     
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be true
     tweet.stream_id.should_not be_nil
     
     
@@ -294,11 +297,11 @@ describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+    Social::TwitterWorker.new.perform
     
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be_truthy
     ticket = tweet.tweetable
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm[:text])
@@ -326,11 +329,11 @@ describe Social::Gnip::TwitterFeed do
     twitter_dm = Twitter::DirectMessage.new(sample_dm)
     twitter_dm_array = [twitter_dm]
     Twitter::REST::Client.any_instance.stubs(:direct_messages).returns(twitter_dm_array)
-    Social::Workers::Twitter::DirectMessage.perform({:account_id => @account.id})
+    Social::TwitterWorker.new.perform
 
     tweet = @account.tweets.find_by_tweet_id(sample_dm[:id])
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be_truthy
     ticket = tweet.tweetable
     ticket_body = tweet.tweetable.ticket_body.description
     ticket_body.should eql(sample_dm[:text])

@@ -1,12 +1,12 @@
 <div style="font-weight:bold;">
-	<%= include_cloudfront_js :defaults  %>
+	<%= javascript_include_tag :'cdn/defaults'  %>
 	<%= calendar_date_select_includes 'silver' %>
 	<% CalendarDateSelect.format = :iso_date %>	
  	<div style="display:block;">
 	<table cellspacing="0" cellpadding="0">
 	 <tr>
 		<td>
-	<% form_tag "/metrics", :method => 'get', :class => "pull-right" do %>
+	<%= form_tag "/metrics", :method => 'get', :class => "pull-right" do %>
 	  <p>                                                                     
 	    <%= calendar_date_select_tag 'start_date', ((params[:start_date].blank?) ? "" : params[:start_date])%>
 		 	to

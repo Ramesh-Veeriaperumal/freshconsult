@@ -2,17 +2,11 @@
 module Community::Moderation::MoveToDB
 
 	include CloudFilesHelper
-	
-	REPORT_HAM = true
 
 	def approve
 		begin
-			topic_post_saved = Topic.transaction do
-				topic_saved = find_or_approve_topic
-				approve_post if !@spam_post.topic_id.nil? or topic_saved
-			end
-			@spam_post.destroy if topic_post_saved
-			report_post(@published_post, REPORT_HAM) if @spam_post.spam?
+			@spam_post.destroy if save_object
+			report_post(@published_post, Post::REPORT[:ham]) if @spam_post.spam?
 			respond_back
 		rescue ActiveRecord::RecordInvalid => e
 			invalid_topic_message(e)
@@ -20,27 +14,31 @@ module Community::Moderation::MoveToDB
 	end
 
 	private
-
-		def find_or_approve_topic
+		def save_object
+			find_or_initialize_topic
+			initialize_post
+			@spam_post.topic_id.nil? ? @topic.approve! : @published_post.approve!
+		end
+		
+		def find_or_initialize_topic
 			if @spam_post.topic_id.nil?
-				approve_topic
+				initialize_topic
 			else
 				@topic = current_account.topics.find(@spam_post.topic_id)
 			end
 		end
 
-		def approve_topic
+		def initialize_topic
 			forum = current_account.forums.find(@spam_post.forum_id)
 			@topic = forum.topics.new(topic_params)
-			@topic.approve!
 		end
 
-		def approve_post
-			@published_post = current_account.posts.new(post_params)
+		def initialize_post
+			@published_post = @topic.posts.build(post_params)
 			@published_post.topic = @topic
+			@published_post.published = true
 			move_attachments(@spam_post.attachments, @published_post) if @spam_post.attachments.present?
 			build_cloud_files_attachments(@published_post, JSON.parse(@spam_post.cloud_file_attachments))
-			@published_post.approve!
 		end
 
 		def topic_params

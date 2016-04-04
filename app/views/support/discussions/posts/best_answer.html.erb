@@ -1,4 +1,4 @@
-<% form_for @post, :url =>toggle_answer_support_discussions_topic_post_path(@post.topic, @post.id) do |f| %>
+<%= form_for @post, :url =>toggle_answer_support_discussions_topic_post_path(@post.topic, @post.id) do |f| %>
 <% end %>
 <%= t('forum_shared.best_answer.answer_confirm') %>
 <div class="answer_previous">
@@ -12,7 +12,8 @@
 	</div>
 	<div class="answer-desc">
 		<div class="p-desc">
-			<%= truncate(@answer.body, :length => 400) %>
+                  <% # TODO-RAILS3:: calling liquid truncate rather Actionview Helper %>
+			<%= truncate(@answer.body, 400) %>
 		</div>
 	</div>
 </div>

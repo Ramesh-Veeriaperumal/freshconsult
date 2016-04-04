@@ -101,7 +101,6 @@
     position: absolute;
     vertical-align: text-top;
     @include margin-left(-20px);
-    @extend .icon-dd-tick-dark; 
   }
 }
 
@@ -149,4 +148,6 @@
 .typeahead {
   margin-top: 2px; // give it some space to breathe
   @include border-radius(4px);
+  max-height: 200px;
+  overflow: scroll;
 }

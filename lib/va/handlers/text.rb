@@ -14,23 +14,29 @@ class Va::Handlers::Text < Va::RuleHandler
     end
 
     def in(evaluate_on_value)
-      value.include?(evaluate_on_value)
+      evaluate_on_value ||= ""
+      [*value].map(&:downcase).include?(evaluate_on_value.downcase)
+    end
+
+    def not_in(evaluate_on_value)
+      evaluate_on_value ||= ""
+      ! [*value].map(&:downcase).include?(evaluate_on_value.downcase)
     end
 
     def contains(evaluate_on_value)
-      evaluate_on_value && evaluate_on_value.downcase.include?(value.downcase)
+      evaluate_on_value && value.present? && evaluate_on_value.downcase.include?(value.downcase)
     end
 
     def does_not_contain(evaluate_on_value)
-      !contains(evaluate_on_value)
+      evaluate_on_value && value.present? && !evaluate_on_value.downcase.include?(value.downcase)
     end
 
     def starts_with(evaluate_on_value)
-      evaluate_on_value && evaluate_on_value.downcase.starts_with?(value.downcase)
+      evaluate_on_value && value.present? && evaluate_on_value.downcase.starts_with?(value.downcase)
     end
 
     def ends_with(evaluate_on_value)
-      evaluate_on_value && evaluate_on_value.downcase.ends_with?(value.downcase)
+      evaluate_on_value && value.present? && evaluate_on_value.downcase.ends_with?(value.downcase)
     end
 
     def filter_query_is

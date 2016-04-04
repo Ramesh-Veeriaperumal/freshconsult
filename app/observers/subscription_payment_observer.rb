@@ -11,8 +11,11 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
     #add_to_crm(payment)
   end
 
-  def after_commit_on_create(payment)
-    add_to_crm(payment)
+  def after_commit(payment)
+    if payment.send(:transaction_include_action?, :create) 
+      add_to_crm(payment)
+    end
+    true
   end
 
   private
@@ -31,11 +34,11 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
       return unless payment.amount > 0
 
       if payment.setup?
-        SubscriptionNotifier.deliver_setup_receipt(payment)
+        SubscriptionNotifier.setup_receipt(payment)
       elsif payment.misc?
-        #SubscriptionNotifier.deliver_misc_receipt(payment) #Has been moved to subscription itself.
+        #SubscriptionNotifier.misc_receipt(payment) #Has been moved to subscription itself.
       else
-        SubscriptionNotifier.deliver_charge_receipt(payment)
+        SubscriptionNotifier.charge_receipt(payment)
       end
       
       true
@@ -58,12 +61,12 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
-        FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Error contacting shareAsale #{payment.id}"})
+        FreshdeskErrorsMailer.error_email(nil,nil,e,{:subject => "Error contacting shareAsale #{payment.id}"})
       end
     end
 
     def add_to_crm(payment)
-      Resque.enqueue(CRM::AddToCRM::PaidCustomer, {:account_id => payment.account_id, :item_id => payment.id})
+      Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::PaidCustomer, {:account_id => payment.account_id, :item_id => payment.id})
     end
 end
 

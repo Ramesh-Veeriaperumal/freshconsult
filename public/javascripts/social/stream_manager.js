@@ -98,8 +98,12 @@ var StreamManager = Class.create({
         j("#customSearches").on("click.social_evt", ".item_info", this.customSearchesItemInfo.bindAsEventListener(this));
         j("#streamHighlight").on("click.social_evt", "a.new-tweets", this.streamHighlight.bindAsEventListener(this));
         /*CENTER PANE ACTIONS */
-        j(this.streamBoxElements.search_submit).on("click.social_evt", this.streamBoxElements.toggle_btn, this.toggleAdvSearchBox.bindAsEventListener(this)) //for adv search and settings
-        .on("submit.social_evt", this.searchSocialTab.bindAsEventListener(this)); // search form submit
+        j(this.streamBoxElements.search_submit)
+              .on("keyup.social_evt", this.triggerSocialSearch.bindAsEventListener(this));
+    
+        j(this.streamBoxElements.search_submit)
+                .on("click.social_evt", this.streamBoxElements.toggle_btn, this.toggleAdvSearchBox.bindAsEventListener(this)) // for adv search and settings
+                .on("submit.social_evt", this.searchSocialTab.bindAsEventListener(this)); // search form submit
         // stream box actions at center pane
         j(this.streamBoxElements.stream_template).on("mouseenter.social_evt", this.streamBoxElements.list_item, this.streamBoxMouseOver.bindAsEventListener(this))
             .on("mouseleave.social_evt", this.streamBoxElements.list_item, this.streamBoxMouseLeave.bindAsEventListener(this))
@@ -252,11 +256,18 @@ var StreamManager = Class.create({
         this._preventDefault(e);
         j("#advsearch-box").slideToggle(); // to be changed to css transition
     },
+    triggerSocialSearch: function(e){
+      if(e.keyCode == 13){
+        j(this.streamBoxElements.search_submit).trigger('submit');
+      }
+    },
     searchSocialTab: function() {
         if (j("#twitterquery").val() == "") {
             j("#no_query").show();
             return false;
         }
+        j('#streams li a').removeClass('active');
+        j('#customSearches li a').removeClass('active');
         j(".scl-search-here").hide();
         j(".no-stream").hide();
         /* remove the highlight if its not clicked - i.e - newer feeds */

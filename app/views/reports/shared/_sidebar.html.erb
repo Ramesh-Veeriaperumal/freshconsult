@@ -4,7 +4,7 @@
 <% else %>
    <h3 class="title"><%= t('reports.helpdesk_title')%></h3>
 <% end %>   
-	<% form_tag :method => :post do%>
+	<%= form_tag :method => :post do%>
 	<% if params[:controller].ends_with("customer_reports") %>
 		<div class="ff_item" container="dropdown" id="div_ff_customer">
 			<h4 class="title"><%= label_tag "customer_id", t("reports.select_customer") %></h4>           
@@ -12,8 +12,8 @@
 	    </div>
 	<% end %> 
 	<% @show_options.each_with_index do |c_hash, i| %> 
-        <% container = (c_hash[:condition] == "users.customer_id") ? "select" : "multi_select" %> 
-    	    <% content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
+        <% container = (c_hash[:condition] == "owner_id") ? "select" : "multi_select" %> 
+    	    <%= content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
 				:class       => "ff_item", 
 				:operator    => c_hash[:operator],
 				:container   => c_hash[:container] } do %>
@@ -31,7 +31,7 @@
 	<%= submit_tag t('reports.generate_button'), :class => "uiButton" %>
 	<% end %>
 </div>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 jQuery(document).ready(function() {
 	jQuery("#dateRange").daterangepicker({
 		latestDate:Date.parse('Today-1'),
@@ -49,7 +49,7 @@ jQuery(document).ready(function() {
 });
 <% end %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	
   jQuery("#Sidebar form").submit(function(ev){
   	ev.preventDefault();

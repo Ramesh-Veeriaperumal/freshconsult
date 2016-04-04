@@ -8,6 +8,11 @@ class Helpdesk::Note < ActiveRecord::Base
 
   has_many_attachments
 
+  has_many :inline_attachments, :class_name => "Helpdesk::Attachment", 
+                                :conditions => { :attachable_type => "Note::Inline" },
+                                :foreign_key => "attachable_id", 
+                                :dependent => :destroy
+
   has_many_cloud_files
     
   has_one :tweet,
@@ -22,6 +27,8 @@ class Helpdesk::Note < ActiveRecord::Base
     
   has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
 
+  has_one :custom_survey_remark, :foreign_key =>'note_id', :class_name => 'CustomSurvey::SurveyRemark', :dependent => :destroy
+
   has_one :note_old_body, :class_name => 'Helpdesk::NoteOldBody', :dependent => :destroy, :autosave => false
 
   has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
@@ -34,5 +41,7 @@ class Helpdesk::Note < ActiveRecord::Base
   accepts_nested_attributes_for :tweet , :fb_post
 
   has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable'
+  
+  has_one :ebay_question, :as => :questionable, :class_name => 'Ecommerce::EbayQuestion', :dependent => :destroy
 
 end

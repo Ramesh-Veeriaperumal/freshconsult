@@ -12,7 +12,7 @@ describe UserSessionsController do
 
   before(:all) do
     @account.sso_enabled = false
-    @account.save(false)
+    @account.save(:validate => false)
 
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
   end

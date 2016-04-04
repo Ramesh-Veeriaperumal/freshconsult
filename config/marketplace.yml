@@ -1,0 +1,38 @@
+defaults: &defaults
+  dev_portal_url: "http://localhost:3001"
+  admin_url: "http://localhost:3002"
+  api_url: "http://localhost:3003"
+  acc_api_url: "http://localhost:3004"
+  api_auth_key: 18a9cc87b8aaab31a31262e93841174765439bdef0f9857b
+  cdn_static_assets: "d3fbrmmbx555lt.cloudfront.net/app-assets/test_data"
+  dev_oauth_key: dd2dfdc28f5d160992137b6f6e81eb3dd051ae9d9099fee39ee6938d15fc3395
+  dev_oauth_secret: 65000011cbcb72e99e65c2960d1b9cec9dc60d633df5469dd7961c35f80570e6
+  admin_oauth_key: ed2dfdc28f5d160992137b6f6e81eb3dd051ae9d9099fee39ee6938d15fc3395
+  admin_oauth_secret: 75000011cbcb72e99e65c2960d1b9cec9dc60d633df5469dd7961c35f80570e6
+  cache_invalidation_time: 300 ### In Seconds
+  acc_api_read_timeout: 2 ### In Seconds
+  acc_api_conn_timeout: 2 ### In Seconds
+  global_api_read_timeout: 5 ### In Seconds
+  global_api_conn_timeout: 5 ### In Seconds
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+  dev_portal_url: "https://freshappsdev.freshpo.com"
+  admin_url: "https://freshappsadmin.freshpo.com"
+  api_url: "http://freshapps-global-api-2-661604820.us-east-1.elb.amazonaws.com"
+  acc_api_url: "http://freshapps-account-api-2-1479636878.us-east-1.elb.amazonaws.com"
+  cdn_static_assets: "d2p7lkcc8qpotz.cloudfront.net/app-assets"
+
+production:
+  <<: *defaults
+  dev_portal_url: "https://freshappsdev.freshdesk.com"
+  admin_url: "https://freshappsadmin.freshdesk.com"
+  api_url: "https://api.freshdev.io"
+  acc_api_url: "" #POD specific account api url
+  cdn_static_assets: ""

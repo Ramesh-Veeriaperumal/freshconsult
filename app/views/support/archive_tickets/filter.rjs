@@ -1,0 +1,2 @@
+page.replace_html 'ticket-list', :partial => "archive_ticket_list"
+page.replace_html 'ticket-toolbar', :partial => 'filters'

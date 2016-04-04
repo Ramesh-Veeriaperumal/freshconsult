@@ -1,0 +1,43 @@
+<div class="content-area">
+
+<%@remarks.each do |remark|%>
+
+	<div class="content-set">
+		<a href="<%=contacts_url%>/<%=remark.customer.id%>">
+			<div class="left-box">			
+				<span class="content-img"><%=user_avatar(remark.customer)%></span>
+				<%smiley = (remark[:rating].to_i == CustomSurvey::Survey::HAPPY) ? "happysmallsmiley": (remark[:rating].to_i == CustomSurvey::Survey::UNHAPPY) ? "unhappysmallsmiley" : "neutralsmallsmiley"%>
+				<span class="<%=smiley%>"></span>					
+				<p class="inner-box">
+						<strong class="box-title"><%=remark.customer[:name]%></strong>		
+					<span class="box-date">on <%=formated_date(remark[:created_at], {:format => :short_day_separated, :include_year => true})%></span>
+				</p>			
+			</div>
+		</a>	
+		<div class="right-box">
+			<div class="container-arrow"></div>
+			<span class="cote"></span>
+			<%
+				feedback = ""
+
+				feedback = ""+h(remark.survey_remark.feedback.body)+"<br>" unless remark.survey_remark.nil?
+			%>
+			<p class="box-content">
+				<%=feedback.html_safe%>
+				<a href="<%=helpdesk_tickets_url%>/<%=remark.surveyable.display_id%>">
+					<span class="bottom-ticket-title"><%=t('.in_response_to')%>:</span> <%=remark.surveyable.subject%> (#<%=remark.surveyable.display_id%>)
+				</a>
+			</p>
+
+		</div>
+	</div>
+
+<%end%>
+
+<%if @remarks.blank?%>
+<div class="usercomment no-feedback">
+	<%=t("reports.survey_reports.list.no_feedback")%>
+</div>
+<%end%>
+
+</div>

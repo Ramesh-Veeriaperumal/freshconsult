@@ -3,7 +3,7 @@
 		<% if privilege?(:manage_contacts) %>
 		<div class="sidepanel">
 		<h3 class="lead"><%=t('quick_create')%></h3> 
-		<% form_tag :action=> :quick, :method =>:post do %> 
+		<%= form_tag :action=> :quick, :method =>:post do %> 
 		<div class="control-group">
 			<div class="controls">
 				<input id="customer_name" name="company[name]" size="30" type="text" class="required trim_spaces input-large" placeholder="<%=t('company.name')%>" />
@@ -17,7 +17,7 @@
 	<div id="cust-list" class="list-page">
 		<%= render(:partial => '/shared/companyheader', :locals => {:type => "company", :path => companies_path}) %>
 		<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "company", :path => companies_path})%>
-		<% form_tag "", { :id => "contacts-expanded", :method => :put } do %>
+		<%= form_tag "", { :id => "contacts-expanded", :method => :put } do %>
 			<% if @companies.length > 0 %>
 				<div class="list-page-body">
 					<%= render(:partial => '/shared/customers_toolbar', :locals => {:type => "company", :path => "companies"}) %>
@@ -31,8 +31,8 @@
 								</td>
 								<td class="name">
 									<p class="text-info">
-										<strong><%= link_to(h(company.name), company_path(company), :class => 
-																					"item_info" ) %><br/></strong>
+										<strong><%= link_to(h(company.name), company_path(company), :class => "item_info", :'data-pjax' => "#body-container" ) %> <br/>
+										</strong>
 										<% if company.users.contacts.size>=1 %>
 											<% updated_contact_count = pluralize(company.users.contacts.size, t('contacts.contact'), t('contacts.contacts')) %>
 									    	<span class="muted"><%= t('contacts.contacts_in_companies', :contacts => updated_contact_count) %></span>
@@ -44,7 +44,7 @@
 								<td>
 									<div class="item_actions" align="right">
                     <% if privilege?(:manage_contacts) %>
-								    	<%= link_to(t('edit').html_safe, edit_company_path(company), :class => "btn btn-mini") %>
+								    	<%= link_to(t('edit').html_safe, edit_company_path(company), :class => "btn btn-mini", :'data-pjax' => "#body-container") %>
                     <% end %>
                     <% if privilege?(:delete_contact) %>
 								    	<%= link_to "<i class='icon-trash'></i>".html_safe, {:controller => "companies", :action => "destroy", :id => company}, :confirm =>  

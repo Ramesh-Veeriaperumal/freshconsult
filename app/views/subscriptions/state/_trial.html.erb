@@ -34,7 +34,7 @@
 
 <script type="text/javascript">  
   function render_currency_partial(currency){    
-    calculate_request = jQuery.post( "/subscriptions/calculate_plan_amount", { "currency": currency }, 
+    calculate_request = jQuery.post( "/subscription/calculate_plan_amount", { "currency": currency }, 
       function(data){  
         jQuery("#ChangePlan").removeClass("sloading");
         jQuery("#ChangePlan").html(data); 

@@ -61,10 +61,10 @@
 	<br />
 
 	<div id="AddCcToTicket" class="request_panel" style="display:none;">
-		<% form_for :ticket, @ticket, :url => support_ticket_add_cc_url(:id => @ticket.id), :html => {:id => "add_cc_form"} do |f| %>
+		<%= form_for @ticket, :url => support_ticket_add_cc_url(:id => @ticket.id), :html => {:id => "add_cc_form"} do |f| %>
 				<ul class="ui-form">
 					<li>			
-					       <% f.fields_for :cc_email do |cc| %>
+					       <%= f.fields_for :cc_email do |cc| %>
 						<%=cc.text_field :cc_emails, :class=>"multiemail required error", :id => "cc_emails" %>
 					        <%end%>
 					</li>
@@ -76,12 +76,12 @@
 	</div>
 
 	<div id="ReplyToTicket" class="request_panel" style="display:none;">
-		<% form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket), :html => {:multipart => true }  do |f| %>
+		<%= form_for Helpdesk::Note.new, :url => support_ticket_notes_path(@ticket), :html => {:multipart => true }  do |f| %>
 				<%= f.error_messages %>
 				<ul class="ui-form">
 			    	<li> 
 						<%= content_tag( :h4, t('ticket.note_form.form_title'), :class => "title" ) %>
-			  			<% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
+			  			<%= f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
             				<%= ff.text_area :body_html, :class => "required", :id=>"portal_ticket_note", :value => "" %>
           				<% end %>
 					</li>
@@ -104,7 +104,7 @@
 		</div>
 	<% end %>
 </div>
- <% javascript_tag do %>
+ <%= javascript_tag do %>
  	jQuery("#add_cc_form").validate();
  <% end %>
  

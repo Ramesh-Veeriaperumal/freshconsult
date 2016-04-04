@@ -1,4 +1,6 @@
-<% content_for :sidebar do -%><%- end %> 
+<% content_for :sidebar do %>
+	<br>
+<% end %> 
 
 <% unless @zendesk_import %>
 	<%= content_tag( :h3,  t('import_zendesk_title').html_safe, :class => "lead" ) %>

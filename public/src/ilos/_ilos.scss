@@ -1,0 +1,78 @@
+
+#ilos-btn-agent{
+    width:223px;
+    height:20px;
+    padding:8px;
+    background:#fff;
+ }
+
+.ilos-widget{
+    text-align:center;
+}
+
+#ilos-widget-topic{
+	margin-top:8%;
+}
+
+#ilos-widget-sol{
+	margin-top:10%;
+}
+
+#ilos-support{
+	padding:10px;
+}
+
+.ilos-video-title{
+	padding:6px;
+	@include padding-right(0px);
+	width:99%;
+	resize:none;
+}
+
+.ilos-video-desc{
+	padding:6px;
+	@include padding-right(0px);
+	width:99%;
+	resize:none;
+}
+
+#disablingDiv{
+	display:none; 
+	z-index:1001;
+	position:absolute; 
+	top:0; 
+	left:0; 
+	width:100%; 
+	background-color:#eee; 
+	@include opacity(.9); 
+	#ilos-back-page{
+		color:white;
+		@include margin-left(12%);
+		position:fixed;
+    }
+    #ilos-back-btn{
+        padding:5px 20px;
+        @include margin-left(42%);
+        background-color: #fff;
+        outline:none;
+     	@include background-image(linear-gradient(to bottom, #ffffff,#ffffff));
+    }
+}
+
+#ilos-btn-portal{
+	width:160px;
+	outline:none;
+	background:#fff;
+}
+
+#ilos-paragraph{
+    padding-top:15px;
+	text-align:center;
+	font-size:14px;
+	line-height:22px;
+	color:#333;
+}
+
+#ilos-image{
+	vertical-align:middle;
+}

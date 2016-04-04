@@ -1,0 +1,13 @@
+<label class='caption'> <%= translate.get('forCustomer') %> </label>
+<div id="field_options">
+	<div id="req_field_options">
+	<fieldset> 
+		<label class="checkbox"><input type="checkbox" name="portalcc"  id="portalcc_id" <%= (field_options && field_options['portalcc']) ? 'checked' : '' %> /><%= translate.get("displayCCField") %> </label>
+	</fieldset>   
+	<div id="cc_to_option" class="<%= (field_options && field_options['portalcc']) ? '' : 'hide' %>">
+		<fieldset class="tabbed" > 
+			<label class="radio"><input type="radio" name="portalcc_to"  value="company" <%= (field_options && field_options['portalcc_to'] == 'company') ? 'checked' : '' %>/><%= translate.get("ccCompanyContacts") %> </label>
+			<label class="radio"><input type="radio" name="portalcc_to" value="all" <%= (field_options && field_options['portalcc_to'] == 'all') ? 'checked' : '' %> /><%= translate.get("ccAnyEmail") %> </label>
+		</fieldset> 
+	</div>
+</div>

@@ -1,7 +1,7 @@
 module Conversations::Twitter
 
-  include Social::Dynamo::Twitter
   include Social::Twitter::ErrorHandler
+  include Social::Constants
 
   def send_tweet_as_mention(ticket = @parent, note = @item, tweet_body = @tweet_body)
     current_account = Account.current
@@ -18,7 +18,7 @@ module Conversations::Twitter
         :body => tweet_body,
         :in_reply_to_id => status_id
       }
-      error_msg, return_value = twt_sandbox(@reply_handle) {
+      error_msg, return_value = twt_sandbox(@reply_handle, TWITTER_TIMEOUT[:reply]) {
         twt = tweet_to_twitter(@reply_handle, tweet_params)
 
         #update dynamo
@@ -28,8 +28,9 @@ module Conversations::Twitter
           if stream && stream.default_stream?
             update_dynamo_for_tweet(twt, status_id, stream_id, note)
           elsif stream && stream.custom_stream?
+            dynamo_helper = Social::Dynamo::Twitter.new
             reply_params = agent_reply_params(twt, status_id, note)
-            update_custom_streams_reply(reply_params, stream_id, note)
+            dynamo_helper.update_custom_streams_reply(reply_params, stream_id, note)
           end
         end
 
@@ -51,13 +52,14 @@ module Conversations::Twitter
       status_id = latest_tweet.tweet_id
       req_twt_id = latest_comment.nil? ? ticket.requester.twitter_id : latest_comment.user.twitter_id
 
-      error_msg, return_value = twt_sandbox(@reply_handle) {
+      error_msg, return_value = twt_sandbox(@reply_handle, TWITTER_TIMEOUT[:reply]) {
         twitter  = TwitterWrapper.new(@reply_handle).get_twitter
         msg_body = tweet_body
         resp = twitter.create_direct_message(req_twt_id, msg_body)
 
         #update dynamo
         unless latest_tweet.stream_id.nil?
+          dynamo_helper = Social::Dynamo::Twitter.new
           stream_id = "#{current_account.id}_#{latest_tweet.stream_id}"
           reply_params = {
             :id => resp.attrs[:id_str],
@@ -65,7 +67,7 @@ module Conversations::Twitter
             :body => resp.attrs[:text],
             :posted_at => resp.attrs[:created_at]
           }
-          update_dm(stream_id, reply_params)
+          dynamo_helper.update_dm(stream_id, reply_params)
         end
 
         process_tweet note, resp, reply_handle_id, :dm
@@ -82,7 +84,7 @@ module Conversations::Twitter
 
   def update_dynamo_for_tweet(twt, status_id, stream_id, note)
     reply_params = agent_reply_params(twt, status_id, note)
-    update_brand_streams_reply(stream_id, reply_params, note)
+    Social::Dynamo::Twitter.new.update_brand_streams_reply(stream_id, reply_params, note)
   end
 
   def agent_reply_params(twt, status_id, note)

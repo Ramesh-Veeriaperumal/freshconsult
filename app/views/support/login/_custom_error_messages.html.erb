@@ -1,0 +1,13 @@
+<%
+line_classes = {0 => 'strong', 2 => 'mt10'}
+if @user_session.errors.any? %>
+  <div id="errorExplanation"
+      class="errorExplanation credentialError
+            <%= "alert-danger-dark" if @user_session.errors.size > 1 %>">
+    <ul>
+    <% @user_session.errors.full_messages.each_with_index do |msg, line| %>
+      <li class="<%= (line_classes[line] || "") if @user_session.errors.size > 1 %>"><%= msg %></li>
+    <% end %>
+  </ul>
+  </div>
+<% end %>

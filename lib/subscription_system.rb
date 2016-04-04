@@ -7,7 +7,6 @@ module SubscriptionSystem
     #:admin?
     base.send :helper_method, :current_account, :admin_subdomain?, :feature?,
         :allowed_in_portal?, :current_portal, :main_portal?
-    base.send :filter_parameter_logging, :password
   end
   
   def requires_feature(f)

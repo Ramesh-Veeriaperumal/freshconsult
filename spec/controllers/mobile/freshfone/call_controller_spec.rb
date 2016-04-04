@@ -1,10 +1,12 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
 load 'spec/support/freshfone_call_spec_helper.rb'
-include FreshfoneCallSpecHelper
+RSpec.configure do |c|
+  c.include FreshfoneCallSpecHelper
+end
 
 
-describe Freshfone::CallController do
+RSpec.describe Freshfone::CallController do
   before(:all) do
     create_test_freshfone_account
     create_freshfone_user

@@ -45,27 +45,37 @@ class Freshfone::Menu < Tree::TreeNode
   end
 	
 	def validate
-		ivr.errors.add_to_base("Cannot have blank message for menu '#{menu_name}'") unless has_message?
-		ivr.errors.add_to_base("Atleast one keypress option need for '#{menu_name}'") if  ( !has_options? && ivr.ivr_message?)
+		ivr.errors.add(:base,"Cannot have blank message for menu '#{menu_name}'") unless has_message?
+		ivr.errors.add(:base,"Message shouldn't exceed 4096 characters for menu '#{menu_name}'") if has_invalid_size?
+		ivr.errors.add(:base,"Atleast one keypress option need for '#{menu_name}'") if  ( !has_options? && ivr.ivr_message?)
 		validate_options
 	end
 	
 	def to_yaml_properties
-		instance_variables.reject{|v| [:@menu_options, :@ivr].include? v }
+		#options should be serialized before children and children hash to prevent 
+		#yaml dump from creating the child menu refrence first. 
+		#Only this allows the root menu to have an id of id001.
+		instance_variables.reject{|v| [:@menu_options, :@options, :@ivr].include? v }.prepend(:@options)
 	end
 		
-	def to_json(options=nil)
+	def as_json(options=nil)
 		{ :message => message,
 			:messageType => message_type,
-			:menuName => menu_name,
+			:menuName => CGI.escapeHTML(menu_name),
 			:menuId => menu_id,
 			:attachmentId => attachment_id,
-			:attachmentName => attachment_name,
-			:attachmentUrl => attachment_url,
-			:recordingUrl => recording_url,
-			:options => self.options.to_json
-		}.to_json
+			:attachmentName => CGI.escapeHTML(attachment_name || ""),
+			:attachmentUrl => CGI.escapeHTML(attachment_url || ""),
+			:recordingUrl => CGI.escapeHTML(recording_url || ""),
+			:options => self.options
+		}
 	end
+  
+  def to_json(options=nil)
+    hash = as_json
+    hash[:options] = as_json(options)[:options].to_json
+    hash.to_json
+  end
 
 	def speak(params={}, options={ :preview_alert => false, :invalid => false })
 		self.params ||= params
@@ -73,7 +83,8 @@ class Freshfone::Menu < Tree::TreeNode
 			say_verb(r, "Please enter a valid option.") if options[:invalid]
 			preview_alert_message(r) if options[:preview_alert]
 			has_options? ? menu_gather(r) : ivr_message(r)
-			r.Redirect "#{status_url}?force_termination=true&preview=#{preview?}&number_id=#{freshfone_number_id}", :method => "POST"
+			r.Redirect "#{status_url}?force_termination=true&preview=#{preview?}&number_id=#{freshfone_number_id}", 
+				:method => "POST" unless account.features?(:freshfone_conference)
 		end
 		[:twiml, twiml.text]
 	end

@@ -1,0 +1,15 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/hootsuite' %>
+<div class="hs-stream">
+	<div class="ticket-header clearfix">
+	    <span class="<%= font_class('freshdesk', nil, 'pull-left') %>"></span>
+	    <p class='tkt-title'><%= t("integrations.hootsuite.social.convert_to_ticket")%></p>
+	 </div>
+	 <div class="hootsuite-error">
+	 	<% if already_exist %>
+	 		<p><%= t("integrations.hootsuite.social.already_converted")%></p>
+	 	<% else %>
+	 		<p><%= t("integrations.hootsuite.social.successfully_converted")%></p>
+	 	<% end %>
+	 	<a href='<%=@path %>' target='_blank'><%= t('ticket.view_ticket') %></a>
+	 </div>
+</div>

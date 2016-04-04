@@ -1,6 +1,6 @@
-<% javascript_tag do %> 
+<%= javascript_tag do %> 
   function lookup(searchString, callback) { 
-    new Ajax.Request('<%=requesters_search_autocomplete_path%>?q='+encodeURIComponent(searchString), 
+    new Ajax.Request('<%=requesters_search_autocomplete_index_path%>?q='+encodeURIComponent(searchString), 
                                               { 
                                               method : "GET",
                                               onSuccess: function(response) {
@@ -23,7 +23,7 @@
   
   <div class="form_title"><%= t('.title') %>: <span><%= @ticket.from_email %></span> </div>
   <div class="list_agents_replying" class="hide"></div>
-  <% form_for note, :url => reply_helpdesk_ticket_conversations_path(@ticket), :html => { 
+  <%= form_for note, :url => reply_helpdesk_ticket_conversations_path(@ticket), :html => { 
                         :multipart => true, 
                         :id => "HelpdeskReply",
                         "data-panel" => cntid,
@@ -31,32 +31,35 @@
                         "data-fetch-latest" => 'true',
                         "data-cnt-id" => cntid,
                         "data-destroy-editor" => 'true',
+                        "data-domhelper-name" => "cnt-reply",
                         "data-fulltext" => true
                       } do |f| %>
     <%= f.error_messages %>
 
-    
+    <% conv_item = conv_id.nil? ? @ticket : @note %>
+    <% saved_draft = reply_draft(conv_item, @signature) %>
+
     <ul class="ui-form dont-validate botm-space">
       <li class="inline-field field" >
           <%= f.label(:reply_email, t("ticket.from"), :class => "mailaddr-label from" ) %>
           <div class="request_form_options">
             <a  href="#" rel="toggle_email_container" id="add_cc_btn_<%=cntid%>"
-                class="<%=@to_cc_emails.blank? ? '' : 'hide' %>" 
+                class="<%=saved_draft["draft_cc"].blank? ? '' : 'hide' %>"
                 data-container="cc-form-container-<%=cntid%>" 
                 data-toggle-button="add_cc_btn_<%=cntid%>"
                 data-toggle-checkbox="include_cc">
               <%= t(".cc") %>
             </a>
             <a  href="#" rel="toggle_email_container" id="add_bcc_btn-<%=cntid%>" 
-                class="<%=bcc_drop_box_email.blank? ? '' : 'hide' %> "
+                class="<%=saved_draft["draft_bcc"].blank? ? '' : 'hide' %> "
                 data-container="bcc-form-container-<%=cntid%>"
                 data-toggle-button="add_bcc_btn-<%=cntid%>" 
                 data-toggle-checkbox="include_bcc" >
               <%= t(".bcc") %>
             </a>
           </div>
-          <input type="checkbox" class="hide" id="include_cc" name="include_cc"  <%=@to_cc_emails.blank? ? "" : "checked" %>  />              
-          <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" <%=bcc_drop_box_email.blank? ? "" : "checked" %> />
+          <input type="checkbox" class="hide" id="include_cc" name="include_cc"  <%=saved_draft["draft_cc"].blank? ? "" : "checked" %>  />
+          <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" <%=saved_draft["draft_bcc"].blank? ? "" : "checked" %> />
           
           <%#= select :reply_email, :id, options_for_select(@reply_emails, @selected_reply_email),{}, {:class => 'select2 responder_field'} %>
           <select id="reply_email_id" name="reply_email[id]" class="select2 responder_field">
@@ -70,7 +73,7 @@
             <%end%>
           </select>
       </li>
-      <li class="inline-field field <%=@to_cc_emails.blank? ? "hide" : "" %> cc_fields" id="cc-form-container-<%=cntid%>">
+      <li class="inline-field field <%=saved_draft["draft_cc"].blank? ? "hide" : "" %> cc_fields" id="cc-form-container-<%=cntid%>">
         <label class = "mailaddr-label" for="cc_emails_<%=cntid%>"><%= t(".cc") %>:</label>
         <a href="#" class="clear_emails" rel='toggle_email_container' 
             data-container="cc-form-container-<%=cntid%>" 
@@ -78,12 +81,12 @@
             data-clear="true"><%= t('clear') %></a>
             <div class="email_container">
               <input type="text" id="cc_emails_<%=cntid%>" name="helpdesk_note[cc_emails]" />
-              <% javascript_tag do %>
-                new Autocompleter.MultiValue("cc_emails_<%=cntid%>", cachedLookup, $A(<%= @to_cc_emails.map{|item|[item, item]}.to_json.html_safe %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+              <%= javascript_tag do %>
+                new Autocompleter.MultiValue("cc_emails_<%=cntid%>", cachedLookup, $A(<%= saved_draft["draft_cc"].map{|item|[item, item]}.to_json.html_safe %>), {frequency: 0.1, acceptNewValues: true, allowSpaces: true, ignoreQuotedComma: true, separatorRegEx:/(?:"[^"]*"|[^,])+/g});
               <% end %>
             </div>
       </li>
-      <li class="inline-field field <%=bcc_drop_box_email.blank? ? "hide" : '' %>  cc_fields" id="bcc-form-container-<%=cntid%>">
+      <li class="inline-field field <%=saved_draft["draft_bcc"].blank? ? "hide" : '' %>  cc_fields" id="bcc-form-container-<%=cntid%>">
         <label class = "mailaddr-label" for="cc_emails_<%=cntid%>"><%= t(".bcc") %>:</label>
         <a href="#" class="clear_emails" rel='toggle_email_container' 
             data-container="bcc-form-container-<%=cntid%>" 
@@ -91,17 +94,18 @@
             data-clear="true"><%= t('clear') %></a>
             <div class="email_container">
               <input type="text" id="bcc_emails_<%=cntid%>" name="helpdesk_note[bcc_emails]" />
-              <% javascript_tag do %>
-                new Autocompleter.MultiValue("bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json.html_safe unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+              <%= javascript_tag do %>
+                new Autocompleter.MultiValue("bcc_emails_<%=cntid%>", cachedLookup, $A(<%= saved_draft["draft_bcc"].map{|item|[item, item]}.to_json.html_safe unless saved_draft["draft_bcc"].blank? %>), {frequency: 0.1, acceptNewValues: true, allowSpaces: true, separatorRegEx:/;|,/});
               <% end %>
             </div>
       </li>
       <li class="inline-field field clearField message">
         <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
         <% conv_item = conv_id.nil? ? @ticket : @note %>
-        <% f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
+        <%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
             <%= ff.text_area :body_html, :class => "required", :id => "#{cntid}-body", 
-                              :value => bind_last_reply(conv_item, @signature),
+                              :value => saved_draft["draft_text"],
+                              :"data-domhelper-name" => "#{cntid}-body",
                               :"data-quoted-textarea" => "##{cntid}-quoted", :"data-wrap-font-family" => true %>
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", :style => "display:none;" %>
             <%= text_area_tag "quoted_text_html", h(quoted_text(conv_item)), { :id => "#{cntid}-quoted", :class => "hide" } %>
@@ -131,7 +135,8 @@
       <%= f.hidden_field :from_email, :id => "reply_from_email_#{cntid}", :value => @selected_reply_email%>
       <%= f.hidden_field :email_config_id, :value => @selected_email_config_id %>
       <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
-      <%= hidden_field_tag(:ticket_status , '', :id=> "reply_ticket_status_#{cntid}"  )%>
+      <%= hidden_field_tag :last_note_id,'', :value => @last_note_id, :class => "last_note_id" %>
+
       <div class="clearfix zeroh" ></div>
       <div class="post_in_forum">
 
@@ -147,7 +152,7 @@
 
         <% show_satisfaction_survey_checkbox = @ticket.account.survey.can_send?(@ticket,
                                         Survey::SPECIFIC_EMAIL_RESPONSE) 
-           show_surveymonkey_checkbox = Integrations::SurveyMonkey.show_surveymonkey_checkbox? @ticket.account
+           show_surveymonkey_checkbox = Integrations::SurveyMonkey.show_surveymonkey_checkbox?
         %>
 
         <% if show_satisfaction_survey_checkbox and !show_surveymonkey_checkbox%>
@@ -206,7 +211,7 @@
           <% if privilege?(:edit_ticket_properties) %>
           <ul id="conversation_reply" data-menu-hover-in='li' data-menu-trigger="a" class="menuselector dropdown-menu custom_statuses pull-right">
             <%
-            ticket_statuses = current_account.ticket_status_values.reject{|status| status.status_id == 2 }
+            ticket_statuses = current_account.ticket_status_values_from_cache.reject{|status| status.status_id == 2 }
             %>
             <% ticket_statuses.each do |status| %>
             <li>
@@ -225,7 +230,7 @@
     <% end %>
 </div>
 <% content_for :pagefixed do %>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
 
     jQuery("#HelpdeskReply")      
       .bind("submit", function(ev){

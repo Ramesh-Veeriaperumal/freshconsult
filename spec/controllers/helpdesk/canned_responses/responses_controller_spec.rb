@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::CannedResponses::ResponsesController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -492,6 +491,27 @@ describe Helpdesk::CannedResponses::ResponsesController do
     canned_response.folder_id.should eql @personal_response_1.folder_id
   end
 
+  it "should update Canned Responses if any changes in case of title letters " do
+    test_response= create_response({:title => "Test response",:content_html => Faker::Lorem.paragraph,
+                                    :visibility => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups],:folder_id=>@test_cr_folder_1.id
+                                    })
+    put :update, {
+      :id => test_response.id,
+      :admin_canned_responses_response => {
+        :title => "test response",
+        :content_html => "Updated DESCRIPTION: New Canned_Responses Hepler",
+        :visibility => {:user_id => @agent.id,
+                        :visibility => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]
+                        }
+      },
+      :new_folder_id => test_response.folder_id,
+      :folder_id =>test_response.folder_id
+    }
+    canned_response   = @account.canned_responses.find_by_id(test_response.id)
+    canned_response.title.should eql("test response")
+    canned_response.folder_id.should eql test_response.folder_id
+  end
+
   # Bulk move cases starts from here
 
 
@@ -526,7 +546,7 @@ describe Helpdesk::CannedResponses::ResponsesController do
   it "should delete multiple Canned Responses" do
     new_response = @account.canned_responses.find_by_title("New Canned_Responses #{@now}")
     ids = ["#{@test_response_1.id}","#{new_response.id}"]
-    delete :delete_multiple, :ids => ids
+    delete :delete_multiple, :ids => ids, :folder_id => @test_response_1.folder.id
     ids.each do |id|
       @account.canned_responses.find_by_id(id).should be_nil
     end

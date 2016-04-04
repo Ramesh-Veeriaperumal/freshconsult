@@ -1,18 +1,16 @@
 require 'spec_helper'
 
 #Test cases for json api calls to contacts.
-describe ContactsController do
+RSpec.describe ContactsController do
 	self.use_transactional_fixtures = false
-	include APIAuthHelper
 
 	context "For Contacts without custom fields" do
 		before(:each) do
 			request.host = @account.full_domain
 			http_login(@agent)
 		end
-
 		before(:all) do
-			@new_company = Factory.build(:company)
+			@new_company = FactoryGirl.build(:company)
 			@new_company.save
 		end
 
@@ -27,7 +25,7 @@ describe ContactsController do
 			post :create, @params.merge!(:format => 'xml'), :content_type => 'application/xml'
 			@account.companies.find_by_name(company_name).should be_an_instance_of(Customer)
 			result = parse_xml(response)
-			expected = (response.status =~ /201 Created/) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 201) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
@@ -36,13 +34,13 @@ describe ContactsController do
 			@params[:user].merge!(:company_name => @new_company.name)
 			post :create, @params.merge!(:format => 'xml'), :content_type => 'application/xml'
 			result = parse_xml(response)
-			expected = (response.status =~ /201 Created/) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 201) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
 		it "should create a contact" do # To check normalize_params prioritization
 			test_email = Faker::Internet.email
-			company = Factory.build(:company)
+			company = FactoryGirl.build(:company)
 			company.save
 			post :create, :user => {:name => Faker::Name.name, 
 									:email => test_email , 
@@ -55,7 +53,7 @@ describe ContactsController do
 			new_contact.should be_an_instance_of(User)
 			new_contact.company_id.should eql company.id
 			result = parse_xml(response)
-			expected = (response.status =~ /201 Created/) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 201) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
@@ -63,7 +61,7 @@ describe ContactsController do
 			contact = add_new_user(@account,{})
 			get :show, {:id => contact.id, :format => 'xml'}
 			result = parse_xml(response)
-			expected = (response.status =~ /200 OK/) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 200) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
@@ -78,7 +76,7 @@ describe ContactsController do
 														:language => contact.language,
 														:customer => @new_company.name },
 											 :format => 'xml'}
-			response.status.should eql("200 OK")
+			response.status.should eql(200)
 		end
 
 		it "should update an existing contact" do # with new company parameters(customer deprecation)
@@ -92,14 +90,14 @@ describe ContactsController do
 														:time_zone => contact.time_zone, 
 														:language => contact.language,
 														:company_name => company_name},:format => 'xml'}
-			response.status.should eql("200 OK")
+			response.status.should eql(200)
 			@account.companies.find_by_name(company_name).should be_an_instance_of(Customer)
 		end
 
 		it "should delete an existing contact" do
 			contact = add_new_user(@account,{})
 			delete :destroy, {:id => contact.id, :format => 'xml'}
-			response.status.should be_eql('200 OK')		
+			response.status.should be_eql(200)		
 		end
 
 		it "should fetch contacts filtered by email" do
@@ -107,7 +105,7 @@ describe ContactsController do
 			check_email  = contact.email
 			get :index, {:query=>"email is #{check_email}", :state=>:all, :format => 'xml'}
 			result = parse_xml(response)
-			expected = (response.status =~ /200 OK/) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 200) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
@@ -116,7 +114,7 @@ describe ContactsController do
 			# US numbers format is not searched 812.123.1232 or (802)-123-1232
 			# Hence not using Faker for phonenumber generation.
 			# This needs to be addressed. change filter expresssion in api_helper_methods
-			contact = Factory.build(:user, :account => @account,
+			contact = FactoryGirl.build(:user, :account => @account,
 											:name => Faker::Name.name, 
 											:email => Faker::Internet.email,
 											:phone => "42345678",
@@ -127,13 +125,13 @@ describe ContactsController do
 			check_phone  = contact.phone
 			get :index, {:query=>"phone is #{check_phone}", :state=>:all, :format => 'xml'}
 			result = parse_xml(response)
-			expected = (response.status =~ /200 OK/) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 200) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
 		it "should fetch contacts filtered by mobile" do
 			# This needs to be addressed. change filter expresssion in api_helper_methods
-			contact = Factory.build(:user, :account => @account,
+			contact = FactoryGirl.build(:user, :account => @account,
 											:name => Faker::Name.name, 
 											:email => Faker::Internet.email,
 											:mobile => "9876543210",
@@ -144,14 +142,14 @@ describe ContactsController do
 			check_mobile  = contact.mobile
 			get :index, {:query=>"mobile is #{check_mobile}", :state=>:all, :format => 'xml'}
 			result = parse_xml(response)
-			expected = (response.status =~ /200 OK/) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 200) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
 		it "should fetch contacts filtered by company id" do
-			new_company = Factory.build(:customer, :name => Faker::Name.name)
+			new_company = FactoryGirl.build(:customer, :name => Faker::Name.name)
 			new_company.save
-			contact = Factory.build(:user, :account => @account,
+			contact = FactoryGirl.build(:user, :account => @account,
 											:name => Faker::Name.name, 
 											:email => Faker::Internet.email,
 											:mobile => "9876543210",
@@ -163,7 +161,7 @@ describe ContactsController do
 			check_id  = new_company.id
 			get :index, {:query=>"customer_id is #{check_id}", :state=>:all, :format => 'xml'}
 			result = parse_xml(response)
-			expected = (response.status =~ /200 OK/) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
+			expected = (response.status == 200) && (compare(result["users"].first.keys,APIHelper::CONTACT_ATTRIBS,{}).empty?)
 			expected.should be(true)
 		end
 
@@ -171,7 +169,7 @@ describe ContactsController do
 			contact = add_new_user(@account,{})
 			put :make_agent, {:id => contact.id,:format => 'xml'}
 			result = parse_xml(response)
-			expected = (response.status == "200 OK") && (compare(result["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
+			expected = (response.status == 200) && (compare(result["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
                 (compare(result["agent"]["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
             expected.should be(true)
 		end
@@ -180,7 +178,7 @@ describe ContactsController do
 	context "For Contacts with custom fields" do
 
 		before(:all) do
-			@user = Factory.build(:user, :account => @acc, :phone => Faker::PhoneNumber.phone_number, :email => Faker::Internet.email,
+			@user = FactoryGirl.build(:user, :account => @acc, :phone => Faker::PhoneNumber.phone_number, :email => Faker::Internet.email,
 											:user_role => 3, :active => true)
 			@user.save
 			@custom_field = []
@@ -189,6 +187,7 @@ describe ContactsController do
 				params = cf_params(field)
 				create_contact_field params 
 			end
+			clear_contact_field_cache
 			@text = Faker::Lorem.words(4).join(" ")
 		end
 
@@ -217,7 +216,8 @@ describe ContactsController do
 						  :format => 'xml'
 
 			result = parse_xml(response)
-			expected = (response.status == "201 Created") && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?) &&
+			expected = (response.status == 201
+        ) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?) &&
 							result["user"]["custom_field"].keys.sort == @custom_field.sort
 			expected.should be(true)
 
@@ -227,7 +227,7 @@ describe ContactsController do
 			new_user.send("cf_linetext").should eql(text)
 			new_user.send("cf_category").should eql "Tenth"
 			new_user.send("cf_agt_count").should eql(34)
-			new_user.send("cf_show_all_ticket").should be_false
+			new_user.send("cf_show_all_ticket").should be false
 			new_user.send("cf_file_url").should eql(url)
 		end
 
@@ -246,7 +246,7 @@ describe ContactsController do
 						  :format => 'xml'
 
 			result = parse_xml(response)
-			expected = (response.status == "201 Created") && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?) &&
+			expected = (response.status == 201) && (compare(result["user"].keys,APIHelper::CONTACT_ATTRIBS,{}).empty?) &&
 							result["user"]["custom_field"].keys.sort == custom_field.map {|k,v| k.to_s}.sort
 			expected.should be(true)
 
@@ -254,13 +254,14 @@ describe ContactsController do
 			new_user.should be_an_instance_of(User)
 			new_user.flexifield_without_safe_access.should_not be_nil
 			new_user.send("cf_linetext").should eql(text)
-			new_user.send("cf_show_all_ticket").should be_true
+			new_user.send("cf_show_all_ticket").should be true
 			new_user.send("cf_file_url").should eql(url)
 			new_user.send("cf_agt_count").should be_nil
 			new_user.send("cf_testimony").should be_nil
 		end
 
 		it "should update a contact with custom fields" do
+			@user = @account.users.create(:email => Faker::Internet.email)
 			@user.flexifield_without_safe_access.should be_nil
 			put :update,{:id => @user.id, 
 						 :user=>{:name => Faker::Name.name,
@@ -279,7 +280,7 @@ describe ContactsController do
 			user.send("cf_testimony").should eql(@text)
 			user.send("cf_category").should eql "First"
 			user.send("cf_agt_count").should eql(7)
-			user.send("cf_show_all_ticket").should be_true
+			user.send("cf_show_all_ticket").should be true
 			user.send("cf_file_url").should be_nil
 			user.send("cf_linetext").should eql("updated text")
 		end
@@ -288,6 +289,8 @@ describe ContactsController do
 			text = Faker::Lorem.words(4).join(" ")
 			name = Faker::Name.name
 			user = @account.users.find(@user.id)
+			text = user.custom_field["cf_testimony"]
+
 			put :update,{:id => user.id, 
 						 :user=>{:name => name,
 								:email => user.email, 
@@ -303,12 +306,7 @@ describe ContactsController do
 			user.time_zone.should eql "Moscow"
 
 			user.flexifield_without_safe_access.should_not be_nil
-			user.send("cf_testimony").should eql(@text)
-			user.send("cf_category").should eql "First"
-			user.send("cf_agt_count").should eql(7)
-			user.send("cf_show_all_ticket").should be_true
-			user.send("cf_file_url").should be_nil
-			user.send("cf_linetext").should eql("updated text")
+			user.send("cf_testimony").should eql(text)
 		end
 
 		it "should update a contact with custom fields with null values" do
@@ -334,6 +332,10 @@ describe ContactsController do
 			user.flexifield_without_safe_access.should_not be_nil
 			user.name.should eql(name)
 		end
-	end
 
+		def clear_contact_field_cache
+			key = MemcacheKeys::CONTACT_FORM_FIELDS % {:account_id => @account.id,:contact_form_id => @account.contact_form.id}
+			MemcacheKeys.delete_from_cache key
+		end
+	end
 end

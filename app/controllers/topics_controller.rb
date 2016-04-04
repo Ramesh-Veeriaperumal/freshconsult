@@ -82,7 +82,7 @@ class TopicsController < ApplicationController
 			respond_to do |format|
 				format.html { render :action => "new" }
 				format.xml  { render  :xml => @topic.errors }
-				format.json  { render  :json => @topic.errors }
+				format.json  { render  :json => @topic.errors.fd_json }
 			end
 		end
 	end

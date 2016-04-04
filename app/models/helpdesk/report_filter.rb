@@ -1,5 +1,6 @@
 class Helpdesk::ReportFilter < ActiveRecord::Base
-  set_table_name "report_filters"
+  self.table_name =  "report_filters"
+  self.primary_key = :id
 
   belongs_to_account
 
@@ -9,7 +10,10 @@ class Helpdesk::ReportFilter < ActiveRecord::Base
 
   serialize :data_hash
 
-  named_scope :by_report_type, lambda { |report_type|
+  scope :by_report_type, lambda { |report_type|
     { :conditions => {:report_type => report_type}}
   }
+
+  scope :order_by_latest, :order => 'updated_at DESC'
+  
 end

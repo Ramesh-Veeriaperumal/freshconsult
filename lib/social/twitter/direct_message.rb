@@ -4,22 +4,26 @@ class Social::Twitter::DirectMessage
 
   attr_accessor :twitter, :twt_handle
   include Social::Twitter::TicketActions
-  include Social::Dynamo::Twitter
+  include Social::Twitter::ErrorHandler
+  include Social::Constants
 
   def initialize(twt_handle, options = {})
     wrapper         = TwitterWrapper.new twt_handle
     self.twitter    = wrapper.get_twitter
     self.twt_handle = twt_handle
+    @dynamo_helper = Social::Dynamo::Twitter.new
   end
 
   def process
-    tweets = twt_handle.last_dm_id.blank? ? twitter.direct_messages : twitter.direct_messages({:since_id => twt_handle.last_dm_id})
-    last_tweet_id = tweets[0].id unless tweets.blank?
-    tweets.sort! { |x,y| Time.at(x.created_at).utc <=> Time.at(y.created_at).utc } unless tweets.blank?
-    tweets.each do |twt|
-      create_fd_item(twt, twt_handle)
+    social_error_msg, tweets = fetch_dms 
+    if social_error_msg.blank?
+      last_tweet_id = tweets[0].id unless tweets.blank?
+      tweets.sort! { |x,y| Time.at(x.created_at).utc <=> Time.at(y.created_at).utc } unless tweets.blank?
+      tweets.each do |twt|
+        create_fd_item(twt, twt_handle)
+      end
+      twt_handle.update_attribute(:last_dm_id, last_tweet_id) unless last_tweet_id.blank?
     end
-    twt_handle.update_attribute(:last_dm_id, last_tweet_id) unless last_tweet_id.blank?
   end
 
 
@@ -27,9 +31,9 @@ class Social::Twitter::DirectMessage
   def create_fd_item(twt, twt_handle)
     @sender = twt.sender
     account = twt_handle.account
-    user   = get_twitter_user(@sender.screen_name.dup, @sender.profile_image_url.to_s)
+    user   = get_twitter_user(@sender.screen_name.dup, @sender.profile_image_url.to_s, @sender.name)
     user.make_current
-    previous_ticket = user.tickets.twitter_dm_tickets(twt_handle.id).newest(1).first
+    previous_ticket = user.tickets.twitter_dm_tickets(twt_handle.id).newest(1).readonly(false).first
     unless previous_ticket.blank?
       if (!previous_ticket.notes.blank? && !previous_ticket.notes.latest_twitter_comment.blank?)
         last_reply =  previous_ticket.notes.latest_twitter_comment.first
@@ -67,7 +71,14 @@ class Social::Twitter::DirectMessage
       :body      => twt.attrs[:text],
       :posted_at => twt.attrs[:created_at]
     }
-    update_dm(stream_id, params)
+    @dynamo_helper.update_dm(stream_id, params)
+  end
+  
+  def fetch_dms
+    twt_sandbox(twt_handle, TWITTER_TIMEOUT[:dm]) do
+      msg_params = twt_handle.last_dm_id.blank? ? {} : { :since_id => twt_handle.last_dm_id }
+      twitter.direct_messages(msg_params.merge(:full_text => true))
+    end
   end
 
 end

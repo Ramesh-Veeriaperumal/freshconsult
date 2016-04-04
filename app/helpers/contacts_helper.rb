@@ -2,6 +2,7 @@ module ContactsHelper
 
 	include ContactsCompaniesHelper
   include UserEmailsHelper
+  include Marketplace::ApiHelper
 
   def contact_fields
     @user.helpdesk_agent? ? current_account.contact_form.default_contact_fields : current_account.contact_form.contact_fields
@@ -24,13 +25,13 @@ module ContactsHelper
   def view_contact_fields 
     reject_fields = [:default_name, :default_job_title, :default_company_name, :default_description, :default_tag_names]
     view_contact_fields = contact_fields.reject do |item|
-      field_value = (field_value = @user.send(item.name)).blank? ? item.default_value : field_value
-      (reject_fields.include? item.field_type) || !field_value.present?
+      (reject_fields.include? item.field_type) || !(@user.send(item.name).present?)
     end
   end
 
   def user_activities
-    activities = @user_tickets + @user.recent_posts
+    activities = @user_tickets
+    activities += @user.recent_posts if current_account.features?(:forums)
     activities = activities.sort_by {|item| -item.created_at.to_i}
     activities = activities.take(10)
   end
@@ -53,6 +54,9 @@ module ContactsHelper
 
     (icon_wrapper + text_wrapper + time_div)
   end
+
+  #This is for user emails display in show page
+  #The one for the form is in user_emails_helper
 
   def render_user_email_field field
     output = []
@@ -77,6 +81,22 @@ HTML
     head = content_tag(:p, field.label, :class => 'field-label break-word')
     output.join("").html_safe
     li = content_tag(:li, (head+output.join("").html_safe), :class => 'show-field')
+  end
+
+  def api_permitted_data
+    [:id,:name,:email,:created_at,:updated_at,:active,:job_title,
+    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted, :helpdesk_agent,
+    :fb_profile_id,:external_id,:language,:address,:customer_id]
+  end
+  
+  def is_campaign_app?(app_name)
+    Integrations::Constants::CAMPAIGN_APPS.include?(app_name.to_sym)
+  end
+
+  def installed_campaign_apps
+    Integrations::Constants::CAMPAIGN_APPS.select do |app|
+      get_app_details(app.to_s)
+    end
   end
 
 end

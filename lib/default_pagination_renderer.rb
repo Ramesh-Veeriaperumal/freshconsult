@@ -1,4 +1,6 @@
-class DefaultPaginationRenderer < WillPaginate::LinkRenderer
+# TODO-RAILS3 need to change this
+# http://thewebfellas.com/blog/2010/8/22/revisited-roll-your-own-pagination-links-with-will_paginate-and-rails-3
+class DefaultPaginationRenderer < WillPaginate::ActionView::LinkRenderer
 
   def initialize
     @gap_marker = '<span class="gap">&hellip;</span>'
@@ -11,7 +13,7 @@ class DefaultPaginationRenderer < WillPaginate::LinkRenderer
     links.push    page_link_or_span(@collection.next_page,     'disabled next_page', @options[:next_label].html_safe)
 
     html = links.join(@options[:separator]).html_safe
-    (@options[:container] ? @template.content_tag(:div, html, html_attributes) : html).html_safe
+    (@options[:container] ? @template.content_tag(:div, html, container_attributes) : html).html_safe
   end
 
   protected
@@ -27,7 +29,7 @@ class DefaultPaginationRenderer < WillPaginate::LinkRenderer
   end
 
   def page_link(page, text, attributes = {})
-    @template.link_to text.html_safe, url_for(page).html_safe, attributes
+    @template.link_to text.html_safe, url(page).html_safe, attributes
   end
 
   def page_span(page, text, attributes = {})

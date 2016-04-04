@@ -1,31 +1,47 @@
+require 'business_calendar_ext/association'
 class Freshfone::Number < ActiveRecord::Base
+  self.primary_key = :id
 	include Mobile::Actions::Freshfone
-	set_table_name :freshfone_numbers
-	include BusinessCalendar::Association
+	self.table_name =  :freshfone_numbers
+	include BusinessCalendarExt::Association
+
 	require_dependency 'freshfone/number/message'
 
-	serialize :on_hold_message
+	serialize :on_hold_message #Queue Message
 	serialize :non_availability_message
 	serialize :non_business_hours_message
 	serialize :voicemail_message
+	serialize :wait_message #Message that plays after the welcome message
+	serialize :hold_message
 
 	belongs_to_account
 	has_many :freshfone_calls, :class_name => 'Freshfone::Call',
 						:foreign_key => :freshfone_number_id, :dependent => :delete_all
 	has_one :ivr, :class_name => 'Freshfone::Ivr',
 					:foreign_key => :freshfone_number_id, :dependent => :delete
+	has_many :freshfone_number_groups, :class_name => "Freshfone::NumberGroup",
+  					:dependent => :delete_all, :foreign_key => :freshfone_number_id
 	belongs_to :business_calendar
+	belongs_to :freshfone_caller_id, :class_name => "Freshfone::CallerId", :foreign_key => :caller_id
 
 	has_many :attachments, :as => :attachable, :class_name => 'Helpdesk::Attachment', 
 						:dependent => :destroy
 
-	delegate :group_id, :group, :to => :ivr
+	delegate :group_id, :group, :read_welcome_message, :to => :ivr
 	attr_accessor :attachments_hash, :address_required, :skip_in_twilio
 	attr_protected :account_id
+  after_find :assign_number_to_message
+  after_create :assign_number_to_message
 
-	MESSAGE_FIELDS = [:on_hold_message, :non_availability_message, :voicemail_message, :non_business_hours_message]
+  #on_hold_message is not HOLD message. it is queue message. Should be renamed
+	MESSAGE_FIELDS = [:on_hold_message, :non_availability_message, :voicemail_message, :non_business_hours_message, :wait_message, :hold_message]
 	STATE = { :active => 1, :expired => 2 }
 	STATE_BY_VALUE = STATE.invert
+	
+	DEFAULT_WAIT_MUSIC = "http://com.twilio.music.guitars.s3.amazonaws.com/Pitx_-_Long_Winter.mp3"
+	DEFAULT_QUEUE_MUSIC = "http://com.twilio.music.guitars.s3.amazonaws.com/Pitx_-_A_Thought.mp3"
+	DEFAULT_RINGING_MUSIC = "http://assets1.freshdesk.com/assets/cdn/ringing.mp3"
+	DEFAULT_WAIT_LOOP = 1
 
 	TYPE = [
 		[:local, 'local', 1],
@@ -49,6 +65,11 @@ class Freshfone::Number < ActiveRecord::Base
 	
 	HUNT_TYPE = { :simultaneous => 1, :round_robin => 2 }
 	RECORDING_VISIBILITY = {:public_recording => true, :private_recording => false}
+	ALL_NUMBERS = "0" #Used in Call History and Reports for filtering
+	MIN_RINGING_TIME = 30
+	MIN_RR_TIMEOUT = 10
+	MAX_RINGING_TIME = 999
+	PORT_STATE = {:port_in => 1, :port_away => 2}
 
 	validates_presence_of :account_id
 	validates_presence_of :number, :presence => true
@@ -60,14 +81,18 @@ class Freshfone::Number < ActiveRecord::Base
 		:message => "%{value} is not a valid state"
 	validates_inclusion_of :number_type, :in => TYPE_HASH.values,
 		:message => "%{value} is not a valid number_type"
-	validate_on_create :validate_purchase
-	validate_on_update :validate_settings, :validate_attachments, :unless => :deleted_changed?
+	validate :validate_purchase, on: :create
+	validate :validate_settings, :validate_attachments, :validate_name, :unless => :deleted_changed?, on: :update
+	validate :validate_queue_position_message, :if => :queue_position_preference, on: :update
+	validates_inclusion_of :rr_timeout, :in => MIN_RR_TIMEOUT..MAX_RINGING_TIME
+	validates_inclusion_of :ringing_time, :in => MIN_RINGING_TIME..MAX_RINGING_TIME
 	validates_uniqueness_of :number, :scope => :account_id
-
-	named_scope :filter_by_number, lambda {|from, to| {
+	validate :validate_port
+	scope :filter_by_number, lambda {|from, to| {
 		:conditions => ["number in (?, ?)", from, to] }
 	}
-	named_scope :expired, :conditions => { :state => 2 }
+	scope :expired, :conditions => { :state => 2 }
+	scope :numbers_with_groups, :include => :freshfone_number_groups
 
 
 	VOICE_HASH.each_pair do |k, v|
@@ -98,16 +123,20 @@ class Freshfone::Number < ActiveRecord::Base
 		male_voice? ? VOICE_TYPE_HASH[:male] : VOICE_TYPE_HASH[:female]
 	end
 	
-	def to_json
-		MESSAGE_FIELDS.map do |msg_type|
+	def as_json(opts ={})
+    if opts.blank?
+      MESSAGE_FIELDS.map do |msg_type|
 
-			if self[msg_type].blank?
-				{ :type => msg_type }
-			else
-				self[msg_type].parent = self
-				self[msg_type]
-			end
-		end.to_json
+        if self[msg_type].blank?
+          { :type => msg_type }
+        else
+          self[msg_type].parent = self
+          self[msg_type].as_json
+        end
+      end
+    else
+      super(opts)
+    end
 	end
 
 	def number_name
@@ -123,10 +152,6 @@ class Freshfone::Number < ActiveRecord::Base
 		attachments_hash.has_key?(type)
 	end
 	
-	def after_find
-		assign_number_to_message
-	end
-
 	def self.find_due(renew_at = Time.now)
 		find(:all, :conditions => { :state => STATE[:active], :deleted => false,
 											 :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
@@ -141,7 +166,7 @@ class Freshfone::Number < ActiveRecord::Base
 	def renew
 		begin
 			next_renewal = self.next_renewal_at.advance(:months => 1) - 1.day
-			account.freshfone_credit.renew_number(rate, id)
+			deduce_credit
 			update_attributes(:next_renewal_at => next_renewal)
 		rescue Exception => e
 			puts "Number Renewal failed for Account : #{account.id} : \n #{e}"
@@ -167,12 +192,20 @@ class Freshfone::Number < ActiveRecord::Base
 		on_hold_message.speak(xml_builder) unless on_hold_message.blank?
 	end
 
+	def play_hold_message(xml_builder)
+		hold_message.speak(xml_builder, 50) unless hold_message.blank? # loop 50 
+	end
+
 	def read_non_availability_message(xml_builder)
 		non_availability_message.speak(xml_builder) unless non_availability_message.blank?
 	end
 
 	def read_non_business_hours_message(xml_builder)
 		non_business_hours_message.speak(xml_builder) unless non_business_hours_message.blank?
+	end
+
+	def play_wait_message(xml_builder)
+		wait_message.speak(xml_builder, 5) unless wait_message.blank?
 	end
 	
 	def message_changed?
@@ -182,6 +215,49 @@ class Freshfone::Number < ActiveRecord::Base
 
 	def unused_attachments
 		attachments.reject{ |a| inuse_attachment_ids.include? a.id }
+	end
+
+	def ringing_duration
+		round_robin? ? rr_timeout : ringing_time
+	end
+
+	def working_hours?
+    (non_business_hour_calls? or within_business_hours?)
+  end
+
+  def within_business_hours?
+    default_business_calendar = business_calendar 
+    default_business_calendar.blank? ? 
+      (default_business_calendar = Freshfone::Number.default_business_calendar(self)) :
+      (Time.zone = default_business_calendar.time_zone)  
+    business_hours = Time.working_hours?(Time.zone.now, default_business_calendar)
+    ensure
+      TimeZone.set_time_zone
+  end
+
+	def self.accessible_freshfone_numbers(current_user, freshfone_numbers=[])
+		all_numbers = numbers_with_groups
+		agent_groups = current_user.agent_groups.collect{|ag| ag.group_id}
+		freshfone_numbers = all_numbers.reject { |number|
+			number_groups = number.freshfone_number_groups.collect{|group| group.group_id}
+			(number_groups.present? && (number_groups&agent_groups).blank?)
+		}
+		freshfone_numbers
+	end
+
+	def can_access_by_agent?(user)
+		number_groups = freshfone_number_groups.collect{|group| group.group_id}
+		return true if number_groups.blank?
+		agent_groups = user.agent_groups.collect{|ag| ag.group_id}
+		(number_groups&agent_groups).present?
+	end
+
+	def ivr_enabled?
+		ivr.ivr_message?
+	end
+
+	def self.twilio_number(number_sid, current_account)
+		current_account.freshfone_account.twilio_subaccount.incoming_phone_numbers.get(number_sid)
 	end
 
 	private
@@ -223,18 +299,19 @@ class Freshfone::Number < ActiveRecord::Base
 		def validate_attachments 
 			 (attachments || []).each do |a|
 			 	if a.id.blank? 
-					errors.add_to_base(I18n.t('freshfone.admin.invalid_attachment',
+					errors.add(:base,I18n.t('freshfone.admin.invalid_attachment',
 						{ :name => a.content_file_name })) unless a.mp3?
 				end
 			end
 		end
 
 		def validate_purchase
+			return validate_trial if account.freshfone_account.trial?
 			if invalid_credit_and_country
-				errors.add_to_base(I18n.t('freshfone.admin.numbers.cannot_purchase'))
+				errors.add(:base,I18n.t('freshfone.admin.numbers.failure_purchase'))
 				return false
 			end
-			errors.add_to_base(I18n.t('freshfone.admin.numbers.insuffcient_credits')) unless sufficient_credits?
+			errors.add(:base,I18n.t('freshfone.admin.numbers.low_credits')) unless sufficient_credits?
 		end
 
 		def assign_number_to_message
@@ -252,4 +329,40 @@ class Freshfone::Number < ActiveRecord::Base
 			FreshfoneNotifier.deliver_ops_alert(account, notification, message)
 		end
 
+		def validate_name
+			errors.add(:base, I18n.t('freshfone.admin.number_settings.name_maxlength')) if (name.present? && name.length > 255 )
+		end
+
+		def validate_queue_position_message
+			errors.add(:base, "invalid queue position message") if queue_position_message.match(/\{\{queue.position\}\}/).blank?
+		end
+
+		def validate_port
+			return if !port.present?
+			PORT_STATE.values.include?(port) ? true : errors.add(:base, "invalid port state")
+		end
+		
+		def validate_trial
+			number_country = Freshfone::Cost::NUMBERS[self.country]
+			number_rate = (number_country || {})[Freshfone::Number::TYPE_STR_REVERSE_HASH[number_type]]
+			if number_country.blank? || number_rate.blank?
+				errors.add :base, I18n.t('freshfone.admin.numbers.failure_purchase')
+				return false
+			elsif validate_trial_number_restrictions(number_rate)
+				errors.add :base, I18n.t('freshfone.admin.trial.request_activation_msg')
+				return false
+			end
+		end
+
+		def validate_trial_number_restrictions(number_rate)
+			number_count = Freshfone::Subscription.fetch_number_count(account)
+			number_credit = Freshfone::Subscription.fetch_number_credit(account)
+			((account.freshfone_numbers.count + 1) > number_count) || (number_rate > number_credit)
+		end
+
+		def deduce_credit
+			return account.freshfone_subscription.add_to_others_usage(rate) if
+				account.freshfone_account.in_trial_states?
+			account.freshfone_credit.renew_number(rate, id)
+		end
 end

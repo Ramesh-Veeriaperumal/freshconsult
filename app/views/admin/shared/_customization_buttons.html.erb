@@ -28,7 +28,7 @@ end
 %>
 
 <div class="form-buttons">
-  <%= link_to t("go_back"), (@portal.main_portal? ? edit_account_path : admin_products_path), :class => "btn" %>
+  <%= link_to t("go_back"), admin_portal_index_path, :class => "btn" %>
 
   <a href="#reset-dialog" role="button" class="btn" 
     data-toggle="modal" rel="reset-btn" id="soft_reset_button"

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-describe ContactsController do
-  integrate_views
+RSpec.describe ContactsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -11,13 +10,9 @@ describe ContactsController do
   end
 
   before(:all) do
-    @sample_contact = Factory.build(:user, :account => @acc, :phone => "234234234234234", :email => Faker::Internet.email,
+    @sample_contact = FactoryGirl.build(:user, :account => @acc, :phone => "234234234234234", :email => Faker::Internet.email,
                               :user_role => 3)
     @sample_contact.save
-  end
-
-  after(:each) do
-    @account.features.multiple_user_emails.destroy
   end
 
   it "should not create a new contact without an email" do
@@ -26,7 +21,7 @@ describe ContactsController do
   end
 
   it "should not allow to create more agents than allowed by the plan" do
-    contact = Factory.build(:user)
+    contact = FactoryGirl.build(:user)
     contact.save
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
     @request.env['HTTP_REFERER'] = 'sessions/new'
@@ -36,7 +31,7 @@ describe ContactsController do
   end
 
   it "should not create a contact within a company" do
-    new_company = Factory.build(:customer, :name => Faker::Name.name)
+    new_company = FactoryGirl.build(:customer, :name => Faker::Name.name)
     new_company.save
     post :quick_contact_with_company, { :company_name => new_company.id, 
                                         :user => { :name => Faker::Name.name, 
@@ -49,7 +44,7 @@ describe ContactsController do
   end
 
   it "should not edit a contact" do
-    contact = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+    contact = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
     contact.save
     test_email = Faker::Internet.email
@@ -76,7 +71,7 @@ describe ContactsController do
 
   it "should fail making a customer a full-time agent" do
     @account.subscription.update_attributes(:agent_limit => 1)
-    customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email,
+    customer = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
     customer.save
     put :make_agent, :id => customer.id
@@ -87,16 +82,14 @@ describe ContactsController do
   it "should fail user creation MUE feature enabled" do
     user = add_new_user(@account)
     @user_count = @user_count + 1
-    @account.features.multiple_user_emails.create
     test_email = user.email
     post :create, :user => { :name => Faker::Name.name, :email => test_email , :time_zone => "Chennai", :language => "en" }
     @account.users.all.size.should eql @user_count
     response.body.should =~ /Email has already been taken/
-    @account.features.multiple_user_emails.destroy
   end
 
   it "should unblock an user" do
-    contact = Factory.build(:user, :account => @acc, :phone => "4564564656456", 
+    contact = FactoryGirl.build(:user, :account => @acc, :phone => "4564564656456", 
                                                      :blocked => true, 
                                                      :email => Faker::Internet.email,
                                                      :user_role => 3, 
@@ -105,7 +98,7 @@ describe ContactsController do
     contact.save
     ticket = create_ticket({ :requester_id => contact.id })
     Resque.inline = true
-    User.any_instance.stubs(:update_without_callbacks).raises(StandardError)
+#    User.any_instance.stubs(:update_without_callbacks).raises(StandardError)
     get :unblock, :id => contact.id
     User.any_instance.unstub(:update_without_callbacks)
     Resque.inline = false

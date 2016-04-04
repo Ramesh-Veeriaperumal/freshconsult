@@ -1,6 +1,6 @@
-<div class="request_panel" id="<%=cntid%>" style="display:none;" data-is-twitter="<%=@ticket.is_twitter?.to_s%>" data-type="textarea" rel="emitter" data-node-name="agent_replying">
+<div class="request_panel" id="<%=cntid%>" style="display:none;" data-is-twitter="<%=@ticket.twitter?.to_s%>" data-type="textarea" rel="emitter" data-node-name="agent_replying">
 	<div class="form_title">
-		<strong><%= t(".title", :user=>"@#{@ticket.requester.twitter_id}") %>: </strong> 
+		<strong><%= t(".title", :user=>"#{@ticket.latest_twitter_comment_user}") %>: </strong> 
 
 		<span id="not_following_message" class="info-highlight center">
 			<%=t('ticket.tweet_form.user_not_following')%>
@@ -8,9 +8,10 @@
 	</div>
 	<div class="list_agents_replying" class="hide"></div>
 	<input type="hidden" value="<%= @ticket.requester.twitter_id %>" id="requester_twitter_handle" />
-	<% form_for note, :url => twitter_helpdesk_ticket_conversations_path(@ticket), :html => {
+	<%= form_for note, :url => twitter_helpdesk_ticket_conversations_path(@ticket), :html => {
 						:multipart => true,  
 						:id => "HelpdeskTweets",
+            :rel => 'tweet_form', 
 						"data-panel" => cntid,
                         "data-show-pseudo-reply" => 'true',
                         "data-fetch-latest" => 'true',
@@ -19,8 +20,12 @@
 		<%= hidden_field_tag :tweet, "true", :id => "tweet" %>
 		<%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>  
 		<%= f.hidden_field :private , :value => "false" %>
+    <%= hidden_field_tag :tkt_tweet_type, @ticket.tweet.tweet_type, :id => "tkt_tweet_type" %>
+    <%= hidden_field_tag :in_reply_to_handle, @ticket.latest_twitter_comment_user, :id => "in_reply_to_handle" %>
+    
 		<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"]%>  
-		<%= hidden_field_tag(:ticket_status ,'', :id=> "reply_ticket_status_#{cntid}"  )%>
+		<%= hidden_field_tag :last_note_id,'', :value => @last_note_id, :class => "last_note_id" %>
+
 		<ul class="ui-form dont-validate">
 			<li class="inline-field field">
 				<%= render(:partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :id => id, :cntid => cntid }) %> 
@@ -30,13 +35,13 @@
 								:class => 'select2 responder_field' %>
 			</li>				
 			<li class="inline-field field clearField continous message">
-				<% f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
+				<%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
 					<%= ff.text_area :body, { :class => 'required tweet auto-height', :id => "#{id}-#{cntid}-body", :value =>default_twitter_body_val(@ticket), :rows => "3", "data-tweet-count" => default_twitter_body_val(@ticket).length } %>
 				<% end %>
 			</li>
 		</ul>
 
-		<span class="tweet-counter" id="SendTweetCounter">140</span>
+		<span class="tweet-counter" id="SendTweetCounter"></span>
 
 		<div class="btn-toolbar">
 			<span id="tweet_type_selector">
@@ -49,7 +54,7 @@
 	        </span>
 
 	        <span class="btn-group <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
-	          <a class="btn btn-primary submit_btn" id="tweet-reply-btn" data-tweet-type="<%=@ticket.tweet.tweet_type%>" data-confirm-message = "<%= t('ticket.reply_form.dm_confirm_message') %>">
+	          <a class="btn btn-primary submit_btn" id="tweet-reply-btn" data-tweet-type="<%=@ticket.tweet.tweet_type%>">
 	            <%= t('ticket.reply_form.send') %>
               <% if privilege?(:edit_ticket_properties) %>
 	              <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
@@ -78,5 +83,5 @@
 
 <% content_for :onload_script do %>
   jQuery("#HelpdeskTweets").validate();	
-  jQuery('#send-tweet-cnt-reply-body').NobleCount('#SendTweetCounter', { on_negative : "error" }); 
+  jQuery("#tweet_type").change();
 <% end %>

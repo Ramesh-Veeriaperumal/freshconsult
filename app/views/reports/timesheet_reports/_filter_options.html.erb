@@ -1,5 +1,5 @@
 
-<% form_tag(export_csv_timesheet_reports_url, { :method => :post, :id => 'report_filters' }) do %>
+<%= form_tag(export_csv_timesheet_reports_url, { :method => :post, :id => 'report_filters' }) do %>
 <ul class="unstyled">
 
 <li>
@@ -12,7 +12,7 @@
 			date_range = @report_date.blank? ? date_range_val((Time.zone.now.ago 30.day),Time.zone.now) :  @report_date	
 		%>
 			
-  		<%= render :partial => "/reports/shared/daterange_picker", :locals => { :date_range => date_range }%> 
+  		<%= render :partial => "/reports/shared/daterange_picker.html.erb", :locals => { :date_range => date_range }%> 
       <label class="control-label"><%=t('helpdesk.time_sheets.customer')%></label>  
 			
 			<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies }) %>
@@ -25,7 +25,6 @@
 							  :class => "select2 filter_item", 
 										 "data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_agent') } %>
 			<label class="control-label"><%=t('helpdesk.time_sheets.billing_type')%></label>
-			<%@billable = [] if @billable.length == 2 %>
 			<%= select_tag :billable, options_for_select(Helpdesk::TimeSheet.billable_options,@billable), 
 			 				{ :multiple => true, 
 			 				  :class => "select2 filter_item",
@@ -39,9 +38,8 @@
 							  :class => "select2 filter_item", 
 										 "data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_group') } %>
 
-			
 			<% grp_data = Helpdesk::TimeSheet.group_by_options.collect {|grp| grp[1] if !(@headers.include?(grp[1])) } %>
-			<%= hidden_field_tag "group_by", grp_data %>
+			<%= hidden_field_tag "group_by", grp_data.compact[0] %>
 			
 			<label class="control-label"><%=t('helpdesk.time_sheets.product')%></label>
 			<%= select_tag :products_id, options_for_select(current_account.products.collect{|c| [c.name, c.id]}, @products_id.map(&:to_i) ), 

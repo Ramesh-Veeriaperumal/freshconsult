@@ -1,12 +1,18 @@
 class Support::SurveysController < ApplicationController
 
   skip_before_filter :check_privilege, :verify_authenticity_token
+  before_filter :load_ticket, :only => :create_for_portal
   before_filter :load_handle, :except => [:create_for_portal]
-  
-  include SupportTicketControllerMethods
+  before_filter :delta_handle
+
+  include SupportTicketControllerMethods  
+    
+  def delta_handle
+   redirect_to params.merge!(:controller => "support/custom_surveys", :only_path => true) if current_account.new_survey_enabled?
+  end
 
   def new
-  	send_error and return if @survey_handle.rated?
+    send_error and return if @survey_handle.rated?
     @rating = Survey::CUSTOMER_RATINGS_BY_TOKEN.fetch(params[:rating], Survey::HAPPY)
     @account = Account.find_by_id @survey_handle.survey[:account_id]
     render :partial => 'new'
@@ -19,13 +25,10 @@ class Support::SurveysController < ApplicationController
       @survey_handle.survey_result.add_feedback(params[:survey][:feedback]) unless params[:survey][:feedback].blank?
       @survey_handle.destroy
     end
-    render :partial => 'index'
+    render :partial => 'index', :formats => [:html]
   end
   
   def create_for_portal
-
-    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
-    
     unless can_access_support_ticket?
       access_denied
     else        
@@ -48,12 +51,31 @@ class Support::SurveysController < ApplicationController
   protected
     def load_handle
       @survey_handle = current_account.survey_handles.find_by_id_token(params[:survey_code])
-      send_error unless @survey_handle
+      send_error if @survey_handle.blank? || @survey_handle.surveyable.blank? || archived_ticket_link
     end
     
     def send_error
-      flash[:warning] = I18n.t('support.surveys.feedback_already_done')
+      if @survey_handle.blank?
+        flash[:notice] = I18n.t('support.surveys.feedback_already_done')
+      elsif @survey_handle.surveyable.blank? || archived_ticket_link
+        flash[:notice] = I18n.t('support.surveys.survey_closed')
+      end
       redirect_to root_path
+    end
+
+    def load_ticket
+      @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+      
+      # Display "survey_closed" message for archived tickets
+      if @ticket.blank? and current_account.features?(:archive_tickets) and 
+          current_account.archive_tickets.find_by_display_id(params[:ticket_id])
+        send_error I18n.t('support.surveys.survey_closed') 
+      end
+    end
+
+    def archived_ticket_link
+      @survey_handle.surveyable and current_account.features?(:archive_tickets) and 
+          @survey_handle.surveyable.is_a?(Helpdesk::ArchiveTicket)
     end
     
 end

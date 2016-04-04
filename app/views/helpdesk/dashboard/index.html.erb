@@ -1,14 +1,13 @@
-<% @page_title = "Dashboard" %>
+<%= render :partial => 'check_reauth_required' %>
 
 <div class="index-page-content">
+<% unless current_account.dashboard_disabled? %>
   <%= render :partial => "summary" %>
-
+<% end %>
   <%= content_tag :div, "", :rel => "remote", :id => "Activity",
                  "data-remote-url" => '/helpdesk/dashboard/activity_list' %>
 </div>
 
 <%= render :partial => 'sidebar' %>
-<% if chat_activated? %>
-	<%= include_cloudfront_js :livechat_mini_dashboard %>
-	<%= include_cloudfront_rtl_css :livechat_mini_dashboard %>
-<% end %>
+
+<%= render :partial => 'chat_activate' %>

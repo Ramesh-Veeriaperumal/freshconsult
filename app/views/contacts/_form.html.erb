@@ -1,3 +1,4 @@
+<%= javascript_include_tag 'cdn/contact_templates' %>
 <script type="text/javascript">
 jQuery('body').on('assetLoaded.fjax', function() {
 	window.App.Contacts.Contact_form.confirm_text = "<%= t('merge_contacts.email_remove') %>";
@@ -15,21 +16,25 @@ jQuery('body').on('assetLoaded.fjax', function() {
 		</div>
 	  <%else%>		
 	   	<%= error_messages_for :user %>
-	   	<%= error_messages_for :user_emails %>
+	   	<% @user.user_emails.each do |user_email|%>
+	   	<% next if user_email.primary_role %>
+	   	<%= error_messages_for user_email %>
+	   	<% end unless @user.errors.any? %>
 	 <%end%>
 	 	 
 <div class="row-fluid">
   <div class="span3">
-    <%= render :partial => "/shared/profile_avatar.html", :locals => { :user => @user} %> 
+    <%= render :partial => "/shared/profile_avatar", :formats => [:html], :locals => { :user => @user} %> 
+    <% if !@user.new_record? and privilege?(:admin_tasks) and @user.allow_password_update? %>
+      <br /><%= link_to(t('change_password').html_safe, change_password_contact_path(@user), :'data-pjax' => "#body-container")%> 
+    <% end %>
   </div>
 
   <div class="span9">
   	<ul class="form-horizontal contact-form">
-
     <% contact_fields.each do |field| %>
     <%=  render_as_list f, field %>
     <% end %>
-
   	</ul>	 
   </div>
 </div>

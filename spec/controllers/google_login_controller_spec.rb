@@ -1,8 +1,10 @@
 require 'spec_helper'
-include MemcacheKeys
 
-describe GoogleLoginController do
-	integrate_views
+RSpec.configure do |c|
+  c.include MemcacheKeys
+end
+
+RSpec.describe GoogleLoginController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

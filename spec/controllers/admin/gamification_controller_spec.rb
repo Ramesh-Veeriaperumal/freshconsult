@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::GamificationController do
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -41,12 +40,12 @@ describe Admin::GamificationController do
 									"5"=>{:points=>pts[5], :id=>"6"}
 									}
 		}
-		response.session[:flash][:notice].should eql "Gamification settings has been successfully updated."
+		session[:flash][:notice].should eql "Gamification settings has been successfully updated."
 		for i in 1..6 do
 			@account.scoreboard_ratings.find(i).score.should eql scr[i-1]
 			@account.scoreboard_levels.find(i).points.should eql pts[i-1]
 		end
-		response.redirected_to.should eql "/admin/gamification" 
+		response.should redirect_to("/admin/gamification")
 	end
 
 	it "should inactivate the Gamification" do

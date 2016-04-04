@@ -1,8 +1,11 @@
 
 require 'spec_helper'
-include Gamification::Scoreboard::Constants
 
-describe "Ticket and Agent score specs" do
+RSpec.configure do |c|
+  c.include Gamification::Scoreboard::Constants
+end
+
+RSpec.describe "Ticket and Agent score specs" do
   self.use_transactional_fixtures = false
   
   before(:all) do
@@ -19,8 +22,8 @@ describe "Ticket and Agent score specs" do
       @ticket =  @account.tickets.find(test_ticket.id)
       @ticket.update_attributes(:status => 4) # Status changed to resolved
       @ticket.reload
-      @fast_rating = @ticket.account.scoreboard_ratings.find_by_resolution_speed(FAST_RESOLUTION)
-      @first_call_rating = @ticket.account.scoreboard_ratings.find_by_resolution_speed(FIRST_CALL_RESOLUTION)
+      @fast_rating = @ticket.account.scoreboard_ratings.find_by_resolution_speed(Gamification::Scoreboard::Constants::FAST_RESOLUTION)
+      @first_call_rating = @ticket.account.scoreboard_ratings.find_by_resolution_speed(Gamification::Scoreboard::Constants::FIRST_CALL_RESOLUTION)
     end
     
     before(:each) do
@@ -70,7 +73,7 @@ describe "Ticket and Agent score specs" do
       Resque.inline = true
       @ticket.update_attributes(:status => 4) # Status changed to resolved
       @ticket.reload
-      @on_time_rating = @ticket.account.scoreboard_ratings.find_by_resolution_speed(ON_TIME_RESOLUTION)
+      @on_time_rating = @ticket.account.scoreboard_ratings.find_by_resolution_speed(Gamification::Scoreboard::Constants::ON_TIME_RESOLUTION)
     end
     
     before(:each) do
@@ -150,7 +153,7 @@ describe "Ticket and Agent score specs" do
       send_while = rand(1..4)
       s_handle = create_survey_handle(@ticket, send_while, note) 
       s_result = s_handle.create_survey_result(Survey::HAPPY)
-      @happy_rating = @ticket.account.scoreboard_ratings.find_by_resolution_speed(HAPPY_CUSTOMER)
+      @happy_rating = @ticket.account.scoreboard_ratings.find_by_resolution_speed(Gamification::Scoreboard::Constants::HAPPY_CUSTOMER)
     end
     
     before(:each) do
@@ -190,7 +193,7 @@ describe "Ticket and Agent score specs" do
       send_while = rand(1..4)
       s_handle = create_survey_handle(@ticket, send_while, note) 
       s_result = s_handle.create_survey_result(Survey::UNHAPPY)
-      @unhappy_rating = @ticket.account.scoreboard_ratings.find_by_resolution_speed(UNHAPPY_CUSTOMER)
+      @unhappy_rating = @ticket.account.scoreboard_ratings.find_by_resolution_speed(Gamification::Scoreboard::Constants::UNHAPPY_CUSTOMER)
     end
     
     before(:each) do

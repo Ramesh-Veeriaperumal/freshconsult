@@ -1,0 +1,14 @@
+glance: 
+  Blossom:
+  - :agent_id
+  - :group_id
+  Blossom Classic:
+  - :agent_id
+  - :group_id
+  Garden:
+  - :agent_id
+  - :group_id
+  Garden Classic:
+  - :agent_id
+  - :group_id
+

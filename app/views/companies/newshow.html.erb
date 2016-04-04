@@ -3,12 +3,12 @@
 <div class='page-header-sticky' rel='sticky' id='contactHeaderSticky'>
 	<div class='sticky-header-wrapper'>
 		<h3 class='lead pull-left'>
-			<%= link_to t('company.title'), '/companies'%>  
+			<%= link_to t('company.title'), '/companies', :'data-pjax' => "#body-container" %>  
 			<span class='contact-name ellipsis'> / <%= h(@company.name) %></span>
 		</h3>
 		<div class='btn-group pull-right'>
 			<% if privilege?(:manage_contacts) %>
-				<%= link_to t('edit'), edit_company_path(@company), :class => "btn" %>
+				<%= link_to t('edit'), edit_company_path(@company), :class => "btn", :'data-pjax' => "#body-container" %>
 			<% end %>
 			<% if privilege?(:delete_contact) %>
 				<%= link_to("<i class='icon-trash'></i>".html_safe, @company, :method => :delete, :class => "btn hide", :id => 'delete_customer' ) %>
@@ -37,12 +37,12 @@
 				</div>
 				<div class='user-info'>
 					<h1 class='lead break-word'><%= h(@company.name) %></h1>
-					<div class='break-word user-job-title'><%= h(@company.description).gsub(/\n/, '<br />') %></div>
+					<div class='break-word user-job-title'><%= company_description(h(@company.description)) %></div>
 					<% if @company_users_size > 0 %>
 						<div class='no-contacts'>
 							<div class='border-wrap left'></div>
 							<div class='no-contacts-msg'>
-								<%= link_to t('companies.no_contacts', :no_contacts => @company_users_size), URI::escape('/contacts/filter/all?query=customer_id is ' + @company.id.to_s) %>
+								<%= link_to t('companies.no_contacts', :no_contacts => @company_users_size), URI::escape('/contacts/filter/all?query=customer_id is ' + @company.id.to_s), :'data-pjax' => "#body-container" %>
 							</div>
 							<div class='border-wrap right'></div>
 						</div>
@@ -59,7 +59,7 @@
 		</div>
 		<div class='contact-edit-fields'>
 			<div id='updateForm' class='contact-edit-padding clearfix'>
-				<% form_for :company, @company, 
+				<%= form_for @company, 
 					:url => {:controller => 'companies', :action => 'update_notes'},
 					:html => {
 						:class => 'edit_user',
@@ -81,29 +81,7 @@
 				<% end %>	
 			</div>
 			<div class='contact-edit-padding'>
-				<h1 class='conv-title'> <%= t('contacts.conversations.tickets') %> </h1>
-				<p class='muted'> <%= t('contacts.conversations.company_all') %> </p>
-				<div class='timeline'>
-					<ul class='timeline-list'>
-						
-						<% company_activities.each do |item| %>
-							<li class='timeline-item'>
-								<%= ticket_activity(item) %>
-							</li>
-
-						<% end %>
-					</ul>
-				</div>
-				<% if @total_company_tickets.size > 10 %>
-					<div class='contact_tickets'>
-						<div class="more_results">
-							<%= link_to t('contacts.view_all').html_safe, helpdesk_company_filter_path(:company_id => @company.id) , :id => "show_more" %>
-						</div>
-					</div>
-				<% end %>
-				<% if company_activities.empty? %>
-					<p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
-				<% end %>
+				<%= render :partial => "ticket_list" %>
 			</div>
 		</div>
 		<div class='contact-sidebar'>
@@ -115,7 +93,7 @@
 							<%= t('companies.add_contact_company', :company_name => @company.name) %> 
 						</p>
 					</h4>
-						<% form_tag({ :action => :quick_contact_with_company, :controller => "contacts", :method => :post }, { :class => "clearfix add-contact", :rel=> 'validate'} ) do %>
+						<%= form_tag({ :action => :quick_contact_with_company, :controller => "contacts", :method => :post }, { :class => "clearfix add-contact", :rel=> 'validate'} ) do %>
 						<ul>
 							<li class='control-group'>
 								<div class='controls'>
@@ -152,8 +130,8 @@
 							<% users = @company_users.take(5) %>
 							<% users.each do |user| %>
 							  	<li class='user-item'>
-							  		<a href='<%= contact_path(user) %>' class='clearfix'>
-							      		<%= user_avatar(user, :thumb) %>
+							  		<a href='<%= contact_path(user) %>' class='clearfix' data-pjax='#body-container'>
+							      		<%= user_avatar(user, :thumb, 'preview_pic small circle') %>
 							      		<div class='vertical-alignment'>
 							      			<p class='name ellipsis'> <%= h(user.name) %> </p>
 							      			<p class='email ellipsis'> <%= h(user.email) %> </p>

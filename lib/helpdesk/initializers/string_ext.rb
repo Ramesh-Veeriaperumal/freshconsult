@@ -1,8 +1,30 @@
 class String
   def to_bool
-    return true   if self == true   || self =~ (/(true|t|yes|y|1)$/i)
-    return false  if self == false  || self.blank? || self =~ (/(false|f|no|n|0)$/i)
+    return true   if self == true   || self =~ (/^(true|t|yes|y|1)$/i)
+    return false  if self == false  || self.blank? || self =~ (/^(false|f|no|n|0)$/i)
     raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
+  end
+
+  def is_number?
+    true if Float(self) rescue false
+  end
+
+  def tokenize_emoji
+    EmojiParser.tokenize(self)
+  rescue
+    self
+  end
+
+  def detokenize_emoji
+    EmojiParser.detokenize(self)
+  rescue
+    self
+  end
+end
+
+class NullObject < Struct.new(nil)
+  def self.instance
+    @@null_object ||= NullObject.new
   end
 end
 

@@ -1,0 +1,5 @@
+<% if @my_drafts.size < 1 %>
+  <%= render :partial => "all_drafts" %>
+<% else %>
+  <%= render :partial => "my_drafts" %>
+<% end %>

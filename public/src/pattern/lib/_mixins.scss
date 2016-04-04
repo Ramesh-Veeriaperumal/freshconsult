@@ -74,6 +74,13 @@
   width: $width;
   height: $height;
 }
+
+//Position shortcuts
+@mixin micro-position($top){
+  position: relative;
+  top: $top;
+}
+
 @mixin square($size) {
   @include size($size, $size);
 }
@@ -244,16 +251,6 @@
 @mixin resizable($direction) {
   resize: $direction; // Options: horizontal, vertical, both
   overflow: auto; // Safari fix
-}
-
-// CSS3 Content Columns
-@mixin content-columns($columnCount, $columnGap: $gridGutterWidth) {
-  -webkit-column-count: $columnCount;
-     -moz-column-count: $columnCount;
-          column-count: $columnCount;
-  -webkit-column-gap: $columnGap;
-     -moz-column-gap: $columnGap;
-          column-gap: $columnGap;
 }
 
 // Optional hyphenation
@@ -583,16 +580,43 @@
 }
 
 
-// Generic utilites 
+// Generic utilites
 // =====================================
 
 // Helper to get the class name if its not default
-@function get-class-name($suffix, $base) {  
+@function get-class-name($suffix, $base) {
   @if $suffix == default {
     @return #{ "." + $base};
   } @else if $suffix == disabled {
     @return #{ "." + $base + "." + $suffix + ", ." + $base + "[" + $suffix + "]" };
   } @else {
     @return #{ "." + $base + "-" + $suffix };
-  }  
+  }
+}
+
+//// Shadow when scrolling
+@mixin scrolling-shadows($background-color: rgb(255, 255, 255), $shadow-intensity: 0.5, $shadow-color: rgb(200,200,200), $cover-size: 32px, $shadow-size: 8px) {
+
+	background:
+		// Shadow covers
+		linear-gradient($background-color 30%, rgba($background-color,0)),
+		linear-gradient(rgba($background-color,0), $background-color 70%) 0 100%,
+
+		// Shadows
+		radial-gradient(50% 0, farthest-side, rgba($shadow-color,$shadow-intensity), rgba($shadow-color,0)),
+		radial-gradient(50% 100%,farthest-side, rgba($shadow-color,$shadow-intensity), rgba($shadow-color,0)) 0 100%;
+	background:
+		// Shadow covers
+		linear-gradient($background-color 30%, rgba($background-color,0)),
+		linear-gradient(rgba($background-color,0), $background-color 70%) 0 100%,
+
+		// Shadows
+		radial-gradient(farthest-side at 50% 0, rgba($shadow-color,$shadow-intensity), rgba($shadow-color,0)),
+		radial-gradient(farthest-side at 50% 100%, rgba($shadow-color,$shadow-intensity), rgba($shadow-color,0)) 0 100%;
+	background-repeat: no-repeat;
+	background-color: $background-color;
+	background-size: 100% $cover-size, 100% $cover-size, 100% $shadow-size, 100% $shadow-size;
+
+	// Opera doesn't support this in the shorthand
+	background-attachment: local, local, scroll, scroll;
 }

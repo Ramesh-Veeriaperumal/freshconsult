@@ -4,9 +4,11 @@ require 'base64'
 module Integrations::AppsUtil
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
+
+  SPL_CHAR_ESCAPE = { '&' => '\\u0026', "'" => "''", '/' => '\\u002f', '"' => "\\u0022", '+' => '\\u002b', "#" => '\\u0023', "\\" => '\\u005c\\u005c' }
   
   def get_installed_apps
-    @installed_applications = Integrations::InstalledApplication.find(:all, :conditions => ["account_id = ?", current_account])
+    @installed_applications = Account.current.installed_applications.includes(:application).all
   end
 
   def execute(clazz_str, method_str, args=[])
@@ -18,6 +20,14 @@ module Integrations::AppsUtil
       else
         raise "#{clazz_str} is not responding to #{method_str}."
       end
+    end
+  end
+
+  def execute_service(clazz_str, method_str, installed_app, args=[])
+    unless clazz_str.blank?
+      obj = clazz_str.constantize
+      obj = obj.new(installed_app, args)
+      obj.receive(method_str)
     end
   end
 
@@ -58,5 +68,9 @@ module Integrations::AppsUtil
   def check_agent_app_access app_name
     return true if current_user && current_user.agent?
     render :json => { :error => "Access Denied" }, :status => 403
+  end
+
+  def spl_char_replace company_name
+    company_name = company_name.to_s.gsub(/[&\'"+#\/\\]/, SPL_CHAR_ESCAPE)
   end
 end

@@ -1,8 +1,10 @@
 require 'spec_helper'
-include GnipHelper
 include Social::Twitter::Constants
+RSpec.configure do |c|
+  c.include GnipHelper
+end
 
-describe Social::TwitterStream do
+RSpec.describe Social::TwitterStream do
 
   self.use_transactional_fixtures = false
 
@@ -137,7 +139,7 @@ describe Social::TwitterStream do
     end
     #Ensure the handle and stream have been deleted
     handle = Social::TwitterHandle.find_by_id(handle_id)
-    custom_streams = Social::TwitterStream.find(:all).map{|stream| stream.social_id if stream.data[:kind] == STREAM_TYPE[:custom]}.compact
+    custom_streams = Social::TwitterStream.find(:all).map{|stream| stream.social_id if stream.data[:kind] == TWITTER_STREAM_TYPE[:custom]}.compact
     custom_streams.should_not include(handle_id)    
     handle.should be_nil
     Resque.inline = false

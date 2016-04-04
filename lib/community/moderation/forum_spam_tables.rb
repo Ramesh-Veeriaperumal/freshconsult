@@ -13,8 +13,8 @@ module Community::Moderation::ForumSpamTables
 
 		MONTHS_SINCE.each_pair do |method_name, months|
 			define_method(method_name) do
-				prefix = table_name.split(RAILS_ENV[0..3]).first
-				%{#{prefix}#{RAILS_ENV[0..3]}_#{(Time.now.months_since(months)).utc.strftime('%Y_%m')}}
+				prefix = table_name.split(Rails.env[0..3]).first
+				%{#{prefix}#{Rails.env[0..3]}_#{(Time.now.months_since(months)).utc.strftime('%Y_%m')}}
 			end
 
 			define_method(%{#{method_name.to_s}_year}) do

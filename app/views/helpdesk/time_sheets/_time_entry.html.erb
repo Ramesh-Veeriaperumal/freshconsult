@@ -2,26 +2,28 @@
   <% if privilege?(:edit_time_entries, time_entry) %>
     <div class="actions">
       <% @ticket ||= time_entry.workable %>
-      <%= link_to_remote(t(".toggle_timer_#{!time_entry.timer_running}"), 
-                      { :url => toggle_timer_helpdesk_time_sheet_path(time_entry),
-                            :method => :put },
-                      :class => 'toggle_timer') %>
+      <%= link_to t(".toggle_timer_#{!time_entry.timer_running}"), 
+                  toggle_timer_helpdesk_time_sheet_path(time_entry), 
+                  :method => :put,
+                  :remote => true,
+                  :class => 'toggle_timer' %>
       <%= link_to(t('edit'), 
-                    edit_helpdesk_ticket_helpdesk_time_sheet_path(@ticket, time_entry), 
+                    edit_helpdesk_ticket_time_sheet_path(@ticket, time_entry), 
                     "rel" => 'freshdialog', "data-target" => "#edit_timeentry_#{time_entry.id}",
                     "data-width" => 450,
                     "data-submit-label" => t('update'),
+                    "id" => "edit_#{time_entry.id}",
                     :title => 'Edit Timesheet' ) unless time_entry.timer_running %>
-      <%= link_to_remote( "delete",
-                      { :url => helpdesk_time_sheet_url(time_entry),
-                        :method => :delete ,
-                        :confirm => "Delete this time entry?" }) %>
+      <%= link_to "delete", helpdesk_time_sheet_url(time_entry), 
+                  :method => :delete,
+                  :remote => true,
+                  :confirm => "Delete this time entry?" %>
     </div>
   <% end %>
-  <div class="requester-avatar-wrap"><%= user_avatar(time_entry.user) if time_entry.user %></div>
+  <div class="requester-avatar-wrap"><%= user_avatar(time_entry.user, :thumb, 'small') if time_entry.user %></div>
   <div class="details">
     <h4>
-      <%= link_to_user(time_entry.user, :class => "user_name" , :rel =>"") %>
+      <%= link_to_user(time_entry.user, :class => "user_name" , :rel =>"", :'data-pjax' => '#body-container') %>
       <span class="tracked_time">
         <%= content_tag :span, get_time_in_hours(time_entry.running_time), 
                             :class => "time",
@@ -42,7 +44,7 @@
       </div>
     </div>
     <div class="note">
-      <%= RedCloth.new(h(time_entry.note) || "").to_html.html_safe %>
+      <%= time_entry_note(h(time_entry.note) || "") %>
     </div> 
   </div>
 </div>

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::RolesController do
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -35,7 +34,7 @@ describe Admin::RolesController do
 
 	it "should create a new Role" do
 		privileges = [ "manage_tickets", "reply_ticket", "forward_ticket", "view_solutions", "view_forums", 
-			"view_contacts", "view_reports", "", "0", "0", "0", "0" ] 
+			"view_contacts", "view_reports", "manage_contacts", "", "0", "0", "0", "0" ] 
 		post :create, { :role => {  :name => "Create: New role test #{@now}", :description => Faker::Lorem.paragraph, 
 									:privilege_list => privileges
 									} 
@@ -43,7 +42,7 @@ describe Admin::RolesController do
 		new_role = @account.roles.find_by_name("Create: New role test #{@now}")
 		new_user = add_test_agent(@account,{:role => new_role.id})
 		user_privilege = verify_user_privileges(new_user, privileges)
-		user_privilege.should be_true
+		user_privilege.should be_truthy
 		new_role.should_not be_nil
 	end
 
@@ -80,7 +79,7 @@ describe Admin::RolesController do
 		@test_role.name.should eql("Updated: Roles #{@now}")
 		@new_user.reload
 		user_privilege = verify_user_privileges(@new_user, privileges)
-		user_privilege.should be_true
+		user_privilege.should be_truthy
 	end
 
 	it "should not update role without the name" do
@@ -104,7 +103,7 @@ describe Admin::RolesController do
 		}
 		new_role = @account.roles.find_by_id(default_role.id)
 		new_role.name.should_not be_eql("Updated default_role")
-		response.session[:flash][:notice].should eql "You cannot modify default roles"
+		session[:flash][:notice].should eql "You cannot modify default roles"
 		response.body.should =~ /redirected/
 	end
 
@@ -113,13 +112,13 @@ describe Admin::RolesController do
 		delete :destroy, :id => default_role.id
 		new_role = @account.roles.find_by_id(default_role.id)
 		new_role.should_not be_nil
-		response.session[:flash][:notice].should eql "You cannot modify default roles"
+		session[:flash][:notice].should eql "You cannot modify default roles"
 		response.body.should =~ /redirected/
 	end
 
 	it "should not delete a Role that is already assigned to a user" do
 		delete :destroy, :id => @test_role.id
-		response.session[:flash][:notice].should eql "You cannot delete this role. There are other users are associated with it."
+		session[:flash][:notice].should eql "You cannot delete this role. There are other users are associated with it."
 		@test_role.reload
 		@test_role.should_not be_nil
 	end

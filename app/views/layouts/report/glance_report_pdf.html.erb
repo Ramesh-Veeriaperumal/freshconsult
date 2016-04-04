@@ -1,10 +1,10 @@
 
-<%= render :partial => "layouts/report/pdf_files", :locals => {} %>
+<%= render :partial => "layouts/report/pdf_files", :formats => [:html], :locals => {} %>
 	<div class="row-fluid">
 		<div class="report-page" id="report-page">
 		  <div class="report-content-wrapper">
 		    <!--report header-->
-		    <%= render :partial => "reports/shared/report_view_header", :locals => {:is_pdf =>true} %>
+		    <%= render :partial => "reports/shared/report_view_header", :formats => [:html], :locals => {:is_pdf =>true} %>
 
 		    <!--metrics-->
 		    <div class="row-fluid  report-summary">

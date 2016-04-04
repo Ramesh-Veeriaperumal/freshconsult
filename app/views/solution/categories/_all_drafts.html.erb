@@ -1,0 +1,16 @@
+<div class="solutions-widget-header">
+  <span class="ficon-file fsize-18 pr9"></span>
+  <div class="sidebar-dropdown">
+    <h5 class="dropdown-toggle">
+      <span class="widget-filter drafts-filter-title">
+        <%= t('solution.sidebar.drafts.all') %>
+      </span>
+    </h5>
+  </div>
+  <span class="lead lead-small">
+    <%=t('solution.sidebar.drafts.title').html_safe%>
+  </span>
+</div>
+<div class="tab-content">
+  <%= sidebar_drafts_list(@drafts,'drafts-all','active') %>
+</div>

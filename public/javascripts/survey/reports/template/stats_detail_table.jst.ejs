@@ -1,0 +1,37 @@
+<%if(table && table.length>1){%>
+	<table class="table table-bordered" id="report_tabular_data" style="display:none;">
+		<thead>
+			<tr>
+			<%	 
+					var header = table[0];
+					for(var i=0;i<header.length;i++){
+			%>
+						<th class="descendFirst"><%=header[i]%></th>		
+			<%
+					}
+			%>
+			</tr>
+		</thead>
+		<tbody>
+			<%
+				for(var i=1;i<table.length;i++){
+			%>	
+			<tr class="<% if(table[i].name == "None") {%>exclude_none <%}%>">
+				<td><%=table[i].name%></td>
+				<%
+				 	var groupInfo = table[i].choices;
+					for(var j=0;j<groupInfo.length;j++){				
+				%>
+					<td><%=groupInfo[j]%></td>
+				<%
+					}
+				%>
+				<td><%=table[i].total%></td>
+			</tr>
+			<%
+				}
+			%>		
+		</tbody>
+	</table>
+	<% setTimeout(function(){ SurveyTable.draw(table.length); }, 0);%>
+<%}else{ SurveyTable.type.hide(); }%>

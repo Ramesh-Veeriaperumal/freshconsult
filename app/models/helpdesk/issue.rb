@@ -1,6 +1,7 @@
 # encoding: utf-8
 class Helpdesk::Issue < ActiveRecord::Base
-  set_table_name "helpdesk_issues"
+  self.table_name =  "helpdesk_issues"
+  self.primary_key = :id
 
   belongs_to :user,
     :class_name => 'User'
@@ -21,8 +22,8 @@ class Helpdesk::Issue < ActiveRecord::Base
     :as => 'notable',
     :dependent => :destroy
 
-  named_scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
-  named_scope :visible, :conditions => "status > 0" 
+  scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
+  scope :visible, :conditions => "status > 0" 
 
   STATUSES = [
     [ :open,        "OPEN",                           1 ], 
@@ -101,9 +102,9 @@ class Helpdesk::Issue < ActiveRecord::Base
       f = f.to_sym
 
       if user && f == :monitored_by
-        user.subscribed_tickets.scoped(:conditions => {:deleted => false})
+        user.subscribed_tickets.where({:deleted => false})
       else
-        scope.scoped(:conditions => conditions[f])
+        scope.where(conditions[f])
       end
     end
 
@@ -126,7 +127,7 @@ class Helpdesk::Issue < ActiveRecord::Base
     # Protect us from SQL injection in the 'field' param
     return scope unless conditions
 
-    scope.scoped(:conditions => conditions)
+    scope.where(conditions)
   end
 
   def nickname

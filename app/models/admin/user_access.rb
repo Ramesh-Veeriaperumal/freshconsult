@@ -1,5 +1,5 @@
 class Admin::UserAccess < ActiveRecord::Base
-  set_table_name "admin_user_accesses"  
+  self.table_name =  "admin_user_accesses"  
   
   belongs_to_account
   belongs_to :accessible, :polymorphic => true  
@@ -17,6 +17,7 @@ class Admin::UserAccess < ActiveRecord::Base
   VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten] 
   
   before_save :check_visibility
+
   
   def check_visibility
     if !group_agents_visibility?

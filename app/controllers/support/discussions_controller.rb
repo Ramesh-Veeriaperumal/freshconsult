@@ -1,6 +1,7 @@
 class Support::DiscussionsController < SupportController
 	# before_filter :scoper
 	before_filter :load_category, :only => :show
+  before_filter :check_forums_access
 	before_filter { |c| c.requires_feature :forums }
 	before_filter :check_forums_state
 	before_filter { |c| c.check_portal_scope :open_forums }
@@ -35,7 +36,7 @@ class Support::DiscussionsController < SupportController
 	    @topics = current_account.topics.paginate(options)
 	    respond_to do |format|
 	      format.xml { render :xml => @topics.to_xml(:except=>:account_id) }
-	      format.json { render :json => @topics.as_json(:except=>:account_id) }
+	      format.json { render :json => @topics.as_json(:except=>[:account_id]) }
 	    end
   	end
 
@@ -49,7 +50,7 @@ class Support::DiscussionsController < SupportController
       @page_meta ||= {
         :title => @category.name,
         :description => @category.description,
-        :canonical => support_discussion_url(@category)
+        :canonical => support_discussion_url(@category, :host => current_portal.host)
       }
     end
 end 

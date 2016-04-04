@@ -8,6 +8,6 @@ ticket = Helpdesk::Ticket.seed(:account_id, :subject) do |s|
   s.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal]
   s.priority = TicketConstants::PRIORITY_KEYS_BY_TOKEN[:low]
   s.ticket_type = "Question"
-  s.cc_email = {:cc_emails => [], :fwd_emails => [], :reply_cc => []}
+  s.cc_email = Helpdesk::Ticket.default_cc_hash
   s.ticket_body_attributes = {:description => 'This is a sample ticket, feel free to delete it.', :description_html => "<div>This is a sample ticket, feel free to delete it.</div>" }
 end

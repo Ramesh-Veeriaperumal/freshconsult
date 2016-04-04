@@ -17,12 +17,12 @@
     		        <span id="resp-icon" title="<%= t('.remove') %>"></span>
     		       		<div id="merge-ticket" class="merge_element" data-id=<%= h(ticket.display_id) %> data-created=<%= (ticket.created_at.to_i) %>>
                     <%= link_to("##{ticket.display_id} #{ticket.subject}", ticket, :title => h(ticket.subject), 
-                    :class =>"item_info", :target=>"_blank" ) %>
+                    :class =>"item_info", :target=>"_blank", :"data-pjax" => '#body-container' ) %>
     			          <div class="info-data hideForList">
     			          	<span class="merge-ticket-info">
-    			          		<%= t("ticket.merge_ticket_list_status_"+ticket.ticket_states.current_state, 
+    			          		<%= t("ticket.merge_ticket_list_status_"+ticket.ticket_states.current_state(ticket.outbound_email?), 
               					:username => "<span class='muted requester_name'>#{h(ticket.requester.display_name)}</span>",
-                        :time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))).html_safe %>
+                        :time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state(ticket.outbound_email?)))).html_safe %>
           						</span>
     			          </div>
     			        </div>
@@ -51,7 +51,8 @@
       <input type="hidden" value='<%= redirect_back %>' id="redirect"/>
     </div>
 
-      <% form_remote_tag(:url =>{ :controller => "merge_tickets", :action=>"merge" },:html => {:id=>"bulk_merge_tickets"}) do -%>  
+      <%= form_tag url_for(:controller => "merge_tickets", :action=>"merge"), :id=> "bulk_merge_tickets", 
+       :remote => true  do -%>  
       <div class="divide"></div>
       <input type="hidden" name="target[ticket_id]" id="target_ticket" />
         <div class="button-container" id="bulk-merge-button-container">

@@ -1,14 +1,13 @@
 class Social::TwitterHandlesController < ApplicationController
 
   include ErrorHandle
-  include Social::Dynamo::Twitter
 
   before_filter { |c| c.requires_feature :twitter }
 
   prepend_before_filter :load_product, :only => [:signin, :authdone]
   before_filter :build_item, :only => [:signin, :authdone]
   before_filter :load_item,  :only => [:tweet, :edit, :update, :destroy]
-  before_filter :check_social_revamp_feature, :only => [:index, :feed]
+  before_filter :welcome_page_redirect, :only => [:index, :feed]
   before_filter :twitter_wrapper, :only => [:signin, :authdone, :index]
   before_filter :check_if_handles_exist, :only => [:feed]
 
@@ -174,7 +173,7 @@ class Social::TwitterHandlesController < ApplicationController
         :twitter_user_id => user.id,
         :prof_img_url    => profile_image_url
       }
-      Resque.enqueue(Social::Workers::Twitter::UploadAvatar, args)
+      Social::UploadAvatar.perform_async(args)
     end
     user
   end
@@ -263,17 +262,6 @@ class Social::TwitterHandlesController < ApplicationController
     end
   end
 
-  #Followig method will check requester is a follower of responding twitter Id
-  def user_following
-    user_follows  = false
-    reply_twitter = current_account.twitter_handles.find(params[:twitter_handle])
-    unless reply_twitter.nil?
-      @wrapper = TwitterWrapper.new reply_twitter
-      twitter  = @wrapper.get_twitter
-      user_follows = twitter.friendship?(params[:req_twt_id], reply_twitter.screen_name)
-    end
-    render :json => {:user_follows => user_follows }.to_json
-  end
 
   protected
 
@@ -324,7 +312,7 @@ class Social::TwitterHandlesController < ApplicationController
     'Twitter'
   end
   
-  def check_social_revamp_feature # If the old ui url is hit directly, redirect to new UI
+  def welcome_page_redirect # If the old ui url is hit directly, redirect to new UI
     action_name == "index" ? (redirect_to :admin_social_streams) : ( current_account.twitter_handles_from_cache.blank? ? 
       (redirect_to :social_welcome_index)  : (redirect_to :social_streams) )
   end

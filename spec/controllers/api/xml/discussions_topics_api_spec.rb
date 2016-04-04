@@ -28,7 +28,7 @@ describe Discussions::TopicsController do
 
 		topic.reload
 		topic.stamp_type.should eql stamp_type
-		response.status.should eql "200 OK"
+		response.status.should eql 200
 	end
 	
 	it "should update stamp of a topic on put 'update_stamp' with valid posts" do
@@ -43,7 +43,7 @@ describe Discussions::TopicsController do
 
 		topic.reload
 		topic.stamp_type.should eql stamp_type
-		response.status.should eql "200 OK"
+		response.status.should eql 200
 	end
 	
 	it "should not update stamp of a topic on put 'update_stamp' with invalid stamp_type" do
@@ -58,7 +58,7 @@ describe Discussions::TopicsController do
 		@response.body.should match "Stamp type is not valid"
 		topic.reload
 		topic.stamp_type.should eql initial_stamp_type
-		response.status.should eql "400 Bad Request"
+		response.status.should eql 400
 	end
 	
 	it "should not update stamp of a topic on put 'update_stamp' with invalid posts" do
@@ -73,7 +73,7 @@ describe Discussions::TopicsController do
 		@response.body.should match "Stamp type is not valid"
 		topic.reload
 		topic.stamp_type.should eql initial_stamp_type
-		response.status.should eql "400 Bad Request"
+		response.status.should eql 400
 	end
 
 end

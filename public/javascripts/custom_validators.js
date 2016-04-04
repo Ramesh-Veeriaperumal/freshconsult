@@ -27,7 +27,14 @@
     if($(element).data('tweet-count') >= 0){
       return true;
     }
-  }, "Your Tweet was over 140 characters. You'll have to be more clever." );
+  }, "Oops! You have exceeded Twitter's character limit. You'll have to modify your response." );
+  
+  
+  $.validator.addMethod("password_confirmation", function(value, element){
+    return ($(element).val() == $("#password").val());
+  }, "The passwords don't match. Please try again.");
+
+  $.validator.addClassRules("password_confirmation", { password_confirmation : true });
 
   $.validator.addMethod("hours", function(value, element) {
      hours = normalizeHours(value);
@@ -47,6 +54,11 @@
       return false;
     }
   }, '');
+  $.validator.addMethod("ecommerce", function(value, element) {
+    if($(element).data('ecommerce-count') >= 0){
+      return true;
+    }
+  }, "Your reply was over 2000 characters. You'll have to be more clever." );
   $.validator.addMethod("sla_min_time", function(value, element) {
     if (value>=900){
       jQuery('#text_'+element.id.match(/[0-9].+/)).removeClass('sla-error');
@@ -127,8 +139,8 @@
     });
  
     return _returnCondition
-
- },jQuery.validator.format('We could not find any matching requester. Please check your query, or try adding a <a href="#" id="add_requester_btn_proxy">new requester.</a>'));
+    
+ },jQuery.validator.format('Please enter a valid requester details or <a href="#" id="add_requester_btn_proxy">add new requester.</a>'));
 
   $.validator.addClassRules("requester", { requester: true });
 
@@ -204,6 +216,21 @@ $.validator.addMethod( //override email to sync ruby's email validation
     },
     'Please enter a valid email address.'
 );
+
+//UserEmail Validation
+$.validator.addMethod( //override email to sync ruby's email validation
+    'useremail',
+    function(value, element){
+        var result = this.optional(element) || /^[a-zA-Z0-9.'-_~!$&()*+;=:%+]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test( value );
+        if(!result)
+          $(element).addClass("email-error");
+        else
+          $(element).removeClass("email-error");
+        return result
+    },
+    'Please enter a valid email address.'
+);
+
 
 $.validator.addMethod("time_12", function(value, element){
   if( ! /^[0-9]{1,2}:[0-9]{1,2} [ap]m$/i.test(value) ) return false;  
@@ -356,5 +383,42 @@ $.validator.addClassRules("ca_same_folder_validity", { ca_same_folder_validity: 
 $.validator.addMethod("field_maxlength", $.validator.methods.maxlength, "Please enter less than 255 characters" );   
 $.validator.addClassRules("field_maxlength", { field_maxlength: 255 });
 $.validator.addClassRules("decimal", { number: true });
+
+$.validator.addMethod("require_from_group", function(value, element, options) {
+  var $fields = $(options[1], element.form),
+    $fieldsFirst = $fields.eq(0),
+    validator = $fieldsFirst.data("valid_req_grp") ? $fieldsFirst.data("valid_req_grp") : $.extend({}, this),
+    isValid = $fields.filter(function() {
+      return validator.elementValue(this);
+    }).length >= options[0];
+
+  // Store the cloned validator for future validation
+  $fieldsFirst.data("valid_req_grp", validator);
+
+  // If element isn't being validated, run each require_from_group field's validation rules
+  if (!$(element).data("being_validated")) {
+    $fields.data("being_validated", true);
+    $fields.each(function() {
+      validator.element(this);
+    });
+    $fields.data("being_validated", false);
+  }
+  return isValid;
+}, $.validator.format("Please fill at least {0} of these fields."));
+
+$.validator.addClassRules("fillone", {
+    require_from_group: [1,".fillone"]
+});
+
+$.validator.addMethod("portal_visibility_required", function(value, element) {
+    return value != undefined;
+  }, 'Select atleast one portal.');
+
+$.validator.addClassRules("portal_visibility_required", { portal_visibility_required: true });
+
+$.validator.addMethod("valid_custom_headers", function(value, element) {
+  return value.split('\n').filter(Boolean).every(function(elem) {return elem.includes(":")});
+}, $.validator.format("Please type custom header in the format -  header : value"));
+$.validator.addClassRules("valid_custom_headers", { valid_custom_headers: true });
 
 })(jQuery);

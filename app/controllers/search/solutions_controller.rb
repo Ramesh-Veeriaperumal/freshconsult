@@ -9,15 +9,15 @@ class Search::SolutionsController < Search::SearchController
 			format.js do
 				render :layout => false
 			end
-			format.json do 
-				json = "["; sep=""
-			    @result_set.each do |article| 
-			      json << sep + article.to_mob_json[11..-2]; sep=","
-			    end
-			    render :json => json + "]"
-			end
-		end				
-	end
+      format.json do
+        array = []
+        @result_set.each do |article| 
+          array <<  article.to_mob_json['article']
+        end
+        render :json => array
+      end
+    end
+  end
 
 	def search_solutions
 		article_suggest params[:q]
@@ -39,6 +39,8 @@ class Search::SolutionsController < Search::SearchController
 		def search_filter_query f, search_in         
 			unless search_in.blank?
 				f.filter :term,  { 'folder.category_id' => params[:category_id] } if params[:category_id]
+				f.filter :term,  { 'folder_id' => params[:folder_id] } if params[:folder_id]
+				f.filter :term,  { 'language_id' => Language.for_current_account.id }
 			end
 		end
 
@@ -62,10 +64,19 @@ class Search::SolutionsController < Search::SearchController
 			if ["search_solutions", "related_solutions"].include?(action_name)
 				@suggest = true
 			end
+			detect_multilingual_search
 		end
 
 		def load_ticket
 			@ticket = current_account.tickets.find_by_id(params[:ticket])
 			@ticket = current_account.tickets.find_by_display_id(params[:ticket]) if is_native_mobile?
+		end
+
+		# Hack for getting language and hitting corresponding alias
+		# Probably will be moved to search/search_controller when dynamic solutions goes live
+		def detect_multilingual_search
+			if params[:language].present? and current_account.features_included?(:es_multilang_solutions)
+				@search_lang = ({ :language => params[:language] })
+			end
 		end
 end

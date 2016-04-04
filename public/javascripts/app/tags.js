@@ -35,12 +35,13 @@ $(document).ready(function(){
         open: function(event, ui){
             $(this).removeClass('ui-corner-all');
             $(".ui-menu").addClass("tag-search-results");
+            $(".ui-menu").css({'display':'block', 'z-index': 10});
             $clear_text.removeClass("hide").addClass("clear-search-results");
-
         }
-    }).data( "autocomplete" )._renderItem = function( ul, item ) {
+    }).autocomplete( "instance" )._renderItem = function( ul, item ) {
+
         return $( "<li></li>" )
-            .data( "item.autocomplete", item )
+            .data( "autocomplete-item", item )
             .append( "<a>" + item.value + "</a>" )
             .appendTo( ul );
     };
@@ -108,40 +109,10 @@ $(document).ready(function(){
     });
 
 
-    $('.tag-list').on('click.tag_index', '#tag-delete', function(e) {
-        $( "#tag-delete-confirm" ).dialog({
-            resizable: false,
-            height:150,
-            modal: true,
-            buttons: {
-
-
-                Cancel: {
-                    text:"Cancel",
-                    class:"btn",
-                    style:"margin: 5px;",
-                    click:function() {
-                        $( this ).dialog( "close" );
-                    }
-                },
-
-                "Delete Tags": {
-                    text:"Delete Tags",
-                    class:"btn btn-primary",
-                    style:"margin: 5px",
-                    click:function() {
-                        var form = $("#tags-expanded");
-                        form.submit();
-                        $( this ).dialog( "close" );
-                    }
-                }
-
-
-            }
-        });
-
-    })
-
+    $( "#tag-delete-confirm-submit" ).live('click', function(e) {
+        $( "#tag-delete-confirm" ).modal('hide');
+        $("#tags-expanded").submit();
+    });
 
     var tag_sort = function(){
 
@@ -162,7 +133,7 @@ $(document).ready(function(){
 
     $('.tag-list').on('click.tag_index', '.tag_name', function(e) {
        e.preventDefault();
-      
+
         var tag_id = $(this).parents("tr").data("tagId"),
             $tag_text = $("#tag_text_container_"+tag_id),
             tag_text = $tag_text.children(".textbox");
@@ -178,7 +149,7 @@ $(document).ready(function(){
     $('.tag-list').on('keydown.tag_index', '.tag_text', function(ev) {
         if(ev.keyCode == 13){
             ev.preventDefault();
-            $(this).trigger("change");
+            $(this).trigger("blur");
         }
     });
 
@@ -195,70 +166,36 @@ $(document).ready(function(){
         }
     })
 
+    var tag_association;
+    var tag_id, tag_name;
 
-
-    $('.tag-list').on('focusout.tag_index', '.tag_text', function(e){
-        e.stopPropagation();
-        var this_tag_text = $(this);
-        var tag_id = this_tag_text.parents("tr").data("tagId");
-        var tag_name_id = $("#tag_name_"+tag_id)
-
-        if(this_tag_text.attr("value") == tag_name_id.data("tagName") || this_tag_text.attr("value") == "" || this_tag_text.attr("value")==null )
-        {
-            tag_name_id.removeClass("hide");
-            $("#tag_text_container_"+tag_id).addClass("hide");
-        }
-
-    });
-
-    $('.tag-list').on('change.tag_index', '.tag_text', function(e) {
-
+    $('.tag-list').on('focusout.tag_index', '.tag_text', function(e) {
 
         var this_tag_text = $(this)
 
-        var tag_id = this_tag_text.parents("tr").data("tagId");
+        tag_id = this_tag_text.parents("tr").data("tagId");
+        tag_name = this_tag_text.attr("value");
         var tag_name_id = $("#tag_name_"+tag_id)
         if(!(this_tag_text.attr("value") == tag_name_id.data("tagName") || this_tag_text.attr("value") == "" || this_tag_text.attr("value") == null))
         {
-            change_tag_name(tag_id, this_tag_text.attr("value"));
+            change_tag_name(tag_id, tag_name);
+        }
+        else
+        {
+            tag_name_id.removeClass("hide");
+            $("#tag_text_container_"+tag_id).addClass("hide");
+
         }
 
     });
 
     $('.tag-list').on('click.tag_index', '.removetag', function(ev) {
-
-        var tag_association = $(this) ;
-
-        $( "#tag-remove-confirm" ).dialog({
-            resizable: false,
-            height:150,
-            modal: true,
-            buttons: {
-
-                Cancel: {
-                    text:"Cancel",
-                    class:"btn",
-                    style:"margin: 5px;",
-                    click:function() {
-                        $( this ).dialog( "close" );
-                    }
-                },
-
-            "Remove": {
-                text:"Remove",
-                class:"btn btn-primary",
-                style:"margin: 5px",
-                click:function() {
-                    remove_association(tag_association);
-                    $( this ).dialog( "close" );
-                }
-            }
-
-            }
-        });
-
-
+        tag_association = $(this) ;
     });
+
+    $(document).on('click.tag_index', '#tag-remove-confirm-submit', function(){
+        remove_association(tag_association);
+    })
 
     var remove_association = function(tag_association){
 
@@ -266,7 +203,6 @@ $(document).ready(function(){
 
         //Removing the active Twipsy
         $('.twipsy.in').remove();
-        tag_association.remove();
 
         var this_count_id = $("#"+count_id);
         var tag_type = this_count_id.data("tag-type");
@@ -276,6 +212,8 @@ $(document).ready(function(){
             type: "DELETE",
             data: { tag_id: tag_id, tag_type:tag_type  },
             success: function(status){
+                $(".modal").modal("hide");
+                tag_association.remove();
                 this_count_id
                     .removeClass("count")
                     .addClass("muted disabled")
@@ -298,46 +236,26 @@ $(document).ready(function(){
 
                 if(status["status"] === "existing_tag" )
                 {
-                    $( "#tag-dialog-confirm" ).dialog({
-                        resizable: false,
-                        height:150,
-                        modal: true,
-                        buttons: {
+                    var data = {
+                        targetId: "#tag-dialog-confirm",
+                        title: "Merge Tags",
+                        width: "400",
+                        backdrop: "static",
+                        submitLabel: "Merge Tags",
+                        closeLabel: "Cancel",
+                        destroyOnClose: true
+                    }
 
-
-                            Cancel: {
-                                text:"Cancel",
-                                class:"btn",
-                                style:"margin: 5px;",
-                                click:function() {
-                                    $("#tag_text_container_"+tag_id).addClass("hide")
-                                        .children(".textbox").attr("value",$("#tag_name_"+tag_id).data("tagName"));
-                                    $("#tag_name_"+tag_id).removeClass("hide");
-                                    $( this ).dialog( "close" );
-                                }
-                            },
-
-                            "Merge Tags": {
-                                text:"Merge Tags",
-                                class:"btn btn-primary",
-                                style:"margin: 5px",
-                                click:function() {
-                                    merge_tags(tag_id,tag_name);
-                                    $( this ).dialog( "close" );
-                                }
-                            }
-
-                        }
-                    });
+                    $.freshdialog(data);
                 }
                 else
                 {
                     var tag_name_id = $("#tag_name_"+tag_id);
                     tag_name_id.data("tagName",status["name"]);
                     var name= status["name"]
-                    if( status["name"].length>12)
+                    if( status["name"].length > 20)
                     {
-                       name=status["name"].slice(0,10)+"..."
+                       name=status["name"];
                        tag_name_id.addClass("tooltip").attr("title",status["name"]);
 
                     }
@@ -358,10 +276,24 @@ $(document).ready(function(){
             type: "PUT",
             data: {tag_id: tag_id, tag_name: tag_name },
             success: function(status){
-                location.reload();
+                $(".modal").modal("hide");
+                location.replace("/helpdesk/tags");
             }
         });
     }
+
+
+    $(document).on('click.tag_index', "#tag-dialog-confirm-cancel", function(){
+        $("#tag_text_container_" + tag_id).addClass("hide")
+                .children(".textbox").attr("value",$("#tag_name_" + tag_id).data("tagName"));
+        $("#tag_name_" + tag_id).removeClass("hide");
+
+    })
+
+    $(document).on("click.tag_index", "#tag-dialog-confirm-submit", function(){
+        merge_tags(tag_id,tag_name);
+    })
+
 
 });
 })(jQuery)

@@ -34,9 +34,9 @@ class VA::Tester::Condition::Supervisor < VA::Tester::Condition
   private
 
     def fetched? ticket, joins, filter_query, negation_query
-      fetched = Account.current.tickets.scoped(:conditions => negation_query).scoped(:conditions => filter_query).
-                  updated_in(1.month.ago).visible.find(:all, :joins => joins, :select => "helpdesk_tickets.*").map(&:id)
-      return fetched.include?(ticket.id)
+      fetched = Account.current.tickets.where(negation_query).where(filter_query).
+                  updated_in(1.month.ago).visible.joins(joins).select("helpdesk_tickets.*").pluck(:id)
+      fetched.include?(ticket.id)
     end
 
     def compare ticket_value, rule_value, option_name, operator, operator_type

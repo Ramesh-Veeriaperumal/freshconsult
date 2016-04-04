@@ -1,6 +1,7 @@
 class Portal::Template < ActiveRecord::Base    
 
-	set_table_name "portal_templates"
+	self.table_name =  "portal_templates"
+  self.primary_key = :id
 
   include Redis::RedisKeys
   include Redis::PortalRedis
@@ -22,6 +23,13 @@ class Portal::Template < ActiveRecord::Base
     [:footer,  "portal/footer.portal"],
     [:layout,  "portal/layout.portal"],
     [:head,    "portal/head.portal"]
+  ]
+
+  TEMPLATE_MAPPING_RAILS3 = [ 
+    [:header,  "portal/header", :portal],    
+    [:footer,  "portal/footer", :portal],
+    [:layout,  "portal/layout", :portal],
+    [:head,    "portal/head", :portal]
   ]
 
   TEMPLATE_MAPPING_FILE_BY_TOKEN = Hash[*TEMPLATE_MAPPING.map { |i| [i[0], i[1]] }.flatten]
@@ -51,7 +59,7 @@ class Portal::Template < ActiveRecord::Base
 
   # Merge with default params for specific portal
   def get_portal_pref
-    pref = self.portal.preferences || self.account.main_portal.preferences
+    pref = self.portal.preferences.presence || self.account.main_portal.preferences
     # Selecting only bg_color, tab_color, header_color from the portals preferences
     Hash[*[:bg_color, :tab_color, :header_color].map{ |a| [ a, pref[a] ] }.flatten]
   end
@@ -132,8 +140,8 @@ class Portal::Template < ActiveRecord::Base
   def validate_preferences
     pref = default_preferences.keys - [:baseFont, :headingsFont, :nonResponsive]
     preferences.each do |key, value|
-      next if pref.exclude?(key.to_sym)
-      errors.add_to_base("Please enter a valid hex color value.") and return false unless value =~ Portal::HEX_COLOR_REGEX
+      next if value.blank? || pref.exclude?(key.to_sym)
+      errors.add(:base, "Please enter a valid hex color value.") and return false unless value =~ Portal::HEX_COLOR_REGEX
     end
   end
 

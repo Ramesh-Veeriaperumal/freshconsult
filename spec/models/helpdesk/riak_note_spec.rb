@@ -6,6 +6,15 @@ describe Helpdesk::Note do
 
   before(:all) do
     @user = User.find_by_account_id(@account.id)
+    unless RIAK_ENABLED
+      $primary_cluster = "mysql"
+      $secondary_cluster = "none"
+      $backup_cluster = "none"
+    else
+      $primary_cluster = "riak"
+      $secondary_cluster = "mysql"
+      $backup_cluster = "none"
+    end
     @ticket =  Helpdesk::Ticket.new(
       :requester_id => @user.id,
       :subject => "test note one",
@@ -24,11 +33,13 @@ describe Helpdesk::Note do
           :user_id => @user.id
         )
         note.save_note
-        riak_note_body = note.read_from_riak
-        riak_note_body.body.should eql "Not given."
-        riak_note_body.body_html.should eql "<div>Not given.</div>"
-        riak_note_body.full_text.should eql "Not given."
-        riak_note_body.full_text_html.should eql "<div>Not given.</div>"
+        if RIAK_ENABLED
+          riak_note_body = note.read_from_riak
+          riak_note_body.body.should eql "Not given."
+          riak_note_body.body_html.should eql "<div>Not given.</div>"
+          riak_note_body.full_text.should eql "Not given."
+          riak_note_body.full_text_html.should eql "<div>Not given.</div>"
+        end
         riak_note_body = note.read_from_mysql
         riak_note_body.body.should eql "Not given."
         riak_note_body.body_html.should eql "<div>Not given.</div>"
@@ -44,11 +55,13 @@ describe Helpdesk::Note do
             :body_html => "<div>body two</div>"
         })
         note.save_note
-        riak_note_body = note.read_from_riak
-        riak_note_body.body.should eql "body two"
-        riak_note_body.body_html.should eql "<div>body two</div>"
-        riak_note_body.full_text.should eql "body two"
-        riak_note_body.full_text_html.should eql "<div>body two</div>"
+        if RIAK_ENABLED
+          riak_note_body = note.read_from_riak
+          riak_note_body.body.should eql "body two"
+          riak_note_body.body_html.should eql "<div>body two</div>"
+          riak_note_body.full_text.should eql "body two"
+          riak_note_body.full_text_html.should eql "<div>body two</div>"
+        end
         riak_note_body = note.read_from_mysql
         riak_note_body.body.should eql "body two"
         riak_note_body.body_html.should eql "<div>body two</div>"
@@ -64,11 +77,13 @@ describe Helpdesk::Note do
           :body_html => "<div>body two</div>"
         )
         note.save_note
-        riak_note_body = note.read_from_riak
-        riak_note_body.body.should eql "body two"
-        riak_note_body.body_html.should eql "<div>body two</div>"
-        riak_note_body.full_text.should eql "body two"
-        riak_note_body.full_text_html.should eql "<div>body two</div>"
+        if RIAK_ENABLED
+          riak_note_body = note.read_from_riak
+          riak_note_body.body.should eql "body two"
+          riak_note_body.body_html.should eql "<div>body two</div>"
+          riak_note_body.full_text.should eql "body two"
+          riak_note_body.full_text_html.should eql "<div>body two</div>"
+        end  
         riak_note_body = note.read_from_mysql
         riak_note_body.body.should eql "body two"
         riak_note_body.body_html.should eql "<div>body two</div>"
@@ -84,7 +99,9 @@ describe Helpdesk::Note do
           :body => "body two",
           :body_html => "<div>body two</div>"
         )
-        Riak::RObject.any_instance.stubs(:store).raises(ActiveRecord::Rollback, "Call tech support!")
+        if RIAK_ENABLED
+          Riak::RObject.any_instance.stubs(:store).raises(ActiveRecord::Rollback, "Call tech support!")
+        end
         note.save_note
         # Helpdesk::Note.find_by_id(note.id).should be_nil
         Helpdesk::Note.find_by_id(note.id).body.should eql "body two"
@@ -106,9 +123,11 @@ describe Helpdesk::Note do
           :body_html => "<div>body edit updated</div>"
         }
       )
-      riak_note_body = note.read_from_riak
-      riak_note_body.body.should eql "body edit updated"
-      riak_note_body.body_html.should eql "<div>body edit updated</div>"
+      if RIAK_ENABLED
+        riak_note_body = note.read_from_riak
+        riak_note_body.body.should eql "body edit updated"
+        riak_note_body.body_html.should eql "<div>body edit updated</div>"
+      end
       riak_note_body = note.read_from_mysql
       riak_note_body.body.should eql "body edit updated"
       riak_note_body.body_html.should eql "<div>body edit updated</div>"
@@ -128,9 +147,11 @@ describe Helpdesk::Note do
           :body_html => "<div>body three</div>"
         }
       )
-      riak_note_body = note.read_from_riak
-      riak_note_body.body.should eql "body three"
-      riak_note_body.body_html.should eql "<div>body three</div>"
+      if RIAK_ENABLED
+        riak_note_body = note.read_from_riak
+        riak_note_body.body.should eql "body three"
+        riak_note_body.body_html.should eql "<div>body three</div>"
+      end
       riak_note_body = note.read_from_mysql
       riak_note_body.body.should eql "body three"
       riak_note_body.body_html.should eql "<div>body three</div>"
@@ -140,9 +161,11 @@ describe Helpdesk::Note do
           :body_html => "<div>body four</div>"
         }
       )
-      riak_note_body = note.read_from_riak
-      riak_note_body.body.should eql "body three"
-      riak_note_body.body_html.should eql "<div>body three</div>"
+      if RIAK_ENABLED
+        riak_note_body = note.read_from_riak
+        riak_note_body.body.should eql "body three"
+        riak_note_body.body_html.should eql "<div>body three</div>"
+      end
       riak_note_body = note.read_from_mysql
       riak_note_body.body.should eql "body three"
       riak_note_body.body_html.should eql "<div>body three</div>"
@@ -175,7 +198,9 @@ describe Helpdesk::Note do
       note.save_note
       note_id = note.note_body.id
       note.destroy
-      expect { $note_body.get("#{@account.id}/#{note.id}") }.to raise_error
+      if RIAK_ENABLED
+        expect { $note_body.get("#{@account.id}/#{note.id}") }.to raise_error
+      end
       expect { Helpdesk::NoteOldBody.find("#{note_id}") }.to raise_error
     end
 
@@ -188,15 +213,21 @@ describe Helpdesk::Note do
         :body_html => "<div>description delete</div>"
       )
       note.save_note
-      Riak::Bucket.any_instance.stubs(:delete).raises(ActiveRecord::Rollback, "Call tech support!")
+      if RIAK_ENABLED
+        Riak::Bucket.any_instance.stubs(:delete).raises(ActiveRecord::Rollback, "Call tech support!")
+      end
       note.destroy
-      riak_note_body = note.read_from_riak
-      riak_note_body.body.should eql "description delete"
-      riak_note_body.body_html.should eql "<div>description delete</div>"
+      if RIAK_ENABLED
+        riak_note_body = note.read_from_riak
+        riak_note_body.body.should eql "description delete"
+        riak_note_body.body_html.should eql "<div>description delete</div>"
+      end
       riak_note_body = note.read_from_mysql
       riak_note_body.body.should eql "description delete"
       riak_note_body.body_html.should eql "<div>description delete</div>"
-      Riak::Bucket.any_instance.unstub(:delete)
+      if RIAK_ENABLED
+        Riak::Bucket.any_instance.unstub(:delete)
+      end
     end
   end
 
@@ -210,16 +241,18 @@ describe Helpdesk::Note do
       })
       note.save_note
       note.note_body_content = nil
-      Riak::RContent.any_instance.expects(:data).with().returns(
-        {"note_body"=>
-         {"body"=>"body two",
-          "body_html"=>"<div>body two</div>",
-          "meta_info"=>nil,
-          "raw_html"=>nil,
-          "raw_text"=>nil,
-          "version"=>nil
-          }
-         }).once
+      if RIAK_ENABLED
+        Riak::RContent.any_instance.expects(:data).with().returns(
+          {"note_body"=>
+           {"body"=>"body two",
+            "body_html"=>"<div>body two</div>",
+            "meta_info"=>nil,
+            "raw_html"=>nil,
+            "raw_text"=>nil,
+            "version"=>nil
+            }
+           }).once
+      end
       note.note_body
       note.destroy
     end
@@ -233,7 +266,9 @@ describe Helpdesk::Note do
       })
       note.save_note
       note.note_body_content = nil
-      Riak::Bucket.any_instance.stubs(:get).raises(Riak::ProtobuffsFailedRequest.new("",""))
+      if RIAK_ENABLED
+        Riak::Bucket.any_instance.stubs(:get).raises(Riak::ProtobuffsFailedRequest.new("",""))
+      end
       note_old_body_object = Helpdesk::NoteOldBody.find_by_note_id(note.id)
       note_body = note.note_body
       note_body.class.should eql Helpdesk::NoteOldBody

@@ -12,52 +12,40 @@ class Mobihelp::SolutionsController < MobihelpController
 
   def articles
     solution_data = "[]"
-    unless @categories.blank?
+    unless @category_ids.blank?
       if request_version_2?
-        solution_data = @mobihelp_app.solutions_with_category(@categories)
+        solution_data = @mobihelp_app.solutions_with_category(@category_ids)
       else
-        solution_data = @mobihelp_app.solutions_without_category(@categories)
+        solution_data = @mobihelp_app.solutions_without_category(@category_ids)
       end
     end
     render_json(solution_data)
   end
 
   private
-
-  def load_mobihelp_solution_category
-    category_ids = @mobihelp_app.app_solutions.all(:order => "position").map(&:category_id)
-    if category_ids.any?
-      @categories = Solution::Category.find(category_ids, :order => "field(id, #{category_ids.join(',')})")
+    def load_mobihelp_solution_category
+      @category_ids = @mobihelp_app.app_solution_category_ids
     end
-  end
 
-  def render_json(data)
-    respond_to do |format|
-      format.json {
-        render :json => data
-      }
+    def request_version_2?
+      request.headers["X-API-Version"] == Mobihelp::App::API_VERSIONS_BY_NAME[:v_2]
     end
-  end
 
-  def request_version_2?
-    request.headers["X-API-Version"] == Mobihelp::App::API_VERSIONS_BY_NAME[:v_2]
-  end
+    def check_solution_updated
+      updated_since = params[:updated_since]
+      unless updated_since.nil?
+        begin
+          updated_since = DateTime.rfc3339(updated_since)
+        rescue Exception => e
+          return ""
+        end
 
-  def check_solution_updated
-    updated_since = params[:updated_since]
-    unless updated_since.nil?
-      begin
-        updated_since = DateTime.rfc3339(updated_since)
-      rescue Exception => e
-        return ""
-      end
-
-      last_updated_time =  @mobihelp_app.last_updated_time
-      if last_updated_time.nil?
-        render_json("[]")
-      else
-        render_json({:no_update => true})  if updated_since > last_updated_time
+        last_updated_time =  @mobihelp_app.last_updated_time
+        if last_updated_time.nil?
+          render_json("[]")
+        else
+          render_json({:no_update => true})  if updated_since > last_updated_time
+        end
       end
     end
-  end
 end

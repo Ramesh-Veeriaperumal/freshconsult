@@ -42,13 +42,27 @@
 	.Message-alert{
 		padding: 6px 0;
 		@include text-align(center);
-		@include margin-left(150px);		
+		@include margin-left(150px);
 	}
 	.freshfone-controls {
 		.select2-container { @include margin-left(0); }
 		.toggle-button {
 			margin-top: 3px;
 			@include margin-left(0);
+		}
+	}
+.access_groups_control {
+			height: 30px;
+		}
+	.wait_message, .hold_message {
+		.message-container{
+			padding: 0;
+		}
+		.message_value_container {
+			margin: 0;
+			.custom-file-upload{
+				margin-left:0;
+			}
 		}
 	}
 }
@@ -61,9 +75,38 @@
 
 .max_queue_length_select2{
 	display: inline-block;
-	width: 50px;
+	width: 70px;
 }
 
+.queue_setting_div.main {
+  border-left: 1px solid #bbb;
+  padding-left: 10px;
+  margin-top: 15px;
+  .message-container {
+  	padding-left: 0;
+  	.message-type {
+  		margin-left: 0;
+  	}
+  }
+  .queue_position_controls {
+  	padding-top: 10px;
+  	textarea {
+			width: 417px;
+			max-height: 80px;
+  	}
+  	.recording-alert {
+  		padding-left: 2px;
+  	}
+  }
+
+  .settings-label {
+  	max-width: 185px;
+  	font-weight: normal;
+  }
+  .controls {
+  	margin-left: 160px;
+  }
+}
 .queue_wait_time{
 	display: inline-block;
 	.queue_wait_time_options{
@@ -73,7 +116,7 @@
 		 label{
 			display:inline-block;
 			vertical-align: bottom;
-		}	
+		}
 	}
 }
 
@@ -94,3 +137,80 @@
 .freshfone-disabled-alert{
 	margin-bottom: 25px;
 }
+.selectGroupAccess{
+	cursor: pointer;
+}
+.freshfone_video {
+  margin: 20px 50px 20px 60px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0px 10px 10px 10px;
+  background: #eee;
+  .title {
+    padding: 10px 10px 10px 2px;
+	  display: block;
+	  line-height: 1;
+  }
+}
+.ff_seperator {
+  margin: 20px 0 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.ff_numbers_trial_usage {
+  border: 1px solid #EEE;
+  background: #FFE;
+  padding: 11px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  height: 90px;
+  .trial_msg {
+    height:36px; 
+    margin:4px;
+    .usage_container{
+      width:30px;
+      @include margin-right(10px);
+    }
+    .usage_info {
+      width: 120px;
+      .error{
+        color: #A90329;
+      }
+    }
+  }
+  .error{
+    color: #A90329;
+  }
+  .content{
+    width: 70%;
+  }
+  .graph{
+    width: 27%;
+  }
+  .btn {
+    margin-top:10px;
+    width: 137px;
+  }
+}
+
+.caller_id {
+  width : 190px;
+}
+
+.call_id_mask{
+  @include micro-position(7px);
+  .toggle-button{
+    margin-left: 0px;
+    float: left;
+    top: -2px;
+  }
+  .caller_id_container{
+    @include micro-position(-5px);
+  }
+}
+
+.no-number-added{
+  color: #888;
+}
+

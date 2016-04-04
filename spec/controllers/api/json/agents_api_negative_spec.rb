@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe AgentsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -26,7 +25,7 @@ describe AgentsController do
                                  :role_ids => ["#{@agent_role.id}"],
                                  :privileges => @agent_role.privileges })
     get :api_key, {:id => user.agent.id, :format => 'json'}
-    forbidden_status?(response.status).should be_true
+    forbidden_status?(response.status).should be true
   end
 
   it "should not get agent's api key if the requester canot assume identity of agent" do
@@ -39,7 +38,7 @@ describe AgentsController do
                                  :role_ids => ["#{@admin_role.id}"],
                                  :privileges => @admin_role.privileges })
     get :api_key, {:id => user.agent.id, :format => 'json'}
-    forbidden_status?(response.status).should be_true
+    forbidden_status?(response.status).should be true
   end
 
   it "should not get agent api key if the requester is not super admin" do
@@ -59,16 +58,16 @@ describe AgentsController do
   it "should not update an logged in agent's role" do
     put :update, {:id => @agent.agent.id, :agent => {:user => {:role_ids => ["#{@agent_role.id}","#{@admin_role.id}"]},
                                               },:format => 'json'}                                                                                               
-    forbidden_status?(response.status).should be_true
+    forbidden_status?(response.status).should be true
   end
   
   it "should not update an logged in agent's ticket permission" do
     put :update, {:id => @agent.agent.id, :agent => {:ticket_permission => 2}, :format => 'json'}                                                                                               
-    forbidden_status?(response.status).should be_true
+    forbidden_status?(response.status).should be true
   end
 
   def forbidden_status?(status)
-    status =~ /403 Forbidden/
+    status == 403
   end
 
 end

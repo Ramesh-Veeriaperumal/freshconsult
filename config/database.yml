@@ -15,6 +15,8 @@ development:
       database: helpkit1
       not_a_shard: false
 
+
+
 # development:
 #   adapter: mysql
 #   encoding: utf8
@@ -35,9 +37,6 @@ staging:
       host: 127.0.0.1
       database: helpkit1
       not_a_shard: false
-      slave:
-        host: 127.0.0.1
-        database: helpkit1
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -48,17 +47,17 @@ test:
   # timeout: 5000
   adapter: mysql2
   encoding: utf8
-  database: helpkit_test
+  database: helpkit_test_rails3
   username: root
   password:
   shards:
     shard_2:
       host: 127.0.0.1
-      database: helpkit_test
+      database: helpkit_test_rails3
       not_a_shard: false
     shard_1:
       host: 127.0.0.1
-      database: helpkit_test
+      database: helpkit_test_rails3
       not_a_shard: false
 
 production:

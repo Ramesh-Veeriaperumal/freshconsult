@@ -2,7 +2,7 @@ page << "timesheet.editCompelete('add', true)"
 page.replace "timeentry_#{@time_entry.id}", :partial => "time_entry", :object => @time_entry
 clear_view_timers(page, @time_entry, @time_cleared)
 page << "jQuery('#timesheetlist .time-tracked-details:not(.time_running) .toggle_timer').hide();"
-page << "jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();"
+page << "jQuery('#timesheetlist .time-tracked-details:first .toggle_timer').show();"
 if @time_entry.timer_running
         page << "trigger_event('time_entry_started', #{@time_entry.to_json} );"
 else

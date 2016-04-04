@@ -1,8 +1,10 @@
 require 'spec_helper'
-include TicketFieldsHelper
 
-describe TicketFieldsController do
-  integrate_views
+RSpec.configure do |c|
+  c.include TicketFieldsHelper
+end
+
+RSpec.describe TicketFieldsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

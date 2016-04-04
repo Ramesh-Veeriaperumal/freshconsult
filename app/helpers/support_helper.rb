@@ -4,7 +4,13 @@ module SupportHelper
   include Redis::RedisKeys
   include Redis::PortalRedis
   include Portal::Helpers::DiscussionsHelper
+  include Portal::Helpers::DiscussionsVotingHelper
   include Portal::Helpers::Article
+
+  # TODO-RAILS3 the below helpers are added to use liquids truncate
+  # HACK Need to scope down liquid helpers and include only the required ones
+  # and ignore all rails helpers in portal_view
+  include Liquid::StandardFilters
 
 	FONT_INCLUDES = { "Source Sans Pro" => "Source+Sans+Pro:regular,italic,700,700italic",
 					  "Droid Sans" => "Droid+Sans:regular,700",
@@ -44,28 +50,28 @@ module SupportHelper
 	    end
 	    final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
 	end
-  
+
   def default_meta meta
     output = []
-    output << %( 
+    output << %(
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
       <meta name="description" content="#{ meta['description'] }" />
       <meta name="author" content="#{ meta['author'] }" /> )
-      
+
     output << %( <meta name="keywords" content="#{ meta['keywords'] }" /> ) if meta['keywords'].present?
     output << %( <link rel="canonical" href="#{ meta['canonical'] }" /> ) if meta['canonical'].present?
-      
+
     output.join('')
   end
-  
+
   def default_responsive_settings portal
     if( portal['settings']['nonResponsive'] != "true" )
-      %(<link rel="apple-touch-icon" href="/images/touch/touch-icon-iphone.png" />
-    	  <link rel="apple-touch-icon" sizes="72x72" href="/images/touch/touch-icon-ipad.png" />
-        <link rel="apple-touch-icon" sizes="114x114" href="/images/touch/touch-icon-iphone-retina.png" />
-    	  <link rel="apple-touch-icon" sizes="144x144" href="/images/touch/touch-icon-ipad-retina.png" />
+      %(<link rel="apple-touch-icon" href="/assets/touch/touch-icon-iphone.png" />
+    	  <link rel="apple-touch-icon" sizes="72x72" href="/assets/touch/touch-icon-ipad.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="/assets/touch/touch-icon-iphone-retina.png" />
+    	  <link rel="apple-touch-icon" sizes="144x144" href="/assets/touch/touch-icon-ipad-retina.png" />
     	  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" /> )
     end
   end
@@ -82,6 +88,8 @@ module SupportHelper
 
 		# Showing portal login link or signout link based on user logged in condition
 		if portal['user']
+			# Show switch to agent portal if the loggedin user is an agent
+			output << %(<b><a href="#{ portal['helpdesk_url']}">#{ t('header.goto_agent_portal') }</a></b> | ) if portal['user'].agent?
 			# Showing profile settings path for loggedin user
 			output << %(<b><a href="#{ portal['profile_url'] }">#{ t('header.edit_profile') }</a></b>)
 			# Showing Signout path for loggedin user
@@ -108,15 +116,15 @@ module SupportHelper
 						</div>)
 		else
 			if portal['can_signup_feature']
-				output << content_tag(:div, 
-															I18n.t('portal.login_signup_to_submit_ticket', 
-																			:login_url => portal['login_url'], 
-																			:signup_url => portal['signup_url']).html_safe, 
+				output << content_tag(:div,
+															I18n.t('portal.login_signup_to_submit_ticket',
+																			:login_url => portal['login_url'],
+																			:signup_url => portal['signup_url']).html_safe,
 															:class => "hide-in-mobile")
 			else
-				output << content_tag(:div, 
-															I18n.t('portal.login_to_submit_ticket', 
-																			:login_url => portal['login_url']).html_safe, 
+				output << content_tag(:div,
+															I18n.t('portal.login_to_submit_ticket',
+																			:login_url => portal['login_url']).html_safe,
 															:class => "hide-in-mobile")
 			end
 		end
@@ -125,7 +133,7 @@ module SupportHelper
 								<span>#{ I18n.t('header.check_ticket_status') }</span>
 							</a>
 						</div> )
-		output << %( <div> <a href="#" class="mobile-icon-nav-contact contact-info ellipsis">
+		output << %( <div> <a href="tel:#{ h(portal['contact_info']) }" class="mobile-icon-nav-contact contact-info ellipsis">
 						<span>#{ h(portal['contact_info']) }</span>
 					 </a> </div> ) if portal['contact_info']
 
@@ -182,7 +190,7 @@ module SupportHelper
 						<form class="hc-search-form" autocomplete="off" action="#{ tab_based_search_url }" id="hc-search-form">
 							<div class="hc-search-input">
 								<input placeholder="#{ I18n.t('portal.search.placeholder') }" type="text"
-									name="term" class="special" value="#{ h(params[:term]) }"
+									name="term" class="special" value="#{params[:term]}"
 						            rel="page-search" data-max-matches="10">
 						        <span class="search-icon icon-search-dark"></span>
 							</div>
@@ -194,18 +202,29 @@ module SupportHelper
 	end
 
 	# User image page
-	def profile_image user, more_classes = "", width = "50px", height = "50px"
+	def profile_image user, more_classes = "", width = "50px", height = "50px", profile_size = 'thumb'
 		output = []
-		output << %( 	<div class="user-pic-thumb image-lazy-load #{more_classes}">
-							<img src="/images/fillers/profile_blank_thumb.gif" onerror="imgerror(this)" )
-		output << %(			data-src="#{user['profile_url']}" rel="lazyloadimage" ) if user['profile_url']
-		output << %(			width="#{width}" height="#{height}" />
-						</div> )
+		output << %( 	<div class="user-pic-thumb image-lazy-load #{more_classes}"> )
+		if user['profile_url']
+			output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" rel="lazyloadimage"  data-src="#{user['profile_url']}" /> )
+		else
+			username = user['name'].lstrip
+
+			if isalpha(username[0])
+				output << %(<div class="#{profile_size} avatar-text circle text-center bg-#{unique_code(username)}">)
+				output << %( #{username[0]} )
+				output << %( </div>)
+			else
+				output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" />)
+			end
+		end
+		output << %( </div> )
 		output.join("").html_safe
 	end
 
 	#freshfone audio dom
-	def freshfone_audio_dom(notable)
+	# TODO-RAILS3 duplicate of tickets_helper
+ def freshfone_audio_dom(notable)
       notable = notable
       call = notable.freshfone_call
       dom = []
@@ -230,9 +249,10 @@ module SupportHelper
 	end
 
 	# Logo for the portal
-	def logo portal
+	def logo portal, link_flag = false
 		_output = []
-		_output << %(<a href='#{portal['linkback_url']}' class='portal-logo'>)
+		_output << %(<a href= '#{ link_flag ?  "javascript:void(0)" : "#{portal['linkback_url']}" }')
+		_output << %(class='portal-logo'>)
 		# Showing the customer uploaded logo or default logo within an image tag
 		_output << %(<span class="portal-img"><i></i>
 										<img src='#{portal['logo_url']}' alt="#{I18n.t('logo')}"
@@ -243,8 +263,8 @@ module SupportHelper
 	end
 
 	def portal_fav_ico
-		fav_icon = MemcacheKeys.fetch(["v6","portal","fav_ico",current_portal],30.days.to_i) do
-     			current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' :
+		fav_icon = MemcacheKeys.fetch(["v7","portal","fav_ico",current_portal],30.days.to_i) do
+     			current_portal.fav_icon.nil? ? '/assets/misc/favicon.ico?123458' :
             		AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,
             			current_portal.fav_icon.content.bucket_name,
                         :expires => 30.days.to_i,
@@ -287,8 +307,19 @@ module SupportHelper
 		content_tag :div, _text.join(" ").html_safe, :class => "alert alert-ticket-status"
 	end
 
+	def archive_status_alert ticket
+		_text = []
+		_text << I18n.t('archive_ticket.no_reply_msg')
+		content_tag :div, _text.join(" ").html_safe, :class => "alert alert-ticket-status"
+	end
+
 	def widget_prefilled_value field
-		format_prefilled_value(field, prefilled_value(field)) unless params[:helpdesk_ticket].blank?
+		#format_prefilled_value(field, prefilled_value(field)) unless params[:helpdesk_ticket].blank?
+		if @feeback_widget_error
+			helpdesk_ticket_values field, @params
+		else
+			format_prefilled_value(field, prefilled_value(field)) unless params[:helpdesk_ticket].blank?
+		end
 	end
 
 	def prefilled_value field
@@ -315,20 +346,20 @@ module SupportHelper
 		form_value.merge!({:category_val => URI.unescape(params[:helpdesk_ticket][:custom_field][field.name] || "") })
 	end
 
-	def ticket_field_container form_builder,object_name, field, field_value = ""
+	def ticket_field_container form_builder,object_name, field, field_value = "", pl_value_id=nil
 		case field.dom_type
 			when "checkbox" then
 				required = (field[:required_in_portal] && field[:editable_in_portal])
 				%(  <div class="controls">
 						<label class="checkbox #{required ? 'required' : '' }">
-							#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value } #{ field[:label_in_portal] }
+							#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value, { :pl_value_id => pl_value_id } } #{ field[:label_in_portal] }
 						</label>
 					</div> ).html_safe
 			else
 				%( #{ ticket_label object_name, field }
-		   			<div class="controls">
-
-		   				#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value }
+		   			<div class="controls #{"nested_field" if field.dom_type=="nested_field"} #{"support-date-field" if field.dom_type=="date"}">
+		   				#{ ticket_form_element form_builder, :helpdesk_ticket, field, field_value,
+		   																						 { :pl_value_id => pl_value_id } }
 		   			</div> ).html_safe
 		end
 	end
@@ -340,9 +371,11 @@ module SupportHelper
 	end
 
 	def ticket_form_element form_builder, object_name, field, field_value = "", html_opts = {}
+			pl_value_id = html_opts.delete(:pl_value_id)
 	    dom_type = (field.field_type == "nested_field") ? "nested_field" : (field['dom_type'] || field.dom_type)
 	    required = (field.required_in_portal && field.editable_in_portal)
-	    element_class = " #{required ? 'required' : '' } #{ dom_type }"
+	    element_class   = " #{required ? 'required' : '' } #{ dom_type }"
+	    element_class  += " section_field" if field.section_field?
 	    field_name      = (field_name.blank?) ? field.field_name : field_name
 	    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
 
@@ -364,13 +397,20 @@ module SupportHelper
 	        		{ :include_blank => "...", :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "nested_field" then
 			nested_field_tag(object_name, field_name, field,
-	        	{:include_blank => "...", :selected => field_value},
+	        	{:include_blank => "...", :selected => field_value, :pl_value_id => pl_value_id},
 	        	{:class => element_class}, field_value, true, required)
 	      when "hidden" then
 			hidden_field(object_name , field_name , :value => field_value)
 	      when "checkbox" then
-	      	( required ? check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, { :class => element_class } ) :
-                                                   check_box(object_name, field_name, { :class => element_class, :checked => field_value.to_s.to_bool }) )
+	      	check_box_html = { :class => element_class }
+	        if pl_value_id
+	          id = gsub_id object_name+"_"+field_name+"_"+pl_value_id
+	          check_box_html.merge!({:id => id})
+	        end
+	      	( required ? check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, check_box_html ) :
+                                                   check_box(object_name, field_name, check_box_html.merge!({:checked => field_value.to_s.to_bool})) )
+	      when "date" then
+	      	construct_date_field(field_value, object_name, field_name, element_class)
 	      when "html_paragraph" then
 	      	_output = []
 	      	form_builder.fields_for(:ticket_body, @ticket.ticket_body) do |ff|
@@ -388,19 +428,32 @@ module SupportHelper
 	# The field_value(init value) for the nested field should be in the the following format
 	# { :category_val => "", :subcategory_val => "", :item_val => "" }
 	def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false, required)
-		_category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
 		_javascript_opts = {
 		  :data_tree => _field.nested_choices,
 		  :initValues => _field_values,
 		  :disable_children => false
 		}.merge!(_opt)
+		if _opt[:pl_value_id].present?
+			_htmlopts.merge!({:id => gsub_id("#{_name}_#{_fieldname}_#{_opt[:pl_value_id]}")})
+			_category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
 
-		_field.nested_levels.each do |l|
-		  _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = (_name +"_"+ l[:name]).gsub('[','_').gsub(']','')
-		  _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe, :class => "#{required ? 'required' : '' }") + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+			_field.nested_levels.each do |l|
+        _htmlopts.merge!({:id => gsub_id("#{_name}_#{l[:name]}_#{_opt[:pl_value_id]}")})
+        _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = gsub_id(_name +"_"+ l[:name]+"_"+_opt[:pl_value_id])
+        _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe, :class => "#{required ? 'required' : '' }") + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+      end
+
+      (_category + javascript_tag("jQuery('##{gsub_id(_name +"_"+ _fieldname+"_"+_opt[:pl_value_id])}').nested_select_tag(#{_javascript_opts.to_json});"))
+		else
+			_category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
+
+			_field.nested_levels.each do |l|
+			  _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = gsub_id(_name +"_"+ l[:name])
+			  _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe, :class => "#{required ? 'required' : '' }") + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+			end
+
+			_category + javascript_tag("jQuery('##{gsub_id(_name +"_"+ _fieldname)}').nested_select_tag(#{_javascript_opts.to_json});")
 		end
-
-		_category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")
 	end
 
 	# NON-FILTER HELPERS
@@ -434,7 +487,7 @@ module SupportHelper
 
 	def ticket_field_display_value(field, ticket)
 		_field_type = field.field_type
-		_field_value = (field.is_default_field?) ? ticket.send(field.field_name) : ticket.get_ff_value(field.name)
+		_field_value = (field.is_default_field?) ? ticket.send(field.field_name) : fetch_custom_field(ticket, field.name)
 		_dom_type = (_field_type == "default_source") ? "dropdown" : field.dom_type
 
 		case _dom_type
@@ -442,13 +495,15 @@ module SupportHelper
 			    if(_field_type == "default_agent")
 					ticket.responder.name if ticket.responder
 			    elsif(_field_type == "nested_field" || _field_type == "nested_child")
-					ticket.get_ff_value(field.name)
+					fetch_custom_field(ticket, field.name)
 			    else
 					field.dropdown_selected(((_field_type == "default_status") ?
 						field.all_status_choices : field.html_unescaped_choices), _field_value)
 			    end
 			when "checkbox"
 				_field_value ? I18n.t('plain_yes') : I18n.t('plain_no')
+			when "date"
+				formatted_date(_field_value) if _field_value.present?
 			else
 			  	_field_value
 		end
@@ -456,14 +511,14 @@ module SupportHelper
 
 	def ticket_field_form_value(field, ticket)
 		form_value = (field.is_default_field?) ?
-		              ticket.send(field.field_name) : ticket.get_ff_value(field.name)
+		              ticket.send(field.field_name) : fetch_custom_field(ticket, field.name)
 
 		if(field.field_type == "nested_field")
 			form_value = {}
 			field.nested_levels.each do |ff|
-			form_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = ticket.get_ff_value(ff[:name])
+			form_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = fetch_custom_field(ticket, ff[:name])
 			end
-			form_value.merge!({:category_val => ticket.get_ff_value(field.name)})
+			form_value.merge!({:category_val => fetch_custom_field(ticket, field.name)})
 		end
 
 		return form_value
@@ -516,9 +571,9 @@ module SupportHelper
 		  :current_page_name => @current_page_token,
 		  :current_tab => @current_tab,
 		  :preferences => portal_preferences,
-			:image_placeholders => { :spacer => image_path("spacer.gif"),
-			 												:profile_thumb => image_path("fillers/profile_blank_thumb.gif"),
-															 :profile_medium => image_path("fillers/profile_blank_medium.gif") }
+			:image_placeholders => { :spacer => spacer_image_url,
+			 												:profile_thumb => image_path("misc/profile_blank_thumb.jpg"),
+															 :profile_medium => image_path("misc/profile_blank_medium.jpg") }
 		}.to_json
 	end
 
@@ -606,6 +661,7 @@ module SupportHelper
 			output << %(<div class="cs-g-c attachments" id="ticket-#{ ticket.id }-attachments">)
 
 			can_delete = (ticket.requester and (ticket.requester.id == User.current.id))
+			can_delete = false if ticket.is_a?(Helpdesk::ArchiveTicketDrop)
 
 			(ticket.attachments || []).each do |a|
 				output << attachment_item(a.to_liquid, can_delete)
@@ -619,6 +675,53 @@ module SupportHelper
 		output.join('').html_safe
 	end
 
+	def custom_survey_data comment
+		output = []
+		if comment.survey.present? and Account.current.new_survey_enabled?
+			survey = comment.survey.to_liquid
+			output << %(<div class='survey_questions_wrap'>) 
+		    output << custom_survey_default_question(survey)
+			output << custom_survey_additional_questions(survey.additional_questions)
+		    output << %(</div>)
+			if comment.description_text.present? 
+	        	output << %(<div class="title muted"><b>#{ I18n.t('portal.tickets.comments') }</b></div>)
+	        end
+		end
+		output.join('').html_safe
+	end
+
+	def custom_survey_default_question(survey)
+		output = %( <div class="default_question">
+				        <div class='ques-desc'>
+				            #{survey.default_question}
+				        </div>
+				        <div class='ques-ans'>
+				            <span class="ticket-rating-label">#{ survey.default_rating_text}</span>
+				            <span class = "survey-rating #{ survey.default_rating_class }"></span>
+				        </div>
+		      		</div>)
+	end
+
+	def custom_survey_additional_questions(additional_questions_data)
+		output = []
+		if additional_questions_data.present?
+		    output << %(<ul class="survey-additional-questions">)
+			for question_obj in additional_questions_data
+			    output << %(<li>
+			                <div class='ques-desc'> #{question_obj['question']} </div>
+			                <div class='ques-ans'>
+			                  
+			                	<span class='ticket-rating-label'>#{question_obj['rating_text']}</span>
+			                    <span class="survey-rating #{ question_obj['rating_class'] }"
+			                      data-class="#{ question_obj['rating_class'] }"></span>
+			                </div>
+			              </li>)
+			end
+			output << %(</ul>)
+		end
+		output.join('').html_safe
+	end
+
 	def comment_attachments comment
 		output = []
 
@@ -626,6 +729,7 @@ module SupportHelper
 			output << %(<div class="cs-g-c attachments" id="comment-#{ comment.id }-attachments">)
 
 			can_delete = (comment.user and comment.user.id == User.current.id)
+			can_delete = false if comment.is_a?(Helpdesk::ArchiveNoteDrop)
 
 			(comment.attachments || []).each do |a|
 				output << attachment_item(a.to_liquid, can_delete)
@@ -643,15 +747,16 @@ module SupportHelper
 
 	def attachment_item attachment, can_delete = false
 		output = []
-
-		output << %(<div class="cs-g-3 attachment">)
+		tooltip = "data-toggle='tooltip' title='#{attachment.filename}'" if attachment.filename.size > 15
+		output << %(<div class="attachment">)
 		output << %(<a href="#{attachment.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
 		output << default_attachment_type(attachment)
 
 		output << %(<div class="attach_content">)
 		output << %(<div class="ellipsis">)
-		output << %(<a href="#{attachment.url}" class="filename" target="_blank">#{ attachment.filename } </a>)
+		output << %(<a href="#{attachment.url}" class="filename" target="_blank" #{tooltip}
+		            >#{ attachment.filename.truncate(15) } </a>)
 		output << %(</div>)
 		output << %(<div>(#{  attachment.size  }) </div>)
 		output << %(</div>)
@@ -663,14 +768,16 @@ module SupportHelper
 	def cloud_file_item cloud_file, can_delete = false
 		output = []
 
-		output << %(<div class="cs-g-3 attachment">)
+		output << %(<div class="attachment">)
+		tooltip = "data-toggle='tooltip' title='#{cloud_file.filename}'" if cloud_file.filename.size > 15
 		output << %(<a href="#{cloud_file.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
-		output << %(<img src="/images/#{cloud_file.provider}_big.png"></span>)
+		output << %(<img src="/assets/#{cloud_file.provider}_big.png"></span>)
 
 		output << %(<div class="attach_content">)
 		output << %(<div class="ellipsis">)
-		output << %(<a href="#{cloud_file.url}" class="filename" target="_blank">#{ cloud_file.filename } </a>)
+		output << %(<a href="#{cloud_file.url}" class="filename" target="_blank"
+			        #{tooltip}>#{ cloud_file.filename.truncate(15) } </a>)
 		output << %(<span class="file-size cloud-file"></span>)
 		output << %(</div>)
 		output << %(</div>)
@@ -682,7 +789,7 @@ module SupportHelper
 	def default_attachment_type (attachment)
 		output = []
 
-		if attachment.is_image?
+		if attachment.is_image? && attachment.source.has_thumbnail?
 			output << %(<img src="#{attachment.thumbnail}" onerror="default_image_error(this)" class="file-thumbnail image" alt="#{attachment.filename}">)
 		else
 	      	filetype = attachment.filename.split(".")[-1] || ""
@@ -709,6 +816,18 @@ module SupportHelper
 		end
 	end
 
+	def spacer_image_url
+		"#{asset_host_url}/assets/misc/spacer.gif"
+	end
+
+	def helpdesk_ticket? ticket
+    ticket and ticket.is_a?(Helpdesk::Ticket)
+  end
+
+  def archived_ticket? ticket
+    ticket and ticket.is_a?(Helpdesk::ArchiveTicket)
+  end
+
 	private
 
 		def portal_preferences
@@ -730,4 +849,9 @@ module SupportHelper
 	      [:label, :title, :id, :class, :rel].zip(args) {|key, value| link_opts[key] = h(value) unless value.blank?}
 	      link_opts
 	    end
+
+	  def fetch_custom_field(ticket, field_name)
+	  	ticket.class.eql?(Helpdesk::ArchiveTicket) ? ticket.custom_field_value(field_name) :
+	  		ticket.get_ff_value(field_name)
+	  end
 end

@@ -1,8 +1,11 @@
 require 'spec_helper'
-include GnipHelper
-include DynamoHelper
 
-describe Helpdesk::ConversationsController do
+RSpec.configure do |c|
+  c.include GnipHelper
+  c.include DynamoHelper
+end
+
+RSpec.describe Helpdesk::ConversationsController do
   self.use_transactional_fixtures = false
 
   before(:all) do
@@ -39,7 +42,7 @@ describe Helpdesk::ConversationsController do
                   :reply_email=>{"id"=>"support@#{@account.full_domain}"}, 
                   :ticket_id=>@test_ticket.display_id
                   }
-    json_response["server_response"].should be_true
+    json_response["server_response"].should be true
     replied_ticket = @account.tickets.find(@test_ticket.id)
     ticket_reply = replied_ticket.notes.last
     ticket_reply.full_text_html.should be_eql("<div>#{now}</div>")
@@ -68,7 +71,7 @@ describe Helpdesk::ConversationsController do
                      "controller"=>"helpdesk/conversations", 
                      "action"=>"forward", 
                      "ticket_id"=>@test_ticket.display_id }
-    json_response["server_response"].should be_true
+    json_response["server_response"].should be true
     @account.tickets.find(@test_ticket.id).notes.last.full_text_html.should be_eql("<div>#{now}</div>")
   end
 
@@ -87,10 +90,10 @@ describe Helpdesk::ConversationsController do
                   "action"=>"note", 
                   "ticket_id"=>@test_ticket.display_id 
                 }
-    json_response["server_response"].should be_true
+    json_response["server_response"].should be true
     private_note = @account.tickets.find(@test_ticket.id).notes.last
     private_note.body_html.should be_eql("<div>#{now}</div>")
-    private_note.private.should be_true
+    private_note.private.should be true
   end
 
   it "should send a twitter reply to a ticket" do
@@ -120,7 +123,7 @@ describe Helpdesk::ConversationsController do
     tweet = send_tweet_and_wait(feed)
     
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be true
     tweet.stream_id.should_not be_nil
     tweet_body = feed["body"]
     ticket = tweet.get_ticket
@@ -138,7 +141,7 @@ describe Helpdesk::ConversationsController do
     post :twitter,  { :helpdesk_note => {
                         :private => false, 
                         :source => 5, 
-                        :note_body_attributes => {:body => twitter_object[:text] }
+                        :note_body_attributes => {:body => twitter_object[:text].dup }
                      },
                     :tweet => true,
                     :tweet_type => "mention",
@@ -148,6 +151,6 @@ describe Helpdesk::ConversationsController do
                     :format => "json"
                   }
     json_response.should include("server_response")
-    json_response["server_response"].should be_true
+    json_response["server_response"].should be true
   end
 end

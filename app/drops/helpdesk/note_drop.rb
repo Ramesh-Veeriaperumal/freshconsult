@@ -1,8 +1,8 @@
 class Helpdesk::NoteDrop < BaseDrop
 
-	include ActionController::UrlWriter
+	include Rails.application.routes.url_helpers
 
-	liquid_attributes << :private
+	self.liquid_attributes += [:private]
 
 	def initialize(source)
 		super source
@@ -18,6 +18,10 @@ class Helpdesk::NoteDrop < BaseDrop
 
 	def commenter
 		@source.user
+	end
+	
+	def by_agent
+		user.agent && note_ticket.requester_id != user.id
 	end
 
 	def note_ticket
@@ -48,6 +52,10 @@ class Helpdesk::NoteDrop < BaseDrop
 
 	def survey_result
 		@source.survey_remark.survey_result.rating unless @source.survey_remark.nil?
+	end
+
+	def survey
+		@source.custom_survey_remark && @source.custom_survey_remark.survey_result
 	end
 
 	def attachments

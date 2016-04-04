@@ -1,0 +1,39 @@
+<div class="list-query-panel">
+	<ul>
+		<li class="lf-item">
+			<div class="item-checkbox"><input type="checkbox" id="fa_item-select-all" /></div>
+		</li>
+		<li class="lf-item lf-btns faded solution-bulk-actions" id="article-bulk-action">
+			<span>
+				<%= select_tag :id,
+	          option_groups_from_collection_for_select(current_account.solution_categories.reject(&:is_default?), :folders ,:name, :id, :name), {
+	          		:class => "disabled bulk-action-btns input-small select2 m0",
+	              :id => "move_to",
+	              :'data-dropdown-css-class' => 'bulk-action-menu',
+		          	:'data-container-css-class' => 'bulk-action-button',
+	              :include_blank => true,
+	              :placeholder => t('solution.move_to'),
+	              :"data-show-below-only" => true,
+	              :"data-action-on" => "articles",
+	              :"data-action" => "move_to"
+	          } %>
+			</span>
+			<%# if privilege?(:admin_tasks) %>
+				<!-- <span class="right-btn"> -->
+					<%# select_tag :id,
+		          options_for_select(current_account.technicians.collect{|t|[t.name, t.id]}), {
+		          		:class => "disabled bulk-action-btns input-medium select2 m0",
+		              :id => "change_author",
+		              :'data-dropdown-css-class' => 'bulk-action-menu',
+			          	:'data-container-css-class' => 'bulk-action-button',
+		              :"data-show-below-only" => true,
+		              :include_blank => true,
+		              :placeholder => t('solution.change_author'),
+		              :"data-action-on" => "articles",
+		              :"data-action" => "change_author"
+		          } %>
+				<!-- </span> -->
+			<%# end %>
+		</li>
+	</ul>
+</div>

@@ -1,0 +1,1 @@
+//= require app/social/templates/social_tweet

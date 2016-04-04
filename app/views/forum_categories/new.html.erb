@@ -1,6 +1,6 @@
-<% content_for :sidebar do -%><%-end %>
+<% content_for :sidebar do -%>&nbsp;<%-end %>
 <h3 class="lead"><%=t 'category.new'%> </h3>
-<% form_for :forum_category, :url => categories_path do |f| -%>
+<%= form_for :forum_category, :url => categories_path do |f| -%>
 	<%= f.error_messages %>
 	<%= render :partial => "/shared/name_desc", :locals => { :form => f } %>
 	<div class="button-container">	

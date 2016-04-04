@@ -5,13 +5,14 @@ describe CompaniesController do
   SKIPPED_KEYS = [  :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, 
                     :delta, :import_id, :custom_field ]
 
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
     #@account = create_test_account
     @user = add_test_agent(@account)
+    @account.companies.destroy
     @comp = create_company
   end
 
@@ -37,7 +38,7 @@ describe CompaniesController do
     post :create, @params.merge!(:format => 'json')
     @comp = @account.companies.find_by_name(@company_name)
     result =  parse_json(response)
-    expected = (response.status =~ /201 Created/) && compare(result['company'].keys,APIHelper::COMPANY_ATTRIBS,{}).empty?
+    expected = (response.status == 201) && compare(result['company'].keys,APIHelper::COMPANY_ATTRIBS,{}).empty?
     expected.should be(true)
   end
 
@@ -50,18 +51,18 @@ describe CompaniesController do
   end
 
   it "should update a company using the API" do
-    id = @account.companies.find_by_name(@comp.name).id
+    id = @comp.id
     fake_a_company
     put :update, (@params).merge!({ :id => id, :format => 'json' })
-    { :company => company_attributes(@account.companies.find(id), SKIPPED_KEYS) }.
-                                                                    should be_eql(@company_params)
+
+    company_attributes(@account.companies.find(id), SKIPPED_KEYS).should be_eql(@company_params[:company])
   end
 
   it "should delete a company using the API" do
     @comp = create_company
     id = @account.companies.find_by_name(@comp.name).id
     delete :destroy, { :id => id, :format => 'json' }
-    response.status.should be_eql("200 OK")
+    response.status.should be_eql(200)
     @company = nil
   end
 
@@ -71,7 +72,7 @@ describe CompaniesController do
     @another_comp = create_company
     another_id = @account.companies.find_by_name(@another_comp.name).id
     delete :destroy, { :ids => [id, another_id], :format => 'json' }
-    response.status.should be_eql("200 OK")
+    response.status.should be_eql(200)
     @company = nil
   end
 

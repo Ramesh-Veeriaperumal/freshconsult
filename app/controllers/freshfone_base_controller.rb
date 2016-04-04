@@ -1,5 +1,6 @@
 class FreshfoneBaseController < ApplicationController
-	include TwilioMaster	
+	include TwilioMaster
+	include Freshfone::SubscriptionsUtil
 	
 	before_filter :check_privilege, :if => :restricted_method?
 	before_filter :check_freshfone_feature
@@ -19,10 +20,9 @@ class FreshfoneBaseController < ApplicationController
     end
 
 		def reject_call
-      if current_account.freshfone_credit.below_calling_threshold?
-				Rails.logger.debug "current_account :: #{current_account}, account_sid :: #{params[:AccountSid]}, call_sid :: #{params[:CallSid]}"
-				render :xml => Twilio::TwiML::Response.new { |r| r.Reject }.text
-			end
+			return if trial? && !trial_exhausted? # Not checking credit for trial state alone
+			return reject_trial_call if trial_exhausted? || trial_expired?
+			validate_credit
 		end
 
     def freshfone_account
@@ -34,10 +34,7 @@ class FreshfoneBaseController < ApplicationController
     def check_freshfone_feature
       unless current_account.freshfone_enabled?
         Rails.logger.debug "Freshfone enabled validation failed ::: Account :: #{current_account.id}, account_sid :: #{params[:AccountSid]}, call_sid :: #{params[:CallSid]}"
-        render :xml => Twilio::TwiML::Response.new { |r|
-          r.comment! "freshfone enabled validation failed"
-          r.Reject 
-        }.text
+        render :xml => telephony.reject('freshfone enabled validation failed')
       end 
     end
   
@@ -52,4 +49,18 @@ class FreshfoneBaseController < ApplicationController
   	def call_initiation_method?
   		( CALL_INITIATION_METHODS[controller_name.to_sym] || [] ).include? action_name.to_sym
   	end
+
+    def reject_trial_call
+      render xml: telephony.reject("Trial #{trial_exhausted? ? 'Exhausted' : 'Expired'}")
+    end
+
+    def validate_credit
+      return unless current_account.freshfone_credit.below_calling_threshold?
+      Rails.logger.debug "current_account :: #{current_account}, account_sid :: #{params[:AccountSid]}, call_sid :: #{params[:CallSid]}"
+      render :xml => telephony.reject('Low Credit')
+    end
+
+    def telephony
+      @telephony ||= Freshfone::Telephony.new
+    end
 end

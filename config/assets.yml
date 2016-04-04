@@ -1,4 +1,4 @@
-package_assets:         on          # (on, off, always)
+package_assets:         off          # (on, off, always)
 embed_assets:           off         # (on, off, datauri)
 compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
@@ -29,7 +29,7 @@ stylesheets:
   :tkt_details_print  => [ "page/tkt_details/tkt_details_print"],
   :gadget  => [ "common","pages","module","sprites","app/app-common","app/app-bootstrap","plugins","app/ie","page/tkt_details/tkt_details","page/tkt_details/tkt_details_sprites","page/gadget"],
   :google_signup  => [ "common","page/google-signup"],
-  :reports  => [ "page/reports"],
+  :reports  => [ "reports"],
   :print  => [ "print/print"],
   :report_print  => [ "print/report-print"],
   :portal_print  => [ "print/support"],
@@ -42,14 +42,14 @@ stylesheets:
   :responsive_widget  => [ "portal/responsive-widget"],
   :facebook  => [ "portal/facebook"],
   :social  => [ "social/social"],
-  :rating  => [ "portal/rating"],
+  :survey  => [ "portal/survey"],
   :freshfone  => [ "freshfone/freshfone","freshfone/jquery.keypad","freshfone/call_history","ui.daterangepicker"],
   :freshfone_ivr  => [ "freshfone/ivr/main"],
   :freshfone_settings  => [ "freshfone/settings/main"],
   :freshfone_admin  => [ "freshfone/admin"],
   :freshfone_message_select  => [ "freshfone/message_select"],
   :freshfone_recording_playback  => [ "freshfone/record_playback"],
-  :freshchat_admin  => [ "chat/admin","chat/visitor"],
+  :livechat_admin  => [ "chat/admin","chat/visitor"],
   :livechat_mini_dashboard  => [ "chat/mini-dashboard"],
   :ui_daterangepicker => ["ui.daterangepicker"],
   :remote_configurations  => [ "page/remote-configurations"],
@@ -101,6 +101,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/frameworks/plugins/jquery.gritter.js
+    - public/javascripts/frameworks/plugins/jquery.ba-bbq.js
     - public/javascripts/jquery.keypad.js
     - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/moment/*
@@ -114,6 +115,7 @@ javascripts:
     - public/javascripts/frameworks/faye.js
     - public/javascripts/frameworks/socket.io-agent.js
     - public/javascripts/helpdesk/socket_agent.js
+    - public/javascripts/helpdesk/socket_agent_autorefresh.js
     - public/javascripts/helpdesk/freshdesk_node.js
     - app/views/helpdesk/tickets/show/agent_collision.jst
     # - public/javascripts/sisyphus.js
@@ -131,7 +133,8 @@ javascripts:
     - public/javascripts/frameworks/plugins/daterangepicker.js
     - public/javascripts/frameworks/plugins/menuselector.js
     - public/javascripts/frameworks/plugins/jquery.autosuggester.js
-    - public/javascripts/integrations/construct_rules.js
+    - public/javascripts/integrations/construct_rule.js
+    - public/javascripts/marketplace/freshapp.js
 
   # Code editor for portal cms
   codemirror:
@@ -175,7 +178,6 @@ javascripts:
     - public/javascripts/fjax/config.js
     - public/javascripts/fjax/assets.js
     - public/javascripts/fjax/manager.js
-    - public/javascripts/loader.js
     - public/javascripts/application.js
     - public/javascripts/navsearch.js
     - app/views/shared/spotlight_result.jst
@@ -187,41 +189,58 @@ javascripts:
     - public/javascripts/app/admin_font_settings.js
     - public/javascripts/app/merge.js
 
-  freshchat:
-    - public/javascripts/freshchat/freshchat.js
+  livechat_collision:
+    - public/javascripts/livechat/collision/collisionChat.js
 
-  freshchat_intializer:
-     # Templates
-    - public/javascripts/freshchat/lib/ticket_search.js
-    - public/javascripts/freshchat/templates/freshchat_archive.jst
-    - public/javascripts/freshchat/templates/freshchat_conversation.jst
-    - public/javascripts/freshchat/templates/freshchat_archive_row.jst
-    - public/javascripts/freshchat/templates/freshchat_visitor_details.jst
-    - public/javascripts/freshchat/dashboard/dashboard_template.jst
-    - public/javascripts/freshchat/templates/ticket_description.jst
-    - public/javascripts/freshchat/templates/ticket_search_list.jst
-    - public/javascripts/freshchat/templates/ticket_options.jst
-    - public/javascripts/freshchat/ticket_options/main.js
+  livechat_initializer:
+    - public/javascripts/livechat/templates/archive/main.jst.ejs
+    - public/javascripts/livechat/templates/archive/conversation.jst.ejs
+    - public/javascripts/livechat/templates/archive/archiveRow.jst.ejs
+    - public/javascripts/livechat/templates/archive/visitorDetails.jst.ejs
 
+    - public/javascripts/livechat/templates/tickets/ticketDescription.jst.ejs
+    - public/javascripts/livechat/templates/tickets/ticketSearchList.jst.ejs
+    - public/javascripts/livechat/templates/tickets/ticketOptions.jst.ejs
+    - public/javascripts/livechat/ticketOptions/main.js
 
-  livechat_mini_dashboard:
-    - public/javascripts/freshchat/dashboard/dashboard.js
+    - public/javascripts/livechat/templates/availability.jst.ejs
+    - public/javascripts/livechat/availability.js
 
-  freshchat_archive:
+    - public/javascripts/livechat/templates/dashboard/miniDashboard.jst.ejs
+    - public/javascripts/livechat/dashboard/miniDashboard.js
+
+  livechat_agentAvailability:
+    - public/javascripts/livechat/templates/agentAvailability/agentAvailability.jst.ejs
+    - public/javascripts/livechat/agentAvailability/agentAvailability.js
+
+  livechat_archive:
     #Library
     - public/javascripts/report/daterangepicker.jQuery.js
-    - public/javascripts/freshchat/templates/visitor_list.jst
+    - public/javascripts/livechat/templates/visitors/visitorList.jst.ejs
     # Views
-    - public/javascripts/freshchat/views/archive_view.js
-    - public/javascripts/freshchat/views/conversation_view.js
-    - public/javascripts/freshchat/views/visitor/visitor_list.js
+    - public/javascripts/livechat/views/archive/archiveView.js
+    - public/javascripts/livechat/views/archive/conversationView.js
+    - public/javascripts/livechat/views/visitors/visitorList.js
     # Router
-    - public/javascripts/freshchat/router/router.js
+    - public/javascripts/livechat/router/main.js
     # Main
-    - public/javascripts/freshchat/main.js
+    - public/javascripts/livechat/main.js
 
-  freshchatreports:
-    - public/javascripts/chat/report.js
+  livechat_reports:
+    - public/javascripts/livechat/chat/reports.js
+  livechat_admin_settings:
+    - public/javascript/livechat/admin/zeroClipboard.js
+    - public/javascript/livechat/admin/widgetSettings.js
+    - public/javascript/livechat/admin/widgetCode.js
+    - public/javascript/livechat/admin/offlineSettings.js
+    - public/javascript/livechat/admin/preferences.js
+    - public/javascript/livechat/admin/visitorForm.js
+    - public/javascript/livechat/admin/mainSettings.js
+    - public/javascript/livechat/admin/main.js
+  livechat_helper:
+    - public/javascript/livechat/liveChatHelper.js
+  livechat_mini_dashboard:
+    - public/javascript/livechat/dashboard/miniDashboard.js
 
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js
@@ -330,14 +349,20 @@ javascripts:
     - public/javascripts/freshfone/components/timer.js
     - public/javascripts/freshfone/components/socket.js
     - public/javascripts/freshfone/components/end_call_form.js
+    - public/javascripts/freshfone/components/network_error.js
     - public/javascripts/freshfone/components/components_main.js
     - public/javascripts/freshfone/intlTelInput.js
     - public/javascripts/freshfone/device.js
     - public/javascripts/freshfone/client.js
     - public/javascripts/freshfone/phoneformatutil.js
     - public/javascripts/freshfone/dialpad.js
+    - public/javascripts/freshfone/ongoing_call_dialpad.js
+    - public/javascripts/freshfone/dialpad_events.js
+    - public/javascripts/freshfone/components/contact_search.js
     - public/javascripts/freshfone/components/call_transfer.js
     - public/javascripts/freshfone/freshfone_logger.js
+    - public/javascripts/freshfone/freshfone_monitor.js
+    - public/javascripts/freshfone/components/freshfone_conference_connection.js
 
   freshfone_call_history:
     - public/javascripts/report/daterangepicker.jQuery.js
@@ -383,6 +408,7 @@ javascripts:
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/portal/fresh_suggest.js
+    - public/javascripts/frameworks/plugins/jquery.blockUI.js
 
   preview:
     - public/javascripts/portal/jquery-1.8.3.js
@@ -444,19 +470,58 @@ javascripts:
   ticket_fields:
     - public/javascripts/frameworks/plugins/jquery.tabby.js
     - public/javascripts/lib/nestedtree.js
-    - public/javascripts/frameworks/tf_customizer.js
+    # - public/javascripts/custom-form/*.js
+    - public/javascripts/custom-form/custom-field.js
+    - public/javascripts/custom-form/custom-form-builder.js
+    - public/javascripts/custom-form/custom_field_dialog.js
+    - public/javascripts/custom-form/dropdown.js
+    - public/javascripts/custom-form/sortable.js
+    - public/javascripts/custom-form/ticket_fields.js
+    - public/javascripts/custom-form/nested-field.js
+    - public/javascripts/custom-form/custom-sections.js
+    - public/javascripts/custom-form/template/*.jst
+    #- public/javascripts/frameworks/tf_customizer.js
 
   contact_fields:
     - public/javascripts/app/admin/contact_fields/cf_customizer.js
     - public/javascripts/app/admin/contact_fields/formfield_props.jst
+    - public/javascripts/app/admin/contact_fields/dom_field.jst
+    # - public/javascripts/custom-form/custom-field.js
+    # - public/javascripts/custom-form/custom-form-builder.js
+    # - public/javascripts/custom-form/custom_field_dialog.js
+    # - public/javascripts/custom-form/dropdown.js
+    # - public/javascripts/custom-form/sortable.js
+    # - public/javascripts/custom-form/contact_fields.js
+    # - public/javascripts/custom-form/template/*.jst
 
   company_fields:
-    - public/javascripts/app/admin/contact_fields/cf_customizer.js
-    - public/javascripts/app/admin/company_fields/formfield_props.jst
+    - public/javascripts/custom-form/custom-field.js
+    - public/javascripts/custom-form/custom-form-builder.js
+    - public/javascripts/custom-form/custom_field_dialog.js
+    - public/javascripts/custom-form/dropdown.js
+    - public/javascripts/custom-form/sortable.js
+    - public/javascripts/custom-form/company_fields.js
+    - public/javascripts/custom-form/template/*.jst
 
   survey:
     - public/javascripts/frameworks/jquery.js
+    - public/javascripts/frameworks/plugins/jquery.blockUI.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/survey/rating.js
+    - public/javascripts/survey/feedback.js
+
+  survey_admin:
+    - app/views/admin/surveys/template/*.jst
+    - public/javascripts/survey/admin/*
+    - public/javascripts/survey/admin.js
+    - public/javascripts/survey/rating.js
+
+  survey_report:
+    - public/javascripts/frameworks/plugins/daterangepicker.js
+    - app/views/reports/survey_reports/template/*.jst 
+    - public/javascripts/survey/reports/*
+    - public/javascripts/survey/report.js
 
   redactor:
     - public/javascripts/redactor/redactor.js
@@ -513,14 +578,19 @@ javascripts:
     - public/javascripts/app/merge_tickets.js
 
   contacts:
-    - public/javascripts/app/contacts.js
-    - public/javascripts/app/contact_form.js
-    - public/javascripts/app/contacts_merge.js
-    - public/javascripts/app/contact_view.js
+    - public/javascripts/app/contacts/contacts.js
+    - public/javascripts/app/contacts/contact_form.js
+    - public/javascripts/app/contacts/contacts_merge.js
+    - public/javascripts/app/contacts/contact_view.js
+    - public/javascripts/app/contacts/email_template.jst
+    - public/javascripts/app/contacts/add_email.jst
 
   companies:
     - public/javascripts/app/companies.js
     - public/javascripts/app/company_view.js
+
+  shortcodes:
+    - public/javascript/livechat/shortcodes/main.js
 
   shortcut:
     - public/javascripts/mousetrap/mousetrap.js

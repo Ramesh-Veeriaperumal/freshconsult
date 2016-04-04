@@ -22,10 +22,12 @@ module Inherits
         accepts_nested_attributes_for :custom_field_choices, :allow_destroy => true
         acts_as_list # helps in reordering
         # hack.. no better way in Rails 2 - removing from list in builder methods when deleted => true
-        before_destroy.reject!{ |callback| callback.method == :remove_from_list } #coz we are doing hard delete only later
+        # before_destroy.reject!{ |callback| callback.method == :remove_from_list } #coz we are doing hard delete only later
+        skip_callback :destroy, :before, :remove_from_list
 
-        named_scope :custom_fields, :conditions => ["field_type > '#{MAX_DEFAULT_FIELDS}'"]
-        named_scope :deleted, :conditions => { :deleted => true }
+        scope :custom_fields, :conditions => ["field_type > '#{MAX_DEFAULT_FIELDS}'"]
+        scope :deleted, :conditions => { :deleted => true }
+        scope :custom_dropdown_fields, :conditions => ["field_type = #{CUSTOM_FIELD_PROPS[:custom_dropdown][:type]}"]
 
         include InstanceMethods
         include ApiMethods

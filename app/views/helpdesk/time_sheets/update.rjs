@@ -3,6 +3,6 @@ page << "jQuery('#edit_timeentry_#{@time_entry.id}').modal('hide');"
 page.replace "timeentry_#{@time_entry.id}", :partial => "time_entry", :object => @time_entry
 page << 'totalTime("#timesheetlist .time", "#timeentry_timer_total");'
 page << "jQuery('#timesheetlist .time-tracked-details:not(.time_running) .toggle_timer').hide();"
-page << "jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();"
+page << "jQuery('#timesheetlist .time-tracked-details:first .toggle_timer').show();"
 page << "trigger_event('time_entry_updated', #{@time_entry.to_json} );"
 updateToTimesheetIntegratedApps page, @time_entry

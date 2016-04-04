@@ -16,17 +16,17 @@ module VAConfig
   INSTALLED_APP_BUSINESS_RULE = 12
   API_WEBHOOK_RULE = 13
 
+  # TODO-RAIL3:: Get these I18N based constants out of Initializers
   CREATED_DURING_VALUES = [
-    [ :business_hours, I18n.t('ticket.created_during.business_hours'), "business_hours"],
-    [ :non_business_hours, I18n.t('ticket.created_during.non_business_hours'), "non_business_hours"],
-    [ :holidays, I18n.t('ticket.created_during.holidays'), "holidays"]
+    [ :business_hours, "Business Hours", "business_hours"],
+    [ :non_business_hours, "Non-Business Hours", "non_business_hours"],
+    [ :holidays, "Holidays", "holidays"]
   ]
 
   CREATED_DURING_NAMES_BY_KEY = Hash[*CREATED_DURING_VALUES.map { |i| [i[2], i[1]] }.flatten]
 
-  def self.handler(field, account, evaluate_on=nil)
-    @evaluate_on = evaluate_on
-    fetch_handler field, account, :rule
+  def self.handler(field, account, evaluate_on_type = nil)
+    fetch_handler field, account, :rule, evaluate_on_type
   end
 
   def self.event_handler(field, account)
@@ -40,21 +40,21 @@ module VAConfig
 
   private
 
-    def self.fetch_handler(field, account, handler_type)
+    def self.fetch_handler(field, account, handler_type, evaluate_on_type = nil)
       Rails.logger.debug "The field is : #{field}, handler_type is :#{handler_type},"
-      field_key = fetch_field_key field, account, handler_type
-      handler_key = FIELDS[handler_type][field_key]
+      field_key = fetch_field_key field, account, handler_type, evaluate_on_type
+      handler_key = FIELDS[handler_type][field_key] || "fallback"
 
       Rails.logger.debug "field_key is : #{field_key}  handler_key is : #{handler_key}"
       VA_HANDLERS[handler_type][handler_key.to_sym]
     end
 
-    def self.fetch_field_key field, account, handler_type
-      (FIELDS[handler_type].include? field) ? field : (custom_field_handler_type field.to_s, account)
+    def self.fetch_field_key(field, account, handler_type, evaluate_on_type = nil)
+      (FIELDS[handler_type].include? field) ? field : (custom_field_handler_type field.to_s, account, evaluate_on_type)
     end
   
-    def self.custom_field_handler_type field, account
-      case @evaluate_on
+    def self.custom_field_handler_type(field, account, evaluate_on_type = nil)
+      case evaluate_on_type
       when "ticket"
         fetch_ticket_field field, account
       when "requester"

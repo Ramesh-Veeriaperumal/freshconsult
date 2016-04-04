@@ -7,10 +7,8 @@ module Freshfone::Presence
 
 	def update_presence_and_publish_call(params, message=nil)
 		user = current_user || current_account.users.find_by_id(params[:agent])
-		unless params[:dont_update_call_count]
-			publish_live_call(params)
-			add_active_call_params_to_redis(params, message) unless params[:CallSid].blank?
-		end
+		add_active_call_params_to_redis(params, message) if 
+			!fresfone_conference? && params[:CallSid].present? && !params[:dont_update_call_count]
 		update_freshfone_presence(user, Freshfone::User::PRESENCE[:busy])
 	end
 
@@ -21,5 +19,10 @@ module Freshfone::Presence
 	def freshfone_user(user)
 		user.freshfone_user || user.build_freshfone_user({ :account => user.account })
 	end
+
+	private
+		def fresfone_conference?
+			current_account.features? :freshfone_conference
+		end
 
 end

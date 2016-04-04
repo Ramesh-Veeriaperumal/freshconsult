@@ -44,7 +44,7 @@ module Mobile::Actions::Push_Notifier
         notification_types = {NOTIFCATION_TYPES[:TICKET_ASSIGNED] => [responder_id]}
       elsif group_id
         begin
-          user_ids = self.account.groups.find(group_id).agent_groups.map(&:user_id)
+          user_ids = self.account.agent_groups.where(group_id: group_id).pluck(:user_id)
           user_ids.delete(current_user_id)
           notification_types = {NOTIFCATION_TYPES[:GROUP_ASSIGNED] => user_ids} unless user_ids.empty?
         rescue Exception => e
@@ -55,9 +55,22 @@ module Mobile::Actions::Push_Notifier
       else 
         notification_types = {NOTIFCATION_TYPES[:NEW_TICKET] => []}  
       end
-		
+		  
+      #Fix for - mobihelp/hotline agent not receiving push notification  
+      if self.mobihelp?
+        current_user_id   = ""
+        current_user_name = ""
+      end
+
     elsif action == :response then
-        user_ids = notable.subscriptions.map(&:user_id)
+
+        # Fix for - mobihelp/hotline agent not receiving push notification  
+        if self.mobihelp?
+          current_user_id   = notable.requester ? notable.requester.id : ""
+          current_user_name = notable.requester ? notable.requester.name : ""
+        end
+        
+        user_ids = notable.subscriptions.pluck(:user_id)
         unless incoming || self.to_emails.blank? || self.source != Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] then
           notified_agent_emails =  self.to_emails.map { |email| parse_email_text(email)[:email] }
           user_ids = user_ids | account.users.find(:all, :select => :id , :conditions => {:email => notified_agent_emails}).map(&:id)
@@ -66,7 +79,7 @@ module Mobile::Actions::Push_Notifier
 
         user_ids.push(notable.responder_id) unless notable.responder_id.blank? || notable.responder_id == current_user_id || user_ids.include?(notable.responder_id)
 
-		notification_types = {NOTIFCATION_TYPES[:NEW_RESPONSE] => user_ids} unless user_ids.empty?
+  		notification_types = {NOTIFCATION_TYPES[:NEW_RESPONSE] => user_ids} unless user_ids.empty?
 
     else
 		process_status_update_notification message, notification_types, current_user_id
@@ -94,7 +107,7 @@ module Mobile::Actions::Push_Notifier
       notification_types.merge! NOTIFCATION_TYPES[:TICKET_ASSIGNED] => [responder_id]
     end
     if unassigned_ticket && @model_changes.key?(:group_id) && group_id then
-      user_ids = self.account.groups.find(group_id).agent_groups.map(&:user_id)
+      user_ids = self.account.agent_groups.where(group_id: group_id).pluck(:user_id)
       user_ids.delete(current_user_id)
       notification_types.merge! NOTIFCATION_TYPES[:GROUP_ASSIGNED] => user_ids unless user_ids.empty?
     end
@@ -109,9 +122,9 @@ module Mobile::Actions::Push_Notifier
   def publish_to_mobile_channel message, channel_id
 	  channel = MOBILE_NOTIFICATION_MESSAGE_CHANNEL % {:channel_id => channel_id}
 	  Rails.logger.debug "DEBUG :: pushing to channel : #{channel}"
-      newrelic_begin_rescue do
-          $redis_mobile.publish(channel, message)
-      end
+    newrelic_begin_rescue do
+      $redis_mobile.perform_redis_op("publish", channel, message)
+    end
   end
 
   

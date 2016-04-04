@@ -1,12 +1,13 @@
 # encoding: utf-8
 class Helpdesk::Tag < ActiveRecord::Base
   
+  self.primary_key = :id
   include Cache::Memcache::Helpdesk::Tag
   include Search::ElasticSearchIndex
 
   after_commit :clear_cache
 
-  set_table_name "helpdesk_tags"
+  self.table_name =  "helpdesk_tags"
   
   xss_sanitize  :only => [:name], :plain_sanitizer => [:name]
 
@@ -20,6 +21,12 @@ class Helpdesk::Tag < ActiveRecord::Base
     :class_name => 'Helpdesk::Ticket',
     :source => :taggable,
     :source_type => "Helpdesk::Ticket",
+    :through => :tag_uses
+
+  has_many :archive_tickets,
+    :class_name => 'Helpdesk::ArchiveTicket',
+    :source => :taggable,
+    :source_type => "Helpdesk::ArchiveTicket",
     :through => :tag_uses
 
   has_many :users,
@@ -41,16 +48,16 @@ class Helpdesk::Tag < ActiveRecord::Base
            :source_type => "Solution::Article",
            :through => :tag_uses
 
-  named_scope :with_taggable_type, lambda { |taggable_type| {
+  scope :with_taggable_type, lambda { |taggable_type| {
             :include => :tag_uses,
             :conditions => ["helpdesk_tag_uses.taggable_type = ?", taggable_type] }
         }
-  named_scope :most_used, lambda { |num| { :limit => num, :order => 'tag_uses_count DESC'}
+  scope :most_used, lambda { |num| { :limit => num, :order => 'tag_uses_count DESC'}
         }
 
-  named_scope :sort_tags, lambda  { |sort_type| { :order => SORT_SQL_BY_KEY[(sort_type).to_sym] || SORT_SQL_BY_KEY[:activity_desc] }  }
+  scope :sort_tags, lambda  { |sort_type| { :order => SORT_SQL_BY_KEY[(sort_type).to_sym] || SORT_SQL_BY_KEY[:activity_desc] }  }
 
-  named_scope :tag_search, lambda { |keyword| { :conditions => ["name like ?","#{keyword}%"] } if keyword.present? }
+  scope :tag_search, lambda { |keyword| { :conditions => ["name like ?","#{keyword}%"] } if keyword.present? }
 
 
 
@@ -103,11 +110,30 @@ class Helpdesk::Tag < ActiveRecord::Base
     tickets.visible.size
   end
 
+  # Common handler for creating/removing tags
+  def self.assign_tags(tags_to_be_added=[])
+    return [] if tags_to_be_added.blank?
+
+    missing_tags = []
+    tag_list     = []
+
+    existing_tags = self.where(name: tags_to_be_added).all
+    tag_list.push(*existing_tags) # Pushing to the array so that when .any? called is made, it wont trigger (converting AR relation to array)
+    
+    tags_to_be_added.each do |new_tag|
+      next if tag_list.any? { |tag_in_db| tag_in_db.name.casecmp(new_tag) == 0 }
+      missing_tags << new_tag
+    end
+    missing_tags.each { |tag_name| tag_list.push(self.create(name: tag_name)) }
+
+    tag_list
+  end
+
   def to_indexed_json
-    to_json({
+    as_json({
             :root => "helpdesk/tag",
             :tailored_json => true,
             :only => [ :name, :tag_uses_count, :account_id ]
-            })
+            }).to_json
   end
 end

@@ -3,15 +3,19 @@ class PartnerAdmin::AffiliatesController < ApplicationController
   prepend_before_filter :check_admin_subdomain  
   skip_before_filter  :check_privilege, :set_time_zone, :set_current_account, :set_locale,
                       :check_account_state, :ensure_proper_protocol, :check_day_pass_usage,
-                      :redirect_to_mobile_url, :select_shard, :determine_pod
+                      :redirect_to_mobile_url, :determine_pod
+
+  skip_filter :select_shard # as select shard is around filter need to skip both                      
   
   around_filter :select_account_shard, :only => :add_affiliate_transaction
-  before_filter :authenticate_using_basic_auth, :ensure_right_parameters, :fetch_account, 
+  before_filter :ensure_right_parameters, :fetch_account, 
                 :only => :add_affiliate_transaction
   
   #Reseller portal verifications
   before_filter :verify_timestamp, :verify_signature, :ssl_check, :authenticate_using_basic_auth,
                  :except => :add_affiliate_transaction  
+
+  skip_after_filter :set_last_active_time
   
   SUBSCRIPTION = { :account_id => :account_id, :helpdesk_name => :account_name, 
                     :domain => :account_full_domain, :admin_name => :admin_first_name, 
@@ -22,6 +26,8 @@ class PartnerAdmin::AffiliatesController < ApplicationController
 
   RECORDS_PER_PAGE = 30
   TIME_ALLOWED = 1800
+  RESELLER_TOKEN = "FDRES"
+  AFFILIATE = "Share A Sale"
 
   #Shareasale methods
   def select_account_shard(&block)
@@ -42,12 +48,12 @@ class PartnerAdmin::AffiliatesController < ApplicationController
   #Reseller portal API methods
   def add_reseller
     params = ActiveSupport::JSON.decode request.body.read
-    affilate = SubscriptionAffiliate.create(params)
+    affilate = SubscriptionAffiliate.new(params)
     
     if affilate.save
       render :json => { :success => true }
     else
-      render :json => { :success => false, :errors => affilate.errors }
+      render :json => { :success => false, :errors => affilate.errors.fd_json }
     end
   end
 
@@ -99,17 +105,61 @@ class PartnerAdmin::AffiliatesController < ApplicationController
     render_json_object({:success => true})
   end
 
+  def fetch_affiliates
+    affiliates = {}
+    shareasale_affiliates = SubscriptionAffiliate.all.select{ |affiliate| affiliate.name.eql?(AFFILIATE) }
+    others = SubscriptionAffiliate.all.select{ |affiliate| !affiliate.name.eql?(AFFILIATE) and !affiliate.token.include?(RESELLER_TOKEN) }
+    affiliates[:shareasale_affiliates] = fetch_accounts(shareasale_affiliates, true)
+    affiliates[:others] = fetch_accounts(others)
+    
+    affiliates[:coupon_discount] = load_discounts(AffiliateDiscount.all.select{|discount| discount.discount_type.eql?(1)})
+    affiliates[:percent_discount] = load_discounts(AffiliateDiscount.all.select{|discount| discount.discount_type.eql?(2)})
+    render :json => { :success => true, :data => affiliates.to_json }
+
+  end
+
+  def edit_affiliate
+    affiliate = SubscriptionAffiliate.find_by_token(params["token"])
+    result = affiliate.update_attributes(params["affiliate"])
+    if result
+      render_json_object('Affiliate successfully updated.')
+    else
+      render_json_object('')
+    end
+  end
+
   protected
+    def fetch_accounts(account_list, calc_fees = false)
+      all_accounts = []
+      account_list.each do |account|
+        accounts = account.attributes.except("created_at", "updated_at")
+        accounts[:discount] = load_discounts(account.discounts)
+        accounts[:commission] = account.fees if calc_fees
+        all_accounts << accounts 
+      end
+      all_accounts
+    end
+
+    def load_discounts(discount_list)
+      all_discounts = []
+      discount_list.each do |discount|
+        all_discounts << discount.attributes
+      end
+      all_discounts
+    end
+
     def ensure_right_parameters
-      if ((!request.ssl?) or
-        (!request.post?) or 
-        (params[:tracking].blank?) or 
-        (params[:userID].blank?) or 
-        (params[:commission].blank?) or
-        (params[:transID].blank?) or
-        (params[:amount].blank?))
-        return render :xml => ArgumentError, :status => 500
-   	  end
+      unless authenticate_using_basic_auth == 401 #Check for authorization and right params
+        if ((!request.ssl?) or
+          (!request.post?) or 
+          (params[:tracking].blank?) or 
+          (params[:userID].blank?) or 
+          (params[:commission].blank?) or
+          (params[:transID].blank?) or
+          (params[:amount].blank?))
+          return render :xml => ArgumentError, :status => 500
+     	  end
+      end
     end
 
     def ensure_right_affiliate
@@ -186,7 +236,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
       unmapped_accounts = []
       domains.each do |domain|
         domain_mapping = DomainMapping.find_by_domain(domain)
-        if domain_mapping
+        if domain_mapping and domain_mapping.shard.status == 200
           Sharding.select_shard_of(domain) do 
             account = Account.find_by_full_domain(domain)
             SubscriptionAffiliate.add_affiliate(account, affiliate.token)

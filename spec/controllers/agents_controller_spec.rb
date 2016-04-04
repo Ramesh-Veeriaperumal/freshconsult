@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe AgentsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -10,9 +9,9 @@ describe AgentsController do
     @role_id = ["#{@account.roles.first.id}"]
     @agent_role = @account.roles.find_by_name("Agent")
 
-    agent = Factory.build(:agent, :occasional => "false", :scoreboard_level_id => "1", :signature_html=> "Spec Cheers!", 
+    agent = FactoryGirl.build(:agent, :occasional => "false", :scoreboard_level_id => "1", :signature_html=> "Spec Cheers!", 
                                   :user_id => "",:ticket_permission => "1")
-    @user = Factory.build(:user, :avatar_attributes => { :content => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png', 'image/png')},
+    @user = FactoryGirl.build(:user, :avatar_attributes => { :content => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png', 'image/png')},
                                   :helpdesk_agent => true,:name => "Spec test user", :email => Faker::Internet.email, 
                                   :time_zone => "Chennai", :job_title =>"Spec Agent", :phone => Faker::PhoneNumber.phone_number, 
                                   :language => "en", :delta => 1,:role_ids => ["#{@agent_role.id}"],
@@ -87,11 +86,38 @@ describe AgentsController do
                   }
     created_user = @account.users.find_by_email(test_email)
     created_user.should be_nil
-    response.session[:flash][:notice].should eql "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents. "
+    session[:flash][:notice].should eql "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents. "
     @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
   end
 
-  it "should not create a new agent without a Agent role or existing email ID" do
+  it "should not create a new agent without a Agent role" do
+    @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
+    @request.env['HTTP_REFERER'] = 'sessions/new'
+    test_name = Faker::Name.name
+    post :create, { :agent => { :occasional => "false",
+                                :scoreboard_level_id => "1",
+                                :signature_html=> "Cheers!",
+                                :user_id => "",
+                                :ticket_permission => "1"
+                                },
+                    :user => { :helpdesk_agent => true,
+                                :name => test_name,
+                                :user_emails_attributes => {"0" => {:email => Faker::Internet.email}},
+                                :time_zone => "Chennai",
+                                :job_title =>"Support Agent",
+                                :phone => Faker::PhoneNumber.phone_number,
+                                :language => "en",
+                                :role_ids => [""],
+                                :privileges => "",
+                                :roleValidate => ""
+                              }
+                  }
+    response.body.should =~ /A user must be associated with atleast one role/
+    created_user = @account.users.find_by_name(test_name)
+    created_user.should_not be_an_instance_of(User)
+  end
+  
+  it "should not create a new agent with existing email ID" do
     @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     user = add_new_user(@account)
@@ -109,13 +135,12 @@ describe AgentsController do
                                 :job_title =>"Support Agent",
                                 :phone => Faker::PhoneNumber.phone_number,
                                 :language => "en",
-                                :role_ids => [""],
+                                :role_ids => ["1"],
                                 :privileges => "",
                                 :roleValidate => ""
                               }
                   }
-    # response.body.should =~ /Email has already been taken/
-    response.body.should =~ /A user must be associated with atleast one role/
+    response.body.should =~ /Email has already been taken/
     created_user = @account.users.find_by_name(test_name)
     created_user.should_not be_an_instance_of(User)
   end
@@ -184,6 +209,28 @@ describe AgentsController do
       @user.avatar.should be_nil
     end
 
+  it "should convert a full time agent to occasional" do
+    user = @account.full_time_agents.last.user
+    agent = user.agent
+    get :edit, :id => agent.id
+    response.body.should =~ /Edit Agent/
+    put :update, :id => agent.id, :agent => { :occasional => 1,
+                                              :scoreboard_level_id => agent.scoreboard_level_id,
+                                              :user_id => user.id,
+                                              :ticket_permission => 1
+                                            },
+                                   :user => { :helpdesk_agent => true,
+                                              :name => user.name,
+                                              :email => user.email,
+                                              :time_zone => user.time_zone,
+                                              :language => user.language
+                                            }
+    edited_user = @account.users.find_by_email(user.email)
+    edited_user.should be_an_instance_of(User)
+    edited_user.agent.occasional.should be_eql(true)
+    # Delayed::Job.last.handler.should include("#{@account.name}: #{edited_user.name} was converted to an occasional agent")
+  end
+
   it "should check_agent_limit for update" do
     @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
     user = add_test_agent(@account)
@@ -204,32 +251,9 @@ describe AgentsController do
     user.reload
     user.should be_an_instance_of(User)
     user.name.should be_eql "upadate: check limit"
-    user.agent.occasional.should be_true
+    user.agent.occasional.should be_truthy
     user.agent.ticket_permission.should be_eql(2)
     @account.subscription.update_attributes(:state => "trial", :agent_limit => nil)
-  end
-
-  it "should not update an agent when user_id is nil" do
-    user = add_test_agent(@account)
-    agent = user.agent
-    get :edit, :id => agent.id
-    response.body.should =~ /Edit Agent/
-    put :update, :id => agent.id, :agent => { :occasional => agent.occasional,
-                                              :scoreboard_level_id => "1",
-                                              :ticket_permission => 3,
-                                              :user_id => nil
-                                            },
-                                   :user => { :helpdesk_agent => true,
-                                              :name => "",
-                                              :email => "",
-                                              :time_zone => user.time_zone,
-                                              :language => user.language
-                                            }
-    user.reload
-    agent = user.agent.reload
-    agent.should be_an_instance_of(Agent)
-    agent.scoreboard_level_id.should_not be_eql(1)
-    agent.ticket_permission.should_not be_eql(3)
   end
 
   it "should not update an user without name" do
@@ -261,7 +285,7 @@ describe AgentsController do
     get :edit, :id => user.agent.id
     user.reload
     response.body.should_not =~ /Edit Agent/
-    response.session[:flash][:notice].should eql "You cannot edit this agent"
+    session[:flash][:notice].should eql "You cannot edit this agent"
   end
 
   it "should restrict_current_user for update" do
@@ -282,30 +306,9 @@ describe AgentsController do
     user.reload
     user.should be_an_instance_of(User)
     user.agent.ticket_permission.should_not be_eql(3)
-    response.session[:flash][:notice].should eql "You cannot edit this agent"
+    session[:flash][:notice].should eql "You cannot edit this agent"
   end
 
-  it "should convert a full time agent to occasional" do
-    user = @account.users.find_by_email(@agent.email)
-    agent = user.agent
-    get :edit, :id => agent.id
-    response.body.should =~ /Edit Agent/
-    put :update, :id => agent.id, :agent => { :occasional => 1,
-                                              :scoreboard_level_id => agent.scoreboard_level_id,
-                                              :user_id => user.id,
-                                              :ticket_permission => 1
-                                            },
-                                   :user => { :helpdesk_agent => true,
-                                              :name => user.name,
-                                              :email => user.email,
-                                              :time_zone => user.time_zone,
-                                              :language => user.language
-                                            }
-    edited_user = @account.users.find_by_email(user.email)
-    edited_user.should be_an_instance_of(User)
-    edited_user.agent.occasional.should be_eql(true)
-    # Delayed::Job.last.handler.should include("#{@account.name}: #{edited_user.name} was converted to an occasional agent")
-  end
 
   it "should convert an occasional to full time agent" do
     user = @account.users.find_by_email(@agent.email)
@@ -333,7 +336,7 @@ describe AgentsController do
     new_user = add_test_agent(@account)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :convert_to_contact, :id => new_user.agent.id
-    @account.users.find(new_user.id).helpdesk_agent.should be_false
+    @account.users.find(new_user.id).helpdesk_agent.should be false
     @account.agents.find_by_user_id(new_user.id).should be_nil
     Delayed::Job.last.handler.should include("#{@account.name}: #{new_user.name} was deleted")
   end
@@ -345,7 +348,7 @@ describe AgentsController do
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :convert_to_contact, :id => user.agent.id
     user.reload
-    response.session[:flash][:notice].should eql "You cannot edit this agent"
+    session[:flash][:notice].should eql "You cannot edit this agent"
   end
 
   it "should check_current_user to convert a full time agent to a customer" do
@@ -354,8 +357,8 @@ describe AgentsController do
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :convert_to_contact, :id => user.agent.id
     user.reload
-    user.deleted.should be_false
-    response.session[:flash][:notice].should eql "You cannot edit this agent"
+    user.deleted.should be_falsey
+    session[:flash][:notice].should eql "You cannot edit this agent"
   end
 
   it "should delete an agent" do
@@ -363,7 +366,7 @@ describe AgentsController do
     @request.env['HTTP_REFERER'] = 'sessions/new'
     delete :destroy, :id => user.agent.id
     user = @account.all_users.find(user.id)
-    user.deleted.should be_true
+    user.deleted.should be_truthy
     @account.agents.find_by_user_id(user.id).should be_nil
   end
 
@@ -374,8 +377,8 @@ describe AgentsController do
     @request.env['HTTP_REFERER'] = 'sessions/new'
     delete :destroy, :id => user.agent.id
     user.reload
-    user.deleted.should be_true
-    response.session[:flash][:notice].should eql "You cannot edit this agent"
+    user.deleted.should be_truthy
+    session[:flash][:notice].should eql "You cannot edit this agent"
   end
 
   it "should check_current_user for destroy" do
@@ -384,15 +387,15 @@ describe AgentsController do
     @request.env['HTTP_REFERER'] = 'sessions/new'
     delete :destroy, :id => user.agent.id
     user.reload
-    user.deleted.should be_false
-    response.session[:flash][:notice].should eql "You cannot edit this agent"
+    user.deleted.should be_falsey
+    session[:flash][:notice].should eql "You cannot edit this agent"
   end
 
   it "should reset password" do
     new_user = add_test_agent(@account)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :reset_password, :id => new_user.agent.id
-    response.session[:flash][:notice].should eql "A reset mail with instructions has been sent to #{new_user.email}."
+    session[:flash][:notice].should eql "A reset mail with instructions has been sent to #{new_user.email}."
     response.body.should =~ /redirected/
   end
 
@@ -403,8 +406,8 @@ describe AgentsController do
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :reset_password, :id => user.agent.id
     user.reload
-    response.session[:flash][:notice].should_not eql "A reset mail with instructions has been sent to #{user.email}."
-    response.session[:flash][:notice].should eql "You cannot edit this agent"
+    session[:flash][:notice].should_not eql "A reset mail with instructions has been sent to #{user.email}."
+    session[:flash][:notice].should eql "You cannot edit this agent"
   end
 
   it "should check_current_user to reset password" do
@@ -413,8 +416,8 @@ describe AgentsController do
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :reset_password, :id => user.agent.id
     user.reload
-    user.deleted.should be_false
-    response.session[:flash][:notice].should eql "You cannot edit this agent"
+    user.deleted.should be_falsey
+    session[:flash][:notice].should eql "You cannot edit this agent"
   end
 
   it "should disable toggle_availability for an agent" do
@@ -422,7 +425,7 @@ describe AgentsController do
     agent = user.agent
     post :toggle_availability, :id => user.id, :value => "false"
     agent.reload
-    agent.available.should be_false
+    agent.available.should be_falsey
     response.should be_success
   end
 
@@ -433,7 +436,7 @@ describe AgentsController do
     agent.save
     post :toggle_availability, :id => user.id, :value => "true"
     agent.reload
-    agent.available.should be_true
+    agent.available.should be true
     response.should be_success
   end
 
@@ -441,7 +444,7 @@ describe AgentsController do
     user = add_test_agent(@account)
     put :toggle_shortcuts, :id => user.agent.id
     user.reload
-    user.text_uc01[:agent_preferences][:shortcuts_enabled].should be_false
+    user.text_uc01[:agent_preferences][:shortcuts_enabled].should be_falsey
   end
 
   it "should invite multiple agents from getting_started page" do

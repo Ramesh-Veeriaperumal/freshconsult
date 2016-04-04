@@ -1,6 +1,6 @@
 account = Account.current
 
-VARule.seed_many(:account_id, :name, :rule_type, [
+VaRule.seed_many(:account_id, :name, :rule_type, [
     [ 'Automatically assign ticket to first responder', 
       'When an agent replies to, or adds a note to an unassigned ticket, it gets assigned to him/her automatically.',
       1,
@@ -11,7 +11,7 @@ VARule.seed_many(:account_id, :name, :rule_type, [
                     ],
         :performer => { :type => Va::Performer::AGENT },
         :conditions => [
-                          { :value => nil, :operator => 'is', :name => 'responder_id' }
+                          {:evaluate_on => "ticket", :value => [""], :operator => 'in', :name => 'responder_id' }
                       ]
       },
       [ 
@@ -27,7 +27,7 @@ VARule.seed_many(:account_id, :name, :rule_type, [
                     ],
         :performer => { :type => Va::Performer::CUSTOMER },
         :conditions => [
-                          { :value => "2", :operator => 'is_not', :name => 'status' }
+                          {:evaluate_on => "ticket", :value => ["2"], :operator => 'not_in', :name => 'status' }
                       ]
       },
       [

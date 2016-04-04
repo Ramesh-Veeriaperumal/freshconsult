@@ -1,4 +1,5 @@
 class Subscription::Addon < ActiveRecord::Base
+  self.primary_key = :id
 	not_sharded
 	
 	has_many :subscription_plan_addons, 

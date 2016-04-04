@@ -2,7 +2,7 @@
 	<%= post_topic_in_portal current_portal.to_liquid, true %>
 <% else %>
 	<% @topic ||= current_account.topics.new %>
-	<% form_for @topic, :url => @topic.new_record? ? support_discussions_topics_path : support_discussions_topic_path(@topic), 
+	<%= form_for @topic, :url => @topic.new_record? ? support_discussions_topics_path : support_discussions_topic_path(@topic), 
 						:method => @topic.new_record? ? :post : :put,
 						:html => { :multipart => true, :rel => "validate", :class => "form-portal" } do |form| -%>
 	<%= form.error_messages %>					
@@ -12,7 +12,7 @@
 		</label>
 		<div class="controls suggestions">
 			<%= form.text_field :title, :class => "required text span12", 
-			:autocomplete => :off, :tabindex => 10, 
+			:autocomplete => :off, :autofocus => true, 
 			'data-suggestions' => @topic.new_record? ? "/support/search/topics/suggest" : '', 
 			'data-left-position' => "96.5%", 'data-top-position' => "5%" %>
 		</div> 	
@@ -21,7 +21,7 @@
 			<%= t('message') %>
 		</label>
 		<div class="controls">
-			<%= form.rich_editor :body_html, :value => !@topic.new_record? ? @topic.posts.first.body_html : "", 
+			<%= form.rich_editor :body_html,
 				:rows => 12, "editor-type" => :forum, :class => "required_redactor" %>
 		</div>
 	</div>	
@@ -31,11 +31,12 @@
 		</label>
 		<div class="controls">
 			<%= form.select :forum_id, grouped_options_for_select(forum_options), 
-				{ :include_blank => t("portal.topic.default_select_option") },
+				{ :include_blank => true },
 				{ :class => "required custom-select", 
-				  :disabled => !@topic.new_record? } %>
-			<% javascript_tag do %>
-				jQuery("#topic_forum_id").val(<%= params[:forum_id] || @topic.forum_id %>)
+				  :disabled => !@topic.new_record?,
+				  :data => { :placeholder => t("portal.topic.default_select_option") } } %>
+			<%= javascript_tag do %>
+				jQuery("#topic_forum_id").val("escape(<%= params[:forum_id] || @topic.forum_id %>"))
 			<% end %>
 		</div>
 	</div>
@@ -72,7 +73,7 @@
 		</div>
 	</div>
 
-	<% if @topic.new_record? %>
+	<% if @topic.new_record? && !current_account.features_included?(:forum_captcha_disable)%>
 		<div class="control-group"> 
 	    	<%= content_tag( :label, t('ticket.verify_human'), :class => "control-label" ) %>
 	    	<div class="controls recaptcha-control">

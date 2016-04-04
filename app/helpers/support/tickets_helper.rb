@@ -41,6 +41,13 @@ module Support::TicketsHelper
                 [ t("helpdesk.tickets.views.#{f}"), 
                   filter_support_tickets_path( :wf_filter => f, :requested_by => @requested_by),
                   (@current_filter == f)] }
+    if current_account.features?(:archive_tickets)
+      f_list << [:divider]                
+      f_list << [t("helpdesk.tickets.views.archived"), 
+                  filter_support_archive_tickets_path(:wf_filter => :archived, :requested_by => @requested_by),
+                  (@current_filter == :archived)]
+    end
+    
     # Constructing the dropdown
     dropdown_menu f_list, TOOLBAR_LINK_OPTIONS
   end

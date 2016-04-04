@@ -3,6 +3,8 @@ class Helpdesk::AuthorizationsController < ApplicationController
 
   include HelpdeskControllerMethods
 
+  skip_after_filter :set_last_active_time
+  
   def index
     @items = Helpdesk::Authorization.paginate(
       :page => params[:page], 
@@ -19,23 +21,14 @@ class Helpdesk::AuthorizationsController < ApplicationController
   end
 
   def deliver_autocomplete auto_scoper
-    if current_account.features_included?(:multiple_user_emails)
-      items = auto_scoper.find(
-      :all, 
-      :select => ["users.id as `id` , users.name as `name`, user_emails.email as `email_found`"],
-      :joins => ["INNER JOIN user_emails ON user_emails.user_id = users.id AND user_emails.account_id = users.account_id"],
-      :conditions => ["(users.name like ? or user_emails.email like ?) and users.deleted = 0", "%#{params[:v]}%", "%#{params[:v]}%"], 
-      :limit => 1000)
-      r = {:results => items.map {|i| {:id => i.email_found, :value => i.name, :user_id => i.id }}}
-      r[:results].push({:id => current_account.kbase_email, :value => ""}) if params[:v] =~ /(kb[ase]?.*)/
-    else
-      items = auto_scoper.find(
-      :all, 
-      :conditions => ["email is not null and name like ? or email like ?", "%#{params[:v]}%", "%#{params[:v]}%"], 
-      :limit => 1000)
-      r = {:results => items.map {|i| {:id => i.email, :value => i.name, :user_id => i.id }}}
-      r[:results].push({:id => current_account.kbase_email, :value => ""}) if params[:v] =~ /(kb[ase]?.*)/
-    end
+    items = auto_scoper.find(
+    :all, 
+    :select => ["users.id as `id` , users.name as `name`, user_emails.email as `email_found`"],
+    :joins => ["INNER JOIN user_emails ON user_emails.user_id = users.id AND user_emails.account_id = users.account_id"],
+    :conditions => ["(users.name like ? or user_emails.email like ?) and users.deleted = 0", "%#{params[:v]}%", "%#{params[:v]}%"], 
+    :limit => 1000)
+    r = {:results => items.map {|i| {:id => i.email_found, :value => i.name, :user_id => i.id }}}
+    r[:results].push({:id => current_account.kbase_email, :value => ""}) if params[:v] =~ /(kb[ase]?.*)/
     
     respond_to do |format|
       format.json { render :json => r.to_json }

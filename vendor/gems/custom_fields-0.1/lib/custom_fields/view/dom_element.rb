@@ -4,6 +4,7 @@ module CustomFields
     class DomElement # helper class for creating dom elements, used in contact/_form
 
       include ActionView::Helpers
+      include ::DateHelper
 
       def initialize(form_builder, object_name, class_name, field, field_label, dom_type, required, enabled,
                       field_value = '', dom_placeholder = '', bottom_note = '', args = {})
@@ -104,7 +105,7 @@ module CustomFields
         end
 
         def construct_date
-          date_format = format_date
+          format_date
           text_field_tag("#{@object_name}[#{@field_name}]", @field_value, 
                     {:class => "#{@field_class} datepicker_popover", 
                       :disabled => @disabled,
@@ -113,8 +114,19 @@ module CustomFields
         end
 
         def construct_disabled
-          anchor = @field_value
-          anchor = (content_tag :a, @field_value, :href => @field_value, :target => '_blank') if @dom_type == :url
+          anchor ||= begin
+            case @dom_type
+              when :date
+                format_date
+                @field_value
+              when :url
+                content_tag :a, @field_value, :href => @field_value, :target => '_blank'
+              when :dropdown_blank
+                CGI.unescapeHTML(@field_value.to_s)
+              else 
+                @field_value
+            end
+          end
           content_tag :div, anchor, :class => "disabled-field"
         end
 
@@ -130,12 +142,11 @@ module CustomFields
         end
 
         def format_date
-          date_format = AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]
-          unless @field_value.empty?
-            time_format = Account.current.date_type(:short_day_separated)
-            @field_value = (Time.parse(@field_value.to_s)).strftime(time_format)
-          end 
-          date_format
+          @field_value = formatted_date(@field_value) unless @field_value.empty?
+        end
+
+        def date_format
+          AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]
         end
 
     end

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::ObserverRulesController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -15,19 +14,19 @@ describe Admin::ObserverRulesController do
 
   it "should go to the index page" do
     get 'index'
-    response.should render_template "admin/observer_rules/index.html.erb"
+    response.should render_template "admin/observer_rules/index"
   end
 
   it "should go to new observer rule page" do
     get 'new'
-    response.should render_template "admin/observer_rules/new.html.erb"
+    response.should render_template "admin/observer_rules/new"
   end
 
   it "should create a new observer rule" do
     observer_rule_name = "created by #{Faker::Name.name}"
     post :create , { :type=>"virtual_agents",
                      :va_rule =>{"name"=>observer_rule_name, "description"=>Faker::Lorem.sentence(3), "match_type"=>"all"},
-                     :filter_data=>[{:name=>"ticket_type", :operator=>"is", :value=>"Problem"}].to_json,
+                     :filter_data=>[{:name=>"ticket_type", :operator=>"in", :value=>["Problem", "Question"]}].to_json,
                      :filter=>"end",
                      :operator=>"is", :value=>"2",
                      :event_data=>[{:name=>"priority", :from=>"--", :to=>"--"}].to_json,
@@ -39,21 +38,21 @@ describe Admin::ObserverRulesController do
 
   it "should edit observer rule" do
     get :edit, :id =>@test_observer_rule.id
-    response.should render_template "admin/observer_rules/edit.html.erb"
+    response.should render_template "admin/observer_rules/edit"
   end
 
   it "should clone a observer rule" do
     get :clone_rule, :id => @test_observer_rule.id
-    response.should render_template "admin/observer_rules/clone_rule.html.erb"
-    (@test_observer_rule.id == assigns(:va_rule).id).should be_true
-    (@test_observer_rule.action_data == assigns(:va_rule).action_data).should be_true
-    (@test_observer_rule.filter_data == assigns(:va_rule).filter_data).should be_true
+    response.should render_template "admin/observer_rules/clone_rule"
+    (@test_observer_rule.id == assigns(:va_rule).id).should be true
+    (@test_observer_rule.action_data == assigns(:va_rule).action_data).should be true
+    (@test_observer_rule.filter_data == assigns(:va_rule).filter_data).should be true
   end
 
   it "should update observer rule" do
     put :update, {:va_rule=>{"name"=>@test_observer_rule.name+" - temp", "description"=>Faker::Lorem.sentence(3)},
                   :filter_data=>[{:name=>"subject", :operator=>"is", :value=>"temp"}].to_json,
-                  :filter=>"end", :name=>"status", :operator=>"is", :value=>"6",
+                  :filter=>"end", :name=>"status", :operator=>"in", :value=>["6", "2"],
                   :event_data =>[{:name=>"priority", :from=>"--", :to=>"--"}].to_json,
                   :event=>"end",
                   :name=>"status", :from=>"--", :to=>"--", :performer_data=>{"type"=>"1"},

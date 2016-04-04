@@ -1,7 +1,6 @@
 require 'spec_helper'
-
+require './app/controllers/topics_controller'
 describe TopicsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -37,12 +36,12 @@ describe TopicsController do
     topic = create_test_topic(@forum)
     controller.stubs(:main_portal?).returns(false)
     get :show, :category_id => @category.id+10000, :forum_id => @forum.id, :id => topic.id
-    response.should render_template("errors/wrong_portal.html.erb")
+    response.should render_template("errors/_error_page")
     controller.class.any_instance.unstub(:main_portal?)
   end
 
   # it "should redirect to discussions topic page on 'index'" do
   #   get :index, :category_id => @category.id, :forum_id => @forum.id
-  #   response.should redirect_to 'discussions'
+  #   response.should redirect_to '/discussions'
   # end
 end

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::EmailCommandsSettingsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -11,7 +10,7 @@ describe Admin::EmailCommandsSettingsController do
 
   it "should go to the index page" do
     get 'index'
-    response.should render_template "admin/email_commands_settings/index.html.erb"
+    response.should render_template "admin/email_commands_settings/index"
   end
 
   it "should edit the delimiter for email commands" do

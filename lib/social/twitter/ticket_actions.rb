@@ -3,15 +3,18 @@ module Social::Twitter::TicketActions
   include Social::DynamoHelper
   include Social::Constants
   include Social::Stream::Util
+  include Social::Util
+  include Social::Twitter::Common
 
   def tweet_to_fd_item(current_feed_hash, search_type)
     feeds = build_current_interaction(current_feed_hash, search_type, true)
     fd_items = process_feeds(feeds, current_feed_hash)
   end
 
-  def add_as_ticket(twt, twt_handle, twt_type, options={})
+  def add_as_ticket(twt, twt_handle, twt_type, options={},archived_ticket = nil)
     tkt_hash = construct_params(twt, options)
     account  = Account.current
+    
     ticket   = account.tickets.build(
       :subject    =>  Helpdesk::HTMLSanitizer.plain(tkt_hash[:body]) ,
       :twitter_id =>  tkt_hash[:sender] ,
@@ -29,7 +32,7 @@ module Social::Twitter::TicketActions
         :description_html => tkt_hash[:body]
       }
     )
-
+    ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) if archived_ticket
     if ticket.save_ticket
       Rails.logger.debug "This ticket has been saved - #{tkt_hash[:tweet_id]}"
     else
@@ -72,31 +75,6 @@ module Social::Twitter::TicketActions
     return note
   end
 
-  def get_twitter_user(screen_name, profile_image_url=nil)
-    account = Account.current
-    user = account.all_users.find_by_twitter_id(screen_name)
-    unless user
-      user = account.contacts.new
-      user.signup!({
-                     :user => {
-                       :twitter_id      => screen_name,
-                       :name            => screen_name,
-                       :active          => true,
-                       :helpdesk_agent  => false
-                     }
-      })
-    end
-    if user.avatar.nil? && !profile_image_url.nil?
-      args = {
-        :account_id       => account.id,
-        :twitter_user_id  => user.id,
-        :prof_img_url     => profile_image_url
-      }
-      Resque.enqueue(Social::Workers::Twitter::UploadAvatar, args)
-    end
-    user
-  end
-
   private
 
     def process_feeds(feeds, current_feed_hash)
@@ -125,8 +103,9 @@ module Social::Twitter::TicketActions
     end
 
     def construct_params(twt, options)
+      tweet_body = options[:tweet] ? twt[:body] : twt.text
       hash = {
-        :body         => options[:tweet] ? twt[:body] : twt.text,
+        :body         => tweet_body.to_s.tokenize_emoji,
         :tweet_id     => options[:tweet] ? twt[:id].split(":").last.to_i : twt.id ,
         :posted_time  => options[:tweet] ? Time.at(Time.parse(twt[:postedTime]).to_i) : Time.at(twt.created_at).utc,
         :sender       => options[:tweet] ? @sender : @sender.screen_name

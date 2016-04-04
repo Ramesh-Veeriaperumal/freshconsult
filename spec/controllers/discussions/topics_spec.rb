@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-describe TopicsController do
-	integrate_views
+RSpec.describe Discussions::TopicsController do
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -14,7 +13,7 @@ describe TopicsController do
 	end
 
 	after(:all) do
-		@category.destroy
+		@category.destroy if @category
 	end
 
 	describe "Setting Default stamps for the Topics" do

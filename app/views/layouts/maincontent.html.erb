@@ -5,10 +5,10 @@
 		<% 
 			body_class = []
 			body_class << (yield :layoutType)
-			body_class << "single" unless(@content_for_sidebar || @content_for_helpcard)
+			body_class << "single" unless(content_for?(:sidebar) || content_for?(:helpcard))
 			body_class << "shortcuts-active" if(shortcuts_enabled?)
 		%>
-		<% javascript_tag do %>			
+		<%= javascript_tag do %>			
 			jQuery('body').attr("class", '<%= body_class.join(" ") %>');
 			
 			jQuery('ul.header-tabs li.active').removeClass('active');
@@ -16,12 +16,12 @@
 		<% end %>
 		<%= render(:partial => '/search/navsearch') %>
 		<div id="inner"> 
-				<% if @content_for_sidebar %>
+				<% if content_for?(:sidebar) %>
 					<div class="sidebar" id="Sidebar" <% if(selected_tab == "admin") %> rel="sticky" <% end %> >
 						<%= yield :sidebar %>					
 					</div>
 				<% end %> 
-				<% if @content_for_helpcard %>
+				<% if content_for?(:helpcard) %>
 					<div class="sidebar sidebar-help" id="Sidebar" <% if(selected_tab == "admin") %> rel="sticky" <% end %> >
 						<div class="sidepanel">
 							<i class="common-icon-help"></i>
@@ -45,9 +45,8 @@
 <%= yield :dialogs   %>
 <%= yield :pagefixed %>
 <% if request.headers['X-PJAX'] %>
-	<% javascript_tag do %>
+	<%= javascript_tag do %>
 		setTimeout(function(){
-			<!-- $J("a.dialog2, a[data-ajax-dialog], button.dialog2").dialog2(); -->
 			<%= yield :onload_script -%>
 		}, 50);
 	<% end %>

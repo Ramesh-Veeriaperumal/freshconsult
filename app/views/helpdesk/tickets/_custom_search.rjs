@@ -1,6 +1,6 @@
 page.replace_html 'ticket-list', :partial => '/helpdesk/shared/tickets'
 page.replace_html 'ticket-sub-toolbar', :partial => '/helpdesk/shared/ticket_sort'
 page << "bulkActionButtonsDisabled();"
-page << "jQuery.getScript('/helpdesk/tickets/full_paginate?total_entries=#{params["total_entries"]}&page=#{params["page"]}');"
+page << "jQuery.getScript('/helpdesk/tickets/full_paginate?total_entries=#{params["total_entries"]}&tickets_in_current_page=#{@items.size}&page=#{params["page"]}');"
 page << "handle_agent_collision();" if feature?(:agent_collision) && current_account.agents_from_cache.count > 1
 page << "if(window.shortcuts || window.shortcuts != null) shortcuts.setListItemCursor('table.tickets tbody tr');"

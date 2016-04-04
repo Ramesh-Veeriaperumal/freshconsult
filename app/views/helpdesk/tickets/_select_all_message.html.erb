@@ -1,0 +1,40 @@
+
+<div class="inline-block">
+    <span id="toggle_select_all_page" class="">
+        <%= t('ticket.admin_select_all.select_all_page_text',
+            :count => "<span class='admin_select_all_ticket_count_page'></span>").html_safe 
+        %> 
+    </span>
+    <span id="toggle_select_all_view" class="hide">
+        <%= t('ticket.admin_select_all.select_all_view_text', 
+            :count => "<span class='admin_select_all_ticket_count'></span>").html_safe 
+        %> 
+    </span>
+</div>
+<% current_select_all_job = select_all_running_job || {} %>
+<% if current_select_all_job.empty? %>
+    <div id="toggle_select_all" class="toggle_select_all_container inline-block">
+        <a href="javascript:void(0)" id="toggle_select_all_default"> 
+        <%= t('ticket.admin_select_all.toggle_select_all', 
+            :count => "<span class='admin_select_all_ticket_count'></span>").html_safe %>
+        </a>
+        <a href="javascript:void(0)" id="toggle_select_all_clear" class="hide">
+            <%= t('ticket.admin_select_all.clear_selection').html_safe %>
+        </a>
+    </div>
+<% else %>
+    <div id="select_all_disabled" class="toggle_select_all_container inline-block">
+        <span id="toggle_select_all_default" class="admin_select_all_disabled">
+            <%= t('ticket.admin_select_all.toggle_select_all', 
+                :count => "<span class='admin_select_all_ticket_count'></span>").html_safe %>
+        </span>
+    </div>
+    <div class="inline-block tooltip" 
+      data-original-title='<%= (current_user.id.to_s == current_select_all_job["user_id"])? 
+        t("ticket.admin_select_all.in_progress_text_you").html_safe 
+        : t("ticket.admin_select_all.in_progress_text", :user_name => current_select_all_job["user_name"]) %>' 
+      data-placement="right" >
+        <span class="sloading loading-tiny active" id="admin_select_all_loading">
+        </span>
+    </div>
+<% end %> 

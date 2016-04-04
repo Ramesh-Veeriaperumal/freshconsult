@@ -3,11 +3,15 @@ class Helpdesk::Email::Process
   include EmailCommands
   include Helpdesk::Email::ParseEmailData
   include Helpdesk::Email::HandleArticle
+  include Helpdesk::DetectDuplicateEmail
+  include ActionView::Helpers
   include WhiteListHelper
+  include Helpdesk::ProcessByMessageId
+  include AccountConstants
 
   #All email meta data and parsing of email values are done on parse_email_data.rb. Please refer while viewing this file.
 
-  attr_accessor :to_email, :common_email_data, :params, :account, :user, :kbase_email
+  attr_accessor :to_email, :common_email_data, :params, :account, :user, :kbase_email, :start_time
 
   MAPPING_ENCODING = {
     "ks_c_5601-1987" => "CP949",
@@ -23,13 +27,19 @@ class Helpdesk::Email::Process
     self.to_email = parse_to_email #In parse_email_data
   end
 
+  def determine_pod
+    shard = ShardMapping.fetch_by_domain(to_email[:domain])
+    shard.pod_info unless shard.blank?
+  end
+
 	def perform
+    self.start_time = Time.now.utc
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
     return unless shardmapping.present?
-		Sharding.select_shard_of(to_email[:domain]) do 
-			accept_email if get_active_account
-		end
-	end
+    Sharding.select_shard_of(to_email[:domain]) do 
+      accept_email if get_active_account
+    end
+  end
 
   def get_active_account
     self.account = Account.find_by_full_domain(to_email[:domain])
@@ -38,13 +48,28 @@ class Helpdesk::Email::Process
 
   def accept_email
     account.make_current
+    TimeZone.set_time_zone
     self.common_email_data = email_metadata #In parse_email_data
     return if mail_from_email_config?
     # encode_stuffs
+    if account.features?(:domain_restricted_access)
+      wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
+      return unless Array.wrap(wl_domain).include?(common_email_data[:from][:domain])
+    end
     construct_html_param
+    if (common_email_data[:from][:email] =~ EMAIL_VALIDATOR).nil?
+      error_msg = "Invalid email address found in requester details - #{common_email_data[:from][:email]} for account : #{account.id}"
+      Rails.logger.debug error_msg
+      NewRelic::Agent.notice_error(Exception.new(error_msg))
+      return
+    end
     self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data
     return if (user.nil? or user.blocked?)
     get_necessary_details
+    return if duplicate_email?(common_email_data[:from][:email],
+                               common_email_data[:to][:email],
+                               common_email_data[:subject],
+                               params["Message-Id"][1..-2])
     assign_to_ticket_or_kbase
   end
 
@@ -78,8 +103,21 @@ class Helpdesk::Email::Process
 		ticket_identifier = Helpdesk::Email::IdentifyTicket.new(ticket_data, user, account)
     ticket = ticket_identifier.belongs_to_ticket
     email_handler = Helpdesk::Email::HandleTicket.new(ticket_data, user, account, ticket)
-		ticket ? email_handler.create_note : email_handler.create_ticket
+		ticket ? email_handler.create_note(start_time) : create_archive_link(ticket_identifier,email_handler,start_time)
 	end
+
+  def create_archive_link(ticket_identifier,email_handler,start_time)
+    if account.features?(:archive_tickets)
+      archive_ticket = ticket_identifier.belongs_to_archive
+      if archive_ticket && archive_ticket.is_a?(Helpdesk::ArchiveTicket)
+        email_handler.archive_ticket = archive_ticket 
+      elsif archive_ticket && archive_ticket.is_a?(Helpdesk::Ticket)
+        email_handler.ticket = archive_ticket
+        return email_handler.create_note(start_time)
+      end
+    end
+    email_handler.create_ticket(start_time)
+  end
 
   # def encode_stuffs
  #    charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])

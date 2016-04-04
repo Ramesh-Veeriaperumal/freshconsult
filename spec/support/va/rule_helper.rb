@@ -17,7 +17,7 @@ module VA::RuleHelper
     @agent2 = add_test_agent(@account)
     @agent2.make_current
     @agent3 = add_test_agent(@account)
-    @product = @account.products.create(Factory.attributes_for(:product)) # to make it multi product
+    @product = @account.products.create(FactoryGirl.attributes_for(:product)) # to make it multi product
     @to_email = @account.email_configs.first.to_email
     @ticlet_cc = Faker::Internet.email
     define_required_accessors
@@ -25,13 +25,13 @@ module VA::RuleHelper
   end
 
   def create_required_objects
-    @product = @account.products.create(Factory.attributes_for(:product))
-    @company = @account.companies.create(Factory.attributes_for(:company))
-    @requester = @account.users.create(Factory.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
+    @product = @account.products.create(FactoryGirl.attributes_for(:product))
+    @company = @account.companies.create(FactoryGirl.attributes_for(:company))
+    @requester = @account.users.create(FactoryGirl.attributes_for(:user, :email => Faker::Internet.email, :customer_id => @company.id))
     @responder = add_test_agent(@account)
-    @ticket = @account.tickets.create(Factory.attributes_for(:ticket, :requester_id => @requester.id, :responder_id => @responder.id))
-    @agent_note =@ticket.notes.create(Factory.attributes_for(:helpdesk_note, :notable_id => @ticket.id, :user_id => User.current.id, :source => 2))
-    @user_note = @ticket.notes.create(Factory.attributes_for(:helpdesk_note, :notable_id => @ticket.id, :user_id => @requester.id))
+    @ticket = @account.tickets.create(FactoryGirl.attributes_for(:ticket, :requester_id => @requester.id, :responder_id => @responder.id))
+    @agent_note =@ticket.notes.create(FactoryGirl.attributes_for(:helpdesk_note, :notable_id => @ticket.id, :user_id => User.current.id, :source => 2))
+    @user_note = @ticket.notes.create(FactoryGirl.attributes_for(:helpdesk_note, :notable_id => @ticket.id, :user_id => @requester.id))
     @time_sheet = @ticket.time_sheets.create
     @survey_result = @ticket.survey_results.create(:rating => 1)
     ###Need to define custom fields

@@ -1,8 +1,8 @@
 class Solution::ArticleDrop < BaseDrop
   
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   
-  liquid_attributes << :title << :status << :thumbs_up << :thumbs_down
+  self.liquid_attributes += [ :title , :status , :thumbs_up , :thumbs_down ]
   
   def initialize(source)
     super source
@@ -37,11 +37,11 @@ class Solution::ArticleDrop < BaseDrop
   end
 
   def attachments
-    source.attachments
+    source[:current_attachments] || source.attachments
   end
 
   def cloud_files
-    source.cloud_files
+    source[:current_cloud_files] || source.cloud_files
   end
   
   def type

@@ -18,7 +18,7 @@
           <%= link_to 'All', :letter => '', :state => params[:state] || "active" %>
         </li>
         <% "A".upto("Z") do |l| -%>     
-         <li class="<%= 'active' if params[:letter] == [l] %>">
+         <li class="<%= 'active' if params[:letter] == l %>">
           <%= link_to l, :letter => l, :state => params[:state] || "active" %>
          </li>  
         <% end %>

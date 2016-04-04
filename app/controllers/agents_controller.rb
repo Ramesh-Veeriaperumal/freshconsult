@@ -1,8 +1,10 @@
 # encoding: utf-8
 class AgentsController < ApplicationController
   include AgentsHelper
-  helper AgentsHelper
+  include UserHelperMethods
   include APIHelperMethods
+  include ExportCsvUtil
+  include Spam::SpamAction
   
   include Gamification::GamificationUtil
   include MemcacheKeys
@@ -11,12 +13,12 @@ class AgentsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:info_for_node]
   
   before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
-    :convert_to_contact, :api_key] 
+    :convert_to_contact, :reset_score, :api_key] 
   before_filter :ssl_check, :can_assume_identity, :only => [:api_key] 
-  before_filter :load_roles, :only => [:new, :create, :edit, :update]
+  before_filter :load_roles, :load_groups, :only => [:new, :create, :edit, :update]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :restrict_current_user, :only => [ :edit, :update, :destroy,
-    :convert_to_contact, :reset_password ]
+    :convert_to_contact, :reset_score, :reset_password ]
   before_filter :check_current_user, :only => [ :destroy, :convert_to_contact, :reset_password ]
   before_filter :check_agent_limit, :only =>  [:restore, :create] 
   before_filter :check_agent_limit_on_update, :validate_params, :can_edit_roles_and_permissions, :only => [:update]
@@ -42,8 +44,10 @@ class AgentsController < ApplicationController
       @agents = scoper.filter(params[:state],params[:letter], current_agent_order, current_agent_order_type, params[:page])
     end
     respond_to do |format|
-      format.html # index.html.erb
-      format.js
+      format.html #index.html.erb
+      format.js do
+        render 'index', :formats => [:rjs] 
+      end
       format.xml  { render :xml => @agents.to_xml }
       format.json  { render :json => @agents.to_json }
     end
@@ -55,7 +59,7 @@ class AgentsController < ApplicationController
       format.html do
         @user = @agent.user
         @recent_unresolved_tickets = 
-                            current_account.tickets.assigned_to(@user).unresolved.visible.newest(5)
+                            current_account.tickets.permissible(current_user).assigned_to(@user).unresolved.visible.newest(5)
       end
       format.xml  { render :xml => @agent.to_xml }
       format.json { render :json => @agent.as_json }
@@ -85,11 +89,13 @@ class AgentsController < ApplicationController
   end
 
   def toggle_availability
-    @agent = current_account.agents.find_by_user_id(params[:id])
-    @agent.toggle(:available)
-    @agent.active_since = Time.now.utc
-    @agent.save
-    Rails.logger.debug "Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{@agent.user.email}, Value:: #{params[:value]}, Time:: #{Time.zone.now} "
+    if params[:admin] || !current_account.features?(:disable_rr_toggle)
+      @agent = current_account.agents.find_by_user_id(params[:id])
+      @agent.toggle(:available)
+      @agent.active_since = Time.now.utc
+      @agent.save
+      Rails.logger.debug "Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{@agent.user.email}, Value:: #{params[:value]}, Time:: #{Time.zone.now} "
+    end
     respond_to do |format|
       format.html { render :nothing => true}
       format.json  { render :json => {} }
@@ -125,31 +131,34 @@ class AgentsController < ApplicationController
   end
   
   def create_multiple_items
-    @agent_emails = params[:agents_invite_email]
+    @agent_emails = params[:agents_invite_email].reject {|e| e.empty?}
 
     @responseObj = {}
-    if current_account.can_add_agents?(@agent_emails.length)
+    if !account_whitelisted? && current_account.subscription.agent_limit.nil? && (@agent_emails.length > 25)
+      @responseObj[:reached_limit] = :blocked
+    elsif current_account.can_add_agents?(@agent_emails.length)
       @existing_users = [];
       @new_users = [];
-      @agent_emails.each do |agent_email|        
+      @agent_emails.each do |agent_email|
+        next if agent_email.blank?        
         @user  = current_account.users.new
         if @user.signup!(:user => { 
             :email => agent_email,
             :helpdesk_agent => true,
             :role_ids => [current_account.roles.find_by_name("Agent").id]
-        })
+            })
           @user.create_agent
           @new_users << @user
-        else
-          check_email_exist
-          @existing_users << @existing_user
-        end
-        
+        # Has no use in getting started
+        # else
+        #   check_email_exist
+        #   @existing_users << @existing_user 
+        end        
       end      
             
-      @responseObj[:reached_limit] = false
+      @responseObj[:reached_limit] = :false
     else      
-      @responseObj[:reached_limit] = true
+      @responseObj[:reached_limit] = :true
     end              
   end
   
@@ -192,7 +201,13 @@ class AgentsController < ApplicationController
   def convert_to_contact
       user = @agent.user
       if user.make_customer
-        flash[:notice] = t(:'flash.agents.to_contact')
+        #current_account subscription state changing from "active" to "Active" after 
+        #user.make_customer, so using downcase to check active customers
+        if current_account.subscription.state.downcase.eql?("active")
+          flash[:notice] = t(:'flash.agents.to_contact_active', :subscription_link => "/subscription").html_safe
+        else
+          flash[:notice] = t(:'flash.agents.to_contact')
+        end
         redirection_url(user)
       else
         flash[:notice] = t(:'flash.agents.to_contact_failed')
@@ -256,6 +271,30 @@ class AgentsController < ApplicationController
       end
   end 
 
+  def configure_export
+    @csv_headers = Agent::EXPORT_FIELDS
+    render :layout => false
+  end
+
+  def export_csv
+    portal_url = main_portal? ? current_account.host : current_portal.portal_url
+    if valid_export_params?
+      ExportAgents.perform_async({:csv_hash => params[:export_fields], 
+                                            :user => current_user.id, 
+                                            :portal_url => portal_url})
+      flash[:notice] = t('agent.export_successfull')
+    else
+      flash[:notice] = t('agent.invalid_export_params')
+    end
+    redirect_to :back
+  end
+
+  def reset_score
+    GamificationReset.perform_async({"agent_id" => @agent.id })
+    flash[:notice] = I18n.t('gamification.score_reset_successfull')
+    redirect_to agent_path(@agent)
+  end
+
  protected
  
   def scoper
@@ -271,7 +310,7 @@ class AgentsController < ApplicationController
   end
   
   def check_email_exist
-    if("Email has already been taken".eql?(@user.errors["base"]))        
+    if Array.wrap(@user.errors.messages[:"primary_email.email"]).include? "has already been taken"
       @existing_user = current_account.user_emails.user_for_email(params[:user][:email])
     end
   end
@@ -299,6 +338,10 @@ class AgentsController < ApplicationController
     @roles = current_account.roles.all
   end
   
+  def load_groups
+    @groups = current_account.groups_from_cache
+  end
+
   def restrict_current_user
     unless can_edit?(@agent)
       error_responder(t(:'flash.agents.edit.not_allowed'), 'forbidden')
@@ -354,6 +397,15 @@ private
       params[:user][:role_ids] = role_ids
     end
   end
+  
+  def validate_groups
+    group_ids = params[:agent][:group_ids]
+    if group_ids.nil? or (group_ids.kind_of?(Array) and group_ids.all? &:blank?)
+      params[:agent][:group_ids] = []
+    else
+      params[:agent][:group_ids] = current_account.groups.where(:id => group_ids).map(&:id)
+    end
+  end
 
   def validate_ticket_permission
     #validating permissions
@@ -369,17 +421,19 @@ private
     params[:agent].delete(:user)
   end
  
-  def clean_params
+  def filter_params
     params[:agent].except!(:user_id, :available, :active_since) # should we expose "available" ?
     params[:user].except!(:helpdesk_agent, :deleted, :active)
+    validate_phone_field_params @agent.user
   end
 
   def validate_params
     validate_scoreboard_level
     validate_ticket_permission
     format_api_params
-    clean_params
+    filter_params
     validate_roles
+    validate_groups
   end
 
   def can_edit_roles_and_permissions # Should be checked after validate_params as params hash is unified in validate_params
@@ -395,6 +449,10 @@ private
                               redirect_to :back }
         format.any(:xml, :json) {render request.format.to_sym => error, :status => status.to_sym}
     end
+  end
+
+  def valid_export_params?
+    params[:export_fields].values.all? { |param| Agent::EXPORT_FIELD_VALUES.include? param }
   end
 
 end

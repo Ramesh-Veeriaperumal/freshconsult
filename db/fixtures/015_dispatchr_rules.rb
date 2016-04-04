@@ -1,13 +1,13 @@
 account = Account.current
 
-VARule.seed(:account_id, :name, :rule_type) do |s|
+VaRule.seed(:account_id, :name, :rule_type) do |s|
   s.account_id = account.id
   s.rule_type = VAConfig::BUSINESS_RULE
   s.name = "Send Leads to Sales - Sample Dispatch'r rule"
   s.match_type = "any"
   s.filter_data = [
-      { :name => "subject_or_description", :operator => "contains", :value => "credit card" },
-      { :name => "subject_or_description", :operator => "contains", :value => "purchase" } ]
+      {:evaluate_on => "ticket", :name => "subject_or_description", :operator => "contains", :value => "credit card" },
+      {:evaluate_on => "ticket", :name => "subject_or_description", :operator => "contains", :value => "purchase" } ]
   s.action_data = [
       { :name => "ticket_type", :value => "Lead" }, #should we need to_s?
       { :name => "group_id", :value => account.groups.find_by_name("Sales").id } ]

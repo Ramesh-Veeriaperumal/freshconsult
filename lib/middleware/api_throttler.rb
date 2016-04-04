@@ -6,7 +6,8 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   include Redis::OthersRedis
   include MemcacheKeys
   
-  SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login", "emailparser", "mailboxparser"] 
+  SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login", "emailparser", "mailboxparser","freshops"] + FreshopsSubdomains
+  SKIPPED_PATHS      = ["/reports/v2"]
   THROTTLED_TYPES = ["application/json", "application/x-javascript", "text/javascript",
                       "text/x-javascript", "text/x-json", "application/xml", "text/xml"]
   ONE_HOUR = 3600
@@ -40,14 +41,19 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     @host = env["HTTP_HOST"]
     @content_type = env['CONTENT-TYPE'] || env['CONTENT_TYPE']
     @api_path = env["REQUEST_URI"]
+    @mobihelp_auth = env["HTTP_X_FD_MOBIHELP_APPID"]
     @sub_domain = @host.split(".")[0]
+    @path_info = env["PATH_INFO"]
     if SKIPPED_SUBDOMAINS.include?(@sub_domain)
       @status, @headers, @response = @app.call(env)
       return [@status, @headers, @response]
     end
     domain = DomainMapping.find_by_domain(env["HTTP_HOST"])
     @account_id = domain.account_id if domain
-    if allowed?
+    pod_info = domain.shard.pod_info if domain
+    if PodConfig['CURRENT_POD'] != pod_info
+      @status, @headers, @response = @app.call(env)
+    elsif allowed?
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
         remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
@@ -65,10 +71,12 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
 
   def by_pass_throttle?
     return true if  SKIPPED_SUBDOMAINS.include?(@sub_domain)
+    return true unless @mobihelp_auth.blank?
+    SKIPPED_PATHS.each{|p| return true if @path_info.include? p}
     if @content_type.nil?
       return ( !@api_path.include?(".xml") && !@api_path.include?(".json") )
     else
-      Rails.logger.debug "Content type on API:: #{@content_type}"
+      Rails.logger.debug "Account ID :: #{@account_id} ::: Content type on API:: #{@content_type}" if @account_id
       return !THROTTLED_TYPES.include?(@content_type)
     end
   end

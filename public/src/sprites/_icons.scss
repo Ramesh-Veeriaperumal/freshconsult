@@ -7,25 +7,7 @@
 /* %% more styles set for this class in some other file */
 
 /* %% app-common */
-.results{
-	.helpdesk_ticket_icon	span.icon{ @include icons-sprite(page-white); }
-	.user_icon	span.icon{ @include icons-sprite(user); }
-	.customer_icon	span.icon{ @include icons-sprite(building); }
-	.solution_article_icon	span.icon{ @include icons-sprite(solutions); }
-	.topic_icon		span.icon{ @include icons-sprite(comments); }
-}
 
-.sort .sort_order{
-	.ASC{  @include icons-sprite(sort-asc); }
-	.DESC{ @include icons-sprite(sort-desc); }
-}
-
-// .forum_list .base-set{
-// 	.forum_type_howto{ 		@include icons-sprite(forum_howto); }
-// 	.forum_type_ideas{ 		@include icons-sprite(forum_ideas); }
-// 	.forum_type_problem{ 	@include icons-sprite(forum_problem); }
-// 	.forum_type_announce{ 	@include icons-sprite(forum_announce); }
-// }
 
 .ui-form .inline-field .google_contacts_sync {
 	li.freshdesk{ 	@include icons-sprite(freshdesk); }
@@ -34,19 +16,7 @@
 
 .icons-edit-forum{ @include icons-sprite(edit-forum); }
 
-// .forum_follow_icon{ @include icons-sprite(follow-forum); }
-//
-// .forum_follow_icon.active{ @include icons-sprite(following-forum); }
 
-.icons-like{ @include icons-sprite(like); }
-
-.icons-dislike{ @include icons-sprite(dislike); }
-
-// .agent-preview{ @include icons-sprite(agent-preview); }
-
-.solution-list li:before{
-	@include icons-sprite(article-list);
-}
 
 .meta-os { @include icons-sprite('os-generic'); }
 @each $os in mac, windows, android, linux {
@@ -62,37 +32,8 @@
 /* Importing chat availability icon */
 @import "cdn-ignored/sprites/chat/*.png";
 $chat-layout:horizontal;
-.agent-fchat-on { @include chat-sprite(status-on); }
 
-.agent-fchat-off { @include chat-sprite(status-off); }
-
-.topic-list-view {
-	.spam_action { @include icons-sprite(is-spam); }
-	.spam_action:hover { @include icons-sprite(not-spam); }
-}
-
-.icon-eye{
-	display: inline-block;
-	width: 22px;
-	height: 12px;
-	margin-top: 1px;
-	vertical-align: text-top;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-image: url("/images/eye.png");
-}
-.icon-crosseye{
-	display: inline-block;
-	width: 22px;
-	height: 12px;
-	margin-top: 1px;
-	vertical-align: text-top;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-image: url("/images/crosseye.png");
-}
-
-.icon_remove{
+.icon_remove, .group_icon_remove{
   cursor:pointer;
 	width: 15px;
 	height: 15px;
@@ -129,16 +70,3 @@ $chat-layout:horizontal;
 	}
 }
 
-@each $class_name in publish, queue-spam, spam-delete,
-	comment-count, like-count, view-count,
-	answer, unanswer, mark-spam {
-	.community .community-#{$class_name} { @include icons-sprite('community-#{$class_name}'); }
-}
-
-// .community .community-publish:hover {
-	// @include icons-sprite('community-publish-hover');
-// }
-
-// @each $forum_type in ideas, problem, announce, howto {
-// 	.community .forum-type-#{$forum_type} { @include icons-sprite('forum-type-#{$forum_type}'); }
-// }

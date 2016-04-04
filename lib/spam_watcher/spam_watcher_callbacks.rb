@@ -23,7 +23,7 @@ module SpamWatcherCallbacks
       user_column, key  = self.spam_watcher_options[:user_column],self.spam_watcher_options[:key]
       threshold,sec_expire =  self.spam_watcher_options[:threshold], self.spam_watcher_options[:sec_expire]
       class_eval %Q(
-        after_commit_on_create :spam_watcher_counter
+        after_commit :spam_watcher_counter, on: :create
         def spam_watcher_counter
           begin
             Timeout::timeout(SpamConstants::SPAM_TIMEOUT) {
@@ -38,16 +38,16 @@ module SpamWatcherCallbacks
               final_key = key + ":" + account_id.to_s + ":" + user_id.to_s
               # this case is added for the sake of skipping imports
               return true if (((key == "sw_helpdesk_tickets") or (key == "sw_helpdesk_notes")) && ((Time.now.to_i - self.created_at.to_i) > 1.day))
-              return true if $spam_watcher.get(account_id.to_s + "-" + user_id.to_s)
-              count = $spam_watcher.rpush(final_key, Time.now.to_i)
+              return true if $spam_watcher.perform_redis_op("get", account_id.to_s + "-" + user_id.to_s)
+              count = $spam_watcher.perform_redis_op("rpush", final_key, Time.now.to_i)
               sec_expire = "#{sec_expire}".to_i 
-              $spam_watcher.expire(final_key, sec_expire+1.minute)
+              $spam_watcher.perform_redis_op("expire", final_key, sec_expire+1.minute)
               if count >= max_count
-                head = $spam_watcher.lpop(final_key).to_i
+                head = $spam_watcher.perform_redis_op("lpop", final_key).to_i
                 time_diff = Time.now.to_i - head
                 if time_diff <= sec_expire
                   # ban_expiry = sec_expire - time_diff
-                  $spam_watcher.rpush(SpamConstants::SPAM_WATCHER_BAN_KEY,final_key)
+                  $spam_watcher.perform_redis_op("rpush", SpamConstants::SPAM_WATCHER_BAN_KEY,final_key)
                 end
               end
             }

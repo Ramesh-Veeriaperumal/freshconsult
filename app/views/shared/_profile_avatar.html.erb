@@ -1,15 +1,14 @@
-<% javascript_tag do %>
+<%= javascript_tag do %>
   customMessages = {
     confirmDelete: '<%= t("user.remove_profile_image_confirm") %>',
     ie9FileChangeMsg: '<%= t('user.ie9_file_change_msg') %>',
     confirmNavigate: '<%= t("admin.products.portal.save_and_continue") %>'
 }
 <% end %>
-<%= include_cloudfront_js 'profile_avatar' %>  
+<%= javascript_include_tag 'cdn/profile_avatar' %>  
 <div class='avatar-pic'>
-  <%= image_tag user.avatar ? user.avatar.expiring_url(:medium) : '', 
-                :alt => user.name,
-                :onerror => "imgerror(this)" %>
+  <img src="/assets/misc/profile_blank_medium.jpg" class="hide profile_pic medium" />
+  <%= user_avatar(user, :medium, "profile_pic avatar-pic",{:width => "120px"}) %>
   <p class='ie9-file-change-msg break-word'> </p>
 </div>
 <div class='avatar-options'>
@@ -23,7 +22,7 @@
           <%= t('user.add_photo') %>
         <% end %>
       </span>
-      <% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
+      <%= fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
         <%= avatar_form.file_field :content, 
                                     :size => 10 , 
                                     :class => 'upload_size_validity avatar-file', 

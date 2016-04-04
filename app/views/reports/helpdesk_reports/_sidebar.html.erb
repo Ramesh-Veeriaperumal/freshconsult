@@ -1,6 +1,7 @@
-<div class="sidepanel">
-  <% form_remote_tag(:url => '/activity_reports/helpdesk/generate', :update => "report-container", 
-	                   :loading => "jQuery('#report-container').html('<div class=\"sloading loading-block loading-small\"></div>');  ") do %>
+ <div class="sidepanel">
+ 	<!-- #TODO-RAILS3 to be tested -->
+  <%= form_tag '/activity_reports/helpdesk/generate', :"data-update" => "report-container", 
+	                   :"data-loading" => "report-container", :"data-loading-classes" => "sloading loading-block loading-small", :remote => true do %>
 	  <%= render :partial => "/reports/shared/options_form" %> 
 	<%= submit_tag t('reports.generate_button'), :class => "btn" %>
 	<% end %>

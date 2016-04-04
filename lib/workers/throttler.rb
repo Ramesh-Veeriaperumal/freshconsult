@@ -20,10 +20,11 @@ class Workers::Throttler
                           (expires_after > retry_after ? expires_after : retry_after) : retry_after
         throttler_args[:retry_after] = nil
         Rails.logger.debug "Scheduling in #{schedule_after} seconds, Conditions: #{limit_exceeded}, #{retry_attempt}"
-        Resque.enqueue_in(schedule_after, Workers::Throttler, throttler_args)
+        Resque.enqueue_in(schedule_after, Workers::Throttler, throttler_args) #unless Rails.env.test?
       else
         args                   = throttler_args[:args]
         args[:current_user_id] = throttler_args[:current_user_id]
+        args[:account_id]      = throttler_args[:account_id]
         worker                 = throttler_args[:worker].constantize
         count = increment_others_redis(key)
         if expires_after == -1
@@ -31,13 +32,18 @@ class Workers::Throttler
           Rails.logger.debug "Expiry set in #{throttler_args[:expire_after]} seconds"
         end
         Rails.logger.debug "Enqueueing #{worker} NewCount: #{count}"
-        Resque.enqueue(worker, args)
+        Resque.enqueue(worker, args) #unless Rails.env.test?
       end
     rescue Resque::DirtyExit
       Resque.enqueue(Workers::Throttler, throttler_args)
     rescue Exception => e
-      puts "something is wrong  : #{e.message}"
+      puts "something is wrong  Throttler : #{e.message}"
     end
+  end
+
+  def self.around_perform_with_shard(*args)
+    args[0].is_a?(Hash) ? args[0].symbolize_keys! : args[1].symbolize_keys!
+    yield
   end
 
 end

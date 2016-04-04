@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe CompaniesController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -22,7 +22,7 @@ describe CompaniesController do
                                   :note => "", 
                                   :domains => ""
                                  }
-    response.body.should =~ /Name can&#39;t be blank/
+    response.body.should =~ /Name can&#x27;t be blank/
   end
 
   it "should not create a new company with the same name" do

@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe ForumSpam do
 
-	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
 	before(:all) do
@@ -44,18 +43,18 @@ describe ForumSpam do
 
 	it "should update the count on creation of new topic" do
 
-		spam_count = SpamCounter.spam_count(@account.id)
+		spam_count = SpamCounter.spam_count
 
 		create_dynamo_topic("ForumSpam", @forum)
 
-		SpamCounter.spam_count(@account.id).should eql spam_count + 1
+		SpamCounter.spam_count.should eql spam_count + 1
 
-		spam_post_count = SpamCounter.count(@topic.id, :spam, @account.id)
+		spam_post_count = SpamCounter.count(@topic.id, :spam)
 
 		create_dynamo_post("ForumSpam", @topic)
 
-		SpamCounter.spam_count(@account.id).should eql spam_count + 2
-		SpamCounter.count(@topic.id, :spam, @account.id).should eql spam_post_count + 1
+		SpamCounter.spam_count.should eql spam_count + 2
+		SpamCounter.count(@topic.id, :spam).should eql spam_post_count + 1
 
 	end
 
@@ -66,7 +65,7 @@ describe ForumSpam do
 		@dynamo_topic.user.should eql @customer
 		@dynamo_post.user.should eql @customer
 
-		@dynamo_topic.send("spam?").should be_true
+		@dynamo_topic.send("spam?").should be true
 	end
 
 	it "should return only last one month topics" do
@@ -80,7 +79,7 @@ describe ForumSpam do
 			include_topics << create_dynamo_topic("ForumSpam", @forum).attributes
 		end
 
-		last_month = ForumSpam.last_month(@account.id).records.map(&:attributes)
+		last_month = ForumSpam.last_month.records.map(&:attributes)
 
 		last_month.should_not =~ not_include_topics
 		last_month.should =~ include_topics
@@ -94,7 +93,7 @@ describe ForumSpam do
 			last_2_days_posts << create_dynamo_topic("ForumSpam", @forum, {:timestamp => (Time.now - i.day).utc.to_f}).attributes
 		end
 
-		ForumSpam.next(@account.id, (Time.now - 2.day).utc.to_f).records.map(&:attributes).should =~ last_2_days_posts
+		ForumSpam.next((Time.now - 2.day).utc.to_f).records.map(&:attributes).should =~ last_2_days_posts
 		
 	end
 
@@ -104,7 +103,7 @@ describe ForumSpam do
 			topic_posts << create_dynamo_post("ForumSpam", @topic).attributes
 		end
 
-		ForumSpam.topic_spam(@account.id, @topic.id).records.map(&:attributes).should =~ topic_posts
+		ForumSpam.topic_spam(@topic.id).records.map(&:attributes).should =~ topic_posts
 	end
 
 	it "should delete all the posts of a given topic" do
@@ -113,11 +112,11 @@ describe ForumSpam do
 			topic_posts << create_dynamo_post("ForumSpam", @topic).attributes
 		end
 
-		ForumSpam.topic_spam(@account.id, @topic.id).records.map(&:attributes).should =~ topic_posts
+		ForumSpam.topic_spam(@topic.id).records.map(&:attributes).should =~ topic_posts
 
-		ForumSpam.delete_topic_spam(@account.id, @topic.id)
+		ForumSpam.delete_topic_spam(@topic.id)
 
-		ForumSpam.topic_spam(@account.id, @topic.id).records.should eql []
+		ForumSpam.topic_spam(@topic.id).records.should eql []
 	end
 
 	it "should delete all the posts of a account" do
@@ -128,9 +127,9 @@ describe ForumSpam do
 			create_dynamo_topic("ForumSpam", @forum)
 		end
 		
-		ForumSpam.delete_account_spam(@account.id)
+		ForumSpam.delete_account_spam
 
-		ForumSpam.last_month(@account.id).records.should eql []
+		ForumSpam.last_month.records.should eql []
 	end
 
 end

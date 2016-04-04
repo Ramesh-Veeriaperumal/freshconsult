@@ -14,8 +14,7 @@ class VA::Tester::Event < VA::Tester
       from = feed_data[:from] || feed_data[:value]
       to = feed_data[:to]
       current_events_generated = fetch_events(ticket, option_name, from, to)
-      current_events = { option_name => get_change(feed_data) }
-      result = (current_events_generated == current_events)
+      result = (current_events_generated[option_name] == get_change(feed_data))
       unless va_rule.event_matches?(current_events_generated, ticket) == result
         raise "event_matches of #{va_rule} should be_eql to true"
       end

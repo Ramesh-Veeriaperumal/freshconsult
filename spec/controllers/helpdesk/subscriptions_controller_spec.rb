@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::SubscriptionsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -16,7 +15,7 @@ describe Helpdesk::SubscriptionsController do
 
   it "should render the list of watchers of a ticket" do
     ticket = create_ticket
-    subscription = Factory.build(:subscription, :account_id => @account.id,
+    subscription = FactoryGirl.build(:subscription, :account_id => @account.id,
                                                 :ticket_id => ticket.id,
                                                 :user_id => @agent.id)
     subscription.save
@@ -34,12 +33,12 @@ describe Helpdesk::SubscriptionsController do
                                       :role_ids => ["#{@account.roles.first.id}"] })
     post :create_watchers, :ticket_id => @test_ticket.display_id, :user_id => test_user.id
     @test_ticket.subscriptions.last.ticket_id.should be_eql(@test_ticket.id)
-    Delayed::Job.last.handler.should include("deliver_notify_new_watcher")
+    Delayed::Job.last.handler.should include("notify_new_watcher")
   end
 
   it "should unwatch a ticket" do
     ticket = create_ticket
-    subscription = Factory.build(:subscription, :account_id => @account.id,
+    subscription = FactoryGirl.build(:subscription, :account_id => @account.id,
                                                 :ticket_id => ticket.id,
                                                 :user_id => @agent.id)
     subscription.save
@@ -51,7 +50,7 @@ describe Helpdesk::SubscriptionsController do
   it "should unwatch multiple tickets" do
     3.times do |i|
       instance_variable_set("@ticket_#{i+1}", create_ticket)
-      instance_variable_set("@subscription_#{i+1}", Factory.build(:subscription, 
+      instance_variable_set("@subscription_#{i+1}", FactoryGirl.build(:subscription, 
                                                                 :account_id => @account.id,
                                                                 :ticket_id => instance_variable_get("@ticket_#{i+1}").id,
                                                                 :user_id => @agent.id).save)

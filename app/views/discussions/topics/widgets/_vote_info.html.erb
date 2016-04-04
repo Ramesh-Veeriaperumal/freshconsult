@@ -1,0 +1,31 @@
+<% 
+if !first_post.nil? and first_post.id == post.id
+  user_list_url = users_voted_discussions_topic_path(:id => topic.id)
+  object = topic
+  target = "#topic_#{topic.id}_voted_users_all"
+else 
+  user_list_url = users_voted_discussions_topic_post_path(:topic_id => topic.id, :id => post.id)
+  object = post
+  target = "#post_#{post.id}_voted_users_all"
+end 
+%>
+<% unless object.user_votes==0 %>
+	<div class="vote-content muted">
+		<span class="tooltip" 
+		      title="<div class='align-left'><%= populate_vote_list_content(object) %></div>"
+		      data-hide-before="this" 
+		      data-html="true" 
+		      data-placement="below"
+		      data-toggle="tooltip" >
+		<%= link_to(t('topic.vote', :count => object.user_votes), 
+								user_list_url,
+								"data-target" => "#{target}",
+								:rel => :freshdialog,
+								"data-template-footer" => "",
+								"data-width" => "300",
+								"data-title" => t('portal.topic_vote.user_upvote_list_title'))
+		%>
+	</span>
+		<%= t('topic.upvote_appended_text') %>
+	</div>
+<% end %>

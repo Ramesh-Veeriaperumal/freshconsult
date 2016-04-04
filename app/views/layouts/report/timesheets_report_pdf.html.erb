@@ -1,4 +1,5 @@
-<%= include_cloudfront_rtl_css :common %>
-<%= include_cloudfront_js :defaults %>
-<%= render :partial => "layouts/report/pdf_files", :locals => {} %>
-<%= render :partial => "reports/timesheet_reports/time_sheet_list.html", :locals => {:time_sheets => @time_sheets} %> 
+ 
+<%= stylesheet_link_tag_with_rtl :'cdn/common' %>
+<%= javascript_include_tag :'cdn/defaults' %>
+<%= render :partial => "layouts/report/pdf_files.html.erb", :formats => [:html], :locals => {} %>
+<%= render :partial => "reports/timesheet_reports/time_sheet_list.html.erb", :formats => [:html], :locals => {:time_sheets => @time_sheets} %> 

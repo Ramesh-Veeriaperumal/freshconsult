@@ -1,12 +1,13 @@
 module Freshfone::NumberMethods
-
+  include Freshfone::FreshfoneUtil
 	def number_scoper
     @scoper ||= current_account.freshfone_numbers
   end
 	
 	def incoming_number
-		transfer_incoming? ? number_scoper.filter_by_number(params[:From], params[:To]).first :
-								number_scoper.find_by_number(params[:To])
+		transfer_incoming? ? 
+      number_scoper.filter_by_number(params[:From], params[:To]).first :
+			regular_incoming_number
 	end
 	
 	def outgoing_number
@@ -15,7 +16,8 @@ module Freshfone::NumberMethods
 	end
 	
 	def current_number
-		@current_number ||= is_outgoing_call? ? outgoing_number : incoming_number
+    @current_number ||= sip_call? ? sip_freshfone_number : 
+        (is_outgoing_call? ? outgoing_number : incoming_number)
 	end
 
   def queue_wait_time
@@ -43,5 +45,25 @@ module Freshfone::NumberMethods
 		def transfer_incoming?
 			params[:action] == "transfer_incoming_call"
 		end
+
+    def regular_incoming_number
+      return agent_leg_number if agent_call_leg? #used in conference
+      return if params[:To].to_s.starts_with?("client")
+      number_scoper.find_by_number(params[:To])
+    end
+
+    def agent_leg_number
+      number_scoper.find_by_number(params[:From])
+    end
+
+    def sip_freshfone_number
+      #Temporarily using the first freshfone number as caller ID. 
+      #To be changed later when caller ID selection is offered
+      number_scoper.first 
+    end
+
+    def agent_call_leg?
+      ["connect", "disconnect"].include? params[:leg_type]
+    end
 
 end

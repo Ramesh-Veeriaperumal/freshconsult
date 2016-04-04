@@ -3,8 +3,10 @@
 # Check out google_contacts_importer for proper import, export or merge functionalities.
 
 class Integrations::GoogleAccount < ActiveRecord::Base
+  self.primary_key = :id
   include Integrations::GoogleContactsUtil
   include Integrations::OauthHelper
+  include Integrations::Constants
 
   belongs_to :account
   belongs_to :sync_tag, :class_name => "Helpdesk::Tag"
@@ -13,6 +15,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   has_many :google_contacts, :dependent => :destroy # TODO: Handle the destroy through single query.
   attr_accessor :last_sync_index, :import_groups, :donot_update_sync_time, :access_token # Non persisted property used only for importing.
 
+  #In OAuth2 , google_account.token = oauth2.access_token, google_account.secret = oauth2.refresh_token.
   def self.find_or_create(params, account)
     id = params[:id]
     id = params[:integrations_google_account][:id] if id.blank?
@@ -43,20 +46,20 @@ class Integrations::GoogleAccount < ActiveRecord::Base
                   :select => "google_accounts.*, installed_applications.configs", :conditions => conditions)
   end
 
-  def create_google_group(group_name)
+  def create_google_group(group_name, use_oauth2=nil)
     xml_to_send = CREATE_GROUP_XML.gsub("$group_name", group_name)
-    access_token = prepare_access_token(self.token, self.secret)
-    response = access_token.post(google_groups_uri(self), xml_to_send, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0"})
+    access_token = prepare_access_token(self.token, self.secret, use_oauth2)
+    response = access_token.post(google_groups_uri(self), { :body => xml_to_send, :headers => {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0"}})
     Rails.logger.debug "response #{response.inspect}"
-    if response.code == "200" || response.code == "201"
+    if response.status == 200 || response.status == 201
       # If create group is successful return the id
-      updated_group_hash = XmlSimple.xml_in(response.body)
+      updated_group_hash = ::XmlSimple.xml_in(response.body)
       goog_grp_id = Integrations::GoogleContactsUtil.parse_id(updated_group_hash['id'])
       return goog_grp_id
     end
   end
 
-  def fetch_all_google_groups(query_params=nil)
+  def fetch_all_google_groups(query_params=nil, use_oauth2=nil)
     google_account = self 
     token = google_account.token
     secret = google_account.secret
@@ -65,9 +68,9 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     unless query_params.blank?
       goog_groups_url = goog_groups_url+query_params 
     end
-    access_token = prepare_access_token(token, secret)
+    access_token = prepare_access_token(token, secret, use_oauth2)
     updated_groups_xml = access_token.get(goog_groups_url).body
-    updated_groups_hash = XmlSimple.xml_in(updated_groups_xml)['entry'] || []
+    updated_groups_hash = ::XmlSimple.xml_in(updated_groups_xml)['entry'] || []
     Rails.logger.debug "#{updated_groups_hash.length} groups from google account has been fetched with query #{query_params}. #{google_account.email}"
     google_groups_arr = []
     updated_groups_hash.insert(0, 'id'=>['base/6'], 'content'=>{'content'=>'My Contacts'})
@@ -152,7 +155,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         # puts "batch_operation_xml #{batch_operation_xml}"
         uri = google_contact_batch_uri(self)
         access_token = prepare_access_token(self.token, self.secret)
-        batch_response = access_token.post(uri, batch_operation_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0", "If-Match" => "*"})
+        batch_response = access_token.post(uri, {:body => batch_operation_xml, :headers => {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0", "If-Match" => "*"}})
         stats = handle_batch_response(batch_response, stats, db_contacts_slice)
         slice_no += 1
       rescue => e
@@ -177,7 +180,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
           Rails.logger.debug "Updating contact #{db_contact.email} in google for account #{db_contact.account_id}."
           response = update_google_contact(db_contact, batch)
         end
-        batch_xml << response unless response.blank?
+        batch_xml << response if !response.blank? && batch
       rescue => e
         Rails.logger.error "Problem in exporting google contact #{db_contact.email}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       end
@@ -188,9 +191,9 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   private
     def handle_batch_response(batch_response, stats, db_contacts_slice)
       inc=0
-      if batch_response.code == "200"
+      if batch_response.status == 200
         batch_response_xml = batch_response.body
-        batch_response_hash = XmlSimple.xml_in(batch_response_xml)
+        batch_response_hash = ::XmlSimple.xml_in(batch_response_xml)
         # puts "stats #{stats}  \n Converted batch_response_hash #{batch_response_hash.inspect}"
         batch_response_hash = batch_response_hash['entry']
         batch_response_hash.each {|response|
@@ -245,11 +248,11 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         goog_contact_entry_xml = covert_to_contact_xml(db_contact)
         goog_contacts_url = google_contact_uri(google_account)
         access_token = prepare_access_token(google_account.token, google_account.secret)
-        response = access_token.post(goog_contacts_url, goog_contact_entry_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0"})
+        response = access_token.post(goog_contacts_url, {:body => goog_contact_entry_xml, :headers => {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0"}})
         Rails.logger.debug "Adding contact #{db_contact}, response #{response.inspect}"
-        if response.code == "200" || response.code == "201"
+        if response.status == 200 || response.status == 201
           # If create contact is successful update the id in the database.
-          updated_contact_hash = XmlSimple.xml_in(response.body)
+          updated_contact_hash = ::XmlSimple.xml_in(response.body)
           goog_id = Integrations::GoogleContactsUtil.parse_id(updated_contact_hash['id'])
           updated = update_google_contact_id(db_contact, goog_id)
           Rails.logger.info "Newly added contacts id #{goog_id}, updated #{updated}"
@@ -275,12 +278,12 @@ class Integrations::GoogleAccount < ActiveRecord::Base
           goog_contacts_url = google_contact_uri(google_account)+"/"+goog_contact_id
     #        puts goog_contact_entry_xml +" "+goog_contacts_url 
           access_token = prepare_access_token(google_account.token, google_account.secret)
-          response = access_token.put(goog_contacts_url, goog_contact_entry_xml, {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0", "If-Match" => "*"})
+          response = access_token.put(goog_contacts_url, {:body => goog_contact_entry_xml, :headers => {"Content-Type" => "application/atom+xml", "GData-Version" => "3.0", "If-Match" => "*"}})
           Rails.logger.debug "Updating contact #{db_contact}, response #{response.inspect}"
-          if response.code == "200" || response.code == "201"
+          if response.status == 200 || response.status == 201
             Rails.logger.info "Successfully updated contact #{goog_contact_id}"
             #TODO update the google_id if the google_contact is not yet created for this db_contact.
-          elsif response.code == "404"  # If the user does not found.
+          elsif response.status == 404  # If the user does not found.
             Rails.logger.info "Contact does not exist. Adding the contact #{goog_contact_id}"
             add_google_contact(db_contact)
           end
@@ -298,9 +301,9 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         else
           goog_contacts_url = google_contact_uri(google_account)+"/"+goog_contact_id
           access_token = prepare_access_token(google_account.token, google_account.secret)
-          response = access_token.delete(goog_contacts_url, {"If-Match" => "*"})
+          response = access_token.delete(goog_contacts_url, {:headers => {"If-Match" => "*"}}) # not sure if this has to be changed.
           Rails.logger.info "Deleted contact #{db_contact}, response #{response.inspect}"
-          if response.code == "200"
+          if response.status == 200
             goog_cnt = GoogleContact.find_by_user_id(db_contact.id)
             goog_cnt.destroy
             return "true"
@@ -324,12 +327,12 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         goog_contacts_url = goog_contacts_url+query_params 
       end
       access_token = prepare_access_token(token, secret)
-      updated_contact_xml = access_token.get(goog_contacts_url, "GData-Version" => "3.0").body
+      updated_contact_xml = access_token.get(goog_contacts_url, {:headers => {"GData-Version" => "3.0"}}).body
       # Rails.logger.debug goog_contacts_url + "   " + updated_contact_xml
       google_users = []
       begin
-        doc = REXML::Document.new(updated_contact_xml)
-        doc.elements.each('feed/entry') { |contact_entry_element|
+        doc = Nokogiri::XML(updated_contact_xml)
+        doc.xpath('//xmlns:feed/xmlns:entry').each do |contact_entry_element|
           begin
             converted_user = convert_to_user(contact_entry_element, new_company_list)
             google_users.push(converted_user)
@@ -337,7 +340,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
             google_users.push(nil) # In case any exception occurs just store nil value for giving the correct number contacts fetched.
             Rails.logger.error "Error in processing a contact. contact_entry_element #{contact_entry_element.inspect}:  #{e.inspect}\n#{e.backtrace.join("\n\t")}"
           end
-        }
+        end
       rescue => e
         Rails.logger.error "Error in parsing the xml: #{updated_contact_xml}.  #{e.inspect}\n#{e.backtrace.join("\n\t")}"
       end
@@ -372,7 +375,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
         if(!goog_prop_xml.blank? and user.has_attribute?(prop_name))
           prop_value = user.read_attribute(prop_name)
           unless prop_value.blank?
-            prop_value = prop_value.to_s.to_xs
+            prop_value = ::Builder::XChar.encode(prop_value)
             xml_str << goog_prop_xml.gsub("$"+prop_name, prop_value)
           end
         end
@@ -451,7 +454,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       # Set the values for the user.
       goog_contact_detail.each { |key, value|
         db_attr = GOOGLE_FIELDS_TO_USER_FILEDS_MAPPING[key]
-        user.write_attribute(db_attr, value) unless (db_attr.blank? or value.blank?)
+        user.send(:write_attribute,db_attr, value) unless (db_attr.blank? or value.blank?)
       }
 
       user.account = account if user.account.blank?
@@ -482,7 +485,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
 
     def find_user_by_google_id(google_id)
       self.account.all_users.first(:include=>[:tags], :joins=>"INNER JOIN google_contacts ON google_contacts.user_id=users.id", 
-                                  :conditions=>["google_contacts.google_id = ? and google_contacts.google_account_id = ?", google_id, self.id]) unless google_id.blank?
+                                  :conditions=>["google_contacts.google_id = ? and google_contacts.google_account_id = ?", google_id, self.id], :readonly => false) unless google_id.blank?
     end
 
     def fetch_current_account_contact(db_contact) #possible dead code
@@ -492,11 +495,55 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       return nil
     end
 
-    def prepare_access_token(token, secret)
-      if self.access_token.blank?
-        self.access_token = get_oauth_access_token(token, secret)
+    # Has custom logic to migrate to OAuth2 if it is enabled using OAuth1.
+    def prepare_access_token(token, secret, use_oauth2=nil)
+      google_acc = self
+      if (use_oauth2 == true || auth_oauth2?(self.account, GOOGLE_CONTACTS["app_name"], google_acc) )
+        access_token_object = get_oauth2_access_token(GOOGLE_CONTACTS["provider"], secret, GOOGLE_CONTACTS["app_name"])
+      else
+        oauth2_refresh_token = oauth2_migrate(token, secret)
+        Rails.logger.info "Successfully migrated #{google_acc.email} with OAuth2 refresh token '#{oauth2_refresh_token}' for the account #{google_acc.account_id}"
+        unless oauth2_refresh_token.blank?
+          enable_integration(google_acc)
+          oauth2_access_token_obj = get_oauth2_access_token(GOOGLE_CONTACTS["provider"], oauth2_refresh_token, GOOGLE_CONTACTS["app_name"])
+          self.token = oauth2_access_token_obj.token
+          self.secret = oauth2_refresh_token
+          self.save!
+        else
+          Rails.logger.error "Error during OAuth2 migration for #{google_acc.email} for the account id #{google_acc.account_id}"
+        end
+        access_token_object = oauth2_access_token_obj
       end
-      self.access_token
+      access_token_object
+    end
+
+    def oauth2_migrate(oauth1_token, oauth1_token_secret)
+      oauth2_refresh_token = nil
+      oauth_s = Integrations::OauthHelper.get_oauth_keys('google')
+      oauth_options = Integrations::OauthHelper.get_oauth_options('google')
+      consumer = OAuth::Consumer.new(oauth_s["consumer_token"], oauth_s["consumer_secret"],
+                                      :site   => 'https://accounts.google.com', :scheme => :header)
+      oauth2_options = Integrations::OauthHelper.get_oauth_keys("google_contacts", "google_contacts")
+      params = {
+        "grant_type" => "urn:ietf:params:oauth:grant-type:migration:oauth1",
+        "client_id"  => oauth2_options["consumer_token"],
+        "client_secret"  => oauth2_options["consumer_secret"],
+        "scope"  => "https://www.google.com/m8/feeds"
+      }
+      # Create the access token object.
+      access_token = OAuth::AccessToken.new(consumer, oauth1_token, oauth1_token_secret)
+      resp = access_token.post(
+                                "/o/oauth2/token",
+                                params,
+                                { 'Content-Type' => 'application/x-www-form-urlencoded' })
+      if resp.code.to_s != "200"
+        raise "#{resp.code} - #{resp.body}"
+      else
+        json_resp = JSON.parse(resp.body)
+        oauth2_refresh_token = json_resp["refresh_token"]
+        Rails.logger.info "Migrated from OAuth1 to OAuth2 for #{oauth1_token} and #{oauth1_token_secret} with OAuth2 refresh token #{oauth2_refresh_token}"
+      end
+      oauth2_refresh_token
     end
 
     CREATE="create"

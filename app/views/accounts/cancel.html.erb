@@ -1,10 +1,10 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do -%>&nbsp;<%- end %>
 
 <h3 class="lead"><%= @page_title = t(".cancel_account") %></h3>
 
 <label><%= t(".info_text") %></label>
 
-<% form_tag({ :action => 'cancel' }, { :id => 'cancel-form', :class => "cancel-form"} ) do %>
+<%= form_tag({ :action => 'cancel' }, { :id => 'cancel-form', :class => "cancel-form"} ) do %>
 
 	<div id="feedback-section" class="cancel-form dont-validate form-bordered">
 			<ul id = "account-feedback" class = "cancel-field" >	
@@ -82,7 +82,7 @@
 <% end %>
 
 <% content_for :pagefixed do %>
-	<% javascript_tag do %>
+	<%= javascript_tag do %>
 		
 		// Validation 
 		jQuery(document).ready(function()

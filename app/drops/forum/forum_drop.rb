@@ -1,8 +1,8 @@
 class Forum::ForumDrop < BaseDrop
   
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   
-  liquid_attributes << :name << :description << :topics_count
+  self.liquid_attributes += [:name, :description, :topics_count]
   
   def initialize(source)
     super source

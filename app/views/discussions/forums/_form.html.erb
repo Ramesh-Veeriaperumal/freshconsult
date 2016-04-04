@@ -18,7 +18,7 @@
 	<div class="control-group">
 		<%= form.label :forum_category_id, t('forum.category'), :class => "control-label" %>
 		<div class="controls">
-			<%= form.select :forum_category_id, current_account.forum_categories.collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-xlarge" } %>
+			<%= form.select :forum_category_id, current_account.forum_categories.collect{|c|[c.name, c.id]}, { :selected => @forum.forum_category_id }, { :class => "select2 required input-xlarge" } %>
 		</div>
 	</div>
 	<% unless @forum.topics_count > 0 %>
@@ -35,12 +35,26 @@
 			<%= form.select :forum_visibility, Forum::VISIBILITY_OPTIONS, {}, { :class => "select2 input-xlarge" } %>
 			<br/><br/>
 			<span id="company_forums">
-				<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies }) %>
+				<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies, 
+					:max_limit => 250 }) %>
 			</span>
 		</div>
 	</div>
+	<div class="control-group">
+			<%= form.label :convert_to_ticket, t('forum.convert_to_ticket'), :class => "control-label" %>
+			<div class="controls mt12">
+				<div class="vertical-alignment">
+					<%= form.check_box :convert_to_ticket, :rel => 'toggle',  "data-checked-label" => t('plain_yes'), "data-unchecked-label" => t('plain_no') %>
+				</div>
+				<div class="vertical-alignment pl5">
+					<div class="muted"><%= t('forum.convert_to_ticket_info') %>
+					</div>
+			    </div>
+				<br/><br/>
+			</div>
+	</div>
 </div>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery(document).ready(function(){
 		jQuery('#forum_forum_visibility').bind("change", show_hide_customers);
 		
@@ -55,6 +69,5 @@
 			}
 		};
   	show_hide_customers();
-  	jQuery("#forum_forum_category_id").val(<%= params[:forum_category_id] || @forum.forum_category_id %>)
 	});
 <% end %>

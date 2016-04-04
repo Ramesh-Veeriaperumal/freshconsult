@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::TimeSheetsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -27,7 +26,7 @@ describe Helpdesk::TimeSheetsController do
   it "should not allow an unauthorized user to toggle a timer" do
     ticket = create_ticket
     user = add_new_user(@account)
-    time_sheet = Factory.build(:time_sheet, :user_id => user.id,
+    time_sheet = FactoryGirl.build(:time_sheet, :user_id => user.id,
                                             :workable_id => ticket.id,
                                             :account_id => @account.id,
                                             :billable => 1,

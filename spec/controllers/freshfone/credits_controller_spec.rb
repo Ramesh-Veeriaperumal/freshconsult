@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::Freshfone::CreditsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -34,7 +33,7 @@ describe Admin::Freshfone::CreditsController do
   it 'should return error message on failed purchase' do
     Freshfone::Credit.any_instance.stubs(:purchase).returns(false)
     post :purchase, {:credit => 500}
-    flash[:error].should be_eql("Error purchasing Freshfone Credits")
+    flash[:error].should be_eql("Error purchasing phone credits.")
   end
 
   it 'should return error message on invalid recharge amount' do

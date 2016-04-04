@@ -613,7 +613,7 @@ vi:
         company_posts_info: "Freshdesk sẽ chuyển đổi tất cả các bài viết trên trang Facebook của công ty này vào ticket."
         product: "sản phẩm"
         direct_messages: "nhập <strong> \"Direct messages\" </strong> như ticket"
-        direct_messages_info: "Freshdesk sẽ chuyển đổi tất cả các tin nhắn trực tiếp trên trang Facebook này như ticket. nếu bạn đang cho phép lần đầu tiên này, bạn có thể cần phải <a href='{{reauth_url}}'>Reauthorize với Facebook </a>"
+        direct_messages_info: "Freshdesk sẽ chuyển đổi tất cả các tin nhắn trực tiếp trên trang Facebook này như ticket. nếu bạn đang cho phép lần đầu tiên này, bạn có thể cần phải <a href='%{reauth_url}'>Reauthorize với Facebook </a>"
     twitter_handles:
       index:
         go_to_ticket: "Xem ticket"
@@ -2106,13 +2106,13 @@ vi:
     updated: "thư mục trả lời mẫu được cập nhật"
     deleted: "thư mục trả lời mẫu được xóa"
     no_folders: "không có trả lời mẫu"
-    folder_update: "Câu trả lời được lựa chọn đã được di chuyển đến thư mục: {{folder_name}}"
+    folder_update: "Câu trả lời được lựa chọn đã được di chuyển đến thư mục: %{folder_name}"
     update: "thư mục trả lời mẫu được cập nhật"
     created: "thư mục trả lời mẫu đượctạo"
     delete_multiple: "câu trả lời mẫu được chọn đã xóa"
     no_delete: "Thư mục mặc định không thể bị xóa!"
     create_new: "tạo mới"
-    no_response_admin: "Không có hồi đáp trong thư mục này <a href={{link}} id='new_resp'> tạo mới</a>"
+    no_response_admin: "Không có hồi đáp trong thư mục này <a href=%{link} id='new_resp'> tạo mới</a>"
     select_folder: "chọn thư mục"
   portalcss:
     reset_all_changes: "Thiết lập lại tất cả những thay đổi"
@@ -3280,7 +3280,7 @@ vi:
     remove_tab: "Gỡ bỏ trang"
     tab_not_removed: "Không thể gỡ trang"
     tab_removed: "Trang đã được gỡ bỏ"
-    page_added: "Trang này đã được thêm để {{source}}. Xin vui lòng gỡ ra và thử thêm lại"
+    page_added: "Trang này đã được thêm để %{source}. Xin vui lòng gỡ ra và thử thêm lại"
     add_tab: "Thêm trang"
     tab_name: "Tên trang"
     tab_url: "URL hình ảnh trang"
@@ -3978,8 +3978,6 @@ vi:
   import: Import
   contains: chứa
   import_solution_article_info: "Lưu ý: Hệ thống sẽ không lưu các bình luận trong forum"
-  no_anonymous_tickets: "để gửi 1 ticket<a href={{signup}}><b> đăng ký</b></a> như người dùng mới <a href={{login}}><b> đăng nhập</b></a>"
-  no_signup: "để gửi 1 ticket<a href={{login}}><b> đăng nhập</b></a>"
   register: "đăng ký"
   by: bởi
   portal:
@@ -4385,7 +4383,7 @@ vi:
     inactive_info1: "Hỗ trợ tất cả các email của bạn vẫn chưa được xác minh, bạn phải xác minh ít nhất một email hỗ trợ"
     info14: "Bất kỳ email được gửi đến địa chỉ này sẽ được chuyển đổi như một ticket"
     info4: "<strong> note: </strong> Nếu bạn có nhiều địa chỉ email để hỗ trợ nhiều sản phẩm,<a href='{{products_path}}'> thêm nó vào đây </a>."
-    spf_info: "Trả lời email từ Freshdesk sẽ tự động sử dụng hỗ trợ tương ứng ID email của bạn như địa chỉ email từ. tạo ra một<a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\"> bản ghi SPF </a> trong khu tập tin DNS của bạn sẽ đảm bảo giao hàng đúng email."
+    spf_info: "Trả lời email từ Freshdesk sẽ tự động sử dụng hỗ trợ tương ứng ID email của bạn như địa chỉ email từ. tạo ra một<a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\"> bản ghi SPF </a> trong khu tập tin DNS của bạn sẽ đảm bảo giao hàng đúng email."
     reply_email: "email hỗ trợ của bạn"
     unverified_info1: "Vui lòng kích hoạt email này bằng cách nhấp vào liên kết xác minh trong hộp thư đến của bạn."
     inactive_info2: "Cho đến lúc đó, các email mặc định \"%{default_email} sẽ được sử dụng như email thay thế"
@@ -4393,8 +4391,8 @@ vi:
     helpcard:
       tour1: "Giúp tôi cài đặt email hỗ trợ của tôi"
       tour2: "Giúp tôi định cấu hình nhiều hộp thư"
-      info5: "Hỗ trợ mặc định địa chỉ email của bạn <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Bất kỳ email được gửi ở đây được tự động chuyển đổi thành một ticket mà bạn có thể được làm việc trên. "
-      info19: "Bạn có thể cấu hình tài khoản Freshdesk của bạn để sử dụng một email hỗ trợ trong phạm vi của riêng bạn, như support@mycompany.com bằng cách chuyển tiếp email từ địa chỉ này để <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>"
+      info5: "Hỗ trợ mặc định địa chỉ email của bạn <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Bất kỳ email được gửi ở đây được tự động chuyển đổi thành một ticket mà bạn có thể được làm việc trên. "
+      info19: "Bạn có thể cấu hình tài khoản Freshdesk của bạn để sử dụng một email hỗ trợ trong phạm vi của riêng bạn, như support@mycompany.com bằng cách chuyển tiếp email từ địa chỉ này để <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>"
       edit_info: "Để tạo 1 hộp thư hỗ trợ mới, chọn \"chỉnh sửa\" dưới cài đặt chung"
       info20: "sử dụng nhiều hộp thư"
       info21: "Bạn có thể thêm các hộp thư không giới hạn vào và ra (như info@yourcompany.com, sales@yourcompany.com, vv) trong trợ giúp của bạn. Bạn thậm chí có thể thiết lập để tự động gán Freshdesk email từ mỗi hộp thư cho một nhóm cụ thể."
@@ -4412,7 +4410,7 @@ vi:
     info18: "Địa chỉ bcc tự động bao gồm trả lời các ticket"
     email_added_succ_msg: "Email đã được thêm vào"
     assign_to_product_msg: "Liên kết email hỗ trợ này với một sản phẩm"
-    assign_to_product_info: "Nếu bạn muốn liên kết các email đến một sản phẩm mới đầu tiên <a href='{{products_path}}'> thêm sản phẩm </a>"
+    assign_to_product_info: "Nếu bạn muốn liên kết các email đến một sản phẩm mới đầu tiên <a href='%{products_path}'> thêm sản phẩm </a>"
     new_support_email: "mail hỗ trợ mới"
     global_support_emails: "email hỗ trợ toàn cầu "
     support_email: "email hỗ trợ"

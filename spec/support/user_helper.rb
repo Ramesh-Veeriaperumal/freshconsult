@@ -14,10 +14,12 @@ module UsersHelper
   end
 
   def add_agent(account, options={})
-    new_agent = Factory.build(:agent, :account => account,
+    new_agent = FactoryGirl.build(:agent,
+                                      :account_id => account.id,
                                       :available => 1,
                                       :ticket_permission => options[:ticket_permission])
-    new_user = Factory.build(:user, :account => account,
+    new_user = FactoryGirl.build(:user,
+                                    :account_id => account.id,
                                     :name => options[:name],
                                     :email => options[:email],
                                     :helpdesk_agent => options[:agent],
@@ -38,11 +40,12 @@ module UsersHelper
   end
 
   def add_new_user(account, options={})
+
     if options[:email]
       user = User.find_by_email(options[:email])
       return user if user
     end
-    new_user = Factory.build(:user, :account => account,
+    new_user = FactoryGirl.build(:user, :account => account,
                                     :name => options[:name] || Faker::Name.name,
                                     :email => options[:email] || Faker::Internet.email,
                                     :time_zone => "Chennai",
@@ -51,12 +54,14 @@ module UsersHelper
                                     :blocked => options[:blocked] || 0,
                                     :customer_id => options[:customer_id] || nil,
                                     :language => "en")
+    new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
     new_user.save
     new_user.reload
   end
 
   def add_user_with_multiple_emails(account, number)
     new_user = add_new_user(@account)
+    new_user.helpdesk_agent = 0;
     new_user.save
     new_user.reload
     number.times do |i|
@@ -83,7 +88,7 @@ module UsersHelper
       user = User.find_by_phone(options[:phone])
       return user if user
     end
-    new_user = Factory.build(:user, :account => account,
+    new_user = FactoryGirl.build(:user, :account => account,
                                     :name => options[:name] || Faker::Name.name,
                                     :phone => options[:phone] || Faker::PhoneNumber.phone_number,
                                     :time_zone => "Chennai",
@@ -94,5 +99,73 @@ module UsersHelper
                                     :language => "en")
     new_user.save
     new_user.reload
+  end
+
+  def add_new_user_with_fb_id(account,options={})
+    if options[:fb_profile_id]
+      user = User.find_by_fb_profile_id(options[:fb_profile_id])
+      return user if user
+    end
+    new_user = FactoryGirl.build(:user, :account => account,
+                                    :name => options[:name] || Faker::Name.name,
+                                    :fb_profile_id => options[:fb_profile_id] || Faker::Name.name,
+                                    :time_zone => "Chennai",
+                                    :delta => 1,
+                                    :deleted => options[:deleted] || 0,
+                                    :blocked => options[:blocked] || 0,
+                                    :customer_id => options[:customer_id] || nil,
+                                    :language => "en")
+    new_user.save
+    new_user.reload
+  end
+
+  def add_new_user_with_twitter_id(account,options={})
+    if options[:twitter_id]
+      user = User.find_by_fb_profile_id(options[:twitter_id])
+      return user if user
+    end
+    new_user = FactoryGirl.build(:user, :account => account,
+                                    :name => options[:name] || Faker::Name.name,
+                                    :twitter_id => options[:twitter_id] || "@#{Faker::Name.name}",
+                                    :time_zone => "Chennai",
+                                    :delta => 1,
+                                    :deleted => options[:deleted] || 0,
+                                    :blocked => options[:blocked] || 0,
+                                    :customer_id => options[:customer_id] || nil,
+                                    :language => "en")
+    new_user.save
+    new_user.reload
+  end
+  
+  # Helpers
+  def other_user
+    u = User.find { |x| @agent.can_assume?(x) } || create_dummy_customer
+    u.update_column(:email, Faker::Internet.email)
+    u.reload
+  end
+
+  def deleted_user
+    user = User.find { |x| x.id != @agent.id } || create_dummy_customer
+    user.update_column(:deleted, true)
+    user.update_column(:email, Faker::Internet.email)
+    user.reload
+  end
+
+  def get_default_user
+    User.first_or_create do |user|
+      user.name = Faker::Name.name
+      user.email = Faker::Internet.email
+      user.time_zone = "Chennai"
+      user.delta = 1,
+      user.language = "en"
+    end
+  end
+
+  def user_address_params
+    @address_param =  {:street => Faker::Address.street_address,
+        :city => Faker::Address.city,
+        :state => Faker::Address.state,
+        :postal_code => Faker::Address.postcode,
+        :country => 'DE'}
   end
 end

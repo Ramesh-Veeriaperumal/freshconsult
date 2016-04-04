@@ -1,6 +1,6 @@
 <div class="ui-form">
 	<div class="aligncenter">
-	<img src="/images/logo.png" class="logo_rect" alt="<%=t('logo')%>">
+	<img src="/images/misc/logo.png" class="logo_rect" alt="<%=t('logo')%>">
 	<h2 class="title"> All right! Let’s refresh your helpdesk.</h2>
 	<p>Creating your account now...</h3>
 	<div class="topborder"></div>
@@ -23,7 +23,7 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga
 })();
 </script>
 <!-- google analytices ends here -->
-<% javascript_tag do%>				  
+<%= javascript_tag do%>				  
  setTimeout(function(){
  window.location = '<%= @rediret_url %>'
 },2000);

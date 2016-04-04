@@ -1,4 +1,5 @@
-page.insert_html :bottom, :reminderlist, :partial => @reminder_partial, :object => @item
+page.insert_html :top, :reminderlist, :partial => @reminder_partial, :object => @item
 page << "$('helpdesk_reminder_body').value = '';"
 page << "$('helpdesk_reminder_body').disabled = false;"
 page << "trigger_event('todo_created', #{@item.to_json} );"
+page << "getRemainderCount();"

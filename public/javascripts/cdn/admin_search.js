@@ -1,0 +1,1 @@
+//= require admin/ui_search

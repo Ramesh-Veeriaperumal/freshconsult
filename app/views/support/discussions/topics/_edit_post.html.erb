@@ -1,4 +1,4 @@
-<% form_for @post, :url => support_discussions_topic_post_path(@topic.id, @post.id), :method => :put,
+<%= form_for @post, :url => support_discussions_topic_post_path(@topic.id, @post.id), :method => :put,
 	:html => { :rel => "validate" } do |f| -%>		
 	<div class="row-fluid">
 		<p class="span12">
@@ -19,6 +19,6 @@
 		</a>
 	</div>
 <% end -%>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery('#post-actions-<%=@post.id%>').hide();
 <% end %>

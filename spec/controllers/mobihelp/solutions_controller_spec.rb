@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Mobihelp::SolutionsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -12,19 +11,9 @@ describe Mobihelp::SolutionsController do
 
   before(:each) do
     @request.env['X-FD-Mobihelp-Auth'] = get_app_auth_key(@mobihelp_app)
+    @request.env["HTTP_ACCEPT"] = "application/json"
   end
 
-  it "should fetch empty solutions for no updates" do
-    update_since = (Time.now - 86400 ).utc.strftime('%FT%TZ') # no updates in 24 hours
-    get  :articles, {
-      :updated_since => update_since
-    }
-    result = JSON.parse(response.body)
-    result.should have(1).items
-    result["no_update"].should be_true
-  end
-
-  
   it "should fetch updated solution when updates present" do 
     update_since = Time.now.utc.strftime('%FT%TZ')
 
@@ -44,6 +33,16 @@ describe Mobihelp::SolutionsController do
     result = JSON.parse(response.body)
     result.should have(1).items
     result[0]["folder"].should_not be_nil
+  end
+
+  it "should fetch empty solutions for no updates" do
+    update_since = (Time.now + 86400 ).utc.strftime('%FT%TZ') # no updates in 24 hours
+    get  :articles, {
+      :updated_since => update_since
+    }
+    result = JSON.parse(response.body)
+    result.should have(1).items
+    result["no_update"].should be true
   end
 
   it "should fetch all the solutions when solution updated time is lesser than the mobihelp app updated time" do
@@ -83,7 +82,7 @@ describe Mobihelp::SolutionsController do
     }
     result = JSON.parse(response.body)
     result.should have(1).items
-    result["no_update"].should be_true
+    result["no_update"].should be_truthy
   end
 
   it "should fetch all solutions when last updated time is not sent" do
@@ -103,20 +102,80 @@ describe Mobihelp::SolutionsController do
     result[0]["folder"].should_not be_nil
   end
 
-  it "should fetch empty solutions when category id is invalid" do
-    update_since = (1.day.ago).utc.strftime('%FT%TZ') 
+  describe "It should update the updated_at column of mobihelp_app_solutions on solution CRED operations" do
+    before(:all) do
+      @mobihelp_category = create_category( {:name => "Mobihelp test new category #{Time.now} #{Faker::Name.name}", :description => "new category", :is_default => false} )
+      mobihelp_apps = ((0..2).map do |j|
+        mobihelp_app = create_mobihelp_app
+        create_mobihelp_app_solutions({:app_id => mobihelp_app.id, :category_id => @mobihelp_category.id, 
+                              :position => j+1, :account_id => mobihelp_app.account_id})
+        mobihelp_app
+      end)
+      @mobihelp_app1 = mobihelp_apps.first
+      @categories = ((0..2).map do |i|
+        category = create_category( {:name => "new category #{Time.now} #{i+1}", :description => "new category", :is_default => false} )
+        create_mobihelp_app_solutions({:app_id => @mobihelp_app1.id, :category_id => category.id, 
+                              :position => i+1, :account_id => @mobihelp_app1.account_id})
+        category
+      end)
+      @mobihelp_category.reload
+      @mobihelp_app1.reload
+      @mobihelp_folder = create_folder( {:name => "new folder", :description => "new folder", :visibility => 1,
+                                      :category_id => @mobihelp_category.id } )
+      @mobihelp_folder.reload
+      @mobihelp_article = create_article( {:title => "new article", :description => "new test article", 
+                          :folder_id => @mobihelp_folder.id, :user_id => @user.id, :status => "2", :art_type => "1" } )
+      @mobihelp_article.reload
+    end
 
-    dummy_mh_app = create_mobihelp_app
-    dummy_solution_category = create_mobihelp_app_solutions({:app_id => dummy_mh_app.id, :category_id => 0, :position => 1, :account_id => dummy_mh_app.account_id})
-    
-    @request.env['X-FD-Mobihelp-Auth'] = get_app_auth_key(dummy_mh_app)
-    
-    get  :articles, {
-      :updated_since => update_since
-    }
-    JSON.parse(response.body).should have(0).items
-    dummy_mh_app.delete
-    dummy_solution_category.delete
-  end
+    before(:each) do |example|
+      unless example.metadata[:skip_before]
+        @app_solutions_clone = @mobihelp_category.reload.mobihelp_app_solutions.clone 
+        sleep(1)
+      end
+    end
 
+    after(:each) do |example|
+      unless example.metadata[:skip_before]
+        compare_updated_at(@app_solutions_clone, @mobihelp_category.reload.mobihelp_app_solutions)
+      end
+    end
+
+    it "should change updated_at on article creation" do
+      test_new_article = create_article( {:title => "new article", :description => "new test article", 
+                          :folder_id => @mobihelp_folder.id, :user_id => @user.id, :status => "2", :art_type => "1" } )
+    end
+
+    it "should change updated_at on article updation" do
+      @mobihelp_article.update_attribute(:status, 1)
+    end
+
+    it "should change updated_at while destroying an article" do
+      @mobihelp_article.destroy
+    end
+      
+    it "should change updated_at on folder creation" do
+      test_new_folder = create_folder( {:name => "new folder #{Time.now}", :description => "new folder", :visibility => 1,
+                                      :category_id => @mobihelp_category.id } )
+    end
+
+    it "should change updated_at on folder updation" do
+      @mobihelp_folder.update_attribute(:visibility, 2)
+    end
+
+    it "should change updated_at while destroying a folder" do
+      @mobihelp_folder.destroy
+    end
+
+    it "should change updated_at on category updation" do
+      @mobihelp_category.update_attribute(:name, "Updating name")
+    end
+
+    it "should change app's app_solutions on category deletion", :skip_before do
+      app_solutions_clone = @mobihelp_app1.app_solutions.clone.reject {|x| x.category_id == @categories[1].id }
+      sleep(1)
+      @categories[1].destroy
+      compare_updated_at(app_solutions_clone, @mobihelp_app1.reload.app_solutions)
+    end
+  end 
 end

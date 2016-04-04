@@ -100,7 +100,8 @@
 
 			fieldContainer.empty()
 						.removeClass('field')
-						.addClass('custom-field');
+						.addClass('custom-field')
+						.removeAttr('style');
 
 			switch(dataItem.dom_type) {
 				case 'dropdown_blank':
@@ -274,6 +275,7 @@
 					$(sourcefield).remove();
 				}
 				this.hideDialog();
+				this.settings.currentField = null;
 			}
 		},
 
@@ -282,7 +284,7 @@
 			var fieldtype = this.settings.currentData['field_type'];//$H(listItem.data("raw")).get('field_type');
 
 			if ($.inArray(fieldtype, this.settings.nonEditableFields) == -1) {
-				$(this.settings.dialogContainer).html(JST['formfield_props'](this.settings.currentData));
+				$(this.settings.dialogContainer).html(JST['app/admin/'+this.settings.customFieldType+'_fields/formfield_props'](this.settings.currentData));
 				this.dialogOnLoad(element);
 				$(this.settings.customPropsModal).modal('show');
 			}
@@ -371,7 +373,7 @@
 		deletePostData: function(data) {
 			data.custom_field_choices_attributes = data.admin_choices;
 			delete data.admin_choices;
-			if(data.column_name == 'default') {
+			if(/^default/.test(data.field_type)) {
 				delete data.custom_field_choices_attributes;
 			}
 			delete data.dom_type;
@@ -427,7 +429,7 @@
 					var self = this;
 					$.each(this.settings.fieldMap, function(key, value) {
 						if(key == 'admin_choices') {
-							if(self.settings.currentData.get('column_name') != 'default') {
+							if (/^custom/.test(self.settings.currentData.get('field_type'))) {
 								self.settings.currentData.set(key, self.getAllChoices(self.dialogDOMMap[key]));
 							}
 						}

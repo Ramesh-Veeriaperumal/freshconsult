@@ -76,6 +76,7 @@ describe Community::Moderation::QueuedPost do
 	end
 
 	it "should create a published topic" do
+		@account.features.moderate_all_posts.destroy
 		sqs_params = sqs_topic_params
 
 		Community::Moderation::QueuedPost.new(sqs_params).analyze
@@ -133,6 +134,7 @@ describe Community::Moderation::QueuedPost do
 	end
 
 	it "should create a dynamo spam topic when body has email" do
+		@account.features.moderate_all_posts.destroy
 		@account.features.moderate_posts_with_links.create
 		sqs_params = sqs_topic_params.merge({
 										"body_html" => "<p>#{Faker::Lorem.paragraph}#{Faker::Internet.email}</p>"

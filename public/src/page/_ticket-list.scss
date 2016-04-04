@@ -1,10 +1,11 @@
-.view_filters{
+	.view_filters{
 	display:inline-block;
 	span.unsaved_star {
 		vertical-align: baseline;
 		font-size: 18px;
 		font-weight: bold;
 		line-height: 0;
+		color: #f81;
 	}
 	.link-item.active, a.link-item:hover{
 		margin:0px -5px;
@@ -14,7 +15,7 @@
 	.link-item.active{
 		color:#336699;
 		font-weight:bold;
-		@include single-box-shadow( rgba(0, 0, 0, 0.07), 0, 0, 2px, false, true);         
+		@include single-box-shadow( rgba(0, 0, 0, 0.07), 0, 0, 2px, false, true);
 	}
 	.link-item.active:after{
 	   content:"";
@@ -22,9 +23,9 @@
 	   @include right(9px);
 	   top:8px;
 	   width:11px;
-	   height:11px;	   
+	   height:11px;
 	}
-	.link-item{ 
+	.link-item{
 		font-size:13px;
 		display:inline-block;
 		color:#444444;
@@ -39,6 +40,7 @@
 			@include text-shadow(#ffffff, 2px, 2px, 2px);
 			&.unsaved {
 				font-style:italic;
+				color: #f81;
 			}
 
 		}
@@ -48,7 +50,7 @@
 			visibility: visible;
 			@include opacity(1);
 		}
-	}   
+	}
 }
 
 .ticket-view-delete,.ticket-view-cancel,.ticket-view-edit,.ticket-view-save,.ticket-view-saveas{
@@ -56,7 +58,42 @@
 	vertical-align: bottom;
 	width: 36px;
 	height: 16px;
-	opacity: 0.3;
+	opacity: 0.7;
+	font-size: 18px;
+	position: relative;
+}
+
+.ticket-view-delete:before,
+.ticket-view-cancel:before,
+.ticket-view-edit:before,
+.ticket-view-save:before,
+.ticket-view-saveas:before {
+	position: absolute;
+	position: absolute;
+	top: -2px;
+	color: #333;
+	padding-left: 11px;
+}
+
+.ticket-view-saveas {
+	&:after {
+		position: relative;
+		left: 21px;
+		top: 2px;
+		color: #333;
+	}
+}
+
+.ticket-view-cancel {
+	&:after {
+		content: "\00d7";
+		position: relative;
+		top: -3px;
+		left: 11px;
+		font-size: 22px;
+		font-weight: bold;
+		color: #333;
+	}
 }
 
 .leftFilter {
@@ -108,7 +145,7 @@
 	@include border-left(5px solid transparent);
 	@include border-right(5px solid transparent);
 	border-top: 5px solid #333;
-	margin: 4px 0 0; 
+	margin: 4px 0 0;
 	padding: 5px 0;
 	position: absolute;
  	@include right(36px);
@@ -166,7 +203,7 @@
 		}
 		tr, tr.active {
 			td.priority-border{
-				width:($TKT_LIST_VIEW_PRIORITY_BORDER_SIZE / 2);	
+				width:($TKT_LIST_VIEW_PRIORITY_BORDER_SIZE / 2);
 			}
 		}
 		h3 a {
@@ -175,7 +212,7 @@
 		td.check {
 			@include padding-left(5px);
 		}
-	}	
+	}
 	.quick-action .result {
 		position: static;
 		@include padding-right(0px);
@@ -213,16 +250,32 @@
 		border-color: #CCC;
 		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.2);
 	}
+	.btn_with_freshdialog{
+		color:#333;
+		display: block;
+		padding: 4px 10px;
+	}
 }
+
+.admin_select_all_notification{
+	line-height: 21px;
+	.admin_select_all_notification_list {
+		@include margin(0 0 8px 30px);
+		li {
+			line-height: 21px;
+		}
+	}
+}
+
 .ticket_overlay_content {
 	width:500px;
 	display:inline-block;
 	.preview_pic {
 		display:inline-block;
 		img{
-			width: 30px;
-			height:30px;	
-			border: 1px solid #9a9a9a;
+			height: 25px;
+			width: 25px;
+			border-radius: 10%;
 		}
 		@include margin-right(5px);
 	}
@@ -264,18 +317,27 @@
 	margin-top: 12px;
 }
 .tickets {
+	th.bulk_action_buttons{
+		vertical-align:middle;
+	}
+	th.toolbar_right, th.toolbar_right_spam_trash{
+		@include text-align(right);
+		vertical-align:middle;
+		a {
+			display:inline-block;
+		}
+	}
+	th.toolbar_right_spam_trash{
+		a {
+			font-weight:500;
+		}
+	}
 	th.toolbar_right{
-      @include text-align(right);
-      width: 130px;
-      vertical-align:middle;
-      padding:5px 0 0;
-      a {
-      	display:inline-block;
-      }
+      width: 130px; 
    }
 	.check{
 		width:25px;
-		@include padding(7px 16px 0 2px); 
+		@include padding(7px 16px 0 2px);
 	}
 
 	.headings td.check {
@@ -284,12 +346,12 @@
 	th.check{
 		@include padding(8px 18px 0 0);
 		@include text-align(right);
-		vertical-align: top;
+		@include micro-position(-3px);
 	}
 }
 
 #tickets-expanded {
-	width:100%;	
+	width:100%;
 	color:#5f5f5f;
 	overflow:hidden;
 	table{
@@ -303,7 +365,7 @@
 		background:none;
 		padding:0px 6px;
 		vertical-align:top;
-	}		 
+	}
 	td{
 		vertical-align:top;
 		padding: 6px 10px;
@@ -314,7 +376,7 @@
 		vertical-align: middle;
 		a{
 			text-decoration:none;
-			color:#5a8ec1; 
+			color:#5a8ec1;
 		}
 	}
 
@@ -327,22 +389,38 @@
 	}
 	.check{
 		width:25px;
-		@include padding(8px 16px 0 5px); 
+		@include padding(22px 5px);
 		@include text-align(right);
 		vertical-align: top;
 	}
-
+	.userpic{
+		width: 40px;
+		vertical-align: top;
+		padding-top: 10px;
+			img{
+			width: 40px;
+			height: 40px;
+			@include border-radius(50%);
+			}
+			.hideForList{
+				opacity: 0.8;
+			}
+	}
 	.td-ticket-status {
 		@include text-align(right);
 		@include padding-right(0);
 		width: 140px;
+
+		.subject_style {
+			cursor: default;
+		}
 	}
-	
+
 	.td-ticket-details{
 		width: 60%;
 		.information{
 			width: 100%;
-		}		
+		}
 	}
 	.company-name{
 		&:before{ content: "("; }
@@ -356,7 +434,7 @@
 		@include padding(5px 10px 0 5px);
 	}
 	// ------------------------------------------------------------------------------------------------------------
-	//													Priority Border 
+	//													Priority Border
 	// ------------------------------------------------------------------------------------------------------------
 
 	//$priority_gradient:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHElEQVQIW2NkgIL///8bM4LYYAYj41lGGAMkCADN/ws0WTnAvgAAAABJRU5ErkJggg==);
@@ -427,7 +505,7 @@
 			}
 		}
 	}
-	
+
 	.subject_style {
 		@include border-radius(16px);
 		font-size:9px;
@@ -438,7 +516,7 @@
 		display:inline-block;
 		white-space:nowrap;
 		@include box-shadow(1px 1px 0 white);
-   		
+
 		@include text-shadow(1px  1px 0 rgba(255,255,255,0.7));
 
 		&.customer_responded, &.overdue,&.customer_responded_overdue  {
@@ -485,10 +563,9 @@
 		}
 	}
 
-	
+
 	.name, .name-user{
       width:auto;
-      @include padding-left(58px);
       line-height:  16px;
       &.user-page {
       	@include padding-left(5px);
@@ -497,13 +574,13 @@
 			*position: static;
 			margin:0px;
 			margin-top:3px;
-			@include margin-left(-55px);         
-			@include border-radius(5px);
-			border:1px solid #CCC;
+			@include margin-left(-55px);
 			height:45px;
-			img{ 
+			img{
 				width:45px; height:45px;
-				@include border-radius(4px);
+				opacity: 0.8 !important;
+				box-shadow: 1px 1px 5px #ccc;
+				@include border-radius(50%);
 			}
 		}
 		.new_ticket {
@@ -601,7 +678,7 @@
 					text-overflow:ellipsis;
 					margin-bottom: 0;
 					color: #888;
-				}				
+				}
 			}
 		}
 	}
@@ -633,7 +710,7 @@
 		}
 	}
 
-}	  
+}
 .leftFilter .drop-right:after, .ssportal_filters .drop-right:after{
 	content:"";
 	width: 0;
@@ -642,13 +719,13 @@
 	@include border-right(6px solid transparent);
 	border-top: 6px solid #888;
 	position: absolute;
-	@include margin(6px 3px 0 8px); 
+	@include margin(6px 3px 0 8px);
 }
 
 .ticket-leftcol{
 	width:230px;
 	@include float(left);
-	@include min-height(477px);	
+	@include min-height(477px);
 	h3.title{
 	  color:$default_txt_color;
 	  font-size:16px;
@@ -662,7 +739,7 @@
 		font-weight:500;
 		color:$default_txt_color;
 	}
-   
+
    .leftFilter{
 		position:relative;
 	   	.checkboxSet{
@@ -683,10 +760,10 @@
 			padding-bottom:2px;
 			padding-top:2px;
 			font-size:12px;
-			color:#444444; 
+			color:#444444;
 			cursor: pointer;
 			input{@include margin(0 4px 3px 0); }
-	   	} 
+	   	}
 		.item:hover span{
 			color:#000000;
 
@@ -738,4 +815,26 @@
 	.level{
 		@include margin-left(11px);
 	}
+}
+// Archived Ticket List CSS
+#archived-ticket-list{
+	#ticket-toolbar{
+		padding: 2px 8px 6px 0;
+	}
+	
+	.userpic{
+		padding: 15px;
+		padding-left: 20px;
+	}
+}
+//new ticket sub info
+.ticket_sub_text{
+	padding-bottom: 10px;
+}
+
+.out-of-scope-flash{
+	margin-bottom: 8px;
+	padding:5px 8px;
+	border:1px solid #e1e1e1;
+	@include border-radius(5px);
 }

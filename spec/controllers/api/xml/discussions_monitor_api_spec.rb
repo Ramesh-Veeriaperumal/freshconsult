@@ -1,9 +1,8 @@
 require 'spec_helper'
 
-describe Support::DiscussionsController do
+RSpec.describe Support::DiscussionsController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   before(:all) do
     @category = create_test_category
@@ -21,7 +20,7 @@ describe Support::DiscussionsController do
   it "should be able to fetch user monitored topics.(xml)" do
     get :user_monitored, { :user_id => @user.id, :format => 'xml'}, :content_type => 'application/xml'
     result = parse_xml(response)
-    expected = (response.status === "200 OK") && (compare(result["topics"].first.keys, APIHelper::TOPIC_ATTRIBS-["account_id", "import_id"], {}).empty?)
+    expected = (response.status === 200) && (compare(result["topics"].first.keys, APIHelper::TOPIC_ATTRIBS-["account_id", "import_id"], {}).empty?)
     expected.should be(true)
   end
 
@@ -30,7 +29,7 @@ describe Support::DiscussionsController do
     get :user_monitored, { :user_id => @test_user.id, :format => 'xml'}, :content_type => 'application/xml'
     result = parse_xml(response)
     # result will be {"nil_classes"=>[]} 
-    expected = (response.status === "200 OK")
+    expected = (response.status === 200)
     expected.should be(true)
   end
 end

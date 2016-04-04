@@ -4,31 +4,31 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-
-<%= render :partial => "/shared/customer_fields_header", :locals => { :field_class => CompanyField} %>
-<br/>
-<%= include_cloudfront_js :company_fields %>
-<% form_for @fields_to_render, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
- 
-  <div class="custom_form_outer">
-    <input type="hidden" name="jsonData" id="field_values" value="" />
-    <div class="row-fluid">
-      <div class='span12'>
-        <ul id="custom-field-form" class="form-horizontal custom-field-form"></ul>
-        <ul id="cloned-custom-field-form" class="form-horizontal custom-field-form cloned-custom-fields"></ul>
+<div class="contact_fields">
+  <%= render :partial => "/shared/customer_fields_header", :locals => { :field_class => CompanyField} %>
+  <br/>
+  <%= javascript_include_tag :'cdn/company_fields' %>
+  <%= form_for @fields_to_render, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
+   
+    <div class="custom_form_outer">
+      <input type="hidden" name="jsonData" id="field_values" value="" />
+      <div class="row-fluid">
+        <div class='span12'>
+          <ul id="custom-field-form" class="form-horizontal custom-field-form"></ul>
+          <ul id="cloned-custom-field-form" class="form-horizontal custom-field-form cloned-custom-fields"></ul>
+        </div>
       </div>
     </div>
-  </div>
-<%end%>
+  <%end%>
 
 <% content_for :dialogs do %>
   <div id="CustomFieldsPropsDialog">
 
   </div>
 <% end %>
-
+</div>
 <% content_for :pagefixed do %>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     // Localizing ticket fields js elements
     customFields = <%= @fields_json.html_safe %>;
     tf_lang = {
@@ -40,7 +40,7 @@
       formTitle:     '<%= t("admin.company_fields.formfield_props.form_title") %>',
       deleteField:     '<%= t("admin.company_fields.formfield_props.delete_field") %>',
       regExp:     '<%= t("admin.company_fields.formfield_props.regexp") %>',
-      regExpExample:     '<%= t("admin.company_fields.formfield_props.regexp_example_html") %>',
+      regExpExample:     '<%= escape_javascript t("admin.company_fields.formfield_props.regexp_example_html", regex: "/^fresh\w/") %>',
       dropdownChoice:     '<%= t("admin.company_fields.formfield_props.dropdown_choices") %>',
       addNewChoice:     '<%= t("admin.company_fields.formfield_props.add_new_choice") %>',
       label:     '<%= t("admin.company_fields.formfield_props.label") %>',

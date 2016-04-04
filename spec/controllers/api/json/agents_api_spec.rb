@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe AgentsController do
-  integrate_views
+  # integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -27,7 +27,7 @@ describe AgentsController do
                                   :privileges => @agent_role.privileges })
     get :index, :format => 'json'
     result = parse_json(response)
-    expected = (response.status == "200 OK") && (compare(result.first["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
+    expected = (response.status == 200) && (compare(result.first["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
           (compare(result.first["agent"]["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
@@ -35,7 +35,7 @@ describe AgentsController do
   it "should show all the agent details on the show page" do
     get :show, :id => @agent.agent.id, :format => 'json'
     result = parse_json(response)
-    expected = (response.status == "200 OK") && (compare(result["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
+    expected = (response.status == 200) && (compare(result["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
                 (compare(result["agent"]["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
@@ -53,7 +53,7 @@ describe AgentsController do
     check_email  = user.email
     get :index, {:query=>"email is #{check_email}", :format => 'json'}
     result = parse_json(response)
-    expected = (response.status == "200 OK") && (compare(result.first["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
+    expected = (response.status == 200) && (compare(result.first["agent"].keys,APIHelper::AGENT_ATTRIBS,{}).empty?) && 
           (compare(result.first["agent"]["user"].keys,APIHelper::USER_ATTRIBS,{}).empty?)
     expected.should be(true)
     expected_email = result.first["agent"]["user"]["email"]
@@ -71,7 +71,7 @@ describe AgentsController do
                                  :privileges => @agent_role.privileges })
     @request.env['HTTPS'] = 'on'
     get :api_key, {:id => user.agent.id, :format => 'json'}
-    response.status.should eql("200 OK")
+    response.status.should eql(200)
   end
 
   it "should update an existing agent" do
@@ -85,7 +85,7 @@ describe AgentsController do
                                  :privileges => @agent_role.privileges })
     put :update, {:id => user.agent.id, :agent => {:ticket_permission => 1,
                                               :user => { :job_title => "Developer"}},:format => 'json'}                                                                                               
-    response.status.should eql("200 OK")
+    response.status.should eql(200)
   end
 
 end

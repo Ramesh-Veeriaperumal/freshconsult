@@ -1,5 +1,6 @@
 class SubscriptionAdmin::FreshfoneActionsController < ApplicationController
   include AdminControllerMethods
+  include Freshfone::AccountUtil
 
   around_filter :select_shard, :except => [:index]
   before_filter :validate_credits, :only => [:add_credits]
@@ -77,8 +78,7 @@ class SubscriptionAdmin::FreshfoneActionsController < ApplicationController
         number.delete
       end
       @account.freshfone_numbers.each do |number|
-        number.deleted = true
-        number.send(:update_without_callbacks)
+        number.class.where(:id => number.id, :account_id => number.account_id).update_all(:deleted => true)
       end
     end
 
@@ -96,6 +96,18 @@ class SubscriptionAdmin::FreshfoneActionsController < ApplicationController
        render :json => overall_country_list
      end
     end
+  end
+
+  def new_freshfone_account
+    result = []
+    freshfone_account = create_freshfone_account(@account)
+    if freshfone_account.present?
+      result = { 
+        :twilio_subaccount_id => freshfone_account.twilio_subaccount_id,
+        :friendly_name => freshfone_account.friendly_name
+      }
+    end
+     render :json => result
   end
 
   private

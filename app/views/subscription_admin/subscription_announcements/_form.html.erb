@@ -43,8 +43,8 @@
   	<%= form.datetime_select :ends_at %>
 	</div>
 </div>
-<%= include_cloudfront_js :subscription%>
-<% javascript_tag do %>
+<%= javascript_include_tag :'cdn/subscription' %>
+<%= javascript_tag do %>
     jQuery("#subscription_announcement_notification_type").on("change",function(){ 
 		if(this.value == 2){
 			jQuery(".notification-date").hide();

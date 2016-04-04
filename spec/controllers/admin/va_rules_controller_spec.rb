@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::VaRulesController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -15,12 +14,12 @@ describe Admin::VaRulesController do
 
   it "should go to the index page" do
     get 'index'
-    response.should render_template "admin/va_rules/index.html.erb"
+    response.should render_template "admin/va_rules/index"
   end
 
   it "should got to new dispatchr page" do
     get 'new'
-    response.should render_template "admin/va_rules/new.html.erb"
+    response.should render_template "admin/va_rules/new"
   end
 
   it "should create a new dispatchr rule" do
@@ -40,15 +39,15 @@ describe Admin::VaRulesController do
 
   it "should edit a dispatchr rule" do
     get :edit, :id =>@test_va_rule.id
-    response.should render_template "admin/va_rules/edit.html.erb"
+    response.should render_template "admin/va_rules/edit"
   end
 
   it "should clone a dispatchr rule" do
     get :clone_rule, :id => @test_va_rule.id
-    response.should render_template "admin/va_rules/clone_rule.html.erb"
-    (@test_va_rule.id == assigns(:va_rule).id).should be_true
-    (@test_va_rule.action_data == assigns(:va_rule).action_data).should be_true
-    (@test_va_rule.filter_data == assigns(:va_rule).filter_data).should be_true
+    response.should render_template "admin/va_rules/clone_rule"
+    (@test_va_rule.id == assigns(:va_rule).id).should be true
+    (@test_va_rule.action_data == assigns(:va_rule).action_data).should be true
+    (@test_va_rule.filter_data == assigns(:va_rule).filter_data).should be true
   end
 
 
@@ -78,7 +77,7 @@ describe Admin::VaRulesController do
     @account.features.send(:cascade_dispatchr).create
     post :toggle_cascade, {:cascade_dispatcher=>"0","_"=>""}
     @account.reload
-    @account.features?(:cascade_dispatchr).should be_false
+    @account.features?(:cascade_dispatchr).should be_falsey
   end
 
 end

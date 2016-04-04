@@ -13,7 +13,7 @@ freshChat.visitor_list_view = function(){
     },
     initialize : function(options) {
       this.type = options.type;
-      this.template = window.JST.visitor_list;
+      this.template = window.JST['freshchat/templates/visitor_list'];
       this.$el.attr({ id: 'visitor_results', class: 'visitor_results' });
       this.collection = options.collection;
       this.filteredCollection = options.filteredCollection;
@@ -237,7 +237,8 @@ freshChat.visitor_list_view = function(){
         id : clicked_row.attr("data-id"),
         widget_id : clicked_row.attr("data-widget-id"),
         visitor_info : this.filteredCollection.get(clicked_row.attr("data-id")).toJSON(),
-        fromlist : true
+        fromlist : true,
+        reopenChat: true
       };
       this.collection.acceptVisitor(visitor_data);
     }

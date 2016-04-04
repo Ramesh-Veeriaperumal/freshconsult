@@ -1,0 +1,110 @@
+<div class="fc-conversation">
+	<div class="row-fluid">
+		<div class="span12 report-breadcrum-wrapper pad-l">
+			<ul class="breadcrumb span8">
+			  <li>
+			  	<a id="archive-page-link" href="#"><%=CHAT_I18n.message_archives%></a> <span class="divider">/</span></li>
+			  <li><%=CHAT_I18n.conversation%></li>
+			</ul>
+		</div>
+	</div>
+	<% 
+		function formattedTimestamp(timeStamp, format){
+			timeStamp = moment(timeStamp).utc().add(parseInt(CURRENT_USER.time_zone_offset),'s');
+			return format ? timeStamp.format(format) : timeStamp;
+		}
+	%>
+	<div class="row-fluid">
+		<div class="span8 pad-l">
+			<h3 class="lead"><span class="ficon-comments fsize-22"></span>
+				<% chatTitle = chatData.title == chatData.participant_id ? "Visitor" : chatData.title %>
+				<% if (chatData.missed === true){ %>
+					 		<span class='label label-missed'><%= CHAT_I18n.missed_chat %></span> <%= chatTitle %> 
+				<%} else {%>
+							<span id='chat-title'> <%= chatTitle %> </span>
+							<%= CHAT_I18n.and %>
+							<%=  window.userCollection.getTitle(parseInt(chatData.agent_id)) %>
+							<%=(chatData.inConversation === true)? "- " + CHAT_I18n.in_conversation : ""	%>
+				<% }%>
+				<div class="lc-timestamp"> <%= formattedTimestamp(chatData.created_at, "D MMM YYYY, h:mm a") %> | <%=CHAT_I18n.reported %> <%= moment(chatData.created_at).fromNow() %> 
+				<% if (chatData.widget_id){%>
+							<%=CHAT_I18n.via_widget %> <%= window.liveChat.widgetList[chatData.widget_id] %> </div>
+				<% } %>
+				
+			</h3>
+		</div>
+		<div class="span4 options pad-r">
+		
+		<% if(chatData.type === "visitor") {  
+			if(chatData.spam === true) { %>
+				<a id="undo-spam" class="btn btn-default"><i class="ficon-warning"> </i> <%=CHAT_I18n.unmark_spam%></a>
+			<% }else{ %>
+				<a id="mark-spam" class="btn btn-default"><i class="ficon-warning"> </i> <%=CHAT_I18n.mark_spam%></a>
+				<% if (chatData.inConversation !== true && chatData.external_id == null) { %> 
+					<a id="convertTicket" class="btn btn-default"><i class="ficon-plus"></i> <%=CHAT_I18n.convert%></a>
+				<% }else if(chatData.external_id){ 
+					if(chatData.inConversation !== true && chatData.closed !== true ) { %>
+		  			<a  id="add-note" class="btn btn-default"><i class='ficon-file-edit'></i> <%=CHAT_I18n.add_note%></a>
+		  			<% } %>
+					<a target="_blank"  href="/helpdesk/tickets/<%=chatData.external_id%>" class="btn btn-default">#<%=chatData.external_id%></a>
+				<% } 
+			}
+		}%> 
+		</div>
+	</div>
+	<div class="row-fluid fc-container">
+		<div class="span8 conversation">
+			<div class="user-comment">
+				<div class="conversation_wrap">
+					<% for(var i = 0,length = messages.length;i<length;i++){ %>
+					<div class="rsltmsg chat_tkt_details clearfix <%=(messages[i].userId.match(/visitor/gi) === null)? "fc_self_expanded" : "fc_guest_expanded"%>">
+						<div class="rsltavatar "><img src="<%=(messages[i].photo == null)? "/images/fillers/profile_blank_thumb.gif" : messages[i].photo%>"></div>	
+						<div class="rsltmsg_wrap">
+							<div class="rsltuser"><%=messages[i].name%></div>
+							<div class="time">
+							<% 	var today = formattedTimestamp(new Date());
+									var messageCreatedAt = messages[i].createdAt;
+									var timeFormat = (today.diff(messageCreatedAt, 'days') === 0) ? "hh:mm A" : "MMM D";
+									var time = formattedTimestamp(messageCreatedAt, timeFormat);
+									print(time);
+							%>
+							</div>
+							<div class="tkt_rsltsum">
+							<%	var msg = messages[i].msg;
+								function linkifier(msg) {
+									var phoneRegExp  = new RegExp(/(\s|^)\b\d{9,12}(\s|$)/gi);
+									var mailRegExp  = new RegExp(/(^[-A-Z0-9.''_&%=~+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15}))/gi);
+									var webRegExp = new RegExp(/[-a-zA-Z0-9:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi);
+									var linkRegex = new RegExp(/(^[-A-Z0-9.''_&%=~+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15}))|(\s|^)\b\d{9,12}(\s|$)|([-a-zA-Z0-9:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?)/gi);
+									var link = "";
+									return msg.replace(linkRegex, function(token) {
+										if(mailRegExp.test(token)){
+											link = '<a href="mailto:'+token+'" class="mail_info_link" ><i class="ficon icon-mail"></i>'+token+'</a>';
+										}else if(phoneRegExp.test(token)){
+											link = '<a href="javascript:void(0);" class="phone_info_link"><i class="ficon icon-mobile"></i>'+token+'</a>';
+										}else {
+											if(token.match("http") || token.match("https")){
+												link = '<a href="'+ token +'" target="_blank">'+token+'</a>';
+											}else{
+												link = '<a href="https:'+ token +'" target="_blank">'+token+'</a>';
+											}
+										}
+										return link;
+									}) 
+								}
+								print(linkifier(msg));
+							%>
+							</div>
+						</div>
+					</div>
+					<% } %>
+				</div>
+			</div>
+		</div>
+		<% if(chatData.type === "visitor" ) { %>
+		<div class="span4 profile-options edit sloading " id="visitor_details">
+		
+		</div>
+		<% } %>
+	</div>
+</div>

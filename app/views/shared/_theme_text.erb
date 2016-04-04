@@ -1,4 +1,4 @@
-<% unless current_portal.preferences.nil? %>
+<% if current_portal.preferences.present? %>
 	$background: 	<%= current_portal.preferences[:bg_color] %>;
 	$header_color: 	<%= current_portal.preferences[:header_color] %>;
 	$tab_color:		<%= current_portal.preferences[:tab_color] %>;

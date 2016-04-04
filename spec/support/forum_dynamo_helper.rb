@@ -53,10 +53,18 @@ module ForumDynamoHelper
 		}
 	end
 
+	def forum_attachment
+		file = Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')
+		class << file
+			attr_reader :tempfile
+		end
+		file
+	end
+
 	def uploaded_attachments
-		[{:resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')}].each_with_index.map do |att, i|
+		[{:resource => forum_attachment }].each_with_index.map do |att, i|
 			filename = "#{i}_#{att[:resource].original_filename}"
-			AwsWrapper::S3Object.store("#{attachment_folder_name}/#{filename}", att[:resource], S3_CONFIG[:bucket])
+			AwsWrapper::S3Object.store("#{attachment_folder_name}/#{filename}", att[:resource].tempfile, S3_CONFIG[:bucket])
 			filename
 		end
 	end
@@ -144,8 +152,8 @@ module ForumDynamoHelper
 	end
 
 	def dynamo_table_name(klass, args)
-		prefix = klass.table_name.split(RAILS_ENV[0..3]).first
-  	%{#{prefix}#{RAILS_ENV[0..3]}_#{(Time.new(args[:year], args[:month])).strftime('%Y_%m')}}
+		prefix = klass.table_name.split(Rails.env[0..3]).first
+  	%{#{prefix}#{Rails.env[0..3]}_#{(Time.new(args[:year], args[:month])).strftime('%Y_%m')}}
   end
 
   def dynamo_table_exists?(name)
@@ -157,10 +165,17 @@ module ForumDynamoHelper
     end
   end
 
+  def provisioned_throughput(name)
+    begin
+      table_data = $dynamo.describe_table(:table_name => name)
+      return table_data[:table][:provisioned_throughput]
+    end
+  end
+
   def store_attachments(folder_name)
   	@attachment_arr.each do |att|
 			filename = att[:resource].original_filename
-			AwsWrapper::S3Object.store("#{folder_name}/#{filename}", att[:resource], S3_CONFIG[:bucket])
+			AwsWrapper::S3Object.store("#{folder_name}/#{filename}", att[:resource].tempfile, S3_CONFIG[:bucket])
 			filename
 		end
   end

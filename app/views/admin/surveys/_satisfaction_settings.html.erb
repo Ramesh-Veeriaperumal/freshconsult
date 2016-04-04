@@ -12,7 +12,7 @@
 	</li>
 	<li style="border-top:1px solid #ccc;" id="survey_elements" <%unless @account.features?(:survey_links)%>style="display:none"<%end%>>	
 	
-<% remote_form_for :survey, @survey, :url => { :action => "update" },  :html => { :id => "survey_form", :method => :put } do |f| %>
+<%= form_for @survey, :remote => true, :url => { :action => "update" },  :html => { :id => "survey_form", :method => :put } do |f| %>
 <ul>
 	<li><strong><%=t('.link_text_label')%></strong><br/> <span class="link_text_info"><%=t('.link_text_info')%></span></li>
 	<li>
@@ -56,7 +56,7 @@
 </li>
 </ul>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
     function update_status(status_url){
     	jQuery.ajax({
     		url: status_url,

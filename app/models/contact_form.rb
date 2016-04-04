@@ -1,5 +1,7 @@
 class ContactForm < ActiveRecord::Base
 
+  self.primary_key = :id
+  
   include Cache::Memcache::ContactField
   
   serialize :form_options
@@ -45,6 +47,22 @@ class ContactForm < ActiveRecord::Base
     contact_fields.select{ |cf| cf.required_for_agent }
   end
 
+  def custom_non_dropdown_fields
+    custom_contact_fields.select { |c| c.field_type != :custom_dropdown }
+  end
+
+  def custom_drop_down_fields
+    custom_fields.select { |c| c.field_type == :custom_dropdown }
+  end
+
+  def custom_dropdown_field_choices
+    custom_drop_down_fields.map { |x| [x.name, x.choices.map { |t| t[:value] }] }.to_h
+  end
+
+  def custom_checkbox_fields
+    custom_fields.select { |c| c.field_type == :custom_checkbox }
+  end
+
   private
 
     def fetch_contact_fields
@@ -57,8 +75,8 @@ class ContactForm < ActiveRecord::Base
     end
 
     def contact_field_conditions
-      { 'time_zone' => account.features?(:multi_timezone), 
-        'language' => account.features?(:multi_language) }
+      { 'time_zone' => Account.current.features?(:multi_timezone), 
+        'language' => Account.current.features?(:multi_language) }
     end
     
 end

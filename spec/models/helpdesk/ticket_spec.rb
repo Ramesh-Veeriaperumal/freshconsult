@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Helpdesk::Ticket do
+RSpec.describe Helpdesk::Ticket do
 
   before(:all) do
     setup_data
@@ -15,9 +15,9 @@ describe Helpdesk::Ticket do
 
   before(:each) do
     @ticket.responder_id = nil
-    @ticket.save(false)
+    @ticket.save(:validate => false)
     @new_ticket.responder_id = nil
-    @new_ticket.save(false)
+    @new_ticket.save(:validate => false)
   end
 
 
@@ -37,18 +37,23 @@ describe Helpdesk::Ticket do
 
     @ticket = create_ticket({:status => 2}, @group)
     @ticket.group_id = @group.id
-    @ticket.save(false)
+    @ticket.save_ticket
   end
 
   it "should be assigning tickets to agents in round robin" do
+    
+    Resque.inline = true
     @agent2 = add_agent_to_account(@account, {:name => "testing", :email => Faker::Internet.email,
                                               :active => 1, :role => 4,
                                               :group_id => @group.id})
 
-    @agent3 = add_agent_to_account(@account, {:name => "testing", :email => Faker::Internet.email,
+    @agent3 = add_agent_to_account(@account, {:name => "testing1", :email => Faker::Internet.email,
                                               :active => 1, :role => 4,
                                               :group_id => @group.id})
 
+    @agent4 = add_agent_to_account(@account, {:name => "testing2", :email => Faker::Internet.email,
+                                              :active => 1, :role => 4,
+                                              :group_id => @group.id})
     @group.ticket_assign_type.should == Group::TICKET_ASSIGN_TYPE[:round_robin]
     #created 2 more agents. so totally 3 agents and 3 tickets.
     @ticket.assign_tickets_to_agents
@@ -57,19 +62,27 @@ describe Helpdesk::Ticket do
     #the assigned agents id should be different
     @ticket.responder_id.should_not == @new_ticket.responder_id
     @ticket.responder_id.should_not == @another_ticket.responder_id
+    Resque.inline = false
   end
 
 
   it "should not be assigned to agent if no agents are available" do
-    Agent.any_instance.stubs(:available?).returns(false)
-    @agent.available?.should be_false
+    Resque.inline = true
+    @group.agents.each do |u|
+      ag=u.agent
+      ag.available = false
+      ag.save
+    end
+    @agent.reload
+    @agent.available?.should be false
     @ticket.assign_tickets_to_agents
     @ticket.responder_id.should be_nil
+    Resque.inline = false
   end
 
   it "should not be assigned to agents if there is no group " do
     @ticket.group = nil
-    @ticket.save!
+    @ticket.save_ticket!
     @ticket.assign_tickets_to_agents.should be_nil
   end
 

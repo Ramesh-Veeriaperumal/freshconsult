@@ -2,7 +2,7 @@
   Request Support
 <% end %>
 
-<% form_for @ticket, :url => anonymous_requests_path do |f| %>
+<%= form_for @ticket, :url => anonymous_requests_path do |f| %>
   <%= f.error_messages %>
   <%= f.label :email, "Your email" %>
   <%= f.text_field :email %>

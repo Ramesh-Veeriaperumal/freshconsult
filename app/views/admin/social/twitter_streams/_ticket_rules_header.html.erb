@@ -1,6 +1,6 @@
 <div class="head">
   <label class="label-bold"><%= t('admin.social.ticket_rules.header') %></label>
-  <% if twitter_stream.custom_stream? %>
+  <% if twitter_stream.custom_stream? and current_account.products.any? %>
   <label class="label-bold">&nbsp;<%= t('admin.social.ticket_rules.header_ext') %></label>
     <%= collection_select(:social_twitter_stream, :product_id, current_account.products, :id, :name, { :include_blank => 'Default Product', :selected => @twitter_stream.product_id}, :class => 'select2-container select2 span2 twt-stream-change')%>
   <% end %>

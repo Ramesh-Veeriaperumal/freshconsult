@@ -1,12 +1,11 @@
 require 'spec_helper'
 describe Integrations::PivotalTrackerController do
-  integrate_views
 	setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
-    new_application = Factory.build(:application, :name => "pivotal_tracker",
+    new_application = FactoryGirl.build(:application, :name => "pivotal_tracker",
                                     :display_name => "pivotal_tracker",
                                     :listing_order => 23,
                                     :options => {
@@ -15,14 +14,14 @@ describe Integrations::PivotalTrackerController do
 																        :pivotal_update => { :type => :checkbox, :label => "integrations.pivotal_tracker.pivotal_updates"}
 																    },
                                     :application_type => "pivotal_tracker")
-    new_application.save(false)
+    new_application.save(:validate => false)
 
-    new_installed_application = Factory.build(:installed_application, :application_id => new_application.id,
+    new_installed_application = FactoryGirl.build(:installed_application, :application_id => new_application.id,
                                               :account_id => @account.id,
                                               :configs => { :inputs => { 'api_key' => "c599b57edad0cb430d6fbf2543450c6c", "pivotal_update" => "1"} }
                                               )
-    @new_installed = new_installed_application.save(false)
-    integrated_res = Factory.build(:integrated_resource, :installed_application_id => new_installed_application.id,
+    @new_installed = new_installed_application.save(:validate => false)
+    integrated_res = FactoryGirl.build(:integrated_resource, :installed_application_id => new_installed_application.id,
                     :remote_integratable_id => "1106038/stories/73687832", :local_integratable_id => @test_ticket.display_id,
                     :local_integratable_type => "issue-tracking", :account_id => @account.id)
     resp = integrated_res.save!

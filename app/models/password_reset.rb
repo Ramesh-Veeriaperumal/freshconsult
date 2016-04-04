@@ -1,4 +1,5 @@
 class PasswordReset < ActiveRecord::Base
+  self.primary_key = :id
   include TokenGenerator
   
   belongs_to :user
@@ -8,6 +9,6 @@ class PasswordReset < ActiveRecord::Base
   protected
   
     def send_email
-      SubscriptionNotifier.deliver_password_reset(self)
+      SubscriptionNotifier.password_reset(self)
     end
 end

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::TagsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -22,14 +21,14 @@ describe Helpdesk::TagsController do
 
   it "should go to index page" do
     get 'index'
-    response.should render_template "helpdesk/tags/index.html.erb"
+    response.should render_template "helpdesk/tags/index"
     response.body.should =~ /Manage Tags/
   end
 
 
   it "should show sorted tags" do
     get 'index' ,:sort=>"name_asc"
-    response.should render_template "helpdesk/tags/_sort_results.rjs"
+    response.should render_template "helpdesk/tags/_sort_results"
   end
 
   it "should rename the tag" do
@@ -49,9 +48,9 @@ describe Helpdesk::TagsController do
   end
 
   it "should complete tags search automatically" do
-    t=@account.tags.find(:all,:conditions => ["name like ?","tag%"])
+    t=@account.tags.where("name like ?","tag%")
     r={:results=>t.map{|i| {:id=> i.to_param,:value => i.send("name")}}}.to_json
-    get 'autocomplete',:v=>"tag"
+    get 'autocomplete', :v=>"tag", :format => :json
     response.body.should =~/r/
   end
 

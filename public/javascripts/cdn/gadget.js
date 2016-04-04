@@ -1,0 +1,10 @@
+//= require frameworks/jquery.js
+//= require frameworks/plugins/layzr.js
+//= require frameworks/plugins/jquery.livequery.js
+//= require integrations/gadget_layzr_livequery.js
+//= require redactor/redactor.js
+//= require redactor/freshdesk_redactor.js
+//= require prototype-1.6.js
+//= require lib/nestedtree.js
+//= require frameworks/plugins/jquery.nested_select_tag.js
+//= require utils.js

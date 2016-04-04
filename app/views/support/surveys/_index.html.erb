@@ -2,17 +2,17 @@
 <html>
 <head>
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-	<%= include_cloudfront_rtl_css :rating %>
-	<%= include_cloudfront_js :survey  %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/old_rating' %>
+	<%= javascript_include_tag :'cdn/survey'  %>
 </head>
 <body>	
 	<div class="top-strip">
 		<div class="wrapper">
 		<div class="wrapper-shadow">
-			<div class="brand">
-		    	<% link_to (portal_pref(@survey_handle.portal, :logo_link).empty?) ? 
+			<div class="fd-branding brand">
+		    	<%= link_to (portal_pref(@survey_handle.portal, :logo_link).empty?) ? 
 			    	"/home" : portal_pref(@survey_handle.portal, :logo_link), :class => "logo" do %>
-		        <%= image_tag (@survey_handle.portal.logo.nil? ? "/images/logo.png?722013" : @survey_handle.portal.logo.content.url(:logo)) %>
+		        <%= image_tag (@survey_handle.portal.logo.nil? ? "/assets/misc/logo.png?721013" : @survey_handle.portal.logo.content.url(:logo)) %>
 
 		        <% end %>
 		        <%= link_to(h(@survey_handle.portal.name), "/home", :class => "logo_text") %>
@@ -31,14 +31,14 @@
 				</div>
 				<div>
 				<%if @rating==Survey::HAPPY.to_s%>	
-					<h3><%= t('.thanks') %></h3>
-					<h4><%= t('.happy_info') %></h4>
+					<h3><%= t('support.surveys.new.thanks') %></h3>
+					<h4><%= t('support.surveys.new.happy_info') %></h4>
 				<%elsif @rating==Survey::UNHAPPY.to_s%>
-					<h3><%= t('.thanks') %> <%= t('.sorry') %></h3>
-					<h4><%= t('.unhappy_info') %></h4>					
+					<h3><%= t('support.surveys.new.thanks') %> <%= t('.sorry') %></h3>
+					<h4><%= t('support.surveys.new.unhappy_info') %></h4>					
 				<%else%>
-					<h3><%= t('.thanks') %></h3>
-					<h4><%= t('.neutral_information') %></h4>	
+					<h3><%= t('support.surveys.new.thanks') %></h3>
+					<h4><%= t('support.surveys.new.neutral_information') %></h4>	
 				<%end%>
 				</div>
 			</div>

@@ -1,7 +1,10 @@
 class Helpdesk::BulkReplyTickets
   
-  include Conversations::Twitter
   include CloudFilesHelper
+  include Conversations::Twitter
+  include Facebook::Constants
+  include Facebook::TicketActions::Util
+  include Social::Util
   attr_accessor :params, :tickets, :attachments
 
   def initialize(args)
@@ -71,14 +74,24 @@ class Helpdesk::BulkReplyTickets
     end
 
     def set_current_user
-      user = User.find_by_account_id_and_id(params[:account_id],params[:current_user_id])
-      user.make_current
+      if params[:account_id] and params[:current_user_id]
+        user = User.find_by_account_id_and_id(params[:account_id],params[:current_user_id])
+        user.make_current
+       end
     end
 
     def add_reply ticket
       note = ticket.notes.build note_params(ticket)
+      note.from_email = get_from_email if params[:email_config] and params[:email_config]["reply_email"]
+      # Injecting '@skip_resource_rate_limit' instance variable to skip spam watcher
+      note.instance_variable_set(:@skip_resource_rate_limit, true)
       build_attachments note
       send("#{note.source_name}_reply", ticket, note) if note.save_note
+    end
+
+    def get_from_email
+      email_config = Account.current.email_configs.find_by_reply_email(params[:email_config]["reply_email"])
+      params[:email_config]["reply_email"] if email_config
     end
 
     def note_params ticket
@@ -128,17 +141,26 @@ class Helpdesk::BulkReplyTickets
     def facebook_reply ticket, note
       fb_page = ticket.fb_post.facebook_page
       if fb_page
-        if ticket.is_fb_message?
-          Facebook::Core::Message.new(fb_page).send_reply(ticket, note)
-        else
-          Facebook::Core::Comment.new(fb_page, nil).send_reply(ticket, note)
-        end
+        message_type = ticket.is_fb_message? ? POST_TYPE[:message] : POST_TYPE[:post]
+        send_reply(fb_page, ticket, note, message_type)
       end
     end
     
     def twitter_reply ticket, note
       twt_type = ticket.tweet.tweet_type || :mention.to_s
-      send("send_tweet_as_#{twt_type}", ticket, note, note.body.strip)
+      error_message, tweet_body = get_tweet_text(twt_type, ticket, note.body.strip)
+      send("send_tweet_as_#{twt_type}", ticket, note, tweet_body) unless error_message
+    end
+
+    def mobihelp_reply ticket, note
+      #Do nothing
+    end
+    
+    def ecommerce_reply ticket,note
+      ebay_question = ticket.ebay_question
+      if ebay_question
+        Ecommerce::Ebay::Api.new({:ebay_account_id => ticket.ebay_question.ebay_account_id}).make_ebay_api_call(:reply_to_buyer, :ticket => ticket, :note => note)
+      end
     end
 
 end

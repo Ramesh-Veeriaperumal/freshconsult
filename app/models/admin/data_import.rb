@@ -1,10 +1,11 @@
 class Admin::DataImport < ActiveRecord::Base
+  self.primary_key = :id
 
 	include Import::Zen::Redis
 
 	after_destroy :clear_key, :if => :zendesk_import?
   
-  set_table_name "admin_data_imports"    
+  self.table_name =  "admin_data_imports"    
   
   belongs_to :account
   
@@ -13,7 +14,7 @@ class Admin::DataImport < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
     
-  IMPORT_TYPE = {:zendesk => 1 , :contact => 2}
+  IMPORT_TYPE = {:zendesk => 1, :contact => 2, :company => 3}
   ZEN_IMPORT_STATUS = { :started => 1 , :completed => 2 }
 
   private

@@ -253,7 +253,7 @@ Ext.define('plugin.ux.ListPaging2', {
     /**
      * @private
      */
-    onStoreLoad: function(store) {
+    onStoreLoad: function(store) {        
         var loadCmp  = this.addLoadMoreCmp(),
             template = this.getLoadTpl(),
             message  = this.storeFullyLoaded() ? this.getNoMoreRecordsText() : this.getLoadMoreText(),
@@ -315,7 +315,13 @@ Ext.define('plugin.ux.ListPaging2', {
     storeFullyLoaded: function() {
         var store = this.getList().getStore(),
             total = store.getTotalCount();
-
+        if(store && store["data"] && store["data"]["all"]){
+            if(store["data"]["all"].length < (store.currentPage * store.getPageSize())){
+                return true
+            }else{
+                return false
+            }
+        }
         return total !== null ? store.getTotalCount() <= (store.currentPage * store.getPageSize()) : false;
     },
 

@@ -1,23 +1,25 @@
 class Product < ActiveRecord::Base
   
+  self.primary_key = :id
   include Cache::Memcache::Product
 
   before_destroy :remove_primary_email_config_role
   validates_uniqueness_of :name , :case_sensitive => false, :scope => :account_id
-  xss_sanitize :only => [:name, :description], :plain_sanitizer => [:name, :description]
+  xss_sanitize :only => [:name, :description], :plain_sanitizer => [:name], :html_sanitize => [:description]
 
   after_create :create_chat_widget
 
   after_commit :clear_cache
   after_update :widget_update
 
-  belongs_to :account
+  belongs_to_account
   has_one    :portal               , :dependent => :destroy
   has_one    :chat_widget          , :dependent => :destroy
   has_many   :email_configs        , :dependent => :nullify, :order => "primary_role desc"
   has_one    :primary_email_config , :class_name => 'EmailConfig', :conditions => { :primary_role => true }
   has_many   :twitter_handles      , :class_name => 'Social::TwitterHandle', :dependent => :nullify
   has_many   :facebook_pages       , :class_name => 'Social::FacebookPage' , :dependent => :nullify
+  has_many   :ecommerce_accounts   , :class_name => 'Ecommerce::Account', :dependent => :nullify
 
   attr_protected :account_id
   
@@ -33,11 +35,11 @@ class Product < ActiveRecord::Base
   end
   
   def enable_portal
-    @enable_portal ||= (portal && !portal.new_record?)? '1' : '0'
+    @enable_portal = true
   end
   
   def portal_enabled?
-    enable_portal.eql? '1'
+    @enable_portal || !(portal.blank? || portal.new_record?)
   end
   
   def portal_attributes=(pt_attr) # Possible dead code

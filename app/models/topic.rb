@@ -1,8 +1,15 @@
 class Topic < ActiveRecord::Base
-  include Juixe::Acts::Voteable
+  self.primary_key = :id
   include Search::ElasticSearchIndex
-  include ActionController::UrlWriter
   include Mobile::Actions::Topic
+  
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+  
+  HITS_CACHE_THRESHOLD = 100
+
+  include Community::HitMethods
+  
   acts_as_voteable
   validates_presence_of :forum, :user, :title
   validate :check_stamp_type
@@ -16,70 +23,83 @@ class Topic < ActiveRecord::Base
 
   before_create :set_locked
   before_save :set_sticky
-  before_validation_on_create :set_unanswered_stamp, :if => :questions?
-  before_validation_on_create :set_unsolved_stamp, :if => :problems?
+  before_validation :set_unanswered_stamp, :if => :questions?, :on => :create
+  before_validation :set_unsolved_stamp, :if => :problems?, :on => :create
+  before_validation :assign_default_stamps, :mark_post_as_unanswered, :if => :forum_id_changed?, :on => :update
 
   has_many :merged_topics, :class_name => "Topic", :foreign_key => 'merged_topic_id', :dependent => :nullify
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
 
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
-  has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
+  has_many :merged_monitorships,
+           :as => :monitorable,
+           :class_name => "Monitorship", 
+           :through => :merged_topics,
+           :source => :monitorships
+  has_many :monitors, :through => :monitorships, :source => :user, 
+                      :conditions => ["#{Monitorship.table_name}.active = ?", true],
+                      :order => "#{Monitorship.table_name}.id DESC"
 
   has_many :posts, :order => "#{Post.table_name}.created_at", :dependent => :delete_all
   # previously posts had :dependant => :destroy
   # to delete all dependant post hile deleting a topic, destroy has been changed to delete all
   # as a result no callbacks will be triggered and so User.posts_count will not be updated
   has_one  :recent_post, :conditions => {:published => true}, :order => "#{Post.table_name}.id DESC", :class_name => 'Post'
-  has_one  :first_post, :conditions => {:published => true}, :order => "#{Post.table_name}.id ASC", :class_name => 'Post'
+  has_one  :first_post, :order => "#{Post.table_name}.id ASC", :class_name => 'Post', :autosave => true
 
   has_one :ticket_topic, :dependent => :destroy
-  has_one :ticket,:through => :ticket_topic
-
   has_many :voices, :through => :posts, :source => :user, :uniq => true, :order => "#{Post.table_name}.id DESC"
 
-  has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'
 
-  delegate :problems?, :questions?, :to => :forum
-  delegate :type_name, :to => :forum
+  delegate :problems?, :questions?, :to => :forum, :allow_nil => true # delegation precedes validations, if allow_nil is removed and forum is nil this line throws error
+  delegate :type_name, :to => :forum, :allow_nil => true # delegation precedes validations, if allow_nil is removed and forum is nil this line throws error
 
-  named_scope :newest, :order => 'replied_at DESC'
+  scope :newest, :order => 'replied_at DESC'
 
-  named_scope :visible, lambda {|user| visiblity_options(user) }
+  scope :visible, lambda {|user| visiblity_options(user) }
 
-  named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
+  scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
-  named_scope :published, :conditions => { :published => true }
+  scope :published, :conditions => { :published => true }
 
-  named_scope :as_list_view,
+  scope :as_list_view,
       :conditions => { :published => true },
       :include => {:last_post => [:user], :forum => [], :user => []}
 
-  named_scope :as_activities,
+  scope :as_activities,
       :conditions => { :published => true },
       :include => {:last_post => [:user], :forum => []},
       :order => "#{Topic.table_name}.replied_at DESC"
 
-  named_scope :find_by_forum_category_id, lambda { |forum_category_id|
+  scope :scope_by_forum_category_id, lambda { |forum_category_id|
     { :joins => %(INNER JOIN forums ON forums.id = topics.forum_id AND
         forums.account_id = topics.account_id),
       :conditions => ["forums.forum_category_id = ?", forum_category_id],
     }
   }
 
-  named_scope :following, lambda { |ids|
+  scope :followed_by, lambda { |user_id|
+    { :joins => %(INNER JOIN monitorships on topics.id = monitorships.monitorable_id 
+                  and monitorships.monitorable_type = 'Topic' 
+                  and topics.account_id = monitorships.account_id),
+      :conditions => ["monitorships.active=? and monitorships.user_id = ?",true, user_id],
+    }
+  } # Used by monitorship APIs
+
+  scope :following, lambda { |ids|
     {
       :conditions => following_conditions(ids),
       :order => "#{Topic.table_name}.replied_at DESC"
     }
   }
 
-  named_scope :published_and_unmerged, :conditions => { :published => true, :merged_topic_id => nil }
+  scope :published_and_unmerged, :conditions => { :published => true, :merged_topic_id => nil }
 
-  named_scope :topics_for_portal, lambda { |portal|
+  scope :topics_for_portal, lambda { |portal|
     {
       :joins => %( INNER JOIN forums AS f ON f.id = topics.forum_id ),
       :conditions => [' f.forum_category_id IN (?)',
@@ -88,7 +108,7 @@ class Topic < ActiveRecord::Base
   }
 
   # The below namescope might be used later. DO NOT DELETE. @Thanashyam
-  # named_scope :followed_by, lambda { |user_id|
+  # scope :followed_by, lambda { |user_id|
   #   {
   #     :joins => %(  LEFT JOIN `forums` ON `forums`.`id` = `topics`.`forum_id`
   #                   INNER JOIN `monitorships` ON 
@@ -112,22 +132,22 @@ class Topic < ActiveRecord::Base
   # !FORUM ENHANCE Removing hits from orderby of popular as it will return all time
   # It would be better if it can be tracked month wise
   # Generally with days before DateTime.now - 30.days
-  named_scope :popular, lambda { |days_before|
+  scope :popular, lambda { |days_before|
     { :conditions => ["replied_at >= ?", days_before],
-      :order => 'hits DESC, user_votes DESC, replied_at DESC',
+      :order => "hits DESC, #{Topic.table_name}.user_votes DESC, replied_at DESC",
       :include => :last_post }
   }
 
-  named_scope :sort_by_popular,
-      :order => 'user_votes DESC, hits DESC, replied_at DESC'
+  scope :sort_by_popular,
+      :order => "#{Topic.table_name}.user_votes DESC, hits DESC, replied_at DESC"
 
 
   # The below named scopes are used in fetching topics with a specific stamp used for portal topic list
-  named_scope :by_stamp, lambda { |stamp_type|
+  scope :by_stamp, lambda { |stamp_type|
     { :conditions => ["stamp_type = ?", stamp_type] }
   }
 
-  named_scope :unmerged, :conditions => { :merged_topic_id => nil }
+  scope :unmerged, :conditions => { :merged_topic_id => nil }
 
   attr_accessor :trash
 
@@ -157,12 +177,12 @@ class Topic < ActiveRecord::Base
     [sql.join(" OR ")] | ([ids[:topic], ids[:forum]] - [[]])
   end
 
-  named_scope :for_forum, lambda { |forum|
+  scope :for_forum, lambda { |forum|
     { :conditions => ["forum_id = ? ", forum]
     }
   }
-  named_scope :limit, lambda { |num| { :limit => num } }
-  named_scope :freshest, lambda { |account|
+  # scope :limit, lambda { |num| { :limit => num } }
+  scope :freshest, lambda { |account|
     { :conditions => ["account_id = ? ", account],
       :order => "topics.replied_at DESC"
     }
@@ -170,7 +190,7 @@ class Topic < ActiveRecord::Base
 
   attr_protected :forum_id , :account_id, :published
   # to help with the create form
-  attr_accessor :body_html, :highlight_title
+  attr_accessor :body_html, :highlight_title, :sort_by
 
   IDEAS_STAMPS = [
     [ :planned,      I18n.t("topic.ideas_stamps.planned"),       1 ],
@@ -238,15 +258,17 @@ class Topic < ActiveRecord::Base
     
   FORUM_TO_STAMP_TYPE = {
     Forum::TYPE_KEYS_BY_TOKEN[:announce] => [nil],
-    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY.keys + [nil],
+    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY.keys + [nil], # nil should always be last, if not, revisit check_stamp_type
     Forum::TYPE_KEYS_BY_TOKEN[:problem] => PROBLEMS_STAMPS_BY_KEY.keys,
     Forum::TYPE_KEYS_BY_TOKEN[:howto] => QUESTIONS_STAMPS_BY_KEY.keys
   }
 
   def check_stamp_type
-    is_valid = FORUM_TO_STAMP_TYPE[forum.forum_type].include?(stamp_type)
-    is_valid &&= check_answers if questions?
-    errors.add(:stamp_type, "is not valid") unless is_valid
+    if forum
+      is_valid = FORUM_TO_STAMP_TYPE[forum.forum_type].include?(stamp_type)
+      is_valid &&= check_answers if questions?
+      errors.add(:stamp_type, "is not valid") unless is_valid
+    end
   end
 
   def check_answers
@@ -273,10 +295,6 @@ class Topic < ActiveRecord::Base
     IDEAS_STAMPS_TOKEN_BY_KEY[stamp_type].to_s
   end
 
-	def hit!
-    self.class.increment_counter :hits, id
-  end
-
   def stamp?
     stamp_type? && Topic::ALL_TOKENS_FOR_FILTER[forum.forum_type].present? && ALL_TOKENS_FOR_FILTER[forum.forum_type].keys.include?(stamp_type)
   end
@@ -299,18 +317,20 @@ class Topic < ActiveRecord::Base
 
   def set_locked
     self.locked = false if self.locked.nil?
+    true
   end
 
   def set_sticky
     self.sticky = 0 if self.sticky.nil?
+    true
   end
 
   def set_unanswered_stamp
-    self.stamp_type = Topic::QUESTIONS_STAMPS_BY_TOKEN[:unanswered]
+    self.stamp_type ||= Topic::QUESTIONS_STAMPS_BY_TOKEN[:unanswered]
   end
 
   def set_unsolved_stamp
-    self.stamp_type = Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
+    self.stamp_type ||= Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
   end
 
   def last_page
@@ -345,30 +365,21 @@ class Topic < ActiveRecord::Base
                     Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved] : Topic::PROBLEMS_STAMPS_BY_TOKEN[:solved]))
   end
 
-  def users_who_voted
-    users = User.find(:all,
-      :joins => [:votes],
-      :conditions => ["votes.voteable_id = ? and users.account_id = ?", id, account_id],
-      :order => "votes.created_at DESC"
-    )
-    users
-  end
-
   def last_post_url
     if self.last_post_id.present?
-      support_discussions_topic_path(self, :anchor => "post-#{self.last_post_id}")
+      Rails.application.routes.url_helpers.support_discussions_topic_path(self, :anchor => "post-#{self.last_post_id}")
     end
   end
 
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => ([:account_id,:import_id]+TOPIC_ATTR_TO_REMOVE))
   end
 
   def to_indexed_json
-    to_json(
+    as_json(
           :root => "topic",
           :tailored_json => true,
           :only => [ :title, :user_id, :forum_id, :account_id, :created_at, :updated_at ],
@@ -379,10 +390,10 @@ class Topic < ActiveRecord::Base
                                     :include => { :customer_forums => { :only => [:customer_id] } }
                                   }
                       }
-       )
+       ).to_json
   end
 
-  def to_json(options = {})
+  def as_json(options = {})
     options[:except] = ((options[:except] || []) +  TOPIC_ATTR_TO_REMOVE).uniq
     super(options)
   end
@@ -407,7 +418,7 @@ class Topic < ActiveRecord::Base
   end
 
   def topic_desc
-    truncate(self.posts.first.body.gsub(/<\/?[^>]*>/, ""), 300)
+    truncate(self.posts.first.body.gsub(/<\/?[^>]*>/, ""), :length => 300)
   end
 
   def approve!
@@ -416,15 +427,41 @@ class Topic < ActiveRecord::Base
   end
 
   def spam_count
-    SpamCounter.count(id, :spam, account_id)
+    SpamCounter.count(id, :spam)
   end
 
   def unpublished_count
-    SpamCounter.count(id, :unpublished, account_id)
+    SpamCounter.count(id, :unpublished)
   end
 
   def has_unpublished_posts?
     spam_count > 0 || unpublished_count > 0
   end
+  
+  def hit_key
+    TOPIC_HIT_TRACKER % {:account_id => account_id, :topic_id => id }
+  end
 
+  def unsubscribed_agents
+    user_ids = monitors.map(&:id)
+    account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+  
+  def assign_default_stamps
+    if forum && !stamp_type_changed? && forum_was.forum_type != forum.forum_type
+      self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[forum.forum_type]
+    end
+  end
+
+  def mark_post_as_unanswered
+    posts.answered_posts.map(&:toggle_answer) if forum && forum_was.questions? && !forum.questions?
+  end
+
+  def forum_was
+    @old_forum_cached ||= Forum.find(forum_id_was) if forum_id_was
+  end
+
+  def ticket
+    ticket_topic.ticketable if ticket_topic
+  end
 end

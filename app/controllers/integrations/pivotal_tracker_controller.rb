@@ -2,6 +2,8 @@ class Integrations::PivotalTrackerController < ApplicationController
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:pivotal_updates]
   before_filter :check_app_installed?, :only => [:pivotal_updates, :update_config, :get_performer_email]
+
+  include Integrations::PivotalTracker::Constant
   
   def tickets
     tkt = current_account.tickets.permissible(current_user)  
@@ -16,9 +18,7 @@ class Integrations::PivotalTrackerController < ApplicationController
 
   def pivotal_updates
     if @installed_app && @installed_app["configs"][:inputs]["pivotal_update"] == "1"
-      pivotal_updates = JSON(request.raw_post)
-      exclude_arr = ["accepted_at", "updated_at","owner_ids","label_ids", "labels", "after_id", "owned_by_id", "before_id"]
-      pivotal_values = pivotal_updates["changes"].first
+      pivotal_updates = JSON(request.raw_post)     
       primary_resources = pivotal_updates["primary_resources"].first
       story_id = primary_resources["id"]
       project_id = pivotal_updates["project"]["id"]
@@ -26,6 +26,7 @@ class Integrations::PivotalTrackerController < ApplicationController
       performer_id = pivotal_updates["performed_by"]["id"]
       case pivotal_updates["kind"].to_sym
         when :story_update_activity
+          pivotal_values = pivotal_updates["changes"].find{|x| x["kind"] == PIVOTAL_STORY}
           changes = "<div> Story <a href=#{primary_resources["url"]} target=_blank > #{primary_resources["name"]}</a>
             updated with following changes:<br/><br/>"
           pivotal_values["original_values"].each do |key, value|
@@ -35,7 +36,7 @@ class Integrations::PivotalTrackerController < ApplicationController
             end
             value = "none" if pivotal_values["original_values"][key] == nil
             pivotal_values["new_values"][key] = "none" if pivotal_values["new_values"][key] == nil
-            changes += "#{key} changed from #{value} to #{pivotal_values["new_values"][key]} <br/>" unless exclude_arr.include?(key)
+            changes += "#{key} changed from #{value} to #{pivotal_values["new_values"][key]} <br/>" unless EXCLUDE_ARR.include?(key)
           end
           changes = "<div>#{pivotal_updates["message"]} for the story <a href=#{primary_resources["url"]} target=_blank > #{primary_resources["name"]}</a>" if pivotal_updates["highlight"] == "rejected"
           changes += "</div>"
@@ -86,7 +87,7 @@ class Integrations::PivotalTrackerController < ApplicationController
 
   private
     def construct_xml
-      xml = Builder::XmlMarkup.new()
+      xml = ::Builder::XmlMarkup.new()
       xml.instruct!
       xml.external_stories(:type => "array") do 
         @items.each_with_index do |external_story|
@@ -105,7 +106,8 @@ class Integrations::PivotalTrackerController < ApplicationController
 
 
     def insert_integrated_resources
-      resource = { "application_id" => params[:application_id], :integrated_resource => { :local_integratable_id => params[:ticket_id],
+      ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+      resource = { "application_id" => params[:application_id], :integrated_resource => { :local_integratable_id => ticket.id,
                  :remote_integratable_id => "#{params[:project_id]}/stories/#{params[:story_id]}",
                  :local_integratable_type => "issue-tracking", :account => current_account }}
       result = Integrations::IntegratedResource.createResource(resource)
@@ -129,7 +131,15 @@ class Integrations::PivotalTrackerController < ApplicationController
         user_id = get_user_id(user, performer_name, performer_id)
       end
       unless integrated_resource.nil?
-        @ticket = current_account.tickets.find_by_display_id(integrated_resource["local_integratable_id"])
+        if integrated_resource.local_integratable_type == "Helpdesk::ArchiveTicket"
+          archive_ticket = integrated_resource.local_integratable
+          if archive_ticket
+            @ticket = archive_ticket.ticket || create_ticket(archive_ticket)
+            modify_integrated_resource(@ticket, integrated_resource)
+          end      
+        else
+          @ticket = integrated_resource.local_integratable
+        end
         note = @ticket.notes.build(
             :note_body_attributes => {:body_html => msg },
             :private => true,
@@ -172,5 +182,23 @@ class Integrations::PivotalTrackerController < ApplicationController
     def check_app_installed?
       @installed_app = current_account.installed_applications.with_name("pivotal_tracker").first
       return render :json => { :pivotal_message => "Application not installed"} if @installed_app.nil?
+    end
+
+    def modify_integrated_resource(ticket, integrated_resource)
+      integrated_resource = Integrations::IntegratedResource.find(integrated_resource.id)
+      integrated_resource.update_attributes({
+          :local_integratable_type => "Helpdesk::Ticket", 
+          :local_integratable_id => ticket.id 
+        }) if integrated_resource
+    end
+
+    def create_ticket(archive_ticket)
+      ticket = Helpdesk::Ticket.new(
+                :requester_id => archive_ticket.requester_id,
+                :subject => archive_ticket.subject,
+                :ticket_body_attributes => { :description => archive_ticket.description })
+      ticket.build_archive_child(:archive_ticket_id => archive_ticket.id) if archive_ticket
+      ticket.save_ticket
+      ticket
     end
 end

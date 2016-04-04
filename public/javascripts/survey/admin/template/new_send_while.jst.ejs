@@ -1,0 +1,11 @@
+<div>
+	<label id="send_while_title" class="lead"><%=send_while.title%></label>
+	<div id="survey_send_while">
+		<%_.each(send_while.elements,function(element){%>
+			<label class="radio">
+			  <input type="radio" name="send_while" value="<%=element.value%>" <%if(element.value == send_while.defaultValue){%>checked<%}%>>
+			  	<%=element.text%>
+			</label>
+		<%});%>
+	</div>
+</div>

@@ -36,6 +36,15 @@ module FreshfoneQueueHelper
       "Caller"=>"+16617480240", "CalledCity"=>"WHITE DEER", "QueueTime"=>"67" }
   end
 
+  def simultaneous_call_queue_params
+    { "Called"=>"+12407433321", "ToState"=>"NJ", "CallerCountry"=>"LS", "Direction"=>"inbound", "CallerState"=>"", 
+      "ToZip"=>"", "CallSid"=>"CA2db76c748cb6f081853f80dace462a04", "To"=>"+12407433321", "CallerZip"=>"", 
+      "ToCountry"=>"US", "ApiVersion"=>"2010-04-01", "CalledZip"=>"", "CalledCity"=>"", "CallStatus"=>"in-progress", 
+      "From"=>"+266696687", "AccountSid"=>"AC0d09d493d112a98972c3a8feeda31950", "CalledCountry"=>"US", "CallerCity"=>"", 
+      "Caller"=>"+266696687", "FromCountry"=>"LS", "ToCity"=>"", "FromCity"=>"", 
+      "CalledState"=>"NJ", "FromZip"=>"", "FromState"=>""}
+  end
+
   def set_default_queue_redis_entry
     controller.set_key(DEFAULT_QUEUE % {account_id: @account.id}, ["CDEFAULTQUEUE"].to_json)
   end

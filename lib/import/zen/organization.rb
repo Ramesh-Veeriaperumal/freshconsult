@@ -3,7 +3,7 @@ module Import::Zen::Organization
  class CompanyProp < Import::FdSax
    element :name
    element :id , :as => :import_id
-   element :details
+   # element :details
  end
 
  def save_organization company_xml

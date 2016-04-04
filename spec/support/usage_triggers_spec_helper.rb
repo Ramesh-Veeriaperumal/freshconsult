@@ -1,5 +1,5 @@
 module UsageTriggersSpecHelper
-  def create_ut(type)
+  def create_ut(type, trigger_value = 100)
     @usage_trigger = Freshfone::UsageTrigger.create(
       :account => @account,
       :freshfone_account => @account.freshfone_account,
@@ -7,7 +7,7 @@ module UsageTriggersSpecHelper
       :trigger_type => type,
       :start_value => 15,
       :idempotency_token => "DummyToken",
-      :trigger_value => 100)
+      :trigger_value => trigger_value)
   end
 
   def credit_overdraft_params

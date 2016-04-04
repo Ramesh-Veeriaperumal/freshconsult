@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Public::NotesController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
   
@@ -10,7 +9,7 @@ describe Public::NotesController do
   end
   
   it "must add a note when the requester adds a note" do
-    access_token = @test_ticket.access_token
+    access_token = @test_ticket.get_access_token
     requester_email = @test_ticket.requester.email
     note_description = Faker::Lorem.paragraph
     post :create, {
@@ -31,7 +30,7 @@ describe Public::NotesController do
     @test_ticket.cc_email = {:cc_emails => [cc_ppl], :fwd_emails => [], :reply_cc => [cc_ppl]}
     @test_ticket.save
     
-    access_token = @test_ticket.access_token
+    access_token = @test_ticket.get_access_token
     note_description = Faker::Lorem.paragraph
     post :create, {
                       :ticket_id => access_token,
@@ -48,7 +47,7 @@ describe Public::NotesController do
   
   it "must throw an error when a person other than requester or cc'd person adds a note" do
     random_user = Faker::Internet.email
-    access_token = @test_ticket.access_token
+    access_token = @test_ticket.get_access_token
     note_description = Faker::Lorem.paragraph
     
     post :create, {

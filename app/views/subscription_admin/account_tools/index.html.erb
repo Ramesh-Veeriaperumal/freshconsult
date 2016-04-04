@@ -61,7 +61,7 @@
   </div>
   <div>
 <% end %>
-    <% form_for :blacklist_ip, @blacklisted_ips, :url => update_global_blacklist_ips_admin_account_tools_path, :html => {:method => 'put', :id => 'update_ip_list'}  do |f| %>
+    <%= form_for @blacklisted_ips, :url => update_global_blacklist_ips_admin_tools_path, :html => {:method => 'put', :id => 'update_ip_list'}  do |f| %>
       <%= f.error_messages %>
     <% end %>
   </div>

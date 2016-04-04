@@ -47,12 +47,3 @@
 .pagination li:last-child a, .pagination li:last-child span {
   @include border-radius(0 3px 3px 0);
 }
-
-// Hiding other links from mobile
-@include at-breakpoint($media-mobile){
-  .pagination a { display: none; }
-  .pagination li:first-child a, .pagination li:last-child a, .pagination .active a 
-  .pagination li:first-child span, .pagination li:last-child span{
-    display: block;
-  }
-}

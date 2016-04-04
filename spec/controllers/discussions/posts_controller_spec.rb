@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Discussions::PostsController do
-	integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -12,8 +11,8 @@ describe Discussions::PostsController do
 	end
 
 	before(:each) do
-        @request.env['HTTP_REFERER'] = '/discussions'
-	    log_in(@agent)
+    @request.env['HTTP_REFERER'] = '/discussions'
+    log_in(@agent)
 	end
 
 	after(:all) do
@@ -34,6 +33,7 @@ describe Discussions::PostsController do
 		new_post.user_id.should be_eql @agent.id
 		new_post.topic_id.should be_eql @topic.id
 		new_post.account_id.should be_eql @account.id
+		
 		Monitorship.count.should eql old_follower_count + 1
 		Monitorship.last.portal_id.should_not be_nil
 		response.should redirect_to "/discussions/topics/#{@topic.id}/page/last#post_#{new_post.id}"
@@ -53,7 +53,7 @@ describe Discussions::PostsController do
 
 		get :edit, :id => post.id, :topic_id => @topic.id
 
-		response.should render_template "discussions/posts/edit.html.erb"
+		response.should render_template "discussions/posts/edit"
 	end
 
 	it "should update a post on 'update'" do
@@ -119,7 +119,7 @@ describe Discussions::PostsController do
 
 	    put :best_answer, :id => post.id, :topic_id => @topic.id
 
-	    response.should render_template "discussions/posts/best_answer.html.erb"
+	    response.should render_template "discussions/posts/best_answer"
 	end
 
 

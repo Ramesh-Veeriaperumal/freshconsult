@@ -1,0 +1,33 @@
+<div class="widget clearfix" id="requester_info">
+  <h3 class="title"><%=t('ticket.requestor_info')%></h3>
+  <div class="content">
+  <div class="tkt-tabs-wrap">
+    <ul class="tkt-tabs">
+      <li><a href="#contact_info_default" class="requester-info-sprite requester-info-default"></a></li>
+    </ul>
+  </div>
+  
+  <%
+  user = @ticket.requester 
+  contact = (privilege?(:view_contacts) && current_user.can_view_all_tickets?) ? user : "javascript:void(0)"
+  %>
+
+  <div id="contact_info_default" class='requester_tab'>
+    <div class="requester-details">
+      <%= render :partial => "contacts/hover_card", :locals => { 
+          :user => user, 
+          :show_recent_tickets => :dialog,
+          :ticket => @ticket          
+        } %>
+    </div>
+  </div>
+  </div>
+</div> 
+
+<script>
+  jQuery(document).ready(function(){
+    if (jQuery('.requester-info-sprite').length < 2) {
+      jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
+    }
+  })
+</script>

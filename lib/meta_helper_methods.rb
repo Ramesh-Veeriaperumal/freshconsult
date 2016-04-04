@@ -79,9 +79,10 @@ module MetaHelperMethods
 
   def short_referrer(url)
     begin
-      truncate(URI.parse(url).path, 20)
+      url = url.to_s
+      truncate(URI.parse(url).path, :length => 20)
     rescue
-      truncate(url, 20)
+      truncate(url, :length => 20)
     end
   end
 

@@ -181,4 +181,11 @@ $animation-type: ease-in;
 		}
 	} 
 	.screenshot-wrap{display: none;}
+	// Layout
+    // -----
+    .span1, .span2, .span3, .span4, 
+    .span5, .span6, .span7, .span8,
+    .span9, .span10, .span11, .span12 { 
+      @include reset-columns; display: block; 
+    }
 }

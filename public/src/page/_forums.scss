@@ -113,17 +113,15 @@
 			margin-bottom:10px;
 			border-bottom:1px solid #efefef;
 			overflow: hidden;
+			.preview_pic{
+				margin-bottom: 5px;
+			}
 		}
 		li{
 			.topic_icon{
 			 	@include float-left;
 			 	@include margin-right(10px);
 			}
-			img{
-				width: 36px;
-				height: 36px;
-			}
-
 		}
 		h4.topic_title{
 			margin:0px;
@@ -328,18 +326,14 @@
   font-size: 22px;
 }
 
-.icons-like{
+.icons-like, .icons-dislike{
 	display: inline-block;
-	height: 16px;
-	width: 20px;
+	@include margin-right(5px);
 }
 
 .icons-dislike{
-	display: inline-block;
-	height: 16px;
-	width: 20px;
 	position: relative;
-	top: 8px;
+	top: 2px;
 }
 
 .artical-list{
@@ -370,8 +364,8 @@
 	.highlight{
 		color: #E00000;
 	}
-	.null-value{
-		opacity: 0.3;
+	.muted{
+		@include opacity(0.3);
 	}
 }
 
@@ -495,7 +489,7 @@
 	margin:5px 0;
 	padding:10px 0;
 	@include float(left);
-	width:49%;
+	width:47%;
 	h4 a{ color: #333; }
 	li{
 		line-height:22px;
@@ -511,22 +505,11 @@
 	}
 }
 .solution-list .odd{
-	@include margin-right(2%);
+	@include margin-right(4%);
 }
 
 .solution_title{
 	position:relative;
-	.topic_icon{
-		position:absolute;
-	 	@include left(20px);
-		top:10px;
-		@include text-align(center);
-		.locked{
-			position:absolute;
-			top:13px;
-		 	@include left(10px);
-		}
-	}
 }
 
 

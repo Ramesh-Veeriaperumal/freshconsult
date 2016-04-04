@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Reports::Freshfone::SummaryReportsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -24,6 +23,7 @@ describe Reports::Freshfone::SummaryReportsController do
   end
 
   it "should generate the summary for the incoming calls criteria" do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     number = @account.freshfone_numbers.first
     start_date = (Date.today-7.day).strftime('%d %b, %Y')
     end_date = Date.today.strftime('%d %b, %Y')
@@ -31,10 +31,11 @@ describe Reports::Freshfone::SummaryReportsController do
     post :generate, {:date_range=>"#{start_date} - #{end_date}", :freshfone_number=>number.id, 
           :call_type=>1}
     assigns[:calls].should_not be_empty
-    response.should render_template("reports/freshfone/summary_reports/generate.rjs")
+    response.should render_template("reports/freshfone/summary_reports/generate")
   end
 
   it "should generate the summary for the outgoing calls criteria" do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     number = @account.freshfone_numbers.first
     start_date = (Date.today-7.day).strftime('%d %b, %Y')
     end_date = Date.today.strftime('%d %b, %Y')
@@ -42,35 +43,36 @@ describe Reports::Freshfone::SummaryReportsController do
     post :generate, {:date_range=>"#{start_date} - #{end_date}", :freshfone_number=>number.id, 
           :call_type=>2,:group_id=> groups.first}
     assigns[:calls].should be_empty
-    response.should render_template("reports/freshfone/summary_reports/generate.rjs")
+    response.should render_template("reports/freshfone/summary_reports/generate")
   end
   
    it "should generate the summary for the incoming calls with unassigned group criteria" do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     number = @account.freshfone_numbers.first
     start_date = (Date.today-7.day).strftime('%d %b, %Y')
     end_date = Date.today.strftime('%d %b, %Y')
     post :generate, {:date_range =>"#{start_date} - #{end_date}", :freshfone_number => number.id, 
           :call_type => 1,:group_id => Reports::FreshfoneReport::UNASSIGNED_GROUP.to_i}
     assigns[:calls].should_not be_empty
-    response.should render_template("reports/freshfone/summary_reports/generate.rjs")
+    response.should render_template("reports/freshfone/summary_reports/generate")
   end
 
    it "should generate the summary for the incoming calls for all numbers" do
     start_date = (Date.today-7.day).strftime('%d %b, %Y')
     end_date = Date.today.strftime('%d %b, %Y')
-    post :generate, {:date_range =>"#{start_date} - #{end_date}", :freshfone_number => Reports::FreshfoneReport::ALL_NUMBERS, 
+    post :generate, {:date_range =>"#{start_date} - #{end_date}", :freshfone_number => Freshfone::Number::ALL_NUMBERS, 
           :call_type => 1,:group_id => Reports::FreshfoneReport::UNASSIGNED_GROUP.to_i}
     assigns[:calls].should_not be_empty
-    response.should render_template("reports/freshfone/summary_reports/generate.rjs")
+    response.should render_template("reports/freshfone/summary_reports/generate")
   end
 
    it "should generate the summary for the outgoing calls for all numbers" do
     start_date = (Date.today-7.day).strftime('%d %b, %Y')
     end_date = Date.today.strftime('%d %b, %Y')
-    post :generate, {:date_range =>"#{start_date} - #{end_date}", :freshfone_number => Reports::FreshfoneReport::ALL_NUMBERS, 
+    post :generate, {:date_range =>"#{start_date} - #{end_date}", :freshfone_number => Freshfone::Number::ALL_NUMBERS, 
           :call_type => 2,:group_id => Reports::FreshfoneReport::UNASSIGNED_GROUP.to_i}
     assigns[:calls].should be_empty
-    response.should render_template("reports/freshfone/summary_reports/generate.rjs")
+    response.should render_template("reports/freshfone/summary_reports/generate")
   end
 
   it "should export the data as a csv for the outgoing calls criteria" do
@@ -79,8 +81,8 @@ describe Reports::Freshfone::SummaryReportsController do
     end_date = Date.today.strftime('%d %b, %Y')
     post :export_csv, {:date_range=>"#{start_date} - #{end_date}", :freshfone_number=>number.id }
     assigns[:calls].should_not be_empty
-    expected = (response.status =~ /200 OK/)
-    expected.should be_true
+    expected = (response.status == 200)
+    expected.should be true
   end
 
 end

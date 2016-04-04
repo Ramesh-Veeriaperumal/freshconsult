@@ -4,17 +4,13 @@
 %>	
 <li id="reminder_<%=r.id%>">  
     <%  form_action = (r.deleted) ? restore_helpdesk_reminder_path(r) : complete_helpdesk_reminder_path(r) %>
-    <%  form_remote_tag(:url => form_action, :method => :put, :after => %{ jQuery(this).parent().addClass('disabled'); }) do %>
+        <%=  form_tag form_action, :method => :put, :remote => true, :class => "reminder_check" do %>
         <input type="hidden" name="source" value="ticket_view" />
         <label>
             <%= check_box_tag("", 1, r.deleted , :onchange => %{ jQuery(this.form).trigger("submit"); }) %>
         </label>
     <%  end %>
-    <%= link_to_remote( '',
-                        :url => helpdesk_reminder_path(r),
-                        :method => 'delete',                        
-                        #:confirm => t("delete_reminder"),
-                        :html => { :class => 'delete_black' } ) %>
-		<%= content_tag("label", text, :class=>"reminder #{ r.deleted ? "checked" : "unchecked" }") %>
+     <%= link_to '', helpdesk_reminder_path(r), :method => 'delete', :class => 'delete_black', 
+                 :remote => true %>
+    <%= content_tag("label", text, :class=>"reminder #{ r.deleted ? "checked" : "unchecked" }") %>
 </li>
-

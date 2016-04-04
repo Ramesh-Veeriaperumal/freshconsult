@@ -1,7 +1,7 @@
-<% content_for :sidebar do -%><%-end %>
+<% content_for :sidebar do -%>&nbsp;<%-end %>
 <h3 class="lead"><%= t('topic.edit') %></h3>
 <%= error_messages_for :topic %>
-<% form_for @topic,
+<%= form_for @topic,
      :url  => category_forum_topic_path(@forum_category, @forum, @topic),
     :html => {:multipart => true, :method => :put } do |f| -%>
 

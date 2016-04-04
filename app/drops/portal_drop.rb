@@ -1,8 +1,10 @@
 class PortalDrop < BaseDrop
   
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   
-  liquid_attributes << :name << :language
+  self.liquid_attributes += [:name, :language]
+  
+  FEATURE_BASED_METHODS = [:solution_categories, :folders, :recent_articles, :articles_count]
 
   def initialize(source)
     super source
@@ -21,7 +23,7 @@ class PortalDrop < BaseDrop
   def logo_url
     @logo_url ||=  MemcacheKeys.fetch(["v7", "portal", "logo_href", source],30.days.to_i) do
             source.logo.nil? ? 
-              "/images/logo.png" :
+              "/assets/misc/logo.png" :
               AwsWrapper::S3Object.url_for(source.logo.content.path(:logo), 
                             source.logo.content.bucket_name,
                             :secure => true, 
@@ -31,7 +33,7 @@ class PortalDrop < BaseDrop
   end
 
   def linkback_url
-    @linkback_url ||= source.preferences.fetch(:logo_link, support_home_path)
+    @linkback_url ||= (source.preferences[:logo_link].presence || support_home_path)
   end
 
   def contact_info
@@ -76,6 +78,10 @@ class PortalDrop < BaseDrop
   def new_ticket_url
     @new_ticket_url ||= new_support_ticket_path(url_options)
   end
+  
+  def helpdesk_url
+    @helpdesk_url ||= root_path
+  end
 
   def my_topics_url
     @my_topics_url ||= my_topics_support_discussions_topics_path
@@ -116,6 +122,10 @@ class PortalDrop < BaseDrop
 
   def ticket_export_url
     @ticket_export_url ||= configure_export_support_tickets_path
+  end
+
+  def archive_ticket_export_url
+    @archive_ticket_export_url ||= configure_export_support_archive_tickets_path
   end
 
   def current_tab
@@ -182,7 +192,8 @@ class PortalDrop < BaseDrop
   end
 
   def recent_articles
-    @recent_articles ||= source.recent_articles
+    @recent_articles ||= (source.main_portal ? source.account.published_articles.newest(10) :
+      source.account.solution_articles.articles_for_portal(source).visible.newest(10))
   end
 
   # !MODEL-ENHANCEMENT Need to make published articles for a 
@@ -190,6 +201,27 @@ class PortalDrop < BaseDrop
   def articles_count
     @articles_count ||= folders.map{ |f| f.published_articles.count }.sum
   end
+  
+  def solution_categories_through_meta
+    @solution_categories ||= @source.solution_category_meta.reject(&:is_default?)
+  end
+
+  def folders_through_meta
+    @folders ||= (solution_categories.map { |c|
+                    c.solution_folder_meta.visible(portal_user) }.reject(&:blank?) || []).flatten
+  end
+
+  def recent_articles_through_meta
+    @recent_articles ||= (source.main_portal ?
+      source.account.solution_article_meta.visible_to_all.published.newest(10) :
+      source.account.solution_article_meta.for_portal(source).published.newest(10))
+  end
+
+  def articles_count_through_meta
+    @articles_count ||= folders.map{ |f| f.solution_article_meta.published.count }.sum
+  end
+  
+  include Solution::MetaAssociationSwitcher
 
   def url_options
     @url_options ||= { :host => source.host }    
@@ -201,6 +233,10 @@ class PortalDrop < BaseDrop
   
   def settings
     @settings ||= source.template.preferences
+  end
+  
+  def recent_topics
+    Forum::RecentTopicsDrop.new(self.source)
   end
   
   private

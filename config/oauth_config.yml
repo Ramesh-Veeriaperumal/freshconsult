@@ -14,17 +14,32 @@ oauth_options:
   google_oauth2:
     site: https://accounts.google.com
     token_url: /o/oauth2/token
+  infusionsoft:
+     authorize_url: "https://signin.infusionsoft.com/app/oauth/authorize"
+     token_url: "https://api.infusionsoft.com/token"
   box:
     site: https://www.box.com
     token_url: /api/oauth2/token
     authorize_url: /api/oauth2/authorize
-  slack:
-    site: "https://slack.com"  
-    
+  quickbooks:
+    site: "https://oauth.intuit.com"
+    request_token_path: "/oauth/v1/get_request_token"
+    authorize_url: "https://appcenter.intuit.com/Connect/Begin"
+    access_token_path: "/oauth/v1/get_access_token" 
+  google_contacts:
+    site: https://accounts.google.com
+    token_url: /o/oauth2/token
+
 development:
  salesforce:
   consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzddB6NCYAJVslYxFc.rabGWq9hI7uRXIKqFvCm4IoVzHOtMEkwrHs7dwcLZa
   consumer_secret: 7977697105566556112
+ quickbooks:
+  consumer_token: qyprdl501v3SKVbWrYDHdAlXxotIh4
+  consumer_secret: 2C4hEa7pGCXWwwz1CmJEUU8q7aVsaohZtdqr8V4S
+ github:
+  consumer_token: 93f887d3b15eee92cd76
+  consumer_secret: 542d73b9194cb31ce7e1d49d174cd71bf322a0bd
  google:
   consumer_token: 663183371165.apps.googleusercontent.com
   consumer_secret: Td7XaDzfHiNZzZChgmHjJUHy
@@ -43,6 +58,14 @@ development:
   options:
     scope: read write sign
     api_key: vsg6tg9qsdhmp28q2yugtdng
+ google_contacts:
+  provider: google_oauth2
+  consumer_token: 872717553632-61vshiv7id01g01ese7sp2vnbj7fccf6.apps.googleusercontent.com
+  consumer_secret: UtAAhjbukdfktyIuxWQovVxE
+  options:
+    prompt: consent
+    scope: https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
+    name: google_contacts
  google_oauth2:
   provider: google_oauth2
   consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
@@ -72,6 +95,9 @@ development:
  slack:
    consumer_token: "3575209657.3577497590"
    consumer_secret: 7193779dab625ec3e6764dd5df21309e
+ infusionsoft:
+   consumer_token:  pymmum7erkmq5vm4vsbqamut
+   consumer_secret: DzWRNku2hu
 
 defaults: &defaults
  salesforce:
@@ -80,6 +106,17 @@ defaults: &defaults
  google:
   consumer_token: 663183371165.apps.googleusercontent.com
   consumer_secret: Td7XaDzfHiNZzZChgmHjJUHy
+ quickbooks:
+  consumer_token: qyprdl501v3SKVbWrYDHdAlXxotIh4
+  consumer_secret: 2C4hEa7pGCXWwwz1CmJEUU8q7aVsaohZtdqr8V4S
+ google_contacts:
+  provider: google_oauth2
+  consumer_token: 872717553632-61vshiv7id01g01ese7sp2vnbj7fccf6.apps.googleusercontent.com
+  consumer_secret: UtAAhjbukdfktyIuxWQovVxE
+  options:
+    prompt: consent
+    scope: https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
+    name: google_contacts
  google_oauth2:
   provider: google_oauth2
   consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
@@ -98,12 +135,21 @@ defaults: &defaults
     prompt: none
     scope: https://www.googleapis.com/auth/calendar profile email
     name: google_gadget
+ shopify:
+  consumer_token: b78ef7808d2dba974b17fd21dc94201f
+  consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
+  options:
+    scope: 'read_orders'
+ slack:
+   consumer_token: "3575209657.3577497590"
+   consumer_secret: 7193779dab625ec3e6764dd5df21309e
   
 test:
  <<: *defaults
 
 slave:
  <<: *defaults
+
 
 test:
  <<: *defaults
@@ -116,6 +162,12 @@ staging:
  salesforce:
   consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzeEqoR3qkUeKQ7WcT5etA69USZCdVPz1gpkLxxdYRYYU3zPsrJd1bzoVRLZf
   consumer_secret: 7527225363657893740
+ quickbooks:
+  consumer_token: qyprdl501v3SKVbWrYDHdAlXxotIh4
+  consumer_secret: 2C4hEa7pGCXWwwz1CmJEUU8q7aVsaohZtdqr8V4S
+ github:
+  consumer_token: 93f887d3b15eee92cd76
+  consumer_secret: 542d73b9194cb31ce7e1d49d174cd71bf322a0bd
  google:
   consumer_token: freshpo.com
   consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
@@ -128,6 +180,14 @@ staging:
     prompt: none
     scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
     name: google_login
+ google_contacts:
+  provider: google_oauth2
+  consumer_token: 872717553632-61vshiv7id01g01ese7sp2vnbj7fccf6.apps.googleusercontent.com
+  consumer_secret: UtAAhjbukdfktyIuxWQovVxE
+  options:
+    prompt: consent
+    scope: https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
+    name: google_contacts
  google_gadget_oauth2:
   provider: google_oauth2
   consumer_token: 593295161831-52fdiqmli0c9613kld5ilj0nueb87htn.apps.googleusercontent.com
@@ -153,8 +213,8 @@ staging:
     scope: read write sign
     api_key: cjw2pjzf2s9fbvkz8863wwmt
  shopify:
-   consumer_token: e160240bdc6507d0945c6ee6971cb263
-   consumer_secret: dc44a9d893c1963eac73f3d843fc1f69
+   consumer_token: b78ef7808d2dba974b17fd21dc94201f
+   consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
    options:
       scope: 'read_orders'   
  box:
@@ -163,14 +223,31 @@ staging:
  slack:
    consumer_token: "3575209657.3577656254"
    consumer_secret: 40e3176389a2255436efedfdd5f9d76a
+ infusionsoft:
+   consumer_token:  pymmum7erkmq5vm4vsbqamut
+   consumer_secret: DzWRNku2hu
 
 production:
  salesforce:
   consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzd2iOSIknPyJj9LL1Y5IqbQPB9BbzrJRfdkPHFA5QJs9YIQxBJqqX70IXc78
   consumer_secret: 4449493033389148724
+ quickbooks:
+  consumer_token: qyprdspxhaEDF9y8hixSOacRuh4lYt
+  consumer_secret: ifISBYQG8peHZZUbeUaVgjOpl0VN9UYTe4KoxEXw
+ github:
+  consumer_token: 9b721c6fe3d0437a8135
+  consumer_secret: 897f8d8d2198b1aacd77dc67112332fe0af48a5c
  google:
   consumer_token: freshdesk.com
   consumer_secret: f7NgGAv6TKqew3O5Xb85SadF
+ google_contacts:
+  provider: google_oauth2
+  consumer_token: 354224567032-abbutsrfm490t6i3h6ulf41go7sh216e.apps.googleusercontent.com
+  consumer_secret: X2HZKWNsAlVssUgWRaimPMS4
+  options:
+    prompt: consent
+    scope: https://www.google.com/m8/feeds https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
+    name: google_contacts
  google_oauth2:
   provider: google_oauth2
   consumer_token: 367378856688.apps.googleusercontent.com
@@ -205,8 +282,8 @@ production:
     api_key: d499g57y8synva8crhycgmfx
     scope: read write sign
  shopify:
-   consumer_token: 00db090ddd4d64ff5c40d5129ae8cafd
-   consumer_secret: 44b5aa84216bc6cc6b08eb04377234b7
+   consumer_token: b78ef7808d2dba974b17fd21dc94201f
+   consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
    options:
          scope: 'read_orders'
  box:
@@ -215,3 +292,6 @@ production:
  slack:
    consumer_token: "3575209657.3866308321"
    consumer_secret: 19210e220ec23853881fdbbaa9aa0a5b
+ infusionsoft:
+   consumer_token:  pymmum7erkmq5vm4vsbqamut
+   consumer_secret: DzWRNku2hu

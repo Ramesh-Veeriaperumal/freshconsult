@@ -2,32 +2,86 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   include Fdadmin::AccountsControllerMethods
 
-  around_filter :select_slave_shard , :only => [:show]
-  around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on,:remove_feature,:change_account_name]
-
+  before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
+  around_filter :select_slave_shard , :only => [:show, :features, :agents, :tickets, :portal, :user_info]
+  around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on,:remove_feature,:change_account_name, :change_api_limit, :reset_login_count]
+  before_filter :validate_params, :only => [ :change_api_limit ]
+  before_filter :load_account, :only => [:user_info, :reset_login_count]
+  before_filter :load_user_record, :only => [:user_info, :reset_login_count]
+  
   def show
     account_summary = {}
     account = Account.find(params[:account_id])
-    account_summary[:account_info] = fetch_account_info(account)
-    account_summary[:main_portal] = account.main_portal.ssl_enabled
+    shard_info = ShardMapping.find(params[:account_id])
+    account_summary[:account_info] = fetch_account_info(account) 
     account_summary[:passes] = account.day_pass_config.available_passes
     account_summary[:contact_details] = { email: account.admin_email , phone: account.admin_phone }
     account_summary[:currency_details] = fetch_currency_details(account)
     account_summary[:subscription] = fetch_subscription_account_details(account)
-    account_summary[:agents] = fetch_agents_details(account)
     account_summary[:subscription_payments] = account.subscription_payments.sum(:amount)
-    account_summary[:tickets] = fetch_ticket_details(account)
-    account_summary[:social] = fetch_social_info(account)
-    account_summary[:multi_product] = account.portals.count > 1
-    account_summary[:chat] = { :enabled => account.features?(:chat) , :active => account.chat_setting.active? }
     account_summary[:email] = fetch_email_details(account)
-    account_summary[:portals] = fetch_portal_details(account)
+    account_summary[:invoice_emails] = fetch_invoice_emails(account)
+    account_summary[:api_limit] = account.api_limit
+    account_summary[:api_v2_limit] = $rate_limit.perform_redis_op("get", Redis::RedisKeys::ACCOUNT_API_LIMIT % {account_id: params[:account_id]})
     credit = account.freshfone_credit
     account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
-    account_summary[:invoice_emails] = fetch_invoice_emails(account)
+    account_summary[:shard] = shard_info.shard_name
+    account_summary[:pod] = shard_info.pod_info
+    account_summary[:freshfone_feature] = account.features?(:freshfone) || account.launched?(:freshfone_onboarding)
     respond_to do |format|
       format.json do
         render :json => account_summary
+      end
+    end
+  end
+
+  def features
+    feature_info = {}
+    account = Account.find(params[:account_id])
+    feature_info[:social] = fetch_social_info(account)
+    feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.display_id?) }
+    feature_info[:mailbox] = account.features?(:mailbox)
+    feature_info[:freshfone] = account.features?(:freshfone)
+    respond_to do |format|
+      format.json do
+        render :json => feature_info
+      end
+    end
+  end
+
+
+  def tickets
+    account_tickets = {}
+    account = Account.find(params[:account_id])
+    account_tickets[:tickets] = fetch_ticket_details(account)
+    respond_to do |format|
+      format.json do
+        render :json => account_tickets
+      end
+    end
+  end
+
+  def agents
+    agents_info = {}
+    account = Account.find(params[:account_id])
+    agents_info[:agents] = fetch_agents_details(account)
+    respond_to do |format|
+      format.json do
+        render :json => agents_info
+      end
+    end
+
+  end
+
+  def portal
+    portal_info = {}
+    account = Account.find(params[:account_id])
+    portal_info[:portals] = fetch_portal_details(account)
+    portal_info[:multi_product] = account.portals.count > 1
+    portal_info[:main_portal] = account.main_portal.ssl_enabled
+    respond_to do |format|
+      format.json do
+        render :json => portal_info
       end
     end
   end
@@ -50,6 +104,29 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         render :json => result
       end
     end
+  end
+
+
+  def change_api_limit
+    result = {}
+    account = Account.find(params[:account_id])
+    if account.account_additional_settings.update_attributes(:api_limit => params[:new_limit].to_i)
+      result[:status] = "success"
+    else
+      result[:status] = "notice"
+    end
+    result[:account_id] = account.id 
+    result[:account_name] = account.name
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
+  def change_v2_api_limit
+    $rate_limit.perform_redis_op("set", Redis::RedisKeys::ACCOUNT_API_LIMIT % {account_id: params[:account_id]},params[:new_limit])
+    render :json => {:status => "success"}
   end
 
   def add_feature
@@ -157,7 +234,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       result[:status] = "success" if sub.save
       Account.reset_current_account
     end
-    $spam_watcher.set("#{params[:account_id]}-","true")
+    $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
     respond_to do |format|
       format.json do
         render :json => result
@@ -183,7 +260,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       end
       Account.reset_current_account
     end
-    $spam_watcher.del("#{params[:account_id]}-")
+    $spam_watcher.perform_redis_op("del", "#{params[:account_id]}-")
     respond_to do |format|
       format.json do
         render :json => result
@@ -193,7 +270,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def whitelist
     result = {:account_id => params[:account_id]}
-    $spam_watcher.set("#{params[:account_id]}-","true")
+    $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
     result[:status] = :success
     respond_to do |format|
       format.json do
@@ -215,4 +292,76 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       end
   end
 
+  def check_domain_exists
+    request_parameters = {
+      :old_domain => params[:domain_name], 
+      :new_domain => params[:new_url], 
+      :target_method => :check_domain_availability
+    }
+    response = Fdadmin::APICalls.connect_main_pod(request_parameters)
+    render :json => { status: "notice"} and return if response["account_id"]
   end
+
+  def user_info
+    result = {}
+    result[:status] = "Found"
+    result[:user_id] = @user.id
+    result[:second_email] = @user.second_email
+    result[:name] = @user.name
+    result[:account_id] = @user.account_id 
+    result[:language] = @user.language
+    result[:time_zone] = @user.time_zone
+    result[:phone] = @user.phone
+    result[:mobile] = @user.mobile
+    result[:twitter_id] = @user.twitter_id
+    result[:fb_profile_id] = @user.fb_profile_id
+    result[:failed_login_count] = @user.failed_login_count
+    respond_to do |format|
+      format.json do 
+        render :json => result
+        end
+      end
+  end
+
+  def reset_login_count
+    result = {}
+    @user.failed_login_count = 0
+    if @user.save
+    result[:status] = "success" 
+    result[:failed_login_count] = @user.failed_login_count
+    respond_to do |format|
+      format.json do 
+        render :json => result
+        end
+      end
+    end
+  end
+
+  private 
+    def validate_params
+      render :json => {:status => "error"} and return unless /^[0-9]/.match(params[:new_limit])
+    end
+
+    def load_account
+      Account.reset_current_account
+      account  = Account.find params[:account_id]
+      account.make_current
+    end
+
+    def load_user_record
+      if (!params[:email].blank? || params[:user_id].blank?) 
+        account_id = params[:account_id]
+        user_id = params[:user_id]
+        @user = user_id.present? ? User.find_by_id_and_account_id(user_id,account_id) : User.find_by_account_id_and_email_and_helpdesk_agent(account_id,params[:email],1) 
+      end
+       unless @user
+        respond_to do |format|
+          format.json do 
+            render :json => {:status => "Please check the entered value"}.to_json
+          end
+        end
+      end
+      
+    end
+
+end

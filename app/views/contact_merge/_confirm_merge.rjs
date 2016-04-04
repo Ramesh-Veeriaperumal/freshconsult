@@ -1,9 +1,0 @@
-if @target_users.blank?
-  page.show :invalid_user
-  page.replace_html :invalid_user, t(:"flash.tickets.merge.wrong_ticket_id")
-else
-  page.hide :mergebox
-  page.hide :invalid_user 
-  page.replace_html :mergebox_confirm, :partial => "confirm"
-  page.show :mergebox_confirm  
-end

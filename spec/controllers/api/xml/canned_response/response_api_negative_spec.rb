@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::CannedResponses::ResponsesController do
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -35,8 +34,8 @@ describe Helpdesk::CannedResponses::ResponsesController do
 			:folder_id => "#{@test_response_1.folder_id}",
 			:format => 'xml'
 		}
-		name_blank?(response).should be_true
-		error_status?(response.status).should be_true
+		name_blank?(response).should be true
+		error_status?(response.status).should be true
 		canned_response = @account.canned_responses.find_by_id(@test_response_1.id)
 		canned_response.title.should eql("New Canned_Responses Hepler")
 		canned_response.title.should_not eql ""
@@ -44,7 +43,7 @@ describe Helpdesk::CannedResponses::ResponsesController do
 	end
 
 		def error_status?(status)
-			status =~ /422 Unprocessable Entity/ 
+			status == 422
 		end
 
 		def name_blank?(response)

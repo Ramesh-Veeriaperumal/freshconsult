@@ -34,16 +34,35 @@ include Freshfone::CallHistoryHelper
 
 
   def filter_number_options
-    number_options = [{:id => Reports::FreshfoneReport::ALL_NUMBERS, :value => t('reports.freshfone.all_numbers'), 
-        :deleted => false, :name => t('reports.freshfone.all_numbers')},{:value => "", :deleted => false, :name => "" }]
-    numbers_options = freshfone_numbers.reverse.reduce(number_options){|obj, c|
-      obj.push({ :id => c.id, :value => c.number_name, :deleted => c.deleted, :name => c.name })
-     }.to_json
+    numbers_options = freshfone_numbers.map{|c|
+      { :id => c.id, :value => c.number, :deleted => c.deleted, :name => CGI.escapeHTML(c.name.to_s) }
+     }
+    numbers_options.unshift({:value => t('reports.freshfone.all_numbers'),:deleted=> false, :id=> 0 ,:name=> t('reports.freshfone.all_call_types')})
+    numbers_options.to_json
+  end
+
+  def business_hours_hash
+    @business_hour_hash ||=
+      {""  => t('freshfone.call_history.filter_option_all_calls'),
+      "1" => t('freshfone.call_history.filter_option_within_business_hours'),
+      "0" => t('freshfone.call_history.filter_option_outside_business_hours')}
+  end
+
+  def filter_by_business_hours_options
+   business_hours_type.to_json
+  end
+
+  def business_hours_type
+    business_hours_options = []
+    business_hours_options =  business_hours_hash.each_with_index.map { |(k,v),index| 
+      { :id => index, :value => v, :business_hour_call=> k}
+    }
   end
 
   def filter_default_number
+    return {:id => 0, :value => t('reports.freshfone.all_numbers') }.to_json if @freshfone_number == "0"
     selected_number = freshfone_numbers.find(@freshfone_number)
-    {:id => selected_number.id, :value => selected_number.number_name }.to_json
+    {:id => selected_number.id, :value => "#{selected_number.name} (#{selected_number.number})" }.to_json
   end
 
   # Count Methods (results from query: def report_query)
@@ -60,6 +79,14 @@ include Freshfone::CallHistoryHelper
 
   def voicemails_count(calls)
     calls.sum(&:voicemail)
+  end
+
+  def external_transfers_count(calls)
+    calls.sum(&:external_transfers) || 0
+  end
+
+  def direct_dial_count(calls)
+    calls.sum(&:direct_dial_count) || 0
   end
 
   def unanswered_transfers(calls)
@@ -81,7 +108,7 @@ include Freshfone::CallHistoryHelper
   def answered_percentage(call_list)
     sum = call_list.sum(&:count)
     answered = sum - (unanswered_calls_count(call_list) + unanswered_transfers(call_list))
-    percentage = ((answered/sum)*100 || 0).to_i
+    percentage = ((answered/sum.to_f)*100 || 0).to_i
   end
 
   def avg_handle_time(call_list)
@@ -96,7 +123,7 @@ include Freshfone::CallHistoryHelper
 
   def helpdesk_handle_time(call_list)
     sum = 0
-    answered =  helpdesk_calls_count(call_list) - unanswered_calls_count(call_list)
+    answered =  calls_count(call_list) - (all_unanswered(call_list) + direct_dial_count(call_list) + external_transfers_count(call_list))
     call_list.each do |calls|
       next if calls.agent_name.blank? || calls.total_duration.blank?
       sum += calls.total_duration
@@ -114,6 +141,16 @@ include Freshfone::CallHistoryHelper
   #Used in filter_options
   def call_types
     Freshfone::Call::CALL_TYPE_HASH.map { |k,v| [t("reports.freshfone.options.#{k}"), v]}
+  end
+
+  def group_cache
+    @cached_filter['group_id']
+  end
+
+  def business_hours_cache
+    return business_hours_type[1][:id] if @cached_filter['business_hours'] == "1"
+    return business_hours_type[2][:id] if @cached_filter['business_hours'] == "0"
+    @cached_filter['business_hours']
   end
 
 end

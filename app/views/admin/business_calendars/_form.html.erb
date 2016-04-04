@@ -65,6 +65,9 @@
 											<% if (end_of_workday.eql?("11:59:59") and (workday_start.eql?("12:00 am") or beginning_of_workday.eql?("00:00:00"))) %>
 												<% end_of_workday = beginning_of_workday = "12:00" %>
 												<% end_of_workday_range = beginning_of_workday_range = "am" %>
+											<% elsif end_of_workday.eql?("11:59:59") %>
+												<% end_of_workday = "12:00" %>
+												<% end_of_workday_range = "am" %>
 											<% end %>
 										<%else%>
 											<% beginning_of_workday="8:00" %>
@@ -121,17 +124,17 @@
 						<%= link_to_function( t('add_holiday'), "addHoliday()", :class => "btn" ) %>
 					</span>
 					<span class="span2 import-link">
-						<a href="#importholiday" title="<%= t('business_hours.import_holiday') %>" data-submit-label="Import" rel="freshdialog" data-width="400"><%= t('business_hours.import_holiday') %></a>
+						<a href="#importholiday" title="<%= t('business_hours.holiday_calendar') %>" data-submit-label="<%= t('add') %>" rel="freshdialog" data-width="400"><%= t('business_hours.holiday_calendar') %></a>
 					</span>
 				</div>
 			</div>
-			<%= render :partial => "import_holiday" %>
+			<%= render :partial => "import_holiday"%>
 			<div class="holidaylist row-fluid">
 				<%= f.hidden_field :holiday_data, :id=>"holiday_data" %>
 				<ul class="unstyled hide" id="HolidayList"></ul>
 				<% content_for :pagefixed do %>
-					<% javascript_tag do %>
-						<% @business_calendar.holiday_data.each do |holiday| %>
+					<%= javascript_tag do %>
+						<% (@business_calendar.holiday_data || []).each do |holiday| %>
 							addHolidaytoList("<%=holiday[0]%>", "<%=h(holiday[1])%>");
 						<% end %>	
 					<% end %>
@@ -147,7 +150,9 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 <% if feature?(:multiple_business_hours) && @business_calendar.is_default? %>
-	jQuery("#business_calenders_time_zone").data("select2").container.hide();
+	setTimeout(function(){
+		jQuery("#business_calenders_time_zone").data("select2").container.hide();
+	},1000);
 	var time_zone_element = "<p><b>" + "<%=@business_calendar.time_zone %>" + "</b></p>";
 	time_zone_element += "<p class='muted'> <%= t('business_hours.change_time_zone').html_safe %></p>";
 	jQuery("#business_calenders_time_zone").parent().append(time_zone_element);

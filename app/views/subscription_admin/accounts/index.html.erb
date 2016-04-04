@@ -1,12 +1,12 @@
 <h1><%= @page_title = 'Accounts' %></h1>
 
-<%= include_cloudfront_js :defaults  %>
+<%= javascript_include_tag :'cdn/defaults'  %>
 <%= calendar_date_select_includes 'silver' %>
 <%CalendarDateSelect.format = :iso_date%>
 
 Next Renewal 
 
-<% form_tag "/accounts", :method => 'get' do %>
+<%= form_tag "/accounts", :method => 'get' do %>
   <p>
     <%= calendar_date_select_tag 'start_date', "" %>
 	 to
@@ -15,7 +15,7 @@ Next Renewal
   </p>
 <% end %>
 
-<% form_tag "/accounts/renewal_csv", :method => 'get' do %>
+<%= form_tag "/accounts/renewal_csv", :method => 'get' do %>
   <%=hidden_field_tag 'from_date', @start_date%>
   <%=hidden_field_tag 'to_date', @end_date%>
   <%= submit_tag "trials.csv", :name => nil %>
@@ -23,7 +23,7 @@ Next Renewal
 
 Host name
 
-<% form_tag "/accounts", :method => 'get' do %>
+<%= form_tag "/accounts", :method => 'get' do %>
   <p>
   	
     <%= text_field_tag :search, params[:search] %>

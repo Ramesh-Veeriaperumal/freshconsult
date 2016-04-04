@@ -14,5 +14,4 @@ module LoadInitializer
     end
   end
 end
-
 LoadInitializer.load_files( "#{Rails.root}/lib", YAML.load_file(File.join(Rails.root, 'config', 'helpdesk_initializers.yml')) )

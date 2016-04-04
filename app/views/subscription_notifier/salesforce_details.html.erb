@@ -1,0 +1,28 @@
+<div>Account details</div>
+<div>
+  <table>
+    <tr>
+      <td>Account Id</td>
+      <td>Account admin email </td>
+      <td>Account domain name</td>
+      <td>MRR</td>
+      <td>State</td>
+    </tr>
+    <tr>
+      <td><%=@account.id%></td>
+      <td><%=@account.admin_email%></td>
+      <td><%=@account.full_domain%></td>
+      <td><%=@account.subscription.cmrr%></td>
+      <td><%=@account.subscription.state%></td>
+    </tr>
+  </table>
+</div>
+<div>********************</div>
+<div>
+  Caller details ::
+</div>
+<div>
+  <%@caller_details.each do |c|%>
+    <div><%=c%></div>
+  <%end%>
+</div>

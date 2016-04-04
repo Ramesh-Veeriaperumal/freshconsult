@@ -1,10 +1,9 @@
 class PostObserver < ActiveRecord::Observer
 
-	include ActionController::UrlWriter
-
 	def before_create(post)
 		post.forum_id = post.topic.forum_id
-		post.published ||= (post.user.agent?  || !post.import_id.nil?) #Agent posts are approved by default.
+		post.published = true
+    post
 	end
 
 	def before_save(post)
@@ -19,10 +18,14 @@ class PostObserver < ActiveRecord::Observer
 		end
 
 	end
+  
+  def before_destroy(post)
+    create_activity(post, 'delete_post', User.current) unless post.trash#TODO-RAILS3
+  end
 
 	def after_destroy(post)
 		update_cached_fields(post)
-		create_activity(post, 'delete_post', User.current) unless post.trash
+#		create_activity(post, 'delete_post', User.current) unless post.trash#TODO-RAILS3 do it in before destroy
 	end
 
 	def monitor_reply(post)
@@ -30,9 +33,9 @@ class PostObserver < ActiveRecord::Observer
   end
 
   def send_monitorship_emails(post)
-    post.topic.monitorships.active_monitors.all(:include => :portal).each do |monitorship|
+    post.topic.monitorships.active_monitors.all(:include => [:portal, :user]).each do |monitorship|
     	next if monitorship.user.email.blank? or (post.user_id == monitorship.user_id)
-    	PostMailer.deliver_monitor_email!(monitorship.user.email, post, post.user, monitorship.portal, *monitorship.sender_and_host)
+    	PostMailer.monitor_email(monitorship.user.email, post, post.user, monitorship.portal, *monitorship.sender_and_host)
     end
   end
 
@@ -62,13 +65,13 @@ class PostObserver < ActiveRecord::Observer
   	end
 
 	def create_activity(post, type, user = post.user)
-		post.activities.create(
+		post.topic.activities.create(
 			:description => "activities.forums.#{type}.long",
 			:short_descr => "activities.forums.#{type}.short",
 			:account 		=> post.account,
 			:user 			=> user,
 			:activity_data 	=> {
-								 :path => discussions_topic_path(post.topic_id),
+								 :path => Rails.application.routes.url_helpers.discussions_topic_path(post.topic_id),
 								 :url_params => {
 												 :topic_id => post.topic_id,
 												 :path_generator => 'discussions_topic_path'

@@ -6,7 +6,6 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
   before_filter :authorize_freshdesk_user, :only => [ :create ]
   before_filter :validate_wrt_app, :only => [ :show ]
 
-  APPCONFIG = YAML::load_file File.join(Rails.root, 'config', 'app_config.yml')
 
   def show
     if(params[:app] == "seoshop")
@@ -21,22 +20,25 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
     if domain_mapping
       Sharding.select_shard_of(domain) do
         if(params["app"] == "seoshop")
+          Account.find(domain_mapping.account_id).make_current
           process_seoshop(domain, domain_mapping.account_id)
         end
       end
+    else
+      show_notice "This is an invalid freshdesk domain."
     end
   end
 
   def validate_wrt_app
     if(params[:app] == "seoshop")
-      validate_seoshop(APPCONFIG["seoshop"])
+      validate_seoshop(ThirdPartyAppConfig["seoshop"])
     end
   end
 
 private
   def authorize_freshdesk_user
     begin
-      site = RestClient::Resource.new("#{params[:domain]}/health_check.json", params[:key], "X")
+      site = RestClient::Resource.new("#{params[:domain]}#{health_check_verify_credential_path}.json", params[:key], "X")
       response = site.get(:accept => "application/json")
       if !response.body.include? "success"
         show_notice "Unable to authorize user in Freshdesk..... Please check your domain and API Key....."
@@ -70,7 +72,7 @@ private
 
   def build_configs
     if(params[:app] == "seoshop")
-      build_seoshop_configs(APPCONFIG["seoshop"])
+      build_seoshop_configs(ThirdPartyAppConfig["seoshop"])
     end
   end
 
@@ -97,11 +99,24 @@ private
 
   def redirect_url
     if(params[:app] == "seoshop")
-      "#{params[:domain]}/helpdesk/dashboard"
+      "#{params[:domain]}/helpdesk"
     end
   end
 
   def partial_link(app)
-    render :partial => "integrations/applications/remote_login", :locals => {:page => app}, :layout => 'remote_configurations'
+    render :template => "integrations/applications/remote_login", :locals => {:page => app}, :layout => 'remote_configurations'
+  end
+
+  def determine_pod
+    if params[:domain]
+      domain = params[:domain].partition('://').last.sub('/', '')
+      shard = ShardMapping.lookup_with_domain(domain)
+      if PodConfig['CURRENT_POD'] != shard.pod_info
+        Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
+        redirect_to_pod(shard) and return #defined in application_controller
+      end
+    else
+      super #fallback to the default if domain is not defined
+    end
   end
 end

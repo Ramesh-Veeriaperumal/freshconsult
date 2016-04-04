@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::DynamicNotificationTemplatesController do
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -9,7 +8,7 @@ describe Admin::DynamicNotificationTemplatesController do
 		@email_notifications = @account.email_notifications
 		@test_notification = @email_notifications.find_by_notification_type("1")
 		@test_notification.update_attributes({:outdated_requester_content => true})
-		@test_translation = Factory.build(:dynamic_notification_templates)
+		@test_translation = FactoryGirl.build(:dynamic_notification_templates)
 		@test_translation.save
 	end
 

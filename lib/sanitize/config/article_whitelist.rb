@@ -18,8 +18,13 @@ class Sanitize
                     ],
         'video' => ['src', 'width', 'height', 'crossorigin', 'poster', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted', 'controls'],
         'track' => ['kind', 'src', 'srclang', 'label', 'default'],
-        'font' => HTML_RELAXED[:attributes]['font'] + ['size', 'face']
-      }.merge(HTML_RELAXED[:attributes].except('iframe','object','param','embed','video','audio','source','track','font', :all)),
+        'font' => HTML_RELAXED[:attributes]['font'] + ['size', 'face'],
+        'td' => HTML_RELAXED[:attributes]['td'] + ['bgcolor'],
+        'table' => HTML_RELAXED[:attributes]['table'] + ['bgcolor'],
+        'th' => HTML_RELAXED[:attributes]['th'] + ['bgcolor'],
+        'tr' => ['bgcolor'],
+        'tbody' => ['bgcolor']
+      }.merge(HTML_RELAXED[:attributes].except('iframe','object','param','embed','video','audio','source','track','font', 'td', :all)),
 
       :protocols => {
         'img' => { 'src' => HTML_RELAXED[:protocols]['img']['src'] + ['data', 'cid'] }

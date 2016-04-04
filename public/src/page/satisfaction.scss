@@ -1,5 +1,6 @@
 // Core variables and mixin
 @import "../settings/settings";
+@import '../module/_survey-smiley.scss';
 
 .top-title, .top-time, .topic-head, .box-title, .cote, .tab-text{
 	font-family: $baseFontFamily;
@@ -58,38 +59,6 @@
 	}
 }
 
-.happy-smily{
-	background: url("/images/happy-smily-tab.png") no-repeat;
-	@include float(left);
-	@include padding-left(10px);
-	position: relative;
-	width: 42px;
-	height: 42px;
-	@include margin-left(-8px);
-	margin-top: 10px;
-}
-
-.neutral-smily{
-	background: url("/images/neutral-smily-tab.png") no-repeat;
-	@include float(left);
-	@include padding-left(10px);
-	position: relative;
-	width: 42px;
-	height: 42px;
-	@include margin-left(-8px);
-	margin-top: 10px;
-}
-
-.unhappy-smily{
-	background: url("/images/unhappy-smily-tab.png") no-repeat;
-	@include float(left);
-	@include padding-left(10px);
-	position: relative;
-	width: 42px;
-	height: 42px;
-	@include margin-left(-8px);
-	margin-top: 10px;
-}
 
 
 #report_list .tabs, .pills{margin:0 0 0; padding:0; list-style:none;zoom:1}
@@ -150,29 +119,6 @@
 	@include margin(1px 0 1px 40px);	
 }
 
-.happy-smily-small{
-	background: url("/images/happy-smily-small.png") no-repeat;
-}
-
-.unhappy-smily-small{
-	background: url("/images/unhappy-smily-small.png") no-repeat;
-}
-
-.neutral-smily-small{
-	background: url("/images/neutral-smily-small.png") no-repeat;
-}
-
-.happy-smily-small, .unhappy-smily-small, .neutral-smily-small {
-	top: 9px;
- @include left(-65px);
-
-	width:20px;
-	height:21px;
-	display: block;
-	@include float(right);
-	position: relative;
-}
-
 #report_feedback {
 	.happy-smily-small, .unhappy-smily-small, .neutral-smily-small {
 	 @include left(-4px);
@@ -222,13 +168,16 @@
 }
 
 .cote{
-	margin-top: 2px;
+	margin-top: 6px;
 	@include margin-left(5px);
-	background: url("/images/cote-img.png") no-repeat;
-	width:16px;
-	height:13px;
 	display: block;
 	position: absolute;
+	&:before{
+		color: #aaa;
+		content: open-quote;
+		font-size: 2em;
+		line-height: 0.1em;
+	}
 }
 
 .tab-width{
@@ -286,4 +235,3 @@
 .survey-option-conf .happy-smily,.survey-option-conf .unhappy-smily,.survey-option-conf .neutral-smily{
 	margin-top:-10px;
 }
-

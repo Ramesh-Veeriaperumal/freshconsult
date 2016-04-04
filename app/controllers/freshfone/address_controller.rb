@@ -1,5 +1,5 @@
 class Freshfone::AddressController < ApplicationController
-  include Freshfone::FreshfoneHelper
+  include Freshfone::FreshfoneUtil
   def create
     render :json => {
       :success => build_address.save, 

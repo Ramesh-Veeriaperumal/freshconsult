@@ -1,0 +1,30 @@
+<%
+	var trimTitle = function(title){
+		var unescaped_title = unescapeHtml(title);
+		if(title && title.length > 50){
+			title =  title.substring(0,50) + "...";
+		}
+		return title;//Helpkit.commonSavedReportUtil.escapeString(unescaped_title);
+	}
+%>
+<ul class="saved_reports_list">
+		<li>
+			<a href="javascript:void(0)" data-index="-1" data-action="select-saved-report" data-title="<%= I18n.t(report_title, { defaultValue : 'report'}) %>"
+			data-original-title="<%= I18n.t(report_title, { defaultValue : 'report'}) %>"
+			>          
+			<span><i class="<%= report_icon %> fsize-20" size="20"></i></span>
+          	<%= I18n.t(report_title,{defaultValue : 'report'}) %>
+			</a>
+		</li>
+		<li class="seperator <%= data.length == 0 ? 'hidden' : '' %> "></li>	
+<% for (i = 0; i < data.length; i++) { %>
+    	<li>
+			<a href="javascript:void(0)" data-action="select-saved-report" data-index='<%= data[i].id %>' data-title='<%= trimTitle(data[i].text) %>' data-original-title='<%= data[i].text %>' >          
+			<span class="pull-left"><i class="ficon-dot fsize-8" size="8"></i></span>
+          	<span class="pull-left report_title">
+          		<%= trimTitle(data[i].text) %>
+          	</span>
+			</a>
+		</li>
+<% } %>
+</ul>

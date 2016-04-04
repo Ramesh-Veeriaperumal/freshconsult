@@ -6,6 +6,7 @@ var FreshfoneConnection;
 		this.init();
 		this.connection = connection;
 		this.freshfoneNotification = freshfoneNotification;
+		this.callNotificationTimeout = false;
 	};
 	FreshfoneConnection.prototype = {
 		init: function () {
@@ -21,7 +22,10 @@ var FreshfoneConnection;
 			this.freshfoneNotification.setRequestObject(this);
 			this.freshfoneNotification.prefillContactTemplate(this.customerNumber);
 			this.bindEventHandlers();
-			freshfoneNotification.userInfo(this.customerNumber, this);
+			if(freshfonecalls.transfered) {
+				freshfonewidget.resetTransferingState();
+			}
+			this.freshfoneNotification.userInfo(this.customerNumber, this);
 		},
 		bindEventHandlers: function () {
 			var self = this;
@@ -29,7 +33,9 @@ var FreshfoneConnection;
 				self.reject();
 			});
 			this.$userInfoContainer.one('click','#accept_call', function () {
-				$("#accept_call").text("Accepting...");
+				App.Phone.Metrics.setCallDirection("incoming");
+				App.Phone.Metrics.resetConvertedToTicket();
+				self.$userInfoContainer.find("#accept_call .ff-phone-accept-text").text("Accepting...");
 				self.$userInfoContainer.off('click','#reject_call');
 				self.accept();
 			});
@@ -42,11 +48,8 @@ var FreshfoneConnection;
 			$("#log").text("Ready");
 			ffLogger.log({'action': "Rejected by agent", 'params': this.connection.parameters});
 			this.connection.reject();
+			freshfonesocket.notify_ignore(this.connection.parameters.CallSid);
 			this.freshfoneNotification.popOngoingNotification(this.connection, this);
-			setTimeout(function() {
-				ffLogger.log("Bridging calls after a reject");
-				freshfoneuser.bridgeQueuedCalls();
-			}, 30000);
 		},
 		callSid: function() {
 			return this.connection.parameters.CallSid;
@@ -82,7 +85,7 @@ var FreshfoneConnection;
 					}
 				},
 				error: function () {
-					ffLogger.logIssue("Unable accept the incoming call for "+ CURRENT_USER.id, { "params" : data });
+					ffLogger.logIssue("Unable accept the incoming call for "+ freshfone.current_user_details.id, { "params" : data });
 				 }
 			});
 		},
@@ -90,6 +93,7 @@ var FreshfoneConnection;
 			if ( this.canCreateDesktopNotification() ) {
 				try {
 					this.notification = new FreshfoneDesktopNotification(this);
+					this.notification.createCallWebNotification();
 				}
 				catch (e) {
 					console.log(e);

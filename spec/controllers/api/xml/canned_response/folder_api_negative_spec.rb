@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::CannedResponses::FoldersController do
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -11,13 +10,13 @@ describe Helpdesk::CannedResponses::FoldersController do
 
 	it "should not create a new folder with less than 3 characters" do
 		post :create, { :admin_canned_responses_folder => {:name => "cr"}, :format => 'xml' }
-		name_blank?(response).should be_true
-		error_status?(response.status).should be_true
+		name_blank?(response).should be true
+		error_status?(response.status).should be true
 		@account.canned_response_folders.find_by_name("cr").should be_nil
 	end
 
 		def error_status?(status)
-			status =~ /422 Unprocessable Entity/ 
+			status == 422
 		end
 
 		def name_blank?(response)

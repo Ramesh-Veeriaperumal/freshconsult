@@ -1,4 +1,5 @@
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
+&nbsp;
 <%-end %>
 <% first_search = nil %>
 <% handle_id = nil %>
@@ -81,7 +82,7 @@
 		</tr>
 	</table>
 </div>
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
   function check_tweets_with_tickets( update_div ){
     var tweet_ids = [];
     jQuery.each(update_div, function(index, item){
@@ -110,7 +111,7 @@
   } 
 <%- end %>
 
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
   var current_product_id = <%= @twitter_accounts.first.product ? @twitter_accounts.first.product.id : 0 %> ;
   var current_twitter_id = <%= @twitter_accounts.first.id %>;
   var feed = null;
@@ -222,10 +223,11 @@
 <%- end %> 
 
 <div id="tweet_form" style="display:none;">  
-  <% form_remote_tag :url => { :action => "send_tweet" }, :html => { :class => "uniForm", :id => "form_tweet" } do %>
+  <%= form_tag url_for(:action => "send_tweet"), :class => "uniForm", :id => "form_tweet", 
+   :remote => true do %>
   <div class="dialog-special">
    <div class="content">
-    <table>
+    <table width="100%">
       <tr>
         <td width="120px">
           <%= t('social.twitter_handles.index.from') %>

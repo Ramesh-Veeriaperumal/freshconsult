@@ -1,8 +1,10 @@
 Agent Collision: 
-  - :agent_collision
+  - :collision
 Chat:
   - :chat
   - :chat_enable
+Chat Routing:
+  - :chat_routing
 Custom Domain:
   - :custom_domain
 Custom Mailbox:
@@ -14,6 +16,8 @@ Custom Slas:
 Custom Ssl: 
   - :custom_domain
   - :custom_ssl
+Dynamic Sections:
+  - :dynamic_sections
 Enterprise Reporting:
   - :enterprise_reporting
   - :surveys
@@ -37,4 +41,5 @@ Round Robin:
   - :round_robin
 Whitelisted Ips:
   - :whitelisted_ips
-
+Custom Surveys:
+  - :custom_surveys

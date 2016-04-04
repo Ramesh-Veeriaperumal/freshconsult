@@ -219,6 +219,7 @@ function insertTextAtCursor(el, text) {
         endIndex = el.selectionEnd;
         el.value = val.slice(0, endIndex) + text + val.slice(endIndex);
         el.selectionStart = el.selectionEnd = endIndex + text.length;
+        el.focus();
     } else if (typeof document.selection != "undefined" && typeof document.selection.createRange != "undefined") {
         el.focus();
         range = document.selection.createRange();
@@ -265,7 +266,32 @@ function reply_multiple_submit( url, method, params){
   form.submit();
 }
 
+function helpdesk_generic_submit(form_id, url, method, params){
+  var form = $(form_id);
+  if(method && typeof(form.down('input[name=_method]')) !== "undefined"){
+    form.down('input[name=_method]').value = method;
+  }
+  else if (method){
+    var method_field = new Element('input', {
+                     type: 'hidden'
+                   });
+    method_field.name = "_method"
+    method_field.value = method;
+    form.appendChild(method_field);
+  }
 
+  (params || []).each(function(item){
+    item = $(item);
+    var field = new Element('input', {
+                     type: 'hidden'
+                   });
+    field.name = item.name;
+    field.value = item.value;
+    form.appendChild(field);
+  });
+  form.action = url;
+  form.submit();
+}
 
 function setSelRange(inputEl, selStart, selEnd) {
    if (inputEl.setSelectionRange) {
@@ -322,7 +348,7 @@ function setPostParam(form, name, value){
             }
             show_hide.bind("click", function(ev){
                ev.preventDefault();
-               child_quote.toggle();
+               jQuery(this).siblings("blockquote.freshdesk_quote").toggle();
             });
             jQuery(item).removeClass("request_mail");
             jQuery(item).attr("data-quoted", true);
@@ -331,91 +357,8 @@ function setPostParam(form, name, value){
 
 active_dialog = null;
 
-// JQuery plugin that customizes the dialog widget to load an ajax infomation
+// // JQuery plugin that customizes the dialog widget to load an ajax infomation
 (function( $ ){
-   var methods = {
-        init : function( options ) {
-          return this.each(function(i, item){
-            curItem = $(item);
-            var dialog = null;
-            curItem.click(function(e){
-              e.preventDefault();
-
-              var $this = $(this),
-                  dialog = $this.data("dialog2"),
-                  width = $this.data("width") || '750px',
-                  href = $this.data('url') || this.href,
-                  params = $this.data('parameters');
-
-              if(dialog == null){
-                  dialog = $("<div class='sloading' />")
-                              .html("<br />")
-                              .dialog({  modal:true, width: width, height:'auto', position:'top',
-                                         title: this.title, resizable: false,
-                                         close: function( event, ui ) {
-
-                                          if($this.data("destroyOnClose"))
-                                              $this.dialog2("destroy")
-                                         } });
-
-                  active_dialog = dialog.load(href, params || {}, function(responseText, textStatus, XMLHttpRequest) {
-                                                   dialog.removeClass("sloading");
-                                                   dialog.css({"height": "auto"});
-                                                });
-
-                  $this.data("dialog2", dialog)
-
-               }else{
-                  dialog.dialog("open");
-               }
-            });
-          });
-        },
-        destroy : function( ) {
-          return this.each(function(){
-            var $this = $(this),
-                dialog = $this.data('dialog2');
-
-            $(window).unbind('.dialog2');
-            $this.removeData('dialog2');
-            $el = dialog.dialog("destroy")
-            $el.remove()
-
-            dialog = null;
-          })
-        },
-        show : function( ) { },
-        hide : function( ) {
-          return this.each(function(){
-            console.log('Calling hide event');
-          });
-          // console.log('Calling the hide event');
-          // console.log('Data part is : ' + $(this).data('destroy-on-close'));
-          // if ($(this).data('destroy-on-close') === true ) {
-          //   $(this).dialog('destroy');
-          // }
-        },
-        update : function( content ) { },
-        close: function (ev, ui) {
-
-          return this.each(function(){
-            console.log('Calling close event');
-          });
-        }
-   };
-
-
-
-  $.fn.dialog2 = function( method ) {
-    // Method calling logic
-    if ( methods[method] ) {
-      return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-    } else if ( typeof method === 'object' || ! method ) {
-      return methods.init.apply( this, arguments );
-    } else {
-      $.error( 'Method ' +  method + ' does not exist on jQuery.dialog2' );
-    }
-  };
 
   // usage: $('p').autoLink()
   $.fn.autoLink = function() {
@@ -443,17 +386,23 @@ active_dialog = null;
 		} catch(e) {}
 	}
 
- $(document).bind('mousedown', function(e) {
-   if($(e.target).hasClass("select2-choice") || $(e.target).hasClass("item-in-menu")) return;
-  if ($(e.target).parents().is(".fd-ajaxmenu, .fd-ajaxmenu .contents, .profile_info, .select2-container")) { return };
+  $(document).bind('mousedown', function(e) {
+    var $target = $(e.target),
+        $activeMenu = $($(document).data("active-menu-element"));
+    if ($target.hasClass("select2-choice") || $(e.target).hasClass("item-in-menu")) return;
+    if ($target.parents().is(".fd-ajaxmenu, .fd-ajaxmenu .contents, .profile_info, .select2-container")) { return };
+    if ($target.is($activeMenu) || $target.parents().is($activeMenu) ) { return };
+
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
       else setTimeout(hideActiveMenu, 500);
     }
- });
+  });
 
  hideActiveMenu = function (){
-    $($(document).data("active-menu-element")).hide().removeClass("active-nav-menu");
+    $($(document).data("active-menu-element"))
+      .hide()
+      .removeClass("active-nav-menu");
     $($(document).data("active-menu-parent")).removeClass("selected");
     $(document).data("active-menu", false);
  }
@@ -464,8 +413,8 @@ active_dialog = null;
 
        $(node).bind("click", function(ev){
            ev.preventDefault();
-           elementid = id || node.getAttribute("menuid");
-           element = $(elementid).show().css("visibility", "visible");
+           var elementid = id || node.getAttribute("menuid");
+           var element = $(elementid).show().css("visibility", "visible");
            $(document).data({ "active-menu": true, "active-menu-element": element, "active-menu-parent": this });
            $(element).find("a, li").data("menu-active", true);
            $(node).addClass("selected");
@@ -520,7 +469,7 @@ active_dialog = null;
           });
         }
 
-        menu = $('#' + $(node).data('menuid'));
+        var menu = $('#' + $(node).data('menuid'));
         menu.show().css('visibility','visible');
         $(document).data({ "active-menu": true, "active-menu-element": menu, "active-menu-parent": node });
 
@@ -752,30 +701,30 @@ function fetchCannedResponses(folder_id) {
     jQuery('#ca_responses-'+folder_id).siblings().hide();
 }
 
-// function fetchResponses(url, element){
-//   var elem = jQuery(element)
-//   var use_id = "responses"+elem.data('folder');
-//   if (!elem.hasClass('folderSelected'))
-//   {
-//     if(elem.hasClass('clicked'))
-//     {
-//       var response_old = jQuery('#fold-list .list2').detach();
-//       jQuery('#cf_cache').append(response_old);
-//       jQuery('#fold-list').append(jQuery('#'+use_id));
-//     }
-//     else
-//     {
-//       var temp_resp = jQuery('.list2').detach();
-//       jQuery('#cf_cache').append(temp_resp);
-//       jQuery('#fold-list').append('<div id="responses" class="list2"></div>');
-//       jQuery('#responses').addClass('sloading loading-small');
-//       jQuery.getScript(url, function(){
-//       jQuery('#responses').attr('id', use_id);
-//       elem.addClass('clicked');
-//       });
-//     }
-//   }
-// }
+function fetchResponses(url, element){
+  var elem = jQuery(element)
+  var use_id = "responses"+elem.data('folder');
+  if (!elem.hasClass('folderSelected'))
+  {
+    if(elem.hasClass('clicked'))
+    {
+      var response_old = jQuery('#fold-list .list2').detach();
+      jQuery('#cf_cache').append(response_old);
+      jQuery('#fold-list').append(jQuery('#'+use_id));
+    }
+    else
+    {
+      var temp_resp = jQuery('.list2').detach();
+      jQuery('#cf_cache').append(temp_resp);
+      jQuery('#fold-list').append('<div id="responses" class="list2"></div>');
+      jQuery('#responses').addClass('sloading loading-small');
+      jQuery.getScript(url, function(){
+      jQuery('#responses').attr('id', use_id);
+      elem.addClass('clicked');
+      });
+    }
+  }
+}
 
 function trim(s){
   return s.replace(/^\s+|\s+$/g, '');
@@ -859,12 +808,19 @@ jQuery.fn.serializeObject = function(){
               epoch_sec = merge.getTime() + (1100*60000);
               merge = (new Date(epoch_sec)).toISOStringCustom().trim();
             }
+            else if (jQuery(self).find('[name="'+this.name+'"]').hasClass("tempo"))
+            {
+              this.name = keys[0] + '[' + keys[1] + ']'
+              keys.pop();
+              merge = parseFloat(merge);
+              reverse_key = this.name
+            }
             else if (jQuery(self).find('[name="'+this.name+'"]').hasClass("numeric"))
             {
               merge = parseFloat(merge);
             }
             while((k = keys.pop()) !== undefined){
-
+                
                 // adjust reverse_key
                 reverse_key = reverse_key.replace(new RegExp("\\[" + k + "\\]$"), '');
 
@@ -925,10 +881,27 @@ function unescapeHtml(escapedStr) {
         return child ? child.nodeValue : '';
 };
 
+//Alternative to escapeHtml, also escapes quotes
+function htmlEntities(str) {
+  var entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;',
+    '`': '&#x60;',
+    '=': '&#x3D;'
+  };
+  return String(str).replace(/[&<>"'`=\/]/g, function fromEntityMap (s) {
+    return entityMap[s];
+  });
+};
+
 jQuery.scrollTo = function(element, options) {
   var defaults = {
     speed: 500,
-    offset: jQuery('#sticky_header').outerHeight()
+    offset: jQuery('#sticky_header').outerHeight(true)
   };
   var opts = jQuery.extend({}, defaults, options || {});
   var el = jQuery(element);
@@ -938,6 +911,31 @@ jQuery.scrollTo = function(element, options) {
     }, opts.speed);
 };
 
+jQuery.fn.bringToView = function(options) {
+  var defaults = {
+    speed: 500,
+    offset: 50
+  },
+  $win = jQuery(window),
+  $this = jQuery(this),
+  scrollPosition = $win.scrollTop(),
+  screenBottom = $win.outerHeight(true) + $win.scrollTop(),
+  elementBottom = $this.outerHeight(true) + $this.offset().top;
+
+  var opts = jQuery.extend({}, defaults, options || {});
+  elementBottom += opts.offset;
+  if (elementBottom > screenBottom) {
+    scrollPosition = $win.scrollTop() + (elementBottom - screenBottom);
+  } else if ($this.offset().top < $win.scrollTop()) {
+    scrollPosition = $this.offset().top - opts.offset
+  }
+
+  jQuery('body, html').animate({
+      scrollTop: scrollPosition
+    }, opts);
+
+  return this;
+};
 
 function trigger_event(event_name, event_data){
   jQuery(document).trigger( event_name , event_data );
@@ -949,10 +947,10 @@ function hashTabSelect(){
   if(window.location.hash != '') {
     hash = window.location.hash.split('/');
     jQuery.each(hash, function(index, value){
-      setTimeout(function(){
+      setTimeout(function(){ 
         catchException(function(){
-          jQuery(value + "-tab").trigger('click')
-        }, "Error in File globalinit.js");
+          jQuery('#Pagearea').find(value + "-tab").trigger('click')
+        }, "Error in method hashTabSelect");
       }, ((index+1)*10) )
     })
   }
@@ -964,6 +962,10 @@ function storeInLocalStorage(key, value) {
 
 function getFromLocalStorage(key_name) {
   return JSON.parse(localStorage.getItem(key_name))
+}
+
+function removeFromLocalStorage(key) {
+  localStorage.removeItem(key);
 }
 
 function highlight_code() {
@@ -1004,3 +1006,23 @@ function getKeyFromValue(object,value){
   }
   return key;
 }
+
+function focusFirstModalElement(namescope) {
+  var namescope = namescope || "default";
+  var target = ['shown', namescope].join('.');
+  jQuery('body').on(target, '.modal', function () {
+    jQuery(this).find('input:text:visible:first').focus();
+  });
+}
+
+// Return a boolean value
+// Return container has scrollbar or not
+jQuery.fn.hasScrollBar = function() {
+      return this.get(0).scrollHeight > this.get(0).clientHeight;
+}
+
+function nativePlaceholderSupport() {
+  var i = document.createElement('input');
+  return i.placeholder !== undefined;
+}
+

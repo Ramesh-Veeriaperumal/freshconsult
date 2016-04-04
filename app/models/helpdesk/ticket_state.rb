@@ -1,24 +1,28 @@
 class Helpdesk::TicketState <  ActiveRecord::Base
 
+  self.primary_key = :id
+  self.table_name =  "helpdesk_ticket_states"
+
   include Reports::TicketStats
   include Redis::RedisKeys
   include Redis::ReportsRedis
+  include BusinessHoursCalculation
 
   # Attributes for populating data into monthly stats tables
-  STATS_ATTRIBUTES = [:resolved_at,:first_assigned_at,:assigned_at,:opened_at]
-  TICKET_STATE_SEARCH_FIELDS = [ :resolved_at, :closed_at, :agent_responded_at,
-                                 :requester_responded_at, :status_updated_at ]
+  STATS_ATTRIBUTES = ['resolved_at','first_assigned_at','assigned_at','opened_at']
+  TICKET_STATE_SEARCH_FIELDS = [ 'resolved_at', 'closed_at', 'agent_responded_at',
+                                 'requester_responded_at', 'status_updated_at' ]
 
   belongs_to_account
-  set_table_name "helpdesk_ticket_states"
   belongs_to :tickets , :class_name =>'Helpdesk::Ticket',:foreign_key =>'ticket_id'
   
   attr_protected :ticket_id
 
   before_update :update_ticket_state_changes
-  after_commit_on_create :create_ticket_stats, :if => :ent_reports_enabled?
-  after_commit_on_update :update_ticket_stats, :if => :ent_reports_enabled?
-  after_commit_on_update :update_search_index
+  #https://github.com/rails/rails/issues/988#issuecomment-31621550
+  after_commit :update_ticket_stats, on: :update, :if => :ent_reports_enabled?
+  after_commit :create_ticket_stats, on: :create, :if => :ent_reports_enabled?
+  after_commit :update_search_index,  on: :update
   
   def reset_tkt_states
     @resolved_time_was = self.resolved_at_was
@@ -31,14 +35,14 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     @resolved_time_was ||= resolved_at
   end
   
-  def set_resolved_at_state
-    self.resolved_at=Time.zone.now
+  def set_resolved_at_state(time=Time.zone.now)
+    self.resolved_at = time 
     set_resolution_time_by_bhrs
   end
   
-  def set_closed_at_state
+  def set_closed_at_state(time=Time.zone.now)
     set_resolved_at_state if resolved_at.nil?
-    self.closed_at=Time.zone.now
+    self.closed_at = time
   end
   
   def need_attention
@@ -53,6 +57,14 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     (requester_responded_at && agent_responded_at && requester_responded_at > agent_responded_at)
   end
 
+  def customer_responded_for_outbound?
+    if agent_responded_at and requester_responded_at
+      requester_responded_at > agent_responded_at
+    else
+      requester_responded_at.present?
+    end
+  end
+
   def consecutive_customer_response?
     if (agent_responded_at && requester_responded_at)
       requester_responded_at > agent_responded_at
@@ -62,10 +74,10 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   end
 
   def first_call_resolution?
-      (inbound_count == 1)
+      (inbound_count == 1 and !tickets.outbound_email?)
   end
 
-  def current_state
+  def current_state(outbound_email = nil)
 
     if (closed_at && status_updated_at && status_updated_at > closed_at) #inapportune case
         return TICKET_LIST_VIEW_STATES[:resolved_at] if(resolved_at && resolved_at > closed_at )
@@ -82,7 +94,12 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     
     return TICKET_LIST_VIEW_STATES[:resolved_at] if resolved_at
     
-    return TICKET_LIST_VIEW_STATES[:requester_responded_at] if customer_responded?
+    if outbound_email || (outbound_email.nil? and self.tickets.outbound_email?)
+      return TICKET_LIST_VIEW_STATES[:requester_responded_at] if customer_responded_for_outbound?
+    else
+      return TICKET_LIST_VIEW_STATES[:requester_responded_at] if customer_responded?
+    end
+    
     return TICKET_LIST_VIEW_STATES[:agent_responded_at] if agent_responded_at
     return TICKET_LIST_VIEW_STATES[:created_at]
   end
@@ -95,16 +112,19 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     closed_at || closed_at_dirty_fix
   end
 
-  def set_first_response_time(time)
+  def pending_since_dirty
+    pending_since || pending_since_dirty_fix
+  end
+
+  def set_first_response_time(time, created_time = nil)
+    created_time ||= self.created_at
     self.first_response_time ||= time
     BusinessCalendar.execute(self.tickets) { 
       if self.first_resp_time_by_bhrs
         self.first_resp_time_by_bhrs
       else
         default_group = tickets.group if tickets
-        business_calendar_config = Group.default_business_calendar(default_group)
-        self.first_resp_time_by_bhrs = Time.zone.parse(created_at.to_s).
-                          business_time_until(Time.zone.parse(first_response_time.to_s),business_calendar_config)
+        self.first_resp_time_by_bhrs = calculate_time_in_bhrs(created_time, first_response_time, default_group)
       end
     }
   end
@@ -114,9 +134,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     time = created_at || Time.zone.now
     BusinessCalendar.execute(self.tickets) {
       default_group = tickets.group if tickets
-      business_calendar_config = Group.default_business_calendar(default_group)
-      self.resolution_time_by_bhrs = Time.zone.parse(time.to_s).
-                          business_time_until(Time.zone.parse(resolved_at.to_s),business_calendar_config)
+      self.resolution_time_by_bhrs = calculate_time_in_bhrs(time, resolved_at, default_group)
     }
   end
 
@@ -125,38 +143,14 @@ class Helpdesk::TicketState <  ActiveRecord::Base
       :select => %(count(*) as outbounds, 
         round(avg(helpdesk_schema_less_notes.#{Helpdesk::SchemaLessNote.resp_time_column}), 3) as avg_resp_time, 
         round(avg(helpdesk_schema_less_notes.#{Helpdesk::SchemaLessNote.resp_time_by_bhrs_column}), 3) as avg_resp_time_bhrs))
-    self.outbound_count = tkt_values.outbounds
+    #Hack - for outbound emails, the initial description is considererd as outbound, so adding that for outbound_count column
+    self.outbound_count = tickets.outbound_email? ? tkt_values.outbounds + 1 : tkt_values.outbounds
     self.avg_response_time = tkt_values.avg_resp_time
     self.avg_response_time_by_bhrs = tkt_values.avg_resp_time_bhrs
   end
 
   def update_search_index
     tickets.update_es_index if (@ticket_state_changes.keys & TICKET_STATE_SEARCH_FIELDS).any?
-  end
-
-private
-  TICKET_LIST_VIEW_STATES = { :created_at => "created_at", :closed_at => "closed_at", 
-    :resolved_at => "resolved_at", :agent_responded_at => "agent_responded_at", 
-    :requester_responded_at => "requester_responded_at" }
-
-
-  def resolved_at_dirty_fix
-    return nil if tickets.active?
-    self.update_attribute(:resolved_at , updated_at)
-    NewRelic::Agent.notice_error(Exception.new("resolved_at is nil. Ticket state id is #{id}"))
-    resolved_at
-  end
-
-  def closed_at_dirty_fix
-    return nil if tickets.active?
-    self.update_attribute(:closed_at, updated_at)
-    NewRelic::Agent.notice_error(Exception.new("closed_at is nil. Ticket state id is #{id}"))
-    closed_at
-  end
-
-  def update_ticket_state_changes
-    @ticket_state_changes = self.changes.clone
-    @ticket_state_changes.symbolize_keys!
   end
 
   # populating data in monthly stats table for created and update cases
@@ -172,7 +166,7 @@ private
         connection.execute(sql)
       end
     rescue Exception => e
-      puts "Exception occurred while inserting data into stats table"
+      puts "Exception occurred while inserting data into stats table ::: #{e.message}" 
       NewRelic::Agent.notice_error(e)
     end
   end
@@ -193,9 +187,42 @@ private
       end
     rescue Exception => e
       puts "Exception occurred while updating data into stats table"
+      puts e.backtrace.join("\n\t")
       NewRelic::Agent.notice_error(e)
     end
   end
+
+private
+  TICKET_LIST_VIEW_STATES = { :created_at => "created_at", :closed_at => "closed_at", 
+    :resolved_at => "resolved_at", :agent_responded_at => "agent_responded_at", 
+    :requester_responded_at => "requester_responded_at" }
+
+
+  def resolved_at_dirty_fix
+    return nil if tickets.active?
+    Sharding.run_on_master { self.update_attribute(:resolved_at , updated_at) }
+    NewRelic::Agent.notice_error(Exception.new("resolved_at is nil. Ticket state id is #{id}"))
+    resolved_at
+  end
+
+  def closed_at_dirty_fix
+    return nil if tickets.active?
+    Sharding.run_on_master { self.update_attribute(:closed_at, updated_at) }
+    NewRelic::Agent.notice_error(Exception.new("closed_at is nil. Ticket state id is #{id}"))
+    closed_at
+  end
+
+  def pending_since_dirty_fix
+    Sharding.run_on_master do
+      self.update_attribute(:pending_since, updated_at)
+    end
+    NewRelic::Agent.notice_error(Exception.new("pending_since is nil. Ticket state id is #{id}"))
+    pending_since
+  end
+  def update_ticket_state_changes
+    @ticket_state_changes = self.changes.clone
+  end
+
 
   def check_and_update_ticket_stats(stats_table_name, field_hash, datetime)
     resolved_tkt, reopens, assign_tkt, reassigns, fcr_tkt, sla_tkt, resolved_hour, 

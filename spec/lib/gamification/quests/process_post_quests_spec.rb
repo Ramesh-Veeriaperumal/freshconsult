@@ -1,16 +1,10 @@
 require 'spec_helper'
 
-describe Gamification::Quests::ProcessPostQuests do
+RSpec.describe Gamification::Quests::ProcessPostQuests do
 	self.use_transactional_fixtures = false
 
 	before(:all) do
-		@account.quests.answer_forum_quests.each {|quest| quest.destroy}
-		@user = add_test_agent(@account)
-		@category = create_test_category
-		@forum_1 = create_test_forum(@category)
-		@forum_2 = create_test_forum(@category)
-		@topic_1 = create_test_topic(@forum_1)
-		@topic_2 = create_test_topic(@forum_2)
+		before_all_call
 	end
 
 	after(:each) do
@@ -57,6 +51,8 @@ describe Gamification::Quests::ProcessPostQuests do
 	context "For quest achievement with or_filters conditions" do
 
 		before(:all) do
+      before_all_call
+      
 			Resque.inline = false
 			filter_data = {
 				:actual_data=> [{:name=>"forum_id", :operator=>"is", :value=>"#{@forum_2.id}"}, 
@@ -76,9 +72,10 @@ describe Gamification::Quests::ProcessPostQuests do
 		end
 
 		it "should not achieve quests when filter_data is not satisfied" do
+      count = @account.quests.find(@new_quest_3.id).achieved_quests.count
 			Resque.inline = true
 			post = create_test_post(@topic_2,@user)
-			@account.quests.find(@new_quest_3.id).achieved_quests.first.should be_nil
+      @account.quests.find(@new_quest_3.id).achieved_quests.count.should eql(count)
 			unachieved_response([@new_quest_3],@exiting_pts)
 		end
 
@@ -99,15 +96,15 @@ describe Gamification::Quests::ProcessPostQuests do
 				
 				quest.support_scores.should be_empty
 
-				@user.achieved_quests.find_by_quest_id(quest.id).should be_nil
+				@user.achieved_quests.find_by_quest_id(quest.id).to_i.should eql(exiting_pts)
 
-				total_points.should be_nil
+				total_points.should eql(0)
 			}
 		end
 
 		def total_points
 			@user.reload
-			@user.agent.points
+			@user.agent.points.to_i
 		end
 
 		def achieved_response quests,exiting_pts
@@ -125,10 +122,20 @@ describe Gamification::Quests::ProcessPostQuests do
 				@user.achieved_quests.find_by_quest_id(quest.id).should_not be_nil
 
 				sb_level = @account.scoreboard_levels.level_for_score(total_points).first
-				@user.agent.scoreboard_level_id.should eql(sb_level.id)
+				@user.agent.scoreboard_level_id.should eql(sb_level.id) if sb_level
 				quest_points += quest.points
 			}
 			bonus_pts = total_points - exiting_pts
 			bonus_pts.should eql(quest_points)
 		end
+    
+    def before_all_call
+      @account.quests.answer_forum_quests.each {|quest| quest.destroy}
+      @user = add_test_agent(@account)
+      @category = create_test_category
+      @forum_1 = create_test_forum(@category)
+      @forum_2 = create_test_forum(@category)
+      @topic_1 = create_test_topic(@forum_1)
+      @topic_2 = create_test_topic(@forum_2)
+    end
 end

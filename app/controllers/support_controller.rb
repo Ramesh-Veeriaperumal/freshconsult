@@ -3,6 +3,11 @@ class SupportController < ApplicationController
   skip_before_filter :check_privilege, :set_cache_buster
   layout :resolve_layout
   before_filter :portal_context
+  around_filter :run_on_slave , :only => [:index,:show],
+    :if => proc {|controller| 
+      path = controller.controller_path
+      path.include?("/solutions") || path.include?("/home")
+    }
   
   include Redis::RedisKeys
   include Redis::PortalRedis
@@ -19,7 +24,7 @@ class SupportController < ApplicationController
     controller.send('flash').keys.blank?
   }, 
   :cache_path => proc { |c| 
-    Digest::SHA1.hexdigest("#{c.send(:current_portal).cache_prefix}#{c.request.request_uri}")
+    Digest::SHA1.hexdigest("#{c.send(:current_portal).cache_prefix}#{c.request.fullpath}#{params[:portal_type]}")
   }
   
   def cache_enabled?
@@ -79,7 +84,8 @@ class SupportController < ApplicationController
       # Setting dynamic header, footer, layout and misc. information
       process_template_liquid
 
-      @skip_liquid_compile = true # if active_layout.present?      
+      # TODO-RAILS3 need to check this
+      @skip_liquid_compile = false # if active_layout.present?      
     end
 
     def preview?
@@ -91,6 +97,10 @@ class SupportController < ApplicationController
     end
 
   private
+  
+    def run_on_slave(&block)
+      Sharding.run_on_slave(&block)
+    end
 
     def portal_context
       @portal ||= current_portal
@@ -125,6 +135,8 @@ class SupportController < ApplicationController
                        :keywords => @page_keywords,
                        :canonical => @page_canonical }
                        
+      @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{@current_path}"
+                       
       @meta = HashDrop.new( @page_meta )
     end
 
@@ -132,9 +144,10 @@ class SupportController < ApplicationController
       partial = Portal::Page::PAGE_FILE_BY_TOKEN[ page_token ]
       dynamic_template = nil
       dynamic_template = page_data(page_token) if feature?(:layout_customization)
-      _content = render_to_string :file => partial,
+      _content = render_to_string :file => partial, :layout => false,
                   :locals => { :dynamic_template => dynamic_template } if dynamic_template.nil? || !dynamic_template.blank?
-
+                  
+                  
       @page_yield = @content_for_layout = _content
     end
 
@@ -164,10 +177,10 @@ class SupportController < ApplicationController
     end
 
     def process_template_liquid
-      Portal::Template::TEMPLATE_MAPPING.each do |t|
+      Portal::Template::TEMPLATE_MAPPING_RAILS3.each do |t|
         dynamic_template = template_data(t[0]) if feature?(:layout_customization)
-        _content = render_to_string :partial => t[1], 
-                    :locals => { :dynamic_template => dynamic_template } if dynamic_template.nil? || !dynamic_template.blank?
+        _content = render_to_string(:partial => t[1], :layout => false, :handlers => [t[2]],
+                    :locals => { :dynamic_template => dynamic_template }) if dynamic_template.nil? || !dynamic_template.blank?
         instance_variable_set "@#{t[0]}", _content
       end
     end
@@ -202,13 +215,18 @@ class SupportController < ApplicationController
       feature?(:forums) && allowed_in_portal?(:open_forums) && !feature?(:hide_portal_forums)
     end
 
+    def check_forums_access
+      render_404 unless feature?(:forums) 
+    end
+
     protected
 
     def render_tracker
-      File.open("#{Rails.root}/public/images/spacer.gif", 'rb') do |f|
+      File.open("#{Rails.root}/public/images/misc/spacer.gif", 'rb') do |f|
         send_data f.read, :type => "image/gif", :disposition => "inline"
       end
     end
+
   private
 
   def agent?

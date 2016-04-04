@@ -6,10 +6,10 @@
 		</div>
 		<span class="pull-right label label-small"><%= ticket.status_name %></span>
 	    <div class="ellipsis">
-	      	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", support_ticket_path(ticket), :title => truncate(ticket.description, 350, "...")) %> 
+	      	<%= link_to(h(ticket.subject) + " (##{ticket.display_id})", support_ticket_path(ticket), :title => truncate(ticket.description, :length => 350, :omission => '...')) %> 
 	    </div>
 			
-		<% content_tag :p, :class => "help-text" do %>
+		<%= content_tag :p, :class => "help-text" do %>
 			<% unless ticket.requester.nil? or current_user.eql?(ticket.requester) %>
 				<%= t('ticket.portal_created_on', {:username => h(ticket.requester.display_name), :date => formated_date(ticket.created_at)}).html_safe %>
 			<% else %>

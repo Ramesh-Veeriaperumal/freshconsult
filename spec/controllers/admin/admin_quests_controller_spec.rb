@@ -2,8 +2,7 @@ require 'spec_helper'
 
 include Gamification::Quests::Constants
 
-describe Admin::QuestsController do
-  integrate_views
+RSpec.describe Admin::QuestsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -11,14 +10,14 @@ describe Admin::QuestsController do
     quest_data = {:value=>"4", :date=>"4"}
     @new_quest = create_article_quest(@account, quest_data)
 
-    flexifield_def_entry = Factory.build(:flexifield_def_entry, 
+    flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry, 
                                          :flexifield_def_id => @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                          :flexifield_alias => "tkt_level_#{@account.id}",
                                          :flexifield_name => "ff_int01",
                                          :flexifield_coltype => "number",
                                          :account_id => @account.id)
     flexifield_def_entry.save
-    custom_field = Factory.build( :ticket_field, :account_id => @account.id,
+    custom_field = FactoryGirl.build( :ticket_field, :account_id => @account.id,
                                                  :name => "tkt_level_#{@account.id}",
                                                  :field_type => "custom_number",
                                                  :flexifield_def_entry_id => flexifield_def_entry.id)
@@ -32,7 +31,7 @@ describe Admin::QuestsController do
   it "should display the quest index page" do
     get :index
     response.body.should =~ /redirected/
-    response.redirected_to.should eql "/admin/gamification#quests"
+    response.should redirect_to("/admin/gamification#quests")
   end
 
   it "should render new quest" do
@@ -49,10 +48,10 @@ describe Admin::QuestsController do
                               },
                     :quest_data_date=>"2", :filter_data=>"", :quest_data=> quest_data
     }
-    response.session[:flash][:notice].should eql "The quest has been created."  
+    session[:flash][:notice].should eql "The quest has been created."  
     quest = @account.quests.find_by_badge_id(45)
     quest.should be_an_instance_of(Quest)
-    response.redirected_to.should eql "/admin/gamification#quests"
+    response.should redirect_to "/admin/gamification#quests"
   end
 
   it "should not create new quest without quest_name" do
@@ -115,7 +114,7 @@ describe Admin::QuestsController do
     @new_quest.save
     put :toggle, :id => @new_quest.id
     @new_quest.reload
-    @new_quest.active.should be_false
+    @new_quest.active.should be_falsey
   end
 
   it "should activate the quest" do
@@ -123,6 +122,6 @@ describe Admin::QuestsController do
     @new_quest.save
     put :toggle, :id => @new_quest.id
     @new_quest.reload
-    @new_quest.active.should be_true
+    @new_quest.active.should be_truthy
   end
 end

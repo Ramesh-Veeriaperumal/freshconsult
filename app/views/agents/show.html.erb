@@ -40,6 +40,20 @@
 		<% else %>
 			<p class="info-text left"><%= t('no_badge_achieved_label') %></p>
 		<% end %>
+        <% if privilege?(:manage_users)%>
+			<%= link_to 'reset', { :action => :reset_score, :id => @agent.id } ,:method => 'put', :id => "agent_score_reset" , :class => "hide" %>		
+			<a href='#agent-gamification-reset' 
+				id="scoreboard_start_over"
+				rel="freshdialog"
+				title="<%= t('agent.reset_score_title') %>"
+				data-submit-label="<%= t('reset') %>"
+				data-width="400px"
+				data-close-on-submit="true"
+				data-close-label="<%= t('cancel') %>"
+				data-destroy-on-close="true"> 
+				<%= t('agent.reset_scores') %>
+			</a>
+		<% end %>
 	</div>
 	<%end%>
 <%- end %> 
@@ -53,14 +67,36 @@
       		</div>
           <%= link_to t('edit_agent'), edit_agent_path(@agent) %>
           <% if(@agent.user != current_user)%>
-            <%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => @agent.id } ,:method => 'put' %>
-            <%= link_to_function t('reset_password_title'), "confirm_password()" if @agent.user.active? %>
+						<%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => @agent.id } ,:method => 'put', :id => "agent_contact_convert" , :class => "hide" %>
+						<a href="#agent-deletion-confirmation"
+							rel="freshdialog"
+							title="<%= t('agent.convert_to_contact')%>"
+							data-submit-label="Confirm"
+							data-width="400px"
+							data-close-on-submit="true"
+							data-close-label="Cancel"
+							data-destroy-on-close="true">
+							<%= t('agent.info4') %>
+						</a>
+
+            <% if(@agent.user.active?) %>
+            	 <a href="#reset_password_template"
+					rel="freshdialog"
+					title="<%= t('reset_password_title') %>"
+					data-submit-label="Yes"
+					data-width="400px"
+					data-template-footer="false"
+					data-close-label="No"
+					data-destroy-on-close="true">
+					<%= t('reset_password_title') %>
+				</a>
+            <% end %>
           <% end %>
 			  <%end%>
 		</div>
 	  <% end %>
 
-		<%= user_avatar(@user, :medium, "profile_pic") %>	
+		<%= user_avatar(@user, :medium, "profile_pic", {:width => "120px"}) %>	
 		<h3 class="title"><%= h(@user.display_name) %></h3>
 		<% unless @user.job_title.blank? %>
 		   <b><%= h @user.job_title %></b>
@@ -83,20 +119,19 @@
 <div class="contact-box-additional">
 	<%= render_agent_tickets%>
 </div>	 
-<% javascript_tag do %> 
+<div id="agent-deletion-confirmation" class="hide">
+	<p class="margin-bottom"><br/><%= t('agent.convert_agent_confirmation')%></p>
+</div>
+<div id="agent-gamification-reset" class="hide">
+	<p class="margin-bottom"><br/> 
+		<% reset_score_alert = (@user == current_user ? 'agent.reset_score_alert_you' : 'agent.reset_score_alert_them') %>
+		<%= t(reset_score_alert, :points => current_account.scoreboard_levels.least_points.first.points, :name => @user.name) %></p>
+</div>
+<%= javascript_tag do %> 
 jQuery("#reset_password_button").click(function() 
 {
 	jQuery(this).addClass("disabled");
 });
-
-
-function confirm_password()
-{
- 	jQuery("#reset_password_template").dialog({
-       position: "top",
-       title: '<%= t('reset_password_title') %>'
-    });
- }
 
 // need to convert this to util
 jQuery(document).ready(function(){
@@ -107,5 +142,13 @@ jQuery(document).ready(function(){
   if (jQuery.trim( jQuery('div.action_buttons').text() ).length != 0) {
     jQuery('div.action_buttons').show();
   }
+});
+
+jQuery('#agent-deletion-confirmation-submit').live("click", function(){
+	jQuery('#agent_contact_convert').trigger('click');
+});
+
+jQuery('#agent-gamification-reset-submit').live('click', function(){ 
+	jQuery('#agent_score_reset').trigger('click');
 });
 <%end%>

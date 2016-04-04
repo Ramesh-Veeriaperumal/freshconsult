@@ -8,10 +8,10 @@
         <span><%=@data_obj['comparison_field'][selected.to_sym]%></span>
         <ul class="showHideDiv_container pull-right">
           <li data-graph="line_chart" data-type="<%=selected%>" class="bargraph-icon active">
-            <img src="/images/spacer.gif" class="reports-icon-barGraph-icon-b" width="20px" height="20px"/>
+            <img src="<%= spacer_image_url %>" class="reports-icon-barGraph-icon-b" width="20px" height="20px"/>
           </li>
           <li data-graph="bar_chart" data-type="<%=selected%>" class="bargraph-icon">
-            <img src="/images/spacer.gif" class="reports-icon-lineGraph-icon-b" width="20px" height="20px"/>
+            <img src="<%= spacer_image_url %>" class="reports-icon-lineGraph-icon-b" width="20px" height="20px"/>
           </li>
         </ul>
       </h3>

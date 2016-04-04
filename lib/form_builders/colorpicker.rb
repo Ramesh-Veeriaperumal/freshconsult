@@ -12,7 +12,7 @@ module FormBuilders::Colorpicker
         output = []
         output << %( <input type='color' id ="#{options[:id]}" class="#{options[:class]}" value="#{options[:value]}" data-hex="true" data-loadedScript="true" name="#{options[:name]}"  maxlength="#{options[:maxlength]}" /> )
         output << %(<script type="text/javascript">
-            scriptLoader.load('colorpicker');
+            Fjax.Assets.plugin('colorpicker');
           </script>
         )
         

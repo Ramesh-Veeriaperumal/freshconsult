@@ -1,7 +1,7 @@
 class Helpdesk::CloudFileDrop < BaseDrop
   
   include ActionView::Helpers::NumberHelper
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
     
   def initialize(source)
     super source

@@ -40,13 +40,21 @@
 
 		<section class="user-comment" id="ticket-description">			
 			<div class="user-info">
+			{% if ticket.outbound_email? %}
+				{{ ticket.outbound_initiator | profile_image:'user-pointer-bottom', '40px', '40px' }}
+				<div class="user-details">
+					<h4 class="user-name">{{ ticket.outbound_initiator.name | h}}</h4>
+					<div class="p-info">{% translate portal.reported %} {{ ticket.created_on | time_ago }}</div>
+				</div>
+			{% else %}
 				{{ ticket.requester | profile_image:'user-pointer-bottom', '40px', '40px' }}
 				<div class="user-details">
 					<h4 class="user-name">{{ ticket.requester.name | h}}</h4>
 					<div class="p-info">{% translate portal.reported %} {{ ticket.created_on | time_ago }}</div>
 				</div>
+			{% endif %}
 			</div>
-			<div class="p-content">
+			<div class="p-content" rel="image-enlarge">
 				<div class="p-desc">
 					{{ ticket.description_html }}
 					{{ ticket | freshfone_audio_dom }}
@@ -58,7 +66,7 @@
 
 		<section id="ticket-comments">
 			{% for comment in ticket.public_comments %}
-				<section class="user-comment {% if comment.user.is_agent %} comment-by-agent {% endif %}" 
+				<section class="user-comment {% if comment.by_agent %} comment-by-agent {% endif %}" 
 						 id="ticket-note-{{ comment.id }}">
 
 					<div class="user-info">
@@ -69,8 +77,9 @@
 						</div>
 					</div>
 					
-					<div class="p-content">						
+					<div class="p-content" rel="image-enlarge">						
 						<div class="p-desc">
+							{{ comment | custom_survey_data}}
 							{{ comment.description }}
 							{{ comment | freshfone_audio_dom }}
 						</div>
@@ -90,7 +99,7 @@
 						<h4 class="user-name">{{ portal.user.name | h}}</h4>
 					</div>
 				</div>
-				<div class="p-content">
+				<div class="p-content" rel="image-enlarge">
 					<input type="text" class="special span12" 
 							placeholder="{% translate portal.tickets.reply_placeholder %}" id="add-note-form-proxy" 
 							data-proxy-for="#add-note-form" />

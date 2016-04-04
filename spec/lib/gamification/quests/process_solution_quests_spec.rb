@@ -113,6 +113,6 @@ describe Gamification::Quests::ProcessSolutionQuests do
 			bonus_pts.should eql(quest.points)
 
 			sb_level = @account.scoreboard_levels.level_for_score(total_points).first
-			@user.agent.scoreboard_level_id.should eql(sb_level.id)
+			@user.agent.scoreboard_level_id.should eql(sb_level.id) if sb_level
 		end
 end

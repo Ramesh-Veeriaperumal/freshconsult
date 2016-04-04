@@ -3,16 +3,58 @@
 	<p><%=t('email_command_setting.helpcard.info2').html_safe%></p>
 	<p><%=t('email_command_setting.helpcard.info3').html_safe%></p> 
 
-	 <span class="seperator"></span>
-	 <p>
-	 <h4><%=t('ticket.available_commands').html_safe%></h4>
-	 <strong><%=t('status').html_safe%></strong> : <%=t('pending').html_safe%><br>
-	 <strong><%=t('ticket.priority').html_safe%></strong> : <%=t('medium').html_safe%><br>
-	 <strong><%=t('ticket.assigned_agent').html_safe%></strong>: John Robert<br>
-	 <strong><%=t('ticket_fields.fields.group').html_safe%></strong>: <%=t('sales').html_safe%><br>
-	 <strong><%=t('ticket.source').html_safe%></strong>: <%=t('email')%><br>
-	 <strong><%=t('ticket.type')%></strong>: <%=t('email_command_setting.helpcard.ticket_type_example')%><br>
-	 <strong><%=t('ticket_fields.fields.product')%></strong>: <%=t('email_configs.freshdesk')%><br>
-	 <%= @email_content_custom_commands.html_safe%>		 
-	</p>
+	<span class="seperator"></span>
+	<h3 class="title"> <%=t('ticket.available_commands').html_safe%> </h3>
+	
+	<ul class="mb10">
+	 <li>
+	 	<span class="available-command-list">
+	 		<%=t('status').html_safe%>
+	 	</span>: <%=t('pending').html_safe%>
+	 </li>
+	 <li>
+	 	<span class="available-command-list">
+	 		<%=t('ticket.priority').html_safe%>
+	 	</span>: <%=t('medium').html_safe%>
+	 </li>
+	 <li>
+	 	<span class="available-command-list">
+	 		<%=t('ticket.assigned_agent').html_safe%>
+	 	</span>: John Robert
+	 </li>
+	 <li>
+	 	<span class="available-command-list">
+	 		<%=t('ticket_fields.fields.group').html_safe%>
+	 	</span>: <%=t('sales').html_safe%>
+	 </li>
+	 <li>
+	 	<span class="available-command-list">
+	 		<%=t('ticket.source').html_safe%>
+	 	</span>: <%=t('email')%>
+	 </li>
+	 <li>
+	 	<span class="available-command-list">
+	 		<%=t('ticket.type')%>
+	 	</span>: <%=t('email_command_setting.helpcard.ticket_type_example')%>
+	 </li>
+	 <li>
+	 	<span class="available-command-list">
+	 		<%=t('ticket_fields.fields.product')%>
+	 	</span>: <%=t('email_configs.freshdesk')%>
+	 </li>
+	 <li>
+	 	<span class="available-command-list">
+	 		<%=t('ticket.action')%>
+	 	</span>: <%=t('email_command_setting.helpcard.note')%>
+	 </li>
+	 <% current_account.ticket_fields.custom_fields.each do |field| %>
+	   <% unless field.field_type == "nested_field" %>
+	   <li>
+	   	<span class="available-command-list">
+	   		<%= field.label %>
+	   	</span>: [Custom Field Value]
+	   </li>
+	   <%end%>
+	 <%end%>	 
+	</ul>
 	<%= tour_button(t('email_command_setting.helpcard.tour').html_safe, '5017d45de13a46792b000015') %>

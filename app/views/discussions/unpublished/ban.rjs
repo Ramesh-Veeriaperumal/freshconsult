@@ -2,6 +2,6 @@ page << "jQuery('#post_#{@spam_post.timestamp.to_i} .post-ban-user').removeTip()
 page.replace_html "post_#{@spam_post.timestamp.to_i}", render(:partial => "after_ban")
 page << "App.Discussions.Moderation.banPostUser(#{@spam_post.timestamp.to_i}, 10);"
 page << "App.Discussions.setSpamCounts(#{@counts.to_json.html_safe});"
-if params[:popup]
+if params[:popup].to_bool
 	page << "App.Discussions.Moderation.closeModal('#{Post::SPAM_SCOPES_DYNAMO.key(@spam_post.class)}', 10.5);"
 end

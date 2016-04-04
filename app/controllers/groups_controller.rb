@@ -41,7 +41,7 @@ class GroupsController < Admin::AdminController
   end
 
   def create
-     @group = current_account.groups.new(params[nscname])     
+     @group = current_account.groups.new(params[nscname].except(:added_list, :removed_list))     
      agents_data = params[:group][:agent_list] 
      #for api to pass agent_id as an comma separated value/otherwise UI sends as array so each will take care.
      agents_data.split(',').each { |agent| @group.agent_groups.build(:user_id =>agent) } unless agents_data.blank?
@@ -70,11 +70,12 @@ class GroupsController < Admin::AdminController
     
      @group = current_account.groups.find(params[:id])
      @group.business_calendar_id = params[:group][:business_calendar]
+     filtered_params = params[nscname].reject { |k| k == "added_list" || k == "removed_list" }
      respond_to do |format|      
-      if @group.update_attributes(params[nscname])
+      if @group.update_attributes(filtered_params)
         format.html do
           update_agent_list
-          redirect_to(groups_url, :notice => 'Group was successfully updated.')
+          redirect_to(groups_url, :notice => t(:'flash.general.update.success', :human_name => 'Group'))
         end    
         format.xml do
           update_agents
@@ -126,6 +127,16 @@ class GroupsController < Admin::AdminController
       format.json { head :ok }
     end
     
+  end
+
+  def toggle_roundrobin
+    if current_account.features?(:disable_rr_toggle)
+      current_account.features.disable_rr_toggle.destroy
+    else
+      current_account.features.disable_rr_toggle.create
+    end
+    flash[:notice] = t('group.settings_saved')
+    render :action => 'index'
   end
   
 protected

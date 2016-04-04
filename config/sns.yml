@@ -2,15 +2,19 @@ development:
   social_notification_topic: social_notification_dev
   reports_notification_topic: reports_notification_dev
   dev_ops_notification_topic: dev_ops_notification_dev
+  mailbox_notification_topic: mailbox_notification_dev
 staging:
   social_notification_topic: social_notification_staging
   reports_notification_topic: reports_notification_staging
   dev_ops_notification_topic: dev_ops_notification_staging
+  mailbox_notification_topic: mailbox_notification_staging
 production:
   social_notification_topic: social_notification_production
   reports_notification_topic: reports_notification_production
   dev_ops_notification_topic: dev_ops_notification_production
+  mailbox_notification_topic: mailbox_notification_production
 test:
   social_notification_topic: social_notification_test
   reports_notification_topic: reports_notification_test
   dev_ops_notification_topic: dev_ops_notification_test
+  mailbox_notification_topic: mailbox_notification_test

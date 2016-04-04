@@ -120,11 +120,12 @@ module AuthenticationSystem
     end
   
     def require_user
+
       unless authorized?
         respond_to do |wants|
           wants.html do
             store_location
-            flash[:notice] = I18n.t(:'flash.general.need_login')
+            flash[:notice] = password_expired? ? I18n.t(:'flash.general.password_expired') :I18n.t(:'flash.general.need_login')
             redirect_to login_url
           end
           
@@ -146,7 +147,7 @@ module AuthenticationSystem
     end
   
     def store_location
-      session[:return_to] = request.fullpath
+      session[:return_to] = request.original_fullpath
     end
   
     def redirect_back_or_default(default)
@@ -156,7 +157,8 @@ module AuthenticationSystem
 
     def authenticate_admin
       authenticate_or_request_with_http_basic do |user, password|
-        user == 'super' && password == 'SPIDEYd00per'
+        password_hash = Digest::MD5.hexdigest(password)
+        user == 'super' && password_hash == "e621cfc8e4ee61466898a0b65279b111"
       end
     end
 
@@ -174,8 +176,13 @@ module AuthenticationSystem
       unless current_user.day_pass_granted_on
         store_location
         log_out!
-        flash[:notice] = I18n.t('agent.day_pass_expired')
-        redirect_to login_url
+        respond_to do |format|
+          format.json { day_pass_expired_json } # defined in application_concern.
+          format.all do 
+            flash[:notice] = I18n.t('agent.day_pass_expired')
+            redirect_to login_url
+          end
+        end
       end
     end
     
@@ -192,6 +199,7 @@ module AuthenticationSystem
       true
     end
     
+    # Check qualify_for_day_pass? method in api_applciation_controller if this method is modified.
     def qualify_for_day_pass?
       current_user && current_user.occasional_agent? && !current_account.subscription.trial? && !is_assumed_user?
     end

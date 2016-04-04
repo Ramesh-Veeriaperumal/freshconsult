@@ -16,8 +16,8 @@
 }
 .user-pic-thumb img{ width:40px; }
 .user-pic-normal img{ width:auto; }
-.uv-user-thumb .user-pic-thumb img{ width:30px; }
-.c-user-thumb .user-pic-thumb img{ width:35px; }
+.uv-user-thumb .user-pic-thumb img{ width:40px; }
+.c-user-thumb .user-pic-thumb img{ width:40px; }
 
 .user-pic-original img{
 	border:1px solid #dddddd; 
@@ -106,6 +106,7 @@
 input.date.datepicker_popover {
 	@include padding(4px 4px 4px 25px);
 	height: auto;
+	width: 100%;
 }
 
 .form-horizontal {
@@ -121,4 +122,9 @@ input.date.datepicker_popover {
 	font-size: 12px;
 	line-height: 18px;
 	padding-bottom: 6px;
+}
+.user-comment{
+	.user-pic-thumb{
+		background: transparent;
+	}
 }

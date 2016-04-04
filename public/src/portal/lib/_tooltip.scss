@@ -29,7 +29,7 @@ $tooltipArrowColor:         $tooltipBackground !default;
 
 // Wrapper for the tooltip content
 .tooltip-inner {
-  max-width: 300px;
+  max-width: 600px;
   padding: 3px 8px;
   color: $tooltipColor;
   @include text-align(center);

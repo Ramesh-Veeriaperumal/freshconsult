@@ -24,7 +24,7 @@ describe AccountsController do
 		Resque.inline = false
 		Billing::Subscription.any_instance.unstub(:create_subscription)
 		json_response.should include("success", "host", "t", "support_email")
-		json_response["success"].should be_true
+		json_response["success"].should eql(true)
 		new_user = User.find_by_email(json_response["support_email"])
 		json_response["t"].should be_eql(new_user.single_access_token)
 	end

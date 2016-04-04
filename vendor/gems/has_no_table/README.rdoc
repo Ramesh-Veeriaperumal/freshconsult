@@ -1,0 +1,3 @@
+= Has No Table
+
+This project rocks and uses MIT-LICENSE.

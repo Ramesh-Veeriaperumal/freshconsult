@@ -1,0 +1,9 @@
+<%
+	if(remarks && remarks.length>0){
+		for(var i=0;i<remarks.length;i++){
+%>
+		<%= JST["survey/reports/template/content_response_item"]({remark:remarks[i]})%>
+<%
+		}
+	}
+%>

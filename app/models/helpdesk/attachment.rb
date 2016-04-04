@@ -3,6 +3,11 @@ require 'mime/types'
 
 class Helpdesk::Attachment < ActiveRecord::Base
 
+  self.table_name =  "helpdesk_attachments"
+  self.primary_key = :id
+
+  include Helpdesk::Utils::Attachment
+
   MIME_TYPE_MAPPING = {"ppt" => "application/vnd.ms-powerpoint",
                        "doc" => "application/msword",
                        "xls" => "application/vnd.ms-excel",
@@ -13,7 +18,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   MAX_DIMENSIONS = 16000000
 
-  set_table_name "helpdesk_attachments"
+  NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account", 
+    "Helpdesk::ArchiveTicket", "Helpdesk::ArchiveNote"]
+
+  self.table_name =  "helpdesk_attachments"
   belongs_to_account
 
   belongs_to :attachable, :polymorphic => true
@@ -27,10 +35,12 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :s3_protocol => :https,
     :url => "/:s3_alias_url",
     :s3_host_alias => S3_CONFIG[:bucket_name],
+    :s3_host_name => S3_CONFIG[:s3_host_name],
     :whiny => false,
+    :restricted_characters => /[&$+,\/:;=?@<>\[\]\{\}\|\\\^~%#]/,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
 
-   named_scope :gallery_images,
+   scope :gallery_images,
     {
       :conditions => ['description = ? and attachable_type = ?',
       'public', 'Image Upload'],
@@ -39,27 +49,64 @@ class Helpdesk::Attachment < ActiveRecord::Base
     }
 
 
-    #before_validation_on_create :set_random_secret
     before_post_process :image?, :valid_image?
-    #before_post_process :set_content_dispositon
     before_create :set_content_type
     before_save :set_account_id
 
-   def s3_permissions
+  alias_attribute :parent_type, :attachable_type
+
+  class << self
+
+    def s3_path(att_id, content_file_name)
+      "data/helpdesk/attachments/#{Rails.env}/#{att_id}/original/#{content_file_name}"
+    end
+
+    def create_for_3rd_party account, item, attached, i, content_id, mailgun=false
+      limit = mailgun ? HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE : 
+                        HelpdeskAttachable::MAX_ATTACHMENT_SIZE
+      unless item.validate_attachment_size({:content => attached.tempfile},
+                                           {:attachment_limit => limit })
+        filename = self.new.utf8_name attached.original_filename,
+                             "attachment-#{i+1}"
+        attributes = { :content_file_name => filename,
+                       :content_content_type => attached.content_type,
+                       :content_file_size => attached.tempfile.size.to_i
+                      }
+        write_options = { :content_type => attached.content_type }
+        if content_id
+          model = item.is_a?(Helpdesk::Ticket) ? "Ticket" : "Note"
+          attributes.merge!({:description => "content_id", :attachable_type => "#{model}::Inline"})
+          write_options.merge!({:acl => "public-read"})
+        end
+
+        att = account.attachments.new(attributes)
+        if att.save
+          path = s3_path(att.id, att.content_file_name)
+          AwsWrapper::S3Object.store(path, 
+                                     attached.tempfile, 
+                                     S3_CONFIG[:bucket], 
+                                     write_options)
+          att
+        end
+      end
+    end
+  end
+
+  def s3_permissions
     public_permissions? ? "public-read" : "private"
-   end
+  end
 
-   def public_permissions?
+  def public_permissions?
     description and (description == "logo" || description == "fav_icon" || description == "public" || description == "content_id")
-   end
+  end
 
-   def set_content_type
+  def set_content_type
     mime_content_type = lookup_by_extension(File.extname(self.content_file_name).gsub('.',''))
     self.content_content_type = mime_content_type unless mime_content_type.blank?
-   end
+  end
 
-   def set_content_dispositon
-     self.content.options.merge({:s3_headers => {"Content-Disposition" => "attachment; filename="+self.content_file_name}})
+  def set_content_dispositon
+    self.content.options.merge({:s3_headers => {"Content-Disposition" => "attachment; filename="+self.content_file_name}})
   end
 
   def attachment_url
@@ -84,6 +131,14 @@ class Helpdesk::Attachment < ActiveRecord::Base
     audio? /^audio\/(mp3|mpeg)/
   end
 
+  def object_type
+    :attachable
+  end
+
+  def has_thumbnail?
+    !(NON_THUMBNAIL_RESOURCES.include?(attachable_type))
+  end
+
   def attachment_sizes
    if self.description == "logo"
       return {:logo => "x50>"}
@@ -98,20 +153,23 @@ class Helpdesk::Attachment < ActiveRecord::Base
     [:account_id, :description, :content_updated_at, :attachable_id, :attachable_type]
   end
 
-  def attachment_url_for_api
-    AwsWrapper::S3Object.url_for(content.path, content.bucket_name, :expires => 1.days)
+  def attachment_url_for_api(secure=true)
+    AwsWrapper::S3Object.url_for(content.path, content.bucket_name, { :expires => 1.days, :secure => secure })
   end
 
-  def to_json(options = {})
+  def as_json(options = {})
     options[:except] = exclude
     options[:methods] = [:attachment_url_for_api]
-    json_str = super(options)
-    ActiveSupport::JSON.encode(ActiveSupport::JSON.decode(json_str)["attachment"]).sub("\"attachment_url_for_api\"", "\"attachment_url\"")
+    json_hash = super(options)
+    #json_hash[:attachment_url] = json_hash['attachment'].delete(:attachment_url_for_api)
+    attachment_hash = json_hash['attachment']
+    attachment_hash[:attachment_url] = attachment_hash.delete(:attachment_url_for_api)
+    json_hash['attachment'] = attachment_hash
   end
 
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => exclude) do |xml|
          xml.tag!("attachment_url", attachment_url_for_api)
@@ -146,7 +204,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   private
 
   def set_random_secret
-    self.random_secret = ActiveSupport::SecureRandom.hex(8)
+    self.random_secret = SecureRandom.hex(8)
   end
 
   def lookup_by_extension(extension)
@@ -154,10 +212,12 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def set_account_id
-    if attachable and self.attachable.class.name=="Account"
-      self.account_id = self.attachable_id
-    elsif attachable
-      self.account_id = attachable.account_id
+    unless self.account_id
+      if attachable and self.attachable.class.name=="Account"
+        self.account_id = self.attachable_id
+      elsif attachable
+        self.account_id = attachable.account_id
+      end
     end
   end
 

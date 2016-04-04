@@ -1,25 +1,36 @@
 class User < ActiveRecord::Base
   
-  #next validations are replaced with :on => :create/:update for rails 3
-  before_validation_on_create :create_user_email, :if => [:email_available?, :user_emails_migrated?]
-  before_validation_on_update :update_user_email, :if => [:email_changed?, :user_emails_migrated?]
-  after_update :update_verified, :if => [:email_available?, :active_changed?, :user_emails_migrated?]
+  #------User email callbacks starts here------------------------------
+  #If the user is created by API call or agent create we need to create user_email
+  before_validation :create_user_email, on: :create, :if => [:email_available?]
 
-  #For user email UI feature  
-  before_validation_on_create :assign_primary_email, :if => :has_contact_merge?
-  before_validation_on_create :update_user_table_email, :if => :has_contact_merge?
+  #If email is updated for user through API or google or if the agent email is updated
+  #user_email should be updated
+  before_validation :update_user_email, on: :update, :if => [:email_changed?]
 
-  before_validation_on_update :set_primary_email, :if => :has_contact_merge?
+  #To update the verified in user_email, when the active is changed
+  after_update :update_verified, :if => [:email_available?, :active_changed?]
 
+  #For user email UI feature. To assign primary email. contact form with multiple emails.
+  before_validation :assign_primary_email, on: :create, :if => :has_contact_merge?
+
+  #To update user table's email on user create through contact form with multiple emails
+  before_validation :update_user_table_email, on: :create, :if => :has_contact_merge?, :unless => [:email_available?]
+
+  #To update the primary email on user's update through contact form with multiple emails
+  before_validation :set_primary_email, on: :update, :if => [:has_contact_merge?], :unless => [:email_changed?]
+
+  #To remove duplicate emails. needed only for contact form with multiple emails
   before_validation :remove_duplicate_emails, :if => :has_contact_merge?
 
-  #user email related callback changes for user
-  before_update :make_inactive, :if => :email_changed?
-  after_update :drop_authorization , :if => [:email_changed?, :no_multiple_user_emails]
-  after_commit_on_update :send_activation_email, :if => [:email_updated?]  
+  #Sanity check. Not enforced in production and test
+  after_commit :verify_details_on_create, on: :create
+  after_commit :verify_details_on_update, on: :update
 
-  after_commit_on_create :verify_details
-  after_commit_on_update :verify_details
+  #------User email callbacks ends here------------------------------
+
+  before_update :make_inactive, :if => :email_changed?
+  after_commit :send_activation_email, on: :update, :if => [:email_updated?]
 
   def drop_authorization
     authorizations.each do |auth|
@@ -36,7 +47,7 @@ class User < ActiveRecord::Base
   def verify_details
     unless ["production", "test"].include?(Rails.env)
       self.reload
-      if user_emails_migrated? and email_available? and no_contact_merge
+      if email_available? and no_contact_merge
         raise error_text unless (self.primary_email.present? and (self.email == self.primary_email.email and self.active == self.primary_email.verified))
       end
 
@@ -50,6 +61,8 @@ class User < ActiveRecord::Base
       end
     end
   end
+  alias :verify_details_on_create :verify_details
+  alias :verify_details_on_update :verify_details
 
   def error_text
     %(Record error ::: email : #{self.email}, active : #{self.active}, 
@@ -83,7 +96,7 @@ class User < ActiveRecord::Base
           reset_primary_email(current_primary.id) if current_primary.email != primary_email.email
         else
           current_primary.primary_role = true
-          self.primary_email = current_primary
+          #self.primary_email = current_primary
         end
         self.email = current_primary.email
       else
@@ -95,7 +108,7 @@ class User < ActiveRecord::Base
 
   def create_user_email
     # for user email
-    build_primary_email({:email => self[:email], :primary_role => true, :verified => active, :account_id => account.id}) if self.user_emails.empty?
+    build_primary_email({:email => self[:email], :primary_role => true, :user => self, :verified => active, :account => self.account}) if self.user_emails.empty?
   end
 
   def update_user_email
@@ -103,6 +116,8 @@ class User < ActiveRecord::Base
     if primary_email
       if email_available?
         self.primary_email.email = self[:email]
+        self.primary_email.verified = false
+        true
       else
         self.primary_email.mark_for_destruction
       end
@@ -140,18 +155,6 @@ class User < ActiveRecord::Base
   end
 
     #feature checks
-    def user_emails_migrated?
-      # for user email delta
-      self.account.user_emails_migrated?
-    end
-
-    def no_multiple_user_emails
-      !has_multiple_user_emails?
-    end
-
-    def has_multiple_user_emails?
-      self.account.features_included?(:multiple_user_emails) 
-    end
 
     def no_contact_merge
       !has_contact_merge?

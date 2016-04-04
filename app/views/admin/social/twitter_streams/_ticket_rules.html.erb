@@ -7,7 +7,7 @@
 <% end %>
 <a href="" id="add_new_rule" class="add-another"><%= font_icon "plus", :size=>"14" %><%= t('admin.social.ticket_rules.add') %></a>
 
-<% javascript_tag  do %>
+<%= javascript_tag  do %>
 
   jQuery('#create_rule').live('click', function (event) {
     console.log("Create rule clikced");

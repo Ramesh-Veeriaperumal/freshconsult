@@ -1,10 +1,8 @@
-
 <% content_for :helpcard do %>
 <%= render :partial => "helpnote_without_tour" %>
 <% end %>
 <h3 class="lead itil-hide"><%=t('sla_policy.edit')%></h3>
-<% form_for(@sla_policy, :html => {:class => 'sla_policy_form'}) do |f| %>
+<%= form_for(@sla_policy, :html => {:class => 'sla_policy_form'}) do |f| %>
 	<%= generate_breadcrumbs(params, f) %>
-	<%= form_partial(f) %>
-   		
+	<%= form_partial(f) %>   		
 <% end %>

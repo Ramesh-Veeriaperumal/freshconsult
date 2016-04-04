@@ -9,16 +9,16 @@ class ForumUnpublished < Dynamo
 	after_destroy :decr_counter, :destroy_next
 
 	def self.table_name
-		"forum_unpublished_#{RAILS_ENV[0..3]}_#{Time.now.utc.strftime('%Y_%m')}"
+		"forum_unpublished_#{Rails.env[0..3]}_#{Time.now.utc.strftime('%Y_%m')}"
 	end
 
 	def next_table
 		ForumUnpublishedNext
 	end
 
-	def self.by_user(acc, user, user_timestamp)
+	def self.by_user(user, user_timestamp)
 		query(
-			:account_id => acc,
+			:account_id => Account.current.id,
 			:user_timestamp => 
 			[:between, user_timestamp, next_user_timestamp(user)],
 			:ascending => true

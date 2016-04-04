@@ -3,7 +3,7 @@ require 'spec_helper'
 include GnipHelper
 include DynamoHelper
 include Social::Twitter::Constants
-include Social::Dynamo::Twitter
+#include Social::Dynamo::Twitter
 include Social::Util
 include Mobile::Constants
 
@@ -69,7 +69,7 @@ describe Social::TwitterController do
       tweet_id = fd_item_params[:item][:feed_id]
       tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
-      tweet.is_ticket?.should be_true
+      tweet.is_ticket?.should be true
       
       if GNIP_ENABLED
         feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)
@@ -88,7 +88,7 @@ describe Social::TwitterController do
       tweet_id = fd_item_params[:item][:feed_id]
       tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
-      tweet.is_ticket?.should be_true
+      tweet.is_ticket?.should be true
       #Covering exception
       post :create_fd_item, fd_item_params 
       json_response.should include("message","items","result")  
@@ -108,7 +108,7 @@ describe Social::TwitterController do
       tweet_id = fd_item_params[:item][:feed_id]
       tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
-      tweet.is_ticket?.should be_true
+      tweet.is_ticket?.should be true
       ticket = tweet.tweetable
       
       @stream_id = "#{@account.id}_#{@custom_stream.id}"
@@ -117,14 +117,14 @@ describe Social::TwitterController do
       reply_tweet_id = twitter_feed[:id]
       twitter_feed[:in_reply_to_status_id_str] = tweet_id
       twitter_feed = Social::Twitter::Feed.new(twitter_feed)
-      Social::Workers::Stream::Twitter.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
+      Social::CustomStreamTwitter.new.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
       
       tweet = @account.tweets.find_by_tweet_id(reply_tweet_id)
       tweet.should_not be_nil
-      tweet.is_note?.should be_true
+      tweet.is_note?.should be true
       
       #Covering exception
-      Social::Workers::Stream::Twitter.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
+      Social::CustomStreamTwitter.new.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
     end
   end
   
@@ -186,7 +186,7 @@ describe Social::TwitterController do
       tweet_id = fd_item_params[:item][:feed_id]
       tweet = @account.tweets.find_by_tweet_id(tweet_id)
       tweet.should_not be_nil
-      tweet.is_ticket?.should be_true
+      tweet.is_ticket?.should be true
       ticket = tweet.tweetable
       
       if GNIP_ENABLED
@@ -331,7 +331,7 @@ describe Social::TwitterController do
     
     json_response.should include("message","result")
     json_response["message"].should be_eql(MOBILE_TWITTER_RESPONSE_CODES[:favorite_success])
-    json_response["result"].should be_true
+    json_response["result"].should be true
   end
   
   it "should unfavorite the tweet on clicking the unfavorite icon" do
@@ -385,7 +385,7 @@ describe Social::TwitterController do
 
     json_response.should include("message","result")
     json_response["message"].should be_eql(MOBILE_TWITTER_RESPONSE_CODES[:unfavorite_success])
-    json_response["result"].should be_true
+    json_response["result"].should be true
 
     if GNIP_ENABLED
       feed_entry, user_entry = dynamo_feed_for_tweet(@handle, sample_gnip_feed, true)

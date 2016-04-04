@@ -2,15 +2,15 @@
 	<% container_id = container_id || "sortable" %>
 	<div class="sortable hide" id="<%= container_id %>">
 		<h4 class="title"><%= t('reorder') %></h4>
-		<% form_for :reorder, items, :url => action_url, :html => { :method => :put } do |f| %>
+		<%= form_for items.first, :url => action_url, :html => { :method => :put } do |f| %>
 		  <input name="reorderlist" type="hidden" value="" />
 		  <ul class="sort-list" rel="sortlist">
 			  <% items.each do |item| %>
 			  	<% disabled ||= nil %>
-			  	<% content_tag :li, :item_id => item.id, 
+			  	<%= content_tag :li, :item_id => item.id, 
 			  	:class => (disabled && item.respond_to?(disabled) && item.send(disabled) && "disabled") do %>
 			  		<span class="sort_handle"></span>
-			  		<%= h(item.send(title)) %> 
+			  		<%= h(item.send(title)).truncate(100) %> 
 			  	<% end %>
 			  <% end %>
 		  </ul>

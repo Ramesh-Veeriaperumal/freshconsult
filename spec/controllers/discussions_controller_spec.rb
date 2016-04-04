@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe DiscussionsController do
 
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -62,14 +61,16 @@ describe DiscussionsController do
 			get :show, :id => @forum_category.id
 			response.should render_template("discussions/show")
 			response.body.should =~ /#{@forum_category.name}/
-			category_forums = @forum_category.forums.all(:order => 'position').paginate(:page => params[:page])
+			category_forums = @forum_category.forums.all(:order => 'position').paginate(:page => controller.params[:page])
+      @forum_category.forums.order('position').paginate(:page => controller.params[:page])
+      
 			fetched_forums_from_controller = controller.instance_variable_get("@forums")
 			fetched_forums_from_controller.should =~ category_forums
 		end
 
-		it "should redirect to discussions_path when the forum_category corresponding to the given id is not found" do
+		it "should redirect to /discussions when the forum_category corresponding to the given id is not found" do
 			get :show, :id => 1000
-			response.should redirect_to(discussions_path)
+			response.should redirect_to '/discussions'
 		end
 	end
 
@@ -87,7 +88,7 @@ describe DiscussionsController do
 
 		it "should not create a new forum category when there is no name" do
 			post :create, :forum_category => {}
-			response.body.should =~ /Name can&#39;t be blank./
+			response.body.should =~ /Name can&#x27;t be blank/
 		end
 	end
 
@@ -111,12 +112,13 @@ describe DiscussionsController do
 			get :categories
 			response.should render_template("discussions/categories")
 			fetched_categories_from_controller = controller.instance_variable_get("@forum_categories")
-			fetched_categories_from_controller.should =~ @account.forum_categories
+			fetched_categories_from_controller.should == @account.forum_categories
 		end
 
 		it "should display all categories, underlying forums, my posts, all posts and other views in the sidebar" do
-			get :sidebar
-			response.should render_template("discussions/shared/_sidebar_categories.html.erb")
+			request.env["HTTP_ACCEPT"] = "application/javascript"
+      get :sidebar
+			response.should render_template("discussions/shared/_sidebar_categories")
 		end
 	end
 
@@ -138,10 +140,15 @@ describe DiscussionsController do
 			p2 = create_product({
                                 :portal_url => "#{Faker::Internet.domain_word}.#{Faker::Internet.domain_name}"
                                 })
-			
-			arr = [p1.portal.id, p2.portal.id, @account.main_portal.id]
-			@forum_category = create_test_category_with_portals(p1.portal.id, p2.portal.id)
-			result = @forum_category.portal_forum_categories.map(&:portal_id)
+			arr = [p1.portal.id, p2.portal.id]
+
+			post :create, :forum_category => {
+												:name => "Test category with portals",
+												:portal_ids => arr
+											}
+											
+			category = @account.forum_categories.find_by_name("Test category with portals")
+			result = category.portal_forum_categories.map(&:portal_id)
 			result.sort.should eql arr.sort
 		end
 	end

@@ -1,5 +1,5 @@
 class Freshfone::CallController < FreshfoneBaseController
-	include Freshfone::FreshfoneHelper
+	include Freshfone::FreshfoneUtil
 	include Freshfone::CallHistory
 	include Freshfone::Presence
 	include Freshfone::NumberMethods
@@ -7,13 +7,18 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::TicketActions
 	include Freshfone::Call::EndCallActions
 	
+	include Freshfone::Search
 	before_filter :load_user_by_phone, :only => [:caller_data]
 	before_filter :set_native_mobile, :only => [:caller_data]
 	before_filter :populate_call_details, :only => [:status]
+	before_filter :set_abandon_state, :only => [:status]
 	before_filter :force_termination, :only => [:status]
 	before_filter :clear_client_calls, :only => [:status]
 	before_filter :reset_outgoing_count, :only => [:status]
+	before_filter :validate_trial, :only => [:trial_warnings]
 	
+	skip_after_filter :set_last_active_time, :only => [:caller_data], :unless =>lambda{ params[:outgoing]}
+
 	include Freshfone::Call::CallCallbacks
 	include Freshfone::Call::BranchDispatcher
 
@@ -25,13 +30,14 @@ class Freshfone::CallController < FreshfoneBaseController
           :call_meta => call_meta
         }
       }
-      format.js {
+      format.json {
 				render :json => {
      		  :user_hover => render_to_string(:partial => 'layouts/shared/freshfone/caller_photo', 
-                          :locals => { :user => @user }),
-		      :user_name => (@user || {})[:name],
+					:locals => { :user => @user }),
+		      :user_name => caller_lookup(params[:PhoneNumber],@user),
   	 		  :user_id => (@user || {})[:id],
-          :call_meta => call_meta
+          :call_meta => call_meta,
+          :caller_card => caller_card
     		}
       }
 	  end
@@ -44,7 +50,7 @@ class Freshfone::CallController < FreshfoneBaseController
 			notify_error({:ErrorUrl => e.message})
 			return empty_twiml
 		ensure
-			add_cost_job unless call_transferred?
+			add_cost_job
 		end
 	end
 
@@ -54,23 +60,58 @@ class Freshfone::CallController < FreshfoneBaseController
 		render :json => { :can_accept => (status) ? 1 : 0 }
 	end
 
+	def caller_recent_tickets 	
+		caller =  current_account.all_users.find_by_id(params[:id]) unless params[:id].blank?
+		if caller.present?
+			@caller_tickets_count = current_account.tickets.permissible(current_user).requester_active(caller).visible.count
+			@caller_tickets = current_account.tickets.permissible(current_user).requester_active(caller).visible.newest(3).find(:all, 
+      				:include => [:ticket_status])
+		end
+    render :partial => 'freshfone/caller/caller_recent_tickets'
+	end
+
+	def trial_warnings
+		respond_to do |format|
+			format.json do
+				render :json => trial_warnings_meta
+			end
+		end
+	end
+
 	private
 		def load_user_by_phone
-			@user = Freshfone::Search.search_user_with_number(params[:PhoneNumber])
+			@user = search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
 		end
 
-		def call_meta
+		def call_meta	
 	    #Yet to handle the scenario where multiple calls at the same time 
 	    #from the same number targeting different groups.
-	    call = current_account.freshfone_calls.first(:joins => [:caller], 
-	            :include => [:freshfone_number], 
-	            :conditions => {'freshfone_callers.number' => params[:PhoneNumber]}, :order => "freshfone_calls.created_at DESC")
-	    if call.present?
-		    { :number => call.freshfone_number.number_name,
-		    	:group 	=> (call.group.present?) ? call.group.name : ""
-		    }
-		  end
-	  end
+			return if caller.blank?
+			call = current_account.freshfone_calls.first( :include => [:freshfone_number], 
+							:conditions => {:caller_number_id => caller.id}, :order => "freshfone_calls.id DESC") 
+
+			if call.present?
+				{ :number => call.freshfone_number.number_name,
+					:ringing_time => call.freshfone_number.ringing_time,
+					:transfer_agent => get_transfer_agent(call),
+					:group 	=> (call.group.present?) ? call.group.name : "",
+					:company_name => (@user.present? && @user.company_name.present?) ? @user.company_name : ""
+				}
+			end
+		end
+
+		def caller 
+			@caller ||= current_account.freshfone_callers.find_by_number(params[:PhoneNumber])
+		end
+
+		def caller_card
+			render_to_string(:partial => 'layouts/shared/freshfone/caller_card.html', :locals => { :user => @user, :caller_location => caller_location } , :format=> :html)
+		end
+
+		def caller_location 
+			return [caller.city , caller.country].compact.reject{|c| c.empty? }.join(", ") if caller.present?
+			GlobalPhone.parse(params[:PhoneNumber]).territory.name 
+		end 
 
 		def populate_call_details
 			key = ACTIVE_CALL % { :account_id => current_account.id, :call_sid => params[:DialCallSid]}
@@ -85,6 +126,7 @@ class Freshfone::CallController < FreshfoneBaseController
 
 		def force_termination
 			if params[:force_termination]
+				return empty_twiml if in_progress?
 				add_cost_job
 				update_call_status unless preview?
 				return empty_twiml
@@ -130,7 +172,39 @@ class Freshfone::CallController < FreshfoneBaseController
 		def validate_twilio_request
 			@callback_params = params.except(*[:agent, :direct_dial_number, :preview,
 							:batch_call, :force_termination, :number_id, :below_safe_threshold, 
-							:forward, :transfer_call, :call_back, :source_agent, :target_agent, :outgoing, :group_transfer])
+							:forward, :transfer_call, :call_back, :source_agent, :target_agent, 
+							:outgoing, :group_transfer])
 			super
+		end
+
+		def get_transfer_agent(call)
+			return false unless (call.meta.present? && call.meta.transfer_by_agent.present?)
+			user = current_account.users.find_by_id(call.meta.transfer_by_agent) 
+			return false unless user.present?
+			avatar = view_context.user_avatar(user, :thumb, "preview_pic small circle")
+			 {
+				:user_id => user.id,
+				:user_hover => avatar,
+				:user_name => user.name
+			}
+		end
+
+		def in_progress?
+			params[:CallStatus] == 'in-progress'
+		end
+
+		def set_abandon_state
+			return unless current_call.present? 
+			current_call.set_abandon_call(params)
+		end
+
+		def validate_trial
+			return head :no_content unless params[:CallSid].present? && trial?
+		end
+
+		def trial_warnings_meta
+			return {} if current_call.blank?
+			return freshfone_subscription.incoming_trial_warnings if current_call.incoming?
+			freshfone_subscription.outgoing_trial_warnings
 		end
 end

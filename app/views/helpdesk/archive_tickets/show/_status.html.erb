@@ -1,0 +1,12 @@
+<div class="open-box" id="due-by-element-parent">
+	<h4 class="title"><%= h(ticket.status_name.html_safe) %></h4>
+	<p>
+		<% 
+		changed_time = ticket.status_updated_at
+		Rails.logger.info "::::::::#{changed_time}"
+		%>
+		<%= t('since').html_safe %> <abbr data-livestamp="<%= changed_time.to_i %>"><%= distance_of_time_in_words(Time.now(), changed_time) %></abbr>
+		<br />from <%= formated_date(changed_time) %>
+    <br /> <%= t('archived_on').html_safe %> <%= formated_date(ticket.archive_created_at) %>
+	</p>
+</div>

@@ -3,7 +3,7 @@
 		 <div class="page-header">
 			<h2>New announcement <small>Send a notice message to all Freshdesk accounts</small></h2>
 		 </div>
-		 <% form_for [:admin, @announcement], :html => {:class => "form-horizontal"} do |f| %>
+		 <%= form_for [:admin, @announcement], :html => {:class => "form-horizontal"} do |f| %>
 		 <fieldset>                
 			<%= render :partial => "form", :object => f %>
 		  <div class="form-actions">

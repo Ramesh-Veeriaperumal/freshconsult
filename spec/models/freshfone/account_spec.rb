@@ -17,9 +17,4 @@ describe Freshfone::Account do
     @freshfone_account.update_attributes(:expires_on => nil, :state => 1)
   end
 
-  it 'should update voice URL in Twilio' do
-    application = @freshfone_account.update_voice_url
-    application.should be_an_instance_of(Twilio::REST::Application)
-  end
-
 end

@@ -1,0 +1,31 @@
+<% 
+  debug_data_json = JSON.parse(@json_data_str) if @json_data_str
+%>
+<div class="tab-pane fade active in" id="myAppTab">
+  	<div id="ticket-data" class="selection-bottom app-content-wrapper">
+  		<ul id="app-and-device-tab" class="tabs nav-tabs">
+  			<li class="active first"><a href="#metaData" data-toggle="tab"><%= t("ticket.app_info.app_and_device")%></a></li>
+  			<li><a href="#customData" data-toggle="tab"><%= t("helpdesk.tickets.show.custom")%></a></li>
+  			<li><a href="#breadCrumb" data-toggle="tab"><%= t("ticket.app_info.breadcrumbs")%></a></li>
+        <li><a href="#debugLog" id="link-debug-log" data-toggle="tab"><%= t("ticket.app_info.debug_log")%></a></li>
+  		</ul>
+  		<div class="tab-content">
+  			<div class="tab-pane active" id="metaData">
+          <%= render :partial => 'helpdesk/tickets/show/app_device_info', :locals => {:extra_info => @extra_info, :info => debug_data_json["app_info"] ,  :source => 'app_info'} if debug_data_json %>
+  			</div>
+  			<div class="tab-pane" id="customData">
+          <%= render :partial => 'helpdesk/tickets/show/app_device_info', :locals => {:extra_info => @extra_info, :info => debug_data_json["custom_data"] , :source => 'custom_data'} if debug_data_json %>
+  			</div>
+  			<div class="tab-pane" id="breadCrumb">
+          <%= render :partial => 'helpdesk/tickets/show/app_device_info', :locals => {:extra_info => @extra_info, :info => debug_data_json["breadcrumbs"] , :source => 'breadcrumbs'} if debug_data_json%>
+  			</div>
+        <div class="tab-pane" id="debugLog">
+          <div id="debugLogContent">
+            <pre><%=debug_data_json["debug_logs"].strip if debug_data_json%>
+            </pre>
+          </div>
+  			</div>
+  		</div>
+  	</div>
+  </div>
+</div>

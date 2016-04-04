@@ -1,7 +1,8 @@
 class BaseDrop < Liquid::Drop
   
-  class_inheritable_reader :liquid_attributes
-  write_inheritable_attribute :liquid_attributes, [:object_id]
+  class_attribute :liquid_attributes
+  self.liquid_attributes = [:object_id]
+  
   attr_reader :source
   delegate :hash, :to => :source
   

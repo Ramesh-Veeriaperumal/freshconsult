@@ -1,3 +1,14 @@
+// Icons
+@import "cdn-ignored/sprites/remote-configurations/*.png";
+@include all-remote-configurations-sprites(true);
+
+[class^="remote-configurations-"],
+[class*="remote-configurations-"]{
+  display:inline-block;
+  vertical-align: middle;
+}
+
+
 #integrations-list {
 	display:block;
 	overflow: hidden;
@@ -24,13 +35,22 @@
 //-------------------------------------------------------------------------------------------
 //										Jira styles
 //-------------------------------------------------------------------------------------------
-#jira_sync_settings {
+.jira_sync_settings {
 	td {
-		vertical-align:middle
+		vertical-align:middle;
+		padding-bottom: 10px;	
+		display:inline-block;
+		width:47%;
 	}
-
+	td.align_width{
+		width:100%;
+	}
 	select {
-		margin: 0
+		margin: 0;
+
+	}
+	.toggle-button{
+		margin: 0;
 	}
 }
 #jira_widget {
@@ -73,6 +93,9 @@
 				&.right {
 					@include padding(0 0 0 5%);
 				}
+			}
+			.assignee {
+				padding-bottom: 9px;
 			}
 
 		}
@@ -119,6 +142,115 @@
 		}
 	}
 
+}
+
+//-------------------------------------------------------------------------------------------
+//									Configuration settings
+//-------------------------------------------------------------------------------------------
+.integration_config_settings {
+	span.checkbox_label {
+		display: inline-block;
+		vertical-align: middle;
+		cursor: pointer;
+	}
+}
+span.beta {
+	font-size: 10px;
+	text-transform: uppercase;
+	background-color: transparent;
+	padding: 2px 5px;
+	font-weight: 500;
+	border: 1px solid #DDDDDD;
+	border-radius: 4px;
+	@include margin-left(14px);
+}
+.quickbooks_c2qb {
+	.logo {
+		display: block;
+    text-align: center;
+    margin: 0 auto;
+    padding: 20px 0;
+    i{
+    	@include filter(saturate(0));
+    }
+	}
+  .connect_text {
+  	font-size: 13px;
+  	line-height: 1.4;
+  	font-weight: 400;
+  	padding: 10px;
+  }
+  .quickbooks_connect {
+    text-align: center;
+    padding-bottom: 20px;
+    padding-top: 40px;
+  }
+}
+
+//-------------------------------------------------------------------------------------------
+//									Invoices
+//-------------------------------------------------------------------------------------------
+.integ_invoices {
+	.invoice_number {
+		font-weight: 500;
+	}
+	.integ_invoice_each {
+		padding: 10px 0px;
+	}
+	.invoice_data_text {
+		color: #7f7f7f;
+	}
+	.invoice-status{
+	  background-color: #dadada;
+	  padding: 2px 4px;
+	  display: inline-block;
+	  vertical-align: top;
+	  border-radius: 3px;
+	  text-transform: uppercase;
+	  font-size: 11px;
+	  margin-left: 80px;
+	}
+}
+.integ_empty_invoices {
+	color: #999999;
+	text-align: center;
+}
+.integ_invoice_modal {
+	.invoice_data_text {
+		color: #7f7f7f;
+	}
+	margin-bottom: 12px;
+}
+.integ_invoice_header {
+	font-size: 20px;
+}
+.integ_invoice_total_row {
+	td {
+		font-weight: 500;
+	}
+}
+.integ_invoice_details_header{
+	border-top: 2px solid #A9A9A9;
+}
+
+//-------------------------------------------------------------------------------------------
+//									QuickBooks
+//-------------------------------------------------------------------------------------------
+.qb_open {
+	color: #0098cd;
+	font-weight: 500;
+}
+.qb_partial {
+	color: #0098cd;
+	font-weight: 500;
+}
+.qb_overdue {
+	color: #e33d43;
+	font-weight: 500;
+}
+.qb_paid {
+	color: #56b349;
+	font-weight: 500;
 }
 
 //-------------------------------------------------------------------------------------------
@@ -212,33 +344,10 @@
 			min-height:30px;
 		}
 	
-		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
-		background-repeat: no-repeat;
+		// background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
+		// background-position: 223px 7px;
+		// background-repeat: no-repeat;
 	}
-
-	/* div. added for higher specificity */
-	div.salesforce_widget_bg {
-		background-image: url(/images/integrations/salesforce_icon.png);
- 	}
-
- 	div.batchbook_widget_bg {
-		background-image: url(/images/integrations/batchbook_icon.png);
-  	}
-
- 	div.highrise_widget_bg {
-		background-image: url(/images/integrations/highrise_icon.png);
-  	}
-
- 	div.zohocrm_widget_bg {
-		background-image: url(/images/integrations/zohocrm_icon.png);
-		background-position: 210px -6px;
-  	}
-
- 	div.nimble_widget_bg {
-		background-image: url(/images/integrations/nimble_icon.png);
-  	}
-	
 
  	.error {
 		&.name, &.salesforce-name {
@@ -287,7 +396,7 @@
 		label {
 			@include float(left);
 			height: inherit;
-			width: 65px;
+			width: 80px;
 			font-size: 100%;
 			font-weight: bold; 
 			color: $default_txt_color;
@@ -295,7 +404,8 @@
 		}
 		div > span {
 			@include float(left);
-			width: 193px;
+			width: 180px;
+			word-wrap: break-word;
 
 			#contact-address{
 				display: table;
@@ -350,6 +460,55 @@
 	height:40px;
   box-sizing: border-box;
 }
+.capsule-user-details {
+	padding-left: 60px;
+	position: relative;
+	min-width: 200px;
+	.preview_pic{
+		position:absolute;
+	 	@include left(0);
+		top:0;
+	}
+	a{	text-decoration:none; }
+	.name{
+		display:block;
+		font-size:1.2em;
+		margin-bottom:4px;
+	}
+	.jobtitle{
+		font-size:1.2em;
+	}
+	h5{
+		font-weight:bold;
+		padding:8px 0 3px;
+		color:#555;
+	}
+	.sub{
+		color:#999;
+		text-transform:lowercase;
+		font-style:italic;
+	}
+}
+
+//-------------------------------------------------------------------------------------------
+//										SugarCRM
+//-------------------------------------------------------------------------------------------
+
+#sugar-populate-custom-fields{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#sugar-crm-view{
+	float: left;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+#sugar-crm-view,#sugar-populate-custom-fields,#sugar-contact-desig{
+	margin-left: 30px;
+}
+
 
 // --------------------------------------------------------------------------------------------------
 //												Screenr
@@ -368,6 +527,15 @@
 	width: 137px;
 	height: 22px;
 	display: inline-block !important;
+}
+
+// --------------------------------------------------------------------------------------------------
+//												Ilos
+// --------------------------------------------------------------------------------------------------
+.ilos-table{
+	td{
+		@include padding(10px 0 0 0);
+	}
 }
 
 // --------------------------------------------------------------------------------------------------
@@ -401,8 +569,12 @@
 		-moz-text-overflow: ellipsis;
 		-webkit-text-overflow: ellipsis;
 		margin: 5px 95px;
-		background: url(/images/integrations/campaign-link.png) left -2px no-repeat;
 		@include padding-left(20px);
+		.url-icon {
+			font-size: 14px;
+			padding-right: 3px;
+			color: #999;
+		}
 	}
 	
 }
@@ -414,7 +586,7 @@
 	@include text-align(right);
 
 	.toggle_preview {
-		background: #FFF;
+		background-color: #FFF;
 		border: solid 1px #c9c9c9;
 		@include box-shadow(#c2c2c2 0 0 2px);
 		@include border-radius(5px);
@@ -424,7 +596,8 @@
 		margin-bottom:5px;
 
 		&.active {
-			background: url(/images/integrations/custom_app_preview_title_bar.gif);
+			background-color: #fff5cb;
+			@include background-image(repeating-linear-gradient(135deg, transparent, transparent 15px, #FFEEA9 15px, #FFEEA9 30px));
 		}
 
 		&:after {
@@ -448,19 +621,28 @@
 	@include margin(0 10px 10px 0);
 	.titlebar {
 		font-weight:bold;
-		background: url(/images/integrations/custom_app_preview_title_bar.gif);
+		background-color: #fff5cb;
+		@include background-image(repeating-linear-gradient(135deg, transparent, transparent 15px, #FFEEA9 15px, #FFEEA9 30px));
 		@include padding(10px 5px 10px 15px);
 		border-bottom: solid 1px #c9c9c9;
 		font-size:13px;
 		.preview_link {
 			@include float(right);
-			width:60px;
-			background: url(/images/integrations/refresh_preview.png) right no-repeat;
-			@include padding(10px 30px 10px 5px);
+			width:70px;
+			color: #8e6a00;
+			@include padding(10px 5px 10px 5px);
 			@include text-align(right);
 			color:#AAA;
 			margin-top:-10px;
 			font-weight:normal;
+			line-height: 29px;
+			.refresh-icon {
+				color: #8e6a00;
+				font-size: 24px;
+				display: inline-block;
+				margin-top: 3px;
+				line-height: 21px;
+			}
 		}
 	}
 
@@ -508,9 +690,6 @@
 	
 }
 
-.logmein-logo {
-		background: url(/images/integrations/logmein_logo.png) right 8px no-repeat;
-}
 #logmein_widget .error{
 	color: red;
 }
@@ -534,9 +713,6 @@
 		color: #676767;
 		font-size: 11px;
 		line-height: 3px;
-	}
-	.contact_title{
-		width: 550px;
 	}
 }
 
@@ -571,12 +747,12 @@
 			background-position: center;
 		}
 	}
-	.campaign-image {
-		background: url(/images/integrations/campaign-image.png) 10px no-repeat;
+	.integrations-campaign-image {
+		@include padding-right(10px);
 	}
 
 	.campaign-activity{
-		@include padding-left(35px);
+		@include padding-left(10px);
 		font-weight: bold;
 		border-bottom: 1px solid #DDD;
 		background-color: #EEE;
@@ -630,72 +806,529 @@
 		background-size: 85px, 25px;
 }
 // --------------------------------------------------------------------------------------------------
-//												Slack 
+//												Rule Constructor
 // --------------------------------------------------------------------------------------------------
 
-.channel{
-	display:inline-block;
-}
-.channel.actions{
-	padding: 5px;
-  padding-left: 145px;
-}
-.channel.pad-channel{
-	padding: 6px;
-}
 .rules_wrapper{
+	width: 100%;
+	display: table;
+	background-color: white;
+	.rules_list_wrapper{
+		display: table-row-group;
+	}
+	.tabel-thead{
+		display: table-header-group;
+		background-color: #f3f3f3;
+		border-bottom: 1px solid #d2d2d2;
+		color: #333;
+		font-weight: 500;
+	}
 	.list{
-		padding: 8px 0 8px 4px;
-		border: 1px solid #D2D2D2;
-		position: relative;
-		border-bottom: 0;
+		display: table-row;
 	}
-	.list:first-child {
-	border-radius: 5px 5px 0 0;
+	.overlay{
+		background-color: #F7F7F7;
+		.list-data{
+			border-bottom: 1px solid #ECECEC;
+		}
+		.remove_list{
+			cursor: auto;
+			background-color: rgb(174, 174, 174);
+		}
+		.select2-choice div{
+			opacity: 0.5;
+		}	
 	}
-	.delete{
-		position: absolute;
-		left: 10px;
-		top: 15px;
-		opacity: .5;
-		cursor: pointer;
-	}
-	.control, .add_list{
-		margin-left: 34px;
-		float: none;
-		display: inline-block;
-		width: 93%;
-	}
-	.add_menu_wrapper{
-		position: relative;
-		padding: 8px 0 8px 4px;
-		border: 1px solid #DDD;
-		border-radius: 0 0 5px 5px;
-		cursor: pointer;
-		&:hover{
-			background-color: #eee;
+	.list-data{
+		.error{
+			margin: 0;
+			margin-top: -8px;
+			margin-left: 10px;
+			color: #d00000;
+		}
+		.header-txt{
+			margin: 15px;
+		}
+		.select2-container{
+			display:block !important;
 		}
 	}
-	.select2-container, input {
-		margin-right: 15px;
+	.add_menu_wrapper{
+		display: table-footer-group;
+		.list-data{
+			border-bottom: 0;
+		}
+	}
+
+	.delete-btn, .list-data{
+		display: table-cell;
+		border-bottom: 1px solid #F5F5F5;
+		vertical-align: top;
+	}
+
+	.list-data:first-child {
+		position: relative;
+		width: 50px;
+		text-align: center;
+	}
+
+	.select2-container, .add_list, input {
+		margin: 10px;
+	}
+	.remove_list{
+		background: #d30000;
+
+		&:before{
+			content: "--";
+		}
 	}
 	.add_img{
+		background: green;
+		&:before{
+			content: "+";
+		}
+	}
+	.list-icon {
+		border-radius: 100%;
+		color: #fff;
 		position: absolute;
-		left: 10px;
-		top: 8px;
-		opacity: .5;
+		top: 14px;
+		right: 10px;
+		padding: 2px 7px 4px 5px;
+		font-size: 16px;
+		font-weight: bold;
+		line-height: 14px;
+		-webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+		-moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+		letter-spacing: -3px;
+		opacity: 0.4;
 		cursor: pointer;
 	}
 	.add_new_list{
-		display: inline-block;
+		cursor: pointer;
 	}
-
 	.empty_list_alert, .prev_empty_notify{
 		display: none;
 		margin-left: 20px;
 		color: rgb(208, 0, 0);
 		&.inline{
-			display: inline-block;
+			display: table-cell;
 		}
 	}
 }
+
+
+// --------------------------------------------------------------------------------------------------
+//												Xero
+// --------------------------------------------------------------------------------------------------
+
+.xeroFormBlock{
+	#lineitems{
+	fieldset{
+		padding: 10px;
+		.controls{
+			margin-left: 0;
+
+		}
+		.xero_delete{
+			width: 35px;
+			padding: 5px;
+		}
+		.xero_s{
+			
+		}
+		.xero_line{
+			display: inline-block;
+			float: none;
+			height: 30px;
+			width: 1px;
+			vertical-align: middle;
+			margin: 0 5px;
+			background: #DAD9D9;
+		}
+	}
+	}
+	.inl{
+		display: inline-block;
+		padding: 5px;
+		div{
+			width: 100%;
+		}
+		.required_star{
+			@include margin-left(180px);
+		}
+
+	}
+	.xero-hash-mandatory{
+		color: #a2a19f;	
+	}
+	.xero-hash-mandatory-footer{
+		color: #a2a19f;				
+		margin-left: 180px;						
+	}
+	.xero_due_date {
+		width: 35%;
+	}
+	.thirty-percent{
+		width: 30%;
+	}
+	.xero_footer{
+		margin-top: 25px;
+		padding: 10px;
+	}
+
+
+	.rules_wrapper{ 
+		.tabel-thead {
+			background: none;
+			.list-data{
+				&:first-child{
+					width:35px;
+				}
+				p{					
+					margin-top: 0;
+				}
+				.input{
+					padding-left: 5px;
+				}
+				.header-txt{
+					margin: 7px 9px;
+					  margin-right: 0;
+				}
+				border-bottom: 1px solid #d8d8d8;
+			}
+		}
+		.overlay{
+			background-color: none;
+		}
+		input {
+		  width: 90% !important;
+		}		
+	}		
+	.rules_list_wrapper{
+	 	.list{
+			&:last-child{
+				.list-data{
+					border-bottom: 1px solid #ddd;
+				}
+			}
+		}
+		.items_dropdown{
+			width: 220px;
+		}
+		.input_text_items{
+			width: 220px;
+		}
+	}
+	.add_menu_wrapper{
+		.list-data{
+			.add_list{
+				color: #06c;
+	  			font-weight: 500;
+			}
+		}
+	}
+	.list .list-data:nth-child(3){
+		width: 20% !important;
+	}
+	.modal-body > .spinner{
+		top: 0px !important;
+		display: block;
+	}
+	.modal-body .form-horizontal {
+		width: 100%;
+		display: block;
+	}
+
+
+}
+//-------------------------------------------------------------------------------------------
+//                                  Magento
+//-------------------------------------------------------------------------------------------
+
+.ml60{
+	margin-left: 60px;
+}
+
+.clr-bth{
+	clear: both;
+}
+.magento-order-status{
+    text-align: center;
+    padding: 2px 10px 3px 10px;
+}
+
+//-------------------------------------------------------------------------------------------
+//                                  Github
+//-------------------------------------------------------------------------------------------
+.github_select_dropdown {
+    word-wrap: break-word;
+    border-color: #ccc;
+    margin-top: -3px;
+}
+#github_side_bar_widget {
+    @extend .integration_widget;
+    .content { width: inherit; }
+    /* Nav tab customization */
+    .nav-tabs {
+        >li.active>a, >li.active>a:hover, >li.active>a:focus {
+            color: #000;
+            background-color: #fff;
+            border: none;
+            border-bottom: 3px solid #888888;
+        }
+        >li>a {
+            border: none;
+            background-color: #fff;
+        }
+    }
+    /* Nav tab customization END*/
+    .tab-content {
+        @include padding-left(5px);
+    }
+    #github-create-link label {
+        font-weight: 500;
+    }
+
+    #github-issue-display {
+        font-size: 13px;
+        #github-issue-title {
+            @include float(left);
+            max-width: 75%;
+            padding-top: 5px;
+            vertical-align: middle;
+            font-size: 15px;
+        }
+        #github-unlink {
+            font-weight: bold;
+            @include cursor(pointer);
+            border: 1px solid #d4d4d4;
+            @include padding(5px 12px 5px);
+            border-radius: 4px;
+            @include float(right);
+        }
+
+        ul {
+            @include clear(both);
+            padding-top: 5px;
+            li {
+                color: #7f7f7f;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                span {
+                    @include padding-left(5px);
+                }
+            }
+        }
+    }
+}
+#github-settings {
+    margin-top: 5px;
+    .seperator {
+        @include margin(10px 0px);
+    }
+
+    label {
+        display: inline-block;
+        @include padding(5px 10px 10px 0px);
+        width: 60%;
+        vertical-align: middle;
+    }
+
+    input[type="checkbox"] { 
+        vertical-align: text-top; 
+    }
+
+    input[type="checkbox"] + label { 
+        vertical-align: inherit; 
+    }
+
+    a.toggle-button {
+        vertical-align: text-bottom;
+        @include margin-left(0px);
+    }
+
+    h5 {
+        font-weight: 500;
+        padding-bottom: 10px;
+        font-size: 13px;
+    }
+    .select2-choices{
+        background:none;
+        @include border-radius(5px);
+        border: 1px solid #c9c9c9;
+        background: #fff;
+        .select2-search-field{
+            @include padding(4px);
+        }
+        .select2-search-choice-close{
+            @include float(right);
+            width:auto;
+            &:after{
+                content: "-";
+                background:#d30000;
+                @include border-radius(100%);
+                color: #fff;
+                position: absolute;
+                top: 3px;
+                @include right(7px);
+                @include padding(2px 10px 4px 7px);
+                font-size: 16px;
+                font-weight: bold;
+                line-height: 14px;
+                @include box-shadow(1px 1px 1px rgba(0,0,0,0.2));
+                letter-spacing: -3px;
+
+            }
+        }
+        .select2-search-choice{
+            >div {
+                margin-right: 5px;
+            }
+            border: 0;
+            background: #f7f7f7;
+            @include padding(10px);
+            border-bottom:1px solid rgba(#ccc, 0.3);
+            margin:0;
+            width: 97%;
+        }
+
+    }
+    .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover::after{
+        color:#fff;
+    }
+    .int-select{
+        border:0;
+        @include border-radius(0);
+        width:75%;
+        &:after{
+            content: "+";
+            background:green;
+            @include border-radius(100%);
+            color: #fff;
+            position: absolute;
+            bottom: 8px;
+            @include right(7px);
+            @include padding(1px 5px 4px 5px);
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 14px;
+            @include box-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
+            font-weight: bold;
+            @include margin-right(2px);
+        }
+    }
+
+}
+
+#xero{
+	.xero_ul_sidebar{
+		list-style: none;
+		border-top: 1px solid #ddd;
+		margin-left: 0;
+		li{
+			padding: 10px 5px;
+			border-bottom: 1px solid #ddd;
+		}
+		#xero_no_contact{
+			color: #6F6767;
+			padding-top: 10px; 
+			text-align: justify;
+		}		
+	}
+	
+	.errormsg{
+	position: absolute;
+	top: 5px;
+	right: 0px;
+	color: #9B9B9B;
+	}
+	
+	#add_invoice{
+		padding: 7px;
+		text-align: right;
+  		float: right;
+  		position: absolute;
+  		right: 0px;
+  		TOP: 6px;
+	}	
+	.xero_li_hover{
+		display: none;
+		padding-right: 15px;
+		cursor: pointer;
+	}
+	.xero_li_hover_delete{
+		color: #801414;
+		float: right;
+		position: absolute;
+		cursor: pointer;
+		display: none;
+		left: 175px;
+	}
+	.xero_scroll {    
+    	.each_invoice{
+    		a{
+    			&:first-child{
+    				font-weight: 500;
+    				padding-right: 5px;
+    			}
+
+    		}
+    		&.cur_ticket{
+    			i{
+    				color: #06c;
+    				padding-right: 5px;
+    				font-size: 15px;
+    				vertical-align: middle; 
+    			}
+    		}
+    		&.cur_ticket_deleted{
+    			i{
+    				color: #801414;
+    				padding-right: 5px;
+    				font-size: 15px;
+    				vertical-align: middle; 
+    			}
+    		}
+    		.date-item{
+    			padding: 1px 0px 3px;
+    		}
+    	}
+	}
+	
+	.date-item{
+		display: block;
+	}
+	
+	.modal-body{
+		.loading-fb {
+		background-position: 49% 0% !important;
+	  	padding-bottom: 10px;
+		}
+
+}
+
+}
+
+#inv_status{
+ 
+	ul{
+	margin-top: 7px;
+	}
+ 
+	li{
+	list-style: disc;
+	margin-left: 17px;
+	margin-bottom: 2px;
+	}
+}
+
+.slack-bottom{
+	clear:both;
+}
+
+
+	.slack-form {
+		min-height: 300px;
+	}

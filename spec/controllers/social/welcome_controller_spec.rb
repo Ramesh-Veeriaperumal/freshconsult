@@ -2,7 +2,6 @@ require 'spec_helper'
 
 
 describe Social::WelcomeController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
   
@@ -24,16 +23,17 @@ describe Social::WelcomeController do
   
   it "should fetch all the streams(default/custom) on rendering the page if there are no handles associated" do
     get :index
-    response.should render_template("social/welcome/index.html.erb")
+    response.should render_template("social/welcome/index")
   end
   
   it "should get the response rate of a particular handle" do
     OAuth2::AccessToken.any_instance.stubs(:get).returns(sample_tweets_array, sample_tweets_array(false))
+    request.env["HTTP_ACCEPT"] = "application/javascript"
     get :get_stats, {
       :twitter_handle => "TestingGnip"
     }
-    response.should render_template("social/welcome/get_stats.rjs")
-    response.template_objects["perct"].should eql(12)
+    response.should render_template("social/welcome/get_stats")
+    assigns[:perct].should eql(12)
   end
   
   it "should set enable feature to false if TURN OFF SOCIAL is clicked and redirect to admin home" do

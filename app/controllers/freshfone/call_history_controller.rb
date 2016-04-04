@@ -1,14 +1,20 @@
 class Freshfone::CallHistoryController < ApplicationController
+	include Freshfone::CallHistory
+	include Freshfone::FreshfoneUtil
+	include Redis::RedisKeys
+  include Redis::OthersRedis
 	before_filter :set_native_mobile, :only => [:custom_search, :children]
-	before_filter :set_cookies_for_filter, :only => [:custom_search]
-	before_filter :get_cookies_for_filter, :only => [:index]
+	before_filter :cache_filter_params, :only => [:custom_search, :export]
+	before_filter :load_cached_filters, :only => [:index, :export]
 	before_filter :load_calls, :only => [:index, :custom_search]
 	before_filter :load_children, :only => [:children]
 	before_filter :fetch_recent_calls, :only => [:recent_calls]
 	before_filter :fetch_blacklist, :only => [:index, :custom_search, :children]
+	before_filter :check_export_range, :only => [:export]
 	
+	before_filter :fetch_current_call, :only =>[:destroy_recording], if: 'privilege?(:view_admin)'
 	def index
-		@all_freshfone_numbers = current_account.all_freshfone_numbers.all(:order => "deleted ASC")
+		@all_freshfone_numbers = current_account.all_freshfone_numbers.order("deleted ASC").all
 	end
 	
 	def custom_search
@@ -16,7 +22,10 @@ class Freshfone::CallHistoryController < ApplicationController
 			format.js {}
             format.nmobile {
 				response = {:calls => @calls.map(&:as_calls_mjson)}
-				response.merge!(:freshfone_numbers => current_account.freshfone_numbers.map(&:as_numbers_mjson)) if params[:page] == "1"
+				if params[:page] == "1"
+					response.merge!(:freshfone_numbers => current_account.freshfone_numbers.map(&:as_numbers_mjson) ,
+					 :group_numbers => current_account.freshfone_numbers.accessible_freshfone_numbers(current_user).map(&:as_numbers_mjson)) 
+				end
 				render :json => response
             }
 		end
@@ -38,22 +47,71 @@ class Freshfone::CallHistoryController < ApplicationController
 		end
 	end
 
-	private
-		def load_calls
-			params[:wf_per_page] = 30
-			@calls = current_number.freshfone_calls.roots.filter(:params => params,
-																		:filter => "Freshfone::Filters::CallFilter")
+	def destroy_recording
+		if @call.present?
+			begin
+				flash[:notice] = @call.delete_recording(current_user.id) ? 
+					t('freshfone.call_history.recording_delete.successful') : t('freshfone.call_history.recording_delete.unsuccessful')
+			rescue Exception => e
+				flash[:notice] = t('freshfone.call_history.recording_delete.error')
+				Rails.logger.debug "Error deleting the recording for call #{@call.id} account #{current_account.id}
+				.\n #{e.message} \n#{e.backtrace.join("\n\t")}"
+			end
 		end
+	end
 
-		def current_number
+	def export
+    params.merge!({ :account_id => current_account.id, :user_id => current_user.id })
+    Resque.enqueue(Freshfone::Jobs::CallHistoryExport::CallHistoryExport, params)
+    render nothing: true
+	end
+
+	private
+		
+    def load_calls
+			params[:wf_per_page] = 30
+			@calls = all_numbers? ? 
+                  current_account.freshfone_calls.roots.filter(:params => params,
+						        :filter => "Freshfone::Filters::CallFilter") : 
+                  current_number.freshfone_calls.roots.filter(:params => params,
+						        :filter => "Freshfone::Filters::CallFilter")
+      freshfone_stats_debug("all_number_option",params[:controller]) if all_numbers?
+		end
+        
+        def all_numbers?
+            params[:number_id] == Freshfone::Number::ALL_NUMBERS
+        end    
+        
+        def current_number
 			@current_number ||= params[:number_id].present? ? current_account.all_freshfone_numbers.find_by_id(params[:number_id])
                            : current_account.freshfone_numbers.first || current_account.all_freshfone_numbers.first 
 		end
 	
 		def load_children
 			#  remove include of number and use current_number instead
-			@parent_call = current_number.freshfone_calls.find(params[:id])
+			@parent_call = all_numbers? ? current_account.freshfone_calls.find(params[:id]) : current_number.freshfone_calls.find(params[:id])
 			@calls = @parent_call.descendants unless @parent_call.blank?
+		end
+
+		def calls_filter_key
+			ADMIN_CALLS_FILTER % {:account_id => current_account.id, :user_id => current_user.id}
+		end
+
+		def cache_filter_params
+			set_others_redis_hash(calls_filter_key, filter_hash)
+			set_others_redis_expiry(calls_filter_key,86400*7)
+		end
+
+		def filter_hash
+			{:data_hash => params[:data_hash], :number_id => params[:number_id] }
+		end
+
+		def load_cached_filters
+			 if redis_key_exists?(calls_filter_key)
+					@cached_filters = get_others_redis_hash(calls_filter_key)
+					params[:data_hash] = @cached_filters['data_hash']
+				  params[:number_id] = @cached_filters['number_id']
+			 end
 		end
 
 		def fetch_recent_calls
@@ -61,15 +119,22 @@ class Freshfone::CallHistoryController < ApplicationController
 		end
 
 		def fetch_blacklist
-			@blacklist_numbers =  current_account.freshfone_blacklist_numbers.all(:select => 'number').map(&:number)
+			@blacklist_numbers =  current_account.freshfone_callers.blocked_callers.pluck(:id)
 		end
 
-		def get_cookies_for_filter
-			params["number_id"] = cookies["fone_number_id"]
+		def check_export_range
+			render nothing: true, status: 400 if !within_export_range?
 		end
 
-		def set_cookies_for_filter
-			cookies["fone_number_id"] = params["number_id"]
+		def within_export_range?
+			date_hash = JSON.parse(params[:data_hash]).find { |entry| entry["condition"] == "created_at" }
+			return false if date_hash.blank?
+			dates = date_hash["value"].split('-')
+			return true if dates.count < 2
+			days = dates.map { |d| Date.parse(d) }.reduce { |diff, date| date.mjd - diff.mjd }
+			days < Freshfone::Call::EXPORT_RANGE_LIMIT_IN_MONTHS * 31
 		end
-
+		def fetch_current_call
+			@call = current_call if params[:id].present?
+		end
 end

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe ForumCategoriesController do
-	integrate_views
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 
@@ -21,8 +20,8 @@ describe ForumCategoriesController do
 
 	it "should redirect to discussions page on 'index'" do
 		get :index
-
-		response.should redirect_to discussions_path
+    
+		response.should redirect_to '/discussions'
 	end
 
 	it "should redirect to discussions show page on 'show'" do

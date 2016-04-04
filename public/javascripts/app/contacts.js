@@ -41,6 +41,11 @@ window.App = window.App || {};
 				this[this.current_module].onLeave();
 				this.current_module = '';
 			}
+
+			if(typeof window.merge_class != "undefined"){
+				delete window.merge_class;
+				jQuery('body').off('.merge_contacts');
+			}
 		}
 	};
 }(window.jQuery));

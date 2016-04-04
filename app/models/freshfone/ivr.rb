@@ -1,5 +1,6 @@
 class Freshfone::Ivr < ActiveRecord::Base
-	set_table_name "freshfone_ivrs"
+  self.primary_key = :id
+	self.table_name =  "freshfone_ivrs"
 	require_dependency 'freshfone/menu'
 	require_dependency 'freshfone/option'
 	require_dependency 'freshfone/number/message'
@@ -11,7 +12,6 @@ class Freshfone::Ivr < ActiveRecord::Base
 	has_many :attachments, :as => :attachable, :class_name => 'Helpdesk::Attachment', 
 						:dependent => :destroy
 	
-	validates_presence_of :account_id
 	validate :validate_menus, :validate_attachments, :validate_welcome_message
 	belongs_to_account
 	belongs_to :freshfone_number, :class_name => 'Freshfone::Number'
@@ -21,7 +21,9 @@ class Freshfone::Ivr < ActiveRecord::Base
 
 	attr_protected :account_id
 	attr_accessor :relations, :attachments_hash, :params, :preview_mode, :menus_list
-
+  after_find :assign_ivr_to_welcome_message
+  after_create :assign_ivr_to_welcome_message
+  
 	# Format: [symbol, twilio_type, display_name, value_for_select_tag]
 
 	validates_presence_of :account_id, :freshfone_number_id
@@ -39,10 +41,6 @@ class Freshfone::Ivr < ActiveRecord::Base
 		end
 	end
 	
-	def after_find
-		assign_ivr_to_welcome_message
-	end
-
 	def menus
 		self.menus_list ||= begin
 			get_menus(get_ivr_data)
@@ -111,7 +109,7 @@ class Freshfone::Ivr < ActiveRecord::Base
 		def validate_attachments
 			(attachments || []).each do |a|
 				if a.id.blank? 
-					errors.add_to_base(I18n.t('freshfone.admin.invalid_attachment',
+					errors.add(:base,I18n.t('freshfone.admin.invalid_attachment',
 						{ :name => a.content_file_name })) unless a.mp3?  
 				end
 			end

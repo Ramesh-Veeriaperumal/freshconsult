@@ -1,7 +1,9 @@
 <% unless ["ko", "zh-CN", "ja-JP"].index(current_user.language) %>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <% end %>
-<%= include_cloudfront_rtl_css :reports  %>
-<%= include_cloudfront_rtl_css :pattern  %>
-<%= include_cloudfront_js :frameworks  %>
-<%= include_cloudfront_js :reports  %>
+ 
+<%= stylesheet_link_tag_with_rtl :'cdn/reports'  %>
+<%= stylesheet_link_tag_with_rtl :'cdn/pattern'  %>
+<%= javascript_include_tag :'cdn/defaults'  %>
+<%= javascript_include_tag :'cdn/frameworks'  %>
+<%= javascript_include_tag :'cdn/reports'  %>

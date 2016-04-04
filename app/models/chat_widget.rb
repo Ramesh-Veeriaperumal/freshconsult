@@ -1,4 +1,5 @@
 class ChatWidget < ActiveRecord::Base
+  self.primary_key = :id
 		belongs_to_account
 		belongs_to :chat_setting
 		belongs_to :business_calendar

@@ -1,159 +1,173 @@
 module Reports
-	module ArchiveData
+  module ArchiveData
 
-		include Reports::Constants
-		include Reports::TicketStats
-		include Redis::RedisKeys
-		include Redis::ReportsRedis
+    include Reports::Constants
+    include Reports::TicketStats
+    include Redis::RedisKeys
+    include Redis::ReportsRedis
 
-		attr_accessor :stats_date, :stats_date_time, :stats_end_time, :stats_table_name
+    attr_accessor :stats_date, :stats_date_time, :stats_end_time, :stats_table_name
 
-			def archive(options)
-				account_id, regenerate = options[:account_id], options.key?(:regenerate)
-				start_date, end_date = options[:start_date].to_date, options[:end_date].to_date
-				Sharding.run_on_slave do
-					account = Account.current
-					Time.zone = account.time_zone
-					start_date.upto(end_date) do |day|
-						@stats_date, @stats_end_time = day.strftime("%Y-%m-%d 00:00:00"), Time.zone.parse(day.strftime("%Y-%m-%d 23:59:59"))
-						@stats_date_time = Time.zone.parse(stats_date)
-						@stats_table_name = stats_table(stats_date_time, account)
-						load_archive_data(account, regenerate)
-						add_to_reports_hash(REPORT_STATS_EXPORT_HASH % {:account_id => account_id},"date",
-																		stats_date_time.strftime("%Y-%m-%d"),604800) unless regenerate
-					end
-				end 
-			end
+      def archive(options)
+        account_id, regenerate = options[:account_id], options.key?(:regenerate)
+        start_date, end_date = options[:start_date].to_date, options[:end_date].to_date
+        Sharding.run_on_slave do
+          account = Account.current
+          begin
+            Time.zone = account.time_zone
+          rescue ArgumentError => e
+            # we have problem with Kyev. In rails 2.3.18 Kyev , but in Rails 3.2.18 its corrected to Kyiv
+            # https://rails.lighthouseapp.com/projects/8994/tickets/2613-fix-spelling-of-kyiv-timezone
+            if e.message.include?("Invalid Timezone: Kyev")
+              Time.zone = "Kyiv" 
+            else
+              raise e
+            end
+          end
+          start_date.upto(end_date) do |day|
+            @stats_date, @stats_end_time = day.strftime("%Y-%m-%d 00:00:00"), Time.zone.parse(day.strftime("%Y-%m-%d 23:59:59"))
+            @stats_date_time = Time.zone.parse(stats_date)
+            @stats_table_name = stats_table(stats_date_time, account)
+            load_archive_data(account, regenerate)
+            add_to_reports_hash(REPORT_STATS_EXPORT_HASH % {:account_id => account_id},"date",
+                                    stats_date_time.strftime("%Y-%m-%d"),604800) unless regenerate
+          end
+        end 
+      end
 
-			def load_archive_data(account, regenerate = false)
-				begin
-					ff_cols = FlexifieldDefEntry.dropdown_custom_fields(account).sort	
-				rescue Exception => e
-					ff_cols = []
-				end
-				def_columns = select_def_columns(ff_cols)
+      def load_archive_data(account, regenerate = false)
+        begin
+          ff_cols = FlexifieldDefEntry.dropdown_custom_fields(account).sort 
+        rescue Exception => e
+          ff_cols = []
+        end
+        def_columns = select_def_columns(ff_cols)
 
-				query_str = " select #{select_aggregate_columns}, #{def_columns} from #{join_query(ff_cols)} "\
-    								" where #{conditions(account.id)} group by #{def_columns}"
-				reporting_data = ActiveRecord::Base.connection.select_all(query_str)
-  			# write data into csv
-  			temp_file = ARCHIVE_DATA_FILE % {:date => stats_date_time.strftime("%Y-%m-%d"), :account_id => account.id}
-				csv_file_path = File.join(FileUtils.mkdir_p(CSV_FILE_DIR),%(#{temp_file}.csv))
-				csv_string = CSVBridge.open(csv_file_path, "w", {:col_sep => "|"}) do |csv|
-     			csv << (REPORT_COLUMNS + %w(created_at))
-     			reporting_data.each do |hash| 
-     				val_array = REPORT_COLUMNS.inject([]) do |values, col_name|
-     					values << ( !hash.key?(col_name) ? "\\N" : (hash[col_name].nil? ? "\\N" : mysql_escape(hash[col_name])))
-     					values
-     				end
-     				val_array << stats_date
-     				csv << val_array
-     			end
-      	end
-      	# reporting_data.free
+        query_str = " select #{select_aggregate_columns}, #{def_columns} from #{join_query(ff_cols)} "\
+                    " where #{conditions(account.id)} group by #{def_columns}"
+        reporting_data = ActiveRecord::Base.connection.select_all(query_str)
+        
+        # write data into csv
+        temp_file = ARCHIVE_DATA_FILE % {:date => stats_date_time.strftime("%Y-%m-%d"), :account_id => account.id}
+        csv_file_path = File.join(FileUtils.mkdir_p(CSV_FILE_DIR),%(#{temp_file}.csv))
+        csv_string = CSVBridge.generate({:col_sep => "|"}) do |csv|
+          csv << (REPORT_COLUMNS + %w(created_at))
+          reporting_data.each do |hash| 
+            val_array = REPORT_COLUMNS.inject([]) do |values, col_name|
+              values << ( !hash.key?(col_name) ? "\\N" : (hash[col_name].nil? ? "\\N" : mysql_escape(hash[col_name])))
+              values
+            end
+            val_array << stats_date
+            csv << val_array
+          end
+        end
+        compressed_content = Helpdesk::Text::Compression.compress(csv_string)
+        File.open(csv_file_path, "w") {|f| f.write(compressed_content) }
+        # reporting_data.free
 
-      	utc_time = Time.now.utc
-      	utc_date, utc_hour = utc_time.strftime('%Y_%m_%d'), utc_time.hour
+        utc_time = Time.now.utc
+        utc_date, utc_hour = utc_time.strftime('%Y_%m_%d'), utc_time.hour
 
-      	s3_folder = regenerate ? regenerate_s3_folder(utc_date, utc_hour) : %(#{utc_date}_#{utc_hour})
+        s3_folder = regenerate ? regenerate_s3_folder(utc_date, utc_hour) : %(#{utc_date}_#{utc_hour})
 
-      	file_name = "#{$st_env_name}/#{s3_folder}/redshift_#{temp_file}.csv"
-      	begin
-      		AwsWrapper::S3Object.store(file_name, File.read(csv_file_path), S3_CONFIG[:reports_bucket])
-      	rescue => e
-      		subject = "Error occured while loading daily archive data to s3 for account =#{account.id}"
-					message =  e.message << "\n" << e.backtrace.join("\n")
-					report_notification(subject,message)
-					raise e
-      	end
-      	
-				File.delete(csv_file_path)
+        file_name = "#{$st_env_name}/#{s3_folder}/redshift_#{temp_file}.csv"
 
-				# adding notification for special accounts..
-				if(REPORT_NOTIFICATION_ACCOUNTS.include?(account.id))
-					#if file exists
-					bucket = AWS::S3::Bucket.new(S3_CONFIG[:reports_bucket])
-					file = bucket.objects[file_name]
-					file_exists, file_size = file.exists?, 0 
-					file_size = file.content_length if file_exists
-					subject = "Done daily archive data upload to s3 for account #{account.id}"
-					message = "File Name : #{file_name} does file exists : #{file_exists} file size : #{file_size} in bytes"
-					report_notification(subject,message)
-				end
-			end
+        begin
+          AwsWrapper::S3.upload(S3_CONFIG[:reports_bucket], file_name, csv_file_path)
+        rescue Exception => e
+          subject = "Error occured while loading daily archive data to s3 for account =#{account.id}"
+          message =  e.message << "\n" << e.backtrace.join("\n")
+          report_notification(subject,message)
+          raise e
+        end
 
-			def mysql_escape(object)
-				return object unless object.is_a?(String)
-		    Mysql2::Client.escape(object)
-		  end
-			
-			def select_def_columns(ff_cols)
-				def_cols = DEFAULT_TICKET_COLUMNS.map {|c| "helpdesk_tickets.#{c}"}.join(",")
-				def_schema_cols = DEFAULT_SCHEMA_LESS_TICKET_COLUMNS.map {|c| "helpdesk_schema_less_tickets.#{c}"}.join(",")
-				user_cols = USER_COLUMNS.map {|c| "users.#{c}"}.join(",")
-				stat_cols = STATS_COLUMNS.map {|c| "#{stats_table_name}.#{c}"}.join(",")
-				custom_fields = ff_cols.map{|c| "flexifields.#{c}"}.join(",")
-				%(#{def_cols}, #{def_schema_cols}, #{user_cols}, #{stat_cols} %s) % (custom_fields.empty? ? "" : ", #{custom_fields}")
-			end
+        File.delete(csv_file_path)
 
-			# backlog_columns and all survey rated tickets count will be calculated till the end of the selected time period
-			# avg_response_time,agent_interactions,customer_interactions will be considered only for resolved tickets
-			def select_aggregate_columns
-				%( CAST(IFNULL(SUM(received_tickets),0) as SIGNED) as received_tickets, CAST(IFNULL(SUM(resolved_tickets),0) as SIGNED) as resolved_tickets, 
-				count(if((helpdesk_tickets.status not in (4,5) and (helpdesk_ticket_states.resolved_at is NULL or 
-      	helpdesk_ticket_states.resolved_at > '#{stats_end_time.to_s(:db)}')),1,NULL)) as backlog_tickets,
-				SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
-					helpdesk_ticket_states.avg_response_time,NULL)) as avg_resp_time,
-				SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
-					helpdesk_ticket_states.avg_response_time_by_bhrs,NULL)) as avg_resp_time_by_bhrs,
-				count(if((#{time_condition('helpdesk_ticket_states.first_response_time')}), 1, NULL)) as first_responded_tickets, 
-				CAST(SUM(if((#{time_condition('helpdesk_ticket_states.first_response_time')}),
-					TIMESTAMPDIFF(SECOND, helpdesk_ticket_states.created_at, helpdesk_ticket_states.first_response_time),NULL)) as SIGNED) 
-					as first_resp_time,
-				CAST(SUM(if((#{time_condition('helpdesk_ticket_states.first_response_time')}),
-					helpdesk_ticket_states.first_resp_time_by_bhrs,NULL)) as SIGNED) as first_resp_time_by_bhrs,
-				CAST(SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
-					TIMESTAMPDIFF(SECOND, helpdesk_ticket_states.created_at, helpdesk_ticket_states.resolved_at),NULL)) as SIGNED)
-					as resolution_time,
-				CAST(SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
-					helpdesk_ticket_states.resolution_time_by_bhrs,NULL)) as SIGNED) as resolution_time_by_bhrs,
-				CAST(SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
-					helpdesk_ticket_states.inbound_count,0)) as SIGNED) as customer_interactions,
-				CAST(SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
-					helpdesk_ticket_states.outbound_count,0)) as SIGNED) as agent_interactions,
-				CAST(IFNULL(SUM(num_of_reopens),0) as SIGNED) as num_of_reopens,
-				CAST(IFNULL(SUM(assigned_tickets),0) as SIGNED) as assigned_tickets, CAST(IFNULL(SUM(num_of_reassigns),0) as SIGNED) as num_of_reassigns,
-				CAST(IFNULL(SUM(fcr_tickets),0) as SIGNED) as fcr_tickets,CAST(IFNULL(SUM(sla_tickets),0) as SIGNED) as sla_tickets,
-				#{happy_rated_tkts(stats_end_time)} as happy_rated_tickets,
-				#{neutral_rated_tkts(stats_end_time)} as neutral_rated_tickets,
-				#{unhappy_rated_tkts(stats_end_time)} as unhappy_rated_tickets)
-			end
+        # adding notification for special accounts..
+        if(REPORT_NOTIFICATION_ACCOUNTS.include?(account.id))
+          #if file exists
+          file = AwsWrapper::S3.fetch_obj(S3_CONFIG[:reports_bucket], file_name)
+          file_exists, file_size = file.exists?, 0 
+          file_size = file.content_length if file_exists
+          subject = "Done daily archive data upload to s3 for account #{account.id}"
+          message = "File Name : #{file_name} does file exists : #{file_exists} file size : #{file_size} in bytes"
+          report_notification(subject,message)
+        end               
 
-			def join_query(ff_cols = [])
-				%( helpdesk_tickets left join #{stats_table_name} on (helpdesk_tickets.id = 
-					#{stats_table_name}.ticket_id and helpdesk_tickets.account_id = #{stats_table_name}.account_id and 
-					#{stats_table_name}.created_at = '#{stats_date}') inner join #{tickets_join_query(ff_cols)})
-			end
+      end
 
-			def conditions(account_id)
-				%( #{ticket_conditions(stats_end_time,account_id)} )
-			end
+      def mysql_escape(object)
+        return object unless object.is_a?(String)
+        Mysql2::Client.escape(object)
+      end
+      
+      def select_def_columns(ff_cols)
+        def_cols = DEFAULT_TICKET_COLUMNS.map {|c| "helpdesk_tickets.#{c}"}.join(",")
+        def_schema_cols = DEFAULT_SCHEMA_LESS_TICKET_COLUMNS.map {|c| "helpdesk_schema_less_tickets.#{c}"}.join(",")
+        user_cols = USER_COLUMNS.map {|c| "users.#{c}"}.join(",")
+        stat_cols = STATS_COLUMNS.map {|c| "#{stats_table_name}.#{c}"}.join(",")
+        custom_fields = ff_cols.map{|c| "flexifields.#{c}"}.join(",")
+        %(#{def_cols}, #{def_schema_cols}, #{user_cols}, #{stat_cols} %s) % (custom_fields.empty? ? "" : ", #{custom_fields}")
+      end
 
-			def resolve_time_condition(table_column_name)
-				%(helpdesk_tickets.status IN (4,5) and #{time_condition(table_column_name)}) 
-			end
+      # backlog_columns and all survey rated tickets count will be calculated till the end of the selected time period
+      # avg_response_time,agent_interactions,customer_interactions will be considered only for resolved tickets
+      def select_aggregate_columns
+        %( CAST(IFNULL(SUM(received_tickets),0) as SIGNED) as received_tickets, CAST(IFNULL(SUM(resolved_tickets),0) as SIGNED) as resolved_tickets, 
+        count(if((helpdesk_tickets.status not in (4,5) and (helpdesk_ticket_states.resolved_at is NULL or 
+        helpdesk_ticket_states.resolved_at > '#{stats_end_time.to_s(:db)}')),1,NULL)) as backlog_tickets,
+        SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
+          helpdesk_ticket_states.avg_response_time,NULL)) as avg_resp_time,
+        SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
+          helpdesk_ticket_states.avg_response_time_by_bhrs,NULL)) as avg_resp_time_by_bhrs,
+        count(if((#{time_condition('helpdesk_ticket_states.first_response_time')}), 1, NULL)) as first_responded_tickets, 
+        CAST(SUM(if((#{time_condition('helpdesk_ticket_states.first_response_time')}),
+          TIMESTAMPDIFF(SECOND, helpdesk_ticket_states.created_at, helpdesk_ticket_states.first_response_time),NULL)) as SIGNED) 
+          as first_resp_time,
+        CAST(SUM(if((#{time_condition('helpdesk_ticket_states.first_response_time')}),
+          helpdesk_ticket_states.first_resp_time_by_bhrs,NULL)) as SIGNED) as first_resp_time_by_bhrs,
+        CAST(SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
+          TIMESTAMPDIFF(SECOND, helpdesk_ticket_states.created_at, helpdesk_ticket_states.resolved_at),NULL)) as SIGNED)
+          as resolution_time,
+        CAST(SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
+          helpdesk_ticket_states.resolution_time_by_bhrs,NULL)) as SIGNED) as resolution_time_by_bhrs,
+        CAST(SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
+          helpdesk_ticket_states.inbound_count,0)) as SIGNED) as customer_interactions,
+        CAST(SUM(if((#{resolve_time_condition('helpdesk_ticket_states.resolved_at')}),
+          helpdesk_ticket_states.outbound_count,0)) as SIGNED) as agent_interactions,
+        CAST(IFNULL(SUM(num_of_reopens),0) as SIGNED) as num_of_reopens,
+        CAST(IFNULL(SUM(assigned_tickets),0) as SIGNED) as assigned_tickets, CAST(IFNULL(SUM(num_of_reassigns),0) as SIGNED) as num_of_reassigns,
+        CAST(IFNULL(SUM(fcr_tickets),0) as SIGNED) as fcr_tickets,CAST(IFNULL(SUM(sla_tickets),0) as SIGNED) as sla_tickets,
+        #{happy_rated_tkts(stats_end_time)} as happy_rated_tickets,
+        #{neutral_rated_tkts(stats_end_time)} as neutral_rated_tickets,
+        #{unhappy_rated_tkts(stats_end_time)} as unhappy_rated_tickets)
+      end
 
-			def time_condition(table_column_name)
-				%(#{table_column_name} >= '#{stats_date_time.to_s(:db)}' AND #{table_column_name} <= '#{stats_end_time.to_s(:db)}') 
-			end
+      def join_query(ff_cols = [])
+        %( helpdesk_tickets left join #{stats_table_name} on (helpdesk_tickets.id = 
+          #{stats_table_name}.ticket_id and helpdesk_tickets.account_id = #{stats_table_name}.account_id and 
+          #{stats_table_name}.created_at = '#{stats_date}') inner join #{tickets_join_query(ff_cols)})
+      end
 
-			def report_notification(subject,message)
-				notification_topic = SNS["reports_notification_topic"]
-      	DevNotification.publish(notification_topic, subject, message)
-			end
+      def conditions(account_id)
+        %( #{ticket_conditions(stats_end_time,account_id)} )
+      end
 
-			def regenerate_s3_folder(date,hour)
-				%(#{REGENERATE_LABEL}#{date}_#{hour})
-			end
-	end
+      def resolve_time_condition(table_column_name)
+        %(helpdesk_tickets.status IN (4,5) and #{time_condition(table_column_name)}) 
+      end
+
+      def time_condition(table_column_name)
+        %(#{table_column_name} >= '#{stats_date_time.to_s(:db)}' AND #{table_column_name} <= '#{stats_end_time.to_s(:db)}') 
+      end
+
+      def report_notification(subject,message)
+        notification_topic = SNS["reports_notification_topic"]
+        DevNotification.publish(notification_topic, subject, message)
+      end
+
+      def regenerate_s3_folder(date,hour)
+        %(#{REGENERATE_LABEL}#{date}_#{hour})
+      end
+  end
 end

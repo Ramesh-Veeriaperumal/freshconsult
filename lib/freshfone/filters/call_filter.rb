@@ -8,7 +8,7 @@ class Freshfone::Filters::CallFilter < Wf::Filter
         :order => order_clause,
         :page => page, :per_page => per_page,
         :conditions => sql_conditions,
-        :include => [:ticket, :note, :recording_audio, :caller, :agent => [:avatar], :customer => [:avatar]] )
+        :include => [:ticket, :note, :recording_audio, :caller, :meta, :freshfone_number, :agent => [:avatar], :customer => [:avatar]] )
       recs.wf_filter = self
       recs
     end
@@ -122,8 +122,8 @@ class Freshfone::Filters::CallFilter < Wf::Filter
     date_range = filter["value"]
     date_range = date_range.split('-')
     value = []
-    value << date_range[0].to_date.beginning_of_day().to_s(:db)
-    value << (date_range[1] || date_range[0]).to_date.end_of_day().to_s(:db)
+    value << date_range[0].to_date.beginning_of_day()
+    value << (date_range[1] || date_range[0]).to_date.end_of_day()
     add_condition(filter["condition"],filter["operator"],value)
   end
 

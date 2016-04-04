@@ -40,4 +40,29 @@ describe Monitorship do
  		mail_options.first.should == @monitorship.account.default_friendly_email
  		mail_options.last.should == @monitorship.account.host
  	end
+
+ 	describe "Topic Merge" do
+ 		before(:each) do
+ 			@admin.make_current
+ 			@forum_category = create_test_category
+ 			@forum = create_test_forum(@forum_category)
+ 			@topic1 = create_test_topic(@forum)
+ 			@topic2 = create_test_topic(@forum)
+ 			@users = []
+ 			4.times do 
+ 			  @users <<  add_test_agent(@account) 
+ 			end
+ 		end
+
+ 		it "should not send notification mail for topic merge" do 
+ 			monitor_topic(@topic1, @users[0])
+ 			monitor_topic(@topic1, @users[1])
+ 			monitor_topic(@topic2, @users[2])
+ 			monitor_topic(@topic2, @users[3])
+ 			Delayed::Job.delete_all
+ 			@topic2.update_attributes(:locked => 1, :merged_topic_id => @topic1.id)
+ 			@topic2.merge_followers(@topic1)
+ 			Delayed::Job.count.should == 0
+ 		end
+ 	end
 end

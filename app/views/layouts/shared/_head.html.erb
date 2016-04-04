@@ -1,7 +1,7 @@
 <head>
 	<% if @debuging%>
 		<script type="text/javascript">
-	    	var t_pagestart=new Date().getTime();
+	    	var t_pagestart = new Date().getTime();
 	  	</script>
   	<%end%>
   	<meta charset="utf-8">
@@ -15,72 +15,90 @@
 	<!-- Adding meta tag for CSRF token -->
 	<%= csrf_meta_tag %>
 	<!-- End meta tag for CSRF token -->
-	<!--  Mobile viewport optimized: j.mp/bplateviewport -->
+	<!-- Mobile viewport optimized: j.mp/bplateviewport -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<% unless page_canonical.blank? %>
 		<link rel="canonical" href="<%= page_canonical %>" />
 	<% end %>
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-	<%= include_cloudfront_rtl_css :common %>
-	<%= include_cloudfront_rtl_css :pattern, :media => "screen, print, projection"  %>
-	<%= include_cloudfront_rtl_css :plugins, :sprites, :app, :non_pattern, :tour_my_app %>
-	<%= include_cloudfront_rtl_css :ie_hacks %>
-	<%= include_cloudfront_rtl_css :tkt_details, :media => "screen, print, projection"  %>
-	<%= include_cloudfront_rtl_css :'player360' %>
-	<%= include_cloudfront_rtl_css :community %>
 
-	<%= include_cloudfront_rtl_css :'freshfone_recording_playback' %>
-	<%#= render :partial => "shared/theme.css"  %>
+	<!-- TODO-RAILS3 Clean up the below module oriented items -->
+	 
+	<%= stylesheet_link_tag_with_rtl :'cdn/common' %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/pattern', :media => "screen, print, projection"  %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/plugins'  %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/sprites'  %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/app' %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/non_pattern' %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/tour_my_app' %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/ie_hacks' %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/tkt_details', :media => "screen, print, projection"  %>
 
+	<%= stylesheet_link_tag_with_rtl :'cdn/community' %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/freshfone_recording_playback' %>
+
+	<%= stylesheet_link_tag_with_rtl :'cdn/realtime_dashboard' %>
 	<script type="text/javascript">
-		PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
-		PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';
-		SPACER_IMAGE_PATH = '<%= image_path("spacer.gif") %>';
+	  /* TODO-RAILS3 need to cross check this area */
+		PROFILE_BLANK_THUMB_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_thumb.jpg';
+		PROFILE_BLANK_MEDIUM_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_medium.jpg';
+		SPACER_IMAGE_PATH = '<%= spacer_image_url %>';
 		FILLER_IMAGES = {
-			imageLoading : '<%= image_path("fillers/image_upload_placeholder.gif") %>'
+			imageLoading : '<%= asset_host_url %>/assets/animated/image_upload_placeholder.gif'
 		};
 		cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
-		cloudfront_host_url = "<%= CloudfrontAssetHost.asset_host('frameworks.js',request) %>";
+		cloudfront_host_url = "<%= asset_host_url %>";
 	</script>
-	<%= include_cloudfront_js :defaults  %>
-	<%= include_cloudfront_js :frameworks %>
-	<%= include_cloudfront_js :workspace %>
-	<%= include_cloudfront_js :redactor %>
-	<%= include_cloudfront_js :shortcut if shortcuts_enabled? %>
-	<%= include_cloudfront_js :syntaxhighlighter %>
+		
+	<%= javascript_include_tag :'cdn/defaults'  %>
+	<%= javascript_include_tag :'cdn/frameworks' %>
+	<%= javascript_include_tag :'cdn/workspace' %>
+	<%= javascript_include_tag :'cdn/redactor' %>
+	<%= javascript_include_tag :'cdn/syntaxhighlighter' %>
+	<%= javascript_include_tag :'cdn/pattern'  %>
+	<%= javascript_include_tag :'cdn/merge'  %>
+	<%= javascript_include_tag :'cdn/custom_widget' %>
+  	<%= javascript_include_tag :'cdn/livechat_helper' %>
 
-
-	<%= include_cloudfront_js :pattern  %>
-	<%= include_cloudfront_js :custom_widget %>
 
 	<% if current_account.features?(:freshfone) ||
 	  (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
-		<%= include_cloudfront_js :soundmanager %>
+		<%= javascript_include_tag :'cdn/soundmanager' %>
 	<% end %>
 	<% if chat_activated? && !current_account.features_included?(:collision_socket) %>
-		<%= include_cloudfront_js :freshchat %>
+		<%= javascript_include_tag :'cdn/livechat_collision' %>
 	<% end %>
 	
 	<% if chat_activated? %>
-		<%= include_cloudfront_js :freshchat_intializer %>
+    <%= javascript_include_tag :'cdn/livechat_initializer' %>
 	<% end %> 
 
-	<%= include_cloudfront_js_langs %>
+	<%= javascript_include_tag :'cdn/livechat_admin_settings' %>
+	
+	<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
+
+	<!-- for i18n-js translations -->
+  <%= javascript_include_tag :"cdn/i18n/#{I18n.locale.to_s}" %>
 
 	<script type="text/javascript">
 		Fjax.pjax_parallel_request = null;
-		var js_assets = JSON.parse('<%= Jammit.configuration[:javascripts].to_json =%>'.replace(/&quot;/g,'"')),
-				css_assets = JSON.parse('<%= Jammit.configuration[:stylesheets].to_json =%>'.replace(/&quot;/g,'"'));
-		window.scriptLoader = new ScriptLoader(js_assets, css_assets);
-		Fjax.Assets.setup(js_assets, css_assets, cloudfront_version, cloudfront_host_url);
+		$LAB.setGlobalDefaults({
+			BasePath: cloudfront_host_url + '/assets/'
+		});
+		Fjax.Assets.setup(<%= asset_manifest(:js).to_json.html_safe %>, {app:[], plugins:[]}, "", cloudfront_host_url);
 		Fjax.Manager.start();
 	</script>
 
+	<script type="text/javascript">
+    	I18n.defaultLocale = "<%= I18n.default_locale %>";
+    	I18n.locale = "<%= I18n.locale %>";
+  </script>
 
 	<%= yield :head %>
 
 	<link href="<%= helpdesk_theme_url %>" media="screen" rel="stylesheet" type="text/css">
-	<%= render :partial => 'layouts/shared/app_analytics' if current_user.present? and current_user.agent? and Rails.env.production? %>
+
+	
 </head>
 
 <%if @debuging %>

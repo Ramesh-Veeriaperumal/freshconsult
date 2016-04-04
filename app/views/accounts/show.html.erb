@@ -1,18 +1,3 @@
-<%
-	admin_choice = current_account.account_managers.inject([]) { |choice, admin| 
-							choice << "{ id : '#{escape_javascript(admin.email)}',
-	            		   				value : '#{escape_javascript(admin.email)}',
-	               						text : '#{escape_javascript(admin.email)}' }"  }
-
-	unless (emails = current_account.invoice_emails).blank?  
-	  added_invoice_emails = emails.inject([]) { |choice, email| 
-							choice << "{ id: '#{escape_javascript(email)}',
-														text: '#{escape_javascript(email)}',
-														value: '#{escape_javascript(email)}' }" }
-	end
-
-%>
-
 <% content_for :sidebar do -%>
 	
 	<div class="sidepanel">
@@ -34,7 +19,7 @@
 	<div class="sidepanel">
 		<h5 class="lead"><%= t(".export_data") %></h5> 
 		<p><%= t('.export_data_text') %></p>
-		<%= link_to "#{t('.export_now')} &rsaquo;".html_safe, export_admin_data_export_url, :class => "btn" %>
+		<%= link_to "#{t('.export_now')} &rsaquo;".html_safe, export_admin_data_export_index_path, :class => "btn" %>
 	</div>
 
 <%- end %>
@@ -45,8 +30,7 @@
 </h3>
 
 <div class="account-content">
-	 
-	<% form_for :account_configuration, @account_configuration, :url => { :controller => 
+	<%= form_for current_account.account_configuration, :url => { :controller => 
 		"account_configurations", :action => "update" },  :html => { :method => :put, 
 		:id => "account-details-form"} do |f| %>
 
@@ -83,17 +67,7 @@
 			  		<div class="controls">
 						<%= text_field_tag "account_configuration[contact_info][phone]", current_account.admin_phone, :id => "contact-phone",:class =>"span5", :autocomplete => "off" %>
 					</div>
-				</li>
-				<li>
-					<br/>
-					<h3 class="rebrand-head-text top-space-none"><%= t('.invoice_email_info') %></h3>
-				</li>
-				<li class="control-group">
-					<%= content_tag(:label, "#{t('.invoice_emails')}<span class='required_star'>*</span>".html_safe, :class => "control-label") %>
-					<div class="controls">
-						<%= hidden_field_tag "invoice_email_field", added_invoice_emails, :class => "required span5 clear-left-margin" %>
-					</div>
-				</li>						
+				</li>				
 			</ul>
 	  	</li>
 	</ul>
@@ -125,24 +99,6 @@
 								else { return null; } 
 				     }}
 
-
-  	jQuery("#invoice_email_field").select2({
-  			data: [ <%= admin_choice.join(",").html_safe  %> ],
-  			multiple: true,
-  			maximumSelectionSize: 1,
-
-  			initSelection : function (element, callback) {
-    			callback( [<%= added_invoice_emails.join(",").html_safe if added_invoice_emails %>] );
-  			},
-
-  			specialFormatting: true,
-  			formatResult: results,
-				formatNoMatches: function () { return "Invalid email"; },
-				formatSelectionTooBig: function(){ return "You cannot add any more emails"; },
-
-  			createSearchChoice: search_choice_validation		
-		});
-	
 		jQuery("#invoice_email_field").select2("val",[]);
 
 	});

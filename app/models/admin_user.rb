@@ -1,6 +1,7 @@
 # encoding: utf-8
 class AdminUser < ActiveRecord::Base
   not_sharded
+  self.primary_key = :id
   
   FD_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+[a-zA-Z0-9.-]+@freshdesk\.com\b/
   PASSWORD_REGEX = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
@@ -9,6 +10,7 @@ class AdminUser < ActiveRecord::Base
     c.session_class = AdminSession
     c.validate :password_validation
     c.validates_format_of_email_field_options :with => FD_EMAIL_REGEX
+    c.crypto_provider = Authlogic::CryptoProviders::Sha512
   end
 
   validates_uniqueness_of :name, :message => "is already in use"

@@ -61,6 +61,11 @@ JIRA_REST_API = {
       :method => "delete",
       :rest_url => "rest/webhooks/1.0/webhook/issueId",
       :content_type => "application/json"
+    },
+    :add_attachment => {
+      :method => "post",
+      :rest_url => "rest/api/2/issue/issueId/attachments",
+      :content_type => "application/json"
     }
   } 
 

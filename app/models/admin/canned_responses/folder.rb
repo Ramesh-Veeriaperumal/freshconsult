@@ -1,6 +1,6 @@
 class Admin::CannedResponses::Folder < ActiveRecord::Base
-
-  set_table_name "ca_folders"
+  self.primary_key = :id
+  self.table_name =  "ca_folders"
 
   belongs_to_account
 
@@ -23,7 +23,7 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
   FOLDER_TYPE_KEYS_BY_TOKEN = Hash[*FOLDER_TYPE.map { |i| [i[0], i[2]] }.flatten]
   FOLDER_NAMES_BY_TOKEN     = Hash[*FOLDER_TYPE.map { |i| [i[0], i[1]] }.flatten]
 
-  named_scope :accessible_for, lambda { |agent_user|
+  scope :accessible_for, lambda { |agent_user|
     {
       :select => "ca_folders.*, available_responses_count",
       :joins => %(inner join
@@ -47,10 +47,10 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
     }
   }
 
-  named_scope :personal_folder,
+  scope :personal_folder,
     :conditions => { :folder_type => FOLDER_TYPE_KEYS_BY_TOKEN[:personal] }
 
-  named_scope :default_folder,
+  scope :default_folder,
     :conditions => { :is_default => true }
 
 
@@ -71,12 +71,12 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
 
   protected
 
-  def confirm_destroy
-    if is_default?
-      self.errors.add_to_base("Cannot delete default folder!!")
-      return false
+    def confirm_destroy
+      if is_default?
+        self.errors.add(:base,"Cannot delete default folder!!")
+        return false
+      end
     end
-  end
 
   def set_folder_type
     self.folder_type = FOLDER_TYPE_KEYS_BY_TOKEN[:others] if self.folder_type.nil?

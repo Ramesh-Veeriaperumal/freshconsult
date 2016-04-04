@@ -15,7 +15,7 @@
 			} %>
 			<!-- Welcome message is turned OFF, All Incoming calls will directly reach your helpdesk. Turn On  |  Learn more
 			Welcome message will be played for all incoming calls. Turn Off  -->
-<% form_for @ivr, :html => { :class => "edit_freshfone_ivr ivr_setting", 
+<%= form_for @ivr, :html => { :class => "edit_freshfone_ivr ivr_setting", 
 						:multipart => true } do |f| %>
 	
 	<%= f.error_messages %>
@@ -45,6 +45,6 @@
 
 
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	var menu_json = <%= @ivr.menus.to_json.html_safe %>;
 <% end %>

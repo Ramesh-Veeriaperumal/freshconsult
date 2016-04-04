@@ -1,9 +1,10 @@
 <!--Copyright © 2014 Freshdesk Inc. All Rights Reserved.-->
 <% content_for :layoutType do -%>reports_page<%- end %>
-<script src="/javascripts/report/date.js" type="text/javascript"></script>
-<script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
-<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
-<%= include_cloudfront_rtl_css :reports %>
+
+<%= javascript_include_tag :'cdn/report_date'  %>
+<%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %> 
+<%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
+<%= javascript_include_tag :'cdn/reports'  %>
   <div id="loading-box">
    <div class="sloading loading-left loading-small reports-loading"><%=t('adv_reports.glance.loading_msg')%></div> 
    </div>
@@ -19,32 +20,38 @@
  <!--end report header-->
 <!-- report content -->
 <div class="row-fluid" id="freshfone_summary_report">
-  <div class="report-page" id="report-page">
+  <div class="report-page reports-main" id="report-page">
     <div class="report-content-wrapper" id="">
     <!--report header-->
-    <div class="row-fluid report-header">
-      <div class="row-fluid">
-        <div class="span12 report-header-content">
-          <div class="span7">
-              <img src="/images/reports/report-icon.png" alt="" class="vertical-alignment report-header-icon">
-            <div class="vertical-alignment report-inner-heading">
-              <h1 class="lead" id="report_header_title"><%=t('reports.freshfone.report_title')%></h1>
-              <p class="muted" id="report_header_date"><%=@report_date%></p>
-            </div>
-          </div>
-        </div>
+    <div class="row-fluid reports-header">
+      <div class="reports-title span12">
+        <span class="report-icon">
+            <i class="fsize-36 ficon-phone_summary"></i>
+        </span>
+        <span class="report-title-block" data-action="pop-report-type-menu" >
+          <span class="unsaved_star vertical-alignment hide">*</span>
+          <span id="report-title">
+            <%=t('helpdesk_reports.phone_summary.title')%>
+          </span>
+          <span class="grey-arrow-down title-dropdown"></span>
+          <p class="muted" id="report_header_date"></p>
+        </span>
+        <% if current_account.subscription.non_sprout_plan? %>
+          <%= render :partial => "reports/shared/save_report_controls"%>
+        <% end %>
       </div>
-      <div class="row-fluid">
-        <div class="report-filter span12" id="report-filter-details">
-          <div class="vertical-alignment report-filter-slide-btn">
-              <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding">Edit</a>
-          </div>
-          <div class="filter-container" id="filter_container">
-            <%= render :partial => 'filter_header' %>
-          </div>
-          <div class="">
-            <!-- report filter name if any -->
-          </div>
+      <div class="reports-filter span12" id="report-filter-details">
+        <div class="span1 edit-filter report-filter-slide-btn">
+            <a class="btn btn-primary reports-metrics" href="#report-filter-edit" data-parent="#report-page" id="sliding">Edit</a>
+        </div>
+        <div class="span11 filter-type filter-container" id="filter_container">
+          <%= render :partial => 'filter_header' %>
+        </div>
+        <div class="">
+          <!-- report filter name if any -->
+        </div>
+        <div class="reports-menu hide" id="reports_type_menu">
+          <!-- Saved reports menu -->   
         </div>
       </div>
     </div>
@@ -60,10 +67,35 @@
   </div>
 <!--end report content-->
 </div>
-<% javascript_tag do %> 
+<%= render :partial => "reports/shared/dialog"%>
+<%= javascript_tag do %> 
+  jQuery(window).on("load", function () {
+      App.Phone.Metrics.recordSource("REPORTS_LOAD");
+      App.Phone.Metrics.push_event();
+  });
   jQuery('body').on('assetLoaded.fjax', function() {
     App.Freshfonereports.summaryReports('<%=generate_reports_freshfone_summary_reports_url%>');
-    App.Freshfonereports.groupOptions('<%= filter_group_options.html_safe %>','<%=t("reports.freshfone.options.all_groups")%>');
-    App.Freshfonereports.numberOptions(JSON.parse('<%= filter_number_options.html_safe %>'),JSON.parse('<%=filter_default_number.html_safe%>'));
+    App.Freshfonereports.groupOptions(<%= filter_group_options.html_safe %>,'<%=t("reports.freshfone.options.all_groups")%>');
+    App.Freshfonereports.numberOptions(<%= filter_number_options.html_safe %> , <%=filter_default_number.html_safe %>);
+    App.Freshfonereports.businessHoursOptions(<%= filter_by_business_hours_options.html_safe %>, '<%=t("reports.freshfone.filter_option_all_calls")%>');
+    if (typeof freshfoneReports === "undefined") { freshfoneReports = {}; }
+    freshfoneReports.group_cache = <%= group_cache.blank? ? 0 : group_cache %>
+    freshfoneReports.business_hours_cache = <%= business_hours_cache.blank? ? 0 : business_hours_cache %>
+   });
+
+  jQuery(function(){
+    jQuery('#report-page').on('click.helpdesk_reports', '[data-action="pop-report-type-menu"]',  function (event) {
+                event.stopImmediatePropagation();
+               var menu = jQuery('#reports_type_menu');
+                if (!menu.is(':visible')) {
+                    menu.removeClass('hide');
+                } else {
+                    menu.addClass('hide');
+                }
+          });
   });
+  
+  var Helpkit = Helpkit || {};
+  Helpkit.report_filter_data = <%= @report_filter_data.to_json.html_safe %>;
+  Helpkit.report_type = "phone_summary"
 <%end%>

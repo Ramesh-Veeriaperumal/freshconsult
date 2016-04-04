@@ -1,4 +1,4 @@
-<% javascript_tag do %>
+<%= javascript_tag do %>
 
 	jQuery(document).ready(function() {
 
@@ -18,6 +18,45 @@
 			jQuery('#agent_dialog_form')
 					.resetForm()
 					.find('select').trigger('change');
+		});
+
+		jQuery('.email_notfn').on('click', function () {
+			field = jQuery(this)
+			var lang = field.data('language')
+			if (jQuery('form#description_'+lang+'_form').valid()) {
+				var redr = jQuery('#description_'+lang).data('redactor')
+				redr.removeCursorImage();
+				field.attr('disabled','disabled');
+				field.val(field.data('loadingText'));
+				var id = field.data('id')
+				var contr = (lang == 'default') ? "email_notifications" : "dynamic_notification_templates";
+				jQuery.ajax({
+					url: "/admin/"+contr+"/"+id,
+					type: "PUT",
+					data: jQuery('form#description_'+lang+'_form').serialize(),
+
+					success: function(data){
+						if(data.success) {
+							if(data.url) {
+								jQuery(window).attr("location",data.url)
+							}
+							window.location.reload();
+						} else if(data.msg) {
+							field.attr('disabled', false);
+							field.val(field.data('originalText'));
+							jQuery("#noticeajax").html(data.msg).show();
+							closeableFlash('#noticeajax');
+							jQuery(document).scrollTop(0);
+						}
+					},
+
+					error: function(data){
+						console.log(data.responseText);
+						field.attr('disabled', false);
+						field.val(field.data('originalText'));
+					}
+				});
+			}
 		});
 
 		if (<%=@supported_languages.blank? %>){
@@ -42,7 +81,7 @@
 			
 		});
 		
-		jQuery('a[data-toggle="tab"]').on('show', function(e) {
+		jQuery('#language-tab a[data-toggle="tab"]').on('show', function(e) {
 		 jQuery('#default_help').show();	
 		 jQuery('#default_help_show').hide();
 		 jQuery('.hide-default').show();	
@@ -88,12 +127,21 @@
 
 			});
 		} 
+
+		setTimeout(function(){
+ 			jQuery('#'+ current_tab ).data("redactor").focusOnCursor();
+ 		}, 500)
+
 		});
+
+		setTimeout(function(){
+ 			jQuery('#'+ current_tab ).data("redactor").focusOnCursor();
+ 		}, 500)
 
 		jQuery('.link_placeholder').live("click", function(ev){
 		    ev.preventDefault();
 				jQuery('#place-dialog').slideDown('fast', function(){
-        			jQuery(this).groupPlaceholders({'truncateItems': false});
+        			jQuery(this).groupPlaceholders();
 				});
 		});
 		jQuery('.redactor_editor').live('click', function(){
@@ -132,13 +180,15 @@
     			<h3 class="lead">
     				<%if @type == 'requester_template'%>
     					<% type_url = 'requester'%>
-    					<%= link_to "#{t('email_notifications.requestor_notification')}", "/admin/email_notifications##{type_url}" %>
+    					<%= link_to "#{t('email_notifications.requestor_notification')}", "#{admin_email_notifications_path}##{type_url}" %>
 					<%elsif @type == 'agent_template'%>
 							<% type_url = 'agent'%>
-							<%= link_to "#{t('email_notifications.agent_notification')}", "/admin/email_notifications##{type_url}"%>
+							<%= link_to "#{t('email_notifications.agent_notification')}", "#{admin_email_notifications_path}##{type_url}"%>
+					<% elsif @type == "cc_notification"%>
+							<%= link_to "#{t('email_notifications.cc_notifications')}", "#{admin_email_notifications_path}##{@type}"%>
 					<%else%>
 							<% type_url = 'template'%>
-							<%= link_to "#{t('email_notifications.notification_template')}", "/admin/email_notifications##{type_url}"%>
+							<%= link_to "#{t('email_notifications.notification_template')}", "#{admin_email_notifications_path}##{type_url}"%>
 					<%end%>/&nbsp;<%= t("#{@email_notification .token}") %>
     			</h3>
     		</div>
@@ -196,7 +246,7 @@
 	<br/>
 <div class="row-fluid tab-content">
 	<div class="tab-pane fade active in" id="default"> 
-		<% form_for @email_notification, :remote => true, :url => { :action => "update" }, :html => { :method => :put, :id => "description_default_form", :class => "notif_form", :rel =>"validate"} do |f| %>
+		<%= form_for @email_notification, :url => { :action => "update" }, :html => { :method => :put, :id => "description_default_form", :class => "notif_form", :rel =>"validate"} do |f| %>
 			<div class="row-fluid" id="last_saved_reset">
 				<div class="span7">
 					<div class="notification-message" title="<%=@email_notification.updated_at%>" >
@@ -207,16 +257,15 @@
 					<%= link_to "#{t('email_notifications.reset_last_saved')}", "#", :id => "reset_template_default", :class =>"pull-right reset_template" %>
 				</div>
 			</div>
-			<%	if @type == 'requester_template' || @type == 'reply_template' %> 
-				<%= hidden_field_tag 'requester', '1'%>
-			<%else%>
+			<%	if @type == 'agent_template' %> 
 				<%= hidden_field_tag 'agent', '1'%>
+			<%else%>
+				<%= hidden_field_tag 'requester', '1'%>
 			<%end%>	
 			
 			<div class="row-fluid">
-				
-					<span class="pull-right"><a href="#" class="pull-right link_placeholder btn btn-mini"><%=t('email_notifications.insert_placeholder')%> &raquo;</a></span>
-					<label><b><%= t('email_notifications.subject') %></b> <span class="required_star">*</span></label>
+				<span class="pull-right"><a href="#" class="pull-right link_placeholder btn btn-mini btn-flat"><%=t('email_notifications.insert_placeholder')%></a></span>
+				<label><b><%= t('email_notifications.subject') %></b> <span class="required_star">*</span></label>
 				<% if (@type == 'agent_template')
 					 		description_field = :agent_template
 					 		subject_field = :agent_subject_template
@@ -260,7 +309,7 @@
 					
 				</div>	
 			<%end%>	
-				<% javascript_tag do %>
+				<%= javascript_tag do %>
 						jQuery("#reset_template_default").data('html', jQuery('#description_default').val());
 						jQuery("#reset_template_default").data('subject', jQuery('#subject_default').val());
 						jQuery('#reset_template_default').live("click", function(ev){
@@ -287,7 +336,9 @@
 					</div>
 					<div class="text-right span5 pull-right ">
 						<%= link_to t('cancel'), admin_email_notifications_path, :class => "btn" %>
-						<%= f.submit t('save'), { :id => "description_default_save", :class => "btn btn-primary ","data-loading-text" => t('saving') } %>
+					<input type="button" data-id="<%= @email_notification.id %>" value="<%= t('save') %>" 
+						data-language="default" class="btn btn-primary email_notfn" 
+						data-loading-text= "<%=t('saving')%>" data-original-text="<%= t('save') %>">
 					</div>
 				</div>
 		<%end%>	
@@ -301,7 +352,7 @@
 				content = get_requester_content(@email_notification, lang)
 			end %>	 
 			<div class="tab-pane fade" id="<%=lang%>" data-lang="<%=lang%>">  
-				<% form_for content, :url => { :controller => 'admin/dynamic_notification_templates', :action => "update" , :id => content.id}, :html => { :method => :put, :id => 'description_'+lang+'_form', :class => "notif_form" , :rel =>"validate"}  do |c| %>	
+				<%= form_for content, :url => { :controller => 'admin/dynamic_notification_templates', :action => "update" , :id => content.id}, :html => { :method => :put, :id => 'description_'+lang+'_form', :class => "notif_form" , :rel =>"validate"}  do |c| %>	
 				<%= c.hidden_field :language %>
 				<%= c.hidden_field :category %>
 				<%= c.hidden_field :active %>
@@ -335,7 +386,7 @@
 					
 				</div>
 				<div class="row-fluid">
-					<span class="pull-right"><a href="#" class="pull-right link_placeholder btn btn-mini"><%=t('email_notifications.insert_placeholder')%> &raquo;</a></span>
+					<span class="pull-right"><a href="#" class="pull-right link_placeholder btn btn-mini btn-flat"><%=t('email_notifications.insert_placeholder')%></a></span>
 						<label><b><%= t('email_notifications.subject') %></b> <span class="required_star">*</span> </label> 
 							<%= c.text_field :subject, {:id => "subject_#{lang}", :class => "email-notification-subject insert-placeholder-target required" } %>
 							<br/>
@@ -348,7 +399,9 @@
 					<% if notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE %>
 						<label><b><%= t('message') %></b><span class="required_star">*</span></label> 
 					<%end%>	
-					<%= c.rich_editor :description, {'editor-type' => :email_notification, :id => 'description_'+lang, :class =>"desc_info #{(notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE) ? 'required_redactor' : ''}", :height => "200px"} %>
+					<% email_template = JSON.parse(email_template_settings) %>
+					<%= c.rich_editor :description, {'editor-type' => :email_notification, :id => 'description_'+lang, :class =>"desc_info #{(notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE) ? 'required_redactor' : ''}", :height => "200px", 'data-remove-cursor' => notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE ? true : false,  :wrapFontSettings => {"font-family" => email_template["font-family"] , "font-size" => email_template["font-size"]} 
+					} %>
 				</div>
 				<div class="row-fluid email-notification-footer"> 
 					<div class="span8">
@@ -359,7 +412,7 @@
 						    </label>
 						</div>
 					<%end%>
-					<% javascript_tag do %>
+					<%= javascript_tag do %>
 							jQuery("#reset_template_<%=lang%>").data('html', jQuery('#description_<%=lang%>').val());
 							jQuery("#reset_template_<%=lang%>").data('subject', jQuery('#subject_<%=lang%>').val());
 							jQuery('#reset_template_<%=lang%>').live("click", function(ev){
@@ -376,7 +429,9 @@
 					<div class="span4 pull-right">
 						<div class="text-right">
 							<%= link_to t('cancel'), admin_email_notifications_path, :class => "btn" %>
-							<%= c.submit t('save'), {  :id => 'description_'+lang+'_save' ,:class => "btn btn-primary " ,"data-loading-text" => t('saving') } %>
+							<input type="button" data-id="<%= content.id %>" value="<%= t('save') %>" 
+								data-language="<%=lang%>" class="btn btn-primary email_notfn" 
+								data-loading-text= "<%=t('saving')%>" data-original-text="<%= t('save') %>">
 						</div>
 					</div>
 				</div>
@@ -399,9 +454,9 @@ title="<%= t('email_notifications.unsaved_title')%>"
 <% if notification_type == EmailNotification::NEW_TICKET and @type == 'agent_template' %>
 	<div id="agent-dialog" style="display:none;">
 		<p> <%=t('email_notifications.agent_select')%></p><br/>
-		<% form_for :email_notification_agents , :url => { :controller => 'admin/email_notifications', :action => "update_agents" , :id => @email_notification.id }, :html => { :method => :put , :id => "agent_dialog_form"}  do |v| %>
+		<%= form_for :email_notification_agents , :url => { :controller => 'admin/email_notifications', :action => "update_agents" , :id => @email_notification.id }, :html => { :method => :put , :id => "agent_dialog_form"}  do |v| %>
 			<%= v.hidden_field :notifyagents_data, { :id => "NotifyAgents" } %>
-			<% agent_hash = {:options => get_agent_options } if (notification_type == EmailNotification::NEW_TICKET and @type =="agent_template")%>
+			<% agent_hash = {:options => agent_options } if (notification_type == EmailNotification::NEW_TICKET and @type =="agent_template")%>
 
 			<%= select_tag "notify_agents_#{@email_notification.id}", options_for_select( agent_hash[:options].map {|a| [a[1], a[0]] },@email_notification.agents.collect {|a| a.id} ), { :multiple => true, "data-placeholder"=> t('email_notifications_agent_selection_msg'), :id =>"notify_agents_data", :class => "select2 span5 clear-left-margin", "data-default" => @email_notification.agents.collect{|a| a.id}.join(",") } %>
 		<%end%>	

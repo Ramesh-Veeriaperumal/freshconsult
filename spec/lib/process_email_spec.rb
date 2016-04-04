@@ -1,12 +1,11 @@
 require 'spec_helper'
-include EmailHelper
+RSpec.configure do |c|
+  c.include EmailHelper
+end
 
-describe Helpdesk::ProcessEmail do
+RSpec.describe Helpdesk::ProcessEmail do
 	before(:all) do
-		add_agent_to_account(@account, {:name => "Harry Potter", :email => Faker::Internet.email, :active => true})
-		clear_email_config
-		@comp = create_company
-		restore_default_feature("reply_to_based_tickets")
+		before_all_call
 	end
 
 	before(:each) do
@@ -122,6 +121,8 @@ describe Helpdesk::ProcessEmail do
 			ticket = @account.tickets.last
 			ticket_incremented?(@ticket_size)
   		@account.tickets.last.requester.email.downcase.should eql email[:from].downcase
+			@account.features.reply_to_based_tickets.create
+			@account.reload
 		end
 
 		it "with kbase in cc by requester" do
@@ -133,11 +134,11 @@ describe Helpdesk::ProcessEmail do
 		end
 
 		it "by agent with kbase in cc", :focus => true do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :include_cc => @account.kbase_email, :reply => @account.agents.first.user.email})
+			email = new_email({:email_config => @account.primary_email_config.to_email, :include_cc => @account.kbase_email, :reply => @agent.user.email})
 			Helpdesk::ProcessEmail.new(email).perform
 			ticket = @account.tickets.last
 			@account.reload
-			ticket_incremented?(@ticket_size)
+      ticket_incremented?(@ticket_size)
 			@account.solution_articles.size.should eql @article_size+1
 		end
 
@@ -167,13 +168,13 @@ describe Helpdesk::ProcessEmail do
 		end
 
 		it "forwarded from agent" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
 			email[:text] = add_forward_content+email[:text]
 			email[:html] = add_forward_content+email[:html]
 			Helpdesk::ProcessEmail.new(email).perform
 			ticket = @account.tickets.last
 			ticket_incremented?(@ticket_size)
-			ticket.requester.email.should_not eql @account.agents.first.user.email
+			ticket.requester.email.should_not eql @agent.user.email
 		end
 
 		it "with plain text" do
@@ -234,17 +235,6 @@ describe Helpdesk::ProcessEmail do
 			ticket.spam.should eql true
 		end
 
-		it "with email commands" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email[:text] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email[:text]
-			email[:html] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email[:html]
-			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.priority.should eql 2
-		end
-
 		it "with unknown email_config" do
 			email = new_email({:email_config => "abcde234fg@localhost.freshpo.com"})
 			Helpdesk::ProcessEmail.new(email).perform
@@ -295,12 +285,21 @@ describe Helpdesk::ProcessEmail do
 			Helpdesk::ProcessEmail.new(email).perform
 			solutions_incremented?(@article_size)
 		end
+    
+	    after(:all) do
+	      restore_default_feature("reply_to_based_tickets")
+	    end
 	end
 
 	describe "Create article" do
+    
+    before(:all) do
+      before_all_call
+    end
+  
 		it "once by email" do
-			email = new_email({:email_config => @account.kbase_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
+			email = new_email({:email_config => @account.kbase_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
 			Helpdesk::ProcessEmail.new(email).perform
 			solutions_incremented?(@article_size)
 		end
@@ -313,17 +312,26 @@ describe Helpdesk::ProcessEmail do
 		end
 
 		it "with inline attachments" do
-			email = new_email({:email_config => @account.kbase_email, :reply => @account.agents.first.user.email, :attachments => 1, :inline => 1})
+			email = new_email({:email_config => @account.kbase_email, :reply => @agent.user.email, :attachments => 1, :inline => 1})
 			email[:html] = email[:html] + "<img src=\"#{content_id}\" alt=\"Inline image 1\"><br>"
-			email[:from] = @account.agents.first.user.email
+			email[:from] = @agent.user.email
 			Helpdesk::ProcessEmail.new(email).perform
 			solution = Solution::Article.last
 			solutions_incremented?(@article_size)
 			solution.attachments.size.should eql 1
 		end
+    
+    after(:all) do
+      restore_default_feature("reply_to_based_tickets")
+    end
 	end
 
 	describe "Create Note" do
+    
+    before(:all) do
+      before_all_call
+    end
+    
 		it "by ticket id" do
 			email_id = Faker::Internet.email
 			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
@@ -360,22 +368,6 @@ describe Helpdesk::ProcessEmail do
 			another[:subject] = another[:subject]+" [##{ticket.display_id}]"
 			Helpdesk::ProcessEmail.new(another).perform
 			ticket_incremented?(@ticket_size)
-		end
-
-		it "with email_commands" do
-			email = new_email({:email_config => @account.primary_email_config.to_email})
-			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			another = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			another[:subject] = another[:subject]+" [##{ticket.display_id}]"
-			another[:from] = @account.agents.first.user.email
-			another[:text] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email[:text]
-			another[:html] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email[:html]
-			Helpdesk::ProcessEmail.new(another).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			@account.notes.size.should eql @note_size+1
-			ticket.priority.should eql 2
 		end
 
 		it "by span" do
@@ -455,7 +447,7 @@ describe Helpdesk::ProcessEmail do
 		end
 
 		it "by agent" do
-			email_id = @account.agents.first.user.email
+			email_id = @agent.user.email
 			email = new_email({:email_config => @account.primary_email_config.to_email, :include_cc => email_id})
 			another = new_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			Helpdesk::ProcessEmail.new(email).perform
@@ -484,13 +476,14 @@ describe Helpdesk::ProcessEmail do
 			email = new_email({:email_config => @account.primary_email_config.to_email})
 			Helpdesk::ProcessEmail.new(email).perform
 			ticket = @account.tickets.first
+			notes_count = ticket.notes.count
 			@account.tickets.update_all(:cc_email => nil)
-			another = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
+			another = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
 			another[:subject] = another[:subject]+" [##{ticket.display_id}]"
 			Helpdesk::ProcessEmail.new(another).perform
 			ticket_incremented?(@ticket_size)
 			@account.notes.size.should eql @note_size+1
-			ticket.notes.size.should eql 1
+			ticket.notes.count.should eql notes_count+1
 		end
 
 		it "as reply with new CC emails" do
@@ -527,7 +520,6 @@ describe Helpdesk::ProcessEmail do
 		it "by secondary email" do
 			@key_state = mue_key_state(@account)
     		enable_mue_key(@account)
-    		@account.features.multiple_user_emails.create
     		@account.features.contact_merge_ui.create
     		@account.reload
     		@account.features.reload
@@ -543,7 +535,6 @@ describe Helpdesk::ProcessEmail do
 			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
 			@account.features.contact_merge_ui.destroy
-			@account.features.multiple_user_emails.destroy
 			disable_mue_key(@account) unless @key_state
 		end
 
@@ -585,5 +576,34 @@ describe Helpdesk::ProcessEmail do
 			latest_ticket.cc_email_hash[:reply_cc].should include cc_email
 		end
 	end
+
+	describe "Kbase email processing" do
+		it "should convert to html properly when html is not present in params" do
+			kbase_email = @account.kbase_email
+			email_subject = Faker::Lorem.words(5).join(" ")
+			content_arr = Faker::Lorem.sentences(5)
+			email = {
+								:dkim => "none", 
+								:to => kbase_email, 
+								:from => @agent.user.email, 
+								:text => content_arr.join("\r\n"),
+								:sender_ip => random_ip, 
+								:envelope => "{\"to\":[\"#{kbase_email}\"],\"from\":\"#{@agent.user.email}\"}", 
+								:attachments => 0, 
+								:subject => email_subject, 
+								:SPF => "pass" }
+			Helpdesk::ProcessEmail.new(email).perform
+			@article = @account.solution_articles.find_by_title(email_subject)
+			@article.description.should eql "<p>#{content_arr.join("\n<br>")}</p>"
+		end
+	end
+  
+  
+  def before_all_call
+    @agent = add_agent_to_account(@account, {:name => "Harry Potter", :email => Faker::Internet.email, :active => true})
+		clear_email_config
+		@comp = create_company
+		restore_default_feature("reply_to_based_tickets")
+  end
 
 end

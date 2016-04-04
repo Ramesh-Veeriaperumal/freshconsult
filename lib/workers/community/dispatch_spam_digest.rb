@@ -6,42 +6,36 @@ class Workers::Community::DispatchSpamDigest
 	class << self
 
 		def perform(args)
-			args.symbolize_keys!
 
-			Sharding.select_shard_of(args[:account_id]) do 
+			moderation_digest = HashWithIndifferentAccess.new({
+									:unpublished_count => SpamCounter.elaborate_count("unpublished"), 
+									:spam_count => SpamCounter.elaborate_count("spam")
+								})
 
-				account = Account.find(args[:account_id])
+			moderation_digest.delete(:unpublished_count) unless can_send_approval_digest?(moderation_digest)
 
-				moderation_digest = HashWithIndifferentAccess.new({
-										:unpublished_count => SpamCounter.elaborate_count(account.id, "unpublished"), 
-										:spam_count => SpamCounter.elaborate_count(account.id, "spam")
-									})
-
-				moderation_digest.delete(:unpublished_count) unless can_send_approval_digest?(account, moderation_digest)
-
-				unless counters_blank(moderation_digest)
-					Time.zone = account.time_zone
-					account.forum_moderators.each do |moderator|
-						SpamDigestMailer.deliver_spam_digest({
-								:account => account,
-								:recipients => moderator.email,
-								:moderator => moderator.user,
-								:subject => %(Topics waiting for approval in #{account.helpdesk_name} - #{Time.zone.now.strftime(Timezone::Constants::MAIL_FORMAT)}),
-								:moderation_digest => moderation_digest,
-								:host => account.full_url 
-							}) unless moderator.email.blank?
-					end
+			unless counters_blank(moderation_digest)
+				Time.zone = Account.current.time_zone
+				Account.current.forum_moderators.each do |moderator|
+					SpamDigestMailer.spam_digest({
+							:account => Account.current,
+							:recipients => moderator.email,
+							:moderator => moderator.user,
+							:subject => %(Topics waiting for approval in #{Account.current.name} - #{Time.zone.now.strftime(Timezone::Constants::MAIL_FORMAT)}),
+							:moderation_digest => moderation_digest,
+							:host => Account.current.full_url 
+						}) unless moderator.email.blank?
 				end
 			end
 		end
 
-		def can_send_approval_digest?(account, moderation_digest)
+		def can_send_approval_digest?(moderation_digest)
 			reject_blank_values(moderation_digest[:unpublished_count]).present? || 
-						(account.features_included?(:moderate_all_posts) || account.features_included?(:moderate_posts_with_links))
+						(Account.current.features_included?(:moderate_all_posts) || Account.current.features_included?(:moderate_posts_with_links))
 		end
 
 		def reject_blank_values(counter)
-			counter.reject { |k,v| v.zero? }
+			counter.reject { |k,v| v <= 0 }
 		end
 
 		def counters_blank(moderation_digest)

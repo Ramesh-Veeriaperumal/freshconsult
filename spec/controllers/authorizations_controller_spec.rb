@@ -1,78 +1,89 @@
 require 'spec_helper'
 
 describe AuthorizationsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
     #@account = create_test_account
     @user = add_test_agent(@account)
-    @new_installed_application = Factory.build(:installed_application, 
+    @new_installed_application = FactoryGirl.build(:installed_application, 
                                                 {
                                                   :application_id => 19,
                                                   :account_id => @account.id, 
                                                   :configs => { :inputs => {}}
                                                 })
     @new_installed_application.save!
-    @auth_data = Factory.build(:authorization, {:provider => "facebook",
+    @auth_data = FactoryGirl.build(:authorization, {:provider => "facebook",
                     :uid => "int_uid", :user_id => @user.id, :account_id => @account.id })
     @data = @auth_data.save!
   end
 
   it "should create authorization for google calendar" do
-    @request.env["omniauth.origin"] = "id=#{@account.id}&app_name=google_calendar"
+    @request.env["omniauth.origin"] = "id=#{@account.id}&app_name=google_calendar&user_id=1"
     @request.env["omniauth.auth"] = OmniAuth::AuthHash.new(
       { :credentials => { :expires => true,
-                          :expires_at => "1403449470",
-                          :refresh_token => "1/fFgVJuv3VI3GN7JUImKpMsektOmDrrW7RBchDhz8guU",
-                          "token" => "ya29.LgD2vk9PKA42sh8AAAC8ndo_R0_Lp7AJyFOUKJutWbJCDCkUlgel57Z2RW2saQ"
+                          :expires_at => "1429609241",
+                          :refresh_token => "1/tNVnf_juKFRDSygGBGtCz0vyEXKz1JwKhID_AgD8LMs",
+                          "token" => "ya29.XAH7EFHaE5nCOBXDQmiJxYRpQf3Ss-hTsnLSStXiQ7jrPdiyDIDA3gryYF8yDo1gpcU1SjHr-Omq8g"
                         }, 
-        :extra => { :raw_info => { :email => "sathish@freshdesk.com",
-                                   :family_name=>"Babu", 
+        :extra => { :raw_info => { :email => "bala@freshdesk.com",
+                                   :family_name=>"Kumar", 
                                    :gender=>"male", 
-                                   :given_name=>"Sathish", 
+                                   :given_name=>"Bala", 
                                    :hd=>"freshdesk.com", 
-                                   :id=>"102416485588144939702",
-                                   :link=>"https://plus.google.com/102416485588144939702", 
+                                   :id=>"116155779926622689580",
+                                   :link=>"https://plus.google.com/+BalaKumarSM", 
                                    :locale=>"en", 
-                                   :name=>"Sathish Babu", 
-                                   :picture=>"https://lh3.googleusercontent.com/-gmWGnkpBsXU/AAAAAAAAAAI/AAAAAAAAACE/l4RmjyYB_z4/photo.jpg", 
+                                   :name=>"Bala Kumar", 
+                                   :picture=>"https://lh5.googleusercontent.com/-o3nQbAwnMXs/AAAAAAAAAAI/AAAAAAAAABc/yXa8EfpQ6K8/photo.jpg", 
                                    :verified_email=>true
                                   }
                   },
-        :info => { :email=>"sathish@freshdesk.com", 
-                   :first_name=>"Sathish", 
-                   :image=>"https://lh3.googleusercontent.com/-gmWGnkpBsXU/AAAAAAAAAAI/AAAAAAAAACE/l4RmjyYB_z4/photo.jpg", 
-                   :last_name=>"Babu", 
-                   :name=>"Sathish Babu"
+        :info => { :email=>"bala@freshdesk.com", 
+                   :first_name=>"Bala", 
+                   :image=>"https://lh5.googleusercontent.com/-o3nQbAwnMXs/AAAAAAAAAAI/AAAAAAAAABc/yXa8EfpQ6K8/photo.jpg", 
+                   :last_name=>"Kumar", 
+                   :name=>"Bala Kumar"
                   },
         'provider' => "google_oauth2",
-        :uid=>"102416485588144939702"}) 
-    get :create, :code=>"4/AjFGM3kabI0u9GpZlIrA2MLyjNWr.AsBTJLpfhu8cdJfo-QBMszueosWGjQI", :provider=>"google_oauth2"
+        :uid=>"116155779926622689580"}) 
+    get :create, :code=>"4/CnG0syz1np5oJ-NU3kWCIxa93UNDzoUuBOtr6SrOLDQ.EkqAQT0OzhEVcp7tdiljKKY_zEW2mQI", :provider=>"google_oauth2"
     response.location.should eql "#{portal_url}/integrations/user_credentials/oauth_install/google_calendar"
   end
 
+  # This should be changed to use the new OAuth2 credentials. Follow the same model that is done for Google Calendar.
   it "should create authorization for google contacts" do 
-    inst_obj = Integrations::InstalledApplication.find_by_application_id(4)
-    inst_obj.destroy unless inst_obj.blank?
-
-    @request.env["omniauth.origin"] = "install"
+    @request.env["omniauth.origin"] = "id=1&portal_id=1&iapp_id=3&app_name=google_contacts"
     @request.env["omniauth.auth"] = OmniAuth::AuthHash.new(
-                                          { :credentials => { :secret => "cXGmgJ7I84ZDO3g_KSrk5-lK", 
-                                                              :token => "1/0LRsZZCmOCyfDclmZjg9g8-eEPcBqs9a_2O_3nhn_Kk"},
-                                            :info=>{ :email=>"sathish@freshdesk.com",
-                                                     :name=>"Sathish Babu",
-                                                     :uid=>"sathish@freshdesk.com"
-                                                    },
-                                            :provider=>"google", 
-                                            :uid=>"sathish@freshdesk.com"
-                                          })
-    get :create, :origin=>"install",
-                 :oauth_token=>"4/2ReVhjihDDsvQxQuSBcodIAEkiPn",
-                 :oauth_verifier=>"ElX_cOA8LINHqbs8eQNuuF44",
-                 :provider=>"google"
-    response.should render_template "integrations/google_accounts/edit"
+      { :credentials => { :expires => true,
+                          :expires_at => "1436787350",
+                          :refresh_token => "1/7QR5U0kKISVkHrHsKvfpW5cI3-HKaDAAHQIPbNUwe2lIgOrJDtdun6zK6XiATCKT",
+                          "token" => "ya29.rwGCIOdIePYmPL3SVLB2n-plYWOHuQDMrlvgLSKphYJzaEzwwwNMhGRDtd0rQeUt6mFb"
+                        }, 
+        :extra => { :raw_info => { :email => "admin@freshpo.com",
+                                   :family_name=>"Freshdesk", 
+                                   :gender=>"male", 
+                                   :given_name=>"Freshpo", 
+                                   :hd=>"freshpo.com", 
+                                   :id=>"111788248084232796423",
+                                   :link=>"https://plus.google.com/111788248084232796423", 
+                                   :locale=>"en", 
+                                   :name=>"Freshpo Freshdesk", 
+                                   :picture=>"https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg", 
+                                   :verified_email=>true
+                                  }
+                  },
+        :info => { :email=>"admin@freshpo.com", 
+                   :first_name=>"Freshpo", 
+                   :image=>"https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg", 
+                   :last_name=>"Freshdesk", 
+                   :name=>"Freshpo Freshdesk"
+                  },
+        'provider' => "google_contacts",
+        :uid=>"111788248084232796423"}) 
+    get :create, :code=>"4/xnzupD-QqB2erbkpaGis-_kAOaNMWaHMaDubEVN9dTk", :provider=>"google_contacts"
+    response.location.should eql "#{portal_url}/integrations/applications/oauth_install/google_contacts"
   end
 
   it "should create authorization for mailchimp" do 
@@ -147,34 +158,34 @@ describe AuthorizationsController do
   end
 
   it "should create authorization for google calendar" do
-    @request.env["omniauth.origin"] = "id=#{@account.id}&app_name=google_calendar"
+    @request.env["omniauth.origin"] = "id=#{@account.id}&app_name=google_calendar&user_id=1"
     @request.env["omniauth.auth"] = OmniAuth::AuthHash.new(
       { :credentials => { :expires => true,
-                          :expires_at => "1403449470",
-                          :refresh_token => "1/fFgVJuv3VI3GN7JUImKpMsektOmDrrW7RBchDhz8guU",
-                          "token" => "ya29.LgD2vk9PKA42sh8AAAC8ndo_R0_Lp7AJyFOUKJutWbJCDCkUlgel57Z2RW2saQ"
+                          :expires_at => "1429609241",
+                          :refresh_token => "1/tNVnf_juKFRDSygGBGtCz0vyEXKz1JwKhID_AgD8LMs",
+                          "token" => "ya29.XAH7EFHaE5nCOBXDQmiJxYRpQf3Ss-hTsnLSStXiQ7jrPdiyDIDA3gryYF8yDo1gpcU1SjHr-Omq8g"
                         }, 
-        :extra => { :raw_info => { :email => "sathish@freshdesk.com",
-                                   :family_name=>"Babu", 
+        :extra => { :raw_info => { :email => "bala@freshdesk.com",
+                                   :family_name=>"Kumar", 
                                    :gender=>"male", 
-                                   :given_name=>"Sathish", 
+                                   :given_name=>"Bala", 
                                    :hd=>"freshdesk.com", 
-                                   :id=>"102416485588144939702",
-                                   :link=>"https://plus.google.com/102416485588144939702", 
+                                   :id=>"116155779926622689580",
+                                   :link=>"https://plus.google.com/+BalaKumarSM", 
                                    :locale=>"en", 
-                                   :name=>"Sathish Babu", 
-                                   :picture=>"https://lh3.googleusercontent.com/-gmWGnkpBsXU/AAAAAAAAAAI/AAAAAAAAACE/l4RmjyYB_z4/photo.jpg", 
+                                   :name=>"Bala Kumar", 
+                                   :picture=>"https://lh5.googleusercontent.com/-o3nQbAwnMXs/AAAAAAAAAAI/AAAAAAAAABc/yXa8EfpQ6K8/photo.jpg", 
                                    :verified_email=>true
                                   }
                   },
-        :info => { :email=>"sathish@freshdesk.com", 
-                   :first_name=>"Sathish", 
-                   :image=>"https://lh3.googleusercontent.com/-gmWGnkpBsXU/AAAAAAAAAAI/AAAAAAAAACE/l4RmjyYB_z4/photo.jpg", 
-                   :last_name=>"Babu", 
-                   :name=>"Sathish Babu"
+        :info => { :email=>"bala@freshdesk.com", 
+                   :first_name=>"Bala", 
+                   :image=>"https://lh5.googleusercontent.com/-o3nQbAwnMXs/AAAAAAAAAAI/AAAAAAAAABc/yXa8EfpQ6K8/photo.jpg", 
+                   :last_name=>"Kumar", 
+                   :name=>"Bala Kumar"
                   },
         'provider' => "google_oauth2",
-        :uid=>"102416485588144939702"}) 
+        :uid=>"116155779926622689580"})
     temp = Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH
     Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH = nil
     get :create, :code=>"4/AjFGM3kabI0u9GpZlIrA2MLyjNWr.AsBTJLpfhu8cdJfo-QBMszueosWGjQI", :provider=>"google_oauth2"
@@ -187,5 +198,18 @@ describe AuthorizationsController do
     @request.env["omniauth.auth"] = OmniAuth::AuthHash.new()
     get :create, :code=>"5e1f89f7246defb1586b31d12ddbadd5", :provider=>"mailchimp"
     response.should redirect_to "#{portal_url}/integrations/applications"
+  end
+
+  it "should create authorization for quickbooks" do
+    @request.env["omniauth.origin"] = "id=#{@account.id}"
+    @request.env["omniauth.auth"] = OmniAuth::AuthHash.new(
+    {
+      :credentials => { :secret => "WSAAVSrqDQZht0NDWc3pM8s2uiSYC6e5M2fGav3w",
+                        :token => "qyprd4i4GAqClBcnA0jsAxLUv2xq3hRlCtM1OhUDlYbbxUHp"
+                      },
+      :provider => "quickbooks"
+    })
+    get :create, :provider=>"quickbooks"
+    response.should redirect_to "#{portal_url}/integrations/applications/oauth_install/quickbooks"
   end
 end

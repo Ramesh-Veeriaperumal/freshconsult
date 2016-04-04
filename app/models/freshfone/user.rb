@@ -1,9 +1,10 @@
 class Freshfone::User < ActiveRecord::Base
-	set_table_name "freshfone_users"
+  self.primary_key = :id
+	self.table_name =  "freshfone_users"
 	include Freshfone::CallValidator
 	belongs_to_account
 
-	belongs_to :user, :inverse_of => :freshfone_user
+	belongs_to :user, :class_name => '::User', :inverse_of => :freshfone_user
 	has_many :agent_groups, :through => :user
 	delegate :available_number, :name, :avatar, :to => :user
 	attr_accessor :user_avatar
@@ -32,21 +33,25 @@ class Freshfone::User < ActiveRecord::Base
 	validates_inclusion_of :incoming_preference, :in => INCOMING.values,
 		:message => "%{value} is not a valid incoming preference"
 
-	named_scope :online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago], :include => :user }}
-	named_scope :raw_online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago] }}
-	named_scope :online_agents_with_avatar, lambda { {
+	scope :agents_with_avatar, lambda { {
+							:include => [:user => [:avatar]]}}	
+	scope :online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago], :include => :user }}
+	scope :raw_online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago] }}
+	scope :online_agents_with_avatar, lambda { {
 							:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago],
 							:include => [:user => [:avatar]] }}
-	named_scope :busy_agents, :conditions => { :presence => PRESENCE[:busy] }
-	named_scope :agents_in_group, lambda { |group_id|
+	scope :busy_agents, :conditions => { :presence => PRESENCE[:busy] }
+	scope :agents_in_group, lambda { |group_id|
 		{:joins => "INNER JOIN agent_groups ON agent_groups.user_id = #{table_name}.user_id AND
 								agent_groups.account_id = #{table_name}.account_id",
 		 :conditions => ["agent_groups.group_id = ? ", group_id]
 		}
 	}
 
-	named_scope :agents_by_last_call_at, lambda { |order_type| order_type = "ASC" if order_type.blank?
-		{:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", 
+	scope :agents_by_last_call_at, lambda { |order_type|
+		order_type = "ASC" if order_type.blank?
+		{:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)
+			#{' AND `freshfone_users`.`available_on_phone` = 0' if trial?}",
 		PRESENCE[:online], PRESENCE[:offline], 1.hour.ago], :include => :user, :order => "freshfone_users.last_call_at #{order_type}" } }
 
 	def set_presence(status)
@@ -63,8 +68,8 @@ class Freshfone::User < ActiveRecord::Base
 		self
 	end
 	
-	def change_presence_and_preference(status, user_avatar_content, nmobile = false)
-		self.user_avatar = user_avatar_content
+	def change_presence_and_preference(status, user_avatar_content=nil, nmobile = false)
+		self.user_avatar = user_avatar_content if user_avatar_content.present?
 		if nmobile
 			self.mobile_token_refreshed_at = Time.now if self.incoming_preference == INCOMING[:allowed]
 		else
@@ -97,8 +102,32 @@ class Freshfone::User < ActiveRecord::Base
 		end
 	end
 
+	def self.load_agents(current_number, group=nil)
+		@freshfone_number = current_number
+		return available_agents_in_group(group) if group.present?
+		return available_agents_in_group(@freshfone_number.group_id) if @freshfone_number.group.present?
+  	all_available_and_busy_agents
+  end
+
+  def self.all_available_and_busy_agents
+  	{ :available_agents => available_agents,
+    	:busy_agents      => busy_agents }
+  end
+  
+  def self.available_agents_in_group(group)
+  	{
+  		:available_agents => online_agents_in_group(group),
+  		:busy_agents      => busy_agents_in_group(group)
+  	}
+  end
+
+  def self.available_agents
+    sort_order = @freshfone_number.round_robin? ?  "ASC" : "DESC"
+    agents_by_last_call_at(sort_order)
+  end
+
 	def self.online_agents_in_group(group_id)
-		online_agents.agents_in_group(group_id)
+		available_agents.agents_in_group(group_id)
 	end
 	
 	def self.busy_agents_in_group(group_id)
@@ -121,7 +150,7 @@ class Freshfone::User < ActiveRecord::Base
 	end
 
 	def get_capability_token(force_generate = false)
-		(self.capability_token_hash.nil? || Time.now.utc >= self.capability_token_hash[:expiry].utc ||
+		(self.capability_token_hash.blank? || Time.now.utc >= self.capability_token_hash[:expiry].utc ||
 			self.incoming_preference != capability_token_hash[:type]) || force_generate ?
 			generate_token : capability_token_hash[:token]
 	end
@@ -146,6 +175,10 @@ class Freshfone::User < ActiveRecord::Base
 		save
 	end
 
+	def mobile_refreshed_an_hour_ago?
+		self.mobile_token_refreshed_at.present? && self.mobile_token_refreshed_at > 1.hour.ago
+	end
+
 	private
 
 		def call_agent_on_phone(xml_builder, forward_call_url)
@@ -160,11 +193,14 @@ class Freshfone::User < ActiveRecord::Base
 		def vaild_phone_number?(current_number)
 			@current_number = current_number.number
 			@agent_number = GlobalPhone.parse(number)
-			@agent_number  && authorized_country?(@agent_number,account) && 
-				@agent_number.valid? && can_dial_agent_number?
+			@agent_number && authorized_country?(@agent_number,account) && @agent_number.valid? && can_dial_agent_number?
 		end
 
 		def can_dial_agent_number?
 			@agent_number.national_string != GlobalPhone.parse(@current_number).national_string
+		end
+
+		def self.trial?
+			::Account.current.freshfone_account.trial?
 		end
 end

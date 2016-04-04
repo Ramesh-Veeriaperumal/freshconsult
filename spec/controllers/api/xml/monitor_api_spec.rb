@@ -1,9 +1,8 @@
 require 'spec_helper'
 
-describe MonitorshipsController do
+RSpec.describe MonitorshipsController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   before(:all) do
     @category = create_test_category
@@ -19,30 +18,30 @@ describe MonitorshipsController do
   #adding xml api too here, to avoid an unnecessary file
   it "should be able to monitor/follow a forum topic" do
     post :toggle, {:id => @topic.id, :object => "topic", :type => "follow", :format => 'xml'}, :content_type => 'application/xml'
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
   it "should be able to unmonitor/unfollow a forum topic" do
     post :toggle, {:id => @topic.id, :object => "topic", :type => "unfollow", :format => 'xml'}, :content_type => 'application/xml'
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
   
   it "should be able to view monitoring status of an unfollowed forum" do
     get :is_following, {:id => @forum.id, :object => "forum", :format => 'xml'}
     result = parse_xml(response)
-    response.status.should === "200 OK" && result==[]
+    response.status.should == 200 && result==[]
   end
 
   it "should be able to view monitoring status of a followed forum" do
     monitor_forum(@forum, User.current)
     get :is_following, {:id => @forum.id, :object => "forum", :format => 'xml', :user_id => User.current.id}
     result = parse_xml(response)
-    response.status.should === "200 OK" && compare(result['monitorship'].keys, APIHelper::MONITOR_ATTRIBS,{}).empty?
+    response.status.should === 200 && compare(result['monitorship'].keys, APIHelper::MONITOR_ATTRIBS,{}).empty?
   end
 
   it "should be able to view monitoring status of a forum topic" do
     get :is_following, {:id => @topic.id, :object => "topic", :format => 'xml'}
     result = parse_xml(response)
-    response.status.should === "200 OK" && compare(result['monitorship'].keys, APIHelper::MONITOR_ATTRIBS,{}).empty?
+    response.status.should === 200 && compare(result['monitorship'].keys, APIHelper::MONITOR_ATTRIBS,{}).empty?
   end
 
  end

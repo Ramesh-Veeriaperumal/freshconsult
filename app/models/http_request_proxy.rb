@@ -2,6 +2,10 @@ class HttpRequestProxy
 
   include Integrations::OauthHelper
   include HttpProxyMethods
+  include Fdadmin::ApiCallConstants
+
+  READ_TIMEOUT = 5
+  OPEN_TIMEOUT = 1
 
   def fetch(params, request)
     unless(request.blank?)
@@ -13,7 +17,7 @@ class HttpRequestProxy
     fetch_using_req_params(params, requestParams)
   end
 
-  def fetch_using_req_params(params, requestParams)
+  def fetch_using_req_params(params, requestParams, customHeaders=nil)
     response_code = 200
     content_type = params[:content_type] || "application/json"
     accept_type = params[:accept_type] || "application/json"
@@ -39,6 +43,15 @@ class HttpRequestProxy
           post_request_body = (params[entity_name].to_json :root => entity_name)
         end
       end
+
+      if (params[:encode_params])
+        encode_params = JSON.parse(params[:encode_params])
+        rest_url += '?'
+        encode_params.each do |k, v|
+          rest_url += k + "=" + ERB::Util.url_encode(v)
+        end
+      end
+
       unless /http.*/.match(domain)
         http_s = ssl_enabled == "true"? "https":"http";
         domain = http_s+"://"+ domain
@@ -58,22 +71,40 @@ class HttpRequestProxy
       options[:body] = post_request_body unless post_request_body.blank?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.
       options[:headers] = {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type, "User-Agent" => user_agent}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
       options[:headers] = options[:headers].merge(params[:custom_auth_header]) unless params[:custom_auth_header].blank?
-      options[:timeout] = params[:timeout] || 30 #Returns status code 504 on timeout expiry 
+      options[:headers] = options[:headers].merge(customHeaders) unless (customHeaders.nil? or customHeaders.empty?)
+      timeout = params[:timeout].to_i
+      options[:read_timeout] = timeout.between?(1, READ_TIMEOUT)  ? timeout : READ_TIMEOUT #Returns status code 504 on timeout expiry
+      options[:open_timeout] = OPEN_TIMEOUT
       begin
-        net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_s]
-        final_url       = encode_url ? URI.encode(remote_url) : remote_url
-        proxy_request   = HTTParty::Request.new(net_http_method, final_url, options)
-        Rails.logger.debug "Sending request: #{proxy_request.inspect}"
-        proxy_response = proxy_request.perform
-        Rails.logger.debug "Response Body: #{proxy_response.body}"
-        Rails.logger.debug "Response Code: #{proxy_response.code}"
-        Rails.logger.debug "Response Headers: #{proxy_response.headers.inspect}"
-  
-  
+        if (params[:auth_type] == 'OAuth1')
+          send_req_options = Hash.new
+          send_req_options[:app_name] = params[:app_name]
+          send_req_options[:method] = HTTP_METHOD_TO_SYMBOL_MAPPING[method.downcase]
+          send_req_options[:url] = remote_url
+          send_req_options[:body] = params[:body]
+          send_req_options[:headers] = {'Accept' => accept_type, 'Content-Type' => content_type}
+
+          proxy_response = get_oauth1_response(send_req_options)
+
+          proxy_response.body = Hash.from_xml(proxy_response.body).to_json if (proxy_response.body.include? 'xml') # always returns JSON
+          response_type = content_type
+          Rails.logger.debug "Response Body: #{proxy_response.body}"
+          Rails.logger.debug "Response Code: #{proxy_response.code}"
+        else
+          net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_sym]
+          final_url       = encode_url ? URI.encode(remote_url) : remote_url
+          proxy_request   = HTTParty::Request.new(net_http_method, final_url, options)
+          Rails.logger.debug "Sending request: #{proxy_request.inspect}"
+          proxy_response = proxy_request.perform
+          Rails.logger.debug "Response Body: #{proxy_response.body}"
+          Rails.logger.debug "Response Code: #{proxy_response.code}"
+          Rails.logger.debug "Response Headers: #{proxy_response.headers.inspect}"
+        end
+
         # TODO Need to audit all the request and response calls to 3rd party api.
         response_body = proxy_response.body
         response_code = proxy_response.code
-        response_type = proxy_response.headers['content-type']
+        response_type = proxy_response.headers['content-type'] unless (params[:auth_type] == 'OAuth1')
 
       rescue Timeout::Error
         Rails.logger.error("Timeout trying to complete the request. \n#{params.inspect}")
@@ -106,12 +137,5 @@ class HttpRequestProxy
     end
     return {:text=>response_body, :content_type => response_type, :status => response_code, 'x-headers' => x_headers}
   end
-
-  HTTP_METHOD_TO_CLASS_MAPPING = {
-            "get" => Net::HTTP::Get,
-            "post" => Net::HTTP::Post,
-            "put" => Net::HTTP::Put,
-            "delete" => Net::HTTP::Delete,
-            "patch" => Net::HTTP::Patch
-        }
+  
 end

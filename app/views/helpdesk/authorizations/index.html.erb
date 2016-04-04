@@ -3,7 +3,7 @@
   <link href="/stylesheets/autosuggest_inquisitor.css" media="screen" rel="stylesheet" type="text/css">
   <script src="/javascripts/helpdesk/core.js" type="text/javascript"></script>
   <script src="/javascripts/helpdesk/id_selector.js" type="text/javascript"></script>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     document.observe("dom:loaded", function(){
 
       Helpdesk.sel = new Helpdesk.MultiSelector({
@@ -40,7 +40,7 @@
 <% end %>
 
 <% content_for :sidebar do %>
-  <% form_for Helpdesk::Authorization.new(:role_token => 'admin') do |f| %>
+  <%= form_for Helpdesk::Authorization.new(:role_token => 'admin') do |f| %>
     <label id="search-value-label">Type a user's name to add:</label>
     <%= text_field_tag :usersearch %>
     <%= f.hidden_field :role_token %>
@@ -75,11 +75,11 @@
 
 <% content_for :main_panel_content do %>
 
-  <% form_tag "", :method => :put, :style=>'display: none', :id => 'role-form' do %>
+  <%= form_tag "", :method => :put, :style=>'display: none', :id => 'role-form' do %>
     <%= hidden_field_tag "helpdesk_authorization[role_token]", "", :id => 'role-token' %>
   <% end %>
 
-  <% form_tag "", { :method => :put, :id => :list } do %>
+  <%= form_tag "", { :method => :put, :id => :list } do %>
     <table class="authorizations">
         <%= render :partial => "authorization", :collection => @items %>
     </table>

@@ -1,13 +1,18 @@
 <%
 	date_range = date_range_val((Time.zone.now.ago 30.day),Time.zone.now,{:format => :short_day})
 %>
-<script src="/javascripts/report/date.js" type="text/javascript"></script>
-<script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
-<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
+<%= javascript_include_tag :'cdn/report_date'  %>
+<%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %>  
 
 <div class="sidepanel">
- 	<% remote_form_for( survey_list_path, {:url => survey_list_url, :before => "if(!validate_request()){return false;}",:method => :post, :html => {:id => 'report_filters'},
- 			:update => "report_list", :loading => "jQuery('#report_list').html('<div class=\"sloading loading-small loading-block\"></div>');" }) do %>
+ 	<%= form_for survey_list_path,
+ 				:url => survey_list_url,
+ 				:method => :post, :html => {
+ 					:id => 'report_filters', 
+ 					"data-update" => "report_list",
+ 					"data-loading-class" => "sloading loading-small loading-block",
+ 					"data-loading" => "report_list loading-small loading-block"
+ 				}  do %>
  		<ul>
     	   <li class="control-group">
 				<label class="control-label"><%=t('.filter_by')%></label>
@@ -31,38 +36,40 @@
 				<%= submit_tag t('reports.summary_report.show_report'), :class => "btn" %>
 			</li>
 		</ul>
-	<%end%>
+	<% end %>
 </div>
 
 <div class="sidepanel helpcard">
 	<p>	<%= t('.helptext').html_safe %> </p>
 </div>
 
-<% javascript_tag do %> 	
+<%= javascript_tag do %>
 
-	function validate_request(){
-		var category =  jQuery("#category").val();
-		var date_range =  jQuery("#date_range").serialize();
-		if(category == "company"){
-			location.href = encodeURI("/survey/reports/"+category+"/details?"+date_range);
-			return false;	
-		}
-		return true;
-	}
 
 	jQuery(document).ready(function() {
-	    jQuery("#report_filters").change(function(){
-    			jQuery("#report_list").html("<div class='sloading loading-small loading-block'></div>"); 
-		    	jQuery.ajax({
-		        			url: '<%=survey_list_url%>',
-		        			type: "POST",
-		        			beforeSend: validate_request,
-		        			data: jQuery(this).serializeArray(),
-		        			success: function(data){ 
-				   		jQuery("#report_list").hide().html(data).fadeIn(300);
-		        			}
+		jQuery("#report_filters").on('change submit', function(){
+			
+			var category =  jQuery("#category").val(),
+				date_range =  jQuery("#date_range").serialize();
+			if(category == "company"){
+				location.href = encodeURI("/survey/reports/"+category+"/details?"+date_range);
+			} else {
+				jQuery("#report_list").html("<div class='sloading loading-small loading-block'></div>");
+				jQuery.ajax({
+					url: '<%=survey_list_url%>',
+					type: "POST",
+					data: jQuery(this).serializeArray(),
+					success: function(data){ 
+						jQuery("#report_list").hide().html(data).fadeIn(300);
+					}
 				});
-	    });
+			}
+			
+			return false;
+		});
+
+			    
+
 
 		jQuery("#date_range").daterangepicker({
 		earliestDate: Date.parse('1/1/2009'),

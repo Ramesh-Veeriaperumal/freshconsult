@@ -1,24 +1,6 @@
 module RtlHelper
 
-  RTL_LANGUAGES = %w( ar )
-
-  def include_cloudfront_rtl_css(*packages)
-
-    options = packages.extract_options!
-
-    packages.uniq.map { |package|
-      
-      package_name = is_current_language_rtl? ? "#{package}_rtl" : package
-
-      include_cloudfront_css(package_name.to_sym, options) if package_available?(package_name.to_sym)
-
-    }.join("").html_safe
-
-  end
-
-  def package_available? package
-    Jammit.configuration[:stylesheets][package].present?
-  end
+  RTL_LANGUAGES = %w( ar he )
 
   def is_current_language_rtl? lang = I18n.locale.to_s
     RTL_LANGUAGES.include? lang
@@ -28,5 +10,16 @@ module RtlHelper
     is_current_language_rtl? ? "rtl" : "ltr"
   end
 
+  def stylesheet_link_tag_with_rtl(*packages)
+    options = packages.extract_options!
+
+    packages.uniq.map { |package|
+      
+      package_name = is_current_language_rtl? ? package.to_s.gsub("cdn/","cdn/rtl/") : package
+
+      stylesheet_link_tag package_name.to_sym, options 
+
+    }.join("").html_safe
+  end
 
 end

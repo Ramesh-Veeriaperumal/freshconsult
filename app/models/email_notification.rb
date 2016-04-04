@@ -1,15 +1,19 @@
 class EmailNotification < ActiveRecord::Base
+  self.primary_key = :id
   has_many :dynamic_notification_templates
-  belongs_to :account
+  belongs_to_account
   attr_protected  :account_id
   before_create :set_default_version
+  include AccountOverrider
+
   xss_sanitize  :only => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template], :decode_calm_sanitizer => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template]
 
-  def after_find
+  def set_requester_and_agent_template
     if (self.version == 1)
       self.requester_template = (RedCloth.new(requester_template).to_html) if requester_template
       self.agent_template = (RedCloth.new(agent_template).to_html) if agent_template
     end
+    self
   end
   
   has_many :email_notification_agents, :class_name => "EmailNotificationAgent", :dependent => :destroy
@@ -20,26 +24,31 @@ class EmailNotification < ActiveRecord::Base
   validates_uniqueness_of :notification_type, :scope => :account_id
   
   #Notification types
-  NEW_TICKET = 1
-  TICKET_ASSIGNED_TO_GROUP = 2
-  TICKET_ASSIGNED_TO_AGENT = 3
-  COMMENTED_BY_AGENT = 4
-  #COMMENTED_BY_REQUESTER = 5
-  REPLIED_BY_REQUESTER = 6
-  TICKET_RESOLVED = 7
-  TICKET_CLOSED = 8
+  NEW_TICKET                = 1
+  TICKET_ASSIGNED_TO_GROUP  = 2
+  TICKET_ASSIGNED_TO_AGENT  = 3
+  COMMENTED_BY_AGENT        = 4
+  #COMMENTED_BY_REQUESTER   = 5
+  REPLIED_BY_REQUESTER      = 6
+  TICKET_RESOLVED           = 7
+  TICKET_CLOSED             = 8
   # TICKET_REOPENED = 9
   
   #2nd batch
-  USER_ACTIVATION = 10
-  TICKET_UNATTENDED_IN_GROUP = 11
-  FIRST_RESPONSE_SLA_VIOLATION = 12
+  USER_ACTIVATION               = 10
+  TICKET_UNATTENDED_IN_GROUP    = 11
+  FIRST_RESPONSE_SLA_VIOLATION  = 12
   RESOLUTION_TIME_SLA_VIOLATION = 13
-  PASSWORD_RESET = 14
+  PASSWORD_RESET                = 14
   ADDITIONAL_EMAIL_VERIFICATION = 17
+  NEW_TICKET_CC                 = 19
+  PUBLIC_NOTE_CC                = 20
+  NOTIFY_COMMENT                = 21
 
-  DEFAULT_REPLY_TEMPLATE = 15
-  
+  DEFAULT_REPLY_TEMPLATE  = 15
+  RESPONSE_SLA_REMINDER   = 22
+  RESOLUTION_SLA_REMINDER = 23
+
   EMAIL_SUBJECTS = {
     NEW_TICKET                    => "Ticket Received - {{ticket.encoded_id}} {{ticket.subject}}",
     TICKET_ASSIGNED_TO_GROUP      => "Assigned to Group - {{ticket.encoded_id}} {{ticket.subject}}",
@@ -54,18 +63,22 @@ class EmailNotification < ActiveRecord::Base
     RESOLUTION_TIME_SLA_VIOLATION => "Resolution time SLA violated - {{ticket.encoded_id}} {{ticket.subject}}"
   }
 
-  DISABLE_NOTIFICATION = { NEW_TICKET =>{ :requester_notification => false, :agent_notification => false },
-                           TICKET_ASSIGNED_TO_GROUP =>{:agent_notification =>false},
-                           TICKET_ASSIGNED_TO_AGENT => {:agent_notification => false},
-                           TICKET_RESOLVED => {:requester_notification => false},
-                           TICKET_CLOSED => {:requester_notification => false},
-                           COMMENTED_BY_AGENT =>{:requester_notification => false},
-                           TICKET_RESOLVED =>{:requester_notification => false},
-                           # TICKET_REOPENED =>{:agent_notification => false},
-                           REPLIED_BY_REQUESTER =>{:agent_notification =>false},
-                           USER_ACTIVATION => {:requester_notification => false},
-                           ADDITIONAL_EMAIL_VERIFICATION => {:requester_notification => false}
-                         }
+  DISABLE_NOTIFICATION = {
+    NEW_TICKET =>  { 
+      :requester_notification => false, 
+      :agent_notification     => false 
+    },
+    TICKET_ASSIGNED_TO_GROUP      =>  {:agent_notification => false},
+    TICKET_ASSIGNED_TO_AGENT      =>  {:agent_notification => false},
+    TICKET_RESOLVED               =>  {:requester_notification => false},
+    TICKET_CLOSED                 =>  {:requester_notification => false},
+    COMMENTED_BY_AGENT            =>  {:requester_notification => false},
+    TICKET_RESOLVED               =>  {:requester_notification => false},
+    #TICKET_REOPENED              =>  {:agent_notification => false},
+    REPLIED_BY_REQUESTER          =>  {:agent_notification => false},
+    USER_ACTIVATION               =>  {:requester_notification => false},
+    ADDITIONAL_EMAIL_VERIFICATION =>  {:requester_notification => false}
+  }
                           
 
   # Admin settings for email notifications
@@ -73,34 +86,45 @@ class EmailNotification < ActiveRecord::Base
     :AGENT_AND_REQUESTER   => 1,
     :AGENT_ONLY            => 2,
     :REQUESTER_ONLY        => 3,
-    :REPLY_TEMPLATE        => 4
+    :REPLY_TEMPLATE        => 4,
+    :CC_NOTIFICATION       => 5
   }
 
   # notification_token, notification_type, visibility
   EMAIL_NOTIFICATIONS = [
-    [:user_activation_email,  USER_ACTIVATION,                VISIBILITY[:AGENT_AND_REQUESTER]   ],
-    [:password_reset_email,   PASSWORD_RESET,                 VISIBILITY[:AGENT_AND_REQUESTER]   ],
-    [:new_ticket_created,     NEW_TICKET,                     VISIBILITY[:AGENT_AND_REQUESTER]   ],
-    [:tkt_assigned_to_group,  TICKET_ASSIGNED_TO_GROUP,       VISIBILITY[:AGENT_ONLY]            ],
-    [:tkt_unattended_in_grp,  TICKET_UNATTENDED_IN_GROUP,     VISIBILITY[:AGENT_ONLY]            ],
-    [:tkt_assigned_to_agent,  TICKET_ASSIGNED_TO_AGENT,       VISIBILITY[:AGENT_ONLY]            ],
-    [:agent_adds_comment,     COMMENTED_BY_AGENT,             VISIBILITY[:REQUESTER_ONLY]        ],
-    [:first_response_sla,     FIRST_RESPONSE_SLA_VIOLATION,   VISIBILITY[:AGENT_ONLY]            ],
-    [:requester_replies,      REPLIED_BY_REQUESTER,           VISIBILITY[:AGENT_ONLY]            ],
-    [:resolution_time_sla,    RESOLUTION_TIME_SLA_VIOLATION,  VISIBILITY[:AGENT_ONLY]            ],
-    [:agent_solves_tkt,       TICKET_RESOLVED,                VISIBILITY[:REQUESTER_ONLY]        ],
-    [:agent_closes_tkt,       TICKET_CLOSED,                  VISIBILITY[:REQUESTER_ONLY]        ],
-    [:default_reply_template, DEFAULT_REPLY_TEMPLATE,         VISIBILITY[:REPLY_TEMPLATE]        ],
-    [:additional_email_verification, ADDITIONAL_EMAIL_VERIFICATION, VISIBILITY[:REQUESTER_ONLY]  ]
+    [:user_activation_email,          USER_ACTIVATION,                VISIBILITY[:AGENT_AND_REQUESTER]],
+    [:password_reset_email,           PASSWORD_RESET,                 VISIBILITY[:AGENT_AND_REQUESTER]],
+    [:new_ticket_created,             NEW_TICKET,                     VISIBILITY[:AGENT_AND_REQUESTER]],
+    [:tkt_assigned_to_group,          TICKET_ASSIGNED_TO_GROUP,       VISIBILITY[:AGENT_ONLY]         ],
+    [:tkt_unattended_in_grp,          TICKET_UNATTENDED_IN_GROUP,     VISIBILITY[:AGENT_ONLY]         ],
+    [:tkt_assigned_to_agent,          TICKET_ASSIGNED_TO_AGENT,       VISIBILITY[:AGENT_ONLY]         ],
+    [:agent_adds_comment,             COMMENTED_BY_AGENT,             VISIBILITY[:REQUESTER_ONLY]     ],
+    [:first_response_sla,             FIRST_RESPONSE_SLA_VIOLATION,   VISIBILITY[:AGENT_ONLY]         ],
+    [:response_reminder_sla,          RESPONSE_SLA_REMINDER,          VISIBILITY[:AGENT_ONLY]         ],
+    [:requester_replies,              REPLIED_BY_REQUESTER,           VISIBILITY[:AGENT_ONLY]         ],
+    [:resolution_time_sla,            RESOLUTION_TIME_SLA_VIOLATION,  VISIBILITY[:AGENT_ONLY]         ],
+    [:resolution_reminder_sla,        RESOLUTION_SLA_REMINDER,        VISIBILITY[:AGENT_ONLY]         ],
+    [:agent_solves_tkt,               TICKET_RESOLVED,                VISIBILITY[:REQUESTER_ONLY]     ],
+    [:agent_closes_tkt,               TICKET_CLOSED,                  VISIBILITY[:REQUESTER_ONLY]     ],
+    [:default_reply_template,         DEFAULT_REPLY_TEMPLATE,         VISIBILITY[:REPLY_TEMPLATE]     ],
+    [:additional_email_verification,  ADDITIONAL_EMAIL_VERIFICATION,  VISIBILITY[:REQUESTER_ONLY]     ],
+    [:notify_comment,                 NOTIFY_COMMENT,                 VISIBILITY[:AGENT_ONLY]         ],
+    [:new_ticket_cc,                  NEW_TICKET_CC,                  VISIBILITY[:CC_NOTIFICATION]    ],
+    [:public_note_cc,                 PUBLIC_NOTE_CC,                 VISIBILITY[:CC_NOTIFICATION]    ]
   ]
   
   # List of notfications to agents which cannot be turned off
-  AGENT_MANDATORY_LIST = [ :user_activation_email, :password_reset_email ]
+  AGENT_MANDATORY_LIST = [ :user_activation_email, :password_reset_email, :notify_comment ]
   # List of notfications to requester which cannot be turned off
   REQUESTER_MANDATORY_LIST = [ :password_reset_email ]
 
   TOKEN_BY_KEY  = Hash[*EMAIL_NOTIFICATIONS.map { |i| [i[1], i[0]] }.flatten]
   VISIBILITY_BY_KEY  = Hash[*EMAIL_NOTIFICATIONS.map { |i| [i[1], i[2]] }.flatten]
+
+  BCC_DISABLED_NOTIFICATIONS = [NOTIFY_COMMENT, PUBLIC_NOTE_CC, NEW_TICKET_CC]
+
+  scope :response_sla_reminder, :conditions => { :notification_type => RESPONSE_SLA_REMINDER } 
+  scope :resolution_sla_reminder, :conditions => { :notification_type => RESOLUTION_SLA_REMINDER }
 
   def token
     TOKEN_BY_KEY[self.notification_type]
@@ -116,6 +140,10 @@ class EmailNotification < ActiveRecord::Base
 
   def reply_template?
     (VISIBILITY_BY_KEY[self.notification_type] == VISIBILITY[:REPLY_TEMPLATE])
+  end
+
+  def cc_notification?
+    (VISIBILITY_BY_KEY[self.notification_type] == VISIBILITY[:CC_NOTIFICATION])
   end
 
   def can_turn_off_for_agent?
@@ -204,6 +232,16 @@ class EmailNotification < ActiveRecord::Base
 
   def self.disable_notification (account)
     Thread.current["notifications_#{account.id}"] = EmailNotification::DISABLE_NOTIFICATION  
+  end
+
+  def fetch_template
+    if self.reply_template? or self.cc_notification?
+      "requester_template"
+    end  
+  end
+
+  def bcc_disabled?
+    BCC_DISABLED_NOTIFICATIONS.include?(self.notification_type)
   end
 
   private

@@ -1,0 +1,24 @@
+**__Basic Approach of result parsing__**
+
+1) Raw Result from Redshift comes as an Array of Hashes.
+
+2) Every hash is a row of SQL result with Column names as key and corresponding value as hash values.
+
+3) Sample result from Redshift ** Raw Result **
+[
+  {"source":"2","priority":"1","status":"7","ticket_type":"1","ffs_01":null,"range_benchmark":"t","count":"26"},
+  {"source":"1","priority":"1","status":"5","ticket_type":"1","ffs_01":null,"range_benchmark":"f","count":"10"},
+  {"source":"1","priority":"1","status":"9","ticket_type":"1","ffs_01":null,"range_benchmark":"f","count":"9"}
+]
+
+4) In above sample, range_benchmark is a special column. It can either "t" or "f". 
+It is included in the result when the use case is to calculate metric result for given time range along with benchmark difference from previous time range.
+i.e Received tickets in last month = 500, 11% more then what was in previous month, here 11% is benchmark difference.
+Both figures are calculated in a single query by doubling up the time range and setting the range_benchmark column to TRUE if the row is in later half of the extended time range and FALSE if the row is in first half.
+
+5) processed_result[column] ||= {} creates a hash for new Column, say source, priority etc
+
+6) processed_result[column][value] ||= 0 initialize the value of an element in column to 0.
+say column = source then element can be email, portal, chat etc.
+
+7) Column-value pair is not unique hence it is always initialized as described in step 6. To avoid over-writing previously existing pair.

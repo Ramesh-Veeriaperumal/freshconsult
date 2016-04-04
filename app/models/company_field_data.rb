@@ -1,6 +1,7 @@
 class CompanyFieldData < ActiveRecord::Base
 
-  set_table_name "company_field_data"
+  self.table_name = "company_field_data"
+  self.primary_key = :id
 
   belongs_to_account
 

@@ -29,6 +29,7 @@ class Freshfone::IvrsController < ApplicationController
 
 	def index
 		@ivrs = scoper
+    render :text => ' '
 	end
 
 	def edit
@@ -50,7 +51,7 @@ class Freshfone::IvrsController < ApplicationController
 			respond_to do |format|
 				format.html { 
 					flash[:notice] = t(:'flash.general.update.failure', :human_name => "IVR")
-					load_dependencies; render "admin/freshfone/numbers/edit"
+					load_dependencies; render "admin/freshfone/numbers/edit"#  TODO-RAILS3 possible dead code by sath
 				}
 				format.json { render :json => { 
 					:error_message => render_to_string(:partial => 'error_message') } }
@@ -79,13 +80,13 @@ class Freshfone::IvrsController < ApplicationController
 	end
 
 	def destroy
-		if @ivr.destroy
+    @ivr.destroy
+		if @ivr.destroyed?
 			flash[:notice] = t(:'flash.general.destroy.success', :human_name => "IVR")
-			redirect_to :action => :index
 		else
 			flash[:notice] = t(:'flash.general.destroy.failure', :human_name => "IVR")
-			render :action => :edit
 		end
+    redirect_to :action => :index
 	end
 
 

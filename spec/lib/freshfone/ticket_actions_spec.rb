@@ -2,7 +2,7 @@ require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
 include FreshfoneSpecHelper
 
-describe Freshfone::TicketActions do
+RSpec.describe Freshfone::TicketActions do
   self.use_transactional_fixtures = false
   
   include Freshfone::TicketActions
@@ -12,6 +12,7 @@ describe Freshfone::TicketActions do
 
   before(:each) do
     create_test_freshfone_account
+    @account.freshfone_callers.delete_all
   end
   
   it 'create a new voicemail ticket' do

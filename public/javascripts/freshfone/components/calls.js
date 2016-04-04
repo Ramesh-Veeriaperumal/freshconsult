@@ -4,24 +4,31 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
     "use strict";
 	var callDirection = { NONE : 0, INCOMING : 1, OUTGOING : 2 },
 		callStatus = { NONE: 0, INCOMINGINIT : 1, OUTGOINGINIT : 2, ACTIVECALL : 3, AVAILABLE : 4 },
+		TRANSFER_FALLBACK_STATUS = ["ignored", "noAnswer"],
+		TRANSFERING_STATUS = ["inProgress", "connected"],
 		numbersHash = freshfone.numbersHash,
 		phoneNumber;
 	FreshfoneCalls = function () {
 		this.init();
 		this.currentUser = freshfone.current_user;
-		this.ALLOWED_DIGITS = 15;
+		this.ALLOWED_DIGITS = 50;
 		this.cached = {};
 		this.freshfoneCallTransfer = {};
 		this.exceptionalNumber=false;
 		this.recentCaller = 0;
+		this.callInitiationTime = null;
 	};
 
 	FreshfoneCalls.prototype = {
 		init: function () {
 			this.tConn = false;
 			this.isMute = 0;
+			this.isHold = 0;
+			this.conferenceMode = false;
+			this.conferenceConn = false;
 			this.status = callStatus.NONE;
 			this.direction = callDirection.NONE;
+			this.callId = null;
 			this.callerId = null;
 			this.callerName = null;
 			this.callSid = null;
@@ -29,9 +36,17 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.error = null;
 			this.errorcode = null;
 			this.transfered = false;
+			this.transferSuccess = false;
 			this.recordingInstance = null;
 			this.group_id = null;
-			$('#freshfone_available_agents .transfering_call').hide();
+			this.resetCallTransferTimer();
+			this.isIncomingTransfer = false;
+		},
+		resetFlags: function() {
+			this.errorcode = null;
+			this.lastAction = null;
+			this.transfered = false;
+			this.isHold = 0;
 		},
 		initGroup: function (group_id){
 			this.group_id = group_id
@@ -62,11 +77,22 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			return this.cached.$restrictedCountryText = this.cached.$restrictedCountryText ||
 																			this.$container.find('.restricted_country');
 		},
+		$strangeNumberText: function() {
+			return this.cached.$strangeNumberText = this.cached.$strangeNumberText || this.$container.find('.strange_number');
+		},
 		$outgoingNumberSelector: function () {
 			return this.cached.$outgoingNumber = this.cached.$outgoingNumber ||
 																			this.$container.find('#outgoing_number_selector');
 		},
 		
+		$backToDialer: function() {
+			return this.cached.$backToDialer = this.cached.$backToDialer ||
+																			this.$container.find('#cancel_call');
+		},
+		$connectCall: function() {
+			return this.cached.$connectCall = this.cached.$connectCall ||
+																			this.$container.find('.connect_call');
+		},
 		outgoingNumberId: function () {
 			return (this.$outgoingNumberSelector().val() || 
 							this.$outgoingNumberSelector().data('number_id'));
@@ -99,15 +125,52 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		setDirectionIncoming: function () {
 			this.direction = callDirection.INCOMING;
+			this.status = callStatus.ACTIVECALL;
 		},
 		setDirectionOutgoing: function () {
 			this.direction = callDirection.OUTGOING;
+			this.status = callStatus.ACTIVECALL;
 		},
 		getCallSid: function () {
-			return this.callSid || this.tConn.parameters.CallSid;
+			var callSid = this.call || this.callSid 
+			if(callSid == undefined && this.tConn.parameters && this.tConn.parameters.CallSid){
+				callSid = this.tConn.parameters.CallSid;
+			}
+			return callSid;
 		},
 		setCallSid: function (call_sid) {
 			this.callSid = call_sid;
+		},
+		setIsIncomingTransfer: function(flag){
+			this.isIncomingTransfer = flag;
+		},
+		saveCallNotes: function(){
+			var self = this;
+			if(freshfonewidget.callNote.val()!="" && (freshfone.isConferenceMode)){
+	            $.ajax({
+					type: 'POST',
+					dataType: "json",
+					url: '/freshfone/conference_call/save_call_notes',
+					data: { "call_sid": this.getCallSid(),
+						"call_notes": freshfonewidget.callNote.val() }
+				});
+			}
+		},
+		getSavedCallNotes: function(phoneNumber){
+			var self = this;
+			if(freshfone.isConferenceMode && freshfonecalls.isIncomingTransfer){
+				$.ajax({
+					type: 'GET',
+					dataTyp: "json",
+					url: '/freshfone/conference_call/call_notes',
+					data: {"PhoneNumber": phoneNumber },
+					success: function (data){
+						if(data && data.call_notes){
+							freshfonewidget.renderNotes(data);
+						}
+					}
+				});
+			}	
 		},
 		fetchCallerDetails: function (details) {
 			this.callerId = details.callerId;
@@ -127,7 +190,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			}
 			var self = this;
 			this.setDirectionOutgoing();
-			var params = { record: true, number_id: numberId, agent: this.currentUser };
+			var params = { record: true, number_id: numberId, agent: this.currentUser, type: "record" };
 			this.actionsCall(function () { Twilio.Device.connect(params); } );
 		},
 		resetRecordingState: function () {
@@ -155,28 +218,46 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 	   				success: function (outcome) {
 							if(outcome.code == 1001){
 								balance_available = false;  
-							}else if(outcome.code == 1002){
+							} else if(outcome.code == 1002){
 								country_enabled = false;
 							}
-					}
+							else if(outcome.code == 1003){
+								freshfone.trialExpired = true;
+							}
+							else if(outcome.code == 1004){
+								freshfone.trialOutgoingExhausted = true;
+							}
+						}
 			});
 			if (!balance_available) { this.$infoText().show(); }
 			if (!country_enabled) { this.$restrictedCountryText().show(); }  
+			if (freshfone.trialOutgoingExhausted || freshfone.trialExpired) { 
+				freshfonewidget.showOutgoing(); freshfonewidget.showDialPad(); }
 			return (balance_available && country_enabled);
 		},
-		makeCall: function () {
+		addDialCode: function(number){ 
+			var selectedCountryData = this.$number.intlTelInput("getSelectedCountryData");
+			 number = number || this.$number.val();
+			if (this.$number.intlTelInput("getDialCode") == "") {
+				number = ["+",selectedCountryData.dialCode, number].join("");
+			}
+			return number
+		},
+		makeCall: function (item) {
 			if (Twilio.Device.status() !== 'busy') {
-				this.number = this.$number.val();
-				this.makeOutgoing();
+				this.number = this.addDialCode();
+				this.makeOutgoing(item);
 			}
 		},
-		makeOutgoing: function () {
+		makeOutgoing: function (item) {
+			this.number = formatE164(this.callerLocation(), this.number);
+			this.prefillDialerTemplate(item);
+			this.clearMessage();
 			if (this.freshfoneuser.isBusy()) { return this.toggleAlreadyInCallText(true); }
 			if (!this.canDialNumber()) { return this.toggleInvalidNumberText(true); }
-			this.number = formatE164(this.callerLocation(), this.number);
 			
 			var params = { PhoneNumber : this.number, phone_country: this.callerLocation(),
-										number_id: this.outgoingNumberId(), agent: this.currentUser };
+										number_id: this.outgoingNumberId(), agent: this.currentUser, type: "outgoing" };
 
 			if(!this.call_validation(true)) {
 				return false;
@@ -184,21 +265,40 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.actionsCall(function () { Twilio.Device.connect(params); } );
 			
 
-			this.$infoText().hide();
-			this.$restrictedCountryText().hide();
-			this.toggleInvalidNumberText(false);
-			this.toggleAlreadyInCallText(false);
+			this.toggleBackToDialer(false);
+			$('.call_loader').show();		
 			this.status = callStatus.OUTGOINGINIT;
 			this.setDirectionOutgoing();
 			this.freshfoneUserInfo.userInfo(this.number, true, this);
 			this.disableCallButton();
 		},
-
+		prefillDialerTemplate: function(item) {
+			if(typeof item != "undefined") { 	
+				freshfoneDialpadEvents.prefillConnectedCallTemplate(item);
+			} else {
+				freshfoneDialpadEvents.prefillConnectedCallNumber(this.number);
+			}
+		},
+		clearMessage: function(){
+			this.toggleBackToDialer(true);
+			this.toggleConnectCall(false);
+			this.$strangeNumberText().toggle(false);
+			this.$infoText().hide();
+			this.$restrictedCountryText().hide();
+			this.$invalidNumberText().toggle(false);
+			this.$invalidPhoneNumber().toggle(false);
+			this.toggleAlreadyInCallText(false);
+			$('.call_loader').hide();
+		},
 		toggleInvalidNumberText: function (show) {
 			if (this.$alreadyInCallText().is(":visible")) { this.toggleAlreadyInCallText(false);}
-			if(show && !(this.exceptionalNumberValidation(phoneNumber))){
+			if(show && !(this.exceptionalNumberValidation(phoneNumber)) && !(freshfonewidget.checkForStrangeNumbers(phoneNumber)) ) {
 			 this.$invalidNumberText().toggle(show || false);
 			 this.$invalidPhoneNumber().toggle(!show || false);
+			 if($('.invalid_phone_num').is(':visible')){
+			 		this.toggleBackToDialer(false);
+					this.toggleConnectCall(true);
+				}	
 			}
 		},
 		exceptionalNumberValidation: function(number){
@@ -207,12 +307,22 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		toggleAlreadyInCallText: function(show) {
 			this.$alreadyInCallText().toggle(show || false);
 		},
+		toggleBackToDialer: function(show){
+			this.$backToDialer().toggle(show || false);
+		},
+		toggleConnectCall: function(show){
+			this.$connectCall().toggle(show || false);
+		},
 		canDialNumber: function () {	 
 			if(this.number.indexOf('+') == -1){
 				this.number = $.keypad.selectedCode + this.number;
    			}
 			phoneNumber = this.number;
-			return (this.number !== this.outgoingNumber()) && (isValidNumber(this.number) || this.numberValidation());
+			if(freshfonewidget.checkForStrangeNumbers(this.number)){
+				 this.$strangeNumberText().toggle(true);
+				 return false;
+			}
+			return (this.number !== this.outgoingNumber()) && (isValidNumber(this.number) || this.numberValidation()) ;
 		},
 		numberValidation: function () {
 			if(!(isValidNumber(this.number)) && this.exceptionalNumberValidation(this.number)){
@@ -222,13 +332,18 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 				this.exceptionalNumber = true;
 				this.$invalidNumberText().toggle(false);
 				this.$invalidPhoneNumber().toggle(true);				
+			if($('.invalid_phone_num').is(':visible')){
+				this.toggleBackToDialer(false);
+				this.toggleConnectCall(true);
+			}			
 		}
 			return false;
 		},
 		hideText: function() {
 			$('.invalid_phone_text').hide();
-		    $('.invalid_phone_num').hide();
+		  $('.invalid_phone_num').hide();
 		  this.$restrictedCountryText().hide();
+		  this.$strangeNumberText().toggle(false);
 		},
 		previewIvr: function (id) {
 			var params = {
@@ -248,6 +363,8 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 
 			Twilio.Device.disconnectAll();
 			this.timer.stopCallTimer();
+			this.status = callStatus.NONE;
+			this.direction = callDirection.NONE;
 		},
 		mute: function () {
 			if (this.tConn) {
@@ -255,12 +372,20 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 				this.isMute ^= 1;
 			}
 		},
-		transferCall: function (id, group_id) {
+		transferCall: function (id, group_id, external_number) {
 			this.transfered = true;
-			this.freshfoneCallTransfer = new FreshfoneCallTransfer(this, id, group_id);
+			this.freshfoneCallTransfer = new FreshfoneCallTransfer(this, id, group_id, external_number);
+            this.saveCallNotes();
 		},
+		isTransfering: function(){
+			var status = $(".transfer-status").children(":visible").data("status");
+			return ($.inArray(status, TRANSFERING_STATUS) > -1 ) ? true : false ;
+    },
 
 		dontShowEndCallForm: function () {
+			if(freshfone.isConferenceMode){
+				return (this.tConn.message || {}).preview || this.callError()  || this.isTransfering();
+			}
 			return (this.tConn.message || {}).preview || this.callError() || this.transfered;
 		},
 
@@ -307,7 +432,6 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		updateCountriesPreferred : function () {
 			$('#number').intlTelInput("updatePreferredCountries");
 		},
-
 		onCallStopSound : function () {
 			if(typeof threeSixtyPlayer != "undefined"){
 				var self = threeSixtyPlayer;
@@ -315,6 +439,108 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
                     self.lastSound.stop();
                 }      		
 			}
+		},
+
+		//Conference method starts here
+
+		registerCall: function (call_sid) {
+			this.call = call_sid;
+		},
+		setCallId: function(callId){
+			this.callId = callId;
+		},
+		handleHold: function () {
+			$("#failed_hold").hide();
+			if (this.tConn && this.call ) {
+				this.toggleWidgetOnHold(false);
+				this.isHold ? this.unhold() : this.hold();
+				this.isHold ^= 1;
+			} else {
+				this.resetHoldUI();
+			}
+		},
+		resetHold: function() {
+			this.isHold ^= 1;
+			this.resetHoldUI();
+		},
+		resetHoldUI: function() {
+			$("#hold").removeClass('active');
+			$("#failed_hold").hide();
+			this.toggleWidgetOnHold(true);
+		},
+    hold: function () {
+      //Call hold
+      var self = this;
+      $.ajax({
+        dataType: "json",
+        data: { "CallSid": self.call },
+        url: '/freshfone/hold/add',
+        success: function(data) {
+          if (data.status != 'hold_initiated') {
+          	self.resetHold();
+          	if (self.tConn) { $("#failed_hold").show(); }
+          }
+        },
+        error: function () {
+          self.resetHold();
+          if (self.tConn) { $("#failed_hold").show(); }
+        }
+      });
+    },
+		unhold: function () {
+			var self = this;
+      $.ajax({
+        dataType: "json",
+        data: { "CallSid": self.call },
+        url: '/freshfone/hold/remove',
+        success: function(data) {
+        },
+        failure: function () {
+        	self.resetHold();
+        }
+      });
+		},
+		toggleWidgetOnHold: function(holded) {
+			var self = this;
+			if(holded) {
+				$('.freshfone_widget .end_call, .freshfone_widget .transfer_call, .freshfone_widget .hold').removeClass('disabled');
+					$('.freshfone_widget .hold').removeClass('loading');
+			} else {
+				$('.freshfone_widget .end_call, .freshfone_widget .transfer_call, .freshfone_widget .hold').addClass('disabled');
+				$('.freshfone_widget .hold').addClass('loading');
+				setTimeout(function() { 
+					self.toggleWidgetOnHold(true);
+				}, 10000);
+			}
+		},
+		connectCall: function (params) {
+			Twilio.Device.connect(params);
+			this.callInitiationTime = new Date();
+		},
+		getDialCallSid: function() {
+			return this.tConn.parameters.CallSid;
+		},
+		//Conference methods ends here
+		isCallActive : function () {
+			return (this.status == callStatus.ACTIVECALL);
+		},
+		resetCallTransferTimer: function() {
+			if((this.freshfoneCallTransfer == {}) || (typeof this.freshfoneCallTransfer == "undefined")) {return};
+			if (freshfonecalls.freshfoneCallTransfer  instanceof FreshfoneCallTransfer) {
+				this.freshfoneCallTransfer.cleanUpTimer();	
+			}
+		},
+		saveCallQualityMetrics: function(statsObject){
+			var self = this;
+			$.ajax({
+				type: 'POST',
+				dataType: "json",
+				url: '/freshfone/conference_call/save_call_quality_metrics',
+				data: {"call_quality_metrics": statsObject, 
+					"call_id" : this.callId
+				}
+			});
 		}
+
 	};
 }(jQuery));

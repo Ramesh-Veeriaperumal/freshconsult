@@ -15,7 +15,7 @@
   &.fade.in{
     @include opacity(0.8);
   }
-  &.above{
+  &.above, &.topRight{
       .twipsy-arrow {
         bottom: 0;
         left: 50%;
@@ -24,6 +24,11 @@
         border-right: 5px solid transparent;
         border-top: 5px solid #000000;
       }
+  }
+  &.topRight{
+    .twipsy-arrow {
+      left:18px;
+    }
   }
   &.below{
     .twipsy-arrow {
@@ -71,7 +76,7 @@
   background-color: #000000;
   color: white;
   text-align: center;
-  max-width: 400px;
+  max-width: 600px;
   text-decoration: none;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;

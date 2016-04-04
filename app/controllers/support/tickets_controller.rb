@@ -14,12 +14,13 @@ class Support::TicketsController < SupportController
   skip_before_filter :verify_authenticity_token
   before_filter :verify_authenticity_token, :unless => :public_request?
   
-  before_filter :check_user_permission, :only => [:show], :if => :not_facebook?
   before_filter :require_user, :only => [:show, :index, :filter, :close, :update, :add_people]
-
+  before_filter :load_item, :only => [:show, :update, :close, :add_people]
+  before_filter :check_user_permission, :only => [:show], :if => :not_facebook?
+  
   # Ticket object loading
   before_filter :build_tickets, :only => [:index, :filter]
-  before_filter :load_item, :verify_ticket_permission, :only => [:show, :update, :close, :add_people]
+  before_filter :verify_ticket_permission, :only => [:show, :update, :close, :add_people]
   before_filter :set_date_filter, :only => [:export_csv]  
 
   def show
@@ -94,10 +95,10 @@ class Support::TicketsController < SupportController
   end
 
   def add_people
-    cc_params = params[:helpdesk_ticket][:cc_email][:cc_emails].split(/,/)
+    cc_params = fetch_valid_emails(params[:helpdesk_ticket][:cc_email][:reply_cc])
     if cc_params.length <= TicketConstants::MAX_EMAIL_COUNT
-      @ticket.cc_email[:cc_emails] = cc_params.delete_if {|x| !valid_email?(x)}
-      update_reply_cc @ticket.cc_email, @old_cc_hash
+      @ticket.cc_email[:reply_cc] = cc_params.delete_if {|x| !valid_email?(x)}
+      update_ticket_cc @ticket.cc_email
       @ticket.save
       flash[:notice] = "Email(s) successfully added to CC."
     else
@@ -115,8 +116,15 @@ class Support::TicketsController < SupportController
     def load_item
       @ticket = @item = Helpdesk::Ticket.find_by_param(params[:id], current_account) 
       # Using .dup as otherwise it references the same address quoting same values.
-      @old_cc_hash = (@ticket and @ticket.cc_email_hash) ? @ticket.cc_email_hash.dup : { :cc_emails => [], :fwd_emails => [], :reply_cc => [] }
-      @item || raise(ActiveRecord::RecordNotFound)      
+      @old_cc_hash = (@ticket and @ticket.cc_email_hash) ? @ticket.cc_email_hash.dup : Helpdesk::Ticket.default_cc_hash
+      
+      load_archive_ticket unless @ticket 
+    end
+
+    def load_archive_ticket
+      archive_ticket = Helpdesk::ArchiveTicket.find_by_param(params[:id], current_account)
+      raise ActiveRecord::RecordNotFound unless archive_ticket
+      redirect_to support_archive_ticket_path(params[:id])
     end
 
     def redirect_url
@@ -159,6 +167,8 @@ class Support::TicketsController < SupportController
     end
 
     def check_user_permission
+      return if current_user and current_user.agent? and !preview? and @item.restricted_in_helpdesk?(current_user)
+      
       if current_user and current_user.agent? and !preview?
         return redirect_to helpdesk_ticket_url(:format => params[:format])
       end
@@ -173,14 +183,12 @@ class Support::TicketsController < SupportController
     end
 
   private
-  
-    def update_reply_cc cc_hash, old_cc_hash
-      if cc_hash[:reply_cc]
-        removed = cc_hash[:reply_cc] - cc_hash[:cc_emails]
-        added = cc_hash[:cc_emails] - old_cc_hash[:cc_emails]
-        cc_hash[:reply_cc] = cc_hash[:reply_cc] - removed + added
+
+    def update_ticket_cc cc_hash
+      if cc_hash[:cc_emails].present?
+        cc_hash[:cc_emails] = (cc_hash[:cc_emails] + cc_hash[:reply_cc]).uniq
       else
-        cc_hash[:reply_cc] = cc_hash[:cc_emails]
+        cc_hash[:cc_emails] = cc_hash[:reply_cc]
       end
     end
   

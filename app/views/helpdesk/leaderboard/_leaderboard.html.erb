@@ -18,7 +18,7 @@
 		<div class="list-noinfo"><%= t("gamification.leaderboard.leaderboard_is_empty") %></div>
 	<% end %>
 </div>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery("#leaderboard_list_love, #leaderboard_list_sharpshooter, #leaderboard_list_speed")
 		.css("minHeight", jQuery('#leaderboard_list_mvp').height());
 <% end %>

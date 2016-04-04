@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <%= open_html_tag %>
   <head>
-    <%= include_cloudfront_rtl_css :remote_configurations %>
-    <%= include_cloudfront_js :remote_configurations %>
+    <%= stylesheet_link_tag_with_rtl :'cdn/remote_configurations' %>
+    <%= javascript_include_tag :'cdn/remote_configurations' %>
   </head>
   
   <body class="remote-configurations">

@@ -2,7 +2,7 @@
 class Helpdesk::CannedResponses::ResponsesController < ApplicationController
   include HelpdeskControllerMethods
 
-  before_filter :load_multiple_items, :only => [:delete_multiple, :update_folder]
+  before_filter :load_items, :only => [:delete_multiple, :update_folder]
   before_filter :load_folders,  :only => [:new, :edit, :create, :update]
   before_filter :load_response, :only => [:edit, :update]
   before_filter :reset_visibility,    :only => [:create, :update]
@@ -134,10 +134,6 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
 
   private
 
-  def cname
-    @cname ||= controller_name.singularize
-  end
-
   def load_folders
     @all_folders = current_account.canned_response_folders
     @pfolder     = @all_folders.select{|f| f.personal?}.first
@@ -147,7 +143,7 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
   end
 
   def load_response
-    @ca_response = scoper.find(params[:id])
+    @ca_response = scoper.find_by_id(params[:id])
   end
 
   def reset_visibility
@@ -220,6 +216,7 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
 
   def build_ca_response_defaults
     @ca_response.helpdesk_accessible = current_account.accesses.new
+    @ca_response.folder_id = @folder.id
     @ca_response.helpdesk_accessible.access_type = @folder.personal? ? 
       Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] : Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
   end

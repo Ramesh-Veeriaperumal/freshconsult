@@ -1,7 +1,7 @@
 <div class="row">
   <div class="span4">
     <h3>Add Credits </h3>
-    <% form_tag({:action => 'add_credits'}, :class => "well") do %>
+    <%= form_tag({:action => 'add_credits'}, :class => "well") do %>
       <%= label_tag :account_id%>
       <%= text_field_tag :account_id, "", :class => "required" %>
       <%= label_tag :credits %>
@@ -14,7 +14,7 @@
   </div>
   <div class="span3">
     <h3>Refund Credits </h3>
-    <% form_tag({:action => 'refund_credits'}, :class => "well") do %>
+    <%= form_tag({:action => 'refund_credits'}, :class => "well") do %>
       <%= label_tag :account_id%>
       <%= text_field_tag :account_id, "", :class => "required" %>
       <div><%= submit_tag "Refund credits", :class => "btn btn-success" %></div>
@@ -37,7 +37,7 @@
  </div> 
 </div>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
   (function($){
     $(document).on('click','#fetch_country_permissions',function () {
     var account_id = $('#country_restriction_account_id').val();

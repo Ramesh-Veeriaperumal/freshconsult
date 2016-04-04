@@ -1,8 +1,8 @@
 require 'csv'
 class Export::Customer
   include ExportCsvUtil
+  include Rails.application.routes.url_helpers
   include Export::Util
-  include ActionController::UrlWriter
 
   def initialize(csv_hash, portal_url, type)
     @csv_hash = csv_hash
@@ -43,7 +43,11 @@ class Export::Customer
       @items.each do |record|
         csv_data = []
         @headers.each do |val|
-          csv_data << record.send(@csv_hash[val]) if record.respond_to?(@csv_hash[val])
+          if val == "Language"
+            csv_data << record.send("language_name") if record.respond_to?("language_name")
+          else
+            csv_data << record.send(@csv_hash[val]) if record.respond_to?(@csv_hash[val])
+          end
         end
         csv << csv_data if csv_data.any?
       end

@@ -1,14 +1,18 @@
 module MemcacheKeys
 
-  LEADERBOARD_MINILIST = "HELPDESK_LEADERBOARD_MINILIST:%{agent_type}:%{account_id}"
+  LEADERBOARD_MINILIST = "v2/HELPDESK_LEADERBOARD_MINILIST:%{agent_type}:%{account_id}"
 
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
 
+  ACCOUNT_CUSTOM_SURVEY = "v2/ACCOUNT_CUSTOM_SURVEY:%{account_id}"
+
   ACCOUNT_TICKET_TYPES = "v3/ACCOUNT_TICKET_TYPES:%{account_id}"
 
-  ACCOUNT_AGENTS = "v3/ACCOUNT_AGENTS:%{account_id}"
+  ACCOUNT_AGENTS = "v4/ACCOUNT_AGENTS:%{account_id}"
+
+  ACCOUNT_SUBSCRIPTION = "ACCOUNT_SUBSCRIPTION:%{account_id}"
 
   ACCOUNT_GROUPS = "v2/ACCOUNT_GROUPS:%{account_id}"
 
@@ -33,17 +37,21 @@ module MemcacheKeys
 
   ACCOUNT_CUSTOM_DROPDOWN_FIELDS = "v2/ACCOUNT_CUSTOM_DROPDOWN_FIELDS:%{account_id}"
 
-  ACCOUNT_NESTED_FIELDS = "v2/ACCOUNT_NESTED_FIELDS:%{account_id}"
+  ACCOUNT_NESTED_FIELDS = "v3/ACCOUNT_NESTED_FIELDS:%{account_id}"
 
   ACCOUNT_EVENT_FIELDS = "v1/ACCOUNT_EVENT_FIELDS:%{account_id}"
 
   ACCOUNT_FLEXIFIELDS = "v1/ACCOUNT_FLEXIFIELDS:%{account_id}"
+
+  ACCOUNT_TICKET_FIELDS = "v1/ACCOUNT_TICKET_FIELDS:%{account_id}"
 
   ACCOUNT_OBSERVER_RULES = "v1/ACCOUNT_OBSERVER_RULES:%{account_id}"
   
   ACCOUNT_TWITTER_HANDLES = "v2/ACCOUNT_TWITTER_HANDLES:%{account_id}"
 
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
+  
+  ALL_SOLUTION_CATEGORIES = "v1/ALL_SOLUTION_CATEGORIES:%{account_id}"
 
   CONTACT_FORM_FIELDS = "v1/CONTACT_FORM_FIELDS:%{account_id}:%{contact_form_id}"
 
@@ -62,13 +70,13 @@ module MemcacheKeys
 
   TWITTER_REAUTH_CHECK = "v1/TWITTER_REAUTH_CHECK:%{account_id}"
 
-  WHITELISTED_IP_FIELDS = "v1/WHITELISTED_IP_FIELDS:%{account_id}"
+  WHITELISTED_IP_FIELDS = "v3/WHITELISTED_IP_FIELDS:%{account_id}"
 
   FEATURES_LIST = "v4/FEATURES_LIST:%{account_id}"
   
-  SHARD_BY_DOMAIN = "v3/SHARD_BY_DOMAIN:%{domain}"
+  SHARD_BY_DOMAIN = "v4/SHARD_BY_DOMAIN:%{domain}"
  
-  SHARD_BY_ACCOUNT_ID = "v3/SHARD_BY_ACCOUNT_ID:%{account_id}"
+  SHARD_BY_ACCOUNT_ID = "v4/SHARD_BY_ACCOUNT_ID:%{account_id}"
 
   AUTO_REFRESH_AGENT_DETAILS = "AGENT_DETAILS:%{account_id}:%{user_id}"
   
@@ -90,13 +98,37 @@ module MemcacheKeys
 
   MOBIHELP_APP = "MOBIHELP_APP:%{account_id}:%{app_key}"
 
-  MOBIHELP_SOLUTIONS = "MOBIHELP_SOLUTIONS:%{account_id}:%{category_id}"
+  MOBIHELP_SOLUTION_CATEGORY_IDS = "MOBIHELP_SOLUTION_CATEGORY_IDS:%{account_id}:%{app_key}"
+
+  MOBIHELP_SOLUTIONS = "v1/MOBIHELP_SOLUTIONS:%{account_id}:%{category_id}"
   
-  MOBIHELP_SOLUTION_UPDATED_TIME = "v2/MOBIHELP_SOLUTION_UPDATED_TIME:%{account_id}:%{app_id}"
+  MOBIHELP_SOLUTION_UPDATED_TIME = "v3/MOBIHELP_SOLUTION_UPDATED_TIME:%{account_id}:%{app_id}"
+  
+  PRODUCT_NOTIFICATION = "v3/%{language}/PRODUCT_NOTIFICATION"
 
-  PRODUCT_NOTIFICATION = "v2/PRODUCT_NOTIFICATION"
+  POD_SHARD_ACCOUNT_MAPPING = "v2/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
 
-  POD_SHARD_ACCOUNT_MAPPING = "v1/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
+  ACCOUNT_ADDITIONAL_SETTINGS = "v2/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
+
+  INSTALLED_FRESHPLUGS = "v1/FA:%{page}:PLUGS:%{account_id}"
+
+  FRESHPLUG_CODE = "v1/FA:PLUG:%{version_id}"
+
+  EXTENSION_CATEGORIES = "v1/FA:EXTENSION_CATEGORIES"
+
+  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}"
+
+  EXTENSION_VERSION_DETAILS = "v1/FA:EXTENSION:%{version_id}:%{locale_id}"
+
+  CONFIGURATION_DETAILS = "v1/FA:CONFIGURATIONS:%{version_id}:%{locale_id}"
+
+  INSTALLED_CTI_APP = "v1/INSTALLED_CTI_APP:%{account_id}"
+
+  ECOMMERCE_REAUTH_CHECK = "v1/ECOMMERCE_REAUTH_CHECK:%{account_id}"
+
+  ACCOUNT_PASSWORD_POLICY = "v1/ACCOUNT_PASSWORD_POLICIES:%{account_id}:%{user_type}"
+
+  LEADERBOARD_MINILIST_REALTIME = "v2/LEADERBOARD_MINILIST_REALTIME:%{account_id}:%{agent_type}"
 
   class << self
 
@@ -123,7 +155,6 @@ module MemcacheKeys
 
     def memcache_delete(key, account=Account.current, user=User.current)
       newrelic_begin_rescue { $memcache.delete(memcache_view_key(key, account, user)) } 
-      newrelic_begin_rescue { $dalli.delete(memcache_view_key(key, account, user)) } 
     end
 
     def get_from_cache(key, raw=false)
@@ -136,7 +167,14 @@ module MemcacheKeys
 
     def delete_from_cache(key)
       newrelic_begin_rescue { $memcache.delete(key) }
-      newrelic_begin_rescue { $dalli.delete(key) } 
+    end
+
+    def set_null(value)
+      value.nil? ? NullObject.instance : value
+    end
+
+    def unset_null(value)
+      value.is_a?(NullObject) ? nil : value
     end
 
     def fetch(key, expiry=0,&block)
@@ -144,9 +182,9 @@ module MemcacheKeys
       cache_data = get_from_cache(key)
       if cache_data.nil?
         Rails.logger.debug "Cache hit missed :::::: #{key}"
-        cache(key, (cache_data = block.call), expiry)
+        cache(key, (cache_data = set_null(block.call)), expiry)
       end
-      cache_data
+      unset_null(cache_data)
     end
   end
   

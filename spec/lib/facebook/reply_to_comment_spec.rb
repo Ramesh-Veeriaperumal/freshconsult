@@ -2,13 +2,11 @@ require 'spec_helper'
 
 include FacebookHelper
 include SocialHelper
-include Facebook::Core::Util
+include Facebook::Util
 
 describe Facebook::Core::Post do
   
   before(:all) do
-    #@account = create_test_account
-    @account.features.send(:facebook_realtime).create
     @account.make_current
     @fb_page = create_test_facebook_page(@account, true)
     Social::FacebookPage.update_all("import_visitor_posts = true", "page_id = #{@fb_page.page_id}")
@@ -25,7 +23,7 @@ describe Facebook::Core::Post do
     
       post_id = complete_post_id.split("_").last
       comment_id = "#{post_id}_#{get_social_id}"
-      realtime_feed = sample_realtime_comment_feed(comment_id, true, complete_post_id)
+      realtime_feed = sample_realtime_comment_feed(complete_post_id, comment_id)
       comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
       
       Koala::Facebook::API.any_instance.stubs(:get_object).returns(comment)
@@ -35,7 +33,7 @@ describe Facebook::Core::Post do
       user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
       post_comment = Social::FbPost.find_by_post_id(comment[:id])
       post_comment.should_not be_nil
-      post_comment.is_note?.should be_true
+      post_comment.is_note?.should be true
       
       note = post_comment.postable
       note.notable.should eql ticket
@@ -45,7 +43,7 @@ describe Facebook::Core::Post do
   end
   
   
-  it "should create a ticket and note when the parent post is not converted to a ticket and import visitor posts in enabled and the comment is from a visitor" do
+  it "should create a ticket and note when the parent post is not converted to a ticket and import visitor posts is enabled " do
     unless @account.features?(:social_revamp)
       feed_id = "#{@fb_page.page_id}_#{get_social_id}"
       comment_id = "#{get_social_id}_#{get_social_id}"
@@ -61,7 +59,7 @@ describe Facebook::Core::Post do
       
       post = @account.facebook_posts.find_by_post_id(feed_id)
       post.should_not be_nil
-      post.is_ticket?.should be_true
+      post.is_ticket?.should be true
       
       ticket = post.postable
       user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -71,7 +69,7 @@ describe Facebook::Core::Post do
       comment_feed = facebook_feed[:comments]["data"]
       post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
       post_comment.should_not be_nil
-      post_comment.is_note?.should be_true
+      post_comment.is_note?.should be true
       
       note = post_comment.postable
       note.notable.should eql ticket
@@ -81,7 +79,7 @@ describe Facebook::Core::Post do
       reply_to_comment_feed = comment_feed.first[:comments]["data"]
       reply_post_comment = @account.facebook_posts.find_by_post_id(reply_to_comment_feed.first[:id])
       reply_post_comment.should_not be_nil
-      reply_post_comment.is_note?.should be_true
+      reply_post_comment.is_note?.should be true
       
       note = reply_post_comment.postable
       note.notable.should eql ticket
@@ -89,7 +87,7 @@ describe Facebook::Core::Post do
     end  
   end
   
-   it "should create a ticket and note when the parent post is not converted to a ticket and import company posts in enabled and the comment is from a company" do
+   it "should create a ticket and note when the parent post is not converted to a ticket and import company posts in enabled and the comment is from a visitor" do
     Social::FacebookPage.update_all("import_company_posts = true", "page_id = #{@fb_page.page_id}")
     
     unless @account.features?(:social_revamp)
@@ -106,7 +104,7 @@ describe Facebook::Core::Post do
       
       post = @account.facebook_posts.find_by_post_id(feed_id)
       post.should_not be_nil
-      post.is_ticket?.should be_true
+      post.is_ticket?.should be true
       
       ticket = post.postable
       user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
@@ -116,7 +114,7 @@ describe Facebook::Core::Post do
       comment_feed = facebook_feed[:comments]["data"]
       post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
       post_comment.should_not be_nil
-      post_comment.is_note?.should be_true
+      post_comment.is_note?.should be true
       
       note = post_comment.postable
       note.notable.should eql ticket
@@ -126,7 +124,7 @@ describe Facebook::Core::Post do
       reply_to_comment_feed = comment_feed.first[:comments]["data"]
       reply_post_comment = @account.facebook_posts.find_by_post_id(reply_to_comment_feed.first[:id])
       reply_post_comment.should_not be_nil
-      reply_post_comment.is_note?.should be_true
+      reply_post_comment.is_note?.should be true
       
       note = reply_post_comment.postable
       note.notable.should eql ticket
@@ -151,7 +149,7 @@ describe Facebook::Core::Post do
   #   user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
   #   post_comment = Social::FbPost.find_by_post_id(comment[:id])
   #   post_comment.should_not be_nil
-  #   post_comment.is_note?.should be_true
+  #   post_comment.is_note?.should be true
     
   #   note = post_comment.postable
   #   note.notable.should eql ticket
@@ -196,7 +194,7 @@ describe Facebook::Core::Post do
   #   user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
   #   post_comment = Social::FbPost.find_by_post_id(comment[:id])
   #   post_comment.should_not be_nil
-  #   post_comment.is_note?.should be_true
+  #   post_comment.is_note?.should be true
     
   #   note = post_comment.postable
   #   note.notable.should eql ticket

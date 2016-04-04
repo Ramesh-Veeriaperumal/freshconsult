@@ -2,7 +2,7 @@
 	<div class="control-group">
 		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.name') %></label>
 		<div class="controls">
-			<%= f.text_field :name, :class => "span4", :placeholder => t('freshfone.admin.number_settings.name_placeholder') %>
+			<%= f.text_field :name, :class => "span4", :placeholder => t('freshfone.admin.number_settings.name_placeholder'), :maxlength => 255 %>
 		</div>
 	</div>
 	<div class="control-group">
@@ -71,13 +71,21 @@
 		</div>
 	</div>
 
-	<div class="control-group">
-		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.non_availability_message') %></label>
-		<div class="controls">
-			<div class="freshfone-controls non_availability_message"></div>
+	<% if current_account.features?(:freshfone_conference) %>
+		<div class="control-group">
+			<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.wait_music') %></label>
+			<div class="controls">
+				<div class="freshfone-controls wait_message"></div>
+			</div>
 		</div>
-	</div>
 
+		<div class="control-group">
+			<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.hold_music') %></label>
+			<div class="controls">
+				<div class="freshfone-controls hold_message"></div>
+			</div>
+		</div>
+	<% end %>
 
 	<div class="control-group">
 		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.max_queue_calls') %></label>
@@ -92,10 +100,36 @@
 					<label> <%= t('freshfone.admin.number_settings.call_wait_time_suffix') %></label>
 				</div>
 			</div>
-			<div class="queue_setting_div togglable_message">
-				<label class="togglable_options_title"><%= t('freshfone.admin.number_settings.wait_message') %></label>
-				<div class="freshfone-controls on_hold_message"></div>
+			<div class="queue_setting_div main">
+				<div class="queue_setting_div control-group">
+					<label class="togglable_options_title control-label settings-label"><%= t('freshfone.admin.number_settings.queue_wait_message') %></label>
+					<div class="controls freshfone-controls on_hold_message"></div>
+				</div>
+
+				<div class="queue_setting_div control-group">
+					<%= f.label :queue_position_preference, t('freshfone.admin.number_settings.queue_position_preference'),
+											:class => " togglable_options_title control-label settings-label" %>
+
+					<div class="controls">
+						<%= f.check_box :queue_position_preference, 
+						"data-checked-label" => t('freshfone.admin.number_settings.queue_position_enable'),
+						"data-unchecked-label" => t('freshfone.admin.number_settings.queue_position_disable') %>
+					</div>
+					<div class="controls muted queue_position_controls queue_position_message_div">
+						<%= f.text_area :queue_position_message, :class => "span4", :placeholder => t('freshfone.admin.number_settings.queue_position_message_placeholder'), :maxlength => 255, :rows => 3 %>
+						<div class='recording-alert'>
+							<span><%= t('freshfone.admin.number_settings.queue_position_message_alert').html_safe %></span>
+						</div>
+					</div>
+				</div>
+				</div>
 			</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.non_availability_message') %></label>
+		<div class="controls">
+			<div class="freshfone-controls non_availability_message"></div>
 		</div>
 	</div>
 
@@ -146,7 +180,57 @@
 			</div>
 		</div>
 	</div>
+	<div class="control-group">
+		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.number_accessible') %></label>
+		<div class="controls freshfone-controls access_groups_control">
+			
+				<span class="control-label hide" id="defaultGroupAccess"> Everyone <span class="muted"> | </span><a id="selectGroupAccess" class="selectGroupAccess"> Select group </a></span>
+			
+				<%= select_tag  "access_groups",
+												options_from_collection_for_select(current_account.groups, 
+													:id, :name, accessible_groups(number)),{:multiple => true,
+												:class => 'select2 span4 hide', :placeholder => "Select group"} %>
+				<input type="hidden" id="added_list" name="access_groups_added_list"/>
+			 	<input type="hidden" id="removed_list" name="access_groups_removed_list"/>
+
+		</div>
+	</div>
 	
+	<% if current_account.launched?(:freshfone_caller_id_masking) %>
+	  <div class="control-group">
+			<label class="control-label settings-label"><%=t('freshfone.admin.numbers.caller_id.call_id_mask')%></label>
+			<div class="controls">
+				<div class="call_id_mask">
+					
+					<% if number.freshfone_caller_id.present? %>
+					<%= check_box_tag :callmask_active, true, true , :class => 'call_mask_toggle' %>
+					<% else %>	
+					<%= check_box_tag :callmask_active, true, false, :class => 'call_mask_toggle' %>
+					<% end %>	
+					
+					<% if outgoing_callers.blank? %>
+						<span class="no-number-added common-mask hide ml20 pull-left">
+							<%=t('freshfone.admin.numbers.caller_id.no_number_added')%>
+						</span>	
+					<% end %>
+
+					<span class="caller_id_container ml20 common-mask hide pull-left">
+						<%= select_tag  "caller_id",
+															options_from_collection_for_select(outgoing_callers,"id","number",outgoing_caller(number)),{:multiple => false,
+															:class => 'select2 caller_id'} %>								
+							
+					</span>	
+					
+					<a id="new-outgoing-caller" class="common-mask hide ml10" href="#" ><%=t('freshfone.admin.numbers.caller_id.add_new')%></a>								
+				
+				</div>									
+			</div>
+		</div>
+	<% end %> 
+
+	<% if current_account.launched?(:freshfone_caller_id_masking) %>
+		<%= render :partial => "/freshfone/outgoing_callers_id", :locals => { :settings => true } %>
+	<% end %>	
 	
 </div>
 <script type="text/javascript">
@@ -160,6 +244,9 @@
 			$('.multi_business_hours').show();
 			$('.non_business_hours_message_container').show();
 			$('#non_business_hour_calls_false').prop('checked',true);
+		}
+		if($('.call_mask_toggle').prop('checked')){
+			$('.common-mask').show();
 		}
 	})(jQuery)
 

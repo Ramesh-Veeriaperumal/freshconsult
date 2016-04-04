@@ -1,6 +1,5 @@
 require 'spec_helper'
 describe Integrations::OauthUtilController do
-	integrate_views
 	setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -11,7 +10,7 @@ describe Integrations::OauthUtilController do
 		     								'oauth_token' => "ya29.NAABYWd0ZOrbyxkAAAC6NPsuDQwcBaz9x1s4fyV0JbtgzNmFDfZ4O8XVJEHz2w", 
 		     								:email => "satbruceitan@gmail.com"}, :account_id => @account.id,:application_name => 'google_calendar',:configs => { :inputs => {} }})
 
-	  @new_installed_app = Factory.build(:installed_application, :application_id => 9,
+	  @new_installed_app = FactoryGirl.build(:installed_application, :application_id => 9,
                         :account_id => @account.id,
                         :configs => {:inputs=>
                         {"refresh_token"=>"5Aep8617VFpoP.M.4vr0B8cw7H4cGnnLPu4C1ZIHSC2psImKCK1bbT_IZQxg32DkO6BQJtg0UVmveObnUEK_x8D", 
@@ -29,16 +28,16 @@ describe Integrations::OauthUtilController do
 
 	it "should get access token for user_specific_auth" do 
 		get :get_access_token, {:controller=>"integrations/oauth_util", :action=>"get_access_token",:app_name=>"google_calendar"}
-		response.status.should eql "200 OK"
+		response.status.should eql 200
 	end
 
 	it "should get access token for non_user_specific_auth" do
 	get :get_access_token, {:controller=>"integrations/oauth_util", :action=>"get_access_token",:app_name=>"salesforce"} 
-	response.status.should eql "200 OK"
+	response.status.should eql 200
 	end
 
 	it "failure case" do
 		get :get_access_token, {:controller=>"integrations/oauth_util", :action=>"get_access_token",:app_name=>"pivotal_tracker"} 
-		response.status.should eql "200 OK"
+		response.status.should eql 200
 	end
 end

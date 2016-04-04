@@ -17,21 +17,27 @@ class Freshfone::Number::Message
 		end
 	end
 
-	def to_json(options=nil)
+	def as_json(options=nil)
 		{ :message => message,
 			:messageType => message_type,
 			:attachmentId => attachment_id,
-			:attachmentName => attachment_name,
-			:attachmentUrl => attachment_url,
-			:recordingUrl => recording_url,
+			:attachmentName => CGI.escapeHTML(attachment_name || ""),
+			:attachmentUrl => CGI.escapeHTML(attachment_url || ""),
+			:recordingUrl => CGI.escapeHTML(recording_url || ""),
 			:type => type,
 			:group_id => group_id
-		}.to_json
+		}
+	end
+  
+  def to_json(options=nil)
+		as_json(options).to_json
 	end
 	
 	def validate
-		parent.errors.add_to_base(I18n.t('flash.freshfone.number.blank_message', 
+		parent.errors.add(:base,I18n.t('flash.freshfone.number.blank_message', 
 															{:num_type => type.to_s.humanize})) unless has_message?
+		parent.errors.add(:base, I18n.t('flash.freshfone.number.invalid_message_length', 
+															{:num_type => type.to_s.humanize})) if has_invalid_size?
 	end
 	
 	def to_yaml_properties
@@ -45,16 +51,20 @@ class Freshfone::Number::Message
 		end
 	end
 	
-	def speak(xml_builder)
+	def speak(xml_builder, loop_count=Freshfone::Number::DEFAULT_WAIT_LOOP)
 		if transcript?
 			xml_builder.Say message, { :voice => voice_type }
 		else
-			xml_builder.Play(uploaded_audio? ? attachment_url : recording_url)
+			xml_builder.Play message_url, {:loop => loop_count}
 		end
 	end
+
+	def message_url
+		uploaded_audio? ? attachment_url : recording_url
+	end
+
 	private 
 		def new_attachment_reference
 			type
 		end
-
 end

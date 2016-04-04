@@ -1,0 +1,223 @@
+:customer_interactions: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+
+:agent_interactions: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+
+:agent_reassign_count: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+
+:group_reassign_count: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+
+:reopen_count: 
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+
+:first_response_time: 
+  - operator: less_than_eql
+    value: 900
+    label: helpdesk_reports.bucket.less_than_fifteen_mins
+  - operator: range
+    value: "900,1800"
+    label: helpdesk_reports.bucket.fifteen_to_thirty_mins
+  - operator: range
+    value: "1800,3600"
+    label: helpdesk_reports.bucket.thirty_to_sixty_mins
+  - operator: range
+    value: "3600,7200"
+    label: helpdesk_reports.bucket.one_to_two_hrs
+  - operator: range
+    value: "7200,14400"
+    label: helpdesk_reports.bucket.two_to_four_hrs
+  - operator: range
+    value: "14400,28800"
+    label: helpdesk_reports.bucket.four_to_eight_hrs
+  - operator: range
+    value: "28800,43200"
+    label: helpdesk_reports.bucket.eight_to_twelve_hrs
+  - operator: range
+    value: "43200,86400"
+    label: helpdesk_reports.bucket.twelve_to_twenty_four_hrs
+  - operator: range
+    value: "86400,172800"
+    label: helpdesk_reports.bucket.twenty_four_to_fourty_eight_hrs
+  - operator: greater_than_eql
+    value: 172800
+    label: helpdesk_reports.bucket.fourty_eight_plus_hrs
+:response_time: 
+  - operator: less_than_eql
+    value: 900
+    label: helpdesk_reports.bucket.less_than_fifteen_mins
+  - operator: range
+    value: "900,1800"
+    label: helpdesk_reports.bucket.fifteen_to_thirty_mins
+  - operator: range
+    value: "1800,3600"
+    label: helpdesk_reports.bucket.thirty_to_sixty_mins
+  - operator: range
+    value: "3600,7200"
+    label: helpdesk_reports.bucket.one_to_two_hrs
+  - operator: range
+    value: "7200,14400"
+    label: helpdesk_reports.bucket.two_to_four_hrs
+  - operator: range
+    value: "14400,28800"
+    label: helpdesk_reports.bucket.four_to_eight_hrs
+  - operator: range
+    value: "28800,43200"
+    label: helpdesk_reports.bucket.eight_to_twelve_hrs
+  - operator: range
+    value: "43200,86400"
+    label: helpdesk_reports.bucket.twelve_to_twenty_four_hrs
+  - operator: range
+    value: "86400,172800"
+    label: helpdesk_reports.bucket.twenty_four_to_fourty_eight_hrs
+  - operator: greater_than_eql
+    value: 172800
+    label: helpdesk_reports.bucket.fourty_eight_plus_hrs
+:resolution_time: 
+  - operator: less_than_eql
+    value: 18000
+    label: helpdesk_reports.bucket.less_than_5_hrs
+  - operator: range
+    value: "18000,36000"
+    label: helpdesk_reports.bucket.5_to_10_hrs
+  - operator: range
+    value: "36000,54000"
+    label: helpdesk_reports.bucket.10_to_15_hrs
+  - operator: range
+    value: "54000,90000"
+    label: helpdesk_reports.bucket.15_to_25_hrs
+  - operator: range
+    value: "90000,180000"
+    label: helpdesk_reports.bucket.25_to_50_hrs
+  - operator: range
+    value: "180000,360000"
+    label: helpdesk_reports.bucket.50_to_100_hrs  
+  - operator: range
+    value: "360000,720000"
+    label: helpdesk_reports.bucket.100_to_200_hrs  
+  - operator: range
+    value: "720000,1260000"
+    label: helpdesk_reports.bucket.200_to_350_hrs 
+  - operator: range
+    value: "1260000,2520000"
+    label: helpdesk_reports.bucket.350_to_700_hrs
+  - operator: greater_than_eql
+    value: 2520000
+    label: helpdesk_reports.bucket.700_plus_hrs
+:reply_count: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+
+:private_note_count: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+

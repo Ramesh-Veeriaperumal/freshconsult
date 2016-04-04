@@ -1,6 +1,7 @@
 class Helpdesk::Access < ActiveRecord::Base
-  set_table_name "helpdesk_accesses"
-
+  self.table_name =  "helpdesk_accesses"  
+  self.primary_key = :id
+  
   concerned_with :user_access_methods,:group_access_methods
   belongs_to_account
 
@@ -9,10 +10,22 @@ class Helpdesk::Access < ActiveRecord::Base
   has_many :group_accesses, :class_name => "Helpdesk::GroupAccess"
   has_many :user_accesses, :class_name => "Helpdesk::UserAccess"
   has_and_belongs_to_many :users,
-    :join_table => 'user_accesses'
-
+    :join_table => 'user_accesses',
+    :insert_sql => proc { |record|
+      %{
+        INSERT INTO user_accesses (account_id, access_id, user_id) VALUES
+        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
+     }
+    }
+  
   has_and_belongs_to_many :groups,
-    :join_table => 'group_accesses'
+    :join_table => 'group_accesses',
+    :insert_sql => proc { |record|
+      %{
+        INSERT INTO group_accesses (account_id, access_id, group_id) VALUES
+        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
+     }
+    }
 
 
   ACCESS_TYPES = [
@@ -104,9 +117,7 @@ class Helpdesk::Access < ActiveRecord::Base
     end
 
     def all_user_accessible_sql(type,user)
-      self.send(:construct_finder_sql,:select => "accessible_id, accessible_type, access_type, helpdesk_accesses.account_id",
-        :joins => "#{user_accesses_join(type, user)} #{group_accesses_join(type, user)} #{agent_groups_join}",
-        :conditions => "#{type_conditions(type)} AND (#{user_conditions(user).values.join(' OR ')})")
+      self.all_user_accessible(type,user).to_sql
     end
 
     def shared_accessible_sql(type,user)
@@ -122,37 +133,20 @@ class Helpdesk::Access < ActiveRecord::Base
     end
   end
 
-  named_scope :user_accessible_items_via_group, lambda { |type, user|
+  scope :all_user_accessible, lambda { |type, user|
+    { :select => "accessible_id, accessible_type, access_type, helpdesk_accesses.account_id",
+      :joins => "#{user_accesses_join(type, user)} #{group_accesses_join(type, user)} #{agent_groups_join}",
+      :conditions => "#{type_conditions(type)} AND (#{user_conditions(user).values.join(' OR ')})"
+    }
+  }
+
+  scope :user_accessible_items_via_group, lambda { |type, user|
     {
       :joins      => "#{group_accesses_join(type, user)} #{agent_groups_join}" ,
       :conditions => "#{type_conditions(type)} AND (#{user_conditions(user)[:global]} OR #{user_conditions(user)[:users_via_group]})",
       :select     => "accessible_id, accessible_type, access_type"
     }
   }
-
-  # named_scope :all_user_accessible_items, lambda { |type, user|
-  #   {
-  #     :joins => "#{user_accesses_join(type, user)} #{group_accesses_join(type, user)} #{agent_groups_join}",
-  #     :conditions => "#{type_conditions(type)} AND (#{user_conditions(user).values.join(' OR ')})" ,
-  #     :select => "accessible_id, accessible_type, access_type"
-  #   }
-  # }
-
-  # named_scope :user_accessible_items, lambda { |type, user|
-  #   {
-  #     :joins => "#{user_accesses_join(type, user)}",
-  #     :conditions => "#{type_conditions(type)} AND (#{user_conditions(user)[:global]} OR #{user_conditions(user)[:users]})",
-  #     :select => "accessible_id, accessible_type, access_type"
-  #   }
-  # }
-
-  # named_scope :group_accessible_items, lambda { |type, group|
-  #   {
-  #     :joins => "#{group_accesses_join(type, group)}",
-  #     :conditions => "#{type_conditions(type)} AND (#{group_conditions(group)[:global]} OR #{group_conditions(group)[:groups]})",
-  #     :select => "accessible_id, accessible_type, access_type"
-  #   }
-  # }
 
   def global_access_type?
     access_type == ACCESS_TYPES_KEYS_BY_TOKEN[:all]

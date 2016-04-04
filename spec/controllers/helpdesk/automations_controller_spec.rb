@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::ScenarioAutomationsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -31,13 +30,13 @@ describe Helpdesk::ScenarioAutomationsController do
 
   it "should go to the index page" do
     get 'index'
-    response.should render_template "helpdesk/scenario_automations/index.html.erb"
+    response.should render_template "helpdesk/scenario_automations/index"
     response.body.should =~ /Scenario Automations/
   end
 
   it "should go to new scenario" do
     get 'new'
-    response.should render_template "helpdesk/scenario_automations/new.html.erb"
+    response.should render_template "helpdesk/scenario_automations/new"
     response.body.should =~ /New Scenario/
   end
 
@@ -54,15 +53,15 @@ describe Helpdesk::ScenarioAutomationsController do
 
   it "should edit selected scenario" do
     get :edit, :id =>@test_scn.id
-    response.should render_template "helpdesk/scenario_automations/edit.html.erb"
+    response.should render_template "helpdesk/scenario_automations/edit"
   end
 
   it "should clone a selected scenario" do
     get :clone_rule, :id => @test_scn.id
-    response.should render_template "helpdesk/scenario_automations/clone_rule.html.erb"
-    (@test_scn.action_data == assigns(:va_rule).action_data).should be_true
-    (@test_scn.filter_data == assigns(:va_rule).filter_data).should be_true
-    (@test_scn.accessible.access_type == assigns(:va_rule).accessible.access_type).should be_true
+    response.should render_template "helpdesk/scenario_automations/clone_rule"
+    assigns(:va_rule).action_data.should be_eql(@test_scn.action_data)
+    assigns(:va_rule).filter_data.should be_eql(@test_scn.filter_data)
+    assigns(:va_rule).accessible.access_type.should be_eql(@test_scn.accessible.access_type)
   end
 
   it "should update a scenario" do
@@ -71,6 +70,17 @@ describe Helpdesk::ScenarioAutomationsController do
                   :action_data=>[{:name=>"priority", :value=>"3"},{:name=>"status", :value=>"3"}].to_json,  :name=>"status", :value=>"3",:id=>@test_scn.id}
     @account.scn_automations.find_by_id(@test_scn.id).action_data.should_not be_eql(@test_scn.action_data)
   end
+
+  # validation on edit scenario - (case changes in scenario name)
+
+  it "should update scenario name with case changes in letters" do
+    put :update, {:va_rule=>{"name"=>"Move To Support", "description"=>Faker::Lorem.sentence(3),
+                           :accessible_attributes => {:access_type=>Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]}},
+                  :action_data=>[{:name=>"priority", :value=>"3"},{:name=>"status", :value=>"3"}].to_json,  :name=>"status", :value=>"3",:id=>@test_scn.id}
+    @account.scn_automations.find_by_id(@test_scn.id).name.should be_eql("Move To Support")
+  end
+
+
 
   it "should delete a scenario" do
     delete_scn=create_scn_automation_rule({:account_id=>@account.id,:accessible_attributes => {:access_type=>Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]}})

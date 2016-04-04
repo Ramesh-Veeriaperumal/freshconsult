@@ -58,10 +58,3 @@ $labels:
   
 .label-light           { background-color: #eee; color:#666; @include text-shadow(none); }
 .label-light:hover     { background-color: darken(#eee, 3%); color:#444; @include text-shadow(none); }
-
-// Responsive settings for labels
-@if $nonResponsive == false {
-  @include at-breakpoint($media-mobile){
-    .label{ @include border-radius(3px); }
-  } 
-}

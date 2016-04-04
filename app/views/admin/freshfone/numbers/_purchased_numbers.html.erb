@@ -1,20 +1,21 @@
 <% if @numbers.any? %>
 	<% unless feature?(:freshfone) %>
 		<div class="alert alert-page alert-notice freshfone-disabled-alert" rel="permanent">
-			<%= t('freshfone.admin.disable_alert').html_safe %>
+			<%= t('freshfone.admin.suspended_alert').html_safe %>
 		</div>
 	<% end %>
 	<div class="list-page-body ">
 		<table class="table table-striped">
 			<% if purchased_numbers.any? %>
 				<% purchased_numbers.each do |incoming_number| %>
-					<tr><td>
+					<tr>
+						<td>
 							<p class="text-info">
 							<strong>
-								<%= link_to(incoming_number.number_name, edit_admin_freshfone_number_path(incoming_number), 
+								<%= link_to(h(incoming_number.number_name), edit_admin_freshfone_number_path(incoming_number), 
 											:class => "item_info") %>
 							</strong><br/>
-							<% if incoming_number.country == "US" %>
+							<% if incoming_number.name.present? %>
 								<span class="muted"><%= incoming_number.number %></span>
 							<% end %>
 						</td>
@@ -28,14 +29,17 @@
 						</td>
 						<td>
 							<div class="item_actions" align="right">
-						    <%= link_to_if( current_account.freshfone_account.suspended?, t('edit'), "#", :class => "btn btn-mini", :disabled => true ) do |edit| 
-						    			link_to(edit, edit_admin_freshfone_number_path(incoming_number), :class => "btn btn-mini")
-						    		end %>
-						    <%= link_to "<i class='icon-trash'></i>".html_safe, admin_freshfone_number_path(incoming_number), 
-						    					:confirm => t('freshfone.admin.numbers.delete_alert'), 
-						    					:method => :delete, :class => "btn btn-mini" %>
+								<%= link_to_if(active?, t('edit'), edit_admin_freshfone_number_path(incoming_number), :class => "btn btn-mini") do
+									link_to(t('edit'), "#", :class => "btn btn-mini", :disabled => true )
+								end %>
+								<% unless freshfone_trial_states? %>
+									<%= link_to "<i class='icon-trash'></i>".html_safe, admin_freshfone_number_path(incoming_number), 
+										:confirm => t('freshfone.admin.numbers.delete_alert'), 
+										:method => :delete, :class => "btn btn-mini" %>
+								<%end%>
 							</div>
-						</td></tr>
+						</td>
+					</tr>
 				<% end %>
 			<% end %>
 		</table>

@@ -14,63 +14,48 @@ jQuery.noConflict()
     // Attaching dom ready events
 
     // Remote ajax for links
-    $("a[data-remote]").live("click", function(ev){
-      ev.preventDefault()
+    // $("a[data-remote]").live("click", function(ev){
+    //   ev.preventDefault()
 
-      var _o_data = $(this).data(),
-        _self = $(this),
-        _post_data = { 
-          "_method" : $(this).data("method")
-        }
+    //   var _o_data = $(this).data(),
+    //     _self = $(this),
+    //     _post_data = { 
+    //       "_method" : $(this).data("method")
+    //     }
 
-      if(!_o_data.loadonce){
-        // Setting the submit button to a loading state
-        if($(this).hasClass('btn')) $(this).button("loading")
+    //   if(!_o_data.loadonce){
+    //     // Setting the submit button to a loading state
+    //     if($(this).hasClass('btn')) $(this).button("loading")
 
-        // A data-loading-box will show a loading box in the specified container
-        $(_o_data.loadingBox||"").html("<div class='sloading loading-block loading-small'></div>")
+    //     // A data-loading-box will show a loading box in the specified container
+    //     $(_o_data.loadingBox||"").html("<div class='sloading loading-block loading-small'></div>")
 
-        $.ajax({
-          type: _o_data.type || 'POST',
-          url: this.href,
-          data: _post_data,
-          dataType: _o_data.responseType || "html",
-          success: function(data){          
-            $(_o_data.showDom||"").show()
-            $(_o_data.hideDom||"").hide()
-            $(_o_data.update||"").html(_o_data.updateWithMessage || data) 
+    //     $.ajax({
+    //       type: _o_data.type || 'POST',
+    //       url: this.href,
+    //       data: _post_data,
+    //       dataType: _o_data.responseType || "html",
+    //       success: function(data){          
+    //         $(_o_data.showDom||"").show()
+    //         $(_o_data.hideDom||"").hide()
+    //         $(_o_data.update||"").html(_o_data.updateWithMessage || data) 
 
-            // Executing any unique dom related callback
-            if(_o_data.callback != undefined)
-              window[_o_data.callback](data)
+    //         // Executing any unique dom related callback
+    //         if(_o_data.callback != undefined)
+    //           window[_o_data.callback](data)
 
-            // Resetting the submit button to its default state
-            if($(this).hasClass('btn'))  _self.button("reset")
-            _self.html(_self.hasClass("active") ? 
-                    _o_data.buttonActiveLabel : _o_data.buttonInactiveLabel)
+    //         // Resetting the submit button to its default state
+    //         if($(this).hasClass('btn'))  _self.button("reset")
+    //         _self.html(_self.hasClass("active") ? 
+    //                 _o_data.buttonActiveLabel : _o_data.buttonInactiveLabel)
 
-          }
-        })
-      }else{
-        $(_o_data.showDom||"").show()
-        $(_o_data.hideDom||"").hide()
-      }
-    })
-
-    // Data api for rails button submit with method passing
-    $("a[data-method], button[data-method]").live("click", function(ev){
-      ev.preventDefault()
-      if($(this).data("remote")) return
-
-      if($(this).data("confirm") && !confirm($(this).data("confirm"))) return
-
-      var _form = $("<form class='hide' method='post' />")
-              .attr("action", this.href)
-              .append("<input type='hidden' name='_method' value='"+$(this).data("method")+"' />");
-              add_csrf_token(_form);
-              _form.get(0).submit();      
-    })
-
+    //       }
+    //     })
+    //   }else{
+    //     $(_o_data.showDom||"").show()
+    //     $(_o_data.hideDom||"").hide()
+    //   }
+    // })
     // Data api for onclick showing dom elements
     $("a[data-show-dom], button[data-show-dom]").live("click", function(ev){
       ev.preventDefault()

@@ -1,13 +1,12 @@
 class FlexifieldPicklistVal < ActiveRecord::Base
+  self.primary_key = :id
+  
+  attr_accessible :flexifield_def_entry_id, :value, :position
   
   belongs_to :flexifield_def_entry
   
-  acts_as_list
+  acts_as_list :scope => 'flexifield_def_entry_id = #{flexifield_def_entry_id}'
   
-  # scope_condition for acts_as_list
-  def scope_condition
-    "flexifield_def_entry_id = #{flexifield_def_entry_id}"
-  end
   
   def to_s
     value

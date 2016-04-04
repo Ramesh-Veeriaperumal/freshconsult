@@ -87,7 +87,7 @@ namespace :freshdesk_tire do
           ENV['CLASS'] = klass
           index_alias = Search::EsIndexDefinition.searchable_aliases(Array(klass.partition('.').first.constantize), account.id).to_s
           ENV['INDEX'] = index_alias
-          Rake::Task["tire:import"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']}")
+          Rake::Task["tire:import:model"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']}")
         end
       end
       account.es_enabled_account.update_attribute(:imported, true)
@@ -164,7 +164,7 @@ def init_es_indexing(es_account_ids)
     next if account.nil?
     account.make_current
     if account.es_enabled_account.nil?
-      Search::CreateAlias.perform({ :account_id => account.id, :sign_up => false })
+      SearchSidekiq::CreateAlias.new.perform({ :sign_up => false })
       ENV['CLASS'] = import_classes(account_id, klasses)
       ENV['ACCOUNT_ID'] = account_id.to_s
       Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
@@ -187,7 +187,7 @@ def init_partial_reindex(es_account_ids)
     ENV['ACCOUNT_ID'] = account_id.to_s
     unless account.es_enabled_account.nil?
       if account.es_enabled_account.imported
-        Search::RemoveFromIndex::AllDocuments.perform({ :account_id => account.id })
+        SearchSidekiq::RemoveFromIndex::AllDocuments.new.perform
         account.es_enabled_account.delete
         ENV['CLASS'] = ''
         Rake::Task["freshdesk_tire:create_index"].execute("ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
@@ -208,22 +208,24 @@ def import_classes(id, klasses)
 end
 
 def import_condition(id, item)
-  condition = ".scoped(:conditions => ['account_id=? and updated_at<?', #{id}, Time.now.utc])"
+  condition = ".where(['account_id=? and updated_at<?', #{id}, Time.now.utc])"
   case item.strip
     when "Helpdesk::Ticket" then
-      condition = ".scoped(:conditions => ['account_id=? and updated_at<? and deleted=? and spam=?', #{id}, Time.now.utc, false, false])"
+      condition = ".where(['account_id=? and updated_at<? and deleted=? and spam=?', #{id}, Time.now.utc, false, false])"
     when "User" then
-      condition = ".scoped(:conditions => ['account_id=? and updated_at<? and deleted=?', #{id}, Time.now.utc, false])"
+      condition = ".where(['account_id=? and updated_at<? and deleted=?', #{id}, Time.now.utc, false])"
     when "Helpdesk::Note" then
-      condition = ".scoped(:conditions => ['account_id=? and updated_at<? and notable_type=? and deleted=? and source<>?', #{id}, Time.now.utc, 'Helpdesk::Ticket', false, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']])"
+      condition = ".where(['account_id=? and updated_at<? and notable_type=? and deleted=? and source<>?', #{id}, Time.now.utc, 'Helpdesk::Ticket', false, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']])"
     when "Helpdesk::Tag" then
-      condition = ".scoped(:conditions => ['account_id=?', #{id}])"
+      condition = ".where(['account_id=?', #{id}])"
     when "Freshfone::Caller" then
-      condition = ".scoped(:conditions => ['account_id=?', #{id}])"
+      condition = ".where(['account_id=?', #{id}])"
     when "ScenarioAutomation" then
-      condition = ".scoped(:conditions => ['account_id=? and rule_type=?', #{id},#{VAConfig::SCENARIO_AUTOMATION}])"
+      condition = ".where(['account_id=? and rule_type=?', #{id},#{VAConfig::SCENARIO_AUTOMATION}])"
     when "Admin::CannedResponses::Response" then
-      condition = ".scoped(:conditions => ['account_id=?', #{id}])"
+      condition = ".where(['account_id=?', #{id}])"
+    when "Solution::Article" then
+      condition = ".where(['`solution_articles`.account_id=? and `solution_articles`.updated_at<?', #{id}, Time.now.utc])"
   end
   condition
 end

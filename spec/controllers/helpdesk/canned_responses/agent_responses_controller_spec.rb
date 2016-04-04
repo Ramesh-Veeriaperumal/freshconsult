@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::CannedResponses::ResponsesController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -121,7 +120,7 @@ describe Helpdesk::CannedResponses::ResponsesController do
   it "should delete shared attachment" do
     now = (Time.now.to_f*1000).to_i
     canned_response = create_response( {:title => "Recent Canned_Responses #{now}",:content_html => Faker::Lorem.paragraph,
-                                        :visibility => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
+                                        :visibility => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],:user_id=>@new_agent.id,:folder_id=>@pfolder_id,
                                         :attachments => { :resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png'),
                                                           :description => Faker::Lorem.characters(10) }
                                         })
@@ -135,13 +134,19 @@ describe Helpdesk::CannedResponses::ResponsesController do
                         :visibility => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
                         }
       },
-      :remove_attachments => ["#{canned_response.shared_attachments.first.id}"],
+      :remove_attachments => ["#{canned_response.shared_attachments.first.attachment_id}"],
       :new_folder_id => @pfolder_id,
       :folder_id => "#{canned_response.folder_id}"
     }
     canned_response.reload
     canned_response.title.should eql("Canned Response without attachment")
     canned_response.shared_attachments.first.should be_nil
+  end
+
+  # default visiblity check for personal folder -new response
+  it "should create a Canned Responses in personal folder " do
+    get :new, :folder_id => @pfolder_id
+    response.should render_template("helpdesk/canned_responses/responses/new")
   end
   
   #if visibility other than My self, responses should created in personal folder
@@ -202,7 +207,7 @@ describe Helpdesk::CannedResponses::ResponsesController do
   it "should delete multiple Canned Responses" do
     new_response = @account.canned_responses.find_by_title("New Canned_Responses #{@now}")
     ids = ["#{@test_response_1.id}","#{new_response.id}"]
-    delete :delete_multiple, :ids => ids
+    delete :delete_multiple, :ids => ids, :folder_id =>@test_response_1.folder.id
     ids.each do |id|
       @account.canned_responses.find_by_id(id).should be_nil
     end

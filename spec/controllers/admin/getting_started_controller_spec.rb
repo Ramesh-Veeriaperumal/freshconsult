@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::GettingStartedController do
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -19,13 +18,13 @@ describe Admin::GettingStartedController do
 		put :rebrand, { :account=>{ 
 				:main_portal_attributes=> { :name=>"Test Account", 
 											:logo_attributes=>{:content=>
-												Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png', 'image/png')}, 
+												fixture_file_upload('files/image4kb.png', 'image/png')}, 
 											:preferences=>{:header_color=>"#252525", :tab_color=>"#006063", :bg_color=>"#efefef"},
 											:id=> @account.id 
 											}
 									}
 		}
-		response.template.assigns["error"].should be_nil
+		assigns["error"].should be_nil
 		@account.main_portal.logo.should_not be_nil
 		@account.main_portal.logo.content_file_name.should eql "image4kb.png"
 	end
@@ -34,13 +33,13 @@ describe Admin::GettingStartedController do
 		put :rebrand, { :account=>{ 
 				:main_portal_attributes=>{  :name=>"Test Account", 
 											:logo_attributes=>{:content=>
-												Rack::Test::UploadedFile.new('spec/fixtures/files/image33kb.jpg', 'image/jpg')}, 
+												fixture_file_upload('files/image33kb.jpg', 'image/jpg')}, 
 											:preferences=>{:header_color=>"#252asa525", :tab_color=>"#00sd6063", :bg_color=>"#efsdsefef"},
 											:id=> @account.id 
 											}
 									}
 		}
-		response.template.assigns["error"].should eql "Header color code is invalid."
+		assigns["error"].should eql "Header color code is invalid."
 		@account.main_portal.logo.content_file_name.should_not eql "image33kb.jpg"
 		@account.main_portal.logo.content_file_name.should eql "image4kb.png"
 	end

@@ -17,6 +17,7 @@ module Reports::FreshfoneReport
     @call_type = params[:call_type] || Freshfone::Call::CALL_TYPE_HASH[:incoming]
     @group_id = params[:group_id]
     @freshfone_number = params[:freshfone_number] || current_account.freshfone_numbers.first.id
+    @business_hours = params[:business_hours]
   end
 
   def filter(start_date, end_date)
@@ -28,8 +29,11 @@ module Reports::FreshfoneReport
   end
 
   def call_duration_in_mins(duration)
-    format = (duration >= 3600) ? "%H:%M:%S" : "%M:%S"
-    Time.at(duration).gmtime.strftime(format)
+    if duration >= 3600
+      "%02d:%02d:%02d" % [duration / 3600, (duration / 60) % 60, duration % 60]
+    else
+      "%02d:%02d" % [(duration / 60) % 60, duration % 60]
+    end
   end
 
   def previous_time_range
@@ -52,10 +56,11 @@ module Reports::FreshfoneReport
 
     def select_conditions
       group_condition
-      conditions = ["freshfone_calls.call_type = ? #{number_condition} #{group_condition}", 
+      conditions = ["freshfone_calls.call_type = ? #{number_condition} #{group_condition} #{business_hours_condition}", 
        @call_type]
       conditions.push(@freshfone_number) if @freshfone_number != ALL_NUMBERS
       conditions.push(@group_id) unless all_or_unassigned?
+      conditions.push(@business_hours) unless @business_hours.blank?
       conditions
     end
 
@@ -64,13 +69,23 @@ module Reports::FreshfoneReport
     end
 
     def group_condition
-      query = "and freshfone_calls.group_id = ? " unless @group_id.blank?
+      query = "and freshfone_calls.group_id = ? " unless group_unavailable?
       query = "and freshfone_calls.group_id IS NULL"  if @group_id == UNASSIGNED_GROUP
       query
     end
 
+    def business_hours_condition
+      "and freshfone_calls.business_hour_call = ? " unless @business_hours.blank?
+    end
+
     def all_or_unassigned?
-      @group_id.blank? || @group_id == UNASSIGNED_GROUP
+      group_unavailable? || @group_id == UNASSIGNED_GROUP
+    end
+
+    def group_unavailable?
+      return true if @group_id.blank?
+      group = current_account.groups.find_by_id(@group_id)
+      group.nil?
     end
     
     def set_default_date_range
@@ -90,14 +105,18 @@ module Reports::FreshfoneReport
     def report_query
       %( #{select_columns}, count(freshfone_calls.id) as count,
           sum(if(freshfone_calls.ancestry is NULL, 1,0)) as total_count,
-          sum(if((freshfone_calls.ancestry is NOT NULL and freshfone_calls.call_status not in (#{Freshfone::Call::CALL_STATUS_HASH[:completed]}, 
+          sum(if(freshfone_calls.ancestry is NULL and freshfone_calls.direct_dial_number is NOT NULL, 1,0)) as direct_dial_count,
+          sum(if((freshfone_calls.ancestry is NOT NULL and freshfone_calls.direct_dial_number is NULL and 
+            freshfone_calls.call_status not in (#{Freshfone::Call::CALL_STATUS_HASH[:completed]}, #{Freshfone::Call::CALL_STATUS_HASH[:'on-hold']},
             #{Freshfone::Call::CALL_STATUS_HASH[:'in-progress']})), 1,0)) as unanswered_transfers,
-          ifnull(sum(if(freshfone_calls.call_status in (1,8,10),freshfone_calls.call_duration,0)),0) as total_duration,
+          ifnull(sum(if(freshfone_calls.call_status in (1,10),freshfone_calls.call_duration,0)),0) as total_duration,
           ifnull(sum(if(freshfone_calls.call_status = #{Freshfone::Call::CALL_STATUS_HASH[:voicemail]}, 1, 0)), 0) as voicemail,
-          ifnull(sum(if(freshfone_calls.call_status not in (#{Freshfone::Call::CALL_STATUS_HASH[:completed]}, #{Freshfone::Call::CALL_STATUS_HASH[:'in-progress']}) 
-            and freshfone_calls.call_type = #{Freshfone::Call::CALL_TYPE_HASH[:incoming]} and freshfone_calls.ancestry is NULL, 1, 0)), 0) as unanswered_call,
+          ifnull(sum(if(freshfone_calls.call_status not in (#{Freshfone::Call::CALL_STATUS_HASH[:completed]}, #{Freshfone::Call::CALL_STATUS_HASH[:'in-progress']},
+            #{Freshfone::Call::CALL_STATUS_HASH[:'on-hold']}) and freshfone_calls.call_type = #{Freshfone::Call::CALL_TYPE_HASH[:incoming]} 
+            and freshfone_calls.ancestry is NULL and freshfone_calls.direct_dial_number is NULL, 1, 0)), 0) as unanswered_call,
           ifnull(sum(if(freshfone_calls.call_status in (2,3,4,5) and freshfone_calls.ancestry is NULL and 
-            freshfone_calls.call_type = #{Freshfone::Call::CALL_TYPE_HASH[:outgoing]}, 1, 0)), 0) as outbound_failed_call
+            freshfone_calls.call_type = #{Freshfone::Call::CALL_TYPE_HASH[:outgoing]}, 1, 0)), 0) as outbound_failed_call,
+          sum(if((freshfone_calls.ancestry is NOT NULL and freshfone_calls.direct_dial_number is NOT NULL),1,0)) as external_transfers
       )
     end
 end

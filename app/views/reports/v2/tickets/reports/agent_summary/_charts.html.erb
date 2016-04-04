@@ -1,0 +1,94 @@
+<div class="summary-table">
+        <div class="data-wrapper" id="data_table">
+            <table id="agent-summary">
+                <thead>
+                    <tr class="title">
+                        <th>
+                            <span data-metric-title="AGENT_NAME">
+                                <%=t( 'helpdesk_reports.agent_summary.agent') %>
+                            </span>
+                        </th>
+                        <th>
+                            <span data-metric-title="AGENT_ASSIGNED_TICKETS">
+                                <%=t( 'helpdesk_reports.agent_summary.ticket_assigned') %>
+                            </span>
+                        </th>
+                        <th>
+                            <span data-metric-title="RESOLVED_TICKETS">
+                                <%=t( 'helpdesk_reports.agent_summary.ticket_resolved') %>
+                            </span>
+                        </th>
+                        <th>
+                            <span data-metric-title="REOPENED_TICKETS">
+                                <%=t( 'helpdesk_reports.agent_summary.tickets_reopened') %>
+                            </span>
+                        </th>
+                        <th>
+                            <span data-metric-title="AGENT_REASSIGNED_TICKETS">
+                                 <%=t( 'helpdesk_reports.agent_summary.ticket_reasigned') %>
+                            </span>
+                        </th>
+                        <th>
+                            <span data-metric-title="RESPONSE_SLA">
+                                <%=t( 'helpdesk_reports.agent_summary.reports_sla') %>
+                            </span>
+                        </th>
+                        <th>
+                            <span data-metric-title="RESOLUTION_SLA">
+                                <%=t( 'helpdesk_reports.agent_summary.res_sla') %>
+                            </span>
+                        </th>
+                        <th>
+                            <span data-metric-title="FCR_TICKETS">
+                                <%=t( 'helpdesk_reports.agent_summary.fcr') %>
+                            </span>
+                        </th>
+                        <th>
+                            <span data-metric-title="PRIVATE_NOTES">
+                                 <%=t( 'helpdesk_reports.agent_summary.private_note') %>
+                            </span>
+                        </th>
+                        <th>
+                            <span data-metric-title="RESPONSES">
+                                <%=t( 'helpdesk_reports.agent_summary.responses') %>
+                            </span>
+                        </th>
+                        <th>
+                            <span data-metric-title="AVG_FIRST_RESPONSE_TIME">
+                                <%=t( 'helpdesk_reports.agent_summary.avg_first_res_time') %>
+                            </span>
+                        </th>
+                        <th>
+                            <span data-metric-title="AVG_RESPONSE_TIME">
+                                <%=t( 'helpdesk_reports.agent_summary.avg_res_time') %>
+                            </span>
+                        </th>
+                        <th>
+                            <span data-metric-title="AVG_RESOLUTION_TIME"> 
+                                <%=t( 'helpdesk_reports.agent_summary.avg_resolution_time') %>
+                            </span>
+                        </th>
+                    </tr>
+                    <!--<tr class="metric-average-header title"></tr>-->
+                </thead>
+                <tbody class="dynamic-ticket-datas" data-table="ticket-data"></tbody>
+            </table>
+    </div>
+</div>
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %> ;
+        var locals = HelpdeskReports.locals;
+        locals.chart_hash = <%= @data.to_json.html_safe %> ;
+        if (!err && locals.chart_hash.length !== 0) {
+            HelpdeskReports.ChartsInitializer.AgentSummary.init(locals.chart_hash);
+        } else if (!err && locals.chart_hash.length === 0) {
+            var div = ['data_table'];
+            HelpdeskReports.CoreUtil.populateEmptyChart(div, I18n.t('helpdesk_reports.no_data_to_display_msg'));
+        } else {
+            var div = ["data_table"];
+            HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
+        }
+    });
+</script>
+

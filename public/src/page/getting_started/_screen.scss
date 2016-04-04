@@ -3,7 +3,6 @@ body{
   min-height: 700px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: normal;
-
 }
 
 .f-left {
@@ -852,10 +851,6 @@ p{
   width: 63px;
   height: 28px;
   top: 4px;
-}
-
-#email_config_submit.loading{
-  background:#ccdede image-url("animated/gs-loader.gif") no-repeat center 3px;
 }
 #email_config_submit.saved{
   background: #137200 inline-image("cdn-ignored/inline-images/gs/email-success.png") no-repeat center 7px;

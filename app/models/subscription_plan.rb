@@ -1,4 +1,5 @@
 class SubscriptionPlan < ActiveRecord::Base
+  self.primary_key = :id
   not_sharded
   
   include ActionView::Helpers::NumberHelper
@@ -6,7 +7,7 @@ class SubscriptionPlan < ActiveRecord::Base
   
   has_many :subscriptions
   
-  has_many :subscription_plan_addons, :class_name => "Subscription::PlanAddon"
+  has_many :subscription_plan_addons, :class_name => "Subscription::PlanAddon", :source => :subscription_plan_addon
   has_many :addons,
     :class_name => "Subscription::Addon",
     :through => :subscription_plan_addons,
@@ -19,7 +20,7 @@ class SubscriptionPlan < ActiveRecord::Base
   
   attr_accessor :discount
   
-  named_scope :current, :conditions => { :classic => false }, :order => 'amount asc'
+  scope :current, :conditions => { :classic => false }, :order => 'amount asc'
   
   SUBSCRIPTION_PLANS = { 
     :basic => "Basic", 
@@ -83,7 +84,7 @@ class SubscriptionPlan < ActiveRecord::Base
   end
   
   def canon_name
-    SUBSCRIPTION_PLANS.index(name)
+    SUBSCRIPTION_PLANS.key(name)
   end
   
   def amount(include_discount = true)

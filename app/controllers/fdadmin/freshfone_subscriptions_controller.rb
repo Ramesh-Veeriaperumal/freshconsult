@@ -32,5 +32,6 @@ class Fdadmin::FreshfoneSubscriptionsController < Fdadmin::DevopsMainController
         end
       end
       results.sort_by{|credit| Time.parse(credit[0])}.reverse!
+      results.sort_by{|month,credit| Time.parse(month)}.reverse.to_h
     end
 end

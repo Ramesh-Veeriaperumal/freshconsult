@@ -1,6 +1,8 @@
 class Admin::CannedResponses::Response < ActiveRecord::Base
-
-  set_table_name "admin_canned_responses"
+  
+  self.table_name =  "admin_canned_responses"    
+  self.primary_key = :id
+  
   include Mobile::Actions::CannedResponse
   include Search::ElasticSearchIndex
   include Helpdesk::Accessible::ElasticSearchMethods
@@ -37,12 +39,11 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
 
   validates_length_of :title, :in => 3..240
   validates_presence_of :folder_id
-  before_validation :validate_title, on: [:create,:update]
-
+  before_validation :validate_title
   unhtml_it :content
   xss_sanitize :only =>[:content_html],  :html_sanitize => [:content_html]
 
-  named_scope :accessible_for, lambda { |user|
+  scope :accessible_for, lambda { |user|
     {
       :joins => %(JOIN admin_user_accesses acc ON
                   admin_canned_responses.account_id=%<account_id>i AND
@@ -61,7 +62,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
     }
   }
 
-  named_scope :only_me, lambda { |user|
+  scope :only_me, lambda { |user|
     {
       :joins => %(JOIN helpdesk_accesses acc ON
                   acc.accessible_id = admin_canned_responses.id AND
@@ -77,7 +78,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
     }
   }
 
-  named_scope :folder_responses_by_title, lambda { |response|
+  scope :folder_responses_by_title, lambda { |response|
     {
       :conditions => ["admin_canned_responses.title=? and admin_canned_responses.folder_id=?", response.title, response.folder_id]
     }
@@ -101,8 +102,9 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   def validate_title
     if (!visible_only_to_me? && (self.title_changed? || self.folder_id_changed?))
       response = Account.current.canned_responses.folder_responses_by_title(self)
+      response=response.select{|resp| resp.id!=self.id} if !self.new_record?
       if !response.nil? && response.any?
-        self.errors.add_to_base(I18n.t('canned_responses.errors.duplicate_title'))
+        self.errors.add(:base,I18n.t('canned_responses.errors.duplicate_title'))
         return false
       end
       true

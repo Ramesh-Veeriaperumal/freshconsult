@@ -1,0 +1,7 @@
+<li class="divider"></li>
+	<li class="muted"><%=name%></li>
+	<li>
+	<%for(var i=0;i<choices.length;i++){%>
+		<a onclick="<%=handler%>" class="rating_list" value="<%=choices[i].label%>" tabindex="-1" id=<%=choices[i].value%> ><i class="survey-indicator <%=choices[i].class%>" ></i> <%=choices[i].label%> </a>
+	<%}%>
+</li>	

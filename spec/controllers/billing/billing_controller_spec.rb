@@ -3,7 +3,6 @@ require 'spec_helper'
 # Tests may fail if test db is not in sync with Chargebee account.
 
 describe Billing::BillingController do
-  integrate_views
   self.use_transactional_fixtures = false
 
   before(:all) do
@@ -26,7 +25,7 @@ describe Billing::BillingController do
     @request.env["HTTP_AUTHORIZATION"] = "Basic " + Base64::encode64("freshdesk:FDCB$6MUSD") 
   end
 
-  it "should update subscription and adds(/removes) a feature as addon" do  	
+  it "should update subscription and adds(/removes) a feature as addon" do  
     billing_result = build_test_billing_result(@account.id)
     @account.subscription.addons = [ Subscription::Addon.first ]
     @account.subscription.agent_limit = 1
@@ -47,7 +46,7 @@ describe Billing::BillingController do
     billing_result.subscription.addons.each do |addon|
       addon_obj = Subscription::Addon.fetch_addon(addon.id)
       @account.addons.should include(addon_obj)
-      @account.features?(addon.id.to_sym).should be_true
+      @account.features?(addon.id.to_sym).should be_truthy
     end
   end
 

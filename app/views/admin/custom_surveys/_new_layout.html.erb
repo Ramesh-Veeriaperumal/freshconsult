@@ -1,0 +1,84 @@
+<%= javascript_include_tag :'cdn/survey_admin'  %>
+<div class="cust-satisfaction survey" id="survey_new_layout" style="display:none;">
+	<div class="survey-overlay center" style="display:none;"><div class="sloading loading-small loading-center"> <div class="survey-overlay-text"><b> <%= t('admin.surveys.new_layout.loading') %> </b></div></div></div>
+	<form accept-charset="UTF-8" name="survey_fields" class="form-horizontal" novalidate="novalidate">
+		<div class="clearfix">
+			<div class="control-group">
+				<h3 class="lead itil-hide">
+					<%if @layout_params[:action] == 'create'%> 
+						<%=t('admin.surveys.index.new') %>
+					<%else%>  
+						<%=t('admin.surveys.index.edit')%> 
+					<%end %> 
+					<%=t('admin.surveys.new_layout.survey')%> 
+					<div class="pull-right">
+					   <input id="TogglesurveyActivate" type="checkbox" name="active"
+						class="pull-right pseudoCheckbox" rel="toggle"  data-checked-label='ON' 
+						data-unchecked-label='OFF'
+						<%if @layout_params[:active]%> checked="checked" <%end%> style="display: none;"
+						<% if @layout_params[:id] != "" %>
+						onchange="javascript:SurveyStatus.change(<%=@layout_params[:id]%>,this.checked);"
+						<% else %>
+						onchange="javascript:SurveyStatus.change(0,this.checked);"
+						<% end %> />
+					   <%= pjax_link_to t('admin.surveys.index.cancel'), @layout_params[:cancelUrl] ,:class=> 'btn' %>
+					   <%if @layout_params[:id] != "" %>
+			           		<input type="button" onclick="javascript:SurveyDetail.preview(<%=@layout_params[:id]%>);" id="previewFeedback" class="btn" value="<%=t('admin.surveys.index.preview_survey')%>">
+			           <% end %>
+			           <input type="button" value="<%=t('admin.surveys.index.save_survey')%>" onclick='jQuery("#surveyForm input:submit").submit();' class="btn btn-primary save_survey_btn">
+					</div>
+				</h3>
+				<label class="clearfix"> <%= t('admin.surveys.new_layout.title') %> </label>
+				<div class="clearfix">
+					<input type="text" maxlength="150" placeholder="<%= t('admin.surveys.new_layout.default_survey') %>" name="title_text" value="<%=@layout_params[:title]%>"/>
+					<label id="title_text-error" class="error" style="display:none;"><%= t('admin.surveys.new_layout.title_error_text') %></label>
+				</div>
+			</div>
+		</div>
+		<div class="vertical-line">
+		</div>
+		<div id="survey_rating" class="sub-container gradiant-border cust-satisfaction-rating">
+		</div>
+
+		<div class="selecting-info">
+			<span>
+				<i class="ficon-arrow-click"></i>
+				<p class="muted"><%=t('admin.surveys.index.survey_help_msg_v3')%></p>
+			</span>
+		</div>
+
+		<div id="survey_thanks">
+		</div>
+		<div id="survey_link_scenarios" class="sub-container cust-satisfaction-rating">
+		</div>
+	</form>
+	<form accept-charset="UTF-8" name="survey" class="pull-right" id="surveyForm" surveyId="<%=@layout_params[:id]%>" method="<%=@layout_params[:method]%>" action="<%=@layout_params[:url]%>" novalidate="novalidate">
+		<input type="hidden" value="javascript:SurveyAdminUtil.action.split(<%=@layout_params[:action]%>);" name="action">
+		<input type="hidden" value="" name="survey">
+		<input type="hidden" value="" name="jsonData">
+		<%= pjax_link_to t('admin.surveys.index.cancel'), @layout_params[:cancelUrl] ,:class=> 'btn' %>
+		<input type="submit" value="<%=t('admin.surveys.index.save_survey')%>" class="btn btn-primary save_survey_btn">
+	</form>
+	<%if @layout_params[:id].present? && !@layout_params[:default] && !@layout_params[:active]%>
+			<input type="button" value="<%=t('admin.surveys.index.delete')%>" class="btn pull-left" onclick="javascript:SurveyList.destroy('<%=@layout_params[:id]%>',true);">
+	<% end %>
+</div>
+<% content_for :helpcard do %>
+	<div class="helpcard">
+		<% if !@account.default_survey_enabled? %> 
+			<%= t('admin.surveys.custom_helptext_v2').html_safe %>
+		<% else %>
+			<p>	<%= t('admin.surveys.helptext_v2').html_safe %> </p>
+		<% end %>
+	</div>
+<%end%>	
+<% content_for :dialogs do %>
+	<div id="SurveyConfirmContainer"></div>
+<%end%>
+<script type="text/javascript">
+
+ jQuery(document).ready(function(){
+	SurveyAdmin.setFullSurvey(<%= !@account.default_survey_enabled? %>);
+ });
+
+</script>

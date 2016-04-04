@@ -12,14 +12,13 @@ class Community::Moderation::QueuedPost
     @params = params
     get_account
     find_or_initialize_topic
-    initialize_post
+    initialize_post if topic
   end
 
   def analyze
     return unless topic
     check_for_spam
     moderate
-    send_to_analysis
   end
 
   private
@@ -46,8 +45,9 @@ class Community::Moderation::QueuedPost
     end
 
     def initialize_post
-      @post = Account.current.posts.new(post_params)
+      @post = topic.posts.build(post_params)
       post.body = Helpdesk::HTMLSanitizer.plain(post_params[:body_html])
+      post.published = true
     end
 
     def topic_params
@@ -96,20 +96,17 @@ class Community::Moderation::QueuedPost
 
     def create_published_post
       begin
-        Topic.transaction do
-          topic_saved = post.topic.approve! if post.topic.new_record?
-          backup_and_save! if !post.topic.new_record? || topic_saved
-        end
+        save_attachments
+        post.topic.new_record? ? topic.approve! : post.approve!
       rescue ActiveRecord::RecordInvalid => e
         NewRelic::Agent.notice_error(e)
         Rails.logger.error("Error while saving topic!")
       end
     end 
 
-    def backup_and_save!
+    def save_attachments
       move_attachments(params['attachments'], post)
       build_cloud_files_attachments(post, params['cloud_file_attachments'])
-      post.approve!
     end
 
     def unpublished_params
@@ -137,10 +134,6 @@ class Community::Moderation::QueuedPost
       error_message = "Forum dynamodb Error : Dynamodb save failed: #{unpublished_params}"
       NewRelic::Agent.notice_error(StandardError.new(error_message))
       Rails.logger.error(error_message)
-    end
-
-    def send_to_analysis
-      SpamAnalysis.push(post, {:request_params => params['request_params'], "spam" => spam})
     end
 
 end

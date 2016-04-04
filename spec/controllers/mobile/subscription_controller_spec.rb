@@ -33,13 +33,13 @@ describe Helpdesk::SubscriptionsController do
     test_ticket.save!
     delete :unwatch, { :format => "json", :ticket_id => test_ticket.display_id }
     json_response.should include("success")
-    json_response["success"].should be_true
+    json_response["success"].should be true
   end
 
   it "should create watcher" do
     test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "subscription"}))
     post :create_watchers, {:format => "json", :ticket_id => test_ticket.display_id, :user_id => @agent.id}
     json_response.should include("success")
-    json_response["success"].should be_true
+    json_response["success"].should be true
   end
 end

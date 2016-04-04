@@ -34,20 +34,24 @@ module AccountConstants
       :moment_date_with_week  => 'ddd, D MMM, YYYY',
       :datepicker       => 'd M, yy',
       :datepicker_escaped   => 'd M yy',
-      :datepicker_full_date => 'D, d M, yy'
+      :datepicker_full_date => 'D, d M, yy',
+      :mediumDate => 'd MMM, yyyy'
     },
       :us => {
       :moment_date_with_week  => 'ddd, MMM D, YYYY',
       :datepicker       => 'M d, yy',
       :datepicker_escaped   => 'M d yy',
-      :datepicker_full_date => 'D, M d, yy'
+      :datepicker_full_date => 'D, M d, yy',
+      :mediumDate => 'MMM d, yyyy'
     }
-  } 
-  
+  }
+
   DATEFORMATS_NAME_BY_VALUE = Hash[*DATEFORMATS.flatten] 
 
+  # Used by API too. 
   EMAIL_VALIDATOR = /(\A[-A-Z0-9.'’_&%=~+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})\z)/i
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_&%=~+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/
   EMAIL_SCANNER = /\b[-a-zA-Z0-9.'’_&%=~+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
-
+  SPECIAL_CHARACTERS_REGEX = /(?=.*([\x20-\x2F]|[\x3A-\x40]|[\x5B-\x60]|[\x7B-\x7E]))/
+  AUTHLOGIC_EMAIL_REGEX = /\A[A-Z0-9_\.&%\+\-']+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,13})\z/i
 end

@@ -7,7 +7,7 @@ module ControllerLogger
       controller_logger.info "#{log_format}"
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while capturing controller logs for #{path}"}}) 
-      FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Splunk logging Error at ControllerLogger",:recipients => "pradeep.t@freshdesk.com"})  
+      FreshdeskErrorsMailer.error_email(nil,nil,e,{:subject => "Splunk logging Error at ControllerLogger",:recipients => "pradeep.t@freshdesk.com"})  
     end
   end
 

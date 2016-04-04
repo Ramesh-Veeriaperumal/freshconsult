@@ -18,23 +18,55 @@
 		// Attaching dom ready events
 		$(document).ready(function(){
 			$('[rel=remote]').trigger('afterShow');
-		})
 
+			//Loop through all the images
+			// Get their orig dims.
+			// Check the current aspect ratio (outerWidth)
+			// If diff, set the height
+			if( portal['preferences']['nonResponsive'] != "true" ) {
+				$(window).on('resize', function () {
+					$("[rel='image-enlarge'] img").each(function (i) {
+						var img = $(this);
+						$("<img/>")
+					    .attr("src", img.attr("src"))
+					    .load(function() {
+					    	var originalWidth = this.width, 
+					    		originalHeight = this.height, 
+					    		outerWidth = img.outerWidth(),
+					    		outerHeight = img.outerHeight(),
+					    		originalAspectRatio = originalWidth / originalHeight,
+					    		aspectRatio = outerWidth / outerHeight;
+
+							  if(aspectRatio !== originalAspectRatio) {
+							  	img.outerHeight(outerWidth/originalAspectRatio);
+
+								if(!img.parent('a').get(0)) {
+									img.wrap(function(){
+										return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
+									});
+								}
+							  }
+						    });
+					});
+				}).trigger('resize');
+			}
+		})
+	
 		// Preventing default click & event handlers for disabled or active links
-		$(".pagination, .dropdown-menu") 
+		$(".pagination, .dropdown-menu")
 			.find(".disabled a, .active a")
 			.on("click", function(ev){
 				ev.preventDefault()
 				ev.stopImmediatePropagation()
 			})
-		
+
 		// Remote ajax for links
 		$(".a-link[data-remote], a[data-remote]").live("click", function(ev){
 			ev.preventDefault()
 
 			var _o_data = $(this).data(),
 				_self = $(this),
-				_post_data = { 
+				_post_data = {
 					"_method" : $(this).data("method") || "get"
 				}
 
@@ -42,7 +74,11 @@
 
 			if(!_o_data.loadonce){
 				// Setting the submit button to a loading state
-				$(this).button("loading")
+				if (_o_data.noLoading) {
+					$(this).addClass('disabled');
+				} else {
+					$(this).button("loading")
+				}	
 
 				// A data-loading-box will show a loading box in the specified container
 				$(_o_data.loadingBox||"").html("<div class='loading loading-box'></div>")
@@ -206,12 +242,26 @@
 				}
 			})
 		})
-
-		$(".image-lazy-load img").unveil(200, function() {
-		    $(this).load(function() {
-		      this.style.opacity = 1;
-		    });
-		});
+		
+		var layzr;
+		$(".image-lazy-load img").livequery(
+			function(){
+				layzr = new Layzr({
+					container: null,
+					selector: '.image-lazy-load img',
+					attr: 'data-src',
+					retinaAttr: 'data-src-retina',
+					hiddenAttr: 'data-layzr-hidden',
+					threshold: 0,
+					callback: function(){
+						$(".image-lazy-load img").css('opacity' , 1);
+					}
+				});
+			},
+			function() {
+				layzr._destroy()
+			}
+		); 		
 		
 		// If there are some form changes that is unsaved, it prompts the user to save before leaving the page.
 		$(window).on('beforeunload', function(ev){
@@ -233,13 +283,19 @@
 				dateFormat = $(this).data('date-format');
 			}
 			$(this).datepicker({
-				dateFormat: dateFormat
+				dateFormat: dateFormat,
+				 changeMonth: true,
+                 changeYear: true,
 			});
 			 if($(this).data('showImage')) {
 		        $(this).datepicker('option', 'showOn', "both" );
 		        $(this).datepicker('option', 'buttonText', "<span class='icon-calendar'></span>" );
 		      }
 		});
+
+		$('[data-toggle=tooltip]').livequery(function() {
+			$(this).tooltip();
+		})
 
 		$('body').on('afterShow', '[rel=remote]', function(ev) {
 			var _self = $(this);

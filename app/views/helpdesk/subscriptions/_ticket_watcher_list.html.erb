@@ -1,0 +1,37 @@
+<% if @ticket.subscriptions.present? %>
+  <% 
+    @subscriptions = @ticket.subscriptions.sort_by(&:created_at).reverse
+    if @subscriptions.map(&:user_id).include? current_user.id
+      @subscriptions.insert(0, @subscriptions.delete_at(@subscriptions.index{ |l| l.user_id==current_user.id }))
+    end
+  %>
+  <div id="watcherlist">
+    <ul class="trans-bg">
+      <% @subscriptions.each do |subscription| %>
+        <li>
+          <div class="user_image clearfix">
+            <%= user_avatar(subscription.user, :thumb, "preview_pic small circle" , 
+                            { :width => "36px", :height => "36px" })  %>
+          </div>
+          <% if subscription.user.id == current_user.id %>
+            <div class="unwatch" title="<%=t('helpdesk.tickets.add_watcher.unwatch')%>" >
+              <i class="rounded-minus-icon"></i>
+            </div>
+            <div class="watcher_list">
+              <b><%= t('helpdesk.tickets.add_watcher.me') %></b>&nbsp;
+              <span class="agent_name" title="<%=current_user.name%>"> 
+                (<%= current_user.name %>)
+              </span>
+            </div>
+          <% else %>
+            <div class="watcher_list">
+              <span class="agent_name" title="<%=subscription.user.name%>"> 
+                <%= subscription.user.name %> 
+              </span>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

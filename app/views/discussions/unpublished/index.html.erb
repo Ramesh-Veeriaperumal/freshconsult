@@ -13,7 +13,7 @@
 
 <% content_for :sticky_right do %>
 	<% if (@spam_posts.size > 0) %>
-		<%= link_to t('.empty_folder'), empty_folder_discussions_unpublished_path, :method => :delete, :class => 'btn btn-primary' unless @moderation_scope == ForumUnpublished %>
+		<%= link_to t('.empty_folder'), empty_folder_discussions_unpublished_index_path, :method => :delete, :class => 'btn btn-primary' unless @moderation_scope == ForumUnpublished %>
 	<% end %>
 	<%= link_to(t('.moderation_solution'), 'https://support.freshdesk.com/support/solutions/articles/195476', :class => 'mini-link', :target => '_blank') if @moderation_scope == ForumUnpublished %>
 <% end %>
@@ -30,7 +30,7 @@
 		<%= render :partial => 'post', :collection => @spam_posts %>
 	<% end %>
 </div>
-<%= pageless_dynamo(more_discussions_unpublished_path(:next => @spam_posts.last.timestamp, :filter => @spam_posts.first.type)) unless @spam_posts.blank? || @spam_posts.last_evaluated_key.nil? %>
+<%= pageless_dynamo(more_discussions_unpublished_index_path(:next => @spam_posts.last.timestamp, :filter => @spam_posts.first.type)) unless @spam_posts.blank? || @spam_posts.last_evaluated_key.nil? %>
 
 <script type="text/javascript">
 	jQuery('body').one('assetLoaded.fjax', function() {

@@ -1,6 +1,6 @@
 module Helpdesk::Activities
 
-	def stacked_activities(activities)
+  def stacked_activities(ticket, activities, archived = false)
 		activity_stack = []
 		notes_to_fetch = []
 		activity = {}
@@ -43,30 +43,35 @@ module Helpdesk::Activities
 		end
 
 		activity_stack << combine(activity, previous_activity_meta) unless activity.blank?
-		prefetch_notes(notes_to_fetch)
+    if notes_to_fetch.present?
+      @prefetched_notes = (archived ? prefetch_archive_notes(ticket, notes_to_fetch) : prefetch_notes(ticket, notes_to_fetch))
+    end
 		activity_stack
-	end
+  end
 
 	def activity_json
 		Sharding.run_on_slave do
 			activity_records = @item.activities.newest_first(100)
-			activities = stacked_activities(activity_records.reverse)
+      activities = stacked_activities(@item, activity_records.reverse)
 			result = []
 			activities.each do |activity|
 				performer = []
 				tkt_act = []
 				performer.push({ "id" => activity[:user].id, "name" => activity[:user].name, "email" => activity[:user].email, 
 													 "agent" => activity[:user].helpdesk_agent })
-				if activity[:stack].first.activity_data.blank?
+				if activity[:stack].first.activity_data_blank?
 					result.push({ :ticket_activity => { :performer => performer, :activity => "Ticket created", 
 												:performed_time => activity[:time] }})
 					next
 				end
-				if activity[:is_note]
-					result.push({ :ticket_activity => { :performer => performer, :activity => "Added a note",
-												:note_content => @prefetched_notes[activity[:stack].first.note_id].body,
-												:private => @prefetched_notes[activity[:stack].first.note_id].private,
-												:performed_time => activity[:time] }})
+        if activity[:is_note]
+          #Activity might not have got deleted when a note is split as a new ticket
+          if @prefetched_notes[activity[:stack].first.note_id].present?
+            result.push({ :ticket_activity => { :performer => performer, :activity => "Added a note",
+                        :note_content => @prefetched_notes[activity[:stack].first.note_id].body,
+                        :private => @prefetched_notes[activity[:stack].first.note_id].private,
+                        :performed_time => activity[:time] }})
+          end
 				else
 					stack = activity[:stack].map{ |act| 
 													Liquid::Template.parse(
@@ -88,8 +93,9 @@ private
 
 
 	ACTIVITIES_NOT_TO_COMBINE = [
-									'new_ticket', 
-									'ticket_merge', 'ticket_split', 
+									'new_ticket', 'new_outbound',
+									'ticket_merge', 'ticket_split', 'note_split',
+									'due_date_updated',
 									'deleted', 'restored',
 									'timesheet.new', 'timesheet.timer_started', 'timesheet.timer_stopped'
 								]
@@ -123,7 +129,7 @@ private
 	end
 
 	def in_short_span?(activity, previous_activity)
-		activity.created_at - previous_activity[:time] <= 2.minutes or previous_activity[:time] - activity.created_at <= 2.minutes
+		(activity.created_at - previous_activity[:time]).abs <= 2.minutes
 	end
 
 	def same_user?(activity, previous_activity)
@@ -161,10 +167,24 @@ private
 		types_importance.sort! { |x,y| x[:index] <=> y[:index]}.first[:type]
 	end
 
-	def prefetch_notes(note_ids)
-		notes = Helpdesk::Note.find(note_ids, :include => :user)
-		@prefetched_notes = Hash[*notes.map { |note| [note.id, note] }.flatten]
+  def prefetch_notes(ticket, note_ids)
+    options = [{:user => :avatar}, :notable, :schema_less_note, :note_old_body]
+    options << (Account.current.new_survey_enabled? ? {:custom_survey_remark =>
+                  {:survey_result => [:survey_result_data, :agent, {:survey => :survey_questions}]}} : :survey_remark)
+    options << :fb_post if ticket.facebook?
+    options << :tweet if ticket.twitter?
 
-	end
+    notes = Helpdesk::Note.includes(options).where(:id => note_ids)
+    Hash[*notes.map { |note| [note.id, note] }.flatten]
+  end
+
+  def prefetch_archive_notes(ticket, note_ids)
+    options = [{:user => :avatar}, :archive_note_association]
+    options << :fb_post if ticket.facebook?
+    options << :tweet if ticket.twitter?
+
+    notes = Helpdesk::ArchiveNote.includes(options).where(:note_id => note_ids)
+    Hash[*notes.map { |note| [note.note_id, note] }.flatten]
+  end
 
 end

@@ -6,11 +6,11 @@ module Utils
       elements.each do |element|
         element_html = element+"_html"
         if item.send(element_html) && (new_record? || item.send(element_html+"_changed?"))
-          item.write_attribute(element_html,
+          item.send(:write_attribute,element_html,
                                Helpdesk::HTMLSanitizer.clean(item.send(element_html)))
         end
-        populate_content_create(item,*elements) if new_record?
       end
+      populate_content_create(item, *elements) if new_record?
     end
 
     def sanitize_body_hash(attributes,nested_attribute, *elements)

@@ -1,0 +1,1 @@
+require 'xss/railtie' if defined?(Rails)

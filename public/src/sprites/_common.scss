@@ -1,6 +1,4 @@
 /* Importing admin icons */
-
-/*Report tab icons */
 @import "cdn-ignored/sprites/common-icon/*.png";
 $common-icon-layout:horizontal;
 @include all-common-icon-sprites(true);
@@ -9,36 +7,33 @@ $common-icon-layout:horizontal;
 $admin-icon-layout:horizontal;
 @include all-admin-icon-sprites;*/
 
-@import "application-logo/*.png";
+@import "cdn-ignored/sprites/application-logo/*.png";
 $application-logo-layout:vertical;
 $application-logo-sprite-dimensions:true;
 @include all-application-logo-sprites;
 
-/*Report tab icons */
+@import "cdn-ignored/sprites/integrations/*.png";
+$integrations-layout:vertical;
+$integrations-sprite-dimensions:true;
+@include all-integrations-sprites;
+
+/* Report tab icons */
 @import "cdn-ignored/sprites/reports-icon/*.png";
 $reports-icon-layout:horizontal;
 @include all-reports-icon-sprites(true);
 
-/*Ticket View icons */
+/* Ticket View icons */
 @import "cdn-ignored/sprites/ticket-view/*.png";
 $ticket-view-layout:smart;
 @include all-ticket-view-sprites;
 
-/*header icons */
+/* header icons */
 @import "cdn-ignored/sprites/header-icons/*.png";
 @include all-header-icons-sprites;
 
-/*Admin product source icons */
-@import "cdn-ignored/sprites/product/*.png";
-@include all-product-sprites;
-
-/*Social product source icons */
+/* Social product source icons */
 @import "cdn-ignored/sprites/social/*.png";
 @include all-social-sprites(true);
-
-@import "cdn-ignored/sprites/common-icon/*.png";
-$reports-icon-layout:horizontal;
-@include all-common-icon-sprites(true);
 
 /*Search page icons */
 @import "cdn-ignored/sprites/search/*.png";
@@ -48,6 +43,5 @@ $reports-icon-layout:horizontal;
 @include all-mailbox-sprites(true);
 
 
-/* !IMPORTANT ALL GAMIFICATION RELATED STYLES WILL BE UNDER "app/gamification.scss" 
+/* !IMPORTANT ALL GAMIFICATION RELATED STYLES WILL BE UNDER "app/gamification.scss"
 * These sprites are moved there so that they can be imported only if the feature is enabled */
-

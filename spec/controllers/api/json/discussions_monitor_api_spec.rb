@@ -1,9 +1,8 @@
 require 'spec_helper'
 
-describe Support::DiscussionsController do
+RSpec.describe Support::DiscussionsController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   before(:all) do
     @category = create_test_category
@@ -21,7 +20,7 @@ describe Support::DiscussionsController do
   it "should be able to fetch user monitored topics." do
     get :user_monitored, { :user_id => @user.id, :format => 'json' }, :content_type => 'application/json'
     result = parse_json(response)
-    expected = (response.status === "200 OK") && (compare(result.first["topic"].keys, APIHelper::TOPIC_ATTRIBS, {}).empty?)
+    expected = (response.status === 200) && (compare(result.first["topic"].keys, APIHelper::TOPIC_ATTRIBS-["account_id"], {}).empty?)
     expected.should be(true)
   end
 
@@ -29,7 +28,7 @@ describe Support::DiscussionsController do
     @test_user = add_new_user(@account)
     get :user_monitored, { :user_id => @test_user.id, :format => 'json' }, :content_type => 'application/json'
     result = parse_json(response)
-    expected = (response.status === "200 OK") && result.empty?
+    expected = (response.status === 200) && result.empty?
     expected.should be(true)
   end
 

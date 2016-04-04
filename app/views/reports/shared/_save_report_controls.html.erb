@@ -1,0 +1,53 @@
+<div id="view_manage_links">
+	<a href = "javascript:void(0)" class="vertical-alignment left-border hide" id="update_filter" data-action="update-saved-report" >
+		<i class="ticket-view-save tooltip" data-placement="above" data-original-title="Save" twipsy-content-set="true"></i>
+	</a>
+	<a class="vertical-alignment left-border hide" 
+		id="save_filter" 
+		href="#report-dialog-save" 
+		rel="freshdialog" 
+		data-backdrop="static"
+		data-show-close="true" 
+		id="save-report" 
+		data-destroy-on-close="true"
+		data-title="<%=t('helpdesk_reports.saved_report.dialog_header')%>" 
+		data-submit-label="Save" 
+		data-close-label="Cancel" 
+		data-width="800">
+		<i class="ticket-view-saveas tooltip" data-placement="above" data-original-title="Save As" twipsy-content-set="true"></i>
+	</a>
+	<a href = "javascript:void(0)" class="vertical-alignment right-border hide" id="discard_filter" data-action="discard-changes">
+		<i class="ticket-view-cancel tooltip" data-placement="above" data-original-title="Discard changes" twipsy-content-set="true"></i>
+	</a>
+	<a class="vertical-alignment left-border hide" 
+		id="edit_filter" 
+		data-action="edit-saved-report" 
+		href="#report-dialog-edit" 
+		rel="freshdialog" 
+		data-title="<%=t('helpdesk_reports.saved_report.edit_dialog_header')%>"
+		data-backdrop="static" 
+		data-submit-label="Save" 
+		data-close-label="Cancel" 
+		data-show-close="true" 
+		data-destroy-on-close="true" 
+		id="edit-report" 
+		data-width="800"
+	>
+		<i class="ticket-view-edit tooltip" data-placement="above" data-original-title="Edit" twipsy-content-set="true"></i>
+	</a>
+	<a class="vertical-alignment right-border hide" 
+		id="delete_filter" 
+		data-action="delete-saved-report"
+		href="#report-dialog-delete" 
+		rel="freshdialog" 
+		data-backdrop="static" 
+		data-title="<%=t('helpdesk_reports.saved_report.delete_dialog_header')%>" 
+		data-show-close="true" 
+		data-submit-label="Confirm" 
+		data-close-label="Cancel" 
+		data-width="400"
+		data-destroy-on-close="true"
+	>
+		<i class="ficon-trash-o trash tooltip" data-placement="above" data-original-title="Delete" twipsy-content-set="true"></i>
+	</a>	
+</div>

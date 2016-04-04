@@ -17,7 +17,7 @@
 </div>
 
 <% content_for :pagefixed do %>
-<% javascript_tag do %>
+<%= javascript_tag do %>
     jQuery('#agent_collision_placeholder').append(jQuery('#agent_collision_show').detach());
 
     var agents = { viewing:[], replying:[] };

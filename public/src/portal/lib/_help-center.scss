@@ -1,5 +1,4 @@
 .help-center{
-	position: relative;
 	z-index: 3; 
 	background-color: $help_center_color;
 	border: 1px solid darken($help_center_color, 10%);
@@ -148,7 +147,7 @@
                 height: 35px;
             } 
             .hc-search-button .btn-primary {
-                background: sprite($icon-sprites, search-dark) no-repeat;
+                background: sprite($dynamic-icon-sprites, search-dark) no-repeat;
                 /*background-position-x: 50%;*/
                 height: 20px;
                 border: 0;
@@ -195,9 +194,10 @@
                 background-color: transparent;
             }
         }
-        @include mobile-icon(nav-contact, $tab_color);
-        @include mobile-icon(nav-newticket, $tab_color);
-        @include mobile-icon(nav-status, $tab_color);
+        /* TODO_RAILS3 Migrate this in to a sprite helper than a sprite include */
+        // @include mobile-icon(nav-contact, $tab_color);
+        // @include mobile-icon(nav-newticket, $tab_color);
+        // @include mobile-icon(nav-status, $tab_color);
 	}
 }
 

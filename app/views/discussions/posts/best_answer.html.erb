@@ -1,4 +1,4 @@
-<% form_for(@post, :url => toggle_answer_discussions_topic_post_path(@topic, @post)) do |f| %>
+<%= form_for(@post, :url => toggle_answer_discussions_topic_post_path(@topic, @post)) do |f| %>
 <% end %>
 <%= t('forum_shared.best_answer.answer_confirm') %>
 <%= render :partial => 'discussions/shared/answer', :locals => { :post => @answer, :popup => true } %>

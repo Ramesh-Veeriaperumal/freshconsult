@@ -3,25 +3,23 @@ module Helpdesk::Email::TicketMethods
   include Redis::OthersRedis
   include ParserUtil
   include AccountConstants
+  include EmailHelper
+  include Helpdesk::ProcessAgentForwardedEmail
 
   def get_original_user
-    get_user(orig_email_from_text , email[:email_config], email[:text]) unless orig_email_from_text.blank?
+    email_from_text = account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text
+    unless email_from_text.blank?
+      self.original_sender = email_from_text[:email]
+      email_from_text[:cc_emails].reject!{ |cc_email| kbase_email?(cc_email) or requester_email?(cc_email) }
+      email[:cc].concat(email_from_text[:cc_emails]).uniq!
+      email[:to_emails].concat(email_from_text[:cc_emails])
+      get_user(email_from_text , email[:email_config], email[:text])
+    end
   end
 
   def orig_email_from_text #To process mails fwd'ed from agents
-    @orig_user ||= begin
-      content = email[:text] || email[:description_html]
-      if (content && (content.gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
-                            content.gsub("\r\n", "\n") =~ /^\s*From:\s(.*)\s+\[mailto:(.*)\]/ or  
-                            content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
-        name = $1
-        email = $2
-        if email =~ EMAIL_REGEX
-          return { :name => name, :email => $1 }
-        end
-      end
-      {}
-    end
+    content = email[:text] || email[:description_html]
+    identify_original_requestor(content)
   end
 
   def current_agent?
@@ -29,11 +27,13 @@ module Helpdesk::Email::TicketMethods
   end
 
   def create_ticket_object
+    alter_forwarding_based_user if current_agent?
+
     self.ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => email[:subject],
         :ticket_body_attributes => {
-                      :description => email[:text], 
+                      :description => tokenize_emojis(email[:text]),
                       :description_html => email[:description_html]
         },
         :requester => user,
@@ -44,32 +44,24 @@ module Helpdesk::Email::TicketMethods
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
       )
-
-    if current_agent?
-      ticket.sender_email = get_original_email || email[:from][:email]
-      alter_forwarding_based_user       
-    end
+    self.ticket.build_archive_child(:archive_ticket_id => archive_ticket.id) if archive_ticket
+    ticket.sender_email = self.original_sender
   end
 
   def alter_forwarding_based_user
     self.user = (get_original_user || user)
-    ticket.requester = user
-  end
-
-  def get_original_email
-    (orig_email_from_text.present?)  ? orig_email_from_text[:email] : nil
   end
 
   def hash_cc_emails
     #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
-    {:cc_emails => email[:cc], :fwd_emails => [], :reply_cc => email[:cc].dup}
+    {:cc_emails => global_cc, :fwd_emails => [], :reply_cc => global_cc, :tkt_cc =>  email[:cc].dup}
   end
 
   def check_valid_ticket
     check_for_chat_sources
     check_for_spam
-    check_for_auto_responders
-    check_support_emails_from
+    check_for_auto_responders(ticket, email[:headers])
+    check_support_emails_from(ticket, user, account)
   end
 
   def check_for_chat_sources
@@ -92,35 +84,37 @@ module Helpdesk::Email::TicketMethods
     ticket.spam = true if ticket.requester.deleted?
   end
 
-  def check_for_auto_responders
-    ticket.skip_notification = true if auto_responder?(email[:headers])
-  end
-
-  def auto_responder?(headers)
-    headers.present? && check_headers_for_responders(Hash[JSON.parse(headers)])
-  end
-
-  def check_headers_for_responders header_hash
-    (header_hash["Auto-Submitted"] =~ /auto-(.)+/i || header_hash["Precedence"] =~ /(bulk|junk|auto_reply)/i).present?
-  end
-
-  def check_support_emails_from
-    ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(user.email) == 0}
-  end
-
   def finalize_ticket_save
     ticket_message_id = header_processor.zendesk_email || header_processor.message_id
     begin
       header_info_update(ticket_message_id)
       ticket.save_ticket!
+      
+      # Insert header to schema_less_ticket_dynamo
+      begin
+        Timeout::timeout(0.5) do
+          dynamo_obj = Helpdesk::Email::SchemaLessTicketDynamo.new
+          dynamo_obj['account_id'] = Account.current.id
+          dynamo_obj['ticket_id'] = ticket.id
+          dynamo_obj['headers'] = JSON.parse(self.email[:headers]).map{|x| "#{x[0]}: #{x[1]}" }.join("\n")
+          dynamo_obj.save
+        end
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
+      
     rescue ActiveRecord::RecordInvalid => e
-      FreshdeskErrorsMailer.deliver_error_email(ticket,email,e)
+      # FreshdeskErrorsMailer.error_email(ticket,email,e)
+      NewRelic::Agent.notice_error(e)
     end
+    cleanup_attachments ticket
     create_redis_key_for_ticket(ticket_message_id) unless ticket_message_id.nil?
   end
 
   def header_processor
-    @header_processor ||= Helpdesk::Email::ProcessByMessageId.new(email[:message_id], email[:in_reply_to], email[:references])
+    @header_processor ||= Helpdesk::Email::ProcessByMessageId.new(email[:message_id][1..-2], 
+                                                                  email[:in_reply_to][1..-2], 
+                                                                  email[:references])
   end
 
   def header_info_update ticket_message_id
@@ -128,7 +122,14 @@ module Helpdesk::Email::TicketMethods
   end
 
   def create_redis_key_for_ticket ticket_message_id
-    set_others_redis_key(header_processor.message_key(account, ticket_message_id), ticket.display_id, 86400 * 7)
+    header_processor.set_ticket_id_with_message_id account, ticket_message_id, ticket
   end
-
+  
+  private 
+  #All recipients are moved to global Cc to have them part of the entire ticket conversation 
+  def global_cc
+    sup_emails              = Account.current.support_emails.map(&:downcase)
+    additional_to_emails    = email[:to_emails].reject{|mail| email[:to][:email].include?(mail) or sup_emails.include?(mail.downcase)}
+    @global_cc ||= additional_to_emails.push(email[:cc]).flatten.compact.uniq 
+  end
 end

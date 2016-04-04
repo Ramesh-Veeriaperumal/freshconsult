@@ -1,0 +1,49 @@
+<% hidden_class = ["Closed","Resolved"].include?(ticket.status_name)? "gray" : "" %>
+<div class="hs_message <%= hidden_class %>" onclick="openTicket(<%= ticket.display_id %>)">
+	<div class='status-wrapper separator'>
+		<% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) %>
+		<% ticket_style = ticket.subject_style(ticket,@onhold_and_closed_statuses) %>
+
+		<% unless ticket_style.blank? %>
+			<span class='status friendly'><%= t("helpdesk.tickets.friendly_status.#{ticket_style}") %></span>
+		<% end %>
+		<span class='status'> <%= ticket.status_name%> </span>
+	</div>
+	<div class="hs_content separator">
+		<p class='hs_userName'> #<%= ticket.display_id %> <%= truncate(ticket.subject)%> </p>
+	</div>
+	<div class="hs_content">
+		<p class="post-user-data">
+			<%= t("integrations.hootsuite.ticket_created_message",
+				:requester_name => ticket.requester_name,
+				:created_date => hootsuite_datetime_format(ticket.created_at))
+			 %>
+		</p>
+		<p class="post-user-data">
+				<%= ticket.sla_status(ticket,@onhold_and_closed_statuses) %>
+		</p>
+	</div>
+
+	<% note = ticket.conversation.last%>
+	<% unless note.blank? %>
+		<div class='note-wrapper separator'>
+			<%= user_avatar(note.user, :thumb,"preview_pic circle small") if note.user %>
+		    <div class='hs_content'>
+		    	<% kind = note.survey_remark.nil? ? note.kind : 'survey' %>
+				<p class='hs_contentText'><%= t("helpdesk.tickets.note.hootsuite_created_on.#{kind}", 
+						:user_name => note.user.name, 
+						:note_date => hootsuite_datetime_format(note.created_at), 
+						:timestamp => note.created_at.to_i 
+					).html_safe %></p>
+				<div class="hs_contentText">
+					<% 
+						notes = note.body_html	
+						notes = notes.gsub(/\n/, ' ')
+						notes = notes.gsub(/<[^>]*>/, ' ')
+					%>			
+					<%= truncate(h(notes)) %>
+				</div>
+			</div>
+		</div>
+	<% end %>
+</div>

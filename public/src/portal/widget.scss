@@ -32,7 +32,7 @@
 
 // Page related styles
 @import "lib/content";
-@import "lib/autocomplete";
+@import "../plugins/select2";
 
 // Import redactor styles
 @import "../plugins/redactor";
@@ -43,4 +43,6 @@
 @import "lib/widget-icons";
 
 @import "lib/utilities";
+
+@import "../plugins/_jquery-ui";
 

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe PasswordResetsController do
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
@@ -21,7 +20,7 @@ describe PasswordResetsController do
 
 	it "should create new password" do
 		post :create, :email => @test_email
-		response.session[:flash][:notice].should eql "Instructions to reset your password have been emailed to you. Please check your email."
+		session[:flash][:notice].should eql "Instructions to reset your password have been emailed to you. Please check your email."
 		response.body.should =~ /redirected/
 		Delayed::Job.last.handler.should include("A request to change your password has been made.")
 	end
@@ -35,8 +34,8 @@ describe PasswordResetsController do
 
 	it "should not create new password" do
 		post :create, :email => Faker::Internet.email
-		response.session[:flash][:notice].should eql "No user was found with that email address"
-		response.redirected_to.should =~ /forgot_password/
+		session[:flash][:notice].should eql "No user was found with that email address"
+    response.location.should =~ /forgot_password/
 	end
 
 	it "should not create new password" do
@@ -55,7 +54,7 @@ describe PasswordResetsController do
 
 	it "should not edit existing password" do
 		get :edit, :id => "5xkWZy3vNrn5674389tJFm"
-		response.session[:flash][:notice].should eql "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."
+		session[:flash][:notice].should eql "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."
 		response.body.should =~ /redirected/
 	end
 
@@ -63,7 +62,7 @@ describe PasswordResetsController do
 		user = @account.users.find_by_email(@test_email)
 		token = user.perishable_token
 		put :update, :id => token, :user =>{:password =>"[FILTERED]"}
-		response.session[:flash][:notice].should eql "Password successfully updated"
+		session[:flash][:notice].should eql "Password successfully updated"
 		response.body.should =~ /redirected/
 	end
 end

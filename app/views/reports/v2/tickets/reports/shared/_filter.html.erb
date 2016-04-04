@@ -1,0 +1,42 @@
+ <%
+  date_by_plan = default_date_range(@date_lag_by_plan)
+  date_range = date_range_val(date_by_plan[0], date_by_plan[1])
+%>
+<div class="report-filters-container animated hide" id="report-filters">
+ 	<ul class="unstyled">
+		<li class="metric-header">
+		    <h3>
+		    	<%=t('helpdesk_reports.filter_by').html_safe %>
+		    	<span class="close" data-action="close-filter-menu"> <%= font_icon "cross", :size => 20 %> </span>
+		    </h3>
+		</li>
+ 		<li>
+		 	<div id="FilterOptions" method="post" action='#' target="_blank" class="filter-form">
+		        <div class="row-fluid">
+			        <div class="report-fields-widget">
+						<div id="time-duration">
+							<label><%=t('helpdesk_reports.time_period') %></label>
+							<%= text_field_tag :date_range, date_range, :class => "required serialize" %>
+						</div>
+					</div>
+		        </div>
+		        
+		    	<% if current_account.subscription.non_sprout_plan? || feature?(:advanced_reporting) %>
+		    		<div id="active-report-filters"></div>
+					<div class="report-fields-selector" data-action="add-filter">
+						<%= font_icon "plus-circle", :size => 16 %> <a href="javascript:void(0)"><%=t('helpdesk_reports.more') %></a>
+					</div>
+					<div class="report-fields-menu hide" id="report_fields_list">
+						<ul></ul>
+					</div>
+				<% end %>
+			</div>
+		</li>
+		<li class="generate-reports">
+			<div class="filter-validations" id="filter_validation_errors">
+				<span class="error-msg"></span>
+			</div>
+			<a class="btn btn-primary" href="javascript:void(0)" data-action="reports-submit"><%=t('helpdesk_reports.generate') %></a>
+		</li>
+	</ul>
+ </div>

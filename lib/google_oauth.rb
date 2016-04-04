@@ -2,9 +2,11 @@ module GoogleOauth
 	include Redis::RedisKeys
   include Redis::OthersRedis
 
-	def create_user(account, name, email)
+  def create_user(account, name, email)
     user = account.users.new(:name => name, :email => email, :active => true)
-    user.save
+    portal = account.portals.find_by_portal_url(requested_portal_url)
+    user.language = portal.present? ? portal.language : account.language
+    user.save!
     user
   end
 
@@ -27,7 +29,7 @@ module GoogleOauth
   end
 
   def construct_redirect_url(account, domain, type, uid)
-    protocol = account.ssl_enabled? ? "https" : "http"
+    protocol = (account.ssl_enabled? || is_native_mobile?) ? "https" : "http"
     if type == "openid"
       url = "https://www.google.com/accounts/o8/site-xrds?hd="+domain
       redirect_url = protocol+"://" + account.host + "/auth/open_id?openid_url="+url

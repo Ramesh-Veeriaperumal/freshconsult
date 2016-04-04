@@ -3,6 +3,7 @@ var FreshfoneUserInfo;
 	// "use strict";
 	var customerNumber;
 
+  var strangeNumber;
 	FreshfoneUserInfo = function () {
 		this.init();
 	};
@@ -17,6 +18,9 @@ var FreshfoneUserInfo;
 		$contactTemplate: $('#freshfone-contact-template'),
 		$contactTemplateNameless: $('#ffone-contact-template-nameless'),
 		$callMetaTemplate: $('#freshfone-call-meta-template'),
+		$callWasAnsweredTemplate: $("#freshfone-call-picked-template"),
+		$transferMetaTemplate: $("#freshfone-call-transfer-template"),
+		$callContext: $('#freshfone-call-context'),
 		setRequestObject: function (requestObject) {
 			this.requestObject = requestObject;
 		},
@@ -29,7 +33,8 @@ var FreshfoneUserInfo;
 				outgoing : this.isOutgoing,
 				callerName: null,
 				formattedNumber: this.formattedNumber(),
-				callerLocation: this.callerLocation()
+				callerLocation: this.callerLocation(),
+				strangeNumber : freshfonewidget.classForStrangeNumbers(this.customerNumber)
 			};
 
 			this.removeExistingPopup();
@@ -48,28 +53,40 @@ var FreshfoneUserInfo;
 						self.requestObject.callerId = data.user_id;
 						self.requestObject.avatar = data.user_hover || false;
 						self.requestObject.callMeta = self.construct_meta(data.call_meta);
-						self.requestObject.ffNumberName = (data.call_meta || {}).number || "";
+						self.requestObject.callerCard  = data.caller_card;
+						if(data.call_meta){
+							self.requestObject.transferAgentName = data.call_meta.transfer_agent.user_name;
+							self.requestObject.ffNumberName = (data.call_meta || {}).number || "";
+						}	
+						
 					}
-					if (self.isOutgoing) {
+					if (self.isOutgoing) {						
 						self.setOngoingStatusAvatar(self.requestObject.avatar || self.blankUserAvatar);
+						self.setOngoingCallContext(data.caller_card);
 					} else {
 						params.callerName = self.requestObject.callerName;
 						params.callMeta = self.requestObject.callMeta;
 						self.buildContactTemplate(params);
+						if (data.call_meta){ 
+							freshfone.ringing_time = data.call_meta.ringing_time;
+							if (data.call_meta.transfer_agent) {
+								freshfonecalls.setIsIncomingTransfer(true);
+								self.fillTransferAgent(data.call_meta.transfer_agent);
+							}else{
+								freshfonecalls.setIsIncomingTransfer(false);
+							}
+						}
 					}
 					self.unknownUserFiller();
 				}
 			});
 		},
 		construct_meta: function (meta) {
-			var call_meta = "";
+			var call_meta = {};
 			if (meta) {
 				number = meta.number || "";
 				group  = meta.group  || "";
-				if (number != "" && group != "") {
-					group = " (" + group + ")"
-				}
-				call_meta = number + group;
+				call_meta = {"ff_number_info": number, "ff_group_info": group, "company_name": meta.company_name};
 			}
 			return call_meta;
 		},
@@ -80,6 +97,7 @@ var FreshfoneUserInfo;
 		},
 		unknownUserFiller: function () {
 			customerNumber = this.customerNumber;
+			strangeNumber = freshfonewidget.classForStrangeNumbers(this.customerNumber);
 			$('.unknown_user_hover').popover({
 				placement: 'above',
 				html: true,
@@ -89,10 +107,16 @@ var FreshfoneUserInfo;
 			});
 		},
 		setOngoingStatusAvatar: function (avatar) {
-			if (freshfonewidget.ongoingCallWidget.find('#incall_user_info')) {
-				freshfonewidget.ongoingCallWidget.find('#incall_user_info').html($(avatar).clone());
+			if ($('#incall_user_info')) {
+				$('#incall_user_info').html($(avatar).clone());
 				this.unknownUserFiller();
 			}
+		},
+		setOngoingCallContext: function(callerCard){
+			var self = this;
+			freshfonewidget.callerUserId =  this.requestObject.callerId;
+			$('.caller-context-details').html(callerCard);
+			$('.caller-number').html(self.formattedNumber());
 		},
 		formattedNumber: function () {
 			return formatInternational(this.callerLocation(), this.customerNumber)
@@ -108,14 +132,14 @@ var FreshfoneUserInfo;
 					callerLocation: this.callerLocation()
 				};
 
-			this.requestObject.$userInfoContainer.find('.customer').html(template.tmpl(params));
+			this.requestObject.$userInfoContainer.find('.customer-info').html(template.tmpl(params));
 			this.setBlankProfileImage()
 		},
 		buildContactTemplate: function (params) {
 			var template = this.requestObject.callerName ? this.$contactTemplate.clone() : this.$contactTemplateNameless.clone();
 			var metaTemplate = this.$callMetaTemplate.clone();
-			this.requestObject.$userInfoContainer.find('.customer').html(template.tmpl(params));
-			this.requestObject.$userInfoContainer.find('.call-meta').html(metaTemplate.tmpl(params));
+			this.requestObject.$userInfoContainer.find('.customer-info').html(template.tmpl(params));
+			this.requestObject.$userInfoContainer.find('.call-meta').html(metaTemplate.tmpl(params.callMeta));
 			if (this.requestObject.avatar) {
 				var avatar = $(this.requestObject.avatar).find('img');
 				this.requestObject.$userInfoContainer.find('.user_avatar')
@@ -126,19 +150,33 @@ var FreshfoneUserInfo;
 			this.requestObject.createDesktopNotification();
 		},
 		setBlankProfileImage: function () {
-			this.requestObject.$userInfoContainer.find('.user_avatar')
+			this.requestObject.$userInfoContainer.find('.incoming-details .user_avatar')
 				.html($('<img />').attr('src', PROFILE_BLANK_THUMB_PATH));
 		},
-
+		fillTransferAgent: function (params) {
+			var template = $("#freshfone-transfer-call-notifier").clone();
+			this.requestObject.$userInfoContainer.find('.transfer-details').html(template.tmpl(params));
+		},
 		userContactHover: function () {
-			var template = "<span><div class='infoblock'><div class='preview_pic' size_type='thumb'></div><div class='user_name'>${number}</div></div></span>",
+			var template = "<span><div class='infoblock'><div class='preview_pic' size_type='thumb'></div><div class='user_name ${strangeNumber}'>${number}</div></div></span>",
 				$div = $("<div />")
 							.append($(template)
-												.tmpl({ number: customerNumber }));
+												.tmpl({ number: customerNumber, strangeNumber: strangeNumber  }));
 			$div.find('.preview_pic').html($('.unknown_user_hover').html());
 			return $div.html();
+		},
+		setCallPickedAlert: function(agent){
+			var domTemplate = this.$callWasAnsweredTemplate.clone();
+			domTemplate = domTemplate.tmpl({agent: agent});
+			if (this.requestObject.$userInfoContainer)
+				this.requestObject.$userInfoContainer.find('.incoming-details').html(domTemplate);
+		},
+		setTransferMeta: function (type, agent) {
+			var metaTemplate = this.$transferMetaTemplate.clone(),
+			params = {transferType: type.capitalize(), sourceAgent: agent};
+			this.requestObject.$userInfoContainer.find('.transfer-meta')
+			.html(metaTemplate.tmpl(params))
+			.toggle(true);
 		}
-		
-		
 	};
 }(jQuery));

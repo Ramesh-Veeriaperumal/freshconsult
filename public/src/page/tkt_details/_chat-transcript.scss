@@ -134,7 +134,7 @@
     &:after{
       content:"";
       opacity: 0.5;
-      @extend .icon-comments;
+      @extend .icon-comments !optional;
     }
     .fc_guest_expanded{
       background: #f7f7f7;

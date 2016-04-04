@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Social::TwitterHandlesController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -18,9 +17,9 @@ describe Social::TwitterHandlesController do
       it "should be successful" do
         get :index
 
-        response.should redirect_to "admin/social/streams"
-        # session["request_token"].present?.should be_true
-        # session["request_secret"].present?.should be_true
+        response.should redirect_to "/admin/social/streams"
+        # session["request_token"].present?.should be true
+        # session["request_secret"].present?.should be true
       end
     end
 
@@ -28,7 +27,7 @@ describe Social::TwitterHandlesController do
       it "should redirect if exception arises" do
         TwitterWrapper.any_instance.stubs(:request_tokens).raises(Timeout::Error)
         get :index
-        response.should redirect_to "admin/social/streams"
+        response.should redirect_to "/admin/social/streams"
       end
     end
   end
@@ -39,7 +38,7 @@ describe Social::TwitterHandlesController do
       get :edit, {
           :id => twt_handler.id
         }
-        response.should render_template("social/twitter_handles/edit.html.erb") 
+        response.should render_template("social/twitter_handles/edit") 
     end
   end
 
@@ -51,36 +50,27 @@ describe Social::TwitterHandlesController do
       TwitterWrapper.any_instance.stubs(:auth).returns(twt_handler)
 
       get :authdone
-      response.should redirect_to "social/twitters/#{twt_handler.id}/edit"
+      response.should redirect_to "/social/twitters/#{twt_handler.id}/edit"
     end
 
     it "should redirect to new handle if it doesn't exists" do
       #Social::TwitterHandle.destroy_all
-      twt_handler = Factory.build(:twitter_handle, :screen_name => Faker::Name.name.downcase, :access_token => Faker::Lorem.characters(10),
+      twt_handler = FactoryGirl.build(:twitter_handle, :screen_name => Faker::Name.name.downcase, :access_token => Faker::Lorem.characters(10),
                                   :access_secret => Faker::Lorem.characters(10), :capture_dm_as_ticket => 1, :capture_mention_as_ticket => 1,
                                   :twitter_user_id => rand(100000000))
       TwitterWrapper.any_instance.stubs(:auth).returns(twt_handler)
 
       get :authdone
       twt_handler = @account.twitter_handles.find_by_screen_name(twt_handler.screen_name)
-      response.should redirect_to "social/twitters/#{twt_handler.id}/edit"
+      response.should redirect_to "/social/twitters/#{twt_handler.id}/edit"
     end
 
     it "should redirect to social/twitters if exception arise" do
       TwitterWrapper.any_instance.stubs(:auth).raises(Errno::ECONNRESET)
       get :authdone
-      response.should redirect_to "social/twitters"
+      response.should redirect_to "/social/twitters"
     end
 
-  end
-  
-  describe "POST #tweet" do
-    it "should tweet to twitter" do
-      Twitter::REST::Client.any_instance.stubs(:update).returns("")
-      post :tweet, {
-        :tweet => "Tweet to twitter"
-      }
-    end
   end
 
 
@@ -90,14 +80,14 @@ describe Social::TwitterHandlesController do
       Social::TwitterHandle.destroy_all
 
       get :feed
-      response.should redirect_to "social/welcome"
+      response.should redirect_to "/social/welcome"
     end
 
     it "if handles preset should render feed page" do
       twt_handler = create_test_twitter_handle(@account)
 
       get :feed
-      response.should redirect_to "social/streams"
+      response.should redirect_to "/social/streams"
     end
 
   end
@@ -164,8 +154,8 @@ describe Social::TwitterHandlesController do
       delete :destroy, :id => twt_handler.id
 
       handle = @account.twitter_handles.find_by_id(twt_handler.id)
-      handle.present?.should be_false
-      response.should redirect_to 'social/twitters'
+      handle.present?.should be_falsey
+      response.should redirect_to '/social/twitters'
     end
 
   end
@@ -173,6 +163,7 @@ describe Social::TwitterHandlesController do
   describe "GET #tweet_exists" do
 
     it "Check for tweet exists" do
+      request.env["HTTP_ACCEPT"] = "application/json"
       get :tweet_exists, :tweet_ids => rand(100)
       body = JSON.parse(response.body)
       body.class.should be_eql(Hash)
@@ -210,8 +201,8 @@ describe Social::TwitterHandlesController do
       }
 
       response.should render_template '_create_twicket'
-      @account.contacts.find_by_twitter_id(twitter_id).present?.should be_true
-      @account.tickets.find_by_subject(subject).present?.should be_true
+      @account.contacts.find_by_twitter_id(twitter_id).present?.should be_truthy
+      @account.tickets.find_by_subject(subject).present?.should be_truthy
     end
 
     it "should create first tweet as ticket and second tweet as note " do
@@ -271,9 +262,9 @@ describe Social::TwitterHandlesController do
       }
 
       response.should render_template '_create_twicket'
-      @account.contacts.find_by_twitter_id(twitter_id).present?.should be_true
+      @account.contacts.find_by_twitter_id(twitter_id).present?.should be_truthy
       ticket = Helpdesk::Ticket.find_by_id(ft.tweetable_id)
-      ticket.notes.present?.should be_true
+      ticket.notes.present?.should be_truthy
       ticket.notes.last.tweet.tweet_id.should be_eql(note_tweet_id)
     end
 
@@ -298,21 +289,10 @@ describe Social::TwitterHandlesController do
       handle =  @account.twitter_handles.find_by_id(twt_handler.id)
       handle.should be_an_instance_of(Social::TwitterHandle)
       handle.search_keys.first.should be_eql("@#{twt_handler.screen_name}")
-      handle.capture_mention_as_ticket.should be_true
+      handle.capture_mention_as_ticket.should be_truthy
 
       handle.dm_thread_time.should be_eql(86400)
     end
   end
-  
-  it "should check if the user who is responding follows the accout to which being replyed to" do
-    twt_handler = create_test_twitter_handle(@account)
-    
-    Twitter::REST::Client.any_instance.stubs(:friendship?).returns(true)
-    
-    post :user_following, {
-                            :twitter_handle => twt_handler.id, 
-                            :req_twt_id => "TestingTwitter", 
-                          }
-  end 
-  
+
 end

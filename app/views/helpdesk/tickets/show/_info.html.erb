@@ -43,7 +43,7 @@
 						</div>
 					</div>
 					<div class="commentbox-info" id="ticket_status_box">
-						<%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
+						<%= render :partial => 'helpdesk/tickets/show/status', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
 
 						<div class="ticket-subject">
 							<h2 class="subject <%= 'show_full' if @ticket.deleted or @ticket.spam %>">
@@ -56,7 +56,7 @@
 									</div>
 									<div class="monitor_div">
 										<span id="monitor">
-											<%= render :partial => "/helpdesk/subscriptions/monitor.html.erb" %>
+											<%= render :partial => "/helpdesk/subscriptions/monitor" %>
 										</span>
 									</div>
 								<% end %>
@@ -95,7 +95,7 @@
 								<ul>
 									<li class="ticket-btns">
 										<div class="btn-group">
-											<% if privilege?(:reply_ticket) && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present?) %>
+											<% if privilege?(:reply_ticket) && (@ticket.twitter? or @ticket.facebook? or @item.from_email.present?) %>
 										  	<a class="btn" rel="note-button" data-note-type="reply" id="ReplyButton">
 										  		<span class="reply-inner"></span>
 									    		<%= t('ticket.reply_to')  %>
@@ -131,7 +131,7 @@
   									</li>
                   <% end %>
 									<li class="ticket-btns">
-										<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
+										<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
 										  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn',
 										  				"data-submit-label" => t('ticket.execute_scenario'),
 										  				:title => t('ticket.execute_scenario') ) %>
@@ -161,7 +161,7 @@
 										  	</li>
 
 										  	<li id="spamicon">
-										  		<%= render :partial => "spam.html.erb", :locals => { :ticket => @ticket, :page => params[:page] } %>
+										  		<%= render :partial => "spam", :locals => { :ticket => @ticket, :page => params[:page] } %>
 										  	</li>
                         <% if privilege?(:delete_ticket) %>
   										  	<li>

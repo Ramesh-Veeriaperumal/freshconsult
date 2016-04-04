@@ -1,12 +1,15 @@
 class Account < ActiveRecord::Base
 
+  self.primary_key = :id
+  
   include Mobile::Actions::Account
   include Social::Ext::AccountMethods
   include Cache::Memcache::Account
   include Redis::RedisKeys
   include Redis::TicketsRedis
+  include Redis::OthersRedis
   include Redis::DisplayIdRedis
-  include Redis::RoutesRedis
+  include Redis::OthersRedis
   include ErrorHandle
   include AccountConstants
 
@@ -16,36 +19,40 @@ class Account < ActiveRecord::Base
 
   pod_filter "id"
   
-  concerned_with :associations, :constants, :validations, :callbacks
+  is_a_launch_target
+  
+  concerned_with :associations, :constants, :validations, :callbacks, :rabbitmq, :solution_associations
+
   include CustomerDeprecationMethods
   
   xss_sanitize  :only => [:name,:helpdesk_name], :plain_sanitizer => [:name,:helpdesk_name]
   
   attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,
                   :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
-                  :language, :ssl_enabled, :whitelisted_ip_attributes, :account_additional_settings_attributes
+                  :language, :ssl_enabled, :whitelisted_ip_attributes, :account_additional_settings_attributes,
+                  :primary_email_config_attributes, :main_portal_attributes
 
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
-  named_scope :active_accounts,
+  scope :active_accounts,
               :conditions => [" subscriptions.state != 'suspended' "], 
               :joins => [:subscription]
 
-  named_scope :trial_accounts,
+  scope :trial_accounts,
               :conditions => [" subscriptions.state = 'trial' "], 
               :joins => [:subscription]
 
-  named_scope :free_accounts,
+  scope :free_accounts,
               :conditions => [" subscriptions.state IN ('free','active') and subscriptions.amount = 0 "], 
               :joins => [:subscription]
 
-  named_scope :paid_accounts,
+  scope :paid_accounts,
               :conditions => [" subscriptions.state = 'active' and subscriptions.amount > 0 "], 
               :joins => [:subscription]
 
-  named_scope :premium_accounts, {:conditions => {:premium => true}}
+  scope :premium_accounts, {:conditions => {:premium => true}}
               
-  named_scope :non_premium_accounts, {:conditions => {:premium => false}}
+  scope :non_premium_accounts, {:conditions => {:premium => false}}
   
   Limits = {
     'agent_limit' => Proc.new {|a| a.full_time_agents.count }
@@ -65,7 +72,48 @@ class Account < ActiveRecord::Base
       SELECTABLE_FEATURES.keys.each { |f_n| feature f_n }
     end
   end
+
+  def time_zone
+    tz = self.read_attribute(:time_zone)
+    tz = "Kyiv" if tz.eql?("Kyev")
+    tz
+  end
   
+  def survey
+    @survey ||= begin
+      if new_survey_enabled?
+        active_custom_survey_from_cache || custom_surveys.first
+      else
+        surveys.first unless surveys.blank?
+      end
+    end
+  end
+
+  def any_survey_feature_enabled?
+    survey_enabled? || default_survey_enabled? || custom_survey_enabled?
+  end
+
+  def any_survey_feature_enabled_and_active?
+    new_survey_enabled? ? active_custom_survey_from_cache.present? :
+      features?(:surveys, :survey_links)
+  end
+
+  def survey_enabled?
+    features?(:surveys)
+  end
+
+  def new_survey_enabled?
+    default_survey_enabled? || custom_survey_enabled?
+  end
+
+  def default_survey_enabled?
+    features?(:default_survey) && !custom_survey_enabled?
+  end
+  
+  def custom_survey_enabled?
+    features?(:custom_survey)
+  end
+
   def freshfone_enabled?
     features?(:freshfone) and freshfone_account.present?
   end
@@ -78,12 +126,70 @@ class Account < ActiveRecord::Base
     freshchat_enabled? and features?(:chat_routing)
   end
 
+  def contact_merge_enabled?
+    features?(:contact_merge_ui)
+  end
+
+  #Temporary feature check methods - using redis keys - starts here
+  def compose_email_enabled?
+    !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
+  end
+
+  def dashboard_disabled?
+    ismember?(DASHBOARD_DISABLED, self.id)
+  end
+
+  def restricted_compose_enabled?
+    ismember?(RESTRICTED_COMPOSE, self.id)
+  end
+  
+  def slave_queries?
+    ismember?(SLAVE_QUERIES, self.id)
+  end
+
+  def tag_based_article_search_enabled?
+    ismember?(TAG_BASED_ARTICLE_SEARCH, self.id)
+  end
+
+  def classic_reports_enabled?
+    ismember?(CLASSIC_REPORTS_ENABLED, self.id)
+  end
+
+  def old_reports_enabled?
+    ismember?(OLD_REPORTS_ENABLED, self.id)
+  end
+
+  #Temporary feature check methods - using redis keys - ends here
+
+  def validate_required_ticket_fields?
+    ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
+  end
+
   def freshfone_active?
     features?(:freshfone) and freshfone_numbers.present?
   end
 
   def active_groups
     active_groups_in_account(id)
+  end
+
+  def fields_with_in_operators
+    custom_dropdown = "custom_dropdown"
+    default_in_op_fields = Hash.new
+
+    default_in_op_fields[:ticket] = DEFAULT_IN_OPERATOR_FIELDS[:ticket].clone
+    default_in_op_fields[:ticket] << custom_dropdown_fields_from_cache.map(&:name)
+    default_in_op_fields[:ticket].flatten!
+
+    default_in_op_fields[:requester] = DEFAULT_IN_OPERATOR_FIELDS[:requester].clone
+    default_in_op_fields[:requester] << contact_form.custom_fields.custom_dropdown_fields.pluck(:name)
+    default_in_op_fields[:requester].flatten!
+
+    default_in_op_fields[:company] = DEFAULT_IN_OPERATOR_FIELDS[:company].clone
+    default_in_op_fields[:company] << company_form.custom_fields.custom_dropdown_fields.pluck(:name)
+    default_in_op_fields[:company].flatten!
+
+    default_in_op_fields.stringify_keys!
   end
 
   class << self # class methods
@@ -110,7 +216,7 @@ class Account < ActiveRecord::Base
   end
   
   def installed_apps_hash
-    installed_apps = installed_applications.all(:include => :application )
+    installed_apps = self.installed_applications.includes(:application).all
     installed_apps.inject({}) do |result,installed_app|
      result[installed_app.application.name.to_sym] = installed_app
      result
@@ -129,6 +235,13 @@ class Account < ActiveRecord::Base
       return  ticket_dis_id > max_dis_id ? ticket_dis_id : max_dis_id+1
     end
     return 0
+  end
+
+  def max_display_id
+    return get_max_display_id unless self.features?(:redis_display_id)
+    
+    key = TICKET_DISPLAY_ID % { :account_id => self.id }
+    get_display_id_redis_key(key).to_i
   end
   
   def account_managers
@@ -154,7 +267,23 @@ class Account < ActiveRecord::Base
   def active?
     !self.subscription.suspended?
   end
-  
+
+  def spam_email?
+    ismember?(SPAM_EMAIL_ACCOUNTS, self.id)
+  end
+
+  def premium_email?
+    ismember?(PREMIUM_EMAIL_ACCOUNTS, self.id)
+  end
+
+  def premium_webhook_throttler?
+    ismember?(PREMIUM_WEBHOOK_THROTTLER, self.id)
+  end
+
+  def premium_gamification_account?
+    ismember?(PREMIUM_GAMIFICATION_ACCOUNT, self.id)
+  end
+
   def plan_name
     subscription.subscription_plan.canon_name
   end
@@ -169,11 +298,13 @@ class Account < ActiveRecord::Base
   end
   
   def default_friendly_email
-    primary_email_config.friendly_email
+    primary_email_config.active? ? primary_email_config.friendly_email : "support@#{full_domain}"
   end
 
   def default_friendly_email_personalize(user_name)
-    primary_email_config.friendly_email_personalize(user_name)
+    primary_email_config.active? ? 
+      primary_email_config.friendly_email_personalize(user_name) :
+      "#{primary_email_config.send(:format_name, user_name)} <support@#{full_domain}>"
   end
   
   def default_email
@@ -186,7 +317,7 @@ class Account < ActiveRecord::Base
   
   #Will be used as :host in emails
   def host
-    main_portal.portal_url.blank? ? full_domain : main_portal.portal_url
+    main_portal_from_cache.portal_url.blank? ? full_domain : main_portal_from_cache.portal_url
   end
   
   def full_url
@@ -221,7 +352,7 @@ class Account < ActiveRecord::Base
   end
   
    def language
-      main_portal.language
+    main_portal_from_cache.language
    end
   
   #Sentient things start here, can move to lib some time later - Shan
@@ -259,11 +390,15 @@ class Account < ActiveRecord::Base
   end
   
   def ticket_type_values
-    ticket_fields.type_field.first.picklist_values
+    ticket_fields_without_choices.type_field.first.level1_picklist_values
   end
   
   def ticket_status_values
     ticket_statuses.visible
+  end
+
+  def ticket_status_values_from_cache
+    Helpdesk::TicketStatus.status_objects_from_cache(self)
   end
   
   def has_multiple_products?
@@ -281,9 +416,8 @@ class Account < ActiveRecord::Base
   def pass_through_enabled?
     pass_through_enabled
   end
-
-  def user_emails_migrated?
-    $redis_others.sismember(USER_EMAIL_MIGRATED, self.id)
+  def select_all_enabled?
+    launched?(:select_all)
   end
 
   def google_account?
@@ -323,8 +457,15 @@ class Account < ActiveRecord::Base
     self.sso_options = set_sso_options_hash
   end
 
-  def rabbit_mq_exchange
-    $rabbitmq_shards[id%($rabbitmq_shards).count]
+  def enable_ticket_archiving(archive_days = 120)
+    add_features(:archive_tickets)
+    if account_additional_settings.additional_settings.present?
+      account_additional_settings.additional_settings[:archive_days] = archive_days
+      account_additional_settings.save
+    else
+      additional_settings = { :archive_days => archive_days }
+      account_additional_settings.update_attributes(:additional_settings => additional_settings)
+    end
   end
 
   protected

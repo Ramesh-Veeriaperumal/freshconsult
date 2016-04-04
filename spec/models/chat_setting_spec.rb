@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe ChatSetting do
+RSpec.describe ChatSetting do
 
-	it "should create chatSettings" do
+	it "should create chatSettings" do# failing in master
 	chat=ChatSetting.new
 	chat.save
 	test_display_id=Digest::MD5.hexdigest("#{ChatConfig['secret_key']}::#{chat.id}")

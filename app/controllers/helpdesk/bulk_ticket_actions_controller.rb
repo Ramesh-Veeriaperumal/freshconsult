@@ -1,4 +1,3 @@
-require 'fastercsv'
 
 class Helpdesk::BulkTicketActionsController < ApplicationController
   include ActionView::Helpers::TextHelper
@@ -6,8 +5,8 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   include HelpdeskControllerMethods
   include Helpdesk::TagMethods
 
-  before_filter :filter_params_ids, :only => :update_multiple
-  before_filter :load_multiple_items, :only => :update_multiple
+  before_filter :filter_params_ids, :validate_params, :scoper_bulk_actions, :only => :update_multiple
+  before_filter :load_items, :only => :update_multiple
 
   def update_multiple             
     failed_tickets = []
@@ -34,13 +33,15 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
           Timeout::timeout(SpamConstants::SPAM_TIMEOUT) do
             key = "#{current_user.account_id}-#{current_user.id}"
             value = Time.now.to_i.to_s
-            $spam_watcher.setex(key,24.hours,value)
+            $spam_watcher.perform_redis_op("setex", key, 24.hours, value)
             params["spam_key"] = "#{key}:#{value}"
           end
         rescue Exception => e
           NewRelic::Agent.notice_error(e,{:description => "error occured while adding key in redis"})
         end
-        Resque.enqueue(Workers::BulkReplyTickets, params_for_queue)
+        #Resque.enqueue(Workers::BulkReplyTickets, params_for_queue)
+        args = params_for_queue
+        Tickets::BulkTicketReply.perform_async(args)
       end
     end
 
@@ -84,7 +85,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     end
 
     def params_for_queue
-      params.slice('ids', 'helpdesk_note', 'twitter_handle', 'cloud_file_attachments', 'shared_attachments', 'spam_key')
+      params.slice('ids', 'helpdesk_note', 'twitter_handle', 'cloud_file_attachments', 'shared_attachments', 'spam_key', 'email_config')
     end
 
     def get_updated_ticket_count
@@ -99,4 +100,37 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       'helpdesk_ticket'
     end
 
+   private
+
+    def params_for_bulk_action
+      params.slice('ids')
+    end
+
+    def validate_params
+      #Removing invalid ticket types
+      ticket_types = Account.current.ticket_types_from_cache.collect(&:value)
+      if params[:helpdesk_ticket] and !ticket_types.include?(params[:helpdesk_ticket][:ticket_type])
+        params[:helpdesk_ticket].delete(:ticket_type)
+      end
+    end
+
+    def scoper_bulk_actions
+      if params[:ids] and params[:ids].length > BACKGROUND_THRESHOLD
+        update_multiple_background
+      end
+    end
+
+    def update_multiple_background
+      args = { :action => action_name, :helpdesk_ticket => params[:helpdesk_ticket] }
+      args.merge!(params_for_bulk_action)
+      args[:tags] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
+      Tickets::BulkTicketActions.perform_async(args) if args[:helpdesk_ticket] or args[:tags]
+      queue_replies
+      respond_to do |format|
+        format.html {
+          flash[:notice] = t('helpdesk.flash.tickets_background')
+          redirect_to helpdesk_tickets_path
+        }
+      end
+    end
 end

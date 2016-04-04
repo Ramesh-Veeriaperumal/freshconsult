@@ -1,0 +1,22 @@
+<tr>
+	<td class='email-tip'>
+		<input rel="toggle" type="checkbox" id="em" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (reply_template.requester_notification) ? "checked" : "" %> disabled >
+	</td>
+	<td>
+		<span class="vertical-alignment event-name">
+			<strong>
+			<a href="<%= admin_edit_notification_path(:id => reply_template.id, :type =>"reply_template")%>"><%= t("#{reply_template.token}") %></a>
+			</strong>
+		</span>
+	</td>
+		<td class="text-right">
+			<% if (reply_template.outdated_requester_content == true ) %>
+				<i class="common-icon-outdated"></i>
+				<span class="muted"><%=t('email_notifications.index_outdated')%></span>
+			<%end%>	
+		</td>
+		
+	<td class="text-right">
+		<%= link_to(t('edit'), admin_edit_notification_path(:id => reply_template.id, :type =>"reply_template"), :class => 'btn btn-mini') %>
+	</td>
+</tr>

@@ -5,7 +5,7 @@
 	  <h4 class='title'><%= t("helpdesk.flash.sending_failure") %></h4>
 	  <ul>
 	    <% failed_tickets.each do |a| %>
-			<% content_tag(:li) do %>
+			<%= content_tag(:li) do %>
 				<h3 class="social_nw_link_error">
 					<%= link_to "#{a.subject}	#{content_tag(:span, '#'+a.display_id.to_s, :class =>'ticket_id')}", 
 						%(/helpdesk/tickets/#{a.display_id}), :target => "_blank" %>

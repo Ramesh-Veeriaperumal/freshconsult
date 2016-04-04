@@ -1,0 +1,26 @@
+tickets_in_current_page = params['tickets_in_current_page'].to_i
+per_page = params[:per_page] || 30
+current_page = params[:page].to_i
+current_page = 1 if current_page.blank? || current_page == 0
+options = {
+	:tickets_in_current_page => tickets_in_current_page,
+	:per_page => per_page,
+	:current_page => current_page
+}
+options = options.symbolize_keys.reverse_merge WillPaginate::ViewHelpers.pagination_options
+morethan_one_page = current_page > 1 || tickets_in_current_page == 30
+if morethan_one_page
+	full_paginate_content = ticket_pagination_html(options,true)
+	options[:previous_label] = '<span></span>'
+	options[:next_label] = '<span></span>'
+	paginate_content = ticket_pagination_html(options)
+	page << "jQuery('#ticket_pagination').show();"
+	page.replace_html 'ticket_pagination', paginate_content
+	page.replace_html 'ticket-toolbar-bottom', full_paginate_content
+	# page << "jQuery('#ticket_pagination').show()"
+end
+
+total_count_message = morethan_one_page ? I18n.t('.many') : tickets_in_current_page
+page << "jQuery('#ticket_list_count').removeClass('fetching').html('#{total_count_message}').data('url',false);"
+page << "jQuery('.page_info').hide();" if tickets_in_current_page == 0
+# why not handle everything from the UI

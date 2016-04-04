@@ -127,9 +127,11 @@
 
 .pricelist .btn{
 	display: block;
-	width: 100%;
+	width: 80%;
 	padding-left: 0;
 	padding-right: 0;
+	position: absolute;
+	bottom: 10px;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -335,7 +337,7 @@ input[type=text].input-agent-count{
 			font-weight: 300;
 			font-size: 15px;
 			line-height: 1.8;
-			margin-bottom: 20px;
+			margin-bottom: 25px;
 		}
 		.plan-brief{
 			font-size: 11px;
@@ -422,3 +424,53 @@ input[type=text].input-agent-count{
 .billing-actions{
 	margin-top: 10px;
 }
+
+
+.invoice-list, .invoice-download-icon{
+	background-color: #f7f7f7;
+	text-align: center;
+	color: #7b7b7b;
+	border-radius: 3px;
+}
+
+.invoice-download-icon{
+  padding: 8px 8px 8px 10px;
+}
+
+.invoice-date{
+	text-align: right;
+  color: #AAAAAA;
+}
+
+.invoice-modal-config{
+	color: #8E8E8E;
+}
+	
+.invoice-table.table th{
+	border-top: 1px solid #535353;
+	border-bottom: 1px solid #A6A6A6;
+}
+
+.ft-wt{
+	font-weight: 500;
+}
+
+.invoice-status{
+	color:green;
+}
+
+.invoice-refund{
+	color:#D75334;	
+}
+
+.btn-primary{
+	[class*='ficon-']{ color: #fff;}
+}
+
+.table tr:hover {
+	.invoice-download-icon{
+		background-color: #DDDDDD;
+	}
+}
+
+

@@ -22,16 +22,21 @@ class Account < ActiveRecord::Base
   has_many :portals, :dependent => :destroy
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
+  delegate :supported_languages, :to => :account_additional_settings
   has_one  :whitelisted_ip
+  has_one :contact_password_policy, :class_name => 'PasswordPolicy',
+    :conditions => {:user_type => PasswordPolicy::USER_TYPE[:contact]}, :dependent => :destroy
+  has_one :agent_password_policy, :class_name => 'PasswordPolicy',
+    :conditions => {:user_type => PasswordPolicy::USER_TYPE[:agent]}, :dependent => :destroy
   has_many :dynamic_notification_templates
+  has_many :google_accounts, :class_name => 'Integrations::GoogleAccount'
 
   accepts_nested_attributes_for :primary_email_config
   accepts_nested_attributes_for :main_portal
   accepts_nested_attributes_for :account_additional_settings
   accepts_nested_attributes_for :whitelisted_ip
-
-  has_many :survey_results
-  has_many :survey_remarks
+  accepts_nested_attributes_for :contact_password_policy
+  accepts_nested_attributes_for :agent_password_policy
 
   has_one  :subscription_plan, :through => :subscription
 
@@ -41,7 +46,10 @@ class Account < ActiveRecord::Base
 
   has_many :features
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
-  has_one  :ticket_field_def,  :class_name => 'FlexifieldDef', :conditions => 'name = "Ticket_#{self.id}"'
+  has_one  :ticket_field_def,  :class_name => 'FlexifieldDef', 
+    :conditions => Proc.new { 
+      "name = 'Ticket_#{self.id}'"
+    }
   has_one  :contact_form
   has_one  :company_form
   has_many :flexifield_def_entries
@@ -81,12 +89,16 @@ class Account < ActiveRecord::Base
 
   has_one :subscription
   has_many :subscription_payments
-  has_many :solution_categories, :class_name =>'Solution::Category', :include =>:folders, :order => "position"
-  has_many :solution_articles, :class_name =>'Solution::Article'
 
+
+  has_many :solution_drafts, :class_name =>'Solution::Draft'
+  has_many :solution_draft_bodies, :class_name =>'Solution::DraftBody'
+  has_many :article_tickets, :class_name => 'ArticleTicket'
+  
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :user_credentials, :class_name => 'Integrations::UserCredential'
   has_many :companies
+  has_many :company_domains
   has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false,
@@ -95,32 +107,34 @@ class Account < ActiveRecord::Base
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy'
   has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
+  has_many :google_contacts, :class_name => 'GoogleContact'
+  has_many :mobihelp_devices, :class_name => 'Mobihelp::Device'
 
   #Scoping restriction for other models starts here
-  has_many :account_va_rules, :class_name => 'VARule'
+  has_many :account_va_rules, :class_name => 'VaRule'
 
-  has_many :va_rules, :class_name => 'VARule', :conditions => {
+  has_many :va_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::BUSINESS_RULE, :active => true }, :order => "position"
-  has_many :all_va_rules, :class_name => 'VARule', :conditions => {
+  has_many :all_va_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::BUSINESS_RULE }, :order => "position"
 
-  has_many :supervisor_rules, :class_name => 'VARule', :conditions => {
+  has_many :supervisor_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::SUPERVISOR_RULE, :active => true }, :order => "position"
-  has_many :all_supervisor_rules, :class_name => 'VARule', :conditions => {
+  has_many :all_supervisor_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::SUPERVISOR_RULE }, :order => "position"
 
-  has_many :observer_rules, :class_name => 'VARule', :conditions => {
+  has_many :observer_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::OBSERVER_RULE, :active => true }, :order => "position"
-  has_many :all_observer_rules, :class_name => 'VARule', :conditions => {
+  has_many :all_observer_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::OBSERVER_RULE }, :order => "position"
 
-  has_many :api_webhook_rules, :class_name => 'VARule', :conditions => {
+  has_many :api_webhook_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::API_WEBHOOK_RULE, :active => true }, :order => "position"
 
   has_many :scn_automations, :class_name => 'ScenarioAutomation', :conditions =>{
   :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order => "name"
 
-  has_many :all_scn_automations, :class_name => 'VARule',:conditions => {
+  has_many :all_scn_automations, :class_name => 'VaRule',:conditions => {
   :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order=> "position"
    
   has_many :email_notifications
@@ -140,14 +154,17 @@ class Account < ActiveRecord::Base
 
   has_many :topics
   has_many :posts
-
-  has_many :folders, :class_name =>'Solution::Folder', :through => :solution_categories
-  has_many :public_folders, :through => :solution_categories
-  has_many :published_articles, :through => :public_folders,
-    :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
+  has_many :monitorships
+  has_many :votes
 
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
-    :include => [:picklist_values, :flexifield_def_entry], :order => "position"
+    :include => [:picklist_values, :flexifield_def_entry], :order => "helpdesk_ticket_fields.position"
+    
+  has_many :ticket_fields_without_choices, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
+    :include => [:flexifield_def_entry], :order => "helpdesk_ticket_fields.position"   
+
+  has_many :ticket_fields_including_nested_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
+    :include => [:picklist_values, :flexifield_def_entry, :nested_ticket_fields], :order => "helpdesk_ticket_fields.position"
 
   # added below mapping for multiform phase1 only
   has_many :ticket_fields_with_nested_fields, :class_name => 'Helpdesk::TicketField'
@@ -173,9 +190,18 @@ class Account < ActiveRecord::Base
   has_many :tweets, :class_name =>'Social::Tweet'
   has_many :social_streams, :class_name => 'Social::Stream'
   has_many :twitter_streams, :class_name => 'Social::TwitterStream'
+  has_many :facebook_streams, :class_name => 'Social::FacebookStream'
 
-  has_one :survey
-  has_many :survey_handles, :through => :survey
+  has_many :surveys
+  has_many :survey_handles, :through => :surveys
+  has_many :survey_results
+  has_many :survey_remarks
+
+  has_many :custom_surveys, :class_name => 'CustomSurvey::Survey'
+  has_many :custom_survey_questions, :class_name => 'CustomSurvey::SurveyQuestion'
+  has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle'
+  has_many :custom_survey_results, :class_name => 'CustomSurvey::SurveyResult'
+  has_many :custom_survey_remarks, :class_name => 'CustomSurvey::SurveyRemark'
 
   has_many :scoreboard_ratings
   has_many :scoreboard_levels
@@ -195,9 +221,19 @@ class Account < ActiveRecord::Base
 
   has_one :contact_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:contact]}
 
+  has_one :company_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:company]}
+
 
   has_many :tags, :class_name =>'Helpdesk::Tag'
   has_many :tag_uses, :class_name =>'Helpdesk::TagUse'
+  
+  # Archive Association Starts Here
+  has_many :archive_tickets, :class_name => "Helpdesk::ArchiveTicket"
+  has_many :archive_notes, :class_name => "Helpdesk::ArchiveNote"
+  has_many :archive_ticket_associations, :class_name => "Helpdesk::ArchiveTicketAssociation"
+  has_many :archive_note_associations, :class_name => "Helpdesk::ArchiveNoteAssociation"
+  has_many :archive_time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:archive_tickets , :conditions =>['archive_tickets.deleted =?', false]
+  # Archive Association Ends Here
 
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
 
@@ -206,7 +242,7 @@ class Account < ActiveRecord::Base
   has_one  :es_enabled_account, :class_name => 'EsEnabledAccount', :dependent => :destroy
 
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter,
-    :pass_through_enabled, :api_limit, :to => :account_additional_settings
+    :pass_through_enabled, :api_limit, :webhook_limit, :to => :account_additional_settings
 
   has_many :subscription_events
 
@@ -227,6 +263,8 @@ class Account < ActiveRecord::Base
   has_many :freshfone_users, :class_name => "Freshfone::User"
   has_many :freshfone_other_charges, :class_name => "Freshfone::OtherCharge"
   has_many :freshfone_blacklist_numbers, :class_name => "Freshfone::BlacklistNumber"
+  has_one  :freshfone_subscription, :class_name => "Freshfone::Subscription"
+  has_many :freshfone_caller_id, :class_name => "Freshfone::CallerId"
 
   has_many :freshfone_callers, :class_name => "Freshfone::Caller"
 
@@ -239,6 +277,19 @@ class Account < ActiveRecord::Base
   has_many :chat_widgets
   has_one  :main_chat_widget, :class_name => 'ChatWidget', :conditions => {:main_widget => true}
   has_many :mobihelp_apps, :class_name => 'Mobihelp::App'
+  has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution'
+  has_many :ecommerce_accounts, :class_name => 'Ecommerce::Account', :dependent => :destroy
+  has_many :ebay_accounts, :class_name => 'Ecommerce::EbayAccount'
+  has_many :ebay_questions, :class_name => "Ecommerce::EbayQuestion", :through => :ebay_accounts
 
   has_many :forum_moderators
+
+  has_many :solution_customer_folders, :class_name => "Solution::CustomerFolder"
+
+  has_many :sections, :class_name => 'Helpdesk::Section', :dependent => :destroy
+  has_many :section_fields, :class_name => 'Helpdesk::SectionField', :dependent => :destroy
+
+  has_many :subscription_invoices
+  has_many :user_companies
+  has_many :outgoing_email_domain_categories, :dependent => :destroy
 end

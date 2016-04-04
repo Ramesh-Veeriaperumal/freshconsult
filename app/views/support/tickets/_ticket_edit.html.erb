@@ -1,7 +1,7 @@
-<% if @editable_ticket_fields.present? %>
+<% if helpdesk_ticket?(@ticket) and @editable_ticket_fields.present? %>
 <section class="widget" id="ticket-sidebar-edit">
 	<h3 class="light">Modify ticket details</h4>
-	<% form_for @ticket, :url => { :action => "update", :controller => "support/tickets" }, 
+	<%= form_for @ticket, :url => { :action => "update", :controller => "support/tickets" }, 
 				:html => { :id => 'portal_ticket_form' } do |f| %>
 		<% current_portal.ticket_fields(:customer_editable).each do |field| %>
 		    <% if(field.visible_in_view_form?) %>
@@ -22,7 +22,7 @@
 	    <div>
 			<%= f.submit t('update'), :class => "btn btn-small btn-primary pull-right" %>
 		</div>
-		<% javascript_tag do %> 
+		<%= javascript_tag do %> 
 			<% if @ticket.ticket_status.deleted? %>
 				jQuery("#helpdesk_ticket_status")
 					.append('<option disabled="disabled" value="<%= @ticket.status %>"> <%= @ticket.status_name %> </option>')

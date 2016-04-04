@@ -56,6 +56,8 @@ jQuery.fn.daterangepicker = function(settings){
 		onOpen: function(){},
 		onChange: function(){},
 		rangeDurationMonths: null,
+		limitRangeToConstraints : false,
+		presetRangesCallback: false,
 		datepickerOptions: null //object containing native UI datepicker API options
 	}, settings);
 	
@@ -202,13 +204,13 @@ jQuery.fn.daterangepicker = function(settings){
 		var riOffset = relEl.offset(),
 			side = 'left',
 			val = riOffset.left,
-			offRight = jQuery(window).width() - val - relEl.outerWidth();
+			offRight = jQuery(window).width() - val - relEl.outerWidth(true);
 
 		if(val > offRight){
 			side = 'right', val =  offRight;
 		}
 		
-		rp.parent().css(side, val).css('top', riOffset.top + relEl.outerHeight());
+		rp.parent().css(side, val).css('top', riOffset.top + relEl.outerHeight(true));
 	}
 	
 	
@@ -257,6 +259,10 @@ jQuery.fn.daterangepicker = function(settings){
 			rp.find('.range-start').restoreDateFromData().css('opacity',1).show(400);
 			rp.find('.range-end').restoreDateFromData().css('opacity',1).show(400);
 			setTimeout(function(){doneBtn.fadeIn();}, 400);
+
+			if (options.presetRangesCallback){
+				jQuery(document).trigger("presetRangesSelected",false); 
+			}
 		}
 		else {
 			//custom date range specified in the options (no calendars shown)
@@ -268,6 +274,12 @@ jQuery.fn.daterangepicker = function(settings){
 			var dateEnd = (typeof el.data('dateEnd') == 'string') ? Date.parse(el.data('dateEnd')) : el.data('dateEnd')();
 			rp.find('.range-start').datepicker('setDate', dateStart).find('.ui-datepicker-current-day').trigger('click');
 			rp.find('.range-end').datepicker('setDate', dateEnd).find('.ui-datepicker-current-day').trigger('click');
+			// Reports Hack: To persist relative date Range
+			if (options.presetRangesCallback){
+				jQuery(document).trigger("presetRangesSelected",true); 
+			}
+				
+
 		}
 		
 		return false;
@@ -292,15 +304,37 @@ jQuery.fn.daterangepicker = function(settings){
 		}
 
 		if(options.rangeDurationMonths){
-			if (which == 'range-start') {
-				var maxDate = Date.parse(fDate(rp.find('.range-start').datepicker('getDate'))).add(options.rangeDurationMonths).months();
-				rp.find('.range-end').datepicker( "option", "maxDate", maxDate);
+			if(options.limitRangeToConstraints){
+				if (which == 'range-start') {
+					 var maxDateAccRange = Date.parse(fDate(rp.find('.range-start').datepicker('getDate'))).add(options.rangeDurationMonths).months();
+					 var maxDateAccLimit = options.latestDate;
+					 if(Date.compare(maxDateAccLimit,maxDateAccRange) == -1){
+					 	rp.find('.range-end').datepicker( "option", "maxDate", maxDateAccLimit);
+					 }else{
+					 	rp.find('.range-end').datepicker( "option", "maxDate", maxDateAccRange);
+					 }
+				}
+				if (which == 'range-end') {
+					var minDateAccRange = Date.parse(fDate(rp.find('.range-end').datepicker('getDate'))).add(-options.rangeDurationMonths).months();
+					var minDateAccLimit = options.earliestDate;
+					if(Date.compare(minDateAccLimit,minDateAccRange) == -1){
+						rp.find('.range-start').datepicker( "option", "minDate", minDateAccRange);
+					}else{
+						rp.find('.range-start').datepicker( "option", "minDate", minDateAccLimit);
+					}
+				}
+			}else{
+				if (which == 'range-start') {
+				 var maxDate = Date.parse(fDate(rp.find('.range-start').datepicker('getDate'))).add(options.rangeDurationMonths).months();
+				 rp.find('.range-end').datepicker( "option", "maxDate", maxDate);
+				
+				}
+				if (which == 'range-end') {
+					var minDate = Date.parse(fDate(rp.find('.range-end').datepicker('getDate'))).add(-options.rangeDurationMonths).months();
+					rp.find('.range-start').datepicker( "option", "minDate", minDate);
+				}
 			}
-			if (which == 'range-end') {
-				var minDate = Date.parse(fDate(rp.find('.range-end').datepicker('getDate'))).add(-options.rangeDurationMonths).months();
-				rp.find('.range-start').datepicker( "option", "minDate", minDate);
-			}
-		}
+		} 
 	}
 
 	// rpPickers.find('.range-start, .range-end')	

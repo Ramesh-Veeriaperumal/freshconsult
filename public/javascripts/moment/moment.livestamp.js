@@ -60,6 +60,7 @@
       });
 
       $livestamps = $livestamps.not(toRemove);
+      delete $livestamps.prevObject;
     },
 
     pause: function() {

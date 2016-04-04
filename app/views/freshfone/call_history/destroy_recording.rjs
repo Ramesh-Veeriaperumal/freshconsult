@@ -1,0 +1,7 @@
+if @call.present? && @call.recording_deleted
+  show_ajax_flash page
+  page.replace_html "call-id-#{@call.id}",
+    "<div class='recording_deleted tooltip' title='#{recording_deleted_title(@call)}'>
+      <span class='right'>#{call_duration_formatted(@call.call_duration) if @call.call_duration.present?}</span>
+    </div>"
+end

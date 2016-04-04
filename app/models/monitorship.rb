@@ -1,4 +1,5 @@
 class Monitorship < ActiveRecord::Base
+  self.primary_key = :id
 
   belongs_to_account
   belongs_to :monitorable, :polymorphic => true
@@ -8,13 +9,16 @@ class Monitorship < ActiveRecord::Base
   validates_uniqueness_of :user_id, :scope => [:monitorable_id, :monitorable_type, :account_id]
   validate :user_has_email
 
-  named_scope :active_monitors, :conditions => { :active => true }
-  named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
+  scope :active_monitors, :conditions => { :active => true }
+  scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
   ALLOWED_TYPES = [:forum, :topic]
-  ACTIONS = [:follow, :unfollow, :is_following]
+  ACTIONS = [:follow, :unfollow, :is_following, :followers]
+  ADD_FOLLOWER_MAILERS_FOR = [:topic, :forum]
 
   before_create :set_account_id
+  after_create :notify_new_follower
+  after_update :notify_new_follower, :if => :active_changed?
 
   def sender_and_host
     if portal && !portal.main_portal?
@@ -31,7 +35,28 @@ class Monitorship < ActiveRecord::Base
     @get_portal ||= portal_id? ? portal : account.main_portal
   end
 
+  def notify_new_follower
+    return if mail_unnecessary?
+    "#{monitorable.class.name}Mailer".constantize.send_later(:notify_new_follower,monitorable,User.current,self)
+  end
+
   protected
+
+  def mail_unnecessary?
+    [
+      (User.current.blank? || User.current.id != user_id),
+      self.active?,
+      ADD_FOLLOWER_MAILERS_FOR.include?(monitorable.class.to_s.downcase.to_sym),
+      self.user.privilege?(:view_forums),
+      !merging_topic_followers?
+    ].include?(false)
+  end
+
+  def merging_topic_followers?
+    return false unless monitorable.is_a?(Topic)
+    ((monitorable.merged_topics.exists?) and
+      monitorable.merged_monitorships.all(:select => "monitorships.user_id").map(&:user_id).include?(self.user_id))
+  end
 
   def user_has_email
   	unless user.has_email?

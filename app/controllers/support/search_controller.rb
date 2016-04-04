@@ -88,16 +88,13 @@ class Support::SearchController < SupportController
 
     def es_search_portal(search_in)
       begin
+        @search_lang = ({ :language => current_portal.language }) if current_portal and current_account.features_included?(:es_multilang_solutions)
         Search::EsIndexDefinition.es_cluster(current_account.id)
         options = { :load => true, :page => (params[:page] || 1), :size => (params[:max_matches] || 20), :preference => :_primary_first }
-        @es_items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id), options do |search|
+        @es_items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id, @search_lang), options do |search|
           search.query do |query|
             query.filtered do |f|
-              if SearchUtil.es_exact_match?(params[:term])
-                f.query { |q| q.text :_all, SearchUtil.es_filter_exact(params[:term]), :type => :phrase }
-              else
-                f.query { |q| q.string SearchUtil.es_filter_key(params[:term]), :analyzer => "include_stop" }
-              end
+              search_match_query f,search_in
               f.filter :term, { :account_id => current_account.id }
               f.filter :or, { :not => { :exists => { :field => :status } } },
                             { :not => { :term => { :status => SearchUtil::DEFAULT_SEARCH_VALUE } } }
@@ -134,15 +131,15 @@ class Support::SearchController < SupportController
                                 { :term => { :requester_id => current_user.id } }
                 end
               end
-              unless main_portal?
-                if search_in.include?(Solution::Article)
-                  f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
-                                { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_id) } }
-                end
-                if search_in.include?(Topic)
-                    f.filter :or, { :not => { :exists => { :field => 'forum.forum_category_id' } } },
-                                { :terms => { 'forum.forum_category_id' => current_portal.portal_forum_categories.map(&:forum_category_id) } }
-                end
+              if search_in.include?(Solution::Article)
+                f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
+                              { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_meta_id) } }
+                f.filter :or, { :not => { :exists => { :field => :language_id } } },
+                              { :term => { :language_id => Language.for_current_account.id } }
+              end
+              if search_in.include?(Topic)
+                  f.filter :or, { :not => { :exists => { :field => 'forum.forum_category_id' } } },
+                              { :terms => { 'forum.forum_category_id' => current_portal.portal_forum_categories.map(&:forum_category_id) } }
               end
             end
           end
@@ -159,6 +156,39 @@ class Support::SearchController < SupportController
         @search_results = []
         @items = []
         NewRelic::Agent.notice_error(e)
+      end
+    end
+
+    def search_match_query f,search_in
+      f.query do |q|
+        q.boolean do |b|
+          exact_or_wildcard_query b
+          user_related_search_query b if search_in.include?(Solution::Article) and params[:tags].present? and current_account.tag_based_article_search_enabled?
+        end
+      end
+    end
+
+    def exact_or_wildcard_query b_query
+      if SearchUtil.es_exact_match?(params[:term])
+        query = SearchUtil.es_filter_exact(params[:term]) 
+        b_query.must { match :_all, query, :type => :phrase }
+      else
+        query = SearchUtil.es_filter_key(params[:term], false)
+        analyzer = SearchUtil.analyzer(@search_lang) 
+        b_query.must { match :_all, query, :analyzer => analyzer }
+      end
+    end
+
+    def user_related_search_query b_query
+      search_value = params[:tags].split(",").compact
+      return if search_value.empty?
+      #search_value = ["London", "UK", "North America"]
+      b_query.must do |multi_match_block|
+        multi_match_block.boolean do |mm_bool|
+          search_value.each do |mm_value|
+            mm_bool.should { match "tags.name", mm_value, :type => :phrase }
+          end
+        end
       end
     end
 
@@ -256,7 +286,7 @@ class Support::SearchController < SupportController
     def topic_result topic
       { 'title' => topic.es_highlight('title').html_safe, 
         'group' => h(topic.forum.name), 
-        'desc' => truncate(h(topic.posts.first.body), :length => truncate_length),
+        'desc' => h(truncate(topic.posts.first.body, :length => truncate_length)).html_safe,
         'type' => "TOPIC", 
         'url' => support_discussions_topic_path(topic) }
     end

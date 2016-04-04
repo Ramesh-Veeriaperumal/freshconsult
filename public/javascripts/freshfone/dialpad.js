@@ -2,15 +2,10 @@
 	"use strict";
 	var timeout,
 		longpress,
-		$number = $('#number'),
-		$callButtonContainer;
+		$number = $('.ff-dial-pad #number');
 	
-	// Defining two custom keys
 //Invoking intlTelInput plugin 
     window.tel = $number.intlTelInput(); 
-// Defining two custom keys
-	$.keypad.addKeyDef('CALL', 'call', function (inst) { freshfonecalls.makeCall(); });
-	
  // Invoking keypad
 	$number.keypad({
 		keypadOnly: false,
@@ -18,7 +13,7 @@
 		callStatus: 'Make calls',
 		backStatus: 'Delete',
 		backText: 'X',
-		layout: ['123', '456', '789', '*0#',  $.keypad.CALL, $.keypad.BACK ],
+		layout: ['123', '456', '789', '*0#'],
 		showAnim: 'show',
 		// showOptions: {direction : 'up'},
 		keypadClass: 'freshfone_dialpad',
@@ -32,7 +27,10 @@
 			longpress = false;
 		},
 		onMousedown: function (keypad, inst) {
-
+			var searchString = $number.val() + $(this).html();
+			freshfoneDialpadEvents.bindSearchResult(searchString);
+			
+			$number.intlTelInput("updateFlag");
 			freshfonecalls.hideText();
 			if($(this).attr('class').indexOf("keypad-call") == -1){
 				freshfonecalls.exceptionalNumber = false;
@@ -53,12 +51,6 @@
 		}
 	}).keypress(function (ev) {
 		freshfonecalls.hideText();
-		if (ev.keyCode === 13) { 
-			return freshfonecalls.makeCall(); }
-		else{
-			freshfonecalls.exceptionalNumber = false;
-		}
-
 		var key = String.fromCharCode(ev.charCode), key_element;
 		
 		
@@ -71,9 +63,12 @@
 		
 		if (key === "+") { key = "0"; }
 		
-		key_element = $('.freshfone_dialpad').find('.keypad-key:contains(' + key + ')');
-		key_element.addClass('keypad-key-down');
-		setTimeout(function () { key_element.removeClass('keypad-key-down'); }, 200);
+		if (key != ('('||')')){ 
+			key_element = $('.freshfone_dialpad').find('.keypad-key:contains(' + key + ')'); 
+			key_element.addClass('keypad-key-down');
+			setTimeout(function () { key_element.removeClass('keypad-key-down'); }, 200);
+		}
+
 		freshfonecalls.toggleInvalidNumberText(false);
 
 	}).bind('paste', function (ev) {
@@ -83,66 +78,41 @@
 		
 		setTimeout(function () { freshfonecalls.removeExtraCharacters(); }, 1);
 		// setTimeout(function () { freshfonecalls.removeDisallowedCharacters(); }, 1);
+	}).keydown(function(ev){	
+		var key = ev.keyCode;
+		if (key == 38 || key == 40){
+			freshfoneDialpadEvents.nextElement(key);
+		} else {			
+			if(key == 8) {	freshfonecalls.hideText(); }
+			freshfonecalls.exceptionalNumber = false; 	
+		}	
 	}).keyup(function(ev){
-		if(ev.keyCode == 8){
-			freshfonecalls.hideText();
-		}
+		if(ev.keyCode == 13){	freshfoneDialpadEvents.bindEnterEvent(); }
 	});
 	
 	
 	// Dialpad show
 	$('.ongoingDialpad, .showDialpad')
 		.on('shown', function (e) {
-			$number.keypad('show');
-			$number.intlTelInput("setPreferredCountries");
-			freshfonecalls.hideText();
-			$callButtonContainer = $('.freshfone_dialpad .keypad-call').parent();
-
-			if ($(this).hasClass('showDialpad')) {
-				$callButtonContainer.show();
-				freshfonecalls.enableOrDisableCallButton();
+			freshfoneMetricsOnKeyPress();
+			if(freshfonecalls.recentCaller != 1){  
+				$number.val("");
 			} else {
-				$callButtonContainer.hide();
+				freshfonecalls.recentCaller = 0;
 			}
 
-		}).on('hidden', function (e) {
-			$number.keypad('hide');
-		});
-		
-		$('.outgoing_numbers_list').on("change",function(){
-			var callerIdNumber = $('.outgoing_numbers_list').select2("val");
-			localStorage.setItem("callerIdNumber", callerIdNumber);
-            $('#outgoing_number_selector').find('.li_opt_selected').removeClass("li_opt_selected");
-			$('#outgoing_number_selector option:selected').addClass("li_opt_selected");
+			$number.intlTelInput("setPreferredCountries");
+			freshfonecalls.hideText();
+	});
 
-        });
+	function freshfoneMetricsOnKeyPress(){
+		jQuery(".user_phone").keypress(function(ev){
+				if(ev.keyCode===13){
+					App.Phone.Metrics.resetCallDirection();
+					App.Phone.Metrics.resetConvertedToTicket();
+				}
+			});
+	}
 
 
-        $(document).ready(function(){
-            var $outgoing_numbers_list = $('.outgoing_numbers_list');
-            
-            $outgoing_numbers_list.select2({
-            	dropdownCssClass: "outgoing_numbers_list_dropdown",
-            	minimumResultsForSearch: 5,
-            	attachtoContainerClass: ".popupbox-content",
-
-	            formatResult: function(result, container,query){
-                    var name = freshfone.namesHash[result.id],
-	            	    number = freshfone.numbersHash[result.id];
-	                if(name == ""|| name.trim == "" ){
-	            	    return  "<span>" +number + "</span>" ;
-                    }else{
-	            		return "<span><b>" + name + "</b></span><br/><span>" + number + " </span>" ;    
-	            	}
-	            },
-	            
-	            formatSelection: function(data, container) {
-	            	var result = data.text;
-	            	var lastindex = result.lastIndexOf(" ");
-	            	result = (lastindex > -1) ?  result.substring(0, lastindex) : data.text;
-                    return result;
-                }
-            });
-            
-       });
 }(jQuery));

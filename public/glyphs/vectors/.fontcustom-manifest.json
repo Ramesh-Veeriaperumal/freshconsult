@@ -1,0 +1,547 @@
+{
+  "checksum": {
+    "previous": "",
+    "current": "3ecf73a4768b93a0bab52b64be885161f6e0238256554877d4d7567db63addd1"
+  },
+  "fonts": [
+
+  ],
+  "glyphs": {
+    "account": {
+      "source": "./account.svg",
+      "codepoint": 61696
+    },
+    "agent": {
+      "source": "./agent.svg",
+      "codepoint": 61697
+    },
+    "all-streams": {
+      "source": "./all-streams.svg",
+      "codepoint": 61698
+    },
+    "answer-checked": {
+      "source": "./answer-checked.svg",
+      "codepoint": 61699
+    },
+    "answer-unchecked": {
+      "source": "./answer-unchecked.svg",
+      "codepoint": 61700
+    },
+    "arrow-down": {
+      "source": "./arrow-down.svg",
+      "codepoint": 61701
+    },
+    "arrow-down-2": {
+      "source": "./arrow-down-2.svg",
+      "codepoint": 61702
+    },
+    "arrow-left": {
+      "source": "./arrow-left.svg",
+      "codepoint": 61703
+    },
+    "arrow-left-2": {
+      "source": "./arrow-left-2.svg",
+      "codepoint": 61704
+    },
+    "arrow-right": {
+      "source": "./arrow-right.svg",
+      "codepoint": 61705
+    },
+    "arrow-right-2": {
+      "source": "./arrow-right-2.svg",
+      "codepoint": 61706
+    },
+    "arrow-up": {
+      "source": "./arrow-up.svg",
+      "codepoint": 61707
+    },
+    "arrow-up-2": {
+      "source": "./arrow-up-2.svg",
+      "codepoint": 61708
+    },
+    "bell": {
+      "source": "./bell.svg",
+      "codepoint": 61709
+    },
+    "billing": {
+      "source": "./billing.svg",
+      "codepoint": 61710
+    },
+    "blank-file": {
+      "source": "./blank-file.svg",
+      "codepoint": 61711
+    },
+    "book": {
+      "source": "./book.svg",
+      "codepoint": 61712
+    },
+    "bulb": {
+      "source": "./bulb.svg",
+      "codepoint": 61713
+    },
+    "bullhorn": {
+      "source": "./bullhorn.svg",
+      "codepoint": 61714
+    },
+    "business-hours": {
+      "source": "./business-hours.svg",
+      "codepoint": 61715
+    },
+    "canned-response": {
+      "source": "./canned-response.svg",
+      "codepoint": 61716
+    },
+    "caret-down": {
+      "source": "./caret-down.svg",
+      "codepoint": 61717
+    },
+    "caret-left": {
+      "source": "./caret-left.svg",
+      "codepoint": 61718
+    },
+    "caret-right": {
+      "source": "./caret-right.svg",
+      "codepoint": 61719
+    },
+    "caret-up": {
+      "source": "./caret-up.svg",
+      "codepoint": 61720
+    },
+    "chat-disable": {
+      "source": "./chat-disable.svg",
+      "codepoint": 61721
+    },
+    "chat-enable": {
+      "source": "./chat-enable.svg",
+      "codepoint": 61722
+    },
+    "checkmark": {
+      "source": "./checkmark.svg",
+      "codepoint": 61723
+    },
+    "checkmark-round": {
+      "source": "./checkmark-round.svg",
+      "codepoint": 61724
+    },
+    "checkmark-round-o": {
+      "source": "./checkmark-round-o.svg",
+      "codepoint": 61725
+    },
+    "comment-multi": {
+      "source": "./comment-multi.svg",
+      "codepoint": 61726
+    },
+    "comments": {
+      "source": "./comments.svg",
+      "codepoint": 61727
+    },
+    "conversation": {
+      "source": "./conversation.svg",
+      "codepoint": 61728
+    },
+    "cross": {
+      "source": "./cross.svg",
+      "codepoint": 61729
+    },
+    "crown": {
+      "source": "./crown.svg",
+      "codepoint": 61730
+    },
+    "customer-portal": {
+      "source": "./customer-portal.svg",
+      "codepoint": 61731
+    },
+    "day_pass": {
+      "source": "./day_pass.svg",
+      "codepoint": 61732
+    },
+    "dispatcher": {
+      "source": "./dispatcher.svg",
+      "codepoint": 61733
+    },
+    "dots": {
+      "source": "./dots.svg",
+      "codepoint": 61734
+    },
+    "dropbox": {
+      "source": "./dropbox.svg",
+      "codepoint": 61735
+    },
+    "earth": {
+      "source": "./earth.svg",
+      "codepoint": 61736
+    },
+    "edit": {
+      "source": "./edit.svg",
+      "codepoint": 61737
+    },
+    "ellipsis": {
+      "source": "./ellipsis.svg",
+      "codepoint": 61738
+    },
+    "email": {
+      "source": "./email.svg",
+      "codepoint": 61739
+    },
+    "email-notifications": {
+      "source": "./email-notifications.svg",
+      "codepoint": 61740
+    },
+    "email_commands_setting": {
+      "source": "./email_commands_setting.svg",
+      "codepoint": 61741
+    },
+    "eye": {
+      "source": "./eye.svg",
+      "codepoint": 61742
+    },
+    "facebook": {
+      "source": "./facebook.svg",
+      "codepoint": 61743
+    },
+    "facebook-lock": {
+      "source": "./facebook-lock.svg",
+      "codepoint": 61744
+    },
+    "facebook-setting": {
+      "source": "./facebook-setting.svg",
+      "codepoint": 61745
+    },
+    "feedback": {
+      "source": "./feedback.svg",
+      "codepoint": 61746
+    },
+    "ff-add-note": {
+      "source": "./ff-add-note.svg",
+      "codepoint": 61747
+    },
+    "ff-clock": {
+      "source": "./ff-clock.svg",
+      "codepoint": 61748
+    },
+    "ff-dialpad": {
+      "source": "./ff-dialpad.svg",
+      "codepoint": 61749
+    },
+    "ff-mic": {
+      "source": "./ff-mic.svg",
+      "codepoint": 61750
+    },
+    "ff-mute": {
+      "source": "./ff-mute.svg",
+      "codepoint": 61751
+    },
+    "ff-on-browser": {
+      "source": "./ff-on-browser.svg",
+      "codepoint": 61752
+    },
+    "ff-on-call": {
+      "source": "./ff-on-call.svg",
+      "codepoint": 61753
+    },
+    "ff-phone": {
+      "source": "./ff-phone.svg",
+      "codepoint": 61754
+    },
+    "file": {
+      "source": "./file.svg",
+      "codepoint": 61755
+    },
+    "file-edit": {
+      "source": "./file-edit.svg",
+      "codepoint": 61756
+    },
+    "file-visible": {
+      "source": "./file-visible.svg",
+      "codepoint": 61757
+    },
+    "folder-o": {
+      "source": "./folder-o.svg",
+      "codepoint": 61758
+    },
+    "folder-open-o": {
+      "source": "./folder-open-o.svg",
+      "codepoint": 61759
+    },
+    "freshchat": {
+      "source": "./freshchat.svg",
+      "codepoint": 61760
+    },
+    "freshdesk": {
+      "source": "./freshdesk.svg",
+      "codepoint": 61761
+    },
+    "freshfone": {
+      "source": "./freshfone.svg",
+      "codepoint": 61762
+    },
+    "gamification-settings": {
+      "source": "./gamification-settings.svg",
+      "codepoint": 61763
+    },
+    "gear": {
+      "source": "./gear.svg",
+      "codepoint": 61764
+    },
+    "googleplus": {
+      "source": "./googleplus.svg",
+      "codepoint": 61765
+    },
+    "group": {
+      "source": "./group.svg",
+      "codepoint": 61766
+    },
+    "grouping-disable": {
+      "source": "./grouping-disable.svg",
+      "codepoint": 61767
+    },
+    "grouping-enable": {
+      "source": "./grouping-enable.svg",
+      "codepoint": 61768
+    },
+    "help": {
+      "source": "./help.svg",
+      "codepoint": 61769
+    },
+    "import": {
+      "source": "./import.svg",
+      "codepoint": 61770
+    },
+    "infinity-5": {
+      "source": "./infinity-5.svg",
+      "codepoint": 61771
+    },
+    "integrations": {
+      "source": "./integrations.svg",
+      "codepoint": 61772
+    },
+    "like": {
+      "source": "./like.svg",
+      "codepoint": 61773
+    },
+    "link": {
+      "source": "./link.svg",
+      "codepoint": 61774
+    },
+    "linkedin": {
+      "source": "./linkedin.svg",
+      "codepoint": 61775
+    },
+    "lock": {
+      "source": "./lock.svg",
+      "codepoint": 61776
+    },
+    "lock-open": {
+      "source": "./lock-open.svg",
+      "codepoint": 61777
+    },
+    "mail": {
+      "source": "./mail.svg",
+      "codepoint": 61778
+    },
+    "map-marker": {
+      "source": "./map-marker.svg",
+      "codepoint": 61779
+    },
+    "message": {
+      "source": "./message.svg",
+      "codepoint": 61780
+    },
+    "minus": {
+      "source": "./minus.svg",
+      "codepoint": 61781
+    },
+    "mobihelp": {
+      "source": "./mobihelp.svg",
+      "codepoint": 61782
+    },
+    "multi-product": {
+      "source": "./multi-product.svg",
+      "codepoint": 61783
+    },
+    "notice": {
+      "source": "./notice.svg",
+      "codepoint": 61784
+    },
+    "notice-o": {
+      "source": "./notice-o.svg",
+      "codepoint": 61785
+    },
+    "observer": {
+      "source": "./observer.svg",
+      "codepoint": 61786
+    },
+    "open-in-new-window": {
+      "source": "./open-in-new-window.svg",
+      "codepoint": 61787
+    },
+    "paperplane": {
+      "source": "./paperplane.svg",
+      "codepoint": 61788
+    },
+    "phone": {
+      "source": "./phone.svg",
+      "codepoint": 61789
+    },
+    "phone-disable": {
+      "source": "./phone-disable.svg",
+      "codepoint": 61790
+    },
+    "phone-enable": {
+      "source": "./phone-enable.svg",
+      "codepoint": 61791
+    },
+    "plus": {
+      "source": "./plus.svg",
+      "codepoint": 61792
+    },
+    "post-edit": {
+      "source": "./post-edit.svg",
+      "codepoint": 61793
+    },
+    "rearrange": {
+      "source": "./rearrange.svg",
+      "codepoint": 61794
+    },
+    "rebranding": {
+      "source": "./rebranding.svg",
+      "codepoint": 61795
+    },
+    "refresh": {
+      "source": "./refresh.svg",
+      "codepoint": 61796
+    },
+    "reorder": {
+      "source": "./reorder.svg",
+      "codepoint": 61797
+    },
+    "reorder-2": {
+      "source": "./reorder-2.svg",
+      "codepoint": 61798
+    },
+    "reply": {
+      "source": "./reply.svg",
+      "codepoint": 61799
+    },
+    "retweet": {
+      "source": "./retweet.svg",
+      "codepoint": 61800
+    },
+    "role": {
+      "source": "./role.svg",
+      "codepoint": 61801
+    },
+    "scenario": {
+      "source": "./scenario.svg",
+      "codepoint": 61802
+    },
+    "search": {
+      "source": "./search.svg",
+      "codepoint": 61803
+    },
+    "security": {
+      "source": "./security.svg",
+      "codepoint": 61804
+    },
+    "sidebar-list": {
+      "source": "./sidebar-list.svg",
+      "codepoint": 61805
+    },
+    "sla": {
+      "source": "./sla.svg",
+      "codepoint": 61806
+    },
+    "star": {
+      "source": "./star.svg",
+      "codepoint": 61807
+    },
+    "star-o": {
+      "source": "./star-o.svg",
+      "codepoint": 61808
+    },
+    "supervisor": {
+      "source": "./supervisor.svg",
+      "codepoint": 61809
+    },
+    "survey-settings": {
+      "source": "./survey-settings.svg",
+      "codepoint": 61810
+    },
+    "tags": {
+      "source": "./tags.svg",
+      "codepoint": 61811
+    },
+    "ticket": {
+      "source": "./ticket.svg",
+      "codepoint": 61812
+    },
+    "ticket-fields": {
+      "source": "./ticket-fields.svg",
+      "codepoint": 61813
+    },
+    "ticket2": {
+      "source": "./ticket2.svg",
+      "codepoint": 61814
+    },
+    "trash": {
+      "source": "./trash.svg",
+      "codepoint": 61815
+    },
+    "trash-o": {
+      "source": "./trash-o.svg",
+      "codepoint": 61816
+    },
+    "twitter": {
+      "source": "./twitter.svg",
+      "codepoint": 61817
+    },
+    "twitter-lock": {
+      "source": "./twitter-lock.svg",
+      "codepoint": 61818
+    },
+    "unlock": {
+      "source": "./unlock.svg",
+      "codepoint": 61819
+    },
+    "user": {
+      "source": "./user.svg",
+      "codepoint": 61820
+    },
+    "view-retweets": {
+      "source": "./view-retweets.svg",
+      "codepoint": 61821
+    },
+    "warning": {
+      "source": "./warning.svg",
+      "codepoint": 61822
+    }
+  },
+  "options": {
+    "input": {
+      "vectors": ".",
+      "templates": "."
+    },
+    "output": {
+      "fonts": "fontcustom",
+      "css": "fontcustom",
+      "preview": "fontcustom"
+    },
+    "config": false,
+    "templates": [
+      "css",
+      "preview"
+    ],
+    "font_name": "fontcustom",
+    "css_selector": ".icon-{{glyph}}",
+    "preprocessor_path": null,
+    "autowidth": false,
+    "no_hash": false,
+    "debug": false,
+    "force": false,
+    "quiet": false,
+    "skip_first": false
+  },
+  "templates": [
+
+  ]
+}

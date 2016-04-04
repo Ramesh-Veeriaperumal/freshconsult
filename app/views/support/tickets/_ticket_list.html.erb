@@ -10,7 +10,8 @@
 					</span>
 					<div class="ticket-brief">
 					    <div class="ellipsis">
-					      	<%= link_to(h(ticket.subject) + " ##{ticket.display_id}", support_ticket_path(ticket), :title => ticket.chat? ? "" : truncate(ticket.description, { :length => 350 }), :class => "c-link") %> 
+                                              <% # TODO-RAILS3:: calling liquid truncate rather Actionview Helper %>
+					      	<%= link_to(ticket.subject + " ##{ticket.display_id}", support_ticket_path(ticket), :title => ticket.chat? ? "" : truncate(ticket.description, 350 ), :class => "c-link") %> 
 					    </div>
 					    <div class="help-text">
 							<% unless ticket.requester.nil? or current_user.eql?(ticket.requester) %>
@@ -37,6 +38,10 @@
 	<% end %>
 
 	<script type='text/javascript'>
+		jQuery("#ticket-export-button").remove();
+	  var exportLink = '<a href="<%= configure_export_support_tickets_path %>" data-target="#export-modal" id="ticket-export-button" rel="freshdialog" data-submit-label="<%= t("portal.tickets.submit_export") %>" title="<%= t("portal.tickets.export_ticket_data") %>"><%= t("portal.tickets.export_ticket_data") %></a>'
+	  jQuery(".ticket-toolbar").append(exportLink);
+
 		jQuery("#ticket-export-button").toggle(<%= @tickets.present? %>)
 	</script>
 </div>

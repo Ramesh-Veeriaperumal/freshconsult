@@ -13,7 +13,10 @@ module TicketsFilter
     [:my_overdue,       I18n.t('helpdesk.tickets.views.my_overdue'), [:visible, :responded_by, :overdue]  ],
     [:my_on_hold,       I18n.t('helpdesk.tickets.views.my_on_hold'), [:visible, :responded_by, :on_hold]  ],
     [:monitored_by,     I18n.t('helpdesk.tickets.views.monitored_by'), [:visible]  ],
+    [:raised_by_me,     I18n.t('helpdesk.tickets.views.raised_by_me'), [:visible] ],
     [:my_all,           I18n.t('helpdesk.tickets.views.my_all'), [:visible, :responded_by]  ],
+    [:article_feedback, I18n.t('helpdesk.tickets.views.article_feedback'), [:visible]  ],
+    [:my_article_feedback, I18n.t('helpdesk.tickets.views.my_article_feedback'), [:visible]  ],
     
     [ :my_groups_open,    I18n.t('helpdesk.tickets.views.my_groups_open'), [:visible, :my_groups, :open] ],
     [ :my_groups_new,     I18n.t('helpdesk.tickets.views.my_groups_new'), [:visible, :my_groups, :new] ],
@@ -31,6 +34,7 @@ module TicketsFilter
     [:on_hold,          I18n.t('helpdesk.tickets.views.on_hold'), [:visible]  ],
     [:all,              I18n.t('helpdesk.tickets.views.all_tickets'), [:visible]  ],
     
+    [:unresolved,       I18n.t('helpdesk.tickets.views.unresolved'), [:visible]  ],
     [:spam,             I18n.t('helpdesk.tickets.views.spam')  ],
     [:deleted,          I18n.t('helpdesk.tickets.views.trash')  ],
     [:tags  ,           I18n.t('helpdesk.tickets.views.tags') ],
@@ -88,7 +92,8 @@ module TicketsFilter
     sort_fields = SORT_FIELDS.clone
     if Account.current && Account.current.features_included?(:sort_by_customer_response)
       sort_fields << [ :requester_responded_at, "tickets_filter.sort_fields.requester_responded_at"]
-    end      
+      sort_fields << [ :agent_responded_at, "tickets_filter.sort_fields.agent_responded_at"]
+    end
     sort_fields.map { |i| [I18n.t(i[1]), i[0]] }
   end
 
@@ -106,10 +111,16 @@ module TicketsFilter
   SORT_ORDER_FIELDS_OPTIONS = SORT_ORDER_FIELDS.map { |i| [i[1], i[0]] }
   SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
-  DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open all_tickets monitored_by spam deleted )
+  DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by spam deleted )
+  DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by archived spam deleted )
 
   def self.default_views
-    DEFAULT_VISIBLE_FILTERS.map { |i| {
+    filters = if Account.current && Account.current.features?(:archive_tickets)
+      DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE
+    else
+      DEFAULT_VISIBLE_FILTERS
+    end
+    filters.map { |i| {
         :id       =>  i, 
         :name     =>  I18n.t("helpdesk.tickets.views.#{i}"), 
         :default  =>  true 
@@ -120,20 +131,34 @@ module TicketsFilter
     to_ret = (scope ||= default_scope)
     
     conditions = load_conditions(user,filter)
-
     if user && filter == :monitored_by
-      to_ret = user.subscribed_tickets.scoped(:conditions => {:spam => false, :deleted => false})
+      to_ret = user.subscribed_tickets.where({:spam => false, :deleted => false})
     else
-      to_ret = to_ret.scoped(:conditions => conditions[filter]) unless conditions[filter].nil?
+      to_ret = to_ret.where(conditions[filter]) unless conditions[filter].nil?
     end
     
     ADDITIONAL_FILTERS[filter].each do |af|
-      to_ret = to_ret.scoped(:conditions => conditions[af])
+      to_ret = to_ret.where(conditions[af])
     end unless ADDITIONAL_FILTERS[filter].nil?
     join = JOINS[filter]
-    to_ret = to_ret.scoped(:joins => join) if join
+    to_ret = to_ret.joins(join) if join
     to_ret
   end
+
+  ### ES Count query related hacks : START ###
+
+  ### Hack for dashboard/API summary count fetching from ES
+  def self.es_filter_count(selector, unresolved=false, agent_filter=false)
+    custom_filter       = Helpdesk::Filters::CustomTicketFilter.new
+    action_hash         = custom_filter.default_filter(selector.to_s) || []
+    negative_conditions = (unresolved ? [{ "condition" => "status", "operator" => "is_not", "value" => "#{RESOLVED},#{CLOSED}" }] : [])
+    
+    action_hash.push({ "condition" => "responder_id", "operator" => "is_in", "value" => "0" }) if agent_filter
+
+    Search::Filters::Docs.new(action_hash, negative_conditions).count(Helpdesk::Ticket)
+  end
+
+  ### ES Count query related hacks : END ###
 
   def self.default_scope
     eval "Helpdesk::Ticket"
@@ -163,7 +188,7 @@ module TicketsFilter
     # Protect us from SQL injection in the 'field' param
     return scope unless conditions
 
-    scope.scoped(:conditions => conditions)
+    scope.where(conditions)
   end
   
   protected

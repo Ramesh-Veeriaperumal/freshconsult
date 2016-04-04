@@ -8,7 +8,7 @@ module Inherits
           #can remove levels after removing nested levels from cf_customizer.js        
           custom_field      = self.new field_details
           custom_field.name = field_name field_details[:label]
-          populate_meta_data custom_field
+          populate_meta_data custom_field, field_details[self::CUSTOM_FORM_ID_COLUMN]
 
           if custom_field.errors.full_messages.empty? && custom_field.save # rails flushes errors before saving
             custom_field.insert_at(field_details[:position]) unless field_details[:position].blank?
@@ -20,8 +20,8 @@ module Inherits
         end
 
         private
-          def populate_meta_data custom_field
-            custom_field.custom_form = custom_field.send(self::CUSTOM_FORM_METHOD)
+          def populate_meta_data custom_field, custom_form_id
+            custom_field.custom_form = custom_field.send(self::CUSTOM_FORM_METHOD, custom_form_id)
 
             similar_form_fields = custom_field.custom_form.all_fields.all(:conditions => 
                                     { :field_type => custom_field.similar_field_types })
@@ -30,7 +30,7 @@ module Inherits
             total_columns =  custom_field.all_suitable_columns
             available_columns = total_columns - used_columns
 
-            (custom_field.errors.add_to_base("#{I18n.t("flash.cf.create.failure")} #{I18n.t("flash.cf.count_exceeded.generic")}") && 
+            (custom_field.errors[:base] << ("#{I18n.t("flash.cf.create.failure")} #{I18n.t("flash.cf.count_exceeded.generic")}") && 
               return) if available_columns.empty? #need to change the flash messages
             
             custom_field.column_name = available_columns.first
@@ -68,7 +68,7 @@ module Inherits
 
         private
           def update_error action
-            self.errors.add_to_base(
+            self.errors.add( :base,
                       "#{I18n.t("flash.cf.#{action}.failure")}") if self.errors.count.zero?
           end
 

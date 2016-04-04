@@ -310,11 +310,11 @@ function pjax(options) {
       timeout: options.timeout,
       data: pjax_data
     }
-    cacheBackData.push(pjax_data);
+    // cacheBackData.push(pjax_data);
     window.history.replaceState(pjax.state, document.title)
   }
     
-  cacheBackData.push($(target).data());        
+  // cacheBackData.push($(target).data());        
 
   // Cancel the current request if we're already pjaxing
   var xhr = pjax.xhr
@@ -359,7 +359,7 @@ function pjax(options) {
     fire('pjax:start', [xhr, options])
     fire('pjax:send', [xhr, options])
   }
-
+  delete options;
   return pjax.xhr
 }
 

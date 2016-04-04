@@ -10,10 +10,10 @@
 		<meta name="author" content="">
 		<meta name="keywords" content="<%= page_keywords %>">
 		
-	    <link rel="apple-touch-icon" href="/images/touch/touch-icon-iphone.png" />
-		<link rel="apple-touch-icon" sizes="72x72" href="/images/touch/touch-icon-ipad.png" />
-		<link rel="apple-touch-icon" sizes="114x114" href="/images/touch/touch-icon-iphone-retina.png" />
-		<link rel="apple-touch-icon" sizes="144x144" href="/images/touch/touch-icon-ipad-retina.png" />
+	    <link rel="apple-touch-icon" href="/assets/touch/touch-icon-iphone.png" />
+		<link rel="apple-touch-icon" sizes="72x72" href="/assets/touch/touch-icon-ipad.png" />
+		<link rel="apple-touch-icon" sizes="114x114" href="/assets/touch/touch-icon-iphone-retina.png" />
+		<link rel="apple-touch-icon" sizes="144x144" href="/assets/touch/touch-icon-ipad-retina.png" />
 
 		<meta name="viewport" content="width=device-width,user-scalable=no" />
 		<meta name="viewport" content="initial-scale = 1.0">
@@ -28,14 +28,14 @@
 		<%= portal_fav_ico %>
 
 		<!-- Base stylesheet -->
-		<%= include_cloudfront_rtl_css :portal_utils %>
-		<%= include_cloudfront_rtl_css :facebook %>
-
+ 
+		<%= stylesheet_link_tag_with_rtl :'cdn/portal_utils' %>
+		<%= stylesheet_link_tag_with_rtl :'cdn/facebook' %>
 		<!-- Google font url if present -->
 		<%= portal_fonts %>
 
 		<!-- Including default portal based script framework at the top -->
-		<%= include_cloudfront_js :portal_head %>
+		<%= javascript_include_tag :'cdn/portal_head' %>
     
     <link href="<%= facebook_theme_url %>" media="screen" rel="stylesheet" type="text/css">
 
@@ -105,13 +105,13 @@
 		<% unless current_user %>
 		<div id="auth_fb_btn"></div>
 		<% end %>
-		<%= @page_yield %>
+		<%= @page_yield.html_safe %>
 				
 		<%= render :partial => "layouts/shared/scripts" %> 
 
 		<!-- Including default portal based script at the bottom -->
-		<%= include_cloudfront_js :portal_bottom %>
-		<%= include_cloudfront_js :redactor %>
+		<%= javascript_include_tag :'cdn/portal_bottom' %>
+		<%= javascript_include_tag :'cdn/redactor' %>
 
 		<%= cookie_law %>
 	</body>

@@ -1,12 +1,14 @@
 class Integrations::IntegratedResource < ActiveRecord::Base
+  self.primary_key = :id
   belongs_to :installed_application, :class_name => 'Integrations::InstalledApplication'
   belongs_to :local_integratable, :polymorphic => true
   belongs_to_account
-
+  scope :first_integrated_resource, ->(remote_integratable_id) { where("remote_integratable_id = ?", remote_integratable_id).order(:created_at).limit(1) }
   before_create :set_integratable_type
 
   def self.createResource(params)
     irParams = params[:integrated_resource]
+    irParams.delete(:error)
     unless irParams.blank?
       irParams[:installed_application] = irParams[:account].installed_applications.find_by_application_id(params['application_id'])
       ir = self.new(irParams)
@@ -56,7 +58,7 @@ class Integrations::IntegratedResource < ActiveRecord::Base
 
   private
     def set_integratable_type
-      self.local_integratable_type = @@integratable_type_map[self.local_integratable_type]
+      self.local_integratable_type = @@integratable_type_map[self.local_integratable_type] if (@@integratable_type_map[self.local_integratable_type])
     end
 
     @@integratable_type_map = {

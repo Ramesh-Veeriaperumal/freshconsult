@@ -2,14 +2,13 @@ class Social::Twitter::Feed
 
   include Gnip::Constants
   include Social::Constants
-  include Social::Dynamo::Twitter
   include Social::Twitter::Constants
   include Social::Twitter::Util
   include Social::Twitter::ErrorHandler
   include Social::Twitter::TicketActions
 
   attr_accessor :feed_id, :posted_time, :user, :body, :is_replied, :ticket_id, :user_in_db, :dynamo_posted_time,
-    :in_reply_to, :stream_id, :in_conv, :agent_name,:source, :parent_feed_id, :user_mentions
+    :in_reply_to, :stream_id, :in_conv, :agent_name,:source, :parent_feed_id, :user_mentions, :dynamo_helper
 
 
   def initialize(feed_obj)
@@ -35,6 +34,7 @@ class Social::Twitter::Feed
     @user_in_db  = false
     @in_conv     = 0
     @agent_name  = false
+    @dynamo_helper = Social::Dynamo::Twitter.new
   end
 
   def convert_to_fd_item(stream, action_data)
@@ -50,12 +50,17 @@ class Social::Twitter::Feed
     action_data.merge!(:stream_id => stream.id) if stream
     tweet = account.tweets.find_by_tweet_id(self.in_reply_to)
     unless tweet.blank?
-      ticket = tweet.get_ticket
-      user = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
-      notable  = add_as_note(feed_obj, handle, :mention, ticket, user, action_data)
+      ticket  = tweet.get_ticket
+      user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
+      if ticket
+        notable  = add_as_note(feed_obj, handle, :mention, ticket, user, action_data)
+      else 
+        archive_ticket  = tweet.get_archive_ticket
+        notable = add_as_ticket(feed_obj, handle, :mention, action_data, archive_ticket) 
+      end
     else
       if action_data[:convert]
-        user = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
+        user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
         notable = add_as_ticket(feed_obj, handle, :mention, action_data) 
       end
     end
@@ -82,7 +87,7 @@ class Social::Twitter::Feed
       :user => self.user,
       :user_mentions => screen_names_hash 
     }
-    update_live_feed(posted_time, args, dynamo_params, self )
+    dynamo_helper.update_live_feed(posted_time, args, dynamo_params, self )
   end
 
   def self.fetch_tweets(handle, search_params, max_id, since_id, options)
@@ -124,6 +129,14 @@ class Social::Twitter::Feed
       twitter = TwitterWrapper.new(handle).get_twitter
       action_response = twitter.send(action, "#{param}")
     end
+  end   
+  
+  def self.following?(handle, req_twt_id)
+    return if req_twt_id.blank?
+    twt_sandbox(handle) do
+      twitter = TwitterWrapper.new(handle).get_twitter
+      user_follows = twitter.friendship?(req_twt_id, handle.screen_name)
+    end
   end  
 
   private
@@ -137,7 +150,7 @@ class Social::Twitter::Feed
     twt_query = Social::Twitter::Query.new(search_params[:q], search_params[:exclude_keywords], search_params[:exclude_handles])
     query     = twt_query.query_string
 
-    twt_sandbox(handle) do
+    twt_sandbox(handle, TWITTER_TIMEOUT[:search]) do
       wrapper = TwitterWrapper.new handle
       twitter = wrapper.get_twitter
       if max_id

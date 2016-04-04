@@ -1,9 +1,8 @@
 require 'spec_helper'
 
-describe TopicsController do
+RSpec.describe TopicsController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   before(:all) do
     @category = create_test_category
@@ -25,7 +24,7 @@ describe TopicsController do
     params.merge!(:category_id => @category.id,:forum_id=>@forum.id)
     post :create, params.merge!(:format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    expected = (response.status === "200 OK") && (compare(result["topic"].keys,APIHelper::TOPIC_ATTRIBS-["account_id","import_id"],{}).empty?)
+    expected = (response.status === 200) && (compare(result["topic"].keys,APIHelper::TOPIC_ATTRIBS-["account_id","import_id"],{}).empty?)
     expected.should be(true)
   end
   it "should be able to update a forum topic" do
@@ -33,21 +32,21 @@ describe TopicsController do
     params = topic_api_params
     params.merge!(:id=>@topic.id,:category_id => @category.id,:forum_id=>@forum.id)
     put :update, params.merge!(:format => 'xml'), :content_type => 'application/xml'
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
   it "should be able to view a forum topic" do
     @topic = create_test_topic(@forum)
     params = {:id=>@topic.id,:category_id => @category.id,:forum_id=>@forum.id}
     get :show, params.merge!(:format => 'xml')
     result = parse_xml(response)
-    expected = (response.status === "200 OK") && (compare(result["topic"].keys-["posts"],APIHelper::TOPIC_ATTRIBS-["account_id","import_id"],{}).empty?)
+    expected = (response.status === 200) && (compare(result["topic"].keys-["posts"],APIHelper::TOPIC_ATTRIBS-["account_id","import_id"],{}).empty?)
     expected.should be(true)
   end
   it "should be able to delete a forum topic" do
     @topic = create_test_topic(@forum)
     params = {:id=>@topic.id,:category_id => @category.id,:forum_id=>@forum.id}
     delete :destroy, params.merge!(:format => 'xml')
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
 
 

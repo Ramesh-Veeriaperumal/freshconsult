@@ -1,9 +1,10 @@
 require 'spec_helper'
-include GnipHelper
-include DynamoHelper
+RSpec.configure do |c|
+  c.include GnipHelper
+  c.include DynamoHelper
+end
 
-describe Helpdesk::TicketsController do
-  integrate_views
+RSpec.describe Helpdesk::TicketsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -33,7 +34,7 @@ describe Helpdesk::TicketsController do
     feed = sample_gnip_feed(@rule)
     tweet = send_tweet_and_wait(feed)
     tweet.should_not be_nil
-    tweet.is_ticket?.should be_true
+    tweet.is_ticket?.should be true
     tweet.stream_id.should_not be_nil
     tweet_body = feed["body"]
     ticket = tweet.get_ticket

@@ -1,4 +1,4 @@
-<% form_tag({:action => :export_csv, :a=>params[:a], :i=>params[:i] }, { :method => :post, :id => 'exportFilter', :class => "form-horizontal" }) do %>
+<%= form_tag({:action => :export_csv, :a=>params[:a], :i=>params[:i] }, { :method => :post, :id => 'exportFilter', :class => "form-horizontal" }) do %>
   <input type="hidden" name="data_hash" value="" />
 	<ul class="configure_export">
 		<li class="control-group">
@@ -28,34 +28,35 @@
 		<hr/>
 		<li class="control-group">
 			<label class="control-label">
-				<%= check_box_tag :toggle_checks, '', false,	:class => 'tooltip', 
-																											:"data-placement" => 'below', 
-																											:title => 'Check/Uncheck all' %>
+				<%= check_box_tag :toggle_checks, '', false, :class => 'tooltip', :"data-placement" => 'below',
+								  :title => t('export_data.check_uncheck_title') %>
 				<strong><%= t('export_data.select_header') %></strong>
 			</label><br/><br/><br/>
 				<div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
 				<div class="threecol-form" id="ticket_fields">
-		 			<% csv_headers.each do |head| %>
+		 			<% @csv_headers.each do |head| %>
 		 			  	<div class="item <%= head[:type] %>">
 			  				<label class="checkbox prime"> 
-			    				<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], head[:selected] %> 
+							<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], export_fields_redis.include?(head[:value]) || (!export_fields_redis.any? && head[:selected]) %>
 								<%= head[:label].html_safe %>														
 			  				</label>
-			  				<div class="tree_line">
-				  				<% head[:levels].each do |level| %>
-					  				<label class="checkbox level"> 
-					    				<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], false  %> 
-										<%= level[:label].html_safe %>
-					  				</label>
-					  			<% end %>
-				  		   </div>
+			  				<%if head[:levels]%>
+				  				<div class="tree_line">
+					  				<% head[:levels].each do |level| %>
+						  				<label class="checkbox level"> 
+										<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], export_fields_redis.include?(level[:name])  %>
+											<%= level[:label].html_safe %>
+						  				</label>
+						  			<% end %>
+					  		   </div>
+					  		<%end%>
 		  			    </div>	
 		 			<% end %>
 				</div>
 		<li>
 	</ul>	
 <%end%>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 // For Select all/none functionality 
 	jQuery('#toggle_checks').on('change', function () {
 		jQuery('[id^=export_fields]').prop('checked', jQuery(this).is(":checked"));
@@ -72,6 +73,7 @@
 
 	if (jQuery('#ticket_fields :checked').length == 0) {
 		jQuery('#err_no_fields_selected').removeClass('hide');
+		jQuery('#export_tickets').data().freshdialog['$submitBtn'].button('reset');
 		return false;
 	} else {
 		jQuery('#err_no_fields_selected').addClass('hide');
@@ -109,7 +111,7 @@
 			maxDate: "today",
 			showOn: "both", 
 			dateFormat: getDateFormat('datepicker'),
-			disabled: true,
+			disabled: false,
 			onSelect: function( selectedDate ) {
 				var option = this.id == "start_date" ? "minDate" : "maxDate",
 					instance = jQuery( this ).data( "datepicker" ),
@@ -121,13 +123,10 @@
 				jQuery(this).prop("date", date);
 			}
 		});
-		
-		jQuery("#start_date").val("<%= formated_date(1.month.ago,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
-		jQuery("#end_date").val("<%= formated_date(Time.now,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
-		
+		setExportCreatedRange();
 	});
 	jQuery("#start_date, #end_date").bind('keypress keyup keydown', function(ev) {
-   	ev.preventDefault();
+	ev.preventDefault();
    	return false;
   });
 <% end %>

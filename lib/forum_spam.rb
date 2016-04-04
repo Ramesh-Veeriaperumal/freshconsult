@@ -11,21 +11,21 @@ class ForumSpam < Dynamo
 	after_destroy :decr_counter, :destroy_next
 
 	def self.table_name
-		"forum_spam_#{RAILS_ENV[0..3]}_#{Time.now.utc.strftime('%Y_%m')}"
+		"forum_spam_#{Rails.env[0..3]}_#{Time.now.utc.strftime('%Y_%m')}"
 	end
 
 	def next_table
 		ForumSpamNext
 	end
 
-	def self.delete_account_spam(acc)
-		results = ForumSpam.query(:account_id => acc)
+	def self.delete_account_spam
+		results = self.last_month
 		while(results.present?)
 			last_time = results.last.timestamp
 			results.each do |result|
 				result.destroy
 			end
-			results = ForumSpam.query(:account_id => acc, :timestamp => [:lt, last_time])
+			results = self.next(last_time)
 		end
 	end
 

@@ -1,5 +1,6 @@
 class CompanyFieldChoice < ActiveRecord::Base
 
+  self.primary_key = :id
   belongs_to_account
   
   stores_custom_field_choice  :custom_field_class => 'CompanyField', 

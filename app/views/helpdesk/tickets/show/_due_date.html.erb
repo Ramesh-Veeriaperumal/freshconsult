@@ -2,7 +2,7 @@
 	<div class="transparent-overlay" id="due-date-overlay"></div>	
 	<div class="due-date-dialog" id="due-date-dialog" style="display:none;"> 
 		<span class="right_pointer"></span>
-		<% form_for @ticket, :url => { :action => "change_due_by" }, :html => { :id => "DueDateForm", :method => "put" } do |f| %>
+		<%= form_for @ticket, :url => { :action => "change_due_by" }, :html => { :id => "DueDateForm", :method => "put" } do |f| %>
 			<%= content_tag :label, t(".when_is_it_due") %>
 			<select name="due_date_options" id="due-date-options">
 				<option value="today"><%= t(".today") %></option>
@@ -33,8 +33,8 @@
 		  </div>
 		  <%= hidden_field_tag "due_by_date_time" %>
 		  <div class="calender-buttons" id="calender-buttons">
-			<%= link_to_function( t('cancel'), "showHideDueByDialog(false)", :class => "uiButton small" ) %>
-			<%= f.submit t('save'), :class => "uiButton small" %>
+			<%= link_to_function( t('cancel'), "showHideDueByDialog(false)", :class => "uiButton small") %>
+			<%= f.submit t('save'), :class => "uiButton small", "data-domhelper-name" => "ticket-properties-update" %>
 			<span class="loading-item"></span>
 		  </div>
 		  <div id="calender-info" class="info-highlight" style="display:none;">

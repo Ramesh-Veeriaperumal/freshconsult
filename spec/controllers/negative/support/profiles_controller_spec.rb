@@ -1,16 +1,15 @@
 require 'spec_helper'
 
 describe Support::ProfilesController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   it "should not allow to edit an existing contact email" do
     email = Faker::Internet.email
-    contact = Factory.build(:user, :account => @acc, :email => email,
+    contact = FactoryGirl.build(:user, :account => @acc, :email => email,
                               :user_role => 3)
     contact.save
-    company = Factory.build(:company)
+    company = FactoryGirl.build(:company)
     company.save
     log_in(contact)
     updated_email = Faker::Internet.email
@@ -26,8 +25,8 @@ describe Support::ProfilesController do
 
     @account.users.find_by_email(updated_email).should be_nil
     user = @account.users.find_by_email(email)
-    user.is_client_manager?.should be_false
-    user.helpdesk_agent.should be_false
+    user.is_client_manager?.should be_falsey
+    user.helpdesk_agent.should be_falsey
     user.user_role.should be_eql(3)
   end
 end

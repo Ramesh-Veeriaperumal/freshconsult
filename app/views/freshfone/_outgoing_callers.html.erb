@@ -1,0 +1,30 @@
+<div class="calling-outgoing-number caller hide">
+  <%= render :partial => "/freshfone/calling_outgoing_number" %>
+</div>
+
+<div class="verify-caller-id caller hide">
+  <%= render :partial => "/freshfone/verify_caller_id" %>
+</div>
+
+<div class="verifying-number caller hide">
+  <%= render :partial => "/freshfone/verifying_number" %>
+</div>
+
+<div class="validation-success caller hide">
+  <%= render :partial => "/freshfone/validation_success" %>
+</div>
+
+<script id="caller-list-item" type="text/x-jquery-tmpl">
+    <li class ="caller-number" id ="caller-list-item${id}" >
+        <div class = "caller-list clearfix" id="caller-number${id}">
+          <a  href = "#" class="ficon-delete active caller-delete-icon pull-left" data-id = ${id} ></a> 
+          <div class="pull-left pl10 caller-id-number">${number}</div> 
+          <div id ="caller-delete${id}" class="caller-delete pull-right ">
+            <span>${delete_text}</span> 
+            <a  href = "#" class="ficon-cross-round active cancel-icon-wrap text-center" data-id = ${id}></a>
+            <a  href = "#" class="ficon-checkmark-round active tick-icon-wrap text-center" data-number-sid = ${number_sid} data-id = ${id} >
+            </a>
+          </div>
+        </div>
+    </li>
+</script>

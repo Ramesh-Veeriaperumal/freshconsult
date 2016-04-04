@@ -1,8 +1,10 @@
 require 'spec_helper'
 
-include FacebookHelper
+RSpec.configure do |c|
+  c.include FacebookHelper
+end
 
-describe Facebook::Core::Message do
+RSpec.describe Facebook::Graph::Message do
   
   before(:all) do
     @fb_page = create_test_facebook_page(@account)
@@ -17,12 +19,12 @@ describe Facebook::Core::Message do
     sample_dm = sample_dm_threads(thread_id, actor_id, msg_id)
     Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_dm)
     
-    fb_message = Facebook::Core::Message.new(@fb_page)
+    fb_message = Facebook::Graph::Message.new(@fb_page)
     fb_message.fetch_messages
     
     post = @account.facebook_posts.find_by_post_id(msg_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be_truthy
   end
   
   it "should convert a dm to a ticket and subsequent replies within the threded time to a note when dm to ticket is enabled" do
@@ -34,23 +36,23 @@ describe Facebook::Core::Message do
     sample_dm = sample_dm_threads(thread_id, actor_id, msg_id)
     Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_dm)
     
-    fb_message = Facebook::Core::Message.new(@fb_page)
+    fb_message = Facebook::Graph::Message.new(@fb_page)
     fb_message.fetch_messages
     
     post = @account.facebook_posts.find_by_post_id(msg_id)
     post.should_not be_nil
-    post.is_ticket?.should be_true
+    post.is_ticket?.should be_truthy
     
     actor_id = thread_id + 10
     msg_id = thread_id + 20
     sample_dm = sample_dm_threads(thread_id, actor_id, msg_id)
     Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_dm)
     
-    fb_message = Facebook::Core::Message.new(@fb_page)
+    fb_message = Facebook::Graph::Message.new(@fb_page)
     fb_message.fetch_messages
     
     post = @account.facebook_posts.find_by_post_id(msg_id)
     post.should_not be_nil
-    post.is_note?.should be_true
+    post.is_note?.should be_truthy
   end
 end

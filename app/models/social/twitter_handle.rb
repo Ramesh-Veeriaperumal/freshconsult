@@ -1,16 +1,24 @@
 class Social::TwitterHandle < ActiveRecord::Base
 
-  set_table_name "social_twitter_handles"
+  self.table_name =  "social_twitter_handles"
+  self.primary_key = :id
 
   concerned_with :associations, :constants, :validations, :callbacks
 
   serialize  :search_keys, Array
 
-  named_scope :active, :conditions => { :state => TWITTER_STATE_KEYS_BY_TOKEN[:active] }
-  named_scope :disabled, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:disabled] }
-  named_scope :reauth_required, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]}
-  named_scope :capture_mentions, :conditions => {:capture_mention_as_ticket => true}
-
+  scope :active, :conditions => { :state => TWITTER_STATE_KEYS_BY_TOKEN[:active] }
+  scope :disabled, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:disabled] }
+  scope :reauth_required, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]}
+  scope :capture_mentions, :conditions => {:capture_mention_as_ticket => true}
+  
+  scope :paid_acc_handles, 
+              :conditions => ["subscriptions.state IN ('active', 'free')"],
+              :joins      =>  "INNER JOIN `subscriptions` ON subscriptions.account_id = social_twitter_handles.account_id"
+              
+  scope :trail_acc_handles, 
+              :conditions => ["subscriptions.state = 'trial'"],
+              :joins      => "INNER JOIN `subscriptions` ON subscriptions.account_id = social_twitter_handles.account_id"
 
   def search_keys_to_s
     search_keys.blank? ? "" : search_keys.join(",")
@@ -35,7 +43,7 @@ class Social::TwitterHandle < ActiveRecord::Base
 
   def update_ticket_rules(dm_group_id=nil, includes=[], mention_group_id = nil)
     streams = self.twitter_streams
-    changes = previous_changes.symbolize_keys!
+    changes = previous_changes
 
     unless streams.empty?
       default_stream = self.default_stream
@@ -64,25 +72,17 @@ class Social::TwitterHandle < ActiveRecord::Base
   end
 
   def default_stream
-    streams = self.twitter_streams
-    streams.each do |stream|
-      return stream if stream.data[:kind] == STREAM_TYPE[:default]
-    end
-    return nil
+    self.twitter_streams.detect{|stream| stream.data[:kind] == TWITTER_STREAM_TYPE[:default]}
   end
 
   def dm_stream
-    streams = self.twitter_streams
-    streams.each do |stream|
-      return stream if stream.data[:kind] == STREAM_TYPE[:dm]
-    end
-    return nil
+    self.twitter_streams.detect{|stream| stream.data[:kind] == TWITTER_STREAM_TYPE[:dm]}
   end
 
   def find_custom_stream(keyword)
     streams = self.twitter_streams
     streams.each do |stream|
-      return stream if (stream.data[:kind] == STREAM_TYPE[:custom] && stream.includes.include?(keyword))
+      return stream if (stream.data[:kind] == TWITTER_STREAM_TYPE[:custom] && stream.includes.include?(keyword))
     end
     return nil
   end

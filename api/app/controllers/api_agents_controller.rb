@@ -1,0 +1,44 @@
+class ApiAgentsController < ApiApplicationController
+  def me
+    render "#{controller_path}/show"
+  end
+
+  private
+
+    def load_object
+      params[:id] = api_current_user.id if me?
+      @item = scoper.find_by_user_id(params[:id])
+      log_and_render_404 unless @item
+    end
+
+    def validate_filter_params
+      params.permit(*AgentConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
+      @agent_filter = AgentFilterValidation.new(params)
+      render_errors(@agent_filter.errors, @agent_filter.error_options) unless @agent_filter.valid?
+    end
+
+    def load_objects
+      # Preloading user as 'includes' introduces an additional outer join to users table while inner join with user already exists
+      super agents_filter(scoper).preload(:user).order(:name)
+    end
+
+    def agents_filter(agents)
+      @agent_filter.conditions.each do |key|
+        clause = agents.api_filter(@agent_filter)[key.to_sym] || {}
+        agents = agents.where(clause[:conditions])
+      end
+      agents
+    end
+
+    def scoper
+      current_account.all_agents
+    end
+
+    def me?
+      @me ||= current_action?('me')
+    end
+
+    def allowed_to_access?
+      me? ? true : super
+    end
+end

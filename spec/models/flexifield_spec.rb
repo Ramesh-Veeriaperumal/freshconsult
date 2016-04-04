@@ -33,7 +33,8 @@ end
 describe FlexifieldDef do
 
   before(:all) do
-    @account.ticket_fields_with_nested_fields.custom_fields.each &:destroy
+    @account.reload
+    @account.ticket_fields_with_nested_fields.custom_fields.each {|custom_field| custom_field.destroy }
     create_ticket_custom_fields
   end
 
@@ -47,7 +48,7 @@ describe FlexifieldDef do
 
 end
 
-describe FlexifieldDefEntry do
+RSpec.describe FlexifieldDefEntry do
 
   before(:each) do
     create_essential_variables

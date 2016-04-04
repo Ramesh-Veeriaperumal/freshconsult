@@ -70,15 +70,6 @@ SurveyMonkey.prototype = {
 			})
 		]
 
-		jQuery("body").on('click.surveymonkey', 'select.group_list', function () {
-			if (jQuery(this).val() != "") {
-				jQuery("select.group_list").not(this).find("option[value=" + jQuery(this).val() + "]").attr('disabled', 'disabled').addClass("disabled");
-				jQuery("select.group_list").not(this).find("option[value=" + previous + "]").removeAttr('disabled').removeClass("disabled");
-			} else {
-				jQuery(".group_list").not(this).find("option[value=" + previous + "]").removeAttr('disabled').removeClass("disabled");
-			}
-		}).focus(function () { previous = jQuery(this).val(); });
-
 		jQuery('body').on('change.surveymonkey', '.survey_list', function() {
 			// change the hidden group_id based on the values selected group
 			var selected_survey_id = jQuery(this).val();
@@ -105,7 +96,7 @@ SurveyMonkey.prototype = {
 				ihtml = "<option value=\"\">- Select -</option>";
 				collectors.each(function(collector) {
 					ihtml = ihtml + "<option value=\"" + collector.id + "\" " +
-									"data-collector-url=\"" + collector.url + "\">" + collector.name + "</option>";
+									"data-collector-url=\"" + collector.url + "\">" + escapeHtml(collector.name) + "</option>";
 				});
 				jQuery(collector_list_wrapper).removeClass("sloading loading-small");
 				jQuery(collector_container).removeClass("sloading loading-small loading-left");
@@ -121,6 +112,8 @@ SurveyMonkey.prototype = {
 			if(jQuery(".m-survey-row").length == 1) {
 				alert("Atleast one group should be associated with a survey. In case if not needed then please disable the integration.");
 			} else {
+				curr_value = jQuery(this).parents(".m-survey-row").find("select.group_list").val();
+				jQuery(".group_list").find("option[value="+curr_value+"]").removeAttr('disabled').removeClass("disabled");
 				jQuery(this).parents(".m-survey-row").remove();
 			}
 			sm.show_or_hide_add_group_button();
@@ -142,7 +135,10 @@ SurveyMonkey.prototype = {
 		});
 
 		jQuery('body').on('change.surveymonkey', '.group_list', function() {
+			sm.validate_group();
 			var group_id = jQuery(this).val();
+			var previous_group_val = jQuery(this).parents(".m-survey-row").find(".group_id").val();
+			jQuery(".group_list").find("option[value="+previous_group_val+"]").removeAttr('disabled').removeClass("disabled");
 			jQuery(this).parents(".m-survey-row").find(".group_id").val(group_id);
 			jQuery(this).parents(".m-survey-row").find(".survey_id").attr('name', 'configs[groups]['+group_id+'][survey_id]').val("");
 			jQuery(this).parents(".m-survey-row").find(".collector_id").attr('name', 'configs[groups]['+group_id+'][collector_id]').val("");
@@ -204,7 +200,7 @@ SurveyMonkey.prototype = {
 				var configured_survey_id = jQuery(this).val();
 				sm.surveys.each(function(s) {
 					selected_attrib = ((s.id == configured_survey_id || has_only_one_survey) ? 'selected="selected" ' : '');
-					ihtml += ("<option value=\"" + s.id + "\" " + selected_attrib + ">" + s.name + "</option>");
+					ihtml += ("<option value=\"" + s.id + "\" " + selected_attrib + ">" + escapeHtml(s.name) + "</option>");
 				});
 				jQuery(this).parent().find(".survey-list-wrapper").removeClass("sloading loading-small loading-left");
 				jQuery(this).parent().find("select.survey_list").html(ihtml);
@@ -229,7 +225,7 @@ SurveyMonkey.prototype = {
 				collectors.each(function(collector) {
 					var selected_attrib = (configured_collector_id == collector.id ? 'selected="selected" ' : '');
 					ihtml = ihtml + "<option value=\"" + collector.id + "\" " + selected_attrib +
-									"data-collector-url=\"" + collector.url + "\">" + collector.name + "</option>";
+									"data-collector-url=\"" + collector.url + "\">" + escapeHtml(collector.name) + "</option>";
 				});
 				jQuery(collector_container).find("select.collector_list").html(ihtml);
 				jQuery(collector_list_wrapper).removeClass("sloading loading-small loading-left");
@@ -272,7 +268,7 @@ SurveyMonkey.prototype = {
 			on_success: function(res){
 				var webLinks = [];
 				res.responseJSON.data.collectors.each(function(collector){
-					if (collector.type=='url') webLinks.push({name: collector.name, url: collector.url, id: collector.collector_id});
+					if (collector.type=='url') webLinks.push({name: escapeHtml(collector.name), url: collector.url, id: collector.collector_id});
 				});
 				if (webLinks.length) {
 					callback(webLinks);
@@ -337,11 +333,10 @@ SurveyMonkey.prototype = {
 		jQuery("select.group_list").map( function() {
 			if (jQuery(this).val() != "") {
 				jQuery("select.group_list").not(this).find("option[value=" + jQuery(this).val() + "]").attr('disabled', 'disabled').addClass("disabled");
-				jQuery("select.group_list").not(this).find("option[value=" + previous + "]").removeAttr('disabled').removeClass("disabled");
 			} else {
-				jQuery(".group_list").not(this).find("option[value=" + previous + "]").removeAttr('disabled').removeClass("disabled");
+				jQuery(this).val(null);
 			}
-		}).focus(function () { previous = jQuery(this).val(); });
+		});
 	},
 
 	validate_the_form: function() {

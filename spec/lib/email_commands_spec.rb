@@ -1,294 +1,361 @@
 require 'spec_helper'
-include EmailHelper
-include MailgunHelper
 require "#{Rails.root}/lib/import/custom_field.rb"
-include Import::CustomField
 
-describe EmailCommands do
+RSpec.configure do |c|
+  c.include EmailHelper
+  c.include MailgunHelper
+  c.include Import::CustomField
+end
+
+RSpec.describe EmailCommands do
 	before(:all) do
-		add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => true})
+		@agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => true})
+		@user  = create_dummy_customer
 		clear_email_config
 		@comp = create_company
 		restore_default_feature("reply_to_based_tickets")
 		f = { :field_type=>"custom_text", :label=>"abcd", :label_in_portal=>"abcd", :description=>"", :position=>4, :active=>true, :required=>false, :required_for_closure=>false, :visible_in_portal=>true, :editable_in_portal=>true, :required_in_portal=>false, :field_options=>nil, :type=>"text" }
+		@invalid_fields ||= []
 		create_field(f, @account)
 		@account.reload
+
+		#create an email ticket
+		@ticket = @account.tickets.last
+		if @ticket.nil?
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @user.email})
+			Helpdesk::ProcessEmail.new(email).perform
+			@ticket = @account.tickets.last
+		end
 	end
 
 	after(:each) do
 		@account.reload
 		@account.make_current
-		@ticket_size = @account.tickets.size
-		@note_size = @account.notes.size
 	end
 
 	before(:each) do
 		@account.reload		
 		@account.make_current
-		@ticket_size = @account.tickets.size
-		@note_size = @account.notes.size
+		@ticket.reload
 	end
 
-	describe "Email commands" do
+	describe "Email commands(sendgrid)" do
 
-		it "change priority with sendgrid" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
+		it "change priority" do
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:subject] = "[##{@ticket.display_id}] #{email[:subject]}"
+			email[:from] = @agent.user.email
 			email[:text] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email[:text]
 			email[:html] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email[:html]
 			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.priority.should eql 2
+			@ticket.reload
+			@ticket.priority.should eql 2
 		end
 
-		it "change priority with mailgun" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email["body-plain"] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email["body-plain"]
-			email["body-html"] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email["body-html"]
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.priority.should eql 2
-		end
-
-		it "change status with sendgrid" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email[:text] = %(\n#{@account.email_cmds_delimeter} "status":"closed" #{@account.email_cmds_delimeter} \n)+email[:text]
-			email[:html] = %(\n#{@account.email_cmds_delimeter} "status":"closed" #{@account.email_cmds_delimeter} \n)+email[:html]
+		it "change status" do
+			@ticket.update_column(:status, 2)
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
+			email[:text] = %(\n#{@account.email_cmds_delimeter} "status":"Closed" #{@account.email_cmds_delimeter} \n)+email[:text]
+			email[:html] = %(\n#{@account.email_cmds_delimeter} "status":"Closed" #{@account.email_cmds_delimeter} \n)+email[:html]
+			email[:subject] = "[##{@ticket.display_id}] #{email[:subject]}"
 			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.status.should eql 5
+			@ticket.reload
+			@ticket.status.should eql 5
 		end
 
-		it "change status with mailgun" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email["body-plain"] = %(\n#{@account.email_cmds_delimeter} "status":"closed" #{@account.email_cmds_delimeter} \n)+email["body-plain"]
-			email["body-html"] = %(\n#{@account.email_cmds_delimeter} "status":"closed" #{@account.email_cmds_delimeter} \n)+email["body-html"]
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.status.should eql 5
-		end
-
-		it "change agent with sendgrid" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
+		it "change agent" do
+			@ticket.update_column(:responder_id, nil)
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
 			email[:text] = %(\n#{@account.email_cmds_delimeter} "agent":"#{@account.agents.last.user.name}" #{@account.email_cmds_delimeter} \n)+email[:text]
 			email[:html] = %(\n#{@account.email_cmds_delimeter} "agent":"#{@account.agents.last.user.name}" #{@account.email_cmds_delimeter} \n)+email[:html]
+			email[:subject] = "[##{@ticket.display_id}] #{email[:subject]}"
 			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.responder.id.should eql @account.agents.last.user.id
+			@ticket.reload
+			@ticket.responder.id.should eql @account.agents.last.user.id
 		end
 
-		it "change agent with sendgrid assign to me" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
+		it "change agent assign to me" do
+			@ticket.update_column(:responder_id, nil)
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
 			email[:text] = %(\n#{@account.email_cmds_delimeter} "agent":"me" #{@account.email_cmds_delimeter} \n)+email[:text]
 			email[:html] = %(\n#{@account.email_cmds_delimeter} "agent":"me" #{@account.email_cmds_delimeter} \n)+email[:html]
+			email[:subject] = "[##{@ticket.display_id}] #{email[:subject]}"
 			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.responder.id.should eql @account.agents.first.user.id
+			@ticket.reload
+			@ticket.responder.id.should eql @agent.user.id
 		end
 
-		it "change agent with sendgrid to email" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
+		it "change agent to email" do
+			@ticket.update_column(:responder_id, nil)
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
 			email[:text] = %(\n#{@account.email_cmds_delimeter} "agent":"#{@account.agents.last.user.email}" #{@account.email_cmds_delimeter} \n)+email[:text]
 			email[:html] = %(\n#{@account.email_cmds_delimeter} "agent":"#{@account.agents.last.user.email}" #{@account.email_cmds_delimeter} \n)+email[:html]
+			email[:subject] = "[##{@ticket.display_id}] #{email[:subject]}"
 			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.responder.id.should eql @account.agents.last.user.id
+			@ticket.reload
+			@ticket.responder.id.should eql @account.agents.last.user.id
 		end
 
-		it "change agent with mailgun" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email["body-plain"] = %(\n#{@account.email_cmds_delimeter} "agent":"#{@account.agents.last.user.name}" #{@account.email_cmds_delimeter} \n)+email["body-plain"]
-			email["body-html"] = %(\n#{@account.email_cmds_delimeter} "agent":"#{@account.agents.last.user.name}" #{@account.email_cmds_delimeter} \n)+email["body-html"]
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.responder.id.should eql @account.agents.last.user.id
-		end
-
-		it "change agent with mailgun to me" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email["body-plain"] = %(\n#{@account.email_cmds_delimeter} "agent":"me" #{@account.email_cmds_delimeter} \n)+email["body-plain"]
-			email["body-html"] = %(\n#{@account.email_cmds_delimeter} "agent":"me" #{@account.email_cmds_delimeter} \n)+email["body-html"]
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.responder.id.should eql @account.agents.first.user.id
-		end
-
-		it "change agent with mailgun to email" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email["body-plain"] = %(\n#{@account.email_cmds_delimeter} "agent":"#{@account.agents.last.user.email}" #{@account.email_cmds_delimeter} \n)+email["body-plain"]
-			email["body-html"] = %(\n#{@account.email_cmds_delimeter} "agent":"#{@account.agents.last.user.email}" #{@account.email_cmds_delimeter} \n)+email["body-html"]
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.responder.id.should eql @account.agents.last.user.id
-		end
-
-		it "change type with sendgrid" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
+		it "change type" do
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
 			email[:text] = %(\n#{@account.email_cmds_delimeter} "type":"Incident" #{@account.email_cmds_delimeter} \n)+email[:text]
 			email[:html] = %(\n#{@account.email_cmds_delimeter} "type":"Incident" #{@account.email_cmds_delimeter} \n)+email[:html]
+			email[:subject] = "[##{@ticket.display_id}] #{email[:subject]}"
 			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.ticket_type.should eql "Incident"
+			@ticket.reload
+			@ticket.ticket_type.should eql "Incident"
 		end
 
-		it "change type with mailgun" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email["body-plain"] = %(\n#{@account.email_cmds_delimeter} "type":"Incident" #{@account.email_cmds_delimeter} \n)+email["body-plain"]
-			email["body-html"] = %(\n#{@account.email_cmds_delimeter} "type":"Incident" #{@account.email_cmds_delimeter} \n)+email["body-html"]
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.ticket_type.should eql "Incident"
-		end
-
-		it "change group with sendgrid" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
+		it "change group" do
+			@ticket.update_column(:group_id, nil)
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
 			email[:text] = %(\n#{@account.email_cmds_delimeter} "group":"Sales" #{@account.email_cmds_delimeter} \n)+email[:text]
 			email[:html] = %(\n#{@account.email_cmds_delimeter} "group":"Sales" #{@account.email_cmds_delimeter} \n)+email[:html]
+			email[:subject] = "[##{@ticket.display_id}] #{email[:subject]}"
 			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.group.name.should eql "Sales"
+			@ticket.reload
+			@ticket.group.name.should eql "Sales"
 		end
 
-		it "change group with mailgun" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email["body-plain"] = %(\n#{@account.email_cmds_delimeter} "group":"Sales" #{@account.email_cmds_delimeter} \n)+email["body-plain"]
-			email["body-html"] = %(\n#{@account.email_cmds_delimeter} "group":"Sales" #{@account.email_cmds_delimeter} \n)+email["body-html"]
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.group.name.should eql "Sales"
-		end
-
-		it "change source with sendgrid" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
+		it "change source" do
+			@ticket.update_column(:source, 1)
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
 			email[:text] = %(\n#{@account.email_cmds_delimeter} "source":"chat" #{@account.email_cmds_delimeter} \n)+email[:text]
 			email[:html] = %(\n#{@account.email_cmds_delimeter} "source":"chat" #{@account.email_cmds_delimeter} \n)+email[:html]
+			email[:subject] = "[##{@ticket.display_id}] #{email[:subject]}"
 			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.source.should eql 7
+			@ticket.reload
+			@ticket.source.should eql 7
 		end
 
-		it "change source with mailgun" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email["body-plain"] = %(\n#{@account.email_cmds_delimeter} "source":"chat" #{@account.email_cmds_delimeter} \n)+email["body-plain"]
-			email["body-html"] = %(\n#{@account.email_cmds_delimeter} "source":"chat" #{@account.email_cmds_delimeter} \n)+email["body-html"]
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.source.should eql 7
-		end
-
-		it "change custom_field with sendgrid" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
+		it "change custom_field" do
+			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
 			email[:text] = %(\n#{@account.email_cmds_delimeter} "abcd":"1234" #{@account.email_cmds_delimeter} \n)+email[:text]
 			email[:html] = %(\n#{@account.email_cmds_delimeter} "abcd":"1234" #{@account.email_cmds_delimeter} \n)+email[:html]
+			email[:subject] = "[##{@ticket.display_id}] #{email[:subject]}"
 			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.custom_field["abcd_1"].should eql "1234"
+
+			@ticket = @account.tickets.find(@ticket.id) #reload doesnt reload custom_fiels[]
+			@ticket.custom_field["abcd_1"].should eql "1234"
 		end
 
-		it "change custom_field with mailgun" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email["body-plain"] = %(\n#{@account.email_cmds_delimeter} "abcd":"1234" #{@account.email_cmds_delimeter} \n)+email["body-plain"]
-			email["body-html"] = %(\n#{@account.email_cmds_delimeter} "abcd":"1234" #{@account.email_cmds_delimeter} \n)+email["body-html"]
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.custom_field["abcd_1"].should eql "1234"
-		end
-
-		it "private note in mailgun" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			another["subject"] = another["subject"]+" [##{ticket.display_id}]"
-			another[:from] = @account.agents.first.user.email
-			another["body-plain"] = %(\n#{@account.email_cmds_delimeter} "action":"note" #{@account.email_cmds_delimeter} \n)+another["body-plain"]
-			another["body-html"] = %(\n#{@account.email_cmds_delimeter} "action":"note" #{@account.email_cmds_delimeter} \n)+another["body-html"]
-			Helpdesk::Email::Process.new(another).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			@account.notes.size.should eql @note_size+1
-			ticket.notes.last.private?.should eql true
-		end
-
-		it "private note in sendgrid" do
+		it "private note" do
+			ticket_size = @account.tickets.count
+			note_size   = @account.notes.count
 			email = new_email({:email_config => @account.primary_email_config.to_email})
 			Helpdesk::ProcessEmail.new(email).perform
 			ticket = @account.tickets.last
-			another = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
+			another = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
 			another[:subject] = another[:subject]+" [##{ticket.display_id}]"
-			another[:from] = @account.agents.first.user.email
+			another[:from] = @agent.user.email
 			another[:text] = %(\n#{@account.email_cmds_delimeter} "action":"note" #{@account.email_cmds_delimeter} \n)+email[:text]
 			another[:html] = %(\n#{@account.email_cmds_delimeter} "action":"note" #{@account.email_cmds_delimeter} \n)+email[:html]
 			Helpdesk::ProcessEmail.new(another).perform
 			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			@account.notes.size.should eql @note_size+1
+			ticket_incremented?(ticket_size)
+			@account.notes.size.should eql note_size+1
 			ticket.notes.last.private?.should eql true
 		end
 
-		it "change multiple with sendgrid" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email[:text] = %(\n#{@account.email_cmds_delimeter} "source":"chat", "priority":"medium", "status":"closed", "agent":"me", "abcd":"1234" #{@account.email_cmds_delimeter} \n)+email[:text]
-			email[:html] = %(\n#{@account.email_cmds_delimeter} "source":"chat", "priority":"medium", "status":"closed", "agent":"me", "abcd":"1234" #{@account.email_cmds_delimeter} \n)+email[:html]
+		it "change multiple" do
+			ticket_size = @account.tickets.count
+			note_size   = @account.notes.count
+			email = new_email({:email_config => @account.primary_email_config.to_email})
 			Helpdesk::ProcessEmail.new(email).perform
 			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
+			ticket_incremented?(ticket_size)
+			
+			ticket = @account.tickets.last
+			another = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			another[:subject] = another[:subject]+" [##{ticket.display_id}]"
+			another[:from] = @agent.user.email
+			another[:text] = %(\n#{@account.email_cmds_delimeter} "source":"chat", "priority":"medium", "status":"closed", "agent":"me", "abcd":"abcd" #{@account.email_cmds_delimeter} \n) + email[:text]
+			another[:html] = %(\n#{@account.email_cmds_delimeter} "source":"chat", "priority":"medium", "status":"closed", "agent":"me", "abcd":"abcd" #{@account.email_cmds_delimeter} \n) + email[:html]
+			Helpdesk::ProcessEmail.new(another).perform		
+
+			ticket = @account.tickets.find(ticket.id) #reload doesnt reload custom_fiels[]
 			ticket.source.should eql 7
 			ticket.priority.should eql 2
 			ticket.status.should eql 5
-			ticket.responder.id.should eql @account.agents.first.user.id
-			ticket.custom_field["abcd_1"].should eql "1234"
+			ticket.responder.id.should eql @agent.user.id
+			ticket.custom_field["abcd_1"].should eql "abcd"
 		end
 
-		it "change multiple with mailgun" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @account.agents.first.user.email})
-			email[:from] = @account.agents.first.user.email
-			email["body-plain"] = %(\n#{@account.email_cmds_delimeter} "source":"chat", "priority":"medium", "status":"closed", "agent":"me", "abcd":"1234" #{@account.email_cmds_delimeter} \n)+email["body-plain"]
-			email["body-html"] = %(\n#{@account.email_cmds_delimeter} "source":"chat", "priority":"medium", "status":"closed", "agent":"me", "abcd":"1234" #{@account.email_cmds_delimeter} \n)+email["body-html"]
+	end
+
+	describe "Email commands(mailgun)" do
+		it "change priority" do
+			@ticket.update_column(:priority, 1)
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
+			email["stripped-text"] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email["stripped-text"]
+			email["stripped-html"] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email["stripped-html"]
+			email["body-plain"]    = email["stripped-text"]
+			email["body-html"]     = email["stripped-html"]
+			email["subject"]       = "[##{@ticket.display_id}] #{email['subject']}"
 			Helpdesk::Email::Process.new(email).perform
+			@ticket.reload
+			@ticket.priority.should eql 2
+		end
+
+		it "change status" do
+			@ticket.update_column(:status, 2)
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
+			email["stripped-text"] = %(\n#{@account.email_cmds_delimeter} "status":"Closed" #{@account.email_cmds_delimeter} \n) + email["stripped-text"]
+			email["stripped-html"] = %(\n#{@account.email_cmds_delimeter} "status":"Closed" #{@account.email_cmds_delimeter} \n) + email["stripped-html"]
+			email['subject']       = "[##{@ticket.display_id}] #{email['subject']}"
+			email["body-plain"]    = email["stripped-text"]
+			email["body-html"]     = email["stripped-html"]
+			Helpdesk::Email::Process.new(email).perform
+			@ticket.reload
+			@ticket.status.should eql 5
+		end		
+
+		it "change agent" do
+			@ticket.update_column(:responder_id, nil)
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
+			email["stripped-text"] = %(\n#{@account.email_cmds_delimeter} "agent":"#{@account.agents.last.user.name}" #{@account.email_cmds_delimeter} \n)+email["stripped-text"]
+			email["stripped-html"] = %(\n#{@account.email_cmds_delimeter} "agent":"#{@account.agents.last.user.name}" #{@account.email_cmds_delimeter} \n)+email["stripped-html"]
+			email['subject']       = "[##{@ticket.display_id}] #{email['subject']}"
+			email["body-plain"]    = email["stripped-text"]
+			email["body-html"]     = email["stripped-html"]
+			Helpdesk::Email::Process.new(email).perform
+			@ticket.reload
+			@ticket.responder.id.should eql @account.agents.last.user.id
+		end
+
+		it "change agent to me" do
+			@ticket.update_column(:responder_id, nil)
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
+			email["stripped-text"] = %(\n#{@account.email_cmds_delimeter} "agent":"me" #{@account.email_cmds_delimeter} \n)+email["stripped-text"]
+			email["stripped-html"] = %(\n#{@account.email_cmds_delimeter} "agent":"me" #{@account.email_cmds_delimeter} \n)+email["stripped-html"]
+			email['subject']       = "[##{@ticket.display_id}] #{email['subject']}"
+			email["body-plain"]    = email["stripped-text"]
+			email["body-html"]     = email["stripped-html"]
+			Helpdesk::Email::Process.new(email).perform
+			@ticket.reload
+			@ticket.responder.id.should eql @agent.user.id
+		end
+
+		it "change agent to email" do
+			@ticket.update_column(:responder_id, nil)
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
+			email["stripped-text"] = %(\n#{@account.email_cmds_delimeter} "agent":"#{@account.agents.last.user.email}" #{@account.email_cmds_delimeter} \n)+email["stripped-text"]
+			email["stripped-html"] = %(\n#{@account.email_cmds_delimeter} "agent":"#{@account.agents.last.user.email}" #{@account.email_cmds_delimeter} \n)+email["stripped-html"]
+			email['subject']       = "[##{@ticket.display_id}] #{email['subject']}"
+			email["body-plain"]    = email["stripped-text"]
+			email["body-html"]     = email["stripped-html"]
+			Helpdesk::Email::Process.new(email).perform
+			@ticket.reload
+			@ticket.responder.id.should eql @account.agents.last.user.id
+		end		
+
+		it "change type" do
+			@ticket.update_column(:ticket_type, nil)
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
+			email["stripped-text"] = %(\n#{@account.email_cmds_delimeter} "type":"Incident" #{@account.email_cmds_delimeter} \n)+email["stripped-text"]
+			email["stripped-html"] = %(\n#{@account.email_cmds_delimeter} "type":"Incident" #{@account.email_cmds_delimeter} \n)+email["stripped-html"]
+			email['subject']       = "[##{@ticket.display_id}] #{email['subject']}"
+			email["body-plain"]    = email["stripped-text"]
+			email["body-html"]     = email["stripped-html"]
+			Helpdesk::Email::Process.new(email).perform
+			@ticket.reload
+			@ticket.ticket_type.should eql "Incident"
+		end		
+
+		it "change group" do
+			@ticket.update_column(:group_id, nil)
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
+			email["stripped-text"] = %(\n#{@account.email_cmds_delimeter} "group":"Sales" #{@account.email_cmds_delimeter} \n)+email["stripped-text"]
+			email["stripped-html"] = %(\n#{@account.email_cmds_delimeter} "group":"Sales" #{@account.email_cmds_delimeter} \n)+email["stripped-html"]
+			email['subject']       = "[##{@ticket.display_id}] #{email['subject']}"
+			email["body-plain"]    = email["stripped-text"]
+			email["body-html"]     = email["stripped-html"]
+			Helpdesk::Email::Process.new(email).perform
+			@ticket.reload
+			@ticket.group.name.should eql "Sales"
+		end		
+
+		it "change source" do
+			@ticket.update_column(:source, 1)
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
+			email["stripped-text"] = %(\n#{@account.email_cmds_delimeter} "source":"chat" #{@account.email_cmds_delimeter} \n)+email["stripped-text"]
+			email["stripped-html"] = %(\n#{@account.email_cmds_delimeter} "source":"chat" #{@account.email_cmds_delimeter} \n)+email["stripped-html"]
+			email['subject']       = "[##{@ticket.display_id}] #{email['subject']}"
+			email["body-plain"]    = email["stripped-text"]
+			email["body-html"]     = email["stripped-html"]
+			Helpdesk::Email::Process.new(email).perform
+			@ticket.reload
+			@ticket.source.should eql 7
+		end		
+
+		it "change custom_field" do
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
+			email["stripped-text"] = %(\n#{@account.email_cmds_delimeter} "abcd":"xyz" #{@account.email_cmds_delimeter} \n)+email["stripped-text"]
+			email["stripped-html"] = %(\n#{@account.email_cmds_delimeter} "abcd":"xyz" #{@account.email_cmds_delimeter} \n)+email["stripped-html"]
+			email['subject']       = "[##{@ticket.display_id}] #{email['subject']}"
+			email["body-plain"]    = email["stripped-text"]
+			email["body-html"]     = email["stripped-html"]
+			Helpdesk::Email::Process.new(email).perform
+
+			@ticket = @account.tickets.find(@ticket.id) #reload doesnt reload custom_fiels[]
+			@ticket.custom_field["abcd_1"].should eql "xyz"
+		end
+
+		it "private note" do
+			ticket_size = @account.tickets.count
+			note_size   = @account.notes.count
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
+			Helpdesk::Email::Process.new(email).perform
+			ticket_incremented?(ticket_size)
 			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.source.should eql 7
-			ticket.priority.should eql 2
-			ticket.status.should eql 5
-			ticket.responder.id.should eql @account.agents.first.user.id
-			ticket.custom_field["abcd_1"].should eql "1234"
+			
+			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			another["subject"] = another["subject"]+" [##{ticket.display_id}]"
+			another[:from] = @agent.user.email
+			another["stripped-text"] = %(\n#{@account.email_cmds_delimeter} "action":"note" #{@account.email_cmds_delimeter} \n)+another["stripped-text"]
+			another["stripped-html"] = %(\n#{@account.email_cmds_delimeter} "action":"note" #{@account.email_cmds_delimeter} \n)+another["stripped-html"]
+			another["body-plain"]    = email["stripped-text"]
+			another["body-html"]     = email["stripped-html"]
+			Helpdesk::Email::Process.new(another).perform
+			ticket.reload
+			@account.notes.size.should eql note_size+1
+			ticket.notes.last.private?.should eql true
+		end
+
+		it "change multiple" do
+			ticket_size = @account.tickets.count
+			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
+			email[:from] = @agent.user.email
+			email["stripped-text"] = %(\n#{@account.email_cmds_delimeter} "source":"chat", "priority":"medium", "status":"closed", "agent":"me", "abcd":"1234567" #{@account.email_cmds_delimeter} \n)+email["stripped-text"]
+			email["stripped-html"] = %(\n#{@account.email_cmds_delimeter} "source":"chat", "priority":"medium", "status":"closed", "agent":"me", "abcd":"1234567" #{@account.email_cmds_delimeter} \n)+email["stripped-html"]
+			email["body-plain"]    = email["stripped-text"]
+			email["body-html"]     = email["stripped-html"]
+			email["subject"]       = " [##{@ticket.display_id}] #{email['subject']}"
+			Helpdesk::Email::Process.new(email).perform
+			
+			@ticket = @account.tickets.find(@ticket.id) #reload doesnt reload custom_fiels[]
+			@ticket.source.should eql 7
+			@ticket.priority.should eql 2
+			@ticket.status.should eql 5
+			@ticket.responder.id.should eql @agent.user.id
+			@ticket.custom_field["abcd_1"].should eql "1234567"
 		end
 	end
 end

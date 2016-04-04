@@ -15,10 +15,8 @@ class SubscriptionsController < ApplicationController
   before_filter :build_free_subscription, :only => :convert_subscription_to_free
   before_filter :build_paying_subscription, :only => :billing
   before_filter :check_for_subscription_errors, :except => [ :calculate_amount, :show, :calculate_plan_amount ]
-
   after_filter :add_event, :only => [ :plan, :billing, :convert_subscription_to_free ]
 
-  filter_parameter_logging :creditcard, :password
   restrict_perform :billing
   ssl_required :billing
 
@@ -66,6 +64,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def billing
+    @privacy_policy = true
     if request.post?
       if add_card_to_billing
         scoper.state = ACTIVE
@@ -73,14 +72,19 @@ class SubscriptionsController < ApplicationController
           flash[:notice] = t('billing_info_update')
           flash[:notice] = t('card_process') if params[:charge_now].eql?("true")
         end
-        redirect_to subscription_url  
+        request.xhr?  ? render(:json => 200) : redirect_to(subscription_url)
       else
         redirect_to :action => "billing"
       end
+    else
+      result = billing_subscription.update_payment_method(current_account.id)
+      @hosted_page = result.hosted_page
     end
   end
 
   def show 
+    @offline_subscription = scoper.offline_subscription?
+    @invoice = scoper.subscription_invoices.last unless @offline_subscription or scoper.affiliate.present?
   end
 
   private
@@ -122,7 +126,7 @@ class SubscriptionsController < ApplicationController
 
     def cache_objects
       @cached_subscription = Subscription.find(current_account.subscription.id)
-      @cached_addons = @cached_subscription.addons.clone
+      @cached_addons = @cached_subscription.addons.dup
     end
 
     #building objects
@@ -135,7 +139,7 @@ class SubscriptionsController < ApplicationController
     end
 
     def load_freshfone_credits
-      @freshfone_credit = current_account.freshfone_credit
+      @freshfone_credit = current_account.freshfone_credit || Freshfone::Credit.new
     end
 
     def build_free_subscription
@@ -182,7 +186,8 @@ class SubscriptionsController < ApplicationController
 
     def activate_subscription
       begin
-        result = billing_subscription.activate_subscription(scoper)
+        billing_address = @customer_details.nil? ? {} : billing_address(@customer_details.card)
+        result = billing_subscription.activate_subscription(scoper, billing_address)
         scoper.set_next_renewal_at(result.subscription)
         scoper.save!
       rescue Exception => e
@@ -191,12 +196,25 @@ class SubscriptionsController < ApplicationController
       end
     end
 
+    def billing_address(card_details)
+      {
+        :billing_address => 
+        {
+          :first_name => card_details.first_name,
+          :last_name => card_details.last_name,
+          :line1 => "#{card_details.billing_addr1} #{card_details.billing_addr2}", 
+          :city => card_details.billing_city, 
+          :state => card_details.billing_state,
+          :zip => card_details.billing_zip, 
+          :country => card_details.billing_country
+        }
+      }
+    end
+
     def add_card_to_billing
       begin
-        @creditcard.number = params[:number]
-        @creditcard.verification_value = params[:cvv]
-        result = billing_subscription.store_card(@creditcard, @address, scoper)        
-        scoper.set_billing_info(result.card)
+        @customer_details = billing_subscription.retrieve_subscription(current_account.id)
+        scoper.set_billing_info(@customer_details.card)
         scoper.save!
       rescue Exception => e
         handle_error(e, t('card_error'))
@@ -230,7 +248,7 @@ class SubscriptionsController < ApplicationController
     def handle_error(error, custom_error_msg)
       Rails.logger.debug "Subscription Error::::: #{error}"      
 
-      if (error_msg = error.message.split(/error_msg/).last.sub(/http.*/,""))
+      if (error_msg = error.json_obj[:error_msg].split(/error_msg/).last.sub(/http.*/,""))
         flash[:notice] = error_msg #chargebee_error_message
       else
         flash[:notice] = custom_error_msg

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Support::ProfilesController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -130,7 +129,7 @@ describe Support::ProfilesController do
       user.send("cf_category").should eql "First"
       user.send("cf_agt_count").should be_nil
       user.send("cf_file_url").should be_nil
-      user.send("cf_show_all_ticket").should be_true
+      user.send("cf_show_all_ticket").should be true
       user.avatar.should_not be_nil
       user.avatar.content_file_name.should eql "image33kb.jpg"
     end
@@ -244,7 +243,7 @@ describe Support::ProfilesController do
       user.flexifield_without_safe_access.should_not be_nil
       user.send("cf_linetext").should eql(text)
       user.send("cf_category").should eql "Third"
-      user.send("cf_show_all_ticket").should be_true
+      user.send("cf_show_all_ticket").should be true
       user.send("cf_linetext_with_regex_validation").should eql "customer service with Freshdesk"
     end
 

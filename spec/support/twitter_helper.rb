@@ -2,7 +2,7 @@ module TwitterHelper
   
   def create_test_twitter_handle(test_account=nil)
     account = test_account.nil? ? Account.first : test_account
-    handle = Factory.build(:twitter_handle, :account_id => account.id)
+    handle = FactoryGirl.build(:twitter_handle, :account_id => account.id)
     handle.save()
     handle.reload
     handle
@@ -11,7 +11,7 @@ module TwitterHelper
   
   def create_test_custom_twitter_stream(handle)
     account = @account
-    custom_stream = Factory.build(:twitter_stream, :account_id => account.id, :social_id => handle.id)
+    custom_stream = FactoryGirl.build(:twitter_stream, :account_id => account.id, :social_id => handle.id)
     custom_stream.save()
     custom_stream.reload
     custom_stream.populate_accessible(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all])
@@ -20,7 +20,7 @@ module TwitterHelper
   
   def create_test_ticket_rule(stream, test_account=nil)
     account = test_account.nil? ? Account.first : test_account
-    ticket_rule = Factory.build(:ticket_rule, :account_id => account.id, :stream_id => stream.id)
+    ticket_rule = FactoryGirl.build(:ticket_rule, :account_id => account.id, :stream_id => stream.id)
     ticket_rule.filter_data = {:includes => ['@TestingGnip']}
     ticket_rule.save
     ticket_rule

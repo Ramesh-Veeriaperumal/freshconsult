@@ -8,6 +8,9 @@
 			border-top: 1px solid #CCC;
 			padding: 5px 0 30px;
 		}
+		.border-none{
+			border: none;
+		}
 		.sub-section{
 			padding-bottom: 15px;
 			border-bottom: 1px solid #F1F1F1;
@@ -17,6 +20,11 @@
 			@include margin-left(5px);
 			@include margin-right(20px);
 		}
+		@if $rtl{
+			label{
+				unicode-bidi: -moz-isolate; unicode-bidi: -webkit-isolate; unicode-bidi: isolate;
+			}
+		}
 		.control-label{
 			padding-top: 0;
 			width: 320px;
@@ -24,6 +32,10 @@
 		.controls{
 			@include margin-left(320px);
 			@include padding-left(10px);
+		}
+		.forum_captcha{
+			@include margin(10px 0 0 0);
+			min-height: 0px;
 		}
 		.captcha{
 			@include margin(10px 0 0 130px);
@@ -50,6 +62,12 @@
 .multiple_radio {
 	input[type="radio"], input[type="checkbox"]{
 			margin-top: -2px;
+	}
+	.ficon-help{
+   	font-size: 16px;
+    margin-top: -6px;
+    color: #06c;
+    &:hover{ color: #004080;}
 	}
 	&.moderation{
 		span{

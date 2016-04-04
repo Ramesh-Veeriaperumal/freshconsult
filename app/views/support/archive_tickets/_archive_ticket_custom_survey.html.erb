@@ -1,0 +1,47 @@
+<% if archived_ticket?(@ticket) and customer_survey_required? %>
+<section class="widget survey-widget-wrapper" id="survey-sidebar-details">
+  <h3 class="lead"><%= t('support.tickets.ticket_survey.title_v2') %></h3>
+  <div class="survey-form">
+    <% 
+      survey_result = @ticket.custom_survey_results.last 
+    %>
+    <%
+      unless survey_result.blank?
+        ticket_info = survey_result.ticket_info
+        feedback = survey_result.survey_remark.try(:feedback).try(:body)
+          details = survey_result.note_details
+        question_values = details[:question_values]
+
+    %>
+    <div id="survey-information">   
+        <div class="muted">
+                        <%= t("support.tickets.ticket_survey.rating_sub_title_v2") %>
+                        <%= t('support.tickets.ticket_survey.rated_on', :rated_on => formated_date(survey_result.created_at, {:format => :short_day_with_week, :include_year => true}))%>
+        </div>
+        <div class="border-<%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[ticket_info[:value]] %> default_question">
+            <div class="muted"><%= ticket_info[:label]%></div>
+            <div><%= ticket_info[:text]%></div>
+        </div>
+        <% if question_values.present? || feedback.present? %>
+            <a id="load_questions" href="#" data-toggle-dom="#additional_questions_wrapper,#load_questions">
+                <%=t('support.tickets.ticket_survey.load_questions') %>
+            </a>
+            <div id="additional_questions_wrapper" class="hide">
+                <% question_values.each do |question|%>
+                <div class="border-<%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[question[:key]] %>">
+                    <div class="muted"><%= question[:label] %></div>
+                    <div class="rating-text"> <%= question[:value] %></div>
+                </div>
+                <% end %>
+                <% if feedback.present? %>
+                    <span class="muted"> <%= t('support.tickets.ticket_survey.comments') %> </span>
+                    <p> <%= feedback %></p>
+                <% end %>
+            </div>
+        <% end %>
+    </div>
+    <% end %>
+  </div>
+</section>
+<hr class="content-divider" />
+<% end %>

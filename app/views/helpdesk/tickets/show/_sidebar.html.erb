@@ -1,12 +1,12 @@
 
-<div class="tkt-sidebar" id="ticket_details_sidebar">
-	<%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
-	<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
-	<%= render :partial => "helpdesk/tickets/show/app_info.html.erb" , :locals => {:ticket => @ticket} if @ticket.mobihelp? and @ticket.mobihelp_ticket_info %>
-	<% unless @ticket.deleted or @ticket.spam %> 
-		<div class="widget" id='TicketProperties'>
+<div class="tkt-sidebar" id="ticket_details_sidebar" data-domhelper-name="ticket-details-sidebar">
+	<%= render :partial => 'helpdesk/tickets/show/status', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
+	<%= render :partial => "helpdesk/tickets/show/requester" %> 
+	<%= render :partial => "helpdesk/tickets/show/app_info" , :locals => {:ticket => @ticket} if @ticket.mobihelp? and @ticket.mobihelp_ticket_info %>
+	<% unless @ticket.deleted or @ticket.spam %>
+		<div class="widget" id='TicketProperties' data-domhelper-name='ticket-properties'>
 			<h3 class="title"><%=t('ticket.properties')%></h3>
-			<div class="content" data-remote-url="/helpdesk/tickets/component/<%= @ticket.id %>?component=ticket_fields"></div>
+			<div class="content" data-remote-url="/helpdesk/tickets/<%= @ticket.id %>/component?component=ticket_fields"></div>
 		</div>
 
 		<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
@@ -14,7 +14,7 @@
 			<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button></div>
 			<div class="modal-body"><div class="sloading loading-small loading-block"></div></div>
 		</div>
-		<div class="widget time-tracked inactive load_remote" id="TimesheetTab">
+		<div class="widget time-tracked inactive load_remote" id="TimesheetTab" data-domhelper-name="timesheet-tab">
 			<h3>
 				<%= t('helpdesk.time_sheets.sidebar_title') %>
 				<div class="tracked_time">
@@ -22,14 +22,32 @@
 					<span class="time_unit">Hrs </span>
 				</div>
 			</h3>
-			<div class="content" rel="remote" data-remote-url="<%= helpdesk_ticket_helpdesk_time_sheets_path(@ticket) %>"></div>
+			<div class="content" rel="remote" data-remote-url="<%= helpdesk_ticket_time_sheets_path(@ticket) %>"></div>
 		</div>
 		<% end %>
-		<div class="widget inactive load_remote" id="ToDoList">
+		<div class="widget inactive load_remote" id="ToDoList" data-domhelper-name="todo-list">
 			<h3><%= t('to_do') %></h3>
-			<div class="content" rel="remote" data-remote-url="/helpdesk/tickets/component/<%= @ticket.id %>?component=todo"></div>
+			<div class="content" rel="remote" data-remote-url="/helpdesk/tickets/<%= @ticket.id %>/component?component=todo"></div>
 		</div>
 		
-		<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
+		<%= render :partial => "helpdesk/tickets/show/integrations" %> 
+
+    <% if is_application_installed?(Integrations::Constants::APP_NAMES[:ilos]) %>
+      <% ilos_app_config = get_app_config(Integrations::Constants::APP_NAMES[:ilos]) %>
+      <% if ilos_app_config[:visible_agent_ticket].to_bool %>
+        <%= stylesheet_link_tag :"cdn/ilos_video" %>
+        <div class="widget inactive">
+          <h3><%= t('integrations.ilos.messages.ilos_header') %></h3>
+          <div class="content">
+            <div class="ilos-widget" id="ilos-widget-tkt">
+              <%= ilos_widget(@ticket.display_id, "agent_ticket") %>
+              <p id="ilos-support">
+                <a href= "https://support.freshdesk.com/solution/articles/214400-ilos-videos-integration-with-freshdesk" target="blank"><%= t('integrations.ilos.messages.about_recording') %></a>
+              </p>
+            </div>
+          </div>
+        </div>
+      <% end %> 
+    <% end %> 
 	<% end %>
 </div>

@@ -17,6 +17,15 @@ $badges-layout:smart;
 $badges-a-layout:smart;
 @include all-badges-a-sprites;
 
+@import "cdn-ignored/sprites/badges-small/*.png";
+$badges-layout:smart;
+@include all-badges-small-sprites;
+
+@import "cdn-ignored/sprites/badges-a-small/*.png";
+$badges-a-layout:smart;
+@include all-badges-a-small-sprites;
+
+
 .trophy{ @include inline-block; }
 
 .gamesettings .admin_list{ margin: 0 -16px; }
@@ -74,6 +83,13 @@ $badges-a-layout:smart;
   		position: relative;
   		top:53px;
   	}
+  	&.badges-small{
+  		width: 32px;
+		height: 32px;
+		.label.points {
+			top: 40px;
+		}
+	}
 }
 
 .badges.center{
@@ -448,14 +464,17 @@ li.dashboard-quest-points {
 	padding:8px 0;
 	.preview_pic{
 		padding:2px;
-		background:#AFAFAF;
 		@include border-radius(3em);
-		line-height:0;
+	}
+	.avatar-text{
+		line-height: 40px;
 	}
 	.preview_pic img{
 		@include border-radius(2em);
-		width:36px;
-		height:36px;
+		padding: 0;
+		margin: 0;
+		width: 40px;
+		height: 40px;
 	}
 	.help-text{
 		color:#666;
@@ -518,5 +537,18 @@ li.dashboard-quest-points {
 		padding-right: 20px;
 		padding-left: 20px;
 		margin-bottom: 20px;
+	}
+}
+
+.game-points{
+	input{
+		@include float(left);
+	}
+	label.error{
+		clear: both;
+	}
+	.info_data{
+		display: inline-block;
+		margin: 3px;
 	}
 }

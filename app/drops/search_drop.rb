@@ -1,5 +1,5 @@
 class SearchDrop < BaseDrop
-  	include ActionController::UrlWriter
+  	include Rails.application.routes.url_helpers
 
 	def initialize(source)
 		super source

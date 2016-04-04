@@ -6,7 +6,7 @@ require 'rack/openid'
 require 'uri'
 require 'openid'
 require 'oauth/consumer' 
-require 'oauth/request_proxy/action_controller_request'
+require 'oauth/request_proxy/rack_request'
 require 'oauth/signature/rsa/sha1'
 require 'openssl'
 
@@ -26,8 +26,11 @@ include GoogleLoginHelper
   skip_before_filter :determine_pod, :only => [:openid_google,:opensocial_google]
   skip_before_filter :set_current_account, :only => [:oauth_google_gadget,:opensocial_google] 
   skip_before_filter :set_locale, :only => [:oauth_google_gadget,:opensocial_google] 
+  skip_before_filter :ensure_proper_protocol, :only => [:oauth_google_gadget,:opensocial_google] 
+  skip_after_filter :set_last_active_time
   
   def new
+    flash.keep
     # Login normal supersets all login access (can be used by agents)
     if request.path == "/login/normal"
       @user_session = current_account.user_sessions.new
@@ -42,6 +45,7 @@ include GoogleLoginHelper
   # Handles response from SAML provider
   def saml_login
     saml_response = validate_saml_response(current_account, params[:SAMLResponse])
+    relay_state_url = params[:RelayState]
 
     sso_data = {
       :name => saml_response.user_name,
@@ -51,7 +55,7 @@ include GoogleLoginHelper
     }
 
     if saml_response.valid?
-      handle_sso_response(sso_data)
+      handle_sso_response(sso_data, relay_state_url)
     else
       flash[:notice] = t(:'flash.login.failed') + " -  #{saml_response.error_message}"
       redirect_to login_normal_url
@@ -74,24 +78,30 @@ include GoogleLoginHelper
         @current_user = create_user(params[:email],current_account,nil,sso_user_options)
         @current_user.active = true
         saved = @current_user.save
-      elsif current_account.sso_enabled?
+      else
         @current_user.name =  params[:name]
         @current_user.phone = params[:phone] unless params[:phone].blank?
-        @current_user.customer_id = current_account.customers.find_or_create_by_name(params[:company]).id unless params[:company].blank?
+        @current_user.customer_id = current_account.companies.find_or_create_by_name(params[:company]).id unless params[:company].blank?
         @current_user.active = true
         saved = @current_user.save
       end
       
       @user_session = @current_user.account.user_sessions.new(@current_user)
-      if @user_session.save
+      if saved && @user_session.save
+        if is_native_mobile?
+          cookies["mobile_access_token"] = { :value => @current_user.helpdesk_agent ? @current_user.single_access_token : 'customer', :http_only => true } 
+          cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
+        end
         flash.discard
         remove_old_filters  if @current_user.agent?
         redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass  
       else
+        cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
         flash[:notice] = t(:'flash.login.failed')
         redirect_to login_normal_url
       end
     else
+      cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
       flash[:notice] = t(:'flash.login.failed')
       redirect_to login_normal_url
     end  
@@ -100,12 +110,12 @@ include GoogleLoginHelper
   def opensocial_google
     begin
       Account.reset_current_account
-      cert_file  = "#{Rails.root}/config/cert/#{params['xoauth_public_key']}"
+      cert_file  = "#{Rails.root}/config/cert/pub.1210278512.2713152949996518384.cer"
       cert = OpenSSL::X509::Certificate.new( File.read(cert_file) )
       public_key = OpenSSL::PKey::RSA.new(cert.public_key)
       container = params['opensocial_container']
       consumer = OAuth::Consumer.new(container, public_key)
-      req = OAuth::RequestProxy::ActionControllerRequest.new(request)
+      req = OAuth::RequestProxy::RackRequest.new(request)
       sign = OAuth::Signature::RSA::SHA1.new(req, {:consumer => consumer})
       verified = sign.verify
       if verified
@@ -185,23 +195,25 @@ include GoogleLoginHelper
       #Unable to put 'grant_day_pass' in after_filter due to double render
     else
       note_failed_login
-        respond_to do |format|
-          # format.mobile{
-          #   flash[:error] = I18n.t("mobile.home.sign_in_error")
-          #   redirect_to root_url
-          # }
-          format.html{
-            redirect_to support_login_path
-          }
-          format.nmobile{
-              json = "{'login':'failed',"
-              @user_session.errors.each_error do |attr,error|
-                json << "'attr' : '#{attr}', 'message' : '#{error.message}'}"
-                break # even if password & email passed here is incorrect, only email is validated first. so this array will always have one element. This break will ensure that if in case...
-              end
-              render :json => json
-          } 
-        end
+      respond_to do |format|
+        # format.mobile{
+        #   flash[:error] = I18n.t("mobile.home.sign_in_error")
+        #   redirect_to root_url
+        # }
+        format.html{
+          redirect_to support_login_path
+        }
+        format.nmobile{# TODO-RAILS3
+          err_resp = {login: "failed"}
+          @user_session.errors.messages.each do |attribute, error|
+            error.each do |err|
+              err_resp.merge!(:attr => "#{attribute}", message: "#{err}")
+              break # even if password & email passed here is incorrect, only email is validated first. so this array will always have one element. This break will ensure that if in case...
+            end
+          end
+          render :json => err_resp
+        } 
+      end
       
     end
   end
@@ -209,7 +221,7 @@ include GoogleLoginHelper
   def destroy
     remove_old_filters if current_user && current_user.agent?
 
-    mark_agent_unavailable if current_account.features?(:round_robin) && current_user && current_user.agent? && current_user.agent.available?
+    mark_agent_unavailable if can_turn_off_round_robin?
 
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
@@ -217,8 +229,8 @@ include GoogleLoginHelper
     flash.clear if mobile?
    remove_logged_out_user_mobile_registrations if is_native_mobile?
 
-    current_user_session.destroy unless current_user_session.nil? 
-    if current_account.sso_enabled? and current_account.sso_logout_url.present?
+    current_user_session.destroy unless current_user_session.nil?
+    if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
       sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
       redirect_to sso_redirect_url and return
     end
@@ -242,6 +254,7 @@ include GoogleLoginHelper
     
     @user_session = current_account.user_sessions.new(@current_user)
     if @user_session.save
+      @current_user.reset_perishable_token!
       @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
@@ -311,7 +324,7 @@ include GoogleLoginHelper
           @notice = t(:'flash.gmail_gadgets.kvp_missing')
         elsif @current_user.blank?
           @notice = t(:'flash.gmail_gadgets.user_missing')
-        elsif @current_user.agent.blank?
+        elsif !@current_user.agent?
           @notice = t(:'flash.gmail_gadgets.agent_missing')
         else
           @gauth_error=false
@@ -376,7 +389,8 @@ include GoogleLoginHelper
   private
 
     def remove_old_filters
-      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
+      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => request.session_options[:id]})
+      remove_tickets_redis_key(EXPORT_TICKET_FIELDS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => request.session_options[:id]})
     end
 
     def mark_agent_unavailable
@@ -386,12 +400,12 @@ include GoogleLoginHelper
 
     def check_sso_params
       time_in_utc = get_time_in_utc
-      if ![:name, :email, :hash].all? {|s| params.key? s} 
+      if ![:name, :email, :hash].all? {|key| params[key].present?}
         flash[:notice] = t(:'flash.login.sso.expected_params')
-        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+        redirect_to login_normal_url
       elsif !params[:timestamp].blank? and !params[:timestamp].to_i.between?((time_in_utc - SSO_ALLOWED_IN_SECS),( time_in_utc + SSO_CLOCK_DRIFT ))
         flash[:notice] = t(:'flash.login.sso.invalid_time_entry')
-        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)  
+        redirect_to login_normal_url
       end
     end
 
@@ -399,13 +413,17 @@ include GoogleLoginHelper
       if params[:timestamp].blank?
         Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
       else
-        digest  = OpenSSL::Digest::Digest.new('MD5')
+        digest  = OpenSSL::Digest.new('MD5')
         OpenSSL::HMAC.hexdigest(digest,current_account.shared_secret,params[:name]+params[:email]+params[:timestamp])
       end
     end
 
     def get_time_in_utc
       Time.now.getutc.to_i
+    end
+
+    def can_turn_off_round_robin?
+      current_user && current_user.agent? && current_user.agent.available? && current_account.features?(:round_robin) && !current_account.features?(:disable_rr_toggle) 
     end
     
     def note_failed_login
@@ -428,7 +446,7 @@ include GoogleLoginHelper
       @contact = account.users.new
       @contact.name = options[:name] unless options[:name].blank?
       @contact.phone = options[:phone] unless options[:phone].blank?
-      @contact.customer_id = current_account.customers.find_or_create_by_name(options[:company]).id unless options[:company].blank?
+      @contact.customer_id = current_account.companies.find_or_create_by_name(options[:company]).id unless options[:company].blank?
       @contact.email = email
       @contact.helpdesk_agent = false
       @contact.language = current_portal.language

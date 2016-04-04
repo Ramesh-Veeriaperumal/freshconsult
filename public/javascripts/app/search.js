@@ -52,17 +52,18 @@
 			{
 				var result = data.results[i];
 				if(result){
-					var resultType = result.result_type
+					var resultType = result.result_type,
+						templateName = ["app/search/templates/", resultType].join("");
 					if ((resultType == "helpdesk_ticket") || (resultType == "helpdesk_note")){
 						var idKey = (resultType == "helpdesk_ticket") ? "id" : "notable_id";
 						var ticketId = parseInt(result[idKey]); 
 						if(jQuery.inArray(ticketId, $this.searchedTicketIds) < 0){
-							resultHtml += (JST[resultType](result));
+							resultHtml += (JST[templateName](result));
 							$this.searchedTicketIds.push(ticketId);
 						}
 					}
 					else {
-						resultHtml += (JST[resultType](result));
+						resultHtml += (JST[templateName](result));
 					}
 				}
 			}

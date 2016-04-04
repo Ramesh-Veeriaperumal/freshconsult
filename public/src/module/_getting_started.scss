@@ -151,65 +151,7 @@
 	@include float(right);
 	@include margin-right(20px);
 }
- 
-.gs .twitterbutton, .gs .facebookbutton{
-	color: #666;
-	@include text-align(left);
-	@include padding(10px 10px 10px 40px);
-	width: 70px;	
-	height: 25px;
-}
- 
-.gs .twitterbutton{
-	background-image: url(/images/twitter_32.png) no-repeat 5% 50%;
-	background: url(/images/twitter_32.png) no-repeat 5% 50%,-moz-linear-gradient(top,  #aee7fb 0%, #95d9f1 100%); /* FF3.6+ */
-	background: url(/images/twitter_32.png) no-repeat 5% 50%,-webkit-gradient(linear, left top, left bottom, color-stop(0%,#aee7fb), color-stop(100%,#95d9f1)); /* Chrome,Safari4+ */
-	background: url(/images/twitter_32.png) no-repeat 5% 50%,-webkit-linear-gradient(top,  #aee7fb 0%,#95d9f1 100%); /* Chrome10+,Safari5+ */
-	background: url(/images/twitter_32.png) no-repeat 5% 50%,-o-linear-gradient(top,  #aee7fb 0%,#95d9f1 100%); /* Opera 11.10+ */
-	background: url(/images/twitter_32.png) no-repeat 5% 50%,-ms-linear-gradient(top,  #aee7fb 0%,#95d9f1 100%); /* IE10+ */
-	background: url(/images/twitter_32.png) no-repeat 5% 50%,linear-gradient(top,  #aee7fb 0%,#95d9f1 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#aee7fb', endColorstr='#95d9f1',GradientType=0 ); /* IE6-8 */
-}
- 
-.gs .twitterbutton:hover{
-	background-image: url(/images/twitter_32.png) no-repeat 5% 50%;
-	background: url(/images/twitter_32.png) no-repeat 5% 50%,-moz-linear-gradient(top,  #95d9f1 0%, #aee7fb 100%); /* FF3.6+ */
-	background: url(/images/twitter_32.png) no-repeat 5% 50%,-webkit-gradient(linear, left top, left bottom, color-stop(0%,#95d9f1), color-stop(100%,#aee7fb)); /* Chrome,Safari4+ */
-	background: url(/images/twitter_32.png) no-repeat 5% 50%,-webkit-linear-gradient(top,  #95d9f1 0%,#aee7fb 100%); /* Chrome10+,Safari5+ */
-	background: url(/images/twitter_32.png) no-repeat 5% 50%,-o-linear-gradient(top,  #95d9f1 0%,#aee7fb 100%); /* Opera 11.10+ */
-	background: url(/images/twitter_32.png) no-repeat 5% 50%,-ms-linear-gradient(top,  #95d9f1 0%,#aee7fb 100%); /* IE10+ */
-	background: url(/images/twitter_32.png) no-repeat 5% 50%,linear-gradient(top,  #95d9f1 0%,#aee7fb 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#95d9f1', endColorstr='#aee7fb',GradientType=0 ); /* IE6-8 */
-}
-		
-.gs .facebookbutton{
-	background-image: url(/images/facebook_32.png) no-repeat 5% 50%;
-	background: url(/images/facebook_32.png) no-repeat 5% 50%,-moz-linear-gradient(top,  #b0d8fb 0%, #83bae8 100%); /* FF3.6+ */
-	background: url(/images/facebook_32.png) no-repeat 5% 50%,-webkit-gradient(linear, left top, left bottom, color-stop(0%,#b0d8fb), color-stop(100%,#83bae8)); /* Chrome,Safari4+ */
-	background: url(/images/facebook_32.png) no-repeat 5% 50%,-webkit-linear-gradient(top,  #b0d8fb 0%,#83bae8 100%); /* Chrome10+,Safari5+ */
-	background: url(/images/facebook_32.png) no-repeat 5% 50%,-o-linear-gradient(top,  #b0d8fb 0%,#83bae8 100%); /* Opera 11.10+ */
-	background: url(/images/facebook_32.png) no-repeat 5% 50%,-ms-linear-gradient(top,  #b0d8fb 0%,#83bae8 100%); /* IE10+ */
-	background: url(/images/facebook_32.png) no-repeat 5% 50%,linear-gradient(top,  #b0d8fb 0%,#83bae8 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b0d8fb', endColorstr='#83bae8',GradientType=0 ); /* IE6-8 */
- 
-	@include margin-left(10px);
-}
-	
-.gs .facebookbutton:hover{
-	background-image: url(/images/facebook_32.png) no-repeat 5% 50%;
-	background: url(/images/facebook_32.png) no-repeat 5% 50%,-moz-linear-gradient(top,  #83bae8 0%, #b0d8fb 100%); /* FF3.6+ */
-	background: url(/images/facebook_32.png) no-repeat 5% 50%,-webkit-gradient(linear, left top, left bottom, color-stop(0%,#83bae8), color-stop(100%,#b0d8fb)); /* Chrome,Safari4+ */
-	background: url(/images/facebook_32.png) no-repeat 5% 50%,-webkit-linear-gradient(top,  #83bae8 0%,#b0d8fb 100%); /* Chrome10+,Safari5+ */
-	background: url(/images/facebook_32.png) no-repeat 5% 50%,-o-linear-gradient(top,  #83bae8 0%,#b0d8fb 100%); /* Opera 11.10+ */
-	background: url(/images/facebook_32.png) no-repeat 5% 50%,-ms-linear-gradient(top,  #83bae8 0%,#b0d8fb 100%); /* IE10+ */
-	background: url(/images/facebook_32.png) no-repeat 5% 50%,linear-gradient(top,  #83bae8 0%,#b0d8fb 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#83bae8', endColorstr='#b0d8fb',GradientType=0 ); /* IE6-8 */
- 
-}	
-	
-	.gs .twitterbutton strong,.gs .facebookbutton strong{ color: black; font-size: 14px;}
-	.gs .twitterbutton samp,.gs .facebookbutton samp{ color: black; font-size: 10px; font-weight: normal;}
- 
+  
 	.gs_update .gs_update,.gs_success .gs_success,.gs_failure .gs_failure{display:block;margin:auto;padding:auto;}
 	.gs_update .gs_success,.gs_update .gs_failure,.gs_success .gs_update,.gs_success .gs_failure,.gs_failure .gs_update,.gs_failure .gs_success{display:none;}
 	.gs_update{color:#C84B11;}

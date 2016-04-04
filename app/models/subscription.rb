@@ -1,5 +1,6 @@
 class Subscription < ActiveRecord::Base
   
+  self.primary_key = :id
   SUBSCRIPTION_TYPES = ["active", "trial", "free", "suspended"]
   
   AGENTS_FOR_FREE_PLAN = 3
@@ -25,6 +26,7 @@ class Subscription < ActiveRecord::Base
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   has_one :billing_address,:class_name => 'Address',:as => :addressable,:dependent => :destroy
 
+  has_many :subscription_invoices
   has_many :subscription_addon_mappings, 
     :class_name=> "Subscription::AddonMapping"
   has_many :addons,
@@ -46,24 +48,23 @@ class Subscription < ActiveRecord::Base
 
   after_update :add_to_crm
   after_update :update_reseller_subscription
-  after_commit_on_update :update_social_subscription, :add_free_freshfone_credit
-
+  after_commit :update_social_subscription, :add_free_freshfone_credit, on: :update
+  after_commit :clear_account_susbcription_cache
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
-
-  named_scope :paying_subscriptions, { 
+  scope :paying_subscriptions, { 
     :conditions => ["state = '#{ACTIVE}' AND amount > 0.00"],
     :include => "currency" }
   
-  named_scope :free_subscriptions, { 
+  scope :free_subscriptions, { 
     :conditions => ["state IN ('#{ACTIVE}', '#{FREE}') AND amount = 0.00"] }
   
-  named_scope :filter_with_currency, lambda { |currency| {    
+  scope :filter_with_currency, lambda { |currency| {    
     :conditions => { :subscription_currency_id => currency.id }
   }}
   
-  named_scope :filter_with_state, lambda { |state| {
+  scope :filter_with_state, lambda { |state| {
     :conditions => { :state => state }
   }}
 
@@ -116,6 +117,11 @@ class Subscription < ActiveRecord::Base
 
   def self.free_agent_count
     sum('free_agents', :conditions => [ "state in ('#{ACTIVE}', '#{FREE}')"]).to_i
+  end
+
+  def self.fetch_by_account_id(account_id)
+    key = MemcacheKeys::ACCOUNT_SUBSCRIPTION % { :account_id => account_id }
+    MemcacheKeys.fetch(key) { Subscription.find_by_account_id(account_id) }
   end
 
   def cmrr
@@ -284,6 +290,83 @@ class Subscription < ActiveRecord::Base
     suspended? and card_number.blank? and subscription_payments.empty?
   end
 
+  def paid_account?
+    (state == 'active') and (subscription_payments.count > 0)
+  end
+  alias :is_paid_account :paid_account?
+
+
+  def chk_change_agents 
+    if(agent_limit && agent_limit < account.full_time_agents.count)
+     errors.add(:base,I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_agents.count}))
+    end  
+  end
+
+  def non_free_agents 
+    non_free_agents =  (agent_limit || account.full_time_agents.count) - free_agents
+    (non_free_agents > 0) ? non_free_agents : 0
+  end
+
+  def available_free_agents
+    agents = agent_limit || account.full_time_agents.count
+    if (free_agents >= agents) 
+      available_free_slots = (free_agents - agents).to_s + " available"
+    else
+      available_free_slots = free_agents
+    end
+    available_free_slots
+  end
+
+  def is_chat_plan?
+    freshchat_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
+                        SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
+                        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], SubscriptionPlan::SUBSCRIPTION_PLANS[:premium] ]
+    freshchat_plans.include?(self.subscription_plan.name)
+  end
+
+  def set_next_renewal_at(billing_subscription)
+    self.next_renewal_at = if (renewal_date = billing_subscription.current_term_end)
+      Time.at(renewal_date).to_datetime.utc
+    else
+      Time.at(billing_subscription.trial_end).to_datetime.utc
+    end
+  end
+  
+  def set_billing_info(card)
+    self.card_number = card.masked_number
+    self.card_expiration = "%02d-%d" % [card.expiry_month, card.expiry_year]
+    self.update_billing_address(card)
+  end
+
+  def clear_billing_info
+    self.card_number = nil
+    self.card_expiration = nil
+    self.billing_id = nil
+  end
+
+  def paid_account?
+    (state == 'active') and (subscription_payments.count > 0)
+  end
+  alias :is_paid_account :paid_account?
+
+  def total_amount(addons, coupon_code)      
+    subscription_estimate(addons, coupon_code)
+    self.amount = to_currency(@response.estimate.amount)
+  end
+
+  def discount_amount(addons, coupon_code)
+    subscription_estimate(addons, coupon_code)
+    @response.estimate.discounts ? to_currency(response.estimate.discounts.first.amount) : nil
+  end
+  
+  def plan_name
+    subscription_plan.name
+  end
+  
+  def non_sprout_plan?
+    !(sprout? || sprout_classic?) 
+  end
+  
   protected
   
     def non_social_plans
@@ -317,11 +400,6 @@ class Subscription < ActiveRecord::Base
         self.amount = to_currency(response.estimate.amount)
       end
     end
-    
-    def paid_account?
-      (state == 'active') and (subscription_payments.count > 0)
-    end
-    alias :is_paid_account :paid_account?
 
     def subscription_estimate(addons, coupon_code)
       unless active?
@@ -330,44 +408,13 @@ class Subscription < ActiveRecord::Base
         @response ||= Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
       end
     end
-    
-    def total_amount(addons, coupon_code)      
-      subscription_estimate(addons, coupon_code)
-      self.amount = to_currency(@response.estimate.amount)
-    end
 
-    def discount_amount(addons, coupon_code)
-      subscription_estimate(addons, coupon_code)
-      @response.estimate.discounts ? to_currency(response.estimate.discounts.first.amount) : nil
-    end
-    
     def cache_old_model
       @old_subscription = Subscription.find id
     end
     
     def validate_on_update
       chk_change_agents unless trial?
-    end
-
-    def chk_change_agents 
-      if(agent_limit && agent_limit < account.full_time_agents.count)
-       errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_agents.count}))
-      end  
-    end
-
-    def available_free_agents
-      agents = agent_limit || account.full_time_agents.count
-      if (free_agents >= agents) 
-        available_free_slots = (free_agents - agents).to_s + " available"
-      else
-        available_free_slots = free_agents
-      end
-      available_free_slots
-    end
-
-    def non_free_agents 
-      non_free_agents =  (agent_limit || account.full_time_agents.count) - free_agents
-      (non_free_agents > 0) ? non_free_agents : 0
     end
 
     def finished_trial?
@@ -383,19 +430,6 @@ class Subscription < ActiveRecord::Base
       SAAS::SubscriptionActions.new.change_plan(account, @old_subscription)
     end
 
-    def set_next_renewal_at(billing_subscription)
-      self.next_renewal_at = if (renewal_date = billing_subscription.current_term_end)
-        Time.at(renewal_date).to_datetime.utc
-      else
-        Time.at(billing_subscription.trial_end).to_datetime.utc
-      end
-    end
-
-    def set_billing_info(card)
-      self.card_number = card.masked_number
-      self.card_expiration = "%02d-%d" % [card.expiry_month, card.expiry_year]
-      self.update_billing_address(card)
-    end
 
     def update_billing_address(card)
       billing_address = self.billing_address
@@ -410,12 +444,6 @@ class Subscription < ActiveRecord::Base
       ADDRESS_INFO.inject({}) { |h, (k, v)| h[k] = card.send(v); h }
     end
     
-    def clear_billing_info
-      self.card_number = nil
-      self.card_expiration = nil
-      self.billing_id = nil
-    end
-    
     def config_from_file(file)
       YAML.load_file(File.join(Rails.root, 'config', file))[Rails.env].symbolize_keys
     end
@@ -428,12 +456,6 @@ class Subscription < ActiveRecord::Base
       state == 'active' and amount > 0
     end
    
-    def is_chat_plan?
-      freshchat_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
-                          SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
-                          SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], SubscriptionPlan::SUBSCRIPTION_PLANS[:premium] ]
-      freshchat_plans.include?(self.subscription_plan.name)
-    end
    
   private
 
@@ -448,14 +470,23 @@ class Subscription < ActiveRecord::Base
 
     def add_to_crm
       if next_renewal_at_changed? and (trial? or suspended?)
-        Resque.enqueue(CRM::AddToCRM::UpdateTrialAccounts, { :account_id => account_id })
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateTrialAccounts, { :account_id => account_id })
       elsif free_customer?
-        Resque.enqueue(CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
       end
+
+      if state_changed?
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateCustomerStatus, { :item_id => id, :account_id => account_id })
+      end
+    ensure
+      Resque.enqueue_at(15.minutes.from_now, CRM::Freshsales::TrackSubscription, 
+                            { account_id: account_id, old_subscription: @old_subscription.attributes, 
+                              old_cmrr: @old_subscription.cmrr, subscription: self.attributes, 
+                              cmrr: self.cmrr, payments_count: self.subscription_payments.count }) if changes.any?
     end
 
-    def update_reseller_subscription 
-      if state_changed? or (active? and amount_changed?) or subscription_currency_id_changed?
+    def update_reseller_subscription
+      if state_changed? or (active? and amount_changed?) or subscription_currency_id_changed? or next_renewal_at_changed?
         Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => account_id, 
           :event_type => :subscription_updated })
       end
@@ -470,5 +501,10 @@ class Subscription < ActiveRecord::Base
 
     def to_currency(amount)
       (amount/100.0).round.to_f
+    end
+
+    def clear_account_susbcription_cache
+      key = MemcacheKeys::ACCOUNT_SUBSCRIPTION % { :account_id => self.account_id }
+      MemcacheKeys.delete_from_cache key
     end
  end

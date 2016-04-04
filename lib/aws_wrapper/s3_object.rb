@@ -1,7 +1,8 @@
+  # This file uses aws-sdk version 1.11.3
 module AwsWrapper
   class S3
     #this version of aws_sdk uses "s3.amazonaws.com" 1.11.3
-    DEFAULT_HOST = "s3.amazonaws.com"
+    #DEFAULT_HOST = "s3.amazonaws.com"
   end
 
   class S3Object

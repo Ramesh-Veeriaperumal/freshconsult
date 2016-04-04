@@ -25,6 +25,7 @@
 			height: 14px;
 			display: inline-block;
 			position: relative;
+			margin-top: -12px;
 			&:before{
 				position: absolute;
 				content: "";
@@ -71,6 +72,15 @@
 			display: inline-block;
 			vertical-align: middle;
 			background: inline-image('cdn-ignored/inline-images/box.png') no-repeat #ffffff;
+		}
+		.file-types-onedrive{
+			margin: 0;
+			@include padding(3px 0px 3px 25px);
+			width: auto;
+			height: 13px;
+			display: inline-block;
+			vertical-align: middle;
+			background: inline-image('cdn-ignored/inline-images/onedrive.png') no-repeat #ffffff;
 		}
 		img.image{
 				margin:0;
@@ -150,9 +160,33 @@
 }
 
 .no-image-logo{
-	@include no-image-class("logo.png");
+	@include no-image-class("cdn-ignored/inline-images/logo.png");
 }
 
 .no-image-favicon{
-	@include no-image-class("favicon-preview.png");
+	@include no-image-class("cdn-ignored/inline-images/favicon-preview.png");
+}
+
+// ------------------------------------------------------------------ //
+// -------------------- DropBox Style  ------------------------------ //
+// ------------------------------------------------------------------ //
+.attach-list-wrap{
+	position: relative;
+	&.tkt-dropbox-atmt {
+		.ficon-dropbox {
+			left: 8px;
+			top: 5px;
+		}
+	}
+	.ficon-dropbox{
+		color: #1272de;
+		position: absolute;
+		@include left(5px);
+		top: 3px;
+	}
+	.ficon-file-edit{
+		position: absolute;
+		@include left(3px);
+		top: 4px;
+	}
 }

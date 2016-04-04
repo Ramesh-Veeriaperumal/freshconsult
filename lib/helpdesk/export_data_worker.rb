@@ -4,7 +4,6 @@ require 'zip/zipfilesystem'
 require 'fileutils'
 
 class Helpdesk::ExportDataWorker < Struct.new(:params)
-  include ActionController::UrlWriter
 
   def perform
     begin
@@ -24,16 +23,16 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
       @data_export.file_created!
       @file = File.open(zip_file_path,  'r')
       
-      @data_export.build_attachment(:content => @file,  :account_id => @current_account.id)
+      @data_export.build_attachment(:content => @file)
       @data_export.save!
 
       @data_export.file_uploaded!
       hash_file_name = Digest::SHA1.hexdigest(@data_export.id.to_s + Time.now.to_f.to_s)
       @data_export.save_hash!(hash_file_name)
-      url = url_for(:controller => "download_file/#{@data_export.source}/#{hash_file_name}", 
+      url = Rails.application.routes.url_helpers.download_file_url(@data_export.source,hash_file_name, 
                     :host => @current_account.host, 
-                    :protocol => @current_account.url_protocol)
-      DataExportMailer.deliver_data_backup({:email => params[:email], 
+                    :protocol => 'https')
+      DataExportMailer.data_backup({:email => params[:email], 
                                             :domain => params[:domain],
                                             :host => @current_account.host,
                                             :url =>  url})
@@ -98,6 +97,15 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
        i+=1
     end
   end
+
+  def export_archived_tickets_data
+    i = 0 
+    @current_account.archive_tickets.find_in_batches(:batch_size => 300, :include => [:archive_notes,:attachments]) do |tkts|
+       xml_output = tkts.to_xml
+       write_to_file("ArchivedTickets#{i}.xml",xml_output)
+       i += 1
+    end
+  end
   
   def export_groups_data
     groups = @current_account.groups.all
@@ -116,6 +124,7 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
       export_users_data #Users data
       export_companies_data #Companies data
       export_tickets_data #Tickets data
+      export_archived_tickets_data #Archived tickets data
       export_groups_data #Groups data
   end
   

@@ -1,5 +1,6 @@
 class Mobihelp::Device < ActiveRecord::Base
-  set_table_name :mobihelp_devices
+  self.primary_key = :id
+  self.table_name =  :mobihelp_devices
 
   belongs_to_account
 

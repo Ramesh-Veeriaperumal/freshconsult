@@ -1,6 +1,6 @@
 class Search::AutocompleteController < ApplicationController
 
-  USER_ASSOCIATIONS = { User => { :include => [{ :account => :features }] }}
+  USER_ASSOCIATIONS = { User => { :include => [{ :account => :features }, :user_emails] }}
 
   def agents
     begin
@@ -87,6 +87,7 @@ class Search::AutocompleteController < ApplicationController
     def search_companies
       search_name_string = 'name:'+params[:q]+'*'
       options = { :load => true, :size => 1000 }
+      Search::EsIndexDefinition.es_cluster(current_account.id)
       s = Tire.search Search::EsIndexDefinition.searchable_aliases([Customer], current_account.id),options do |s|
         s.query do |q|
           q.boolean do |b|
@@ -99,10 +100,11 @@ class Search::AutocompleteController < ApplicationController
     
     def search_users(agent=false)
       options = { :load => USER_ASSOCIATIONS, :size => 100 }
+      Search::EsIndexDefinition.es_cluster(current_account.id)
       items = Tire.search Search::EsIndexDefinition.searchable_aliases([User], current_account.id),options do |tire_search|
          tire_search.query do |q|
            q.filtered do |f|
-             f.query { |q| q.string SearchUtil.es_filter_key(params[:q]), :fields => [ 'email', 'name', 'phone', 'user_emails.email' ], :analyzer => "include_stop" }
+             f.query { |q| q.match [ 'email', 'name', 'phone', 'mobile', 'user_emails.email' ], SearchUtil.es_filter_key(params[:q], false), :type => :phrase_prefix }
              f.filter :term, { :helpdesk_agent => agent } if agent
              f.filter :term, { :account_id => current_account.id }
              f.filter :term, { :deleted => false }
@@ -115,6 +117,7 @@ class Search::AutocompleteController < ApplicationController
     def search_tags
       search_name_string = 'name:'+params[:q]+'*'
       options = { :load => true, :size => 25 }
+      Search::EsIndexDefinition.es_cluster(current_account.id)
       items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Tag], current_account.id),options do |tire_search|
         tire_search.query do |q|
           q.boolean do |b|
@@ -136,22 +139,13 @@ class Search::AutocompleteController < ApplicationController
     end
 
     def agent_sql
-      if current_account.features_included?(:multiple_user_emails)
-        items = current_account.users.technicians.find(
-        :all, 
-        :select => ["users.id as `id` , users.name as `name`, user_emails.email as `email_found`"],
-        :joins => ["INNER JOIN user_emails ON user_emails.user_id = users.id AND user_emails.account_id = users.account_id"],
-        :conditions => ["(users.name like ? or user_emails.email like ?) and users.deleted = 0", "%#{params[:q]}%", "%#{params[:q]}%"], 
-        :limit => 1000)
-        result = {:results => items.map {|i| {:id => i.email_found, :value => i.name, :user_id => i.id }}}
-      else
-        items = current_account.users.technicians.find(
-        :all, 
-        :conditions => ["email is not null and name like ? or email like ?", "%#{params[:q]}%", "%#{params[:q]}%"], 
-        :limit => 1000)
-        result = {:results => items.map {|i| {:id => i.email, :value => i.name, :user_id => i.id }}}
-      end
-      return result
+      items = current_account.users.technicians.find(
+      :all, 
+      :select => ["users.id as `id` , users.name as `name`, user_emails.email as `email_found`"],
+      :joins => ["INNER JOIN user_emails ON user_emails.user_id = users.id AND user_emails.account_id = users.account_id"],
+      :conditions => ["(users.name like ? or user_emails.email like ?) and users.deleted = 0", "%#{params[:q]}%", "%#{params[:q]}%"], 
+      :limit => 1000)
+      {:results => items.map {|i| {:id => i.email_found, :value => i.name, :user_id => i.id }}}
     end
 
   	def results

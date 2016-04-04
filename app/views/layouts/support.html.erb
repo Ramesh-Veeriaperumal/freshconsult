@@ -2,7 +2,7 @@
 <%= open_html_tag %>
 	<head>
 		
-		<%= @head %>
+		<%= raw @head %>
 		
 		<!-- Adding meta tag for CSRF token -->
 		<%= csrf_meta_tag %>
@@ -12,8 +12,11 @@
 		<%= portal_fav_ico %>
 
 		<!-- Base stylesheet -->
-		<%= include_cloudfront_rtl_css :portal_utils %>
-		<%= include_cloudfront_rtl_css :portal_print, :media => "print" %>
+
+ 
+		<%= stylesheet_link_tag_with_rtl :'cdn/portal_utils' %>
+		<%= stylesheet_link_tag_with_rtl :'cdn/portal_print',  :media => "print" %>
+
 		
 		<!-- Theme stylesheet -->
 		<link href="<%= support_theme_url %>" media="screen" rel="stylesheet" type="text/css">
@@ -22,10 +25,10 @@
 		<%= portal_fonts %>
 
 		<!-- Including default portal based script framework at the top -->
-		<%= include_cloudfront_js :portal_head %>
+		<%= javascript_include_tag :'cdn/portal_head' %>
 		
 		<!-- Including syntexhighlighter for portal -->
-		<%= include_cloudfront_js :syntaxhighlighter %>
+		<%= javascript_include_tag :'cdn/syntaxhighlighter' %>
 
 		<%= render :partial => "layouts/support/google_analytics_integration" %>
 
@@ -35,18 +38,18 @@
 	<body>
 		<%= assumed_identity_message %>
 
-		<%= @layout %>
+		<%= raw @layout %>
 
 		<% if portal_chat_enabled? %>
 			<%= render :partial => "layouts/shared/chat/chat" %>
 		<% end %>
 				
+	    <%= javascript_include_tag :'cdn/portal_bottom' %>
+		<%= javascript_include_tag :'cdn/redactor' %>
+		<%= javascript_include_tag :'cdn/freshfone_portal' %>	
+		<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
 		<!-- Including default portal based script at the bottom -->
-		<%= include_cloudfront_js :portal_bottom %>
-		<%= include_cloudfront_js :redactor %>
-		<%= include_cloudfront_js :freshfone_portal %>
-		<%= include_cloudfront_js_langs %>
-		<%= render :partial => "layouts/shared/scripts" %> 	
+		<%= render :partial => "layouts/shared/scripts" %> 
 
 		<%= back_to_agent_view %>
 

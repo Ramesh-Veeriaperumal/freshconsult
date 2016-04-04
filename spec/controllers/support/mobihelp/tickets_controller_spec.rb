@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Support::Mobihelp::TicketsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -37,16 +36,19 @@ describe Support::Mobihelp::TicketsController do
   end
 
   it "should fetch the ticket attributes" do
+    request.env["HTTP_ACCEPT"] = "application/json"
     get :show, { :id => @test_ticket.display_id , :device_uuid => @user_device_id }
     JSON.parse(response.body).should have(1).items
   end
 
   it "should fetch all the tickets" do
+    request.env["HTTP_ACCEPT"] = "application/json"
     get :index
     JSON.parse(response.body).should_not be_empty
   end
 
   it "should fetch all the tickets when device id is provided" do
+    request.env["HTTP_ACCEPT"] = "application/json"
     get :index, :device_uuid => @user_device_id
     JSON.parse(response.body).should_not be_empty
   end
@@ -63,7 +65,7 @@ describe Support::Mobihelp::TicketsController do
         :id => @test_ticket.display_id
       }
 
-    post :add_note, note
+    post :notes, note
   end
 
   it "should add note with attachment" do
@@ -79,7 +81,7 @@ describe Support::Mobihelp::TicketsController do
         :id => @test_ticket.display_id
       }
 
-    post :add_note, note
+    post :notes, note
   end
 
   it "should close a mobihelp ticket" do

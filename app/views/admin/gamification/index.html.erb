@@ -1,10 +1,24 @@
 <div class="pull-right">
+	<a href='#all-agents-gamification-reset' 
+        id="scoreboard_start_over"
+        rel="freshdialog"
+        title="<%= t('reset_arcade') %>"
+        data-submit-label="<%= t('reset') %>"
+        data-width="400px"
+        data-close-on-submit="true"
+        data-close-label="<%= t('cancel') %>"
+        data-destroy-on-close="true"
+        <% unless feature?(:gamification_enable) %>style="display:none"<% end %> >
+        	<%=t('.start_over')%>
+	</a>
 	<%= check_box_tag :gamification_enable, 1, feature?(:gamification_enable), 
 			:rel => "toggle", 
 			"data-checked-label" => "enabled", 
 			"data-unchecked-label" => "disabled", 
-			:onchange => remote_function( :url => toggle_admin_gamification_path, :complete => "jQuery('#gamification-intro').slideToggle();jQuery('#scoreboard_elements').slideToggle();") %>
+			:onchange => remote_function( :url => toggle_admin_gamification_index_path, :complete => "jQuery('#scoreboard_start_over').toggle();jQuery('#gamification-intro').slideToggle();jQuery('#scoreboard_elements').slideToggle();") %>
+	<%= link_to 'reset', reset_arcade_admin_gamification_index_path, :method => 'put', :id => "all_agents_score_reset", :class => "hide" %>       
 </div>
+
 <h3 class="lead"><%=t('.title')%></h3>
 
 <div id="scoreboard_elements" <% unless feature?(:gamification_enable) %>style="display:none"<%end%> >
@@ -30,7 +44,7 @@
 <div class="clearfix" id="gamification-intro" <% if feature?(:gamification_enable) %>style="display:none"<%end%>>	
 	<div class="aracde-content">
 		<div class="aligncenter">
-			<%= image_tag '/images/helpimages/arcade-admin-page.png', :alt => "Helpdesk Arcade"  %>
+			<%= image_tag "#{asset_host_url}/assets/helpimages/arcade-admin-page.png", :alt => t('admin.help_image_alt.helpdesk_arcarde')  %>
 		</div>
 		<h2><%= t('admin.gamification.fresh_arcade') %></h2>
 		<p>
@@ -55,14 +69,17 @@
 	</div>
 </div>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery('#points-tab, #quests-tab').bind("click", function(){
 		jQuery("#gamification-help .active").removeClass("active");
 		jQuery('#'+this.id+'-help').addClass('active');
 	});
 	jQuery('#enable-gamification-button').bind("click", function(){
-	jQuery('#gamification_enable').trigger('click');
-});
+		jQuery('#gamification_enable').trigger('click');
+	});
+	jQuery('#all-agents-gamification-reset-submit').live('click', function(){ 
+      jQuery('#all_agents_score_reset').trigger('click');
+    });
 <% end %>
 
 <% content_for :helpcard do %>

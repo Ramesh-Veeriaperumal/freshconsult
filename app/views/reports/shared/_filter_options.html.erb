@@ -63,7 +63,7 @@
                 container = "multi_select" 
               end
             %>
-            <% 
+            <%=
             unless c_hash[:options].blank?
               content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
                                     :class       => "ff_item", 
@@ -92,7 +92,7 @@
       </li>
       </form>
     </ul>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 var custom_fields = <%= @show_fields.to_json.html_safe%>;
 custom_fields['ticket_type'] = 'Type';
 custom_fields['source'] = 'Source';

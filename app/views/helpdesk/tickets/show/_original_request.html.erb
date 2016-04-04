@@ -1,6 +1,6 @@
-<%= link_to user_avatar(@ticket.requester), @ticket.requester, :class => 'avatar-wrap' %>
+<%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
 <% fb_message = @ticket.is_fb_message? %>
-<% twitter_dm = @ticket.is_twitter? && @ticket.tweet.is_dm? %>
+<% twitter_dm = @ticket.twitter? && @ticket.tweet.is_dm? %>
 <% fb_comment = @ticket.is_fb_comment? %>
 <div class="commentbox private-note <%= 'commentbox-social' if (fb_message || twitter_dm) %>">
 	<% if fb_message %>
@@ -33,11 +33,20 @@
 		<% end %>
 
 		<%
-            customer_opinion = ""                                
-            unless @ticket.survey_results.nil? || @ticket.survey_results.last.nil?
-              customer_opinion = ["<div class='customer-opinion ", @ticket.survey_results.last.get_small_img_class ,"'></div>"].join.html_safe
+            customer_opinion = "" 
+            survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
+           unless @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil? 
+           		if (Account.current.new_survey_enabled?)
+           			rating_class_value = " color-" + CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[@ticket.send(survey_association).last.ticket_info[:value]] + "' title='" + @ticket.send(survey_association).last.ticket_info[:text]
+           			tooltip_class = "tooltip "
+           		else
+		       		rating_class_value = ""
+		       		tooltip_class = ""
+	       		end
+           		
+            	customer_opinion = ["<div class='customer-opinion ",tooltip_class, @ticket.send(survey_association).last.get_small_img_class, rating_class_value, "'></div>"].join.html_safe
             end  
-	    %>				
+	    %>
 	    <%=customer_opinion%>									
 
 		<%= h(@ticket.subject) %>
@@ -48,10 +57,12 @@
 			<abbr data-livestamp="<%= @ticket.created_at.to_i %>"></abbr> 
 			(<%= formated_date(@ticket.created_at) %>)
 			<%= t('ticket.via')%>
-			<% if @ticket.is_twitter? %>
+			<% if @ticket.twitter? %>
 				<span class="ficon-twitter fsize-12 pr5 pl5"></span> <%= @ticket.tweet.twitter_handle.screen_name %> 
-			<% elsif @ticket.is_facebook? %>
+			<% elsif @ticket.facebook? %>
 				<span class="ficon-facebook-setting fsize-12 pr5 pl5"></span> <%= @ticket.fb_post.facebook_page.page_name %>
+			<% elsif @ticket.ecommerce? and @ticket.ebay_account.present? %>
+				<span class="ficon-ecommerce fsize-14 pr5 pl5"></span> <%= @ticket.ebay_account.name %>
 			<% else %>
 				<%= @ticket.source_name %>
 			<% end %>
@@ -59,13 +70,13 @@
 
 			<%= metainfo(@ticket) unless @ticket.mobihelp? %>
 			<% if @ticket.requester %>
-				<% if @ticket.is_twitter? && @ticket.tweet.is_mention? %>
+				<% if @ticket.twitter? && @ticket.tweet.is_mention? %>
 				<div class="ticket-details-twitter">
 					<span class="ficon-twitter fsize-16 mr6"></span><%= link_to(t('ticket.view_twitter'),
 					    "http://twitter.com/#{@ticket.requester.twitter_id}/status/#{@ticket.tweet.tweet_id}", 
 					     :id => "ViewConvo", :target => "_blank") %>
 				</div>
-				<% elsif @ticket.is_facebook? && @ticket.is_fb_wall_post? %>
+				<% elsif @ticket.facebook? && @ticket.is_fb_wall_post? %>
 				<div class="ticket-details-twitter">
 					<span class="ficon-facebook-setting fsize-16 mr6"></span>
 						<%= link_to(t('ticket.view_facebook'), facebook_link, :id => "ViewConvo", :target => "_blank") %>
@@ -75,34 +86,42 @@
 		</div>
 		<% created_by_agent_info = created_by_agent(@ticket) %>
 		<% unless created_by_agent_info.blank? %>
-      		<%= t('ticket.created_by') %> <%= created_by_agent_info %> 
+      		<%= t('ticket.created_by') %> <%= created_by_agent_info %>
       	<% end %>
-		<div class="info"> 
+		<div class="info">
 			<%= content_tag :div, multiple_emails_container(@to_emails, "To: ") unless @ticket.cc_email_hash.blank? or @to_emails.blank? %>
-			<%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails], "Cc: ") unless @ticket.cc_email_hash.blank? %>
-      	</div> 
+			<%= content_tag :div, multiple_emails_container(@ticket.ticket_cc, "Cc: ") unless @ticket.cc_email_hash.blank? %>
+      	</div>
 	</div>
-	<div id="ticket_original_request" class="request_mail">
+	<div rel="image-enlarge" id="ticket_original_request" class="request_mail">
     	<%= @ticket.description_html.html_safe %>
 	</div>
 
-	<%= freshfone_audio_dom %>
+  <%= freshfone_audio_dom  if current_account.features?(:freshfone) %>
 
-	<% unless @ticket.ticket_topic.nil? %>
-	<div class="info-highlight">
-		<%= t("helpdesk.tickets.show.linked_ticket") %>
-    <% if privilege?(:view_forums) %>
-    "<%= link_to("#{truncate(@ticket.topic.title)}", discussions_topic_path(@ticket.topic.id), :class => "link_to") %>"
-    <% else %>
-      "<%= truncate(@ticket.topic.title)%>"
-    <% end %>
-	</div>
+  <% if current_account.features?(:forums) and  @ticket.ticket_topic.present? %>
+    <div class="info-highlight">
+      <%= t("helpdesk.tickets.show.linked_ticket") %>
+      <% if privilege?(:view_forums) %>
+        "<%= link_to("#{truncate(@ticket.topic.title)}", discussions_topic_path(@ticket.topic.id), :class => "link_to") %>"
+      <% else %>
+        "<%= truncate(@ticket.topic.title)%>"
+      <% end %>
+    </div>
+  <% end %>
+
+	<% if current_account.features?(:archive_tickets) and @ticket.archive_child %>
+		<div class="info-highlight">
+			<%= t("helpdesk.tickets.show.archived_ticket") %>
+	    "<%= link_to("#{truncate(@ticket.archive_ticket.subject)}", helpdesk_archive_ticket_path(@ticket.archive_ticket.display_id), :class => "link_to") %>"
+		</div>
 	<% end %>
 
+    <div id="ticket_attachments_container_<%= @ticket.id%>">
 	<% unless @ticket.attachments.empty? and @ticket.cloud_files.empty? %>
 		<span class="seperator"></span>
-		<div class="attachments-wrap clearfix">
-			<h5><strong><%= pluralize(@ticket.attachments.size + @ticket.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
+		<div class="attachments-wrap clearfix" data-domhelper-name="attachments-wrap">
+			<h5 id="ticket_attachments_title_<%= @ticket.id %>"><strong><%= pluralize(@ticket.attachments.size + @ticket.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
 			<ul class="attachment_list">
 			    <% @ticket.attachments.each do |attached| %> 
 			    	<%= attachment_list(attached, privilege?(:edit_ticket_properties), "ticket",nil) %>
@@ -114,6 +133,7 @@
 			</ul>
 		</div>
 	<% end %>
+	</div>
 	<%= itil_ticket_tabs %>
 </div>
 </div>

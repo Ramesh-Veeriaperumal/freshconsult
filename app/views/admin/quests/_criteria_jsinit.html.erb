@@ -1,6 +1,5 @@
-<script src="/javascripts/report/date.js" type="text/javascript"></script>
-<script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
-<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
+<%= javascript_include_tag :'cdn/report_date'  %>
+<%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %> 
 
 <% content_for :pagefixed do %>
   <% content_for :onload_script do %> 
@@ -130,7 +129,7 @@
     }(jQuery);
     Gamification.init(<%= @criteria_defs.html_safe if @criteria_defs %>, [<%= @quest_input.html_safe if @quest_input%>], <%= @quest.sub_category.blank? ? 'undefined' : @quest.sub_category%>);    
   <% end %>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     // Condition Parsing 
     // This template contains the dom population information 
     var conditional_dom = function(filter, id, compName, initFeed, val, classname, _dataAttr){
@@ -329,10 +328,6 @@ var getFilterDef = function(name,quest_type){
     }
     jQuery('#quest_data_value').live('keyup',fnPopulateQuestDes);
     jQuery('#quest_data_date,#quest_data_mode').live('change',fnPopulateQuestDes);
-
     jQuery('#quest_description').live('keyup',function(){_is_Desc_edited = true;})
-  <% end %>
-  <% unless @quest.id.nil?%>
-    _is_Desc_edited = true;
   <% end %>
 <% end %>

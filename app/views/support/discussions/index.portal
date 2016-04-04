@@ -56,7 +56,7 @@
 						{{ topic | my_topic_info }}
 						{% if topic.last_post.present? %}
 							<div class="my_topics_right">
-								{{ topic.last_post.body | h || truncate:60 }}
+								{{ topic.last_post.body | h | truncate:60 }}
 								{% if topic.last_post.body.size > 60 %}
 									<a href="{{ topic.last_post_url }}">{% translate more %}</a>
 								{% endif %}

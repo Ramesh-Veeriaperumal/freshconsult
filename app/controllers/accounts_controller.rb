@@ -21,6 +21,9 @@ class AccountsController < ApplicationController
   skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
                                          :marketplace_login, :portal_login, :create_account_from_google,
                                          :associate_google_account,:associate_local_to_google]
+  skip_before_filter :ensure_proper_protocol, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
+                                         :marketplace_login, :portal_login, :create_account_from_google,
+                                         :associate_google_account,:associate_local_to_google]
   skip_before_filter :determine_pod, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
                                         :marketplace_login, :portal_login, :create_account_from_google,
                                         :associate_google_account,:associate_local_to_google]
@@ -34,10 +37,10 @@ class AccountsController < ApplicationController
   before_filter :admin_selected_tab, :only => [:show, :edit, :cancel ]
   before_filter :validate_custom_domain_feature, :only => [:update]
   before_filter :build_signup_param, :only => [:new_signup_free, :create_account_google]
+  before_filter :build_signup_contact, :only => [:new_signup_free]
   before_filter :check_supported_languages, :only =>[:update], :if => :dynamic_content_available?
   before_filter :set_native_mobile, :only => [:new_signup_free]
 
-  filter_parameter_logging :creditcard,:password
   
   def show
   end   
@@ -61,6 +64,7 @@ class AccountsController < ApplicationController
    @signup = Signup.new(params[:signup])
    
    if @signup.save
+   @signup.account.agents.first.user.reset_perishable_token! 
       add_to_crm
       respond_to do |format|
         format.html {
@@ -70,6 +74,8 @@ class AccountsController < ApplicationController
                             :callback => params[:callback]
         }
         format.nmobile {
+
+          @signup.account.agents.first.user.deliver_admin_activation
           render :json => { :success => true, :host => @signup.account.full_domain,
                             :t => @signup.account.agents.first.user.single_access_token,
                             :support_email => @signup.account.agents.first.user.email
@@ -77,7 +83,7 @@ class AccountsController < ApplicationController
         }
       end
     else
-      render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).to_json }, :callback => params[:callback] 
+      render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).fd_json }, :callback => params[:callback] 
     end    
   end
   
@@ -100,6 +106,7 @@ class AccountsController < ApplicationController
     @signup = Signup.new(params[:signup])
    
     if @signup.save
+       @signup.user.deliver_admin_activation
        add_to_crm       
        @rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
        @rediret_url = "https://www.google.com/a/cpanel/"+@signup.account.google_domain if @rediret_url.blank?
@@ -109,7 +116,7 @@ class AccountsController < ApplicationController
       @account = @signup.account
       @user = @signup.user
       @call_back_url = params[:call_back]
-      render :action => :signup_google 
+      render "google_signup/signup_google"
     end    
   end
 
@@ -132,66 +139,6 @@ class AccountsController < ApplicationController
 	  end
 	   logger.debug "here is the retrieved data: #{data.inspect}"
  end
-
-  def associate_google_account
-    @google_domain = params[:account][:google_domain]
-    @call_back_url = params[:call_back]
-    @full_domain = get_full_domain_for_google
-    if @full_domain.blank?      
-      #set_account_values
-      flash.now[:error] = t(:'flash.g_app.no_subdomain')
-      render :signup_google and return
-    end
-    Sharding.select_shard_of(@full_domain) do
-      @account = Account.find_by_full_domain(@full_domain)
-      @account.make_current if @account
-      open_id_user = verify_open_id_user @account
-      unless open_id_user.blank?
-        if open_id_user.privilege?(:manage_account)
-         if @account.update_attribute(:google_domain,@google_domain)     
-            @rediret_url = @call_back_url+"&EXTERNAL_CONFIG=true" unless @call_back_url.blank?
-            @rediret_url = "https://www.google.com/a/cpanel/"+@google_domain if @rediret_url.blank?
-            render "thank_you"          
-         end        
-       else
-         flash.now[:error] = t(:'flash.general.insufficient_privilege.admin')
-         render :associate_google         
-       end
-      else      
-        render :associate_google
-      end
-    end
-  end
-  
- 
-  def associate_local_to_google
-    @google_domain = params[:account][:google_domain]
-    @call_back_url = params[:call_back]    
-    @full_domain = get_full_domain_for_google  
-    Sharding.select_shard_of(@full_domain) do
-    @account = Account.find_by_full_domain(@full_domain)
-    @account.make_current if @account
-    @check_session = @account.user_sessions.new(params[:user_session])
-    if @check_session.save
-       logger.debug "The session is :: #{@check_session.user}"
-        if @check_session.user.privilege?(:manage_account)
-         if @account.update_attribute(:google_domain,@google_domain)
-            @check_session.destroy
-            rediret_url = @call_back_url+"&EXTERNAL_CONFIG=true" unless @call_back_url.blank?
-            rediret_url = "https://www.google.com/a/cpanel/"+@google_domain if rediret_url.blank?
-            redirect_to rediret_url
-         end        
-       else
-         @check_session.destroy         
-         flash[:notice] = t(:'flash.general.insufficient_privilege.admin')
-         render :associate_google         
-       end     
-    else       
-      flash[:notice] = t(:'flash.login.verify_credentials')
-      render :associate_google
-    end 
-   end
-  end
   
   def create    
     @account.affiliate = SubscriptionAffiliate.find_by_token(cookies[:affiliate]) unless cookies[:affiliate].blank?
@@ -251,7 +198,7 @@ class AccountsController < ApplicationController
   
   def delete_logo
     current_account.main_portal.logo.destroy
-    current_account.main_portal.touch
+    current_account.main_portal.save
     respond_to do |format|
       format.html { redirect_to :back }
       format.js { render :text => "success" }
@@ -260,7 +207,7 @@ class AccountsController < ApplicationController
   
   def delete_favicon
     current_account.main_portal.fav_icon.destroy
-    current_account.main_portal.touch
+    current_account.main_portal.save
     
     respond_to do |format|
       format.html { redirect_to :back }
@@ -301,7 +248,7 @@ class AccountsController < ApplicationController
        @account.primary_email_config.active = true
       
       begin 
-        locale = request.compatible_language_from I18n.available_locales  
+        locale = http_accept_language.compatible_language_from I18n.available_locales  
         locale = I18n.default_locale if locale.blank?
       rescue
         locale =  I18n.default_locale
@@ -443,15 +390,25 @@ class AccountsController < ApplicationController
         end
       end
       
-      params[:signup][:locale] = request.compatible_language_from(I18n.available_locales)
+      params[:signup][:locale] = http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
       params[:signup][:metrics] = build_metrics
     end
 
+    def build_signup_contact
+      unless params[:user][:name]
+        params[:signup][:user_name] = %(#{params[:user][:first_name]} #{params[:user][:last_name]})
+        params[:signup][:contact_first_name] = params[:user][:first_name]
+        params[:signup][:contact_last_name] = params[:user][:last_name]
+      end
+    end
+
     def add_to_crm
-      Resque.enqueue(Marketo::AddLead, { :account_id => @signup.account.id, 
-                            :cookie => ThirdCRM.fetch_cookie_info(request.cookies),
-                            :signup_id => params[:signup_id] })
+      if (Rails.env.production? or Rails.env.staging?)
+        Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id, 
+          :signup_id => params[:signup_id] })
+      end
+      
     end  
 
     def perform_account_cancel(feedback)
@@ -474,7 +431,7 @@ class AccountsController < ApplicationController
     end      
 
     def deliver_mail(feedback)
-      SubscriptionNotifier.deliver_account_deleted(current_account, 
+      SubscriptionNotifier.account_deleted(current_account, 
                                   feedback) if Rails.env.production?
     end
     
@@ -495,7 +452,7 @@ class AccountsController < ApplicationController
 
     def clear_account_data
       Resque.enqueue(Workers::ClearAccountData, { :account_id => current_account.id })
-      send_to_mixpanel(self.class.name)
+      ::MixpanelWrapper.send_to_mixpanel(self.class.name)
     end
 
     def customer_details

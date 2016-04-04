@@ -25,7 +25,7 @@ class Subscription::UpdateResellerSubscription
       def trigger_subscription_updated_event(account, args)
         data = { :account_id => account.id, :state => account.subscription.state, 
                   :cmrr => (account.subscription.amount/account.subscription.renewal_period), 
-                  :currency => account.currency_name }        
+                  :currency => account.currency_name, :next_renewal_at => account.subscription.next_renewal_at }        
         http_connect(:subscription_updated, data, "post")
       end
 
@@ -39,6 +39,10 @@ class Subscription::UpdateResellerSubscription
         http_connect(:payment_added, data, "post")
       end
 
+      def trigger_auto_collection_off_event(account, args = {})
+        data = {:account_id => account.id}
+        http_connect(:auto_collection_turned_off, data, "post")
+      end
 
       def http_connect(event_type, data, req_type)        
         hrp = HttpRequestProxy.new

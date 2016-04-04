@@ -6,6 +6,7 @@ class SsoController < ApplicationController
   skip_before_filter :check_privilege
   before_filter :get_redis_key, :only =>[:google_login]
   skip_before_filter :check_privilege, :verify_authenticity_token
+  skip_after_filter :set_last_active_time
 
   def login
     auth = Authorization.find_by_provider_and_uid_and_account_id(params['provider'], params['uid'], current_account.id)
@@ -43,7 +44,7 @@ class SsoController < ApplicationController
   end
 
   def google_login
-    protocol = current_account.ssl_enabled? ? "https" : "http"
+    protocol = (current_account.ssl_enabled? || is_native_mobile?) ? "https" : "http"
     if @current_user.nil? || @current_user.deleted
       user_deleted
     else
@@ -56,7 +57,7 @@ class SsoController < ApplicationController
     def get_redis_key
       redis_oauth_key = GOOGLE_OAUTH_SSO % {:domain => params['domain'],:uid => params['uid']}
       redis_oauth_value = get_others_redis_key(redis_oauth_key)
-      @current_user = current_account.all_users.find_by_email(redis_oauth_value)
+      @current_user = current_account.user_emails.user_for_email(redis_oauth_value)
       remove_others_redis_key(redis_oauth_key)
     end
 

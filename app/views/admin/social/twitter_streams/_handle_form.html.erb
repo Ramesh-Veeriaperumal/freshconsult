@@ -10,10 +10,12 @@
 <div class="adm-social adm-p">
   <div class="row-fluid">
     <div class='form_data span11 mlt'>
-      <div class="control-group span6">
-        <label><%= t('admin.social.twitter_streams.edit.link_to_product') %></label>
-        <%= collection_select(:social_twitter_handle, :product_id, current_account.products, :id, :name, { :include_blank => 'Default Product', :selected => twitter_handle.product_id }, :class => 'select2-container select2 span12')%>
-      </div>
+      <% if current_account.products.any? %>
+        <div class="control-group span6">
+          <label><%= t('admin.social.twitter_streams.edit.link_to_product') %></label>
+          <%= collection_select(:social_twitter_handle, :product_id, current_account.products, :id, :name, { :include_blank => 'Default Product', :selected => twitter_handle.product_id }, :class => 'select2-container select2 span12')%>
+        </div>
+      <% end %>
       
       <div class="control-group span6">
         <label><%= t('admin.social.twitter_streams.edit.visible_to') %> <span class="field-important ">*</span></label>

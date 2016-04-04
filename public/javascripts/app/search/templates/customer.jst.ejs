@@ -1,0 +1,17 @@
+<li id="<%= id %>-customer" rel="searched-customers">
+	<div class="search-list-wrap">
+		<div class="avatar avatar-small pull-left">
+			<img alt="" src="/images/misc/company-profile-pic.png">
+		</div>
+		<div class="search-result-text">
+			<div class="ticket_subject search-result-content">
+				<h5 class="ticket-description-tip">
+					<a href="<%= path %>" class="search-title" data-pjax="#body-container"><%= name %></a>
+				</h5>
+				<% if (domains !== null){ %>
+					<span class="muted"><%= domains %></p>
+				<% } %>
+			</div>
+		</div>
+	</div>
+</li>

@@ -69,8 +69,13 @@ class Admin::QuestsController < Admin::AdminController
     end
 
     def load_config
-      @op_types        = ActiveSupport::JSON.encode OPERATOR_TYPES
-      @op_list        = ActiveSupport::JSON.encode OPERATOR_LIST
+      operator_types = OPERATOR_TYPES.clone
+      
+      operator_types[:choicelist] = ["is", "is_not"]
+      operator_types[:object_id] = ["is", "is_not"]
+
+      @op_types         = ActiveSupport::JSON.encode operator_types
+      @op_list          = ActiveSupport::JSON.encode OPERATOR_LIST
       @available_badges = available_badges
       
       filter_hash = {
@@ -89,7 +94,7 @@ class Admin::QuestsController < Admin::AdminController
     end
     
     def ticket_filters
-      [
+      ticket_filter = [
         { :name => -1, :value => "#{I18n.t('click_to_select_filter')}" },
         { :name => "priority", :value => I18n.t('ticket.priority'), :domtype => "dropdown", 
           :choices => TicketConstants.priority_list.sort, :operatortype => "choicelist" },
@@ -98,12 +103,22 @@ class Admin::QuestsController < Admin::AdminController
           :operatortype => "choicelist" },
         { :name => "source", :value => I18n.t('ticket.source'), :domtype => "dropdown", 
           :choices => TicketConstants.source_list.sort, :operatortype => "choicelist" },
-        { :name => "inbound_count", :value => I18n.t('quests.fcr'), :domtype => "blank_boolen" },
-        { :name => "st_survey_rating", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
-          :choices => Survey.survey_names(current_account).collect { |c| 
-            [c[0],CGI.escapeHTML(c[1])]
-          }, :operatortype => "choicelist" },
+        { :name => "inbound_count", :value => I18n.t('quests.fcr'), :domtype => "blank_boolen" }
       ]
+      if current_account.new_survey_enabled?
+        ticket_filter.push(
+              { :name => "st_survey_rating", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
+                :choices => current_account.active_custom_survey_from_cache.choice_names.collect { |c| 
+                [c[0],CGI.escapeHTML(c[1])]}, :operatortype => "choicelist" 
+              }) unless current_account.active_custom_survey_from_cache.blank?
+      else
+        ticket_filter.push(
+          { :name => "st_survey_rating", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
+            :choices => Survey.survey_names(current_account).collect { |c| 
+            [c[0],CGI.escapeHTML(c[1])]}, :operatortype => "choicelist" 
+          })
+      end
+      ticket_filter
     end
 
     def add_custom_filters filter_hash
@@ -163,4 +178,5 @@ class Admin::QuestsController < Admin::AdminController
           :operatortype => 'greater' }
       ]
     end
+
 end

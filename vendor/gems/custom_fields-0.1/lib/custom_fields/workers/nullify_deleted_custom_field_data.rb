@@ -24,11 +24,12 @@ module CustomFields
           custom_field_data_class = custom_field_class::FIELD_DATA_CLASS.constantize
           custom_form_id_column   = custom_field_class::CUSTOM_FORM_ID_COLUMN
 
-          begin
-            records_nullified   = custom_field_data_class.update_all( "`#{column_name}` = NULL", [ "#{column_name} IS NOT NULL AND 
-                                  #{custom_form_id_column} = ?", custom_form_id ], {:limit => BATCH_LIMIT} )
-            Rails.logger.info "Nullified #{records_nullified} flexifield records in this batch, for #{custom_field.inspect} deletion"
-          end while records_nullified == BATCH_LIMIT
+          custom_field_data_class.where("#{column_name} IS NOT NULL AND 
+                                  #{custom_form_id_column} = ? ", 
+                                  custom_form_id).find_in_batches(batch_size: BATCH_LIMIT) do |data_fields|
+            data_field_ids = data_fields.map(&:id)
+            custom_field_data_class.where(id: data_field_ids).update_all(column_name.to_sym => nil)
+          end
 
           custom_field.destroy
           Rails.logger.info "Deleted #{custom_field_class} #{custom_field.inspect}"

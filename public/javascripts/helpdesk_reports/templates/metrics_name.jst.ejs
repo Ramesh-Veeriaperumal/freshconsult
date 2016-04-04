@@ -1,0 +1,11 @@
+<%if (data && data.length>0) { %>
+	<% for (i=0; i<data.length; i++) { %>
+		<tr class="<%if (i%2 == 0) { %>even<% } else{ %>odd<% } %>">
+			<% if (report == 'agent') { %>
+				<td data-agent-id="<%= data[i]['agent_id'] %>"><%= data[i]['agent_name'] %></td>
+			 <% } else { %>  
+				<td data-group-id="<%= data[i]['group_id'] %>"><%= data[i]['group_name'] %></td>
+			<% } %>
+		</tr>
+	<% } %>
+<% } %>

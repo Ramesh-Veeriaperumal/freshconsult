@@ -1,15 +1,17 @@
 <label class="control-label"><%= t('reports.select_time_period').html_safe%></label>
 <%= text_field_tag :date_range, date_range, :class => "required input-large" %>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 jQuery(document).ready(function() {
 	jQuery("#date_range").daterangepicker({
-		earliestDate: Date.parse('1/1/2010'),
+		earliestDate: Date.parse('01/01/2010'),
 		latestDate: new Date(),
 		presetRanges: [
-			{text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-7', dateEnd: 'Today-1' },
-			{text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-30', dateEnd: 'Today-1'},
-			{text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-90',  dateEnd: 'Today-1'}
+			{text: '<%= t('reports.date_ranges.today') %>', dateStart: 'Today', dateEnd: 'Today' },
+    	    {text: '<%= t('reports.date_ranges.yesterday') %>', dateStart: 'Today-1', dateEnd: 'Today-1' },
+      		{text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-6', dateEnd: 'Today' },
+      		{text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-29', dateEnd: 'Today'},
+      		{text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-89',  dateEnd: 'Today'}
 		],
 		presets: {
 			dateRange: '<%= t('reports.date_ranges.custom') %>'
@@ -17,8 +19,10 @@ jQuery(document).ready(function() {
 		dateFormat: getDateFormat('datepicker'),
 		closeOnSelect: true,
 		onClose: function() {
+			trigger_event("filter_changed",{});
 			jQuery('#date_range').trigger('change');
-		}
+		},
+        presetRangesCallback : true
 	});
 
 	jQuery('#date_range').bind('keypress keyup keydown', function(ev) {

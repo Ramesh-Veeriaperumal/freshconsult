@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Gamification::Quests::ProcessTopicQuests do
+RSpec.describe Gamification::Quests::ProcessTopicQuests do
 	self.use_transactional_fixtures = false
 
 	before(:all) do
@@ -114,13 +114,13 @@ describe Gamification::Quests::ProcessTopicQuests do
 
 				@user.achieved_quests.find_by_quest_id(quest.id).should be_nil
 
-				total_points.should be_nil
+				total_points.should eql(exiting_pts)
 			}
 		end
 
 		def total_points
 			@user.reload
-			@user.agent.points
+			@user.agent.points.to_i
 		end
 
 		def achieved_response quests,exiting_pts
@@ -138,7 +138,7 @@ describe Gamification::Quests::ProcessTopicQuests do
 				@user.achieved_quests.find_by_quest_id(quest.id).should_not be_nil
 
 				sb_level = @account.scoreboard_levels.level_for_score(total_points).first
-				@user.agent.scoreboard_level_id.should eql(sb_level.id)
+				@user.agent.scoreboard_level_id.should eql(sb_level.id) if sb_level
 				quest_points += quest.points
 			}
 			bonus_pts = total_points - exiting_pts

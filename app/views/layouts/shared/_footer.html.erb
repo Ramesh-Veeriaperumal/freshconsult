@@ -11,6 +11,10 @@
 			<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
 			<% end %>
 			<%= link_to(t('footer.browse_community'), "#{AppConfig['support_url']}/support/discussions", :target => "_blank") %>
+			<% if @privacy_policy %>
+				<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
+				<%= link_to(t('footer.privacy_policy'), AppConfig['privacy_policy'], :target => "_blank") %>
+			<% end %>
 		</div> 
 	</div>
 </div>
@@ -25,16 +29,17 @@
     <script
       src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
       data-apikey= <%=AppConfig["client_debugging"]["bugsnag"][Rails.env]["api_key"]%> 
-      data-autonotify="false"
+      data-autonotify="true"
       >
     </script>
-    <%= include_cloudfront_js :client_logger %>
+    <%= javascript_include_tag :'cdn/client_logger' %>
 <% end %>
 <% if current_user && current_user.agent? %>
-	<% cti_app = current_account.installed_applications.detect {|app| app.application.cti?} %>
-	<% unless cti_app.blank? %>
-	<% @cti_app_name = cti_app.application.name %>
-	<%= render :partial => 'layouts/shared/integrations/cti/' + @cti_app_name %>
+	<% cti_app = current_account.cti_installed_app_from_cache %>
+	<% if cti_app.present? %>
+	<% cti_app_name = cti_app.application.name %>
+	<%= render :partial => 'layouts/shared/integrations/cti/cti_toolbar', :locals => {:app => cti_app.application} %>
+	<%= render :partial => 'layouts/shared/integrations/cti/' + cti_app_name, :locals => {:installed_app => cti_app} %>
 	<% end %>
 <% end %>
 <%if @debuging %>
@@ -42,22 +47,39 @@
 	<script type="text/javascript" src="/javascripts/labs/benchmark_init.js"></script>
 <% end %>
 
-<% if current_user %>
-<script type="text/javascript" src="https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.js"></script>
-<style type="text/css" media="screen, projection">
-	@import url(https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.css); 
-</style> 
+<% if shortcuts_enabled? %>
 <script type="text/javascript">
-	FreshWidget.init("", {"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
-	
-	jQuery("body").on("click",'#footer_feedback_widget', function(ev){
-    	ev.preventDefault();
-    	if(window.widget_updated){
-    		FreshWidget.update({"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>"} );
-    	}
-    	window.widget_updated = false;
-    	FreshWidget.show();	
-    });
-  var APP_ENV = "<%= Rails.env %>";
+	Fjax.Assets.plugin('shortcut');
 </script>
+<% end %>
+
+<% if current_user %>
+
+<% if Rails.env.development? %>
+<% @LoadAsset=request.headers['origin'] %>
+<% @LoadAsset1=request.headers['origin'].to_s+"/widget" %>
+<% elsif Rails.env.staging? %>
+<% @LoadAsset="https://s3.amazonaws.com/assets.freshpo.com" %>
+<% @LoadAsset1="https://s3.amazonaws.com/assets.freshpo.com/widget" %>
+<% elsif Rails.env.production? %>
+<% @LoadAsset="https://s3.amazonaws.com/assets.freshdesk.com" %>
+<% @LoadAsset1="https://s3.amazonaws.com/assets.freshpo.com/widget" %>
+<% end %>
+	 <script type="text/javascript" src="<%= @LoadAsset %>/widget/freshwidget.js"></script>
+<style type="text/css" media="screen, projection">
+	@import url(<%= @LoadAsset %>/widget/freshwidget.css); 
+</style> 
+	<script type="text/javascript">
+		FreshWidget.init("", {"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>","assetUrl":"<%= @LoadAsset1 %>"} );
+		
+		jQuery("body").on("click",'#footer_feedback_widget', function(ev){
+	    	ev.preventDefault();
+	    	if(window.widget_updated){
+	    		FreshWidget.update({"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>","assetUrl":"<%= @LoadAsset1 %>"} );
+	    	}
+	    	window.widget_updated = false;
+	    	FreshWidget.show();	
+	    });
+	  var APP_ENV = "<%= Rails.env %>";
+	</script>
 <% end %>

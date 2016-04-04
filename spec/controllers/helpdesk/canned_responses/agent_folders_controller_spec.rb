@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::CannedResponses::FoldersController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -21,7 +20,7 @@ describe Helpdesk::CannedResponses::FoldersController do
 
   it "should go to the folder index page" do
     get :index
-    response.should render_template("helpdesk/canned_responses/folders/index.html.erb")
+    response.should render_template("helpdesk/canned_responses/folders/index")
     response.body.should =~ /Personal/
   end
 

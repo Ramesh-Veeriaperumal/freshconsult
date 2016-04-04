@@ -1,67 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<!-- Adding meta tag for CSRF token -->
-	    <%= csrf_meta_tag %>
-	    <!-- End meta tag for CSRF token -->
-		<meta charset="utf-8">                       
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">     
-  	<title><% h(@page_title.to_s) %></title>
+  <head>
+    <!-- Adding meta tag for CSRF token -->
+      <%= csrf_meta_tag %>
+      <!-- End meta tag for CSRF token -->
+    <meta charset="utf-8">                       
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">     
+    <title><% h(@page_title.to_s) %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <%= stylesheet_link_tag :'cdn/subscription' %>    
+  </head>
+  <body>     
+    <div class="navbar navbar-fixed-top">
+          <div class="navbar-inner">  
+            <div class="container">       
+              <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </a>
+              <a class="fd-branding" href="/">
+                Freshdesk admin
+              </a>            
+              <div class="nav-collapse">
+                <ul class="nav">                    
+                  <%=
+                      [
+                        [customers_path, :customers, "Customers" ],
+                        [affiliates_path, :affiliates, "Affiliates" ],
+                        [admin_announcements_path, :announcements, "Announcements" ],
+                        [admin_events_path, :events, "Events"],
+                        [admin_tools_path, :tools, "Tools"],
+                        [admin_manage_users_path, :users, "Users"],
+                        [admin_subscription_users_path, :admin_users, "Admin Users"]
+                      ].map do |s| 
+              content_tag(:li, link_to(s[2], s[0]).html_safe, :class => ((@selected_tab == s[1]) ? "active" : "")) if current_user && current_user.has_role?(s[1])
+              end.to_s.html_safe
+            %>          
+            <% if current_user %>         
+              <li><%= link_to "Logout",admin_subscription_logout_path(@subscription_session) %></li>
+              <%= content_tag(:li, link_to("My Profile", admin_subscription_user_path(current_user)).html_safe) %>   
+            <% end %>    
+                </ul> 
+                <%= form_tag "/", :method => 'get', :class => "navbar-search pull-right" do %>
+                  <%= text_field_tag :search, params[:search], :class => "search-query span3", :placeholder => "Search account", :autocompelete => "off" %> 
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>   
+    <div class="container main-body">  
+      <%= [:notice, :warning, :error].collect {|type| content_tag('div', ("<a class='close' data-dismiss='alert'>×</a>" + flash[type]).html_safe, :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.join.html_safe %>
+      <%= yield %>
+    </div>
+    <%= javascript_include_tag :subscription%>    
+    <%= javascript_tag do %>
+      jQuery.noConflict();
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
-		<link rel="shortcut icon" href="/images/favicon.ico" />
-		<%= include_cloudfront_rtl_css :subscription %>		
-	</head>
-	<body>     
-		<div class="navbar navbar-fixed-top">
-		      <div class="navbar-inner">  
-		        <div class="container">       
-							<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-							</a>
-		          <a class="brand" href="/">
-		          	Freshdesk admin
-		          </a>            
-		          <div class="nav-collapse">
-		            <ul class="nav">                    
-		              <%=
-		              	  [
-		              	  	[customers_admin_subscriptions_path(), :customers, "Customers" ],
-							[admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
-							[admin_subscription_announcements_path, :announcements, "Announcements" ],
-							[admin_subscription_events_path, :events, "Events"],
-							[admin_account_tools_path, :tools, "Tools"],
-							[admin_manage_users_path, :users, "Users"],
-							[admin_subscription_users_path, :admin_users, "Admin Users"]
-							].map do |s| 
-							content_tag(:li, link_to(s[2], s[0]).html_safe, :class => ((@selected_tab == s[1]) ? "active" : "")) if current_user && current_user.has_role?(s[1])
-							end.to_s.html_safe
-						%>          
-						<% if current_user %>         
-							<li><%= link_to "Logout",admin_subscription_logout_path(@subscription_session) %></li>
-							<%= content_tag(:li, link_to("My Profile", show_admin_subscription_user_path(current_user)).html_safe) %>   
-						<% end %>    
-		            </ul> 
-								<% form_tag "/", :method => 'get', :class => "navbar-search pull-right" do %>
-								  <%= text_field_tag :search, params[:search], :class => "search-query span3", :placeholder => "Search account", :autocompelete => "off" %> 
-								<% end %>
-		          </div>
-		        </div>
-		      </div>
-		    </div>   
-		<div class="container main-body">  
-			<%= [:notice, :warning, :error].collect {|type| content_tag('div', ("<a class='close' data-dismiss='alert'>×</a>" + flash[type]).html_safe, :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.join.html_safe %>
-			<%= yield %>
-		</div>
-		<%= include_cloudfront_js :subscription%>    
-		<% javascript_tag do %>
-			jQuery.noConflict();
-
-			jQuery("select.select2").livequery(function(){ jQuery(this).select2(jQuery(this).data()); });
-		<% end %>
-		<%= yield :pagefixed %>
-	</body>
+      jQuery("select.select2").livequery(function(){ jQuery(this).select2(jQuery(this).data()); });
+    <% end %>
+    <%= yield :pagefixed %>
+  </body>
 </html>

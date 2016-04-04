@@ -22,6 +22,7 @@ class Discussions::ForumsController < ApplicationController
 
 	def new
 		@forum = scoper.new
+		@forum.forum_category_id = params[:forum_category_id]
 		respond_to do |format|
 			format.html
 			format.xml  { render :xml => @forum }
@@ -91,6 +92,9 @@ class Discussions::ForumsController < ApplicationController
 		end
 	end
 
+	def followers
+	  render :layout => false
+	end
 
 	protected
 

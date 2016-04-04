@@ -1,6 +1,6 @@
 class Helpdesk::ConversationsController < ApplicationController
   
-  helper 'helpdesk/tickets'
+  helper  Helpdesk::TicketsHelper#TODO-RAILS3
   
   before_filter :load_parent_ticket_or_issue
   
@@ -8,20 +8,28 @@ class Helpdesk::ConversationsController < ApplicationController
   include ParserUtil
   include Conversations::Email
   include Conversations::Twitter
-  include Facebook::Core::Util
+  include Facebook::TicketActions::Util
   include Helpdesk::Activities
+  include Helpdesk::Permissions
   include Redis::RedisKeys
   include Redis::TicketsRedis
   include Social::Util
   helper Helpdesk::NotesHelper
+  include Ecommerce::Ebay::ReplyHelper
   
-  before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text]
-  before_filter :validate_fwd_to_email, :only => [:forward]
-  before_filter :check_for_kbase_email, :set_quoted_text, :only => [:reply]
+  before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text, :traffic_cop]
+  before_filter :validate_fwd_to_email, :only => [:forward, :reply_to_forward]
+  before_filter :check_for_kbase_email, :only => [:reply, :forward]
+  before_filter :set_quoted_text, :only => :reply
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
-    :fetch_item_attachments, :set_native_mobile, :except => [:full_text]
-  before_filter :set_ticket_status, :except => :forward
+    :fetch_item_attachments, :set_native_mobile, :except => [:full_text, :traffic_cop]
+  before_filter :set_ticket_status, :except => [:forward, :reply_to_forward, :traffic_cop]
   before_filter :load_item, :only => [:full_text]
+  before_filter :verify_permission, :only => [:reply, :forward, :reply_to_forward, :note, :twitter, :facebook, :mobihelp, :ecommerce, :traffic_cop, :full_text]
+  before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp, :ecommerce]
+  before_filter :check_for_public_notes, :only => [:note]
+  before_filter :validate_ecommerce_reply, :only => :ecommerce
+  around_filter :run_on_slave, :only => [:update_activities, :has_unseen_notes, :traffic_cop_warning]
 
   TICKET_REDIRECT_MAPPINGS = {
     "helpdesk_ticket_index" => "/helpdesk/tickets"
@@ -34,11 +42,7 @@ class Helpdesk::ConversationsController < ApplicationController
     if @item.save_note
       clear_saved_draft
       add_forum_post if params[:post_forums]
-      begin
-        create_article if @publish_solution
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-      end
+      note_to_kbase
       flash[:notice] = t(:'flash.tickets.reply.success')
       process_and_redirect
     else
@@ -51,12 +55,26 @@ class Helpdesk::ConversationsController < ApplicationController
     build_attachments @item, :helpdesk_note
     if @item.save_note
       add_forum_post if params[:post_forums]
+      note_to_kbase
       flash[:notice] = t(:'fwd_success_msg')
       process_and_redirect
     else
       flash[:error] = @item.errors.full_messages.to_sentence 
       create_error(:fwd)
     end
+  end
+
+  def reply_to_forward
+    build_attachments @item, :helpdesk_note
+    if @item.save_note
+      add_forum_post if params[:post_forums]
+      flash[:notice] = t(:'fwd_success_msg')
+      process_and_redirect
+    else
+      flash[:error] = @item.errors.full_messages.to_sentence 
+      create_error(:fwd)
+    end
+
   end
 
   def note
@@ -73,11 +91,8 @@ class Helpdesk::ConversationsController < ApplicationController
   def twitter
     tweet_text = params[:helpdesk_note][:note_body_attributes][:body].strip
     twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : "mention"
-    if twt_type.eql?"mention"
-      error_message, @tweet_body = validate_tweet(tweet_text, "@#{@parent.requester.twitter_id}") 
-    else
-      error_message, @tweet_body = validate_tweet(tweet_text, nil, false) 
-    end
+    
+    error_message, @tweet_body = get_tweet_text(twt_type, @parent, tweet_text)
     if error_message.blank?
       if @item.save_note 
         error_message, reply_twt = send("send_tweet_as_#{twt_type}")
@@ -113,11 +128,28 @@ class Helpdesk::ConversationsController < ApplicationController
     end
   end
 
+  def ecommerce
+    ebay_reply 
+  end
+
   def full_text
     render :text => @item.full_text_html.to_s.html_safe
   end
 
+  def traffic_cop
+    return if traffic_cop_warning
+    respond_to do |format|
+      format.js {
+        render  :nothing => true
+      }
+    end
+  end
+
   protected
+
+    def verify_permission
+      verify_ticket_permission(@parent)
+    end
 
     def build_note_body_attributes
       if params[:helpdesk_note][:body] || params[:helpdesk_note][:body_html]
@@ -134,8 +166,9 @@ class Helpdesk::ConversationsController < ApplicationController
     
     def build_conversation
       logger.debug "testing the caller class:: #{nscname} and cname::#{cname}"
-      @item = self.instance_variable_set('@' + cname,
-        scoper.is_a?(Class) ? scoper.new(params[nscname]) : scoper.build(params[nscname]))
+      @item = self.instance_variable_set('@' + cname, scoper.build(params[nscname]))
+      # TODO-RAILS3 need think another better way
+      @item.notable = @parent
       set_item_user
       @item
     end
@@ -199,6 +232,7 @@ class Helpdesk::ConversationsController < ApplicationController
         format.js { render :file => "helpdesk/notes/error.rjs", :locals => { :note_type => note_type} }
         format.html { redirect_to @parent }
         format.nmobile { render :json => { :server_response => false } }
+        format.any(:json, :xml) { render request.format.to_sym => @item.errors, :status => 400 }
       end
     end
     
@@ -210,6 +244,7 @@ class Helpdesk::ConversationsController < ApplicationController
           @post  = @topic.posts.build(:body_html => params[:helpdesk_note][:note_body_attributes][:body_html])
           @post.user = current_user
           @post.account_id = current_account.id
+          attachment_builder(@post, params[:helpdesk_note][:attachments], params[:cloud_file_attachments] )
           @post.save!
         end
       end
@@ -229,7 +264,7 @@ class Helpdesk::ConversationsController < ApplicationController
       def update_activities
         if params[:showing] == 'activities'
           activity_records = @parent.activities.activity_since(params[:since_id])
-          @activities = stacked_activities(activity_records.reverse)
+          @activities = stacked_activities(@parent, activity_records.reverse)
         end
       end
 
@@ -248,4 +283,45 @@ class Helpdesk::ConversationsController < ApplicationController
           flash[:notice] = I18n.t(:"flash.general.create.#{status}", :human_name => cname.humanize.downcase)
         end
       end
+
+      def note_to_kbase
+        begin
+          create_article if @publish_solution
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e)
+        end
+      end
+
+      def has_unseen_notes?
+        return false if params["last_note_id"].nil?
+        last_public_note    = @parent.notes.visible.last_traffic_cop_note.first
+        late_public_note_id = last_public_note.blank? ? -1 : last_public_note.id
+        return late_public_note_id > params["last_note_id"].to_i
+      end
+
+      def traffic_cop_warning
+        return unless has_unseen_notes?
+        @notes = @parent.conversation_since(params[:since_id]).reverse
+        @public_notes = @notes.select{ |note| note.private == false || note.incoming == true }
+        respond_to do |format|
+          format.js {
+            render :file => "helpdesk/notes/traffic_cop.rjs" and return true
+          }
+          format.nmobile {
+            note_arr = []
+            @public_notes.each do |note|
+              note_arr << note.to_mob_json
+            end
+            render :json => { :traffic_cop_warning => true, :notes => note_arr }
+          }
+        end
+      end
+
+      def check_for_public_notes
+        traffic_cop_warning unless params[:helpdesk_note][:private].to_s.to_bool
+      end
+
+      def run_on_slave(&block)
+        Sharding.run_on_slave(&block)
+      end 
 end

@@ -5,6 +5,8 @@ require 'net/imap'
 class Admin::EmailConfigsController < Admin::AdminController
   include ModelControllerMethods
   include MailboxValidator
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   before_filter :only => [:new] do |c|
     c.requires_feature :multiple_emails
@@ -57,7 +59,7 @@ class Admin::EmailConfigsController < Admin::AdminController
 
   def test_email
     @email_config = current_account.primary_email_config
-    emailObj = EmailConfigNotifier.deliver_test_email(current_account.primary_email_config)
+    emailObj = EmailConfigNotifier.test_email(current_account.primary_email_config)
     
     render :json => {:email_sent => true}.to_json 
     
@@ -101,6 +103,26 @@ class Admin::EmailConfigsController < Admin::AdminController
         :reply_email => @email_config.reply_email)
 
     redirect_to :back
+  end
+
+  def toggle_agent_forward_feature
+    if current_account.features_included?(:disable_agent_forward)
+      current_account.features.disable_agent_forward.destroy
+    else
+      current_account.features.disable_agent_forward.create
+    end
+    post_process
+  end
+
+   def toggle_compose_email_feature
+    if current_account.features_included?(:compose_email)
+      current_account.features.compose_email.destroy
+    else
+      current_account.features.compose_email.create
+      #Handle delta case. Will remove this code once we remove redis feature check.
+      $redis_others.perform_redis_op("srem", COMPOSE_EMAIL_ENABLED,current_account.id)
+    end
+    post_process
   end
   
   def personalized_email_enable    
@@ -176,6 +198,8 @@ class Admin::EmailConfigsController < Admin::AdminController
     end
     
     def create_error #Need to refactor this code, after changing helpcard a bit.
+      @imap_mailbox = @obj.imap_mailbox
+      @smtp_mailbox = @obj.smtp_mailbox
       @products = current_account.products
       @groups = current_account.groups 
     end

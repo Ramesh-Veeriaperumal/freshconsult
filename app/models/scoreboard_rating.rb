@@ -1,4 +1,5 @@
 class ScoreboardRating < ActiveRecord::Base
+  self.primary_key = :id
   
   include Gamification::Scoreboard::Constants
  

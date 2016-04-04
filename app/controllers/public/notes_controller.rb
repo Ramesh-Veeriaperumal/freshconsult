@@ -72,9 +72,9 @@ class Public::NotesController < ApplicationController
 
     def get_cc_email
       cc_email_hash_value = @ticket.cc_email_hash
+      @cc_parsed_array = []
       if cc_email_hash_value
         cc_array =  cc_email_hash_value[:cc_emails] 
-        @cc_parsed_array = []
         cc_array.each do |cc|
           @cc_parsed_array <<  parse_email_text(cc)
         end

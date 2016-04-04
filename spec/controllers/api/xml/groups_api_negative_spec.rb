@@ -1,8 +1,7 @@
 require 'spec_helper'
 
-describe GroupsController do
+RSpec.describe GroupsController do
 	self.use_transactional_fixtures = false
-	include APIAuthHelper
 
 	before(:each) do
 		request.host = @account.full_domain
@@ -11,8 +10,8 @@ describe GroupsController do
 
 	before(:all) do
 		@test_group = create_group(@account, {:name => "Spec Testing Grp Helper"})
-		@calendar = Factory.build(:business_calendars,:name=> "Grp business_calendar", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
-		@calendar.save(false)
+		@calendar = FactoryGirl.build(:business_calendars,:name=> "Grp business_calendar", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
+		@calendar.save(:validate => false)
 	end
 
 	after(:all) do
@@ -26,7 +25,7 @@ describe GroupsController do
 									},
 						:format => 'xml'
 		}
-		name_blank?(response).should be_true
+		name_blank?(response).should be true
 	end
 
 	it "should not update the Group without a name" do
@@ -41,8 +40,8 @@ describe GroupsController do
 			},
 			:format => 'xml'
 		}
-		name_blank?(response).should be_true
-		error_status?(response.status).should be_true
+		name_blank?(response).should be true
+		error_status?(response.status).should be true
 		@test_group.reload
 		@test_group.name.should eql("Spec Testing Grp Helper")
 		@test_group.name.should_not eql ""
@@ -55,6 +54,6 @@ describe GroupsController do
 		end
 
 		def error_status?(status)
-			status =~ /422 Unprocessable Entity/ 
+			status == 422
 		end
 end

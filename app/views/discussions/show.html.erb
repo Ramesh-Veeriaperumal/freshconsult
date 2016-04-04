@@ -27,7 +27,7 @@
 		<div class="mt20">
 			<%= pjax_link_to(t("topic.add_forum"),
 						new_discussions_forum_path(:forum_category_id => @forum_category.id),
-						:class => "btn btn-primary") %>
+						:class => "btn btn-primary") if current_user.privilege?(:manage_forums) %>
 		</div>
 	</div>
 <% else %>

@@ -30,7 +30,7 @@
 
   <div class = "pull-right" id ="pick_period" >
 
-    <% form_tag "/events", :method => 'get' do %>
+    <%= form_tag "/events", :method => 'get' do %>
 
       <% options = { :discard_day => true, :order => [:month, :year], :start_year => 2013, 
                       :end_year => Time.now.year } %>
@@ -141,9 +141,9 @@
                                   :column => "Churn", :type => "deleted"} %>
       <% } %>
 
-      <%= include_cloudfront_js :subscription%>
+      <%= javascript_include_tag :'cdn/subscription' %>
       
-      <% javascript_tag do %>
+      <%= javascript_tag do %>
         jQuery("#slide-down").live('click', function(ev){
           ev.preventDefault();
           jQuery(this).parent().find('.event-details').slideToggle();

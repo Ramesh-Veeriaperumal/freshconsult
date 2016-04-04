@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "SpamWatcher" do
+RSpec.describe "SpamWatcher" do
   self.use_transactional_fixtures = false
   before(:all) do
     load "tasks/spam_watcher_redis.rake"
@@ -21,7 +21,7 @@ describe "SpamWatcher" do
     @account.make_current #Account reset in core_spam_watcher
     @agent1.destroy
     @user1.destroy
-    Account.reset_current_account
+    # Account.reset_current_account
   end
 
   describe "tickets" do

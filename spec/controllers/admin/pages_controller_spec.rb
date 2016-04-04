@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::PagesController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -21,7 +20,7 @@ describe Admin::PagesController do
     @page_type = @page_type_array.sample
     @portal_page_label = Portal::Page::PAGE_TYPE_TOKEN_BY_KEY[@page_type]
     page = @account.main_portal.template.pages.new( :page_type => @page_type )
-    @content = File.read("#{RAILS_ROOT}/app/views/#{page.default_page}").gsub("h2", "h3")
+    @content = File.read("#{Rails.root}/app/views/#{page.default_page}").gsub("h2", "h3")
     @agent.make_current
   end
 

@@ -5,88 +5,124 @@ module ForumHelper
 					 "12345678901x1234", "044 2656 7136", "(0055)(123)8575973", "1-234-567-8901 x1234", "+1 800 555-1234"]
 
 	def create_test_category
-    forum_category = Factory.build(:forum_category, :account_id => @account.id,
+    forum_category = FactoryGirl.build(:forum_category, :account_id => @account.id,
                                                     :name => Faker::Lorem.sentence(2))
-		forum_category.save(false)
+		forum_category.save(validate: false)
 		forum_category
 	end
 
 	def create_test_category_with_portals(p1, p2)
-		forum_category = Factory.build(:forum_category, :account_id => @account.id,
+		forum_category = FactoryGirl.build(:forum_category, :account_id => @account.id,
                                                     :name => Faker::Lorem.sentence(2),
                                                     :portal_ids => [p1,p2])
-		forum_category.save(false)
+		forum_category.save(:validate => false)
 		forum_category
 	end
 
-	def create_test_forum(forum_category,type = 1)
-		forum = Factory.build(
+	def create_test_forum(forum_category, type = 1, visibility=nil, convert = 0)
+		forum = FactoryGirl.build(
 							:forum, 
 							:account_id => @account.id, 
 							:forum_category_id => forum_category.id,
-							:forum_type => type
+							:forum_type => type,
+							:convert_to_ticket => convert
 							)
-		forum.save(false)
+		forum.forum_visibility = visibility if visibility
+		forum.save(validate: false)
 		forum
 	end
 
 	def create_test_topic(forum, user = @customer )
 		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
 		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys[1]
-		topic = Factory.build(
+		topic = FactoryGirl.build(
 							:topic, 
 							:account_id => @account.id, 
 							:forum_id => forum.id,
 							:user_id => user.id,
-							:stamp_type => stamp_type
+							:stamp_type => stamp_type,
+							:user_votes => 0
 							)
-		topic.save(true)
-		post = Factory.build(
-							:post,
+		topic.save
+		post = FactoryGirl.build(:post,
 							:account_id => @account.id,
 							:topic_id => topic.id,
 							:user_id => user.id,
+							:user_votes => 0
 							)
 		post.save!
+		topic.last_post_id = post.id
 		publish_post(post)
 		topic.reload
 	end
 
 	def create_test_topic_with_attachments(forum, user = @customer )
 		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
-		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys.sample
-		topic = Factory.build(
+		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys[1]
+		topic = FactoryGirl.build(
 							:topic, 
 							:account_id => @account.id, 
 							:forum_id => forum.id,
 							:user_id => user.id,
-							:stamp_type => stamp_type
+							:stamp_type => stamp_type,
+							:user_votes => 0
 							)
-		topic.save(true)
-		post = Factory.build(
+		topic.save
+		post = FactoryGirl.build(
 							:post,
 							:account_id => @account.id,
 							:topic_id => topic.id,
 							:user_id => user.id,
+							:user_votes => 0
 							)
-		post.save!
 		attachment = post.attachments.build(
 									:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                   :description => Faker::Name.first_name, 
                   :account_id => post.account_id)
 		attachment.save
+		post.save!
+		topic.last_post_id = post.id
 		publish_post(post)
 		topic.reload
 	end
 
-	def create_test_post(topic, user = @customer)
-		post = Factory.build(
-							:post, 
+	def create_test_topic_with_cloud_files(forum, user = @customer )
+		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
+		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys[1]
+		topic = FactoryGirl.build(
+							:topic, 
+							:account_id => @account.id, 
+							:forum_id => forum.id,
+							:user_id => user.id,
+							:stamp_type => stamp_type,
+							:user_votes => 0
+							)
+		topic.save
+		post = FactoryGirl.build(
+							:post,
+							:account_id => @account.id,
+							:topic_id => topic.id,
+							:user_id => user.id,
+							:user_votes => 0
+							)
+		cloud_file = post.cloud_files.build(:url => "https://www.dropbox.com/s/7d3z51nidxe358m/Getting Started.pdf?dl=0", 
+			:application_id => 20, :filename => "Getting Started.pdf")
+		cloud_file.save
+		post.save!
+		topic.last_post_id = post.id
+		publish_post(post)
+		topic.reload
+	end
+
+	def create_test_post(topic, published = false, user = @customer)
+		post = FactoryGirl.build(:post, 
 							:account_id => @account.id, 
 							:topic_id => topic.id,
-							:user_id => user.id
+							:user_id => user.id,
+							:user_votes => 0,
+							:published => published
 							)
-		post.save(true)
+		post.save
 		post			
 	end
 
@@ -95,19 +131,19 @@ module ForumHelper
 	end
 
 	def create_ticket_topic_mapping(topic,ticket)
-		ticket_topic = Factory.build(
-											:ticket_topic,
+		ticket_topic = FactoryGirl.build(:ticket_topic,
 											:account_id => @account.id,
 											:topic_id => topic.id,
-											:ticket_id => ticket.id 
+											:ticketable_id => ticket.id,
+											:ticketable_type => 'Helpdesk::Ticket'
 										)
-		ticket_topic.save(true)
+		ticket_topic.save
 		ticket_topic
 	end
 
 	def publish_topic(topic)
 		topic.published = true
-		topic.save(true)
+		topic.save
 		topic
 	end
 
@@ -122,8 +158,7 @@ module ForumHelper
 	end
 
 	def monitor_topic(topic, user = @user, portal_id = nil)
-		monitorship = Factory.build(
-									:monitorship,
+		monitorship = FactoryGirl.build(:monitorship,
 									:monitorable_id => topic.id,
 									:user_id => user.id,
 									:active => 1,
@@ -131,11 +166,12 @@ module ForumHelper
 									:monitorable_type => "Topic",
 									:portal_id => portal_id
 									)
-		monitorship.save(true)
+		monitorship.save
+		monitorship
 	end
 
 	def monitor_forum(forum, user = @user, portal_id = nil)
-		monitorship = Factory.build(
+		monitorship = FactoryGirl.build(
 									:monitorship,
 									:monitorable_id => forum.id,
 									:user_id => user.id,
@@ -144,19 +180,21 @@ module ForumHelper
 									:monitorable_type => "Forum",
 									:portal_id => portal_id
 									)
-		monitorship.save(true)
+		monitorship.sneaky_save
+		monitorship
 	end
 
 	def vote_topic(topic, user = @user)
-		vote = Factory.build(
+		vote = FactoryGirl.build(
 									:vote,
 									:voteable_type => 'Topic',
 									:voteable_id => topic.id,
 									:vote => 1,
 									:user_id => user.id,
-									:account_id => @account.id
+									:account_id => @account.id,
+                  :created_at => Time.now
 			)
-		vote.save(true)
+		vote.sneaky_save
 	end
 
 	def lock_topic(topic)
@@ -179,4 +217,8 @@ module ForumHelper
 		@current_user_session = UserSession.find
 		@current_user_session.destroy
 	end
+
+	def email_from_friendly_email friendly_email
+	  friendly_email.split("<")[1].split(">")[0]
+	end 
 end

@@ -1,5 +1,5 @@
 module Export::Util
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
 
   def check_and_create_export type
     limit_data_exports type
@@ -19,6 +19,10 @@ module Export::Util
   def build_file file_string, type, format = "csv"
     file_path = generate_file_path(type, format)
     write_file(file_string, file_path)
+    upload_file(file_path)
+  end
+  
+  def upload_file(file_path)
     @data_export.file_created!
     build_attachment(file_path)
     remove_export_file(file_path)
@@ -26,6 +30,12 @@ module Export::Util
 
   def write_file file_string, file_path
     File.open(file_path , "wb") do |f|
+      f.write(file_string)
+    end
+  end
+  
+  def append_file(file_string, file_path)
+    File.open(file_path, "a") do |f|
       f.write(file_string)
     end
   end
@@ -50,16 +60,16 @@ module Export::Util
   end
 
   def hash_url portal_url
-    url_for(
-            :controller => "download_file/#{@data_export.source}/#{file_hash(@data_export.id)}", 
-            :host => portal_url, 
-            :protocol => Account.current.url_protocol
+    Rails.application.routes.url_helpers.download_file_url(@data_export.source,
+              file_hash(@data_export.id),
+              host: portal_url, 
+              protocol: Account.current.url_protocol
             )
   end
 
   def file_hash(export_id)
-    file_hash = Digest::SHA1.hexdigest("#{export_id}#{Time.now.to_f}")
-    @data_export.save_hash!(file_hash)
-    file_hash
+    hash = Digest::SHA1.hexdigest("#{export_id}#{Time.now.to_f}")
+    @data_export.save_hash!(hash)
+    hash
   end
 end

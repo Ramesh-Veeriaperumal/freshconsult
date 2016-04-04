@@ -1,0 +1,82 @@
+<div id="app-window" class="fa-container fa-bg">
+  <div id="fa-nav" class="fa-sidehead">
+    <div class="fa-breadcrumb">
+      <a class="back2list_btn pull-left" href="#" data-url="<%= back_url %>">
+        <span class="ficon-left-arrow-thick fsize-12"></span>
+      </a>
+      <h1 class="app-name"><%- display_name %></h1>
+    </div>
+  </div>
+
+  <div class="head-spacer o-VH">
+    <div class="app-meta">
+      <div class="logo-box">
+        <div class="img-helper">
+          <img src="<%= cover_art['thumb'] %>" srcset="<%= cover_art['thumb'] %> 1366w, <%= cover_art['thumb2x'] %>" class="img-thumbnail" alt="<%- display_name %>"/>
+        </div>
+      </div>
+      <ul class="app-info">
+        <li>
+          <%= install_btn %>
+        </li>
+        <li class="version"><%= translate.get('marketplace_ver') %> <%= app_version %></li>
+        <li class="dev"><%= translate.get('developed_by') %><span class="bold"><%= account %></span></li>
+        <li class="published"><%= published_date %> <%= translate.get('time_ago') %> </li>
+        <li class="help dot ttl"><%= translate.get('help_and_support') %></li>
+        <li class="help dot"><a href="mailto:support@freshdesk.com">support@freshdesk.com</a></li>
+        <li class="help"><a href="https://support.freshdesk.com" target="_blank">support.freshdesk.com</a></li>
+      </ul>
+    </div>
+
+    <div class="app-desc">
+      <p class="descript pre-wrap"><%- description %></p>
+      <% if (whats_new) { %>
+        <div class="whats-new">
+          <h6 class="version"><%= translate.get('marketplace_VERSION') %> <%= app_version %></h6>
+          <p class="version-info"><%- whats_new %></p>
+        </div>
+      <% } %>
+
+      <% if(categories){ %>
+        <p class="category-bubble">
+          <% for(var i=0; i < categories.length; i++) { %>
+            <a href="#" class='tag index_btn category' data-url="<%= categories[i].url %>"><%= categories[i].name %></a>
+          <% } %>
+        </p>
+      <% } %>
+
+      <% if(screenshots.length >0){ %>
+        <div class="screenshots">
+          <div id="carousel-bounding-box">
+            <div class="carousel slide" id="screenshotsCarousel">
+              <!-- Carousel items -->
+              <div class="carousel-inner">
+                <% for(var i=0; i < screenshots.length; i++) { %>
+                  <% if (i == 0 ) { var active = "active" } else{ active = '' }%>
+                  <div class="item <%= active %>" data-slide-number="<%= i %>">
+                    <img src="<%= screenshots[i]['large'] %>" srcset="<%= screenshots[i]['large'] %> 1024w, <%= screenshots[i]['large2x'] %>">
+                  </div>
+                <% } %>
+              </div><!-- Carousel nav -->
+              <a class="carousel-control left" data-slide="prev" href="#screenshotsCarousel"><span>‹</span></a> 
+              <a class="carousel-control right" data-slide="next" href="#screenshotsCarousel"><span>›</span></a>
+            </div>
+          </div>
+
+        </div>
+      <% } %>
+
+      <% if (instructions) { %>
+        <div class="instr">
+          <h3><%= translate.get('marketplace_instr') %></h3>
+          <pre class="pre-wrap"><%- instructions %></pre>
+        </div>
+      <% } %>
+      
+
+    </div>
+
+
+
+  </div>
+</div>

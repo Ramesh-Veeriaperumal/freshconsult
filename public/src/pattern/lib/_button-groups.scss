@@ -161,7 +161,7 @@
 // Reposition the caret
 .btn .caret {
   margin-top: 8px;
-  @include margin-left(0);
+  margin-left: 4px;
 }
 // Carets in other button sizes
 .btn-mini .caret,

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Admin::Social::StreamsController do
-  integrate_views
   setup :activate_authlogic  
   self.use_transactional_fixtures = false
   
@@ -15,7 +14,7 @@ describe Admin::Social::StreamsController do
   
   it "should render the admin social streams index page" do
     get "index"
-    response.should render_template("admin/social/streams/index.html.erb") 
+    response.should render_template("admin/social/streams/index") 
   end
   
 end

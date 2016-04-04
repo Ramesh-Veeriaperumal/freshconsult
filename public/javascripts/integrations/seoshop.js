@@ -21,7 +21,7 @@ SEOshopWidget.prototype= {
 		this.freshdeskWidget = new Freshdesk.Widget({
 			app_name: "seoshop",
 			integratable_type:"crm",
-			widget_name:"seoshop_widget",
+			widget_name:"seoshop_side_bar_widget",
 			use_server_password:true,
 			domain:seoshopBundle.domain,
 			auth_type:"NoAuth",

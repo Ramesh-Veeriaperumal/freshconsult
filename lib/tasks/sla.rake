@@ -20,22 +20,23 @@ SLA_TASK = {
             }
 
 namespace :sla do
-  desc 'Check for SLA violation and trigger emails..'
 
-  desc 'Execute Supervisor Rules...'
-  
+  desc 'Check for SLA violation and trigger emails for paid accounts'
   task :run => :environment do
     execute_sla("paid")
   end
 
+  desc 'Check for SLA violation and trigger emails for trial accounts'
   task :trial => :environment do
    execute_sla("trial")
   end
 
+  desc 'Check for SLA violation and trigger emails for free accounts'
   task :free => :environment do
    execute_sla("free")
   end
 
+  desc 'Check for SLA violation and trigger emails for paid accounts'
   task :paid => :environment do
    execute_sla("paid")
   end
@@ -48,15 +49,16 @@ def execute_sla(task_name)
       rake_logger = custom_logger(path)
     rescue Exception => e
       puts "Error occured #{e}"  
-      FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Splunk logging Error for sla.rake",:recipients => "pradeep.t@freshdesk.com"})      
+      FreshdeskErrorsMailer.error_email(nil,nil,e,{:subject => "Splunk logging Error for sla.rake",:recipients => "pradeep.t@freshdesk.com"})      
     end
     rake_logger.info "rake=#{task_name} SLA" unless rake_logger.nil?
     current_time = Time.now.utc
     queue_name = SLA_TASK[task_name][:queue_name]
+    puts "queue_name === #{queue_name}"
     if sla_should_run?(queue_name)
       accounts_queued = 0
       Sharding.execute_on_all_shards do
-        Account.current_pod.send(SLA_TASK[task_name][:account_method]).each do |account|        
+        Account.current_pod.send(SLA_TASK[task_name][:account_method]).each do |account|    
           Resque.enqueue(SLA_TASK[task_name][:class_name].constantize, { :account_id => account.id})
           accounts_queued += 1
         end

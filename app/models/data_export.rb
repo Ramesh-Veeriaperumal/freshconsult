@@ -1,4 +1,5 @@
 class DataExport < ActiveRecord::Base
+  self.primary_key = :id
   belongs_to_account
   belongs_to :user
 
@@ -7,7 +8,7 @@ class DataExport < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
   
-  EXPORT_TYPE = { :backup => 1, :ticket => 2, :contact => 3, :company => 4 }
+  EXPORT_TYPE = { :backup => 1, :ticket => 2, :contact => 3, :company => 4, :call_history => 5, :agent => 6, :reports => 7 }
 
   TICKET_EXPORT_LIMIT = 3
 
@@ -16,10 +17,15 @@ class DataExport < ActiveRecord::Base
                     :file_uploaded => 3,
                     :completed => 4 }
 
-  named_scope :ticket_export, :conditions => { :source => EXPORT_TYPE[:ticket] }
-  named_scope :data_backup, :conditions => { :source => EXPORT_TYPE[:backup] }, :limit => 1 
-  named_scope :contact_export, :conditions => { :source => EXPORT_TYPE[:contact] }
-  named_scope :company_export, :conditions => { :source => EXPORT_TYPE[:company] }
+
+  scope :ticket_export, :conditions => { :source => EXPORT_TYPE[:ticket] }, :order => "id"
+  scope :data_backup, :conditions => { :source => EXPORT_TYPE[:backup] }, :limit => 1 
+  scope :contact_export, :conditions => { :source => EXPORT_TYPE[:contact] }, :order => "id"
+  scope :company_export, :conditions => { :source => EXPORT_TYPE[:company] }, :order => "id"
+  scope :call_history_export, :conditions => { :source => EXPORT_TYPE[:call_history] }
+  scope :agent_export, :conditions => { :source => EXPORT_TYPE[:agent] }, :order => "id"
+  scope :reports_export, :conditions => { :source => EXPORT_TYPE[:reports] }, :order => "id"
+
 
   def owner?(downloader)
     user_id && downloader && (user_id == downloader.id)

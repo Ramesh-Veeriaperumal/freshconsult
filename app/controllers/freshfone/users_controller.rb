@@ -1,19 +1,18 @@
 class Freshfone::UsersController < ApplicationController
-	include Freshfone::FreshfoneHelper
+	include Freshfone::FreshfoneUtil
 	include Freshfone::Presence
 	include Freshfone::NodeEvents
-	include Redis::RedisKeys
-	include Redis::IntegrationsRedis
- 	include Freshfone::Queue
+	include Freshfone::CallsRedisMethods
+	include Freshfone::SubscriptionsUtil
 
 	EXPIRES = 3600
 	before_filter { |c| c.requires_feature :freshfone }
-	before_filter :validate_freshfone_state
+	before_filter :validate_freshfone_state, :only => [:availability_on_phone, :refresh_token]
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:node_presence]
 	before_filter :validate_presence_from_node, :only => [:node_presence]
 	before_filter :load_or_build_freshfone_user
-	after_filter  :check_for_bridged_calls, :only => [:refresh_token]
 	before_filter :set_native_mobile, :only => [:presence, :in_call, :refresh_token]
+	before_filter :validate_presence, :only => [:presence]
 
 	def presence
 		respond_to do |format|
@@ -43,21 +42,26 @@ class Freshfone::UsersController < ApplicationController
 	end
 
 	def availability_on_phone
+		return render(json: { error: "In Trial" }, status: 403) if in_trial_states?
 		@freshfone_user.available_on_phone = params[:available_on_phone]
-		respond_to do |format|
-			format.json { render :json => { :update_status => @freshfone_user.save } }
+		if @freshfone_user.save
+			publish_agent_device(@freshfone_user,current_user)
+			render :json => { :update_status =>  true } 
+		else
+			render :json => { :update_status =>  false } 
 		end
 	end
 	
 	def refresh_token
-		@freshfone_user.change_presence_and_preference(params[:status], user_avatar(current_user), is_native_mobile?)
+		@freshfone_user.change_presence_and_preference(params[:status], 
+			view_context.user_avatar(current_user,:thumb, "preview_pic", {:width => "30px", :height => "30px"}), is_native_mobile?)
 		resolve_busy if is_agent_busy?
 		respond_to do |format|
 			format.any(:json, :nmobile) {
 				if @freshfone_user.save
 					render(:json => { :update_status => true,
 						:token => @freshfone_user.get_capability_token(force_generate_token?),
-						:client => default_client, :expire => EXPIRES })
+						:client => default_client, :expire => EXPIRES, :availability_on_phone => @freshfone_user.available_on_phone? })
 				else
 					render :json => { :update_status => false }
 				end
@@ -70,20 +74,27 @@ class Freshfone::UsersController < ApplicationController
 		respond_to do |format|
 			format.any(:json, :nmobile) { render :json => {
 				:update_status => update_presence_and_publish_call(params),
-				:call_sid => outgoing? ? current_call_sid : nil } }
+				:call_sid => current_call_sid, 
+				:call_id => current_call_id } }
 		end
 	end
 
-	
+	def manage_presence
+		Rails.logger.debug "Admin agent availability manage :: #{current_account.id} :: #{params[:agent_id]}"
+		return modify_presence(Freshfone::User::PRESENCE[:offline]) if @freshfone_user.online?
+		modify_presence(Freshfone::User::PRESENCE[:online])
+	end
+
 	private
 		def validate_freshfone_state
 			render :json => { :update_status => false } and return if
-				current_account.freshfone_account.blank? || !current_account.freshfone_account.active?
+				current_account.freshfone_account.blank? || ( !current_account.freshfone_account.active? && !current_account.freshfone_account.trial? )
 		end
 
 		def load_or_build_freshfone_user
 			return node_user if requested_from_node?
-			@freshfone_user = current_user.freshfone_user || build_freshfone_user
+			@freshfone_user = current_account.freshfone_users.find_by_user_id(params[:agent_id]) if params[:agent_id].present?
+			@freshfone_user ||= current_user.freshfone_user || build_freshfone_user
 		end
 
 		def build_freshfone_user
@@ -92,6 +103,7 @@ class Freshfone::UsersController < ApplicationController
 
 		def reset_client_presence
 			return false if @freshfone_user.blank? || @freshfone_user.available_on_phone?
+			return false if params[:status] == Freshfone::User::PRESENCE[:offline] && @freshfone_user.mobile_refreshed_an_hour_ago?
 			@freshfone_user.set_presence(params[:status])
 		end
 
@@ -100,15 +112,24 @@ class Freshfone::UsersController < ApplicationController
 		end
 		
 		def current_call_sid
-			(current_user.freshfone_calls.call_in_progress || {})[:call_sid]
+			outgoing? ? (current_outgoing_call || {})[:call_sid] : incoming_sid
+		end
+
+		def current_call_id
+			outgoing? ? (current_outgoing_call || {})[:id] :
+			(current_account.freshfone_calls.filter_by_call_sid(incoming_sid).first || {})[:id]
+		end
+
+		def current_outgoing_call
+			@outgoing_call ||= current_user.freshfone_calls.call_in_progress
+		end
+
+		def incoming_sid
+			@browser_sid ||= get_browser_sid
 		end
 		
 		def outgoing?
 			params[:outgoing].to_bool
-		end
-
-		def check_for_bridged_calls
-			bridge_queued_call
 		end
 
 		def requested_from_node?
@@ -126,8 +147,9 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def call_meta_info
-			call = outgoing? ? current_user.freshfone_calls.call_in_progress : customer_in_progress_calls
-			update_call_meta(call) unless call.blank? #sometimes in_call reaches after call:in_call and status is already not in-progress.
+			return update_conf_meta if current_account.features?(:freshfone_conference)
+			call = current_user.freshfone_calls.call_in_progress #either way its inprogress call for current agent
+			update_call_meta(call) unless call.blank?
 		end
  
 		def customer_in_progress_calls
@@ -154,4 +176,19 @@ class Freshfone::UsersController < ApplicationController
 			return true if is_native_mobile?
 			params[:force].present? ? params[:force].to_bool : false
 		end
+
+		def modify_presence(status)
+			@freshfone_user.change_presence_and_preference(status) 
+			render :json => { :status => @freshfone_user.save }
+		end
+
+		def agent_in_call?
+			current_account.freshfone_calls.agent_progress_calls(
+				@freshfone_user.user_id).present?
+		end
+
+		def validate_presence
+			return render json: { update_status: false } if agent_in_call?
+		end
+
 end

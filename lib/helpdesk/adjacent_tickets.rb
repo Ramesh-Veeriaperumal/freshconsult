@@ -174,7 +174,7 @@ module Helpdesk::AdjacentTickets
 		def prepare_redis_key(key)
 			key % { :account_id => current_account.id, 
 					:user_id => current_user.id, 
-					:session_id => session.session_id }
+					:session_id => request.session_options[:id] }
 		end
 
 end

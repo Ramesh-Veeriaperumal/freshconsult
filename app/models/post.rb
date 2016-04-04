@@ -1,6 +1,16 @@
 class Post < ActiveRecord::Base
-  include ActionController::UrlWriter
+  
+  include Juixe::Acts::Voteable
 
+  SORT_ORDER = {
+    :date => 'created_at ASC',
+    :popularity => 'user_votes DESC',
+    :recency => 'created_at DESC'
+  }
+
+  acts_as_voteable
+
+  self.primary_key = :id
   def self.per_page() 25 end
   validates_presence_of :user_id, :body_html, :topic
 
@@ -14,28 +24,28 @@ class Post < ActiveRecord::Base
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'
 
-  named_scope :answered_posts, :conditions => { :answer => true }
+  scope :answered_posts, :conditions => { :answer => true }
   has_many :support_scores, :as => :scorable, :dependent => :destroy
+  
+  scope :published_and_mine, lambda { |user| { :conditions => ["(published=1 OR user_id =?) AND (published=1 OR spam != 1 OR spam IS NULL)", user.id] } }
+  scope :published, :conditions => {:published => true, :trash => false }
+  scope :trashed, :conditions => {:trash => true }
 
-  named_scope :published_and_mine, lambda { |user| { :conditions => ["(published=1 OR user_id =?) AND (published=1 OR spam != 1 OR spam IS NULL)", user.id] } }
-  named_scope :published, :conditions => {:published => true, :trash => false }
-  named_scope :trashed, :conditions => {:trash => true }
-
-  named_scope :include_topics_and_forums, :include => { :topic => [ :forum ] }
-  named_scope :unpublished_spam,:conditions => {:published => false, :spam => true, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
-  named_scope :waiting_for_approval,:conditions => {:published => false, :spam => false, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
-  named_scope :unpublished,:conditions => {:published => false, :trash => false}, :order => "created_at DESC", :joins => [ :topic ]
+  scope :include_topics_and_forums, :include => { :topic => [ :forum ] }
+  scope :unpublished_spam,:conditions => {:published => false, :spam => true, :trash => false}, :order => "posts.created_at DESC", :joins => [ :topic ]
+  scope :waiting_for_approval,:conditions => {:published => false, :spam => false, :trash => false}, :order => "posts.created_at DESC", :joins => [ :topic ]
+  scope :unpublished,:conditions => {:published => false, :trash => false}, :order => "posts.created_at DESC", :joins => [ :topic ]
 
 
-  named_scope :by_user, lambda { |user|
+  scope :by_user, lambda { |user|
       { :joins => [:topic],
-        :conditions => ["posts.user_id = ? and posts.user_id != topics.user_id", user.id ]
+        :conditions => ["posts.user_id = ?  and posts.user_id != topics.user_id", user.id ]
       }
   }
   before_update :unmark_another_answer, :if => :questions? && :topic_has_answer?
   after_update :toggle_answered_stamp, :if => :questions?
   after_destroy :mark_as_unanswered, :if => :answer
-
+  
   has_many_attachments
   has_many_cloud_files
   
@@ -57,8 +67,14 @@ class Post < ActiveRecord::Base
     :unpublished => ForumUnpublished
   }
 
+  REPORT = {
+    :ham => true,
+    :spam => false
+  }
+
   attr_accessor :request_params, :portal
 
+  
   def to_xml(options = {})
     options[:except] ||= []
     options[:except] << :topic_title << :forum_name
@@ -67,15 +83,14 @@ class Post < ActiveRecord::Base
 
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id])
   end
 
   def as_json (options={})
     options[:except]=[:account_id,:import_id]
-    json_str=super options
-    return json_str
+    super options
   end
 
   def to_liquid
@@ -144,11 +159,11 @@ class Post < ActiveRecord::Base
   end
 
   def topic_path
-    support_discussions_topic_path(topic)
+    Rails.application.routes.url_helpers.support_discussions_topic_path(topic)
   end
 
   def topic_url
-    support_discussions_topic_url(topic, :host => account.host)
+    Rails.application.routes.url_helpers.support_discussions_topic_url(topic, :host => account.host)
   end
 
 end

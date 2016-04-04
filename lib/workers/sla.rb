@@ -54,7 +54,7 @@ end
       sla_logger = custom_logger(path)
     rescue Exception => e
       puts "Exception occured - #{e}"
-      FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Splunk logging Error for sla.rb",:recipients => "pradeep.t@freshdesk.com"})  
+      FreshdeskErrorsMailer.error_email(nil,nil,e,{:subject => "Splunk logging Error for sla.rb",:recipients => "pradeep.t@freshdesk.com"})  
     end
     account = Account.current
     db_name = account.premium? ? "run_on_master" : "run_on_slave"
@@ -85,9 +85,10 @@ end
                                      and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id" , 
                             :readonly => false , 
                             :conditions =>['frDueBy <=? AND fr_escalated=? AND status IN (?) AND 
-                                                helpdesk_ticket_states.first_response_time IS ?', 
+                                                helpdesk_ticket_states.first_response_time IS ? AND
+                                                source != ?', 
                           Time.zone.now.to_s(:db),false,
-                          Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil] )
+                          Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil, Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]] )
                        }                       
     froverdue_tickets_start_time=Time.now.utc                   
     froverdue_tickets.each do |fr_ticket|
@@ -130,15 +131,16 @@ end
 
 
   def self.send_email(ticket, agent, n_type)
-    e_notification = ticket.account.email_notifications.find_by_notification_type(n_type)
+    account = Account.current
+    e_notification = account.email_notifications.find_by_notification_type(n_type)
     return unless e_notification.agent_notification
     agent.make_current
     agent_template = e_notification.get_agent_template(agent)
     email_subject = Liquid::Template.parse(agent_template.first).render(
-                                'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+                                'ticket' => ticket, 'helpdesk_name' => account.portal_name)
     email_body = Liquid::Template.parse(agent_template.last).render(
-                                'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
-    SlaNotifier.deliver_escalation(ticket, agent, :email_body => email_body, :subject => email_subject)
+                                'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => account.portal_name)
+    SlaNotifier.escalation(ticket, agent, :email_body => email_body, :subject => email_subject)
     User.reset_current
   end
 end

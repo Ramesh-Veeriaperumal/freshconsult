@@ -1,6 +1,6 @@
-<% content_for :sidebar do -%><%-end %>
+<% content_for :sidebar do -%>&nbsp;<%-end %>
 <h3 class="title"><%= t('forum.new') %></h3>
-<% form_for :forum, :url => category_forums_path(@forum_category) do |f| -%>
+<%= form_for :forum, :url => category_forums_path(@forum_category) do |f| -%>
 	<%= render :partial => "form", :object => f %>
 	<div class="button-container">	
 		<%= submit_tag t('save'), { :class => "uiButton" } -%> 

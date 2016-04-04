@@ -1,4 +1,5 @@
 class AffiliateDiscount < ActiveRecord::Base
+  self.primary_key = :id
 	not_sharded
 
 	has_many :affiliate_discount_mappings
@@ -15,9 +16,9 @@ class AffiliateDiscount < ActiveRecord::Base
 	}
 	
 	
-	named_scope :free_agent_coupons,
+	scope :free_agent_coupons,
 		{ :conditions => { :discount_type => COUPON_TYPES[:free_agent] }}
-	named_scope :percentage_coupons,  
+	scope :percentage_coupons,  
 		{ :conditions => { :discount_type => COUPON_TYPES[:percentage] }}
 
 	

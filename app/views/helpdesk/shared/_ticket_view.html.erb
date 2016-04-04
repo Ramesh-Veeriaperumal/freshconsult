@@ -3,15 +3,28 @@
 </div>
 
 <div id="ticket-sub-toolbar">
-	<% unless @items.empty? %>
-  <%= render :partial => "/helpdesk/shared/ticket_sort" , :inline => true %>
+  <% if(@items.length > 0) %>
+  	<%= render :partial => "/helpdesk/shared/ticket_sort" , :inline => true %>
   <% end %>
+  <% if @current_view == "raised_by_me" && !current_user.agent.all_ticket_permission%>
+	<div class="out-of-scope-flash">  
+	   <label class="center pt5"> 
+	    	<%= I18n.t('wf.messages.out_of_scope', :support_tickets => current_portal.tickets_url).html_safe %> 
+	    </label>
+	</div>
+   <% end %>
 </div>
 
 <div id="ticket-list-body"><div id="ticket-list-body-content">
 	<div id="ticket-toolbar" class="toolbar">
 	  <%= render :partial => "/helpdesk/shared/ticket_toolbar" , :inline => true %>
-	</div>	
+    </div>
+    <% if render_select_all_toolbar? %>
+       <div id="select_all_alert" class="hide admin_select_all_text">
+        <%= render :partial => "select_all_message" %>
+       </div>
+    <% end %>
+
 	<div id="index_refresh_alert" class="hide">
 		<span id="new_ticket_message" class="count-label hide" 
 			data-text-one="<%= t('ticket.new_ticket') %>"

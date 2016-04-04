@@ -1,4 +1,5 @@
-<% form_remote_tag :url => { :controller => "social/twitter", :action => "post_tweet" },  :html => { :class => "uniForm", :id => "post_tweet" } do %>
+<%= form_tag url_for(:controller => "social/twitter", :action => "post_tweet"), :class => "uniForm", 
+ :id => "post_tweet", :remote => true do %>
       
   <% handle = handles.first%>
   <div class="row twt-area">
@@ -7,7 +8,7 @@
     </div>
     <div class="twt-options clearfix">
       <div class="twt-profile image-lazy-load twt-as-main">
-        <img src="/images/fillers/profile_blank_thumb.gif" data-src="<%= @thumb_avatar_urls[handle.screen_name]%>" data-src-retina="<%= @medium_avatar_urls[handle.screen_name]%>"/>
+        <img src="/images/misc/profile_blank_thumb.jpg" data-src="<%= @thumb_avatar_urls[handle.screen_name]%>" data-src-retina="<%= @medium_avatar_urls[handle.screen_name]%>"/>
       </div>
       <div class="twt-as">
         <div class="dropdown">

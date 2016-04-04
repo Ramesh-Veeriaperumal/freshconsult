@@ -1,0 +1,10 @@
+<div class="details" id='<%= notedetails %>' data-note-id="<%= note.id %>">
+  <%= content_tag(:div, "", :class => "#{note.survey_result.get_small_img_class} smiley") unless note.survey_remark.nil? || note.survey_result.nil? %>
+  <div class="request_archive_mail <%= 'survey-note old-survey-note' unless note.survey_remark.nil? %>">
+    <%= "<div class='old-survey-text'>#{note.survey_result.text}</div>".html_safe unless note.survey_remark.nil? || note.survey_result.nil? %>      
+    <%= note.body_html.html_safe %>
+    <% if note.fwd_email? %>
+      <div class="freshdesk_quote" data-remote-quote=true></div>
+    <% end %>
+  </div>
+</div>

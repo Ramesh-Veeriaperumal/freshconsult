@@ -42,7 +42,7 @@ module Helpdesk::TicketNotifications
   def notify_watchers(status)
     self.subscriptions.each do |subscription|
       if subscription.user.id != User.current.id
-        Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_status_change, self, 
+        Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_status_change, self,
                                               subscription, status, "#{User.current.name}")
       end
     end
@@ -55,7 +55,12 @@ module Helpdesk::TicketNotifications
   def notify_by_email(notification_type)
     if notify_enabled?(notification_type)
       if (self.requester.language != nil)
-        Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self)
+        if self.send_and_set
+          Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::TicketNotifier, :notify_by_email, [notification_type, self]), 
+          nil, 90.seconds.from_now)
+        else
+          Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self)
+        end
       else
         args = [notification_type, self]
         Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::TicketNotifier, :notify_by_email, args), 
@@ -66,7 +71,11 @@ module Helpdesk::TicketNotifications
   
   def notify_enabled?(notification_type)
     e_notification = account.email_notifications.find_by_notification_type(notification_type)
-    e_notification.requester_notification? or e_notification.agent_notification?
+    (e_notification.requester_notification? && !self.ecommerce?) or e_notification.agent_notification?
+  end
+
+  def send_outbound_email
+    Helpdesk::TicketNotifier.send_later(:deliver_notify_outbound_email, self)
   end
 
 	end

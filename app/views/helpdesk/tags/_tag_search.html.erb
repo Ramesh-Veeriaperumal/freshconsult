@@ -2,7 +2,7 @@
   <link href="/stylesheets/autosuggest_inquisitor.css" media="screen" rel="stylesheet" type="text/css">
   <script src="/javascripts/helpdesk/autosuggest.js" type="text/javascript"></script>
 
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     document.observe("dom:loaded", function(){
 
       new bsn.AutoSuggest('tag-search', {
@@ -24,7 +24,7 @@
   <% end %>
 <% end %>
 
-<% form_tag local_assigns[:action] || "", :id => "tag-search-form", :style => "display: #{ local_assigns[:hidden] ? "none" : "block"};" do %>
+<%= form_tag local_assigns[:action] || "", :id => "tag-search-form", :style => "display: #{ local_assigns[:hidden] ? "none" : "block"};" do %>
   <h4 class="title" id="search-value-label"><%= label_text %></h4>
   <input type="text" id="tag-search" name="name"></input>
 <% end %>

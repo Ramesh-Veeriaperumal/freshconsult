@@ -1,4 +1,4 @@
-<% form_for :email_config, @email_config, :url => admin_email_configs_path, :html => { :method => :post, :id => "newEmailConfigForm"} do |f| %>
+<%= form_for @email_config, :url => admin_email_configs_path, :html => { :method => :post, :id => "newEmailConfigForm"}, :object_name => :email_config  do |f| %>
 <%= f.error_messages %>
 <h3 class="lead"><%=t('email_configs.title')%></h3>
 <ul class="unstyled form-horizontal row-fluid">
@@ -59,10 +59,10 @@
 		</div>
 
 		<div class="hide" id="CustomMailbox">
-			<% f.fields_for :imap_mailbox, @imap_mailbox do |imap_mailbox| %>
+			<%= f.fields_for :imap_mailbox, @imap_mailbox do |imap_mailbox| %>
 				<%= render :partial => "new_imap_mailbox", :locals => {:imap_mailbox => imap_mailbox} %>
 			<% end %>
-			<% f.fields_for :smtp_mailbox, @smtp_mailbox do |smtp_mailbox| %>
+			<%= f.fields_for :smtp_mailbox, @smtp_mailbox do |smtp_mailbox| %>
 				<%= render :partial => "new_smtp_mailbox", :locals => {:smtp_mailbox => smtp_mailbox} %>
 			<% end %>
 		</div>

@@ -4,7 +4,8 @@ include GnipHelper
 include Gnip::Constants
 include Social::Twitter::Constants
 
-describe Gnip::RuleClient do
+
+RSpec.describe Gnip::RuleClient do
 
   self.use_transactional_fixtures = false
 

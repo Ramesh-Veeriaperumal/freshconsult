@@ -1,5 +1,6 @@
 class Survey < ActiveRecord::Base
   
+  self.primary_key = :id
   include Reports::ActivityReport
   
   ANY_EMAIL_RESPONSE = 1
@@ -32,6 +33,9 @@ class Survey < ActiveRecord::Base
   belongs_to :account
   has_many :survey_handles, :dependent => :destroy
   has_many :survey_results, :dependent => :destroy
+
+  xss_sanitize :only => [:link_text, :happy_text, :neutral_text , :unhappy_text], 
+               :plain_sanitizer => [:link_text, :happy_text, :neutral_text , :unhappy_text ]
   
   def can_send?(ticket, s_while)    
     ( account.features?(:surveys, :survey_links) && ticket.requester && 
@@ -48,11 +52,10 @@ class Survey < ActiveRecord::Base
   end
  
   def self.satisfaction_survey_html(ticket)
-        
-        survey_handle = SurveyHandle.create_handle_for_place_holder(ticket)
-        
-        ActionController::Base.helpers.render(:partial => "app/views/helpdesk/ticket_notifier/satisfaction_survey.html.erb",
-                                        :locals => {:ticket => ticket, :survey_handle => survey_handle, :surveymonkey_survey => nil})
+    survey_handle = SurveyHandle.create_handle_for_place_holder(ticket)
+    SurveyHelper.render_content_for_placeholder({ :ticket => ticket, 
+                                     :survey_handle => survey_handle, 
+                                     :surveymonkey_survey => nil})
   end
 
   def self.survey_names(account)

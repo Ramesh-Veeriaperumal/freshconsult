@@ -1,2 +1,7 @@
-page << "jQuery('##{dom_id(@item.attachment)}').fadeOut(500, function(){ jQuery(this).remove() });"
+if @note_attachment_count > 0
+  page << "jQuery('#note_attachments_container_#{@note.id} ##{dom_id(@item.attachment)}').fadeOut(500, function(){ jQuery(this).remove() });"
+  page.replace_html "note_attachments_title_#{@note.id}", pluralize(@note_attachment_count, "Attachment")
+else
+  page.replace_html "note_attachments_container_#{@note.id}", ""
+end
 show_ajax_flash(page)

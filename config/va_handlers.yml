@@ -15,6 +15,7 @@ va_handlers:
         allow_all: Va::Handlers::AllowAll
     event:
         default: Va::EventHandlers::Update
+        fallback: Va::EventHandlers::Fallback
         update: Va::EventHandlers::Update # [:from, :to] comparison handler
         value: Va::EventHandlers::Value # :value comparison handler
         change: Va::EventHandlers::Change # doesn't matter what the change is..

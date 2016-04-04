@@ -1,4 +1,5 @@
-<%= include_cloudfront_rtl_css :social %>
+ 
+<%= stylesheet_link_tag_with_rtl :'cdn/social' %>
 <div class="row-fluid">
   <div class="span2">
     <% if @streams.length > 0 %>
@@ -8,7 +9,7 @@
             <li><a href="#" id="unifiedStreams" class="active" tittle="All"><%= font_icon "all-streams", :size => 24 %><span>All</span></a></li>
             <% @streams.each do |stream| %>
               <li class="strmlst"><a href="#" class="image-lazy-load item_info" data-stream-id="<%= stream.id %>" title="<%= h(stream.name) %>">
-                <img src="/images/fillers/profile_blank_thumb.gif" data-src="<%= s3_twitter_avatar(stream.twitter_handle)%>" data-src-retina="<%= s3_twitter_avatar(stream.twitter_handle,'medium')%>"/>
+                <img src="/images/misc/profile_blank_thumb.jpg" data-src="<%= s3_twitter_avatar(stream.twitter_handle)%>" data-src-retina="<%= s3_twitter_avatar(stream.twitter_handle,'medium')%>"/>
                 <span><%= h(stream.name) %></span></a></li>
             <% end %>
           </ul>
@@ -37,7 +38,11 @@
       <!-- No Visible streams -->
       <% if @streams.empty? && @custom_streams.empty? %>
         <div class="scl-search-here">
-          Search twitter for updates <span class="image-lazy-load"><img src="/images/cdn-ignored/inline-images/social/noresults-search.png" data-src-retina="/images/cdn-ignored/inline-images/social/noresults-search.png" alt /></span>
+          Search twitter for updates 
+          <span class="image-lazy-load">
+            <img src="/images/social/noresults-search.png" 
+              data-src-retina="/images/social/noresults-search.png" alt />
+          </span>
         </div>
         <div class="info-highlight no-stream">No activity available</div>
       <% end %>
@@ -81,9 +86,14 @@
     </div>
 
     <div class="tw-explorer">
-      <div class="info-highlight fs-notify">
-          <a href="https://support.freshdesk.com/support/solutions/articles/195564-understanding-the-options-in-the-social-tab" target="_blank"><b><%= t('social.streams.twitter.flash_card_text')%></b></a>
-      </div>
+      <% social_reauth = social_reauth_required %>
+      <% if social_reauth.present? %>
+       <%= social_reauth %>
+      <% else %>
+        <div class="info-highlight fs-notify">
+            <a href="https://support.freshdesk.com/support/solutions/articles/195564-understanding-the-options-in-the-social-tab" target="_blank"><b><%= t('social.streams.twitter.flash_card_text')%></b></a>
+        </div>
+      <% end %>
       
       <% if privilege?(:reply_ticket) and @visible_handles.any? %>
         <div class="ph-grey">
@@ -145,7 +155,7 @@
   </div>
 </div>
 
-<%= include_cloudfront_js  :social_tab %>
+<%= javascript_include_tag  :'cdn/social_tab' %>
 <script type="text/javascript">
   Fjax.afterNextPage = function () {
     streamMgr.destroy();

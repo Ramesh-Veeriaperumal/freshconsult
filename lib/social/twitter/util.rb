@@ -85,7 +85,7 @@ module Social::Twitter::Util
   end
   
   def all_visible_streams
-    @all_visible_streams ||= current_user.visible_social_streams
+    @all_visible_streams ||= current_user.visible_twitter_streams
   end
 
 end

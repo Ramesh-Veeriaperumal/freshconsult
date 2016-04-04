@@ -6,19 +6,28 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include AccountConstants
   include EmailHelper
   include Helpdesk::ProcessByMessageId
+  include Helpdesk::DetectDuplicateEmail
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::UrlHelper
   include WhiteListHelper
   include Helpdesk::Utils::Attachment
   include Helpdesk::Utils::ManageCcEmails
+  include Helpdesk::ProcessAgentForwardedEmail
 
   MESSAGE_LIMIT = 10.megabytes
 
-  attr_accessor :reply_to_email, :additional_emails
+  attr_accessor :reply_to_email, :additional_emails,:archived_ticket, :start_time, :actual_archive_ticket
+
+  def determine_pod
+    to_email = parse_to_email
+    shard = ShardMapping.fetch_by_domain(to_email[:domain])
+    shard.pod_info unless shard.blank?
+  end
 
   def perform
     # from_email = parse_from_email
+    self.start_time = Time.now.utc
     to_email = parse_to_email
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
     return unless shardmapping.present?
@@ -27,32 +36,50 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if !account.nil? and account.active?
       # clip_large_html
       account.make_current
+      TimeZone.set_time_zone
       encode_stuffs
       from_email = parse_from_email(account)
       return if from_email.nil?
+      if account.features?(:domain_restricted_access)
+        domain = (/@(.+)/).match(from_email[:email]).to_a[1]
+        wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
+        return unless Array.wrap(wl_domain).include?(domain)
+      end
       kbase_email = account.kbase_email
       
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
         return if email_config && (from_email[:email] == email_config.reply_email)
-        sanitized_html = Helpdesk::HTMLSanitizer.plain(params[:html])
-        params[:text] = params[:text] || sanitized_html
-        user = get_user(account, from_email, email_config)        
-        if !user.blocked?
-            # Workaround for params[:html] containing empty tags
-          
-          self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/sanitize']) do
-            #need to format this code --Suman
-            if sanitized_html.blank? && !params[:text].blank? 
-             email_cmds_regex = get_email_cmd_regex(account) 
-             params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
-            end
-          end  
-            
-          
-          add_to_or_create_ticket(account, from_email, to_email, user, email_config)
-
+        return if duplicate_email?(from_email[:email], 
+                                   to_email[:email], 
+                                   params[:subject], 
+                                   message_id)
+        if (from_email[:email] =~ EMAIL_VALIDATOR).nil?
+          error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
+          Rails.logger.debug error_msg
+          NewRelic::Agent.notice_error(Exception.new(error_msg))
+          return
         end
+        user = existing_user(account, from_email)
+        unless user
+          text_part
+          user = create_new_user(account, from_email, email_config)
+        else
+          return if user.blocked?
+          text_part
+        end
+        set_current_user(user)
+        
+        self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/sanitize']) do
+          # Workaround for params[:html] containing empty tags
+          #need to format this code --Suman
+          if params[:html].blank? && !params[:text].blank? 
+           email_cmds_regex = get_email_cmd_regex(account) 
+           params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
+          end
+        end
+          
+        add_to_or_create_ticket(account, from_email, to_email, user, email_config)
       end
       
       begin
@@ -66,16 +93,39 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     end
   end
-  
+
   # ITIL Related Methods starts here
 
   def add_to_or_create_ticket(account, from_email, to_email, user, email_config)
     ticket = fetch_ticket(account, from_email, user)
     if ticket
       return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-      ticket = ticket.parent if can_be_added_to_ticket?(ticket.parent, user)
+      primary_ticket = check_primary(ticket,account)
+      if primary_ticket 
+        return create_ticket(account, from_email, to_email, user, email_config) if primary_ticket.is_a?(Helpdesk::ArchiveTicket)
+        ticket = primary_ticket
+      end
       add_email_to_ticket(ticket, from_email, user)
     else
+      if account.features?(:archive_tickets)
+        archive_ticket = fetch_archived_ticket(account, from_email, user)
+        if archive_ticket
+          self.archived_ticket = archive_ticket
+          parent_ticket = self.archived_ticket.parent_ticket 
+          # If merge ticket change the archive_ticket
+          if parent_ticket && parent_ticket.is_a?(Helpdesk::ArchiveTicket)
+            self.archived_ticket = parent_ticket
+          elsif parent_ticket && parent_ticket.is_a?(Helpdesk::Ticket)
+            return add_email_to_ticket(ticket, from_email, user) if can_be_added_to_ticket?(parent_ticket, user, from_email)
+          end
+          # If not merge check if archive child present
+          linked_ticket = self.archived_ticket.ticket
+          if linked_ticket
+            linked_ticket = linked_ticket.parent if can_be_added_to_ticket?(linked_ticket.parent, user, from_email)
+            return add_email_to_ticket(linked_ticket, from_email, user)
+          end
+        end
+      end
       create_ticket(account, from_email, to_email, user, email_config)
     end
   end
@@ -83,7 +133,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   def encoded_display_id_regex account
     Regexp.new("\\[#{account.ticket_id_delimiter}([0-9]*)\\]")
   end
-  
+
   # ITIL Related Methods ends here
 
   def create_article(account, from_email, to_email)
@@ -94,7 +144,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     user = get_user(account, from_email,email_config)
     
     article_params[:title] = params[:subject].gsub( encoded_display_id_regex(account), "" )
-    article_params[:description] = Helpdesk::HTMLSanitizer.clean(params[:html]) || params[:text]
+    article_params[:description] = cleansed_html || simple_format(params[:text])
     article_params[:user] = user.id
     article_params[:account] = account.id
     article_params[:content_ids] = params["content-ids"].nil? ? {} : get_content_ids
@@ -110,7 +160,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     Helpdesk::KbaseArticles.create_article_from_email(article_params)
   end
-  
+
   private
     def encode_stuffs
       charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])
@@ -140,7 +190,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
       end
     end
-    
+
     def parse_email(email_text)
       
       parsed_email = parse_email_text(email_text)
@@ -161,25 +211,20 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def parse_reply_to_email
       if(!params[:headers].nil? && params[:headers] =~ /^Reply-[tT]o: (.+)$/)
-        self.additional_emails = get_email_array($1)[1..-1]
-        self.reply_to_email = parse_email($1)
+        self.additional_emails = get_email_array($1.strip)[1..-1]
+        parsed_reply_to = parse_email($1.strip)
+        self.reply_to_email = parsed_reply_to if parsed_reply_to[:email] =~ EMAIL_REGEX
       end
       reply_to_email
     end
-    
+
     def orig_email_from_text #To process mails fwd'ed from agents
-      content = params[:text] || Helpdesk::HTMLSanitizer.clean(params[:html])
-      if (content && (content.gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
-                            content.gsub("\r\n", "\n") =~ /^\s*From:\s(.*)\s+\[mailto:(.*)\]/ or  
-                            content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
-        name = $1
-        email = $2
-        if email =~ EMAIL_REGEX
-          { :name => name, :email => $1 }
-        end
+      @orig_email_user ||= begin
+        content = params[:text] || cleansed_html
+        identify_original_requestor(content)
       end
     end
-    
+
     def parse_to_email
       envelope = params[:envelope]
       unless envelope.nil?
@@ -196,7 +241,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       #Assigns email of reply_to if feature is present or gets it from params[:from]
       #Will fail if there is spaces and no key after reply_to or has a garbage string
-      f_email = reply_to_email || parse_email(params[:from])
+      f_email = reply_to_email || parse_email(params[:from].strip)
       
       #Ticket will be created for no_reply if there is no other reply_to
       f_email = reply_to_email if valid_from_email?(f_email, reply_to_feature)
@@ -206,7 +251,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def valid_from_email? f_email, reply_to_feature
       (f_email[:email] =~ /(noreply)|(no-reply)/i or f_email[:email].blank?) and !reply_to_feature and parse_reply_to_email
     end
-    
+
     def parse_cc_email
       cc_array = []
       unless params[:cc].nil?
@@ -214,6 +259,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       cc_array.concat(additional_emails || [])
       return cc_array.compact.map{|i| i.downcase}.uniq
+    end
+
+    def parse_cc_email_new
+      cc_array = get_email_array params[:cc]
+      cc_array.concat(additional_emails || [])
+      cc_array.compact.map{|i| i.downcase}.uniq
     end
 
     def parse_to_emails
@@ -226,34 +277,52 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_to_emails
     end
 
+    def parse_to_emails_new
+      fetch_valid_emails params[:to]
+    end
+
     def fetch_ticket(account, from_email, user)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
       ticket = account.tickets.find_by_display_id(display_id) if display_id
-      return ticket if can_be_added_to_ticket?(ticket, user)
+      return ticket if can_be_added_to_ticket?(ticket, user, from_email)
       ticket = ticket_from_headers(from_email, account)
-      return ticket if can_be_added_to_ticket?(ticket, user)
+      return ticket if can_be_added_to_ticket?(ticket, user, from_email)
       ticket = ticket_from_email_body(account)
-      return ticket if can_be_added_to_ticket?(ticket, user)
+      return ticket if can_be_added_to_ticket?(ticket, user, from_email)
       ticket = ticket_from_id_span(account)
-      return ticket if can_be_added_to_ticket?(ticket, user)
+      return ticket if can_be_added_to_ticket?(ticket, user, from_email)
+    end
+
+    def fetch_archived_ticket(account, from_email, user)
+      display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
+      archive_ticket = account.archive_tickets.find_by_display_id(display_id) if display_id
+      return archive_ticket if can_be_added_to_ticket?(archive_ticket, user)
+      archive_ticket = archive_ticket_from_headers(from_email, account)
+      return archive_ticket if can_be_added_to_ticket?(archive_ticket, user)
+      return self.actual_archive_ticket if can_be_added_to_ticket?(self.actual_archive_ticket, user)
     end
     
-    def create_ticket(account, from_email, to_email, user, email_config)            
+    def create_ticket(account, from_email, to_email, user, email_config)
       e_email = {}
       if (user.agent? && !user.deleted?)
-        e_email = orig_email_from_text || {}
+        e_email = account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text
+        if e_email[:cc_emails].present?
+          params[:cc] = (params[:cc].present?) ? (params[:cc] << ", " << e_email[:cc_emails].join(", ")) : e_email[:cc_emails]
+        end
         user = get_user(account, e_email , email_config) unless e_email.blank?
       end
      
+      global_cc = parse_all_cc_emails(account.kbase_email, account.support_emails)
+
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
-        :ticket_body_attributes => {:description => params[:text], 
-                          :description_html => Helpdesk::HTMLSanitizer.clean(params[:html])},
+        :ticket_body_attributes => {:description => tokenize_emojis(params[:text]) || "",
+                          :description_html => cleansed_html || ""},
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
-        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => [], :reply_cc => parse_cc_email},
+        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
@@ -265,7 +334,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       check_support_emails_from(account, ticket, user, from_email)
 
       begin
-        if (user.agent? && !user.deleted?)
+        if (ticket.agent_performed?(user) && !user.deleted?)
           process_email_commands(ticket, user, email_config, params) if user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(account)
           ticket.ticket_body.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
@@ -275,26 +344,62 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         NewRelic::Agent.notice_error(e)
       end
       message_key = zendesk_email || message_id
+
+      # Creating attachments without attachable info
+      # Hitting S3 outside create-ticket transaction
+      self.class.trace_execution_scoped(['Custom/Sendgrid/ticket_attachments']) do
+        # attachable info will be updated on ticket save
+        ticket.attachments, ticket.inline_attachments = create_attachments(ticket, account)
+      end
+
       begin
-        self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/attachments_tickets']) do
-          build_attachments(ticket, ticket)
+        self.class.trace_execution_scoped(['Custom/Sendgrid/tickets']) do
           (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
+          return if large_email && duplicate_email?(from_email[:email], 
+                                                    to_email[:email], 
+                                                    params[:subject], 
+                                                    message_id)
+          if account.features?(:archive_tickets) && archived_ticket
+            ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) 
+            # tags = archived_ticket.tags
+            # add_ticket_tags(tags,ticket) unless tags.blank?
+          end
           ticket.save_ticket!
+          cleanup_attachments ticket
+          mark_email(process_email_key, from_email[:email], 
+                                        to_email[:email], 
+                                        params[:subject], 
+                                        message_id) if large_email
         end
+
+        # Insert header to schema_less_ticket_dynamo
+        begin
+          Timeout::timeout(0.5) do
+            dynamo_obj = Helpdesk::Email::SchemaLessTicketDynamo.new
+            dynamo_obj['account_id'] = Account.current.id
+            dynamo_obj['ticket_id'] = ticket.id
+            dynamo_obj['headers'] = params[:headers]
+            dynamo_obj.save
+          end
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e) 
+        end
+
       rescue AWS::S3::Errors::InvalidURI => e
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
         raise e
       rescue ActiveRecord::RecordInvalid => e
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
+        NewRelic::Agent.notice_error(e)
       end
-      set_others_redis_key(message_key(account, message_key), ticket.display_id, 86400*7) unless message_key.nil?
+      set_ticket_id_with_message_id account, message_key, ticket
     end
     
     def check_for_spam(ticket)
       ticket.spam = true if ticket.requester.deleted?
       ticket  
     end
-  
+
     def check_for_chat_scources(ticket,from_email)
       ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] if Helpdesk::Ticket::CHAT_SOURCES.has_value?(from_email[:domain])
       if from_email[:domain] == Helpdesk::Ticket::CHAT_SOURCES[:snapengage]
@@ -304,36 +409,66 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       ticket
     end
-    
-    def check_for_auto_responders(ticket)
+
+    def check_for_auto_responders(model)
       headers = params[:headers]
       if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || (headers =~ /Precedence: auto_reply/) || (headers =~ /Precedence: (bulk|junk)/i)))
-        ticket.skip_notification = true
+        model.skip_notification = true
       end
     end
 
-    def check_support_emails_from(account, ticket, user, from_email)
-      ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(from_email[:email]) == 0}
+    def check_support_emails_from(account, model, user, from_email)
+      model.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(from_email[:email]) == 0}
     end
 
     def ticket_from_email_body(account)
-      display_span = Nokogiri::HTML(params[:html]).css("span[title='fd_tkt_identifier']")
+      display_span = run_with_timeout(NokogiriTimeoutError) { 
+                        Nokogiri::HTML(params[:html]).css("span[title='fd_tkt_identifier']") 
+                      }
       unless display_span.blank?
         display_id = display_span.last.inner_html
-        return account.tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
+        unless display_id.blank?
+          ticket = account.tickets.find_by_display_id(display_id.to_i)
+          self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features?(:archive_tickets) && !ticket
+          return ticket 
+        end 
       end
     end
 
     def ticket_from_id_span(account)
+      parsed_html = run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(params[:html]) }
+      display_span = parsed_html.css("span[style]").select{|x| x.to_s.include?('fdtktid')}
+      unless display_span.blank?
+        display_id = display_span.last.inner_html
+        display_span.last.remove
+        params[:html] = parsed_html.inner_html
+        unless display_id.blank?
+          ticket = account.tickets.find_by_display_id(display_id.to_i)
+          self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features?(:archive_tickets) && !ticket
+          return ticket 
+        end 
+      end
+    end
+
+    def archive_ticket_from_email_body(account)
+      display_span = Nokogiri::HTML(params[:html]).css("span[title='fd_tkt_identifier']")
+      unless display_span.blank?
+        display_id = display_span.last.inner_html
+        return account.archive_tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
+      end
+    end
+
+    def archive_ticket_from_id_span(account)
       parsed_html = Nokogiri::HTML(params[:html])
       display_span = parsed_html.css("span[style]").select{|x| x.to_s.include?('fdtktid')}
       unless display_span.blank?
         display_id = display_span.last.inner_html
         display_span.last.remove
         params[:html] = parsed_html.inner_html
-        return account.tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
+        return account.archive_tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
       end
     end
+
 
     def add_email_to_ticket(ticket, from_email, user)
       msg_hash = {}
@@ -344,7 +479,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         full_text = msg_hash[:full_text]
       end
       # for html text
-      msg_hash = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email,false)
+      msg_hash = show_quoted_text(cleansed_html, ticket.reply_email,false)
       unless msg_hash.blank?
         body_html = msg_hash[:body]
         full_text_html = msg_hash[:full_text]
@@ -354,11 +489,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_cc_emails = parse_cc_email
       parsed_cc_emails.delete(ticket.account.kbase_email)
       note = ticket.notes.build(
-        :private => (from_fwd_recipients and user.customer?) ? true : false ,
+        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?),
         :incoming => true,
-        :note_body_attributes => {:body => body,:body_html => body_html,
-                                  :full_text => full_text, :full_text_html => full_text_html} ,
-        :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
+        :note_body_attributes => {
+          :body => tokenize_emojis(body) || "",
+          :body_html => body_html || "",
+          :full_text => tokenize_emojis(full_text),
+          :full_text_html => full_text_html
+          },
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"],
         :user => user, #by Shan temp
         :account_id => ticket.account_id,
         :from_email => from_email[:email],
@@ -366,11 +505,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :cc_emails => parsed_cc_emails
       )  
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
-      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
+      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?)
       
+      note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?
+
+      check_for_auto_responders(note)
+      check_support_emails_from(ticket.account, note, user, from_email)
+
       begin
         ticket.cc_email = ticket_cc_emails_hash(ticket, note)
-        if (user.agent? && !user.deleted?)
+        if (ticket.agent_performed?(user) && !user.deleted?)
           process_email_commands(ticket, user, ticket.email_config, params, note) if 
             user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(ticket.account)
@@ -382,58 +526,112 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
-      self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/attachments_notes']) do
-        build_attachments(ticket, note)
+
+      # Creating attachments without attachable info
+      # Hitting S3 outside create-note transaction
+      self.class.trace_execution_scoped(['Custom/Sendgrid/note_attachments']) do
+        # attachable info will be updated on note save
+        note.attachments, note.inline_attachments = create_attachments(note, ticket.account)
+      end
+
+      self.class.trace_execution_scoped(['Custom/Sendgrid/notes']) do
         # ticket.save
         note.notable = ticket
+        return if large_email && duplicate_email?(from_email[:email], 
+                                                  parse_to_emails.first, 
+                                                  params[:subject], 
+                                                  message_id)
         note.save_note
+        cleanup_attachments note
+        mark_email(process_email_key, from_email[:email], 
+                                      parse_to_emails.first, 
+                                      params[:subject], 
+                                      message_id) if large_email
       end
     end
     
-    def can_be_added_to_ticket?(ticket,user)
+    def rsvp_to_fwd?
+      @rsvp_to_fwd ||= (Account.current.features?(:threading_without_user_check) && reply_to_forward(all_message_ids))
+    end
+
+    def can_be_added_to_ticket?(ticket, user, from_email={})
       ticket and
       ((user.agent? && !user.deleted?) or
       (ticket.requester.email and ticket.requester.email.include?(user.email)) or 
       (ticket.included_in_cc?(user.email)) or
-      belong_to_same_company?(ticket,user))
+      (from_email[:email] == ticket.sender_email) or
+      belong_to_same_company?(ticket,user) or
+      Account.current.features?(:threading_without_user_check))
     end
     
     def belong_to_same_company?(ticket,user)
-      user.company_id and (user.company_id == ticket.requester.company_id)
+      user.company_id and (user.company_id == ticket.company_id)
     end
-    
+
+    def text_part
+      params[:text] = params[:text] || run_with_timeout(HtmlSanitizerTimeoutError) {
+                                             Helpdesk::HTMLSanitizer.plain(params[:html])
+                                            }
+    end
+
     def get_user(account, from_email, email_config)
-      user = account.user_emails.user_for_email(from_email[:email])
+      user = existing_user(account, from_email)
       unless user
-        user = account.contacts.new
-        language = (account.features?(:dynamic_content)) ? nil : account.language
-        portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
-        signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
-        args = [user, text_for_detection]  #user_email changed
-        Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
+        user = create_new_user(account, from_email, email_config)
       end
-      user.make_current
+      set_current_user(user)
+    end
+
+    def existing_user(account, from_email)
+      account.user_emails.user_for_email(from_email[:email])
+    end
+
+    def create_new_user(account, from_email, email_config)
+      user = account.contacts.new
+      language = (account.features?(:dynamic_content)) ? nil : account.language
+      portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
+      signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
+        :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
+      if params[:text]
+        text = text_for_detection
+        args = [user, text]  #user_email changed
+        #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
+        Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
+      end
       user
     end
 
-    def text_for_detection
-      text = params[:text][0..100]
-      text.gsub("\n","").squeeze(" ").split(" ")[0..5].join(" ")
+    def set_current_user(user)
+      user.make_current
     end
 
-    def build_attachments(ticket, item)
-      content_ids = params["content-ids"].nil? ? {} : get_content_ids
+    def text_for_detection
+      text = params[:text][0..200]
+      text.squish.split.first(15).join(" ")
+    end
+
+    def create_attachments(item, account)
+      attachments = []
+      inline_attachments = []
       content_id_hash = {}
-     
-      attachment_info = JSON.parse(params["attachment-info"]) if params["attachment-info"]
+      inline_count = 0
+      content_ids = params["content-ids"].nil? ? {} : get_content_ids
+
       Integer(params[:attachments]).times do |i|
-      description = content_ids["attachment#{i+1}"] ? "content_id" : ""
         begin
-          created_attachment = {:content => params["attachment#{i+1}"], 
-            :account_id => ticket.account_id,:description => description}
-            created_attachment = create_attachment_from_params(item, created_attachment,
-                                    (attachment_info.present? ? attachment_info["attachment#{i+1}"] : nil),"attachment#{i+1}")
+          content_id = content_ids["attachment#{i+1}"] && 
+                        verify_inline_attachments(item, content_ids["attachment#{i+1}"])
+          att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
+                  params["attachment#{i+1}"], i, content_id)
+          if att.is_a? Helpdesk::Attachment
+            if content_id
+              content_id_hash[att.content_file_name+"#{inline_count}"] = content_ids["attachment#{i+1}"]
+              inline_count+=1
+              inline_attachments.push att
+            else
+              attachments.push att
+            end
+          end
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
           add_notification_text item
@@ -442,14 +640,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
           break
         end
-        file_name = created_attachment.content_file_name
-        unique_file_name = file_name + "#{i}"
-        if content_ids["attachment#{i+1}"]
-          content_id_hash[unique_file_name] = content_ids["attachment#{i+1}"]
-          created_attachment.description = "content_id"
-        end
       end
       item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
+      return attachments, inline_attachments
     end
 
     def add_notification_text item
@@ -464,25 +657,25 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         item.body_html << notification_text_html
       end
     end
-      
+
     def get_content_ids
         content_ids = {}
-        split_content_ids = params["content-ids"].tr("{}\\\"","").split(",")   
+        split_content_ids = params["content-ids"].tr("{}\\\"","").split(",")
         split_content_ids.each do |content_id|
           split_content_id = content_id.split(":")
           content_ids[split_content_id[1]] = split_content_id[0]
         end
-        content_ids  
+        content_ids
     end
-  
+
     def show_quoted_text(text, address,plain=true)
-      
+
       return text if text.blank?
-      
+
       regex_arr = [
         Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
         Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
-        Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),   
+        Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
         Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
         Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
         Regexp.new("On.*?wrote:"),
@@ -495,12 +688,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       index = regex_arr.inject(tl) do |min, regex|
           (text.index(regex) or tl) < min ? (text.index(regex) or tl) : min
       end
-      
+
       original_msg = text[0, index]
       old_msg = text[index,text.size]
-      
+
       return  {:body => original_msg, :full_text => text } if plain
-      #Sanitizing the original msg   
+      #Sanitizing the original msg
       unless original_msg.blank?
         sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
         unless sanitized_org_msg.blank?
@@ -508,15 +701,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           original_msg = sanitized_org_msg.inner_html
         end
       end
-      #Sanitizing the old msg   
+      #Sanitizing the old msg
       unless old_msg.blank?
         sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
-        unless sanitized_old_msg.blank? 
+        unless sanitized_old_msg.blank?
           remove_identifier_span(sanitized_old_msg)
-          old_msg = sanitized_old_msg.inner_html 
+          remove_survey_div(sanitized_old_msg) unless plain
+          old_msg = sanitized_old_msg.inner_html
         end
       end
-        
+
       full_text = original_msg
       unless old_msg.blank?
 
@@ -524,7 +718,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
        "<div class='freshdesk_quote'>" +
        "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
        "</div>"
-      end 
+      end
       {:body => full_text,:full_text => full_text}  #temp fix made for showing quoted text in incoming conversations
     end
 
@@ -537,8 +731,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       envelope = params[:envelope]
       envelope_to = envelope.nil? ? [] : (ActiveSupport::JSON.decode envelope)['to']
       envelope_to
-    end    
-    
+    end
+
     def from_fwd_emails?(ticket,from_email)
       cc_email_hash_value = ticket.cc_email_hash
       unless cc_email_hash_value.nil?
@@ -549,11 +743,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def ticket_cc_emails_hash(ticket, note)
-      cc_email_hash_value = ticket.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => [], :reply_cc => []} : ticket.cc_email_hash
-      cc_emails_val =  parse_cc_email
-      cc_emails_val.delete(ticket.account.kbase_email)
+      cc_email_hash_value = ticket.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
+      cc_emails_val =  parse_all_cc_emails(ticket.account.kbase_email, ticket.account.support_emails)
       cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
-      add_to_reply_cc(cc_emails_val, ticket, note, cc_email_hash_value)
+      reply_type = in_reply_to.to_s.include?("notification.freshdesk.com") ? :notification : :default
+      add_to_reply_cc(cc_emails_val, ticket, note, cc_email_hash_value, reply_type)
       cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
       cc_email_hash_value
     end
@@ -568,13 +762,80 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
 
-    #remove Redcloth from formatting
+    def cleansed_html
+      @cleaned_html_body ||= begin
+        cleansed_html = run_with_timeout(HtmlSanitizerTimeoutError) { 
+           Helpdesk::HTMLSanitizer.clean params[:html]
+        }
+      end 
+    end
+
+    def remove_survey_div parsed_html
+      survey_div = parsed_html.css("div[title='freshdesk_satisfaction_survey']")
+      survey_div.remove unless survey_div.blank?
+    end
+
+    def text_to_html(body)
+      result_string = ""
+      body.each_char.with_index do |char, i|
+        case (char)
+        when "&"
+          result_string << "&amp;"
+        when "<"
+          result_string << "&lt;"
+        when ">"
+          result_string << "&gt;"
+        when "\t"
+          result_string << "&nbsp;&nbsp;&nbsp;&nbsp;"
+        when "\n"
+          result_string << "<br>"
+        when "\""
+          result_string << "&quot;"
+        when "\'"
+          result_string << "&#39;"
+        else
+          result_string << char
+        end
+      end
+      "<p>" + result_string + "</p>"
+    end
+
     def body_html_with_formatting(body,email_cmds_regex)
       body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
-      body_html = auto_link(body) { |text| truncate(text, 100) }
-      textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [ :hard_breaks ])
-      textilized.hard_breaks = true if textilized.respond_to?("hard_breaks=")
-      white_list(textilized.to_html)
+      to_html = text_to_html(body)
+      body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
+      html = white_list(body_html)
+      html.gsub!("&amp;amp;", "&amp;")
+      html
     end
-    
+
+  def add_ticket_tags(tags_to_be_added, ticket)
+    tags_to_be_added.each do |tag|
+      ticket.tags << tag
+    end
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e) 
+  end
+
+  def check_primary(ticket,account)
+    parent_ticket_id = ticket.schema_less_ticket.parent_ticket
+    if !parent_ticket_id
+      return nil
+    elsif account.features?(:archive_tickets) && parent_ticket_id
+      parent_ticket = ticket.parent
+      unless parent_ticket
+        archive_ticket = Helpdesk::ArchiveTicket.find_by_ticket_id(parent_ticket_id)
+        archive_child_ticket = archive_ticket.ticket if archive_ticket
+        return archive_child_ticket if archive_child_ticket
+        self.archived_ticket = archive_ticket
+        return archived_ticket
+      end
+    else
+      return ticket.parent
+    end
+  end
+
+  alias_method :parse_cc_email, :parse_cc_email_new
+  alias_method :parse_to_emails, :parse_to_emails_new
+
 end

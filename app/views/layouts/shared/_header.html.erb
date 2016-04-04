@@ -2,8 +2,8 @@
 <div class="header">
   <div class="wrapper">
   	<div class="wrapper-shadow">
-		<div class="brand">
-			<% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
+		<div class="fd-branding">
+			<%= link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
 				<span class="vertical-align logo-image">
 					<i></i>
 					<%= image_tag logo_url, :alt => t('logo'),
@@ -20,13 +20,15 @@
 			<% if current_user then %>  
 			  	<div class="header-link-wrapper">
 			  		<% if current_account.freshfone_active? %>
-							<a href="#" id="freshfone-presence-toggle" class="tooltip"
+							<a href="#" id="freshfone-presence-toggle" class="tooltip 
+								<%= phone_disabled? %>"
 								data-placement="below"  
+								rel = "ff-hover-popover"
 							 	title="<%= current_user.freshfone_user_online? ? "Accepting calls" : "Not accepting calls" %>" data-html="true">
-							 	<img alt="" height="35px" src="/images/spacer.gif" class="<%="header-icons-agent-ffone-" + (case current_user.freshfone_user.presence when 0 then "off" when 1 then "on" when 2 then "busy" else current_user.freshfone_user.presence.to_s end)%>">
+							 	<i class='header-icon-freshfone <%= freshfone_presence_status_class %>'></i>
 			  			</a>
 			  		<% end %>
-			  		<% if feature?(:round_robin) && current_user.in_round_robin? %>
+			  		<% if feature?(:round_robin) && !feature?(:disable_rr_toggle) && current_user.in_round_robin? %>
 			  		<%
 			  			availabilty_tooltip = ""
 			  			if current_user.available?
@@ -35,9 +37,15 @@
 			  				availabilty_tooltip = t('header.user_not_available').html_safe
 			  			end
 			  		%>
-				  		<a href="#" id="availabilty-toggle" class="tooltip" data-placement="below"  
-				  		title="<%= availabilty_tooltip %>" data-html="true">
-				  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-agent-roundrobin-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggleAgent()">
+				  		<a href="#" id="availabilty-toggle" class="tooltip" title="<%= availabilty_tooltip %>" 
+              	 data-placement="below" 
+              	 data-html="true" 
+              	 data-assign-on="<%= t('header.user_not_available').html_safe %>"
+              	 data-assign-off="<%= t('header.user_available').html_safe %>">
+				  			<img alt="" height="35px" src="<%= spacer_image_url %>" 
+                  class="header-icons-agent-roundrobin-<%= current_user.available? ? "on" : "off" %>" 
+                  id="available_icon" 
+                  data-remote-url = "<%= toggle_availability_agent_path(current_user.id) %>">
 				  		</a>
 				  	<% end %>
 					<a href="#" class="nav-trigger" menuid="#LoggedOptions" id="header-profile-avatar">
@@ -47,7 +55,7 @@
 			<% else %>
 			 	<div class="header_links">
 			        <%= link_to( t('header.login').html_safe , login_path) %>
-					<%= link_to( t('signup').html_safe , current_portal.support_signup_path ) if feature?(:signup_link) %>
+					<%= link_to( t('signup').html_safe , support_signup_path ) if feature?(:signup_link) %>
 				</div>
 		    <% end %>    
 			<% if current_user then %>                        
@@ -60,33 +68,54 @@
 					<div class="link custom">
 						<span><%= t('header.toggle_shortcuts').html_safe %></span>
 						<span class="pull-right">
-							<%= check_box_tag(:toggle_shortcut, 0, shortcuts_enabled?, {:rel => "toggle"}) %>
+							<%= check_box_tag(:toggle_shortcut, 0, shortcuts_enabled?, {:rel => "toggle", :"data-remote-url" => toggle_shortcuts_agent_path(current_user.agent) }) %>
 						</span>
 						<span class="shorcuts-info description">
 							<%= t('header.shortcuts_info').html_safe %>
 						</span>
 					</div>
 					<% if is_assumed_user? %>
+						<span class="seperator"></span>
 						<%= link_to t('revert_identity_link_msg').html_safe, revert_identity_users_path, :class => "link" %>			
-					<% elsif privilege?(:manage_users) && !current_user.agent.assumable_agents.blank? %>  			
+					<% elsif privilege?(:manage_users) %>  			
+						<div class="info switch_agent" id="switch_agent_container">
+              <div id="agt_loading" class="link load_agent"><span><%= t("agent_loading_msg") %></span></div>
+              <select id="assumed_select_id" data-placeholder="<%= t("swith_agent_msg") %>" class="header-agent-select hide">
+                <option></option>
+              </select>
+            </div>
+					<% end %>     
+					<div class="tone-customize hide" >
 						<span class="seperator"></span>
 						<div class="info">
-							<input type="hidden" id="assumed_select_id" class="header-agent-select"
-							data-placeholder = "<%= t("swith_agent_msg") %>" onchange="assume_identity_url()"/>
-							<% javascript_tag do%>
-							  function assume_identity_url() {
-							    window.location = '/users/'+$('assumed_select_id').value+'/assume_identity';
-							  }
-							<%end%>
-						</div>
-					<% end %>                    
+							<p class="muted"><%= t("freshchat.change_livechat_tone") %></p>
+							<input type="hidden" id="change_ping_tone" class="agent-tone-select"/>
+						</div>      
+					</div>       
+					<% if current_user.agent? %>
+						<span class="seperator"></span>
+						<%= link_to t('header.goto_customer_portal').html_safe, current_portal.full_url, 
+															:class => "link"%>  
+					<% end %>   
 					<span class="seperator"></span>			
 					<%= link_to t('header.signout').html_safe, logout_path, :class => "link" %>
 				</div>    
 				<% if current_user.agent? %>
 					<div id="product_notify_header" class="header-notification-wrapper" rel="remote-load" 
 			    		data-url="/notification/product_notification">
-			    	</div>
+			    </div>
+			    <% unless freshfone_trial? || freshfone_trial_expired? %>
+				    <div class="ff_presence_options hide" id="FreshfonePresenceOptions">
+	  					<div class="availabilityOnPhone" data-to_phone='false' id="availableOnBrowser">
+	  						<i class="ficon-ff-on-browser fsize-20 <%= 'active' unless current_user.available_on_phone? %>"></i>
+	  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_browser')%></span>
+	  					</div>
+	  					<div class="availabilityOnPhone" data-to_phone='true' id="availableOnPhone">
+	  						<i class="ficon-ff-on-mobile fsize-20  <%= 'active' if current_user.available_on_phone? %>"></i>
+	  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_phone')%></span>
+	  					</div>
+	  				</div>
+  				<%end%>
 		    	<% end %>
 			<% end %>
 		</div>
@@ -106,7 +135,7 @@
 							<ul class="dropdown-menu">
 								<% if !(privilege? (:manage_canned_responses))%>
 								<li>
-									<%= link_to t('canned_folders.responses'),helpdesk_canned_responses_folders_path %>
+									<%= link_to t('canned_folders.responses'),folders_helpdesk_canned_responses_path %> 
 								</li>
 								<%end%>
 								<% if !(privilege?(:manage_scenario_automation_rules))%>
@@ -118,22 +147,32 @@
 			            </div>
 			        <%end%>
 						<% if privilege?(:manage_tickets) then %>
-							<%= link_to( "<span></span> #{t('header.new_ticket')}".html_safe, new_helpdesk_ticket_path,
-									:class => "new_ticket tooltip" ,
-									:title => t("header.new_ticket_tip").html_safe,
-									'data-placement' => "below",
-									"data-keybinding" => shortcut('app_nav.ticket_new') ) %>
+						  <%if current_account.compose_email_enabled? %>
+							<div class="dropdown pull-left">
+								<a class="dropdown-toggle new_ticket_button" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									<span></span> <%= t('header.new_ticket') %>
+								</a>
+								<ul class="dropdown-menu new-ticket-dropdown" role="menu" aria-labelledby="dropdownMenu1">
+									<li>
+										<%= pjax_link_to content_tag(:span, "", :class => "ficon-new-ticket fsize-20")+t("header.new_phone_ticket").html_safe, new_helpdesk_ticket_path, 'data-keybinding'=>shortcut('app_nav.ticket_new') %></li>
+									<li>
+										<%= pjax_link_to content_tag(:span, "", :class => "ficon-compose-email fsize-20")+t("header.compose_email").html_safe, compose_email_helpdesk_tickets_path, 'data-keybinding' => shortcut('app_nav.compose_email') %></li>
+								</ul>
+							</div>
+						  <% else %>
+						  	<%= pjax_link_to( "<span></span> #{t('header.new_ticket')}".html_safe, new_helpdesk_ticket_path,:class => "new_ticket_button tooltip" ,:title => t("header.new_ticket_tip").html_safe,'data-placement' => "below","data-keybinding" => shortcut('app_nav.ticket_new')) %>
+						  <% end %>
 						<% else %>
-							<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket tooltip" ) if allowed_in_portal?(:anonymous_tickets) %>
+							<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket_button tooltip" ) if allowed_in_portal?(:anonymous_tickets) %>
 						<% end %>
 						<% if current_user then %>
-							<% form_tag('/search/all', :method => :get, :class => "nav_search") do %>
-								<div class="search_bar" id="SearchBar">
+							<%= form_tag('/search/all', :method => :get, :class => "nav_search") do %>
+								<div class="search_bar tooltip" id="SearchBar" title="<%= t("header.search").html_safe %>" data-placement="below">
 									<span class="search-icon-inactive"></span>
 									<span class="searchIcon nav-search-icon"></span>
 									<label class="overlabel" for="header_search"><%= t("header.search").html_safe %></label>
 									<input value="" type="text" id="header_search" autocomplete="off" name="term"
-										data-keybinding="<%= shortcut('global.search') %>"/>
+										data-keybinding="<%= shortcut('global.search') %>" placeholder/>
 								</div>
 							<% end %>
 						<% end %>
@@ -146,95 +185,15 @@
 		</div>
 	</div>
 </div>
-<script type="text/javascript">
-	jQuery(document).ready(function() {
-	<%
-		assume_agent = []
-		if privilege?(:manage_users)
-			@allowed_to_assume = current_user.agent.assumable_agents
 
-			if @allowed_to_assume
-				@allowed_to_assume.each do |req|
-					assume_agent << "{id: '#{req.id}',
-		                  value: '#{escape_javascript(req.name)}',
-		                  text: '#{escape_javascript(req.name)}'}"
-				end
-			end
-		end
-	%>
-		jQuery("#assumed_select_id").select2("val",[]);
-
-		jQuery('#assumed_select_id').select2({
-		multiple: false,
-		data: [<%=assume_agent.join(",").html_safe%>]
-
-	});
-
-	jQuery('#toggle_shortcut').bind('change', function(){
-		var that = this;
-		jQuery(this)
-			.attr('disabled', 'disabled')
-		jQuery.ajax({
-			type: "PUT",
-			dataType:"json",
-			url: "<%= toggle_shortcuts_agent_path(current_user.agent) if logged_in? and current_user.agent? %>",
-			success: function (response) {
-				jQuery(that)
-					.removeAttr('disabled')
-				if (response.shortcuts_enabled) {
-					if(window.shortcuts !== undefined){
-						jQuery(document).trigger("shortcuts:invoke")
-					} else {
-        				scriptLoader.load('shortcut');
-					}
-				} else {
-					jQuery(document).trigger("shortcuts:destroy")
-				}
-			}
-		});
-	});
-
-	jQuery('#shortcuts_info').bind('click', function(ev){
-		ev.preventDefault();
-		jQuery('#shortcut_help_chart').trigger('click');
-	});
-
-});
-
-
-</script>
-
-<% if current_user %>
-	<% javascript_tag do %>
-	 function toggleAgent() {
-		var user_id = '<%= current_user.id %>'
-	  	var value = ( jQuery("#available_icon").attr("class") == "header-icons-agent-roundrobin-on" )
-
-	  	new Ajax.Request('/agents/toggle_availability',
-	                   { parameters: {value: !value, id: user_id},
-	                      onLoading: function() {
-	                        jQuery('#available_icon').addClass('header-spinner')
-	                      },
-	                      onSuccess: function(response) {
-	                       //change the icon class.
-	                      jQuery('#available_icon').removeClass('header-spinner')
-	                      if (jQuery('#available_icon').hasClass('header-icons-agent-roundrobin-on'))
-	                      {
-	                        jQuery('#available_icon').removeClass('header-icons-agent-roundrobin-on').addClass('header-icons-agent-roundrobin-off')
-	                        jQuery('#availabilty-toggle')
-	                        	.attr('title',"<%= t('header.user_not_available').html_safe %>")
-	                      }
-	                      else{
-	                        jQuery('#available_icon').removeClass('header-icons-agent-roundrobin-off').addClass('header-icons-agent-roundrobin-on')
-	                        jQuery('#availabilty-toggle')
-	                        	.attr('title',"<%= t('header.user_available').html_safe %>")
-	                      }
-
-
-	                     } });
-
-	}
-
-	Helpdesk.settings = <%= email_template_settings.html_safe %>;
-	<% end %>
-<% end %>
+<%  if logged_in? and current_user.agent?  %>
+  <script type="text/javascript">
+    jQuery(document).ready(function() {
+      App.Header.init(<%= is_assumed_user? %>);
+    })
+    var current_account_id = "<%=current_account.id%>";
+		var raw_store_data = <%= get_store_data.html_safe %>
+		createDataStore(raw_store_data);
+    Helpdesk.settings = <%= email_template_settings.html_safe %>;
+  </script>
+<% end %> 

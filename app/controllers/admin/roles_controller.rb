@@ -7,7 +7,7 @@ class Admin::RolesController < Admin::AdminController
   before_filter :check_users, :only => :destroy
 
   def index
-    @roles = scoper.all
+    @roles = scoper.all.paginate(:page => params[:page], :per_page => 30)
     respond_to do |format|
       format.html
       format.any(:xml, :json) { render request.format.to_sym => @roles }

@@ -1,9 +1,8 @@
 require 'spec_helper'
 
-describe ForumsController do
+RSpec.describe ::ForumsController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   before(:all) do
     @category = create_test_category
@@ -19,32 +18,32 @@ describe ForumsController do
     params.merge!(:category_id => @category.id)
     post :create, params.merge!(:format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    expected = (response.status === "200 OK") && (compare(result["forum"].keys,APIHelper::FORUM_ATTRIBS,{}).empty?)
+    expected = (response.status === 200) && (compare(result["forum"].keys,APIHelper::FORUM_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
   it "should be able to update a forum" do
     test_forum = create_test_forum(@category)
     put :update, { :id => test_forum.id, :category_id => @category.id, :forum => {:description => Faker::Lorem.paragraph }, :format => 'xml'}
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
   it "should be able to view a forum" do
     test_forum = create_test_forum(@category)
     get :show, { :id => test_forum.id,  :category_id => @category.id,:format => 'xml'}
     result = parse_xml(response)
-    expected = (response.status === "200 OK") && (compare(result["forum"].keys-["topics"],APIHelper::FORUM_ATTRIBS,{}).empty?)
+    expected = (response.status === 200) && (compare(result["forum"].keys-["topics"],APIHelper::FORUM_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
   it "should be able to delete a forum " do
     test_forum = create_test_forum(@category)
     delete :destroy, { :id => test_forum.id,  :category_id => @category.id, :format => 'xml'}
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
   #negative condition check.
   it "should not create a forum  without a name" do
     post :create, {:forum=> { :description=>Faker::Lorem.paragraph, :forum_type=>2,
           :forum_visibility=>1},:category_id => @category.id,:format => 
     'json'}, :content_type => 'application/xml'
-    response.status.should =~ /406 Not Acceptable/
+    response.status.should === 406
   end
 
   def forum_api_params

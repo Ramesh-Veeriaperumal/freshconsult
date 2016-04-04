@@ -1,34 +1,59 @@
 class Admin::DynamicNotificationTemplatesController < Admin::AdminController
+  include LiquidSyntaxParser
+  include Spam::SpamAction
 
-	def update
-    dynamic_notification = (params[:id].nil?) ? current_account.dynamic_notification_templates.new : 
-                                                current_account.dynamic_notification_templates.find_by_id(params[:id])
-		
-		if dynamic_notification.update_attributes(params[:dynamic_notification_template])
-  		flash[:notice] = t(:'flash.email_notifications.update.success')
-  	else
-   		flash[:notice] = t(:'flash.email_notifications.update.failure') 	
-   	end	
+  before_filter :load_item, :validate_liquid, :detect_spam_action
 
-    template_type = ( dynamic_notification.category == DynamicNotificationTemplate::CATEGORIES[:agent]) ? "agent_template" :
-      ( dynamic_notification.email_notification.notification_type == EmailNotification::DEFAULT_REPLY_TEMPLATE ?
-        "reply_template" : "requester_template" )
+  def update
+    if @errors.present?
+      flash_msg = @errors.uniq.join("<br>").html_safe
+      render :json => { :success => false, :msg => flash_msg }
+    else
+      if @dynamic_notification.update_attributes(params[:dynamic_notification_template])
+        template_spam_check
+        flash[:notice] = t(:'flash.email_notifications.update.success')
+      else
+        flash[:notice] = t(:'flash.email_notifications.update.failure') 	
+      end
+      render :json => { :success => true, :url => redirect_url }
+    end
+  end
 
-    respond_to do |format|
-      format.html { 
-        redirect_to redirect_url(template_type)
-      }
-      format.js 
-    end  
-	end	
+  private
 
-private
-  def redirect_url(template_type)
+  def load_item
+    @dynamic_notification = (params[:id].blank?) ? current_account.dynamic_notification_templates.new : 
+      current_account.dynamic_notification_templates.find_by_id(params[:id])
+    redirect_to admin_email_notifications_path, :flash => { :notice => t('email_notifications.page_not_found') } if @dynamic_notification.nil?
+  end
+
+  def validate_liquid
+    ["subject", "description"].each do |suffix|
+      syntax_rescue(params[:dynamic_notification_template]["#{suffix}"])
+    end
+  end
+
+  def redirect_url
     language = DynamicNotificationTemplate::LANGUAGE_MAP_KEY[params[:dynamic_notification_template][:language].to_i].to_s
+    url_params = {:id => params[:dynamic_notification_template][:email_notification_id], :type => template_type}
+    "#{admin_edit_notification_path(url_params)}##{language}"
+  end
 
-     url = admin_edit_notification_path(
-          :id =>params[:dynamic_notification_template][:email_notification_id], 
-          :type => template_type
-          )+"#"+language
+  def template_type
+    notfn = @dynamic_notification.email_notification
+    if notfn.reply_template?
+      "reply_template"
+    elsif notfn.cc_notification?
+      "cc_notification"
+    elsif @dynamic_notification.category == DynamicNotificationTemplate::CATEGORIES[:agent]
+      "agent_template"
+    else
+      "requester_template"
+    end
+  end
+
+  def extract_subject_and_message
+    dynamic_notfn = params[:dynamic_notification_template]
+    return dynamic_notfn["subject"], dynamic_notfn["description"]
   end
 end	

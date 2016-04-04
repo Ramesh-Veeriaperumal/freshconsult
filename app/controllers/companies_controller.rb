@@ -3,12 +3,14 @@ class CompaniesController < ApplicationController
   
   include HelpdeskControllerMethods
   include ExportCsvUtil
+  include CompaniesHelperMethods
   
   before_filter :set_selected_tab
   before_filter :load_item,  :only => [:show, :edit, :update, :update_company, :update_notes, :sla_policies]
   before_filter :build_item, :only => [:quick, :new, :create, :create_company]
   before_filter :set_required_fields, :only => [:create_company, :update_company]
   before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_company, :update_company]
+  before_filter :set_native_mobile, :only => [:update]
 
   def index
     per_page = (!params[:per_page].blank? && params[:per_page].to_i >= 500) ? 500 :  50
@@ -55,7 +57,7 @@ class CompaniesController < ApplicationController
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @company.errors, :status => :unprocessable_entity }
-        format.json { render :json => @company.errors, :status => :unprocessable_entity }
+        format.json { render :json => @company.errors.fd_json, :status => :unprocessable_entity }
       end
     end
   end
@@ -70,10 +72,12 @@ class CompaniesController < ApplicationController
         format.html { redirect_to(@company, :notice => t(:'company.updated')) }
         format.xml  { head :ok }
         format.json { render :json => "", :status => :ok }
+        format.nmobile { render :json => { :success => true }}
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @company.errors, :status => :unprocessable_entity }
-        format.json { render :json => @company.errors, :status => :unprocessable_entity }
+        format.json { render :json => @company.errors.fd_json, :status => :unprocessable_entity }
+        format.nmobile { render :json => { :success => false ,:err => @company.errors.full_messages ,:status => :unprocessable_entity } }
       end
     end
   end
@@ -92,7 +96,7 @@ class CompaniesController < ApplicationController
           define_company_properties
           render :action => :newshow 
         }
-        format.json { render :json => @company.errors, :status => :unprocessable_entity }
+        format.json { render :json => @company.errors.fd_json, :status => :unprocessable_entity }
       end
     end
   end
@@ -102,7 +106,7 @@ class CompaniesController < ApplicationController
   end
 
   def configure_export
-    render :partial => "company_export", :locals => {:csv_headers => export_customer_fields("company")}
+    render :partial => "companies/company_export", :locals => {:csv_headers => export_customer_fields("company")}
   end
 
   def export_csv
@@ -118,9 +122,16 @@ class CompaniesController < ApplicationController
 
     def define_company_properties 
       @total_company_tickets = 
-        current_account.tickets.permissible(current_user).all_company_tickets(@company.id).visible
-      @company_tickets       = @total_company_tickets.newest(10).find(:all, 
-                                :include => [:ticket_states,:ticket_status,:responder,:requester])
+        current_account.tickets.permissible(current_user).all_company_tickets(@company.id).visible.newest(11).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester])
+      @company_tickets = @total_company_tickets.sort_by {|item| -item.created_at.to_i}.take(10)
+
+      if current_account.features?(:archive_tickets)
+        @total_company_archive_tickets = 
+          current_account.archive_tickets.permissible(current_user).all_company_tickets(@company.id).newest(10).find(:all, 
+                                  :include => [:ticket_status, :responder, :requester])
+        @company_archive_tickets = @total_company_archive_tickets.sort_by {|item| -item.created_at.to_i}.take(10)
+      end
+
       @company_users         = @company.users.contacts
       @company_users_size    = @company_users.size
     end
@@ -151,15 +162,5 @@ class CompaniesController < ApplicationController
 
     def after_destroy_url
       return companies_url
-    end
-
-    def set_required_fields
-      @company.required_fields = { :fields => current_account.company_form.agent_required_company_fields, 
-                                :error_label => :label }
-    end
-
-    def set_validatable_custom_fields
-      @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields, 
-                                          :error_label => :label }
     end
 end

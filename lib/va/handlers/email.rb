@@ -53,6 +53,9 @@ class Va::Handlers::Email < Va::RuleHandler
     end
     
     def filter_query_does_not_contain
+      return [ "#{condition.db_column} not like ? and #{condition.db_column} not like ?", "%#{value}%",
+        nil ] if condition.db_column =~ /to_emails/  # Fix for not like query (nil.to_yaml)
+      
       [ "#{condition.db_column} not like ?", "%#{value}%" ]
     end
 end

@@ -1,9 +1,8 @@
 require 'spec_helper'
 
 #Test cases for xml api calls to time entries.
-describe Helpdesk::TimeSheetsController do
+RSpec.describe Helpdesk::TimeSheetsController do
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
   TIME_ENTRY_XML_ATTRIBS = ["billable", "created_at", "executed_at", "id", "note", 
     "start_time", "timer_running", "updated_at", "user_id", "workable_type", "ticket_id",
@@ -24,9 +23,9 @@ describe Helpdesk::TimeSheetsController do
   it "should create a time entry" do 
     params = time_entry_params
     post :create, {:time_entry => params, :ticket_id => @test_ticket.display_id, :format => 'xml'}, :content_type => 'application/xml'
-    #api impl gives out 200 status, change this when its fixed to return '201 created'
+    #api impl gives out 200 status, change this when its fixed to return 201
     result = parse_xml(response)
-    expected = (response.status === "200 OK")&& (compare(result["time_entry"].keys, TIME_ENTRY_XML_ATTRIBS, {}).empty?)
+    expected = (response.status === 200)&& (compare(result["time_entry"].keys, TIME_ENTRY_XML_ATTRIBS, {}).empty?)
     expected.should be(true)
   end
 
@@ -34,7 +33,7 @@ describe Helpdesk::TimeSheetsController do
     time_sheet = create_test_time_entry({}, @test_ticket)
     get :show, {:id => time_sheet.id, :ticket_id=>@test_ticket.display_id, :format => 'xml'}
     result = parse_xml(response)
-    expected = (response.status === "200 OK") && (compare(result["time_entry"].keys, TIME_ENTRY_XML_ATTRIBS, {}).empty?)
+    expected = (response.status === 200) && (compare(result["time_entry"].keys, TIME_ENTRY_XML_ATTRIBS, {}).empty?)
     expected.should be(true)
   end
 
@@ -44,21 +43,21 @@ describe Helpdesk::TimeSheetsController do
     params["billable"] = false #updating billable to false
     put :update, {:id => time_sheet.id, :ticket_id=>@test_ticket.display_id, :time_entry => params  ,:format => 'xml'}
     result = parse_xml(response)
-    expected = (response.status === "200 OK") && (compare(result["time_entry"].keys, TIME_ENTRY_XML_ATTRIBS, {}).empty?)
+    expected = (response.status === 200) && (compare(result["time_entry"].keys, TIME_ENTRY_XML_ATTRIBS, {}).empty?)
     expected.should be(true)
   end
 
   it "should delete an existing time entry" do
     time_sheet = create_test_time_entry({}, @test_ticket)
     delete :destroy, {:id => time_sheet.id, :format => 'xml'}
-    response.status.should be_eql('200 OK')   
+    response.status.should be_eql(200)   
   end
   
   it "should show an all time entries for the ticket" do
     time_sheet = create_test_time_entry({}, @test_ticket)
     get :index, { :ticket_id => @test_ticket.display_id, :format => 'xml'}
     result = parse_xml(response)
-    expected = (response.status === "200 OK") && (compare(result["time_entries"].first.keys, TIME_ENTRY_XML_ATTRIBS, {}).empty?)
+    expected = (response.status === 200) && (compare(result["time_entries"].first.keys, TIME_ENTRY_XML_ATTRIBS, {}).empty?)
     expected.should be(true)
   end
 
@@ -66,7 +65,7 @@ describe Helpdesk::TimeSheetsController do
     time_sheet = create_test_time_entry({}, @test_ticket)
     put :toggle_timer, {:id => time_sheet.id, :ticket_id => @test_ticket.display_id, :format => 'xml'}
     result = parse_xml(response)
-    expected = (response.status === "200 OK")  && (compare(result["time_entry"].keys, TIME_ENTRY_XML_ATTRIBS, {}).empty?)
+    expected = (response.status === 200)  && (compare(result["time_entry"].keys, TIME_ENTRY_XML_ATTRIBS, {}).empty?)
     expected.should be(true)
   end
 
@@ -74,7 +73,7 @@ describe Helpdesk::TimeSheetsController do
     time_sheet = create_test_time_entry({}, @test_ticket)
     get :index, { :billable => true, :start_date => 2.days.ago.to_s(:db) , :format => 'xml'}
     result = parse_xml(response)
-    expected = (response.status === "200 OK") && (compare(result["time_entries"].first.keys, TIME_ENTRY_XML_ATTRIBS, {}).empty?)
+    expected = (response.status === 200) && (compare(result["time_entries"].first.keys, TIME_ENTRY_XML_ATTRIBS, {}).empty?)
     expected.should be(true)
   end
   

@@ -1,0 +1,45 @@
+
+<div id="sticky_header"  rel="sticky" data-scroll-top = "true" class="tkt-details-sticky" data-collapsed="true" data-sticky-bottom="true">
+	<div class="sticky_right">
+		<div class="status_info"></div>
+	</div>
+		
+		<div class="pagination-link" id="adjacents">
+			<ul>
+				<li>
+					<a id="next_page" href="#" class="page-btn btn disabled"><span class="arrow-next"></span></a>
+				</li>
+				<li>
+					<a href="#" class="page-btn btn disabled"><span class="arrow-previous"></span></a>
+				</li>
+			</ul>
+		</div>
+
+		
+
+		<div id="activity_toggle" title='<%= t('ticket.activity_toggle') %>' 
+			class="activity_toggle btn clearfix tooltip" data-toggle="button" data-placement = "below"
+			data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>" data-highlight="true">
+			<div class="text"><%= t('ticket.activity_toggle') %></div>
+			<span class="visible">Yes</span><span>No</span>
+		</div>
+
+
+
+	<div class="sticky_left">
+		<div>
+			<%= link_to t('header.tabs.tickets').html_safe, helpdesk_archive_tickets_path, 
+										"data-pjax" => "#body-container", "data-parallel-url" => "/helpdesk/tickets/filter_options", 
+										"data-parallel-placeholder" => '#tickeet-leftFilter',
+										:rel =>'link_ticket_list' %>
+			/ <%= "#{t('ticket.singular')} <span id='ticket-display-id'>##{h(@ticket.display_id)}</span>".html_safe%>
+		</div>
+		<div class="source-badge-wrap">
+			<div class='source <%= "priority_color_#{@ticket.priority} status_#{@ticket.status}" %>' >
+				<span class="source_<%= @ticket.source %>"></span>
+			</div>
+		</div>
+
+	</div>
+</div>
+<div class="clearfix"></div>

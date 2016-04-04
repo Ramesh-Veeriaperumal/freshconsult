@@ -1,0 +1,30 @@
+<% content_for :onload_script do -%>
+ function lookup(searchString, callback) { 
+                    new Ajax.Request('<%= requesters_search_autocomplete_index_path %>?q='+encodeURIComponent(searchString), 
+                                                              { method : "GET",
+                                                              onSuccess: function(response) {
+                                                                var choices = $A();
+                                                                response.responseJSON.results.each(function(item){
+																  if(item.value == "") {
+				                                                    choices.push([item.details, item.details]);
+				                                                  } else {
+				                                                    choices.push([item.details , item.details ]);
+				                                                  } 
+                                                                });                                                
+                                                                callback(choices);
+                                                              } });
+                                                            }
+            var cachedBackend = new Autocompleter.Cache(lookup, {searchKey: 0, choices: 10});
+            var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+<%- end %>
+
+
+	<% if current_user.agent? %>
+		<% content_for :onload_script do -%>
+	        new Autocompleter.MultiValue("cc_emails", cachedLookup, 
+	        							  $A(),{frequency: 0.1, 
+	        							  acceptNewValues: true,separatorRegEx:/;|,/});
+		<%- end %>
+	<% end %>
+    <input type="text" id="cc_emails" name="cc_emails" />
+

@@ -1,4 +1,5 @@
 class Integrations::UserCredential < ActiveRecord::Base
+  self.primary_key = :id
 	include Integrations::AppsUtil
 	belongs_to :installed_application, :class_name => 'Integrations::InstalledApplication'
 	belongs_to :user
@@ -8,7 +9,7 @@ class Integrations::UserCredential < ActiveRecord::Base
 
 	before_save :auth_config
 
-	set_table_name "integrations_user_credentials"
+	self.table_name =  "integrations_user_credentials"
 
 	def self.add_or_update(installed_application, user_id, params={})
 		

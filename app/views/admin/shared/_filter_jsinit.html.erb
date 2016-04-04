@@ -1,7 +1,7 @@
 <% content_for :pagefixed do %>
-  <link href="/stylesheets/autosuggest_inquisitor.css" media="screen" rel="stylesheet" type="text/css">
-  <%= include_cloudfront_js :conditional %>
-  <% javascript_tag do %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/autosuggest_inquisitor' %>
+  <%= javascript_include_tag :'cdn/conditional' %>
+  <%= javascript_tag do %>
     // Condition Parsing 
     // This template contains the dom population information 
     var conditional_dom = function(filter, id, compName, initFeed, val, classname, _dataAttr){
@@ -20,7 +20,11 @@
         case 'url':
         case 'phone_number':
         case 'autocompelete':
-          c_dom = FactoryUI.text("", value, initFeed[value], ' required text row-fluid ');
+          c_dom = FactoryUI.text("<%= I18n.t('enter_a_value') %>", value, initFeed[value], ' required text row-fluid ');
+          jQuery(c_dom).prop("id", id);
+        break;
+        case 'autocomplete_multiple':
+          c_dom = FactoryUI.multiple_text("<%= I18n.t('enter_values') %>", value, initFeed[value], ' filter-multi-select required');
           jQuery(c_dom).prop("id", id);
         break;
         case 'date':
@@ -87,7 +91,7 @@
           c_dom = FactoryUI.paragraph("", value, initFeed[value]);
         break;
         case 'comment':  
-          var placeholder = jQuery("<a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a>")
+          var placeholder = jQuery("<a class='l_placeholder btn btn-mini btn-flat'><%= t('.insert_placeholder') %></a>")
 
           c_dom = jQuery("<div class=\"s_comment\" />")
                 .append(placeholder)
@@ -119,7 +123,7 @@
                       .append(control);
           }
 
-          var placeholder1 = jQuery("<a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a>")
+          var placeholder1 = jQuery("<a class='l_placeholder btn btn-mini btn-flat'><%= t('.insert_placeholder') %></a>")
 
           var subject = jQuery('<div class="subject_div row-fluid" />')
                   .append("<label class='span2'><%= t('.subject') %></label>")
@@ -200,7 +204,7 @@
                         .append(method_dropdown)
                         .append(FactoryUI.link('<%= t('.how_to_use_webhook').html_safe %>', 'https://support.freshdesk.com/solution/articles/132589-using-webhooks-in-observer', 'using_webhooks'));
 
-          var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
+          var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini btn-flat'><%= t('.insert_placeholder') %></a> </span>")
           var uri_textarea = FactoryUI.paragraph("", "url", initFeed['url'], "text uri required insert-placeholder-target")
                                 .data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey');
 
@@ -211,7 +215,7 @@
           var url = jQuery('<div class="row-fluid"/>').append(jQuery('<span class="span2"/>')
                       .append(FactoryUI.label('<%= t(".url") %>', 'required_label')).append('<b class="required_star">*</b>'))
                       .append(placeholder1)
-                      .append(uri_textarea)  
+                      .append(uri_textarea)
                       // No URL validation - for allowing placeholder in URL
                       .append(FactoryUI.checkbox("<%= t('.url_req_auth') %>","need_authentication",initFeed['need_authentication'],"url_req_auth"));
           var username_password = jQuery('<div class="row-fluid user_pass_webhook"/>')
@@ -229,8 +233,40 @@
           var credentials = jQuery('<div class="row-fluid credentials"/>')
                           .append(username_password)
                           .append(api_key);
-            
-          var content_layout_radiobuttons = FactoryUI.radiobutton(content_layout_choices, "", 
+
+          var custom_headers_text = '';
+          if (initFeed['custom_headers'] != undefined) {
+            custom_headers_text = JSON.stringify(initFeed['custom_headers'])
+                                                    .replace('{','').replace('}','')
+                                                    .replace(/,/g, "\n")
+                                                    .replace(/\"/g, "");
+          }
+          var custom_headers_textarea = FactoryUI.paragraph("", "custom_headers", custom_headers_text, 'text custom_headers uri insert-placeholder-target valid_custom_headers')
+                            .data("ignorePlaceholders", 'triggered_event')
+                            .prop("rows","5")
+                            .attr("placeholder","X-Sample-Header1: ABCDE");
+
+          custom_headers_toggle = jQuery('<div class="row-fluid custom_headers_toggle"/>')
+                     .append(FactoryUI.link("<%= t('.add_custom_headers') %>", '#headers-toggle-add', 'headers_toggle headers_toggle_add'))
+          custom_headers_toggle.append(FactoryUI.link("<%= t('.remove_custom_headers') %>", '#headers-toggle-remove', 'headers_toggle headers_toggle_remove'))
+
+          var custom_headers_area = jQuery('<div class="span10"/>')
+                                    .append(custom_headers_textarea)
+                                    .append(FactoryUI.label("<%= t('.custom_headers_tip') %>", 'tip'))
+
+          var custom_headers = jQuery('<div class="row-fluid custom_headers_wrapper"/>')
+                    .append(jQuery('<span class="span2"/>')
+                      .append(FactoryUI.label('Custom Headers', 'custom_headers_label')))
+                    .append(custom_headers_area)
+
+          if(custom_headers_text === ''){
+            custom_headers.hide();
+            custom_headers_toggle.find('.headers_toggle_remove').hide();
+          }else{
+            custom_headers_toggle.find('.headers_toggle_add').hide();
+          }
+
+          var content_layout_radiobuttons = FactoryUI.radiobutton(content_layout_choices, "",
                                                       "content_layout", initFeed['content_layout']);
 
           var simple_edit = jQuery('<div class="params_div"/>');
@@ -246,7 +282,7 @@
                         .append(simple_edit)
                         .append(FactoryUI.label("<%= t('.simple_webhook_tip') %>", 'tip'));
 
-          var placeholder2 = jQuery("<span class='placeholder_div body_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
+          var placeholder2 = jQuery("<span class='placeholder_div body_div'> <a class='l_placeholder btn btn-mini btn-flat'><%= t('.insert_placeholder') %></a> </span>")
           var advanced_edit = jQuery("<div class='row-fluid'/>")
                                 .append(FactoryUI.paragraph("", "params", ((initFeed['content_layout']==2) ? initFeed['params'] :''), 'params insert-placeholder-target').data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey'));
           var advanced = jQuery('<div class="edit2 span10"/>')
@@ -284,7 +320,12 @@
           show_layout = initFeed['content_layout'] || 1;
           (show_layout == 1) ? advanced.hide() : simple.hide();
 
-          c_dom = jQuery('<div class="webhook"/>').append(method).append(url).append(credentials)
+          c_dom = jQuery('<div class="webhook"/>')
+                    .append(method)
+                    .append(url)
+                    .append(credentials)
+                    .append(custom_headers_toggle)
+                    .append(custom_headers)
                     .append(params);
         break;
         
@@ -296,10 +337,15 @@
               value: arrayItem[1]
             });
           });
-          c_dom = FactoryUI.dropdown(choices, 'value', 'select2');
-          jQuery(c_dom).attr('placeholder','<%= I18n.t('select_watchers') %>')
+          classNames = 'select2'
+          if (compName == 'filter') classNames+=' required filter-multi-select';
+          c_dom = FactoryUI.dropdown(choices, 'value', classNames );
+          jQuery(c_dom).attr('placeholder',(compName == 'filter') ? '<%= I18n.t('select_values') %>' : '<%= I18n.t('select_watchers') %>')
           jQuery(c_dom).prop({'multiple':'multiple'}).val(initFeed["value"]);
         break;
+        <% if current_account.installed_applications.with_name("slack_v2").present? %>
+          <%= render :partial => "integrations/va_actions/slack", :formats => [:js] %>
+        <% end %>
 
         default:
         c_dom = "";

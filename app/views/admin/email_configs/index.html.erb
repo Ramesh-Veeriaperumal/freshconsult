@@ -5,7 +5,10 @@
   <% if feature?(:multiple_emails) %>
     <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "pull-right btn btn-primary"%>
   <% else %>
-    <%= link_to t('email_configs.new_support_email'), "#", :class => "pull-right btn locked tooltip", "data-placement" => 'below', :title => t('non_covered_feature_error') %>
+    <%= link_to "#", :class => "pull-right btn tooltip", "data-placement" => 'below', :title => t('non_covered_feature_error') do %>
+      <span class='ficon-lock locked'></span>
+      <%= t('email_configs.new_support_email') %>
+    <% end %>
     <% options =  ( current_user.privilege?(:manage_account) ) ? {:tag => :a, :href => subscription_url } : {:tag => :p} %>
     <%= content_tag(options[:tag], t('subscription.upgrade.message'), :href => options[:href], :class => "upgrade-message" ) %>
   <% end %>
@@ -13,9 +16,16 @@
   <div class="lead-desc"><%=t('email_configs.info11')%></div>
 </div>
 <div class="pull-right email-settings-bcc">
-  <%= content_tag :label, "#{I18n.t('email_configs.bcc_text')}: #{truncate(current_account.bcc_email, 20, '...')}", :class=> 'floatl', :title => current_account.bcc_email unless current_account.bcc_email.blank?%>
-  <%= link_to( (current_account.bcc_email.blank? ? t('email_configs.add_bcc_text') : t('email_configs.edit')) , { :controller => 'admin/account_additional_settings', :action => "assign_bcc_email" }, :class => "dialog2", :title => t('email_configs.set_bcc_email_text'), "data-width" => "400" ) %>
-  <%= content_tag :span, "", :class => "tool-tip", :title=> t('email_configs.info17')%>
+  <%= content_tag :label, "#{I18n.t('email_configs.bcc_text')}: #{truncate(current_account.bcc_email, :length => 20, :omission => '...')}", :class=> 'floatl', :title => current_account.bcc_email unless current_account.bcc_email.blank?%>
+  <%= link_to( (current_account.bcc_email.blank? ? t('email_configs.add_bcc_text') : t('email_configs.edit')), 
+              { :controller => 'admin/account_additional_settings', 
+                :action => "assign_bcc_email" }, 
+              :class => "", 
+              :rel => "freshdialog", 
+              :title => t('email_configs.set_bcc_email_text'), 
+              :"data-target" => "#assign-bcc", 
+              :"data-width" => "400" ) %>
+  <%= content_tag :i, "", :class => "tooltip #{font_class(:help)} email-help", :title => t('email_configs.info17')%>
 </div>
 <div class="list-page">
   <h4 class="sub-lead"><%=t('email_configs.global_support_emails')%></h4>
@@ -41,11 +51,24 @@
   </div>
 </div>
 <br/>
+
 <div class="row-fluid">
   <div class="span10">
-    <h5 class="lead"><%= t('email_configs.Personalized_email_replies') %></h5>   
+    <h5 class="lead small-lead"><%= t('email_configs.enable_compose') %></h5>   
     <p class="muted lead-desc"> 
-      <%= t('email_configs.Personalized_email_replies_info',:current_user_name => current_user.name, :current_account_domain => current_account.default_email ).html_safe%>
+      <%= t('email_configs.enable_compose_info')%>
+    </p> 
+  </div>
+  <div class="span2 align-right">
+    <input rel="toggle" type="checkbox" id="enable_compose_email" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_account.compose_email_enabled? %>checked="true"<%end%> />
+  </div>
+</div>
+
+<div class="row-fluid">
+  <div class="span10">
+    <h5 class="lead small-lead"><%= t('email_configs.personalized_email_replies_title') %></h5>   
+    <p class="muted lead-desc"> 
+      <%= t('email_configs.personalized_email_replies_info',:current_user_name => current_user.name, :current_account_domain => current_account.default_email ).html_safe%>
     </p> 
   </div>
   <div class="span2 align-right" id="survey_link_con">
@@ -54,7 +77,7 @@
 </div>
 <div class="row-fluid">
   <div class="span10">
-    <h5 class="lead"><%= t('email_configs.reply_to_tickets') %></h5>   
+    <h5 class="lead small-lead"><%= t('email_configs.reply_to_tickets') %></h5>   
     <p class="muted lead-desc"> 
       <%= t('email_configs.reply_to_tickets_info',:current_user_name => current_user.name, :current_account_domain => current_account.default_email ).html_safe%>
     </p> 
@@ -64,7 +87,21 @@
   </div>
 </div>
 
-<% javascript_tag do %>
+
+<div class="row-fluid">
+  <div class="span10">
+    <h5 class="lead small-lead"><%= t('email_configs.disable_agent_forward') %></h5>   
+    <p class="muted lead-desc"> 
+      <%= t('email_configs.disable_agent_forward_info')%>
+    </p> 
+  </div>
+  <div class="span2 align-right">
+    <input rel="toggle" type="checkbox" id="disable_agent_forward_tickets" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%unless current_account.features_included?(:disable_agent_forward)%>checked="true"<%end%> />
+  </div>
+</div>
+
+
+<%= javascript_tag do %>
     function update_status(status_url){
       jQuery.ajax({
         url: status_url,
@@ -88,6 +125,14 @@
       else{
         update_status("<%= reply_to_email_disable_admin_email_configs_path %>");
       }
+    });
+
+    jQuery("#disable_agent_forward_tickets").on('change.email_config_feature', function(){
+        update_status("<%= toggle_agent_forward_feature_admin_email_configs_path %>");
+    });
+
+    jQuery("#enable_compose_email").on('change.email_config_feature', function(){
+        update_status("<%= toggle_compose_email_feature_admin_email_configs_path %>");
     });
 
 <%end%>

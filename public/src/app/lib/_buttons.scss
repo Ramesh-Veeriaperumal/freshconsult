@@ -1,4 +1,4 @@
-@import "compass/css3/pie";
+// @import "compass/css3/pie";
 @import "../../pattern/lib/rtl-mixins";
 
 .ui-datepicker{
@@ -92,7 +92,6 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
    padding:3px 10px;
    font-size:11px;
    @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px);
-   background-image:url(/images/overlay-top-shadow.png);
    @include padding-right(40px);
    position:relative;
    span{
@@ -127,9 +126,6 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
    padding:7px 10px;
    font-size:11px;
    @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px);
-   background-image:url(/images/overlay-top-shadow.png);
-   background-position:top left;
-   background-repeat:repeat-x;
    @include padding-right(40px);
    position:relative;
    font-family:inherit;
@@ -153,6 +149,8 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
     text-shadow: 0 0 0 transparent;
     @include padding-left(40px);
     @include padding-right(10px);
+    @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px, inset 0px 3px 3px 0px rgba(190,190,190,0.5));
+
     span.other{
       @include left(-1px);   
     }
@@ -349,7 +347,7 @@ div.action_buttons:hover{
       position:absolute;    
   		width:11px;
       span{
-         @include left(2px); top:0px;
+         @include left(3px); top:3px;
          position:absolute; width:22px; height:22px;  
       }
    }      
@@ -370,7 +368,7 @@ div.action_buttons:hover{
       @extend .button;
       background:#ffffff; 
       border-color:#dfdfdf;
-      @include single-box-shadow(none);
+      @include box-shadow(none);
 
       &:hover {
         background:#ffffff;
@@ -383,7 +381,7 @@ div.action_buttons:hover{
       border-color:#888;
    }
    .disabled.prev_page, .disabled.next_page, .disabled.prev_page:hover, .disabled.next_page:hover{ 
-      @include single-box-shadow(none);
+      @include box-shadow(none);
       background: #EFEFEF;      
       cursor: default;
       border-color: #DFDFDF;
@@ -427,7 +425,7 @@ div.action_buttons:hover{
   margin-bottom: -22px;
 }
 .toggle-button{
-  @include pie;
+  // @include pie; /*TODO-RAILS3 deprecated*/
   text-transform:uppercase;    
   font-size:12px;  
   position:relative;
@@ -470,7 +468,7 @@ div.action_buttons:hover{
     @include left(50%);
     span{
       @include inline-block;
-      @include pie;
+      // @include pie; /*TODO-RAILS3 deprecated*/
       border:1px solid rgba(0, 0, 0, 0.2); 
       width:16px;
       height:16px;              
@@ -504,7 +502,7 @@ div.action_buttons:hover{
     @include float(left);
     width:50%;
     height:100%;
-    @include pie;
+    // @include pie; /*TODO-RAILS3 deprecated*/
     @include border-radius(16px);
     line-height:0;
     font-size: inherit;
@@ -526,7 +524,7 @@ div.action_buttons:hover{
   display: block;
   @include border-radius(20px);
   height: auto;
-  @include padding(6px 0 7px 33px);
+  padding: 6px 0 7px 33px;
   background-image: inline-image("cdn-ignored/inline-images/tourmyapp-btn-arrow.png");
   background-repeat: no-repeat;
   background-position: 7px 6px;

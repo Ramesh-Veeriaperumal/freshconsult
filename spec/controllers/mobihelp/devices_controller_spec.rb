@@ -2,7 +2,6 @@ require 'spec_helper'
 require 'base64'
 
 describe Mobihelp::DevicesController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -14,6 +13,7 @@ describe Mobihelp::DevicesController do
   before(:each) do
     @request.env['X-FD-Mobihelp-Auth'] = get_app_auth_key(@mobihelp_app) 
     @request.params['format'] = "html"
+    @request.env["HTTP_ACCEPT"] = "application/json"
     @device_attr = {
       "user" => {
         "name" => "Mobihelp User",
@@ -80,8 +80,7 @@ describe Mobihelp::DevicesController do
     @device_attr["device_info"].merge!("device_uuid" => device_id)
 
     post  :register_user, @device_attr
-
-    @account.users.find_by_external_id(email_id).should be_an_instance_of(User)
+    @account.users.find_by_external_id(device_id).should be_an_instance_of(User)
     @account.users.find_by_external_id(device_id).mobihelp_devices.find_by_device_uuid(device_id).should be_an_instance_of(Mobihelp::Device);
   end
 
@@ -115,7 +114,7 @@ describe Mobihelp::DevicesController do
     info["breadcrumb_count"].should_not be_nil
     info["debug_log_count"].should_not be_nil
     info["acc_status"].should_not be_nil
-    info.include?("app_review_launch_count").should_not be_false
+    info.include?("app_review_launch_count").should_not be_falsey
   end
 
   it "should return error code if the device uuid is not unique" do

@@ -105,7 +105,7 @@
 	  	width: 		"710px",
 		title: 		'',
 		classes: 	'',
-		keyboard: 	true, 
+		keyboard: 	true,
 		templateHeader: '<div class="modal-header">' +
 							'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
 							'<h3 class="ellipsis modal-title"></h3>' +

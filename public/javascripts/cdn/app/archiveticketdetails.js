@@ -1,0 +1,1 @@
+//= require app/archive_ticket_details.js

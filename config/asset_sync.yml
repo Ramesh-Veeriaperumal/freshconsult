@@ -1,0 +1,65 @@
+defaults: &defaults
+  fog_provider: 'AWS'
+  # To use AWS reduced redundancy storage.
+  # aws_reduced_redundancy: true
+  fog_directory: "rails3-app-static-assets"
+  # You may need to specify what region your storage bucket is in
+  # fog_region: "eu-west-1"
+  existing_remote_files: keep
+  # To delete existing remote files.
+  # existing_remote_files: delete
+  # Automatically replace files with their equivalent gzip compressed version
+  gzip_compression: true
+  # Fail silently.  Useful for environments such as Heroku
+  # fail_silently: true
+  # Ignored files. Useful if there are some files that are created dynamically on the server and you don't want to upload on deploy.
+  # ignored_files:  !ruby/regexp '/^assets\/cdn-ignored\/*/'
+  ignored_files: ['manifest.yml', 'sources_manifest.yml']
+  # Always upload. Useful if you want to overwrite specific remote assets regardless of their existence
+  #  eg: Static files in public often reference non-fingerprinted application.css
+  #  note: You will still need to expire them from the CDN's edge cache locations
+  # always_upload: ['freshdeskwidget.js']
+  # Using IAM roles instead of keys
+  aws_iam_roles: true
+
+development:
+  <<: *defaults
+  enabled: true
+
+test:
+  <<: *defaults
+  enabled: false
+
+staging:
+  <<: *defaults
+  fog_directory: "rails3-app-static-assets"
+  asset_host_url_https:
+    - "https://assets1.freshpo.com"
+    - "https://assets2.freshpo.com"
+    - "https://assets3.freshpo.com"
+    - "https://assets4.freshpo.com"
+    - "https://assets5.freshpo.com"
+    - "https://assets6.freshpo.com"
+    - "https://assets7.freshpo.com"
+    - "https://assets8.freshpo.com"
+    - "https://assets9.freshpo.com"
+    - "https://assets10.freshpo.com"
+production:
+  <<: *defaults
+  fog_directory: "helpkit-app-static-assets"
+  asset_host_url_https:
+    - "https://assets1.freshdesk.com"
+    - "https://assets2.freshdesk.com"
+    - "https://assets3.freshdesk.com"
+    - "https://assets4.freshdesk.com"
+    - "https://assets5.freshdesk.com"
+    - "https://assets6.freshdesk.com"
+    - "https://assets7.freshdesk.com"
+    - "https://assets8.freshdesk.com"
+    - "https://assets9.freshdesk.com"
+    - "https://assets10.freshdesk.com"
+    - "https://assets11.freshdesk.com"
+    - "https://assets12.freshdesk.com"
+    - "https://assets13.freshdesk.com"
+    - "https://assets14.freshdesk.com"
+    - "https://assets15.freshdesk.com"

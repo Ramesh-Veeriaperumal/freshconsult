@@ -1,0 +1,42 @@
+<div class="helpkit-glance"> 
+	<div class="ticket-metrics" id="glance_sidebar"></div>
+	<div class="glance-chart-wrapper" id="glance_chart_wrapper">
+		<div class="loading-bar hide">
+			<div class="loading-box" id="loading-box"> 
+				<div class="reports-loading sloading loading-small loading-left repo generate-hd-reports"><%=t('helpdesk_reports.loading_text') %></div> 
+			</div>
+		</div>
+		<div class="glance-chart">
+			<div class="active-metric-title"></div>
+			<div class="solution-article">
+				 <a target="_blank" id="solution_link" href=""><%=t('helpdesk_reports.solution_article_text') %></a>
+			</div>
+			<div class="clearfix view-all-container" id="view_all_tickets"></div>
+			<div id="glance_main"></div>
+		</div>
+	</div>
+	
+</div>
+
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+	    var locals = HelpdeskReports.locals;
+	    locals.chart_hash = <%= @data.to_json.html_safe %>;
+
+	    var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
+
+	    if (err) {
+	    	var div = ["reports_container"];
+	        HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
+	    } else {
+	    	HelpdeskReports.ChartsInitializer.Glance.init(locals.chart_hash);
+	    }
+
+	    //populate the default metric solution url in solution link
+	    //Set the solution url for the active metric
+	    var constants = HelpdeskReports.Constants.Glance;
+	    var default_metric = constants.default_metric;
+        jQuery(".glance-chart #solution_link").attr('href',constants.metrics[HelpdeskReports.locals.active_metric].solution_url);
+        jQuery(".glance-chart .active-metric-title").html(constants.metrics[HelpdeskReports.locals.active_metric].name);
+	});
+</script>

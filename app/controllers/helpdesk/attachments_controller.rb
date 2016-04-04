@@ -2,7 +2,7 @@
 class Helpdesk::AttachmentsController < ApplicationController
 
   include HelpdeskControllerMethods
-  skip_before_filter :check_privilege, :verify_authenticity_token
+  skip_before_filter :check_privilege
   before_filter :load_item, :only => [:text_content, :show]
   before_filter :check_download_permission, :only => [:show, :text_content]
   before_filter :check_destroy_permission, :only => [:destroy]
@@ -13,14 +13,19 @@ class Helpdesk::AttachmentsController < ApplicationController
     redir_url = AwsWrapper::S3Object.url_for(@attachment.content.path(style.to_sym),@attachment.content.bucket_name,
                                           :expires => 300.seconds, :secure => true, :response_content_type => @attachment.content_content_type)
     respond_to do |format|
+      
       format.html do
         redirect_to redir_url
       end
+
       format.xml  do
         render :xml => @attachment.to_xml
       end
       format.nmobile do
         render :json => { "url" => redir_url}.to_json
+      end
+      format.all do
+        redirect_to redir_url
       end
     end
   end
@@ -43,6 +48,8 @@ class Helpdesk::AttachmentsController < ApplicationController
 
   def unlink_shared
     if can_unlink?
+      @note = @item.shared_attachable
+      @note_attachment_count = @note.all_attachments.size + @note.cloud_files.size - 1
       @item.destroy
       flash[:notice] = t(:'flash.tickets.notes.remove_attachment.success')
     else
@@ -59,7 +66,7 @@ class Helpdesk::AttachmentsController < ApplicationController
         if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? attachment.attachable_type
           ticket = attachment.attachable.respond_to?(:notable) ? attachment.attachable.notable : attachment.attachable
           can_destroy = true if privilege?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
-        elsif ['Solution::Article'].include? attachment.attachable_type
+        elsif ['Solution::Article', 'Solution::Draft'].include? attachment.attachable_type
           can_destroy = true if privilege?(:publish_solution) or (current_user && attachment.attachable.user_id == current_user.id)
         elsif ['Account'].include? attachment.attachable_type
           can_destroy = true if privilege?(:manage_account)
@@ -95,7 +102,7 @@ class Helpdesk::AttachmentsController < ApplicationController
 
       # Is the attachment on a note?
       #if @attachment.attachable.respond_to?(:notable)
-      if ['Helpdesk::Ticket', 'Helpdesk::Note', 'Mobihelp::TicketInfo'].include? @attachment.attachable_type
+      if ['Helpdesk::Ticket', 'Helpdesk::Note', 'Mobihelp::TicketInfo', 'Helpdesk::ArchiveTicket','Helpdesk::ArchiveNote'].include? @attachment.attachable_type
 
         # If the user has high enough permissions, let them download it
         return true if(current_user && current_user.agent?)
@@ -122,9 +129,9 @@ class Helpdesk::AttachmentsController < ApplicationController
     end
 
     def ticket_access?(ticket)
-      return false if ticket.blank?
+      return false if ticket.nil?
       (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || 
-        (privilege?(:client_manager)  && ticket.requester.company == current_user.company))) || 
+        (privilege?(:client_manager)  && ticket.company == current_user.company))) || 
         (params[:access_token] && ticket.access_token == params[:access_token])
     end
 

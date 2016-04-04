@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::BulkTicketActionsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -39,20 +38,16 @@ describe Helpdesk::BulkTicketActionsController do
     test_ticket1 = create_ticket({ :status => 2, :responder_id => @agent.id })
     test_ticket2 = create_ticket({ :status => 2, :responder_id => @agent.id })
     @request.env['HTTP_REFERER'] = 'sessions/new'
-    buffer = ("b" * 1024).freeze
-    att_file = Tempfile.new('bulk_att')
-    File.open(att_file.path, 'wb') { |f| f.write buffer }
-
-    Resque.inline = true
+    Sidekiq::Testing.inline!
     put :update_multiple, { :helpdesk_note => { :note_body_attributes => { :body_html => "<p>bulk ticket update with reply and attachments</p>" },
                                                 :private => "0",
                                                 :user_id => @agent.id,
                                                 :source => "0",
-                                                :attachments => [{"resource" => att_file}]
-                                              },
+                                                :attachments => [{"resource" => fixture_file_upload('files/image.gif', 'image/gif')}]
+      },
                             :ids => [test_ticket1.display_id, test_ticket2.display_id]
                           }
-    Resque.inline = false
+    Sidekiq::Testing.disable!
     test_ticket1.reload
     test_ticket2.reload
     tkt1_note = @account.tickets.find(test_ticket1.id).notes.last
@@ -61,6 +56,5 @@ describe Helpdesk::BulkTicketActionsController do
     tkt2_note.attachments.first.attachable_type.should be_eql("Helpdesk::Note")
     tkt1_note.attachments.size.should be_eql(1)
     tkt2_note.attachments.size.should be_eql(1)
-    att_file.unlink
   end
 end

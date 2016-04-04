@@ -68,8 +68,8 @@
 
 .search-inputs-location{
   display: none;
-  .search-phrase{ 
-    @include margin(13px 0 0 0); 
+  .search-phrase{
+    @include margin(13px 0 0 0);
   }
 }
 
@@ -83,7 +83,7 @@
 }
 
 .phone-search-results{
-  .search-caption{  
+  .search-caption{
     display: inline-block;
     margin-top: 10px;
   }
@@ -267,7 +267,7 @@
   .ui-dialog-title{
     font-size: 24px;
   }
-  
+
 }
 #purchase-confirmation{
     .number-message{
@@ -293,27 +293,73 @@
 #purchase-confirmation-content {
   padding: 10px 20px 7px;
 }
+.freshfone_alert{
+  @include margin-left(0px);
+  @include margin-right(0px);
+}
 .content_footer {
   font-size: 14px;
   margin-bottom: 30px;
   margin-top: 20px;
 }
+.content_container{
+  margin-top:42px;
+}
+
+.trial_content {
+  position: relative;
+  &:first-child{
+    @include border-right(1px solid #ccc);
+  }
+  .freshfone_trial_request{
+    font-weight:bold;
+    font-size:13px;
+    @include padding(6px 55px);
+  }
+  .circle_divider{
+    position: absolute;
+    padding: 6px;
+    @include right(-15px);
+    top: 10px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    border-radius: 50px;
+    background-color: #f6f6f6;
+    font-size: 10px;
+  }
+  .disclaimer{
+    @include padding(10px 65px 0 60px);
+  }
+}
+
 .freshfone_admin_content {
-  @include margin(0 0 0 150px);
+  p{
+    font-size: 13px;
+  }
   .info-data {
     font-size: 15px;
     li {
+      @include padding(0);
       line-height: 1.8;
     }
+    &:after{
+      content:" ";
+      display: table;
+      clear:both;
+    }
+  }
+  .content_footer{
+    margin-top: 10px;
+    margin-bottom: 20px;
   }
 }
-.fresfhone_flash_message {
+.fresfhone_flash_message, .small_note{
   display: block;
   position: relative;
   margin-top: 10px;
-  p {
-    font-size: 14px;  
-  } 
+}
+.after_request{
+  height: 100px;
 }
 .success_flash, .error_flash {
   text-align: center;
@@ -334,4 +380,27 @@
 }
 .purchase-footer .address-required-alert {
   color: #888;
+}
+.freshfone_video {
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  @include padding (0px 10px 10px 10px);
+  background: #eee;
+  margin: 30px auto;
+  width: 560px;
+  .title {
+    @include padding(10px 10px 10px 2px);
+    display: block;
+    text-align: center;
+  }
+}
+.ff_welcome_details{
+  height: 280px;
+}
+.ff_seperator {
+  border-bottom: 1px solid #ccc;
+}
+.ff_welcome_page {
+  @include margin(20px 0 20px 0px);
 }

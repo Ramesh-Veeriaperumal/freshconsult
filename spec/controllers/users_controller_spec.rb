@@ -1,14 +1,13 @@
 require 'spec_helper'
 
 describe UsersController do
-	integrate_views
 	setup :activate_authlogic
 	self.use_transactional_fixtures = false
 
 	before(:all) do
 		@user = add_new_user(@account)
 		@user_agent = add_test_agent(@account)
-		@new_user = Factory.build(:user, :avatar_attributes => { :content => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png', 
+		@new_user = FactoryGirl.build(:user, :avatar_attributes => { :content => fixture_file_upload('files/image4kb.png', 
                                         'image/png')},
                                     :name => "user with profile image",
                                     :email => Faker::Internet.email,
@@ -53,22 +52,20 @@ describe UsersController do
 					 :user => { :name => "user with profile image #{now}", :email => @user.email , :time_zone => @user.time_zone, 
 								:language => @user.language }
 		}
-		response.session["flash"][:notice].should eql "The user has been updated."
+		session["flash"][:notice].should eql "The user has been updated."
 		@account.users.find_by_name("user with profile image #{now}").should be_an_instance_of(User)
 	end
 
 	it "should view a user" do
 		get :show, :id => @user.id
-		response.redirected_to[:controller].should eql "contacts"
-		response.redirected_to[:action].should eql "show"
-		response.redirected_to[:id].should eql "#{@user.id}" 
+    response.should redirect_to :controller => 'contacts', 
+                                :action => 'show', :id => @user.id
 	end
 
 	it "should view a user_agent" do
 		get :show, :id => @user_agent.id
-		response.redirected_to[:controller].should eql "agents"
-		response.redirected_to[:action].should eql "show"
-		response.redirected_to[:id].should eql(@user_agent.agent.id)
+    response.should redirect_to :controller => 'agents', 
+                                :action => 'show', :id => @user_agent.agent.id
 	end
 
 	it "should display profile image" do
@@ -79,22 +76,22 @@ describe UsersController do
 
 	it "should assume_identity for a user" do
 		get :assume_identity, :id => @new_user.id
-		response.session[:flash][:notice].should eql "You've assumed your identity as #{@new_user.name}."
-		response.redirected_to.should eql "/"
+		session[:flash][:notice].should eql "You've assumed your identity as #{@new_user.name}."
+		response.should redirect_to "/"
 	end
 
 	it "should not assume_identity for a user" do
 		user = add_test_agent(@account)
 		log_in(user)
 		get :assume_identity, :id => user.id
-		response.session[:flash][:notice].should eql "You are not allowed to assume this user."
-		response.redirected_to.should eql "/"
+		session[:flash][:notice].should eql "You are not allowed to assume this user."
+		response.should redirect_to "/"
 	end
 
 	it "should not revert_identity to original user" do
 		get :revert_identity 
-		response.session[:flash][:error].should eql "Sorry, we couldn't find your original user."
-		response.redirected_to.should eql "/"
+		session[:flash][:error].should eql "Sorry, we couldn't find your original user."
+		response.should redirect_to '/'
 	end
 
 	it "should delete profile_image of a user" do
@@ -106,9 +103,9 @@ describe UsersController do
 
 	it "should block the user" do
 		user = add_new_user(@account)
-		put :block, :ids => ["#{user.id}"]
+		put :block, :id => user.id #TODO-RAILS3 change the same in views
 		user.reload
-		user.deleted.should be_true
-		response.session[:flash][:notice].should eql "Following contact(s) (#{user.name}) have been blocked"
+		user.deleted.should be true
+		session[:flash][:notice].should eql "Following contact(s) (#{user.name}) have been blocked"
 	end
 end

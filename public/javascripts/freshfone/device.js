@@ -14,77 +14,109 @@
 		});
 
 		Twilio.Device.error(function (error) {
-			ffLogger.logIssue("Call Failure ", {"error": error}, 'error');
-			freshfonetimer.resetCallTimer();
-			freshfoneNotification.resetJsonFix();
-			freshfoneNotification.popAllNotification();
-			freshfonecalls.resetRecordingState();
-			freshfonewidget.resetPreviewButton();
-			if ($.inArray(error.code, [400, 401, 31205]) > -1) {
-				freshfoneuser.getCapabilityToken(undefined, true);
-			}
 			freshfonecalls.error = error;
 			freshfonecalls.errorcode = error.code;
-			// error.code 400 --->> invalid access token
-			// error.code 401 --->> This AccessToken is no longer valid
-			
+			ffLogger.logIssue("Call Failure ", {"error": error}, 'error');
+			if(freshfonecalls.errorcode == 31003){ //for ICE Liveness Check
+				$(window).trigger('ffone.networkDown'); // for non-chromium based browsers
+			}
+			else{
+				freshfoneNotification.resetJsonFix();
+				freshfoneNotification.popAllNotification();
+				freshfonecalls.resetRecordingState();
+				freshfonewidget.resetPreviewButton();
+				if(freshfoneSupervisorCall.isSupervisorOnCall){
+					freshfoneSupervisorCall.resetJoinCallButton();
+				}
+				// if ($.inArray(error.code, [400, 401, 31204, 31205]) > -1) {
+					// freshfoneuser.getCapabilityToken(undefined, true);
+				// }
+			}
 		});
+
+		Twilio.Device.offline(function (device) {
+			if(freshfoneuser.tokenRegenerationOn == null)
+				regenerateToken();
+			else{
+				if((freshfoneuser.tokenRegenerationOn - new Date()) > 3600000)
+					regenerateToken();	
+			}
+				
+		})
 
 		Twilio.Device.connect(function (conn) {
 			freshfonecalls.tConn = conn;
 			ffLogger.log({'action': "Call accepted", 'params': conn.parameters});
-			if(!freshfonecalls.isOutgoing()) { freshfoneNotification.initializeCall(conn); }
-			freshfonecalls.errorcode = null;
-			freshfonecalls.lastAction = null;
-			freshfonecalls.transfered = false;
+			if(!freshfonecalls.isOutgoing() && !freshfonecalls.conferenceMode) { freshfoneNotification.initializeCall(conn); }
+			freshfonecalls.resetFlags();
 			if (recordingMode()) { return freshfonecalls.setRecordingState(); }
-			$("#log").text("Successfully established call");
 			freshfoneNotification.resetJsonFix();
 			if(freshfonecalls.isOutgoing()){
 		    	$('#number').intlTelInput("updatePreferredCountries");
-	     	}
-			freshfoneNotification.popAllNotification(conn);
-			freshfonetimer.startCallTimer();
+		    	freshfonecalls.registerCall(conn.parameters.CallSid);
+	     } 
+			var accecptedConnection = freshfonecalls.conferenceMode ? freshfonecalls.conferenceConn : conn
+			freshfoneNotification.popAllNotification(accecptedConnection);
 			freshfonewidget.toggleWidgetInactive(false);
-			freshfonewidget.handleWidgets('ongoing');
+			freshfonewidget.hideTransfer();
+			if(freshfoneSupervisorCall.isSupervisorOnCall){
+				freshfoneSupervisorCall.startCallTimer();
+				freshfoneSupervisorCall.handleConnect();
+			} else {
+				freshfonetimer.startCallTimer();
+				freshfonewidget.handleWidgets('ongoing');
+			}
 			freshfonecalls.disableCallButton();
 			if (previewMode()) {
 				freshfonewidget.enablePreviewMode();
 			}
 			var dontUpdateCallCount = previewMode() || recordingMode();
+			freshfonecalls.getSavedCallNotes(conn.parameters.From);
 			freshfoneuser.publishLiveCall(dontUpdateCallCount);
-			freshfonesocket.bindTransfer();
 			freshfonecalls.onCallStopSound();
-		});
+				if(freshfone.isCallQualityMetricsEnabled){
+					freshfonecalls.freshfone_monitor = new window.FreshfoneMonitor(conn);
+					freshfonecalls.freshfone_monitor.startLoggingWithInterval();
+				}
+			
+			});
 
-		/* Log a message when a call disconnects. */
+			
+
 		Twilio.Device.disconnect(function (conn) {
-			var callSid, detail;
-			ffLogger.log({'action': "Call ended", 'params': conn.parameters});
-			if (freshfonecalls.tConn) {
-				callSid = freshfonecalls.tConn.parameters.CallSid;
-				detail = callSid ? callSid : 'To :: '+ freshfonecalls.tConn.message.PhoneNumber;
-				ffLogger.logIssue("Freshfone Call :: " + detail);
+			if(freshfone.isCallQualityMetricsEnabled && freshfonecalls.freshfone_monitor){
+				freshfonecalls.freshfone_monitor.stopLogging();
 			}
 			freshfoneNotification.resetJsonFix();
+			freshfoneDialpadEvents.hideContactDetails();
+			freshfonewidget.resetWidget();
+			ffLogger.log({'action': "Call ended", 'params': conn.parameters});
+			if (freshfonecalls.tConn) {
+				var callSid = freshfonecalls.tConn.parameters.CallSid;
+				var detail = callSid ? callSid : 'To :: '+ freshfonecalls.tConn.message.PhoneNumber;
+				ffLogger.logIssue("Freshfone Call :: " + detail);
+			}
 			if (recordingMode()) {
 				return freshfonecalls.fetchRecordedUrl();
 			}
 			if (freshfonetimer.timerElement.data('runningTime') < 5) {
 				ffLogger.logIssue('Freshfone Short Call :: ' + detail, '', 'error');
 			}
-
 			freshfonetimer.stopCallTimer();
 			freshfonecalls.enableCallButton();
+
 			if (previewMode()) {
 				freshfonewidget.resetPreviewMode();
 				freshfonewidget.resetPreviewButton();
 				return freshfonewidget.handleWidgets('outgoing');
 			}
-			
+
 			freshfonecalls.tConn = conn;
 			if (freshfonecalls.hasUnfinishedAction()) {
 				return;
+			} else if(freshfoneSupervisorCall.isSupervisorConnected)
+			{
+				freshfoneSupervisorCall.resetToDefaultState();
 			} else if (!freshfonecalls.dontShowEndCallForm()) {
 				var in_call_time = parseInt($(freshfonetimer.timerElement).data('runningTime') || 0, 10)
 				if ( in_call_time < 3){ // less than 3 seconds is an invalid case.
@@ -93,17 +125,33 @@
 					freshfoneuser.updatePresence();					
 					return;
 				}
-				freshfoneendcall.showEndCallForm();
+				if(!freshfonecalls.transferSuccess && !freshfonecalls.callError()){//edge case where call disconnect comes first before transfer success.
+					freshfoneendcall.showEndCallForm();
+				}
+				freshfonecalls.transferSuccess = false;
 			} else {
+				if(freshfone.isConferenceMode){
+					if(freshfonecalls.isTransfering() && !freshfonecalls.transferSuccess){
+						if (!freshfonecalls.callError())
+							freshfoneendcall.showEndCallForm();
+						freshfonecalls.freshfoneCallTransfer.resetTransferState();
+						jQuery('.popupbox-tabs .transfer_call').trigger('click');
+					}
+					freshfoneuser.resetStatusAfterCall();
+					freshfoneuser.updatePresence();
+				} else {
+					freshfonewidget.resetTransferingState();
+				}
 				freshfonecalls.init();
 				freshfoneuser.init();
 			}
 			freshfonecalls.lastAction = null;
-			freshfonewidget.hideTransfer();
+			// freshfonewidget.hideTransfer();
+			freshfonecalls.call = null;
+			freshfonecalls.callInitiationTime = null;
 		});
 
 		Twilio.Device.cancel(function (conn) {
-			$("#log").text("Ready");
 			// freshfonecalls.enableCallButton();
 			freshfoneNotification.closeConnections(conn);
 			var callSid = conn.parameters.CallSid ||  'To :: '+ freshfonecalls.tConn.message.PhoneNumber;
@@ -112,16 +160,33 @@
 		});
 
 		Twilio.Device.incoming(function (conn) {
-			$("#log").text("Incoming connection from " + conn.parameters.From);
 			// freshfonecalls.disableCallButton();
-			ffLogger.log({'action': "Incoming Call Notification", 'params': conn.parameters});
-			freshfoneNotification.anyAvailableConnections(conn);
-			var freshfoneConnection = new FreshfoneConnection(conn);
-			freshfoneConnection.incomingAlert();
+			if(deviceWithActiveConnection()) {
+				ffLogger.logIssue("New incoming call on busy device!", {'action': "Incoming Call Notification", 'params': conn.parameters}, 'error');
+				
+				conn.reject();
+			} else {
+				ffLogger.log({'action': "Incoming Call Notification", 'params': conn.parameters});
+				freshfoneNotification.anyAvailableConnections(conn);
+				var freshfoneConnection = new FreshfoneConnection(conn);
+				freshfoneConnection.incomingAlert();
+			}
         });
-
-		Twilio.Device.presence(function (pres) {
-		});
+	}
+	function deviceWithActiveConnection() {
+		var activeConnection = Twilio.Device.activeConnection();
+		return (activeConnection && 
+			activeConnection.status()=="open");
+	}
+	function regenerateToken () {
+		freshfoneuser.getCapabilityToken();
+		freshfoneuser.tokenRegenerationOn = new Date();
 	}
 	});
+	$(window).on("load", function(){
+		Twilio.Connection.prototype.getMediaStream = function(){
+			return this.mediaStream;
+		}
+	});
+
 }(jQuery));

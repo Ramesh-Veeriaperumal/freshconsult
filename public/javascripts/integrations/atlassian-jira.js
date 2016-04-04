@@ -2,7 +2,7 @@ var JiraWidget = Class.create();
 JiraWidget.prototype = {
 	JIRA_FORM:new Template(
 		'<div id="jira_issue_forms"><div id="jira_issue_create"><div class="heading"><span class="current_form">Create a new issue</span>' +
-			'<span class="divider"> or </span>' + 
+			'<span class="divir"> or </span>' + 
 			' <span class="other_form show_linkform">Link to an existing issue</span></div>' + 
 	    '<form id="jira-add-form" method="post" class="ui-form"> ' +
 		    '<div class="field half_width left">' +
@@ -235,20 +235,75 @@ JiraWidget.prototype = {
 	},
 
 	constructFieldsDynamically: function(evt){
-		resJson = evt.responseJSON;
-		jiraWidget.selectOnlyRequiredFields(resJson);
+		var resJson = evt.responseJSON;
+		jiraWidget.checkForAssignee(resJson);
 	},
 	processFailureCustomFields: function(evt){
 
 	},
-	selectOnlyRequiredFields:function(resJson){
+	checkForAssignee:function(resJson)
+	{
+		var isAssignee = false;
+		jiraWidget.allCustomfield = resJson;
 		jiraWidget.customFieldData = {};
 		jQuery.each(resJson.projects[0].issuetypes[0].fields,function(field_key,field_value){
+			if(field_key == "assignee")
+			{
+				isAssignee = true;
+				jiraWidget.customFieldData[field_key] = field_value;
+				project_key = jiraWidget.getProjectBy('id', jQuery('#jira-projects').val()).key;
+				jiraWidget.getAssignableUsers(project_key);
+			}
+		});
+		if(!isAssignee){
+			 jiraWidget.selectOnlyRequiredFields();
+		}
+	},
+	getAssignableUsers: function(project_key){
+		jiraWidget.freshdeskWidget.request({
+			rest_url: "rest/api/2/user/assignable/search?project="+project_key+"&maxResults=1000",
+			content_type: "application/json",
+			on_success: function(evt) {
+				resJ = evt.responseJSON;
+				resJ =resJ.sort(function(a, b){return a.displayName > b.displayName;});
+				var unassigned = { displayName: "Unassigned", name: "null" };
+				resJ.unshift(unassigned);
+				jiraWidget.customFieldData.assignee['allowedValues'] = resJ;
+				jiraWidget.selectOnlyRequiredFields();
+			},
+			on_failure: function(){
+				alert("unbale to get Assignee");
+			}
+		});
+	},
+	selectOnlyRequiredFields:function(){
+		
+		var tempo_flag = false;
+		jQuery.each(jiraWidget.allCustomfield.projects[0].issuetypes[0].fields,function(field_key,field_value){
 			if(field_value["required"]&& (field_key != "issuetype" && field_key != "project")){
 				jiraWidget.customFieldData[field_key] = field_value; 
 			}
+			if(field_value["schema"]["type"] == "account" && field_value["required"]){
+				tempo_flag = true 
+			}
 		});
-		jiraWidget.processJiraFields();
+		tempo_flag ? jiraWidget.tempoAccountDetails() : jiraWidget.processJiraFields();
+		
+	},
+	tempoAccountDetails: function(){
+		jiraWidget.freshdeskWidget.request({
+				rest_url : "rest/tempo-accounts/1/account",
+				method : "get",
+				domain : jiraBundle.domain,
+				content_type : "application/json",
+				on_success :  function(evt){
+						resJ = evt.responseJSON;
+						jiraWidget.processJiraFields(resJ);
+				},
+				on_failure:function(evt){ 
+					alert("Problem in fetching Account details");
+				}
+		});
 	},
 
 	handleLoadIssueTypes: function(issueTypes) {
@@ -270,12 +325,34 @@ JiraWidget.prototype = {
 		return ticket_url;
 	},
 
+	addAttachments:function(created_issue)
+	{
+		var attachments = jiraBundle.attachments;
+		if(attachments.length > 0)
+		{
+    	attachment_list = ""
+			jQuery.each( attachments, function(index, url){
+        attachment_list = attachment_list + url + '\n';
+     	});
+     	if(created_issue.fields.description)
+     	{
+    		created_issue.fields.description = created_issue.fields.description + '\n' + 'Attachments in Freshdesk :-\n' + attachment_list;
+    	}
+    	else
+    	{
+    		created_issue.fields.description = 'Box or Dropbox Attachments in Freshdesk :-\n' + attachment_list;
+    	}
+    }
+    return created_issue;
+	},
+
 	createJiraIssue: function(resultCallback) {
 		if(jiraWidget.form_validation())
 		{
 			return false;
 		}
 		this.showSpinner();
+
 		self = this;
 		integratable_type = "issue-tracking";
 		projectId = (jiraBundle.projectId) ? jiraBundle.projectId : jQuery('#jira-projects').val();
@@ -284,7 +361,12 @@ JiraWidget.prototype = {
 		ticket_url = jiraBundle.ticket_url;
 		jiraWidget.jiraCreateSummaryAndDescription();
 		created_issue = jQuery("#jira-add-form").serializeObject();
-   
+		var assignee = "assignee"
+		if(created_issue.fields.hasOwnProperty(assignee) && created_issue.fields.assignee.name == "null")
+    {
+    	delete created_issue.fields.assignee;
+    }
+    created_issue = jiraWidget.addAttachments(created_issue);	
 		this.jsonFix();
 		issue = JSON.stringify(created_issue);
 	  this.resetJsonFix();
@@ -352,7 +434,7 @@ JiraWidget.prototype = {
 			return
 		}
 
-		jQuery('#jira_issue_icon a.jira').removeClass('jira').addClass('jira_active');
+		jQuery('#jira_issue_icon a.integrations-jira').removeClass('integrations-jira').addClass('integrations-jira_color');
 		if(resultCallback) resultCallback(evt);
 
 	},	
@@ -516,6 +598,8 @@ JiraWidget.prototype = {
 		reqData = {
 			"update": {}
 		};
+		requestData = jiraWidget.addAttachments(resData.responseJSON);
+		requestData = requestData.fields.description;
 		if(freshdeskData != null) {
 			if(freshdeskData.indexOf(jiraWidget.getCurrentUrl()) != -1) ticketData = freshdeskData;
 			else {
@@ -535,7 +619,8 @@ JiraWidget.prototype = {
 				application_id: jiraBundle.application_id,
 				local_integratable_id: jiraBundle.ticket_rawId,
 				local_integratable_type: integratable_type,
-				source_url: "/integrations/jira_issue/update"
+				source_url: "/integrations/jira_issue/update",
+				cloud_attachment: requestData
 
 			}];
 		} else {
@@ -551,7 +636,8 @@ JiraWidget.prototype = {
 				local_integratable_type: integratable_type,
 				source_url: "/integrations/jira_issue/update",
 				on_success: jiraWidget.updateIssueJiraSuccess.bind(this),
-				on_failure: jiraWidget.updateIssueJiraFailure.bind(this)
+				on_failure: jiraWidget.updateIssueJiraFailure.bind(this),
+				cloud_attachment: requestData
 			}];
 		}
 		jiraWidget.freshdeskWidget.options.init_requests = init_reqs;
@@ -568,7 +654,7 @@ JiraWidget.prototype = {
 			jiraWidget.linkIssue = true;
 			jiraBundle.custom_field_id = resJ['integrated_resource']['custom_field'];
 
-			jQuery('#jira_issue_icon a.jira').removeClass('jira').addClass('jira_active');
+			jQuery('#jira_issue_icon a.integrations-jira').removeClass('integrations-jira').addClass('integrations-jira_color');
 			jiraWidget.renderDisplayIssueWidget();
 		} else {
 			jiraException = self.jiraExceptionFilter(resJ['error'])
@@ -609,7 +695,7 @@ JiraWidget.prototype = {
 			jiraBundle.integrated_resource_id = "";
 			jiraBundle.remote_integratable_id = "";
 
-			jQuery('#jira_issue_icon a.jira_active').addClass('jira').removeClass('jira_active');
+			jQuery('#jira_issue_icon a.integrations-jira_color').addClass('integrations-jira').removeClass('integrations-jira_color');
 		}
 
 		this.displayCreateWidget();
@@ -650,7 +736,7 @@ JiraWidget.prototype = {
 		resJ = evt.responseJSON
 		if(resJ['error'] == null || resJ['error'] == "") {
 			jQuery('.subtitle').html("Link an issue");
-			jQuery('#jira_issue_icon a.jira_active').addClass('jira').removeClass('jira_active');
+			jQuery('#jira_issue_icon a.integrations-jira_color').addClass('integrations-jira').removeClass('integrations-jira_color');
 			jiraWidget.displayCreateWidget();
 		} 
 		else {
@@ -714,12 +800,16 @@ JiraWidget.prototype = {
 		}
 	},
 
-	processJiraFields:function(fieldKey,fieldData){
+	processJiraFields:function(resJ){
 		jiraWidget.fieldContainer = "";
 		jQuery.each(jiraWidget.customFieldData, function(fieldKey, fieldData){
 		functionName = "processJiraField"+(fieldData["schema"]["type"]).capitalize();
 		var args=[];
 		args.push(fieldKey,fieldData);
+		if(fieldData["schema"]["type"] == "account")
+		{
+			 args.push(resJ)
+		}
 		callerObject = window["jiraWidget"][functionName]
 		if(callerObject)  
 			callerObject.apply(null, args);
@@ -729,7 +819,18 @@ JiraWidget.prototype = {
 		jQuery("#fields").html(jiraWidget.fieldContainer);
 		jQuery('#jira-submit').removeAttr('disabled');
 	},
+	processJiraFieldAccount: function(fieldKey,fieldData,resJ)
+	{ 
 
+		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';
+		jiraWidget.fieldContainer += '<select class ="tempo" name="fields['+ fieldKey+'][id]"> ';
+		selectOptions = "";
+		jQuery.each(resJ,function(key,data){
+				selectOptions += "<option value=" + data["id"]+ ">"+ data["name"]+" ("+ data["key"]+")"+"</option>";
+		});	
+	  jiraWidget.fieldContainer += selectOptions + '</select>';
+		
+	},
 	processJiraFieldPriority:function(fieldKey,fieldData)
 	{
 		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';
@@ -742,8 +843,20 @@ JiraWidget.prototype = {
 	},
 	processJiraFieldUser:function(fieldKey,fieldData)
 	{
-		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>'+
-				'<input type="text" name="fields['+fieldKey+'][name]" id="fields['+ fieldKey+'][name]" value="'+jiraBundle.username+'"/>';
+		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>'
+		if(fieldKey == "reporter")
+		{
+			jiraWidget.fieldContainer +=	'<input type="text" name="fields['+fieldKey+'][name]" id="fields['+ fieldKey+'][name]" value="'+jiraBundle.username+'"/>';
+		}
+		else if (fieldKey == "assignee")
+		{	
+			jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][name]" id ="jira-assignee" class="select2 full assignee">';
+			var selectOptions = "";
+			jQuery.each(fieldData["allowedValues"],function(key,data){
+				selectOptions += "<option value='"+data["name"]+"'>"+data["displayName"]+"</option>";
+			});
+			jiraWidget.fieldContainer += selectOptions+ '</select>';		
+		}
 	
 	},
 	processJiraFieldTimetracking:function(fieldKey,fieldData){
@@ -796,6 +909,18 @@ JiraWidget.prototype = {
 
 		}
 	},
+	processJiraFieldOption:function(fieldKey,fieldData){
+		if(fieldData["allowedValues"])
+		{
+			jiraWidget.fieldContainer += '<label>' + fieldData["name"] + '</label>';
+			jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][value]">';
+			selectOptions = "";
+			jQuery.each(fieldData["allowedValues"],function(key,data){
+			selectOptions += "<option value='"+data["value"]+"'>"+data["value"]+"</option>";
+		  });
+			jiraWidget.fieldContainer += selectOptions+ '</select>';
+		}			
+	},
 	processJiraFieldArrayString:function(fieldKey,fieldData){
 		jiraWidget.fieldContainer += '<label>' + fieldData["name"] + '</label>';
 		jiraWidget.fieldContainer += '<input type="text" class ="array" name="fields[' + fieldKey + ']" id="fields[' + fieldKey + '] " value="" placeholder="label1,label2"/>';
@@ -809,7 +934,13 @@ JiraWidget.prototype = {
 		jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][0][id]">';
 		selectOptions = "";
 		jQuery.each(fieldData["allowedValues"],function(key,data){
-			selectOptions += "<option value='"+data["id"]+"'>"+data["name"]+"</option>";
+			if(fieldData["schema"]["items"] == "component" || fieldData["schema"]["items"] == "version")
+			{
+				selectOptions += "<option value='"+data["id"]+"'>"+data["name"]+"</option>";	
+			}
+			else {
+				selectOptions += "<option value='"+data["id"]+"'>"+data["value"]+"</option>";
+			}
 		});
 		jiraWidget.fieldContainer += selectOptions+ '</select>';
 	}, 
@@ -838,9 +969,9 @@ JiraWidget.prototype = {
 		var error = [];
 		var flag = false;
 		jQuery.each(jQuery("#jira-add-form").find("input"),function(){
-			if (this.value == "undefined" || this.value == "" || this.value.trim()=="")
+			if (jQuery(this).attr("class") != "select2-focusser select2-offscreen" && jQuery(this).attr("class") != "select2-input" && ( this.value == "undefined" || this.value == "" || this.value.trim()=="") )
 			{
-				error.push(jQuery(this).prev().text());
+		 	  error.push(jQuery(this).prev().text());
 			}
 		});
 		if(error.length > 0){
@@ -851,5 +982,3 @@ JiraWidget.prototype = {
 	},
 	
 }
-
-jiraWidget = new JiraWidget(jiraBundle);

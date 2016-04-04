@@ -33,7 +33,7 @@ module PodHelper
   def self.included(receiver)
     receiver.extend         ClassMethods
     receiver.class_eval do
-      named_scope :current_pod, lambda  {cond = shard_account_condition 
+      scope :current_pod, lambda  {cond = shard_account_condition 
                                       {:conditions => ["#{cond}"]} if cond
                                     }
     end

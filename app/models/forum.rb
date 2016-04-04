@@ -1,13 +1,14 @@
 class Forum < ActiveRecord::Base
-  acts_as_list :scope => :forum_category
-  include ActionController::UrlWriter
-
+  self.primary_key = :id
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'
 
   has_many :monitorships, :as => :monitorable, :class_name => "Monitorship", :dependent => :destroy
-
+  has_many :monitors, :through => :monitorships, :source => :user,
+           :conditions => ["#{Monitorship.table_name}.active = ?", true], 
+           :order => "#{Monitorship.table_name}.id DESC"
+           
   belongs_to_account
 
   TYPES = [
@@ -44,14 +45,13 @@ class Forum < ActiveRecord::Base
     end
   end
 
-
-  named_scope :visible, lambda {|user| {
+  scope :visible, lambda {|user| {
                     # :joins => "LEFT JOIN `customer_forums` ON customer_forums.forum_id = forums.id
                     #             and customer_forums.account_id = forums.account_id ",
                     :conditions => visiblity_condition(user) } }
 
 
-  named_scope :in_categories, lambda {|category_ids|
+  scope :in_categories, lambda {|category_ids|
     {
       :conditions => {
         :forum_category_id => category_ids
@@ -59,14 +59,13 @@ class Forum < ActiveRecord::Base
     }
   }
   def self.visiblity_condition(user)
-    condition =  {:forum_visibility =>self.visibility_array(user) }
-    condition =  Forum.merge_conditions(condition) + " OR
-                  ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]}
+    condition = "forums.forum_visibility IN (#{self.visibility_array(user).join(",")})"
+    condition +=  " OR ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]}
                     AND forums.id IN (SELECT customer_forums.forum_id from customer_forums
                                       where customer_forums.customer_id = #{user.customer_id} and
                                       customer_forums.account_id = #{user.account_id}))"  if (user && user.has_company?)
                 # customer_forums.customer_id = #{user.customer_id} )"  if (user && user.has_company?)
-    return condition
+    condition
   end
 
   validates_presence_of :name,:forum_category,:forum_type
@@ -96,25 +95,38 @@ class Forum < ActiveRecord::Base
   has_many :customer_forums , :class_name => 'CustomerForum' , :dependent => :destroy
 
   format_attribute :description
-  attr_protected :forum_category_id , :account_id
+  
+  attr_accessible :name, :description, :topics_count, :posts_count, :description_html, 
+    :forum_type, :import_id, :forum_visibility, :customer_forums_attributes, :position, :convert_to_ticket
+  acts_as_list :scope => :forum_category
+  
   xss_sanitize :only=>[:description_html], :html_sanitize => [:description_html]
 
   # after_save :set_topic_delta_flag
   before_update :clear_customer_forums, :backup_forum_changes
-  after_commit_on_update :update_search_index, :if => :forum_visibility_updated?
-  after_commit_on_destroy :remove_topics_from_es
+  after_commit :update_search_index, on: :update, :if => :forum_visibility_updated?
+  after_commit :remove_topics_from_es, on: :destroy
+  
+  after_create :add_activity_new_and_clear_cache
+  after_update :clear_cache_with_condition
+  before_destroy :add_activity
+  after_destroy :clear_cat_cache
 
-  def after_create
+  def add_activity_new_and_clear_cache
     create_activity('new_forum')
     account.clear_forum_categories_from_cache
   end
-
-  def after_destroy
+  
+  
+  def add_activity
     create_activity('delete_forum')
+  end
+
+  def clear_cat_cache
     account.clear_forum_categories_from_cache
   end
 
-  def after_update
+  def clear_cache_with_condition
     account.clear_forum_categories_from_cache unless (self.changes.keys & ['name', 'forum_category_id', 'position']).empty?
   end
   #validates_inclusion_of :forum_visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
@@ -208,15 +220,14 @@ class Forum < ActiveRecord::Base
 
   def to_xml(options = {})
      options[:indent] ||= 2
-      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id])
   end
 
   def as_json(options={})
     options[:except] = [:account_id,:import_id]
-    json_str = super options
-    json_str
+    super options
   end
 
   def visible_to_all?
@@ -242,7 +253,7 @@ class Forum < ActiveRecord::Base
       :account => account,
       :user => User.current,
       :activity_data => {
-                          :path => discussions_forum_path(id),
+                          :path => Rails.application.routes.url_helpers.discussions_forum_path(id),
                           'category_name' => h(forum_category.to_s),
                           :url_params => {
                                            :id => id,
@@ -255,22 +266,26 @@ class Forum < ActiveRecord::Base
   end
 
   def update_search_index
-    Resque.enqueue(Search::IndexUpdate::ForumTopics, { :current_account_id => account_id, :forum_id => id }) if ES_ENABLED
+    SearchSidekiq::IndexUpdate::ForumTopics.perform_async({ :forum_id => id }) if ES_ENABLED
   end
 
   def remove_topics_from_es
-    Resque.enqueue(Search::RemoveFromIndex::ForumTopics, { :account_id => account_id, :deleted_topics => @deleted_topic_ids }) if ES_ENABLED
+    SearchSidekiq::RemoveFromIndex::ForumTopics.perform_async({ :deleted_topics => @deleted_topic_ids }) if ES_ENABLED
   end
 
   def backup_forum_topic_ids
     @deleted_topic_ids = self.topics.map(&:id)
   end
 
+  def unsubscribed_agents
+    user_ids = monitors.map(&:id)
+    account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+
   private
 
     def backup_forum_changes
       @all_changes = self.changes.clone
-      @all_changes.symbolize_keys!
     end
 
     def forum_visibility_updated?

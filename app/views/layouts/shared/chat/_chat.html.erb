@@ -3,22 +3,25 @@
 		var asset = <%= ChatConfig['asset_url'].to_json.html_safe %>;
 		var http_only = ((<%=ChatConfig['http_only']%> == "1")? true : false);
 		window.FC_HTTP_ONLY = http_only;
-		var isSecured = ((window.location && window.location.protocol == 'https:') && !window.FC_HTTP_ONLY);
+		var fc_isSecured = ((window.location && window.location.protocol == 'https:') && !window.FC_HTTP_ONLY);
 		var fc_CSS = document.createElement('link');
+		var fc_lang = document.getElementsByTagName('html')[0].getAttribute('lang');
+		var fc_rtlLanguages = ['ar','he'];
+		var fc_rtlSuffix = (fc_rtlLanguages.indexOf(fc_lang) >= 0) ? "-rtl" : "";
 		fc_CSS.setAttribute('rel','stylesheet');
 		fc_CSS.setAttribute('type','text/css');
-		fc_CSS.setAttribute('href',((isSecured) ? asset.cloudfront : asset.css)+'/css/visitor.css');
+		fc_CSS.setAttribute('href',((fc_isSecured) ? asset.cloudfront : asset.css)+'/css/visitor'+ fc_rtlSuffix +'.css');
 		document.getElementsByTagName('head')[0].appendChild(fc_CSS);
 		var jsload = (typeof jQuery=='undefined') ? 'visitor-jquery':'visitor';
 		var fc_JS = document.createElement('script');
 		fc_JS.type = 'text/javascript';
-		fc_JS.src = ((isSecured) ? asset.cloudfront : asset.js)+'/js/'+jsload+'.js';
+		fc_JS.src = ((fc_isSecured) ? asset.cloudfront : asset.js)+'/js/'+jsload+'.js';
 		document.body.appendChild(fc_JS);
 		window.freshchat_setting = '<%=encoded_freshchat_setting%>';
 		<% if current_user %>
 			window.FRESHCHAT_VISITORINFO = {name:"<%= current_user.name%>",email:"<%= current_user.email%>"};
 		<% end %>
-		<%if Rails.env == 'development' %>  
+		<%if Rails.env == 'development' %>
 			jQuery.getScript(asset.js+"/js/visitor-devtools.js");
 		<%end%>
 	});

@@ -1,6 +1,6 @@
 class Helpdesk::TagDrop < BaseDrop
   
-  liquid_attributes << :name
+  self.liquid_attributes += [:name]
   
   def initialize(source)
     super source

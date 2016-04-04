@@ -1,0 +1,38 @@
+<% var constants = HelpdeskReports.Constants.Glance; %>
+<% var css_class = constants.metrics %>
+
+<% for (i = 0; i < metrics.length; i++) { %>
+  <%  if(metrics[i].substring(metrics[i].length - 6) !== 'BUCKET'){ %>
+        <div class="pdf-metric-lablel">
+          <div class="pdf-metric-name"><%=HelpdeskReports.Constants.Glance.metrics[metrics[i]].name%> -</div>
+          <% if (result_hash[metrics[i]]['general']!== undefined) {%>
+            <div class="pdf-metric-result">
+              <% if (HelpdeskReports.Constants.Glance.time_metrics.indexOf(metrics[i]) > -1) { %>
+                    <span > <%= HelpdeskReports.CoreUtil.timeMetricConversion(result_hash[metrics[i]].general.metric_result) %> </span>
+              <% } else if (HelpdeskReports.Constants.Glance.percentage_metrics.indexOf(metrics[i]) > -1) { %>
+                    <span > <%= HelpdeskReports.CoreUtil.addsuffix(result_hash[metrics[i]].general.metric_result) %>  </span>
+              <%  } else { %>
+                    <span >  <%= HelpdeskReports.CoreUtil.shortenLargeNumber(result_hash[metrics[i]].general.metric_result, 1) %> </span>
+              <%  } %>
+            </div>
+            <%
+              var template; 
+              var percent = result_hash[metrics[i]].general.diff_percentage;
+              if (parseFloat(percent) !== NaN && parseFloat(percent) > 0) {
+                template = "<span class='pdf-symbol'><span class='status-symbol " + css_class[metrics[i]].css[0] +"'></span></span><span class='volume-percent'> " + percent + "% </span>";
+              } else if (parseFloat(percent) !== NaN && parseFloat(percent) < 0) {
+                template = "<span class='pdf-symbol'><span class='status-symbol " + css_class[metrics[i]].css[1] +"'></span></span><span class='volume-percent'> " + Math.abs(percent) + "% </span>";
+              } else if (parseFloat(percent) !== NaN && parseFloat(percent) == 0) {
+                template = "<span class='pdf-symbol'><span class='status-symbol report-arrow no-change left-arrow'></span></span><span class='pdf-symbol'><span class='report-arrow no-change right-arrow'></span></span><span class='volume-percent'> " + Math.abs(percent) + "% </span>";
+              } else {
+                template = "";
+              }
+            %>
+            <div class="pdf-diff-percentage"><%= template %></div>    
+          <% } %>    
+        </div>
+        <div class="glance-chart">
+          <div id="<%=metrics[i].toLowerCase()%>" class="half-container pdf-page"></div>
+        </div>
+  <%  }%>
+<% } %>

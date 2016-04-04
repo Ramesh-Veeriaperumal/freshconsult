@@ -1,0 +1,11 @@
+<!--  Header section -->
+<div rel="sticky" class="cb tickets-title">
+	<h3 class="lead pull-left"><%= t("ticket.edit") %></h3>
+	<div class="btn-toolbar pull-right">
+		<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn" %>
+		<% if privilege?(:delete_ticket) %>
+			<%= link_to t('delete'), @item, :method => :delete, :class => "btn" %>
+		<% end %>
+		<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit" , :"data-loading-text" => "Updating..." %>   
+	</div> 
+</div>

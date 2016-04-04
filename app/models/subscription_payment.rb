@@ -1,8 +1,11 @@
 class SubscriptionPayment < ActiveRecord::Base
   
+  self.primary_key = :id
   serialize :meta_info
   
   include HTTParty
+
+  self.primary_key = :id
 
   NON_RECURRING_PAYMENTS = {
     :day_pass => "Day Pass",

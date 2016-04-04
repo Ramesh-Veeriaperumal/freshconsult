@@ -1,12 +1,12 @@
-<% javascript_tag do -%>
+<%= javascript_tag do -%>
   jQuery('.header').hide();
 <% end %>
 
-<%= link_to "Overview", admin_resque_home_path(), {:class => "uiButton", :id => "overview_button" } %>
+<%= link_to "Overview", home_path(), {:class => "uiButton", :id => "overview_button" } %>
 
-    <%= link_to "Remove jobs in #{@name.humanize}" , destroy_all_admin_resque_failed_path(:name => @name), { :method => :delete, :class => "uiButton" , :id => "resque_btn"} %>
+    <%= link_to "Remove jobs in #{@name.humanize}" , failed_destroy_all_path(:name => @name), { :method => :delete, :class => "uiButton" , :id => "resque_btn"} %>
 
-    <%= link_to "Requeue" , requeue_all_admin_resque_failed_path(:name => @name), { :method => :put, :class => "uiButton" , :id => "resque_btn"} %>
+    <%= link_to "Requeue" , failed_requeue_all_path(:name => @name), { :method => :put, :class => "uiButton" , :id => "resque_btn"} %>
 
 <h1 class="failed_heading">Failed Jobs (<%= @failed_jobs_count %>)</h1>
 
@@ -19,7 +19,7 @@
 	<%= render :partial => "jobs", :object => @failed_in_given_queue %>
 </table>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery('#results').pageless({ 
 	                           url: "<%= url_path(request.path_info.sub('/','')) %>"
 	                          , params: { job_count: function(){ return jQuery("#results").data("jobCount") } }

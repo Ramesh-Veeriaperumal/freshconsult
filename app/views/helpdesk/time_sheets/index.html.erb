@@ -1,19 +1,24 @@
-<div id="timesheetlist">
-	<%= each_or_message "time_entry", @ticket.time_sheets, t(".no_timeentry") %>
-</div>
 <div class="new_timer">
-	<a id="triggerAddTime" href="<%= new_helpdesk_ticket_helpdesk_time_sheet_path(@ticket) %>" title="<%= t('ticket.add_time') %>" 
+	<a  class="btn btn-flat" id="triggerAddTime" href="<%= new_helpdesk_ticket_time_sheet_path(@ticket) %>" title="<%= t('ticket.add_time') %>" 
 		rel="freshdialog" data-target="#new_timeentry" data-width="480"
 		 data-submit-label="<%= t('save')%>" data-submit-loading="<%= t('saving')%>"
 		 ><%= t('ticket.add_time') %></a>
 </div>
-<% javascript_tag do -%>
+<div id="timesheetlist">
+	<%= each_or_message "time_entry", @ticket.time_sheets_with_users, t(".no_timeentry") %>
+</div>
+<%= javascript_tag do -%> 
    jQuery('#timeentry_timer_total').data('staticTotal', false);
    totalTime("#timesheetlist .time", "#timeentry_timer_total");
-   jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();
-   trigger_event("sidebar_loaded",{name: "time_sheets", dom_id: "#TimesheetTab"});
+   jQuery('#timesheetlist .time-tracked-details:first .toggle_timer').show();
+   trigger_event("time_entry_loaded",{name: "time_sheets", dom_id: "#TimesheetTab"});
 <% end %>
-<%= include_cloudfront_js :timesheet %>
+<%= javascript_include_tag :'cdn/timesheet' %>
 <div id="timeentry_apps_add" class="ui-form hide">   
 	<%= render :partial => "integration" if timesheet_integrations_enabled? %>
 </div>
+<script type = "text/javascript">
+  jQuery('body').on('hidden.bs.modal', '.modal', function (e) {
+  	jQuery("#timeentry_apps_add").detach().appendTo("#ticket_details_sidebar").hide();
+	});
+</script>

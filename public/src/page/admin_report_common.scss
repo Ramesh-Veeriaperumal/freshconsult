@@ -1,0 +1,191 @@
+/*
+* Common Styles of Admin & New Reports Landing Pages
+*/
+$helpdesk_color:#8399b2;
+$helpdesk_hover_color:#5279a6;
+
+$HelpdeskProductivity_color:#82A3A9;
+$HelpdeskProductivity_hover_color:#4e8683;
+
+$CustomerPortal_color:#a594b2;
+$CustomerPortal_hover_color:#866aa0;
+
+$hover_boxshadow_start: 0 0 0 0;
+$hover_boxshadow_middle: 0 0 0 7px;
+$hover_boxshadow_final: 0 0 0 5px;
+$animation_timing: .2s;
+
+.section-header{
+	h3.title{
+		border-top:1px solid;
+		span{
+			border-top:3px solid;
+		}
+	}
+}
+
+.icon{	
+	@include clearfix;
+	list-style:none;
+	li{
+		@include float(left);
+		padding: 0 18px;
+		position:relative;
+		@include min-height(130px);
+		a{
+			position:relative;
+			display:block;
+			@include padding(8px 0 2px 0);
+			@include text-align(center); 
+			text-decoration:none;
+			color:#666;
+			width:100px;
+			.img-outer{
+				height: 60px;
+				width: 60px;
+				margin: 0 auto;
+				padding:1px;
+				@include border-radius(50%);
+				margin-bottom:5px; 
+
+			}
+			i{ 
+				@include border-radius(50%); 
+				@include transition(all 0.1s ease);
+				display:block;
+				color:#fff;
+				@include text-shadow(0px 1px 0px rgba(0,0,0,0.2));
+				padding: 12px;
+				min-height: 36px;
+				min-width: 36px;
+			}
+			div.admin-icon-text{
+				@include wrap;
+				font-size:13px;
+				line-height:16px;
+				margin:0 0;
+				padding:1px 3px;
+				position:relative;
+			}
+		}
+	}	
+}
+
+.category1{
+		ul.admin_icons,ul.report_icon{
+			li a 
+			{
+				i{
+					background-color: $helpdesk_color;
+				}
+				&:hover{
+					color:darken($helpdesk_hover_color, 10%);
+					.img-outer{
+						background-color: $helpdesk_hover_color;
+					}
+					i{
+						background-color: $helpdesk_hover_color;
+						@include animation(helpdesk_beat $animation_timing);
+						@include box-shadow( $hover_boxshadow_final $helpdesk_hover_color);
+					}
+				}
+			}
+		}
+		h3.title{
+			border-color: $helpdesk_color !important;
+			span{
+				border-color:$helpdesk_color !important;
+			}
+		}
+}
+
+.category2{
+		ul.admin_icons,ul.report_icon{
+			li a{ 
+				i{
+					background-color: $HelpdeskProductivity_color;
+				}
+				&:hover{
+					color:darken($HelpdeskProductivity_hover_color,10%);
+					.img-outer{
+						background-color: $HelpdeskProductivity_hover_color;
+					}
+					i{
+						background-color: $HelpdeskProductivity_hover_color;
+						@include animation(HelpdeskProductivity_beat $animation_timing); 
+						@include box-shadow($hover_boxshadow_final $HelpdeskProductivity_hover_color);
+					}
+				}
+			}
+		}
+		h3.title{
+			border-color: $HelpdeskProductivity_color !important;
+			span{
+				border-color:$HelpdeskProductivity_color !important;
+			}
+		}
+}
+
+.category3{
+		ul.admin_icons,ul.report_icon{
+			li a{ 
+				i{
+					background-color: $CustomerPortal_color;
+				}
+				&:hover{
+					color:darken($CustomerPortal_hover_color,10%);
+					.img-outer{
+						background-color: $CustomerPortal_hover_color;
+					}
+					i{
+						background-color: $CustomerPortal_hover_color;
+						@include animation(CustomerPortal_beat $animation_timing); 
+						@include box-shadow($hover_boxshadow_final $CustomerPortal_hover_color);
+					}
+				}
+			}
+		}
+		h3.title{
+			border-color: $CustomerPortal_hover_color !important;
+			span{
+				border-color:$CustomerPortal_color !important;
+			}
+		}
+}
+
+@include keyframes(helpdesk_beat) {
+	from {
+		@include box-shadow($hover_boxshadow_start $helpdesk_hover_color);
+	}
+	50% {
+		@include box-shadow($hover_boxshadow_middle $helpdesk_hover_color);
+	}
+	to {
+		@include box-shadow($hover_boxshadow_final $helpdesk_hover_color);
+	}
+}
+
+/* Helpdesk Productivity Animation */
+@include keyframes(HelpdeskProductivity_beat) {
+	from {
+		@include box-shadow($hover_boxshadow_start $HelpdeskProductivity_hover_color);
+	}
+	50% {
+		@include box-shadow($hover_boxshadow_middle $HelpdeskProductivity_hover_color);
+	}
+	to {
+		@include box-shadow($hover_boxshadow_final $HelpdeskProductivity_hover_color);
+	}
+}
+/*  Customer Portal Animation */
+@include keyframes(CustomerPortal_beat) {
+	from {
+		@include box-shadow($hover_boxshadow_start $CustomerPortal_hover_color);
+	}
+	50% {
+		@include box-shadow($hover_boxshadow_middle $CustomerPortal_hover_color);
+	}
+	to {
+		@include box-shadow($hover_boxshadow_final $CustomerPortal_hover_color);
+	}
+}

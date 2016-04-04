@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AgentsController do
+RSpec.describe AgentsController do
   self.use_transactional_fixtures = false
 	
   let(:params) { {:format => "json"} }
@@ -14,6 +14,6 @@ describe AgentsController do
     get :show, params.merge!(:id => user.agent.id)
     user_json = json_response['user'].map{|res| res[0]}
     required_attributes = ["id","avatar_url","name","email", "company_name", "phone", "mobile", "job_title", "user_time_zone", "twitter_id"]
-    required_attributes.all? { |attribute| user_json.include?(attribute)}.should be_true
+    required_attributes.all? { |attribute| user_json.include?(attribute)}.should be true
   end
 end

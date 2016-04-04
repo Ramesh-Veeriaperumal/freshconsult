@@ -1,0 +1,17 @@
+<% multi_product = current_account.features_included?(:multi_product) %>
+<h4 class="heading caption lead">
+	<% if multi_product %>
+	  <%= pjax_link_to t('portals_key'), admin_portal_index_path  %> /
+	  <%= @portal.full_name %> <%= "\"#{t("admin.products.portal.product_label", :product_name => @portal.product.name)}\"" unless @portal.product.blank? %>
+	<% end %>
+  <div class="pull-right hidden-items">
+    <%= pjax_link_to(t('cancel'), multi_product ? admin_portal_index_path : admin_home_index_path , :class => "btn" ) -%>
+    <%= f.submit t("save"), :class => "btn btn-primary" %>
+  </div>
+</h4>
+<%= render(:partial => "customer_portal", :locals => {:f => f, :edit => edit }) unless @portal.main_portal %>
+<%= render :partial => "form", :locals => {:f => f, :portal => @portal } %>
+<div class="button-container pull-right hidden-items">
+  <%= pjax_link_to(t('cancel'), multi_product ? admin_portal_index_path : admin_home_index_path, :class => "btn" ) %>
+  <%= f.submit t("save"), :class => "btn btn-primary" %>
+</div>

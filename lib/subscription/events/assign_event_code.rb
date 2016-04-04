@@ -109,7 +109,7 @@ module Subscription::Events::AssignEventCode
 		end
 
 		def notify_via_email(subscription, old_subscription)
-			SubscriptionNotifier.deliver_subscription_downgraded(subscription, 
+			SubscriptionNotifier.subscription_downgraded(subscription, 
 																							old_subscription) if Rails.env.production?
 		end
 	end

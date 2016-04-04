@@ -7,12 +7,13 @@ class Helpdesk::NotesController < ApplicationController
   include HelpdeskControllerMethods
   include ParserUtil
   include Conversations::Twitter
-  include Facebook::Core::Util
+  include Facebook::TicketActions::Util
   include Helpdesk::Activities
   
   skip_before_filter :build_item, :only => [:create]
   alias :build_note :build_item
   before_filter :build_note_body_attributes, :build_note, :only => [:create]
+  before_filter :verify_permission, :only => [:create, :index, :edit, :update, :destroy, :public_conversation]
 
   before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
@@ -42,18 +43,15 @@ class Helpdesk::NotesController < ApplicationController
         format.xml do
          render :xml => @notes.to_xml(options) 
         end
-    format.json do
-      render :json => @notes.to_json(options)
-    end
-    format.nmobile do
-        response = "["
-        sep = ""
-        @notes.each do |note|
-          response << sep + "#{note.to_mob_json}"
-          sep = ","
+        format.json do
+          render :json => @notes.to_json(options)
         end
-        response << "]"
-        render :json => response
+        format.nmobile do
+          array = []
+          @notes.each do |note|
+            array << note.to_mob_json
+          end
+          render :json => array
         end
       end
     end    
@@ -92,7 +90,7 @@ class Helpdesk::NotesController < ApplicationController
 
       if params[:showing] == 'activities'
         activity_records = @parent.activities.activity_since(params[:since_id])
-        @activities = stacked_activities(activity_records.reverse)
+        @activities = stacked_activities(@parent, activity_records.reverse)
       end
   
       post_persist
@@ -122,6 +120,13 @@ class Helpdesk::NotesController < ApplicationController
 
   def agents_autocomplete
     @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+    respond_to do |format|
+      format.html { render :layout => false }
+    end
+  end
+
+  def public_conversation
+    @notes = @parent.conversation(nil, 5, [:note_old_body]).public
     respond_to do |format|
       format.html { render :layout => false }
     end
@@ -226,6 +231,13 @@ class Helpdesk::NotesController < ApplicationController
 
   def after_restore_url
     :back
+  end
+
+  def verify_permission
+    if (@parent && @parent.is_a?(Helpdesk::Ticket)) || (@item && @item.notable.is_a?(Helpdesk::Ticket))
+      ticket = @parent || @item.notable
+      verify_ticket_permission(ticket)
+    end
   end
 
 end

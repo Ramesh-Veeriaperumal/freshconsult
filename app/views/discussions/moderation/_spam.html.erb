@@ -3,12 +3,12 @@
 %>
 <li id="<%= dom_id(spam) %>" class="pb0">
 	<div class="pull-right actions p5">
-		<%= link_to_remote "",	:url => approve_discussions_moderation_path(spam),
-														:method => :put,
-														:html => {
-																:class => 'spam_action tooltip',
-																:title => t('.approve')
-															} %>
+		<%= link_to "",	approve_discussions_moderation_path(spam),
+			:method => :put,
+			:class => 'spam_action tooltip',
+			:title => t('.approve'),
+			:remote => true
+		%>
 
 	</div>
 

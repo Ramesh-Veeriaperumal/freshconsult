@@ -15,17 +15,24 @@
  <% if current_account.features?(:cascade_dispatchr) %>
   <div class="row-fluid list-page-subheader">
     <span class="vertical-alignment">
-      <img alt="" src="/images/down-arrow-automation.png">
+      <i class="ficon-arrow-down-2 fsize-18"></i>
     </span>
     <span class="vertical-alignment"><%= t('dispatch.cascade_text') %> &nbsp;</span>
-      <% form_for :cascade_dispatcher, @va_rules, :url => { :controller => "va_rules", :action => "toggle_cascade" }, :html => { :id => "dispatcher_cascade" , :class => "vertical-alignment"} do |f| %>
+      <%= form_for @va_rules, :url => { :controller => "va_rules", :action => "toggle_cascade" }, :html => { :id => "dispatcher_cascade" , :class => "vertical-alignment"} do |f| %>
 
-        <%= select "cascade_dispatchr", "cascade", VARule.cascade_dispatchr_option, 
+        <%= select "cascade_dispatchr", "cascade", VaRule.cascade_dispatchr_option, 
                          {:selected => current_account.features?(:cascade_dispatchr) ? 1 : 0 }, { :class => "select2 select2-flat span12", :id => "cascade_dispatchr" } %>
       <% end %>
       <span id="cascade_loader" class="vertical-alignment loading-tiny loading-left"></span>
   </div>
-  <% end %>
+ <% else %>
+  <div class="row-fluid list-page-subheader">
+    <span class="vertical-alignment">
+      <i class="ficon-arrow-down-2 fsize-18"<></i>
+    </span>
+    <span class="vertical-alignment"><%= t('dispatch.info_help').html_safe %></span>
+  </div>
+ <% end %>
 
   <div>
   <%= render :partial => "/shared/reorder_list", :locals => { 
@@ -41,7 +48,7 @@
       <% (@va_rules.active + @va_rules.inactive).each do |va_rule| %>
         <tr id=<%= dom_id(va_rule) %>>
           <td>
-            <% form_for va_rule, :url => activate_deactivate_admin_va_rule_path(va_rule) do |f| %>
+            <%= form_for va_rule, :url => activate_deactivate_admin_va_rule_path(va_rule) do |f| %>
               <%= f.check_box :active, { :class => 'activate'}, true, false %>
             <% end %>
           </td>
@@ -65,7 +72,7 @@
 
 </div>
 
-<% javascript_tag do %>
+<%= javascript_tag do %>
   (function($){
     $('.activate').itoggle({
       checkedLabel: 'On',

@@ -12,6 +12,11 @@
 		visibility: visible;
 	}
 }
+.modal-body{
+	.recording_delete_warning{
+		border-radius: 4px;
+	}
+}
 .fresfone-call-history {
 //	change css
 	overflow: hidden;
@@ -26,6 +31,9 @@
 	}
 	.normal {
 		font-weight: 400;
+	}
+	.call_history_sorting_div > #sorting_dropdown {
+		margin-left: 10px;
 	}
 	.filter-name {
 		color: #666;
@@ -75,24 +83,43 @@
 		}
 	}
 	.assigned_ticket {
-		color: $ch-assigned-ticket;
+		@include margin-right(12px);
 		.spinner{
 		 @include left(12px !important);
 		}
 	}
-	.call_user {
-		@include border-left(1px solid $ch-call-user-border);
-		@include margin-right(-12px);
-		.can-make-calls {
-			height: 30px;
-			width: 30px;
-			margin: 0 auto;
-			background-repeat: no-repeat;
-			cursor:pointer;
+	.btn-round{
+		[class*="#{$font-class}"]{
+			position: relative;
+			top: 10px;
 			display: block;
-			text-indent: -9999px;
+		}
+		border-radius: 50%;
+		cursor: pointer;
+		@include size(36px, 36px);
+		padding: 0;
+		text-align: center;
+		box-shadow: none;
+		background-color: #fff;
+		border: 1px solid #ddd;
+		&:hover{
+			background-color:#f9f9f9;
+			border-color:#aaa;
+		}
+	}
+	.call_user {
+		@extend .btn-round;
+		.restrict-call,.can-make-calls {
+			margin: 0 auto;
+			@include size(30px, 30px);
+			display: block;
 			direction: ltr;
-			padding: 0;
+			padding-top: 3px;
+			font-size: 20px;
+			line-height:30px;
+		}
+		.restrict-call{
+			cursor: default;
 		}
 	}
 	.preview_pic img,	.callhistory_helpdesk_avatar {
@@ -108,12 +135,16 @@
 	}
 	.blacklist-toggle {
 		position: absolute;
-		top: 20px;
-	 	@include left(8px);
+		top: 31px;
+	 	@include left(12px);
 		z-index: 3;
-		width: 16px;
-		height: 16px;
 		display: block;
+		background-radius: 1;
+		border-radius: 8px;
+		width: 14px;
+		height: 15px;
+		padding-left: 2px;
+		padding-top: 1px;
 	}
 	.blacklist-toggle.blacklist {
 		display: none;
@@ -124,13 +155,57 @@
 		margin-top: 4px;
 		text-transform: capitalize;
 	}
-	.ui360 {
-		border: 1px solid $ch-ui360-border;
+	.curved_border{
+		height:40px;
+		width:100px;
+		border:1px solid $ch-ui360-border;
 		@include border-radius(20px);
-		width: 100px;
-		background-color: $ch-ui360-background;
+		.spinner{
+			padding-top:19px;
+			@include padding-left(1px);
+		}
 	}
-	.playing {
+	.ui360 {
+		@extend .curved_border;
+		background-color: $ch-ui360-background;
+		float:left;
+		cursor:pointer;
+		&:hover{
+			border-color:#aaaaaa;
+			background-color:#eee;
+		}
+	}
+	.recording_delete{
+		position:relative;
+		top:10px;
+		float:right;
+	}
+	.show_recording_delete{
+		height:43px;
+		width:100%;
+		&:hover .recording_delete{
+			display:block;
+		}
+	}
+	.recording_deleted{
+		@extend .curved_border;
+		background-repeat: repeat;
+		span{
+			font-size:13px;
+			color:#999;
+			@include text-shadow(0px 2px 1px #fff);	
+			top:4px;
+			position:relative;
+		}		
+		&:before{
+			font-size:25px;
+			top : 10px;
+			position: relative;
+			color:#ccc;
+			@include right(7px);
+		}
+	}
+	.playing, .playing:hover {
 		background-color: $ch-ui360-playing-background;
 		border-color: $ch-ui360-playing-border;
 		@include box-shadow(inset -1px 0px 7px -1px $ch-ui360-playing-shadow);
@@ -140,6 +215,7 @@
 		display: block;
 		font-weight: 700;
 		@include text-align(center);
+		padding-right:15px;
 		color: $ch-child-call-text;
 	}
 	.no_call_history {
@@ -149,6 +225,9 @@
 		color: $ch-no-call-log-text;
 		font-weight: 200;
 	}
+	.ficon-abandoned-call {
+    	color: #e3acac;
+	}
 	.call_direction {
 		width:40px;
 		height:24px;
@@ -156,13 +235,11 @@
 		background-repeat: no-repeat;
 		cursor: default;
 	}
-	.create_freshfone_ticket,
-	.converted_ticket {
-		@include padding(6px 0 6px 30px);
-		background-repeat: no-repeat;
-		font-weight: 500;
-		@if $rtl{
-			background-position-x: 30px;
+	.converted_ticket{
+		background-color:#f9f9f9;
+		border-color:#eee;
+		span{
+			@include size(100%,100%);
 		}
 	}
 	.transfer_call {
@@ -226,6 +303,40 @@
 	}
 	.list-page-body{
 		position: relative;
+	}
+
+	.call_history_export_div > .dropdown-menu {
+		min-width: 75px;
+		width : auto;
+	}
+
+	.call_history_export_div {
+		padding: 0 10px;
+		color: #000;
+	}
+	.export_help_text {
+	    display: inline-block;
+	    position: relative;
+	    left: 65px;
+	    top: 18px;
+	    color: #aaa;
+	    font-size: 12px;
+	}
+
+	.call_history_export_div * span {
+		color: #000;
+	}
+
+	.call_history_export_div * .caret {
+		border-top: 4px solid #000;
+	}	
+
+	.disabled > #export_dropdown > span  {
+		color: #888;
+	}
+
+	.disabled > #export_dropdown > .caret {
+		border-top: 4px solid #888;
 	}
 
 	.filter_title {
@@ -349,7 +460,7 @@
 	padding: 5px 0;
 }
 .filter-container {
-	width: 85%;
+	width: 84%;
 }
 
 .freshfone_filter_sorting {
@@ -370,4 +481,20 @@
 .list-page-freshfone-numbers .freshfone-lead {
 	margin-bottom: 3px !important;
 	font-weight: 400;
+}
+.select2-results .select2-result-label{
+	margin: 5px;
+}
+.ff_call_cost {
+	cursor: pointer;
+}
+.freshfone-cost-splitup {
+	line-height: 20px;
+	max-width: 180px;
+	.pulse_rate { padding-left: 6px; }
+	.no_of_unit { padding-right: 6px; }
+	.total_duration_text {
+		color: #aaa;
+		font-size: 12px;
+	}
 }

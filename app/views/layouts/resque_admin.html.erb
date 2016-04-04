@@ -4,9 +4,9 @@
 	<!-- Adding meta tag for CSRF token -->
 	<%= csrf_meta_tag %>
 	<!-- End meta tag for CSRF token -->
-	<%= include_cloudfront_js :defaults %>
-	<%= include_cloudfront_js :frameworks %>
-	<%= include_cloudfront_js :workspace %>
+	<%= javascript_include_tag :'cdn/defaults' %>
+	<%= javascript_include_tag :'cdn/frameworks' %>
+	<%= javascript_include_tag :'cdn/workspace' %>
 	<body>
 		<%= yield %>
 		<%= render :partial => "layouts/shared/scripts" %>

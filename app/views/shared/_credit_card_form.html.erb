@@ -1,0 +1,55 @@
+<%
+if @subscription.trial? or @subscription.trial_expired?
+  status = "true"
+else
+  status = "false"
+end
+%>
+
+<div id ="iframe-div">
+    <div id ="process-request" class = "cb-process-request hide">
+        <p> <span class ="sloading mt100"><span class="pl20" style="">Please wait...</span></span> </p>
+</div>
+
+<script type="text/javascript" src="https://js.chargebee.com/v1/chargebee.js">            
+</script>
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        var pId = "<%=@hosted_page.id%>";
+        var pUrl = "<%=@hosted_page.url%>";
+        subscribeResponseEmbedHandler(pId, pUrl);
+    });           
+
+    function subscribeResponseEmbedHandler(pageId, cardUrl) {
+         var hostedPageId = pageId;
+         var iframeContainer = jQuery('#iframe-div');
+         var x = ChargeBee.embed(cardUrl, "<%=@subscription.currency_billing_site%>").load({
+             addIframe: function(iframe) {
+                iframeContainer.append(iframe);
+             },
+             onLoad: function(iframe, width, height) {
+                 var style= 'width:100%;';
+                 style = style + 'height:' + height + 'px;';
+                 iframe.setAttribute('style', style);
+             },
+             onSuccess: function(iframe) {
+              jQuery("#process-request").removeClass("hide");
+              redirectToSubscriptionTab();
+              jQuery.post( "<%=billing_subscription_path%>",{charge_now: "<%=status%>"}, function( data ) {
+                jQuery("#process-request").addClass("hide");
+                window.location.assign("<%=subscription_path%>");
+              });
+             },
+             onCancel: function(iframe) {
+              window.location.assign("<%=subscription_path%>");
+             }
+         });
+    }
+
+    function redirectToSubscriptionTab()
+    {
+        setTimeout(function(){
+            window.location.assign("<%=subscription_path%>");
+        },15000);
+    }
+</script>

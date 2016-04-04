@@ -1,4 +1,4 @@
-page << "jQuery('#recent_calls').removeClass('loading-small sloading');
+page << "jQuery('#freshfone_dialpad').removeClass('loading-small sloading');
 jQuery('#recent_calls')
 .html('#{escape_javascript(render :partial => 'recent_calls_body', :locals => {:calls => @calls}) }');
 setRecentCallDuration();"

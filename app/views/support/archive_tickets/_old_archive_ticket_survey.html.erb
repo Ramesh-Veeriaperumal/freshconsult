@@ -1,0 +1,35 @@
+<% if archived_ticket?(@ticket) and @ticket.survey_results.present? %>
+  <section class="widget" id="survey-sidebar-details">
+      <h3 class="lead"><%= t('support.tickets.ticket_survey.title') %></h3>
+      <div class="survey-form">
+      <% 
+        form_display = ""
+        unless @ticket.survey_results.blank?  
+          form_display = "hide"
+          sresult = @ticket.survey_results.last
+          feedback = ""
+          feedback =  sresult.survey_remark.feedback.body unless sresult.survey_remark.blank?
+          rating_class = "neutral"
+          rating_msg =  current_account.survey.neutral_text
+          if sresult.happy?
+            rating_class = "happy"
+            rating_msg =  current_account.survey.happy_text
+          elsif sresult.unhappy?
+            rating_class = "unhappy"                              
+            rating_msg =  current_account.survey.unhappy_text
+          end
+      %>
+        <div id="survey-information">   
+            <span class="lead-small">
+                <%= t("support.tickets.ticket_survey.rating_sub_title") %>
+                <i class="icon-smiley-<%=rating_class%>-small"></i>
+                <%= rating_msg %>
+            </span>
+            <div class="help-text">
+                <%= t('support.tickets.ticket_survey.rated_on', :rated_on => formated_date(sresult.created_at, {:format => :short_day_with_week}))%>
+            </div>
+        </div>
+      <% end %>
+
+  <hr class="content-divider" />
+<% end %>

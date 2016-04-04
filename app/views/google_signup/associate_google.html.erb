@@ -1,6 +1,6 @@
 <div class="top_banner">
 	<div class="top-banner-content">
-		<img src="/images/freshdesklogo.png" alt="Freshdesk" width="204px" height="50px"/>
+		<img src="/images/misc/freshdesklogo.png" alt="Freshdesk" width="204px" height="50px"/>
 		<span class="marketplace-link">
 			<%= t('.link_your_helpdesk') %>
 		</span>
@@ -13,7 +13,7 @@
 	<div class="tab-content">
 	  <div class="tab-pane active" id="new-account">
 	  	<div class="ui-form signup-form" id="signup-form">
-	  		<% form_for :account, @account, :url => {:action=> :associate_local_to_google} , :html => { :method => "put", :class => "form-horizontal" } do |f| %>
+	  		<%= form_for @account, :url => {:action=> :associate_local_to_google} , :html => { :method => "put", :class => "form-horizontal" }, :object_name => :account  do |f| %>
 					<%= f.error_messages %>
 					<%= show_flash %>
 					<input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />

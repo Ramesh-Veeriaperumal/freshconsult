@@ -4,7 +4,7 @@ module Solution::Constants
     [ :draft,     "solutions.status.draft",        1 ], 
     [ :published, "solutions.status.published",    2 ]
   ]
-
+  HITS_CACHE_THRESHOLD = 100
   STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
   STATUS_NAMES_BY_KEY = Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
   STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
@@ -43,5 +43,18 @@ module Solution::Constants
   VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
   VISIBILITY_NAMES_BY_KEY = Hash[*VISIBILITY.map { |i| [i[2], i[1]] }.flatten] 
   VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten] 
+
+  API_OPTIONS = {
+    :except  =>  [
+								    :account_id, :import_id, :available, :draft_present, :published, 
+										:outdated, :solution_article_id, :language_id, :parent_id, :bool_01, 
+										:datetime_01, :delta, :int_01, :int_02, :int_03, :string_01, :string_02
+								  ],
+    :include =>  {:tags => { :only => [:name] },
+                  :folder => { :except => [:account_id,:import_id],
+                               :include => { :customer_folders => { :only => [:customer_id] } }
+                          }
+                  }
+  }
 
 end

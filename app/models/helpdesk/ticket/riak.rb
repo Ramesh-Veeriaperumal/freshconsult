@@ -13,7 +13,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       Helpdesk::Riak::Ticket::Body.store_in_riak(key,value)
     rescue Exception => e
       # push into redis incase where the saving of ticket is failed in riak
-      $redis_tickets.rpush(Redis::RedisKeys::RIAK_FAILED_TICKET_CREATION,"#{self.account_id}/#{self.id}")
+      $redis_tickets.perform_redis_op("rpush", Redis::RedisKeys::RIAK_FAILED_TICKET_CREATION,"#{self.account_id}/#{self.id}")
       NewRelic::Agent.notice_error(e,{:description => "error occured while saving ticket into riak"})
     end
   end
@@ -40,7 +40,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       $ticket_body.delete("#{self.account_id}/#{self.id}")
     rescue Exception => e
       # pushing into redis incase where riak ticket deltion is failed 
-      $redis_tickets.rpush(Redis::RedisKeys::RIAK_FAILED_TICKET_DELETION,"#{self.account_id}/#{self.id}")
+      $redis_tickets.perform_redis_op("rpush", Redis::RedisKeys::RIAK_FAILED_TICKET_DELETION,"#{self.account_id}/#{self.id}")
       NewRelic::Agent.notice_error(e,{:description => "error occured while deleting ticket from riak"})
     end
   end

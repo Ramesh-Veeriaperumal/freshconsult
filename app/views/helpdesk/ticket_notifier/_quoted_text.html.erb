@@ -33,7 +33,7 @@ else
   end
 
   unless quote_added
-    prev_notes.reverse!
+    prev_notes = prev_notes.reverse
     last_reply_content = ""
     prev_notes.each do |note|
       last_reply_content = "

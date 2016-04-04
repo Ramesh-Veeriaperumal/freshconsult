@@ -1,9 +1,8 @@
 <%
     date_range = date_range_val((Time.zone.now.ago 30.day),Time.zone.now)
 %>
-<script src="/javascripts/report/date.js" type="text/javascript"></script>
-<script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
-<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
+<%= javascript_include_tag :'cdn/report_date'  %>
+<%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %>  
  <div class="sidepanel"> 
 <%        
 
@@ -14,7 +13,7 @@
         end        
 
 %>
-    <% form_for(details_link, { :action => details_link, :method => :post, :html => {:id => 'date_filter'}, :loading => "jQuery('#report_list').html('<div class=\"sloading loading-small loading-block\"></div>');" }) do %>
+    <%= form_for(details_link, { :action => details_link, :method => :post, :html => {:id => 'date_filter'}, :loading => "jQuery('#report_list').html('<div class=\"sloading loading-small loading-block\"></div>');" }) do %>
     <ul class="">
            <input type="hidden" name="category" value="<%=params[:category]%>">
            <input type="hidden" name="rating" value="<%=params[:rating]%>">
@@ -34,7 +33,7 @@
     <%end%> 
  </div>     
 
-<% javascript_tag do %>     
+<%= javascript_tag do %>     
     jQuery(document).ready(function() {
         jQuery("#date_range").daterangepicker({
         earliestDate: Date.parse('1/1/2009'),

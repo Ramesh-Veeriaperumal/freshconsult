@@ -2,13 +2,13 @@ module Gamification
 	module Quests
 		class ProcessTicketQuests 
 			extend Resque::AroundPerform
-			@queue = "gamificationQueue"
+			@queue = "gamification_ticket_quests"
 
 			def self.perform(args)
 				args.symbolize_keys!
 				id, account_id = args[:id], args[:account_id]
 				ticket = Helpdesk::Ticket.find_by_id_and_account_id(id, account_id)
-				return if ticket.deleted or ticket.spam
+				return if ticket.blank? or ticket.deleted or ticket.spam
 				args.key?(:rollback) ? rollback_ticket_quests(ticket, args[:resolved_time_was]) : evaluate_ticket_quests(ticket)
 			end
 
@@ -35,9 +35,7 @@ module Gamification
 									helpdesk_schema_less_tickets.ticket_id
 		              inner join helpdesk_ticket_states on helpdesk_tickets.id = 
 		              helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = 
-		              helpdesk_ticket_states.account_id inner join users on 
-		              helpdesk_tickets.requester_id = users.id  and users.account_id = 
-		              helpdesk_tickets.account_id  left join customers on users.customer_id = 
+		              helpdesk_ticket_states.account_id left join customers on helpdesk_tickets.owner_id = 
 		              customers.id inner join flexifields on helpdesk_tickets.id = 
 		              flexifields.flexifield_set_id  and helpdesk_tickets.account_id = 
 		              flexifields.account_id and flexifields.flexifield_set_type = 'Helpdesk::Ticket'),

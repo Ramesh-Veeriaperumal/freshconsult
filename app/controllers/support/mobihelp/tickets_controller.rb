@@ -1,12 +1,14 @@
 class Support::Mobihelp::TicketsController < SupportController
 
   include Helpdesk::TicketActions
+  include Mobihelp::MobihelpHelperMethods
 
   before_filter :mobihelp_user_login
+  before_filter :validate_user
   before_filter :require_user_login
   before_filter :build_tickets, :only => [:index]
-  before_filter :load_ticket, :only => [:show,:add_note,:close]
-  before_filter :check_ticket_permissions, :only => [:show,:add_note,:close]
+  before_filter :load_ticket, :only => [:show,:notes,:close]
+  before_filter :check_ticket_permissions, :only => [:show,:notes,:close]
   before_filter :pre_process_mobihelp_params, :only => [:create]
   skip_before_filter :check_day_pass_usage
 
@@ -19,39 +21,35 @@ class Support::Mobihelp::TicketsController < SupportController
     else
       logger.debug "Ticket Errors is #{@ticket.errors.inspect}"
     end
-    respond_to do |format|
-      format.json {
-        render :json => {:success => status, :ticket => ( status ? @ticket : {})}
-      }
-    end
+    render_json({:success => status, :ticket => ( status ? @ticket : {})})
   end
 
   def show
-    respond_to do |format|
-      format.json {
-        render :json => @ticket
-      }
+    if current_account.features_included?(:limit_mobihelp_results)
+      render_json(@ticket.to_mobihelp_json())
+    else
+      render_json(@ticket)
     end
   end
 
   def index
-    respond_to do |format|
-      format.json {
-        render :json => @tickets
-      }
+    if current_account.features_included?(:limit_mobihelp_results)
+      ticket_json_list = []
+      @tickets.each do |ticket|
+        ticket_json_list << ticket.to_mobihelp_json()
+      end
+      render_json("[#{ticket_json_list.join(",")}]")
+    else
+      render_json(@tickets.to_json())
     end
   end
 
   def close
     status = @ticket.update_attribute(:status , Helpdesk::Ticketfields::TicketStatus::CLOSED)
-    respond_to do |format|
-      format.json {
-        render :json => { :success => status }
-      }
-    end
+    render_json({ :success => status })
   end
 
-  def add_note
+  def notes
     @note = @ticket.notes.build({
       "incoming" => true,
       "private" => false,
@@ -63,12 +61,9 @@ class Support::Mobihelp::TicketsController < SupportController
       attachment_content = params[:helpdesk_note][:attachments]
       @note.attachments.build(:content => attachment_content[:resource], :description => attachment_content[:description])
     end
+
     success = @note.save_note
-    respond_to do |format|
-      format.json {
-        render :json => { :success => success, :item => @note }.to_json
-      }
-    end
+    render_json({ :success => success, :item => @note })
   end
 
   def cache_enabled?
@@ -79,7 +74,11 @@ class Support::Mobihelp::TicketsController < SupportController
     def build_tickets
       if params[:device_uuid] #filter by device id
         @assoc_device = current_user.mobihelp_devices.find_by_device_uuid(params[:device_uuid])
-        @tickets = @assoc_device.tickets
+        @tickets = if current_account.features_included?(:limit_mobihelp_results)
+          @assoc_device.tickets.includes(:mobihelp_notes =>  [:note_old_body])
+        else
+          @assoc_device.tickets.includes(:notes =>  [:note_old_body, :attachments,:schema_less_note])
+        end
       else # fallback to mobihelp filter
         @tickets = current_user.tickets.find_by_source( TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobihelp] )
       end
@@ -91,7 +90,7 @@ class Support::Mobihelp::TicketsController < SupportController
 
       @assoc_device = current_user.mobihelp_devices.find_by_device_uuid(params[:helpdesk_ticket][:external_id])
       unless @assoc_device
-        render :json => unregistered_device
+        render_json(unregistered_device)
       end
       if params[:helpdesk_ticket][:mobihelp_ticket_info_attributes]  && @assoc_device
         params[:helpdesk_ticket][:mobihelp_ticket_info_attributes][:account_id] = current_account.id
@@ -120,22 +119,22 @@ class Support::Mobihelp::TicketsController < SupportController
     end
 
     def load_ticket
-      @ticket = @item = Helpdesk::Ticket.find_by_param(params[:id], current_account)
+      @ticket = @item = if current_account.features_included?(:limit_mobihelp_results)
+        Helpdesk::Ticket.includes(:mobihelp_notes =>  [:note_old_body])
+          .where(:display_id => params[:id], :account_id => current_account.id ).first
+      else
+        Helpdesk::Ticket.includes(:notes =>  [:note_old_body, :attachments,:schema_less_note])
+          .where(:display_id => params[:id], :account_id => current_account.id ).first
+      end
     end
 
     def check_ticket_permissions
-      render :json => { :access_denied => true } unless @ticket and current_user.has_ticket_permission? @ticket
+      render_json({ :access_denied => true }) unless @ticket and current_user.has_customer_ticket_permission? @ticket
     end
 
-    def mobihelp_user_login
-      unless current_user # override validated user check for mobihelp tickets
-        user = User.find_by_single_access_token(params['k']) #ignore active / check
-        if user.nil? or user.deleted? or user.blocked?
-          render :json => {:success => false, :status_code => Mobihelp::MobihelpHelperMethods::MOBIHELP_STATUS_CODE_BY_NAME[:MHC_USER_DELETED]}
-        else
-          @current_user = user
-          User.current = @current_user
-        end
+    def validate_user
+      unless valid_user?
+        render_json({:success => false, :status_code => MOBIHELP_STATUS_CODE_BY_NAME[:MHC_USER_DELETED]})
       end
     end
 end

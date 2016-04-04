@@ -1,14 +1,15 @@
 require 'spec_helper'
-include MemcacheKeys
+RSpec.configure do |c|
+  c.include MemcacheKeys
+end
 
-describe Integrations::ApplicationsController do
-  integrate_views
+RSpec.describe Integrations::ApplicationsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
     @agent = add_test_agent(@account)
-    @new_application = Factory.build(:application, 
+    @new_application = FactoryGirl.build(:application, 
                                     :name => "Test Application",
                                     :listing_order => 24,
                                     :options => {
@@ -22,17 +23,17 @@ describe Integrations::ApplicationsController do
                                                   },
                                     :application_type => "freshplug",
                                     :account_id => @account.id)
-    @new_application.save(false)
-    @widget = Factory.build(:widget, :application_id => @new_application.id)
-    @widget.save(false)
-    @new_installed_app = Factory.build(:installed_application, :application_id => @new_application.id,
+    @new_application.save(validate: false)
+    @widget = FactoryGirl.build(:widget, :application_id => @new_application.id)
+    @widget.save(:validate => false)
+    @new_installed_app = FactoryGirl.build(:installed_application, :application_id => @new_application.id,
                                               :account_id => @account.id,
                                               :configs => { :inputs => { "refresh_token" => "7977697105566556112", 
                                                             "oauth_token" => "61837911-03ab-485a-9903-fb6dbbbf7b46", 
                                                             "uid" => "roshiniphilip@gmail.com"}
                                                           }
                                               )
-    @new_installed_app.save(false)
+    @new_installed_app.save(validate: false)
   end
 
   before(:each) do
@@ -41,7 +42,7 @@ describe Integrations::ApplicationsController do
 
   it "renders the application index template" do
     get 'index'
-    response.should render_template "integrations/applications/index.html.erb"
+    response.should render_template "integrations/applications/index"
   end
 
   it "should install surveymonkey application and redirect to edit(configurable)" do
@@ -49,7 +50,7 @@ describe Integrations::ApplicationsController do
     set_redis_key(provider, surveymonkey_params(provider))
     post 'oauth_install', :id => provider
     get_redis_key(provider).should be_nil
-    installed_app = Integrations::InstalledApplication.with_name(provider)
+    installed_app = Integrations::InstalledApplication.with_name(provider).first
     installed_app.should_not be_nil
     response.should redirect_to edit_integrations_installed_application_path(installed_app)
   end
@@ -59,8 +60,7 @@ describe Integrations::ApplicationsController do
     set_redis_key(provider, slack_params(provider))
     post 'oauth_install', :id => provider
     get_redis_key(provider).should be_nil
-
-    installed_app = Integrations::InstalledApplication.with_name(provider)
+    installed_app = Integrations::InstalledApplication.with_name(provider).first
     installed_app.should_not be_nil
     response.should redirect_to edit_integrations_installed_application_path(installed_app)
   end
@@ -84,7 +84,7 @@ describe Integrations::ApplicationsController do
     post 'oauth_install', :id => provider
     get_redis_key(provider).should_not be_nil
     Integrations::InstalledApplication.with_name(provider).should_not be_nil
-    response.should render_template "integrations/applications/_salesforce_fields.html.erb"
+    response.should render_template "integrations/applications/salesforce_fields"
   end
 
   it "should install salesforce application using oauth token from redis" do
@@ -103,54 +103,18 @@ describe Integrations::ApplicationsController do
     set_redis_key(provider, salesforce_params(provider))
     post 'oauth_install', :id => provider, :install => true, :contacts => "Account_Id"
     response.should redirect_to "/integrations/applications"
-    error_flash = {:error=>"Error in enabling the integration."}
-    response.flash.should eql error_flash
+    error_flash = {:error=>"Error while installing the app."}
+    request.flash[:error].should eql error_flash[:error]
   end
 
-  it "renders the new application template" do
-    get 'new'
-    response.should render_template "integrations/applications/new.html.erb"
+  it "should install salesforce application using oauth" do
+    provider = "salesforce"
+    set_redis_key(provider, salesforce_params(provider))
+    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(:text => '{"fields":[{"name":"name","label":"label"}]}')
+    post 'oauth_install', :id => provider
+    get_redis_key(provider).should_not be_nil
+    Integrations::InstalledApplication.with_name(provider).should_not be_nil
+    response.should render_template("integrations/applications/salesforce_fields")
   end
-
-  it "should create a new application" do
-    now = (Time.now.to_f*1000).to_i
-    post :create, :application => {:name => "New application #{now}",
-                                   :display_name => "New application #{now}",
-                                   :description => "New application subject #{now}",
-                                   :listing_order => 1,
-                                   :options => {:display_in_pages => ["helpdesk_tickets_show_page_side_bar"]},
-                                   :account_id => @account.id,
-                                   :application_type => "freshplug"
-                                  }
-    response.should redirect_to "/integrations/applications"
-  end
-
-  it "renders the edit application template" do
-    get 'edit', :id => @new_application.id
-    response.should render_template "integrations/applications/edit.html.erb"
-  end
-
-  it "should update a new application" do
-    now = (Time.now.to_f*1000).to_i
-    put :update, {:id => @new_application.id , :application => {:display_name => "New application #{now}",
-                                               :description => "New application subject #{now}",
-                                               :view_pages => ["helpdesk_tickets_show_page_side_bar"],
-                                               :script => "<script></script>" }
-                }
-    app = Integrations::Application.find_by_display_name("New application #{now}")
-    app.should_not be_nil
-    response.should redirect_to "/integrations/applications"
-  end
-
-  it "should delete an installed aplication" do
-    delete :destroy, :id => @new_application.id
-    app = Integrations::Application.find_by_id(@new_application.id)
-    app.should be_nil
-    response.should redirect_to "/integrations/applications"
-  end
-
-  it "renders custom widget preview partial" do
-    get 'custom_widget_preview'
-    response.should render_template("integrations/widgets/_custom_widget_preview.rjs")
-  end
+  
 end

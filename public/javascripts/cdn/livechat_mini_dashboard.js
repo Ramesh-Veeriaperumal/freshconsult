@@ -1,0 +1,1 @@
+//=require livechat/dashboard/miniDashboard

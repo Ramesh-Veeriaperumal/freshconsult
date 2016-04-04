@@ -1,16 +1,12 @@
 class Admin::GettingStartedController < Admin::AdminController
   
-  before_filter :build_twitter_item, :twitter_wrapper, :set_session_state ,:fb_client
+  before_filter :set_session_state ,:fb_client
 
   helper Admin::GettingStartedHelper
   
   VALID_COLOR_REGEX = /^#(?:[0-9a-fA-F]{3}){1,2}$/
 
-  def index
-    request_token = @wrapper.request_tokens   
-    @auth_redirect_url = request_token.authorize_url
-    session[:request_token] = request_token.token
-    session[:request_secret] = request_token.secret    
+  def index  
     @email_configs = current_account.all_email_configs
     @email_config = current_account.primary_email_config
     @agent = current_account.agents.new       
@@ -25,7 +21,7 @@ class Admin::GettingStartedController < Admin::AdminController
   
   def delete_logo
   	 current_account.main_portal.logo.destroy
-     current_account.main_portal.touch
+     current_account.main_portal.save
  	   render :text => "success"
   end
 
@@ -37,7 +33,7 @@ class Admin::GettingStartedController < Admin::AdminController
     end
 
     current_portal.update_attributes(params[:account][:main_portal_attributes]) if @error.blank?
-    current_portal.touch
+    current_portal.save
     redirect_params = {:activeSlide => "3"}
     redirect_params[:error] = @error unless @error.blank?
     redirect_to admin_getting_started_index_path(redirect_params) if params["rebrand_from_ie"]=="true"
@@ -54,16 +50,6 @@ class Admin::GettingStartedController < Admin::AdminController
     def valid_color_code(color)      
       (color =~ VALID_COLOR_REGEX) ? true : false
     end
-
-    def twitter_wrapper
-      @wrapper = TwitterWrapper.new @twitter_item, {:current_account => current_account,
-                                             :callback_url => authdone_social_twitters_url }
-    end
-  
-    def build_twitter_item
-      @twitter_item = current_account.twitter_handles.build
-    end
-    
     
     def fb_client   
       @fb_client = Facebook::Oauth::FbClient.new(nil, social_facebook_index_url) 

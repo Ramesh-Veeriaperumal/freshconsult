@@ -1,0 +1,10 @@
+<%= '<div class="conversation_thread" id="all_notes" rel="activity_container">'.html_safe unless params[:since_id].present? or params[:before_id].present? %>
+  <% unless @ticket_notes.blank? %>
+    <%= render :partial => "helpdesk/archive_tickets/show/note", :formats => [:html], :collection => @ticket_notes %>
+  <% end %>
+<%= '</div>'.html_safe unless params[:since_id].present? or params[:before_id].present? %>
+<% unless params[:since_id].present? or params[:before_id].present? %>
+<script type="text/javascript">
+  TICKET_DETAILS_DATA['total_notes'] = "<%= @ticket_notes_total %>";
+</script>
+<% end %>

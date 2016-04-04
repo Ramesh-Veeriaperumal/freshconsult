@@ -9,7 +9,7 @@ body {
   color: $textColor;
   background-color: $bg_color;
   @if $pagePattern {
-    background-image: inline-image('portal/bgnoise_lg.png');
+    background-image: inline-image('/portal/bgnoise_lg.png');
   }
 }
 

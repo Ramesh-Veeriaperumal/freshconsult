@@ -1,6 +1,6 @@
 <div>
 	<div><strong><%= t('.marked') %></strong></div>
-	<div>
+	<div id='restore_contact_<%= @post.id %>'>
 		<%= t('.contact_deleted') %>
 		<%= link_to_remote t('.restore_contact'), 
 					:url => restore_contact_path(@post.user_id),

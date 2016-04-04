@@ -23,7 +23,7 @@ describe Helpdesk::MergeTicketsController do
 
   it "should merge tickets with private notes and time_sheets" do
     # Creating a time sheet for @source_ticket1
-    time_sheet = Factory.build(:time_sheet, :user_id => @agent.id,
+    time_sheet = FactoryGirl.build(:time_sheet, :user_id => @agent.id,
                                             :workable_id => @source_ticket1.id,
                                             :account_id => @account.id,
                                             :billable => 1,
@@ -41,7 +41,7 @@ describe Helpdesk::MergeTicketsController do
                             :format => 'json'
                           }
     Resque.inline = false
-    json_response["result"].should be_true
+    json_response["result"].should be true
     json_response["count"].should be_eql(2)
     end
 
@@ -58,7 +58,7 @@ describe Helpdesk::MergeTicketsController do
                             :format => 'json'
                           }
     Resque.inline = false                      
-    json_response["result"].should be_true
+    json_response["result"].should be true
     json_response["count"].should be_eql(2)
   end
 
@@ -75,7 +75,7 @@ describe Helpdesk::MergeTicketsController do
                             :format => 'json'
                           }
     Resque.inline = false                      
-    json_response["result"].should be_true
+    json_response["result"].should be true
     json_response["count"].should be_eql(2)
   end
 
@@ -99,16 +99,16 @@ describe Helpdesk::MergeTicketsController do
                             :format => 'json'
                           }
     Resque.inline = false
-    json_response["result"].should be_true
+    json_response["result"].should be true
     json_response["count"].should be_eql(2)
   end
 
   it "should merge tickets with header_info" do
     ids = ["newreply@gamil.com","replynote@gamil.com"]
     @target_ticket.header_info = {:message_ids => [ids[0]]}
-    @target_ticket.save(false)
+    @target_ticket.save(validate: false)
     @source_ticket2.header_info = {:message_ids => [ids[1]]}
-    @source_ticket2.save(false)
+    @source_ticket2.save(validate: false)
 
     # Before merge
     @target_ticket.schema_less_ticket.text_tc01[:message_ids].should_not include(ids[1])
@@ -126,7 +126,7 @@ describe Helpdesk::MergeTicketsController do
                           }
     Resque.inline = false
 
-    json_response["result"].should be_true
+    json_response["result"].should be true
     json_response["count"].should be_eql(2)
   end
 end

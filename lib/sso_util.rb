@@ -5,8 +5,10 @@ module SsoUtil
   SAML_NAME_ID_FORMAT="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
   SSO_ALLOWED_IN_SECS = 1800
   SSO_CLOCK_DRIFT = 60 # No of secs the response time can be before the server time .. Keep this very low for security
-  FIRST_NAME_STRS = ["givenname" , "FirstName", "User.FirstName", "username"].map &:to_sym  # username will always return something
-  LAST_NAME_STRS = ["surname", "LastName", "User.LastName"].map &:to_sym
+  FIRST_NAME_STRS = ["givenname" , "FirstName", "User.FirstName", "username" ,
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"].map &:to_sym
+  LAST_NAME_STRS = ["surname", "LastName", "User.LastName",
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"].map &:to_sym
   PHONE_NO_STRS = [:phone]
   COMPANY_NAME_STRS = [:organization, :company]
 
@@ -43,26 +45,33 @@ module SsoUtil
   def get_saml_settings(acc)
     settings = OneLogin::RubySaml::Settings.new
 
-    settings.issuer = request.host
+    if current_account.features_included?(:saml_old_issuer)#backward compatibility
+      settings.issuer = request.host
+    else
+      settings.issuer = "#{request.protocol}#{request.host}"
+    end
+
     port = Rails.env.development? ? ":3000" : ""
     settings.assertion_consumer_service_url = "#{request.protocol}#{request.host}#{port}/login/saml"
 
     settings.idp_cert_fingerprint = acc.sso_options[:saml_cert_fingerprint]
-    settings.idp_sso_target_url = acc.sso_options[:saml_login_url]
+    settings.idp_sso_target_url = acc.sso_login_url
+    settings.idp_slo_target_url = acc.sso_logout_url unless acc.sso_logout_url.blank?
     settings.name_identifier_format = SAML_NAME_ID_FORMAT
     settings
   end
 
 
-  def handle_sso_response(sso_data)
+  def handle_sso_response(sso_data, relay_state_url)
     user_email_id = sso_data[:email]
     user_name = sso_data[:name]
     phone = sso_data[:phone]
     company = sso_data[:company]
 
-    @current_user = current_account.all_users.find_by_email(user_email_id)
+    @current_user = current_account.user_emails.user_for_email(user_email_id)
 
     if @current_user && @current_user.deleted?
+      cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
       flash[:notice] = t(:'flash.login.deleted_user')
       redirect_to login_normal_url and return
     end
@@ -76,17 +85,28 @@ module SsoUtil
     elsif current_account.sso_enabled?
       @current_user.name =  user_name
       @current_user.phone = phone unless phone.blank?
-      @current_user.customer_id = current_account.customers.find_or_create_by_name(company).id unless company.blank?
+      @current_user.customer_id = current_account.companies.find_or_create_by_name(company).id unless company.blank?
       @current_user.active = true
       saved = @current_user.save
     end
 
     @user_session = @current_user.account.user_sessions.new(@current_user)
-    if @user_session.save
+    if (!@current_user.new_record? && @user_session.save)
+      if is_native_mobile?
+        cookies["mobile_access_token"] = { :value => @current_user.helpdesk_agent ? @current_user.single_access_token : 'customer', :http_only => true } 
+        cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
+      end
       remove_old_filters  if @current_user.agent?
       flash[:notice] = t(:'flash.login.success')
-      redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass
+      if grant_day_pass
+        unless relay_state_url.blank?
+          redirect_to relay_state_url
+        else
+          redirect_back_or_default(params[:redirect_to] || '/')
+        end
+      end
     else
+      cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
       flash[:notice] = t(:'flash.login.failed')
       redirect_to login_normal_url
     end

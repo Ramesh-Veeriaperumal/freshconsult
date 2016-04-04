@@ -59,6 +59,13 @@ module SubscriptionHelper
 		ActiveMerchant::Billing::CreditCard.new(card)
 	end
 
+	def billing_address(address)
+    Billing::Subscription::ADDRESS_INFO.inject({}) { |h, (k, v)| h[k] = address.send(v); h }
+  end
+
+  def billing_card_details
+  	Billing::Subscription::CREDITCARD_INFO.inject({}) { |h, (k, v)| h[k] = active_merchant_card_object.send(v); h }
+  end
 end
 
 

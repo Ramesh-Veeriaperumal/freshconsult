@@ -1,5 +1,6 @@
 class Helpdesk::TagUse < ActiveRecord::Base
-  set_table_name "helpdesk_tag_uses"
+  self.table_name =  "helpdesk_tag_uses"
+  self.primary_key = :id
 
   belongs_to_account
   belongs_to :tags, 
@@ -15,7 +16,7 @@ class Helpdesk::TagUse < ActiveRecord::Base
   validates_uniqueness_of :tag_id, :scope => [:taggable_id, :taggable_type]
   validates_numericality_of :tag_id, :taggable_id
 
-  named_scope :tags_to_remove, lambda { |taggable_id,tag_id,taggable_type|
+  scope :tags_to_remove, lambda { |taggable_id,tag_id,taggable_type|
           { 
             :conditions => {:taggable_id => taggable_id, :tag_id => tag_id, :taggable_type => taggable_type}
           }

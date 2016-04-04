@@ -1,5 +1,5 @@
 <!--Copyright © 2014 Freshdesk Inc. All Rights Reserved.-->
-<% form_tag(export_csv_reports_freshfone_summary_reports_url, { :method => :post, :id => 'report_filters' }) do %>
+<%= form_tag(export_csv_reports_freshfone_summary_reports_url, { :method => :post, :id => 'report_filters' }) do %>
 <ul class="unstyled">
 
 <li>
@@ -15,18 +15,22 @@
   </li>
   <li>
     <label class="control-label"><%=t('reports.freshfone.number')%></label>  
-    <input type="hidden" id="freshfone_number"  name="freshfone_number" class="select2"/>
+    <input type="hidden" id="freshfone_number"  name="freshfone_number" class="ff_item" />
   </li>
   <li>
       <label class="control-label"><%=t('reports.freshfone.group')%></label>  
 
-      <input type="hidden" id='group_id' name='group_id' class = "select2 filter_item"/>
+      <input type="hidden" id='group_id' name='group_id' class = "filter_item ff_item"/>
 
       <label class="control-label"><%=t('reports.freshfone.call_type')%></label>
       <%= select_tag :call_type, options_for_select(call_types,@call_type.to_i), 
               { :multiple => false, 
-                :class => "select2 filter_item",
+                :class => "select2 filter_item report-metric",
                       "data-placeholder".to_sym() => t('reports.freshfone.select_call_type')} %>
+
+      <label class="control-label"><%=t('reports.freshfone.business_hours')%></label>  
+
+      <input type="hidden" id='ff_business_hours' name='business_hours' class = "filter_item ff_item"/>
   </li> 
     <li>
       <br/>
@@ -36,14 +40,16 @@
     </li>
   </ul>
 <% end %>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 jQuery(document).ready(function() {
  jQuery("#date_range").daterangepicker({
     latestDate: new Date(),
     presetRanges: [
-      {text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-8', dateEnd: 'Today-1' },
-      {text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-31', dateEnd: 'Today-1'},
-      {text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-91',  dateEnd: 'Today-1'}
+      {text: '<%= t('reports.date_ranges.today') %>', dateStart: 'Today', dateEnd: 'Today' },
+      {text: '<%= t('reports.date_ranges.yesterday') %>', dateStart: 'Today-1', dateEnd: 'Today-1' },
+      {text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-6', dateEnd: 'Today' },
+      {text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-29', dateEnd: 'Today'},
+      {text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-89',  dateEnd: 'Today'}
     ],
     presets: {
       dateRange: '<%= t('reports.date_ranges.custom') %>'
@@ -51,7 +57,8 @@ jQuery(document).ready(function() {
     dateFormat: getDateFormat('datepicker'),
     closeOnSelect: true,
     earliestDate: Date.parse('t - 6 m'),
-    rangeDurationMonths: parseInt('<%=Reports::FreshfoneReport::MAX_ALLOWED_MONTHS%>')
+    rangeDurationMonths: parseInt('<%=Reports::FreshfoneReport::MAX_ALLOWED_MONTHS%>'),
+    presetRangesCallback : true
   });
   
 

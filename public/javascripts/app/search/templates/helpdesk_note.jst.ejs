@@ -1,0 +1,38 @@
+<li id="<%= id %>-note" data-notable="<%= notable_id %>" rel="searched-notes" data-id="<%= id %>">
+	<div class="search-list-wrap">
+		<div class="avatar avatar-small pull-left">
+			<img alt="" onerror="imgerror(this)" size_type="thumb" src="<%= avatar_url %>">
+		</div> 
+		<div class="search-result-text row-fluid">
+		    <div class="ticket_subject search-result-content">
+				<h5>
+					<a href="<%= ticket_path %>" class="search-title" data-pjax="#body-container">
+						<%= notable_subject %>  <span class="muted">#<%= ticket_display_id %></span>
+					</a>
+				</h5>
+
+				<div class="info-data">
+					<%= ticket_info %>
+				</div>
+
+				<p class="muted"><%= body %></p>
+			</div>
+			<div class="search-result-info pull-right info-data">
+				<div>
+					<span class="muted search-label"><%= SEARCH_RESULT_LANG["agent"] %></span>
+					<span class="emphasize ellipsis result-info">
+						<%= responder_name %>
+					</span>
+				</div>
+				<div>
+					<span class="muted search-label"><%= SEARCH_RESULT_LANG["status"] %></span>
+					<span class="emphasize ellipsis result-info"><%= ticket_status %></span>
+				</div>
+				<div>
+					<span class="muted search-label"><%= SEARCH_RESULT_LANG["group"] %></span>
+					<span class="emphasize ellipsis result-info"><%= ticket_group %></span>
+				</div>
+			</div>
+		</div>
+	</div>
+</li>

@@ -4,14 +4,14 @@
 </div>
 
 <% unless current_user%>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     jQuery("#helpdesk_ticket_email").focusout(function(){
       var ticket_email = jQuery("#helpdesk_ticket_email").val();
       var valid_email = /^<%= email_regex %>$/;
 
       if(valid_email.test(ticket_email)) {  
         jQuery("#helpdesk_ticket_email").addClass("sloading loading-small loading-right");
-        jQuery.ajax({ url: "<%= check_email_support_tickets_path %>?v="+ticket_email,
+        jQuery.ajax({ url: "<%= check_email_support_tickets_path %>?v="+encodeURIComponent(ticket_email),
           success: function(data){
             jQuery("#helpdesk_ticket_email").removeClass("sloading loading-small loading-right");
             if(data.user_exists){

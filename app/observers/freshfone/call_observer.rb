@@ -1,18 +1,47 @@
 class Freshfone::CallObserver < ActiveRecord::Observer
 	observe Freshfone::Call
 
+  include Freshfone::NodeEvents
+  include Freshfone::CallsRedisMethods
+  include Freshfone::SubscriptionsUtil
+  
 	def before_create(freshfone_call)
 		initialize_data_from_params(freshfone_call)
 	end
 
+  def after_create(freshfone_call)
+    create_call_metrics(freshfone_call) if freshfone_call.account.features? :freshfone_call_metrics
+  end
+
 	def before_save(freshfone_call)
 		set_customer_on_ticket_creation(freshfone_call) if freshfone_call.customer_id.blank?
-    update_caller_data(freshfone_call)
+    update_caller_data(freshfone_call) if freshfone_call.caller.blank?
 	end
+
+  def after_update(freshfone_call)
+    account = freshfone_call.account
+    freshfone_call.update_metrics if account.features? :freshfone_call_metrics
+    if freshfone_call.call_status_changed?
+      publish_new_call_status(freshfone_call)
+      initiate_tracker(freshfone_call) if
+        account.launched?(:freshfone_call_tracker) && !trial?
+      if freshfone_call.call_ended?
+        trigger_cost_job(freshfone_call)
+        remove_value_from_set(pinged_agents_key(freshfone_call.id, account), freshfone_call.call_sid)
+      end
+    end
+  end
+
+  def after_commit(call)
+    return unless call.send(:transaction_include_action?, :update)
+    initiate_subscription_actions(call) if
+      call.previous_changes[:total_duration] && trial?
+  end
 
 	private
 		def initialize_data_from_params(freshfone_call)
 			params = freshfone_call.params || {}
+			freshfone_call.business_hour_call = freshfone_call.freshfone_number.working_hours?
 			freshfone_call.call_sid = params[:CallSid]
 		end
 
@@ -72,5 +101,74 @@ class Freshfone::CallObserver < ActiveRecord::Observer
       options.delete(:country) if options[:country].blank? # sometimes empty country is updated.
       caller.update_attributes(options)
       caller
+    end
+
+    def add_cost_job(freshfone_call)
+      cost_params = { :account_id => freshfone_call.account_id, :call =>  freshfone_call.id}
+      Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::CallBilling, cost_params) 
+      Rails.logger.debug "FreshfoneJob for sid : #{freshfone_call.call_sid} :: dsid : #{freshfone_call.dial_call_sid} :: Call Id :#{cost_params[:call]}"
+    end
+
+    def trigger_cost_job(freshfone_call)
+      return if freshfone_call.call_cost.present?
+      add_cost_job freshfone_call
+    end
+
+    def publish_new_call_status(freshfone_call)
+      account = freshfone_call.account
+      case freshfone_call.call_status
+        when Freshfone::Call::CALL_STATUS_HASH[:queued]
+          trigger_queued_call_publish(freshfone_call, account)
+        when Freshfone::Call::CALL_STATUS_HASH[:completed]
+          if (freshfone_call.call_status_was == Freshfone::Call::CALL_STATUS_HASH[:queued])
+            trigger_dequeued_call_publish(freshfone_call, account) 
+          else  
+            trigger_active_call_end_publish(freshfone_call, account)
+          end
+        when Freshfone::Call::CALL_STATUS_HASH[:'in-progress']
+          trigger_new_active_call_publish(freshfone_call, account) unless (freshfone_call.call_status_was == Freshfone::Call::CALL_STATUS_HASH[:'on-hold'])
+        else
+          trigger_dequeued_call_publish(freshfone_call, account) if (freshfone_call.call_status_was == Freshfone::Call::CALL_STATUS_HASH[:queued])
+      end
+    end
+
+    def trigger_queued_call_publish(freshfone_call, account)
+      publish_queued_call(freshfone_call, freshfone_call.account)
+    end
+
+    def trigger_dequeued_call_publish(freshfone_call, account)
+      publish_dequeued_call(freshfone_call, account)
+    end
+
+    def trigger_new_active_call_publish(freshfone_call, account)
+      publish_new_active_call(freshfone_call,account) 
+    end
+
+    def trigger_active_call_end_publish(freshfone_call, account)
+      publish_active_call_end(freshfone_call,account)
+    end
+
+    def create_call_metrics(freshfone_call)
+      freshfone_call.create_call_metrics ({:account => freshfone_call.account})
+    end
+    
+    def initiate_trial_trigger_worker(freshfone_call)
+      trigger_params = { :account_id => freshfone_call.account_id, :call => freshfone_call.id }
+      Freshfone::TrialCallTriggerWorker.perform_async(trigger_params)
+    end
+
+    def initiate_tracker(freshfone_call) #Will be used only for freshfone trial customers initially #Add condition to check for freshfone trial
+      if freshfone_call.inprogress?
+        return if [Freshfone::Call::CALL_STATUS_HASH[:'in-progress'], Freshfone::Call::CALL_STATUS_HASH[:'on-hold']].include?(freshfone_call.call_status_was)
+        Freshfone::TrackerWorker.perform_async(freshfone_call.id, :connect, Time.now)
+      elsif freshfone_call.completed?
+        return if (freshfone_call.call_status_was == Freshfone::Call::CALL_STATUS_HASH[:completed])
+        Freshfone::TrackerWorker.perform_async(freshfone_call.id, :disconnect, Time.now)
+      end
+    end
+
+    def initiate_subscription_actions(call)
+      freshfone_subscription.add_to_calls_minutes(call.call_type, call.total_duration)
+      initiate_trial_trigger_worker(call)
     end
 end

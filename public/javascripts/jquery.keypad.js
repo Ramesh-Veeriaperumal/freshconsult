@@ -336,7 +336,7 @@ $.extend(Keypad.prototype, {
 				}
 			});
 			target.prepend('<div class="' + this._disableClass + '" style="width: ' +
-				inline.outerWidth() + 'px; height: ' + inline.outerHeight() +
+				inline.outerWidth() + 'px; height: ' + inline.outerHeight(true) +
 				'px; left: ' + (offset.left - relOffset.left) +
 				'px; top: ' + (offset.top - relOffset.top) + 'px;"></div>');
 			var inst = target.data(this.propertyName);
@@ -464,9 +464,9 @@ $.extend(Keypad.prototype, {
 			offset.left = Math.max((isFixed ? 0 : scrollX), offset.left - (isFixed ? scrollX : 0));
 		}
 		// reposition keypad panel vertically if outside the browser window
-		if ((offset.top + inst._mainDiv.outerHeight() - scrollY) > browserHeight) {
+		if ((offset.top + inst._mainDiv.outerHeight(true) - scrollY) > browserHeight) {
 			offset.top = Math.max((isFixed ? 0 : scrollY),
-				pos[1] - (isFixed ? scrollY : 0) - inst._mainDiv.outerHeight());
+				pos[1] - (isFixed ? scrollY : 0) - inst._mainDiv.outerHeight(true));
 		}
 		else {
 			offset.top = Math.max((isFixed ? 0 : scrollY), offset.top - (isFixed ? scrollY : 0));

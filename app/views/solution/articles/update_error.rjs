@@ -1,0 +1,3 @@
+show_ajax_flash(page)
+page << "jQuery('#article-prop-#{@article.id}').modal('hide');"
+page << "jQuery('#article-prop-#{@article.id}-submit').button('reset');"

@@ -3,7 +3,6 @@ require 'spec_helper'
 # Tests may fail if test db is not in sync with Chargebee account.
 
 describe PartnerAdmin::AffiliatesController do
-  integrate_views
   self.use_transactional_fixtures = false
   user_name = AppConfig["reseller_portal"]["user_name"]
   password = AppConfig["reseller_portal"]["password"]
@@ -27,7 +26,6 @@ describe PartnerAdmin::AffiliatesController do
     reseller_params = { :name => "Test Reseller", :token => reseller_token, :rate => 0.2 } 
     @request.env['RAW_POST_DATA'] = reseller_params.to_json
     post "add_reseller", reseller_params.merge!(@auth_params)
-    
     SubscriptionAffiliate.find_by_token(reseller_token).should be_present
   end
 
@@ -39,7 +37,7 @@ describe PartnerAdmin::AffiliatesController do
 
     account = Account.find_by_full_domain(domain)
     reseller = SubscriptionAffiliate.find_by_token(reseller_token)
-    response.status.should be_eql ('200 OK')
+    response.status.should eql(200)
     reseller.subscriptions.should include account.subscription
   end
 
@@ -47,40 +45,35 @@ describe PartnerAdmin::AffiliatesController do
     reseller_params = { :token => reseller_token, :state => "trial", :page => 1 } 
     @request.env['RAW_POST_DATA'] = Base64.encode64(reseller_params.to_json)
     get "fetch_affilate_subscriptions", reseller_params.merge!(@auth_params)
-    
-    response.status.should be_eql ('200 OK')
+    response.status.should eql(200)
   end
 
   it "should get reseller account summary" do
     reseller_params = { :token => reseller_token } 
     @request.env['RAW_POST_DATA'] = Base64.encode64(reseller_params.to_json)
     get "affiliate_subscription_summary", reseller_params.merge!(@auth_params)
-    
-    response.status.should be_eql ('200 OK')    
+    response.status.should eql(200)    
   end
 
   it "should fetch reseller account info" do
     reseller_params = { :account_id => 1 } 
     @request.env['RAW_POST_DATA'] = Base64.encode64(reseller_params.to_json)
     get "fetch_reseller_account_info", reseller_params.merge!(@auth_params)
-    
-    response.status.should be_eql ('200 OK')    
+    response.status.should eql(200)    
   end
 
   it "should fetch reseller account activity" do
     reseller_params = { :id => 1 } 
     @request.env['RAW_POST_DATA'] = Base64.encode64(reseller_params.to_json)
     get "fetch_account_activity", reseller_params.merge!(@auth_params)
-    
-    response.status.should be_eql ('200 OK')    
+    response.status.should eql(200)    
   end
 
   it "should fetch remove reseller subscription" do
     reseller_params = { :account_id => 1 } 
     @request.env['RAW_POST_DATA'] = reseller_params.to_json
     post "remove_reseller_subscription", reseller_params.merge!(@auth_params)
-    
-    response.status.should be_eql ('200 OK')    
+    response.status.should eql(200)    
   end
 
   #Share A Sale API
@@ -92,6 +85,6 @@ describe PartnerAdmin::AffiliatesController do
 
   #   post "add_affiliate_transaction", reseller_params
     
-  #   response.status.should be_eql ('200 OK')    
+  #   response.status.should eql(200)    
   # end
 end

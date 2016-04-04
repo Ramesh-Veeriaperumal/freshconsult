@@ -4,8 +4,7 @@ module HelpdeskSystem
     store_location unless current_user
     respond_to do |format|
       format.html { 
-        flash[:notice] = current_user ? I18n.t(:'flash.general.access_denied') : 
-                                        I18n.t(:'flash.general.need_login')
+        flash[:notice] = access_denied_message
 
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless request.headers['X-PJAX']
         render :text => "abort" if request.headers['X-PJAX']
@@ -18,14 +17,26 @@ module HelpdeskSystem
           page.redirect_to :url => send(Helpdesk::ACCESS_DENIED_ROUTE)
         end
       }
+      format.widget {
+        render :text =>  access_denied_message
+      }
     end
  end 
+
+ def password_expired?
+  current_user_session && current_user_session.stale_record && current_user_session.stale_record.password_expired
+ end
+
+ def access_denied_message
+   current_user ? I18n.t(:'flash.general.access_denied') : 
+        password_expired? ? I18n.t(:'flash.general.password_expired') : I18n.t(:'flash.general.need_login')
+ end
 
   def unprocessable_entity
     respond_to do |format|
       format.html {
         unless request.headers['X-PJAX']
-          render :file => "#{Rails.root}/public/422.html", :status => :unprocessable_entity
+          render :file => "#{Rails.root}/public/422.html", :status => :unprocessable_entity, :layout => false
         else
           render :text => "abort", :status => :unprocessable_entity
         end
@@ -50,7 +61,7 @@ module HelpdeskSystem
       if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? cloud_file.droppable_type
         ticket = cloud_file.droppable.respond_to?(:notable) ? cloud_file.droppable.notable : cloud_file.droppable
         can_destroy = true if privilege?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
-      elsif ['Solution::Article'].include?  cloud_file.droppable_type
+      elsif ['Solution::Article', 'Solution::Draft'].include?  cloud_file.droppable_type
         can_destroy = true if privilege?(:publish_solution) or (current_user && cloud_file.droppable.user_id == current_user.id)
       elsif ['Account'].include?  cloud_file.droppable_type
         can_destroy = true if privilege?(:manage_account)

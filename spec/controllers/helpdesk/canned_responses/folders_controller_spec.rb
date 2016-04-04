@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Helpdesk::CannedResponses::FoldersController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -18,7 +17,7 @@ describe Helpdesk::CannedResponses::FoldersController do
 
   it "should go to the folder index page" do
     get :index
-    response.should render_template("helpdesk/canned_responses/folders/index.html.erb")
+    response.should render_template("helpdesk/canned_responses/folders/index")
     response.body.should =~ /Personal/
   end
 
@@ -30,7 +29,7 @@ describe Helpdesk::CannedResponses::FoldersController do
   it "should create a new folder" do
     @now = (Time.now.to_f*1000).to_i
     get :new
-    response.redirected_to.should eql "/helpdesk/canned_responses/folders"
+    should redirect_to "/helpdesk/canned_responses/folders"
     post :create, { :admin_canned_responses_folder => {:name => "New CR Folder #{@now}"} }
     @account.canned_response_folders.find_by_name("New CR Folder #{@now}").should_not be_nil
   end
@@ -41,7 +40,7 @@ describe Helpdesk::CannedResponses::FoldersController do
   end
 
   it "should update a folder" do
-    get :edit
+    get :edit, :id => @cr_folder_1.id
     response.should_not be_nil
     put :update, { :id => @cr_folder_1.id,
                    :admin_canned_responses_folder => { :name => "Updated CR Folder #{@now}" }

@@ -1,5 +1,7 @@
 <%= f.error_messages %>
 <% conditions = @sla_policy.conditions || {} %>
+<% esc_conditions = @sla_policy.escalations || {} %>
+
 <div class="dont-validate form-horizontal">
   	<div class="control-group">
 		<%= f.label :name, t('name'), :class => "control-label" %>
@@ -20,8 +22,9 @@
 			<label class="large"><%=t('sla_policy.sla_targets')%></label>
 			<p class="muted"><%= t('sla_policy.sla_targets_details') %></p>
 		</div>
-		<div class="alert aligncenter">
-			<%= t('sla_policy.sla_rule').html_safe %>
+		<div class="alert alignleft">
+			<%= t('sla_policy.sla_rule_info1').html_safe %> <br>
+			<%= t('sla_policy.sla_rule_info2').html_safe %>
 		</div>
 	</div>
 	<div>	 	 		
@@ -38,7 +41,7 @@
 	 		<% 
 				sla_size = @sla_policy.sla_details.size
 				@sla_policy.sla_details.each_with_index do |slas , index| %>
-		 		<% fields_for "SlaDetails[#{index}]", slas do |sla| %>
+		 		<%= fields_for "SlaDetails[#{index}]", slas do |sla| %>
 					<%
 					 priority_id = slas.priority || (sla_size-index)
 					 priority = Helpdesk::SlaDetail::PRIORITY_NAMES_BY_KEY[priority_id]  %>
@@ -74,10 +77,10 @@
 	<% unless @sla_policy.is_default %>
 	<li>
 		<%= f.label :conditions, "#{t('sla_policy.applicable_to').html_safe}:" , :class => "large" %>
-		<p class="muted"><%= t('sla_policy.applicable_details').html_safe %></p>
+		<p class="muted mt5" ><%= t('sla_policy.applicable_details').html_safe %></p>
 		<label for="sla_policy_conditions" class="hide" data-error-text="<%= t('sla_policy.applicable_error').html_safe %>">
 		</label>
-	    <% f.fields_for :conditions do |a| %>
+	    <%= f.fields_for :conditions do |a| %>
 	    <div class="sla_policy_conditions_container">
 	    	<div class="fast_autocomplete condition <%= @companies.blank? ? "hide" : "" %>" id="company_id">
 	    		<span class='delete_conditions'></span>
@@ -93,14 +96,14 @@
 						<span class='delete_conditions'></span>
 						<label class='inline_text'><%= type[1] %></label>
 						<div class="condition_autocompleter">
-							<%= a.select type[0], options_for_select([["", " "]]+ self.send("#{type[0]}_list"), 
+							<%= a.select type[0], options_for_select(self.send("#{type[0]}_list"), 
 								:selected => (conditions[type[0]] || {}) ), 
 								{}, {:multiple => true, :placeholder => t("sla_policy.#{type[0].to_s}_placeholder"),
 									   :class => 'select2-conditions'} %>
 						</div>
 		    	</div>
 		    <% end %>
-		    <% f.fields_for :datatype do |a| %>
+		    <%= f.fields_for :datatype do |a| %>
 		    	<%= a.hidden_field :'ticket_type', :value => 'text'%>
 		    <% end %>
 	    	<div class="add_new_condition hide" >
@@ -129,98 +132,30 @@
 	    <% end %>
 	</li>
 	<% end %>
-	<li>
-		<%= f.label :conditions, "#{t('sla_policy.escalate').html_safe}", :class => "large" %>
-		<div class="escalate_to">
-			<label><%= t('sla_policy.escalation_response_text').html_safe %></label>
-			<div class="grid">
-				<table data-max-level=1 data-type="response" class="sla_policies">
-					<%= select_tag('response_time', 
-									options_for_select(escalation_time_options), 
-									{:class => "hide"}) %>
-				 	<% f.fields_for :escalations do |e| %>
-				 		<% e.fields_for "response" do |response|%>	
-				 			<% response.fields_for "1"  do |i| %>
-								<tr data-level = "1" data-type = "response" rel = "reconstruct" 
-										class='<%= (@esc_agents || {})['response_1'] ? "" : "hide" %> escalations response' 
-										id="response_level_1">
-									<%= render :partial => 'sla_matrix', 
-														 :locals => {
-														 		:index => "0", :i => i, 
-										 						 :options => 
-																	{:type => "response", 
-																	 :value => (@esc_agents || {})['response_1'],
-																	 :id => "agents_0",
-																	 :time_options => options_for_select(
-																	 	escalation_time_options, 
-				 													 :selected => (@time || {})['response_1']) }} %>
-								</tr>
-							<% end %>
-						<% end %>
-						<tr class='add_next_level hide'>
-							<td colspan="5">
-								<%= content_tag :div, "<span class='symbols-add'></span> 
-																			#{t('sla_policy.add_response_esc')}".html_safe, 
-								:class => "icon-detail add_next" %>
-							</td>
-						</tr>
-				</table>
-			</div>
-			<label><%= t('sla_policy.escalation_resolution_text').html_safe %></label>
-			<div class="grid resolution_container">
-				<table data-max-level = <%= Helpdesk::SlaPolicy::ESCALATION_LEVELS_MAX %> 
-							 class="sla_policies">
-						<%= select_tag('resolution_time', 
-								options_for_select(escalation_time_options), 
-								{:class => "hide"}) %>
 
-			 			<% (Helpdesk::SlaPolicy::ESCALATION_LEVELS_OPTIONS).each do |index| %>
-					 		<% e.fields_for "resolution" do |resolution|%>	
-					 			<% resolution.fields_for "#{index}"  do |i| %>
-
-									<tr data-level = <%= "#{index}" %> data-type = "resolution" rel = "reconstruct" 
-											id = "<%= "resolution_level_#{index}" %>" 
-											class="<%= (@esc_agents || {})["resolution_#{index}"] ? "" : "hide" %> 
-											escalations resolution" >
-										<%= render :partial => 'sla_matrix', 
-															 :locals => 
-																{:index => index, :i => i, 
-										 						 :options => 
-																	 {:type => "resolution", 
-																	 :value => (@esc_agents || {})["resolution_#{index}"],
-																	 :id => "agents_#{index}"}
-																	}%>
-									</tr>
-								<% end %>
-							<% end %>
-				  	<% end %>
-				  	<tr class="add_next_level hide" >
-				  		<td colspan="5">
-				  			<%= content_tag :div, "<span class='symbols-add'></span>
-				  														#{t('sla_policy.add_level')} <span class='level'></span> #{t('sla_policy.add_resolution_esc')}".html_safe,
-				  			{'data-type' => "resolution", :class => "icon-detail add_next"} %>
-				  		</td></tr>
-					<% end %>
-				</table>
-		  </div>
-		</div>
-	</li>
+	<%= render  :partial => 'sla_reminder', :locals => {:f => f ,:esc_conditions => esc_conditions}%>
+	<%= render  :partial => 'sla_escalation', :locals => {:f => f ,:esc_conditions => esc_conditions}%>
+	
 </ul>
 <div class="button-container">
 	<%= link_to t('cancel'), helpdesk_sla_policies_path, :class => "btn" %>
 	<%= f.submit t('save'), :class => "btn btn-primary" %>
 </div>	 
 
-<script src="/javascripts/helpdesk/sla_policy.js" type="text/javascript"></script>
-<% javascript_tag do %>
+<%= javascript_include_tag :'cdn/admin/sla_policy.js' %>
+<%= javascript_tag do %>
 	var time = <%= ActiveSupport::JSON.encode(@time && {1 => @time['resolution_1'], 
 										2 => @time['resolution_2'],	3 => @time['resolution_3'], 
 										4 => @time['resolution_4']}).html_safe %> || {};
 	var autocomplete_companies_url = '<%= company_autocomplete_helpdesk_authorizations_path %>';
-	var agent_autocomplete_path = '<%= agents_search_autocomplete_path %>';
+	var agent_autocomplete_path = '<%= agents_search_autocomplete_index_path %>';
 
 	var agents_hash = <%= ActiveSupport::JSON.encode(@agents_cache).html_safe %>  || {} ;
 	var companies = <%= ActiveSupport::JSON.encode(@companies).html_safe %> || [];
+
+	var assigned_agent_id = '<%= Helpdesk::SlaPolicy::custom_users_id_by_type[:assigned_agent] %>';
+	var assigned_agent_value = '<%= Helpdesk::SlaPolicy::custom_users_value_by_type[:assigned_agent] %>';
+	var assigned_agent_desc = '<%= Helpdesk::SlaPolicy::custom_users_desc_by_type[:assigned_agent] %>';
 	
 	var is_default = <%= @sla_policy.is_default %>
 	var placeholder = { company: '<%= t('sla_policy.company_placeholder').html_safe %>', 
@@ -250,5 +185,10 @@
 			var field = jQuery(this).prop('id').match(/[0-9].+/);
 			updateInSeconds(field);
 		});
+
+		jQuery(document).on('click', '#sla_remainder', function(){
+			jQuery(this).parents('li').siblings('.sla_remainder_wrapper').toggleClass('hide');
+			jQuery(this).parent().hide(200);
+		})
 	});
 <% end %>

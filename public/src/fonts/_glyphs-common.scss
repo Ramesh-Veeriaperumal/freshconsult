@@ -1,4 +1,4 @@
-	$font-class: "ficon-";
+$font-class: "ficon-";
 
 // Default font size will be taken from the parents font size
 [class*="#{$font-class}"] {
@@ -10,7 +10,21 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
   color:#333;
 }
 
-// Font icons used in forum pages
+.#{$font-class}freshfone,.#{$font-class}phone-enable,.#{$font-class}phone-channel{
+	@extend .#{$font-class}ff-phone;	
+}
+// -----------------------------------------------------------------------------------------------
+//									 Fix!!! - Remove content controls
+// 												Ticket Details
+// -----------------------------------------------------------------------------------------------
+.content .controls, .ticket_details .sticky_right, .community {
+	.monitor{              @extend .#{$font-class}star-o;}
+	.monitor_active{       @extend .#{$font-class}star;}
+	.monitor_active:after{ @extend .#{$font-class}star-o:before; }
+}
+// -----------------------------------------------------------------------------------------------
+// 									Font icons used in forum pages
+// -----------------------------------------------------------------------------------------------
 .forum_follow_icon{              @extend .#{$font-class}star-o; }
 .forum_follow_icon.active{       @extend .#{$font-class}star; }
 .forum_follow_icon.active:after{ @extend .#{$font-class}star-o:before; }
@@ -19,9 +33,55 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 .forum-type-ideas{               @extend .#{$font-class}bulb; }
 .forum-type-howto{               @extend .#{$font-class}help; }
 .agent-preview{                  @extend .#{$font-class}open-in-new-window; }
+
+// Hover card font icons
+.contact_hover .product-twitter { 			@extend .#{$font-class}twitter-o;}
+.contact_hover .product-email-logo { 		@extend .#{$font-class}mail;}
+.product-page .product-email-logo { 		@extend .#{$font-class}mail;}
+.contact_hover .product-call { 				@extend .#{$font-class}phone;}
+
+// Email notification font icons
+.common-icon-outdated {				@extend .#{$font-class}notice;}
+
+// Ticket Show font icons
+.commentbox .conv-actions-delete {			@extend .#{$font-class}trash;}
+.commentbox .conv-actions-edit {			@extend .#{$font-class}edit;}
+.commentbox .conv-actions-forward {			@extend .#{$font-class}forward;}
+.commentbox .conv-actions-split {			@extend .#{$font-class}split;}
+
+// Ticket View font icons
+.ticket-view-saveas{						
+	@extend .#{$font-class}checkmark;
+	&:before {
+		font-weight: bold;
+	}
+}
+.ticket-view-save{							
+	@extend .#{$font-class}checkmark;
+	&:before {
+		font-weight: bold;
+	}
+}
+.ticket-view-saveas:after{					@extend .#{$font-class}ellipsis:before;}
+.ticket-view-edit {							@extend .#{$font-class}edit;}
+.ticket-view-delete {						@extend .#{$font-class}trash;}
+
 .list-query-panel .dropdown-menu li.active a:before{ 	
 	@extend .#{$font-class}checkmark; 
 }
+// -----------------------------------------------------------------------------------------------
+// 									Font icons used in Search
+// -----------------------------------------------------------------------------------------------
+.helpdesk_ticket_icon{	@extend .#{$font-class}ticket }
+.customer_icon{			@extend .#{$font-class}company }
+.topic_icon{			@extend .#{$font-class}conversation }
+.solution_article_icon{	@extend .#{$font-class}book }
+.user_icon{				@extend .#{$font-class}user }
+	
+	
+// -----------------------------------------------------------------------------------------------
+// 									Font icons in ticket pages
+// -----------------------------------------------------------------------------------------------
 
 .delete-notice{
 	@extend .#{$font-class}notice;
@@ -30,7 +90,7 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 		background: #fff;
 		border-radius: 100%;
 		line-height: 30px;
-		border: 2px solid #fff;
+		@include box-shadow(0px -1px 0px 2px rgba(255, 255, 255, 1))
 	}
 }
 // Font icons in ticket pages
@@ -50,8 +110,9 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 		color: #007F80;
 	}
 }
-
-// Font icons used in Freshsocial
+// -----------------------------------------------------------------------------------------------
+// 									Font icons used in Freshsocial
+// -----------------------------------------------------------------------------------------------
 .tw-accs{
 	li{
 		a{
@@ -59,13 +120,19 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 				width: 24px;
 				height: 24px;
 				@include float(left);
-				background: #333;
+				background: $default_txt_color;
 				color: #fff;
 				text-align: center;
 				@include border-radius(4px);
 			}
 			&:after{
-				@extend .#{$font-class-name}arrow-right:before;
+				@if $rtl{
+					@extend .#{$font-class-name}arrow-left:before;
+				}
+				@else{
+					@extend .#{$font-class-name}arrow-right:before;
+				}
+
 			}
 		}
 	}
@@ -84,7 +151,7 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 				.#{$font-class-name}cross{
 					display: inline-block;
 					margin-top: 2px;
-					color: #333;
+					color: $default_txt_color;
 					@include margin-right(5px);
 				}
 			}
@@ -173,7 +240,9 @@ i.#{$font-class-name}twitter{
 		}
 	}
 }
-/* ======================= header notification ================== */
+// -----------------------------------------------------------------------------------------------
+// 											header notification 
+// -----------------------------------------------------------------------------------------------
 .header-notification-wrapper{
 	.notification_present .#{$font-class-name}help{
 		color: white;
@@ -195,7 +264,9 @@ i.#{$font-class-name}twitter{
 		}
 	}
 }
-/* === Admin Chat Settings === */
+// -----------------------------------------------------------------------------------------------
+// 											Admin Chat Settings 		
+// -----------------------------------------------------------------------------------------------
 .prechat_form{
 	.inline-field{
 		.#{$font-class-name}rearrange{
@@ -215,6 +286,187 @@ i.#{$font-class-name}twitter{
 		}
 	}
 }
+// -----------------------------------------------------------------------------------------------
+//												Add and Delete Icon
+// -----------------------------------------------------------------------------------------------
+
+.rounded-add-icon{
+	background: green;
+	@extend .#{$font-class}plus;
+}
+.rounded-minus-icon{
+	background: #990000;
+	@extend .#{$font-class}minus;
+}
+.rounded-add-icon, .rounded-minus-icon{
+	display: inline-block;
+	cursor: pointer;
+	border-radius: 100%;
+	@include padding(0 4px 0 4px);
+	color: #fff;
+	font-size: 14px;
+	@include box-shadow(inset 1px -1px 0px rgba(0,0,0,0.2));
+	&.disabled{
+		background: #999;
+	}
+}
+span.fb_add
+.pick-response, 
+#results li, .match_results li:hover #resp-icon,
+.contactdiv:hover #resp-icon,
+#resp-icon, .canned-response-menu span.bullet{
+	@extend .rounded-add-icon;
+}
+#contact-area #resp-icon
+.sla_policy_form .delete, 
+.sla_policy_form .delete_conditions,
+.rem_mail, #cancel_email, .remove_image,
+.ivr-menu .delete-symbol,
+.merge-cont #resp-icon { 
+	@extend .rounded-minus-icon;  
+}
+.icon-detail .symbols-add{
+	@extend .#{$font-class}plus;
+	font-size:14px;
+	color: #fff;
+	background: #009853;
+	width: auto;
+	height: auto;
+	@include padding(1px 4px);
+	text-align: center;
+	border-radius: 100%;
+}
+.canned-response-menu span.bullet{ color:#aaa; }
+.rem_mail, #cancel_email, .remove_image { 
+	@include padding(0 0 2px 20px); @include margin-left(5px); cursor: pointer; 
+}
+
+.icon-close{
+	cursor: pointer;
+	&:before{
+		content: '\00d7';
+		padding: 2px;
+		color: #000;
+		font-weight: bold;
+		position: relative;
+		top: -1px;
+	}
+}
+#resp-icon.clicked{
+	background-color: #fff;
+	&:before{
+		visibility:hidden;
+	}
+}
+// -----------------------------------------------------------------------------------------------
+// 												Freshfone & customer details page
+// -----------------------------------------------------------------------------------------------
+
+.phone-icons,.user_phone{@extend .#{$font-class}ff-phone; font-size:14px;}
+.mobile-icons { @extend .#{$font-class}mobile; }
+.phone-icons, .mobile-icons { &:before{@include padding-right(10px); color:$default_txt_color;}}
+.recent_calls_call_user .can-call, .fresfone-call-history .call_user .can-make-calls{
+		@extend .#{$font-class}phone;
+}
+
+.recent_calls_call_user, .call_user {
+	.restrict-call{
+		@extend .#{$font-class}phone-disable-thin;
+		
+		color:#eee;
+		&:hover{
+			color:#eee;
+		}
+	}
+}
+
+.recent_call_entry:hover .recent_calls_call_user .can-call,
+.fresfone-call-history .call_user .can-make-calls:hover {
+		@extend .#{$font-class}ff-phone;
+		&:before{
+			color:#196019;
+		} 
+}
+
+.fresfone-call-history .blacklist-toggle.blacklist{
+	@extend .#{$font-class}block;
+	color: #999;
+	background: white;
+}
+
+.fresfone-call-history .blacklist-toggle.blacklisted{
+	@extend .#{$font-class}block;
+	color: #B44632;
+	background: white;
+}
+
+
+.recording_deleted{
+	&:before{
+		@extend .#{$font-class-name}deleted;
+	}
+}
+
+.fone_icon_connection{
+	@extend .#{$font-class-name}ff-phone;
+	font-size:17px;
+}
+
+.freshfone_connection_error,.freshfone_error_info{
+	.fone_error_wrap{
+		@extend .#{$font-class-name}no-network;
+		font-size:22px;
+	}
+}
+.freshfone_connection_success{
+	.fone_error_wrap{
+		@extend .#{$font-class-name}checkmark-thick;
+		font-size:16px;
+	}
+}
+// -----------------------------------------------------------------------------------------------
+// 										Ticket Details Page
+// -----------------------------------------------------------------------------------------------
+.conversation_thread{
+	.comment-lock{ @extend .#{$font-class}security; color:#999; font-size:16px; }
+	.attachment-options .dropbox_div label{ 
+		@extend .#{$font-class}dropbox;
+		&:before{
+			font-size: 15px;
+			@include padding-right(7px);
+		}
+	} 
+} 
+.ticket-actions{
+	.forward{ @extend .#{$font-class}arrow-right-2; }
+	.reply-inner{ @extend .#{$font-class}reply; }
+	.forward-inner{ @extend .#{$font-class}forward-tkt; }
+	.note-inner{ @extend .#{$font-class}file-edit; }
+	.forward, .reply-inner, .forward-inner, .note-inner{
+		&:before{
+			font-size: 16px;
+			vertical-align: middle;
+			position: relative;
+			top: -1px;
+		}
+	}
+}
+.private-icon{ @extend .#{$font-class}security;}
+.delete_black{ @extend .#{$font-class}trash; }
+.private-icon,.delete_black{
+	font-size: 16px;color:#000; 
+	&:hover{color:#000;}
+}
+.reminders, .todo{ .delete{ @extend .#{$font-class}trash-o; color:#990000; font-size: 18px; } }
+
+.toolbar_pagination .prev_page span{ @extend .#{$font-class}caret-left; font-size:20px;}
+.toolbar_pagination .next_page span{ @extend .#{$font-class}caret-right; font-size:20px;}
+// -----------------------------------------------------------------------------------------------
+
+#duration .error{ @extend .#{$font-class}warning; color:#fdb415; }
+.symbols-issue{ @extend .#{$font-class}warning; color:#d33d27; }
+.symbols-tag-edit{@extend .#{$font-class}pencil; }
+.symbols-tag-remove{@extend .#{$font-class}minus; }
 // Chat Archive
 .fc-conversation{
 	.recent-chats{		
@@ -225,6 +477,12 @@ i.#{$font-class-name}twitter{
 		}
 	}
 }
+
+// Fonticons used in Custom Form
+
+.#{$font-class}phone_number{ @extend .#{$font-class}freshfone; }
+
+.#{$font-class}url{ @extend .#{$font-class}link; }
 
 /* ====== Admin Font Settings ======== */
 .font-setting-wrapper {
@@ -290,6 +548,11 @@ i.#{$font-class-name}twitter{
 		border-radius: 50%;
 		font-size: 12px;
 	}
+  .forward-reply{
+    border: none;
+    border-radius: 0;
+    text-align: inherit;
+  }
 	.commentbox {
 		.conv-actions-reply{
 			text-indent: inherit;
@@ -310,5 +573,71 @@ i.#{$font-class-name}twitter{
 		.chat_icon_connection{
 			@extend .ficon-disconnected; 
 		}
+	}
+}
+
+//Custom Fields
+.custom-choices .#{$font-class-name}rearrange{
+	position: relative;
+	left: 0px;
+  top: 5px;  
+  @include float(left);
+  font-size: 14px;
+  cursor: move;
+}
+.#{$font-class-name}dropdown{
+	@extend .#{$font-class-name}dropdown_blank;
+}
+.#{$font-class-name}html_paragraph{
+	@extend .#{$font-class-name}paragraph;
+}
+
+// Contact info
+.contact_hover{
+	.contact-append{
+		.add-on{
+			.#{$font-class-name}twitter{
+				color:#a2a19f;
+			}
+			.#{$font-class-name}facebook-setting{
+				color:#a2a19f;
+			}
+		}
+	}
+}
+
+// twitter like icon status
+.twt-fav{
+	&.is-active{
+		.#{$font-class-name}twitter-like{
+			color:#dd2e44;
+		}
+	}
+}
+
+/*Unresolved tickets sort icons*/
+.standard-table, .dataTables_scrollHead, .DTFC_LeftHeadWrapper{
+	table.dataTable thead th.sorting:after,
+	table.dataTable thead th.sorting_asc:after,
+	table.dataTable thead th.sorting_desc:after {
+	    position: relative;
+	    display: block;
+	    font-family: "glyphs";
+	    @include float( right );
+	}
+	table.dataTable thead th.sorting:after {
+	    content: $font-glyphs-sorting-default;
+	    color: #999;
+	    font-size: 20px;
+	}
+	table.dataTable thead th.sorting_asc:after {
+		font-size: 20px;
+		color: #333;
+	    content: $font-glyphs-sorting-asc;
+	}
+	table.dataTable thead th.sorting_desc:after {
+		color: #333;
+		font-size: 20px;
+	    content: $font-glyphs-sorting-dsc;
 	}
 }

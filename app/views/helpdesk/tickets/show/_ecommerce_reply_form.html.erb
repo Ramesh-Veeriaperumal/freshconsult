@@ -1,0 +1,89 @@
+<div class="request_panel" id="<%=cntid%>" style="display:none;" data-type="textarea" rel="emitter" data-node-name="agent_replying">
+
+  <div class="form_title">
+    <%= t('.title') %>: 
+    <span><%= @ticket.requester.name %></span> 
+  </div>
+  <div class="list_agents_replying" class="hide"></div>
+  <%= form_for note, :url => ecommerce_helpdesk_ticket_conversations_path(@ticket), :html => {
+            :multipart => true,  
+            :id => "HelpdeskEcommerceReply",
+            "data-panel" => cntid,
+            "data-show-pseudo-reply" => 'true',
+            "data-fetch-latest" => 'true',
+            "data-cnt-id" => cntid } do |f| %>
+    <%= f.error_messages %>
+    <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>  
+    <%= f.hidden_field :private , :value => "false" %>
+    <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["ecommerce"]%>  
+    <%= hidden_field_tag :last_note_id,'', :value => @last_note_id, :class => "last_note_id" %>
+
+    <ul class="ui-form dont-validate">
+      <li class="inline-field field clearField message">
+          <%= render(:partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :id => id, :cntid => cntid}) %> 
+          <label class="ecom-from">From: <%= @ticket.ebay_account.name if @ticket.ebay_account.present? %></label>
+      </li>
+      <li class="inline-field field clearField continous message">
+        <%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
+          <%= ff.text_area :body, { :class => 'required ecommerce auto-height', :id => "#{id}-#{cntid}-body", :rows => "10", :"data-ecommerce-count" => 0 } %>
+          <%= text_area_tag "quoted_text_html", "", { :id => "#{cntid}-quoted", :class => "hide" } %>
+        <% end %>
+      </li>
+      <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">
+        <span class="alert-text"><%= t('helpdesk.tickets.show.reply_form.not_sent') %></span>
+        <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
+      </li>
+      <li class="inline-field field attachment-options continous" id="attachment-options-reply">
+          <% unless local_assigns[:no_attachments] %>
+          <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :max_attachment => 5, :max_size => 7  } %>
+          <% end %>    
+      </li>
+    </ul>
+    <span class="ecommerce-counter" id="SendecommerceCounter">2000</span>
+
+    <div class="btn-toolbar">
+      <span>
+        <%= link_to(t('cancel'), '#', :class => "btn cancel_btn reply_agent_collision", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true', "data-editor-id" => '#{id}-#{cntid}-body') %>
+      </span>
+
+      <span class="btn-group <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
+        <button class="btn btn-primary submit_btn">
+            <%= t('ticket.reply_form.send') %>
+            
+            <% if privilege?(:edit_ticket_properties) %>
+             <button class="btn btn-primary dropdown-toggle dialog-btn" data-toggle="dropdown" href="#">
+                <span class="caret"></span>
+              </button>
+            <% end %>
+          </button>
+        <% if privilege?(:edit_ticket_properties) %>
+          <ul data-menu-hover-in='li' data-menu-trigger="a" class="menuselector dropdown-menu custom_statuses pull-right">
+            <%
+            ticket_statuses = current_account.ticket_status_values.reject{|status| status.status_id == 2 }
+            %>
+            <% ticket_statuses.each do |status| %>
+            <li>
+              <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>'  class="reply_agent_collision">
+                <%= t('ticket.reply_form.send_and_set_as', { :status => (status.is_default ? t(status.name.downcase) : status.name) }).html_safe %>
+              </a>
+            </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </span>
+    </div>
+  <% end %>
+</div>  
+
+
+
+<% content_for :onload_script do %>
+  jQuery("#HelpdeskEcommerceReply").validate(); 
+  jQuery('#send-ecommerce-post-cnt-reply-body').NobleCount('#SendecommerceCounter', { on_negative : "error", max_chars: 2000, on_update: function(t_obj, char_area, c_settings, char_rem){
+  ecommerce_reply = t_obj.val(),
+  max_length = 2000;
+  char_rem = max_length - ecommerce_reply.length;
+  t_obj.data("ecommerce-count", char_rem);
+  char_area.html(char_rem);
+  } }); 
+<% end %>

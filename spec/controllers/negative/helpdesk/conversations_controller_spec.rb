@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Helpdesk::ConversationsController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
   
   before(:all) do
-    @test_ticket = create_ticket({ :status => 2 })
+    # Raising the ticket with logged in agent as the requester so that meta notes wont be created
+    @test_ticket = create_ticket({ :status => 2, :requester_id => @agent.id})
   end
 
   before(:each) do
@@ -24,7 +24,7 @@ describe Helpdesk::ConversationsController do
                    :showing => "notes",
                    :ticket_id => @test_ticket.display_id
                   }
-    response.should have_rjs
+    response.content_type.should == Mime::JS
     private_note = @account.tickets.find(@test_ticket.id).notes.last
     private_note.should be_nil
   end
@@ -33,7 +33,7 @@ describe Helpdesk::ConversationsController do
     note_body = Faker::Lorem.sentence(3)
     cc_email = Faker::Internet.email
     bcc_email = Faker::Internet.email
-    Resque.inline = true
+    Sidekiq::Testing.inline!
     source_text = Faker::Lorem.words(2).join(" ")
     post :reply, { :reply_email => { :id => "support@#{@account.full_domain}" },
                    :helpdesk_note => { :note_body_attributes =>{ :body_html => "<div>#{note_body}</div>",
@@ -50,8 +50,8 @@ describe Helpdesk::ConversationsController do
                    :showing => "notes",
                    :ticket_id => @test_ticket.display_id
                   }
-    Resque.inline = false
-    response.should have_rjs
+    Sidekiq::Testing.disable!
+    response.content_type == Mime::JS
     reply_note = @account.tickets.find(@test_ticket.id).notes.last
     reply_note.should be_nil
   end
@@ -73,7 +73,7 @@ describe Helpdesk::ConversationsController do
                    :showing => "notes",
                    :ticket_id => @test_ticket.display_id
                   }
-    response.should have_rjs
+    response.content_type == Mime::JS
     fwd_note = @account.tickets.find(@test_ticket.id).notes.last
     fwd_note.should be_nil
   end
@@ -90,7 +90,7 @@ describe Helpdesk::ConversationsController do
                         :ticket_status => "",
                         :format => "js"
                       }
-    response.should have_rjs
+    response.content_type == Mime::JS
     tweet_note = @account.tickets.find(@test_ticket.id).notes.last
     tweet_note.should be_nil
   end
@@ -107,7 +107,7 @@ describe Helpdesk::ConversationsController do
                             :showing => "notes",
                             :ticket_id => @test_ticket.display_id,
                         }
-    response.should have_rjs
+    response.content_type == Mime::JS
     fb_note = @account.tickets.find(@test_ticket.id).notes.last
     fb_note.should be_nil
   end

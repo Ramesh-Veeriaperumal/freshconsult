@@ -49,6 +49,10 @@ module Inherits
         !default_field?
       end
 
+      def custom_checkbox?
+        field_type.to_sym == :custom_checkbox
+      end
+
       def choices=(c_attr)
         @choices = c_attr
       end

@@ -1,5 +1,5 @@
 <% content_for :helpcard do %>
-	<%= render :partial => "helpnote_without_tour" %>
+	<%= render :partial => "helpnote_content" %>
 <% end %>
 <div id="cust-list" class="list-page">
 	<div class="list-page-header"	>
@@ -28,7 +28,7 @@
 					<% else %>
 						<td <%= "class='sla_policy_disabled custom-tip' data-tip-classes = 'sla-policy-index-tooltip' title='#{t('sla_policy.default_policy')}'".html_safe if policy.conditions.blank? %>>
 					<% end %>
-						<% form_for policy, :url => activate_helpdesk_sla_policy_path(policy) do |f| %>
+						<%= form_for policy, :url => activate_helpdesk_sla_policy_path(policy) do |f| %>
 							<%= f.check_box :active, { :class => 'activate'}, true, false %>
 						<% end %>
 						<%= "<div class='itoggle-disable'></div>".html_safe if policy.conditions.blank? %>
@@ -54,7 +54,7 @@
 		</table>  
 	</div>
 </div>
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	(function($){
 		$('.activate').itoggle({
 			checkedLabel: 'On',

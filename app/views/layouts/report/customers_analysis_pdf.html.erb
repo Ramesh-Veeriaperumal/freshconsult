@@ -1,11 +1,11 @@
-<%= render :partial => "layouts/report/pdf_files", :locals => {} %>
+<%= render :partial => "layouts/report/pdf_files", :formats => [:html], :locals => {} %>
 <% obj_array_size = @data_obj.length 
    counter = 0
 %>
 <div class="report-page" id="report-page">
   <div class="report-content-wrapper">
     <!--report header-->
-    <%= render :partial => "reports/shared/report_view_header", :locals => {:is_pdf =>true} %>
+    <%= render :partial => "reports/shared/report_view_header", :formats => [:html], :locals => {:is_pdf =>true} %>
     <% @data_obj.each do |key,data| %>
     <%if counter % 2 == 0%>
     <div class="row-fluid">

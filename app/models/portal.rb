@@ -1,6 +1,8 @@
+require_dependency "mobile/actions/portal"
+require_dependency "cache/memcache/portal"
 class Portal < ActiveRecord::Base
-  include ActionController::UrlWriter
 
+  self.primary_key = :id
   HEX_COLOR_REGEX = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
 
   serialize :preferences, Hash
@@ -11,21 +13,21 @@ class Portal < ActiveRecord::Base
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
   validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$",
   :allow_nil => true, :allow_blank => true
+  validates_inclusion_of :language, :in => Language.all_codes, :if => :language_changed?
   validate :validate_preferences
   before_update :backup_portal_changes , :if => :main_portal
-  after_commit_on_update :update_users_language, :if => :main_portal_language_changes?
+  after_commit :update_solutions_language, on: :update, :if => :main_portal_language_changes?
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
   after_save :update_chat_widget
   before_save :update_portal_forum_categories
-  before_save :save_route_info
+  before_save :save_route_info, :add_default_solution_category
   after_destroy :destroy_route_info
 
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
   include Redis::RedisKeys
   include Redis::PortalRedis
-  include Redis::RoutesRedis
 
   has_one :logo,
     :as => :attachable,
@@ -40,17 +42,6 @@ class Portal < ActiveRecord::Base
     :dependent => :destroy
 
   has_one :template, :class_name => 'Portal::Template'
-
-  has_many :portal_solution_categories,
-    :class_name => 'PortalSolutionCategory',
-    :foreign_key => :portal_id,
-    :order => "position",
-    :dependent => :delete_all
-
-  has_many :solution_categories,
-    :class_name => 'Solution::Category',
-    :through => :portal_solution_categories,
-    :order => "portal_solution_categories.position"
 
   has_many :portal_forum_categories,
     :class_name => 'PortalForumCategory',
@@ -70,7 +61,9 @@ class Portal < ActiveRecord::Base
   belongs_to_account
   belongs_to :product
 
-  APP_CACHE_VERSION = "FD70"
+  concerned_with :solution_associations
+
+  APP_CACHE_VERSION = "FD72"
 
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -81,7 +74,7 @@ class Portal < ActiveRecord::Base
   end
 
   def fav_icon_url
-    fav_icon.nil? ? '/images/favicon.ico' : fav_icon.content.url
+    fav_icon.nil? ? '/assets/misc/favicon.ico' : fav_icon.content.url
   end
 
   def portal_forums
@@ -105,8 +98,12 @@ class Portal < ActiveRecord::Base
       account.solution_articles.articles_for_portal(self).visible.newest(10)
   end
 
-  def recent_portal_topics user
-    account.topics.topics_for_portal(self).published.visible(user).newest.limit(6)
+  def recent_portal_topics user, limit = 6
+    limit = 100 if limit.to_i > 100
+    account.
+      topics.topics_for_portal(self).
+      published.visible(user).newest.
+      preload(:user, :forum, :last_post => {:user => :avatar}).limit(limit)
   end
 
   def my_topics(user, per_page, page)
@@ -120,6 +117,10 @@ class Portal < ActiveRecord::Base
   #Yeah.. It is ugly.
   def ticket_fields(additional_scope = :all)
     filter_fields account.ticket_fields.send(additional_scope), ticket_field_conditions
+  end
+
+  def ticket_fields_including_nested_fields(additional_scope = :all)
+    filter_fields account.ticket_fields_including_nested_fields.send(additional_scope), ticket_field_conditions
   end
 
   def customer_editable_ticket_fields
@@ -175,10 +176,24 @@ class Portal < ActiveRecord::Base
     self.ssl_enabled? ? 'https' : 'http'
   end
 
+  def full_url
+    main_portal ? "#{Account.current.full_url}/support/home" : "#{url_protocol}://#{portal_url}/support/home"
+  end
+
+  def full_name
+    main_portal && name.blank? ? Account.current.name : name
+  end
+  
+  def tickets_url
+    main_portal ? "#{Account.current.full_url}/support/tickets" : "#{url_protocol}://#{portal_url}/support/tickets"
+  end
+  
+
   private
 
-    def update_users_language
-      account.all_users.update_all(:language => account.language) unless account.features.multi_language?
+    ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
+    def update_solutions_language
+      Community::HandleLanguageChange.perform_async
     end
 
     def main_portal_language_changes?
@@ -187,7 +202,6 @@ class Portal < ActiveRecord::Base
 
     def backup_portal_changes
       @portal_changes = self.changes.clone
-      @portal_changes.symbolize_keys!
     end
 
     def handle_icon(icon_field, icon_attr)
@@ -208,7 +222,7 @@ class Portal < ActiveRecord::Base
     def validate_preferences
       preferences.each do |key, value|
         if ["header_color", "tab_color", "bg_color"].include?(key)
-          errors.add_to_base("Please enter a valid hex color value.") unless value =~ HEX_COLOR_REGEX
+          errors.add(:base, "Please enter a valid hex color value.") unless value =~ HEX_COLOR_REGEX
         elsif key == 'contact_info'
           preferences[key] = RailsFullSanitizer.sanitize(value)
         end
@@ -218,7 +232,7 @@ class Portal < ActiveRecord::Base
     def ticket_field_conditions
       { 'product' => (main_portal && !account.products.empty?) }
     end
-    
+
     def filter_fields(f_list, conditions)
       to_ret = []
 
@@ -262,12 +276,23 @@ class Portal < ActiveRecord::Base
         Rails.logger.info "portal_url changed #{portal_url}"
         Rails.logger.info "Old URL #{portal_url_was},  #{portal_url}, #{account_id}, #{account.full_domain}"
         destroy_route_info(portal_url_was) unless portal_url_was.blank? #delete old portal url
-        set_route_info(portal_url, account_id, account.full_domain) unless portal_url.blank? #add new portal url
+        Redis::RoutesRedis.set_route_info(portal_url, account_id, account.full_domain) unless portal_url.blank? #add new portal url
       end
     end
 
     def destroy_route_info(old_portal_url = portal_url)
       Rails.logger.info "Deleting #{old_portal_url} route."
-      delete_route_info(old_portal_url) unless old_portal_url.blank?
+      Redis::RoutesRedis.delete_route_info(old_portal_url) unless old_portal_url.blank?
+    end
+    
+    def add_default_solution_category
+      # Remove this method when new solution UI goes out
+      return if account.solution_categories.empty?
+      default_category = account.solution_categories.find_by_is_default(true)
+      self.solution_category_ids = self.solution_category_ids | [default_category.id] if default_category.present?
+    end
+
+    def clear_solution_cache(obj=nil)
+      account.clear_solution_categories_from_cache
     end
 end

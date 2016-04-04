@@ -202,28 +202,24 @@ BoxChooser.prototype = {
   },
 
   error_insufficient_permission: function(response){
-    jQuery("div.box-error-modal-content").html("Sorry, it seems you do not have the permissions required to make this change.");
-    jQuery('#box-error-modal')
-      .removeClass("hide")
-      .dialog({ 
-          title: "Access Denied", 
-          buttons: [{
-                      text: "OK",
-                      "class": "confirm-modal-yes-button hide btn btn-primary",
-                      click: function(){ jQuery(this).dialog('close'); }
-                    }],
-          show: { effect: "fade", duration: 200},
-          create: function(evt, ui){
-            jQuery(".confirm-modal-yes-button").blur();
-          },
-          close: function(){ unblockChooser(); },
-          width: 420, height: 50, modal: true, resizable: false,
-          zIndex: 1051, stack: false
-      }); 
-    jQuery(".confirm-modal-yes-button, .confirm-modal-no-button").show();
+
+    var data = {
+        targetId: "#box-error-modal",
+        title: "Access Denied",
+        width: "420",
+        backdrop: "static",
+        templateFooter: false,
+        destroyOnClose: true
+    }
+
+    jQuery.freshdialog(data);
   }
 
 };
+
+jQuery(document).on('click', '#box-error-button', function(){
+  jQuery('.modal').modal('hide');
+})
 
 jQuery('div#box-navbar').on('click.box_chooser', 'div.box-header div.box-item span:not([data-item-id=na])', function(e) {
   jQuery(".box-loading-big").show();
@@ -236,51 +232,35 @@ function performOAuth(){
   document.location.href = boxBundle.oauth_url;
 }
 
-var autoClose = false;
+var autoClose = false; 
 function confirmSecurityDowngrade(dTitle, dContent, y, n, callback){
   jQuery("div.box-confirm-modal-content").html(dContent);
-  jQuery('#box-confirm-modal')
-    .removeClass("hide")
-    .dialog({ 
-        title: dTitle, 
-        buttons: [{
-                    text: y,
-                    'class': "confirm-modal-yes-button hide btn btn-primary",
-                    click: function(){
-                      autoClose = true;
-                      jQuery(this).dialog('close');
-                      autoClose = false;
-                      callback(true);
-                    }
-                  },
-                  {
-                    text: n,
-                    'class': "confirm-modal-no-button hide btn",
-                    click: function(){
-                      autoClose = true;
-                      jQuery("#box-confirm-modal").dialog('close');
-                      autoClose = false;
-                      callback(false);
-                    }
-                  },
-                  {
-                    text: 'Cancel',
-                    'class': "confirm-modal-no-button hide btn",
-                    click: function(){
-                      jQuery("#box-confirm-modal").dialog('close');
-                    }
-                  }],
-        show: { effect: "fade", duration: 200, complete: function(){} },
-        create: function(evt, ui){
-          jQuery(".confirm-modal-yes-button").blur();
-        },
-        close: function(){ if(!autoClose) unblockChooser() },
-        width: 450, height: 50, modal: true, resizable: false,
-        zIndex: 1051, stack: false
-    }); 
-  jQuery(".confirm-modal-yes-button, .confirm-modal-no-button").show();
+
+  var data = {
+        targetId: "#box-confirm-modal",
+        title: dTitle,
+        width: "450",
+        backdrop: "static",
+        templateFooter: false,
+        destroyOnClose: true
+    }
+
+    jQuery.freshdialog(data);
 }
 
+jQuery(document).on('click', '#box-confirm-yes', function(){
+  jQuery('.modal').modal('hide');
+  boxChooser.createSharedLink();
+})
+
+jQuery(document).on('click', '#box-confirm-no', function(){
+  jQuery('.modal').modal('hide');
+  boxChooser.attach_file(entry); 
+})
+
+jQuery(document).on('click', '#box-confirm-cancel', function(){
+  jQuery('.modal').modal('hide');
+})
 
 jQuery('div#box-content-pane li.box-item').live('click', function(e){
   e.preventDefault();
@@ -314,7 +294,7 @@ jQuery('div#box-content-pane li.box-item').live('click', function(e){
         on0: boxChooser.handle_broken_request.bind(boxChooser)
       }
     });
-    blockChooser();
+    // blockChooser();
   } else if(element.data('item-type')=='folder'){
     boxChooser.get_folder_items(element.data('item-id'))
   }

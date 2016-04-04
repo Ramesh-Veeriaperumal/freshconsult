@@ -32,7 +32,7 @@
 		{% for category in portal.forum_categories %}
 			{% if category.forums_count > 0 %}
 				<div class="cs-s">
-					<h3 class="heading">{{ category.name | h | link_to: category.url }}</h3>
+					<h3 class="heading">{{ category.name | link_to: category.url }}</h3>
 					<div class="cs-g-c">
 					{% for forum in category.forums %}
 						<section class="cs-g topic-list">

@@ -1,9 +1,8 @@
 require 'spec_helper'
 
-describe Solution::CategoriesController do
+RSpec.describe Solution::CategoriesController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
 
   before(:all) do
@@ -21,7 +20,7 @@ describe Solution::CategoriesController do
     post :create, params.merge!(:format => 'json'), :content_type => 'application/json'
     result = parse_json(response)
 
-    expected = (response.status === "201 Created")  && (compare(result["category"].keys,APIHelper::SOLUTION_CATEGORY_ATTRIBS,{}).empty?)
+    expected = (response.status === 201)  && (compare(result["category"].keys,APIHelper::SOLUTION_CATEGORY_ATTRIBS,{}).empty?)
     expected.should be(true)
 
   end
@@ -29,7 +28,7 @@ describe Solution::CategoriesController do
     solution_category = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
     put :update, { :id => solution_category.id, :solution_category => {:description => Faker::Lorem.paragraph }, :format => 'json'}
     
-    response.status.should === "200 OK"
+    response.status.should === 200
 
   end
   it "should be able to view a solution category" do
@@ -38,7 +37,7 @@ describe Solution::CategoriesController do
     get :show, { :id => solution_category.id, :format => 'json'}
     result = parse_json(response)
 
-    expected = (response.status === "200 OK") &&  (compare(result["category"].keys-["folders"],APIHelper::SOLUTION_CATEGORY_ATTRIBS,{}).empty?)
+    expected = (response.status === 200) &&  (compare(result["category"].keys-["folders"],APIHelper::SOLUTION_CATEGORY_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
   it "should be able to view all solution categories" do
@@ -47,7 +46,7 @@ describe Solution::CategoriesController do
     
     get :index, {:format => 'json'}
     result = parse_json(response)
-    expected = (response.status === "200 OK")  && (compare(result.first["category"].keys-["folders"],APIHelper::SOLUTION_CATEGORY_ATTRIBS,{}).empty?)
+    expected = (response.status === 200)  && (compare(result.first["category"].keys-["folders"],APIHelper::SOLUTION_CATEGORY_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
   it "should be able to delete a solution category" do
@@ -55,7 +54,7 @@ describe Solution::CategoriesController do
 
     delete :destroy, { :id => solution_category.id, :format => 'json'}
 
-    expected = (response.status === "200 OK")
+    expected = (response.status === 200)
     expected.should be(true)
   end
   #negative condition check.
@@ -63,7 +62,7 @@ describe Solution::CategoriesController do
     post :create, {:solution_category => { :description=>Faker::Lorem.paragraph },:format => 
     'json'}, :content_type => 'application/json'
     #currently no error handling for json. change this once its implemented.
-    response.status.should =~ /406 Not Acceptable/
+    response.status.should === 406
   end
 
     def solution_category_api_params

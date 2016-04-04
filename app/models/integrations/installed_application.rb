@@ -4,20 +4,31 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   
   serialize :configs, Hash
   belongs_to :application, :class_name => 'Integrations::Application'
-  belongs_to :account
+  belongs_to_account
   has_many :integrated_resources, :class_name => 'Integrations::IntegratedResource', :dependent => :destroy
   has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
-  has_many :external_notes,:class_name => 'Helpdesk::ExternalNote',:foreign_key => 'installed_application_id',:dependent => :destroy  
+  has_many :external_notes,:class_name => 'Helpdesk::ExternalNote',:foreign_key => 'installed_application_id',:dependent => :delete_all
+  has_many :app_business_rules, :class_name =>'Integrations::AppBusinessRule', :dependent => :destroy
+  has_many :va_rules, through: :app_business_rules
   attr_protected :application_id
-
+  
+  validate :check_existing_app, :on => :create
   before_destroy :before_destroy_customize
   after_destroy :delete_google_accounts, :after_destroy_customize
   before_save :before_save_customize
+  before_create :before_create_customize
+  after_create :after_create_customize
   after_save :after_save_customize
+  after_commit :after_commit_on_create_customize, :on => :create
+  after_commit :after_commit_on_update_customize, :on => :update
+  after_commit :after_commit_on_destroy_customize, :on => :destroy
+  after_commit :after_commit_customize
 
+  include ::Integrations::AppMarketPlaceExtension
+
+  scope :with_name, lambda { |app_name| where("applications.name = ?", app_name ).joins(:application).select('installed_applications.*')}
   delegate :oauth_url, :to => :application 
-  
-  named_scope :with_name, lambda { |app_name| {:joins=>"INNER JOIN applications ON applications.id=installed_applications.application_id", :conditions=>["applications.name = ?", app_name]}}
+  scope :with_type_cti, -> { where("applications.application_type = 'cti_integration'").includes(:application) }
   
   def to_liquid
     configs[:inputs]
@@ -36,6 +47,11 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       self.configs[:inputs] = self.configs[:inputs].merge(inputs_hash)
     end
   end
+
+  def is_freshplug?
+    self.application && self.application.freshplug?
+  end
+
 
   def method_missing(meth_name, *args, &block)
     matched = /configs([^_]*)_([^=]*)(=?)/.match(meth_name.to_s)
@@ -103,6 +119,14 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       execute_custom_clazz(:after_save)
     end
 
+    def before_create_customize
+      execute_custom_clazz(:before_create)
+    end
+
+    def after_create_customize
+      execute_custom_clazz(:after_create)
+    end
+
     def before_destroy_customize
       execute_custom_clazz(:before_destroy)
     end
@@ -111,17 +135,37 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       execute_custom_clazz(:after_destroy)
     end
 
+    def after_commit_on_create_customize
+      execute_custom_clazz(:after_commit_on_create)
+    end
+
+    def after_commit_on_update_customize
+      execute_custom_clazz(:after_commit_on_update)
+    end
+
+    def after_commit_on_destroy_customize
+      execute_custom_clazz(:after_commit_on_destroy)
+    end
+
+    def after_commit_customize
+      execute_custom_clazz(:after_commit)
+    end
+
     def execute_custom_clazz(action)
       return if self.application.blank?
       as = self.application.options[action]
       unless as.blank?
-        execute(as[:clazz], as[:method], self)
+        if ["github"].include? self.application.name
+          execute_service(as.delete(:clazz), as.delete(:method), self, as)
+        else
+          execute(as[:clazz], as[:method], self)
+        end
       end
     end
 
     def sanitize_hash_values(inputs_hash)
       inputs_hash.each do |key, value|
-        inputs_hash[key] = sanitize_value(value)
+        inputs_hash[key] = sanitize_value(value) unless key == "password"
       end
     end
 
@@ -134,5 +178,12 @@ class Integrations::InstalledApplication < ActiveRecord::Base
     def sanitize_value(value)
       value.is_a?(Array) ? sanitize_array_values(value) : ( value.is_a?(Hash) ?
           sanitize_hash_values(value) : RailsFullSanitizer.sanitize(value) )
+    end
+
+    def check_existing_app
+      ext_app = self.class.where(:account_id => Account.current.id, :application_id => self.application_id).any?
+      if ext_app
+        self.errors[:base] << t(:'flash.application.already') and return false
+      end
     end
 end

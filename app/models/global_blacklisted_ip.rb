@@ -1,4 +1,5 @@
 class GlobalBlacklistedIp < ActiveRecord::Base
+  self.primary_key = :id
 
 	not_sharded
 
@@ -10,9 +11,9 @@ class GlobalBlacklistedIp < ActiveRecord::Base
 	validate :valid_ips?
 
   def valid_ips?
-  	return if ip_list.nil?
+  	return if ip_list.blank?
 		unless ip_list.all? { |ip| valid_ipv4_address?(ip) || valid_ipv6_address?(ip) }
-			errors.add_to_base("Invalid IPAddress")
+			errors.add(:base,"Invalid IPAddress")
 		end
 	end
 

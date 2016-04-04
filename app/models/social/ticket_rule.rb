@@ -1,10 +1,9 @@
 class Social::TicketRule < ActiveRecord::Base
 
-  set_table_name "social_ticket_rules"
+  self.table_name =  "social_ticket_rules"
+  self.primary_key = :id
 
   belongs_to_account
-
-  acts_as_list :scope => :stream
 
   belongs_to :stream,
     :foreign_key => :stream_id,
@@ -12,6 +11,9 @@ class Social::TicketRule < ActiveRecord::Base
 
   serialize :filter_data, Hash
   serialize :action_data, Hash
+
+  attr_accessible :filter_data, :action_data, :position
+  acts_as_list :scope => :stream
 
 
   def apply(feed)

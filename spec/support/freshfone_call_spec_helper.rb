@@ -34,6 +34,12 @@ module FreshfoneCallSpecHelper
                                       :params => { :CallSid => "CA2db76c748cb6f081853f80dace462a04" } )
   end
 
+  def create_call_for_status_with_out_agent
+    @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
+                                      :call_status => Freshfone::Call::CALL_STATUS_HASH[:default], :call_type => 1, :business_hour_call => true,
+                                      :params => { :CallSid => "CA2db76c748cb6f081853f80dace462a04" } )
+  end
+
   def in_call_params
     { "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "CallStatus"=>"in-progress", "CalledVia"=>"+12407433321", 
       "FromState"=>"CA", "Called"=>"client:1", "To"=>"client:1", "ParentCallSid"=>"CA2db76c748cb6f081853f80dace462a04", 
@@ -51,6 +57,16 @@ module FreshfoneCallSpecHelper
       "From"=>"+16617480240", "CallerZip"=>"93307", "FromZip"=>"93307", "CallStatus"=>"in-progress", "ToCity"=>"", 
       "ToState"=>"Tamil Nadu", "To"=>"+919994269753", "ToCountry"=>"IN", "CallerCity"=>"BAKERSFIELD", "ApiVersion"=>"2010-04-01", 
       "Caller"=>"+16617480240", "CalledCity"=>"", "direct_dial_number"=>"9994269753"}
+  end
+
+  def external_transfer_success_params
+    {"AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "CalledVia"=>"+12407433321", "FromState"=>"CA", "ToZip"=>"",
+     "Called"=>"+919876543210", "ParentCallSid"=>"CDIRECTPARENT", "FromCountry"=>"US", 
+     "CallerCountry"=>"US", "CalledZip"=>"", "Direction"=>"outbound-dial", "FromCity"=>"BAKERSFIELD", "ForwardedFrom"=>"+12407433321",
+      "CalledCountry"=>"IN", "CallerState"=>"CA", "CallSid"=>"CTRANSFER", "CalledState"=>"Chennai", 
+      "From"=>"+16617480240", "CallerZip"=>"93307", "FromZip"=>"93307", "CallStatus"=>"in-progress", "ToCity"=>"", "ToState"=>"Chennai",
+      "To"=>"+919876543210", "ToCountry"=>"IN", "CallerCity"=>"BAKERSFIELD", "ApiVersion"=>"2010-04-01", 
+      "Caller"=>"+16617480240", "CalledCity"=>"", "direct_dial_number"=>"+919876543210"}
   end
 
   def call_transfer_params

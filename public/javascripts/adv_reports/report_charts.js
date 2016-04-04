@@ -374,7 +374,9 @@ function lineChart(opts){
       },
       y: 15,
       verticalAlign: 'bottom',
-      floating: false
+      floating: false,
+      useHTML:true,
+       rtl: jQuery('html').attr("dir") === 'rtl' ? true : false
     },
     xAxis: {
       type: 'datetime',
@@ -408,6 +410,7 @@ function lineChart(opts){
     series: opts['chartData'],
 
     tooltip: {
+      useHTML:true,
       shared: true,
       crosshairs: true,
       enabled: opts['isPDF'] ? false : true,
@@ -667,7 +670,9 @@ function xaxis_bar_chart(opts){
       },
       y: 13,
       verticalAlign: 'bottom',
-      floating: false
+      floating: false,
+      useHTML:true,
+       rtl: jQuery('html').attr("dir") === 'rtl' ? true : false
     }
   });
 }

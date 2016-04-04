@@ -1,15 +1,14 @@
 require 'spec_helper'
 
-describe Solution::FoldersController do
+RSpec.describe Solution::FoldersController do
 
   self.use_transactional_fixtures = false
-  include APIAuthHelper
 
 
   before(:all) do
     @user = create_dummy_customer
     @solution_category = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-    @new_company = Factory.build(:company, :name => Faker::Name.name)
+    @new_company = FactoryGirl.build(:company, :name => Faker::Name.name)
     @new_company.save
     @new_company.reload
   end
@@ -24,35 +23,38 @@ describe Solution::FoldersController do
     params = solution_folder_api_params
     post :create, params.merge!(:category_id=>@solution_category.id,:format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    expected = (response.status === "201 Created") && (compare(result["solution_folder"].keys,APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?)
+    expected = (response.status === 201) && (compare(result["solution_folder"].keys,APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?)
     expected.should be(true)
   end
   it "should be able to update a solution folder" do
     @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
      :category_id => @solution_category.id } ) 
     put :update, { :id => @test_folder.id, :category_id=>@solution_category.id, :solution_folder => {:description => Faker::Lorem.paragraph }, :format => 'xml'}
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
   it "should be able to view a solution folder" do
     @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
      :category_id => @solution_category.id } )
+    @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", 
+      :folder_id => @test_folder.id, :user_id => @agent.id, :status => "2", :art_type => "1" } )
     get :show, { :category_id => @solution_category.id, :id=>@test_folder.id, :format => 'xml'}
     result = parse_xml(response)
-    expected = (response.status === "200 OK") &&  (compare(result["solution_folder"].keys-["articles"],APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?)
-    expected.should be(true)
+    expect(response.status).to be_eql(200)
+    expect(assert_array(result["solution_folder"].keys, APIHelper::SOLUTION_FOLDER_ATTRIBS, ["articles"])).to be_truthy
+    expect(assert_array(result["solution_folder"]["articles"].first.keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS, ["tags", "folder"])).to be_truthy
   end
   it "should be able to delete a solution folder" do
     @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
      :category_id => @solution_category.id } )
     delete :destroy, { :category_id => @solution_category.id, :id=>@test_folder.id, :format => 'xml'}
-    response.status.should === "200 OK"
+    response.status.should === 200
   end
 
   it "should be able to create a solution folder with visibility being selected companies" do
     params = solution_folder_params_with_company_visibility
     post :create, params.merge!(:category_id=>@solution_category.id,:format => 'xml'), :content_type => 'application/xml'
     result = parse_xml(response)
-    expected = (response.status === "201 Created") && (compare(result["solution_folder"].keys,APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?)
+    expected = (response.status === 201) && (compare(result["solution_folder"].keys,APIHelper::SOLUTION_FOLDER_ATTRIBS,{}).empty?)
     customer_id = @account.folders.find_by_name(params["solution_folder"]["name"] ).customer_folders.first.customer.id 
     expected.should be(true)
     customer_id.should be(@new_company.id)

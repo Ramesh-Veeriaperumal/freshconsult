@@ -1,9 +1,7 @@
 class SurveyHandle < ActiveRecord::Base
-	
+  self.primary_key = :id
   belongs_to_account
-  	
-  include ActionController::UrlWriter
-  
+    
   NOTIFICATION_VS_SEND_WHILE = {
     EmailNotification::TICKET_RESOLVED => Survey::RESOLVED_NOTIFICATION,
     EmailNotification::TICKET_CLOSED => Survey::CLOSED_NOTIFICATION
@@ -16,13 +14,13 @@ class SurveyHandle < ActiveRecord::Base
 
   delegate :portal, :to => :surveyable
   
-  def self.create_handle(ticket, note, specific_include)  	
+  def self.create_handle(ticket, note, specific_include)
     create_handle_internal(ticket, 
       (specific_include) ? Survey::SPECIFIC_EMAIL_RESPONSE : Survey::ANY_EMAIL_RESPONSE , 
       note)
   end
   
-  def self.create_handle_for_place_holder(ticket)    
+  def self.create_handle_for_place_holder(ticket)
     create_handle_internal(ticket, Survey::PLACE_HOLDER)
   end
 
@@ -31,8 +29,9 @@ class SurveyHandle < ActiveRecord::Base
     create_handle_internal(ticket, send_while) if send_while
   end
   
+  # Method moved to helper
   def survey_url(ticket, rating)
-    support_customer_survey_url(id_token, Survey::CUSTOMER_RATINGS[rating], 
+    Rails.application.routes.url_helpers.support_customer_survey_url(id_token, Survey::CUSTOMER_RATINGS[rating], 
       :host => ticket.portal_host)
   end
   
@@ -58,7 +57,7 @@ class SurveyHandle < ActiveRecord::Base
     
     save
   end
-  
+
   private
     def self.create_handle_internal(ticket, send_while, note = nil)      
       return nil unless ticket.account.survey.can_send?(ticket, send_while)

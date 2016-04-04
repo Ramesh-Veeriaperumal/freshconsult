@@ -13,7 +13,7 @@ module TwoFactorAuthentication
 		text = t('one_time_password_instructions', :otp => otp)
 		set_others_redis_key(USER_OTP_KEY % {:email => email},otp,FIVE_MINUTES)
 		Rails.logger.silence do
-			UserNotifier.deliver_one_time_password(email,text)
+			UserNotifier.one_time_password(email,text)
 		end
 	end
 

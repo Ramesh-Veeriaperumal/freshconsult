@@ -24,7 +24,7 @@ module FormBuilders::Codemirror
         output << %(<script type="text/javascript">
            jQuery("##{id}").data('codemirrorOptions',#{_javascript_options.to_json});
            jQuery("##{id}").attr('rel','codemirror');
-           scriptLoader.load('codemirror');
+           Fjax.Assets.plugin('codemirror');
           </script>
         )
 

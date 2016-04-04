@@ -1,12 +1,14 @@
 class Solution::CustomerFolder < ActiveRecord::Base
 
-	set_table_name "solution_customer_folders"
+	self.table_name =  "solution_customer_folders"
+  self.primary_key = :id
 
 	before_validation :set_account_id
 
 
 	belongs_to_account
 	belongs_to :folder, :class_name => 'Solution::Folder'
+	belongs_to :folder_meta, :class_name => 'Solution::FolderMeta'
 	belongs_to :customer, :class_name => 'Company', :foreign_key => 'customer_id'
 	belongs_to :account
 
@@ -16,7 +18,7 @@ class Solution::CustomerFolder < ActiveRecord::Base
 
 	delegate :update_search_index, :to => :folder, :allow_nil => true
 	
-	after_commit_on_create :update_search_index
+	after_commit :update_search_index, on: :create
 
 	def set_account_id
 		self.account_id = customer.account_id

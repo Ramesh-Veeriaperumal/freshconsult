@@ -1,13 +1,26 @@
 helpdesk:
   initializers:
+    - mri2.1_patches
+    - rails3_patches
+    - authlogic_patch
     - helpdesk
+    - api_initializer
+    - support_initializer
+    - jbuilder_cache_store
     - action_mailer_callbacks
     - action_mailer_no_tmail
     - activerecord_log
     - admin_roles
     - akismet_config
+    - asset_sync
     - aws_s3
-    - aws_social
+    - aws/dynamo
+    - aws/sns
+    - aws/sqs
+    - aws/swf
+    - aws/cloud_watch
+    - aws_forums
+    - belongs_to_account
     - chat_config
     - compass
     - concerns
@@ -25,17 +38,18 @@ helpdesk:
     - memcached
     - mime_types
     - new_rails_defaults
-    - omniauth
     - pdf_executable_path
     - portal_init
     - query_trace
     - rabbit_mq
     - redis
+    - resource_rate_limit
     - redshift
     - resque
     - riak
     - ruby193_monkey_patches
-    - rails2_3_session_share_patch
+    - secret_token
+    - session_store
     - sidekiq
     - site_cloudfront_asset_host
     - site_keys
@@ -44,8 +58,20 @@ helpdesk:
     - text_datastore
     - time_formats
     - twitter_config
+    - social_config
     - virtual_agent
+    - white_list_formatted_content
     - will_paginate
+    - wrap_parameters
     - statsd_config
     - big_brother
+    - integrations
+    - autopilot_config
+    - marketplace_config
+    - doorkeeper
+    - ebay_config
+    - doorkeeper_extension
+    - helpdesk_reports/reports_app_config
+    - controller_log_subscriber
+
 

@@ -1,13 +1,13 @@
 <% show_delete ||= true %>
 <li id="<%= dom_id(attachment) %>">
 	<%=
-		link_to_remote("", :url => helpdesk_attachment_path(attachment), :method => 'delete',
-											:html => { :class =>"attachment-close" },
-											:confirm => t('attachment_delete'))  if show_delete
-											%>
+		link_to_if show_delete "", helpdesk_attachment_path(attachment), :method => 'delete',
+				   :class =>"attachment-close", :confirm => t('attachment_delete'),
+				   :remote => true
+	%>
 
 	<div class="attachment-type file-types-<%= attachment_extension(attachment.content_file_name) %>">
-		<%= link_to h(truncate(attachment.content_file_name,15)), attachment, :popup => true, :title => h(attachment.content_file_name) %>
+		<%= link_to h(truncate(attachment.content_file_name, :length => 15)), attachment, :target => "_blank", :title => h(attachment.content_file_name) %>
 		<span>(<%= number_to_human_size attachment.content_file_size %>)</span>
 	</div>
 </li>

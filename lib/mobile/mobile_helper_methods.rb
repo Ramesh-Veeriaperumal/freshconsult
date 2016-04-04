@@ -44,16 +44,22 @@ module Mobile::MobileHelperMethods
       @native_mobile_agent ||= request.env["HTTP_USER_AGENT"] && request.env["HTTP_USER_AGENT"][/#{AppConfig['app_name']}_Native/].present? 
     end
 
-    def set_mobile      
+    def set_mobile# TODO-RAILS3      
       Rails.logger.debug "mobile ::: #{mobile?} :: #{request.headers['HTTP_ACCEPT']}"
       if mobile?
-        params[:format] = "mobile" if request.headers['HTTP_ACCEPT'] && request.headers['HTTP_ACCEPT'].eql?("application/json")
+        if request.headers['HTTP_ACCEPT'] && request.headers['HTTP_ACCEPT'].eql?("application/json")
+          params[:format] = "mobile" 
+          request.format = 'mobile'
+        end
       end
     end
 
     def set_native_mobile
       Rails.logger.debug "nmobile ::: #{is_native_mobile?} :: #{request.headers['HTTP_ACCEPT']}"
-      params[:format] = "nmobile" if is_native_mobile?
+      if is_native_mobile?
+        params[:format] = "nmobile"
+        request.format = 'nmobile'
+      end
     end
 
     def require_user_login

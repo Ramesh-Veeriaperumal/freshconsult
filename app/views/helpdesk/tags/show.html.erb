@@ -3,7 +3,7 @@
   <script src="/javascripts/helpdesk/page_switcher.js" type="text/javascript"></script>
   <script src="/javascripts/helpdesk/take_it_button.js" type="text/javascript"></script>
   <script src="/javascripts/helpdesk/id_selector.js" type="text/javascript"></script>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     document.observe("dom:loaded", function(){
       
 	  Helpdesk.sel = new Helpdesk.MultiSelectorsOnPages({
@@ -67,13 +67,13 @@
 
   <div id="pages" class="tickets-container">
     <!--%= render :partial => "/helpdesk/tags/ticket_header" %-->
-    <% form_tag "", { :id => "expanded", :method => :put, :style=>'display: none'} do %>
+    <%= form_tag "", { :id => "expanded", :method => :put, :style=>'display: none'} do %>
       <table class="tickets-expanded">
         <%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @tickets %>
       </table>
     <% end %>
 
-    <% form_tag "", { :id => "list",  :method => :put, :style=>'display: none' } do %>
+    <%= form_tag "", { :id => "list",  :method => :put, :style=>'display: none' } do %>
       <table class="tickets">
         <%= render :partial => "/helpdesk/shared/collapsed/ticket", :collection => @tickets %>
       </table>

@@ -1,12 +1,14 @@
 require 'spec_helper'
 
-describe Admin::SecurityController do
-  integrate_views
+RSpec.describe Admin::SecurityController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
   before(:all) do
     @account.features.whitelisted_ips.create
+    currency = Subscription::Currency.find_by_name "USD"
+    @account.subscription.currency = currency
+    @account.subscription.save
   end
 
   before(:each) do

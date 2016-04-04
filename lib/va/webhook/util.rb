@@ -41,7 +41,7 @@ module Va::Webhook::Util
       event_hash  = get_matched_event_hash(triggered_event)
       content     = act_hash[content_key]
       contexts    = { map_class(act_on.class.name) => act_on, 'helpdesk_name' => act_on.account.portal_name, 
-        'triggered_event' => j(event_hash.to_json) }
+        'event_performer' => doer, 'triggered_event' => j(event_hash.to_json) }
       filters     = { :filters => [Va::Webhook::HelperMethods] }
       case content
       when String

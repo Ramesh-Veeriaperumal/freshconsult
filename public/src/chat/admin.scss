@@ -170,7 +170,7 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 	    }
 	    .profile{
 	    	display: none;
-	    }	
+	    }
     }
 	}
 	.profile{
@@ -227,7 +227,7 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 	}
 	.editing{
 		.error{
-			border-color:rgba(239, 80, 95, 0.3); 
+			border-color:rgba(239, 80, 95, 0.3);
 		}
 		input[type=text]{
 			line-height: 16px;
@@ -351,5 +351,12 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 			border-top:1px solid #ddd;
 			margin: 5px 0;
 		}
+	}
+	// Archive Conversation Timestamp
+	.lc-timestamp{
+		display: block;
+	  margin-top: 0;
+	  font-size: 12px;
+	  margin-left: 37px;
 	}
 }

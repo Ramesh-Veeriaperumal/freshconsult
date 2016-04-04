@@ -18,7 +18,8 @@ class Shortcut
 			:customers 			=> "g c",
 			:reports 			=> "g r",
 			:admin 				=> "g a",
-			:ticket_new			=> "g n"
+			:ticket_new			=> "g n",
+			:compose_email      => "g m"
 		},
 		:pagination	=> {
 			:previous			=> "alt+left",
@@ -39,7 +40,8 @@ class Shortcut
 			:undo				=> "z",
 			:reply				=> "r",
 			:forward			=> "f",
-			:add_note			=> "n"
+			:add_note			=> "n",
+			:scenario			=> "s"
 		},
 		:ticket_detail	=> {
 			:toggle_watcher		=> "w",
@@ -73,9 +75,9 @@ class Shortcut
 		:portal_customizations  => {
 			:preview			=> "mod+shift+p"
 		},
-		:community_actions => {
-			:monitor_topic => "w",
-			:monitor_forum => "w",
+		:discussions => {
+			:toggle_following => "w",
+			:add_follower => "shift+w",
 			:reply_topic => "r"
 		}
 	}

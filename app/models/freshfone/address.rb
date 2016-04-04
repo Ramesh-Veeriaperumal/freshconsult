@@ -1,5 +1,5 @@
 class Freshfone::Address < ActiveRecord::Base
-  set_table_name :freshfone_number_addresses
+  self.table_name = "freshfone_number_addresses"
   belongs_to_account
   belongs_to :freshfone_account, :class_name => "Freshfone::Account"
   before_create :create_address_in_twilio

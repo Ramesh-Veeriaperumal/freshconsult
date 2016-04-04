@@ -1,5 +1,6 @@
 # encoding: utf-8
 class FlexifieldDefEntry < ActiveRecord::Base
+  self.primary_key = :id
 
   include Cache::Memcache::FlexifieldDefEntry
 
@@ -10,16 +11,17 @@ class FlexifieldDefEntry < ActiveRecord::Base
   has_one :ticket_field, :class_name => 'Helpdesk::TicketField'#, :dependent => :destroy # Confirm with Shan
   validates_presence_of :flexifield_name, :flexifield_alias, :flexifield_order
 
-  named_scope :drop_down_fields, :conditions => {:flexifield_coltype => 'dropdown' }
+  scope :drop_down_fields, :conditions => {:flexifield_coltype => 'dropdown' }
 
-  named_scope :event_fields, 
+  scope :event_fields, 
               :conditions => [ "flexifield_coltype = 'dropdown' or flexifield_coltype = 'checkbox'" ]  
   
   before_save :ensure_alias_is_one_word
   before_create :set_account_id
 
-  after_commit_on_create :clear_cache
-  after_commit_on_destroy :clear_cache
+  #https://github.com/rails/rails/issues/988#issuecomment-31621550
+  after_commit ->(obj) { obj.clear_cache }, on: :create
+  after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
   ViewColumn = Struct.new(:object,:content) do
     def viewname

@@ -25,7 +25,7 @@
   end
 %>
 <% unless sub_category.nil? %>
-  <% content_tag :div,{ :id  => "div_ff_#{sub_category[:condition]}", 
+  <%= content_tag :div,{ :id  => "div_ff_#{sub_category[:condition]}", 
                 :class       => "level_2 nested-input ff_item", 
                 :condition   => sub_category[:condition],
                 :operator    => sub_category[:operator],
@@ -37,7 +37,7 @@
         
   <% unless item.nil? %>
       <% item_val = current_options[item[:condition].to_s].to_s %>
-      <% content_tag :div,{ :id => "div_ff_#{item[:condition]}", 
+      <%= content_tag :div,{ :id => "div_ff_#{item[:condition]}", 
                     :class       => "level_3 nested-input ff_item", 
                     :condition   => item[:condition],
                     :operator    => item[:operator],
@@ -47,7 +47,7 @@
         <%= select_tag item[:name], "", :id => sub_category_item_id, :class => "dropdown nested_field select2"%>
       <% end %>
   <% end %>
-  <% javascript_tag do %>
+  <%= javascript_tag do %>
     jQuery(document).ready(function(){
       jQuery('#<%=category_id%>')
         .nested_select_tag({

@@ -166,6 +166,7 @@ Autocompleter.MultiValue = Class.create({
     this.form = outputElement.up('form');
     this.dataFetcher = dataFetcher;
     this.active = false;
+    this.options.ignoreQuotedComma = this.options.ignoreQuotedComma || false;
     this.acceptNewValues      = this.options.acceptNewValues || false;
     this.options.frequency    = this.options.frequency || 0.4;
     this.options.allowSpaces  = this.options.allowSpaces || false;
@@ -289,7 +290,13 @@ Autocompleter.MultiValue = Class.create({
       var fieldValue = $F(event.element());
       var separatorIndex = 0;
       if (event.keyCode == 188) {
-        separatorIndex = fieldValue.indexOf(',');
+
+        if(this.getEntry(0) != undefined){
+          this.selectEntry();
+        } else {
+          separatorIndex = fieldValue.indexOf(',');
+        }
+      
       } else if (event.keyCode == 32 && !this.options.allowSpaces) {
         separatorIndex = fieldValue.indexOf(' ');
       };
@@ -363,14 +370,21 @@ Autocompleter.MultiValue = Class.create({
   addEntry: function(id, title, skip_separatorRegEx) {
     var items = [id],index,titleArr=[title];
     if(!skip_separatorRegEx && this.options.separatorRegEx){
-        items = id.split(this.options.separatorRegEx);
-        titleArr = title.split(this.options.separatorRegEx);
+        if(this.options.ignoreQuotedComma){
+          items = id.match(this.options.separatorRegEx);
+          titleArr = title.match(this.options.separatorRegEx);
+        }
+        else{
+          items = id.split(this.options.separatorRegEx);
+          titleArr = title.split(this.options.separatorRegEx);
+        }
     }
     for(index=0;index<items.length;index++){
       id = items[index],title=titleArr[index];
       title = title || id;
       if (!this.selectedEntries().include('' + id)) {
         this.searchFieldItem.insert({before: this.createSelectedElement(id, title)});
+        jQuery(this.searchField).trigger('added.Autocompleter');
       };
       var emptyValueField = this.emptyValueElement();
       if (emptyValueField) {
@@ -384,6 +398,7 @@ Autocompleter.MultiValue = Class.create({
     entryElement = Object.isElement(entryElement) ? entryElement : this.holder.down("li[choice_id=" + entryElement + "]");
     if (entryElement) {
       entryElement.remove();
+      jQuery(this.searchField).trigger('removed.Autocompleter');
       if (this.selectedEntries().length == 0) {
         this.setEmptyValue();
         jQuery(this.searchField).attr('placeholder', this.options.placeHolder);

@@ -1,9 +1,10 @@
 # encoding: utf-8
-class User < ActiveRecord::Base
-  
+class User < ActiveRecord::Base  
+  self.primary_key= :id
+
   belongs_to_account
-  include ArExtensions
-  include ActionController::UrlWriter
+  has_many :access_tokens, :class_name => 'Doorkeeper::AccessToken', :foreign_key => :resource_owner_id, :dependent => :destroy
+
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
   include Mobile::Actions::User
@@ -18,20 +19,20 @@ class User < ActiveRecord::Base
   include ApiWebhooks::Methods
   include Social::Ext::UserMethods
   include AccountConstants
+  include PasswordPolicies::UserHelpers
   
-  concerned_with :constants, :associations, :callbacks, :user_email_callbacks
+  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
 
   xss_sanitize  :only => [:name,:email,:language, :job_title], :plain_sanitizer => [:name,:email,:language, :job_title]
-  named_scope :contacts, :conditions => { :helpdesk_agent => false }
-  named_scope :technicians, :conditions => { :helpdesk_agent => true }
-  named_scope :visible, :conditions => { :deleted => false }
-  named_scope :active, lambda { |condition| { :conditions => { :active => condition }} }
-  named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
-  named_scope :with_contact_number, lambda { |number| { :conditions => ["mobile=? or phone=?",number,number]}}
+  scope :contacts, :conditions => { :helpdesk_agent => false }
+  scope :technicians, :conditions => { :helpdesk_agent => true }
+  scope :visible, :conditions => { :deleted => false }
+  scope :active, lambda { |condition| { :conditions => { :active => condition }} }
+  scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash
   alias_attribute :preferences, :text_uc01  
@@ -41,30 +42,56 @@ class User < ActiveRecord::Base
   # alias_attribute :last_name, :string_uc02 # string_uc02 is used in Freshservice to store last name
   alias_attribute :user_type, :user_role # Used for "System User"
   alias_attribute :extn, :string_uc03 # Active Directory User - Phone Extension
+
+  delegate :history_column=, :history_column, :to => :flexifield
     
   acts_as_authentic do |c|    
     c.login_field(:email)
     c.validate_login_field(false)
     c.validate_email_field(false)
     c.validations_scope = :account_id
-    c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
-    c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials?}    
+    c.validates_length_of_password_field_options = {:on => :update, :minimum => PASSWORD_LENGTH, :if => :has_no_credentials? }
+    c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => PASSWORD_LENGTH, :if => :has_no_credentials?}    
     #The following is a part to validate email only if its not deleted
     c.merge_validates_format_of_email_field_options  :if =>:chk_email_validation?, :with => EMAIL_VALIDATOR
     c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
     c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation?, :case_sensitive => true
-  end
+    c.crypto_provider = Authlogic::CryptoProviders::Sha512
+
+    c.validate_password_length = {:if => :password_length_enabled?, 
+                                  :min_length => :minimum_password_length}
+
+    c.password_history_field(:history_column)
+
+    c.validate_password_history = {:if => :password_history_enabled?, 
+                                   :depth => :password_history_depth}
   
+    c.password_format_options([{:if => :password_alphanumeric_enabled?, :regex => FDPasswordPolicy::Regex.alphanumeric, :error => I18n.t('password_policy.alphanumeric')}, 
+                               {:if => :password_special_character_enabled?, :regex => FDPasswordPolicy::Regex.special_characters, :error => I18n.t('password_policy.special_characters')}, 
+                               {:if => :password_mixed_case_enabled?, :regex => FDPasswordPolicy::Regex.mixed_case, :error => I18n.t('password_policy.mixed_case')}])
+
+    c.validate_password_contains_login(:if => :password_contains_login_enabled?)
+
+    c.password_expiry_field(:text_uc01)
+    c.password_expiry_timeout = { :if => :password_expiry_enabled?, 
+                                  :duration => :password_expiry_duration}
+
+    c.disable_perishable_token_maintenance(true)
+
+    # enable for Phase 2
+    # c.periodic_logged_in_timeout = { :if => :periodic_login_enabled?, 
+    #                                  :duration => :periodic_login_duration}
+  end
+
   validate :has_role?, :unless => :customer?
   validate :email_validity, :if => :chk_email_validation?
   validate :user_email_presence, :if => :email_required?
-  validate_on_update :only_primary_email, :if => [:agent?, :has_contact_merge?]
+  validate :only_primary_email, on: :update, :if => [:agent?, :has_contact_merge?]
   validate :max_user_emails, :if => [:has_contact_merge?]
-
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
-    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.find_by_email(self[:email], :conditions => [(self[:id] ? "id != #{self[:id]}" : "")])
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.exists?(["email = ? and id != '#{self.id}'", self[:email]])
   end
 
   def only_primary_email
@@ -76,7 +103,7 @@ class User < ActiveRecord::Base
   end
 
   def max_user_emails
-    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_emails')) if (self.user_emails.length > MAX_USER_EMAILS)
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_emails')) if (self.user_emails.reject(&:marked_for_destruction?).length > MAX_USER_EMAILS)
   end
 
   def has_no_emails_with_ui_feature?
@@ -89,8 +116,39 @@ class User < ActiveRecord::Base
                   :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id, 
                   :description, :time_zone, :customer_id, :avatar_attributes, :company_id, 
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language, 
-                  :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id
+                  :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04
 
+  def time_zone
+    tz = self.read_attribute(:time_zone)
+    tz = "Kyiv" if tz.eql?("Kyev")
+    tz
+  end
+
+  def avatar_url(profile_size = :thumb)
+    (avatar ? avatar.expiring_url(profile_size, 30.days.to_i) : is_user_social(profile_size)) if present?
+  end
+  
+  def allow_password_update?
+    !deleted? and !spam? and !blocked? and !email.blank? and !agent?
+  end
+
+  def is_user_social(profile_size)
+    if fb_profile_id
+      profile_size = (profile_size == :medium) ? "large" : "square"
+      facebook_avatar(fb_profile_id, profile_size)
+    else
+      "/assets/misc/profile_blank_#{profile_size}.gif"
+    end
+  end
+
+  def facebook_avatar( facebook_id, profile_size = "square")
+    "https://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
+  end
+
+  def ebay_user?
+    (self.external_id && self.external_id =~ /\Afbay-/) ? true : false
+  end
+  
   class << self # Class Methods
     #Search display
     def search_display(user)
@@ -100,28 +158,32 @@ class User < ActiveRecord::Base
 
     def filter(letter, page, state = "verified", per_page = 50,order_by = 'name')
       begin
-        users = paginate  :per_page => per_page, :page => page,
-                          :conditions => filter_condition(state, letter),
-                          :order => order_by
-        preload_associations users, :flexifield
-        users
+        paginate(
+                :per_page => per_page, 
+                :page => page,
+                :conditions => filter_condition(state, letter),
+                :order => order_by
+                ).preload(:flexifield)
       rescue Exception =>exp
         raise "Invalid fetch request for contacts"
       end
     end
 
     def filter_condition(state, letter)
-      case state
+      conditions = case state
         when "verified", "unverified"
-          [ ' name like ? and deleted = ? and active = ? and deleted_at IS NULL and blocked = false ', 
-            "#{letter}%", false , state.eql?("verified") ]
+           [ ' deleted = ? and active = ? and deleted_at IS NULL and blocked = false ', 
+            false , state.eql?("verified") ]
         when "deleted", "all"
-          [ ' name like ? and deleted = ? and deleted_at IS NULL and blocked = false', 
-            "#{letter}%", state.eql?("deleted")]
+          [ ' deleted = ? and deleted_at IS NULL and blocked = false', 
+            state.eql?("deleted")]
         when "blocked"
-          [ ' name like ? and ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
-            "#{letter}%", true, (Time.now+5.days).to_s(:db), true, (Time.now+5.days).to_s(:db)  ]
-      end                                      
+          [ ' ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
+            true, (Time.zone.now+5.days).to_s(:db), true, (Time.zone.now+5.days).to_s(:db) ]
+      end
+      
+      conditions[0] = "#{conditions[0]} and name like '#{letter}%' " unless letter.blank?
+      conditions
     end
 
     def find_by_email_or_name(value)
@@ -158,12 +220,47 @@ class User < ActiveRecord::Base
       User.current = nil
     end
 
-    protected :find_by_email_or_name, :find_by_an_unique_id
+    # Used by API V2
+    def contact_filter(contact_filter)
+      {
+        deleted: {
+          conditions: { deleted: true }
+        },
+        verified: {
+          conditions: { deleted: false, active: true }
+        },
+        unverified: {
+          conditions: { deleted: false, active: false }
+        },
+        blocked: {
+          conditions: [ "((blocked = true and blocked_at <= ?) or (deleted = true and deleted_at <= ?)) and whitelisted = false", Time.zone.now+5.days, Time.zone.now+5.days ]
+        },
+        default: {
+          conditions: { deleted: false, blocked: false }
+        },
+        company_id: {
+          conditions: { customer_id: contact_filter.company_id }
+        },
+        email: {
+          joins: :user_emails, 
+          # It is guranteed that all contacts in FD have atleast one entry in user_emails table. 
+          conditions: { user_emails: { email: contact_filter.email }}
+        },
+        phone: {
+          conditions: { phone: contact_filter.phone }
+        },
+        mobile: {
+          conditions: { mobile: contact_filter.mobile }
+        }
+      }
+    end
+
+    # protected :find_by_email_or_name, :find_by_an_unique_id
   end
 
   def client_manager=(checked)
     if customer?
-      self.privileges = (checked == "true" && company ) ? Role.privileges_mask([:client_manager]) : "0"
+      self.privileges = ((checked == "true" || checked == true) && company ) ? Role.privileges_mask([:client_manager]) : "0"
     end
   end
 
@@ -190,24 +287,18 @@ class User < ActiveRecord::Base
     string_uc04.to_i
   end
 
+  def parent_id?
+    !parent_id.zero?
+  end
+
   def parent_id=(p_id)
     self.string_uc04 = p_id.to_s
   end
 
   def tag_names= updated_tag_names
     unless updated_tag_names.nil? # Check only nil so that empty string will remove all the tags.
-      updated_tag_names.strip! #strip! to avoid empty tag name error
-      updated_tag_names = updated_tag_names.split(",")
-      current_tags = account.tags_from_cache
-      new_tags = []
-      updated_tag_names.each do |updated_tag_name|
-        updated_tag_name.strip!
-        next if new_tags.any?{ |new_tag| new_tag.name.casecmp(updated_tag_name)==0 }
-
-        new_tags.push(current_tags.find{ |current_tag| current_tag.name.casecmp(updated_tag_name) == 0 } ||
-                      Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id))
-      end
-      self.tags = new_tags
+      updated_tag_names = updated_tag_names.split(",").map(&:strip).reject(&:empty?)
+      self.tags = account.tags.assign_tags(updated_tag_names)
     end
   end
 
@@ -237,12 +328,13 @@ class User < ActiveRecord::Base
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
     if [:tag_names, :tags].any?{|attr| # checking old key for API & prevents resetting tags if its not intended 
      params.include?(attr)} && params[:tags].is_a?(String)
-      params[:tag_names]||= params[:tags]
+      tags = params.delete(:tags)
+      params[:tag_names]||= tags
     end
     super(params)
   end
 
-  def signup!(params , portal=nil)
+  def signup!(params , portal=nil, send_activation=true)
     normalize_params(params[:user]) # hack to facilitate contact_fields & deprecate customer
     params[:user][:tag_names] = params[:user][:tags] unless params[:user].include?(:tag_names)
     self.name = params[:user][:name]
@@ -271,7 +363,7 @@ class User < ActiveRecord::Base
     self.created_from_email = params[:user][:created_from_email] 
     return false unless save_without_session_maintenance
     portal.make_current if portal
-    if (!deleted and !email.blank?)
+    if (!deleted and !email.blank? and send_activation)
       if self.language.nil?
         args = [ portal,false, params[:email_config]]
         Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), 
@@ -283,9 +375,24 @@ class User < ActiveRecord::Base
     true
   end
 
-  named_scope :matching_users_from, lambda { |search|
+  # Used by API V2
+  def create_contact!
+    self.avatar = self.avatar
+    return false unless save_without_session_maintenance
+    if (!self.deleted and !self.email.blank?)
+      portal = nil
+      force_notification = false
+      args = [ portal, force_notification ]
+      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
+    end
+    true
+  end
+
+  #This scope is currently used only for failure searches through ES for contact_merge search
+
+  scope :matching_users_from, lambda { |search|
     {
-      :select => %(users.id, name, users.account_id, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
+      :select => %(users.id, name, users.account_id, users.string_uc04, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
         twitter_id, fb_profile_id, phone, mobile, job_title, customer_id),
       :joins => %(left join user_emails on user_emails.user_id=users.id and 
         user_emails.account_id = users.account_id) % { :str => "%#{search}%" },
@@ -298,7 +405,7 @@ class User < ActiveRecord::Base
     }
   }
 
-  named_scope :without, lambda { |source|
+  scope :without, lambda { |source|
     {
       :conditions => "users.id <> %<us_id>i" % {
         :us_id => source.id
@@ -340,7 +447,7 @@ class User < ActiveRecord::Base
   end
 
   def first_name
-    name_part("given")
+    name_part("given").split.first
   end
 
   def last_name
@@ -370,6 +477,13 @@ class User < ActiveRecord::Base
     self.privilege?(:client_manager)
   end
 
+  # Marketplace
+  def developer?
+    marketplace_developer_application = Doorkeeper::Application.find_by_name(Marketplace::Constants::DEV_PORTAL_NAME)
+    developer_privilege = access_tokens.find_by_application_id(marketplace_developer_application.id) if self.access_tokens
+    Account.current.features?(:fa_developer) && !developer_privilege.blank?
+  end
+
   def can_assume?(user)
     # => Not himself
     # => User is not deleted
@@ -389,7 +503,7 @@ class User < ActiveRecord::Base
 
   ##Authorization copy starts here
   def name_details #changed name_email to name_details
-    return "#{name} <#{email}>" unless email.blank?
+    return "#{format_name} <#{email}>" unless email.blank?
     return "#{name} (#{phone})" unless phone.blank?
     return "#{name} (#{mobile})" unless mobile.blank?
     return "@#{twitter_id}" unless twitter_id.blank?
@@ -397,8 +511,8 @@ class User < ActiveRecord::Base
   end
 
   def search_data
-    if has_contact_merge?
-      self.user_emails.map{|x| {:id => id, :details => "#{name} <#{x.email}>", :value => name, :email => x.email}}
+    if has_contact_merge? and self.user_emails.present?
+      self.user_emails.map{|x| {:id => id, :details => "#{format_name} <#{x.email}>", :value => name, :email => x.email}}
     else
       [{:id => id, :details => self.name_details, :value => name, :email => email}]
     end
@@ -407,15 +521,16 @@ class User < ActiveRecord::Base
   ##Authorization copy ends here
   
   def url_protocol
-    if account.main_portal.portal_url.blank? 
+    if account.main_portal_from_cache.portal_url.blank? 
       return account.ssl_enabled? ? 'https' : 'http'
     else 
-      return account.main_portal.ssl_enabled? ? 'https' : 'http'
+      return account.main_portal_from_cache.ssl_enabled? ? 'https' : 'http'
     end
   end
   
   def to_s
-    name.blank? ? email : name
+    user_display_text = name.blank? ? (email.blank? ? (phone.blank? ? mobile : phone) : email) : name
+    user_display_text.to_s
   end
   
   def to_liquid
@@ -464,14 +579,14 @@ class User < ActiveRecord::Base
   end
   
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (ticket.requester_id == self.id) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
+    (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (group_ticket_permission && (ticket.group_id && (agent_groups.pluck(:group_id).insert(0,0)).include?( ticket.group_id))) 
   end
 
   # For a customer we need to check if he is the requester of the ticket
   # Or if he is allowed to view tickets from his company
   def has_customer_ticket_permission?(ticket)
     (self.id == ticket.requester_id) or 
-    (is_client_manager? && self.company_id && ticket.requester.company_id && (ticket.requester.company_id == self.company_id) )
+    (is_client_manager? && self.company_id && ticket.company_id && (ticket.company_id == self.company_id) )
   end
   
   def restricted?
@@ -550,6 +665,9 @@ class User < ActiveRecord::Base
   end
 
   def reset_primary_email primary
+    # Web does not allow a new email to be the primary_email for a contact, but it should be allowed via API
+    return true if primary.nil?
+    
     new_primary = self.user_emails.find(primary.to_i)
     if new_primary
       self.user_emails.update_all(:primary_role => false)
@@ -560,11 +678,14 @@ class User < ActiveRecord::Base
   
   def make_customer
     return true if customer?
+    set_company_name
     if update_attributes({:helpdesk_agent => false, :deleted => false})
       subscriptions.destroy_all
       agent.destroy
       freshfone_user.destroy if freshfone_user
       email_notification_agents.destroy_all
+      self.set_password_expiry({:password_expiry_date => 
+              (Time.now.utc + FDPasswordPolicy::Constants::GRACE_PERIOD).to_s})
       return true
     end 
     return false
@@ -572,18 +693,23 @@ class User < ActiveRecord::Base
   
   def make_agent(args = {})
     ActiveRecord::Base.transaction do
-      self.user_emails = [self.primary_email] if has_multiple_user_emails?
+      self.user_emails = [self.primary_email]
       self.deleted = false
       self.helpdesk_agent = true
+      self.company = nil
+      self.address = nil
       self.role_ids = [account.roles.find_by_name("Agent").id] 
+      self.tags.clear
       agent = build_agent()
       agent.occasional = !!args[:occasional]
+      self.set_password_expiry({:password_expiry_date => 
+          (Time.now.utc + FDPasswordPolicy::Constants::GRACE_PERIOD).to_s}, false)
       save ? true : (raise ActiveRecord::Rollback)
     end
   end
 
   def update_search_index
-    Resque.enqueue(Search::IndexUpdate::UserTickets, { :current_account_id => account_id, :user_id => id })
+    SearchSidekiq::IndexUpdate::UserTickets.perform_async({ :user_id => id }) if ES_ENABLED
   end
 
   def moderator_of?(forum)
@@ -606,12 +732,20 @@ class User < ActiveRecord::Base
     self.tags
   end
 
+  def language_name
+    Language.find_by_code(self.language.to_s).try(:name)
+  end
+
   def custom_form
     helpdesk_agent? ? nil : (Account.current || account).contact_form # memcache this 
   end
 
   def custom_field_aliases
-    @custom_field_aliases ||= helpdesk_agent? ? [] : custom_form.custom_contact_fields.map(&:name)
+    @custom_field_aliases ||= (helpdesk_agent? || (Account.current || account).blank?) ? [] : custom_form.custom_contact_fields.map(&:name)
+  end
+
+  def custom_field_types
+    @custom_field_types ||= (helpdesk_agent? || (Account.current || account).blank?) ? {} : custom_form.custom_contact_fields.inject({}) { |types,field| types.merge(field.name => field.field_type) }
   end
 
   def self.search_by_name search_by, account_id, options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
@@ -622,7 +756,7 @@ class User < ActiveRecord::Base
         search.query do |query|
           query.filtered do |f|
             if SearchUtil.es_exact_match?(search_by)
-              f.query { |q| q.match ["name", "email", "user_emails.email"], SearchUtil.es_filter_exact(search_by) } 
+              f.query { |q| q.match ["name", "email", "user_emails.email"], SearchUtil.es_filter_exact(search_by), :type => :phrase } 
             else
               f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['name', 'email', 'user_emails.email'], :analyzer => "include_stop" }
             end
@@ -640,6 +774,7 @@ class User < ActiveRecord::Base
     end 
   end
 
+
   # Hack to sanitize phone, mobile from api when passed as integer
   def phone=(value)
     value = value.nil? ? value : value.to_s
@@ -651,15 +786,17 @@ class User < ActiveRecord::Base
     write_attribute(:mobile, RailsFullSanitizer.sanitize(value))
   end
   # Hack ends here
-
-  protected
   
-    def search_fields_updated?
-      (@all_changes.keys & es_columns).any?
-    end
+  def search_fields_updated?
+    (@all_changes.keys & es_columns).any?
+  end
 
+  def company_id
+    self.customer_id
+  end
 
   private
+
     def name_part(part)
       part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"
       parsed_name[part].blank? ? name : parsed_name[part]
@@ -670,7 +807,7 @@ class User < ActiveRecord::Base
     end
 
     def backup_user_changes
-      @all_changes = self.changes.clone
+      @all_changes = self.changes.clone.to_hash
       @all_changes.merge!(flexifield.changes)
       @all_changes.symbolize_keys!
     end
@@ -687,12 +824,16 @@ class User < ActiveRecord::Base
       @all_changes.has_key?(:customer_id)
     end
 
-    def privileges_updated?
-      @all_changes.has_key?(:privileges)
+    def deleted_updated?
+       @all_changes.has_key?(:deleted)
+    end
+
+    def blocked_updated?
+       @all_changes.has_key?(:blocked)
     end
 
     def company_info_updated?
-      company_id_updated? or privileges_updated?
+      company_id_updated?
     end
 
     def clear_redis_for_agent
@@ -717,20 +858,23 @@ class User < ActiveRecord::Base
         ((@role_change_flag or new_record?) && self.roles.blank?)
     end
 
+    #This is the current login method. It is fed to authlogic in user_sessions.rb
+
     def self.find_by_user_emails(login)
-      if !Account.current.features_included?(:multiple_user_emails)
-        user = User.find_by_email(login)
-        user if user.present? and user.active? and !user.blocked?
-      else
-        user_email = UserEmail.find_by_email(login)
-        user_email.user if !user_email.nil? and user_email.user and user_email.user.active? and !user_email.user.blocked?
-      end
+      # Without using select will results in making the user object readonly.
+      # http://stackoverflow.com/questions/639171/what-is-causing-this-activerecordreadonlyrecord-error
+      user = User.select("`users`.*").joins("INNER JOIN `user_emails` ON `user_emails`.`user_id` = `users`.`id` AND `user_emails`.`account_id` = `users`.`account_id`").where(account_id: Account.current.id, user_emails: {email: login}).first
+      user if user and user.active? and !user.blocked?
     end
 
     def process_api_options default_options, current_options
       default_options.each do |key, value| 
         current_options[key] = current_options.key?(key) ? current_options[key] & default_options[key] : default_options[key]
       end
+    end
+
+    def format_name
+      (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
     end
 
 end

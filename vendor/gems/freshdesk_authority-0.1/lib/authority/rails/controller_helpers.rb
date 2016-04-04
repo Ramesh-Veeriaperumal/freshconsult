@@ -7,6 +7,7 @@ module Authority::FreshdeskRails
     end
   
     def check_privilege
+    # Check check_privilege method in api_applciation_controller if this method is modified.
       access_denied and return if(current_user.nil? || current_user.customer? || !allowed_to_access?)
     end
 
@@ -16,6 +17,7 @@ module Authority::FreshdeskRails
            
     private
     
+      # Check allowed_to_access? method in api_applciation_controller if this method is modified.
       def allowed_to_access?
         return false unless ABILITIES.key?(resource)
 

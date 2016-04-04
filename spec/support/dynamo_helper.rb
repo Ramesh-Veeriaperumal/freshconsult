@@ -21,7 +21,7 @@ module DynamoHelper
       feed_entry["data"][:ss].each do |twt|
         result ||= compare_intersecting_keys(tweet_feed, JSON.parse(twt))
       end
-      result.should be_true
+      result.should be_truthy
     else
       feed_entry.should be_nil
     end
@@ -41,9 +41,9 @@ module DynamoHelper
     end
 
     if present
-      result.should be_true
+      result.should be_truthy
     else
-      result.should be_false
+      result.should be_falsey
     end
     
     [feed_entry, user_entry]

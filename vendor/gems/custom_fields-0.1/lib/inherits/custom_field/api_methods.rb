@@ -2,11 +2,13 @@ module Inherits
   module CustomField
     module ApiMethods
 
+      #including field_type as attribute in to_xml is breaking in rails3. So including as method and excluding from attributes.
+
       def to_xml(options = {})
         options[:indent] ||= 2
         xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
         xml.instruct! unless options[:skip_instruct]
-        super(:builder => xml, :skip_instruct => true, :except => [:account_id, :column_name, self.class::CUSTOM_FORM_ID_COLUMN]) do |xml|
+        super(:builder => xml, :skip_instruct => true, :except => [:account_id, :column_name, self.class::CUSTOM_FORM_ID_COLUMN, :field_type], :methods => [:field_type]) do |xml|
           xml.choices do
             choices.each do |choice|  
               xml.option do

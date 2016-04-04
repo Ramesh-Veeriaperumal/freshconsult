@@ -1,10 +1,10 @@
 class Helpdesk::TimeSheet < ActiveRecord::Base
-
+  self.primary_key = :id
   include Va::Observer::Util
   include ApplicationHelper
   include Mobile::Actions::TimeSheet
 
-  set_table_name "helpdesk_time_sheets"
+  self.table_name =  "helpdesk_time_sheets"
 
   default_scope :order => "executed_at DESC"
   
@@ -14,6 +14,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   belongs_to :user
   belongs_to_account
   
+  # if any validation is introduced, update_running_timer in api/time_entries_controller should also be changed accordingly.
   before_validation :set_default_values 
 
   after_create :create_new_activity
@@ -24,51 +25,82 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   has_many :integrated_resources, 
     :class_name => 'Integrations::IntegratedResource',
     :as => 'local_integratable'
-    
-  named_scope :timer_active , :conditions =>["timer_running=?" , true]
 
-  named_scope :created_at_inside, lambda { |start, stop|
+  has_many :linked_applications, :through => :integrated_resources,
+           :source => :installed_application
+
+  scope :timer_active , :conditions =>["timer_running=?" , true]
+
+  scope :created_at_inside, lambda { |start, stop|
     { :conditions => 
       [" helpdesk_time_sheets.executed_at >= ? and helpdesk_time_sheets.executed_at <= ?", 
         start, stop] 
     }
   }
-  named_scope :hour_billable , lambda {|hr_billable| {:conditions =>{:billable => hr_billable} } }
+  scope :hour_billable , lambda {|hr_billable| {:conditions =>{:billable => hr_billable} } }
         
-  named_scope :by_agent , lambda { |created_by|
+  scope :by_agent , lambda { |created_by|
     { :conditions => {:user_id => created_by } } unless created_by.blank?
   }
   
-  named_scope :by_group , lambda  { |group|
+  scope :by_group , lambda  { |group|
       { :conditions => { :helpdesk_tickets => { :group_id => group } } } unless group.blank?
   }
 
-  named_scope :for_companies, lambda{ |company_ids|
+  scope :for_companies, lambda{ |company_ids|
     {
-      :select     => "DISTINCT `helpdesk_time_sheets`.*" ,
-      :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
-                "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
-      :conditions => {:users => {:customer_id => company_ids}}
+      :conditions => {:helpdesk_tickets => {:owner_id => company_ids}}
     } unless company_ids.blank?
   }
       
-  named_scope :for_contacts, lambda{|contact_email|
+  scope :for_contacts, lambda{|contact_email|
       {
-        :select => "DISTINCT `helpdesk_time_sheets`.*" ,
-        :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
-                "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
+        :joins => [ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
         :conditions =>{:users => {:email => contact_email}},
       } unless contact_email.blank?
   }
 
-  named_scope :for_products, lambda { |products|
+  scope :for_contacts_with_id, lambda{|id|
+      {
+        :joins => [ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
+        :conditions =>{:users => {:id => id}},
+      } unless id.blank?
+  }
+
+  scope :for_products, lambda { |products|
     { 
-      :select => "DISTINCT helpdesk_time_sheets.*",
-      :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
-                "INNER JOIN helpdesk_schema_less_tickets on helpdesk_schema_less_tickets.ticket_id = helpdesk_tickets.id"],
+      :joins => [ "INNER JOIN helpdesk_schema_less_tickets on helpdesk_schema_less_tickets.ticket_id = helpdesk_tickets.id"],
       :conditions => {:helpdesk_schema_less_tickets=>{:product_id=>products}}
      } unless products.blank?
+  }
+
+  #************************** Archive scope start here *****************************#
+  scope :archive_by_group , lambda  { |group|
+      { :conditions => { :archive_tickets => { :group_id => group } } } unless group.blank?
+  }
+
+  scope :archive_for_companies, lambda{ |company_ids|
+    {
+      :conditions => {:archive_tickets => {:owner_id => company_ids}}
+    } unless company_ids.blank?
+  }
+      
+  scope :archive_for_contacts, lambda{|contact_email|
+      {
+        :joins => [ "INNER JOIN `users` ON `archive_tickets`.requester_id = `users`.id"],
+        :conditions =>{:users => {:email => contact_email}},
+      } unless contact_email.blank?
+  }
+
+  scope :archive_for_products, lambda { |products|
+    { 
+      :conditions => { :archive_tickets => { :product_id => products } }
+    } unless products.blank?
   } 
+
+  #************************** Archive scope ends here *****************************#
+
+  FILTER_OPTIONS = { :group_id => [], :company_id => [], :user_id => [], :billable => true, :executed_after => 0 }
 
   def self.billable_options
     { I18n.t('helpdesk.time_sheets.billable') => true, 
@@ -96,6 +128,55 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :product_name => I18n.t('helpdesk.time_sheets.product'), 
       :group_name => I18n.t('helpdesk.time_sheets.group') }    
   end                    
+  
+  # Used by API v2
+  def self.filter(filter_options=FILTER_OPTIONS, user=User.current)
+    relation = scoped.where(permissible_ticket_conditions(user))
+    filter_options.each_pair do |key, value|
+      clause = filter_conditions(filter_options)[key.to_sym] || {}
+      relation = relation.where(clause[:conditions]).joins(clause[:joins]) # where & join chaining
+    end
+    relation
+  end
+
+  # Used by API v2
+  def self.filter_conditions(filter_options=FILTER_OPTIONS)
+    {
+      billable: {
+        conditions: { billable: filter_options[:billable].to_s.to_bool }
+      },
+
+      executed_after: {
+        conditions: ['`helpdesk_time_sheets`.`executed_at` >= ?', filter_options[:executed_after].try(:to_time).try(:utc) ]
+      },
+
+      executed_before: {
+        conditions: ['`helpdesk_time_sheets`.`executed_at` <= ?', filter_options[:executed_before].try(:to_time).try(:utc) ]
+      },
+
+      agent_id: {
+        conditions: {user_id: filter_options[:agent_id]}
+      },
+      
+      company_id: {
+        joins: ["INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id AND `helpdesk_tickets`.account_id = `users`.account_id"],
+        conditions: {:users => {:customer_id => filter_options[:company_id]}}
+      }
+    }
+  end
+
+  # Used by API v2
+  def self.permissible_ticket_conditions(user)
+    # Not spammed tickets only
+    ticket_conditions = "`helpdesk_tickets`.spam =0"
+
+    # get permissible tickets for the user.
+    conditions =  user.agent? ? Helpdesk::Ticket.agent_permission(user) : [ "`helpdesk_tickets`.requester_id=?", user.id ]
+
+    # Merge above two conditions.
+    conditions[0] = conditions.present? ? "#{ticket_conditions} AND #{conditions[0]}"  : ticket_conditions 
+    conditions
+  end
 
   def hours 
     seconds = time_spent.to_f
@@ -135,7 +216,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
   
   def customer_name
-    workable.requester.company ? workable.requester.company.name : workable.requester.name
+    workable.company ? workable.company.name : workable.requester.name
   end
 
   def priority_name
@@ -156,24 +237,26 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
      self.save
   end
 
-   def to_json(options = {}, deep=true)
+   def as_json(options = {}, deep=true)
     if deep
-      self[:ticket_id] = self.workable.display_id
-      self[:agent_name] = self.agent_name
-      self[:timespent] = sprintf( "%0.02f", self.time_spent.to_f/3600) # converting to hours as in UI
-      self[:agent_email] = user.email
-      self[:customer_name] = self.customer_name
-      self[:contact_email] = workable.requester.email
+      hash = {}
+      hash['ticket_id'] = self.workable.display_id
+      hash['agent_name'] = self.agent_name
+      hash['timespent'] = sprintf( "%0.02f", self.time_spent.to_f/3600) # converting to hours as in UI
+      hash['agent_email'] = user.email
+      hash['customer_name'] = self.customer_name
+      hash['contact_email'] = workable.requester.email
       options[:except] = [:account_id,:workable_id,:time_spent]
       options[:root] =:time_entry
     end
-    json_str = super options
-    json_str
+    json_hash = super(options)
+    json_hash[:time_entry] = json_hash[:time_entry].merge(hash) if deep
+    json_hash
   end
 
   def to_xml(options = {})
     options[:indent] ||= 2
-    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
     super(:builder => xml, :skip_instruct => true, :dasherize=>false, :except => 
       [:account_id,:workable_id,:time_spent],:root=>:time_entry) do |xml|
@@ -185,15 +268,15 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       xml.tag!(:contact_email,workable.requester.email)
     end
   end
+
+
+  def calculate_time_spent
+    time = time_spent.to_i
+    time += (Time.zone.now.to_time - start_time.to_time).abs.round if start_time
+    time
+  end
   
   private
-  
-   def calculate_time_spent
-    to_time = Time.zone.now.to_time
-    from_time = start_time.to_time 
-    running_time =  ((to_time - from_time).abs).round 
-    return (time_spent + running_time)
-   end
 
   def update_timer_activity
       if timer_running

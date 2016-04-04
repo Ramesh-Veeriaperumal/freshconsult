@@ -1,10 +1,9 @@
 class Social::Stream::TwitterFeed < Social::Stream::Feed
 
   include Social::Twitter::Util
-  include Social::Dynamo::Twitter
   include Social::Twitter::TicketActions
   
-  attr_accessor :user_mentions, :favorited
+  attr_accessor :user_mentions, :favorited , :dynamo_helper
 
   def initialize(feed_obj)
     @stream_id          = feed_obj[:stream_id][:s]
@@ -30,6 +29,7 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     @favorited   = (feed_obj[:favorite].nil? || feed_obj[:favorite][:n].to_i == 0) ? false : true
     @ticket_id   = feed_obj[:fd_link][:ss][0] unless feed_obj[:fd_link].nil?
     @agent_name  = feed_obj[:replied_by][:ss][0] unless feed_obj[:replied_by].nil?
+    @dynamo_helper = Social::Dynamo::Twitter.new
   end
 
   def convert_to_fd_item(stream, options)
@@ -42,24 +42,30 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     #HACK for a period of 1 week when we transition from old UI to new UI
     tweet = account.tweets.find_by_tweet_id(self.feed_id)
     if tweet
-      notable = tweet.get_ticket
-      user  = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
-      update_fd_link(self.stream_id, self.feed_id, notable, user)
+      notable = tweet.tweetable
+      user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
+      dynamo_helper.update_fd_link(self.stream_id, self.feed_id, notable, user)
       return notable
     end
 
     reply_tweet = account.tweets.find_by_tweet_id(self.in_reply_to)
     unless reply_tweet.blank?
       ticket  = reply_tweet.get_ticket
-      user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
-      notable = add_as_note(feed_obj, handle, :mention, ticket, user, options)
+      user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
+      if ticket
+        notable  = add_as_note(feed_obj, handle, :mention, ticket, user, options)
+      else 
+        archive_ticket  = reply_tweet.get_archive_ticket
+        notable = add_as_ticket(feed_obj, handle, :mention, options, archive_ticket) 
+      end
+      
     else
       if options[:convert]
-        user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
+        user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
         notable = add_as_ticket(feed_obj, handle, :mention, options) 
       end
     end
-    update_fd_link(self.stream_id, self.feed_id, notable, user) if notable
+    dynamo_helper.update_fd_link(self.stream_id, self.feed_id, notable, user) if notable
     notable
   end
 

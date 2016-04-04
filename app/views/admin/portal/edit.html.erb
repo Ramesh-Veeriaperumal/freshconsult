@@ -1,0 +1,18 @@
+<% content_for :helpcard do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
+<%= render(:partial => 'header', :locals => { :active => :portals }) if params[:id].blank? %>
+<div class="row-fluid">
+  <%= form_for @portal, 
+        :url => "/admin/portal/#{@portal.id}",
+        :html => { 
+          :multipart => true, 
+          :rel => "validate", 
+          :method => :put, 
+          :id => "portal-form", 
+          "data-rebrand-form" => true, 
+          :class => "form-horizontal" 
+        } do |f| %>
+        <%= render :partial => "portal_form", :locals => {:f => f, :edit => true} %>
+  <% end %>
+</div>

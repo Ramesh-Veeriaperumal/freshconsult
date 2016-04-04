@@ -15,11 +15,11 @@
           <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
             <li class="portal-attach">
              <span class="attach-proxy">
-               <a href="#" class="attach-link-wrap" 
+               <a href="#" class="attach-link-wrap attach-list-wrap" 
                   id="<%=attach_id%>_file_proxy_link" 
                   data-file-id="<%=attach_id%>_file" 
                   onclick="Helpdesk.Multifile.clickProxy(this); return false;">
-                 <%= I18n.t('portal.attach_file').html_safe %>
+                    <%= I18n.t('portal.attach_file').html_safe %>
                </a>
              </span>
              <div class="attach-file attach-link-file hide" id="<%= attach_id %>-attach-container">
@@ -34,6 +34,7 @@
            </li>
           <%= render :partial => "integrations/applications/box", :locals => {:attach_id => attach_id} unless current_user.blank? %>
           <%= render :partial => "integrations/applications/dropbox", :locals => {:attach_id => attach_id} %>
+          <%= render :partial => "integrations/applications/onedrive", :locals => {:attach_id => attach_id} if installed_apps[:onedrive].present? %>
           </ul>      
         </div>
       <% else %>      
@@ -75,7 +76,8 @@
               <ul class="dropdown-menu screenr-dropdown align-left" role="menu" aria-labelledby="dLabel">
                 <li class="portal-attach">
                   <div id="takescreen-btn">
-                    <a href="#"><i class="wicon-camera"></i> <%=t('.feedback_widgets_screenshot')%></a>
+                    <a href="#"><i class="wicon-camera"></i> <span id="screenshot-value" style="display:none;"><%=t('.feedback_widgets_screenshot')%></span></a>
+                    <span id="screenshot-loader"><img src="/assets/animated/ajax-loader.gif"></span>
                   </div>
                 </li>
                 <li>
@@ -95,7 +97,8 @@
           <div class="ie8plusonly">
             <div id="takescreen-btn">
               <i class="wicon-camera"></i>
-              <a href="#"><%=t('.feedback_widgets_screenshot')%></a>
+              <a href="#"><span id="screenshot-value"><%=t('.feedback_widgets_screenshot')%></span></a>
+              <span id="screenshot-loader" style="display:none;"><img src="/assets/animated/ajax-loader.gif" ></span>
             </div>
             <div class="flash" style="display:none"></div>
             <div id="screenshot-wrap" style="display:none">

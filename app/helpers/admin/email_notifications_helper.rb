@@ -1,7 +1,7 @@
 module Admin::EmailNotificationsHelper
 
 	def get_requester_content(email_notification,language)
-		content = email_notification.return_template(DynamicNotificationTemplate::CATEGORIES[:requester], language)
+		content = define_template(email_notification,language,:requester)
 		return content.first unless content.blank?
 
 	 	DynamicNotificationTemplate.new({
@@ -13,7 +13,7 @@ module Admin::EmailNotificationsHelper
 	end
 
 	def get_agent_content(email_notification,language)
-		content = email_notification.return_template(DynamicNotificationTemplate::CATEGORIES[:agent], language) 
+		content = define_template(email_notification,language,:agent)
 		return content.first unless content.blank?
 
 		DynamicNotificationTemplate.new({
@@ -24,9 +24,16 @@ module Admin::EmailNotificationsHelper
 			}) 	
 	end
 
-	def get_agent_options
-		current_account.agents.collect { |au| [au.user.id, au.user.name] }
+	def agent_options
+		user_ids = current_account.agents.pluck(:user_id)
+		current_account.users.select("id, name").find_all_by_id(user_ids).collect { |au| [au.id, au.name] }
 	end
+
+	private
+
+		def define_template(email_notification,language,user)
+			email_notification.return_template(DynamicNotificationTemplate::CATEGORIES[user], language) 
+		end
 
 	ActionView::Base.default_form_builder = FormBuilders::FreshdeskBuilder
 end		

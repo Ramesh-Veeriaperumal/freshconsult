@@ -1,9 +1,10 @@
 require 'spec_helper'
-include Redis::TicketsRedis
-include Redis::RedisKeys
+RSpec.configure do |c|
+  c.include Redis::TicketsRedis
+  c.include Redis::RedisKeys
+end
 
-describe Helpdesk::RemindersController do
-  integrate_views
+RSpec.describe Helpdesk::RemindersController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -44,25 +45,25 @@ describe Helpdesk::RemindersController do
                     :_ => "",
                     :ticket_id => @test_ticket.display_id
                   }
-    response.should redirect_to "sessions/new"
+    response.should redirect_to "/sessions/new"
   end
 
   it "should strike off a to-do entry" do
-    reminder = Factory.build(:reminder, :user_id => @agent.id,
+    reminder = FactoryGirl.build(:reminder, :user_id => @agent.id,
                                         :ticket_id => @test_ticket.id,
                                         :account_id => @account.id)
     reminder.save
     put :complete, { :source => "ticket_view", :id => @test_ticket.reminders.first.id }
-    @test_ticket.reminders.first.deleted.should be_true
+    @test_ticket.reminders.first.deleted.should be_truthy
   end
 
   it "should restore a to-do entry" do
     put :restore, { :source => "ticket_view", :id => @test_ticket.reminders.first.id }
-    @test_ticket.reminders.first.deleted.should be_false
+    @test_ticket.reminders.first.deleted.should be_falsey
   end
 
   it "should delete a reminder" do
-    reminder = Factory.build(:reminder, :user_id => @agent.id,
+    reminder = FactoryGirl.build(:reminder, :user_id => @agent.id,
                                         :ticket_id => @test_ticket.id,
                                         :account_id => @account.id)
     reminder.save

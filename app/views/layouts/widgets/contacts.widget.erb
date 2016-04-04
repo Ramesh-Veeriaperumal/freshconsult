@@ -10,9 +10,9 @@
 	  
 	  <title><%= "#{h(current_account.name)} Widget" %></title>
 
-		<%= include_cloudfront_rtl_css :common  %> 	    
-		<%= include_cloudfront_rtl_css :app  %> 	    
-		<%= render :partial => "shared/theme.css"  %>
+		<%= stylesheet_link_tag_with_rtl :'cdn/common'  %> 	    
+		<%= stylesheet_link_tag_with_rtl :'cdn/app'  %> 	    
+		<%= render :partial => "shared/theme", :formats => [:css]  %>
 	  <%= yield :head %>
 	</head>
   <body style="min-width:auto;">

@@ -13,7 +13,7 @@
 
 <% content_for :sticky_right do %>
 	<% if (@posts.size > 0) %>
-		<%= link_to t('.empty_folder'), empty_folder_discussions_moderation_path, :method => :delete, :class => 'btn btn-primary' unless @moderation_scope == :waiting_for_approval %>
+		<%= link_to t('.empty_folder'), empty_folder_discussions_moderation_index_path, :method => :delete, :class => 'btn btn-primary' unless @moderation_scope == :waiting_for_approval %>
 	<% end %>
 	<%= link_to(t('.moderation_solution'), 'https://support.freshdesk.com/support/solutions/articles/195476', :class => 'mini-link', :target => '_blank') if @moderation_scope == :waiting_for_approval %>
 <% end %>

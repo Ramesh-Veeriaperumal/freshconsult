@@ -1,10 +1,11 @@
 # encoding: utf-8
 class Helpdesk::TicketStatus < ActiveRecord::Base
   
+  self.primary_key = :id
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketStatus
   
-  set_table_name "helpdesk_ticket_statuses"
+  self.table_name =  "helpdesk_ticket_statuses"
 
   belongs_to_account
   
@@ -12,20 +13,20 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   validates_presence_of :name, :message => I18n.t('status_name_validate_presence_msg')
   validates_uniqueness_of :name, :scope => :account_id, :message => I18n.t('status_name_validate_uniqueness_msg'), :case_sensitive => false
   
-  attr_protected :account_id, :status_id
-  
+  attr_accessible :name, :customer_display_name, :stop_sla_timer, :deleted, :is_default, :ticket_field_id, :position
   belongs_to :ticket_field, :class_name => 'Helpdesk::TicketField'
-  
+
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :foreign_key => "status", :primary_key => "status_id",
-           :conditions => 'helpdesk_tickets.account_id = #{account_id}'
-           
+        :conditions => proc  { "helpdesk_tickets.account_id = #{send(:account_id)}" }
+
+  has_many :archived_tickets, :class_name => 'Helpdesk::ArchiveTicket', :foreign_key => "status", :primary_key => "status_id",
+      :conditions => proc  { "archive_tickets.account_id = #{send(:account_id)}" }
+
   after_update :update_tickets_sla_on_status_change
 
-  after_commit_on_destroy :clear_statuses_cache
-  after_commit_on_create :clear_statuses_cache
-  after_commit_on_update :clear_statuses_cache
+  after_commit :clear_statuses_cache
   
-  named_scope :visible, :conditions => {:deleted => false}
+  scope :visible, :conditions => {:deleted => false}
 
   acts_as_list :scope => :account
   
@@ -83,10 +84,14 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def self.unresolved_statuses(account)
-    statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => ["status_id not in (?,?)", RESOLVED, CLOSED])
-    statuses.collect { |status| status.status_id }
+    status_ids = statuses_from_cache(account).map(&:last)
+    status_ids.reject{|id| resolved_statuses.include?(id)}
   end
-  
+
+  def self.resolved_statuses
+    [RESOLVED, CLOSED]
+  end
+
   def update_tickets_sla_on_status_change
     if deleted_changed?
       send_later(:update_tickets_sla)
@@ -158,7 +163,8 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
             sla_timer_stopped_at_time = fetch_ticket.ticket_states.sla_timer_stopped_at
             if(!sla_timer_stopped_at_time.nil? and fetch_ticket.due_by > sla_timer_stopped_at_time)
               fetch_ticket.update_dueby(true)
-              fetch_ticket.send(:update_without_callbacks)
+              # fetch_ticket.send(:update_without_callbacks)
+              fetch_ticket.sneaky_save
             end
             fetch_ticket.ticket_states.sla_timer_stopped_at = nil
             fetch_ticket.ticket_states.save

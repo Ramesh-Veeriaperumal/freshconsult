@@ -1,7 +1,7 @@
 class Workers::Community::ReportPost
   extend Resque::AroundPerform
 
-	include ActionController::UrlWriter
+	include Rails.application.routes.url_helpers
 
   @queue = 'report_post'
 
@@ -17,12 +17,11 @@ class Workers::Community::ReportPost
 
 		def build_post(post_id, klass_name)
 			klass_name.eql?("Post") ? Account.current.posts.find(post_id) : 
-					ForumSpam.find(:account_id => Account.current.id, :timestamp => post_id)
+					ForumSpam.find_post(post_id)
 		end
 
 		def analysis(type, current_post)
 			Akismetor.send(type ? :submit_ham : :submit_spam, akismet_params(current_post))
-			SpamAnalysis.push(current_post, {:user_action => type})
 		end
 
 		def akismet_params(post)

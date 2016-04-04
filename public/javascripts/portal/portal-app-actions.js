@@ -23,7 +23,7 @@
 
 		      	_agent_ui.html("<option value=''>...</option>")
 
-			    $.post( '/helpdesk/commons/group_agents/'+$(this).val(),
+			    $.get( '/helpdesk/commons/group_agents/'+$(this).val(),
 	        		function(data){
 						_agent_ui.html(data);
 					});
@@ -50,7 +50,7 @@
 			if(ticket_email.isValidEmail()){				
 				$this.addClass("loading-right")
 
-				$.ajax({ url: email_path+"?v="+ticket_email,
+				$.ajax({ url: email_path+"?v="+encodeURIComponent(ticket_email),
 				  	success: function(data){
 					    $this.removeClass("loading-right")
 					    toggle_name(!data.user_exists)
@@ -65,8 +65,9 @@
 		var _static_cc_emails_opts = {
 			data: [],
 			multiple: true,
+			matchFlag: true,
 			tokenSeparators: [",", " "],
-			formatNoMatches: function () { return "Add multiple cc emails seperated by \",\""; },
+			formatNoMatches: function () { return "Add multiple cc emails separated by \",\""; },
 			createSearchChoice: function(term, data) {
 									if(jQuery(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0) { 
 										if(term.isValidEmail())
@@ -74,8 +75,8 @@
 									} 
 								},
 		    initSelection: 	function (element, callback) {
-						        var data = [];	        
-						        $(element.val().split(",")).each(function(i, term) {
+						        var data = [];	
+						        $(element.val().match(/(?:"[^"]*"|[^,])+/g)).each(function(i, term) {
 						            data.push({id: term, text: term});
 						        });
 						        callback(data);
@@ -128,13 +129,16 @@
 						response( data )
 	                });
 	            },
+	            open: function(event, ui){
+	            	$(".ui-menu").css({'display':'block', 'z-index': 10});
+	            },
 	            focus: function( event, ui ) { event.preventDefault() }
 	        })
 	        .on( "autocompleteselect", function( event, ui ) { window.location = ui.item.url } )
 			
 			window['portal-search-render-ui'] = function( ul, item ) {
 	            return $( "<li>" )
-	                .data( "item.autocomplete", item )
+	                .data( "autocomplete-item", item )
 	                .append("<a href='"+item.url+"'>" + item.title + "</a> ")
 	                .append('<span class="label label-small label-light">'+ item.group +'</span>')
 	                // .append('<div>'+ item.desc +'</div>')
@@ -143,7 +147,7 @@
 	        }
 
 			$.each(window['portal-search-boxes'], function(i, searchItem){
-				$(searchItem).data( "autocomplete" )._renderItem = window['portal-search-render-ui']
+				$(searchItem).data( "ui-autocomplete" )._renderItem = window['portal-search-render-ui']
 			})
     	}
 
@@ -179,6 +183,9 @@
 
 	    // Page specific script invocations
 	    switch(portal['current_page_name']){
+	    	case 'submit_ticket':
+	    		$("#meta_user_agent").val(window.navigator.userAgent);
+	    		break;
 	    	case 'ticket_view':
 			    // Tickets quoted text auto adjust
 			    $.each($('.p-desc'), function(i, item){
@@ -205,6 +212,10 @@
 			case 'topic_view':
 				highlight_code();
 				$('.p-desc *').css('position', '');
+			case 'portal_home':
+				hideEmptyCategory('#solutions-index-home .cs-s');
+			case 'solution_home':
+				hideEmptyCategory('#solutions-home .cs-s');
 			break;
 	    }
 
@@ -216,6 +227,21 @@
 	    $('input[data-suggestions]').livequery(function(){
 	    	$(this).fresh_suggestion();
 	    })
-	})
 
+	    function hideEmptyCategory(categorySelector){
+	    	$(categorySelector).each (function (index,category){
+	    	  category = $(category);
+	    	  if (parseInt(category.find('.article-list .item-count').text()) == 0) {
+	    	    category.remove();
+	    	  }else {
+					  category.find('.article-list').each(function(index,folder){
+					    folder = $(folder); 
+					    if(folder.find('.item-count').text() == "0"){
+					      folder.remove();
+					    }
+					  });
+					}
+	    	 });
+	    }
+	})
 }(window.jQuery);

@@ -1,4 +1,5 @@
 class SubscriptionAnnouncement < ActiveRecord::Base   
+  self.primary_key = :id
 	not_sharded
 
 	include MemcacheKeys
@@ -18,29 +19,31 @@ class SubscriptionAnnouncement < ActiveRecord::Base
 	#latest product notification limit
 	NOTIFICATION_LIMIT = 3
 
-	named_scope :maintenance_notifications, 
+	scope :maintenance_notifications, 
 		:conditions => { :notification_type => NOTIFICATION_TYPE_BY_TOKEN[:maintenance] }, 
     	:order => 'updated_at DESC' 
 
-	named_scope :product_notifications, 
+	scope :product_notifications, 
 		:conditions => { :notification_type => NOTIFICATION_TYPE_BY_TOKEN[:product] },
     	:order => 'updated_at DESC'
 
- 	named_scope	:latest_product_notifications, 
+ 	scope	:latest_product_notifications, 
  		:conditions => { :notification_type => NOTIFICATION_TYPE_BY_TOKEN[:product] },
     	:limit => NOTIFICATION_LIMIT, 
     	:order => 'updated_at DESC'
 
-	def self.current_announcements(hide_time)
- 		with_scope :find => { :conditions => [ "starts_at <= UTC_TIMESTAMP() AND ends_at >= UTC_TIMESTAMP() 
- 			and notification_type = ? ", NOTIFICATION_TYPE_BY_TOKEN[:maintenance] ] } do hide_time.nil? ? last 
- 			: last( :conditions => ["updated_at > ? OR starts_at > ?", hide_time, hide_time] )
-  		end
-	end
+  def self.current_announcements(hide_time)
+    where([ "starts_at <= UTC_TIMESTAMP() AND ends_at >= UTC_TIMESTAMP() 
+ 			and notification_type = ? ", NOTIFICATION_TYPE_BY_TOKEN[:maintenance] ]).scoping do
+      hide_time.nil? ? last : where(["updated_at > ? OR starts_at > ?", hide_time, hide_time]).last
+    end
+  end
 
 	private
 	def clear_notifications_content
-      	MemcacheKeys.delete_from_cache PRODUCT_NOTIFICATION
+		Language.all_codes.each do |lang|
+      		MemcacheKeys.delete_from_cache PRODUCT_NOTIFICATION % {:language => lang}
+      	end
 	end
 
 end

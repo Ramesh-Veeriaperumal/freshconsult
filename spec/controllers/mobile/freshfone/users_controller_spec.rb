@@ -1,10 +1,12 @@
 require 'spec_helper'
 load 'spec/support/freshfone_spec_helper.rb'
 load 'spec/support/freshfone_call_spec_helper.rb'
-include FreshfoneCallSpecHelper
 
+RSpec.configure do |c|
+  c.include FreshfoneCallSpecHelper
+end
 
-describe Freshfone::UsersController do
+RSpec.describe Freshfone::UsersController do
   self.use_transactional_fixtures = false
 
   context "when mobile request" do
@@ -27,21 +29,23 @@ describe Freshfone::UsersController do
       @account.features.freshfone.destroy
       post :refresh_token, { :format => "json" }
       json_response.should include("requires_feature")
-      json_response["requires_feature"].should be_false
+      json_response["requires_feature"].should be false
       json_response.should_not include("token","update_status","client","expire")
+      @account.features.freshfone.create
+      @account.reload
     end
 
     it "should post presence of an user" do
       post :presence , { :format => "json" }
       json_response.should include("update_status")
-      json_response["update_status"].should be_true
+      json_response["update_status"].should be true
     end
 
     it "should send incoming call" do
       freshfone_call = create_freshfone_call
       post :in_call, {:format => "json", :From => "+16617480240", :To => "+12407433321", :CallSid => freshfone_call.call_sid, :outgoing => "false"}
       json_response.should include("update_status","call_sid")
-      json_response["update_status"].should be_true
+      json_response["update_status"].should be true
     end
 
     it "should send outgoing call to server" do
@@ -58,6 +62,7 @@ describe Freshfone::UsersController do
     # When web request, it should reset the mobile_token_refreshed_at to 2 hours before
     # current time.
     it "should update mobile_token_refreshed_at to 2 Hours ago when web request" do
+      request.env["HTTP_ACCEPT"] = "application/json"
       log_in(@agent)
       create_test_freshfone_account
       create_freshfone_user

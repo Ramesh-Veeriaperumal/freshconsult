@@ -55,6 +55,7 @@ class Admin::TemplatesController < Admin::AdminController
           set_preview_and_redirect(preview_url) 
         end
       }
+      format.js
     end
   end  
 
@@ -75,10 +76,10 @@ class Admin::TemplatesController < Admin::AdminController
     end
 
     def default_liquids
+      @show_raw_liquid = true
       Portal::Template::TEMPLATE_MAPPING.each {
-        |t| @portal_template[t[0]] = render_to_string(:partial => t[1], 
-          :content_type => 'text/plain') if (@portal_template[t[0]].nil?)
-      }   
+        |t| @portal_template[t[0]] = render_to_string(:partial => t[1]) if (@portal_template[t[0]].nil?)
+      }  
     end
 
     def sanitize_preferences

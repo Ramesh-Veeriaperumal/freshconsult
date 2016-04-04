@@ -7,6 +7,7 @@ class GoogleSignupController < AccountsController
   around_filter :select_shard
   skip_before_filter :check_privilege
   before_filter :initialize_user, :load_account, :only =>[:associate_google_account, :associate_local_to_google]
+  before_filter :ensure_proper_protocol
 
   def associate_google_account
     oauth_user = @account.users.find_by_email(@email)
@@ -15,6 +16,9 @@ class GoogleSignupController < AccountsController
     else
       render :associate_google
     end
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
+      flash.now[:error] = t(:'flash.g_app.domain_restriction')
+      render :signup_google_error
   end
 
   def associate_local_to_google
@@ -26,6 +30,9 @@ class GoogleSignupController < AccountsController
     else
       render :associate_google
     end
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
+      flash.now[:error] = t(:'flash.g_app.domain_restriction')
+      render :signup_google_error
   end
 
   private
@@ -57,6 +64,12 @@ class GoogleSignupController < AccountsController
 
     def full_domain
       @full_domain ||= get_full_domain_for_google
+    end
+
+    def create_user(account, name, email)
+      user = account.users.new(:name => name, :email => email, :active => true)
+      user.save!
+      user
     end
 
 end

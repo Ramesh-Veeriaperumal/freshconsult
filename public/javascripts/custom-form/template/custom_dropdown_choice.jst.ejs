@@ -1,0 +1,53 @@
+<% isDeleted = item._destroy ? true : false %>
+<% deletedClassName = isDeleted ? 'hide' : '' %>
+<% isDisabled = 'delete_choice_btn' %>
+<% disabledTooltip =  translate.get('dropdown_choice_disabled') %>
+
+<%
+	if(item.field_type == 'default_status'){
+		isDisabled = (item.id == 2 || item.id == 3 || item.id == 4 || item.id == 5) ? 'disabled tooltip' : 'delete_choice_btn'
+	}
+	if(item.has_section && item.id){
+		disabledTooltip = translate.get('remove_type') 
+		isDisabled = ((picklistIds.filter( function(type){ return (type.id == item.id) } )
+						).length == 0) ? 'disabled tooltip' : 'delete_choice_btn'
+	}
+%>
+<fieldset class='<%= deletedClassName %>'
+			data-destroy="<%= isDeleted %>"
+			data-choice-id="<%= item['id'] ? item['id'] : '0' %>">
+	<span class="rearrange-icon ficon-rearrange"></span>
+	<span class='ficon-minus delete-choice <%= isDisabled %>'
+		<% if(isDisabled != 'delete_choice_btn'){%>
+			title="<%= disabledTooltip %>"
+		<% }%>
+	></span>
+	<span class="dropchoice">
+		<input type="text" 
+				name="choice_<%= item['id'] || (new Date().getTime()) %>" 
+				<% if(item.field_type == "default_status"){ %>	
+				rel="companion"
+				data-companion="#statusCustomerName_<%= item['id'] || (new Date().getTime()) %>" 
+				<% }%>
+				value="<%= item['name'].replace(/"/g, '&quot;') %>"
+				class='field_maxlength'
+				maxlength='255'
+				<%= isDisabled %>/>
+	</span>
+	<% if(item.field_type == "default_status") { %>
+		<span class="dropchoice">
+			<input type="text" 
+					id="statusCustomerName_<%= item['id'] || (new Date().getTime()) %>"
+					name="customer_display_name" 
+					value="<%= item.customer_display_name.replace(/"/g, '&quot;') %>" 
+					placeholder = ""/>
+		</span>
+	<% } %>
+	<% if (item.field_type == 'default_status' && item.id != 2 && item.id != 4 && item.id != 5) { %>
+		<input rel="toggle" type="checkbox" 
+				name="stop_sla_timer" 
+				data-inverted=true 
+				<% if(item.stop_sla_timer){ %> checked="checked" <% } %> 
+				value=true />
+	<% } %>
+</fieldset>

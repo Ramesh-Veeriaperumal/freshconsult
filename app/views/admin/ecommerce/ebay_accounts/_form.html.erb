@@ -1,0 +1,55 @@
+<%= f.error_messages %>
+<div class="control-group">
+  <%= f.label :name, t('admin.ecommerce.new.account_name'), :class => "control-label required" %>
+  <div class = "controls">
+    <%= f.text_field :name, :class => "text span6 required" %>
+  </div>
+</div>
+
+<%if page =="new" %>
+  <div class="control-group">
+    <%= f.label :name, t('admin.ecommerce.new.ebay_site'), :class => "control-label required" %>
+    <div class = "controls">
+      <%= f.select_tag('ebay_account[ebay_site_id]', options_for_select(@sites), { :prompt => t('admin.ecommerce.new.select_ebay_site'), :class => 'select2 input-xlarge required' }) %>
+      <div class="muted input-xxlarge"><%=t('admin.ecommerce.new.site_helptext').html_safe%> </div>
+    </div>
+  </div>
+<%else%>
+  <div class="control-group">
+    <%= f.label :hard_expiration_time, t('admin.ecommerce.edit.expiry_date'), :class => "control-label" %>
+    <div class = "controls">
+      <%= label_tag formated_date(account.configs[:hard_expiration_time].to_date,{:format => :short_day_with_week, :include_year => true}), nil, :class => "pt6" %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :ebay_site, t('admin.ecommerce.edit.ebay_site'), :class => "control-label" %>
+    <div class = "controls">
+      <%= label_tag Ecommerce::Ebay::Constants::EBAY_SITE_BY_CODE[account.configs[:site_id].to_i], nil, :class => "pt6" %>
+    </div>
+  </div>
+<%end%>
+
+<% if feature?(:multi_product) && @products.present? %> 
+    <div class="control-group">
+      <%= f.label :product_id, t('admin.ecommerce.new.assign_product'), :class => "control-label" %>
+      <div class="controls">
+        <%= f.collection_select(:product_id, @products, :id, :name, options = {:include_blank => t('admin.ecommerce.new.select_product'), :selected => @ebay_account.blank? ? nil : @ebay_account.product_id },:class =>"select2 input-xlarge") %>
+      </div>
+    </div> 
+  <% end %> 
+
+<% if @groups.present? %> 
+  <div class="control-group">
+      <%= f.label :group_id, t('admin.ecommerce.new.assign_group'), :class => "control-label" %>
+      <div class="controls">
+        <%= f.collection_select(:group_id, @groups, :id, :name, options = {:include_blank => t('admin.ecommerce.new.select_group'), :selected => @ebay_account.blank? ? nil : @ebay_account.group_id },:class =>"select2 input-xlarge") %>
+      </div>
+  </div> 
+<% end %> 
+
+
+<div class="button-container">
+  <%= link_to t('cancel'), admin_ecommerce_accounts_path, :class => "btn" %>
+  <%= f.submit t('admin.ecommerce.new.save_account'), :class => "btn btn-primary " %>
+</div>
+

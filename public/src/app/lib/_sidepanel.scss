@@ -1,6 +1,6 @@
-// -------------------------------------------------------------------------------------------- 
-// 											Layout without sidebar styles 									
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
+// 											Layout without sidebar styles
+// --------------------------------------------------------------------------------------------
 .side-panel{
 	background-color:#ffffff;
 	border:1px solid #b3b3b3;
@@ -17,22 +17,22 @@
 		line-height:1.6em;
 		@include margin(0 0 14px 0);
 		color:#444;
-	}  
+	}
 	h4{
 		font-size:1.1em;
 		font-weight:bold;
 		line-height:1.4em;
 	}
-	
+
 	.element{
 		@include padding(4px 16px 16px 16px);
-		margin:0 -20px; 
+		margin:0 -20px;
 		font-size:$default-font-size;
 		h4{
 			border-bottom:1px solid #f1f1f1;
 			padding-bottom:1px;
 			margin-bottom:6px;
-		} 
+		}
 		.edit{
 			@include float(right);
 			margin-top:4px;
@@ -49,13 +49,40 @@
 		@include float(right);
 		position:relative;
 	 	@include left(5px);
-		top:3px;			
+		top:3px;
 	}
-} 
+
+	// --- Agent Availability Button --- //
+	.dashboard_agent_status_link{
+	  background-color: #e7e7e7;
+	  padding: 10px;
+	  display: block;
+	  color: #666;
+		position: relative;
+		@include border-radius(3px);
+		&:hover{
+			background-color: #eee;
+		}
+	  @if $rtl{
+	  	padding-right: 20px;
+	  }
+    &:after{
+      content: "";
+      display: inline-block;
+      border-top: 5px solid transparent;
+      border-left: 5px solid #555;
+      border-bottom: 5px solid transparent;
+      position: absolute;
+      right: 10px;
+      top: 13px;
+    }
+	}
+
+}
 .sidepanel .cnt li {
 	border-bottom: 1px solid #F3F3F3;
 	padding: 6px 0;
-	
+
 	a{ text-decoration:none; }
 	label{
 		display:block;
@@ -66,7 +93,7 @@
 	select{
 		font-size:11px;
 		max-width:100%;
-	} 
+	}
 	.name_label {
 		color: #666666;
 		font-size: 12px;
@@ -78,16 +105,19 @@
 		font-weight: normal;
 	}
 }
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
 //										Free Trial Notification
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
 .trial_expiry {
-	
+
 	margin:(-$common-padding) (-$common-padding) 0;
 	padding: $common-padding / 2 $common-padding;
 	p{
 		color: #777;
 	}
+}
+
+.trial_expiry, .sales-manager-notifier{
 	.trial-background {
 		padding: 8px 12px 8px;
 		border: 1px solid rgba(0, 0, 0, 0.2);
@@ -140,12 +170,12 @@
 }
 
 
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
 //											Todo
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
 
-.rtCnt .rtDetails.todo{ 
-   background-color:#ffffe2; 
+.rtCnt .rtDetails.todo{
+   background-color:#ffffe2;
 	label{ font-size:14px; }
 	h3.title{
 	   @include padding(1px 0 5px 0);
@@ -156,11 +186,11 @@
 	border:0;
 }
 .reminders, .todo{
-	position:relative; 
+	position:relative;
 	padding-top:10px;
-	h3.title{ 
+	h3.title{
 		display:block;
-	}   
+	}
    	ul{
 		display:block;
 		border-top:1px dotted #ddd;
@@ -177,19 +207,19 @@
 				font-size: $default-font-size;
 				font-weight:normal;
 				@include margin-left(5px);
-				line-height:18px;	
+				line-height:18px;
 				padding-top:0;
 				display:block;
 				word-break:break-all;
 				width: 90%;
 			}
 			a.request_link{
-				display:block; 
+				display:block;
 				@include link-colors(#666666, #6f8698, #6f8698, #6f8698);
-				font-size:12px;		
-				text-decoration:none;		
+				font-size:12px;
+				text-decoration:none;
 			}
-			.checked{ 
+			.checked{
 				font-size:12px;
 				text-decoration:line-through;
 				a.request_link{
@@ -199,21 +229,23 @@
 			}
 			.delete{
 				@include float(right);
-				width:16px; height:16px; 
+				width:16px; height:16px;
 				overflow:hidden;
-				@include text-indent(-99999px);				
 				visibility:hidden;
 				position:relative;
 			 	@include left(-3px);
 			}
-		}  
+		}
 		li:hover, li.active{
-			background-color:#FEFEF2;
+			background-color: #f9f7f7;
 			.delete{
+				top:-2px;
+				color: $gray;
 				visibility:visible;
+				&:hover{ color: $grayDarker;}
 			}
 		}
-	} 
+	}
 }
 div.addReminder{
 	margin:0 0;
@@ -225,14 +257,13 @@ div.addReminder{
 		background-color:#fff;
 		@include box-shadow(inset 0 2px 3px rgba(180, 180, 180, 0.1));
 		input.text{
-			color:#734e3d;
+			color:#333;
 			border:0px; background:0px;
 			@include box-shadow(none);
 			font-size:14px;
 			display:block;
 			@include margin(2px 0 0 0);
 			padding:0 5px;
-			width: 245px;
 			@include box-shadow(0 0 0 #fff);
 		}
 		input:focus{ @include box-shadow(none); @include border-radius(0); }
@@ -241,9 +272,9 @@ div.addReminder{
 			padding:0;
 		}
 	}
-} 
+}
 // -----------------------------------------------------------
-//							Gamification 
+//							Gamification
 // -----------------------------------------------------------
 .sidepanel .action-right{
 	@include float(right);
@@ -268,12 +299,17 @@ div.addReminder{
 //				Trial Account Salesperson details
 // -----------------------------------------------------------
 .details-container{
-	margin-bottom: -20px;
+	background-color: #ffffd5;
+	border-radius: 4px;
+	// display: table;
 }
+.sp-title, .sp-details, .sp-plan-select{
+	// display: table-cell;
+	height: 100%;
+}
+.sp-plan-select{ padding: 10px 20px 0px 0px; }
 .sp-title{
-	background-color:#fefef0;
-	margin:(-$common-padding) (-$common-padding) 0;
-	padding: $common-padding / 2 $common-padding;
+	padding: 2px $common-padding;
 	h3.title{
 		font-weight:bold;
 		line-height: 20px;
@@ -281,75 +317,64 @@ div.addReminder{
 }
 .sp-details{
 	background-color:#FEFED2;
-	margin: 0 (-$common-padding);
+	color: $grayDarker;
+	min-height: 118px;
 	padding: $common-padding / 2 $common-padding;
-	border-top: 1px solid #aaa;
+	border-right: 1px #d6d6bd solid;
+	border-left: 1px #d6d6bd solid;
 	position:relative;  // Arrow Up based this
-	.arrow-up{
-		border-bottom-color: #aaa;
-		top: -15px;
-		position: absolute;
-		&:after{
+		&:after, &:before {
+			right: 100%;
+			top: 25%;
+			border: solid transparent;
 			content: " ";
+			height: 0;
+			width: 0;
 			position: absolute;
-			border-style: solid;
-			border-color: transparent;
-			border-width: 0.6em;
-			border-bottom-color: #FEFED2;
-			border-bottom-width: 0.9em;
-			@include margin-left(-5px);
-			margin-top: -3px;
+			pointer-events: none;
 		}
-	}
+		&:after {
+			border-color: rgba(254, 254, 210, 0);
+			border-right-color: #FEFED2;
+			border-width: 8px;
+			margin-top: -8px;
+		}
+		&:before {
+			border-color: rgba(151, 151, 151, 0);
+			border-right-color: #d6d6bd;
+			border-width: 9px;
+			margin-top: -9px;
+		}
 }
+
 .sp-details-list{
 	li{padding-bottom:5px;}
 }
 .plan_and_expiry{
-	background-color:#666;
-	margin:0 (-$common-padding);
-	padding: 12px $common-padding;
+
 	.arrow-right{
     	@include border-left-color(#fff);
 	}
-	p{
-		text-align: center;
-	}
 }
 .select-plan{
-    width: 48%;
-    display: inline-block;
-    @include text-align(right);
-    vertical-align: middle;
     font-weight: 700;
-    a, a:hover{
-	    color: #fff;
-	    padding: 10px 0px;
-	    text-decoration: underline;
-    }
-    a:hover{
-    	text-decoration: none;
-    }
+		a{
+			display: block;
+			width: 100%;
+			@include text-align(left);
+			i{color: #fff; float: right}
+		}
 }
 .current-plan-name{
-    width: 50%;
-    display: inline-block;
-    vertical-align: middle;
-    color: #fff;
     word-wrap: break-word;
 }
 .expiry-details{
-	color: #fff;
 	display: block;
-	text-align: center;
 	vertical-align: middle;
 }
 .trial-alert-color{
-	background-color: #444;
+	color: #444;
 }
 .trial-end-alert-color{
-	background-color: #900;
-	span{
-		font-weight: 700;
-	}
+	color: #900;
 }

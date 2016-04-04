@@ -69,6 +69,10 @@
     },
     localFileOnLoad : function(evt) {
       (this.options.fields.avatarPic).attr('src', evt.target.result);
+     if($('.avatar-pic').closest('.avatar-text').length !== 0){
+        $('div.avatar-text').addClass('hide');
+        $('.avatar-pic img').removeClass('hide');
+      }
     },
     checkSupportedImageFormats : function(fileType) {
       return ($.inArray(fileType, this.options.supportedImageFormats) !== -1)
@@ -103,6 +107,10 @@
         this.updateDestroyValue("1");
         this.setDefaultPic();
         this.toggleRemoveOption('hide');
+      }
+      if($('.avatar-pic').closest('.avatar-text').length !== 0){
+          $('div.avatar-text').removeClass('hide');
+        $('.avatar-pic img').addClass('hide');
       }
     },
     init : function() {

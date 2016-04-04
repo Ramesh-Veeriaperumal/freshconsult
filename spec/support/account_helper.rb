@@ -2,14 +2,14 @@ module AccountHelper
   include Redis::RedisKeys
 
   def create_test_account(name = "test_account", domain = "test@freshdesk.local")
-    subscription = Subscription.first(:all, :conditions => ["state != 'suspended'"])
+    subscription = Subscription.where("state != 'suspended'").first
     @acc = Account.find_by_id(subscription.account_id) unless subscription.nil?
     unless @acc.nil?
       @acc.make_current
       create_dummy_customer
       return @acc
     end
-    ENV["SEED"]="002_subscription_plans"
+    ENV["SEED"]="global/002_subscription_plans"
     ENV["FIXTURE_PATH"] = "db/fixtures/global"
     SeedFu::PopulateSeed.populate
     ENV["SEED"] = nil
@@ -17,12 +17,13 @@ module AccountHelper
     
     create_new_account
     update_currency
+    @account = @acc
     @acc
   end
 
   def create_test_billing_acccount
-    # auto_increment_query = "ALTER TABLE shard_mappings AUTO_INCREMENT = #{Time.now.to_i}"
-    # ActiveRecord::Base.connection.execute(auto_increment_query)
+    auto_increment_query = "ALTER TABLE shard_mappings AUTO_INCREMENT = #{Time.now.to_i}"
+    ActiveRecord::Base.connection.execute(auto_increment_query)
 
     create_new_account("billingtest#{Time.now.to_i}", "sample+#{Time.now.to_i}@freshdesk.com")
   end
@@ -48,13 +49,13 @@ module AccountHelper
   end
 
   def create_dummy_customer
-    @customer = @acc.users.find(:all, :conditions => "helpdesk_agent = 0 and email IS NOT NULL and active = 1 and deleted = 0", :limit => 1).first
+    @customer = @acc.all_users.where(:helpdesk_agent => false, :active => true, :deleted => false).where("email is not NULL").first
 
     if @customer.nil?
-      @customer = Factory.build(:user, :account => @acc, :email => Faker::Internet.email, :user_role => 3)
+      @customer = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
+                              :user_role => 3)
       @customer.save
     end
-
     @customer
   end
 
@@ -79,7 +80,8 @@ module AccountHelper
     
     subscription = @acc.subscription
     subscription.set_billing_params("USD")
-    subscription.save
+    subscription.state.downcase!
+    subscription.sneaky_save
   end
 
   def mue_key_state(account)
@@ -95,6 +97,7 @@ module AccountHelper
   end
 
   def restore_default_feature feature
+    @account.reload
     @account.features.send(feature).create unless @account.features_included?(feature.to_sym)
   end
 

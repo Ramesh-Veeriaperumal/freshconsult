@@ -54,7 +54,7 @@ class Workers::Supervisor
       supervisor_logger = custom_logger(path)
     rescue Exception => e
       puts "Error occured while #{e}"
-      FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Splunk logging Error for supervisor",:recipients => "pradeep.t@freshdesk.com"})  
+      FreshdeskErrorsMailer.error_email(nil,nil,e,{:subject => "Splunk logging Error for supervisor",:recipients => "pradeep.t@freshdesk.com"})  
     end
     account = Account.current
     return unless account.supervisor_rules.count > 0 
@@ -66,17 +66,20 @@ class Workers::Supervisor
         conditions = rule.filter_query
         next if conditions.empty?
         negate_conditions = [""]
-        negate_conditions = rule.negation_query if $redis_others.get("SUPERVISOR_NEGATION")
+        negate_conditions = rule.negation_query if $redis_others.perform_redis_op("get", "SUPERVISOR_NEGATION")
         puts "rule name::::::::::#{rule.name}"
         puts "conditions::::::: #{conditions.inspect}"
         puts "negate_conditions::::#{negate_conditions.inspect}"
         joins  = rule.get_joins(["#{conditions[0]} #{negate_conditions[0]}"])
-        tickets = Sharding.run_on_slave { account.tickets.scoped(:conditions => negate_conditions).scoped(:conditions => conditions).updated_in(1.month.ago).visible.find(:all, :joins => joins, :select => "helpdesk_tickets.*") }
+        tickets = Sharding.run_on_slave { account.tickets.where(negate_conditions).where(conditions).updated_in(1.month.ago).visible.find(:all, :joins => joins, :select => "helpdesk_tickets.*") }
         tickets.each do |ticket|
           begin
             rule.trigger_actions ticket
             ticket.save_ticket!
           rescue Exception => e
+            Rails.logger.info "::::::::::::::::::::error:::::::::::::#{rule.inspect}"
+            Rails.logger.debug e
+            Rails.logger.debug ticket.inspect
             NewRelic::Agent.notice_error(e)
             next
           end

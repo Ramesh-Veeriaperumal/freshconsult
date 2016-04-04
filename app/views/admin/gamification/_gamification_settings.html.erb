@@ -1,5 +1,5 @@
 <div>
-    <% form_tag update_game_admin_gamification_path, :method => :put, :id => "scoreboard_ratings_form", :rel => "validate", :class => "form-horizontal" do %>
+    <%= form_tag update_game_admin_gamification_index_path, :method => :put, :id => "scoreboard_ratings_form", :rel => "validate", :class => "form-horizontal" do %>
         <h5 class="lead"><%= t('admin.gamification.gamification_settings.award_points') %></h5>
         <div class="control-group">
             <label class="control-label">
@@ -9,11 +9,11 @@
                 <div class="row-fluid">
                     <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
                         <%if scoreboard.resolution_speed < 100 %>
-                            <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
-                                <div class="span3">
+                            <%= fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
+                                <div class="span4 game-points">
                                     <label class="label-title"> <%= t(".#{h(scoreboard.resolution_name)}").html_safe %> </label>
+                                     <span class="info_data">Pts</span>
                                     <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
-                                    <span class="info_data">Pts</span>
                                     <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
                                     <%= sb.hidden_field :id, :value => scoreboard.id %>
                                 </div>
@@ -32,11 +32,11 @@
                 <div class="row-fluid">
                     <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
                         <%if scoreboard.resolution_speed > 100 %>
-                            <% fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
-                                <div class="span3"> 
+                            <%= fields_for "scoreboard_ratings[#{index}]", scoreboard do |sb| %>
+                                <div class="span4 game-points"> 
                                     <label class="label-title"><%= t(".#{scoreboard.resolution_name}") %> </label>
+                                     <span class="info_data">Pts</span>
                                     <%= sb.text_field :score, :value => scoreboard.score, :class => "number points alignright required", :maxlength => "5" %>
-                                    <span class="info_data">Pts</span>
                                     <%= sb.hidden_field :resolution_speed, :value => scoreboard.resolution_speed %>
                                     <%= sb.hidden_field :id, :value => scoreboard.id %>
                                 </div>
@@ -50,7 +50,7 @@
         <p class="lead-desc muted"><%= t('.info_levels') %></p>
         <div class="row-fluid">
             <% @scoreboard_levels.each_with_index do |level , index| %>
-                <% fields_for "scoreboard_levels[#{index}]", level do |sl| %>
+                <%= fields_for "scoreboard_levels[#{index}]", level do |sl| %>
                 <div class="span2">
                     <label class="label-title"><%= level.name %></label>
                     <%= sl.text_field :points, :value => level.points, :maxlength => "9", 
@@ -67,6 +67,10 @@
         </div>
     <% end %>
 </div>
+<div id="all-agents-gamification-reset" class="hide">
+  <p class="margin-bottom"><br/> <%= t('admin.gamification.reset_arcade_alert', :points => current_account.scoreboard_levels.least_points.first.points) %></p>
+</div>
+
 
 <% content_for :onload_script do %>
     jQuery.validator.addMethod("level", function(value, element, param) {

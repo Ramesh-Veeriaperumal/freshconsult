@@ -17,12 +17,12 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
     duration_in_days = (params[:end_date].to_date - params[:start_date].to_date).to_i
   end
 
-  def export_fields(is_portal=false)
+  def export_fields(is_portal = false)
     flexi_fields = Account.current.ticket_fields.custom_fields(:include => :flexifield_def_entry)
     csv_headers = Helpdesk::TicketModelExtension.csv_headers 
     #Product entry
     csv_headers = csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.has_multiple_products?
-    csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
+    csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
 
     if is_portal
       vfs = visible_fields
@@ -37,7 +37,7 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
   def export_customer_fields type
     return unless ["contact", "company"].include?(type)
     custom_fields = Account.current.send("#{type}_form").fields
-    custom_fields.reject!{|x| ["client_manager","tag_names"].include?(x.name)} if type.eql?("contact")
+    custom_fields.reject!{|x| ["tag_names"].include?(x.name)} if type.eql?("contact")
     custom_fields.collect { |cf| 
             { :label => cf.label, 
               :value => cf.name, 
@@ -68,11 +68,20 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
   end
 
   def tickets_data(items, headers, records = [])
+    custom_field_names = Account.current.ticket_fields.custom_fields.map(&:name)
+    date_format = Account.current.date_type(:short_day_separated)
     items.each do |item|
       record = []
       headers.each do |val|
-        data = item.send(val)
-        data = parse_date(data) if DATE_TIME_PARSE.include?(val.to_sym) and data.present?
+        data = item.is_a?(Helpdesk::ArchiveTicket) ? 
+                  fetch_archive_ticket_value(item, val) : item.send(val)
+        if data.present?
+          if DATE_TIME_PARSE.include?(val.to_sym)
+            data = parse_date(data)
+          elsif custom_field_names.include?(val) && data.is_a?(Time)
+            data = data.utc.strftime(date_format)
+          end
+        end
         record << unescape_html(data)
       end
       records << record
@@ -100,4 +109,7 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
     headers
   end
 
+  def fetch_archive_ticket_value(item, val)
+    item.respond_to?(val) ? item.send(val) : item.custom_field_value(val)
+  end
 end

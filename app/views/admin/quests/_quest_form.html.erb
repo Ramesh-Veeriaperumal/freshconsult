@@ -25,8 +25,8 @@
 		        	<p><%= t('admin.quests.quest_form.no_condition') %></p>
 		    	</fieldset>
 				<fieldset class="addchoice">
+		         	<i class="rounded-add-icon"></i>
 		         	<p><%=t('dispatch.add_condition')%></p> 
-		         	<img alt="<%=t('dispatch.add_new_choice').html_safe%>" class="add" src="/images/add.png" />
 		    	</fieldset>
 	    	</div>
 		</div>
@@ -61,7 +61,7 @@
 			<div class="badgelist badges_items">
 				<div class="row">
 					<% @available_badges.each do | badges | %>
-						<% content_tag :div,"", 
+						<%= content_tag :div,"", 
 								"data-class" => badges[:classname],
 								"data-name" => badges[:name],
 								"data-badge-id" => badges[:id], :class => "span2 badge-set" do %>

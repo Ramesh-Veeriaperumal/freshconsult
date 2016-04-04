@@ -1,0 +1,13 @@
+Added as topic follower
+
+<%= "_" * 100 %>
+
+You have been added as a follower by <%= @user.name %> to this topic. 
+
+<%= @topic.title %>
+<%= @topic.first_post.body %>
+
+<%= "_" * 100 %>
+
+<%= link_to 'Stop following this topic',toggle_monitorship_url(:object => "topic", 
+                  :id => @topic.id, :type=>"unfollow", :host=> @portal.host), :class => "desc" %> 

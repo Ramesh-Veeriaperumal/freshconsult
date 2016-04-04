@@ -1,27 +1,41 @@
 class Admin::FreshfoneController < Admin::AdminController
-	before_filter(:only => [:search, :available_numbers]) { |c| c.requires_feature :freshfone }
+	include Freshfone::SubscriptionsUtil
+	include Redis::RedisKeys
+	include Redis::IntegrationsRedis
+
+	before_filter :load_numbers, :only => [:index, :search]
+	before_filter :trial_render, :only => [:index]
+	before_filter :validate_freshfone_state, :only => [:search]
+	before_filter :validate_trial, :only => [:search]
 	before_filter :validate_params, :only => [:available_numbers]
-	before_filter :load_freshfone_account, :only => [:toggle_freshfone]
+	after_filter  :add_request_to_redis,:only => [:request_freshfone_feature]
 
 	def index
-		redirect_to admin_freshfone_numbers_path and return if can_view_freshfone_number_settings?
+		redirect_to admin_freshfone_numbers_path and return if
+			can_view_freshfone_number_settings?
 	end
 
 	def request_freshfone_feature
 		email_params = {
-			:subject => t('freshfone.admin.feature_request_content.email_subject',
-				{:account_name => current_account.name}),
+			:subject => "Phone Request - #{current_account.name}",
 			:from => current_user.email,
 			:cc => current_account.admin_email,
-			:message => "Request to Enable freshfone "
+			:message => "Request to enable the phone channel in your Freshdesk account."
 		}
-		FreshfoneNotifier.send_later(:deliver_freshfone_request_template, current_account, current_user, email_params)
+		FreshfoneNotifier.send_later(
+				:deliver_freshfone_request_template,
+				current_account, current_user, email_params)
+		FreshfoneNotifier.send_later(
+				:deliver_freshfone_ops_notifier,
+				current_account,
+				message: "Phone Activation Requested From Trial For Account ::#{current_account.id}") if in_trial_states?
 		render :json => { :status => :success }
 	end
 
 	def available_numbers
 		begin
-			available_numbers = TwilioMaster.account.available_phone_numbers.get( params[:country] ).send(params[:type]).list( params[:search_options] )
+			available_numbers = TwilioMaster.account.available_phone_numbers.get(
+				params[:country]).send(params[:type]).list(params[:search_options])
 			@search_results = available_numbers.inject([]) do |results, num|
 				results << {
 					:phone_number_formatted => num.friendly_name,
@@ -55,17 +69,12 @@ class Admin::FreshfoneController < Admin::AdminController
 	end
 
 	private
-		def load_freshfone_account
-			@freshfone_account ||= current_account.freshfone_account
-		end
+
 		def validate_params
-			if(params[:search_options])
-				search_options = (params[:search_options].values.all?(&:empty?) ) ? {} : params[:search_options]
-			else
-				search_options = {}
-			end
-			params[:type] = (search_options[:type] == "local" or search_options[:type] == "toll_free") ? 
-																search_options[:type] : "local"
+			@freshfone_subscription = 'trial' if onboarding_enabled? ||
+					trial_numbers_empty?
+			search_options = load_search_options
+			params[:type] = load_type(search_options)
 			params[:search_options] = search_options
 		end
 
@@ -80,6 +89,66 @@ class Admin::FreshfoneController < Admin::AdminController
 		end
 
 		def can_view_freshfone_number_settings?
-			current_account.features?(:freshfone) or current_account.freshfone_numbers.any?
+			current_account.features?(:freshfone) ||
+				current_account.freshfone_numbers.any?
+		end
+
+		def validate_freshfone_state
+			return if onboarding_enabled?
+			requires_feature(:freshfone)
+		end
+
+		def validate_trial
+			if trial_conditions?
+				@freshfone_subscription = 'trial'
+				return
+			elsif (trial? && !trial_number_purchase_allowed?) || trial_expired?
+				return redirect_to admin_freshfone_numbers_path
+			end
+		end
+
+		def trial_conditions?
+			onboarding_valid? ||
+				trial_numbers_empty? || trial_number_purchase_allowed?
+		end
+
+		def load_numbers
+			@numbers = current_account.freshfone_numbers
+		end
+
+		def add_request_to_redis
+			set_key(activation_key, true, 1.week.seconds)
+		end
+
+		def activation_key
+			FRESHFONE_ACTIVATION_REQUEST % { :account_id => current_account.id }
+		end
+
+		def trial_render
+			return render :trial_index if
+				onboarding_valid? || trial_numbers_empty?
+		end
+
+		def trial_number_purchase_allowed?
+			trial? &&
+				Freshfone::Subscription.number_purchase_allowed?(::Account.current)
+		end
+
+		def load_search_options
+			if params[:search_options].present? &&
+				params[:search_options].values.any?(&:present?)
+				return params[:search_options]
+			end
+			{}
+		end
+
+		def load_type(search_options)
+			return search_options[:type] if %w(local toll_free).include?(
+					search_options[:type])
+			'local'
+		end
+
+		def onboarding_valid?
+			onboarding_enabled? && !in_trial_states?
 		end
 end

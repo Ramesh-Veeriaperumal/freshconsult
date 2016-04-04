@@ -1,0 +1,26 @@
+<% @page_title = "Dashboard" %>
+<% if current_user && current_user.privilege?(:view_admin) %>
+    <%= check_fb_reauth_required  %>
+    <%= check_twitter_reauth_required %>
+<% end %>
+
+<div class="index-page-content" data-widget-type="<%= @manage_dashboard and @global_dashboard %>" id="realtime-dashboard-content">
+    <%= render :partial => "/helpdesk/realtime_dashboard/summary" %>
+    <%= render :partial => "/helpdesk/realtime_dashboard/trial_account" %>
+
+    <div class="widget-wrapper-bg clearfix">
+        <div class="row-fluid widget-wrapper">
+            <div class="grid-stack grid-stack-3" id="grid-stack">
+                <% widget_list.each do |widget| %>
+                  <%= render_dashboard_widget widget %>
+                <% end %>
+            </div>
+        </div>
+    </div>
+
+    <div class="unresolved_tickets hide" id="unresolved_tickets"></div>
+</div>
+
+<% if chat_activated? %>
+    <%= javascript_include_tag :'cdn/livechat_mini_dashboard' %>
+<% end %>

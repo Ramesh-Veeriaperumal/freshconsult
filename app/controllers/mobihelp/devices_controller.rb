@@ -8,15 +8,15 @@ class Mobihelp::DevicesController < MobihelpController
   before_filter :validate_user, :only => :register_user
 
   def register
-    render :json => generate_resp_with_config(nil)
+    render_json(generate_resp_with_config(nil))
   end
 
   def register_user
-    render :json => register_user_to_device()
+    render_json(register_user_to_device())
   end
 
   def app_config
-    render :json => generate_resp_with_config(nil)
+    render_json(generate_resp_with_config(nil))
   end
 
   def register_user_to_device # should be called only when the user is creating a ticket
@@ -44,6 +44,6 @@ class Mobihelp::DevicesController < MobihelpController
     end
 
     def validate_user
-      render :json => generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_USER_DELETED], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_USER_DELETED]) if @user.deleted? or @user.blocked?
+      render_json(generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_USER_DELETED], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_USER_DELETED])) if @user.deleted? or @user.blocked?
     end
 end

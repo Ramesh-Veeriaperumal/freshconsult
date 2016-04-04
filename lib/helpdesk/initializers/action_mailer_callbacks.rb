@@ -2,29 +2,27 @@ require 'action_mailer'
 require 'smtp_tls'
 
 module ActionMailerCallbacks
-  
-  include ActionView::Helpers::TextHelper
-  include ActionView::Helpers::TagHelper
 
   def self.included(base)
     base.extend ClassMethods
-    base.alias_method_chain :deliver!, :deliver_callbacks
+    base.extend Helpdesk::Email::OutgoingCategory
   end
 
   module ClassMethods
-    @mailbox = nil
+    @email_confg = nil
+        
+    def set_email_config _email_config
+      @email_confg = _email_config
+    end
     
-    def set_mailbox _mailbox
-      @mailbox = _mailbox
+    def email_config
+      @email_confg
     end
-
-    def smtp_mailbox
-      @mailbox
-    end
-
-    def set_smtp_settings
-      if smtp_mailbox
-        self.smtp_settings = {
+    
+    def set_smtp_settings(mail)
+      if (email_config && email_config.smtp_mailbox)
+        smtp_mailbox = email_config.smtp_mailbox
+        smtp_settings = {
           :tls                  => smtp_mailbox.use_ssl,
           :enable_starttls_auto => true,
           :user_name            => smtp_mailbox.user_name,
@@ -34,62 +32,44 @@ module ActionMailerCallbacks
           :authentication       => smtp_mailbox.authentication,
           :domain               => smtp_mailbox.domain
         }
+        Rails.logger.debug "Used SMTP mailbox : #{email_config.smtp_mailbox.user_name} in email config : #{email_config.id} while email delivery"
+        self.smtp_settings = smtp_settings
+        mail.delivery_method(:smtp, smtp_settings)
+      elsif (email_config && email_config.category)
+        Rails.logger.debug "Used EXISTING category : #{email_config.category} in email config : #{email_config.id} while email delivery"
+        category_id = email_config.category
+        self.smtp_settings = read_smtp_settings(category_id)
+        mail.delivery_method(:smtp, read_smtp_settings(category_id))
       else
-        self.smtp_settings = Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
+        reset_smtp_settings(mail)
       end
+      @email_confg = nil
     end
 
-    def reset_smtp_settings
-      self.smtp_settings = Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
+    def reset_smtp_settings(mail)
+      begin
+        category_id = get_category_id
+      rescue Exception => e
+        Rails.logger.debug "Exception occurred while getting category id : #{e} - #{e.message} - #{e.backtrace}"
+        NewRelic::Agent.notice_error(e)
+        category_id = nil
+      end
+      Rails.logger.debug "Fetched category : #{category_id} while email delivery"
+      self.smtp_settings = read_smtp_settings(category_id)
+      mail.delivery_method(:smtp, read_smtp_settings(category_id))
     end   
-  end
-
-  def deliver_with_deliver_callbacks!(*args)
-    @mail = auto_link_mail @mail
-    self.class.reset_smtp_settings
-    self.class.set_smtp_settings
-    deliver_without_deliver_callbacks!(*args)
-    @mail
-  end
-
-  def auto_link_mail mail=@mail
-    #Does mail contain parts?
-    if(!mail.parts.blank?)
-      #if first part is multipart/mixed then delete --> temporary fix
-      if(mail.parts[0].content_type.start_with?("multipart/mixed") && mail.parts[0].body.blank?)
-        mail.parts.delete_at(0)
-      end
-      #send parts for auto_link
-      auto_link_section(mail.parts)
-    # if no parts and content is html then auto_link
-    elsif(mail.content_type.start_with?("text/html"))
-      autolinked_body = Rinku.auto_link(mail.body.to_s, :urls)
-      encode_body(mail, autolinked_body)
-    end
-    mail
-  end
-    
-  private
-    def auto_link_section(section)
-      section.each do |sub_section|
-        if(sub_section.content_type.start_with?("text/html") && sub_section.content_disposition != "attachment")
-          autolinked_body = Rinku.auto_link(sub_section.body.to_s, :urls)
-          encode_body(sub_section, autolinked_body)
-        end
-        auto_link_section(sub_section.parts) unless sub_section.parts.blank?
+        
+    def read_smtp_settings(category_id)
+      if (!category_id.nil?) && (!Helpdesk::EMAIL["category-#{category_id}".to_sym].nil?)
+        Helpdesk::EMAIL["category-#{category_id}".to_sym][Rails.env.to_sym]
+      else 
+        Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
       end
     end
-
-    def encode_body(part, autolinked_body)
-      case (part.content_transfer_encoding || "").downcase
-        when "base64" then
-          part.body = Mail::Encodings::Base64.encode(autolinked_body)
-        when "quoted-printable"
-          part.body = [normalize_new_lines(autolinked_body)].pack("M*")
-        else
-          part.body = autolinked_body
-      end
-    end
+  end
 end
 
 ActionMailer::Base.send :include, ActionMailerCallbacks
+
+require 'auto_link_mail_interceptor'
+ActionMailer::Base.register_interceptor(AutoLinkMailInterceptor)

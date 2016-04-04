@@ -21,7 +21,9 @@ module TicketConstants
     [ :facebook,         'facebook_source',  6 ],
     [ :chat,             'chat',             7 ],
     [ :mobihelp,         'mobihelp',         8 ],
-    [ :feedback_widget,  'feedback_widget',  9 ]
+    [ :feedback_widget,  'feedback_widget',  9 ],
+    [ :outbound_email,   'outbound_email',   10],
+	[ :ecommerce,        'ecommerce',        11 ]
   
   ]
 
@@ -59,7 +61,7 @@ module TicketConstants
   TYPE_NAMES_BY_SYMBOL = Hash[*TYPE.map { |i| [i[0], i[1]] }.flatten]
   
   DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
-    :ticket_type, :source, "helpdesk_tags.name", "users.customer_id",
+    :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
     :requester_id, "helpdesk_schema_less_tickets.product_id" ]
   
   DEFAULT_COLUMNS =  [
@@ -72,6 +74,7 @@ module TicketConstants
     [ :due_by,              'due_by',           :due_by],
     [ "helpdesk_tags.name", "tags",             :dropdown],
     [ "users.customer_id",  "customers",        :customer],
+    [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
     [ "helpdesk_schema_less_tickets.product_id",'products', :dropdown]
@@ -105,6 +108,20 @@ module TicketConstants
   CREATED_BY_KEYS_BY_TOKEN = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[2]] }.flatten]
   CREATED_BY_NAMES_BY_SYMBOL = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[1]] }.flatten]
   
+  ARCHIVE_EXPORT_VALUES = [
+    [ :two_months,       I18n.t('two_months'),   60 ], 
+    [ :six_months,       I18n.t('six_months'),   180],
+    [ :set_date,         I18n.t('set_date'),     4  ]
+  ]
+  ARCHIVE_EXPORT_OPTIONS = ARCHIVE_EXPORT_VALUES.map { |i| [i[1], i[2]] }
+
+  ARCHIVE_CREATED_WITHIN_VALUES = [
+    [ :any_time,         I18n.t('any_time'),      "any_time"   ],
+    [ :two_months,       I18n.t('two_months'),    "two_months" ], 
+    [ :six_months,       I18n.t('six_months'),    "six_months" ],
+    [ :set_date,         I18n.t('set_date'),      "set_date"   ]
+  ]
+  ARCHIVE_CREATED_WITHIN_OPTIONS = ARCHIVE_CREATED_WITHIN_VALUES.map { |i| [i[2], i[1]] }
 
   CREATED_WITHIN_VALUES = [
     [ :any_time,         'any_time',        "any_time"], # If modified, _auto_refresh.html.erb has to be modified.
@@ -118,9 +135,11 @@ module TicketConstants
     [ :today,            'today',             "today" ],
     [ :yesterday,        'yesterday',     "yesterday" ],
     [ :this_week,        'seven_days',         "week" ],
+    [ :last_week,        'last_seven_days',     "last_week" ],
     [ :this_month,       'thirty_days',       "month" ],
-    [ :two_months,       'two_months',   "two_months" ], 
-    [ :six_months,       'six_months',   "six_months" ],
+    [ :last_month,       'last_thirty_days',    "last_month"],
+    [ :two_months,       'last_sixty_days',   "two_months" ], 
+    [ :six_months,       'last_one_eighty_days',   "six_months" ],
     [ :set_date,         'set_date',       "set_date" ]
   ]
 
@@ -140,7 +159,8 @@ module TicketConstants
     :deleted          => "create_deleted_activity",
     :responder_id     => "create_assigned_activity",
     :product_id       => "create_product_activity",
-    :ticket_type      => "create_ticket_type_activity"
+    :ticket_type      => "create_ticket_type_activity",
+    :due_by           => "create_due_by_activity"
   }
 
   REPORT_TYPE_HASH = {
@@ -153,6 +173,15 @@ module TicketConstants
     :agent_resolved     => :"helpdesk_ticket_states.resolved_at",
     :customer_resolved  => :"helpdesk_ticket_states.resolved_at"
   }
+
+  DASHBOARD_FILTER_MAPPING = {
+    :agent => "responder_id",
+    :group => "group_id",
+    :priority => "priority",
+    :type => "ticket_type",
+    :source => "source",
+    :status => "status"
+  }
   # CC emails count
   MAX_EMAIL_COUNT = 50
 
@@ -160,6 +189,16 @@ module TicketConstants
   TICKET_START_DISPLAY_ID = -100000000
   TICKET_DISPLAY_ID_MAX_LOOP = 10
   TICKET_ID_LOCK_EXPIRY = 5 #5 seconds
+
+  BACKGROUND_THRESHOLD = 5
+
+  # Used in reports ETL
+  VISIBILITY_MAPPING = {
+    :active => 1,
+    :deleted => 2,
+    :spam => 3,
+    :merged_ticket => 4
+  }
 
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])

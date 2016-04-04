@@ -1,20 +1,32 @@
 module Helpdesk::Email::NoteMethods
 
   include Helpdesk::Utils::ManageCcEmails
+  include EmailHelper
 
   def build_note_object
     self.note = ticket.notes.build(note_params)     
     set_note_source
+    set_note_category
     note.subject = Helpdesk::HTMLSanitizer.clean(email[:subject])
+    check_for_auto_responders(note, email[:headers])
+    check_support_emails_from(note, user, account)
+  end
+
+  def set_note_category
+    note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?
   end
 
   def set_note_source
-    note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[(from_fwd_emails? or user.agent?) ? "note" : "email"]
+    note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[(from_fwd_emails? or note.notable.agent_performed?(user) or rsvp_to_fwd?) ? "note" : "email"]
+  end
+
+  def rsvp_to_fwd?
+    @rsvp_to_fwd ||= (Account.current.features?(:threading_without_user_check) && reply_to_forward(header_processor.all_message_ids))
   end
 
   def note_params
     {
-      :private => (from_fwd_emails? and user.customer?),
+      :private => (from_fwd_emails? or reply_to_private_note?(header_processor.all_message_ids) or rsvp_to_fwd?),
       :incoming => true,
       :note_body_attributes => separate_quoted_text ,
       :user => user, #by Shan temp
@@ -44,10 +56,10 @@ module Helpdesk::Email::NoteMethods
     # html = show_quoted_text(email[:description_html], false) || {}
     
     {
-      :body => email[:stripped_text], 
-      :body_html => sanitize_message(email[:stripped_html]), 
-      :full_text => email[:text], 
-      :full_text_html => sanitize_message(email[:description_html])
+      :body => tokenize_emojis(email[:stripped_text]),
+      :body_html => sanitize_note_message(email[:stripped_html]),
+      :full_text => tokenize_emojis(email[:text]),
+      :full_text_html => sanitize_note_message(email[:description_html])
     }
   end
 
@@ -67,7 +79,7 @@ module Helpdesk::Email::NoteMethods
   #   [
   #     Regexp.new("From:\s*" + address, Regexp::IGNORECASE),
   #     Regexp.new("<" + address + ">", Regexp::IGNORECASE),
-  #     Regexp.new(address + "\s+wrote:", Regexp::IGNORECASE),   
+  #     Regexp.new(address + "\s+wrote:", Regexp::IGNORECASE),
   #     Regexp.new("\\n.*.\d.*." + address ),
   #     Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
   #     Regexp.new("On.*?wrote:"),
@@ -79,13 +91,13 @@ module Helpdesk::Email::NoteMethods
   # def get_body_and_full_text text, index, plain
   #   original_msg = text[0, index]
   #   old_msg = text[index,text.size]
-    
+
   #   return  {:body => original_msg, :full_text => text } if plain
   #   #Sanitizing the original msg and old msg
 
   #   original_msg = sanitize_message(original_msg) unless original_msg.blank?
   #   old_msg = sanitize_message(old_msg) unless old_msg.blank?
-      
+
   #   full_text = get_full_text(original_msg, old_msg)
   #   {:body => full_text, :full_text => full_text}  #temp fix made for showing quoted text in incoming conversations
   # end
@@ -95,10 +107,11 @@ module Helpdesk::Email::NoteMethods
   #   %(#{original_msg}<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>#{old_msg}</blockquote></div>)
   # end
 
-  def sanitize_message msg
-    sanitized_msg = Nokogiri::HTML(msg).at_css("body")
+  def sanitize_note_message msg
+    sanitized_msg = run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(msg).at_css("body") }
     remove_identifier_span(sanitized_msg)
-    sanitized_msg.inner_html unless sanitized_msg.blank? 
+    remove_survey_div(sanitized_msg)
+    sanitized_msg.inner_html unless sanitized_msg.blank?
   end
 
   def remove_identifier_span msg
@@ -106,15 +119,24 @@ module Helpdesk::Email::NoteMethods
     id_span.remove if id_span
   end
 
+  def remove_survey_div msg
+    survey_div = msg.css("div[title='freshdesk_satisfaction_survey']")
+    survey_div.remove unless survey_div.blank?
+  end
+
   def select_id_span msg
     msg.css("span[style]").select{|x| x.to_s.include?('fdtktid')}
   end
 
   def update_ticket_cc
-    cc_email = ticket.cc_email_hash || {:cc_emails => [], :fwd_emails => [], :reply_cc => []}
-    incoming_cc = email[:cc].reject { |cc| requester_email?(cc) }
-    add_to_reply_cc(incoming_cc, ticket, note, cc_email)
-    cc_email[:cc_emails] = incoming_cc | cc_email[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}.compact
+    sup_emails       = account.support_emails.map(&:downcase)
+    cc_email         = ticket.cc_email_hash || Helpdesk::Ticket.default_cc_hash
+    incoming_cc      = email[:cc].reject { |cc| requester_email?(cc) }
+    other_recipients = email[:to_emails].reject{|mail| email[:to][:email].include?(mail) or  sup_emails.include?(mail.downcase)}
+    new_cc           = incoming_cc.push(other_recipients).flatten
+    in_reply_to = email[:in_reply_to].to_s.include?("notification.freshdesk.com") ? :notification : :default
+    add_to_reply_cc(new_cc, ticket, note, cc_email, in_reply_to)
+    cc_email[:cc_emails] = new_cc | cc_email[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}.compact
     ticket.cc_email = cc_email
   end
 end

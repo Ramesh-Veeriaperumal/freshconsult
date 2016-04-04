@@ -572,6 +572,7 @@ input.special{
   border-color: #8c8c8c;
   font-size:16px;
   margin-bottom: 0;
+  margin-right: 0;
   padding:6px 10px;
   @include box-shadow(rgba(0, 0, 0, 0.3) 0 1px 2px inset);
 }
@@ -588,10 +589,11 @@ label.required:after{
 }
 
 // Ticket form specific css
-.ticket-form{
+.ticket-form, .form-portal, .edit_helpdesk_ticket{
   .nested_field .level_2, 
   .nested_field .level_3,
   .control-tabbed-border{
+    display:none;
     @include border-left(1px dotted #333);    
     @include padding-left(15px);
     padding-top:15px;

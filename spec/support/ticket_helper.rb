@@ -6,17 +6,19 @@ module TicketHelper
       user = add_new_user(@account)
       requester_id = user.id
     end
+    cc_emails = params[:cc_emails] || []
     subject = params[:subject] || Faker::Lorem.words(10).join(" ")
     account_id =  group ? group.account_id : @account.id
-    test_ticket = Factory.build(:ticket, :status => params[:status] || 2,
+    test_ticket = FactoryGirl.build(:ticket, :status => params[:status] || 2,
                                          :display_id => params[:display_id], 
                                          :requester_id =>  requester_id,
                                          :subject => subject,
                                          :responder_id => params[:responder_id],
                                          :source => params[:source] || 2,
-                                         :cc_email => {:cc_emails => [], :fwd_emails => [], :reply_cc => []},
+                                         :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails),
                                          :created_at => params[:created_at],
-                                         :account_id => account_id)
+                                         :account_id => account_id,
+                                         :custom_field => params[:custom_field])
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
     if params[:attachments]
       test_ticket.attachments.build(:content => params[:attachments][:resource], 
@@ -35,7 +37,7 @@ module TicketHelper
 
   def create_test_time_entry(params = {}, test_ticket = nil)
     ticket = test_ticket.blank? ? create_ticket : test_ticket
-    time_sheet = Factory.build(:time_sheet, :user_id => params[:agent_id] || @agent.id,
+    time_sheet = FactoryGirl.build(:time_sheet, :user_id => params[:agent_id] || @agent.id,
                                             :workable_id => ticket.id,
                                             :account_id => @account.id,
                                             :billable => params[:billable] || 1,

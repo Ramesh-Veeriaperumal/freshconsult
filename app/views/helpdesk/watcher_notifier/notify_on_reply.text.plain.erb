@@ -30,7 +30,8 @@
 
 <%= @note.body %>
 
-<%=unsubscribe_helpdesk_ticket_helpdesk_subscriptions_url(@ticket,:host => @ticket.account.host, :protocol => @ticket.url_protocol)%>
+
+<%=unsubscribe_helpdesk_ticket_subscriptions_url(@ticket,:host => @ticket.account.host, :protocol => @ticket.url_protocol)%>
 
 
 <%=t('helpdesk.tickets.add_watcher.mail.stop_emails') %>

@@ -172,7 +172,7 @@
       <% end %>
       <div id="edit"></div>
     </div>
-    <% javascript_tag do %>
+    <%= javascript_tag do %>
     	(function($) {
 		    $('.requestCnt').on('click', '.reset_button, .save_button', function(ev){
 		    	var id = $(this).data('id');

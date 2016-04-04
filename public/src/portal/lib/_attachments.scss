@@ -134,6 +134,15 @@
 				vertical-align: middle;
 				background: inline-image('cdn-ignored/inline-images/box.png') no-repeat #ffffff;
 			}
+			.file-types-onedrive{
+				margin: 0;
+				@include padding(3px 0px 3px 25px);
+				width: auto;
+				height: 25px;
+				display: inline-block;
+				vertical-align: middle;
+				background: inline-image('cdn-ignored/inline-images/onedrive.png') no-repeat #ffffff;
+			}
 		}
 	}
 }
@@ -160,9 +169,9 @@
 }
 
 .no-image-logo{
-	@include no-image-class("logo.png");
+	@include no-image-class("cdn-ignored/inline-images/logo.png");
 }
 
 .no-image-favicon{
-	@include no-image-class("favicon-preview.png");
+	@include no-image-class("cdn-ignored/inline-images/favicon-preview.png");
 }

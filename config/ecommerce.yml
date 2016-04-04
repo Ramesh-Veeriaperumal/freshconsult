@@ -1,0 +1,8 @@
+eBay:
+ app_id: Testsath-4f6a-48bf-9ed0-78b233c4b505
+ dev_id: 84ff4c32-efc8-4d41-86c1-34f34db19bb8
+ cert_id: 27feb8c7-97e9-4550-88ee-103c071e751c
+ ru_name: Testsathish-Testsath-4f6a-4-jhonio
+ authorize_url: https://signin.ebay.com/ws/eBayISAPI.dll?SignIn
+ sandbox: false
+ compatability_level: 837

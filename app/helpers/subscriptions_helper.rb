@@ -24,18 +24,22 @@ module SubscriptionsHelper
     return  t('amount_per_month',{:amount => amount,:period => SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[period]}).html_safe
   end
 
-    def open_html_tag
-      html_conditions = [ ["lt IE 6", "ie6"],
+  def open_html_tag
+    html_conditions = [ ["lt IE 7", "ie6"],
                         ["IE 7", "ie7"],
                         ["IE 8", "ie8"],
                         ["IE 9", "ie9"],
                         ["IE 10", "ie10"],
                         ["(gt IE 10)|!(IE)", "", true]]
-
-      html_conditions.map { |h| %( 
-          <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
-            current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }.to_s.html_safe
-    end
+    
+    date_format = (AccountConstants::DATEFORMATS[current_account.account_additional_settings.date_format] if current_account.account_additional_settings) || :non_us
+    
+    html_conditions.map { |h|
+      %(
+        <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{
+          current_portal.language }" dir="#{current_direction?}" data-date-format="#{date_format}">#{h[2] ? '<!--' : ''}<![endif]-->)
+    }.to_s.html_safe
+  end
 
   def current_freshfone_balance(freshfone_credit)
     balance = (freshfone_credit) ? freshfone_credit.available_credit : 0
@@ -52,14 +56,14 @@ module SubscriptionsHelper
   end
 
   def default_freshfone_credit(freshfone_credit)
-    return Freshfone::Credit::DEFAULT if freshfone_credit.blank?
+    return Freshfone::Credit::DEFAULT if freshfone_credit.new_record?
     current_credit = freshfone_credit.credit
-    return current_credit if Freshfone::Credit::RECHARGE_OPTIONS.include?(current_credit)
+    return current_credit.to_i if Freshfone::Credit::RECHARGE_OPTIONS.include?(current_credit)
     Freshfone::Credit::DEFAULT
   end
 
   def default_freshfone_auto_recharge(freshfone_credit)
-    return Freshfone::Credit::DEFAULT if freshfone_credit.blank?
+    return Freshfone::Credit::DEFAULT if freshfone_credit.new_record?
     recharge_quantity = freshfone_credit.recharge_quantity
     return recharge_quantity if Freshfone::Credit::RECHARGE_OPTIONS.include?(recharge_quantity)
     Freshfone::Credit::DEFAULT
@@ -126,6 +130,10 @@ module SubscriptionsHelper
     end
     output << %( > #{button_label} </button>)
     output.join("").html_safe
+  end
+
+  def freshfone_allowed?
+    feature?(:freshfone) && !freshfone_trial_states?
   end
 
  end

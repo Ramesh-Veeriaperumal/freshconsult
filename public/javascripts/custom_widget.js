@@ -4,6 +4,7 @@ Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
 	initialize:function(widgetOptions){
 		this.options = widgetOptions || {};
+		(this.options.auth_type == 'OAuth') ? this.options.refresh_count = 0 : null;
 		this.app_name = this.options.app_name || this.app_name || "Integrated Application";
 		if(!this.options.widget_name) this.options.widget_name = this.app_name.toLowerCase().replace(' ', '_')+"_widget"
 		if(!this.options.username) this.options.username = Cookie.retrieve(this.options.widget_name+"_username");
@@ -100,6 +101,10 @@ Freshdesk.Widget.prototype={
 			merge_sym = (reqData.resource.indexOf('?') == -1) ? '?' : '&'
 			reqData.rest_url = reqData.resource + merge_sym + this.options.url_token_key + '=' + this.options.username;
 		}
+		else if (this.options.auth_type == 'OAuth1') {
+			reqData.auth_type = 'OAuth1';
+			reqData.app_name = this.options.app_name.toLowerCase().replace(' ', '_');
+		}
 		else{
 			reqHeader.Authorization = "Basic " + Base64.encode(this.options.username + ":" + this.options.password);
 		}
@@ -133,6 +138,11 @@ Freshdesk.Widget.prototype={
 		}
 	},
 
+    oauth_retry_error:function() {
+        this.options.oauth_token = null;
+        //console.log("OAuth refresh token refresh error for " + this.options.app_name + ". No  retries after 2 refresh attempts.");
+    },
+
 	resource_failure:function(evt, reqData, reqHeader){
 		resJ = evt.responseJSON;
 		
@@ -149,6 +159,7 @@ Freshdesk.Widget.prototype={
 				cw = this;
 				req_sent_again = true;						
 				this.refresh_access_token(function(){
+                    (this.options.refresh_count > 2) ? this.oauth_retry_error() : this.options.refresh_count++;
 					if(this.options.oauth_token) {
 						this.request(reqData);
 					} else {
@@ -194,7 +205,7 @@ Freshdesk.Widget.prototype={
 				}			
 		} else {
 				errorStr = evt.responseText;
-				this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + ".\n\nTry fixing the error or Contact Support.");
+				this.alert_failure("Problem in connecting to " + this.app_name + ". Response code: " + evt.status);
 		}
 		if(!req_sent_again){
 			loading_elem = jQuery('div[class^="loading-"]').attr('class');
@@ -219,6 +230,7 @@ Freshdesk.Widget.prototype={
 			this.error_element.innerHTML = errorMsg;
 		}
 		jQuery("#" + this.options.widget_name).removeClass('sloading loading-small');
+		jQuery('#' + this.options.app_name.toLowerCase() + '_loading').remove();
 	},
 
 	refresh_access_token:function(callback, reqHeader){
@@ -345,6 +357,8 @@ Freshdesk.Widget.prototype={
 	}
 };
 
+Freshdesk.NativeIntegration = {};
+
 Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	initialize: function($super, widgetOptions, integratable_impl){
 		if(widgetOptions.reqEmail == ""){
@@ -362,7 +376,6 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	},
 
 	renderPrimary: function(){
-		jQuery('#' + this.app + "_widget").addClass('sloading loading-small');
 		if(this.app == "icontact" || this.app == "constantcontact"){
 			this.getUserInfo(); 
 		}
@@ -374,19 +387,21 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 
 	bindClicks: function(){
 		var obj = this;
-		jQuery('#' + this.options.widget_name).on('click','.lists-submit', (function(ev){
+		jQuery(document).off("email_marketing");
+
+		jQuery(document).on('click.email_marketing','#' + this.options.widget_name + ' .lists-submit', (function(ev){
 			ev.preventDefault(); obj.manageLists();
 		}));
-		jQuery('#' + this.options.widget_name).on('click', '.contact-submit', (function(ev){
+		jQuery(document).on('click.email_marketing', '#' + this.options.widget_name + ' .contact-submit', (function(ev){
 			ev.preventDefault(); obj.addUser();
 		}));
-		jQuery('#' + this.options.widget_name).on('click', '.newlists-submit', (function(ev){
+		jQuery(document).on('click.email_marketing', '#' + this.options.widget_name + ' .newlists-submit', (function(ev){
 			ev.preventDefault(); obj.newSubscribe();
 		}));
-		jQuery('#' + this.app + "_widget").on('click', '.list-tab', (function(ev){
+		jQuery(document).on('click.email_marketing', '#' + this.app + '_widget ' + '.list-tab', (function(ev){
 			ev.preventDefault(); obj.mailingLists();
 		}));
-		jQuery('#' + this.app + "_widget").on('click', '.campaign-tab', (function(ev){
+		jQuery(document).on('click.email_marketing', "#" + this.app + "_widget " + ".campaign-tab", (function(ev){
 			ev.preventDefault(); obj.campaignActivity();
 		}));
 	},
@@ -777,8 +792,16 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		contact = contact || {};
 		contact.name = this.options.reqName;
 		title = _.template(this.Title, {contact: contact, app: this.app});
-		if (jQuery('#' + this.options.widget_name).dialog( "isOpen" ) == true)
-			jQuery('#' + this.options.widget_name).dialog("option", "title", title)
+		
+		if(jQuery('#' + this.options.widget_name).data('modal') != undefined) {
+			if((jQuery('#' + this.options.widget_name).data('modal').isShown === true) && 
+				(!jQuery('#' + this.options.widget_name + '.modal').find('.email_marketing'))) {
+
+				jQuery('#' + this.options.widget_name + '.modal').children('.modal-header').children('h3').remove();
+				jQuery('#' + this.options.widget_name + '.modal').children('.modal-header').append(title);
+			}
+		}
+
 		cw.title[this.app] = title;
 	},
 
@@ -824,10 +847,10 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	},
 
 	Title: '<div class="email_marketing">'+
-						'<div class="contact_title">'+
-							'<div class="<%=app%>-modal-logo"> <h3 class="fname"><%=contact.name%></h3></div><div class="cust-added"><%= (contact.since && contact.since != "") ? ("Customer since " + (new Date(contact.since.replace(/\-/g,"\/")).strftime("%a, %d %b %Y"))) : "" %></div>'+
-						'</div>'+
-					'</div>',
+				'<div class="contact_title">'+
+					'<div class="clearfix"> <h3 class="ellipsis modal-title pull-left"><%=contact.name%></h3><div class="application-logo-<%=app%> pull-right"></div></div><div class="cust-added"><%= (contact.since && contact.since != "") ? ("Customer since " + (new Date(contact.since.replace(/\-/g,"\/")).strftime("%a, %d %b %Y"))) : "" %></div>'+
+				'</div>'+
+			'</div>',
 
 	Parent: '<div class="parent-container">'+
 							'<div class="email_title"></div>'+
@@ -846,14 +869,15 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	Export: '<hr/>'+
 					'<div class="export-user">'+
 						'<span><%=name%>&lt;<%=email%>&gt; cannot be found in <%=appname%></span>'+
-						'<div class="contact-submit"><input type="submit" class="uiButton contact-add" value="Subscribe" /></div>'+
+						'<div class="button-container"><input type="submit" class="btn btn-primary contact-add contact-submit" value="Subscribe" /></div>'+
 					'</div>'+
 					'<div class="lists-load hide"></div>',
 
 
 	NewLists: '<div class="mailing-msg"><b>Choose from the below mailing lists to add the contact and click Save</b></div>'+
-						'<div class="listsExportAll"><input type="submit" class="uiButton newlists-submit"  value="Save"></div>' +
-						'<div class="all-lists"><div class="lists threecol-form"><%=lists%></div></div>',
+						'<div class="all-lists"><div class="lists threecol-form"><%=lists%></div></div>' +
+						'<div class="listsExportAll mt10"><input type="submit" class="btn btn-primary newlists-submit"  value="Save"></div>',
+						
 
 
 	Campaigns: '<div class="campaigns">'+
@@ -862,14 +886,14 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 										'if(app == "icontact"){'+
 											'keys = _.keys(campaigns).reverse();'+
 									    'for(i=0; i<keys.length; i++){ %>'+
-								    		'<div id="show-activity-<%=app%>" class="activity-toggle <%=keys[i]%>"> <div class="campaign-activity campaign-image"><%=campaigns[keys[i]].title%></div></div>'+
+								    		'<div id="show-activity-<%=app%>" class="activity-toggle <%=keys[i]%>"> <div class="campaign-activity"><div class="pull-left integrations-campaign-image"></div><%=campaigns[keys[i]].title%></div></div>'+
 												'<div id="user-campaign-<%=keys[i]%>" class="hide loading-fb">'+
 													'<div class="activities">'+
 													'<div class="campaign-details hide"></div>'+
 												'</div>'+
 											'</div>'+
 									    '<%}}else{'+
-										 'for(key in campaigns){%><div id="show-activity-<%=app%>" class="activity-toggle <%=key%>"> <div class="campaign-activity campaign-image"><%=campaigns[key].title%></div></div>'+
+										 'for(key in campaigns){%><div id="show-activity-<%=app%>" class="activity-toggle <%=key%>"> <div class="campaign-activity"><div class="pull-left integrations-campaign-image"></div><%=campaigns[key].title%></div></div>'+
 												'<div id="user-campaign-<%=key%>" class="hide loading-fb">'+
 													'<div class="activities">'+
 													'<div class="campaign-details hide"></div>'+
@@ -878,7 +902,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 							'</div>'+
 						'</div>',
 
-	CampaignActivity: '<div class="activity"><div class="action_type"> <span class="action"> <%=action%> </span></div><span class="action-time"><%=action_time%></span><span class="action-url"><a href="<%=action_url%>" target="_blank"><%=action_url%></a></span> </div>',
+	CampaignActivity: '<div class="activity"><div class="action_type"> <span class="action"> <%=action%> </span></div><span class="action-time"><%=action_time%></span><span class="action-url"><a href="<%=action_url%>" target="_blank"><span class="ficon-link url-icon"></span><%=action_url%></a></span> </div>',
 
 	MailingLists: '<div class="mailing-lists">'+
 										'<div class="lists-load hide">'+
@@ -1049,7 +1073,7 @@ Freshdesk.CRMWidget = Class.create(Freshdesk.Widget, {
 
 var UIUtil = {
 
-	constructDropDown:function(data, type, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
+	constructDropDown:function(data, type, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries,searchAttr) {
 		foundEntity = "";
 		dropDownBox = $(dropDownBoxId);
 		if (!keepOldEntries) dropDownBox.innerHTML = "";
@@ -1077,7 +1101,7 @@ var UIUtil = {
 
 			var newEntityOption = new Element("option");
 			entityIdValue = parser.getNodeValueStr(entitiesArray[i], entityId);
-			entityEmailValue = parser.getNodeValueStr(entitiesArray[i], "email");
+			entityEmailValue = (!searchAttr) ? parser.getNodeValueStr(entitiesArray[i], "email") :  parser.getNodeValueStr(entitiesArray[i], searchAttr).toLowerCase();
 			if (searchTerm != null && searchTerm != '') {
 				if (entityEmailValue == searchTerm) {
 					foundEntity = entitiesArray[i];
@@ -1171,15 +1195,41 @@ var UIUtil = {
 }
 
 var CustomWidget =  {
+
+	util_loaded: {},
+
 	include_js: function(jslocation) {
 		widget_script = document.createElement('script');
 		widget_script.type = 'text/javascript';
 		widget_script.src = jslocation+"?"+timeStamp;
 		document.getElementsByTagName('head')[0].appendChild(widget_script);
+	},
+
+	include_util_js: function(jslocation,call_back) {
+		if (this.util_loaded[jslocation]) {
+			call_back();
+			return;
+		}
+		this.util_loaded[jslocation] = true;
+		widget_script = document.createElement('script');
+		widget_script.type = 'text/javascript';
+		if(widget_script.readyState){ //For IE
+			widget_script.onreadystatechange=function(){
+				if(widget_script.readyState == "loaded" || widget_script.readyState == "complete"){
+					widget_script.onreadystatechange=null;
+					call_back();
+				}
+			};
+		}
+		else{ //For other browsers
+			widget_script.onload=call_back;
+		}
+		widget_script.src = jslocation+"?"+timeStamp;
+		document.getElementsByTagName('head')[0].appendChild(widget_script);
 	}
 };
 
-CustomWidget.include_js("/javascripts/strftime-min.js");
+CustomWidget.include_js("/assets/strftime-min.js");
 
 var XmlUtil = {
 	extractEntities:function(resStr, lookupTag){

@@ -3,12 +3,13 @@ class Support::LoginController < SupportController
 	include Redis::RedisKeys
 	include Redis::TicketsRedis
 	include SsoUtil
-	MAX_ATTEMPT = 5
+	MAX_ATTEMPT = 3
 	SUB_DOMAIN = "freshdesk.com"
 
 	before_filter :set_no_ssl_msg, :only => :new
 	skip_before_filter :check_account_state
 	after_filter :set_domain_cookie, :only => :create
+  skip_after_filter :set_last_active_time
 	
 	def new
 		if current_account.sso_enabled? and check_request_referrer 
@@ -21,19 +22,24 @@ class Support::LoginController < SupportController
 		end
 	end
 
-	def create   
+	def create
 		@user_session = current_account.user_sessions.new(params[:user_session])
-    	@verify_captcha = (params[:recaptcha_challenge_field] ? verify_recaptcha : true )
-    	if @verify_captcha && @user_session.save 
-			#Temporary hack due to current_user not returning proper value
-			@current_user_session = @user_session
-			@current_user = @user_session.record
-			#Hack ends here
+   	@verify_captcha = (params[:recaptcha_challenge_field] ? verify_recaptcha : true )
+   	if @verify_captcha && @user_session.save 
 
-			remove_old_filters if @current_user.agent?
+      @current_user_session = current_account.user_sessions.find
+      @current_user = @current_user_session.record
+      if @current_user_session && !@current_user && @current_user_session.stale_record && @current_user_session.stale_record.password_expired 
+        stale_user = @current_user_session.stale_record
+        stale_user.reset_perishable_token!
 
-			redirect_back_or_default('/') if grant_day_pass 
-			#Unable to put 'grant_day_pass' in after_filter due to double render
+        redirect_to(edit_password_reset_path(stale_user.perishable_token))
+      else
+  			remove_old_filters if @current_user.agent?
+
+  			redirect_back_or_default('/') if grant_day_pass 
+  			#Unable to put 'grant_day_pass' in after_filter due to double render
+      end
 		else
 			note_failed_login
       		show_recaptcha?
@@ -80,13 +86,14 @@ class Support::LoginController < SupportController
 	    		login_user = current_account.all_users.find_by_email(params[:user_session][:email])
 	    		if !login_user.nil? && login_user.deleted?
 		    		@user_session.errors.clear
-					@user_session.errors.add_to_base(I18n.t("activerecord.errors.messages.contact_admin"))
+					@user_session.errors.add(:base,I18n.t("activerecord.errors.messages.contact_admin"))
 				end
 	    	end
 	    end
 
 	    def remove_old_filters
-	      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
+	      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => request.session_options[:id]})
+	      remove_tickets_redis_key(EXPORT_TICKET_FIELDS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => request.session_options[:id]})
 	    end
 
       def check_request_referrer

@@ -1,0 +1,38 @@
+<%= form_tag({:action => :export_csv}, { :method => :post, :id => 'exportFilter' }) do %>
+  <div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
+  <br/>
+  <label class="checkbox prime"><%= check_box_tag "select_all_inputs" %><b><%= t('export_data.select_all') %></b></label><br>  
+  <div class="threecol-form" id="agent_fields">
+  <% @csv_headers.each do |head| %>
+    <div class="item ">
+      <label class="checkbox prime"> 
+      <%= check_box_tag "export_fields[#{t(head[:label])}]", head[:value], head[:selected], :class => "displayed_field" %> 
+      <%= t(head[:label]) %>                           
+      </label>
+    </div>  
+  <% end %>
+  </div>
+<% end %>
+
+
+<%= javascript_tag do %>
+  jQuery("#exportFilter").submit(function() {  
+
+  if (jQuery('#agent_fields :checked').length == 0) {
+    jQuery('#err_no_fields_selected').removeClass('hide');
+    jQuery('#agent_export-submit').button("reset");
+    return false;
+  } else {
+    jQuery('#err_no_fields_selected').addClass('hide');
+  }
+  });
+
+  jQuery('#select_all_inputs').on('click', function(){
+    jQuery(".displayed_field").prop('checked', jQuery(this).prop('checked'));
+  });
+
+  jQuery('.displayed_field').on('click', function(){
+    jQuery('#select_all_inputs').prop('checked', (jQuery('.displayed_field').length ==  jQuery('.displayed_field:checked').length));
+  });
+
+<% end %>

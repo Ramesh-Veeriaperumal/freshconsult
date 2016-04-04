@@ -3,9 +3,15 @@ class Reports::CustomerReportsController < ApplicationController
   include Reports::CompanyReport
    
   before_filter { |c| c.requires_feature :advanced_reporting }
+  before_filter :check_accessibility
   before_filter :set_selected_tab
   before_filter :set_default_values
   before_filter :select_customer, :only => :generate
+
+
+  def check_accessibility
+    redirect_to reports_customer_glance_reports_url unless current_account.classic_reports_enabled?
+  end
 
   def generate
     @pie_charts_hash = {}

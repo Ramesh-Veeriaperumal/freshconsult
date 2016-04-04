@@ -111,9 +111,9 @@
 }
 /* Component containers
 ----------------------------------*/
-.ui-widget { font-family: $sansFontFamily; font-size: 1.1em; }
+.ui-widget { font-size: 1.1em; }
 .ui-widget .ui-widget { font-size: 1em; }
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: $sansFontFamily; font-size: 1em; }
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-size: 1em; }
 .ui-datepicker { 
 	color: #333333;
 	border: 2px solid #666;

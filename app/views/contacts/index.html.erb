@@ -3,7 +3,7 @@
     <div class="sidepanel">
 	  	<% if privilege?(:manage_contacts) %>
     		<h3 class="lead"><%=t('quick_create')%></h3>	
-    		<% form_tag contacts_path, :method => :post, :rel => "validate" do %>
+    		<%= form_tag contacts_path, :method => :post, :rel => "validate" do %>
     			<%= error_messages_for :user %> 	
     			<div class="quick-contact">
     				<div class="control-group">
@@ -38,11 +38,11 @@
     <div id="myTabContent" class="tab-content">
             <div class="tab-pane fade active in" id="home">
             	<div id="cust-list">
-            		<%= render(:partial => '/shared/companyheader', :locals => {:type => "user", :path => contacts_path}) %>
+            		<%= render(:partial => '/shared/companyheader', :locals => {:type => "contact", :path => contacts_path}) %>
             		<% if params[:query].nil? %>
 	            		<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "user"}) %>
 	            	<% end %>
-	            	<% form_tag "", { :id => "contacts-expanded", :method => :put } do %>
+	            	<%= form_tag "", { :id => "contacts-expanded", :method => :put } do %>
 		        		<% if @contacts.present? %>
 					        <div class="list-page-body <%= 'mt20' if params[:query].present? %>">
 					        	<!-- Add content here for top of the table-->
@@ -64,7 +64,7 @@
 										<% if params[:letter].blank? %>
 											<%= t('contacts.verified.no_contacts') %><br />
                       <% if privilege?(:manage_contacts) %>
-											  <span class="small">Create a <a href= "/contacts/new" >new contact</a></span>
+											  <span class="small">Create a <a href= "/contacts/new" data-pjax="#body-container" >new contact</a></span>
                       <% end %>
 										<% end %>
 									<% elsif params[:state].eql?('deleted') %>
@@ -83,11 +83,11 @@
         </div>
 </div>​
 <div id="user-deletion-confirmation" class="hide">
-	<p class="margin-bottom lead-desc"><%= t('contacts.delete_confirmation')%></p>
+	<p class="margin-bottom"><%= t('contacts.delete_confirmation')%></p>
 </div>
 
 
-<% javascript_tag do%>
+<%= javascript_tag do%>
 	jQuery(".delete_user_btn").on('click',function(){
 		jQuery("#contacts-expanded").data('user',jQuery(this).data('user'));
 	});

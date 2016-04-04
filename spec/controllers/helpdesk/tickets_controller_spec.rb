@@ -1,10 +1,10 @@
 require 'spec_helper'
+require 'sidekiq/testing'
 include Redis::TicketsRedis
 include Redis::RedisKeys
 include FacebookHelper
 
-describe Helpdesk::TicketsController do
-  integrate_views
+RSpec.describe Helpdesk::TicketsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -12,6 +12,10 @@ describe Helpdesk::TicketsController do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
     @group = @account.groups.first
     user = add_test_agent(@account)
+    @email_config =  @account.email_configs.new(:name => "consoleemailconfig", :to_email => "smething@teting.com", :reply_email => "somehintg@testing.com")
+    @email_config.save
+    @email_config.reload
+    @email_config.update_column(:active, true)
     sla_policy = create_sla_policy(user)
     $redis_tickets.keys("HELPDESK_TICKET_FILTERS*").each {|key| $redis_tickets.del(key)}
     $redis_tickets.keys("HELPDESK_TICKET_ADJACENTS*").each {|key| $redis_tickets.del(key)}
@@ -24,14 +28,14 @@ describe Helpdesk::TicketsController do
 
   it "should go to the index page" do
     get 'index'
-    response.should render_template "helpdesk/tickets/index.html.erb"
+    response.should render_template "helpdesk/tickets/index"
     response.body.should =~ /Filter Tickets/
   end
     
   # Added this test case for covering meta_helper_methods.rb
   it "should view a ticket created from portal" do
     ticket = create_ticket({:status => 2},@group)
-    meta_data = { :user_agent => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 
+    meta_data = { :user_agent => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36\ 
                                               (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36", 
                    :referrer => ""}
     note = ticket.notes.build(
@@ -47,6 +51,16 @@ describe Helpdesk::TicketsController do
   end
 
 
+  it "should create a outbound ticket" do
+    @account.features.compose_email.create
+
+    ticket = create_ticket({:status => 2, :source => 10, :email_config_id => @email_config.id})
+    get :show, :id => ticket.display_id
+    ticket.source..should = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+    Delayed::Job.last.handler.should_not include("biz_rules_check")
+    @account.features.compose_email.destroy
+  end
+
   it "should create a meta for created by for phone tickets" do
     ticket = create_ticket({:status => 2, :source => 3})
     get :show, :id => ticket.display_id
@@ -55,7 +69,7 @@ describe Helpdesk::TicketsController do
   end
 
   it "should not create a meta for created by if user and requester are the same" do
-    user = Factory.build(:user,:name => "new_user_contact", :account => @acc, :phone => Faker::PhoneNumber.phone_number, 
+    user = FactoryGirl.build(:user,:name => "new_user_contact", :account => @acc, :phone => Faker::PhoneNumber.phone_number, 
                                     :email => Faker::Internet.email, :user_role => 3, :active => true, :customer_id => company.id)
     user.save
     user.make_current
@@ -144,54 +158,50 @@ describe Helpdesk::TicketsController do
     @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
   end
 
-  it "should create a new ticket with cc emails" do
+  it "should create a new outbound email ticket" do
     now = (Time.now.to_f*1000).to_i
-    post :create, { :helpdesk_ticket => {:email => "rachel@freshdesk.com", 
-                                       :subject => "New Ticket #{now}", 
-                                       :ticket_type => "Question", 
-                                       :source => "3", 
-                                       :status => "2", 
-                                       :priority => "1", 
-                                       :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
-                                      }, 
-                                      :cc_emails => "superman@marvel.com,avengers@marvel.com"
-                  }
-    ticket = @account.tickets.find_by_subject("New Ticket #{now}")
-    ticket.cc_email_hash[:cc_emails].should eql ticket.cc_email_hash[:reply_cc]
-  end
-
-  it "should not create a new ticket without email - Mobile Format" do
-    now = (Time.now.to_f*1000).to_i
-    post :create, :helpdesk_ticket => {:email => "",
+    @account.features.compose_email.create
+    post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
                                        :requester_id => "",
-                                       :subject => "New Ticket #{now}",
+                                       :subject => "New Oubound Ticket #{now}",
                                        :ticket_type => "Question",
-                                       :source => "3",
+                                       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email],
                                        :status => "2",
                                        :priority => "1",
                                        :group_id => "",
                                        :responder_id => "",
+                                       :cc_email => ["someone@cc.com", "somenew@cc.com"],
+                                       :email_config_id => @email_config.id,
                                        :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
-                                      },
-                  :format => 'mobile'
-    @account.tickets.find_by_subject("New Ticket #{now}").should_not be_an_instance_of(Helpdesk::Ticket)
+                                      }
+    Delayed::Job.last.handler.should_not include("biz_rules_check")                                  
+    t = @account.tickets.find_by_subject("New Oubound Ticket #{now}")
+    t.cc_email[:cc_email].include?("someone@cc.com")
+    t.source.should be_eql(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
+    @account.tickets.find_by_subject("New Oubound Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+    @account.features.compose_email.destroy
   end
 
-  it "should not create a new ticket without email - Widget Format" do
+  it "should create a new outbound email ticket for non feature account but outbound email check should return false" do
     now = (Time.now.to_f*1000).to_i
-    post :create, :helpdesk_ticket => {:email => "",
+    post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
                                        :requester_id => "",
-                                       :subject => "New Ticket #{now}",
+                                       :subject => "New Oubound Ticket #{now}",
                                        :ticket_type => "Question",
-                                       :source => "3",
+                                       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email],
                                        :status => "2",
                                        :priority => "1",
                                        :group_id => "",
                                        :responder_id => "",
+                                       :email_config_id => @email_config.id,
                                        :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
-                                      },
-                  :format => 'widget'
-    @account.tickets.find_by_subject("New Ticket #{now}").should_not be_an_instance_of(Helpdesk::Ticket)
+                                      }
+    Delayed::Job.last.handler.should_not include("biz_rules_check")
+    t = @account.tickets.find_by_subject("New Oubound Ticket #{now}")
+    t.source.should be_eql(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
+    t.outbound_email?.should be false
+    @account.tickets.find_by_subject("New Oubound Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+
   end
 
   it "should create a new ticket with RabbitMQ enabled" do
@@ -326,8 +336,21 @@ describe Helpdesk::TicketsController do
     it "should save draft for a ticket" do
       draft_key = HELPDESK_REPLY_DRAFTS % { :account_id => @account.id, :user_id => @agent.id,
         :ticket_id => @test_ticket.id}
-      post :save_draft, { :draft_data => "<p>Testing save_draft</p>", :id => @test_ticket.display_id }
-      get_tickets_redis_key(draft_key).should be_eql("<p>Testing save_draft</p>")
+      post :save_draft, { :draft_data => "<p>Testing save_draft</p>",
+                          :draft_cc => "ccemail@email.com",
+                          :draft_bcc => "bccemail@email.com",
+                          :id => @test_ticket.display_id }
+      draft_hash = get_tickets_redis_hash_key(draft_key)
+      if draft_hash
+        draft_message = draft_hash["draft_data"]
+        draft_cc = draft_hash["draft_cc"]
+        draft_bcc = draft_hash["draft_bcc"]
+        draft_message.should be_eql("<p>Testing save_draft</p>")
+        draft_cc.should be_eql("ccemail@email.com")
+        draft_bcc.should be_eql("bccemail@email.com")
+      else
+        fail "Draft hash is nil"
+      end
     end
 
     it "should execute a scenario" do
@@ -389,8 +412,8 @@ describe Helpdesk::TicketsController do
       put :pick_tickets, { :id => "multiple",
                            :ids => ["#{pick_ticket1.display_id}", "#{pick_ticket2.display_id}"]}
       picked_tickets = @account.tickets.find_all_by_responder_id(@agent.id).map(&:id)
-      picked_tickets.include?(pick_ticket1.id).should be_true
-      picked_tickets.include?(pick_ticket2.id).should be_true
+      picked_tickets.include?(pick_ticket1.id).should be_truthy
+      picked_tickets.include?(pick_ticket2.id).should be_truthy
     end
 
     it "should assign multiple tickets to a specific agent" do
@@ -408,8 +431,8 @@ describe Helpdesk::TicketsController do
       put :assign, { :id => "multiple", :responder_id => new_agent.id,
                     :ids => ["#{assign_ticket1.display_id}", "#{assign_ticket2.display_id}"]}
       assigned_tickets = @account.tickets.find_all_by_responder_id(new_agent.id).map(&:id)
-      assigned_tickets.include?(assign_ticket1.id).should be_true
-      assigned_tickets.include?(assign_ticket2.id).should be_true
+      assigned_tickets.include?(assign_ticket1.id).should be_truthy
+      assigned_tickets.include?(assign_ticket2.id).should be_truthy
     end
 
     it "should close multiple tickets" do
@@ -419,8 +442,8 @@ describe Helpdesk::TicketsController do
       put :close_multiple, { :id => "multiple",
                              :ids => ["#{close_ticket1.display_id}", "#{close_ticket2.display_id}"]}
       closed_tickets = @account.tickets.find_all_by_status(5).map(&:id)
-      closed_tickets.include?(close_ticket1.id).should be_true
-      closed_tickets.include?(close_ticket2.id).should be_true
+      closed_tickets.include?(close_ticket1.id).should be_truthy
+      closed_tickets.include?(close_ticket2.id).should be_truthy
     end
 
     it "should mark multiple tickets as spam" do
@@ -430,8 +453,8 @@ describe Helpdesk::TicketsController do
       put :spam, { :id => "multiple",
                    :ids => ["#{spam_ticket1.display_id}", "#{spam_ticket2.display_id}"]}
       spammed_tickets = @account.tickets.find_all_by_spam(1).map(&:id)
-      spammed_tickets.include?(spam_ticket1.id).should be_true
-      spammed_tickets.include?(spam_ticket2.id).should be_true
+      spammed_tickets.include?(spam_ticket1.id).should be_truthy
+      spammed_tickets.include?(spam_ticket2.id).should be_truthy
     end
 
     it "should delete multiple tickets" do
@@ -440,8 +463,8 @@ describe Helpdesk::TicketsController do
       delete :destroy, { :id => "multiple",
                          :ids => ["#{del_ticket1.display_id}", "#{del_ticket2.display_id}"]}
       deleted_tickets = @account.tickets.find_all_by_deleted(1).map(&:id)
-      deleted_tickets.include?(del_ticket1.id).should be_true
-      deleted_tickets.include?(del_ticket2.id).should be_true
+      deleted_tickets.include?(del_ticket1.id).should be_truthy
+      deleted_tickets.include?(del_ticket2.id).should be_truthy
     end
 
 
@@ -449,12 +472,12 @@ describe Helpdesk::TicketsController do
 
     it "should mark a ticket as spam" do
       put :spam, :id => @test_ticket.display_id
-      @account.tickets.find(@test_ticket.id).spam.should be_true
+      @account.tickets.find(@test_ticket.id).spam.should be_truthy
     end
 
     it "should delete a ticket" do
       delete :destroy, :id => @test_ticket.display_id
-      @account.tickets.find(@test_ticket.id).deleted.should be_true
+      @account.tickets.find(@test_ticket.id).deleted.should be_truthy
     end
 
     it "should unspam a ticket from spam view" do
@@ -469,8 +492,8 @@ describe Helpdesk::TicketsController do
       put :unspam, :id => "multiple", :ids => spam_tkt_arr
       tkt1.reload
       tkt2.reload
-      @account.tickets.find(tkt1.id).spam.should be_false
-      @account.tickets.find(tkt2.id).spam.should be_false
+      @account.tickets.find(tkt1.id).spam.should be false
+      @account.tickets.find(tkt2.id).spam.should be false
     end
 
   # Tickets filter
@@ -486,8 +509,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should return tickets created yesterday" do
@@ -502,8 +525,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should return tickets created within this week" do
@@ -518,8 +541,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should return tickets created within this month" do
@@ -534,8 +557,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should return tickets created within 2 months" do
@@ -550,8 +573,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should return tickets created within 6 months" do
@@ -566,8 +589,8 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should return tickets created within mins of integer values" do
@@ -582,8 +605,87 @@ describe Helpdesk::TicketsController do
         "total_entries" => 0,
         "unsaved_view" => true
       }
-      (assigns(:items).include? ticket_created).should be_true
-      (response.body.include? created_at_timestamp).should be_true
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
+    end
+
+    it "should return unresolved tickets using Unresolved filter view" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "filter_name" => "unresolved",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
+    end
+
+    it "should return tickets with no tags" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "helpdesk_tags.name", operator: "is_in", ff_name: "default", value: "-1"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
+    end
+
+    it "should return tickets with no products" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "helpdesk_schema_less_tickets.product_id", operator: "is_in", ff_name: "default", value: "-1"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
+    end
+
+    it "should return tickets with no companies" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "users.customer_id", operator: "is_in", ff_name: "default", value: "-1"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
+    end
+
+    it "should return tickets which are unresolved" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "status", operator: "is_in", ff_name: "default", value: "0"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
     end
 
     it "should show the custom view save popup" do
@@ -599,7 +701,7 @@ describe Helpdesk::TicketsController do
         "unsaved_view" => true
       }
       get :custom_view_save, :operation => "save_as"
-      response.should render_template "helpdesk/tickets/customview/_new.html.erb"
+      response.should render_template "helpdesk/tickets/customview/_new"
     end
 
     it "should return new tickets page through topic" do
@@ -608,7 +710,7 @@ describe Helpdesk::TicketsController do
       topic = create_test_topic(forum)
       publish_topic(topic)
       get :new , {"topic_id" => topic.id }
-      response.should render_template "helpdesk/tickets/new.html.erb"
+      response.should render_template "helpdesk/tickets/new"
       response.body.should =~ /"#{topic.title}"/
     end
 
@@ -622,82 +724,69 @@ describe Helpdesk::TicketsController do
       tkt1.reload
       tkt1_note.reload
       get :latest_note , :id => tkt1.display_id
-      response.should render_template "helpdesk/shared/_ticket_overlay.html.erb"
+      response.should render_template "helpdesk/shared/_ticket_overlay"
       response.body.should =~ /#{body}/
       tkt2 = create_ticket({ :status => 2 }, @group)
       tkt2.reload
       get :latest_note , :id => tkt2.display_id
-      response.should render_template "helpdesk/shared/_ticket_overlay.html.erb"
+      response.should render_template "helpdesk/shared/_ticket_overlay"
       response.body.should =~ /#{tkt2.description}/
     end
 
-    it "should load the next and previous tickets of a ticket" do
+    it "should load the next and previous tickets of a ticket" do # failing in master
       ticket_1 = create_ticket
       ticket_2 = create_ticket
       ticket_3 = create_ticket
       get :index
-      response.should render_template "helpdesk/tickets/index.html.erb"
+      response.should render_template "helpdesk/tickets/index"
       get :prevnext, :id => ticket_2.display_id
       assigns(:previous_ticket).to_i.should eql ticket_3.display_id
       assigns(:next_ticket).to_i.should eql ticket_1.display_id
     end
 
-    it "should load the next ticket of a ticket from the adjacent page" do
+    it "should load the next ticket of a ticket from the adjacent page" do# TODO-RAILS3 failing on master also
       get :index
-      response.should render_template "helpdesk/tickets/index.html.erb"
+      response.should render_template "helpdesk/tickets/index"
       ticket = assigns(:items).first
       30.times do |i|
         create_ticket
       end
       get :index
-      response.should render_template "helpdesk/tickets/index.html.erb"
+      response.should render_template "helpdesk/tickets/index"
       last_ticket = assigns(:items).last
       get :prevnext, :id => last_ticket.display_id
       assigns(:next_ticket).to_i.should eql ticket.display_id
     end
 
-    it "should load the next and previous tickets of a ticket with no filters" do
+    it "should load the next and previous tickets of a ticket with no filters" do# failing in master
       30.times do |i|
         t = create_ticket
       end
       @request.cookies['filter_name'] = "0"
       get :index
-      response.should render_template "helpdesk/tickets/index.html.erb"
+      response.should render_template "helpdesk/tickets/index"
       last_ticket = assigns(:items).last
       remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => @account.id, 
                                                           :user_id => @agent.id, 
-                                                          :session_id => session.session_id})
+                                                          :session_id => request.session_options[:id]})
       get :prevnext, :id => last_ticket.display_id
       assigns(:previous_ticket).to_i.should eql last_ticket.display_id + 1
     end
 
-
-    # Empty Trash
-    it "should empty(delete) all tickets in trash view" do
-      tkt1 = create_ticket({ :status => 2 }, @group)
-      tkt2 = create_ticket({ :status => 2 }, @group)
-      delete_tkt_arr = []
-      delete_tkt_arr.push(tkt1.display_id.to_s, tkt2.display_id.to_s)
-      delete :destroy, :id => "multiple", :ids => delete_tkt_arr
-      Resque.inline = true
-      delete :empty_trash
-      Resque.inline = false
-      @account.tickets.find_by_id(tkt1.id).should be_nil
-      @account.tickets.find_by_id(tkt2.id).should be_nil
-    end
-    
     # Ticket actions
     it "should split the note and as ticket" do
-      tkt = create_ticket({ :status => 2})
+      tkt = create_ticket({ :status => 2, :source => 0})
       @account.reload
       tickets_count = @account.tickets.count
       note_body = Faker::Lorem.sentence
       note = tkt.notes.build({ :note_body_attributes => {:body => note_body} , :user_id => tkt.requester_id, 
-                               :incoming => true, :private => false})
+                               :incoming => true, :private => false, :source => 0})
       note.save_note
+      activity = tkt.activities.where({'description' => "activities.tickets.conversation.in_email.long"}).detect{ |a| a.note_id == note.id }
       post :split_the_ticket, { :id => tkt.display_id,
           :note_id => note.id
       }
+      tkt.activities.find_by_id(activity.id).should be_nil
       tkt.notes.find_by_id(note.id).should be_nil
       ticket_incremented? tickets_count
       @account.tickets.last.ticket_body.description_html.should =~ /#{note_body}/
@@ -721,7 +810,7 @@ describe Helpdesk::TicketsController do
 
     it "should clear the filter_ticket values and set new values from company page" do
       company = create_company
-      user = Factory.build(:user,:name => "new_user_contact", :account => @acc, :phone => Faker::PhoneNumber.phone_number, 
+      user = FactoryGirl.build(:user,:name => "new_user_contact", :account => @acc, :phone => Faker::PhoneNumber.phone_number, 
                                     :email => Faker::Internet.email, :user_role => 3, :active => true, :customer_id => company.id)
       user.save
       ticket = create_ticket({ :status => 2, :requester_id => user.id}, @group)
@@ -746,7 +835,7 @@ describe Helpdesk::TicketsController do
 
     it "should render add_requester page" do
       post :add_requester
-      response.should render_template 'contacts/_add_requester_form.html.erb'
+      response.should render_template 'contacts/_add_requester_form'
       response.should be_success
     end
 
@@ -754,8 +843,8 @@ describe Helpdesk::TicketsController do
       ticket_1 = create_ticket({ :status => 2}, @group)
       ticket_2 = create_ticket({ :status => 2}, @group)
       tag = ticket_1.tags.create(:name=> "Tag - #{Faker::Name.name}", :account_id =>@account.id)
-      tag_uses = Factory.build(:tag_uses, :tag_id => tag.id, :taggable_type => "Helpdesk::Ticket", :taggable_id=> ticket_2.id)
-      tag_uses.save(false)
+      tag_uses = FactoryGirl.build(:tag_uses, :tag_id => tag.id, :taggable_type => "Helpdesk::Ticket", :taggable_id=> ticket_2.id)
+      tag_uses.save(:validate => false)
       get 'index', :tag_name => tag.name, :tag_id => tag.id
       tickets_count = @account.tags.find(tag.id).tag_uses_count
       get :full_paginate
@@ -765,14 +854,14 @@ describe Helpdesk::TicketsController do
 
     it "should configure the export" do
       get :configure_export
-      response.should render_template 'helpdesk/tickets/_configure_export.html.erb'
+      response.should render_template 'helpdesk/tickets/_configure_export'
       response.body.should =~ /Export as/
       response.body.should =~ /Filter tickets by/
     end
 
     it "should export a ticket csv file" do 
-      open_ticket = create_ticket({ :status => 2, :requester_id => @agent.id, :subject => Faker::Lorem.sentence(4) })
-      closed_ticket = create_ticket({ :status => 5, :requester_id => @agent.id, :subject => Faker::Lorem.sentence(4) })
+      create_ticket({ :status => 2, :requester_id => @agent.id, :subject => Faker::Lorem.sentence(4) })
+      create_ticket({ :status => 5, :requester_id => @agent.id, :subject => Faker::Lorem.sentence(4) })
 
       start_date = Date.parse((Time.now - 2.day).to_s).strftime("%d %b, %Y");
       end_date = Date.parse((Time.now).to_s).strftime("%d %b, %Y");
@@ -791,20 +880,20 @@ describe Helpdesk::TicketsController do
                                                                         :updated_at => "Last Updated Time"
                         }
       Resque.inline = false
-      response.content_type.should be_eql("text/html")
-      response.header["Content-type"].should eql("text/html; charset=utf-8")
-      response.session[:flash][:notice].should eql"Your Ticket data will be sent to your email shortly!"
+      response.content_type.to_s.should be_eql("text/html")
+      response.headers['Content-Type'].should eql("text/html; charset=utf-8")
+      session[:flash][:notice].should eql"Your Ticket data will be sent to your email shortly!"
     end
 
     it "should render assign tickets to agent page" do
       post :assign_to_agent
-      response.should render_template 'helpdesk/tickets/_assign_agent.html.erb'
+      response.should render_template 'helpdesk/tickets/_assign_agent'
       response.should be_success
     end
 
     it "should render update_multiple_tickets page" do
       get :update_multiple_tickets
-      response.should render_template 'helpdesk/tickets/_update_multiple.html.erb'
+      response.should render_template 'helpdesk/tickets/_update_multiple'
       response.should be_success
     end
 
@@ -812,7 +901,7 @@ describe Helpdesk::TicketsController do
       ticket = create_ticket({ :status => 2}, @group)
       get :component, :component => "ticket_fields", :id => ticket.id
       assigns["ticket"].id.should eql ticket.id
-      response.should render_template 'helpdesk/tickets/show/_ticket_fields.html.erb'
+      response.should render_template 'helpdesk/tickets/show/_ticket_fields'
       response.should be_success
     end
   
@@ -833,6 +922,53 @@ describe Helpdesk::TicketsController do
     
     Resque.inline = false
   end
+  # test cases for bulk scenario automations starts here
+  it "should render scenarios page" do
+    get :bulk_scenario, :bulk_scenario => true
+    response.should render_template "helpdesk/tickets/show/_scenarios"
+    response.should be_success
+  end
 
-  
+  it "should execute a scenario for multiple tickets" do
+    Sidekiq::Testing.inline!
+    @request.env['HTTP_REFERER'] = 'sessions/new'
+    scenario_ticket1 = create_ticket({ :status => 2 }, @group)
+    scenario_ticket2 = create_ticket({ :status => 2 }, @group)
+    user = Account.current.users.find_by_id(1)
+    user.make_current
+    scenario = @account.scn_automations.find_by_name("Mark as Feature Request")
+    put :execute_bulk_scenario, :scenario_id => scenario.id, :ids => ["#{scenario_ticket1.display_id}","#{scenario_ticket2.display_id}"],:user_id => "1"
+    @account.tickets.find(scenario_ticket1.id).ticket_type.should be_eql("Feature Request")
+    @account.tickets.find(scenario_ticket2.id).ticket_type.should be_eql("Feature Request")
+    Sidekiq::Testing.disable!
+  end
+  # test cases for bulk scenario automations ends here
+
+  # Empty Spam
+  it "should empty(delete) all tickets in spam view" do
+    Sidekiq::Testing.inline!
+    tkt1 = create_ticket({ :status => 2 }, @group)
+    tkt2 = create_ticket({ :status => 2 }, @group)
+    spam_tkt_arr = []
+    spam_tkt_arr.push(tkt1.display_id.to_s, tkt2.display_id.to_s)
+    put :spam, :id => "multiple", :ids => spam_tkt_arr
+    delete :empty_spam
+    @account.tickets.find_by_id(tkt1.id).should be_nil
+    @account.tickets.find_by_id(tkt2.id).should be_nil
+    Sidekiq::Testing.disable!
+  end
+
+  # Empty Trash
+  it "should empty(delete) all tickets in trash view" do
+    Sidekiq::Testing.inline!
+    tkt1 = create_ticket({ :status => 2 }, @group)
+    tkt2 = create_ticket({ :status => 2 }, @group)
+    delete_tkt_arr = []
+    delete_tkt_arr.push(tkt1.display_id.to_s, tkt2.display_id.to_s)
+    delete :destroy, :id => "multiple", :ids => delete_tkt_arr
+    delete :empty_trash
+    @account.tickets.find_by_id(tkt1.id).should be_nil
+    @account.tickets.find_by_id(tkt2.id).should be_nil
+    Sidekiq::Testing.disable!
+  end
 end

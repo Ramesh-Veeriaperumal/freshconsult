@@ -2,17 +2,17 @@
 <html>
 <head>
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-	<%= include_cloudfront_rtl_css :rating %>
-	<%= include_cloudfront_js :survey  %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/old_rating' %>
+	<%= javascript_include_tag :'cdn/survey'  %>
 </head>
 <body>	
 	<div class="top-strip">
 		<div class="wrapper">
 		<div class="wrapper-shadow">
 			<div class="brand">
-		    	<% link_to (portal_pref(@survey_handle.portal, :logo_link).empty?) ? 
+		    	<%= link_to (portal_pref(@survey_handle.portal, :logo_link).empty?) ? 
 			    	"/home" : portal_pref(@survey_handle.portal, :logo_link), :class => "logo" do %>
-		        <%= image_tag (@survey_handle.portal.logo.nil? ? "/images/logo.png?722013" : @survey_handle.portal.logo.content.url(:logo)) %>
+		        <%= image_tag (@survey_handle.portal.logo.nil? ? "/assets/misc/logo.png?721013" : @survey_handle.portal.logo.content.url(:logo)) %>
 
 		        <% end %>
 		        <%= link_to(h(@survey_handle.portal.name), "/home", :class => "logo_text") %>
@@ -30,32 +30,32 @@
 		<div class="position">
 		    <div class="smily <%= @rating == Survey::HAPPY ? 'rating-selected' : '' %>">
 		    	<i class="smiley-happy"></i>
-		    	<span><%= t('.happy') %></span>
+		    	<span><%= @survey_handle.survey.happy_text %></span>
 			</div>
 		    <div class="smily <%= @rating == Survey::NEUTRAL ? 'rating-selected' : '' %>">
 			    <i class="smiley-neutral"></i>
-			    <span><%= t('.neutral') %></span>
+			    <span><%= @survey_handle.survey.neutral_text %></span>
 			</div>
 
 			<div class="smily <%= @rating == Survey::UNHAPPY ? 'rating-selected' : '' %>">
 	      		<i class="smiley-unhappy"></i>
-	      		<span><%= t('.unhappy') %></span>
+	      		<span><%= @survey_handle.survey.unhappy_text %></span>
 			</div>
 		</div>
 	 	
 		<div class="clear"></div>
 		<div>
-			<% form_for :survey_handle, :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post, :id => "survey_form" } do |f| -%>
+			<%= form_for :survey_handle, :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post, :id => "survey_form" } do |f| -%>
 				<div class="text_con">
 					<%= text_area(:survey, :feedback, :autocomplete => "off", 
 						:rel => "ghostwriter", :size => "24", :width => "100%", 
 						:class=> "textfield required" , :placeholder => t('.additional_info')) %>
 				</div>	
-			</div>
 				<div>						
 					<%= f.submit t('.submit'), :class => "button button-text" %>
 				</div>
-			<%end%>		
+			<%end%>
+		</div>
 	</div>
 	</div>
 </body>

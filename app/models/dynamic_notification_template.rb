@@ -1,8 +1,11 @@
 class DynamicNotificationTemplate < ActiveRecord::Base
+  self.primary_key = :id
 	belongs_to :email_notification
 	after_create :update_outdated_in_email_notifications
 	after_update :update_outdated_in_email_notifications
 	belongs_to_account
+
+	xss_sanitize  :only => [:subject, :description], :decode_calm_sanitizer => [:subject, :description]
 
 	CATEGORIES = {
 		:agent => 1,
@@ -38,7 +41,11 @@ class DynamicNotificationTemplate < ActiveRecord::Base
 					:tr 		 => 25,
 					:vi 		 => 26,
 					:ar 		 => 27,
-					:et      => 28
+					:et      => 28,
+					:uk      => 29,
+					:he      => 30,
+					:th      => 31,
+					:ro      => 32
 				  }
 
 	LANGUAGE_MAP_KEY = LANGUAGE_MAP.inject({}) do |value, hash|
@@ -46,13 +53,13 @@ class DynamicNotificationTemplate < ActiveRecord::Base
 		value
 	end
 	
-	named_scope :agent_template, :conditions => { :category => CATEGORIES[:agent] }
-	named_scope :requester_template, :conditions => { :category => CATEGORIES[:requester] }
-	named_scope :for_language, lambda { |language| {
+	scope :agent_template, :conditions => { :category => CATEGORIES[:agent] }
+	scope :requester_template, :conditions => { :category => CATEGORIES[:requester] }
+	scope :for_language, lambda { |language| {
 		:conditions => { :language => LANGUAGE_MAP[language.to_sym] } 
 		}
 	}
-	named_scope :active, :conditions => { :active => true }
+	scope :active, :conditions => { :active => true }
 
 	def update_outdated_in_email_notifications
 		email_notification.outdate_email_notification!(category)

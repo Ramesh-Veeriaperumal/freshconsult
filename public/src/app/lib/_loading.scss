@@ -5,12 +5,16 @@
 .loading-center, .loading-box,
 .ui-autocomplete-loading, .paddingloading,
 .page-list .list-group .loadingbox,
-.loading-amount, .ui-after-submit{ background-image:image-url('/images/animated/ajax-loader.gif') no-repeat; } 
-.response-loading #resp-icon{ background: image-url('/images/animated/canned-response.gif') no-repeat !important; }
-#ticket_list_count.fetching{ background: image-url("/images/animated/ticket-count.gif"); }
-#tickets-expanded .fd-ajaxmenu.loading{ background-image:image-url('/images/animated/loading.gif'); }
+.loading-amount, .ui-after-submit{ background-image:image-url('/assets/animated/ajax-loader.gif') no-repeat; } 
+.response-loading #resp-icon{ 
+	background: inline-image('animated/canned-response.gif') no-repeat !important; 
+	@include text-indent(-99999px);
+	width: 8px;
+}
+#ticket_list_count.fetching{ background: image-url("/assets/animated/ticket-count.gif"); }
+#tickets-expanded .fd-ajaxmenu.loading{ background-image:image-url('/assets/animated/loading.gif'); }
 .loading-fb, .request_details .request-cnt-first .loading-edit, .due-date-dialog .calender-buttons .loading-item{ 
-	background-image:image-url('/images/animated/load-fb-style.gif'); background-repeat:no-repeat;
+	background-image:image-url('/assets/animated/load-fb-style.gif'); background-repeat:no-repeat;
 }
 
 /*.ajax-loader, .loading, .loading-right, .loading-center, .loading-box, .loading-fb, .paddingloading{*/
@@ -50,13 +54,13 @@
 	height:17px;
 	background:#fff;
 	position:relative;
- 	@include left(0);
+	@include left(0);
 	display: block;
 	background:url(/images/cdn-ignored/sprites/symbols/redactor-loading.png) no-repeat left;
 	cursor:none;
 	.sloading{
 		position: relative;
-	 @include left(15px);
+		@include left(15px);
 		top: -11px;
 	}
 }
@@ -114,12 +118,6 @@
 		width:100%;
 		height:100%;
 	}
-}
-
-#campaignmonitor_widget, #icontact_widget, #mailchimp_widget, #constantcontact_widget{
-	&.sloading{
-		width:100% !important;	
-	}	
 }
 
 .page-search .live_search{ width:445px; }
@@ -189,7 +187,7 @@ input[type="text"].loading, .ui-autocomplete-loading{
 	}
 }
 
-.request_details .request-cnt-first .loading-edit{ 
+.request_details .request-cnt-first .loading-edit{
 	position:absolute;
 	width:16px;
 	height:11px;
@@ -205,3 +203,41 @@ input[type="text"].loading, .ui-autocomplete-loading{
 .report-page .loading-center{
 	padding-top:50%;
 }*/
+
+/* survey Loading */
+.survey-overlay{
+	@include size(100%, 100%);
+	background-color: rgba(255,255,255,0.8);
+	display: block;
+	position: absolute;
+	box-sizing: border-box;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	.sloading{
+		@include padding-left(15px);
+		margin-top: 134px;
+		display: block;
+		.spinner{
+			display: inline-block;
+		}
+		.survey-overlay-text{
+			position: relative;
+			top: 15px;
+		}
+	}
+}
+
+/* Chargebee credit card form loader overlay */
+.cb-process-request{
+	position:absolute;
+	text-align: center;
+	top:162px;
+	left:0;
+	@include size(100%, 800px);
+	background-color: #fff;
+	opacity:0.8;
+	.sloading{padding-top: 200px}
+}

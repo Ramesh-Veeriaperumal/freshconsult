@@ -23,31 +23,40 @@ class PortalObserver < ActiveRecord::Observer
       remove_domain_mapping(portal)
       notify_custom_ssl_removal(portal)
   	end
+    
+    def after_commit(portal)
+      if portal.send(:transaction_include_action?, :update)
+        commit_on_update(portal)
+      elsif portal.send(:transaction_include_action?, :destroy)
+        commit_on_destroy(portal)
+      end
+      update_users_language(portal) if portal.main_portal? and @all_changes.present? and @all_changes.has_key?(:language)
+      true
+    end
+    
+    private
 
-    def after_commit_on_update(portal)
+    def commit_on_update(portal)
       clear_portal_cache
     end
 
-    def after_commit_on_destroy(portal)
+    def commit_on_destroy(portal)
       clear_portal_cache
     end
-
-  private
 
     def create_template(portal)
       portal.build_template()
-      portal.template.save()
+      portal.template.save
     end
 
     def backup_changes(portal)
       @old_object = Portal.find_by_account_id_and_id(portal.account_id,portal.id)
       @all_changes = portal.changes.clone
-      @all_changes.symbolize_keys!
     end
 
     def notify_custom_ssl_removal(portal)
       if portal.elb_dns_name
-        FreshdeskErrorsMailer.deliver_error_email( nil, 
+        FreshdeskErrorsMailer.error_email( nil, 
                                               { "domain_name" => portal.portal_url }, 
                                               nil, 
                                               { :subject => "Custom SSL to be removed for ##{portal.account_id}" })
@@ -79,6 +88,14 @@ class PortalObserver < ActiveRecord::Observer
     def remove_domain_mapping(portal)
       domain_mapping = DomainMapping.find_by_portal_id_and_account_id(portal.id,portal.account_id)
       domain_mapping.destroy if domain_mapping
+    end
+
+    def update_users_language(portal)
+      account = portal.account
+      unless account.features.multi_language?
+        User.current.update_attribute(:language, account.language) if User.current
+        Users::UpdateLanguage.perform_async({ :account_id => account.id }) 
+      end
     end
 	
 end

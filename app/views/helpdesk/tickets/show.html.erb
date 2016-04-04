@@ -1,24 +1,29 @@
-<%= include_cloudfront_rtl_css :tkt_details_print, :media => "print"  %>
-<%= render :partial => "helpdesk/tickets/show/scriptvars.html.erb" %>
+ 
+<%= stylesheet_link_tag_with_rtl :'cdn/tkt_details_print', :media => "print"  %>
+<%= render :partial => "helpdesk/tickets/show/scriptvars" %>
 <%= load_sticky %>
 <div class="tkt-wrapper ticket_show" data-showing='notes'>
 	<div class="tkt-wrapper-inner clearfix">
 
-		<%# render :partial => "helpdesk/tickets/show/info.html.erb" %>
+		<%# render :partial => "helpdesk/tickets/show/info" %>
 		<div id="forFixed" class="conversation_thread"></div>
 		<div id="tkt-inner" class="scollable_content clearfix" >
 
 			<% unless params[:format] == 'widget' %>
-				<%= render :partial => "helpdesk/tickets/show/sidebar.html.erb" %>
+				<%= render :partial => "helpdesk/tickets/show/sidebar" %>
 			<% end %>
 			<!--content Left-->
 			<div class="leftcontent">
 				<div class="conversation_thread" id="original_request">
 					<div class="conversation">
-						<%= render :partial => "helpdesk/tickets/show/original_request.html.erb" %> 
+						<% if @ticket.outbound_email? %>
+							<%= render :partial => "helpdesk/tickets/show/outbound_request" %> 
+						<% else %>
+							<%= render :partial => "helpdesk/tickets/show/original_request" %> 
+						<% end %>
 					</div>
 				</div>
-				<div class="conversation_thread hide" id="show_more">
+				<div class="conversation_thread hide" id="show_more" data-domhelper-name="show-more">
 					<div class="conversation">
 						<a href="" class="avatar-wrap avatar-wrap-collapse"><p>
 							<span class='count_number not_on_loading' rel='count-total-remaining'></span>
@@ -30,21 +35,21 @@
 						</a>
 					</div>
 				</div>
-				<%= render :partial => "helpdesk/tickets/show/conversations.html.erb" %> 
-				<%= render :partial => "helpdesk/tickets/show/new_conversation.html.erb" %> 
+				<%= render :partial => "helpdesk/tickets/show/conversations" %> 
+				<%= render :partial => "helpdesk/tickets/show/new_conversation" %> 
 			</div>
 		</div>
 	</div>
 </div>
 
-<%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %>
+<%= render :partial => "helpdesk/tickets/show/due_date" %>
 <% if current_account.features?(:collision) %>
 	<%= render :partial => "helpdesk/tickets/freshdesk_socket", :locals => {:ticket => @ticket } if current_account.agents_from_cache.count > 1%>
 <% end %>
 
 
 <script type="text/javascript">
-	scriptLoader.load('360player');
+	Fjax.Assets.plugin('360player');
 jQuery(document).ready(function(){
 	jQuery('div.attach-error').parents('.commentbox').find('.seperator').addClass('overlapping');
 	jQuery(".search_field_item input").keypress(function(event) { return event.keyCode != 13; });
@@ -58,7 +63,7 @@ try {
 	Fjax.current_page = 'ticket_detail';
 	TICKET_DETAILS_DOMREADY();
 	Fjax.afterNextPage = TICKET_DETAILS_CLEANUP;
-	<% if @ticket.is_twitter? %>
+	<% if @ticket.twitter? %>
 	jQuery(document).ready(function(){
 		jQuery('#twitter_handle').change();
 	});

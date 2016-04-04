@@ -37,4 +37,13 @@ class InstalledAppDrop < BaseDrop
         end
 	end
 
+    def before_method(method)
+      matched = /^configs_([^=]*)/.match(method)
+      if matched.present?
+        input_key = matched[1]
+        @source.configs[:inputs] = {} if @source.configs[:inputs].blank?
+        @source.configs[:inputs][input_key].to_json
+      end
+    end
+
 end

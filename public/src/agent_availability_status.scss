@@ -1,0 +1,32 @@
+@import "./settings/settings";
+.list-page{
+	margin:0 auto;
+    .list-page-header{
+        margin-bottom: 10px;
+        .lead{
+            margin-bottom:20px;
+        }
+    }
+		img.thumb, div.thumb{
+	        @include size(25px, 25px);
+	    }
+	    div.thumb{
+	        line-height: 25px;
+	    }
+	    img.thumb{
+	        position: relative;
+	        top: 2px;
+	    }
+      .pt2{padding-top: 2px;}
+      .on_device_img{
+        i{ padding-top: 2px;}
+      }
+}	    
+
+.cust-list-avatar{
+  padding-left: inherit;
+}
+
+.busy_agent_set{
+  @include opacity(0.3);
+}

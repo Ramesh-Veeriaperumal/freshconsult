@@ -1532,13 +1532,13 @@ nb-NO:
     updated: "Ferdigsvar mappen har blitt oppdatert"
     deleted: "Ferdigsvar mappen har blitt slettet"
     no_folders: "Ingen ferdigsvar"
-    folder_update: "Valgte svar har blitt flyttet til mappe: {{folder_name}}"
+    folder_update: "Valgte svar har blitt flyttet til mappe: %{folder_name}"
     update: "Ferdigsvaret ble oppdatert."
     created: "Ferdigsvar ble opprettet."
     delete_multiple: "Det valgte ferdigsvaret ble slettet"
     no_delete: "Standard mappe kan ikke slettes!"
     create_new: "Opprett ny"
-    no_response_admin: "Ingen svar i denne mappen <a href={{link}} id='new_resp'>Opprett nytt</a>"
+    no_response_admin: "Ingen svar i denne mappen <a href=%{link} id='new_resp'>Opprett nytt</a>"
     select_folder: "Velg mappe"
   portalcss:
     reset_all_changes: "Nullstill alle endringer"
@@ -2591,8 +2591,6 @@ nb-NO:
   import: Importer
   contains: Inneholder
   import_solution_article_info: "Merk: Vi vil ikke lagre forum-kommentarene"
-  no_anonymous_tickets: "For å registrere en sak må du <a href={{signup}}><b>registrere deg</b></a> som ny bruker eller <a href={{login}}><b>logge inn</b></a>."
-  no_signup: "For å registrere en sak, <a href={{login}}><b>Logg inn</b></a>."
   register: Registrere
   by: av
   portal:
@@ -2895,7 +2893,7 @@ nb-NO:
     helpcard:
       tour1: "Hjelp meg med å konfigurere min support e-post"
       tour2: "Hjelp meg med å sette opp ulike e-postbokser"
-      info5: "Din standard support e-postadresse er <a target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. E-poster sendt hit blir automatisk gjort om til saker."
+      info5: "Din standard support e-postadresse er <a target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. E-poster sendt hit blir automatisk gjort om til saker."
       info20: "bruk av forskjellige e-postbokser"
     primary_supp_email: "Hoved support e-post"
     info16: "Saker vil bli tildelt"

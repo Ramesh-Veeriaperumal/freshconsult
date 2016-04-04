@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%><%- end %>
+<% content_for :sidebar do -%>&nbsp;<%- end %>
 <%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "va_rule", :placeholders => ticket_placeholders.merge(event_placeholders) } %>
 <%= f.error_messages :object_name => 'rule' %>
 <div class="form-horizontal">
@@ -34,7 +34,8 @@
 			<div class="conditionset" id="filterDOM">
 			<div id="RuleList" class="rule_list"></div>
 			<fieldset class="addchoice">
-		         <p><%=t('dispatch.add_condition')%></p> <img alt="<%=t('dispatch.add_new_choice')%>" class="add" src="/images/add.png" />
+				<i class="rounded-add-icon pull-left"></i>	
+		        <p><%=t('dispatch.add_condition')%></p>
 		    </fieldset>			
 			</div>
 		</li>
@@ -48,7 +49,8 @@
 			<div class="conditionset" id="actionDOM">
 				<div id="ActionList" class="rule_list"></div>
 				<fieldset class="addchoice">
-		        	<p><%=t('dispatch.add_new_action')%></p> <img alt="<%=t('dispatch.add_new_action')%>" class="add" src="/images/add.png" />
+					<i class="rounded-add-icon pull-left"></i>
+		        	<p><%=t('dispatch.add_new_action')%></p>
 		    	</fieldset>		
 			</div>
 		</li>
@@ -56,7 +58,7 @@
 
 
 	<div id="webhook_usecase" class="hide">
-		<%= render :partial=> 'admin/shared/advanced_webhook_usecase.html.erb' %>
+		<%= render :partial=> 'admin/shared/advanced_webhook_usecase' %>
 	</div>
 	<div class="button-container itil-hide">
 		<input type="hidden" name="save_json" id="savejson" value="" />

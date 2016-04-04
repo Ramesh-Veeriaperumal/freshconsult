@@ -1,6 +1,10 @@
 module Users
   module Activator
 
+    include ActionView::Helpers
+    include ActionDispatch::Routing
+    include Rails.application.routes.url_helpers
+
     def reset_agent_password(portal = nil)
       clear_password_field
       deliver_password_reset_instructions!(portal)
@@ -25,7 +29,7 @@ module Users
         subj_template = agent_template.first
       end
 
-      UserNotifier.send_later(:deliver_password_reset_instructions, self, 
+      UserNotifier.send_later(:deliver_password_reset_instructions, self,
         {:email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
           'helpdesk_name' => (!portal.name.blank?) ? portal.name : account.portal_name, 
           'password_reset_url' => edit_password_reset_url(perishable_token, 
@@ -37,7 +41,7 @@ module Users
     end
     
     def deliver_activation_instructions!(portal, force_notification, email_config = nil) #Need to refactor this.. Almost similar structure with the above one.
-      portal = Portal.current || account.main_portal
+      portal = Portal.current || account.main_portal_from_cache
       reply_email = email_config ? email_config.friendly_email : 
                       (portal.main_portal ? account.default_friendly_email : portal.friendly_email)
       email_config = email_config ? email_config : 
@@ -77,7 +81,7 @@ module Users
     
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
         requester_template = e_notification.get_requester_template(self)
-        UserNotifier.send_later(:deliver_user_activation, self, 
+        UserNotifier.send_later(:deliver_user_activation, self,
           { :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
               'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
             :subject => Liquid::Template.parse(e_notification.requester_subject_template).render , 
@@ -95,7 +99,7 @@ module Users
       unless verified?
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::ADDITIONAL_EMAIL_VERIFICATION)
         return unless e_notification.requester_notification? and @user.customer?
-        UserNotifier.send_later(:deliver_email_activation, self, 
+        UserNotifier.send_later(:deliver_email_activation, self,
             {:email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => @user, 
               'helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name , 'email' => self.email, 'activation_url' => register_new_email_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> @user.url_protocol)), 
             :subject => Liquid::Template.parse(e_notification.requester_subject_template).render('helpdesk_name' =>  (!portal.name.blank?) ? portal.name : account.portal_name) , :reply_email => reply_email}, email_config)
@@ -106,6 +110,15 @@ module Users
       UserNotifier.send_later(:deliver_admin_activation,self)
     end
 
+    def restrict_domain
+      if self.account.features_included?(:domain_restricted_access)
+        domain = (/@(.+)/).match(self.email).to_a[1]
+        wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
+        unless Array.wrap(wl_domain).include?(domain)
+          errors.add(:base, t(:'flash.g_app.domain_restriction')) and return false
+        end
+      end
+    end
     private
 
     def clear_password_field

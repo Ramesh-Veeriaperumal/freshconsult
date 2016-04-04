@@ -30,9 +30,19 @@
 
   <div id="box-confirm-modal" class="hide">
     <div class="box-confirm-modal-content"><span>Convert to Open link?</span></div>
+    <div class="button-container">
+        <a href="javascript:void(0);" class="btn btn-primary" id="box-confirm-yes">Yes</a>
+        <a href="javascript:void(0);" class="btn " id="box-confirm-no">No</a>
+        <a href="javascript:void(0);" class="btn " id="box-confirm-cancel">Cancel</a>
+    </div>
   </div>
   <div id="box-error-modal" class="hide">
-    <div class="box-error-modal-content"><span>Convert to Open link?</span></div>
+    <div class="box-error-modal-content">
+      <div>Sorry, it seems you do not have the permissions required to make this change.</div>
+      <div class="button-container">
+        <a href="javascript:void(0);" class="btn btn-primary" id="box-error-button">Ok</a>
+      </div>
+    </div>
   </div>
 
   </body>

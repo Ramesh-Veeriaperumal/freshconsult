@@ -9,7 +9,7 @@
             "data-fullscreen-actions" => "#page_btns .portal-form-actions" %>
 </p>
 
-<% if [:ticket_view, :article_view, :article_list, :topic_view, :topic_list].include?(@portal_page.token) %>
+<% if [:ticket_view, :article_view, :article_list, :topic_view, :topic_list, :archive_ticket_list, :archive_ticket_view].include?(@portal_page.token) %>
 	<p class="help-text"> <%=t("portalcss.layout_pages.page_preview_message.#{@portal_page.token}")%> </p>
 <% end %>
 

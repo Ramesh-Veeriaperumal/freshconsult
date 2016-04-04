@@ -23,8 +23,23 @@ module Integrations::Constants
     :shopify => "shopify",
     :seoshop => "seoshop",
     :box => 'box',
-    :slack => "slack"
+    :slack => "slack",
+    :quickbooks => "quickbooks",
+    :dynamicscrm => "dynamicscrm",
+    :xero => "xero",
+    :hootsuite => "hootsuite",
+    :onedrive => "onedrive",
+    :github => "github",
+    :ilos => "ilos",
+    :magento => "magento",
+    :slack_v2 => "slack_v2",
+    :infusionsoft => "infusionsoft",
+    :pivotal_tracker => "pivotal_tracker",
+    :twitter => "twitter",
+    :facebook => "facebook"
   }
+
+  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft]
 
   APP_CATEGORY_ID_TO_NAME = {
     10 => :custom,
@@ -36,4 +51,24 @@ module Integrations::Constants
 
   SYSTEM_ACCOUNT_ID = 0
 
+  CRM_MODULE_TYPES = ["account", "contact", "lead"]
+
+  CRM_INSTANCE_TYPES = { "on_demand" => "On-Demand", "on_premise" => "On-Premise" }
+
+  DYNAMICS_CRM_CONSTANTS = { "rst2_login_url" => "https://login.microsoftonline.com/RST2.srf" }
+
+  GOOGLE_CONTACTS = {"provider" => "google_contacts", "app_name" => "google_contacts"}
+
+  SUCCESS = "success"
+  FAILURE = "failure"
+
+  INVOICE_APPS = [APP_NAMES[:quickbooks], APP_NAMES[:freshbooks]]
+
+  CAMPAIGN_APPS = [:mailchimp, :icontact, :constantcontact, :campaignmonitor]
+
+  TIMESHEET_APPS = [APP_NAMES[:freshbooks], APP_NAMES[:harvest], APP_NAMES[:workflow_max], APP_NAMES[:quickbooks]]
+
+  FRESHPLUG = 'freshplug'
+
+  NON_EDITABLE_APPS = ["mailchimp", "constantcontact", "nimble", "google_calendar", "shopify", "box", "onedrive"]
 end

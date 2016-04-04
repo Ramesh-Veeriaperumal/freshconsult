@@ -1,4 +1,5 @@
 class ScoreboardLevel < ActiveRecord::Base
+  self.primary_key = :id
   
   belongs_to :account
 
@@ -11,24 +12,26 @@ class ScoreboardLevel < ActiveRecord::Base
     [ I18n.t('gamification.levels.guru'),        100000 ] 
   ]
 
-  named_scope :level_for_score, lambda { | score | { 
+  scope :level_for_score, lambda { | score | { 
       :conditions => [ 'points <= ?', score ], 
       :limit => 1, 
       :order => 'points DESC' 
     } 
   }
 
-  named_scope :next_level_for_points, lambda { |points| {
+  scope :next_level_for_points, lambda { |points| {
       :conditions => [ 'points > ?', points ],
       :limit => 1,
       :order => 'points ASC'
     }
   }
 
-  named_scope :level_up_for, lambda { |level| {
+  scope :level_up_for, lambda { |level| {
       :conditions => ['id = ? or points > ?', level, level.points ],
       :order => 'points ASC'
     } if level
   }
+
+  scope :least_points, lambda {{ :order => 'points ASC', :limit => 1 }}
 
 end

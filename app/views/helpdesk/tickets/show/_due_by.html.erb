@@ -1,6 +1,6 @@
 <% due_by_content_text = t( due_by > Time.now() ? 'ticket_future_due_by_live' : 'ticket_past_due_by_live',
   {:time => distance_of_time_in_words(Time.now(), due_by), :timestamp => due_by.to_i}).html_safe
-due_by_content_text = due_by_content_text.gsub("\n" , " ") if params[:format] == 'widget'
+due_by_content_text = (due_by_content_text.gsub("\n" , " ")).html_safe if params[:format] == 'widget'
 %>
 <%= due_by_content_text %>
 <% if params[:format] != 'widget' %>
@@ -8,15 +8,15 @@ due_by_content_text = due_by_content_text.gsub("\n" , " ") if params[:format] ==
 <% end %>
 on <%= formated_date(due_by) %>
 <% if privilege?(:edit_ticket_properties) && params[:format] != 'widget' %>
-<a id="edit-dueby-time" 
-			data-placement="topRight" 
-			href="#" 
+<a id="edit-dueby-time"
+			data-placement="topRight"
+			href="#"
 			data-widget-container="due-date-dialog-container">
 	<%= t('change').html_safe %>
 </a>
 <% end %>
-<% javascript_tag do %>
-jQuery('.ticket_details .status_info').html("<%= escape_javascript(render :partial => '/helpdesk/tickets/show/sticky_status.html.erb') %>");
+<%= javascript_tag do %>
+jQuery('.ticket_details .status_info').html("<%= escape_javascript(render :partial => '/helpdesk/tickets/show/sticky_status', :formats => [:html]) %>");
 <% if flash[:error] %>
 	jQuery('#noticeajax').html("<%= content_tag('div', flash[:error]) %>");
 	jQuery('#noticeajax').show();

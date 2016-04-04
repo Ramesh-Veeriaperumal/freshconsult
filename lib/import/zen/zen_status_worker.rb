@@ -9,7 +9,7 @@ class Import::Zen::ZenStatusWorker < Struct.new(:params)
 
 	def perform
 		if completed?
-			Admin::DataImportMailer.deliver_import_summary({ :user => current_agent.user })
+			Admin::DataImportMailer.import_summary({ :user => current_agent.user })
 			Account.current.zendesk_import.destroy
 		else
 			Resque.enqueue_at(1.hour.from_now, Import::Zen::ZendeskImportStatus, 

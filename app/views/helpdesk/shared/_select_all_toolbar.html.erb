@@ -1,0 +1,92 @@
+<%if render_select_all_toolbar? %>
+  <th class="admin_bulk_actions hide">
+    <input id="close_all_ticket_btn" class="hide"
+        onclick="helpdesk_submit('<%= close_multiple_helpdesk_select_all_ticket_actions_path %>', 'put', jQuery('#FilterOptions').serializeArray());" 
+        type="button" value="Close" />
+        
+    <input id="spam_all_ticket_btn" class="hide" 
+        onclick="helpdesk_submit('<%= spam_helpdesk_select_all_ticket_actions_path %>', 'put', jQuery('#FilterOptions').serializeArray());" 
+        type="button" value="Flag Spam" />
+
+
+    <input id="delete_all_ticket_btn" class="hide"  
+        onclick="helpdesk_submit('<%= delete_helpdesk_select_all_ticket_actions_path %>', 'put', jQuery('#FilterOptions').serializeArray());"
+        type="button" value="Delete" />
+
+    <a href="#ticket-close-all-confirmation"
+      rel="freshdialog"
+      data-title="<%= t('ticket.admin_select_all.close_tickets') %>"
+      class="btn"
+      data-submit-label="<%= t('ticket.admin_select_all.close_tickets') %>"
+      data-width="500px"
+      data-close-on-submit="true"
+      data-close-label=<%=t('cancel')%>>
+      <%= t('close') %>
+    </a>
+    <a href="/helpdesk/tickets/update_all_tickets"
+        data-target="#bulk" rel="freshdialog" data-width="709px" 
+        class="btn" 
+        data-title="<%=t('bulk_actions')%>"
+        data-submit-label="<%= t('ticket.admin_select_all.bulk_action_submit_label') %>"
+        data-close-on-submit="true"
+        data-template-footer="false"
+        data-destroy-on-close="true"
+        data-close-label="<%= t('cancel') %>" ><%= t('bulk_actions') %></a>
+
+    <a href="#ticket-spam-all-confirmation"
+      rel="freshdialog"
+      data-title="<%= t('ticket.flag_spam') %>"
+      class="btn"
+      data-submit-label=<%=t('ticket.admin_select_all.spam_confirmation')%>
+      data-width="400px"
+      data-close-on-submit="true"
+      data-close-label=<%=t('cancel')%>
+      data-destroy-on-close="true">
+      <%= t('ticket.flag_spam') %>
+    </a>
+    <% if privilege?(:delete_ticket) %>
+      <a href="#ticket-delete-all-confirmation"
+        rel="freshdialog"
+        data-title="<%= t('ticket.admin_select_all.delete_tickets') %>"
+        class="btn"
+        data-submit-label=<%=t('ticket.admin_select_all.delete_confirmation')%>
+        data-width="400px"
+        data-close-on-submit="true"
+        data-close-label=<%=t('cancel')%>
+        data-destroy-on-close="true">
+        <%= t('delete') %>
+      </a>
+    <% end %>
+    <div id="ticket-close-all-confirmation" class="admin_select_all_notification hide">
+        <%= t('ticket.admin_select_all.close_all_notification.text', 
+                :count => "<span class='admin_select_all_ticket_count'></span>"
+            ).html_safe 
+        %><br/>
+        <%= t('ticket.admin_select_all.please_note') %>
+        <ol class="admin_select_all_notification_list">
+          <li><%= t('ticket.admin_select_all.close_all_notification.list1') %></li>
+          <li><%= t('ticket.admin_select_all.close_all_notification.list2') %></li>
+          <li><%= t('ticket.admin_select_all.close_all_notification.list3') %></li>
+        </ol>
+        <%= t('ticket.admin_select_all.close_all_notification.are_you_sure') %>
+    </div>
+    <div id="ticket-spam-all-confirmation" class="hide">
+      <p class="margin-bottom">
+        <%= 
+          t('ticket.admin_select_all.spam_all_confirmation',
+            :count => "<span class='admin_select_all_ticket_count'></span>"
+          ).html_safe 
+        %>
+      </p>
+    </div>
+    <div id="ticket-delete-all-confirmation" class="hide">
+      <p class="margin-bottom">
+        <%= 
+          t('ticket.admin_select_all.delete_all_confirmation',
+            :count => "<span class='admin_select_all_ticket_count'></span>"
+          ).html_safe 
+        %>
+      </p>
+    </div>
+  </th>
+<% end %>

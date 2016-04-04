@@ -2,15 +2,18 @@ module Va::Observer::Constants
 
 	FETCH_EVALUATE_ON_ID = {	'Helpdesk::Ticket' => :id,
 														'Helpdesk::Note' => :notable_id,
+              							'CustomSurvey::SurveyResult' => :surveyable_id,
 														'SurveyResult' => :surveyable_id,
 														'Helpdesk::TimeSheet' => :workable_id }
-	FETCH_DOER_ID = { 	'Helpdesk::Note' => :user_id,
-											'SurveyResult' => :customer_id,
-											'Helpdesk::TimeSheet' => :user_id }
 
-	TICKET_EVENTS = [ :status, :priority, :ticket_type, :group_id, :responder_id, :due_by,
-										:time_sheet_action, :deleted, :spam, :reply_sent, :note_type,
-										:customer_feedback ]
+	FETCH_DOER_ID = { 'Helpdesk::Note' => :user_id,
+                    'CustomSurvey::SurveyResult' => :customer_id,
+			              'SurveyResult' => :customer_id,
+			              'Helpdesk::TimeSheet' => :user_id,
+                  }
+
+	TICKET_EVENTS = [ :status, :priority, :ticket_type, :group_id, :responder_id, :due_by, :deleted, :spam,
+										:time_sheet_action, :reply_sent, :note_type, :customer_feedback]
 
 	TICKET_UPDATED = { :ticket_action => :update }
 	TICKET_DELETED = { :ticket_action => :delete }
@@ -25,3 +28,4 @@ module Va::Observer::Constants
 												}		
 
 end
+

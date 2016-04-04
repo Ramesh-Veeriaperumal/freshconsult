@@ -4,7 +4,7 @@
   </div>
   <div class="list_agents_replying" class="hide"></div>
   <input type="hidden" value="<%= @ticket.requester.twitter_id %>" id="requester_twitter_handle" />
-  <% form_for note, :url => facebook_helpdesk_ticket_conversations_path(@ticket), :html => {
+  <%= form_for note, :url => facebook_helpdesk_ticket_conversations_path(@ticket), :html => {
                         :multipart => true,  
                         :id => "HelpdeskFbComment",
                         "data-panel" => cntid,
@@ -18,7 +18,7 @@
     <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
     <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
     <%= f.hidden_field :private , :value => "false" %>
-    <%= hidden_field_tag(:ticket_status , '', :id=> "reply_ticket_status_#{cntid}"  )%>
+    <%= hidden_field_tag :last_note_id,'', :value => @last_note_id, :class => "last_note_id" %>
 
     <ul class="ui-form dont-validate">
       <li class="inline-field field">
@@ -27,7 +27,7 @@
         &nbsp;<%= @ticket.fb_post.facebook_page.page_name if @ticket.fb_post && @ticket.fb_post.facebook_page %>
       </li>       
       <li class="inline-field field clearField continous message">
-        <% f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
+        <%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
         <%= ff.text_area :body, { :class => 'required facebook auto-height', :id => "#{id}-#{cntid}-body", :rows => "6" } %>
         <% end %>
       </li>

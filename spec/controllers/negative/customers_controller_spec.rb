@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-describe CustomersController do
-  integrate_views
+RSpec.describe CustomersController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -10,6 +9,7 @@ describe CustomersController do
   end
 
   before(:each) do
+    request.env["HTTP_ACCEPT"] = "application/xml"
     login_admin
   end
 

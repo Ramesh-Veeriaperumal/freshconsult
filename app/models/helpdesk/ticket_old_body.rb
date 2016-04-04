@@ -2,10 +2,13 @@
 # New tickets created should not be stored in this table, they should be stored in riak
 
 class Helpdesk::TicketOldBody < ActiveRecord::Base
-  set_table_name 'helpdesk_ticket_bodies'
+  self.table_name =  'helpdesk_ticket_bodies'
+  self.primary_key =  :id
 
   belongs_to_account
   belongs_to :ticket, :class_name => "Helpdesk::Ticket", :foreign_key => "ticket_id"
+
+  after_update ->(obj) { obj.ticket.update_timestamp }, :if => :changed?
 
   attr_protected :account_id
 

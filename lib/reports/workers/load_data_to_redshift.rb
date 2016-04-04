@@ -8,7 +8,7 @@ module Reports
 				include Reports::Constants
 				include Reports::Redshift
 				include Reports::ArchiveData
-
+				
 				def perform(args)
 					args.symbolize_keys!
 					date, hour = args[:date], args[:hour].to_i
@@ -20,28 +20,29 @@ module Reports
 						hour = hour - 1
 					end
 					@s3_folder = %(#{$st_env_name}/#{date}_#{hour})
-					bucket = AWS::S3::Bucket.new(S3_CONFIG[:reports_bucket])
-					files_arr = bucket.objects.with_prefix(@s3_folder)
+					
+					files_arr = AwsWrapper::S3.list(S3_CONFIG[:reports_bucket], @s3_folder, true)
 					return if files_arr.count == 0
 
 					query = %(COPY #{REPORTS_TABLE}(#{REDSHIFT_COLUMNS.join(", ")})
 							from 's3://#{S3_CONFIG[:reports_bucket]}/#{@s3_folder}/redshift_' 
 							credentials 'aws_access_key_id=#{S3_CONFIG[:access_key_id]};aws_secret_access_key=#{S3_CONFIG[:secret_access_key]}' 
-							delimiter '|' IGNOREHEADER 1 ROUNDEC REMOVEQUOTES MAXERROR 100000;)
+							gzip delimiter '|' IGNOREHEADER 1 ROUNDEC REMOVEQUOTES MAXERROR 100000;)
 					
 					begin
 						execute_redshift_query(query).clear
-					rescue => e
+					rescue Exception => e
 						subject = "Error occured while loading archive data for folder =#{@s3_folder}"
 						message =  "query====#{query} " << "\n" << e.message << "\n" << e.backtrace.join("\n")
 						report_notification(subject,message)
 						raise e
 					end
+					
 					# vacuum_query = %(VACUUM SORT ONLY #{REPORTS_TABLE}) # sort only vacuum query to sort the newly added rows
 					# execute_redshift_query(vacuum_query).clear
 					# delete the uploaded files
-					files_arr.delete_all
-					# files_arr.each {|obj| obj.delete}
+					AwsWrapper::S3.batch_delete(S3_CONFIG[:reports_bucket], files_arr.map(&:key))
+					
 				end
 
 			end

@@ -1,4 +1,4 @@
-<% if @freshfone_credit.present? %> 
+<% unless @freshfone_credit.new_record? %> 
 	<div class="row-fluid auto_recharge_quantity">
 		<div class="recharge-now-text">
 			<%= t('freshfone.subscription.auto_recharge_text') %>
@@ -11,7 +11,7 @@
 					($<%= @freshfone_credit.recharge_quantity %> <%= t('freshfone.subscription.followup_text') %>)
 				<% end %>
 				<div class="action-links">
-					<% form_tag(disable_auto_recharge_admin_freshfone_credits_path, 
+					<%= form_tag(disable_auto_recharge_admin_freshfone_credits_path, 
 											:method => :put, 
 											:class => "disable_auto_recharge_form") do %>
 						<%= link_to t('edit'), "#", :class => "edit_auto_recharge" %> | 
@@ -21,7 +21,7 @@
 				</div>
 			</div>
 		<% end %>
-		<% form_for :freshfone_credits, @freshfone_credit,
+		<%= form_for @freshfone_credit,
 						:url => {:action => "enable_auto_recharge", :controller => "admin/freshfone/credits"}, 
 						:html => {:class => "auto_recharge_form", :method => :put} do |f| %>
 

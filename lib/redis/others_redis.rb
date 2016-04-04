@@ -1,64 +1,98 @@
 module Redis::OthersRedis
 	def get_others_redis_key key
-		newrelic_begin_rescue { $redis_others.get(key) }
+		newrelic_begin_rescue { $redis_others.perform_redis_op("get", key) }
 	end
 
 	def set_others_redis_key(key, value, expires = 86400)
 		newrelic_begin_rescue do
-			$redis_others.set(key, value)
-			$redis_others.expire(key,expires) if expires
+			$redis_others.perform_redis_op("set", key, value)
+			$redis_others.perform_redis_op("expire", key,expires) if expires
 	  end
 	end
 
 	def set_others_redis_with_expiry(key, value, options)
-		newrelic_begin_rescue { $redis_others.set(key, value, options) }
+		newrelic_begin_rescue { $redis_others.perform_redis_op("set", key, value, options) }
 	end
 
 	def remove_others_redis_key key
-		newrelic_begin_rescue { $redis_others.del(key) }
+		newrelic_begin_rescue { $redis_others.perform_redis_op("del", key) }
 	end
 
 	def set_others_redis_expiry(key, expires)
 		newrelic_begin_rescue do
-			$redis_others.expire(key, expires)
+			$redis_others.perform_redis_op("expire", key, expires)
 		end
 	end
 
 	def get_others_redis_expiry(key)
-		newrelic_begin_rescue { $redis_others.ttl(key) }
+		newrelic_begin_rescue { $redis_others.perform_redis_op("ttl", key) }
 	end
 
 	def increment_others_redis(key)
-		newrelic_begin_rescue { $redis_others.INCR(key) }
+		newrelic_begin_rescue { return $redis_others.perform_redis_op("INCR", key) }
 	end
 
-	def exists?(key)
-		newrelic_begin_rescue { $redis_others.exists(key) }
+	def decrement_others_redis(key, value=1)
+		newrelic_begin_rescue do
+			if value == 1
+				$redis_others.perform_redis_op("DECR", key)
+			else
+				$redis_others.perform_redis_op("DECRBY", key, value)
+			end
+		end
+	end
+
+	def redis_key_exists?(key)
+		newrelic_begin_rescue { $redis_others.perform_redis_op("exists", key) }
 	end
 
   def publish_to_channel channel, message
     newrelic_begin_rescue do
-        return $redis_others.publish(channel, message)
+        return $redis_others.perform_redis_op("publish", channel, message)
     end
   end
 
   	def get_others_redis_list(key, start = 0, stop = -1)
-		newrelic_begin_rescue { $redis_others.lrange(key,start,stop) }
+		newrelic_begin_rescue { $redis_others.perform_redis_op("lrange", key,start,stop) }
 	end
 
 	def get_others_redis_llen(key)
-		newrelic_begin_rescue { $redis_others.llen(key) }
+		newrelic_begin_rescue { $redis_others.perform_redis_op("llen", key) }
 	end
 
 	def set_others_redis_lpush(key, value)
-		newrelic_begin_rescue { $redis_others.lpush(key,value) }
+		newrelic_begin_rescue { $redis_others.perform_redis_op("lpush", key,value) }
 	end
 
 	def get_others_redis_rpoplpush(source, destination)
-		newrelic_begin_rescue { $redis_others.rpoplpush(source, destination) }
+		newrelic_begin_rescue { $redis_others.perform_redis_op("rpoplpush", source, destination) }
 	end
 
 	def get_others_redis_lrem(key, value, all=0)
-		newrelic_begin_rescue { $redis_others.lrem(key,all,value) }
+		newrelic_begin_rescue { $redis_others.perform_redis_op("lrem", key,all,value) }
 	end
+	
+	def ismember?(key, value)
+		newrelic_begin_rescue { $redis_others.perform_redis_op("sismember", key, value) }
+	end
+	
+	def set_others_redis_hash(key, value)
+		newrelic_begin_rescue { $redis_others.perform_redis_op("mapped_hmset", key,value) }
+	end
+
+	def get_others_redis_hash(key)
+		newrelic_begin_rescue { $redis_others.perform_redis_op("hgetall", key) }
+	end
+  
+  def add_member_to_redis_set(key, member)
+    newrelic_begin_rescue { $redis_others.perform_redis_op("sadd", key, member) }
+  end
+
+  def remove_member_from_redis_set(key, member)
+    newrelic_begin_rescue { $redis_others.perform_redis_op("srem", key, member) }
+  end
+  
+  def get_all_members_in_a_redis_set(key)
+    newrelic_begin_rescue { $redis_others.perform_redis_op("smembers", key) }
+  end
 end

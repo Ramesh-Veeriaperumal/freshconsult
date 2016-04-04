@@ -1,0 +1,1 @@
+//= require marketplace/template_dock_manager.js

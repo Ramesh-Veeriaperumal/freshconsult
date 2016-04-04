@@ -1,15 +1,14 @@
 require 'spec_helper'
 
-describe GroupsController do
+RSpec.describe GroupsController do
 	self.use_transactional_fixtures = false
-	include APIAuthHelper
 
 	before(:all) do
 		@now = (Time.now.to_f*1000).to_i
 		@user_1 = add_test_agent(@account)
 		@test_group = create_group(@account, {:name => "Spec Testing Grp Helper"})
-		@calendar = Factory.build(:business_calendars,:name=> "Grp business_calendar", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
-		@calendar.save(false)
+		@calendar = FactoryGirl.build(:business_calendars,:name=> "Grp business_calendar", :description=>Faker::Lorem.sentence(2),:account_id=>@account.id)
+		@calendar.save(:validate => false)
 	end
 
 	before(:each) do
@@ -30,8 +29,8 @@ describe GroupsController do
 		}
 		@account.groups.find_by_name("Spec Testing Grp - xml").should_not be_nil
 		result = parse_xml(response)
-		agent_xml_attributes = ['type'] + APIHelper::AGENT_USER_ATTRIBS # agents displayed within a group has a type attribute
-		expected = (response.status == "201 Created") && (compare(result["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
+		agent_xml_attributes = APIHelper::AGENT_USER_ATTRIBS + ['type'] # agents displayed within a group has a type attribute
+		expected = (response.status == 201) && (compare(result["group"].keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
 				 	(compare(result["group"]["agents"].first.keys,agent_xml_attributes,{}).empty?)
 		expected.should be(true)
 	end
@@ -53,7 +52,7 @@ describe GroupsController do
 		@test_group.ticket_assign_type.should eql 0
 		agent_list = [ @agent.id, @user_1.id ]
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
-		(agent_list.sort == agents_in_group.sort).should be_true
+		(agent_list.sort == agents_in_group.sort).should be true
 	end
 
 	it "should add new agents to the group" do
@@ -73,14 +72,14 @@ describe GroupsController do
 		@test_group.ticket_assign_type.should eql 0
 		agent_list = [@user_1.id]
 		agents_in_group = @test_group.agent_groups.map { |agent| agent.user_id }
-		(agent_list.sort == agents_in_group.sort).should be_true
+		(agent_list.sort == agents_in_group.sort).should be true
 	end
 
 	it "should go to the Groups index page" do
 		get :index, :format => 'xml'
 		result = parse_xml(response)
-		agent_xml_attributes = ['type'] + APIHelper::AGENT_USER_ATTRIBS # agents displayed within a group has a type attribute
-		expected = (response.status =~ /200 OK/) && (compare(result["groups"].first.keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
+		agent_xml_attributes = APIHelper::AGENT_USER_ATTRIBS + ['type'] # agents displayed within a group has a type attribute
+		expected = (response.status == 200) && (compare(result["groups"].first.keys,APIHelper::GROUP_ATTRIBS,{}).empty?) && 
 				 	(compare(result["groups"].last["agents"].first.keys,agent_xml_attributes,{}).empty?)
 		expected.should be(true)
 	end
@@ -89,7 +88,7 @@ describe GroupsController do
 		get :edit, :id => @test_group.id, :format => 'xml'
 		result = parse_xml(response)
 		result['group']['description'] == "#{@test_group.description}"
-		response.status.should be_eql("200 OK")
+		response.status.should eql(200)
 	end
 
 	it "should show the Group" do

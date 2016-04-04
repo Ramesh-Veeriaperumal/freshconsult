@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Integrations::RemoteConfigurationsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
-  integrate_views
 
   before(:all) do
     dm = DomainMapping.new
@@ -42,39 +41,56 @@ describe Integrations::RemoteConfigurationsController do
 
   it "should install seoshop app for the domain" do
     post :create, params.merge(fd_cred).merge(:id => "install")
-    response.should redirect_to "https://integrations.freshdesk.com/helpdesk/dashboard"
-    response.session[:flash][:notice].should =~ /Application is successfully installed in this domain/
+    response.should redirect_to "https://integrations.freshdesk.com/helpdesk"
+    session[:flash][:notice].should =~ /Application is successfully installed in this domain/
     post :create, params.merge(fd_cred).merge(:id => "uninstall")
   end
 
   it "trying to re-install seoshop app for the domain, gives already installed message" do
     post :create, params.merge(fd_cred).merge(:id => "install")
     post :create, params.merge(fd_cred).merge(:id => "install")
-    response.session[:flash][:notice].should =~ /Application is already installed for this domain/
+    session[:flash][:notice].should =~ /Application is already installed for this domain/
     post :create, params.merge(fd_cred).merge(:id => "uninstall")
   end
 
   it "should uninstall seoshop app for the domain" do
     post :create, params.merge(fd_cred).merge(:id => "install")
     post :create, params.merge(fd_cred).merge(:id => "uninstall")
-    response.should redirect_to "https://integrations.freshdesk.com/helpdesk/dashboard"
-    response.session[:flash][:notice].should =~ /Application is successfully uninstalled in this domain/
+    response.should redirect_to "https://integrations.freshdesk.com/helpdesk"
+    session[:flash][:notice].should =~ /Application is successfully uninstalled in this domain/
   end
 
   it "should give application not available message" do
     post :create, params.merge(fd_cred).merge(:id => "install")
     post :create, params.merge(fd_cred).merge(:id => "uninstall")
     post :create, params.merge(fd_cred).merge(:id => "uninstall")
-    response.session[:flash][:notice].should =~ /Application is not installed in this Domain!/
+    session[:flash][:notice].should =~ /Application is not installed in this Domain!/
   end
 
-  it "should say unable to authorize user" do
+  it "should say unable to authorize user for seoshop" do
     post :create, {
       :domain => "https://integrations.freshdesk.com",
       :key => "Zi9wklsdf0lEsUepRNYtLFFl0",
-      :app_params => {}
+      :app_params => {},
+      :app => "seoshop",
     }
-    response.session[:flash][:notice].should =~ /Unable to authorize user in Freshdesk..... Please check your domain and API Key...../
+    session[:flash][:notice].should =~ /Unable to authorize user in Freshdesk..... Please check your domain and API Key...../
+  end
+
+  it "should display login msg image if its a freshdesk domain for quickbooks" do
+    post :create, {
+      :domain => "https://integrations.freshdesk.com",
+      :app => "quickbooks",     
+    }
+    response.body.should =~ /showMsgAndRedirect\(\"login\"/
+  end
+  
+  it "should say invalid freshdesk domain" do
+    post :create, {
+      :domain => "https://integrate.freshdesk.com",
+      :app => "quickbooks"
+    }
+    session[:flash][:notice].should =~ /This is an invalid freshdesk domain./
   end
 
   it "Missing param" do

@@ -2,7 +2,7 @@
 <% unless (ticket.onhold_and_closed? or ticket.ticket_status.deleted?)%>
 	<h4 class="title"><%= h(ticket.status_name.html_safe) %></h4>
 	<p id="edit-dueby-time-parent">
-		<%= render :partial => "/helpdesk/tickets/show/due_by.html.erb", :object => ticket.due_by %>
+		<%= render :partial => "/helpdesk/tickets/show/due_by", :formats => [:html], :object => ticket.due_by %>
 	</p>
 <% else %>
 	<% if ticket.ticket_status.deleted? %>
@@ -15,12 +15,15 @@
 		</h4>
 	<% end %>
 	<p>
-		<% changed_time = ticket.ticket_states.send(status_changed_time_value_hash(ticket)[:method]) %>
+		<% 
+		changed_time = ticket.ticket_states.send(status_changed_time_value_hash(ticket)[:method]) 
+		Rails.logger.info "::::::::#{changed_time}"
+		%>
 		<%= t('since').html_safe %> <abbr data-livestamp="<%= changed_time.to_i %>"><%= distance_of_time_in_words(Time.now(), changed_time) %></abbr>
 		<br />from <%= formated_date(changed_time) %>
 	</p>
 <% end %>
 </div>
-<% javascript_tag do %>
-jQuery('.ticket_details .status_info').html("<%= escape_javascript(render :partial => '/helpdesk/tickets/show/sticky_status.html.erb') %>");
+<%= javascript_tag do %>
+jQuery('.ticket_details .status_info').html("<%= escape_javascript(render :partial => '/helpdesk/tickets/show/sticky_status', :formats => [:html]) %>");
 <% end %>

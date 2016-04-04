@@ -1,4 +1,4 @@
-<% javascript_tag do %>
+<%= javascript_tag do %>
 	jQuery(document).ready(function(){
 		jQuery("#contact_customer").autocomplete({
 			source: function( request, response ) {
@@ -23,11 +23,12 @@
 			},
 			open: function(){
 				jQuery(this).removeClass('ui-corner-all');
+				jQuery(".ui-menu").css({'display':'block', 'z-index': 10});
 			}
-		}).data( "autocomplete" )
+		}).data( "instance" )
 			._renderItem = function( ul, item ) {
 									return jQuery( "<li></li>" )
-										.data( "item.autocomplete", item )
+										.data( "autocomplete-item", item )
 										.append( "<a>" + item.label + "</a>" )
 										.appendTo( ul );
 								};	
@@ -57,9 +58,7 @@
 		</li>
 		<li>
 			<%= label(:user, :email, t('user.email')) %> 
-			<% f.fields_for :user_emails do |ue| %>
-				<%= ue.text_field :email, :id => "email_primary", :class => "email" %>
-			<% end %>
+			<%= text_field(:user, :email, :id => "email_primary" ) %>
 		</li>
 
 		<li>

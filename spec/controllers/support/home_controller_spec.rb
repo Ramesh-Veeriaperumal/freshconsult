@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Support::HomeController do
-  integrate_views
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 
@@ -84,4 +83,11 @@ describe Support::HomeController do
     response.body.should_not =~ /article2 with status as draft/
   end
 
+  it "should redirect to login page if the account has open_forums feature without having forums and solutions" do
+    @account.features.open_solutions.destroy
+    @account.features.open_forums.create
+    @account.features.forums.destroy
+    get 'index'
+    response.should redirect_to support_login_url
+  end
 end

@@ -1,4 +1,5 @@
 class Role < ActiveRecord::Base
+  self.primary_key = :id
   
   include Authority::FreshdeskRails::ModelHelpers
   before_destroy :destroy_user_privileges
@@ -12,6 +13,13 @@ class Role < ActiveRecord::Base
   
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
+
+  #Role-Based scopes
+  scope :default_roles, -> { where(:default_role => true) }
+  scope :account_admin, -> { where(:name => 'Account Administrator') }
+  scope :admin,         -> { where(:name => 'Administrator') }
+  scope :supervisor,    -> { where(:name => 'Supervisor') }
+  scope :agent,         -> { where(:name => 'Agent') }
   
   API_OPTIONS = { 
     :except     => [:account_id, :privileges]
@@ -21,14 +29,20 @@ class Role < ActiveRecord::Base
 
   def privilege_list=(privilege_data)
     privilege_data = privilege_data.collect {|p| p.to_sym unless p.blank?}.compact
-    self.privileges = Role.privileges_mask(privilege_data).to_s
+    # Remove this check once new privileges list shown in UI
+    unless self.default_role
+      Helpdesk::PrivilegesMap::MIGRATION_MAP.each do |key,value|
+          privilege_data.concat(value) if privilege_data.include?(key)
+      end
+    end
+    self.privileges = Role.privileges_mask(privilege_data.uniq).to_s
   end
 
   def self.privileges_mask(privilege_data)
     (privilege_data & PRIVILEGES_BY_NAME).map { |r| 2**PRIVILEGES[r] }.sum
   end
 
-  def to_json(options={})
+  def as_json(options={})
     options.merge!(API_OPTIONS)
     #(options[:methods] ||= []).push(:system_role)
     super options
