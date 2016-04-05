@@ -261,6 +261,7 @@ describe Solution::ArticlesController do
       @article_meta.reload
       @article_meta.send("#{@article_lang_ver}_outdated?").should eql true
       @article_meta.send("#{@another_lang_ver}_outdated?").should eql true
+      response.should render_template("solution/articles/_language_tabs")
     end
 
     it "should mark current translation as uptodate" do
@@ -269,6 +270,7 @@ describe Solution::ArticlesController do
       @article_meta.reload
       @article_meta.send("#{@article_lang_ver}_outdated?").should eql false
       @article_meta.send("#{@another_lang_ver}_outdated?").should eql true
+      response.status.should eql 200
     end
   end
 
@@ -301,6 +303,7 @@ describe Solution::ArticlesController do
         }
       @category_meta.reload
       @folder_meta.reload
+      response.should render_template('solution/articles/translate_parents')
       @category_meta.send("#{language.to_key}_available?").should eql true
       @folder_meta.send("#{language.to_key}_available?").should eql true
     end
@@ -317,6 +320,7 @@ describe Solution::ArticlesController do
           :id => @category_meta.id
         }
       @category_meta.reload
+      response.should render_template('solution/articles/translate_parents')
       @category_meta.send("#{language.to_key}_available?").should eql true
     end
 
@@ -332,6 +336,7 @@ describe Solution::ArticlesController do
           :id => @folder_meta.id
         }
       @folder_meta.reload
+      response.should render_template('solution/articles/translate_parents')
       @folder_meta.send("#{language.to_key}_available?").should eql true
     end
   end
