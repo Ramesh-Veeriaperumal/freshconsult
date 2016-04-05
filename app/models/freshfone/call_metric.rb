@@ -139,7 +139,7 @@ class Freshfone::CallMetric < ActiveRecord::Base
 
     def update_total_ring_time(queued_at = nil)
       self.total_ringing_time = 0 if self.total_ringing_time.blank?
-      self.total_ringing_time += calculate_ring_time(queued_at)
+      self.total_ringing_time += calculate_ring_time(queued_at).to_i
     end
 
     def calculate_handle_time
