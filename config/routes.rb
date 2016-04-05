@@ -668,6 +668,7 @@ Helpkit::Application.routes.draw do
       member do
         put :install
         delete :uninstall
+        get :uninstall
       end
     end
 
@@ -684,6 +685,7 @@ Helpkit::Application.routes.draw do
         put :update
         get :edit
         get :new
+        get :oauth_install
         post :install
         post :notify
     end
@@ -808,11 +810,13 @@ Helpkit::Application.routes.draw do
     namespace :marketplace do
       namespace :login do
         get :login
+        get :tryout
       end
 
       namespace :quickbooks_sso do
         get :open_id
         get :open_id_complete
+        get :landing
       end
 
       namespace :shopify do

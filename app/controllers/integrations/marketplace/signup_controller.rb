@@ -20,14 +20,15 @@ class Integrations::Marketplace::SignupController < ApplicationController
     else
       login_user = get_user(@account, @email)
     end
+    request_params = params['request_params'].merge({:remote_id => @remote_id})
     if login_user.present?
       verify_user_and_redirect(login_user)
     else
-      redirect_url = send(@app_name + '_url')
+      redirect_url = get_redirect_url(@app_name, @account, request_params)
       redirect_to redirect_url
     end
     rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
-      redirect_url = send(@app_name + '_url')
+      redirect_url = get_redirect_url(@app_name, @account, request_params)
       redirect_to redirect_url
   end
 
@@ -35,6 +36,7 @@ class Integrations::Marketplace::SignupController < ApplicationController
     @signup = Signup.new(params[:signup])
 
     if @signup.save
+      @signup.user.reset_perishable_token!
       @signup.user.deliver_admin_activation
       @account = @signup.account
       add_to_crm

@@ -18,6 +18,19 @@ class Integrations::Marketplace::QuickbooksSsoController < Integrations::Marketp
     map_remote_user
   end
 
+  def landing
+    redirect_url = current_account.full_url
+    installed_app = current_account.installed_applications.with_name('quickbooks').first
+    if params['operation'] == 'disconnect' && installed_app.present?
+      redirect_url += uninstall_integrations_installed_application_path(installed_app)
+    elsif params['operation'] == 'launch' || installed_app.present?
+      redirect_url += "/helpdesk"
+    else
+      redirect_url += "/auth/quickbooks?origin=id%3D" + current_account.id.to_s
+    end
+    redirect_to redirect_url
+  end
+
   private
 
   def select_shard(&block)
