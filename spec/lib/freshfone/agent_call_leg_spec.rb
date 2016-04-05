@@ -11,6 +11,7 @@ RSpec.describe Freshfone::Initiator::AgentCallLeg do
   before(:all) do
     #@account = create_test_account
     @agent = get_admin
+    @account.freshfone_numbers.delete_all
   end
 
   before(:each) do
@@ -29,7 +30,8 @@ RSpec.describe Freshfone::Initiator::AgentCallLeg do
   it 'should resolve simulataneous calls with a single or multiple busy agents' do
     call_leg_params = agent_call_leg_params.merge(:CallStatus => "busy",:caller_sid => @freshfone_call.id)
     agent_call_leg = Freshfone::Initiator::AgentCallLeg.new(call_leg_params, @account, @number, @call_actions, @telephony)
-    @freshfone_user.update_attributes!({:presence => 2, :incoming_preference =>1})
+    @account.freshfone_users.update_all({presence: Freshfone::User::PRESENCE[:busy], incoming_preference: Freshfone::User::INCOMING[:allowed] })
+    @account.freshfone_users.reload
     agent_call_leg.process.should_not be_falsey
     agent_call_leg.send(:all_agents_busy?).should_not be_falsey
     Freshfone::CallActions.any_instance.unstub(:save_conference_meta)

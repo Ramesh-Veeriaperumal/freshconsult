@@ -87,6 +87,7 @@ describe 'BusyResolve' do
   
   it 'should reset presence of the user if found to be not in a call' do
     @freshfone_user.busy!
+    @freshfone_user.update_attributes!(:incoming_preference => Freshfone::User::INCOMING[:not_allowed])
     Freshfone::Jobs::BusyResolve.stubs(:no_active_calls).returns(true)
     Freshfone::Jobs::BusyResolve.perform(:agent_id => @freshfone_user.user_id)
     freshfone_user = @account.freshfone_users.find_by_user_id(@agent)

@@ -227,9 +227,13 @@ RSpec.describe Freshfone::CallController do
 
   it 'should update call ringing abandon status on force termination' do
     call_params = status_params.merge({"DialCallStatus" => 'no-answer', "CallStatus" => 'completed'})
-    set_twilio_signature('freshfone/call/status?force_termination=true', call_params)
+    params = call_params.symbolize_keys
+    number = @account.freshfone_numbers.first
+    number.update_column(:business_calendar_id, nil) 
+    number.reload
+    set_twilio_signature('freshfone/call/status?force_termination=true', params)
     status_call = create_call_for_status
-    post :status, call_params.merge(:force_termination => true)
+    post :status, params.merge(:force_termination => true)
     freshfone_call = @account.freshfone_calls.find(status_call)
     ringing_state = Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ringing_abandon]
     freshfone_call.abandon_state.should be_eql(ringing_state)
@@ -238,6 +242,9 @@ RSpec.describe Freshfone::CallController do
   it 'should update call IVR abandon status on force termination' do
     call_params = status_params.merge({"DialCallStatus" => 'no-answer', "CallStatus" => 'completed'})
     set_twilio_signature('freshfone/call/status?force_termination=true', call_params)
+    number = @account.freshfone_numbers.first
+    number.update_column(:business_calendar_id, nil) 
+    number.reload
     status_call = create_call_for_status_with_out_agent
     Freshfone::Number.any_instance.stubs(:ivr_enabled?).returns(true)
     post :status, call_params.merge(:force_termination => true)

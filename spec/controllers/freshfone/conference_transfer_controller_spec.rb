@@ -62,8 +62,10 @@ RSpec.describe Freshfone::ConferenceTransferController  do
     child_call = create_conf_child_call('CTRANSFERCHILD',parent_call,transfer_agent)
     create_freshfone_conf_call_meta(child_call, [{:id=>transfer_agent.id,:ff_user_id => transfer_agent.id,:name=>transfer_agent.name,:device_type=>:browser,:call_sid =>'CAeab765499b16de80d428196f8c59ef28'}])
     Freshfone::Providers::Twilio.any_instance.stubs(:dequeue)
-    set_twilio_signature("freshfone/conference_transfer/transfer_success?call=#{parent_call.id}", transfer_success_params(parent_call.id).except("call"))
-    post :transfer_success, transfer_success_params(parent_call.id)
+    params = transfer_success_params(parent_call.id)
+    params["To"] = "client:#{child_call.user_id}"
+    set_twilio_signature("freshfone/conference_transfer/transfer_success?call=#{parent_call.id}", params.except("call"))
+    post :transfer_success, params
     Freshfone::Providers::Twilio.any_instance.unstub(:dequeue)
     Twilio::REST::Calls.any_instance.unstub(:get)
     expect(response.body).to match(/Conference/)
