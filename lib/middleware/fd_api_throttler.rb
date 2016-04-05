@@ -35,7 +35,10 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
         # In order to avoid a 'get' and an 'incrby' call to redis for every request, 'incrby' is being called twice conditionally.
         unless extra_credits == 0
           increment_redis_key(extra_credits)
-          set_redis_expiry(key, THROTTLE_PERIOD) if !expiry_set && (@count <= used_limit) # Avoiding expiry when it is already set in the current request.
+          # Expiry should be set immediately after increment, as the expiry condition depends on the incremented value.
+          # expiry_set will be true when it is already set in the current request.
+          # if expiry happens during @app.call, @count will be less than used_limit. Hence checking '<=' instead of '=='
+          set_redis_expiry(key, THROTTLE_PERIOD) if !expiry_set && (@count <= used_limit)
         end
         set_rate_limit_headers if @count
         Rails.logger.debug("Throttled :: Host: #{@host}, Time: #{Time.now}, Count: (#{@count})")
