@@ -73,9 +73,9 @@ class TicketsController < ApiApplicationController
 
   protected
 
-    def requires_feature(f)
+    def requires_feature(feature)
       return if !compose_email? || Account.current.compose_email_enabled?
-      render_request_error(:require_feature, 403, feature: f.to_s.titleize)
+      render_request_error(:require_feature, 403, feature: feature.to_s.titleize)
     end
 
   private
@@ -249,7 +249,7 @@ class TicketsController < ApiApplicationController
       set_default_values
       params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
       ticket = TicketValidation.new(params_hash, @item, string_request_params?)
-      render_custom_errors(ticket, true) unless ticket.valid?(get_action_name.to_sym)
+      render_custom_errors(ticket, true) unless ticket.valid?(original_action_name.to_sym)
     end
 
     def set_default_values
@@ -335,7 +335,7 @@ class TicketsController < ApiApplicationController
       @compose_email ||= params.key?('_action') ? params['_action'] == 'compose_email' : action_name.to_s == 'compose_email'
     end
 
-    def get_action_name
+    def original_action_name
       compose_email? ? 'compose_email' : action_name
     end
 
