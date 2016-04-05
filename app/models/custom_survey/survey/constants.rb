@@ -43,11 +43,9 @@ class CustomSurvey::Survey < ActiveRecord::Base
 
   SAMPLE_TICKET_MSG = I18n.t('ticket_fields.survey_preview_ticket_msg')
 
-  DEFAULT_TEXT = {
-    :title_text             =>  :"admin.surveys.new_layout.default_survey",
-    :thanks_text            =>  :"admin.surveys.thanks_contents.message_text",
-    :feedback_response_text =>  :"admin.surveys.new_thanks.thanks_feedback_v2",
-    :comments_text          =>  :"admin.surveys.new_thanks.comments_feedback",
-    :link_text              =>  :"admin.surveys.satisfaction_settings.link_text_input_label"
-  }.with_indifferent_access
+  CLASSIC_TO_CUSTOM_RATING = {
+    "happy"   => "extremely_happy",
+    "neutral" => "neutral",
+    "unhappy" => "extremely_unhappy"
+  }
 end

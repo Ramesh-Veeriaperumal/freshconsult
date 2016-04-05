@@ -65,7 +65,12 @@ module Helpdesk::TagMethods
     end
   end
 
+
   # Used by API v2
+  def sanitize_tags(tags)
+    Array.wrap(tags).map! { |x| RailsFullSanitizer.sanitize(x.to_s.strip) }.uniq(&:downcase).reject(&:blank?)
+  end
+
   def construct_tags(tags_to_be_added)
     tag_list = []
     # add tags to the item which already exists
@@ -73,10 +78,9 @@ module Helpdesk::TagMethods
     existing_tags = current_account.tags.where(:name => tags_to_be_added)
     tag_list.push(*existing_tags)
     # Collect new tags to be added
-    new_tags = tags_to_be_added.collect(&:downcase) - existing_tags.collect(&:name).collect(&:downcase)
-    new_tags.each do |tag_string|
-      # create new tag and add to the item
-      tag_list << current_account.tags.new(:name => tag_string)
+    existing_tag_names = tag_list.collect(&:name)
+    tags_to_be_added.each do |tag|
+      tag_list << current_account.tags.new(:name => tag) unless existing_tag_names.any?{ |x| x.casecmp(tag).zero? }
     end
     tag_list
   end

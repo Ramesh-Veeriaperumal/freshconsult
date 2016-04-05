@@ -29,6 +29,9 @@ class Auth::MagentoAuthenticator < Auth::Authenticator
         env['omniauth.strategy'].options[:consumer_key] = installed_app.configs[:inputs]["shops"][shop_no]["consumer_token"]
         env['omniauth.strategy'].options[:consumer_secret] = installed_app.configs[:inputs]["shops"][shop_no]["consumer_secret"]
         env['omniauth.strategy'].options[:client_options]["site"] = installed_app.configs[:inputs]["shops"][shop_no]["admin_url"]
+        env['omniauth.strategy'].options[:client_options]["request_token_url"] = "#{installed_app.configs[:inputs]["shops"][shop_no]["shop_url"]}/oauth/initiate"
+        env['omniauth.strategy'].options[:client_options]["authorize_url"] = "#{installed_app.configs[:inputs]["shops"][shop_no]["admin_url"]}/oauth_authorize"
+        env['omniauth.strategy'].options[:client_options]["access_token_url"] = "#{installed_app.configs[:inputs]["shops"][shop_no]["shop_url"]}/oauth/token"
       end  
     }
   end

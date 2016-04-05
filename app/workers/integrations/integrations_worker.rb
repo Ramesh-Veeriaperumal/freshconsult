@@ -13,7 +13,7 @@ module Integrations
         end
       rescue Exception => error
         Rails.logger.debug "Integrations worker job failed - #{error}"
-        NewRelic::Agent.notice_error(error)
+        NewRelic::Agent.notice_error(error, { :custom_params => {:options => options.to_json} })
       end
 
     end

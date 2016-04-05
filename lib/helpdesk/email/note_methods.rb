@@ -6,21 +6,27 @@ module Helpdesk::Email::NoteMethods
   def build_note_object
     self.note = ticket.notes.build(note_params)     
     set_note_source
+    set_note_category
     note.subject = Helpdesk::HTMLSanitizer.clean(email[:subject])
     check_for_auto_responders(note, email[:headers])
     check_support_emails_from(note, user, account)
   end
 
+  def set_note_category
+    note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?
+  end
+
   def set_note_source
-    note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[(from_fwd_emails? or note.notable.agent_performed?(user)) ? "note" : "email"]
+    note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[(from_fwd_emails? or note.notable.agent_performed?(user) or rsvp_to_fwd?) ? "note" : "email"]
+  end
+
+  def rsvp_to_fwd?
+    @rsvp_to_fwd ||= (Account.current.features?(:threading_without_user_check) && reply_to_forward(header_processor.all_message_ids))
   end
 
   def note_params
     {
-      :private => (
-          (from_fwd_emails? or reply_to_private_note?(header_processor.all_message_ids)) or
-          (account.features?(:threading_without_user_check) && reply_to_forward(header_processor.in_reply_to))
-        ),
+      :private => (from_fwd_emails? or reply_to_private_note?(header_processor.all_message_ids) or rsvp_to_fwd?),
       :incoming => true,
       :note_body_attributes => separate_quoted_text ,
       :user => user, #by Shan temp

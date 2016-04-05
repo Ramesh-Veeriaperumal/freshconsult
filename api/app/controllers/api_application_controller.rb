@@ -23,14 +23,13 @@ class ApiApplicationController < MetalApiController
   around_filter :select_shard
   before_filter :current_shard # should happen first within around filter.
   prepend_before_filter :determine_pod
-  before_filter :unset_current_account, :unset_current_portal, :set_current_account
+  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_shard_for_payload
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :check_account_state
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone
   before_filter :force_utf8_params
   before_filter :set_cache_buster
-  before_filter :set_shard_for_payload
   include AuthenticationSystem
   include HelpdeskSystem
   include SubscriptionSystem

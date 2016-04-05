@@ -3,7 +3,7 @@ require_relative '../unit_test_helper'
 class ApiCompaniesDependencyTest < ActionView::TestCase
   def test_before_filters_application_controller
     expected_filters = [:determine_pod, :activate_authlogic, :clean_temp_files, :select_shard,
-                        :unset_current_account, :unset_current_portal, :set_current_account, :set_default_locale,
+                        :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_default_locale,
                         :set_locale, :ensure_proper_protocol, :check_privilege, :freshdesk_form_builder,
                         :remove_rails_2_flash_before, :check_account_state, :set_time_zone, :check_day_pass_usage,
                         :force_utf8_params, :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_shard_for_payload,

@@ -4,7 +4,7 @@
 */
 
 var SurveyState = {
-    path: '/custom_survey/reports/',
+    path: '/reports/custom_survey/',
     isRating:false,
     RemarksOnly:false,
     TYPE:{1:"OVERVIEW",2:"RESPONSE"},
@@ -141,7 +141,7 @@ var SurveyState = {
 
     last_applied_saved_report_index : -1,
     CONST: {
-        base_url : '/custom_survey/reports',
+        base_url : '/reports/custom_survey',
         save_report   : "/save_reports_filter",
         delete_report : "/delete_reports_filter",
         update_report : "/update_reports_filter"

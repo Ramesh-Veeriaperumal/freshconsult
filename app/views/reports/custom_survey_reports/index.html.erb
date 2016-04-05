@@ -7,10 +7,15 @@
 <%
 	date_range = date_range_val((Time.zone.now.ago 30.day),Time.zone.now)
 %>
-
+<%
+	surveysMerge = []
+	surveysMerge.concat(@surveys[:undeleted])
+	surveysMerge.concat(@surveys[:deleted])
+%>
 <%= javascript_tag do %>
 	var SurveyReportData = {
-		  surveysList : <%=@surveys.to_json.html_safe%>,
+
+		  surveysList : <%=surveysMerge.to_json.html_safe %>,
 		  agentsList : <%=@agents.to_json.html_safe%>,
 		  groupsList : <%=@groups.to_json.html_safe%>,
 		  survey_report_date_range : "<%=date_range.html_safe%>	",
@@ -91,8 +96,15 @@
 			<ul>
 				<li>
 					<span><%= t('reports.survey_reports.main.survey_name') %> : </span>
-				
-					<%= select_tag :survey_report_survey_list , options_for_select(@surveys.collect{ |s| [s["title_text"] || s["label"],s["id"]||s["value"]]}, @surveys.detect{|s| s["active"] == 1 }.blank? ? @surveys.detect{|s| s["active"]}["id"] : @surveys.detect{|s| s["active"] == 1}["id"]) , :onchange => "SurveyList.change(this)", :class => 'select2 survey-list-select'%>
+					<%
+					list_options = @surveys[:undeleted].collect{ |s| [ s["title_text"] || s["label"] ,s["id"]||s["value"]]}
+					if  @surveys[:deleted].present?
+						list_options.push([t('reports.survey_reports.main.deleted_list'),{class: 'deleted_list'}])
+						list_options.concat(@surveys[:deleted].collect{ |s| [ s["title_text"] || s["label"] ,s["id"]||s["value"]]})
+					end
+					%>
+					
+					<%= select_tag :survey_report_survey_list , options_for_select(list_options, @surveys[:undeleted].detect{|s| s["active"] == 1 }.blank? ? @surveys[:undeleted].detect{|s| s["active"]}["id"] : @surveys[:undeleted].detect{|s| s["active"] == 1}["id"]) , :onchange => "SurveyList.change(this)", :class => 'select2 survey-list-select'%>
 				</li>
 				<li>
 			  		<span><%= t('reports.survey_reports.main.time_period') %> : </span>
@@ -127,6 +139,7 @@ var Helpkit = Helpkit || {};
 Helpkit.report_filter_data = <%= @report_filter_data.to_json.html_safe %>;
 Helpkit.report_type = "satisfaction_survey";
 jQuery(document).ready(function(){
+	jQuery('.deleted_list').attr('disabled','disabled');
 	jQuery('#survey_main_layout').append(JST["survey/reports/template/main_content"]());
 	jQuery('#survey_main_layout').on('click.survey_reports', function(){
 		jQuery('#reports_type_menu').hide();

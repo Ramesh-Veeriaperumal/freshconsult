@@ -2,7 +2,6 @@ require 'spec_helper'
 
 RSpec.configure do |c|
   c.include GnipHelper
-  c.include DynamoHelper
 end
 
 RSpec.describe Social::Twitter::Feed do
@@ -37,7 +36,7 @@ RSpec.describe Social::Twitter::Feed do
     sample_feed = Social::Twitter::Feed.new(sample_feed)
 
     sample_feed_array = [sample_feed]
-    Social::CustomStreamTwitter.new.process_stream_feeds(sample_feed_array, @custom_stream, "#{get_social_id}")
+    Social::CustomStreamTwitter.new({}).send("process_stream_feeds", sample_feed_array, @custom_stream, "#{get_social_id}")
 
     tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should be_nil
@@ -56,7 +55,7 @@ RSpec.describe Social::Twitter::Feed do
 
 
     sample_feed_array = [sample_feed]
-    Social::CustomStreamTwitter.new.process_stream_feeds(sample_feed_array, @custom_stream, "#{get_social_id}")
+    Social::CustomStreamTwitter.new({}).send("process_stream_feeds", sample_feed_array, @custom_stream, "#{get_social_id}")
 
     tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should_not be_nil
@@ -81,7 +80,7 @@ RSpec.describe Social::Twitter::Feed do
     sample_feed = Social::Twitter::Feed.new(sample_feed)
 
     sample_feed_array = [sample_feed]
-    Social::CustomStreamTwitter.new.process_stream_feeds(sample_feed_array, @custom_stream, "#{get_social_id}")
+    Social::CustomStreamTwitter.new({}).send("process_stream_feeds", sample_feed_array, @custom_stream, "#{get_social_id}")
 
     tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should_not be_nil
@@ -107,7 +106,7 @@ RSpec.describe Social::Twitter::Feed do
 
 
     sample_feed_array = [sample_feed]
-    Social::CustomStreamTwitter.new.process_stream_feeds(sample_feed_array, @custom_stream, "#{get_social_id}")
+    Social::CustomStreamTwitter.new({}).send("process_stream_feeds", sample_feed_array, @custom_stream, "#{get_social_id}")
 
     tweet = @account.tweets.find_by_tweet_id(sample_feed.feed_id)
     tweet.should_not be_nil

@@ -4,9 +4,11 @@ module Fdadmin
       include Fdadmin::FreshfoneStatsMethods
 
       around_filter :select_slave_shard, :only => [:stats_by_account]
-      
+      before_filter :load_account, only: [:stats_by_account]
+      before_filter :validate_freshfone_account, only: [:stats_by_account]
+
       def stats_by_account
-        result = { account_id: account.id, account_name: account.name }
+        result = { account_id: @account.id, account_name: @account.name }
         begin
           result[:details] = [fd_account_details, number_details, calls_usage,
             call_and_numbers_usage].inject(&:merge)
@@ -29,9 +31,9 @@ module Fdadmin
         params[:export_type] = 'Subscriptions Stats'
         data = Sharding.run_on_all_slaves { subscription_stats }
         csv_string = construct_csv(data, subscriptions_csv_columns)
-        return render json: {empty: true} if csv_string.blank?
-        email_csv(csv_string,params)
-        render json: {status: true}
+        return render json: { empty: true } if csv_string.blank?
+        email_csv(csv_string, params)
+        render json: { status: true }
       end
 
       def recent_stats
@@ -65,15 +67,15 @@ module Fdadmin
         end
 
         def freshfone_account
-          @freshfone_account ||= account.freshfone_account
+          @freshfone_account ||= @account.freshfone_account
         end
 
         def fd_account_details
-          { account_url: account.full_url }
+          { account_url: @account.full_url }
         end
 
         def number_details
-          number = account.freshfone_numbers.order('created_at ASC').first
+          number = @account.freshfone_numbers.order('created_at ASC').first
           return {} if number.blank?
           { fd_number_buy_date: number.created_at.utc.strftime('%-d %b %Y') }
         end

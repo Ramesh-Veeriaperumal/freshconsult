@@ -3,7 +3,7 @@ require 'spec_helper'
 include GnipHelper
 include DynamoHelper
 include Social::Twitter::Constants
-include Social::Dynamo::Twitter
+#include Social::Dynamo::Twitter
 include Social::Util
 include Mobile::Constants
 

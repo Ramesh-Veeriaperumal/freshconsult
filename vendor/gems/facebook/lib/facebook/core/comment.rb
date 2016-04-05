@@ -52,7 +52,6 @@ module Facebook
             self.fd_item = add_as_note(parent_post.postable, self.koala_comment) 
           end
         end
-        
         #Comments are pushed to dynamo if its not pushed in via the parent classes already
         dynamo_push_comments = !push_post_tree_to_dynamo && can_dynamo_push
         insert_to_dynamo_and_process_replies(self.fd_item.present?, dynamo_push_comments)
@@ -126,6 +125,7 @@ module Facebook
       end     
       
       def convert_post?(parent_in_dynamo)
+        return false unless (self.fan_page.import_company_posts || self.fan_page.import_visitor_posts)
         post_type  = fetch_parent_data(parent_in_dynamo)
         can_convert_company_post || can_convert_visitor_post
       end  
@@ -136,6 +136,8 @@ module Facebook
         elsif parent_post.present?
           self.koala_post.fetch_post_from_db(post_id)
         else
+          #Explicitly logging second call made within the exception handler
+          self.fan_page.log_api_hits
           self.koala_post.fetch(post_id)
         end
       end

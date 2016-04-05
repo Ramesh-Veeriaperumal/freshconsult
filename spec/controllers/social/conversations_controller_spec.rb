@@ -155,76 +155,76 @@ RSpec.describe Helpdesk::ConversationsController do
     end
     
     context "For FB posts" do
-      it "must reply to a FB post(ticket)" do
-        post_id = "#{(Time.now.ago(9.minutes).utc.to_f*100000).to_i}_#{(Time.now.ago(8.minutes).utc.to_f*100000).to_i}"
-        put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f*100000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f*100000).to_i}"
-        fql_feeds = sample_fql_feed(post_id, true)
-        facebook_feed = sample_facebook_feed(true, post_id).symbolize_keys!
-        sample_put_comment = { "id" => put_comment_id }
+    #   it "must reply to a FB post(ticket)" do
+    #     post_id = "#{(Time.now.ago(9.minutes).utc.to_f*100000).to_i}_#{(Time.now.ago(8.minutes).utc.to_f*100000).to_i}"
+    #     put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f*100000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f*100000).to_i}"
+    #     fql_feeds = sample_fql_feed(post_id, true)
+    #     facebook_feed = sample_facebook_feed(true, post_id).symbolize_keys!
+    #     sample_put_comment = { "id" => put_comment_id }
 
-        # stub the calls
-        Facebook::Graph::Posts.any_instance.stubs(:get_html_content).returns(fql_feeds.first["message"])
-        Koala::Facebook::API.any_instance.stubs(:fql_query).returns(fql_feeds)
-        Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed) 
-        Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment) 
+    #     # stub the calls
+    #     Facebook::Graph::Posts.any_instance.stubs(:get_html_content).returns(fql_feeds.first["message"])
+    #     Koala::Facebook::API.any_instance.stubs(:fql_query).returns(fql_feeds)
+    #     Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed) 
+    #     Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment) 
         
-        # Create FB post ticket
-        Facebook::Graph::Posts.new(@fb_page).fetch
-        fb_post = Social::FbPost.find_by_post_id(post_id)
-        fb_post.should_not be_nil
-        fb_post.is_ticket?.should be true
-        ticket = fb_post.postable
+    #     # Create FB post ticket
+    #     Facebook::Graph::Posts.new(@fb_page).fetch
+    #     fb_post = Social::FbPost.find_by_post_id(post_id)
+    #     fb_post.should_not be_nil
+    #     fb_post.is_ticket?.should be true
+    #     ticket = fb_post.postable
          
-        post :facebook, {   :helpdesk_note => 
-                              { :source => 7, 
-                                :private => false, 
-                                :note_body_attributes => {:body => Faker::Lorem.sentence(3) }
-                              },
-                            :fb_post => true,
-                            :format => "js",
-                            :ticket_status => "",
-                            :showing => "notes",
-                            :ticket_id => ticket.display_id
-                        }
-        comment = Social::FbPost.find_by_post_id(put_comment_id)
-        comment.should_not be_nil
-        comment.is_note?.should be true
-      end
-    end
+    #     post :facebook, {   :helpdesk_note => 
+    #                           { :source => 7, 
+    #                             :private => false, 
+    #                             :note_body_attributes => {:body => Faker::Lorem.sentence(3) }
+    #                           },
+    #                         :fb_post => true,
+    #                         :format => "js",
+    #                         :ticket_status => "",
+    #                         :showing => "notes",
+    #                         :ticket_id => ticket.display_id
+    #                     }
+    #     comment = Social::FbPost.find_by_post_id(put_comment_id)
+    #     comment.should_not be_nil
+    #     comment.is_note?.should be true
+    #   end
+    # end
     
-    context "For FB Private Msgs" do
-      it "must reply to a FB private msg ticket" do
-        actor_id = Time.now.ago(10.minutes).utc.to_i
-        thread_id = generate_thread_id
-        msg_id = generate_msg_id
-        sample_fb_dms = sample_dm_threads(thread_id, actor_id, msg_id)
-        Koala::Facebook::API.any_instance.stubs(:get_object).returns(sample_user_profile(actor_id))
-        Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_fb_dms)
-        Facebook::Graph::Message.new(@fb_page).fetch_messages
+    # context "For FB Private Msgs" do
+    #   it "must reply to a FB private msg ticket" do
+    #     actor_id = Time.now.ago(10.minutes).utc.to_i
+    #     thread_id = generate_thread_id
+    #     msg_id = generate_msg_id
+    #     sample_fb_dms = sample_dm_threads(thread_id, actor_id, msg_id)
+    #     Koala::Facebook::API.any_instance.stubs(:get_object).returns(sample_user_profile(actor_id))
+    #     Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_fb_dms)
+    #     Facebook::Graph::Message.new(@fb_page).fetch_messages
         
-        dm = Social::FbPost.find_by_post_id(msg_id)
-        dm.should_not be_nil
-        dm.is_ticket?.should be true
-        dm_ticket =  dm.postable
+    #     dm = Social::FbPost.find_by_post_id(msg_id)
+    #     dm.should_not be_nil
+    #     dm.is_ticket?.should be true
+    #     dm_ticket =  dm.postable
         
-        reply_dm_id = generate_msg_id
-        sample_reply_dm = { "id" => reply_dm_id }
-        Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
-        post :facebook, {   :helpdesk_note => 
-                              { :source => 7, 
-                                :private => false, 
-                                :note_body_attributes => {:body => Faker::Lorem.sentence(3) }
-                              },
-                            :fb_post => true,
-                            :format => "js",
-                            :ticket_status => "",
-                            :showing => "notes",
-                            :ticket_id => dm_ticket.display_id,
-                        }
-        dm_reply = Social::FbPost.find_by_post_id(reply_dm_id)
-        dm_reply.should_not be_nil
-        dm_reply.is_note?.should be true
-      end
+    #     reply_dm_id = generate_msg_id
+    #     sample_reply_dm = { "id" => reply_dm_id }
+    #     Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
+    #     post :facebook, {   :helpdesk_note => 
+    #                           { :source => 7, 
+    #                             :private => false, 
+    #                             :note_body_attributes => {:body => Faker::Lorem.sentence(3) }
+    #                           },
+    #                         :fb_post => true,
+    #                         :format => "js",
+    #                         :ticket_status => "",
+    #                         :showing => "notes",
+    #                         :ticket_id => dm_ticket.display_id,
+    #                     }
+    #     dm_reply = Social::FbPost.find_by_post_id(reply_dm_id)
+    #     dm_reply.should_not be_nil
+    #     dm_reply.is_note?.should be true
+    #   end
     end
     
     after(:all) do

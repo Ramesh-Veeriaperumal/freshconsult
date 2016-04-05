@@ -30,8 +30,7 @@ var SurveyOverview = {
                     JST["survey/reports/template/content_layout"]()
                 );
                 SurveyChart.create(SurveyUtil.whichSurvey().survey_questions[0]);
-                
+                SurveyTab.renderSidebar();
             }
-            SurveyTab.renderSidebar();
         }
 }

@@ -9,7 +9,8 @@ class ApplicationController < ActionController::Base
   around_filter :select_shard
   
   prepend_before_filter :determine_pod
-  before_filter :unset_current_account, :unset_current_portal, :set_current_account
+  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account
+  before_filter :set_shard_for_payload
   before_filter :set_default_locale, :set_locale
   include SslRequirement
   include Authority::FreshdeskRails::ControllerHelpers
@@ -22,7 +23,6 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   #before_filter :logging_details 
   before_filter :remove_pjax_param 
-  before_filter :set_shard_for_payload 
   after_filter :set_last_active_time
 
   after_filter :remove_rails_2_flash_after

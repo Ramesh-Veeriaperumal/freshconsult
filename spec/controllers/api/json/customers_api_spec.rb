@@ -46,8 +46,7 @@ describe CustomersController do
     id = @account.companies.find_by_name(@comp.name).id
     fake_a_customer
     put :update, (@params).merge!({ :id => id, :format => 'json' })
-    { :customer => company_attributes(@account.companies.find(id), SKIPPED_KEYS) }.
-                                                                    should be_eql(@company_params)
+    company_attributes(@account.companies.find(id), SKIPPED_KEYS).should be_eql(@company_params[:customer])
   end
 
   it "should delete a company using the API" do

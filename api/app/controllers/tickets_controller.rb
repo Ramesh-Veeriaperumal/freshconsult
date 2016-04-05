@@ -63,10 +63,7 @@ class TicketsController < ApiApplicationController
   end
 
   def show
-    if params[:include] == 'conversations'
-      @conversations = conversations.limit(ConversationConstants::MAX_INCLUDE)
-      increment_api_credit_by(1) # for embedded conversations
-    end
+    sideload_associations if @include_validation.include_array.present?
     super
   end
 
@@ -76,6 +73,13 @@ class TicketsController < ApiApplicationController
 
   private
 
+    def sideload_associations 
+      @include_validation.include_array.each do |association|
+        instance_variable_set("@#{association}", send(association))
+        increment_api_credit_by(1) # for embedded associations
+      end
+    end
+
     def decorator_options
       super({ name_mapping: (@name_mapping || get_name_mapping) })
     end
@@ -83,8 +87,8 @@ class TicketsController < ApiApplicationController
     def get_name_mapping
       # will be called only for index and show.
       # We want to avoid memcache call to get custom_field keys and hence following below approach.
-      custom_field = (index? || search?) ? @items.first.try(:custom_field) : @item.custom_field
-      custom_field.each_with_object({}) { |(name, value), hash| hash[name] = TicketDecorator.display_name(name) } if custom_field
+      mapping = Account.current.ticket_field_def.ff_alias_column_mapping
+      mapping.each_with_object({}) { |(ff_alias, column), hash| hash[ff_alias] = TicketDecorator.display_name(ff_alias) } if @item || @items.present?
     end
 
     def set_custom_errors(item = @item)
@@ -92,8 +96,16 @@ class TicketsController < ApiApplicationController
     end
 
     def load_objects
-      super tickets_filter.preload(:ticket_old_body,
-                                   :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries })
+      super tickets_filter.preload(conditional_preload_options)
+    end
+
+    def conditional_preload_options
+      preload_options = [:ticket_old_body, :schema_less_ticket, :flexifield]
+      @ticket_filter.include_array.each do |assoc|
+        preload_options << assoc
+        increment_api_credit_by(1)
+      end
+      preload_options
     end
 
     def after_load_object
@@ -107,10 +119,21 @@ class TicketsController < ApiApplicationController
       end
     end
 
+    # needed for side loading association
     def conversations
       # eager_loading note_old_body is unnecessary if all conversations are retrieved from cache.
       # There is no best solution for this
-      @item.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
+      @item.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at).limit(ConversationConstants::MAX_INCLUDE)
+    end
+
+    # used in side loading association 
+    def requester     
+      @item.requester
+    end
+
+    # used in side loading association 
+    def company
+      @item.company
     end
 
     def paginate_options(is_array = false)
@@ -156,10 +179,8 @@ class TicketsController < ApiApplicationController
 
     def validate_url_params
       params.permit(*ApiTicketConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
-      if params.key?(:include) && ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.exclude?(params[:include])
-        errors = [[:include, :not_included]]
-        render_errors errors, list: ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.join(', ')
-      end
+      @include_validation = TicketIncludeValidation.new(params)
+      render_errors @include_validation.errors, @include_validation.error_options unless @include_validation.valid?
     end
 
     def sanitize_params
@@ -169,7 +190,7 @@ class TicketsController < ApiApplicationController
       cc_emails =  params[cname][:cc_emails]
 
       # Using .dup as otherwise its stored in reference format(&id0001 & *id001).
-      @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup } unless cc_emails.nil?
+      @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup, tkt_cc: cc_emails.dup } unless cc_emails.nil?
 
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
@@ -201,7 +222,7 @@ class TicketsController < ApiApplicationController
     end
 
     def prepare_tags
-      tags = Array.wrap(params[cname][:tags]).map! { |x| RailsFullSanitizer.sanitize(x.to_s.strip) }.uniq(&:downcase).reject(&:blank?) if create? || params[cname].key?(:tags)
+      tags = sanitize_tags(params[cname][:tags]) if create? || params[cname].key?(:tags)
       params[cname][:tags] = construct_tags(tags) if tags
     end
 

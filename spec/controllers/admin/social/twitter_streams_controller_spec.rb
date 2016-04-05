@@ -4,7 +4,7 @@ RSpec.configure do |c|
   c.include GnipHelper
   c.include DynamoHelper
   c.include Social::Twitter::Constants
-  c.include Social::Dynamo::Twitter
+  #c.include Social::Dynamo::Twitter
   c.include Social::Util
 end
 

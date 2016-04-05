@@ -1,6 +1,5 @@
 // Core variables and mixin
 @import "../settings/settings";
-$options-color: (strongly-disagree: #e7340f,some-what-disagree: #ff8c00,disagree: #ffc400,satisfaction-neutral: #f1db15,agree: #a9d340,some-what-agree: #6bb437,strongly-agree: #4e8d00);
 $none: #eeeeee;
 $survey-border-color: #e9e9e9;
 $survey-heading-color: #686868;
@@ -90,14 +89,10 @@ $survey-heading-color: #686868;
 	}
 
 	.rating-label{
-	  float:right;
-	  padding:7px;
-	  label{
-	  	text-overflow: ellipsis;
-	  	overflow: hidden;
-	  	white-space: nowrap;
-	  	width:80px;
-	  }
+	  text-overflow: ellipsis;
+	  overflow: hidden;
+	  white-space: nowrap;
+	  width:160px;
 	}
 }
 
@@ -183,8 +178,8 @@ $survey-heading-color: #686868;
 }
 .survey-card{	
 	@include float(left);
-	width: 13%;
-	padding: 10px 0 0 0;
+	width: 12%;
+	padding: 10px 5px;
 	text-align:center;
 	vertical-align:middle;
 	height:50px;
@@ -265,7 +260,7 @@ $survey-heading-color: #686868;
 	}
 }
 
-@each $opt,$col in $options-color{
+@each $opt,$col in $survey-options-color{
 	#{'.'+$opt}{
 		background-color: #{$col};
 	}

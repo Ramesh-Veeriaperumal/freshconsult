@@ -19,8 +19,8 @@ var CollapseButton = function(element, options){
 	this.template = '<div class="btn-group" id="more-btn">' +
 						'<a class="btn dropdown-toggle" data-toggle="dropdown"> ' +  this.options.buttonText +
 							'<span class="caret"></span>' +
-						'</a>' + 
-						'<ul class="dropdown-menu" id="collapse-list" role="menu" style="display:none"></ul>' +
+						'</a>' +
+						'<ul class="dropdown-menu" id="collapse-list" role="menu" style="display:none" data-domhelper-name="more-collapse-list"></ul>' +
 					'</div>'
 
 	this.init();
