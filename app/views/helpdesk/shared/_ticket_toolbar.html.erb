@@ -26,7 +26,7 @@
           </a>
             <input id="close_ticket_btn" class="btn tooltip" title="<%= t('ticket.close_without_notification') %>"
                 onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);"
-                type="button" value="<%=t('close')%>" disabled="disabled">
+                type="button" value="<%=t('close')%>" disabled="disabled" data-domhelper-name="ticket-close-button">
           <% end %>
 
           <% if privilege?(:edit_ticket_properties) || privilege?(:reply_ticket) %>

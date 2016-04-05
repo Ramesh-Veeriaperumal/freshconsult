@@ -51,11 +51,11 @@ describe CompaniesController do
   end
 
   it "should update a company using the API" do
-    id = @account.companies.find_by_name(@comp.name).id
+    id = @comp.id
     fake_a_company
     put :update, (@params).merge!({ :id => id, :format => 'json' })
-    { :company => company_attributes(@account.companies.find(id), SKIPPED_KEYS) }.
-                                                                    should be_eql(@company_params)
+
+    company_attributes(@account.companies.find(id), SKIPPED_KEYS).should be_eql(@company_params[:company])
   end
 
   it "should delete a company using the API" do

@@ -17,6 +17,10 @@ module TicketsTestHelper
     ticket_pattern(ticket).except(:attachments, :conversations, :tags)
   end
 
+  def index_ticket_pattern_with_associations(ticket, requester=true)
+    ticket_pattern_with_association(ticket, false, false, requester, false).except(:attachments, :conversations, :tags)
+  end
+
   def index_deleted_ticket_pattern(ticket)
     index_ticket_pattern(ticket).merge(deleted: ticket.deleted.to_s.to_bool)
   end
@@ -30,12 +34,47 @@ module TicketsTestHelper
     ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
 
+  def ticket_pattern_with_association(ticket, limit=false, notes=true, requester=true, company=true)
+    result_pattern = ticket_pattern(ticket)
+    if notes 
+      notes_pattern = []
+      ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
+        notes_pattern << index_note_pattern(n)
+      end
+      notes_pattern = notes_pattern.take(10) if limit
+      result_pattern.merge!(conversations: notes_pattern.ordered!)
+    end
+    if requester
+      ticket.requester ? result_pattern.merge!(requester: requester_pattern(ticket.requester)) : result_pattern.merge!(requester: {})
+    end
+    if company
+      ticket.company ? result_pattern.merge!(company: company_pattern(ticket.company)) : result_pattern.merge!(company: {})
+    end
+    result_pattern
+  end
+
+  def requester_pattern(requester)
+    {
+      id: requester.id,
+      name: requester.name,
+      email: requester.email,
+      mobile: requester.mobile,
+      phone: requester.phone
+    }
+  end
+
+  def company_pattern(company)
+    {
+      id: company.id,
+      name: company.name
+    }
+  end
+
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
     custom_field = ticket.custom_field.map { |k, v| [TicketDecorator.display_name(k), v] }.to_h
     ticket_custom_field = (custom_field && ignore_extra_keys) ? custom_field.as_json.ignore_extra_keys! : custom_field.as_json
     description_html = format_ticket_html(ticket, expected_output[:description]) if expected_output[:description]
-    expected_tags = expected_output[:tags] ? expected_output[:tags].map(&:downcase) : nil
 
     {
       cc_emails: expected_output[:cc_emails] || ticket.cc_email[:cc_emails],
@@ -60,7 +99,7 @@ module TicketsTestHelper
       to_emails: expected_output[:to_emails] || ticket.to_emails,
       product_id:  expected_output[:product_id] || ticket.product_id,
       attachments: Array,
-      tags:  expected_tags || ticket.tag_names,
+      tags:  expected_output[:tags] || ticket.tag_names,
       custom_fields:  expected_custom_field || ticket_custom_field,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},

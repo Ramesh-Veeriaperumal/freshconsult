@@ -33,8 +33,8 @@
 		  </div>
 		  <%= hidden_field_tag "due_by_date_time" %>
 		  <div class="calender-buttons" id="calender-buttons">
-			<%= link_to_function( t('cancel'), "showHideDueByDialog(false)", :class => "uiButton small" ) %>
-			<%= f.submit t('save'), :class => "uiButton small" %>
+			<%= link_to_function( t('cancel'), "showHideDueByDialog(false)", :class => "uiButton small") %>
+			<%= f.submit t('save'), :class => "uiButton small", "data-domhelper-name" => "ticket-properties-update" %>
 			<span class="loading-item"></span>
 		  </div>
 		  <div id="calender-info" class="info-highlight" style="display:none;">

@@ -2,6 +2,11 @@
 	<div class="lead">
 			<%= surveysI18n.survey_feedback %>
 	</div>
+	<% if(hasLayoutCustomization){ %>
+		<p>
+	  	<%= surveysI18n.solution_article_link_text %>
+		</p>
+	<% } %>
 	<div class="control-group">
 		<label class="control-label"><%=thanks.title%></label>
 		<div class="">

@@ -18,8 +18,8 @@ class ForumsQueriesTest < ActionDispatch::IntegrationTest
 
       create: 20,
       show: 14,
-      update: 21,
-      destroy: 28,
+      update: 20,
+      destroy: 27,
       follow: 21,
       unfollow: 21,
       is_following: 13,

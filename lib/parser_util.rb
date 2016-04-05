@@ -95,15 +95,18 @@ module ParserUtil
     emails.map { |email| parse_email_text(email)[:email] }.join(", ") 
   end
 
-  def fetch_valid_emails(addresses)
+  def fetch_valid_emails(addresses, options = {})
     if addresses.is_a? String
       addresses = addresses.split(/,|;/)
     end
 
     return [] if addresses.blank?
-     
+
+    ignore_emails = options[:ignore_emails].to_a
+
     addresses = addresses.collect do |address|
       next if address.blank?
+ 
       address = address.gsub('"','')
 
       matches = address.strip.scan(/(\w[^<\>]*)<(\b[A-Z0-9.'_&%+-]+@[A-Z0-9.-]+\.[A-Z]{2,15}\b)\>\z|\A<!--?((\b[A-Z0-9.'_&%+-]+)@[A-Z0-9.-]+\.[A-Z]{2,15}\b)-->?\z/i)
@@ -123,20 +126,26 @@ module ParserUtil
           name = ""
         end
       end
-      if email.present? and name.present?
-        "#{name.gsub(/\./, ' ').strip} <#{email.downcase.strip}>".strip
-      elsif email.present?
-        email.downcase.strip
+
+      if email.present?
+        email = email.downcase.strip
+        next if ignore_emails.include?(email)
+
+        if name.present?
+          "#{name.gsub(/\./, ' ').strip} <#{email}>".strip
+        else
+          email
+        end
       end
     end
     addresses.compact.uniq
   end
 
-  def fetch_valid_emails_with_mail_parser(addresses)
-    parse_addresses(addresses)[:emails]
+  def fetch_valid_emails_with_mail_parser(addresses, options = {})
+    parse_addresses(addresses, options)[:emails]
   rescue Exception => e
     Rails.logger.debug "Exception when validating email list : #{addresses} : #{e.message} : #{e.backtrace}"
-    fetch_valid_emails_without_mail_parser(addresses)
+    fetch_valid_emails_without_mail_parser(addresses, options)
   end
   
   # possibly dead code validate_emails, extract_email, valid_email?

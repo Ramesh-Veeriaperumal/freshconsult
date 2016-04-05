@@ -105,6 +105,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       assert_response 201
       assert ticket.tags.count == 1
       assert ticket.cc_email[:cc_emails].count == 1
+      assert ticket.cc_email[:tkt_cc].count == 1
 
       put "/api/tickets/#{ticket.id}", { tags: nil }.to_json, @write_headers
       match_json([bad_request_error_pattern('tags', :datatype_mismatch, prepend_msg: :input_received, given_data_type: 'Null' , expected_data_type: Array)])
@@ -136,10 +137,11 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
   def test_custom_date_utc_format
     t = ticket
     time = Time.zone.now.in_time_zone('Chennai')
-    Helpdesk::Ticket.any_instance.stubs(:custom_field).returns(custom_date_1: time)
+    Helpdesk::Ticket.any_instance.stubs(:custom_field_via_mapping).returns('custom_date_1' => time)
 
     # without CustomFieldDecorator
     TicketDecorator.any_instance.stubs(:utc_format).returns(time)
+    FlexifieldDef.any_instance.stubs(:ff_alias_column_mapping).returns('custom_date_1' => 'custom_date')
     get "/api/v2/tickets/#{t.display_id}", nil, @write_headers
     parsed_response = JSON.parse(response.body)['custom_fields']
     assert_equal time.iso8601, parsed_response['custom_date']
@@ -150,7 +152,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     get "/api/v2/tickets/#{t.display_id}", nil, @write_headers
     parsed_response = JSON.parse(response.body)['custom_fields']
     assert_equal time.utc.iso8601, parsed_response['custom_date']
-    Helpdesk::Ticket.any_instance.unstub(:custom_field)
+    Helpdesk::Ticket.any_instance.unstub(:custom_field_via_mapping)
   end
 
   def test_updated_at_of_ticket_with_description_update

@@ -1,10 +1,10 @@
 <%
 	var trimTitle = function(title){
 		var unescaped_title = unescapeHtml(title);
-		if(unescaped_title && unescaped_title.length > 50){
-			unescaped_title =  unescaped_title.substring(0,50) + "...";
+		if(title && title.length > 50){
+			title =  title.substring(0,50) + "...";
 		}
-		return escapeHtml(unescaped_title).replace(/'/g, '&apos;');
+		return title;//escapeHtml(unescaped_title).replace(/'/g, '&apos;');
 	}
 %>
 <li>

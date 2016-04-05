@@ -24,7 +24,7 @@ RSpec.describe Freshfone::CallFlow do
   it 'should render non availability message if all users in the group are offline' do# failing in master
     group = create_group @account, {:name => "Freshfone Group"}
     call = create_freshfone_call
-    @freshfone_user.update_attributes(:presence => 0)
+    @account.freshfone_users.update_all(presence: Freshfone::User::PRESENCE[:offline])
     call_flow = Freshfone::CallFlow.new({:CallSid => call.call_sid}, @account, @number, @agent)
     
     twiml = twimlify call_flow.call_users_in_group(group.id)

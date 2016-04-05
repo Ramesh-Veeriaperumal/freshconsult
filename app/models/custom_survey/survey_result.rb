@@ -20,7 +20,11 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
   def custom_field_aliases
     @custom_field_aliases ||= custom_form.survey_questions.map(&:name)
   end
-    
+  
+  def to_liquid
+    @survey_result_drop ||= CustomSurvey::SurveyResultDrop.new self
+  end
+
   def update_result_and_feedback(params)
     feedback = survey_remark.feedback
     feedback_text = Helpdesk::HTMLSanitizer.plain(params[:feedback])
@@ -113,6 +117,23 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
     json[:rating] = question_rating question_column
     json
   end
+
+  def additional_questions
+      survey.feedback_questions.inject([]) do |question_details, question|
+        rating_value = survey_result_data[question.column_name]
+        choice = question.choices.find{ |choice| choice[:face_value] == rating_value }  
+        if choice.present?
+          rating = {
+            'question'    => question.label, 
+            'rating_class'      => CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[choice[:face_value]], 
+            'rating_text'    => choice[:value]
+          }
+          question_details.push(rating) 
+        else
+          question_details
+        end
+      end
+    end 
 
   private
 

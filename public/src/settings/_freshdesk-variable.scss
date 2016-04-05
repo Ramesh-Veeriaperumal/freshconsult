@@ -79,3 +79,16 @@ $font-class-name: "ficon-";
 
 $bg_color_ticket:						#9c5cb7;
 $bg_color_forum:						#e19c6d;
+
+// --------------------------------------------------
+// Custom Survey Colors
+// --------------------------------------------------
+$survey-options-color: (
+	strongly-disagree: #e7340f,
+	some-what-disagree: #ff8c00,
+	disagree: #ffc400,
+	satisfaction-neutral: #f1db15,
+	agree: #a9d340,
+	some-what-agree: #6bb437,
+	strongly-agree: #4e8d00);
+

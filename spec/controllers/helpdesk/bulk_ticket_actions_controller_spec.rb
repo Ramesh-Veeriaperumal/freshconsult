@@ -38,7 +38,7 @@ describe Helpdesk::BulkTicketActionsController do
     test_ticket1 = create_ticket({ :status => 2, :responder_id => @agent.id })
     test_ticket2 = create_ticket({ :status => 2, :responder_id => @agent.id })
     @request.env['HTTP_REFERER'] = 'sessions/new'
-    Resque.inline = true
+    Sidekiq::Testing.inline!
     put :update_multiple, { :helpdesk_note => { :note_body_attributes => { :body_html => "<p>bulk ticket update with reply and attachments</p>" },
                                                 :private => "0",
                                                 :user_id => @agent.id,
@@ -47,7 +47,7 @@ describe Helpdesk::BulkTicketActionsController do
       },
                             :ids => [test_ticket1.display_id, test_ticket2.display_id]
                           }
-    Resque.inline = false
+    Sidekiq::Testing.disable!
     test_ticket1.reload
     test_ticket2.reload
     tkt1_note = @account.tickets.find(test_ticket1.id).notes.last

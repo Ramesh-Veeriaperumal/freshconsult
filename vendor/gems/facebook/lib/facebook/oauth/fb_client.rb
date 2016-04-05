@@ -6,6 +6,8 @@ module Facebook
   module Oauth
     class FbClient
 
+      include Facebook::Exception::Handler
+      
       attr_accessor :fb_app_id, :fb_app_secret, :call_back_url, :oauth, :app_type
 
       REALTIME_BLOCK = Proc.new { |pages, oauth_access_token|
@@ -106,13 +108,12 @@ module Facebook
       end
 
       def profile_name(profile_id, fan_page)
-        begin
+        user = sandbox do
+          @fan_page = fan_page
           rest = Koala::Facebook::API.new(fan_page.access_token)
-          user = rest.get_object(profile_id).symbolize_keys
-          user_name = user ? "#{user[:first_name]} #{user[:last_name]}" : ""
-        rescue => e
-          return ""
+          rest.get_object(profile_id).symbolize_keys
         end
+        user ? "#{user[:first_name]} #{user[:last_name]}" : ""
       end
 
     end

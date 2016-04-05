@@ -268,17 +268,6 @@ RSpec.describe Helpdesk::Email::Process do
       ticket.spam.should eql true
 		end
 
-		it "with email commands" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
-			email[:from] = @agent.user.email
-			email["body-plain"] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email["body-plain"]
-			email["body-html"] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email["body-html"]
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.priority.should eql 2
-		end
-
 		it "with unknown email_config" do
 			email = new_mailgun_email({:email_config => "abcde234fg@localhost.freshpo.com"})
 			Helpdesk::Email::Process.new(email).perform
@@ -390,22 +379,6 @@ RSpec.describe Helpdesk::Email::Process do
 			Helpdesk::Email::Process.new(another).perform
 			ticket_incremented?(@ticket_size)
 			@account.notes.size.should eql @note_size
-		end
-
-		it "with email_commands" do
-			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email})
-			Helpdesk::Email::Process.new(email).perform
-			ticket = @account.tickets.last
-			another = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
-			another["subject"] = another["subject"]+" [##{ticket.display_id}]"
-			another[:from] = @agent.user.email
-			another["body-plain"] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+another["body-plain"]
-			another["body-html"] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+another["body-html"]
-			Helpdesk::Email::Process.new(another).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			@account.notes.size.should eql @note_size+1
-			ticket.priority.should eql 2
 		end
 
 		it "by span" do

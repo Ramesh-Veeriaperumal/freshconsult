@@ -33,6 +33,6 @@ private
     end
 
     def telephony
-      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number, current_call)
+      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number)
     end
 end

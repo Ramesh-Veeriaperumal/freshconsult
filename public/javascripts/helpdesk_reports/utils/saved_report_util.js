@@ -13,7 +13,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		    saved_report_names : [],
 		    bindEvents : function() {
 
-		    	jQuery(document).on('click',"#save_filter",function(){
+		    	jQuery(document).on('click.save_reports',"#save_filter",function(){
 		    		jQuery("#report-dialog-save .unavailable_field").addClass('hide');
 		     	    jQuery("#report-dialog-save .missing_field").addClass('hide');
 		    		//Set the value of input field
@@ -22,7 +22,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		    		jQuery("#filter_name_save").val(current_title);
 		    	});
 
-		    	jQuery(document).on('click',"#edit_filter",function(){
+		    	jQuery(document).on('click.save_reports',"#edit_filter",function(){
 		    		jQuery("#report-dialog-edit .unavailable_field").addClass('hide');
 		     	    jQuery("#report-dialog-edit .missing_field").addClass('hide');
 		    		//Set the value of input field
@@ -31,7 +31,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		    	});
 
 		    	//Saved Reports
-		        jQuery(document).on('click',"#report-dialog-save-submit",function() {  
+		        jQuery(document).on('click.save_reports',"#report-dialog-save-submit",function() {  
 
 		        	var field_val = jQuery("#filter_name_save").val().trim();   
 		         	if(field_val == "") {
@@ -49,7 +49,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		          	}
 		        });
 
-		        jQuery(document).on('click',"#report-dialog-edit-submit",function() {  
+		        jQuery(document).on('click.save_reports',"#report-dialog-edit-submit",function() {  
 
 		        	var field_val = jQuery("#filter_name_edit").val().trim();   
 		         	if( field_val == "") {
@@ -67,20 +67,20 @@ HelpdeskReports.SavedReportUtil = (function() {
 		          	}
 		        });
 
-		        jQuery(document).on('click',"#report-dialog-delete-submit",function() {  
+		        jQuery(document).on('click.save_reports',"#report-dialog-delete-submit",function() {  
 		        		 _FD.deleteSavedReport();
 		        		jQuery("#report-dialog-delete-cancel").click();
 		        });
 
-		        jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="update-saved-report"]', function () {
+		        jQuery('#reports_wrapper').on('click.save_reports', '[data-action="update-saved-report"]', function () {
 		            _FD.updateSavedReport(false);
 		        });
 
-		        jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="discard-changes"]', function () {
+		        jQuery('#reports_wrapper').on('click.save_reports', '[data-action="discard-changes"]', function () {
 		            _FD.discardChangesMadeToFilter();
 		        });
 
-		        jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="select-saved-report"]', function () {
+		        jQuery('#reports_wrapper').on('click.save_reports', '[data-action="select-saved-report"]', function () {
 		           var index = jQuery(this).attr('data-index');
 		           jQuery('#loading-box').show();
 		           setTimeout(function(){
@@ -646,7 +646,8 @@ HelpdeskReports.SavedReportUtil = (function() {
 	            }
 	    	},
 		    escapeString : function(name) {
-	    		return name != undefined ? escapeHtml(name).replace(/'/g, '&apos;') : name;
+	    		//return name != undefined ? escapeHtml(name).replace(/'/g, '&apos;') : name;
+	    		return name;
 	    	},
 	    	/* Used for identifying index from cached id */
 	    	getDataIndex : function(id){

@@ -4,6 +4,8 @@ class ContactsController < ApplicationController
    include HelpdeskControllerMethods
    include ExportCsvUtil
    include UserHelperMethods
+   include Redis::RedisKeys
+   include Redis::OthersRedis
 
    before_filter :redirect_to_mobile_url
    before_filter :clean_params, :only => [:update, :update_contact, :update_description_and_tags]
@@ -168,9 +170,14 @@ class ContactsController < ApplicationController
 
   def export_csv
     portal_url = main_portal? ? current_account.host : current_portal.portal_url
-    Resque.enqueue(Workers::ExportContact, {:csv_hash => params[:export_fields], 
+    export_worker_params = {:csv_hash => params[:export_fields], 
                                             :user => current_user.id, 
-                                            :portal_url => portal_url})
+                                            :portal_url => portal_url}
+    if redis_key_exists?(EXPORT_SIDEKIQ_ENABLED)
+      Export::ContactWorker.perform_async(export_worker_params)
+    else
+      Resque.enqueue(Workers::ExportContact, export_worker_params)
+    end
     flash[:notice] = t(:'contacts.export_start')
     redirect_to :back
   end

@@ -18,6 +18,7 @@ helpdesk:
     - aws/sns
     - aws/sqs
     - aws/swf
+    - aws/cloud_watch
     - aws_forums
     - belongs_to_account
     - chat_config

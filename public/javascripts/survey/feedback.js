@@ -37,7 +37,7 @@ var Feedback = {
 			}
 		}
 		if(isCommentable){
-			params["feedback"] = jQuery("input[name=feedback]").val();
+			params["feedback"] = jQuery("textarea[name=feedback]").val();
 		}
 		params["custom_field"] = custom_fields;
 		return params;

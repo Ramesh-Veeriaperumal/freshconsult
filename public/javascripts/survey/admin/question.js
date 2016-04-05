@@ -4,20 +4,19 @@
 var SurveyQuestion = {
 	name_prefix: "Q",
 	items:[],
+	removeFlag: false,
 	id_prefix: "survey_question",
 	newFormat:function(field,index,choices){
 		var question_format = {
 				 name: "Q"+(index+1),
 				 type: "survey_radio",
 				 field_type: "custom_survey_radio",
-				 label: "",
 				 id: null,
-				 choices: [],
-				 action:"create"
+				 action:"create",
+				 default: false,
+				 custom_field_choices_attributes: JSON.parse(SurveyJSON.stringify(choices)),
+				 label: field.value
 		};
-		question_format.choices = choices;
-		question_format.label = field.value;
-		question_format.choiceMap = field.choiceMap;
 		return question_format;
 	},
 	existingFormat:function(survey_questions,field,choices){
@@ -25,12 +24,56 @@ var SurveyQuestion = {
 			if(field.id == survey_questions[i].id){
 				survey_questions[i].label = field.value;
 				survey_questions[i].action = "update";
-				survey_questions[i].choices = choices;
+				survey_questions[i].default = false;
+				survey_questions[i].custom_field_choices_attributes = JSON.parse(SurveyJSON.stringify(choices));
+				survey_questions[i].choiceMap = jQuery(field).data('choicemap');
 				return survey_questions[i];
 			}
 		}
 	},
-	survey_id: '',
+	deletedFormat:function(id){
+		var deleted_format = {
+			id:parseInt(id),
+			action: "delete"
+		};
+		return deleted_format;
+	},
+	defaultFormat: function(default_question){
+		var default_format = {
+				 type: "survey_radio",
+				 field_type: "custom_survey_radio",
+				 label: default_question.link_text,
+				 id: jQuery(default_question.id).length > 0 ? parseInt(jQuery(default_question.id).val()) : null,
+				 custom_field_choices_attributes: default_question.choices,
+				 action: jQuery(default_question.id).length > 0 ? "update" : "create",
+				 default: true,
+				 choiceMap: default_question.choicemap
+		};
+		return default_format;
+	},
+	formatChoices:function(questions_format){
+		var position = 1;
+		_.each(questions_format, function(question){
+			question.position = position++;
+			if(question.action == "update"){
+				var choiceMap = jQuery.extend({},question.choiceMap);
+				_.each(question.custom_field_choices_attributes, function(choice){
+					if(choiceMap[choice.face_value]){
+						choice.id = choiceMap[choice.face_value];
+						delete choiceMap[choice.face_value];
+					}
+				});
+				_.each(choiceMap, function(deleted_id){
+					question.custom_field_choices_attributes.push({id: deleted_id, _destroy: true});
+				});
+			}
+			_.each(["choices","name", "deleted"], function(attr){
+				delete question[attr];
+			});
+		});
+		return questions_format;
+	},
+	survey_id: null,
 	hideOptions:function(view){
 		jQuery("div#survey_rating_choice").hide();
 		jQuery("a#question-cancel").hide();
@@ -70,8 +113,9 @@ var SurveyQuestion = {
 		if(view){
 			SurveyQuestion.survey_id = view.id;
 		}else{
-			SurveyQuestion.survey_id = '';
+			SurveyQuestion.survey_id = null;
 		}
+		SurveyQuestion.removeFlag = false;
 		view = view || SurveyProtocol.currentView;
 		if(view.questions.list.length==0 || jQuery("div#survey_questions").css('display')!="none"){return;}
 		jQuery("div#survey_questions").html("");
@@ -120,7 +164,7 @@ var SurveyQuestion = {
 				SurveyProtocol.content.questions.count = jQuery('div#survey_question_set .question').length;
 			}
 		});
-		if(SurveyQuestion.survey_id != '' && questionId){
+		if(SurveyQuestion.survey_id && questionId){
 			SurveyQuestion.items.push(questionId);
 		}
 		if(SurveyProtocol.content.questions.count < SurveyProtocol.content.questions.limit){
