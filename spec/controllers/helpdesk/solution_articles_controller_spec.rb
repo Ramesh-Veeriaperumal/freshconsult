@@ -225,6 +225,140 @@ describe Solution::ArticlesController do
     expect(response).to redirect_to(solution_folder_path(test_article_meta.solution_folder_meta_id))
   end
 
+  it "should render article properties form" do
+    xhr :get, :properties, :id => @test_article_meta.id
+    response.should render_template(["solution/articles/properties", "/solution/articles/_articles_properties_form"])
+  end
+
+  it "should render voted users list" do
+    test_article = @test_article_meta.primary_article
+    test_article.votes.build(:vote => 1, :user_id => @user.id)
+    test_article.votes.build(:vote => 0, :user_id => @user_1.id)
+    test_article.save
+    xhr :get, :voted_users, :id => @test_article_meta.id, :language_id => test_article.language_id
+    response.should render_template("solution/articles/voted_users")
+    expect(controller.instance_variable_get("@article").votes).to eq(@test_article_meta.primary_article.votes)
+  end
+
+  describe "Outdated/Uptodate" do
+    before(:all) do
+      enable_multilingual
+      @account.make_current
+      @category_meta = create_category
+      @folder_meta = create_folder({:visibility => 1, :category_id => @category_meta.id})
+      @article_lang_ver = @account.supported_languages_objects.first.to_key
+      @another_lang_ver = @account.supported_languages_objects.last.to_key
+      params = create_solution_article_alone(solution_default_params(:article, :title).merge({
+                :folder_id => @folder_meta.id,
+                :lang_codes => [@article_lang_ver, @another_lang_ver, :primary]
+               }))
+      @article_meta = Solution::Builder.article(params)
+      @article_translation = @article_meta.send("#{@article_lang_ver}_article")
+    end
+
+    it "should mark other translations as outdated" do
+      xhr :put, :mark_as_outdated, :item_id => @article_meta.id
+      @article_meta.reload
+      @article_meta.send("#{@article_lang_ver}_outdated?").should eql true
+      @article_meta.send("#{@another_lang_ver}_outdated?").should eql true
+    end
+
+    it "should mark current translation as uptodate" do
+      xhr :put, :mark_as_outdated, :item_id => @article_meta.id
+      xhr :put, :mark_as_uptodate, :item_id => @article_meta.id, :language_id => @article_translation.language_id
+      @article_meta.reload
+      @article_meta.send("#{@article_lang_ver}_outdated?").should eql false
+      @article_meta.send("#{@another_lang_ver}_outdated?").should eql true
+    end
+  end
+
+  describe "Translate parents" do
+
+    before(:all) do
+      enable_multilingual
+      @account.make_current
+      @category_meta = create_category
+      @folder_meta = create_folder({:visibility => 1, :category_id => @category_meta.id})
+      @article_meta = create_article({:folder_id => @folder_meta.id, :art_type => 1})
+    end
+
+    it "should create category & folder translation" do
+      language = @account.supported_languages_objects.first
+      xhr :put, :translate_parents, 
+        :id => @article_meta.id,
+        :language => language.code,
+        :solution_category_meta => {
+          "#{language.to_key}_category" => {
+            :name => "#{Faker::Name.name} #{(Time.now.to_f*1000).to_i.to_s}"
+          },
+          :id => @category_meta.id
+        },
+        :solution_folder_meta => {
+          "#{language.to_key}_folder" => {
+            :name => "#{Faker::Name.name} #{(Time.now.to_f*1000).to_i.to_s}"
+          },
+          :id => @folder_meta.id
+        }
+      @category_meta.reload
+      @folder_meta.reload
+      @category_meta.send("#{language.to_key}_available?").should eql true
+      @folder_meta.send("#{language.to_key}_available?").should eql true
+    end
+
+    it "should create category translation" do
+      language = @account.supported_languages_objects.last
+      xhr :put, :translate_parents, 
+        :id => @article_meta.id,
+        :language => language.code,
+        :solution_category_meta => {
+          "#{language.to_key}_category" => {
+            :name => "#{Faker::Name.name} #{(Time.now.to_f*1000).to_i.to_s}"
+          },
+          :id => @category_meta.id
+        }
+      @category_meta.reload
+      @category_meta.send("#{language.to_key}_available?").should eql true
+    end
+
+    it "should create folder translation" do
+      language = @account.supported_languages_objects.last
+      xhr :put, :translate_parents, 
+        :id => @article_meta.id,
+        :language => language.code,
+        :solution_folder_meta => {
+          "#{language.to_key}_folder" => {
+            :name => "#{Faker::Name.name} #{(Time.now.to_f*1000).to_i.to_s}"
+          },
+          :id => @folder_meta.id
+        }
+      @folder_meta.reload
+      @folder_meta.send("#{language.to_key}_available?").should eql true
+    end
+  end
+
+  describe "Show master" do
+    before(:all) do
+      enable_multilingual
+      @account.make_current
+      @category_meta = create_category
+      @folder_meta = create_folder({:visibility => 1, :category_id => @category_meta.id})
+      @article_meta = create_article({:folder_id => @folder_meta.id, :art_type => 1})
+      @article_meta.primary_article.create_draft_from_article({:title => "Draft for publish #{Faker::Name.name}", :description => "Desc 1 : #{Faker::Lorem.sentence(4)}"})
+    end
+
+    it "should render popover content with published version content" do
+      put :show_master, :id => @article_meta.id, :published => "true"
+      response.should render_template("solution/articles/_popover_content")
+      expect(controller.instance_variable_get("@item")).to eq(@article_meta.primary_article)
+    end
+
+    it "should render popover content with draft version content" do
+      put :show_master, :id => @article_meta.id, :published => "false"
+      response.should render_template("solution/articles/_popover_content")
+      expect(controller.instance_variable_get("@item")).to eq(@article_meta.draft)
+    end
+  end
+
   describe "Modified at column" do
     before(:each) do
       name = "#{Faker::Name.name} #{(Time.now.to_f*1000).to_i.to_s}"

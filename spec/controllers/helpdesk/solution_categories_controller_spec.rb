@@ -185,4 +185,15 @@ describe Solution::CategoriesController do
     response.should redirect_to(solution_my_drafts_path('all'))
   end
 
+  it "should render all categories list" do 
+    get :all_categories, :portal_id => @account.main_portal.id
+    response.should render_template("solution/categories/all_categories")
+    expect(controller.instance_variable_get("@categories")).to eq(@account.main_portal.solution_category_meta.reject(&:is_default))
+  end
+
+  it "should render navmenu" do
+    xhr :get, :navmenu
+    response.should render_template "/solution/shared/_navmenu_content"
+  end
+
 end
