@@ -157,10 +157,12 @@ RSpec.describe Freshfone::CallHistoryController do
     end
 
     it 'should export call records with their children' do
+      @account.freshfone_calls.delete_all
       create_call_family
-      @account.freshfone_calls.each do |call| # Because call hist export skips ongoing calls
-        call.update_attributes( { :call_status => Freshfone::Call::CALL_STATUS_STR_HASH['completed'] })
-      end
+      @parent_call.update_attributes!( { :call_status => Freshfone::Call::CALL_STATUS_STR_HASH['completed'] })
+      @parent_call.children.last.update_attributes!( { :call_status => Freshfone::Call::CALL_STATUS_STR_HASH['completed'] })
+      @parent_call.reload
+      @parent_call.children.last.reload
       Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker.new(@export_params).perform
       files = Dir.glob(@out_dir + '/*.csv')
       files.first.should_not be_blank

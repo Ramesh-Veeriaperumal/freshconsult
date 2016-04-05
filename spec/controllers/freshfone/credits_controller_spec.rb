@@ -11,8 +11,11 @@ describe Admin::Freshfone::CreditsController do
   end
 
   it 'redirect to subscription url on successfull credit purchase' do
+    @credit.reload
     recharged_credit = @credit.available_credit.to_f + 500
     Billing::Subscription.any_instance.stubs(:purchase_freshfone_credits).returns(true)
+    @account.subscription.currency = Subscription::Currency.find_by_name('USD')
+    @account.subscription.save
     post :purchase, {:credit => 500}
     Account.first.freshfone_credit.available_credit.to_f.should eql(recharged_credit)
     response.should redirect_to subscription_url
