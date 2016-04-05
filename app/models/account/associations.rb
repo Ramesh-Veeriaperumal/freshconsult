@@ -286,6 +286,8 @@ class Account < ActiveRecord::Base
   has_many :solution_customer_folders, :class_name => "Solution::CustomerFolder"
 
   has_many :sections, :class_name => 'Helpdesk::Section', :dependent => :destroy
+  has_many :section_fields_with_field_values_mapping, :class_name => 'Helpdesk::SectionField', 
+            :include => [:parent_ticket_field, :section => {:section_picklist_mappings => :picklist_value}]
   has_many :section_fields, :class_name => 'Helpdesk::SectionField', :dependent => :destroy
 
   has_many :subscription_invoices

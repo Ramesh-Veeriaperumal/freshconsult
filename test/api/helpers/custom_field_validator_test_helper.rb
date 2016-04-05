@@ -1,11 +1,15 @@
 class CustomFieldValidatorTestHelper
-  attr_accessor :id, :nested_fields_choices_by_name, :account_id, :name, :label, :label_in_portal, :description, :active, :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, :required_for_closure, :flexifield_def_entry_id, :created_at, :updated_at, :field_options, :default, :level, :parent_id, :prefered_ff_col, :import_id
+  attr_accessor :id, :section_field, :nested_fields_choices_by_name, :account_id, :name, :label, :label_in_portal, :description, :active, :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, :required_for_closure, :flexifield_def_entry_id, :created_at, :updated_at, :field_options, :default, :level, :parent_id, :prefered_ff_col, :import_id
 
   NESTED_CHOICES = { 'country_1' => { '...' => {}, 'Usa' => { 'california' =>  ['los angeles', 'san fransico', 'san diego'] }, 'india' => { 'tamil nadu' => ['chennai', 'trichy'], 'kerala' => [], 'andra pradesh' => ['hyderabad', 'vizag'] } },
                      'first_1' =>  { 'category 1' => { 'subcategory 1' => ['abc', 'def'], 'subcategory 2' => ['mno', 'pqr'], 'subcategory 3' => [] }, 'category 2' => { 'subcategory 1' => ['123', '456'] } } }
 
   def initialize(params = {})
     params.each { |key, value| instance_variable_set("@#{key}", value) }
+  end
+
+  def section_field?
+    section_field
   end
 
   class << self
@@ -54,6 +58,27 @@ class CustomFieldValidatorTestHelper
       ]
     end
 
+    def section_field_parent_field_mapping_for_data_type
+      {
+        11=>{"ticket_type"=>["Incident", "Lead", "Question"], "priority" =>[2, 3]}, 
+        12=>{"ticket_type"=>["Question"]}, 
+        28=>{"ticket_type"=>["Question"]},
+        43=>{"priority" => [2]},
+        27=>{"status" => [2]},
+        39=>{"priority" =>[3]},
+        18=>{"ticket_type" => ["Lead"]},
+        24=>{"ticket_type" =>["Incident"]}
+      }
+    end
+
+    def section_field_parent_field_mapping_for_choices
+      {
+        17=>{"ticket_type"=>["Incident", "Lead", "Question"], "priority" =>[2, 3]}, 
+        13=>{"ticket_type"=>["Question"]}, 
+        20=>{"ticket_type"=>["Question"]}
+      }
+    end
+
     def required_choices_validatable_custom_fields
       choices_validatable_custom_fields.each { |x| x.required = true }
     end
@@ -69,6 +94,23 @@ class CustomFieldValidatorTestHelper
     def required_closure_data_type_validatable_custom_fields
       data_type_validatable_custom_fields.each { |x| x.required_for_closure = true }
     end
+
+    def section_field_for_data_type
+      data_type_validatable_custom_fields.each {|x| x.section_field = true }
+    end
+
+    def section_field_for_choices
+      choices_validatable_custom_fields.each {|x| x.section_field = true }
+    end
+
+    def section_field_for_data_type_required
+      section_field_for_data_type.each {|x| x.required = true }
+    end
+
+    def section_field_for_choices_required
+      section_field_for_choices.each {|x| x.required = true }
+    end
+
 
     def dropdown_choices_by_field_name
       { dropdown2_1: %w(first11 second22 third33 four44), dropdown1_1: ['1st', '2nd'], dropdown3_1: ['first', 'second'], dropdown4_1: ['third', 'fourth'] }.stringify_keys

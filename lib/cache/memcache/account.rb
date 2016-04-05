@@ -128,6 +128,14 @@ module Cache::Memcache::Account
     end
   end
 
+
+  def section_fields_with_field_values_mapping_cache
+    key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.id }
+    MemcacheKeys.fetch(key) do
+      section_fields_with_field_values_mapping.all
+    end
+  end
+
   def observer_rules_from_cache
     key = ACCOUNT_OBSERVER_RULES % { :account_id => self.id }
     MemcacheKeys.fetch(key) do

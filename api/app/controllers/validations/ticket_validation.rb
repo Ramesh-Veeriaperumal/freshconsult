@@ -72,7 +72,8 @@ class TicketValidation < ApiValidation
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required,
-                                ignore_string: :allow_string_param
+                                ignore_string: :allow_string_param,
+                                section_field_mapping: proc{ |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
                            }
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
