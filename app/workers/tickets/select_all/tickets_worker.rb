@@ -6,13 +6,19 @@ class Tickets::SelectAll::TicketsWorker
   sidekiq_options :queue => 'select_all_tickets', :retry => 0, :dead => true,
                 :failures => :exhausted
 
+  class InvalidBatchError < StandardError
+  end
+
   def perform(ticket_ids, user_id, params)
     @account = Account.current
-    Thread.current[:skip_round_robin] = true
     user = @account.all_users.find_by_id(user_id)
-    user.make_current 
+    user.make_current
+    raise InvalidBatchError unless valid_within_batch?
+    Thread.current[:skip_round_robin] = true
     disable_notification(@account)
     perform_desired_action(ticket_ids, params)
+  rescue InvalidBatchError => e
+    raise e
   rescue => e
     NewRelic::Agent.notice_error(e, {
       :custom_params => {

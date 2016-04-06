@@ -12,6 +12,21 @@ class Tickets::SelectAll::BatcherWorker < BaseWorker
   MAX_TIME_INTERVAL = 2.hours
   MIN_TIME_INTERVAL = 30.minutes
 
+  def cancel_select_all_job(account_id)
+    Sharding.select_shard_of(account_id) do
+      Account.find_by_id(account_id).make_current
+      redis_val = bulk_action_redis_value
+      return unless redis_val.present?
+      bid = redis_val["batches"].split("||").last
+      return unless bid.present?
+      batch = Sidekiq::Batch.new(bid)
+      batch.invalidate_all
+      remove_others_redis_key(bulk_action_redis_key)
+    end
+  ensure
+    Account.reset_current_account
+  end
+
   def perform(params, account_id, user_id, start_id = nil)
     Sharding.select_shard_of(account_id) do
       @account = Account.find(account_id).make_current
@@ -81,13 +96,13 @@ class Tickets::SelectAll::BatcherWorker < BaseWorker
       tkt_batch
     end
 
-    def job_complete_callback(status, options)
+    def job_success_callback(status, options)
       redis_val = get_others_redis_hash(options['batch_redis_key'])
       remove_others_redis_key(options['batch_redis_key'])
       Admin::BulkActionsMailer.bulk_actions_email(redis_val) unless (Rails.env.development? or Rails.env.test?)
     end
 
-    def batch_complete_callback(status, options)
+    def batch_success_callback(status, options)
       next_batch_schedule_time = MAX_TIME_INTERVAL - (Time.now.utc - options['current_time'].to_time).to_i
 
       next_batch_schedule_time = MIN_TIME_INTERVAL if next_batch_schedule_time < MIN_TIME_INTERVAL
@@ -102,8 +117,8 @@ class Tickets::SelectAll::BatcherWorker < BaseWorker
 
     def spawn_next_batch_if_needed(params, ticket_batches)
       if tickets_limit_reached?
-        @sidekiq_batch.on(:complete, 
-          "Tickets::SelectAll::BatcherWorker#batch_complete_callback", { 
+        @sidekiq_batch.on(:success,
+          "Tickets::SelectAll::BatcherWorker#batch_success_callback", {
             'account_id' => @account.id,
             'user_id' => @user.id,
             'params' => params,
@@ -111,8 +126,8 @@ class Tickets::SelectAll::BatcherWorker < BaseWorker
             'current_time' => Time.now.utc
         })
       else
-        @sidekiq_batch.on(:complete, 
-          "Tickets::SelectAll::BatcherWorker#job_complete_callback", 
+        @sidekiq_batch.on(:success,
+          "Tickets::SelectAll::BatcherWorker#job_success_callback",
           'batch_redis_key' => bulk_action_redis_key
         )
       end
