@@ -17,8 +17,8 @@ module Social
       Koala.config.api_version = "v2.2" 
       account = Account.current
       if msg and msg['fb_page_id']
-        fan_page = account.facebook_pages.find(msg['fb_page_id'])
-        fetch_from_fb fan_page
+        fan_page = account.facebook_pages.find_by_id(msg['fb_page_id'])
+        fetch_from_fb fan_page if fan_page
       else
         fb_pages = account.facebook_pages.valid_pages
         fb_pages.each do |fan_page|

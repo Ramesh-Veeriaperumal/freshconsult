@@ -7,8 +7,8 @@ module Social
     def perform(args = nil)
       account = Account.current
       if args and args['twt_handle_id']
-        twt_handle = account.twitter_handles.find(args['twt_handle_id'])
-        fetch_direct_msgs twt_handle if twt_handle.capture_dm_as_ticket
+        twt_handle = account.twitter_handles.find_by_id(args['twt_handle_id'])
+        fetch_direct_msgs twt_handle if twt_handle && twt_handle.capture_dm_as_ticket
       else
         return if account.twitter_handles.empty?
         twitter_handles = account.twitter_handles.active
