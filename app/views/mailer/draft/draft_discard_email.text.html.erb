@@ -5,7 +5,7 @@
 	<div class="mail_content">
 		<b>The draft version of the article
 		<%= link_to "\"#{@draft[:title]}\"", 
-					solution_article_url(@article.id, :host => @host)%>
+					solution_article_url(@article, :host => @host)%>
 		 was discarded by <%= link_to(@user.name, contact_url(@user.id, :host => @host)) %> on <%= Time.zone.now.strftime("%a, %d %b %Y at %H:%M %p") %> .
 	</div>
 
@@ -20,7 +20,7 @@
 		<br>
 	</div>
 	<div class="footer">
-		<%= link_to("View article", solution_article_url(@article.id, :host => @host), :class => "reply") %>
+		<%= link_to("View article", solution_article_url(@article, :host => @host), :class => "reply") %>
 	</div>
 	<br>
 	<br>
