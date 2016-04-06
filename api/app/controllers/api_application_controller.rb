@@ -3,6 +3,7 @@ class ApiApplicationController < MetalApiController
   # do not change the exception order # standard error has to have least priority hence placing at the top.
   rescue_from StandardError, with: :render_500
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
+  rescue_from ShardNotFound, with: :record_not_found
   rescue_from DomainNotReady, with: :route_not_found
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
@@ -21,7 +22,6 @@ class ApiApplicationController < MetalApiController
   # App specific Before filters Starts
   # All before filters should be here. Should not be moved to concern. As the order varies for API and Web
   around_filter :select_shard
-  before_filter :current_shard # should happen first within around filter.
   prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_shard_for_payload
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
@@ -152,8 +152,7 @@ class ApiApplicationController < MetalApiController
 
     def record_not_found(e)
       # Render 404 if domain is not present else 500.
-      # our locally cached current_shard will be nil if specific domain doesn't belongs to any shards
-      if current_shard.nil?
+      if e.is_a?(ShardNotFound)
         Rails.logger.error("API V2 request for invalid host. Host: #{request.host}")
         head 404
       else
@@ -161,13 +160,6 @@ class ApiApplicationController < MetalApiController
         Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
         render_base_error(:internal_error, 500)
       end
-    end
-
-    # Caching current_shard_selection in local instance variable to find out domain not found error.
-    # As exception ensures connection to be switched to initial shard.
-    def current_shard
-      return @current_shard if defined?(@current_shard)
-      @current_shard ||= Thread.current[:shard_selection].try(:shard)
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
@@ -489,7 +481,7 @@ class ApiApplicationController < MetalApiController
     def set_current_account # this method is redefined because of api_current_user
       current_account.make_current
       User.current = api_current_user
-    rescue ActiveRecord::RecordNotFound
+    rescue ActiveRecord::RecordNotFound, ShardNotFound
       Rails.logger.error("API V2 request for invalid account. Host: #{request.host}")
       head 404
     rescue ActiveSupport::MessageVerifier::InvalidSignature # Authlogic throw this error if signed_cookie is tampered.
