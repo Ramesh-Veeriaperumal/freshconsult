@@ -133,7 +133,7 @@ class Search::AutocompleteController < ApplicationController
                       :id => current_account.kbase_email, 
                       :value => "",
                       :details => current_account.kbase_email
-                    }) if params[:q] =~ /(kb[ase]?.*)/
+                    }) if current_account.kbase_email.start_with?(params[:q])
       return requesters
 
     end
