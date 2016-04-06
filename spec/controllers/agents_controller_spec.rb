@@ -341,6 +341,28 @@ describe AgentsController do
     Delayed::Job.last.handler.should include("#{@account.name}: #{new_user.name} was deleted")
   end
 
+  context "when an agent is converted to contact and contact has password policy enabled" do 
+    it "should set the password expiry of the user to grace period" do
+      new_user = add_test_agent(@account)
+      @request.env['HTTP_REFERER'] = 'sessions/new'
+      put :convert_to_contact, :id => new_user.agent.id
+      contact =  @account.users.find(new_user.id)
+      contact.password_expiry.to_s.should == ((Time.now.utc + FDPasswordPolicy::Constants::GRACE_PERIOD).to_s)
+    end
+  end
+
+  context "when an agent is converted to contact and contact has password policy as none" do 
+    it "should set the password expiry of the user to NEVER" do
+      @account.contact_password_policy.destroy
+      new_user = add_test_agent(@account)
+      @request.env['HTTP_REFERER'] = 'sessions/new'
+      put :convert_to_contact, :id => new_user.agent.id
+
+      contact = @account.users.find(new_user.id)
+      contact.password_expiry.to_date.to_s.should == ((Time.now.utc + FDPasswordPolicy::Constants::NEVER.to_i.days).to_date.to_s)
+    end
+  end
+
   it "should restrict_current_user to convert a full time agent to a customer" do
     user = add_test_agent(@account)
     user.deleted = true
