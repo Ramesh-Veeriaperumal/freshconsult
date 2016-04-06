@@ -42,6 +42,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
+  zero_downtime_migration_methods :methods => {:remove_columns => [ "description", "description_html"] }
+  
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, 
