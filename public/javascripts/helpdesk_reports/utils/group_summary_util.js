@@ -21,7 +21,7 @@ HelpdeskReports.ReportUtil.GroupSummary = (function () {
         getTicketListTitle : function(el){
 
             var metric_name = jQuery(el).data("metric-name");
-            var metric_value = jQuery(el).html();
+            var metric_value = jQuery(el).data("order");
             var metric_title = jQuery(".summary-table .title [data-metric-title='" + metric_name +"']").html();
             var group_id = jQuery(el).data("group-id");
             var group_name = jQuery("[data-group-id='" + group_id + "']" ).html(); 

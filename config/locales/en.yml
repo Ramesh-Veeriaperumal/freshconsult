@@ -7507,6 +7507,8 @@ en:
     view_all_tickets: View all tickets
     view_all_compliant_tickets: View all compliant tickets
     view_all_violated_tickets: View all violated tickets
+    export_exceeds_row_limit_msg: "- The report has been truncated to show %{row_max_limit} records -"
+    average_interactions: "( Average %{count} )"
     saved_report: 
       title: Report Title
       dialog_header: Save as
@@ -7633,6 +7635,9 @@ en:
         violated: 'Violated: %{percent_of_tickets}'
         total_tickets_received: 'Total tickets received : %{count}'
         total_tickets_resolved: 'Total tickets resolved : %{count}'
+        reopened_tickets:
+          one: "%{ticket_count} tickets with %{reopen_count} reopen"
+          other: "%{ticket_count} tickets with %{reopen_count} reopens"
       tickets: tickets
       source: source
       priority: priority
