@@ -132,15 +132,20 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     items.each do |item|
       record = []
       headers.each do |val|
-        data = export_params[:archived_tickets] ? fetch_field_value(item, val) : item.send(val)
-        if data.present?
-          if DATE_TIME_PARSE.include?(val.to_sym)
-            data = parse_date(data)
-          elsif custom_field_names.include?(val) && data.is_a?(Time)
-            data = data.utc.strftime(date_format)
+        begin
+          data = export_params[:archived_tickets] ? fetch_field_value(item, val) : item.send(val)
+          if data.present?
+            if DATE_TIME_PARSE.include?(val.to_sym)
+              data = parse_date(data)
+            elsif custom_field_names.include?(val) && data.is_a?(Time)
+              data = data.utc.strftime(date_format)
+            end
           end
+          record << escape_html(data)
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e,{:custom_params => {:ticket_id => item.id }})
+          Rails.logger.info "Exception in tickets export::: Ticket:: #{item}, data:: #{data}"
         end
-        record << escape_html(data)
       end
       @records << record
     end
