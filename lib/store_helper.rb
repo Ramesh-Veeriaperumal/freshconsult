@@ -4,8 +4,8 @@
 
 module StoreHelper
 	def get_store_data
-		@agents_list ||= current_account.agents_from_cache.inject([]) do |res,agent|
-			res << {:id => agent.user.id, :name => agent.user.name}
+		@agents_list ||= current_account.agents_details_from_cache.inject([]) do |res,agent|
+			res << {:id => agent.id, :name => agent.name}
 		end
 
 		@groups_list ||= current_account.groups_from_cache.inject([]) do |res,group|

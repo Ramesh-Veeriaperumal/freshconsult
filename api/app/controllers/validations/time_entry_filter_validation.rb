@@ -14,7 +14,7 @@ class TimeEntryFilterValidation < FilterValidation
   end
 
   def valid_user?
-    user = Account.current.agents_from_cache.detect { |x| x.user_id == @agent_id.to_i }
+    user = Account.current.agents_details_from_cache.detect { |x| x.id == @agent_id.to_i }
     errors[:agent_id] << :"can't be blank" unless user
   end
 

@@ -46,7 +46,7 @@ class TimeEntryValidation < ApiValidation
   private
 
     def valid_user?
-      user = Account.current.agents_from_cache.find { |x| x.user_id == @agent_id } if @agent_id_set
+      user = Account.current.agents_details_from_cache.find { |x| x.id == @agent_id } if @agent_id_set
       errors[:agent_id] << :"can't be blank" unless user
     end
 

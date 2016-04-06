@@ -832,7 +832,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def unsubscribed_agents
     user_ids = subscriptions.map(&:user_id)
-    account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+    account.agents_details_from_cache.reject{ |a| user_ids.include?(a.id) }
   end
 
   def resolved_now?
