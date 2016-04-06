@@ -3,11 +3,14 @@ class TicketsController < ApiApplicationController
   include Helpdesk::TagMethods
   include CloudFilesHelper
   include TicketConcern
-  decorate_views
+  include SearchHelper
+  include Search::Filters::QueryHelper
+  decorate_views(decorate_objects: [:index, :search])
 
   around_filter :run_on_slave, only: [:index]
 
   before_filter :ticket_permission?, only: [:destroy]
+  before_filter :check_search_feature, :validate_search_params, :only => [:search]
 
   def create
     assign_protected
@@ -39,13 +42,23 @@ class TicketsController < ApiApplicationController
     end
   end
 
+  def search
+    lookup_and_change_params
+    @tkts = search_query
+    @items = paginate_items(@tkts)
+  end
+
   def destroy
-    @item.update_attribute(:deleted, true)
+    @item.deleted = true
+    store_dirty_tags(@item) #Storing tags whenever ticket is deleted. So that tag count is in sync with DB.
+    @item.save
     head 204
   end
 
   def restore
-    @item.update_attribute(:deleted, false)
+    @item.deleted = false
+    restore_dirty_tags(@item)
+    @item.save
     head 204
   end
 
@@ -163,6 +176,14 @@ class TicketsController < ApiApplicationController
       render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
+    def validate_search_params
+      name_mapping_txt_fields = searchable_text_ff_fields
+      custom_fields = name_mapping_txt_fields.empty? ? [nil] : name_mapping_txt_fields.keys
+      params.permit(*ApiTicketConstants::SEARCH_ALLOWED_DEFAULT_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS, *custom_fields)
+      @ticket_filter = TicketFilterValidation.new(params.merge(cf: custom_fields))
+      render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
+    end
+
     def scoper
       current_account.tickets
     end
@@ -212,7 +233,7 @@ class TicketsController < ApiApplicationController
     end
 
     def prepare_tags
-      tags = Array.wrap(params[cname][:tags]).map! { |x| RailsFullSanitizer.sanitize(x.to_s.strip) }.uniq(&:downcase).reject(&:blank?) if create? || params[cname].key?(:tags)
+      tags = sanitize_tags(params[cname][:tags]) if create? || params[cname].key?(:tags)
       params[cname][:tags] = construct_tags(tags) if tags
     end
 
@@ -269,6 +290,10 @@ class TicketsController < ApiApplicationController
       end
     end
 
+    def check_search_feature
+      log_and_render_404 unless current_account.launched?(:api_search_beta)
+    end
+
     def group_ticket_permission?(ids)
       # Check if current user has group ticket permission and if ticket also belongs to the same group.
       api_current_user.group_ticket_permission && scoper.group_tickets_permission(api_current_user, ids).present?
@@ -322,6 +347,17 @@ class TicketsController < ApiApplicationController
       return true if super
       allowed_content_types = ApiTicketConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
       allowed_content_types.include?(request.content_mime_type.ref)
+    end
+
+    def search_query
+      es_options = {
+        :page         => params[:page] || 1,
+        :order_entity => params[:order_by]|| 'created_at',
+        :order_sort   => params[:order_type] || 'desc'
+      }
+      neg_conditions = [Helpdesk::Filters::CustomTicketFilter.deleted_condition(true), Helpdesk::Filters::CustomTicketFilter.spam_condition(true)]
+      conditions = params[:search_conditions].collect {|s_c| {'condition' => s_c.first, 'operator' => 'is_in', 'value' => s_c.last.join(",") } }
+      Search::Filters::Docs.new(conditions, neg_conditions).records('Helpdesk::Ticket',es_options)
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

@@ -70,12 +70,12 @@
 			<div id="TicketPseudoReply" class="pseudo_reply">
 
 				<% if privilege?(:reply_ticket) && @ticket.show_reply? %>
-				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" data-replyto-handle="<%= @ticket.twitter? ? @ticket.latest_twitter_comment_user : "" %>" ><%= t('ticket.reply_to')  %></a> / 
+				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" data-domhelper-name="reply-button" data-replyto-handle="<%= @ticket.twitter? ? @ticket.latest_twitter_comment_user : "" %>" ><%= t('ticket.reply_to')  %></a> / 
 				<% end %>
         <% if privilege?(:forward_ticket) %>
-				  <a href="" id="FwdButton" rel="note-button" data-note-type="fwd" ><%= t('fwd_to') %></a> /
+				  <a href="" id="FwdButton" rel="note-button" data-note-type="fwd" data-domhelper-name="fwd-button"><%= t('fwd_to') %></a> /
         <% end %>
-				<a href="#"  rel="note-button" data-note-type="note" ><%= t('ticket.add_note') %></a>
+				<a href="#"  rel="note-button" data-note-type="note" data-domhelper-name="note-button"><%= t('ticket.add_note') %></a>
         <% if @ticket.mobihelp? %>
         	/ <%= link_to 'Request App review', "#", :id => "ReviewButton", :rel => "review-button" %>
 					<%= render(:partial => '/helpdesk/tickets/show/app_review_form', 

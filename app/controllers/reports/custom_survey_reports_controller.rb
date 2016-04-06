@@ -2,11 +2,17 @@ class Reports::CustomSurveyReportsController < ApplicationController
 
   before_filter { |c| current_account.new_survey_enabled? }
 
-  before_filter :set_selected_tab, :only => :index
-
-  include ReadsToSlave
+  before_filter :set_report_type
+  before_filter :set_selected_tab, :report_filter_data_hash, :only => :index
+  before_filter :max_limit?,                                 :only => [:save_reports_filter]
+  before_filter :construct_filters,                          :only => [:save_reports_filter,:update_reports_filter]
+  
+  around_filter :run_on_slave,                             :except => [:save_reports_filter,:update_reports_filter,:delete_reports_filter]
+  
   include Reports::CustomSurveyReport
   include ApplicationHelper
+
+  attr_accessor :report_type
   
   AGENT_ALL_URL_REF = 'a'
   GROUP_ALL_URL_REF = 'g'
@@ -14,7 +20,6 @@ class Reports::CustomSurveyReportsController < ApplicationController
 
   def index
     @surveys = surveys_json
-    @report_type = 'satisfaction_survey'
     @agents = agents
     @groups = groups
     @default_all_values = {:agent => AGENT_ALL_URL_REF, :group => GROUP_ALL_URL_REF, :rating => RATING_ALL_URL_REF}
@@ -39,10 +44,46 @@ class Reports::CustomSurveyReportsController < ApplicationController
     remarks = remarks.paginate(:page => current_page, :per_page => page_limit)
     result_json = remarks.remarks_json(question_column_name)
     if current_page==1
-      result_json[:total] = total_remarks
       result_json[:page_limit] = page_limit
     end
     render :json => result_json
+  end
+
+  def save_reports_filter
+    report_filter = current_user.report_filters.build(
+      :report_type => @report_type_id,
+      :filter_name => @filter_name,
+      :data_hash   => @data_map
+    )
+    report_filter.save
+    
+    render :json => {:text=> "success", 
+                     :status=> "ok",
+                     :id => report_filter.id,
+                     :filter_name=> @filter_name,
+                     :data=> @data_map }.to_json
+  end
+
+  def update_reports_filter
+    id = params[:id].to_i
+    report_filter = current_user.report_filters.find(id)
+    report_filter.update_attributes(
+      :report_type => @report_type_id,
+      :filter_name => @filter_name,
+      :data_hash   => @data_map
+    )
+    render :json => {:text=> "success", 
+                     :status=> "ok",
+                     :id => report_filter.id,
+                     :filter_name=> @filter_name,
+                     :data=> @data_map }.to_json
+  end
+
+  def delete_reports_filter
+    id = params[:id].to_i
+    report_filter = current_user.report_filters.find(id)
+    report_filter.destroy 
+    render json: "success", status: :ok
   end
 
   private
@@ -50,6 +91,10 @@ class Reports::CustomSurveyReportsController < ApplicationController
     def set_selected_tab
       @selected_tab = :reports
     end 
+
+    def set_report_type
+      @report_type = "satisfaction_survey"
+    end
 
     def page_limit
       10
@@ -81,12 +126,6 @@ class Reports::CustomSurveyReportsController < ApplicationController
     
     def default_params
       {:survey_id => which_survey, :start_date => start_date, :end_date => end_date}
-    end
-
-    def total_remarks # avoid this query - used only for pageless plugin
-      remarks = survey.survey_results.total_remarks(default_params)
-      remarks = filter remarks
-      remarks[0].total
     end
 
     def aggregate_report_data

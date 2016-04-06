@@ -16,11 +16,11 @@
 		Twilio.Device.error(function (error) {
 			freshfonecalls.error = error;
 			freshfonecalls.errorcode = error.code;
+			ffLogger.logIssue("Call Failure ", {"error": error}, 'error');
 			if(freshfonecalls.errorcode == 31003){ //for ICE Liveness Check
 				$(window).trigger('ffone.networkDown'); // for non-chromium based browsers
 			}
 			else{
-				ffLogger.logIssue("Call Failure ", {"error": error}, 'error');
 				freshfoneNotification.resetJsonFix();
 				freshfoneNotification.popAllNotification();
 				freshfonecalls.resetRecordingState();
@@ -161,11 +161,22 @@
 
 		Twilio.Device.incoming(function (conn) {
 			// freshfonecalls.disableCallButton();
-			ffLogger.log({'action': "Incoming Call Notification", 'params': conn.parameters});
-			freshfoneNotification.anyAvailableConnections(conn);
-			var freshfoneConnection = new FreshfoneConnection(conn);
-			freshfoneConnection.incomingAlert();
+			if(deviceWithActiveConnection()) {
+				ffLogger.logIssue("New incoming call on busy device!", {'action': "Incoming Call Notification", 'params': conn.parameters}, 'error');
+				
+				conn.reject();
+			} else {
+				ffLogger.log({'action': "Incoming Call Notification", 'params': conn.parameters});
+				freshfoneNotification.anyAvailableConnections(conn);
+				var freshfoneConnection = new FreshfoneConnection(conn);
+				freshfoneConnection.incomingAlert();
+			}
         });
+	}
+	function deviceWithActiveConnection() {
+		var activeConnection = Twilio.Device.activeConnection();
+		return (activeConnection && 
+			activeConnection.status()=="open");
 	}
 	function regenerateToken () {
 		freshfoneuser.getCapabilityToken();

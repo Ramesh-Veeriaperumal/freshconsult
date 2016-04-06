@@ -47,7 +47,7 @@ module Cache::Memcache::Account
 
   def agents_from_cache
     key = agents_memcache_key
-    MemcacheKeys.fetch(key) { self.agents.find(:all, :include => :user) }
+    MemcacheKeys.fetch(key) { self.agents.find(:all, :include => [:user,:agent_groups]) }
   end
 
   def groups_from_cache
@@ -163,7 +163,7 @@ module Cache::Memcache::Account
   def api_webhooks_rules_from_cache
     key = ACCOUNT_API_WEBHOOKS_RULES % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      api_webhook_rules.find(:all)
+      api_webhook_rules.all
     end
   end
 

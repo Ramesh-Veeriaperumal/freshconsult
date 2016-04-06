@@ -83,6 +83,8 @@ Helpkit::Application.routes.draw do
     resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update]
   end
 
+  match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { :format => 'json' }, :as => :tickets_search, via: :get
+  
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
     scope '/v2', &api_routes # "/api/v2/.."
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header

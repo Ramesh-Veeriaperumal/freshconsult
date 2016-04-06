@@ -7,16 +7,21 @@
 		<%= graph_icon(@report_type) %>
 	</span>
 	<span class="report-title-block" data-action="pop-report-type-menu" >
+		<span class="unsaved_star vertical-alignment hide">*</span>
 		<span id="report-title">
 			<%=t("helpdesk_reports.#{@report_type}.title").html_safe %>
 		</span>
-		<span class="grey-arrow-down title-dropdown"></span>
+		<% if current_account.subscription.non_sprout_plan? || feature?(:advanced_reporting) %>
+			<span class="grey-arrow-down title-dropdown"></span>
+		<% end %>
 	</span>
-
+	<% if current_account.subscription.non_sprout_plan? || feature?(:advanced_reporting)%>
+		<%= render :partial => "reports/shared/save_report_controls"%>
+	<% end %>
 	<%= render :partial => "reports/v2/tickets/reports/shared/generate_pdf" %>
 </div>
 <div class="reports-filter span12">
-		<% if current_account.subscription.non_sprout_plan? %>
+		<% if current_account.subscription.non_sprout_plan? || feature?(:advanced_reporting) %>
 			<div class="edit-filter span1">
 				<button class="btn btn-primary" id="metric-edit" data-action="open-filter-menu"><%=t('helpdesk_reports.edit_filter') %></button> 
 			</div>
@@ -35,16 +40,14 @@
 				</div>
 			</div>
 		<% end %>
-	<div class="filter-type <%= current_account.subscription.non_sprout_plan? ? 'span11' : 'span7' %>">
+	<div class="filter-type <%= current_account.subscription.non_sprout_plan? ? 'span8' : 'span7' %>">
 		<ul id="filter_text"></ul>
 	</div>
 	<div class="reports-menu hide" id="reports_type_menu">
-		<ul>
-			<%= reports_sub_menu %>
-		</ul>
+
 	</div>
 </div>
-
+<%= render :partial => "reports/shared/dialog" %> 
 <script>
 jQuery("#pdf_form").submit(function(event) {
   var pdf_args = HelpdeskReports.CoreUtil.pdfParams();

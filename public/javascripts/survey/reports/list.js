@@ -6,8 +6,8 @@ var SurveyList = {
       		SurveyUtil.updateState();
       		SurveyTab.resetState();
             var surveyId = jQuery(obj).val();
-            var label = jQuery(obj).find("option:selected").text();
-            SurveyState.fetch(label);
+      		SurveyState.filterChanged = true;
+            SurveyState.fetch();
 
       }
 }

@@ -17,7 +17,7 @@ module Integrations::RemoteConfigurations::Seoshop
       app_params = {}
       app_params[:language] = params[:language]
       app_params[:token] = params[:token]
-      app_params.inspect
+      app_params.to_json
     else
       params[:app_params]
     end
@@ -35,9 +35,9 @@ module Integrations::RemoteConfigurations::Seoshop
     configs = {}
     configs[:inputs] = {}
     configs[:inputs]["api_key"] = key_hash["api_key"]
-    app_params = eval(params[:app_params])
-    configs[:inputs]["api_secret"] = Digest::MD5.hexdigest(app_params[:token] + key_hash["api_secret"])
-    configs[:inputs]["language"] = app_params[:language]
+    app_params = JSON.parse(params[:app_params])
+    configs[:inputs]["api_secret"] = Digest::MD5.hexdigest(app_params['token'] + key_hash["api_secret"])
+    configs[:inputs]["language"] = app_params['language']
     configs
   end
 

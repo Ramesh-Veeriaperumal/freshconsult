@@ -90,7 +90,10 @@ var SurveyTable = {
                     "sNext": ">",
                     "sPrevious": "<"
                 }
-            }
+            },
+            "columnDefs": [
+                {"orderSequence": ["desc","asc"], "targets":"descendFirst" },
+            ]
         });
         jQuery('#report_tabular_data').show();
 

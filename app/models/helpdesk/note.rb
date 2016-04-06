@@ -162,7 +162,9 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def can_split?
-    (self.incoming and self.notable) and ((self.notable.facebook? and self.fb_post) ? self.fb_post.can_comment? : true) and (self.private ? user.customer? : true) and (!self.mobihelp?) and !user.blocked? and (!self.ecommerce?)
+    (self.incoming and self.notable) and !user.blocked? and (self.private ? user.customer? : true) and
+      ((self.notable.facebook? and self.fb_post) ? self.fb_post.can_comment? : true) and 
+        (!self.mobihelp?) and (!self.ecommerce?) and(!self.feedback?)
   end
 
   def as_json(options = {})
@@ -316,6 +318,20 @@ class Helpdesk::Note < ActiveRecord::Base
     else
       [[], []]
     end
+  end
+
+  def load_note_reply_from_email
+    email_addrs = []
+    if (self.fwd_email? || self.reply_to_forward?)
+      parsed_email = parse_email_text(self.from_email)
+      email_addrs = parsed_email[:email].downcase.to_a
+    elsif self.third_party_response?
+      to_emails = self.to_emails.map{ |email| parse_email_text(email)[:email].downcase }
+      email_addrs = to_emails
+      cc_emails = self.cc_emails.map{ |email| parse_email_text(email)[:email].downcase }
+      email_addrs += cc_emails
+    end
+    email_addrs
   end
   
   # Instance level spam watcher condition

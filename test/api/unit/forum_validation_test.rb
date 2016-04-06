@@ -148,6 +148,6 @@ class ForumValidationTest < ActionView::TestCase
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
     assert_equal ['Company ids datatype_mismatch'], forum.errors.full_messages
-    assert_equal({ name: {}, forum_visibility: {}, forum_category_id: {}, company_ids: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type' } }, forum.error_options)
+    assert_equal({ name: {}, forum_visibility: {}, forum_category_id: {}, company_ids: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null'  } }, forum.error_options)
   end
 end

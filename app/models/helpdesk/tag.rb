@@ -111,14 +111,22 @@ class Helpdesk::Tag < ActiveRecord::Base
   end
 
   # Common handler for creating/removing tags
-  def self.assign_tags(tag_list=[])
-    return [] if tag_list.blank?
+  def self.assign_tags(tags_to_be_added=[])
+    return [] if tags_to_be_added.blank?
 
-    associated_tags = self.where(name: tag_list).all
-    missing_tags    = tag_list - associated_tags.map(&:name)
-    missing_tags.each { |tag_name| associated_tags.push(self.create(name: tag_name)) }
+    missing_tags = []
+    tag_list     = []
 
-    associated_tags
+    existing_tags = self.where(name: tags_to_be_added).all
+    tag_list.push(*existing_tags) # Pushing to the array so that when .any? called is made, it wont trigger (converting AR relation to array)
+    
+    tags_to_be_added.each do |new_tag|
+      next if tag_list.any? { |tag_in_db| tag_in_db.name.casecmp(new_tag) == 0 }
+      missing_tags << new_tag
+    end
+    missing_tags.each { |tag_name| tag_list.push(self.create(name: tag_name)) }
+
+    tag_list
   end
 
   def to_indexed_json

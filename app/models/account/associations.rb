@@ -242,7 +242,7 @@ class Account < ActiveRecord::Base
   has_one  :es_enabled_account, :class_name => 'EsEnabledAccount', :dependent => :destroy
 
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter,
-    :pass_through_enabled, :api_limit, :to => :account_additional_settings
+    :pass_through_enabled, :api_limit, :webhook_limit, :to => :account_additional_settings
 
   has_many :subscription_events
 
@@ -264,6 +264,7 @@ class Account < ActiveRecord::Base
   has_many :freshfone_other_charges, :class_name => "Freshfone::OtherCharge"
   has_many :freshfone_blacklist_numbers, :class_name => "Freshfone::BlacklistNumber"
   has_one  :freshfone_subscription, :class_name => "Freshfone::Subscription"
+  has_many :freshfone_caller_id, :class_name => "Freshfone::CallerId"
 
   has_many :freshfone_callers, :class_name => "Freshfone::Caller"
 

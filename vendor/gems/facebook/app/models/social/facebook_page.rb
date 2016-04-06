@@ -3,6 +3,7 @@ class Social::FacebookPage < ActiveRecord::Base
   include Social::Util
   include Facebook::Constants
   include Cache::Memcache::Facebook
+  include Facebook::RedisMethods
 
   self.table_name =  "social_facebook_pages"
   self.primary_key = :id
@@ -70,5 +71,9 @@ class Social::FacebookPage < ActiveRecord::Base
   
   def dm_stream
     self.facebook_streams.detect{|s| s.data[:kind] == FB_STREAM_TYPE[:dm]}
+  end
+  
+   def log_api_hits
+    increment_api_hit_count_to_redis(self.page_id)
   end
 end

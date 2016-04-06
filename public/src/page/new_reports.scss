@@ -16,7 +16,7 @@
 			margin-top: 36px;
        		margin-right: 16px;
        		.report-link{
-				font-size: 13px;
+				font-size: 12px;
 				color : #06C;
 				&:hover{
 					color: #004080;
@@ -45,8 +45,10 @@
 	}
 	.report-link-block{
 		margin-bottom: 15px;
+		@include text-align(right);
+		font-weight : 500;
 		.report-link{
-			font-size: 15px;
+			font-size: 13px;
 			color : #06C;
 			.view-all-arrow{
 				border-top: 4px solid transparent;
@@ -59,6 +61,10 @@
 			    margin-left: 6px;
 			    cursor: pointer;
 			}
+		}
+		.seperator_reports{
+			margin : 0px 8px;
+			display : inline-block;
 		}
 	}
 }

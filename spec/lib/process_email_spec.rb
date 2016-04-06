@@ -235,17 +235,6 @@ RSpec.describe Helpdesk::ProcessEmail do
 			ticket.spam.should eql true
 		end
 
-		it "with email commands" do
-			email = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
-			email[:from] = @agent.user.email
-			email[:text] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email[:text]
-			email[:html] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email[:html]
-			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			ticket.priority.should eql 2
-		end
-
 		it "with unknown email_config" do
 			email = new_email({:email_config => "abcde234fg@localhost.freshpo.com"})
 			Helpdesk::ProcessEmail.new(email).perform
@@ -379,22 +368,6 @@ RSpec.describe Helpdesk::ProcessEmail do
 			another[:subject] = another[:subject]+" [##{ticket.display_id}]"
 			Helpdesk::ProcessEmail.new(another).perform
 			ticket_incremented?(@ticket_size)
-		end
-
-		it "with email_commands" do
-			email = new_email({:email_config => @account.primary_email_config.to_email})
-			Helpdesk::ProcessEmail.new(email).perform
-			ticket = @account.tickets.last
-			another = new_email({:email_config => @account.primary_email_config.to_email, :reply => @agent.user.email})
-			another[:subject] = another[:subject]+" [##{ticket.display_id}]"
-			another[:from] = @agent.user.email
-			another[:text] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email[:text]
-			another[:html] = %(\n#{@account.email_cmds_delimeter} "priority":"medium" #{@account.email_cmds_delimeter} \n)+email[:html]
-			Helpdesk::ProcessEmail.new(another).perform
-			ticket = @account.tickets.last
-			ticket_incremented?(@ticket_size)
-			@account.notes.size.should eql @note_size+1
-			ticket.priority.should eql 2
 		end
 
 		it "by span" do
@@ -547,7 +520,6 @@ RSpec.describe Helpdesk::ProcessEmail do
 		it "by secondary email" do
 			@key_state = mue_key_state(@account)
     		enable_mue_key(@account)
-    		@account.features.multiple_user_emails.create
     		@account.features.contact_merge_ui.create
     		@account.reload
     		@account.features.reload
@@ -563,7 +535,6 @@ RSpec.describe Helpdesk::ProcessEmail do
 			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
 			@account.features.contact_merge_ui.destroy
-			@account.features.multiple_user_emails.destroy
 			disable_mue_key(@account) unless @key_state
 		end
 

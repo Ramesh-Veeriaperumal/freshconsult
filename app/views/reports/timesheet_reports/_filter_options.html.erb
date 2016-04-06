@@ -12,7 +12,7 @@
 			date_range = @report_date.blank? ? date_range_val((Time.zone.now.ago 30.day),Time.zone.now) :  @report_date	
 		%>
 			
-  		<%= render :partial => "/reports/shared/daterange_picker", :locals => { :date_range => date_range }%> 
+  		<%= render :partial => "/reports/shared/daterange_picker.html.erb", :locals => { :date_range => date_range }%> 
       <label class="control-label"><%=t('helpdesk.time_sheets.customer')%></label>  
 			
 			<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies }) %>
@@ -25,7 +25,6 @@
 							  :class => "select2 filter_item", 
 										 "data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_agent') } %>
 			<label class="control-label"><%=t('helpdesk.time_sheets.billing_type')%></label>
-			<%@billable = [] if @billable.length == 2 %>
 			<%= select_tag :billable, options_for_select(Helpdesk::TimeSheet.billable_options,@billable), 
 			 				{ :multiple => true, 
 			 				  :class => "select2 filter_item",

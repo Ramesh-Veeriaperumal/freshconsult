@@ -4,13 +4,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     # value = construct_ticket_old_body_hash.merge(add_created_at_and_updated_at)
     # table_name = Helpdesk::Mysql::Util.table_name_extension("helpdesk_ticket_bodies")
     # Heldpesk::TicketBodyWeekly.create(table_name,value)
-    Resque.enqueue(::Workers::Helpkit::Ticket::TicketBodyJobs, {
-                     :account_id => self.account_id,
-                     :key_id => self.id,
-                     :create => true,
-                     :requester_id => self.requester_id
-                     # :table_name => table_name
-    }) if s3_create
+    # Resque.enqueue(::Workers::Helpkit::Ticket::TicketBodyJobs, {
+    #                  :account_id => self.account_id,
+    #                  :key_id => self.id,
+    #                  :create => true,
+    #                  :requester_id => self.requester_id
+    #                  # :table_name => table_name
+    # }) if s3_create
+    Tickets::TicketBodyJobs.perform_async({:key_id => self.id, :create => true,:requester_id => self.requester_id})  if s3_create
   end
 
   def read_from_s3
@@ -27,19 +28,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
     # table_name = Helpdesk::Mysql::Util.table_name_extension("helpdesk_ticket_bodies")
     # value[:conditions] = {:account_id => self.account_id, :ticket_id => self.id}
     # Heldpesk::TicketBodyWeekly.create_or_update(table_name,value)
-    Resque.enqueue(::Workers::Helpkit::Ticket::UpdateTicketBodyJobs, {
-                     :account_id => self.account_id,
-                     :key_id => self.id,
-                     # :table_name => table_name
-    }) if s3_update
+    # Resque.enqueue(::Workers::Helpkit::Ticket::UpdateTicketBodyJobs, {
+    #                  :account_id => self.account_id,
+    #                  :key_id => self.id,
+    #                  # :table_name => table_name
+    # }) if s3_update
+     Tickets::UpdateTicketBodyJobs.perform_async({:key_id => self.id,})  if s3_update
   end
 
   def push_to_resque_destroy
-    Resque.enqueue(::Workers::Helpkit::Ticket::TicketBodyJobs, {
-                     :account_id => self.account_id,
-                     :key_id => self.id,
-                     :delete => true
-    }) if s3_delete
+    # Resque.enqueue(::Workers::Helpkit::Ticket::TicketBodyJobs, {
+    #                  :account_id => self.account_id,
+    #                  :key_id => self.id,
+    #                  :delete => true
+    # }) if s3_delete
+    Tickets::TicketBodyJobs.perform_async({:key_id => self.id, :delete => true})  if s3_delete
   end
 
   def create_in_s3

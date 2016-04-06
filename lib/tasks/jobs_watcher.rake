@@ -17,7 +17,12 @@ QUEUE_WATCHER_RULE = {
         "free_sla_worker" => 25000,
         "trail_sla_worker" => 25000
     } ,
-    :except => ["supervisor_worker"]
+    :except => ["supervisor_worker",
+              "gamification_ticket_quests",
+              "gamification_ticket_score",
+              "helpdesk_note_body_queue",
+              "gamification_user_score"
+            ]
 }
 
 
@@ -37,12 +42,12 @@ namespace :delayedjobs_watcher do
 
         #For every 5 hours we will init the alert
         if config["pg_duty_failed"] <= failed_jobs_count and 
-          $redis_others.get("#{queue.upcase}_FAILED_JOBS_ALERTED").blank?
+          $redis_others.perform_redis_op("get", "#{queue.upcase}_FAILED_JOBS_ALERTED").blank?
 
           Monitoring::PagerDuty.trigger_incident("delayed_jobs/#{Time.now}",{
             :description => "#{queue} #{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs"
           })
-          $redis_others.setex("#{queue.upcase}_FAILED_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
+          $redis_others.perform_redis_op("setex", "#{queue.upcase}_FAILED_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
         end
       end
     end
@@ -60,12 +65,12 @@ namespace :delayedjobs_watcher do
 
         #For every 5 hours we will init the alert
         if config["pg_duty_total"]  <= total_jobs_count and 
-          $redis_others.get("#{queue.upcase}_TOTAL_JOBS_ALERTED").blank?
+          $redis_others.perform_redis_op("get", "#{queue.upcase}_TOTAL_JOBS_ALERTED").blank?
 
           Monitoring::PagerDuty.trigger_incident("delayed_jobs/#{Time.now}",{
             :description => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} jobs are in queue"
           })
-          $redis_others.setex("#{queue.upcase}_TOTAL_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
+          $redis_others.perform_redis_op("setex", "#{queue.upcase}_TOTAL_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
         end
       end
     end
@@ -100,14 +105,14 @@ namespace :resque_watcher do
         
         FreshdeskErrorsMailer.error_email(nil, nil, nil,details_hash) unless queue_info.empty?
         growing_queue_names = queue_info.keys 
-        if $redis_others.get("RESQUEUE_JOBS_ALERTED").blank? and
+        if $redis_others.perform_redis_op("get", "RESQUEUE_JOBS_ALERTED").blank? and
             (growing_queue_names & PAGERDUTY_QUEUES).size > 0
 
             Monitoring::PagerDuty.trigger_incident("resque_jobs/#{Time.now}",{
                 :description => "Resque is queuing up. Needs your attention!",
                 :details => queue_info
             })
-            $redis_others.setex("RESQUEUE_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
+            $redis_others.perform_redis_op("setex", "RESQUEUE_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
         end
 
     end

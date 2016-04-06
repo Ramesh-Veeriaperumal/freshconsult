@@ -13,7 +13,9 @@ window.App = window.App || {};
 			return freshfone.full_domain;
 		},
 		recordIdentity: function(){
-			_kmq.push(['identify', this.getIdentity()]);
+			if(typeof (_kmq) !== undefined ){
+				_kmq.push(['identify', this.getIdentity()]);
+			}
 		},
 		kissMetricTrackingCode: function(api_key){
 				var _kmq = _kmq || [];

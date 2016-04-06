@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "aa064ac732faedf91662428df179fdff303180f92fffd65eb4fa1dbd80a531a5",
-    "current": "aa064ac732faedf91662428df179fdff303180f92fffd65eb4fa1dbd80a531a5"
+    "previous": "ff6de99008ed2214afcb1d634816a99121610ee764f16a7bd32eb123e196ebc0",
+    "current": "ff6de99008ed2214afcb1d634816a99121610ee764f16a7bd32eb123e196ebc0"
   },
   "fonts": [
-    "public/assets/glyphs_aa064ac732faedf91662428df179fdff.ttf",
-    "public/assets/glyphs_aa064ac732faedf91662428df179fdff.svg",
-    "public/assets/glyphs_aa064ac732faedf91662428df179fdff.woff",
-    "public/assets/glyphs_aa064ac732faedf91662428df179fdff.eot"
+    "public/assets/glyphs_ff6de99008ed2214afcb1d634816a991.ttf",
+    "public/assets/glyphs_ff6de99008ed2214afcb1d634816a991.svg",
+    "public/assets/glyphs_ff6de99008ed2214afcb1d634816a991.woff",
+    "public/assets/glyphs_ff6de99008ed2214afcb1d634816a991.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -57,6 +57,10 @@
     "apple": {
       "codepoint": 61702,
       "source": "public/glyphs/vectors/apple.svg"
+    },
+    "apps": {
+      "codepoint": 61971,
+      "source": "public/glyphs/vectors/apps.svg"
     },
     "archived-ticket": {
       "codepoint": 61955,
@@ -254,6 +258,10 @@
       "codepoint": 61737,
       "source": "public/glyphs/vectors/cross.svg"
     },
+    "cross-round": {
+      "codepoint": 61972,
+      "source": "public/glyphs/vectors/cross-round.svg"
+    },
     "crown": {
       "codepoint": 61738,
       "source": "public/glyphs/vectors/crown.svg"
@@ -322,6 +330,10 @@
       "codepoint": 61897,
       "source": "public/glyphs/vectors/decimal.svg"
     },
+    "delete": {
+      "codepoint": 61973,
+      "source": "public/glyphs/vectors/delete.svg"
+    },
     "deleted": {
       "codepoint": 61875,
       "source": "public/glyphs/vectors/deleted.svg"
@@ -337,6 +349,10 @@
     "dispatcher": {
       "codepoint": 61745,
       "source": "public/glyphs/vectors/dispatcher.svg"
+    },
+    "dot": {
+      "codepoint": 61970,
+      "source": "public/glyphs/vectors/dot.svg"
     },
     "dots": {
       "codepoint": 61746,
@@ -607,7 +623,7 @@
       "source": "public/glyphs/vectors/infinity-5.svg"
     },
     "integrations": {
-      "codepoint": 61788,
+      "codepoint": 61974,
       "source": "public/glyphs/vectors/integrations.svg"
     },
     "ios": {
@@ -1106,6 +1122,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",

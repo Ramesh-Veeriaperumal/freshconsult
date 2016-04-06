@@ -29,10 +29,6 @@ describe ContactsController do
                 cf.update_attributes(:required_for_agent => false) unless cf.field_type == :default_name}
   end
 
-  after(:each) do
-    @account.features.multiple_user_emails.destroy
-  end
-
   #A few exceptions have been missed and agent failures couldnt be reproduced
 
   it "should create a new contact" do
@@ -648,7 +644,6 @@ describe ContactsController do
 
     it "should update a contact with custom fields" do
       text = Faker::Lorem.words(4).join(" ")
-      @user.flexifield_without_safe_access.should be_nil
       avatar_file = Rack::Test::UploadedFile.new('spec/fixtures/files/image33kb.jpg', 'image/jpg')
       put :update_contact, {:id => @user.id, 
                             :user =>{ :avatar_attributes => {:content => avatar_file},
@@ -676,7 +671,6 @@ describe ContactsController do
 
     it "should update a contact with custom fields with null values" do
       @user.reload
-      @user.flexifield_without_safe_access.should_not be_nil
       name = Faker::Name.name
       avatar_file = Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png')
       put :update_contact, {:id => @user.id, 

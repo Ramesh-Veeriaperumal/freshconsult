@@ -415,11 +415,24 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                        description: nil,
                                                        note: nil)
     assert_response 400
-    match_json([bad_request_error_pattern('note', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
+    match_json([bad_request_error_pattern('note', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
                 bad_request_error_pattern('domains', :blank)])
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+  end
+
+  def test_update_with_custom_fields_required_which_is_already_present
+    company = create_company(name: Faker::Lorem.characters(10))
+    field = { type: 'text', field_type: 'custom_text', label: 'required_linetext', required_for_agent: true }
+    params = company_params(field)
+    cf_sample_field = create_company_field params
+    clear_contact_field_cache
+    company.update_attributes(custom_field: {"cf_required_linetext" => "test value"})
+    put :update, construct_params({ id: company.id }, {name: "Sample Company"})
+    assert_response 200
+  ensure
+    cf_sample_field.update_attribute(:required_for_agent, false)
   end
 
   def clear_contact_field_cache

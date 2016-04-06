@@ -196,6 +196,42 @@
 		</div>
 	</div>
 	
+	<% if current_account.launched?(:freshfone_caller_id_masking) %>
+	  <div class="control-group">
+			<label class="control-label settings-label"><%=t('freshfone.admin.numbers.caller_id.call_id_mask')%></label>
+			<div class="controls">
+				<div class="call_id_mask">
+					
+					<% if number.freshfone_caller_id.present? %>
+					<%= check_box_tag :callmask_active, true, true , :class => 'call_mask_toggle' %>
+					<% else %>	
+					<%= check_box_tag :callmask_active, true, false, :class => 'call_mask_toggle' %>
+					<% end %>	
+					
+					<% if outgoing_callers.blank? %>
+						<span class="no-number-added common-mask hide ml20 pull-left">
+							<%=t('freshfone.admin.numbers.caller_id.no_number_added')%>
+						</span>	
+					<% end %>
+
+					<span class="caller_id_container ml20 common-mask hide pull-left">
+						<%= select_tag  "caller_id",
+															options_from_collection_for_select(outgoing_callers,"id","number",outgoing_caller(number)),{:multiple => false,
+															:class => 'select2 caller_id'} %>								
+							
+					</span>	
+					
+					<a id="new-outgoing-caller" class="common-mask hide ml10" href="#" ><%=t('freshfone.admin.numbers.caller_id.add_new')%></a>								
+				
+				</div>									
+			</div>
+		</div>
+	<% end %> 
+
+	<% if current_account.launched?(:freshfone_caller_id_masking) %>
+		<%= render :partial => "/freshfone/outgoing_callers_id", :locals => { :settings => true } %>
+	<% end %>	
+	
 </div>
 <script type="text/javascript">
 	(function($){		
@@ -208,6 +244,9 @@
 			$('.multi_business_hours').show();
 			$('.non_business_hours_message_container').show();
 			$('#non_business_hour_calls_false').prop('checked',true);
+		}
+		if($('.call_mask_toggle').prop('checked')){
+			$('.common-mask').show();
 		}
 	})(jQuery)
 

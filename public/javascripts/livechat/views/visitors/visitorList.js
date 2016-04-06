@@ -242,6 +242,7 @@ liveChat.visitorListView = function(){
     },
     initiateChat : function(event){
       var clicked_row = jQuery(event.currentTarget);
+      clicked_row.removeClass('visitor_chatnow');
       var visitor_data = {
         id : clicked_row.attr("data-id"),
         widget_id : clicked_row.attr("data-widget-id"),

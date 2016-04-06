@@ -75,6 +75,58 @@ class TicketsControllerTest < ActionController::TestCase
     ticket
   end
 
+  def test_search_with_feature_enabled
+    @account.launch :es_count_writes
+    Sidekiq::Testing::inline!
+    params = ticket_params_hash.except(:description).merge(custom_field: {})
+    CUSTOM_FIELDS.each do |custom_field|
+      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    t = create_ticket(params)
+    @account.launch :api_search_beta
+    get :search, controller_params({:status => "2,3", "test_custom_text" => params[:custom_field]["test_custom_text_#{@account.id}"]})
+    assert_response 200
+    results = parse_response(@response.body)
+    results.each do |r|
+      assert_equal params[:custom_field]["test_custom_text_#{@account.id}"], r["custom_fields"]["test_custom_text"]
+    end
+  end
+
+  def test_search_with_feature_enabled_and_invalid_params
+    @account.launch :es_count_writes
+    params = ticket_params_hash.except(:description).merge(custom_field: {})
+    CUSTOM_FIELDS.each do |custom_field|
+      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    t = create_ticket(params)
+    @account.launch :api_search_beta
+    get :search, controller_params({:status => "2,3", :priority => 4, "test_custom_text" => params[:custom_field]["test_custom_text_#{@account.id}"]})
+    assert_response 400
+  end
+
+  def test_search_with_feature_enabled_and_invalid_value
+    @account.launch :es_count_writes
+    params = ticket_params_hash.except(:description).merge(custom_field: {})
+    CUSTOM_FIELDS.each do |custom_field|
+      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    t = create_ticket(params)
+    @account.launch :api_search_beta
+    get :search, controller_params({:status => "2,3,test1", "test_custom_text" => params[:custom_field]["test_custom_text_#{@account.id}"]})
+    assert_response 400
+  end
+
+  def test_search_without_feature_enabled
+    params = ticket_params_hash.except(:description).merge(custom_field: {})
+    CUSTOM_FIELDS.each do |custom_field|
+      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    t = create_ticket(params)
+    @account.rollback :api_search_beta
+    get :search, controller_params({:status => "2,3", "test_custom_text" => params[:custom_field]["test_custom_text_#{@account.id}"]})
+    assert_response 404
+  end
+
   def update_ticket_params_hash
     agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     subject = Faker::Lorem.words(10).join(' ')
@@ -195,15 +247,16 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_duplicate_tags
     @account.tags.create(name: 'existing')
-    params = { requester_id: requester.id, tags: ['new', '<1>new', 'existing', '<2>existing', 'Existing', 'NEW'],
+    @account.tags.create(name: 'TestCaps')
+    params = { requester_id: requester.id, tags: ['new', '<1>new', 'existing', 'testcaps', '<2>existing', 'Existing', 'NEW'],
                status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     assert_difference 'Helpdesk::Tag.count', 1 do # only new should be inserted.
-      assert_difference 'Helpdesk::TagUse.count', 2 do # duplicates should be rejected
+      assert_difference 'Helpdesk::TagUse.count', 3 do # duplicates should be rejected
         post :create, construct_params({}, params)
       end
     end
     assert_response 201
-    params[:tags] = ['new', 'existing']
+    params[:tags] = ['new', 'existing', 'TestCaps']
     t = Helpdesk::Ticket.last
     match_json(ticket_pattern(params, t))
     match_json(ticket_pattern({}, t))
@@ -2123,7 +2176,10 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_show_with_company
-    ticket.update_column(:deleted, false)
+    t = ticket
+    t.update_column(:deleted, false)
+    company = create_company
+    t.update_column(:owner_id, company.id)
     get :show, controller_params(id: ticket.display_id, include: 'company')
     assert_response 200
     match_json(ticket_pattern_with_association(ticket, false, false, false, true))
@@ -2323,7 +2379,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
-  def test_index_with_requester
+  def test_index_with_requester_filter
     Helpdesk::Ticket.update_all(requester_id: User.first.id)
     ticket = create_ticket(requester_id: User.last.id)
     ticket.update_column(:created_at, 2.months.ago)
@@ -2646,11 +2702,11 @@ class TicketsControllerTest < ActionController::TestCase
                                                       source: nil,
                                                       type: nil
                                  )
-    match_json([bad_request_error_pattern('description',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('subject',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
+    match_json([bad_request_error_pattern('description',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('subject',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null' ),
                 bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Lead'),

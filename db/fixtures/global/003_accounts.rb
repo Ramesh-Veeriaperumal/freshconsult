@@ -18,4 +18,12 @@ unless Account.current
   else
     Account.first.make_current
   end
+  if Account.current
+    subscription = Account.current.subscription
+    if subscription.subscription_currency_id.nil?
+      subscription.subscription_currency_id = 3 # Default USD
+      subscription.state.downcase!
+      subscription.sneaky_save
+    end
+  end
 end

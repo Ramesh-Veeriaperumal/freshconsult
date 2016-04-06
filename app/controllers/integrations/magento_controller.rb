@@ -3,6 +3,7 @@ class Integrations::MagentoController < Admin::AdminController
   APP_NAME = Integrations::Constants::APP_NAMES[:magento]
 
   before_filter :get_installed_app, :only => [:edit, :update]
+  before_filter :check_installed_app, :only => [:new]
 
   def new
     params["configs"] = {}
@@ -10,6 +11,7 @@ class Integrations::MagentoController < Admin::AdminController
   end
 
   def edit
+    flash[:error] = params["error"] if params["error"].present?
     params["configs"] = {}
     params["configs"] = @installed_app["configs"][:inputs] if defined? @installed_app.configs[:inputs]["shops"]
     render_settings
@@ -20,17 +22,17 @@ class Integrations::MagentoController < Admin::AdminController
     arr = []
     arr = @installed_app.configs[:inputs]["shops"] if defined? @installed_app.configs[:inputs]["shops"]
     arr[position.to_i] = params["configs"]["shops"][position]
-    arr[position.to_i]["shop_url"] = arr[position.to_i]["shop_url"].strip
-    arr[position.to_i]["admin_url"] = arr[position.to_i]["admin_url"].strip
-    
-    response = validate_url(arr[position.to_i]["shop_url"])
+    arr[position.to_i]["shop_url"] = arr[position.to_i]["shop_url"].strip.chomp("/")
+    arr[position.to_i]["admin_url"] = arr[position.to_i]["admin_url"].strip.chomp("/")
+
+    response = external_url_is_valid?(arr[position.to_i]["shop_url"])
     unless response
       flash[:error] = I18n.t(:'integrations.magento.form.invalid_shop_url')
       redirect_to integrations_magento_edit_path and return
     end
-    arr[position.to_i]["shop_url"] = "#{response.scheme}://#{response.host}"
-
-    response = validate_url(arr[position.to_i]["admin_url"])
+    arr[position.to_i]["shop_url"] = "#{response.scheme}://#{response.host}#{response.path.presence}"
+    
+    response = external_url_is_valid?(arr[position.to_i]["admin_url"])
     unless response
       flash[:error] = I18n.t(:'integrations.magento.form.invalid_admin_url')
       redirect_to integrations_magento_edit_path and return
@@ -45,7 +47,15 @@ class Integrations::MagentoController < Admin::AdminController
 
   private
 
-    def validate_url(url)
+
+    def check_installed_app
+      if get_installed_app.present?
+        flash[:notice] = t(:'flash.application.already') 
+        redirect_to integrations_applications_path
+      end 
+    end
+
+    def external_url_is_valid?(url)
       begin
         uri = URI.parse(url)
         raise "Not a valid url" unless (uri.kind_of?(URI::HTTP) || uri.kind_of?(URI::HTTPS))
@@ -64,7 +74,7 @@ class Integrations::MagentoController < Admin::AdminController
         req = Net::HTTP.new(uri.host, uri.port)
         if uri.scheme == "https"
           req.use_ssl = true
-          req.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          req.verify_mode = OpenSSL::SSL::VERIFY_PEER
         end
         res = req.request_head(uri.path.presence || '/')
         return res.code

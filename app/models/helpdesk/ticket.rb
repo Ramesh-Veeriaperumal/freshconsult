@@ -166,6 +166,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :order => order_param
     }
   }
+
+  scope :group_escalate_sla, lambda { |due_by| {
+          :select => "helpdesk_tickets.*",
+          :joins =>  "inner join helpdesk_ticket_states 
+                      on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
+                      and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id 
+                      inner join groups on groups.id = helpdesk_tickets.group_id and 
+                      groups.account_id =  helpdesk_tickets.account_id",
+          :conditions => ['DATE_ADD(helpdesk_tickets.created_at,INTERVAL groups.assign_time SECOND) <=? 
+                            AND group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?', 
+                            due_by,false,Helpdesk::Ticketfields::TicketStatus::OPEN,nil]
+  }}
   
   scope :response_sla, lambda { |account,due_by| {
           :select => "helpdesk_tickets.*",
@@ -526,6 +538,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def subject_or_description
     [subject, description]
+  end
+
+  def spam_or_deleted?
+    self.spam || self.deleted
   end
   
   def from_email

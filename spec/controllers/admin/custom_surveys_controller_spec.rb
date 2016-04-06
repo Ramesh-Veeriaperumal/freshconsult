@@ -15,14 +15,16 @@ describe Admin::CustomSurveysController do
     response.body.should =~ /Surveys/
   end
 
-  it "should disable customer satisfaction surveys" do
-    post :disable , {id: @account.custom_surveys.first.id}
-    @account.features.find_by_type("SurveyLinksFeature").should eql nil
+  it "should deactivate customer satisfaction surveys" do
+    survey_id = @account.custom_surveys.first.id
+    post :deactivate , {id: survey_id}
+    @account.custom_surveys.find_by_id(survey_id).active.should eql 0
   end
 
-  it "should enable customer satisfaction surveys" do
-    post :enable , {id: @account.custom_surveys.first.id}
-    @account.features.find_by_type("SurveyLinksFeature").should be_an_instance_of(SurveyLinksFeature)
+  it "should activate customer satisfaction surveys" do
+    survey_id = @account.custom_surveys.first.id
+    post :activate , {id: survey_id}
+    @account.custom_surveys.find_by_id(survey_id).active.should eql 1
   end
 
   it "should create a new ticket and send notification emails with a survey" do
@@ -48,7 +50,7 @@ describe Admin::CustomSurveysController do
                         :jsonData => [{"name" =>  "Q1", "type" => "survey_radio", "field_type"=> "custom_survey_radio", 
                         "label" => "Are you satisfied with our customer support experience?", 
                         "choices" => [["Strongly Agree", 103, 1], ["Strongly Disagree", -103, 2]], "action" => "create"}].to_json   
-          active_survey= @account.custom_surveys.find(:all , :conditions => {:title_text => "dummy"}).first 
+          active_survey= @account.custom_surveys.where(:title_text => "dummy").first 
           active_survey.id.should_not eql nil
   end
   it "should create a survey with 3 choices" do
@@ -59,7 +61,7 @@ describe Admin::CustomSurveysController do
                         :jsonData => [{"name" =>  "Q1", "type" => "survey_radio", "field_type"=> "custom_survey_radio", 
                         "label" => "Are you satisfied with our customer support experience?", 
                         "choices" => [["Strongly Agree", 103, 1],["Neutral",100,2],["Strongly Disagree", -103, 3]], "action" => "create"}].to_json   
-    active_survey= @account.custom_surveys.find(:all , :conditions => {:title_text => "dummy_choices3"}).first 
+    active_survey= @account.custom_surveys.where(:title_text => "dummy_choices3").first 
     active_survey.id.should_not eql nil
   end
 
@@ -72,7 +74,7 @@ it "should create a survey with 5 choices" do
                         :jsonData => [{"name" =>  "Q1", "type" => "survey_radio", "field_type"=> "custom_survey_radio", 
                         "label" => "Are you satisfied with our customer support experience?", 
                         "choices" => [["Strongly Agree", 103,1],["Some What Agree",102,2],["Neutral",100,3],["Some What Disagree",-102,4],["Strongly Disagree", -103,5]], "action" => "create"}].to_json   
-    active_survey= @account.custom_surveys.find(:all , :conditions => {:title_text => "dummy_choices5"}).first 
+    active_survey= @account.custom_surveys.where(:title_text => "dummy_choices5").first 
     active_survey.id.should_not eql nil
   end
 
@@ -87,13 +89,13 @@ it "should create a survey with 5 choices" do
                         "choices" => [["Strongly Agree", 103,1],["Some What Agree",102,2],["Agree",101,3],
                                       ["Neutral",100,4],["Disagree",-101,5],["Some What Disagree",-102,6],
                                       ["Strongly Disagree", -103,7]], "action" => "create"}].to_json   
-    active_survey= @account.custom_surveys.find(:all , :conditions => {:title_text => "dummy_choices7"}).first 
+    active_survey= @account.custom_surveys.where(:title_text => "dummy_choices7").first 
     active_survey.update_attributes(:default => false)
     active_survey.id.should_not eql nil
   end
 
   it "should update the customer satisfaction survey settings" do
-      active_survey= @account.custom_surveys.find(:all , :conditions => {:active => true}).first
+      active_survey= @account.custom_surveys.where(:active => true).first
       choice = 2
       survey_result = active_survey.survey_results.last
       unless survey_result.blank?
@@ -120,7 +122,7 @@ it "should create a survey with 5 choices" do
   end
 
   it "should delete a survey" do
-      survey= @account.custom_surveys.find(:all , :conditions => {:title_text => "dummy_choices7"}).first  
+      survey= @account.custom_surveys.where(:title_text => "dummy_choices7").first  
       delete :destroy, {:id=>survey.id}
       @account.surveys.find_by_id(survey.id).should be_nil
   end

@@ -64,6 +64,7 @@ class ContactValidation < ApiValidation
     super(request_params, item, allow_string_param)
     @tag_names = item.tag_names.split(',') if item && !request_params.key?(:tags)
     @current_email = item.email if item
+    fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
   end
 
   def required_default_fields

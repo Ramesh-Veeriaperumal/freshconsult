@@ -34,6 +34,7 @@ class Freshfone::Account < ActiveRecord::Base
 	]
 	STATE_HASH = Hash[*STATE.map { |i| [i[0], i[2]] }.flatten]
 	STATE_AS_STRING = Hash[*STATE.map { |i| [i[0], i[1]] }.flatten]
+	STATE_REVERSE_HASH = STATE_HASH.invert
 
 	STATE_HASH.each_pair do |key, value|
 		define_method("#{key}?") do

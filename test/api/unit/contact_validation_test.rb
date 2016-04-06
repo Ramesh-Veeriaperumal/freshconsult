@@ -71,7 +71,7 @@ class ContactValidationTest < ActionView::TestCase
     errors = contact.errors.full_messages
     assert errors.include?('Tag names datatype_mismatch')
     assert errors.include?('Custom fields datatype_mismatch')
-    assert_equal({ email: {}, tag_names: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type' }, name: {}, custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null Type' } }, contact.error_options)
+    assert_equal({ email: {}, tag_names: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null'  }, name: {}, custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null'  } }, contact.error_options)
     Account.unstub(:current)
   end
 

@@ -1,5 +1,6 @@
 <div id="not_following_message" class="info-highlight center"></div>
-<%= form_for [@ticket, @note], :url => twitter_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true, :class =>" twitter-form", :id => "social_reply_form" } do |f| %>
+<%= form_for [@ticket, @note], :url => twitter_integrations_hootsuite_tickets_path, :html => {:class =>" twitter-form", :id => "social_reply_form" } do |f| %>
+    <%= hidden_field_tag :id, @ticket.display_id %>
     <%= hidden_field_tag :tkt_tweet_type, @ticket.tweet.tweet_type, :id => "tkt_tweet_type" %>
     <%= hidden_field_tag :in_reply_to_handle, @ticket.latest_twitter_comment_user, :id => "in_reply_to_handle" %>
     <%= hidden_field_tag :tweet, "true", :id => "tweet" %>

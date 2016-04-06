@@ -3,6 +3,7 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
   # http://www.paperplanes.de/2012/3/14/on-notifications-logsubscribers-and-bringing-sanity-to-rails-logging.html
 
   def process_action(event)
+    event.payload[:duration] = event.duration
     log_details(event.payload)
   end
 
@@ -19,7 +20,8 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
   def logging_format(payload)
     payload[:db_runtime] = payload[:db_runtime].round(2) if payload[:db_runtime]
     payload[:view_runtime] = payload[:view_runtime].round(2) if payload[:view_runtime]
-    log_file_format = "ip=#{payload[:ip]}, account_id=#{payload[:account_id]}, domain=#{payload[:domain]}, url=#{payload[:url]}, path=#{payload[:path]}, controller=#{payload[:controller]}, action=#{payload[:action]}, server_ip=#{payload[:server_ip]}, status=#{payload[:status]}, format=#{payload[:format]}, db_runtime=#{payload[:db_runtime]}, view_time=#{payload[:view_runtime]}, shard_name=#{payload[:shard_name]}"
+    payload[:duration] = payload[:duration].round(2)
+    log_file_format = "ip=#{payload[:ip]}, account_id=#{payload[:account_id]}, domain=#{payload[:domain]}, url=#{payload[:url]}, path=#{payload[:path]}, controller=#{payload[:controller]}, action=#{payload[:action]}, server_ip=#{payload[:server_ip]}, status=#{payload[:status]}, format=#{payload[:format]}, db_runtime=#{payload[:db_runtime]}, view_time=#{payload[:view_runtime]}, shard_name=#{payload[:shard_name]}, duration=#{payload[:duration]}"
   end
 
   def log_file

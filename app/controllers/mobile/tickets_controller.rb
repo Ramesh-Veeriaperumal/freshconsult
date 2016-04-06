@@ -3,16 +3,21 @@ class Mobile::TicketsController < ApplicationController
   include Mobile::Controllers::Ticket
   include ActionView::Helpers::CsrfHelper
   include HelpdeskControllerMethods
+  include Mobile::Constants
+
 
   before_filter :require_user_login, :set_mobile
 
-  before_filter :set_native_mobile , :only => [:mobile_filter_count, :get_filtered_tickets, :get_solution_url]
+  before_filter :set_native_mobile , :only => [:mobile_filter_count, :get_filtered_tickets, :get_solution_url, :recent_tickets]
   
   before_filter :load_ticket, :load_article , :only => [:get_solution_url]
+
+  before_filter :validate_recent_ticket_ids, :only => [:recent_tickets]
 
   FILTER_NAMES = [ :new_and_my_open, :all, :monitored_by, :spam, :deleted ]
   
   MOBILE_FILTERS = [ :overdue, :due_today, :on_hold, :open, :new ]
+
 
   MAX_TICKET_LIMIT = 60
 
@@ -71,10 +76,36 @@ class Mobile::TicketsController < ApplicationController
     end
   end
 
+
+  def recent_tickets
+     Sharding.run_on_slave do
+      # get all user tickets
+      items = scoper.where(display_id: @tkt_ids).limit(MOBILE_RECENT_TICKETS_LIMIT)
+      #filter tickets in my array
+      #each_with_object insead of inject
+      recent_tickets = items.inject([]) do |t, item|
+        t << item.to_mob_json_index
+      end
+      respond_to do |format|
+        format.nmobile {render json: { tickets: recent_tickets}} 
+     end
+    end    
+  end
+
+
+
   private
   
   def load_ticket
     @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+  end
+
+  def validate_recent_ticket_ids   
+    @tkt_ids = params[:recent_ticket_ids]
+    #Include a count check condition here to prevent call to recent_tickets
+    unless @tkt_ids.is_a?(Array) && @tkt_ids.map!(&:to_i)
+     render json: { tickets: [], error: MOBILE_API_RESULT_PARAM_FAILED}
+    end
   end
   
   def load_article
@@ -136,19 +167,23 @@ class Mobile::TicketsController < ApplicationController
   end
 
   def filter_count(selector, agent_filter=false)
-    if Account.current.launched?(:es_count_reads)
+    if current_account.launched?(:es_count_reads)
       TicketsFilter.es_filter_count(selector, true, agent_filter)
     else
       Sharding.run_on_slave do
         tickets = filter_tickets(agent_filter,selector)
-        tickets.unresolved.count
+        if current_account.launched?(:force_index_tickets)
+          tickets.use_index("index_helpdesk_tickets_status_and_account_id").unresolved.count
+        else
+          tickets.unresolved.count
+        end
       end
     end
   end
 
   def filter_tickets(agent_filter,selector = nil)
-    filter_scope   = current_account.tickets.permissible(current_user)
-    filter_scope   = filter_scope.where(:responder_id => current_user.id) if agent_filter
+    filter_scope   = scoper
+    filter_scope   = scoper.where(:responder_id => current_user.id) if agent_filter
     unless selector.nil?  
       filter_tickets = TicketsFilter.filter(filter(selector), current_user, filter_scope)
     else
@@ -167,7 +202,12 @@ class Mobile::TicketsController < ApplicationController
    rescue ArgumentError
     false
    else
-    true
+    trueas
   end
 
+  def scoper
+    current_account.tickets.permissible(current_user).preload({ticket_states: :tickets}, :account, :ticket_status, :requester, :responder, :company)
+  end
+
+  
 end

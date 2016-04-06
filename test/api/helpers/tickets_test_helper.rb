@@ -44,11 +44,11 @@ module TicketsTestHelper
       notes_pattern = notes_pattern.take(10) if limit
       result_pattern.merge!(conversations: notes_pattern.ordered!)
     end
-    if requester && ticket.requester
-      result_pattern.merge!(requester: requester_pattern(ticket.requester))
+    if requester
+      ticket.requester ? result_pattern.merge!(requester: requester_pattern(ticket.requester)) : result_pattern.merge!(requester: {})
     end
-    if company && ticket.company
-      result_pattern.merge!(company: company_pattern(ticket.company))
+    if company
+      ticket.company ? result_pattern.merge!(company: company_pattern(ticket.company)) : result_pattern.merge!(company: {})
     end
     result_pattern
   end

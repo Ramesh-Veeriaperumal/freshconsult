@@ -6,24 +6,24 @@ class Account < ActiveRecord::Base
 
   after_create :populate_features, :change_shard_status
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain, :update_route_info
-  
-  before_update :update_global_pod_domain , :if => :non_global_pods?
-  
+  before_update :update_global_pod_domain 
+
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_freshchat_url, :if => :freshchat_enabled?
+
+  after_destroy :remove_global_shard_mapping, :remove_from_slave_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
 
   after_commit :add_to_billing, :enable_elastic_search, on: :create
   after_commit :clear_api_limit_cache, :update_redis_display_id, on: :update
   after_commit :delete_reports_archived_data, on: :destroy
-
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
+
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
-  include Fdadmin::APICalls
   
   def check_default_values
     dis_max_id = get_max_display_id
@@ -56,6 +56,7 @@ class Account < ActiveRecord::Base
   def populate_features
     add_features_of subscription.subscription_plan.name.downcase.to_sym
     SELECTABLE_FEATURES.each { |key,value| features.send(key).create  if value}
+    add_member_to_redis_set(SLAVE_QUERIES, self.id)
   end
 
   protected
@@ -80,12 +81,17 @@ class Account < ActiveRecord::Base
     end
 
     def create_shard_mapping
-      shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:not_found],
+      if Fdadmin::APICalls.non_global_pods? && domain_mapping = DomainMapping.find_by_domain(full_domain) 
+        self.id = domain_mapping.account_id
+        populate_google_domain(domain_mapping.shard) if google_account?
+      else
+        shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard,:status => ShardMapping::STATUS_CODE[:not_found],
                                                :pod_info => PodConfig['CURRENT_POD']})
-      shard_mapping.domains.build({:domain => full_domain})  
-      populate_google_domain(shard_mapping) if google_account?
-      shard_mapping.save!                            
-      self.id = shard_mapping.id
+        shard_mapping.domains.build({:domain => full_domain})  
+        populate_google_domain(shard_mapping) if google_account?
+        shard_mapping.save!                            
+        self.id = shard_mapping.id
+      end
     end
 
     def set_shard_mapping
@@ -112,19 +118,15 @@ class Account < ActiveRecord::Base
     end
 
     def update_global_pod_domain
-      if full_domain_changed?
+      if Fdadmin::APICalls.non_global_pods? and full_domain_changed?
         request_parameters = {
           :account_id => id,
           :target_method => :change_domain_mapping_for_pod ,
           :old_domain => @old_object.full_domain,
           :new_domain => full_domain 
         }
-        response = connect_main_pod(
-          :post,
-          request_parameters,
-          PodConfig["pod_paths"]["pod_endpoint"],
-          "#{AppConfig['freshops_subdomain']['global']}.#{AppConfig['base_domain'][Rails.env]}")
-        raise ActiveRecord::Rollback, "Domain Already Taken" unless response["status"]
+        response = Fdadmin::APICalls.connect_main_pod(request_parameters)
+        raise ActiveRecord::Rollback, "Domain Already Taken" unless response && response["account_id"]
       end
     end
 
@@ -153,10 +155,21 @@ class Account < ActiveRecord::Base
       shard_mapping.destroy
     end
 
+    def remove_global_shard_mapping
+      if Fdadmin::APICalls.non_global_pods?
+        request_parameters = {:account_id => id,:target_method => :remove_shard_mapping_for_pod }
+        PodDnsUpdate.perform_async(request_parameters)
+      end
+    end
+
     def make_shard_mapping_inactive
       shard_mapping = ShardMapping.find_by_account_id(id)
       shard_mapping.status = ShardMapping::STATUS_CODE[:not_found]
       shard_mapping.save
+    end
+
+    def remove_from_slave_queries
+      remove_member_from_redis_set(SLAVE_QUERIES,self.id)
     end
 
     def delete_reports_archived_data

@@ -4,6 +4,7 @@
 
 <%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %> 
 <%= javascript_include_tag :'cdn/report_date'  %>
+<%= javascript_include_tag :'cdn/kissmetrics'  %>
 <%= stylesheet_link_tag_with_rtl :'cdn/reports', :media => "screen, print, projection"  %>
 <%= stylesheet_link_tag_with_rtl :'cdn/reports_print', :media => "print, projection" %>
 <span class="floatr">
@@ -36,6 +37,9 @@
 
 
 <%= javascript_tag do %>
+
+var report_label = '<%= @current_report[:label] %>';
+full_domain = '<%= current_account.full_domain %>'
 jQuery(document).ready(function() {
 	jQuery("#date_range").daterangepicker({
 		earliestDate:Date.parse('04/01/2013'),
@@ -58,8 +62,38 @@ jQuery(document).ready(function() {
 		ev.preventDefault();
 		return false;
 	});
+
+	recordAnalytics();
 });     
+
+function recordAnalytics() {
+
+	jQuery("input[type=submit]").click(function(ev) {
+
+		var date_range = jQuery("#date_range").val().split('-');
+		var diff = -1;
+		var event_prop = {
+			Date: jQuery("#date_range").val()
+		};
+
+        if (date_range.length == 2){
+			diff = (new Date().setHours(0,0,0,0) - Date.parse(date_range[1])) / (36e5 * 24);	
+		} else{
+		   diff = (new Date().setHours(0,0,0,0) - Date.parse(date_range[0])) / (36e5 * 24);
+		}
+		
+		if(diff == 0) {
+			event_prop.today_used_in_range = true;
+		}
+		if(diff == 1) {
+			event_prop.yesterday_used_in_range = true;
+		}
+		App.Report.Metrics.push_event(report_label,event_prop);
+	});
+}
+
 <% end %>
+	    
 <% end %>
 
 <div class="grid report" id="agent_ticket_summary">	
@@ -190,3 +224,10 @@ jQuery(document).ready(function() {
 		<%end%>
 	</table>	
 </div>
+<% unless AppMetrics::FRESHFONE_METRICS.blank? %>
+  	<%= javascript_tag do %>
+  		if(App.Kissmetrics != undefined){
+  			App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");	
+  		}	
+	<% end %>
+<% end %>

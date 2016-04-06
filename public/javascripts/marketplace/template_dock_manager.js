@@ -1,30 +1,89 @@
 var TemplateDockManager   = Class.create({
-  initialize: function(extensionsEl, customMsgs, tabName, types, type_ni) {
+  initialize: function(extensionsEl, customMsgs, tabName) {
     this.extensionsWrapper = extensionsEl;
     this.customMessages = customMsgs;
     this.progressInterval;
-    this.chosenCategory = "All";
     this.tabName = tabName;
-    this.types = types;
-    this.type_ni = type_ni;
 
     this.bindTemplateEvents();
     this.setupCarousel();
+
+    var that = this;  
+    jQuery(".search-query").livequery(function(){
+      var _searchInput = jQuery(this);
+      jQuery(this).autocomplete({
+        source: function( request, response ) {
+          var term = jQuery.trim(request.term)
+          if (term.length >= 2) {
+            jQuery.ajax({
+              type: 'get',
+              url: jQuery(_searchInput).data("url")+'&query='+encodeURIComponent(term),
+              success: function(data) {
+                results = data;
+                if(results.length > 0){
+                  response(
+                    jQuery.map( results, function( item ) {
+                      return {
+                        term : item.suggest_term,
+                        url : item.show_url
+                      }
+                    })
+                  )
+                }else{
+                  jQuery('.search-loader, .ui-autocomplete').hide();
+                  jQuery('.remove-query').show();
+                }
+              },
+              error: function(jqXHR, exception) {
+                that.showErrorMsg(that.customMessages.api_error);
+              }
+            });
+          }
+        },
+        minLength: 2,
+        search: function( event, ui ){
+          jQuery('.search-loader').show();
+          jQuery('.remove-query').hide();
+        },
+        open: function( event, ui ){
+          jQuery('.search-loader').hide();
+        },
+        select: function( event, ui ) {
+          that.getAppInfo(ui.item.url, true); // params are 'url to be loaded on click', 'is this from search suggestion?' 
+          jQuery(".appsearch-box #query").val(ui.item.term);
+        },
+        focus: function( event, ui ) {
+          jQuery(".appsearch-box #query").val(ui.item.term);
+          return false;
+        }
+      }).autocomplete( "instance" )._renderItem = function( ul, item ) {
+        jQuery('.remove-query').show();
+        return jQuery( "<li class='fa-autocomplete'></li>" )
+            .data( "autocomplete-item", item )
+            .append( "<a class='suggested-term' data-url='"+ item.url+ "'>" + escapeHtml(item.term) + "</a>" )
+            .appendTo( ul );
+      };
+
+    }); 
+    
   },
   bindTemplateEvents: function(){
-    jQuery(document).on("click.tmpl_events", ".browse-btn,.category,.index_btn" , this.loadApps.bindAsEventListener(this))
+    jQuery(document).on("click.tmpl_events", ".browse-btn,.category,.back2list_btn, .index_btn, #appGalleryLogo" , this.loadApps.bindAsEventListener(this))
                     .on("click.tmpl_events", ".fplugs-box,.backbtn, .show_btn" , this.loadAppInfo.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-btn" , this.installApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-form-btn, .update" , this.updateApp.bindAsEventListener(this))
-                    .on("submit.tmpl_events", "form#search-extension-form" , this.onSearch.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".nativeapp" , this.installNativeApp.bindAsEventListener(this))
+                    .on("submit.tmpl_events", "form#extension-search-form" , this.onSearch.bindAsEventListener(this))
                     .on("click.tmpl_events", "[id^=carousel-selector-]" , this.carouselSelector.bindAsEventListener(this))
-                    .on("click.tmpl_events", ".fa-tabd a", this.reinstateURL.bindAsEventListener(this));
+                    .on("click.tmpl_events", ".fa-tabd a", this.reinstateURL.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".remove-query", this.resetQuery.bindAsEventListener(this));
+  },
+  resetQuery: function (e) {
+    jQuery(".appsearch-box #query").attr("value", "");
   },
   setupCarousel: function(){
     jQuery("#screenshotsCarousel").livequery(function(){
-      jQuery(this).carousel({
-        interval: 5000
-      });
+      jQuery(this).carousel('pause');
       jQuery(this).on('slid', function (e) {
         var item = jQuery('#screenshotsCarousel .carousel-inner .item.active');
         // Deactivate all nav links
@@ -44,12 +103,6 @@ var TemplateDockManager   = Class.create({
   showLoader: function(){
     jQuery(this.extensionsWrapper).empty();
     jQuery(this.extensionsWrapper).append('<div class="sloading loading-block"></div>');
-  },
-  getObjConstr: function(i){
-    var screenshots_no = {
-      "screenshots_no" : i
-    };
-    return screenshots_no;
   },
   installTrigger: function(){
     jQuery(".install-btn").trigger("click");
@@ -76,31 +129,23 @@ var TemplateDockManager   = Class.create({
       type: "GET",
       beforeSend: function(){
         that.showLoader();
-        if(jQuery(el).hasClass("browse-btn"))
-          that.chosenCategory = "All";
-        else if(jQuery(e.currentTarget).hasClass("category"))
-          that.chosenCategory = jQuery(e.currentTarget).text();
-        else
-          that.chosenCategory = that.chosenCategory;
+        
       },
       success: function(jqXHR, exception){
-        that.types = jqXHR.type;
-        jQuery(that.extensionsWrapper).empty();
-        jQuery('#freshplug_listing_template').tmpl(jqXHR).appendTo(that.extensionsWrapper);
-        if(jQuery(el).hasClass("category") || jQuery(el).hasClass("index_btn")){
-          jQuery('#categoryname').text("/ " + that.chosenCategory);
-          jQuery(el).parent(".dd-categories").hide();
-        }
+        jQuery(that.extensionsWrapper).empty()
+                                      .append(JST["marketplace/marketplace_list"](jqXHR));
+        jQuery("#query").focus();
       },
       error: function(jqXHR, exception) {
-        that.showErrorMsg();
+        that.showErrorMsg(that.customMessages.no_connection);
       }
     });
   },
-  showErrorMsg: function(){
+  showErrorMsg: function(error_msg){
     var that = this;
+    error_msg = error_msg || that.customMessages.no_connection;
     jQuery(that.extensionsWrapper).empty();
-    jQuery(that.extensionsWrapper).append("<div class='alert alert-error'>"+ that.customMessages.no_connection + "</div>");
+    jQuery(that.extensionsWrapper).append("<div class='alert alert-error'>"+ error_msg + "</div>");
   },
   loadAppInfo: function(e){
     e.preventDefault();
@@ -112,57 +157,83 @@ var TemplateDockManager   = Class.create({
       e.stopPropagation();
     }
     else{
-      jQuery.ajax({
-        url: jQuery(el).attr("data-url"),
-        type: "GET",
-        beforeSend: function(){
-          that.showLoader();
-        },
-        success: function(extensions){
-          jQuery(extensions.screenshots).each(function(index){
-            jQuery.extend( extensions.screenshots[index], that.getObjConstr(index) );
-          });
-          extensions.types = that.types; 
+      var ele = jQuery(el);
+      this.getAppInfo(ele);
+    }
+  },
 
-          // install_btn_class
-          if(extensions.type != that.type_ni) {
-            extensions.install_btn_class = "install-form-btn";
-          }
-          if(extensions.installed){
-            if(extensions.installed_version == extensions.version_id){
-              extensions.install_btn_class = "disabled";
-            }
-          }
+  getAppInfo: function(obj, isSuggestion){
+    var that = this,
+        url;
 
-          // install_btn_text
-          extensions.install_btn_text = that.customMessages.install;
-          if(extensions.installed){
-            if(extensions.installed_version == extensions.version_id){
-              extensions.install_btn_text = that.customMessages.installed;
-            }
-            else{
-              extensions.install_btn_text = that.customMessages.update;
-            }
-          }
+    if(isSuggestion){
+      url = obj;
+    }else{
+      url = jQuery(obj).attr("data-url");
+    }
 
-          jQuery(that.extensionsWrapper).empty();
-          jQuery('#freshplug_details_template').tmpl(extensions).appendTo(that.extensionsWrapper);
+    jQuery.ajax({
+      url: url,
+      type: "GET",
+      beforeSend: function(){
+        that.showLoader();
+      },
+      success: function(extensions){
+        jQuery(that.extensionsWrapper).empty()
+                                    .append(JST["marketplace/marketplace_show"](extensions));
 
-          if(jQuery(el).hasClass("moreinfo-lnk")){
-            jQuery("#fa-nav").css("display", "none");
+
+        if(!isSuggestion){
+          if(jQuery(obj).hasClass("moreinfo-lnk")){
+            jQuery(".back2list_btn").css("display", "none");
+            jQuery(".app-name").css("padding-left", "15px");
             jQuery(".dtl-box").removeClass("head-spacer");
           }
           else{
            jQuery("#fa-nav").css("display", "inline-block");
            jQuery(".dtl-box").addClass("head-spacer");
           }
-        },
-        error: function(jqXHR, exception) {
-          that.showErrorMsg();
         }
-      });
-    }
+
+        that.manageShowMore();
+      },
+      error: function(jqXHR, exception) {
+        that.showErrorMsg(that.customMessages.no_connection);
+      }
+    });
   },
+
+  manageShowMore: function(){
+    var showChar = 260,  // How many characters are shown by default
+        ellipsis = "...",
+        moretext = "more",
+        lesstext = "less",
+        content  = jQuery(".descript").html();
+ 
+    if(content.length > showChar) {
+
+        var c = content.substr(0, showChar);
+        var h = content.substr(showChar, content.length - showChar);
+
+        var html = c + '<span class="moreellipses">' + ellipsis+ '&nbsp;</span><span class="morecontent"><span>' + h + '&nbsp;&nbsp;</span><a href="" class="morelink">' + moretext + '</a></span>';
+
+        jQuery(".descript").html(html);
+    }
+
+    jQuery(".morelink").click(function(){
+      if(jQuery(this).hasClass("less")) {
+          jQuery(this).removeClass("less");
+          jQuery(this).html(moretext);
+      } else {
+          jQuery(this).addClass("less");
+          jQuery(this).html(lesstext);
+      }
+      jQuery(this).parent().prev().toggle();
+      jQuery(this).prev().toggle();
+      return false;
+    });
+  },
+
   installApp: function(e){
     e.preventDefault();
     e.stopPropagation();
@@ -195,7 +266,7 @@ var TemplateDockManager   = Class.create({
             jQuery('.bar').css("width", "100%");
             parent.location.reload();
           } else {
-            jQuery("#install-error").show().text(that.customMessages.install_error);
+            jQuery("#install-error").show().text(that.customMessages.api_error);
             jQuery(".progress, .installing-text").hide();
             jQuery('.backbtn').removeAttr('disabled');
             jQuery(".install-form").show();
@@ -204,13 +275,17 @@ var TemplateDockManager   = Class.create({
           clearInterval(that.progressInterval);
         },
         error: function(jqXHR, exception) {
-          that.showErrorMsg();
+          that.showErrorMsg(that.customMessages.api_error);
         }
       });
     }else{
       jQuery("#install-error").show().text(that.customMessages.field_blank);
       jQuery(".install-form").css("height", "calc(100vh - 230px)");
     }
+  },
+  installNativeApp: function(e){
+    jQuery("#nativeapp-form").submit();
+    jQuery(".nativeapp").attr('disabled', 'disabled');
   },
   updateApp: function(e){
     e.preventDefault();
@@ -225,8 +300,9 @@ var TemplateDockManager   = Class.create({
         that.showLoader();
       },
       success: function(install_extension){
-        jQuery(that.extensionsWrapper).empty();
-        jQuery('#install_new_template').tmpl(install_extension).appendTo(that.extensionsWrapper);
+        jQuery(that.extensionsWrapper).empty()
+                                      .append(JST["marketplace/marketplace_install"](install_extension));
+        
         if(install_extension.configs == null  ) { // no config
           jQuery(".install-form").hide();
           setTimeout( that.installTrigger, 1000);
@@ -246,11 +322,12 @@ var TemplateDockManager   = Class.create({
 
       },
       error: function(jqXHR, exception) {
-        that.showErrorMsg();
+        that.showErrorMsg(that.customMessages.no_connection);
       }
     });
     
   },
+
   onSearch: function(e){
     e.preventDefault();
     e.stopPropagation();
@@ -263,20 +340,22 @@ var TemplateDockManager   = Class.create({
       beforeSend: function(){
         that.showLoader();
       },
-      success: function(extensions) {
-        jQuery(that.extensionsWrapper).empty();
-        jQuery('#freshplug_listing_template').tmpl(extensions).appendTo(that.extensionsWrapper);
+      success: function(jqXHR, exception){
+        jQuery(that.extensionsWrapper).empty()
+                                      .append(JST["marketplace/marketplace_list"](jqXHR));
       },
       error: function(jqXHR, exception) {
-        that.showErrorMsg();
+        that.showErrorMsg(that.customMessages.no_connection);
       }
     });
   },
+
   reinstateURL: function(e){
     e.preventDefault();
     e.stopPropagation();
     window.history.pushState(null, null, this.tabName);
   },
+  
   destroy: function(obj){
     jQuery(obj).off(".tmpl_events");
   }

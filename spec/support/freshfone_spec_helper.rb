@@ -64,7 +64,7 @@ module FreshfoneSpecHelper
 
   def create_freshfone_call_meta(call,external_number)
     @call_meta = call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
-              :meta_info => external_number, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
+              :meta_info => {:agent_info => external_number}, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
   end
 
   def create_supervisor_call(call=@freshfone_call, call_status = Freshfone::SupervisorControl::CALL_STATUS_HASH[:default])
@@ -130,6 +130,11 @@ module FreshfoneSpecHelper
     customer = FactoryGirl.build(:user, :account => @account, :email => Faker::Internet.email, :user_role => 3)
     customer.save
     customer
+  end
+
+  def create_freshfone_outgoing_caller(number = "+1234567890", number_sid = "PN2ba4c66ed6a57e8311eb0f14d5aa2d88")
+    @outgoing_caller = @account.freshfone_caller_id.create({:number => number,
+                                                        :number_sid => number_sid })
   end
 
   def set_twilio_signature(path, params = {}, master=false)

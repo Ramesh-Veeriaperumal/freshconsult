@@ -134,7 +134,7 @@ describe Helpdesk::CannedResponses::ResponsesController do
                         :visibility => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
                         }
       },
-      :remove_attachments => ["#{canned_response.shared_attachments.first.id}"],
+      :remove_attachments => ["#{canned_response.shared_attachments.first.attachment_id}"],
       :new_folder_id => @pfolder_id,
       :folder_id => "#{canned_response.folder_id}"
     }

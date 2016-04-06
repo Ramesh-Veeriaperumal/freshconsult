@@ -13,6 +13,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include WhiteListHelper
   include Helpdesk::Utils::Attachment
   include Helpdesk::Utils::ManageCcEmails
+  include Helpdesk::ProcessAgentForwardedEmail
 
   MESSAGE_LIMIT = 10.megabytes
 
@@ -220,16 +221,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def orig_email_from_text #To process mails fwd'ed from agents
       @orig_email_user ||= begin
         content = params[:text] || cleansed_html
-        if (content && (content.gsub("\r\n", "\n") =~ /^>*\s*From:\s*(.*)\s+<(.*)>$/ or 
-                              content.gsub("\r\n", "\n") =~ /^\s*From:\s(.*)\s+\[mailto:(.*)\]/ or  
-                              content.gsub("\r\n", "\n") =~ /^>>>+\s(.*)\s+<(.*)>$/))
-          name = $1
-          email = $2
-          if email =~ EMAIL_REGEX
-            return { :name => name, :email => $1 }
-          end
-        end
-        {}
+        identify_original_requestor(content)
       end
     end
 
@@ -314,10 +306,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       e_email = {}
       if (user.agent? && !user.deleted?)
         e_email = account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text
+        if e_email[:cc_emails].present?
+          params[:cc] = (params[:cc].present?) ? (params[:cc] << ", " << e_email[:cc_emails].join(", ")) : e_email[:cc_emails]
+        end
         user = get_user(account, e_email , email_config) unless e_email.blank?
       end
      
       global_cc = parse_all_cc_emails(account.kbase_email, account.support_emails)
+
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
@@ -493,10 +489,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_cc_emails = parse_cc_email
       parsed_cc_emails.delete(ticket.account.kbase_email)
       note = ticket.notes.build(
-        :private => (
-           (from_fwd_recipients or reply_to_private_note?(all_message_ids)) or 
-           (Account.find_by_id(ticket.account_id).features?(:threading_without_user_check) && reply_to_forward(in_reply_to))
-          ),
+        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?),
         :incoming => true,
         :note_body_attributes => {
           :body => tokenize_emojis(body) || "",
@@ -504,7 +497,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :full_text => tokenize_emojis(full_text),
           :full_text_html => full_text_html
           },
-        :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"],
         :user => user, #by Shan temp
         :account_id => ticket.account_id,
         :from_email => from_email[:email],
@@ -512,7 +505,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :cc_emails => parsed_cc_emails
       )  
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
-      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if ticket.agent_performed?(user)
+      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?)
+      
+      note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?
+
       check_for_auto_responders(note)
       check_support_emails_from(ticket.account, note, user, from_email)
 
@@ -554,6 +550,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
     
+    def rsvp_to_fwd?
+      @rsvp_to_fwd ||= (Account.current.features?(:threading_without_user_check) && reply_to_forward(all_message_ids))
+    end
+
     def can_be_added_to_ticket?(ticket, user, from_email={})
       ticket and
       ((user.agent? && !user.deleted?) or
@@ -561,7 +561,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       (ticket.included_in_cc?(user.email)) or
       (from_email[:email] == ticket.sender_email) or
       belong_to_same_company?(ticket,user) or
-      Account.find_by_id(ticket.account_id).features?(:threading_without_user_check))
+      Account.current.features?(:threading_without_user_check))
     end
     
     def belong_to_same_company?(ticket,user)

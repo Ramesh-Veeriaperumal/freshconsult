@@ -6,7 +6,9 @@ module WfFilterHelper
     :filter_name=>"Blah", :wf_model=>"Helpdesk::Ticket", :wf_order=>"created_at", :wf_order_type=>"desc", :custom_ticket_filter=>{"visibility"=>{"visibility"=>"3", "user_id"=>"1", "group_id"=>"1"}}}
 
   COMPARABLE_KEYS = [:wf_order, :wf_model, :wf_order_type]
-  DEFAULT_FILTER = 'all_tickets'
+  DEFAULT_FILTER = [{ "condition" => "spam", "operator" => "is", "value" => false}, 
+                    { "condition" => "deleted", "operator" => "is", "value" => false}]
+
 
   def create_filter args 
     params = {:filter_name => Faker::Name.name}.merge(args.symbolize_keys!)
@@ -19,7 +21,7 @@ module WfFilterHelper
   def check_filter_equality filter, params
     filter_hash = filter.serialize_to_params
     params_data_hash = JSON.parse params[:data_hash]
-    Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS[DEFAULT_FILTER].each do |filter|
+    DEFAULT_FILTER.each do |filter|
       params_data_hash << filter
     end
 

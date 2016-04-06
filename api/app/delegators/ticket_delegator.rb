@@ -7,7 +7,7 @@ class TicketDelegator < BaseDelegator
   validates :email_config, presence: true, if: -> { errors[:email_config_id].blank? && email_config_id && attr_changed?('email_config_id') }
   validate :product_presence, if: -> { product_id && attr_changed?('product_id', schema_less_ticket) }
   validate :user_blocked?, if: -> { requester_id && errors[:requester].blank? && attr_changed?('requester_id') }
-  validates :custom_field,  custom_field: { custom_field:
+  validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
                               {
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_dropdown_fields(x) },
                                 drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices },

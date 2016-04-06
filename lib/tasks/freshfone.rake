@@ -115,7 +115,7 @@ namespace :freshfone do
 						FreshfoneNotifier.deliver_freshfone_ops_notifier(account,
 							:message => "Freshfone Account Expiry Date Extended By 15 Days For Account :: #{ff_account.account_id}")
 					end
-				rescue => e
+				rescue Exception => e
 					FreshfoneNotifier.deliver_freshfone_ops_notifier(account,
 						{:subject => "Error On Expiring Freshfone Account For Account :: #{ff_account.account_id}",
 						:message => "Account :: #{ff_account.account_id}<br>Exception Message :: #{e.message}<br>
@@ -137,11 +137,10 @@ namespace :freshfone do
           account = ff_account.account
           account.make_current
           FreshfoneNotifier.deliver_phone_trial_half_way(account)
-        rescue => e
+        rescue Exception => e
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
-            subject: "Exception while performing Trial Day 7 reminder ::
-              #{ff_account.account_id}",
+            subject: "Exception while performing Trial Day 7 reminder :: #{ff_account.account_id}",
             message: "Account:: #{ff_account.account_id}
               <br/>Exception Message::
               #{e.message}<br/>Exception Stacktrace ::
@@ -162,11 +161,10 @@ namespace :freshfone do
           account = ff_account.account
           account.make_current
           FreshfoneNotifier.deliver_phone_trial_about_to_expire(account)
-        rescue => e
+        rescue Exception => e
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
-            subject: "Exception while performing Phone About to Expire ::
-              #{ff_account.account_id}",
+            subject: "Exception while performing Phone About to Expire :: #{ff_account.account_id}",
             message: "Account:: #{ff_account.account_id}
               <br/>Exception Message::
               #{e.message}<br/>Exception Stacktrace ::
@@ -188,11 +186,10 @@ namespace :freshfone do
           account = ff_account.account
           account.make_current
           FreshfoneNotifier.deliver_phone_trial_expire(account)
-        rescue => e
+        rescue Exception => e
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
-            subject: "Exception while performing Trial Expiry Reminder ::
-              #{ff_account.account_id}",
+            subject: "Exception while performing Trial Expiry Reminder :: #{ff_account.account_id}",
             message: "Account:: #{ff_account.account_id}
               <br/>Exception Message::
               #{e.message}<br/>Exception Stacktrace ::
@@ -216,7 +213,7 @@ namespace :freshfone do
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
             message: "Phone Trial has been expired for Account :: #{ff_account.account_id}")
-        rescue => e
+        rescue Exception => e
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
             subject: "Error On Setting Trial Expire for Freshfone Trial Account For Account :: #{ff_account.account_id}",
@@ -239,7 +236,7 @@ namespace :freshfone do
           account = ff_account.account
           account.make_current
           FreshfoneNotifier.deliver_trial_number_deletion_reminder(account)
-        rescue => e
+        rescue Exception => e
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
             subject: "Error while Sending 5 days Phone Trial reminder for Freshdesk Account :: #{ff_account.account_id}",
@@ -262,7 +259,7 @@ namespace :freshfone do
           account = ff_account.account
           account.make_current
           FreshfoneNotifier.deliver_trial_number_deletion_reminder_last_day(account)
-        rescue => e
+        rescue Exception => e
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
             subject: "Error while Sending 1 day to go Phone Trial Number deletion reminder for Freshdesk Account :: #{ff_account.account_id}",
@@ -289,9 +286,8 @@ namespace :freshfone do
           account.rollback(:freshfone_onboarding) if
             account.launched?(:freshfone_onboarding)
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
-            account, message: "Freshfone Account Expired For Account ::
-            #{ff_account.account_id} after Trial Expired")
-        rescue => e
+            account, message: "Freshfone Account Trial Expired For Account :: #{ff_account.account_id}")
+        rescue Exception => e
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
             subject: "Error On Setting Expiry for Trial Expired Freshfone Account For Account :: #{ff_account.account_id}",

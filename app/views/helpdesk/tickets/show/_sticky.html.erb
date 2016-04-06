@@ -21,8 +21,8 @@
 			<div class="text"><%= t('ticket.activity_toggle') %></div>
 			<span class="visible">Yes</span><span>No</span>
 		</div>
-		<div class="ticket-actions">
-			<ul class="collapse-content">
+		<div class="ticket-actions" data-domhelper-name="ticket-actions">
+			<ul class="collapse-content" data-domhelper-name="ticket-action-options">
 				<% unless @ticket.deleted or @ticket.spam %>
 				<li class="ticket-btns">
 					<div class="watchers_tooltip hide" id="new_watcher_page"
@@ -48,24 +48,26 @@
 				<li class="ticket-btns">
 					<div class="btn-group">
 						<% if privilege?(:reply_ticket)  && (@ticket.twitter? or @ticket.facebook? or @item.from_email.present? or @ticket.mobihelp? or @ticket.allow_ecommerce_reply?) %>
-					  	<a class="btn tooltip btn-collapse" title='<%= t('ticket.reply_to') %>' data-placement = "below" 
+							<a class="btn tooltip btn-collapse" title='<%= t('ticket.reply_to') %>' data-placement = "below" 
 					  		rel="note-button" data-note-type="reply" id="ReplyButton"  data-keybinding="<%= shortcut('ticket_detail.reply') %>" 
-					  		data-highlight="true" 
-							data-replyto-handle="<%= @ticket.twitter? ? default_twitter_body_val(@ticket) : "" %>" >
+					  		data-highlight="true" data-domhelper-name="reply-sticky-button"
+							  data-replyto-handle="<%= @ticket.twitter? ? default_twitter_body_val(@ticket) : "" %>" >
 					  		<span class="reply-inner"></span>
 				    		<%= t('ticket.reply_to')  %>
 				    	</a>
 						<% end %>
 						<% if privilege?(:forward_ticket) %>
-					  	<a href="#" id="FwdButton" class="btn tooltip btn-collapse" title='<%= t('fwd_to') %>' 
-					  		data-placement = "below" rel="note-button" data-note-type="fwd" data-keybinding="<%= shortcut('ticket_detail.forward') %>" 
+					  	<a href="#" id="FwdButton" class="btn tooltip btn-collapse" title='<%= t('fwd_to') %>'
+					  		data-placement = "below" rel="note-button" data-note-type="fwd" data-keybinding="<%= shortcut('ticket_detail.forward') %>"
+								data-domhelper-name="fwd-sticky-button"
 					  		data-highlight="true" >
 					  		<span class="forward-inner"></span>
 				    		<%= t('fwd_to') %>
 				    	</a>
 				    	<% end %>
-					  	<a href="#" id="noteButton" rel="note-button" class="btn tooltip btn-collapse" title='<%= t('ticket.add_note') %>' 
-					  		data-placement = "below" data-note-type="note" data-keybinding="<%= shortcut('ticket_detail.add_note') %>" 
+					  	<a href="#" id="noteButton" rel="note-button" class="btn tooltip btn-collapse" title='<%= t('ticket.add_note') %>'
+					  		data-placement = "below" data-note-type="note" data-keybinding="<%= shortcut('ticket_detail.add_note') %>"
+								data-domhelper-name="note-sticky-button"
 					  		data-highlight="true" >
 					  		<span class="note-inner"></span>
 							<%= t('ticket.add_note') %>
@@ -74,11 +76,11 @@
 				</li>
 				<% if privilege?(:edit_ticket_properties) %>
 				<li class="ticket-btns hide_on_collapse">
-					<%= link_to(t('ticket.close_btn'), "#", 
-							:title  => t('ticket.close_without_notification'), 
-							:class => "btn tooltip btn-collapse" , :id=>"close_ticket_btn" , 
-							:rel => "close_ticket_btn", "data-placement" => "below",
-							"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? 
+					<%= link_to(t('ticket.close_btn'), "#",
+							:title  => t('ticket.close_without_notification'),
+							:class => "btn tooltip btn-collapse" , :id=>"close_ticket_btn" ,
+							:rel => "close_ticket_btn", "data-placement" => "below", "data-domhelper-name" => "ticket-close-btn",
+							"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed?
 					%>
 				</li>
 				<% end %>
@@ -137,9 +139,9 @@
 			  	
 			  	<% if privilege?(:delete_ticket) %>
 			  	<li class = "collapse_on_default">
-			  		<%= link_to(t('ticket.delete_btn'), 
-			  					helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), 
-			  					:method => :delete, "data-keybinding" => shortcut('ticket_detail.delete')) %>
+			  		<%= link_to(t('ticket.delete_btn'),
+			  					helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}),
+			  					:method => :delete, "data-domhelper-name" => "ticket-delete-btn", "data-keybinding" => shortcut('ticket_detail.delete')) %>
   				</li>
   				<% end %>
 			</ul>

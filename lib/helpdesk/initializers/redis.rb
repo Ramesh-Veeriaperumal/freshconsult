@@ -8,18 +8,18 @@ display_id_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_displ
 
 #$redis_secondary = Redis.new(:host => config["host"], :port => config["port"])
 
-$redis_tickets = Redis.new(:host => config["host"], :port => config["port"])
-$redis_reports = Redis.new(:host => config["host"], :port => config["port"])
-$redis_integrations = Redis.new(:host => config["host"], :port => config["port"])
-$redis_portal = Redis.new(:host => config["host"], :port => config["port"])
-$redis_others = Redis.new(:host => config["host"], :port => config["port"])
+$redis_tickets = Redis.new(:host => config["host"], :port => config["port"], :timeout => 0.5)
+$redis_reports = Redis.new(:host => config["host"], :port => config["port"], :timeout => 0.5)
+$redis_integrations = Redis.new(:host => config["host"], :port => config["port"], :timeout => 0.5)
+$redis_portal = Redis.new(:host => config["host"], :port => config["port"], :timeout => 0.5)
+$redis_others = Redis.new(:host => config["host"], :port => config["port"], :timeout => 0.5)
 $spam_watcher = Redis.new(:host => rate_limit["host"], :port => rate_limit["port"], :timeout => 0.5)
 $rate_limit = Redis.new(:host => rate_limit["host"], :port => rate_limit["port"], :timeout => 0.5) # Used by fd_api_throttler.
-$redis_routes = Redis.new(:host => routes_config["host"], :port => routes_config["port"])
-$redis_display_id = Redis.new(:host => display_id_config["host"], :port => display_id_config["port"])
+$redis_routes = Redis.new(:host => routes_config["host"], :port => routes_config["port"], :timeout => 0.5)
+$redis_display_id = Redis.new(:host => display_id_config["host"], :port => display_id_config["port"], :timeout => 0.5)
 
 mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.yml'))[Rails.env]
-$redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"])
+$redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"], :timeout => 2)
 
 Redis.class_eval {add_method_tracer :set}
 Redis.class_eval {add_method_tracer :get}

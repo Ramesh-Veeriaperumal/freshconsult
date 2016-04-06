@@ -30,30 +30,26 @@ var ContactDom = Class.create({
     }
   },
 
+  getCustomField: function(){
+    return dom_helper_data.user.custom_field;
+  },
+
   convertToAgent: function(options){
     if(options){
       var id = options;
       var valid = jQuery.inArray(id, ['fulltime','occasional']);
-      var el = jQuery("ul.dropdown-menu.pull-right");
       if(valid == 0){
-        jQuery(el).find("li:first a").trigger("click");
+        jQuery("[data-domhelper-name='convert-agent-fulltime']").trigger("click");
       }
       else if(valid == 1){
-       jQuery(el).find("li:last a").trigger("click");
+        jQuery("[data-domhelper-name='convert-agent-occasional']").trigger("click");
       }
-    }
-  },
-
-  setBackgroundInfo: function(options){
-    if(options){
-      jQuery('textarea#user_description').val(options);
-      jQuery('input#user_submit').trigger('click');
     }
   },
 
   appendToContactSidebar: function(options){
     if(options){
-      jQuery('div.contact-sidebar-content').append(options);
+      jQuery("[data-domhelper-name='contact-sidebar']").append(options);
     }
   },
 

@@ -35,12 +35,12 @@
     redis_keys = ["xero_session_handle:#{Account.current.id}", "xero_access_token:#{Account.current.id}", "xero_access_secret:#{Account.current.id}", 
       "xero_expire_time:#{Account.current.id}"] 
     expires_in = 30.minutes
-    $redis_others.setex(redis_keys[0], expires_in, @xero_client.session_handle)
-    $redis_others.setex(redis_keys[1], expires_in, @xero_client.access_token.token)
-    $redis_others.setex(redis_keys[2], expires_in, @xero_client.access_token.secret)
-    $redis_others.setex(redis_keys[3], expires_in, @xero_client.client.instance_variable_get(:@expires_at))    
+    $redis_others.perform_redis_op("setex", redis_keys[0], expires_in, @xero_client.session_handle)
+    $redis_others.perform_redis_op("setex", redis_keys[1], expires_in, @xero_client.access_token.token)
+    $redis_others.perform_redis_op("setex", redis_keys[2], expires_in, @xero_client.access_token.secret)
+    $redis_others.perform_redis_op("setex", redis_keys[3], expires_in, @xero_client.client.instance_variable_get(:@expires_at))    
     redis_keys.each do |keys|
-      $redis_others.expire(keys, 30.minutes)
+      $redis_others.perform_redis_op("expire", keys, 30.minutes)
     end
     @revenue_accounts, @items_code_names = get_revenue_accounts_and_items
     raise ArgumentError if @revenue_accounts.blank?
@@ -83,10 +83,10 @@
       redis_keys = ["xero_session_handle:#{Account.current.id}", "xero_access_token:#{Account.current.id}", "xero_access_secret:#{Account.current.id}", 
         "xero_expire_time:#{Account.current.id}"]         
       config_params = {
-        'refresh_token' => $redis_others.get(redis_keys[0]),
-        'oauth_token' => $redis_others.get(redis_keys[1]),
-        'oauth_secret' => $redis_others.get(redis_keys[2]),
-        'expires_at' => $redis_others.get(redis_keys[3]),        
+        'refresh_token' => $redis_others.perform_redis_op("get", redis_keys[0]),
+        'oauth_token' => $redis_others.perform_redis_op("get", redis_keys[1]),
+        'oauth_secret' => $redis_others.perform_redis_op("get", redis_keys[2]),
+        'expires_at' => $redis_others.perform_redis_op("get", redis_keys[3]),        
         'accounts_code' => accounts,
         'items_code' => items,
         'default_desc' => RailsSanitizer.full_sanitizer.sanitize(params["description"])                

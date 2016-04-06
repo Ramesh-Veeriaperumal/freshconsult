@@ -68,11 +68,14 @@ class Social::Dynamo::Facebook
   def fetch_feeds(feed_id, stream_id)
     dynamo_hash_key   = "#{Account.current.id}_#{stream_id}"
     feed_interaction  = interactions_helper.get_feed_interaction(dynamo_hash_key, feed_id)
+    feeds_responses   = []
     if feed_interaction.present?
       feed_ids           = feed_interaction["feed_ids"][:ss]
-      attributes_to_get  = batch_get_feed_params(dynamo_hash_key, feed_ids)
-      feeds_responses    = feeds_helper.get_feeds_data(attributes_to_get)
+      feed_ids.each_slice(90) do |ids|
+        feeds_responses << feeds_helper.get_feeds_data(batch_get_feed_params(dynamo_hash_key, ids))
+      end
     end
+    feeds_responses.flatten
   end
   
   def delete_fd_link(stream_id, feed_id)

@@ -1,5 +1,5 @@
  
 <%= stylesheet_link_tag_with_rtl :'cdn/common' %>
 <%= javascript_include_tag :'cdn/defaults' %>
-<%= render :partial => "layouts/report/pdf_files", :formats => [:html], :locals => {} %>
-<%= render :partial => "reports/timesheet_reports/time_sheet_list", :formats => [:html], :locals => {:time_sheets => @time_sheets} %> 
+<%= render :partial => "layouts/report/pdf_files.html.erb", :formats => [:html], :locals => {} %>
+<%= render :partial => "reports/timesheet_reports/time_sheet_list.html.erb", :formats => [:html], :locals => {:time_sheets => @time_sheets} %> 

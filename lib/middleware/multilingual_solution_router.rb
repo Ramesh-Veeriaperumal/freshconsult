@@ -15,7 +15,10 @@ class Middleware::MultilingualSolutionRouter
       if request.path_info.starts_with?(*ACCEPTED_PATHS)
         shard = ShardMapping.lookup_with_domain(request.host)
         return execute_request(env) if shard.nil?
-        if LaunchParty.new.launched?(feature: :solutions_meta_read, account: shard.account_id)
+        lp = LaunchParty.new
+        meta_read = (lp.launched?(feature: :solutions_meta_read, account: shard.account_id) ||
+                  lp.launched?(feature: :solutions_meta_read))
+        if meta_read
           request.path_info = request.path_info.gsub(/(\A\/support|\A\/mobihelp)/) {|match| "#{match}/multilingual"}
           Rails.logger.debug "********** Using solutions_meta_read **********"
         end

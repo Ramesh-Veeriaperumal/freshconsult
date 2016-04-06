@@ -4,9 +4,10 @@ class Fdadmin::FreshfoneStats::CallQualityMetricsController < Fdadmin::DevopsMai
 	include Freshfone::CallsRedisMethods
 
 	around_filter :select_slave_shard, :only => [:export_csv]
+  before_filter :load_account, only: [:export_csv]
 
 	def export_csv
-		render :json => {:call_quality_metrics_disabled => true, :status => "error"} and return unless account.features?(:call_quality_metrics)
+		render :json => {:call_quality_metrics_disabled => true, :status => "error"} and return unless @account.features?(:call_quality_metrics)
 	  csv_string = ""
 	  csv_string = select_call_metrics_csv  if params[:export_type] == "select_call" 
 	  csv_string = last_ten_calls_metrics_csv  if params[:export_type] == "last_ten_call"
@@ -33,7 +34,7 @@ class Fdadmin::FreshfoneStats::CallQualityMetricsController < Fdadmin::DevopsMai
     end  
 
     def select_call_metrics_csv
-      call = account.freshfone_calls.filter_by_dial_call_sid(params[:dial_call_sid]).first
+      call = @account.freshfone_calls.filter_by_dial_call_sid(params[:dial_call_sid]).first
       if call.present?
 	      csv_string = CSVBridge.generate do |csv|
 	        csv << call_info_header_string
@@ -95,11 +96,11 @@ class Fdadmin::FreshfoneStats::CallQualityMetricsController < Fdadmin::DevopsMai
     end 
 
     def key(id) 
-    	$redis_integrations.keys("FRESHFONE:CALL_QUALITY_METRICS:#{params[:account_id]}:#{id}")
+    	$redis_integrations.perform_redis_op("keys", "FRESHFONE:CALL_QUALITY_METRICS:#{params[:account_id]}:#{id}")
     end
 
     def last_ten_call_records
-      @calls ||= account.freshfone_calls.limit(10).where("dial_call_sid is NOT NUll").order('id desc')
+      @calls ||= @account.freshfone_calls.limit(10).where("dial_call_sid is NOT NUll").order('id desc')
     end
 	
 end	

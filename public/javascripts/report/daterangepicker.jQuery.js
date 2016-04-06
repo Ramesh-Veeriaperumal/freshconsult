@@ -259,6 +259,10 @@ jQuery.fn.daterangepicker = function(settings){
 			rp.find('.range-start').restoreDateFromData().css('opacity',1).show(400);
 			rp.find('.range-end').restoreDateFromData().css('opacity',1).show(400);
 			setTimeout(function(){doneBtn.fadeIn();}, 400);
+
+			if (options.presetRangesCallback){
+				jQuery(document).trigger("presetRangesSelected",false); 
+			}
 		}
 		else {
 			//custom date range specified in the options (no calendars shown)
@@ -272,7 +276,7 @@ jQuery.fn.daterangepicker = function(settings){
 			rp.find('.range-end').datepicker('setDate', dateEnd).find('.ui-datepicker-current-day').trigger('click');
 			// Reports Hack: To persist relative date Range
 			if (options.presetRangesCallback){
-				jQuery('#reports_wrapper').trigger("presetRangesSelected"); 
+				jQuery(document).trigger("presetRangesSelected",true); 
 			}
 				
 

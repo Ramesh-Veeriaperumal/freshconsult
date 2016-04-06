@@ -45,8 +45,8 @@ var SurveyAdmin = {
 			SurveyAdmin.render(surveyProtocol);
 			jQuery('a#previewFeedback').show();
 			(surveyProtocol.active || surveyProtocol.isDefault) ? jQuery('input#deleteSurvey').hide() 
-                            :  jQuery('input#deleteSurvey').show();
-            	jQuery('#survey_new_layout').show();
-          SurveyQuestion.defaultOptions(surveyProtocol);
+                           				 :  jQuery('input#deleteSurvey').show();
+            		jQuery('#survey_new_layout').show();
+          		SurveyQuestion.defaultOptions(surveyProtocol);
 		}
 }

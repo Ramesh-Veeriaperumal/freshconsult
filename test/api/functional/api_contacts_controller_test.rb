@@ -340,6 +340,23 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 201
   end
 
+  def test_create_duplicate_tags
+    @account.tags.create(name: 'existingtag')
+    @account.tags.create(name: 'TestCapsTag')
+    params = { name: Faker::Lorem.characters(20), tags: ['newtag', '<1>newtag', 'existingtag', 'testcapstag', '<2>existingtag', 'ExistingTag', 'NEWTAG'],
+               email: Faker::Internet.email }
+    assert_difference 'Helpdesk::Tag.count', 1 do # only new should be inserted.
+      assert_difference 'Helpdesk::TagUse.count', 3 do # duplicates should be rejected
+        post :create, construct_params({}, params)
+      end
+    end
+    params[:tags] = ['newtag', 'existingtag', 'TestCapsTag']
+    u = User.last
+    match_json(deleted_contact_pattern(params, u))
+    match_json(deleted_contact_pattern({}, u))
+    assert_response 201
+  end
+
   # Update user
   def test_update_user_with_blank_name
     params_hash  = { name: '' }
@@ -713,7 +730,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_out_of_a_user_without_email
-    @account.subscription.update_attribute(:agent_limit, nil)
+    @account.subscription.update_column(:agent_limit, nil)
     sample_user = get_user
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
@@ -725,7 +742,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_out_of_a_user_beyond_agent_limit
-    @account.subscription.update_attribute(:agent_limit, 1)
+    @account.subscription.update_column(:agent_limit, 1)
     sample_user = get_user_with_email
     put :make_agent, construct_params(id: sample_user.id)
     assert_response 403
@@ -911,15 +928,15 @@ class ApiContactsControllerTest < ActionController::TestCase
                                                            address: nil
                                  )
     assert_response 400
-    match_json([bad_request_error_pattern('email', :datatype_mismatch, code: :missing_field, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('job_title', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('mobile', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('address', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('view_all_tickets', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('twitter_id', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('phone', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                bad_request_error_pattern('tags', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null Type'),
+    match_json([bad_request_error_pattern('email', :datatype_mismatch, code: :missing_field, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('job_title', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('mobile', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('address', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('view_all_tickets', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('twitter_id', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('phone', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
+                bad_request_error_pattern('tags', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null' ),
                 bad_request_error_pattern('company_id', :blank),
                 bad_request_error_pattern('language', :not_included,
                                           list: I18n.available_locales.map(&:to_s).join(',')),
@@ -1151,5 +1168,14 @@ class ApiContactsControllerTest < ActionController::TestCase
     get :index, controller_params({ email: [email] }, false)
     assert_response 400
     match_json([bad_request_error_pattern('email', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
+  end
+
+  def test_update_with_custom_fields_required_which_is_already_present
+    cf_sample_field = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'SampleField', editable_in_signup: 'true', required_for_agent: true))
+    user = add_new_user(@account, custom_fields: {"cf_samplefield" => "test value"})
+    put :update, construct_params({ id: user.id }, {name: "Sample User 1"})
+    assert_response 200
+  ensure
+    cf_sample_field.update_attribute(:required_for_agent, false)
   end
 end

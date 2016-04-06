@@ -7,12 +7,10 @@ describe ActivationsController do
   before(:all) do
     @key_state = mue_key_state(@account)
     enable_mue_key(@account)
-    @account.features.multiple_user_emails.create
     @user2 = add_user_with_multiple_emails(@account, 4)
   end
 
   after(:all) do
-    @account.features.multiple_user_emails.destroy
     disable_mue_key(@account) unless @key_state
   end
 
@@ -36,6 +34,7 @@ describe ActivationsController do
     u = add_new_user(@account)
     u.active = false
     u.save
+    u.reset_perishable_token!
     get :new, :activation_code => u.perishable_token
     response.body.should =~ /<h3 class="heading">Activate your account /
   end
@@ -83,14 +82,17 @@ describe ActivationsController do
     u.active = false
     u.save
     u.reload
-    post :create, :perishable_token => u.perishable_token, :user=>{:name=>u.name, :password=>"hello", :password_confirmation=>"hello"}
+    u.reset_perishable_token!
+    post :create, :perishable_token => u.perishable_token, :user=>{:name=>u.name, :password=>"hello1234", :password_confirmation=>"hello1234"}
     u.reload
     u.active?.should eql true
     session["flash"][:notice].should eql "Your account has been activated."
   end
 
   it "should not create activation" do
-    post :create, :perishable_token => "dasdasdASDASDasdAsdefsFasDfSdfsdFsDf"
+    user = Account.current.users.last
+    user.reset_perishable_token!
+    post :create, :perishable_token => user.perishable_token, :user=>{}
     response.body.should_not =~ /Your account has been activated./
   end
 end

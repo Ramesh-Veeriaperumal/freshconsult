@@ -199,7 +199,7 @@ var presentInList = function(filter_values, msg_val){
 }
 
 window.autoRefresh = function(server, hashed_params, current_username, current_userid){
-  var node_socket = agentio.connect(server, {'force new connection':true, 'sync disconnect on unload':true});
+  var node_socket = agentio.connect(server, {'force new connection':true, 'sync disconnect on unload':true, 'reconnectionDelay': 3000, 'reconnectionDelayMax': 60000});
   window.node_socket = node_socket;
   jQuery("#index_refresh_alert").data("updated", {});
   jQuery("#index_refresh_alert").data("created", {});

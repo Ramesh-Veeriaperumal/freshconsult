@@ -18,7 +18,7 @@ module Reports
 						Account.current_pod.active_accounts.find_in_batches(:batch_size => 500 , 
 																						:conditions => {:time_zone => time_zones}) do |accounts|
 							accounts.each do |account|
-								next if ismember?(OLD_REPORTS_DISABLED, account.id)
+								next unless account.old_reports_enabled?
 								id = account.id
                 begin
                   Time.zone = account.time_zone

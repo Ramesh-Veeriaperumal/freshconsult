@@ -344,8 +344,8 @@ module ApiDiscussions
       forum = create_test_forum(fc_obj)
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: nil, forum_type: nil, forum_category_id: nil, name: nil)
-      pattern = [bad_request_error_pattern('name', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null Type'),
-                 bad_request_error_pattern('forum_category_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null Type'),
+      pattern = [bad_request_error_pattern('name', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
+                 bad_request_error_pattern('forum_category_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null' ),
                  bad_request_error_pattern('forum_visibility', :not_included, list: '1,2,3,4'),
                  bad_request_error_pattern('forum_type', :not_included, list: '1,2,3,4')]
       match_json(pattern)
@@ -548,10 +548,11 @@ module ApiDiscussions
     end
 
     def test_category_forums
-      get :category_forums, controller_params(id: fc_obj.id)
+      forum_category = fc_obj
+      get :category_forums, controller_params(id: forum_category.id)
       assert_response 200
       result_pattern = []
-      fc_obj.forums.each do |f|
+      forum_category.forums.each do |f|
         result_pattern << forum_pattern(f)
       end
       match_json(result_pattern.ordered!)

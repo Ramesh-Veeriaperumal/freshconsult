@@ -106,7 +106,7 @@ module Freshfone::CallsRedisMethods
   def add_pinged_agents_call(call_id, agent_call_sid)
     key = pinged_agents_key(call_id)
     add_to_set(key, agent_call_sid)
-    $redis_integrations.expire(key, 1800)
+    $redis_integrations.perform_redis_op("expire", key, 1800)
   end
 
   def get_pinged_agents_call(call_id)

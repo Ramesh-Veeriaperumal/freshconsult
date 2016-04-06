@@ -1,12 +1,5 @@
 @import "../../fonts/glyphs-variables";
 $survey-types: happy #82af56, neutral #f3ca6e, sad #ee715e;
-$survey-response-color: extremely-satisfied #4e8d00,
-						satisfied #6cb537,
-						moderately-satisfied #aad340,
-						netural #f1db16,
-						moderately-dissatisfied #ffc400,
-						dissatisfied #ff8c00,
-						extremely-dissatisfied #e7340f;
 
 @each $survey-type in $survey-types {
 	.ficon-survey-#{nth($survey-type, 1)}, a .ficon-survey-#{nth($survey-type, 1)}{
@@ -14,13 +7,8 @@ $survey-response-color: extremely-satisfied #4e8d00,
 	}
 }
 
-@each $survey-color in $survey-response-color {
-	.survey-#{nth($survey-color, 1)}{
-		background-color: nth($survey-color, 2);
-	}
-}
 .spinner{
-	@include left(-10px !important);
+	@include left(-15px !important);
 	top: -6px !important;
 
 }
@@ -146,8 +134,11 @@ $survey-response-color: extremely-satisfied #4e8d00,
 			&.disable {
     			cursor: default;
     			color: #D6D6D6;    
-    			padding: 15px;
+    			padding: 10px 15px;
     			line-height: 38px;
+    			.survey-nav-lead{
+    				width:47%;
+    			}
 			}
 			&.active{
 				background: #fff;
@@ -207,7 +198,9 @@ $survey-response-color: extremely-satisfied #4e8d00,
 	font-size: 12px;
 	color: #333;
 }
-
+.report_contact{
+	@include margin-left(40px);
+}
 .survey-details{
 	color: #999;
 	font-weight: 500;
@@ -222,9 +215,9 @@ $survey-response-color: extremely-satisfied #4e8d00,
 	padding-bottom: 15px;
 	margin-bottom: 20px;
 	blockquote{
-		border-left: 1px solid #ddd;
+		@include border-left(1px solid #ddd);
 		line-height: 1.3;
-		padding-left: 10px;
+		@include padding-left(10px);
 		padding-bottom: 0;
 		margin-bottom: 5px;
 	}
@@ -233,10 +226,9 @@ $survey-response-color: extremely-satisfied #4e8d00,
 .user-profile-rounded{
 	@include border-radius(100%);
 	@include size(32px, 32px);
+	@include float(left);
 	padding: 0;
-	float: left;
 	display: inline;
-	margin-right: 10px;
 	position: relative;
 	img{
 		@include size(32px, 32px);
@@ -401,7 +393,8 @@ $survey-response-color: extremely-satisfied #4e8d00,
 			text-align: center;
 		}
 		td:first-of-type{
-			background-color:#fff !important;
+			background-color:#fafafa !important;
+			@include text-align(left);
 		}
 	}
 
@@ -463,6 +456,16 @@ $survey-response-color: extremely-satisfied #4e8d00,
     				border-right: 6px solid transparent;
     				border-top: 6px solid #989898;
 				}
+				span.unsaved_star {
+				    vertical-align: baseline;
+				    font-size: 18px;
+				    font-weight: bold;
+				    line-height: 0;
+				}
+			}
+			.report-title-block.changed {
+    			color: #F81;
+    			font-style: italic;
 			}
 		}
 		.reports-menu{
@@ -476,20 +479,30 @@ $survey-response-color: extremely-satisfied #4e8d00,
 				border: 1px solid #cbcbcb;
 				@include border-radius(5px);
 				@include box-shadow(1px 1px 10px #ebebeb);
+				overflow-y : auto;
+				max-height: 350px;
 				li{
 					a{
 						display: block;
 						span{
-							padding-right: 12px;
+							@include padding-right(12px);
 							display: inline-block;
 						}
-						font-size: 14px;
-						height: 45px;
-						line-height: 45px;
-						padding: 0px 25px 0 18px;
+						span.report_title{
+							color: #7f7f7f;
+							font-size: 14px;
+							width: 86%;
+							word-wrap: break-word;
+						}
+						@include padding(12px 25px 12px 18px);
 						color: #7f7f7f;
 						i{
 							color: #7f7f7f;
+						}
+						&:after{
+							display: block;
+							content: '';
+							clear : both;
 						}
 					}
 					&:hover{
@@ -497,8 +510,10 @@ $survey-response-color: extremely-satisfied #4e8d00,
 					}
 					&.active{
 						a{
-							font-weight: bold;
-							color: #333;
+							span.report_title{
+								font-weight: bold;
+								color: #333;
+							}
 							i{
 								color: #333;
 							}
@@ -512,27 +527,49 @@ $survey-response-color: extremely-satisfied #4e8d00,
 			background: #f8f8f8;
 			padding: 10px 20px;
 			ul{
-	    		li{
-	    			display: inline-block;
-	    			margin-right: 10px;
-	    			margin-top: 5px;
-	    			a{
-	    				color: #000;
-	    				font-weight: 600;
-	    			}
-	    			input[type="text"]{
-	    				margin-bottom:0;
-	    				width:inherit;
-	    			}
-	    		}
+		    		li{
+		    			display: inline;
+		    			margin-right: 10px;
+		    			margin-top: 5px;
+		    			a{
+		    				color: #000;
+		    				font-weight: 600;
+		    			}
+		    			input[type="text"]{
+		    				margin-bottom:0;
+			    			width:inherit;
+			    			height: 8px;
+		    			}
+		    			.select2-container-active .select2-choice{
+		    				@include box-shadow(none);
+		    			}
+		    			#survey_date_link_container{
+		    				padding-bottom: 1px;
+			    			border-bottom: 1px solid #ccc;
+		    			}
+		    		}
 			}
 		}
+	}
+
+	.empty-chart{
+	    line-height: 200px;
+	    text-align: center;
+	    width: 100%;
+	    color: #cdcdcd;
+	    font-weight: 500;
+	    font-size:18px;
 	}
 }
 .select2-drop{ 
 	width: 240px !important;
 	.select2-result-label{
 		margin: 5px;
+	}
+	.deleted_list{
+		background-color: #fff;
+		color: #d3d3d3;
+		border-top: 1px dashed #d3d3d3;
 	}
 }
 .select2-drop-active{
@@ -553,13 +590,6 @@ $survey-response-color: extremely-satisfied #4e8d00,
 	}
 	a.dropdown-toggle h5 {
     	font-weight: 400;
-	}
-	.empty-chart{
-	    line-height: 200px;
-	    text-align: center;
-	    width: 100%;
-	    font-weight: 500;
-	    font-size:18px;
 	}
 	.survey-report{
 		margin: 8px;
@@ -599,23 +629,39 @@ $survey-response-color: extremely-satisfied #4e8d00,
 		overflow: auto;
 	}
 }
-.survey_date_range{
-	padding-bottom: 38px;
-	&.opensright .calendar{
-		&.left, .right{
-			float: left;
+ /*saved reports Styles*/
+ #view_manage_links {
+	display: inline-block;
+	@include margin-left(5px);
+	margin-top : 10px;
+	a {
+		&.left-border {
+			@include border-left(1px solid #e1e1e1);
+		}
+		&.right-border {
+			@include border-right(1px solid #e1e1e1);
+		}
+		i {
+			@include opacity(1);
+
+			&.trash{
+				width: 24px;
+			    font-size: 18px;
+			    display: inline-block;
+			    text-align: center;
+			    margin-right: 4px;
+			}
 		}
 	}
-	.ranges{
-	  width: 110px;
-	  position: absolute;
-	  bottom: 6px;
-	  right: 0px;
-	  margin-top: 114px;
-	}
-	.cancelBtn, .applyBtn{
-		padding: 3px 9px;
-	}
-	.icon-arrow-left:before, .icon-arrow-right:before{ display: none;}
-	.daterangepicker_start_input, .daterangepicker_end_input{ display: none;	}
+}
+.missing_field,.unavailable_field{
+	color : #b94a48;
+}
+.field_title{
+	font-weight: 600;
+}
+p.visibility {
+    color: #d3d3d3;
+    margin-top: -10px;
+    margin-bottom: 20px;
 }

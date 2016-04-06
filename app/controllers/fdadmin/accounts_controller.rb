@@ -22,7 +22,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:email] = fetch_email_details(account)
     account_summary[:invoice_emails] = fetch_invoice_emails(account)
     account_summary[:api_limit] = account.api_limit
-    account_summary[:api_v2_limit] = $rate_limit.get(Redis::RedisKeys::ACCOUNT_API_LIMIT % {account_id: params[:account_id]})
+    account_summary[:api_v2_limit] = $rate_limit.perform_redis_op("get", Redis::RedisKeys::ACCOUNT_API_LIMIT % {account_id: params[:account_id]})
     credit = account.freshfone_credit
     account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
     account_summary[:shard] = shard_info.shard_name
@@ -125,7 +125,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   end
 
   def change_v2_api_limit
-    $rate_limit.set(Redis::RedisKeys::ACCOUNT_API_LIMIT % {account_id: params[:account_id]},params[:new_limit])
+    $rate_limit.perform_redis_op("set", Redis::RedisKeys::ACCOUNT_API_LIMIT % {account_id: params[:account_id]},params[:new_limit])
     render :json => {:status => "success"}
   end
 
@@ -298,11 +298,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       :new_domain => params[:new_url], 
       :target_method => :check_domain_availability
     }
-    response = connect_main_pod(
-      :post,request_parameters,
-      PodConfig["pod_paths"]["pod_endpoint"],
-      "#{AppConfig['freshops_subdomain']['global']}.#{AppConfig['base_domain'][Rails.env]}")
-    render :json => { status: "notice"} and return if response["status"]
+    response = Fdadmin::APICalls.connect_main_pod(request_parameters)
+    render :json => { status: "notice"} and return if response["account_id"]
   end
 
   def user_info

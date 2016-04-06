@@ -14,7 +14,7 @@ module Admin
           conditions = execute_on_db { rule.filter_query }
           next if conditions.empty?
           negate_conditions = [""]
-          negate_conditions = execute_on_db { rule.negation_query } if $redis_others.get("SUPERVISOR_NEGATION")
+          negate_conditions = execute_on_db { rule.negation_query } if $redis_others.perform_redis_op("get", "SUPERVISOR_NEGATION")
           logger.info "rule name::::::::::#{rule.name}"
           logger.info "conditions::::::: #{conditions.inspect}"
           logger.info "negate_conditions::::#{negate_conditions.inspect}"

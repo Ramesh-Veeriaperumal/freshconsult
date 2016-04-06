@@ -5,6 +5,9 @@
   <span class="report-title-block" data-action="pop-report-type-menu">
     <span id="report-title">
       <%=t("helpdesk_reports.#{report_type}.title").html_safe %>
+      <% if filter_name.present? %>
+        <%= " - #{filter_name}" %>
+      <% end %>
     </span>
   </span>
 </div>
