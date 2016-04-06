@@ -384,7 +384,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(phone: Faker::PhoneNumber.phone_number)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('name', :phone_mandatory)])
+    match_json([bad_request_error_pattern('name', :phone_mandatory, code: :missing_field)])
   end
 
   def test_create_email_format_invalid
@@ -447,14 +447,14 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(fr_due_by: nil, due_by: 12.days.since.iso8601)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('fr_due_by', :fr_due_by_validation)])
+    match_json([bad_request_error_pattern('fr_due_by', :fr_due_by_validation, code: :missing_field)])
   end
 
   def test_create_with_nil_due_by_with_fr_due_by
     params = ticket_params_hash.merge(due_by: nil, fr_due_by: 12.days.since.iso8601)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :due_by_validation)])
+    match_json([bad_request_error_pattern('due_by', :due_by_validation, code: :missing_field)])
   end
 
   def test_create_closed_with_nil_due_by_fr_due_by
@@ -482,14 +482,14 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:due_by, :fr_due_by).merge(due_by: 12.days.since.iso8601)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('fr_due_by', :fr_due_by_validation)])
+    match_json([bad_request_error_pattern('fr_due_by', :fr_due_by_validation, code: :missing_field)])
   end
 
   def test_create_without_due_by_with_fr_due_by
     params = ticket_params_hash.except(:due_by, :fr_due_by).merge(fr_due_by: 12.days.since.iso8601)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :due_by_validation)])
+    match_json([bad_request_error_pattern('due_by', :due_by_validation, code: :missing_field)])
   end
 
   def test_create_with_due_by_and_fr_due_by
@@ -1723,7 +1723,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(phone: Faker::PhoneNumber.phone_number, requester_id: nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('name', :phone_mandatory)])
+    match_json([bad_request_error_pattern('name', :phone_mandatory, code: :missing_field)])
   end
 
   def test_update_email_format_invalid
@@ -2862,7 +2862,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({_action: 'compose_email'}, params)
     params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 400
-    match_json([bad_request_error_pattern('email_config_id',  :field_validation_for_outbound)])
+    match_json([bad_request_error_pattern('email_config_id',  :field_validation_for_outbound, code: :missing_field)])
   end
 
   def test_compose_email_with_invalid_email_config_id
