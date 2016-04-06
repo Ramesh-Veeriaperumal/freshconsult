@@ -318,7 +318,7 @@ class ApiApplicationController < MetalApiController
     end
 
     # will take items as one argument and is_array (whether scoper is a AR or array as another argument.)
-    def paginate_items(items)
+    def paginate_items(items, count = nil)
       is_array = !items.respond_to?(:scoped) # check if it is array or AR
       paginated_items = items.paginate(paginate_options(is_array))
 
@@ -326,12 +326,17 @@ class ApiApplicationController < MetalApiController
       # next page exists if scoper is AR & collection length > per_page
       next_page_exists = paginated_items.length > @per_page || paginated_items.next_page && is_array
       add_link_header(page: (page + 1)) if next_page_exists
+      add_total_entries(count) if count.present? 
       paginated_items[0..(@per_page - 1)] # get paginated_collection of length 'per_page'
     end
 
     # Add link header if next page exists.
     def add_link_header(query_parameters)
       response.headers['Link'] = construct_link_header(query_parameters)
+    end
+
+    def add_total_entries(total_items)
+      response.headers['X-Search-Results-Count'] = total_items.to_s 
     end
 
     # Construct link header for paginated collection

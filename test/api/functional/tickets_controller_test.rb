@@ -83,6 +83,7 @@ class TicketsControllerTest < ActionController::TestCase
     get :search, controller_params({:status => "2,3", "test_custom_text" => params[:custom_field]["test_custom_text_#{@account.id}"]})
     assert_response 200
     results = parse_response(@response.body)
+    assert_equal true, response.headers.include?('X-Search-Results-Count')
     results.each do |r|
       assert_equal params[:custom_field]["test_custom_text_#{@account.id}"], r["custom_fields"]["test_custom_text"]
     end

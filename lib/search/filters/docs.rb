@@ -37,11 +37,12 @@ class Search::Filters::Docs
   def records(model_class, options={})
     
     # Options for querying ES
-    es_offset       = ES_PAGINATION_SIZE * (options[:page].to_i - 1)
+    es_page_size    = (options[:per_page].presence || ES_PAGINATION_SIZE).to_i
+    es_offset       = es_page_size * (options[:page].to_i - 1)
     es_defaults     = ({
                         :_source  => false, 
                         :sort     => { options[:order_entity].to_sym => options[:order_sort].to_s },
-                        :size     => ES_PAGINATION_SIZE,
+                        :size     => es_page_size,
                         :from => es_offset 
                       })
     
