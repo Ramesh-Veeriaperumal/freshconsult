@@ -8,6 +8,7 @@
 //= require lib/nestedtree.js
 //= require frameworks/plugins/jquery.livequery.js
 //= require portal/multifile.js
+//= require portal/multifile_upload.js
 //= require portal/portal_custom_validators.js
 //= require frameworks/plugins/jquery.nested_select_tag.js
 //= require frameworks/plugins/select2.js

@@ -54,13 +54,14 @@
 <% end %>
 
 <% if current_user %>
-
 <% if Rails.env.development? %>
-<% @LoadAsset=request.headers['origin'] %>
-<% @LoadAsset1=request.headers['origin'].to_s+"/widget" %>
+<% @LoadAsset=request.protocol.to_s+request.host_with_port %>
+<% @LoadAsset1=request.protocol.to_s+request.host_with_port.to_s+"/widget" %>
+
 <% elsif Rails.env.staging? %>
 <% @LoadAsset="https://s3.amazonaws.com/assets.freshpo.com" %>
 <% @LoadAsset1="https://s3.amazonaws.com/assets.freshpo.com/widget" %>
+
 <% elsif Rails.env.production? %>
 <% @LoadAsset="https://s3.amazonaws.com/assets.freshdesk.com" %>
 <% @LoadAsset1="https://s3.amazonaws.com/assets.freshpo.com/widget" %>
