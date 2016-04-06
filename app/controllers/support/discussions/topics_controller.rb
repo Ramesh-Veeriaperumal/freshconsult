@@ -72,6 +72,8 @@ class Support::Discussions::TopicsController < SupportController
   end
 
   def new
+    @topic = current_account.topics.new
+    @topic.forum_id = params[:forum_id] if params[:forum_id]
     respond_to do |format|
       format.html { set_portal_page :new_topic }
     end
