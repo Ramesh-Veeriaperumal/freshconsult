@@ -8,10 +8,9 @@ class SearchV2::IndexOperations
     def perform(args)
       args.symbolize_keys!
       folder = Account.current.folders.find(args[:folder_id])
-      folder_articles = folder.articles
-      folder_articles.each do |article|
-        article.sqs_manual_publish
-      end unless folder_articles.blank?
+      folder.articles.find_in_batches do |articles|
+        articles.map(&:sqs_manual_publish)
+      end if folder
     end
   end
   
@@ -19,10 +18,19 @@ class SearchV2::IndexOperations
     def perform(args)
       args.symbolize_keys!
       forum = Account.current.forums.find(args[:forum_id])
-      forum_topics = forum.topics
-      forum_topics.each do |topic|
-        topic.sqs_manual_publish
-      end unless forum_topics.blank?
+      forum.topics.find_in_batches do |topics|
+        topics.map(&:sqs_manual_publish)
+      end if forum
+    end
+  end
+  
+  class UpdateTaggables < SearchV2::IndexOperations
+    def perform(args)
+      args.symbolize_keys!
+      tag = Account.current.tags.find(args[:tag_id])
+      tag.tag_uses.preload(:taggable).find_in_batches do |tag_uses|
+        tag_uses.map(&:taggable).map(&:sqs_manual_publish)
+      end if tag
     end
   end
   

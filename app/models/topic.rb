@@ -44,7 +44,7 @@ class Topic < ActiveRecord::Base
                       :conditions => ["#{Monitorship.table_name}.active = ?", true],
                       :order => "#{Monitorship.table_name}.id DESC"
 
-  has_many :posts, :order => "#{Post.table_name}.created_at", :dependent => :delete_all
+  has_many :posts, :order => "#{Post.table_name}.created_at", :dependent => :destroy #=> Changing after discussing with Shyam
   # previously posts had :dependant => :destroy
   # to delete all dependant post hile deleting a topic, destroy has been changed to delete all
   # as a result no callbacks will be triggered and so User.posts_count will not be updated

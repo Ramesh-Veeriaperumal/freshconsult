@@ -6,6 +6,7 @@ class Helpdesk::Tag < ActiveRecord::Base
   include Search::ElasticSearchIndex
 
   after_commit :clear_cache
+  after_commit :update_taggables, on: :update
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -140,4 +141,10 @@ class Helpdesk::Tag < ActiveRecord::Base
         only: [ :name, :tag_uses_count, :account_id ]
       }).to_json
   end
+  
+  private
+    
+    def update_taggables
+      SearchV2::IndexOperations::UpdateTaggables.perform_async(tag_id: self.id)
+    end
 end
