@@ -10,6 +10,10 @@ describe 'Language prefix', :type => :request do
   	@new_agent = add_test_agent(@account,  {:role => @account.roles.first.id})
     @new_agent.password = "test1234"
     @new_agent.save
+    @user = create_dummy_customer
+    @user.password = "test1234"
+    @user.language = Language.all.sample.code
+    @user.save
     @test_category_meta = create_category
     @public_folder_meta  = create_folder({ :visibility => 1, :category_id => @test_category_meta.id })
     @folder_meta  = create_folder({ :visibility => 1, :category_id => @test_category_meta.id })
@@ -33,6 +37,7 @@ describe 'Language prefix', :type => :request do
     	url_locale = @account.language
     	get "http://#{@account.full_domain}/#{url_locale}/support/home"
     	Language.current.code.should be_eql(url_locale)
+    	I18n.locale.should be_eql(@account.language.to_sym)
     	response.code.should be_eql("200")
     end
 
@@ -40,6 +45,7 @@ describe 'Language prefix', :type => :request do
     	url_locale = pick_a_unsupported_language
     	get "http://#{@account.full_domain}/#{url_locale}/support/home"
     	Language.current.code.should_not be_eql(url_locale)
+    	I18n.locale.should be_eql(@account.language.to_sym)
     	response.should redirect_to "http://#{@account.full_domain}/#{Language.current.code}/support/home"
     end
 
@@ -48,22 +54,31 @@ describe 'Language prefix', :type => :request do
     	url_locale = @account.supported_languages.first
     	get "http://#{@account.full_domain}/#{url_locale}/support/home"
     	Language.current.code.should be_eql(url_locale)
+    	I18n.locale.should be_eql(url_locale.to_sym)
     	response.code.should be_eql("200")
     end
 
-    it "should not override the I18n locale when a user is logged in" do
+    it "should override the I18n locale when a user is logged in" do
     	post "http://#{@account.full_domain}/#{@account.language}/support/login", :user_session => { :email => @new_agent.email, :password => "test1234", :remember_me => "0" }
     	I18n_locale = I18n.locale
     	url_locale = (@account.supported_languages.reject{ |l| l == I18n.locale }).sample.dup
     	get "http://#{@account.full_domain}/#{url_locale}/support/home"
-    	I18n.locale.should_not be_eql(Language.current.code)
-    	I18n.locale.should be_eql(I18n_locale)
+    	I18n.locale.should be_eql(Language.current.code.to_sym)
+    	I18n.locale.should_not be_eql(I18n_locale)
     end
 
     it "should override the I18n locale when a user is not logged in if it is not same as current language" do
     	url_locale = (@account.supported_languages.reject{ |l| l == I18n.locale }).sample.dup
     	get "http://#{@account.full_domain}/#{url_locale}/support/home"
     	I18n.locale.to_s.should be_eql(Language.current.code)
+    end
+
+    it "should not override I18n locale if logged in user's language is not present in portal languages" do
+      post "http://#{@account.full_domain}/#{@account.language}/support/login", :user_session => { :email => @user.email, :password => "test1234", :remember_me => "0" }
+      url_locale = (@account.portal_languages.reject{ |l| l == I18n.locale }).sample.dup
+      get "http://#{@account.full_domain}/#{url_locale}/support/home"
+      Language.current.code.should be_eql(url_locale)
+      I18n.locale.should be_eql(@user.language.to_sym)
     end
   end
 
@@ -78,6 +93,7 @@ describe 'Language prefix', :type => :request do
       url_locale = @account.language
       get "http://#{@account.full_domain}/#{url_locale}/support/articles/#{@public_article_meta.id}"
       Language.current.code.should be_eql(url_locale)
+      I18n.locale.should be_eql(@account.language.to_sym)
       response.code.should be_eql("200")
     end
 
@@ -85,6 +101,7 @@ describe 'Language prefix', :type => :request do
       url_locale = pick_a_unsupported_language
       get "http://#{@account.full_domain}/#{url_locale}/support/articles/#{@public_article_meta.id}"
       Language.current.code.should_not be_eql(url_locale)
+      I18n.locale.should be_eql(@account.language.to_sym)
       response.should redirect_to "http://#{@account.full_domain}/#{Language.current.code}/support/articles/#{@public_article_meta.id}"
     end
 
@@ -92,7 +109,8 @@ describe 'Language prefix', :type => :request do
       post "http://#{@account.full_domain}/#{@account.language}/support/login", :user_session => { :email => @new_agent.email, :password => "test1234", :remember_me => "0" }
       url_locale = @account.supported_languages.first
       get "http://#{@account.full_domain}/#{url_locale}/support/articles/#{@public_article_meta.id}"
-			Language.current.code.should be_eql(url_locale)
+      Language.current.code.should be_eql(url_locale)
+      I18n.locale.should be_eql(url_locale.to_sym)
       response.should redirect_to "http://#{@account.full_domain}/#{url_locale}/support/home"
     end
 
@@ -113,16 +131,17 @@ describe 'Language prefix', :type => :request do
       url_locale = language_code
       get "http://#{@account.full_domain}/#{url_locale}/support/articles/#{@article_meta.id}"
       Language.current.code.should be_eql(url_locale)
+      I18n.locale.should be_eql(url_locale.to_sym)
       response.code.should be_eql("200") 
     end
 
-    it "should not override the I18n locale when a user is logged in" do
+    it "should override the I18n locale when a user is logged in" do
       post "http://#{@account.full_domain}/#{@account.language}/support/login", :user_session => { :email => @new_agent.email, :password => "test1234", :remember_me => "0" }
       I18n_locale = I18n.locale
       url_locale = (@account.supported_languages.reject{ |l| l == I18n.locale }).sample.dup
       get "http://#{@account.full_domain}/#{url_locale}/support/articles/#{@public_article_meta.id}"
-      I18n.locale.should_not be_eql(Language.current.code)
-      I18n.locale.should be_eql(I18n_locale)
+      I18n.locale.should be_eql(Language.current.code.to_sym)
+      I18n.locale.should_not be_eql(I18n_locale)
     end
 
     it "should override the I18n locale when a user is not logged in if it is not same as current language" do
@@ -130,6 +149,15 @@ describe 'Language prefix', :type => :request do
       get "http://#{@account.full_domain}/#{url_locale}/support/articles/#{@public_article_meta.id}"
       I18n.locale.to_s.should be_eql(Language.current.code)
     end
+
+    it "should not override I18n locale if logged in user's language is not present in portal languages" do
+      post "http://#{@account.full_domain}/#{@account.language}/support/login", :user_session => { :email => @user.email, :password => "test1234", :remember_me => "0" }
+      url_locale = (@account.portal_languages.reject{ |l| l == I18n.locale }).sample.dup
+      get "http://#{@account.full_domain}/#{url_locale}/support/articles/#{@public_article_meta.id}"
+      Language.current.code.should be_eql(url_locale)
+      I18n.locale.should be_eql(@user.language.to_sym)
+    end
+
   end
 
   describe "support folder page" do
@@ -143,6 +171,7 @@ describe 'Language prefix', :type => :request do
       url_locale = @account.language
       get "http://#{@account.full_domain}/#{url_locale}/support/solutions/folders/#{@public_folder_meta.id}"
       Language.current.code.should be_eql(url_locale)
+      I18n.locale.should be_eql(@account.language.to_sym)
       response.code.should be_eql("200")
     end
 
@@ -150,6 +179,7 @@ describe 'Language prefix', :type => :request do
       url_locale = pick_a_unsupported_language
       get "http://#{@account.full_domain}/#{url_locale}/support/solutions/folders/#{@public_folder_meta.id}"
       Language.current.code.should_not be_eql(url_locale)
+      I18n.locale.should be_eql(@account.language.to_sym)
       response.should redirect_to "http://#{@account.full_domain}/#{Language.current.code}/support/solutions/folders/#{@public_folder_meta.id}"
     end
 
@@ -158,6 +188,7 @@ describe 'Language prefix', :type => :request do
       url_locale = @account.supported_languages.first
       get "http://#{@account.full_domain}/#{url_locale}/support/solutions/folders/#{@folder_meta.id}"
       Language.current.code.should be_eql(url_locale)
+      I18n.locale.should be_eql(url_locale.to_sym)
       response.should redirect_to "http://#{@account.full_domain}/#{url_locale}/support/home"
     end
 
@@ -174,22 +205,31 @@ describe 'Language prefix', :type => :request do
       url_locale = @folder_version.language.code
       get "http://#{@account.full_domain}/#{url_locale}/support/solutions/folders/#{@folder_meta.id}"
       Language.current.code.should be_eql(url_locale)
+      I18n.locale.should be_eql(url_locale.to_sym)
       response.code.should be_eql("200") 
     end
 
-    it "should not override the I18n locale when a user is logged in" do
+    it "should override the I18n locale when a user is logged in" do
       post "http://#{@account.full_domain}/#{@account.language}/support/login", :user_session => { :email => @new_agent.email, :password => "test1234", :remember_me => "0" }
       I18n_locale = I18n.locale
       url_locale = (@account.supported_languages.reject{ |l| l == I18n.locale }).sample.dup
       get "http://#{@account.full_domain}/#{url_locale}/support/solutions/folders/#{@public_folder_meta.id}"
-      I18n.locale.should_not be_eql(Language.current.code)
-      I18n.locale.should be_eql(I18n_locale)
+      I18n.locale.should be_eql(Language.current.code.to_sym)
+      I18n.locale.should_not be_eql(I18n_locale)
     end
 
     it "should override the I18n locale when a user is not logged in if it is not same as current language" do
       url_locale = (@account.supported_languages.reject{ |l| l == I18n.locale }).sample.dup
       get "http://#{@account.full_domain}/#{url_locale}/support/solutions/folders/#{@public_folder_meta.id}"
       I18n.locale.to_s.should be_eql(Language.current.code)
+    end
+
+    it "should not override I18n locale if logged in user's language is not present in portal languages" do
+      post "http://#{@account.full_domain}/#{@account.language}/support/login", :user_session => { :email => @user.email, :password => "test1234", :remember_me => "0" }
+      url_locale = (@account.portal_languages.reject{ |l| l == I18n.locale }).sample.dup
+      get "http://#{@account.full_domain}/#{url_locale}/support/solutions/folders/#{@public_folder_meta.id}"
+      Language.current.code.should be_eql(url_locale)
+      I18n.locale.should be_eql(@user.language.to_sym)
     end
   end
 end

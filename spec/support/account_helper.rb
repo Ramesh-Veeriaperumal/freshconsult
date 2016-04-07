@@ -124,7 +124,9 @@ module AccountHelper
   end
 
   def create_enable_multilingual_feature
-    @account.account_additional_settings.update_attributes({:supported_languages => pick_languages(@account.language, 3)})
+    supported_languages = pick_languages(@account.language, 3)
+    @account.account_additional_settings.update_attributes({:supported_languages => supported_languages})
+    @account.account_additional_settings.update_attributes(:additional_settings => {:portal_languages=> supported_languages.sample(2)})
     @account.features.enable_multilingual.create unless @account.features?(:enable_multilingual)
     @account.make_current
     Sidekiq::Testing.inline! do

@@ -5,6 +5,7 @@ class SupportController < ApplicationController
   before_filter :portal_context
   before_filter :strip_url_locale
   before_filter :set_language
+  before_filter :redirect_to_locale
   around_filter :run_on_slave , :only => [:index,:show],
     :if => proc {|controller| 
       path = controller.controller_path
@@ -255,41 +256,20 @@ class SupportController < ApplicationController
 
   def set_language
     Language.for_current_account.make_current and return unless current_account.multilingual?
-    remove_locale unless supported_language?
     Language.set_current(
       request_language: http_accept_language.compatible_language_from(I18n.available_locales), 
       url_locale: params[:url_locale])
-    override_default_locale unless current_user.present? || Language.current.code.to_sym == I18n.locale
-    redirect_to request.fullpath.prepend("/#{Language.current.code}") if current_account.multilingual? && 
-        (!facebook? && (params[:url_locale] != Language.current.code))
+    override_default_locale
   end
 
-  def supported_language?
-    locale_in_portal_languages? || agent_supported_language? || primary_language?
-  end
-
-  def locale_in_portal_languages?
-    current_account.portal_languages && current_account.portal_languages.include?(params[:url_locale])
-  end
-
-  def agent_supported_language?
-    agent? && current_account.all_languages.include?(params[:url_locale])
-  end
-
-  def agent?
-    current_user && current_user.agent?
-  end
-
-  def primary_language?
-    current_account.language == params[:url_locale]
-  end
-
-  def remove_locale
-    return nil if params[:url_locale].nil?
-    params.delete(:url_locale)
+  def redirect_to_locale
+    redirect_to request.fullpath.prepend("/#{Language.current.code}") if current_account.multilingual? && !facebook? && (params[:url_locale] != Language.current.code)
   end
 
   def override_default_locale
+    # We should not override the locale if the logged in user's language is not present in the portal languages.
+    # We show the labels in user's language and the articles in Language.current.
+    return if current_user.present? && !current_account.valid_portal_language?(Language.for_current_user)
     #We are doing this for non-logged in users as it's better we show them everything(not only solutions) 
     # in the current locale i.e Language.current instead of the account's language.
     I18n.locale = Language.current.code.to_sym

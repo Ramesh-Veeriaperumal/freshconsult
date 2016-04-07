@@ -91,7 +91,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	AGGREGATED_COLUMNS.each do |col|
 		define_method "aggregated_#{col}" do
-			return self[col] if Account.current.multilingual?
+			return self.send(col) if Account.current.multilingual?
 			primary_article.send(col)
 		end
 	end	
