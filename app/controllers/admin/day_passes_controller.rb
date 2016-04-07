@@ -3,9 +3,10 @@ class Admin::DayPassesController < ApplicationController
   before_filter :set_selected_tab
   before_filter :load_config
   before_filter :load_purchases, :only => [:index]
+  DAYPASS_QUANTITY = [5, 10, 25, 50]
   
   def index
-    @day_pass_amounts = [5, 10, 25, 50].map{ |pass| 
+    @day_pass_amounts = DAYPASS_QUANTITY.map{ |pass| 
       [pass, (pass * subscription.retrieve_addon_price(:day_pass)).to_i] 
     }
   end
@@ -21,7 +22,7 @@ class Admin::DayPassesController < ApplicationController
   end
   
   def buy_now 
-    if @day_pass_config.buy_now(params[:quantity].to_i)
+    if DAYPASS_QUANTITY.include?(params[:quantity].to_i) and @day_pass_config.buy_now(params[:quantity].to_i)
       flash[:notice] = t("flash.daypass.success", :quantity => params[:quantity])
     else
       flash[:error] = t("flash.daypass.failed")
