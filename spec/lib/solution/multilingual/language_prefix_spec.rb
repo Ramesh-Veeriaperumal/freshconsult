@@ -13,7 +13,7 @@ describe 'Language prefix', :type => :request do
     @test_category_meta = create_category
     @public_folder_meta  = create_folder({ :visibility => 1, :category_id => @test_category_meta.id })
     @folder_meta  = create_folder({ :visibility => 1, :category_id => @test_category_meta.id })
-    @public_article_meta = create_article({ :folder_id => @public_folder_meta.id, :status => 2, :art_type => 1, :user_id => @agent.id })
+		@public_article_meta = create_article({ :folder_id => @public_folder_meta.id, :status => 2, :art_type => 1, :user_id => @agent.id })
     @article_meta = create_article({ :folder_id => @public_folder_meta.id, :status => 2, :art_type => 1, :user_id => @agent.id })
   end
 
@@ -92,7 +92,7 @@ describe 'Language prefix', :type => :request do
       post "http://#{@account.full_domain}/#{@account.language}/support/login", :user_session => { :email => @new_agent.email, :password => "test1234", :remember_me => "0" }
       url_locale = @account.supported_languages.first
       get "http://#{@account.full_domain}/#{url_locale}/support/articles/#{@public_article_meta.id}"
-      Language.current.code.should be_eql(url_locale)
+			Language.current.code.should be_eql(url_locale)
       response.should redirect_to "http://#{@account.full_domain}/#{url_locale}/support/home"
     end
 
