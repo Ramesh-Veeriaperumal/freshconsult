@@ -332,6 +332,7 @@ Helpkit::Application.routes.draw do
     collection do
       post :reset_api_key
       put :notification_read
+      put :on_boarding_complete
     end
     member do
       post :change_password

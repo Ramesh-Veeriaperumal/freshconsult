@@ -1610,8 +1610,17 @@ module ApplicationHelper
     content_tag :ul, &list
   end
 
+  def show_onboarding?
+    current_user.agent.onboarding_completed? && current_user.login_count <= 2  && !is_assumed_user?
+  end
+
+  def inlinemanual_topic_id
+    topic = (current_user.privilege?(:view_admin)) ? 'admin_topic' : 'agent_topic'
+    User::INLINE_MANUAL[topic]
+  end
+
   def outgoing_callers
     current_account.freshfone_caller_id
   end
-  
+
 end

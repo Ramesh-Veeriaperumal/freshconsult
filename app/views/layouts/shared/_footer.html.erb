@@ -83,4 +83,14 @@
 	    });
 	  var APP_ENV = "<%= Rails.env %>";
 	</script>
+
+<script src="https://inlinemanual.com/embed/player.a16aba7cb34cb7248e7691132ba76af3.js" async ></script>
+<script type="text/javascript" >
+		window.im_option = {
+			to_activate : <%= show_onboarding? %>,	
+			topic_id : <%= inlinemanual_topic_id %>
+		}
+</script>
+<%= javascript_include_tag :'cdn/inline_manual_trigger' %>
+
 <% end %>
