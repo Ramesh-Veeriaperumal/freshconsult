@@ -20,6 +20,7 @@ fields:
         group_id: object_id
         company_id: object_id
         ticlet_cc: email
+        domains: text_array
 
         created_at: date_time
         opened_at: date_time

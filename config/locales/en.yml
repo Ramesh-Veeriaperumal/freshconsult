@@ -4267,6 +4267,8 @@ en:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: "You don't have any companies with the letter '%{alphabet}'"
     valid_comapany_domain: "Enter valid domains"
+    view_company: "View Company"
+    info1: "Domain has already been taken"
   billing_info_update: Your billing information has been updated.
   wrong_portal:
     content_not_available: The content you are looking for is, not available in this portal.
@@ -4969,6 +4971,7 @@ en:
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
     info8: More info regarding this company like address, phone number, website etc
+    info12: "eg: mycompany1.com, mycompany2.com"
     errors:
       required_field: cannot be blank
       custom_text : is not valid
