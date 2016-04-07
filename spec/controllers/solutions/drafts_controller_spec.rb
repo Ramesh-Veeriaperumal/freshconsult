@@ -195,25 +195,71 @@ describe Solution::DraftsController do
 				@draft_article_meta3 = create_article( {:title => "Article 3 attachment delete agent1[#{@agent1.id}] #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(2)}", :folder_id => @public_folder_meta.id, 
 	      		:status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
 				@draft_article3 = @draft_article_meta3.primary_article
-				@attachment = @draft_article3.attachments.build(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
-                                            :description => Faker::Name.first_name, 
-                                            :account_id => @draft_article3.account_id)
-				@attachment.save
-	  		request.env["HTTP_REFERER"] = "where_i_came_from"
-	  	end
+			end
 
-	  	it "should soft delete the attachment from article draft" do
-	  		draft = @draft_article3.draft
-	  		draft.should_not be_blank
-	  		@draft_article3.attachments.should be_present
+			describe "for attachments" do
+				before(:each) do
+					@attachment = @draft_article3.attachments.build(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
+	                                            :description => Faker::Name.first_name, 
+	                                            :account_id => @draft_article3.account_id)
+					@attachment.save
+		  		request.env["HTTP_REFERER"] = "where_i_came_from"
+	  		end
 
-	  		delete :attachments_delete, :article_id => @draft_article_meta3.id, :attachment_type => :attachment, :attachment_id => @attachment.id, :language_id => @draft_article3.language_id
+		  	it "should soft delete the attachment from article draft" do
+		  		draft = @draft_article3.draft
+		  		draft.should_not be_blank
+		  		@draft_article3.attachments.should be_present
 
-	  		draft.reload
-	  		@draft_article3.reload
-	  		@draft_article3.attachments.should be_present
-	  		draft.deleted_attachments(:attachments).should be_eql([@attachment.id])
-	  	end
+		  		delete :attachments_delete, :article_id => @draft_article_meta3.id, :attachment_type => :attachment, :attachment_id => @attachment.id, :language_id => @draft_article3.language_id
+
+		  		draft.reload
+		  		@draft_article3.reload
+		  		@draft_article3.attachments.should be_present
+		  		draft.deleted_attachments(:attachments).should be_eql([@attachment.id])
+		  	end
+
+		  	it "should soft delete the attachment from article draft when the attachment_type is invalid but resource is an attachment" do
+		  		draft = @draft_article3.draft
+		  		draft.should_not be_blank
+		  		@draft_article3.attachments.should be_present
+		  		delete :attachments_delete, :article_id => @draft_article_meta3.id, :attachment_type => 'test', :attachment_id => @attachment.id, :language_id => @draft_article3.language_id
+		  		draft.reload
+		  		@draft_article3.reload
+		  		@draft_article3.attachments.should be_present
+		  		draft.deleted_attachments(:attachments).should be_eql([@attachment.id])
+		  	end
+		  end
+
+		  describe "for cloud_files" do
+				before(:each) do
+					@cloud_file = @draft_article3.cloud_files.build(:url => "https://www.dropbox.com/s/7d3z51nidxe358m/Getting Started.pdf?dl=0", 
+						:application_id => 20, :filename => "Getting Started.pdf")
+					@cloud_file.save
+		  		request.env["HTTP_REFERER"] = "where_i_came_from"
+	  		end
+
+	  		it "should soft delete the attachment from article draft" do
+		  		draft = @draft_article3.draft
+		  		draft.should_not be_blank
+		  		@draft_article3.cloud_files.should be_present
+		  		delete :attachments_delete, :article_id => @draft_article_meta3.id, :attachment_type => 'cloud_file', :attachment_id => @cloud_file.id, :language_id => @draft_article3.language_id
+		  		draft.reload
+		  		@draft_article3.reload
+		  		@draft_article3.cloud_files.should be_present
+		  		draft.deleted_attachments(:cloud_files).should be_eql([@cloud_file.id])
+		  	end
+
+		  	it "should render 404 if attachment_type is invalid but resource is a cloud file" do
+		  		draft = @draft_article3.draft
+		  		draft.should_not be_blank
+		  		@draft_article3.cloud_files.should be_present
+		  		delete :attachments_delete, :article_id => @draft_article_meta3.id, :attachment_type => 'test', :attachment_id => @cloud_file.id, :language_id => @draft_article3.language_id
+		  		response.code.should be_eql("404")
+		  		@draft_article3.cloud_files.should be_present
+		  		draft.deleted_attachments(:cloud_files).should be_eql([])
+		  	end	
+		  end
 
 		end
 		#end : specs for  attachment delete action

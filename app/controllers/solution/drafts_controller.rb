@@ -13,6 +13,8 @@ class Solution::DraftsController < ApplicationController
   before_filter :load_attachment, :only => [:attachments_delete]
   before_filter :language, :only => [:publish, :attachments_delete]
 
+  ATTACHMENT_TYPES = ["attachment", "cloud_file"]
+
   def index
     @drafts = drafts_scoper.in_applicable_languages.as_list_view.paginate(:page => params[:page], :per_page => 10)
   end
@@ -85,9 +87,8 @@ class Solution::DraftsController < ApplicationController
     end
 
     def load_attachment
-      @assoc = params[:attachment_type].pluralize.to_sym
-      render_404 unless [:attachments, :cloud_files].include?(@assoc)
-      @attachment = @article.send(@assoc).find(params[:attachment_id])
+      @assoc = (ATTACHMENT_TYPES.include?(params[:attachment_type]) && params[:attachment_type]) || ATTACHMENT_TYPES.first
+      @attachment = @article.send(@assoc.pluralize.to_sym).find(params[:attachment_id])
     end
 
     def autosave_validate
@@ -136,7 +137,7 @@ class Solution::DraftsController < ApplicationController
     end
 
     def pseudo_delete_article_attachment
-      deleted = { @assoc => [@attachment.id]}
+      deleted = { @assoc.pluralize.to_sym => [@attachment.id]}
       @draft.meta[:deleted_attachments] ||= {}
       @draft.meta[:deleted_attachments].merge!(deleted) { |key,oldval,newval| oldval | newval }
 
