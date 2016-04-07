@@ -2740,7 +2740,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_compose_email_without_feature
     Account.any_instance.stubs(:compose_email_enabled?).returns(false)
-    params = ticket_params_hash.except(:source).merge(custom_fields: {})
+    params = ticket_params_hash.except(:source, :product_id).merge(custom_fields: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
@@ -2752,22 +2752,22 @@ class TicketsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:compose_email_enabled?)
   end
 
-  def test_compose_email_with_source_param
-    params = ticket_params_hash.merge(custom_fields: {})
+  def test_compose_email_with_invalid_params
+    params = ticket_params_hash.merge(custom_fields: {}, product_id: 2)
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({_action: 'compose_email'}, params)
     params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 400
-    match_json([bad_request_error_pattern('source',  :invalid_field)])
+    match_json([bad_request_error_pattern('source',  :invalid_field), bad_request_error_pattern('product_id',  :invalid_field)])
   ensure
     Account.any_instance.unstub(:compose_email_enabled?)
   end
 
   def test_compose_email
     email_config = fetch_email_config
-    params = ticket_params_hash.except(:source).merge(custom_fields: {}, email_config_id: email_config.id)
+    params = ticket_params_hash.except(:source, :product_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
@@ -2781,10 +2781,25 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 201
   end
 
+  def test_compose_with_all_default_fields_required_valid
+    default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
+    default_non_required_fiels.map { |x| x.toggle!(:required) }
+    default_non_required_fiels.select { |x| x.name == 'product'}.map{ |x| x.toggle!(:required) }
+    email_config = fetch_email_config
+    params = {requester_id: @agent.id, email_config_id: email_config.id, priority: 2, type: 'Lead', description: Faker::Lorem.characters(15), group_id: ticket_params_hash[:group_id], subject: Faker::Lorem.characters(15)}
+    post :create, construct_params({_action: 'compose_email'}, params)
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+    match_json(ticket_pattern(params.merge(responder_id: @agent.id, source: 10, status: 5), Helpdesk::Ticket.last))
+    assert_response 201
+  ensure
+    default_non_required_fiels.map { |x| x.toggle!(:required) }
+    default_non_required_fiels.select { |x| x.name == 'product'}.map{ |x| x.toggle!(:required) }
+  end
+
   def test_compose_with_attachment
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
-    params = ticket_params_hash.except(:source).merge('attachments' => [file, file2], status: '2', priority: '2', email_config_id: "#{fetch_email_config.id}")
+    params = ticket_params_hash.except(:source, :product_id).merge('attachments' => [file, file2], status: '2', priority: '2', email_config_id: "#{fetch_email_config.id}")
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
     post :create, construct_params({_action: 'compose_email'}, params)
@@ -2855,7 +2870,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_compose_email_without_email_config_id
-    params = ticket_params_hash.except(:source).merge(custom_fields: {})
+    params = ticket_params_hash.except(:source, :product_id).merge(custom_fields: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
@@ -2866,7 +2881,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_compose_email_with_invalid_email_config_id
-    params = ticket_params_hash.except(:source).merge(custom_fields: {}, email_config_id: 123)
+    params = ticket_params_hash.except(:source, :product_id).merge(custom_fields: {}, email_config_id: 123)
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
@@ -2881,7 +2896,7 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
     User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
     email_config = create_email_config(group_id: ticket_params_hash[:group_id])
-    params = ticket_params_hash.except(:source).merge(custom_fields: {}, email_config_id: email_config.id)
+    params = ticket_params_hash.except(:source, :product_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
@@ -2900,7 +2915,7 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
     User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
     email_config = create_email_config(group_id: create_group(@account).id)
-    params = ticket_params_hash.except(:source).merge(custom_fields: {}, email_config_id: email_config.id)
+    params = ticket_params_hash.except(:source, :product_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
@@ -2920,7 +2935,7 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
     User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
     email_config = create_email_config
-    params = ticket_params_hash.except(:source).merge(custom_fields: {}, email_config_id: email_config.id)
+    params = ticket_params_hash.except(:source, :product_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
@@ -2941,7 +2956,7 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
     User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
     email_config = create_email_config(group_id: create_group(@account).id)
-    params = ticket_params_hash.except(:source).merge(custom_fields: {}, email_config_id: email_config.id)
+    params = ticket_params_hash.except(:source, :product_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end

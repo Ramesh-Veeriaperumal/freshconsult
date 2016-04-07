@@ -243,8 +243,7 @@ class TicketsController < ApiApplicationController
       @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
-      field = "ApiTicketConstants::#{action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
-      field -= ['source'] if compose_email?
+      field = "ApiTicketConstants::#{original_action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       set_default_values
       params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
@@ -253,9 +252,12 @@ class TicketsController < ApiApplicationController
     end
 
     def set_default_values
-      params[cname][:status] = ApiTicketConstants::CLOSED if !params[cname].key?(:status) && compose_email?
+      if compose_email?
+        params[cname][:status] = ApiTicketConstants::CLOSED unless params[cname].key?(:status)
+        params[cname][:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+        params[cname][:responder_id] = api_current_user.id unless params[cname].key?(:responder_id)
+      end
       ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert) # Using map instead of invert does not show any perf improvement.
-      params[cname][:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email] if compose_email?
       load_ticket_status # loading ticket status to avoid multiple queries in model.
     end
 
@@ -336,7 +338,7 @@ class TicketsController < ApiApplicationController
     end
 
     def original_action_name
-      compose_email? ? 'compose_email' : action_name
+      @original_action_name ||= compose_email? ? 'compose_email' : action_name
     end
 
     def error_options_mappings
