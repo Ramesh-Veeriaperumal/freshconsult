@@ -1611,7 +1611,8 @@ module ApplicationHelper
   end
 
   def show_onboarding?
-    current_user.agent.onboarding_completed? && current_user.login_count <= 2  && !is_assumed_user?
+    user_trigger = !is_assumed_user? && current_user.login_count <= 2  && current_user.agent.onboarding_completed? 
+    (current_user.privilege?(:view_admin))  ?  user_trigger && current_account.subscription.trial?  :  user_trigger
   end
 
   def inlinemanual_topic_id
