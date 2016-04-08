@@ -21,6 +21,7 @@ module ApplicationHelper
   include Freshfone::SubscriptionsHelper
   include DateHelper
   include StoreHelper
+  include JsonEscape
   
   require "twitter"
 
