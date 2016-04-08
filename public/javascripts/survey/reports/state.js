@@ -7,6 +7,7 @@ var SurveyState = {
     path: '/reports/custom_survey/',
     isRating:false,
     RemarksOnly:false,
+    saved_report_used:false,
     TYPE:{1:"OVERVIEW",2:"RESPONSE"},
     OVERVIEW:{type:1,tab:"survey_overview_link",container:"survey_overview",disable:"survey_responses_link"},
     RESPONSE:{type:2,tab:"survey_responses_link",container:"survey_responses",disable:"survey_overview_link"},
@@ -94,6 +95,9 @@ var SurveyState = {
       return data;
     },
     fetch:function(savedData){
+        if(savedData){
+          SurveyState.saved_report_used = true;
+        }
         var root = jQuery(".report-panel-content").find('li.active').data('container').split("_")[1];
         var urlData = savedData || SurveyUtil.getUrlData();
         var rating = "all";

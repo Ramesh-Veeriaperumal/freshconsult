@@ -90,6 +90,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		        });
 		        jQuery('#reports_wrapper').on('change', '[data-type="filter-field"]', function () { 
 		            _FD.filterChanged = true;
+		            HelpdeskReports.locals.saved_report_used = false;
 		        });
 		        jQuery(document).on("report_refreshed",function(ev,data){
 		        	if(_FD.filterChanged) {
@@ -99,6 +100,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		        });
 		        jQuery(document).on("filter_changed",function(ev,data){
 		        	_FD.filterChanged = true;
+		        	HelpdeskReports.locals.saved_report_used = false;
 		        });
 		    },
 		    saveReport : function() {
@@ -317,6 +319,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		        var flag = _FD.core.refreshReports();
 		                
 		        if(flag) {
+		        	HelpdeskReports.locals.saved_report_used = true;
 		        	if(refresh){ 
 		        		_FD.applySpecificReportActions(index);
 		        	}
