@@ -3,14 +3,14 @@
 <% content_for :helpcard do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-<div class="new-launch">
-  <p>
-    <%= t('marketplace.app_gallery_launch_text').html_safe %>
-  </p>
-  <a href="<%= t('marketplace.app_gallery_blog_post') %>" target="_blank" class="help-link"><%= t('marketplace.app_gallery_link_text') %></a>
-</div>
 <!-- TITLE -->
 <% if feature?(:marketplace) %>
+  <div class="new-launch">
+    <p>
+      <%= t('marketplace.app_gallery_launch_text').html_safe %>
+    </p>
+    <a href="<%= t('marketplace.app_gallery_blog_post') %>" target="_blank" class="help-link"><%= t('marketplace.app_gallery_link_text') %></a>
+  </div>
   <h3 class="title"><%=t('marketplace.apps')%></h3>
   <div class="intro"><%=t('marketplace.app_description')%></div>
 <% else %>
