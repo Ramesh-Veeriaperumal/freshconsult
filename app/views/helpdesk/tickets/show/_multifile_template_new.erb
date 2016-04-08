@@ -1,6 +1,7 @@
 
 <script id="multiple-file-list-template" type="text/x-jquery-tmpl">
     {{if (file_valid)}}
+    {{if (!provider)}}
         <div id="${attachment_id}" class="clearfix" style="margin: 0px;padding: 5px;">
 
                 <a class="attachment-close"  href="javascript:void(0)" 
@@ -15,6 +16,23 @@
                 {{/each}}
                 </div>
         </div>
+        {{/if}}
+        {{if (provider)}}
+        <div id="${attachment_id}" class="clearfix" style="margin: 0px;padding: 5px;">
+
+                <a class="attachment-close"  href="javascript:void(0)" 
+                onclick="remove_file_size_alert(this);Helpdesk.MultifileUpload.removeCloudFiles(this); return false;" 
+
+                data-input="${inputId}" data-size="${size_in_bytes}" inputId="${attachment_id}" 
+                data-name="${name}" style="float: left;">
+                </a>
+                <div id="files" style="border-left: 1px solid rgba(204, 204, 204, 0.51);float:left;">
+                    <p>
+                        &nbsp;&nbsp;&nbsp; <span  class="tooltip" title="${name}">  ${name} {{if (size != '0' && size != '0.00 KB ') }}( ${size} ){{/if}}</span>
+                    </p>
+                </div>
+        </div>
+        {{/if}}
     {{/if}}
     {{if (!file_valid)}}
         <div class="item invalid_files">

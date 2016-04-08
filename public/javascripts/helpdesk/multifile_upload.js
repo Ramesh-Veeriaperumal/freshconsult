@@ -106,13 +106,16 @@ Helpdesk.MultifileUpload = {
                 filesize = filesize.toFixed(2) + ' MB ';
             }
         }
+            var attachmentId = "attachment-" + new Date().getTime();
+
         var target = jQuery("#"+jQuery(oldInput).attr('fileList'));
         target.append(jQuery.tmpl(this.template, {
                 name: jQuery(oldInput).data('filename') || jQuery(oldInput).val().replace(this.FILE_LOCATION, ''),
                 inputId: jQuery(oldInput).attr('id'),
                 size: filesize,
                 file_valid: validFile,
-                provider: (jQuery(oldInput).data('provider') || "").toLowerCase()
+                provider: (jQuery(oldInput).data('provider') || "").toLowerCase(),
+                attachment_id: attachmentId
             }));
         jQuery("#"+container + ' .a-count').text(target.children(':visible').length);
         return validFile;
@@ -179,7 +182,7 @@ Helpdesk.MultifileUpload = {
                 provider: (jQuery(inputEl).data('provider') || "").toLowerCase(),
                 files:filesList,
                 size_in_bytes: totalFileSize,
-                attachment_id: attachmentId
+                attachment_id: attachmentId,
             }));
             // clearing all error statements
             jQuery(".invalid_files").remove();
@@ -266,28 +269,31 @@ Helpdesk.MultifileUpload = {
         }
     },
 
-    remove: function(link){
-        try{
-            var fileInput = jQuery('#'+jQuery(link).attr('inputId'));
-            var strSize = link.dataset["size"];
-
-            if (window.FileReader)
-            {
-                
-                this.deductTotalSize(strSize);
-                // this.decrementTotalSize(fileInput);
-                this.VALID_FILE_count = this.VALID_FILE_count - 1;
-            }
-            var target = jQuery("#"+jQuery(fileInput).attr('fileList'));
-            var container = jQuery(fileInput).attr('fileContainer');
-            jQuery('#'+jQuery(link).attr('inputId')).remove();
-            jQuery(link).parents("div:first, .attachment.list_element").remove();
-            jQuery("#"+container + ' .a-count').text(target.children(':visible').length);
-            return true;
-        }catch(e){
-            alert(e);
-        }
-    },    
+    removeCloudFiles: function(link){
+        jQuery.each(jQuery('[filelist]'),function(key,data){
+           var val=jQuery(data).val();
+           if(jQuery(data).attr('name')=="[cloud_file_attachments][]")
+           {
+              var json=jQuery.parseJSON(val);
+               if(jQuery.type(json)=="object")
+                {
+                  var matchName=jQuery(link).attr('data-name');
+                  if(json.name==matchName)
+                   {
+                     jQuery(data).remove();
+                     jQuery(link).parent('div').remove();
+                     // maintaining forward count
+                     var oldvalue=parseInt(jQuery('.a-count:visible').text());
+                      if(oldvalue!==0 || oldvalue!=="")
+                      {
+                        jQuery('.a-count:visible').text(oldvalue-1);
+                      }
+                     return false;
+                   }
+                 }
+           }
+        });
+      },
 
     // For multiple attachments
     removeAttachments: function(linkEl) {
