@@ -1,5 +1,5 @@
 module ContactConstants
-  ARRAY_FIELDS = ['tags','other_emails']
+  ARRAY_FIELDS = ['tags', 'other_emails']
   HASH_FIELDS = ['custom_fields']
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
   CONTACT_FIELDS = %w(address avatar view_all_tickets company_id description email job_title language mobile name other_emails phone time_zone twitter_id).freeze | ARRAY_FIELDS | HASH_FIELDS
@@ -38,19 +38,6 @@ module ContactConstants
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {
     create: [:json, :multipart_form],
     update: [:json, :multipart_form]
-  }.freeze
-
-  DEFAULT_FIELD_VALIDATIONS = {
-    job_title:  { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-    language: { custom_inclusion: { in: ContactConstants::LANGUAGES } },
-    tag_names:  { data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING, message: :too_long } }, string_rejection: { excluded_chars: [','] } },
-    time_zone: { custom_inclusion: { in: ContactConstants::TIMEZONES } },
-    phone: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-    mobile: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-    address: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-    twitter_id: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-    email: { format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-    description: { data_type: { rules: String } }
   }.freeze
 
   FIELD_MAPPINGS = { company_name: :company_id, tag_names: :tags, company: :company_id, 'primary_email.email'.to_sym => :email, base: :email }.freeze

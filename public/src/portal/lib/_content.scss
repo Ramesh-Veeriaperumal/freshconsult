@@ -243,20 +243,72 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 		margin-bottom: 10px;
 		border-top: 1px solid #efefef;
 	}
+
 }
 
 .p-desc{
 	word-break: normal; 
 	word-wrap: break-word; 
 	overflow-x: auto;
-
 	// Fix for elements breaking layout with inline styles	
 	div, p, ol, ul, li, article, aside,
 	details, figcaption, figure, footer,
 	header, hgroup, nav, section{
 		max-width: 100%;
 	}
+
 }
+/* Custom Survey portal note styles begin*/
+.survey_questions_wrap{
+	margin:0;
+	font-weight: 500;
+	font-size: 13px;
+	.title{
+		color:#a2a19f;
+		line-height: 45px;
+	}
+	.survey-additional-questions{
+		@include padding-left(0px);
+		list-style: disc inside;
+		margin: 15px 0;
+		.input-survy-ques{
+		  width:440px;
+		  @include margin-right(15px);
+		}
+		li{
+		  width: 100%;
+		  padding: 15px 0;
+		  border-top: 1px solid #eee;
+		  @include float(left);
+		}
+	}
+	.ques-desc, .ques-ans{
+		display: inline-block;
+		vertical-align: middle;
+		font-weight: normal;
+	}
+	.ques-desc{
+		width: 65%
+	}
+	.ques-ans{
+		width:30%;
+		@include text-align(right);
+		@include float(right);
+		label{padding-bottom: 5px}
+		.ticket-rating-label{
+			width: 81%;
+			vertical-align: middle;
+			display: inline-block;
+			@include margin-right(5px);
+		}
+	}
+	.default_question{
+		.ques-desc, .ques-ans{
+			font-weight:500;
+		}
+	}
+}
+/* Custom Survey portal note styles end*/
 
 #ticket-comments .freshdesk_quote{ display: none; }
 

@@ -81,11 +81,13 @@ module Mobile::Actions::Ticket
   
 	def to_mob_json_index
     options = { 
-      :only => [ :id, :display_id, :subject, :priority, :status, :updated_at],
+      :root => 'helpdesk_ticket',
+      :tailored_json => true,
+      :only => [ :id, :display_id, :subject, :priority, :status, :updated_at, :created_at],
       :methods => [ :ticket_subject_style,:ticket_sla_status,:ticket_sla_status_type, :status_name, :priority_name, :source_name, :requester_name,
                     :responder_name, :company_name,:need_attention, :pretty_updated_date ,:ticket_current_state]
     }
-    as_json(options,false) 
+  as_json(options,false) 
   end
   
 	def to_mob_json_search

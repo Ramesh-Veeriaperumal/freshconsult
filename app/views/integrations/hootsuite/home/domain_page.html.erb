@@ -1,13 +1,27 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/hootsuite' %>
-<%= form_tag params.merge(:action => "verify_domain").except(:freshdesk_domain), {:class => "hs_form hs_domain"} do %>
+<%= javascript_include_tag :'cdn/hootsuite' %>
+<%= form_tag params.merge(:action => "verify_domain").except(:freshdesk_domain,:user_session), {:class => "hs_form hs_domain"} do %>
 	<%if params[:error].present? %><div class="alert alert-error login-error" id="alert">
 			<%= t("integrations.hootsuite.domain.domain_error") %>
 		</div>
 	<% end %>
 	<div class="control-group">
-		<div class="text-center"><%= t("integrations.hootsuite.domain.domain_message") %></div>
+		<label><%= t("integrations.hootsuite.domain.domain_message") %></label>
 		<div class="controls">
 			<%= text_field_tag 'freshdesk_domain', nil, { :class => 'hs_demoInput'} %><br />
+			<%= hidden_field_tag 'is_plugin', params[:is_plugin] %>
+		</div>
+	</div>
+	<div class="control-group">
+		<label><%= t("integrations.hootsuite.login.email") %></label>
+		<div class="controls">
+			<%= text_field_tag 'user_session[username]', nil, {:class => 'hs_demoInput'} %>
+		</div>
+	</div>
+	<div class="control-group">
+		<label><%= t("integrations.hootsuite.login.password") %></label>
+		<div class="controls">
+			<%= password_field_tag 'user_session[password]', nil, {:class => 'hs_demoInput'} %>
 		</div>
 	</div>
 	<div class="button-container text-center">
@@ -15,3 +29,6 @@
 	</div>
 	<a href="http://freshdesk.com/signup?utm_source=Hootsuite&utm_medium=Inapp&utm_campaign=AppLink" target="_blank" class="signup-link"><%= t("integrations.hootsuite.signup_message") %></a>
 <% end %>
+<script>
+listenHootsuiteEvent("user_loggedin");
+</script>

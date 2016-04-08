@@ -6,7 +6,7 @@
 		{{ portal | link_to_start_topic }}
 	</div>
 	<h2 class="heading">
-		{{ category.name}}
+		{{ category.name | h }}
 	</h2>
 	{% if category.forums_count > 0 %}
 		<div class="cs-g-c">

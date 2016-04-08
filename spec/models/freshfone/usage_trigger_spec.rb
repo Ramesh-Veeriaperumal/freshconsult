@@ -48,17 +48,25 @@ RSpec.describe Freshfone::UsageTrigger do
 
   it 'should create trial usage triggers when a call`s total duration is updated' do
     @account.freshfone_account.freshfone_usage_triggers.destroy_all
+    @account.freshfone_subscription.destroy if @account.freshfone_subscription.present?
     load_freshfone_trial
+    @account.reload
+    @account.freshfone_account.reload
     @calls_usage = @account.freshfone_account.subscription.calls_usage[:minutes][:incoming]
     @freshfone_call = @account.freshfone_calls.create(:freshfone_number_id => @number.id,
       :call_type => 1, :agent => @agent, :params => {:CallSid => "CA2db76c748cb6f081853f80dace462a04"})
-    Freshfone::Jobs::UsageTrigger.stubs(:delete_usage_trigger)
-    twilio_mock_helper('SidUT','05',"#{@calls_usage+10}")
-    Resque.inline = true
-    @freshfone_call.update_attributes(total_duration: 10)
-    expect(Freshfone::UsageTrigger.trial_triggers_present?(@account.freshfone_account)).to be true
-    Twilio::REST::Triggers.any_instance.unstub(:create)
-    Freshfone::Jobs::UsageTrigger.unstub(:delete_usage_trigger)
-    Resque.inline = false
+    @freshfone_call.reload
+    @freshfone_call.account.reload
+    @freshfone_call.account.freshfone_account.reload
+    Sidekiq::Testing.inline! do
+      Resque.inline = true
+      Freshfone::Jobs::UsageTrigger.stubs(:delete_usage_trigger)
+      twilio_mock_helper('SidUT','05',"#{@calls_usage+10}")
+      @freshfone_call.update_attributes(total_duration: 10)
+      expect(Freshfone::UsageTrigger.trial_triggers_present?(@account.freshfone_account)).to be true
+      Twilio::REST::Triggers.any_instance.unstub(:create)
+      Freshfone::Jobs::UsageTrigger.unstub(:delete_usage_trigger)
+      Resque.inline = false
+    end
   end
 end

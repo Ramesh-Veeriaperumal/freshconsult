@@ -20,6 +20,8 @@ module Integrations
           service_obj = service_class.new(installed_app, payload)
           service_obj.receive("slash_command")
         end
+      else
+        raise StandardError, "IntegrationOperationsHandler else block raise error! Account id is #{Account.current.id} "
       end
     end
 

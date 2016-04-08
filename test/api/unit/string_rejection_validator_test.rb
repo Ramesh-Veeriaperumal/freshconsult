@@ -1,17 +1,18 @@
 require_relative '../unit_test_helper'
 
 class StringRejectionValidatorTest < ActionView::TestCase
-  class TestValidation
+  class TestValidation < MockTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute1, :attribute2, :attribute3, :error_options
+    attr_accessor :attribute1, :attribute2, :attribute3
 
     validates :attribute2, data_type: { rules: Array, allow_nil: true }
-    validates :attribute1, string_rejection: { excluded_chars: [','] }
-    validates :attribute2, string_rejection: { excluded_chars: [',', 'junk', '!', '$'] }
-    validates :attribute3, string_rejection: { excluded_chars: [6767] }
+    validates :attribute1, string_rejection: { excluded_chars: [','], allow_nil: true }
+    validates :attribute2, string_rejection: { excluded_chars: [',', 'junk', '!', '$'], allow_nil: true }
+    validates :attribute3, string_rejection: { excluded_chars: [6767], allow_nil: true }
 
     def initialize(params_hash)
+      super
       params_hash.each { |k, v| instance_variable_set("@#{k}", v) }
     end
   end
@@ -39,7 +40,8 @@ class StringRejectionValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute2: :data_type_mismatch }, errors)
+    assert_equal({ attribute2: :datatype_mismatch }, errors)
+    assert_equal({ attribute2: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String } }, test.error_options)
     assert errors.count == 1
   end
 

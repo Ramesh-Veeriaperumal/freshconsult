@@ -17,6 +17,10 @@ module Concerns::ApplicationConcern
     Thread.current[:shard_name_payload] = Thread.current[:shard_selection].shard if Thread.current[:shard_selection]
   end
 
+  def unset_shard_for_payload
+    Thread.current[:shard_name_payload] = nil
+  end
+
   def day_pass_expired_json
     @error = RequestError.new(:access_denied)
     render template: '/request_error', status: 403

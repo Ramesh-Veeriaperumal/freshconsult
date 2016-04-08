@@ -74,23 +74,6 @@ describe Integrations::MarketplaceAppsController do
   end
 
   it "should delete the record from installed applications" do
-    application = @applications.find_by_name("magento")
-    FactoryGirl.build(:installed_application,
-      :application_id => application.id,
-      :account_id => @account.id,
-      :configs => {
-        :input => {
-          :shops => {
-            :shop_name => "test",
-            :shop_url => "http://magentotest.ngrok.com",
-            :consumer_token => "66aaebb2a5a4610bb3c39b3e5e54cdac",
-            :consumer_secret => "f0e4d57b68deafa2ab8bc22c5c2e37b4",
-            :oauth_token => "1b27d1d38e1bbe4207182f445515172c",
-            :oauth_token_secret => "d10cbf9fdd5d8cfa97a9a6050ed1ce29"
-          }
-        }
-      }
-    ).save!
     delete :uninstall, { :id => "magento" }
     expect(response).to be_success
   end

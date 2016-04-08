@@ -23,6 +23,7 @@ liveChat.visitorListView = function(){
       this.listenTo(this.collection, 'change_visitor_type', this.addVisitor); // when a visitor becomes active in collection
       this.listenTo(this.collection, 'save_filterd_visitors', this.saveFilteredCollection); //from visitor collection fetch
       this.listenTo(this.collection, 'change_count', this.setCount);
+      this.listenTo(this.collection, 'enable_visitors', this.enableVisitors);
       this.autoRefreshVisitorList = new PeriodicalExecuter(function(pe) {
         if(visitorCollection.count[this.type] !=  this.filteredCollection.length){
           this.addLoader();
@@ -57,6 +58,12 @@ liveChat.visitorListView = function(){
       this.addLoadMoreOption();
       this.setCount();
       return this;
+    },
+    enableVisitors : function(visitorId){
+      jQuery('a[data-id ^="visitor"]').addClass('visitor_chatnow');
+      if(visitorId){
+        jQuery('a[data-id ="'+visitorId+'"]').attr("style","color:#0066cc");
+      }
     },
     parseVisitor : function(visitor){
       var sclass = { returnVisitor:'return-visitor', newVisitor:'new-visitor', inConversation:'chat-visitor' };
@@ -151,12 +158,14 @@ liveChat.visitorListView = function(){
         that.removeVisitor(visitor_exists);
       }; 
     },
-    removeVisitor : function(visitor){
-      var visitor_id;
-      if(visitor instanceof Backbone.Model){
-        visitor_id = visitor.get('id');
+    removeVisitor : function(data){
+      var visitor_id, agentId;
+      if(data instanceof Backbone.Model){
+        visitor_id = data.get('id');
+        agentId = data.get('agent');
       }else{
-        visitor_id = visitor.id;
+        visitor_id = data.id;
+        agentId = data.agent;
       }
       this.filteredCollection.remove(visitor_id);
       if(jQuery("#visitor_list_"+visitor_id).length>0){
@@ -242,6 +251,8 @@ liveChat.visitorListView = function(){
     },
     initiateChat : function(event){
       var clicked_row = jQuery(event.currentTarget);
+      jQuery('a[data-id ^="visitor"]').removeClass('visitor_chatnow');
+      clicked_row.attr("style","color:#474747");
       var visitor_data = {
         id : clicked_row.attr("data-id"),
         widget_id : clicked_row.attr("data-widget-id"),

@@ -39,7 +39,7 @@ describe Reports::CustomSurveyReportsController do
 	end
 
 	it "should generate remarks" do
-		active_survey = @account.custom_surveys.find(:all , :conditions => {:active => true}).first
+		active_survey = @account.custom_surveys.where(:active => true).first
 		default_params = {:survey_id=>active_survey.id, :start_date=>active_survey.created_at, :end_date=>active_survey.updated_at}
 		get :remarks , {survey_id: active_survey.id, group_id: GROUP_ALL_URL_REF, agent_id: AGENT_ALL_URL_REF, rating: RATING_ALL_URL_REF ,date_range:'1427740200-1430332200' }		
 		response.should be_success

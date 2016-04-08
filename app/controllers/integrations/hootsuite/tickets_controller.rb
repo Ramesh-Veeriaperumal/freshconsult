@@ -6,7 +6,7 @@ class Integrations::Hootsuite::TicketsController < Integrations::Hootsuite::Hoot
   include Social::Twitter::Common
 
   before_filter :build_ticket, :only => [:create]
-  before_filter :load_object, :only => [:show,:add_note,:add_reply,:append_social_reply,:update]
+  before_filter :load_object, :only => [:show,:add_note,:add_reply,:append_social_reply,:update,:full_text,:twitter,:facebook]
 
   def show
     @ticket_notes_total = @ticket.conversation_count
@@ -22,7 +22,7 @@ class Integrations::Hootsuite::TicketsController < Integrations::Hootsuite::Hoot
 
   def create
     if @ticket.save_ticket
-      @path = helpdesk_ticket_url(@ticket)
+      @path = helpdesk_ticket_url(@ticket, :host => current_account.full_domain)
       render(:partial => "integrations/hootsuite/home/ticket_link_page",:locals => {:already_exist => false})
     else
       @error = true
@@ -81,14 +81,82 @@ class Integrations::Hootsuite::TicketsController < Integrations::Hootsuite::Hoot
     end
   end
 
-  def append_social_reply
-    respond_to do |format|
-      format.js { render "note" }
+  def full_text
+    note = @ticket.notes.find_by_id(params[:note_id])
+    render :text => note.full_text_html.to_s.html_safe
+  end
+
+  def twitter
+    body = {:tkt_tweet_type => params[:tkt_tweet_type],
+      :in_reply_to_handle =>params[:in_reply_to_handle],
+      :tweet => params[:tweet],
+      :helpdesk_note => params[:helpdesk_note],
+      :twitter_handle => params[:twitter_handle],
+      :ticket_status =>"",
+      :tweet_type =>params[:tweet_type],
+      :ticket_id =>@ticket.display_id
+    }
+    resp = HTTParty.post("#{current_account.full_url}#{twitter_helpdesk_ticket_conversations_path(@ticket)}.json",timeout: 10, :basic_auth => basic_auth,:body => body)
+    if resp.response.code == "200"
+      respond_to do |format|
+        format.js { render "note" }
+      end
+    else
+      render :json => {:status => "failed", :msg => t(:'flash.general.create.failure',
+        {:human_name => t(:'integrations.hootsuite.reply.human_name') })}
     end
+  end
+
+  def facebook
+    body = {:ticket_requester_name =>params[:ticket_requester_name],
+      :parent_post =>params[:parent_post],
+      :fb_post=>params[:fb_post],
+      :helpdesk_note => params[:helpdesk_note],
+      :ticket_id =>@ticket.display_id
+    }
+    resp = HTTParty.post("#{current_account.full_url}#{facebook_helpdesk_ticket_conversations_path(@ticket)}.json",timeout: 10, :basic_auth => basic_auth,:body => body)
+    if resp.response.code == "200"
+      respond_to do |format|
+        format.js { render "note" }
+      end
+    else
+      render :json => {:status => "failed", :msg => t(:'flash.general.create.failure',
+        {:human_name => t(:'integrations.hootsuite.reply.human_name') })}, :status => :not_acceptable
+    end
+  end
+
+  def user_following
+    user_follows = false
+    reply_handle = current_account.twitter_handles.find(params[:twitter_handle])
+    unless reply_handle.nil?
+      @social_error_msg , user_follows = Social::Twitter::Feed.following?(reply_handle, params[:req_twt_id])
+    end
+    user_following = @social_error_msg.blank? ? (user_follows ? user_follows : t('ticket.tweet_form.user_not_following')): t('twitter.not_authorized')
+    render :json => {:user_follows => user_following }.to_json
+  end
+
+  def group_agents
+    group_id = params[:id]
+    assigned_agent = params[:agent]
+    blank_value = !params[:blank_value].blank? ? params[:blank_value] : "..."
+    @agents = if group_id.present?
+      AgentGroup.where({ :group_id => group_id, :users => {:account_id => current_account.id , :deleted => false } }).joins(:user).order("users.name")
+    else
+      current_account.agents.includes(:user)
+    end
+    array = []
+    @agents.each { |agent_group|
+      array << agent_group.user.to_mob_json(:root => false)
+    }
+    render :partial => "/helpdesk/commons/group_agents", :locals =>{ :blank_value => blank_value, :assigned_agent => assigned_agent }
   end
 
   private
 
+  def basic_auth
+    {:username => current_user.single_access_token, :password => 'X'}
+  end
+  
   def build_ticket
     params[:helpdesk_ticket][:ticket_body_attributes][:description_html] = params[:helpdesk_ticket][:ticket_body_attributes][:description_html].gsub!(/\r\n|\n/, '<br/>')
     if (params[:tweet_id].present? && params[:helpdesk_ticket][:twitter_id].present?)
@@ -122,8 +190,6 @@ class Integrations::Hootsuite::TicketsController < Integrations::Hootsuite::Hoot
       }
     params[:helpdesk_ticket][:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]
   end
-
-  private
 
   def load_object
     @ticket = scoper.find_by_display_id(params[:id])

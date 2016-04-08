@@ -54,6 +54,10 @@ class Helpdesk::NoteDrop < BaseDrop
 		@source.survey_remark.survey_result.rating unless @source.survey_remark.nil?
 	end
 
+	def survey
+		@source.custom_survey_remark && @source.custom_survey_remark.survey_result
+	end
+
 	def attachments
 	    @source.all_attachments
 	end

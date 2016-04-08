@@ -1004,16 +1004,16 @@ module ApplicationHelper
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
         if (['default_priority','default_source','default_status'].include?(field.field_type) )
-          element = label + select(object_name, field_name, field.html_unescaped_choices, {:selected => field_value},{:class => element_class + " select2"})
+          element = label + select(object_name, field_name, field.html_unescaped_choices, {:selected => field_value},{:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
           #Just avoiding the include_blank here.
         else
-          element = label + select(object_name, field_name, field.html_unescaped_choices, { :include_blank => "...", :selected => field_value},{:class => element_class + " select2"})
+          element = label + select(object_name, field_name, field.html_unescaped_choices, { :include_blank => "...", :selected => field_value},{:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
         end
       when "dropdown_blank" then
         element = label + select(object_name, field_name,
                                               field.html_unescaped_choices(@ticket),
                                               {:include_blank => "...", :selected => field_value},
-                                              {:class => element_class + " select2"})
+                                              {:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
       when "nested_field" then
         element =  new_nested_field_tag(label, object_name, 
                                             field_name, 
@@ -1608,6 +1608,10 @@ module ApplicationHelper
     end
     
     content_tag :ul, &list
+  end
+
+  def outgoing_callers
+    current_account.freshfone_caller_id
   end
   
 end

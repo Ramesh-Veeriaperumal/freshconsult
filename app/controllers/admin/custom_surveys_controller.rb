@@ -4,13 +4,13 @@ class Admin::CustomSurveysController < Admin::AdminController
   before_filter :redirect_to_default_survey,          :if   => :default_survey_feature_enabled?
   before_filter :escape_html_entities_in_json
   before_filter :check_survey_limit,                  :only => [:new,    :create]
-  before_filter :format_custom_choices_attribs,       :only => [:create, :update]
+  before_filter :validate_question_limit,       :only => [:create, :update]
   before_filter :load_survey,                         :only => [:edit,   :update, :destroy, :activate, :deactivate, :test_survey]
   inherits_custom_fields_controller
 
   def index
     @account = current_account
-    @surveys = scoper.sort_by{|survey| survey[:active]}.reverse
+    @surveys = sorted_scoper
   end
 
   def new
@@ -20,7 +20,7 @@ class Admin::CustomSurveysController < Admin::AdminController
       action:     "create",
       method:     "post",
       active:     false,
-      default:    0,
+      default:    false,
       title:      "",
       id:         "",
       url:        admin_custom_surveys_path,
@@ -31,7 +31,7 @@ class Admin::CustomSurveysController < Admin::AdminController
   def create
     @survey = scoper.new
     update
-    @survey.activate if JSON.parse(params[:survey])["active"]
+    @survey.activate if survey_data[:active]
   end  
 
   def edit
@@ -41,7 +41,7 @@ class Admin::CustomSurveysController < Admin::AdminController
       action:       "update",
       method:       "put",
       active:       @survey.active?,
-      default:      @survey.default,
+      default:      @survey.default?,
       title:        @survey.title_text,
       id:           @survey_id,
       url:          admin_custom_survey_path(@survey_id),
@@ -53,16 +53,14 @@ class Admin::CustomSurveysController < Admin::AdminController
       default_question:     @survey.default_question.to_json,
       survey_result_exists: !@survey.survey_results.blank? 
     }
-    flash[:notice] = t(:'admin.surveys.new_layout.result_exist_msg') if @survey.survey_results.present? &&
-                                                                         @account.custom_survey_enabled?
+    flash[:notice] = t(:'admin.surveys.new_layout.result_exist_msg_v2') if @survey.survey_results.present? &&
+                                                                         !@survey.default?
   end  
 
   def update
-    unless params["deleted"].blank?
-      questions = params["deleted"].split(",")
-      @survey.survey_questions.where(:id => questions).destroy_all
-    end
-    if @survey.store(params)
+    if @survey.store(survey_data)
+      update_questions @survey.id
+      params[:jsonData] = survey_questions_data.to_json
       super
       @surveys = scoper
       result_set = {surveys: @surveys.to_json}
@@ -72,13 +70,14 @@ class Admin::CustomSurveysController < Admin::AdminController
       result_set = {'errors' => @errors}
     end
     result_set['default_survey_enabled'] = current_account.default_survey_enabled?
-    flash[:notice] ||= @survey_id.blank? ? t(:'admin.surveys.successfully_created') : 
-                                           t(:'admin.surveys.successfully_updated') if @errors.blank?
+    flash[:notice] = @survey_id.blank? ? t(:'admin.surveys.successfully_created_v2') : 
+                                         t(:'admin.surveys.successfully_updated_v2') if @errors.blank?
     render :json => result_set
   end  
 
   def destroy
-    @survey.destroy unless (@survey.default? || @survey.active?)
+    @survey.deleted = true
+    @survey.save unless (@survey.default? || @survey.active?)
     flash[:notice] = t(:'admin.surveys.successfully_deleted')
     render :json => { id: @survey.id }
   end
@@ -98,10 +97,7 @@ class Admin::CustomSurveysController < Admin::AdminController
 
   def test_survey
     if current_user.agent?
-      @survey_id = params[:id]
-      ticket = CustomSurvey::Survey.sample_ticket(current_user, @survey_id)
-      e_notification = ticket.account.email_notifications.preview_email_verification
-      Helpdesk::TicketNotifier.deliver_agent_notification(ticket.responder, ticket.requester.email, e_notification, ticket, nil, @survey_id)
+      Admin::CustomSurveysMailer.send_later(:deliver_preview_email, :survey_id => params[:id], :user_id => current_user.id)
     else
       flash[:notice] = t(:'admin.surveys.survey_preview_error')
     end
@@ -109,6 +105,14 @@ class Admin::CustomSurveysController < Admin::AdminController
   end
 
   private
+
+    def survey_data
+      @survey_data ||= JSON.parse(params[:survey]).symbolize_keys
+    end
+
+    def survey_questions_data
+      @survey_questions_data ||= JSON.parse(params[:jsonData])
+    end
 
     def redirect_to_default_survey
       default_survey = current_account.custom_surveys.default.first  
@@ -128,33 +132,12 @@ class Admin::CustomSurveysController < Admin::AdminController
       end
     end
 
-    def format_custom_choices_attribs
-      questions = JSON.parse params[:jsonData]
-
-      if questions.length > CustomSurvey::Survey::QUESTIONS_LIMIT
+    def validate_question_limit
+      if (survey_questions_data.length - 1) > CustomSurvey::Survey::QUESTIONS_LIMIT
         render :json => {
           :error => t(:'admin.surveys.questions.limit_exceed_error', 
           :count => CustomSurvey::Survey::QUESTIONS_LIMIT)
         }
-      else        
-        questions.each_with_index do |question, index|
-          custom_format = question['choices'].each_with_index.inject([]) do |result , (choice, i)|
-            position = i+1
-            choice_format  = {
-              :position   => position, 
-              :value      => choice[0], 
-              :face_value => choice[1],
-              :_destroy   => 0
-            }
-            choice_format[:id] = question["choiceMap"][position.to_s] unless question["choiceMap"].blank?
-            result << choice_format
-          end
-          question["custom_field_choices_attributes"] = custom_format
-          ["choices", "choiceMap", "name", "deleted", "survey_id"].each do |attrib|
-            question.delete(attrib)
-          end
-        end
-        params[:jsonData] = questions.to_json      
       end      
     end
 
@@ -165,8 +148,18 @@ class Admin::CustomSurveysController < Admin::AdminController
       end
     end
 
+    def update_questions survey_id
+      survey_questions_data.each do |question|
+        question['survey_id'] = survey_id
+      end
+    end
+
+    def sorted_scoper
+      scoper.sorted
+    end
+
     def scoper
-      current_account.custom_surveys
+      current_account.custom_surveys.undeleted
     end
 
     def scoper_class

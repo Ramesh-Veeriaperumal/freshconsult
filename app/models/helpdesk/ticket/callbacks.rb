@@ -41,8 +41,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
-  after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
-  after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
+  after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
+  after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -647,7 +647,7 @@ private
 
   def assign_flexifield
     build_flexifield
-    self.ff_def = FlexifieldDef.find_by_account_id_and_name(self.account_id, "Ticket_#{self.account_id}").id
+    self.flexifield_def = Account.current.ticket_field_def
     assign_ff_values custom_field
     @custom_field = nil
   end

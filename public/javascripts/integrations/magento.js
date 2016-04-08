@@ -7,7 +7,7 @@ MagentoWidget.prototype= {
                 "<div class='span16'>" +
                     "<div class='mb2'><span class='magento-order-status label label-light'> #{status} </span></div>"+
                     "<div>" +
-                        "<a class='order-id-link lazyload' data-show='##{increment_id}' rel='freshdialog' data-target='##{increment_id}' data-lazyload='true' data-template-footer='' href='#'>##{increment_id}</a>"+
+                        "<a class='order-id-link lazyload' data-show='#ord-#{unique_id}' rel='freshdialog' data-target='#ord-#{unique_id}' data-template-footer='' href='#'>##{increment_id}</a>"+
                         "<span class='info-data'>&nbsp;(#{order_items_length} items)</span>"+
                         "<span class='pull-right'> #{website_name} </span>" +
                     "</div>" +
@@ -15,7 +15,7 @@ MagentoWidget.prototype= {
                     "<div>Total : #{store_currency_code} #{grand_total}</div>" +
                 "</div>" +
             "</div>" + 
-            "<div class='product-list hide' rel='lazyload' id='#{increment_id}'>#{line_items_html} </div>" +
+            "<div class='product-list hide' id='ord-#{unique_id}'>#{line_items_html} </div>" +
         "</div>"
     ),
 
@@ -133,7 +133,8 @@ MagentoWidget.prototype= {
         }
         else {
             var orders1 = orders["message"];
-                
+            var no_of_orders = Object.keys(orders1).length;
+
             Object.keys(orders1).sort().reverse().forEach(function(key){
                 var val = orders1[key],
                     line_items_html = "";
@@ -181,7 +182,9 @@ MagentoWidget.prototype= {
 
                 var website_name = val.store_name.split("\n")[0];
 
-                orders_tag +=  $this.ORDERS_LIST.evaluate({increment_id: $this.escapeHtmlCustom(val.increment_id), 
+                orders_tag +=  $this.ORDERS_LIST.evaluate({
+                                    unique_id: no_of_orders--,
+                                    increment_id: $this.escapeHtmlCustom(val.increment_id), 
                                     order_items_length: val.order_items.length,
                                     website_name : $this.escapeHtmlCustom(website_name),
                                     created_at: $this.escapeHtmlCustom(created_at),
@@ -215,7 +218,7 @@ MagentoWidget.prototype= {
     },
 
     format_date: function(datestring) {
-        datestring += " GMT";
+        datestring = datestring.replace(" ", "T") + "Z";
         var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         var date = new Date(datestring);
         return months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + " " +date.toLocaleTimeString();

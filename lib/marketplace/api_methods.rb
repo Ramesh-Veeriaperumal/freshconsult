@@ -18,11 +18,37 @@ module Marketplace::ApiMethods
                            { :product_id => PRODUCT_ID },
                            Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:mkp_extensions] 
                         )
-
-        MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+        mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
           get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT) 
         end
 
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
+
+    def search_mkp_extensions
+      begin
+        api_payload = payload(
+                           Marketplace::ApiEndpoint::ENDPOINT_URL[:search_mkp_extensions] %
+                           { :product_id => PRODUCT_ID },
+                           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:search_mkp_extensions]
+                        )
+        get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
+
+    def auto_suggest_mkp_extensions
+      begin
+        api_payload = payload(
+                           Marketplace::ApiEndpoint::ENDPOINT_URL[:auto_suggest_mkp_extensions] %
+                           { :product_id => PRODUCT_ID },
+                           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:auto_suggest_mkp_extensions]
+                        )
+
+        get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
       rescue *FRESH_REQUEST_EXP => e
         exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
       end
@@ -40,7 +66,7 @@ module Marketplace::ApiMethods
                             },
                             Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:extension_details] 
                           )
-        MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+        mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
           get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
         end
       rescue *FRESH_REQUEST_EXP => e
@@ -55,7 +81,7 @@ module Marketplace::ApiMethods
                             { :product_id => PRODUCT_ID },
                             Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:all_categories] 
                           )
-        MemcacheKeys.fetch(MemcacheKeys::EXTENSION_CATEGORIES) do
+        mkp_memcache_fetch(MemcacheKeys::EXTENSION_CATEGORIES) do
           get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT) 
         end
       rescue *FRESH_REQUEST_EXP => e
@@ -73,7 +99,7 @@ module Marketplace::ApiMethods
                                   :version_id => params[:version_id]},
                           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:extension_configs] 
                           )
-        @extension_configs ||= MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+        @extension_configs ||= mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
           get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
         end
       rescue *FRESH_REQUEST_EXP => e

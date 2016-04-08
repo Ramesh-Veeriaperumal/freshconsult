@@ -71,17 +71,10 @@ module Admin::Sla::Escalation
       def group_escalate
         ##Tickets left unassigned in group
         account = Account.current
+        
         tickets_unpicked =  execute_on_db {
-                              account.tickets.unresolved.updated_in(2.month.ago).visible.where(:all, 
-                                :joins => "inner join helpdesk_ticket_states 
-                                          on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
-                                          and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id 
-                                          inner join groups on groups.id = helpdesk_tickets.group_id and 
-                                          groups.account_id =  helpdesk_tickets.account_id" ,
-                                :readonly => false , 
-                                :conditions =>['DATE_ADD(helpdesk_tickets.created_at, INTERVAL groups.assign_time SECOND)  <=? AND 
-                                          group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?', 
-                                          Time.zone.now.to_s(:db),false,Helpdesk::Ticketfields::TicketStatus::OPEN,nil] )
+                              account.tickets.unresolved.visible.group_escalate_sla(Time.zone.now.to_s(:db)).
+                              updated_in(2.month.ago).all
                             }
         tickets_unpicked.each do |gr_ticket| 
           send_email(gr_ticket, gr_ticket.group.escalate, EmailNotification::TICKET_UNATTENDED_IN_GROUP) unless gr_ticket.group.escalate.nil?

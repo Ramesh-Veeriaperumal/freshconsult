@@ -57,14 +57,17 @@ module FreshfoneSpecHelper
   end
 
   def create_freshfone_call(call_sid = "CA2db76c748cb6f081853f80dace462a04", call_type = Freshfone::Call::CALL_TYPE_HASH[:incoming])
-    @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
+    @freshfone_call = @account.freshfone_calls.new(:freshfone_number_id => @number.id, 
                                       :call_status => 0, :call_type => call_type, :agent => @agent,
                                       :params => { :CallSid => call_sid })
+    @freshfone_call.account.features.reload
+    @freshfone_call.save!
+    @freshfone_call
   end
 
   def create_freshfone_call_meta(call,external_number)
     @call_meta = call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
-              :meta_info => external_number, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
+              :meta_info => {:agent_info => external_number}, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
   end
 
   def create_supervisor_call(call=@freshfone_call, call_status = Freshfone::SupervisorControl::CALL_STATUS_HASH[:default])
@@ -130,6 +133,11 @@ module FreshfoneSpecHelper
     customer = FactoryGirl.build(:user, :account => @account, :email => Faker::Internet.email, :user_role => 3)
     customer.save
     customer
+  end
+
+  def create_freshfone_outgoing_caller(number = "+1234567890", number_sid = "PN2ba4c66ed6a57e8311eb0f14d5aa2d88")
+    @outgoing_caller = @account.freshfone_caller_id.create({:number => number,
+                                                        :number_sid => number_sid })
   end
 
   def set_twilio_signature(path, params = {}, master=false)
@@ -397,7 +405,7 @@ module FreshfoneSpecHelper
 
   def update_ringing_at_in_pinged_agents(agent_id, call = @freshfone_call)
     call.meta.reload
-    call.meta.update_agent_ringing_time(agent_id)
+    call.meta.update_pinged_agent_ringing_at(agent_id)
   end
 
   def twilio_mock_helper(sid, current_value, trigger_value)

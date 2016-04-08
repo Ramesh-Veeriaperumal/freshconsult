@@ -116,7 +116,7 @@ RSpec.describe Freshfone::CallMeta do
                            :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
                            :pinged_agents => [{:id=>1, :ff_user_id=>1, :name=>"Support", :device_type=>:browser}])
    
-    @freshfone_call_meta.update_external_transfer_call_response("+12407433321",1).should be true
+    @freshfone_call_meta.update_external_transfer_call_response("+12407433321","accepted").should be true
   end
 
   it 'should contain user agent type hash values' do
@@ -144,5 +144,85 @@ RSpec.describe Freshfone::CallMeta do
     Freshfone::CallMeta::HUNT_TYPE_HASH[:simple_routing].should be_eql(3)
   end
 
+  it 'should have a rating' do
+    create_freshfone_number
+    @freshfone_call = @account.freshfone_calls.create(:freshfone_number_id => @number.id, 
+                                                      :call_type => 1, :agent => @agent)
+    @freshfone_call_meta = @freshfone_call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
+                           :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
+                           :pinged_agents => [{:id=>1, :ff_user_id=>1, :name=>"Support", :device_type=>:browser},{:id=>2, :ff_user_id=>2, :name=>"Steve", :device_type=>:browser}])
+   
+    @freshfone_call_meta.update_feedback(:CallSid => "CA2db76c748cb6f081853f80dace462a04", :rating => "good")
+    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be_eql(:good)
+  end
+
+  it 'should have an issue for bad calls' do
+    create_freshfone_number
+    @freshfone_call = @account.freshfone_calls.create(:freshfone_number_id => @number.id, 
+                                                      :call_type => 1, :agent => @agent)
+    @freshfone_call_meta = @freshfone_call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
+                           :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
+                           :pinged_agents => [{:id=>1, :ff_user_id=>1, :name=>"Support", :device_type=>:browser},{:id=>2, :ff_user_id=>2, :name=>"Steve", :device_type=>:browser}])
+   
+    @freshfone_call_meta.update_feedback(:CallSid => "CA2db76c748cb6f081853f80dace462a04", :rating => "bad", :issue => 'dropped_call')
+    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be_eql(:bad)
+    @freshfone_call_meta.meta_info[:quality_feedback][:issue].should be_eql(:dropped_call)
+  end
+
+   it 'should have comment for other issues' do
+    create_freshfone_number
+    @freshfone_call = @account.freshfone_calls.create(:freshfone_number_id => @number.id, 
+                                                      :call_type => 1, :agent => @agent)
+    @freshfone_call_meta = @freshfone_call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
+                           :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
+                           :pinged_agents => [{:id=>1, :ff_user_id=>1, :name=>"Support", :device_type=>:browser},{:id=>2, :ff_user_id=>2, :name=>"Steve", :device_type=>:browser}])
+   
+    @freshfone_call_meta.update_feedback(:CallSid => "CA2db76c748cb6f081853f80dace462a04", :rating => "bad", :issue => 'other_issues', :comment => "Bad Call Quality")
+    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be_eql(:bad)
+    @freshfone_call_meta.meta_info[:quality_feedback][:issue].should be_eql(:other)
+    @freshfone_call_meta.meta_info[:quality_feedback][:comment].should be_eql("Bad Call Quality")
+  end
+
+  it 'should not have a rating' do
+    create_freshfone_number
+    @freshfone_call = @account.freshfone_calls.create(:freshfone_number_id => @number.id, 
+                                                      :call_type => 1, :agent => @agent)
+    @freshfone_call_meta = @freshfone_call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
+                           :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
+                           :pinged_agents => [{:id=>1, :ff_user_id=>1, :name=>"Support", :device_type=>:browser},{:id=>2, :ff_user_id=>2, :name=>"Steve", :device_type=>:browser}])
+   
+    @freshfone_call_meta.update_feedback(:CallSid => "CA2db76c748cb6f081853f80dace462a04")
+    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be(nil)
+    @freshfone_call_meta.meta_info[:quality_feedback][:issue].should be_eql(nil)
+    @freshfone_call_meta.meta_info[:quality_feedback][:comment].should be_eql(nil)
+  end
+
+  it 'should not have issue for good calls' do
+    create_freshfone_number
+    @freshfone_call = @account.freshfone_calls.create(:freshfone_number_id => @number.id, 
+                                                      :call_type => 1, :agent => @agent)
+    @freshfone_call_meta = @freshfone_call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
+                           :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
+                           :pinged_agents => [{:id=>1, :ff_user_id=>1, :name=>"Support", :device_type=>:browser},{:id=>2, :ff_user_id=>2, :name=>"Steve", :device_type=>:browser}])
+   
+    @freshfone_call_meta.update_feedback(:CallSid => "CA2db76c748cb6f081853f80dace462a04", :rating => "good")
+    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be_eql(:good)
+    @freshfone_call_meta.meta_info[:quality_feedback][:issue].should be_eql(nil)
+    @freshfone_call_meta.meta_info[:quality_feedback][:comment].should be_eql(nil)
+  end
+
+  it 'should not have comment' do
+    create_freshfone_number
+    @freshfone_call = @account.freshfone_calls.create(:freshfone_number_id => @number.id, 
+                                                      :call_type => 1, :agent => @agent)
+    @freshfone_call_meta = @freshfone_call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
+                           :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
+                           :pinged_agents => [{:id=>1, :ff_user_id=>1, :name=>"Support", :device_type=>:browser},{:id=>2, :ff_user_id=>2, :name=>"Steve", :device_type=>:browser}])
+   
+    @freshfone_call_meta.update_feedback(:CallSid => "CA2db76c748cb6f081853f80dace462a04", :rating => "bad", :issue => 'dropped_call')
+    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be_eql(:bad)
+    @freshfone_call_meta.meta_info[:quality_feedback][:issue].should be_eql(:dropped_call)
+    @freshfone_call_meta.meta_info[:quality_feedback][:comment].should be_eql(nil)
+  end
 
 end  

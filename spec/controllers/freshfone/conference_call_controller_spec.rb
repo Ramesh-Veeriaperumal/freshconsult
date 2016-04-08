@@ -231,6 +231,81 @@ RSpec.describe Freshfone::ConferenceCallController do
     freshfone_call.abandon_state.should be_nil
   end
 
+   it 'should have a rating' do
+    create_freshfone_call
+    create_call_meta
+    params = {:CallSid => @freshfone_call.call_sid, :rating => "good" }
+    put :wrap_call, params
+    expect(json).to be_truthy
+    expect(json[:result]).to be true
+    @freshfone_call_meta.reload
+    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be_eql(:good)
+  end
+
+  it 'should have an issue for bad calls' do
+    create_freshfone_call
+    create_call_meta
+    params = {:CallSid => "CA2db76c748cb6f081853f80dace462a04", :rating => "bad", :issue => 'dropped_call'}
+    put :wrap_call, params
+    expect(json).to be_truthy
+    expect(json[:result]).to be true
+    @freshfone_call_meta.reload
+    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be_eql(:bad)
+    @freshfone_call_meta.meta_info[:quality_feedback][:issue].should be_eql(:dropped_call)
+  end
+
+   it 'should have comment for other issues' do
+    create_freshfone_call
+    create_call_meta
+    params = {:CallSid => "CA2db76c748cb6f081853f80dace462a04", :rating => "bad", :issue => 'other_issues', :comment => "Bad Call Quality"}
+    put :wrap_call, params
+    expect(json).to be_truthy
+    expect(json[:result]).to be true
+    @freshfone_call_meta.reload
+    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be_eql(:bad)
+    @freshfone_call_meta.meta_info[:quality_feedback][:issue].should be_eql(:other)
+    @freshfone_call_meta.meta_info[:quality_feedback][:comment].should be_eql("Bad Call Quality")
+  end
+
+  it 'should not have a rating' do
+    create_freshfone_call
+    create_call_meta
+    params = {:CallSid => "CA2db76c748cb6f081853f80dace462a04"}
+    put :wrap_call, params
+    expect(json).to be_truthy
+    expect(json[:result]).to be true
+    @freshfone_call_meta.reload
+    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be(nil)
+    @freshfone_call_meta.meta_info[:quality_feedback][:issue].should be_eql(nil)
+    @freshfone_call_meta.meta_info[:quality_feedback][:comment].should be_eql(nil)
+  end
+
+  it 'should not have issue for good calls' do
+    create_freshfone_call
+    create_call_meta
+    params = {:CallSid => "CA2db76c748cb6f081853f80dace462a04", :rating => "good"}
+    put :wrap_call, params
+    expect(json).to be_truthy
+    expect(json[:result]).to be true
+    @freshfone_call_meta.reload
+    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be_eql(:good)
+    @freshfone_call_meta.meta_info[:quality_feedback][:issue].should be_eql(nil)
+    @freshfone_call_meta.meta_info[:quality_feedback][:comment].should be_eql(nil)
+  end
+
+  it 'should not have comment' do
+    create_freshfone_call
+    create_call_meta
+    params = {:CallSid => "CA2db76c748cb6f081853f80dace462a04", :rating => "bad", :issue => 'dropped_call'}
+    put :wrap_call, params
+    expect(json).to be_truthy
+    expect(json[:result]).to be true
+    @freshfone_call_meta.reload
+    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be_eql(:bad)
+    @freshfone_call_meta.meta_info[:quality_feedback][:issue].should be_eql(:dropped_call)
+    @freshfone_call_meta.meta_info[:quality_feedback][:comment].should be_eql(nil)
+  end
+
   describe "Supervisor Leg Ends" do
     
     before :each do

@@ -7,18 +7,17 @@ class DecoratedController < ApiApplicationController
 
   def test_method
     @items = Helpdesk::Ticket.first(2)
-    render :json => {:message => @items}
+    render json: { message: @items }
   end
 
   def test_method_2
     @item = Helpdesk::Ticket.first
-    render :json => {:message => @item}
+    render json: { message: @item }
   end
 end
 
 class DecoratedDecorator
-
-  def initialize(*args)
+  def initialize(*_args)
   end
 end
 
@@ -42,5 +41,4 @@ class DecoratedControllerTest < ActionController::TestCase
     actual = @controller.send(:test_method_2)
     @controller.unstub(:action_name)
   end
-  
 end

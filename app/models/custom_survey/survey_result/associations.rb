@@ -1,5 +1,5 @@
 class CustomSurvey::SurveyResult < ActiveRecord::Base
-  attr_accessible :account_id, :survey_id, :surveyable_id, :surveyable_type, :customer_id, :agent_id, :group_id, :response_note_id, :rating
+  attr_accessible :survey_id, :surveyable_id, :surveyable_type, :customer_id, :agent_id, :group_id, :response_note_id, :rating
 
   belongs_to_account  
   has_one :survey_remark, :class_name => 'CustomSurvey::SurveyRemark', :foreign_key => :survey_result_id, :dependent => :destroy

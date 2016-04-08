@@ -61,7 +61,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings ]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
-    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :acw]
+    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :wrap_call]
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
     resource :"freshfone/autocomplete"
@@ -70,6 +70,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/queue", :only => [:bridge]
     resource :"freshfone/addres"
     resource :"freshfone/caller"
+    resource :"freshfone/caller_id"
     resource :"freshfone/dashboard", :only => [:dashboard_stats, :calls_limit_notificaiton, :mute]
 
     resource :"helpdesk/conversation", :only => [:note, :full_text]
@@ -103,8 +104,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"profile"
 
     # Used for API V2
-    resource :"ticket", :only => [:show, :create, :index]
     resource :"conversation", only: [:create, :ticket_conversations]
+    resource :"ticket", :only => [:show, :create, :index, :search]
 	end
 
   reply_ticket do
@@ -297,7 +298,6 @@ Authority::Authorization::PrivilegeList.build do
     # Used by V2 API
     resource :"api_contact", :only => [:index, :show]
     resource :"api_company", :only => [:index, :show]
-    resource :"api_agent", :only => [:show]
   end
 
   # add_or_edit_contact
@@ -379,7 +379,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
-    resource :user, :only => [:assume_identity]
+    resource :user, :only => [:assume_identity, :assumable_agents]
 
     # Used by V2 API
     resource :"api_contact", :only => [:make_agent]
@@ -464,8 +464,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/salesforce"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
     resource :"admin/integrations/freshplug"
-    resource :"admin/extension"
-    resource :"admin/installed_extension"
+    resource :"admin/marketplace/extension"
+    resource :"admin/marketplace/installed_extension"
     resource :"doorkeeper/authorization"
   	resource :"admin/ecommerce/account",:only => [:index]
     resource :"admin/ecommerce/ebay_account"

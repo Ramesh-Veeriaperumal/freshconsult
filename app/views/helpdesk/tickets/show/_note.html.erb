@@ -78,7 +78,7 @@ end
         <% if privilege?(:forward_ticket) %>
 					<%= link_to_function('', 
 								"jQuery('##{forward_note_id}').show().trigger('afterShow'); invokeRedactor('#{forward_note_id}-body') " ,
-								:class => "conv-action-icon conv-actions-forward tooltip", :title => t('fwd_to')) unless note.private %>
+								:class => "conv-action-icon conv-actions-forward tooltip", :title => t('fwd_to')) unless note.private or note.feedback? %>
         <% end %>
         <% if privilege?(:forward_ticket) %>
 					<%= link_to_function('', 
@@ -100,8 +100,10 @@ end
 						:timestamp => note.created_at.to_i 
 					).html_safe %><br>
 				<%unless survey_name.blank? %>
-					<b><%= t("helpdesk.tickets.note.survey_response",{:survey_name => survey_name})%>
-						<%unless agent_name.blank? %><%= t("helpdesk.tickets.note.survey_response_to",{:agent => agent_name})%><%end%></b>
+					<div class="author-mail-detail">
+						<%= t("helpdesk.tickets.note.survey_response",{:survey_name => survey_name})%>
+						<%unless agent_name.blank? %><%= t("helpdesk.tickets.note.survey_response_to",{:agent => agent_name})%><%end%>
+					</div>
 				<%end%>
 			</div>
 			<%  if privilege?(:manage_tickets)

@@ -86,7 +86,7 @@ module HelpdeskControllerMethods
       if item.respond_to?(:deleted)
         item.deleted =  true
         @restorable = true
-        store_dirty_tags(item)
+        store_dirty_tags(item) if item.is_a?(Helpdesk::Ticket)
         item.save
       else
         item.destroy
@@ -119,7 +119,7 @@ module HelpdeskControllerMethods
   def restore
     @items.each do |item|
       item.deleted = false
-      restore_dirty_tags(item)
+      restore_dirty_tags(item) if item.is_a?(Helpdesk::Ticket)
       item.save
     end
     options = params[:basic].blank? ? {:basic=>true} : params[:basic].to_s.eql?("true") ? {:basic => true} : {}
@@ -138,32 +138,6 @@ module HelpdeskControllerMethods
         flash[:notice] = render_to_string(
           :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items).html_safe
       }
-    end
-  end
-
-  def store_dirty_tags item
-    if item.is_a?(Helpdesk::Ticket)
-      item.dirty_attributes[:tag_attributes] = {}
-      item.tags.each do |tag|
-        item.dirty_attributes[:tag_attributes].merge!(tag.id => tag.name)
-      end
-      item.tags = []
-    end
-  end
-
-  def restore_dirty_tags item 
-    if item.is_a?(Helpdesk::Ticket)
-      unless item.deleted? or item.spam?
-        item.dirty_attributes[:tag_attributes].each do |key, value|
-            tag = current_account.tags.find_by_id(key)
-            if tag 
-              item.tags << tag 
-            else
-              item.tags << current_account.tags.new(:name => value, :tag_uses_count => 1)
-            end
-          end
-          item.dirty_attributes[:tag_attributes] = {}
-      end
     end
   end
 

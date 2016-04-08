@@ -25,7 +25,7 @@
 					   <%if @layout_params[:id] != "" %>
 			           		<input type="button" onclick="javascript:SurveyDetail.preview(<%=@layout_params[:id]%>);" id="previewFeedback" class="btn" value="<%=t('admin.surveys.index.preview_survey')%>">
 			           <% end %>
-			           <input type="button" value="<%=t('admin.surveys.index.save_survey')%>" onclick='jQuery("#surveyForm input:submit").submit();' class="btn btn-primary">
+			           <input type="button" value="<%=t('admin.surveys.index.save_survey')%>" onclick='jQuery("#surveyForm input:submit").submit();' class="btn btn-primary save_survey_btn">
 					</div>
 				</h3>
 				<label class="clearfix"> <%= t('admin.surveys.new_layout.title') %> </label>
@@ -56,11 +56,10 @@
 		<input type="hidden" value="javascript:SurveyAdminUtil.action.split(<%=@layout_params[:action]%>);" name="action">
 		<input type="hidden" value="" name="survey">
 		<input type="hidden" value="" name="jsonData">
-		<input type="hidden" id="deleted" name="deleted" value="">
 		<%= pjax_link_to t('admin.surveys.index.cancel'), @layout_params[:cancelUrl] ,:class=> 'btn' %>
-		<input type="submit" value="<%=t('admin.surveys.index.save_survey')%>" class="btn btn-primary">
+		<input type="submit" value="<%=t('admin.surveys.index.save_survey')%>" class="btn btn-primary save_survey_btn">
 	</form>
-	<%if @layout_params[:id] != "" && @layout_params[:default] == 0 && !@layout_params[:active]%>
+	<%if @layout_params[:id].present? && !@layout_params[:default] && !@layout_params[:active]%>
 			<input type="button" value="<%=t('admin.surveys.index.delete')%>" class="btn pull-left" onclick="javascript:SurveyList.destroy('<%=@layout_params[:id]%>',true);">
 	<% end %>
 </div>
@@ -79,7 +78,8 @@
 <script type="text/javascript">
 
  jQuery(document).ready(function(){
-	SurveyAdmin.setFullSurvey(<%= !@account.default_survey_enabled? %>);
+ 	SurveyAdmin.fullSurvey = <%= !@account.default_survey_enabled? %>;
+ 	SurveyAdmin.hasLayoutCustomization = <%= @account.features?(:layout_customization) %>;
  });
 
 </script>

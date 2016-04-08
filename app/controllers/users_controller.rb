@@ -100,6 +100,16 @@ class UsersController < ApplicationController
     redirect_to "/"
   end
 
+  def assumable_agents
+    assumable_agents = current_user.agent.assumable_agents.inject([]) do |result, agent|
+      result  <<  {id: "#{agent.id}", value: "#{agent.name}", text: "#{agent.name}"}
+    end
+
+    respond_to do |format|
+      format.json { render :json => assumable_agents }
+    end
+  end
+
   def revert_identity
     if(session.has_key?(:original_user))
       

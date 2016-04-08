@@ -52,7 +52,8 @@ describe Admin::EmailNotificationsController do
 		@test_notification.dynamic_notification_templates.create( :language =>"5",
 										:category =>"2", :active =>"true", :email_notification_id =>"3",
 										:subject=> "new spanish subject", :description=>"new spanish subject", :outdated=>"0")
-		put :update, :id => @test_notification.id, :requester => "1", :email_notification =>{}, :outdated => "yes"
+		put :update, :id => @test_notification.id, :requester => "1", :email_notification => 
+				{:requester_subject_template => @sample_subject, :requester_template => @sample_message}, :outdated => "yes"
 		@test_notification.reload
 		@test_notification.dynamic_notification_templates.reload
 		@test_notification.dynamic_notification_templates.find_by_language("5").outdated.should eql true
@@ -67,7 +68,8 @@ describe Admin::EmailNotificationsController do
 		@test_notification.dynamic_notification_templates.create( :language =>"6",
 										:category =>"1", :active =>"true", :email_notification_id =>"3",
 										:subject=> "new finnish subject", :description=>"new finnish subject", :outdated=>"0")
-		put :update, :id => @test_notification.id, :agent => "1", :email_notification =>{}, :outdated => "yes"
+		put :update, :id => @test_notification.id, :agent => "1", :email_notification =>
+					{:agent_subject_template => @sample_subject, :agent_template => @sample_message}, :outdated => "yes"
 		@test_notification.reload
 		@test_notification.dynamic_notification_templates.reload
 		@test_notification.dynamic_notification_templates.find_by_language("6").outdated.should eql true

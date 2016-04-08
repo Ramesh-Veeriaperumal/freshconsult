@@ -120,7 +120,7 @@ class Admin::EmailConfigsController < Admin::AdminController
     else
       current_account.features.compose_email.create
       #Handle delta case. Will remove this code once we remove redis feature check.
-      $redis_others.srem(COMPOSE_EMAIL_ENABLED,current_account.id)
+      $redis_others.perform_redis_op("srem", COMPOSE_EMAIL_ENABLED,current_account.id)
     end
     post_process
   end

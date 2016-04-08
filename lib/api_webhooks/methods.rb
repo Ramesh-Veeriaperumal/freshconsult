@@ -3,10 +3,9 @@ module ApiWebhooks::Methods
 	include ApiWebhooks::Constants
 	include Va::Util
 
-	def allow_api_webhook?
-		api_webhook_condition = !zendesk_import? && !freshdesk_webhook?
-		return api_webhook_condition
-	end
+  def allow_api_webhook?
+    (!zendesk_import? && !freshdesk_webhook?)
+  end
 
 	def subscribe_event_create 
 		event_changes = MAP_CREATE_ACTION[self.class.name]

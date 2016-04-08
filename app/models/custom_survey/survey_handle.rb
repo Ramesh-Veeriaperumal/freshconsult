@@ -13,9 +13,9 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
     create_handle_internal(ticket, CustomSurvey::Survey::PLACE_HOLDER)
   end
 
-  def self.create_handle_for_notification(ticket, notification_type,survey_id, preview, portal = false)
+  def self.create_handle_for_notification(ticket, notification_type,survey_id)
     send_while = NOTIFICATION_VS_SEND_WHILE[notification_type]
-    create_handle_internal(ticket, send_while, survey_id, note=nil, preview, portal) if send_while
+    create_handle_internal(ticket, send_while, survey_id, note=nil) if send_while
   end
 
   def self.create_handle_for_portal(ticket, notification_type)
@@ -24,8 +24,8 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
                             save=false) if send_while
   end
 
-  def survey_url(ticket, rating)
-    Rails.application.routes.url_helpers.support_customer_custom_survey_url(id_token, CustomSurvey::Survey::CUSTOMER_RATINGS[rating],:host => ticket.portal_host, :protocol => ticket.account.url_protocol)
+  def self.create_handle_for_preview(survey_id, send_while)
+    create_handle_internal(ticket=nil, send_while, survey_id, note=nil, preview=true)
   end
   
   def record_survey_result rating
@@ -33,7 +33,6 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
 
     ActiveRecord::Base.transaction do
       create_survey_result({
-        :account_id       => survey.account_id,
         :survey_id        => survey_id,
         :surveyable_id    => surveyable_id,
         :surveyable_type  => surveyable_type,
@@ -78,16 +77,21 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
     
       return nil unless (preview or portal or ticket.can_send_survey?(send_while))
 
-      s_handle = ticket.custom_survey_handles.build({
-        :id_token   => Digest::MD5.hexdigest("#{Helpdesk::SECRET_1}#{ticket.id}#{Time.now.to_f}").downcase,
+      s_handle = self.new({
+        :id_token   => Digest::MD5.hexdigest("#{Helpdesk::SECRET_1}_#{survey_id}_#{ticket.try(:id)}_#{Time.now.to_f}").downcase,
         :sent_while => send_while,
-        :survey_id  => survey_id || ticket.account.survey.id,
-        :account_id => ticket.account_id,
-        :preview    => preview,
-        :group_id   => ticket.group_id
+        :survey_id  => survey_id || Account.current.survey.id,
+        :preview    => preview
       })
-      s_handle.response_note_id = note.id if note
-      s_handle.agent_id = note ? note.user_id : ticket.responder_id
+      if note.present?
+        s_handle.response_note_id = note.id
+        s_handle.agent_id = note.user_id
+      end
+      if ticket.present?
+        s_handle.surveyable = ticket 
+        s_handle.group_id = ticket.group_id
+        s_handle.agent_id ||= ticket.responder_id
+      end
       s_handle.save if save
       s_handle
     end

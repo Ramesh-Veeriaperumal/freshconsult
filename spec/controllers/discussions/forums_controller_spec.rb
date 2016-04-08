@@ -161,7 +161,7 @@ describe Discussions::ForumsController do
 			response.should render_template 'discussions/forums/show'
 			fetched_topics_from_controller = controller.instance_variable_get("@topics")
 			topics = @forum.topics.newest
-			topics = topics.published.find(:all,:conditions => ["stamp_type IN (?)", stamp_types]).paginate(
+			topics = topics.published.where("stamp_type IN (?)", stamp_types).paginate(
 																																	:page => controller.params[:page],:per_page => 10)
 			fetched_topics_from_controller.should =~ topics
 		end

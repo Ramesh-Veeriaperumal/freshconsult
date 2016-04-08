@@ -109,6 +109,7 @@ class Helpdesk::Note < ActiveRecord::Base
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
       notable.updated_at = created_at
       add_cc_email  if (email_conversation? and !user.customer?) || reply_to_forward?
+      add_client_manager_cc if performed_by_client_manager?
       # notable.cc_email_will_change! if notable_cc_email_updated?(@prev_cc_email, notable.cc_email)
       notable.trigger_cc_changes(@prev_cc_email)
       notable.save
@@ -121,7 +122,21 @@ class Helpdesk::Note < ActiveRecord::Base
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
                                               notable, self) if notable.responder && e_notification.agent_notification? && replied_by_customer?
-        Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if public_note? && notable.cc_email.present?
+        if public_note? 
+          if performed_by_client_manager?
+            Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
+          end
+          if notable.cc_email.present?
+            if user.id == notable.requester_id
+              Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
+            elsif notable.included_in_cc?(user.email)
+              additional_emails = [notable.requester.email] unless performed_by_client_manager?
+              # Using cc notification to send notification to requester about new comment by cc
+              Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {:additional_emails => additional_emails,
+                                                                                   :ignore_emails => [user.email]})
+            end
+          end
+        end
         handle_notification_for_agent_as_req if ( !incoming && notable.agent_as_requester?(user.id))
       else    
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
@@ -205,6 +220,7 @@ class Helpdesk::Note < ActiveRecord::Base
       return if schema_less_note.category
       schema_less_note.category = CATEGORIES[:meta_response]
       return unless human_note_for_ticket?
+      return schema_less_note.category = CATEGORIES[:customer_feedback] if self.feedback?
 
       if notable.customer_performed?(user)
         schema_less_note.category = case 
@@ -288,7 +304,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
  
     def api_webhook_note_check
-      (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook?
+      (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook? && !notable.spam_or_deleted?
     end
     
     ##### ****** Methods related to reports starts here ******* #####
@@ -343,4 +359,14 @@ class Helpdesk::Note < ActiveRecord::Base
       end
       return true
     end
+
+    def add_client_manager_cc
+      notable.cc_email[:reply_cc] << user.email unless notable.cc_email[:reply_cc].include?(user.email)
+      notable.cc_email[:cc_emails] << user.email unless notable.cc_email[:cc_emails].include?(user.email)
+    end
+
+    def performed_by_client_manager?
+      public_note? && notable.customer_performed?(user) && user.has_customer_ticket_permission?(notable) && (user.id != notable.requester_id)
+    end
+
 end

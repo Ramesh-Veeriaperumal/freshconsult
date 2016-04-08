@@ -49,7 +49,7 @@ module ApiDiscussions
       forum = f_obj
       put :update, construct_params({ id: forum.id }, name: ' ')
       assert_response 400
-      match_json([bad_request_error_pattern('name', :"can't be blank")])
+      match_json([bad_request_error_pattern('name', :blank)])
     end
 
     def test_update_invalid_forum_type
@@ -73,7 +73,7 @@ module ApiDiscussions
       forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, forum_type: '1')
       assert_response 400
-      match_json([bad_request_error_pattern('forum_type', :datatype_and_inclusion, list: '1,2,3,4')])
+      match_json([bad_request_error_pattern('forum_type', :not_included, code: :datatype_mismatch, list: '1,2,3,4', prepend_msg: :input_received, given_data_type: String)])
     end
 
     def test_update_invalid_forum_visibility_datatype
@@ -81,7 +81,7 @@ module ApiDiscussions
       forum = f_obj
       put :update, construct_params({ id: forum.id }, forum_visibility: '1')
       assert_response 400
-      match_json([bad_request_error_pattern('forum_visibility', :datatype_and_inclusion, list: '1,2,3,4')])
+      match_json([bad_request_error_pattern('forum_visibility', :not_included, code: :datatype_mismatch, list: '1,2,3,4', prepend_msg: :input_received, given_data_type: String)])
     end
 
     def test_update_duplicate_name
@@ -90,7 +90,7 @@ module ApiDiscussions
       another_forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, name: another_forum.name)
       assert_response 409
-      match_json([bad_request_error_pattern('name', :"already exists in the selected category")])
+      match_json([bad_request_error_pattern('name', :'already exists in the selected category')])
     end
 
     def test_update_unexpected_fields
@@ -117,7 +117,7 @@ module ApiDiscussions
       put :update, construct_params({ id: forum.id }, forum_category_id: fc.reload.id)
       fc.update_column(:account_id, @account.id)
       assert_response 400
-      match_json([bad_request_error_pattern('forum_category_id', :"can't be blank")])
+      match_json([bad_request_error_pattern('forum_category_id', :absent_in_db, resource: :category, attribute: :forum_category_id)])
     end
 
     def test_update_invalid_customer_id
@@ -156,8 +156,8 @@ module ApiDiscussions
       fc = fc_obj
       forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, name: Faker::Lorem.characters(300), description: Faker::Lorem.characters(300))
-      match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)"),
-                  bad_request_error_pattern('description', :"is too long (maximum is 255 characters)")])
+      match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
+                  bad_request_error_pattern('description', :'Has 300 characters, it can have maximum of 255 characters')])
       assert_response 400
     end
 
@@ -173,9 +173,9 @@ module ApiDiscussions
 
     def test_create_validate_presence
       post :create, construct_params({ id: ForumCategory.first.id }, description: 'test')
-      match_json([bad_request_error_pattern('name', :required_and_data_type_mismatch, data_type: String),
-                  bad_request_error_pattern('forum_visibility', :required_and_inclusion, list: '1,2,3,4'),
-                  bad_request_error_pattern('forum_type', :required_and_inclusion, list: '1,2,3,4')])
+      match_json([bad_request_error_pattern('name', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                  bad_request_error_pattern('forum_visibility', :not_included, code: :missing_field, list: '1,2,3,4'),
+                  bad_request_error_pattern('forum_type', :not_included, code: :missing_field, list: '1,2,3,4')])
       assert_response 400
     end
 
@@ -188,8 +188,8 @@ module ApiDiscussions
 
     def test_create_validate_length
       post :create, construct_params({ id: ForumCategory.first.id }, forum_visibility: 1, forum_type: 1, name: Faker::Lorem.characters(300), description: Faker::Lorem.characters(300))
-      match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)"),
-                  bad_request_error_pattern('description', :"is too long (maximum is 255 characters)")])
+      match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
+                  bad_request_error_pattern('description', :'Has 300 characters, it can have maximum of 255 characters')])
       assert_response 400
     end
 
@@ -212,9 +212,9 @@ module ApiDiscussions
 
     def test_create_no_params
       post :create, construct_params(id: ForumCategory.first.id)
-      match_json([bad_request_error_pattern('name', :required_and_data_type_mismatch, data_type: String),
-                  bad_request_error_pattern('forum_visibility', :required_and_inclusion, list: '1,2,3,4'),
-                  bad_request_error_pattern('forum_type', :required_and_inclusion, list: '1,2,3,4')])
+      match_json([bad_request_error_pattern('name', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                  bad_request_error_pattern('forum_visibility', :not_included, code: :missing_field, list: '1,2,3,4'),
+                  bad_request_error_pattern('forum_type', :not_included, code: :missing_field, list: '1,2,3,4')])
       assert_response 400
     end
 
@@ -278,7 +278,7 @@ module ApiDiscussions
       customer = company
       params = { description: 'desc', forum_visibility: 1, forum_type: 1, name: 'customer test 2', company_ids: [customer.id] }
       post :create, construct_params({ id: ForumCategory.first.id }, params)
-      match_json([bad_request_error_pattern('company_ids', :incompatible_field)])
+      match_json([bad_request_error_pattern('company_ids', :cannot_set_company_ids, code: :incompatible_field)])
       assert_response 400
     end
 
@@ -287,7 +287,7 @@ module ApiDiscussions
       forum = f_obj
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: 1, company_ids: [customer.id])
-      match_json([bad_request_error_pattern('company_ids', :incompatible_field)])
+      match_json([bad_request_error_pattern('company_ids', :cannot_set_company_ids, code: :incompatible_field)])
       assert_response 400
     end
 
@@ -314,7 +314,7 @@ module ApiDiscussions
       customer = company
       params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: Faker::Name.name, company_ids: "#{customer.id}" }
       post :create, construct_params({ id: ForumCategory.first.id }, params)
-      match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, data_type: Array)])
+      match_json([bad_request_error_pattern('company_ids', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
       assert_response 400
     end
 
@@ -323,7 +323,7 @@ module ApiDiscussions
       forum = f_obj
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: 4, company_ids: "#{customer.id}")
-      match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, data_type: Array)])
+      match_json([bad_request_error_pattern('company_ids', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
       assert_response 400
     end
 
@@ -344,8 +344,8 @@ module ApiDiscussions
       forum = create_test_forum(fc_obj)
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: nil, forum_type: nil, forum_category_id: nil, name: nil)
-      pattern = [bad_request_error_pattern('name', :data_type_mismatch, data_type: String),
-                 bad_request_error_pattern('forum_category_id', :data_type_mismatch, data_type: 'Positive Integer'),
+      pattern = [bad_request_error_pattern('name', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
+                 bad_request_error_pattern('forum_category_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null' ),
                  bad_request_error_pattern('forum_visibility', :not_included, list: '1,2,3,4'),
                  bad_request_error_pattern('forum_type', :not_included, list: '1,2,3,4')]
       match_json(pattern)
@@ -357,7 +357,7 @@ module ApiDiscussions
       forum = create_test_forum(fc)
       topic = create_test_topic(forum)
       put :update, construct_params({ id: forum.id }, forum_type: 2)
-      pattern = [bad_request_error_pattern('forum_type', :incompatible_field)]
+      pattern = [bad_request_error_pattern('forum_type', :cannot_set_forum_type, code: :incompatible_field)]
       match_json(pattern)
       assert_response 400
     end
@@ -377,7 +377,7 @@ module ApiDiscussions
       fc = fc_obj
       forum = create_test_forum(fc)
       post :create, construct_params({ id: fc.id }, forum_visibility: 1, forum_type: 1, name: forum.name)
-      match_json([bad_request_error_pattern('name', :"already exists in the selected category")])
+      match_json([bad_request_error_pattern('name', :'already exists in the selected category')])
       assert_response 409
     end
 
@@ -471,7 +471,7 @@ module ApiDiscussions
     def test_follow_user_id_invalid
       post :follow, construct_params({ id: f_obj.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user_id', :"can't be blank")]
+      match_json [bad_request_error_pattern('user_id', :absent_in_db, resource: :contact, attribute: :user_id)]
     end
 
     def test_new_monitor_follow_user_id_valid
@@ -485,7 +485,7 @@ module ApiDiscussions
     def test_new_monitor_follow_user_id_invalid
       post :follow, construct_params({ id: f_obj.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user_id', :"can't be blank")]
+      match_json [bad_request_error_pattern('user_id', :absent_in_db, resource: :contact, attribute: :user_id)]
     end
 
     def test_is_following_without_user_id
@@ -514,7 +514,7 @@ module ApiDiscussions
     def test_is_following_without_privilege_invalid_user_id
       get :is_following, controller_params({ user_id: ['1'], id: f_obj.id }, false)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: Array)])
     end
 
     def test_is_following_without_privilege_valid
@@ -528,7 +528,7 @@ module ApiDiscussions
     def test_is_following_non_numeric_user_id
       get :is_following, controller_params(user_id: 'test', id: f_obj.id)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer')])
     end
 
     def test_is_following_invalid_topic_id
@@ -548,10 +548,11 @@ module ApiDiscussions
     end
 
     def test_category_forums
-      get :category_forums, controller_params(id: fc_obj.id)
+      forum_category = fc_obj
+      get :category_forums, controller_params(id: forum_category.id)
       assert_response 200
       result_pattern = []
-      fc_obj.forums.each do |f|
+      forum_category.forums.each do |f|
         result_pattern << forum_pattern(f)
       end
       match_json(result_pattern.ordered!)
@@ -582,7 +583,7 @@ module ApiDiscussions
       category = fc_obj
       get :category_forums, controller_params(id: category.id, per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
     end
 
     def test_category_forums_with_link_header

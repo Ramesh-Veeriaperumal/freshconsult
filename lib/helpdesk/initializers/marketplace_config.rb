@@ -11,7 +11,6 @@ module MarketplaceConfig
   DEV_OAUTH_SECRET = config[:dev_oauth_secret]
   ADMIN_OAUTH_KEY = config[:admin_oauth_key]
   ADMIN_OAUTH_SECRET = config[:admin_oauth_secret]
-  S3_ASSETS = config[:s3_assets]
   CDN_STATIC_ASSETS = config[:cdn_static_assets]
   CACHE_INVALIDATION_TIME = config[:cache_invalidation_time]
   ACC_API_TIMEOUT = { :read => config[:acc_api_read_timeout], :conn => config[:acc_api_conn_timeout] }

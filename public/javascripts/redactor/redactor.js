@@ -818,15 +818,8 @@ Redactor.prototype = {
 		   			this.specialPaste = false;
 		   		}
 					
-				if (this.opts.autoresize === true)
-				{
-					this.saveScroll = document.body.scrollTop;
-				}
-				else
-				{
-					this.saveScroll = this.$editor.scrollTop();
-				}   
-                
+				this.saveScroll = $(window).scrollTop();
+
 			}, this));
 
 			// Drop Image in editor only for firefox
@@ -1161,7 +1154,7 @@ Redactor.prototype = {
 			if(!this.inputEventAvailable()) {
 				this.syncCode();
 			}
-				
+
 
 		}, this));		
 	},
@@ -1990,22 +1983,64 @@ Redactor.prototype = {
 	
 	// PASTE CLEANUP
 	pasteCleanUp: function(html) {
-		if(this.textPaste == false) {			
+		if(this.textPaste == false) {		
+			html = this.onPasteFromWord(html);
+			html = this.onPasteFromExcel(html);
 			html = this.sanitizeContent(html);
 			html = this.normalizeContent(html).html();
 			this.execCommand('inserthtml', html);
-    } else {
-    	this.textPaste = false;
+	    } else {
+	    	this.textPaste = false;
 			this.execCommand('inserttext', html);
-    }
+	    }
 		
-		if (this.opts.autoresize === true) {
-			$(document.body).scrollTop(this.saveScroll);
-		} else {
-			this.$editor.scrollTop(this.saveScroll);
-		}		
+		var isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+
+		if(isSafari || $.browser.msie) {
+			$(window).scrollTop(this.saveScroll);
+		}	
 	},
-	
+
+	onPasteFromWord: function(html) {
+		// Remove comments
+		html = html.replace(/<!--[\s\S]*?-->/gi, '');
+
+		// Remove style
+		html = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+
+		if (/(class=\"?Mso|style=\"[^\"]*\bmso\-|w:WordDocument)/.test(html))
+		{
+			// shapes
+			html = html.replace(/<img(.*?)v:shapes=(.*?)>/gi, '');
+			html = html.replace(/src="file\:\/\/(.*?)"/, 'src=""');
+
+			// list 
+			html = html.replace(/p(.*?)class=MsoListParagraphCxSpFirst ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpFirst" ([\w\W]*?)\/p/gi, this.removeIndentForList);
+			html = html.replace(/p(.*?)class=MsoListParagraphCxSpMiddle ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpMiddle" ([\w\W]*?)\/p/gi, this.removeIndentForList);
+			html = html.replace(/p(.*?)class=MsoListParagraphCxSpLast ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpLast" ([\w\W]*?)\/p/gi, this.removeIndentForList);
+			// one line
+			html = html.replace(/p(.*?)class="MsoListParagraph" ([\w\W]*?)\/p/gi, this.removeIndentForList);
+
+			// remove ms word tags
+			html = html.replace(/<o:p(.*?)>([\w\W]*?)<\/o:p>/gi, '$2');
+		}
+
+		return html;
+	},
+
+	removeIndentForList: function(matches) {
+		return matches.replace(/text-indent:.*?\;/,'');
+	},
+
+	onPasteFromExcel: function (html) {
+		// Set border to table
+		if(/(microsoft-com|schemas-microsoft-com:office:excel|content=Excel.Sheet)/.test(html)) {
+			html = html.replace(/<table(.*?)border=0/, '<table$1 border=1') 
+		}
+
+		return html;
+	},
+
 	sanitizeContent: function(html) {		
 		// convert div to p
 		if (this.opts.convertDivs) {
@@ -2014,12 +2049,19 @@ Redactor.prototype = {
 		
 		// remove nbsp
 		html = html.replace(/(&nbsp;){2,}/gi, '&nbsp;');
-		html = html.replace(/&nbsp;/gi, ' ');		
+		// html = html.replace(/&nbsp;/gi, ' ');		
 		var self = this;
-		//remove script and style tags
+		//remove script and style Tags
 		html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,'');
 		html = html.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi,'');
-		
+
+		//Get Only body content ( This is mainly to avoid garbage value copy/past from Microsoft content)
+		var getBodyContent = html.match(/<body(.*?) ([\w\W]*?)<\/body>/g);
+
+		if(getBodyContent != null) {
+			html = getBodyContent[0]
+		}
+
 		// remove comments & php code
 		html = html.replace(/<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi, '');
 		
@@ -2063,7 +2105,7 @@ Redactor.prototype = {
 		
 		return html;
 	},
-	
+
 	// Setting a jQuery wrapper for content parsing
 	normalizeContent: function(html) {
 		var cleaner = $('<div></div>').html(html);
@@ -2211,11 +2253,11 @@ Redactor.prototype = {
             {
                 if (htmls[i].search('{replace') == -1)
                 {
-                	if($.browser.mozilla == true || $.browser.msie == true) {
+                	// if($.browser.mozilla == true || $.browser.msie == true) {
                 		html += htmls[i].replace(/^\n+|\n+$/g, "");
-                	} else {
-                		html += '<p>' + htmls[i].replace(/^\n+|\n+$/g, "") + '</p>';
-                	}
+                	// } else {
+                	// 	html += '<p>' + htmls[i].replace(/^\n+|\n+$/g, "") + '</p>';
+                	// }
                 }
                 else html += htmls[i];
             }

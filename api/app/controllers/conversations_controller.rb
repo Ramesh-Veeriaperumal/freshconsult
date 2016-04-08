@@ -6,8 +6,13 @@ class ConversationsController < ApiApplicationController
   before_filter :can_send_user?, only: [:create, :reply]
 
   def create
-    is_success = create_note
-    render_response(is_success)
+    conversation_delegator = ConversationDelegator.new(@item)
+    if conversation_delegator.valid?
+      is_success = create_note
+      render_response(is_success)
+    else
+      render_custom_errors(conversation_delegator, true)
+    end
   end
 
   def reply
@@ -24,7 +29,7 @@ class ConversationsController < ApiApplicationController
   def update
     @item.notable = @ticket # assign notable instead of id as the object is already loaded.
     build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
-    @item.assign_element_html(params[cname][:note_body_attributes], 'body', 'full_text') if params[cname][:note_body_attributes]
+    @item.assign_element_html(params[cname][:note_body_attributes], 'body') if params[cname][:note_body_attributes]
     unless @item.update_note_attributes(params[cname])
       render_custom_errors(@item) # not_tested
     end
@@ -91,7 +96,7 @@ class ConversationsController < ApiApplicationController
     def can_update?
       # note without source type as 'note' should not be allowed to update
       unless @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
-        render_base_error(:method_not_allowed, 405, methods: 'DELETE')
+        render_base_error(:method_not_allowed, 405, methods: 'DELETE', fired_method: env['REQUEST_METHOD'])
         return false
       end
       true
@@ -161,12 +166,10 @@ class ConversationsController < ApiApplicationController
     end
 
     def build_note_body_attributes
-      if params[cname][:body] || params[cname][:body_html]
-        note_body_hash = { note_body_attributes: { body: params[cname][:body],
-                                                   body_html: params[cname][:body_html] } }
+      if params[cname][:body]
+        note_body_hash = { note_body_attributes: { body_html: params[cname][:body] } }
         params[cname].merge!(note_body_hash).tap do |t|
           t.delete(:body) if t[:body]
-          t.delete(:body_html) if t[:body_html]
         end
       end
     end

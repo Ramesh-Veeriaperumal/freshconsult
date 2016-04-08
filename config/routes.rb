@@ -453,7 +453,7 @@ Helpkit::Application.routes.draw do
         post :in_call
         post :update_recording
         post :save_call_notes
-        put :acw
+        put :wrap_call
         get :call_notes
         post :save_call_quality_metrics
       end
@@ -591,10 +591,22 @@ Helpkit::Application.routes.draw do
       end
     end
   end
+
+  namespace :freshfone, :path => "phone" do
+    resources :caller_id do
+      collection do
+        post :validation
+        post :verify
+        post :add
+        post :delete
+      end
+    end
+  end
   
   resources :users do
     collection do
       get :revert_identity
+      get :assumable_agents
     end
     member do
       delete :delete_avatar
@@ -858,8 +870,12 @@ Helpkit::Application.routes.draw do
       resources :tickets, :only => [:update,:create,:show] do
         collection do
           post :add_note
+          post :twitter
+          post :facebook
           post :add_reply
-          get :append_social_reply
+          get :full_text
+          get :user_following
+          get :group_agents
         end
       end
 
@@ -869,15 +885,13 @@ Helpkit::Application.routes.draw do
         post :verify_domain
         get :handle_plugin
         delete :destroy
-        get :log_out
+        get :destroy
         post :uninstall
         get :index
         get :refresh
         post :iframe_page
         post :search
-        delete :delete_hootsuite_user
-        get :hootsuite_login
-        post :create_login_session
+        get :plugin_url
       end
     end
 	
@@ -1203,21 +1217,25 @@ Helpkit::Application.routes.draw do
     end
 
     # Marketplace
-    resources :extensions, :only => [:index] do
-      collection do
-        get ':version_id', action: :show
+    namespace :marketplace do
+      resources :extensions, :only => [:index] do
+        collection do
+          get :search
+          get :auto_suggest
+          get '/:version_id', :action => :show, :as => 'show'
+        end
       end
-    end
 
-    namespace :installed_extensions do
-      scope ':extension_id/:version_id' do
-        get :new_configs
-        get :edit_configs
-        post :install
-        put :reinstall
-        delete :uninstall
-        put :enable
-        put :disable
+      namespace :installed_extensions do
+        scope ':extension_id/:version_id' do
+          get :new_configs
+          get :edit_configs
+          post :install
+          put :reinstall
+          delete :uninstall
+          put :enable
+          put :disable
+        end
       end
     end
 
@@ -1329,7 +1347,17 @@ Helpkit::Application.routes.draw do
   match '/search/topics.:format' => 'search/forums#index'
   match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
   match '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
-  
+
+  # routes for custom survey reports
+  match '/reports/custom_survey' => 'reports/custom_survey_reports#index', :as => :custom_survey_activity
+  match '/reports/custom_survey/aggregate_report/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#aggregate_report', :as => :custom_survey_aggregate_report
+  match '/reports/custom_survey/group_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#group_wise_report', :as => :custom_survey_group_wise_report
+  match '/reports/custom_survey/agent_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#agent_wise_report', :as => :custom_survey_agent_wise_report
+  match '/reports/custom_survey/responses/:survey_id/:group_id/:agent_id/:survey_question_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_remarks
+  match '/reports/custom_survey/save_reports_filter' =>  'reports/custom_survey_reports#save_reports_filter', :as => :custom_survey_save_reports_filter
+  match '/reports/custom_survey/update_reports_filter' =>  'reports/custom_survey_reports#update_reports_filter', :as => :custom_survey_update_reports_filter
+  match '/reports/custom_survey/delete_reports_filter' =>  'reports/custom_survey_reports#delete_reports_filter', :as => :custom_survey_delete_reports_filter
+ 
   # BEGIN Routes for new reports **/report/v2**
   match "/reports/v2/:report_type/fetch_metrics",      :controller => 'reports/v2/tickets/reports', :action => 'fetch_metrics', :method => :post
   match "/reports/v2/:report_type/fetch_active_metric", :controller => 'reports/v2/tickets/reports', :action => 'fetch_active_metric', :method => :post
@@ -1529,15 +1557,6 @@ Helpkit::Application.routes.draw do
   match '/reports/survey_reports/refresh_details' => 'reports/survey_reports#refresh_details', :as => :survey_refresh_details
   match '/survey/reports/:survey_id/:group_id/:agent_id/:date_range' => 'reports/survey_reports#reports', :as => :survey_reports
   match '/survey/reports/remarks/:survey_id/:group_id/:agent_id/:rating/:date_range' => 'reports/survey_reports#remarks', :as => :survey_remarks
-  
-  match '/custom_survey/reports' => 'reports/custom_survey_reports#index', :as => :custom_survey_activity
-  match '/custom_survey/reports/aggregate_report/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#aggregate_report', :as => :custom_survey_aggregate_report
-  match '/custom_survey/reports/group_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#group_wise_report', :as => :custom_survey_group_wise_report
-  match '/custom_survey/reports/agent_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#agent_wise_report', :as => :custom_survey_agent_wise_report
-  match '/custom_survey/reports/responses/:survey_id/:group_id/:agent_id/:survey_question_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_remarks
-  match '/custom_survey/reports/save_reports_filter' =>  'reports/custom_survey_reports#save_reports_filter', :as => :custom_survey_save_reports_filter
-  match '/custom_survey/reports/update_reports_filter' =>  'reports/custom_survey_reports#update_reports_filter', :as => :custom_survey_update_reports_filter
-  match '/custom_survey/reports/delete_reports_filter' =>  'reports/custom_survey_reports#delete_reports_filter', :as => :custom_survey_delete_reports_filter
 
   namespace :social do
 
@@ -2433,8 +2452,8 @@ Helpkit::Application.routes.draw do
     match '/surveys/:survey_code/:rating' => 'surveys#create', :as => :survey_feedback, :via => :post
 
     match '/custom_surveys/:survey_result/:rating' => 'custom_surveys#create', :as => :custom_survey_feedback, :via => :post
-    match '/custom_surveys/:survey_code/:rating/new' => 'custom_surveys#new' ,:as => :customer_custom_survey
-    match '/custom_surveys/:ticket_id/:rating'  => 'custom_surveys#create_for_portal', :as => :portal_custom_survey
+    match '/custom_surveys/:survey_code/:rating/new' => 'custom_surveys#new_via_handle' ,:as => :customer_custom_survey
+    match '/custom_surveys/:ticket_id/:rating'  => 'custom_surveys#new_via_portal', :as => :portal_custom_survey
 
     namespace :mobihelp do
       resources :tickets do
@@ -2473,6 +2492,7 @@ Helpkit::Application.routes.draw do
         get :get_filtered_tickets
         get :get_solution_url
         get :mobile_filter_count
+        post :recent_tickets
         match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end
     end

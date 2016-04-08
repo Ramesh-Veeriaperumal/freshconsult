@@ -1,17 +1,28 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/hootsuite' %>
 <%= javascript_include_tag :'cdn/hootsuite' %>
-<script src="https://d2l6uygi1pgnys.cloudfront.net/jsapi/0-6/hsp.js"></script>
+<script src="https://d2l6uygi1pgnys.cloudfront.net/jsapi/2-0/hsp.js"></script>
 <script type="text/javascript">
 var uid = '<%= params[:uid]%>';
 var ts = '<%= params[:ts]%>';
 var token = '<%= params[:token]%>';
 var pid = '<%= params[:pid]%>';
 var args = "?uid="+uid+"&ts="+ts+"&token="+token+"&pid="+pid;
+var api_key = '<%= ThirdPartyAppConfig["hootsuite"]["api_key"] %>';
+
+jQuery(document).ready(function() {
+  window.parent.frames[api_key+"_"+pid].hsp.getData(function (data){ 
+    prefillCreateTicketForm(data);
+  });
+  var redirect_url = "<%= AppConfig['integrations_url'][Rails.env]%>" + '<%= integrations_hootsuite_home_index_path %>' + args;
+  sendEventToOtherFrames("user_loggedin",redirect_url);
+});
+
 </script>
 <div class='hs_stream'>
   <div class="ticket-header clearfix">
     <span class="<%= font_class('freshdesk', nil, 'pull-left') %>"></span>
     <p class='tkt-title'><%= t("integrations.hootsuite.social.convert_to_ticket")%></p>
+    <%= button_to t('header.signout'), params.merge(:controller => "home", :action => "destroy"),:class => "hs-logout", :method => :delete, :id => "log_out", "data-integrations-url" => logout_redirect_url %>
   </div>
   <div class='create-form-wrapper'>
     <% if @error.present? %>
@@ -31,37 +42,44 @@ var args = "?uid="+uid+"&ts="+ts+"&token="+token+"&pid="+pid;
         </li>
         <li class='field'>
           
-          <%if params[:twitter_id].present? && current_account.twitter_handles.present? %>
-            <label class='hs_label hs_demoLabel'><%= t("integrations.hootsuite.social.twitter_handles")%></label>
-            <input type='text' id="requester_twitter_id" name="helpdesk_ticket[twitter_id]" class='hs_demoInput' 
-            value= <%= params[:twitter_id]%> readonly/>
-            <input type='hidden' id="requester_tweet_id" name="tweet_id" class='hs_demoInput' 
-            value= <%= params[:tweet_id]%> />
-            <input type='hidden' id="image_url" name="image" class='hs_demoInput' 
-            value= <%= params[:image]%> />
-            <select id="twitter_handle_id" name="twitter_handle_id">
-                <% current_account.twitter_handles.each do |handle| %>
-                <option value=<%=handle.id%>><%= handle.screen_name%></option>
-                <% end %>
-            </select>
+          <%if params[:channel]=="TWITTER" && current_account.twitter_handles.present? %>
+            <div id="twitter_requeter_form">
+              <label class='hs_label hs_demoLabel'><%= t("integrations.hootsuite.social.twitter_handles")%></label>
+              <input type='text' id="requester_twitter_id" name="helpdesk_ticket[twitter_id]" class='hs_demoInput' 
+              value="" readonly/>
+              <input type='hidden' id="requester_tweet_id" name="tweet_id" class='hs_demoInput' 
+              value="" />
+              <input type='hidden' id="image_url" name="image" class='hs_demoInput' 
+              value="" />
+              <select id="twitter_handle_id" name="twitter_handle_id">
+                  <% current_account.twitter_handles.each do |handle| %>
+                  <option value=<%=handle.id%>><%= handle.screen_name%></option>
+                  <% end %>
+              </select>
+            </div>
 
-          <% elsif params[:fb_profile_id].present? && current_account.facebook_pages.present?%>
-            <label class='hs_label hs_demoLabel'><%= t("integrations.hootsuite.social.facebook_name")%></label>
-            <input type='text' id="requester_name" name="helpdesk_ticket[name]" class='hs_demoInput' value= "<%= params[:user_name]%>" readonly/>
-            <input type='hidden' id="fb_post_id" name="post_id" class='hs_demoInput' 
-            value= "<%= params[:post_id]%>" />
-             <input type='hidden' id="fb_profile_id" name="fb_profile[id]" class='hs_demoInput' 
-            value= "<%= params[:fb_profile_id]%>" />
-            <input type='hidden' id="fb_profile_name" name="fb_profile[name]" class='hs_demoInput' 
-            value= "<%= params[:user_name]%>" />
-            <select id="fb_page_id" name="fb_page_id">
-                <% current_account.facebook_pages.each do |page| %>
-                <option value=<%=page.id%>><%= page.page_name%></option>
-                <% end %>
-            </select>
+          <% elsif params[:channel]=="FACEBOOK" && current_account.facebook_pages.present?%>
+            <div id="fb_requeter_form">
+              <label class='hs_label hs_demoLabel'><%= t("integrations.hootsuite.social.facebook_name")%></label>
+              <input type='text' id="requester_name" name="helpdesk_ticket[name]" class='hs_demoInput' value= "" readonly/>
+              <input type='hidden' id="fb_post_id" name="post_id" class='hs_demoInput' 
+              value= "" />
+               <input type='hidden' id="fb_profile_id" name="fb_profile[id]" class='hs_demoInput' 
+              value= "" />
+              <input type='hidden' id="fb_profile_name" name="fb_profile[name]" class='hs_demoInput' 
+              value= "" />
+              <select id="fb_page_id" name="fb_page_id">
+                  <% current_account.facebook_pages.each do |page| %>
+                  <option value=<%=page.id%>><%= page.page_name%></option>
+                  <% end %>
+              </select>
+            </div>
+
           <%else %>
-            <label class='hs_label hs_demoLabel'><%= t("integrations.hootsuite.social.requester")%></label>
-            <input type='text' id="requester_email_id" name="helpdesk_ticket[email]" class='hs_demoInput' value=<%= current_user.email %> />
+            <div id="email_requeter_form">
+              <label class='hs_label hs_demoLabel'><%= t("integrations.hootsuite.social.requester")%></label>
+              <input type='text' id="requester_email_id" name="helpdesk_ticket[email]" class='hs_demoInput' value=<%= current_user.email %> />
+            </div>
           <% end %>
         </li>
         <% @ticket_fields.each do |field|
@@ -77,7 +95,5 @@ var args = "?uid="+uid+"&ts="+ts+"&token="+token+"&pid="+pid;
   </div>
 </div>
 <%= javascript_tag do %>
-jQuery("#ticket_description").val(decodeURIComponent('<%= URI::encode("#{params[:description].to_s}")%>'));
- jQuery("#ticket_subject").val(decodeURIComponent('<%= URI::encode("#{params[:subject].to_s}")%>'));
  jQuery('#create_ticket').validate();
 <% end %>

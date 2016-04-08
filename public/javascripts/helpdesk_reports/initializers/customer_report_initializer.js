@@ -18,7 +18,7 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                 _FD.redraw(metric,sort_order);
             });
         },
-        contructCharts: function (hash) {
+        contructCharts: function (hash, type) {
             var metrics = _.keys(_FD.constants.metrics);
             HelpdeskReports.CoreUtil.flushCharts();
             jQuery('#customer_report_main').html('');            
@@ -34,15 +34,24 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
             }else  {
                 for (i = 0; i < metrics.length; i++) {
-                    var tmpl = JST["helpdesk_reports/templates/customer_report_chart"]({
+                    var template = "helpdesk_reports/templates/" + (type == 'pdf' ? 'pdf_' : '') + "customer_report_chart";
+                    var tmpl = JST[template]({
                         metric: metrics[i]
                     });
                     jQuery('#customer_report_main').append(tmpl);
                     if(jQuery.isEmptyObject(hash[metrics[i]])){
                         var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
-                        var div = [metrics[i] + '_container'];
                         jQuery("[data-chart='"+ metrics[i] +"']").hide();
-                        HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+                        if(type == 'pdf'){
+                            var div = [metrics[i] + '_desc_container'];
+                            HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+                            div = [metrics[i] + '_asc_container'];
+                            HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+                        }
+                        else{
+                            var div = [metrics[i] + '_container'];
+                            HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+                        }
                     }else if(!jQuery.isEmptyObject(hash[metrics[i]]['error'])){
                         var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                         var div = [metrics[i] + '_container'];
@@ -50,17 +59,17 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                         HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
                     }
                     else{
-                        _FD.constructChartSettings(hash, metrics[i]);
+                        _FD.constructChartSettings(hash, metrics[i], type);
                     }
                 }
             } 
                     
             
         },
-        constructChartSettings: function (hash_active, metric) {
+        constructChartSettings: function (hash_active, metric, type) {
             var constants    = _FD.constants; 
             var current_hash = hash_active[metric]['company_id']['DESC'];
-            var options = {    
+            var options = {
                     color : REPORT_COLORS["plotBG"],
                     radius : 5,
                     lrRadius : null,
@@ -69,8 +78,16 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                     cursor: 'default',
                     minPoint: true,
                     suffix: (constants.percentage_metrics.indexOf(metric) > -1) ? '{value}%' : null,
-                }   
+                    order: 'desc',
+                    type: type == 'pdf' ? 'pdf' : 'page'
+                }
             _FD.renderCommonChart(current_hash, options, metric);
+
+            if(type == 'pdf'){
+                current_hash = hash_active[metric]['company_id']['ASC'];
+                options.order = 'asc';
+                _FD.renderCommonChart(current_hash, options, metric);
+            }
         },
         calculateMaxValue: function (hash) {
             var modified_hash = _.values(hash); 
@@ -119,7 +136,7 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                 },
             });
             var settings = {
-                renderTo: metric + "_container",
+                renderTo: (options.type == 'pdf') ? (metric + "_" + options.order + "_container") : (metric + "_container"),
                 height: height,
                 xAxisLabel: labels,
                 chartData: data_array,
@@ -180,11 +197,11 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
         init: function (hash) {
             _FD.constants = HelpdeskReports.Constants.CustomerReport;
             _FD.bindevents();
-            _FD.contructCharts(hash);
+            _FD.contructCharts(hash, 'page');
         },
         pdf: function (hash) {
             _FD.constants = HelpdeskReports.Constants.CustomerReport;
-            _FD.contructCharts(hash);
+            _FD.contructCharts(hash, 'pdf');
         }
     };
 })();

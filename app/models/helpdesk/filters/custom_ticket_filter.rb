@@ -281,9 +281,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         all_conditions = sql_conditions
         all_joins = get_joins(sql_conditions)
         all_joins[0].concat(states_join) if all_conditions[0].include?("helpdesk_ticket_states")
+        status_in_conditions = query_hash.any? {|q_h| q_h["condition"] == "status"}
+        model_klass = if status_in_conditions and Account.current.launched?(:force_index_tickets)
+                        model_class.use_index("index_helpdesk_tickets_status_and_account_id")
+                      else
+                        model_class
+                      end
 
         if @without_pagination
-          return model_class.find(:all , :select => @filter_fields_to_select , :order => order_clause, 
+          return model_klass.find(:all , :select => @filter_fields_to_select , :order => order_clause, 
                                         :limit => per_page, :offset => (page - 1) * per_page,
                                         :conditions => all_conditions, :joins => all_joins)
         end
@@ -291,7 +297,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         select = @html_format ? ticket_select : "helpdesk_tickets.*"
         select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
 
-        recs = model_class.paginate(:select => select,
+        recs = model_klass.paginate(:select => select,
                                    :order => order_clause, :page => page, 
                                    :per_page => per_page, :conditions => all_conditions, :joins => all_joins,
                                    :total_entries => count_without_query).preload([:ticket_states, :ticket_status, :responder,:requester])

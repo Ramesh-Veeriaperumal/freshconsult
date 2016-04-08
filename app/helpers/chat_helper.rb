@@ -136,6 +136,14 @@ module ChatHelper
       :agent_reopen_chat_msg => t("freshchat.agent_reopen_chat_msg"),
       :visitor_side_inactive_msg => t('freshchat.visitor_side_inactive_msg'),
       :agent_disconnect_msg => t('freshchat.agent_disconnect_msg'),
+      :visitor_cobrowse_request => t('freshchat.visitor_cobrowse_request'),
+      :cobrowsing_start_msg => t('freshchat.cobrowsing_start_msg'),
+      :cobrowsing_stop_msg => t('freshchat.cobrowsing_stop_msg'),
+      :cobrowsing_cancel_visitor_msg => t('freshchat.cobrowsing_cancel_visitor_msg'),
+      :cb_viewing_screen_vi => t('freshchat.cb_viewing_screen_vi'),
+      :cb_controlling_screen_vi => t('freshchat.cb_controlling_screen_vi'),
+      :cb_give_control_vi => t('freshchat.cb_give_control_vi'),
+      :cobrowsing_stop_request => t('freshchat.cobrowsing_stop_request'),
     }
     return freshchat_setting.to_json.html_safe
   end
@@ -327,7 +335,18 @@ module ChatHelper
             :no_agents => t('helpdesk.dashboard.livechat.no_agents'),
             :no_activity => t('helpdesk.dashboard.livechat.no_activity'),
             :last_active => t('helpdesk.dashboard.livechat.last_active'),
-            :chats_in_progress => t('helpdesk.dashboard.livechat.chats_in_progress')
+            :chats_in_progress => t('helpdesk.dashboard.livechat.chats_in_progress'),
+            :cobrowse_request => t('freshchat.cobrowse_request'),
+            :cobrowsing_start_msg => t('freshchat.cobrowsing_start_msg'),
+            :cobrowsing_stop_msg => t('freshchat.cobrowsing_stop_msg'),
+            :cobrowsing_deny_msg => t('freshchat.cobrowsing_deny_msg'),
+            :cobrowsing_viewing_screen => t('freshchat.cobrowsing_viewing_screen'),
+            :cobrowsing_controlling_screen => t('freshchat.cobrowsing_controlling_screen'),
+            :cobrowsing_request_control => t('freshchat.cobrowsing_request_control'),
+            :cobrowsing_stop_request => t('freshchat.cobrowsing_stop_request'),
+            :cobrowsing_request_control_rejected => t('freshchat.cobrowsing_request_control_rejected'),
+            :agent_parallel_accept_error => t('freshchat.agent_parallel_accept_error')
+
         }
         return text.to_json.html_safe
   end

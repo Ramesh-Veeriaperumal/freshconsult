@@ -74,9 +74,9 @@ module APIHelper
 
   GROUP_ATTRIBS = ["assign_time", "business_calendar_id", "created_at", "description", "escalate_to", "id", "name", "ticket_assign_type","updated_at", "agents"]
    
-  USER_ATTRIBS = ["active", "address", "created_at", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at"]
+  USER_ATTRIBS = ["active", "address", "created_at", "deleted", "description", "email", "external_id", "fb_profile_id", "helpdesk_agent", "id", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "updated_at"] 
   
-  AGENT_ATTRIBS = ["active_since","available", "created_at", "id", "occasional", "points", "scoreboard_level_id", "signature", "signature_html", "ticket_permission", "updated_at", "user_id", "user"]
+  AGENT_ATTRIBS = ["active_since", "available", "created_at", "id", "last_active_at", "occasional", "points", "scoreboard_level_id", "signature", "signature_html", "ticket_permission", "updated_at", "user_id", "user"] 
 
   CONTACT_FIELDS_ATTRIBS = ["created_at", "deleted", "editable_in_portal", "editable_in_signup", "field_options", "id", "label", "label_in_portal", "name", "position", "required_for_agent", "required_in_portal", "updated_at", "visible_in_portal", "field_type", "choices"]
 
