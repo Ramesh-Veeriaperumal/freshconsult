@@ -28,8 +28,8 @@ class SearchV2::IndexOperations
     def perform(args)
       args.symbolize_keys!
       tag = Account.current.tags.find(args[:tag_id])
-      tag.tag_uses.preload(:taggable).find_in_batches do |tag_uses|
-        tag_uses.map(&:taggable).map(&:sqs_manual_publish)
+      tag.tag_uses.preload(:taggable).find_in_batches do |taguses|
+        taguses.map(&:taggable).map(&:sqs_manual_publish)
       end if tag
     end
   end

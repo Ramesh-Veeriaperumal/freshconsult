@@ -145,6 +145,6 @@ class Helpdesk::Tag < ActiveRecord::Base
   private
     
     def update_taggables
-      SearchV2::IndexOperations::UpdateTaggables.perform_async(tag_id: self.id)
+      SearchV2::IndexOperations::UpdateTaggables.perform_async({ :tag_id => self.id }) if Account.current.features?(:es_v2_writes)
     end
 end
