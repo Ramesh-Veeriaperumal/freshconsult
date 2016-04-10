@@ -25,7 +25,8 @@ Sidekiq.configure_client do |config|
       "WebhookV1Worker",
       "PremiumWebhookWorker",
       "DevNotificationWorker",
-      "PodDnsUpdate"
+      "PodDnsUpdate",
+      "SearchV2::Manager::DisableSearch"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -64,7 +65,8 @@ Sidekiq.configure_server do |config|
       "WebhookV1Worker",
       "PremiumWebhookWorker",
       "DevNotificationWorker",
-      "PodDnsUpdate"
+      "PodDnsUpdate",
+      "SearchV2::Manager::DisableSearch"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -94,7 +96,8 @@ Sidekiq.configure_server do |config|
       "WebhookWorker",
       "WebhookV1Worker",
       "PremiumWebhookWorker",
-      "DevNotificationWorker"
+      "DevNotificationWorker",
+      "SearchV2::Manager::DisableSearch"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

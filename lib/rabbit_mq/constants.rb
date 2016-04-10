@@ -36,7 +36,7 @@ module RabbitMq::Constants
     [  'article',             CRUD_KEYS_BY_TOKEN[:all],                 'article'         ],
     [  'tag',                 CRUD_KEYS_BY_TOKEN[:all],                 'tag'             ],
     [  'tag_use',             CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'tag_use'         ],
-    [  'account',             CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'account'         ]
+    [  'account',             CRUD_KEYS_BY_TOKEN[:destroy],             'account'         ]
   ]
   
   # If the exchange mapping values ("ticket", "customer") is changed, please make sure that the changes

@@ -35,6 +35,8 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   attr_protected :account_id
   accepts_nested_attributes_for :archive_note_association, :allow_destroy => true
   
+  scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
+  
   concerned_with :esv2_methods
   
   # Callbacks will be executed in the order in which they have been included. 

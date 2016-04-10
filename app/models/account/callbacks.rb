@@ -19,6 +19,9 @@ class Account < ActiveRecord::Base
   after_commit :delete_reports_archived_data, on: :destroy
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
+  
+  after_commit :enable_searchv2, on: :create
+  after_commit :disable_searchv2, on: :destroy
 
 
   # Callbacks will be executed in the order in which they have been included. 
@@ -218,5 +221,13 @@ class Account < ActiveRecord::Base
         Redis::RoutesRedis.delete_route_info(full_domain_was)
         Redis::RoutesRedis.set_route_info(full_domain, id, full_domain)
       end
+    end
+    
+    def enable_searchv2
+      SearchV2::Manager::EnableSearch.perform_async if self.features?(:es_v2_writes)
+    end
+    
+    def disable_searchv2
+      SearchV2::Manager::DisableSearch.perform_async(account_id: self.id)
     end
 end
