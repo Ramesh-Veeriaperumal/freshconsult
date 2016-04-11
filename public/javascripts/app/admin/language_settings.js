@@ -76,7 +76,7 @@ window.App.Admin = window.App.Admin || {};
       tempateVariables['activeClass'] = (visible ? "active" : "");
       tempateVariables['visibility'] = visible;
 
-      $.tmpl(this.langTemplate, tempateVariables).prependTo('#manage_languages_form .selected-languages');
+      $.tmpl(this.langTemplate, tempateVariables).prependTo('#manage_languages_form .selected-languages').animateHighlight();
     },
     
     validateLanguage: function (ev) {

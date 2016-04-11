@@ -224,7 +224,7 @@ class AccountsController < ApplicationController
     if @account.save
       flash[:notice] = t(:'flash.account.update.success')
       check_and_enable_multilingual_feature
-      redirect_to admin_home_index_path
+      redirect_to edit_account_path
     else
       render :action => 'manage_languages'
     end
