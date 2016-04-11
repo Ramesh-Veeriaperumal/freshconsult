@@ -22,7 +22,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:email] = fetch_email_details(account)
     account_summary[:invoice_emails] = fetch_invoice_emails(account)
     account_summary[:api_limit] = account.api_limit
-    account_summary[:api_v2_limit] = $rate_limit.perform_redis_op("get", Redis::RedisKeys::ACCOUNT_API_LIMIT % {account_id: params[:account_id]})
+    account_summary[:api_v2_limit] = get_api_redis_key(params[:account_id], account_summary[:subscription][:subscription_plan_id])
     credit = account.freshfone_credit
     account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
     account_summary[:shard] = shard_info.shard_name
@@ -350,6 +350,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   private 
     def validate_params
       render :json => {:status => "error"} and return unless /^[0-9]/.match(params[:new_limit])
+    end
+
+    def get_api_redis_key(account_id,plan_id)
+      keys = Redis::RedisKeys::ACCOUNT_API_LIMIT % { account_id: account_id }, Redis::RedisKeys::PLAN_API_LIMIT % { plan_id: plan_id }, Redis::RedisKeys::DEFAULT_API_LIMIT
+      api_limit = $rate_limit.perform_redis_op("mget", *keys).compact.first || Middleware::FdApiThrottler::API_LIMIT
     end
 
     def generate_sso_url(account)
