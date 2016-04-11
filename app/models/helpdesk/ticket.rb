@@ -529,6 +529,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     tags.collect { |tag| tag.name }
   end
 
+  def tag_ids
+    tag_uses.pluck(:tag_id)
+  end
+
   def ticket_tags
     tag_names.join(',')
   end

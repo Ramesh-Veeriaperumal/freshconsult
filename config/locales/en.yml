@@ -1617,6 +1617,10 @@ en:
       index:
         human_name: Dispatch’r Rule
       remember_to_save: 'After updating, please remember to save it.'
+      label:
+        object_id_array_in: 'Contains any of'
+        object_id_array_and: 'Contains all of'
+        object_id_array_not_in: 'Contains none of'
     webhook:
       jira_hook_title: JIRA Issue Creation
       jira_hook_description: You could use a webhook to automatically create issues inside your JIRA account when a ticket is raised in Freshdesk.
@@ -2757,6 +2761,7 @@ en:
   username: Username
   reply: Reply
   is_not: Is not
+  and: And
   during: during
   less_than: Less than
   greater_than: Greater than

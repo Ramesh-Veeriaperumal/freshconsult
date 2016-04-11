@@ -10,6 +10,7 @@ fields:
         subject_or_description: text_array
         priority: numeric
         tag_names: text_array
+        tag_ids: object_id_array
         ticket_type: text
         status: numeric
         source: numeric
