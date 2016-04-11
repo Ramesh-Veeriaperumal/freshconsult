@@ -35,7 +35,7 @@
 		<% elsif @account.features_included?(:enable_multilingual) %>
 			<div class="mt5">
 				<%= @account.language_object.name %>
-				<span class="ml20">
+				<span class="ml20 enable-link">
 					<%= pjax_link_to t("admin.products.portal.enable_multilingual"), manage_languages_path if @account.multilingual_available? && !@account.supported_languages.present? %>
 				</span>
 			</div>
@@ -51,8 +51,10 @@
 							}
 				%>
 			</div>
-			<div class="span4 mt5">
-				<%= pjax_link_to t("admin.products.portal.enable_multilingual"), manage_languages_path if @account.multilingual_available? %>
+			<div class="span4 enable-link">
+				<div class="mt5">
+					<%= pjax_link_to t("admin.products.portal.enable_multilingual"), manage_languages_path if @account.multilingual_available? %>
+				</div>
 			</div>
 		<% end %>
 	</div>
