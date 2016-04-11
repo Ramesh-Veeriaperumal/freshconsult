@@ -3,13 +3,16 @@ require 'spec_helper'
 RSpec.configure do |c|
   c.include FreshfoneQueueHelper
   c.include Freshfone::Queue
-  c.include FreshfoneCallMetricHelper
 end
 
 RSpec.describe Freshfone::QueueController do
   
   setup :activate_authlogic
   self.use_transactional_fixtures = false
+
+  before(:all) do
+    @account.freshfone_numbers.delete_all
+  end
 
   before(:each) do
     create_test_freshfone_account
@@ -76,23 +79,6 @@ RSpec.describe Freshfone::QueueController do
     xml[:Response][:Say].should_not be_blank
   end
 
-  it 'should remove call sid for a call not in-progress from the queue' do
-    log_in(@agent)
-    controller.send(:queued_members).stubs(:list).returns(["random"])
-    controller.set_key( "FRESHFONE:CALLS:QUEUE:#{@account.id}", 
-                        ["CAae09f7f2de39bd201ac9276c6f1cc66a"].to_json )
-    post :bridge
-    controller.get_key( "FRESHFONE:CALLS:QUEUE:#{@account.id}").should be_eql([].to_json)
-  end
-
-  it 'should success json when queue list is empty' do
-    log_in(@agent)
-    stub_twilio_queues
-    post :bridge
-    json.should be_eql({:status => "success"})
-    Twilio::REST::Queues.any_instance.unstub(:get)
-  end
-
   it 'should dequeue twiml on call dequeue' do
   	@account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
     create_freshfone_call('CAb5ce7735068c8cd04a428ed9a57ef64e')
@@ -105,6 +91,7 @@ RSpec.describe Freshfone::QueueController do
   it 'should remove all default queue entries from redis on hangup' do # failing in master
     set_twilio_signature('freshfone/queue/hangup', hangup_params)
     create_freshfone_call('CDEFAULTQUEUE')
+    create_call_meta
     set_default_queue_redis_entry
     post :hangup, hangup_params
     controller.get_key(FreshfoneQueueHelper::DEFAULT_QUEUE % {account_id: @account.id}).should be_nil
@@ -127,44 +114,6 @@ RSpec.describe Freshfone::QueueController do
     response.body.should be_eql("Dequeued Call CAb5ce7735068c8cd04a428ed9a57ef64e from QU629430fd5b8d41769b02abfe7bfbe3a9")
   end
 
-  it 'should fetch the calls waiting in queue for an agent: agent hunted call' do
-    log_in @agent
-    
-    agent_key = "FRESHFONE:AGENT_QUEUE:#{@account.id}"
-    controller.remove_key agent_key
-    controller.set_key(agent_key, {@agent.id => ["CAGENTHUNTEDCALL"]}.to_json)
-
-    controller.stubs(:bridge_priority_call)
-    list = mock()
-    list.stubs(:list).returns(["dummy queued member"])
-    controller.stubs(:queued_members).returns(list)
-    
-    post :bridge
-    assigns[:priority_call].should match("CAGENTHUNTEDCALL")
-
-    controller.remove_key agent_key
-  end
-
-  it 'should fetch the calls waiting in queue for a group: group hunted call' do
-    log_in @agent
-    group = create_group @account, {:name => "Freshfone Group"}
-    AgentGroup.new(:user_id => @agent.id , :account_id => @account.id, :group_id => group.id).save!    
-    
-    group_key = "FRESHFONE:GROUP_QUEUE:#{@account.id}"
-    controller.remove_key group_key
-    controller.set_key(group_key, {group.id => ["CGROUPHUNTEDCALL"]}.to_json)
-
-    controller.stubs(:bridge_priority_call)
-    list = mock()
-    list.stubs(:list).returns(["dummy queued member"])
-    controller.stubs(:queued_members).returns(list)
-    
-    post :bridge
-    assigns[:priority_call].should match("CGROUPHUNTEDCALL")
-
-    controller.remove_key group_key
-  end
-
   it 'should update call queue abandon status on customer hangup' do
     set_twilio_signature('freshfone/queue/hangup', hangup_params)
     freshfone_call = create_freshfone_call('CDEFAULTQUEUE')
@@ -183,26 +132,5 @@ RSpec.describe Freshfone::QueueController do
     freshfone_call = @account.freshfone_calls.find(freshfone_call)
     freshfone_call.should be_default
     freshfone_call.abandon_state.should be_nil
-  end
-
-  it 'should update IVR time in metrics before enqueue' do
-    set_twilio_signature('freshfone/queue/enqueue?hunt_type=&hunt_id=', queue_params)
-    create_freshfone_call('CAae09f7f2de39bd201ac9276c6f1cc66a')
-    create_call_meta
-    mock_call_metrics_attricbutes
-    post :enqueue, queue_params
-    @freshfone_call.reload
-    call_metrics = @freshfone_call.call_metrics.reload
-    expect(call_metrics.ivr_time).not_to be_nil
-  end
-
-  it 'should update IVR time in metrics on hangup' do
-    set_twilio_signature('freshfone/queue/hangup', hangup_params)
-    create_freshfone_call('CDEFAULTQUEUE')
-    set_default_queue_redis_entry
-    mock_call_metrics_attricbutes
-    post :hangup, hangup_params
-    call_metrics = @freshfone_call.call_metrics.reload
-    call_metrics.queue_wait_time.should be_eql(67)
   end
 end

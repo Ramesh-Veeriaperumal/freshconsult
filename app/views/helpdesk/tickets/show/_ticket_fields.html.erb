@@ -5,9 +5,9 @@
 	<% if privilege?(:edit_ticket_properties) %>
 		<div class="button-container top">
 			<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit_dup",
-			"data-loading-text" => "#{t('ticket.updating')}...", 
-			"data-saved-text" => "✔ #{t('ticket.update_done')}", 
-		
+			"data-loading-text" => "#{t('ticket.updating')}...",
+			"data-saved-text" => "✔ #{t('ticket.update_done')}",
+			"data-domhelper-name" => "ticket-properties-update-dup",
 			"data-default-text" => t('update') %>
 		</div>
 	<% end %>
@@ -23,9 +23,9 @@
 	<% if privilege?(:edit_ticket_properties) %>
 		<div class="button-container">
 			<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit",
-			"data-loading-text" => "#{t('ticket.updating')}...", 
-			"data-saved-text" => "✔ #{t('ticket.update_done')}", 
-		
+			"data-loading-text" => "#{t('ticket.updating')}...",
+			"data-saved-text" => "✔ #{t('ticket.update_done')}",
+			"data-domhelper-name" => "ticket-properties-update",
 			"data-default-text" => t('update') %>
 		</div>
 	<% end %>

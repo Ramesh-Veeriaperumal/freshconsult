@@ -17,10 +17,10 @@ class TopicsQueriesTest < ActionDispatch::IntegrationTest
         api_is_following: 1,
         api_posts: 2,
 
-        create: 45,
+        create: 43,
         show: 14,
-        update: 36,
-        destroy: 30,
+        update: 34,
+        destroy: 28,
         follow: 15,
         unfollow: 22,
         is_following: 13,

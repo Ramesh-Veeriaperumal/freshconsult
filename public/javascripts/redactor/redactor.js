@@ -1154,7 +1154,7 @@ Redactor.prototype = {
 			if(!this.inputEventAvailable()) {
 				this.syncCode();
 			}
-				
+
 
 		}, this));		
 	},
@@ -1985,6 +1985,7 @@ Redactor.prototype = {
 	pasteCleanUp: function(html) {
 		if(this.textPaste == false) {		
 			html = this.onPasteFromWord(html);
+			html = this.onPasteFromExcel(html);
 			html = this.sanitizeContent(html);
 			html = this.normalizeContent(html).html();
 			this.execCommand('inserthtml', html);
@@ -2031,6 +2032,15 @@ Redactor.prototype = {
 		return matches.replace(/text-indent:.*?\;/,'');
 	},
 
+	onPasteFromExcel: function (html) {
+		// Set border to table
+		if(/(microsoft-com|schemas-microsoft-com:office:excel|content=Excel.Sheet)/.test(html)) {
+			html = html.replace(/<table(.*?)border=0/, '<table$1 border=1') 
+		}
+
+		return html;
+	},
+
 	sanitizeContent: function(html) {		
 		// convert div to p
 		if (this.opts.convertDivs) {
@@ -2044,7 +2054,14 @@ Redactor.prototype = {
 		//remove script and style Tags
 		html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,'');
 		html = html.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi,'');
-		
+
+		//Get Only body content ( This is mainly to avoid garbage value copy/past from Microsoft content)
+		var getBodyContent = html.match(/<body(.*?) ([\w\W]*?)<\/body>/g);
+
+		if(getBodyContent != null) {
+			html = getBodyContent[0]
+		}
+
 		// remove comments & php code
 		html = html.replace(/<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi, '');
 		

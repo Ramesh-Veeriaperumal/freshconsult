@@ -217,7 +217,7 @@ module IntegrationServices::Services
         when "dm_agent"
           @configs["allow_dm"].present?
         else
-          @configs["public_channels"].include?(push_to) || @configs["private_channels"].include?(push_to)
+          Array.wrap(@configs["public_channels"]).include?(push_to) || Array.wrap(@configs["private_channels"]).include?(push_to)
         end
       end
 

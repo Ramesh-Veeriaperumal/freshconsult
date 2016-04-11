@@ -243,15 +243,16 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_duplicate_tags
     @account.tags.create(name: 'existing')
-    params = { requester_id: requester.id, tags: ['new', '<1>new', 'existing', '<2>existing', 'Existing', 'NEW'],
+    @account.tags.create(name: 'TestCaps')
+    params = { requester_id: requester.id, tags: ['new', '<1>new', 'existing', 'testcaps', '<2>existing', 'Existing', 'NEW'],
                status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     assert_difference 'Helpdesk::Tag.count', 1 do # only new should be inserted.
-      assert_difference 'Helpdesk::TagUse.count', 2 do # duplicates should be rejected
+      assert_difference 'Helpdesk::TagUse.count', 3 do # duplicates should be rejected
         post :create, construct_params({}, params)
       end
     end
     assert_response 201
-    params[:tags] = ['new', 'existing']
+    params[:tags] = ['new', 'existing', 'TestCaps']
     t = Helpdesk::Ticket.last
     match_json(ticket_pattern(params, t))
     match_json(ticket_pattern({}, t))
@@ -1439,7 +1440,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { tags: tags }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    assert t.reload.tag_names == tags.map(&:downcase)
+    assert t.reload.tag_names == tags
     match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
   end
@@ -2163,18 +2164,50 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern_with_notes(ticket))
   end
 
+  def test_show_with_requester
+    ticket.update_column(:deleted, false)
+    get :show, controller_params(id: ticket.display_id, include: 'requester')
+    assert_response 200
+    match_json(ticket_pattern_with_association(ticket, false, false, true, false))
+  end
+
+  def test_show_with_company
+    t = ticket
+    t.update_column(:deleted, false)
+    company = create_company
+    t.update_column(:owner_id, company.id)
+    get :show, controller_params(id: ticket.display_id, include: 'company')
+    assert_response 200
+    match_json(ticket_pattern_with_association(ticket, false, false, false, true))
+  end
+
+  def test_show_with_all_associations
+    show_ticket = ticket
+    show_ticket.update_column(:deleted, false)
+    get :show, controller_params(id: show_ticket.display_id, include: 'conversations,requester,company')
+    assert_response 200
+    match_json(ticket_pattern_with_association(show_ticket))
+  end
+
   def test_show_with_empty_include
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: '')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company')])
+  end
+
+  def test_show_with_wrong_type_include
+    ticket.update_column(:deleted, false)
+    get :show, controller_params(id: ticket.display_id, include: ['test'])
+    assert_response 400
+    match_json([bad_request_error_pattern('include', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: 'Array')])
   end
 
   def test_show_with_invalid_param_value
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'test')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company')])
   end
 
   def test_show_with_invalid_params
@@ -2342,7 +2375,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
-  def test_index_with_requester
+  def test_index_with_requester_filter
     Helpdesk::Ticket.update_all(requester_id: User.first.id)
     ticket = create_ticket(requester_id: User.last.id)
     ticket.update_column(:created_at, 2.months.ago)
@@ -2484,6 +2517,34 @@ class TicketsControllerTest < ActionController::TestCase
     assert response.size > 0
     assert response.map { |item| item['ticket_id'] }
     Time.zone = old_time_zone
+  end
+
+   def test_index_with_requester
+    get :index, controller_params(include: 'requester')
+    assert_response 200
+    response = parse_response @response.body
+    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month)
+    assert_equal tkts.count, response.size
+    pattern = tkts.map { |tkt| index_ticket_pattern_with_associations(tkt) }
+    match_json(pattern)
+  end
+
+  def test_index_with_empty_include
+    get :index, controller_params(include: '')
+    assert_response 400
+    match_json([bad_request_error_pattern('include', :not_included, list: 'requester')])
+  end
+
+  def test_index_with_wrong_type_include
+    get :index, controller_params(include: ['test'])
+    assert_response 400
+    match_json([bad_request_error_pattern('include', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: 'Array')])
+  end
+
+  def test_index_with_invalid_param_value
+    get :index, controller_params(include: 'test')
+    assert_response 400
+    match_json([bad_request_error_pattern('include', :not_included, list: 'requester')])
   end
 
   def test_show_with_conversations_exceeding_limit

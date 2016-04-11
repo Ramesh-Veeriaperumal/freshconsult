@@ -23,6 +23,7 @@ content << link_to("<span class='arrow-next'></span>".html_safe, next_link,
 						:title => "#{t('ticket.next')}", 
 						"data-placement" => 'below',
 						"data-keybinding" => shortcut('pagination.next'),
+						"data-domhelper-name" => "next-page",
 						"data-highlight" => "true")
 content << '</li><li>'
 content << link_to(" <span class='arrow-previous'></span>".html_safe,  previous_link,
@@ -31,6 +32,7 @@ content << link_to(" <span class='arrow-previous'></span>".html_safe,  previous_
 						:title => "#{t('ticket.previous')}",
 						"data-placement" => 'below',
 						"data-keybinding" => shortcut('pagination.previous'),
+						"data-domhelper-name" => "prev-page",
 						"data-highlight" => "true")
 content << '</li></ul>'
 

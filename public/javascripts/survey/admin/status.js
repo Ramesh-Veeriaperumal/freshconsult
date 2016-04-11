@@ -73,6 +73,7 @@ var SurveyStatus = {
 				SurveyList.delete_survey(survey_id);
 				break;
 			case 'remove':
+				SurveyQuestion.removeFlag = true;
 				SurveyQuestion.hide();
 				break;
 			default:

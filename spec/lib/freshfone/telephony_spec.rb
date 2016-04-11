@@ -34,7 +34,7 @@ RSpec.describe Freshfone::Telephony do
     stub_twilio_queues
     @number.update_attributes({:max_queue_length =>2})
     @number.reload
-    xml = @telephony.initiate_queue
+    xml = @telephony.initiate_queue(:initiated)
     expect(xml).to match(/Response/)
     expect(xml).to match(/Enqueue/)
   end

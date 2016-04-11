@@ -92,6 +92,14 @@ class PlanChangeWorker
     Role.destroy_all(:account_id => account.id, :default_role => false )
   end
 
+  def drop_custom_survey_data(account)
+    if account.default_survey_enabled?
+      account.custom_surveys.default.first.activate if account.active_custom_survey_from_cache.present?
+    else
+      account.custom_surveys.deactivate_active_surveys
+    end
+  end
+
   def drop_dynamic_content_data(account)
     # update_all_in_batches({ :language => account.language }){ |cond| 
     #   account.all_users.where(@conditions).limit(@batch_size).update_all(cond) 

@@ -243,6 +243,7 @@ RSpec.describe ContactsController do
 		end
 
 		it "should update a contact with custom fields" do
+			@user = @account.users.create(:email => Faker::Internet.email)
 			@user.flexifield_without_safe_access.should be_nil
 			avatar_file = Rack::Test::UploadedFile.new('spec/fixtures/files/image33kb.jpg', 'image/jpg')
 			put :update,{:id => @user.id, 
@@ -274,6 +275,9 @@ RSpec.describe ContactsController do
 			text = Faker::Lorem.words(4).join(" ")
 			name = Faker::Name.name
 			user = @account.users.find(@user.id)
+
+			text = user.custom_field["cf_testimony"]
+
 			put :update,{:id => user.id, 
 						 :user=>{:name => name,
 								:email => user.email, 
@@ -289,12 +293,7 @@ RSpec.describe ContactsController do
 			user.time_zone.should eql "Moscow"
 
 			user.flexifield_without_safe_access.should_not be_nil
-			user.send("cf_testimony").should eql(@text)
-			user.send("cf_category").should eql "First"
-			user.send("cf_agt_count").should eql(7)
-			user.send("cf_show_all_ticket").should be true
-			user.send("cf_file_url").should be_nil
-			user.send("cf_linetext").should eql("updated text")
+			user.send("cf_testimony").should eql(text)
 		end
 
 		it "should update a contact with custom fields with null values" do

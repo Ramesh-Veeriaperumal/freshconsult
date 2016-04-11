@@ -95,6 +95,8 @@ defaults: &defaults
     - [helpdesk_update_note_body_queue]
     - [contact_import]
     - [company_import]
+    - [contact_export]
+    - [data_export]
 development:
   <<: *defaults
 

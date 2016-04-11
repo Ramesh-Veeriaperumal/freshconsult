@@ -253,9 +253,10 @@ module SupportHelper
 	end
 
 	# Logo for the portal
-	def logo portal
+	def logo portal, link_flag = false
 		_output = []
-		_output << %(<a href='#{portal['linkback_url']}' class='portal-logo'>)
+		_output << %(<a href= '#{ link_flag ?  "javascript:void(0)" : "#{portal['linkback_url']}" }')
+		_output << %(class='portal-logo'>)
 		# Showing the customer uploaded logo or default logo within an image tag
 		_output << %(<span class="portal-img"><i></i>
 										<img src='#{portal['logo_url']}' alt="#{I18n.t('logo')}"
@@ -674,6 +675,53 @@ module SupportHelper
 			end
 
 			output << %(</div>)
+		end
+		output.join('').html_safe
+	end
+
+	def custom_survey_data comment
+		output = []
+		if comment.survey.present? and Account.current.new_survey_enabled?
+			survey = comment.survey.to_liquid
+			output << %(<div class='survey_questions_wrap'>) 
+		    output << custom_survey_default_question(survey)
+			output << custom_survey_additional_questions(survey.additional_questions)
+		    output << %(</div>)
+			if comment.description_text.present? 
+	        	output << %(<div class="title muted"><b>#{ I18n.t('portal.tickets.comments') }</b></div>)
+	        end
+		end
+		output.join('').html_safe
+	end
+
+	def custom_survey_default_question(survey)
+		output = %( <div class="default_question">
+				        <div class='ques-desc'>
+				            #{survey.default_question}
+				        </div>
+				        <div class='ques-ans'>
+				            <span class="ticket-rating-label">#{ survey.default_rating_text}</span>
+				            <span class = "survey-rating #{ survey.default_rating_class }"></span>
+				        </div>
+		      		</div>)
+	end
+
+	def custom_survey_additional_questions(additional_questions_data)
+		output = []
+		if additional_questions_data.present?
+		    output << %(<ul class="survey-additional-questions">)
+			for question_obj in additional_questions_data
+			    output << %(<li>
+			                <div class='ques-desc'> #{question_obj['question']} </div>
+			                <div class='ques-ans'>
+			                  
+			                	<span class='ticket-rating-label'>#{question_obj['rating_text']}</span>
+			                    <span class="survey-rating #{ question_obj['rating_class'] }"
+			                      data-class="#{ question_obj['rating_class'] }"></span>
+			                </div>
+			              </li>)
+			end
+			output << %(</ul>)
 		end
 		output.join('').html_safe
 	end

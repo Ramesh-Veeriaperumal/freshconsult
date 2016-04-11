@@ -48,7 +48,7 @@ describe Helpdesk::TagsController do
   end
 
   it "should complete tags search automatically" do
-    t=@account.tags.find(:all,:conditions => ["name like ?","tag%"])
+    t=@account.tags.where("name like ?","tag%")
     r={:results=>t.map{|i| {:id=> i.to_param,:value => i.send("name")}}}.to_json
     get 'autocomplete', :v=>"tag", :format => :json
     response.body.should =~/r/

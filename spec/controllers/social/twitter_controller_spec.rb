@@ -4,7 +4,6 @@ RSpec.configure do |c|
   c.include GnipHelper
   c.include DynamoHelper
   c.include Social::Twitter::Constants
-  c.include Social::Dynamo::Twitter
   c.include Social::Util
 end
 
@@ -111,14 +110,14 @@ RSpec.describe Social::TwitterController do
       reply_tweet_id = twitter_feed[:id]
       twitter_feed[:in_reply_to_status_id_str] = tweet_id
       twitter_feed = Social::Twitter::Feed.new(twitter_feed)
-      Social::CustomStreamTwitter.new.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
+      Social::CustomStreamTwitter.new({}).send("process_stream_feeds", [twitter_feed], stream, reply_tweet_id)
       
       tweet = @account.tweets.find_by_tweet_id(reply_tweet_id)
       tweet.should_not be_nil
       tweet.is_note?.should be_truthy
       
       #Covering exception
-      Social::CustomStreamTwitter.new.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
+      Social::CustomStreamTwitter..new({}).send("process_stream_feeds", [twitter_feed], stream, reply_tweet_id)
       tweet.is_note?.should be_truthy
     end
   end

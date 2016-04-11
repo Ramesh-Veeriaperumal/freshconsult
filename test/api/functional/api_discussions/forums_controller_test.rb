@@ -548,10 +548,11 @@ module ApiDiscussions
     end
 
     def test_category_forums
-      get :category_forums, controller_params(id: fc_obj.id)
+      forum_category = fc_obj
+      get :category_forums, controller_params(id: forum_category.id)
       assert_response 200
       result_pattern = []
-      fc_obj.forums.each do |f|
+      forum_category.forums.each do |f|
         result_pattern << forum_pattern(f)
       end
       match_json(result_pattern.ordered!)

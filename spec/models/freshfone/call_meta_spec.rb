@@ -116,7 +116,7 @@ RSpec.describe Freshfone::CallMeta do
                            :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
                            :pinged_agents => [{:id=>1, :ff_user_id=>1, :name=>"Support", :device_type=>:browser}])
    
-    @freshfone_call_meta.update_external_transfer_call_response("+12407433321",1).should be true
+    @freshfone_call_meta.update_external_transfer_call_response("+12407433321","accepted").should be true
   end
 
   it 'should contain user agent type hash values' do

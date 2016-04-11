@@ -50,7 +50,7 @@ describe Freshfone::CallerIdController do
     outgoing_caller = {"delete" => true , "phone_number" => "+1234567890"}
     outgoing_caller = OpenStruct.new outgoing_caller
     Twilio::REST::OutgoingCallerIds.any_instance.stubs(:get).returns(outgoing_caller)
-    params = { :id => @outgoing_caller.id, :number => "+91234567890", :number_sid => "PN2ba4c66ed6a57e8311eb0f14d5aa2d88"}
+    params = { :caller_id => @outgoing_caller.id, :number => "+91234567890", :number_sid => "PN2ba4c66ed6a57e8311eb0f14d5aa2d88"}
     post :delete, params
     json.should have_key(:deleted)
     json[:deleted].should == true

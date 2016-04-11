@@ -5,9 +5,9 @@
 			:html => { :rel => "validate" } do |f| %>	
 
 		<%= f.fields_for :cc_email do |cc| %>
-			<%= cc.text_field :cc_emails,
-					:value => (@ticket.cc_email[:cc_emails].join(',') if 
-						(@ticket.cc_email.present? && @ticket.cc_email[:cc_emails].present? )),
+			<%= cc.text_field :reply_cc,
+					:value => (@ticket.cc_email[:reply_cc].join(',') if 
+						(@ticket.cc_email.present? && @ticket.cc_email[:reply_cc].present? )),
 					:class => "span12", :id => "cc_emails" %>
 		<%end%>
 	<% end %>

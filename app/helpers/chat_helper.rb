@@ -344,7 +344,8 @@ module ChatHelper
             :cobrowsing_controlling_screen => t('freshchat.cobrowsing_controlling_screen'),
             :cobrowsing_request_control => t('freshchat.cobrowsing_request_control'),
             :cobrowsing_stop_request => t('freshchat.cobrowsing_stop_request'),
-            :cobrowsing_request_control_rejected => t('freshchat.cobrowsing_request_control_rejected')
+            :cobrowsing_request_control_rejected => t('freshchat.cobrowsing_request_control_rejected'),
+            :agent_parallel_accept_error => t('freshchat.agent_parallel_accept_error')
 
         }
         return text.to_json.html_safe

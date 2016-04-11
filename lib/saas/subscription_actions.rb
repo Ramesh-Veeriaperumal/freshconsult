@@ -43,14 +43,6 @@ class SAAS::SubscriptionActions
       account.sections.destroy_all
     end
 
-    def drop_custom_survey_data(account)
-      if account.default_survey_enabled?
-        account.custom_surveys.default.first.activate if account.active_custom_survey_from_cache.present?
-      else
-        account.custom_surveys.deactivate_active_surveys
-      end
-    end
-
     def remove_chat_feature(account)
       account.remove_feature(:chat) if !account.subscription.is_chat_plan? && account.features?(:chat)
     end

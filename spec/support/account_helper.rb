@@ -49,7 +49,7 @@ module AccountHelper
   end
 
   def create_dummy_customer
-    @customer = @acc.users.find(:all, :conditions => "helpdesk_agent = 0 and email IS NOT NULL and active = 1 and deleted = 0", :limit => 1).first
+    @customer = @acc.all_users.where(:helpdesk_agent => false, :active => true, :deleted => false).where("email is not NULL").first
 
     if @customer.nil?
       @customer = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
@@ -80,7 +80,8 @@ module AccountHelper
     
     subscription = @acc.subscription
     subscription.set_billing_params("USD")
-    subscription.save
+    subscription.state.downcase!
+    subscription.sneaky_save
   end
 
   def mue_key_state(account)
