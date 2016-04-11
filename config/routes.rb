@@ -2581,6 +2581,7 @@ Helpkit::Application.routes.draw do
           put :add_feature
           put :change_url
           get :single_sign_on
+          get :sso_time_stamp
           put :change_account_name
           put :ublock_account
           put :remove_feature

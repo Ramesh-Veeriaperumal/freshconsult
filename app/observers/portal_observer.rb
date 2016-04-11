@@ -22,6 +22,7 @@ class PortalObserver < ActiveRecord::Observer
     def after_destroy(portal)
       remove_domain_mapping(portal)
       notify_custom_ssl_removal(portal)
+      remove_custom_domain_from_global(portal) if Fdadmin::APICalls.non_global_pods?
   	end
     
     def after_commit(portal)
@@ -96,6 +97,15 @@ class PortalObserver < ActiveRecord::Observer
         User.current.update_attribute(:language, account.language) if User.current
         Users::UpdateLanguage.perform_async({ :account_id => account.id }) 
       end
+    end
+
+    def remove_custom_domain_from_global(portal)
+      request_parameters = {
+        :target_method => :remove_domain_mapping_for_pod,
+        :domain => portal.portal_url,
+        :account_id => portal.account_id
+      }
+      PodDnsUpdate.perform_async(request_parameters)
     end
 	
 end
