@@ -97,6 +97,8 @@ defaults: &defaults
     - [company_import]
     - [contact_export]
     - [data_export]
+    - [delete_spam_tickets]
+    - [suspended_accounts_deletion]
 development:
   <<: *defaults
 
