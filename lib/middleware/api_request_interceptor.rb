@@ -16,6 +16,7 @@ class Middleware::ApiRequestInterceptor
 
   def call(env)
     @resource = env['PATH_INFO']
+    @host = env['HTTP_HOST']
     unless api_request?
       @status, @headers, @response = @app.call(env)
     else
@@ -47,20 +48,20 @@ class Middleware::ApiRequestInterceptor
   end
 
   def invalid_json_error(error, env)
-    Rails.logger.error("API MultiJson::ParseError: #{env['rack.input'].read} \n#{error.message}\n#{error.backtrace.join("\n")}")
+    Rails.logger.error("API MultiJson::ParseError :: Host: #{@host}, #{env['rack.input'].read} \n#{error.message}\n#{error.backtrace.join("\n")}")
     message =  { code: INVALID_JSON, message: ErrorConstants::ERROR_MESSAGES[:invalid_json] }
     set_response(400, RESPONSE_HEADERS, message)
   end
 
   def respond_500(error, env)
     notify_new_relic_agent(error, env['REQUEST_URI'], env['action_dispatch.request_id'], description: 'Error occurred while processing API', request_method: env['REQUEST_METHOD'], request_body: env['rack.input'].gets)
-    Rails.logger.error("API StandardError: #{error.message}\n#{error.backtrace.join("\n")}")
+    Rails.logger.error("API StandardError ::  Host: #{@host}, #{error.message}\n#{error.backtrace.join("\n")}")
     message =  { code: INTERNAL_ERROR, message: ErrorConstants::ERROR_MESSAGES[:internal_error] }
     set_response(500, RESPONSE_HEADERS, message)
   end
 
   def invalid_encoding_error(error)
-    Rails.logger.error("API Invalid Encoding error: #{error.message}\n#{error.backtrace.join("\n")}")
+    Rails.logger.error("API Invalid Encoding error :: Host: #{@host}, #{error.message}\n#{error.backtrace.join("\n")}")
     invalid_query_string = error.message.sub('invalid %-encoding (', '').chop
     message =  { code: INVALID_ENCODING, message: ErrorConstants::ERROR_MESSAGES[:invalid_encoding] % { invalid_query_string: invalid_query_string } }
     set_response(400, RESPONSE_HEADERS, message)
@@ -68,7 +69,7 @@ class Middleware::ApiRequestInterceptor
 
   def validate_content_type
     unless  @content_type =~ /multipart\/form-data|application\/json/
-      Rails.logger.error("API Un_supported content_type:#{@content_type} is sent in the request")
+      Rails.logger.error("API Un supported content_type error ::  Host: #{@host}, content_type:#{@content_type} is sent in the request")
       message = { code: INVALID_CONTENT_TYPE, message: ErrorConstants::ERROR_MESSAGES[:invalid_content_type] % {content_type: @content_type} }
       set_response(415, RESPONSE_HEADERS, message)
       return false
@@ -78,7 +79,7 @@ class Middleware::ApiRequestInterceptor
 
   def validate_accept_header
     unless @accept_header =~ /(application\/json)|(\*\/\*)|(application\/vnd.freshdesk.v\d)/
-      Rails.logger.error("API Not_acceptable accept_header:#{@accept_header} is sent in the request")
+      Rails.logger.error("API not acceptable header error ::  Host: #{@host}, accept_header:#{@accept_header} is sent in the request")
       message = { code: INVALID_ACCEPT_HEADER, message: ErrorConstants::ERROR_MESSAGES[:invalid_accept_header] % { accept_header: @accept_header } }
       set_response(406, RESPONSE_HEADERS, message)
       return false

@@ -119,7 +119,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                       note: Faker::Lorem.characters(5), domains: domain_array,
                                                       custom_fields: { 'linetext' => Faker::Lorem.characters(10) })
     assert_response 200
-    match_json(company_pattern({ name => name }, company.reload))
+    match_json(company_pattern({ name => name }, Company.find(company.id)))
   end
 
   def test_update_company_with_nil_custom_field
@@ -343,7 +343,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array)
     put :update, construct_params({ id: company.id }, domains: [])
     assert_response 200
-    match_json(company_pattern(company.reload))
+    match_json(company_pattern(Company.find(company.id)))
   end
 
   def test_create_company_without_required_custom_field

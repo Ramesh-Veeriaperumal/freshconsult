@@ -1,6 +1,6 @@
 module ErrorConstants
   API_ERROR_CODES = {
-    missing_field: %w(missing_field phone_mandatory fill_a_mandatory_field company_id_required),
+    missing_field: %w(missing_field fill_a_mandatory_field),
     duplicate_value: ['has already been taken', 'already exists in the selected category', 'Email has already been taken', 'email_already_taken'],
     invalid_field: ['invalid_field'],
     datatype_mismatch: %w(datatype_mismatch per_page_invalid array_datatype_mismatch),

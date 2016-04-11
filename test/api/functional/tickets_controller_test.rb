@@ -381,7 +381,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(phone: Faker::PhoneNumber.phone_number)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('name', :phone_mandatory)])
+    match_json([bad_request_error_pattern('name', :phone_mandatory, code: :missing_field)])
   end
 
   def test_create_email_format_invalid
@@ -444,14 +444,14 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(fr_due_by: nil, due_by: 12.days.since.iso8601)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('fr_due_by', :fr_due_by_validation)])
+    match_json([bad_request_error_pattern('fr_due_by', :fr_due_by_validation, code: :missing_field)])
   end
 
   def test_create_with_nil_due_by_with_fr_due_by
     params = ticket_params_hash.merge(due_by: nil, fr_due_by: 12.days.since.iso8601)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :due_by_validation)])
+    match_json([bad_request_error_pattern('due_by', :due_by_validation, code: :missing_field)])
   end
 
   def test_create_closed_with_nil_due_by_fr_due_by
@@ -479,14 +479,14 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:due_by, :fr_due_by).merge(due_by: 12.days.since.iso8601)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('fr_due_by', :fr_due_by_validation)])
+    match_json([bad_request_error_pattern('fr_due_by', :fr_due_by_validation, code: :missing_field)])
   end
 
   def test_create_without_due_by_with_fr_due_by
     params = ticket_params_hash.except(:due_by, :fr_due_by).merge(fr_due_by: 12.days.since.iso8601)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :due_by_validation)])
+    match_json([bad_request_error_pattern('due_by', :due_by_validation, code: :missing_field)])
   end
 
   def test_create_with_due_by_and_fr_due_by
@@ -1024,7 +1024,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_choices_custom_fields_required_for_closure_with_status_closed
-    t = ticket
+    t = create_ticket(ticket_params_hash)
     params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 5)
     Helpdesk::TicketField.where(name: [@@choices_custom_field_names]).update_all(required_for_closure: true)
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -1038,7 +1038,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_choices_custom_fields_required_for_closure_with_status_resolved
-    t = ticket
+    t = create_ticket(ticket_params_hash)
     params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4)
     Helpdesk::TicketField.where(name: [@@choices_custom_field_names]).update_all(required_for_closure: true)
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -1053,7 +1053,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_choices_custom_fields_required
     params_hash = update_ticket_params_hash
-    t = ticket
+    t = create_ticket(ticket_params_hash)
     Helpdesk::TicketField.where(name: [@@choices_custom_field_names]).update_all(required: true)
     put :update, construct_params({ id: t.display_id }, params_hash)
     Helpdesk::TicketField.where(name: [@@choices_custom_field_names]).update_all(required: false)
@@ -1720,7 +1720,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(phone: Faker::PhoneNumber.phone_number, requester_id: nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('name', :phone_mandatory)])
+    match_json([bad_request_error_pattern('name', :phone_mandatory, code: :missing_field)])
   end
 
   def test_update_email_format_invalid

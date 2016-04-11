@@ -106,7 +106,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
       responder_id: {  expected_data_type: :'Positive Integer', code: :missing_field }, product_id: {  expected_data_type: :'Positive Integer', code: :missing_field }, client_manager: {  expected_data_type: 'Boolean', code: :missing_field },
       description: {  expected_data_type: String, code: :missing_field }, note: {  expected_data_type: String, code: :missing_field }, job_title: {  expected_data_type: String, code: :missing_field },
       tags: {  expected_data_type: Array, code: :missing_field }, language: { list: I18n.available_locales.map(&:to_s).join(','), code: :missing_field }, time_zone: { list: ActiveSupport::TimeZone.all.map(&:name).join(','), code: :missing_field }, domains: {  expected_data_type: Array, code: :missing_field },
-      address: {}, company_id: {}, email: {}, mobile: {}, phone: {}, subject: {}, twitter_id: {}
+      address: { code: :missing_field }, company_id: { code: :missing_field }, email: { code: :missing_field }, mobile: { code: :missing_field }, phone: { code: :missing_field }, subject: { code: :missing_field }, twitter_id: { code: :missing_field }
     }.sort,
                  error_options
                 )
