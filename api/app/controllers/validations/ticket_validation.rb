@@ -15,7 +15,7 @@ class TicketValidation < ApiValidation
   # Default fields validation
   validates :subject, custom_absence: { message: :outbound_email_field_restriction }, if: :outbound_email?, on: :update
   validates :description, custom_absence: { message: :outbound_email_field_restriction }, if: :outbound_email?, on: :update
-  validates :email_config_id, required: { message: :field_validation_for_outbound }, if: :outbound_email?
+  validates :email_config_id, required: { message: :field_validation_for_outbound }, on: :compose_email
   validates :description, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },

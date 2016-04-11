@@ -76,3 +76,4 @@ api_error_messages:
   immutable_resource: "This action is not permitted in merged topic"
   outbound_email_field_restriction: "It cannot be updated, if ticket is of type outbound email"
   field_validation_for_outbound: "It should not be blank as this is a mandatory field for outbound email ticket"
+  inaccessible_value: "The %{resource} matching the given %{attribute} is inaccessible to you"

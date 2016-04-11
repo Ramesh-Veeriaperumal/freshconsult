@@ -1027,7 +1027,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_choices_custom_fields_required_for_closure_with_status_closed
-    t = ticket
+    t = create_ticket(ticket_params_hash)
     params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 5)
     Helpdesk::TicketField.where(name: [@@choices_custom_field_names]).update_all(required_for_closure: true)
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -1041,7 +1041,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_choices_custom_fields_required_for_closure_with_status_resolved
-    t = ticket
+    t = create_ticket(ticket_params_hash)
     params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4)
     Helpdesk::TicketField.where(name: [@@choices_custom_field_names]).update_all(required_for_closure: true)
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -1056,7 +1056,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_choices_custom_fields_required
     params_hash = update_ticket_params_hash
-    t = ticket
+    t = create_ticket(ticket_params_hash)
     Helpdesk::TicketField.where(name: [@@choices_custom_field_names]).update_all(required: true)
     put :update, construct_params({ id: t.display_id }, params_hash)
     Helpdesk::TicketField.where(name: [@@choices_custom_field_names]).update_all(required: false)
@@ -2922,7 +2922,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({_action: 'compose_email'}, params)
     params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 400
-    match_json([bad_request_error_pattern('email_config_id',  :absent_in_db, resource: :email_config, attribute: :email_config_id)])
+    match_json([bad_request_error_pattern('email_config_id',  :inaccessible_value, resource: :email_config, attribute: :email_config_id)])
   ensure
     Account.any_instance.unstub(:restricted_compose_enabled?)
     User.any_instance.unstub(:can_view_all_tickets?)
@@ -2963,7 +2963,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({_action: 'compose_email'}, params)
     params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 400
-    match_json([bad_request_error_pattern('email_config_id',  :absent_in_db, resource: :email_config, attribute: :email_config_id)])
+    match_json([bad_request_error_pattern('email_config_id',  :inaccessible_value, resource: :email_config, attribute: :email_config_id)])
   ensure
     Account.any_instance.unstub(:restricted_compose_enabled?)
     User.any_instance.unstub(:can_view_all_tickets?)
@@ -2980,6 +2980,17 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('subject', :outbound_email_field_restriction, code: :incompatible_field),
       bad_request_error_pattern('description', :outbound_email_field_restriction, code: :incompatible_field)])
+  ensure
+    Account.any_instance.unstub(:compose_email_enabled?)
+  end
+
+  def test_update_compose_email_without_email_config_id
+    Account.any_instance.stubs(:compose_email_enabled?).returns(true)
+    t = ticket
+    t.update_attributes(source: 10)
+    params_hash = update_ticket_params_hash.except(:email, :source, :subject, :description).merge(type: 'Problem')
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 200
   ensure
     Account.any_instance.unstub(:compose_email_enabled?)
   end
