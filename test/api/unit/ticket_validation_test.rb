@@ -213,7 +213,6 @@ class TicketValidationTest < ActionView::TestCase
     errors = ticket.errors.full_messages
     assert errors.include?('Subject outbound_email_field_restriction')
     assert errors.include?('Description outbound_email_field_restriction')
-    assert errors.include?('Email config field_validation_for_outbound')
   ensure
     Account.any_instance.unstub(:compose_email_enabled?)
     Account.unstub(:current)
