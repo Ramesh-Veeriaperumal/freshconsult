@@ -6,10 +6,12 @@ namespace :account_cleanup do
         Account.find_in_batches do |accounts|
           accounts.each do |account|
             s_m = ShardMapping.find_by_account_id(account.id)
-            shard_name = s_m.shard_name
-            if (account.subscription &&  account.subscription.suspended? && account.subscription.updated_at < 3.months.ago )
-              puts "Enqueuing #{account.id} to SuspendedAccountsWorker"
-              AccountCleanup::SuspendedAccountsWorker.perform_async( :shard_name => shard_name, :account_id => account.id )
+            if s_m
+              shard_name = s_m.shard_name
+              if (account.subscription &&  account.subscription.suspended? && account.subscription.updated_at < 3.months.ago )
+                puts "Enqueuing #{account.id} to SuspendedAccountsWorker"
+                AccountCleanup::SuspendedAccountsWorker.perform_async( :shard_name => shard_name, :account_id => account.id )
+              end
             end
           end
         end
