@@ -10,7 +10,7 @@ module CompaniesTestHelper
       id: Fixnum,
       name: expected_output[:name] || company.name,
       description: company.description,
-      domains: domains,
+      domains: expected_output[:domains] || domains,
       note: company.note,
       custom_fields: expected_output['custom_field'] || company.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v] }.to_h,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},

@@ -187,8 +187,8 @@ class TicketValidationTest < ActionView::TestCase
 
     controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], status_ids: [1, 2] }
     item = Helpdesk::Ticket.new
-    item.description = ''
-    item.description_html = 'test'
+    item.ticket_body.description = ''
+    item.ticket_body.description_html = 'test'
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:update)
     refute ticket.errors.full_messages.include?('Description blank')
