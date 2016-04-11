@@ -316,7 +316,7 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "name", :value => t('company_name'), :domtype => "autocomplete_multiple", 
           :data_url => companies_search_autocomplete_index_path, :operatortype => "choicelist" },
         { :name => "domains", :value => t('company_domain'), :domtype => "text", 
-          :operatortype => "text" }
+          :operatortype => "choicelist" }
       ]
       add_customer_custom_fields filter_hash['company'], "company"
     end

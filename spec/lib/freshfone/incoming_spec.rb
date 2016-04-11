@@ -43,7 +43,7 @@ RSpec.describe Freshfone::Initiator::Incoming do
     create_freshfone_call     
     create_freshfone_call_meta(@freshfone_call,"+1234567890")
     Freshfone::CallActions.any_instance.stubs(:save_conference_meta).returns(@call_meta)
-    incoming=Freshfone::Initiator::Incoming.new(incoming_params, @account, @number)
+    incoming=Freshfone::Initiator::Incoming.new(incoming_params.symbolize_keys, @account, @number)
     incoming.return_non_availability.should_not be_falsey
     Freshfone::CallActions.any_instance.unstub(:save_conference_meta)
   end

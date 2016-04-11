@@ -23,8 +23,17 @@ function openFromSkyDrive(inp) {
                 name: file.name,
                 provider: 'onedrive'
               })).data('filename', file.name).data('provider', 'onedrive');
-              Helpdesk.Multifile.addFileToList(jQuery('#' + inputElement));
-              newInput = Helpdesk.Multifile.duplicateInput(jQuery('#' + inputElement));
+              //mutilfile uploading changes
+              if(jQuery('#attachment-type').data('multifile-enable')==true || jQuery('#attachment-type').data('multifile-enable')=="true")
+              {
+                Helpdesk.MultifileUpload.addFileToList(jQuery('#' + inputElement));
+                newInput = Helpdesk.MultifileUpload.duplicateInput(jQuery('#' + inputElement));
+              }
+              else
+              {
+                Helpdesk.Multifile.addFileToList(jQuery('#' + inputElement));
+                newInput = Helpdesk.Multifile.duplicateInput(jQuery('#' + inputElement));
+              }
               jQuery(inp).data('holder', newInput.attr('id'));
             } 
             else{              

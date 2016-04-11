@@ -51,7 +51,7 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
 
   def landing
     installed_app = current_account.installed_applications.with_name(Integrations::Constants::APP_NAMES[:shopify]).first
-    shop = params[:shop]
+    shop = params[:remote_id]
     if shop.blank?
       remote_integ_map = Integrations::ShopifyRemoteUser.where(:account_id => current_account.id).first
       if remote_integ_map.present?

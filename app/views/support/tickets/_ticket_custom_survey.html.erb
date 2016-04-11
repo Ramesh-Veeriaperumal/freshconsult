@@ -4,6 +4,7 @@
   <div class="survey-form">
     <% 
       choices = current_account.active_custom_survey_from_cache.choices
+      default_question_label = current_account.active_custom_survey_from_cache.default_question.label
       survey_result = @ticket.custom_survey_results.last 
     %>
     <%
@@ -55,7 +56,7 @@
         <a href="#" class='feedback-text btn btn-mini pull-right' data-show-dom="#load_questions" data-hide-dom="#additional_questions_wrapper" data-toggle-dom="#survey-information, #survey-feedback">
                             <%=t('support.tickets.ticket_survey.cancel') %></a>
       <% end %>
-      <p><%= ticket_info[:label]%></p>
+      <p><%= default_question_label %></p>
       <div class="survey-buttons">
         <% !JSON.parse(choices).blank? && JSON.parse(choices).reverse().each_with_index do |option, index|%>
           <%= link_to "<span class=\"survey-rating #{CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[option["survey_question_choice"]["face_value"]]}\"></span><div class='survey-rating-label'>#{h(option["survey_question_choice"]["value"])}</div>".html_safe , support_portal_custom_survey_path(@ticket,option["survey_question_choice"]["face_value"]), :target => "_blank" %>       

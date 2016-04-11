@@ -43,4 +43,10 @@ class User < ActiveRecord::Base
 
   ALPHA_NUMERIC_REGEX = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/
   SPECIAL_CHARACTERS_REGEX = /(?=.*([\x20-\x2F]|[\x3A-\x40]|[\x5B-\x60]|[\x7B-\x7E]))/
+
+  INLINE_MANUAL = {
+    'admin_topic' => 3649,
+    'agent_topic' => 6266
+  }
+
 end

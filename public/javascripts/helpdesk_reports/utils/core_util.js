@@ -1005,6 +1005,10 @@ HelpdeskReports.CoreUtil = {
     generateCharts: function (params) {
         var _this = this;
         _this.scrollTop();
+        //Append the saved report used param
+        jQuery.each(params,function(idx,param){
+            param['saved_report_used'] = HelpdeskReports.locals.saved_report_used;
+        })
         var opts = {
             url: _this.CONST.base_url + HelpdeskReports.locals.report_type + _this.CONST.metrics_url,
             type: 'POST',

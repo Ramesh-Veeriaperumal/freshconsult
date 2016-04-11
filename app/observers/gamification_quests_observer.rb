@@ -2,6 +2,8 @@ class GamificationQuestsObserver < ActiveRecord::Observer
 
 	observe Helpdesk::Ticket, Solution::Article, Topic, Post, SurveyResult, CustomSurvey::SurveyResult
 
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 	include Gamification::GamificationUtil
 
 	SOLUTION_UPDATE_ATTRIBUTES = ["folder_id", "status"]
@@ -35,18 +37,26 @@ class GamificationQuestsObserver < ActiveRecord::Observer
 	end
 
 	def process_ticket_quests(ticket)
-  	if ticket.responder and ticket.resolved_now?
-  		Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => ticket.id, 
-  							:account_id => ticket.account_id })
-  	end
+    if ticket.responder and ticket.resolved_now?
+      queue_quest_calculation(ticket)
+    end
   end
 
   def rollback_achieved_quests(ticket)
-  	if ticket.responder and ticket.reopened_now?
-  		Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => ticket.id, 
-  							:account_id => ticket.account_id, :rollback => true,
-  							:resolved_time_was => ticket.ticket_states.resolved_time_was })
-  	end
+    if ticket.responder and ticket.reopened_now?
+
+      # Check if quest performance optimization is enabled for the account
+      if Account.current.launched?(:gamification_quest_perf)
+        # Enqueueing is done in 30 minutes because the quest processing would 
+        # be queued in a maximum of 30 minutes
+        Gamification::ProcessTicketQuests.perform_in(5.minute.from_now, { :id => ticket.id, :account_id => ticket.account_id, :rollback => true, :resolved_time_was => ticket.ticket_states.resolved_time_was })
+      else
+        # if not proceed as usual
+        Resque.enqueue(Gamification::Quests::ProcessTicketQuests, {
+          :id => ticket.id,:account_id => ticket.account_id, :rollback => true,
+          :resolved_time_was => ticket.ticket_states.resolved_time_was })
+      end
+    end
   end
 
   def process_article_quests(article)
@@ -72,8 +82,24 @@ class GamificationQuestsObserver < ActiveRecord::Observer
   end
 
   def process_surveyresult_quests(sr)
-    Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => sr.surveyable_id, 
-                :account_id => sr.account_id })
+  	queue_quest_calculation(sr.surveyable)
+  end
+
+  def queue_quest_calculation(scorable)
+  	# Check if quest performance optimization is enabled for the account
+  	if Account.current.launched?(:gamification_quest_perf)
+  	  # Check cooldown for the user
+  	  if !quest_cooldown?(scorable)
+  	    # If no cooldown enqueue process and refresh cooldown
+  	     Gamification::ProcessTicketQuests.perform_in(5.minute.from_now,
+  	      { :user_id => scorable.responder.id, :account_id => scorable.account_id })
+  	    set_quest_cooldown (scorable)
+  	  end
+  	else
+  	  # If not enabled proceed as usual
+  	  Resque.enqueue(Gamification::Quests::ProcessTicketQuests, {
+  	    :id => scorable.id,:account_id => scorable.account_id })
+  	end
   end
 
   private 
@@ -89,5 +115,17 @@ class GamificationQuestsObserver < ActiveRecord::Observer
       else
           return name.class.name.downcase
       end
+  end
+
+  def set_quest_cooldown (ticket)
+    set_others_redis_key(redis_quest_key(ticket),true,5.minutes.to_i)
+  end
+
+  def quest_cooldown? (ticket)
+    redis_key_exists?(redis_quest_key(ticket))
+  end
+
+  def redis_quest_key (ticket)
+    GAMIFICATION_QUEST_COOLDOWN % { :account_id => ticket.account_id, :user_id => ticket.responder_id }
   end
 end
