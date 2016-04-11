@@ -1802,7 +1802,7 @@ en:
         portal_settings: Portal Settings
         categories_visible: Portal Categories
         product_label: "Product: %{product_name}"
-        enable_multilingual: "Setup multilingual support"
+        enable_multilingual: "Setup Multilingual Support"
       edit:
         title: Edit Product
         updating: Updating...

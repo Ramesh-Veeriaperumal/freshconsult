@@ -2532,6 +2532,11 @@ a.mobile_switchBtn {
 	.manage-link {
 		padding-top: 50px;
 	}
+
+	.enable-link {
+		@include padding-left(10px);
+		@include border-left(1px solid #ddd);
+	}
 }
 
 .manage-languages-header {
@@ -2575,7 +2580,7 @@ a.mobile_switchBtn {
 	}
 
 	.selected-languages {
-		width: 629px;
+		width: 580px;
 
 		.lang-selected-option {
 			background-color: #FAFAFA;
@@ -2633,7 +2638,7 @@ a.mobile_switchBtn {
 	}
 
 	.secondary-languages-field {
-		width: 630px;
+		width: 580px;
 
 		.select2-choices {
 			padding-left: 25px;
