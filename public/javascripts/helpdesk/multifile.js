@@ -187,7 +187,7 @@ Helpdesk.Multifile = {
 jQuery("document").ready(function(){
     jQuery("input[fileList]").livequery(function(){ 
     var type=jQuery("#attachment-type").attr('data-multifile-enable');
-         if(type=="false")
+         if(type=="false" || type == undefined)
          {
                 var $input_file = jQuery(this)
                 Helpdesk.Multifile.load()
