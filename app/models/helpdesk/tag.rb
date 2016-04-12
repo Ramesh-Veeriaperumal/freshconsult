@@ -7,6 +7,7 @@ class Helpdesk::Tag < ActiveRecord::Base
 
   after_commit :clear_cache
   after_commit :update_taggables, on: :update
+  after_commit :remove_taguses, on: :destroy
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -19,8 +20,7 @@ class Helpdesk::Tag < ActiveRecord::Base
   belongs_to_account
 
   has_many :tag_uses,
-    :class_name => 'Helpdesk::TagUse',
-    :dependent => :delete_all
+    :class_name => 'Helpdesk::TagUse'
 
   has_many :tickets,
     :class_name => 'Helpdesk::Ticket',
@@ -154,5 +154,9 @@ class Helpdesk::Tag < ActiveRecord::Base
     
     def update_taggables
       SearchV2::IndexOperations::UpdateTaggables.perform_async({ :tag_id => self.id }) if Account.current.features?(:es_v2_writes)
+    end
+    
+    def remove_taguses
+      TagUsesCleaner.perform_async({ tag_id: self.id })
     end
 end
