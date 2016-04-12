@@ -3,7 +3,7 @@ sidekiq_config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq_client
 
 $sidekiq_conn = Redis.new(:host => config["host"], :port => config["port"])
 $sidekiq_datastore = proc { Redis::Namespace.new(config["namespace"], :redis => $sidekiq_conn) }
-$sidekiq_redis_pool_size = sidekiq_config[:concurrency]
+$sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
 $sidekiq_redis_timeout = sidekiq_config[:timeout]
 
 
@@ -26,7 +26,9 @@ Sidekiq.configure_client do |config|
       "PremiumWebhookWorker",
       "DevNotificationWorker",
       "PodDnsUpdate",
-      "Gamification::ProcessTicketQuests"
+      "Gamification::ProcessTicketQuests",
+      "AccountCleanup::DeleteSpamTicketsCleanup",
+      "AccountCleanup::SuspendedAccountsWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -66,7 +68,9 @@ Sidekiq.configure_server do |config|
       "PremiumWebhookWorker",
       "DevNotificationWorker",
       "PodDnsUpdate",
-      "Gamification::ProcessTicketQuests"
+      "Gamification::ProcessTicketQuests",
+      "AccountCleanup::DeleteSpamTicketsCleanup",
+      "AccountCleanup::SuspendedAccountsWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -97,7 +101,9 @@ Sidekiq.configure_server do |config|
       "WebhookV1Worker",
       "PremiumWebhookWorker",
       "DevNotificationWorker",
-      "Gamification::ProcessTicketQuests"
+      "Gamification::ProcessTicketQuests",
+      "AccountCleanup::DeleteSpamTicketsCleanup",
+      "AccountCleanup::SuspendedAccountsWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

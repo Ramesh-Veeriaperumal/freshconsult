@@ -27,6 +27,23 @@
           c_dom = FactoryUI.multiple_text("<%= I18n.t('enter_values') %>", value, initFeed[value], ' filter-multi-select required');
           jQuery(c_dom).prop("id", id);
         break;
+        case 'autocomplete_multiple_with_id':
+          var autocomplete_choices = [];
+          var val = initFeed[value];
+          var choices = jQuery.parseJSON(filter.autocomplete_choices);
+          if(val != undefined) {
+            val.each(function(ai) {
+              if(choices[ai] != undefined) {
+                autocomplete_choices.push({
+                  name: ai,
+                  value: unescapeHtml(choices[ai])
+                });
+              } 
+            });
+          }
+          c_dom = FactoryUI.multiple_text_with_id(autocomplete_choices, "<%= I18n.t('enter_values') %>", value, initFeed[value], 'filter-multi-select');
+          jQuery(c_dom).prop("id", id);
+        break;
         case 'date':
           c_dom = FactoryUI.date("", value, initFeed[value], 'date text required datepicker_popover', "<%=AccountConstants::DATA_DATEFORMATS[AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]][:datepicker] %>");
         break;
@@ -364,7 +381,7 @@
   <% end %>
   <% if (filter_type == "va_rule" || filter_type == "observer") %>
     var filter_array = <%= @filter_defs.html_safe if @filter_defs %>;
-    var op_hash = preProcessCondition(<%= @op_types.html_safe if @op_types %>, <%= @op_list.html_safe if @op_list %>);
+    var op_hash = preProcessCondition(<%= @op_types.html_safe if @op_types %>, <%= @op_list.html_safe if @op_list %>, <%= @op_label.html_safe if @op_label %>);
     var options = {
         "operators"   : op_hash, 
         "init_feed"   :$A(<%= @filter_input.html_safe if @filter_input %>),

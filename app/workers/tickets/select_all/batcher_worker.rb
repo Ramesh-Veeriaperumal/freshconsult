@@ -103,6 +103,8 @@ class Tickets::SelectAll::BatcherWorker < BaseWorker
     end
 
     def batch_success_callback(status, options)
+      batch_redis_key = options.delete('batch_redis_key')
+      return unless redis_key_exists?(batch_redis_key)
       next_batch_schedule_time = MAX_TIME_INTERVAL - (Time.now.utc - options['current_time'].to_time).to_i
 
       next_batch_schedule_time = MIN_TIME_INTERVAL if next_batch_schedule_time < MIN_TIME_INTERVAL
@@ -123,7 +125,8 @@ class Tickets::SelectAll::BatcherWorker < BaseWorker
             'user_id' => @user.id,
             'params' => params,
             'start_id' => ticket_batches[-1].sort.last + 1,
-            'current_time' => Time.now.utc
+            'current_time' => Time.now.utc,
+            'batch_redis_key' => bulk_action_redis_key
         })
       else
         @sidekiq_batch.on(:success,

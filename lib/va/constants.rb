@@ -14,7 +14,8 @@ module Va
       :object_id   => [ "in", "not_in"],
       :date_time   => [ "during" ],
       :date        => [ "is" , "is_not", "greater_than", "less_than" ],
-      :number_for_contacts => [ "is", "is_not", "greater_than", "less_than" ]
+      :number_for_contacts => [ "is", "is_not", "greater_than", "less_than" ],
+      :object_id_array  => [ "in", "and", "not_in" ]
     }
 
     CF_OPERATOR_TYPES = {
@@ -51,7 +52,14 @@ module Va
       :greater_than      =>  I18n.t('greater_than'),
       :during            =>  I18n.t('during'),
       :in                =>  I18n.t('is'),
-      :not_in            =>  I18n.t('is_not')
+      :not_in            =>  I18n.t('is_not'),
+      :and               =>  I18n.t('and')
+    }
+
+    ALTERNATE_LABEL = {
+      :object_id_array => {:in     => I18n.t('admin.va_rules.label.object_id_array_in'),
+                      :and    => I18n.t('admin.va_rules.label.object_id_array_and'),
+                      :not_in => I18n.t('admin.va_rules.label.object_id_array_not_in')}
     }
 
     NOT_OPERATORS = ['is_not', 'does_not_contain', 'not_selected', 'not_in']

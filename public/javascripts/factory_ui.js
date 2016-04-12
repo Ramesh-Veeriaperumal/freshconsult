@@ -46,6 +46,21 @@ window.FactoryUI = {
 				.val(value);
 		return text_field;
 	},
+	multiple_text_with_id:function(choices, _placeholder, _name, _value, _className){
+		if(!choices) return;
+		var className	= _className || "",
+			placeholder = _placeholder || "",
+			name		= _name || "",
+			value		= _value || "";
+
+		var text_field = jQuery("<input type='text' />")
+				.prop({ "name": name, "placeholder":placeholder })
+				.addClass(className)
+				.val(value)
+				.data('initObject', choices);
+
+		return text_field;
+	},
 	date: function(_placeholder, _name, _value, _className, _date_format) {
 		var className	= _className || "datepicker_popover",
 			placeholder = _placeholder || "",
