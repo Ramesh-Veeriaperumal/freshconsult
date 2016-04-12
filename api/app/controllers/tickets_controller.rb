@@ -256,7 +256,6 @@ class TicketsController < ApiApplicationController
       if compose_email?
         params[cname][:status] = ApiTicketConstants::CLOSED unless params[cname].key?(:status)
         params[cname][:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]
-        params[cname][:responder_id] = api_current_user.id unless params[cname].key?(:responder_id)
       end
       ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert) # Using map instead of invert does not show any perf improvement.
       load_ticket_status # loading ticket status to avoid multiple queries in model.

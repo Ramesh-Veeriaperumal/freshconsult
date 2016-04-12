@@ -20,13 +20,13 @@ class TicketValidation < ApiValidation
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
-                              }, unless: :outbound_email?
+                              }, if: :create_or_update?
 
-  validates :description, :ticket_type, :status, :subject, :priority, :agent, :group, default_field:
+  validates :description, :ticket_type, :status, :subject, :priority, :group, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
-                              }, if: :outbound_email?
+                              }, on: :compose_email
 
   validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true }, on: :update
   validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
@@ -159,6 +159,10 @@ class TicketValidation < ApiValidation
     else
       ApiTicketConstants::SOURCES 
     end
+  end
+
+  def create_or_update?
+    [:create, :update].include?(self.validation_context)
   end
 
   def outbound_email?
