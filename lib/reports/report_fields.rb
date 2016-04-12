@@ -87,7 +87,7 @@ module Reports::ReportFields
         return TicketConstants.priority_list.sort
       when :responder_id
         agents = []
-        agents.concat(current_account.agents_from_cache.collect { |au| [au.user.id, au.user.name] })
+        agents.concat(current_account.agents_details_from_cache.collect { |au| [au.id, au.name] })
         return agents
       when :group_id
         groups = []

@@ -32,6 +32,14 @@ module Agents
       update_preferences({:notification_timestamp => timestamp})
     end
 
+    def onboarding_completed?
+      preferences[:show_onBoarding]
+    end
+
+    def onboarding_completed=(enabled)
+      update_preferences({:show_onBoarding => enabled})
+    end
+
     private
 
       def update_preferences(settings = {})

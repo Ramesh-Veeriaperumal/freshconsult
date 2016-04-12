@@ -37,7 +37,8 @@ module Fdadmin::AccountsControllerMethods
 			revenue: account.subscription.cmrr,
 			next_renewal: account.subscription.next_renewal_at,
 			amount: account.subscription.amount,
-			billing_cycle: account.subscription.renewal_period
+			billing_cycle: account.subscription.renewal_period,
+			subscription_plan_id: account.subscription.subscription_plan_id
 		}
 	end
 

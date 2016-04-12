@@ -16,7 +16,7 @@ class TicketsQueriesTest < ActionDispatch::IntegrationTest
 
         create: 89,
         show: 20,
-        update: 38,
+        update: 37,
         index: 20,
         destroy: 40, # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62
         restore: 48 # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62

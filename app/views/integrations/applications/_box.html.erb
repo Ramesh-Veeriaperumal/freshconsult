@@ -17,10 +17,19 @@
                                 .val(file1_json || JSON.stringify(files[0]))
                                 .data('filename', files[0].name)
                                 .data('provider', 'Box');
-
-          Helpdesk.Multifile.addFileToList($inputElement);
-          newInput = Helpdesk.Multifile.duplicateInput(jQuery('#'+inputElement, doc));
+          if(jQuery("#attachment-type").data('multifile-enable')==true)
+          {
+              Helpdesk.MultifileUpload.addFileToList($inputElement);
+          newInput = Helpdesk.MultifileUpload.duplicateInput(jQuery('#'+inputElement, doc));
           jQuery(inp, doc).data('holder',newInput.attr('id'));
+          }
+          else
+          {
+             Helpdesk.Multifile.addFileToList($inputElement);
+          newInput = Helpdesk.Multifile.duplicateInput(jQuery('#'+inputElement, doc));
+          jQuery(inp, doc).data('holder',newInput.attr('id')); 
+          }
+        
       }})
     }
   </script>

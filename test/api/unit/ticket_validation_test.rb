@@ -131,7 +131,7 @@ class TicketValidationTest < ActionView::TestCase
     controller_params = { status: true, priority: true, source: '3', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
-    refute ticket.valid?
+    refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
     assert errors.include?('Status not_included')
     assert errors.include?('Priority not_included')
@@ -139,7 +139,7 @@ class TicketValidationTest < ActionView::TestCase
 
     controller_params = { status: '2', priority: '2', source: '', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
     ticket = TicketValidation.new(controller_params, item)
-    refute ticket.valid?
+    refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
     assert errors.include?('Status not_included')
     assert errors.include?('Priority not_included')
@@ -187,8 +187,8 @@ class TicketValidationTest < ActionView::TestCase
 
     controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], status_ids: [1, 2] }
     item = Helpdesk::Ticket.new
-    item.description = ''
-    item.description_html = 'test'
+    item.ticket_body.description = ''
+    item.ticket_body.description_html = 'test'
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:update)
     refute ticket.errors.full_messages.include?('Description blank')

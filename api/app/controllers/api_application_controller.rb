@@ -3,6 +3,7 @@ class ApiApplicationController < MetalApiController
   # do not change the exception order # standard error has to have least priority hence placing at the top.
   rescue_from StandardError, with: :render_500
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
+  rescue_from ShardNotFound, with: :record_not_found
   rescue_from DomainNotReady, with: :route_not_found
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
@@ -21,7 +22,6 @@ class ApiApplicationController < MetalApiController
   # App specific Before filters Starts
   # All before filters should be here. Should not be moved to concern. As the order varies for API and Web
   around_filter :select_shard
-  before_filter :current_shard # should happen first within around filter.
   prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_shard_for_payload
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
@@ -152,8 +152,7 @@ class ApiApplicationController < MetalApiController
 
     def record_not_found(e)
       # Render 404 if domain is not present else 500.
-      # our locally cached current_shard will be nil if specific domain doesn't belongs to any shards
-      if current_shard.nil?
+      if e.is_a?(ShardNotFound)
         Rails.logger.error("API V2 request for invalid host. Host: #{request.host}")
         head 404
       else
@@ -161,13 +160,6 @@ class ApiApplicationController < MetalApiController
         Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
         render_base_error(:internal_error, 500)
       end
-    end
-
-    # Caching current_shard_selection in local instance variable to find out domain not found error.
-    # As exception ensures connection to be switched to initial shard.
-    def current_shard
-      return @current_shard if defined?(@current_shard)
-      @current_shard ||= Thread.current[:shard_selection].try(:shard)
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
@@ -281,7 +273,6 @@ class ApiApplicationController < MetalApiController
 
     def prepare_array_fields(array_fields = [])
       array_fields.each do |array_field|
-        array_field = array_field.to_sym
         if create? || params[cname].key?(array_field)
           array_value = Array.wrap params[cname][array_field]
           params[cname][array_field] = array_value.uniq.reject(&:blank?)
@@ -318,7 +309,7 @@ class ApiApplicationController < MetalApiController
     end
 
     # will take items as one argument and is_array (whether scoper is a AR or array as another argument.)
-    def paginate_items(items)
+    def paginate_items(items, count = nil)
       is_array = !items.respond_to?(:scoped) # check if it is array or AR
       paginated_items = items.paginate(paginate_options(is_array))
 
@@ -326,12 +317,17 @@ class ApiApplicationController < MetalApiController
       # next page exists if scoper is AR & collection length > per_page
       next_page_exists = paginated_items.length > @per_page || paginated_items.next_page && is_array
       add_link_header(page: (page + 1)) if next_page_exists
+      add_total_entries(count) if count.present? 
       paginated_items[0..(@per_page - 1)] # get paginated_collection of length 'per_page'
     end
 
     # Add link header if next page exists.
     def add_link_header(query_parameters)
       response.headers['Link'] = construct_link_header(query_parameters)
+    end
+
+    def add_total_entries(total_items)
+      response.headers['X-Search-Results-Count'] = total_items.to_s 
     end
 
     # Construct link header for paginated collection
@@ -484,7 +480,7 @@ class ApiApplicationController < MetalApiController
     def set_current_account # this method is redefined because of api_current_user
       current_account.make_current
       User.current = api_current_user
-    rescue ActiveRecord::RecordNotFound
+    rescue ActiveRecord::RecordNotFound, ShardNotFound
       Rails.logger.error("API V2 request for invalid account. Host: #{request.host}")
       head 404
     rescue ActiveSupport::MessageVerifier::InvalidSignature # Authlogic throw this error if signed_cookie is tampered.

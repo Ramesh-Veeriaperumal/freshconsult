@@ -44,8 +44,9 @@ class TicketsController < ApiApplicationController
 
   def search
     lookup_and_change_params
-    @tkts = search_query
-    @items = paginate_items(@tkts)
+    es_response = search_query
+    @tkts = es_response
+    @items = paginate_items(@tkts,es_response.total)
   end
 
   def destroy
@@ -325,6 +326,7 @@ class TicketsController < ApiApplicationController
 
     def search_query
       es_options = {
+        :per_page     => params[:per_page] || 30,
         :page         => params[:page] || 1,
         :order_entity => params[:order_by]|| 'created_at',
         :order_sort   => params[:order_type] || 'desc'

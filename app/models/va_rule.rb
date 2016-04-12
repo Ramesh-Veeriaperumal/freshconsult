@@ -289,6 +289,9 @@ class VaRule < ActiveRecord::Base
     true
   end
 
+  def filter_array
+    (observer_rule? || api_webhook_rule?) ? filter_data[:conditions] : filter_data
+  end
 
   private
     def has_events?
@@ -303,10 +306,6 @@ class VaRule < ActiveRecord::Base
     
     def has_actions?
       errors.add(:base,I18n.t("errors.actions_empty")) if(action_data.blank?)
-    end
-
-    def filter_array
-      (observer_rule? || api_webhook_rule?) ? filter_data[:conditions] : filter_data
     end
 
     def encrypt data

@@ -149,6 +149,8 @@ module Redis::RedisKeys
   EXPORT_SIDEKIQ_ENABLED = "EXPORT_SIDEKIQ_ENABLED"
 
   
+  GAMIFICATION_QUEST_COOLDOWN = "GAMIFICATION:QUEST:%{account_id}:%{user_id}"
+
 	def newrelic_begin_rescue
 	    begin
 	      yield

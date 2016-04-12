@@ -159,13 +159,11 @@ liveChat.visitorListView = function(){
       }; 
     },
     removeVisitor : function(data){
-      var visitor_id, agentId;
+      var visitor_id;
       if(data instanceof Backbone.Model){
         visitor_id = data.get('id');
-        agentId = data.get('agent');
       }else{
         visitor_id = data.id;
-        agentId = data.agent;
       }
       this.filteredCollection.remove(visitor_id);
       if(jQuery("#visitor_list_"+visitor_id).length>0){

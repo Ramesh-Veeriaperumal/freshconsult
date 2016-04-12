@@ -45,7 +45,7 @@ module Social
         custom_params = {
           :description => "Exception in UploadAvatarWorker",
         }
-        custom_params.merge!({:params => hash[:item].id}) if hash[:item]
+        custom_params.merge!({:params => hash[:item].id}) if (hash && hash[:item])
         NewRelic::Agent.notice_error(e.to_s, :custom_params => custom_params)
       ensure
         if file

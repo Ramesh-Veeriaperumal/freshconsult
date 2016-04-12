@@ -126,6 +126,17 @@ class Admin::VaRulesController < Admin::AdminController
                 groups << [ag.id, CGI.escapeHTML(ag.name)]
                 groups
               end
+      tag_ids = []
+      @va_rule.filter_array.each do |f|
+        f.symbolize_keys!
+        if(f[:evaluate_on].present? and f[:evaluate_on] == "ticket" and f[:name] == "tag_ids")
+          tag_ids = tag_ids + f[:value]
+        end
+      end
+
+      @tag_hash = {}
+      current_account.tags.where(id: tag_ids).each {|t| @tag_hash[t.id] = CGI.escapeHTML(t.name)}
+      @tag_hash = ActiveSupport::JSON.encode @tag_hash
 
       filter_hash = {}
       add_ticket_fields filter_hash
@@ -146,6 +157,7 @@ class Admin::VaRulesController < Admin::AdminController
       end
       @op_types     = ActiveSupport::JSON.encode operator_types
       @op_list      = ActiveSupport::JSON.encode OPERATOR_LIST
+      @op_label     = ActiveSupport::JSON.encode ALTERNATE_LABEL
     end
 
     def add_ticket_fields filter_hash
@@ -184,7 +196,10 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "responder_id", :value => I18n.t('ticket.agent'), :domtype => dropdown_domtype,
           :operatortype => "object_id", :choices => @agents },
         { :name => "group_id", :value => I18n.t('ticket.group'), :domtype => dropdown_domtype,
-          :operatortype => "object_id", :choices => @groups }
+          :operatortype => "object_id", :choices => @groups },
+        { :name => "tag_ids", :value => t('ticket.tags'), :domtype => "autocomplete_multiple_with_id", 
+          :data_url => tags_search_autocomplete_index_path, :operatortype => "object_id_array",
+          :condition => !supervisor_rules_controller?, :autocomplete_choices => @tag_hash }
       ]
 
       if supervisor_rules_controller?
@@ -316,7 +331,7 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "name", :value => t('company_name'), :domtype => "autocomplete_multiple", 
           :data_url => companies_search_autocomplete_index_path, :operatortype => "choicelist" },
         { :name => "domains", :value => t('company_domain'), :domtype => "text", 
-          :operatortype => "text" }
+          :operatortype => "choicelist" }
       ]
       add_customer_custom_fields filter_hash['company'], "company"
     end

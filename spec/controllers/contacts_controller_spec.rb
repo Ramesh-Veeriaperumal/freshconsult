@@ -407,6 +407,33 @@ describe ContactsController do
     full_time_agent.occasional.should be false
   end
 
+  context "when a contact is converted to agent and Agents has password policy enabled" do 
+    it "should set the password expiry of the user to grace period" do
+      @account.subscription.update_attributes(:agent_limit => nil)
+      @request.env['HTTP_REFERER'] = 'sessions/new'
+      customer = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
+                              :user_role => 3)
+      customer.save
+      put :make_agent, :id => customer.id
+      agent = @account.agents.find_by_user_id(customer.id)
+      agent.user.password_expiry.to_s.should == (Time.now.utc + FDPasswordPolicy::Constants::GRACE_PERIOD).to_s
+    end
+  end
+
+  context "when a contact is converted to agent and Agents has password policy as none" do 
+    it "should set the password expiry of the user to NEVER" do
+      @account.subscription.update_attributes(:agent_limit => nil)
+      @account.agent_password_policy.delete
+      @request.env['HTTP_REFERER'] = 'sessions/new'
+      customer = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
+                              :user_role => 3)
+      customer.save
+      put :make_agent, :id => customer.id
+      agent = @account.agents.find_by_user_id(customer.id)
+      agent.user.password_expiry.to_s.should == (Time.now.utc + FDPasswordPolicy::Constants::NEVER.to_i.days).to_s 
+    end
+  end
+
   it "should make a customer an occasional agent" do
     occasional_customer = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)

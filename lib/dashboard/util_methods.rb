@@ -124,7 +124,7 @@ module Dashboard::UtilMethods
   end
 
   def agent_list_from_cache
-    Account.current.agents_from_cache.collect { |au| [au.user_id, au.user.name] }.to_h
+    Account.current.agents_details_from_cache.collect { |au| [au.id, au.name] }.to_h
   end
 
   def filter_list(values, retain_values)

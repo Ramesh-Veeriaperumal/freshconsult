@@ -332,6 +332,7 @@ Helpkit::Application.routes.draw do
     collection do
       post :reset_api_key
       put :notification_read
+      put :on_boarding_complete
     end
     member do
       post :change_password
@@ -668,6 +669,7 @@ Helpkit::Application.routes.draw do
       member do
         put :install
         delete :uninstall
+        get :uninstall
       end
     end
 
@@ -684,6 +686,7 @@ Helpkit::Application.routes.draw do
         put :update
         get :edit
         get :new
+        get :oauth_install
         post :install
         post :notify
     end
@@ -808,11 +811,13 @@ Helpkit::Application.routes.draw do
     namespace :marketplace do
       namespace :login do
         get :login
+        get :tryout
       end
 
       namespace :quickbooks_sso do
         get :open_id
         get :open_id_complete
+        get :landing
       end
 
       namespace :shopify do
@@ -2576,6 +2581,7 @@ Helpkit::Application.routes.draw do
           put :add_feature
           put :change_url
           get :single_sign_on
+          get :sso_time_stamp
           put :change_account_name
           put :ublock_account
           put :remove_feature

@@ -74,6 +74,11 @@ class ProfilesController < ApplicationController
     head 200
   end
 
+def on_boarding_complete
+    current_user.agent.update_attribute(:onboarding_completed, false)
+    head 200
+end
+
 private
 
   def load_profile

@@ -429,7 +429,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
         return agent_list
       end
       
-      Account.current.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
+      Account.current.agents_details_from_cache.collect { |c| [c.name, c.id] }
     end
 
     def populate_choices
