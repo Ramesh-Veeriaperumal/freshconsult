@@ -80,11 +80,12 @@ module AccountCleanup
       UNINDEXED_TABLES.each do |table_name, related_table_info|
         query = "select id from #{table_name} where account_id = #{account_id}"
         ids = ActiveRecord::Base.connection.select_values(query)
+        break if ids.size == 0
         delete_in_batches(account_id, ids, table_name)
         related_table, related_id = related_table_info
         query = "select id from #{related_table} where #{related_id} in (#{ids.join(',')})"
         related_ids = ActiveRecord::Base.connection.select_values(query)
-        delete_in_batches(account_id, related_ids, related_table)
+        delete_in_batches(account_id, related_ids, related_table) if related_ids.size > 0
       end
     end
 
