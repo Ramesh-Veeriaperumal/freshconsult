@@ -14,7 +14,8 @@
 <div class="manage-languages-body">
 	<%= error_messages_for :account %>
 	<div class="form-horizontal">
-		<%= form_for @account, :url => { :action => 'update_languages' }, :html => { :id => "manage_languages_form", :rel => "validate" } do |f| %>
+		<%= form_for @account, :url => { :action => 'update_languages' }, :html => { :id => "manage_languages_form", :rel => "validate", :data => { :portal_languages => @account.portal_languages }
+			} do |f| %>
 			<div class="row-fluid">
 				<%= f.fields_for :main_portal do |portal| %>
 					<div class="fields">
@@ -57,17 +58,6 @@
 									<div class="row-fluid muted mt5">
 										<%= t('account.add_more_languages_msg') %>
 									</div>
-									<%= settings.fields_for :additional_settings do |additional_settings| %>
-										<%= additional_settings.select :portal_languages, 
-												options_for_select( I18n.available_locales_with_name.reject { |lang, sym| sym == @account.main_portal.language.to_sym() }, 
-												:selected => @account.portal_languages), 
-												{}, 
-												{ 
-													:multiple => true,
-													:class => "hide",
-													:id => "portal_supported_languages"
-												} %>
-									<% end %>
 									<div class="row-fluid selected-languages mt20"></div>
 								</div>					
 							</div>

@@ -2591,9 +2591,11 @@ a.mobile_switchBtn {
 	    border-top: none;
 
 	    .remove-language {
-	    	cursor: pointer;
 	    	float: left;
-
+	    	
+	    	.remove-icon {
+	    		cursor: pointer;
+	    	}
 	    	.rounded-minus-icon {
   		    background: #BB6362;
 	    	}

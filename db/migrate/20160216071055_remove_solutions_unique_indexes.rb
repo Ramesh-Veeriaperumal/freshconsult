@@ -21,13 +21,13 @@ class RemoveSolutionsUniqueIndexes < ActiveRecord::Migration
 
   def down
     Lhm.change_table :solution_categories, :atomic_switch => true do |m|
+      m.remove_index "account_id_language_id_and_name"
       m.ddl("ALTER TABLE %s 
-                ADD UNIQUE INDEX index_solution_categories_on_account_id_language_id_and_name 
-                (`account_id`, `language_id`, `name`)" % m.name)
+                ADD UNIQUE INDEX index_solution_categories_on_account_id_and_name 
+                (`account_id`, `name`)" % m.name)
     end
     
     Lhm.change_table :solution_folders, :atomic_switch => true do |m|
-      m.remove_index "account_id_language_id_and_name"
       m.ddl("ALTER TABLE %s 
                 ADD UNIQUE INDEX index_solution_folders_on_category_id_and_name 
                 (`category_id`, `name`)" % m.name)
