@@ -107,7 +107,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	end
 
   def validate_is_default
-    if changes[:is_default].present? || (new_record? && (is_default == true))
+    if changes[:is_default].present? || (new_record? && is_default)
       default_category = Account.current.solution_category_meta.where(:is_default => true).first
       return true unless default_category.present?
       self.is_default = default_category.id == id
