@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160104125144) do
+ActiveRecord::Schema.define(:version => 20160412081950) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -3799,6 +3799,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.integer  "company_id", :limit => 8
     t.integer  "account_id", :limit => 8
     t.boolean  "default"
+    t.boolean  "client_manager"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

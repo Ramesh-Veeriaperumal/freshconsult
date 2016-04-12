@@ -70,10 +70,8 @@ module AccountCleanup
     def delete_shard_domain_mappings(shard_name, account_id)
       # Deleting by active record to invoke callbacks for clearing cache
       # this will delete domain mapping also
-      if (shard_name == ActiveRecord::Base.current_shard_selection.shard.to_s)
        shard = ShardMapping.find_by_account_id(account_id)
        shard.destroy 
-     end
     end
 
     def handle_unindexed_tables(account_id, shard_name)
