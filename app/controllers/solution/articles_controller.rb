@@ -16,6 +16,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
   before_filter :load_meta_objects, :only => [:show, :edit, :update, :properties, :destroy, :reset_ratings]
+  before_filter :check_create_privilege, :only => [:show]
   before_filter :old_folder, :only => [:move_to]
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
   before_filter :set_current_folder, :only => [:create]
@@ -508,5 +509,13 @@ class Solution::ArticlesController < ApplicationController
       return unless params[:solution_article].present?
       params[:solution_article][:folder_id] = params[:folder_id]
       params[:solution_article][:id] = params[:id] if params[:id].present?
+    end
+
+    def check_create_privilege
+      # The user has 'Create Folder/Category' privilege but not 'Publish Solution'. 
+      # UI check : The link to add new version will not be available.
+      # So when he hits the url directly to add new version, we render 404.
+      return unless current_account.multilingual?
+      render_404 unless privilege?(:publish_solution) || @article.present?
     end
 end
