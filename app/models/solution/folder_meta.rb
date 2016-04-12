@@ -152,7 +152,7 @@ class Solution::FolderMeta < ActiveRecord::Base
   end
 
   def companies_limit_check
-    if customer_folders.size > 250
+    if customer_folders.size > COMPANIES_LIMIT
       errors.add(:base, I18n.t("solution.folders.visibility.companies_limit_exceeded"))
       return false
     else

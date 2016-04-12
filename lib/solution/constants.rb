@@ -65,4 +65,6 @@ module Solution::Constants
     :quadrillion => "Q+"
   }
 
+  COMPANIES_LIMIT = 250
+
 end

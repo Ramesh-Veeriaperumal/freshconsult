@@ -80,7 +80,7 @@
 									:selected_values => selected_companies(@customer_id),
 									:type => :companies,
 									:dom_id => "folder_customers_#{@folder_meta.id}",
-									:max_limit => 250
+									:max_limit => Solution::Constants::COMPANIES_LIMIT
 					}) %>
 				</div>
 			<% end %>
