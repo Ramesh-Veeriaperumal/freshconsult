@@ -69,7 +69,7 @@ class Solution::Category < ActiveRecord::Base
     parent_id
   end
 
-  def stripped_name
+  def stripped_name(name = self.name)
     (name || "").downcase.strip
   end
    
@@ -77,7 +77,11 @@ class Solution::Category < ActiveRecord::Base
   
     def name_uniqueness_validation
       return true unless new_record? || name_changed?
-      if (Account.current.solution_categories.where(:language_id => self.language_id) - [self]).map(&:stripped_name).include?(self.stripped_name)
+      conditions = "`solution_categories`.`language_id` = #{self.language_id}"
+      conditions << " AND `solution_categories`.`id` != #{self.id}" unless new_record?
+      if Account.current.solution_categories.
+            where(conditions).pluck(:name).map{|n| stripped_name(n)}.
+            include?(self.stripped_name)
         errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
         return false
       end

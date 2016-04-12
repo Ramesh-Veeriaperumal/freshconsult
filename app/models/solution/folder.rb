@@ -68,12 +68,16 @@ class Solution::Folder < ActiveRecord::Base
     present?
   end
 
-  def stripped_name
+  def stripped_name(name = self.name)
     (name || "").downcase.strip
   end
 
   def name_uniqueness_validation
-    if ((self.solution_folder_meta.solution_category_meta.solution_folders.where(:language_id => self.language_id)) - [self]).map(&:stripped_name).include?(self.stripped_name)
+    conditions = "`solution_folders`.`language_id` = #{self.language_id}"
+    conditions << " AND `solution_folders`.`id` != #{self.id}" unless new_record?
+    if self.solution_folder_meta.solution_category_meta.solution_folders.
+            where(conditions).pluck(:name).map{|n| stripped_name(n)}.
+            include?(self.stripped_name)
       errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
       return false
     end
