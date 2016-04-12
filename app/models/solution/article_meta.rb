@@ -100,11 +100,6 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		SOLUTION_META_HIT_TRACKER % {:account_id => account_id, :article_meta_id => id }
 	end
 
-	def self.translations_with_draft
-    base_name = self.name.chomp('Meta').gsub("Solution::", '').downcase
-    (['primary'] | Account.current.applicable_languages).collect(&:to_sym).collect {|s| {:"#{s}_#{base_name}" => :draft}}
-  end
-
   def type_name
   	TYPE_NAMES_BY_KEY[art_type]
   end
@@ -118,6 +113,10 @@ class Solution::ArticleMeta < ActiveRecord::Base
   end
 	
 	def deserialize_attr
+		# In the customer portal, we select attributes of the current language article from solution_articles table
+		# along with each article_meta object. So if we try to fetch a serialized attribute of the current child article 
+		# through the parent object, it had the raw content(serialized string) from the table. Hence, we had
+		# to deserialize any such attributes.
 		self.attributes.slice(*Solution::Article.serialized_attributes.keys).each do |k, v|
 			self[k] = YAML.load(v)
 		end
@@ -156,7 +155,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	end
 	
 	def valid_change?
-		self.previous_changes.slice(:position).present? || 
+		self.changes.slice(:position).present? || 
 			(primary_article && (primary_article.previous_changes.slice(*[:modified_at, :status]).present? || 
 			primary_article.tags_changed))
 	end

@@ -9,6 +9,9 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	include Solution::LanguageAssociations
 	include Solution::Constants
 	include Solution::ApiDelegator
+	
+	after_save :update_mh_solutions_category_time, :if => :valid_change?
+	before_destroy :update_mh_app_time
 
 	belongs_to_account
 
@@ -73,9 +76,6 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	after_create :clear_cache
 	after_destroy :clear_cache
-	
-	after_save :update_mh_solutions_category_time, :if => :valid_change?
-	before_destroy :update_mh_app_time
 
 	alias_method :children, :solution_categories
 	
@@ -94,7 +94,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	private
 	
 	def valid_change?
-		previous_changes.except(*(BINARIZE_COLUMNS + [:updated_at])).present? || 
+		changes.except(*(BINARIZE_COLUMNS + [:updated_at])).present? || 
 			(primary_category && primary_category.previous_changes.present?)
 	end
 
