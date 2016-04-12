@@ -203,7 +203,7 @@ class Solution::FoldersController < ApplicationController
       render_to_string(
       :inline => t("solution.flash.folders_move_to_success#{'_multilingual' if current_account.multilingual?}",
                       :count => @updated_items.count - 1,
-                      :category_name => h(@new_category.name.truncate(30)),
+                      :category_name => view_context.pjax_link_to(h(@new_category.name.truncate(30)), solution_category_path(@new_category.id)),
                       :folder_name => h(meta_scoper.find(@updated_items.first).name.truncate(30)),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'folders_undo_bulk',

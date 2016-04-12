@@ -408,7 +408,7 @@ class Solution::ArticlesController < ApplicationController
       render_to_string(
       :inline => t("solution.flash.articles_move_to_success#{'_multilingual' if current_account.multilingual?}",
                       :count => @updated_items.count - 1,
-                      :folder_name => h(@new_folder.name.truncate(30)),
+                      :folder_name => view_context.pjax_link_to(h(@new_folder.name.truncate(30)), solution_folder_path(@new_folder.id)),
                       :article_name => h(meta_scoper.find(@updated_items.first).title.truncate(30)),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'articles_undo_bulk',
