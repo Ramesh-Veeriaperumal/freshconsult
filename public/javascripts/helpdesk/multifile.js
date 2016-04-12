@@ -185,18 +185,17 @@ Helpdesk.Multifile = {
 };
 
 jQuery("document").ready(function(){
-    // setTimeout(function() {
-    //     Helpdesk.Multifile.load();
-    // },500);
-    
     jQuery("input[fileList]").livequery(function(){ 
-        var $input_file = jQuery(this)
-        Helpdesk.Multifile.load()
-        Helpdesk.Multifile.addEventHandler(this)
-        jQuery(this.form).off("reset.Multifile")
-        jQuery(this.form).on("reset.Multifile", function(){
-            Helpdesk.Multifile.resetAll(this)
-        })
+    var type=jQuery("#attachment-type").attr('data-multifile-enable');
+         if(type=="false" || type == undefined)
+         {
+                var $input_file = jQuery(this)
+                Helpdesk.Multifile.load()
+                Helpdesk.Multifile.addEventHandler(this)
+                jQuery(this.form).off("reset.Multifile")
+                jQuery(this.form).on("reset.Multifile", function(){
+                    Helpdesk.Multifile.resetAll(this)
+                })
+         }
     });
 });
-

@@ -1,9 +1,15 @@
 <%= javascript_tag do %>
   customMessages = {
     confirmNavigate: '<%= t("admin.products.portal.save_and_continue") %>'
-}
+
+  }
 <% end %>
-<%= f.error_messages %> 
+<% if @existing_company %>
+  <div id="errorExplanation" class="errorExplanation">
+  <%= "#{t('companies.info1')} " %>     <%= link_to(t('companies.view_company') , @existing_company ) %>  </div>
+<%else%>    
+  <%= f.error_messages %>
+<%end%>
 <div class="row-fluid">
   <div class="span12">
     <ul class="form-horizontal contact-form">

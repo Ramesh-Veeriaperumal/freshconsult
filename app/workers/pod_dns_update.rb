@@ -20,6 +20,11 @@ class PodDnsUpdate
     global_pod_response = Fdadmin::APICalls.connect_main_pod(request_parameters)
   end
 
+  def remove_domain_mapping_for_pod(request_parameters)
+    puts "Req Params: #{request_parameters}"
+    global_pod_response = Fdadmin::APICalls.connect_main_pod(request_parameters)
+  end
+
   def map_cname_to_domain(domain_config)
   	route53 = Aws::Route53::Client.new(:access_key_id => PodConfig["access_key_id"],
   		:secret_access_key => PodConfig["secret_access_key"],

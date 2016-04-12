@@ -1,6 +1,7 @@
 class Integrations::GithubController < Admin::AdminController
 
-  before_filter :load_app, :only => [:new, :install]
+  before_filter :load_app, :only => [:new, :install, :oauth_install]
+  before_filter :check_installed_app, :only => [:new, :install, :oauth_install]
   before_filter :load_installed_app, :only => [:edit, :update, :notify]
   before_filter :valid_webhook_request?, :only => [:notify]
   skip_before_filter :check_privilege, :check_day_pass_usage, :verify_authenticity_token, :only => [:notify]
@@ -96,6 +97,10 @@ class Integrations::GithubController < Admin::AdminController
     render :json => {:message => resp}, :status => status || :no_content
   end
 
+  def oauth_install
+    redirect_to @application.oauth_url({account_id: @current_account.id, :portal_id => current_portal.id})
+  end
+
   private
 
   def load_app
@@ -106,6 +111,14 @@ class Integrations::GithubController < Admin::AdminController
     @installed_app = current_account.installed_applications.with_name(APP_NAME).first
     unless @installed_app
       flash[:error] = t(:'flash.application.not_installed')
+      redirect_to integrations_applications_path
+    end
+  end
+
+  def check_installed_app
+    @installed_app = current_account.installed_applications.find_by_application_id(@application)
+    if @installed_app
+      flash[:error] = t(:'flash.application.already')
       redirect_to integrations_applications_path
     end
   end
@@ -135,7 +148,6 @@ class Integrations::GithubController < Admin::AdminController
 
   def repository_options
     {
-      :affiliation => "organization_member",
       :visibility => "private"
     }
   end

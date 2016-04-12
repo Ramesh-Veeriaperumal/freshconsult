@@ -42,6 +42,7 @@ class CompaniesController < ApplicationController
     if @company.save  
       flash[:notice] = t(:'company.created')
     else
+      check_domain_exists
       flash[:notice] = activerecord_error_list(@company.errors)
     end
    redirect_to(companies_url)
@@ -55,6 +56,7 @@ class CompaniesController < ApplicationController
         format.xml  { render :xml => @company, :status => :created, :location => @company }
         format.json { render :json => @company, :status => :created }
       else
+        check_domain_exists
         format.html { render :action => "new" }
         format.xml  { render :xml => @company.errors, :status => :unprocessable_entity }
         format.json { render :json => @company.errors.fd_json, :status => :unprocessable_entity }
@@ -74,6 +76,7 @@ class CompaniesController < ApplicationController
         format.json { render :json => "", :status => :ok }
         format.nmobile { render :json => { :success => true }}
       else
+        check_domain_exists
         format.html { render :action => "edit" }
         format.xml  { render :xml => @company.errors, :status => :unprocessable_entity }
         format.json { render :json => @company.errors.fd_json, :status => :unprocessable_entity }
@@ -162,5 +165,13 @@ class CompaniesController < ApplicationController
 
     def after_destroy_url
       return companies_url
+    end
+
+    def check_domain_exists
+      if @company.errors[:"company_domains.domain"].include?("has already been taken")
+        @company.company_domains.each do |cd|
+          @existing_company ||= current_account.company_domains.find_by_domain(cd.domain).try(:company) if cd.new_record?
+        end
+      end
     end
 end

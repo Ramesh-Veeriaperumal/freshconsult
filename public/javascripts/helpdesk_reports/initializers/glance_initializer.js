@@ -425,8 +425,9 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 var data_array = [];
                 var series = _.keys(current_series);
                 for (i = 0; i < series.length; i++) {
+                    var legend_name = current_series[series[i]]+"<br/>"+I18n.t('helpdesk_reports.average_interactions',{count: hash['average_interactions'][series[i]]});
                     data_array.push({
-                        name: current_series[series[i]],
+                        name: legend_name, //for complex formatting use highcharts format string or labelFormatter callback
                         data: _.values(hash[series[i]]).reverse(),
                         legendIndex: i,
                         id: series[i],
@@ -478,14 +479,12 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             var container = ev.series.chart.container;
             var bucket_type = jQuery(container).closest('[data-glance-container="bucket"]').data('bucket-name');
             var series_name = ev.series.options.id;
-            var series = ev.series.name;
             var series_index = ev.series.index;
             var hash = HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric + '_BUCKET'].value_map;
             var data = {
                 condition: series_name,
                 operator: hash[series_name][ev.category][1],
                 value: hash[series_name][ev.category][0],
-                series : series,
                 series_index : series_index,
                 x : ev.category,
                 y : ev.y

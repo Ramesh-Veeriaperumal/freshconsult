@@ -1,0 +1,1 @@
+class ShardNotFound < StandardError; end

@@ -3,7 +3,8 @@
   attachments ||= {:regular => [], :cloud_files => []}
   nsc_param = nsc_param || "post"
 %>
-<div class="attachments-wrap">
+
+<div class="attachments-wrap" id="attachment-type" data-multifile-enable="<%= current_account.launched?(:multifile_attachments) %>">
   <div id="<%=attach_id%>-container" class="attachments-container">
 
     <% if cloud_files_installed?  %>
@@ -14,7 +15,7 @@
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
           <li class="portal-attach">
             <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-list-wrap attach-link-wrap">
-                <%= I18n.t('portal.attach_file').html_safe %>
+                 <%= current_account.launched?(:multifile_attachments) ? t('attach_files') : t('attach_file') %>
                 <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
                   <input type="file" name="emptyfile" 
                     id="<%=attach_id%>_file"
@@ -22,7 +23,9 @@
                     nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
                     fileContainer="<%=attach_id%>-container" 
                     fileList="<%=attach_id%>-attachments"
-                    sendFocusTo="<%=attach_id%>-body" />
+                    sendFocusTo="<%=attach_id%>-body"
+                    <%= current_account.launched?(:multifile_attachments) ? "multiple" : ""%>
+                     />
                 </div>
             </a>
           </li>
@@ -34,12 +37,14 @@
       </div>
     <% else %>
       <div class="hidden_upload">
-        <div class="add_attachment"><span>+</span> <%= t('attach_file') %> </div>
+        <div class="add_attachment"><span>+</span> <%= current_account.launched?(:multifile_attachments) ? t('attach_files') : t('attach_file') %> </div>
         <input type="file" id="<%=attach_id%>_file" name="emptyfile"
                 nameWhenFilled="<%=nsc_param%>[attachments][][resource]"
                 fileContainer="<%=attach_id%>-container"
                 fileList="<%=attach_id%>-attachments"
-                sendFocusTo="<%=attach_id%>-body"/>
+                sendFocusTo="<%=attach_id%>-body"
+                <%= current_account.launched?(:multifile_attachments) ? "multiple" : ""%>
+                />
       </div>
     <% end %>
     <div class="clear"> </div>
@@ -91,6 +96,9 @@
     </div>
   </li>
 </script>
+<!-- for multifile uploading -->
+<%= render :partial => "/helpdesk/tickets/show/multifile_template_new" %>
+
 <div class="clearfix"></div>
 
 <script type="text/javascript">

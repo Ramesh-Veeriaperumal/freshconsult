@@ -168,7 +168,7 @@ var MarketplaceBrowser  = Class.create({
 	},
   toggleAppsMessage: function(toggle_apps){
     if( toggle_apps || jQuery('#apps .alert-error').length > 0){
-      jQuery('#apps .no-plugs').toggle();
+      jQuery('#apps .no-apps').toggle();
     }
   },
   togglePlugsMessage: function(toggle_plugs){

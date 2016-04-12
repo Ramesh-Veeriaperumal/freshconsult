@@ -16,7 +16,9 @@
        }).select2('val', agentData.ping_tone);
 
       $("#change_ping_tone").on('change', function(element){
-        freshChatSound.play('playTone', window.ASSET_URL.cloudfront+'/sound/'+agentData.availablePingTones[element.val]);
+        var audioElement = document.createElement('audio');
+        audioElement.src = window.ASSET_URL.cloudfront+'/sound/'+agentData.availablePingTones[element.val];
+        audioElement.setAttribute('autoplay','');
         window.liveChat.updatePingTone(element);
       });
 

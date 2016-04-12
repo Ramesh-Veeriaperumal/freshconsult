@@ -28,51 +28,87 @@ function postProcessCondition(filter, id){
 		jQuery("#"+id).trigger("blur");		
 	}
 	if(filter && filter.domtype === 'autocomplete_multiple'){
-			jQuery('#'+id).select2('destroy');
-			jQuery('#'+id).select2({
-				minimumInputLength: 1,
-				multiple: true,
-				tags:true,
-				allowClear:true,
-				quietMillis: 1000,
-				data: [],
-				initSelection: function(element, callback) {
-					var data = [];
-					var val = jQuery(element).val().split(",");
-						jQuery(val).each(function () {
-							data.push({id: this,value:this,text:this});
-				    });
-					callback(data);
-				},
-				ajax: {
-						url: filter.data_url,
-						dataType:'json',
-						data: function (term) { 
-								return {
-									q: term
-								};
-						},
-						results: function (data) {
-								jQuery(data.results).each(function(){
-									this.id = this.value;
-									this.value=this.value;
-									this.text=this.value;
-								});
-								return {results: data.results};
-						}
-				},
-				formatResult: vrformatResult,
-				formatSelection: vrFormatSelection
-			});
+
+		select2Initialization(filter, id, 
+			function(element, callback) {
+				var data = [];
+				var val = jQuery(element).val().split(",");
+				jQuery(val).each(function () {
+						data.push({id: this,value:this,text:this});
+			  });
+				callback(data);
+			}, 
+			function (data) {
+				jQuery(data.results).each(function(){
+					this.id = this.value;
+					this.value=this.value;
+					this.text=this.value;
+				});
+				return {results: data.results};
+			})
+	}
+
+	if(filter && filter.domtype === 'autocomplete_multiple_with_id'){
+
+		select2Initialization(filter, id, 
+			function(element, callback) {
+				var data = [];
+				var val = jQuery(element).data('initObject')
+				jQuery(val).each(function (index, object) {
+					data.push({id: object.name, value:object.value, text:object.value});
+		    });
+				callback(data);
+			}, 
+			function (data) {
+				jQuery(data.results).each(function(){
+					this.id = this.id;
+					this.value=this.value;
+					this.text=this.value;
+				});
+				return {results: data.results};
+			})
 	}
 };
 
-var preProcessCondition = function(types, list){
+
+function select2Initialization (filter, id, initCallback, resultCallback) {
+
+		jQuery('#'+id).select2('destroy');
+		jQuery('#'+id).select2({
+			minimumInputLength: 1,
+			multiple: true,
+			tags:true,
+			allowClear:true,
+			quietMillis: 1000,
+			data: [],
+			initSelection: initCallback,
+			ajax: {
+					url: filter.data_url,
+					dataType:'json',
+					data: function (term) { 
+							return {
+								q: term
+							};
+					},
+					results: resultCallback
+			},
+			formatResult: vrformatResult,
+			formatSelection: vrFormatSelection
+		});
+}
+
+var preProcessCondition = function(types, list, label = null){
 	types = $H(types);
 	types.each(function(item){
 		var listDrop = $A();
 		$A(item.value).each(function(pair){
-			var value = { name : pair, value : list[pair] };
+			var value = {};
+			if(label != null && label[item.key] != null && label[item.key][pair] != null) {
+				value = { name : pair, value : label[item.key][pair] };
+			}
+			else {
+				value = { name : pair, value : list[pair] };
+		  }
 			listDrop.push(value);
 		});
 		types.set(item.key, listDrop);
@@ -145,7 +181,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			criteria 		   : "ticket",
 			is_requester	   : false,
 			orig_filter_data   : filter_data,
-			autocomplete_multiple_fields : {"ticket" : ["tag_names"], "company" : ["name"]},
+			autocomplete_multiple_fields : {"ticket" : ["tag_ids"], "company" : ["name"]},
 			onRuleSelect       : function(){},
 			change_filter_data : function(_filter_data){return _filter_data}
 		};

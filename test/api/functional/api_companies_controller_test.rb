@@ -83,6 +83,15 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('name', :'has already been taken')])
   end
 
+  def test_create_company_with_duplicate_domain
+    name = Faker::Lorem.characters(10)
+    company = create_company(name: name)
+    domains = company.domains.split(',')
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), domains: domains, note: Faker::Lorem.characters(10))
+    assert_response 409
+    match_json([bad_request_error_pattern('domains', :'has already been taken')])
+  end
+
   def test_create_length_invalid
     params_hash = { name: Faker::Lorem.characters(300) }
     post :create, construct_params({}, params_hash)
@@ -119,7 +128,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                       note: Faker::Lorem.characters(5), domains: domain_array,
                                                       custom_fields: { 'linetext' => Faker::Lorem.characters(10) })
     assert_response 200
-    match_json(company_pattern({ name => name }, company.reload))
+    match_json(company_pattern({ name => name }, Company.find(company.id)))
   end
 
   def test_update_company_with_nil_custom_field
@@ -339,11 +348,20 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('name', :'has already been taken')])
   end
 
+  def test_update_company_with_duplicate_domains
+    company1 = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    company2 = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    domains = company1.domains.split(',')
+    put :update, construct_params({ id: company2.id }, domains: domains)
+    assert_response 409
+    match_json([bad_request_error_pattern('domains', :'has already been taken')])
+  end
+
   def test_update_delete_existing_domains
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array)
     put :update, construct_params({ id: company.id }, domains: [])
     assert_response 200
-    match_json(company_pattern(company.reload))
+    match_json(company_pattern(Company.find(company.id)))
   end
 
   def test_create_company_without_required_custom_field
