@@ -115,7 +115,7 @@ class TicketsController < ApiApplicationController
       preload_options = [:ticket_old_body, :schema_less_ticket, :flexifield]
       @ticket_filter.include_array.each do |assoc|
         preload_options << assoc
-        increment_api_credit_by(1)
+        increment_api_credit_by(2)
       end
       preload_options
     end
