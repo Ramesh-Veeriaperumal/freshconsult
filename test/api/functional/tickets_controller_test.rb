@@ -2754,7 +2754,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_compose_email_with_invalid_params
-    params = ticket_params_hash.merge(custom_fields: {}, product_id: 2)
+    params = ticket_params_hash.merge(custom_fields: {}, product_id: 2, requester_id: 3, phone: 7, twitter_id: "67", facebook_id: 'ui')
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
@@ -2763,7 +2763,11 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('source',  :invalid_field), 
       bad_request_error_pattern('product_id',  :invalid_field),
-      bad_request_error_pattern('responder_id',  :invalid_field)])
+      bad_request_error_pattern('responder_id',  :invalid_field),
+      bad_request_error_pattern('requester_id',  :invalid_field), 
+      bad_request_error_pattern('twitter_id',  :invalid_field),
+      bad_request_error_pattern('facebook_id',  :invalid_field),
+      bad_request_error_pattern('phone',  :invalid_field)])
   ensure
     Account.any_instance.unstub(:compose_email_enabled?)
   end
@@ -2789,7 +2793,7 @@ class TicketsControllerTest < ActionController::TestCase
     default_non_required_fiels.map { |x| x.toggle!(:required) }
     default_non_required_fiels.select { |x| x.name == 'product'}.map{ |x| x.toggle!(:required) }
     email_config = fetch_email_config
-    params = {requester_id: @agent.id, email_config_id: email_config.id, priority: 2, type: 'Lead', description: Faker::Lorem.characters(15), group_id: ticket_params_hash[:group_id], subject: Faker::Lorem.characters(15)}
+    params = {email: Faker::Internet.email, email_config_id: email_config.id, priority: 2, type: 'Lead', description: Faker::Lorem.characters(15), group_id: ticket_params_hash[:group_id], subject: Faker::Lorem.characters(15)}
     post :create, construct_params({_action: 'compose_email'}, params)
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     match_json(ticket_pattern(params.merge(responder_id: @agent.id, source: 10, status: 5), Helpdesk::Ticket.last))
@@ -2872,15 +2876,17 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('due_by',  :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
-  def test_compose_email_without_email_config_id
-    params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {})
+  def test_compose_email_without_mandatory_params
+    params = ticket_params_hash.except(:source, :product_id, :responder_id, :email, :subject).merge(custom_fields: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({_action: 'compose_email'}, params)
     params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 400
-    match_json([bad_request_error_pattern('email_config_id',  :field_validation_for_outbound, code: :missing_field)])
+    match_json([bad_request_error_pattern('email_config_id',  :field_validation_for_outbound, code: :missing_field),
+      bad_request_error_pattern('subject',  :field_validation_for_outbound, code: :missing_field),
+      bad_request_error_pattern('email',  :field_validation_for_outbound, code: :missing_field)])
   end
 
   def test_compose_email_with_invalid_email_config_id

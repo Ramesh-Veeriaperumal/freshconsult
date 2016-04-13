@@ -13,16 +13,16 @@ class TicketValidation < ApiValidation
   alias_attribute :responder_id, :agent
 
   # Default fields validation
-  validates :subject, custom_absence: { message: :outbound_email_field_restriction }, if: :outbound_email?, on: :update
-  validates :description, custom_absence: { message: :outbound_email_field_restriction }, if: :outbound_email?, on: :update
-  validates :email_config_id, required: { message: :field_validation_for_outbound }, on: :compose_email
+  validates :subject, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
+  validates :description, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
+  validates :email_config_id, :subject, :email, required: { message: :field_validation_for_outbound }, on: :compose_email
   validates :description, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
                               }, if: :create_or_update?
 
-  validates :description, :ticket_type, :status, :subject, :priority, :group, default_field:
+  validates :description, :ticket_type, :status, :priority, :group, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
@@ -32,7 +32,7 @@ class TicketValidation < ApiValidation
   validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0  }
 
-  validate :requester_detail_missing, if: :requester_id_mandatory?
+  validate :requester_detail_missing, if: -> { create_or_update? && requester_id_mandatory? }
   # validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No
   validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: :name_required?  # No
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
@@ -165,7 +165,7 @@ class TicketValidation < ApiValidation
     [:create, :update].include?(self.validation_context)
   end
 
-  def outbound_email?
+  def source_as_outbound_email?
     @outbound_email ||= (source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?  
   end
 
