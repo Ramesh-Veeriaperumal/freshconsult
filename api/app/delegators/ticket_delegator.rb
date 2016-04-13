@@ -13,7 +13,8 @@ class TicketDelegator < BaseDelegator
                                 drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices },
                                 nested_field_choices: proc { TicketsValidationHelper.custom_nested_field_choices },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
-                                required_attribute: :required
+                                required_attribute: :required,
+                                section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
                             }
   validate :facebook_id_exists?, if: -> { facebook_id }

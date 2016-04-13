@@ -1,5 +1,7 @@
 class Helpdesk::Section < ActiveRecord::Base
 
+  include MemcacheKeys
+
   self.primary_key = :id
   self.table_name = "helpdesk_sections"
 
@@ -17,7 +19,14 @@ class Helpdesk::Section < ActiveRecord::Base
   accepts_nested_attributes_for :section_picklist_mappings, :allow_destroy => true
   accepts_nested_attributes_for :section_fields, :allow_destroy => true
 
+  after_commit :clear_cache
+
   def parent_ticket_field_id
     section_picklist_mappings[0].picklist_value.pickable_id
+  end
+
+  def clear_cache
+    key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.id }
+    MemcacheKeys.delete_from_cache key
   end
 end

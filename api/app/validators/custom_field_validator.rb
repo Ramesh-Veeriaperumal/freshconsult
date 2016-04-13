@@ -1,5 +1,5 @@
 class CustomFieldValidator < ActiveModel::EachValidator
-  ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined, :nested_fields]
+  ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined, :nested_fields, :attribute, :section_field_mapping]
   attr_accessor(*ATTRS)
 
   def validate(record)
@@ -19,7 +19,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
         field_name = custom_field.name # assign field name
         value = values.try(:[], custom_field.name) # assign value
         @parent =  nested_field? && parent_exists? ? get_parent(values) : {} # get parent if nested_field for computing required
-        @is_required = required_field? # find if the field is required
+        @is_required = required_field?(record, values) # find if the field is required
         @current_field_defined = key_exists?(values, field_name) # check if the field is defined for required validator
         next unless validate?(record, field_name, values) # check if it can be validated
         record.class.send(:attr_accessor, field_name)
@@ -123,6 +123,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     def assign_options(attribute)
+      @attribute = attribute
       @validatable_custom_fields = options[attribute][:validatable_custom_fields] || []
       @nested_field_choices = options[attribute][:nested_field_choices] || {}
       @drop_down_choices = options[attribute][:drop_down_choices] || {}
@@ -148,11 +149,29 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     # required based on ticket field attribute or combination of status & ticket field attribute.
-    def required_field?
+    def required_field?(record, values)
       # Should we have to raise exception or warn if current_field doen't respond to required_attribute?
       is_required = @current_field.send(@required_attribute.to_sym) || (@closure_status && @current_field.required_for_closure)
       is_required ||= @parent[:required] if @parent.present?
+      is_required = section_parent_present?(record, values) if is_required && section_field?
       is_required
+    end
+
+    def section_parent_present?(record, values)
+      section_parent_list.any? { |parent_field, value_mapping| value_mapping.include?(parent_value(parent_field, record, values)) }
+    end
+
+    def section_parent_list 
+      @section_field_mapping ||= proc_to_object(options[@attribute][:section_field_mapping]) || {}
+      @section_field_mapping[@current_field.id] || {}
+    end
+
+    def parent_value(parent_field, record, values)
+      (record.send(parent_field) || values.try(:[], parent_field))
+    end
+ 
+    def section_field?
+      @current_field.respond_to?(:section_field?) && @current_field.section_field?
     end
 
     # should allowed to be validated upon satisfying any of the below conditions
@@ -160,7 +179,12 @@ class CustomFieldValidator < ActiveModel::EachValidator
     # 2. value present?
     # 3. nested parent field with children not set
     def validate?(record, field_name, values)
+      return false if section_field? && section_parent_has_errors?(record, values) 
       @is_required || values.try(:[], field_name) || (values.present? && nested_field? && !children_set_or_blank?(record, field_name, values))
+    end
+
+    def section_parent_has_errors?(record, values)
+      section_parent_list.all? { |parent_field, value_mapping| record.errors[parent_field].present? || parent_value(parent_field, record, values).nil? }
     end
 
     def key_exists?(values, key)
