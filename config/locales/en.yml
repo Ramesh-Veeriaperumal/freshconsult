@@ -1232,8 +1232,8 @@ en:
         loading: Loading...
         default_survey: Default Survey
         survey: Survey
-        title: Survey Name
-        title_error_text: Survey Name has already been taken
+        title: Survey name
+        title_error_text: Survey name has already been taken
         result_exist_msg: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers.
         result_exist_msg_v2: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can rephrase the questions and answer choices.
       new_rating:
@@ -1243,7 +1243,6 @@ en:
         content_text_v2: This question helps assess the overall satisfaction for the response provided by the agent.
                       It appears below your signature at the bottom of the email sent to the customer.
         survey_question: Survey question
-        survey_question_v2: Survey Question
         error_text: This field is required
         points_scale: points scale
         point_scale_v2: Point scale
@@ -1252,10 +1251,11 @@ en:
 
       new_thanks:
         survey_feedback: Survey Feedback Page
-        survey_feedback_v2: Thank You Page
+        survey_feedback_v2: Thank you page
         thanks_feedback: Thank you for your valuable feedback.
         thanks_feedback_v2: Thank you. Your feedback has been submitted.
         additional_comments_feedback: Collect additional feedback
+        additional_comments_feedback_v2: Include additional comments box
         additional_comments_feedback_statement: Additional feedback
         comments_feedback: Add more details about customer experience.
         thanks_message_feedback: Thank you message for Feedback survey
@@ -1310,23 +1310,30 @@ en:
         survey_help_msg_v3: When a satisfaction rating is selected, a thank you page is shown to collect more feedback
         on: ON
         off: OFF
-        confirm_text: Please Confirm...
+        confirm_text: Please confirm...
         delete: Delete
         activate_survey: Activate
-        activate_msg: Activating this survey will deactivate <b id='active_survey_name'> Default Survey </b><br> Are you sure you want to proceed?
+        activate_msg: Activating this survey will deactivate <b id='active_survey_name'> Default Survey </b><br> Are you sure you want to activate?
         remove_msg: Removing this section will result in the loss of any changes made to the additional questions. Do you wish to continue?
       choice_contents:
         strongly_disagree: Strongly Disagree
-        some_what_disagree: Some What Disagree
+        extremly_dissatisfied: Extremely dissatisfied
+        some_what_disagree: Somewhat Disagree
+        mostly_dissatisfied: Mostly dissatisfied
         disagree: Disagree
+        slightly_dissatisfied: Slightly dissatisfied
         neutral: Neutral
+        neutral_v2: Neither satisfied nor dissatisfied
         agree: Agree
-        some_what_agree: Some What Agree
+        slightly_satisfied: Slightly satisfied
+        some_what_agree: Somewhat Agree
+        mostly_satisfied: Mostly satisfied
         strongly_agree: Strongly Agree
+        extremely_satisfied: Extremely satisfied
 
       thanks_contents:
         title_text: Thank you message for Customer satisfaction rating
-        title_text_v2: Thank you message for Customer Satisfaction Survey
+        title_text_v2: Thank you message for customer satisfaction survey
         solution_article_link_text: Your portal layout will be applied to this page. <a target='_blank' href='https://support.freshdesk.com/solution/articles/217757-customizing-your-thank-you-page'>How to change it?</a>
         message_text: Thank you for your valuable feedback.
         label_text: Add a feedback survey
@@ -1336,7 +1343,7 @@ en:
 
       satisfaction_settings:
         enable_label: Customer Satisfaction Rating
-        enable_label_v2: Customer Satisfaction Survey
+        enable_label_v2: Customer satisfaction survey
         satisfaction_text: I am satisfied with the service provided to me by
         link_text_label: Satisfaction survey link text
         link_text_input_label: How would you rate your overall satisfaction for the resolution provided by the agent?
@@ -7007,7 +7014,7 @@ en:
         main:
             all: All
             time_period: Time Period
-            survey_name: Survey Name
+            survey_name: Survey name
             group: Group
             agent: Agent
             overview: Overview
