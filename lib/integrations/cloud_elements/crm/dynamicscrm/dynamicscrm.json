@@ -1,15 +1,16 @@
 
 {
-    "element" : { "key" : "dynamicscrm"},
+    "element" : { "key" : "dynamicscrmadfs"},
 
     "configuration" : {
-        "user.username" : "%{username}",
+        "user.username" : "%{domain}",
         "user.password" : "%{password}",
         "dynamics.tenant" : "%{dynamicscrm_url}",
         "document.tagging" : false,
         "event.notification.enabled" : "true",
         "event.vendor.type" : "polling",
-        "event.objects" : "contact,account"
+        "event.poller.urls" : "account\ncontact",
+        "event.notification.callback.url": "https://bb5c49bb.ngrok.io/integrations/cloud_elements/crm/event_notification"
       },
 
     "name" : "%{element_name}"

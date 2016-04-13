@@ -9,6 +9,11 @@ class Integrations::SalesforceController < Admin::AdminController
     @installed_app = current_account.installed_applications.build(:application => @application)
     @installed_app.configs = { :inputs => {} }
     @installed_app.configs[:inputs] = get_app_configs
+    #redirect here to the clould elements oauth action
+    if current_account.features?(:cloud_elements_crm_sync)
+      set_metadata_in_redis
+      redirect_to "/integrations/cloud_elements/oauth_url?state=sfdc" and return
+    end
     @salesforce_config = fetch_metadata_fields
     @action = 'install'
     @installed_app = nil
@@ -39,6 +44,10 @@ class Integrations::SalesforceController < Admin::AdminController
   end
 
   def edit
+    if current_account.features?(:cloud_elements_crm_sync)
+      fetch_metadata_fields
+      redirect_to "/integrations/cloud_elements/crm/edit" and return
+    end
     @salesforce_config = fetch_metadata_fields
     @action = 'update'
     render :template => "integrations/applications/salesforce_fields"
@@ -111,13 +120,19 @@ class Integrations::SalesforceController < Admin::AdminController
 
   def fetch_metadata_fields
     salesforce_config = Hash.new
-    salesforce_config['contact_fields'] = service_obj.receive(:contact_fields)
+    contact_fields = service_obj.receive(:contact_fields)
+    lead_fields = service_obj.receive(:lead_fields)
+    account_fields = service_obj.receive(:account_fields)
+    opportunity_fields = service_obj.receive(:opportunity_fields)
+    salesforce_config['contact_fields'] = contact_fields["field_labels"]
+    salesforce_config['contact_fields_types'] = contact_fields["field_data_types"]
     IntegrationServices::Services::SalesforceService::CONTACT_CUSTOM_FIELDS.each do |k|
       salesforce_config['contact_fields'].delete(k)  
-    end  
-    salesforce_config['lead_fields'] = service_obj.receive(:lead_fields)
-    salesforce_config['account_fields'] = service_obj.receive(:account_fields)
-    salesforce_config['opportunity_fields'] = service_obj.receive(:opportunity_fields)
+    end
+    salesforce_config['account_fields'] = account_fields["field_labels"]
+    salesforce_config['account_fields_types'] = account_fields["field_data_types"]
+    salesforce_config['lead_fields'] = lead_fields["field_labels"]
+    salesforce_config['opportunity_fields'] = opportunity_fields
     salesforce_config
   end
 
@@ -148,5 +163,11 @@ class Integrations::SalesforceController < Admin::AdminController
     app_config = JSON.parse(kv_store.get_key)
     raise "OAuth Token is nil" if app_config["oauth_token"].nil?
     app_config
+  end
+
+  def set_metadata_in_redis
+    redis_key = "cloud_elements_salesforce:#{current_account.id}"
+    $redis_others.setex(redis_key, 5.minutes, fetch_metadata_fields.to_json)
+    $redis_others.expire(redis_key, 5.minutes)
   end
 end

@@ -3,31 +3,49 @@ class Integrations::CloudElementsController < ApplicationController
   before_filter :verify_authenticity, :build_installed_app, :only => [:oauth_url]
 
   def oauth_url
-    unless current_account.features?(:cloud_elements_crm_sync)
-      element = Integrations::CloudElements::Constant::APP_NAMES[params[:state].to_sym]
-      redirect_to "/auth/#{element}?origin=id=#{current_account.id}"
-    else
-      metadata = @metadata.merge({:element => params[:state]})
-      response = service_obj({}, metadata).receive(:oauth_url)
-      redirect_url = response['oauthUrl']
-      redirect_to redirect_url
-    end
+    # unless current_account.features?(:cloud_elements_crm_sync)
+    #   element = Integrations::CloudElements::Constant::APP_NAMES[params[:state].to_sym]
+    #   redirect_to "/auth/#{element}?origin=id=#{current_account.id}"
+    # else
+    metadata = @metadata.merge({:element => params[:state]})
+    response = service_obj({}, metadata).receive(:oauth_url)
+    redirect_url = response['oauthUrl']
+    redirect_to redirect_url
+    # end
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
       flash[:error] = t(:'flash.application.install.error')
       redirect_to integrations_applications_path
   end
 
+  def settings
+
+    #where the endpoints applications/{id} will hit by setting install_action in the applications controller
+    #redirect_to installed_applications/install if there is no feature
+    #or redirect to the respective controller action inside cloud elements.
+  end
+
+
+
   private
 
     def build_installed_app
-      @installed_app = current_account.installed_applications.build(:application => app )
-      @installed_app.configs = { :inputs => {} }
+      case element
+      when "dynamicscrm"
+        @installed_app = current_account.installed_applications.with_name(element).first
+      else
+        @installed_app = current_account.installed_applications.build(:application => app )
+        @installed_app.configs = { :inputs => {} }
+      end
       @metadata = {:user_agent => request.user_agent}
     end
 
     def app
-      Integrations::Application.find_by_name(Integrations::CloudElements::Crm::Constant::APP_NAMES[params[:state].to_sym])
+      Integrations::Application.find_by_name(element)
+    end
+
+    def element
+      Integrations::CloudElements::Crm::Constant::APP_NAMES[params[:state].to_sym]
     end
 
     def service_obj payload, metadata

@@ -23,12 +23,16 @@ module IntegrationServices::Services
       fields_block = lambda do |fields_hash|
         fields_hash = fields_hash["fields"]
         field_labels = Hash.new
+        field_data_types = Hash.new
         fields_hash.each do |field|
          field_label = CGI.escapeHTML(RailsFullSanitizer.sanitize(field["label"]))
-         field_labels[field["name"]] = field_label if field_label.present?
+         if field_label.present?
+          field_labels[field["name"]] = field_label 
+          field_data_types[field_label] = field["type"]
+         end
         end
         field_labels.merge!(opt_fields) if opt_fields.present?
-        field_labels
+        {"field_labels" => field_labels, "field_data_types" => field_data_types}
       end
      end
 

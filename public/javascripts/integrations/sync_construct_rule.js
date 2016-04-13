@@ -10,8 +10,8 @@
         this.inputAttrName = {};
         this.default_data = [];
         this.default_data_key = {};
-        this.dropdown1_validator = options.fdContactTypeValidator;
-        this.dropdown2_validator = options.sfContactTypeValidator;
+        this.dropdown1_validator = options.fdTypeValidator;
+        this.dropdown2_validator = options.sfTypeValidator;
         this.maximumSize = options.maximumSelectionSizeContact;
         this.data_type = [];
         this.init();

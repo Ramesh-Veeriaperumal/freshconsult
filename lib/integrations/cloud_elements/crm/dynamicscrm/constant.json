@@ -2,11 +2,22 @@
 
     "objects" : {"contact" : "contact", "account" : "account", "lead" : "lead"},
 
-    "parameters" : ["username","password","dynamicscrm_url"],
+    "parameters" : ["domain","password","dynamicscrm_url"],
 
-    "existing_companies" : [{"fd_field" : "name", "sf_field" : "attributes.name"}],
+    "existing_companies" : [{"fd_field" : "name", "sf_field" : "attributes.yominame"}],
 
-    "existing_contacts" : [{"fd_field" : "name", "sf_field" : "attributes.fullname"}, {"fd_field" : "email", "sf_field" : "attributes.emailaddress1"}, {"fd_field" : "mobile", "sf_field" : "attributes.telephone1"}],
+    "existing_contacts" : [{"fd_field" : "name", "sf_field" : "attributes.fullname"}, {"fd_field" : "email", "sf_field" : "attributes.emailaddress1"}, {"fd_field" : "mobile", "sf_field" : "attributes.telephone1"}, {"fd_field" : "phone", "sf_field" : "attributes.mobilephone"}],
 
-    "default_fields" : ["attributes.telephone1"]
+    "default_fields" : {"contact": ["attributes.telephone1"], "account" : ["attributes.telephone1"], "lead" : ["attributes.telephone1"]},
+
+    "default_labels" : {"contact": ["Business Phone"], "account": ["Main Phone"], "lead": ["Business Phone"]},
+
+    "validator": {"string": ["text", "paragraph"],"date": ["date"], "number": ["number"],
+					"boolean": ["checkbox"], "unknown": [] },
+
+	"fd_validator": {"text": ["string"], "email": [], "phone_number": ["string"], "checkbox": ["boolean"], "paragraph": ["string"], "dropdown": [],
+				  	 "number": ["number"], "survey_radio": [], "date": ["date"], "url": [] }
 }   
+
+
+

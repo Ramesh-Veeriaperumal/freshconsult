@@ -668,6 +668,7 @@ Helpkit::Application.routes.draw do
 
     namespace :cloud_elements do
        get :oauth_url
+       get :settings
     end
 
     namespace :cloud_elements do

@@ -20,10 +20,7 @@
   <div class="well">
     <div class="tab-content row-fluid">
       <label class="caption span3">
-        <%case @element_config["element"]%>
-        <%when "salesforce"%>
-          <div class="logo application-logo-salesforce"></div>
-        <%end%>
+        <div class="logo application-logo-<%=@element_config["element"]%>"></div>
         <div class="logo info-data">
           <%=t("integrations.#{@element_config["element"]}.desc")%>
         </div>
@@ -31,10 +28,11 @@
 
           <div class="tab-pane span9" id="field-mapping-tab">
 
-            <% existing_companies = @element_config['existing_companies']
+            <% 
+                existing_companies = @element_config['existing_companies']
                existing_contacts = @element_config['existing_contacts']
-               existing_companies = @installed_app.configs_companies unless @installed_app.nil?
-               existing_contacts = @installed_app.configs_contacts unless @installed_app.nil? 
+               # existing_companies = @installed_app.configs_companies unless @installed_app.nil?
+               # existing_contacts = @installed_app.configs_contacts unless @installed_app.nil? 
             %>
             <%= render :partial => "/integrations/applications/crm/mapping",
                        :locals => { :existing_companies => existing_companies, :existing_contacts => existing_contacts } %>   
@@ -197,13 +195,13 @@ function fillLabels(){
   /*
       content for field mapping starts here.
   */
-  var fdContactTypeValidator= <%= raw @element_config['fd_validator'].to_json%>;
-  var sfContactTypeValidator= <%= raw @element_config['element_validator'].to_json%>;
+  var fdTypeValidator= <%= raw @element_config['fd_validator'].to_json%>;
+  var sfTypeValidator= <%= raw @element_config['element_validator'].to_json%>;
   var maximumSelectionSizeContact = 10;
 
   jQuery(function(){
-   jQuery('[rel="construct_contact_rules"]').syncConstructRules({fdContactTypeValidator, sfContactTypeValidator, maximumSelectionSizeContact});
-   jQuery('[rel="construct_company_rules"]').syncConstructRules({fdContactTypeValidator, sfContactTypeValidator, maximumSelectionSizeContact});
+   jQuery('[rel="construct_contact_rules"]').syncConstructRules({fdTypeValidator, sfTypeValidator, maximumSelectionSizeContact});
+   jQuery('[rel="construct_company_rules"]').syncConstructRules({fdTypeValidator, sfTypeValidator, maximumSelectionSizeContact});
   });
 
   jQuery('#company-mapping-btn, #contact-mapping-btn').on('click', function(){

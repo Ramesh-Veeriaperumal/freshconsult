@@ -13,16 +13,25 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     fetch_metadata_fields(el_response['token'])
     formula_resp = create_formula_inst(el_response['id'], fd_response['id'])
     app_configs = get_app_configs(el_response['token'], el_response['id'], fd_response['id'], formula_resp['id'])
-    @installed_app.configs[:inputs] = app_configs
+    @installed_app.configs[:inputs].merge!(app_configs)
     @installed_app.save!
     @action = 'install'
-    @installed_app = nil
     flash[:notice] = t(:'flash.application.install.cloud_element_success')
     render_settings
   rescue => e
-    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
-    flash[:error] = t(:'flash.application.update.error')
-    redirect_to integrations_applications_path
+    binding.pry
+    if params[:state].eql? "dynamicscrm" and el_response.nil?
+      flash[:error] = "Please provide a valid Organisation URL"
+      redirect_to "/integrations/dynamicscrm/settings?state=dynamicscrm&dynamicscrm_url=#{params["dynamicscrm_url"]}" #configs=#{CGI.escape params["configs"]}&
+    else
+      [el_response, fd_response].each do |response|
+        delete_element_instance_error @installed_app, request.user_agent, response['id'] if response.present?
+      end
+      delete_formula_instance_error @installed_app, request.user_agent, formula_resp['id'] if formula_resp.present?
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
+      flash[:error] = t(:'flash.application.update.error')
+      redirect_to integrations_applications_path
+    end
   end
 
   def install
@@ -37,16 +46,13 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
   end
 
   def edit
-    unless current_account.features?(:cloud_elements_crm_sync)
-      redirect_to "/integrations/#{element}/edit"
-    else
-      @action = 'update'
-      fetch_metadata_fields(@app_config['element_token'])
-      @element_config['enble_sync'] = @app_config['enble_sync']
-      default_mapped_fields
-      construct_synced_contacts
-      render_settings
-    end
+    binding.pry
+    @action = 'update'
+    fetch_metadata_fields(@app_config['element_token'])
+    @element_config['enble_sync'] = @app_config['enble_sync']
+    default_mapped_fields
+    construct_synced_contacts
+    render_settings
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
     flash[:error] = t(:'flash.application.update.error')
@@ -85,7 +91,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       json_payload['configuration']['event.poller.configuration'] = event_poller_config
       api_key = current_user.single_access_token
       subdomain = current_account.domain
-      JSON.generate(json_payload) % {:api_key => api_key, :subdomain => "balaji", :fd_instance_name => "freshdesk_#{element}_#{current_account.id}" }
+      JSON.generate(json_payload) % {:api_key => api_key, :subdomain => "bb5c49bb", :fd_instance_name => "freshdesk_#{element}_#{current_account.id}" }
     end
 
     def instance_hash
@@ -105,37 +111,39 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
     def crm_element_metadata_fields(element_token)
       @element_config = Hash.new
-      @element_config['features']= current_account.features?(:cloud_elements_crm_sync)
-      @element_config['element'] = element
-      metadata = @metadata.merge({ :element_token => element_token })
-      constant_file = JSON.parse(File.read("lib/integrations/cloud_elements/crm/#{element}/constant.json"))
-
-      constant_file['objects'].each do |key, obj|
-        metadata[:object] = obj
-        element_metadata = service_obj({},metadata).receive("#{key}_metadata".to_sym)
-        hash = map_fields( element_metadata )
-        @element_config["#{key}_fields"] = hash['fields_hash']
-        @element_config["#{key}_fields_types"] = hash['data_type_hash']
-      end
-      if element == "salesforce"
+      # @element_config['features']= current_account.features?(:cloud_elements_crm_sync)
+      if element == 'salesforce'
+        @element_config = JSON.parse $redis_others.get("cloud_elements_salesforce:#{current_account.id}")
         #removing the custom fields that we will be syncing from the customers view
         @element_config["contact_fields"].delete("FD_ContactId__c")
         @element_config["contact_fields_types"].delete("FD_ContactId")
         @element_config["account_fields"].delete("FD_AccountId__c")
-        @element_config["contact_fields_types"].delete("FD_AccountId")
+        @element_config["account_fields_types"].delete("FD_AccountId")
+      else
+        metadata = @metadata.merge({ :element_token => element_token })
+        constant_file = JSON.parse(File.read("lib/integrations/cloud_elements/crm/#{element}/constant.json"))
+        constant_file['objects'].each do |key, obj|
+          metadata[:object] = obj
+          element_metadata = service_obj({},metadata).receive("#{key}_metadata".to_sym)
+          hash = map_fields( element_metadata )
+          @element_config["#{key}_fields"] = hash['fields_hash']
+          @element_config["#{key}_fields_types"] = hash['data_type_hash']
+        end
       end
+
     end
 
     def fd_metadata_fields
       contact_metadata = current_account.contact_form.fields
       company_metadata = current_account.company_form.fields
-      contact_hash = fd_fields_hash( contact_metadata )
-      account_hash = fd_fields_hash( company_metadata )  
+      contact_hash = fd_fields_hash( contact_metadata, "contact" )
+      account_hash = fd_fields_hash( company_metadata, "company" )
+      @element_config['element'] = element
       @element_config['fd_contact'] = contact_hash['fields_hash']
       @element_config['fd_contact_types'] = contact_hash['data_type_hash']
       @element_config['fd_company'] = account_hash['fields_hash']
       @element_config['fd_company_types'] = account_hash['data_type_hash']
-      @element_config['fd_validator'] = FD_VALIDATOR
+      # @element_config['fd_validator'] = FD_VALIDATOR
     end
 
     def map_fields(metadata)
@@ -149,16 +157,20 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       {'fields_hash' => fields_hash, 'data_type_hash' => data_type_hash }
     end
 
-    def fd_fields_hash(object)
-      contact_data_types = CONTACT_TYPES
+    def fd_fields_hash(object, type)
       fields_hash = {}
       data_type_hash = {}
+      if type.eql? "contact"
+        data_types = CONTACT_TYPES
+      else
+        data_types = COMPANY_TYPES
+      end
       #To remove those custom fields that we will be syncing from the customers view
       custom_fields = ["cf_sf_accountid", "cf_sf_contactid"]
       object.each do |field|
         unless custom_fields.include? field[:name]
           fields_hash[field[:name]] = field[:label]
-          data_type_hash[field[:label]] = contact_data_types[field[:field_type].to_s]
+          data_type_hash[field[:label]] = data_types[field[:field_type].to_s]
         end
       end
       {'fields_hash' => fields_hash, 'data_type_hash' => data_type_hash }
@@ -180,15 +192,32 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       config_hash['fd_instance_id'] = fd_instance_id
       config_hash['crm_to_helpdesk_formula_instance'] = formula_instance_id
       config_hash['enble_sync'] = nil
-      config_hash['contact_fields'] = element_config['default_fields']['contact'].join(",")
-      config_hash['account_fields'] = element_config['default_fields']['account'].join(",")
-      config_hash['lead_fields'] = element_config['default_fields']['lead'].join(",")
-      config_hash['contact_labels'] = element_config['default_labels']['contact'].join(",")
-      config_hash['account_labels'] = element_config['default_labels']['account'].join(",")
-      config_hash['lead_labels'] = element_config['default_labels']['lead'].join(",")
-      config_hash['opportunity_view'] = "0"
+      binding.pry
+      element_config['objects'].each do |object|
+        if @installed_app.configs[:inputs]["#{object}s"].present?
+          #dynamics
+          config_hash["#{object}_fields"] = @installed_app.configs[:inputs]["#{object}s"].join(",")
+          config_hash["#{object}_labels"] = @installed_app.configs[:inputs]["#{object}_labels"]
+          @installed_app.configs[:inputs].delete("#{object}s")
+        else
+          config_hash["#{object}_fields"] = element_config['default_fields'][object].join(",")
+          config_hash["#{object}_labels"] = element_config['default_labels'][object].join(",")
+        end 
+      end
+      # config_hash['contact_fields'] = element_config['default_fields']['contact'].join(",")
+      # config_hash['account_fields'] = element_config['default_fields']['account'].join(",")
+      # config_hash['lead_fields'] = element_config['default_fields']['lead'].join(",")
+      # config_hash['contact_labels'] = element_config['default_labels']['contact'].join(",")
+      # config_hash['account_labels'] = element_config['default_labels']['account'].join(",")
+      # config_hash['lead_labels'] = element_config['default_labels']['lead'].join(",")
       config_hash['companies'] = get_selected_field_arrays(element_config['existing_companies'])
       config_hash['contacts'] = get_selected_field_arrays(element_config['existing_contacts'])
+      case element
+      when "salesforce"
+        config_hash['opportunity_view'] = "0"
+      when "dynamicscrm"
+        config_hash['dynamicscrm_url'] = params["dynamicscrm_url"]
+      end
       config_hash
     end
 
@@ -318,7 +347,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       config_hash['contact_labels'] = params['contact_labels'] unless params[:contacts].nil?
       config_hash['lead_labels'] = params['lead_labels'] unless params[:leads].nil?
       config_hash['account_labels'] = params['account_labels'] unless params[:accounts].nil?
-      config_hash = get_opportunity_params config_hash
+      config_hash = get_opportunity_params config_hash if element.eql? "salesforce"
       config_hash['companies'] = get_selected_field_arrays(params[:inputs][:companies])
       config_hash['contacts'] = get_selected_field_arrays(params[:inputs][:contacts])
       config_hash
@@ -364,18 +393,18 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def construct_synced_contacts
-      arr = Array.new
+      @element_config['existing_contacts'] = Array.new
       contact_synced = @installed_app.configs_contacts
       account_synced = @installed_app.configs_companies
       contact_synced['fd_fields'].each_with_index do |fd_field, index|
-        arr.push({'fd_field' => fd_field, 'sf_field' => contact_synced['sf_fields'][index]})
+        @element_config['existing_contacts'].push({'fd_field' => fd_field, 'sf_field' => contact_synced['sf_fields'][index]})
       end
-      @installed_app.configs_contacts = arr
-      arr = []
+      # @installed_app.configs_contacts = arr
+      @element_config['existing_companies'] = []
       account_synced['fd_fields'].each_with_index do |fd_field, index|
-        arr.push({'fd_field' => fd_field, 'sf_field' => account_synced['sf_fields'][index]})
+        @element_config['existing_companies'].push({'fd_field' => fd_field, 'sf_field' => account_synced['sf_fields'][index]})
       end
-      @installed_app.configs_companies = arr
+      # @installed_app.configs_companies = arr
     end
 
     def default_mapped_fields
@@ -385,6 +414,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       @element_config['default_fields'] = file['default_fields']
       @element_config['default_labels'] = file['default_labels']
       @element_config['element_validator'] = file['validator']
+      @element_config['fd_validator'] = file['fd_validator']
       @element_config['objects']= file['objects'].keys
       @element_config
     end
@@ -400,6 +430,27 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       Integrations::CloudElementsController.delete_formula_instance(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
       Integrations::CloudElementsController.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => element_instance_id }))
       Integrations::CloudElementsController.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => fd_instance_id }))
+    end
+
+    def build_configs
+      arr =[] 
+      params.each do |key, value|
+        arr << "#{key}=#{value}"
+      end
+      arr.join("&")
+    end
+
+    def delete_element_instance_error installed_app, user_agent, element_instance_id
+      app_name = installed_app.application.name
+      metadata = {:user_agent => user_agent}
+      Integrations::CloudElementsController.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => element_instance_id }))
+    end
+
+    def delete_formula_instance_error installed_app, user_agent, formula_instance_id
+      app_name = installed_app.application.name
+      formula_id = CRM_TO_HELPDESK_FORMULA_ID[app_name.to_sym]
+      metadata = {:user_agent => user_agent}
+      Integrations::CloudElementsController.delete_formula_instance(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
     end
 
 end

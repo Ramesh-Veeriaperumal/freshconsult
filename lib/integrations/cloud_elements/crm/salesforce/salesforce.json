@@ -10,8 +10,8 @@
     "event.vendor.type" : "polling", 
     "event.notification.enabled" : "true", 
     "event.objects" : "Contact,Account",
-    "event.poller.refresh_interval": "1",
-    "event.notification.callback.url": "https://jagdamba.ngrok.io/integrations/cloud_elements/crm/event_notification"
+    "event.poller.refresh_interval": "5",
+    "event.notification.callback.url": "https://bb5c49bb.ngrok.io/integrations/cloud_elements/crm/event_notification"
     },
 
     "tags" : [], 

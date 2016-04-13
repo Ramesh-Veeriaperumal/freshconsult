@@ -8,7 +8,6 @@ class OmniauthCallbacksController < ApplicationController
 
   def complete
     authenticator_class = Auth::Authenticator.get_auth_class(params[:provider])
-
     authenticator = authenticator_class.new(
       :origin_account => origin_account,
       :current_account => current_account,
@@ -73,8 +72,8 @@ class OmniauthCallbacksController < ApplicationController
     account = origin_account
     portal = (@portal_id ? Portal.find(@portal_id) : account.main_portal)
     port = ''
-    # @portal_url = "#{portal.url_protocol}://#{portal.host}#{port}"
-    @portal_url = "http://localhost.freshdesk-dev.com:3000"
+    @portal_url = "#{portal.url_protocol}://#{portal.host}#{port}"
+    @portal_url = "http://localhost:3000" if Rails.env.eql? "development"
   end
 
 end
