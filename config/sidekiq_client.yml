@@ -33,6 +33,8 @@ defaults: &defaults
     - [facebook_delta]
     - [trial_twitter]
     - [custom_twitter]
+    - [twitter_replay_worker]
+    - [twitter_gnip_worker]
     - [rabbitmq_publish]
     - [plan_change]
     - [update_tickets_company]
