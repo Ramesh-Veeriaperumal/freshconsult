@@ -2,6 +2,7 @@ module FreshdeskCore::Model
   include Subscription::Events::Constants
   include Redis::RedisKeys
   include Redis::OthersRedis	
+  include Cache::Memcache::WhitelistUser
 
   HELPKIT_TABLES =  [   "account_additional_settings",  
                         "account_configurations", 
@@ -112,6 +113,7 @@ module FreshdeskCore::Model
                           "solution_article_meta",
                          
                         "subscriptions",
+                        "subscription_invoices",
 
                         "surveys",
                           "survey_questions",
@@ -183,7 +185,6 @@ module FreshdeskCore::Model
                         "day_pass_purchases", 
                         "ecommerce_accounts", 
                         "ebay_questions",
-                        "remote_integrations_mappings",
                         "form_ticket_field_values",
                         "helpdesk_sections",
                         "helpdesk_section_fields",
@@ -194,7 +195,6 @@ module FreshdeskCore::Model
                         "smtp_mailboxes",
                         "ticket_form_fields",
                         "user_companies",
-                        "whitelist_users",
                         "outgoing_email_domain_categories"
                     ]
 
@@ -214,6 +214,8 @@ module FreshdeskCore::Model
     remove_mobile_registrations(account.id)
     remove_addon_mapping(account)
     remove_card_info(account)
+    remove_whitelist_users(account.id)
+    remove_remote_integration_mappings(account.id)
     
     delete_data_from_tables(account.id)
     account.destroy
@@ -255,6 +257,7 @@ module FreshdeskCore::Model
       end
     end
     
+    
     def jira_enabled?(account)
       app_id = Integrations::Application.find_by_name('jira').id
       account.installed_applications.find_by_application_id(app_id)
@@ -289,6 +292,15 @@ module FreshdeskCore::Model
           end
         end
       end
+    end
+    
+    def remove_whitelist_users(account_id)
+      WhitelistUser.where(account_id: account_id).delete_all
+      clear_whitelist_users_cache
+    end
+    
+    def remove_remote_integration_mappings(account_id)
+      RemoteIntegrationsMapping.where(account_id: account_id).delete_all
     end
 
     def delete_info_from_table(account_id)

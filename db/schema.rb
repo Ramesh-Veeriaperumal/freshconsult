@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160412081950) do
+ActiveRecord::Schema.define(:version => 20160413071150) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2684,6 +2684,7 @@ ActiveRecord::Schema.define(:version => 20160412081950) do
     t.datetime "updated_at",              :null => false
   end
 
+  add_index "remote_integrations_mappings", ["account_id", "type"], :name => "account_id_type_index"
   add_index "remote_integrations_mappings", ["remote_id", "type"], :name => "index_remote_integrations_mappings_on_remote_id_and_type", :unique => true
 
   create_table "report_filters", :force => true do |t|
