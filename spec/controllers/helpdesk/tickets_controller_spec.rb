@@ -68,6 +68,18 @@ RSpec.describe Helpdesk::TicketsController do
     note.body.should_not be_nil
   end
 
+  it "should throw internal server error for invalid format" do
+    request.env["HTTP_ACCEPT"] = "application/json"
+    ticket = create_ticket({:status => 2, :source => 3})
+    get :show, { :id => ticket.display_id, :format => 'josn' }
+    response.status.should eql(500)
+  end
+
+  it "should throw internal server error for non integer id" do
+    get :show, :id => "id"
+    response.status.should eql(500)
+  end
+
   it "should not create a meta for created by if user and requester are the same" do
     user = FactoryGirl.build(:user,:name => "new_user_contact", :account => @acc, :phone => Faker::PhoneNumber.phone_number, 
                                     :email => Faker::Internet.email, :user_role => 3, :active => true, :customer_id => company.id)
