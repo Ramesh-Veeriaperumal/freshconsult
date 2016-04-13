@@ -68,7 +68,7 @@ class TicketValidationTest < ActionView::TestCase
     controller_params = { requester_id: 1, description: Faker::Lorem.paragraph, ticket_fields: [], attachments: ['file.png'] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
-    refute ticket.valid?
+    refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
     assert errors.include?('Attachments array_datatype_mismatch')
     assert_equal({ requester_id: {}, description: {}, attachments: { expected_data_type: 'valid file format' } }, ticket.error_options)
