@@ -97,7 +97,8 @@ function select2Initialization (filter, id, initCallback, resultCallback) {
 		});
 }
 
-var preProcessCondition = function(types, list, label = null){
+var preProcessCondition = function(types, list, label){
+	var label = label || null;
 	types = $H(types);
 	types.each(function(item){
 		var listDrop = $A();
