@@ -93,6 +93,7 @@ class TicketValidation < ApiValidation
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
     @due_by ||= item.try(:due_by).try(:iso8601) if item
     @item = item
+	check_params_set(request_params[:custom_fields]) if request_params[:custom_fields].is_a?(Hash)
     fill_custom_fields(request_params, item.custom_field_via_mapping) if item && item.custom_field_via_mapping.present?
   end
 

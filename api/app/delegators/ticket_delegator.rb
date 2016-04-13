@@ -21,6 +21,7 @@ class TicketDelegator < BaseDelegator
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
+    check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     super record
   end
 
