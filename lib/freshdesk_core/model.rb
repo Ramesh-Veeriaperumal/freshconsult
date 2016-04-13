@@ -237,7 +237,7 @@ module FreshdeskCore::Model
         default_stream = streams.select {|stream| stream.default_stream? }.first
         if default_stream
           args = default_stream.construct_unsubscribe_args(nil)
-          Social::Workers::Gnip::TwitterRule.perform(args)
+          Social::Gnip::RuleWorker.perform_async(args)
         end
       end
     end

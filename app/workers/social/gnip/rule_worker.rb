@@ -1,23 +1,21 @@
-#To be removed the next week
+class Social::Gnip::RuleWorker < BaseWorker
 
-class Social::Workers::Gnip::TwitterRule
-  extend Resque::AroundPerform
-
-  @queue = "twitter_gnip_worker"
-
+  sidekiq_options :queue => :twitter_gnip_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+  
+  
+  include Gnip::Constants
   include Social::Gnip::DbUtil
   include Social::Twitter::Constants
-  include Gnip::Constants
 
-  def self.perform(args)
-    powertrack_envs = args[:env]
-    rule            = args[:rule].symbolize_keys!
+  def perform(args)
+    powertrack_envs = args['env']
+    rule            = args['rule'].symbolize_keys!
     source          = SOURCE[:twitter]
 
     powertrack_envs.each do |env|
       client = Gnip::RuleClient.new(source, env, rule)
       next unless Rails.env.production? || !client.replay
-      response = client.send(args[:action]) #add/delete the given rule
+      response = client.send(args['action']) #add/delete the given rule
 
       unless response.nil?
         #update delete action response
@@ -26,7 +24,7 @@ class Social::Workers::Gnip::TwitterRule
           if delete_response[:response]
             update_db(env, RULE_ACTION[:delete], delete_response)
           else
-            Resque.enqueue_at(5.minutes.from_now, self, args)
+            Social::Gnip::RuleWorker.perform_at(15.minutes.from_now, args)
           end
         end
 

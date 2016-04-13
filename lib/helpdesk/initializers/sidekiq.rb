@@ -28,7 +28,9 @@ Sidekiq.configure_client do |config|
       "PodDnsUpdate",
       "Gamification::ProcessTicketQuests",
       "AccountCleanup::DeleteSpamTicketsCleanup",
-      "AccountCleanup::SuspendedAccountsWorker"
+      "AccountCleanup::SuspendedAccountsWorker",
+      "Social::Gnip::ReplayWorker",
+      "Social::Gnip::RuleWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -70,7 +72,9 @@ Sidekiq.configure_server do |config|
       "PodDnsUpdate",
       "Gamification::ProcessTicketQuests",
       "AccountCleanup::DeleteSpamTicketsCleanup",
-      "AccountCleanup::SuspendedAccountsWorker"
+      "AccountCleanup::SuspendedAccountsWorker",
+      "Social::Gnip::ReplayWorker",
+      "Social::Gnip::RuleWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -103,7 +107,9 @@ Sidekiq.configure_server do |config|
       "DevNotificationWorker",
       "Gamification::ProcessTicketQuests",
       "AccountCleanup::DeleteSpamTicketsCleanup",
-      "AccountCleanup::SuspendedAccountsWorker"
+      "AccountCleanup::SuspendedAccountsWorker",
+      "Social::Gnip::ReplayWorker",
+      "Social::Gnip::RuleWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
