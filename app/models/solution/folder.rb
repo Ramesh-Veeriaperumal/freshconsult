@@ -7,7 +7,6 @@ class Solution::Folder < ActiveRecord::Base
 
   concerned_with :associations
 
-  attr_protected :category_id, :account_id
   validates_presence_of :name
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_folder_meta.new_record?"
 
@@ -21,7 +20,7 @@ class Solution::Folder < ActiveRecord::Base
   
   scope :alphabetical, :order => 'name ASC'
 
-  attr_accessible :name, :description, :category_id, :import_id, :visibility, :position, :is_default
+  attr_accessible :name, :description, :import_id
   attr_accessor :count_articles
 
   delegate :visible?, :to => :solution_folder_meta

@@ -25,7 +25,7 @@ class Solution::Draft < ActiveRecord::Base
   before_destroy :discard_notification, :add_activity_delete
   after_create :add_activity_new
 
-  attr_protected :account_id, :status, :user_id
+  attr_accessible :title, :meta, :description
   attr_accessor :discarding, :publishing
 
   alias_attribute :modified_by, :user_id

@@ -51,8 +51,10 @@ private
 
     def create_draft_for_article(article)
     	return unless article.status_changed? && article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && !article.draft
-			article.build_draft(article.draft_attributes)
-			article.draft.user_id = article.user_id
+			draft = article.build_draft
+      article.draft_attributes(:user_id => article.user_id).each do |k, v|
+        draft.send("#{k}=", v)
+      end
 			article.draft.populate_defaults
     end
 

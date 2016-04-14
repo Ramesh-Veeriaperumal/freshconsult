@@ -66,9 +66,12 @@ module AccountHelper
     Agent.destroy_all
     Helpdesk::Ticket.destroy_all
     AgentGroup.destroy_all
+    Solution::CategoryMeta.destroy_all
     Solution::Category.destroy_all
-    Solution::Folder.destroy_all  
-    Solution::Article.destroy_all  
+    Solution::FolderMeta.destroy_all
+    Solution::Folder.destroy_all
+    Solution::ArticleMeta.destroy_all
+    Solution::Article.destroy_all 
   end
 
   def update_currency

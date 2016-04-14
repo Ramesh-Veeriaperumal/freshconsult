@@ -10,6 +10,8 @@ class Solution::FolderMeta < ActiveRecord::Base
 	include Solution::LanguageAssociations
 	include Solution::ApiDelegator
 	
+  attr_accessible :visibility, :position, :solution_category_meta_id
+
 	belongs_to_account
 
   validates_inclusion_of :visibility, 

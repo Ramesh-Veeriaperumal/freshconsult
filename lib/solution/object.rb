@@ -12,6 +12,12 @@ class Solution::Object
 		:solution_folder => :solution_category, 
 		:solution_article => :solution_folder
 	}
+
+	VERSION_ATTRIBUTES = {
+		:solution_category => [:name, :description, :import_id],
+		:solution_folder => [:name, :description, :import_id],
+		:solution_article => [:title, :description, :user_id, :status, :import_id, :seo_data, :outdated]
+	}
 	
 	PREFIXES = Language.all.collect(&:to_key).collect(&:to_s).prepend('primary')
 
@@ -74,7 +80,7 @@ class Solution::Object
 	end
 	
 	def initialize_meta
-		return @child.send("#{obj}_meta") || @child.send("build_#{obj}_meta", @params) if @child.present?
+		return @child.send("#{obj}_meta") || @child.send("build_#{obj}_meta") if @child.present?
 		Account.current.send("#{obj}_meta").find_by_id(@params[:id]) || raise('Meta object not found')
 	end
 
@@ -108,7 +114,7 @@ class Solution::Object
 	
 	def build_for(lang)
 		object = @meta_obj.send("#{lang}_#{short_name}") || @meta_obj.send("build_#{lang}_#{short_name}") 
-		params_for(lang).except(:id, :tags, :position).each do |k,v|
+		params_for(lang).slice(*VERSION_ATTRIBUTES[obj]).each do |k,v|
 			object.send("#{k}=", v)
 		end
 		build_associations(object, lang)

@@ -20,7 +20,7 @@ class Solution::Category < ActiveRecord::Base
 
   concerned_with :associations
 
-  attr_accessible :name, :description, :import_id, :is_default, :portal_ids, :position
+  attr_accessible :name, :description, :import_id
 
   scope :customer_categories, {:conditions => {:is_default=>false}}
 

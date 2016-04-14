@@ -33,8 +33,7 @@ class Solution::Article < ActiveRecord::Base
   
   attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed
 
-  attr_accessible :title, :description, :user_id, :folder_id, :status, :art_type, 
-    :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data, :position, :outdated
+  attr_accessible :title, :description, :user_id, :status, :import_id, :seo_data, :outdated
 
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
@@ -257,12 +256,15 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def build_draft_from_article(opts = {})
-    draft = self.account.solution_drafts.build(draft_attributes(opts))
+    draft = self.account.solution_drafts.build
+    draft_attributes(opts).each do |k, v|
+      draft.send("#{k}=", v)
+    end
     draft
   end
 
   def draft_attributes(opts = {})
-    draft_attrs = opts.merge(:article => self, :category_meta => solution_folder_meta.solution_category_meta)
+    draft_attrs = opts.merge(:article_id => self.id, :category_meta_id => solution_folder_meta.solution_category_meta_id)
     Solution::Draft::COMMON_ATTRIBUTES.each do |attribute|
       draft_attrs[attribute] = self.send(attribute)
     end

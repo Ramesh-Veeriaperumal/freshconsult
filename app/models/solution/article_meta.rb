@@ -14,6 +14,8 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	include Solution::ApiDelegator
 	include Solution::UrlSterilize
 
+	attr_accessible :position, :art_type, :solution_folder_meta_id
+
 	has_many :solution_articles,
 		:inverse_of => :solution_article_meta,
 		:class_name => "Solution::Article",

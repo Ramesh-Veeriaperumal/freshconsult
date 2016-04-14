@@ -9,6 +9,8 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	include Solution::LanguageAssociations
 	include Solution::Constants
 	include Solution::ApiDelegator
+
+	attr_accessible :position, :portal_ids
 	
 	after_save :update_mh_solutions_category_time, :if => :valid_change?
 	before_destroy :update_mh_app_time
