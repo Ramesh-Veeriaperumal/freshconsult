@@ -9,7 +9,7 @@ module AccountCleanup
               attachable_ids = args[:attachable_ids]
               attachable_types = args[:attachable_type]
             # find attachment ids using attachable ids
-              query = "select id from helpdesk_attachments where account_id = #{account.id} and attachable_id in (#{attachable_ids.join(',')}) and attachable_type in ('#{attachable_types.join(',')}') LIMIT 50"
+              query = "select id from helpdesk_attachments where account_id = #{account.id} and attachable_id in (#{attachable_ids.join(',')}) and attachable_type in ('#{attachable_types.join("','")}') LIMIT 50"
             else  
               # only account id
               query = "select id from helpdesk_attachments where account_id = #{account.id} limit 50"
