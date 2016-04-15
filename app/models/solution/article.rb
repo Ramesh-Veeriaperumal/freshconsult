@@ -28,7 +28,6 @@ class Solution::Article < ActiveRecord::Base
   
   acts_as_voteable
   
-  
   serialize :seo_data, Hash
   
   attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed
@@ -227,6 +226,12 @@ class Solution::Article < ActiveRecord::Base
       meta_class.increment_counter(method, self.parent_id)
       queue_quest_job if (method == :thumbs_up && self.published?)
       return true
+    end
+    
+    define_method "#{method}=" do |value|
+      return unless new_record?
+      solution_article_meta.send("#{method}=", (solution_article_meta.send("#{method}") + value))
+      super(value) 
     end
   end
 

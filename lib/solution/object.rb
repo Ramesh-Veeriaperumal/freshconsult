@@ -16,7 +16,7 @@ class Solution::Object
 	VERSION_ATTRIBUTES = {
 		:solution_category => [:name, :description, :import_id],
 		:solution_folder => [:name, :description, :import_id],
-		:solution_article => [:title, :description, :user_id, :status, :import_id, :seo_data, :outdated]
+		:solution_article => [:title, :description, :user_id, :status, :import_id, :seo_data, :outdated, :thumbs_up, :thumbs_down]
 	}
 	
 	PREFIXES = Language.all.collect(&:to_key).collect(&:to_s).prepend('primary')

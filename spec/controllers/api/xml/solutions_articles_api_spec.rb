@@ -24,6 +24,29 @@ RSpec.describe Solution::ArticlesController do
     expect(assert_array(result["solution_article"].keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS, [ "tags", "folder"])).to be_empty
     expect(result["solution_article"]["status"]).to be_eql(2)
   end
+  
+  it "should be able to create an article with thumbs_up/thumbs_down and the values must reflect in the corresponding solution_article_meta" do
+    votes_val = 25
+    params =     {
+      "solution_article"=>
+        {
+          "title"=>Faker::Lorem.sentence(2), 
+          "description"=>Faker::Lorem.sentence(3), 
+          "folder_id"=> @solution_folder.id,
+          "thumbs_up" => votes_val,
+          "thumbs_down" => votes_val
+        }
+    }
+    post :create, params.merge!(:category_id=>@solution_category.id,:folder_id=>@solution_folder.id,
+      :format => 'xml'), :content_type => 'application/xml'
+    result = parse_xml(response)
+    expect(response.status).to be_eql(200)
+    expect(result["solution_article"]["thumbs_up"]).to be_eql(votes_val)
+    expect(result["solution_article"]["thumbs_down"]).to be_eql(votes_val)
+    article_meta = @account.solution_article_meta.find(result["solution_article"]["id"])
+    article_meta.thumbs_up.should be_eql(votes_val)
+    article_meta.thumbs_down.should be_eql(votes_val)
+  end
 
   it "should be able to update a solution article" do
     params = article_api_params
@@ -34,6 +57,29 @@ RSpec.describe Solution::ArticlesController do
     result = parse_xml(response)
     expect(response.status).to be_eql(200)
     expect(assert_array(result["solution_article"].keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS, ["tags", "folder"])).to be_empty
+  end
+  
+  it "should not be able to update thumbs_up/thumbs_down while updating a solution article" do
+    params = article_api_params
+    votes_val = 50
+    new_vote_val = 100
+    test_article_meta = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", 
+      :folder_id => @solution_folder.id, :user_id => @agent.id, :status => "2", :art_type => "1"} )
+    test_article_meta.update_column(:thumbs_up, votes_val)
+    test_article_meta.primary_article.update_column(:thumbs_up, votes_val)
+    put :update, params.merge!(:category_id=>@solution_category.id,
+      :folder_id=>@solution_folder.id, :id=>test_article_meta.id,
+      :thumbs_up => 100, :format => 'xml'), 
+      :content_type => 'application/xml'
+    result = parse_xml(response)
+    expect(response.status).to be_eql(200)
+    result["solution_article"]["thumbs_up"].should be_eql(votes_val)
+    result["solution_article"]["thumbs_up"].should_not be_eql(new_vote_val)
+    test_article_meta.reload
+    test_article_meta.thumbs_up.should be_eql(votes_val)
+    test_article_meta.thumbs_up.should_not be_eql(new_vote_val)
+    test_article_meta.primary_article.thumbs_up.should be_eql(votes_val)
+    test_article_meta.primary_article.thumbs_up.should_not be_eql(new_vote_val)
   end
 
   it "should be able to view a solution article" do
