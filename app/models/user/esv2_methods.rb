@@ -67,8 +67,7 @@ class User < ActiveRecord::Base
   
   # Tag use callbacks to ES
   def update_user_tags(obj)
-    self.tags_updated = true unless self.changes.present?
-    #=> No need to trigger if default properties are changed as that'll trigger callbacks
+    self.tags_updated = true
   end
 
   ##########################
