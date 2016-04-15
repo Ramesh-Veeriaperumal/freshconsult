@@ -68,7 +68,7 @@ class TicketValidationTest < ActionView::TestCase
     controller_params = { requester_id: 1, description: Faker::Lorem.paragraph, ticket_fields: [], attachments: ['file.png'] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
-    refute ticket.valid?
+    refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
     assert errors.include?('Attachments array_datatype_mismatch')
     assert_equal({ requester_id: {}, description: {}, attachments: { expected_data_type: 'valid file format' } }, ticket.error_options)
@@ -187,8 +187,8 @@ class TicketValidationTest < ActionView::TestCase
 
     controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], status_ids: [1, 2] }
     item = Helpdesk::Ticket.new
-    item.description = ''
-    item.description_html = 'test'
+    item.ticket_body.description = ''
+    item.ticket_body.description_html = 'test'
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:update)
     refute ticket.errors.full_messages.include?('Description blank')
@@ -213,7 +213,6 @@ class TicketValidationTest < ActionView::TestCase
     errors = ticket.errors.full_messages
     assert errors.include?('Subject outbound_email_field_restriction')
     assert errors.include?('Description outbound_email_field_restriction')
-    assert errors.include?('Email config field_validation_for_outbound')
   ensure
     Account.any_instance.unstub(:compose_email_enabled?)
     Account.unstub(:current)

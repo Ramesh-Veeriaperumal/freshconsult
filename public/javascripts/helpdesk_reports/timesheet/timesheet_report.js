@@ -111,6 +111,7 @@ var savedReportUtil = (function() {
             jQuery(document).on('change', '#customers_filter,.filter_item,.ff_item', function (ev) { 
                  if(ev.target && ev.target.id != "group_by_field"){
                     _this.filterChanged = true; 
+                    _this.setFlag('false');
                  }
             });
 
@@ -132,6 +133,7 @@ var savedReportUtil = (function() {
             });
             jQuery(document).on("filter_changed",function(ev,data){
                 _this.filterChanged = true;
+                _this.setFlag('false');
             });
             jQuery(document).on("report_refreshed",function(ev,data){
                 if(_this.filterChanged) {
@@ -141,6 +143,11 @@ var savedReportUtil = (function() {
                   var index = parseInt(jQuery('.active [data-action="select-saved-report"]').attr('data-index'));
                   if(index != -1) {
                       _this.save_util.controls.showDeleteAndEditOptions();
+                      if(is_preset_selected){
+                        _this.save_util.controls.showScheduleOptions(false);
+                      } else{
+                        _this.save_util.controls.hideScheduleOptions();
+                      }
                   }
                 }
             });
@@ -251,6 +258,7 @@ var savedReportUtil = (function() {
             var hash = Helpkit.report_filter_data;
             var _this = this;
             var invalid_params_found = false;
+            is_preset_selected = false;
 
             _this.flushAppliedFilters();
             _this.last_applied_saved_report_index = index;
@@ -303,6 +311,8 @@ var savedReportUtil = (function() {
 
             _this.save_util.setActiveSavedReport(jQuery(".reports-menu li a[data-index=" + index +"]"));
             _this.filterChanged = false;
+            //Set the flag that saved report was used
+            _this.setFlag('true');
             jQuery("#submit").trigger('click');
             _this.save_util.cacheLastAppliedReport(id);
             
@@ -317,6 +327,9 @@ var savedReportUtil = (function() {
               _this.updateSavedReport(false);
             }
             
+        },
+        setFlag : function(val){
+            jQuery('#is_saved_report').val(val);
         },
         checkValidityOfSavedParams : function() {
             return true;

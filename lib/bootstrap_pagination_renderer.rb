@@ -10,6 +10,10 @@ class BootstrapPaginationRenderer < WillPaginate::ActionView::LinkRenderer
     end
   end
 
+  def gap
+    tag(:li, tag(:span, "…", :class => "gap"))
+  end
+
   def previous_or_next_page(page, text, classname)
     if page && page != current_page
       tag(:li, link(text, page), :class => classname)

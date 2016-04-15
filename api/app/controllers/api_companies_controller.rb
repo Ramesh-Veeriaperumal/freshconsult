@@ -15,7 +15,7 @@ class ApiCompaniesController < ApiApplicationController
   end
 
   def update
-    @item.assign_attributes(params[cname])
+    @item.assign_attributes(custom_field: params[cname].delete(:custom_field)) # Temp hack
     company_delegator = CompanyDelegator.new(@item)
     if !company_delegator.valid?
       render_custom_errors(company_delegator, true)
@@ -54,7 +54,7 @@ class ApiCompaniesController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields({ base: :domains }.merge(@name_mapping), item)
+      ErrorHelper.rename_error_fields({ :"company_domains.base" => :domains }.merge(@name_mapping), item)
     end
 
     def error_options_mappings

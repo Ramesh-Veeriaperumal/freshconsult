@@ -20,6 +20,6 @@
      end
 
      def invalid_users(agent_list)
-       (agent_list - Account.current.agents_from_cache.map(&:user_id))
+       (agent_list - Account.current.agents_details_from_cache.map(&:id))
      end
  end

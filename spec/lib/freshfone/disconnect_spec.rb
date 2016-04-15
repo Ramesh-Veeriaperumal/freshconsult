@@ -10,6 +10,7 @@ RSpec.describe Freshfone::Disconnect do
   
   before(:all) do
     @agent = get_admin
+    @account.freshfone_numbers.delete_all
   end
 
   before(:each) do
@@ -60,6 +61,7 @@ RSpec.describe Freshfone::Disconnect do
     create_pinged_agents
     @call_actions = Freshfone::CallActions.new(incoming_params, @account, @number)
     @telephony = Freshfone::Telephony.new(incoming_params, @account, @number)
+    Freshfone::Initiator::AgentCallLeg.any_instance.stubs(:agent_connected?).returns(true)
     Freshfone::Initiator::AgentCallLeg.any_instance.stubs(:current_call).returns(@freshfone_call)
     agent_call_leg = Freshfone::Initiator::AgentCallLeg.new(agent_call_leg_params, @account, @number, @call_actions, @telephony)
     agent_call_leg.send(:perform_call_cleanup).should_not be_falsey

@@ -1,6 +1,7 @@
 require 'models/shard_mapping'
 require 'models/domain_mapping'
 require 'exceptions/domain_not_ready'
+require 'exceptions/shard_not_found'
 require 'models/pod_shard_condition'
 class Sharding
   
@@ -55,7 +56,7 @@ class Sharding
   private
 
   def check_shard_status(shard)
-    raise ActiveRecord::RecordNotFound  if shard.nil?
+    raise ShardNotFound  if shard.nil?
     raise DomainNotReady  unless shard.ok?
   end
 

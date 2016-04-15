@@ -4,7 +4,8 @@ class Va::Condition
   
 
   DISPATCHER_COLUMNS = {
-    'to_email'                => 'to_emails'
+    'to_email'                => 'to_emails',
+    'domains'                 => 'domain_list'
   }
 
   QUERY_COLUMNS = {

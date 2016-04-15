@@ -450,6 +450,12 @@ window.xhrPool = [];
           } catch(e) { }
         });
 
+        $(document).on('click', '[rel=guided-inlinemanual]',function(ev) {
+          ev.preventDefault();
+          try {
+            inline_manual_player.activateTopic($(this).data('topic-id'));
+          } catch(e) { }
+        });
 
         $(".nav-drop li.menu-item a").bind("click", function(){
             hideMenuItem();

@@ -78,7 +78,7 @@ module IntegrationServices
 
     # Returns a list of the services.
     def self.service_classes
-      return @service_classes if @service_classes
+      return @service_classes if @service_classes.present?
       subclasses = {}
       ObjectSpace.each_object(Module) {|m| subclasses[m.title.downcase] =  m if m.ancestors.include?(Service) && m != Service}
       @service_classes = subclasses

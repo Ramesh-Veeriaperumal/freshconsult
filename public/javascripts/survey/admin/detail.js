@@ -117,6 +117,7 @@ var SurveyDetail = {
 	thanks:{
 		create:function(view){
 			view.surveyLimit = SurveyAdmin.fullSurvey;
+			view.hasLayoutCustomization = SurveyAdmin.hasLayoutCustomization;
 			jQuery('#survey_thanks').html(JST["survey/admin/template/new_thanks"](view));
 		}
 	}

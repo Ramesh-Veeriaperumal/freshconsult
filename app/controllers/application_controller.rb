@@ -29,6 +29,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
+  rescue_from ShardNotFound, :with => :record_not_found
   rescue_from DomainNotReady, :with => :render_404
 
   

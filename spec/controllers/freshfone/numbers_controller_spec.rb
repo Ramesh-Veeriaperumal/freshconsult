@@ -59,6 +59,7 @@ describe Admin::Freshfone::NumbersController do
   end
 
   it 'should allow numbers whose rate are of 2$ if configured in trial' do
+    @account.freshfone_subscription.destroy if @account.freshfone_subscription.present?
     @account.freshfone_numbers.destroy_all
     @account.freshfone_account.update_column(:state, Freshfone::Account::STATE_HASH[:trial])
     create_test_freshfone_subscription(number_credit: 2)

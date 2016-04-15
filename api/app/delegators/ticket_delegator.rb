@@ -3,7 +3,7 @@ class TicketDelegator < BaseDelegator
   attr_accessor :ticket_fields
   validate :group_presence, if: -> { group_id && attr_changed?('group_id') }
   validate :responder_presence, if: -> { responder_id && attr_changed?('responder_id') }
-  validate :email_config_presence,  if: :outbound_email?
+  validate :email_config_presence,  if: -> {  email_config_id && outbound_email? }
   validates :email_config, presence: true, if: -> { errors[:email_config_id].blank? && email_config_id && attr_changed?('email_config_id') }
   validate :product_presence, if: -> { product_id && attr_changed?('product_id', schema_less_ticket) }
   validate :user_blocked?, if: -> { requester_id && errors[:requester].blank? && attr_changed?('requester_id') }
@@ -21,6 +21,7 @@ class TicketDelegator < BaseDelegator
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
+    check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     super record
   end
 
@@ -53,12 +54,13 @@ class TicketDelegator < BaseDelegator
   end
 
   def email_config_presence
-    if !Account.current.restricted_compose_enabled? || User.current.can_view_all_tickets?
-      email_config = Account.current.email_configs.where(id: email_config_id).first
-    elsif (User.current.group_ticket_permission || User.current.assigned_ticket_permission)
-      email_config = Account.current.email_configs.where("id = ? AND (group_id is NULL or group_id in (?))", email_config_id, User.current.agent_groups.pluck(:group_id)).first
+    email_config = Account.current.email_configs.where(id: email_config_id).first
+    if email_config.nil?
+      errors[:email_config_id] << :"can't be blank"
+    elsif !User.current.can_view_all_tickets? && Account.current.restricted_compose_enabled? && (User.current.group_ticket_permission || User.current.assigned_ticket_permission)
+      accessible_email_config = email_config.group_id.nil? || User.current.agent_groups.exists?(group_id: email_config.group_id)
+      errors[:email_config_id] << :inaccessible_value unless accessible_email_config
     end
-    errors[:email_config_id] << :"can't be blank" unless email_config
   end
 
   def user_blocked?

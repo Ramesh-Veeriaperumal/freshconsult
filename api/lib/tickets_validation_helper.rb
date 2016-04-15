@@ -35,7 +35,11 @@ class TicketsValidationHelper
 
     def parent_field_value_mapping(section_fields)
       #Ex: [[{"ticket_type"=>["Question", "Feature Request"]}, [11, 12, 13]], [{"ticket_type"=>["Problem"]}, [11]]]
-      section_fields.group_by{|x| {x.parent_ticket_field.name =>  x.section.section_picklist_mappings.map{|x| x.picklist_value.value}}}.map{|x, y|[x, y.map(&:ticket_field_id)]}
+      sections_fields_group_by_parent_field_value_mapping(section_fields).map{|parent_grouping, section_fields|[parent_grouping, section_fields.map(&:ticket_field_id)]}
+    end
+
+    def sections_fields_group_by_parent_field_value_mapping(section_fields)
+      section_fields.group_by{|x| {x.parent_ticket_field.name =>  x.section.section_picklist_mappings.map{|x| x.picklist_value.value}}}
     end
 
     def custom_nested_field_choices

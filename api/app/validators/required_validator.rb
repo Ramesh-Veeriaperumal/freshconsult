@@ -8,6 +8,10 @@ class RequiredValidator < ApiValidator
       !present_or_false?
     end
 
+    def error_code
+      :missing_field unless attribute_defined?
+    end
+
     def message
       attribute_defined? ? :blank : :missing_field
     end

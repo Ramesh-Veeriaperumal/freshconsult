@@ -1,0 +1,47 @@
+  #attachment-type
+  {
+    .add_attachment {
+    color: #1272de;
+    cursor: pointer;
+    height: 22px;
+    overflow: hidden;
+    position: relative;
+    text-overflow: ellipsis;
+    top: 14px;
+    white-space: nowrap;
+    width: 120px;
+    z-index: 2;
+}
+.hidden_upload input[type="file"] {
+    cursor: pointer;
+    height: 22px;
+    opacity: 0;
+    position: relative;
+    right: 0;
+    top: -10px;
+    width: 120px;
+    z-index: 10;
+}
+.attachments-wrap .attachment-close::before {
+    color: #666;
+    content: "×";
+    font-size: 20px;
+    font-weight: bold;
+}
+.attachments-wrap .attachment-close {
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+a {
+    color: #000;
+    text-decoration: none;
+}
+.alert-text {
+    color: red;
+}
+.span8
+{
+  margin-top: -10px;
+}
+}

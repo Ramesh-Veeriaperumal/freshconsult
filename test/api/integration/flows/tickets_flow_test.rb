@@ -75,7 +75,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     tags = [Faker::Name.name, Faker::Name.name]
     @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
     params_hash = { email: email, email_config_id: fetch_email_config.id, cc_emails: cc_emails, description: description, subject: subject,
-                    priority: 2, type: 'Problem', responder_id: @agent.id, tags: tags, group_id: @create_group.id }
+                    priority: 2, type: 'Problem', tags: tags, group_id: @create_group.id }
     tkt_field1 = create_custom_field('test_custom_decimal', 'decimal')
     tkt_field2 = create_custom_field('test_custom_checkbox', 'checkbox')
     field1 = tkt_field1.name[0..-3]
@@ -86,7 +86,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     end
     [tkt_field1, tkt_field2].each(&:destroy)
     @account.make_current
-    match_json(ticket_pattern(params_hash.merge(source: 10, status: 5, custom_fields: { field1.to_sym => '2.34', field2.to_sym => false }), Helpdesk::Ticket.last))
+    match_json(ticket_pattern(params_hash.merge(source: 10, responder_id: @agent.id, status: 5, custom_fields: { field1.to_sym => '2.34', field2.to_sym => false }), Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     assert Helpdesk::Ticket.last.attachments.count == 1
     assert_response 201

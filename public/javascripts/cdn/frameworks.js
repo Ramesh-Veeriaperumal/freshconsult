@@ -31,6 +31,7 @@
 //= require hackz.js
 //= require lib/nestedtree.js
 //= require helpdesk/multifile.js
+//= require helpdesk/multifile_upload.js
 //= require frameworks/plugins/jquery.nested_select_tag.js
 //= require frameworks/socket.io-1.2.1.js
 //= require frameworks/faye.js
@@ -53,7 +54,6 @@
 //= require frameworks/plugins/jquery.autosuggester.js
 //= require integrations/construct_rule.js
 //= require frameworks/plugins/collapseButton.js
-//= require marketplace/freshapp.js
 //= require frameworks/plugins/jquery.dataTables.js
 //= require frameworks/plugins/dataTable.fixedColumns.js
 //= require marketplace/freshapp.js

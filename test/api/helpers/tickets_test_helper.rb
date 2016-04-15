@@ -117,7 +117,7 @@ module TicketsTestHelper
   def v2_outbound_payload
     product = (Product.first || create_product)
     email_config = product.primary_email_config
-    v2_ticket_params.except(:source, :fr_due_by, :due_by, :status).merge(email_config_id: email_config.id, product_id: product.id).to_json
+    v2_ticket_params.except(:source, :fr_due_by, :due_by, :status, :responder_id).merge(email_config_id: email_config.id).to_json
   end
 
   def v1_outbound_payload

@@ -17,7 +17,6 @@ module CompanyHelper
         :name        => @company_name, 
         :description => Faker::Lorem.sentence, 
         :note        => Faker::Lorem.sentence, 
-        :domains     => ",#{Faker::Internet.domain_name},"
       } 
     }
     @company_params = @params.dup

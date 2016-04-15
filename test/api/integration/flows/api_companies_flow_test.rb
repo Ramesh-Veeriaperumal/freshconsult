@@ -40,7 +40,7 @@ class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
 
       put "/api/companies/#{company.id}", { domains: [] }.to_json, @write_headers
       assert_response 200
-      assert company.reload.domains.split(',').count == 0
+      assert Company.find(company.id).domains.split(',').count == 0
     end
   end
 

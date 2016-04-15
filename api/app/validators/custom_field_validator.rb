@@ -1,6 +1,7 @@
 class CustomFieldValidator < ActiveModel::EachValidator
   ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined, :nested_fields, :attribute, :section_field_mapping]
   attr_accessor(*ATTRS)
+  NAME_MAPPING = {'ticket_type' => 'type'}.freeze
 
   def validate(record)
     attributes.each do |attribute|
@@ -24,7 +25,8 @@ class CustomFieldValidator < ActiveModel::EachValidator
         next unless validate?(record, field_name, values) # check if it can be validated
         record.class.send(:attr_accessor, field_name)
         record.instance_variable_set("@#{field_name}", value) if @current_field_defined
-        validate_each(record, field_name, value)
+        absence_validator_check(record, field_name, values)
+        validate_each(record, field_name, value) if record.errors[field_name].blank?
       end
     end
   end
@@ -122,6 +124,14 @@ class CustomFieldValidator < ActiveModel::EachValidator
       DateTimeValidator.new(date_options).validate(record)
     end
 
+    def absence_validator_check(record, field_name, values)
+      if section_field? && !section_parent_present?(record, values)
+        parent = section_parent_list.keys.first
+        message_options = {field: parent_name_mapping(parent.to_s), value: parent_value(parent, record, values) }
+        CustomAbsenceValidator.new(attributes: field_name, message: :section_field_absence_check_error, message_options: message_options).validate(record) 
+      end
+    end
+
     def assign_options(attribute)
       @attribute = attribute
       @validatable_custom_fields = options[attribute][:validatable_custom_fields] || []
@@ -172,6 +182,15 @@ class CustomFieldValidator < ActiveModel::EachValidator
  
     def section_field?
       @current_field.respond_to?(:section_field?) && @current_field.section_field?
+    end
+	
+	def parent_name_mapping(field)
+      mapping = NAME_MAPPING[field] || custom_field?(field) || field
+      mapping
+    end
+
+    def custom_field?(field)
+      field.ends_with?("_#{Account.current.id}") ?  TicketDecorator.display_name(mapping) : nil
     end
 
     # should allowed to be validated upon satisfying any of the below conditions

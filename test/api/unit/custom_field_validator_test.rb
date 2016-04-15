@@ -134,6 +134,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     def initialize(params = {})
       params.each { |key, value| instance_variable_set("@#{key}", value) }
+	  check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
+      check_params_set(params[:attribute2]) if params[:attribute2].is_a?(Hash)
       super
     end
 
@@ -167,6 +169,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     def initialize(params = {})
       params.each { |key, value| instance_variable_set("@#{key}", value) }
+	  check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
+      check_params_set(params[:attribute2]) if params[:attribute2].is_a?(Hash)
       super
     end
 
@@ -343,22 +347,22 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert test.valid?
   end
 
-  # def test_section_field_validation_for_data_type_absence_error
-  #   account = mock
-  #   account.stubs(:id).returns(1)
-  #   Account.stubs(:current).returns(account)
-  #   test = SectionFieldTestValidation.new(ticket_type: 'Problem', status: 3, priority: 4, attribute1: {'single_1' => "jkj", 'check1_1' => true, 'date_1' => Time.now.zone.to_s, 'url1_1' => "gh", 'phone' => "dasfdf", 'multi2_1' => "efsdff", 'number1_1' => 23, 'decimal2_1' => "12.4"})
-  #   refute test.valid?
-  #   errors = test.errors.to_h
-  #   assert_equal({single_1: :section_field_absence_check_error, check1_1: :section_field_absence_check_error, date_1: :section_field_absence_check_error, url1_1: :section_field_absence_check_error, phone: :section_field_absence_check_error, multi2_1: :section_field_absence_check_error, number1_1: :section_field_absence_check_error, decimal2_1: :section_field_absence_check_error}.sort.to_h, errors.sort.to_h)
-  # end
+  def test_section_field_validation_for_data_type_absence_error
+    account = mock
+    account.stubs(:id).returns(1)
+    Account.stubs(:current).returns(account)
+    test = SectionFieldTestValidation.new(ticket_type: 'Problem', status: 3, priority: 4, attribute1: {'single_1' => "jkj", 'check1_1' => true, 'date_1' => Time.now.zone.to_s, 'url1_1' => "gh", 'phone' => "dasfdf", 'multi2_1' => "efsdff", 'number1_1' => 23, 'decimal2_1' => "12.4"})
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({single_1: :section_field_absence_check_error, check1_1: :section_field_absence_check_error, date_1: :section_field_absence_check_error, url1_1: :section_field_absence_check_error, phone: :section_field_absence_check_error, multi2_1: :section_field_absence_check_error, number1_1: :section_field_absence_check_error, decimal2_1: :section_field_absence_check_error}.sort.to_h, errors.sort.to_h)
+  end
 
-  #  def test_section_field_validation_for_choices_absence_error
-  #   test = SectionFieldTestValidation.new(ticket_type: 'Problem', status: 3, priority: 4, attribute2: {'dropdown1_1' => "ewee", 'first_1' => "fsdfsdf", 'country_1' => "ewrewtrwer"})
-  #   refute test.valid?
-  #   errors = test.errors.to_h
-  #   assert_equal({dropdown1_1: :section_field_absence_check_error, first_1: :section_field_absence_check_error, country_1: :section_field_absence_check_error}.sort.to_h, errors.sort.to_h)
-  # end
+  def test_section_field_validation_for_choices_absence_error
+    test = SectionFieldTestValidation.new(ticket_type: 'Problem', status: 3, priority: 4, attribute2: {'dropdown1_1' => "ewee", 'first_1' => "fsdfsdf", 'country_1' => "ewrewtrwer"})
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({dropdown1_1: :section_field_absence_check_error, first_1: :section_field_absence_check_error, country_1: :section_field_absence_check_error}.sort.to_h, errors.sort.to_h)
+  end
 
   def test_section_field_validation_for_choices_required
     test = SectionFieldTestRequiredValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute1: {'single_1' => "jkj", 'check1_1' => true, 'date_1' =>'2011-09-12', 'phone' => "35345346dgdf", 'multi2_1' => "efsdff"})

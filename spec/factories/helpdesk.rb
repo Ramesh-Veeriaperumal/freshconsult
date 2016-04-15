@@ -11,7 +11,6 @@ if Rails.env.test?
       isescalated 0
       priority 1
       subject Faker::Lorem.sentence(3)
-      description Faker::Lorem.paragraph(3)
       cc_email(Helpdesk::Ticket.default_cc_hash.with_indifferent_access)
       created_at Time.now
     end

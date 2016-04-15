@@ -15,10 +15,10 @@ class TicketsQueriesTest < ActionDispatch::IntegrationTest
         api_restore: 7,
         api_compose_email: 3,
 
-        create: 88,
-        compose_email: 85,
+        create: 89,
+        compose_email: 82,
         show: 20,
-        update: 38,
+        update: 37,
         index: 20,
         destroy: 40, # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62
         restore: 48 # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62

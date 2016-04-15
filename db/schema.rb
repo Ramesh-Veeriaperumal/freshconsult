@@ -3889,7 +3889,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.string   "string_uc06"
   end
 
-  add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
+  add_index "users", ["email", "account_id"], :name => "index_users_on_email_and_account_id", :unique => true
   add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"account_id"=>nil, "external_id"=>20}
   add_index "users", ["account_id", "fb_profile_id"], :name => "index_users_on_account_id_fb_profile_id"
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
@@ -3898,7 +3898,6 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
   add_index "users", ["account_id", "phone"], :name => "index_users_on_account_id_phone"
   add_index "users", ["account_id", "twitter_id"], :name => "index_users_on_account_id_twitter_id"
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
-  add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
   add_index "users", ["single_access_token", "account_id"], :name => "index_users_on_account_id_and_single_access_token", :unique => true

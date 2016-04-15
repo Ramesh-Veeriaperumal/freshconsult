@@ -107,9 +107,6 @@
 }
 
 //css for js adds
-.h-Z0{
-  z-index: 0;
-}
 .b-OH{
   overflow: hidden;
 }
@@ -264,8 +261,8 @@
     .caret{
       margin-top:12px;
       border-top: 6px solid #000;
-      border-right: 6px solid transparent;
-      border-left: 6px solid transparent;
+      @include border-right(6px solid transparent);
+      @include border-left(6px solid transparent);
     }
   }
   .fa-headd .selected{
@@ -431,16 +428,44 @@
     height: 100vh;
     .carousel{
       border: solid 1px #ddd;
+      @include border-radius(4px);
       &:hover{
-        .left, .right{
-          opacity: 0.5 !important;
+        .carousel-control{
+          opacity: 0.6 !important;
         }
       }
+    }
+    .carousel-nav{
+      position: absolute;
+      bottom: -20px;
+      text-align: center;
+      width: 100%;
+      z-index: 999;
+    }
+    .carousel-indicators {
+      text-align: center;
+    }
+    .carousel-indicators li {
+      display: inline-block;
+      margin-left: 10px;
+      @include border-radius(8px);
+      cursor: pointer;
+      border: 1px solid #888888;
+      background-color: transparent;
+      width: 8px;
+      height: 8px;
+    }
+    .carousel-indicators .active{
+      width: 10px;
+      height: 10px;
+      background-color: #999;
+      border: none;
     }
   }
   .instr{
     font-size: 12px;
     line-height: 22px;
+    padding-top: 10px;
     padding-bottom: 10px;
     h3{
       font-size: 14px;
@@ -534,7 +559,7 @@
       font-size: 18px;
     }
     .back2list_btn{
-      @include padding(18px 6px 18px 15px);
+      @include padding(17px 20px 18px 20px);
       &:hover{
         span{
           color: #004080;
@@ -729,28 +754,42 @@
     color: #333;
     font-weight: bold;
   }
+  .cat{
+    font-weight: 500;
+    @include margin(10px 0 10px 0);
+    text-transform: none;
+  }
+  .category-bubble{
+    padding-bottom: 3px;
+    margin-bottom: 0;
+  }
   .tag{
     @include text-align(center);
-    background-color: rgba(255,255,255,0.5);
+    background-color: rgba(0,0,0, 0.03);
     @include border-radius(20px);
-    border: solid 1px #dadada;
+    border: solid 1px #eee;
     color: #333;
-    font-weight: 300;
-    font-size: 12px;
-    @include padding(3px 10px);
+    font-size: 11px;
+    @include padding(1px 10px);
+    @include clear(both);
+    display: inline-table;
+    @include margin(2px);
+    &:hover{
+      border-color: #bbb;
+    }
   }
   .carousel-inner{
-    height: 400px;
+    height: 425px;
     text-align: center;
     .item{
-      max-height: 400px;
+      max-height: 425px;
     }
     img{
       max-width:100%;
       @include margin-left(auto);
       @include margin-right(auto);
       vertical-align: middle;
-      height: 400px;
+      height: 425px;
     }
   }
   .slider-thumbs{
@@ -772,13 +811,10 @@
   .carousel-control{
     position: absolute;
     top: 0;
-    width: 75px;
-    height: 400px;
+    width: 60px;
+    height: 425px;
     margin-top: 0;
-    font-size: 94px;
-    font-weight: 100;
-    color: #000;
-    background-color: #eee;
+    background-color: rgba(100,100,100,0.1);
     @include text-align(center);
     @include border-radius(0);
     border: none;
@@ -791,6 +827,9 @@
       @include right(0);
       opacity: 0;
       transition: opacity .25s ease-in-out;
+    }
+    .ficon-arrow-right, .ficon-arrow-left {
+      font-size: 42px;
     }
     span{
       vertical-align: middle;

@@ -8,7 +8,7 @@ class Integrations::ApplicationsController < Admin::AdminController
   before_filter :handle_google_contacts, :only => [:oauth_install]
   def index
     if feature?(:marketplace)
-      @installed_plugs = installed_plugs(:integrations_list)
+      @installed_mkp_apps = installed_mkp_apps(:integrations_list)
     else
       @applications = Integrations::Application.available_apps(current_account)
       @installed_applications = get_installed_apps
