@@ -47,7 +47,7 @@ class Support::Solutions::ArticlesController < SupportController
   end
 
   def hit
-    @article.current_article.hit! unless agent?
+    @article.current_article.hit! unless (current_user && current_user.agent?)
     render_tracker
   end
   
