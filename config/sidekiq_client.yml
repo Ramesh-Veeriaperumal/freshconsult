@@ -101,6 +101,9 @@ defaults: &defaults
     - [data_export]
     - [delete_spam_tickets]
     - [suspended_accounts_deletion]
+    - [tickets_export_queue]
+    - [premium_ticket_export]
+    - [long_running_ticket_export]
 development:
   <<: *defaults
 

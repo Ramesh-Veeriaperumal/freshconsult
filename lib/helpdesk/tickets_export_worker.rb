@@ -3,6 +3,8 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   include ExportCsvUtil
   include Rails.application.routes.url_helpers
   include Export::Util
+  include Redis::RedisKeys
+  
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
   
   # Temporary workaround for '.' in values
@@ -51,6 +53,22 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     end
   end
 
+  def self.enqueue(export_params)
+    # Not using the methods in RedisOthers to avoid the include /extend problem
+    # class methods vs instance methods issue
+    if $redis_others.perform_redis_op("exists", TICKET_EXPORT_SIDEKIQ_ENABLED)
+      if $redis_others.perform_redis_op("sismember", PREMIUM_TICKET_EXPORT, Account.current.id)
+        Tickets::Export::PremiumTicketsExport.perform_async(export_params)
+      elsif $redis_others.perform_redis_op("sismember", long_running_key, Account.current.id)
+        Tickets::Export::LongRunningTicketsExport.perform_async(export_params)
+      else
+        Tickets::Export::TicketsExport.perform_async(export_params)
+      end
+    else
+      Resque.enqueue(Helpdesk::TicketsExport, export_params)
+    end
+  end
+  
   protected
 
   def initialize_params
@@ -60,8 +78,10 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   end
 
   def set_current_user
-    user = Account.current.users.find(export_params[:current_user_id])
-    user.make_current
+    unless User.current 
+      user = Account.current.users.find(export_params[:current_user_id])
+      user.make_current
+    end
     TimeZone.set_time_zone
   end
 
