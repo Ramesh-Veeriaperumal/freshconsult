@@ -3291,6 +3291,8 @@ ActiveRecord::Schema.define(:version => 20160413071150) do
   end
 
   add_index "survey_handles", ["account_id", "id_token"], :name => "index_survey_handles_on_account_id_and_id_token", :length => {"account_id"=>nil, "id_token"=>20}
+  add_index "survey_handles", ["account_id", "surveyable_id", "surveyable_type"], :name => "index_on_account_id_and_surveyable_id_and_surveyable_type"
+
   execute "ALTER TABLE survey_handles ADD PRIMARY KEY (id,account_id)"
 
   create_table "survey_question_choices", :force => true do |t|
