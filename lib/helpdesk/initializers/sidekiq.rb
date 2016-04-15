@@ -40,7 +40,10 @@ Sidekiq.configure_client do |config|
       "Tickets::ClearTickets::EmptyTrash",
       "MergeTickets",
       "Export::ContactWorker",
-      "Tickets::Export::TicketsExport"
+      "Tickets::Export::TicketsExport",
+      "Tickets::Export::LongRunningTicketsExport",
+      "Tickets::Export::PremiumTicketsExport"
+
     ]
   end
 end
@@ -85,7 +88,9 @@ Sidekiq.configure_server do |config|
       "Tickets::ClearTickets::EmptyTrash",
       "MergeTickets",
       "Export::ContactWorker",
-      "Tickets::Export::TicketsExport"
+      "Tickets::Export::TicketsExport",
+      "Tickets::Export::LongRunningTicketsExport",
+      "Tickets::Export::PremiumTicketsExport"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -121,7 +126,9 @@ Sidekiq.configure_server do |config|
       "Tickets::ClearTickets::EmptyTrash",
       "MergeTickets",
       "Export::ContactWorker",
-      "Tickets::Export::TicketsExport"
+      "Tickets::Export::TicketsExport",
+      "Tickets::Export::LongRunningTicketsExport",
+      "Tickets::Export::PremiumTicketsExport"
     ]
   end
 end
