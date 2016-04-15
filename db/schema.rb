@@ -1010,7 +1010,7 @@ ActiveRecord::Schema.define(:version => 20160413071150) do
   add_index "dynamic_notification_templates", ["account_id", "email_notification_id", "category"], :name => "index_dynamic_notn_on_acc_and_notification_id_and_category"
 
   create_table "ebay_questions", :force => true do |t|
-    t.string   "user_id",     :limit => 8
+    t.integer  "user_id",     :limit => 8
     t.string   "message_id" 
     t.string   "item_id"
     t.integer  "questionable_id",   :limit => 8
