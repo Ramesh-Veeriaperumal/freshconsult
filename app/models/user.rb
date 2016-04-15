@@ -110,7 +110,8 @@ class User < ActiveRecord::Base
     has_contact_merge? and (primary_email.blank? and self.user_emails.reject(&:marked_for_destruction?).empty?)
   end
 
-  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :primary_email_attributes
+  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, 
+                :primary_email_attributes, :tags_updated
   
   attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes, 
                   :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id, 
@@ -782,6 +783,7 @@ class User < ActiveRecord::Base
     def backup_user_changes
       @all_changes = self.changes.clone.to_hash
       @all_changes.merge!(flexifield.changes)
+      @all_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
       @all_changes.symbolize_keys!
     end
 

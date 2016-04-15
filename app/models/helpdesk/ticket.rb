@@ -44,7 +44,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, 
-    :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule, :disable_activities
+    :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule, 
+    :disable_activities, :tags_updated
 
 #  attr_protected :attachments #by Shan - need to check..
 

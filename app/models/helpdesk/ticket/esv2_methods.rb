@@ -12,7 +12,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def esv2_columns
     @@esv2_columns ||= [:subject, :description, :requester_id, :to_emails, :cc_email, :priority, 
                       :status, :ticket_type, :responder_id, :group_id, :source, :due_by, 
-                      :frDueBy, :spam, :deleted, :product_id, :status_stop_sla_timer, :status_deleted
+                      :frDueBy, :spam, :deleted, :product_id, :status_stop_sla_timer, :status_deleted,
+                      :tags
                     ].concat(esv2_ff_columns)
   end
 
@@ -52,6 +53,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #
   def es_v2_attachments
     attachments.pluck(:content_file_name)
+  end
+  
+  # Tag use callbacks to ES
+  def update_ticket_tags(obj)
+    self.tags_updated = true unless self.changes.present?
+    #=> No need to trigger if default properties are changed as that'll trigger callbacks
   end
 
   #############################
