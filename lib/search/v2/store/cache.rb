@@ -9,10 +9,20 @@ module Search
         ## Cache Keys
         #################
 
-        ALIAS         = "alias:%{tenant_id}:%{type}"
-        CLUSTER       = "cluster:%{tenant_id}"
-        TENANT        = "tenant:%{tenant_id}"
-        TENANT_INFO   = "tenant_info:%{tenant_id}"
+        ### Tenant Keys ###
+        
+        ALIAS         = "v1/alias:%{tenant_id}:%{type}"
+        HOME_CLUSTER  = "v1/tenant_home:%{tenant_id}"
+        TENANT        = "v1/tenant:%{tenant_id}"
+        TENANT_INFO   = "v1/tenant_info:%{tenant_id}"
+        
+        ### Cluster Keys ###
+        
+        CLUSTER               = "v1/cluster:%{cluster_id}"
+        CLUSTER_INFO          = "v1/cluster_info:%{cluster_id}"
+        LASTEST_CLUSTER       = "v1/latest_cluster"
+        CLUSTER_INDEX_SPLIT   = "v1/split:%{cluster_id}:%{type}"
+        CLUSTER_INDEX_VERSION = "v1/version:%{cluster_id}:%{type}"
 
         # Can add necessary methods from here:
         # https://github.com/mperham/dalli/blob/master/lib/dalli/client.rb
