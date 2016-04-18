@@ -22,6 +22,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     def initialize(params = {})
       super
+      check_params_set(params[:attribute3]) if params[:attribute3].is_a?(Hash)
+      check_params_set(params[:attribute4]) if params[:attribute4].is_a?(Hash)
       params.each { |key, value| instance_variable_set("@#{key}", value) }
     end
 
@@ -50,6 +52,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     def initialize(params = {})
       super
+      check_params_set(params[:attribute5]) if params[:attribute5].is_a?(Hash)
+      check_params_set(params[:attribute6]) if params[:attribute6].is_a?(Hash)
       params.each { |key, value| instance_variable_set("@#{key}", value) }
     end
 
@@ -79,6 +83,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     def initialize(params = {})
       super
+      check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
+      check_params_set(params[:attribute2]) if params[:attribute2].is_a?(Hash)
       params.each { |key, value| instance_variable_set("@#{key}", value) }
     end
 
@@ -101,6 +107,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     def initialize(params = {})
       super
+      check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
       params.each { |key, value| instance_variable_set("@#{key}", value) }
     end
 
@@ -134,7 +141,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     def initialize(params = {})
       params.each { |key, value| instance_variable_set("@#{key}", value) }
-	  check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
+	    check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
       check_params_set(params[:attribute2]) if params[:attribute2].is_a?(Hash)
       super
     end
@@ -169,7 +176,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     def initialize(params = {})
       params.each { |key, value| instance_variable_set("@#{key}", value) }
-	  check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
+	    check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
       check_params_set(params[:attribute2]) if params[:attribute2].is_a?(Hash)
       super
     end
