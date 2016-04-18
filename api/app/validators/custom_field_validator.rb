@@ -199,7 +199,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     # 3. nested parent field with children not set
     def validate?(record, field_name, values)
       return false if section_field? && section_parent_has_errors?(record, values) 
-      @is_required || values.try(:[], field_name) || (values.present? && nested_field? && !children_set_or_blank?(record, field_name, values))
+      @is_required || key_exists?(values, field_name) || (values.present? && nested_field? && !children_set_or_blank?(record, field_name, values))
     end
 
     def section_parent_has_errors?(record, values)

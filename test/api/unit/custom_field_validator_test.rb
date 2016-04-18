@@ -179,6 +179,18 @@ class CustomFieldValidatorTest < ActionView::TestCase
     end
   end
 
+  def setup
+    account = mock
+    account.stubs(:id).returns(1)
+    Account.stubs(:current).returns(account)
+    super
+  end
+
+  def teardown
+    Account.unstub(:current)
+    super
+  end
+
   def test_choices_validatable_fields_valid
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'dropdown2_1' => 'first11' })
     assert test.valid?
@@ -194,7 +206,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_format_validatable_fields_invalid
-    test = TestValidation.new(attribute2: { 'single_1' => [1, 2], 'check1_1' => 'ds', 'check2_1' => 'sd', 'decimal1_1' => 'sds', 'phone' => 3.4, 'decimal2_1' => 'sd', 'number1_1' => 909.898, 'number2_1' => 'dd', 'multi_1' => 9.0, 'url1_1' => 'udp:/testurl', 'url2_1' => 'http:/testurl.123' })
+    test = TestValidation.new(attribute2: { 'single_1' => [1, 2], 'check1_1' => 'ds', 'check2_1' => nil, 'decimal1_1' => 'sds', 'phone' => 3.4, 'decimal2_1' => 'sd', 'number1_1' => false, 'number2_1' => 'dd', 'multi_1' => 9.0, 'url1_1' => 'udp:/testurl', 'url2_1' => 'http:/testurl.123' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal(
@@ -204,7 +216,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
         number2_1: :datatype_mismatch, url1_1: :invalid_format, url2_1: :invalid_format
       },
       errors)
-    assert_equal({ 'single_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Array }, 'check1_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, 'check2_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, 'decimal1_1' => { expected_data_type: :Number }, 'decimal2_1' => { expected_data_type: :Number }, 'number1_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: Float }, 'number2_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: String }, 'multi_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'phone' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'url1_1' => { accepted: 'valid URL' }, 'url2_1' => { accepted: 'valid URL' } }.stringify_keys.merge(attribute2: {}), test.error_options)
+    assert_equal({ 'single_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Array }, 'check1_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, 'check2_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null' }, 'decimal1_1' => { expected_data_type: :Number }, 'decimal2_1' => { expected_data_type: :Number }, 'number1_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: 'Boolean' }, 'number2_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: String }, 'multi_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'phone' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'url1_1' => { accepted: 'valid URL' }, 'url2_1' => { accepted: 'valid URL' } }.stringify_keys.merge(attribute2: {}), test.error_options)
   end
 
   def test_format_validatable_fields_valid
@@ -351,10 +363,10 @@ class CustomFieldValidatorTest < ActionView::TestCase
     account = mock
     account.stubs(:id).returns(1)
     Account.stubs(:current).returns(account)
-    test = SectionFieldTestValidation.new(ticket_type: 'Problem', status: 3, priority: 4, attribute1: {'single_1' => "jkj", 'check1_1' => true, 'date_1' => Time.now.zone.to_s, 'url1_1' => "gh", 'phone' => "dasfdf", 'multi2_1' => "efsdff", 'number1_1' => 23, 'decimal2_1' => "12.4"})
+    test = SectionFieldTestValidation.new(ticket_type: 'Problem', status: 3, priority: 4, attribute1: {'single_1' => "jkj", 'check1_1' => false, 'check2_1' => true, 'date_1' => Time.now.zone.to_s, 'url1_1' => "gh", 'phone' => "dasfdf", 'multi2_1' => "efsdff", 'number1_1' => 23, 'decimal2_1' => "12.4"})
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({single_1: :section_field_absence_check_error, check1_1: :section_field_absence_check_error, date_1: :section_field_absence_check_error, url1_1: :section_field_absence_check_error, phone: :section_field_absence_check_error, multi2_1: :section_field_absence_check_error, number1_1: :section_field_absence_check_error, decimal2_1: :section_field_absence_check_error}.sort.to_h, errors.sort.to_h)
+    assert_equal({single_1: :section_field_absence_check_error, check1_1: :section_field_absence_check_error, check2_1: :section_field_absence_check_error, date_1: :section_field_absence_check_error, url1_1: :section_field_absence_check_error, phone: :section_field_absence_check_error, multi2_1: :section_field_absence_check_error, number1_1: :section_field_absence_check_error, decimal2_1: :section_field_absence_check_error}.sort.to_h, errors.sort.to_h)
   end
 
   def test_section_field_validation_for_choices_absence_error
@@ -365,7 +377,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_section_field_validation_for_choices_required
-    test = SectionFieldTestRequiredValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute1: {'single_1' => "jkj", 'check1_1' => true, 'date_1' =>'2011-09-12', 'phone' => "35345346dgdf", 'multi2_1' => "efsdff"})
+    test = SectionFieldTestRequiredValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute1: {'single_1' => "jkj", 'check1_1' => true, 'check2_1' => false, 'date_1' =>'2011-09-12', 'phone' => "35345346dgdf", 'multi2_1' => "efsdff"})
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({dropdown1_1: :not_included, first_1: :not_included, country_1: :not_included}.sort.to_h, errors.sort.to_h)
@@ -375,7 +387,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = SectionFieldTestRequiredValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute2: {'dropdown1_1' => "1st", 'first_1' => "category 1", 'country_1' => "Usa"})
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({single_1: :datatype_mismatch, check1_1: :datatype_mismatch, date_1: :invalid_date, phone: :datatype_mismatch, multi2_1: :datatype_mismatch}.sort.to_h, errors.sort.to_h)
+    assert_equal({single_1: :datatype_mismatch, check1_1: :datatype_mismatch, check2_1: :datatype_mismatch, date_1: :invalid_date, phone: :datatype_mismatch, multi2_1: :datatype_mismatch}.sort.to_h, errors.sort.to_h)
   end
 
   def test_section_field_validation_for_data_type_invalid
@@ -399,7 +411,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     account = mock
     account.stubs(:id).returns(1)
     Account.stubs(:current).returns(account)
-    test = SectionFieldTestValidation.new('ticket_type' => 'QuestionType', attribute1: {'single_1' => "jkj", 'check1_1' => true, 'date_1' => Time.now.zone.to_s, 'url1_1' => "gh", 'phone' => "dasfdf", 'multi2_1' => "efsdff", 'number1_1' => 23, 'decimal2_1' => "12.4"})
+    test = SectionFieldTestValidation.new('ticket_type' => 'QuestionType', attribute1: {'single_1' => "jkj", 'check1_1' => true, 'check2_1' => false, 'date_1' => Time.now.zone.to_s, 'url1_1' => "gh", 'phone' => "dasfdf", 'multi2_1' => "efsdff", 'number1_1' => 23, 'decimal2_1' => "12.4"})
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ticket_type: :not_included}.sort.to_h, errors.sort.to_h)
@@ -413,7 +425,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_section_field_validation_for_choices_required_with_parent_invalid
-    test = SectionFieldTestRequiredValidation.new('ticket_type' => 'QuestionType', attribute1: {'single_1' => "jkj", 'check1_1' => true, 'date_1' =>'2011-09-12', 'phone' => "35345346dgdf", 'multi2_1' => "efsdff"})
+    test = SectionFieldTestRequiredValidation.new('ticket_type' => 'QuestionType', attribute1: {'single_1' => "jkj", 'check1_1' => true, 'check2_1' => false, 'date_1' =>'2011-09-12', 'phone' => "35345346dgdf", 'multi2_1' => "efsdff"})
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ticket_type: :not_included}.sort.to_h, errors.sort.to_h)

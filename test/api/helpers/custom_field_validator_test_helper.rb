@@ -62,6 +62,7 @@ class CustomFieldValidatorTestHelper
       {
         11=>{"ticket_type"=>["Incident", "Lead", "Question"], "priority" =>[2, 3]}, 
         12=>{"ticket_type"=>["Question"]}, 
+        33=>{"ticket_type"=>["Question"]},
         28=>{"ticket_type"=>["Question"]},
         43=>{"priority" => [2]},
         27=>{"status" => [2]},
