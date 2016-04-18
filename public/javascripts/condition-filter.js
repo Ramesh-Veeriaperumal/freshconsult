@@ -98,12 +98,13 @@ function select2Initialization (filter, id, initCallback, resultCallback) {
 }
 
 var preProcessCondition = function(types, list, label){
+	var label = label || null;
 	types = $H(types);
 	types.each(function(item){
 		var listDrop = $A();
 		$A(item.value).each(function(pair){
 			var value = {};
-			if(label[item.key] != null && label[item.key][pair] != null) {
+			if(label != null && label[item.key] != null && label[item.key][pair] != null) {
 				value = { name : pair, value : label[item.key][pair] };
 			}
 			else {
