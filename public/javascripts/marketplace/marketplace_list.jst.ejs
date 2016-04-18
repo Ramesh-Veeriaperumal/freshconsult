@@ -52,7 +52,7 @@
               <h3 title="<%- extensions[i].display_name %>"><%- extensions[i].display_name %></h3>
             </div>
             <figure class="figure-box">
-              <img src="<%= extensions[i].cover_art['thumb'] %>" srcset="<%= extensions[i].cover_art['thumb'] %> 1366w, <%= extensions[i].cover_art['thumb2x'] %>" alt="<%- extensions[i].display_name %>" height="100">
+              <img src="<%= extensions[i].cover_art['thumb'] %>" srcset="<%= extensions[i].cover_art['thumb'] %> 1x, <%= extensions[i].cover_art['thumb2x'] %> 2x" alt="<%- extensions[i].display_name %>" height="100">
               <figcaption class="caption slide-caption">
                 <%- extensions[i].description.substr(0, 120) %> <% if (extensions[i].description.length > 120) { %>... <% } %>
               </figcaption>

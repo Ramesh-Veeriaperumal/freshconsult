@@ -33,6 +33,8 @@ defaults: &defaults
     - [facebook_delta]
     - [trial_twitter]
     - [custom_twitter]
+    - [twitter_replay_worker]
+    - [twitter_gnip_worker]
     - [rabbitmq_publish]
     - [plan_change]
     - [update_tickets_company]
@@ -99,6 +101,9 @@ defaults: &defaults
     - [data_export]
     - [delete_spam_tickets]
     - [suspended_accounts_deletion]
+    - [tickets_export_queue]
+    - [premium_ticket_export]
+    - [long_running_ticket_export]
 development:
   <<: *defaults
 

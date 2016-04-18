@@ -23,18 +23,10 @@ class CustomersImportController < ApplicationController
   def create
     if fields_mapped?
       current_account.send(:"create_#{params[:type]}_import",{:status => 1})
-      if key_exists?(IMPORT_SIDEKIQ_ENABLED)
-        import_worker = params[:type].eql?("company") ?
-          "Import::CompanyWorker" :
-          "Import::ContactWorker"
-          import_worker.constantize.perform_async(customer_params)
-      else
-        if params[:type].eql?("company")
-          Resque.enqueue(Workers::Import::Company, customer_params)
-        else
-          Resque.enqueue(Workers::Import::Contact, customer_params)
-        end
-      end
+      import_worker = params[:type].eql?("company") ?
+        "Import::CompanyWorker" :
+        "Import::ContactWorker"
+      import_worker.constantize.perform_async(customer_params)
       redirect_to "/#{params[:type].pluralize}", :flash =>{ :notice => t(:'flash.import.success')}
     else
       redirect_to "/imports/#{params[:type]}"

@@ -44,9 +44,9 @@ class TicketsController < ApiApplicationController
 
   def search
     lookup_and_change_params
-    es_response = search_query
-    @tkts = es_response
-    @items = paginate_items(@tkts,es_response.total)
+    @items = search_query
+    add_total_entries(@items.total)
+    add_link_header(page:@items.next_page) if @items.next_page.present?
   end
 
   def destroy

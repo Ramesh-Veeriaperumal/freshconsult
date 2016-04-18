@@ -5,7 +5,7 @@
       <div class="row-fluid list-box <%if !installed['enabled']%> disabled-app <%end%>">
         <div class="logo-box pull-left">
           <% unless installed['cover_art'].blank? %>
-            <img src="<%= installed['cover_art']['thumb'] %>" srcset="<%= installed['cover_art']['thumb'] %>, <%= installed['cover_art']['thumb2x'] %>" alt="<%= installed['display_name'] %>"/>
+            <img src="<%= installed['cover_art']['thumb'] %>" srcset="<%= installed['cover_art']['thumb'] %> 1x, <%= installed['cover_art']['thumb2x'] %> 2x" alt="<%= installed['display_name'] %>"/>
           <% else %>
             <span class="<%= font_class('puzzle', 32) %>"></span>
           <% end %>

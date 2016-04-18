@@ -12,7 +12,9 @@ class Admin::DayPassesController < ApplicationController
   end
   
   def update
-    @day_pass_config.update_attributes(params[:day_pass_config])
+    if DAYPASS_QUANTITY.include?(params[:day_pass_config][:recharge_quantity].to_i)
+      @day_pass_config.update_attributes(params[:day_pass_config])
+    end
     redirect_to admin_day_passes_path
   end
   

@@ -83,6 +83,15 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('name', :'has already been taken')])
   end
 
+  def test_create_company_with_duplicate_domain
+    name = Faker::Lorem.characters(10)
+    company = create_company(name: name)
+    domains = company.domains.split(',')
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), domains: domains, note: Faker::Lorem.characters(10))
+    assert_response 409
+    match_json([bad_request_error_pattern('domains', :'has already been taken')])
+  end
+
   def test_create_length_invalid
     params_hash = { name: Faker::Lorem.characters(300) }
     post :create, construct_params({}, params_hash)
@@ -337,6 +346,15 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: company2.id }, name: company1.name)
     assert_response 409
     match_json([bad_request_error_pattern('name', :'has already been taken')])
+  end
+
+  def test_update_company_with_duplicate_domains
+    company1 = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    company2 = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    domains = company1.domains.split(',')
+    put :update, construct_params({ id: company2.id }, domains: domains)
+    assert_response 409
+    match_json([bad_request_error_pattern('domains', :'has already been taken')])
   end
 
   def test_update_delete_existing_domains

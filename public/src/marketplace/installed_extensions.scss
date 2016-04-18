@@ -34,19 +34,19 @@
     margin-top: 25px;
     h3{
       font-size: 24px;
-      @include padding(14px 22px);
+      @include padding(6px 22px 14px 22px);
       @include border-radius(4px);
       margin-bottom: 8px;
+      color: #666;
     }
     .btn-appgallery{
-      font-size: 18px;
-      @include padding(10px 18px);
+      @include padding(6px 16px);
       @include border-radius(4px);
-      margin-top: 12px;
+      margin-top: 8px;
     }
   }
 }
-.no-plugs{
+.no-custom-apps{
 	border: solid 1px #ececec;
 	height: 100px;
 	width: 100%;

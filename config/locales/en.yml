@@ -1232,8 +1232,8 @@ en:
         loading: Loading...
         default_survey: Default Survey
         survey: Survey
-        title: Survey Name
-        title_error_text: Survey Name has already been taken
+        title: Survey name
+        title_error_text: Survey name has already been taken
         result_exist_msg: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers.
         result_exist_msg_v2: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can rephrase the questions and answer choices.
       new_rating:
@@ -1243,7 +1243,6 @@ en:
         content_text_v2: This question helps assess the overall satisfaction for the response provided by the agent.
                       It appears below your signature at the bottom of the email sent to the customer.
         survey_question: Survey question
-        survey_question_v2: Survey Question
         error_text: This field is required
         points_scale: points scale
         point_scale_v2: Point scale
@@ -1252,10 +1251,11 @@ en:
 
       new_thanks:
         survey_feedback: Survey Feedback Page
-        survey_feedback_v2: Thank You Page
+        survey_feedback_v2: Thank you page
         thanks_feedback: Thank you for your valuable feedback.
         thanks_feedback_v2: Thank you. Your feedback has been submitted.
         additional_comments_feedback: Collect additional feedback
+        additional_comments_feedback_v2: Include additional comments box
         additional_comments_feedback_statement: Additional feedback
         comments_feedback: Add more details about customer experience.
         thanks_message_feedback: Thank you message for Feedback survey
@@ -1310,23 +1310,30 @@ en:
         survey_help_msg_v3: When a satisfaction rating is selected, a thank you page is shown to collect more feedback
         on: ON
         off: OFF
-        confirm_text: Please Confirm...
+        confirm_text: Please confirm...
         delete: Delete
         activate_survey: Activate
-        activate_msg: Activating this survey will deactivate <b id='active_survey_name'> Default Survey </b><br> Are you sure you want to proceed?
+        activate_msg: Activating this survey will deactivate <b id='active_survey_name'> Default Survey </b><br> Are you sure you want to activate?
         remove_msg: Removing this section will result in the loss of any changes made to the additional questions. Do you wish to continue?
       choice_contents:
         strongly_disagree: Strongly Disagree
-        some_what_disagree: Some What Disagree
+        extremly_dissatisfied: Extremely dissatisfied
+        some_what_disagree: Somewhat Disagree
+        mostly_dissatisfied: Mostly dissatisfied
         disagree: Disagree
+        slightly_dissatisfied: Slightly dissatisfied
         neutral: Neutral
+        neutral_v2: Neither satisfied nor dissatisfied
         agree: Agree
-        some_what_agree: Some What Agree
+        slightly_satisfied: Slightly satisfied
+        some_what_agree: Somewhat Agree
+        mostly_satisfied: Mostly satisfied
         strongly_agree: Strongly Agree
+        extremely_satisfied: Extremely satisfied
 
       thanks_contents:
         title_text: Thank you message for Customer satisfaction rating
-        title_text_v2: Thank you message for Customer Satisfaction Survey
+        title_text_v2: Thank you message for customer satisfaction survey
         solution_article_link_text: Your portal layout will be applied to this page. <a target='_blank' href='https://support.freshdesk.com/solution/articles/217757-customizing-your-thank-you-page'>How to change it?</a>
         message_text: Thank you for your valuable feedback.
         label_text: Add a feedback survey
@@ -1336,7 +1343,7 @@ en:
 
       satisfaction_settings:
         enable_label: Customer Satisfaction Rating
-        enable_label_v2: Customer Satisfaction Survey
+        enable_label_v2: Customer satisfaction survey
         satisfaction_text: I am satisfied with the service provided to me by
         link_text_label: Satisfaction survey link text
         link_text_input_label: How would you rate your overall satisfaction for the resolution provided by the agent?
@@ -2076,6 +2083,7 @@ en:
         custom_mailbox_meta: Custom Mailboxes
         integrations: "Integrations"
         list_all_apps: "List of all apps"
+        custom_apps: Custom Apps
         plugs: Plugs
         freshplugs: Freshplugs
     placeholders:
@@ -5016,8 +5024,8 @@ en:
     helpcard:
       title1: Integrations
       info1: Integrations in Freshdesk let you share data with third party applications and services that you use regularly. Freshdesk offers several native integrations out-of-the-box. To start using a native integration, click on the corresponding “Enable” button.
-      title2: Plugs
-      info2: In addition to the built-in integrations, you can bring in data from any other third party application, legacy system or database into the tickets and contact pages with Plugs. You can customize your Plug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS and Javascript.
+      title2: Custom Apps
+      info2: In addition to the built-in integrations, you can bring in data from any other third party application, legacy system or database into the tickets and contact pages with custom apps. You can customize your custom app widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS and Javascript.
   account:
     name: Account Name
     cancel: Cancel
@@ -5069,7 +5077,7 @@ en:
     new: New Business Hours
     to: to
     time_zone: Time Zone
-    change_time_zone: You can change your default time zone under <a href='/account/edit' >Helpdesk Rebranding</a>
+    change_time_zone: You can change your default time zone under <a href='/account/edit' >Helpdesk Settings</a>
     delete: Are you sure you want to delete?
     valid_time: Please enter a valid time
     holiday_name: Holiday name
@@ -6026,19 +6034,17 @@ en:
     terms_of_use: "Terms of Use"
     terms_of_use_link: "http://freshdesk.com/terms#marketplace"
     get_more_apps: Get more Apps
-    your_plugs: Your Plugs
     confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
     app: app
-    plug: plug
+    custom_app: custom app
     app_gallery_launch_text: "<b>Welcome to the brand new App Gallery!</b> Manage any integrations you installed previously, and try out new Apps. Get a preview of what the app will look like in your helpdesk and how it will help you - all in one glance."
     app_gallery_blog_post: "http://blog.freshdesk.com/new-marketplace/"
     app_gallery_link_text: "Read more about the new App Gallery"
     app_gallery: App Gallery
     app_description: "Apps allow you to integrate with other applications to make your Freshdesk experience more awesome. They also enable you to customize and personalize your Freshdesk portal."
     apps: Apps
-    plugs: Plugs
-    new_plug: New Plug
-    no_plugs: "You have no plugs installed. Create and Install a new Plug by clicking "
+    custom_apps: Custom Apps
+    no_custom_apps: "You have no custom apps installed. Create and Install a new custom app by clicking "
     all_categories: All categories
     settings: Settings
     coming_soon: Coming Soon
@@ -6051,9 +6057,9 @@ en:
     check_app_gallery: "Check out the App Gallery to install them!"
     go_to_dev_portal: Go to Developer Portal
     developer_shortcuts: Developer Shortcuts
-    plug_info: "Did you know, now there is a better way to write and manage and even share your plugs to all of freshdesk community."
+    custom_app_info: "Did you know, now there is a better way to write and manage and even share your apps to all of Freshdesk community."
     needs_developer_text: Needs Developer Account
-    write_a_plug: Write a Plug
+    write_a_custom_app: Write a custom app
     description: Description
     instructions: Instructions
     screenshots: Screenshots
@@ -6066,14 +6072,14 @@ en:
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
     no_connection: "The app gallery is currently unavailable. Please try again later. Please contact us, if the issue persists."
-    plugs_unavailable: "Certain apps could not be rendered. Please try again later. Please contact us if the issue persists."
+    apps_unavailable: "Certain apps could not be rendered. Please try again later. Please contact us if the issue persists."
     installed_mkp_apps_unavailable: "The listing of installed apps is currently unavailable. Please try again later. Please contact us if the issue persists."
     api_error: "We could not process your request. Please try after sometime."
     results: results
     field_blank: Please fill all the fields.
     installed: Installed
     helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get more Apps” button."
-    helpnote2: "In addition to the apps, you can bring in data from any other third party solution, legacy system or database into the tickets and contacts pages with Plugs. You can customize your Plug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS, and Javascript."
+    helpnote2: "In addition to the apps, you can bring in data from any other third party solution, legacy system or database into the tickets and contacts pages with custom apps. You can customize your custom app widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS, and Javascript."
     no_configs: "This app does not require any configs."
     search: "Search"
     search_language_warning: "Search available in English only"
@@ -6093,18 +6099,18 @@ en:
     uninstall: Uninstall
     deprecated_message: This app is no longer supported. Please install the latest version.
     no_timesheet_feature: This app can only be installed for accounts with Time Tracking enabled.
-    freshplugs:
+    custom_apps:
       refresh: Refresh
       custom_widget_preview: Custom Widget Preview
       show_preview: Show Preview
       hide_preview: Hide Preview
       show_widget_in_ticket_view_page: Show the widget in ticket view page.
       show_the_widget_in_contact_view_page: Show the widget in contact view page.
-      plug_preview: Plug Preview
-      preview_helptext: This plug will appear in the sidebar
+      custom_app_preview: Custom app preview
+      preview_helptext: This custom app will appear in the sidebar
       ticket_detail_page: Ticket detail page
       contact_detail_page: Contact detail page
-      plug_used_in: Plug displayed on
+      custom_app_used_in: Custom app displayed on
     whmcs:
       label: "WHMCS"
       products: "Products"
@@ -6684,10 +6690,10 @@ en:
       description: "Description"
       script: "Script"
       label: "Custom Widget"
-      new_plug: "New Plug"
-      edit_plug: "Edit Plug"
+      new_custom_app: "New Custom app"
+      edit_custom_app: "Edit Custom app"
       desc: "You can add a custom widget to display any detail using your own custom script."
-      helpnote: "<h4>Plugs</h4><p><br/> You can develop your own Plug using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a Plug, first give it a name and description. Then enter your code in the  ‘Script’ area. You can pass any ticket or requestor field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about Plugs."
+      helpnote: "<h4>Custom Apps</h4><p><br/> You can develop your own custom app using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a custom app, first give it a name and description. Then enter your code in the ‘Script’ area. You can pass any ticket or requestor field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about custom apps."
       form:
         widget_title: "Widget Name"
         widget_script: "Widget code snippet"
@@ -7007,7 +7013,7 @@ en:
         main:
             all: All
             time_period: Time Period
-            survey_name: Survey Name
+            survey_name: Survey name
             group: Group
             agent: Agent
             overview: Overview

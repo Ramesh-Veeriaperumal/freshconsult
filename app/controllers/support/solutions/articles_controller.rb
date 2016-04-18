@@ -43,7 +43,7 @@ class Support::Solutions::ArticlesController < SupportController
         draft_preview? ? adapt_article : load_page_meta
         set_portal_page :article_view 
       }
-      format.json { render :json => @article.to_json  }
+      format.json { render :json => @article.to_json(Solution::Constants::API_OPTIONS)  }
     end
   end
 

@@ -62,7 +62,9 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
         set_others_redis_key(key+"_expiry",1,ONE_HOUR) if value == 1
       end
     else
-      @status, @headers,@response = [403, {'Retry-After' => retry_after,'Content-Type' => 'text/html'}, 
+      retry_value = retry_after
+      Rails.logger.error("API V1 Ratelimit Error :: Account: #{@account_id}, Host: #{@host}, Count: #{@count}, Retry-After: #{retry_value}, Time: #{Time.now}")
+      @status, @headers,@response = [403, {'Retry-After' => retry_value,'Content-Type' => 'text/html'}, 
                                       ["You have exceeded the limit of requests per hour"]]
     end
     
