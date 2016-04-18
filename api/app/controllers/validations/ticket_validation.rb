@@ -79,7 +79,7 @@ class TicketValidation < ApiValidation
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required,
                                 ignore_string: :allow_string_param,
-                                section_field_mapping: proc{ |x| TicketsValidationHelper.section_field_parent_field_mapping }
+                                section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
                            }
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
@@ -93,7 +93,7 @@ class TicketValidation < ApiValidation
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
     @due_by ||= item.try(:due_by).try(:iso8601) if item
     @item = item
-	check_params_set(request_params[:custom_fields]) if request_params[:custom_fields].is_a?(Hash)
+    check_params_set(request_params[:custom_fields]) if request_params[:custom_fields].is_a?(Hash)
     fill_custom_fields(request_params, item.custom_field_via_mapping) if item && item.custom_field_via_mapping.present?
   end
 
@@ -156,19 +156,19 @@ class TicketValidation < ApiValidation
   end
 
   def sources
-    if Account.current.compose_email_enabled? 
+    if Account.current.compose_email_enabled?
       ApiTicketConstants::SOURCES | [TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
     else
-      ApiTicketConstants::SOURCES 
+      ApiTicketConstants::SOURCES
     end
   end
 
   def create_or_update?
-    [:create, :update].include?(self.validation_context)
+    [:create, :update].include?(validation_context)
   end
 
   def source_as_outbound_email?
-    @outbound_email ||= (source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?  
+    @outbound_email ||= (source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?
   end
 
   def default_field_validations

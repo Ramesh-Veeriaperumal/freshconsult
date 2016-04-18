@@ -214,7 +214,7 @@ module ApiDiscussions
 
     def test_update_with_nil_name
       put :update, construct_params({ id: fc.id }, name: nil)
-      match_json([bad_request_error_pattern('name', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' )])
+      match_json([bad_request_error_pattern('name', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null')])
       assert_response 400
     end
 

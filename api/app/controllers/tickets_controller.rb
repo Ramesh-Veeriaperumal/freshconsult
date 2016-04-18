@@ -10,7 +10,7 @@ class TicketsController < ApiApplicationController
   around_filter :run_on_slave, only: [:index]
 
   before_filter :ticket_permission?, only: [:destroy]
-  before_filter :check_search_feature, :validate_search_params, :only => [:search]
+  before_filter :check_search_feature, :validate_search_params, only: [:search]
 
   def create
     assign_protected
@@ -46,12 +46,12 @@ class TicketsController < ApiApplicationController
     lookup_and_change_params
     @items = search_query
     add_total_entries(@items.total)
-    add_link_header(page:@items.next_page) if @items.next_page.present?
+    add_link_header(page: @items.next_page) if @items.next_page.present?
   end
 
   def destroy
     @item.deleted = true
-    store_dirty_tags(@item) #Storing tags whenever ticket is deleted. So that tag count is in sync with DB.
+    store_dirty_tags(@item) # Storing tags whenever ticket is deleted. So that tag count is in sync with DB.
     @item.save
     head 204
   end
@@ -85,7 +85,7 @@ class TicketsController < ApiApplicationController
       FeatureConstants::TICKETS
     end
 
-    def sideload_associations 
+    def sideload_associations
       @include_validation.include_array.each do |association|
         instance_variable_set("@#{association}", send(association))
         increment_api_credit_by(1) # for embedded associations
@@ -138,12 +138,12 @@ class TicketsController < ApiApplicationController
       @item.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at).limit(ConversationConstants::MAX_INCLUDE)
     end
 
-    # used in side loading association 
-    def requester     
+    # used in side loading association
+    def requester
       @item.requester
     end
 
-    # used in side loading association 
+    # used in side loading association
     def company
       @item.company
     end
@@ -353,14 +353,14 @@ class TicketsController < ApiApplicationController
 
     def search_query
       es_options = {
-        :per_page     => params[:per_page] || 30,
-        :page         => params[:page] || 1,
-        :order_entity => params[:order_by]|| 'created_at',
-        :order_sort   => params[:order_type] || 'desc'
+        per_page: params[:per_page] || 30,
+        page: params[:page] || 1,
+        order_entity: params[:order_by] || 'created_at',
+        order_sort: params[:order_type] || 'desc'
       }
       neg_conditions = [Helpdesk::Filters::CustomTicketFilter.deleted_condition(true), Helpdesk::Filters::CustomTicketFilter.spam_condition(true)]
-      conditions = params[:search_conditions].collect {|s_c| {'condition' => s_c.first, 'operator' => 'is_in', 'value' => s_c.last.join(",") } }
-      Search::Filters::Docs.new(conditions, neg_conditions).records('Helpdesk::Ticket',es_options)
+      conditions = params[:search_conditions].collect { |s_c| { 'condition' => s_c.first, 'operator' => 'is_in', 'value' => s_c.last.join(',') } }
+      Search::Filters::Docs.new(conditions, neg_conditions).records('Helpdesk::Ticket', es_options)
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

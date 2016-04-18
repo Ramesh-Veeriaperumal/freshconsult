@@ -602,7 +602,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     get "/api/tickets/#{ticket.display_id}?include=conversations,requester,company", nil, @headers
     assert_equal '4', response.headers['X-RateLimit-Used-CurrentRequest']
 
-    get "/api/tickets?include=requester", nil, @headers
+    get '/api/tickets?include=requester', nil, @headers
     assert_equal '3', response.headers['X-RateLimit-Used-CurrentRequest']
   end
 
@@ -628,7 +628,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     v2_api_consumed_limit = get_key(v2_api_key).to_i
     assert_equal old_v2_api_consumed_limit + 7, v2_api_consumed_limit
 
-    get "/api/tickets?include=requester", nil, @headers
+    get '/api/tickets?include=requester', nil, @headers
 
     v2_api_consumed_limit = get_key(v2_api_key).to_i
     assert_equal old_v2_api_consumed_limit + 10, v2_api_consumed_limit
@@ -706,7 +706,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
     remove_key(v2_api_key)
     Middleware::FdApiThrottler.stubs(:extra_credits).returns(10)
-    get "/api/v2/discussions/categories", nil, @headers
+    get '/api/v2/discussions/categories', nil, @headers
     assert_equal 1, get_key(v2_api_key).to_i
     assert $rate_limit.ttl(v2_api_key).to_i > 3000
 
