@@ -13,9 +13,9 @@ class ApiGroupsQueriesTest < ActionDispatch::IntegrationTest
         api_index: 0,
         api_destroy: 11,
 
-        create: 25,
+        create: 23,
         show: 15,
-        update: 23,
+        update: 21,
         index: 14,
         destroy: 29
       }

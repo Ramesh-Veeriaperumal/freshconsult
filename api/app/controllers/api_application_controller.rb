@@ -326,7 +326,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def add_total_entries(total_items)
-      response.headers['X-Search-Results-Count'] = total_items.to_s 
+      response.headers['X-Search-Results-Count'] = total_items.to_s
     end
 
     # Construct link header for paginated collection

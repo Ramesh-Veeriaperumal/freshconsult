@@ -9,9 +9,10 @@ class ContactDelegator < BaseDelegator
 
   validate :user_emails_validation, if: -> { @other_emails }
 
-  def initialize(record, other_emails = [])
-    @other_emails = other_emails
+  def initialize(record, options = {})
+    @other_emails = options[:other_emails]
     @user_id = record.id
+    check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     super(record)
   end
 

@@ -14,7 +14,7 @@ class TimeEntriesQueriesTest < ActionDispatch::IntegrationTest
         api_destroy: 7,
         api_ticket_time_entries: 3,
 
-        create: 23,
+        create: 21,
         update: 19,
         index: 15,
         toggle_timer: 20,
