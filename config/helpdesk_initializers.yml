@@ -56,6 +56,7 @@ helpdesk:
     - spam_watcher
     - string_ext
     - text_datastore
+    - archive_datastore
     - time_formats
     - twitter_config
     - social_config

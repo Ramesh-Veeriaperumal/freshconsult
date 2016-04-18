@@ -55,6 +55,7 @@ defaults: &defaults
     - [archive_build_create_ticket]
     - [archive_modify_ticket_association]
     - [archive_delete_ticket]
+    - [archive_delete_ticket_dependencies]
     - [chargebee_invoice]
     - [update_ticket_states]
     - [ticket_observer]
