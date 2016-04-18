@@ -59,7 +59,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     if $redis_others.perform_redis_op("exists", TICKET_EXPORT_SIDEKIQ_ENABLED)
       if $redis_others.perform_redis_op("sismember", PREMIUM_TICKET_EXPORT, Account.current.id)
         Tickets::Export::PremiumTicketsExport.perform_async(export_params)
-      elsif $redis_others.perform_redis_op("sismember", long_running_key, Account.current.id)
+      elsif $redis_others.perform_redis_op("sismember", LONG_RUNNING_TICKET_EXPORT, Account.current.id)
         Tickets::Export::LongRunningTicketsExport.perform_async(export_params)
       else
         Tickets::Export::TicketsExport.perform_async(export_params)
