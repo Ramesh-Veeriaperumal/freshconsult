@@ -62,11 +62,12 @@ class Search::AutocompleteController < ApplicationController
       tags = { :results => [] }
       search_results.results.each do |document|
         tags[:results].push(*[{
-            :value => document.name
+            :value => document.name,
+            :id => document.id
           }])
       end
     rescue
-      tags = { :results => tag_results.map { |tag| { :value => tag.name } } }
+      tags = { :results => tag_results.map { |tag| { :value => tag.name, :id => tag.id } } }
     end
     respond_to do |format|
       format.json { render :json => tags.to_json }
@@ -133,7 +134,7 @@ class Search::AutocompleteController < ApplicationController
                       :id => current_account.kbase_email, 
                       :value => "",
                       :details => current_account.kbase_email
-                    }) if params[:q] =~ /(kb[ase]?.*)/
+                    }) if current_account.kbase_email.start_with?(params[:q])
       return requesters
 
     end

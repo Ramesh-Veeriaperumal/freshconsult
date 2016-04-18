@@ -37,11 +37,12 @@ class Search::Filters::Docs
   def records(model_class, options={})
     
     # Options for querying ES
-    es_offset       = ES_PAGINATION_SIZE * (options[:page].to_i - 1)
+    es_page_size    = (options[:per_page].presence || ES_PAGINATION_SIZE).to_i
+    es_offset       = es_page_size * (options[:page].to_i - 1)
     es_defaults     = ({
                         :_source  => false, 
                         :sort     => { options[:order_entity].to_sym => options[:order_sort].to_s },
-                        :size     => ES_PAGINATION_SIZE,
+                        :size     => es_page_size,
                         :from => es_offset 
                       })
     
@@ -60,6 +61,7 @@ class Search::Filters::Docs
     #_Note_: Cannot do query chaining with this, as superclass is Array
     results         = Search::Filters::Docs::Results.new(records, { 
                                                                     page: options[:page].to_i, 
+                                                                    per_page: es_page_size,
                                                                     from: es_offset, 
                                                                     total_entries: total_entries 
                                                                   })
@@ -163,7 +165,8 @@ class Search::Filters::Docs
       @total    = es_options[:total_entries]
       @options  = {
         :page   => es_options[:page] || 1,
-        :from   => es_options[:from] || 0
+        :from   => es_options[:from] || 0,
+        :per_page => es_options[:per_page] || ES_PAGINATION_SIZE.to_i
       }
       super(result_set)
     end
@@ -174,7 +177,7 @@ class Search::Filters::Docs
     end
 
     def per_page
-      ES_PAGINATION_SIZE.to_i
+      @options[:per_page].to_i
     end
 
     def total_pages

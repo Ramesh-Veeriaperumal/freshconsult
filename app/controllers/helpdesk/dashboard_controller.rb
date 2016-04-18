@@ -75,7 +75,7 @@ class Helpdesk::DashboardController < ApplicationController
     @status = Helpdesk::TicketStatus.status_names_from_cache(current_account)
     @groups = current_account.groups_from_cache.map { |group| [group.name, group.id] }
     @groups.insert(0,["My Groups", 0])
-    @agents = current_account.agents_from_cache.map {|ag| [ag.user.name, ag.user_id]}
+    @agents = current_account.agents_details_from_cache.map {|ag| [ag.name, ag.id]}
   end
 
   def tickets_summary

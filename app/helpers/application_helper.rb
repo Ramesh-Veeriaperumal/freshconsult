@@ -21,6 +21,7 @@ module ApplicationHelper
   include Freshfone::SubscriptionsHelper
   include DateHelper
   include StoreHelper
+  include JsonEscape
   
   require "twitter"
 
@@ -1616,8 +1617,18 @@ module ApplicationHelper
     content_tag :ul, &list
   end
 
+  def show_onboarding?
+    user_trigger = !is_assumed_user? && current_user.login_count <= 2  && current_user.agent.onboarding_completed? 
+    (current_user.privilege?(:view_admin))  ?  user_trigger && current_account.subscription.trial?  :  user_trigger
+  end
+
+  def inlinemanual_topic_id
+    topic = (current_user.privilege?(:view_admin)) ? 'admin_topic' : 'agent_topic'
+    User::INLINE_MANUAL[topic]
+  end
+
   def outgoing_callers
     current_account.freshfone_caller_id
   end
-  
+
 end

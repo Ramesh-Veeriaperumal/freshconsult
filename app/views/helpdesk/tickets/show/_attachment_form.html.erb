@@ -5,7 +5,7 @@
   max_attachment ||= nil
   max_size ||= 15
 %>
-<div class="attach-wrapper row-fluid new-attach">
+<div class="attach-wrapper row-fluid new-attach" id="attachment-type" data-multifile-enable="<%= current_account.launched?(:multifile_attachments) %>">
   <div class="span8">   
     <div class="attachments-list-form" id="<%= attach_id %>-container">
       <% total_attachments = original_attachments[:regular].size + original_attachments[:cloud_files].size if original_attachments.present? %>
@@ -18,7 +18,7 @@
           <% original_attachments[:regular].each do |attachment| %>
             <div class="item" rel="original_attachment" id="<%= dom_id(attachment) %>">
                 <a class="attachment-close"  href="javascript:void(0)" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" 
-                  onclick="jQuery(this).parent().hide(); jQuery(this).next().prop('disabled', true); Helpdesk.Multifile.updateCount(this); return false;"></a>
+                  onclick="jQuery(this).parent().hide(); jQuery(this).next().prop('disabled', true);Helpdesk.Multifile.updateCount(this); return false;"></a>
               <input type="hidden" name="helpdesk_note[attachments][][resource]" value="<%=attachment.id%>" rel="original_attachment"/>
               <div class="attachment-type file-types-def">
                 <a href="javascript:void(0)"><%= attachment.content_file_name %></a>
@@ -50,7 +50,7 @@
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
           <li class="portal-attach">
             <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap">
-                <%= I18n.t('portal.attach_file').html_safe %>
+               <%= current_account.launched?(:multifile_attachments) ? t('attach_files') : t('attach_file') %>
                 <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
                   <input type="file" name="emptyfile" 
                     id="<%=attach_id%>_file"
@@ -58,7 +58,9 @@
                     nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
                     fileContainer="<%=attach_id%>-container" 
                     fileList="<%=attach_id%>-attachments"
-                    sendFocusTo="<%=attach_id%>-body" />
+                    sendFocusTo="<%=attach_id%>-body" 
+                    <%= current_account.launched?(:multifile_attachments) ? "multiple" : ""%>
+                    />
                 </div>
             </a>
           </li>
@@ -69,7 +71,7 @@
       </div>
     <% else %>      
       <div class="hidden_upload">
-        <div class="add_attachment"><span>+</span> <%= t('attach_file') %> </div>
+        <div class="add_attachment"><span>+</span> <%= current_account.launched?(:multifile_attachments) ? t('attach_files') : t('attach_file') %></div>
         <input type="file" name="emptyfile" 
                     id="<%=attach_id%>_file"
                     data-attach-id="<%=attach_id%>"
@@ -78,13 +80,17 @@
                     fileList="<%=attach_id%>-attachments"
                     sendFocusTo="<%=attach_id%>-body" 
                     max_size="<%=max_size%>"
-                    max_attachment= "<%=max_attachment%>" />
+                    max_attachment= "<%=max_attachment%>" 
+                    <%= current_account.launched?(:multifile_attachments) ? "multiple" : ""%>
+                    >
       </div>
     <% end %>    
   </div>
 </div>
 <script type="text/javascript">
   // Fix for Firefox/IE - To override :hover style persistance after click on input[type=file] element
+  // global mutifile key
+  
   jQuery('div.attach-wrapper a[data-toggle="dropdown"]').bind('click', function(){
     jQuery(this).parents('div.attach-wrapper').find('a.attach-link-wrap').first().css({
           'background-color': 'inherit',
@@ -112,3 +118,5 @@
   the attachments table.
  %>
 <%= render :partial => "/helpdesk/tickets/show/multifile_template"  %>
+<%= render :partial => "/helpdesk/tickets/show/multifile_template_new" %>
+

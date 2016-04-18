@@ -103,7 +103,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
                                         view_all_tickets: true)
-    match_json([bad_request_error_pattern('company_id', :company_id_required)])
+    match_json([bad_request_error_pattern('company_id', :company_id_required, code: :missing_field)])
     assert_response 400
   end
 

@@ -25,8 +25,27 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
     (domain_mapping && domain_mapping.update_attribute(:domain,params[:new_domain])) ? domain_mapping.account_id : nil
   end
 
+  def update_domain_mapping_for_pod
+    if params[:operation].eql?("create")
+      DomainMapping.new(params[:custom_portal]).save ? true : false
+    else
+      domain = params[:old_domain].blank? ? params[:custom_portal][:domain] : params[:old_domain]
+      domain_mapping = DomainMapping.find_by_domain(domain)
+      if domain_mapping && domain_mapping.account_id.eql?(params[:custom_portal][:account_id].to_i)
+        return domain_mapping.update_attributes(params[:custom_portal]) ? true : false
+      else
+        return false
+      end
+    end
+  end
+
   def check_domain_availability
     DomainMapping.find_by_domain(params[:new_domain]) ? true : false
+  end
+
+  def remove_domain_mapping_for_pod
+    domain_mapping = DomainMapping.find_by_account_id_and_domain(params[:account_id],params[:domain])
+    (domain_mapping && domain_mapping.destroy) ? true : false
   end
 
   def pod_endpoint

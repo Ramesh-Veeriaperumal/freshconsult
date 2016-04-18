@@ -42,6 +42,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
+  #zero_downtime_migration_methods :methods => {:remove_columns => [ "description", "description_html"] }
+  
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, 
@@ -527,6 +529,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     tags.collect { |tag| tag.name }
   end
 
+  def tag_ids
+    tag_uses.pluck(:tag_id)
+  end
+
   def ticket_tags
     tag_names.join(',')
   end
@@ -832,7 +838,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def unsubscribed_agents
     user_ids = subscriptions.map(&:user_id)
-    account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+    account.agents_details_from_cache.reject{ |a| user_ids.include?(a.id) }
   end
 
   def resolved_now?

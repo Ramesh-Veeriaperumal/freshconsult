@@ -4,20 +4,6 @@ module Redis::TicketsRedis
 	end
 
   def get_tickets_redis_hash_key key
-    #TBD: Remove if condition after 2 days of deploying "save emails in ticket draft" enhancement
-    #newrelic_begin_rescue { $redis_tickets.perform_redis_op("hgetall", key) } #Only this line is required
-    newrelic_begin_rescue do
-      key_type = redis_key_type(key)
-      if key_type.eql? "string"
-        draft_hash_data = {
-          "draft_data" => get_tickets_redis_key(key),
-          "draft_cc" => "",
-          "draft_bcc" => ""
-        }
-        remove_tickets_redis_key(key)
-        set_tickets_redis_hash_key(key, draft_hash_data)
-      end
-    end
     newrelic_begin_rescue { $redis_tickets.perform_redis_op("hgetall", key) }
   end
 

@@ -11,6 +11,7 @@ describe CompaniesController do
 
   before(:each) do
     login_admin
+    @company_count = @account.companies.all.size
   end
 
   SKIPPED_KEYS = [  :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, 
@@ -54,5 +55,17 @@ describe CompaniesController do
     another_company = create_company
     put :update, {:company => company_attributes(company, SKIPPED_KEYS)}.merge(:id => another_company.id)
     response.body.should =~ /Name has already been taken/
+  end
+
+  it "should not create a new company with the same domain" do
+    company = create_company
+    @company_count = @company_count + 1
+    post :create, :company => { :name => Faker::Company.name, 
+                                :description => Faker::Lorem.sentence(3), 
+                                :note => "", 
+                                :domains => company.domains
+                              }
+    @account.companies.all.size.should eql @company_count
+    response.body.should match Regexp.new(I18n.t('companies.info1'))
   end
 end

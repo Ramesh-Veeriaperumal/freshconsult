@@ -16,10 +16,18 @@
             .val(JSON.stringify({link: files[0].link,name: files[0].name, provider: 'dropbox'}))
             .data('filename', files[0].name)
             .data('provider', 'Dropbox');
-
-          Helpdesk.Multifile.addFileToList(jQuery('#'+inputElement));
-          newInput = Helpdesk.Multifile.duplicateInput(jQuery('#'+inputElement));
-          jQuery(inp).data('holder',newInput.attr('id'));
+          if(jQuery("#attachment-type").data('multifile-enable')==true)
+          {
+            Helpdesk.MultifileUpload.addFileToList(jQuery('#'+inputElement));
+            newInput = Helpdesk.MultifileUpload.duplicateInput(jQuery('#'+inputElement));
+            jQuery(inp).data('holder',newInput.attr('id'));
+          }
+          else
+          {
+            Helpdesk.Multifile.addFileToList(jQuery('#'+inputElement));
+            newInput = Helpdesk.Multifile.duplicateInput(jQuery('#'+inputElement));
+            jQuery(inp).data('holder',newInput.attr('id'));
+          }
       }, extensions:""})
     }
   </script>

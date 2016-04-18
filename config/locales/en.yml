@@ -1619,6 +1619,10 @@ en:
       index:
         human_name: Dispatch’r Rule
       remember_to_save: 'After updating, please remember to save it.'
+      label:
+        object_id_array_in: 'Contains any of'
+        object_id_array_and: 'Contains all of'
+        object_id_array_not_in: 'Contains none of'
     webhook:
       jira_hook_title: JIRA Issue Creation
       jira_hook_description: You could use a webhook to automatically create issues inside your JIRA account when a ticket is raised in Freshdesk.
@@ -2784,6 +2788,7 @@ en:
   username: Username
   reply: Reply
   is_not: Is not
+  and: And
   during: during
   less_than: Less than
   greater_than: Greater than
@@ -4381,6 +4386,8 @@ en:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: "You don't have any companies with the letter '%{alphabet}'"
     valid_comapany_domain: "Enter valid domains"
+    view_company: "View Company"
+    info1: "Domain has already been taken"
   billing_info_update: Your billing information has been updated.
   wrong_portal:
     content_not_available: The content you are looking for is, not available in this portal.
@@ -5083,6 +5090,7 @@ en:
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
     info8: More info regarding this company like address, phone number, website etc
+    info12: "eg: mycompany1.com, mycompany2.com"
     errors:
       required_field: cannot be blank
       custom_text : is not valid
@@ -6143,6 +6151,9 @@ en:
     confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
     app: app
     plug: plug
+    app_gallery_launch_text: "<b>Welcome to the brand new App Gallery!</b> Manage any integrations you installed previously, and try out new Apps. Get a preview of what the app will look like in your helpdesk and how it will help you - all in one glance."
+    app_gallery_blog_post: "http://blog.freshdesk.com/new-marketplace/"
+    app_gallery_link_text: "Read more about the new App Gallery"
     app_gallery: App Gallery
     app_description: "Apps allow you to integrate with other applications to make your Freshdesk experience more awesome. They also enable you to customize and personalize your Freshdesk portal."
     apps: Apps
@@ -6156,7 +6167,9 @@ en:
     update: Update
     installing_text: "Please wait..."
     in_development: In Development
-    no_mktp_apps: "You have no Apps installed. Browse and Install Apps from the App Gallery by clicking "
+    no_mktp_apps: "No Apps installed"
+    no_mktp_apps_txt: "We've integrated with some of your favorite applications." 
+    check_app_gallery: "Check out the App Gallery to install them!"
     go_to_dev_portal: Go to Developer Portal
     developer_shortcuts: Developer Shortcuts
     plug_info: "Did you know, now there is a better way to write and manage and even share your plugs to all of freshdesk community."
@@ -6167,6 +6180,7 @@ en:
     screenshots: Screenshots
     version: VERSION
     ver: "Version: "
+    published_in: "Published in"
     installs: Installs
     no_apps: No Apps available
     no_apps_in_category: No Apps available in this category
@@ -6174,7 +6188,7 @@ en:
     similar_apps: "Similar Apps:"
     no_connection: "The app gallery is currently unavailable. Please try again later. Please contact us, if the issue persists."
     plugs_unavailable: "Certain apps could not be rendered. Please try again later. Please contact us if the issue persists."
-    installed_plugs_unavailable: "The listing of installed apps is currently unavailable. Please try again later. Please contact us if the issue persists."
+    installed_mkp_apps_unavailable: "The listing of installed apps is currently unavailable. Please try again later. Please contact us if the issue persists."
     api_error: "We could not process your request. Please try after sometime."
     results: results
     field_blank: Please fill all the fields.
@@ -7628,6 +7642,8 @@ en:
     view_all_tickets: View all tickets
     view_all_compliant_tickets: View all compliant tickets
     view_all_violated_tickets: View all violated tickets
+    export_exceeds_row_limit_msg: "- The report has been truncated to show %{row_max_limit} records -"
+    average_interactions: "( Average %{count} )"
     saved_report: 
       title: Report Title
       dialog_header: Save as
@@ -7754,6 +7770,9 @@ en:
         violated: 'Violated: %{percent_of_tickets}'
         total_tickets_received: 'Total tickets received : %{count}'
         total_tickets_resolved: 'Total tickets resolved : %{count}'
+        reopened_tickets:
+          one: "%{ticket_count} tickets with %{reopen_count} reopen"
+          other: "%{ticket_count} tickets with %{reopen_count} reopens"
       tickets: tickets
       source: source
       priority: priority

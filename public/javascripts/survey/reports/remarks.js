@@ -11,9 +11,11 @@ var SurveyRemark = {
             var self = this;
             this.currentPage=1;
             jQuery.ajax({
-                type: 'GET',
+                type: 'POST',
+                data: {saved_report_used: SurveyState.saved_report_used},
                 url: self.makeURL(),
                 success:function(data){
+                    SurveyState.saved_report_used = false;
                     if(SurveyState.RemarksOnly){
                         self.remarksConditionalRender(data);
                         SurveyUtil.hideOverlay();

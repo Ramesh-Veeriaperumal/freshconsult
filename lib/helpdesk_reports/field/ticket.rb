@@ -142,7 +142,7 @@ module HelpdeskReports::Field::Ticket
     when :priority
       TicketConstants.priority_list.sort
     when :agent_id
-      Account.current.agents_from_cache.collect { |au| [au.user.id, au.user.name] }
+      Account.current.agents_details_from_cache.collect { |au| [au.id, au.name] }
     when :group_id
       Account.current.groups_from_cache.collect { |g| [g.id, g.name]}
     when :product_id

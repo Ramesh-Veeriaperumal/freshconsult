@@ -684,8 +684,10 @@ class User < ActiveRecord::Base
       agent.destroy
       freshfone_user.destroy if freshfone_user
       email_notification_agents.destroy_all
+
+      expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date => 
-              (Time.now.utc + FDPasswordPolicy::Constants::GRACE_PERIOD).to_s})
+              (Time.now.utc + expiry_period).to_s})
       return true
     end 
     return false
@@ -702,8 +704,10 @@ class User < ActiveRecord::Base
       self.tags.clear
       agent = build_agent()
       agent.occasional = !!args[:occasional]
+
+      expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date => 
-          (Time.now.utc + FDPasswordPolicy::Constants::GRACE_PERIOD).to_s}, false)
+          (Time.now.utc + expiry_period).to_s}, false)
       save ? true : (raise ActiveRecord::Rollback)
     end
   end

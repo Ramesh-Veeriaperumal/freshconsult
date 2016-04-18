@@ -52,14 +52,14 @@
 
 <!-- Marketplace Plugs -->
 <% if feature?(:marketplace) %>
-  <% inst_plugs = installed_plugs(:contact_details_page) %>
+  <% inst_plugs = installed_mkp_apps(:contact_details_page) %>
   <% if inst_plugs.kind_of?(Hash) and inst_plugs[:error].present? %>
     <div class="alert alert-error">
       <%= t('marketplace.plugs_unavailable') %>
     </div>
   <% else %>  
     <% inst_plugs.try(:each) do |installed_plug| %>
-      <div id="<%= installed_plug['name'] %>" class="widget">
+      <div id="ext_<%= installed_plug['extension_id'] %>" class="widget">
         <div class="content">
           <%= freshplug_script(installed_plug.symbolize_keys) %>
         </div>

@@ -1,0 +1,29 @@
+
+<script id="multiple-file-list-template" type="text/x-jquery-tmpl">
+    {{if (file_valid)}}
+        <div id="${attachment_id}" class="clearfix" style="margin: 0px;padding: 5px;width:500px;">
+
+                <a class="attachment-close"  href="javascript:void(0)" 
+                onclick="Helpdesk.MultifileUpload.removeAttachments(this); return false;" 
+                data-input="${inputId}" data-size="${size_in_bytes}" data-attachment="${attachment_id}" style="float: left;">
+                </a>
+                <div id="files" style="border-left: 1px solid rgba(204, 204, 204, 0.51);float:left;">
+                {{each files}}
+                    <p>
+                        &nbsp;&nbsp;&nbsp; <span   title="${name}" style="opacity: 1; padding-left: 10px;">  ${short_name} {{if (size != '0' && size != '0.00 KB ') }}( ${size} ){{/if}}</span>
+                    </p>
+                {{/each}}
+                </div>
+        </div>
+    {{/if}}
+    {{if (!file_valid)}}
+        <div class="item invalid_files">
+            <div class="file-types-def">
+                <%= content_tag(:b, t('helpdesk.tickets.note.attachment_size.exceed'), 
+                                :class => "alert-text", 
+                                :title => t('helpdesk.tickets.note.attachment_size.exceed_limit')) %>
+            </div>
+        </div>
+    {{/if}}
+</script>
+

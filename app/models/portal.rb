@@ -25,6 +25,10 @@ class Portal < ActiveRecord::Base
   before_save :save_route_info, :add_default_solution_category
   after_destroy :destroy_route_info
 
+  before_create :update_custom_portal , :unless => :main_portal
+  after_create :update_custom_portal , :unless => :main_portal
+  before_update :update_custom_portal , :unless => :main_portal
+
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
   include Redis::RedisKeys
@@ -64,7 +68,7 @@ class Portal < ActiveRecord::Base
 
   concerned_with :solution_associations
 
-  APP_CACHE_VERSION = "FD72"
+  APP_CACHE_VERSION = "FD73"
 
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -299,4 +303,29 @@ class Portal < ActiveRecord::Base
     def clear_solution_cache(obj=nil)
       Account.current.clear_solution_categories_from_cache
     end
+
+    # * * * POD Operation Methods Begin * * *
+    def update_custom_portal
+      if Fdadmin::APICalls.non_global_pods? && portal_url_changed?
+        action = (send(:transaction_include_action?, :create) && new_record?) ? :create : :update
+        request_parameters = {
+          :target_method => :update_domain_mapping_for_pod,
+          :operation => action,
+          :old_domain => portal_url_was,
+          :custom_portal => {
+            :portal_id => id,
+            :account_id => account_id,
+            :domain => portal_url
+          }
+        }
+        begin
+          response = Fdadmin::APICalls.connect_main_pod(request_parameters)
+          raise ActiveRecord::Rollback unless response["account_id"]
+        rescue Exception => e
+          errors[:base] << "Portal url has already been taken"
+          return false
+        end
+      end
+    end
+  # * * * POD Operation Methods End * * *
 end

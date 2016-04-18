@@ -110,6 +110,7 @@ javascripts:
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
+    - public/javascripts/helpdesk/multifile_upload.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/socket.io-1.2.1.js
     - public/javascripts/frameworks/faye.js

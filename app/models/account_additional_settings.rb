@@ -46,6 +46,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings[:archive_days] unless additional_settings.blank?
   end
 
+  def delete_spam_tickets_days
+    additional_settings[:delete_spam_days] unless additional_settings.blank?
+  end
+
   private
 
   def clear_cache
