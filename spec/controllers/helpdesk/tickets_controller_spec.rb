@@ -75,9 +75,9 @@ RSpec.describe Helpdesk::TicketsController do
     response.status.should eql(500)
   end
 
-  it "should throw internal server error for non integer id" do
+  it "should throw not found error for non integer id" do
     get :show, :id => "id"
-    response.status.should eql(500)
+    response.status.should eql(404)
   end
 
   it "should not create a meta for created by if user and requester are the same" do

@@ -21,7 +21,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
-  before_filter :verify_format_and_tkt_id, :portal_check, :only => :show
+  before_filter :portal_check, :verify_format_and_tkt_id, :only => :show
   before_filter :check_compose_feature, :only => :compose_email
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new

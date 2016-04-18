@@ -140,11 +140,19 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_format_and_tkt_id
-    render_500 if params[:id].to_i.zero? || request.format.nil?
+    if request.format.nil?
+      render_500
+    elsif params[:id].to_i.zero?
+      render_error
+    end
   end
-  
+
   def record_not_found(exception)
     Rails.logger.debug "Error  =>" + exception.message
+    render_error
+  end
+
+  def render_error
     respond_to do |format|
       format.html {
         unless @current_account
