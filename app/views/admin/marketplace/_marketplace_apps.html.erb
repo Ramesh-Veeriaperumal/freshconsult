@@ -2,9 +2,11 @@
   <div id="freshplug-tab-content" class="tab-content clear">
       
       <div class="no-apps clear text-center blank-slate">
+        <span class="ficon-cubes fsize-60" style="opacity: 0.4;"></span>
         <h3><%= t('marketplace.no_mktp_apps') %></h3>
         <p class="txt"><%= t('marketplace.no_mktp_apps_txt') %></p>
         <p class="txt"><%= t('marketplace.check_app_gallery') %></p>
+        <a class="btn browse-btn btn-flat btn-primary btn-appgallery" href="" data-url="<%= admin_marketplace_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %></a>
       </div>
 
     <% if installed_mkp_apps.kind_of?(Hash) and installed_mkp_apps[:error].present?%>

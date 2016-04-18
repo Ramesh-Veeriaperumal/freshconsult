@@ -1,10 +1,10 @@
-<div class="custom-apps-list freshplugs-list tab-pane"  id="plugs">
+<div class="custom-apps-list freshplugs-list tab-pane"  id="custom_apps">
   <div id="freshplug-tab-content" class="tab-content clear">
     
-    <div class="no-plugs clear">
+    <div class="no-custom-apps clear">
       <p>
-        <%= t('marketplace.no_plugs') %>
-        <%= link_to t('marketplace.new_plug').html_safe, new_admin_integrations_freshplug_path, :class =>"" %>
+        <%= t('marketplace.no_custom_apps') %>
+        <%= link_to t('integrations.custom_application.new_custom_app').html_safe, new_admin_integrations_freshplug_path, :class =>"" %>
       </p>
     </div>
     <ul>
@@ -34,7 +34,7 @@
                       <a class='btn btn-mini btn-edit tooltip' href='<%= edit_admin_integrations_freshplug_path(application.id) %>' data-placement="below" data-original-title='<%= t('application.tooltip.edit') %>' >
                       <span class="<%= font_class('edit', 16) %>"></span></a>
 
-                      <a href="#toggle-confirm" rel="freshdialog" class="btn btn-mini tooltip delete-btn" title="<%= t('integrations.uninstall') %>" data-placement="below" data-original-title="<%= t('integrations.uninstall') %>" data-width="600" data-close-on-submit="true" data-show-close="true" data-destroy-on-close="true"  data-url="<%= admin_integrations_freshplug_path(application.id) %>" data-close-label="<%= t('plain_no') %>" data-submit-label="<%= t('plain_yes') %>" data-submit-class="btn btn-primary delete-confirm" data-confirm-content="<%= t('marketplace.confirm_uninstall_message', :human_name => t('marketplace.plug')) %>"> 
+                      <a href="#toggle-confirm" rel="freshdialog" class="btn btn-mini tooltip delete-btn" title="<%= t('integrations.uninstall') %>" data-placement="below" data-original-title="<%= t('integrations.uninstall') %>" data-width="600" data-close-on-submit="true" data-show-close="true" data-destroy-on-close="true"  data-url="<%= admin_integrations_freshplug_path(application.id) %>" data-close-label="<%= t('plain_no') %>" data-submit-label="<%= t('plain_yes') %>" data-submit-class="btn btn-primary delete-confirm" data-confirm-content="<%= t('marketplace.confirm_uninstall_message', :human_name => t('marketplace.custom_app')) %>"> 
                         <span class="<%= font_class('trash-o', 16) %>"></span>
                       </a>
                     </div>
