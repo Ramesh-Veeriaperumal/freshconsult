@@ -205,7 +205,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     if cc_email and cc_email.is_a?(Array)
       {:cc_emails => cc_email, :fwd_emails => [], :reply_cc => cc_email}.with_indifferent_access
     else
-      cc_email.with_indifferent_access
+      cc_email.with_indifferent_access if cc_email.is_a?(Hash)
     end
   end
   alias :cc_email :cc_email_hash
