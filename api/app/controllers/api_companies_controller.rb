@@ -4,7 +4,7 @@ class ApiCompaniesController < ApiApplicationController
   around_filter :run_on_slave, only: [:index]
 
   def create
-    company_delegator = CompanyDelegator.new(@item)
+    company_delegator = CompanyDelegator.new(@item, custom_fields: params[cname][:custom_field])
     if !company_delegator.valid?
       render_custom_errors(company_delegator, true)
     elsif @item.save
@@ -15,8 +15,9 @@ class ApiCompaniesController < ApiApplicationController
   end
 
   def update
-    @item.assign_attributes(custom_field: params[cname].delete(:custom_field)) # Temp hack
-    company_delegator = CompanyDelegator.new(@item)
+    custom_fields = params[cname].delete(:custom_field)
+    @item.assign_attributes(custom_field: custom_fields) # Temp hack
+    company_delegator = CompanyDelegator.new(@item, custom_fields: custom_fields)
     if !company_delegator.valid?
       render_custom_errors(company_delegator, true)
     elsif !@item.update_attributes(params[cname])

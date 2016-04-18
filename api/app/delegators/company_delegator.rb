@@ -5,4 +5,9 @@ class CompanyDelegator < BaseDelegator
     required_attribute: :required_for_agent
   }
   }
+
+  def initialize(record, options)
+    check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
+    super record
+  end
 end
