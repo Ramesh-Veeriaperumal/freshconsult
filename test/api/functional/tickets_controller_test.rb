@@ -2136,22 +2136,19 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_deleted
     ticket.update_column(:deleted, true)
     put :update, construct_params({ id: ticket.display_id }, source: 2)
-    assert_response :missing
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'PUT'))
+    assert_equal 'GET', response.headers['Allow']
     ticket.update_column(:deleted, false)
   end
 
   def test_destroy_deleted
     ticket.update_column(:deleted, true)
     delete :destroy, construct_params(id: ticket.display_id)
-    assert_response :missing
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'DELETE'))
+    assert_equal 'GET', response.headers['Allow']
     ticket.update_column(:deleted, false)
-  end
-
-  def test_destroy_spammed
-    ticket.update_column(:spam, true)
-    delete :destroy, construct_params(id: ticket.display_id)
-    assert_response :missing
-    ticket.update_column(:spam, false)
   end
 
   def test_restore_not_deleted
@@ -2585,7 +2582,9 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.update_column(:spam, true)
     delete :destroy, controller_params(id: t.display_id)
-    assert_response :missing
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'DELETE'))
+    assert_equal 'GET', response.headers['Allow']
     t.update_column(:spam, false)
   end
 
@@ -2593,7 +2592,9 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.update_column(:spam, true)
     put :update, construct_params({ id: t.display_id }, update_ticket_params_hash)
-    assert_response :missing
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'PUT'))
+    assert_equal 'GET', response.headers['Allow']
     t.update_column(:spam, false)
   end
 

@@ -538,7 +538,22 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user
     sample_user.update_column(:deleted, true)
     delete :destroy, construct_params(id: sample_user.id)
-    assert_response :missing
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'DELETE'))
+    assert_equal 'GET', response.headers['Allow']
+  ensure
+    sample_user.update_column(:deleted, false)
+  end
+
+  def test_delete_a_blocked_contact
+    sample_user = get_user
+    sample_user.update_column(:blocked, true)
+    delete :destroy, construct_params(id: sample_user.id)
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'DELETE'))
+    assert_equal 'GET', response.headers['Allow']
+  ensure
+    sample_user.update_column(:blocked, false)
   end
 
   def test_update_a_deleted_contact
@@ -546,7 +561,23 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_column(:deleted, true)
     params_hash = { language: 'cs' }
     put :update, construct_params({ id: sample_user.id }, params_hash)
-    assert_response :missing
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'PUT'))
+    assert_equal 'GET', response.headers['Allow']
+  ensure
+    sample_user.update_column(:deleted, false)
+  end
+
+  def test_update_a_blocked_contact
+    sample_user = get_user
+    sample_user.update_column(:blocked, true)
+    params_hash = { language: 'cs' }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'PUT'))
+    assert_equal 'GET', response.headers['Allow']
+  ensure
+    sample_user.update_column(:blocked, false)
   end
 
   def test_show_a_deleted_contact
