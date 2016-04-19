@@ -21,6 +21,10 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     ticket
   end
 
+  def fetch_email_config
+    EmailConfig.first || create_email_config
+  end
+
   def test_create_with_invalid_attachment_type
     skip_bullet do
       post '/api/tickets', { 'ticket' => { 'email' => 'test@abc.com', 'attachments' => 's', 'subject' => 'Test Subject', 'description' => 'Test', 'priority' => '1', 'status' => '2' } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
@@ -61,6 +65,31 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     match_json(ticket_pattern(params_hash.merge(custom_fields: { field1.to_sym => '2.34', field2.to_sym => false }), Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     assert Helpdesk::Ticket.last.attachments.count == 1
+  end
+
+  def test_multipart_create_outbound_ticket_with_all_params
+    cc_emails = [Faker::Internet.email, Faker::Internet.email]
+    subject = Faker::Lorem.words(10).join(' ')
+    description = Faker::Lorem.paragraph
+    email = Faker::Internet.email
+    tags = [Faker::Name.name, Faker::Name.name]
+    @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
+    params_hash = { email: email, email_config_id: fetch_email_config.id, cc_emails: cc_emails, description: description, subject: subject,
+                    priority: 2, type: 'Problem', tags: tags, group_id: @create_group.id }
+    tkt_field1 = create_custom_field('test_custom_decimal', 'decimal')
+    tkt_field2 = create_custom_field('test_custom_checkbox', 'checkbox')
+    field1 = tkt_field1.name[0..-3]
+    field2 = tkt_field2.name[0..-3]
+    headers, params = encode_multipart(params_hash.merge(custom_fields: { field1.to_sym => '2.34', field2.to_sym => 'false' }), 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
+    skip_bullet do
+      post '/api/tickets/outbound_email', params, @headers.merge(headers)
+    end
+    [tkt_field1, tkt_field2].each(&:destroy)
+    @account.make_current
+    match_json(ticket_pattern(params_hash.merge(source: 10, responder_id: @agent.id, status: 5, custom_fields: { field1.to_sym => '2.34', field2.to_sym => false }), Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+    assert Helpdesk::Ticket.last.attachments.count == 1
+    assert_response 201
   end
 
   def test_multipart_create_note_with_all_params
@@ -108,7 +137,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       assert ticket.cc_email[:tkt_cc].count == 1
 
       put "/api/tickets/#{ticket.id}", { tags: nil }.to_json, @write_headers
-      match_json([bad_request_error_pattern('tags', :datatype_mismatch, prepend_msg: :input_received, given_data_type: 'Null' , expected_data_type: Array)])
+      match_json([bad_request_error_pattern('tags', :datatype_mismatch, prepend_msg: :input_received, given_data_type: 'Null', expected_data_type: Array)])
       assert_response 400
 
       put "/api/tickets/#{ticket.id}", { tags: [] }.to_json, @write_headers

@@ -1,0 +1,14 @@
+common: &common
+  archive_primary_storage: s3
+
+development:
+  archive_primary_storage: s3
+
+staging:
+  <<: *common
+
+production:
+  <<: *common
+
+test:
+  archive_primary_storage: s3

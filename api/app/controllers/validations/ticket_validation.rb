@@ -1,7 +1,7 @@
 class TicketValidation < ApiValidation
   MANDATORY_FIELD_ARRAY = [:requester_id, :phone, :email, :twitter_id, :facebook_id].freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
-  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(fr_due_by due_by)).freeze
+  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(fr_due_by due_by subject description)).freeze
 
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
@@ -13,15 +13,26 @@ class TicketValidation < ApiValidation
   alias_attribute :responder_id, :agent
 
   # Default fields validation
-  validates :description, :source, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
+  validates :subject, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
+  validates :description, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
+  validates :email_config_id, :subject, :email, required: { message: :field_validation_for_outbound }, on: :compose_email
+  validates :description, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
-                              }
+                              }, if: :create_or_update?
 
+  validates :description, :ticket_type, :status, :priority, :group, default_field:
+                              {
+                                required_fields: proc { |x| x.required_default_fields },
+                                field_validations: proc { |x| x.default_field_validations }
+                              }, on: :compose_email
+
+  validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true }, on: :update
+  validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0  }
 
-  validate :requester_detail_missing, if: :requester_id_mandatory?
+  validate :requester_detail_missing, if: -> { create_or_update? && requester_id_mandatory? }
   # validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No
   validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: :name_required?  # No
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
@@ -67,7 +78,8 @@ class TicketValidation < ApiValidation
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required,
-                                ignore_string: :allow_string_param
+                                ignore_string: :allow_string_param,
+                                section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
                            }
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
@@ -81,6 +93,7 @@ class TicketValidation < ApiValidation
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
     @due_by ||= item.try(:due_by).try(:iso8601) if item
     @item = item
+    check_params_set(request_params[:custom_fields]) if request_params[:custom_fields].is_a?(Hash)
     fill_custom_fields(request_params, item.custom_field_via_mapping) if item && item.custom_field_via_mapping.present?
   end
 
@@ -142,11 +155,26 @@ class TicketValidation < ApiValidation
     ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status)) }
   end
 
+  def sources
+    if Account.current.compose_email_enabled?
+      ApiTicketConstants::SOURCES | [TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+    else
+      ApiTicketConstants::SOURCES
+    end
+  end
+
+  def create_or_update?
+    [:create, :update].include?(validation_context)
+  end
+
+  def source_as_outbound_email?
+    @outbound_email ||= (source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?
+  end
+
   def default_field_validations
     {
       status: { custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param, detect_type: true } },
       priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param, detect_type: true } },
-      source: { custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true } },
       ticket_type: { custom_inclusion: { in: proc { TicketsValidationHelper.ticket_type_values } } },
       group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },

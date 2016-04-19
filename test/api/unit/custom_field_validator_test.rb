@@ -22,6 +22,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     def initialize(params = {})
       super
+      check_params_set(params[:attribute3]) if params[:attribute3].is_a?(Hash)
+      check_params_set(params[:attribute4]) if params[:attribute4].is_a?(Hash)
       params.each { |key, value| instance_variable_set("@#{key}", value) }
     end
 
@@ -50,6 +52,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     def initialize(params = {})
       super
+      check_params_set(params[:attribute5]) if params[:attribute5].is_a?(Hash)
+      check_params_set(params[:attribute6]) if params[:attribute6].is_a?(Hash)
       params.each { |key, value| instance_variable_set("@#{key}", value) }
     end
 
@@ -79,6 +83,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     def initialize(params = {})
       super
+      check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
+      check_params_set(params[:attribute2]) if params[:attribute2].is_a?(Hash)
       params.each { |key, value| instance_variable_set("@#{key}", value) }
     end
 
@@ -101,12 +107,93 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     def initialize(params = {})
       super
+      check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
       params.each { |key, value| instance_variable_set("@#{key}", value) }
     end
 
     def required_for_closure?
       closed_status == true
     end
+  end
+
+  class SectionFieldTestValidation < MockTestValidation
+    include ActiveModel::Validations
+
+    attr_accessor :attribute1, :attribute2, :closed_status, :allow_string_param, :ticket_type, :status, :priority
+
+    validates :ticket_type, custom_inclusion: { in: %w(Question Lead Problem) }
+    validates :attribute1, :attribute2, data_type: { rules: Hash, allow_nil: true }, custom_field: { attribute1: {
+      validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_data_type },
+      required_based_on_status: proc { |x| x.required_for_closure? },
+      required_attribute: :required,
+      section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_parent_field_mapping_for_data_type }
+    },
+                                                                                                     attribute2: {
+                                                                                                       validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_choices },
+                                                                                                       drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+                                                                                                       nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+                                                                                                       required_based_on_status: proc { |x| x.required_for_closure? },
+                                                                                                       required_attribute: :required,
+                                                                                                       section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_parent_field_mapping_for_choices }
+                                                                                                     }
+    }
+
+    def initialize(params = {})
+      params.each { |key, value| instance_variable_set("@#{key}", value) }
+      check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
+      check_params_set(params[:attribute2]) if params[:attribute2].is_a?(Hash)
+      super
+    end
+
+    def required_for_closure?
+      closed_status == true
+    end
+  end
+
+  class SectionFieldTestRequiredValidation < MockTestValidation
+    include ActiveModel::Validations
+
+    attr_accessor :attribute1, :attribute2, :closed_status, :allow_string_param, :ticket_type, :status, :priority
+
+    validates :ticket_type, custom_inclusion: { in: %w(Question Lead Problem) }
+    validates :attribute1, :attribute2, data_type: { rules: Hash, allow_nil: true }, custom_field: { attribute1: {
+      validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_data_type_required },
+      required_based_on_status: proc { |x| x.required_for_closure? },
+      required_attribute: :required,
+      section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_parent_field_mapping_for_data_type }
+    },
+                                                                                                     attribute2: {
+                                                                                                       validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_choices_required },
+                                                                                                       drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+                                                                                                       nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+                                                                                                       required_based_on_status: proc { |x| x.required_for_closure? },
+                                                                                                       required_attribute: :required,
+                                                                                                       section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_parent_field_mapping_for_choices }
+                                                                                                     }
+    }
+
+    def initialize(params = {})
+      params.each { |key, value| instance_variable_set("@#{key}", value) }
+      check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
+      check_params_set(params[:attribute2]) if params[:attribute2].is_a?(Hash)
+      super
+    end
+
+    def required_for_closure?
+      closed_status == true
+    end
+  end
+
+  def setup
+    account = mock
+    account.stubs(:id).returns(1)
+    Account.stubs(:current).returns(account)
+    super
+  end
+
+  def teardown
+    Account.unstub(:current)
+    super
   end
 
   def test_choices_validatable_fields_valid
@@ -124,7 +211,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_format_validatable_fields_invalid
-    test = TestValidation.new(attribute2: { 'single_1' => [1, 2], 'check1_1' => 'ds', 'check2_1' => 'sd', 'decimal1_1' => 'sds', 'phone' => 3.4, 'decimal2_1' => 'sd', 'number1_1' => 909.898, 'number2_1' => 'dd', 'multi_1' => 9.0, 'url1_1' => 'udp:/testurl', 'url2_1' => 'http:/testurl.123' })
+    test = TestValidation.new(attribute2: { 'single_1' => [1, 2], 'check1_1' => 'ds', 'check2_1' => nil, 'decimal1_1' => 'sds', 'phone' => 3.4, 'decimal2_1' => 'sd', 'number1_1' => false, 'number2_1' => 'dd', 'multi_1' => 9.0, 'url1_1' => 'udp:/testurl', 'url2_1' => 'http:/testurl.123' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal(
@@ -134,7 +221,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
         number2_1: :datatype_mismatch, url1_1: :invalid_format, url2_1: :invalid_format
       },
       errors)
-    assert_equal({ 'single_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Array }, 'check1_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, 'check2_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, 'decimal1_1' => { expected_data_type: :Number }, 'decimal2_1' => { expected_data_type: :Number }, 'number1_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: Float }, 'number2_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: String }, 'multi_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'phone' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'url1_1' => { accepted: 'valid URL' }, 'url2_1' => { accepted: 'valid URL' } }.stringify_keys.merge(attribute2: {}), test.error_options)
+    assert_equal({ 'single_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Array }, 'check1_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, 'check2_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null' }, 'decimal1_1' => { expected_data_type: :Number }, 'decimal2_1' => { expected_data_type: :Number }, 'number1_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: 'Boolean' }, 'number2_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: String }, 'multi_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'phone' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'url1_1' => { accepted: 'valid URL' }, 'url2_1' => { accepted: 'valid URL' } }.stringify_keys.merge(attribute2: {}), test.error_options)
   end
 
   def test_format_validatable_fields_valid
@@ -275,6 +362,85 @@ class CustomFieldValidatorTest < ActionView::TestCase
                                                                      'first_1' =>  { 'category 1' => { 'subcategory 1' => ['abc', 'def'], 'subcategory 2' => ['mno', 'pqr'], 'subcategory 3' => [] }, 'category 2' => { 'subcategory 1' => ['123', '456'] } } }
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     assert test.valid?
+  end
+
+  def test_section_field_validation_for_data_type_absence_error
+    account = mock
+    account.stubs(:id).returns(1)
+    Account.stubs(:current).returns(account)
+    test = SectionFieldTestValidation.new(ticket_type: 'Problem', status: 3, priority: 4, attribute1: { 'single_1' => 'jkj', 'check1_1' => false, 'check2_1' => true, 'date_1' => Time.now.zone.to_s, 'url1_1' => 'gh', 'phone' => 'dasfdf', 'multi2_1' => 'efsdff', 'number1_1' => 23, 'decimal2_1' => '12.4' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ single_1: :section_field_absence_check_error, check1_1: :section_field_absence_check_error, check2_1: :section_field_absence_check_error, date_1: :section_field_absence_check_error, url1_1: :section_field_absence_check_error, phone: :section_field_absence_check_error, multi2_1: :section_field_absence_check_error, number1_1: :section_field_absence_check_error, decimal2_1: :section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_validation_for_choices_absence_error
+    test = SectionFieldTestValidation.new(ticket_type: 'Problem', status: 3, priority: 4, attribute2: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ dropdown1_1: :section_field_absence_check_error, first_1: :section_field_absence_check_error, country_1: :section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_validation_for_choices_required
+    test = SectionFieldTestRequiredValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute1: { 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => '2011-09-12', 'phone' => '35345346dgdf', 'multi2_1' => 'efsdff' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ dropdown1_1: :not_included, first_1: :not_included, country_1: :not_included }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_validation_for_data_type_required
+    test = SectionFieldTestRequiredValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute2: { 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ single_1: :datatype_mismatch, check1_1: :datatype_mismatch, check2_1: :datatype_mismatch, date_1: :invalid_date, phone: :datatype_mismatch, multi2_1: :datatype_mismatch }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_validation_for_data_type_invalid
+    account = mock
+    account.stubs(:id).returns(1)
+    Account.stubs(:current).returns(account)
+    test = SectionFieldTestValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute1: { 'single_1' => 12, 'check1_1' => 'true', 'date_1' => 'sdd', 'phone' => [12, 34], 'multi2_1' => 23 })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ single_1: :datatype_mismatch, check1_1: :datatype_mismatch, date_1: :invalid_date, phone: :datatype_mismatch, multi2_1: :datatype_mismatch }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_validation_for_choices_invalid
+    test = SectionFieldTestValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute2: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ dropdown1_1: :not_included, first_1: :not_included, country_1: :not_included }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_validation_for_data_type_invalid_with_parent_invalid
+    account = mock
+    account.stubs(:id).returns(1)
+    Account.stubs(:current).returns(account)
+    test = SectionFieldTestValidation.new('ticket_type' => 'QuestionType', attribute1: { 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => Time.now.zone.to_s, 'url1_1' => 'gh', 'phone' => 'dasfdf', 'multi2_1' => 'efsdff', 'number1_1' => 23, 'decimal2_1' => '12.4' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ ticket_type: :not_included }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_validation_for_choices_invalid_with_parent_invalid
+    test = SectionFieldTestValidation.new('ticket_type' => 'QuestionType', attribute2: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ ticket_type: :not_included }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_validation_for_choices_required_with_parent_invalid
+    test = SectionFieldTestRequiredValidation.new('ticket_type' => 'QuestionType', attribute1: { 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => '2011-09-12', 'phone' => '35345346dgdf', 'multi2_1' => 'efsdff' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ ticket_type: :not_included }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_validation_for_data_type_required_with_parent_invalid
+    test = SectionFieldTestRequiredValidation.new('ticket_type' => 'QuestionType', attribute2: { 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ ticket_type: :not_included }.sort.to_h, errors.sort.to_h)
   end
 
   def test_non_existent_validation_method

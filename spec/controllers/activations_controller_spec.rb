@@ -95,4 +95,14 @@ describe ActivationsController do
     post :create, :perishable_token => user.perishable_token, :user=>{}
     response.body.should_not =~ /Your account has been activated./
   end
+
+  it "should not create activation for deleted user" do
+    user = Account.current.users.last
+    user.reset_perishable_token!
+    user.deleted = true
+    user.save
+    user.reload
+    post :create, :perishable_token => user.perishable_token, :user=>{}
+    session["flash"][:notice].should eql "You are not allowed to access this page!"
+  end
 end

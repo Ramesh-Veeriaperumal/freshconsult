@@ -9,7 +9,9 @@ development:
   bucket: cdn.freshpo.com
   reports_bucket: reports_archive_data_dev
   ticket_body: ticketbody-dev
+  archive_ticket_body: archive-ticketbody-dev
   note_body: notebody-dev
+  archive_note_body: archive-notebody-dev
   bi_reports_list_bucket: bi-reports-ticket-list-dev
 
 staging:
@@ -17,7 +19,9 @@ staging:
   bucket: cdn.freshpo.com
   reports_bucket: reports_archive_data_staging
   ticket_body: ticketbody-staging
+  archive_ticket_body: archive-ticketbody-staging
   note_body: notebody-staging
+  archive_note_body: archive-notebody-staging
   bi_reports_list_bucket: bi-reports-ticket-list-staging
 
 
@@ -26,7 +30,9 @@ test:
   bucket: fd-testbed
   reports_bucket: reports_archive_data_test
   ticket_body: ticketbody-test
+  archive_ticket_body: archive-ticketbody-test
   note_body: notebody-test
+  archive_note_body: archive-notebody-test
   bi_reports_list_bucket: bi-reports-ticket-list-test
 
 
@@ -38,5 +44,7 @@ production:
   bucket: cdn.freshdesk.com
   reports_bucket: reports_archive_data_production
   ticket_body: ticketbody-production
+  archive_ticket_body: archive-ticketbody-production
   note_body: notebody-production
+  archive_note_body: archive-notebody-production
   bi_reports_list_bucket: bi-reports-ticket-list-production

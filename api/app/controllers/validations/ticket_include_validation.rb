@@ -10,5 +10,5 @@ class TicketIncludeValidation < ApiValidation
       errors[:include] << :not_included
       (self.error_options ||= {}).merge!(include: { list: ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.join(', ') })
     end
-  end  
+  end
 end

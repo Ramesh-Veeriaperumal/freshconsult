@@ -22,6 +22,26 @@ class TicketsValidationHelper
       end.to_h
     end
 
+    def section_field_parent_field_mapping
+      section_fields = Account.current.section_fields_with_field_values_mapping_cache
+
+      # Ex:  {11=>{"ticket_type"=>["Incident", "Lead", "Question"]}, 12=>{"ticket_type"=>["Question"]}, 31=>{"ticket_type"=>["Question"]}}
+      parent_field_value_mapping(section_fields).each_with_object({}) do |(k, v), inverse|
+        v.each do |e|
+          inverse[e] = (inverse[e] || {}).merge(k) { |key, o, n| o + n }
+        end
+      end
+    end
+
+    def parent_field_value_mapping(section_fields)
+      # Ex: [[{"ticket_type"=>["Question", "Feature Request"]}, [11, 12, 13]], [{"ticket_type"=>["Problem"]}, [11]]]
+      sections_fields_group_by_parent_field_value_mapping(section_fields).map { |parent_grouping, fields| [parent_grouping, fields.map(&:ticket_field_id)] }
+    end
+
+    def sections_fields_group_by_parent_field_value_mapping(section_fields)
+      section_fields.group_by { |x| { x.parent_ticket_field.name =>  x.section.section_picklist_mappings.map { |y| y.picklist_value.value } } }
+    end
+
     def custom_nested_field_choices
       Account.current.nested_fields_from_cache.collect { |x| [x.name, x.formatted_nested_choices] }.to_h
     end

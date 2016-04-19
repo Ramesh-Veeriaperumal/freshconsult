@@ -9,10 +9,6 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   belongs_to :user, :class_name => 'User'
   belongs_to :archive_ticket, :class_name => 'Helpdesk::ArchiveTicket'
 
-  has_one :archive_note_association, 
-  		    :class_name => 'Helpdesk::ArchiveNoteAssociation',
-  		    :dependent => :destroy
-
   has_one :tweet, :as => :tweetable, :class_name => 'Social::Tweet', :dependent => :destroy
   has_one :fb_post, :as => :postable, :class_name => 'Social::FbPost',  :dependent => :destroy
   has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable'
@@ -33,7 +29,7 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   
  
   attr_protected :account_id
-  accepts_nested_attributes_for :archive_note_association, :allow_destroy => true
+  concerned_with :attributes, :s3
 
   SOURCES = %w{email form note status meta twitter feedback facebook forward_email phone mobihelp mobihelp_app_review}
 

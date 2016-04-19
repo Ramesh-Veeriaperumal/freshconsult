@@ -59,7 +59,7 @@ class Helpdesk::Filters::ArchiveTicketFilter < Wf::Filter
      @definition ||= begin
       defs = {}
       #default fields
-      TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN.each do |name,cont|
+      TicketConstants::ARCHIVE_DEFAULT_COLUMNS_KEYS_BY_TOKEN.each do |name,cont|
         defs[name.to_sym] = { get_op_list(cont).to_sym => cont  , :name => name, :container => cont,     
         :operator => get_op_list(cont), :options => get_default_choices(name.to_sym) }
       end

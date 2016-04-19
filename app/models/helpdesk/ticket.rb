@@ -42,7 +42,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
-  zero_downtime_migration_methods :methods => {:remove_columns => [ "description", "description_html"] }
+  #zero_downtime_migration_methods :methods => {:remove_columns => [ "description", "description_html"] }
   
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
@@ -929,7 +929,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def search_fields_updated?
-    attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id",
+    attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id", "product_id",
                        "status", "spam", "deleted", "source", "priority", "due_by", "to_emails", "cc_email"]
     include_fields = es_flexifield_columns
     all_fields = attribute_fields | include_fields

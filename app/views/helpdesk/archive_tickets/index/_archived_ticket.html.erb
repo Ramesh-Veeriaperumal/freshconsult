@@ -15,7 +15,7 @@
 
   <div class="ticket_subject">
     <span class="sc-item-cursor priority-border  priority-<%= ticket.priority_key%> shorcuts-info"></span>
-    <h3 class="ticket-description-tip" data-tip-url="<%= latest_note_helpdesk_archive_ticket_url(ticket) %>">
+    <h3>
       <%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), helpdesk_archive_ticket_url(ticket.display_id), "data-pjax" => "#body-container" ) %>
       
     </h3>

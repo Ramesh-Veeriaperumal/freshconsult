@@ -1,5 +1,7 @@
 class Helpdesk::PicklistValue < ActiveRecord::Base
   
+  include MemcacheKeys
+
   belongs_to_account
   self.table_name =  "helpdesk_picklist_values"
   validates_presence_of :value
@@ -21,6 +23,8 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   accepts_nested_attributes_for :sub_picklist_values, :allow_destroy => true
   
   before_create :set_account_id
+
+  after_commit :clear_cache
   
   # scope_condition for acts_as_list and as well for using index in fetching sub_picklist_values
   def scope_condition
@@ -58,6 +62,11 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
     with_scope(method_scoping, :overwrite, &block)
   end
 
+  def clear_cache
+    key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.account_id }
+    MemcacheKeys.delete_from_cache key
+  end
+  
   private
     def set_account_id
       self.account_id = pickable.account_id

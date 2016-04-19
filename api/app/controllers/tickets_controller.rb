@@ -10,11 +10,11 @@ class TicketsController < ApiApplicationController
   around_filter :run_on_slave, only: [:index]
 
   before_filter :ticket_permission?, only: [:destroy]
-  before_filter :check_search_feature, :validate_search_params, :only => [:search]
+  before_filter :check_search_feature, :validate_search_params, only: [:search]
 
   def create
     assign_protected
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields)
+    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field])
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     else
@@ -22,7 +22,7 @@ class TicketsController < ApiApplicationController
       if @item.save_ticket
         @ticket = @item # Dirty hack. Should revisit.
         render_201_with_location(item_id: @item.display_id)
-        notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
+        notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank? || compose_email?
       else
         render_errors(@item.errors)
       end
@@ -34,7 +34,7 @@ class TicketsController < ApiApplicationController
     # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields)
+    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field])
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     else
@@ -44,14 +44,14 @@ class TicketsController < ApiApplicationController
 
   def search
     lookup_and_change_params
-    es_response = search_query
-    @tkts = es_response
-    @items = paginate_items(@tkts,es_response.total)
+    @items = search_query
+    add_total_entries(@items.total)
+    add_link_header(page: @items.next_page) if @items.next_page.present?
   end
 
   def destroy
     @item.deleted = true
-    store_dirty_tags(@item) #Storing tags whenever ticket is deleted. So that tag count is in sync with DB.
+    store_dirty_tags(@item) # Storing tags whenever ticket is deleted. So that tag count is in sync with DB.
     @item.save
     head 204
   end
@@ -72,9 +72,20 @@ class TicketsController < ApiApplicationController
     ApiTicketConstants::WRAP_PARAMS
   end
 
+  protected
+
+    def requires_feature(feature)
+      return if !compose_email? || Account.current.compose_email_enabled?
+      render_request_error(:require_feature, 403, feature: feature.to_s.titleize)
+    end
+
   private
 
-    def sideload_associations 
+    def feature_name
+      FeatureConstants::TICKETS
+    end
+
+    def sideload_associations
       @include_validation.include_array.each do |association|
         instance_variable_set("@#{association}", send(association))
         increment_api_credit_by(1) # for embedded associations
@@ -104,7 +115,7 @@ class TicketsController < ApiApplicationController
       preload_options = [:ticket_old_body, :schema_less_ticket, :flexifield]
       @ticket_filter.include_array.each do |assoc|
         preload_options << assoc
-        increment_api_credit_by(1)
+        increment_api_credit_by(2)
       end
       preload_options
     end
@@ -127,12 +138,12 @@ class TicketsController < ApiApplicationController
       @item.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at).limit(ConversationConstants::MAX_INCLUDE)
     end
 
-    # used in side loading association 
-    def requester     
+    # used in side loading association
+    def requester
       @item.requester
     end
 
-    # used in side loading association 
+    # used in side loading association
     def company
       @item.company
     end
@@ -233,13 +244,21 @@ class TicketsController < ApiApplicationController
       @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
-      field = "ApiTicketConstants::#{action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
+      field = "ApiTicketConstants::#{original_action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
-      ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert) # Using map instead of invert does not show any perf improvement.
-      load_ticket_status # loading ticket status to avoid multiple queries in model.
+      set_default_values
       params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
       ticket = TicketValidation.new(params_hash, @item, string_request_params?)
-      render_custom_errors(ticket, true) unless ticket.valid?
+      render_custom_errors(ticket, true) unless ticket.valid?(original_action_name.to_sym)
+    end
+
+    def set_default_values
+      if compose_email?
+        params[cname][:status] = ApiTicketConstants::CLOSED unless params[cname].key?(:status)
+        params[cname][:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+      end
+      ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert) # Using map instead of invert does not show any perf improvement.
+      load_ticket_status # loading ticket status to avoid multiple queries in model.
     end
 
     def assign_protected
@@ -314,6 +333,14 @@ class TicketsController < ApiApplicationController
       @restore ||= current_action?('restore')
     end
 
+    def compose_email?
+      @compose_email ||= params.key?('_action') ? params['_action'] == 'compose_email' : action_name.to_s == 'compose_email'
+    end
+
+    def original_action_name
+      @original_action_name ||= compose_email? ? 'compose_email' : action_name
+    end
+
     def error_options_mappings
       @name_mapping.merge(ApiTicketConstants::FIELD_MAPPINGS)
     end
@@ -326,14 +353,14 @@ class TicketsController < ApiApplicationController
 
     def search_query
       es_options = {
-        :per_page     => params[:per_page] || 30,
-        :page         => params[:page] || 1,
-        :order_entity => params[:order_by]|| 'created_at',
-        :order_sort   => params[:order_type] || 'desc'
+        per_page: params[:per_page] || 30,
+        page: params[:page] || 1,
+        order_entity: params[:order_by] || 'created_at',
+        order_sort: params[:order_type] || 'desc'
       }
       neg_conditions = [Helpdesk::Filters::CustomTicketFilter.deleted_condition(true), Helpdesk::Filters::CustomTicketFilter.spam_condition(true)]
-      conditions = params[:search_conditions].collect {|s_c| {'condition' => s_c.first, 'operator' => 'is_in', 'value' => s_c.last.join(",") } }
-      Search::Filters::Docs.new(conditions, neg_conditions).records('Helpdesk::Ticket',es_options)
+      conditions = params[:search_conditions].collect { |s_c| { 'condition' => s_c.first, 'operator' => 'is_in', 'value' => s_c.last.join(',') } }
+      Search::Filters::Docs.new(conditions, neg_conditions).records('Helpdesk::Ticket', es_options)
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

@@ -6,7 +6,7 @@ class ApiContactsController < ApiApplicationController
 
   def create
     assign_protected
-    contact_delegator = ContactDelegator.new(@item, @email_objects[:old_email_objects])
+    contact_delegator = ContactDelegator.new(@item, other_emails: @email_objects[:old_email_objects], custom_fields: params[cname][:custom_field])
     if !contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
     else
@@ -22,7 +22,7 @@ class ApiContactsController < ApiApplicationController
   def update
     assign_protected
     @item.assign_attributes(params[cname].except('tag_names'))
-    contact_delegator = ContactDelegator.new(@item, @email_objects[:old_email_objects])
+    contact_delegator = ContactDelegator.new(@item, other_emails: @email_objects[:old_email_objects], custom_fields: params[cname][:custom_field])
     unless contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
       return

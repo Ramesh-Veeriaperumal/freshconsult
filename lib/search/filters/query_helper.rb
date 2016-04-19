@@ -9,7 +9,8 @@ module Search::Filters::QueryHelper
       'owner_id'                                  =>  'company_id',
       'helpdesk_tags.id'                          =>  'tag_ids',
       'helpdesk_tags.name'                        =>  'tag_names',
-      'helpdesk_subscriptions.user_id'            =>  'watchers'
+      'helpdesk_subscriptions.user_id'            =>  'watchers',
+      'helpdesk_schema_less_tickets.product_id'   =>  'product_id'
     }
 
     private
