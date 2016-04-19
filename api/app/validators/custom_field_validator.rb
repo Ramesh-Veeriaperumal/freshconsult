@@ -1,7 +1,7 @@
 class CustomFieldValidator < ActiveModel::EachValidator
   ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined, :nested_fields, :attribute, :section_field_mapping]
   attr_accessor(*ATTRS)
-  NAME_MAPPING = {'ticket_type' => 'type'}.freeze
+  NAME_MAPPING = { 'ticket_type' => 'type' }.freeze
 
   def validate(record)
     attributes.each do |attribute|
@@ -127,8 +127,8 @@ class CustomFieldValidator < ActiveModel::EachValidator
     def absence_validator_check(record, field_name, values)
       if section_field? && !section_parent_present?(record, values)
         parent = section_parent_list.keys.first
-        message_options = {field: parent_name_mapping(parent.to_s), value: parent_value(parent, record, values) }
-        CustomAbsenceValidator.new(attributes: field_name, message: :section_field_absence_check_error, message_options: message_options).validate(record) 
+        message_options = { field: parent_name_mapping(parent.to_s), value: parent_value(parent, record, values) }
+        CustomAbsenceValidator.new(attributes: field_name, message: :section_field_absence_check_error, message_options: message_options).validate(record)
       end
     end
 
@@ -171,7 +171,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       section_parent_list.any? { |parent_field, value_mapping| value_mapping.include?(parent_value(parent_field, record, values)) }
     end
 
-    def section_parent_list 
+    def section_parent_list
       @section_field_mapping ||= proc_to_object(options[@attribute][:section_field_mapping]) || {}
       @section_field_mapping[@current_field.id] || {}
     end
@@ -179,18 +179,18 @@ class CustomFieldValidator < ActiveModel::EachValidator
     def parent_value(parent_field, record, values)
       (record.send(parent_field) || values.try(:[], parent_field))
     end
- 
+
     def section_field?
       @current_field.respond_to?(:section_field?) && @current_field.section_field?
     end
-	
-	def parent_name_mapping(field)
+
+    def parent_name_mapping(field)
       mapping = NAME_MAPPING[field] || custom_field?(field) || field
       mapping
     end
 
     def custom_field?(field)
-      field.ends_with?("_#{Account.current.id}") ?  TicketDecorator.display_name(mapping) : nil
+      field.ends_with?("_#{Account.current.id}") ? TicketDecorator.display_name(mapping) : nil
     end
 
     # should allowed to be validated upon satisfying any of the below conditions
@@ -198,8 +198,8 @@ class CustomFieldValidator < ActiveModel::EachValidator
     # 2. value present?
     # 3. nested parent field with children not set
     def validate?(record, field_name, values)
-      return false if section_field? && section_parent_has_errors?(record, values) 
-      @is_required || values.try(:[], field_name) || (values.present? && nested_field? && !children_set_or_blank?(record, field_name, values))
+      return false if section_field? && section_parent_has_errors?(record, values)
+      @is_required || record.instance_variable_get("@#{field_name}_set") || (values.present? && !values.try(:[], field_name) && nested_field? && !children_set_or_blank?(record, field_name, values))
     end
 
     def section_parent_has_errors?(record, values)
@@ -212,7 +212,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
     # Parent field should be set if children value is set in case of nested fields. otherwise error.
     def children_set_or_blank?(record, field_name, values)
-      children = @custom_fields.select { |x| x.parent_id == @current_field.id || (x.level == 3 && x.parent_id == @current_field.parent_id) }
+      children = @custom_fields.select { |x| x.parent_id == @current_field.id || (x.level == 3 && x.parent_id == @current_field.parent_id && x.id != @current_field.id) }
       children.each do |child|
         next if values[child.name].blank?
         record.errors[field_name] << :conditional_not_blank
@@ -238,7 +238,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
     # construct options hash for diff validators
     def construct_options(custom_options)
-      options_hash = options.merge(custom_options)
+      options.merge(custom_options)
     end
 
     # Get choices based on level, field name & parent value for nested fields

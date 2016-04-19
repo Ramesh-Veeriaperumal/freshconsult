@@ -60,22 +60,23 @@ class CustomFieldValidatorTestHelper
 
     def section_field_parent_field_mapping_for_data_type
       {
-        11=>{"ticket_type"=>["Incident", "Lead", "Question"], "priority" =>[2, 3]}, 
-        12=>{"ticket_type"=>["Question"]}, 
-        28=>{"ticket_type"=>["Question"]},
-        43=>{"priority" => [2]},
-        27=>{"status" => [2]},
-        39=>{"priority" =>[3]},
-        18=>{"ticket_type" => ["Lead"]},
-        24=>{"ticket_type" =>["Incident"]}
+        11 => { 'ticket_type' => %w(Incident Lead Question), 'priority' => [2, 3] },
+        12 => { 'ticket_type' => ['Question'] },
+        33 => { 'ticket_type' => ['Question'] },
+        28 => { 'ticket_type' => ['Question'] },
+        43 => { 'priority' => [2] },
+        27 => { 'status' => [2] },
+        39 => { 'priority' => [3] },
+        18 => { 'ticket_type' => ['Lead'] },
+        24 => { 'ticket_type' => ['Incident'] }
       }
     end
 
     def section_field_parent_field_mapping_for_choices
       {
-        17=>{"ticket_type"=>["Incident", "Lead", "Question"], "priority" =>[2, 3]}, 
-        13=>{"ticket_type"=>["Question"]}, 
-        20=>{"ticket_type"=>["Question"]}
+        17 => { 'ticket_type' => %w(Incident Lead Question), 'priority' => [2, 3] },
+        13 => { 'ticket_type' => ['Question'] },
+        20 => { 'ticket_type' => ['Question'] }
       }
     end
 
@@ -96,21 +97,20 @@ class CustomFieldValidatorTestHelper
     end
 
     def section_field_for_data_type
-      data_type_validatable_custom_fields.each {|x| x.section_field = true }
+      data_type_validatable_custom_fields.each { |x| x.section_field = true }
     end
 
     def section_field_for_choices
-      choices_validatable_custom_fields.each {|x| x.section_field = true }
+      choices_validatable_custom_fields.each { |x| x.section_field = true }
     end
 
     def section_field_for_data_type_required
-      section_field_for_data_type.each {|x| x.required = true }
+      section_field_for_data_type.each { |x| x.required = true }
     end
 
     def section_field_for_choices_required
-      section_field_for_choices.each {|x| x.required = true }
+      section_field_for_choices.each { |x| x.required = true }
     end
-
 
     def dropdown_choices_by_field_name
       { dropdown2_1: %w(first11 second22 third33 four44), dropdown1_1: ['1st', '2nd'], dropdown3_1: ['first', 'second'], dropdown4_1: ['third', 'fourth'] }.stringify_keys

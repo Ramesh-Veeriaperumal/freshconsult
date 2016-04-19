@@ -23,7 +23,8 @@ RSpec.describe Admin::Integrations::FreshplugsController do
                                    :script => "<div id='sample_highrise_widget' title='Sample CRM FreshPlug'>{{ticket.requester}}</div>",
                                    :view_pages => ["helpdesk_tickets_show_page_side_bar"]
                                   }
-    response.should redirect_to "/integrations/applications#plugs"
+    application =   Integrations::Application.find_by_display_name("New Test application")                                
+    response.should redirect_to edit_admin_integrations_freshplug_path(application.id)
   end
 
   it "renders the edit template of the application" do
@@ -45,7 +46,7 @@ RSpec.describe Admin::Integrations::FreshplugsController do
                   }
     application.reload
     application.widget.display_in_pages_option.should eql ["helpdesk_tickets_show_page_side_bar", "contacts_show_page_side_bar"]
-    response.should redirect_to "/integrations/applications#plugs"
+    response.should redirect_to edit_admin_integrations_freshplug_path(application.id)
   end
 
   it "should disable an application(deletes from installed application)" do

@@ -39,7 +39,7 @@ class Solution::Article < ActiveRecord::Base
   
   acts_as_list :scope => :folder
 
-  zero_downtime_migration_methods :methods => {:remove_columns => [ "description", "desc_un_html"] }
+  #zero_downtime_migration_methods :methods => {:remove_columns => [ "description", "desc_un_html"] }
   
   after_save      :set_mobihelp_solution_updated_time, :if => :content_changed?
   before_destroy  :set_mobihelp_solution_updated_time

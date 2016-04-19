@@ -227,7 +227,7 @@ var TemplateDockManager   = Class.create({
   },
 
   manageShowMore: function(){
-    var showChar = 260,  // How many characters are shown by default
+    var showChar = 600,  // How many characters are shown by default
         ellipsis = "...",
         moretext = "more",
         lesstext = "less",

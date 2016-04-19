@@ -21,7 +21,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
-  before_filter :portal_check, :only => :show
+  before_filter :portal_check, :verify_format_and_tkt_id, :only => :show
   before_filter :check_compose_feature, :only => :compose_email
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
@@ -1229,6 +1229,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def build_ticket_body_attributes
+      return render_500 if params[:helpdesk_ticket].nil?
       if params[:helpdesk_ticket][:description] || params[:helpdesk_ticket][:description_html]
         unless params[:helpdesk_ticket].has_key?(:ticket_body_attributes)
           ticket_body_hash = {:ticket_body_attributes => { :description => params[:helpdesk_ticket][:description],

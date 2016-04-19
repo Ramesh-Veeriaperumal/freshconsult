@@ -12,10 +12,10 @@ class Admin::Integrations::FreshplugsController < Admin::AdminController
     unless application_params.blank?
       widget_script = application_params.delete(:script)
       view_pages = application_params.delete(:view_pages)
-      Integrations::Application.create_and_install(application_params, widget_script, view_pages, current_account)
+      application = Integrations::Application.create_and_install(application_params, widget_script, view_pages, current_account)
       flash[:notice] = t(:'flash.application.install.success')   
     end
-    redirect_to integrations_applications_path(:anchor => 'plugs')
+    redirect_to edit_admin_integrations_freshplug_path(application.id)
   end
 
   def update
@@ -30,7 +30,7 @@ class Admin::Integrations::FreshplugsController < Admin::AdminController
       wid.save!
       flash[:notice] = t(:'flash.application.update.success')
     end
-    redirect_to integrations_applications_path(:anchor => 'plugs')
+    redirect_to edit_admin_integrations_freshplug_path(@application.id)
   end
 
   def destroy

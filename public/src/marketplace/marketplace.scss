@@ -463,8 +463,7 @@
     }
   }
   .instr{
-    font-size: 12px;
-    line-height: 22px;
+    line-height: 18px;
     padding-top: 10px;
     padding-bottom: 10px;
     h3{
@@ -723,9 +722,7 @@
       font-weight: 500;
     }
     p{
-      @include text-align(justify);
-      font-size: 12px;
-      line-height: 22px;
+      line-height: 18px;
     }
   }
   .morecontent span {

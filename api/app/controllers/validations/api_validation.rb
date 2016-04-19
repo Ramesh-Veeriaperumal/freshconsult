@@ -41,9 +41,9 @@ class ApiValidation
 
   def fill_custom_fields(request_params, custom_fields)
     if !request_params.key?(:custom_fields)
-      @custom_fields = custom_fields.reject{|k, v| v.nil?}
+      @custom_fields = custom_fields.reject { |k, v| v.nil? }
     elsif request_params[:custom_fields].is_a?(Hash)
-      @custom_fields = custom_fields.reject{|k, v| v.nil?}.merge(request_params[:custom_fields])
+      @custom_fields = custom_fields.reject { |k, v| v.nil? }.merge(request_params[:custom_fields])
     end
   end
 

@@ -13,7 +13,7 @@ class TimeEntryFilterValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:companies).returns(Company.scoped)
     ActiveRecord::Relation.any_instance.stubs(:find_by_id).returns(true)
-    user = User.new(name: "hj")
+    user = User.new(name: 'hj')
     user.id = 1
     Account.any_instance.stubs(:agents_details_from_cache).returns([user])
     time_entry_filter = TimeEntryFilterValidation.new(company_id: 1, agent_id: 1, billable: true,
@@ -26,7 +26,7 @@ class TimeEntryFilterValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:companies).returns(Company.scoped)
     ActiveRecord::Relation.any_instance.stubs(:find_by_id).returns(true)
-    Account.any_instance.stubs(:agents_details_from_cache).returns([User.new(id: 1, name: "gh")])
+    Account.any_instance.stubs(:agents_details_from_cache).returns([User.new(id: 1, name: 'gh')])
     time_entry_filter = TimeEntryFilterValidation.new(company_id: nil, agent_id: nil, billable: nil,
                                                       executed_after: nil, executed_before: nil)
     refute time_entry_filter.valid?

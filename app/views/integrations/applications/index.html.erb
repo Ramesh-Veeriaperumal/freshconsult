@@ -23,11 +23,11 @@
     <div class="tab-actions">
       <% if feature?(:marketplace) %>
         <div class="button-bar browse-apps pull-right">
-          <a class="browse-btn btn btn-flat" href="" data-url="<%= admin_marketplace_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><span class="ficon-puzzle"></span> <%= t('marketplace.get_more_apps') %></a>
+          <a class="browse-btn btn btn-flat" href="" data-url="<%= admin_marketplace_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %></a>
         </div>
       <% end %>
       <div class="button-bar create-new pull-right" style="display:none;">
-        <%= link_to t('marketplace.new_plug').html_safe, new_admin_integrations_freshplug_path, :class =>"btn btn-flat" %>
+        <%= link_to t('integrations.custom_application.new_custom_app').html_safe, new_admin_integrations_freshplug_path, :class =>"btn btn-flat" %>
       </div>
     </div>
     <ul class="tabs nav-tabs sleek-tab" id="myTab">
@@ -39,7 +39,7 @@
         <% end %>
       </li>
       <li>
-        <a href="#plugs" class="cla-plugs" data-toggle="tab"><%= t('marketplace.plugs') %></a>
+        <a href="#custom_apps" class="cla-plugs" data-toggle="tab"><%= t('marketplace.custom_apps') %></a>
       </li>
     </ul>
 

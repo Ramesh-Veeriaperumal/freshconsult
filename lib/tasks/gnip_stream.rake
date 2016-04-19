@@ -55,7 +55,7 @@ namespace :gnip_stream do
         if difference_in_seconds > Social::Twitter::Constants::TIME[:replay_stream_wait_time]
           args = {:start_time => period[0], :end_time => period[1]}
           puts "Gonna initialize ReplayStreamWorker #{Time.zone.now}"
-          Resque.enqueue(Social::Workers::Gnip::TwitterReplay, args)
+          Social::Gnip::ReplayWorker.perform_async(args)
           $redis_others.perform_redis_op("lrem", disconnect_list, 1, disconnected_period)
         end
       end
