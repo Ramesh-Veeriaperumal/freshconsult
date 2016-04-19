@@ -286,4 +286,8 @@ class SupportController < ApplicationController
     flash[:warning] = unscoped_fetch ? version_not_available_msg(controller_name.singularize) : t('wrong_portal.content_not_available')
     redirect_to support_home_path and return
   end
+  
+  def agent?
+    current_user && current_user.agent?
+  end
 end

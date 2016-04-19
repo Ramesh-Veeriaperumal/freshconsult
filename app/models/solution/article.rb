@@ -229,6 +229,7 @@ class Solution::Article < ActiveRecord::Base
     end
     
     define_method "#{method}=" do |value|
+      logger.warn "WARNING!! Assigning #{method.to_s} in this manner is not advised. Please make use of object.#{method.to_s}!"
       return unless new_record?
       solution_article_meta.send("#{method}=", (solution_article_meta.send("#{method}") + value))
       super(value) 
