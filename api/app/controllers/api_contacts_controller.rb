@@ -69,11 +69,17 @@ class ApiContactsController < ApiApplicationController
 
     def after_load_object
       @item.account = current_account if scoper.attribute_names.include?('account_id')
-      scope = ContactConstants::DELETED_SCOPE[action_name]
-      if !scope.nil? && @item.deleted != scope
-        Rails.logger.debug "Contact id: #{@item.id} with deleted attribute value as #{@item.deleted} for #{params[:action]} action"
-        head 404
-        return false
+      action_scopes = ContactConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
+      action_scopes.each_pair do |scope_attribute, value|
+        item_value = @item.send(scope_attribute)
+        if item_value != value
+          Rails.logger.debug "Contact id: #{@item.id} with #{scope_attribute} is #{item_value}"
+          # Render 405 in case of update/delete as it acts on contact endpoint itself 
+          # And User will be able to GET the same contact via Show
+          # other URLs such as contacts/id/make_agent will result in 404 as it is a separate endpoint
+          update? || destroy? ? render_405_error(['GET']) : head(404)
+          return false
+        end
       end
 
       # make_agent route doesn't accept any parameters
