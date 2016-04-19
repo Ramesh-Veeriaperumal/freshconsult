@@ -179,7 +179,7 @@ private
   end
 
   def prefetch_archive_notes(ticket, note_ids)
-    options = [{:user => :avatar}, :archive_note_association]
+    options = [{:user => :avatar}]
     options << :fb_post if ticket.facebook?
     options << :tweet if ticket.twitter?
 

@@ -52,10 +52,12 @@ class ActivationsController < SupportController
 
 
   def create
-    unless params[:perishable_token].blank? 
-      @user = current_account.users.find_by_perishable_token(params[:perishable_token]) 
-    end
-    if @user && @user.activate!(params)
+    @user = current_account.users.find_by_perishable_token(
+            params[:perishable_token]) unless params[:perishable_token].blank?
+    return redirect_to support_login_url, 
+           :flash =>{:notice => t('flash.general.access_denied')} if @user.nil?
+
+    if @user.activate!(params)
       @user.reset_perishable_token!
       flash[:notice] = t('users.activations.success')
       @current_user = @user

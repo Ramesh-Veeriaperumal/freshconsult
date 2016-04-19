@@ -374,9 +374,9 @@ module ApiDiscussions
     def test_update_with_nil_values
       put :update, construct_params({ id: first_topic.id }, forum_id: nil,
                                                             title: nil, message: nil)
-      match_json([bad_request_error_pattern('forum_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null' ),
-                  bad_request_error_pattern('title', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ),
-                  bad_request_error_pattern('message', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' )
+      match_json([bad_request_error_pattern('forum_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
+                  bad_request_error_pattern('title', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
+                  bad_request_error_pattern('message', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null')
                  ])
       assert_response 400
     end

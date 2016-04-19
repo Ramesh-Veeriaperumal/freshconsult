@@ -26,6 +26,16 @@ RSpec.describe Helpdesk::TicketsController do
     expected.should be(true)
  	end
 
+  it "should throw internal server error for invalid params" do
+    request.env["HTTP_ACCEPT"] = "application/json"
+    post :create, {:ticket => { :description => Faker::Lorem.paragraph,
+                    :email => Faker::Internet.email },
+                  :format => 'json'}, 
+                  :content_type => 'application/json'
+    response.status.should eql(500)
+  end
+
+
   it "should throw invalid domain error for an invalid request" do
     get :show, {:id => 1000000000, :format => 'json'}, :content_type => 'application/json'
     result =  parse_json(response)

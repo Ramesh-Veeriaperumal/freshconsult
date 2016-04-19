@@ -92,7 +92,7 @@ class DateTimeValidator < ApiValidator
 
     # skip validation if it is of value from db
     def skip_validation?(validator_options = options)
-      value.is_a?(Time) || super 
+      value.is_a?(Time) || super
     end
 
     def validate_zone(zone)

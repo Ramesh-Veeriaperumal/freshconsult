@@ -37,4 +37,15 @@ describe Helpdesk::ArchiveTicketsController do
     response.should render_template "helpdesk/archive_tickets/index"
   end
 
+  it "should throw internal server error for invalid format" do
+    request.env["HTTP_ACCEPT"] = "application/json"
+    get :show, { :id => @ticket1.display_id, :format => 'josn' }
+    response.status.should eql(500)
+  end
+
+  it "should throw internal server error for non integer id" do
+    get :show, :id => "id"
+    response.status.should eql(500)
+  end
+
 end

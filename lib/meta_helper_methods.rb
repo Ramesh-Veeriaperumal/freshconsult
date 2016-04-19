@@ -92,7 +92,7 @@ module MetaHelperMethods
   def load_meta(ticket)
     meta = ""
     begin
-      meta_note = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) 
+      meta_note = meta_note_info(ticket)
       meta = YAML::load(meta_note.body) unless meta_note.blank?
     rescue
       Rails.logger.info "Error parsing metainfo as YAML"
@@ -101,5 +101,11 @@ module MetaHelperMethods
     meta
   end
 
-
+  def meta_note_info(ticket)
+    if ticket.is_a?(Helpdesk::ArchiveTicket)
+      ticket.archive_notes.find_by_source(Helpdesk::ArchiveNote::SOURCE_KEYS_BY_TOKEN["meta"]) 
+    else  
+      ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) 
+    end
+  end
 end

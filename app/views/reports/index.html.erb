@@ -4,7 +4,7 @@
     <div class="report-head report">
       <div class="report-link-block pull-right">
         <a href="#report-demo" rel="freshdialog" id="demo_link"
-          data-backdrop="static"  data-width="600" data-template-footer="false" data-title=""
+          data-backdrop="static"  data-width="680" data-template-footer="false" data-title=""
         ><%= t('helpdesk_reports.reports_in_action')%>
         </a>
         <% if current_account.old_reports_enabled? %>
@@ -112,12 +112,12 @@
   <% end %>
 </div>
 <div id="report-demo" class="hide row-fluid">
-  <iframe id="video_iframe" width="560" height="315" frameborder="0" allowfullscreen></iframe>
+  <iframe id="video_iframe" width="650" height="366" frameborder="0" allowfullscreen></iframe>
 </div>
 <script>
 jQuery(document).ready(function() {
 
-  var video_url = "https://www.youtube.com/embed/K3Uxigoflrk?rel=0&autoplay=1";
+  var video_url = "//fast.wistia.net/embed/iframe/i0f0lofova?videoFoam=true&autoPlay=true";
 
   jQuery(document).on('click',"#report-demo [data-dismiss='modal']",function(){ 
       resetVideo(); 

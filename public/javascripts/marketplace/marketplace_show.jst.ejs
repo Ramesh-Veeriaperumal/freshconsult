@@ -12,7 +12,7 @@
     <div class="app-meta">
       <div class="logo-box">
         <div class="img-helper">
-          <img src="<%= cover_art['thumb'] %>" srcset="<%= cover_art['thumb'] %> 1366w, <%= cover_art['thumb2x'] %>" class="img-thumbnail" alt="<%- display_name %>"/>
+          <img src="<%= cover_art['thumb'] %>" srcset="<%= cover_art['thumb'] %> 1x, <%= cover_art['thumb2x'] %> 2x" class="img-thumbnail" alt="<%- display_name %>"/>
         </div>
       </div>
       <ul class="app-info">
@@ -66,7 +66,7 @@
                 <% for(var i=0; i < screenshots.length; i++) { %>
                   <% if (i == 0 ) { var active = "active" } else{ active = '' }%>
                   <div class="item <%= active %>" data-slide-number="<%= i %>">
-                    <img src="<%= screenshots[i]['large'] %>" srcset="<%= screenshots[i]['large'] %> 1024w, <%= screenshots[i]['large2x'] %>">
+                    <img src="<%= screenshots[i]['large'] %>" srcset="<%= screenshots[i]['large'] %> 1x, <%= screenshots[i]['large2x'] %> 2x">
                   </div>
                 <% } %>
               </div><!-- Carousel nav -->
