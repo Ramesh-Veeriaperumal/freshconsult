@@ -79,6 +79,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_search_with_feature_enabled
+    warn "Elastic Search is not enabled. It might cause this test \"test_search_with_feature_enabled\" to fail." unless ES_ENABLED
     @account.launch :es_count_writes
     params = ticket_params_hash.except(:description).merge(custom_field: {})
     CUSTOM_FIELDS.each do |custom_field|
