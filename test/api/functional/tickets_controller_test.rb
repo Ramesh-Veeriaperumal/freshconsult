@@ -1,5 +1,7 @@
 
 require_relative '../test_helper'
+require 'sidekiq/testing'
+Sidekiq::Testing.fake!
 
 class TicketsControllerTest < ActionController::TestCase
   include TicketsTestHelper
@@ -37,6 +39,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def setup
     super
+    Sidekiq::Worker.clear_all
     before_all
   end
 
@@ -77,12 +80,13 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_search_with_feature_enabled
     @account.launch :es_count_writes
-    Sidekiq::Testing.inline!
     params = ticket_params_hash.except(:description).merge(custom_field: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
-    t = create_ticket(params)
+    Sidekiq::Testing.inline! do
+      t = create_ticket(params)
+    end
     @account.launch :api_search_beta
     get :search, controller_params(:status => '2,3', 'test_custom_text' => params[:custom_field]["test_custom_text_#{@account.id}"])
     assert_response 200
