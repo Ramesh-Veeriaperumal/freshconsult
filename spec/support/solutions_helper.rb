@@ -150,50 +150,6 @@ module SolutionsHelper
 
   def check_cache_invalidation(account)
     $memcache.get(solutions_cache_key(account)).should be_nil
-  end
-
-  def check_meta_integrity(object)
-    meta_obj = object.reload.meta_object
-    meta_obj.should be_an_instance_of(object.meta_class)
-    object.common_meta_attributes.each do |attrib|
-      meta_obj.send(attrib).should be_eql(object.read_attribute(attrib))
-      meta_obj.send(attrib).should be_eql(object.send(attrib))
-    end
-    parent_keys = object.assign_keys
-    meta_obj.account_id.should be_eql(object.account_id)
-    meta_obj.send(parent_keys.first).should be_eql(object.send(parent_keys.last))
-  end
-
-  def check_position(parent, assoc_name)
-    parent.reload.send(assoc_name).each do |obj|
-      meta_assoc = obj.meta_association
-      obj.position.should be_eql(obj.send(meta_assoc).position) if obj.send(meta_assoc).present?
-      obj.read_attribute(:position).should be_eql(obj.send(meta_assoc).position) if obj.send(meta_assoc).present?
-    end
-  end
-
-  def check_meta_assoc_equality(obj)
-    obj.class::FEATURE_BASED_METHODS.each do |meth|
-      @account.rollback(:meta_read)
-      reload_objects_and_models(obj)
-      result1 = obj.send("#{meth}")
-      @account.launch(:meta_read)
-      reload_objects_and_models(obj)
-      result2 = obj.send("#{meth}")
-      result1.should == result2
-    end
-  end
-
-  def check_meta_delegates(obj)
-    obj.meta_class::COMMON_ATTRIBUTES.each do |attrib|
-      @account.rollback(:meta_read)
-      reload_objects_and_models(obj)
-      result1 = obj.send("#{attrib}")
-      @account.launch(:meta_read)
-      reload_objects_and_models(obj)
-      result2 = obj.send("#{attrib}")
-      result1.should == result2
-    end
   end 
 
   def check_language_equality
@@ -210,12 +166,6 @@ module SolutionsHelper
       obj.language.should be_eql(lang_obj)
       obj.language_id.should be_eql(lang_obj.id)
     end
-  end
-
-  def reload_objects_and_models(obj)
-    @account.reload
-    @account.make_current
-    obj.reload
   end
 
   def create_portal(params = {})
