@@ -901,6 +901,9 @@ GEM
       nokogiri (> 0.0.0)
     sidekiq (3.4.1)
       celluloid (~> 0.16.0)
+    shoryuken (2.0.4)
+      aws-sdk-core (~> 2)
+      celluloid (~> 0.16)
       connection_pool (>= 2.1.1)
       json
       redis (>= 3.0.6)
@@ -1162,6 +1165,7 @@ DEPENDENCIES
   seed-fu!
   sentient_user!
   sharding!
+  shoryuken (~> 2.0)
   sidekiq-pro!
   simplecov (~> 0.7.1)
   simplecov-csv

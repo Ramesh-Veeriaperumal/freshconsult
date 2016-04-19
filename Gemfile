@@ -81,6 +81,7 @@ gem "ipaddress", "0.8.0"
 source "https://a55d1643:d20410bb@gems.contribsys.com/" do 
   gem 'sidekiq-pro' 
 end 
+gem 'shoryuken', '~> 2.0'
 
 gem "soap4r-ruby1.9", "~> 2.0.5"
 gem "jira4r", "0.3.0"
