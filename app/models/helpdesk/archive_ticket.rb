@@ -358,7 +358,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def from_email
-    (account.features_included?(:contact_merge_ui) and self.sender_email.present?) ? self.sender_email : requester.email
+    self.sender_email.present? ? self.sender_email : requester.email
   end
 
   [:due_by, :frDueBy, :fr_escalated, :isescalated].each do |attribute|

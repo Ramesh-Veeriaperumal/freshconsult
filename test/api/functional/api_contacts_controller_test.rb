@@ -1129,31 +1129,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('other_emails', :cant_add_primary_email, email: "#{email}")])
   end
 
-  def test_create_contact_with_other_emails_without_feature_contact_merge_ui
-    allowed_features = Account.first.features.where(' type not in (?) ', ['ContactMergeUiFeature'])
-    Account.any_instance.stubs(:features).returns(allowed_features)
-    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
-    post :create, construct_params({},  name: Faker::Lorem.characters(10),
-                                        email: Faker::Internet.email,
-                                        other_emails: email_array)
-    assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :require_feature_for_attribute, feature: 'Contact Merge', attribute: 'other_emails')])
-  ensure
-    Account.any_instance.unstub(:features)
-  end
-
-  def test_update_contact_with_other_emails_without_feature_contact_merge_ui
-    allowed_features = Account.first.features.where(' type not in (?) ', ['ContactMergeUiFeature'])
-    Account.any_instance.stubs(:features).returns(allowed_features)
-    sample_user = User.last
-    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
-    put :update, construct_params({ id: sample_user.id }, other_emails: email_array)
-    assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :require_feature_for_attribute, feature: 'Contact Merge', attribute: 'other_emails')])
-  ensure
-    Account.any_instance.unstub(:features)
-  end
-
   # Create/Update contact with email, passing an array to the email attribute
 
   def test_create_contact_with_email_array

@@ -8,15 +8,11 @@ module UserEmailsHelper
     end
 
     def construct_email
-      if @account.features_included?(:contact_merge_ui)
-      	construct_user_email
-      else
-        super
-      end
+      construct_user_email
     end
 
     def construct_disabled
-      if @field_name == "email" and @account.features_included?(:contact_merge_ui)
+      if @field_name == "email"
         @field_value = @form_builder.object.user_emails.map(&:email).join(", ")
       end
       super

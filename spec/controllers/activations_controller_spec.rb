@@ -46,29 +46,23 @@ describe ActivationsController do
   end
 
   it "should activate new email" do
-    @account.features.contact_merge_ui.create
     u = add_user_with_multiple_emails(@account, 4)
     u.active = false
     u.save!
     u.reload
     get :new_email, :activation_code => u.user_emails.first.perishable_token
     response.body.should =~ /<h3 class="heading">Activate your account /
-    @account.features.contact_merge_ui.destroy
   end
 
   it "should not activate for no email" do
-    @account.features.contact_merge_ui.create
     get :new_email, :activation_code => 'DFGBDFDFgdfgdfgdfGdfgdGDfGdfgdFGdfg'
     session["flash"][:notice].should eql "Your activation code has been expired!"
     response.should redirect_to(home_index_path)
-    @account.features.contact_merge_ui.destroy
   end
 
   it "should shout message for active user" do
-    @account.features.contact_merge_ui.create
     get :new_email, :activation_code => @user2.user_emails.last.perishable_token
     session["flash"][:notice].should eql "email id already activated"
-    @account.features.contact_merge_ui.destroy
   end
 
   it "should shout message for active user and active email" do

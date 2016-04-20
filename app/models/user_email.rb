@@ -26,7 +26,7 @@ class UserEmail < ActiveRecord::Base
   # Make the verified as false if the email is changed
   before_update :change_email_status, :if => [:email_changed?]
   # Set new perishable token for activation after email is changed
-  before_update :set_token, :if => [:email_changed?, :contact_merge_ui_feature]
+  before_update :set_token, :if => [:email_changed?]
   before_update :save_model_changes
 
   before_create :set_token, :set_verified
@@ -107,10 +107,6 @@ class UserEmail < ActiveRecord::Base
 
     def save_model_changes
       @ue_changes = self.changes.clone
-    end
-
-    def contact_merge_ui_feature
-      self.account.features_included?(:contact_merge_ui)
     end
 
     def check_for_email_change?

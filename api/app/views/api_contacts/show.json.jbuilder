@@ -1,7 +1,7 @@
 json.cache! CacheLib.compound_key(@item, ApiConstants::CACHE_VERSION[:v3], params) do
   json.extract! @item, :active, :address, :company_id, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id
 
-  json.set! :other_emails, @item.other_emails if @item.contact_merge_enabled?
+  json.set! :other_emails, @item.other_emails
 
   json.partial! 'shared/utc_date_format', item: @item
 
