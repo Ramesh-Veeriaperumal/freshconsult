@@ -131,9 +131,6 @@ class Company < ActiveRecord::Base
         all: {
             conditions: {}
         },
-        updated_since: {
-          conditions: ['customers.updated_at >= ?', company_filter.try(:updated_since).try(:to_time).try(:utc)]
-        },
         name: {
           conditions: { name: company_filter.name }
         }
