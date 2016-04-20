@@ -411,10 +411,11 @@ module SolutionHelper
 	def draft_label_popover article_meta
 		op = ""
 		options = {:class => "label"}
+		label = "<span class='draft-label'>#{t('solutions.status.draft')}</span>"
+		return content_tag(:span, label.html_safe, options).html_safe unless current_account.multilingual?
 		options.merge!({ :rel => "draft-qtip", 
-			"data-content-id" => "languages-qtip-contents-#{article_meta.id}"}) if current_account.multilingual?
-		op << content_tag(:a, "<span class='draft-label'>#{t('solutions.status.draft')}</span>".html_safe, options)
-		return op.html_safe unless current_account.multilingual?
+			"data-content-id" => "languages-qtip-contents-#{article_meta.id}"})
+		op << content_tag(:a, label.html_safe, options)
 		op << "<div id='languages-qtip-contents-#{article_meta.id}' class='hide'>"
 		op << languages_popover(article_meta)
 		op << "</div>"

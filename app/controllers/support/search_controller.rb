@@ -43,7 +43,7 @@ class Support::SearchController < SupportController
   end
 
   def related_articles
-    article = current_account.solution_articles.find(params[:article_id])
+    article = current_account.solution_articles.where(:parent_id => params[:article_id], :language_id => Language.current.id).first
     @related_articles = article.related(current_portal, params[:limit])
     @container = params[:container]
     render :layout => false

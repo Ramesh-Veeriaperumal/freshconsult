@@ -83,7 +83,8 @@ HTML
 		unless article.voted_by_user?
 			output << %(<p class="article-vote" id="voting-container" 
 											data-user-id="#{User.current.id if User.current}" 
-											data-article-id="#{article.id}">
+											data-article-id="#{article.id}"
+											data-language="#{Language.current.code}">
 										#{t('feedback.title')})
 			output << article_voting_up(article)
 			output << %(<span class="vote-down-container">)
@@ -103,6 +104,7 @@ HTML
 									data-remote="true" data-method="put" data-update="#voting-container" 
 									data-user-id="#{User.current.id if User.current}"
 									data-article-id="#{article.id}"
+									data-language="#{Language.current.code}"
 									data-update-with-message="#{t('feedback.up_vote_thank_you_message')}">
 								#{t('feedback.upvote')})				
 		output << %(</span>)
@@ -115,6 +117,7 @@ HTML
 									data-remote="true" data-method="put" data-update="#vote-feedback-form" 
 									data-user-id="#{User.current.id if User.current}"
 									data-article-id="#{article.id}"
+									data-language="#{Language.current.code}"
 									data-hide-dom="#voting-container" data-show-dom="#vote-feedback-container">
 								#{t('feedback.downvote')})
 		output << %(</span>)

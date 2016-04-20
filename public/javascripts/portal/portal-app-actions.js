@@ -196,15 +196,16 @@
 					$(this).parent().find(".freshdesk_quote").toggle();
 				})
 			case 'article_view':
-				if(!($("#voting-container").data('user-id'))) {
+				var votingContainer = $("#voting-container");
+				if(!(votingContainer.data('user-id'))) {
 					
 					// Handling Voting Container using JS is applicable only for Guest users.
 					$("#article_thumbs_up, #article_thumbs_down").click( function() {
-						localStorage["vote_" + $(this).data('article-id') ] = true;
+						localStorage["vote_" + $(this).data('article-id') + "_" + $(this).data('language') ] = true;
 					});
 
-					if(localStorage["vote_" + $("#voting-container").data('article-id') ]) {
-						$("#voting-container").hide();
+					if(localStorage["vote_" + votingContainer.data('article-id') + "_" + votingContainer.data('language') ]) {
+						votingContainer.hide();
 					}
 				}
 				highlight_code();
