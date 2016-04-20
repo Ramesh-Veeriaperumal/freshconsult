@@ -2,12 +2,16 @@
 <script src="/javascripts/helpdesk/article_section.js" type="text/javascript"></script>
 <% attach_id = attach_id || "admin_canned_responses_response" %>
 <label><%=t('attach_files')%></label>
-<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="admin_canned_responses_response[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+<div id="attachment-type" data-multifile-enable="<%= current_account.launched?(:multifile_attachments) %>">
+<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="admin_canned_responses_response[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body"
+                    <%= current_account.launched?(:multifile_attachments) ? "multiple" : ""%>
+ />
 <div class="info-data">
   <%=t('attachment_help_info')%>
 </div>
 <div class="attachments" id="<%=attach_id%>-container" style="display:none">
   <div id="<%=attach_id%>-attachments"></div>
+</div>
 </div>
 
 <%#
@@ -22,6 +26,40 @@
 	</span>
   </div>
 </script>
+
+
+<script id="multiple-file-list-template" type="text/x-jquery-tmpl">
+    {{if (file_valid)}}
+    <div id="attachment-type">
+        <div id="${attachment_id}" class="clearfix" style="margin: 0px;padding: 5px;width:500px;">
+                 <div class="attachments-wrap">
+                <a class="attachment-close"  href="javascript:void(0)" 
+                onclick="Helpdesk.MultifileUpload.removeAttachments(this); return false;" 
+                data-input="${inputId}" data-size="${size_in_bytes}" data-attachment="${attachment_id}" style="float: left;">
+                </a>
+                <div id="files" style="border-left: 1px solid rgba(204, 204, 204, 0.51);float:left;">
+                {{each files}}
+                    <p>
+                        &nbsp;&nbsp;&nbsp; <span   title="${name}" style="opacity: 1; padding-left: 10px;">  ${short_name} {{if (size != '0' && size != '0.00 KB ') }}( ${size} ){{/if}}</span>
+                    </p>
+                {{/each}}
+                </div>
+                </div>
+        </div>
+        </div>
+    {{/if}}
+    {{if (!file_valid)}}
+        <div class="item invalid_files">
+            <div class="file-types-def">
+                <%= content_tag(:b, t('helpdesk.tickets.note.attachment_size.exceed'), 
+                                :class => "alert-text", 
+                                :title => t('helpdesk.tickets.note.attachment_size.exceed_limit')) %>
+            </div>
+        </div>
+    {{/if}}
+</script>
+
+
 
 <%= javascript_tag do %>
    function removefile(){

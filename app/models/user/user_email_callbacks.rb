@@ -12,16 +12,16 @@ class User < ActiveRecord::Base
   after_update :update_verified, :if => [:email_available?, :active_changed?]
 
   #For user email UI feature. To assign primary email. contact form with multiple emails.
-  before_validation :assign_primary_email, on: :create, :if => :has_contact_merge?
+  before_validation :assign_primary_email, on: :create
 
   #To update user table's email on user create through contact form with multiple emails
-  before_validation :update_user_table_email, on: :create, :if => :has_contact_merge?, :unless => [:email_available?]
+  before_validation :update_user_table_email, on: :create, :unless => [:email_available?]
 
   #To update the primary email on user's update through contact form with multiple emails
-  before_validation :set_primary_email, on: :update, :if => [:has_contact_merge?], :unless => [:email_changed?]
+  before_validation :set_primary_email, on: :update, :unless => [:email_changed?]
 
   #To remove duplicate emails. needed only for contact form with multiple emails
-  before_validation :remove_duplicate_emails, :if => :has_contact_merge?
+  before_validation :remove_duplicate_emails
 
   #Sanity check. Not enforced in production and test
   after_commit :verify_details_on_create, on: :create
@@ -39,7 +39,7 @@ class User < ActiveRecord::Base
   end
 
   def send_activation_email
-    self.deliver_activation_instructions!(account.main_portal,false) if self.email.present? and ((has_contact_merge? and !self.primary_email.verified?) or no_contact_merge)
+    self.deliver_activation_instructions!(account.main_portal,false) if self.email.present? and (!self.primary_email.verified?)
   end
 
   private
@@ -47,16 +47,13 @@ class User < ActiveRecord::Base
   def verify_details
     unless ["production", "test"].include?(Rails.env)
       self.reload
-      if email_available? and no_contact_merge
-        raise error_text unless (self.primary_email.present? and (self.email == self.primary_email.email and self.active == self.primary_email.verified))
-      end
 
-      if has_contact_merge? and email_available?
+      if email_available?
         ue_length = (self.user_emails.select(&:primary_role).length == 1) if self.user_emails.present?
         raise error_text unless (self.user_emails.present? and self.email.present? and self.email == self.primary_email.email and ue_length)
       end
 
-      if has_contact_merge? and self[:email].blank?
+      if self[:email].blank?
         raise error_text if self.user_emails.present?
       end
     end
@@ -72,11 +69,7 @@ class User < ActiveRecord::Base
   end
 
   def make_inactive
-    if has_contact_merge?
-      self.active = self.primary_email.verified? if self.primary_email
-    else
-      self.active = false
-    end
+    self.active = self.primary_email.verified? if self.primary_email
     true
   end
 
@@ -138,7 +131,7 @@ class User < ActiveRecord::Base
     (self.primary_email.blank? or primary_changed.present?)
   end
 
-  def primary_changed #will happen only with contact_merge_ui
+  def primary_changed
     self.user_emails.select{|x| (x.email_changed? or x.marked_for_destruction?) and x.primary_role?}
   end
 
@@ -153,15 +146,5 @@ class User < ActiveRecord::Base
   def email_available?
     self[:email].present?
   end
-
-    #feature checks
-
-    def no_contact_merge
-      !has_contact_merge?
-    end
-
-    def has_contact_merge?
-      self.account.features_included?(:contact_merge_ui)
-    end
 
 end

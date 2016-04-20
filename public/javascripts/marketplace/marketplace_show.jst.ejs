@@ -12,7 +12,7 @@
     <div class="app-meta">
       <div class="logo-box">
         <div class="img-helper">
-          <img src="<%= cover_art['thumb'] %>" srcset="<%= cover_art['thumb'] %> 1366w, <%= cover_art['thumb2x'] %>" class="img-thumbnail" alt="<%- display_name %>"/>
+          <img src="<%= cover_art['thumb'] %>" srcset="<%= cover_art['thumb'] %> 1x, <%= cover_art['thumb2x'] %> 2x" class="img-thumbnail" alt="<%- display_name %>"/>
         </div>
       </div>
       <ul class="app-info">
@@ -22,6 +22,16 @@
         <li class="version"><%= translate.get('marketplace_ver') %> <%= app_version %></li>
         <li class="dev"><%= translate.get('developed_by') %><span class="bold"><%= account %></span></li>
         <li class="published"><%= published_date %> <%= translate.get('time_ago') %> </li>
+        <li class="text-center">
+          <h6 class="cat"><%= translate.get('published_in') %></h6>
+          <% if(categories){ %>
+            <p class="category-bubble">
+              <% for(var i=0; i < categories.length; i++) { %>
+                <a href="#" class='tag index_btn category' data-url="<%= categories[i].url %>"><%= categories[i].name %></a>
+              <% } %>
+            </p>
+          <% } %>
+        </li>
         <li class="help dot ttl"><%= translate.get('help_and_support') %></li>
         <li class="help dot"><a href="mailto:support@freshdesk.com">support@freshdesk.com</a></li>
         <li class="help"><a href="https://support.freshdesk.com" target="_blank">support.freshdesk.com</a></li>
@@ -37,29 +47,33 @@
         </div>
       <% } %>
 
-      <% if(categories){ %>
-        <p class="category-bubble">
-          <% for(var i=0; i < categories.length; i++) { %>
-            <a href="#" class='tag index_btn category' data-url="<%= categories[i].url %>"><%= categories[i].name %></a>
-          <% } %>
-        </p>
-      <% } %>
-
       <% if(screenshots.length >0){ %>
         <div class="screenshots">
-          <div id="carousel-bounding-box">
+          <div id="screenshots">
             <div class="carousel slide" id="screenshotsCarousel">
               <!-- Carousel items -->
+              <% if(screenshots.length > 1) { %>
+                <div class="carousel-nav">
+                  <ol class="carousel-indicators">
+                  <% for(var i=0; i < screenshots.length; i++) { %>
+                    <% if (i == 0 ) { var active = "active" } else{ active = '' }%>
+                    <li data-target="#carousel" data-slide-to="<%= i %>" class="carousel-dot <%= active %>"></li>
+                  <% } %>
+                  </ol>
+                </div>
+              <% } %>
               <div class="carousel-inner">
                 <% for(var i=0; i < screenshots.length; i++) { %>
                   <% if (i == 0 ) { var active = "active" } else{ active = '' }%>
                   <div class="item <%= active %>" data-slide-number="<%= i %>">
-                    <img src="<%= screenshots[i]['large'] %>" srcset="<%= screenshots[i]['large'] %> 1024w, <%= screenshots[i]['large2x'] %>">
+                    <img src="<%= screenshots[i]['large'] %>" srcset="<%= screenshots[i]['large'] %> 1x, <%= screenshots[i]['large2x'] %> 2x">
                   </div>
                 <% } %>
               </div><!-- Carousel nav -->
-              <a class="carousel-control left" data-slide="prev" href="#screenshotsCarousel"><span>‹</span></a> 
-              <a class="carousel-control right" data-slide="next" href="#screenshotsCarousel"><span>›</span></a>
+              <% if(screenshots.length > 1) { %>
+                <a class="carousel-control left" data-slide="prev" href="#screenshotsCarousel"><span class="ficon-arrow-left"></span></a> 
+                <a class="carousel-control right" data-slide="next" href="#screenshotsCarousel"><span class="ficon-arrow-right"></span></a>
+              <% } %>
             </div>
           </div>
 

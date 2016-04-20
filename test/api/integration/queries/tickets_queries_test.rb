@@ -13,10 +13,12 @@ class TicketsQueriesTest < ActionDispatch::IntegrationTest
         api_index: 5,
         api_destroy: 6,
         api_restore: 7,
+        api_compose_email: 3,
 
         create: 89,
+        compose_email: 82,
         show: 20,
-        update: 38,
+        update: 37,
         index: 20,
         destroy: 40, # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62
         restore: 48 # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62
@@ -25,6 +27,8 @@ class TicketsQueriesTest < ActionDispatch::IntegrationTest
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
       create_v2_payload = v2_ticket_payload
       create_v1_payload = v1_ticket_payload
+      create_v2_outbound = v2_outbound_payload
+      create_v1_outbound = v1_outbound_payload
 
       # create
       v2[:create], v2[:api_create], v2[:create_queries] = count_api_queries do
@@ -36,11 +40,21 @@ class TicketsQueriesTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
 
-      # 3 queries that will be part of new validations added to ticket validator for api. Hence substracting it.
-      v2[:create] -= 3
-
       id1 = Helpdesk::Ticket.last(2).first.display_id
       id2 = Helpdesk::Ticket.last.display_id
+
+      # compose email
+      v2[:compose_email], v2[:api_compose_email], v2[:compose_email_queries] = count_api_queries do
+        post('/api/tickets/outbound_email', create_v2_outbound, @write_headers)
+        assert_response 201
+      end
+      v1[:compose_email] = count_queries do
+        post('/helpdesk/tickets.json', create_v1_outbound, @write_headers)
+        assert_response 200
+      end
+
+      # 3 queries that will be part of new validations added to ticket validator for api. Hence substracting it.
+      v2[:create] -= 3
 
       # show
       v2[:show], v2[:api_show], v2[:show_queries] = count_api_queries do

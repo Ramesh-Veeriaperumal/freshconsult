@@ -11,6 +11,7 @@ va_handlers:
         dropdown:  Va::Handlers::Text
         checkbox: Va::Handlers::Boolean
         object_id: Va::Handlers::ObjectId
+        object_id_array: Va::Handlers::ObjectIdArray
         nested_field: Va::Handlers::NestedField
         allow_all: Va::Handlers::AllowAll
     event:

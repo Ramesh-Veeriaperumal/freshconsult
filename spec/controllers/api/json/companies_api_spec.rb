@@ -3,7 +3,7 @@ require 'spec_helper'
 describe CompaniesController do
 
   SKIPPED_KEYS = [  :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, 
-                    :delta, :import_id, :custom_field ]
+                    :delta, :import_id, :custom_field, :domains ]
 
   # integrate_views
   setup :activate_authlogic

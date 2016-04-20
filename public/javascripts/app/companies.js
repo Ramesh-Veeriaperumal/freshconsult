@@ -26,6 +26,12 @@ window.App = window.App || {};
 			case 'companies/update_notes':
 				this.current_module = 'Company_show';
 				break;
+			case 'companies/edit':
+			case 'companies/new':
+			case 'companies/create_company':
+			case 'companies/update_company':
+				this.current_module = 'Company_form';
+				break;
 			}
 		},
 

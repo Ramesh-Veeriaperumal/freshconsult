@@ -14,13 +14,11 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   belongs_to :group
 
   belongs_to :company, :foreign_key => :owner_id
-  
-  has_one :archive_ticket_association, 
-        :class_name => "Helpdesk::ArchiveTicketAssociation",
-        :dependent => :destroy
-  
-  has_many :archive_notes, :class_name => "Helpdesk::ArchiveNote", :dependent => :destroy
-  
+
+  has_many :archive_notes,
+           :class_name => "Helpdesk::ArchiveNote",
+           :dependent => :destroy
+
   has_many :inline_attachments, :class_name => "Helpdesk::Attachment",
                                 :conditions => { :attachable_type => "ArchiveTicket::Inline" },
                                 :foreign_key => "attachable_id",
@@ -66,10 +64,8 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   attr_accessor :highlight_subject, :highlight_description, :archive_ticket_state
 
   alias_attribute :company_id, :owner_id
-  
-  accepts_nested_attributes_for :archive_ticket_association, allow_destroy: true
 
-  concerned_with :rabbitmq, :esv2_methods
+  concerned_with :rabbitmq, :attributes, :s3, :esv2_methods
 
   SORT_FIELDS = [
     [ :created_at , "tickets_filter.sort_fields.date_created"  ],
@@ -209,9 +205,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     ticket = archive_ticket_association.association_data["helpdesk_tickets"]
     cc_email = ticket["cc_email"] if ticket.present?
     if cc_email and cc_email.is_a?(Array)
-      {:cc_emails => cc_email, :fwd_emails => [], :reply_cc => cc_email}
+      {:cc_emails => cc_email, :fwd_emails => [], :reply_cc => cc_email}.with_indifferent_access
     else
-      cc_email
+      cc_email.with_indifferent_access if cc_email.is_a?(Hash)
     end
   end
   alias :cc_email :cc_email_hash
@@ -267,8 +263,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def included_in_cc?(from_email)
-    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email.downcase) }) or
-                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email.downcase) }) or
+    cc_email_hash_value = cc_email_hash
+    (cc_email_hash_value) and  ((cc_email_hash_value["cc_emails"].any? {|email| email.include?(from_email.downcase) }) or
+                     (cc_email_hash_value["fwd_emails"].any? {|email| email.include?(from_email.downcase) }) or
                      included_in_to_emails?(from_email))
   end
 
@@ -293,8 +290,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def status_updated_at
-    ticket_association = archive_ticket_association.association_data["helpdesk_tickets_association"]
-    ticket_association["ticket_states"]["status_updated_at"] if ticket_association
+    ticket_states.status_updated_at
   end
 
   def custom_field_value(alias_name)
@@ -371,7 +367,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def from_email
-    (account.features_included?(:contact_merge_ui) and self.sender_email.present?) ? self.sender_email : requester.email
+    self.sender_email.present? ? self.sender_email : requester.email
   end
 
   [:due_by, :frDueBy, :fr_escalated, :isescalated, :spam].each do |attribute|
@@ -492,7 +488,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   private
 
     def note_preload_options
-      options = [:attachments, :archive_note_association, :attachments_sharable, :cloud_files, {:user => :avatar}]
+      options = [:attachments, :attachments_sharable, :cloud_files, {:user => :avatar}]
       options << :freshfone_call if Account.current.features?(:freshfone)
       options << :fb_post if facebook?
       options << :tweet if twitter?

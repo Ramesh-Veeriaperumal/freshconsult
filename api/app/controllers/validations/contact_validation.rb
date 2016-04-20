@@ -40,7 +40,6 @@ class ContactValidation < ApiValidation
   # During the update action, ensure that any one of the contact detail exist including fb_profile_id
   validate :contact_detail_missing_update, if: -> { fb_profile_id.nil? && email_mandatory? }, on: :update
 
-  validate :check_contact_merge_feature, if: -> { other_emails }
   validates :other_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } }
   validates :other_emails, custom_length: { maximum: ContactConstants::MAX_OTHER_EMAILS_COUNT, message_options: { element_type: :values } }
   validate :check_contact_for_email_before_adding_other_emails, if: -> { other_emails }
@@ -64,7 +63,8 @@ class ContactValidation < ApiValidation
     super(request_params, item, allow_string_param)
     @tag_names = item.tag_names.split(',') if item && !request_params.key?(:tags)
     @current_email = item.email if item
-    fill_custom_fields(request_params, item) if item && item.custom_field.present?
+    check_params_set(request_params[:custom_fields]) if request_params[:custom_fields].is_a?(Hash)
+    fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
   end
 
   def required_default_fields
@@ -115,12 +115,5 @@ class ContactValidation < ApiValidation
     def attributes_to_be_stripped
       ContactConstants::ATTRIBUTES_TO_BE_STRIPPED
     end
-
-    # 'other_emails' is allowed only if the feature Contact Merge UI is enabled for the account
-    def check_contact_merge_feature
-      unless Account.current.contact_merge_enabled?
-        errors[:other_emails] << :require_feature_for_attribute
-        (self.error_options ||= {}).merge!(other_emails: { feature: 'Contact Merge', attribute: 'other_emails' })
-      end
-    end
+    
 end

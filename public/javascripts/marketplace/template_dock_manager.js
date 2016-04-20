@@ -76,14 +76,19 @@ var TemplateDockManager   = Class.create({
                     .on("submit.tmpl_events", "form#extension-search-form" , this.onSearch.bindAsEventListener(this))
                     .on("click.tmpl_events", "[id^=carousel-selector-]" , this.carouselSelector.bindAsEventListener(this))
                     .on("click.tmpl_events", ".fa-tabd a", this.reinstateURL.bindAsEventListener(this))
-                    .on("click.tmpl_events", ".remove-query", this.resetQuery.bindAsEventListener(this));
+                    .on("click.tmpl_events", ".remove-query", this.resetQuery.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".carousel-dot", this.carouselDotNav.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".carousel", this.carouselScroll.bindAsEventListener(this));
   },
   resetQuery: function (e) {
     jQuery(".appsearch-box #query").attr("value", "");
   },
   setupCarousel: function(){
     jQuery("#screenshotsCarousel").livequery(function(){
-      jQuery(this).carousel('pause');
+      jQuery("#screenshotsCarousel").carousel({
+        pause: true,
+        interval: false
+      });
       jQuery(this).on('slid', function (e) {
         var item = jQuery('#screenshotsCarousel .carousel-inner .item.active');
         // Deactivate all nav links
@@ -91,14 +96,32 @@ var TemplateDockManager   = Class.create({
         //to activate the nav link based on slide
         var index = item.index() + 1;
         jQuery('.slider-thumbs li:nth-child(' + index + ')').addClass('active');
+        jQuery(".carousel-dot.active").removeClass("active");
+        jQuery('.carousel-indicators li:nth-child(' + index + ')').addClass('active');
       });
     });
+  },
+  carouselDotNav: function(e){
+    jQuery(".carousel").carousel(parseInt(jQuery(e.target).attr("data-slide-to")));
+    jQuery(".carousel-dot.active").removeClass("active");
+    jQuery(e.target).addClass("active");
   },
   carouselSelector: function(e){
     var id_selector = jQuery(e.currentTarget).attr("id");
     var id = id_selector.substr(id_selector.length -1);
     var id = parseInt(id);
     jQuery('#screenshotsCarousel').carousel(id);
+  },
+  carouselScroll: function(e){
+    var descHeight = jQuery(".descript").outerHeight();
+    var whatsNewHeight = 0;
+    if(jQuery(".whats-new").length > 0){
+      whatsNewHeight = jQuery(".whats-new").outerHeight();  
+    }
+    
+    jQuery('.head-spacer').animate({
+      scrollTop: descHeight+whatsNewHeight+15
+    }, 1000);
   },
   showLoader: function(){
     jQuery(this.extensionsWrapper).empty();
@@ -204,7 +227,7 @@ var TemplateDockManager   = Class.create({
   },
 
   manageShowMore: function(){
-    var showChar = 260,  // How many characters are shown by default
+    var showChar = 600,  // How many characters are shown by default
         ellipsis = "...",
         moretext = "more",
         lesstext = "less",

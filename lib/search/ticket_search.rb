@@ -72,6 +72,32 @@ module Search::TicketSearch
       defs
     end
   end
+
+
+  def archive_show_options ( column_order = TicketConstants::ARCHIVE_DEFAULT_COLUMNS_ORDER,
+   columns_keys_by_token = TicketConstants::ARCHIVE_DEFAULT_COLUMNS_KEYS_BY_TOKEN,
+    columns_option = TicketConstants::ARCHIVE_DEFAULT_COLUMNS_OPTIONS)
+     @show_options ||= begin
+      defs = []
+      i = 0
+      #default fields
+
+      column_order.each do |name|
+        cont = columns_keys_by_token[name]
+        defs.insert(i,{ get_op_list(cont).to_sym => cont  , 
+                        :condition => name , 
+                        :name => columns_option[name], 
+                        :container => cont,     
+                        :operator => get_op_list(cont), 
+                        :options => get_default_choices(name), 
+                        :value => "", 
+                        :f_type => :default, 
+                        :ff_name => "default"  })
+        i = i+ 1
+      end
+      defs
+    end
+  end
   
   
   def get_id_from_field(tf)
@@ -117,7 +143,7 @@ module Search::TicketSearch
 
     if criteria_key == :responder_id
       agents = [[0, I18n.t("helpdesk.tickets.add_watcher.me")]]
-      agents.concat(Account.current.agents_from_cache.collect { |au| [au.user.id, au.user.name] })      
+      agents.concat(Account.current.agents_details_from_cache.collect { |au| [au.id, au.name] })      
       return agents.push([NONE_VALUE, I18n.t("filter_options.unassigned")])
     end
 
@@ -127,7 +153,7 @@ module Search::TicketSearch
       return groups.push([NONE_VALUE, I18n.t("filter_options.unassigned")])
     end
 
-    if criteria_key == "helpdesk_schema_less_tickets.product_id"
+    if criteria_key == "helpdesk_schema_less_tickets.product_id" || criteria_key == :product_id
       products = Account.current.products_from_cache
       products_list = products.present? ? [[NONE_VALUE, I18n.t("filter_options.none")]] : []
       return products_list.concat(products.collect { |au| [au.id, CGI.escapeHTML(au.name)] })

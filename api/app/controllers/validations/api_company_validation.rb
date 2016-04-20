@@ -25,7 +25,8 @@ class ApiCompanyValidation < ApiValidation
   def initialize(request_params, item)
     super(request_params, item)
     @domains = item.domains.to_s.split(',') if item && !request_params.key?(:domains)
-    fill_custom_fields(request_params, item) if item && item.custom_field.present?
+    check_params_set(request_params[:custom_fields]) if request_params[:custom_fields].is_a?(Hash)
+    fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
   end
 
   def attributes_to_be_stripped

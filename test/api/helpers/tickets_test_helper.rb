@@ -17,7 +17,7 @@ module TicketsTestHelper
     ticket_pattern(ticket).except(:attachments, :conversations, :tags)
   end
 
-  def index_ticket_pattern_with_associations(ticket, requester=true)
+  def index_ticket_pattern_with_associations(ticket, requester = true)
     ticket_pattern_with_association(ticket, false, false, requester, false).except(:attachments, :conversations, :tags)
   end
 
@@ -34,9 +34,9 @@ module TicketsTestHelper
     ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
 
-  def ticket_pattern_with_association(ticket, limit=false, notes=true, requester=true, company=true)
+  def ticket_pattern_with_association(ticket, limit = false, notes = true, requester = true, company = true)
     result_pattern = ticket_pattern(ticket)
-    if notes 
+    if notes
       notes_pattern = []
       ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
         notes_pattern << index_note_pattern(n)
@@ -114,6 +114,22 @@ module TicketsTestHelper
   end
 
   # Helpers
+  def v2_outbound_payload
+    product = (Product.first || create_product)
+    email_config = product.primary_email_config
+    v2_ticket_params.except(:source, :fr_due_by, :due_by, :status, :responder_id).merge(email_config_id: email_config.id).to_json
+  end
+
+  def v1_outbound_payload
+    product = (Product.first || create_product)
+    email_config = product.primary_email_config
+    {
+      helpdesk_ticket: v1_ticket_params.except(:fr_due_by, :due_by, :status, :source).merge(source: 10, status: 5, email_config_id: email_config.id, product_id: product.id),
+      helpdesk: { tags: "#{Faker::Name.name}, #{Faker::Name.name}" },
+      cc_emails: "#{Faker::Internet.email}, #{Faker::Internet.email}"
+    }.to_json
+  end
+
   def v1_ticket_payload
     { helpdesk_ticket: v1_ticket_params, helpdesk: { tags: "#{Faker::Name.name}, #{Faker::Name.name}" },
       cc_emails: "#{Faker::Internet.email}, #{Faker::Internet.email}" }.to_json

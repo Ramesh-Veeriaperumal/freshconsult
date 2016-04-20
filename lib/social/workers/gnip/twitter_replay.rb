@@ -1,3 +1,5 @@
+#To be removed the next week
+
 class Social::Workers::Gnip::TwitterReplay
   include Social::Twitter::Constants
   include Social::Constants

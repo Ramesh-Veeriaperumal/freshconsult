@@ -19,10 +19,16 @@ Freshdesk.Widget.prototype={
 		this.display();
 		this.access_token_renewal_url = widgetOptions.is_customer ? "/support/user_credentials/refresh_access_token/" : "/integrations/refresh_access_token/";
 		this.http_proxy_url = widgetOptions.is_customer ? "/support/http_request_proxy/fetch" : "/http_request_proxy/fetch";
+		this.initializeAjaxQueue();
 		this.call_init_requests();
 	},
 	getUsername: function() {
 		return this.options.username;
+	},
+
+	initializeAjaxQueue:function(){
+		this.ajax_queue = {};
+		this.ajax_queue[this.options.widget_name] = [];
 	},
 
 	login:function(credentials){
@@ -113,7 +119,7 @@ Freshdesk.Widget.prototype={
 		reqData.custom_callbacks = null
 		var reqHeader_copy = jQuery.extend(false, {}, reqHeader)
 		var reqObj=null;
-		new Ajax.Request(url, reqObj=jQuery.extend(false, {
+		var req_obj = new Ajax.Request(url, reqObj=jQuery.extend(false, {
 		    asynchronous: true,
 			parameters:reqData,
 			requestHeaders:reqHeader,
@@ -124,6 +130,15 @@ Freshdesk.Widget.prototype={
 				this.resource_failure(evt, reqData, reqHeader_copy)
 			}.bind(this)
 		}, custom_callbacks));
+		
+		if(this.ajax_queue != undefined){ // To push all ajax calls from a widget
+			if(this.ajax_queue[this.options.widget_name] != undefined){
+				this.ajax_queue[this.options.widget_name].push(req_obj);
+			}
+			else{
+				this.ajax_queue[this.options.widget_name] = [req_obj];
+			}
+		}
 	},
 
 	resource_success:function(evt, reqName, reqData) {
@@ -204,6 +219,7 @@ Freshdesk.Widget.prototype={
 					this.alert_failure("Could not fetch data from " + (this.options.domain || this.domain) + "\n\nPlease verify your integration settings and try again.");
 				}			
 		} else {
+				jQuery(".timeentry_status").hide(); // For timesheet apps, hiding the time_entry push flash message on failure
 				errorStr = evt.responseText;
 				this.alert_failure("Problem in connecting to " + this.app_name + ". Response code: " + evt.status);
 		}

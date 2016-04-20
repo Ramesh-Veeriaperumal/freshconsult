@@ -40,7 +40,6 @@ class Social::TwitterStream < Social::Stream
     rule[:value] = rule_value unless rule_value.nil?
     envs = STREAM.values
     args = {
-      :account_id => self.account_id,
       :rule       => rule,
       :env        => envs,
       :action     => RULE_ACTION[:delete]
@@ -66,12 +65,11 @@ class Social::TwitterStream < Social::Stream
       envs = environments.nil? ? gnip_envs({:subscribe => true}) : environments
       if self.account.active?
         args = {
-          :account_id => account_id,
           :rule       => gnip_rule,
           :env        => envs,
           :action     => RULE_ACTION[:add]
         }
-        Resque.enqueue(Social::Workers::Gnip::TwitterRule, args) if valid_params?(args)
+        Social::Gnip::RuleWorker.perform_async(args) if valid_params?(args)
       end
     end
 
@@ -88,7 +86,7 @@ class Social::TwitterStream < Social::Stream
 
     def unsubscribe_from_gnip(rule_value=nil)
       args = construct_unsubscribe_args(rule_value)
-      Resque.enqueue(Social::Workers::Gnip::TwitterRule, args) if valid_params?(args)
+      Social::Gnip::RuleWorker.perform_async(args) if valid_params?(args)
     end
 
     def update_rule_value

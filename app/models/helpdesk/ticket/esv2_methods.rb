@@ -114,7 +114,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # _Note_: Will be deprecated and removed in near future
   #
   def search_fields_updated?
-    attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id",
+    attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id", "product_id",
                        "status", "spam", "deleted", "source", "priority", "due_by", "to_emails", "cc_email"]
     include_fields = es_flexifield_columns
     all_fields = attribute_fields | include_fields

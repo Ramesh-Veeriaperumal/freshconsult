@@ -2,6 +2,7 @@ defaults: &defaults
   :verbose: true
   :require: ./config/environment.rb
   :concurrency: 5
+  :redis_pool_size: 5
   :logfile: ./log/sidekiq.log
   :timeout: 30
   :queues:
@@ -32,6 +33,8 @@ defaults: &defaults
     - [facebook_delta]
     - [trial_twitter]
     - [custom_twitter]
+    - [twitter_replay_worker]
+    - [twitter_gnip_worker]
     - [rabbitmq_publish]
     - [plan_change]
     - [update_tickets_company]
@@ -52,6 +55,7 @@ defaults: &defaults
     - [archive_build_create_ticket]
     - [archive_modify_ticket_association]
     - [archive_delete_ticket]
+    - [archive_delete_ticket_dependencies]
     - [chargebee_invoice]
     - [update_ticket_states]
     - [ticket_observer]
@@ -98,6 +102,11 @@ defaults: &defaults
     - [company_import]
     - [contact_export]
     - [data_export]
+    - [delete_spam_tickets]
+    - [suspended_accounts_deletion]
+    - [tickets_export_queue]
+    - [premium_ticket_export]
+    - [long_running_ticket_export]
 development:
   <<: *defaults
 

@@ -29,6 +29,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
+  rescue_from ShardNotFound, :with => :record_not_found
   rescue_from DomainNotReady, :with => :render_404
 
   
@@ -131,9 +132,27 @@ class ApplicationController < ActionController::Base
      #                                                              :request_params => params})
     render :file => "#{Rails.root}/public/404.html", :status => :not_found, :layout => false
   end
-  
+
+  def render_500
+    render :file => "#{Rails.root}/public/500.html", 
+           :status => :internal_server_error, 
+           :layout => false
+  end
+
+  def verify_format_and_tkt_id
+    if request.format.nil?
+      render_500
+    elsif params[:id].to_i.zero?
+      render_error
+    end
+  end
+
   def record_not_found(exception)
     Rails.logger.debug "Error  =>" + exception.message
+    render_error
+  end
+
+  def render_error
     respond_to do |format|
       format.html {
         unless @current_account

@@ -1,9 +1,9 @@
 <script id="file-list-template" type="text/x-jquery-tmpl">
-<div class="item">
+<div class="item" id="${attachmentId}">
   {{if (file_valid)}}
   <a class="attachment-close"  href="javascript:void(0)" 
             onclick="remove_file_size_alert(this); Helpdesk.Multifile.remove(this); return false;" 
-            inputId="${inputId}"></a>
+            inputId="${inputId}" data-size="${size_in_bytes}" data-attachment="${attachmentId}"></a>
   {{/if}}
   <div class="attachment-type file-types-def">
     <span class="{{if (!file_valid) }} invalid_attachment {{/if}}">

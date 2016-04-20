@@ -252,10 +252,15 @@ helpdeskReports.prototype = {
         return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%</p></div>'
     },
     barChartSeriesTooltip: function () {
-        if (this.point.series.index == 0) {
-            return '<div class="tooltip"><p style="margin:0;color:#63b3f5;">'+ I18n.t('helpdesk_reports.chart_title.tooltip.tickets_with_agent_responses',{ticket_count: this.y, count: this.x}) + '<br/></p></div>';
-        } else {
-            return '<div class="tooltip"><p style="margin:0;color:#ffe397;">'+ I18n.t('helpdesk_reports.chart_title.tooltip.tickets_with_customer_responses',{ticket_count: this.y, count: this.x}) + '<br/></p></div>';
+        switch(this.series.options.id){
+            case "reopen_count":
+                return '<div class="tooltip"><p style="margin:0;color:#63b3f5;">'+ I18n.t('helpdesk_reports.chart_title.tooltip.reopened_tickets',{ticket_count: this.y, reopen_count: this.x, count: parseInt(this.x)}) + '<br/></p></div>';
+            default:
+                if (this.point.series.index == 0) {
+                    return '<div class="tooltip"><p style="margin:0;color:#63b3f5;">'+ I18n.t('helpdesk_reports.chart_title.tooltip.tickets_with_agent_responses',{ticket_count: this.y, count: this.x}) + '<br/></p></div>';
+                } else {
+                    return '<div class="tooltip"><p style="margin:0;color:#ffe397;">'+ I18n.t('helpdesk_reports.chart_title.tooltip.tickets_with_customer_responses',{ticket_count: this.y, count: this.x}) + '<br/></p></div>';
+                }
         }
     },
     numberLabelFormatter: function(number){

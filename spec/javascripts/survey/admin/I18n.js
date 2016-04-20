@@ -74,11 +74,11 @@
 
 
   view = {"choiceValues":[{"id":"-103","text":"Strongly Disagree","className":"strongly-disagree"},
-            {"id":"-102","text":"Some What Disagree","className":"some-what-disagree"},
+            {"id":"-102","text":"Somewhat Disagree","className":"some-what-disagree"},
             {"id":"-101","text":"Disagree","className":"disagree"},
             {"id":"100","text":"Neutral","className":"satisfaction-neutral"},
             {"id":"101","text":"Agree","className":"agree"},
-            {"id":"102","text":"Some What Agree","className":"some-what-agree"},
+            {"id":"102","text":"Somewhat Agree","className":"some-what-agree"},
             {"id":"103","text":"Strongly Agree","className":"strongly-agree"}],
     "action":"new","rating":{"title":" Customer Satisfaction Rating",
     "link_text":" Please tell us what you think of your support experience",

@@ -59,6 +59,7 @@ helpdesk:
     - spam_watcher
     - string_ext
     - text_datastore
+    - archive_datastore
     - time_formats
     - twitter_config
     - social_config
@@ -78,5 +79,6 @@ helpdesk:
     - doorkeeper_extension
     - helpdesk_reports/reports_app_config
     - controller_log_subscriber
+    - zero_downtime_migration
 
 

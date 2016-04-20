@@ -13,6 +13,6 @@ class FilterValidationTest < ActionView::TestCase
     assert error.include?('Page datatype_mismatch')
     assert error.include?('Per page per_page_invalid')
     assert_equal({ page: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'  },
-                   per_page: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null' , max_value: 100 } }, filter.error_options)
+                   per_page: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null', max_value: 100 } }, filter.error_options)
   end
 end

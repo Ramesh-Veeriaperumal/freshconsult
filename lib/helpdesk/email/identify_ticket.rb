@@ -9,13 +9,8 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
     IDENTIFICATION_METHODS.each do |fn|
       send(fn)
       if ticket
-        tck_parent = ticket_parent
-        if tck_parent && tck_parent.is_a?(Helpdesk::ArchiveTicket)
-          check_parent
-          return nil
-        elsif tck_parent
-          check_parent
-        end 
+        check_parent
+        return nil if ticket.is_a?(Helpdesk::ArchiveTicket)
         return ticket if can_be_added_to_ticket?
       end
     end
@@ -49,7 +44,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
   end
 
   def check_parent
-    self.ticket = ticket_parent if valid_ticket_contact(ticket_parent)
+    self.ticket = ticket_parent if ticket_parent && valid_ticket_contact(ticket_parent)
   end
 
   def ticket_parent
@@ -59,6 +54,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
       if parent_ticket_id
         @par ||= ticket.parent 
         unless @par
+          @set_parent = true
           return self.archived_ticket = Helpdesk::ArchiveTicket.find_by_ticket_id(parent_ticket_id) 
         else
           @set_parent = true
@@ -110,6 +106,8 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
     IDENTIFICATION_METHODS.each do |fn|
       send("archive_"+fn) unless self.archived_ticket
       if self.archived_ticket
+        self.ticket = self.archived_ticket
+        merge_flag_for_parent_ticket = can_be_added_to_ticket?
         parent_ticket = self.archived_ticket.parent_ticket
         # If merge ticket change the archive_ticket
         if parent_ticket && parent_ticket.is_a?(Helpdesk::ArchiveTicket)
@@ -121,14 +119,21 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
           end
         end
         # If not merge check if archive child present
-        
+        self.ticket = self.archived_ticket
+        flag_archive_ticket = can_be_added_to_ticket?
         linked_ticket = self.archived_ticket.ticket
         if linked_ticket
           self.ticket = linked_ticket
+          flag_can_be_parent_ticket = can_be_added_to_ticket?
           self.ticket = linked_ticket.parent if linked_ticket.parent  
-          return self.ticket
+          if can_be_added_to_ticket? or flag_can_be_parent_ticket or flag_archive_ticket or merge_flag_for_parent_ticket
+            return self.ticket
+          else
+            return nil
+          end
         end
-        return self.archived_ticket
+        return self.archived_ticket if flag_archive_ticket or merge_flag_for_parent_ticket
+        return nil
       end
     end
     nil
@@ -136,7 +141,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
 
   def archive_subject_id_based_ticket
     display_id = Helpdesk::Ticket.extract_id_token(email[:subject], account.ticket_id_delimiter)
-    self.archived_ticket = account.archive_tickets.find_by_display_id(display_id) if display_id
+    self.archived_ticket = account.archive_tickets.find_by_display_id(display_id) if display_id 
   end
 
   def archive_assign_header_based_ticket

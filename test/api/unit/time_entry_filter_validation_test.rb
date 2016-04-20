@@ -5,7 +5,7 @@ class TimeEntryFilterValidationTest < ActionView::TestCase
     Account.unstub(:current)
     Account.any_instance.unstub(:companies)
     ActiveRecord::Relation.any_instance.unstub(find_by_id)
-    Account.any_instance.unstub(:agents_from_cache)
+    Account.any_instance.unstub(:agents_details_from_cache)
     super
   end
 
@@ -13,7 +13,9 @@ class TimeEntryFilterValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:companies).returns(Company.scoped)
     ActiveRecord::Relation.any_instance.stubs(:find_by_id).returns(true)
-    Account.any_instance.stubs(:agents_from_cache).returns([Agent.new(user_id: 1)])
+    user = User.new(name: 'hj')
+    user.id = 1
+    Account.any_instance.stubs(:agents_details_from_cache).returns([user])
     time_entry_filter = TimeEntryFilterValidation.new(company_id: 1, agent_id: 1, billable: true,
                                                       executed_after: Time.zone.now.iso8601, executed_before: Time.zone.now.iso8601)
     result = time_entry_filter.valid?
@@ -24,7 +26,7 @@ class TimeEntryFilterValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:companies).returns(Company.scoped)
     ActiveRecord::Relation.any_instance.stubs(:find_by_id).returns(true)
-    Account.any_instance.stubs(:agents_from_cache).returns([Agent.new(user_id: 1)])
+    Account.any_instance.stubs(:agents_details_from_cache).returns([User.new(id: 1, name: 'gh')])
     time_entry_filter = TimeEntryFilterValidation.new(company_id: nil, agent_id: nil, billable: nil,
                                                       executed_after: nil, executed_before: nil)
     refute time_entry_filter.valid?

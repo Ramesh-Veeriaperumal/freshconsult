@@ -4,8 +4,6 @@ class ContactsController < ApplicationController
    include HelpdeskControllerMethods
    include ExportCsvUtil
    include UserHelperMethods
-   include Redis::RedisKeys
-   include Redis::OthersRedis
 
    before_filter :redirect_to_mobile_url
    before_filter :clean_params, :only => [:update, :update_contact, :update_description_and_tags]
@@ -173,11 +171,7 @@ class ContactsController < ApplicationController
     export_worker_params = {:csv_hash => params[:export_fields], 
                                             :user => current_user.id, 
                                             :portal_url => portal_url}
-    if redis_key_exists?(EXPORT_SIDEKIQ_ENABLED)
-      Export::ContactWorker.perform_async(export_worker_params)
-    else
-      Resque.enqueue(Workers::ExportContact, export_worker_params)
-    end
+    Export::ContactWorker.perform_async(export_worker_params)
     flash[:notice] = t(:'contacts.export_start')
     redirect_to :back
   end
@@ -320,7 +314,7 @@ protected
     @user = current_account.users.new
     @user.helpdesk_agent = false
     @user.avatar = Helpdesk::Attachment.new
-    @user.user_emails.build({:primary_role => true}) if current_account.features_included?(:contact_merge_ui)
+    @user.user_emails.build({:primary_role => true})
     @user.time_zone = current_account.time_zone
     @user.language = current_account.language
   end
@@ -352,18 +346,12 @@ protected
   end
   
   def check_email_exist
-    if current_account.features_included?(:contact_merge_ui)
-      @user.user_emails.each do |ue|
-        if(ue.new_record? and @user.errors[:"user_emails.email"].include? "has already been taken")
-          @existing_user ||= current_account.user_emails.user_for_email(ue.email)
-        end
-      end
-      init_user_email
-    else
-      if((@user.errors.messages[:base] || []).include? "Email has already been taken")
-        @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
+    @user.user_emails.each do |ue|
+      if(ue.new_record? and @user.errors[:"user_emails.email"].include? "has already been taken")
+        @existing_user ||= current_account.user_emails.user_for_email(ue.email)
       end
     end
+    init_user_email
   end
 
  def check_agent_limit
@@ -441,7 +429,7 @@ protected
 
     def init_user_email
       @item ||= @user
-      @item.user_emails.build({:primary_role => true, :verified => @item.active? }) if current_account.features_included?(:contact_merge_ui) and @item.user_emails.empty?
+      @item.user_emails.build({:primary_role => true, :verified => @item.active? }) if @item.user_emails.empty?
     end
 
     def run_on_slave(&block) 

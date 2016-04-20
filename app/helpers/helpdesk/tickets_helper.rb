@@ -551,7 +551,7 @@ module Helpdesk::TicketsHelper
   end
 
   def archive_preload_options
-    {:archive_notes => [:attachments, :archive_note_association]}
+    {:archive_notes => [:attachments]}
   end
 
   #Helper methods for compose from email drop down ends here

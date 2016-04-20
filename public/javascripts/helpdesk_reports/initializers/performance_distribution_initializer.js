@@ -220,12 +220,10 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             var responseObj   = HelpdeskReports.locals.chart_hash['AVG_RESPONSE_TIME']['doy'];
             var resolutionObj = HelpdeskReports.locals.chart_hash['AVG_RESOLUTION_TIME']['doy'];
             
-            if(HelpdeskReports.locals.startTimestamp == undefined){
-                if(responseObj){
-                    HelpdeskReports.locals.startTimestamp = _.keys(responseObj)[0];
-                } else if (resolutionObj){
-                    HelpdeskReports.locals.startTimestamp = _.keys(resolutionObj)[0];
-                }
+            if(responseObj){
+                HelpdeskReports.locals.startTimestamp = _.keys(responseObj)[0];
+            } else if (resolutionObj){
+                HelpdeskReports.locals.startTimestamp = _.keys(resolutionObj)[0];
             }
 
             var stepValue = Math.ceil(length/11);                

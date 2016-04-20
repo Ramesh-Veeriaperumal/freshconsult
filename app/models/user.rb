@@ -86,8 +86,8 @@ class User < ActiveRecord::Base
   validate :has_role?, :unless => :customer?
   validate :email_validity, :if => :chk_email_validation?
   validate :user_email_presence, :if => :email_required?
-  validate :only_primary_email, on: :update, :if => [:agent?, :has_contact_merge?]
-  validate :max_user_emails, :if => [:has_contact_merge?]
+  validate :only_primary_email, on: :update, :if => [:agent?]
+  validate :max_user_emails
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
@@ -107,7 +107,7 @@ class User < ActiveRecord::Base
   end
 
   def has_no_emails_with_ui_feature?
-    has_contact_merge? and (primary_email.blank? and self.user_emails.reject(&:marked_for_destruction?).empty?)
+    primary_email.blank? and self.user_emails.reject(&:marked_for_destruction?).empty?
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, 
@@ -359,7 +359,7 @@ class User < ActiveRecord::Base
     self.tag_names = params[:user][:tag_names] # update tags in the user object
     self.custom_field = params[:user][:custom_field]
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
-    self.user_emails_attributes = params[:user][:user_emails_attributes] if params[:user][:user_emails_attributes].present? and has_contact_merge?
+    self.user_emails_attributes = params[:user][:user_emails_attributes] if params[:user][:user_emails_attributes].present?
     self.deleted = true if (email.present? && email =~ /MAILER-DAEMON@(.+)/i)
     self.created_from_email = params[:user][:created_from_email] 
     return false unless save_without_session_maintenance
@@ -512,7 +512,7 @@ class User < ActiveRecord::Base
   end
 
   def search_data
-    if has_contact_merge? and self.user_emails.present?
+    if self.user_emails.present?
       self.user_emails.map{|x| {:id => id, :details => "#{format_name} <#{x.email}>", :value => name, :email => x.email}}
     else
       [{:id => id, :details => self.name_details, :value => name, :email => email}]
@@ -662,8 +662,10 @@ class User < ActiveRecord::Base
       agent.destroy
       freshfone_user.destroy if freshfone_user
       email_notification_agents.destroy_all
+
+      expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date => 
-              (Time.now.utc + FDPasswordPolicy::Constants::GRACE_PERIOD).to_s})
+              (Time.now.utc + expiry_period).to_s})
       return true
     end 
     return false
@@ -680,8 +682,10 @@ class User < ActiveRecord::Base
       self.tags.clear
       agent = build_agent()
       agent.occasional = !!args[:occasional]
+
+      expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date => 
-          (Time.now.utc + FDPasswordPolicy::Constants::GRACE_PERIOD).to_s}, false)
+          (Time.now.utc + expiry_period).to_s}, false)
       save ? true : (raise ActiveRecord::Rollback)
     end
   end

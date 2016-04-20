@@ -23,6 +23,8 @@ module Middleware
           end
         rescue DomainNotReady => e
             puts "Just ignoring the DomainNotReady , #{e.inspect}"
+        rescue ShardNotFound => e
+            puts "Ignoring ShardNotFound, #{e.inspect}, #{msg['account_id']}"
           # rescue Exception => e
           #   NewRelic::Agent.notice_error(e)
         end

@@ -107,7 +107,7 @@ class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
     assert forum.customer_forums.count == 1
 
     put "/api/discussions/forums/#{forum.id}", { company_ids: nil }.to_json, @write_headers
-    match_json([bad_request_error_pattern('company_ids', :datatype_mismatch, expected_data_type: Array, given_data_type: 'Null' , prepend_msg: :input_received)])
+    match_json([bad_request_error_pattern('company_ids', :datatype_mismatch, expected_data_type: Array, given_data_type: 'Null', prepend_msg: :input_received)])
     assert_response 400
 
     put "/api/discussions/forums/#{forum.id}", { company_ids: [] }.to_json, @write_headers

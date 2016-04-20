@@ -168,19 +168,19 @@ var MarketplaceBrowser  = Class.create({
 	},
   toggleAppsMessage: function(toggle_apps){
     if( toggle_apps || jQuery('#apps .alert-error').length > 0){
-      jQuery('#apps .no-plugs').toggle();
+      jQuery('#apps .no-apps').toggle();
     }
   },
   togglePlugsMessage: function(toggle_plugs){
     if(toggle_plugs){
-      jQuery('#plugs .no-plugs').toggle();
+      jQuery('#custom_apps .no-custom-apps').toggle();
     }
   },
   getAppsLength: function(){
     return jQuery('#apps .apps-wrapper').length;
   },
   getFreshPlugsLength: function(){
-    return jQuery('#plugs .apps-wrapper').length;
+    return jQuery('#custom_apps .apps-wrapper').length;
   },
 	destroy: function(){
 		jQuery("document,body").off(".nc_apps_evt");

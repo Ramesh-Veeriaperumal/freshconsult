@@ -50,6 +50,11 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.agents.find(:all, :include => [:user,:agent_groups]) }
   end
 
+  def agents_details_from_cache
+    key = agents_details_memcache_key
+    MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name").all }
+  end  
+
   def groups_from_cache
     key = groups_memcache_key
     MemcacheKeys.fetch(key) { self.groups.find(:all, :order=>'name' ) }
@@ -125,6 +130,14 @@ module Cache::Memcache::Account
     key = ACCOUNT_TICKET_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
       ticket_fields_with_nested_fields.all
+    end
+  end
+
+
+  def section_fields_with_field_values_mapping_cache
+    key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.id }
+    MemcacheKeys.fetch(key) do
+      section_fields_with_field_values_mapping.all
     end
   end
 
@@ -254,6 +267,10 @@ module Cache::Memcache::Account
 
     def agents_memcache_key
       ACCOUNT_AGENTS % { :account_id => self.id }
+    end
+
+    def agents_details_memcache_key
+      ACCOUNT_AGENTS_DETAILS % { :account_id => self.id }
     end
 
     def groups_memcache_key

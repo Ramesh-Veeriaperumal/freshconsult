@@ -116,7 +116,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           if parent_ticket && parent_ticket.is_a?(Helpdesk::ArchiveTicket)
             self.archived_ticket = parent_ticket
           elsif parent_ticket && parent_ticket.is_a?(Helpdesk::Ticket)
-            return add_email_to_ticket(ticket, from_email, user) if can_be_added_to_ticket?(parent_ticket, user, from_email)
+            return add_email_to_ticket(parent_ticket, from_email, user) if can_be_added_to_ticket?(parent_ticket, user, from_email)
           end
           # If not merge check if archive child present
           linked_ticket = self.archived_ticket.ticket
@@ -296,10 +296,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def fetch_archived_ticket(account, from_email, user)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
       archive_ticket = account.archive_tickets.find_by_display_id(display_id) if display_id
-      return archive_ticket if can_be_added_to_ticket?(archive_ticket, user)
+      return archive_ticket if can_be_added_to_ticket?(archive_ticket, user, from_email)
       archive_ticket = archive_ticket_from_headers(from_email, account)
-      return archive_ticket if can_be_added_to_ticket?(archive_ticket, user)
-      return self.actual_archive_ticket if can_be_added_to_ticket?(self.actual_archive_ticket, user)
+      return archive_ticket if can_be_added_to_ticket?(archive_ticket, user, from_email)
+      return self.actual_archive_ticket if can_be_added_to_ticket?(self.actual_archive_ticket, user, from_email)
     end
     
     def create_ticket(account, from_email, to_email, user, email_config)

@@ -1,3 +1,5 @@
+#To be removed the next week
+
 class Social::Workers::Gnip::TwitterRule
   extend Resque::AroundPerform
 

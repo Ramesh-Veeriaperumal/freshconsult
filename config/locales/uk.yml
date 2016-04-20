@@ -1148,7 +1148,7 @@ uk:
         loading: Loading...
         default_survey: "Default Survey"
         title: Title
-        title_error_text: "Survey Name has already been taken"
+        title_error_text: "Survey name has already been taken"
         result_exist_msg: "Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers."
       new_rating:
         content_text: "This Question helps access the overall satisfaction for the response provided by the agent. It appears below your signature at the bottom of the email sent to the customer. Scale cannot be changed once response has been collected for this question."
@@ -1214,11 +1214,11 @@ uk:
         : false
       choice_contents:
         strongly_disagree: "Strongly Disagree"
-        some_what_disagree: "Some What Disagree"
+        some_what_disagree: "Somewhat Disagree"
         disagree: Disagree
         neutral: Neutral
         agree: Agree
-        some_what_agree: "Some What Agree"
+        some_what_agree: "Somewhat Agree"
         strongly_agree: "Strongly Agree"
       thanks_contents:
         title_text: "Thank you message for Customer satisfaction rating"

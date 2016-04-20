@@ -41,9 +41,7 @@ module UsersTestHelper
 
     }
 
-    if contact_merge_enabled?
-      result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role: false).map(&:email))
-    end
+    result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role: false).map(&:email))
     result
   end
 
@@ -113,7 +111,4 @@ module UsersTestHelper
     u.save
   end
 
-  def contact_merge_enabled?
-    Account.current.contact_merge_enabled?
-  end
 end

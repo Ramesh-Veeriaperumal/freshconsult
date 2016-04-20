@@ -25,7 +25,7 @@ class TicketFilterValidation < FilterValidation
     filter_name = fetch_filter(request_params)
     @conditions = @conditions - ['filter'] + [filter_name].compact
     super(request_params, item, allow_string_param)
-    @status = status.to_s.split(",") if request_params.key?("status")
+    @status = status.to_s.split(',') if request_params.key?('status')
   end
 
   def verify_requester
@@ -45,9 +45,9 @@ class TicketFilterValidation < FilterValidation
 
   def verify_cf_data_type
     cf.collect do |x|
-      if instance_values.key?(x) and !instance_values[x].is_a?(String)
+      if instance_values.key?(x) && !instance_values[x].is_a?(String)
         errors[x] << :data_type_mismatch
-        (self.error_options ||= {}).merge!(x.to_sym => { data_type: "String" })
+        (self.error_options ||= {}).merge!(x.to_sym => { data_type: 'String' })
       end
     end
   end
@@ -58,7 +58,7 @@ class TicketFilterValidation < FilterValidation
   end
 
   def account_statuses
-     @statuses = Helpdesk::TicketStatus.status_objects_from_cache(Account.current).map(&:status_id)
+    @statuses = Helpdesk::TicketStatus.status_objects_from_cache(Account.current).map(&:status_id)
   end
 
   def validate_include
@@ -67,5 +67,5 @@ class TicketFilterValidation < FilterValidation
       errors[:include] << :not_included
       (self.error_options ||= {}).merge!(include: { list: ApiTicketConstants::SIDE_LOADING.join(', ') })
     end
-  end 
+  end
 end

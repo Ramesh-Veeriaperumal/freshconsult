@@ -520,7 +520,6 @@ RSpec.describe Helpdesk::ProcessEmail do
 		it "by secondary email" do
 			@key_state = mue_key_state(@account)
     		enable_mue_key(@account)
-    		@account.features.contact_merge_ui.create
     		@account.reload
     		@account.features.reload
     		@user1 = add_user_with_multiple_emails(@account, 2)
@@ -534,7 +533,6 @@ RSpec.describe Helpdesk::ProcessEmail do
 			ticket_incremented?(@ticket_size)
 			@account.notes.size.should eql @note_size+1
 			ticket.notes.size.should eql 1
-			@account.features.contact_merge_ui.destroy
 			disable_mue_key(@account) unless @key_state
 		end
 
