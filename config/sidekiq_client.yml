@@ -65,6 +65,8 @@ defaults: &defaults
     - [free_sla_reminders]
     - [premium_sla_reminders]
     - [deactivate_monitorship]
+    - [es_v2_queue]
+    - [tag_uses_destroy]
     - [bulk_scenario]
     - [github]
     - [webhook_throttler]

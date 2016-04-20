@@ -60,8 +60,8 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
       var list = jQuery('.match_results').find('ul');
       if(list.length)
         list.empty();
-      new Ajax.Request(window.App.Contacts.Contacts_merge.searchUrl+"v="+searchString, 
-                          { parameters: {name: searchString, rand: (new Date()).getTime()},
+      new Ajax.Request(window.App.Contacts.Contacts_merge.searchUrl, 
+                          { parameters: {search_key: searchString, name: searchString, rand: (new Date()).getTime()},
                             method: 'get',
                             dataType: "json",
                             onSuccess: function(response) {       

@@ -21,8 +21,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Reports::TicketStats
   include Helpdesk::TicketsHelperMethods
   include ActionView::Helpers::TranslationHelper
-  include Helpdesk::TicketActivities, Helpdesk::TicketElasticSearchMethods, Helpdesk::TicketCustomFields,
-    Helpdesk::TicketNotifications
+  include Helpdesk::TicketActivities, Helpdesk::TicketCustomFields, Helpdesk::TicketNotifications
   include Helpdesk::Services::Ticket
   include BusinessHoursCalculation
   include AccountConstants
@@ -38,7 +37,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   serialize :cc_email
 
-  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :permissions
+  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :permissions, :esv2_methods
   
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
@@ -47,7 +46,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, 
-    :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule, :disable_activities
+    :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule, 
+    :disable_activities, :tags_updated
 
 #  attr_protected :attachments #by Shan - need to check..
 
@@ -416,7 +416,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     reply_to_user = latest_tweet.nil? ? requester.twitter_id : latest_tweet.user.twitter_id
     "@#{reply_to_user}"
   end
-
+  
   def round_off_time_hrs seconds
     hh = (seconds/3600).to_i
     mm = ((seconds % 3600)/60.to_f).round
@@ -802,39 +802,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     account.pass_through_enabled? ? friendly_reply_email : account.default_friendly_email
   end
 
-  def to_indexed_json
-    as_json({
-            :root => "helpdesk/ticket",
-            :tailored_json => true,
-            :methods => [ :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
-            :only => [ :display_id, :subject, :description, :account_id, :responder_id,
-                       :group_id, :requester_id, :status, :spam, :deleted, :source, :priority, :due_by,
-                       :created_at, :updated_at ],
-            :include => { :flexifield => { :only => es_flexifield_columns },
-                          :attachments => { :only => [:content_file_name] },
-                          :ticket_states => { :only => [ :resolved_at, :closed_at, :agent_responded_at,
-                                                         :requester_responded_at, :status_updated_at ] },
-                        }
-            },
-            false).to_json
-  end
-
-  #To-do: Need to verify with mappings
-  def to_es_json
-    as_json({
-      :root => false,
-      :tailored_json => true,
-      :methods => [
-                    :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
-                    :status_deleted, :product_id, :trashed
-                  ],
-      :only => [
-                  :requester_id, :responder_id, :status, :source, :spam, :deleted, 
-                  :created_at, :updated_at, :account_id, :display_id, :group_id, :due_by, 
-                  :frDueBy, :priority, :ticket_type
-                ]
-    }, false).merge(custom_attributes).to_json
-  end
+  
 
   def unsubscribed_agents
     user_ids = subscriptions.map(&:user_id)
@@ -926,14 +894,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def show_reply?
     (self.twitter? or self.fb_replies_allowed? or self.from_email.present? or self.mobihelp? or self.allow_ecommerce_reply?)
-  end
-
-  def search_fields_updated?
-    attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id", "product_id",
-                       "status", "spam", "deleted", "source", "priority", "due_by", "to_emails", "cc_email"]
-    include_fields = es_flexifield_columns
-    all_fields = attribute_fields | include_fields
-    (@model_changes.keys.map(&:to_s) & all_fields).any?
   end
 
   def to_mobihelp_json
@@ -1040,6 +1000,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     return if next_agent.nil? #There is no agent available to assign ticket.
     self.responder_id = next_agent.user_id
+  end
+
+  # Moved here from note.rb
+  def trigger_cc_changes(old_cc)
+    new_cc      = self.cc_email.dup
+    cc_changed  = if old_cc.nil?
+      !old_cc.eql?(new_cc) 
+    else
+      [:cc_emails, :fwd_emails].any? { |f| !(old_cc[f].uniq.sort.eql?(new_cc[f].uniq.sort)) }
+    end
+
+    self.cc_email_will_change! if cc_changed
   end
 
   private

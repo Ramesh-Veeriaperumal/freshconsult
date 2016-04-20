@@ -2,7 +2,7 @@
 <%= javascript_tag do -%>
   merge_class = window.App.Contacts.Contacts_merge;
   merge_class.initialize(<%= @source_user.to_indexed_json.html_safe %>);
-  merge_class.searchUrl = "<%= search_contact_merge_index_path(@source_user.id) %>?parent_user=<%= @source_user.id %>&";
+  merge_class.searchUrl = "<%= search_contact_merge_index_path(parent_user: @source_user.id) %>";
   merge_class.ErrorSentance = "<%= t('merge_contacts.validation') %>"
   merge_class.markPrimary = "<%= t('merge_contacts.mark_as_primary') %>"
   merge_class.primaryText = "<%= t('merge_contacts.primary_contact') %>"

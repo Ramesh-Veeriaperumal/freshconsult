@@ -6,7 +6,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   include Helpdesk::TicketCustomFields
   include Search::ElasticSearchIndex
   include ArchiveTicketExportParams
-
+  
   self.primary_key = :id
   belongs_to_account
   belongs_to :requester, :class_name => 'User'
@@ -23,7 +23,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
                                 :conditions => { :attachable_type => "ArchiveTicket::Inline" },
                                 :foreign_key => "attachable_id",
                                 :dependent => :destroy
-
+                                
   has_many :activities, :class_name => 'Helpdesk::Activity',:as => :notable, :dependent => :destroy
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
   has_many :survey_results, :as => :surveyable, :dependent => :destroy
@@ -45,14 +45,14 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   has_one :ticket_topic, :as => :ticketable, :dependent => :destroy
   has_one :topic, :through => :ticket_topic
-
+  
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   belongs_to :product
-
+  
   has_many :public_notes,
     :class_name => 'Helpdesk::ArchiveNote',
     :conditions => { :private =>  false }
-
+  
   has_flexiblefields :class_name => 'Flexifield', :as => :flexifield_set
   has_many_attachments
   has_many_cloud_files
@@ -65,7 +65,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   alias_attribute :company_id, :owner_id
 
-  concerned_with :rabbitmq, :attributes, :s3
+  concerned_with :rabbitmq, :attributes, :s3, :esv2_methods
 
   SORT_FIELDS = [
     [ :created_at , "tickets_filter.sort_fields.date_created"  ],
@@ -76,7 +76,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     :sla_policy_id => "long_tc01",
     :merge_ticket => "long_tc02",
     :reports_hash => "text_tc02",
-    :sender_email => "string_tc03"
+    :sender_email => "string_tc03",
+    :trashed      => 'boolean_tc02',
+    :product_id   => 'product_id'
   }
   NON_TEXT_FIELDS = ["custom_text", "custom_paragraph"]
 
@@ -296,8 +298,15 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     return nil unless ff_entry
 
     field_name = ff_entry.flexifield_name
-    ticket_association = archive_ticket_association.association_data["helpdesk_tickets_association"]
-    ticket_association["flexifield"][field_name] if ticket_association
+    flexifield_data[field_name] if helpdesk_tickets_association
+  end
+  
+  def flexifield_data
+    helpdesk_tickets_association['flexifield']
+  end
+  
+  def subscription_data
+    helpdesk_tickets_association['subscriptions']
   end
 
   def ticket_states
@@ -361,7 +370,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     self.sender_email.present? ? self.sender_email : requester.email
   end
 
-  [:due_by, :frDueBy, :fr_escalated, :isescalated].each do |attribute|
+  [:due_by, :frDueBy, :fr_escalated, :isescalated, :spam].each do |attribute|
     define_method "#{attribute}" do
       archive_ticket_association.association_data["helpdesk_tickets"][attribute]
     end

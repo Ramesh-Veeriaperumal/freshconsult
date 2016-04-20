@@ -21,9 +21,6 @@ begin
 
   # custom mailbox sqs queue
   $sqs_mailbox = AWS::SQS.new.queues.named(SQS[:custom_mailbox_realtime_queue])
-    
-  # Reports etl msgs queue
-  $sqs_reports_etl = AWS::SQS.new.queues.named(SQS[:reports_etl_msg_queue])
 
   # Reports Service Export
   $sqs_reports_service_export = AWS::SQS.new.queues.named(SQS[:reports_service_export_queue])
@@ -36,6 +33,13 @@ begin
   #Freshfone Call Tracker
   $sqs_freshfone_tracker = AWS::SQS.new.queues.named(SQS[:freshfone_call_tracker])
 
+  # Add loop if more queues
+  #
+  SQS_V2_QUEUE_URLS = {
+    SQS[:search_etl_queue] => AwsWrapper::SqsV2.queue_url(SQS[:search_etl_queue]),
+    SQS[:reports_etl_msg_queue] => AwsWrapper::SqsV2.queue_url(SQS[:reports_etl_msg_queue])
+  }
+
 rescue => e
-  puts "AWS::SQS connection establishment failed."
+  puts "AWS::SQS connection establishment failed. - #{e.message}"
 end

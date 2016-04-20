@@ -37,6 +37,10 @@ class UserEmail < ActiveRecord::Base
   after_commit :send_activation_on_update, on: :update, :if => [:check_for_email_change?]
 
   before_destroy :drop_authorization
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher 
 
   scope :primary, :conditions => {:primary_role => true}, :limit => 1
 
@@ -79,6 +83,10 @@ class UserEmail < ActiveRecord::Base
   def as_json(options = {})
     options.merge!(API_OPTIONS)
     super options
+  end
+
+  def esv2_fields_updated?
+    check_for_email_change?
   end
 
   protected
