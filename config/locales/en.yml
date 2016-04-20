@@ -555,6 +555,7 @@ en:
         last_month: "Last Month"
         2_months_ago: "2 Months ago"
         3_months_ago: "3 Months ago"
+        select_range: "Pick a date range..."
 
       mvp_trophie_label_group: "Most Valuable Team"
       mvp_trophie_info_group: "Group with the most overall points this month"
