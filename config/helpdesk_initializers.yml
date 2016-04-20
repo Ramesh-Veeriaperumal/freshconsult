@@ -74,6 +74,7 @@ helpdesk:
     - doorkeeper
     - ebay_config
     - search/v2
+    - shoryuken
     - doorkeeper_extension
     - helpdesk_reports/reports_app_config
     - controller_log_subscriber

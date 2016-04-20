@@ -13,8 +13,9 @@ class RabbitmqWorker
     # Publish to Search-v2
     #
     if search_routing_key?(exchange_key, rounting_key)
-      sqs_msg_obj = sqs_v2_push(SQS[:search_etl_queue], message, 0)
-      puts "Searchv2 SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      # sqs_msg_obj = sqs_v2_push(SQS[:search_etl_queue], message, 0)
+      sqs_msg_obj = (Ryuken::SearchSplitter.perform_async(message) rescue nil)
+      puts "Searchv2 SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
 
     # Publish to Reports-v2

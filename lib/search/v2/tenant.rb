@@ -90,8 +90,8 @@ module Search
       # The ELB ip + cluster-identifier
       # Eg: http://localhost:9200/cluster1/users_1/_search
       def cluster_path
-        return ES_V2_CLUSTERS[:esv2_host] if (Rails.env.development? or Rails.env.test?)
-        [ES_V2_CLUSTERS[:esv2_host], home_cluster].join('/')
+        return ES_V2_CONFIG[:esv2_host] if (Rails.env.development? or Rails.env.test?)
+        [ES_V2_CONFIG[:esv2_host], home_cluster].join('/')
       end
 
       # For a tenant's document, get its ES path

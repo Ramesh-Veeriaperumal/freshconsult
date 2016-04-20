@@ -28,6 +28,7 @@ module RabbitMq::Utils
         "object"                    =>  model,
         "action"                    =>  action,
         "action_epoch"              =>  Time.zone.now.to_f,
+        "account_id"                =>  (model.eql?('account') ? self.id : self.account_id),
         "#{model}_properties"    =>  {}, 
         "subscriber_properties" =>  {}        
       }

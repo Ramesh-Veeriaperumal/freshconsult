@@ -24,6 +24,7 @@ run "ln -nfs #{shared_path}/config/akismet.yml #{node[:rel_path]}/config/akismet
 run "ln -nfs #{shared_path}/config/braintree.yml #{node[:rel_path]}/config/braintree.yml"
 run "ln -nfs #{shared_path}/config/rabbitmq.yml #{node[:rel_path]}/config/rabbitmq.yml"
 run "ln -nfs #{shared_path}/config/sidekiq.yml #{node[:rel_path]}/config/sidekiq.yml"
+run "ln -nfs #{shared_path}/config/shoryuken.yml #{node[:rel_path]}/config/shoryuken.yml"
 run "ln -nfs #{shared_path}/config/s3.yml #{node[:rel_path]}/config/s3.yml"
 run "ln -nfs #{shared_path}/config/aws_v2.yml #{node[:rel_path]}/config/aws_v2.yml"
 run "ln -nfs #{shared_path}/config/s3_static_files.yml #{node[:rel_path]}/config/s3_static_files.yml"
@@ -52,7 +53,7 @@ run "ln -nfs #{shared_path}/config/pod_dns_config.yml #{node[:rel_path]}/config/
 #search V2
 run "ln -nfs #{shared_path}/config/search/boost_values.yml #{node[:rel_path]}/config/search/boost_values.yml"
 run "ln -nfs #{shared_path}/config/search/supported_types.yml #{node[:rel_path]}/config/search/supported_types.yml"
-run "ln -nfs #{shared_path}/config/search/esv2_hosts.yml #{node[:rel_path]}/config/search/esv2_hosts.yml"
+run "ln -nfs #{shared_path}/config/search/esv2_config.yml #{node[:rel_path]}/config/search/esv2_config.yml"
 run "ln -nfs #{shared_path}/config/search/dynamo_tables.yml #{node[:rel_path]}/config/search/dynamo_tables.yml"
 
 # Xero Cert files start

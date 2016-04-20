@@ -23,7 +23,7 @@ namespace :search_v2 do
 
   desc 'Create SQS queues for Search V2'
   task create_sqs_queues: :environment do
-    %w(search_etl_queue_dev search_etl_queue_test cluster1-etlqueue).each do |sqs_queue|
+    %W(search_etl_queue_dev search_etl_queue_test #{ES_V2_QUEUE_KEY % { cluster: 'cluster1' }}).each do |sqs_queue|
       $sqs_v2_client.create_queue(
         queue_name: sqs_queue,
         attributes: {
@@ -36,7 +36,7 @@ namespace :search_v2 do
 
   desc 'Delete SQS queues for Search V2'
   task delete_sqs_queues: :environment do
-    %w(search_etl_queue_dev search_etl_queue_test cluster1-etlqueue).each do |sqs_queue|
+    %W(search_etl_queue_dev search_etl_queue_test #{ES_V2_QUEUE_KEY % { cluster: 'cluster1' }}).each do |sqs_queue|
       queue_url = $sqs_v2_client.get_queue_url(queue_name: sqs_queue).queue_url rescue nil
       $sqs_v2_client.delete_queue(queue_url: queue_url) if queue_url.present?
     end
