@@ -9,7 +9,8 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     # TODO currently the manual publish is specific to reports
     # But need to reorg this method such that it pushes only msg to rmq
     # for all the subscribers(reports, activities, search etc)
-    manual_publish_to_xchg("archive_ticket", (reports_rmq_msg(action, options)).to_json, key)
+    uuid = generate_uuid
+    manual_publish_to_xchg(uuid, "archive_ticket", (reports_rmq_msg(action, uuid, options)).to_json, key)
   end
 
   def to_rmq_json(keys, action)
@@ -74,12 +75,13 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     }
   end
 
-  def reports_rmq_msg(action, options)
+  def reports_rmq_msg(action, uuid, options)
     { 
       "object"                       =>  "archive_ticket",
       "action"                       =>  action,
+      "uuid"                         =>  uuid,
       "action_epoch"                 =>  Time.zone.now.to_f,
-      "archive_ticket_properties"    => mq_reports_archive_ticket_properties(action),
+      "archive_ticket_properties"    =>  mq_reports_archive_ticket_properties(action),
       "subscriber_properties"        =>  { "reports" => mq_reports_subscriber_properties(action).merge(options)  }     
     }
   end
