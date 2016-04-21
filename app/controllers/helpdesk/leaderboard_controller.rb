@@ -71,7 +71,7 @@ class Helpdesk::LeaderboardController < ApplicationController
         when "select_range"
           if(params[:date_range_selected])
             @date_range_selected = params[:date_range_selected]
-            @this_month = [get_time(@date_range_selected.split(" - ")[0]),get_time(@date_range_selected.split(" - ")[1])]
+            @this_month = [get_time(@date_range_selected.split(" - ")[0]),get_time(@date_range_selected.split(" - ")[1]).end_of_day]
           else
             @date_range_val = "current_month"
             @this_month = [Time.zone.now.beginning_of_month, Time.zone.now]
