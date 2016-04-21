@@ -8,7 +8,8 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   
   SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login", "emailparser", "mailboxparser","freshops"] + FreshopsSubdomains
   SKIPPED_PATHS      = ["/reports/v2"]
-  THROTTLED_TYPES = ["application/json", "application/x-javascript", "text/javascript",
+  API_FORMATS        = ['.xml', '.json', 'format=json', 'format=xml']
+  THROTTLED_TYPES    = ["application/json", "application/x-javascript", "text/javascript",
                       "text/x-javascript", "text/x-json", "application/xml", "text/xml"]
   ONE_HOUR = 3600
 
@@ -75,11 +76,10 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     return true if  SKIPPED_SUBDOMAINS.include?(@sub_domain)
     return true unless @mobihelp_auth.blank?
     SKIPPED_PATHS.each{|p| return true if @path_info.include? p}
-    if @content_type.nil?
-      return ( !@api_path.include?(".xml") && !@api_path.include?(".json") )
-    else
+    return false if API_FORMATS.any?{|x| @api_path.include?(x)}
+    if @content_type
       Rails.logger.debug "Account ID :: #{@account_id} ::: Content type on API:: #{@content_type}" if @account_id
-      return !THROTTLED_TYPES.include?(@content_type)
+      return !THROTTLED_TYPES.any?{ |x| @content_type.to_s.starts_with?(x) }
     end
   end
 
