@@ -238,7 +238,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   TICKET_STATE_ATTRIBUTES.each do |attribute|
     define_method("#{attribute}") do
-      ticket_states.send(attribute)
+      if ticket_states
+        ticket_states.send(attribute) 
+      else
+        # ticket_states should not be nil. Added for backward compatibility
+        NewRelic::Agent.notice_error("ticket_states is nil for acc - #{Account.current.id} - #{self.id}")
+        nil
+      end
     end
   end
 
