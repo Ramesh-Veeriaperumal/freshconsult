@@ -26,6 +26,7 @@ run "ln -nfs #{shared_path}/config/rabbitmq.yml #{node[:rel_path]}/config/rabbit
 run "ln -nfs #{shared_path}/config/sidekiq.yml #{node[:rel_path]}/config/sidekiq.yml"
 run "ln -nfs #{shared_path}/config/shoryuken.yml #{node[:rel_path]}/config/shoryuken.yml"
 run "ln -nfs #{shared_path}/config/s3.yml #{node[:rel_path]}/config/s3.yml"
+run "ln -nfs #{shared_path}/config/sqs.yml #{node[:rel_path]}/config/sqs.yml"
 run "ln -nfs #{shared_path}/config/aws_v2.yml #{node[:rel_path]}/config/aws_v2.yml"
 run "ln -nfs #{shared_path}/config/s3_static_files.yml #{node[:rel_path]}/config/s3_static_files.yml"
 run "ln -nfs #{shared_path}/config/dalli.yml #{node[:rel_path]}/config/dalli.yml"
