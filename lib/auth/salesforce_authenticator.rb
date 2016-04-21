@@ -1,9 +1,5 @@
 class Auth::SalesforceAuthenticator < Auth::Authenticator
 
-  def self.title
-    "salesforce"
-  end
-
   def after_authenticate(params)
     access_token = @omniauth.credentials
     config_params = {

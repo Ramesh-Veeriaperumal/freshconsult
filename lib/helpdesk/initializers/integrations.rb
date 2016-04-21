@@ -7,6 +7,7 @@ module Integrations
   OAUTH_CONFIG_HASH = oauth_yaml_hash[Rails.env]
   OAUTH_OPTIONS_HASH = oauth_yaml_hash['oauth_options']
   MARKETPLACE_LANDING_PATH_HASH = hash['marketplace_landing_paths']
+  API_KEYS = hash['api_keys']
 	#========================================================
 	xero_key_hash = hash["app"]["xero"]
 	XERO_CONSUMER_KEY = xero_key_hash["consumer_key"]

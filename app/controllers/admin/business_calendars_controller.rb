@@ -1,5 +1,4 @@
 class Admin::BusinessCalendarsController <  Admin::AdminController
-  include GoogleClient
   
   before_filter { |c| c.requires_feature :business_hours }
   before_filter :load_object, :only => [:update, :destroy, :edit]
@@ -89,9 +88,14 @@ class Admin::BusinessCalendarsController <  Admin::AdminController
 
   def holidays
     calendar_id = params["calendar_id"]
-    #pass google calendar id and get the holidays from google.
-    @holiday_data = GoogleClient::holidays_from_google(calendar_id)
-    render :json => @holiday_data
+    google_service_obj = IntegrationServices::Services::GoogleService.new(nil, {"calendar_id" => calendar_id }, :user_agent => request.user_agent)
+    service_response = google_service_obj.receive('list_holidays')
+    if service_response[:error].blank?
+      render :json => service_response[:holidays].to_json
+    else
+      Rails.logger.info "Unable to fetch holidays for #{calendar_id}, Trace: #{service_response[:error_message]}"
+      return []
+    end
   end
 
   private

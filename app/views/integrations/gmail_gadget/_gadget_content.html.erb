@@ -1,7 +1,7 @@
 <![CDATA[
 
     <% if Rails.env.development? %>
-        <%= render :partial => "integrations/gmail_gadgets/gadget_development_css_js.html"%>
+        <%= render :partial => "integrations/gmail_gadget/gadget_development_css_js.html"%>
     <% else %>
         <%= stylesheet_link_tag_with_rtl :'cdn/gadget' %>
         <%= javascript_include_tag :'cdn/gadget' %>
@@ -36,5 +36,5 @@
     </div>
     <div id="error"></div>
 
-    <%= render :partial => "integrations/gmail_gadgets/gadget_content.js" %>
+    <%= render :partial => "integrations/gmail_gadget/gadget_content.js" %>
 ]]>

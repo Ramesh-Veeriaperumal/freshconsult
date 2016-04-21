@@ -1,5 +1,5 @@
 class Auth::Result
-  attr_accessor :user, :redirect_url, :flash_message
+  attr_accessor :user, :redirect_url, :flash_message, :render
 
   attr_accessor :failed,
                 :failed_reason

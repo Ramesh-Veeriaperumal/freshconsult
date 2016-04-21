@@ -91,7 +91,7 @@ class Account < ActiveRecord::Base
         shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard,:status => ShardMapping::STATUS_CODE[:not_found],
                                                :pod_info => PodConfig['CURRENT_POD']})
         shard_mapping.domains.build({:domain => full_domain})  
-        populate_google_domain(shard_mapping) if google_account?
+        populate_google_domain(shard_mapping) if google_account? #remove this when the new google marketplace is stable.
         shard_mapping.save!                            
         self.id = shard_mapping.id
       end
@@ -109,6 +109,8 @@ class Account < ActiveRecord::Base
       end
     end
 
+    #Remove this when the new marketplace signup is stable and working.
+    # Also knock of that google account column from accounts table.
     def populate_google_domain(shard_mapping)
       shard_mapping.build_google_domain({:domain => google_domain})
     end

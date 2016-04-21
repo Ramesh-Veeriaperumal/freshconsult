@@ -2153,6 +2153,7 @@ en:
     password_expiry: "Your password will expire in %{time_in_words}"
     gmail_gadgets:
       kvp_missing: "Invalid authentication.  Reopen the mail and try again."
+      gvid_success: "Authorization is successfull, please close pop up to continue ..."
       user_missing: "In Freshdesk, your email does not exist.  Add an agent with your email and try again."
       agent_missing: "In Freshdesk, you are not an Agent.  Convert the user to agent and try again."
       agent_not_active: "In Freshdesk, you email might have been deleted or deactivated.  Activate it and try again."
@@ -2224,6 +2225,8 @@ en:
       no_subdomain: There is no subdomain like this. Please try again.
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
       domain_restriction: Domain restriction in place. This email is not allowed.
+      use_admin_cred: Please use an admin credential to enable the link.
+      wrong_admin_cred: Credentials given seems to be wrong.
 
     freshfone:
       credits:
@@ -2441,7 +2444,7 @@ en:
       access_denied: You are not allowed to access this page!
       need_login: You must be logged in to access this page
       insufficient_privilege:
-        admin: You don't have sufficient privilage to change this. Please login as Administrator..!!
+        admin: You don't have sufficient privilege to change this. Please login as Administrator..!!
       login_not_needed: You must be logged out to access this page
       deactivation:
         failure: The %{human_name} could not be deactivated

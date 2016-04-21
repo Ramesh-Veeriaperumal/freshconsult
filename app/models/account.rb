@@ -420,6 +420,7 @@ class Account < ActiveRecord::Base
     launched?(:select_all)
   end
 
+  #Totally removed 
   def google_account?
     !google_domain.blank?
   end

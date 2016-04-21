@@ -1,9 +1,5 @@
 class Auth::SlackAuthenticator < Auth::Authenticator
 
-  def self.title
-    "slack"
-  end
-
   def after_authenticate(params)
     access_token = @omniauth.credentials
     config_params = {

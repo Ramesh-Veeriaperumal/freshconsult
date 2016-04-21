@@ -1,9 +1,5 @@
 class Auth::ShopifyAuthenticator < Auth::Authenticator
 
-  def self.title
-    'shopify'
-  end
-
   def after_authenticate(params)
     access_token = @omniauth.credentials
     config_params = {

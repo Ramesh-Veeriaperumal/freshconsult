@@ -190,7 +190,7 @@
         var params = {};
         params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.SIGNED;
         
-        var url = http_s+"://"+url_root+"/opensocial/google?domain="+domain;
+        var url = http_s+"://"+url_root+"/integrations/gmail_gadget/open_social_auth?domain="+domain;
         
         init_done = true;   //Flag set for Minimize/Maximize
 
@@ -243,7 +243,7 @@
 
     function openPopup(url) {
         var popup = window.open('', 'OAuth','height=400,width=600');
-        popup.document.write('<b> Please wait OAuth is in progress. On successfull Freshdesk dashboard view, please close the popup and continue with the Gmail gadget.</b>');
+        popup.document.write('<b> Please wait OAuth is in progress ... </b>');
         popup.document.close(); // needed for chrome and safari
         popup.open(url, 'OAuth','height=400,width=600');
         if(popup == null) {
@@ -257,7 +257,7 @@
                     var params = {};
                     jQuery('#auth').hide();
                     params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.SIGNED;
-                    var url = http_s+"://"+url_root+"/opensocial/google?domain="+domain;
+                    var url = http_s+"://"+url_root+"/integrations/gmail_gadget/open_social_auth?domain="+domain;
                     openSocialRequest(url, openIdUserCreateResponse, params);
                     clearInterval(finishedInterval);
                 }
@@ -295,7 +295,7 @@
     }
 
     function showAuth(t) {
-        var url = http_s+"://"+url_root+"/oauth/googlegadget?domain="+ domain +"&t="+t; // url for Google Gadget OAuth.
+        var url = http_s+"://"+url_root+"/auth/google_gadget?origin=domain%3D"+ domain +"%26t%3D"+t; // url for Google Gadget OAuth.
         var button = jQuery('#auth a');
         button.click(function() {openPopup(url)});
 

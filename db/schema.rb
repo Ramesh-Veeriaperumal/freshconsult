@@ -197,6 +197,7 @@ ActiveRecord::Schema.define(:version => 20160413071150) do
     t.datetime "last_active_at"
   end
 
+  add_index "agents", ["account_id", "google_viewer_id"], :name => "index_agents_on_account_id_and_google_viewer_id"
   add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
 
   create_table "app_business_rules", :force => true do |t|

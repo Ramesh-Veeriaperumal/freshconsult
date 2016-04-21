@@ -66,8 +66,6 @@ gem 'rails_autolink', '1.1.6'
 gem "omniauth-oauth2", "1.0"
 gem "omniauth-openid"
 # TODO-RAILS3 need check are we still using this
-gem "omniauth-google"
-gem "omniauth-google-oauth2"
 gem "omniauth-facebook"
 gem "omniauth-quickbooks"
 gem "omniauth-mailchimp", "~> 1.0.3"
