@@ -99,7 +99,8 @@ describe Solution::Article do
 		before(:each) do
 			params = create_solution_article_alone(solution_default_params(:article, :title).merge({
 								:folder_id => @folder_meta.id,
-					     	:lang_codes => [@article_lang_ver] + [:primary]
+					     	:lang_codes => [@article_lang_ver] + [:primary],
+					     	:status => 1
 					     }))
       @article_meta = Solution::Builder.article(params)
 			@article_translation = @article_meta.send("#{@article_lang_ver}_article")
