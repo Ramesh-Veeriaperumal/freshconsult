@@ -80,7 +80,7 @@ class Account < ActiveRecord::Base
   private
 
     def add_to_billing
-      Resque.enqueue(Billing::AddToBilling, { :account_id => id })
+      Billing::AddSubscriptionToChargebee.perform_async
     end
 
     def create_shard_mapping

@@ -242,7 +242,7 @@ class Billing::BillingController < ApplicationController
 
     def payment_succeeded(content)
       payment = @account.subscription.subscription_payments.create(payment_info(content))
-      Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => @account.id, 
+      Subscription::UpdatePartnersSubscription.perform_async({ :account_id => @account.id, 
           :event_type => :payment_added, :invoice_id => content[:invoice][:id] })
       store_invoice(content) if @account.subscription.affiliate.nil?
 
@@ -354,7 +354,7 @@ class Billing::BillingController < ApplicationController
     end
 
     def auto_collection_off_trigger
-      Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => @account.id, 
-          :event_type => :auto_collection_off })
+      Subscription::UpdatePartnersSubscription.perform_async({ :account_id => @account.id, 
+            :event_type => :auto_collection_off })
     end
 end
