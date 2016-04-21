@@ -132,10 +132,14 @@ module AccountHelper
     @account.account_additional_settings.update_attributes({:supported_languages => supported_languages})
     @account.account_additional_settings.update_attributes(:additional_settings => {:portal_languages=> supported_languages.sample(2)})
     @account.features.enable_multilingual.create unless @account.features?(:enable_multilingual)
-    @account.make_current
+    find_account_and_make_current
     Sidekiq::Testing.inline! do
       Community::SolutionBinarizeSync.perform_async
     end
+  end
+
+  def find_account_and_make_current
+    @account = Account.find(@account.id).make_current
   end
 
   def destroy_enable_multilingual_feature

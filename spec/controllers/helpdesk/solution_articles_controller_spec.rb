@@ -243,7 +243,6 @@ describe Solution::ArticlesController do
   describe "Outdated/Uptodate" do
     before(:all) do
       enable_multilingual
-      @account.make_current
       @category_meta = create_category
       @folder_meta = create_folder({:visibility => 1, :category_id => @category_meta.id})
       @article_lang_ver = @account.supported_languages_objects.first.to_key
@@ -278,7 +277,6 @@ describe Solution::ArticlesController do
 
     before(:all) do
       enable_multilingual
-      @account.make_current
       @category_meta = create_category
       @folder_meta = create_folder({:visibility => 1, :category_id => @category_meta.id})
       @article_meta = create_article({:folder_id => @folder_meta.id, :art_type => 1})
@@ -344,7 +342,6 @@ describe Solution::ArticlesController do
   describe "Show master" do
     before(:all) do
       enable_multilingual
-      @account.make_current
       @category_meta = create_category
       @folder_meta = create_folder({:visibility => 1, :category_id => @category_meta.id})
       @article_meta = create_article({:folder_id => @folder_meta.id, :art_type => 1})
@@ -361,6 +358,40 @@ describe Solution::ArticlesController do
       put :show_master, :id => @article_meta.id, :published => "false"
       response.should render_template("solution/articles/_popover_content")
       expect(controller.instance_variable_get("@item")).to eq(@article_meta.draft)
+    end
+  end
+
+  describe "Article version show" do
+    before(:each) do
+      enable_multilingual
+      @category_meta = create_category
+      @folder_meta = create_folder({:visibility => 1, :category_id => @category_meta.id})
+      @lang_ver = @account.supported_languages_objects.first
+      params = create_solution_article_alone(solution_default_params(:article, :title).merge({
+                :folder_id => @folder_meta.id,
+                :lang_codes => [@lang_ver.to_key, :primary]
+               }))
+      @article_meta = Solution::Builder.article(params)
+    end
+
+    it "should display the primary article version when the language in the url is not in the account's languages list" do
+      lang = pick_a_unsupported_language
+      get :show, :id => @article_meta.id, :language => lang
+      expect(controller.instance_variable_get("@language").code).to eq(@account.language)
+      expect(controller.instance_variable_get("@article")).to eq(@article_meta.primary_article)
+    end
+
+    it "should display the specified language version when the language in the url is in account's language and an article in that language exists" do
+      get :show, :id => @article_meta.id, :language => @lang_ver.code
+      expect(controller.instance_variable_get("@language").code).to eq(@lang_ver.code)
+      expect(controller.instance_variable_get("@article")).to eq(@article_meta.send("#{@lang_ver.to_key}_article"))
+    end
+
+    it "should display the primary article version when account is not multilingual" do
+      destroy_enable_multilingual_feature
+      get :show, :id => @article_meta.id, :language => @lang_ver.code
+      expect(controller.instance_variable_get("@language").code).to eq(@account.language)
+      expect(controller.instance_variable_get("@article")).to eq(@article_meta.primary_article)
     end
   end
 
