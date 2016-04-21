@@ -32,7 +32,7 @@ module Solution::FlashHelper
 
   def portal_add_language_link article
     if privilege?(:admin_tasks)
-      publish_link_html(manage_languages_path, t('solution.articles.add_language', :language_name => article.language.name))
+      publish_link_html(manage_languages_path, t('solution.articles.change_language_settings', :language_name => article.language.name))
     else
       t('solution.articles.contact_admin').html_safe
     end
@@ -51,7 +51,7 @@ module Solution::FlashHelper
         data-item-id='#{@article_meta.id}' 
         data-url='#{send("mark_as_#{action_type}_solution_articles_path")}' 
         data-language-id='#{@article.language_id}'
-      > #{t("solution.general.mark_as_#{action_type}.text_1")}</a> - "
+      > #{t("solution.general.mark_as_#{action_type}.text_1")}</a> | "
   end
 
   def language_visible_in_portal? article

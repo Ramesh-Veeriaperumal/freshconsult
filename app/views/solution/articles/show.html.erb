@@ -7,7 +7,7 @@
 		<div class="solution-sidebar">
 			<%= not_in_portal_notification(@article) %>
 			<% if @article.new_record? %>
-				<!--  #TODO Sidebar content for New translation -->
+				<%= render partial: "new_translation_helpnote" %>
 			<% else %>
 				<%= render partial: "sidebar" %>
 			<% end %>

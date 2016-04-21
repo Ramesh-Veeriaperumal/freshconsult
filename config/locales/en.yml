@@ -2817,6 +2817,8 @@ en:
       info2: You probably want your customers and support agents to access your support portal in your own domain. You can point your support URL at yourcompany.freshdesk.com to your own domain, like support.mycompany.com.
       info3: "All basic settings of your helpdesk can be customized here such as - language, time zone and colour schemes."
       info4: The 'Edit Portal' option will let you configure the portal for your product.
+      info5: "If you are on the Garden plan or above, you will have the option to set up multilingual support under Languages."
+      info6: "To configure the portal for your product, use the Edit Portal option."
     cancel:
       cancel_account: Cancel your Freshdesk account
       info_text: Please take a moment to tell us why you want to cancel your account. Perhaps we could still help...
@@ -2871,22 +2873,22 @@ en:
       manage_languages: "Manage Languages"
       title: "Multilingual Support"
       add_languages: "Add languages"
-      warning_msg: "Note : Primary Language cannot be changed once the supported languages are added."
+      add_more_languages_msg: Add other languages that you support customers in here. You can then translate email notification templates and knowledge base articles for each supported language separately.
+      warning_msg: "Note: Primary language is your default helpdesk language. It cannot be changed once the supported languages are added."
       supported_languages_validity: "should be valid"
       portal_languages_validity: "should be a subset of supported languages"
       portal_language_inclusion: "Supported languages should not include the portal language"
       more_languages: ", <span class='more-languages'>%{count} more</span>"
       helpcard:
         title: "Speak in Your Customer's Language"
-        info1: "Provide a seamless support experience to your customers from different parts of the world."
+        info1: "Provide a seamless support experience to your global customers from different parts of the world."
         supported_languages: 
-          title: "<b>What is 'Supported Languages'?</b><br/>"
-          info1: "The languages in which you would like to create knowledge base articles and email notification to support your customers.<br /><br />"
-          info2: "<i>For example: Adding French to the list will enable you to start writing knowledge base articles and creating email notifications in French.</i>"
+          title: "<b>Supported Languages</b><br/>"
+          info1: "Adding languages to this list will enable you to translate knowledge base articles and email notifications in the respective languages to support your customers.<br /><br />"
+          info2: "<i>Once you add supported languages, you will not be able to change your primary language.</i>"
         portal_languages:
-          title: "<b>What is 'Languages visible to users'?</b><br />"
-          info1: "The languages which will be available to your users on the portal. It is recommended to add languages to this list in which the required knowledge base articles are translated.<br /><br />"
-          info2: "<i>For example: Adding French in this list will allow your users to access the French portal and the available articles in French.</i>"
+          title: "<b>Visible/Hidden on Portal</b><br />"
+          info1: "When your knowledge base articles are translated to other languages and are ready to go live, you can make that language visible to your customers by clicking on the toggle button (Hidden on Portal/Visible on Portal)<br /><br />"
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   account_configuration:
@@ -4042,6 +4044,11 @@ en:
         status: 'Status : %{status}'
         my_articles: "On My Articles"
         all_articles: "On All Articles"
+      new_translation:
+        title: "Working with article translation"
+        info1: "To quickly translate your articles, use the <b> 'Show Master' </b> option to see a preview of the article in its primary language while you are actively working on another language."
+        info2: "Start adding content along with <b> language-specific attachments </b> to assist your customers in a language that they understand."
+        info3: "To improve discoverability of your articles, you have the option to add <b> language specific meta tags </b> for the article being translated."
     anonymous_votes: "Anonymous (%{count})"
     home: Solutions Home
     all_categories: All Categories
@@ -4173,7 +4180,7 @@ en:
       att_deleted: One attachment was deleted.
       published_success: 'This article was published succesfully.<a href= "%{url}" target = "_blank"> View on portal </a>'
       published_success_msg: 'Hurray! The article has been published successfully'
-      published_success_not_in_portal: 'Oops! The article has been published but the language isn’t available on the portal'
+      published_success_not_in_portal: "Oops! The article has been published but the language isn't visible on the portal"
       published_failure: This article could not be published.
       view_draft: Preview Draft
       restrict_edit: "%{name} is currently editing this article."
@@ -4214,9 +4221,10 @@ en:
       add_primary_info: "You can't create other language translations <br />until you create the article in %{primary_language}"
       translations: "Translations"
       show_all_analytics: "See analytics for all languages"
-      not_in_portal: "This language is not visible to users"
-      language_not_in_portal: "This article will not show up to your users on the portal until the language is enabled"
+      not_in_portal: "This language is not visible on portal"
+      language_not_in_portal: "This article will not show up to your users until the language is made visible on portal"
       add_language: "Add %{language_name}"
+      change_language_settings: "Change %{language_name} Settings"
       contact_admin: "<b>Contact your admin</b>"
       missing_translations:
         title: "Add missing translation"
@@ -5164,7 +5172,7 @@ en:
     additional_languages: Supported Languages
     supported_portal_languages: "Languages visible to users"
     supported_languages: "Supported Languages (%{count})"
-    portal_languages: "Enabled Portal Languages (%{count})"
+    portal_languages: "Languages Visible on Portal (%{count})"
     same_language_alert: Supported languages should not include the Portal language.
     settings: "Settings"
     logo_and_colors: "Logo and colors"
@@ -5173,9 +5181,8 @@ en:
     change_favicon: "Change favicon"
     use_default: "Use default"
     last_published: "Portal was last published %{last_published} ago"
-    visible_in_portal: Visible in Portal
+    visible_in_portal: Visible on Portal
     hidden_on_portal: Hidden on Portal
-    add_more_languages_msg: Add other languages that you support customers in here. You can then customize email notification templates for each supported language separately.
   lead: Lead
   comments: Comments
   forum_confirm_msg1: Are you sure you want to delete this category?
