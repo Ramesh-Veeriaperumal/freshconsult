@@ -2,8 +2,6 @@ module GoogleLoginHelper
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-
-  # Throws error on create user for warby parker lockdown!
   def verify_domain_user account, nmobile
     domain_user = account.user_emails.user_for_email(email)
     if domain_user.blank?

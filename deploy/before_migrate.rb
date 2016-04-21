@@ -46,7 +46,6 @@ run "ln -nfs #{shared_path}/config/reports_app.yml #{node[:rel_path]}/config/hel
 run "ln -nfs #{shared_path}/config/marketplace.yml #{node[:rel_path]}/config/marketplace.yml"
 run "ln -nfs #{shared_path}/config/ecommerce.yml #{node[:rel_path]}/config/ecommerce.yml"
 run "ln -nfs #{shared_path}/config/third_party_app_config.yml #{node[:rel_path]}/config/third_party_app_config.yml"
-run "ln -nfs #{shared_path}/config/google_api.yml #{node[:rel_path]}/config/google_api.yml"
 run "ln -nfs #{shared_path}/config/pod_dns_config.yml #{node[:rel_path]}/config/pod_dns_config.yml"
 
 
