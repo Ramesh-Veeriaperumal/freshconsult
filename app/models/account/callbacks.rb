@@ -59,6 +59,8 @@ class Account < ActiveRecord::Base
   def populate_features
     add_features_of subscription.subscription_plan.name.downcase.to_sym
     SELECTABLE_FEATURES.each { |key,value| features.send(key).create  if value}
+    TEMPORARY_FEATURES.each { |key,value| features.send(key).create  if value}
+    ADMIN_CUSTOMER_PORTAL_FEATURES.each { |key,value| features.send(key).create  if value}
     add_member_to_redis_set(SLAVE_QUERIES, self.id)
   end
 
