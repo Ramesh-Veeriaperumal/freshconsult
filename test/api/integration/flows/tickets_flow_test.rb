@@ -49,7 +49,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     tags = [Faker::Name.name, Faker::Name.name]
     @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
     params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
-                    priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
+                    priority: 2, status: 7, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
                     due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @create_group.id }
     tkt_field1 = create_custom_field('test_custom_decimal', 'decimal')
     tkt_field2 = create_custom_field('test_custom_checkbox', 'checkbox')
@@ -298,7 +298,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     tags = [Faker::Name.name, Faker::Name.name]
     @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
     params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
-                    priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
+                    priority: 2, status: 7, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
                     due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @create_group.id }
     headers, params = encode_multipart(params_hash, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do

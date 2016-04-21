@@ -247,7 +247,7 @@ class TicketsController < ApiApplicationController
       field = "ApiTicketConstants::#{original_action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       set_default_values
-      params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
+      params_hash = params[cname].merge(statuses: @statuses, ticket_fields: @ticket_fields)
       ticket = TicketValidation.new(params_hash, @item, string_request_params?)
       render_custom_errors(ticket, true) unless ticket.valid?(original_action_name.to_sym)
     end
