@@ -47,6 +47,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def before_all
     return if @@before_all_run
+    Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
     @@ticket_fields = []
     @@custom_field_names = []
     @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
@@ -138,7 +139,7 @@ class TicketsControllerTest < ActionController::TestCase
     subject = Faker::Lorem.words(10).join(' ')
     description = Faker::Lorem.paragraph
     @update_group ||= create_group_with_agents(@account, agent_list: [agent.id])
-    params_hash = { description: description, subject: subject, priority: 4, status: 3, type: 'Lead',
+    params_hash = { description: description, subject: subject, priority: 4, status: 7, type: 'Lead',
                     responder_id: agent.id, source: 3, tags: ['update_tag1', 'update_tag2'],
                     due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601, group_id: @update_group.id }
     params_hash
@@ -1628,6 +1629,32 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field),
                 bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
+  end
+
+  def test_update_with_sla_timer_off_status_and_only_fr_due_by
+    t = ticket
+    time = 4.days.since.iso8601
+    status = create_custom_status
+    params_hash = { status: status.status_id, fr_due_by: time }
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
+  ensure
+    status.destroy
+  end
+
+  def test_update_with_sla_timer_off_status_and_due_by
+    t = ticket
+    time1 = 12.days.since.iso8601
+    time2 = 4.days.since.iso8601
+    status = create_custom_status
+    params_hash = { status: status.status_id, due_by: time1, fr_due_by: time2 }
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field),
+                bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
+  ensure
+    status.destroy
   end
 
   def test_update_numericality_invalid
