@@ -43,6 +43,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     @content_type = env['CONTENT-TYPE'] || env['CONTENT_TYPE']
     @api_path = env["REQUEST_URI"]
     @mobihelp_auth = env["HTTP_X_FD_MOBIHELP_APPID"]
+    @user_agent ||= env["HTTP_USER_AGENT"]
     @sub_domain = @host.split(".")[0]
     @path_info = env["PATH_INFO"]
     if SKIPPED_SUBDOMAINS.include?(@sub_domain)
@@ -75,6 +76,8 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   def by_pass_throttle?
     return true if  SKIPPED_SUBDOMAINS.include?(@sub_domain)
     return true unless @mobihelp_auth.blank?
+    return true if @user_agent[/#{AppConfig['app_name']}_Native/].present? 
+
     SKIPPED_PATHS.each{|p| return true if @path_info.include? p}
     return false if API_FORMATS.any?{|x| @api_path.include?(x)}
     if @content_type
