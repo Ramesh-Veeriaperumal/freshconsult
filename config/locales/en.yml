@@ -6112,6 +6112,8 @@ en:
       ticket_detail_page: Ticket detail page
       contact_detail_page: Contact detail page
       custom_app_used_in: Custom app displayed on
+      new_ticket_page: New ticket page
+      outbound_email_page: Outbound email page
     whmcs:
       label: "WHMCS"
       products: "Products"

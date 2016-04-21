@@ -155,6 +155,10 @@ class Account < ActiveRecord::Base
     ismember?(OLD_REPORTS_ENABLED, self.id)
   end
 
+  def plugs_enabled_in_new_ticket?
+    ismember?(PLUGS_IN_NEW_TICKET,self.id)
+  end
+
   #Temporary feature check methods - using redis keys - ends here
 
   def validate_required_ticket_fields?
