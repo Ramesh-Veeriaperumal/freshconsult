@@ -11,10 +11,12 @@ module Mobihelp::MultilingualSolutionsUtils
       
       def solutions(category_id)
         MemcacheKeys.fetch(mobihelp_solutions_key_with_category_id(category_id)) {
-          category_meta = Solution::CategoryMeta.find_by_id(category_id)
+          category_meta = Solution::CategoryMeta.includes(
+            {:public_folder_meta => [ 
+              {:published_article_meta => [:current_article_body, :tags]}]}).find_by_id category_id
 
           category_meta.to_json(:include => {:public_folders => 
-            {:include => {:published_articles => {:include => {:tags => {:only => :name }}}}, 
+            {:include => {:published_articles => {:include => {:tags => {:only => :name }}}},
             :except => [:account_id, :import_id]}})
         }
       end
