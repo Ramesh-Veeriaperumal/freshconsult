@@ -52,10 +52,6 @@
 						<div class="info"><%= t('solution.general.mark_as_uptodate.text_2') %></div>
 					</button>
 				</div>
-				<div class="uptodate-section <%= 'hide' if @article.outdated %>">
-					<%= font_icon('checkmark-round-o', :size => 20, :class => 'mr5') %>
-					<%= t('solution.general.uptodate') %>
-				</div>
 			<% end %>
 		<% end %>
 	</div>

@@ -205,7 +205,6 @@ window.App = window.App || {};
 
     postUptodate: function () {
       $('.update-section').hide();
-      $('.uptodate-section').fadeIn();
       $('.lang-tab.selected .language_symbol').removeClass('outdated');
     },
 
