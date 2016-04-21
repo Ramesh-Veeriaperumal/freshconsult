@@ -415,10 +415,6 @@ describe Solution::ArticlesController do
       @article_meta = @article.solution_article_meta
     end
 
-    it "should be same as updated at while creating a new article" do
-      @article.updated_at.should eql @article.modified_at
-    end
-
     it "should be modified when title changes" do
       put :update, :id => @article.solution_article_meta.id,
         :solution_article_meta => {

@@ -43,6 +43,7 @@ module SolutionBuilderHelper
       key = params.keys.include?(:name) ? :name : :title
       final["#{lang_code}_#{base}"] = params.dup
       final["#{lang_code}_#{base}"][key] = "#{lang_code} #{params[key]}" if key.present?
+      final["#{lang_code}_#{base}"][:status] ||= 2 if base == :article
     end
     final.deep_symbolize_keys
   end
