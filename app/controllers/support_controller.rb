@@ -283,8 +283,9 @@ class SupportController < ApplicationController
   def check_version_availability
     return unless current_account.multilingual?
     return if @solution_item && @solution_item.current_available?
-    flash[:warning] = unscoped_fetch ? version_not_available_msg(controller_name.singularize) : t('wrong_portal.content_not_available')
-    redirect_to support_home_path and return
+    render_404 and return if unscoped_fetch.blank?
+    flash[:warning] = version_not_available_msg(controller_name.singularize)
+    redirect_to support_home_path
   end
   
   def agent?
