@@ -294,10 +294,11 @@ class Portal < ActiveRecord::Base
     end
     
     def add_default_solution_category
-      # Remove this method when new solution UI goes out
-      return if account.solution_categories.empty?
-      default_category = account.solution_categories.find_by_is_default(true)
-      self.solution_category_ids = self.solution_category_ids | [default_category.id] if default_category.present?
+      return if account.solution_category_meta.empty?
+      #The above line is needed, as we created portals before soln categories, while creating an account.
+      
+      default_category_meta = account.solution_category_meta.find_by_is_default(true)
+      self.solution_category_metum_ids = self.solution_category_metum_ids | [default_category_meta.id] if default_category_meta.present?
     end
 
     def clear_solution_cache(obj=nil)

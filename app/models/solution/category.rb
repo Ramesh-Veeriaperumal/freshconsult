@@ -10,15 +10,28 @@ class Solution::Category < ActiveRecord::Base
   include Cache::Memcache::Mobihelp::Solution
   include Solution::Activities
 
+  belongs_to_account
+
+  belongs_to :solution_category_meta, 
+    :class_name => 'Solution::CategoryMeta', 
+    :foreign_key => "parent_id"
+
+  has_many :solution_folder_meta,
+    :through => :solution_category_meta,
+    :class_name => 'Solution::FolderMeta',
+    :foreign_key => :solution_category_meta_id
+
+  has_many :activities,
+    :class_name => 'Helpdesk::Activity',
+    :as => 'notable'
+
   self.table_name =  "solution_categories"
 
   validates_presence_of :name,:account
   validate :name_uniqueness_validation
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_category_meta.new_record?"
   
-  after_update :clear_cache, :if => Proc.new { |c| c.name_changed? && c.primary? }
-
-  concerned_with :associations
+  after_commit ->(obj) { obj.send(:clear_cache) }, on: :update
 
   attr_accessible :name, :description, :import_id
 
@@ -89,6 +102,6 @@ class Solution::Category < ActiveRecord::Base
     end
 
     def clear_cache(obj=nil)
-      Account.current.clear_solution_categories_from_cache
+      Account.current.clear_solution_categories_from_cache if previous_changes['name'].present? && primary?
     end
 end

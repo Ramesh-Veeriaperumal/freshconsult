@@ -76,8 +76,8 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	before_create :set_default_portal
 	before_save :validate_is_default
 
-	after_create :clear_cache
-	after_destroy :clear_cache
+  	after_commit ->(obj) { obj.send(:clear_cache) }, on: :create
+  	after_commit ->(obj) { obj.send(:clear_cache) }, on: :destroy
 
 	alias_method :children, :solution_categories
 	

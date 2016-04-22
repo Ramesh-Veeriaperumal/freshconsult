@@ -14,7 +14,7 @@ class Solution::Folder < ActiveRecord::Base
 
   self.table_name =  "solution_folders"
   
-  after_update :clear_cache, :if => Proc.new { |f| f.name_changed? && f.primary? }
+  after_commit ->(obj) { obj.send(:clear_cache) }, on: :update
   
   alias_method :parent, :solution_folder_meta
   
@@ -94,6 +94,6 @@ class Solution::Folder < ActiveRecord::Base
     end
     
     def clear_cache
-      Account.current.clear_solution_categories_from_cache
+      Account.current.clear_solution_categories_from_cache if previous_changes['name'].present? && primary?
     end
 end

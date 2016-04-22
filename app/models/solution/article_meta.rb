@@ -45,9 +45,9 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	AGGREGATED_COLUMNS = [:hits, :thumbs_up, :thumbs_down]
 	
 	before_save :set_default_art_type
-	after_create :clear_cache
-	after_destroy :clear_cache
-	after_update :clear_cache, :if => :solution_folder_meta_id_changed?
+	after_commit ->(obj) { obj.send(:clear_cache) }, on: :destroy
+	after_commit ->(obj) { obj.send(:clear_cache) }, on: :create
+	after_commit ->(obj) { obj.send(:clear_cache_after_update) }, on: :update
 	after_find :deserialize_attr
 
 	after_save :set_mobihelp_solution_updated_time, :if => :valid_change?
@@ -160,5 +160,9 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		self.changes.slice(:position).present? || 
 			(primary_article && (primary_article.previous_changes.slice(*[:modified_at, :status]).present? || 
 			primary_article.tags_changed))
+	end
+
+	def clear_cache_after_update
+		clear_cache if previous_changes['solution_folder_meta_id'].present?
 	end
 end

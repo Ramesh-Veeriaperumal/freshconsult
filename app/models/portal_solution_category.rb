@@ -10,7 +10,7 @@ class PortalSolutionCategory < ActiveRecord::Base
 
 	delegate :name, :to => :solution_category
 
-  after_update :clear_cache, :if => :position_changed?
+  after_commit ->(obj) { obj.send(:clear_cache_with_condition) }, on: :update
 
   CACHEABLE_ATTRS = ["portal_id","position"]
   
@@ -27,6 +27,10 @@ class PortalSolutionCategory < ActiveRecord::Base
 
   def clear_cache
     Account.current.clear_solution_categories_from_cache
+  end
+
+  def clear_cache_with_condition
+    clear_cache if previous_changes['position'].present?
   end
 
 end
