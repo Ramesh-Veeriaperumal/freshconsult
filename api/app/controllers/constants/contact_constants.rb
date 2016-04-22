@@ -6,7 +6,7 @@ module ContactConstants
 
   STATES = %w( verified unverified deleted blocked ).freeze
 
-  INDEX_FIELDS = %w( state email phone mobile company_id updated_since).freeze
+  INDEX_FIELDS = %w( state email phone mobile company_id ).freeze
 
   DELETED_SCOPE = {
     'update' => false,
