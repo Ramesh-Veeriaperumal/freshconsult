@@ -318,6 +318,10 @@ body.community.cs-always-show #community-sidebar {
 			
 			&.multilingual_draft {
 				list-style: none;
+				
+				.language_icon {
+				  @include margin(0);
+				}
 			}
     }
   }
