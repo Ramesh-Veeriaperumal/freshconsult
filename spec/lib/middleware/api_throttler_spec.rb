@@ -33,7 +33,7 @@ RSpec.describe Middleware::ApiThrottler do
     test_app = lambda { |env| [200, {'HTTP_HOST' => 'localhost'}, ['OK']] }
     api_throttler = Middleware::ApiThrottler.new(test_app)
     status, headers, response = api_throttler.call env_for('http://example.freshdesk.com', 
-      { 'HTTP_HOST' => @account.full_domain, 'HTTP_USER_AGENT' => 'curl/7.43.0', 'REQUEST_URI' => 'http://example.freshdesk.com/helpdesk/tickets', 'CONTENT_TYPE' => 'application/json; charset=UTF-8' })
+      { 'HTTP_HOST' => @account.full_domain, 'HTTP_USER_AGENT' => 'curl/7.43.0', 'REQUEST_URI' => 'http://example.freshdesk.com/helpdesk/tickets', 'CONTENT_TYPE' => 'application/json' })
     get_others_redis_key(key).to_i.should >= 1
     status.should eql 200
   end
