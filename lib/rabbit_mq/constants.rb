@@ -29,6 +29,7 @@ module RabbitMq::Constants
     [  'archive_ticket',      CRUD_KEYS_BY_TOKEN[:create],              'archive_ticket'  ],
     [  'archive_note',        CRUD_KEYS_BY_TOKEN[:create],              'archive_note'    ],
     [  'company',             CRUD_KEYS_BY_TOKEN[:all],                 'company'         ],
+    [  'company_domain',      CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'company'         ],
     [  'user',                CRUD_KEYS_BY_TOKEN[:all],                 'user'            ],
     [  'user_email',          CRUD_KEYS_BY_TOKEN[:all],                 'user'            ],
     [  'topic',               CRUD_KEYS_BY_TOKEN[:all],                 'topic'           ],
