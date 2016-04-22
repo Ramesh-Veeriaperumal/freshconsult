@@ -10,12 +10,13 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
       :methods => [
                     :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
                     :status_deleted, :product_id, :trashed, :es_cc_emails, :es_fwd_emails, 
-                    :closed_at, :resolved_at, :to_emails, :spam
+                    :closed_at, :resolved_at, :to_emails, :spam, :description, :due_by, 
+                    :frDueBy
                   ],
       :only => [
                   :requester_id, :responder_id, :status, :source, :deleted, 
-                  :created_at, :updated_at, :account_id, :display_id, :group_id, :due_by, 
-                  :frDueBy, :priority, :ticket_type, :subject, :description
+                  :created_at, :updated_at, :account_id, :display_id, :group_id, 
+                  :priority, :ticket_type, :subject
                 ]
     }, false).merge(esv2_custom_attributes)
             .merge(attachments: es_v2_attachments).to_json
