@@ -82,8 +82,9 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     return false if API_FORMATS.any?{|x| @api_path.include?(x)}
     if @content_type
       Rails.logger.debug "Account ID :: #{@account_id} ::: Content type on API:: #{@content_type}" if @account_id
-      return !THROTTLED_TYPES.any?{ |x| @content_type.to_s.starts_with?(x) }
+      return !THROTTLED_TYPES.include?(@content_type)
     end
+    return true
   end
 
   def retry_after
