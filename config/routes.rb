@@ -2556,6 +2556,7 @@ Helpkit::Application.routes.draw do
 
   resources :rabbit_mq, :only => [:index]
   match '/openid/google', :controller => "integrations/marketplace/google", :action => "old_app_redirect"
+  match '/google/login', :controller => "sso", :action => "mobile_app_google_login"
   match '/' => 'home#index'
   # match '/:controller(/:action(/:id))'
   match '/all_agents' => 'agents#list'

@@ -8,6 +8,11 @@ class SsoController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token
   skip_after_filter :set_last_active_time
 
+
+  def mobile_app_google_login
+    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/google_login"
+  end
+
   def login
     auth = current_account.authorizations.where(:provider => params['provider'], :uid => params['uid']).first
     unless auth.blank?
