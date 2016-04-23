@@ -58,6 +58,8 @@ module RabbitMq::Constants
   
   RMQ_REPORTS_TICKET_KEY         = "*.1.#"
   RMQ_REPORTS_NOTE_KEY           = "*.1.#"
+  RMQ_SEARCH_TICKET_KEY          = "*.*.1.#"
+  RMQ_SEARCH_NOTE_KEY            = "*.*.1.#"
   RMQ_REPORTS_ARCHIVE_TICKET_KEY = "1"
 
   AUTO_REFRESH_TICKET_KEYS = ["id", "display_id", "tag_names", "account_id", "user_id", "responder_id", "group_id", "status", 
