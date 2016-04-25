@@ -10,7 +10,7 @@ class SsoController < ApplicationController
 
 
   def mobile_app_google_login
-    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/google_login"
+    redirect_to "https://#{request.host}/auth/google_login"
   end
 
   def login

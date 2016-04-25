@@ -22,15 +22,16 @@ module GoogleLoginHelper
     set_others_redis_key(redis_oauth_key, uid, 300)
   end
 
-  def construct_redirect_url(account, domain, random_key)
-    protocol = construct_protocol(account)
-    protocol + "://" + construct_sso_path(domain) + construct_params(domain, random_key)
+  def construct_redirect_url(account, domain_arg, random_key, native_mobile_flag)
+    protocol = construct_protocol(account, native_mobile_flag)
+    protocol + "://" + construct_sso_path(domain_arg) + construct_params(domain_arg, random_key)
   end
 
   private
 
-    def domain
-      @domain ||= URI.parse(@portal_url).host || @origin_account.full_domain
+    def domain native_mobile_flag
+      return @origin_account.full_domain if native_mobile_flag.present?
+      URI.parse(@portal_url).host || @origin_account.full_domain
     end
 
     def email
@@ -90,18 +91,19 @@ module GoogleLoginHelper
       user
     end
 
-    def construct_protocol account
+    def construct_protocol account, native_mobile_flag
       return "http" if Rails.env.development?
+      return "https" if native_mobile_flag.present?
       account.url_protocol
     end
 
-    def construct_sso_path domain
-      domain + (Rails.env.development? ? ":3000" : "") + "/sso/google_login"
+    def construct_sso_path domain_arg
+      domain_arg + (Rails.env.development? ? ":3000" : "") + "/sso/google_login"
     end
 
-    def construct_params domain, random_key
-      param = "?domain=" + domain + "&sso=" + random_key
-      param = param + "&portal_url=" + domain if @portal_url.present?
+    def construct_params domain_arg, random_key
+      param = "?domain=" + domain_arg + "&sso=" + random_key
+      param = param + "&portal_url=" + domain_arg if @portal_url.present?
       param
     end
 
