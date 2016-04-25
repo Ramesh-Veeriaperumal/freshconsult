@@ -13,7 +13,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter :verify_permission, :only => [:create, :index, :show, :edit, :update, :destroy, :toggle_timer ] 
   before_filter :check_agents_in_account, :only =>[:create]
   before_filter :set_mobile, :only =>[:index , :create , :update , :show]
-  before_filter :set_native_mobile , :only => [:create , :index, :destroy]
+  before_filter :set_native_mobile , :only => [:create , :index, :destroy, :toggle_timer]
 
   rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
 
@@ -81,8 +81,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
     
     @time_entry = scoper.new(time_entry)    #throws unknown attribute error
     if @time_entry.save!
-      nmobile_response = {:success => true} 
-      respond_to_format(@time_entry, nmobile_response)
+      respond_to_format @time_entry
     end
   end
    
@@ -131,8 +130,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
   def destroy
     @time_entry.destroy
-    mobile_response = {:success => true}
-    respond_to_format @time_entry , mobile_response
+    respond_to_format @time_entry
   end
 
 private
@@ -208,12 +206,12 @@ private
     return (time_entry.time_spent + running_time)
   end
 
-  def respond_to_format result,mobile_response = nil
+  def respond_to_format result
     respond_to do |format|
       format.js
       format.html
       format.nmobile do
-        render :json => mobile_response.to_json and return
+        render :json => {:time_entry_id => result.id, :success => true}.to_json() and return
       end
       format.xml do 
         render :xml => result.to_xml and return 
