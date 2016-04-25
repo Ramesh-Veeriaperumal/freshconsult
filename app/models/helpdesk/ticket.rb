@@ -1038,7 +1038,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # Moved here from note.rb
   def trigger_cc_changes(old_cc)
-    new_cc      = self.cc_email.dup
+    new_cc      = self.cc_email.try(:dup)
     cc_changed  = if old_cc.nil?
       !old_cc.eql?(new_cc) 
     else
