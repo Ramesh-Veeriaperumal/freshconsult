@@ -139,11 +139,12 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
 
     def load_cached_filters
       @cached_filter = get_others_redis_hash(reports_filter_key)
-      params.merge!(@cached_filter)
+      prepare_filters
     end
 
     def cached_params
-      {'date_range' => params[:date_range],
+      {'date_range_type' => params[:date_range_type],
+       'date_range' => params[:date_range], 
        'freshfone_number' => params[:freshfone_number],
        'group_id' => params[:group_id],
        'call_type' => params[:call_type],

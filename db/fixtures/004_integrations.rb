@@ -100,7 +100,8 @@ if Integrations::Application.count == 0
                   :account_settings => {:type => :custom, 
                       :partial => "/integrations/applications/google_accounts", 
                       :required => false, :label => "integrations.google_contacts.form.account_settings", 
-                      :info => "integrations.google_contacts.form.account_settings_info" }
+                      :info => "integrations.google_contacts.form.account_settings_info" },
+                  :oauth_url => "/auth/google_contacts?origin=id%3D{{account_id}}%26app_name%3Dgoogle_contacts%26portal_id%3D{{portal_id}}"
                  }
     s.application_type = "google_contacts"
   end
@@ -555,7 +556,7 @@ if Integrations::Application.count == 0
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.options = {
       :direct_install => true,
-      :oauth_url => "/auth/google_oauth2?origin=id%3D{{account_id}}%26app_name%3Dgoogle_calendar%26user_id%3D{{user_id}}",
+      :oauth_url => "/auth/google_calendar?origin=id%3D{{account_id}}%26app_name%3Dgoogle_calendar%26portal_id%3D{{portal_id}}%26user_id%3D{{user_id}}",
       :user_specific_auth => true,
       :auth_config => {
         :clazz => 'Integrations::GoogleCalendarEmailFinder',

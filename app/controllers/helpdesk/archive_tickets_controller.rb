@@ -27,7 +27,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
     respond_to do |format|
       format.html do
         @current_options = params
-        @show_options = show_options 
+        @show_options = archive_show_options 
       end
       format.json do
         unless @response_errors.nil?

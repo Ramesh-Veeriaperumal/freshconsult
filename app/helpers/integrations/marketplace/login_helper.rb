@@ -5,7 +5,7 @@ module Integrations::Marketplace::LoginHelper
   def find_account_by_remote_id(remote_id, app_name)
     if remote_id.present?
       account_id = nil
-      remote_integ_map = "Integrations::#{app_name.camelize}RemoteUser".constantize.find_by_remote_id(remote_id)
+      remote_integ_map = "#{remote_integration_class(app_name)}".constantize.find_by_remote_id(remote_id)
       if remote_integ_map.present?
         account_id = remote_integ_map.account_id
       end
@@ -36,14 +36,17 @@ module Integrations::Marketplace::LoginHelper
   end
 
   def update_remote_integrations_mapping(app_name, remote_id, account, user)
-    "Integrations::#{app_name.camelize}RemoteUser".constantize.create!(:account_id => account.id,
-      :remote_id => remote_id, :configs => { :user_id => user.id, :user_email => user.email }) if remote_id.present?
+    "#{remote_integration_class(app_name)}".constantize.create!(:account_id => account.id,
+        :remote_id => remote_id, :configs => { :user_id => user.id, :user_email => user.email }) if remote_id.present?
   end
 
   def verify_user_and_redirect(user)
     if user.privilege?(:manage_account)
       update_remote_integrations_mapping(@app_name, @remote_id, @account, user)
       set_redis_and_redirect(@app_name, @account, @remote_id, @email, @operation)
+    elsif proxy_auth_app?(@app_name) && !user.privilege?(:manage_account)
+      flash.now[:error] = t(:'flash.g_app.use_admin_cred')
+      render "google_signup/proxy_auth"
     else
       render :template => 'integrations/marketplace/error', :locals => { :error_type => 'insufficient_privilege' }
     end
@@ -65,5 +68,20 @@ module Integrations::Marketplace::LoginHelper
     redirect_url.query_values = (redirect_url.query_values || {}).merge(query_params)
     return account.full_url + redirect_url.to_s
   end
+
+  private
+
+    def remote_integration_class app_name
+      if app_name == "google"
+        "Integrations::#{app_name.camelize}RemoteAccount"
+      else
+        "Integrations::#{app_name.camelize}RemoteUser"
+      end
+    end
+
+    def proxy_auth_app? app_name
+      proxy_apps = ["google"]
+      proxy_apps.include?(app_name)
+    end
 
 end

@@ -16,7 +16,7 @@ class Company < ActiveRecord::Base
   xss_sanitize  :only => [:name], :plain_sanitizer => [:name]
   alias_attribute :domain_name, :domains
   
-  concerned_with :associations, :callbacks, :es_methods, :rabbitmq
+  concerned_with :associations, :callbacks, :esv2_methods, :rabbitmq
 
   scope :custom_search, lambda { |search_string| 
     { :conditions => ["name like ?" ,"%#{search_string}%"],
@@ -38,31 +38,6 @@ class Company < ActiveRecord::Base
     paginate :per_page => per_page, :page => page,
              :conditions => ['name like ?', "#{letter}%"],
              :order => 'name'
-  end
-  
-  def self.es_filter(account_id, letter,page, field_name, sort_order, per_page)
-    Search::EsIndexDefinition.es_cluster(account_id)
-    index_name = Search::EsIndexDefinition.searchable_aliases([Customer], account_id)
-    options = {:load => { Company => { :include => [:flexifield, :company_domains] }} , :page => page, :size => per_page, :preference => :_primary_first }
-    items = Tire.search(index_name, options) do |search|
-      search.query do |query|
-        query.filtered do |f|
-          if(letter)
-            f.query { |q| q.string SearchUtil.es_filter_key(letter) }
-          else
-            f.query { |q| q.string '*' }
-          end
-          f.filter :term, { :account_id => account_id }
-        end
-      end
-      search.from options[:size].to_i * (options[:page].to_i-1)
-      search.sort { by field_name, sort_order } 
-    end
-    search_results = []
-    items.results.each_with_hit do |result, hit|
-      search_results.push(result)
-    end
-    search_results
   end
 
   def to_s
@@ -93,10 +68,6 @@ class Company < ActiveRecord::Base
 
   def to_liquid
     @company_drop ||= CompanyDrop.new self
-  end
-
-  def search_fields_updated?
-    (@model_changes.keys & es_columns).any?
   end
 
   def custom_form

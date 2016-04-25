@@ -4,12 +4,17 @@ class SsoController < ApplicationController
   include Redis::OthersRedis
 
   skip_before_filter :check_privilege
-  before_filter :get_redis_key, :only =>[:google_login]
+  before_filter :set_current_user, :only =>[:google_login]
   skip_before_filter :check_privilege, :verify_authenticity_token
   skip_after_filter :set_last_active_time
 
+
+  def mobile_app_google_login
+    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/google_login"
+  end
+
   def login
-    auth = Authorization.find_by_provider_and_uid_and_account_id(params['provider'], params['uid'], current_account.id)
+    auth = current_account.authorizations.where(:provider => params['provider'], :uid => params['uid']).first
     unless auth.blank?
       curr_user = auth.user
       key_options = { :account_id => current_account.id, :user_id => curr_user.id, :provider => params['provider']}
@@ -54,11 +59,14 @@ class SsoController < ApplicationController
   end
 
   private
-    def get_redis_key
-      redis_oauth_key = GOOGLE_OAUTH_SSO % {:domain => params['domain'],:uid => params['uid']}
-      redis_oauth_value = get_others_redis_key(redis_oauth_key)
-      @current_user = current_account.user_emails.user_for_email(redis_oauth_value)
-      remove_others_redis_key(redis_oauth_key)
+
+    def set_current_user
+      redis_oauth_key = GOOGLE_OAUTH_SSO % {:random_key => params['sso']}
+      uid = get_others_redis_key(redis_oauth_key)
+      auth = Authorization.find_by_provider_and_uid_and_account_id("google", uid, current_account.id)
+      user_id = auth.present? ? auth.user_id : nil
+      @current_user = user_id.present? ? current_account.users.find_by_id(user_id) : nil
+      remove_others_redis_key(redis_oauth_key) if @current_user.present?
     end
 
     def user_deleted

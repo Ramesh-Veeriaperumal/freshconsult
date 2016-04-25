@@ -14,6 +14,8 @@ class Post < ActiveRecord::Base
   def self.per_page() 25 end
   validates_presence_of :user_id, :body_html, :topic
 
+  concerned_with :esv2_methods
+
   belongs_to_account
 
   belongs_to :forum
@@ -50,12 +52,17 @@ class Post < ActiveRecord::Base
   has_many_cloud_files
   
   delegate :update_es_index, :to => :topic, :allow_nil => true
+  
   delegate :questions?, :problems?, :to => :forum
   xss_sanitize :only => [:body_html],  :html_sanitize => [:body_html]
   #format_attribute :body
 
   attr_protected  :topic_id , :account_id , :attachments, :published, :spam
   after_create  :monitor_topic, :if => :can_monitor?
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   SPAM_SCOPES = {
     :spam => :unpublished_spam,

@@ -5,7 +5,7 @@
 <div class="dialog-well links">
   <div id="default_solution_suggestions" class="request_well article-list">
   	<table class="table table-striped">
-    <%= each_or_message("article", @search_results, t(:'ticket.suggested_solutions.no_result')) %>
+    <%= each_or_message("search/solutions/article", @search_results, t(:'ticket.suggested_solutions.no_result')) %>
     </table>
   </div>
   <div id="more_search_results" class="article-list"></div>

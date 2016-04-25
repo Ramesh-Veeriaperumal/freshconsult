@@ -1,7 +1,7 @@
-<% ticket_tags =  tag.tickets.visible.size
-   customer_tags = tag.contacts.visible.size
+<% ticket_tags =  ticket_tags_count(tag)
+   customer_tags = tags_count(tag, "contacts")
    article_tags =  tag.solution_articles.size
-   archive_tags = tag.archive_tickets.size
+   archive_tags = tags_count(tag, "archive_tickets")
 %>
 <tr class="<%= cycle('stripe', '') %>" id="<%= dom_id(tag) %>" data-tag-id="<%=tag.id%>" >
   <td class="name">
@@ -26,6 +26,10 @@
   <%= tagged_module tag, "Articles", article_tags %>
 
   <td class="total">
+    <% if (customer_tags.is_a?(String) || archive_tags.is_a?(String))%>
+      <span class="tags-total-counter"><%= t("many") %></span>
+    <% else%>
     <span class="tags-total-counter"><%= ticket_tags + article_tags + customer_tags + archive_tags %></span>
+    <% end %>
   </td>
 </tr>

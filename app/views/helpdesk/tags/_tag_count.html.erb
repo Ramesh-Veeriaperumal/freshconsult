@@ -1,6 +1,5 @@
-<td class=" <%= dom_type.downcase %> <%= count > 0 ? 'count' : 'muted disabled'  %>" id="<%= dom_type+"_"+tag.id.to_s %>"  data-tag-type="<%= type %>" >
-  <% ticket_label = pluralize(count, plurals[0],plurals[1]).split(" ")[1] %>
-  <% if count > 0 %>
+<td class=" <%= dom_type.downcase %> <%= (count.is_a?(String) || count > 0 ) ? 'count' : 'muted disabled'  %>" id="<%= dom_type+"_"+tag.id.to_s %>"  data-tag-type="<%= type %>" >
+  <% if(count.is_a?(String) || count > 0 ) %>
       <% if dom_type != "Archive" %>
         <a href="#tag-remove-confirm" class="removetag"
             rel="freshdialog"

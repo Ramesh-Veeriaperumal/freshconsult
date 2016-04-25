@@ -221,4 +221,11 @@ module ForumHelper
 	def email_from_friendly_email friendly_email
 	  friendly_email.split("<")[1].split(">")[0]
 	end 
+
+  def create_customer_forums(forum)
+    3.times do
+      company = create_company
+      forum.customer_forums.create(:customer_id => company.id)
+    end
+  end
 end

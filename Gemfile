@@ -24,7 +24,6 @@ gem "activemerchant", :git => "git://github.com/Shopify/active_merchant", :tag =
 gem "acts_as_list", "0.1.4"
 gem "prototype-rails", '~> 3.2.0'
 gem "dynamic_form"
-gem 'typhoeus', '0.7.3'
 gem "prototype_legacy_helper", '0.0.0', :git => "git://github.com/rails/prototype_legacy_helper.git"
 gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/freshdesk/rack-ssl',:branch => 'ssl'
 gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
@@ -45,6 +44,8 @@ group :development, :test do
   gem 'pry-nav'
   gem 'binding_of_caller'
   gem 'meta_request'
+  gem 'fake_sqs'
+  gem 'fake_dynamo'
 end
 
 gem "rack-mini-profiler", :group => [:development]
@@ -64,9 +65,7 @@ gem 'rails_autolink', '1.1.6'
 
 gem "omniauth-oauth2", "1.0"
 gem "omniauth-openid"
-# TODO-RAILS3 need check are we still using this
-gem "omniauth-google"
-gem "omniauth-google-oauth2"
+
 gem "omniauth-facebook"
 gem "omniauth-quickbooks"
 gem "omniauth-mailchimp", "~> 1.0.3"
@@ -80,6 +79,7 @@ gem "ipaddress", "0.8.0"
 source "https://a55d1643:d20410bb@gems.contribsys.com/" do 
   gem 'sidekiq-pro' 
 end 
+gem 'shoryuken', '~> 2.0'
 
 gem "soap4r-ruby1.9", "~> 2.0.5"
 gem "jira4r", "0.3.0"
@@ -281,3 +281,6 @@ end
 
 # Marketplace
 gem 'doorkeeper', '2.2.1'
+
+# Search v2
+gem 'typhoeus'

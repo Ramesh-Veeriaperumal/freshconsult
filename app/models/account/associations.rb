@@ -230,8 +230,6 @@ class Account < ActiveRecord::Base
   # Archive Association Starts Here
   has_many :archive_tickets, :class_name => "Helpdesk::ArchiveTicket"
   has_many :archive_notes, :class_name => "Helpdesk::ArchiveNote"
-  has_many :archive_ticket_associations, :class_name => "Helpdesk::ArchiveTicketAssociation"
-  has_many :archive_note_associations, :class_name => "Helpdesk::ArchiveNoteAssociation"
   has_many :archive_time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:archive_tickets , :conditions =>['archive_tickets.deleted =?', false]
   # Archive Association Ends Here
 
@@ -294,4 +292,5 @@ class Account < ActiveRecord::Base
   has_many :subscription_invoices
   has_many :user_companies
   has_many :outgoing_email_domain_categories, :dependent => :destroy
+  has_many :authorizations, :class_name => '::Authorization'
 end

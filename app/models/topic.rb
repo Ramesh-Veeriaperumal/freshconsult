@@ -14,7 +14,7 @@ class Topic < ActiveRecord::Base
   validates_presence_of :forum, :user, :title
   validate :check_stamp_type
 
-  concerned_with :merge
+  concerned_with :merge, :esv2_methods
 
   belongs_to_account
   belongs_to :forum
@@ -26,6 +26,10 @@ class Topic < ActiveRecord::Base
   before_validation :set_unanswered_stamp, :if => :questions?, :on => :create
   before_validation :set_unsolved_stamp, :if => :problems?, :on => :create
   before_validation :assign_default_stamps, :mark_post_as_unanswered, :if => :forum_id_changed?, :on => :update
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   has_many :merged_topics, :class_name => "Topic", :foreign_key => 'merged_topic_id', :dependent => :nullify
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
@@ -40,7 +44,7 @@ class Topic < ActiveRecord::Base
                       :conditions => ["#{Monitorship.table_name}.active = ?", true],
                       :order => "#{Monitorship.table_name}.id DESC"
 
-  has_many :posts, :order => "#{Post.table_name}.created_at", :dependent => :delete_all
+  has_many :posts, :order => "#{Post.table_name}.created_at", :dependent => :destroy #=> Changing after discussing with Shyam
   # previously posts had :dependant => :destroy
   # to delete all dependant post hile deleting a topic, destroy has been changed to delete all
   # as a result no callbacks will be triggered and so User.posts_count will not be updated
@@ -376,21 +380,6 @@ class Topic < ActiveRecord::Base
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => ([:account_id,:import_id]+TOPIC_ATTR_TO_REMOVE))
-  end
-
-  def to_indexed_json
-    as_json(
-          :root => "topic",
-          :tailored_json => true,
-          :only => [ :title, :user_id, :forum_id, :account_id, :created_at, :updated_at ],
-          :include => { :posts => { :only => [:body],
-                                    :include => { :attachments => { :only => [:content_file_name] } }
-                                  },
-                        :forum => { :only => [:forum_category_id, :forum_visibility],
-                                    :include => { :customer_forums => { :only => [:customer_id] } }
-                                  }
-                      }
-       ).to_json
   end
 
   def as_json(options = {})

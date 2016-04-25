@@ -14,6 +14,9 @@ helpdesk:
     - akismet_config
     - asset_sync
     - aws_s3
+    - aws/aws_v2
+    - aws/dynamo_sdk2
+    - aws/sqs_sdk2
     - aws/dynamo
     - aws/sns
     - aws/sqs
@@ -56,6 +59,7 @@ helpdesk:
     - spam_watcher
     - string_ext
     - text_datastore
+    - archive_datastore
     - time_formats
     - twitter_config
     - social_config
@@ -70,6 +74,8 @@ helpdesk:
     - marketplace_config
     - doorkeeper
     - ebay_config
+    - search/v2
+    - shoryuken
     - doorkeeper_extension
     - helpdesk_reports/reports_app_config
     - controller_log_subscriber

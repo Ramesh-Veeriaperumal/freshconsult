@@ -12,27 +12,33 @@ class Middleware::TrustedIp
 
     # Skip valid ip check if the request is from skipped subdomains
     return execute_request(env) if skipped_subdomain?(env)
-    shard = ShardMapping.lookup_with_domain(env["HTTP_HOST"])
+    env['SHARD'] ||= ShardMapping.lookup_with_domain(env["SERVER_NAME"])
     # Skip valid ip check if the request is for nil shard.
-    return execute_request(env) if (shard.nil? or PodConfig['CURRENT_POD'] != shard.pod_info) && !Rails.env.development?
+    return execute_request(env) if (env['SHARD'].nil? or PodConfig['CURRENT_POD'] != env['SHARD'].pod_info) && !Rails.env.development?
 
     # All requests other than api has to execute to set the user_credentials_id env var. Set by authlogic.
     # So that whitelisting can happen accordingly.
     # user_credentials_id won't be set in API request as it is not relied on authlogic.
     execute_request(env) unless api_request?(req_path)
-    
-    account_id =  Rails.env.development? ? Account.first.id : shard.account_id
-    Sharding.select_shard_of(account_id) do
-      @current_account = Account.find(account_id)
-      @current_account.make_current
-      # Proceed only if user_credentials_id is present(i.e., authenticated user) or api request.
-      if !env['rack.session']['user_credentials_id'].nil? || api_request?(req_path)
-        if trusted_ips_enabled?
-          unless valid_ip(env['CLIENT_IP'], env['rack.session']['user_credentials_id'], req_path)
-            @status, @headers, @response = set_response(req_path, 403, "/unauthorized.html",
-                                                        'Your IPAddress is blocked by the administrator')
-            Rails.logger.error "Request from invalid ip for ip whitelisting enabled account. Account Id: #{@current_account.id}, IP: #{env['CLIENT_IP']}"
-            return [@status, @headers, @response]
+
+    if env['SHARD'].present?
+      Sharding.run_on_shard(env['SHARD'].shard_name) do
+        account_id = env['SHARD'].account_id
+        if Account.current.try(:id) == account_id
+          @current_account = Account.current
+        else
+          @current_account = Account.find(account_id)
+          @current_account.make_current
+        end
+        # Proceed only if user_credentials_id is present(i.e., authenticated user) or api request.
+        if !env['rack.session']['user_credentials_id'].nil? || api_request?(req_path)
+          if trusted_ips_enabled?
+            unless valid_ip(env['CLIENT_IP'], env['rack.session']['user_credentials_id'], req_path)
+              @status, @headers, @response = set_response(req_path, 403, "/unauthorized.html",
+                                                          'Your IPAddress is blocked by the administrator')
+              Rails.logger.error "Request from invalid ip for ip whitelisting enabled account. Account Id: #{@current_account.id}, IP: #{env['CLIENT_IP']}"
+              return [@status, @headers, @response]
+            end
           end
         end
       end

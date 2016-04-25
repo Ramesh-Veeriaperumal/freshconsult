@@ -93,6 +93,7 @@ class Freshfone::CallActions
 	end
 
 	def save_conference_meta(type, performer = nil,  transfer_by_agent = nil)
+		return update_meta(performer, type) if current_call.meta.present?
 		current_call.group_id = performer if type == :group
 		current_call.user_id  = performer if type == :agent
 		return external_call_meta(performer,transfer_by_agent) if type == :number
@@ -272,6 +273,14 @@ class Freshfone::CallActions
 
     def external_transfer?
       params[:external_transfer].present? && params[:external_number].present?
+    end
+
+    def update_meta(performer, type)
+      Rails.logger.info "Inside Update Meta Performer #{performer} Type  #{type} Call Id : #{current_call.id}"
+      meta = current_call.meta
+      target_group = (type == :group) ? performer : nil # group type check is for safety, this is needed for simple routing with all groups
+      meta.pinged_agents = pinged_agents(performer, type) || load_target_agents(target_group)
+      meta.save!
     end
 
 end

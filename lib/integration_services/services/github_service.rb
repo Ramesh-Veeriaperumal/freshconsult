@@ -17,9 +17,6 @@ module IntegrationServices::Services
                           "Freshdesk Ticket Agent Email: %{agent_email}<br/>" +
                           "Ticket Priority: %{ticket_priority}<br/>" +
                           "Freshdesk Ticket Description:%{description} <br/>"
-    def self.title
-      'GitHub'
-    end
 
     def server_url
       self.configs["server_url"] || "https://api.github.com"
