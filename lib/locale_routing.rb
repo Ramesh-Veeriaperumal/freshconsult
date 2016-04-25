@@ -24,7 +24,7 @@ module RoutingFilter
     end
 
     def accepted_paths
-      ['/support', '/register', '/activate', '/password_resets']
+      ['/support', '/register', '/activate', '/password_resets', '/activations']
     end
   end
 end
