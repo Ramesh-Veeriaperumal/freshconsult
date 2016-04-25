@@ -8,8 +8,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   
   SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login", "emailparser", "mailboxparser","freshops"] + FreshopsSubdomains
   SKIPPED_PATHS      = ["/reports/v2"]
-  API_FORMATS        = ['.xml', '.json', 'format=json', 'format=xml']
-  THROTTLED_TYPES    = ["application/json", "application/x-javascript", "text/javascript",
+  THROTTLED_TYPES = ["application/json", "application/x-javascript", "text/javascript",
                       "text/x-javascript", "text/x-json", "application/xml", "text/xml"]
   ONE_HOUR = 3600
 
@@ -45,7 +44,6 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     @content_type = env['CONTENT-TYPE'] || env['CONTENT_TYPE']
     @api_path = env["REQUEST_URI"]
     @mobihelp_auth = env["HTTP_X_FD_MOBIHELP_APPID"]
-    @user_agent ||= env["HTTP_USER_AGENT"]
     @sub_domain = @host.split(".")[0]
     @path_info = env["PATH_INFO"]
     if SKIPPED_SUBDOMAINS.include?(@sub_domain)
@@ -85,15 +83,13 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   def by_pass_throttle?
     return true if  SKIPPED_SUBDOMAINS.include?(@sub_domain)
     return true unless @mobihelp_auth.blank?
-    return true if @user_agent[/#{AppConfig['app_name']}_Native/].present? 
-
     SKIPPED_PATHS.each{|p| return true if @path_info.include? p}
-    return false if API_FORMATS.any?{|x| @api_path.include?(x)}
-    if @content_type
+    if @content_type.nil?
+      return ( !@api_path.include?(".xml") && !@api_path.include?(".json") )
+    else
       Rails.logger.debug "Account ID :: #{@account_id} ::: Content type on API:: #{@content_type}" if @account_id
       return !THROTTLED_TYPES.include?(@content_type)
     end
-    return true
   end
 
   def retry_after
