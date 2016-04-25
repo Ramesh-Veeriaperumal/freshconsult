@@ -40,7 +40,8 @@ class User < ActiveRecord::Base
 
   has_many :tags, 
     :class_name => 'Helpdesk::Tag',
-    :through => :tag_uses
+    :through => :tag_uses,
+    :after_remove => :update_user_tags
 
   has_many :google_contacts, :dependent => :destroy
 

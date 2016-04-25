@@ -25,8 +25,7 @@ module RabbitMq::Subscribers::Tickets::Reports
   end
 
   def mq_reports_valid(action, model) 
-    return false if archive
-    valid = (valid_model?(model) && (create_action?(action) || non_archive_destroy?(action) || valid_changes.any?))
+    valid = (valid_model?(model) && !archive && (create_action?(action) || non_archive_destroy?(action) || valid_changes.any?))
     Rails.logger.debug "#{Account.current.id} --- #{model} --- #{valid}"
     valid
   end

@@ -1,7 +1,7 @@
 <% hidden_class = ["Closed","Resolved"].include?(ticket.status_name)? "gray" : "" %>
 <div class="hs_message <%= hidden_class %>" onclick="openTicket(<%= ticket.display_id %>)">
 	<div class='status-wrapper separator'>
-		<% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) %>
+		<% @onhold_and_closed_statuses = current_account.onhold_and_closed_statuses_from_cache %>
 		<% ticket_style = ticket.subject_style(ticket,@onhold_and_closed_statuses) %>
 
 		<% unless ticket_style.blank? %>

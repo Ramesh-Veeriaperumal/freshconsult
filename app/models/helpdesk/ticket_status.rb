@@ -126,7 +126,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def onhold_and_closed?
-   Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account).include?(status_id)
+    account.onhold_and_closed_statuses_from_cache.include?(status_id)
   end
 
     def update_tickets_sla

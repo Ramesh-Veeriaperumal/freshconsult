@@ -1,4 +1,4 @@
-<% content_for :sidebar do -%>&nbsp;<%- end %>
+<% content_for :sidebar do %><%= render :partial => "helpdesk/tickets/ticket_widget/sidebar", :locals => {:from_page => 'new_ticket_page_side_bar'}%> <% end %>
 
 <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" , :rel=>"validate"} do |f| %>
     <%= render :partial => "helpdesk/tickets/ticket_widget/new_ticket_title" %>

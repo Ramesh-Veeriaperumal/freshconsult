@@ -96,7 +96,7 @@ class ConversationsController < ApiApplicationController
     def can_update?
       # note without source type as 'note' should not be allowed to update
       unless @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
-        render_base_error(:method_not_allowed, 405, methods: 'DELETE', fired_method: env['REQUEST_METHOD'])
+        render_405_error(['DELETE'])
         return false
       end
       true

@@ -98,7 +98,9 @@ class ApiApplicationControllerTest < ActionController::TestCase
     response = ActionDispatch::TestResponse.new
     @controller.response = response
     @controller.env['PATH_INFO'] = 'api/v2/tickets/1000'
-    @controller.env['REQUEST_METHOD'] = 'POST'
+    request = ActionDispatch::TestRequest.new
+    request.request_method = 'POST'
+    @controller.request = request
     params = ActionController::Parameters.new(version: 2)
     @controller.send(:route_not_found)
     assert_equal response.headers['Allow'], 'GET, PUT, DELETE'

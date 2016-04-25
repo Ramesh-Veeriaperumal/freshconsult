@@ -8,10 +8,10 @@ module ContactConstants
 
   INDEX_FIELDS = %w( state email phone mobile company_id ).freeze
 
-  DELETED_SCOPE = {
-    'update' => false,
-    'destroy' => false,
-    'make_agent' => false
+  SCOPE_BASED_ON_ACTION = {
+    'update'  => { deleted: false, blocked: false },
+    'destroy' => { deleted: false, blocked: false },
+    'make_agent' => { deleted: false, blocked: false }
   }.freeze
 
   # Based on limitation specified in Helpdesk::Attachment ( def image? )

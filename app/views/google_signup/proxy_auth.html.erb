@@ -1,0 +1,72 @@
+<div class="top_banner">
+  <div class="top-banner-content">
+    <img src="/images/misc/freshdesklogo.png" alt="Freshdesk" width="204px" height="50px"/>
+    <span class="marketplace-link">
+      <%= t('integrations.marketplace_login.admin_credentials.link_your_helpdesk') %>
+    </span>
+  </div>
+</div>
+<div class="google-signup-content">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#new-account" data-toggle="tab"><%= t('integrations.marketplace_login.admin_credentials.login_your_helpdesk') %></a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="new-account">
+      <div class="ui-form signup-form" id="signup-form">
+        <%= form_for @account, :url => {:controller => :signup, :action=> :associate_account_using_proxy} , :html => { :method => "put", :class => "form-horizontal" }, :object_name => :account  do |f| %>
+          <%= f.error_messages %>
+          <%= show_flash %>
+          <input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />
+          <input type="hidden" value="<%=@sub_domain%>" name="account[domain]" id="account_sub_domain" class="text disabled" />
+          <input type="hidden" value="<%=@google_domain%>" name="account[google_domain]" id="account_google_domain" class="text disabled" />
+          <div class="intro info-data">
+            <%= t('integrations.marketplace_login.admin_credentials.login_with_admin') %>
+          </div>
+          <input type="hidden" value="<%=@full_domain%>" name="account[full_domain]" id="account_full_domain" class="text disabled" />
+          <input type="hidden" value="<%=@name%>" name="user[name]" id="user_name" class="text disabled" />
+          <input type="hidden" value="<%=@email%>" name="user[email]" id="user_email" class="text disabled" />
+          <input type="hidden" value="<%=@uid%>" name="user[uid]" id="user_uid" class="text disabled" />
+          <input type="hidden" value="<%=@remote_id%>" name="user[remote_id]", id="user_remote_id" class="text disabled" />
+          <input type="hidden" value="<%=@app_name%>" name="request_params[app_name]" id="request_params_app_name" class="text disabled"/>
+          <input type="hidden" value="<%=@operation%>" name="request_params[operation]" id="request_params_operation"  class="text disabled" />
+          <input type="hidden" value="<%=@email_not_reqd%>" name="request_params[email_not_reqd]" id="request_params_email_not_required" class="text disabled"/>
+          <div class="row-fluid">
+            <div class="fields">
+              <div class="control-group">
+                <label class="control-label"><strong><%= t('integrations.marketplace_login.admin_credentials.your_helpdesk') %></strong></label>
+                <div class="controls">
+                  <label><%= @full_domain %></label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row-fluid">
+            <div class="fields">
+              <div class="control-group">
+                <label for="user_session_email" class="control-label"><strong><%=t('integrations.marketplace_login.admin_credentials.email_address')%><span class="required_star">*</span></strong></label>
+                <div class="controls">
+                  <input class="required text valid" id="user_session_email" name="user_session[email]" size="30" type="text">
+                </div>
+              </div>
+            </div>
+            <div class="fields">
+              <div class="control-group">
+                <label for="user_session_password" class="control-label"><strong><%=t('password')%><span class="required_star">*</span></strong></label>
+                <div class="controls">
+                  <input class="required text valid" id="user_session_password" name="user_session[password]" size="30" type="password" autocomplete="off">
+                </div>
+              </div>
+            </div>
+            <div class="fields">
+              <div class="control-group">
+                <div class="controls">
+                  <%= submit_tag  t('integrations.marketplace_login.admin_credentials.login'), :class => "btn btn-primary pull-left" %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

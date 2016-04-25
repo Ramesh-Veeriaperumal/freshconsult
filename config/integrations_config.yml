@@ -11,4 +11,7 @@ marketplace_landing_paths:
   github: "/integrations/github/oauth_install"
   quickbooks: "/integrations/marketplace/quickbooks_sso/landing"
   shopify: "/integrations/marketplace/shopify/landing"
+  google: "/integrations/marketplace/google/home"
 
+api_keys:
+  google_business_calendar: "AIzaSyCGPaSTHQRIbxBd-HVKJL510FSD4uVGHnU"

@@ -99,6 +99,7 @@ class Support::TicketsController < SupportController
     if cc_params.length <= TicketConstants::MAX_EMAIL_COUNT
       @ticket.cc_email[:reply_cc] = cc_params.delete_if {|x| !valid_email?(x)}
       update_ticket_cc @ticket.cc_email
+      @ticket.trigger_cc_changes(@old_cc_hash)
       @ticket.save
       flash[:notice] = "Email(s) successfully added to CC."
     else
@@ -155,7 +156,7 @@ class Support::TicketsController < SupportController
     def ticket_scope
       if privilege?(:client_manager)
         if @requested_by.to_i == 0
-          current_user.company.all_tickets || current_user.tickets
+          current_user.company.try(:all_tickets) || current_user.tickets
         else
           @requested_item = current_account.users.find_by_id(@requested_by)
           @requested_item.tickets

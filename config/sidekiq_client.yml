@@ -65,6 +65,8 @@ defaults: &defaults
     - [free_sla_reminders]
     - [premium_sla_reminders]
     - [deactivate_monitorship]
+    - [es_v2_queue]
+    - [tag_uses_destroy]
     - [bulk_scenario]
     - [github]
     - [webhook_throttler]
@@ -105,6 +107,8 @@ defaults: &defaults
     - [tickets_export_queue]
     - [premium_ticket_export]
     - [long_running_ticket_export]
+    - [chargebee_add_subscription]
+    - [partners_event_queue]
 development:
   <<: *defaults
 

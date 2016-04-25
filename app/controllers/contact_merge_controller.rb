@@ -9,6 +9,8 @@ class ContactMergeController < ApplicationController
     render :partial => "new"
   end
 
+  # Handled in routes to hit V2.
+  #
   def search
     begin
       items = search_users.results.reject(&:parent_id?)
@@ -61,7 +63,7 @@ class ContactMergeController < ApplicationController
          tire_search.query do |q|
            q.filtered do |f|
              f.query { |q| q.match [ 'email', 'name', 'phone', 'user_emails.email' ], 
-                          SearchUtil.es_filter_key(params[:v], false), 
+                          SearchUtil.es_filter_key(params[:search_key], false), 
                           :analyzer => "include_stop", :type => :phrase_prefix 
                       }
              f.filter :term, { :account_id => current_account.id }

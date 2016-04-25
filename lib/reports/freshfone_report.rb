@@ -41,6 +41,11 @@ module Reports::FreshfoneReport
     @prev_end_time = previous_end
   end
 
+  def prepare_filters
+    @cached_filter['date_range'] = get_date_range(@cached_filter['date_range_type'], @cached_filter['date_range'])
+    params.merge!(@cached_filter)
+  end
+
   private 
 
     def scoper(start_date, end_date)
@@ -118,5 +123,24 @@ module Reports::FreshfoneReport
             freshfone_calls.call_type = #{Freshfone::Call::CALL_TYPE_HASH[:outgoing]}, 1, 0)), 0) as outbound_failed_call,
           sum(if((freshfone_calls.ancestry is NOT NULL and freshfone_calls.direct_dial_number is NOT NULL),1,0)) as external_transfers
       )
+    end
+
+    def get_date_range(type,custom_date_range)
+      TimeZone.set_time_zone
+      options = {:format => :short_day_separated, :include_year => true}
+      case type
+        when "Today"
+          view_context.formated_date(Time.zone.now.to_date,options)
+        when "Yesterday"
+          view_context.formated_date(Date.yesterday,options)
+        when "Last7days"
+          view_context.date_range_val(6.days.ago, Time.zone.now.to_date)
+        when "Last30days"
+          view_context.date_range_val(29.days.ago, Time.zone.now.to_date)
+        when "Last90days"
+          view_context.date_range_val(89.days.ago, Time.zone.now.to_date)
+        else
+          custom_date_range 
+        end
     end
 end

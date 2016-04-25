@@ -1,12 +1,66 @@
 <% unless group_action? %>
-<div class='span5'>
-	<div class='dropdown pull-right'>
-		<%= agents_filter %>
-	</div>
+<div class='span4'>
+  <div class='dropdown pull-right'>
+    <%= agents_filter %>
+  </div>
 </div>
 <% end %>
-<div class='span3'>
-	<div class='dropdown'>
-		<%= date_filter %>
-	</div>
+<div class='span4' id="leaderboard_date_dropdown">
+  <span class="hide" 
+        data-date_range_val='<%= j @date_range_val %>' 
+        data-selected_range='<%= j @date_range_selected %>' 
+        id="lb-data-block"></span>
+  <div id="lb_custom_date_range" class="hide">
+    <input id="lb_date_range_input" readonly="readonly"></input>
+    <button class="btn btn-small btn-primary" id="lb_date_range_select_btn"> 
+      <i class="ficon-tick"></i>
+    </button>
+    <button class="btn btn-small" id="lb_date_range_cancel_btn"> 
+      <i class="ficon-cross"></i>
+    </button>
+  </div>
+  <div class='dropdown pull-right'
+       id='lb_date_range_dropdown'>
+    <%= t('gamification.leaderboard.showing') %>
+    <!-- Dropdown Button -->
+    <a role='button' 
+       class='dropdown-toggle' 
+       data-toggle='dropdown' 
+       href='javascript:;'>
+      <% unless @date_range_val=="select_range" %>
+        <b><%= t("gamification.leaderboard.date_range.#{@date_range_val}") %></b>
+      <% else %>
+        <b><%= @date_range_selected %></b>
+      <% end %>
+       <b class='caret'></b>
+    </a>
+    <!-- Dropdown Menu -->
+    <ul class="dropdown-menu"
+        role='menu'>
+        <% support_date_range.each do |date_range| %>
+          <li>
+            <% unless date_range == "select_range" %>
+              <!-- For Predefined Ranges -->
+              <%= link_to({:date_range=>date_range}) do %>
+                <% if @date_range_val == date_range %>
+                  <span class="icon ticksymbol"></span>
+                <% end %>
+                <span><%= t("gamification.leaderboard.date_range.#{date_range}") %></span>
+              <% end %>
+            <% else %>
+              <!-- For Custom Date Range -->
+              <a href="javascript:;" id="lb_select_date_range">
+                <% if @date_range_val == date_range %>
+                  <span class="icon ticksymbol"></span>
+                <% end %>
+                <span><%= t("gamification.leaderboard.date_range.#{date_range}") %></span>
+              </a>
+            <% end %>
+          </li>
+        <% end %>
+    </ul>
+  </div>
+  <div id="leaderboard_date_range"></div>
 </div>
+
+<%= javascript_include_tag :'cdn/gamification' %>

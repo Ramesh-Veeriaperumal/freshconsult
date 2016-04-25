@@ -52,7 +52,7 @@ class AccountConfiguration < ActiveRecord::Base
   	end
 
     def update_reseller_subscription
-      Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => account_id, 
+      Subscription::UpdatePartnersSubscription.perform_async({ :account_id => account_id, 
         :event_type => :contact_updated })
     end
 

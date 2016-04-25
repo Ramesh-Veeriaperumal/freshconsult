@@ -137,6 +137,7 @@ module SsoUtil
         error_message = "Login Rejected"
       rescue Exception => e
         Rails.logger.error("SAML Validation Error : #{e.message}")
+        NewRelic::Agent.notice_error(e, {:custom_params => {:error_message => e.message, :account_id => current_account.id}})
         error_message = " Validation Failed :  #{e.message}"
       end
     end

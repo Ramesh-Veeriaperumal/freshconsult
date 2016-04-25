@@ -11,6 +11,10 @@ class CompanyDomain < ActiveRecord::Base
 
   after_commit :map_contacts_to_company, on: :create
   after_commit :nullify_contact_mapping, on: :destroy
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   private
 

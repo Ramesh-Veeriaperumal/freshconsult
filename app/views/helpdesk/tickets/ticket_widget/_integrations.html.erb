@@ -1,0 +1,24 @@
+
+<% installed_apps.each do |key,installed_app|
+  app = installed_app.application
+  unless app.blank?
+  	widget = app.widget
+      unless widget.blank?
+      	dip = widget.display_in_pages_option
+      	if dip.present? && dip.include?(from_page) 
+      		app_name = app.name
+      		liquid_objects = { "agent" => @agent  } 
+      		if app.application_type == 'freshplug' 
+             widget_code = widget_script(installed_app, widget, liquid_objects) %>
+      			 <div id="<%=app.name%>" class="sidepanel <%=widget.clazz_option%>">
+            		<%=widget_code%>
+          		</div>
+      		<% end 
+      	end
+      end
+  end
+  end
+  %>	
+
+
+

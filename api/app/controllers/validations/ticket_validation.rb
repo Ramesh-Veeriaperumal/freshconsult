@@ -5,7 +5,7 @@ class TicketValidation < ApiValidation
 
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
-                :product, :tags, :custom_fields, :attachments, :request_params, :item, :status_ids, :ticket_fields
+                :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -88,6 +88,7 @@ class TicketValidation < ApiValidation
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
+    @status_ids = request_params[:statuses].map(&:status_id)
     super(request_params, item, allow_string_param)
     @description = item.description_html if !request_params.key?(:description) && item
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
@@ -143,7 +144,7 @@ class TicketValidation < ApiValidation
   end
 
   def disallowed_status?
-    errors[:status].blank? && [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
+    errors[:status].blank? && statuses.detect{|x| x.status_id == status.to_i }.stop_sla_timer
   end
 
   def attributes_to_be_stripped

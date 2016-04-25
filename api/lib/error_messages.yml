@@ -19,7 +19,7 @@ api_error_messages:
   cannot_set_answer: "It cannot be set, for topics belonging to forums that are not of type Question"
   cannot_set_forum_type: "It cannot be set, when the forum already has topics"
   cannot_set_company_ids: "It cannot be set, unless the forum is visible to selected companies only"
-  cannot_set_due_by_fields: "It cannot be set, when the status of the ticket is closed or resolved"
+  cannot_set_due_by_fields: "It cannot be set, when the status of the ticket doesn't have sla timer on"
   invalid_list: "There are no records matching the ids: '%{list}'"
   blank: "It should not be blank as this is a mandatory field"
   conditional_not_blank: "It should not be blank if '%{child}' is set"
