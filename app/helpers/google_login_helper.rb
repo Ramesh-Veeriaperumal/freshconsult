@@ -29,7 +29,7 @@ module GoogleLoginHelper
 
   private
 
-    def domain native_mobile_flag
+    def domain native_mobile_flag=false
       return @origin_account.full_domain if native_mobile_flag.present?
       URI.parse(@portal_url).host || @origin_account.full_domain
     end
@@ -75,7 +75,7 @@ module GoogleLoginHelper
       if nmobile.present?
         @origin_account.full_domain
       else
-        domain
+        domain(false)
       end
     end
 
