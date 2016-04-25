@@ -52,9 +52,9 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_domain_not_ready
-    Sharding.stubs(:select_shard_of).raises(DomainNotReady)
+    Sharding.stubs(:run_on_shard).raises(DomainNotReady)
     post '/api/discussions/categories', '{"name": "testdd"}', @write_headers
-    assert_response :missing
+    assert_response 404
     response.body.must_match_json_expression(message: String)
   end
 
@@ -809,7 +809,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_unexpected_range_error
-    Sharding.stubs(:select_shard_of).raises(RangeError)
+    Sharding.stubs(:run_on_shard).raises(RangeError)
     get '/api/discussions/categories', nil, @headers
     assert_response 500
     response.body.must_match_json_expression(request_error_pattern(:internal_error))
