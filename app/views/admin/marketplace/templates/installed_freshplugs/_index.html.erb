@@ -24,8 +24,7 @@
               </div>
               <% if !is_ni_integration && installed['version_id'] != installed['latest_version'] %>
                   <%= link_to t('update'), "#",
-                      "data-url"=> "#{admin_marketplace_installed_extensions_new_configs_path(installed['extension_id'],installed['latest_version'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&installation_type=update&display_name=#{ERB::Util.url_encode(installed['display_name'])}",
-                      :class => "btn btn-mini btn-settings update" %>
+                      "data-url"=> "#{admin_marketplace_installed_extensions_new_configs_path(installed['extension_id'],installed['latest_version'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&installation_type=update&display_name=#{ERB::Util.url_encode(installed['display_name'])}", :class => "btn btn-mini btn-settings update", "data-developedby"=> installed['account'] %>
               <% end %>
               <% if installed['configs'] %>
                 <% if is_ni_integration %>
