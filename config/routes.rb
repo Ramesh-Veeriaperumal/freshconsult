@@ -2445,6 +2445,7 @@ Helpkit::Application.routes.draw do
 
     match '/custom_surveys/:survey_result/:rating' => 'custom_surveys#create', :as => :custom_survey_feedback, :via => :post
     match '/custom_surveys/:survey_code/:rating/new' => 'custom_surveys#new_via_handle' ,:as => :customer_custom_survey
+    match '/custom_surveys/:survey_code/:rating/hit' => 'custom_surveys#hit' ,:as => :customer_custom_survey_hit
     match '/custom_surveys/:ticket_id/:rating'  => 'custom_surveys#new_via_portal', :as => :portal_custom_survey
 
     namespace :mobihelp do
