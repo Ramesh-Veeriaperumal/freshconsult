@@ -34,7 +34,7 @@
                 <% else %>
                   <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, "", 
                   "data-url"=> "#{admin_marketplace_installed_extensions_edit_configs_path(installed['extension_id'], installed['version_id'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&installation_type=settings&display_name=#{ERB::Util.url_encode(installed['display_name'])}",
-                  :class => "btn btn-mini btn-settings update tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings') %>
+                  :class => "btn btn-mini btn-settings update tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings'), "data-developedby"=> installed['account'] %>
                 <% end %>
               <% end %>
 
