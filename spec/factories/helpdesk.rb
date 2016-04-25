@@ -69,6 +69,9 @@ if Rails.env.test?
     factory :picklist_value, :class => Helpdesk::PicklistValue do |f|
     end
 
+    factory :ticket_status, :class => Helpdesk::TicketStatus do |f|
+    end
+
     factory :section, :class => Helpdesk::Section do |s|
     end
 

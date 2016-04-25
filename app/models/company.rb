@@ -83,7 +83,7 @@ class Company < ActiveRecord::Base
   end
 
   def domain_list
-    self.company_domains.pluck(:domain)
+    self.company_domains.loaded? ? self.company_domains.map(&:domain) : self.company_domains.pluck(:domain)
   end
 
   def domains

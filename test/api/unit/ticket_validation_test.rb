@@ -7,9 +7,20 @@ class TicketValidationTest < ActionView::TestCase
     super
   end
 
+  def statuses
+    statuses  = []
+    (2...7).map do |x|
+      h = Helpdesk::TicketStatus.new
+      h.status_id = x
+      h.stop_sla_timer = true if [3,4,5,6].include?(x)
+      statuses << h
+    end
+    statuses
+  end
+
   def test_mandatory
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [] }
+    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], statuses: statuses }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     assert ticket.valid?(:create)
@@ -18,7 +29,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_email_validation
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'email' => 'fggg,ss@fff.com',  ticket_fields: []  }
+    controller_params = { 'email' => 'fggg,ss@fff.com',  ticket_fields: [], statuses: statuses  }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?
@@ -30,7 +41,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_cc_emails_validation
     Account.stubs(:current).returns(Account.first)
-    controller_params = { ticket_fields: [], 'email' => 'fgggss@fff.com', 'cc_emails' => ['werewrwe@ddd.com, sdfsfdsf@ddd.com'] }
+    controller_params = { ticket_fields: [], 'email' => 'fgggss@fff.com', 'cc_emails' => ['werewrwe@ddd.com, sdfsfdsf@ddd.com'], statuses: statuses }
     item = nil,
            ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?
@@ -42,7 +53,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_tags_comma_invalid
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, ticket_fields: [], tags: ['comma,test'] }
+    controller_params = { 'requester_id' => 1, ticket_fields: [], tags: ['comma,test'], statuses: statuses }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -54,7 +65,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_tags_comma_valid
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], tags: ['comma', 'test'] }
+    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], tags: ['comma', 'test'], statuses: statuses }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     assert ticket.valid?(:create)
@@ -65,7 +76,7 @@ class TicketValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     String.any_instance.stubs(:size).returns(20_000_000)
     TicketsValidationHelper.stubs(:attachment_size).returns(100)
-    controller_params = { requester_id: 1, description: Faker::Lorem.paragraph, ticket_fields: [], attachments: ['file.png'] }
+    controller_params = { requester_id: 1, description: Faker::Lorem.paragraph, ticket_fields: [], attachments: ['file.png'], statuses: statuses }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -79,7 +90,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_tags_multiple_errors
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], tags: 'comma,test' }
+    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], tags: 'comma,test', statuses: statuses }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -92,7 +103,7 @@ class TicketValidationTest < ActionView::TestCase
   def test_custom_fields_multiple_errors
     Account.stubs(:current).returns(Account.first)
     TicketsValidationHelper.stubs(:data_type_validatable_custom_fields).returns(CustomFieldValidatorTestHelper.data_type_validatable_custom_fields)
-    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], custom_fields: 'number1_1 = uioo' }
+    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], custom_fields: 'number1_1 = uioo', statuses: statuses }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -105,7 +116,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_fr_due_by_nil_and_due_by_nil_when_status_is_open
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], status_ids: [2, 3, 4, 5, 6], status: 2, due_by: nil, fr_due_by: nil }
+    controller_params = { 'requester_id' => 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], statuses: statuses, status: 2, due_by: nil, fr_due_by: nil }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     assert ticket.valid?(:create)
@@ -114,7 +125,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_fr_due_by_not_nil_and_due_by_not_nil_when_status_is_closed
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], status_ids: [2, 3, 4, 5, 6], status: 5, due_by: '', fr_due_by: '' }.with_indifferent_access
+    controller_params = { 'requester_id' => 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], statuses: statuses, status: 5, due_by: '', fr_due_by: '' }.with_indifferent_access
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -128,7 +139,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_status_priority_source_invalid
     Account.stubs(:current).returns(Account.first)
-    controller_params = { status: true, priority: true, source: '3', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
+    controller_params = { status: true, priority: true, source: '3', statuses: statuses, ticket_fields: [] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -137,7 +148,7 @@ class TicketValidationTest < ActionView::TestCase
     assert errors.include?('Priority not_included')
     assert errors.include?('Source not_included')
 
-    controller_params = { status: '2', priority: '2', source: '', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
+    controller_params = { status: '2', priority: '2', source: '', statuses: statuses, ticket_fields: [] }
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
@@ -150,7 +161,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_complex_fields_with_nil
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], cc_emails: nil, tags: nil, custom_fields: nil, attachments: nil }
+    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph, statuses: statuses,  ticket_fields: [], cc_emails: nil, tags: nil, custom_fields: nil, attachments: nil }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -171,21 +182,21 @@ class TicketValidationTest < ActionView::TestCase
     desc_field.stubs(:required).returns(true)
     desc_field.stubs(:default).returns(true)
     desc_field.stubs(:name).returns('description')
-    controller_params = { 'requester_id' => 1, ticket_fields: [desc_field] }
+    controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], statuses: statuses }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
     assert ticket.errors.full_messages.include?('Description datatype_mismatch')
     assert_equal({ description: {  expected_data_type: String, code: :missing_field }, requester_id: {} }, ticket.error_options)
 
-    controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], description: '' }
+    controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], description: '', statuses: statuses }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
     assert ticket.errors.full_messages.include?('Description blank')
     assert_equal({ requester_id: {}, description: { expected_data_type: String } }, ticket.error_options)
 
-    controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], status_ids: [1, 2] }
+    controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], statuses: statuses }
     item = Helpdesk::Ticket.new
     item.ticket_body.description = ''
     item.ticket_body.description_html = 'test'
@@ -193,7 +204,7 @@ class TicketValidationTest < ActionView::TestCase
     refute ticket.valid?(:update)
     refute ticket.errors.full_messages.include?('Description blank')
 
-    controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], description: true }
+    controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], description: true, statuses: statuses }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -206,7 +217,7 @@ class TicketValidationTest < ActionView::TestCase
   def test_outbound_ticket_update
     Account.stubs(:current).returns(Account.first)
     Account.any_instance.stubs(:compose_email_enabled?).returns(true)
-    controller_params = {  'subject' => Faker::Lorem.paragraph, 'description' => Faker::Lorem.paragraph,  ticket_fields: [], status_ids: [2, 3, 4, 5, 6] }
+    controller_params = {  'subject' => Faker::Lorem.paragraph, 'description' => Faker::Lorem.paragraph,  ticket_fields: [], statuses: statuses }
     item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:update)

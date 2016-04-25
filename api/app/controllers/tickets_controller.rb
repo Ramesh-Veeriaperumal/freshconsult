@@ -247,7 +247,7 @@ class TicketsController < ApiApplicationController
       field = "ApiTicketConstants::#{original_action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       set_default_values
-      params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
+      params_hash = params[cname].merge(statuses: @statuses, ticket_fields: @ticket_fields)
       ticket = TicketValidation.new(params_hash, @item, string_request_params?)
       render_custom_errors(ticket, true) unless ticket.valid?(original_action_name.to_sym)
     end
@@ -278,7 +278,10 @@ class TicketsController < ApiApplicationController
         item_value = @item.send(scope_attribute)
         if item_value != value
           Rails.logger.debug "Ticket display_id: #{@item.display_id} with #{scope_attribute} is #{item_value}"
-          head(404)
+          # Render 405 in case of update/delete as it acts on ticket endpoint itself 
+          # And User will be able to GET the same ticket via Show
+          # other URLs such as tickets/id/restore will result in 404 as it is a separate endpoint
+          update? || destroy? ? render_405_error(['GET']) : head(404)
           return false
         end
       end
