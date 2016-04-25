@@ -1,8 +1,7 @@
 module Mobile::Actions::TimeSheet
-	
 
 	JSON_OPTIONS = {
-		:only => [:executed_at, :time_spent, :billable, :note, :id, :user_id, :created_at, :timer_running],
+		:only => [:executed_at, :time_spent, :billable, :note, :id, :user_id],
 		:methods => [:agent_name]
 	}
 	
