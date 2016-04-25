@@ -647,7 +647,7 @@
       }
       .votes-stats {
         display: inline-block;
-        border-left: 1px solid #ccc;
+        @include border-left(1px solid #ccc);
         @include margin-left(7px);
         @include padding-left(15px);
 
@@ -659,9 +659,9 @@
           text-align: center;
           min-width: 45px;
           color: #333;
-          .ficon-like{padding-right: 4px;} 
+          .ficon-like{@include padding-right(4px);} 
           .ficon-dislike{
-            padding-right: 4px;
+            @include padding-right(4px);
             position: relative;
             top: 2px;
           }
