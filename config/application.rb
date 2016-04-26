@@ -134,7 +134,7 @@ module Helpkit
     config.autoload_paths += Dir["#{config.root}/lib/"]
     config.autoload_paths += Dir["#{config.root}/api/**/*"]
     # config.autoload_paths += %W(#{config.root}/api/app/validators/)
-    # config.eager_load_paths += Dir["#{config.root}/lib/"]
+    config.eager_load_paths += Dir["#{config.root}/lib/"]
 
 
     # TODO-RAILS3 need to cross check

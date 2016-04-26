@@ -25,7 +25,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = [test.errors.to_h.sort, test.error_options.to_h.sort]
     assert_equal([{ hash: :datatype_mismatch, array: :datatype_mismatch }.sort, { hash: {  expected_data_type: 'key/value pair',
-                                                                                           given_data_type: 'Null' , prepend_msg: :input_received }, array: {  expected_data_type: Array, given_data_type: 'Null' , prepend_msg: :input_received }, multi_error: {}, required_param: {} }.sort], errors)
+                                                                                           given_data_type: 'Null', prepend_msg: :input_received }, array: {  expected_data_type: Array, given_data_type: 'Null', prepend_msg: :input_received }, multi_error: {}, required_param: {} }.sort], errors)
   end
 
   def test_valid_values
@@ -61,7 +61,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     test.allow_string_boolean = 'false'
     refute test.valid?
     assert_equal({ allow_unset_param: :datatype_mismatch }, test.errors.to_h)
-    assert_equal({ allow_unset_param: {  expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null' ,
+    assert_equal({ allow_unset_param: {  expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null',
                                          prepend_msg: :input_received }, boolean: {}, allow_string_boolean: {}, multi_error: {}, required_param: {} },  test.error_options.to_h)
   end
 
@@ -100,7 +100,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
     assert_equal({ set_boolean: :datatype_mismatch }.sort, errors)
-    assert_equal({ set_boolean:  {  expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null' ,
+    assert_equal({ set_boolean:  {  expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null',
                                     prepend_msg: :input_received }, boolean: {}, array: {}, hash: {}, multi_error: {}, required_param: {} }.sort, error_options)
   end
 end

@@ -33,16 +33,6 @@ class SAAS::SubscriptionActions
       disable_chat_routing(account) unless account.features?(:chat_routing)
     end
 
-    def drop_dynamic_sections_data(account)
-      account.ticket_fields.each do |field|
-        if field.section_field?
-          field.field_options["section"] = false
-          field.save
-        end
-      end
-      account.sections.destroy_all
-    end
-
     def remove_chat_feature(account)
       account.remove_feature(:chat) if !account.subscription.is_chat_plan? && account.features?(:chat)
     end

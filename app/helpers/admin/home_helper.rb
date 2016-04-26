@@ -289,7 +289,7 @@
           :open_keywords          =>      [:list_all_integrations]
       },
       :apps                       =>      {
-          :open_keywords          =>      [:integrations, :list_all_apps, :plugs, :freshplugs]
+          :open_keywords          =>      [:integrations, :list_all_apps, :custom_apps, :plugs, :freshplugs]
       },
       :account                    =>      {
           :open_keywords          =>      [:invoice_emails, :export_data],

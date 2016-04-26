@@ -93,16 +93,15 @@ class Integrations::Application < ActiveRecord::Base
     installed_application.account = account
     installed_application[:configs] = {}
     installed_application.save!
+    custom_app
   end
 
   def self.example_app()
     example_app = Integrations::Application.new
     example_app.name = "custom_application"  
-    example_app.display_name = "Sample CRM Plug"
-    example_app.description = "This is a sample Plug. You can use the script here to understand how Plugs work."
-    script = %{
-
-<div id="sample_highrise_widget" title="Sample CRM Plug">
+    example_app.display_name = "Sample CRM custom app"
+    example_app.description = "This is a sample custom app. You can use the script here to understand how custom apps work."
+    script = %{<div id="sample_highrise_widget" title="Sample CRM custom app">
   <div class="content"></div>
   <div class="error"></div>
 </div>

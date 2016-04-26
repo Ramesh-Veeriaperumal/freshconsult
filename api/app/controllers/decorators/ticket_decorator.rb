@@ -30,7 +30,7 @@ class TicketDecorator < ApiDecorator
       }
     end
   end
-  
+
   class << self
     def display_name(name)
       name[0..(-Account.current.id.to_s.length - 2)]

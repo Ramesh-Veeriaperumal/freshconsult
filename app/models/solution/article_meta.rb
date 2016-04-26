@@ -38,6 +38,18 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	acts_as_list :scope => :solution_folder_meta
 
+	has_one :current_article_body, :class_name => "Solution::ArticleBody", :foreign_key => :article_id, :primary_key => :current_child_id
+
+	has_many :tag_uses,
+		:class_name => 'Helpdesk::TagUse',
+		:foreign_key => :taggable_id, 
+		:primary_key => :current_child_id,
+		:conditions => { :taggable_type => "Solution::Article" }
+
+	has_many :tags, 
+		:class_name => 'Helpdesk::Tag',
+		:through => :tag_uses
+
 	COMMON_ATTRIBUTES = ["art_type", "position", "created_at"]
 
 	HITS_CACHE_THRESHOLD = 100
@@ -126,10 +138,6 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	
 	def to_liquid
 		@solution_article_drop ||= (Solution::ArticleDrop.new self)
-	end
-	
-	def current_article_body
-		@current_article_body ||= Account.current.solution_article_bodies.find_by_article_id(current_child_id)
 	end
 	
 	def to_param

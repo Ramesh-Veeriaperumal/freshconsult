@@ -7,8 +7,12 @@ module Archive
         @account = Account.current
         @ticket = @account.tickets.find(args["ticket_id"])
         archive_ticket = @account.archive_tickets.find_by_ticket_id_and_progress(args["ticket_id"],true)
-        unless archive_ticket
-          archive_ticket = Archive::Core::Base.new.create_archive_ticket(@ticket)
+        archvie_core_base = Archive::Core::Base.new
+        if !archive_ticket
+          archive_ticket = archvie_core_base.create_archive_ticket(@ticket)
+          archvie_core_base.create_archive_ticket_body(archive_ticket,@ticket)
+        else
+          archvie_core_base.create_archive_ticket_body(archive_ticket,@ticket)
         end
         Archive::ModifyTicketAssociation.perform_async({
                     :account_id => @account.id, 

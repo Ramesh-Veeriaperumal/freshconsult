@@ -63,7 +63,7 @@ include GoogleLoginHelper
   end
 
   def sso_login
-    if params[:hash] == gen_hash_from_params_hash
+    if sso_hash_validated?
       @current_user = current_account.user_emails.user_for_email(params[:email])  
       
       if @current_user && @current_user.deleted?
@@ -409,13 +409,36 @@ include GoogleLoginHelper
       end
     end
 
-    def gen_hash_from_params_hash
-      if params[:timestamp].blank?
-        Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
+    def sso_hash_validated?
+      if current_account.launched?(:disable_old_sso)
+        params[:hash] == new_sso_hash
       else
-        digest  = OpenSSL::Digest.new('MD5')
-        OpenSSL::HMAC.hexdigest(digest,current_account.shared_secret,params[:name]+params[:email]+params[:timestamp])
+        (params[:hash] == old_sso_hash) ? true : (params[:hash] == new_sso_hash)
       end
+    end
+
+    def new_sso_hash
+      key = "#{params[:name]}#{current_account.shared_secret}#{params[:email]}#{params[:timestamp]}"
+      params[:timestamp].blank? ? md5_digest_hash(key) : hmac_digest_hash(key)
+    end
+
+    def old_sso_hash
+      Rails.logger.info  "::::: Account using old sso ::::::"
+      if params[:timestamp].blank?
+        Rails.logger.info  "::::: Using old sso hash without timestamp ::::::"
+        md5_digest_hash(params[:name]+params[:email]+current_account.shared_secret)
+      else
+        hmac_digest_hash(params[:name]+params[:email]+params[:timestamp])
+      end
+    end
+
+    def md5_digest_hash(key)
+      Digest::MD5.hexdigest(key)
+    end
+
+    def hmac_digest_hash(key)
+      digest  = OpenSSL::Digest.new('MD5')
+      OpenSSL::HMAC.hexdigest(digest,current_account.shared_secret,key)
     end
 
     def get_time_in_utc

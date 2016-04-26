@@ -28,7 +28,9 @@ Sidekiq.configure_client do |config|
       "PodDnsUpdate",
       "Gamification::ProcessTicketQuests",
       "AccountCleanup::DeleteSpamTicketsCleanup",
-      "AccountCleanup::SuspendedAccountsWorker"
+      "AccountCleanup::SuspendedAccountsWorker",
+      "Social::Gnip::ReplayWorker",
+      "Social::Gnip::RuleWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -37,7 +39,11 @@ Sidekiq.configure_client do |config|
       "Tickets::ClearTickets::EmptySpam",
       "Tickets::ClearTickets::EmptyTrash",
       "MergeTickets",
-      "Export::ContactWorker"
+      "Export::ContactWorker",
+      "Tickets::Export::TicketsExport",
+      "Tickets::Export::LongRunningTicketsExport",
+      "Tickets::Export::PremiumTicketsExport"
+
     ]
   end
 end
@@ -70,7 +76,9 @@ Sidekiq.configure_server do |config|
       "PodDnsUpdate",
       "Gamification::ProcessTicketQuests",
       "AccountCleanup::DeleteSpamTicketsCleanup",
-      "AccountCleanup::SuspendedAccountsWorker"
+      "AccountCleanup::SuspendedAccountsWorker",
+      "Social::Gnip::ReplayWorker",
+      "Social::Gnip::RuleWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -79,7 +87,10 @@ Sidekiq.configure_server do |config|
       "Tickets::ClearTickets::EmptySpam",
       "Tickets::ClearTickets::EmptyTrash",
       "MergeTickets",
-      "Export::ContactWorker"
+      "Export::ContactWorker",
+      "Tickets::Export::TicketsExport",
+      "Tickets::Export::LongRunningTicketsExport",
+      "Tickets::Export::PremiumTicketsExport"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -103,7 +114,9 @@ Sidekiq.configure_server do |config|
       "DevNotificationWorker",
       "Gamification::ProcessTicketQuests",
       "AccountCleanup::DeleteSpamTicketsCleanup",
-      "AccountCleanup::SuspendedAccountsWorker"
+      "AccountCleanup::SuspendedAccountsWorker",
+      "Social::Gnip::ReplayWorker",
+      "Social::Gnip::RuleWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -112,7 +125,10 @@ Sidekiq.configure_server do |config|
       "Tickets::ClearTickets::EmptySpam",
       "Tickets::ClearTickets::EmptyTrash",
       "MergeTickets",
-      "Export::ContactWorker"
+      "Export::ContactWorker",
+      "Tickets::Export::TicketsExport",
+      "Tickets::Export::LongRunningTicketsExport",
+      "Tickets::Export::PremiumTicketsExport"
     ]
   end
 end

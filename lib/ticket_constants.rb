@@ -64,6 +64,10 @@ module TicketConstants
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
     :requester_id, "helpdesk_schema_less_tickets.product_id" ]
   
+  ARCHIVE_DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
+    :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
+    :requester_id, :product_id ]
+  
   DEFAULT_COLUMNS =  [
     [ :status,              'status',           :dropdown],
     [ :responder_id,        'responder_id',     :dropdown],
@@ -79,10 +83,30 @@ module TicketConstants
     [ :requester_id,        'requester',        :requester],
     [ "helpdesk_schema_less_tickets.product_id",'products', :dropdown]
   ]
+  ARCHIVE_DEFAULT_COLUMNS =  [
+    [ :status,              'status',           :dropdown],
+    [ :responder_id,        'responder_id',     :dropdown],
+    [ :ticket_type,         'ticket_type',      :dropdown],
+    [ :group_id,            'group_id',         :dropdown],
+    [ :source,              'source',           :dropdown],
+    [ :priority,            'priority',         :dropdown],
+    [ :due_by,              'due_by',           :due_by],
+    [ "helpdesk_tags.name", "tags",             :dropdown],
+    [ "users.customer_id",  "customers",        :customer],
+    [ :owner_id,            "customers",        :customer],
+    [ :created_at,          "created_at",       :created_at],
+    [ :requester_id,        'requester',        :requester],
+    [ :product_id,          'products',       :dropdown]
+  ]
+  
   
   DEFAULT_COLUMNS_OPTIONS = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
   DEFAULT_COLUMNS_BY_KEY = Hash[*DEFAULT_COLUMNS.map { |i| [i[2], i[1]] }.flatten]
   DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
+
+  ARCHIVE_DEFAULT_COLUMNS_OPTIONS = Hash[*ARCHIVE_DEFAULT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
+  ARCHIVE_DEFAULT_COLUMNS_BY_KEY = Hash[*ARCHIVE_DEFAULT_COLUMNS.map { |i| [i[2], i[1]] }.flatten]
+  ARCHIVE_DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*ARCHIVE_DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
   
   DUE_BY_TYPES = [
     [ :all_due,         'all_due',               1 ], # If modified, _auto_refresh.html.erb has to be modified.

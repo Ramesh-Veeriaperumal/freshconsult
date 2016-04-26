@@ -3,7 +3,8 @@ class BadRequestError < BaseError
 
   MODEL_ERROR_MAP = {
     :"can't be blank" => :absent_in_db,
-    :'should be a valid email address' => :absent_in_db
+    :'should be a valid email address' => :absent_in_db,
+    :inaccessible_value => :inaccessible_value
   }
 
   ATTRIBUTE_RESOURCE_MAP = {
