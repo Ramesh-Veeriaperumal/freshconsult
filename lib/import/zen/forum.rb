@@ -178,7 +178,7 @@ def save_solution_article topic_prop
                                                                                                 :description => convert_inline_images(topic_prop.body),
                                                                                                 :status =>Solution::Article::STATUS_KEYS_BY_TOKEN[:published], 
                                                                                                 :art_type => Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent],
-                                                                                                :solution_folder_meta_id => sol_folder.solution_folder_meta_id
+                                                                                                :solution_folder_meta_id => sol_folder.parent_id
                                                                                                 })
     article_meta = Solution::Builder.article({ :solution_article_meta => article_hash })
     article = article_meta.primary_article
