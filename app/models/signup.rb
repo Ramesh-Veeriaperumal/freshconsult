@@ -64,7 +64,7 @@ class Signup < ActivePresenter::Base
       user.agent.account = account
       user.build_primary_email({:email => user.email, :primary_role => true, :verified => user.active}) #user_email key sets after creation of account
       user.primary_email.account = account
-      user.language = account.language
+      user.language = account.main_portal.language
     end
     
     def build_subscription
