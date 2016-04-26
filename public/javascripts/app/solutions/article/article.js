@@ -40,6 +40,7 @@ window.App = window.App || {};
     },
 
     eventsForNewPage: function () {
+      this.handleEdit();
       this.bindPropertiesToggle();
       this.formatSeoMeta();
       this.setTagSelector();

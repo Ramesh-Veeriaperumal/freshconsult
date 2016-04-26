@@ -10,6 +10,7 @@ window.App = window.App || {};
     handleEdit: function () {
       if (window.location.hash === "#edit") {
         $(".article-edit-btn").trigger('click');
+        $('.breadcrumb').addClass('breadcrumb-edit');
       }
     },
     

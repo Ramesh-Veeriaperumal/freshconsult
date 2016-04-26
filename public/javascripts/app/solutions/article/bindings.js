@@ -236,10 +236,14 @@ window.App = window.App || {};
 
     versionSelection: function () {
       $('body').on('change.articles', '#version_selection', function () {
-        var el = $('#version_selection option[value=' + this.value + ']');
-        var lang = this.value;
+        var el = $('#version_selection option[value=' + this.value + ']'),
+					lang = this.value,
+          path = "/solution/articles/" + $(this).data('articleId') + "/" + lang;
         $('#version_selection').select2('val', '');
-        window.pjaxify("/solution/articles/" + $(this).data('articleId') + "/" + lang);
+        if (el.data('state').indexOf('unavailable') !== -1) {
+          path += "#edit";
+        }
+        window.pjaxify(path);
       });
     },
 
