@@ -1,4 +1,4 @@
 <div class ="alert-message block-message announcement" id = "site-announcements">
- 	<p><%= announcement.message %></p>
+ 	<p><%= announcement.message.to_s.html_safe %></p>
 	<%= link_to "Hide this message", "/javascripts/hide_announcement.js" , :class => "btn", :remote => true %>
 </div>
