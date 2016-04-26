@@ -130,7 +130,7 @@ class Integrations::SlackV2Controller < Admin::AdminController
     end
 
     def get_oauth_token(delete=false)
-      key_options = { :account_id => current_account.id, :provider => "slack"}
+      key_options = { :account_id => current_account.id, :provider => "#{APP_NAME}"}
       kv_store = Redis::KeyValueStore.new(Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options))
       kv_store.group = :integration
       app_config = JSON.parse(kv_store.get_key)

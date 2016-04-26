@@ -26,6 +26,8 @@
       }
       CustomWidget.include_js("/javascripts/integrations/boxChooser.js");
     </script>
+  <% else %>
+    <b> <%= t('integrations.box.login_required', :helpdesk_name => current_account.helpdesk_name) %> </b>
   <% end %>
 
   <div id="box-confirm-modal" class="hide">

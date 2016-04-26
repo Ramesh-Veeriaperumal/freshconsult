@@ -19,6 +19,9 @@ class Account < ActiveRecord::Base
   after_commit :delete_reports_archived_data, on: :destroy
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
+  
+  after_commit :enable_searchv2, on: :create
+  after_commit :disable_searchv2, on: :destroy
 
 
   # Callbacks will be executed in the order in which they have been included. 
@@ -56,6 +59,8 @@ class Account < ActiveRecord::Base
   def populate_features
     add_features_of subscription.subscription_plan.name.downcase.to_sym
     SELECTABLE_FEATURES.each { |key,value| features.send(key).create  if value}
+    TEMPORARY_FEATURES.each { |key,value| features.send(key).create  if value}
+    ADMIN_CUSTOMER_PORTAL_FEATURES.each { |key,value| features.send(key).create  if value}
     add_member_to_redis_set(SLAVE_QUERIES, self.id)
     self.launch(:disable_old_sso)
   end
@@ -78,7 +83,7 @@ class Account < ActiveRecord::Base
   private
 
     def add_to_billing
-      Resque.enqueue(Billing::AddToBilling, { :account_id => id })
+      Billing::AddSubscriptionToChargebee.perform_async
     end
 
     def create_shard_mapping
@@ -89,7 +94,7 @@ class Account < ActiveRecord::Base
         shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard,:status => ShardMapping::STATUS_CODE[:not_found],
                                                :pod_info => PodConfig['CURRENT_POD']})
         shard_mapping.domains.build({:domain => full_domain})  
-        populate_google_domain(shard_mapping) if google_account?
+        populate_google_domain(shard_mapping) if google_account? #remove this when the new google marketplace is stable.
         shard_mapping.save!                            
         self.id = shard_mapping.id
       end
@@ -107,6 +112,8 @@ class Account < ActiveRecord::Base
       end
     end
 
+    #Remove this when the new marketplace signup is stable and working.
+    # Also knock of that google account column from accounts table.
     def populate_google_domain(shard_mapping)
       shard_mapping.build_google_domain({:domain => google_domain})
     end
@@ -219,5 +226,13 @@ class Account < ActiveRecord::Base
         Redis::RoutesRedis.delete_route_info(full_domain_was)
         Redis::RoutesRedis.set_route_info(full_domain, id, full_domain)
       end
+    end
+    
+    def enable_searchv2
+      SearchV2::Manager::EnableSearch.perform_async if self.features?(:es_v2_writes)
+    end
+    
+    def disable_searchv2
+      SearchV2::Manager::DisableSearch.perform_async(account_id: self.id)
     end
 end

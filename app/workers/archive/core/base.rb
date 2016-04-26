@@ -190,7 +190,12 @@ module Archive
         note_ids = ActiveRecord::Base.connection.select_values("select * from helpdesk_notes where notable_id=#{ticket_id} and notable_type='Helpdesk::Ticket' and account_id=#{account_id}")
         # delete dependent notes
         delete_notes_association(note_ids,account_id)
-        ActiveRecord::Base.connection.execute("delete from helpdesk_notes where id=#{ticket_id} and account_id=#{account_id}")
+        ActiveRecord::Base.connection.execute("delete from helpdesk_notes where id in (#{note_ids.join(',')}) and account_id=#{account_id}")
+
+        # Removing from ES
+        SearchV2::IndexOperations::PostArchiveProcess.perform_async({ 
+          account_id: account_id, ticket_id: ticket_id, note_ids: note_ids 
+        })
       end
 
       def delete_tickets_association(ticket_id,account_id)

@@ -134,6 +134,8 @@ module Features
     end
 
     def clear_features_from_cache
+      Account.current.try(:reset_feature_from_cache_variable)
+      
       key = ::MemcacheKeys::FEATURES_LIST % { :account_id => self.account_id }
       ::MemcacheKeys.delete_from_cache key
     end

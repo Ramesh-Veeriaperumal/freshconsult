@@ -9,13 +9,14 @@
 class Search::Filters::Docs
   include Search::Filters::QueryHelper
 
-  attr_accessor :params, :negative_params
+  attr_accessor :params, :negative_params, :with_permissible
 
   ES_PAGINATION_SIZE = 30
 
-  def initialize(values=[], negative_values=[])
+  def initialize(values=[], negative_values=[], with_permissible = true)
     @params           = (values.presence || [])
     @negative_params  = (negative_values.presence || [])
+    @with_permissible = with_permissible
   end
 
   # Doing this as there will be only one cluster
@@ -95,7 +96,7 @@ class Search::Filters::Docs
 
     # Make request to ES to get the DOCS
     def es_request(model_class, end_point, options={})
-      deserialized_params = es_query(params, negative_params).merge(options)
+      deserialized_params = es_query(params, negative_params, with_permissible).merge(options)
       error_handle do
         request = RestClient::Request.new(method: :get,
                                            url: [host, alias_name, end_point].join('/'),

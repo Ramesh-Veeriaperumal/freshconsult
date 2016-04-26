@@ -4,7 +4,6 @@ require 'cgi'
 require 'json'
 
 class AuthorizationsController < ApplicationController
-  include Integrations::GoogleContactsUtil
   include Integrations::OauthHelper
   include Integrations::Constants
   include HTTParty
@@ -52,18 +51,17 @@ class AuthorizationsController < ApplicationController
     
     if /^\d+$/.match(origin)        # Fallback         
       origin = origin.to_i if origin_required?
-      @app_name = Integrations::Constants::APP_NAMES[@provider.to_sym] unless @provider.blank?
+      @app_name = Integrations::Constants::PROVIDER_TO_APPNAME_MAP["#{@provider}"] unless @provider.blank?
       portal = Portal.find(origin.to_i)
       @account_id = portal.account_id if portal
     else
       origin = CGI.parse(origin)
       @app_name = origin['app_name'][0].to_s if origin.has_key?('app_name')
-      @app_name ||= Integrations::Constants::APP_NAMES[@provider.to_sym] unless @provider.blank?
+      @app_name ||= Integrations::Constants::PROVIDER_TO_APPNAME_MAP["#{@provider}"] unless @provider.blank?
       @origin_user_id = origin.has_key?('user_id') ? origin['user_id'][0].to_i : params[:user_id]
       if origin.has_key?('id') 
         @account_id = origin['id'][0].to_i
         @portal_id = origin['portal_id'][0].to_i if origin.has_key?('portal_id') 
-        @iapp_id = origin['iapp_id'][0].to_i if origin.has_key?('iapp_id')
       elsif origin.has_key?('pid') # Fallback
         origin = origin['pid'][0].to_i
         portal = Portal.find(origin.to_i)
@@ -115,11 +113,6 @@ class AuthorizationsController < ApplicationController
     case provider
       when APP_NAMES[:box]
         config_params['email'] = @omniauth.extra.raw_info.login
-      when APP_NAMES[:google_contacts]
-        config_params['info'] = {"email" => @omniauth['info']['email'], "first_name" => @omniauth['info']['first_name'],
-                                  "last_name" => @omniauth['info']['last_name'], "name" => @omniauth['info']['name']}
-        config_params['origin'] = @omniauth_origin
-        config_params['iapp_id'] = @iapp_id        
     end
 
     set_oauth_redirect_url(config_params)
@@ -296,7 +289,7 @@ class AuthorizationsController < ApplicationController
     end
 
   OAUTH1_PROVIDERS = ["quickbooks"]
-  OAUTH2_PROVIDERS = ["nimble", "google_oauth2", "surveymonkey", "box", "google_contacts"]
+  OAUTH2_PROVIDERS = ["nimble", "surveymonkey", "box"]
   EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
   OAUTH2_OMNIAUTH_CRENDENTIALS = ["surveymonkey"]
 end

@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "6544e7aa49994eee4af9f9533e92fce4c905ea3c16f5c2a78d7b14315aa16ff4",
-    "current": "6544e7aa49994eee4af9f9533e92fce4c905ea3c16f5c2a78d7b14315aa16ff4"
+    "previous": "f4c87aab366a1f4a1e3e245ab4e6aceb1584e5696913e6f35afa9737016130b7",
+    "current": "f4c87aab366a1f4a1e3e245ab4e6aceb1584e5696913e6f35afa9737016130b7"
   },
   "fonts": [
-    "public/assets/glyphs_6544e7aa49994eee4af9f9533e92fce4.ttf",
-    "public/assets/glyphs_6544e7aa49994eee4af9f9533e92fce4.svg",
-    "public/assets/glyphs_6544e7aa49994eee4af9f9533e92fce4.woff",
-    "public/assets/glyphs_6544e7aa49994eee4af9f9533e92fce4.eot"
+    "public/assets/glyphs_f4c87aab366a1f4a1e3e245ab4e6aceb.ttf",
+    "public/assets/glyphs_f4c87aab366a1f4a1e3e245ab4e6aceb.svg",
+    "public/assets/glyphs_f4c87aab366a1f4a1e3e245ab4e6aceb.woff",
+    "public/assets/glyphs_f4c87aab366a1f4a1e3e245ab4e6aceb.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -271,11 +271,11 @@
       "source": "public/glyphs/vectors/cube.svg"
     },
     "cube-filled": {
-      "codepoint": 61975,
+      "codepoint": 61976,
       "source": "public/glyphs/vectors/cube-filled.svg"
     },
     "cubes": {
-      "codepoint": 61976,
+      "codepoint": 61977,
       "source": "public/glyphs/vectors/cubes.svg"
     },
     "customer-fields": {
@@ -1014,6 +1014,10 @@
       "codepoint": 61848,
       "source": "public/glyphs/vectors/text.svg"
     },
+    "tick": {
+      "codepoint": 61975,
+      "source": "public/glyphs/vectors/tick.svg"
+    },
     "ticket": {
       "codepoint": 61849,
       "source": "public/glyphs/vectors/ticket.svg"
@@ -1130,7 +1134,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",

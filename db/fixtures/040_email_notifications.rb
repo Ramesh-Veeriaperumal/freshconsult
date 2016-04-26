@@ -51,7 +51,7 @@ EmailNotification.seed_many(:account_id, :notification_type, [
     :account_id => account.id, 
     :requester_notification => false, 
     :agent_notification => true,
-    :agent_template => '<p>Hi {{agent.name}},<br /><br />A new ticket in group {{ticket.group.name}} is currently unassigned for more than {{ticket.group.assign_time_mins}} minutes.<br /><br />Ticket Details: <br /><br />Subject - {{ticket.subject}}<br /><br />Description  - {{ticket.description}}<br /><br />This is an escalation email for the {{ticket.group.name}} group in {{helpdesk_name}}<br />{{ticket.url}}</p>',
+    :agent_template => '<p>Hi {{agent.name}},<br /><br />This is an escalation email for the {{ticket.group.name}} group in {{helpdesk_name}}. <br /> <br />A new ticket in {{ticket.group.name}} group is currently unassigned for more than {{ticket.group.assign_time_mins}} minutes.<br /><br />Ticket Details: <br /><br />Subject - {{ticket.subject}}<br /><br />Ticket URL - {{ticket.url}}<br /><br /></p>',
     :agent_subject_template => "Unattended ticket - {{ticket.subject}}"
   },
   { :notification_type => EmailNotification::TICKET_ASSIGNED_TO_AGENT, 

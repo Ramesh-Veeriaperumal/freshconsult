@@ -19,11 +19,11 @@ class Va::Handlers::Numeric < Va::RuleHandler
     end
 
     def greater_than(evaluate_on_value)
-      evaluate_on_value > numeric_value
+      evaluate_on_value.present? and evaluate_on_value > numeric_value
     end
 
     def less_than(evaluate_on_value)
-      evaluate_on_value < numeric_value
+      evaluate_on_value.present? and evaluate_on_value < numeric_value
     end
 
     def in(evaluate_on_value)

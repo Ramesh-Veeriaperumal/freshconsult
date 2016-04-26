@@ -9,7 +9,6 @@ describe ContactMergeController do
   before(:all) do
     @key_state = mue_key_state(@account)
     enable_mue_key(@account)
-    @account.features.contact_merge_ui.create
     @account.reload
     @account.make_current
     custom_field_params.each do |field|
@@ -27,7 +26,6 @@ describe ContactMergeController do
 
   after(:all) do
     destroy_custom_fields
-    @account.features.contact_merge_ui.destroy
     disable_mue_key(@account) unless @key_state
   end
 

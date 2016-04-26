@@ -1,10 +1,6 @@
 module IntegrationServices::Services
   class MagentoService < IntegrationServices::Service
 
-    def self.title
-      'Magento'
-    end
-
     def receive_customer_orders
       orders = {}
       @payload[:position] = @payload[:position].to_i

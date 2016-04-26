@@ -1,0 +1,12 @@
+aws:
+  access_key_id: dummy
+  secret_access_key: dummy
+  region: us-east-1
+  sqs_endpoint: http://localhost:4568
+:verbose: true
+:concurrency: 5
+:logfile: ./log/shoryuken.log
+:timeout: 30
+:queues:
+  - <%= SQS[:search_etl_queue] %>
+  - <%= ES_V2_QUEUE_KEY % { cluster: 'cluster1' } %>
