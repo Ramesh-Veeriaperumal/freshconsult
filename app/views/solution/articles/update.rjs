@@ -4,7 +4,7 @@ if params[:solution_article_meta][@language_scoper][:status] == draft_status.to_
 else
 	show_ajax_flash(page)
 	page << "jQuery('#article-prop-#{@article.id}').modal('hide');"
-	page << "jQuery('#solution_article_folder_id').select2(\"val\", \"#{@article_meta.solution_folder_meta_id}\");"
+	page << "jQuery('#solution_article_meta_solution_folder_meta_id').select2(\"val\", \"#{@article_meta.solution_folder_meta_id}\");"
 	page.replace_html "sidebar-prop", render(:partial => "sidebar_properties", :locals => {:@article => @article}).html_safe
 	page.replace_html "sol_breadcrumb", render(:inline => "#{solutions_breadcrumb(:article)}").html_safe
 end

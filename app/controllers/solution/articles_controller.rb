@@ -448,23 +448,22 @@ class Solution::ArticlesController < ApplicationController
 
     def set_user_and_status
       if params[:solution_article].present?
-        params[:solution_article][:status] ||= get_status
+        params[:solution_article][:status] ||= get_status if get_status
         params[:solution_article][:user_id] = current_user.id
       else
         params[:solution_article_meta][language_scoper.to_sym][:user_id] ||= current_user.id
-        params[:solution_article_meta][language_scoper.to_sym][:status] ||= get_status
+        set_status
       end
     end
 
     def set_status
-      params[:solution_article_meta][language_scoper.to_sym][:status] ||= get_status
+      return if params[:solution_article_meta][language_scoper.to_sym][:status].present?
+      get_status && params[:solution_article_meta][language_scoper.to_sym][:status] = get_status
     end
 
     def get_status
-      status = (params[nscname] || {})[:status]
-      status_keys = Solution::Article::STATUS_KEYS_BY_TOKEN
-      return status_keys[:draft] if save_as_draft? || (status.present? && status_keys[:draft] == status.to_i)
-      status_keys[:published]
+      save_as_draft? ? Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] : 
+        (publish? ? Solution::Article::STATUS_KEYS_BY_TOKEN[:published] : nil)
     end
 
     def set_article_folder

@@ -1,14 +1,17 @@
-<% if @article_meta.new_record? %>
+<% if @article_meta.new_record? || @article_meta.solution_folder_meta.is_default? %>
 	<%= new_article_tab %>
   <div class="version_select_parent"><div class="version_select_container">
 	<span class="tooltip" 
-        title="<%= t('solution.articles.add_primary_info', :primary_language => Language.for_current_account.name) %>" 
+        title="<%= @article_meta.new_record? ? t('solution.articles.add_primary_info', :primary_language => Language.for_current_account.name) : t('solution.articles.move_to_folder_msg')
+              %>" 
         data-placement="right" data-html="true">
 		<%= font_icon('unverified', :size => 14, :class => 'warning-icon') %>
     <%= t('solution.articles.translations') %>
 	</span>
   </div></div>
-  <div class="solution-header draft-notif"></div>
+  <% if @article_meta.new_record? %>
+    <div class="solution-header draft-notif"></div>
+  <% end %>
 <% else %>
 	<%= article_language_tabs %>
 

@@ -8,6 +8,7 @@ class ArticleObserver < ActiveRecord::Observer
 		set_un_html_content(article)
 		modify_date_and_author(article) if (article.article_body.changed? || article.title_changed?)
 		article.article_changes
+        set_default_status(article)
 		create_draft_for_article(article)
 		article.seo_data ||= {}
 	end
@@ -46,6 +47,10 @@ private
 			changed_attribs.each do |attrib, changes|
 				article_meta.increment(attrib, changes[1] - changes[0])
 			end
+    end
+
+    def set_default_status(article)
+      article.status ||= Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
     end
 
     def create_draft_for_article(article)

@@ -139,54 +139,80 @@ describe Solution::ArticlesController do
     response.should render_template("solution/articles/new")    
   end
 
-  it "should edit a solution article" do
-    name = "#{Faker::Name.name} #{(Time.now.to_f*1000).to_i.to_s}"
-    art_description_text = Faker::Lorem.sentence(3)
-    get :edit, :id => @test_article_meta.id
-    response.should  redirect_to("/solution/articles/#{@test_article_meta.primary_article.to_param}#edit")
-    name = Faker::Name.name
-    put :update, :id => @test_article_meta.id,  
-      :solution_article_meta => {
-        :id => @test_article_meta.id,
-        :art_type => 1,
-        :primary_article => {
-          :title => name,
-          :description => "#{Faker::Lorem.sentence(3)}",
-          :status => 2,
-          :tags => {:name => "coool man"}
-        }
-      }
-    @test_article_meta.reload
-    @account.solution_articles.find_by_title(name).should be_an_instance_of(Solution::Article)
-  end
+  describe "Update Action" do
 
-  it "should update a solution article and any changes made in the content should reflect in article_bodies table" do
-    art_description_text = Faker::Lorem.sentence(3)
-    art_description = "<p>#{art_description_text}</p>"
-    put :update, :id => @test_article_meta.id,
-      :solution_article_meta => {
-        :id => @test_article_meta.id,
-        :primary_article => {
-          :description => art_description
+    it "should edit a solution article" do
+      name = "#{Faker::Name.name} #{(Time.now.to_f*1000).to_i.to_s}"
+      art_description_text = Faker::Lorem.sentence(3)
+      get :edit, :id => @test_article_meta.id
+      response.should  redirect_to("/solution/articles/#{@test_article_meta.primary_article.to_param}#edit")
+      name = Faker::Name.name
+      put :update, :id => @test_article_meta.id,  
+        :solution_article_meta => {
+          :id => @test_article_meta.id,
+          :art_type => 1,
+          :primary_article => {
+            :title => name,
+            :description => "#{Faker::Lorem.sentence(3)}",
+            :status => 2,
+            :tags => {:name => "coool man"}
+          }
         }
-      }
-    @test_article_meta.reload                  
-    check_article_body_integrity(@test_article, art_description, art_description_text)
-  end
+      @test_article_meta.reload
+      @account.solution_articles.find_by_title(name).should be_an_instance_of(Solution::Article)
+    end
 
-  it "should add attachment to article" do 
-    Resque.inline = true
-    put :update, :id => @test_article_meta.id, 
-      :solution_article_meta => {
-        :id => @test_article_meta.id,
-        :primary_article => {
-          :attachments => [{"resource" => fixture_file_upload('files/image.gif', 'image/gif')}],
-          :tags => {:name => "sample"}
+    it "should add attachment to article" do 
+      Resque.inline = true
+      put :update, :id => @test_article_meta.id, 
+        :solution_article_meta => {
+          :id => @test_article_meta.id,
+          :primary_article => {
+            :attachments => [{"resource" => fixture_file_upload('files/image.gif', 'image/gif')}],
+            :tags => {:name => "sample"}
+          }
         }
-      }
-    Resque.inline = false
-    @test_article.reload
-    @test_article.attachments.size.should eql 1                  
+      Resque.inline = false
+      @test_article.reload
+      @test_article.attachments.size.should eql 1                  
+    end
+
+    it "should update a solution article and any changes made in the content should reflect in article_bodies table" do
+      art_description_text = Faker::Lorem.sentence(3)
+      art_description = "<p>#{art_description_text}</p>"
+      put :update, :id => @test_article_meta.id,
+        :solution_article_meta => {
+          :id => @test_article_meta.id,
+          :primary_article => {
+            :description => art_description
+          }
+        }
+      @test_article_meta.reload                  
+      check_article_body_integrity(@test_article, art_description, art_description_text)
+    end
+
+    it "should update properties of an article in default category/folder" do
+      default_folder_meta = Account.current.solution_folder_meta.where(:is_default => true).first
+      article_meta = create_article({:folder_id => default_folder_meta.id, :status => Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]})
+      meta_title = Faker::Lorem.sentence(3)
+      xhr :put, :update, :id => article_meta.id,
+        :solution_article_meta => {
+          :id => article_meta.id,
+          :solution_folder_meta_id => @test_folder_meta.id,
+          :primary_article => {
+            :seo_data => {
+              :meta_title => meta_title,
+              :meta_description => Faker::Lorem.sentence(10)
+            }
+          }
+        }
+      expect(response.status).to eql(200)
+      expect(flash[:notice]).to eql(I18n.t('solution.articles.prop_updated_msg'))
+      
+      article_meta.reload
+      expect(article_meta.solution_folder_meta_id).to eql(@test_folder_meta.id)
+      expect(article_meta.primary_article.seo_data[:meta_title]).to eql(meta_title)
+    end
   end
 
   it "should redirect to support article page if user is logged out" do     

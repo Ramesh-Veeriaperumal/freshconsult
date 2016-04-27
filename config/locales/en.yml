@@ -4227,6 +4227,7 @@ en:
         confirm_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
       add_translation: "Add Translation"
       add_primary_info: "You can't create other language translations <br />until you create the article in %{primary_language}"
+      move_to_folder_msg: "You can't create other language translations <br />until you select the folder and click 'Save/Publish'"
       translations: "Translations"
       show_all_analytics: "See analytics for all languages"
       not_in_portal: "This language is not visible on portal"
