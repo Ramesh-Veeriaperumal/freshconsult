@@ -1625,4 +1625,16 @@ module ApplicationHelper
     current_account.freshfone_caller_id
   end
 
+  def inline_manual_people_tracing
+    {
+      :uid      => current_user.id,
+      :email    => current_user.email,
+      :username => current_account.full_domain,
+      :name     => current_user.name,
+      :created  => current_account.created_at.to_i,
+      :updated  => current_user.last_login_at.to_i,
+      :roles    => (current_user.privilege?(:view_admin)) ? 'admin' : 'agent'
+    }
+  end
+
 end
