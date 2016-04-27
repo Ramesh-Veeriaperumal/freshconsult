@@ -11,9 +11,10 @@ module Integrations::GoogleAppsHelper
     def sso account_id, param_var
       account = Account.find(account_id)
       account.make_current
-      domain = account.full_domain
+      acc_domain = account.full_domain #For the Marketplace-apps-sso always login to account full domain and not portal domain.
+      native_mobile_flag = nmobile?(param_var)
       begin
-        verify_domain_user(account, nmobile?(param_var))
+        verify_domain_user(account, native_mobile_flag)
       rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
         Rails.logger.debug "Error during Google marketplace association for #{account.id} -> \n #{e.backtrace}"
         @result.flash_message = I18n.t(:'flash.g_app.domain_restriction')
@@ -22,7 +23,7 @@ module Integrations::GoogleAppsHelper
       end
       random_key = SecureRandom.hex
       set_redis_for_sso(random_key)
-      @result.redirect_url = construct_redirect_url(account, domain, random_key)
+      @result.redirect_url = construct_redirect_url(account, acc_domain, random_key, native_mobile_flag)
     end
 
     def non_hd_account

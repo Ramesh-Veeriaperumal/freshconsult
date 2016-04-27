@@ -3,8 +3,9 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
 
   def after_authenticate(params)
     @origin_account.make_current
+    native_mobile_flag = nmobile?(params)
     begin
-      verify_domain_user(@origin_account, nmobile?(params))
+      verify_domain_user(@origin_account, native_mobile_flag)
     rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
       Rails.logger.debug "Error while Google Login SSO-> #{@origin_account.id} \n #{e.backtrace}"
       @result.flash_message = I18n.t(:'flash.g_app.domain_restriction')
@@ -14,7 +15,8 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
 
     random_key = SecureRandom.hex
     set_redis_for_sso(random_key)
-    @result.redirect_url = construct_redirect_url(@origin_account, domain, random_key)
+    domain_arg = domain(native_mobile_flag)
+    @result.redirect_url = construct_redirect_url(@origin_account, domain_arg, random_key, native_mobile_flag)
     @result
   end
 

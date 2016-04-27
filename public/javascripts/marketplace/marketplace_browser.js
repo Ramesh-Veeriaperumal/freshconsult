@@ -55,10 +55,23 @@ var MarketplaceBrowser  = Class.create({
       type: 'PUT',
       url: url,
       success: function() {
-        if(jQuery(list_box).hasClass("disabled-app"))
+        var selected_app = jQuery(list_box).find(".plug-data .plug-name").text().trim();
+        if(jQuery(list_box).hasClass("disabled-app")){
           jQuery(list_box).removeClass("disabled-app");
-        else
+          jQuery.event.trigger({
+              type: "enabled_app",
+              app_name: selected_app,
+              time: new Date()
+          });
+        }
+        else{
           jQuery(list_box).addClass("disabled-app");
+          jQuery.event.trigger({
+              type: "disabled_app",
+              app_name: selected_app,
+              time: new Date()
+          });
+        }
 
         jQuery(el).attr("data-toggle", url)
                   .attr("data-url", toggle_url)

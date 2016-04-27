@@ -6057,8 +6057,8 @@ en:
     installing_text: "Please wait..."
     in_development: In Development
     no_mktp_apps: "No Apps installed"
-    no_mktp_apps_txt: "We've integrated with some of your favorite applications." 
-    check_app_gallery: "Check out the App Gallery to install them!"
+    no_mktp_apps_note: "We've integrated with some of your favorite applications." 
+    no_mktp_apps_note_2: "Click 'Get more Apps' to browse the selection."
     go_to_dev_portal: Go to Developer Portal
     developer_shortcuts: Developer Shortcuts
     custom_app_info: "Did you know, now there is a better way to write and manage and even share your apps to all of Freshdesk community."

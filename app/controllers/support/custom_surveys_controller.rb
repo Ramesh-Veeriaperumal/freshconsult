@@ -1,23 +1,35 @@
 class Support::CustomSurveysController < SupportController #for Portal Customization
 
   skip_before_filter :check_privilege
-  before_filter :load_handle, :backward_compatibility_check, :only => [:new_via_handle]
+  before_filter :load_handle, :only => [:new_via_handle, :hit]
+  before_filter :backward_compatibility_check, :only => [:hit]
   before_filter :load_ticket,         :only => :new_via_portal
   before_filter :load_survey_result,  :only => :create
   
   include SupportTicketControllerMethods
 
   def new_via_handle
-    @rating = CustomSurvey::Survey::CUSTOMER_RATINGS_BY_TOKEN.fetch(params[:rating], CustomSurvey::Survey::EXTREMELY_HAPPY)  
-    @survey_handle.record_survey_result @rating unless @survey_handle.preview?
     respond_to do |format|
       format.html do
+        @rating = CustomSurvey::Survey::CUSTOMER_RATINGS_BY_TOKEN.fetch(params[:rating], CustomSurvey::Survey::EXTREMELY_HAPPY)
+        @survey_code = params[:survey_code]
+        @rating_via_handle = true
         set_portal_page :csat_survey
         render 'new'
       end
     end
   end
   
+  def hit
+    respond_to do |format|
+      format.json do
+        @rating = params[:rating]
+        @survey_handle.record_survey_result @rating unless @survey_handle.preview?
+          render :json => {:submit_url => @survey_handle.feedback_url(@rating)}.to_json
+      end
+    end
+  end
+
   def new_via_portal
     @rating = params[:rating]
     unless can_access_support_ticket?
