@@ -88,7 +88,7 @@
   overflow-y: auto;
   max-height: 400px;
   padding: 10px 20px 20px;
-
+  transform: translateZ(0); //Hack for scroll bar issue in chrome
   form {
     margin:0;
   }
