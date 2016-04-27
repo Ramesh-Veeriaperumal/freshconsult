@@ -78,12 +78,12 @@ module Solution::LanguageAssociations
     end
     
     def self.select_string_for_query
-      select_string = "`#{child_class.table_name}`.*"
-      child_class::SELECT_ATTRIBUTES.each do |attribute|
-        select_string += ", `#{child_class.table_name}`.#{attribute} as current_child_#{attribute}"
-      end
-      select_string += ", `#{table_name}`.*"
-      select_string
+      (["`#{child_class.table_name}`.*"] |
+        (child_class::SELECT_ATTRIBUTES.collect do |attribute|
+          "`#{child_class.table_name}`.#{attribute} AS current_child_#{attribute}"
+        end) | 
+        [ "`#{table_name}`.*"]
+      ).join(', ')
     end
 
     default_scope lambda { Language.current? ? current : Account.current && where(:account_id => Account.current.id) }
@@ -130,16 +130,14 @@ module Solution::LanguageAssociations
     end
     
     def method_missing(method, *args, &block)
-  		begin
-  			super
-  		rescue NoMethodError => e
-  			Rails.logger.debug "#{self.class.name} :: method_missing :: args is #{args.inspect} and method:: #{method}"
-  			args = args.first if args.present? && args.is_a?(Array)
-        child_assoc = self.class.name.chomp('Meta').gsub("Solution::", '').downcase
-  			return ((args.present? || args.nil?) ? self.send("current_#{child_assoc}").send(method, args) :
-              self.send("current_#{child_assoc}").send(method))
-  			raise e
-  		end
+			super
+		rescue NoMethodError => e
+			Rails.logger.debug "#{self.class.name} :: method_missing :: args is #{args.inspect} and method:: #{method}"
+			args = args.first if args.present? && args.is_a?(Array)
+      child_assoc = self.class.name.chomp('Meta').gsub("Solution::", '').downcase
+			return ((args.present? || args.nil?) ? self.send("current_#{child_assoc}").send(method, args) :
+            self.send("current_#{child_assoc}").send(method))
+			raise e
     end
       
     def child_class_name

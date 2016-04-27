@@ -143,13 +143,6 @@ GIT
     statsd-ruby (1.0.0)
 
 GIT
-  remote: git://github.com/thanashyam/binarize.git
-  revision: 2c71c9d949db1351377d42e4db5085d560a46b8c
-  specs:
-    binarize (0.1.4)
-      activerecord (>= 3)
-
-GIT
   remote: git://github.com/thedarkone/rails-dev-boost.git
   revision: a709a10b06b7d9fc4a9846bc613c60c86af9dd7c
   specs:
@@ -165,6 +158,14 @@ GIT
       builder (>= 3.0.0, < 4.0.0)
       curb (~> 0.8, >= 0.8.5)
       mimemagic (~> 0.2, >= 0.2.1)
+
+GIT
+  remote: git@github.com:freshdesk/binarize.git
+  revision: 1a7933b0853c33d8b6ba877493822fe2db34421c
+  branch: master
+  specs:
+    binarize (0.1.1)
+      activerecord (>= 3)
 
 GIT
   remote: git@github.com:freshdesk/fd_rate_limiter.git
@@ -1022,7 +1023,7 @@ DEPENDENCIES
   aws-sdk (~> 1.11.3)
   aws-sdk-resources (~> 2)
   better_errors (~> 1.1.0)
-  binarize!
+  binarize (= 0.1.1)!
   binding_of_caller
   braintree (= 2.10.0)
   bullet
