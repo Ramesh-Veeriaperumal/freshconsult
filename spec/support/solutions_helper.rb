@@ -174,7 +174,7 @@ module SolutionsHelper
                       :portal_url => params[:portal_url] || "", 
                       :language=>"en",
                       :forum_category_ids => (params[:forum_category_ids] || [""]),
-                      :solution_category_ids => (params[:solution_category_ids] || [""]),
+                      :solution_category_metum_ids => (params[:solution_category_ids] || [""]),
                       :account_id => @account.id,
                       :preferences=> { 
                         :logo_link=>"", 
