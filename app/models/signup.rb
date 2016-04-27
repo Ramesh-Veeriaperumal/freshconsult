@@ -84,13 +84,15 @@ class Signup < ActivePresenter::Base
      account.build_agent_password_policy(
        :user_type =>2,
        :policies => FDPasswordPolicy::Constants::DEFAULT_PASSWORD_POLICIES,
-       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS
+       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS,
+       :signup => true
        )
 
       account.build_contact_password_policy(
        :user_type =>1,
        :policies => FDPasswordPolicy::Constants::DEFAULT_PASSWORD_POLICIES,
-       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS
+       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS,
+       :signup => true
        )
 
    end
