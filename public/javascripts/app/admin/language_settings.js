@@ -1,4 +1,4 @@
-/*jslint browser: true */
+/*jslint browser: true es5: true */
 /*global  App, alert */
 
 window.App = window.App || {};
@@ -38,21 +38,21 @@ window.App.Admin = window.App.Admin || {};
     },
 
     portalLanguageConfig: function () {
-      var $this = this;
+      var $this = this, initialSelectedOptions, key, langCode, visible;
 
       // Initialize Select2 in the beginining
       $('#account_supported_languages').select2({
-        formatSelection: function () {return '';},
+        formatSelection: function () {return ''; },
         allowClear: true
       });
       
       // Generate the already selected options html
-      var initialSelectedOptions = this.supportedLangEl.get(0).selectedOptions || [];
-      for (var key = 0; key < initialSelectedOptions.length ; key++) {
-        var langCode = $(initialSelectedOptions[key]).val();
-        var visible = (this.portalLanguages.indexOf(langCode) != -1);
+      initialSelectedOptions = this.supportedLangEl.get(0).selectedOptions || [];
+      for (key = 0; key < initialSelectedOptions.length; key += 1) {
+        langCode = $(initialSelectedOptions[key]).val();
+        visible = (this.portalLanguages.indexOf(langCode) !== -1);
         $this.addSingleLanguage(initialSelectedOptions[key], visible, false);
-      };
+      }
     },
 
     bindHandlers: function () {
@@ -62,20 +62,20 @@ window.App.Admin = window.App.Admin || {};
 
       //The event 'select2-selecting' is only for 3.5.x versions of select2, the event is differnt in newer version
       $('#account_supported_languages').on('select2-selecting', $.proxy(function (e) {
-        this.addSingleLanguage(e.object.element, false, true);  
+        this.addSingleLanguage(e.object.element, false, true);
       }, this));
     },
 
     addSingleLanguage: function (el, visible, newAddition) {
-      var langCode = $(el).val();
-      var tempateVariables = {
-        langName: $(el).text(),
-        langCode: langCode,
-        visibleText: (visible ? App.Admin.LanguageSettings.msgPortalVisible : App.Admin.LanguageSettings.msgPortalHidden),
-        activeClass: (visible ? "active" : ""),
-        disabled: (visible ? '' : 'disabled')
-      };
-      var newLangEl = $.tmpl(this.langTemplate, tempateVariables).prependTo('#manage_languages_form .selected-languages');
+      var langCode = $(el).val(),
+				tempateVariables = {
+					langName: $(el).text(),
+					langCode: langCode,
+					visibleText: (visible ? App.Admin.LanguageSettings.msgPortalVisible : App.Admin.LanguageSettings.msgPortalHidden),
+					activeClass: (visible ? "active" : ""),
+					disabled: (visible ? '' : 'disabled')
+				},
+				newLangEl = $.tmpl(this.langTemplate, tempateVariables).prependTo('#manage_languages_form .selected-languages');
       if (newAddition) {
         $(newLangEl).animateHighlight();
       }
@@ -89,18 +89,18 @@ window.App.Admin = window.App.Admin || {};
     },
 
     removeLanguage: function (e) {
-      var langCode = $(this).data().langCode;
-      var supportedLangEl = $("#account_supported_languages");
+      var langCode = $(this).data().langCode,
+				supportedLangEl = $("#account_supported_languages");
       $(supportedLangEl)
-        .select2('val', (supportedLangEl.val() || []).reject(function (a) {return a == langCode}))
+        .select2('val', (supportedLangEl.val() || []).reject(function (a) {return a === langCode; }))
         .trigger('change');
       $(this).closest('.lang-selected-option').remove();
     },
 
     portalVisibilityToggle: function (e) {
-      var currentState = $(this).find('input').prop('disabled');
+      var currentState = $(this).find('input').prop('disabled'),
+				textMsg = currentState ? App.Admin.LanguageSettings.msgPortalVisible : App.Admin.LanguageSettings.msgPortalHidden;
       $(this).toggleClass('active', currentState);
-      var textMsg = currentState ? App.Admin.LanguageSettings.msgPortalVisible : App.Admin.LanguageSettings.msgPortalHidden;
       $(this).find('.portal-language-text').html(textMsg);
       $(this).find('input').prop('disabled', !currentState);
     },

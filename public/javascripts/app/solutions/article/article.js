@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true */
-/*global  App, moment, highlight_code, Fjax */
+/*global  App, moment, highlight_code, Fjax, invokeRedactor */
 
 window.App = window.App || {};
 (function ($) {

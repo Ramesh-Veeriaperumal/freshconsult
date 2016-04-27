@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true */
-/*global  App, moment, highlight_code, Fjax */
+/*global  App, moment, highlight_code, Fjax, invokeRedactor */
 
 window.App = window.App || {};
 (function ($) {
@@ -20,7 +20,7 @@ window.App = window.App || {};
     },
 
     highlightCode: function () {
-      if (window.location.hash != "#edit"){
+      if (window.location.hash !== "#edit") {
         highlight_code();
       }
     },
@@ -89,7 +89,7 @@ window.App = window.App || {};
         return false;
       }
       if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create") {
-        var flag =  $('#solution_article_description').valid() || $('#solution_article_title').val().length > 0 ;
+        var flag =  $('#solution_article_description').valid() || $('#solution_article_title').val().length > 0;
         if (flag) {
           return true;
         }
@@ -98,10 +98,10 @@ window.App = window.App || {};
     },
 
     checkAttachments: function () {
-      var att_el = ["#article-attach-container", "#dropboxjs", "#boxjs", ".hidden_upload"];
-      for(var i = 0; i < att_el.length ; i ++) {
-        var el = $(att_el[i]+" input");
-        if(el.length > 1) {
+      var att_el = ["#article-attach-container", "#dropboxjs", "#boxjs", ".hidden_upload"], i, el;
+      for (i = 0; i < att_el.length; i += 1) {
+        el = $(att_el[i] + " input");
+        if (el.length > 1) {
           return true;
         }
       }

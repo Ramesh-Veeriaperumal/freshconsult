@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true */
-/*global  App, moment, highlight_code, Fjax */
+/*global  App, moment, highlight_code, Fjax, escapeHtml */
 
 window.App = window.App || {};
 (function ($) {
@@ -24,7 +24,7 @@ window.App = window.App || {};
       var $this = this;
       $('body').on('modal_loaded.articles', function () {
         $this.articleTags = $('#tags_name').val();
-        $this.articleTags = $this.articleTags != "" ? $this.articleTags.split(",") : "";
+        $this.articleTags = $this.articleTags !== "" ? $this.articleTags.split(",") : "";
         $this.setTagSelector();
         $this.articleProperties();
         $this.checkTranslations();
@@ -46,14 +46,14 @@ window.App = window.App || {};
       });
     },
 
-    articleHistoryEllipsisExpand: function() {
+    articleHistoryEllipsisExpand: function () {
       $('body').on('click.articles', '.article-history .ellipsis', function () {
         $('.created-history').toggleClass('hide');
         $('.article-history .ellipsis').toggleClass('hide');
       });
     },
 
-    cumulativeStatsToggle: function() {
+    cumulativeStatsToggle: function () {
       $('body').on('click.articles', '.analytics .show-cumulative-stats', function () {
         $('.analytics .cumulative-stats').toggleClass('hide');
         $('.analytics .show-cumulative-stats').toggleClass('drop-right selected');
@@ -61,9 +61,9 @@ window.App = window.App || {};
     },
 
     attachmentsDelEvents: function () {
-      $(document).on('attachment_deleted', function(ev, data){
+      $(document).on('attachment_deleted', function (ev, data) {
         $(".article-view #helpdesk_" + data.attachment_type + "_" + data.attachment_id).remove();
-        $(".article-edit #helpdesk_" + data.attachment_type + "_" + data.attachment_id).fadeOut(500, function(){ $(this).remove(); });
+        $(".article-edit #helpdesk_" + data.attachment_type + "_" + data.attachment_id).fadeOut(500, function () { $(this).remove(); });
       });
     },
 
@@ -99,7 +99,7 @@ window.App = window.App || {};
         $('.breadcrumb').removeClass('breadcrumb-edit');
         $this.highlightCode();
 
-        if($this.autoSave.totalCount > 0) {
+        if ($this.autoSave.totalCount > 0) {
           $this.setFormValues();
           $this.resetDraftRequest();
           $this.autoSave.contentChanged = false;
@@ -121,12 +121,12 @@ window.App = window.App || {};
 
     checkTranslations: function () {
       $("body").on('change.articles', '#solution_article_meta_solution_folder_meta_id', function () {
-        $('.check-translations').toggleClass('hide', $(this).data('originalValue') === parseInt($(this).val()));
+        $('.check-translations').toggleClass('hide', $(this).data('originalValue') === parseInt($(this).val(), 10));
       });
     },
 
     formValidate: function () {
-      var $this = this;
+      var $this = this, error_elem;
       $('body').on('submit.articles', '.article-edit #article-form', function (ev) {
         var validation = $('#article-form').valid();
         if (validation) {
@@ -135,11 +135,11 @@ window.App = window.App || {};
           }
           $(window).off('beforeunload.articles');
         } else {
-          var error_elem = $('#article-form .error:input:first');
+          error_elem = $('#article-form .error:input:first');
           if (error_elem.is('.select2')) {
-          	error_elem.select2('focus');
+						error_elem.select2('focus');
           } else {
-          	error_elem.focus();
+						error_elem.focus();
           }
         }
         return validation;
@@ -173,9 +173,9 @@ window.App = window.App || {};
     outdateOrUpdate: function () {
       var $this = this;
       $('body').on('click.articles', '.outdate-uptodate', function (e) {
-        var el = $(this);
-        var flag = $(e.target).is(":button") || $(e.target).parent().is(":button");
-        if(flag) {
+        var el = $(this),
+					flag = $(e.target).is(":button") || $(e.target).parent().is(":button");
+        if (flag) {
           $(e.target).parent().button('loading');
         }
         $.ajax({
@@ -188,8 +188,8 @@ window.App = window.App || {};
           },
           success: function (result) {
             flag ? el.button('complete') : el.remove();
-            setTimeout(function(){
-              (el.data('actionType') === 'mark-outdated') ? $this.postOutdate(result) : $this.postUptodate()
+            setTimeout(function () {
+              (el.data('actionType') === 'mark-outdated') ? $this.postOutdate(result) : $this.postUptodate();
             }, 2000);
           }
         });
@@ -248,8 +248,8 @@ window.App = window.App || {};
     },
 
     setTagSelector: function () {
-      var $this = this;
-      var previouslyselectedTags = [];
+      var $this = this,
+				previouslyselectedTags = [];
       $('.article-tags').val().split(',').each(function (item, i) { previouslyselectedTags.push({ id: item, text: item }); });
       $('.article-tags').select2({
         multiple: true,
@@ -282,15 +282,16 @@ window.App = window.App || {};
           return $this.STRINGS.maxInput;
         },
         createSearchChoice: function (term, data) {
-          if ($(data).filter(function () { return this.text.localeCompare(term) === 0; }).length === 0)
-          return { id: term, text: term };
+          if ($(data).filter(function () { return this.text.localeCompare(term) === 0; }).length === 0) {
+						return { id: term, text: term };
+					}
         }
       });
     },
 
-    bindForShowMaster: function(){
+    bindForShowMaster: function () {
 
-      $('body').on('click.articles', '#draft-tab', function (){
+      $('body').on('click.articles', '#draft-tab', function () {
         $('#master-draft').trigger('afterShow');
       });
 
@@ -299,19 +300,19 @@ window.App = window.App || {};
         $('#show_master_article').fdpopover('show').toggleClass('disabled');
         $('#master-article-tab a:last').tab('show');
         $('.fd-popover .master-article-tab-content div:last').trigger('afterShow');
-       });
+      });
 
-      $('body').on('click.articles', '.fd-popover-close', function (){
+      $('body').on('click.articles', '.fd-popover-close', function () {
         $('#show_master_article').toggleClass('disabled');
       });
 
       $('#show_master_article').fdpopover({
-        trigger:"manual",
-        html:true,
-        content: function() {
+        trigger: "manual",
+        html: true,
+        content: function () {
           return $('#master_article').html();
         },
-        offset:20
+        offset: 20
       });
 
 

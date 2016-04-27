@@ -121,8 +121,7 @@ window.App.Solutions = window.App.Solutions || {};
 			this.submitUrl = '';
 			$('body').off('.solutions.reorder');
 
-			if ($('.comm-items ul').data( "ui-sortable" ))
-			{
+			if ($('.comm-items ul').data("ui-sortable")) {
 				$('.comm-items ul').sortable("destroy");
 			}
 		}

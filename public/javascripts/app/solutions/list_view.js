@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true */
-/*global  App, moment, highlight_code, Fjax */
+/*global  App, moment, highlight_code, Fjax, focusFirstModalElement, hideActiveMenu */
 
 window.App = window.App || {};
 (function ($) {
@@ -88,7 +88,7 @@ window.App = window.App || {};
       });
 
       $('body').on('reorder.folders_articles', function () {
-        if (App.namespace != "solution/folders/show") {
+        if (App.namespace !== "solution/folders/show") {
           App.Solutions.NavMenu.reload();
         }
       });
@@ -129,11 +129,11 @@ window.App = window.App || {};
       });
 
       $("body").on('change.folders_articles', '#solution_folder_meta_solution_category_meta_id', function () {
-        $('.check-translations').toggleClass('hide', $(this).data('originalValue') === parseInt($(this).val()));
+        $('.check-translations').toggleClass('hide', $(this).data('originalValue') === parseInt($(this).val(), 10));
       });
 
       $this.bindLanguageBarLinks();
-      $("body").on('click.folders_articles', '.confirm-delete' ,function (e) {
+      $("body").on('click.folders_articles', '.confirm-delete', function (e) {
         $('.modal').modal('hide');
       });
 
@@ -171,7 +171,7 @@ window.App = window.App || {};
               mimic: 'center'
             }
           },
-          content: function() {
+          content: function () {
             return $('#' + $(this).data('content-id')).html();
           }
         });
@@ -244,7 +244,7 @@ window.App = window.App || {};
       var $this = this;
       this.hideFdMenu();
 
-      if($this.selectedElementsCount() > 0) {
+      if ($this.selectedElementsCount() > 0) {
         $.ajax({
           url: $this.data.visibleToUrl,
           type: 'PUT',
@@ -291,7 +291,7 @@ window.App = window.App || {};
 
     removeElementsAfterMoveTo: function (updated_items) {
       var ids = updated_items.split(','), i;
-      for(i = 0; i < ids.length; i++) {
+      for (i = 0; i < ids.length; i += 1) {
         $('.solution-list li[item_id="' + ids[i] + '"]').remove();
       }
       $(".item_ids_checkbox:checked").attr('checked', false);
@@ -305,12 +305,13 @@ window.App = window.App || {};
     },
 
     setCompanyVisibility: function (e) {
-      var visibility = e.target.value;
-      var form = $(e.target).parents('form');
+      var visibility = e.target.value,
+				form = $(e.target).parents('form'),
+				customers_input;
       if (parseInt(visibility, 10) === 4) {
         form.find('.company_folders').show();
       } else {
-        var customers_input = form.find('.autocomplete_filter [type="hidden"]');
+        customers_input = form.find('.autocomplete_filter [type="hidden"]');
         customers_input.val('');
         customers_input.trigger("liszt:updated");
         form.find('.company_folders').hide();
