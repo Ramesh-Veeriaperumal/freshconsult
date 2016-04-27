@@ -18,7 +18,6 @@ class TicketsController < ApiApplicationController
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     else
-      assign_ticket_status
       if @item.save_ticket
         @ticket = @item # Dirty hack. Should revisit.
         render_201_with_location(item_id: @item.display_id)
@@ -231,6 +230,8 @@ class TicketsController < ApiApplicationController
       if update? && !params[cname].key?(:requester_id) && (params[cname].keys & %w(email phone twitter_id facebook_id)).present?
         params[cname][:requester_id] = nil
       end
+
+      @status = params[cname].delete(:status) if params[cname].key?(:status) # We are removing status from params as status= model method makes memcache calls.
     end
 
     def prepare_tags
@@ -247,7 +248,7 @@ class TicketsController < ApiApplicationController
       field = "ApiTicketConstants::#{original_action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       set_default_values
-      params_hash = params[cname].merge(statuses: @statuses, ticket_fields: @ticket_fields)
+      params_hash = params[cname].merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
       ticket = TicketValidation.new(params_hash, @item, string_request_params?)
       render_custom_errors(ticket, true) unless ticket.valid?(original_action_name.to_sym)
     end
@@ -258,18 +259,20 @@ class TicketsController < ApiApplicationController
         params[cname][:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]
       end
       ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert) # Using map instead of invert does not show any perf improvement.
-      load_ticket_status # loading ticket status to avoid multiple queries in model.
     end
 
     def assign_protected
+      @item.build_schema_less_ticket unless @item.schema_less_ticket
       @item.account = current_account
       @item.cc_email = @cc_emails unless @cc_emails.nil?
       build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       if create? # assign attachments so that it will not be queried again in model callbacks
         @item.attachments = @item.attachments
+        @item.ticket_old_body = @item.ticket_old_body # This will prevent ticket_old_body query during save
         @item.inline_attachments = @item.inline_attachments
-        @item.product ||= current_portal.product unless params[cname].key?(:product_id)
+        @item.schema_less_ticket.product ||= current_portal.product unless params[cname].key?(:product_id)
       end
+      assign_ticket_status
     end
 
     def verify_object_state
@@ -323,13 +326,9 @@ class TicketsController < ApiApplicationController
       log_and_render_404 unless @item
     end
 
-    def load_ticket_status
-      @statuses = Helpdesk::TicketStatus.status_objects_from_cache(current_account)
-    end
-
     def assign_ticket_status
-      @item.status = OPEN unless @item.status_changed?
-      @item.ticket_status = @statuses.find { |x| x.status_id == @item.status }
+      @item[:status] = @status if defined?(@status)
+      @item[:status] ||= OPEN
     end
 
     def restore?

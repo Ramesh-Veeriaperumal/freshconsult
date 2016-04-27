@@ -59,7 +59,7 @@ class UserEmail < ActiveRecord::Base
   end
 
   def self.user_for_email(email)
-    user_email = find_by_email(email)
+    user_email = where(email: email).first
     user_email ? user_email.user : nil
   end
 
