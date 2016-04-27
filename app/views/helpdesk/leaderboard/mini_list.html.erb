@@ -9,11 +9,11 @@
 						<div class="floatr trophy trophy-<%= score_list[1] %>-small"></div>
 						<a rel="hover-popover"
 							data-content='<div class="span2"> <b> <%= score.user %> </b> is the <%= t("gamification.leaderboard.#{score_list[1]}_trophie_label") %>  for this month. </div>'
-							data-placement="right">
+							data-placement="left">
 							<%= user_avatar_with_expiry(score.user,3605) %>
 						</a>
 					</div>
-					<p class="muted  clearfix"><%= t("gamification.leaderboard.#{score_list[1]}_trophie_label") %></p>
+					<p class="muted clearfix"><%= t("gamification.leaderboard.#{score_list[1]}_trophie_label") %></p>
 				</li>
 
 			<% list_empty = true %>
