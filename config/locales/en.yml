@@ -6041,9 +6041,6 @@ en:
     confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
     app: app
     custom_app: custom app
-    app_gallery_launch_text: "<b>Welcome to the brand new App Gallery!</b> Manage any integrations you installed previously, and try out new Apps. Get a preview of what the app will look like in your helpdesk and how it will help you - all in one glance."
-    app_gallery_blog_post: "http://blog.freshdesk.com/new-marketplace/"
-    app_gallery_link_text: "Read more about the new App Gallery"
     app_gallery: App Gallery
     app_description: "Apps allow you to integrate with other applications to make your Freshdesk experience more awesome. They also enable you to customize and personalize your Freshdesk portal."
     apps: Apps
