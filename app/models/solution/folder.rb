@@ -25,6 +25,9 @@ class Solution::Folder < ActiveRecord::Base
 
   delegate :visible?, :to => :solution_folder_meta
   delegate :visible_in?, :to => :solution_folder_meta
+  
+  # Hack to make sure JSON responses for Search API is proper.
+  delegate :customer_folders, :to => :solution_folder_meta
 
   include Solution::LanguageMethods
   
