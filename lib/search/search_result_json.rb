@@ -3,6 +3,7 @@ module Search::SearchResultJson
 	include ApplicationHelper
 	include ActionView::Helpers::DateHelper
 	include HumanizeHelper
+	include Solution::PathHelper
 
 	def helpdesk_ticket_json ticket
 		return ticket_search_json(ticket) if @search_by_field
@@ -180,7 +181,7 @@ module Search::SearchResultJson
 			:id => article.id,
 			:result_type => 'solution_article',
 			:title => article.es_highlight('title').html_safe,
-			:path => solution_article_path(article),
+			:path => multilingual_article_path(article),
 			:folder_name => h(article.solution_folder_meta.send("#{article.language.to_key}_folder").name),
 			:folder_path => solution_folder_path(article.solution_folder_meta),
 			:description => article.es_highlight('desc_un_html'),

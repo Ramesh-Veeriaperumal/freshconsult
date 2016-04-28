@@ -49,11 +49,6 @@ module Solution::LanguageAssociations
       self.attributes[delegation_title.to_s] || send(delegation_assoc).send(delegation_title)
     end
 
-    def self.translation_associations
-      child_name = self.name.chomp('Meta').gsub("Solution::", '').downcase
-      (['primary'] | Account.current.applicable_languages).collect(&:to_sym).collect {|s| :"#{s}_#{child_name}"}
-    end
-
     def self.short_name
       self.name.chomp('Meta').gsub("Solution::", '').downcase
     end
@@ -61,10 +56,6 @@ module Solution::LanguageAssociations
     def self.child_class
       self.name.chomp('Meta').constantize
     end
-    
-    scope :include_translations, lambda {
-      includes(translation_associations)
-    }
     
     scope :current, lambda {
       {

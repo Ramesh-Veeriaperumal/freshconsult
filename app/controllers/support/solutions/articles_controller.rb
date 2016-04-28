@@ -3,6 +3,7 @@ class Support::Solutions::ArticlesController < SupportController
   include Helpdesk::TicketActions
   include Solution::Feedback
   include Solution::ArticlesVotingMethods
+  include Solution::PathHelper
 
   before_filter :load_and_check_permission, :except => [:index]
   
@@ -97,12 +98,6 @@ class Support::Solutions::ArticlesController < SupportController
                             :label => t('portal.preview.view_on_helpdesk'),
                             :icon => "preview" } if privilege?(:view_solutions)
       @agent_actions
-    end
-
-    def multilingual_article_path(article, options={})
-      current_account.multilingual? ?
-        solution_article_version_path(article, options.slice(:anchor).merge({:language => article.language.code})) :
-        solution_article_path(article, options.slice(:anchor))
     end
     
     def load_page_meta

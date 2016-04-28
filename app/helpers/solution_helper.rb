@@ -1,5 +1,6 @@
 module SolutionHelper
 	include Solution::Cache
+	include Solution::PathHelper
 	
 	def solutions_breadcrumb(page = :home)
 		return if page == :home
@@ -239,12 +240,6 @@ module SolutionHelper
 
 	def drafts_path container_id
 		container_id == 'drafts-all' ? solution_my_drafts_path('all') : solution_drafts_path
-	end
-	
-	def multilingual_article_path(article, options={})
-		current_account.multilingual? ?
-			solution_article_version_path(article, options.slice(:anchor).merge({:language => article.language.code})) :
-			solution_article_path(article, options.slice(:anchor))
 	end
 
 	def sidebar_feedbacks_list(feedbacks, container_id, active='')

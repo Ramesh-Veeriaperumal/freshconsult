@@ -484,12 +484,6 @@ class Solution::ArticlesController < ApplicationController
         @current_folder = current_account.solution_folders.first
       end
     end
-    
-  	def multilingual_article_path(article, options={})
-  		current_account.multilingual? ?
-  			solution_article_version_path(article, options.slice(:anchor).merge({:language => article.language.code})) :
-  			solution_article_path(article, options.slice(:anchor))
-  	end
 
     def check_parent_params
       @article_meta = meta_scoper.find(params[:id])

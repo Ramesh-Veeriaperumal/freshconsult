@@ -1,5 +1,7 @@
 module Solution::ControllerMethods
 
+	include Solution::PathHelper
+
 	ACTION = {
 	"create" => "new",
 	"update" => "edit"
