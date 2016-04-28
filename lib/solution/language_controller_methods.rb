@@ -12,7 +12,7 @@ module Solution::LanguageControllerMethods
 
 	def language
 		@language ||= begin
-			lang = (current_account.multilingual? && Language.for_current_account ) ||
+			lang = (!current_account.multilingual? && Language.for_current_account ) ||
           Language.find(params[:language_id]) || 
           Language.find_by_code(params[:language]) || 
           Language.for_current_account
