@@ -30,14 +30,13 @@ class EmailControllerLogSubscriber < ActiveSupport::LogSubscriber
       f_params = controller_params.except("body-html", "body-plain", "stripped-html", "stripped-text")
     when "Helpdesk::ConversationsController"
       params_copy = controller_params.deep_dup
-      if params_copy[:helpdesk_note].present? && params_copy[:helpdesk_note][:note_body_attributes].present?
-        params_copy[:helpdesk_note][:note_body_attributes].delete(:body)
-        params_copy[:helpdesk_note][:note_body_attributes].delete(:body_html)
-        params_copy[:helpdesk_note][:note_body_attributes].delete(:full_text)
-        params_copy[:helpdesk_note][:note_body_attributes].delete(:full_text_html)
-        params_copy[:helpdesk_note][:note_body_attributes].delete(:quoted_text_html)
+      if params_copy["helpdesk_note"].present? && params_copy["helpdesk_note"]["note_body_attributes"].present?
+        params_copy["helpdesk_note"]["note_body_attributes"].delete("body")
+        params_copy["helpdesk_note"]["note_body_attributes"].delete("body_html")
+        params_copy["helpdesk_note"]["note_body_attributes"].delete("full_text")
+        params_copy["helpdesk_note"]["note_body_attributes"].delete("full_text_html")
       end
-      f_params = params_copy
+      f_params = params_copy.except("quoted_text_html")
     end
     f_params
   end
