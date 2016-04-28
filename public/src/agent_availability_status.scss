@@ -27,6 +27,10 @@
   padding-left: inherit;
 }
 
+.agents-filter li.selected a{
+  font-weight:bold;
+}
+
 .busy_agent_set{
   @include opacity(0.3);
 }

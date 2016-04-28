@@ -82,10 +82,18 @@ class Agent < ActiveRecord::Base
     end.compact
   end
 
-  #This method returns true if atleast one of the groups that he belongs to has round robin feature
+  def allow_availability_toggle?
+    !self.groups.empty? && self.groups.where(:toggle_availability => false, :ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin]).count('1') == 0
+  end
+
   def in_round_robin?
-    return self.agent_groups.count(:conditions => ['ticket_assign_type = ?',
-                                                   Group::TICKET_ASSIGN_TYPE[:round_robin]], :joins => :group) > 0
+    self.agent_groups.count(:conditions => ['ticket_assign_type = ?',
+                                             Group::TICKET_ASSIGN_TYPE[:round_robin]], :joins => :group) > 0
+  end
+
+  def toggle_availability?
+    return false if(!account.features?(:round_robin) || !in_round_robin? || account.features?(:disable_rr_toggle))
+    allow_availability_toggle? ? true : false
   end
 
   def group_ticket_permission

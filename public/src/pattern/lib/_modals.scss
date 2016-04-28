@@ -165,6 +165,11 @@
   }
 }
 
+.footer-border-top {
+  .modal-footer {
+    border-top: 1px solid #efefef;
+  }
+}
 
 // Modal slider - Refer dashbaord (Modal will popup from right to left)
 .modal.slider-modal {

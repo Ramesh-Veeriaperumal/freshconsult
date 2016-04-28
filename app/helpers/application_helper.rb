@@ -271,7 +271,8 @@ module ApplicationHelper
           output << %(<li class="divider"></li>)
         else
           li_opts = (item[3].present?) ? options.merge(item[3]) : options
-          output << %(<li>#{"<span class='icon ticksymbol'></span>" if item[2]}#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
+          option_link = link_to(item[0], item[1], li_opts, "tabindex" => "-1")
+          output << ( item[2] ? %(<li class="selected" ><span class='icon ticksymbol'></span>#{option_link}</li>) : %(<li>#{option_link}</li>) )
         end
       end
     end
@@ -344,16 +345,16 @@ module ApplicationHelper
 
   def navigation_tabs
     tabs = [
-      ['/home',               :home,        !privilege?(:manage_tickets) ],
+      ['/home',               :home,          !privilege?(:manage_tickets) ],
       ['/helpdesk/dashboard',  :dashboard,    privilege?(:manage_tickets)],
       ['/helpdesk/tickets',    :tickets,      privilege?(:manage_tickets)],
       social_tab,
-      ['/solution/categories', :solutions,   privilege?(:view_solutions)],
-      ['/discussions',        :forums,       forums_visibility?],
-      ['/contacts',           :customers,    privilege?(:view_contacts)],
-      ['/support/tickets',     :checkstatus, !privilege?(:manage_tickets)],
-      ['/reports',            :reports,      privilege?(:view_reports) ],
-      ['/admin/home',         :admin,        privilege?(:view_admin)],
+      ['/solution/categories', :solutions,    privilege?(:view_solutions)],
+      ['/discussions',        :forums,        forums_visibility?],
+      ['/contacts',           :customers,     privilege?(:view_contacts)],
+      ['/support/tickets',     :checkstatus,  !privilege?(:manage_tickets)],
+      ['/reports',            :reports,       privilege?(:view_reports) ],
+      ['/admin/home',         :admin,         privilege?(:view_admin)],
     ]
 
 #    history_active = false;
@@ -1325,7 +1326,7 @@ module ApplicationHelper
     def forums_visibility?
       feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
     end
-    
+
     def social_tab
       view_social_tab = can_view_social?
       handles_present = handles_associated?

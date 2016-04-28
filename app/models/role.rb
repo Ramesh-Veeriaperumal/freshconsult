@@ -14,8 +14,11 @@ class Role < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
 
+  attr_accessible :name, :description
+
   #Role-Based scopes
   scope :default_roles, -> { where(:default_role => true) }
+  scope :custom_roles,  -> { where(:default_role => false) }
   scope :account_admin, -> { where(:name => 'Account Administrator') }
   scope :admin,         -> { where(:name => 'Administrator') }
   scope :supervisor,    -> { where(:name => 'Supervisor') }
@@ -26,6 +29,8 @@ class Role < ActiveRecord::Base
   } 
 
   attr_protected :privileges 
+
+  MA_ROLES_TO_BE_UPDATED = ["Supervisor", "Administrator", "Account Administrator"]
 
   def privilege_list=(privilege_data)
     privilege_data = privilege_data.collect {|p| p.to_sym unless p.blank?}.compact
@@ -58,6 +63,40 @@ class Role < ActiveRecord::Base
     self.default_role
   end
 
+  def custom_role?
+    !self.default_role
+  end
+
+  def self.add_manage_availability_privilege(account = Account.current)
+    success = true
+    account.roles.each do |role|
+      next if !(!role.privilege?(:manage_availability) and ((role.custom_role? and role.privilege?(:admin_tasks)) or MA_ROLES_TO_BE_UPDATED.include?(role.name)))
+
+      role.privilege_list = (role.abilities + role.manage_availability_privileges).flatten
+      success = false unless role.save      
+    end
+    success
+  end
+
+  def self.remove_manage_availability_privilege(account = Account.current)
+    success = true
+    account.roles.each do |role|
+      next if !role.privilege?(:manage_availability)
+
+      role.privilege_list = (role.abilities - role.manage_availability_privileges).flatten
+      success = false unless role.save    
+    end
+    success
+  end
+
+  def manage_availability_privileges
+    view_admin_enabled = privilege?(:manage_users) || privilege?(:manage_canned_responses) || privilege?(:manage_dispatch_rules) ||
+      privilege?(:manage_supervisor_rules) || privilege?(:manage_scenario_automation_rules) || privilege?(:manage_email_settings) ||
+      privilege?(:manage_account)
+
+    view_admin_enabled ? [:manage_availability] : [:view_admin, :manage_availability]
+  end
+
   private
     def destroy_user_privileges
       users.all.each do |user|
@@ -73,4 +112,5 @@ class Role < ActiveRecord::Base
         user.update_attribute(:privileges, privileges)
       end 
     end
+   
 end

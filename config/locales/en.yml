@@ -1929,6 +1929,7 @@ en:
         not_administrator: Not view any Administrator options
         operational_admin: Perform Operational Admin actions
         manage_users: Manage Agents
+        manage_availability: Manage automatic ticket assignment
         manage_canned_responses: Manage canned responses
         manage_dispatch_rules: Manage Dispatch'r and Observer rules
         manage_supervisor_rules: Manage Supervisor rules
@@ -3371,7 +3372,10 @@ en:
     edit: Edit Group
     title: Groups
     business_calendar: Business Hours
-    ticket_assignment: Automatic Ticket Assignment
+    ticket_assignment: Automatic ticket assignment
+    auto_assignment_description: Once enabled, tickets assigned to this group will be automatically assigned to the available agents in the group through the round robin method
+    escalation_rule: Escalation Rule
+    send_escalation_to: "....then send escalation email to :"
     info1: Agents
     info2: No Agents in this group
     info3: Send an Escalation email to
@@ -3379,6 +3383,14 @@ en:
     info5: Are you sure you want to delete this group?      Deleting a group will not delete the Agents in it.
     info6: "Email Agent when a new ticket is assigned to this group "
     info7: "if a ticket remains un-assigned for more than "
+    info8: "New: Allow your supervisors the ability to manage automatic ticket assignment and agent availability for the groups they belongs to -"
+    info8_readmore: Read More
+    enable: Enable
+    enable_success_message: The ability to manage ticket assignment has been enabled for your supervisors successfully.
+    enable_failure_message: The ability to manage ticket assignment could not be enabled for your supervisors. Please send an email to support@freshdesk.com to proceed further.
+    confirm: Confirm
+    please_confirm: Please confirm...
+    rr_v2_confimation_message: This action cannot be undone. Are you sure you want to proceed?
     tour: Help me create a new agent group
     helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
     automatic_assignment: Once you create homogeneous agent groups, you can choose to automatically assign new tickets in this group to the next agent in Round Robin. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a>
@@ -3390,8 +3402,10 @@ en:
     select_business_calendar: Select Business Hours
     learn_more: Learn more
     settings_saved: Your setting is successfully saved.
-    disable_round_robin_info1: Allow agents the ability to turn on/off automatic ticket assignment
-    disable_round_robin_info2: If disabled, agents will always be set as “available”. Admins can change the agent availability from the dashboard, if necessary.
+    toggle_availability_for_rr: Allow agents the ability to turn on/off automatic ticket assignment
+    toggle_availability_enabled: Agents will be able to manually change their availability for round robin ticket assignment. Admins and supervisors can change the agent availability from the dashboard, if necessary.
+    toggle_availability_disabled: If disabled, agents will always be set as “available”. Admins and supervisors can change the agent availability from the dashboard, if necessary.
+    toggle_availability_note: "Note: Agents belonging to multiple groups will be able to change their availability only if they have permission to control their availability in all of the groups they belong to."
     round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
     assigntime:
       half: 30 Minutes
@@ -5337,7 +5351,7 @@ en:
         ticket_assignment: Ticket Assignment
         all_agents : All agents
         showing:  Showing
-        available_agents: Available agents
+        available_agents: Available Agents
         info1: Showing agents in groups which has automatic ticket assignment enabled
         back_to_dashboard: Back to Dashboard
         na: N/A

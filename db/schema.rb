@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160413071150) do
+ActiveRecord::Schema.define(:version => 20160418103445) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1761,6 +1761,7 @@ ActiveRecord::Schema.define(:version => 20160413071150) do
     t.integer  "import_id",            :limit => 8
     t.integer  "ticket_assign_type",                :default => 0
     t.integer  "business_calendar_id", :limit => 8
+    t.boolean  "toggle_availability",               :default => false
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true

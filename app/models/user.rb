@@ -777,6 +777,14 @@ class User < ActiveRecord::Base
     self.customer_id
   end
 
+  def accessible_groups
+    privilege?(:admin_tasks) ? Account.current.groups : self.groups
+  end
+
+  def accessible_roundrobin_groups
+    self.accessible_groups.round_robin_groups
+  end
+
   private
 
     def name_part(part)

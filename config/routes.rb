@@ -302,8 +302,8 @@ Helpkit::Application.routes.draw do
   match '/contacts/filter/:state(/*letter)' => 'contacts#index', :format => false
   resources :groups do
     collection do
-      get :index
-      post :toggle_roundrobin
+      get  :index
+      get  :enable_roundrobin_v2
     end
   end
 
