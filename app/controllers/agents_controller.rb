@@ -89,7 +89,7 @@ class AgentsController < ApplicationController
   end
 
   def toggle_availability
-    if params[:admin] || current_user.agent.allow_availability_toggle? || !current_account.features?(:disable_rr_toggle)
+    if params[:admin] || current_user.agent.allow_availability_toggle?
       @agent = current_account.agents.find_by_user_id(params[:id])
       @agent.toggle(:available)
       @agent.active_since = Time.now.utc

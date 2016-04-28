@@ -92,7 +92,7 @@ class Agent < ActiveRecord::Base
   end
 
   def toggle_availability?
-    return false if(!account.features?(:round_robin) || !in_round_robin? || account.features?(:disable_rr_toggle))
+    return false if(!account.features?(:round_robin) || !in_round_robin?)
     allow_availability_toggle? ? true : false
   end
 
