@@ -3803,8 +3803,8 @@ ActiveRecord::Schema.define(:version => 20160418103445) do
     t.integer  "user_id",    :limit => 8
     t.integer  "company_id", :limit => 8
     t.integer  "account_id", :limit => 8
-    t.boolean  "default"
-    t.boolean  "client_manager"
+    t.boolean  "default",    :default => 0
+    t.boolean  "client_manager", :default => 0
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
