@@ -97,7 +97,7 @@ module Portal::PortalFilters
 	# Applicaiton link helpers
 	# !PORTALCSS move this area INTO link_helpers later
 	def login_via_google label
-		link_to(label, "/google/login", :class => "btn btn-google") if Account.current.features? :google_signin
+		link_to(label, "/auth/google_login", :class => "btn btn-google") if Account.current.features? :google_signin
 	end
 
 	def login_via_twitter label

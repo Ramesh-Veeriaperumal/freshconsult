@@ -30,6 +30,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket",
                             "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes"]
+
+  TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
+                             "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated", 
+                             "inbound_count", "status_updated_at", "sla_timer_stopped_at", "outbound_count", "avg_response_time", 
+                             "first_resp_time_by_bhrs", "resolution_time_by_bhrs", "avg_response_time_by_bhrs"]
                             
   OBSERVER_ATTR = []
 
@@ -213,7 +218,36 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :conditions => ['helpdesk_schema_less_tickets.boolean_tc05=? AND helpdesk_schema_less_tickets.long_tc01 in (?)',
                             false, sla_rule_ids]
   }}
+
+  SCHEMA_LESS_ATTRIBUTES.each do |attribute|
+    define_method("#{attribute}") do
+      build_schema_less_ticket unless schema_less_ticket
+      schema_less_ticket.send(attribute)
+    end
+
+    define_method("#{attribute}?") do
+      build_schema_less_ticket unless schema_less_ticket
+      schema_less_ticket.send(attribute)
+    end
+
+    define_method("#{attribute}=") do |value|
+      build_schema_less_ticket unless schema_less_ticket
+      schema_less_ticket.send("#{attribute}=", value)
+    end
+  end
   
+  TICKET_STATE_ATTRIBUTES.each do |attribute|
+    define_method("#{attribute}") do
+      if ticket_states
+        ticket_states.send(attribute) 
+      else
+        # ticket_states should not be nil. Added for backward compatibility
+        NewRelic::Agent.notice_error("ticket_states is nil for acc - #{Account.current.id} - #{self.id}")
+        nil
+      end
+    end
+  end
+
   class << self # Class Methods
 
     def mobile_filtered_tickets(query_string,display_id,order_param,limit_val)
@@ -1004,7 +1038,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # Moved here from note.rb
   def trigger_cc_changes(old_cc)
-    new_cc      = self.cc_email.dup
+    new_cc      = self.cc_email.try(:dup)
     cc_changed  = if old_cc.nil?
       !old_cc.eql?(new_cc) 
     else

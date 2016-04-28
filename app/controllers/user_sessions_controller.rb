@@ -5,16 +5,11 @@ require 'gapps_openid'
 require 'rack/openid'
 require 'uri'
 require 'openid'
-require 'oauth/consumer' 
-require 'oauth/request_proxy/rack_request'
-require 'oauth/signature/rsa/sha1'
-require 'openssl'
 
 include Redis::RedisKeys
 include Redis::TicketsRedis
 include SsoUtil
 include Mobile::Actions::Push_Notifier
-include GoogleLoginHelper
 
   skip_before_filter :check_privilege, :verify_authenticity_token  
   skip_before_filter :require_user, :except => :destroy
@@ -22,11 +17,6 @@ include GoogleLoginHelper
   before_filter :check_sso_params, :only => :sso_login
   skip_before_filter :check_day_pass_usage
   before_filter :set_native_mobile, :only => [:create, :destroy]
-  skip_filter :select_shard, :only => [:oauth_google_gadget,:opensocial_google]
-  skip_before_filter :determine_pod, :only => [:openid_google,:opensocial_google]
-  skip_before_filter :set_current_account, :only => [:oauth_google_gadget,:opensocial_google] 
-  skip_before_filter :set_locale, :only => [:oauth_google_gadget,:opensocial_google] 
-  skip_before_filter :ensure_proper_protocol, :only => [:oauth_google_gadget,:opensocial_google] 
   skip_after_filter :set_last_active_time
   
   def new
@@ -63,7 +53,7 @@ include GoogleLoginHelper
   end
 
   def sso_login
-    if params[:hash] == gen_hash_from_params_hash
+    if sso_hash_validated?
       @current_user = current_account.user_emails.user_for_email(params[:email])  
       
       if @current_user && @current_user.deleted?
@@ -107,63 +97,6 @@ include GoogleLoginHelper
     end  
   end
 
-  def opensocial_google
-    begin
-      Account.reset_current_account
-      cert_file  = "#{Rails.root}/config/cert/pub.1210278512.2713152949996518384.cer"
-      cert = OpenSSL::X509::Certificate.new( File.read(cert_file) )
-      public_key = OpenSSL::PKey::RSA.new(cert.public_key)
-      container = params['opensocial_container']
-      consumer = OAuth::Consumer.new(container, public_key)
-      req = OAuth::RequestProxy::RackRequest.new(request)
-      sign = OAuth::Signature::RSA::SHA1.new(req, {:consumer => consumer})
-      verified = sign.verify
-      if verified
-        account_id = find_account_by_google_domain(params[:domain])
-        if account_id.blank?
-          json = {:verified => :false, :reason=>t("flash.gmail_gadgets.account_not_associated")}
-        else
-          Sharding.select_shard_of(account_id) do
-            account = Account.find(account_id)
-            account.make_current
-            google_viewer_id = params['opensocial_viewer_id']
-            google_viewer_id = params['opensocial_owner_id'] if google_viewer_id.blank?
-            if google_viewer_id.blank?
-              json = {:verified => :false, :reason=>t("flash.gmail_gadgets.viewer_id_not_sent_by_gmail")}
-            else
-              agent = account.agents.find_by_google_viewer_id(google_viewer_id)
-              if agent.blank?
-                json = {:user_exists => :false, :t=>generate_random_hash(google_viewer_id, account)}  
-              elsif agent.user.deleted? or !agent.user.active?
-                json = {:verified => :false, :reason=>t("flash.gmail_gadgets.agent_not_active")}
-              else
-                json = {:user_exists => :true, :t=>agent.user.single_access_token, 
-                      :url_root=>agent.user.account.full_domain, :ssl_enabled=>agent.user.account.ssl_enabled}
-              end
-            end
-          end
-        end
-      else
-        json = {:verified => :false, :reason=>t("flash.gmail_gadgets.gmail_request_unverified")}
-      end
-    rescue => e
-      Rails.logger.error "Problem in processing google opensocial request. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
-      json = {:verified => :false, :reason=>t("flash.gmail_gadgets.unknown_error")}
-    end
-    Rails.logger.debug "result json #{json.inspect}"
-    render :json => json
-  end
-
-  def generate_random_hash(google_viewer_id, account)
-     generated_hash = Digest::MD5.hexdigest(DateTime.now.to_s + google_viewer_id)
-     key_options = { :account_id => account.id, :token => generated_hash}
-     key_spec = Redis::KeySpec.new(AUTH_REDIRECT_GOOGLE_OPENID, key_options)
-     Redis::KeyValueStore.new(key_spec, google_viewer_id, {:group => :integration, :expire => 300}).set_key
-     return generated_hash
-  end
-
-  
-  
   def show
     redirect_to :action => :new
   end
@@ -265,119 +198,6 @@ include GoogleLoginHelper
     end
   end
 
-  def oauth_google_gadget
-    base_domain = AppConfig['base_domain'][Rails.env]
-    domain_name = params[:domain] 
-    signup_url = "https://signup."+base_domain+"/account/signup_google?domain="+domain_name unless domain_name.blank?
-    account_id = find_account_by_google_domain(domain_name)
-    if account_id.blank?      
-      flash[:notice] = "There is no account associated with your domain. You may signup here"
-      redirect_to signup_url and return unless signup_url.blank? 
-      raise ActiveResource::ResourceNotFound
-    end
-    Sharding.select_shard_of(account_id) do
-      @current_account = Account.find(account_id)
-      @current_account.make_current
-      @current_portal = @current_account.main_portal
-      @current_portal.make_current
-      cust_url = @current_account.full_domain
-      gv_id = params[:t] || "" # passed token will be preserved for authentication.
-      redirect_to construct_google_auth_url(cust_url, 'google_gadget_oauth2') << "%26gv_id%3D" << "#{gv_id}" # "google_gadget_oauth2" is the base key value in the oauth_config.yml file.
-    end
-  end
-  
-  def find_account_by_google_domain(google_domain_name)
-    unless google_domain_name.blank?
-      account_id = nil
-      gm = GoogleDomain.find_by_domain(google_domain_name)
-      if gm.blank?
-        full_domain  = "#{google_domain_name.split('.').first}.#{AppConfig['base_domain'][Rails.env]}"
-        sm = ShardMapping.fetch_by_domain(full_domain)
-        account_id = sm.account_id if sm
-      else
-        account_id = gm.account_id
-      end
-      account_id
-    end
-  end
-
-  def google_auth_completed    
-    resp = request.env[Rack::OpenID::RESPONSE]  
-    email = nil
-    flash = {}
-    gmail_gadget_temp_token = params[:t]
-    if resp.status == :success
-      email = get_email resp
-      provider = 'open_id' 
-      identity_url = resp.display_identifier
-      logger.debug "The display identifier is :: #{identity_url.inspect}"
-      @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,current_account.id)
-      @current_user = @auth.user unless @auth.blank?
-      @current_user = current_account.user_emails.user_for_email(email) if @current_user.blank?
-      unless gmail_gadget_temp_token.blank?
-        key_options = {:account_id => current_account.id, :token => gmail_gadget_temp_token}
-        kv_store = Redis::KeyValueStore.new(Redis::KeySpec.new(AUTH_REDIRECT_GOOGLE_OPENID, key_options))
-        kv_store.group = :integration
-        google_viewer_id = kv_store.get_key
-        @gauth_error=true
-        if google_viewer_id.blank?
-          @notice = t(:'flash.gmail_gadgets.kvp_missing')
-        elsif @current_user.blank?
-          @notice = t(:'flash.gmail_gadgets.user_missing')
-        elsif !@current_user.agent?
-          @notice = t(:'flash.gmail_gadgets.agent_missing')
-        else
-          @gauth_error=false
-        end
-      else
-        if @current_user.blank?  
-          @current_user = create_user(email,current_account,identity_url) 
-        end
-      end
-
-      if @gauth_error
-        render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
-      else
-        @current_user.active = true 
-        saved = @current_user.save
-        if @auth.blank?
-          @current_user.authorizations.create(:provider => provider, :uid => identity_url, :account_id => current_account.id) #Add an auth in existing user
-        end
-        puts "User saved status: #{saved}"
-
-        @user_session = current_account.user_sessions.new(@current_user)  
-        if @user_session.save
-          logger.debug " @user session has been saved :: #{@user_session.inspect}"
-          
-          remove_old_filters if @current_user.agent?
-
-          if gmail_gadget_temp_token.blank?
-            flash[:notice] = t(:'flash.g_app.authentication_success')        
-            if (@current_user.first_login? && @current_user.privilege?(:manage_account))
-               redirect_to admin_getting_started_index_path
-            else
-              redirect_back_or_default('/')            
-            end  
-          else
-            @current_user.agent.google_viewer_id = google_viewer_id
-            @current_user.agent.save!
-            @notice = t(:'flash.g_app.authentication_success')
-            render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
-          end
-        else
-          flash[:notice] = t(:'flash.g_app.authentication_failed')
-          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-        end
-      end
-    elsif gmail_gadget_temp_token.blank?
-      flash[:notice] = t(:'flash.g_app.authentication_failed')
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-    else
-      @notice = t(:'flash.g_app.authentication_failed')
-      render :action => 'gmail_gadget_auth', :layout => 'layouts/widgets/contacts.widget'
-    end
-  end
-
   # ITIL Related Methods starts here
 
   def redirect_to_getting_started
@@ -409,13 +229,36 @@ include GoogleLoginHelper
       end
     end
 
-    def gen_hash_from_params_hash
-      if params[:timestamp].blank?
-        Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
+    def sso_hash_validated?
+      if current_account.launched?(:disable_old_sso)
+        params[:hash] == new_sso_hash
       else
-        digest  = OpenSSL::Digest.new('MD5')
-        OpenSSL::HMAC.hexdigest(digest,current_account.shared_secret,params[:name]+params[:email]+params[:timestamp])
+        (params[:hash] == old_sso_hash) ? true : (params[:hash] == new_sso_hash)
       end
+    end
+
+    def new_sso_hash
+      key = "#{params[:name]}#{current_account.shared_secret}#{params[:email]}#{params[:timestamp]}"
+      params[:timestamp].blank? ? md5_digest_hash(key) : hmac_digest_hash(key)
+    end
+
+    def old_sso_hash
+      Rails.logger.info  "::::: Account using old sso ::::::"
+      if params[:timestamp].blank?
+        Rails.logger.info  "::::: Using old sso hash without timestamp ::::::"
+        md5_digest_hash(params[:name]+params[:email]+current_account.shared_secret)
+      else
+        hmac_digest_hash(params[:name]+params[:email]+params[:timestamp])
+      end
+    end
+
+    def md5_digest_hash(key)
+      Digest::MD5.hexdigest(key)
+    end
+
+    def hmac_digest_hash(key)
+      digest  = OpenSSL::Digest.new('MD5')
+      OpenSSL::HMAC.hexdigest(digest,current_account.shared_secret,key)
     end
 
     def get_time_in_utc

@@ -64,11 +64,8 @@ class Support::SearchV2::SpotlightController < SupportController
     def construct_es_params
       super.tap do |es_params|
         if current_user
-          if privilege?(:client_manager)
-            es_params[:ticket_company_id]     = current_user.company_id
-          else
-            es_params[:ticket_requester_id]   = current_user.id
-          end
+          es_params[:ticket_requester_id]   = current_user.id
+          es_params[:ticket_company_id]     = current_user.company_id if privilege?(:client_manager)
         end
 
         if searchable_klasses.include?('Solution::Article')

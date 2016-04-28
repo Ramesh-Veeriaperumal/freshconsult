@@ -133,7 +133,8 @@ module Helpkit
     config.autoload_paths += Dir["#{config.root}/lib/"]
     config.autoload_paths += Dir["#{config.root}/api/**/*"]
     # config.autoload_paths += %W(#{config.root}/api/app/validators/)
-    config.eager_load_paths += Dir["#{config.root}/lib/"]
+    # make sure to uncomment this for sidekiq workers
+    config.eager_load_paths += Dir["#{config.root}/lib/"] unless Rails.env.development?
 
 
     # TODO-RAILS3 need to cross check
@@ -153,22 +154,18 @@ module Helpkit
     # /auth/open_id?openid_url=https://www.google.com/accounts/o8/id
     # /auth/open_id?openid_url=https://me.yahoo.com
 
-    config.middleware.use OmniAuth::Builder do
+    require "#{Rails.root}"+"/lib/auth/builder"
+
+    config.middleware.use Auth::Builder do
       OmniAuth.config.logger = Rails.logger
 
       oauth_keys = Integrations::OauthHelper::get_oauth_keys
       oauth_keys.map { |oauth_provider, key_hash|
-        next if ['github', 'salesforce', 'shopify', 'slack', 'infusionsoft'].include?(oauth_provider)
+        next if ['github', 'salesforce', 'shopify', 'slack', 'infusionsoft', 'google_oauth2', 'google_contacts', 'google_gadget_oauth2'].include?(oauth_provider)
       if key_hash["options"].blank?
         provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
-      elsif key_hash["options"]["name"].blank?
-        provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
       else
-        provider key_hash["provider"], key_hash["consumer_token"], key_hash["consumer_secret"], { scope: key_hash["options"]["scope"], name: key_hash["options"]["name"] }
-        if key_hash["options"]["name"] == "google_login" # Since google_calendar uses the same tokens as that of google_login and uses the provider as "google_oauth2"
-          key_hash["options"].delete "name"
-          provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
-        end
+        provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
       end
       }
 
@@ -207,7 +204,7 @@ module Helpkit
     config.assets.initialize_on_precompile = false
 
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
-    config.middleware.insert_before "OmniAuth::Builder","Middleware::Pod"
+    config.middleware.insert_before "Auth::Builder","Middleware::Pod"
 
     config.assets.handle_expiration = true
     config.assets.expire_after= 2.months

@@ -28,7 +28,7 @@
 			 <li>
 				<div>
 					<b><%= t(".sign_in_using") %>:</b>
-					<%= link_to(content_tag(:span, "" , :class => 'social google', :title => t(".sign_in_using_google")) + "Google", "/google/login", :class => "button") if feature?(:google_signin) %>
+					<%= link_to(content_tag(:span, "" , :class => 'social google', :title => t(".sign_in_using_google")) + "Google", "/auth/google_login", :class => "button") if feature?(:google_signin) %>
 					<%= link_to(content_tag(:span, "" , :class => 'ficon-twitter social twitter', :title => "Twitter") + "Twitter", "/auth/twitter", :class => "button") if feature?(:twitter_signin) %>
 					<%= link_to(content_tag(:span, "" , :class => 'ficon-facebook social facebook', :title => "Facebook") + "Facebook", "/sso/facebook", :class => "button") if feature?(:facebook_signin) %>
 				</div>

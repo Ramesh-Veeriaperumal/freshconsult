@@ -23,6 +23,7 @@ module RabbitMq::Utils
 
   private
 
+  # Note: If message structure is changing here, make sure to check PostArchiveProcess file.
   def publish_to_rabbitmq(exchange, model, action)
     if RABBIT_MQ_ENABLED
       uuid    =  generate_uuid
@@ -105,5 +106,7 @@ module RabbitMq::Utils
   def generate_uuid
     UUIDTools::UUID.timestamp_create.hexdigest
   end
-  
+
+  # Need this to invoke without AR objects
+  module_function :generate_uuid, :manual_publish_to_xchg
 end

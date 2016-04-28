@@ -8,9 +8,8 @@ class AccountsController < ApplicationController
   
   layout :choose_layout 
   
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free, :signup_google,
-                      :create_account_google, :openid_complete, :associate_google_account,
-                      :associate_local_to_google, :create, :rebrand, :dashboard, :rabbitmq_exchange_info]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free,
+                     :create, :rebrand, :dashboard, :rabbitmq_exchange_info]
 
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
   skip_before_filter :set_time_zone, :set_current_account,
@@ -18,15 +17,9 @@ class AccountsController < ApplicationController
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   skip_before_filter :check_day_pass_usage, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
-  skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
-                                         :marketplace_login, :portal_login, :create_account_from_google,
-                                         :associate_google_account,:associate_local_to_google]
-  skip_before_filter :ensure_proper_protocol, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
-                                         :marketplace_login, :portal_login, :create_account_from_google,
-                                         :associate_google_account,:associate_local_to_google]
-  skip_before_filter :determine_pod, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,
-                                        :marketplace_login, :portal_login, :create_account_from_google,
-                                        :associate_google_account,:associate_local_to_google]
+  skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
+  skip_before_filter :ensure_proper_protocol, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
+  skip_before_filter :determine_pod, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
 
   around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
 
@@ -36,7 +29,7 @@ class AccountsController < ApplicationController
   before_filter :build_plan, :only => [:new, :create]
   before_filter :admin_selected_tab, :only => [:show, :edit, :cancel ]
   before_filter :validate_custom_domain_feature, :only => [:update]
-  before_filter :build_signup_param, :only => [:new_signup_free, :create_account_google]
+  before_filter :build_signup_param, :only => [:new_signup_free]
   before_filter :build_signup_contact, :only => [:new_signup_free]
   before_filter :check_supported_languages, :only =>[:update], :if => :dynamic_content_available?
   before_filter :set_native_mobile, :only => [:new_signup_free]
@@ -86,60 +79,7 @@ class AccountsController < ApplicationController
       render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).fd_json }, :callback => params[:callback] 
     end    
   end
-  
-  def signup_google 
-    base_domain = AppConfig['base_domain'][Rails.env]
-    logger.debug "base domain is #{base_domain}"   
-    return_url = "https://login."+base_domain+"/google/complete?domain="+params[:domain]  
-    #return_url = "http://localhost:3000/google/complete?domain="+params[:domain]   
-    return_url = return_url+"&callback="+params[:callback] unless params[:callback].blank?    
-    url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
-    rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
-    re_alm = "https://*."+base_domain   
-    #re_alm = "http://localhost:3000/" 
-    logger.debug "return_url is :: #{return_url.inspect} and :: trusted root is:: #{re_alm.inspect} "
-    authenticate_with_open_id(url,{ :required =>rqrd_data , :return_to => return_url ,:trust_root =>re_alm}) do |result, identity_url, registration| 
-    end     
-  end
-  
-  def create_account_google
-    @signup = Signup.new(params[:signup])
-   
-    if @signup.save
-       @signup.user.deliver_admin_activation
-       add_to_crm       
-       @rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
-       @rediret_url = "https://www.google.com/a/cpanel/"+@signup.account.google_domain if @rediret_url.blank?
-       render "thank_you"
-      #redirect to google.... else to the signup page
-    else
-      @account = @signup.account
-      @user = @signup.user
-      @call_back_url = params[:call_back]
-      render "google_signup/signup_google"
-    end    
-  end
 
-  def openid_complete	  
-	  data = Hash.new
-	  resp = request.env[Rack::OpenID::RESPONSE]    
-    logger.debug "The resp.status is :: #{resp.status}"    
-    
-	  if resp.status == :success
-	    session[:openid] = resp.display_identifier
-	    ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
-	    data["email"] = ax_response.data["http://axschema.org/contact/email"].first
-	    data["first_name"] = ax_response.data["http://axschema.org/namePerson/first"].first
-	    data["last_name"] = ax_response.data["http://axschema.org/namePerson/last"].first      
-      deliver_signup_page resp, data
-	    render :action => :signup_google
-	  else
-      logger.debug "Authentication failed....delivering error page"    
-      render :action => :signup_google_error
-	  end
-	   logger.debug "here is the retrieved data: #{data.inspect}"
- end
-  
   def create    
     @account.affiliate = SubscriptionAffiliate.find_by_token(cookies[:affiliate]) unless cookies[:affiliate].blank?
 
@@ -225,7 +165,6 @@ class AccountsController < ApplicationController
     end
 
     def choose_layout 
-      return "signup_google" if (["openid_complete", "create_account_google", "associate_local_to_google", "associate_google_account"].include?(action_name))
       request.headers['X-PJAX'] ? 'maincontent' : 'application'
 	  end
 	
@@ -329,32 +268,6 @@ class AccountsController < ApplicationController
 
   private
 
-    def deliver_signup_page resp,data
-      @open_id_url = resp.identity_url
-      @call_back_url = params[:callback]   
-      @account  = Account.new
-      @account.domain = params[:domain].split(".")[0] 
-      @account.name = @account.domain.titleize
-      @account.google_domain = params[:domain]
-      @user = @account.users.new   
-      unless data.blank?
-        @user.email = data["email"]
-        @user.name = (data["first_name"] || '') +" "+ (data["last_name"] || '') 
-      end
-    end
-
-    def set_account_values
-      @open_id_url = params[:user][:uid]  
-      @call_back_url = params[:call_back]   
-      @account  = Account.new
-      @account.domain = params[:account][:google_domain].split(".")[0] 
-      @account.name = @account.domain.titleize
-      @account.google_domain = params[:account][:google_domain]
-      @user = @account.users.new      
-      @user.email = params[:user][:email]  
-      @user.name = params[:user][:name]      
-    end
-
     def get_account_for_sub_domain
       base_domain = AppConfig['base_domain'][Rails.env]    
       @sub_domain = params[:account][:sub_domain]
@@ -362,24 +275,9 @@ class AccountsController < ApplicationController
       @account =  Account.find_by_full_domain(@full_domain)    
     end
 
-    def get_full_domain_for_google
-      base_domain = AppConfig['base_domain'][Rails.env]    
-      @sub_domain = params[:account][:sub_domain]
-      @full_domain = @sub_domain+"."+base_domain
-    end
-
     def select_latest_shard(&block)
       Sharding.select_latest_shard(&block)
     end   
-
-    def verify_open_id_user account   
-      provider = 'open_id'
-      identity_url = params[:user][:uid]
-      email = params[:user][:email]
-      @auth = Authorization.find_by_provider_and_uid_and_account_id(provider, identity_url,account.id)
-      @current_user = @auth.user unless @auth.blank?
-      @current_user = account.user_emails.user_for_email(email) if @current_user.blank?  
-    end
 
     def build_signup_param
       params[:signup] = {}

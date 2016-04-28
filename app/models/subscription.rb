@@ -487,7 +487,7 @@ class Subscription < ActiveRecord::Base
 
     def update_reseller_subscription
       if state_changed? or (active? and amount_changed?) or subscription_currency_id_changed? or next_renewal_at_changed?
-        Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => account_id, 
+        Subscription::UpdatePartnersSubscription.perform_async({ :account_id => account_id, 
           :event_type => :subscription_updated })
       end
     end

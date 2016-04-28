@@ -25,6 +25,35 @@ module Freshfone::CallHistory
 		@current_call = call if call.present?
 	end
 
+	def prepare_filters(data_filter)
+		filters = ActiveSupport::JSON.decode data_filter['data_hash']
+      filters.each do |filter| 
+        case filter['condition']
+          when 'created_at'
+            filter['value'] = get_date_range(data_filter['date_range_type'] , filter['value'])
+        end
+  		end 
+  	params[:data_hash] = ActiveSupport::JSON.encode filters  
+  	@cached_filters['data_hash'] = params[:data_hash]   
+	end
+
+	def get_date_range(type, custom_value)
+		TimeZone.set_time_zone
+		options = {:format => :short_day_separated, :include_year => true}
+		case type
+			when "Today"
+				view_context.formated_date(Time.zone.now.to_date, options)
+			when "Yesterday"
+				view_context.formated_date(1.day.ago, options)
+			when "Last7Days"
+				view_context.date_range_val(7.days.ago, Time.zone.now.to_date)
+			when "Last30Days"
+				view_context.date_range_val(29.days.ago, Time.zone.now.to_date)
+			else
+				custom_value
+			end
+	end
+
 	
 	private
 		# Find current_call

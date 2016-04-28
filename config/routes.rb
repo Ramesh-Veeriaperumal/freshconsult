@@ -179,10 +179,8 @@ Helpkit::Application.routes.draw do
   match '/javascripts/:action.:format' => 'javascripts#index'
   match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
   resources :authorizations
-  match '/google_sync' => 'authorizations#sync', :as => :google_sync
-  match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
-  match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
-  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft"].each do |provider|
+
+  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget"].each do |provider| 
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -358,15 +356,11 @@ Helpkit::Application.routes.draw do
 
   match '/agents/filter/:state(/*letter)' => 'agents#index'
   match '/logout' => 'user_sessions#destroy', :as => :logout
-  match '/oauth/googlegadget' => 'user_sessions#oauth_google_gadget', :as => :gauth
-  match '/opensocial/google' => 'user_sessions#opensocial_google', :as => :gauth
-  match '/authdone/google' => 'user_sessions#google_auth_completed', :as => :gauth_done
   match '/login' => 'user_sessions#new', :as => :login
   match '/login/sso' => 'user_sessions#sso_login', :as => :sso_login
   match '/login/saml' => 'user_sessions#saml_login', :as => :saml_login
   match '/login/normal' => 'user_sessions#new', :as => :login_normal
   match '/signup_complete/:token' => 'user_sessions#signup_complete', :as => :signup_complete
-  match '/google/complete' => 'accounts#openid_complete', :as => :openid_done
   match '/zendesk/import' => 'admin/zen_import#index', :as => :zendesk_import
   match '/twitter/authdone' => 'social/twitter_handles#authdone', :as => :tauth
   match '/download_file/:source/:token' => 'admin/data_export#download', :as => :download_file
@@ -705,23 +699,19 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :google_accounts do
+    resources :google_accounts, :only => [:new, :update, :delete] do
       member do
-        get :edit
         delete :delete
-        put :update
-        put :import_contacts
       end
       collection do
-        post :update
-        get :edit
+        get :new
+        put :update
       end
     end
 
-    resources :gmail_gadgets do
-      collection do
-        get :spec
-      end
+    namespace :gmail_gadget do
+      get :spec
+      get :open_social_auth
     end
 
     match '/jira_issue/unlink' => 'jira_issue#unlink'
@@ -818,9 +808,16 @@ Helpkit::Application.routes.draw do
         post :receive_webhook
       end
 
+      namespace :google do
+        get :onboard
+        get :home
+        get :landing
+      end
+
       namespace :signup do
         put :associate_account
         put :create_account
+        put :associate_account_using_proxy
       end
     end
 
@@ -1652,7 +1649,6 @@ Helpkit::Application.routes.draw do
       get :cancel
       post :cancel
       get :canceled
-      post :signup_google
       delete :delete_logo
       delete :delete_favicon
       get :new_signup_free
@@ -2213,15 +2209,6 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match 'accounts/create_account_google' => 'accounts#create_account_google', :via => :put
-  resources :google_signup, :controller => 'google_signup' do
-    collection do
-      put :associate_local_to_google
-      put :associate_google_account
-    end
-  end
-
-
   resources :posts
 
   match '/discussions/categories.:format' => 'discussions#create', :via => :post
@@ -2458,6 +2445,7 @@ Helpkit::Application.routes.draw do
 
     match '/custom_surveys/:survey_result/:rating' => 'custom_surveys#create', :as => :custom_survey_feedback, :via => :post
     match '/custom_surveys/:survey_code/:rating/new' => 'custom_surveys#new_via_handle' ,:as => :customer_custom_survey
+    match '/custom_surveys/:survey_code/:rating/hit' => 'custom_surveys#hit' ,:as => :customer_custom_survey_hit
     match '/custom_surveys/:ticket_id/:rating'  => 'custom_surveys#new_via_portal', :as => :portal_custom_survey
 
     namespace :mobihelp do
@@ -2568,10 +2556,8 @@ Helpkit::Application.routes.draw do
   end
 
   resources :rabbit_mq, :only => [:index]
-  match '/marketplace/login' => 'google_login#marketplace_login', :as => :route
-  match '/openid/google' => 'google_login#marketplace_login'
-  match '/google/login' => 'google_login#portal_login', :as => :route
-  match '/gadget/login', :controller => 'google_login', :action => 'google_gadget_login', :as => :route
+  match '/openid/google', :controller => "integrations/marketplace/google", :action => "old_app_redirect"
+  match '/google/login', :controller => "sso", :action => "mobile_app_google_login"
   match '/' => 'home#index'
   # match '/:controller(/:action(/:id))'
   match '/all_agents' => 'agents#list'

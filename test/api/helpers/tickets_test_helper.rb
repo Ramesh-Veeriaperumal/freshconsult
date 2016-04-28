@@ -152,14 +152,14 @@ module TicketsTestHelper
   def v2_ticket_params
     @integrate_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
     { email: Faker::Internet.email, cc_emails: [Faker::Internet.email, Faker::Internet.email], description:  Faker::Lorem.paragraph, subject: Faker::Lorem.words(10).join(' '),
-      priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: [Faker::Name.name, Faker::Name.name],
+      priority: 2, status: 7, type: 'Problem', responder_id: @agent.id, source: 1, tags: [Faker::Name.name, Faker::Name.name],
       due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @integrate_group.id
     }
   end
 
   def v1_ticket_params
     { email: Faker::Internet.email, description:  Faker::Lorem.paragraph, subject: Faker::Lorem.words(10).join(' '),
-      priority: 2, status: 3, ticket_type: 'Problem', responder_id: @agent.id, source: 1,
+      priority: 2, status: 7, ticket_type: 'Problem', responder_id: @agent.id, source: 1,
       due_by: 14.days.since.iso8601, frDueBy: 1.days.since.iso8601, group_id: Group.find(1).id
     }
   end

@@ -33,6 +33,9 @@
 	if(document.referrer.length>0){
 		Feedback.refreshTab();
 	}
+	<% if @rating_via_handle %>
+		Feedback.surveySaveHit("<%= @rating %>","<%= @survey_code%>");
+	<% end %>
 </script>
 
 <body class="single">

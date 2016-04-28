@@ -4,19 +4,17 @@
 class Auth::Authenticator
   include Integrations::OauthHelper
 
-  def self.title
-    raise NotImplementedError
+  def self.inherited(klass)
+    @auth_classes ||= {}
+    @auth_classes[klass.name.split('::').last.underscore.split('_')[0...-1].join('_')] = klass
   end
 
   def self.authenticators
-    return @auth_classes if @auth_classes
-    subclasses = {}
-    ObjectSpace.each_object(Module) {|m| subclasses[m.title] =  m if m.ancestors.include?(Auth::Authenticator) && m.name != 'Auth::Authenticator' }
-    @auth_classes = subclasses
+    @auth_classes
   end
 
   def self.get_auth_class(auth_name)
-    authenticators[auth_name]
+    @auth_classes[auth_name]
   end
 
   def initialize(options = {})
@@ -26,6 +24,7 @@ class Auth::Authenticator
     @result = Auth::Result.new
     @current_account = options[:current_account]
     @omniauth = options[:omniauth]
+    @user_id = options[:user_id]
   end
 
   def name

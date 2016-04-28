@@ -42,15 +42,15 @@ class Middleware::Pod
       provider = provider_match[1]
       Rails.logger.info "Provider: #{provider}"
       case provider
-        when 'google_login', 'google_gadget_login'
+        when 'google_login'
           Rails.logger.info 'Determining login for google.'
           query = Rack::Utils.parse_nested_query(env['QUERY_STRING'])
           return if (query.blank? || query['state'].blank?)
-          state_params = CGI.parse(query['state'])
-          return if state_params["full_domain"][0].blank?
-          shard = ShardMapping.lookup_with_domain(state_params["full_domain"][0])
+          state_params = CGI.parse(URI.decode(query['state']))
+          return if state_params["portal_domain"][0].blank?
+          shard = ShardMapping.lookup_with_domain(state_params["portal_domain"][0])
           determine_pod(shard)
-        when 'google_gadget'
+        when 'google_marketplace_sso', 'google_gadget'
           return
         when 'twitter'
           return # For twitter redirection is based on customer portal rather than integrations url.

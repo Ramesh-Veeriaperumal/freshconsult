@@ -20,9 +20,6 @@ module IntegrationServices::Services
   CONTACT_CUSTOM_FIELDS = ["freshdesk__Freshdesk_Twitter_UserName__c", "freshdesk__Freshdesk_Facebook_Id__c", "freshdesk__Freshdesk_External_Id__c"]
   CONTACT_FIELDS = ["Email", "MobilePhone", "Phone", "freshdesk__Freshdesk_Twitter_UserName__c", 
     "freshdesk__Freshdesk_Facebook_Id__c", "freshdesk__Freshdesk_External_Id__c"]
-    def self.title
-      "salesforce"
-    end
 
     def instance_url
       self.configs['instance_url']

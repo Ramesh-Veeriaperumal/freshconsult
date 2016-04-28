@@ -1,9 +1,5 @@
 class Auth::MagentoAuthenticator < Auth::Authenticator
 
-  def self.title
-    "magento"
-  end
-
   def after_authenticate(params)
     @current_account.make_current
     position = params["position"].to_i

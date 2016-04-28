@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "ef49ed5b233974fd073d2dc9689dea20f5790cb458af38693f9e27530f4b1094",
-    "current": "ef49ed5b233974fd073d2dc9689dea20f5790cb458af38693f9e27530f4b1094"
+    "previous": "f4c87aab366a1f4a1e3e245ab4e6aceb1584e5696913e6f35afa9737016130b7",
+    "current": "f4c87aab366a1f4a1e3e245ab4e6aceb1584e5696913e6f35afa9737016130b7"
   },
   "fonts": [
-    "public/assets/glyphs_ef49ed5b233974fd073d2dc9689dea20.ttf",
-    "public/assets/glyphs_ef49ed5b233974fd073d2dc9689dea20.svg",
-    "public/assets/glyphs_ef49ed5b233974fd073d2dc9689dea20.woff",
-    "public/assets/glyphs_ef49ed5b233974fd073d2dc9689dea20.eot"
+    "public/assets/glyphs_f4c87aab366a1f4a1e3e245ab4e6aceb.ttf",
+    "public/assets/glyphs_f4c87aab366a1f4a1e3e245ab4e6aceb.svg",
+    "public/assets/glyphs_f4c87aab366a1f4a1e3e245ab4e6aceb.woff",
+    "public/assets/glyphs_f4c87aab366a1f4a1e3e245ab4e6aceb.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -269,6 +269,14 @@
     "cube": {
       "codepoint": 61917,
       "source": "public/glyphs/vectors/cube.svg"
+    },
+    "cube-filled": {
+      "codepoint": 61976,
+      "source": "public/glyphs/vectors/cube-filled.svg"
+    },
+    "cubes": {
+      "codepoint": 61977,
+      "source": "public/glyphs/vectors/cubes.svg"
     },
     "customer-fields": {
       "codepoint": 61739,
@@ -1112,10 +1120,6 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
-    "font_ascent": 448,
-    "font_descent": 64,
-    "font_design_size": 16,
-    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {
@@ -1130,7 +1134,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",

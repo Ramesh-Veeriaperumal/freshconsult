@@ -7,7 +7,7 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:signup, :receive_webhook]
 
-  skip_before_filter :set_current_account, :check_account_state, :set_time_zone, :check_day_pass_usage, :set_locale, :only => [:signup, :landing, :receive_webhook]
+  skip_before_filter :set_current_account, :check_account_state, :set_time_zone, :check_day_pass_usage, :set_locale, :only => [:signup, :landing]
 
   before_filter :verify_hmac, :only => [:receive_webhook]
 

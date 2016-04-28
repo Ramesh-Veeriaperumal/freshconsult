@@ -370,7 +370,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     self.sender_email.present? ? self.sender_email : requester.email
   end
 
-  [:due_by, :frDueBy, :fr_escalated, :isescalated, :spam].each do |attribute|
+  ['due_by', 'frDueBy', 'fr_escalated', 'isescalated', 'spam'].each do |attribute|
     define_method "#{attribute}" do
       archive_ticket_association.association_data["helpdesk_tickets"][attribute]
     end

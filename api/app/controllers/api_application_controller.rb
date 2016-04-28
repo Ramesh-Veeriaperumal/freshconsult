@@ -96,8 +96,7 @@ class ApiApplicationController < MetalApiController
       match[:action] != 'route_not_found'
     end.map(&:upcase)
     if allows.present? # route is present, but method is not allowed.
-      render_base_error(:method_not_allowed, 405, methods: allows.join(', '), fired_method: env['REQUEST_METHOD'])
-      response.headers['Allow'] = allows.join(', ')
+      render_405_error(allows)
     else # route not present.
       head 404
     end
@@ -621,6 +620,12 @@ class ApiApplicationController < MetalApiController
     def log_and_render_404
       Rails.logger.debug "API V2 Item not present. Id: #{params[:id]}, method: #{params[:action]}, controller: #{params[:controller]}"
       head 404
+    end
+
+    def render_405_error(allowed_methods)
+      methods = allowed_methods.join(', ')
+      render_base_error(:method_not_allowed, 405, methods: methods, fired_method: request.method)
+      response.headers['Allow'] = methods
     end
 
     def check_day_pass_usage_with_user_time_zone

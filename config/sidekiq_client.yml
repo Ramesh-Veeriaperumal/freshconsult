@@ -107,6 +107,8 @@ defaults: &defaults
     - [tickets_export_queue]
     - [premium_ticket_export]
     - [long_running_ticket_export]
+    - [chargebee_add_subscription]
+    - [partners_event_queue]
 development:
   <<: *defaults
 

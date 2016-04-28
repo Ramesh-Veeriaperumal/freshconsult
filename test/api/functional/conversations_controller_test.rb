@@ -565,6 +565,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params = update_note_params_hash
     put :update, construct_params({ id: n.id }, params)
     assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'DELETE', fired_method: 'PUT'))
+    assert_equal 'DELETE', response.headers['Allow']
   end
 
   def test_update_not_note_or_reply
@@ -572,6 +574,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params = update_note_params_hash
     put :update, construct_params({ id: n.id }, params)
     assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'DELETE', fired_method: 'PUT'))
+    assert_equal 'DELETE', response.headers['Allow']
   end
 
   def test_delete_not_note_or_reply
