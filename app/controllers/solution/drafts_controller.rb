@@ -9,7 +9,8 @@ class Solution::DraftsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :set_selected_tab, :only => [:index]
   before_filter :page_title, :only => [:index]
-  before_filter :load_article_with_meta, :only => [:autosave, :publish, :destroy, :attachments_delete]
+  before_filter :load_article_with_meta, :only => [:publish, :destroy, :attachments_delete]
+  before_filter :load_meta, :article_deleted_response, :load_article, :only => [:autosave]
   before_filter :load_attachment, :only => [:attachments_delete]
   before_filter :language, :only => [:publish, :attachments_delete]
 
@@ -82,8 +83,21 @@ class Solution::DraftsController < ApplicationController
     end
 
     def load_article_with_meta
-      @article_meta = current_account.solution_article_meta.find_by_id!(params[:article_id])
+      load_meta
+      load_article
+    end
+
+    def load_meta
+      @article_meta = current_account.solution_article_meta.find_by_id(params[:article_id])
+    end
+
+    def load_article
+      render_404 and return false unless @article_meta
       @article = @article_meta.solution_articles.find_by_language_id(params[:language_id], :include => :draft, :readonly => false)
+    end
+
+    def article_deleted_response
+      render :json => { :success => false, :deleted => true }.to_json, :formats => [:js], :status => 200 and return false unless @article_meta
     end
 
     def load_attachment
