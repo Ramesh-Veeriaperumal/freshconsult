@@ -5,6 +5,24 @@ class ApiCompanyFieldsControllerTest < ActionController::TestCase
     { api_company_field: params }
   end
 
+  def test_index_with_privilege
+    User.any_instance.stubs(:privilege?).with(:manage_contacts).returns(true).at_most_once
+    get :index, controller_params
+    assert_response 200
+    assert JSON.parse(response.body).count > 1
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_index_without_privilege
+    User.any_instance.stubs(:privilege?).with(:manage_contacts).returns(false).at_most_once
+    get :index, controller_params
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
   def test_index
     get :index, controller_params
     pattern = []
