@@ -79,6 +79,7 @@ window.App.Solutions = window.App.Solutions || {};
 				$('#solution_folder_meta_solution_category_meta_id').select2("enable", !flag);
 				$('#solution_folder_meta_solution_category_meta_id').toggleClass('hide', flag);
 				$('#create-category-text').toggleClass('hide', !flag).attr('disabled', !flag);
+				$('#create-category-text-error').toggleClass('hide', !flag);
 				$('#cancel-create-new').toggleClass('hide', !flag);
 				$('#create-new-category').toggleClass('hide', flag);
 				$('.solution_folder_meta_solution_category_meta').toggleClass('hide', flag);
