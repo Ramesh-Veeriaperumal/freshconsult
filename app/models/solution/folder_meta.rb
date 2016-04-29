@@ -54,10 +54,9 @@ class Solution::FolderMeta < ActiveRecord::Base
 		:foreign_key => :solution_folder_meta_id
 
 	has_many :published_articles,
-		:conditions => proc { { 
-			language_id: Language.for_current_account.id,
-			status: Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
-		 } },
+		:conditions => proc {%{`solution_articles`.status = 
+			#{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]} AND 
+			`solution_articles`.language_id = #{Language.for_current_account.id}} },
 		:through => :solution_article_meta,
 		:class_name => "Solution::Article",
 		:source => :solution_articles

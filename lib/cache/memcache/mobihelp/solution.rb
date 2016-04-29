@@ -52,7 +52,8 @@ module Cache::Memcache::Mobihelp::Solution
     
     def solutions(category_id)
       MemcacheKeys.fetch(mobihelp_solutions_key_with_category_id(category_id)) {
-        category_meta = Solution::CategoryMeta.find_by_id(category_id)
+        category_meta = Solution::CategoryMeta.includes({:public_folder_meta => 
+          {:published_article_meta => [:tags, :current_article_body]}}).find_by_id(category_id)
 
         category_meta.to_json(:include => {:public_folders => 
           {:include => {:published_articles => {:include => {:tags => {:only => :name }}, 

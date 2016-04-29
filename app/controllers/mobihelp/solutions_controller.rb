@@ -4,7 +4,7 @@ class Mobihelp::SolutionsController < MobihelpController
   include Cache::Memcache::Mobihelp::Solution
 
   before_filter :check_solution_updated, :only => :articles
-  before_filter :load_mobihelp_solution_category, :only => :articles
+  before_filter :load_mobihelp_solution_category, :set_language, :only => :articles
 
   # version 1 - Supports single solution category.
   # version 2 - Supports multiple solution categories with the order of position. Mobihelp SDK version 1.3
@@ -47,5 +47,9 @@ class Mobihelp::SolutionsController < MobihelpController
           render_json({:no_update => true})  if updated_since > last_updated_time
         end
       end
+    end
+
+    def set_language
+      Language.for_current_account.make_current
     end
 end
