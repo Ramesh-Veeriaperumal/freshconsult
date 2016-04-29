@@ -131,6 +131,7 @@ jQuery.fn.daterangepicker = function(settings){
 			jQuery('<li class="ui-daterangepicker-'+ this.text.replace(/ /g, '') +' ui-corner-all"><a href="#">'+ this.text +'</a></li>')
 			.data('dateStart', this.dateStart)
 			.data('dateEnd', this.dateEnd)
+			.data('period',this.period != 'undefined' ? this.period : 'default')
 			.appendTo(ul);
 		});
 		var x=0;
@@ -261,7 +262,10 @@ jQuery.fn.daterangepicker = function(settings){
 			setTimeout(function(){doneBtn.fadeIn();}, 400);
 
 			if (options.presetRangesCallback){
-				jQuery(document).trigger("presetRangesSelected",false); 
+				var data = {
+					status : false
+				}
+				jQuery(document).trigger("presetRangesSelected",data); 
 			}
 		}
 		else {
@@ -276,7 +280,11 @@ jQuery.fn.daterangepicker = function(settings){
 			rp.find('.range-end').datepicker('setDate', dateEnd).find('.ui-datepicker-current-day').trigger('click');
 			// Reports Hack: To persist relative date Range
 			if (options.presetRangesCallback){
-				jQuery(document).trigger("presetRangesSelected",true); 
+				var data = {
+					status : true,
+					period : el.data('period')
+				}
+				jQuery(document).trigger("presetRangesSelected",data); 
 			}
 				
 

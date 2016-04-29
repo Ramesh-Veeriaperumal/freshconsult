@@ -1,0 +1,18 @@
+Hi <%= @user.name %>,
+
+The scheduled report that you created for <%=@task.schedulable.filter_name%> was not sent to the following email address(es):
+
+  <%@options[:blocked_emails].each do |email|%>
+    <%= email %>
+  <%end%>
+
+This could be because of one of the following reasons:
+	1.The contact associated with the email was deleted
+  	2.The email address was deleted
+
+You can update the email address(es) by clicking on the below link:
+<%= "#{@user.account.full_url}/reports/v2/#{HelpdeskReports::Constants::Common::REPORT_ENUM_TO_TYPE[@task.schedulable.report_type]}"%>
+
+
+Regards,
+Freshdesk Support Team

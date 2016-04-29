@@ -2713,6 +2713,40 @@ ActiveRecord::Schema.define(:version => 20160418103445) do
 
   add_index "roles", ["account_id", "name"], :name => "index_roles_on_account_id_and_name", :unique => true
 
+  create_table "scheduled_tasks", :force => true do |t|
+    t.integer  "account_id",           :limit => 8
+    t.integer  "user_id",              :limit => 8
+    t.integer  "schedulable_id",       :limit => 8
+    t.string   "schedulable_type"
+    t.integer  "status",               :limit => 2, :null => false, :default => 0
+    t.datetime "next_run_at"
+    t.datetime "last_run_at"
+    t.integer  "frequency",            :limit => 2
+    t.integer  "repeat_frequency",     :limit => 2
+    t.integer  "day_of_frequency",     :limit => 2
+    t.integer  "minute_of_day"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.integer  "consecutive_failuers", :limit => 2
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
+  end
+
+  add_index "scheduled_tasks", ["next_run_at", "status", "account_id"], :name => "index_scheduled_tasks_on_next_run_at_and_status_and_account_id"
+  add_index "scheduled_tasks", ["account_id", "schedulable_type", "user_id"], :name => "index_scheduled_tasks_on_account_id_schedulable_type_and_user_id"
+
+  create_table "schedule_configurations", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.integer  "scheduled_task_id", :limit => 8
+    t.integer  "notification_type", :limit => 2
+    t.text     "config_data",       :limit => 16777215
+    t.text     "description",       :limit => 16777215
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+  end
+
+  add_index "schedule_configurations", ["account_id", "scheduled_task_id"], :name => "index_schedule_configuration_on_account_id_and_scheduled_task_id"
+
   create_table "scoreboard_levels", :force => true do |t|
     t.integer  "account_id", :limit => 8
     t.integer  "points"

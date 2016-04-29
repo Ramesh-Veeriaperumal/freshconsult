@@ -5,7 +5,7 @@
 <div class="reports-wrapper" id="reports_wrapper">
   <div class="reports-main">
     <div class="reports-header row-fluid">
-     <%= render :partial => "layouts/report/v2/shared/header.html.erb", :formats => [:html], :locals => {report_type: report_type, filter_name: filter_name }  %> 
+     <%= render :partial => "layouts/report/v2/shared/header.html.erb", :formats => [:html], :locals => {report_type: report_type, filter_name: filter_name, last_dump_time: last_dump_time }  %> 
     </div>
     <div class="reports-container" id="reports_container">
       <div class="row-fluid volume-header">
@@ -37,14 +37,13 @@
     window.HelpdeskReports = window.HelpdeskReports || {};
     HelpdeskReports.locals = HelpdeskReports.locals || {};
     HelpdeskReports.locals.report_type = "<%= report_type %>";
-    HelpdeskReports.locals.date_lag = <%= date_lag_by_plan %>;
     HelpdeskReports.locals.date_range = "<%= date_range %>";
     HelpdeskReports.locals.select_hash  = <%= filters.to_json.html_safe%> 
     HelpdeskReports.locals.chart_hash = <%= data.to_json.html_safe %>;
     HelpdeskReports.locals.metric = HelpdeskReports.Constants.TicketVolume.metric
     HelpdeskReports.locals.trend = "<%= trend %>";
     HelpdeskReports.locals.pdf = true;
-    HelpdeskReports.locals.is_non_sprout_plan = '<%= Account.current.subscription.non_sprout_plan? || feature?(:advanced_reporting) %>';
+    HelpdeskReports.locals.is_non_sprout_plan = <%= Account.current.subscription.non_sprout_plan? || feature?(:advanced_reporting) %>;
     
     var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
     var locals = HelpdeskReports.locals;

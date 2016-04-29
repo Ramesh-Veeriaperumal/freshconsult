@@ -1508,6 +1508,7 @@ Helpkit::Application.routes.draw do
           post :save_reports_filter
           post :update_reports_filter
           post :delete_reports_filter
+          post :export_pdf
         end
       end
     end
@@ -1519,6 +1520,7 @@ Helpkit::Application.routes.draw do
           post :save_reports_filter
           post :update_reports_filter
           post :delete_reports_filter
+          post :export_pdf
         end
       end
     end
@@ -1538,6 +1540,7 @@ Helpkit::Application.routes.draw do
       post :report_filter
       post :export_csv
       post :generate_pdf
+      post :export_pdf
       post :save_reports_filter
       post :update_reports_filter
       post :delete_reports_filter

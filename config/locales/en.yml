@@ -7529,12 +7529,21 @@ en:
     generate: Generate
     more: More...
     view_more: View more...
-    last_num_days: Last %{num} Days
+    last_num_days: Last %{num} days
+    last_num_months: Last %{num} months
     yesterday: Yesterday
+    this_week: This week
+    previous_week: Previous week
+    this_month: This month
+    previous_month: Previous month
+    this_year: This year
     today: Today
     date_range: Date Range
     start_date: Start Date
     end_date: End Date
+    summary: Summary
+    chats: Chats
+    edit: Edit
     filter_error_msg: '* You can select a maximum of 5 filters. (Each selected level of nested field counts as one filter)'
     no_data_to_display_msg: No data to display
     something_went_wrong_msg: 'Something went wrong, please try again'
@@ -7545,23 +7554,57 @@ en:
     view_all_compliant_tickets: View all compliant tickets
     view_all_violated_tickets: View all violated tickets
     export_exceeds_row_limit_msg: "- The report has been truncated to show %{row_max_limit} records -"
-    average_interactions: "( Average %{count} )"
+    average_interactions: "(Average %{count})"
+    last_updated: "Last updated <span class='instance'><abbr data-livestamp=%{last_dump_time}> ago </abbr></span>"
+    last_updated_at: "Last updated at <span class='instance'>%{time_in_words}</span>"
     saved_report: 
-      title: Report Title
-      dialog_header: Save as
+      title: Report title
+      dialog_header: "Save & Schedule Report"
+      copy_of: "Copy of "
       edit_dialog_header: Edit Report
       delete_dialog_header: Delete Report
       dialog_sub_header: This report will be visible only to you
-      error_missing_title: Title is required
-      error_title_unavailable: This title already exists
+      dialog_schedule_guide : "After saving, you can schedule the report by clicking on the calendar icon"
+      error_max_limit: An account can have maximum of %{limit} saved reports
+      error_missing_title: All Fields are required
+      error_title_unavailable: This title already exist
       delete_cnfm_message: Are you sure you want to delete this saved report?
       deleted_message: Report has been deleted successfully!
-      deleted_failed_message: Report deletion failed.Try Again later.
+      deleted_failed_message: Report deletion failed.Try again later.
       updated_message: Report has been updated successfully!
-      update_failed_message: Report updation failed.Try Again later.
+      update_failed_message: Report updation failed.Try again later.
       saved_message: Report has been saved successfully!
-      save_failed_message: Report saving failed.Try Again later.
+      save_failed_message: Report saving failed.Try again later.
+      save_header: Save Report
+      create_schedule: Create schedule
+      schedule_header: Schedule Report
+      read_more: How to schedule report?
+      schedule_success: Report has been scheduled successfully.
       limit_exceeded_message: You have exceeded the maximum limit. You are allowed to create %{count} saved filters per report
+      tooltip: Scheduled every %{period}
+      save: Save
+      cancel: Cancel
+      desc: "Hello, \n\nPlease find a copy of %{report_name} - %{schedule} report with this email.\n\n\n Thanks,\n %{username}"
+      message:
+        week_tmpl: "%{name} for <strong>last %{day}</strong> to <strong>%{previous_day}</strong> will be sent along with below email <strong>every %{day}</strong> at <strong>%{time}</strong> time"
+        week_friday_tmpl: "%{name} for <strong>last %{day}</strong> to <strong> this %{previous_day}</strong> will be sent along with below email <strong>every %{day}</strong> at <strong>%{time}</strong> time"
+        daily_tmpl: "%{name} for <strong>yesterday</strong> will be sent along with below email <strong>everyday</strong> at <strong>%{time}</strong> time"
+        monthly_tmpl: "%{name} for <strong>last month</strong> will be sent along with below email <strong>first of every month</strong> at <strong>%{time}</strong> time"        
+    scheduled_reports:
+      dialog:
+        email : Email
+        generate_report : Generate report
+        on : On
+        subject : Subject
+        desc : Description
+      errors:
+        emails_limit: You can add maximum %{num} emails
+        invalid_email: Invalid emails
+        acc_max_limit: An account can have maximum of %{count} scheduled tasks
+        user_max_limit: A user can create maximum of %{count} scheduled tasks
+        general: Some of the fields in form are invalid
+        disabled : Reports with custom date ranges cannot be scheduled
+        invalid_frequency: Invalid frequency
     deprecated_message: "The old reports will no longer be available after 30th March, 2016"
     deprecated_header: "This report will no longer be available after 30th March, 2016"
     deprecated_header_index: "These reports will no longer be available after 30th March, 2016"
@@ -7818,6 +7861,8 @@ en:
     export:
       export_report_pdf: "Export as PDF"
       export_report_csv: "Export as CSV"
+      email_report_pdf: "Email PDF"
+      email_report_csv: "Email CSV"
     customer_satisfaction:
       title: Customer Satisfaction Report
   adv_reports:

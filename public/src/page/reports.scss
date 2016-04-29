@@ -136,6 +136,29 @@ $Customer_hover_color:#866aa0;
 	width: 200px;
 	height: 60px;
 }
+.comparision_chart{
+	position: relative;
+	width: 200px;
+	height: 30px;
+	border-radius: 20px;
+    margin-top: 10px;
+    border: 1px solid #70B570;
+	overflow : hidden;
+	
+	.billable {
+	    background: #70B570;
+	    height: 100%;
+	    border-radius: 20px;
+	    border-top-right-radius: 0px;
+	    border-bottom-right-radius: 0px;
+	    transition : width 2s;
+	}
+	.billable_value{
+		position: absolute;
+		right: 10px;
+		top : 7px;
+	}
+}
 .time-sheet-summary{
 	.report-summary .report-summary-wrapper{
 		.report-summary-data, .report-summary-header, .report-summary-footer{
@@ -145,16 +168,12 @@ $Customer_hover_color:#866aa0;
 		}
 	}
 	.hours span{
-		height: 10px;
-		width: 10px;
+		height: 7px;
+		width: 7px;
 		@include margin-right(10px);
 		display: inline-block;
-		margin-top:1px;
-		-webkit-border-radius: 2px;
-		-moz-border-radius: 2px;
-		-ms-border-radius: 2px;
-		-o-border-radius: 2px;
-		border-radius: 2px;
+		vertical-align: middle;
+		border-radius: 8px;
 	}
 	.billable-block{
 			background-color: #7ebf00
@@ -165,7 +184,84 @@ $Customer_hover_color:#866aa0;
 	.filter-type ul{
 		display: inline;
 	}
+
+	.grid{
+		border : 1px solid #e2e2e2;
+		overflow: hidden;
+		border-radius: 8px;
+	}
+	.grid table tr:first-child th{
+		background: #f0f0f0;
+		border-left : 1px solid #e2e2e2;
+		&:first-child{
+			border-left : 0px;
+		}
+	}
+	.report table tr.odd td{
+		border-left : 1px solid #e2e2e2;
+		&:first-child{
+			border-left : 0px;
+		}
+	}
+	.report table tr.even td{
+		background: #fff;
+	}
+	
+	.filter-type ul{
+			display: inline;
+	}
+	.hours{
+		vertical-align: middle;
+	}
 }
+
+/* New TimeSheet Report */
+.metrics{
+	width: 100%;
+	margin: 10px 0 0 0;
+
+	.metric{
+		width: 20%;
+		@include border-right(1px solid #e1e1e1);
+	    @include float(left);
+	    @include padding( 0 20px 10px 20px);
+
+	    &.no-border{
+	    	border-right : 0px;
+		}
+		label{
+			font-size: 13px;
+    		text-transform: uppercase;	
+		}
+		
+		#timesheet_single_stacked_bar_chart_metric{
+			height : $single_stackbar_chart_height/2;
+			width: 250px;
+		}
+	}
+	#bar_chart_noinfo {
+   		 margin: 10px 0px;
+	}
+}
+
+.metric_tooltip{
+	float : left;
+	margin : 10px;
+	&.billable{
+		color : #70B570;
+	}
+	&.non-billable{
+		color : #6e6e6e;
+	}
+	.type{
+		white-space: nowrap;
+	}
+	.value{
+		font-size: 20px;
+    	font-weight: bold;
+	}
+}
+
 .time-sheet-top-margin{
 	margin-top: 10px;
 }
@@ -1015,6 +1111,15 @@ $animation_timing: .1s;
 			    text-align: center;
 			    margin-right: 4px;
 			}
+			&.calendar,&.edit{
+				width: 30px;
+			    font-size: 18px;
+			    display: inline-block;
+			    text-align: center;
+			}
+			&.scheduled{
+				color : green;
+			}
 		}
 	}
 }
@@ -1027,8 +1132,27 @@ $animation_timing: .1s;
 p.visibility {
     color: gray;
     margin-top: -10px;
-    margin-bottom: 20px;
 }
+
+
+//Avoiding improper break in multi-page table
+.table-print-pdf
+{
+	table { 
+		page-break-inside: avoid ;
+    tr    { page-break-inside: avoid; page-break-after:auto }
+    thead { display:table-header-group }
+	}
+}
+
+.export-exceeds-row-limit{
+	text-align: center;
+	margin-top: 20px;
+	padding: 30px;
+	font-weight:bold;
+	font-style: italic;
+}
+
 // Deprecated 
 
 .deprecate-message{
@@ -1046,10 +1170,8 @@ p.visibility {
 
 p.visibility {
     color: gray;
-    margin-top: -10px;
-    margin-bottom: 20px;
+    margin-top: 5px;
 }
-
 .deprecate-message{
 	font-weight: normal;
 	margin-top : 5px;

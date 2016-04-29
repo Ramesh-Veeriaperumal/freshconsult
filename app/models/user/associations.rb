@@ -129,4 +129,6 @@ class User < ActiveRecord::Base
   has_one :forum_moderator , :class_name => 'ForumModerator' , :foreign_key => "moderator_id", :dependent => :destroy
 
   has_many :ebay_questions, :class_name => 'Ecommerce::EbayQuestion'
+  
+  has_many :scheduled_tasks, :class_name => 'Helpdesk::ScheduledTask'
 end
