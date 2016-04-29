@@ -14,12 +14,12 @@ class CategoriesQueriesTest < ActionDispatch::IntegrationTest
       api_destroy: 8,
       api_forums: 2,
 
-      create: 22,
-      show: 14,
-      update: 18,
-      index: 14,
-      destroy: 21,
-      forums: 15
+      create: 19,
+      show: 11,
+      update: 15,
+      index: 11,
+      destroy: 18,
+      forums: 12
     }
 
     # create
@@ -29,7 +29,7 @@ class CategoriesQueriesTest < ActionDispatch::IntegrationTest
     end
     v1[:create] = count_queries do
       post('/discussions/categories.json', v1_category_payload, @write_headers)
-      assert_response 201
+    assert_response 201
     end
 
     id1 = ForumCategory.last(2).first.id

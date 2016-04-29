@@ -32,8 +32,8 @@ class ApiSlaPoliciesQueriesTest < ActionDispatch::IntegrationTest
         api_update: 8,
         api_index: 1,
 
-        update: 19,
-        index: 13
+        update: 17,
+        index: 11
       }
       agent = add_test_agent(@account)
       sp1 = create_sla_policy(agent)

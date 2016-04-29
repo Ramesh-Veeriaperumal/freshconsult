@@ -8,8 +8,8 @@ class ApiProductsQueriesTest < ActionDispatch::IntegrationTest
       api_show: 0,
       api_index: 0,
 
-      show: 14,
-      index: 14
+      show: 11,
+      index: 11
     }
 
     product = create_product

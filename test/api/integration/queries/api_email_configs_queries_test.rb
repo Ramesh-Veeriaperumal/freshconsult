@@ -8,8 +8,8 @@ class ApiEmailConfigsQueriesTest < ActionDispatch::IntegrationTest
       api_show: 1,
       api_index: 1,
 
-      show: 13,
-      index: 13
+      show: 11,
+      index: 11
     }
 
     email_config = create_email_config
