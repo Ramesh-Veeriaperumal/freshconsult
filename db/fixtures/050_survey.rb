@@ -17,6 +17,7 @@ survey = CustomSurvey::Survey.seed(:account_id) do |s|
 end
 
 CustomSurvey::SurveyQuestion.seed(:account_id) do |q|
+  q.account_id = account.id
   q.survey_id = survey.id
   q.name = 'default_survey_question'
   q.label = 'How would you rate your overall satisfaction for the resolution provided by the agent?'
