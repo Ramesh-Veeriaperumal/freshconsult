@@ -1890,6 +1890,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/filter/customer/:customer_id' => 'tickets#index', :as => :customer_filter
     match '/tickets/filter/company/:company_id' => 'tickets#index', :as => :company_filter
     match '/tickets/get_solution_detail/:id' => 'tickets#get_solution_detail'
+    match '/tickets/get_solution_detail/:id/:language' => 'tickets#get_solution_detail'
     match '/tickets/filter/tags/:tag_id' => 'tickets#index', :as => :tag_filter
     match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter
     match '/tickets/dashboard/:filter_type/:filter_key' => 'tickets#index', :as => :dashboard_filter

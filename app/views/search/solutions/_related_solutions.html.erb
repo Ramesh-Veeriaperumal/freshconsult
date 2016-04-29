@@ -33,7 +33,8 @@ function respondWithSol(select, sol_id, url, title){
 	if(select == 'link'){
 		insertLink(url, title);
 	} else {
-		handleSolutionDetail(sol_id);
+    // Instead of title, we will be getting the language_id (if applicable) here.
+		handleSolutionDetail(sol_id, title);
 	}
 }
 
@@ -77,9 +78,13 @@ function insertIntoSocialEditor(value, textarea){
 	textarea.keyup(); // to update the SendTweetCounter value
 }
 
-function handleSolutionDetail(sol_id){
+function handleSolutionDetail(sol_id, title){
+  var content_url = '/helpdesk/tickets/get_solution_detail/' + sol_id;
+  if (title !== undefined) {
+    content_url += '/' + title;
+  }
   jQuery.ajax({	type: 'POST',
-    url: '/helpdesk/tickets/get_solution_detail/'+sol_id,
+    url: content_url,
     success: function(data){ insertSolutionContent(data); }
   });
   return true;

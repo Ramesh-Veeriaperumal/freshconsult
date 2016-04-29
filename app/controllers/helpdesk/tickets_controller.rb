@@ -780,7 +780,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def get_solution_detail
-    sol_desc = current_account.solution_articles.find(params[:id])
+    language = Language.find_by_code(params[:language]) || Language.for_current_account
+    sol_desc = current_account.solution_article_meta.find(params[:id]).send("#{language.to_key}_article")
     render :text => sol_desc.description || ""
   end
 
