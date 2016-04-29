@@ -2202,7 +2202,7 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'requester')
     assert_response 200
-    match_json(ticket_pattern_with_association(ticket, false, false, true, false))
+    match_json(ticket_pattern_with_association(ticket, false, false, true, false, false))
   end
 
   def test_show_with_company
@@ -2212,13 +2212,23 @@ class TicketsControllerTest < ActionController::TestCase
     t.update_column(:owner_id, company.id)
     get :show, controller_params(id: ticket.display_id, include: 'company')
     assert_response 200
-    match_json(ticket_pattern_with_association(ticket, false, false, false, true))
+    match_json(ticket_pattern_with_association(ticket, false, false, false, true, false))
+  end
+
+  def test_show_with_stats
+    t = ticket
+    t.update_column(:deleted, false)
+    t.update_ticket_attributes(status: 4)
+    get :show, controller_params(id: ticket.display_id, include: 'stats')
+    assert_response 200
+    match_json(ticket_pattern_with_association(ticket, false, false, false, false, true))
   end
 
   def test_show_with_all_associations
     show_ticket = ticket
     show_ticket.update_column(:deleted, false)
-    get :show, controller_params(id: show_ticket.display_id, include: 'conversations,requester,company')
+    show_ticket.update_ticket_attributes({status: 5})
+    get :show, controller_params(id: show_ticket.display_id, include: 'conversations,requester,company,stats')
     assert_response 200
     match_json(ticket_pattern_with_association(show_ticket))
   end
@@ -2227,7 +2237,7 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: '')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company, stats')])
   end
 
   def test_show_with_wrong_type_include
@@ -2241,7 +2251,7 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'test')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company, stats')])
   end
 
   def test_show_with_invalid_params
@@ -2559,6 +2569,26 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month)
     assert_equal tkts.count, response.size
+    pattern = tkts.map { |tkt| index_ticket_pattern_with_associations(tkt, true, false) }
+    match_json(pattern)
+  end
+
+  def test_index_with_stats
+    get :index, controller_params(include: 'stats')
+    assert_response 200
+    response = parse_response @response.body
+    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month)
+    assert_equal tkts.count, response.size
+    pattern = tkts.map { |tkt| index_ticket_pattern_with_associations(tkt, false, true) }
+    match_json(pattern)
+  end
+
+  def test_index_with_all_associations
+    get :index, controller_params(include: 'requester,stats', per_page: 70)
+    assert_response 200
+    response = parse_response @response.body
+    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month)
+    assert_equal tkts.count, response.size
     pattern = tkts.map { |tkt| index_ticket_pattern_with_associations(tkt) }
     match_json(pattern)
   end
@@ -2566,7 +2596,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_empty_include
     get :index, controller_params(include: '')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'requester')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'requester, stats')])
   end
 
   def test_index_with_wrong_type_include
@@ -2578,7 +2608,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_invalid_param_value
     get :index, controller_params(include: 'test')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'requester')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'requester, stats')])
   end
 
   def test_show_with_conversations_exceeding_limit

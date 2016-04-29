@@ -113,7 +113,7 @@ class TicketsController < ApiApplicationController
     def conditional_preload_options
       preload_options = [:ticket_old_body, :schema_less_ticket, :flexifield]
       @ticket_filter.include_array.each do |assoc|
-        preload_options << assoc
+        preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc] || assoc) 
         increment_api_credit_by(2)
       end
       preload_options
@@ -145,6 +145,11 @@ class TicketsController < ApiApplicationController
     # used in side loading association
     def company
       @item.company
+    end
+
+    # used in side loading association
+    def stats
+      @item.ticket_states
     end
 
     def paginate_options(is_array = false)

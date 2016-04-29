@@ -24,6 +24,8 @@ json.partial! 'show_requester' if defined?(@requester)
 
 json.partial! 'show_company' if defined?(@company)
 
+json.partial! 'show_stats' if defined?(@stats)
+
 json.extract! @item, :custom_fields
 
 json.set! :tags, @item.tag_names # does not have timestamps, hence no caching

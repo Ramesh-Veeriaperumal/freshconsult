@@ -17,8 +17,8 @@ module TicketsTestHelper
     ticket_pattern(ticket).except(:attachments, :conversations, :tags)
   end
 
-  def index_ticket_pattern_with_associations(ticket, requester = true)
-    ticket_pattern_with_association(ticket, false, false, requester, false).except(:attachments, :conversations, :tags)
+  def index_ticket_pattern_with_associations(ticket, requester = true, ticket_states = true)
+    ticket_pattern_with_association(ticket, false, false, requester, false, ticket_states).except(:attachments, :conversations, :tags)
   end
 
   def index_deleted_ticket_pattern(ticket)
@@ -34,7 +34,7 @@ module TicketsTestHelper
     ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
 
-  def ticket_pattern_with_association(ticket, limit = false, notes = true, requester = true, company = true)
+  def ticket_pattern_with_association(ticket, limit = false, notes = true, requester = true, company = true, stats = true)
     result_pattern = ticket_pattern(ticket)
     if notes
       notes_pattern = []
@@ -49,6 +49,9 @@ module TicketsTestHelper
     end
     if company
       ticket.company ? result_pattern.merge!(company: company_pattern(ticket.company)) : result_pattern.merge!(company: {})
+    end
+    if stats
+      ticket.ticket_states ? result_pattern.merge!(stats: ticket_states_pattern(ticket.ticket_states)) : result_pattern.merge!(stats: {})
     end
     result_pattern
   end
@@ -70,9 +73,17 @@ module TicketsTestHelper
     }
   end
 
+  def ticket_states_pattern(ticket_states)
+    {
+      closed_at: ticket_states.closed_at.try(:utc).try(:iso8601),
+      resolved_at: ticket_states.resolved_at.try(:utc).try(:iso8601),
+      first_responded_at: ticket_states.first_response_time.try(:utc).try(:iso8601)
+    }
+  end
+
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    custom_field = ticket.custom_field.map { |k, v| [TicketDecorator.display_name(k), v] }.to_h
+    custom_field = ticket.custom_field.map { |k, v| [TicketDecorator.display_name(k), v.respond_to?(:utc) ? v.utc.iso8601 : v] }.to_h
     ticket_custom_field = (custom_field && ignore_extra_keys) ? custom_field.as_json.ignore_extra_keys! : custom_field.as_json
     description_html = format_ticket_html(ticket, expected_output[:description]) if expected_output[:description]
 
@@ -103,8 +114,8 @@ module TicketsTestHelper
       custom_fields:  expected_custom_field || ticket_custom_field,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      due_by: expected_output[:due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.due_by.utc.iso8601,
-      fr_due_by: expected_output[:fr_due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.frDueBy.utc.iso8601
+      due_by: expected_output[:due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.due_by.try(:utc).try(:iso8601),
+      fr_due_by: expected_output[:fr_due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.frDueBy.try(:utc).try(:iso8601)
     }
   end
 
