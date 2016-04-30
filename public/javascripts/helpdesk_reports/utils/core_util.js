@@ -945,31 +945,31 @@ HelpdeskReports.CoreUtil = {
         } else if(period == date_const.THIS_WEEK) {
             var end_date        = date_ranges['endDate'];
             var this_week_start = date_ranges['this_week_start'];
-            var this_week_end   = end_date <= this_week_start ? this_week_start : end_date;                    
+            var this_week_end   = Date.parse(end_date) <= Date.parse(this_week_start) ? this_week_start : end_date;                    
             return this_week_start + " - " + this_week_end;
         } else if(period == date_const.PREVIOUS_WEEK) {
             return date_ranges['previous_week_start'] + " - " + date_ranges['previous_week_end'];
         } else if(period == date_const.THIS_MONTH) {
             var end_date         = date_ranges['endDate'];
             var this_month_start = date_ranges['this_month_start'];
-            var this_month_end   = end_date <= this_month_start ? this_month_start : end_date;                    
+            var this_month_end   = Date.parse(end_date) <= Date.parse(this_month_start) ? this_month_start : end_date;                    
             return this_month_start + " - " + this_month_end;
         } else if(period == date_const.PREVIOUS_MONTH) {
             return date_ranges['previous_month_start'] + " - " + date_ranges['previous_month_end'];
         } else if(period == date_const.LAST_3_MONTHS) {
             var end_date      = date_ranges['endDate'];
             var three_month_start = date_ranges['last_3_months'];
-            var three_month_end   = end_date <= three_month_start ? three_month_start : end_date;                    
+            var three_month_end   = Date.parse(end_date) <= Date.parse(three_month_start) ? three_month_start : end_date;                    
             return three_month_start + " - " + three_month_end;
         } else if(period == date_const.LAST_6_MONTHS) {
             var end_date      = date_ranges['endDate'];
             var six_month_start = date_ranges['last_6_months'];
-            var six_month_end   = end_date <= six_month_start ? six_month_start : end_date;                    
+            var six_month_end   = Date.parse(end_date) <= Date.parse(six_month_start) ? six_month_start : end_date;                    
             return six_month_start + " - " + six_month_end;
         } else if(period == date_const.THIS_YEAR) {
             var end_date        = date_ranges['endDate'];
             var this_year_start = date_ranges['this_year_start'];
-            var this_year_end   = end_date <= this_year_start ? this_year_start : end_date;                    
+            var this_year_end   = Date.parse(end_date) <= Date.parse(this_year_start) ? this_year_start : end_date;                    
             return this_year_start + " - " + this_year_end;
         } 
     },
@@ -993,7 +993,7 @@ HelpdeskReports.CoreUtil = {
                 var presetRanges = [{
                     text: I18n.t('helpdesk_reports.this_week'),
                     dateStart: date.this_week_start,
-                    dateEnd: date.endDate <= date.this_week_start ? date.this_week_start : date.endDate,
+                    dateEnd: Date.parse(date.endDate) <= Date.parse(date.this_week_start) ? date.this_week_start : date.endDate,
                     period : "this_week"
                 },{
                     text: I18n.t('helpdesk_reports.previous_week'),
@@ -1008,7 +1008,7 @@ HelpdeskReports.CoreUtil = {
                 },{
                     text: I18n.t('helpdesk_reports.this_month'),
                     dateStart: date.this_month_start,
-                    dateEnd: date.endDate <= date.this_month_start ? date.this_month_start : date.endDate,
+                    dateEnd: Date.parse(date.endDate) <= Date.parse(date.this_month_start) ? date.this_month_start : date.endDate,
                     period : "this_month"
                 },{
                     text: I18n.t('helpdesk_reports.previous_month'),
@@ -1023,7 +1023,7 @@ HelpdeskReports.CoreUtil = {
                 },{
                     text: I18n.t('helpdesk_reports.last_num_months',{ num : '3'}),
                     dateStart: date.last_3_months,
-                    dateEnd: date.endDate <= date.last_3_months ? date.last_3_months : date.endDate ,
+                    dateEnd: Date.parse(date.endDate) <= Date.parse(date.last_3_months) ? date.last_3_months : date.endDate ,
                     period : "last_3_months"
                 },{
                     text: I18n.t('helpdesk_reports.last_num_days',{ num: 90 }),
@@ -1033,12 +1033,12 @@ HelpdeskReports.CoreUtil = {
                 },{
                     text: I18n.t('helpdesk_reports.last_num_months',{ num : '6'}),
                     dateStart: date.last_6_months,
-                    dateEnd: date.endDate <= date.last_6_months ? date.last_6_months : date.endDate,
+                    dateEnd: Date.parse(date.endDate) <= Date.parse(date.last_6_months) ? date.last_6_months : date.endDate,
                     period : "last_6_months"
                 },{
                     text: I18n.t('helpdesk_reports.this_year'),
                     dateStart: date.this_year_start, 
-                    dateEnd: date.endDate <= date.this_year_start ? date.this_year_start : date.endDate,
+                    dateEnd: Date.parse(date.endDate) <= Date.parse(date.this_year_start) ? date.this_year_start : date.endDate,
                     period : "this_year"
                 }];
             }else{
