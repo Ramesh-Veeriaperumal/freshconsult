@@ -461,8 +461,11 @@ module SolutionHelper
 		op << link_to(t('solution.create_new'), '', :id => 'create-new-category', :class => 'inline-block ml15 mt7')
 		op << %(<div class='inline-block mb4'>)
 		f.fields_for(:solution_category_meta) do |category_fields|
-			op << dynamic_text_box(:category, @language, category_fields, 
-									{ :class => "hide input-large", :disabled => true, :id => 'create-category-text', :primary => true})
+      op << text_field_tag("solution_folder_meta[solution_category_meta][primary_category][name]", nil,
+	                         :class => "required hide input-large",
+	                         :id => "create-category-text",
+	                         :autocomplete => "off",
+	                         :placeholder => t("solution.categories.enter_version_name", :language_name => @language.name))
 		end
 		op << %(</div>)
 		op << %(<div class='inline-block'>)
