@@ -669,7 +669,7 @@ en:
         stream_title2: "Converting specific tweets to tickets automatically"
         stream_info2: "The tweets coming in through these social streams can be filtered further using certain keywords and converted to tickets automatically. They can even be assigned to groups and products. You can set up more than one rule and the first rule that the tweet satisfies will get executed. For example, you can convert tweets mentioning “switching to” with your competitors names into tickets and escalate them to your support team head."
       flash:
-        stream_updated: "Twitter stream %{stream_name} has been updated"
+        stream_updated: "Settings for %{stream_name} has been updated"
         stream_deleted: "Twitter stream %{stream_name} has been deleted"
         stream_save_error: "Error encountred on stream save"
         ticket_rule_error: "Some ticket rules might not have been saved due to empty keyword filters"
@@ -723,6 +723,57 @@ en:
         dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
         include_helptext: "example: support, \"System down\", @insideapple"
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
+      facebook_streams:
+        index: 
+          new_account: "New Account"
+          new_page: "New Page"
+          pages: "Facebook Pages"
+          streams: "Facebook Streams"
+          reauthorize: "Reautorize"
+          add_page: "Add Facebook Page"
+          associate_page: "Associate"
+        streams:
+          associated_user: "Associated Fb User"
+        edit:
+          cancel: "Cancel"
+          update: "Update"
+          tke_rule_breif_desc: "Posts will automatically get converted into tickets based on these settings"
+        page_tab:
+          page_tab_head: "Facebook Page Tab"
+          config_info: "Once you enable your Facebook page tab, your customers will be able to directly access your solutions, forums and self-service from within Facebook"
+          reauth: "Please <a href='%{page_tab_url}' > reauthorize </a> with Facebook to access your page tab"
+          no_ssl: "<b>Facebook page tab requires a Secure Connection.</b><br />You need to enable SSL encryption from <a href='/admin/security'>Security settings</a>"
+          tab_name: "Tab name "
+          remove_tab: "Remove page Tab"
+          configure_tab: "Create your Facebook page tab"
+          configure_tab_auth: "<a href='%{page_tab_url}'> Create your Facebook page tab</a>"
+        ticket_rules:
+          do_not_convert: "Do not convert"
+          do_not_convert_help: "No posts will be converted to tickets."
+          convert_only_relevant: "Convert only relevant posts"
+          convert_visitor: "Convert all Visitor Posts to tickets"
+          convert_company: "For company posts, convert individual visitor comments to tickets when they contain these keywords"
+          view_info_text: "You can still view all other visitor comments in your Social Tab"
+          assign_to_gp: "Assign to group"
+          convert_everything: "Convert everything"
+          convert_everything_help: "All Visitor posts and all Company posts with any Visitor Comments will be converted to tickets. You can manually split comments into separate tickets."
+          convert_relevant: "Converts posts according to the visitor posts or company comments with respect to the given settings"
+          edit_stream: "Edit Stream"
+          import_visitor_posts: "Convert all Visitor Posts to tickets"
+          import_company_posts: "For company posts, convert individual visitor comments to tickets when they have these keywords"
+          assign_to_gp: "Assign tickets to group"
+        convert_dm:
+          header: "Convert all Messages to tickets"
+          threading_interval: "Set Ticket Threading Interval"
+          dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
+          assign_to_gp: "Assign tickets to group"
+        page_form:
+          link_to_product: "Link to Product"
+          visible_to: "Visible to"
+          stream_info: "This stream will contain all your wall posts"
+        enable_facebook_page:
+          select_all: Select all
+          associate_page: "Select the facebook pages you would like to associate to the Helpdesk."
     company_fields:
       fields:
         name: Full Name

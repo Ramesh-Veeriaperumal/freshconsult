@@ -6,7 +6,7 @@ module AccountMetricHelperMethods
     Integrations::Widget, Moderatorship, PasswordReset, PodShardCondition, ShardMapping, SQSPost, 
     Subscription::Addon, Subscription::Currency, Subscription::PlanAddon, 
     SubscriptionAffiliate, SubscriptionAnnouncement, SubscriptionPlan, 
-    Freshfone::Address, Social::FacebookPageMapping, FacebookPageMapping, 
+    Freshfone::Address, Social::FacebookPageMapping, 
     GoogleDomain, Helpdesk::UserAccess, Helpdesk::GroupAccess, DeletedCustomers, Wf::Filter,
     Features::Feature, Integrations::GoogleAccount]
 

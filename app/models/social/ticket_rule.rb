@@ -1,5 +1,7 @@
 class Social::TicketRule < ActiveRecord::Base
 
+  include Facebook::Constants
+  
   self.table_name =  "social_ticket_rules"
   self.primary_key = :id
 
@@ -15,14 +17,13 @@ class Social::TicketRule < ActiveRecord::Base
   attr_accessible :filter_data, :action_data, :position
   acts_as_list :scope => :stream
 
-
   def apply(feed)
     #For now, check for includes alone
     return check_includes(feed)
   end
 
   def include_keys
-    filter_data[:includes].join(',')
+    filter_data[:includes] ? filter_data[:includes].join(',') : ""
   end
 
   def group_id
@@ -33,6 +34,32 @@ class Social::TicketRule < ActiveRecord::Base
     if !twitter_stream.id.nil? and !twitter_stream.twitter_handle.nil?
       new_record? ? twitter_stream.twitter_handle.product_id : action_data[:product_id]
     end
+  end
+  
+  ["strict", "optimal", "broad"].each do |rule_type|
+    define_method("#{rule_type}?") do
+      filter_data[:rule_type] && (filter_data[:rule_type] == RULE_TYPE[rule_type.to_sym])
+    end
+  end
+  
+  def convert_fb_feed_to_ticket?(post, status, visitor_comment, message)
+    return false if strict?
+          
+    if optimal?
+      return import_visitor_posts? if post
+      
+      return apply(message) if (visitor_comment && import_company_comments?)
+    end
+      
+    return post || (status && visitor_comment) if broad?
+  end
+
+  def import_visitor_posts?
+    optimal? && filter_data[:import_visitor_posts]
+  end
+  
+  def import_company_comments?
+    optimal? && filter_data[:import_company_comments]
   end
 
   private

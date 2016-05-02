@@ -16,39 +16,45 @@ module Facebook
       alias_attribute :koala_feed, :koala_comment      
 
       def initialize(fan_page, comment_id, koala_comment = nil)
-        @account       = Account.current
-        @fan_page      = fan_page
-        @koala_comment = koala_comment ? koala_comment : get_koala_feed(POST_TYPE[:comment], comment_id)
-        @koala_post    = Facebook::KoalaWrapper::Post.new(fan_page)
-        @source        = SOURCE[:facebook]
-        @type          = POST_TYPE[:comment]
-        @fd_item       = helpdesk_item(@koala_comment.feed_id)
-        @dynamo_helper = Social::Dynamo::Facebook.new
+        @account        = Account.current
+        @fan_page       = fan_page
+        @koala_comment  = koala_comment ? koala_comment : get_koala_feed(POST_TYPE[:comment], comment_id)
+        @koala_post     = Facebook::KoalaWrapper::Post.new(fan_page)
+        @source         = SOURCE[:facebook]
+        @type           = POST_TYPE[:comment]
+        @fd_item        = helpdesk_item(@koala_comment.feed_id)
+        @dynamo_helper  = Social::Dynamo::Facebook.new
+        @parent_fd_item = nil
       end   
       
       # convert_comment - Flag to decide if the comment has to be converted to a fd_item
       # can_dynamo_push - Flag to decide if the comment has to be converted to a ticket or not
       # parent_present  - Set to true when called from a parent class
+      
       def process(convert_comment = false, can_dynamo_push = true, parent_in_dynamo = false)
         convert_post_to_ticket    = false
         push_post_tree_to_dynamo  = parent_in_dynamo ? false : !parent_post_in_dynamo?
+        
         #Comment is not converted to a fd_item as yet
         if self.fd_item.nil?
           #Comment can be added as a note
           if add_as_note?(convert_comment)
             self.fd_item      = add_as_note(parent_post.postable, self.koala_comment)
-          #Comment cannot be converted to a fd_item
+            
+          elsif convert_comment
+            self.fd_item      = add_as_ticket(self.fan_page, self.koala_comment, ticket_attributes)
           else
-            convert_post_to_ticket = convert_post?(!push_post_tree_to_dynamo) unless parent_in_dynamo
+            convert_post_to_ticket = convert_post?(!push_post_tree_to_dynamo)
           end
         end 
         
-        unless parent_in_dynamo
-          process_post(convert_post_to_ticket, push_post_tree_to_dynamo) 
+        
+        if push_post_tree_to_dynamo || convert_post_to_ticket
+          process_post(convert_post_to_ticket, push_post_tree_to_dynamo)  
           self.fd_item = helpdesk_item(@koala_comment.feed_id)
           
           #If post is fetched from Dynamo or DB the current note will not be converted to a fd_item         
-          if (self.fd_item.nil? && add_as_note?(convert_comment))
+          if (self.fd_item.nil? && parent_post.present?)
             self.fd_item = add_as_note(parent_post.postable, self.koala_comment) 
           end
         end
@@ -79,6 +85,10 @@ module Facebook
         dynamo_helper.has_parent_feed?(Time.now.utc, dynamo_keys, post_id)
       end
       
+      def add_as_note?(convert_comment)
+        convert_comment.is_a?(Helpdesk::Ticket) ? true : parent_post.present?
+      end
+      
       def process_post(convert_post, can_dynamo_push)
         fetch_parent_data(!can_dynamo_push) if self.koala_post.feed.blank? 
         post_type  = self.koala_post.by_company? ? POST_TYPE[:status] : POST_TYPE[:post]
@@ -105,16 +115,13 @@ module Facebook
       def dynamo_keys
         dynamo_hash_and_range_key(self.fan_page.default_stream.id)
       end   
-         
-      def add_as_note?(convert_comment)
-        convert_comment || parent_post.present?
-      end
-      
+          
       def insert_comment_in_dynamo
         dynamo_helper.insert_comment_in_dynamo(self)
       end 
       
       alias :insert_reply_in_dynamo :insert_comment_in_dynamo
+      
       
       def can_convert_company_post
         self.koala_comment.by_visitor? && self.fan_page.import_company_posts
@@ -122,15 +129,32 @@ module Facebook
       
       def can_convert_visitor_post
         self.koala_post.by_visitor? && self.fan_page.import_visitor_posts
-      end     
+      end  
+      
+      def comment_to_ticket?(convert_comment, parent_in_dynamo)
+        fetch_parent_data(parent_in_dynamo)
+        convert_comment && self.koala_post.by_company? && social_revamp_enabled?
+      end
       
       def convert_post?(parent_in_dynamo)
-        return false unless (self.fan_page.import_company_posts || self.fan_page.import_visitor_posts)
-        post_type  = fetch_parent_data(parent_in_dynamo)
-        can_convert_company_post || can_convert_visitor_post
+        if social_revamp_enabled?
+          default_stream = self.fan_page.default_stream
+          ticket_rule    = default_stream.ticket_rules.first
+          
+          return false if ticket_rule.strict?
+          
+          fetch_parent_data(parent_in_dynamo)
+          ticket_rule.convert_fb_feed_to_ticket?(self.koala_post.by_visitor?, self.koala_post.by_company?, self.koala_comment.by_visitor?, "")
+        else
+          return false unless (self.fan_page.import_company_posts || self.fan_page.import_visitor_posts)
+          fetch_parent_data(parent_in_dynamo)
+          return (can_convert_company_post || can_convert_visitor_post) 
+        end
       end  
       
       def fetch_parent_data(parent_in_dynamo)
+        return if self.koala_post.feed_id.present?
+        
         if parent_in_dynamo
           self.koala_post.fetch_post_from_dynamo(post_id, self.dynamo_helper)
         elsif parent_post.present?

@@ -1,0 +1,27 @@
+<div class="head">
+    <label class="inline adm-radio" id="capture-dm">
+      <%= t('.header')%>
+    </label>
+  </div>
+<div class='adm-social sts adm-bg c-tkt dm-options'>     
+  <div id="dm-option" class="clearfix">
+    <div class="control-group row-fluid clearfix">
+      <label for="dm-intervals" class="control-label span3"><%= t('.threading_interval')%></label> 
+      <div class="controls span7">
+        <%= select(:social_facebook_page ,:dm_thread_time, Social::FacebookPage::DM_THREADTIME_OPTIONS ,{:selected => facebook_page.dm_thread_time},  :class => 'select2-container select2 span6') %>
+        <div class="msg help-block"><%= t('.dm_info')%></div>
+      </div>
+    </div> 
+    <div class="control-group row-fluid clearfix">
+      <label for="agent-group" class="control-label span3"><%= t('.assign_to_gp')%></label> 
+      <div class="controls span7">
+        <% 
+          dm_stream = facebook_page.dm_stream
+          group_id  = dm_stream.ticket_rules.first.action_data[:group_id] unless dm_stream.ticket_rules.empty?
+        %>
+        <%= collection_select(:dm_rule ,:group_assigned, current_account.groups, :id, :name, {:include_blank => '...',
+            :selected => group_id}, :class => 'select2-container select2 span6') %>
+      </div>
+    </div>   
+  </div>
+</div>     

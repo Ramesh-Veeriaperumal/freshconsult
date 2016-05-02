@@ -54,7 +54,7 @@ class Social::TwitterHandle < ActiveRecord::Base
           default_stream.populate_ticket_rule(mention_group_id, ["#{formatted_handle}"])
         end
       else
-        default_stream.update_ticket_action_data(mention_group_id) unless default_stream.ticket_rules.empty?
+        default_stream.update_ticket_action_data(self.product_id, mention_group_id) unless default_stream.ticket_rules.empty?
       end
 
       dm_stream = self.dm_stream
@@ -66,7 +66,7 @@ class Social::TwitterHandle < ActiveRecord::Base
           dm_stream.populate_ticket_rule(dm_group_id, includes)
         end
       else
-        dm_stream.update_ticket_action_data(dm_group_id) unless dm_stream.ticket_rules.empty?
+        dm_stream.update_ticket_action_data(self.product_id, dm_group_id) unless dm_stream.ticket_rules.empty?
       end
     end
   end

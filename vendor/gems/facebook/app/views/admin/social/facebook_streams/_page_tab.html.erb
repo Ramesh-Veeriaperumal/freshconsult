@@ -33,29 +33,28 @@
   <div class="fb_tab_container">
   
   <!-- This condition is for new Users -->
-  <% if @fb_tab.nil? && @item.page_token_tab.nil? %>
+  <% if @page_tab.nil? && @facebook_page.page_token_tab.nil? %>
     <%unless @edit_tab%>
-    <span class="fb_add"></span><b><%= t('facebook_tab.configure_tab_auth',:page_tab_url => @fb_client_tab.authorize_url(session[:state], true)).html_safe %></b>
+    <p class="pt10 pl20"><%= t('.configure_tab_auth' ,:page_tab_url => @page_tab_url ).html_safe%> </p>
     <div class="fb_tab_pic"></div>
     <%end%>
 
   <!-- This condition is new user and existing user and his page token is expired 
        * This applies for migrated users also 
    -->
-  <% elsif @fb_tab.nil? %>
-    <div class="fb_info_text"><%= t('facebook_tab.reauth',:page_tab_url => @fb_client.authorize_url(session[:state])).html_safe %></div>
-  
+  <% elsif @page_tab.nil? %>
+   <div class=".fb_info_text"><%= t('.reauth',:page_tab_url => @page_tab_url).html_safe%></div>
   <% else %>
   
   <!-- This condition is executed if the user has a page tab added  -->
-    <% unless @fb_tab.blank? %>
+    <% unless @page_tab.blank? %>
        <%= content_tag(:div, t('facebook_tab.no_ssl').html_safe, :class=>"fb_info_text") unless current_account.ssl_enabled? %>
         <div id="after_config" class="row-fluid">
           <label class="control-label span2"><%= t('facebook_tab.tab_name').html_safe %></label>
           <div class="fb_field span9">
-            <%= text_field_tag "custom_name", @fb_tab["name"], :class => "required auto fb_changed", :disabled => !current_account.ssl_enabled?, :size => "40" %>
+            <%= text_field_tag "custom_name", @page_tab["name"], :class => "required auto fb_changed", :disabled => !current_account.ssl_enabled?, :size => "40" %>
           </div>
-          <%= link_to t('facebook_tab.remove_tab').html_safe, remove_admin_social_tab_path(@item), :class=>"remove_fb", :method => 'delete' %>
+          <%= link_to t('facebook_tab.remove_tab').html_safe, remove_admin_social_tab_path(@facebook_page), :class=>"remove_fb", :method => 'delete' %>
         </div>
   
     <% else %>

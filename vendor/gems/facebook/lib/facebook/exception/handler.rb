@@ -46,7 +46,7 @@ module Facebook
                 update_error_and_notify(error_params)
               else
                 Sqs::Message.new("{}").requeue(JSON.parse(@raw_obj)) if @raw_obj
-                raise_sns_notification("Server Error", {:exception => "#{@exception}"})
+                raise_sns_notification("Server Error", {:error => "Server Error", :exception => @exception})
               end
             else
               raise_sns_notification(error_params[:error_msg][0..50], error_params)
@@ -55,7 +55,7 @@ module Facebook
           rescue => @exception
             raise_newrelic_error(page_info)
           ensure
-            @fan_page.log_api_hits 
+            @fan_page.log_api_hits
           end
           
           @exception.nil? ? return_value : false
