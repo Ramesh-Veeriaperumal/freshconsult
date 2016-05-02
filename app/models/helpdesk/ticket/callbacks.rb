@@ -120,6 +120,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     process_agent_and_group_changes
     process_status_changes
     ticket_states.save if ticket_states.changed?
+    schema_less_ticket.save
   end
   
   def process_agent_and_group_changes 
