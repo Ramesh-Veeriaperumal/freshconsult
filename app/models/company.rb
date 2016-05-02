@@ -137,4 +137,3 @@ class Company < ActiveRecord::Base
       self.company_domains.inject({}) {|h,cd| h[cd.domain]=cd.id; h }
     end
 end
- 

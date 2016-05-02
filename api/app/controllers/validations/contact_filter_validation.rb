@@ -1,4 +1,3 @@
-
 class ContactFilterValidation < FilterValidation
   attr_accessor :state, :phone, :mobile, :email, :company_id, :conditions
 

@@ -252,9 +252,6 @@ class User < ActiveRecord::Base
         },
         mobile: {
           conditions: { mobile: contact_filter.mobile }
-        },
-        updated_since: {
-          conditions: ['users.updated_at >= ?', contact_filter.try(:updated_since).try(:to_time).try(:utc)]
         }
       }
     end
@@ -323,10 +320,10 @@ class User < ActiveRecord::Base
     end
     return false
   end
-	
-	def available_number
-		phone.blank? ? mobile : phone
-	end
+  
+  def available_number
+    phone.blank? ? mobile : phone
+  end
 
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
@@ -375,6 +372,19 @@ class User < ActiveRecord::Base
       else
         deliver_activation_instructions!(portal,false, params[:email_config])
       end
+    end
+    true
+  end
+
+  # Used by API V2
+  def create_contact!
+    self.avatar = self.avatar
+    return false unless save_without_session_maintenance
+    if (!self.deleted and !self.email.blank?)
+      portal = nil
+      force_notification = false
+      args = [ portal, force_notification ]
+      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
     end
     true
   end
@@ -520,7 +530,8 @@ class User < ActiveRecord::Base
   end
   
   def to_s
-    name.blank? ? email : name
+    user_display_text = name.blank? ? (email.blank? ? (phone.blank? ? mobile : phone) : email) : name
+    user_display_text.to_s
   end
   
   def to_liquid
@@ -569,14 +580,14 @@ class User < ActiveRecord::Base
   end
   
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (ticket.requester_id == self.id) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
+    (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (group_ticket_permission && (ticket.group_id && (agent_groups.pluck(:group_id).insert(0,0)).include?( ticket.group_id))) 
   end
 
   # For a customer we need to check if he is the requester of the ticket
   # Or if he is allowed to view tickets from his company
   def has_customer_ticket_permission?(ticket)
     (self.id == ticket.requester_id) or 
-    (is_client_manager? && self.company_id && ticket.requester.company_id && (ticket.requester.company_id == self.company_id) )
+    (is_client_manager? && self.company_id && ticket.company_id && (ticket.company_id == self.company_id) )
   end
   
   def restricted?
@@ -645,6 +656,7 @@ class User < ActiveRecord::Base
   
   def make_customer
     return true if customer?
+    set_company_name
     if update_attributes({:helpdesk_agent => false, :deleted => false})
       subscriptions.destroy_all
       agent.destroy

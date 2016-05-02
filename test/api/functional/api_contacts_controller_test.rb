@@ -857,38 +857,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_nil response.headers['Link']
   end
 
-  def test_index_with_dates
-    get :index, controller_params(updated_since: Time.now.iso8601)
-    assert_response 200
-    response = parse_response @response.body
-    assert_equal 0, response.size
-
-    user = User.where(deleted: false, blocked: false).first
-    user.update_column(:created_at, 1.days.from_now)
-    get :index, controller_params(updated_since: Time.now.iso8601)
-    assert_response 200
-    response = parse_response @response.body
-    assert_equal 0, response.size
-
-    user.update_column(:updated_at, 1.days.from_now)
-    get :index, controller_params(updated_since: Time.now.iso8601)
-    assert_response 200
-    response = parse_response @response.body
-    assert_equal 1, response.size
-  end
-
-  def test_index_with_time_zone
-    user = User.where(deleted: false, blocked: false).first
-    old_time_zone = Time.zone.name
-    Time.zone = 'Chennai'
-    get :index, controller_params(updated_since: user.updated_at.iso8601)
-    assert_response 200
-    response = parse_response @response.body
-    assert response.size > 0
-    assert response.map { |item| item['id'] }
-    Time.zone = old_time_zone
-  end
-
   def test_create_contact_with_invalid_tag_values
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
