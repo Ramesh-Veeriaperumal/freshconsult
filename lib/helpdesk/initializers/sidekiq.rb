@@ -3,7 +3,7 @@ sidekiq_config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq_client
 
 $sidekiq_conn = Redis.new(:host => config["host"], :port => config["port"])
 $sidekiq_datastore = proc { Redis::Namespace.new(config["namespace"], :redis => $sidekiq_conn) }
-$sidekiq_redis_pool_size = sidekiq_config[:concurrency]
+$sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
 $sidekiq_redis_timeout = sidekiq_config[:timeout]
 
 
@@ -22,9 +22,16 @@ Sidekiq.configure_client do |config|
       "Throttler::WebhookThrottler",
       "Throttler::PremiumWebhookThrottler",
       "WebhookWorker",
+      "WebhookV1Worker",
       "PremiumWebhookWorker",
       "DevNotificationWorker",
-      "PodDnsUpdate"
+      "PodDnsUpdate",
+      "SearchV2::Manager::DisableSearch",
+      "Gamification::ProcessTicketQuests",
+      "AccountCleanup::DeleteSpamTicketsCleanup",
+      "AccountCleanup::SuspendedAccountsWorker",
+      "Social::Gnip::ReplayWorker",
+      "Social::Gnip::RuleWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -32,7 +39,12 @@ Sidekiq.configure_client do |config|
       "Tickets::BulkTicketReply",
       "Tickets::ClearTickets::EmptySpam",
       "Tickets::ClearTickets::EmptyTrash",
-      "MergeTickets"
+      "MergeTickets",
+      "Export::ContactWorker",
+      "Tickets::Export::TicketsExport",
+      "Tickets::Export::LongRunningTicketsExport",
+      "Tickets::Export::PremiumTicketsExport"
+
     ]
   end
 end
@@ -59,9 +71,16 @@ Sidekiq.configure_server do |config|
       "Throttler::WebhookThrottler",
       "Throttler::PremiumWebhookThrottler",
       "WebhookWorker",
+      "WebhookV1Worker",
       "PremiumWebhookWorker",
       "DevNotificationWorker",
-      "PodDnsUpdate"
+      "PodDnsUpdate",
+      "SearchV2::Manager::DisableSearch",
+      "Gamification::ProcessTicketQuests",
+      "AccountCleanup::DeleteSpamTicketsCleanup",
+      "AccountCleanup::SuspendedAccountsWorker",
+      "Social::Gnip::ReplayWorker",
+      "Social::Gnip::RuleWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -69,10 +88,15 @@ Sidekiq.configure_server do |config|
       "Tickets::BulkTicketReply",
       "Tickets::ClearTickets::EmptySpam",
       "Tickets::ClearTickets::EmptyTrash",
-      "MergeTickets"
+      "MergeTickets",
+      "Export::ContactWorker",
+      "Tickets::Export::TicketsExport",
+      "Tickets::Export::LongRunningTicketsExport",
+      "Tickets::Export::PremiumTicketsExport"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
+    chain.add Middleware::Sidekiq::Server::Throttler, :required_classes => ["WebhookV1Worker"]
   end
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
@@ -87,8 +111,15 @@ Sidekiq.configure_server do |config|
       "Throttler::WebhookThrottler",
       "Throttler::PremiumWebhookThrottler",
       "WebhookWorker",
+      "WebhookV1Worker",
       "PremiumWebhookWorker",
-      "DevNotificationWorker"
+      "DevNotificationWorker",
+      "SearchV2::Manager::DisableSearch",
+      "Gamification::ProcessTicketQuests",
+      "AccountCleanup::DeleteSpamTicketsCleanup",
+      "AccountCleanup::SuspendedAccountsWorker",
+      "Social::Gnip::ReplayWorker",
+      "Social::Gnip::RuleWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -96,7 +127,11 @@ Sidekiq.configure_server do |config|
       "Tickets::BulkTicketReply",
       "Tickets::ClearTickets::EmptySpam",
       "Tickets::ClearTickets::EmptyTrash",
-      "MergeTickets"
+      "MergeTickets",
+      "Export::ContactWorker",
+      "Tickets::Export::TicketsExport",
+      "Tickets::Export::LongRunningTicketsExport",
+      "Tickets::Export::PremiumTicketsExport"
     ]
   end
 end

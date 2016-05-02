@@ -71,4 +71,26 @@ module Integrations::Constants
   FRESHPLUG = 'freshplug'
 
   NON_EDITABLE_APPS = ["mailchimp", "constantcontact", "nimble", "google_calendar", "shopify", "box", "onedrive"]
+
+  PROVIDER_TO_APPNAME_MAP = {
+    "github" => "github",
+    "salesforce" => "salesforce",
+    "magento" => "magento",
+    "shopify" => "shopify",
+    "slack" => "slack_v2",
+    "infusionsoft" => "infusionsoft", 
+    "google_calendar" => "google_calendar",
+    "google_login" => "",
+    "google_marketplace_sso" => "",
+    "google_contacts" => "google_contacts",
+    "google_gadget" => "",
+    "quickbooks" => "quickbooks",
+    "nimble" => "nimble",
+    "surveymonkey" => "surveymonkey",
+    "box" => "box",
+    "mailchimp" => "mailchimp",
+    "constantcontact" => "constantcontact",
+    "surveymonkey" => "surveymonkey"
+  }
+
 end

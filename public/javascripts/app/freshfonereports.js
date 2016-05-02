@@ -34,7 +34,7 @@ window.App.Freshfone = window.App.Freshfone || {};
     summaryReports: function (url) {
       var _this = this;
       jQuery('#loading-box').hide();
-
+      var self = this;
       $('body').on('click.freshfone_reports',"#submit",function(ev){
         App.Phone.Metrics.recordReportsFilterState();
         if(jQuery("#report-filter-edit").css('visibility') == 'visible'){
@@ -47,7 +47,7 @@ window.App.Freshfone = window.App.Freshfone || {};
         jQuery.ajax({
             url: url,
             type: "POST",
-            data: jQuery('#report_filters').serializeArray(),
+            data: self.filterParams(),
             success: function(data){ 
                 jQuery("#loading-box").hide(); 
                 jQuery("#freshfone_summary_report .report-page").css('opacity','1'); 
@@ -62,6 +62,14 @@ window.App.Freshfone = window.App.Freshfone || {};
         });
 
       });
+    },
+    filterParams : function(){
+      var filter_params = jQuery('#report_filters').serializeArray();
+      filter_params.push({ name: "date_range_type", value : this.dateRangeType() });
+      return filter_params
+    },
+    dateRangeType : function(){
+      return $(".ui-widget-content li.ui-state-active").text().replace(/\s/g, "");
     },
     bindHandlers: function () {
       if(jQuery("#report-filter-edit").css('visibility') == 'visible'){
@@ -319,10 +327,12 @@ window.App.Freshfone = window.App.Freshfone || {};
 
         _this.flushAppliedFilters();
         _this.last_applied_saved_report_index = index;
+        var id = - 1;
 
         if(index != -1) {
 
             var filter_hash = hash[index].report_filter;
+            id = filter_hash.id;
 
             //Set the date range from saved range
             var date_hash = filter_hash.data_hash.date;
@@ -357,7 +367,7 @@ window.App.Freshfone = window.App.Freshfone || {};
         }
 
         _this.save_util.setActiveSavedReport(jQuery(".reports-menu li a[data-index=" + index +"]"));
-        _this.save_util.cacheLastAppliedReport(index);
+        _this.save_util.cacheLastAppliedReport(id);
         _this.filterChanged = false;
 
         jQuery("#submit").trigger('click');

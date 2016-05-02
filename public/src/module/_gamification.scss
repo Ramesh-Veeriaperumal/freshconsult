@@ -538,6 +538,33 @@ li.dashboard-quest-points {
 		padding-left: 20px;
 		margin-bottom: 20px;
 	}
+
+	.nav-tabs .open .dropdown-toggle {
+		background-color: transparent;
+	}
+
+	.nav-tabs .dropdown-menu {
+		border-radius: 6px;
+	}
+
+	#lb_date_range_input{
+		width:65%;
+		border:1px solid rgba(0,0,0,0.2);
+		border-radius:3px;
+		padding:2px 5px;
+	}
+
+	#lb_date_range_select_btn{
+		width: 15%;
+		font-size: 14px;
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	#lb_date_range_cancel_btn{
+		width: 10%;
+		font-size: 14px;
+	}
 }
 
 .game-points{

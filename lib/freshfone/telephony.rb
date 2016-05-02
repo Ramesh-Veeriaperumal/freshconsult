@@ -137,7 +137,7 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
     outgoing_params = {
       :url             => outgoing_accept_url(current_call.id),
       :status_callback => outgoing_status_url(current_call.id,current_call.user_id), # SpreadsheetL 57,58,59
-      :from            => current_call.number, #Freshfone number
+      :from            => current_number.freshfone_caller_id.blank? ? current_call.number : current_number.freshfone_caller_id.number, #Freshfone number
       :to              => current_call.caller_number,
       :timeLimit       => time_limit
     }

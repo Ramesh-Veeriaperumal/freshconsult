@@ -17,12 +17,15 @@ describe Freshfone::UsersController do
   end
 
   it 'should reset presence to incoming preference' do
+    Freshfone::UsersController.any_instance.stubs(:agent_in_call?).returns(false)
     @request.env["HTTP_ACCEPT"] = "application/json"
-    @freshfone_user.update_attributes(:incoming_preference => 1)
+    @account.freshfone_users.update_all(:incoming_preference => 1)
+    @account.freshfone_users.reload
     post :presence
     freshfone_user = @account.freshfone_users.find_by_user_id(@agent)
     freshfone_user.should be_online
     json.should be_eql({:update_status => true})
+    Freshfone::UsersController.any_instance.unstub(:agent_in_call?)
   end
 
   it 'should validate and set presence on request from nodejs' do
@@ -89,7 +92,7 @@ describe Freshfone::UsersController do
   it 'should set user presence as busy' do
     @request.env["HTTP_ACCEPT"] = "application/json"
     post :in_call, {:outgoing => "false"}
-    json.should be_eql({:update_status => true, :call_sid => nil})
+    json.should be_eql({:update_status => true, :call_sid => nil, :call_id => nil})
   end
 
   it 'should set user presence as busy and return a call SID for outgoing call' do
@@ -97,12 +100,11 @@ describe Freshfone::UsersController do
     create_freshfone_call
     @freshfone_call.update_attributes(:call_status => Freshfone::Call::CALL_STATUS_HASH[:default])
     post :in_call, {:outgoing => "true"}
-    json.should be_eql({:update_status => true, :call_sid => "CA2db76c748cb6f081853f80dace462a04"})
+    json.should be_eql({:update_status => true, :call_sid => "CA2db76c748cb6f081853f80dace462a04", :call_id => @freshfone_call.id})
   end
 
   it 'should build a new freshfone user if current user is not available' do
     @request.env["HTTP_ACCEPT"] = "application/json"
-    @freshfone_user.destroy
     post :presence
     @freshfone_user = @agent.freshfone_user
     @freshfone_user.should be_an_instance_of(Freshfone::User)

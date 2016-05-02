@@ -4,7 +4,7 @@ module Solution::DraftContext
 	def save_context
 		@drafts_context = current_portal.id
 		newrelic_begin_rescue do
-			$redis_others.set(solutions_draft_key, params[:portal].to_i) if portal_check
+			$redis_others.perform_redis_op("set", solutions_draft_key, params[:portal].to_i) if portal_check
 			get_context
 			set_expiry
 		end
@@ -17,7 +17,7 @@ module Solution::DraftContext
 		end
 
 		def set_expiry
-			$redis_others.expire(solutions_draft_key, 1.days.to_i)
+			$redis_others.perform_redis_op("expire", solutions_draft_key, 1.days.to_i)
 		end
 
 		def validate_portal
@@ -26,7 +26,7 @@ module Solution::DraftContext
 		end
 
 		def get_context
-			@drafts_context = $redis_others.get(solutions_draft_key).to_i || current_portal.id
+			@drafts_context = $redis_others.perform_redis_op("get", solutions_draft_key).to_i || current_portal.id
 			@drafts_context_portal = current_account.portals.find(@drafts_context) unless @drafts_context == 0
 		end
 

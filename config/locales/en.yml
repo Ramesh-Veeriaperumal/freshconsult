@@ -457,7 +457,9 @@ en:
         subject: Test mail for survey - %{title}
         survey_preview_ticket_message: "This is a sample ticket created during preview of customer satisfaction survey"
         title: "Customer survey"
+        title_v2: Satisfaction Rating
         rating_sub_title: "You have rated us"
+        rating_sub_title_v2: Your ratings as
         survey_title: How well did our customer service representative answer your question
                       or solve your problem?
         survey_question_title: How well did our customer service representative answer your question
@@ -470,6 +472,8 @@ en:
         cancel: Cancel
         back: Back
         loading_feedback: Loading Feedback
+        load_questions: View More
+        comments: Comments
     login:
       form:
         email: Email
@@ -551,6 +555,7 @@ en:
         last_month: "Last Month"
         2_months_ago: "2 Months ago"
         3_months_ago: "3 Months ago"
+        select_range: "Pick a date range..."
 
       mvp_trophie_label_group: "Most Valuable Team"
       mvp_trophie_info_group: "Group with the most overall points this month"
@@ -1144,6 +1149,8 @@ en:
       survey_not_found: The survey you are trying to access is not present.
       successfully_created: Customer Satisfaction settings has been successfully created.
       successfully_updated: Customer Satisfaction settings has been successfully updated.
+      successfully_created_v2: Survey has been successfully created.
+      successfully_updated_v2: Survey has been successfully updated.
       successfully_deleted: Survey has been successfully deleted.
       error_updated: Error while updating survey settings.
       custom_helptext: "<p><b>Enabling Satisfaction Surveys</b> <br>
@@ -1226,10 +1233,10 @@ en:
         loading: Loading...
         default_survey: Default Survey
         survey: Survey
-        title: Survey Name
-        title_error_text: Survey Name has already been taken
+        title: Survey name
+        title_error_text: Survey name has already been taken
         result_exist_msg: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers.
-
+        result_exist_msg_v2: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can rephrase the questions and answer choices.
       new_rating:
         content_text: This Question helps access the overall satisfaction for the response provided by the agent.
                       It appears below your signature at the bottom of the email sent to the customer.
@@ -1237,7 +1244,6 @@ en:
         content_text_v2: This question helps assess the overall satisfaction for the response provided by the agent.
                       It appears below your signature at the bottom of the email sent to the customer.
         survey_question: Survey question
-        survey_question_v2: Survey Question
         error_text: This field is required
         points_scale: points scale
         point_scale_v2: Point scale
@@ -1246,10 +1252,11 @@ en:
 
       new_thanks:
         survey_feedback: Survey Feedback Page
-        survey_feedback_v2: Thank You Page
+        survey_feedback_v2: Thank you page
         thanks_feedback: Thank you for your valuable feedback.
         thanks_feedback_v2: Thank you. Your feedback has been submitted.
         additional_comments_feedback: Collect additional feedback
+        additional_comments_feedback_v2: Include additional comments box
         additional_comments_feedback_statement: Additional feedback
         comments_feedback: Add more details about customer experience.
         thanks_message_feedback: Thank you message for Feedback survey
@@ -1296,6 +1303,7 @@ en:
         disabled: Disabled
         save_survey: Save
         default_survey: Default Survey
+        active_delete_tooltip: Cannot delete active survey
         delete_survey: Delete Survey
         delete_msg: Are you sure you want to delete this survey?
         survey_help_msg: Selecting a rating above will link off to the page below
@@ -1303,23 +1311,31 @@ en:
         survey_help_msg_v3: When a satisfaction rating is selected, a thank you page is shown to collect more feedback
         on: ON
         off: OFF
-        confirm_text: Please Confirm...
+        confirm_text: Please confirm...
         delete: Delete
         activate_survey: Activate
-        activate_msg: Activating this survey will deactivate <b id='active_survey_name'> Default Survey </b><br> Are you sure you want to proceed?
+        activate_msg: Activating this survey will deactivate <b id='active_survey_name'> Default Survey </b><br> Are you sure you want to activate?
         remove_msg: Removing this section will result in the loss of any changes made to the additional questions. Do you wish to continue?
       choice_contents:
         strongly_disagree: Strongly Disagree
-        some_what_disagree: Some What Disagree
+        extremly_dissatisfied: Extremely dissatisfied
+        some_what_disagree: Somewhat Disagree
+        mostly_dissatisfied: Mostly dissatisfied
         disagree: Disagree
+        slightly_dissatisfied: Slightly dissatisfied
         neutral: Neutral
+        neutral_v2: Neither satisfied nor dissatisfied
         agree: Agree
-        some_what_agree: Some What Agree
+        slightly_satisfied: Slightly satisfied
+        some_what_agree: Somewhat Agree
+        mostly_satisfied: Mostly satisfied
         strongly_agree: Strongly Agree
+        extremely_satisfied: Extremely satisfied
 
       thanks_contents:
         title_text: Thank you message for Customer satisfaction rating
-        title_text_v2: Thank you message for Customer Satisfaction Survey
+        title_text_v2: Thank you message for customer satisfaction survey
+        solution_article_link_text: Your portal layout will be applied to this page. <a target='_blank' href='https://support.freshdesk.com/solution/articles/217757-customizing-your-thank-you-page'>How to change it?</a>
         message_text: Thank you for your valuable feedback.
         label_text: Add a feedback survey
         label_text_v2: Additional Survey Questions
@@ -1328,7 +1344,7 @@ en:
 
       satisfaction_settings:
         enable_label: Customer Satisfaction Rating
-        enable_label_v2: Customer Satisfaction Survey
+        enable_label_v2: Customer satisfaction survey
         satisfaction_text: I am satisfied with the service provided to me by
         link_text_label: Satisfaction survey link text
         link_text_input_label: How would you rate your overall satisfaction for the resolution provided by the agent?
@@ -1609,6 +1625,10 @@ en:
       index:
         human_name: Dispatch’r Rule
       remember_to_save: 'After updating, please remember to save it.'
+      label:
+        object_id_array_in: 'Contains any of'
+        object_id_array_and: 'Contains all of'
+        object_id_array_not_in: 'Contains none of'
     webhook:
       jira_hook_title: JIRA Issue Creation
       jira_hook_description: You could use a webhook to automatically create issues inside your JIRA account when a ticket is raised in Freshdesk.
@@ -1936,6 +1956,7 @@ en:
         feedback: Feedback widget
         freshchat: Live Chat
         integrations: "Integrations"
+        apps: Apps
         dispatcher: Dispatch'r
         supervisor: Supervisor
         observer: Observer
@@ -2061,6 +2082,11 @@ en:
         trusted_ip_meta: Private Helpdesk
         custom_mailbox: Custom Mail Server
         custom_mailbox_meta: Custom Mailboxes
+        integrations: "Integrations"
+        list_all_apps: "List of all apps"
+        custom_apps: Custom Apps
+        plugs: Plugs
+        freshplugs: Freshplugs
     placeholders:
       tickets: Tickets
       ticket_fields: Ticket Fields
@@ -2127,6 +2153,7 @@ en:
     password_expiry: "Your password will expire in %{time_in_words}"
     gmail_gadgets:
       kvp_missing: "Invalid authentication.  Reopen the mail and try again."
+      gvid_success: "Authorization is successfull, please close pop up to continue ..."
       user_missing: "In Freshdesk, your email does not exist.  Add an agent with your email and try again."
       agent_missing: "In Freshdesk, you are not an Agent.  Convert the user to agent and try again."
       agent_not_active: "In Freshdesk, you email might have been deleted or deactivated.  Activate it and try again."
@@ -2140,21 +2167,21 @@ en:
     facebook:
       updated: Facebook setting has been updated
     application:
-      already: "Integration is already installed."
+      already: "App is already installed."
       uninstall:
-        success: "The integration has been disabled successfully!"
-        error: "Error in disabling the integration."
+        success: "App deleted successfully."
+        error: "Error while deleting the app."
       install:
-        success: "The integration has been enabled successfully!"
-        error: "Error in enabling the integration."
-        cti_error: "Multiple integrations of type CTI can not be enabled."
-        freshfone_alert: "CTI integration cannot be enabled when your phone channel is enabled."
+        success: "App installed successfully."
+        error: "Error while installing the app."
+        cti_error: "Multiple CTI apps can not be enabled."
+        freshfone_alert: "CTI app cannot be enabled when your phone channel is enabled."
         cloud_element_success: "The integration has been enabled with default configuration"
       update:
-        success: "The integration has been updated successfully!"
-        error: "Error in configuring the integration."
-      not_installed: "This integration is not yet installed."
-      setting_saved: "Integration settings have been saved successfully."
+        success: "App updated successfully."
+        error: "Error while updating the app."
+      not_installed: "This app is not yet installed."
+      setting_saved: "App settings have been saved successfully."
       invalid_url: "The url entered is invalid."
     filter:
       delete_success: "View has been deleted successfully!"
@@ -2199,6 +2226,8 @@ en:
       no_subdomain: There is no subdomain like this. Please try again.
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
       domain_restriction: Domain restriction in place. This email is not allowed.
+      use_admin_cred: Please use an admin credential to enable the link.
+      wrong_admin_cred: Credentials given seems to be wrong.
 
     freshfone:
       credits:
@@ -2416,7 +2445,7 @@ en:
       access_denied: You are not allowed to access this page!
       need_login: You must be logged in to access this page
       insufficient_privilege:
-        admin: You don't have sufficient privilage to change this. Please login as Administrator..!!
+        admin: You don't have sufficient privilege to change this. Please login as Administrator..!!
       login_not_needed: You must be logged out to access this page
       deactivation:
         failure: The %{human_name} could not be deactivated
@@ -2745,6 +2774,7 @@ en:
   username: Username
   reply: Reply
   is_not: Is not
+  and: And
   during: during
   less_than: Less than
   greater_than: Greater than
@@ -3922,6 +3952,7 @@ en:
       mark_closed: Mark ticket as closed
       add_people: Add people
       reply_placeholder: "Click here to reply to this ticket"
+      comments: Comments
       details: Ticket details
       add_or_remove_emails: "Add or remove emails that need to be copied when a notification for this ticket is sent."
       add_people_title: Add people to conversation
@@ -4254,6 +4285,8 @@ en:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: "You don't have any companies with the letter '%{alphabet}'"
     valid_comapany_domain: "Enter valid domains"
+    view_company: "View Company"
+    info1: "Domain has already been taken"
   billing_info_update: Your billing information has been updated.
   wrong_portal:
     content_not_available: The content you are looking for is, not available in this portal.
@@ -4325,7 +4358,8 @@ en:
   tag:
     title: Tags
   email_notifications:
-    preview_email_verification: "<p>Hi {{ticket.requester.firstname}},<br/><br/>This email is to give a preview of how customer satisfaction survey feedback is done.<br/><br/></p>"
+    preview_email_verification: "<p>Hi %{name},<br/><br/>This email is to give a preview of how customer satisfaction survey feedback is done.<br/><br/></p>"
+    preview_email_verification_plain_text: "Hi %{name},\nThis email is to give a preview of how customer satisfaction survey feedback is done."
     default_font: "Default Font : "
     customize_email: Customize Email
     edit_reply_template: Edit Template
@@ -4608,6 +4642,8 @@ en:
     expand: "Expand"
     view_ticket: "View Ticket"
     insert: "Insert"
+    auto_delete_notification_spam: 'Tickets in spam for more than 30 days will be automatically deleted'
+    auto_delete_notification_trash: 'Tickets in trash for more than 30 days will be automatically deleted'
     compose:
       choose_email: Pick a From Address
       properties: Properties
@@ -4953,6 +4989,7 @@ en:
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
     info8: More info regarding this company like address, phone number, website etc
+    info12: "eg: mycompany1.com, mycompany2.com"
     errors:
       required_field: cannot be blank
       custom_text : is not valid
@@ -4992,8 +5029,8 @@ en:
     helpcard:
       title1: Integrations
       info1: Integrations in Freshdesk let you share data with third party applications and services that you use regularly. Freshdesk offers several native integrations out-of-the-box. To start using a native integration, click on the corresponding “Enable” button.
-      title2: FreshPlug Widgets
-      info2: In addition to the built-in integrations, you can bring in data from any other third party application, legacy system or database into the tickets and contact pages with FreshPlugs. You can customize your FreshPlug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS and Javascript.
+      title2: Custom Apps
+      info2: In addition to the built-in integrations, you can bring in data from any other third party application, legacy system or database into the tickets and contact pages with custom apps. You can customize your custom app widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS and Javascript.
   account:
     name: Account Name
     cancel: Cancel
@@ -5045,7 +5082,7 @@ en:
     new: New Business Hours
     to: to
     time_zone: Time Zone
-    change_time_zone: You can change your default time zone under <a href='/account/edit' >Helpdesk Rebranding</a>
+    change_time_zone: You can change your default time zone under <a href='/account/edit' >Helpdesk Settings</a>
     delete: Are you sure you want to delete?
     valid_time: Please enter a valid time
     holiday_name: Holiday name
@@ -5570,6 +5607,7 @@ en:
         survey_response: Survey response for %{survey_name}
         survey_response_to: to %{agent}
         survey_satisfaction: How would you rate your overall satisfaction for the resolution provided by the agent?
+        comments: Comments
     merge:
       merge:
         merge_into: Merge into?
@@ -5962,17 +6000,16 @@ en:
     activities: Loading more activities
     items: Loading more items
   application:
-    new: Create New Application
     desc: Integrate with other Apps to make your Freshdesk experience more awesome.
     title: Integrations
     disabled: Disabled
     enabled: Enabled
     configure: Configure
     enable: Enable
-    click_to_disable: Disable integration
-    click_to_enable: Enable integration
-    confirm_disable: "Are you sure you want to disable this integration?"
-    configure_addon: "Configure this integration"
+    click_to_disable: Disable app
+    click_to_enable: Enable app
+    confirm_disable: "Are you sure you want to disable this app?"
+    configure_addon: "Configure this app"
     configure_custom_addon: "Configure this widget"
     tooltip:
       edit: Edit
@@ -6002,73 +6039,85 @@ en:
     terms_of_use: "Terms of Use"
     terms_of_use_link: "http://freshdesk.com/terms#marketplace"
     get_more_apps: Get more Apps
-    your_plugs: Your Plugs
     confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
     app: app
-    plug: plug
+    custom_app: custom app
+    app_gallery_launch_text: "<b>Welcome to the brand new App Gallery!</b> Manage any integrations you installed previously, and try out new Apps. Get a preview of what the app will look like in your helpdesk and how it will help you - all in one glance."
+    app_gallery_blog_post: "http://blog.freshdesk.com/new-marketplace/"
+    app_gallery_link_text: "Read more about the new App Gallery"
     app_gallery: App Gallery
     app_description: "Apps allow you to integrate with other applications to make your Freshdesk experience more awesome. They also enable you to customize and personalize your Freshdesk portal."
     apps: Apps
-    plugs: Plugs
-    new_plug: New Plug
-    no_plugs: "You have no plugs installed. Create and Install a new Plug by clicking "
-    all: All
+    custom_apps: Custom Apps
+    no_custom_apps: "You have no custom apps installed. Create and Install a new custom app by clicking "
+    all_categories: All categories
     settings: Settings
     coming_soon: Coming Soon
     install: Install
     update: Update
     installing_text: "Please wait..."
     in_development: In Development
-    no_mktp_apps: "You have no Apps installed. Browse and Install Apps from the App Gallery by clicking "
+    no_mktp_apps: "No Apps installed"
+    no_mktp_apps_note: "We've integrated with some of your favorite applications." 
+    no_mktp_apps_note_2: "Click 'Get more Apps' to browse the selection."
     go_to_dev_portal: Go to Developer Portal
     developer_shortcuts: Developer Shortcuts
-    plug_info: "Did you know, now there is a better way to write and manage and even share your plugs to all of freshdesk community."
+    custom_app_info: "Did you know, now there is a better way to write and manage and even share your apps to all of Freshdesk community."
     needs_developer_text: Needs Developer Account
-    write_a_plug: Write a Plug
+    write_a_custom_app: Write a custom app
     description: Description
     instructions: Instructions
     screenshots: Screenshots
     version: VERSION
     ver: "Version: "
+    published_in: "Published in"
     installs: Installs
     no_apps: No Apps available
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
     no_connection: "The app gallery is currently unavailable. Please try again later. Please contact us, if the issue persists."
-    plugs_unavailable: "Certain apps could not be rendered.Please try again after a few seconds.Please contact us if the issue persists."
-    installed_plugs_unavailable: "The listing of installed apps is currently unavailable.Please try again later.Please contact us if the issue persists."
-    install_error: "Error while installing the App. Please try again."
+    apps_unavailable: "Certain apps could not be rendered. Please try again later. Please contact us if the issue persists."
+    installed_mkp_apps_unavailable: "The listing of installed apps is currently unavailable. Please try again later. Please contact us if the issue persists."
+    api_error: "We could not process your request. Please try after sometime."
     results: results
     field_blank: Please fill all the fields.
     installed: Installed
     helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get more Apps” button."
-    helpnote2: "In addition to the apps, you can bring in data from any other third party solution, legacy system or database into the tickets and contacts pages with Plugs. You can customize your Plug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS, and Javascript."
+    helpnote2: "In addition to the apps, you can bring in data from any other third party solution, legacy system or database into the tickets and contacts pages with custom apps. You can customize your custom app widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS, and Javascript."
+    no_configs: "This app does not require any configs."
+    search: "Search"
+    search_language_warning: "Search available in English only"
     delete_action:
-      success: "App deleted successfully"
-      error: "Error while deleting the App"
+      success: "App deleted successfully."
+      error: "Error while deleting the App."
     install_action:
       success: "App installed successfully."
     update_action:
       success: "App updated successfully."
+    help_and_support: "Help and Support"
+    developed_by: "By "
+    time_ago: "ago"
   integrations:
     native_integrations: Native Integrations
     cti_app_title: CTI Integrations
     uninstall: Uninstall
     deprecated_message: This app is no longer supported. Please install the latest version.
     no_timesheet_feature: This app can only be installed for accounts with Time Tracking enabled.
-    freshplugs:
+    custom_apps:
       refresh: Refresh
       custom_widget_preview: Custom Widget Preview
       show_preview: Show Preview
       hide_preview: Hide Preview
       show_widget_in_ticket_view_page: Show the widget in ticket view page.
       show_the_widget_in_contact_view_page: Show the widget in contact view page.
-      plug_preview: Plug Preview
-      preview_helptext: This integration will appear in the sidebar
+      custom_app_preview: Custom app preview
+      preview_helptext: This custom app will appear in the sidebar
       ticket_detail_page: Ticket detail page
       contact_detail_page: Contact detail page
-      plug_used_in: Plug displayed on
+      custom_app_used_in: Custom app displayed on
+      new_ticket_page: New ticket page
+      outbound_email_page: Outbound email page
     whmcs:
       label: "WHMCS"
       products: "Products"
@@ -6078,7 +6127,7 @@ en:
     cti:
       convert_to_ticket: "Convert all call recordings into a ticket at the end of the call"
       add_note_as_private: "Mark in call notes as a private"
-      cti_error: "No Integration of type cti enabled for this account"
+      cti_error: "No app of type cti enabled for this account"
     czentrix:
       label: "C-Zentrix"
       desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
@@ -6612,8 +6661,8 @@ en:
       status_update: "Status update"
     slack_msg:
       wrong_channel: ERROR converting channel transcript into Ticket :Ticket can be created only in direct channel group
-      deprecation_notice: "A new release of Freshdesk Slack integration is now available. This version is now obsolete. Please follow this <a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'>solution article</a>  for detailed steps on how to migrate to the new implementation."
-      uninstall_old_slack: Integration is deprecated and updates are ceased. Install Slack V2 for more powerful features.
+      deprecation_notice: "A new release of Freshdesk Slack app is now available. This version is now obsolete. Please follow this <a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'>solution article</a>  for detailed steps on how to migrate to the new implementation."
+      uninstall_old_slack: App is deprecated and updates are ceased. Install Slack V2 for more powerful features.
       invalid_api_key: ERROR :Invalid Freshdesk Api key
       notify_on_ticket_update: "Status updated for  "
       notify_on_ticket_create: "Ticket created by "
@@ -6650,10 +6699,10 @@ en:
       description: "Description"
       script: "Script"
       label: "Custom Widget"
-      new_plug: "New Plug"
-      edit_plug: "Edit Plug"
+      new_custom_app: "New Custom app"
+      edit_custom_app: "Edit Custom app"
       desc: "You can add a custom widget to display any detail using your own custom script."
-      helpnote: "<h4>Plugs</h4><p><br/> You can develop your own Plug using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a Plug, first give it a name and description. Then enter your code in the  ‘Script’ area. You can pass any ticket or requestor field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about Plugs."
+      helpnote: "<h4>Custom Apps</h4><p><br/> You can develop your own custom app using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a custom app, first give it a name and description. Then enter your code in the ‘Script’ area. You can pass any ticket or requestor field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about custom apps."
       form:
         widget_title: "Widget Name"
         widget_script: "Widget code snippet"
@@ -6973,7 +7022,7 @@ en:
         main:
             all: All
             time_period: Time Period
-            survey_name: Survey Name
+            survey_name: Survey name
             group: Group
             agent: Agent
             overview: Overview
@@ -7000,6 +7049,7 @@ en:
             view_report_by: View by
             overall_rating: Rating
             all_responses: All Responses
+            deleted_list: DELETED SURVEYS
         index:
             agent_list_loading: Fetching agent list
         feedbacks:
@@ -7154,6 +7204,7 @@ en:
   assume_identity_button: "Assume Identity"
   revert_identity_link_msg: "Revert Identity"
   swith_agent_msg: "Switch Agent"
+  agent_loading_msg: "Loading agents..."
   switch_heading: "Switch Agent"
   email_notifications_agent_selection_msg: "Select agents to notify"
   on_hold: "On Hold"
@@ -7485,6 +7536,8 @@ en:
     view_all_tickets: View all tickets
     view_all_compliant_tickets: View all compliant tickets
     view_all_violated_tickets: View all violated tickets
+    export_exceeds_row_limit_msg: "- The report has been truncated to show %{row_max_limit} records -"
+    average_interactions: "( Average %{count} )"
     saved_report: 
       title: Report Title
       dialog_header: Save as
@@ -7611,6 +7664,9 @@ en:
         violated: 'Violated: %{percent_of_tickets}'
         total_tickets_received: 'Total tickets received : %{count}'
         total_tickets_resolved: 'Total tickets resolved : %{count}'
+        reopened_tickets:
+          one: "%{ticket_count} tickets with %{reopen_count} reopen"
+          other: "%{ticket_count} tickets with %{reopen_count} reopens"
       tickets: tickets
       source: source
       priority: priority
@@ -8335,6 +8391,30 @@ en:
         setup:
           title_text: "Setting up a call center"
           info_text: "In order to start using the phone channel, you will first need to purchase a call-in number to offer your customers. You can purchase a local number in any <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a>. If your customers will be calling you from the US, UK or Canada, you can also offer them a Toll-free dial in number.<br/><br/>You can purchase multiple phone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk. Check out the <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>call rates here</a>.<br/><br/> Once you have purchased a phone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically."
+        caller_id:
+          manage_caller_id : "Manage Caller ID "  
+          add_another : "/ Add another"
+          enter_code : "Pick up your phone and enter the validation code"
+          enter_number : "Enter the number you want to add as caller id"
+          verify_number : "Verify this number"
+          another_caller : "Add another"
+          delete : "Delete"
+          number_added : "Number Added"
+          no_number_added : "No caller id added"
+          ok : "OK"
+          add_new : "Add New"
+          add_new_caller_id : "Add new Caller ID"
+          wait : "Please wait..."
+          error_message : "Sorry! There was some issue. Please try again"
+          simultaneous_verification_error : "Sorry! already verifying number"
+          invalid_number : "Invalid phone number!"
+          calling : "Calling "
+          call_id_mask : "Mask this number"
+          twilio_errors : 
+            not_allowed : "Sorry there was an issue while adding this number as caller ID. Please try again. If the issue persists contact us at <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>"
+            invalid_number : "Sorry it seems that the number is invalid. Please try again. If the issue persists contact us at <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>"
+            already_verified : "Phone number already verified for your account!"
+
       invalid_attachment: "Attachment '%{name}' is not a valid audio file/ its size is greater than 5MB"
       ivr:
         simple_message_title: "Simple Message"
@@ -8719,6 +8799,7 @@ en:
     via_widget: "via"
     reported: "reported"
     view_ticket: "view ticket"
+    agent_parallel_accept_error: "You have already initiated a chat, please try after a few seconds."
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

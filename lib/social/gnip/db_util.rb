@@ -2,6 +2,7 @@ module Social::Gnip::DbUtil
 
   def self.included(base)
     base.extend ClassMethods
+    base.send(:include, ClassMethods)
   end
 
   module ClassMethods

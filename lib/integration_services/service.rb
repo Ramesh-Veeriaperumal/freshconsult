@@ -46,10 +46,12 @@ module IntegrationServices
     attr_reader :meta_data
 
     def initialize(app, payload = nil, meta_data = {})
-      @installed_app = app
+      if app.present?
+        @installed_app = app
+        @configs = app.configs[:inputs]
+      end
       @user_agent = meta_data.delete(:user_agent) || "Freshdesk"
       @meta_data = meta_data
-      @configs = app.configs[:inputs]
       @payload = payload
       @logger = Rails.logger
       @web_meta = {:content_type => :json, :status => :ok}
@@ -76,16 +78,13 @@ module IntegrationServices
       self.responds_to_events.include?(event.to_sym)
     end
 
-    # Returns a list of the services.
-    def self.service_classes
-      return @service_classes if @service_classes
-      subclasses = {}
-      ObjectSpace.each_object(Module) {|m| subclasses[m.title.downcase] =  m if m.ancestors.include?(Service) && m != Service}
-      @service_classes = subclasses
+    def self.inherited(klass)
+      @service_classes ||= {}
+      @service_classes[klass.name.split('::').last.underscore.split('_')[0...-1].join('_')] = klass
     end
 
     def self.get_service_class service_name
-      service_classes[service_name.downcase]
+      @service_classes[service_name.downcase]
     end
 
     def respond_to_event?
@@ -99,11 +98,16 @@ module IntegrationServices
       end
 
       unless respond_to_event?
-        logger.info("#{self.class.title} ignoring event :#{@event}")
+        logger.info("#{self.class} ignoring event :#{@event}")
         return
       end
+<<<<<<< HEAD
       logger.info("Sending :#{@event} using #{self.class.title}")
       timeout_sec = (timeout || 500).to_i
+=======
+      logger.info("Sending :#{@event} using #{self.class}")
+      timeout_sec = (timeout || 50).to_i
+>>>>>>> refs/heads/rails3-phase2
       Timeout.timeout(timeout_sec, TimeoutError) do
         send(event_method)
       end
@@ -128,13 +132,7 @@ module IntegrationServices
       end
       @installed_app.save!
     end
-
-    class << self
-      # The official title of this Service.
-      def title
-        raise NotImplementedError
-      end
-    end
+    
   end
 end
 Dir["#{Rails.root}/lib/integration_services/services/**/*.rb"].each { |f| require_dependency(f) }

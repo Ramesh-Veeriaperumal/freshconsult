@@ -17,6 +17,10 @@ module Concerns::ApplicationConcern
     Thread.current[:shard_name_payload] = Thread.current[:shard_selection].shard if Thread.current[:shard_selection]
   end
 
+  def unset_shard_for_payload
+    Thread.current[:shard_name_payload] = nil
+  end
+
   def day_pass_expired_json
     @error = RequestError.new(:access_denied)
     render template: '/request_error', status: 403
@@ -51,7 +55,7 @@ module Concerns::ApplicationConcern
   end
 
   def determine_pod
-    shard = ShardMapping.lookup_with_domain(request.host)
+    shard = fetch_shard
     return if shard.nil? or shard.pod_info.blank?
     if shard.pod_info != PodConfig['CURRENT_POD']
       Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
@@ -70,9 +74,21 @@ module Concerns::ApplicationConcern
   end
 
   def select_shard(&_block)
-    Sharding.select_shard_of(request.host) do
-      yield
+    shard = fetch_shard
+
+    if shard.nil?
+      raise ShardNotFound
+    elsif !shard.ok?
+      raise DomainNotReady
+    else
+      Sharding.run_on_shard(shard.shard_name) do
+        yield
+      end
     end
+  end
+
+  def fetch_shard
+    env['SHARD'] ||= ShardMapping.lookup_with_domain(request.host)
   end
 
 end

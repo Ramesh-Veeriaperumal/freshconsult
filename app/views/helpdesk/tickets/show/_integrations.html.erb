@@ -4,6 +4,7 @@
                           raw @item.as_json({}, false).to_json 
                         }
                     %>;
+  dom_helper_data.helpdesk_ticket.tag_list = tag_list;
   current_user = <%= raw current_user.to_json %>;
   requester = <%= raw @ticket.requester.to_json %>;
 </script>
@@ -101,17 +102,17 @@ end %>
 
 <!-- Marketplace Plugs -->
 <% if feature?(:marketplace) %>
-  <% inst_plugs = installed_plugs(:ticket_details_page) %>
+  <% inst_plugs = installed_mkp_apps(:ticket_details_page) %>
 
   <% if inst_plugs.kind_of?(Hash) and inst_plugs[:error].present? %>
     <div class="widget">
       <div class="alert alert-error">
-        <%= t('marketplace.plugs_unavailable') %>
+        <%= t('marketplace.apps_unavailable') %>
       </div>
     </div>
   <% else %>
     <% inst_plugs.try(:each) do |installed_plug| %>
-      <div id="<%= installed_plug['display_name'] %>" class="widget">
+      <div id="ext_<%= installed_plug['extension_id'] %>" class="widget">
         <div class="content">
           <%= freshplug_script(installed_plug.symbolize_keys) %>
         </div>

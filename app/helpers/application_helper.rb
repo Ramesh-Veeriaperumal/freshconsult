@@ -21,6 +21,7 @@ module ApplicationHelper
   include Freshfone::SubscriptionsHelper
   include DateHelper
   include StoreHelper
+  include JsonEscape
   
   require "twitter"
 
@@ -1004,16 +1005,16 @@ module ApplicationHelper
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
         if (['default_priority','default_source','default_status'].include?(field.field_type) )
-          element = label + select(object_name, field_name, field.html_unescaped_choices, {:selected => field_value},{:class => element_class + " select2"})
+          element = label + select(object_name, field_name, field.html_unescaped_choices, {:selected => field_value},{:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
           #Just avoiding the include_blank here.
         else
-          element = label + select(object_name, field_name, field.html_unescaped_choices, { :include_blank => "...", :selected => field_value},{:class => element_class + " select2"})
+          element = label + select(object_name, field_name, field.html_unescaped_choices, { :include_blank => "...", :selected => field_value},{:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
         end
       when "dropdown_blank" then
         element = label + select(object_name, field_name,
                                               field.html_unescaped_choices(@ticket),
                                               {:include_blank => "...", :selected => field_value},
-                                              {:class => element_class + " select2"})
+                                              {:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
       when "nested_field" then
         element =  new_nested_field_tag(label, object_name, 
                                             field_name, 
@@ -1609,5 +1610,19 @@ module ApplicationHelper
     
     content_tag :ul, &list
   end
-  
+
+  def show_onboarding?
+    user_trigger = !is_assumed_user? && current_user.login_count <= 2  && current_user.agent.onboarding_completed? 
+    (current_user.privilege?(:view_admin))  ?  user_trigger && current_account.subscription.trial?  :  user_trigger
+  end
+
+  def inlinemanual_topic_id
+    topic = (current_user.privilege?(:view_admin)) ? 'admin_topic' : 'agent_topic'
+    User::INLINE_MANUAL[topic]
+  end
+
+  def outgoing_callers
+    current_account.freshfone_caller_id
+  end
+
 end

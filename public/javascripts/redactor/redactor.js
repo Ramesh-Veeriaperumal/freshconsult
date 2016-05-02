@@ -1154,7 +1154,7 @@ Redactor.prototype = {
 			if(!this.inputEventAvailable()) {
 				this.syncCode();
 			}
-				
+
 
 		}, this));		
 	},
@@ -1984,7 +1984,8 @@ Redactor.prototype = {
 	// PASTE CLEANUP
 	pasteCleanUp: function(html) {
 		if(this.textPaste == false) {		
-			html = this.onPasteFromWord(html);	
+			html = this.onPasteFromWord(html);
+			html = this.onPasteFromExcel(html);
 			html = this.sanitizeContent(html);
 			html = this.normalizeContent(html).html();
 			this.execCommand('inserthtml', html);
@@ -2013,12 +2014,12 @@ Redactor.prototype = {
 			html = html.replace(/<img(.*?)v:shapes=(.*?)>/gi, '');
 			html = html.replace(/src="file\:\/\/(.*?)"/, 'src=""');
 
-			// list
-			html = html.replace(/<p(.*?)class=MsoListParagraphCxSpFirst ([\w\W]*?)<\/p>/gi, this.removeIndentForList);
-			html = html.replace(/<p(.*?)class=MsoListParagraphCxSpMiddle ([\w\W]*?)<\/p>/gi, this.removeIndentForList);
-			html = html.replace(/<p(.*?)class=MsoListParagraphCxSpLast ([\w\W]*?)<\/p>/gi, this.removeIndentForList);
+			// list 
+			html = html.replace(/p(.*?)class=MsoListParagraphCxSpFirst ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpFirst" ([\w\W]*?)\/p/gi, this.removeIndentForList);
+			html = html.replace(/p(.*?)class=MsoListParagraphCxSpMiddle ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpMiddle" ([\w\W]*?)\/p/gi, this.removeIndentForList);
+			html = html.replace(/p(.*?)class=MsoListParagraphCxSpLast ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpLast" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 			// one line
-			html = html.replace(/<p(.*?)class=MsoListParagraph ([\w\W]*?)<\/p>/gi, this.removeIndentForList);
+			html = html.replace(/p(.*?)class="MsoListParagraph" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 
 			// remove ms word tags
 			html = html.replace(/<o:p(.*?)>([\w\W]*?)<\/o:p>/gi, '$2');
@@ -2029,6 +2030,15 @@ Redactor.prototype = {
 
 	removeIndentForList: function(matches) {
 		return matches.replace(/text-indent:.*?\;/,'');
+	},
+
+	onPasteFromExcel: function (html) {
+		// Set border to table
+		if(/(microsoft-com|schemas-microsoft-com:office:excel|content=Excel.Sheet)/.test(html)) {
+			html = html.replace(/<table(.*?)border=0/, '<table$1 border=1') 
+		}
+
+		return html;
 	},
 
 	sanitizeContent: function(html) {		
@@ -2044,7 +2054,14 @@ Redactor.prototype = {
 		//remove script and style Tags
 		html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,'');
 		html = html.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi,'');
-		
+
+		//Get Only body content ( This is mainly to avoid garbage value copy/past from Microsoft content)
+		var getBodyContent = html.match(/<body(.*?) ([\w\W]*?)<\/body>/g);
+
+		if(getBodyContent != null) {
+			html = getBodyContent[0]
+		}
+
 		// remove comments & php code
 		html = html.replace(/<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi, '');
 		

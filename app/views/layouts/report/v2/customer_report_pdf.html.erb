@@ -23,7 +23,7 @@
     HelpdeskReports.locals.date_lag = <%= date_lag_by_plan %>;
     HelpdeskReports.locals.date_range = "<%= date_range %>";
     HelpdeskReports.locals.chart_hash = <%= data.to_json.html_safe %>;
-    HelpdeskReports.locals.is_non_sprout_plan = '<%= Account.current.subscription.non_sprout_plan? %>';
+    HelpdeskReports.locals.is_non_sprout_plan = '<%= Account.current.subscription.non_sprout_plan? || feature?(:advanced_reporting) %>';
     
     var locals = HelpdeskReports.locals;
     var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;

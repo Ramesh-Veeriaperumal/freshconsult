@@ -20,7 +20,7 @@ HelpdeskReports.ReportUtil.AgentSummary = (function () {
         getTicketListTitle : function(el){
 
             var metric_name = jQuery(el).data("metric-name");
-            var metric_value = jQuery(el).html();
+            var metric_value = jQuery(el).data("order");
             var metric_title = jQuery(".summary-table .title [data-metric-title='" + metric_name +"']").html();
             var group_id = jQuery(el).data("agent-id");
             var group_name = jQuery("[data-agent-id='" + group_id + "']" ).html(); 
@@ -100,12 +100,7 @@ HelpdeskReports.ReportUtil.AgentSummary = (function () {
                 current_params.push(param);
             });
             HelpdeskReports.locals.params = current_params.slice();
-            if (typeof (Storage) !== "undefined" && localStorage.getItem(HelpdeskReports.locals.report_type) !== null) {
-                var index = JSON.parse(localStorage.getItem(HelpdeskReports.locals.report_type));
-                 HelpdeskReports.SavedReportUtil.applySavedReport(index,false);
-            } else {
-                 HelpdeskReports.SavedReportUtil.applySavedReport(-1,false);
-            }
+            HelpdeskReports.SavedReportUtil.applyLastCachedReport();
             _FD.actions.submitReports();
         },
         flushEvents: function () {

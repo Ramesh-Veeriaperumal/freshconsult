@@ -16,9 +16,10 @@ module Solution::ApiDelegator
   CHILD_ATTRIBUTES = {
     :category_meta => [:name, :description],
     :folder_meta => [:name, :description],
-    :article_meta => [:title, :description, :desc_un_html, :status, :hits, :modified_at]
+    :article_meta => [:title, :description, :desc_un_html, :status, :hits, :modified_at, :modified_by, :seo_data, :user_id]
   }
   
+  # Order of the keys in the 2nd level should not be changed.
   PARENT_ASSOCIATIONS = {
     :article_meta => {:folder => :solution_folder_meta},
     :folder_meta => {:category => :solution_category_meta}
@@ -26,8 +27,8 @@ module Solution::ApiDelegator
   
   CHILD_ASSOCIATIONS = {
     :category_meta => { :folders => :solution_folder_meta, :public_folders => :public_folder_meta },
-    :folder_meta => { :articles => :solution_article_meta, :published_articles => :published_article_meta },
-    :article_meta => { :tags => :tags }
+    :folder_meta => { :articles => :solution_article_meta, :published_articles => :published_article_meta},
+    :article_meta => {}
   }
   
   included do |base|
@@ -42,22 +43,49 @@ module Solution::ApiDelegator
     options = options.deep_dup.with_indifferent_access
     parent_json = json_from_parent(options)
     children_json = json_from_children(options)
-    primary_json = self.send("primary_#{api_root_name}").as_json({:only => CHILD_ATTRIBUTES[class_api_name]})[api_root_name]
-    if (options[:include])
-      options[:include].except!(*PARENT_ASSOCIATIONS[class_api_name].keys) if PARENT_ASSOCIATIONS[class_api_name]
-      options[:include].except!(*CHILD_ASSOCIATIONS[class_api_name].keys) if CHILD_ASSOCIATIONS[class_api_name]
-    end
-    options[:except] = API_ALWAYS_REMOVE
+    primary_json =  (self.respond_to?(:current_child_id) ? {} : 
+        self.send("primary_#{api_root_name}").as_json({
+          :only => CHILD_ATTRIBUTES[class_api_name],
+          :except => (options[:except] || []) + [:id] 
+        })[api_root_name]) 
+
+    options[:except] = (options[:except] || []) + API_ALWAYS_REMOVE
     options[:methods] = (options[:methods] || []) + ["#{PARENT_ASSOCIATIONS[class_api_name].keys.first}_id"] if PARENT_ASSOCIATIONS[class_api_name]
+    options[:include] = remove_parent_child_options(options[:include])
     final_resp = super(options.merge(:root => false)).merge(primary_json).merge(parent_json).merge(children_json)
     if (options.key?(:root) && (options[:root] == false))
       final_resp
     else
-      { (options[:root] || api_root_name) => final_resp }
+      final_root_name = options[:to_xml] ? xml_api_root_name : api_root_name
+      { options[:root] || final_root_name => final_resp }
     end
+  end
+
+  def to_xml(options = {})
+    options[:to_xml] = true
+    self.as_json(options.except(:builder, :root, :indent))[xml_api_root_name].to_xml( :root => xml_api_root_name)
   end
   
   private
+
+  # Removing associations that will be included while generating children_json 
+  # to avoid the query to fetch the primary/current object, as it is already loaded using the default scope of the Meta objects
+  def remove_parent_child_options(opts)
+    return [] if opts.blank?
+
+    if opts.is_a? Array
+      return opts - CHILD_ASSOCIATIONS[class_api_name].keys
+    end
+
+    if opts.is_a? Hash
+      return opts.except *CHILD_ASSOCIATIONS[class_api_name].keys
+    end
+
+    if (opts.is_a?(String) || opts.is_a?(Symbol)) && CHILD_ASSOCIATIONS[class_api_name].keys.include?(opts.to_sym)
+      return []
+    end
+    opts
+  end
   
   def json_from_parent(options={})
     parent_json = {}
@@ -67,8 +95,8 @@ module Solution::ApiDelegator
       parent_options = api_includes(parent_assoc, options)
       next unless parent_options
       parent_json.merge!({
-        parent_assoc => self.send(PARENT_ASSOCIATIONS[class_api_name][parent_assoc].as_json(
-            parent_options).merge!({:root => false}))
+        parent_assoc => self.send(PARENT_ASSOCIATIONS[class_api_name][parent_assoc]).as_json(
+            parent_options.merge!({:root => false}))
       })
     end
     parent_json
@@ -81,13 +109,22 @@ module Solution::ApiDelegator
     CHILD_ASSOCIATIONS[class_api_name].keys.each do |child_assoc|
       child_options = api_includes(child_assoc, options)
       next unless child_options
+
+      child_options.merge!(:root => false)
+      if options.key?(:to_xml)
+        child_options.merge!(:to_xml => true) 
+        root_key = "solution-" + CHILD_ASSOCIATIONS[class_api_name].keys.first.to_s.singularize
+      end
+      child_options[:except] = (child_options[:except] || []) + [:tags] if (class_api_name == :folder_meta)
+      
       children_json.merge!({
         child_assoc => (self.send(CHILD_ASSOCIATIONS[class_api_name][child_assoc]).collect do |child|
-          child.as_json(child_options.merge!({:root => false}))
+          child_json = child.as_json(child_options)
+          options.key?(:to_xml) ? Solution::ApiXmlResponse.new(child_json.merge(:root => root_key)) : child_json
         end)
       })
     end
-    
+
     children_json
   end
   
@@ -106,5 +143,9 @@ module Solution::ApiDelegator
   
   def api_root_name
     @api_root_name ||= class_api_name.to_s.gsub('_meta', '')
+  end
+
+  def xml_api_root_name
+    "solution_#{api_root_name}"
   end
 end

@@ -146,6 +146,8 @@ class Solution::Folder < ActiveRecord::Base
 
   def update_search_index
     SearchSidekiq::IndexUpdate::FolderArticles.perform_async({ :folder_id => id }) if ES_ENABLED
+    
+    SearchV2::IndexOperations::UpdateArticleFolder.perform_async({ :folder_id => id }) if Account.current.features?(:es_v2_writes)
   end
 
   def add_visibility(visibility, customer_ids, add_to_existing)

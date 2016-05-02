@@ -98,11 +98,14 @@ class ApiApplicationControllerTest < ActionController::TestCase
     response = ActionDispatch::TestResponse.new
     @controller.response = response
     @controller.env['PATH_INFO'] = 'api/v2/tickets/1000'
+    request = ActionDispatch::TestRequest.new
+    request.request_method = 'POST'
+    @controller.request = request
     params = ActionController::Parameters.new(version: 2)
     @controller.send(:route_not_found)
     assert_equal response.headers['Allow'], 'GET, PUT, DELETE'
     assert_equal response.status, 405
-    assert_equal response.body, base_error_pattern(:method_not_allowed, methods: 'GET, PUT, DELETE').to_json
+    assert_equal response.body, base_error_pattern(:method_not_allowed, methods: 'GET, PUT, DELETE', fired_method: 'POST').to_json
   end
 
   def test_route_not_found
@@ -183,7 +186,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
     @controller.request = request
     actual = @controller.send(:validate_content_type)
     assert_equal response.status, 415
-    assert_equal response.body, request_error_pattern(:invalid_content_type).to_json
+    assert_equal response.body, request_error_pattern(:invalid_content_type, content_type: 'application/xml').to_json
   end
 
   def test_render_errors_with_errors_empty

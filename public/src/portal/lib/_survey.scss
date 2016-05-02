@@ -1,4 +1,37 @@
-.survey-buttons a{
+.survey-widget-wrapper{
+    word-break: break-word;
+    .survey-buttons{
+        word-break:break-word;
+        a{
+            display: block;
+            @include padding(3px 15px 3px 5px);
+            margin-bottom: 5px;
+            text-decoration: none;
+            @include border-radius(2em);
+            i{ 
+                margin-top: -1px;
+                @include margin-right(3px); 
+            }
+            &:hover{ text-decoration: none; }    
+            .survey-rating{
+                height:15px; 
+                width:15px; 
+                border: 1px solid #000;
+                margin-top: 3px;
+                @include float(left);
+            }
+            .survey-rating-label{
+                @include margin-left(25px);
+            }
+        }
+    }
+    .rating-text,.default_question{
+        font-weight: 600;
+    }
+}
+
+/*Remove during clean up of old surveys code*/
+.survey-buttons-old a{
     display: block;
     color: #333;
     @include padding(3px 15px 3px 5px);

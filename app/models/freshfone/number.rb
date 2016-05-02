@@ -22,6 +22,7 @@ class Freshfone::Number < ActiveRecord::Base
 	has_many :freshfone_number_groups, :class_name => "Freshfone::NumberGroup",
   					:dependent => :delete_all, :foreign_key => :freshfone_number_id
 	belongs_to :business_calendar
+	belongs_to :freshfone_caller_id, :class_name => "Freshfone::CallerId", :foreign_key => :caller_id
 
 	has_many :attachments, :as => :attachable, :class_name => 'Helpdesk::Attachment', 
 						:dependent => :destroy

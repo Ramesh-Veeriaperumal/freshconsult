@@ -13,7 +13,7 @@ class CompanyField < ActiveRecord::Base
     :default_name           => { :type => 1, :dom_type => :text, :label => 'company.name' },
     :default_description    => { :type => 2, :dom_type => :paragraph, :label => 'description', :dom_placeholder =>  'company.info8' },
     :default_note           => { :type => 3, :dom_type => :paragraph, :label => 'company.notes', :dom_placeholder => 'company.info5' },
-    :default_domains        => { :type => 4, :dom_type => :text, :label => 'company.info2', :bottom_note => 'company.info9' }
+    :default_domains        => { :type => 4, :dom_type => :text, :label => 'company.info2', :dom_placeholder => 'company.info12', :bottom_note => 'company.info9' }
   }
 
   CUSTOM_FIELDS_SUPPORTED = [ :custom_text, :custom_paragraph, :custom_checkbox, :custom_number,

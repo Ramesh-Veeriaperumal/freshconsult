@@ -5,9 +5,11 @@ var SurveyOverview = {
         fetch:function(label){
             SurveyUtil.showOverlay();
             jQuery.ajax({
-                type: 'GET',
+                type: 'POST',
+                data: {saved_report_used: SurveyState.saved_report_used},
                 url: SurveyUtil.makeURL("aggregate_report"),
                 success:function(data){
+                    SurveyState.saved_report_used = false;
                     SurveyUtil.hideOverlay();
                     SurveyUtil.updateData(data);
                     SurveyUtil.mapResults();
@@ -30,8 +32,7 @@ var SurveyOverview = {
                     JST["survey/reports/template/content_layout"]()
                 );
                 SurveyChart.create(SurveyUtil.whichSurvey().survey_questions[0]);
-                
+                SurveyTab.renderSidebar();
             }
-            SurveyTab.renderSidebar();
         }
 }

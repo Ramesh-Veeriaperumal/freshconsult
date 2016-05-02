@@ -5,12 +5,14 @@ module Users
       :agent_preferences => { 
         :shortcuts_enabled => true,
         :shortcuts_mapping => [],
-        :notification_timestamp => nil
+        :notification_timestamp => nil,
+        :show_onBoarding => true
         # Add new pref for agents here
       }, 
       :user_preferences => {
         # Add new pref for users here
       }
+
     }
 
     def merge_preferences=(pref = {})

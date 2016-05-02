@@ -20,11 +20,24 @@ module RabbitMq::Constants
   
   
   MODELS = [
-    [  "ticket",             CRUD_KEYS_BY_TOKEN[:all] ,                     "ticket"        ],
-    [  "archive_ticket",     CRUD_KEYS_BY_TOKEN[:update],                   "archive_ticket"],
-    [  "note",               CRUD_KEYS_BY_TOKEN[:create_and_destroy] ,      "note"      ],
-    [  "schema_less_note",   CRUD_KEYS_BY_TOKEN[:update],                   "note"      ],
-    [  "account",            CRUD_KEYS_BY_TOKEN[:destroy],                  "account"   ]
+    [  'ticket',              CRUD_KEYS_BY_TOKEN[:all],                 'ticket'          ],
+    [  'ticket_old_body',     CRUD_KEYS_BY_TOKEN[:update],              'ticket'          ],
+    [  'subscription',        CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'ticket'          ],
+    [  'ticket_state',        CRUD_KEYS_BY_TOKEN[:update],              'ticket'          ],
+    [  'note',                CRUD_KEYS_BY_TOKEN[:all],                 'note'            ],
+    [  'schema_less_note',    CRUD_KEYS_BY_TOKEN[:update],              'note'            ],
+    [  'archive_ticket',      CRUD_KEYS_BY_TOKEN[:create_and_update],   'archive_ticket'  ],
+    [  'archive_note',        CRUD_KEYS_BY_TOKEN[:create],              'archive_note'    ],
+    [  'company',             CRUD_KEYS_BY_TOKEN[:all],                 'company'         ],
+    [  'company_domain',      CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'company'         ],
+    [  'user',                CRUD_KEYS_BY_TOKEN[:all],                 'user'            ],
+    [  'user_email',          CRUD_KEYS_BY_TOKEN[:all],                 'user'            ],
+    [  'topic',               CRUD_KEYS_BY_TOKEN[:all],                 'topic'           ],
+    [  'post',                CRUD_KEYS_BY_TOKEN[:all],                 'post'            ],
+    [  'article',             CRUD_KEYS_BY_TOKEN[:all],                 'article'         ],
+    [  'tag',                 CRUD_KEYS_BY_TOKEN[:all],                 'tag'             ],
+    [  'tag_use',             CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'tag_use'         ],
+    [  'account',             CRUD_KEYS_BY_TOKEN[:destroy],             'account'         ]
   ]
   
   # If the exchange mapping values ("ticket", "customer") is changed, please make sure that the changes
@@ -45,6 +58,8 @@ module RabbitMq::Constants
   
   RMQ_REPORTS_TICKET_KEY         = "*.1.#"
   RMQ_REPORTS_NOTE_KEY           = "*.1.#"
+  RMQ_SEARCH_TICKET_KEY          = "*.*.1.#"
+  RMQ_SEARCH_NOTE_KEY            = "*.*.1.#"
   RMQ_REPORTS_ARCHIVE_TICKET_KEY = "1"
 
   AUTO_REFRESH_TICKET_KEYS = ["id", "display_id", "tag_names", "account_id", "user_id", "responder_id", "group_id", "status", 

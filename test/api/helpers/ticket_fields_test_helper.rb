@@ -25,6 +25,20 @@ module TicketFieldsTestHelper
     parent_custom_field
   end
 
+  def create_custom_status(name='custom status', stop_sla_timer=true)
+    status_field = @account.ticket_fields.find_by_name("status")
+    last_status = Helpdesk::TicketStatus.last
+    status_values = FactoryGirl.build(:ticket_status,  account_id: @account.id,
+                                                             name: name,
+                                                             customer_display_name: name,
+                                                             stop_sla_timer: stop_sla_timer,
+                                                             position: last_status.position + 1,
+                                                             status_id: last_status.status_id + 1,
+                                                             ticket_field_id: status_field.id)
+    status_values.save
+    status_values
+  end
+
   def create_custom_field_dropdown(name, choices)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
     return ticket_field_exists if ticket_field_exists

@@ -3,10 +3,9 @@
 */
 var SurveyAdmin = {	
 		fullSurvey: true,
+		hasLayoutCustomization: false,
 		path: "/admin/custom_surveys/",
-		setFullSurvey: function(defaultSurveyFlag){
-			SurveyAdmin.fullSurvey = defaultSurveyFlag;
-		},
+
 		render:function(view){
 			SurveyDetail.rating.create(view);
 			SurveyDetail.thanks.create(view);
@@ -45,8 +44,8 @@ var SurveyAdmin = {
 			SurveyAdmin.render(surveyProtocol);
 			jQuery('a#previewFeedback').show();
 			(surveyProtocol.active || surveyProtocol.isDefault) ? jQuery('input#deleteSurvey').hide() 
-                            :  jQuery('input#deleteSurvey').show();
-            	jQuery('#survey_new_layout').show();
-          SurveyQuestion.defaultOptions(surveyProtocol);
+                           				 :  jQuery('input#deleteSurvey').show();
+            		jQuery('#survey_new_layout').show();
+          		SurveyQuestion.defaultOptions(surveyProtocol);
 		}
 }

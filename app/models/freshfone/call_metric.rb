@@ -14,13 +14,13 @@ class Freshfone::CallMetric < ActiveRecord::Base
     self.call_changes = call.changes
 
     update_ivr_time        if ivr_time.blank? && ivr_complete?
-    update_ringing_at      if ringing_at.blank? && ringing_started?
+    update_ringing_at      if ringing_started?
     update_answered_at     if answered_at.blank? && call_accepted?
     update_hangup_metrics  if call_disconnected?
     update_hold_duration   if hold_complete?
     update_queue_duration  if dequeued?
     update_answering_speed if answering_speed.blank? && call_answered?
-    
+    update_total_ring_time(Time.zone.now) if queued_call?
     self.save!
   end
 
@@ -41,7 +41,7 @@ class Freshfone::CallMetric < ActiveRecord::Base
   end
 
   def update_queue_duration
-    self.queue_wait_time = call_changes[:queue_duration].last
+    self.increment(:queue_wait_time, call_changes[:queue_duration].last)
   end
 
   def update_answering_speed
@@ -51,7 +51,7 @@ class Freshfone::CallMetric < ActiveRecord::Base
 
   def regular_answering_speed
     return if call.outgoing? && call.is_root? #Outgoing parent calls does not have answering speed as there is no ringing time
-    self.answering_speed =  self.total_ringing_time
+    self.answering_speed =  calculate_ring_time
   end
 
   def rr_answering_speed
@@ -70,7 +70,7 @@ class Freshfone::CallMetric < ActiveRecord::Base
     self.talk_time = ((self.hangup_at - self.answered_at).to_i.abs - self.hold_duration) if 
           talk_time.blank? && hangup_at && answered_at
     self.ringing_at = created_at if call.ancestry.present?
-    self.total_ringing_time = calculate_total_ring_time if total_ringing_time.blank?
+    self.total_ringing_time = update_total_ring_time
     self.handle_time = calculate_handle_time
   end
 
@@ -98,8 +98,7 @@ class Freshfone::CallMetric < ActiveRecord::Base
     end
 
     def ringing_started?
-      return if call_changes[:conference_sid].blank?
-      call_changes[:conference_sid].first.blank? && call_changes[:conference_sid].last.present?
+      return  call_changes[:conference_sid].present?
     end
 
     def hold_complete?
@@ -130,12 +129,17 @@ class Freshfone::CallMetric < ActiveRecord::Base
     end
 
     def round_robin_routing?
-      self.freshfone_call.round_robin_call?
+      self.freshfone_call.round_robin_call? && self.queue_wait_time.blank?
     end
 
-    def calculate_total_ring_time
-      disconnected_at = answered_at || hangup_at
+    def calculate_ring_time(queued_at = nil)
+      disconnected_at = queued_at || answered_at || hangup_at
       return (disconnected_at - self.ringing_at).to_i.abs if ringing_at.present?
+    end
+
+    def update_total_ring_time(queued_at = nil)
+      self.total_ringing_time = 0 if self.total_ringing_time.blank?
+      self.total_ringing_time += calculate_ring_time(queued_at).to_i
     end
 
     def calculate_handle_time
@@ -150,5 +154,11 @@ class Freshfone::CallMetric < ActiveRecord::Base
 
     def hold_duration_changed?
       (self.changes.key?(:hold_duration) && self.talk_time.present?)
+    end
+
+    def queued_call?
+      self.ringing_at.present? &&  call_changes[:call_status].present? &&
+        call_changes[:call_status].first == Freshfone::Call::CALL_STATUS_HASH[:default] &&
+        call_changes[:call_status].last == Freshfone::Call::CALL_STATUS_HASH[:queued]
     end
 end

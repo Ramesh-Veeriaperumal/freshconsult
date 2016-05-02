@@ -9,13 +9,14 @@
 class Search::Filters::Docs
   include Search::Filters::QueryHelper
 
-  attr_accessor :params, :negative_params
+  attr_accessor :params, :negative_params, :with_permissible
 
   ES_PAGINATION_SIZE = 30
 
-  def initialize(values=[], negative_values=[])
+  def initialize(values=[], negative_values=[], with_permissible = true)
     @params           = (values.presence || [])
     @negative_params  = (negative_values.presence || [])
+    @with_permissible = with_permissible
   end
 
   # Doing this as there will be only one cluster
@@ -37,11 +38,12 @@ class Search::Filters::Docs
   def records(model_class, options={})
     
     # Options for querying ES
-    es_offset       = ES_PAGINATION_SIZE * (options[:page].to_i - 1)
+    es_page_size    = (options[:per_page].presence || ES_PAGINATION_SIZE).to_i
+    es_offset       = es_page_size * (options[:page].to_i - 1)
     es_defaults     = ({
                         :_source  => false, 
                         :sort     => { options[:order_entity].to_sym => options[:order_sort].to_s },
-                        :size     => ES_PAGINATION_SIZE,
+                        :size     => es_page_size,
                         :from => es_offset 
                       })
     
@@ -54,12 +56,13 @@ class Search::Filters::Docs
     
     records         = model_class.constantize.where(account_id: Account.current.id, id: record_ids)
                                               .order("#{options[:order_entity]} #{options[:order_sort]}")
-                                              .preload([:ticket_states, :ticket_status, :responder,:requester])
+                                              .preload([:schema_less_ticket, :ticket_states, :ticket_status, :responder,:requester, flexifield: { flexifield_def: :flexifield_def_entries }])
     
     # Search::Filters::Docs::Results - Wrapper for pagination
     #_Note_: Cannot do query chaining with this, as superclass is Array
     results         = Search::Filters::Docs::Results.new(records, { 
                                                                     page: options[:page].to_i, 
+                                                                    per_page: es_page_size,
                                                                     from: es_offset, 
                                                                     total_entries: total_entries 
                                                                   })
@@ -93,7 +96,7 @@ class Search::Filters::Docs
 
     # Make request to ES to get the DOCS
     def es_request(model_class, end_point, options={})
-      deserialized_params = es_query(params, negative_params).merge(options)
+      deserialized_params = es_query(params, negative_params, with_permissible).merge(options)
       error_handle do
         request = RestClient::Request.new(method: :get,
                                            url: [host, alias_name, end_point].join('/'),
@@ -163,7 +166,8 @@ class Search::Filters::Docs
       @total    = es_options[:total_entries]
       @options  = {
         :page   => es_options[:page] || 1,
-        :from   => es_options[:from] || 0
+        :from   => es_options[:from] || 0,
+        :per_page => es_options[:per_page] || ES_PAGINATION_SIZE.to_i
       }
       super(result_set)
     end
@@ -174,7 +178,7 @@ class Search::Filters::Docs
     end
 
     def per_page
-      ES_PAGINATION_SIZE.to_i
+      @options[:per_page].to_i
     end
 
     def total_pages

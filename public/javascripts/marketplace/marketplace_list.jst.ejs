@@ -1,0 +1,70 @@
+<div class="fa-sidehead">
+  <div class="apptype-head span6">
+    <div class="logo pull-left">
+      <a id="appGalleryLogo" data-url="<%= app_gallery_url %>" class="logo-link">
+        <%= translate.get('app_gallery') %>
+      </a>
+    </div>
+
+    <div class="fa-dd dropdown fa-headd">
+      <% if(search_term) { %> 
+        <a id="dd-categories" class="dropdown-toggle searched-box" data-toggle="dropdown">
+          <span class="searched" title="<%- search_term %>"> / Searched: <%- search_term %> </span>
+          <span class="results search-count">&nbsp;(<%= extensions.length %>)&#x200E;</span> <span class="caret"></span>
+        </a>
+      <% }else{ %>
+        <a id="dd-categories" class="dropdown-toggle" data-toggle="dropdown">
+          <span id="categoryname" class="selected"> / <%= category_name %> </span>
+          <span class="results">(<%= extensions.length %>)&#x200E;</span> <span class="caret"></span>
+        </a>
+      <% } %>
+      <ul class="dropdown-menu dd-left dd-categories <% if(search_term) { %> searched-dd <% } %>" role="menu" aria-labelledby="dd-categories" style="z-index:9999;">
+        <% for(var i=0; i < categories.length; i++) { %>
+          <li role="presentation">
+            <a role="menuitem" class="category" href="#" data-url="<%= categories[i].url %>" 
+              style="<% if(categories[i].selected) { %> font-weight:bold; <% } %>"><%= categories[i].name %>
+            </a>
+          </li>
+        <% } %>
+      </ul>
+    </div>
+
+  </div>
+
+  <form action="<%= search_url %>" id="extension-search-form" class="span4 pull-right search-form">
+    <div class="appsearch-box ui-widget">
+      <input id="query" name="query" class="search-query" required type="text" placeholder="<%= search_placeholder %>" value="<% if(search_term) { %><%- search_term %><% } %>" data-url="<%= auto_suggest_url %>">
+      <div class="sloading loading-small search-loader" style="display:none;"></div>
+      <button class="remove-query" type="reset"><span class="ficon-cross fsize-16"></span></button>
+      <input style="display:none" type="submit" id="search-btn">
+    </div>
+  </form>
+</div>
+
+<div class="dtl-box head-spacer">
+  <div class="fa-content content-box">
+
+    <% if (extensions.length >0) { %>
+      <div id="freshappslist" class="applist clear">
+        <% for(var i=0; i < extensions.length; i++) { %>
+          <a href="#" class="fplugs-box" data-url="<%= extensions[i].url %>">
+            <div class="app-ttl">
+              <h3 title="<%- extensions[i].display_name %>"><%- extensions[i].display_name %></h3>
+            </div>
+            <figure class="figure-box">
+              <img src="<%= extensions[i].cover_art['thumb'] %>" srcset="<%= extensions[i].cover_art['thumb'] %> 1x, <%= extensions[i].cover_art['thumb2x'] %> 2x" alt="<%- extensions[i].display_name %>" height="100">
+              <figcaption class="caption slide-caption">
+                <%- extensions[i].description.substr(0, 120) %> <% if (extensions[i].description.length > 120) { %>... <% } %>
+              </figcaption>
+            </figure>
+          </a>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="zero-apps">
+        <h5 class="msg"> <%= translate.get('marketplace_no_apps') %> </h5>
+      </div>
+    <% } %>
+    
+  </div>
+</div>

@@ -2,11 +2,11 @@ class ApiContactsController < ApiApplicationController
   include Helpdesk::TagMethods
   decorate_views
 
-  around_filter :run_on_slave, :only => [:index]
+  around_filter :run_on_slave, only: [:index]
 
   def create
     assign_protected
-    contact_delegator = ContactDelegator.new(@item, @email_objects[:old_email_objects])
+    contact_delegator = ContactDelegator.new(@item, other_emails: @email_objects[:old_email_objects], custom_fields: params[cname][:custom_field])
     if !contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
     else
@@ -22,7 +22,7 @@ class ApiContactsController < ApiApplicationController
   def update
     assign_protected
     @item.assign_attributes(params[cname].except('tag_names'))
-    contact_delegator = ContactDelegator.new(@item, @email_objects[:old_email_objects])
+    contact_delegator = ContactDelegator.new(@item, other_emails: @email_objects[:old_email_objects], custom_fields: params[cname][:custom_field])
     unless contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
       return
@@ -39,8 +39,8 @@ class ApiContactsController < ApiApplicationController
   def make_agent
     if @item.email.blank?
       render_request_error :inconsistent_state, 409
-    elsif !current_account.subscription.agent_limit.nil? && agent_limit_reached?
-      render_request_error :max_agents_reached, 403
+    elsif (@agent_limit = current_account.subscription.agent_limit) && agent_limit_reached?
+      render_request_error :max_agents_reached, 403, max_count: @agent_limit
     else
       if @item.make_agent
         @agent = Agent.find_by_user_id(@item.id)
@@ -69,11 +69,17 @@ class ApiContactsController < ApiApplicationController
 
     def after_load_object
       @item.account = current_account if scoper.attribute_names.include?('account_id')
-      scope = ContactConstants::DELETED_SCOPE[action_name]
-      if !scope.nil? && @item.deleted != scope
-        Rails.logger.debug "Contact id: #{@item.id} with deleted attribute value as #{@item.deleted} for #{params[:action]} action"
-        head 404
-        return false
+      action_scopes = ContactConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
+      action_scopes.each_pair do |scope_attribute, value|
+        item_value = @item.send(scope_attribute)
+        if item_value != value
+          Rails.logger.debug "Contact id: #{@item.id} with #{scope_attribute} is #{item_value}"
+          # Render 405 in case of update/delete as it acts on contact endpoint itself 
+          # And User will be able to GET the same contact via Show
+          # other URLs such as contacts/id/make_agent will result in 404 as it is a separate endpoint
+          update? || destroy? ? render_405_error(['GET']) : head(404)
+          return false
+        end
       end
 
       # make_agent route doesn't accept any parameters
@@ -95,9 +101,8 @@ class ApiContactsController < ApiApplicationController
     end
 
     def sanitize_params
-      prepare_array_fields [:tags]
       params_hash = params[cname]
-      params_hash[:tag_names] = params_hash.delete(:tags).join(',') if params_hash.key?(:tags)
+      params_hash[:tag_names] = sanitize_tags(params_hash.delete(:tags)).join(',') if create? || params_hash.key?(:tags)
 
       # Making the view_all_tickets as the last entry in the params_hash, since company_id
       # has to be initialised first for making a contact as a view_all_tickets
@@ -135,7 +140,7 @@ class ApiContactsController < ApiApplicationController
     def validate_filter_params
       params.permit(*ContactConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @contact_filter = ContactFilterValidation.new(params, nil, string_request_params?)
-      render_query_param_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
+      render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
     end
 
     def load_objects
@@ -168,7 +173,7 @@ class ApiContactsController < ApiApplicationController
     end
 
     def agent_limit_reached?
-      current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= current_account.subscription.agent_limit
+      current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= @agent_limit
     end
 
     def valid_content_type?
@@ -182,21 +187,21 @@ class ApiContactsController < ApiApplicationController
       primary_email = @email_objects[:primary_email]
 
       # old emails to be retained
-      @email_objects[:old_email_objects].each { |user_email| 
+      @email_objects[:old_email_objects].each do |user_email|
         email_attributes << { 'email' => user_email.email, 'id' => user_email.id, 'primary_role' => user_email.email == primary_email }
-      }
+      end
 
       # new emails to be added
-      @email_objects[:new_emails].each { |email|
+      @email_objects[:new_emails].each do |email|
         email_attributes << { 'email' => email, 'primary_role' => email == primary_email }
-      }
+      end
 
       # emails to be destroyed
       if update?
         emails_to_be_destroyed =  (@item.user_emails - @email_objects[:old_email_objects])
-        emails_to_be_destroyed.each { |user_email| 
+        emails_to_be_destroyed.each do |user_email|
           email_attributes << { 'email' => user_email.email, 'id' => user_email.id, '_destroy' => 1 }
-        }
+        end
       end
 
       @item.user_emails_attributes = Hash[(0...email_attributes.size).zip email_attributes]

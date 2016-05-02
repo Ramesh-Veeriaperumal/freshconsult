@@ -11,15 +11,19 @@ module Helpdesk
         user_id = args[:user_id]
         user = account.all_users.find_by_id(user_id)
         return if user.nil?
-        begin
-          records_nullified = Helpdesk::Ticket.update_all( "responder_id = NULL", ["account_id = ? and responder_id = ?", account.id,user.id], {:limit => BATCH_LIMIT} )
-        end while records_nullified == BATCH_LIMIT
+        
+        account.tickets.where(responder_id: user.id).select(:id).find_in_batches(batch_size: BATCH_LIMIT) do |tickets|
+          ticket_ids = tickets.map(&:id)
+          account.tickets.where(id: ticket_ids).update_all(responder_id: nil)
+        end
 
         return unless account.features?(:archive_tickets)
-        begin
-          records_nullified = Helpdesk::ArchiveTicket.update_all("responder_id = NULL", 
-            ["account_id = ? and responder_id = ?", account.id, user.id], { :limit => BATCH_LIMIT })
-        end while records_nullified == BATCH_LIMIT
+
+        account.archive_tickets.where(responder_id: user.id).select(:id).find_in_batches(batch_size: BATCH_LIMIT) do |tickets|
+          ticket_ids = tickets.map(&:id)
+          account.archive_tickets.where(id: ticket_ids).update_all(responder_id: nil)
+        end
+
       rescue Exception => e
         puts e.inspect, args.inspect
         NewRelic::Agent.notice_error(e, {:args => args})

@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   include AccountConstants
   include PasswordPolicies::UserHelpers
   
-  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq
+  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
@@ -86,8 +86,8 @@ class User < ActiveRecord::Base
   validate :has_role?, :unless => :customer?
   validate :email_validity, :if => :chk_email_validation?
   validate :user_email_presence, :if => :email_required?
-  validate :only_primary_email, on: :update, :if => [:agent?, :has_contact_merge?]
-  validate :max_user_emails, :if => [:has_contact_merge?]
+  validate :only_primary_email, on: :update, :if => [:agent?]
+  validate :max_user_emails
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
@@ -107,10 +107,11 @@ class User < ActiveRecord::Base
   end
 
   def has_no_emails_with_ui_feature?
-    has_contact_merge? and (primary_email.blank? and self.user_emails.reject(&:marked_for_destruction?).empty?)
+    primary_email.blank? and self.user_emails.reject(&:marked_for_destruction?).empty?
   end
 
-  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :primary_email_attributes
+  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, 
+                :primary_email_attributes, :tags_updated
   
   attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes, 
                   :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id, 
@@ -361,7 +362,7 @@ class User < ActiveRecord::Base
     self.tag_names = params[:user][:tag_names] # update tags in the user object
     self.custom_field = params[:user][:custom_field]
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
-    self.user_emails_attributes = params[:user][:user_emails_attributes] if params[:user][:user_emails_attributes].present? and has_contact_merge?
+    self.user_emails_attributes = params[:user][:user_emails_attributes] if params[:user][:user_emails_attributes].present?
     self.deleted = true if (email.present? && email =~ /MAILER-DAEMON@(.+)/i)
     self.created_from_email = params[:user][:created_from_email] 
     return false unless save_without_session_maintenance
@@ -501,7 +502,7 @@ class User < ActiveRecord::Base
   end
 
   def search_data
-    if has_contact_merge? and self.user_emails.present?
+    if self.user_emails.present?
       self.user_emails.map{|x| {:id => id, :details => "#{format_name} <#{x.email}>", :value => name, :email => x.email}}
     else
       [{:id => id, :details => self.name_details, :value => name, :email => email}]
@@ -602,29 +603,6 @@ class User < ActiveRecord::Base
     super(options)
   end
 
-  def to_indexed_json
-    as_json({
-              :root => "user",
-              :tailored_json => true,
-              :only => [ :name, :email, :description, :job_title, :phone, :mobile,
-                         :twitter_id, :fb_profile_id, :account_id, :deleted,
-                         :helpdesk_agent, :created_at, :updated_at ], 
-              :include => { :customer => { :only => [:name] },
-                            :user_emails => { :only => [:email] }, 
-                            :flexifield => { :only => es_contact_field_data_columns } } }, true
-           ).to_json
-  end
-
-  def es_contact_field_data_columns
-    @@es_contact_field_data_columns ||= ContactFieldData.column_names.select{ |column_name| 
-                                    column_name =~ /^cf_(str|text|int|decimal|date)/}.map &:to_sym
-  end
-  
-  def es_columns
-    @@es_columns ||= [:name, :email, :description, :job_title, :phone, :mobile, :twitter_id, 
-      :fb_profile_id, :customer_id, :deleted, :helpdesk_agent].concat(es_contact_field_data_columns)
-  end
-
   def has_company?
     customer? and company
   end
@@ -672,8 +650,10 @@ class User < ActiveRecord::Base
       agent.destroy
       freshfone_user.destroy if freshfone_user
       email_notification_agents.destroy_all
+
+      expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date => 
-              (Time.now.utc + FDPasswordPolicy::Constants::GRACE_PERIOD).to_s})
+              (Time.now.utc + expiry_period).to_s})
       return true
     end 
     return false
@@ -690,8 +670,10 @@ class User < ActiveRecord::Base
       self.tags.clear
       agent = build_agent()
       agent.occasional = !!args[:occasional]
+
+      expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date => 
-          (Time.now.utc + FDPasswordPolicy::Constants::GRACE_PERIOD).to_s}, false)
+          (Time.now.utc + expiry_period).to_s}, false)
       save ? true : (raise ActiveRecord::Rollback)
     end
   end
@@ -774,10 +756,6 @@ class User < ActiveRecord::Base
     write_attribute(:mobile, RailsFullSanitizer.sanitize(value))
   end
   # Hack ends here
-  
-  def search_fields_updated?
-    (@all_changes.keys & es_columns).any?
-  end
 
   def company_id
     self.customer_id
@@ -797,6 +775,7 @@ class User < ActiveRecord::Base
     def backup_user_changes
       @all_changes = self.changes.clone.to_hash
       @all_changes.merge!(flexifield.changes)
+      @all_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
       @all_changes.symbolize_keys!
     end
 

@@ -7,7 +7,7 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:signup, :receive_webhook]
 
-  skip_before_filter :set_current_account, :check_account_state, :set_time_zone, :check_day_pass_usage, :set_locale, :only => [:signup, :landing, :receive_webhook]
+  skip_before_filter :set_current_account, :check_account_state, :set_time_zone, :check_day_pass_usage, :set_locale, :only => [:signup, :landing]
 
   before_filter :verify_hmac, :only => [:receive_webhook]
 
@@ -51,7 +51,7 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
 
   def landing
     installed_app = current_account.installed_applications.with_name(Integrations::Constants::APP_NAMES[:shopify]).first
-    shop = params[:shop]
+    shop = params[:remote_id]
     if shop.blank?
       remote_integ_map = Integrations::ShopifyRemoteUser.where(:account_id => current_account.id).first
       if remote_integ_map.present?

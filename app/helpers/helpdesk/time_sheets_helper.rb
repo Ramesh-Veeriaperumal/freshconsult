@@ -41,10 +41,12 @@ module Helpdesk::TimeSheetsHelper
     integrated_apps.each do |app|
       app_detail = get_app_details(app[0])
       unless app_detail.blank? or timeentry.blank?
+        integrated_app = timeentry.integrated_resources.where(:installed_application_id => app_detail.id).first
+        remote_integratable_id = integrated_app.present? ? integrated_app.remote_integratable_id :  "null"
         page << "try{"
         page << "if (jQuery('##{app[0]}-timeentry-enabled').is(':checked')) {"
         page << "#{app[2]}.updateNotesAndTimeSpent(#{timeentry.note.to_json}, #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable}, #{timeentry.executed_at.to_json});"
-        page << "#{app[2]}.logTimeEntry(#{timeentry.id});"
+        page << "#{app[2]}.logTimeEntry(#{timeentry.id}, #{remote_integratable_id});"
         page << "}"
         page << "}catch(e){ log(e)}"
       end

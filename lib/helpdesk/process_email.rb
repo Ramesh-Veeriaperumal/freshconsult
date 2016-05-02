@@ -116,7 +116,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           if parent_ticket && parent_ticket.is_a?(Helpdesk::ArchiveTicket)
             self.archived_ticket = parent_ticket
           elsif parent_ticket && parent_ticket.is_a?(Helpdesk::Ticket)
-            return add_email_to_ticket(ticket, from_email, user) if can_be_added_to_ticket?(parent_ticket, user, from_email)
+            return add_email_to_ticket(parent_ticket, from_email, user) if can_be_added_to_ticket?(parent_ticket, user, from_email)
           end
           # If not merge check if archive child present
           linked_ticket = self.archived_ticket.ticket
@@ -296,10 +296,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def fetch_archived_ticket(account, from_email, user)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
       archive_ticket = account.archive_tickets.find_by_display_id(display_id) if display_id
-      return archive_ticket if can_be_added_to_ticket?(archive_ticket, user)
+      return archive_ticket if can_be_added_to_ticket?(archive_ticket, user, from_email)
       archive_ticket = archive_ticket_from_headers(from_email, account)
-      return archive_ticket if can_be_added_to_ticket?(archive_ticket, user)
-      return self.actual_archive_ticket if can_be_added_to_ticket?(self.actual_archive_ticket, user)
+      return archive_ticket if can_be_added_to_ticket?(archive_ticket, user, from_email)
+      return self.actual_archive_ticket if can_be_added_to_ticket?(self.actual_archive_ticket, user, from_email)
     end
     
     def create_ticket(account, from_email, to_email, user, email_config)
@@ -489,10 +489,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_cc_emails = parse_cc_email
       parsed_cc_emails.delete(ticket.account.kbase_email)
       note = ticket.notes.build(
-        :private => (
-           (from_fwd_recipients or reply_to_private_note?(all_message_ids)) or 
-           (Account.find_by_id(ticket.account_id).features?(:threading_without_user_check) && reply_to_forward(in_reply_to))
-          ),
+        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?),
         :incoming => true,
         :note_body_attributes => {
           :body => tokenize_emojis(body) || "",
@@ -500,7 +497,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :full_text => tokenize_emojis(full_text),
           :full_text_html => full_text_html
           },
-        :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"],
         :user => user, #by Shan temp
         :account_id => ticket.account_id,
         :from_email => from_email[:email],
@@ -508,7 +505,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :cc_emails => parsed_cc_emails
       )  
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
-      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if ticket.agent_performed?(user)
+      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?)
+      
+      note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?
+
       check_for_auto_responders(note)
       check_support_emails_from(ticket.account, note, user, from_email)
 
@@ -550,6 +550,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
     
+    def rsvp_to_fwd?
+      @rsvp_to_fwd ||= (Account.current.features?(:threading_without_user_check) && reply_to_forward(all_message_ids))
+    end
+
     def can_be_added_to_ticket?(ticket, user, from_email={})
       ticket and
       ((user.agent? && !user.deleted?) or
@@ -557,7 +561,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       (ticket.included_in_cc?(user.email)) or
       (from_email[:email] == ticket.sender_email) or
       belong_to_same_company?(ticket,user) or
-      Account.find_by_id(ticket.account_id).features?(:threading_without_user_check))
+      Account.current.features?(:threading_without_user_check))
     end
     
     def belong_to_same_company?(ticket,user)

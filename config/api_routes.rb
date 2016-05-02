@@ -1,6 +1,9 @@
 Helpkit::Application.routes.draw do
-  api_routes = Proc.new do
-    resources :tickets, :except => [:new, :edit] do
+  api_routes = proc do
+    resources :tickets, except: [:new, :edit] do
+      collection do
+        post :outbound_email, to: 'tickets#create', defaults: {_action: 'compose_email'}
+      end
       member do
         put :restore
         get :time_entries, to: 'time_entries#ticket_time_entries'
@@ -10,24 +13,25 @@ Helpkit::Application.routes.draw do
         post :time_entries, to: 'time_entries#create'
       end
     end
-    resources :conversations, :except => [:new, :edit, :show, :index, :create]
 
-    resources :ticket_fields, :controller => :api_ticket_fields, :only => [:index]
+    resources :conversations, except: [:new, :edit, :show, :index, :create]
 
-    resources :time_entries, :except => [:new, :edit, :show, :create] do 
-      member do 
+    resources :ticket_fields, controller: :api_ticket_fields, only: [:index]
+
+    resources :time_entries, except: [:new, :edit, :show, :create] do
+      member do
         put :toggle_timer
       end
     end
 
-    namespace :api_discussions, :path => "discussions" do
-      resources :categories, :except => [:new, :edit] do
+    namespace :api_discussions, path: 'discussions' do
+      resources :categories, except: [:new, :edit] do
         member do
           get :forums, to: 'forums#category_forums'
           post :forums, to: 'forums#create'
         end
       end
-      resources :forums, :except => [:new, :edit, :index, :create] do
+      resources :forums, except: [:new, :edit, :index, :create] do
         member do
           get :topics, to: 'topics#forum_topics'
           post :follow, to: :follow
@@ -36,7 +40,7 @@ Helpkit::Application.routes.draw do
           post :topics, to: 'topics#create'
         end
       end
-      resources :topics, :except => [:new, :edit, :index, :create]do
+      resources :topics, except: [:new, :edit, :index, :create]do
         member do
           get :comments, to: 'api_comments#topic_comments'
           post :follow, to: :follow
@@ -44,46 +48,48 @@ Helpkit::Application.routes.draw do
           get :follow, to: :is_following
           post :comments, to: 'api_comments#create'
         end
-        collection do 
+        collection do
           get :followed_by
         end
       end
-      resources :comments, as: "api_comments", :controller => "api_comments", :only => [:destroy, :update]
+      resources :comments, as: 'api_comments', controller: 'api_comments', only: [:destroy, :update]
     end
-    resources :groups, as: "api_groups", :controller => "api_groups", :except => [:new, :edit]
+    resources :groups, as: 'api_groups', controller: 'api_groups', except: [:new, :edit]
 
-    resources :contacts, as: "api_contacts", :controller => "api_contacts", :except => [:new, :edit] do
+    resources :contacts, as: 'api_contacts', controller: 'api_contacts', except: [:new, :edit] do
       member do
         put :make_agent
       end
     end
 
-    resources :agents, :controller => "api_agents", :only => [:index, :show] do
+    resources :agents, controller: 'api_agents', only: [:index, :show] do
       collection do
         get :me
       end
     end
 
-    resources :contact_fields, :controller => "api_contact_fields", :only => [:index]
+    resources :contact_fields, controller: 'api_contact_fields', only: [:index]
 
-    resources :products, :controller => "api_products", :only => [:index, :show]
+    resources :products, controller: 'api_products', only: [:index, :show]
 
-    resources :email_configs, :controller => "api_email_configs", :only => [:index, :show]
+    resources :email_configs, controller: 'api_email_configs', only: [:index, :show]
 
-    resources :business_hours, :controller => "api_business_hours", :only => [:index, :show]
+    resources :business_hours, controller: 'api_business_hours', only: [:index, :show]
 
-    resources :companies, as: "api_companies", :controller => "api_companies", :except => [:new, :edit]
+    resources :companies, as: 'api_companies', controller: 'api_companies', except: [:new, :edit]
 
-    resources :company_fields, as: "api_company_fields", :controller => "api_company_fields", :only => [:index]
+    resources :company_fields, as: 'api_company_fields', controller: 'api_company_fields', only: [:index]
 
-    resources :sla_policies, :controller => "api_sla_policies", :only => [ :index, :update ]  
+    resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update]
   end
-    
-  scope "/api", defaults: {version: "v2", format: "json"}, :constraints => {:format => /(json|$^)/} do
-    scope "/v2" , &api_routes # "/api/v2/.."
+
+  match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { :format => 'json' }, :as => :tickets_search, via: :get
+  
+  scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
+    scope '/v2', &api_routes # "/api/v2/.."
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header
-    scope "", &api_routes
-    match "*route_not_found.:format", :to => "api_application#route_not_found"
-    match "*route_not_found",         :to => "api_application#route_not_found"
+    scope '', &api_routes
+    match '*route_not_found.:format', to: 'api_application#route_not_found'
+    match '*route_not_found',         to: 'api_application#route_not_found'
   end
 end

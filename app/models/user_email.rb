@@ -26,7 +26,7 @@ class UserEmail < ActiveRecord::Base
   # Make the verified as false if the email is changed
   before_update :change_email_status, :if => [:email_changed?]
   # Set new perishable token for activation after email is changed
-  before_update :set_token, :if => [:email_changed?, :contact_merge_ui_feature]
+  before_update :set_token, :if => [:email_changed?]
   before_update :save_model_changes
 
   before_create :set_token, :set_verified
@@ -37,6 +37,10 @@ class UserEmail < ActiveRecord::Base
   after_commit :send_activation_on_update, on: :update, :if => [:check_for_email_change?]
 
   before_destroy :drop_authorization
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher 
 
   scope :primary, :conditions => {:primary_role => true}, :limit => 1
 
@@ -81,6 +85,10 @@ class UserEmail < ActiveRecord::Base
     super options
   end
 
+  def esv2_fields_updated?
+    check_for_email_change?
+  end
+
   protected
 
     def drop_authorization
@@ -107,10 +115,6 @@ class UserEmail < ActiveRecord::Base
 
     def save_model_changes
       @ue_changes = self.changes.clone
-    end
-
-    def contact_merge_ui_feature
-      self.account.features_included?(:contact_merge_ui)
     end
 
     def check_for_email_change?

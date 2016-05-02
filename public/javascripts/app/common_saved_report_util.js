@@ -296,7 +296,7 @@ Helpkit.commonSavedReportUtil = {
 
 	                      //Show successfully saved message
 	                      _this.showResponseMessage(I18n.t('helpdesk_reports.saved_report.saved_message'));
-	                      _this.cacheLastAppliedReport(0);
+	                      _this.cacheLastAppliedReport(resp.id);
 	                  }
 	              },
 	              error: function (xhr,exception) {
@@ -395,7 +395,7 @@ Helpkit.commonSavedReportUtil = {
     	},
     	applyLastCachedReport : function(){
 	        if (typeof (Storage) !== "undefined" && localStorage.getItem(Helpkit.report_type) !== null) {
-	            var index = JSON.parse(localStorage.getItem(Helpkit.report_type));
+	            var index = this.getDataIndex(JSON.parse(localStorage.getItem(Helpkit.report_type)));
 	            if(index != -1){
 	            	//this.applySavedReport(index);
 	            	setTimeout(function(){
@@ -407,6 +407,19 @@ Helpkit.commonSavedReportUtil = {
     	},
     	escapeString : function(name){
     		return name != undefined ? escapeHtml(name).replace(/'/g, '&apos;') : name;
+    	},
+    	/* Used for identifying index from cached id */
+    	getDataIndex : function(id){
+    		var hash = Helpkit.report_filter_data;
+    		var index = -1;
+    		if (hash != undefined) {
+    			jQuery.each(hash,function(idx,obj){
+    				if(obj.report_filter.id == id){
+    					index = idx;
+    				}	
+    			});	
+    		}
+    		return index;
     	},
     	/* Entry point */
 	    init : function() {

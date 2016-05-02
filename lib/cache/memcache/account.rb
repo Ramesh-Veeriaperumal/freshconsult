@@ -21,14 +21,30 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache key
   end
 
+  def onhold_and_closed_statuses_from_cache
+    @onhold_and_closed_statuses_from_cache ||= begin
+      key = ACCOUNT_ONHOLD_CLOSED_STATUSES % { :account_id => self.id}
+      MemcacheKeys.fetch(key) { Helpdesk::TicketStatus.onhold_and_closed_statuses(self) }
+    end
+  end
+
+  def ticket_status_values_from_cache
+    @ticket_status_values_from_cache ||= begin
+      key = ACCOUNT_STATUSES % { :account_id => self.id }
+      MemcacheKeys.fetch(key) { self.ticket_status_values.find(:all) }
+    end
+  end
+  
   def clear_api_limit_cache
     key = API_LIMIT % {:account_id => self.id }
     MemcacheKeys.delete_from_cache key
   end
 
   def main_portal_from_cache
-    key = ACCOUNT_MAIN_PORTAL % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { self.main_portal }
+    @main_portal_from_cache ||= begin
+      key = ACCOUNT_MAIN_PORTAL % { :account_id => self.id }
+      MemcacheKeys.fetch(key) { self.main_portal }
+    end
   end
 
   def active_custom_survey_from_cache
@@ -41,18 +57,29 @@ module Cache::Memcache::Account
   end
 
   def ticket_types_from_cache
-    key = ticket_types_memcache_key
-    MemcacheKeys.fetch(key) { ticket_type_values.all }
+    @ticket_types_from_cache ||= begin
+      key = ticket_types_memcache_key
+      MemcacheKeys.fetch(key) { ticket_type_values.all }
+    end
   end
 
   def agents_from_cache
-    key = agents_memcache_key
-    MemcacheKeys.fetch(key) { self.agents.find(:all, :include => [:user,:agent_groups]) }
+    @agents_from_cache ||= begin
+      key = agents_memcache_key
+      MemcacheKeys.fetch(key) { self.agents.find(:all, :include => [:user,:agent_groups]) }
+    end
   end
 
+  def agents_details_from_cache
+    key = agents_details_memcache_key
+    MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name").all }
+  end  
+
   def groups_from_cache
-    key = groups_memcache_key
-    MemcacheKeys.fetch(key) { self.groups.find(:all, :order=>'name' ) }
+    @groups_from_cache ||= begin
+      key = groups_memcache_key
+      MemcacheKeys.fetch(key) { self.groups.find(:all, :order=>'name' ) }
+    end
   end
 
   def products_from_cache
@@ -66,8 +93,14 @@ module Cache::Memcache::Account
   end
 
   def feature_from_cache
-    key = FEATURES_LIST % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { self.features.map(&:to_sym) }
+    @feature_from_cache ||= begin
+      key = FEATURES_LIST % { :account_id => self.id }
+      MemcacheKeys.fetch(key) { self.features.map(&:to_sym) }
+    end
+  end
+
+  def reset_feature_from_cache_variable
+    @feature_from_cache = nil
   end
 
   def features_included?(*feature_names)
@@ -94,16 +127,20 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.facebook_pages.reauth_required.present? }
   end
   def custom_dropdown_fields_from_cache
-    key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      ticket_fields_without_choices.custom_dropdown_fields.find(:all, :include => [:flexifield_def_entry,:level1_picklist_values] )
+    @custom_dropdown_fields_from_cache ||= begin
+      key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        ticket_fields_without_choices.custom_dropdown_fields.find(:all, :include => [:flexifield_def_entry,:level1_picklist_values] )
+      end
     end
   end
 
   def nested_fields_from_cache
-    key = ACCOUNT_NESTED_FIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      ticket_fields_including_nested_fields.nested_fields.all
+    @nested_fields_from_cache ||= begin
+      key = ACCOUNT_NESTED_FIELDS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        ticket_fields_including_nested_fields.nested_fields.all
+      end
     end
   end
 
@@ -125,6 +162,14 @@ module Cache::Memcache::Account
     key = ACCOUNT_TICKET_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
       ticket_fields_with_nested_fields.all
+    end
+  end
+
+
+  def section_fields_with_field_values_mapping_cache
+    key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.id }
+    MemcacheKeys.fetch(key) do
+      section_fields_with_field_values_mapping.all
     end
   end
 
@@ -155,7 +200,7 @@ module Cache::Memcache::Account
   def api_webhooks_rules_from_cache
     key = ACCOUNT_API_WEBHOOKS_RULES % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      api_webhook_rules.find(:all)
+      api_webhook_rules.all
     end
   end
 
@@ -228,13 +273,17 @@ module Cache::Memcache::Account
   end
 
   def contact_password_policy_from_cache
-    key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:contact])
-    MemcacheKeys.fetch(key) { self.contact_password_policy }
+    @contact_password_policy_from_cache ||= begin
+      key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:contact])
+      MemcacheKeys.fetch(key) { self.contact_password_policy }
+    end
   end
 
   def agent_password_policy_from_cache
-    key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:agent])
-    MemcacheKeys.fetch(key) { self.agent_password_policy }
+    @agent_password_policy_from_cache ||= begin
+      key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:agent])
+      MemcacheKeys.fetch(key) { self.agent_password_policy }
+    end
   end
 
   def clear_contact_password_policy_from_cache
@@ -254,6 +303,10 @@ module Cache::Memcache::Account
 
     def agents_memcache_key
       ACCOUNT_AGENTS % { :account_id => self.id }
+    end
+
+    def agents_details_memcache_key
+      ACCOUNT_AGENTS_DETAILS % { :account_id => self.id }
     end
 
     def groups_memcache_key

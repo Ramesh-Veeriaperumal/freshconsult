@@ -3,6 +3,7 @@ class ApiApplicationController < MetalApiController
   # do not change the exception order # standard error has to have least priority hence placing at the top.
   rescue_from StandardError, with: :render_500
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
+  rescue_from ShardNotFound, with: :record_not_found
   rescue_from DomainNotReady, with: :route_not_found
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
@@ -21,16 +22,14 @@ class ApiApplicationController < MetalApiController
   # App specific Before filters Starts
   # All before filters should be here. Should not be moved to concern. As the order varies for API and Web
   around_filter :select_shard
-  before_filter :current_shard # should happen first within around filter.
   prepend_before_filter :determine_pod
-  before_filter :unset_current_account, :unset_current_portal, :set_current_account
+  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_shard_for_payload
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :check_account_state
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone
   before_filter :force_utf8_params
   before_filter :set_cache_buster
-  before_filter :set_shard_for_payload 
   include AuthenticationSystem
   include HelpdeskSystem
   include SubscriptionSystem
@@ -97,8 +96,7 @@ class ApiApplicationController < MetalApiController
       match[:action] != 'route_not_found'
     end.map(&:upcase)
     if allows.present? # route is present, but method is not allowed.
-      render_base_error(:method_not_allowed, 405, methods: allows.join(', '))
-      response.headers['Allow'] = allows.join(', ')
+      render_405_error(allows)
     else # route not present.
       head 404
     end
@@ -153,8 +151,7 @@ class ApiApplicationController < MetalApiController
 
     def record_not_found(e)
       # Render 404 if domain is not present else 500.
-      # our locally cached current_shard will be nil if specific domain doesn't belongs to any shards
-      if current_shard.nil?
+      if e.is_a?(ShardNotFound)
         Rails.logger.error("API V2 request for invalid host. Host: #{request.host}")
         head 404
       else
@@ -162,13 +159,6 @@ class ApiApplicationController < MetalApiController
         Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
         render_base_error(:internal_error, 500)
       end
-    end
-
-    # Caching current_shard_selection in local instance variable to find out domain not found error.
-    # As exception ensures connection to be switched to initial shard.
-    def current_shard
-      return @current_shard if defined?(@current_shard)
-      @current_shard ||= Thread.current[:shard_selection].try(:shard)
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
@@ -195,7 +185,7 @@ class ApiApplicationController < MetalApiController
     def login_error_handler(e)
       if e.failed_login_count
         Rails.logger.debug "API V2 #{e.message}. Attempt: #{e.failed_login_count}"
-        render_request_error :password_lockout, 403
+        render_request_error :password_lockout, 403, max_count: UserSession.consecutive_failed_logins_limit
       else
         Rail.logger.debug "Exception: ConsecutiveFailedLoginError, Message: #{e.message}, Backtrace: #{e.backtrace}"
         render_base_error(:internal_error, 500)
@@ -243,7 +233,7 @@ class ApiApplicationController < MetalApiController
 
     def validate_content_type
       unless get_request? || request.delete? || valid_content_type?
-        render_request_error :invalid_content_type, 415
+        render_request_error :invalid_content_type, 415, content_type: request.content_type
       end
     end
 
@@ -282,7 +272,6 @@ class ApiApplicationController < MetalApiController
 
     def prepare_array_fields(array_fields = [])
       array_fields.each do |array_field|
-        array_field = array_field.to_sym
         if create? || params[cname].key?(array_field)
           array_value = Array.wrap params[cname][array_field]
           params[cname][array_field] = array_value.uniq.reject(&:blank?)
@@ -305,7 +294,7 @@ class ApiApplicationController < MetalApiController
       # The respective filter validation classes would inherit from FilterValidation to include validations on pagination options.
       params.permit(*ApiConstants::DEFAULT_INDEX_FIELDS, *additional_fields)
       @filter = FilterValidation.new(params, nil, true)
-      render_query_param_errors(@filter.errors, @filter.error_options) unless @filter.valid?
+      render_errors(@filter.errors, @filter.error_options) unless @filter.valid?
     end
 
     def validate_url_params
@@ -333,6 +322,10 @@ class ApiApplicationController < MetalApiController
     # Add link header if next page exists.
     def add_link_header(query_parameters)
       response.headers['Link'] = construct_link_header(query_parameters)
+    end
+
+    def add_total_entries(total_items)
+      response.headers['X-Search-Results-Count'] = total_items.to_s
     end
 
     # Construct link header for paginated collection
@@ -373,7 +366,7 @@ class ApiApplicationController < MetalApiController
         ErrorHelper.rename_keys(error_options_mappings, item.error_options)
         (options ||= {}).merge!(item.error_options)
       end
-      render_errors(item.errors, options)
+      render_errors(item.errors, options || {})
     end
 
     # Error options field mappings to rename the keys Say, agent in ticket error will be replaced with responder_id
@@ -381,21 +374,7 @@ class ApiApplicationController < MetalApiController
       {}
     end
 
-    def render_query_param_errors(errors, meta = nil)
-      set_query_param_errors(errors, meta)
-      render_errors(errors, meta)
-    end
-
-    def set_query_param_errors(errors, meta)
-      # this will translate generic positive_number error to specific per_page_positive_number
-      # this is being done to get different custom codes with the same error message.
-      if errors[:per_page].present?
-        errors[:per_page] = "per_page_#{errors.to_h[:per_page]}"
-        meta[:per_page].merge!(max_value: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page])
-      end
-    end
-
-    def render_errors(errors, meta = nil)
+    def render_errors(errors, meta = {})
       if errors.present?
         @errors = ErrorHelper.format_error(errors, meta)
         log_error_response @errors
@@ -499,7 +478,7 @@ class ApiApplicationController < MetalApiController
     def set_current_account # this method is redefined because of api_current_user
       current_account.make_current
       User.current = api_current_user
-    rescue ActiveRecord::RecordNotFound
+    rescue ActiveRecord::RecordNotFound, ShardNotFound
       Rails.logger.error("API V2 request for invalid account. Host: #{request.host}")
       head 404
     rescue ActiveSupport::MessageVerifier::InvalidSignature # Authlogic throw this error if signed_cookie is tampered.
@@ -565,7 +544,16 @@ class ApiApplicationController < MetalApiController
       # when load_object is not called then the action is a create action,
       # other actions using owned_by permissions is, presently a non-existent and in future also, a rare scenario
       # when user_id parameter is not present in the request, then api_current_user.id will be assigned eventually to the record.
-      item ? privilege?(key, item) : (privilege?(key) || (params[cname] && (params[cname][owned_by_field].nil? || params[cname][owned_by_field] == api_current_user.id)))
+      # # Should have either the privilege or owns the object
+      privilege?(key) || object_of_current_user?(item, owned_by_field)
+    end
+
+    def object_of_current_user?(item, owned_by_field)
+      owner_id_same_as_current_user?(owned_by_field) && (item.nil? || api_current_user.owns_object?(item))
+    end
+
+    def owner_id_same_as_current_user?(owned_by_field)
+      params[cname].try(:[], owned_by_field).nil? || params[cname][owned_by_field] == api_current_user.id
     end
 
     def update?
@@ -586,6 +574,10 @@ class ApiApplicationController < MetalApiController
 
     def index?
       @index ||= current_action?('index')
+    end
+
+    def search?
+      @search ||= current_action?('search')
     end
 
     def current_action?(action)
@@ -630,16 +622,15 @@ class ApiApplicationController < MetalApiController
       head 404
     end
 
-    def check_day_pass_usage_with_user_time_zone
-      in_user_time_zone { check_day_pass_usage }
+    def render_405_error(allowed_methods)
+      methods = allowed_methods.join(', ')
+      render_base_error(:method_not_allowed, 405, methods: methods, fired_method: request.method)
+      response.headers['Allow'] = methods
     end
 
-    def in_user_time_zone
-      old_zone = Time.zone
-      TimeZone.set_time_zone
-      yield
-    ensure
-      Time.zone = old_zone
+    def check_day_pass_usage_with_user_time_zone
+      user_zone = TimeZone.find_time_zone
+      Time.use_zone(user_zone) { check_day_pass_usage }
     end
 
     def run_on_slave

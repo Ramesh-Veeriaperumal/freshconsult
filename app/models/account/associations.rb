@@ -230,8 +230,6 @@ class Account < ActiveRecord::Base
   # Archive Association Starts Here
   has_many :archive_tickets, :class_name => "Helpdesk::ArchiveTicket"
   has_many :archive_notes, :class_name => "Helpdesk::ArchiveNote"
-  has_many :archive_ticket_associations, :class_name => "Helpdesk::ArchiveTicketAssociation"
-  has_many :archive_note_associations, :class_name => "Helpdesk::ArchiveNoteAssociation"
   has_many :archive_time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:archive_tickets , :conditions =>['archive_tickets.deleted =?', false]
   # Archive Association Ends Here
 
@@ -242,7 +240,7 @@ class Account < ActiveRecord::Base
   has_one  :es_enabled_account, :class_name => 'EsEnabledAccount', :dependent => :destroy
 
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter,
-    :pass_through_enabled, :api_limit, :to => :account_additional_settings
+    :pass_through_enabled, :api_limit, :webhook_limit, :to => :account_additional_settings
 
   has_many :subscription_events
 
@@ -264,6 +262,7 @@ class Account < ActiveRecord::Base
   has_many :freshfone_other_charges, :class_name => "Freshfone::OtherCharge"
   has_many :freshfone_blacklist_numbers, :class_name => "Freshfone::BlacklistNumber"
   has_one  :freshfone_subscription, :class_name => "Freshfone::Subscription"
+  has_many :freshfone_caller_id, :class_name => "Freshfone::CallerId"
 
   has_many :freshfone_callers, :class_name => "Freshfone::Caller"
 
@@ -286,9 +285,12 @@ class Account < ActiveRecord::Base
   has_many :solution_customer_folders, :class_name => "Solution::CustomerFolder"
 
   has_many :sections, :class_name => 'Helpdesk::Section', :dependent => :destroy
+  has_many :section_fields_with_field_values_mapping, :class_name => 'Helpdesk::SectionField', 
+            :include => [:parent_ticket_field, :section => {:section_picklist_mappings => :picklist_value}]
   has_many :section_fields, :class_name => 'Helpdesk::SectionField', :dependent => :destroy
 
   has_many :subscription_invoices
   has_many :user_companies
   has_many :outgoing_email_domain_categories, :dependent => :destroy
+  has_many :authorizations, :class_name => '::Authorization'
 end

@@ -16,6 +16,7 @@ class HelpdeskReports::Request::Ticket
     req_params.merge!(account_id: Account.current.id)
     req_params.merge!(report_type: @report_type)
     req_params.merge!(account_plan: Account.current.plan_name)
+    req_params.merge!(account_domain: Account.current.full_domain)
     add_bucketing_condition unless req_params[:bucket_conditions].blank?
     add_time_zone_condition
     

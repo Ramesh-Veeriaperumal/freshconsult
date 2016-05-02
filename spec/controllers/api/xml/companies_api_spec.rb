@@ -3,7 +3,7 @@ require 'spec_helper'
 describe CompaniesController do
 
   SKIPPED_KEYS = [  :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, 
-                    :delta, :import_id,:custom_field ]
+                    :delta, :import_id,:custom_field, :domains ]
 
   # integrate_views
   setup :activate_authlogic
@@ -55,8 +55,7 @@ describe CompaniesController do
     id = @account.companies.find_by_name(@comp.name).id
     fake_a_company
     put :update, @params.merge!({ :id => id, :format => 'xml' })
-    { :company => company_attributes(@account.companies.find(id), SKIPPED_KEYS) }.
-                                                                    should be_eql(@company_params)
+    company_attributes(@account.companies.find(id), SKIPPED_KEYS).should be_eql(@company_params[:company])
   end
 
   it "should delete a company using the API" do

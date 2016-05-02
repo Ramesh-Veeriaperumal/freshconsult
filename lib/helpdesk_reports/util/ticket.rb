@@ -21,7 +21,7 @@ module HelpdeskReports::Util::Ticket
     when :priority
       TicketConstants.priority_list
     when :agent_id
-      Account.current.agents_from_cache.collect { |au| [au.user.id, au.user.name] }.to_h
+      Account.current.agents_details_from_cache.collect { |au| [au.id, au.name] }.to_h
     when :group_id
       Account.current.groups_from_cache.collect { |g| [g.id, g.name]}.to_h
     when :product_id

@@ -1,28 +1,29 @@
 <div class="custom-apps-list freshplugs-list tab-pane"  id="apps">
   <div id="freshplug-tab-content" class="tab-content clear">
-      <div class="button-bar pull-right">
-        <a class="browse-btn btn btn-flat" href="" data-url="<%= admin_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><span class="ficon-puzzle"></span> <%= t('marketplace.get_more_apps') %></a>
+      
+      <div class="no-apps clear text-center blank-slate">
+        <span class="ficon-cubes fsize-60" style="opacity: 0.4;"></span>
+        <h3><%= t('marketplace.no_mktp_apps') %></h3>
+        <p class="txt"><%= t('marketplace.no_mktp_apps_note') %></p>
+        <p class="txt"><%= t('marketplace.no_mktp_apps_note_2') %></p>
+        <a class="btn browse-btn btn-flat btn-primary btn-appgallery" href="" data-url="<%= admin_marketplace_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %></a>
       </div>
 
-      <div class="no-plugs clear">
-        <p>
-          <%= t('marketplace.no_mktp_apps') %>
-          <a href="" class="browse-btn" data-url="<%= admin_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><%= t('marketplace.get_more_apps') %></a>
-        </p>
-      </div>
-    <% if installed_plugs.kind_of?(Hash) and installed_plugs[:error].present?%>
+    <% if installed_mkp_apps.kind_of?(Hash) and installed_mkp_apps[:error].present?%>
       <div class="alert alert-error clear" style="margin:0;">
-        <%= t('marketplace.installed_plugs_unavailable') %>
+        <%= t('marketplace.installed_mkp_apps_unavailable') %>
       </div>
     <%else%>
       <ul id="installed_freshplugs">
-        <%= render :partial => '/admin/marketplace/templates/installed_freshplugs/index', :locals => { :installed_extensions => installed_plugs } %>
+        <%= render :partial => '/admin/marketplace/templates/installed_freshplugs/index', :locals => { :installed_extensions => installed_mkp_apps } %>
       </ul>
     <%end%>
   </div>
 </div>
 
+<% content_for :pagefixed do %>
 <div class="app-browser" style="display:none;">
   <button type="button" class="appbrowser-close"><span class="ficon-cross fsize-20"></button>
   <%= render :partial => "/admin/marketplace/freshplugs" %>
 </div>
+<% end %>

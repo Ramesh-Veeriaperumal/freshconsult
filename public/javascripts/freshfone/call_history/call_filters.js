@@ -28,6 +28,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.$filterContainer = this.$freshfoneCallHistory.find(".ff_item");
       this.$currentNumber = this.$filterSortForm.find("input[name=number_id]");
       this.$data_hash = this.$filterSortForm.find("input[name=data_hash]");
+      this.$date_range_type = this.$filterSortForm.find("input[name=date_range_type]");
       this.$callFilter = $('.call-history-left-filter');
       this.$responder = this.$callFilter.find('#responder');
       this.$callerName = this.$callFilter.find('#callerName');
@@ -423,7 +424,11 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         i++;
       });
       this.$data_hash.val(data_hash.toJSON());
+      this.$date_range_type.val(this.dateRangeState());
       this.filterString = filterString;
+    },
+    dateRangeState: function(){
+      return $(".ui-widget-content li.ui-state-active").text().replace(/\s/g, "");
     },
     bindAutoCompleteSetet2: function ($element, path, placeholder, customeFormatSelection) {
       var self = this;

@@ -2,6 +2,7 @@
     Module deals with activities related to remarks contents.
 */
 var SurveyRemark = {
+        total_remarks:0,
         currentPage:1,
         totalPages:1,
         pageLimit:10,
@@ -10,9 +11,11 @@ var SurveyRemark = {
             var self = this;
             this.currentPage=1;
             jQuery.ajax({
-                type: 'GET',
+                type: 'POST',
+                data: {saved_report_used: SurveyState.saved_report_used},
                 url: self.makeURL(),
                 success:function(data){
+                    SurveyState.saved_report_used = false;
                     if(SurveyState.RemarksOnly){
                         self.remarksConditionalRender(data);
                         SurveyUtil.hideOverlay();
@@ -48,7 +51,7 @@ var SurveyRemark = {
             jQuery("#survey_report_main_content").unblock();
             SurveyReport.showLayout();
             self.pageLimit = data.page_limit;
-            self.totalPages = Math.ceil(data.total/self.pageLimit);
+            self.totalPages = Math.ceil(self.total_remarks/self.pageLimit);
             jQuery('#survey_responses').pageless({
                  url: self.makeURL(),
                  totalPages: self.totalPages,
@@ -75,8 +78,8 @@ var SurveyRemark = {
                 jQuery("#survey_responses").html(remarkHTML); 
                 jQuery("#survey_report_filter_by_component").show();
                 this.show();
-            }  
-            SurveyTab.renderSidebar();
+                SurveyTab.renderSidebar();
+            } 
         },
         show:function(){
             SurveyState.toggle(SurveyState.RESPONSE.type);

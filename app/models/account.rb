@@ -69,7 +69,8 @@ class Account < ActiveRecord::Base
     PLANS_AND_FEATURES.each_pair do |k, v|
       feature k, :requires => ( v[:inherits] || [] )
       v[:features].each { |f_n| feature f_n, :requires => [] } unless v[:features].nil?
-      SELECTABLE_FEATURES.keys.each { |f_n| feature f_n }
+      (SELECTABLE_FEATURES.keys + TEMPORARY_FEATURES.keys + 
+        ADMIN_CUSTOMER_PORTAL_FEATURES.keys).each { |f_n| feature f_n }
     end
   end
 
@@ -126,10 +127,6 @@ class Account < ActiveRecord::Base
     freshchat_enabled? and features?(:chat_routing)
   end
 
-  def contact_merge_enabled?
-    features?(:contact_merge_ui)
-  end
-
   #Temporary feature check methods - using redis keys - starts here
   def compose_email_enabled?
     !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
@@ -155,13 +152,12 @@ class Account < ActiveRecord::Base
     ismember?(CLASSIC_REPORTS_ENABLED, self.id)
   end
 
-  # Temp method for two weeks
-  def disabled_old_reports_ui?
-    created_at.utc > Date.parse('2016-03-01') || ismember?(OLD_REPORTS_DISABLED, self.id)
-  end
-
   def old_reports_enabled?
     ismember?(OLD_REPORTS_ENABLED, self.id)
+  end
+
+  def plugs_enabled_in_new_ticket?
+    ismember?(PLUGS_IN_NEW_TICKET,self.id)
   end
 
   #Temporary feature check methods - using redis keys - ends here
@@ -402,10 +398,6 @@ class Account < ActiveRecord::Base
     ticket_statuses.visible
   end
 
-  def ticket_status_values_from_cache
-    Helpdesk::TicketStatus.status_objects_from_cache(self)
-  end
-  
   def has_multiple_products?
     !products.empty?
   end
@@ -425,6 +417,7 @@ class Account < ActiveRecord::Base
     launched?(:select_all)
   end
 
+  #Totally removed 
   def google_account?
     !google_domain.blank?
   end

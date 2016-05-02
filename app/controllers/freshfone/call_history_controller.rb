@@ -103,13 +103,13 @@ class Freshfone::CallHistoryController < ApplicationController
 		end
 
 		def filter_hash
-			{:data_hash => params[:data_hash], :number_id => params[:number_id] }
+			{:data_hash => params[:data_hash], :number_id => params[:number_id], :date_range_type => params[:date_range_type]}
 		end
 
 		def load_cached_filters
 			 if redis_key_exists?(calls_filter_key)
 					@cached_filters = get_others_redis_hash(calls_filter_key)
-					params[:data_hash] = @cached_filters['data_hash']
+					prepare_filters(@cached_filters)
 				  params[:number_id] = @cached_filters['number_id']
 			 end
 		end

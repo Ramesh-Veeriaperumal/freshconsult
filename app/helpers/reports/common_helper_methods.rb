@@ -5,13 +5,13 @@ module Reports::CommonHelperMethods
   	ENTERPRISE_REPORTS  = ADVANCED_REPORTS + ["ticket_volume", "performance_distribution","customer_report"] 
 
   	SAVE_REPORTS_LIMIT = {
-	    SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_classic] => 25,
-	    SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom] => 25,
-	    SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic] => 25,
-	    SubscriptionPlan::SUBSCRIPTION_PLANS[:garden] => 25,
-	    SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic] => 50,
-	    SubscriptionPlan::SUBSCRIPTION_PLANS[:estate] => 50,
-	    SubscriptionPlan::SUBSCRIPTION_PLANS[:forest] => 50
+	    "Blossom Classic" => 25,
+	    "Blossom" => 25,
+	    "Garden Classic" => 25,
+	    "Garden" => 25,
+	    "Estate Classic" => 50,
+	    "Estate" => 50,
+	    "Forest" => 50
 	}
 
 	REPORT_TYPE_BY_KEY = {

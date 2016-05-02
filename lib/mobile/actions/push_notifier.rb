@@ -55,8 +55,21 @@ module Mobile::Actions::Push_Notifier
       else 
         notification_types = {NOTIFCATION_TYPES[:NEW_TICKET] => []}  
       end
-		
+		  
+      #Fix for - mobihelp/hotline agent not receiving push notification  
+      if self.mobihelp?
+        current_user_id   = ""
+        current_user_name = ""
+      end
+
     elsif action == :response then
+
+        # Fix for - mobihelp/hotline agent not receiving push notification  
+        if self.mobihelp? 
+          current_user_id   = self.user ? self.user.id : ""
+          current_user_name = self.user ? self.user.name : ""
+        end
+        
         user_ids = notable.subscriptions.pluck(:user_id)
         unless incoming || self.to_emails.blank? || self.source != Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] then
           notified_agent_emails =  self.to_emails.map { |email| parse_email_text(email)[:email] }
@@ -66,7 +79,7 @@ module Mobile::Actions::Push_Notifier
 
         user_ids.push(notable.responder_id) unless notable.responder_id.blank? || notable.responder_id == current_user_id || user_ids.include?(notable.responder_id)
 
-		notification_types = {NOTIFCATION_TYPES[:NEW_RESPONSE] => user_ids} unless user_ids.empty?
+  		notification_types = {NOTIFCATION_TYPES[:NEW_RESPONSE] => user_ids} unless user_ids.empty?
 
     else
 		process_status_update_notification message, notification_types, current_user_id
@@ -109,9 +122,9 @@ module Mobile::Actions::Push_Notifier
   def publish_to_mobile_channel message, channel_id
 	  channel = MOBILE_NOTIFICATION_MESSAGE_CHANNEL % {:channel_id => channel_id}
 	  Rails.logger.debug "DEBUG :: pushing to channel : #{channel}"
-      newrelic_begin_rescue do
-          $redis_mobile.publish(channel, message)
-      end
+    newrelic_begin_rescue do
+      $redis_mobile.perform_redis_op("publish", channel, message)
+    end
   end
 
   

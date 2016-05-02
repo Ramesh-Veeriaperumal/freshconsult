@@ -80,8 +80,6 @@ if Rails.env.test?
     "spec/controllers/integrations/oauth_util_controller_spec.rb",
     "spec/controllers/integrations/pivotal_tracker_controller_spec.rb",
     "spec/controllers/integrations/user_credentials_controller_spec.rb",
-    "spec/controllers/google_login_controller_spec.rb",
-    "spec/controllers/google_signup_controller_spec.rb",
     "spec/controllers/integrations/integrated_resources_controller_spec.rb",
     "spec/controllers/api_webhooks_controller_spec.rb",
     "spec/controllers/integrations/slack_controller_spec.rb",
@@ -239,13 +237,13 @@ if Rails.env.test?
     "spec/controllers/admin/supervisor_rules_controller_spec.rb"
   ]
     
-  UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
+  UnitTests = [ APITests, BillingTests, EmailTests,  ForumTests, FunctionalTests,
                 GnipTests, HelpdeskTests,MiddlewareSpecs, MobihelpTests, MobileAppTests, ModelTests, 
-                TwitterTests, XssTests, FreshfoneReportsTests, ChatTests, IntegrationTests, VaRulesTests]
+                 XssTests, ChatTests, IntegrationTests, VaRulesTests, TwitterTests]
 
   UnitTests.flatten!.uniq!
 
-  AllTests = [FacebookTests,UnitTests,TwitterTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]
+  AllTests = [UnitTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]
   AllTests.flatten!.uniq!
 
   # Don't load rspec if running "rake gems:*"

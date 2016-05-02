@@ -4,7 +4,7 @@ class HttpRequestProxy
   include HttpProxyMethods
   include Fdadmin::ApiCallConstants
 
-  DEFAULT_TIMEOUT = 30
+  TIMEOUT = 4
 
   def fetch(params, request)
     unless(request.blank?)
@@ -27,6 +27,7 @@ class HttpRequestProxy
       user_agent = requestParams[:user_agent]? requestParams[:user_agent] + " Freshdesk" :  "Freshdesk"
       domain = params[:domain]
       method = params[:method] || method
+      method = method.downcase
       ssl_enabled = params[:ssl_enabled]
       rest_url = params[:rest_url]
       encode_url = params.fetch(:encode_url, true)
@@ -72,7 +73,7 @@ class HttpRequestProxy
       options[:headers] = options[:headers].merge(params[:custom_auth_header]) unless params[:custom_auth_header].blank?
       options[:headers] = options[:headers].merge(customHeaders) unless (customHeaders.nil? or customHeaders.empty?)
       timeout = params[:timeout].to_i
-      options[:timeout] = timeout.between?(1, DEFAULT_TIMEOUT)  ? timeout : DEFAULT_TIMEOUT #Returns status code 504 on timeout expiry
+      options[:timeout] = timeout.between?(1, TIMEOUT)  ? timeout : TIMEOUT #Returns status code 504 on timeout expiry
       begin
         if (params[:auth_type] == 'OAuth1')
           send_req_options = Hash.new

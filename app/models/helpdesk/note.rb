@@ -15,9 +15,11 @@ class Helpdesk::Note < ActiveRecord::Base
 
   self.table_name =  "helpdesk_notes"
 
-  concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq
+  concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :esv2_methods
   text_datastore_callbacks :class => "note"
   spam_watcher_callbacks :user_column => "user_id"
+  #zero_downtime_migration_methods :methods => {:remove_columns => ["body", "body_html"] } 
+  
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text, 
                 :skip_notification
   attr_protected :attachments, :notable_id
@@ -162,7 +164,9 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def can_split?
-    (self.incoming and self.notable) and ((self.notable.facebook? and self.fb_post) ? self.fb_post.can_comment? : true) and (self.private ? user.customer? : true) and (!self.mobihelp?) and !user.blocked? and (!self.ecommerce?)
+    (self.incoming and self.notable) and !user.blocked? and (self.private ? user.customer? : true) and
+      ((self.notable.facebook? and self.fb_post) ? self.fb_post.can_comment? : true) and 
+        (!self.mobihelp?) and (!self.ecommerce?) and(!self.feedback?)
   end
 
   def as_json(options = {})
@@ -290,20 +294,7 @@ class Helpdesk::Note < ActiveRecord::Base
     all_attachments.empty? ? body_html : 
       "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(all_attachments)}\n"
   end
-
-  def to_indexed_json
-    as_json({
-            :root => "helpdesk/note",
-            :tailored_json => true,
-            :methods => [ :notable_company_id, :notable_responder_id, :notable_group_id,
-                          :notable_deleted, :notable_spam, :notable_requester_id ],
-            :only => [ :notable_id, :deleted, :private, :body, :account_id, :created_at, :updated_at ], 
-            :include => { 
-                          :attachments => { :only => [:content_file_name] }
-                        }
-            }).to_json
-  end
-
+  
   def fb_reply_allowed?
     self.notable.facebook? and self.fb_post and self.incoming and self.fb_post.can_comment? 
   end
@@ -399,13 +390,6 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def consecutive_customer_response?
       notable.ticket_states.consecutive_customer_response?
-    end
-
-    def notable_cc_email_updated?(old_cc, new_cc)
-      return !old_cc.eql?(new_cc) if old_cc.nil?
-      [:cc_emails, :fwd_emails].any? { |f| 
-                                       !(old_cc[f].uniq.sort.eql?(new_cc[f].uniq.sort))
-                                     }
     end
 
     def method_missing(method, *args, &block)

@@ -712,6 +712,10 @@ HelpdeskReports.CoreUtil = {
     },
     getRemoteFilterConfig : function(condition,initFromSavedReportData,initData){
          var _this = this;
+         var include_none = true;
+         var noneVal = "-None-" ;
+         var none_value = -1;
+
          var config = {
             maximumSelectionSize: _this.MULTI_SELECT_SELECTION_LIMIT
         };
@@ -720,6 +724,7 @@ HelpdeskReports.CoreUtil = {
             dataType: 'json',
             delay: 250,
             data: function (term, page) {
+                searchText = term;
                 return {
                     q: term, // search term
                 };
@@ -738,8 +743,15 @@ HelpdeskReports.CoreUtil = {
                               text: item.value
                             });    
                         }
-                        
                       });
+                      if(condition == "agent_id") {
+                            if(include_none && noneVal.toLowerCase().indexOf(searchText.toLowerCase()) > -1){
+                                results.push({
+                                    id: -1, 
+                                    text: noneVal
+                                });
+                            }
+                     }
                       return {
                         results: results 
                       };
@@ -922,10 +934,6 @@ HelpdeskReports.CoreUtil = {
         var date = this.calculateDateLag();
         var previous_value = jQuery("#date_range").val(); //saved filter
         var presetRanges = [{
-                    text: I18n.t('helpdesk_reports.yesterday'),
-                    dateStart: date[1],
-                    dateEnd: date[1]
-                },{
                     text: I18n.t('helpdesk_reports.last_num_days',{ num: 7 }),
                     dateStart: date[7],
                     dateEnd: date.endDate
@@ -942,6 +950,16 @@ HelpdeskReports.CoreUtil = {
             if(HelpdeskReports.locals.date_lag == 0){
                 presetRanges.unshift({
                     text: I18n.t('helpdesk_reports.today'),
+                    dateStart: date.endDate,
+                    dateEnd: date.endDate
+                },{
+                    text: I18n.t('helpdesk_reports.yesterday'),
+                    dateStart: date[1],
+                    dateEnd: date[1]
+                });
+            }else{
+                presetRanges.unshift({
+                    text: I18n.t('helpdesk_reports.yesterday'),
                     dateStart: date.endDate,
                     dateEnd: date.endDate
                 });
@@ -987,6 +1005,10 @@ HelpdeskReports.CoreUtil = {
     generateCharts: function (params) {
         var _this = this;
         _this.scrollTop();
+        //Append the saved report used param
+        jQuery.each(params,function(idx,param){
+            param['saved_report_used'] = HelpdeskReports.locals.saved_report_used;
+        })
         var opts = {
             url: _this.CONST.base_url + HelpdeskReports.locals.report_type + _this.CONST.metrics_url,
             type: 'POST',
@@ -1104,7 +1126,7 @@ HelpdeskReports.CoreUtil = {
         export_options.select_hash = HelpdeskReports.locals.select_hash;
         
         if(parseInt(jQuery(".reports-menu li.active a").attr('data-index')) > -1){
-            export_options.filter_name = jQuery('#report-title').text().trim();    
+            export_options.filter_name = jQuery(".reports-menu li.active a").attr('data-original-title'); 
         }
         
         //Add the metric title and value to the request payload
@@ -1270,7 +1292,7 @@ HelpdeskReports.CoreUtil = {
             trend: trend_args
         }; 
         if(parseInt(jQuery(".reports-menu li.active a").attr('data-index')) > -1){
-            pdf_args.filter_name = jQuery('#report-title').text().trim();    
+            pdf_args.filter_name = jQuery(".reports-menu li.active a").attr('data-original-title');
         }
         return pdf_args; 
     },
@@ -1304,6 +1326,10 @@ HelpdeskReports.CoreUtil = {
     flushEvents: function () {
         jQuery('#reports_wrapper').off('.helpdesk_reports');
         jQuery(document).off('.helpdesk_reports');
+    },
+    flushSavedUtil : function(){
+        HelpdeskReports.SavedReportUtil.initialized = false;
+        jQuery(document).off('.save_reports');
     },
     flushCharts: function () {
         if (Highcharts && Highcharts.charts && Highcharts.charts.length) {

@@ -41,9 +41,7 @@ module UsersTestHelper
 
     }
 
-    if contact_merge_enabled?
-      result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role:false).map(&:email))
-    end
+    result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role: false).map(&:email))
     result
   end
 
@@ -94,7 +92,7 @@ module UsersTestHelper
   end
 
   def v2_contact_params
-    comp  = Company.first || create_company
+    comp  = create_company
     {
       name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10),  phone: '1234567892',
       mobile: '1234567893', description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
@@ -106,14 +104,11 @@ module UsersTestHelper
     contact.reload.emails - [contact.reload.email]
   end
 
-  def add_user_email(contact, email, options={})
-    params = {email: email, user_id: contact.id}
+  def add_user_email(contact, email, options = {})
+    params = { email: email, user_id: contact.id }
     params.merge!(options) if options.any?
     u = UserEmail.new(params)
     u.save
   end
 
-  def contact_merge_enabled?
-    Account.current.contact_merge_enabled?
-  end
 end

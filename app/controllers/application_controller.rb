@@ -9,7 +9,8 @@ class ApplicationController < ActionController::Base
   around_filter :select_shard
   
   prepend_before_filter :determine_pod
-  before_filter :unset_current_account, :unset_current_portal, :set_current_account
+  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account
+  before_filter :set_shard_for_payload
   before_filter :set_default_locale, :set_locale
   include SslRequirement
   include Authority::FreshdeskRails::ControllerHelpers
@@ -22,13 +23,13 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   #before_filter :logging_details 
   before_filter :remove_pjax_param 
-  before_filter :set_shard_for_payload 
   after_filter :set_last_active_time
 
   after_filter :remove_rails_2_flash_after
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
+  rescue_from ShardNotFound, :with => :record_not_found
   rescue_from DomainNotReady, :with => :render_404
 
   
@@ -131,9 +132,27 @@ class ApplicationController < ActionController::Base
      #                                                              :request_params => params})
     render :file => "#{Rails.root}/public/404.html", :status => :not_found, :layout => false
   end
-  
+
+  def render_500
+    render :file => "#{Rails.root}/public/500.html", 
+           :status => :internal_server_error, 
+           :layout => false
+  end
+
+  def verify_format_and_tkt_id
+    if request.format.nil?
+      render_500
+    elsif params[:id].to_i.zero?
+      render_error
+    end
+  end
+
   def record_not_found(exception)
     Rails.logger.debug "Error  =>" + exception.message
+    render_error
+  end
+
+  def render_error
     respond_to do |format|
       format.html {
         unless @current_account

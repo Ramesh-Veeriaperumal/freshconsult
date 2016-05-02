@@ -9,7 +9,8 @@ module Search::Filters::QueryHelper
       'owner_id'                                  =>  'company_id',
       'helpdesk_tags.id'                          =>  'tag_ids',
       'helpdesk_tags.name'                        =>  'tag_names',
-      'helpdesk_subscriptions.user_id'            =>  'watchers'
+      'helpdesk_subscriptions.user_id'            =>  'watchers',
+      'helpdesk_schema_less_tickets.product_id'   =>  'product_id'
     }
 
     private
@@ -22,7 +23,7 @@ module Search::Filters::QueryHelper
     # rest          : terms            #
     ####################################
 
-    def es_query(conditions, neg_conditions)
+    def es_query(conditions, neg_conditions, with_permissible = true)
 
       condition_block = {
         :should   => [],
@@ -31,7 +32,8 @@ module Search::Filters::QueryHelper
       }
 
       # Hack for handling permissible as used in tickets
-      condition_block[:must].push(permissible_filter) if (User.current.agent? and User.current.restricted?)
+      #with_permissible will be false when queried from admin->tag as we dont need permisible there. 
+      condition_block[:must].push(permissible_filter) if with_permissible and User.current.agent? and User.current.restricted?
 
       construct_conditions(condition_block[:must], conditions)
       construct_conditions(condition_block[:must_not], neg_conditions)

@@ -103,7 +103,7 @@ module TestCaseMethods
     remove_wrap_params
 
     # Stringifying the values as controller params are going to be used as query params in only GET & PUT request.
-    params.each { |k, v| params[k] = "#{v}" } if query_string
+    params.each { |k, v| params[k] = v.is_a?(Array) ? v : "#{v}" } if query_string
     request_params.merge(params)
   end
 

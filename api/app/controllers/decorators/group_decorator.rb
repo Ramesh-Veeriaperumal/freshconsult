@@ -1,8 +1,6 @@
 class GroupDecorator < ApiDecorator
-
   delegate :id, :name, :description, :escalate_to, to: :record
 
-  
   def round_robin_enabled?
     Account.current.features? :round_robin
   end
@@ -27,4 +25,3 @@ class GroupDecorator < ApiDecorator
     to_bool(:ticket_assign_type)
   end
 end
-

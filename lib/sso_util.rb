@@ -85,7 +85,7 @@ module SsoUtil
     elsif current_account.sso_enabled?
       @current_user.name =  user_name
       @current_user.phone = phone unless phone.blank?
-      @current_user.customer_id = current_account.customers.find_or_create_by_name(company).id unless company.blank?
+      @current_user.customer_id = current_account.companies.find_or_create_by_name(company).id unless company.blank?
       @current_user.active = true
       saved = @current_user.save
     end
@@ -137,6 +137,7 @@ module SsoUtil
         error_message = "Login Rejected"
       rescue Exception => e
         Rails.logger.error("SAML Validation Error : #{e.message}")
+        NewRelic::Agent.notice_error(e, {:custom_params => {:error_message => e.message, :account_id => current_account.id}})
         error_message = " Validation Failed :  #{e.message}"
       end
     end

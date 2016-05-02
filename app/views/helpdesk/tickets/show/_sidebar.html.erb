@@ -1,10 +1,10 @@
 
-<div class="tkt-sidebar" id="ticket_details_sidebar">
+<div class="tkt-sidebar" id="ticket_details_sidebar" data-domhelper-name="ticket-details-sidebar">
 	<%= render :partial => 'helpdesk/tickets/show/status', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
 	<%= render :partial => "helpdesk/tickets/show/requester" %> 
 	<%= render :partial => "helpdesk/tickets/show/app_info" , :locals => {:ticket => @ticket} if @ticket.mobihelp? and @ticket.mobihelp_ticket_info %>
-	<% unless @ticket.deleted or @ticket.spam %> 
-		<div class="widget" id='TicketProperties'>
+	<% unless @ticket.deleted or @ticket.spam %>
+		<div class="widget" id='TicketProperties' data-domhelper-name='ticket-properties'>
 			<h3 class="title"><%=t('ticket.properties')%></h3>
 			<div class="content" data-remote-url="/helpdesk/tickets/<%= @ticket.id %>/component?component=ticket_fields"></div>
 		</div>
@@ -14,7 +14,7 @@
 			<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button></div>
 			<div class="modal-body"><div class="sloading loading-small loading-block"></div></div>
 		</div>
-		<div class="widget time-tracked inactive load_remote" id="TimesheetTab">
+		<div class="widget time-tracked inactive load_remote" id="TimesheetTab" data-domhelper-name="timesheet-tab">
 			<h3>
 				<%= t('helpdesk.time_sheets.sidebar_title') %>
 				<div class="tracked_time">
@@ -25,7 +25,7 @@
 			<div class="content" rel="remote" data-remote-url="<%= helpdesk_ticket_time_sheets_path(@ticket) %>"></div>
 		</div>
 		<% end %>
-		<div class="widget inactive load_remote" id="ToDoList">
+		<div class="widget inactive load_remote" id="ToDoList" data-domhelper-name="todo-list">
 			<h3><%= t('to_do') %></h3>
 			<div class="content" rel="remote" data-remote-url="/helpdesk/tickets/<%= @ticket.id %>/component?component=todo"></div>
 		</div>

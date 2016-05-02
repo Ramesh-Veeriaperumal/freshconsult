@@ -11,7 +11,7 @@
   position:fixed;
   top:0;
   @include right(-2000px);
-  z-index:9999;
+  z-index:99;
 }
 .slide-activate {
   transition: 1s;
@@ -107,9 +107,6 @@
 }
 
 //css for js adds
-.h-Z0{
-  z-index: 0;
-}
 .b-OH{
   overflow: hidden;
 }
@@ -121,7 +118,8 @@
 
 /*Arun's New CSS */
 .marketplace-listing{
-  .sloading {
+  overflow: auto;
+  .loading-block {
     width: 64px;
     height: 64px;
     position: absolute;
@@ -149,7 +147,7 @@
     position: absolute;
     top: 15px;
     @include padding(2px 4px);
-    @include right(18px);
+    @include right(10px);
     background: none;
     border: none;
     outline: none;
@@ -163,7 +161,15 @@
     }
   }
   .search-query:not(:valid) ~ .remove-query {
-    display: none;
+    display: none !important;
+  }
+  .search-loader{
+    width: 24px;
+    height: 24px;
+    top: 25px;
+    @include left(inherit);
+    @include right(-2px);
+    position: absolute;
   }
   .dtl-box{
     height: calc(100vh - 50px);
@@ -177,26 +183,31 @@
   }
   .apptype-head{
     @include padding(0 15px);
-    h2{
+    .logo{
+      width:106px;
+    }
+    a.logo-link{
       @include margin(0);
       font-size: 20px;
       font-weight: 300;
       line-height: 50px;
       display: inline-table;
+      color: #333333;
+      cursor: pointer;
+      &:hover{
+        color: #004080;
+      }
     }
   }
-  .dev-apps{
-    @include padding(17px);
-  }
-  .nmnp{
-    @include margin(0);
-    @include padding(0);
+  .search-form{
+    @include margin-left(-15px);
+    @include margin-right(10px);
+    border-bottom: 0px;
   }
   .appsearch-box{
     @include padding(0 12px 0px 0px);
-    @include margin-left(-15px);
-    @include margin-right(10px);
     font-weight: 400;
+    position: relative;
     .search-query{
       width: 96%;
       @include margin(8px 4px 8px 6px);
@@ -226,9 +237,6 @@
     font-weight: 300;
     @include padding(10px 0px);
   }
-  .fa-cat{
-    font-weight: bold;
-  }
   .fa-category li a{  
     font-size: 16px;
     @include padding(0 15px);
@@ -249,8 +257,12 @@
   }
   .fa-headd{
     padding-top: 12px;
+    display: inline-block;
     .caret{
       margin-top:12px;
+      border-top: 6px solid #000;
+      @include border-right(6px solid transparent);
+      @include border-left(6px solid transparent);
     }
   }
   .fa-headd .selected{
@@ -270,6 +282,7 @@
       line-height: 1.42857;
       color: #333333;
       white-space: nowrap;
+      cursor: pointer;
       &:hover {
         text-decoration: none;
       }
@@ -278,6 +291,29 @@
       @include padding-right(10px);
       font-weight: 300;
       font-size: 20px;
+    }
+    .searched-box{
+      @include padding(2px 0 0);
+      @include float(left);
+      line-height: 23px;
+      .caret{
+        @include margin-left(0);
+      }
+    }
+    .searched{
+      text-overflow: ellipsis;
+      max-width: 250px;
+      white-space: nowrap;
+      overflow: hidden;
+      @include padding-left(6px);
+      font-size: 20px;
+      font-weight: 300;
+      display: inline-block;
+      @include float(left);
+    }
+    .search-count{
+      display: block;
+      @include float(left);
     }
   }
   .fa-area{
@@ -311,16 +347,17 @@
     @include margin(0 auto);
     @include padding(0);
   }
+  .o-VH{
+    overflow: auto;
+    height: calc(100vh - 50px);
+  }
   .logo-box{
-    display:table-cell;
+    display: block;
     width: 166px;
     height: 86px;
-    @include float(left);
     border: solid 1px #ccc;
-    @include margin-right(20px);
     @include border-radius(3px);
-    vertical-align:middle;
-    position: relative;
+    vertical-align: middle;
     .ficon-puzzle{
       @include margin(-4px 30px);
       position: absolute;
@@ -342,6 +379,97 @@
       @include margin-right(auto);
       overflow: hidden;
       vertical-align: middle;
+    }
+  }
+  .install-app{
+    width: calc(100% - 42px);
+    margin-top: 10px;
+  }
+  .app-info{
+    li{
+      @include padding(0px 0 5px);
+      color: #666;
+    }
+    .version{
+      font-size: 12px;
+      padding-bottom: 2px;
+      padding-top: 0px;
+      text-align: center;
+    }
+    .bold{
+      font-weight: bold;
+    }
+    .published{
+      font-size: 12px;
+      padding-top: 0;
+      text-align: center; 
+    }
+    .dev{
+      text-align: center;
+      padding-bottom: 4px;
+      padding-top: 15px;
+    }
+    .help{
+      font-size: 12px;
+      text-align: center;
+      @include padding(6px 0);
+    }
+    .dot{
+      border-bottom: 1px dotted #ccc;
+    }
+    .ttl{
+      @include padding(14px 0 8px 0);
+    }
+  }
+  .app-desc{
+    display: inline-block;
+    width: calc(81vw - 245px);
+    @include padding(10px 10px 10px 0);
+    height: 100vh;
+    .carousel{
+      border: solid 1px #ddd;
+      @include border-radius(4px);
+      &:hover{
+        .carousel-control{
+          opacity: 0.6 !important;
+        }
+      }
+    }
+    .carousel-nav{
+      position: absolute;
+      bottom: -20px;
+      text-align: center;
+      width: 100%;
+      z-index: 999;
+    }
+    .carousel-indicators {
+      text-align: center;
+    }
+    .carousel-indicators li {
+      display: inline-block;
+      margin-left: 10px;
+      @include border-radius(8px);
+      cursor: pointer;
+      border: 1px solid #888888;
+      background-color: transparent;
+      width: 8px;
+      height: 8px;
+    }
+    .carousel-indicators .active{
+      width: 10px;
+      height: 10px;
+      background-color: #999;
+      border: none;
+    }
+  }
+  .instr{
+    line-height: 18px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    h3{
+      font-size: 14px;
+      @include padding(6px 0);
+      font-weight: 500;
     }
   }
   .info-box{
@@ -389,6 +517,15 @@
     @include clear(both);
     overflow: auto;
   }
+  .app-meta{
+    @include padding(15px);
+    @include clear(both);
+    display: block;
+    width: 168px;
+    @include float(left);
+    overflow: auto;
+    height: 100vh;
+  }
   .install-box{
     @include text-align(center);
     @include padding(12px 0 0);
@@ -409,21 +546,33 @@
     @include border-radius(3px);
     @include float(left);
   }
-  .fa-breadcumb{
+  .fa-breadcrumb{
     display: block;
-    @include padding(17px 15px);
     @include float(left);
-  }
-  .fa-breadcumb span{
-    @include padding(0 3px 0 0px);
-  }
-  .fa-breadcumb .splitter{
-    @include padding(3px);
-    color: #9E9E9E;
-    font-size: 18px;
+    span{
+      @include padding(0 3px 0 0px);
+    }
+    .splitter{
+      @include padding(3px);
+      color: #9E9E9E;
+      font-size: 18px;
+    }
+    .back2list_btn{
+      @include padding(17px 20px 18px 20px);
+      &:hover{
+        span{
+          color: #004080;
+        }
+      }
+    }
+    .app-name{
+      font-size: 18px;
+      @include padding(14px 0px 12px 0);
+      display: inline-block;
+    }
   }
   .dd-left{
-    @include left(120px);
+    @include left(16px);
     @include border-radius(0);
     margin-top: 10px;
     border: 1px solid #ddd;
@@ -432,17 +581,18 @@
     max-width: 320px;
     max-height: 350px;
     overflow-x: hidden;
+    &.searched-dd{
+      margin-top: 5px;
+    }
     a{
       @include padding(5px 10px);
     }
   }
   .fplugs-box{
-    width: 23.7%;
     height: 168px;
     border: solid 1px #ccc;
     @include border-radius(4px);
     @include float(left);
-    @include margin(0 1% 1% 0);
     transition: none;
     transition-delay: 0ms;
     .slide-caption{
@@ -505,6 +655,7 @@
         -webkit-transition: all 200ms ease-out;
         transition-delay: 500ms;
         -webkit-transition-delay: 500ms;
+        outline: 1px solid transparent;
       }
       span.assets-missing{
         position: absolute;
@@ -562,9 +713,25 @@
     @include padding(15px);
     @include margin(0);
   }
-  .app-desc p{
-    @include text-align(justify);
-    font-size: 12px;
+  .app-desc{
+    .whats-new{
+      padding-top: 15px;
+    }
+    .version{
+      padding-bottom: 5px;
+      font-weight: 500;
+    }
+    p{
+      line-height: 18px;
+    }
+  }
+  .morecontent span {
+    display: none;
+  }
+  .morelink {
+    display: table;
+    font-weight: bold;
+    list-style: none;
   }
   .fa-appdesc{
     background: #fff;
@@ -575,31 +742,51 @@
       word-wrap: break-word;
     }
   }
+  .pre-wrap{
+    white-space: pre-wrap;      
+    white-space: -moz-pre-wrap;
+    word-wrap: break-word;
+  }
   .maker{
     color: #333;
     font-weight: bold;
   }
+  .cat{
+    font-weight: 500;
+    @include margin(10px 0 10px 0);
+    text-transform: none;
+  }
+  .category-bubble{
+    padding-bottom: 3px;
+    margin-bottom: 0;
+  }
   .tag{
     @include text-align(center);
-    background-color: rgba(255,255,255,0.5);
+    background-color: rgba(0,0,0, 0.03);
     @include border-radius(20px);
-    border: solid 1px #dadada;
+    border: solid 1px #eee;
     color: #333;
-    font-weight: 300;
-    font-size: 12px;
-    @include padding(3px 10px);
+    font-size: 11px;
+    @include padding(1px 10px);
+    @include clear(both);
+    display: inline-table;
+    @include margin(2px);
+    &:hover{
+      border-color: #bbb;
+    }
   }
   .carousel-inner{
-    height: 400px;
+    height: 425px;
+    text-align: center;
     .item{
-      max-height: 400px;
+      max-height: 425px;
     }
     img{
       max-width:100%;
       @include margin-left(auto);
       @include margin-right(auto);
       vertical-align: middle;
-      height: 400px;
+      height: 425px;
     }
   }
   .slider-thumbs{
@@ -621,22 +808,25 @@
   .carousel-control{
     position: absolute;
     top: 0;
-    width: 75px;
-    height: 400px;
+    width: 60px;
+    height: 425px;
     margin-top: 0;
-    font-size: 94px;
-    font-weight: 100;
-    color: #000;
+    background-color: rgba(100,100,100,0.1);
     @include text-align(center);
-    background: #CFCFCF;
     @include border-radius(0);
     border: none;
-    opacity: 0.5;
     &.left{
       @include left(0);
+      opacity: 0;
+      transition: opacity .25s ease-in-out;
     }
     &.right{
       @include right(0);
+      opacity: 0;
+      transition: opacity .25s ease-in-out;
+    }
+    .ficon-arrow-right, .ficon-arrow-left {
+      font-size: 42px;
     }
     span{
       vertical-align: middle;
@@ -776,6 +966,60 @@
       margin-top: 38px;
       font-weight: 300;
       font-size: 15px;  
+    }
+  }
+}
+.ui-widget-content{
+  z-index: 999;
+  max-height: 200px; 
+  overflow-y: auto; 
+  overflow-x: hidden;
+  background: #fff;
+  padding: 0;
+  li{
+    color: #333333;
+    &:hover{
+      background: #eee;
+      color: #333333;
+    }
+    a{
+      color: #333333;
+      &:hover{
+        color: #333333;
+      }
+    }
+  }
+  .ui-state-focus, .ui-widget-header .ui-state-focus{
+    color: #333333 !important;
+    background: #eee !important;
+  }
+  .ui-state-focus a, &.ui-state-focus a:hover{
+    color: #333333 !important;
+    background: #eee !important;
+  }
+} 
+.fa-autocomplete{
+  @include padding(2px !important);
+  border: none !important;
+}
+
+@media only screen and (max-width: 1599px) {
+  .marketplace-listing .fplugs-box{
+    width: 24%;
+    @include margin(0 1% 1% 0);
+    &:nth-child(4n){
+      @include margin-right(0);
+    }
+  }
+}
+ 
+/* Large screens ----------- */
+@media only screen and (min-width: 1600px) {
+  .marketplace-listing .fplugs-box{
+    width: 19%;
+    @include margin(0 1% 1% 0);
+    &:nth-child(5n){
+      @include margin-right(0);
     }
   }
 }

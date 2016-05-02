@@ -34,6 +34,7 @@ describe ActivationsController do
     u = add_new_user(@account)
     u.active = false
     u.save
+    u.reset_perishable_token!
     get :new, :activation_code => u.perishable_token
     response.body.should =~ /<h3 class="heading">Activate your account /
   end
@@ -45,29 +46,23 @@ describe ActivationsController do
   end
 
   it "should activate new email" do
-    @account.features.contact_merge_ui.create
     u = add_user_with_multiple_emails(@account, 4)
     u.active = false
     u.save!
     u.reload
     get :new_email, :activation_code => u.user_emails.first.perishable_token
     response.body.should =~ /<h3 class="heading">Activate your account /
-    @account.features.contact_merge_ui.destroy
   end
 
   it "should not activate for no email" do
-    @account.features.contact_merge_ui.create
     get :new_email, :activation_code => 'DFGBDFDFgdfgdfgdfGdfgdGDfGdfgdFGdfg'
     session["flash"][:notice].should eql "Your activation code has been expired!"
     response.should redirect_to(home_index_path)
-    @account.features.contact_merge_ui.destroy
   end
 
   it "should shout message for active user" do
-    @account.features.contact_merge_ui.create
     get :new_email, :activation_code => @user2.user_emails.last.perishable_token
     session["flash"][:notice].should eql "email id already activated"
-    @account.features.contact_merge_ui.destroy
   end
 
   it "should shout message for active user and active email" do
@@ -81,14 +76,27 @@ describe ActivationsController do
     u.active = false
     u.save
     u.reload
-    post :create, :perishable_token => u.perishable_token, :user=>{:name=>u.name, :password=>"hello", :password_confirmation=>"hello"}
+    u.reset_perishable_token!
+    post :create, :perishable_token => u.perishable_token, :user=>{:name=>u.name, :password=>"hello1234", :password_confirmation=>"hello1234"}
     u.reload
     u.active?.should eql true
     session["flash"][:notice].should eql "Your account has been activated."
   end
 
   it "should not create activation" do
-    post :create, :perishable_token => "dasdasdASDASDasdAsdefsFasDfSdfsdFsDf"
+    user = Account.current.users.last
+    user.reset_perishable_token!
+    post :create, :perishable_token => user.perishable_token, :user=>{}
     response.body.should_not =~ /Your account has been activated./
+  end
+
+  it "should not create activation for deleted user" do
+    user = Account.current.users.last
+    user.reset_perishable_token!
+    user.deleted = true
+    user.save
+    user.reload
+    post :create, :perishable_token => user.perishable_token, :user=>{}
+    session["flash"][:notice].should eql "You are not allowed to access this page!"
   end
 end

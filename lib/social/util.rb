@@ -11,11 +11,11 @@ module Social::Util
         account = Account.current
         yield(account) if block_given?
       end
-    rescue ActiveRecord::RecordNotFound => e
-      Rails.logger.debug "Could not find account with id #{account_id}"
+    rescue ActiveRecord::RecordNotFound, ShardNotFound => e
+      Rails.logger.debug "#{e.inspect} -- #{account_id}"
       custom_params = {
         :account_id => account_id,
-        :description => "Could not find valid account id"
+        :description => "#{e.inspect}"
       }
       NewRelic::Agent.notice_error(e, :custom_params => custom_params)
     end

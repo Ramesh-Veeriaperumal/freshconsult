@@ -1,7 +1,7 @@
 var FreshbooksWidget = Class.create();
 FreshbooksWidget.prototype = {
 	FRESHBOOKS_FORM:new Template('<form id="freshbooks-timeentry-form"><div class="field first"><label>Staff</label><select name="staff-id" id="freshbooks-timeentry-staff" onchange="Freshdesk.NativeIntegration.freshbooksWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="freshbooks-staff-spinner"></div></div><div class="field"><label>Client</label><select name="client-id" id="freshbooks-timeentry-clients" class="full hide" disabled onchange="Freshdesk.NativeIntegration.freshbooksWidget.clientChanged(this.options[this.selectedIndex].value)"></select> <div class="loading-fb" id="freshbooks-clients-spinner"></div></div><div class="field"><label>Project</label><select class="full hide" name="project-id" id="freshbooks-timeentry-projects" onchange="Freshdesk.NativeIntegration.freshbooksWidget.projectChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="loading-fb" id="freshbooks-projects-spinner"></div></div><div class="field last"><label>Task</label><select class="full hide" disabled name="task-id" id="freshbooks-timeentry-tasks" onchange="Freshdesk.NativeIntegration.freshbooksWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="loading-fb" id="freshbooks-tasks-spinner" ></div></div><div class="field"><label id="freshbooks-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="freshbooks-timeentry-notes" wrap="virtual">'+ jQuery('#freshbooks-note').html() +'</textarea></div><div class="field"><label id="freshbooks-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="freshbooks-timeentry-hours"></div><input type="submit" disabled id="freshbooks-timeentry-submit" value="Submit" onclick="Freshdesk.NativeIntegration.freshbooksWidget.logTimeEntry($(\'freshbooks-timeentry-form\'));return false;"></form>'),
-	STAFF_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="staff.list"></request>'),
+	STAFF_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="staff.list"><page>#{page}</page><per_page>100</per_page></request>'),
 	CLIENT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="client.list"> <page>#{page}</page><per_page>100</per_page><folder>active</folder></request>'),
 	PROJECT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="project.list"> <page>#{page}</page><per_page>100</per_page></request>'),
 	TASK_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?> <request method="task.list" > <project_id>#{project_id}</project_id> </request>'),
@@ -14,9 +14,11 @@ FreshbooksWidget.prototype = {
 	initialize:function(freshbooksBundle, loadInline){
 		Freshdesk.NativeIntegration.freshbooksWidget = this; // Assigning to some variable so that it will be accessible inside custom_widget.
 		this.projectData = ""; init_reqs = []; this.executed_date = new Date(); this.projectResults = "";
+		this.staff_page = 0;
+		this.client_page = 0;
 		freshbooksBundle.freshbooksNote = jQuery('#freshbooks-note').html();
 		init_reqs = [null, {
-			body: Freshdesk.NativeIntegration.freshbooksWidget.STAFF_LIST_REQ.evaluate({}),
+			body: Freshdesk.NativeIntegration.freshbooksWidget.STAFF_LIST_REQ.evaluate({page:1}),
 			content_type: "application/xml",
 			method: "post", 
 			on_success: Freshdesk.NativeIntegration.freshbooksWidget.loadStaffList.bind(this),
@@ -79,22 +81,54 @@ FreshbooksWidget.prototype = {
 			searchTerm = this.get_time_entry_prop_value(this.timeEntryXml, "staff_id")
 		else
 			searchTerm = freshbooksBundle.agentEmail
-		
-		
-		this.loadFreshbooksEntries(resData, "freshbooks-timeentry-staff", "member", "staff_id", ["first_name", " ", "last_name"], null, searchTerm);
-		UIUtil.addDropdownEntry("freshbooks-timeentry-staff", "", "None", true);
-		UIUtil.hideLoading('freshbooks','staff','-timeentry');
-		$("freshbooks-timeentry-staff").enable();
+
+		//Adding pagination for staff
+		this.staff_page++;
+		tot_pages = this.fetchMultiPages(resData, "staff_members", this.STAFF_LIST_REQ, this.loadStaffList)
+		selected_staff_node = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-staff", "member", "staff_id", ["first_name", " ", "last_name"], null, searchTerm, tot_pages>1);
+		var selected_staff_email = XmlUtil.getNodeValueStr(selected_staff_node, "email");
+		var selected_staff_id =  XmlUtil.getNodeValueStr(selected_staff_node, "staff_id");
+		if(searchTerm == selected_staff_email || searchTerm == selected_staff_id){
+			selected_staff_value = jQuery("#freshbooks-timeentry-staff option:selected").val();
+		}
+		selected_staff_value = (typeof selected_staff_value == "undefined") ? jQuery("#freshbooks-timeentry-staff option:selected").val() : selected_staff_value;
+		jQuery("#freshbooks-timeentry-staff").val(selected_staff_value);
+		if(this.staff_page == this.tot_pages || this.tot_pages == 0){
+			UIUtil.addDropdownEntry("freshbooks-timeentry-staff", "", "None", true);
+			UIUtil.hideLoading('freshbooks','staff','-timeentry');
+			$("freshbooks-timeentry-staff").enable();
+		}
 	},
 
 	loadClientList:function(resData){
+		var client_org = undefined;
+		var client_email = undefined;
+		this.client_page++;
 		tot_pages = this.fetchMultiPages(resData, "clients", this.CLIENT_LIST_REQ, this.loadClientList)
-		selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, freshbooksBundle.reqEmail, tot_pages>1);
-		UIUtil.sortDropdown("freshbooks-timeentry-clients");
+		if(freshbooksBundle.reqCompany){
+			selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, freshbooksBundle.reqCompany.toLowerCase(), tot_pages>1,"organization");
+			client_org = XmlUtil.getNodeValueStr(selectedClientNode, "organization");
+			selected_value = (freshbooksBundle.reqCompany == client_org) ? jQuery("#freshbooks-timeentry-clients option:selected").val() : (typeof selected_value == "undefined") ? undefined : selected_value;
+		}
+		else{
+			selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, freshbooksBundle.reqEmail, tot_pages>1);
+			client_email = XmlUtil.getNodeValueStr(selectedClientNode, "email");
+			selected_value = (freshbooksBundle.reqEmail == client_email) ? jQuery("#freshbooks-timeentry-clients option:selected").val() : (typeof selected_value == "undefined") ? undefined : selected_value;
+		}
+		if(!selectedClientNode){
+			UIUtil.addDropdownEntry("freshbooks-timeentry-clients", "", "None", true);
+		}
+		else{
+			selected_value = (selected_value == undefined) ? jQuery("#freshbooks-timeentry-clients option:selected").val() : selected_value;
+			UIUtil.sortDropdown("freshbooks-timeentry-clients");
+			jQuery("#freshbooks-timeentry-clients").val(selected_value);
+		}
 		client_id = XmlUtil.getNodeValueStr(selectedClientNode, "client_id");
-		UIUtil.hideLoading('freshbooks','clients','-timeentry');
-		$("freshbooks-timeentry-clients").enable();
-		this.clientChanged(client_id);
+		if(this.client_page == this.tot_pages || this.tot_pages == 0){
+			UIUtil.hideLoading('freshbooks','clients','-timeentry');
+			$("freshbooks-timeentry-clients").enable();
+			this.clientChanged(client_id);
+		}
 	},
 
 	loadProjectList:function(resData) {
@@ -364,13 +398,13 @@ FreshbooksWidget.prototype = {
 	},
 
 	// Utility methods
-	loadFreshbooksEntries:function(resData, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
+	loadFreshbooksEntries:function(resData, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries, searchAttr) {
 		if(resData.responseXML == undefined)
 			responseData = resData;
 		else
 			responseData = resData.responseXML;
 		if(this.isRespSuccessful(responseData)){
-			UIUtil.constructDropDown(responseData, 'xml', dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries);
+			UIUtil.constructDropDown(responseData, 'xml', dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries, searchAttr);
 		}
 		return foundEntity;
 	},

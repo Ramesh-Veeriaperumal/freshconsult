@@ -3,11 +3,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_tickets'] }, :if => lambda{|obj| obj.rl_enabled? }
 
 	before_validation :populate_requester, :set_default_values
-  before_validation :assign_flexifield, :on => :create
+  before_validation :assign_flexifield, :assign_email_config_and_product, :on => :create
 
   before_create :set_outbound_default_values, :if => :outbound_email?
 
-  before_create :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states, :add_created_by_meta, :build_reports_hash
+  before_create :assign_schema_less_attributes, :save_ticket_states, :add_created_by_meta, :build_reports_hash
 
   before_create :assign_display_id, :if => :set_display_id?
 
@@ -41,8 +41,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
-  after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
-  after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
+  after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
+  after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -446,6 +446,7 @@ private
     @model_changes = self.changes.to_hash
     @model_changes.merge!(schema_less_ticket.changes) unless schema_less_ticket.nil?
     @model_changes.merge!(flexifield.changes) unless flexifield.nil?
+		@model_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
     @model_changes.symbolize_keys!
   end
 
@@ -647,7 +648,7 @@ private
 
   def assign_flexifield
     build_flexifield
-    self.ff_def = FlexifieldDef.find_by_account_id_and_name(self.account_id, "Ticket_#{self.account_id}").id
+    self.flexifield_def = Account.current.ticket_field_def
     assign_ff_values custom_field
     @custom_field = nil
   end

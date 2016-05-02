@@ -110,6 +110,9 @@ RSpec.describe Freshfone::ConferenceController do
   end
 
   it 'should update ringing_at in call metrics when agent_wait triggred' do
+    @account.freshfone_calls.destroy_all
+    @account.features.freshfone_call_metrics.create
+    create_freshfone_call
     twilio_call = mock
     twilio_call.stubs(:sid).returns('DCSid')
     Twilio::REST::Calls.any_instance.stubs(:create).returns(twilio_call)
@@ -118,12 +121,17 @@ RSpec.describe Freshfone::ConferenceController do
     call_metrics = @freshfone_call.call_metrics.reload
     expect(call_metrics.ringing_at).not_to be_nil
     Twilio::REST::Calls.any_instance.unstub(:create)
+    @account.features.freshfone_call_metrics.destroy
   end
 
   it 'should update answered_at in call metrics when he accepted the call from agent' do
+    @account.freshfone_calls.destroy_all
+    @account.features.freshfone_call_metrics.create
+    create_freshfone_call
     set_twilio_signature("freshfone/conference/outgoing_accepted", conference_call_params)
     post :outgoing_accepted, conference_call_params
     call_metrics = @freshfone_call.call_metrics.reload
     expect(call_metrics.answered_at).not_to be_nil
+    @account.features.freshfone_call_metrics.destroy
   end
 end

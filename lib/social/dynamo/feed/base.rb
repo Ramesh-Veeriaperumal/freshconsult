@@ -17,7 +17,7 @@ class Social::Dynamo::Feed::Base
     table_name = Social::DynamoHelper.select_table(TABLE, posted_time)
     hash = "#{args[:account_id]}_#{args[:stream_id]}"
     attributes_to_get = [RANGE_KEY, "parent_feed_id", "in_conversation", "source", "fd_link"]
-    Social::DynamoHelper.get_item(table_name, hash, feed_id, SCHEMA, attributes_to_get, consistent_read)  
+    Social::DynamoHelper.get_item(table_name, hash, feed_id, SCHEMA, attributes_to_get, consistent_read) || {}
   end
 
   def insert_feed(posted_time, args, attributes, feed_obj, options = {})
@@ -87,12 +87,12 @@ class Social::Dynamo::Feed::Base
   end
   
   def get_feeds_data(attributes_to_get)
-    feeds_table = {
+    feeds_data = {
       :name => Social::DynamoHelper.select_table(TABLE, Time.now.utc),
       :keys => attributes_to_get
     }
-    feeds_responses = Social::DynamoHelper.batch_get(feeds_table)
-    feeds_responses.map{|result| result[:responses]["#{feeds_table[:name]}"] }.flatten
+    feeds_responses = Social::DynamoHelper.batch_get(feeds_data)
+    feeds_responses ? feeds_responses.map{|result| result[:responses]["#{feeds_data[:name]}"] }.flatten : []
   end
   
   def delete_fd_link(stream_id, feed_id, source)
@@ -112,7 +112,7 @@ class Social::Dynamo::Feed::Base
   def get_parent_data(table_name, hash, in_reply_to, attributes_to_get)
     parent_attributes = {}
     parent = Social::DynamoHelper.get_item(table_name, hash, in_reply_to, SCHEMA, attributes_to_get)
-    if parent[:item] and parent[:item]["parent_feed_id"]
+    if parent && parent[:item] && parent[:item]["parent_feed_id"]
       parent_attributes = {
         :in_conversation => 1,
         :parent_feed_id  => parent[:item]["parent_feed_id"][:ss],

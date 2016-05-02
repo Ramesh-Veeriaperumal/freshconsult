@@ -15,23 +15,23 @@
   </div>
   <div id="sample_preview" class="custom_app_preview_modal hide">
     <div class="titlebar">
-      <a class="preview_link" href="#"><%= t('integrations.freshplugs.refresh') %></a>
-      <%= t('integrations.freshplugs.plug_preview').html_safe %>
+      <a class="preview_link" href="#"><%= t('integrations.custom_apps.refresh') %></a>
+      <%= t('integrations.custom_apps.custom_app_preview').html_safe %>
     </div>
     <div id="preview" class="preview-content"></div>
   </div>
 
 <%- end %>
   <%widget = @application.custom_widget
-  disp_in_pages = widget.display_in_pages_option || {}%>
+  disp_in_pages = widget.display_in_pages_option || ["helpdesk_tickets_show_page_side_bar"] %>
     <% if feature?(:fa_developer) && !current_user.developer? %>
       <div class="fa-note row-fluid clear">
         <div class="span8 fapps-actions fapps-bdr">
-          <p><%= t('marketplace.plug_info').html_safe %></p>
+          <p><%= t('marketplace.custom_app_info').html_safe %></p>
         </div>
          <div class="span4 goto-dev">
           <% shortcut_url = "#{MarketplaceConfig::DEV_URL}/dashboard/#{current_account.full_domain}/login" %>
-          <a class="browse-pending-btn" href="<%= shortcut_url %>" target="_blank"> <%= t('marketplace.write_a_plug') %></a>
+          <a class="browse-pending-btn" href="<%= shortcut_url %>" target="_blank"> <%= t('marketplace.write_a_custom_app') %></a>
           <p><%= t('marketplace.needs_developer_text').html_safe %></p>
         </div>
       </div>
@@ -56,23 +56,37 @@
           </li>
           <li class="field custom_app_preview">
             <div class="custom_app_preview_link">
-              <%=link_to t('integrations.freshplugs.show_preview'), "#", :class => "toggle_preview", 
-                    "data-toggled-text" => t('integrations.freshplugs.hide_preview'), "data-toggled-class" => "active", 
-                    "data-default-text" => t('integrations.freshplugs.show_preview'), 'data-default-class' => "" %>
-              <span class="hide"> <br /><%= t('integrations.freshplugs.preview_helptext') %></span>
+              <%=link_to t('integrations.custom_apps.show_preview'), "#", :class => "toggle_preview", 
+                    "data-toggled-text" => t('integrations.custom_apps.hide_preview'), "data-toggled-class" => "active", 
+                    "data-default-text" => t('integrations.custom_apps.show_preview'), 'data-default-class' => "" %>
+              <span class="hide"> <br /><%= t('integrations.custom_apps.preview_helptext') %></span>
             </div>
-            <label class="caption"><%=t('integrations.freshplugs.plug_used_in').html_safe%></label>
+            <br>
+            <label class="caption"><%=t('integrations.custom_apps.custom_app_used_in').html_safe%></label>
             <label class="checkwrapper">
               <%= check_box_tag "application[view_pages][]", "helpdesk_tickets_show_page_side_bar", 
                       disp_in_pages.include?('helpdesk_tickets_show_page_side_bar')%>
-                  <%= t('integrations.freshplugs.ticket_detail_page') %>
+                  <%= t('integrations.custom_apps.ticket_detail_page') %>
             </label>
             <label class="checkwrapper">
               <%= check_box_tag "application[view_pages][]", "contacts_show_page_side_bar", 
               disp_in_pages.include?('contacts_show_page_side_bar')%>
-              <%= t('integrations.freshplugs.contact_detail_page') %>
+              <%= t('integrations.custom_apps.contact_detail_page') %>
             </label>
-            
+            <% if current_account.plugs_enabled_in_new_ticket? %>
+            <label class="checkwrapper">
+              <%= check_box_tag "application[view_pages][]", "new_ticket_page_side_bar", 
+              disp_in_pages.include?('new_ticket_page_side_bar')%>
+              <%= t('integrations.freshplugs.new_ticket_page') %>
+            </label>
+            <%if current_account.compose_email_enabled? %>
+            <label class="checkwrapper">
+              <%= check_box_tag "application[view_pages][]", "new_outbound_email_page_side_bar", 
+              disp_in_pages.include?('new_outbound_email_page_side_bar')%>
+              <%= t('integrations.freshplugs.outbound_email_page') %>
+            </label>
+            <% end %>
+            <% end %>
           </li>
         </ul>
       </div>
@@ -88,7 +102,7 @@
     script = jQuery('.CodeMirror')[0].CodeMirror.getValue();
     ev.preventDefault();
     preview_box = jQuery("#preview")
-    preview_box.html("<div class='sloading loading-small loading-block'>Generating Preview</div>");
+    preview_box.html("<div class='sloading loading-small loading-block'>Generating Preview .....</div>");
     params = {"application_script": script};
     jQuery.ajax({
       url: "/admin/integrations/freshplugs/custom_widget_preview/",

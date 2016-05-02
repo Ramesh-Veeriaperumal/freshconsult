@@ -98,7 +98,7 @@ module Helpdesk::TicketActions
       remove_tickets_redis_key(export_redis_key)
       create_ticket_export_fields_list(params[:export_fields].keys)
       params[:portal_url] = main_portal? ? current_account.host : current_portal.portal_url
-      Resque.enqueue(Helpdesk::TicketsExport, params)
+      Helpdesk::TicketsExportWorker.enqueue(params)
       flash[:notice] = t("export_data.ticket_export.info")
       redirect_to helpdesk_tickets_path
     # else
@@ -254,7 +254,7 @@ module Helpdesk::TicketActions
   
   def add_requester
     @user = current_account.users.new
-    @user.user_emails.build({:primary_role => true}) if current_account.features_included?(:contact_merge_ui)
+    @user.user_emails.build({:primary_role => true})
     render :partial => "contacts/add_requester_form"
   end
 

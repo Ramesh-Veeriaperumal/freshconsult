@@ -1,8 +1,17 @@
+"use strict";
+
 //Following code is used in Zapier.com and not in helpkit . 
 //This is a backup of the version hosted on Zapier.com
 //-- Hrishikesh 
 
 var Zap = {
+    new_ticket_poller_trigger_post_poll: function(bundle) {
+        var responseObj = JSON.parse(bundle.response.content);
+        if (responseObj.require_login) {
+            throw new ErrorException('Your login credentials did not work!');
+        }
+        return responseObj;
+    },
     
     /* Priority in the API is an integer . It is not user Friendly 
     so writing this hack to make it a String for user to use String in Zap and 
@@ -60,6 +69,10 @@ var Zap = {
             data.topic.locked = 1;
         else 
             data.topic.locked = 0;
+        data.topic.forum_id = data.forum_id; 
+        
+        delete data.forum_id;
+        
         bundle.request.data = JSON.stringify(data);
         return bundle.request;
     }, 
@@ -83,34 +96,73 @@ var Zap = {
             return zap_field_type;
         };
         
+        utils.get_custom_field_label = function(field){
+            if(field.visible_in_portal)
+                return field.label_in_portal;
+            else 
+                return field.label;
+        };
+        
+        utils.get_field_key = function(field_name, field_type, zap_type){
+            if(field_type.search("custom") != -1){
+                if( zap_type == "trigger"){
+                    return field_name.replace(/_[0-9]+$/ , "");
+                }
+                else{
+                    return "helpdesk_ticket__custom_field__" + field_name;
+                }
+            }
+            else{
+                if( zap_type == "trigger"){
+                    return field_name;
+                }
+                else{
+                    return "helpdesk_ticket__" + field_name;
+                }
+            }
+        };
+        
         return utils;  
     },
-    create_ticket_action_post_custom_action_fields: function(bundle) {
+    new_ticket_trigger_post_custom_trigger_fields:function(bundle){
+        console.log("Called processing");
+        return this.process_custom_fields(bundle, "trigger");
+    },
+    ticket_updated_trigger_post_custom_trigger_fields:function(bundle){
+        console.log("Called processing");
+        return this.process_custom_fields(bundle, "trigger");
+    },
+    create_ticket_action_post_custom_action_fields:function(bundle){
+        console.log("Called custom fields processing");
+        return this.process_custom_fields(bundle, "action");
+    },
+    process_custom_fields: function(bundle, zap_type) {
         var utils = this.getUtils();
         
         var customfields = [];
+        var customfields_input = JSON.parse(bundle.response.content);
         
-        var inputXml = $.parseXML(bundle.response.content);
-        var ticketFieldsSelector = 'helpdesk-ticket-field';
-        var xml = $(inputXml).find(ticketFieldsSelector);
+        if(customfields_input.access_denied) {
+            throw new HaltedException("Access is denied. Please check your authentication details");
+        }
         
-       
-        customfields = _.map(xml, function(element){
-            var $element = $(element);
-            var fieldType = $element.find('field-type').text();
+        customfields = _.map(customfields_input, function(cField){
+            cField = cField.ticket_field;
+            
+            var fieldType = cField.field_type;
             var choices = null;
             if (fieldType == "custom_dropdown"){
                 choices = [];
-                $element.find("choices option value").each(function(){
-                    choices.push($(this).text());
+                cField.choices.forEach(function(val){
+                    choices.push(val[0]);
                 });
             }
             return {
                 type : utils.translate_field_type(fieldType),
-                key: "helpdesk_ticket__custom_field__" + $element.find('name').text(),
-                label: $element.find('label-in-portal').text(),
-                help_text: $element.find('description').text(),
-                required: ( $element.find('required-in-portal').text() === "true" ), 
+                key: utils.get_field_key(cField.name, fieldType, zap_type),
+                label: utils.get_custom_field_label(cField),
+                help_text: cField.description,
+                required: false,
                 choices : choices
             };
         });
@@ -118,10 +170,9 @@ var Zap = {
         customfields = _.filter(customfields , function(field){
             return field.type != "unknown";
         });
-        
         return customfields;
     }, 
-    get_event_data : function(event_name, trigger_data) {
+    get_event_data : function(event_name, trigger_fields) {
         console.log("event_name " + event_name);
         var name = "", value = "";
         if ( event_name == "new_ticket" ) {
@@ -145,39 +196,52 @@ var Zap = {
             value = "--";
         }    
         if( event_name == "ticket_note_added" ) {
-            name = "note_type" ; 
-            if ( trigger_data.ticket_note_type && trigger_data.ticket_note_type == "public" ) 
-                value = "public";
-            else if ( trigger_data.ticket_note_type && trigger_data.ticket_note_type == "private" ) 
-                value = "private";
-            else 
-                value = "--";
+            name = "note_action" ; 
+            value = "create";
         }
         return [ {"name": name ,"value": value} ]; 
     },
+    get_subscription_name : function(bundle){
+        var zap_name = "Freshdesk Zapier Zap";
+        
+        try { 
+            zap_name = bundle.zap.action.service.name + " -> " + bundle.zap.name; 
+        } 
+        catch ( e) { 
+            zap_name = bundle.zap.name;
+        }
+        return zap_name;
+    },
     pre_subscribe: function(bundle) {
-        bundle.request.url="http://" + bundle.auth_fields.domain_name + ".freshdesk.com/admin/observer_rules/subscribe.json";
-        bundle.request.url="http://zapiertest.ngrok.com/admin/observer_rules/subscribe.json";
+        bundle.request.url="https://" + bundle.auth_fields.domain_name + ".freshdesk.com/webhooks/subscription.json";
+       // bundle.request.url="http://zapiertest.ngrok.com/webhooks/subscription.json";
 
         bundle.request.method = "POST";
         
         var request_data = {
             "url":bundle.target_url,
             "name":bundle.zap.link,
-            "description": bundle.zap.name,
-            "event_data": this.get_event_data(bundle.event, bundle.trigger_data),
-            "performer_data":{"type":"3"}
+            "description": this.get_subscription_name(bundle),
+            "event_data": this.get_event_data(bundle.event, bundle.trigger_fields)
+            //,
+            //"performer_data":{"type":"3"} 
         };
        
-        var fields = this.get_fields_for_trigger(bundle.event, bundle.trigger_data);
-        if( fields ) 
-            request_data.fields = fields;
+        //var fields = this.get_fields_for_trigger(bundle.event, bundle.trigger_fields);
+        //if( fields ) 
+        //    request_data.fields = fields;
         bundle.request.data = JSON.stringify(request_data);
         return bundle.request;
+    },
+    post_subscribe: function(bundle) {
+        var subscribe_data = JSON.parse(bundle.response.content);
+        subscribe_data.link=bundle.link;
+        return subscribe_data; 
     }, 
     pre_unsubscribe: function(bundle) {
-        bundle.request.url="http://" + bundle.auth_fields.domain_name + ".freshdesk.com/admin/observer_rules/unsubscribe.json";
-        bundle.request.url="http://zapiertest.ngrok.com/admin/observer_rules/unsubscribe.json";
+        bundle.request.url="https://" + bundle.auth_fields.domain_name + ".freshdesk.com/webhooks/subscription/";
+       // bundle.request.url="http://zapiertest.ngrok.com/webhooks/subscription/";
+        bundle.request.url=bundle.request.url + bundle.subscribe_data.id + ".json";
         bundle.request.method = "DELETE";
         bundle.request.data = JSON.stringify({
             "name":bundle.zap.link
@@ -190,20 +254,33 @@ var Zap = {
     new_user_trigger_catch_hook: function(bundle){
         return this.get_user_data(bundle);
     },
+    update_user_trigger_catch_hook: function(bundle){
+        return this.get_user_data(bundle);
+    },
     ticket_updated_trigger_catch_hook: function(bundle){
-        return get_ticket_data(bundle);
+        return this.get_ticket_data(bundle);
     },
     ticket_note_added_trigger_catch_hook:function(bundle){
-        var ticket_note_type = bundle.trigger_fields.ticket_note_type ; 
-        var data = JSON.parse(bundle.request.content);
-        return data.freshdesk_webhook;
+        var note_data  = this.get_ticket_data(bundle);
+        var note_conversion_data = {
+            "note_private" : function( key, value ) { 
+                key = "private",
+                value = value ? "Yes" : "No";
+                return[key,value];
+            }
+        };
+        note_data = this.beautify(note_data , "note_", note_conversion_data );
+        return note_data;
     },
-    get_fields_for_trigger: function(event_name, trigger_data){
+    get_fields_for_trigger: function(event_name, trigger_fields){
         var fields = "ticket"; 
         if (  event_name == "ticket_note_added" ) { 
             fields = "notes" ;
         }
         if (  event_name == "new_user" ) { 
+            fields = "user" ;
+        }
+        if (  event_name == "update_user" ) { 
             fields = "user" ;
         }
         return fields;
@@ -216,15 +293,21 @@ var Zap = {
         var data = JSON.parse(bundle.request.content);
         return this.beautify(data.freshdesk_webhook, 'user_');
     },
-    beautify:function(input, name_str){
+    beautify:function(input, name_str, conversion_data){
         var output = {};
         var replace_str = '';
         for(var attr in input){
             var oattr = attr;
-            if( attr.search(name_str) ===  0) {
+            var value = input[attr];
+            if( attr.search(name_str) ===  0 &&  attr.search("_id") ===  -1) {
                 oattr = attr.replace(name_str, replace_str);
             }
-            output[oattr] = input[attr];
+            if(conversion_data && conversion_data[attr] ) {
+                var value_array = conversion_data[attr](attr , input[attr]);
+                oattr = value_array[0];
+                value = value_array[1];
+            }
+            output[oattr] = value;
         }
         return output;
     }

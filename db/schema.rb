@@ -11,8 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20160104125144) do
+ActiveRecord::Schema.define(:version => 20160413071150) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -27,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.integer  "date_format",                       :default => 1
     t.text     "additional_settings"
     t.text     "resource_rlimit_conf"
+    t.integer  "webhook_limit",                      :default => 1000
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
@@ -197,6 +197,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.datetime "last_active_at"
   end
 
+  add_index "agents", ["account_id", "google_viewer_id"], :name => "index_agents_on_account_id_and_google_viewer_id"
   add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
 
   create_table "app_business_rules", :force => true do |t|
@@ -907,6 +908,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
   end
 
   add_index "customers", ["account_id", "name"], :name => "index_customers_on_account_id_and_name", :unique => true
+  add_index "customers", ["account_id", "updated_at"], :name => "index_customers_on_account_id_and_updated_at"
 
   create_table "data_exports", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -1009,7 +1011,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
   add_index "dynamic_notification_templates", ["account_id", "email_notification_id", "category"], :name => "index_dynamic_notn_on_acc_and_notification_id_and_category"
 
   create_table "ebay_questions", :force => true do |t|
-    t.string   "user_id",     :limit => 8
+    t.integer  "user_id",     :limit => 8
     t.string   "message_id" 
     t.string   "item_id"
     t.integer  "questionable_id",   :limit => 8
@@ -1386,7 +1388,6 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"
   add_index "freshfone_accounts", ["account_id"], :name => "index_freshfone_accounts_on_account_id", :unique => true
-  add_index "freshfone_accounts", ["state"], :name => "index_freshfone_accounts_on_state"
 
   create_table "freshfone_blacklist_numbers", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -1416,6 +1417,17 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
   end
 
   add_index "freshfone_call_metrics", ["account_id", "call_id"], :name => "index_freshfone_call_metrics_on_account_id_and_call_id"
+  
+  create_table "freshfone_caller_ids", :force => true do |t|
+    t.integer  "account_id", :limit => 8,  :null => false
+    t.string   "name",       :limit => 20
+    t.string   "number_sid", :limit => 50, :null => false
+    t.string   "number",     :limit => 20, :null => false
+    t.datetime "created_at",               :null => false
+    t.datetime "updated_at",               :null => false
+  end
+
+  add_index "freshfone_caller_ids", ["account_id"], :name => "index_freshfone_caller_ids_on_account_id"
 
   create_table "freshfone_callers", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -1569,6 +1581,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.boolean  "queue_position_preference",                                               :default => false
     t.string   "queue_position_message"
     t.integer  "port",                       :limit => 1
+    t.integer  "caller_id",                  :limit => 8
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -2672,6 +2685,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.datetime "updated_at",              :null => false
   end
 
+  add_index "remote_integrations_mappings", ["account_id", "type"], :name => "account_id_type_index"
   add_index "remote_integrations_mappings", ["remote_id", "type"], :name => "index_remote_integrations_mappings_on_remote_id_and_type", :unique => true
 
   create_table "report_filters", :force => true do |t|
@@ -3278,6 +3292,8 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
   end
 
   add_index "survey_handles", ["account_id", "id_token"], :name => "index_survey_handles_on_account_id_and_id_token", :length => {"account_id"=>nil, "id_token"=>20}
+  add_index "survey_handles", ["account_id", "surveyable_id", "surveyable_type"], :name => "index_on_account_id_and_surveyable_id_and_surveyable_type"
+
   execute "ALTER TABLE survey_handles ADD PRIMARY KEY (id,account_id)"
 
   create_table "survey_question_choices", :force => true do |t|
@@ -3450,6 +3466,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.string   "happy_text",                          :default => "Awesome"
     t.string   "neutral_text",                        :default => "Neutral"
     t.string   "unhappy_text",                        :default => "Not Good"
+    t.boolean  "deleted",                             :default => false
   end
 
   add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"
@@ -3786,6 +3803,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.integer  "company_id", :limit => 8
     t.integer  "account_id", :limit => 8
     t.boolean  "default"
+    t.boolean  "client_manager"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
@@ -3876,7 +3894,7 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
     t.string   "string_uc06"
   end
 
-  add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
+  add_index "users", ["email", "account_id"], :name => "index_users_on_email_and_account_id", :unique => true
   add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"account_id"=>nil, "external_id"=>20}
   add_index "users", ["account_id", "fb_profile_id"], :name => "index_users_on_account_id_fb_profile_id"
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
@@ -3885,7 +3903,6 @@ ActiveRecord::Schema.define(:version => 20160104125144) do
   add_index "users", ["account_id", "phone"], :name => "index_users_on_account_id_phone"
   add_index "users", ["account_id", "twitter_id"], :name => "index_users_on_account_id_twitter_id"
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
-  add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
   add_index "users", ["single_access_token", "account_id"], :name => "index_users_on_account_id_and_single_access_token", :unique => true

@@ -2,16 +2,12 @@ module Marketplace::ApiHelper
   include Marketplace::ApiMethods
   include Marketplace::ApiUtil
 
-  def installed_plugs(display_page)
+  def installed_mkp_apps(display_page)
     begin
-      installed_plugs = []
-      installed_extn_list = installed_plugs_list(display_page)
-      return error_message if error_status?(installed_extn_list)
-
-      installed_extn_list.body.try(:each) do |installed_plug|
-        installed_plugs << extension_details(installed_plug['version_id']).body.merge(installed_plug)
-      end
-      installed_plugs
+      page = Marketplace::Constants::DISPLAY_PAGE[display_page]
+      installed_mkp_apps_list(page)
+      return error_message if error_status?(@installed_list)
+      page == Marketplace::Constants::DISPLAY_PAGE[:integrations_list] ? installed_mkp_app_details : @installed_list.body
     rescue Exception => e
       Rails.logger.debug "Error while fetching installed plugs: \n#{e.message}\n#{e.backtrace.join("\n")}"
       NewRelic::Agent.notice_error(e)
@@ -19,16 +15,23 @@ module Marketplace::ApiHelper
     end
   end
 
-  def installed_plugs_list(display_page)
-    page = Marketplace::Constants::DISPLAY_PAGE[display_page]
-    key = MemcacheKeys::INSTALLED_FRESHPLUGS % { 
-          :page => page, :account_id => current_account.id }
-    @installed_list ||= MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
-      installed_extensions(installed_params(page))
-    end
-  end
-
   private
+
+    def installed_mkp_apps_list(page)
+      key = MemcacheKeys::INSTALLED_FRESHPLUGS % { 
+            :page => page, :account_id => current_account.id }
+      @installed_list ||= mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+        installed_extensions(installed_params(page))
+      end
+    end
+
+    def installed_mkp_app_details
+      installed_mkp_apps = []
+      @installed_list.body.try(:each) do |installed_mkp_app|
+        installed_mkp_apps << extension_details(installed_mkp_app['version_id']).body.merge(installed_mkp_app)
+      end
+      installed_mkp_apps
+    end
 
     def installed_params(page)
       installed_params = { type: Marketplace::Constants::DEFAULT_EXTENSION_TYPES}
@@ -51,8 +54,7 @@ module Marketplace::ApiHelper
 
     def plug_code_from_s3(version_id)
       s3_id = version_id.to_s.reverse
-      AwsWrapper::S3Object.read("#{s3_id}/#{Marketplace::Constants::PLG_FILENAME}",
-        MarketplaceConfig::S3_ASSETS)
+      open("https://#{MarketplaceConfig::CDN_STATIC_ASSETS}/#{s3_id}/#{Marketplace::Constants::PLG_FILENAME}").read
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
     end
@@ -60,15 +62,15 @@ module Marketplace::ApiHelper
     def freshplug_script(installed_plug)
       script = plug_code_from_cache(installed_plug[:version_id])
 
-      liquid_objs = freshplug_liquids(installed_plug[:configs])
+      liquid_objs = freshplug_liquids(installed_plug)
       Liquid::Template.parse(script).render(liquid_objs, 
           :filters => [Integrations::FDTextFilter],
           :registers => { :plug_asset => installed_plug[:version_id]}).html_safe
     end
 
-    def freshplug_liquids(configs)
-      config_liquids = configs.blank? ? {} : {'iparam' => IparamDrop.new(configs) }
-      default_liquids.merge(config_liquids)
+    def freshplug_liquids(installed_plug)
+      config_liquids = installed_plug[:configs].blank? ? {} : {'iparam' => IparamDrop.new(installed_plug[:configs]) }
+      default_liquids.merge(config_liquids).merge({'app_id' => "app_#{installed_plug[:extension_id]}"})
     end
 
     def default_liquids

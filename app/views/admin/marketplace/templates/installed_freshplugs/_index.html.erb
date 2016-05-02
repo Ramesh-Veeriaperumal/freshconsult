@@ -3,29 +3,28 @@
   <li class="app-custom apps-wrapper apps installed-listing" id="ext-<%= is_ni_integration ? installed['name'] : installed['version_id'] %>">
     <section class="fa-area clear">
       <div class="row-fluid list-box <%if !installed['enabled']%> disabled-app <%end%>">
-        <div class="switch-box pull-left <%= is_ni_integration ? 'disabled tooltip' : '' %>" data-placement="below" data-original-title= "<%= t('marketplace.coming_soon') %>">
-          <% enabled_or_disabled_path = installed['enabled'] ? admin_installed_extensions_disable_path(installed['extension_id'], installed['version_id']) : admin_installed_extensions_enable_path(installed['extension_id'], installed['version_id']) %>
-          <% toggle_path = !installed['enabled'] ? admin_installed_extensions_disable_path(installed['extension_id'], installed['version_id']) : admin_installed_extensions_enable_path(installed['extension_id'], installed['version_id']) %>
-          <%= check_box_tag '', installed['enabled'], installed['enabled'], "data-url" => enabled_or_disabled_path, 
-          "data-toggle" => toggle_path, :rel => "toggle", :class=>"switch", :name => "onoffswitch", :id => "indplug_#{installed['version_id']}" %>
-        </div>
         <div class="logo-box pull-left">
           <% unless installed['cover_art'].blank? %>
-            <img src="<%= installed['cover_art']['thumb'] %>" srcset="<%= installed['cover_art']['thumb'] %>, <%= installed['cover_art']['thumb2x'] %>" alt="<%= installed['display_name'] %>"/>
+            <img src="<%= installed['cover_art']['thumb'] %>" srcset="<%= installed['cover_art']['thumb'] %> 1x, <%= installed['cover_art']['thumb2x'] %> 2x" alt="<%= installed['display_name'] %>"/>
           <% else %>
-            <span class="<%= font_class('puzzle', 48) %>"></span>
+            <span class="<%= font_class('puzzle', 32) %>"></span>
           <% end %>
         </div>
         <div class="desc-box pull-left">
           <div class="plug-data">
-            <a href="" data-url="/admin/extensions/<%= installed['latest_version'] %>?type=<%=Marketplace::Constants::EXTENSION_TYPE[:plug]%>" class="moreinfo-lnk plug-name show_btn">
+            <a href="" data-url="<%= show_admin_marketplace_extensions_path(installed['latest_version']) %>?type=<%=Marketplace::Constants::DEFAULT_EXTENSION_TYPES %>" class="moreinfo-lnk plug-name show_btn">
               <%= installed['display_name'] %>
             </a>
             <div class="plug-actions">
-              <% if installed['version_id'] != installed['latest_version'] %>
+              <div class="switch-box pull-left <%= is_ni_integration ? 'hide tooltip' : '' %>" data-placement="below" data-original-title= "<%= t('marketplace.coming_soon') %>">
+                <% enabled_or_disabled_path = installed['enabled'] ? admin_marketplace_installed_extensions_disable_path(installed['extension_id'], installed['version_id']) : admin_marketplace_installed_extensions_enable_path(installed['extension_id'], installed['version_id']) %>
+                <% toggle_path = !installed['enabled'] ? admin_marketplace_installed_extensions_disable_path(installed['extension_id'], installed['version_id']) : admin_marketplace_installed_extensions_enable_path(installed['extension_id'], installed['version_id']) %>
+                <%= check_box_tag '', installed['enabled'], installed['enabled'], "data-url" => enabled_or_disabled_path, 
+              "data-toggle" => toggle_path, :rel => "toggle", :class=>"switch", :name => "onoffswitch", :id => "indplug_#{installed['version_id']}" %>
+              </div>
+              <% if !is_ni_integration && installed['version_id'] != installed['latest_version'] %>
                   <%= link_to t('update'), "#",
-                      "data-url"=> "#{admin_installed_extensions_new_configs_path(installed['extension_id'],installed['latest_version'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&upgrade=true&display_name=#{ERB::Util.url_encode(installed['display_name'])}",
-                      :class => "btn btn-mini btn-settings update" %>
+                      "data-url"=> "#{admin_marketplace_installed_extensions_new_configs_path(installed['extension_id'],installed['latest_version'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&installation_type=update&display_name=#{ERB::Util.url_encode(installed['display_name'])}", :class => "btn btn-mini btn-settings update", "data-developedby"=> installed['account'] %>
               <% end %>
               <% if installed['configs'] %>
                 <% if is_ni_integration %>
@@ -34,12 +33,12 @@
                   <% end %>
                 <% else %>
                   <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, "", 
-                  "data-url"=> "#{admin_installed_extensions_edit_configs_path(installed['extension_id'], installed['version_id'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&update=true&display_name=#{ERB::Util.url_encode(installed['display_name'])}",
-                  :class => "btn btn-mini btn-settings update tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings') %>
+                  "data-url"=> "#{admin_marketplace_installed_extensions_edit_configs_path(installed['extension_id'], installed['version_id'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&installation_type=settings&display_name=#{ERB::Util.url_encode(installed['display_name'])}",
+                  :class => "btn btn-mini btn-settings update tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings'), "data-developedby"=> installed['account'] %>
                 <% end %>
               <% end %>
-              <% delete_url = is_ni_integration ? uninstall_integrations_marketplace_app_path(ERB::Util.url_encode(installed['name'])) : admin_installed_extensions_uninstall_path(installed['extension_id'], installed['version_id']) %>
 
+              <% delete_url = is_ni_integration ? uninstall_integrations_marketplace_app_path(ERB::Util.url_encode(installed['name'])) : admin_marketplace_installed_extensions_uninstall_path(installed['extension_id'], installed['version_id']) %>
               <a href="#toggle-confirm" rel="freshdialog" class="btn btn-mini tooltip delete-btn" title="<%= t('integrations.uninstall') %>" data-placement="below" data-original-title="<%= t('integrations.uninstall') %>" data-width="600" data-close-on-submit="true" data-show-close="true" data-destroy-on-close="true"  data-url="<%= delete_url %>" data-close-label="<%= t('plain_no') %>" data-submit-label="<%= t('plain_yes') %>" data-submit-class="btn btn-primary delete-confirm" data-confirm-content="<%= t('marketplace.confirm_uninstall_message', :human_name => t('marketplace.app')) %>"> 
                 <span class="<%= font_class('trash-o', 16) %>"></span>
               </a>

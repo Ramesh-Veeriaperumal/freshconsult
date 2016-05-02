@@ -1,0 +1,7 @@
+--- 
+development: 
+  :tenant: tenant_info_dev
+  :cluster: cluster_info_dev
+test: 
+  :tenant: tenant_info_test
+  :cluster: cluster_info_test

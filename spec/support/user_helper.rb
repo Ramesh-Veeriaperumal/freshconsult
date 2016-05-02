@@ -54,6 +54,7 @@ module UsersHelper
                                     :blocked => options[:blocked] || 0,
                                     :customer_id => options[:customer_id] || nil,
                                     :language => "en")
+    new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
     new_user.save
     new_user.reload
   end
@@ -120,7 +121,7 @@ module UsersHelper
 
   def add_new_user_with_twitter_id(account,options={})
     if options[:twitter_id]
-      user = User.find_by_fb_profile_id(options[:twitter_id])
+      user = User.find_by_twitter_id(options[:twitter_id])
       return user if user
     end
     new_user = FactoryGirl.build(:user, :account => account,

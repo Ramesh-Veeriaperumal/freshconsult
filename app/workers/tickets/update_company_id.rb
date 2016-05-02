@@ -26,6 +26,9 @@ class Tickets::UpdateCompanyId < BaseWorker
           last_ticket_id = execute_on_db { tickets.last.id if tickets.last }
           updated_tickets = tickets.update_all(:owner_id => company_id)
           execute_on_db { send_updates_to_rmq(tickets, tickets.klass.name) }
+
+          #=> Needing this to publish to search until another way found.
+          execute_on_db { tickets.map(&:sqs_manual_publish) } if Account.current.features?(:es_v2_writes)
         end
       end while updated_tickets == TICKET_LIMIT
     end

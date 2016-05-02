@@ -35,8 +35,16 @@
 		<%
             customer_opinion = "" 
             survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
-            unless @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil?
-              customer_opinion = ["<div class='customer-opinion ", @ticket.send(survey_association).last.get_small_img_class ,"'></div>"].join.html_safe
+           unless @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil? 
+           		if (Account.current.new_survey_enabled?)
+           			rating_class_value = " color-" + CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[@ticket.send(survey_association).last.ticket_info[:value]] + "' title='" + @ticket.send(survey_association).last.ticket_info[:text]
+           			tooltip_class = "tooltip "
+           		else
+		       		rating_class_value = ""
+		       		tooltip_class = ""
+	       		end
+           		
+            	customer_opinion = ["<div class='customer-opinion ",tooltip_class, @ticket.send(survey_association).last.get_small_img_class, rating_class_value, "'></div>"].join.html_safe
             end  
 	    %>
 	    <%=customer_opinion%>									
@@ -112,7 +120,7 @@
     <div id="ticket_attachments_container_<%= @ticket.id%>">
 	<% unless @ticket.attachments.empty? and @ticket.cloud_files.empty? %>
 		<span class="seperator"></span>
-		<div class="attachments-wrap clearfix">
+		<div class="attachments-wrap clearfix" data-domhelper-name="attachments-wrap">
 			<h5 id="ticket_attachments_title_<%= @ticket.id %>"><strong><%= pluralize(@ticket.attachments.size + @ticket.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
 			<ul class="attachment_list">
 			    <% @ticket.attachments.each do |attached| %> 

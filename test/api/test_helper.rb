@@ -1,4 +1,5 @@
 require_relative 'helpers/test_files.rb'
+require 'sidekiq/testing'
 class ActionController::TestCase
   rescue_from AWS::DynamoDB::Errors::ResourceNotFoundException do |exception|
     Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, Time.zone.now.month) if  Rails.env.test?
@@ -6,7 +7,7 @@ class ActionController::TestCase
   end
 
   def setup
-    SpamCounter.stubs(:count).returns(0)
+    begin_gc_deferment
     activate_authlogic
     get_agent
     @account.make_current
@@ -23,12 +24,14 @@ class ActionController::TestCase
   end
 
   def teardown
+    reconsider_gc_deferment
     @controller.instance_variables.each do |ivar|
       @controller.instance_variable_set(ivar, nil)
     end
     super
+    clear_instance_variables
   end
-  ActiveRecord::Base.logger.level = 1
+  # ActiveRecord::Base.logger.level = 1
   self.use_transactional_fixtures = false
   fixtures :all
 end
@@ -43,12 +46,13 @@ class ActionDispatch::IntegrationTest
   FileUtils.mkdir_p "#{Rails.root}/test/api/query_reports"
 
   def setup
-    SpamCounter.stubs(:count).returns(0)
+    begin_gc_deferment
     get_agent
     set_request_headers
     host!('localhost.freshpo.com')
     set_key(account_key, 500, nil)
     set_key(default_key, 400, nil)
+    @account.make_current
     set_key(plan_key(@account.subscription.subscription_plan_id), 200, nil)
     Bullet.add_whitelist type: :unused_eager_loading, class_name: 'ForumCategory', association: :forums
     Bullet.add_whitelist type: :n_plus_one_query, class_name: 'ForumCategory', association: :account
@@ -56,7 +60,13 @@ class ActionDispatch::IntegrationTest
     SpamCounter.stubs(:count).returns(0)
   end
 
-  ActiveRecord::Base.logger.level = 1
+  def teardown
+    reconsider_gc_deferment
+    super
+    clear_instance_variables
+  end
+
+  # ActiveRecord::Base.logger.level = 1
   self.use_transactional_fixtures = false
   fixtures :all
 end

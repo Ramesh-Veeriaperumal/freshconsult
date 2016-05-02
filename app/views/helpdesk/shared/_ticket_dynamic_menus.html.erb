@@ -28,9 +28,9 @@
 	   data-value="-" data-text="-" ><%= t('ticket.none') %></a>
 
 	<span class="seperator"></span>
-	<% current_account.agents_from_cache.each do |agent| %>
-			<% unless agent.user_id == current_user.id %>
-				<a href="#" class="action_assign" tabindex=99 data-value= "<%=agent.user.id%>" data-assign-action="agent" ><%=h(agent.user.name)%></a>
+	<% current_account.agents_details_from_cache.each do |agent| %>
+			<% unless agent.id == current_user.id %>
+				<a href="#" class="action_assign" tabindex=99 data-value= "<%=agent.id%>" data-assign-action="agent" ><%=h(agent.name)%></a>
 			<% end %>
   	<% end %>
 </div>

@@ -40,19 +40,13 @@
 				<% if privilege?(:manage_users) %>
 					<% if @user.has_email? and !@user.blocked?%>
 						<ul class="dropdown-menu pull-right" role="menu">
-							<% if current_account.features?(:contact_merge_ui) %>
-								<li><%= link_to( t('contacts.convert_fulltime'), { :action => :make_agent, :id => @user.id},:method => :put, :confirm => t('contacts.convert_note'))%></li>
-								<li><%= link_to( t('contacts.convert_occasional'), { :action => :make_occasional_agent, :id => @user.id}, :method => :put, :confirm => t('contacts.convert_note')) %></li>  
-							<% else %>  
-								<li><%= link_to( t('contacts.convert_fulltime'), { :action => :make_agent, :id => @user.id},:method => :put)%></li>
-								<li><%= link_to( t('contacts.convert_occasional'), { :action => :make_occasional_agent, :id => @user.id}, :method => :put) %></li>  
-							<% end %>
+							<li><%= link_to( t('contacts.convert_fulltime'), { :action => :make_agent, :id => @user.id},:method => :put, :confirm => t('contacts.convert_note'), 'data-domhelper-name' => 'convert-agent-fulltime' )%></li>
+							<li><%= link_to( t('contacts.convert_occasional'), { :action => :make_occasional_agent, :id => @user.id}, :method => :put, :confirm => t('contacts.convert_note'), 'data-domhelper-name' => 'convert-agent-occasional' ) %></li>  
 						</ul>
 					<% end %>
 				<% end %>
 
-				<%= link_to t('ticket.merge_btn'), new_contact_merge_path({:parent_user => @user.id }), :title => t('merge_contacts.merge_contact'), :class => "btn last", "data-width" => "800", :rel => "freshdialog", "data-target" => "#contact-mergebox", "data-template-footer" => "" unless (@merged_user or @user.deleted?) or !current_account.features?(:contact_merge_ui) %>
-	
+				<%= link_to t('ticket.merge_btn'), new_contact_merge_path({:parent_user => @user.id }), :title => t('merge_contacts.merge_contact'), :class => "btn last", "data-width" => "800", :rel => "freshdialog", "data-target" => "#contact-mergebox", "data-template-footer" => "" unless (@merged_user or @user.deleted?)%>
 
 				<% if privilege?(:delete_contact) and @user != current_user and 
 											!@user.deleted? and !@user.spam? and !@user.blocked? %>
@@ -130,7 +124,7 @@
 							<div class='error ajax-error pull-left'></div>
 							<div class="pull-right hide form-save"> 
 								<%= link_to t("cancel"), '#' , :class => "btn cancel-form" %>
-								<%= f.submit t('save'), :class=>"btn btn-primary save-form" %> 
+								<%= f.submit t('save'), :class=>"btn btn-primary save-form" %>
 							</div>
 						</div>
 					<% end %>
@@ -277,7 +271,7 @@
 			</div>
 		</div>
 		<div class='contact-sidebar'>
-			<div class='contact-sidebar-content'>
+			<div class='contact-sidebar-content' data-domhelper-name='contact-sidebar'>
 				<%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => {:user => @user}%>
 				<%= render :partial => "contacts/integrations/email_marketing_container" , :locals => {:contact => @user} %>
 			</div>

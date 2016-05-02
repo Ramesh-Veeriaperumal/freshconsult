@@ -96,12 +96,7 @@ HelpdeskReports.ReportUtil.PerformanceDistribution = (function () {
             });
             HelpdeskReports.locals.params = current_params.slice();
             
-            if (typeof (Storage) !== "undefined" && localStorage.getItem(HelpdeskReports.locals.report_type) !== null) {
-                var index = JSON.parse(localStorage.getItem(HelpdeskReports.locals.report_type));
-                 HelpdeskReports.SavedReportUtil.applySavedReport(index,false);
-            } else {
-                 HelpdeskReports.SavedReportUtil.applySavedReport(-1,false);
-            }
+            HelpdeskReports.SavedReportUtil.applyLastCachedReport();
             _FD.actions.submitReports();
         },
         flushEvents: function () {

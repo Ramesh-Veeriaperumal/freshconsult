@@ -13,7 +13,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		    saved_report_names : [],
 		    bindEvents : function() {
 
-		    	jQuery(document).on('click',"#save_filter",function(){
+		    	jQuery(document).on('click.save_reports',"#save_filter",function(){
 		    		jQuery("#report-dialog-save .unavailable_field").addClass('hide');
 		     	    jQuery("#report-dialog-save .missing_field").addClass('hide');
 		    		//Set the value of input field
@@ -22,7 +22,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		    		jQuery("#filter_name_save").val(current_title);
 		    	});
 
-		    	jQuery(document).on('click',"#edit_filter",function(){
+		    	jQuery(document).on('click.save_reports',"#edit_filter",function(){
 		    		jQuery("#report-dialog-edit .unavailable_field").addClass('hide');
 		     	    jQuery("#report-dialog-edit .missing_field").addClass('hide');
 		    		//Set the value of input field
@@ -31,7 +31,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		    	});
 
 		    	//Saved Reports
-		        jQuery(document).on('click',"#report-dialog-save-submit",function() {  
+		        jQuery(document).on('click.save_reports',"#report-dialog-save-submit",function() {  
 
 		        	var field_val = jQuery("#filter_name_save").val().trim();   
 		         	if(field_val == "") {
@@ -49,7 +49,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		          	}
 		        });
 
-		        jQuery(document).on('click',"#report-dialog-edit-submit",function() {  
+		        jQuery(document).on('click.save_reports',"#report-dialog-edit-submit",function() {  
 
 		        	var field_val = jQuery("#filter_name_edit").val().trim();   
 		         	if( field_val == "") {
@@ -67,20 +67,20 @@ HelpdeskReports.SavedReportUtil = (function() {
 		          	}
 		        });
 
-		        jQuery(document).on('click',"#report-dialog-delete-submit",function() {  
+		        jQuery(document).on('click.save_reports',"#report-dialog-delete-submit",function() {  
 		        		 _FD.deleteSavedReport();
 		        		jQuery("#report-dialog-delete-cancel").click();
 		        });
 
-		        jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="update-saved-report"]', function () {
+		        jQuery('#reports_wrapper').on('click.save_reports', '[data-action="update-saved-report"]', function () {
 		            _FD.updateSavedReport(false);
 		        });
 
-		        jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="discard-changes"]', function () {
+		        jQuery('#reports_wrapper').on('click.save_reports', '[data-action="discard-changes"]', function () {
 		            _FD.discardChangesMadeToFilter();
 		        });
 
-		        jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="select-saved-report"]', function () {
+		        jQuery('#reports_wrapper').on('click.save_reports', '[data-action="select-saved-report"]', function () {
 		           var index = jQuery(this).attr('data-index');
 		           jQuery('#loading-box').show();
 		           setTimeout(function(){
@@ -90,6 +90,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		        });
 		        jQuery('#reports_wrapper').on('change', '[data-type="filter-field"]', function () { 
 		            _FD.filterChanged = true;
+		            HelpdeskReports.locals.saved_report_used = false;
 		        });
 		        jQuery(document).on("report_refreshed",function(ev,data){
 		        	if(_FD.filterChanged) {
@@ -99,6 +100,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		        });
 		        jQuery(document).on("filter_changed",function(ev,data){
 		        	_FD.filterChanged = true;
+		        	HelpdeskReports.locals.saved_report_used = false;
 		        });
 		    },
 		    saveReport : function() {
@@ -167,7 +169,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		                    }
 		                     //Show successfully saved message
 		                    HelpdeskReports.CoreUtil.showResponseMessage(I18n.t('helpdesk_reports.saved_report.saved_message'));
-		                    _this.cacheLastAppliedReport(0);
+		                    _this.cacheLastAppliedReport(resp.id);
 		                }
 		            },
 		            error: function (xhr,exception) {
@@ -223,13 +225,13 @@ HelpdeskReports.SavedReportUtil = (function() {
 		        var hash = HelpdeskReports.locals.report_filter_data;
 		        var _this = this;
 		        var invalid_params_found = false;
-
+		        var id = -1;
 		        _FD.flushAppliedFilters();
 		        _FD.last_applied_saved_report_index = index;
 
 		        if(index != -1) {
 		            var filter_hash = hash[index].report_filter;
-
+		            id = filter_hash.id;
 		            var date_hash = filter_hash.data_hash.date;
 		            var daterange;//_FD.core.convertDateDiffToDate(date_hash.date_range);
 		            //Set the date range from saved range
@@ -317,12 +319,13 @@ HelpdeskReports.SavedReportUtil = (function() {
 		        var flag = _FD.core.refreshReports();
 		                
 		        if(flag) {
-		        	
+		        	HelpdeskReports.locals.saved_report_used = true;
 		        	if(refresh){ 
 		        		_FD.applySpecificReportActions(index);
 		        	}
+		        	_this.cacheLastAppliedReport(id);
 		            _this.controls.hideSaveOptions();
-		            _this.cacheLastAppliedReport(index);
+		            
 		            if(index != -1) {
 		                _this.controls.showDeleteAndEditOptions();
 		            } else{
@@ -344,7 +347,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		    	var hash = HelpdeskReports.locals.report_filter_data;
 
 		    	if(index == -1) {
-		    		_FD.core.resetAndGenerate();
+		    		jQuery("[data-action='reports-submit']").click();
 		    		return;
 		    	}
 		    	var hash = hash[index].report_filter.data_hash;
@@ -638,17 +641,29 @@ HelpdeskReports.SavedReportUtil = (function() {
 	    	},
 	    	applyLastCachedReport : function(){
 		        if (typeof (Storage) !== "undefined" && localStorage.getItem(HelpdeskReports.locals.report_type) !== null) {
-		            var index = JSON.parse(localStorage.getItem(HelpdeskReports.locals.report_type));
-		            if(index != -1){
-		            	//this.applySavedReport(index);
-		            	setTimeout(function(){
-		            		jQuery("li a[data-index=" + index +"]").trigger('click');
-		            	},100);
-		            }
-		        } 
+	                var index = JSON.parse(localStorage.getItem(HelpdeskReports.locals.report_type));
+	                _FD.applySavedReport(_FD.getDataIndex(index),false);
+	                _FD.filterChanged = false
+	            } else {
+	                _FD.applySavedReport(-1,false);
+	            }
 	    	},
 		    escapeString : function(name) {
-	    		return name != undefined ? escapeHtml(name).replace(/'/g, '&apos;') : name;
+	    		//return name != undefined ? escapeHtml(name).replace(/'/g, '&apos;') : name;
+	    		return name;
+	    	},
+	    	/* Used for identifying index from cached id */
+	    	getDataIndex : function(id){
+	    		var hash = HelpdeskReports.locals.report_filter_data;
+	    		var index = -1;
+	    		if(hash != undefined) {
+	    			jQuery.each(hash,function(idx,obj){
+	    				if(obj.report_filter.id == id){
+	    					index = idx;
+	    				}	
+	    			});	
+	    		}
+	    		return index;
 	    	},
 	    	init: function (index) {
 				if(!this.initialized){
@@ -656,7 +671,6 @@ HelpdeskReports.SavedReportUtil = (function() {
 			        _FD.constants = jQuery.extend({}, HelpdeskReports.Constants.Glance);
 			        _FD.bindEvents();
 			        _FD.populateSavedReports(index);
-			        //_FD.applyLastCachedReport();
 			        this.initialized = true;
 			    }
 		    }

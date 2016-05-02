@@ -6,7 +6,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   include Helpdesk::TicketCustomFields
   include Search::ElasticSearchIndex
   include ArchiveTicketExportParams
-
+  
   self.primary_key = :id
   belongs_to_account
   belongs_to :requester, :class_name => 'User'
@@ -14,18 +14,16 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   belongs_to :group
 
   belongs_to :company, :foreign_key => :owner_id
-  
-  has_one :archive_ticket_association, 
-        :class_name => "Helpdesk::ArchiveTicketAssociation",
-        :dependent => :destroy
-  
-  has_many :archive_notes, :class_name => "Helpdesk::ArchiveNote", :dependent => :destroy
-  
+
+  has_many :archive_notes,
+           :class_name => "Helpdesk::ArchiveNote",
+           :dependent => :destroy
+
   has_many :inline_attachments, :class_name => "Helpdesk::Attachment",
                                 :conditions => { :attachable_type => "ArchiveTicket::Inline" },
                                 :foreign_key => "attachable_id",
                                 :dependent => :destroy
-
+                                
   has_many :activities, :class_name => 'Helpdesk::Activity',:as => :notable, :dependent => :destroy
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
   has_many :survey_results, :as => :surveyable, :dependent => :destroy
@@ -47,14 +45,14 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   has_one :ticket_topic, :as => :ticketable, :dependent => :destroy
   has_one :topic, :through => :ticket_topic
-
+  
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   belongs_to :product
-
+  
   has_many :public_notes,
     :class_name => 'Helpdesk::ArchiveNote',
     :conditions => { :private =>  false }
-
+  
   has_flexiblefields :class_name => 'Flexifield', :as => :flexifield_set
   has_many_attachments
   has_many_cloud_files
@@ -66,10 +64,8 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   attr_accessor :highlight_subject, :highlight_description, :archive_ticket_state
 
   alias_attribute :company_id, :owner_id
-  
-  accepts_nested_attributes_for :archive_ticket_association, allow_destroy: true
 
-  concerned_with :rabbitmq
+  concerned_with :rabbitmq, :attributes, :s3, :esv2_methods
 
   SORT_FIELDS = [
     [ :created_at , "tickets_filter.sort_fields.date_created"  ],
@@ -80,7 +76,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     :sla_policy_id => "long_tc01",
     :merge_ticket => "long_tc02",
     :reports_hash => "text_tc02",
-    :sender_email => "string_tc03"
+    :sender_email => "string_tc03",
+    :trashed      => 'boolean_tc02',
+    :product_id   => 'product_id'
   }
   NON_TEXT_FIELDS = ["custom_text", "custom_paragraph"]
 
@@ -207,9 +205,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     ticket = archive_ticket_association.association_data["helpdesk_tickets"]
     cc_email = ticket["cc_email"] if ticket.present?
     if cc_email and cc_email.is_a?(Array)
-      {:cc_emails => cc_email, :fwd_emails => [], :reply_cc => cc_email}
+      {:cc_emails => cc_email, :fwd_emails => [], :reply_cc => cc_email}.with_indifferent_access
     else
-      cc_email
+      cc_email.with_indifferent_access if cc_email.is_a?(Hash)
     end
   end
   alias :cc_email :cc_email_hash
@@ -265,8 +263,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def included_in_cc?(from_email)
-    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email.downcase) }) or
-                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email.downcase) }) or
+    cc_email_hash_value = cc_email_hash
+    (cc_email_hash_value) and  ((cc_email_hash_value["cc_emails"].any? {|email| email.include?(from_email.downcase) }) or
+                     (cc_email_hash_value["fwd_emails"].any? {|email| email.include?(from_email.downcase) }) or
                      included_in_to_emails?(from_email))
   end
 
@@ -291,8 +290,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def status_updated_at
-    ticket_association = archive_ticket_association.association_data["helpdesk_tickets_association"]
-    ticket_association["ticket_states"]["status_updated_at"] if ticket_association
+    ticket_states.status_updated_at
   end
 
   def custom_field_value(alias_name)
@@ -300,8 +298,15 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     return nil unless ff_entry
 
     field_name = ff_entry.flexifield_name
-    ticket_association = archive_ticket_association.association_data["helpdesk_tickets_association"]
-    ticket_association["flexifield"][field_name] if ticket_association
+    flexifield_data[field_name] if helpdesk_tickets_association
+  end
+  
+  def flexifield_data
+    helpdesk_tickets_association['flexifield']
+  end
+  
+  def subscription_data
+    helpdesk_tickets_association['subscriptions']
   end
 
   def ticket_states
@@ -362,10 +367,10 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def from_email
-    (account.features_included?(:contact_merge_ui) and self.sender_email.present?) ? self.sender_email : requester.email
+    self.sender_email.present? ? self.sender_email : requester.email
   end
 
-  [:due_by, :frDueBy, :fr_escalated, :isescalated].each do |attribute|
+  ['due_by', 'frDueBy', 'fr_escalated', 'isescalated', 'spam'].each do |attribute|
     define_method "#{attribute}" do
       archive_ticket_association.association_data["helpdesk_tickets"][attribute]
     end
@@ -483,7 +488,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   private
 
     def note_preload_options
-      options = [:attachments, :archive_note_association, :attachments_sharable, :cloud_files, {:user => :avatar}]
+      options = [:attachments, :attachments_sharable, :cloud_files, {:user => :avatar}]
       options << :freshfone_call if Account.current.features?(:freshfone)
       options << :fb_post if facebook?
       options << :tweet if twitter?

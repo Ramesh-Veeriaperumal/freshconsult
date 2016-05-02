@@ -479,13 +479,15 @@ class Subscription < ActiveRecord::Base
         Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateCustomerStatus, { :item_id => id, :account_id => account_id })
       end
     ensure
-      Resque.enqueue_at(15.minutes.from_now, CRM::Freshsales::TrackSubscription, { account_id: account_id, subscription_id: id, 
-                                                           old_subscription: @old_subscription.attributes })
+      Resque.enqueue_at(15.minutes.from_now, CRM::Freshsales::TrackSubscription, 
+                            { account_id: account_id, old_subscription: @old_subscription.attributes, 
+                              old_cmrr: @old_subscription.cmrr, subscription: self.attributes, 
+                              cmrr: self.cmrr, payments_count: self.subscription_payments.count }) if changes.any?
     end
 
     def update_reseller_subscription
       if state_changed? or (active? and amount_changed?) or subscription_currency_id_changed? or next_renewal_at_changed?
-        Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => account_id, 
+        Subscription::UpdatePartnersSubscription.perform_async({ :account_id => account_id, 
           :event_type => :subscription_updated })
       end
     end

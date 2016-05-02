@@ -4,9 +4,10 @@
 */
 
 var SurveyState = {
-    path: '/custom_survey/reports/',
+    path: '/reports/custom_survey/',
     isRating:false,
     RemarksOnly:false,
+    saved_report_used:false,
     TYPE:{1:"OVERVIEW",2:"RESPONSE"},
     OVERVIEW:{type:1,tab:"survey_overview_link",container:"survey_overview",disable:"survey_responses_link"},
     RESPONSE:{type:2,tab:"survey_responses_link",container:"survey_responses",disable:"survey_overview_link"},
@@ -94,6 +95,9 @@ var SurveyState = {
       return data;
     },
     fetch:function(savedData){
+        if(savedData){
+          SurveyState.saved_report_used = true;
+        }
         var root = jQuery(".report-panel-content").find('li.active').data('container').split("_")[1];
         var urlData = savedData || SurveyUtil.getUrlData();
         var rating = "all";
@@ -141,7 +145,7 @@ var SurveyState = {
 
     last_applied_saved_report_index : -1,
     CONST: {
-        base_url : '/custom_survey/reports',
+        base_url : '/reports/custom_survey',
         save_report   : "/save_reports_filter",
         delete_report : "/delete_reports_filter",
         update_report : "/update_reports_filter"
@@ -182,7 +186,11 @@ var SurveyState = {
         SurveyState.applySavedReport(SurveyState.last_applied_saved_report_index);
     },
     applySavedReport : function(index) {
-        SurveyState.save_util.cacheLastAppliedReport(index);
+        var id = -1;
+        if(index != -1){
+           id = Helpkit.report_filter_data[index].report_filter.id;
+        }
+        SurveyState.save_util.cacheLastAppliedReport(id);
         if(index != -1) {
             var hash = Helpkit.report_filter_data;
             SurveyState.last_applied_saved_report_index = index;

@@ -6,6 +6,12 @@ class Helpdesk::Tag < ActiveRecord::Base
   include Search::ElasticSearchIndex
 
   after_commit :clear_cache
+  after_commit :update_taggables, on: :update
+  after_commit :remove_taguses, on: :destroy
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   self.table_name =  "helpdesk_tags"
   
@@ -14,8 +20,7 @@ class Helpdesk::Tag < ActiveRecord::Base
   belongs_to_account
 
   has_many :tag_uses,
-    :class_name => 'Helpdesk::TagUse',
-    :dependent => :delete_all
+    :class_name => 'Helpdesk::TagUse'
 
   has_many :tickets,
     :class_name => 'Helpdesk::Ticket',
@@ -111,14 +116,22 @@ class Helpdesk::Tag < ActiveRecord::Base
   end
 
   # Common handler for creating/removing tags
-  def self.assign_tags(tag_list=[])
-    return [] if tag_list.blank?
+  def self.assign_tags(tags_to_be_added=[])
+    return [] if tags_to_be_added.blank?
 
-    associated_tags = self.where(name: tag_list).all
-    missing_tags    = tag_list.map(&:downcase) - associated_tags.map(&:name).map(&:downcase)
-    missing_tags.each { |tag_name| associated_tags.push(self.create(name: tag_name)) }
+    missing_tags = []
+    tag_list     = []
 
-    associated_tags
+    existing_tags = self.where(name: tags_to_be_added).all
+    tag_list.push(*existing_tags) # Pushing to the array so that when .any? called is made, it wont trigger (converting AR relation to array)
+    
+    tags_to_be_added.each do |new_tag|
+      next if tag_list.any? { |tag_in_db| tag_in_db.name.casecmp(new_tag) == 0 }
+      missing_tags << new_tag
+    end
+    missing_tags.each { |tag_name| tag_list.push(self.create(name: tag_name)) }
+
+    tag_list
   end
 
   def to_indexed_json
@@ -128,4 +141,22 @@ class Helpdesk::Tag < ActiveRecord::Base
             :only => [ :name, :tag_uses_count, :account_id ]
             }).to_json
   end
+  
+  def to_esv2_json
+    as_json({
+        root: false,
+        tailored_json: true,
+        only: [ :name, :tag_uses_count, :account_id ]
+      }).to_json
+  end
+  
+  private
+    
+    def update_taggables
+      SearchV2::IndexOperations::UpdateTaggables.perform_async({ :tag_id => self.id }) if Account.current.features?(:es_v2_writes)
+    end
+    
+    def remove_taguses
+      TagUsesCleaner.perform_async({ tag_id: self.id })
+    end
 end

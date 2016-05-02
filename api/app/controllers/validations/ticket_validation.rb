@@ -1,7 +1,11 @@
 class TicketValidation < ApiValidation
-  attr_accessor :id, :cc_emails, :description, :description_html, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
+  MANDATORY_FIELD_ARRAY = [:requester_id, :phone, :email, :twitter_id, :facebook_id].freeze
+  MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
+  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(fr_due_by due_by subject description)).freeze
+
+  attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
-                :product, :tags, :custom_fields, :attachments, :request_params, :item, :status_ids, :ticket_fields
+                :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -9,24 +13,34 @@ class TicketValidation < ApiValidation
   alias_attribute :responder_id, :agent
 
   # Default fields validation
-  validates :source, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
+  validates :subject, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
+  validates :description, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
+  validates :email_config_id, :subject, :email, required: { message: :field_validation_for_outbound }, on: :compose_email
+  validates :description, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
-                              }
+                              }, if: :create_or_update?
 
+  validates :description, :ticket_type, :status, :priority, :group, default_field:
+                              {
+                                required_fields: proc { |x| x.required_default_fields },
+                                field_validations: proc { |x| x.default_field_validations }
+                              }, on: :compose_email
+
+  validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true }, on: :update
+  validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0  }
 
-  validates :requester_id, required: { allow_nil: false, message: :requester_id_mandatory }, if: :requester_id_mandatory? # No
+  validate :requester_detail_missing, if: -> { create_or_update? && requester_id_mandatory? }
+  # validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No
   validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: :name_required?  # No
-  validates :name, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? }
-  validates :description, data_type: { rules: String, required: true }
-  validates :description_html, data_type: { rules: String, allow_nil: true }
+  validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
   # Due by and First response due by validations
   # Both should not be present in params if status is closed or resolved
-  validates :fr_due_by, custom_absence: { allow_nil: true, message: :incompatible_field }, if: :disallow_fr_due_by?
-  validates :due_by, custom_absence: { allow_nil: true, message: :incompatible_field }, if: :disallow_due_by?
+  validates :fr_due_by, custom_absence: { allow_nil: true, message: :cannot_set_due_by_fields }, if: :disallow_fr_due_by?
+  validates :due_by, custom_absence: { allow_nil: true, message: :cannot_set_due_by_fields }, if: :disallow_due_by?
   # Either both should be present or both should be absent, cannot send one of them in params.
   validates :due_by, required: { message: :due_by_validation }, if: -> { fr_due_by && errors[:fr_due_by].blank? }
   validates :fr_due_by, required: { message: :fr_due_by_validation }, if: -> { due_by && errors[:due_by].blank? }
@@ -39,22 +53,23 @@ class TicketValidation < ApiValidation
   validate :due_by_gt_fr_due_by, if: -> { (@due_by_set || @fr_due_by_set) && due_by && fr_due_by && errors[:due_by].blank? && errors[:fr_due_by].blank? }
 
   # Attachment validations
-  validates :attachments, presence: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
+  validates :attachments, required: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
   validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
   validates :attachments, file_size:  {
-    min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
-    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) }
-  }, if: -> { attachments }
+    max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
+    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) } }
 
   # Email related validations
-  validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, if: :email_required?
-  validates :email, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? }
-  validates :cc_emails, data_type: { rules: Array }, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
-  validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
+  validates :email, data_type: { rules: String, allow_nil: true }
+  validates :email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address', allow_nil: true }
+  validates :email, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+  validates :cc_emails, data_type: { rules: Array }, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, accepted: :'valid email address' } }
+
+  validates :cc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message_options: { element_type: :values } }
 
   # Tags validations
-  validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String,  allow_nil: true }, length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING, message: :too_long,  allow_nil: true } }
-  validates :tags, string_rejection: { excluded_chars: [','] }
+  validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }
+  validates :tags, string_rejection: { excluded_chars: [','], allow_nil: true }
 
   # Custom fields validations
   validates :custom_fields, data_type: { rules: Hash }
@@ -63,37 +78,39 @@ class TicketValidation < ApiValidation
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required,
-                                ignore_string: :allow_string_param
+                                ignore_string: :allow_string_param,
+                                section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
                            }
-  validates :twitter_id, :phone, data_type: { rules: String, allow_nil: true }
-  validates :twitter_id, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:twitter_id].blank? }
-  validates :phone, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:phone].blank? }
+  validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
+  validates :twitter_id, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+  validates :phone, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
+    @status_ids = request_params[:statuses].map(&:status_id)
     super(request_params, item, allow_string_param)
-    @description = request_params[:description_html] if should_set_description?(request_params)
-    check_params_set(request_params, item)
+    @description = item.description_html if !request_params.key?(:description) && item
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
     @due_by ||= item.try(:due_by).try(:iso8601) if item
     @item = item
+    check_params_set(request_params[:custom_fields]) if request_params[:custom_fields].is_a?(Hash)
+    fill_custom_fields(request_params, item.custom_field_via_mapping) if item && item.custom_field_via_mapping.present?
   end
 
-  def should_set_description?(request_params)
-    request_params[:description].nil? && request_params[:description_html].present?
+  def requester_detail_missing
+    field = MANDATORY_FIELD_ARRAY.detect { |x| instance_variable_defined?("@#{x}_set") }
+    field ? error_options[field] = { code: :invalid_value } : field = :requester_id
+    errors[field] = :fill_a_mandatory_field
+    (error_options[field] ||= {}).merge!(field_names: MANDATORY_FIELD_STRING)
   end
 
   def requester_id_mandatory? # requester_id is must if any one of email/twitter_id/fb_profile_id/phone is not given.
-    email.blank? && twitter_id.blank? && phone.blank? && facebook_id.blank?
+    MANDATORY_FIELD_ARRAY.all? { |x| send(x).blank? && errors[x].blank? }
   end
 
   def name_required? # Name mandatory if phone number of a non existent contact is given. so that the contact will get on ticket callbacks.
     email.blank? && twitter_id.blank? && facebook_id.blank? && phone.present? && requester_id.blank?
-  end
-
-  def email_required? # Email required if twitter_id/fb_profile_id/phone/requester_id is blank.
-    email.present? && twitter_id.blank? && facebook_id.blank? && phone.blank? && requester_id.blank?
   end
 
   def due_by_gt_created_at
@@ -113,13 +130,6 @@ class TicketValidation < ApiValidation
     end
   end
 
-  def cc_emails_max_count
-    if cc_emails.count >= ApiTicketConstants::MAX_EMAIL_COUNT
-      errors[:cc_emails] << :max_count_exceeded
-      (self.error_options ||= {}).merge!(cc_emails: { max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}" })
-    end
-  end
-
   def required_based_on_status?
     status.respond_to?(:to_i) && [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
   end
@@ -134,7 +144,7 @@ class TicketValidation < ApiValidation
   end
 
   def disallowed_status?
-    errors[:status].blank? && [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
+    errors[:status].blank? && statuses.detect{|x| x.status_id == status.to_i }.stop_sla_timer
   end
 
   def attributes_to_be_stripped
@@ -146,16 +156,32 @@ class TicketValidation < ApiValidation
     ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status)) }
   end
 
+  def sources
+    if Account.current.compose_email_enabled?
+      ApiTicketConstants::SOURCES | [TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+    else
+      ApiTicketConstants::SOURCES
+    end
+  end
+
+  def create_or_update?
+    [:create, :update].include?(validation_context)
+  end
+
+  def source_as_outbound_email?
+    @outbound_email ||= (source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?
+  end
+
   def default_field_validations
     {
       status: { custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param, detect_type: true } },
       priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param, detect_type: true } },
-      source: { custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true } },
       ticket_type: { custom_inclusion: { in: proc { TicketsValidationHelper.ticket_type_values } } },
       group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       product: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
-      subject: { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
+      subject: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+      description: { data_type: { rules: String } }
     }
   end
 end

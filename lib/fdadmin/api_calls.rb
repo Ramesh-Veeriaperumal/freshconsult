@@ -1,7 +1,7 @@
 module Fdadmin::APICalls
 
   include Fdadmin::ApiCallConstants
-
+    
   def connect_main_pod(request_parameters)
     make_api_request_to_global(
       :post,
@@ -31,7 +31,6 @@ module Fdadmin::APICalls
     rescue Exception => e
       Rails.logger.debug "Exception in Response for #{request_url} : : : : #{e.inspect} "
       NewRelic::Agent.notice_error(e,{:description => "POD api call failed :#{url_params}"})
-      raise e
     end
     return response
   end

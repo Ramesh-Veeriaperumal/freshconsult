@@ -11,6 +11,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
     resource :"search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
+    resource :"search/v2/autocomplete", :only => [:requesters, :agents, :companies, :tags]
     resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets,
                                            :user_ticket, :search_tweets, :custom_search, :export_csv, :latest_ticket_count, :add_requester, :view_ticket,
                                            :spam, :unspam, :execute_scenario, :pick_tickets,
@@ -69,6 +70,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/queue", :only => [:bridge]
     resource :"freshfone/addres"
     resource :"freshfone/caller"
+    resource :"freshfone/caller_id"
     resource :"freshfone/dashboard", :only => [:dashboard_stats, :calls_limit_notificaiton, :mute]
 
     resource :"helpdesk/conversation", :only => [:note, :full_text]
@@ -77,8 +79,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/scenario_automation"
     resource :agent, :only => [:toggle_availability, :list]
     resource :"search/home", :only => [:index, :suggest]
+    resource :"search/v2/suggest", :only => [:index]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
+    resource :"search/v2/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/ticket", :only => [:index]
+    resource :"search/v2/ticket", :only => [:index]
+    resource :"search/v2/spotlight", :only => [:all, :tickets]
     resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
@@ -98,8 +104,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"profile"
 
     # Used for API V2
-    resource :"ticket", :only => [:show, :create, :index]
     resource :"conversation", only: [:create, :ticket_conversations]
+    resource :"ticket", :only => [:show, :create, :index, :search]
 	end
 
   reply_ticket do
@@ -182,6 +188,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/article", :only => [:index, :show, :voted_users]
     resource :"search/home", :only => [:solutions]
     resource :"search/solution", :only => [:index]
+    resource :"search/v2/spotlight", :only => [:solutions]
     resource :"helpdesk/ticket", :only => [:get_solution_detail]
     resource :"solution/draft", :only => [:index]
   end
@@ -219,7 +226,9 @@ Authority::Authorization::PrivilegeList.build do
     # review code for monitorship?
     resource :"search/home", :only => [:topics]
     resource :"search/forum", :only => [:index]
+    resource :"search/v2/spotlight", :only => [:forums]
     resource :"search/merge_topic", :only => [:index]
+    resource :"search/v2/merge_topic", :only => [:search_topics]
     resource :forums_uploaded_image, :only => [:create]
     resource :monitorship, :only => [:followers]
 
@@ -284,11 +293,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
     resource :"search/customer", :only => [:index]
+    resource :"search/v2/spotlight", :only => [:customers]
 
     # Used by V2 API
     resource :"api_contact", :only => [:index, :show]
     resource :"api_company", :only => [:index, :show]
-    resource :"api_agent", :only => [:show]
   end
 
   # add_or_edit_contact
@@ -299,8 +308,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :update_notes, :quick, :sla_policies, 
                 :configure_export, :export_csv]
     resource :"search/autocomplete", :only => [:companies]
+    resource :"search/v2/autocomplete", :only => [:companies]
     resource :customers_import
     resource :contact_merge
+    resource :"search/v2/merge_contact", :only => [:index]
     resource :user_email
     resource :"segment/identify"
     resource :"segment/group"
@@ -368,7 +379,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
-    resource :user, :only => [:assume_identity]
+    resource :user, :only => [:assume_identity, :assumable_agents]
 
     # Used by V2 API
     resource :"api_contact", :only => [:make_agent]
@@ -449,12 +460,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/select_all_ticket_action"
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
     resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
-    resource :"integrations/github", :only => [:new, :install, :edit, :update ]
+    resource :"integrations/github", :only => [:new, :install, :edit, :update, :oauth_install]
     resource :"integrations/salesforce"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
     resource :"admin/integrations/freshplug"
-    resource :"admin/extension"
-    resource :"admin/installed_extension"
+    resource :"admin/marketplace/extension"
+    resource :"admin/marketplace/installed_extension"
     resource :"doorkeeper/authorization"
   	resource :"admin/ecommerce/account",:only => [:index]
     resource :"admin/ecommerce/ebay_account"

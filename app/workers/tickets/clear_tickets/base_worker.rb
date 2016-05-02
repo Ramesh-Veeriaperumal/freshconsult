@@ -26,7 +26,7 @@ class Tickets::ClearTickets::BaseWorker
     }})
     raise e
   ensure
-    $redis_tickets.del key if params[:clear_all].present?
+    $redis_tickets.perform_redis_op("del", key) if params[:clear_all].present?
   end
 
   protected

@@ -1,10 +1,10 @@
 class ApiCompaniesController < ApiApplicationController
   decorate_views
 
-  around_filter :run_on_slave, :only => [:index]
+  around_filter :run_on_slave, only: [:index]
 
   def create
-    company_delegator = CompanyDelegator.new(@item)
+    company_delegator = CompanyDelegator.new(@item, custom_fields: params[cname][:custom_field])
     if !company_delegator.valid?
       render_custom_errors(company_delegator, true)
     elsif @item.save
@@ -15,8 +15,9 @@ class ApiCompaniesController < ApiApplicationController
   end
 
   def update
-    @item.assign_attributes(params[cname])
-    company_delegator = CompanyDelegator.new(@item)
+    custom_fields = params[cname].delete(:custom_field)
+    @item.assign_attributes(custom_field: custom_fields) # Temp hack
+    company_delegator = CompanyDelegator.new(@item, custom_fields: custom_fields)
     if !company_delegator.valid?
       render_custom_errors(company_delegator, true)
     elsif !@item.update_attributes(params[cname])
@@ -70,7 +71,7 @@ class ApiCompaniesController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields({ base: :domains }.merge(@name_mapping), item)
+      ErrorHelper.rename_error_fields(CompanyConstants::FIELD_MAPPINGS.merge(@name_mapping), item)
     end
 
     def error_options_mappings

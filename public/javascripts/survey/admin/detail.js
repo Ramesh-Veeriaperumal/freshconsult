@@ -17,53 +17,56 @@ var SurveyDetail = {
 				}
 			});
 	 },
+	 createChoices:function(choices){
+	 	var formattedChoices = [];
+	 	for(var i=0;i<choices.length;i++){
+			formattedChoices[i]={};
+			if(choices[i].value.trim().length == 0){
+				formattedChoices[i].value = choices[i].placeholder;
+			}else{
+				formattedChoices[i].value = choices[i].value;
+			}
+			formattedChoices[i].face_value = jQuery(choices[i]).data('face-value');
+			formattedChoices[i].position = jQuery(choices[i]).data('position') || (i+1);
+			formattedChoices[i]._destroy = 0;
+		}
+		return formattedChoices;
+	 },
+
 	 parseFormData:function(obj){
 		var survey_fields = jQuery("form[name=survey_fields]").serializeArray();
 		var survey = {};
-		survey["choices"] = [];
 		for(var i=0;i<survey_fields.length;i++){
 			var element = survey_fields[i];
-			if((element.name!="" && element.name!="can_comment" 
-									&& element.name!="survey-scale" 
-									&& element.name.indexOf("scale")==-1
-									&& element.name.indexOf("question")==-1)
-				|| element.name.indexOf("question_id")!=-1){
+			if(element.name=="title_text" 
+					|| element.name=="thanks_text"
+					|| element.name=="comments_text"
+					|| element.name=="feedback_response_text"
+					|| element.name=="send_while"){
+				survey[element.name] = element.value  || jQuery("input[name="+element.name+"]").attr('placeholder');
+			}
+		}
 
-					survey[element.name] = element.value;
-			}
-		}
-		
 		survey["can_comment"] = jQuery("input[name=can_comment]").length > 0 ? jQuery("input[name=can_comment]")[0].checked : true;
-		var scale = jQuery("textarea[name=survey-scale]");
-		for(var i=0;i<scale.length;i++){
-			if(scale[i].value.trim().length == 0){
-				survey["choices"].push([scale[i].placeholder,jQuery(scale[i]).data('face-value')]);
-			}
-			else{
-				survey["choices"].push([scale[i].value,jQuery(scale[i]).data('face-value')]);
-			}
-		}
-		
 		survey.active = jQuery("input[name=active]").length > 0 ? jQuery("input[name=active]")[0].checked : false;
+
+		var scale = jQuery("textarea[name=survey-scale]");
+		var default_question = {
+			choices: this.createChoices(scale),
+			id: jQuery("input[name=question_id]"),
+			link_text: jQuery("input[name=link_text]").val()  || surveysI18n.link_text_input_label,
+			choicemap: jQuery("input[name=link_text]").data('choicemap')
+		};
+	
 		var survey_questions = [];
+		var default_question_format = SurveyQuestion.defaultFormat(default_question);
+		survey_questions.push(default_question_format);
 		var jsonData = jQuery(jQuery(obj).find("input[name=jsonData]")[0]).val();
 		if(jsonData != ""){ jsonData = JSON.parse(jsonData); }
-		// var surveyQuestionForm = jQuery("form[name=survey_question_fields]")	;
 		var surveyQuestionForm = jQuery(obj);
 		var survey_choices = jQuery("textarea[name^=question-scale]");
+		var choices = this.createChoices(survey_choices);
 		var survey_question_fields = jQuery("input[name^=survey_question]");
-		var choices = [];
-		for(var i=0;i<survey_choices.length;i++){
-			if(survey_choices[i].value.trim().length == 0){
-				choices[i] = [survey_choices[i].placeholder,jQuery(survey_choices[i]).data('face-value')];
-			}else{
-				choices[i] = [survey_choices[i].value,jQuery(survey_choices[i]).data('face-value')];
-			}
-			var position = (i+1);
-			if(jQuery(survey_choices[i]).data('position')){ position = jQuery(survey_choices[i]).data('position'); }
-			choices[i].push(position);
-		}
-
 		for(i=0;i<survey_question_fields.length;i++){
 				var name = jQuery(survey_question_fields[i])[0].name;
 				var question_format = null;
@@ -75,10 +78,20 @@ var SurveyDetail = {
 				}
 				survey_questions.push(question_format);
 		}
-
+		if(SurveyQuestion.removeFlag){
+			for(i=0;i<jsonData.length;i++){
+				if(jsonData[i].id){
+					SurveyQuestion.items.push(jsonData[i].id);
+				} 
+			}
+		}
+	    	for(i=0;i<SurveyQuestion.items.length;i++){
+	    		var deleted_format = SurveyQuestion.deletedFormat(SurveyQuestion.items[i]);
+			survey_questions.push(deleted_format);
+	   	 }
+	    survey_questions = SurveyQuestion.formatChoices(survey_questions);
 		jQuery(obj).find("input[name=survey]").val(SurveyJSON.stringify(survey));
 		jQuery(obj).find("input[name=jsonData]").val(SurveyJSON.stringify(survey_questions));
-		jQuery(obj).find("input[name=deleted]").val(SurveyQuestion.items);
     		return survey_question_fields;
 	},
 	rating:{
@@ -104,6 +117,7 @@ var SurveyDetail = {
 	thanks:{
 		create:function(view){
 			view.surveyLimit = SurveyAdmin.fullSurvey;
+			view.hasLayoutCustomization = SurveyAdmin.hasLayoutCustomization;
 			jQuery('#survey_thanks').html(JST["survey/admin/template/new_thanks"](view));
 		}
 	}

@@ -20,10 +20,8 @@ class HttpRequestProxyController < ApplicationController
       if params[:use_server_password].present?
         installed_app = current_account.installed_applications.with_name(params[:app_name]).first
         if params[:app_name] == "icontact"
-          config = File.join(Rails.root, 'config', 'integrations_config.yml')
-          key_hash = (YAML::load_file config)["icontact"]
-          params[:custom_auth_header] = { "API-Version" => "2.0", "API-AppId" => key_hash["app_id"],
-           "API-Username" => installed_app.configs_username, 
+          params[:custom_auth_header] = { "API-Version" => "2.0", "API-AppId" => Integrations::ICONTACT_APP_ID,
+           "API-Username" => installed_app.configs_username,
            "API-Password" => installed_app.configsdecrypt_password }
         elsif params[:app_name] == APP_NAMES[:surveymonkey] and params[:domain]=='api.surveymonkey.net'
           render :status => :unauthorized and return unless current_user.privilege?(:admin_tasks)
@@ -48,7 +46,7 @@ class HttpRequestProxyController < ApplicationController
         elsif params[:app_name] == APP_NAMES[:sugarcrm]
           company_name = ""
           if params[:company_id].present?
-            company_name = spl_char_replace current_account.customers.find(params[:company_id]).name
+            company_name = spl_char_replace current_account.companies.find(params[:company_id]).name
           end
     		  params[:body] = params[:body] % { :SESSION_ID => installed_app.configs[:inputs]['session_id'], :company_name => company_name}
         else

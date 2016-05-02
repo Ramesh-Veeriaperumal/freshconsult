@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "3094f0fc198eb3e686d99a4f3b4b32cf1b4b92fcc0dfaf87d4ab72cb149bbc13",
-    "current": "3094f0fc198eb3e686d99a4f3b4b32cf1b4b92fcc0dfaf87d4ab72cb149bbc13"
+    "previous": "f4c87aab366a1f4a1e3e245ab4e6aceb1584e5696913e6f35afa9737016130b7",
+    "current": "f4c87aab366a1f4a1e3e245ab4e6aceb1584e5696913e6f35afa9737016130b7"
   },
   "fonts": [
-    "public/assets/glyphs_3094f0fc198eb3e686d99a4f3b4b32cf.ttf",
-    "public/assets/glyphs_3094f0fc198eb3e686d99a4f3b4b32cf.svg",
-    "public/assets/glyphs_3094f0fc198eb3e686d99a4f3b4b32cf.woff",
-    "public/assets/glyphs_3094f0fc198eb3e686d99a4f3b4b32cf.eot"
+    "public/assets/glyphs_f4c87aab366a1f4a1e3e245ab4e6aceb.ttf",
+    "public/assets/glyphs_f4c87aab366a1f4a1e3e245ab4e6aceb.svg",
+    "public/assets/glyphs_f4c87aab366a1f4a1e3e245ab4e6aceb.woff",
+    "public/assets/glyphs_f4c87aab366a1f4a1e3e245ab4e6aceb.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -57,6 +57,10 @@
     "apple": {
       "codepoint": 61702,
       "source": "public/glyphs/vectors/apple.svg"
+    },
+    "apps": {
+      "codepoint": 61971,
+      "source": "public/glyphs/vectors/apps.svg"
     },
     "archived-ticket": {
       "codepoint": 61955,
@@ -254,6 +258,10 @@
       "codepoint": 61737,
       "source": "public/glyphs/vectors/cross.svg"
     },
+    "cross-round": {
+      "codepoint": 61972,
+      "source": "public/glyphs/vectors/cross-round.svg"
+    },
     "crown": {
       "codepoint": 61738,
       "source": "public/glyphs/vectors/crown.svg"
@@ -261,6 +269,14 @@
     "cube": {
       "codepoint": 61917,
       "source": "public/glyphs/vectors/cube.svg"
+    },
+    "cube-filled": {
+      "codepoint": 61976,
+      "source": "public/glyphs/vectors/cube-filled.svg"
+    },
+    "cubes": {
+      "codepoint": 61977,
+      "source": "public/glyphs/vectors/cubes.svg"
     },
     "customer-fields": {
       "codepoint": 61739,
@@ -321,6 +337,10 @@
     "decimal": {
       "codepoint": 61897,
       "source": "public/glyphs/vectors/decimal.svg"
+    },
+    "delete": {
+      "codepoint": 61973,
+      "source": "public/glyphs/vectors/delete.svg"
     },
     "deleted": {
       "codepoint": 61875,
@@ -611,7 +631,7 @@
       "source": "public/glyphs/vectors/infinity-5.svg"
     },
     "integrations": {
-      "codepoint": 61788,
+      "codepoint": 61974,
       "source": "public/glyphs/vectors/integrations.svg"
     },
     "ios": {
@@ -993,6 +1013,10 @@
     "text": {
       "codepoint": 61848,
       "source": "public/glyphs/vectors/text.svg"
+    },
+    "tick": {
+      "codepoint": 61975,
+      "source": "public/glyphs/vectors/tick.svg"
     },
     "ticket": {
       "codepoint": 61849,

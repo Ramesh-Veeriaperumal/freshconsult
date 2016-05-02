@@ -37,7 +37,7 @@ var Feedback = {
 			}
 		}
 		if(isCommentable){
-			params["feedback"] = jQuery("input[name=feedback]").val();
+			params["feedback"] = jQuery("textarea[name=feedback]").val();
 		}
 		params["custom_field"] = custom_fields;
 		return params;
@@ -65,9 +65,23 @@ var Feedback = {
 			jQuery('.loading').show();
 			jQuery('.loading').text(surveyFeedbackI18n.portalMsg);
 			setTimeout(function(){ 
+				parent.window.opener.location.reload();
 				window.close();
-				window.opener.location.reload();
 			}, 3000);
 		}
+	},
+	surveySaveHit: function(rating,survey_code){
+		var hitUrl = "/support/custom_surveys/"+survey_code + "/"+rating+"/hit";
+		jQuery.ajax({
+			url: hitUrl,
+			type: "GET",
+			success:function(data){
+				jQuery("#survey_form").attr("action",data.submit_url);
+             		},
+			error: function (error) {
+	                	console.log(error);
+	                }
+		});
+
 	}
 }

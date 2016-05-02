@@ -81,11 +81,13 @@ module Mobile::Actions::Ticket
   
 	def to_mob_json_index
     options = { 
+      :root => 'helpdesk_ticket',
+      :tailored_json => true,
       :only => [ :id, :display_id, :subject, :priority, :status, :updated_at, :created_at],
       :methods => [ :ticket_subject_style,:ticket_sla_status,:ticket_sla_status_type, :status_name, :priority_name, :source_name, :requester_name,
                     :responder_name, :company_name,:need_attention, :pretty_updated_date ,:ticket_current_state]
     }
-    as_json(options,false) 
+  as_json(options,false) 
   end
   
 	def to_mob_json_search
@@ -121,16 +123,16 @@ module Mobile::Actions::Ticket
   end
 
   def ticket_sla_status
-    closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account)
+    closed_status = account.onhold_and_closed_statuses_from_cache
     sla_status(self,closed_status);
   end
 
   def ticket_sla_status_type
-      Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account).include?(self.status)
+      account.onhold_and_closed_statuses_from_cache.include?(self.status)
   end
   
   def ticket_subject_style
-    closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account)
+    closed_status = account.onhold_and_closed_statuses_from_cache
     subject_style(self,closed_status)
   end
 

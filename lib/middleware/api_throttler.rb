@@ -17,12 +17,14 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     @app = app
   end
 
-  def allowed?
+  def allowed?(env)
     begin
-      Sharding.select_shard_of(@account_id) do 
-        current_account = Account.find(@account_id)
+      return true if !env['SHARD'].present? || !env['SHARD'].ok?
+
+      Sharding.run_on_shard(env['SHARD'].shard_name) do 
         api_key = API_LIMIT% {:account_id => @account_id}
         api_limit = MemcacheKeys.fetch(api_key) do
+          current_account = Account.find(@account_id)
           current_account.api_limit.to_i
         end
         return true if by_pass_throttle?
@@ -48,12 +50,19 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
       @status, @headers, @response = @app.call(env)
       return [@status, @headers, @response]
     end
-    domain = DomainMapping.find_by_domain(env["HTTP_HOST"])
-    @account_id = domain.account_id if domain
-    pod_info = domain.shard.pod_info if domain
+
+    shard = ShardMapping.lookup_with_domain(env["HTTP_HOST"])
+    if shard
+      env['SHARD'] = shard
+      @account_id = shard.account_id
+      pod_info = shard.pod_info
+    else
+      env['SHARD'] = nil
+    end
+
     if PodConfig['CURRENT_POD'] != pod_info
       @status, @headers, @response = @app.call(env)
-    elsif allowed?
+    elsif allowed? env
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
         remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
@@ -62,7 +71,9 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
         set_others_redis_key(key+"_expiry",1,ONE_HOUR) if value == 1
       end
     else
-      @status, @headers,@response = [403, {'Retry-After' => retry_after,'Content-Type' => 'text/html'}, 
+      retry_value = retry_after
+      Rails.logger.error("API V1 Ratelimit Error :: Account: #{@account_id}, Host: #{@host}, Count: #{@count}, Retry-After: #{retry_value}, Time: #{Time.now}")
+      @status, @headers,@response = [403, {'Retry-After' => retry_value,'Content-Type' => 'text/html'}, 
                                       ["You have exceeded the limit of requests per hour"]]
     end
     

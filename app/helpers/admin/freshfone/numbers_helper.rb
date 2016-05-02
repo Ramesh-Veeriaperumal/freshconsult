@@ -113,4 +113,11 @@ module Admin::Freshfone::NumbersHelper
     return if ff_account.blank?
     ff_account.active? || ff_account.trial? || ff_account.trial_exhausted?
   end
+
+  def outgoing_caller(number)
+		return number.freshfone_caller_id.id if number.freshfone_caller_id.present?
+		return current_account.freshfone_caller_id.first.id if current_account.freshfone_caller_id.first.present?
+		return {}
+	end
+
 end

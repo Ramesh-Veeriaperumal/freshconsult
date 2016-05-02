@@ -64,9 +64,13 @@ var SurveyChart = {
               offset: 15,
               labels: {
                   enabled: true,
-                  y: 4,  
+                  useHTML: true,
+                  y: 6,  
                   style: {
                       fontSize: '12px'
+                  },
+                  formatter: function(){
+                    return "<span>" + this.value + "</span>";
                   }
               }
           },
@@ -80,26 +84,26 @@ var SurveyChart = {
             gridLineWidth:0
           },
           plotOptions: {
-              series: {
-                stacking: 'normal',
-                pointWidth: 10,
-								borderWidth: 2,
-                borderRadius: 5,
-								shadow: false,
-                dataLabels: {
-                  enabled: true,
-                  align: 'right',
-                  x: 15,
-                  y: -2,
-                  style: {
-                      fontWeight: 'bold',
-                      fontSize: '12px'
-                  },
-                  formatter: function(){
-                    return (this.y>0)? this.y : null;
-                  }
-                }
+            series: {
+              stacking: 'normal',
+              pointWidth: 10,
+							borderWidth: 2,
+              borderRadius: 5,
+							shadow: false,
+              dataLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    fontSize: '12px'
+                },
+                formatter: function(){
+                  return (this.y>0)? this.y : null;
+                },
+                align: 'right',
+                x: 30,
+                y: -2
               }
+            }
           },
           legend: {
               layout: 'horizontal',
@@ -149,9 +153,9 @@ var SurveyChart = {
                           data:[0,3]
                       },
                       {
-                              name: "Happy",
-                              color: "#a9d340",
-                              data:[0,0,4]
+                          name: "Happy",
+                          color: "#a9d340",
+                          data:[0,0,4]
                       },
                       {
                           name: "Neutral",
@@ -165,7 +169,7 @@ var SurveyChart = {
                       },
                       {
                           name: "Very Unhappy",
-                          color: "darkorange",
+                          color: "#ff8c00",
                           data:[0,0,0,0,0,5]
                       },
                       {

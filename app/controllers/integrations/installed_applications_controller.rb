@@ -4,8 +4,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   include Integrations::AppsUtil
   include Integrations::Slack::SlackConfigurationsUtil #Belongs to Old Slack. Remove when Slack v1 is obselete.
-  include Integrations::GoogleAccountsHelper
-  helper Integrations::GoogleAccountsHelper
 
   before_filter :strip_slash, :only => [:install, :update]
   before_filter :load_object
@@ -35,8 +33,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       if successful
         if @installing_application.name == "google_contacts"
           Rails.logger.info "Redirecting to google_contacts oauth."
-          redirect_to "#{oauth2_url(@installed_application)}"
-          return
+          oauth_url = @installed_application.application.oauth_url({:account_id => current_account.id, :portal_id => current_portal.id})
+          redirect_to "#{oauth_url}" and return
         end
         flash[:notice] = t(:'flash.application.install.success')
       else

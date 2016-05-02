@@ -3,9 +3,14 @@
 <% content_for :helpcard do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-
 <!-- TITLE -->
 <% if feature?(:marketplace) %>
+  <div class="new-launch">
+    <p>
+      <%= t('marketplace.app_gallery_launch_text').html_safe %>
+    </p>
+    <a href="<%= t('marketplace.app_gallery_blog_post') %>" target="_blank" class="help-link"><%= t('marketplace.app_gallery_link_text') %></a>
+  </div>
   <h3 class="title"><%=t('marketplace.apps')%></h3>
   <div class="intro"><%=t('marketplace.app_description')%></div>
 <% else %>
@@ -15,23 +20,33 @@
 
 <div id="integrations-list">
   <div>
+    <div class="tab-actions">
+      <% if feature?(:marketplace) %>
+        <div class="button-bar browse-apps pull-right">
+          <a class="browse-btn btn btn-flat" href="" data-url="<%= admin_marketplace_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %></a>
+        </div>
+      <% end %>
+      <div class="button-bar create-new pull-right" style="display:none;">
+        <%= link_to t('integrations.custom_application.new_custom_app').html_safe, new_admin_integrations_freshplug_path, :class =>"btn btn-flat" %>
+      </div>
+    </div>
     <ul class="tabs nav-tabs sleek-tab" id="myTab">
       <li class="active">
         <% if feature?(:marketplace) %>
-          <a href="#apps" data-toggle="tab"><%= t('marketplace.apps').html_safe %></a>
+          <a href="#apps" class="mkt-apps" data-toggle="tab"><%= t('marketplace.apps').html_safe %></a>
         <% else %>
-          <a href="#native-apps" data-toggle="tab"><%= t('integrations.native_integrations') %></a>
+          <a href="#native-apps" class="nat-apps" data-toggle="tab"><%= t('integrations.native_integrations') %></a>
         <% end %>
       </li>
       <li>
-        <a href="#plugs" data-toggle="tab"><%= t('marketplace.plugs') %></a>
+        <a href="#custom_apps" class="cla-plugs" data-toggle="tab"><%= t('marketplace.custom_apps') %></a>
       </li>
     </ul>
 
     <div id="myTabContent" class="tab-content">
       <% if feature?(:marketplace) %>
         <%= render :partial => '/admin/marketplace/marketplace_apps', :locals => { 
-                   :installed_plugs => @installed_plugs } %>
+                   :installed_mkp_apps => @installed_mkp_apps } %>
       <% else %>
        <%= render :partial => 'native_integrations', :locals => { :applications => @applications, 
                   :installed_applications => @installed_applications } %>
@@ -57,6 +72,7 @@
     var customMessages  = {
                             delete_success: "<%= I18n.t('marketplace.delete_action.success') %>",
                             delete_error: "<%= I18n.t('marketplace.delete_action.error') %>",
+                            api_error : "<%= I18n.t('marketplace.api_error') %>",
                             no_connection: "<%= I18n.t('marketplace.no_connection') %>"
                           };
     var marketplaceBrowser = new MarketplaceBrowser(settingsLinks, customMessages);

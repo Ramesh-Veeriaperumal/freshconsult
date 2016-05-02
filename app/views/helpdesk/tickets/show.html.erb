@@ -23,7 +23,7 @@
 						<% end %>
 					</div>
 				</div>
-				<div class="conversation_thread hide" id="show_more">
+				<div class="conversation_thread hide" id="show_more" data-domhelper-name="show-more">
 					<div class="conversation">
 						<a href="" class="avatar-wrap avatar-wrap-collapse"><p>
 							<span class='count_number not_on_loading' rel='count-total-remaining'></span>
@@ -44,7 +44,7 @@
 
 <%= render :partial => "helpdesk/tickets/show/due_date" %>
 <% if current_account.features?(:collision) %>
-	<%= render :partial => "helpdesk/tickets/freshdesk_socket", :locals => {:ticket => @ticket } if current_account.agents_from_cache.count > 1%>
+	<%= render :partial => "helpdesk/tickets/freshdesk_socket", :locals => {:ticket => @ticket } if current_account.agents_details_from_cache.count > 1%>
 <% end %>
 
 

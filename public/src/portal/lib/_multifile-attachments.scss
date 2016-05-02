@@ -1,0 +1,122 @@
+
+  #attachment-type
+  {
+    padding: 10px 12px 0px;
+        .add_attachment{
+        color: #1272de;
+        cursor: pointer;
+        overflow: hidden;
+        position: relative;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 120px;
+        z-index: 2;
+    }
+    a{
+        color: #049cdb !important;
+        cursor: pointer !important;
+        text-decoration: none;
+    }
+
+  .attachments-list-wrap{
+    position: relative;
+    .attachments-list-form{
+        word-break: break-all;
+        .item{
+            font-size: 13px;
+            color: #555;
+            & > span:first-child{
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    width: 175px;
+                    display: inline-block;
+            }
+            .attachment-close{
+                position: relative;
+                top: -7px;
+            }
+        }
+    }
+    .widget-multiple-list{
+
+    }
+    .multiple-file-names-wrap{
+        position: relative;
+        box-sizing: border-box;
+        padding-bottom: 10px;
+        padding-right: 20px;
+        .attachment-close{
+            position: absolute;
+            left: 0px;
+            top: 0;
+        }
+        .multiple-file-names{
+            border-left: 1px #bbb solid;
+            margin-left: 20px;
+            padding: 0px 0px 0px 10px;
+            font-size: 13px;
+            color: #555;
+        }
+
+    }
+    
+  }
+
+.hidden_upload input[type="file"] {
+    cursor: pointer;
+    height: 22px;
+    opacity: 0;
+    position: relative;
+    right: 0;
+    top: -15px;
+    width: 120px;
+    z-index: 10;
+}
+.attachments-wrap .attachment-close::before {
+    color: #666;
+    content: "×";
+    font-size: 20px;
+    font-weight: bold;
+}
+.attachments-wrap .attachment-close {
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+}
+
+.alert-text {
+    color: red;
+}
+
+.screenshot-wrapper-30
+{
+    padding-top: 5px;
+
+}
+
+.dropdown-menu a {
+    clear: both;
+    color: #333 !important;
+    display: block;
+    font-weight: normal;
+    line-height: 16px;
+    padding: 3px 24px;
+    white-space: nowrap;
+}
+input[type="file"] {
+    cursor: pointer;
+    height: 26px;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 99999;
+}
+}

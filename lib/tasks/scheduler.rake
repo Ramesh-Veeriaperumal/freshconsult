@@ -281,7 +281,7 @@ namespace :scheduler do
   desc "Twitter replay worker"
   task :gnip_replay => :environment do
     disconnect_list = Social::Twitter::Constants::GNIP_DISCONNECT_LIST
-    $redis_others.lrange(disconnect_list, 0, -1).each do |disconnected_period|
+    $redis_others.perform_redis_op("lrange", disconnect_list, 0, -1).each do |disconnected_period|
       period = JSON.parse(disconnected_period)
       if period[0] && period[1]
         
@@ -292,7 +292,7 @@ namespace :scheduler do
           args = {:start_time => period[0], :end_time => period[1]}
           puts "Gonna initialize ReplayStreamWorker #{Time.zone.now}"
           Social::TwitterReplayStreamWorker.perform_async(args)
-          $redis_others.lrem(disconnect_list, 1, disconnected_period)
+          $redis_others.perform_redis_op("lrem", disconnect_list, 1, disconnected_period)
         end
       end
     end

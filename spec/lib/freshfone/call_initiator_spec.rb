@@ -5,6 +5,7 @@ RSpec.describe Freshfone::CallInitiator do
   
   before(:all) do
     @agent = get_admin
+    @account.freshfone_numbers.delete_all
   end
 
   before(:each) do

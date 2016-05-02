@@ -1,7 +1,7 @@
 module ApiDiscussions
   class CategoryValidation < ApiValidation
     attr_accessor :name, :description
-    validates :name, data_type: { rules: String, required: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
+    validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
     validates :description, data_type: { rules: String, allow_nil: true }
 
     def initialize(request_params, item)

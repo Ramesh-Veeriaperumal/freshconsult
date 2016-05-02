@@ -26,7 +26,7 @@
           </a>
             <input id="close_ticket_btn" class="btn tooltip" title="<%= t('ticket.close_without_notification') %>"
                 onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);"
-                type="button" value="<%=t('close')%>" disabled="disabled">
+                type="button" value="<%=t('close')%>" disabled="disabled" data-domhelper-name="ticket-close-button">
           <% end %>
 
           <% if privilege?(:edit_ticket_properties) || privilege?(:reply_ticket) %>
@@ -114,11 +114,15 @@
 
         </th>
         <%= render :partial => "/helpdesk/shared/select_all_toolbar" %>
-
-      	<th class="toolbar_right">
-
+        <% if @current_view == "deleted" || @current_view == "spam" %>
+          <th class="toolbar_right_spam_trash">        
+        <% else %>
+      	 <th class="toolbar_right">
+        <% end %>
           <% if @current_view == "deleted" %>
+            <span class="pl3 muted"> <%= t('ticket.auto_delete_notification_trash') %></span>
             <% if privilege?(:delete_ticket) and !trash_in_progress? && @items.length > 0 %>
+              <span class="muted"> - </span>
               <a href="#empty-trash-confirmation"
                 rel="freshdialog"
                 data-title="<%= t('ticket.empty_trash') %>"
@@ -137,7 +141,9 @@
                   type="button" value="Delete" />
             <% end %>
           <% elsif @current_view == "spam" %>
+            <span class="pl3 muted"> <%= t('ticket.auto_delete_notification_spam') %></span>
             <%if privilege?(:delete_ticket) and !spam_in_progress? && @items.length > 0 %>
+              <span class="muted"> - </span>
               <a href="#empty-spam-confirmation"
                 rel="freshdialog"
                 data-title="<%= t('ticket.empty_spam') %>"

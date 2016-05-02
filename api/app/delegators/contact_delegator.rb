@@ -1,8 +1,4 @@
-class ContactDelegator < SimpleDelegator
-  include ActiveModel::Validations
-
-  attr_accessor :error_options
-
+class ContactDelegator < BaseDelegator
   validates :company, presence: true, if: -> { company_id && changed.include?('customer_id') }
   validates :custom_field, custom_field: { custom_field: {
     validatable_custom_fields: proc { Account.current.contact_form.custom_drop_down_fields },
@@ -13,9 +9,10 @@ class ContactDelegator < SimpleDelegator
 
   validate :user_emails_validation, if: -> { @other_emails }
 
-  def initialize(record, other_emails=[])
-    @other_emails = other_emails
+  def initialize(record, options = {})
+    @other_emails = options[:other_emails]
     @user_id = record.id
+    check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     super(record)
   end
 
@@ -26,9 +23,8 @@ class ContactDelegator < SimpleDelegator
     # Find out the emails that are not associated to the current user
     invalid_emails = @other_emails.map { |x| x.email if id != x.user_id }.compact
     if invalid_emails.any?
-      errors[:other_emails] << :already_taken
+      errors[:other_emails] << :email_already_taken
       @error_options = { other_emails: { invalid_emails: "#{invalid_emails.join(', ')}" }  }
     end
   end
-
 end

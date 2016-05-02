@@ -11,7 +11,6 @@ if Rails.env.test?
       isescalated 0
       priority 1
       subject Faker::Lorem.sentence(3)
-      description Faker::Lorem.paragraph(3)
       cc_email(Helpdesk::Ticket.default_cc_hash.with_indifferent_access)
       created_at Time.now
     end
@@ -68,6 +67,9 @@ if Rails.env.test?
     end
 
     factory :picklist_value, :class => Helpdesk::PicklistValue do |f|
+    end
+
+    factory :ticket_status, :class => Helpdesk::TicketStatus do |f|
     end
 
     factory :section, :class => Helpdesk::Section do |s|

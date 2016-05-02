@@ -1,3 +1,5 @@
+#To be removed the next week
+
 class Social::Workers::Gnip::TwitterReplay
   include Social::Twitter::Constants
   include Social::Constants
@@ -14,7 +16,7 @@ class Social::Workers::Gnip::TwitterReplay
     response = client.start_replay
 
     unless response
-      $redis_others.lpush(GNIP_DISCONNECT_LIST,
+      $redis_others.perform_redis_op("lpush", GNIP_DISCONNECT_LIST,
                           [options[:start_time],options[:end_time]].to_json)
       options.merge!(:environment => Rails.env)
       notification_topic = SNS["social_notification_topic"]

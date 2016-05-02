@@ -1,8 +1,17 @@
-icontact:
- app_id: "qB7RYQgliAPwl5dwezYF0kAN4Islhj4e"
-xero:
- consumer_key: "GBCOF7ERX7TT1Y7ZHIFZR3UYH1R4WN"
- consumer_secret: "QSHJLDBPGOUO2PVT3I04OZUVHXXDI0"
-onedrive:
- client_id: "0000000044164F31"
- client_secret: "0aJhfYIgkDDPb-cE57TehreBwVlRKQd4" 
+app:
+  icontact:
+    app_id: "qB7RYQgliAPwl5dwezYF0kAN4Islhj4e"
+  xero:
+    consumer_key: "GBCOF7ERX7TT1Y7ZHIFZR3UYH1R4WN"
+    consumer_secret: "QSHJLDBPGOUO2PVT3I04OZUVHXXDI0"
+  onedrive:
+    client_id: "0000000044164F31"
+    client_secret: "0aJhfYIgkDDPb-cE57TehreBwVlRKQd4"
+marketplace_landing_paths:
+  github: "/integrations/github/oauth_install"
+  quickbooks: "/integrations/marketplace/quickbooks_sso/landing"
+  shopify: "/integrations/marketplace/shopify/landing"
+  google: "/integrations/marketplace/google/home"
+
+api_keys:
+  google_business_calendar: "AIzaSyCGPaSTHQRIbxBd-HVKJL510FSD4uVGHnU"

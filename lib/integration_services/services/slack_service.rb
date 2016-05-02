@@ -1,10 +1,6 @@
 module IntegrationServices::Services
   class SlackService < IntegrationServices::Service
 
-    def self.title
-      "Slack_V2"
-    end
-
     def receive_channels
       begin
         handle_success({ :channels => channel_resource.list })
@@ -217,7 +213,7 @@ module IntegrationServices::Services
         when "dm_agent"
           @configs["allow_dm"].present?
         else
-          @configs["public_channels"].include?(push_to) || @configs["private_channels"].include?(push_to)
+          Array.wrap(@configs["public_channels"]).include?(push_to) || Array.wrap(@configs["private_channels"]).include?(push_to)
         end
       end
 
@@ -284,7 +280,9 @@ module IntegrationServices::Services
 
       def handle_error e
         @logger.debug("slack_service error #{e.message}")
-        NewRelic::Agent.notice_error(e)
+        NewRelic::Agent.notice_error(e, {
+          :custom_params => { :account_id => Account.current.id, :payload => @payload.to_json }
+        })
         {:error => true, :error_message => e.message}
       end
 
