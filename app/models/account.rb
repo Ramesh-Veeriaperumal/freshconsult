@@ -127,6 +127,9 @@ class Account < ActiveRecord::Base
     freshchat_enabled? and features?(:chat_routing)
   end
 
+  def supervisor_feature_launched?
+    features?(:freshfone_call_monitoring) || launched?(:agent_conference)
+  end
   #Temporary feature check methods - using redis keys - starts here
   def compose_email_enabled?
     !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)

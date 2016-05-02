@@ -63,6 +63,28 @@ class Freshfone::Notifier
     end
   end
 
+  def notify_agent_conference(current_call, add_agent_call)
+    params.merge!({ call_id: current_call.id,
+                    add_agent_call_id: add_agent_call.id })
+    freshfone_user = current_account.freshfone_users
+                                     .find_by_user_id(add_agent_call.supervisor_id)
+    if freshfone_user.present?
+      Rails.logger.debug "Triggered sidekiq notification job for add agent
+                          #{freshfone_user.id} account #{@current_account.id} at
+                          #{Time.now.strftime('%H:%M:%S.%L')}"
+      return notify_mobile_agent_conference(current_call, add_agent_call) if freshfone_user.available_on_phone?
+      Freshfone::NotificationWorker.perform_async(params,
+                                                  add_agent_call.supervisor_id,
+                                                  'browser_agent_conference')
+    end
+  end
+
+  def notify_mobile_agent_conference(current_call, add_agent_call)
+    Freshfone::NotificationWorker.perform_async(params,
+                                                add_agent_call.supervisor_id,
+                                                'mobile_agent_conference')
+  end
+
   def notify_group_transfer(current_call, group_id, source_agent_id)
     freshfone_users = @current_account.freshfone_users.agents_in_group(group_id).online_agents
     freshfone_users.each do |agent|
@@ -110,6 +132,13 @@ class Freshfone::Notifier
     Rails.logger.info "cancel_other_agents => #{current_call.meta.pinged_agents.to_json}"
     params.merge!({ :call_id => current_call.id })
     Freshfone::NotificationWorker.perform_async(params, nil, "cancel_other_agents")
+  end
+
+  def cancel_agent_conference(add_agent_call, call)
+    Rails.logger.info "cancel_agent_conference => #{add_agent_call.id}"
+    params.merge!({ add_agent_call_sid: add_agent_call.sid,
+                    call_id: call.id})
+    Freshfone::NotificationWorker.perform_async(params, nil, 'cancel_agent_conference')
   end
 
   def complete_other_agents(current_call)

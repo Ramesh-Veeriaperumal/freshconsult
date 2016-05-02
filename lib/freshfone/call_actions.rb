@@ -161,6 +161,16 @@ class Freshfone::CallActions
     end
   end
 
+  def handle_failed_agent_conference(call, add_agent_call_id)
+    call.supervisor_controls.find(add_agent_call_id).update_status(
+      Freshfone::SupervisorControl::CALL_STATUS_HASH[:failed])
+    notify_agent_conference_status call, 'agent_conference_unanswered'
+  end
+
+  def handle_failed_cancel_agent_conference(call)
+    notify_agent_conference_status call, 'agent_conference_connecting'
+  end
+
   def handle_failed_external_transfer_call(call)
     child_call = call.children.last
     child_call_meta = child_call.meta

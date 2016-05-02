@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_145d1ddef9c299f94ea3300e91dcb102.eot");
-  src: url("../../assets/glyphs_145d1ddef9c299f94ea3300e91dcb102.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_145d1ddef9c299f94ea3300e91dcb102.woff") format("woff"),
-       url("../../assets/glyphs_145d1ddef9c299f94ea3300e91dcb102.ttf") format("truetype"),
-       url("../../assets/glyphs_145d1ddef9c299f94ea3300e91dcb102.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_a210ecab4df9c449ebb94db252d3f34c.eot");
+  src: url("../../assets/glyphs_a210ecab4df9c449ebb94db252d3f34c.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_a210ecab4df9c449ebb94db252d3f34c.woff") format("woff"),
+       url("../../assets/glyphs_a210ecab4df9c449ebb94db252d3f34c.ttf") format("truetype"),
+       url("../../assets/glyphs_a210ecab4df9c449ebb94db252d3f34c.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_145d1ddef9c299f94ea3300e91dcb102.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_a210ecab4df9c449ebb94db252d3f34c.svg#glyphs") format("svg");
   }
 }
 
@@ -139,6 +139,7 @@
       [data-icon]:before,
       .ficon-abandoned-call:before,
 .ficon-account:before,
+.ficon-add-call:before,
 .ficon-agent:before,
 .ficon-agent-fchat-off:before,
 .ficon-agent-fchat-on:before,
@@ -199,6 +200,7 @@
 .ficon-compose-email:before,
 .ficon-conversation:before,
 .ficon-cross:before,
+.ficon-cross-filled:before,
 .ficon-cross-round:before,
 .ficon-crown:before,
 .ficon-cube:before,
@@ -391,6 +393,7 @@
 .ficon-time_sheet:before,
 .ficon-timeline-forum:before,
 .ficon-timeline-ticket:before,
+.ficon-transfer-round:before,
 .ficon-trash:before,
 .ficon-trash-o:before,
 .ficon-trash-strike-thru:before,
@@ -424,6 +427,7 @@
 
       .ficon-abandoned-call:before { content: "\f1e5"; }
 .ficon-account:before { content: "\f100"; }
+.ficon-add-call:before { content: "\f21f"; }
 .ficon-agent:before { content: "\f101"; }
 .ficon-agent-fchat-off:before { content: "\f1b0"; }
 .ficon-agent-fchat-on:before { content: "\f1b1"; }
@@ -484,6 +488,7 @@
 .ficon-compose-email:before { content: "\f1c8"; }
 .ficon-conversation:before { content: "\f128"; }
 .ficon-cross:before { content: "\f129"; }
+.ficon-cross-filled:before { content: "\f220"; }
 .ficon-cross-round:before { content: "\f214"; }
 .ficon-crown:before { content: "\f12a"; }
 .ficon-cube:before { content: "\f1dd"; }
@@ -676,6 +681,7 @@
 .ficon-time_sheet:before { content: "\f1f2"; }
 .ficon-timeline-forum:before { content: "\f19b"; }
 .ficon-timeline-ticket:before { content: "\f19c"; }
+.ficon-transfer-round:before { content: "\f221"; }
 .ficon-trash:before { content: "\f19d"; }
 .ficon-trash-o:before { content: "\f19e"; }
 .ficon-trash-strike-thru:before { content: "\f19f"; }
@@ -707,7 +713,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (271)</h1>
+      <h1>Font Icons (274)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -728,6 +734,15 @@
         </div>
         <div class="usage">
           <span>account</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-add-call" class="ficon-add-call"></i></span>
+        </div>
+        <div class="usage">
+          <span>add-call</span>
         </div>
       </div>
       
@@ -1268,6 +1283,15 @@
         </div>
         <div class="usage">
           <span>cross</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-cross-filled" class="ficon-cross-filled"></i></span>
+        </div>
+        <div class="usage">
+          <span>cross-filled</span>
         </div>
       </div>
       
@@ -2996,6 +3020,15 @@
         </div>
         <div class="usage">
           <span>timeline-ticket</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-transfer-round" class="ficon-transfer-round"></i></span>
+        </div>
+        <div class="usage">
+          <span>transfer-round</span>
         </div>
       </div>
       

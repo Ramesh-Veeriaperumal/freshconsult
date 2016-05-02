@@ -48,7 +48,7 @@ class Freshfone::CallCostCalculator
 
 		def supervisor_leg
 			return if current_call.blank?
-			return unless current_account.features?(:freshfone_call_monitoring)
+			return unless current_account.features?(:freshfone_call_monitoring) || current_account.launched?(:agent_conference)
 			@supervisor_leg ||= current_call.supervisor_controls.recent_completed_call.first
 		end
 

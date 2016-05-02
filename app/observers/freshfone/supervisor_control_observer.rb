@@ -5,13 +5,15 @@ class Freshfone::SupervisorControlObserver < ActiveRecord::Observer
 
 	def after_create(supervisor_control)
 		account = supervisor_control.account
-      	publish_disable_supervisor_call(supervisor_control.call_id, supervisor_control.supervisor_id, account)
+    publish_disable_supervisor_call(supervisor_control.call_id,
+                  supervisor_control.supervisor_id, account) if supervisor_control.monitoring?
 	end
 
 	def after_update(supervisor_control)
 		account = supervisor_control.account
 		trigger_cost_job(supervisor_control)
-      	publish_enable_supervisor_call(supervisor_control.call_id, supervisor_control.supervisor_id, account)
+    publish_enable_supervisor_call(supervisor_control.call_id,
+                  supervisor_control.supervisor_id, account) if supervisor_control.monitoring?
 	end
 	
 	private

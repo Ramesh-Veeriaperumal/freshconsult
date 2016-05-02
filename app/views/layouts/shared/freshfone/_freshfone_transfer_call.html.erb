@@ -48,17 +48,21 @@
         <!--template -->
         <div class="hide">
           <!-- A template element is needed when list is empty, TODO: needs a better solution -->
-          <li id="agents-item" >
-             <h3 class="available_agents_avatar avatar"></h3>
-              <span class="transfer-agent-onover-icon">
-               <i id='transfer-call-icon' class="ficon-arrow-right-2 fsize-12"></i>
-             </span>
-             <p class="available_agents_name name"></p>
+          <li id="agents-item">
+             <h3 class="available_agents_avatar"></h3>
+             <label class="available_agents_name name span2"></label> 
+              <span class="call-actions">
+
+                <a href="#" class="pull-right tooltip transfer ficon-arrow-right-2 offset1"
+                        title="<%= t('freshfone.widget.transfer_call') %>"></a>
+                <% if current_account.launched?(:agent_conference) %>
+                <a href="#" class="pull-right tooltip add_agent ficon-plus"
+                        title="<%= t('freshfone.widget.add_agent_to_call') %>">
+                </a>
+                <% end %>   
+              </span>
              <span class="hide sortname"></span>
-             <div class="agent-group-name ">
-                <div class="available_group_agents_name"></div>
-                <div class="agents_count muted"></div>
-             </div>
+             <span class="hide agents_count"></span>
              <span class="hide id"></span>
              <span class="hide agents_ids"></span>
              <span class="hide group_id"></span>
@@ -85,10 +89,7 @@
                  <span class="transfer-phone-icons">
                    <i class="ficon-ff-group fsize-16"></i>
                  </span>
-                  <span class="transfer-onover-icons">
-                   <i class="ficon-arrow-right-2 fsize-12"></i>
-                 </span>
-                 <p class="available_agents_name name" id="external_number_label"></p>
+                 <span class="available_agents_name name span2" id="external_number_label"></span>
             </li>
           </ul>
            <!--template -->
@@ -97,11 +98,12 @@
                <span class="transfer-phone-icons">
                  <i class="ficon-ff-group fsize-16"></i>
                </span>
-               <p class="available_agents_name name external_number"></p>
-               <span class="transfer-onover-icons">
-                 <i id='transfer-call-icon' class="ficon-arrow-right-2 fsize-12"></i>
-               </span>
-               <span class="hide id"></span>
+               <span class="available_agents_name name span2 external_number"></span>
+               <span class="call-actions">
+                <a href="#" class="pull-right tooltip transfer ficon-arrow-right-2"
+                        title="<%= t('freshfone.widget.transfer_call') %>"></a>   
+              </span>
+              <span class="hide id"></span>
             </li>
           </div>
           <div class="no_available_numbers hide">

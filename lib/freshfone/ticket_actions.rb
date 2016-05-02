@@ -100,4 +100,8 @@ module Freshfone::TicketActions
 		def agent_with_active_call?
 			current_account.freshfone_calls.agent_active_calls(agent.id).present?
 		end
+
+    def validate_ticket_creation
+      return render json: { status: :error } if params[:CallSid].blank? || current_call.blank?
+    end
 end
