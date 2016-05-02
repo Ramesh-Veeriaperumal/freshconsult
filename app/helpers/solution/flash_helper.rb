@@ -2,9 +2,9 @@ module Solution::FlashHelper
 
   def flash_message
     unless language_visible_in_portal? @article
-      msg = "#{t('solution.articles.published_success_msg')} - "
+      msg = ["#{t('solution.articles.published_success_msg')}"]
     else
-      msg = "#{t('solution.articles.published_success_not_in_portal')} - "
+      msg = ["#{t('solution.articles.published_success_not_in_portal')}"]
     end
 
     if current_account.multilingual?
@@ -15,10 +15,11 @@ module Solution::FlashHelper
       end
     end
     msg << view_on_portal_link
-    msg.html_safe
+    msg.compact.join(' - ').html_safe
   end
 
   def view_on_portal_link
+    return unless @article_meta.solution_category_meta.present? && @article_meta.solution_category_meta.portal_ids.present?
     unless language_visible_in_portal? @article
       relative_path = support_solutions_article_path(@article, view_context.path_url_locale)
       publish_link_html(

@@ -61,8 +61,8 @@
 					<div class="controls">
 						<%= article_version.select :user_id,
 		          options_for_select(current_account.technicians.collect{|t|[t.name, t.id]}, @article.user_id), 
+		            {:include_blank => true},
 		          { :id => "change_author",
-		            :include_blank => true,
 		          	:class => "select2 required",
 		          	:'data-container-css-class' => 'author-dropdown',
 		          	:'data-dropdown-css-class' => 'author-dropdown' }%>

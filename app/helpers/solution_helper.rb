@@ -465,6 +465,7 @@ module SolutionHelper
 	                         :class => "required hide input-large",
 	                         :id => "create-category-text",
 	                         :autocomplete => "off",
+                           :disabled => true,
 	                         :placeholder => t("solution.categories.enter_version_name", :language_name => @language.name))
 		end
 		op << %(</div>)
