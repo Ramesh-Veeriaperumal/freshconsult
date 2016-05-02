@@ -101,13 +101,8 @@ module IntegrationServices
         logger.info("#{self.class} ignoring event :#{@event}")
         return
       end
-<<<<<<< HEAD
-      logger.info("Sending :#{@event} using #{self.class.title}")
-      timeout_sec = (timeout || 500).to_i
-=======
       logger.info("Sending :#{@event} using #{self.class}")
       timeout_sec = (timeout || 50).to_i
->>>>>>> refs/heads/rails3-phase2
       Timeout.timeout(timeout_sec, TimeoutError) do
         send(event_method)
       end

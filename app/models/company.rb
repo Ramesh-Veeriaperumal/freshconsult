@@ -136,6 +136,5 @@ class Company < ActiveRecord::Base
     def pluck_domain_id
       self.company_domains.inject({}) {|h,cd| h[cd.domain]=cd.id; h }
     end
->>>>>>> refs/heads/rails3-phase2
 end
  
