@@ -13,14 +13,13 @@ class ScheduledTaskBase < BaseWorker
   def initialize_task(params)
     Account.reset_current_account
     self.params = params.symbolize_keys
-    self.task = Helpdesk::ScheduledTask.find_by_id(self.params[:task_id]) if self.params[:task_id].is_a? Fixnum
   end
 
   #Never override, instead use execute_task!
   def perform(params)
     begin
       initialize_task(params)
-      execute_on_account_scope { trigger_task_execution } if valid_task?
+      execute_on_account_scope { trigger_task_execution if valid_task? }
     rescue Exception => e
       NewRelic::Agent.notice_error(e, {:description => "Error on executing scheduled task #{params}"})
       logger.error "Error on executing scheduled task: #{task_printable}. Options :#{params.inspect}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
@@ -31,9 +30,10 @@ class ScheduledTaskBase < BaseWorker
   end
 
   def execute_on_account_scope
-    return if task.account_id.blank?
-    Sharding.select_shard_of(task.account_id) do
-      Account.find(task.account_id).make_current
+    return if params[:account_id].blank?
+    Sharding.select_shard_of(params[:account_id]) do
+      Account.find(params[:account_id]).make_current
+      self.task = Helpdesk::ScheduledTask.find_by_id(params[:task_id]) if params[:task_id].is_a? Fixnum
       yield
     end
   end
@@ -43,7 +43,7 @@ class ScheduledTaskBase < BaseWorker
     begin
       task.user.make_current if task.user
       task.mark_in_progress.save!
-      status = true if execute_task(task)
+      status = execute_task(task)
     rescue Exception => e
       raise
     ensure

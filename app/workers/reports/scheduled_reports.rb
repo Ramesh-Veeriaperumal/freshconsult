@@ -10,6 +10,7 @@ class Reports::ScheduledReports < ScheduledTaskBase
 
     Sharding.run_on_slave do
       HelpdeskReports::ScheduledReports::Worker.new(task).perform
+      return true
     end
   end
 
