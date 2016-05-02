@@ -78,7 +78,7 @@ EMAIL:
     default_requester_email: rachel@freshdesk.com
     production_dev_ops_email: dev-ops@freshdesk.com
     sample_email: sample@freshdesk.com
-    spam_watcher: dev-ops@freshdesk.com
+    spam_watcher: riyazdeen@freshdesk.com
 
     # This is the subject line for all replies
     reply_subject: "Your support request"
