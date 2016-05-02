@@ -4,13 +4,13 @@ module SpamConstants
   SPAM_WATCHER = {
     "helpdesk_tickets" => {
       "key_space" => "sw_helpdesk_tickets",
-      "threshold" => 3,
-      "sec_expire" => 240
+      "threshold" => 50,
+      "sec_expire" => 1800
     },
     "helpdesk_notes" => {
       "key_space" => "sw_helpdesk_notes",
-      "threshold" => 3,
-      "sec_expire" => 240
+      "threshold" => 50,
+      "sec_expire" => 1800
     },
     "solution_articles" => {
       "key_space" => "sw_solution_articles",
