@@ -133,6 +133,10 @@ class User < ActiveRecord::Base
     !deleted? and !spam? and !blocked? and !email.blank? and !agent?
   end
 
+  def allow_password_reset?
+    !deleted? and !spam? and !blocked? and !email.blank?
+  end
+
   def is_user_social(profile_size)
     if fb_profile_id
       profile_size = (profile_size == :medium) ? "large" : "square"
@@ -771,6 +775,14 @@ class User < ActiveRecord::Base
 
   def company_id
     self.customer_id
+  end
+
+  def accessible_groups
+    privilege?(:admin_tasks) ? Account.current.groups : self.groups
+  end
+
+  def accessible_roundrobin_groups
+    self.accessible_groups.round_robin_groups
   end
 
   private

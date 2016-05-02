@@ -101,6 +101,7 @@ class Account < ActiveRecord::Base
   has_many :company_domains
   has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
+  has_many :available_agents, :class_name => 'Agent', :through => :users, :source =>:agent, :conditions =>{:available => true}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false,
                                                                   :users=> { :deleted => false } }
   has_many :all_contacts , :class_name => 'User', :conditions => { :helpdesk_agent => false }
@@ -291,6 +292,7 @@ class Account < ActiveRecord::Base
 
   has_many :subscription_invoices
   has_many :user_companies
+  has_many :scheduled_tasks, :class_name => 'Helpdesk::ScheduledTask'
   has_many :outgoing_email_domain_categories, :dependent => :destroy
   has_many :authorizations, :class_name => '::Authorization'
 end

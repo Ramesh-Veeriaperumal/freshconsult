@@ -40,6 +40,8 @@ Helpkit::Application.configure do
   # No Digest paths for Development environment
   config.assets.digest = false
 
+  config.log_tags = [:uuid]
+
   # Expands the lines which load the assets
   config.assets.debug = true
 

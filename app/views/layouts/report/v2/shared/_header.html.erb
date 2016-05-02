@@ -1,6 +1,6 @@
-<div class="reports-title span12">
+<div class="reports-title span12 updated-time">
   <span class="report-icon">
-    <%= graph_icon(report_type) %>
+    <i class="ficon-<%= report_type.to_s %>" style="font-size: 32px;"></i>
   </span>
   <span class="report-title-block" data-action="pop-report-type-menu">
     <span id="report-title">
@@ -9,6 +9,9 @@
         <%= " - #{filter_name}" %>
       <% end %>
     </span>
+    <div id="last-updated">
+      <%= last_dump_time ? t('helpdesk_reports.last_updated_at',{time_in_words: last_dump_time}).html_safe : '' %>
+    </div>
   </span>
 </div>
 <div class="reports-filter span12">

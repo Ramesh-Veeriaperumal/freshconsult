@@ -1,8 +1,8 @@
-<% if ["agent_summary", "group_summary"].include?(@report_type) 
-    anchor_lable = "helpdesk_reports.export.export_report_csv"
+<% if [:agent_summary, :group_summary].include?(@report_type) 
+    anchor_lable = "helpdesk_reports.export.email_report_csv"
   else
     target_blank = true
-    anchor_lable = "helpdesk_reports.export.export_report_pdf"
+    anchor_lable = "helpdesk_reports.export.email_report_pdf"
   end
  %>
 <%if @real_time_export == true %>

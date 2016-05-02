@@ -892,6 +892,108 @@ input.time{
 	}
 }
 
+// .grid class over-written to reduce CPU computation load by removing all background colours
+.grid-pdf{
+	border:1px solid #cfcfcf;
+	padding:0;
+	label.caption{
+	   font-size:13px;
+	   padding:8px 10px;
+	   background:#fefeee;
+	   font-weight:bold;
+	   border-bottom:1px solid #afafaf;
+	   color:#000000;
+	}
+	table{
+		padding:0; margin:0;
+		border:0;
+		font-size:13px;
+		border-bottom:2px solid #cfcfcf;
+		th, td{
+			padding:8px 10px;
+			vertical-align:top;
+			border-top:1px solid #cfcfcf;			
+		}
+		th{			
+			line-height:18px;	
+			font-weight:bold;
+			span{ display:block; }
+		}
+		td{			
+			label{
+				font-weight:bold;
+   				font-size:1em;
+   				@include padding(8px 0 6px 0);
+				em{
+					font-style:normal;
+					font-weight:bold;
+					text-transform:capitalize;
+					color:#000000;
+				}
+			}
+			border-top:1px solid #cfcfcf;
+			.chzn-container{ width:96.8% !important; }             
+			.chzn-drop{ width:100% !important; }
+			ul.chzn-choices li{ width:auto; }
+			.search-field{ @include min-width(500px); }
+			.search-field .default{ width:100% !important; }
+			ul.chzn-results li.active-result{ @include float(none); display:block; width:100%; }
+		}
+		tr.even{
+		}
+		.special_row{
+			td{
+				padding:0;
+			}
+			div{
+				background: #fff;
+				height:20px;
+				margin:0 -1px;
+			}
+		} 
+	}	
+	.olist{
+		list-style:decimal;
+	}
+	.grid_form{	
+		td{
+			border:0;
+			@include padding(6px 10px 0 10px);
+			background:#fafafa;
+		}
+		.button-container{
+			@include text-align(right);
+			@include padding(0 10px 10px 0);
+		}
+	}
+	ul.row{
+      @include no-bullets;
+      margin:0; padding:0;
+      border-top:1px solid #cfcfcf;
+      padding:8px 12px;
+      @include clearfix;
+      li.list{
+         margin:0; padding:0;
+         @include float(left);
+         width:33%;
+      }
+   }
+}
+
+.grid-pdf-column-border table tr:first-child th{
+	border-left : 1px solid #e2e2e2;
+	&:first-child{
+		border-left : 0px;
+	}
+}
+
+.report-pdf-column-border table tr.odd td{
+	border-left : 1px solid #e2e2e2;
+	&:first-child{
+		border-left : 0px;
+	}
+}
+
 .sidepanel .ui-form{
    padding:4px 10px;
 }
@@ -905,6 +1007,25 @@ input.time{
       }
       tr.even td{
          background:#f8f8f8;
+      }
+      .group_by_day_criteria{
+      	width:15%;
+      }
+      .hours{
+        width:10%;
+        @include text-align(right);
+      }
+   }  
+}
+
+.report-pdf{ 
+   table{
+      border:0;
+			td{ font-size:12px; border-top-color:#f3f3f3; }
+      tr.odd td{
+         background:#ffffff;
+      }
+      tr.even td{
       }
       .group_by_day_criteria{
       	width:15%;

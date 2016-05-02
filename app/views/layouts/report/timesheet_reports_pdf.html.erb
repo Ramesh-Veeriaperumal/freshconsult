@@ -1,0 +1,13 @@
+
+<%= render :partial => "layouts/report/old_reports_pdf_files.html.erb", :formats => [:html], :locals => {} %>
+<%= render :partial => "reports/timesheet_reports/time_sheet_list_pdf.html.erb", :formats => [:html], 
+													:locals => {
+																				:params => params,
+																				:time_sheets => time_sheets, 
+																				:report_date => report_date, 
+																				:time_sheet_data => time_sheet_data,
+																				:old_time_sheet_data => old_time_sheet_data, 
+																				:activity_data_hash => activity_data_hash, 
+																				:headers => headers,
+																				:select_hash => params[:select_hash]
+																			} %> 

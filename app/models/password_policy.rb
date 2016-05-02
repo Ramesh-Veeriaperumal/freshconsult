@@ -13,9 +13,11 @@ class PasswordPolicy < ActiveRecord::Base
 	validates_presence_of :policies
 	validate :validate_configs
 
-	after_commit ->(obj) { obj.update_password_expiry }, on: :create, :if => :password_policies_changed
+	after_commit ->(obj) { obj.update_password_expiry }, on: :create, :unless => :signup
 	after_commit ->(obj) { obj.update_password_expiry }, on: :update, :if => :password_policies_changed
 	after_commit :clear_password_policy_cache
+
+	attr_accessor :signup
 
 	USER_TYPE = {
 	  :contact => 1,

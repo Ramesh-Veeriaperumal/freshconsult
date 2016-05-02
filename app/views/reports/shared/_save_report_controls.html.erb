@@ -10,31 +10,53 @@
 		data-show-close="true" 
 		id="save-report" 
 		data-destroy-on-close="true"
-		data-title="<%=t('helpdesk_reports.saved_report.dialog_header')%>" 
-		data-submit-label="Save" 
-		data-close-label="Cancel" 
-		data-width="800">
+		<% if (@report_type == :satisfaction_survey) %>
+			data-title="<%=t('helpdesk_reports.saved_report.save_header')%>" 
+		<% else %>
+			data-title="<%=t('helpdesk_reports.saved_report.save_header')%>"
+		<% end %>
+		data-submit-label="<%=t('helpdesk_reports.saved_report.save')%>" 
+		data-close-label="<%=t('helpdesk_reports.saved_report.cancel')%>" 
+		>
 		<i class="ticket-view-saveas tooltip" data-placement="above" data-original-title="Save As" twipsy-content-set="true"></i>
 	</a>
 	<a href = "javascript:void(0)" class="vertical-alignment right-border hide" id="discard_filter" data-action="discard-changes">
 		<i class="ticket-view-cancel tooltip" data-placement="above" data-original-title="Discard changes" twipsy-content-set="true"></i>
 	</a>
+	<!-- Edit -->
 	<a class="vertical-alignment left-border hide" 
 		id="edit_filter" 
 		data-action="edit-saved-report" 
-		href="#report-dialog-edit" 
+		href="#report-dialog-save" 
 		rel="freshdialog" 
 		data-title="<%=t('helpdesk_reports.saved_report.edit_dialog_header')%>"
 		data-backdrop="static" 
-		data-submit-label="Save" 
-		data-close-label="Cancel" 
+		data-submit-label="<%=t('helpdesk_reports.saved_report.save')%>" 
+		data-close-label="<%=t('helpdesk_reports.saved_report.cancel')%>" 
 		data-show-close="true" 
 		data-destroy-on-close="true" 
 		id="edit-report" 
-		data-width="800"
 	>
-		<i class="ticket-view-edit tooltip" data-placement="above" data-original-title="Edit" twipsy-content-set="true"></i>
+		<i class="ficon-edit edit tooltip" data-placement="above" data-original-title="Edit" twipsy-content-set="true"></i>
 	</a>
+	<!-- Schedule -->
+	<% if enable_schedule_report? %>
+		<a class="vertical-alignment left-border right-border" 
+			data-action="schedule-saved-report" 
+		    href="#report-dialog-save" 
+		    rel="freshdialog"
+		    data-title="<%=t('helpdesk_reports.saved_report.dialog_header')%>"
+			data-backdrop="static" 
+			data-submit-label="<%=t('helpdesk_reports.saved_report.save')%>" 
+			data-close-label="<%=t('helpdesk_reports.saved_report.cancel')%>" 
+			data-show-close="true" 
+			data-destroy-on-close="true"
+			id="schedule_filter"
+		>
+			<i class="ficon-calendar calendar tooltip" data-placement="above" data-original-title="" twipsy-content-set="true"></i>
+		</a>
+	<% end %>
+	<!-- Delete -->
 	<a class="vertical-alignment right-border hide" 
 		id="delete_filter" 
 		data-action="delete-saved-report"

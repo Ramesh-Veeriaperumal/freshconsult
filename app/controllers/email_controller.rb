@@ -28,7 +28,6 @@ class EmailController < ApplicationController
   private
 
   def determine_pod
-    Rails.logger.info "Params: #{params}."
     @process_email = Helpdesk::ProcessEmail.new(params)
     pod_info = @process_email.determine_pod
     if PodConfig['CURRENT_POD'] != pod_info
