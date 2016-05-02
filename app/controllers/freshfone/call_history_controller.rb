@@ -98,8 +98,10 @@ class Freshfone::CallHistoryController < ApplicationController
 		end
 
 		def cache_filter_params
-			set_others_redis_hash(calls_filter_key, filter_hash)
-			set_others_redis_expiry(calls_filter_key,86400*7)
+			if !is_native_mobile?
+				set_others_redis_hash(calls_filter_key, filter_hash)
+				set_others_redis_expiry(calls_filter_key,86400*7)
+			end
 		end
 
 		def filter_hash
@@ -109,8 +111,7 @@ class Freshfone::CallHistoryController < ApplicationController
 		def load_cached_filters
 			 if redis_key_exists?(calls_filter_key)
 					@cached_filters = get_others_redis_hash(calls_filter_key)
-					prepare_filters(@cached_filters)
-				  params[:number_id] = @cached_filters['number_id']
+					prepare_filters(@cached_filters) if @cached_filters['data_hash'].present?
 			 end
 		end
 
