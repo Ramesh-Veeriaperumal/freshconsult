@@ -2,6 +2,7 @@ class ActivationsController < SupportController
   #before_filter :require_no_user, :only => [:new, :create] #Guess we don't really need this - Shan
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:new, :create]
+  skip_before_filter :redirect_to_locale, :only => :send_invite
   
   def send_invite
     user = current_account.all_users.find params[:id]
