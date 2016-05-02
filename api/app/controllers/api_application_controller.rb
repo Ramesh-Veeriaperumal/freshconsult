@@ -4,7 +4,7 @@ class ApiApplicationController < MetalApiController
   rescue_from StandardError, with: :render_500
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
   rescue_from ShardNotFound, with: :record_not_found
-  rescue_from DomainNotReady, with: :route_not_found
+  rescue_from DomainNotReady, with: :record_not_found
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
   rescue_from RangeError, with: :range_error
@@ -154,6 +154,8 @@ class ApiApplicationController < MetalApiController
       if e.is_a?(ShardNotFound)
         Rails.logger.error("API V2 request for invalid host. Host: #{request.host}")
         head 404
+      elsif e.is_a?(DomainNotReady)
+        render_base_error(:domain_not_ready, 404)
       else
         notify_new_relic_agent(e, description: 'ActiveRecord::RecordNotFound error occured while processing api request')
         Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")

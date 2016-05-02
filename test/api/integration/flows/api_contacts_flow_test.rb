@@ -34,6 +34,13 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     end
   end
 
+  def test_multipart_form_data
+    skip_bullet do
+      post('/api/v2/contacts', v2_multipart_payload, @write_headers.merge('CONTENT_TYPE' => 'multipart/form-data'))
+      assert_response 201
+    end
+  end
+
   def test_create_contact_as_in_quick_create_and_update_the_details
     skip_bullet do
       create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'city', editable_in_signup: 'true'))
