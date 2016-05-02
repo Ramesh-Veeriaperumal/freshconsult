@@ -74,7 +74,7 @@ class ApiContactsController < ApiApplicationController
         item_value = @item.send(scope_attribute)
         if item_value != value
           Rails.logger.debug "Contact id: #{@item.id} with #{scope_attribute} is #{item_value}"
-          # Render 405 in case of update/delete as it acts on contact endpoint itself 
+          # Render 405 in case of update/delete as it acts on contact endpoint itself
           # And User will be able to GET the same contact via Show
           # other URLs such as contacts/id/make_agent will result in 404 as it is a separate endpoint
           update? || destroy? ? render_405_error(['GET']) : head(404)

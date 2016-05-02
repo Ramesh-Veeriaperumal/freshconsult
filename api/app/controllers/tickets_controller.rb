@@ -113,7 +113,7 @@ class TicketsController < ApiApplicationController
     def conditional_preload_options
       preload_options = [:ticket_old_body, :schema_less_ticket, :flexifield]
       @ticket_filter.include_array.each do |assoc|
-        preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc] || assoc) 
+        preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc] || assoc)
         increment_api_credit_by(2)
       end
       preload_options
@@ -286,7 +286,7 @@ class TicketsController < ApiApplicationController
         item_value = @item.send(scope_attribute)
         if item_value != value
           Rails.logger.debug "Ticket display_id: #{@item.display_id} with #{scope_attribute} is #{item_value}"
-          # Render 405 in case of update/delete as it acts on ticket endpoint itself 
+          # Render 405 in case of update/delete as it acts on ticket endpoint itself
           # And User will be able to GET the same ticket via Show
           # other URLs such as tickets/id/restore will result in 404 as it is a separate endpoint
           update? || destroy? ? render_405_error(['GET']) : head(404)

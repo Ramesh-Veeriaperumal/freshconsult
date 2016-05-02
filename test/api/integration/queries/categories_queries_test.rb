@@ -29,7 +29,7 @@ class CategoriesQueriesTest < ActionDispatch::IntegrationTest
     end
     v1[:create] = count_queries do
       post('/discussions/categories.json', v1_category_payload, @write_headers)
-    assert_response 201
+      assert_response 201
     end
 
     id1 = ForumCategory.last(2).first.id

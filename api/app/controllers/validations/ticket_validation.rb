@@ -144,7 +144,7 @@ class TicketValidation < ApiValidation
   end
 
   def disallowed_status?
-    errors[:status].blank? && statuses.detect{|x| x.status_id == status.to_i }.stop_sla_timer
+    errors[:status].blank? && statuses.detect { |x| x.status_id == status.to_i }.stop_sla_timer
   end
 
   def attributes_to_be_stripped

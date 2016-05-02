@@ -110,5 +110,4 @@ module UsersTestHelper
     u = UserEmail.new(params)
     u.save
   end
-
 end

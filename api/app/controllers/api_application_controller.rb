@@ -479,8 +479,8 @@ class ApiApplicationController < MetalApiController
 
     def set_current_account
       if Account.current # This would be present because of fd_api_throttler.
-        @current_account = Account.current # setting instance variables 
-        @current_portal = @current_account.main_portal_from_cache # setting instance variables 
+        @current_account = Account.current # setting instance variables
+        @current_portal = @current_account.main_portal_from_cache # setting instance variables
       else
         current_account.make_current
       end

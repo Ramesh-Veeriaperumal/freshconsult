@@ -2227,7 +2227,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_show_with_all_associations
     show_ticket = ticket
     show_ticket.update_column(:deleted, false)
-    show_ticket.update_ticket_attributes({status: 5})
+    show_ticket.update_ticket_attributes(status: 5)
     get :show, controller_params(id: show_ticket.display_id, include: 'conversations,requester,company,stats')
     assert_response 200
     match_json(ticket_pattern_with_association(show_ticket))
