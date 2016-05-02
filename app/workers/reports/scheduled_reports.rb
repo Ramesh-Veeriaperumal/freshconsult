@@ -6,7 +6,7 @@ class Reports::ScheduledReports < ScheduledTaskBase
 
   def execute_task task
     
-    task.mark_disabled && return if !enable_schedule_report?
+    task.mark_disabled && return unless enable_schedule_report?
 
     Sharding.run_on_slave do
       HelpdeskReports::ScheduledReports::Worker.new(task).perform
