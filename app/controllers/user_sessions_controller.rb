@@ -230,7 +230,7 @@ include Mobile::Actions::Push_Notifier
     end
 
     def sso_hash_validated?
-      if current_account.launched?(:disable_old_sso)
+      if !current_account.launched?(:enable_old_sso)
         params[:hash] == new_sso_hash
       else
         (params[:hash] == old_sso_hash) ? true : (params[:hash] == new_sso_hash)
