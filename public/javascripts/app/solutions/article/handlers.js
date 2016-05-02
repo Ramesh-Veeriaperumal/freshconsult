@@ -89,7 +89,7 @@ window.App = window.App || {};
         return false;
       }
       if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create") {
-        var flag =  $('#solution_article_description').valid() || $('#solution_article_title').val().length > 0;
+        var flag =  $('#solution_article_description').data('redactor').isNotEmpty() || $('#solution_article_title').val().length > 0;
         if (flag) {
           return true;
         }
