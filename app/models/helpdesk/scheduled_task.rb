@@ -21,7 +21,7 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
   scope :by_schedulable_type, lambda{ |schedulable_type| {:conditions => ['schedulable_type = ?', schedulable_type]}}
 
   scope :upcoming_tasks, lambda{ |from = Time.now.utc| 
-    tasks_between(from, (from + CRON_FREQUENCY_IN_HOURS).end_of_hour).where(
+    tasks_between(from, from.end_of_hour).where(
       status: STATUS_NAME_TO_TOKEN[:available]) }
 
   scope :dangling_tasks, lambda{ |from = Time.now.utc| 
