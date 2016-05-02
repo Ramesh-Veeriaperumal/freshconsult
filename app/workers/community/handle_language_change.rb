@@ -16,7 +16,7 @@ class Community::HandleLanguageChange < BaseWorker
 					objects.map(&:update_es_index)
 					
 					# For ES-v2
-					objects.map(&:sqs_manual_publish)
+					objects.map(&:sqs_manual_publish) if Account.current.features?(:es_v2_writes)
 				end
 			end
 		end

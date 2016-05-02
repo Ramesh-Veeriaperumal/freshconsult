@@ -6,7 +6,7 @@ namespace :reports do
   task :build_no_activity => :environment do
     Sharding.run_on_all_slaves do
       Account.reset_current_account
-      Account.active_accounts.find_in_batches do |accounts|
+      Account.all.find_in_batches do |accounts|
         accounts.each do |account|
           begin
             account.make_current

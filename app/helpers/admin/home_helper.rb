@@ -55,7 +55,7 @@
       },
       :group                           =>   {
         :url                           =>   "/groups",
-        :privilege                     =>   privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:manage_availability) || privilege?(:admin_tasks)
       },
       :role                            =>   {
         :url                           =>   "/admin/roles",
@@ -95,7 +95,7 @@
       },
       :scenario                        =>   {
         :url                           =>   "/helpdesk/scenario_automations",
-        :privilege                     =>   feature?(:scenario_automations) && privilege?(:manage_scenario_automation_rules)
+        :privilege                     =>   feature?(:scenario_automations) && (privilege?(:manage_scenario_automation_rules) || privilege?(:view_admin))
       },
       :"email-notifications"           =>   {
         :url                           =>   "/admin/email_notifications",
@@ -103,7 +103,7 @@
       },
       :"canned-response"               =>   {
         :url                           =>   "/helpdesk/canned_responses/folders",
-        :privilege                     =>   privilege?(:manage_canned_responses)
+        :privilege                     =>   privilege?(:manage_canned_responses) || privilege?(:view_admin)
       },
       :"survey-settings"               =>   {
         :url                           =>   current_account.new_survey_enabled? ? "/admin/custom_surveys" : "/admin/surveys",

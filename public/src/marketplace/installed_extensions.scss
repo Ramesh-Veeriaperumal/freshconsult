@@ -1,15 +1,6 @@
 /* Integrations Listing CSS */
 @import "settings/settings";
 /* NEW UI */
-.new-launch{
-  background: #fffbee;
-  border: solid 1px #ececec;
-  @include padding(15px);
-  @include border-radius(4px);
-  .help-link{
-    font-weight: 500;
-  }
-}
 #integrations-list{
   .sleek-tab{
     margin-bottom: -1px;

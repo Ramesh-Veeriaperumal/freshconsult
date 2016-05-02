@@ -5,3 +5,35 @@
   I18n.defaultLocale = "<%= I18n.default_locale %>";
   I18n.locale = "<%= I18n.locale %>";
 </script>
+<style>
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+    @font-face {
+      font-family: "glyphs";
+      src: url("<%=Rails.root%>/public/assets/glyphs_1abe08eeb97ac02eafaccc7600a0ee3a.svg#glyphs") format("svg");
+      }
+  }
+  .ficon-customer_report:before,
+  .ficon-glance:before,
+  .ficon-performance_distribution:before,
+  .ficon-ticket_volume:before,
+  .ficon-no-data-graph:before
+   {
+    display: inline-block;
+    font-family: "glyphs";
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    line-height: 1;
+    text-decoration: inherit;
+    text-rendering: optimizeLegibility;
+    text-transform: none;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+  }
+  .ficon-customer_report:before { content: "\f217"; }
+  .ficon-glance:before { content: "\f214"; }
+  .ficon-performance_distribution:before { content: "\f216"; }
+  .ficon-ticket_volume:before { content: "\f1f1"; }
+  .ficon-no-data-graph:before { content: "\f1c6"; }
+</style>

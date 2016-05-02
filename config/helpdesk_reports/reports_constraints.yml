@@ -1,0 +1,66 @@
+:plan_groups:
+  sprout:
+    - Sprout
+    - Sprout Classic
+  blossom:
+    - Blossom
+    - Blossom Classic
+  garden:
+    - Garden
+    - Garden Classic
+  estate:
+    - Estate
+    - Estate Classic
+  forest:
+    - Forest
+
+:max_limits:
+  :save_report:
+    :user:
+      estate: 50
+      forest: 50
+      :default: 25
+  :scheduled_report:
+    :user:
+      garden: 10
+      estate: 20
+      forest: 20
+      :default: 10
+    :account:
+      garden: 70
+      estate: 100
+      forest: 100
+      :default: 70
+
+:plan_constraints:
+  enable_ticket_list:
+    - garden
+    - estate
+    - forest
+  disable_date_lag:
+    - estate
+    - forest
+  enable_save_report:
+    - blossom
+    - garden
+    - estate
+    - forest
+  enable_schedule_report:
+    - garden
+    - estate
+    - forest
+
+:plan_exclude_filters:
+  glance: 
+    blossom:
+      - :agent_id
+      - :group_id
+    garden:
+      - :agent_id
+      - :group_id
+
+:global_exclude_filters:
+  customer_report:
+    - :agent_id
+    - :group_id
+    - :company_id

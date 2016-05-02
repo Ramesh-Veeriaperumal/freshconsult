@@ -3,15 +3,24 @@ class PlanChangeWorker
 
   sidekiq_options :queue => :plan_change, :retry => 0, :backtrace => true, :failures => :exhausted
 
-  def perform(drop_features)
+  def perform(args)
     account = Account.current
-    drop_features.each do |drop_feature|
-      drop_method = "drop_#{drop_feature}_data"
+    if args.is_a?(Array)
+      features = args
+      action = "drop"
+    else
+      args.symbolize_keys!
+      features = args[:features]
+      action = args[:action]
+    end
+
+    features.each do |feature|
+      method = "#{action}_#{feature}_data"
       # Adding this block due to dynamic sections bug
       # Ref: https://github.com/freshdesk/helpkit/commit/7da2749537bfac540bbf8495d144e8a68c9c9e0d
       #
       begin
-        send(drop_method, account) if respond_to?(drop_method)
+        send(method, account) if respond_to?(method)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
@@ -34,6 +43,14 @@ class PlanChangeWorker
     update_all_in_batches({ :time_zone => account.time_zone }){ |cond| 
       account.all_users.where(@conditions).limit(@batch_size).update_all(cond)
     }
+  end
+
+  def drop_round_robin_data(account)
+    Role.remove_manage_availability_privilege account
+  end
+
+  def add_round_robin_data(account)
+    Role.add_manage_availability_privilege account
   end
 
   def drop_multi_product_data(account)

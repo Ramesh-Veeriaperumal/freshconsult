@@ -93,11 +93,11 @@
   }
 }
 
-//German
-:lang(de){
+//German, spanish (LATAM)
+:lang(de),:lang(es-LA){
   .sla_policy_form{
     .grid table.sla_policies tr.escalations td.escalations-time-holder{
-      width: 230px;
+      width: 220px;
     }
   }
 }

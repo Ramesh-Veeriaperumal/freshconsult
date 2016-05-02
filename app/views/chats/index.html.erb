@@ -66,15 +66,76 @@
 		 jQuery("#date_range_error").hide();
 		var $dateElement = jQuery('#livechat_archive_page').find('#date_range');
 		if($dateElement.length >0){
+			var dateFormat = getDateFormat('mediumDate').toUpperCase();
+			var date = Helpkit.commonSavedReportUtil.getDateRangeDefinition(dateFormat);
 			$dateElement.off().daterangepicker({
 				latestDate: Date.parse('Today'),
 				presetRanges: [
-					{text: '<%= t('reports.date_ranges.today') %>', dateStart: 'Today', dateEnd: 'Today' },
-		      		{text: '<%= t('reports.date_ranges.yesterday') %>', dateStart: 'Today-1', dateEnd: 'Today-1' },
-					{text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-6', dateEnd: 'Today' },
-					{text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-29', dateEnd: 'Today'},
-					{text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-89',  dateEnd: 'Today'}
-				],
+				{	text: '<%= t('reports.date_ranges.today') %>', 
+					dateStart: 'Today', 
+					dateEnd: 'Today',
+					period : 'today'
+				},
+	    	    {	text: '<%= t('reports.date_ranges.yesterday') %>', 
+	    	    	dateStart: 'Today-1', 
+	    	    	dateEnd: 'Today-1',
+	    	    	period : 'yesterday' 
+	    	    },
+	      		{	text: '<%= t('helpdesk_reports.this_week') %>', 
+	      			dateStart: date.this_week_start, 
+	      			dateEnd: date.endDate ,
+	      			period : "this_week" 
+	      		},
+	      		{	text: '<%= t('helpdesk_reports.previous_week') %>', 
+	      			dateStart: date.previous_week_start, 
+	      			dateEnd: date.previous_week_end ,
+	      			period : "previous_week" 
+	      		},
+	      		{	text: '<%= t('reports.date_ranges.last_7_days') %>', 
+	      			dateStart: 'Today-6', 
+	      			dateEnd: 'Today' ,
+	      			period : "last_7"
+	      		},
+	      		{
+	                text: '<%= t('helpdesk_reports.this_month') %>',
+	                dateStart: date.this_month_start,
+	                dateEnd: date.previous_week_end,
+	                period : "this_month"
+	            },
+	            {
+	                text: '<%= t('helpdesk_reports.previous_month') %>',
+	                dateStart: date.previous_month_start,
+	                dateEnd: date.previous_month_end,
+	                period : "previous_month"
+	            },
+		  		{	text: '<%= t('reports.date_ranges.last_30_days') %>',
+	  				dateStart: 'Today-29', 
+	  				dateEnd: 'Today',
+	  				period : "last_30"
+	      		},
+	      		{
+	                text: "<%= t('helpdesk_reports.last_num_months', :num => 3 ) %>",
+	                dateStart: date.last_3_months,
+	                dateEnd: date.previous_month_end,
+	                period : "last_3_months"
+	            },
+	      		{	text: '<%= t('reports.date_ranges.last_90_days') %>',
+	  				dateStart: 'Today-89',  
+	  				dateEnd: 'Today',
+	  				period : "last_90"
+	      		},
+	      		{
+	                text: "<%= t('helpdesk_reports.last_num_months', :num => 6) %>",
+	                dateStart: date.last_6_months,
+	                dateEnd: date.previous_month_end,
+	                period : "last_6_months"
+	            },
+	            {
+	                text: "<%= t('helpdesk_reports.this_year') %>",
+	                dateStart: date.this_year_start,
+	                dateEnd: date.endDate,
+	                period : "this_year"
+	            }],
 				presets: {
 						dateRange: '<%= t('reports.date_ranges.custom') %>'
 				},

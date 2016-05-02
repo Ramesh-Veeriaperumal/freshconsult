@@ -6,7 +6,7 @@
 <%= javascript_include_tag :'cdn/reports'  %>
 <%= javascript_include_tag :'cdn/timesheet_reports'  %>
 	<div id="loading-box">
-	 <div class="sloading loading-left loading-small reports-loading">Generating Report...</div> 
+	 <div class="sloading loading-left loading-small reports-loading"><%=t('helpdesk_reports.loading_text')%></div> 
 	 </div>
 	 
 <!--report header-->
@@ -16,11 +16,6 @@
 		  <li><a href="<%=reports_url%>"><%=t('adv_reports.glance.all_reports')%></a> <span class="divider">/</span></li>
 		  <li><%=t('adv_reports.glance.report_view')%></li>
 		</ul>
-		<% unless generate_pdf_action? %>
-			<ul class="nav pull-right">
-	  			<li><a href="#" class="proxy-generate-pdf" ><i class="reports-icon-download"></i><%=t('adv_reports.glance.download')%>					</a></li>
-	  		</ul>
-	  	<% end %>
 	</div>
 	<%= render :partial => "reports/shared/dialog"%>
 </div>
@@ -69,4 +64,12 @@
 	var Helpkit = Helpkit || {};
 	Helpkit.report_filter_data = <%= @report_filter_data.to_json.html_safe %>;
 	Helpkit.report_type = "<%= @report_type %>";
+	Helpkit.enable_schedule_report = <%= enable_schedule_report? %>;
+	current_user = {
+		mail : '<%= current_user.email %>',
+		id : '<%= current_user.id %>',
+		time_zone : '<%= @user_time_zone_abbr %>',
+		name : '<%= current_user.name %>'
+	}
+	day_names = <%=t('date.day_names').to_json.html_safe%>;
 <%end%>

@@ -31,7 +31,8 @@ Sidekiq.configure_client do |config|
       "AccountCleanup::DeleteSpamTicketsCleanup",
       "AccountCleanup::SuspendedAccountsWorker",
       "Social::Gnip::ReplayWorker",
-      "Social::Gnip::RuleWorker"
+      "Social::Gnip::RuleWorker",
+      "Reports::ScheduledReports"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -43,8 +44,9 @@ Sidekiq.configure_client do |config|
       "Export::ContactWorker",
       "Tickets::Export::TicketsExport",
       "Tickets::Export::LongRunningTicketsExport",
-      "Tickets::Export::PremiumTicketsExport"
-
+      "Tickets::Export::PremiumTicketsExport",
+      "Reports::ScheduledReports",
+      "Reports::Export"
     ]
   end
 end
@@ -80,7 +82,8 @@ Sidekiq.configure_server do |config|
       "AccountCleanup::DeleteSpamTicketsCleanup",
       "AccountCleanup::SuspendedAccountsWorker",
       "Social::Gnip::ReplayWorker",
-      "Social::Gnip::RuleWorker"
+      "Social::Gnip::RuleWorker",
+      "Reports::ScheduledReports"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -92,7 +95,8 @@ Sidekiq.configure_server do |config|
       "Export::ContactWorker",
       "Tickets::Export::TicketsExport",
       "Tickets::Export::LongRunningTicketsExport",
-      "Tickets::Export::PremiumTicketsExport"
+      "Tickets::Export::PremiumTicketsExport",
+      "Reports::Export"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -119,7 +123,8 @@ Sidekiq.configure_server do |config|
       "AccountCleanup::DeleteSpamTicketsCleanup",
       "AccountCleanup::SuspendedAccountsWorker",
       "Social::Gnip::ReplayWorker",
-      "Social::Gnip::RuleWorker"
+      "Social::Gnip::RuleWorker",
+      "Reports::ScheduledReports"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -131,7 +136,8 @@ Sidekiq.configure_server do |config|
       "Export::ContactWorker",
       "Tickets::Export::TicketsExport",
       "Tickets::Export::LongRunningTicketsExport",
-      "Tickets::Export::PremiumTicketsExport"
+      "Tickets::Export::PremiumTicketsExport",
+      "Reports::Export"
     ]
   end
 end

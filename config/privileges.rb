@@ -386,6 +386,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_agent", :only => [:show, :index]
   end
 
+  manage_availability do
+    resource :group, :only => [:index, :show, :edit, :update, :toggle_roundrobin]
+    resource :"helpdesk/dashboard",:only => [:agent_status]
+  end
+
   manage_canned_responses do
     resource :"helpdesk/canned_responses/folder"
   end

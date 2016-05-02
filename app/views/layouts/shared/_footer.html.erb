@@ -84,6 +84,9 @@
 	  var APP_ENV = "<%= Rails.env %>";
 	</script>
 
+<script type="text/javascript">
+	window.inlineManualTracking = <%= inline_manual_people_tracing.to_json.html_safe %>
+</script>
 <script src="https://inlinemanual.com/embed/player.a16aba7cb34cb7248e7691132ba76af3.js" async ></script>
 <script type="text/javascript" >
 		window.im_option = {
