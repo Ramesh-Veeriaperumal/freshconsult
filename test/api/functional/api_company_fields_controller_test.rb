@@ -16,6 +16,7 @@ class ApiCompanyFieldsControllerTest < ActionController::TestCase
 
   def test_index_without_privilege
     User.any_instance.stubs(:privilege?).with(:manage_contacts).returns(false).at_most_once
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false).at_most_once
     get :index, controller_params
     assert_response 403
     match_json(request_error_pattern(:access_denied))
