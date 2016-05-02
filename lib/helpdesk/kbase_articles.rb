@@ -63,11 +63,11 @@ class Helpdesk::KbaseArticles
 
     def add_knowledge_base_article(account, user, title, description) 
       
-      default_category = account.solution_category_meta.find_by_is_default(true)
-      default_folder = default_category.solution_folder_meta.find_by_is_default(true) if default_category
+      default_category_meta = account.solution_category_meta.find_by_is_default(true)
+      default_folder_meta = default_category_meta.solution_folder_meta.find_by_is_default(true) if default_category_meta
             
-      if default_folder
-        article = Solution::Builder.article(
+      if default_folder_meta
+        article_meta = Solution::Builder.article(
           {
             :solution_article_meta => {
               :primary_article => {
@@ -77,13 +77,13 @@ class Helpdesk::KbaseArticles
                 :user_id => user.id
               },
               :art_type => Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent],
-              :solution_folder_meta_id => default_folder.id
+              :solution_folder_meta_id => default_folder_meta.id
             }
           }  
         )
-        article.account = account
-        article.save
-        article.reload
+        article_meta.account = account
+        article_meta.save
+        article_meta.reload.primary_article
       end
     end
   end

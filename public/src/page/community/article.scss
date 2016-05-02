@@ -648,8 +648,8 @@
       .votes-stats {
         display: inline-block;
         @include border-left(1px solid #ccc);
-        @include margin-left(7px);
-        @include padding-left(15px);
+        @include margin-left(5px);
+        @include padding-left(10px);
 
         .votes-btn {
           display: inline-block;
@@ -689,7 +689,7 @@
         margin-top: 25px;
         &:after {
           border-top: 4px solid #000;
-          margin-left: 8px;
+          @include margin-left(8px);
         }
       }
       &.selected:after{

@@ -33,7 +33,7 @@ window.App.Admin = window.App.Admin || {};
 
     initialize: function () {
       this.supportedLangEl = $("#account_supported_languages");
-      this.portalLanguages = $('#manage_languages_form').data().portalLanguages;
+      this.portalLanguages = $('#manage_languages_form').data().portalLanguages || [];
       this.portalLanguageConfig();
     },
 
