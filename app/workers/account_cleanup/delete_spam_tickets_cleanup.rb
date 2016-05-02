@@ -68,8 +68,8 @@ module AccountCleanup
           delete_associated_data(account_id)
           delete_polymorphic_association_data(account_id)
 
-          execute_delete("helpdesk_notes", @note_ids)
-          execute_delete("helpdesk_tickets", @ticket_ids)
+          execute_delete("helpdesk_notes", @note_ids, account_id)
+          execute_delete("helpdesk_tickets", @ticket_ids, account_id)
         end
       end
     end
@@ -83,7 +83,7 @@ module AccountCleanup
           ids.in_groups_of(100, false).each do |ids_in_batch|
             condition = "account_id = #{account_id} and #{key} in (#{ids_in_batch.join(',')})"
             associated_ids = select_values( rel_table, condition)
-            execute_delete(rel_table, associated_ids)
+            execute_delete(rel_table, associated_ids, account_id)
           end
         end
       end
@@ -97,7 +97,7 @@ module AccountCleanup
           ids.in_groups_of(100, false).each do |ids_in_batch|
             condition = "account_id = #{account_id} and #{polymorphic}_id in (#{ids_in_batch.join(',')}) and #{polymorphic}_type in ('#{types.join("','")}')"
             associated_ids = select_values(rel_table, condition) 
-            execute_delete(rel_table, associated_ids)       
+            execute_delete(rel_table, associated_ids, account_id)       
           end
         end
       end
@@ -109,9 +109,9 @@ module AccountCleanup
       end 
     end
 
-    def execute_delete(table_name, ids)
+    def execute_delete(table_name, ids, account_id)
       return if ids.size == 0
-      delete_query = "delete from #{table_name} where id in (#{ids.join(",")}) "
+      delete_query = "delete from #{table_name} where id in (#{ids.join(",")}) and account_id = #{account_id}"
       puts delete_query
       ActiveRecord::Base.connection.execute(delete_query)
     end
