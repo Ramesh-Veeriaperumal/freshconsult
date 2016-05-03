@@ -738,6 +738,7 @@ en:
           cancel: "Cancel"
           update: "Update"
           tke_rule_breif_desc: "Posts will automatically get converted into tickets based on these settings"
+          edit_stream: "Edit Page"
         page_tab:
           page_tab_head: "Facebook Page Tab"
           config_info: "Once you enable your Facebook page tab, your customers will be able to directly access your solutions, forums and self-service from within Facebook"
@@ -758,7 +759,6 @@ en:
           convert_everything: "Convert everything"
           convert_everything_help: "All Visitor posts and all Company posts with any Visitor Comments will be converted to tickets. You can manually split comments into separate tickets."
           convert_relevant: "Converts posts according to the visitor posts or company comments with respect to the given settings"
-          edit_stream: "Edit Stream"
           import_visitor_posts: "Convert all Visitor Posts to tickets"
           import_company_posts: "For company posts, convert individual visitor comments to tickets when they have these keywords"
           assign_to_gp: "Assign tickets to group"
