@@ -58,10 +58,10 @@ class ScheduledTaskBase < BaseWorker
         params[:retry_count] += 1
         task.mark_enqueued.save!
         task.worker.perform_in(5.minutes, params)
-      else
-        task.completed!(exec_status)
+        return
       end  
-    end   
+    end
+    task.completed!(exec_status)
   end
 
   def retry_count
