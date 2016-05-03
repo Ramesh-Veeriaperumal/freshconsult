@@ -29,7 +29,7 @@ class Company < ActiveRecord::Base
     end
 
     def nullify_contact_mapping
-      Users::UpdateCompanyId.perform_async({ :domain => self.domains,
+      Users::UpdateCompanyId.perform_async({ :domains => self.domains,
                                              :company_id => nil,
                                              :current_company_id => self.id })
     end

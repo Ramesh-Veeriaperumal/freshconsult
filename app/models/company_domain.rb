@@ -34,7 +34,7 @@ class CompanyDomain < ActiveRecord::Base
     end 
 
     def map_contacts_to_company
-      Users::UpdateCompanyId.perform_async({ :domain => self.domain,
+      Users::UpdateCompanyId.perform_async({ :domains => self.domain,
                                              :company_id => self.company_id }) 
     end
 end
