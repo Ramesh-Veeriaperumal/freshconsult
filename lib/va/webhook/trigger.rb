@@ -1,7 +1,6 @@
 module Va::Webhook::Trigger
 
   include Va::Webhook::Util
-  include Va::Webhook::ThrottlerUtil
   include Redis::RedisKeys
   include Redis::OthersRedis
 

@@ -280,10 +280,6 @@ class Account < ActiveRecord::Base
     ismember?(PREMIUM_EMAIL_ACCOUNTS, self.id)
   end
 
-  def premium_webhook_throttler?
-    ismember?(PREMIUM_WEBHOOK_THROTTLER, self.id)
-  end
-
   def premium_gamification_account?
     ismember?(PREMIUM_GAMIFICATION_ACCOUNT, self.id)
   end
