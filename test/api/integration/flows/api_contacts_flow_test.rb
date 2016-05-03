@@ -1,7 +1,6 @@
 require_relative '../../test_helper'
 
 class ApiContactsFlowTest < ActionDispatch::IntegrationTest
-  include ContactFieldsHelper
   include UsersTestHelper
 
   def get_user

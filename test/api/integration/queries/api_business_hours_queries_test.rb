@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class ApiBusinessHoursQueriesTest < ActionDispatch::IntegrationTest
-  include BusinessCalendarsHelper
+  include BusinessHoursTestHelper
 
   def test_query_count
     v2 = {}

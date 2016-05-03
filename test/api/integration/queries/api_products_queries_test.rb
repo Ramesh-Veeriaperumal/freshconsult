@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class ApiProductsQueriesTest < ActionDispatch::IntegrationTest
-  include ProductsHelper
+  include ProductsTestHelper
   def test_query_count
     v2 = {}
     v2_expected = {

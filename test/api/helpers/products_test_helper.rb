@@ -1,3 +1,4 @@
+['products_helper'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module ProductsTestHelper
   include ProductsHelper
   # Patterns

@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class ApiEmailConfigsQueriesTest < ActionDispatch::IntegrationTest
-  include EmailConfigsHelper
+  include EmailConfigsTestHelper
   def test_query_count
     v2 = {}
     v2_expected = {
