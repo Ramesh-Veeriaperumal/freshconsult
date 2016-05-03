@@ -46,7 +46,9 @@ class TicketsControllerTest < ActionController::TestCase
   @@before_all_run = false
 
   def before_all
+    @account.sections.map{ |x| x.destroy }
     return if @@before_all_run
+    @account.ticket_fields.custom_fields.each{ |c| c.destroy }
     Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
     @@ticket_fields = []
     @@custom_field_names = []
@@ -77,6 +79,30 @@ class TicketsControllerTest < ActionController::TestCase
   def ticket
     ticket = Helpdesk::Ticket.where('source != ?', 10).last || create_ticket(ticket_params_hash)
     ticket
+  end
+
+  def update_ticket_params_hash
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    subject = Faker::Lorem.words(10).join(' ')
+    description = Faker::Lorem.paragraph
+    @update_group ||= create_group_with_agents(@account, agent_list: [agent.id])
+    params_hash = { description: description, subject: subject, priority: 4, status: 7, type: 'Lead',
+                    responder_id: agent.id, source: 3, tags: ['update_tag1', 'update_tag2'],
+                    due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601, group_id: @update_group.id }
+    params_hash
+  end
+
+  def ticket_params_hash
+    cc_emails = [Faker::Internet.email, Faker::Internet.email]
+    subject = Faker::Lorem.words(10).join(' ')
+    description = Faker::Lorem.paragraph
+    email = Faker::Internet.email
+    tags = [Faker::Name.name, Faker::Name.name]
+    @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
+    params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
+                    priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
+                    due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @create_group.id }
+    params_hash
   end
 
   def test_search_with_feature_enabled
@@ -132,30 +158,6 @@ class TicketsControllerTest < ActionController::TestCase
     @account.rollback :api_search_beta
     get :search, controller_params(:status => '2,3', 'test_custom_text' => params[:custom_field]["test_custom_text_#{@account.id}"])
     assert_response 404
-  end
-
-  def update_ticket_params_hash
-    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
-    subject = Faker::Lorem.words(10).join(' ')
-    description = Faker::Lorem.paragraph
-    @update_group ||= create_group_with_agents(@account, agent_list: [agent.id])
-    params_hash = { description: description, subject: subject, priority: 4, status: 7, type: 'Lead',
-                    responder_id: agent.id, source: 3, tags: ['update_tag1', 'update_tag2'],
-                    due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601, group_id: @update_group.id }
-    params_hash
-  end
-
-  def ticket_params_hash
-    cc_emails = [Faker::Internet.email, Faker::Internet.email]
-    subject = Faker::Lorem.words(10).join(' ')
-    description = Faker::Lorem.paragraph
-    email = Faker::Internet.email
-    tags = [Faker::Name.name, Faker::Name.name]
-    @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
-    params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
-                    priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
-                    due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @create_group.id }
-    params_hash
   end
 
   def test_create
@@ -3128,5 +3130,227 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
   ensure
     Account.any_instance.unstub(:compose_email_enabled?)
+  end
+
+  def test_create_with_section_fields
+    create_section_fields
+    params = ticket_params_hash.merge(custom_fields: {}, type: 'Incident', description: '<b>test</b>')
+    ['paragraph', 'dropdown'].each do |custom_field|
+      params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    post :create, construct_params({}, params)
+    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+    result = parse_response(@response.body)
+    assert_equal true, response.headers.include?('Location')
+    assert_equal "http://#{@request.host}/api/v2/tickets/#{result['id']}", response.headers['Location']
+    assert_response 201
+    assert_equal '<b>test</b>', Helpdesk::Ticket.last.description_html
+    assert_equal 'test', Helpdesk::Ticket.last.description
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_create_with_section_fields_absence_check_error_with_format_validatable_fields
+    create_section_fields
+    params = ticket_params_hash.merge(custom_fields: {}, type: 'Lead', description: '<b>test</b>')
+    ['number', 'date'].each do |custom_field|
+      params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('test_custom_date', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead'), bad_request_error_pattern('test_custom_number', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead')])
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_create_with_section_fields_absence_check_error_with_choices_fields
+    create_section_fields
+    params = ticket_params_hash.merge(custom_fields: {}, type: 'Lead', description: '<b>test</b>')
+    ['dropdown'].each do |custom_field|
+      params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('test_custom_dropdown', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead')])
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_update_with_section_fields
+    create_section_fields
+    t = create_ticket(ticket_params_hash)
+    params = update_ticket_params_hash.merge(custom_fields: {}, type: 'Incident')
+    ['paragraph', 'dropdown'].each do |custom_field|
+      params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response 200
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_update_with_section_fields_absence_check_error_with_format_validatable_fields
+    create_section_fields
+    params = update_ticket_params_hash.merge(custom_fields: {}, type: 'Lead', description: '<b>test</b>')
+    ['number', 'date'].each do |custom_field|
+      params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params)
+    match_json([bad_request_error_pattern('test_custom_date', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead'), bad_request_error_pattern('test_custom_number', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead')])
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_update_with_section_fields_absence_check_error_with_choices_fields
+    create_section_fields
+    params = update_ticket_params_hash.merge(custom_fields: {}, type: 'Lead', description: '<b>test</b>')
+    ['dropdown'].each do |custom_field|
+      params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params)
+    match_json([bad_request_error_pattern('test_custom_dropdown', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead')])
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_create_with_section_fields_without_format_required_fields
+    create_section_fields
+    params = ticket_params_hash.merge(custom_fields: {}, type: 'Problem', description: '<b>test</b>')
+    Helpdesk::TicketField.where(name: "test_custom_number_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    Helpdesk::TicketField.where(name: "test_custom_number_#{@account.id}").update_all(required: false)
+    pattern = []
+    ['number'].each do |custom_field|
+      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
+    end
+    match_json(pattern)
+    assert_response 400
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_create_with_section_fields_without_choices_required_fields
+    create_section_fields
+    params = ticket_params_hash.merge(custom_fields: {}, type: 'Incident', description: '<b>test</b>')
+    Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required: false)
+    pattern = []
+    ['dropdown'].each do |custom_field|
+      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_CHOICES_REQUIRED_PARAMS[custom_field]))
+    end
+    match_json(pattern)
+    assert_response 400
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_update_with_section_fields_without_format_required_fields
+    create_section_fields
+    t = create_ticket(ticket_params_hash)
+    params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 5, type: 'Incident')
+    Helpdesk::TicketField.where(name: "test_custom_paragraph_#{@account.id}").update_all(required_for_closure: true)
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    Helpdesk::TicketField.where(name: "test_custom_paragraph_#{@account.id}").update_all(required_for_closure: false)
+    pattern = []
+    ['paragraph'].each do |custom_field|
+      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
+    end
+    match_json(pattern)
+    assert_response 400
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_update_with_section_fields_without_choices_required_fields
+    create_section_fields
+    t = create_ticket(ticket_params_hash)
+    params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 5, type: 'Incident')
+    Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required_for_closure: true)
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required_for_closure: false)
+    pattern = []
+    ['dropdown'].each do |custom_field|
+      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_CHOICES_REQUIRED_PARAMS[custom_field]))
+    end
+    match_json(pattern)
+    assert_response 400
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_create_with_section_fields_without_format_required_fields_valid
+    create_section_fields
+    params = ticket_params_hash.merge(custom_fields: {}, type: 'Incident', description: '<b>test</b>')
+    Helpdesk::TicketField.where(name: "test_custom_number_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    Helpdesk::TicketField.where(name: "test_custom_number_#{@account.id}").update_all(required: false)
+    assert_response 201
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_create_with_section_fields_without_choices_required_fields_valid
+    create_section_fields
+    params = ticket_params_hash.merge(custom_fields: {}, type: 'Problem', description: '<b>test</b>')
+    Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required: false)
+    assert_response 201
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_update_with_section_fields_without_format_required_fields_valid
+    create_section_fields
+    t = create_ticket(ticket_params_hash)
+    params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 5, type: 'Problem')
+    Helpdesk::TicketField.where(name: "test_custom_paragraph_#{@account.id}").update_all(required_for_closure: true)
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    Helpdesk::TicketField.where(name: "test_custom_paragraph_#{@account.id}").update_all(required_for_closure: false)
+    assert_response 200
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
+  end
+
+  def test_update_with_section_fields_without_choices_required_fields_valid
+    create_section_fields
+    t = create_ticket(ticket_params_hash)
+    params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 5, type: 'Problem')
+    Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required_for_closure: true)
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required_for_closure: false)
+    assert_response 200
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+    end
   end
 end
