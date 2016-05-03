@@ -16,8 +16,9 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
   before_save :mark_available, if: :schedule_changed?
   before_save :calculate_next_run_at, :update_last_run_at
   #callbacks commit/update - save inside leads to infinte loop
-  after_commit :trigger, if: :available?, on: [:create, :update]
-
+  
+  after_commit :trigger, if: Proc.new { :persisted? && :available? } 
+  
   scope :by_schedulable_type, lambda{ |schedulable_type| {:conditions => ['schedulable_type = ?', schedulable_type]}}
 
   scope :upcoming_tasks, lambda{ |from = Time.now.utc| 

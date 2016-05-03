@@ -106,7 +106,7 @@ namespace :scheduled_task do
   end
 
   def log(message, error = nil, task = nil)
-    message = "#{message} : Account - #{task.account_id} : Task - #{task.as_json(nil, false)}" if task
+    message = "#{message} : Account - #{task.account_id} : Task - #{task.as_json({}, false)}" if task
     if error
       level = "ERROR"
       NewRelic::Agent.notice_error(e, { :description => message })
