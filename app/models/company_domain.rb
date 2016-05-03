@@ -10,6 +10,7 @@ class CompanyDomain < ActiveRecord::Base
   validates_uniqueness_of :domain, :scope => [:account_id]
 
   after_commit :map_contacts_to_company, on: :create
+  after_commit :nullify_contact_mapping, on: :destroy
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -36,5 +37,10 @@ class CompanyDomain < ActiveRecord::Base
     def map_contacts_to_company
       Users::UpdateCompanyId.perform_async({ :domains => self.domain,
                                              :company_id => self.company_id }) 
+    end
+
+    def nullify_contact_mapping
+      Users::UpdateCompanyId.perform_async({ :domain => self.domain, :company_id => nil,
+        :current_company_id => self.company_id }) if self.company.present?
     end
 end
