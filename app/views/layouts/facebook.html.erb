@@ -79,7 +79,7 @@
           			if(Modernizr.localstorage && localStorage["fb_redirect"]) {
 						localStorage.removeItem("fb_redirect");
     				}
-    			}}, {scope: "<%= Facebook::Oauth::Constants::PAGE_TAB_PERMISSION.join(',') %>"}
+    			}}, {scope: "<%= Facebook::Oauth::Constants::PAGE_TAB_PERMISSIONS.join(',') %>"}
         	);
         });
 
