@@ -80,7 +80,7 @@ class Solution::Folder < ActiveRecord::Base
     if self.solution_folder_meta.solution_category_meta.solution_folders.
             where(conditions).pluck(:name).map{|n| stripped_name(n)}.
             include?(self.stripped_name)
-      errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
+      errors.add(:name, :taken)
       return false
     end
     return true

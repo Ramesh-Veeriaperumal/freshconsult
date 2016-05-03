@@ -380,6 +380,7 @@ module SolutionHelper
 			op << parent_meta.send("#{language.to_key}_#{f}").name
 			op << "</div>"
 		else
+      
 			op << text_field_tag("#{form.object_name}[#{language.to_key}_#{f}][name]", nil,
 	                         :class => "required #{options[:class]}",
 	                         :id => "#{options[:id]}",
@@ -497,4 +498,9 @@ module SolutionHelper
 		op << "<abbr data-livestamp=#{time.to_i}>#{formated_date(time)}</abbr>"
 		op.html_safe
 	end
+  
+  def full_error(attr, msg)
+    [t("activerecord.attributes.#{attr}", :default => "#{attr.to_s.gsub('.', '_').humanize}"),
+      msg].join(' ')
+  end
 end

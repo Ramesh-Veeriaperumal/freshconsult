@@ -40,19 +40,31 @@
     
         <%= folder_fields.fields_for(:solution_category_meta, @category_meta) do |category_fields| %>
           <div class="span4">
+            <% nested_category_id = "solution_article_meta_solution_folder_meta_solution_category_meta_#{@language.to_key}_category_name" %>
             <%= category_fields.label(:category_id, t('solution.category'), { 
             	:class => 'control-label',
             	:for => "solution_article_meta_solution_folder_meta_solution_category_meta_#{@language.to_key}_category_name"
             }) %>
-            <%= dynamic_text_box(:category, @language, category_fields) %>
+            <%= dynamic_text_box(:category, @language, category_fields, :id => nested_category_id) %>
+            <% if @article_meta.errors.messages[:"category.name"].present? %>
+              <label for="<%= nested_category_id %>" class="error">
+                <%= full_error(:"category.name", @article_meta.errors.messages[:"category.name"]) %>
+              </label>
+            <% end %>
           </div>
         <% end %>
 
         <div class="span4">
+          <% nested_folder_id = "solution_article_meta_solution_folder_meta_#{@language.to_key}_folder_name" %>
           <%= folder_fields.label(:folder_id, t('solution.folder'), { 
           			:class => 'control-label', 
           			:for => "solution_article_meta_solution_folder_meta_#{@language.to_key}_folder_name"}) %>
-          <%= dynamic_text_box(:folder, @language, folder_fields) %>
+          <%= dynamic_text_box(:folder, @language, folder_fields, :id => nested_folder_id) %>
+          <% if @article_meta.errors.messages[:"folder.name"].present? %>
+            <label for="<%= nested_folder_id %>" class="error">
+              <%= full_error(:"folder.name", @article_meta.errors.messages[:"folder.name"]) %>
+            </label>
+          <% end %>
         </div>
       <% end %>
 
