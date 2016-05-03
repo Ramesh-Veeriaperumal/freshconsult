@@ -97,7 +97,7 @@ class Discussions::PostsController < ApplicationController
 	def build_post
 
 		@post  = @topic.posts.build(params[:post])
-		if privilege?(:view_admin)
+		if privilege?(:admin_tasks)
 			@post.user = (params[:post][:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
 		end
 

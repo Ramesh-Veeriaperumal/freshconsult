@@ -13,7 +13,7 @@
 			:tabindex => 20, :height => "200px", 'editor-type' => :forum) %>
 		</div>
 	</div>
-	<% if privilege?(:view_admin) and not @topic.new_record? %>
+	<% if privilege?(:admin_tasks) and not @topic.new_record? %>
 		<div id="topic_forum_id" class="control-group">
 	  		<label for="topic_forum_id" class="control-label"><%= t('forum.title') %></label>
 	  		<div class="controls">
@@ -23,7 +23,7 @@
 		</div>
 	<% end %>
 	<div class="inlineChecklist control-group">
-		<% if privilege?(:view_admin) or current_user.moderator_of?(@topic.forum) %>
+		<% if privilege?(:admin_tasks) or current_user.moderator_of?(@topic.forum) %>
 			<div class="controls">
 				<div class="checkbox inline">
 					<%= form.check_box :sticky %> <%= t('topic.sticky') %>

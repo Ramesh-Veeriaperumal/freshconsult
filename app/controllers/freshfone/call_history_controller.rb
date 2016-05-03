@@ -12,7 +12,7 @@ class Freshfone::CallHistoryController < ApplicationController
 	before_filter :fetch_blacklist, :only => [:index, :custom_search, :children]
 	before_filter :check_export_range, :only => [:export]
 	
-	before_filter :fetch_current_call, :only =>[:destroy_recording], if: 'privilege?(:view_admin)'
+	before_filter :fetch_current_call, :only =>[:destroy_recording], if: 'privilege?(:admin_tasks)'
 	def index
 		@all_freshfone_numbers = current_account.all_freshfone_numbers.order("deleted ASC").all
 	end
