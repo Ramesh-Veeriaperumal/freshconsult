@@ -17,14 +17,5 @@ if @folder_meta.errors.empty?
 	end
 	page << "App.Solutions.NavMenu.reload()" if @folder.primary?
 else
-  # Hack for better text in error message
-  if @folder_meta.errors.messages.has_key? :"solution_category_meta.primary_category.name"
-    @folder_meta.errors.messages[:"category.name"] = @folder_meta.errors.messages.delete :"solution_category_meta.primary_category.name"
-  end
-  # Without the above hack, instead of saying "Category name has already been taken", it will say:
-  # "Solution category meta primary category name has already been taken"
-  # Temporary fix until the right way is found
-  
-  
 	page.replace_html :"error_messages_#{params[:action].eql?('create') ? 'new_folder' : "#{@folder_meta.id}_l#{@language.id}"}", "#{error_messages_for :folder_meta}"
 end

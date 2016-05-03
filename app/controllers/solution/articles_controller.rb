@@ -77,7 +77,8 @@ class Solution::ArticlesController < ApplicationController
     @article_meta = Solution::Builder.article(params)
     @article = @article_meta.send(language_scoper)
     set_tags_changed
-    @article.create_draft_from_article if save_as_draft?
+    @article.create_draft_from_article if save_as_draft? && @article_meta.errors.blank?
+    load_article_parents if @article_meta.errors.present?
     
     post_response(@article_meta, @article)
   end
@@ -200,8 +201,12 @@ class Solution::ArticlesController < ApplicationController
       return if id.blank?
       @article_meta = current_account.solution_article_meta.find_by_id!(id)
       @article = @article_meta.send(language_scoper)
-      @folder_meta = @article_meta.solution_folder_meta
-      @category_meta = @folder_meta.solution_category_meta
+      load_article_parents
+    end
+
+    def load_article_parents
+      @folder_meta = @article_meta.solution_folder_meta if @article_meta
+      @category_meta = @folder_meta.solution_category_meta if @folder_meta
     end
 
     def get_meta_id

@@ -39,6 +39,7 @@ class Solution::Object
 		create_parent_translation
 		if save_check?
 			@meta_obj.save
+             add_errors_to_base
 		end
 		@meta_obj
 	end
@@ -139,6 +140,40 @@ class Solution::Object
     parent = Account.current.send("#{PARENT_OF[obj]}_meta").find_by_id(params[attribute])
     raise "#{PARENT_OF[obj]} id not valid" if parent.blank?
     @meta_obj.send("#{PARENT_OF[obj]}_meta_id=", params.delete(attribute))
+  end
+
+  def add_errors_to_base
+    # We are assuming that we are dealing with only one language version of a solution item or a set of solution 
+    # items at any point of time. In future, if we are dealing with multiple language versions in the same form, this
+    # method won't be compatible with that, but other methods might be compatible.
+
+    return unless @meta_obj.errors.present?
+    entities = ['article', 'folder', 'category']
+    #expression to match version attributes eg: :"zh_tw_category.name"
+    exp_vers = Hash.new { |h, k| h[k] = /(\w+)_#{k}$/i }
+    #expression to match meta attributes eg: :"solution_folder_meta.visibility"
+    exp_meta = Hash.new { |h, k| h[k] = /solution_#{k}_meta$/i  }
+    errors_of = @meta_obj.errors.messages.keys
+
+    errors_of.each do |key|
+      # We need only last two attributes in the error message key to identify the solution object and it's attribute
+      # eg: :"solution_article_meta.solution_folder_meta.solution_category_meta.zh_tw_category.name"
+      # to make sense out of the above key we need only "zh_tw_category.name" part.
+      entity_attr = key.to_s.split('.').last(2)
+      if entity_attr.size > 1
+        entities.each do |entity|
+          if exp_vers[entity].match(entity_attr.first) || exp_meta[entity].match(entity_attr.first)
+            # Convert eg: :"zh_tw_category.name" => "category.name" or
+            # convert eg: :"solution_folder_meta.visibility" => "folder.visibility"
+            @meta_obj.errors.messages[:"#{entity}.#{entity_attr[1]}"] = @meta_obj.errors.messages.delete(key)
+            break
+          end
+        end
+      else
+        # To change :"visibility" to :"folder.visibility"
+        @meta_obj.errors.messages[:"#{short_name}.#{entity_attr[0]}"] = @meta_obj.errors.messages.delete(key)
+      end
+    end
   end
 
 end

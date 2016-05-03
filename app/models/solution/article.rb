@@ -38,6 +38,7 @@ class Solution::Article < ActiveRecord::Base
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_article_meta.new_record?"
+  validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   validate :status_in_default_folder
 
   alias_method :parent, :solution_article_meta

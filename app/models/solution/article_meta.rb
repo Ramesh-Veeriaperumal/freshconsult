@@ -65,6 +65,8 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	after_save :set_mobihelp_solution_updated_time, :if => :valid_change?
 	before_destroy :set_mobihelp_solution_updated_time
 
+	validates_inclusion_of :art_type, :in => TYPE_KEYS_BY_TOKEN.values.min..TYPE_KEYS_BY_TOKEN.values.max
+
 	alias_method :children, :solution_articles
 
 	scope :published, lambda {
