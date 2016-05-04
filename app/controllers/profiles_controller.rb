@@ -95,7 +95,7 @@ private
 
   def update_agent
     respond_to do |format|      
-      if @profile.update_attributes(params[:agent])                     
+      if valid_request? && @profile.update_attributes(params[:agent])                     
           @user.update_attributes(params[:user])        
           format.html { redirect_to(edit_profile_url, :notice => 'Your profile has been updated successfully.') }
           format.xml  { head :ok }
@@ -104,6 +104,10 @@ private
         format.xml  { render :xml => @profile.errors, :status => :unprocessable_entity }
       end    
     end    
+  end
+  
+  def valid_request?
+    params[:id] == current_user.id ? true : false
   end
 
   def change_password_fail
