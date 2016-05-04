@@ -18,10 +18,10 @@ class TicketsQueriesTest < ActionDispatch::IntegrationTest
         create: 83,
         compose_email: 75,
         show: 18,
-        update: 27,
+        update: 30,
         index: 18,
-        destroy: 33, # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62
-        restore: 27 # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62
+        destroy: 36, # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62
+        restore: 42 # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
