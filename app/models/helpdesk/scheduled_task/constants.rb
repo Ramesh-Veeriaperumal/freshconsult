@@ -14,7 +14,7 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
   FREQUENCY_UNIT = { :hourly   => 1.hour,
                      :daily    => 1.day,
                      :weekly   => 7.day,
-                     :monthly  => 1.month
+                     :monthly  => 1
                    }
   
   STATUS_NAME_TO_TOKEN = { :available    => 0,
