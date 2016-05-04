@@ -229,8 +229,8 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
 
   def upcoming_schedule(prev_schedule)
     return prev_schedule if prev_schedule > Time.zone.now
-
-    next_at = prev_schedule + (repeat_frequency * FREQUENCY_UNIT[frequency_name])
+    next_at_frequency = monthly? ? (repeat_frequency * FREQUENCY_UNIT[frequency_name]).months : (repeat_frequency * FREQUENCY_UNIT[frequency_name])
+    next_at = prev_schedule + next_at_frequency
     next_at = to_monthly(next_at) if monthly?
     (next_at > Time.zone.now) ? next_at : upcoming_schedule(next_at)
   end
