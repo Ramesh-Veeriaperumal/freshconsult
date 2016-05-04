@@ -11,8 +11,9 @@ module ApiTicketConstants
                   ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include']
-  ALLOWED_INCLUDE_PARAMS = %w(conversations requester company)
-  SIDE_LOADING = ['requester']
+  ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats)
+  SIDE_LOADING = ['requester', 'stats']
+  INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
   ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT

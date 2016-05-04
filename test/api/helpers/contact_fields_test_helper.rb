@@ -1,3 +1,4 @@
+['contact_fields_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module ContactFieldsTestHelper
   include ContactFieldsHelper
   # Patterns

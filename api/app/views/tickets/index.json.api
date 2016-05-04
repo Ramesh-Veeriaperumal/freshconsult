@@ -28,8 +28,10 @@ JSON.generate(@items.map do |item|
       :updated_at => item.updated_at.try(:utc)
     }
     requester_hash = item.requester
+    stats_hash = item.stats
     response_hash.merge!(deleted: item.deleted) if item.deleted
     response_hash.merge!(requester: requester_hash) if requester_hash
+    response_hash.merge!(stats: stats_hash) if stats_hash
     response_hash
 end
 )

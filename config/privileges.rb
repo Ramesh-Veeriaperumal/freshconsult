@@ -106,6 +106,11 @@ Authority::Authorization::PrivilegeList.build do
     # Used for API V2
     resource :"conversation", only: [:create, :ticket_conversations]
     resource :"ticket", :only => [:show, :create, :index, :search]
+
+    # This privilege should only be used for API. This should have only read permission. 
+    # Agent who has access to ticket create will obviously know the custom field names.
+    # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
+    resource :api_ticket_field, :only => [:index] 
 	end
 
   reply_ticket do
@@ -321,6 +326,12 @@ Authority::Authorization::PrivilegeList.build do
     # Used by V2 API
     resource :"api_contact", :only => [:create, :update]
     resource :"api_company", :only => [:create, :update]
+
+    # This privilege should only be used for API. This should have only read permission. 
+    # Agent who has access to contact/company create will obviously know the custom field names.
+    # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as contact/company create.
+    resource :api_contact_field, :only => [:index]
+    resource :api_company_field , :only => [:index]
   end
 
   delete_contact do
@@ -478,9 +489,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/marketplace_app"
 
     # Used by API V2
-    resource :api_ticket_field, :only => [:index]
-    resource :"api_contact_field", :only => [:index]
-    resource :"api_company_field", :only => [:index]
+    resource :api_ticket_field, :only => [:index] 
+    resource :api_contact_field, :only => [:index]
+    resource :api_company_field , :only => [:index]
     resource :"api_business_hour", :only => [:index, :show]
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_sla_policy", :only => [:index, :update]
