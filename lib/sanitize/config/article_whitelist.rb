@@ -4,7 +4,7 @@ class Sanitize
       :elements => HTML_RELAXED[:elements] + ['object', 'param', 'embed', 'canvas', 'video', 'track'],
       :attributes => {
         :all => HTML_RELAXED[:attributes][:all] + ['name'],
-        'iframe' => HTML_RELAXED[:attributes]['iframe'] + ['align'],
+        'iframe' => ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'align'],
         'audio' => HTML_RELAXED[:attributes]['audio'] + ['src', 'crossorigin', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted'],
         'source' => HTML_RELAXED[:attributes]['source'] + ['media'],
         'object' => ['type', 'data', 'height', 'width', 'typemustmatch', 'form', 'classid', 'codebase'],
