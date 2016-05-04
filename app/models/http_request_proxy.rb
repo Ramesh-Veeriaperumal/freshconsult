@@ -132,6 +132,7 @@ class HttpRequestProxy
       Rails.logger.error("Error while processing proxy request #{params.inspect}. \n#{e.message}\n#{e.backtrace.join("\n")}")  # TODO make sure any password/apikey sent in the url is not printed here.
       response_body = '{"result":"error"}'
       response_code = 500  # Internal server error
+      NewRelic::Agent.notice_error(e)
     end
     response_type = accept_type if response_type.blank?
     begin
