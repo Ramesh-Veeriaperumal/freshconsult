@@ -146,6 +146,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
       if due_by_type > sla_timer
         business_minute = bhrs_during_elapsed_time.div(60).business_minute
         business_minute.business_calendar_config = calendar
+        Rails.logger.info "Acc id:: #{ticket.account_id}, Ticket id:: #{ticket.id}, Business Minute:::: #{business_minute.inspect}, Value:: #{due_by_type.inspect}, Zone:: #{Time.zone.name}"
         business_minute.after(due_by_type) 
       else
         due_by_type
