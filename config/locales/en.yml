@@ -1610,6 +1610,7 @@ en:
         title: Supervisor - Rules
       helpnote:
         tour: Help me create a new supervisor rule
+        tour_v2: Help me create a supervisor rule
         help_title: Supervisor
         help_info_1: The Supervisor performs actions on tickets that you specify based on time and event driven triggers. Use the Supervisor to periodically check recent tickets and perform actions like sending reminders to customers for pending tickets, or escalating overdue tickets to the right person in your team.
         help_info_2: The Supervisor will run every hour and process tickets that have been updated within the past 30 days. Supervisor rules are processed sequentially, so the order of the rules is important. A rule may cause certain actions that trigger subsequent rules.
@@ -1628,6 +1629,7 @@ en:
         title: Observer - Rules
       helpnote:
         tour: Help me create a new observer rule
+        tour_v2: Help me create a observer rule
         help_title: Observer
         help_info_1: The Observer lets you trigger specific actions in your support desk as soon as a certain event occurs. For example, you could create an Observer Rule to alert the big man when a customer gives an unfavorable satisfaction rating on any ticket.
         help_title_2a: Events
@@ -3111,6 +3113,7 @@ en:
     info3: When a ticket satisfies these conditions
     helpcard:
       tour: Help me create a new Dispatch’r rule
+      tour_v2: Help me create a Dispatch’r rule
       info1: The Dispatch’r lets you bring your business rules into your support workflow by performing a predefined set of actions on newly created tickets. For example, you could use the Dispatch’r to automatically categorize, prioritize and assign every incoming ticket to the right agent in your team, based on the conditions you specify.
       info2: Remember, the order of the Dispatch’r rules are important. For each incoming ticket, Dispatch'r will execute the first matching rule and stop. You can reorder the list of rules to have the most important rules on top.
     reorder: Reorder
@@ -4368,6 +4371,7 @@ en:
   favicon: Favicon
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
+  widget_config_tour_text: Help me get started with the feedback widget
   chatwidget_help_content:
     title: Live Chat
     info1: Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site.
@@ -7199,6 +7203,7 @@ en:
       info_1: "The ticket form helps capture the data you need from the customer when they submit a ticket. You can customize your Ticket Form to include the right ticket fields for your business, and let your customers and agents fill in the information you need in the format you want. For example, in an e-commerce company, getting a customer's order ID in the ticket form would be very helpful to the agent solving the ticket."
       info2: "Dependent Fields give you an easy way to create deeper ticket categories and identify the biggest issues that clog your support.  With dependent fields you can organize tickets hierarchically  into categories, subcategories and item affected."
       info4: "If you are in the estate plan or above, you can have dynamic fields that appear based on the option selected in the type field. For every option in the type field, you can create a different section. You can then add more ticket fields to each section. For example, in an ecommerce scenario, when the type is chosen as \"Replacement\", a section with a field called \"Reason\" can open up that will collect the reason why customer needs a replacement for the item. <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/212889-creating-your-dynamic-ticket-forms'>Read more about dynamic fields</a>."
+      info4_v2: "If you are in the estate plan or above, you can have dynamic fields that appear based on the option selected in the type field. For every option in the type field, you can create a different section. You can then add more ticket fields to each section. For example, in an ecommerce scenario, when the type is chosen as \"Replacement\", a section with a field called \"Reason\" can open up that will collect the reason why customer needs a replacement for the item."
   contact_field:
     helpcard:
       title2: "Customizing your contact fields"
@@ -9050,6 +9055,7 @@ en:
     folders: Folders
     views_categories: Views and Categories
     tour: Help me setup my forums
+    tour_v2: Help me setup my knowledge base
     show_more: Show more
     helpnote:
       title: Organizing your community

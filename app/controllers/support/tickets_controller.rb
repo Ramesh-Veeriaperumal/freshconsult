@@ -154,7 +154,7 @@ class Support::TicketsController < SupportController
 
     # Used for scoping of filters
     def ticket_scope
-      if privilege?(:client_manager)
+      if privilege?(:client_manager) && current_user.user_companies.present?
         if @requested_by.to_i == 0
           current_user.company.try(:all_tickets) || current_user.tickets
         else

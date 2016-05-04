@@ -228,13 +228,13 @@
           setTimeout(function(ev){
             uri_textarea.autosize();
           }, 500);
-
-          var url = jQuery('<div class="row-fluid"/>').append(jQuery('<span class="span2"/>')
-                      .append(FactoryUI.label('<%= t(".url") %>', 'required_label')).append('<b class="required_star">*</b>'))
-                      .append(placeholder1)
+          var url_wrap = jQuery('<span class="span10"/>').append(placeholder1)
                       .append(uri_textarea)
                       // No URL validation - for allowing placeholder in URL
                       .append(FactoryUI.checkbox("<%= t('.url_req_auth') %>","need_authentication",initFeed['need_authentication'],"url_req_auth"));
+          var url = jQuery('<div class="row-fluid"/>').append(jQuery('<span class="span2"/>')
+                      .append(FactoryUI.label('<%= t(".url") %>', 'required_label')).append('<b class="required_star">*</b>'))
+                      .append(url_wrap);
           var username_password = jQuery('<div class="row-fluid user_pass_webhook"/>')
                           .append(FactoryUI.link("<%= t('.api_key?').html_safe %>", '#api_key', 'credentials_toggle'))
                           .append(FactoryUI.text("<%= t('.username') %>", "username", initFeed['username'], 'username'));
