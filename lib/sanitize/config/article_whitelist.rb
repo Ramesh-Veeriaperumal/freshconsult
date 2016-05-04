@@ -24,7 +24,7 @@ class Sanitize
         'th' => HTML_RELAXED[:attributes]['th'] + ['bgcolor'],
         'tr' => ['bgcolor'],
         'tbody' => ['bgcolor']
-      }.merge(HTML_RELAXED[:attributes].except('iframe','object','param','embed','video','audio','source','track','font', 'td', :all)),
+      }.merge(HTML_RELAXED[:attributes].except('object','param','embed','video','audio','source','track','font', 'td', :all)),
 
       :protocols => {
         'img' => { 'src' => HTML_RELAXED[:protocols]['img']['src'] + ['data', 'cid'] }
