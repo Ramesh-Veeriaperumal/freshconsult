@@ -3,9 +3,9 @@
   <div class="admin-header">
     <div class="report-head report">
       <div class="report-link-block pull-right">
-        <a href="#report-demo" rel="freshdialog" id="demo_link"
-          data-backdrop="static"  data-width="680" data-template-footer="false" data-title=""
-        ><%= t('helpdesk_reports.reports_in_action')%>
+        <a href="#" rel="guided-inlinemanual" 
+          data-topic-id="13753">
+          <%= t('helpdesk_reports.reports_in_action')%>
         </a>
         <% if current_account.old_reports_enabled? %>
           <span class="seperator_reports"> | </span>
@@ -111,35 +111,3 @@
     </div>
   <% end %>
 </div>
-<div id="report-demo" class="hide row-fluid">
-  <iframe id="video_iframe" width="650" height="366" frameborder="0" allowfullscreen></iframe>
-</div>
-<script>
-jQuery(document).ready(function() {
-
-  var video_url = "//fast.wistia.net/embed/iframe/i0f0lofova?videoFoam=true&autoPlay=true";
-
-  jQuery(document).on('click',"#report-demo [data-dismiss='modal']",function(){ 
-      resetVideo(); 
-  });
-  jQuery(document).keyup(function(e) {
-      if (e.keyCode == 27) { 
-        resetVideo();   
-      }
-  });
-
-  function resetVideo(){
-      var iframe = jQuery("#video_iframe")[0];
-      if(iframe != undefined) {
-          var url = iframe.src;
-          iframe.src = '';  
-      }
-  }
-
-  jQuery("#demo_link").on('click',function(){
-      var iframe = jQuery("#video_iframe")[0];
-      var url = iframe.src;
-      iframe.src = video_url;
-  });
-});
-</script>

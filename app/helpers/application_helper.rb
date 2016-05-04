@@ -1356,9 +1356,9 @@ module ApplicationHelper
       privilege?(:admin_tasks) && can_view_social? && social_enabled?
     end
 
-  def tour_button(text, tour_id)
-    link_to(text, '#', :rel => 'guided-tour', "data-tour-id" => tour_id, :class=> 'guided-tour-button')
-  end
+    def inm_tour_button(text,topic_id)
+      link_to(text, '#', :rel => 'guided-inlinemanual', "data-topic-id" => topic_id, :class=> 'inm_tour_button')
+    end
 
   def check_fb_reauth_required
     fb_page = current_account.fb_reauth_check_from_cache

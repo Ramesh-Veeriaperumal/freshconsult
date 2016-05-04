@@ -4,11 +4,10 @@
 	<p><%=t(:'email_configs.helpcard.info19', :solution_url => 
 		current_account.primary_email_config.to_email).html_safe %><%=t('email_configs.helpcard.edit_info').html_safe %>
 	</p>
-	<%= tour_button(t('email_configs.helpcard.tour1').html_safe, '5007f779e13a460684000024') %>
+	<%= inm_tour_button(t('email_configs.helpcard.tour1').html_safe,5132) %>
 	</br>
 	<% if feature?(:mailbox) %>
 		<h3 class="lead"><%=t('email_configs.helpcard.info20').html_safe%></h3>
 		<p><%= t('email_configs.helpcard.info21').html_safe %></p> 
 		<p><%= t(:'email_configs.spf_info', :solution_url => 'https://support.freshdesk.com/solution/articles/43170-creating-an-strong-spf-strong-strong-record-strong-to-ensure-proper-email-delivery').html_safe %></p> 
-		<%= tour_button(t('email_configs.helpcard.tour2').html_safe, '500f8573e13a46133e000044') %>
 	<% end %>
