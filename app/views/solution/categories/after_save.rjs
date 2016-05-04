@@ -2,6 +2,7 @@ if @category_meta.errors.empty?
 	@category_meta.reload
 	if params[:action].eql?('create')
 		page << "App.Solutions.AfterSave.hide('#new-cat');"
+		page << "App.Solutions.resetModalForm(jQuery('#new-cat form'));"
 	else
 		page << "App.Solutions.AfterSave.hide('#version-#{@category_meta.id}-l#{params[:language_id]}');"
 		page << "App.Solutions.AfterSave.hide('#category-edit');"

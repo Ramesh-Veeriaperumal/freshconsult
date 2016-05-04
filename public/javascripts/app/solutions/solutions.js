@@ -75,12 +75,16 @@ window.App = window.App || {};
     },
 
     resetFormOnCancel: function (e) {
-      var form = $('#' + e.target.id).parents('.modal').find('form'), customers_input;
+      var form = $('#' + e.target.id).parents('.modal').find('form');
+      App.Solutions.resetModalForm(form);
+    },
+
+    resetModalForm: function (form) {
       form.resetForm();
       form.find('.select2').trigger('change');
       form.find('.error_messages').empty();
       if (form.find('.company_folders').length > 0) {
-        customers_input = form.find('.autocomplete_filter [type="hidden"]');
+        var customers_input = form.find('.autocomplete_filter [type="hidden"]');
         customers_input.select2('val', customers_input.data().initialValue);
       }
     },

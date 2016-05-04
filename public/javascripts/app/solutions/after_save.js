@@ -75,16 +75,14 @@ window.App.Solutions = window.App.Solutions || {};
 		bindCreateNew: function () {
 			$('#create-new-category, #cancel-create-new').on('click', function (ev) {
 				ev.preventDefault();
-				var flag = $(this).attr('id') === "create-new-category";
-				$('#solution_folder_meta_solution_category_meta_id').select2("enable", !flag);
-				$('#solution_folder_meta_solution_category_meta_id').toggleClass('hide', flag);
-				$('#create-category-text').toggleClass('hide', !flag).attr('disabled', !flag);
-				$('#create-category-text-error').toggleClass('hide', !flag);
-				$('#cancel-create-new').toggleClass('hide', !flag);
-				$('#create-new-category').toggleClass('hide', flag);
-				$('.solution_folder_meta_solution_category_meta').toggleClass('hide', flag);
+				var flag = $(this).attr('id') === "create-new-category",
+					form = $(this).closest('form');
+				form.find('#solution_folder_meta_solution_category_meta_id').toggleClass('hide', flag).select2("enable", !flag);
+				form.find('#create-category-text').toggleClass('hide', !flag).attr('disabled', !flag);
+				form.find('#create-category-text-error, #cancel-create-new').toggleClass('hide', !flag);
+				form.find('#create-new-category, .solution_folder_meta_solution_category_meta').toggleClass('hide', flag);
 				if (flag) {
-					$('#create-category-text').focus();
+					form.find('#create-category-text').focus();
 				}
 			});
 		},

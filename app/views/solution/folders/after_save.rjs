@@ -2,6 +2,7 @@ if @folder_meta.errors.empty?
 	@folder_meta.reload
 	if params[:action].eql?('create')
 		page << "App.Solutions.AfterSave.hide('#new-fold');"
+		page << "App.Solutions.resetModalForm(jQuery('#new-fold form'));"
 		page << "App.Solutions.AfterSave.hide('#folder-new');"
 	else
 		page << "App.Solutions.AfterSave.hide('#version-#{@folder_meta.id}-l#{params[:language_id]}');"
