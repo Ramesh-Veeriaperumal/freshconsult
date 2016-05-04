@@ -6,7 +6,6 @@ class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
     args.symbolize_keys!
 
     # Publish to remove ticket
-
     ticket_uuid     = RabbitMq::Utils.generate_uuid
     ticket_message  = generate_message(
       'ticket',
@@ -41,24 +40,20 @@ class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
   private
 
     def generate_message(model, action, uuid, account_id, id, klass_name, parent_id=nil)
-      Hash.new.tap do |sqs_params|
-        sqs_params['object']                = model
-        sqs_params['action']                = action
-        sqs_params['action_epoch']          = Time.zone.now.to_f
-        sqs_params['uuid']                  = uuid
-        sqs_params['account_id']            = account_id
-        sqs_params["#{model}_properties"]   = Hash.new.tap do |properties|
-          properties['document_id']         = id
-          properties['account_id']          = account_id
-          properties['klass_name']          = klass_name
-          properties['type']                = model
-          properties['action']              = action
-          if parent_id
-            properties['routing_id']        = account_id
-            properties['parent_id']         = parent_id
-          end
+      model_message = RabbitMq::SqsMessage.skeleton_message(model, action, uuid, account_id)
+
+      model_message["#{model}_properties"]   = Hash.new.tap do |properties|
+        properties['document_id']         = id
+        properties['account_id']          = account_id
+        properties['klass_name']          = klass_name
+        properties['type']                = model
+        properties['action']              = action
+        if parent_id
+          properties['routing_id']        = account_id
+          properties['parent_id']         = parent_id
         end
-        sqs_params['subscriber_properties'] = {}
-      end.to_json
+      end
+
+      model_message.to_json
     end
 end
