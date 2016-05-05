@@ -216,7 +216,7 @@ class Freshfone::CallController < FreshfoneBaseController
  end
 
  def agent_conference_launched?
- 	current_account.launched?(:agent_conference)
+ 	current_account.features?(:agent_conference)
  end
 
 		def in_progress?

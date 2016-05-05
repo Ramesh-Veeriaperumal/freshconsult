@@ -128,7 +128,7 @@ class Account < ActiveRecord::Base
   end
 
   def supervisor_feature_launched?
-    features?(:freshfone_call_monitoring) || launched?(:agent_conference)
+    features?(:freshfone_call_monitoring) || features?(:agent_conference)
   end
   #Temporary feature check methods - using redis keys - starts here
   def compose_email_enabled?

@@ -52,7 +52,7 @@ module Freshfone
     end
 
     def agent_conference_enabled?
-      current_account.launched?(:agent_conference)
+      current_account.features?(:agent_conference)
     end
 
     def valid_target_agent?

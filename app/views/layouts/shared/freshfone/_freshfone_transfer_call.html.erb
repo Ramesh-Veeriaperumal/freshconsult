@@ -55,7 +55,7 @@
 
                 <a href="#" class="pull-right tooltip transfer ficon-arrow-right-2 offset1"
                         title="<%= t('freshfone.widget.transfer_call') %>"></a>
-                <% if current_account.launched?(:agent_conference) %>
+                <% if current_account.features?(:agent_conference) %>
                 <a href="#" class="pull-right tooltip add_agent ficon-plus"
                         title="<%= t('freshfone.widget.add_agent_to_call') %>">
                 </a>
