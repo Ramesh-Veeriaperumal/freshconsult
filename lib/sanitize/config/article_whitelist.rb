@@ -1,7 +1,7 @@
 class Sanitize
   module Config
     ARTICLE_WHITELIST = {
-      :elements => HTML_RELAXED[:elements] + ['object', 'param', 'embed', 'canvas', 'video', 'track'],
+      :elements => HTML_RELAXED[:elements] + ['iframe', 'object', 'param', 'embed', 'canvas', 'video', 'track'],
       :attributes => {
         :all => HTML_RELAXED[:attributes][:all] + ['name'],
         'iframe' => ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'align'],
@@ -27,7 +27,8 @@ class Sanitize
       }.merge(HTML_RELAXED[:attributes].except('object','param','embed','video','audio','source','track','font', 'td', :all)),
 
       :protocols => {
-        'img' => { 'src' => HTML_RELAXED[:protocols]['img']['src'] + ['data', 'cid'] }
+        'img' => { 'src' => HTML_RELAXED[:protocols]['img']['src'] + ['data', 'cid'] },
+        'iframe' => {'src'  => ['http', 'https', :relative]}
       }.merge(HTML_RELAXED[:protocols].except('img')),
       :remove_contents => HTML_RELAXED[:remove_contents],
       :transformers => lambda do |env|
