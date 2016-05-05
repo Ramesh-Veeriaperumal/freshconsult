@@ -291,7 +291,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
    def test_updated_at_of_ticket_with_tags_add
     # IN API
-    ticket = Helpdesk::Ticket.first
+    ticket = Helpdesk::Ticket.where('source != ? and deleted = ?', 10, false).last
     existing_tags = ticket.tag_names
     previous_updated_at = ticket.updated_at
     tags = existing_tags | [Faker::Name.name]
@@ -323,7 +323,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
   def test_updated_at_of_ticket_with_tags_remove
     # IN API
-    ticket = Helpdesk::Ticket.first
+    ticket = Helpdesk::Ticket.where('source != ? and deleted = ?', 10, false).last
     ticket.tags = [Helpdesk::Tag.first]
     previous_updated_at = ticket.updated_at
     sleep 1
@@ -357,7 +357,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
   def test_updated_at_of_ticket_with_no_changes_to_tags
     # IN API
-    ticket = Helpdesk::Ticket.first
+    ticket = Helpdesk::Ticket.where('source != ? and deleted = ?', 10, false).last
     tag = Helpdesk::Tag.first
     ticket.tags = [tag]
     previous_updated_at = ticket.updated_at
