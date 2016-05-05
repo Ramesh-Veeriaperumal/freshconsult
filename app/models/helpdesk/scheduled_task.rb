@@ -162,7 +162,7 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
 
   def schedule_changed?
     new_record? || minute_of_day_changed? || day_of_frequency_changed? || 
-      frequency_changed? || repeat_frequency_changed? || end_date_changed? || next_run_at_changed?
+      frequency_changed? || repeat_frequency_changed? || end_date_changed? 
   end
 
   def calculate_next_run_at

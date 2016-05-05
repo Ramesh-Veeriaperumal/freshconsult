@@ -36,7 +36,7 @@ namespace :scheduled_task do
       end
       message = "Processed upcoming_tasks : #{task_count}"
       log(message)
-      DevNotification.publish(SNS["reports_notification_topic"], "Scheduler | #{message}", message)
+      DevNotification.publish(SNS["reports_notification_topic"], "Scheduler(upcoming) | #{message}", message)
 
     end
     log "Completed Scheduled Tasks - upcoming_tasks | base_time: #{base_time}"
@@ -63,7 +63,7 @@ namespace :scheduled_task do
       end
       message = "Processed dangling_tasks : #{task_count}"
       log(message)
-      DevNotification.publish(SNS["reports_notification_topic"], "Scheduler | #{message}", message)
+      DevNotification.publish(SNS["reports_notification_topic"], "Scheduler(dangling) | #{message}", message)
 
     end
     log "Completed Scheduled Tasks - dangling_tasks"

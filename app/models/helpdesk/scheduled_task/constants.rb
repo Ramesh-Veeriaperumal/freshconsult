@@ -1,6 +1,6 @@
 class Helpdesk::ScheduledTask < ActiveRecord::Base
 
-  CONSECUTIVE_FAILUERS_LIMIT = 3
+  CONSECUTIVE_FAILUERS_LIMIT = 7
 
   CRON_FREQUENCY_IN_HOURS = 1.hour
   
