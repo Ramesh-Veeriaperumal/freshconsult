@@ -1042,7 +1042,7 @@ Helpkit::Application.routes.draw do
 
     resources :data_export do
       collection do
-        get :export
+        post :export
       end
     end
 
