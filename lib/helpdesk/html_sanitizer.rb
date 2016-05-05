@@ -25,6 +25,16 @@ module Helpdesk::HTMLSanitizer
     end
   end
 
+  def self.sanitize_post(html)
+    if html
+      begin
+        Sanitize.clean(html, Sanitize::Config::POST_WHITELIST) 
+      rescue Exception => e
+        Sanitize.clean(html, Sanitize::Config::HTML_RELAXED) 
+      end
+    end
+  end
+
   private
   
     def self.plain_text(html)

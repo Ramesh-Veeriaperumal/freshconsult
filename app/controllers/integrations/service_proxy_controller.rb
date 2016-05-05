@@ -1,6 +1,4 @@
 class Integrations::ServiceProxyController < ApplicationController
-  skip_before_filter :check_privilege, :verify_authenticity_token
-  before_filter :authenticated_agent_check
   before_filter :load_installed_app
   before_filter :load_service_class
 
@@ -19,12 +17,6 @@ class Integrations::ServiceProxyController < ApplicationController
   def load_installed_app
     @installed_app = current_account.installed_applications.with_name(params[:app_name]).first
     render  :json => {:message => "App not instaled"}, :status => :not_found unless @installed_app
-  end
-
-  def authenticated_agent_check
-    if current_user.blank? || !current_user.agent?
-      render :json => {:message => "Unauthenticated user" }, :status => :unauthorized
-    end
   end
 
   def load_service_class
