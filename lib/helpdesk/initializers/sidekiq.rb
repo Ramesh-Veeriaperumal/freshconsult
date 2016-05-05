@@ -28,7 +28,8 @@ Sidekiq.configure_client do |config|
       "AccountCleanup::SuspendedAccountsWorker",
       "Social::Gnip::ReplayWorker",
       "Social::Gnip::RuleWorker",
-      "Reports::ScheduledReports"
+      "Reports::ScheduledReports",
+      "Reports::ScheduledReportsCleanup"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

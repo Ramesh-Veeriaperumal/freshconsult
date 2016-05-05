@@ -4,18 +4,36 @@ class Reports::ScheduledReports < ScheduledTaskBase
 
   include HelpdeskReports::Helper::PlanConstraints
 
-  def execute_task task
-    
-    task.mark_disabled && return unless enable_schedule_report?
+  attr_accessor :task
 
-    Sharding.run_on_slave do
-      HelpdeskReports::ScheduledReports::Worker.new(task).perform
+  def execute_task task
+    @task = task
+    if task_permitted?
+      Sharding.run_on_slave do
+        HelpdeskReports::ScheduledReports::Worker.new(task).perform
+      end
+      return true
+    else
+      return "not_permitted"
     end
-    return true
   end
 
   def retry_count
   	2
   end
 
+  private
+    def task_permitted?
+      result = false
+      Sharding.select_shard_of(task.account_id) do
+        if !enable_schedule_report?
+          task.mark_disabled.save!
+        elsif (task.user.blocked? || !task.user.privilege?(:view_reports))
+          AgentDestroyCleanup.perform_async({:user_id => task.user.id})
+        else
+          result = true
+        end
+      end
+      result
+    end
 end

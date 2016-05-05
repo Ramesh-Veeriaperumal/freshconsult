@@ -52,6 +52,8 @@ class ScheduledTaskBase < BaseWorker
   end
 
   def after_execute(exec_status)
+    #For handling tasks created by users who no longer hold reports priveleges
+    return if exec_status == "not_permitted"
     params[:retry_count] = params[:retry_count].to_i
     unless exec_status
       if params[:retry_count] < retry_count

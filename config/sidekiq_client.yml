@@ -108,6 +108,7 @@ defaults: &defaults
     - [chargebee_add_subscription]
     - [partners_event_queue]
     - [scheduled_reports]
+    - [scheduled_reports_cleanup]
 development:
   <<: *defaults
 
