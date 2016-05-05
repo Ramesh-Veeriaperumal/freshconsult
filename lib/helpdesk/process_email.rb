@@ -83,7 +83,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       
       begin
-        if ((to_email[:email] == kbase_email) || (parse_cc_email && parse_cc_email.include?(kbase_email)))
+        if (to_email[:email] == kbase_email)
           create_article(account, from_email, to_email)
         end
       rescue Exception => e
