@@ -30,6 +30,7 @@
                                 :class => "alert-text tooltip", 
                                 :title => t('email_configs.unverified_info1')) %> - 
               <a href="/admin/email_configs/${email_config_id}/deliver_verification" 
+                  data-method="put" 
                   class="btn btn-mini product_send_act" 
                         data-loading-text= <%= t('admin.products.form.forwarding_email_info')%> ><%= t("email_configs.send_verification_email") %></a>
             </div>

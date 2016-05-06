@@ -1005,7 +1005,7 @@ Helpkit::Application.routes.draw do
       end
       member do
         put :make_primary
-        get :deliver_verification
+        put :deliver_verification
         put :test_email
       end
     end
