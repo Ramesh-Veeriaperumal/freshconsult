@@ -1065,7 +1065,7 @@ Helpkit::Application.routes.draw do
           get :show
           put :update
           put :soft_reset
-          get :restore_default
+          put :restore_default
           get :publish
           get :clear_preview
         end
