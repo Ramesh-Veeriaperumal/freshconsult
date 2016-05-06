@@ -1,8 +1,9 @@
 <div class="head">
     <label class="inline adm-radio" id="capture-dm">
+      <%= check_box "social_facebook_page", :import_dms, { :checked => facebook_page.import_dms } %>
       <%= t('.header')%>
-    </label>
-  </div>
+  </label>
+</div>
 <div class='adm-social sts adm-bg c-tkt dm-options'>     
   <div id="dm-option" class="clearfix">
     <div class="control-group row-fluid clearfix">

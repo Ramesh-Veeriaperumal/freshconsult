@@ -24,7 +24,7 @@
       
     </div>
     
-    <% if @facebook_stream.default_stream? and @facebook_page.import_dms %>
+    <% if @facebook_stream.default_stream? %>
       <div class="rules-wrapper">
         <%= render :partial => 'convert_dm',  :locals => { :facebook_page => @facebook_page } %>
       </div>

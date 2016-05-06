@@ -32,7 +32,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
       @facebook_stream.update_attributes({:accessible_attributes => stream_accessible_params(@facebook_stream)})
       
       #Update DM Ticket Rule
-      update_dm_rule(@facebook_page) if params[:dm_rule]
+      update_facebook_dm_rule if params[:dm_rule]
       
       #Update Ticket Rules Specific to the default stream
       update_ticket_rules if params[:social_ticket_rule]
@@ -151,11 +151,34 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
       end  
     end
   end
+
+  def update_facebook_dm_rule
+    dm_stream = @facebook_page.dm_stream
+    if @facebook_page.import_dms 
+      dm_stream.ticket_rules.present? ? update_dm_rule(@facebook_page) : build_dm_ticket_rules(dm_stream)
+    else
+      dm_stream.ticket_rules.first.try(:destroy)
+    end
+  end
+
+  def build_dm_ticket_rules(dm_stream)
+    dm_stream.ticket_rules.create({
+      :filter_data => {
+        :rule_type => RULE_TYPE[:dm]
+      },
+      :action_data => {
+        :product_id => @facebook_page.product_id,
+        :group_id   => params[:dm_rule][:group_assigned].to_i
+      }
+    }
+    )
+  end
   
   def page_params
     {
       :product_id      =>  params[:social_facebook_page][:product_id],
-      :dm_thread_time  =>  params[:social_facebook_page][:dm_thread_time]
+      :dm_thread_time  =>  params[:social_facebook_page][:dm_thread_time],
+      :import_dms      =>  params[:social_facebook_page][:import_dms]
     }
   end
   
