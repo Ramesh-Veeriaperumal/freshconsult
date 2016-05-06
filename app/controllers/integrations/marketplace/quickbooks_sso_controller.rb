@@ -23,6 +23,7 @@ class Integrations::Marketplace::QuickbooksSsoController < Integrations::Marketp
     installed_app = current_account.installed_applications.with_name('quickbooks').first
     if params['operation'] == 'disconnect' && installed_app.present?
       installed_app.destroy
+      flash[:notice] = t(:'flash.application.uninstall.success') if installed_app.destroyed?
       redirect_url = integrations_applications_url
     elsif params['operation'] == 'launch' || installed_app.present?
       redirect_url = "/helpdesk"
