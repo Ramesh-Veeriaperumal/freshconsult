@@ -638,7 +638,8 @@ Helpkit::Application.routes.draw do
     collection do
       get :login
       get :facebook
-      get :google_login
+      get :portal_google_sso
+      get :marketplace_google_sso
     end
   end
 
