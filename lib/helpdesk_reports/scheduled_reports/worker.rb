@@ -34,19 +34,27 @@ private
       report_type: report_type,
       filter_name: report_filter.filter_name,
       data_hash: report_filter.data_hash,
-      # account_id: report_filter.account_id,
-      # user_id: report_filter.user_id
     }
   end
 
   def build_params
-    extra_options = {
-      date_range: date_range,
-      filter_name: report_filter.filter_name,
-    }
-    options = report_filter.data_hash.merge(extra_options)
-    param_constructor = HelpdeskReports::ParamConstructor.const_get(report_type.to_s.camelcase).new(options)
-    params = param_constructor.build_pdf_params
+    #Plan with date lag constraints will have nil for This week (Monday) , This month (1st)
+    if @date_range.nil? 
+      params = {
+        date_range: date_range,
+        filter_name: report_filter.filter_name,
+        report_type: report_type
+      }
+    else
+      extra_options = {
+        date_range: date_range,
+        filter_name: report_filter.filter_name,
+      }
+      options = report_filter.data_hash.merge(extra_options)
+      param_constructor = "HelpdeskReports::ParamConstructor::#{report_type.to_s.camelcase}".constantize.new(options)
+      params = param_constructor.build_pdf_params
+    end
+    params
   end
   
   def build_date_range

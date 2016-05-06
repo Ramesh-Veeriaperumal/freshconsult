@@ -32,10 +32,11 @@ module HelpdeskReports::Helper::PlanConstraints
   end
 
   def exclude_filters(report_type)  
-    excluded_filters = []
+    excluded_filters  = []
     excluded_filters |= ReportsAppConfig::REPORT_CONSTRAINTS[:global_exclude_filters][report_type] || []
-    plan_excludes = ReportsAppConfig::REPORT_CONSTRAINTS[:plan_exclude_filters][report_type]
-    excluded_filters |= plan_excludes ? plan_excludes[plan_group] : [] 
+    plan_excludes     = ReportsAppConfig::REPORT_CONSTRAINTS[:plan_exclude_filters][report_type]
+    plan_filters      = plan_excludes[plan_group] if plan_excludes
+    excluded_filters |= plan_filters || [] 
   end
 
   def max_limits_by_user?(feature, current_count = nil)

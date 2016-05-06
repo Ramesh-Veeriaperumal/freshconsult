@@ -512,7 +512,7 @@ class Subscription < ActiveRecord::Base
     def delete_scheduled_reports_on_downgrade
       return if trial?
       if subscription_plan_id_changed?
-        ScheduledReportsCleanup.perform_async({:account_id => account_id})
+        Reports::ScheduledReportsCleanup.perform_async({:account_id => account_id})
       end
     end
  end

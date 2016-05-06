@@ -4,7 +4,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
 
 
   def perform(no_data = false)
-    email_export nil if no_data
+    return email_export(nil) if no_data
     file_path = build_export
     email_export file_path
   end
