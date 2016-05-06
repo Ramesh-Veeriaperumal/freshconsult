@@ -131,6 +131,8 @@ jQuery('#solution_search').on('keyup', function(ev) {
   	var lang_id = ((lang_select.length == 0) ? <%= Language.for_current_account.id %> : lang_select.val());
   	url = '/search/related_solutions/ticket/' + <%=@ticket.id%> + '?language_id=' + lang_id;
   	fetchAndDisplayDefaultResults(url, lang_id);
+	}else if (ev.keyCode == 13) {
+    jQuery('#searchmoreform').submit();
 	}
 });
 
