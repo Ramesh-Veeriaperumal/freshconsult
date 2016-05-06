@@ -289,7 +289,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i > previous_updated_at_for_api_v1.to_i
   end
 
-   def test_updated_at_of_ticket_with_tags_add
+  def test_updated_at_of_ticket_with_tags_add
     # IN API
     ticket = Helpdesk::Ticket.where('source != ? and deleted = ?', 10, false).last
     existing_tags = ticket.tag_names
@@ -300,7 +300,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
-    
+
     # #IN WEB
     # previous_updated_at_for_web = ticket.updated_at
     # skip_bullet do
@@ -309,7 +309,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     # assert_response 302
     # assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_web
 
-    #IN API V1
+    # IN API V1
     ticket = Helpdesk::Ticket.find(ticket.id)
     previous_updated_at_for_api_v1 = ticket.updated_at
     existing_tags = ticket.tag_names.join(',')
@@ -332,8 +332,8 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
-    
-    #IN WEB
+
+    # IN WEB
     # ticket.tags = [Helpdesk::Tag.first]
     # previous_updated_at_for_web = ticket.updated_at
     # sleep 1
@@ -343,13 +343,13 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     # assert_response 302
     # assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_web
 
-    #IN API V1
+    # IN API V1
     ticket = Helpdesk::Ticket.find(ticket.id)
     ticket.tags = [Helpdesk::Tag.first]
     previous_updated_at_for_api_v1 = ticket.updated_at
     sleep 1
     skip_bullet do
-      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: "" }  }.to_json, @write_headers
+      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: '' }  }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
@@ -366,15 +366,15 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
-    
-    #IN WEB
+
+    # IN WEB
     # skip_bullet do
     #   put "helpdesk/tickets/#{ticket.id}", { helpdesk: { tags: "#{tag.name}" } }.to_json, @write_headers
     # end
     # assert_response 302
     # assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
 
-    #IN API V1
+    # IN API V1
     skip_bullet do
       put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: "#{tag.name}" } }.to_json, @write_headers
     end
