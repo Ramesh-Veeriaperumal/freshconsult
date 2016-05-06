@@ -1,5 +1,9 @@
 <% content_for :sidebar do -%>&nbsp;<%-end %>
 
+<% content_for :helpcard do %>
+  <%= render :partial => "edit_helpnote" %>
+<% end %>
+
 <%= form_for @facebook_stream, :url => admin_social_facebook_stream_path(@facebook_stream), :html => { :method => :put, :rel => "validate" } do |f| %>
 
   <div class="floatr">
