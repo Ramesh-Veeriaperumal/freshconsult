@@ -653,7 +653,6 @@ Helpkit::Application.routes.draw do
       member do
         put :install
         delete :uninstall
-        get :uninstall
       end
     end
 
