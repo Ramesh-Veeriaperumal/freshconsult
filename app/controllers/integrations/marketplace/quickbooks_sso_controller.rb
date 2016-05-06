@@ -2,7 +2,7 @@ class Integrations::Marketplace::QuickbooksSsoController < Integrations::Marketp
   skip_filter :select_shard, :only => [:open_id, :open_id_complete]
   around_filter :select_shard_marketplace, :only => [:open_id, :open_id_complete]
   skip_before_filter :check_privilege, :verify_authenticity_token, :set_current_account, :check_account_state, 
-    :set_time_zone, :check_day_pass_usage, :set_locale
+    :set_time_zone, :check_day_pass_usage, :set_locale, :only => [:open_id, :open_id_complete]
 
   def open_id
     url = Integrations::Quickbooks::Constant::OPENID_URL
@@ -20,14 +20,14 @@ class Integrations::Marketplace::QuickbooksSsoController < Integrations::Marketp
   end
 
   def landing
-    redirect_url = current_account.full_url
     installed_app = current_account.installed_applications.with_name('quickbooks').first
     if params['operation'] == 'disconnect' && installed_app.present?
-      redirect_url += uninstall_integrations_installed_application_path(installed_app)
+      installed_app.destroy
+      redirect_url = integrations_applications_url
     elsif params['operation'] == 'launch' || installed_app.present?
-      redirect_url += "/helpdesk"
+      redirect_url = "/helpdesk"
     else
-      redirect_url += "/auth/quickbooks?origin=id%3D" + current_account.id.to_s
+      redirect_url = "/auth/quickbooks?origin=id%3D" + current_account.id.to_s
     end
     redirect_to redirect_url
   end
