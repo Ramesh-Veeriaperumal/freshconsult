@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
 
-  xss_sanitize  :only => [:name,:email,:language, :job_title], :plain_sanitizer => [:name,:email,:language, :job_title]
+  xss_sanitize  :only => [:name,:email,:language, :job_title, :twitter_id], :plain_sanitizer => [:name,:email,:language, :job_title, :twitter_id]
   scope :contacts, :conditions => { :helpdesk_agent => false }
   scope :technicians, :conditions => { :helpdesk_agent => true }
   scope :visible, :conditions => { :deleted => false }

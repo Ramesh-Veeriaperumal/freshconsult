@@ -56,13 +56,13 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
         notable  = add_as_note(feed_obj, handle, :mention, ticket, user, options)
       else 
         archive_ticket  = reply_tweet.get_archive_ticket
-        notable = add_as_ticket(feed_obj, handle, :mention, options, archive_ticket) 
+        notable = add_as_ticket(feed_obj, handle, :mention, options, archive_ticket, user) 
       end
       
     else
       if options[:convert]
         user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
-        notable = add_as_ticket(feed_obj, handle, :mention, options) 
+        notable = add_as_ticket(feed_obj, handle, :mention, options, nil, user) 
       end
     end
     dynamo_helper.update_fd_link(self.stream_id, self.feed_id, notable, user) if notable
