@@ -209,7 +209,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
         archive_tkt = current_account.archive_tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
         begin
           tickets = tkt.find_all_by_id(id_list[:non_archive], :select => ticket_list_columns)
-          archive_tickets = archive_tkt.find_all_by_id(id_list[:archive], :select => ticket_list_columns)
+          archive_tickets = archive_tkt.find_all_by_ticket_id(id_list[:archive], :select => ticket_list_columns)
         rescue Exception => e
           Rails.logger.error "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets. \n#{e.inspect}\n#{e.message}\n#{e.backtrace.join("\n\t")}"
           NewRelic::Agent.notice_error(e,{:description => "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets"}) 
