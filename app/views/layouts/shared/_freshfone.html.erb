@@ -45,6 +45,7 @@
 	freshfone.current_status = "<%= current_user.freshfone_user_incoming_preference ||
 												Freshfone::User::PRESENCE[:offline] %>";
   <% freshfone_account = current_account.freshfone_account %>
+	freshfone.isAgentConferenceEnabled = <%= current_account.features?(:agent_conference)%>;
 	freshfone.below_threshold = <%= !freshfone_trial_states? && freshfone_below_threshold? %>;
 	freshfone.available_on_phone = <%= current_user.available_on_phone? || false %>;
 	freshfone.recent_calls_path = "<%= recent_calls_freshfone_call_history_index_path %>";
@@ -61,6 +62,11 @@
 	freshfone.add_note_text = "<%= t('freshfone.widget.add_note_text') %>";
 	freshfone.edit_note_text = "<%= t('freshfone.widget.edit_note_text') %>";
 	freshfone.transfer_call = "<%= t('freshfone.widget.transfer_call')%>";
+	if (freshfone.isAgentConferenceEnabled) {
+		freshfone.add_or_transfer_call = "<%= t('freshfone.widget.add_or_transfer_call')%>";
+	} else {
+		freshfone.add_or_transfer_call = "<%= t('freshfone.widget.transfer_call')%>";
+	}
 	freshfone.dialpad = "<%= t('freshfone.widget.dialpad')%>";
 	freshfone.cancel = "<%= t('freshfone.widget.cancel')%>";
 	freshfone.freshfone_nodejs_url = "<%= FreshfoneConfig['node_url'] %>";
@@ -69,10 +75,12 @@
 	freshfone.numbersHash = <%= Hash[*current_account_freshfone_number_hash.collect(&:reverse).flatten].to_json.html_safe %>;
 	freshfone.namesHash = <%= Hash[*current_account_freshfone_names.flatten].to_json.html_safe %>;
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_index_path %>';
-	freshfone.isDebuggingMode = "<%= current_account.features?(:client_debugging)%>";
+	freshfone.isDebuggingMode = <%= current_account.features?(:client_debugging)%>;
 	freshfone.isConferenceMode = <%= current_account.features?(:freshfone_conference)%>;
 	freshfone.isCallMonitoringMode = <%= current_account.features?(:freshfone_call_monitoring)%>;
 	freshfone.isCallQualityMetricsEnabled = <%= current_account.features?(:call_quality_metrics)%>;
+	freshfone.agent_count = "<%= t('freshfone.widget.agents_count.one') %>";
+	freshfone.agents_count = "<%= t('freshfone.widget.agents_count.other') %>";
 	
   freshfone.ringingTime = <%= current_account_freshfone_numbers.present? ?  current_account_freshfone_numbers.first.ringing_time : 30 %>;
   freshfone.isAdmin = <%= current_user.privilege?(:admin_tasks) %>
@@ -104,6 +112,7 @@
 <% end %>
 <%= javascript_include_tag :'cdn/freshfone_client' %>
 <%= javascript_include_tag :'cdn/freshfone_subscription' if freshfone_trial_states? %>
+<%= javascript_include_tag :'cdn/freshfone_agent_conference' if current_account.features?(:agent_conference) %>
 <% unless AppMetrics::FRESHFONE_METRICS.blank? %>
   <%= javascript_tag do %>	
   App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");

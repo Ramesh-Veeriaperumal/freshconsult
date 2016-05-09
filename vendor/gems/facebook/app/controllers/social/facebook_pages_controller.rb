@@ -3,6 +3,7 @@ class Social::FacebookPagesController < Admin::AdminController
   before_filter { |c| c.requires_feature :facebook }
 
   #This Controller should be refactored
+  before_filter :social_revamp_enabled?
   before_filter :set_session_state ,  :only => [:index, :edit, :update_page_token]
   before_filter :fb_client,           :only => [:index, :edit, :update_page_token]
   before_filter :fb_client_page_tab , :only => [:index, :update_page_token]
@@ -110,8 +111,8 @@ class Social::FacebookPagesController < Admin::AdminController
   end
 
   def fb_client
-    @fb_client     = Facebook::Oauth::FbClient.new(nil,fb_call_back_url)
-    @fb_client_tab = Facebook::Oauth::FbClient.new("page_tab",fb_call_back_url(params[:action]))
+    @fb_client     = Facebook::Oauth::FbClient.new(fb_call_back_url)
+    @fb_client_tab = Facebook::Oauth::FbClient.new(fb_call_back_url(params[:action]), true)
   end
 
   def fb_client_page_tab
@@ -149,6 +150,10 @@ class Social::FacebookPagesController < Admin::AdminController
 
   def set_session_state
     session[:state] = Digest::MD5.hexdigest("#{Helpdesk::SECRET_3}#{Time.now.to_f}")
+  end
+  
+  def social_revamp_enabled?
+    redirect_to admin_social_facebook_streams_url if  current_account.features?(:social_revamp)
   end
 
 end

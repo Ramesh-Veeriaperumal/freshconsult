@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class ConversationsFlowTest < ActionDispatch::IntegrationTest
-  include NoteHelper
+  include ConversationsTestHelper
 
   def ticket
     ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)

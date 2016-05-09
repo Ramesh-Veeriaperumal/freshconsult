@@ -1,3 +1,4 @@
+['contact_fields_helper.rb', 'company_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module CompaniesTestHelper
   include ContactFieldsHelper
   include CompanyHelper

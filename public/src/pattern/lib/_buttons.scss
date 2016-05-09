@@ -174,18 +174,6 @@ input[type="button"] {
   @include padding-right(20px);
   font-weight:bold;
 }
-//Record Button
-.btn-record{
- &:before{
-  content:"";
-  width:10px;
-  height:10px;
-  background:#d00;
-  @include border-radius(100%);
-  display: inline-block;
-  @include margin(3px 5px 0 -8px);
-  } 
-}
 // Warning appears are orange
 .btn-warning {
   @include buttonBackground($btnWarningBackground, $btnWarningBackgroundHighlight);

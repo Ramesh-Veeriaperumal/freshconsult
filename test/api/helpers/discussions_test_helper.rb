@@ -1,3 +1,4 @@
+['company_helper.rb', 'forum_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module DiscussionsTestHelper
   include CompanyHelper
   include ForumHelper

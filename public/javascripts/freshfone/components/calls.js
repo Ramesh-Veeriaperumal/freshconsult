@@ -14,6 +14,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		this.ALLOWED_DIGITS = 50;
 		this.cached = {};
 		this.freshfoneCallTransfer = {};
+		this.freshfoneAgentConference = {};
 		this.exceptionalNumber=false;
 		this.recentCaller = 0;
 		this.callInitiationTime = null;
@@ -41,6 +42,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.group_id = null;
 			this.resetCallTransferTimer();
 			this.isIncomingTransfer = false;
+			this.isAgentConference = false;
+			this.isAgentConferenceActive = false;
+			this.agentConferenceParams = null;
 		},
 		resetFlags: function() {
 			this.errorcode = null;
@@ -143,6 +147,10 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		setIsIncomingTransfer: function(flag){
 			this.isIncomingTransfer = flag;
+		},
+		setAgentConferenceParams: function(params){
+			this.isAgentConference = true;
+			this.agentConferenceParams = params;
 		},
 		saveCallNotes: function(){
 			var self = this;
@@ -377,6 +385,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.freshfoneCallTransfer = new FreshfoneCallTransfer(this, id, group_id, external_number);
             this.saveCallNotes();
 		},
+		addAgent: function (id) {
+			this.freshfoneAgentConference = new FreshfoneAgentConference(this, id);
+		},
 		isTransfering: function(){
 			var status = $(".transfer-status").children(":visible").data("status");
 			return ($.inArray(status, TRANSFERING_STATUS) > -1 ) ? true : false ;
@@ -384,7 +395,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 
 		dontShowEndCallForm: function () {
 			if(freshfone.isConferenceMode){
-				return (this.tConn.message || {}).preview || this.callError()  || this.isTransfering();
+				return (this.tConn.message || {}).preview || this.callError()  || this.isTransfering() || this.isAgentConference;
 			}
 			return (this.tConn.message || {}).preview || this.callError() || this.transfered;
 		},

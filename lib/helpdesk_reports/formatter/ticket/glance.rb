@@ -21,7 +21,7 @@ class HelpdeskReports::Formatter::Ticket::Glance
   def perform 
     if @pdf_export
       result.each do |metric, res|
-        next if res['error'].present? || bucket_metric?(metric)     
+        next if res['errors'].present? || bucket_metric?(metric)     
         res.each do |gp_by, values|
           if gp_by == "general"
             values["metric_result"] = NA_PLACEHOLDER_GLANCE if values["metric_result"] == NOT_APPICABLE
@@ -35,9 +35,9 @@ class HelpdeskReports::Formatter::Ticket::Glance
     else
       result.each do |metric, res|
         if metric == "GLANCE_CURRENT"
-          @current_result =  (res.is_a?(Hash) && res['error'] ) ? [] : res
+          @current_result =  (res.is_a?(Hash) && res['errors'] ) ? [] : res
         elsif metric == "GLANCE_HISTORIC"  
-          @historic_result = (res.is_a?(Hash) && res['error'] ) ? [] : res
+          @historic_result = (res.is_a?(Hash) && res['errors'] ) ? [] : res
         elsif bucket_metric?(metric)
           glance_output[metric] = res
         else
@@ -114,9 +114,9 @@ class HelpdeskReports::Formatter::Ticket::Glance
 
   def sort_group_by_chart_values 
     result[group_by_metric].each do |gp_by, values|
+      next if values.is_a?(Hash) && values["errors"]
       values = values.to_a
       next if gp_by == :general 
-      next if values.is_a?(Hash) && values[:error]
       values = values.sort_by{|i| i.second[:value]}.reverse!
       result[group_by_metric][gp_by] = values.to_h
     end

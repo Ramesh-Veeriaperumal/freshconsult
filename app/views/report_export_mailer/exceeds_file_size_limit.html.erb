@@ -1,0 +1,21 @@
+Hi <%=@user.name%>,
+<br/>
+<br/>
+Sorry your pdf File size > 10MB. 
+<br/>
+Scheduled report name : <%= @filter_name %>
+<br/>		
+Filters applied:
+<br/>
+<table border="1" width="100%">
+    <tr><td>Date Range</td><td><%=@date_range%></td></tr>
+    <% @filters.each do |f| %>
+      <tr><td><%=f["name"]%></td><td><%= f["value"] %></td></tr>
+    <%end%>
+</table>
+<br/>
+<br/>
+
+Regards,
+<br/>
+<%= @user.account.helpdesk_name %> Support 

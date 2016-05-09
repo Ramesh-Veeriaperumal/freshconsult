@@ -14,7 +14,6 @@ module Ecommerce
           return if ebay_processor.ebay_account.blank? and !ebay_processor.ebay_account.active?
           ticket = ebay_processor.check_parent_ticket(ebay_processor.notification_user.id, ebay_processor.notification_subject, ebay_processor.notification_item_id)
           ticket ? ebay_processor.thread_exists(ticket) : ebay_processor.thread_not_exists
-          Rails.logger.debug "Notification processed with params #{args} "
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)

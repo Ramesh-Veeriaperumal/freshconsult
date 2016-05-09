@@ -1,6 +1,5 @@
 require_relative '../test_helper'
 class ApiContactsControllerTest < ActionController::TestCase
-  include ContactFieldsHelper
   include UsersTestHelper
 
   def wrap_cname(params)

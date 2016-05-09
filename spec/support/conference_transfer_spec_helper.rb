@@ -1,7 +1,7 @@
 module ConferenceTransferSpecHelper
 
-  def initiate_transfer_params(group_id = "", outgoing = "false")
-     {"CallSid"=>"CTRANSFER", "target"=>"110", "group_id"=>group_id, "outgoing"=>outgoing, "type"=>"normal"}
+  def initiate_transfer_params(group_id = "", outgoing = "false", sid = "CTRANSFER")
+     {"CallSid"=> sid, "target"=>"110", "group_id"=>group_id, "outgoing"=>outgoing, "type"=>"normal"}
   end
 
   def transfer_agent_wait_params

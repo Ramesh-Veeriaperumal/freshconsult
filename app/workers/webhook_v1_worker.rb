@@ -33,7 +33,8 @@ class WebhookV1Worker < ::BaseWorker
   rescue => e
     NewRelic::Agent.notice_error(e, {
       :custom_params => {
-        :description =>"Sidekiq Observer Webhook execution error"
+        :description =>"Sidekiq Observer Webhook execution error",
+        :args => args
       }})
   end
 

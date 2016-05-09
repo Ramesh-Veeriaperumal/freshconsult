@@ -1060,9 +1060,9 @@ tr:
         send_test_mail_info2: "Burada <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'> Nasıl yapacağını görebilirsin.</a>"
         title_message: "Oyuncu desteğine dört adımda başla."
         support_email_title: "Destek <br> maili"
-        agents_title_1: "Temsilci&lt;br&gt; Ekle"
+        adding_agents: "Temsilci<br> Ekle"
         rebrand_title: "Logo<br>&amp; renk"
-        social_title_1: Sosyalleş&lt;br&gt;
+        going_social: "Sosyalleş<br>"
         skip_text: "Hayır teşekkürler, yardım bölümüne yönlendir."
         back_link: Geri
         next_link: Sonraki
@@ -1184,7 +1184,6 @@ tr:
         feedbackwidget_users_can: "Kullanıcılar:"
         feedbackwidget_attach_a_file: "Dosya Ekle"
         feedbackwidget_screenshot: "Ekran görüntüsü al"
-        feedbackwidget_screenr_recording: "Ekran yakalama"
         feedbackwidget_search_area: "Makaleleri ara"
         feedbackwidget_use_https: "https kullan"
         feedbackwidget_mobile_view: "Mobil Görüntü"
@@ -4918,36 +4917,6 @@ tr:
         es: İspanyolca
         sv: Swedish
         tr: Türkçe
-    screenr:
-      button_label: "Record Screencast"
-      label: Screenr
-      desc: "Record screencasts using Screenr and attach it to tickets, forums and solution articles."
-      helptext: "<h4>Freshdesk Screenr Integration</h4><p><br/>The Screenr integration lets agents and customers capture and share screencasts while they are using Freshdesk. It can be used to attach error reports or instructional videos to your tickets, forum posts and solution articles directly.</p><p>Once enabled, you will be able to see a record button alongside your feedback widget, discussions, and your knowledge base. You can choose to record your entire browser window, or select a specific section of it if you want. They screencast will get inserted automatically once your session is complete.</p><p>You can setup this integration by entering your Screener URL (e.g. <a>http://yourname.viewcasts.com</a>) and your Recorder ID, which can be found once you login to your account.</p>"
-      form:
-        recorder_id: "Recorder ID"
-        recorder_id_info: "Recorder ID is the unique ID available in the edit recorders page"
-        site_address_info: ""
-        site_address: "Screenr Subdomain"
-        widget_title: "Araç Başlığı"
-        visible_agent_forum: "Temsilciler için forum ekranı kaydediliyor."
-        visible_agent_forum_info: "Enable to make Screenr Recorder available in Forums for Agents"
-        visible_agent_ticket: "Temsilci Bildirim Ekranı Kaydediliyor."
-        visible_agent_ticket_info: "Enable to make Screenr Recorder available in Ticket form for Agents"
-        visible_solution: "Çözüm Ekranı Kaydediliyor."
-        visible_solution_info: "Enable to make Screenr Recorder available in Solutions"
-        visible_portal_ticket: "Portal Bildirim Ekranı Kaydediliyor."
-        visible_portal_ticket_info: "Enable to make Screenr Recorder available in portal ticket form"
-        visible_portal_forum: "Portal için Forum Bildirim Ekranı Kaydediliyor."
-        visible_portal_forum_info: "Enable to make Screenr Recorder available in portal forum"
-        visible_widget: "Araç Ekranı Kaydediliyor"
-        visible_widget_info: "Freshdesk araçlarında ekran yakalama özelliğini etkinleştir."
-      settings:
-        enable_screenr_recording: "Ekran Yakalamayı etkinleştir."
-        ticket_interaction: "Bildirim sayfaları (Yeni,Düzenle,Cevapla)"
-        forum_interaction: "Forum sayfası (Yeni,Düzenle,Yorum Yap)"
-        create_solution: "Çözüm ( Yeni,düzenle )"
-        for_agents: "Temsilciler için"
-        for_customer: "Oyuncular için"
     harvest:
       label: Topla
       desc: "You can log time spent on tickets into your Harvest projects and tasks."

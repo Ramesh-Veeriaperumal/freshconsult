@@ -19,7 +19,7 @@ class HelpdeskReports::Formatter::Ticket::CustomerReport
   
   def perform
     @result = @result["CUSTOMER_CURRENT_HISTORIC"]
-    if ((@result.is_a?(Hash) && @result["error"]) || @result.empty?)
+    if ((@result.is_a?(Hash) && @result["errors"]) || @result.empty?)
       return @result
     else
       @company_hash = Account.current.companies_from_cache.collect { |au| [au.id, au.name] }.to_h

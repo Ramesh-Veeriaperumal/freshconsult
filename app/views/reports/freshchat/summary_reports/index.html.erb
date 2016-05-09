@@ -5,9 +5,9 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <%= javascript_include_tag :'cdn/reports'  %>
 <%= javascript_include_tag :'cdn/livechat_reports'  %>
-  <div id="loading-box">
-   <div class="sloading loading-left loading-small reports-loading"><%=t('adv_reports.glance.loading_msg')%></div> 
-   </div>
+<div id="loading-box">
+  <div class="sloading loading-left loading-small reports-loading"><%=t('adv_reports.glance.loading_msg')%></div> 
+</div>
 <!--report header-->
 <div class="row-fluid">
   <div class="span12 report-breadcrum-wrapper">
@@ -20,8 +20,8 @@
  <!--end report header-->
 <!-- report content -->
 <div class="row-fluid" id="freshchat_summary_report">
-       <%= render :partial => "chat_reports" %>
-  </div>
+  <%= render :partial => "chat_reports" %>
+</div>
 <!--end report content-->
 
 

@@ -81,7 +81,7 @@
 	<div class="reports-header" id="content_header">
 		<div class="reports-title">
 			<span class="report-icon">
-				<%= graph_icon(@report_type) %>
+				<i class="fsize-32 ficon-customer_satisfaction"></i>
 			</span>
 			<span class="report-title-block" onclick= "SurveyUtil.surveyNavigate(event);">
 				<span class="unsaved_star vertical-alignment hide">*</span>
@@ -137,7 +137,14 @@
 <script type="text/javascript">
 var Helpkit = Helpkit || {};
 Helpkit.report_filter_data = <%= @report_filter_data.to_json.html_safe %>;
+day_names = <%=t('date.day_names').to_json.html_safe%>;
 Helpkit.report_type = "satisfaction_survey";
+current_user = {
+	mail : '<%= current_user.email %>',
+	id : '<%= current_user.id %>',
+	time_zone : '<%= @user_time_zone_abbr %>',
+	name : '<%= current_user.name %>'
+};
 jQuery(document).ready(function(){
 	jQuery('.deleted_list').attr('disabled','disabled');
 	jQuery('#survey_main_layout').append(JST["survey/reports/template/main_content"]());

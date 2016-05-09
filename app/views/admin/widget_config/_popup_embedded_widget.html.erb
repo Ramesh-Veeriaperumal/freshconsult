@@ -96,16 +96,6 @@
   					data-checked-label="Yes" data-unchecked-label="No" checked="checked">
   			</span>
 	  	</div>
-		  	<% if is_application_installed?("screenr")%>
-			  	<div class="row-fluid">
-		  			<span class="span3"><%= t(".feedbackwidget_screenr_recording") %></span>
-		  			<span class="span9">
-		  				<input type="hidden" name="screenr_recording" id="screenr_recording" value="" rel='pseudo' value='' />
-		  				<input type="checkbox" rel="toggle" type="checkbox" class="pseudoCheckbox" 
-		  					data-checked-label="Yes" data-unchecked-label="No" checked="checked" >
-		  			</span>  			
-			  	</div>
-		  	<% end %>
 	  	<% else %>
 	  		<input type="hidden" name="screenshot" id="screenshot" value="no" rel='pseudo' data-set-query-string="true" data-skip-options='true' />
 	  	<% end %>

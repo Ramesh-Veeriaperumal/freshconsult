@@ -32,7 +32,14 @@ class Freshfone::Jobs::UsageTrigger
     def self.delete_usage_trigger(args)
       return if args[:trigger_sid].blank?
       usage_trigger = get_trigger(args[:trigger_sid])
-      usage_trigger.delete if usage_trigger.present?
+      begin
+        if usage_trigger.current_value.present?
+          usage_trigger.delete
+        end
+      rescue Twilio::REST::RequestError => e
+        Rails.logger.error "Message :: #{e.message}"
+        Rails.logger.error "Trace :: #{e.backtrace.join('\n\t')}"
+      end
     end
 
 end

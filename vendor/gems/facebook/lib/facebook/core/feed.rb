@@ -18,17 +18,20 @@ module Facebook
       
            
       def process_feed(raw_obj)
-        select_shard_and_account(@fan_page.account_id) do |account|
-          sandbox(raw_obj) do
-            if (perform_method && klass)
-              if AUXILLARY_LIST.include?(klass)
-                ("facebook/core/#{klass}").camelize.constantize.new(fan_page, feed_id).send(perform_method) if social_revamp_enabled?
-              elsif can_process_feed? 
-                ("facebook/core/#{klass}").camelize.constantize.new(fan_page, feed_id).send(perform_method, convert_to_ticket?, dynamo_feed[:item].blank?)
+        rl_measure = Benchmark.measure do
+          select_shard_and_account(@fan_page.account_id) do |account|
+            sandbox(raw_obj) do
+              if (perform_method && klass)
+                if AUXILLARY_LIST.include?(klass)
+                  ("facebook/core/#{klass}").camelize.constantize.new(fan_page, feed_id).send(perform_method) if social_revamp_enabled?
+                elsif can_process_feed? 
+                  ("facebook/core/#{klass}").camelize.constantize.new(fan_page, feed_id).send(perform_method, convert_to_ticket?, dynamo_feed[:item].blank?)
+                end
               end
             end
           end
         end
+        custom_logger.info("Total time to process Page Id :: #{page_id} Feed Id :: #{feed_id} :: #{rl_measure.total}") unless custom_logger.nil?
       end
       
       def account_and_page_validity
@@ -72,16 +75,6 @@ module Facebook
         end
       end   
       
-      #Checks if feed is already present in Dynamo
-      #Checks if the feed is a comment and can be created to a ticket and is in Dynamo without a fd_link
-      #Returns true if the feed is not in Dynamo or if it has to be converted to a ticket though it's  already pushed to Dynamo
-      def can_process_feed?
-        return !feed_converted? unless social_revamp_enabled?
-        if dynamo_feed
-          return true if dynamo_feed[:item].blank?
-          visitor_comment? && fan_page.import_company_posts && !feed_converted?
-        end
-      end  
       
       #Returns the value of the post_id, comment_id, sender_id and parent_id from the realtime feed
       ["post", "comment", "parent", "sender"].each do |object|
@@ -95,18 +88,19 @@ module Facebook
         define_method("#{object}?") do
           klass == POST_TYPE[object.to_sym]
         end
+      end     
+      
+      #Returns the feed message
+      def message
+        realtime_feed["value"]["message"] if realtime_feed["value"]
       end
       
       def feed_converted?
         Account.current.facebook_posts.exists?(:post_id => feed_id)
       end
-
+      
       def visitor_comment?
         comment? && by_visitor? 
-      end
-      
-      def by_company?
-        sender_id == @page_id
       end
       
       def by_visitor?
@@ -118,17 +112,52 @@ module Facebook
       end
       
       def comment?
-        POST_TYPE[:comment] || POST_TYPE[:reply_to_comment]
+        klass == POST_TYPE[:comment]
+      end
+
+      def post? 
+        klass == POST_TYPE[:post]
       end
       
-      def convert_to_ticket?
-        klass == POST_TYPE[:post] and self.fan_page.import_visitor_posts
+      def status? 
+        klass == POST_TYPE[:status]
       end
       
       def dynamo_feed
         return {} unless social_revamp_enabled?
         key   = dynamo_hash_and_range_key(fan_page.default_stream.id)
         @dynamo_feed ||= dynamo_helper.dynamo_feed(Time.now.utc, key, feed_id, false)
+      end
+      
+      def convert_to_ticket?
+        return (post? && self.fan_page.import_visitor_posts) unless social_revamp_enabled?
+        
+        default_stream = self.fan_page.default_stream
+        ticket_rule    = default_stream.ticket_rules.first
+        
+        ticket_rule.convert_fb_feed_to_ticket?(post?, status?, visitor_comment?, message)
+      end
+      
+      #Checks if feed is already present in Dynamo
+      #Checks if the feed is a comment and can be created to a ticket and is in Dynamo without a fd_link
+      #Returns true if the feed is not in Dynamo or if it has to be converted to a ticket though it's  already pushed to Dynamo
+      def can_process_feed?
+        return !feed_converted? unless social_revamp_enabled?
+        
+        if dynamo_feed
+          return true if dynamo_feed[:item].blank?
+          visitor_comment? && !feed_converted? && convert_to_ticket?
+        end
+      end  
+      
+      def custom_logger
+        begin
+          @@fb_logger ||= CustomLogger.new("#{Rails.root}/log/fb_benchmark.log")
+        rescue Exception => e
+          Rails.logger.info "Error occured while #{e}"
+          NewRelic::Agent.notice_error(e, {:description => "Error while creating custom fb_logger"})
+          nil
+        end
       end
           
     end

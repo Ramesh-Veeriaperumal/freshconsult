@@ -1323,9 +1323,9 @@ ru-RU:
         send_test_mail_info2: "Здесь приведены <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>инструкции по использованию</a>."
         title_message: "Всего четыре шага, и поддержка клиентов готова к работе..."
         support_email_title: "Электронная почта<br> службы поддержки"
-        agents_title_1: "Добавление&lt;br&gt; агентов"
+        adding_agents: "Добавление<br> агентов"
         rebrand_title: "Логотип <br>и цвета"
-        social_title_1: "Интеграция с&lt;br&gt; социальными сетями"
+        going_social: "Интеграция с<br> социальными сетями"
         skip_text: "Нет, переместите меня на мою страницу службы поддержки."
         back_link: Назад
         next_link: Далее
@@ -1447,7 +1447,6 @@ ru-RU:
         feedbackwidget_users_can: "Пользователи могут:"
         feedbackwidget_attach_a_file: "Вкладывать файлы"
         feedbackwidget_screenshot: "Делать снимки экрана"
-        feedbackwidget_screenr_recording: "Запись с экрана с помощью Screenr"
         feedbackwidget_search_area: "Поиск статей"
         feedbackwidget_use_https: "Использовать https"
         feedbackwidget_mobile_view: "Мобильное представление"
@@ -1472,7 +1471,6 @@ ru-RU:
         feedbackwidget_users_can: "Параметры формы"
         feedbackwidget_attach_a_file: "Вложить файл"
         feedbackwidget_screenshot: "Сделать снимок экрана"
-        feedbackwidget_screenr_recording: "Запись с экрана с помощью Screenr"
         feedbackwidget_search_area: "Поиск статей"
         feedbackwidget_use_https: "Использование HTTPS"
         feedbackwidget_mobile_view: "Включить мобильное представление"
@@ -6021,36 +6019,6 @@ ru-RU:
         es: Испанский
         sv: Шведский
         tr: Турецкий
-    screenr:
-      button_label: "Запись с экрана"
-      label: Screenr
-      desc: "Делайте записи с экрана с помощью Screenr и добавляйте их к заявкам, на форумы и в статьи с решениями."
-      helptext: "<h4>Интеграция Screenr во Freshdesk</h4><p><br/>Интеграция Screenr позволяет агентам и клиентам записывать содержимое экрана и делиться им во Freshdesk. Такие записи можно добавлять к отчетам об ошибках, а также в качестве поясняющих видеороликов напрямую к заявкам, записям на форумах и статьям с решениями.</p><p>После включения этой функции рядом с виджетом для отзывов, обсуждениями и базой знаний появится кнопка записи. Можно выбрать как запись всего окна браузера, так и отдельной его части. Запись с экрана будет автоматически вставляться после завершения сеанса.</p><p>Для настройки этого интегрируемого сервиса введите URL Screenr (например, <a>http://вашеимя.viewcasts.com</a>) и идентификатор Recorder, который отображается после входа в учетную запись.</p>"
-      form:
-        recorder_id: "Идентификатор Recorder"
-        recorder_id_info: "Идентификатор Recorder — это уникальный идентификатор, доступный на странице редактирования средств записи"
-        site_address_info: ""
-        site_address: "Субдомен Screenr"
-        widget_title: "Заголовок виджета"
-        visible_agent_forum: "Запись экрана форума для агентов"
-        visible_agent_forum_info: "Разрешить делать Screenr Recorder доступным для агентов на форумах"
-        visible_agent_ticket: "Запись экрана заявки для агентов"
-        visible_agent_ticket_info: "Разрешить делать Screenr Recorder доступным для агентов в формах заявок"
-        visible_solution: "Запись экрана решений"
-        visible_solution_info: "Разрешить делать Screenr Recorder доступным для записи решений"
-        visible_portal_ticket: "Запись экрана заявки на портале"
-        visible_portal_ticket_info: "Разрешить делать Screenr Recorder доступным в формах заявок на портале"
-        visible_portal_forum: "Запись экрана заявки на форуме"
-        visible_portal_forum_info: "Разрешить делать Screenr Recorder доступным на форуме портала"
-        visible_widget: "Запись экрана виджета"
-        visible_widget_info: "Разрешить делать Screenr Recorder доступным для виджета для отзывов"
-      settings:
-        enable_screenr_recording: "Разрешить запись с экрана с помощью Screenr"
-        ticket_interaction: "Страница заявок (создание, редактирование и добавление ответов)"
-        forum_interaction: "Страница форумов (создание, редактирование и добавление комментариев)"
-        create_solution: "Решения (создание и редактирование)"
-        for_agents: "Для агентов"
-        for_customer: "Для клиентов"
     ilos:
       label: "Видеозаписи ilos"
       desc: "Записывайте видео с экрана и присоединяйте эти записи к заявкам, сообщениям форумов и статьям решений."

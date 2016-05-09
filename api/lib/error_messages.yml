@@ -28,6 +28,7 @@ api_error_messages:
   require_feature: "The %{feature} feature is not supported in your plan. Please upgrade your account to use it."
   invalid_credentials: "You have to be logged in to perform this action."
   credentials_required: "Authentication header is needed to log in."
+  domain_not_ready: Your data is getting moved to a new datacenter.
   account_suspended: "Your account has been suspended."
   cannot_update_default_sla: "You are trying to update the Default SLA policy. It cannot be updated"
   unsupported_environment: "Demo site doesn't have this access!"

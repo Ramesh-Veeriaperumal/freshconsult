@@ -253,7 +253,7 @@ var FreshfoneUser,
 		setupDevice: function (token) {
 			var CapabilityToken = token || getCookie('freshfone');
 			try {
-				Twilio.Device.setup(CapabilityToken);
+				Twilio.Device.setup(CapabilityToken, { debug: freshfone.isDebuggingMode });
 				ffLogger.logIssue("Freshfone Device Config", {
 					"Capabilitytoken" : CapabilityToken, "Time Stamp": Date().toString()
 				});

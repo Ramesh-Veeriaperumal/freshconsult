@@ -1,3 +1,4 @@
+['email_configs_helper'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module EmailConfigsTestHelper
   include EmailConfigsHelper
 

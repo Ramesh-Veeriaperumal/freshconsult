@@ -101,7 +101,7 @@
 					<%=	link_to('', freshfone_recording || call.recording_url, :type => 'audio/mp3',
 	         :class => 'call_duration', :'data-time' => call.call_duration) %>
 					</div>
-					<% if privilege?(:view_admin) %>
+					<% if privilege?(:admin_tasks) %>
 						<div class="recording_delete hide">
 					 		<span class="btn btn-mini delete_recording_btn tooltip" 
 					 				title="<%= t('freshfone.call_history.recording_delete.tooltip')%>" 

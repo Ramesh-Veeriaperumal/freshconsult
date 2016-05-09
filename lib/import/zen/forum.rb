@@ -87,6 +87,8 @@ module Import::Zen::Forum
        topic_hash = topic_prop.to_hash.tap { |hs| hs.delete(:body) }.merge({:forum_id =>forum.id ,:user_id =>user.id })
        topic = forum.topics.build(topic_hash)
        topic.account_id = @current_account.id
+       forum_stamp_types = Topic::FORUM_TO_STAMP_TYPE[topic.forum.forum_type]
+       topic.stamp_type = forum_stamp_types.fetch(topic.stamp_type, forum_stamp_types.first)
        if topic.save
           post_hash = topic_prop.to_hash.delete_if{|k, v| [:title,:stamp_type].include? k }.merge({
                                                                                                   :forum_id =>forum.id,
@@ -147,11 +149,11 @@ module Import::Zen::Forum
 
 
 def save_solution_folder forum_prop
-  category = @current_account.solution_categories.find_by_import_id(forum_prop.category_id)
-  category =  @current_account.solution_categories.find_or_create_by_name("General") unless category
+  category =  @current_account.solution_categories.find_or_create_by_name("General")
   folder = category.folders.find(:first, :conditions =>['name=? or import_id=?',forum_prop.name,forum_prop.import_id])
-  unless folder
+  unless folder and folder.import_id.blank?
     folder_hash = forum_prop.to_hash.merge({:visibility => forum_prop.forum_visibility}).delete_if{|k, v| [:forum_type,:forum_visibility].include? k }
+    folder_hash[:name] = "#{folder_hash[:name]} - #{folder_hash[:import_id]}" if folder
     folder = category.folders.create(folder_hash)
   else
     folder.update_attribute(:import_id , forum_prop.import_id )
@@ -194,7 +196,7 @@ end
     desc_html = Nokogiri::HTML(CGI.unescapeHTML(body))
     desc_html.search('img').each do |img_tag|
       unless URL_REGEX.match img_tag['src']
-        if img_tag['src'].start_with?("/attachments")
+        if img_tag['src'] && img_tag['src'].start_with?("/attachments")
           image_url = "#{params[:zendesk][:url]}#{img_tag['src']}"
           begin
             file = RemoteFile.new(image_url, username, password).fetch

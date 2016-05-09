@@ -13,9 +13,6 @@
 			<%= render :partial=>'/support/shared/attachment_form', :locals=>{:attach_id=>attach_id, :nsc_param=>nsc_param} %>
 			<%= render :partial => "/support/shared/multifile_template" %>
 		</div>
-		<% if is_application_installed?("screenr") %>
-	      <%= render :partial => "shared/screenr_recorder", :locals => { :location => "portal_forum" } %>
-	  	<% end %>
 		<hr />
 
     <% if is_application_installed?(Integrations::Constants::APP_NAMES[:ilos]) %>

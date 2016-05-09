@@ -4,32 +4,20 @@ module HelpdeskReports::Export::Utils
   include Redis::ReportsRedis
   include HelpdeskReports::Constants::Export
   
-  def set_current_account account_id
-    Account.find(account_id).make_current
-  end
-  
-  def set_current_user user_id
-    Account.current.users.find(user_id).make_current
-  end
-  
   def set_locale
     I18n.locale =  (User.current && User.current.language) ? User.current.language : I18n.default_locale
   end
   
-  def set_default_locale
-    I18n.locale = I18n.default_locale
-  end
-  
   def build_file file_string, format, export_type
     report_name = REPORTS_NAME_MAPPING[report_type]
-    filter_name = filter_name ? (report_name+"_"+filter_name) : report_name 
+    filter_name = params[:filter_name] ? "#{report_name}_#{params[:filter_name]}" : report_name 
     filter_name = filter_name.gsub(" ","_").underscore
-    file_name   = "#{filter_name}-#{Time.now.utc.strftime("%b-%d-%Y-%H:%M")}-#{SecureRandom.urlsafe_base64(4)}.#{format}"
+    file_name   = "#{filter_name}-#{Time.current.strftime("%d-%b-%y-%H:%M")}-#{SecureRandom.urlsafe_base64(4)}.#{format}"
     file_path   = generate_file_path("bi_reports", file_name)
 
     write_file(file_string, file_path)
     set_attachment_method(file_path)
-    upload_file(file_path, file_name, export_type) if @attachment_via_s3 
+    upload_file(file_path, file_name, export_type) if (@attachment_via_s3 && !params[:scheduled_report])
     file_path
   end
 
@@ -52,5 +40,16 @@ module HelpdeskReports::Export::Utils
     max_size_allowed   = size_from_redis ? size_from_redis.to_i : HelpdeskReports::Constants::Export::MAIL_ATTACHMENT_LIMIT_IN_BYTES
     @attachment_via_s3 = File.size(file_path) > max_size_allowed
   end
-  
+
+  # The below methods are used for modifying data for Timesheet,Chat and Phone reports
+
+  def old_report_params params
+    params[:data_hash].symbolize_keys!
+    pdf_params = params[:data_hash][:report_filters].collect{ |filter| filter.values }.to_h
+    pdf_params.merge!(params)
+    pdf_params[:select_hash] = params[:data_hash][:select_hash]
+    pdf_params[:date_range] ||= params[:data_hash][:date]['date_range'] #temporary. date range for direct export.
+    pdf_params
+  end
+
 end

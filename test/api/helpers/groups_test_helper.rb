@@ -1,3 +1,4 @@
+['group_helper.rb', 'agent_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module GroupsTestHelper
   include GroupHelper
   include AgentHelper

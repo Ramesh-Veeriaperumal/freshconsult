@@ -24,6 +24,7 @@ RSpec.describe 'UsageTrigger' do
 		freshfone_account = @account.freshfone_account
 		trigger = mock
 		trigger.stubs(:delete)
+        trigger.stubs(:current_value)
 		Freshfone::Jobs::UsageTrigger.stubs(:get_trigger).returns(trigger)
 		create_test_usage_triggers
 		freshfone_account.reload

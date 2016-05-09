@@ -62,35 +62,43 @@ jQuery(document).ready(function() {
 		ev.preventDefault();
 		return false;
 	});
-
 	recordAnalytics();
 });     
 
-function recordAnalytics() {
+	function recordAnalytics() {
 
-	jQuery("input[type=submit]").click(function(ev) {
+		jQuery("input[type=submit]").click(function(ev) {
 
-		var date_range = jQuery("#date_range").val().split('-');
-		var diff = -1;
-		var event_prop = {
-			Date: jQuery("#date_range").val()
-		};
+			var date_range = jQuery("#date_range").val().split('-');
+			var diff = -1;
+			var event_prop = {
+				Date: jQuery("#date_range").val()
+			};
 
-        if (date_range.length == 2){
-			diff = (new Date().setHours(0,0,0,0) - Date.parse(date_range[1])) / (36e5 * 24);	
-		} else{
-		   diff = (new Date().setHours(0,0,0,0) - Date.parse(date_range[0])) / (36e5 * 24);
-		}
-		
-		if(diff == 0) {
-			event_prop.today_used_in_range = true;
-		}
-		if(diff == 1) {
-			event_prop.yesterday_used_in_range = true;
-		}
-		App.Report.Metrics.push_event(report_label,event_prop);
-	});
-}
+	        if (date_range.length == 2){
+				diff = (new Date().setHours(0,0,0,0) - Date.parse(date_range[1])) / (36e5 * 24);	
+			} else{
+			   diff = (new Date().setHours(0,0,0,0) - Date.parse(date_range[0])) / (36e5 * 24);
+			}
+			
+			if(diff == 0) {
+				event_prop.today_used_in_range = true;
+			}
+			if(diff == 1) {
+				event_prop.yesterday_used_in_range = true;
+			}
+			App.Report.Metrics.push_event(report_label,event_prop);
+		});
+	}
+	
+	//Deprecated message
+	  var show_disabled = <%= current_account.old_reports_enabled? %>;
+	  if(show_disabled){
+	      jQuery(".empty-holder").hide();
+	  } else{
+	      var message = "<div class='deprecated-header'><div class='message'><%=t('helpdesk_reports.deprecated_header')%></div></div>";
+		  jQuery(".leftcontent").prepend(message);
+	  }
 
 <% end %>
 	    

@@ -7,6 +7,7 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
   include Freshfone::Conference::TransferMethods
 
   before_filter :validate_trial, :only => [:initiate_transfer], :if => :trial?
+  before_filter :validate_transfer_request, only: [:initiate_transfer]
   before_filter :set_group_transfer_param, :only => [:initiate_transfer]
   before_filter :initialize_transfer, :only => [:initiate_transfer]
   before_filter :update_conference_sid, :only => [:transfer_agent_wait]
@@ -156,5 +157,10 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
 
     def validate_trial
       return render :json => { :status => :error } if params[:external_number].present?
+    end
+
+    def validate_transfer_request
+      render json: { status: :error } and
+        return if params[:CallSid].blank? || current_call.blank?
     end
 end
