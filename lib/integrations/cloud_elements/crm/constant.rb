@@ -17,9 +17,9 @@ module Integrations::CloudElements
         :dynamicscrm => '760'
     }
     
-    API_KEY = '3MVG9ZL0ppGP5UrC7ycgr9IfYGKWrOe3Ke9gOzfPife6xgS.XNFCXko7jC.mpUNeF84vm9aGmEk2DOKAtSkfG'
-    API_SECRET = '98436661440156758'
-    CALLBACK_URL = 'http://localhost:3000/integrations/cloud_elements/crm/instances'
+    # API_KEY = '3MVG9ZL0ppGP5UrC7ycgr9IfYGKWrOe3Ke9gOzfPife6xgS.XNFCXko7jC.mpUNeF84vm9aGmEk2DOKAtSkfG'
+    # API_SECRET = '98436661440156758'
+    # CALLBACK_URL = 'http://localhost:3000/integrations/sync/crm/instances'
     
     CUSTOM_FIELDS =  {"1001" => "text", "1002" => "phone_number", "1003" => "dropdown",
         "1004" => "number", "1005"  => "survey_radio", "1006" => "checkbox", "1007" => "date", 

@@ -1,20 +1,19 @@
 {
   "element" : {"key" : "sfdc"}, 
 
-  "providerData" : { "code" : "%{code}" }, 
-
   "configuration" : { 
-    "oauth.callback.url" : "http://localhost:3000/integrations/cloud_elements/crm/instances", 
-    "oauth.api.key" : "3MVG9ZL0ppGP5UrC7ycgr9IfYGKWrOe3Ke9gOzfPife6xgS.XNFCXko7jC.mpUNeF84vm9aGmEk2DOKAtSkfG", 
-    "oauth.api.secret" : "98436661440156758", 
+    "oauth.user.refresh_token" : "%{refresh_token}", 
+    "oauth.api.key" : "%{api_key}", 
+    "oauth.api.secret" : "%{api_secret}", 
     "event.vendor.type" : "polling", 
     "event.notification.enabled" : "true", 
     "event.objects" : "Contact,Account",
     "event.poller.refresh_interval": "5",
-    "event.notification.callback.url": "https://bb5c49bb.ngrok.io/integrations/cloud_elements/crm/event_notification"
+    "event.notification.callback.url": "%{callback_url}/integrations/sync/crm/event_notification"
     },
 
-    "tags" : [], 
+    "tags" : ["SFDC Shared Token Example"], 
 
-    "name" : "%{element_name}"
+    "name" : "%{element_name}",
+    "externalAuthentication": "initial"
   }

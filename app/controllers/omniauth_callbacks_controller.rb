@@ -10,6 +10,7 @@ class OmniauthCallbacksController < ApplicationController
 
   def complete
     authenticator_class = Auth::Authenticator.get_auth_class(params[:provider])
+
     authenticator = authenticator_class.new(
       :origin_account => origin_account,
       :current_account => current_account,
@@ -18,6 +19,7 @@ class OmniauthCallbacksController < ApplicationController
       :omniauth => @omniauth,
       :user_id => @user_id
     )
+    
     result = authenticator.after_authenticate(params)
     flash[:notice] = result.flash_message if result.flash_message.present?
     render result.render and return if result.render.present?

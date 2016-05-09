@@ -37,8 +37,8 @@ module IntegrationServices::Services
       opportunity_resource.get_fields
     end
 
-    def receive_opportunity_stage_field
-      opportunity_resource.stage_name_picklist_values
+    def receive_opportunity_field_properties
+     opportunity_resource.get_field_properties
     end
 
     def receive_create_instance_object_definition

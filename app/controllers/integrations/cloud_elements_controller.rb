@@ -30,10 +30,8 @@ class Integrations::CloudElementsController < ApplicationController
   private
 
     def build_installed_app
-      case element
-      when "dynamicscrm"
-        @installed_app = current_account.installed_applications.with_name(element).first
-      else
+      @installed_app = current_account.installed_applications.find_by_application_id(app.id)
+      if @installed_app.nil?
         @installed_app = current_account.installed_applications.build(:application => app )
         @installed_app.configs = { :inputs => {} }
       end

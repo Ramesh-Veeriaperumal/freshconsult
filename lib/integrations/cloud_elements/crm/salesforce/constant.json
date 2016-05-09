@@ -2,7 +2,8 @@
 {
     "objects" : {"contact" : "Contact", "account" : "Account", "lead" : "Lead", "opportunity" : "Opportunity" },
 
-    "parameters" : ["code"],
+    "delete_fields": {"contact_fields": "FD_ContactId__c", "contact_fields_types": "FD_ContactId", 
+                      "account_fields": "FD_AccountId__c", "account_fields_types": "FD_AccountId"}, 
 
     "existing_companies" : [{"fd_field" : "name", "sf_field" : "Name"}],
 

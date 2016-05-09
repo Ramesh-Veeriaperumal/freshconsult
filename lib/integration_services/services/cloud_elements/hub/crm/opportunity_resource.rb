@@ -12,10 +12,13 @@ module IntegrationServices::Services
         end
       end
 
-      def stage_name_picklist_values
-        stage_field = get_fields(["StageName"])
-        stage_field["picklistValues"].map do |picklistvalue|
-          [ picklistvalue["label"], picklistvalue["value"] ]
+      def get_field_properties
+        request_url = "#{cloud_elements_api_url}/hubs/crm/#{@service.meta_data[:object]}/fields/#{@service.meta_data[:field]}"
+        response = http_get request_url do |req|
+          req.headers = authorization_header
+        end
+        process_response(response, 200) do |fields|
+          return fields
         end
       end
        

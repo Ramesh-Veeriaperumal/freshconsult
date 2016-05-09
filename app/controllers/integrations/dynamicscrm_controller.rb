@@ -1,11 +1,11 @@
- class Integrations::DynamicscrmController < Integrations::CrmAppsController
+class Integrations::DynamicscrmController < Integrations::CrmAppsController
   include Integrations::Dynamicscrm::CrmUtil
   include Integrations::Dynamicscrm::ApiUtil
-  before_filter :render_cloud_elements, :only => [:settings, :edit]
+
   before_filter :get_installed_app, :only =>[:widget_data,:edit,:fields_update]
   before_filter :load_settings_config, :only => [ :widget_data,:edit ]
   before_filter :load_fields, :only => [:edit]
-  before_filter :check_installed_app, :only => [:settings, :settings_update], :if => :check_cloud_elements?
+  before_filter :check_installed_app, :only => [:settings, :settings_update]
 
 
   def settings_update
@@ -16,16 +16,7 @@
         flash.now[:error] = error_message
         render_settings
       else
-        if current_account.features?(:cloud_elements_crm_sync)
-          get_installed_app
-          if @installed_app.nil? 
-            construct_app
-            get_default_fields_params
-            update_crm_fields and return
-          end
-          redirect_to "/integrations/cloud_elements/crm/instances?state=dynamicscrm&domain=#{params["configs"]["domain"]}&password=#{params["configs"]["password"]}&dynamicscrm_url=#{params["configs"]["dynamicscrm_url"]}" and return
-        end
-        construct_app   
+        construct_app
         get_default_fields_params
         update_crm_fields and return
         render_fields
@@ -51,7 +42,6 @@
   private
 
     def load_settings_config
-      binding.pry
       unless @installed_app.blank?
         @instance_type = @installed_app["configs"][:inputs]["instance_type"]
         @domain_user_email = @installed_app["configs"][:inputs]["domain"]
@@ -64,7 +54,6 @@
     end
 
     def load_fields
-      binding.pry
       @fields = {} # @fields is populated in the function verify_email_and_populate_fields
       client_arr = dynamics_client(construct_client_params)
       CRM_MODULE_TYPES.each do |m_type|
@@ -138,14 +127,4 @@
     def api_error
       {"error" => "#{t(:'integrations.dynamicscrm.form.api_error')}"} 
     end
-
-    def build_configs
-      arr =[] 
-      params["configs"].each do |key, value|
-        value = CGI.escape value unless ["domain", "password", "dynamics_url"].include? key
-        arr <<  "#{key}=#{value}" if value.present?
-      end
-      arr.join("&")
-    end
-    
 end

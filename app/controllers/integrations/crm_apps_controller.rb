@@ -28,28 +28,6 @@ class Integrations::CrmAppsController < ApplicationController
     end 
   end
   
-  def render_cloud_elements
-    if current_account.features?(:cloud_elements_crm_sync)
-      get_installed_app
-      if @installed_app.present? and @installed_app.configs[:inputs]["element_token"].present?
-        redirect_to "/integrations/cloud_elements/crm/edit?state=dynamicscrm" and return
-      else
-        render_settings and return
-      end
-    end
-  end
-
-  def check_cloud_elements?
-    get_installed_app
-    if ["settings", "settings_update", "edit"].include? params["action"] and current_account.features?(:cloud_elements_crm_sync)
-      if @installed_app.present? and @installed_app.configs[:inputs]["element_token"].blank?
-        @installed_app = nil
-        return false
-      end
-    end
-    return true
-  end
-
   def get_app_name
     params[:controller].split('/')[1]
   end
@@ -63,7 +41,7 @@ class Integrations::CrmAppsController < ApplicationController
     @installed_app = app.installed_applications.build
     @installed_app.account_id = current_account.id
     @installed_app.set_configs(config_hash)
-  end
+  end 
 
   def render_settings
     render :template => "integrations/applications/#{get_app_name}/#{get_app_name}_settings",
@@ -87,7 +65,6 @@ class Integrations::CrmAppsController < ApplicationController
       end  
     end
     if @installed_app.save
-      return if current_account.features?(:cloud_elements_crm_sync)
       flash[:notice] = t(:'flash.application.install.success') and return false
     else
       flash[:notice] = t(:'flash.application.install.failure') 
@@ -108,19 +85,5 @@ class Integrations::CrmAppsController < ApplicationController
     end
      params.merge!(label_to_field)
   end
-
-  # def build_params_for_cloud_elements
-  #   inputs = @installed_app.configs[:inputs]
-  #   label_to_field = { :accounts =>[], :contacts => [], :leads => [] }
-  #   CRM_MODULE_TYPES.each do |type|
-  #     if inputs["#{type}s"].present?
-  #       inputs["#{type}s"].each do  |label|
-  #         label_to_field["#{type}s".to_sym].push(label)
-  #       end
-  #     end
-  #     params["#{type}_labels"] = inputs["#{type}_labels"] if inputs["#{type}_labels"].present?
-  #   end
-  #   params.merge!(label_to_field)
-  # end
 
 end
