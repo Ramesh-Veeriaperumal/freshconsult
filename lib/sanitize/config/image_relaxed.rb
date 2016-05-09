@@ -53,7 +53,9 @@ class Sanitize
         'pre'        => ['rel','code-brush'],
         'font'       => ['color']
       },
-
+      :add_attributes => {
+        'a' => {'rel' => 'noreferrer'}
+      },
       :protocols => {
         'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', :relative],'target' => ['_blank','_self','_parent','_top',:relative]},
         'blockquote' => {'cite' => ['http', 'https', :relative]},
