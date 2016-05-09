@@ -11,20 +11,20 @@ class TopicsQueriesTest < ActionDispatch::IntegrationTest
         api_create: 7,
         api_show: 1,
         api_update: 9,
-        api_destroy: 11,
+        api_destroy: 17,
         api_follow: 3,
         api_unfollow: 7,
         api_is_following: 1,
         api_posts: 2,
 
-        create: 43,
-        show: 14,
-        update: 34,
-        destroy: 28,
-        follow: 15,
-        unfollow: 22,
-        is_following: 13,
-        posts: 15
+        create: 40,
+        show: 11,
+        update: 31,
+        destroy: 38,
+        follow: 12,
+        unfollow: 19,
+        is_following: 10,
+        posts: 12
       }
 
       forum_id = create_test_forum(ForumCategory.first).id

@@ -13,11 +13,11 @@ class ConversationsQueriesTest < ActionDispatch::IntegrationTest
         api_destroy: 9,
         api_conversations: 5,
 
-        create: 60,
-        reply: 58,
-        update: 26,
-        destroy: 23,
-        conversations: 18
+        create: 54,
+        reply: 52,
+        update: 23,
+        destroy: 21,
+        conversations: 16
       }
 
       ticket_id = Helpdesk::Ticket.first.display_id

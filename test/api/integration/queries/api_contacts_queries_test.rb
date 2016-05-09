@@ -2,12 +2,6 @@ require_relative '../../test_helper'
 
 class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
   include UsersTestHelper
-  def test_multipart_form_data
-    skip_bullet do
-      post('/api/v2/contacts', v2_multipart_payload, @write_headers.merge('CONTENT_TYPE' => 'multipart/form-data'))
-      assert_response 201
-    end
-  end
 
   def test_query_count
     skip_bullet do
@@ -21,12 +15,12 @@ class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
         api_destroy: 6,
         api_make_agent: 4,
 
-        create: 35,
-        update: 35,
-        show: 18,
-        index: 18,
-        destroy: 22,
-        make_agent: 47
+        create: 32,
+        update: 32,
+        show: 15,
+        index: 15,
+        destroy: 20,
+        make_agent: 44
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.

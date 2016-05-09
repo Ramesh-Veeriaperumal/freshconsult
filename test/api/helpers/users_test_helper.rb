@@ -1,5 +1,7 @@
+['company_helper.rb', 'contact_fields_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module UsersTestHelper
   include CompanyHelper
+  include ContactFieldsHelper
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
@@ -110,5 +112,4 @@ module UsersTestHelper
     u = UserEmail.new(params)
     u.save
   end
-
 end
