@@ -414,6 +414,15 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :agent_conference do
+      collection do
+        post :add_agent
+        post :success
+        post :status
+        post :cancel
+      end
+    end
+
     resources :hold do
       collection do
         get  :add
@@ -653,7 +662,6 @@ Helpkit::Application.routes.draw do
       member do
         put :install
         delete :uninstall
-        get :uninstall
       end
     end
 

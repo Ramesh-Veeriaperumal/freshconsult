@@ -211,7 +211,8 @@ private
       format.js
       format.html
       format.nmobile do
-        render :json => {:time_entry_id => result.id, :success => true}.to_json() and return
+        puts result
+        render :json => {:time_entry_id => result.id, :timer_running => result.timer_running, :time_spent => result.time_spent, :success => true}.to_json() and return
       end
       format.xml do 
         render :xml => result.to_xml and return 

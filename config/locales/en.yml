@@ -668,8 +668,16 @@ en:
         stream_info1: "You can create multiple streams to search for different sets of keywords on Twitter. Enter the main keywords you want to look for, based on your business and even exclude certain keywords, hashtags and handles to narrow your search. For example, you may not want to see tweets by your marketers or executives in the custom stream you created to monitor support queries coming in through your brand and brand acronyms.Each stream can be made visible to one or many agent groups. You can also pick the default reply handle for each stream."
         stream_title2: "Converting specific tweets to tickets automatically"
         stream_info2: "The tweets coming in through these social streams can be filtered further using certain keywords and converted to tickets automatically. They can even be assigned to groups and products. You can set up more than one rule and the first rule that the tweet satisfies will get executed. For example, you can convert tweets mentioning “switching to” with your competitors names into tickets and escalate them to your support team head."
+        fb_page_title1: "Adding Facebook pages"
+        fb_page_title2: "Converting Facebook posts to tickets automatically"
+        fb_page_info1: "Associate your Facebook company pages with your helpdesk to manage all queries coming in from there along with your support tickets. You can automatically convert visitor posts and private messages as tickets as well as use keyword rules to pull in specific comments as individual tickets." 
+        fb_page_info2:  "Most Facebook users either post on your wall or comment under one of your company posts, when they have support queries. You can import all your visitor posts directly as tickets. To pull in relevant queries among the noise in visitor comments, filter them based on keywords. For example, an e-commerce company could use keywords like delayed, return or refund to filter out the most relevant questions."
+        fb_stream_title1: "Streamlining Facebook support"
+        fb_stream_title2: "Ticketing Facebook Messenger chats"
+        fb_stream_info1: "You can add as many Facebook brand pages as you want to your helpdesk. You can even associate a page with a specific product, if you support multiple products. Each page can have its own settings and you can streamline the tickets coming in from a page by assigning them to a specific agent group."
+        fb_stream_info2: "Messages via Facebook Messenger will be automatically pulled in as tickets. You can ensure that multiple messages from a customer, regarding a single issue are threaded into one ticket, by setting a threading interval. You can use the industry standard average resolution time for your business to decide this time interval."
       flash:
-        stream_updated: "Twitter stream %{stream_name} has been updated"
+        stream_updated: "Settings for %{stream_name} has been updated"
         stream_deleted: "Twitter stream %{stream_name} has been deleted"
         stream_save_error: "Error encountred on stream save"
         ticket_rule_error: "Some ticket rules might not have been saved due to empty keyword filters"
@@ -723,6 +731,57 @@ en:
         dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
         include_helptext: "example: support, \"System down\", @insideapple"
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
+      facebook_streams:
+        index: 
+          new_account: "New Account"
+          new_page: "New Page"
+          pages: "Facebook Pages"
+          streams: "Facebook Streams"
+          reauthorize: "Reautorize"
+          add_page: "Add Facebook Page"
+          associate_page: "Associate"
+        streams:
+          associated_user: "Associated Fb User"
+        edit:
+          cancel: "Cancel"
+          update: "Update"
+          tke_rule_breif_desc: "Posts will automatically get converted into tickets based on these settings"
+          edit_stream: "Edit Page"
+        page_tab:
+          page_tab_head: "Facebook Page Tab"
+          config_info: "Once you enable your Facebook page tab, your customers will be able to directly access your solutions, forums and self-service from within Facebook"
+          reauth: "Please <a href='%{page_tab_url}' > reauthorize </a> with Facebook to access your page tab"
+          no_ssl: "<b>Facebook page tab requires a Secure Connection.</b><br />You need to enable SSL encryption from <a href='/admin/security'>Security settings</a>"
+          tab_name: "Tab name "
+          remove_tab: "Remove page Tab"
+          configure_tab: "Create your Facebook page tab"
+          configure_tab_auth: "<a href='%{page_tab_url}'> Create your Facebook page tab</a>"
+        ticket_rules:
+          do_not_convert: "Do not convert"
+          do_not_convert_help: "No posts will be converted to tickets."
+          convert_only_relevant: "Convert only relevant posts"
+          convert_visitor: "Convert all Visitor Posts to tickets"
+          convert_company: "For company posts, convert individual visitor comments to tickets when they contain these keywords"
+          view_info_text: "You can still view all other visitor comments in your Social Tab"
+          assign_to_gp: "Assign to group"
+          convert_everything: "Convert everything"
+          convert_everything_help: "All Visitor posts and all Company posts with any Visitor Comments will be converted to tickets. You can manually split comments into separate tickets."
+          convert_relevant: "Converts posts according to the visitor posts or company comments with respect to the given settings"
+          import_visitor_posts: "Convert all Visitor Posts to tickets"
+          import_company_posts: "For company posts, convert individual visitor comments to tickets when they have these keywords"
+          assign_to_gp: "Assign tickets to group"
+        convert_dm:
+          header: "Convert all Messages to tickets"
+          threading_interval: "Set Ticket Threading Interval"
+          dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
+          assign_to_gp: "Assign tickets to group"
+        page_form:
+          link_to_product: "Link to Product"
+          visible_to: "Visible to"
+          stream_info: "This stream will contain all your wall posts"
+        enable_facebook_page:
+          select_all: Select all
+          associate_page: "Select the facebook pages you would like to associate to the Helpdesk."
     company_fields:
       fields:
         name: Full Name
@@ -1559,6 +1618,7 @@ en:
         title: Supervisor - Rules
       helpnote:
         tour: Help me create a new supervisor rule
+        tour_v2: Help me create a supervisor rule
         help_title: Supervisor
         help_info_1: The Supervisor performs actions on tickets that you specify based on time and event driven triggers. Use the Supervisor to periodically check recent tickets and perform actions like sending reminders to customers for pending tickets, or escalating overdue tickets to the right person in your team.
         help_info_2: The Supervisor will run every hour and process tickets that have been updated within the past 30 days. Supervisor rules are processed sequentially, so the order of the rules is important. A rule may cause certain actions that trigger subsequent rules.
@@ -1577,6 +1637,7 @@ en:
         title: Observer - Rules
       helpnote:
         tour: Help me create a new observer rule
+        tour_v2: Help me create a observer rule
         help_title: Observer
         help_info_1: The Observer lets you trigger specific actions in your support desk as soon as a certain event occurs. For example, you could create an Observer Rule to alert the big man when a customer gives an unfavorable satisfaction rating on any ticket.
         help_title_2a: Events
@@ -3060,6 +3121,7 @@ en:
     info3: When a ticket satisfies these conditions
     helpcard:
       tour: Help me create a new Dispatch’r rule
+      tour_v2: Help me create a Dispatch’r rule
       info1: The Dispatch’r lets you bring your business rules into your support workflow by performing a predefined set of actions on newly created tickets. For example, you could use the Dispatch’r to automatically categorize, prioritize and assign every incoming ticket to the right agent in your team, based on the conditions you specify.
       info2: Remember, the order of the Dispatch’r rules are important. For each incoming ticket, Dispatch'r will execute the first matching rule and stop. You can reorder the list of rules to have the most important rules on top.
     reorder: Reorder
@@ -4317,6 +4379,7 @@ en:
   favicon: Favicon
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
+  widget_config_tour_text: Help me get started with the feedback widget
   chatwidget_help_content:
     title: Live Chat
     info1: Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site.
@@ -7148,6 +7211,7 @@ en:
       info_1: "The ticket form helps capture the data you need from the customer when they submit a ticket. You can customize your Ticket Form to include the right ticket fields for your business, and let your customers and agents fill in the information you need in the format you want. For example, in an e-commerce company, getting a customer's order ID in the ticket form would be very helpful to the agent solving the ticket."
       info2: "Dependent Fields give you an easy way to create deeper ticket categories and identify the biggest issues that clog your support.  With dependent fields you can organize tickets hierarchically  into categories, subcategories and item affected."
       info4: "If you are in the estate plan or above, you can have dynamic fields that appear based on the option selected in the type field. For every option in the type field, you can create a different section. You can then add more ticket fields to each section. For example, in an ecommerce scenario, when the type is chosen as \"Replacement\", a section with a field called \"Reason\" can open up that will collect the reason why customer needs a replacement for the item. <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/212889-creating-your-dynamic-ticket-forms'>Read more about dynamic fields</a>."
+      info4_v2: "If you are in the estate plan or above, you can have dynamic fields that appear based on the option selected in the type field. For every option in the type field, you can create a different section. You can then add more ticket fields to each section. For example, in an ecommerce scenario, when the type is chosen as \"Replacement\", a section with a field called \"Reason\" can open up that will collect the reason why customer needs a replacement for the item."
   contact_field:
     helpcard:
       title2: "Customizing your contact fields"
@@ -8129,6 +8193,8 @@ en:
       hold: "Hold"
       holding: "Sorry unable to hold.. \n Please try again later..."
       hold_success: "Now call on hold"
+      add_or_transfer_call: "Add or Transfer Call"
+      add_agent_to_call: "Add to Call"
       transfer_call: "Transfer Call"
       dialpad: "Dialpad"
       cancel: "Cancel"
@@ -8148,6 +8214,9 @@ en:
       unavailable_agents: "Agents are not available to transfer call"
       no_transfers: "No recent transfers"
       agents_count_in_group: "%{count} Agents"
+      agents_count:
+        other: "Agents"
+        one: "Agent"  
       ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
       add_note: "Add Notes"
       note_placeholder: "Add call notes..."
@@ -8192,6 +8261,17 @@ en:
       network_error: "Check your Internet Connection"
       browser_alert: "Recent Changes in Chrome mandates a secure connection using SSL(https://) to make or receive calls"
       read_more: "<b>Read More</b>"
+      agent_conference:
+        connecting: "Connecting to"
+        canceled: "Canceled"
+        cancelling: "Cancelling"
+        add_agent_initiated: "initiated"
+        connected: "Connected"
+        no_answer: "Not available"
+        busy: "Ignored"
+        end_call: "Call ended"
+        cancel_add_agent: "Cancel"
+        in_call: "on call"
       transfer:
         tranfer_via: "via "
         to: "To: "
@@ -8983,6 +9063,7 @@ en:
     folders: Folders
     views_categories: Views and Categories
     tour: Help me setup my forums
+    tour_v2: Help me setup my knowledge base
     show_more: Show more
     helpnote:
       title: Organizing your community

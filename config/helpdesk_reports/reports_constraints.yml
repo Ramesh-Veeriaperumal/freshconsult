@@ -51,7 +51,7 @@
     - forest
 
 :plan_exclude_filters:
-  glance: 
+  :glance: 
     blossom:
       - :agent_id
       - :group_id
@@ -60,7 +60,7 @@
       - :group_id
 
 :global_exclude_filters:
-  customer_report:
+  :customer_report:
     - :agent_id
     - :group_id
     - :company_id

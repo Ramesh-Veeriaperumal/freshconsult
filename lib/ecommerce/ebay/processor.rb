@@ -8,7 +8,7 @@ class Ecommerce::Ebay::Processor
     @account = ::Account.current
     @ebay_account = @account.ebay_accounts.find_by_external_account_id(args["body"]["EIASToken"])
     @notification_user = fetch_user(args["body"]["Messages"]["Message"]["Sender"])
-    @notification_subject = args["body"]["Messages"]["Message"]["Subject"].gsub(EBAY_SUBJECT_REPLY, '')
+    @notification_subject = args["body"]["Messages"]["Message"]["Subject"]
     @notification_body = beautify_html(args["body"]["Messages"]["Message"]["Text"])
     @notification_msg_id = args["body"]["Messages"]["Message"]["ExternalMessageID"]
     @notification_item_id = args["body"]["Messages"]["Message"]["ItemID"]
@@ -60,7 +60,7 @@ class Ecommerce::Ebay::Processor
     unless sent_messages.blank?
       sent_messages.reverse.each do |sent_message|
         user = fetch_user(sent_message[:send_to_name])
-        ticket = check_parent_ticket(user.id, sent_message[:subject].gsub(EBAY_SUBJECT_REPLY, ''), sent_message[:item_id])
+        ticket = check_parent_ticket(user.id, sent_message[:subject], sent_message[:item_id])
         next unless ticket.blank?
         create_sent_message(sent_message, user)
       end
@@ -72,7 +72,7 @@ class Ecommerce::Ebay::Processor
     ticket = nil
     ActiveRecord::Base.transaction do
       ticket = @account.tickets.build(
-            :subject => subject.gsub(EBAY_SUBJECT_REPLY, ''),
+            :subject => subject,
             :requester => requester,
             :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:ecommerce],
             :ticket_body_attributes => {
@@ -129,7 +129,7 @@ class Ecommerce::Ebay::Processor
   def match_ticket_subject(ticket_ids, subject)
     tickets = @account.tickets.where("id in (?)", ticket_ids).all
     tickets.each do |tkt|
-      return tkt if subject == tkt.subject
+      return tkt if subject.include?(tkt.subject)
     end
     nil
   end
@@ -143,7 +143,10 @@ class Ecommerce::Ebay::Processor
     end
     tag_names.each do |tag_string|
       tag = @account.tags.find_by_name(tag_string) || @account.tags.new(:name => tag_string)
-      ticket.tags << tag
+      begin
+        ticket.tags << tag
+      rescue ActiveRecord::RecordInvalid => e
+      end
     end
   end
 

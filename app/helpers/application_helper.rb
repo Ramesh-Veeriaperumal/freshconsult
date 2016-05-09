@@ -1353,12 +1353,12 @@ module ApplicationHelper
     end
 
     def can_view_welcome_page?
-      privilege?(:view_admin) && can_view_social? && social_enabled?
+      privilege?(:admin_tasks) && can_view_social? && social_enabled?
     end
 
-  def tour_button(text, tour_id)
-    link_to(text, '#', :rel => 'guided-tour', "data-tour-id" => tour_id, :class=> 'guided-tour-button')
-  end
+    def inm_tour_button(text,topic_id)
+      link_to(text, '#', :rel => 'guided-inlinemanual', "data-topic-id" => topic_id, :class=> 'inm_tour_button')
+    end
 
   def check_fb_reauth_required
     fb_page = current_account.fb_reauth_check_from_cache
@@ -1614,11 +1614,11 @@ module ApplicationHelper
 
   def show_onboarding?
     user_trigger = !is_assumed_user? && current_user.login_count <= 2  && current_user.agent.onboarding_completed? 
-    (current_user.privilege?(:view_admin))  ?  user_trigger && current_account.subscription.trial?  :  user_trigger
+    (current_user.privilege?(:admin_tasks))  ?  user_trigger && current_account.subscription.trial?  :  user_trigger
   end
 
   def inlinemanual_topic_id
-    topic = (current_user.privilege?(:view_admin)) ? 'admin_topic' : 'agent_topic'
+    topic = (current_user.privilege?(:admin_tasks)) ? 'admin_topic' : 'agent_topic'
     User::INLINE_MANUAL[topic]
   end
 
@@ -1634,7 +1634,7 @@ module ApplicationHelper
       :name     => current_user.name,
       :created  => current_account.created_at.to_i,
       :updated  => current_user.last_login_at.to_i,
-      :roles    => (current_user.privilege?(:view_admin)) ? 'admin' : 'agent'
+      :roles    => (current_user.privilege?(:admin_tasks)) ? 'admin' : 'agent'
     }
   end
 

@@ -16,12 +16,13 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
   before_save :mark_available, if: :schedule_changed?
   before_save :calculate_next_run_at, :update_last_run_at
   #callbacks commit/update - save inside leads to infinte loop
-  after_commit :trigger, if: :available?
-
+  
+  after_commit :trigger, if: Proc.new { persisted? && available? } 
+  
   scope :by_schedulable_type, lambda{ |schedulable_type| {:conditions => ['schedulable_type = ?', schedulable_type]}}
 
   scope :upcoming_tasks, lambda{ |from = Time.now.utc| 
-    tasks_between(from, (from + CRON_FREQUENCY_IN_HOURS).end_of_hour).where(
+    tasks_between(from, from.end_of_hour).where(
       status: STATUS_NAME_TO_TOKEN[:available]) }
 
   scope :dangling_tasks, lambda{ |from = Time.now.utc| 
@@ -161,7 +162,7 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
 
   def schedule_changed?
     new_record? || minute_of_day_changed? || day_of_frequency_changed? || 
-      frequency_changed? || repeat_frequency_changed? || end_date_changed? || next_run_at_changed?
+      frequency_changed? || repeat_frequency_changed? || end_date_changed? 
   end
 
   def calculate_next_run_at
@@ -228,8 +229,8 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
 
   def upcoming_schedule(prev_schedule)
     return prev_schedule if prev_schedule > Time.zone.now
-
-    next_at = prev_schedule + (repeat_frequency * FREQUENCY_UNIT[frequency_name])
+    next_at_frequency = monthly? ? (repeat_frequency * FREQUENCY_UNIT[frequency_name]).months : (repeat_frequency * FREQUENCY_UNIT[frequency_name])
+    next_at = prev_schedule + next_at_frequency
     next_at = to_monthly(next_at) if monthly?
     (next_at > Time.zone.now) ? next_at : upcoming_schedule(next_at)
   end

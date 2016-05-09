@@ -526,7 +526,7 @@ ul.ui-form .ui-form-inline{
 					.required_label{@include margin-left(0)}
 					.using_webhooks{font-weight: 600; @include float(right); margin-top: 8px; @include margin-right(9%);}
 					.usecases{margin:0}
-					.url_req_auth{width: 50%; font-size: 13px; @include margin-left(15.4%);}
+					.url_req_auth{width: 50%; font-size: 13px;}
 					.change_password{margin-top: 7px; @include margin-left(15px);}
 					.checkbox_label{height:25px; min-height:0; margin:0; padding-top: 8px;}
 					.content_label{margin-top:33px; @include margin-left(0);}
@@ -534,7 +534,7 @@ ul.ui-form .ui-form-inline{
 					input[type="text"].api_key{width:87%;margin-bottom:30px;}
 					.select2-container{@include left(1px);}	
 					.required_star{top: 15px; margin: 0;}
-					textarea.uri{width: 57%; @include padding-right(17.3%); @include margin-left(0.8%);}
+					textarea.uri{width: 90%; @include margin-left(1%);}
 					.credentials_toggle{@include float(right); @include margin-right(10%); margin-top:-25px; display:inline-block;}
 					.headers_toggle{
 						float: right;
@@ -553,7 +553,7 @@ ul.ui-form .ui-form-inline{
 						}
 					.params{width:69%; min-height:146px; @include padding-right(20.3%);}
 					.tip{width: 92%; color: grey;}
-					.placeholder_div{position: relative; width: 75%;}
+					.placeholder_div{position: relative; width: 90%;}
 					.body_div{width:90%;}
 					.l_placeholder{position: absolute; @include right(0px); margin-top: 12px; @include float(right);}
 				}

@@ -5,7 +5,7 @@ class HelpdeskReports::Export::PhoneSummary < HelpdeskReports::Export::Report
 
   def initialize(args, scheduled_report = false)
     args.symbolize_keys!
-    args[:data_hash]['report_filters'].map!{|filter| filter.update(filter){|k,v| k=='value' ? v.to_s : v }} if scheduled_report
+    args[:data_hash][:report_filters].map!{|filter| filter.update(filter){|k,v| k=='value' ? v.to_s : v }} if scheduled_report
     args = old_report_params(args)
     super
   end

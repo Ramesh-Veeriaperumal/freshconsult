@@ -26,7 +26,6 @@ class Freshfone::Initiator::AgentCallLeg
     begin
       self.current_call ||= current_account.freshfone_calls.find(params[:caller_sid] || params[:call])
       return telephony.no_action unless current_call
-      return process_agent_leg if connect_leg?
       return resolve_simultaneous_calls if simultaneous_call?
       return initiate_disconnect if disconnect_leg? || not_in_progress?
       
@@ -34,7 +33,7 @@ class Freshfone::Initiator::AgentCallLeg
         current_call.update_attributes(
           :call_status => Freshfone::Call::CALL_STATUS_HASH[:connecting], 
           :user_id => params[:agent_id])
-        initiate_agent_leg
+        process_agent_leg
       else
         handle_simultaneous_answer
       end
@@ -43,11 +42,6 @@ class Freshfone::Initiator::AgentCallLeg
       current_call.cleanup_and_disconnect_call
       telephony.no_action
     end
-  end
-
-  def initiate_agent_leg
-    telephony.redirect_call_to_conference(params[:CallSid], "#{connect_agent_url}#{forward_params}")
-    telephony.no_action
   end
 
   def process_agent_leg

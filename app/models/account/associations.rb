@@ -255,6 +255,7 @@ class Account < ActiveRecord::Base
   has_many :all_freshfone_numbers, :class_name => 'Freshfone::Number', :dependent => :delete_all
   has_many :ivrs, :class_name => 'Freshfone::Ivr'
   has_many :freshfone_calls, :class_name => 'Freshfone::Call'
+  has_many :supervisor_controls, :class_name => 'Freshfone::SupervisorControl'
   delegate :find_by_call_sid, :to => :freshfone_calls
   has_one  :freshfone_credit, :class_name => 'Freshfone::Credit'
   has_many :freshfone_payments, :class_name => 'Freshfone::Payment'

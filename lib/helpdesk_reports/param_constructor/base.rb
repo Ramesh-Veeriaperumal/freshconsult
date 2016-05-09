@@ -51,6 +51,7 @@ class HelpdeskReports::ParamConstructor::Base
       time_trend_conditions: [],
       date_range: date_range,
       metric: nil,
+      scheduled_report: true,
       filter: options[:report_filters].present? ? options[:report_filters] : []
     }
   end

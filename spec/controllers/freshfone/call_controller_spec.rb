@@ -221,7 +221,7 @@ RSpec.describe Freshfone::CallController do
     log_in(@agent)
     get :inspect_call, {:call_sid => "CDUMMY"}
     tear_down CLIENT_CALL
-    json.should be_eql({:can_accept => 1})
+    json.should be_eql({:can_accept => 1, :agent_conference => nil})
   end
 
 

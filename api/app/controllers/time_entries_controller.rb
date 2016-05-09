@@ -26,7 +26,7 @@ class TimeEntriesController < ApiApplicationController
 
   def ticket_time_entries
     return if validate_filter_params
-    @items = paginate_items(scoper.where(workable_id: @ticket.id))
+    @items = paginate_items(@ticket.time_sheets)
     render '/time_entries/index'
   end
 

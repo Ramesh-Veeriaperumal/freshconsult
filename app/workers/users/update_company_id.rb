@@ -10,7 +10,7 @@ class Users::UpdateCompanyId < BaseWorker
 
   def perform(args)
     args.symbolize_keys!
-    domain = args[:domain]
+    domains = args[:domains]
     company_id = args[:company_id]
     current_company_id = args[:current_company_id]
     account = Account.current
@@ -20,8 +20,8 @@ class Users::UpdateCompanyId < BaseWorker
       # Not using find_in_batches `cause of inability to update_all an array
       batch_op = last_user_id ? "AND id > #{last_user_id}" : ""
       condition = "#{cust_id_cdn} and helpdesk_agent = 0 #{batch_op}"
-      users = domain.present? ? account.all_users.where(["SUBSTRING_INDEX(email, '@', -1) = (?) and  #{condition}", 
-                                      domain]).limit(USER_FETCH_LIMIT) :
+      users = domains.present? ? account.all_users.where(["SUBSTRING_INDEX(email, '@', -1) IN (?) and  #{condition}", 
+                                      get_domain(domains)]).limit(USER_FETCH_LIMIT) :
                                  account.all_users.where(condition)
 
       user_ids = execute_on_db { users.pluck(:id) }
@@ -47,4 +47,7 @@ class Users::UpdateCompanyId < BaseWorker
     account.user_companies.where(["user_id in (?) and company_id = ?", user_ids, company_id]).destroy_all
   end
 
+  def get_domain(domains)
+    domains.map{ |s| s.gsub(/^(\s)?(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') }
+  end
 end

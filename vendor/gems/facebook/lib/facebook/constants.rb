@@ -13,6 +13,8 @@ module Facebook
     FEED_TYPES = ["post", "status", "comment", "reply_to_comment", "photo", "video", "share", "link", "like", "message"]
     
     POST_TYPE  = Hash[*FEED_TYPES.map{|type| [type, type]}.flatten].symbolize_keys
+    
+    DEFAULT_KEYWORDS = ["support", "ticket", "issue", "fail", "problem", "suck", "order", "return", "refund"]
 
     #Stream and Ticket Rule type
     FB_STREAM_TYPE = {
