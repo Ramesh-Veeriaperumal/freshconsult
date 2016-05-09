@@ -11,6 +11,13 @@ class HelpdeskReports::ParamConstructor::Base
   end
 
   def build_pdf_params
+    if date_range.nil?
+      return {
+        date_range: date_range,
+        filter_name: options[:filter_name],
+        report_type: report_type
+      }
+    end
     @query_params = build_params
     validate_scope
     @query_params.each do|param|

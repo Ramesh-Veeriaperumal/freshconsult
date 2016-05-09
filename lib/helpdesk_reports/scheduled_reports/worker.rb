@@ -14,14 +14,14 @@ class HelpdeskReports::ScheduledReports::Worker
   def perform
     build_date_range
     params = old_report? ? build_params_old_report : build_params
-    trigger_export(params, @date_range.nil?)
+    trigger_export(params)
   end
   
 private
 
-  def trigger_export(params, no_data = false)
+  def trigger_export(params)
     class_name = old_report? ? report_type.to_s.camelcase : 'Report'
-    "HelpdeskReports::Export::#{class_name}".constantize.new(params, task).perform(no_data)
+    "HelpdeskReports::Export::#{class_name}".constantize.new(params, task).perform
   end
 
   def old_report?
@@ -38,23 +38,10 @@ private
   end
 
   def build_params
-    #Plan with date lag constraints will have nil for This week (Monday) , This month (1st)
-    if @date_range.nil? 
-      params = {
-        date_range: date_range,
-        filter_name: report_filter.filter_name,
-        report_type: report_type
-      }
-    else
-      extra_options = {
-        date_range: date_range,
-        filter_name: report_filter.filter_name,
-      }
-      options = report_filter.data_hash.merge(extra_options)
-      param_constructor = "HelpdeskReports::ParamConstructor::#{report_type.to_s.camelcase}".constantize.new(options)
-      params = param_constructor.build_pdf_params
-    end
-    params
+    report_filter.data_hash[:date_range] = date_range
+    report_filter.data_hash[:filter_name] = report_filter.filter_name
+    param_constructor = "HelpdeskReports::ParamConstructor::#{report_type.to_s.camelcase}".constantize.new(report_filter.data_hash)
+    param_constructor.build_pdf_params
   end
   
   def build_date_range

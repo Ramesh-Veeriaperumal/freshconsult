@@ -7616,7 +7616,7 @@ en:
       tooltip: Scheduled every %{period}
       save: Save
       cancel: Cancel
-      desc: "Hello, \n\nPlease find a copy of %{report_name} - %{schedule} report with this email.\n\n\n Thanks,\n %{username}"
+      desc: "Hello, \n\nPlease find a copy of %{report_name} - %{schedule} report with this email.\n\n\n Thanks"
       message:
         week_tmpl: "%{name} for <strong>last %{day}</strong> to <strong>%{previous_day}</strong> will be sent along with below email <strong>every %{day}</strong> at <strong>%{time}</strong> time"
         week_friday_tmpl: "%{name} for <strong>last %{day}</strong> to <strong> this %{previous_day}</strong> will be sent along with below email <strong>every %{day}</strong> at <strong>%{time}</strong> time"
