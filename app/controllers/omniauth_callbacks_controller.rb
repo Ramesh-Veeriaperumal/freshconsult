@@ -19,7 +19,7 @@ class OmniauthCallbacksController < ApplicationController
       :omniauth => @omniauth,
       :user_id => @user_id
     )
-    
+
     result = authenticator.after_authenticate(params)
     flash[:notice] = result.flash_message if result.flash_message.present?
     render result.render and return if result.render.present?
@@ -102,7 +102,6 @@ class OmniauthCallbacksController < ApplicationController
     portal = (@portal_id ? Portal.find(@portal_id) : account.main_portal)
     port = ''
     @portal_url = "#{portal.url_protocol}://#{portal.host}#{port}"
-    @portal_url = "http://localhost:3000" if Rails.env.eql? "development"
   end
 
 end

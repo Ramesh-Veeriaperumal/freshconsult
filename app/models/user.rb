@@ -321,9 +321,9 @@ class User < ActiveRecord::Base
     return false
   end
   
-      def available_number
-        phone.blank? ? mobile : phone
-      end
+  def available_number
+    phone.blank? ? mobile : phone
+  end
 
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
