@@ -163,7 +163,7 @@ class Support::TicketsController < SupportController
           return current_user.company.try(:all_tickets) || current_user.tickets
         else 
           requested_for = current_account.users.find_by_id(@requested_by)
-          requested_item = requested_item.company.presence == @company? requested_for : current_user
+          requested_item = requested_item.company.presence == @company ? requested_for : current_user
         end
       end
       requested_item.tickets
