@@ -1082,9 +1082,9 @@ cs:
         send_test_mail_info2: "<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>Zde je uvedeno</a>, jak to udělat."
         title_message: "Nastartujte vaši podporu ve čtyřech krocích..."
         support_email_title: "E-mail<br> podpory"
-        agents_title_1: "Přidání&lt;br&gt; zástupců"
+        adding_agents: "Přidání<br> zástupců"
         rebrand_title: "Logo <br>&amp; barvy"
-        social_title_1: "Zapojte &lt;br&gt;se do sociálních sítí"
+        going_social: "Zapojte <br>se do sociálních sítí"
         skip_text: "Ne děkuji, vemte mne na můj helpdesk."
         back_link: Zpět
         next_link: Další

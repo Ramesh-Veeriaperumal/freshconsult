@@ -1320,9 +1320,9 @@ de:
         send_test_mail_info2: "Hier finden Sie heraus, <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>wie es gemacht wird</a>."
         title_message: "Schnelleinrichtung Ihres Kundensupport in vier Schritten..."
         support_email_title: Support-<br>E-Mail
-        agents_title_1: Bearbeiter&lt;br&gt;hinzufügen
+        adding_agents: Bearbeiter<br>hinzufügen
         rebrand_title: "Logo <br>und Farben"
-        social_title_1: Soziale&lt;br&gt;Medien
+        going_social: Soziale<br>Medien
         skip_text: "Nein danke, bringe mich zu meinem Helpdesk."
         back_link: Zurück
         next_link: Weiter

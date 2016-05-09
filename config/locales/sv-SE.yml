@@ -1240,9 +1240,9 @@ sv-SE:
         send_test_mail_info2: "<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>Så här gör du</a>."
         title_message: "Fyra steg för att komma igång med din kundtjänst."
         support_email_title: "E-postadress <br> för support"
-        agents_title_1: "Lägga till &lt;br&gt; representanter"
+        adding_agents: "Lägga till <br> representanter"
         rebrand_title: "Logotyp  <br>och färger"
-        social_title_1: "Använda &lt;br&gt; sociala medier"
+        going_social: "Använda <br> sociala medier"
         skip_text: "Nej tack, ta mig till mitt hjälpcenter."
         back_link: Tillbaka
         next_link: Nästa

@@ -1288,9 +1288,9 @@ ar:
         send_test_mail_info2: "هنا <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>كيفية قيامك بذلك</a>."
         title_message: "البدء السريع لدعم العملاء في أربعة خطوات..."
         support_email_title: "دعم<br> البريد الإلكتروني"
-        agents_title_1: "إضافة&lt;br&gt; وكلاء"
+        adding_agents: "إضافة<br> وكلاء"
         rebrand_title: "الشعار <br>والألوان"
-        social_title_1: "استخدام&lt;br&gt; الشبكة الاجتماعية"
+        going_social: "استخدام<br> الشبكة الاجتماعية"
         skip_text: "لا شكرًا، الانتقال إلى مكتب الدعم الخاص بي."
         back_link: الخلف
         next_link: التالي

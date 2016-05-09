@@ -1265,9 +1265,9 @@ uk:
         send_test_mail_info2: "Тут наведені <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>інструкції по використанню</a>."
         title_message: "Усього чотири кроки, і пітримка клієнтів готова до роботи..."
         support_email_title: "Електронна пошта <br> служби підтримки"
-        agents_title_1: "Додавання &lt;br&gt; агентів"
+        adding_agents: "Додавання <br> агентів"
         rebrand_title: "Логотип <br> та кольори"
-        social_title_1: "Інтеграція з &lt;br&gt; соціальними мережами"
+        going_social: "Інтеграція з <br> соціальними мережами"
         skip_text: "Ні, перемістіть мене на мою сторінку служби підтримки."
         back_link: Назад
         next_link: Далі

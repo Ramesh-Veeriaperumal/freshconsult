@@ -1318,9 +1318,9 @@ fr:
         send_test_mail_info2: "Voilà <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>comment faire</a>."
         title_message: "Lancez votre service d'assistance en quatre étapes..."
         support_email_title: "Adresse e-mail<br> d'assistance"
-        agents_title_1: "Ajout &lt;br&gt;d'agents"
+        adding_agents: "Ajout <br>d'agents"
         rebrand_title: "Logo <br>et couleurs"
-        social_title_1: "Agir sur &lt;br&gt;les réseaux sociaux"
+        going_social: "Agir sur <br>les réseaux sociaux"
         skip_text: "Non merci, dirigez-moi vers mon service d'assistance."
         back_link: Précédent
         next_link: Suivant

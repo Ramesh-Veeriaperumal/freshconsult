@@ -1305,9 +1305,9 @@ ro:
         send_test_mail_info2: "Aici este  <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>cum poti face</a>."
         title_message: "Mergi la incepe asistenta clienti in patru pasi..."
         support_email_title: "Asistenta<br> e-mail"
-        agents_title_1: "Adaugand&lt;br&gt; agenti"
+        adding_agents: "Adaugand<br> agenti"
         rebrand_title: "Logo <br>&amp; culori"
-        social_title_1: "Mergi la&lt;br&gt; social"
+        going_social: "Mergi la<br> social"
         skip_text: "Nu multumesc, du-ma la helpdesk-ul meu."
         back_link: Inapoi
         next_link: Urmatorul

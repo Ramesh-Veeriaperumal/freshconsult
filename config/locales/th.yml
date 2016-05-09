@@ -1237,9 +1237,9 @@ th:
         send_test_mail_info2: "ที่นี่ คือ <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>คุณสามารถทำมันได้อย่างไร</a>."
         title_message: "เริ่มต้นการช่วยเหลือลูกค้าของคุณในสี่ขั้นตอน ..."
         support_email_title: "สนับสนุน<br> อีเมล์"
-        agents_title_1: การเพิ่ม&lt;br&gt;เจ้าหน้าที่
+        adding_agents: การเพิ่ม<br>เจ้าหน้าที่
         rebrand_title: "ตราสัญลักษณ์<br>&amp; สี"
-        social_title_1: เข้า&lt;br&gt;โซเชียล
+        going_social: เข้า<br>โซเชียล
         skip_text: "ไม่ละ ขอบคุณ, กรุณาพาฉันไปที่หน้ารับแจ้งปัญหา"
         back_link: ย้อนกลับ
         next_link: ข้างหน้า

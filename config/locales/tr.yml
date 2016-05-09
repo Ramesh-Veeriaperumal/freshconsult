@@ -1060,9 +1060,9 @@ tr:
         send_test_mail_info2: "Burada <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'> Nasıl yapacağını görebilirsin.</a>"
         title_message: "Oyuncu desteğine dört adımda başla."
         support_email_title: "Destek <br> maili"
-        agents_title_1: "Temsilci&lt;br&gt; Ekle"
+        adding_agents: "Temsilci<br> Ekle"
         rebrand_title: "Logo<br>&amp; renk"
-        social_title_1: Sosyalleş&lt;br&gt;
+        going_social: "Sosyalleş<br>"
         skip_text: "Hayır teşekkürler, yardım bölümüne yönlendir."
         back_link: Geri
         next_link: Sonraki

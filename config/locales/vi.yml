@@ -1377,7 +1377,7 @@ vi:
         congratulations: "chúc mừng! freshdesk đã sẵn sàng!"
         send_test_mail_info2: "đây là <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'> làm sao bạn có thể làm ra nó </a>"
         support_email_title: "Email <br> hổ trợ"
-        agents_title_1: "đang thêm <br> các chuyên viên"
+        adding_agents: "đang thêm <br> các chuyên viên"
         rebrand_title: "Logo <br> &amp; màu"
         skip_text: "không! cám ơn, quay lại helpdesk"
         back_link: "quay lại"

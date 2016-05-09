@@ -1240,9 +1240,9 @@ it:
         send_test_mail_info2: "Ecco <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>la procedura</a>."
         title_message: "Inizia subito l'assistenza ai clienti in quattro passaggi..."
         support_email_title: "E-mail<br> di supporto"
-        agents_title_1: "Aggiunta&lt;br&gt; agenti"
+        adding_agents: "Aggiunta<br> agenti"
         rebrand_title: "Logo <br>e colori"
-        social_title_1: "Reti&lt;br&gt; Social"
+        going_social: "Reti<br> Social"
         skip_text: "No grazie, indirizzami al mio helpdesk."
         back_link: Indietro
         next_link: Avanti

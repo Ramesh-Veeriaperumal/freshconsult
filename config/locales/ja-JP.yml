@@ -1240,9 +1240,9 @@ ja-JP:
         send_test_mail_info2: "こちらから<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>手順</a>をご覧ください。"
         title_message: 4つのステップでカスタマーサポートを活性化・・・
         support_email_title: "サポート<br> メールアドレス"
-        agents_title_1: エージェントを&lt;br&gt;追加中
+        adding_agents: エージェントを<br>追加中
         rebrand_title: "ロゴ <br>&amp; 色"
-        social_title_1: ソーシャル&lt;br&gt;活用
+        going_social: ソーシャル<br>活用
         skip_text: いいえ結構です、ヘルプデスクへ移動してください。
         back_link: 戻る
         next_link: 次

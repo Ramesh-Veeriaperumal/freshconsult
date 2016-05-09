@@ -1115,7 +1115,7 @@ hu:
       index:
         congratulations: "Gratulálunk! Az Ön Freshdesk-je kész!"
         support_email_title: Ügyfélszolgálati<br>email
-        agents_title_1: "Ügyintézők<br> hozzáadása"
+        adding_agents: "Ügyintézők<br> hozzáadása"
         rebrand_title: "Logo <br>& színek"
         back_link: Vissza
         next_link: Következő

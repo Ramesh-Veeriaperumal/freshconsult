@@ -1301,9 +1301,9 @@ es:
         send_test_mail_info2: "Así es<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>cómo puedes hacerlo</a>."
         title_message: "Inaugura tu ayuda al cliente en cuatro pasos..."
         support_email_title: "e-mail <br> de soporte"
-        agents_title_1: "Añadiendo&lt;br&gt; agentes"
+        adding_agents: "Añadiendo<br> agentes"
         rebrand_title: "Logo<br>y colores"
-        social_title_1: "Vuélvete &lt;br&gt; social"
+        going_social: "Vuélvete <br> social"
         skip_text: "No gracias, llévame a mi propio servicio de asistencia."
         back_link: Atrás
         next_link: Sig.

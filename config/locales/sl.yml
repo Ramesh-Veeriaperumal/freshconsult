@@ -1080,9 +1080,9 @@ sl:
         send_test_mail_info2: "Tukaj si poglejte <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'> kako lahko to naredite </a>."
         title_message: "V 4 korakih do podpore vaših kupcev"
         support_email_title: "Podpora <br> e-pošta"
-        agents_title_1: "Dodajanje &lt;br&gt; Agentov"
+        adding_agents: "Dodajanje <br> Agentov"
         rebrand_title: "Logo <br> &amp; barve"
-        social_title_1: "Uporaba &lt;br&gt; socialnih omrežij"
+        going_social: "Uporaba <br> socialnih omrežij"
         skip_text: "Ne hvala, pojdi na mojo podporo."
         back_link: Nazaj
         next_link: Naprej

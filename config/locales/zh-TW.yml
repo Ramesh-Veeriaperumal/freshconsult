@@ -1297,9 +1297,9 @@ zh-TW:
         send_test_mail_info2: "這裡是<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>我們如何才能做到</a>。"
         title_message: 迅速啟動您的客戶服務支援的四個步驟...
         support_email_title: 支援<br>電子郵件
-        agents_title_1: 添加&lt;br&gt;客服
+        adding_agents: 添加<br>客服
         rebrand_title: "Logo<br>&amp; 顏色"
-        social_title_1: 前往&lt;br&gt;社群
+        going_social: 前往<br>社群
         skip_text: 不，謝謝，帶我去我的幫助台。
         back_link: 返回
         next_link: 下一頁

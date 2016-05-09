@@ -1318,9 +1318,9 @@ nl:
         send_test_mail_info2: "Hier leest u <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>welke stappen u moet uitvoeren</a>."
         title_message: "Voer de volgende vier stappen uit om met de klantondersteuning te beginnen..."
         support_email_title: "E-mailadres voor<br> ondersteuning"
-        agents_title_1: Medewerkers&lt;br&gt;toevoegen
         rebrand_title: "Logo<br>en kleuren"
-        social_title_1: Sociale&lt;br&gt;media
+        adding_agents: "Medewerkers <br> toevoegen"
+        going_social: "Sociale<br> media"
         skip_text: "Nee bedankt, ik wil mijn helpdesk weergeven."
         back_link: Terug
         next_link: Volgende

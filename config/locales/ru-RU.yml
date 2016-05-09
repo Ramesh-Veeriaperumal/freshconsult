@@ -1323,9 +1323,9 @@ ru-RU:
         send_test_mail_info2: "Здесь приведены <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>инструкции по использованию</a>."
         title_message: "Всего четыре шага, и поддержка клиентов готова к работе..."
         support_email_title: "Электронная почта<br> службы поддержки"
-        agents_title_1: "Добавление&lt;br&gt; агентов"
+        adding_agents: "Добавление<br> агентов"
         rebrand_title: "Логотип <br>и цвета"
-        social_title_1: "Интеграция с&lt;br&gt; социальными сетями"
+        going_social: "Интеграция с<br> социальными сетями"
         skip_text: "Нет, переместите меня на мою страницу службы поддержки."
         back_link: Назад
         next_link: Далее

@@ -1058,9 +1058,9 @@ zh-CN:
         send_test_mail_info2: "这是<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>处理的方法</a>。"
         title_message: 只需四步即可开始服务您的客户...
         support_email_title: 服务支持<br>邮箱
-        agents_title_1: 添加&lt;br&gt;客服
+        adding_agents: 添加<br>客服
         rebrand_title: "Logo<br>&amp; 颜色"
-        social_title_1: 开始&lt;br&gt;社交
+        going_social: 开始<br>社交
         skip_text: 不用了，带我去帮助台。
         back_link: 返回
         next_link: 下一页

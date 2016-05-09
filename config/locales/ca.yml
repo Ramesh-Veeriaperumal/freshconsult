@@ -1059,9 +1059,9 @@ ca:
         send_test_mail_info2: "Aquí tens <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>com fer-ho</a>."
         title_message: "Posar en marxa la teva atenció a l'usuari en quatre passos ..."
         support_email_title: "Suport<br> correu electrònic"
-        agents_title_1: "Afegint&lt;br&gt; Agents"
+        adding_agents: "Afegint<br> Agents"
         rebrand_title: "Logotip <br>&amp; colors"
-        social_title_1: "Fent-ho&lt;br&gt; Social"
+        going_social: "Fent-ho<br> Social"
         skip_text: "No gràcies, porta'm al meu portal de suport."
         back_link: Enrere
         next_link: següent

@@ -1265,9 +1265,9 @@ he:
         send_test_mail_info2: "כך <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>תוכל לעשות זאת</a>."
         title_message: "התחל לתמוך בלקוחות שלך בארבעה שלבים..."
         support_email_title: "תמיכה<br> דוא\"ל"
-        agents_title_1: "הוספת&lt;br&gt; סוכנים"
+        adding_agents: "הוספת<br> סוכנים"
         rebrand_title: "לוגו <br>&amp צבעים"
-        social_title_1: "שימוש&lt;br&gt; ברשתות החברתיות"
+        going_social: "שימוש<br> ברשתות החברתיות"
         skip_text: "לא תודה, העבר אותי למערכת התמיכה שלי."
         back_link: חזרה
         next_link: הבא

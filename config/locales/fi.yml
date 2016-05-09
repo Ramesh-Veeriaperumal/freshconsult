@@ -1057,9 +1057,9 @@ fi:
         send_test_mail_info2: "Tämän <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'> avullä näet, kuinka voit tehdä sen </a>."
         title_message: "Näillä neljällä vaiheella otat asiakastukesi käyttöön... "
         support_email_title: Tuki<br>sähköposti
-        agents_title_1: "Lisätään&lt;br&gt; edustajia"
+        adding_agents: "Lisätään<br> edustajia"
         rebrand_title: "Logo <br>&amp; värit"
-        social_title_1: "Ryhdy&lt;br&gt; sosiaaliseksi"
+        going_social: "Ryhdy<br> sosiaaliseksi"
         skip_text: "Ei kiitos, vie minut käyttätukeeni."
         back_link: Takaisin
         next_link: Seuraava

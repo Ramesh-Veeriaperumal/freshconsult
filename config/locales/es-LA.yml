@@ -1314,9 +1314,9 @@ es-LA:
         send_test_mail_info2: "Aqui se muestra<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>cómo puedes hacerlo.</a>"
         title_message: "Comienza inmediatamente tu soporte al cliente en solo cuatro pasos..."
         support_email_title: "Correo electrónico de soporte<br>"
-        agents_title_1: "Cómo agregar agentes&lt;br&gt;"
+        adding_agents: "Cómo agregar agentes<br>"
         rebrand_title: "Logotipo <br>y colores"
-        social_title_1: Socialización&lt;br&gt;
+        going_social: "Socialización<br>;"
         skip_text: "No, gracias, llévame a mi helpdesk."
         back_link: Volver
         next_link: Siguiente

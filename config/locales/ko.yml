@@ -1237,9 +1237,9 @@ ko:
         send_test_mail_info2: "<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>이메일 전달 규칙을 확인하는 방법</a>을 참조하십시오."
         title_message: "귀하의 고객 지원 서비스를 네 단계로 점프스타트하십시오."
         support_email_title: "지원<br> 이메일"
-        agents_title_1: "에이전트&lt;br&gt; 추가"
+        adding_agents: "에이전트<br> 추가"
         rebrand_title: "로고 <br>및 색상"
-        social_title_1: "SNS&lt;br&gt; 사용"
+        going_social: "SNS<br> 사용"
         skip_text: "아니요. 괜찮습니다. 제 헬프데스크로 보내 주십시오."
         back_link: 돌아가기
         next_link: 다음

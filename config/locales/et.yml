@@ -1061,9 +1061,9 @@ et:
         send_test_mail_info2: "Siin on kirjas <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>, kuidas sa seda teha saad</a>."
         title_message: "Käivita oma klienditugi nelja sammuga..."
         support_email_title: "Klienditoe<br> e-posti aadress"
-        agents_title_1: "Lisa&lt;br&gt; Lahendajaid"
+        adding_agents: "Lisa<br> Lahendajaid"
         rebrand_title: "Logo <br>&amp; värvid"
-        social_title_1: "Mine&lt;br&gt; sotsiaalvõrgustikesse"
+        going_social: "Mine<br> sotsiaalvõrgustikesse"
         skip_text: "Tänan, ei. Vii mind minu kasutajatoe keskkonda."
         back_link: Tagasi
         next_link: Edasi

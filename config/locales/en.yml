@@ -1439,9 +1439,9 @@ en:
             send_test_mail_info2: "Here is <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>how you can do it</a>."
             title_message: Jump start your customer support in four steps...
             support_email_title: Support<br> e-mail
-            agents_title_1: Adding<br> Agents
             rebrand_title: Logo <br>&amp; colors
-            social_title_1: Going<br> Social
+            adding_agents: "Adding<br> Agents"
+            going_social: "Going<br> Social"
             skip_text: No thanks, take me to my helpdesk.
             back_link: Back
             next_link: Next
