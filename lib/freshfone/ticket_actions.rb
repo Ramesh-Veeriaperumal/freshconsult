@@ -102,6 +102,6 @@ module Freshfone::TicketActions
 		end
 
     def validate_ticket_creation
-      return render json: { status: :error } if params[:CallSid].blank? || current_call.blank?
+      return render json: { status: :error } if current_call.blank?
     end
 end
