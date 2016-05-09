@@ -11,6 +11,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
     resource :"search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
+    resource :"search/v2/autocomplete", :only => [:requesters, :agents, :companies, :tags]
     resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets,
                                            :user_ticket, :search_tweets, :custom_search, :export_csv, :latest_ticket_count, :add_requester, :view_ticket,
                                            :spam, :unspam, :execute_scenario, :pick_tickets,
@@ -78,8 +79,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/scenario_automation"
     resource :agent, :only => [:toggle_availability, :list]
     resource :"search/home", :only => [:index, :suggest]
+    resource :"search/v2/suggest", :only => [:index]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
+    resource :"search/v2/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/ticket", :only => [:index]
+    resource :"search/v2/ticket", :only => [:index]
+    resource :"search/v2/spotlight", :only => [:all, :tickets]
     resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
@@ -183,6 +188,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/article", :only => [:index, :show, :voted_users, :show_master]
     resource :"search/home", :only => [:solutions]
     resource :"search/solution", :only => [:index]
+    resource :"search/v2/spotlight", :only => [:solutions]
     resource :"helpdesk/ticket", :only => [:get_solution_detail]
     resource :"solution/draft", :only => [:index]
   end
@@ -221,7 +227,9 @@ Authority::Authorization::PrivilegeList.build do
     # review code for monitorship?
     resource :"search/home", :only => [:topics]
     resource :"search/forum", :only => [:index]
+    resource :"search/v2/spotlight", :only => [:forums]
     resource :"search/merge_topic", :only => [:index]
+    resource :"search/v2/merge_topic", :only => [:search_topics]
     resource :forums_uploaded_image, :only => [:create]
     resource :monitorship, :only => [:followers]
 
@@ -286,6 +294,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
     resource :"search/customer", :only => [:index]
+    resource :"search/v2/spotlight", :only => [:customers]
 
     # Used by V2 API
     resource :"api_contact", :only => [:index, :show]
@@ -300,8 +309,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :update_notes, :quick, :sla_policies, 
                 :configure_export, :export_csv]
     resource :"search/autocomplete", :only => [:companies]
+    resource :"search/v2/autocomplete", :only => [:companies]
     resource :customers_import
     resource :contact_merge
+    resource :"search/v2/merge_contact", :only => [:index]
     resource :user_email
     resource :"segment/identify"
     resource :"segment/group"
@@ -451,6 +462,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
     resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
     resource :"integrations/github", :only => [:new, :install, :edit, :update, :oauth_install]
+    resource :"integrations/marketplace/quickbooks_sso", :only => [:landing]
+    resource :"integrations/marketplace/shopify", :only => [:landing]
     resource :"integrations/salesforce"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
     resource :"admin/integrations/freshplug"

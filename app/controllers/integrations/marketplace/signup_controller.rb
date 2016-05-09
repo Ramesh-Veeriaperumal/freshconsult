@@ -1,5 +1,6 @@
 class Integrations::Marketplace::SignupController < ApplicationController
   include Integrations::Marketplace::LoginHelper
+  include Integrations::Marketplace::ProxyAuthHelper
 
   layout :choose_layout
 
@@ -10,9 +11,10 @@ class Integrations::Marketplace::SignupController < ApplicationController
     :set_time_zone, :check_day_pass_usage, :set_locale
 
   before_filter :initialize_attr, :check_remote_integrations_mapping
-  before_filter :load_account, :only => [:associate_account]
+  before_filter :load_account, :only => [:associate_account, :associate_account_using_proxy]
   before_filter :build_signup_param, :only => [:create_account]
 
+  UNVERIFIED_EMAIL_APPS = %w(quickbooks)
   def associate_account
     @account.make_current
     if @email_not_reqd
@@ -21,8 +23,11 @@ class Integrations::Marketplace::SignupController < ApplicationController
       login_user = get_user(@account, @email)
     end
     request_params = params['request_params'].merge({:remote_id => @remote_id})
-    if login_user.present?
+    if login_user.present? && UNVERIFIED_EMAIL_APPS.exclude?(@app_name)
       verify_user_and_redirect(login_user)
+    elsif proxy_auth_app?(@app_name) && login_user.blank?
+      flash.now[:notice] = t(:'flash.g_app.use_admin_cred')
+      render "google_signup/proxy_auth"
     else
       redirect_url = get_redirect_url(@app_name, @account, request_params)
       redirect_to redirect_url
@@ -30,6 +35,21 @@ class Integrations::Marketplace::SignupController < ApplicationController
     rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
       redirect_url = get_redirect_url(@app_name, @account, request_params)
       redirect_to redirect_url
+  end
+
+  def associate_account_using_proxy
+    @account.make_current
+    @check_session = @account.user_sessions.new(params[:user_session])
+    if @check_session.save
+      auth_user = @check_session.user
+      sso_redirect(auth_user)
+    else
+      flash.now[:notice] = t(:'flash.general.insufficient_privilege.admin')
+      render "google_signup/signup_google_error"
+    end
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
+      flash.now[:error] = t(:'flash.g_app.domain_restriction')
+      render "google_signup/signup_google_error"
   end
 
   def create_account
@@ -140,9 +160,12 @@ class Integrations::Marketplace::SignupController < ApplicationController
     @name = params[:user][:name]
     @email = params[:user][:email]
     @remote_id = params[:user][:remote_id]
-    @operation = params[:request_params][:operation]
-    @app_name = params[:request_params][:app_name]
-    @email_not_reqd = params[:request_params][:email_not_reqd].to_bool
+    @uid = params[:user][:uid]
+    if params[:request_params].present?
+      @operation = params[:request_params][:operation]
+      @app_name = params[:request_params][:app_name]
+      @email_not_reqd = params[:request_params][:email_not_reqd].to_bool
+    end
   end
 
   def check_remote_integrations_mapping

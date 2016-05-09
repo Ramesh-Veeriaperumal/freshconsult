@@ -28,7 +28,11 @@ class Import::Attachment
      begin
         file = Timeout.timeout(60) { RemoteFile.new(attach_url, username, password).fetch }
         attachment = @item.attachments.build(:content => file , :description => "", :account_id => @item.account_id)
-        @item.update_es_index if attachment.save!
+        
+        if attachment.save!
+          @item.update_es_index
+          @item.sqs_manual_publish if Account.current.features?(:es_v2_writes)
+        end
       rescue Timeout::Error => ex
         raise Timeout::Error, "Timeout on attachment import"
       rescue => e

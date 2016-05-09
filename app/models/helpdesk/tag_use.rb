@@ -12,6 +12,10 @@ class Helpdesk::TagUse < ActiveRecord::Base
   attr_protected :taggable_id, :taggable_type
   before_create :set_account_id
   before_save :fix_counter_cache
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   validates_uniqueness_of :tag_id, :scope => [:taggable_id, :taggable_type]
   validates_numericality_of :tag_id, :taggable_id

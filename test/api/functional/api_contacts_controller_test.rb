@@ -538,7 +538,22 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user
     sample_user.update_column(:deleted, true)
     delete :destroy, construct_params(id: sample_user.id)
-    assert_response :missing
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'DELETE'))
+    assert_equal 'GET', response.headers['Allow']
+  ensure
+    sample_user.update_column(:deleted, false)
+  end
+
+  def test_delete_a_blocked_contact
+    sample_user = get_user
+    sample_user.update_column(:blocked, true)
+    delete :destroy, construct_params(id: sample_user.id)
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'DELETE'))
+    assert_equal 'GET', response.headers['Allow']
+  ensure
+    sample_user.update_column(:blocked, false)
   end
 
   def test_update_a_deleted_contact
@@ -546,7 +561,23 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_column(:deleted, true)
     params_hash = { language: 'cs' }
     put :update, construct_params({ id: sample_user.id }, params_hash)
-    assert_response :missing
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'PUT'))
+    assert_equal 'GET', response.headers['Allow']
+  ensure
+    sample_user.update_column(:deleted, false)
+  end
+
+  def test_update_a_blocked_contact
+    sample_user = get_user
+    sample_user.update_column(:blocked, true)
+    params_hash = { language: 'cs' }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'PUT'))
+    assert_equal 'GET', response.headers['Allow']
+  ensure
+    sample_user.update_column(:blocked, false)
   end
 
   def test_show_a_deleted_contact
@@ -1127,31 +1158,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: sample_user.id }, other_emails: [email])
     assert_response 400
     match_json([bad_request_error_pattern('other_emails', :cant_add_primary_email, email: "#{email}")])
-  end
-
-  def test_create_contact_with_other_emails_without_feature_contact_merge_ui
-    allowed_features = Account.first.features.where(' type not in (?) ', ['ContactMergeUiFeature'])
-    Account.any_instance.stubs(:features).returns(allowed_features)
-    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
-    post :create, construct_params({},  name: Faker::Lorem.characters(10),
-                                        email: Faker::Internet.email,
-                                        other_emails: email_array)
-    assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :require_feature_for_attribute, feature: 'Contact Merge', attribute: 'other_emails')])
-  ensure
-    Account.any_instance.unstub(:features)
-  end
-
-  def test_update_contact_with_other_emails_without_feature_contact_merge_ui
-    allowed_features = Account.first.features.where(' type not in (?) ', ['ContactMergeUiFeature'])
-    Account.any_instance.stubs(:features).returns(allowed_features)
-    sample_user = User.last
-    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
-    put :update, construct_params({ id: sample_user.id }, other_emails: email_array)
-    assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :require_feature_for_attribute, feature: 'Contact Merge', attribute: 'other_emails')])
-  ensure
-    Account.any_instance.unstub(:features)
   end
 
   # Create/Update contact with email, passing an array to the email attribute

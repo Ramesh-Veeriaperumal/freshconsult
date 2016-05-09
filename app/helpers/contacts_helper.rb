@@ -11,7 +11,7 @@ module ContactsHelper
   def render_as_list form_builder, field
     field_value = (field_value = @user.send(field.name)).blank? ? field.default_value : field_value
     if form_builder.nil? 
-      if field.name == "email" and current_account.features_included?(:contact_merge_ui)
+      if field.name == "email"
         render_user_email_field field
       else
         show_field field,field_value

@@ -14,11 +14,11 @@ class Va::Handlers::Date < Va::RuleHandler
     end
 
     def greater_than(evaluated_on_value)
-      date_value(evaluated_on_value) > date_value(value)
+      evaluated_on_value.present? and date_value(evaluated_on_value) > date_value(value)
     end
 
     def less_than(evaluated_on_value)
-      date_value(evaluated_on_value) < date_value(value)
+      evaluated_on_value.present? and date_value(evaluated_on_value) < date_value(value)
     end
 
     def filter_query_is

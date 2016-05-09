@@ -9,11 +9,6 @@ module Cache::Memcache::Helpdesk::TicketStatus
     MemcacheKeys.delete_from_cache(key)
   end
 
-  def onhold_and_closed_statuses_from_cache(account)
-    key = onhold_and_closed_memcache_key(account.id)
-    MemcacheKeys.fetch(key) { onhold_and_closed_statuses(account) }
-  end
-
   def status_names_from_cache(account)
     disp_col_name = self.display_name
     statuses = status_objects_from_cache(account)
@@ -27,8 +22,7 @@ module Cache::Memcache::Helpdesk::TicketStatus
   end
 
   def status_objects_from_cache(account)
-    key = statuses_memcache_key(account.id)
-    MemcacheKeys.fetch(key) { account.ticket_status_values.find(:all) }
+    account.ticket_status_values_from_cache
   end
   
   private

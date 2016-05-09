@@ -65,9 +65,9 @@ module Mobile::Actions::Push_Notifier
     elsif action == :response then
 
         # Fix for - mobihelp/hotline agent not receiving push notification  
-        if self.mobihelp?
-          current_user_id   = notable.requester ? notable.requester.id : ""
-          current_user_name = notable.requester ? notable.requester.name : ""
+        if self.mobihelp? 
+          current_user_id   = self.user ? self.user.id : ""
+          current_user_name = self.user ? self.user.name : ""
         end
         
         user_ids = notable.subscriptions.pluck(:user_id)

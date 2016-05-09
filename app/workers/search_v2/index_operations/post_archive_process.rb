@@ -1,0 +1,64 @@
+# After archiving ticket + notes are deleted via raw SQL.
+# Needing to remove docs from ES as object won't be there to reconstruct params.
+#
+class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
+  def perform(args)
+    args.symbolize_keys!
+
+    # Publish to remove ticket
+
+    ticket_uuid     = RabbitMq::Utils.generate_uuid
+    ticket_message  = generate_message(
+      'ticket',
+      'destroy',
+      ticket_uuid,
+      args[:account_id],
+      args[:ticket_id],
+      'Helpdesk::Ticket'
+    )
+    RabbitMq::Utils.manual_publish_to_xchg(
+      ticket_uuid, 'ticket', ticket_message, RabbitMq::Constants::RMQ_SEARCH_TICKET_KEY
+    )
+
+    # Publish to remove notes
+    args[:note_ids].each do |note_id|
+      note_uuid     = RabbitMq::Utils.generate_uuid
+      note_message  = generate_message(
+        'note',
+        'destroy',
+        note_uuid,
+        args[:account_id],
+        note_id,
+        'Helpdesk::Note',
+        args[:ticket_id]
+      )
+      RabbitMq::Utils.manual_publish_to_xchg(
+        note_uuid, 'note', note_message, RabbitMq::Constants::RMQ_SEARCH_NOTE_KEY
+      )
+    end
+  end
+
+  private
+
+    def generate_message(model, action, uuid, account_id, id, klass_name, parent_id=nil)
+      Hash.new.tap do |sqs_params|
+        sqs_params['object']                = model
+        sqs_params['action']                = action
+        sqs_params['action_epoch']          = Time.zone.now.to_f
+        sqs_params['uuid']                  = uuid
+        sqs_params['account_id']            = account_id
+        sqs_params["#{model}_properties"]   = Hash.new.tap do |properties|
+          properties['document_id']         = id
+          properties['account_id']          = account_id
+          properties['klass_name']          = klass_name
+          properties['type']                = model
+          properties['action']              = action
+          if parent_id
+            properties['routing_id']        = account_id
+            properties['parent_id']         = parent_id
+          end
+        end
+        sqs_params['subscriber_properties'] = {}
+      end.to_json
+    end
+end

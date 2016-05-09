@@ -557,6 +557,7 @@ en:
         last_month: "Last Month"
         2_months_ago: "2 Months ago"
         3_months_ago: "3 Months ago"
+        select_range: "Pick a date range..."
 
       mvp_trophie_label_group: "Most Valuable Team"
       mvp_trophie_info_group: "Group with the most overall points this month"
@@ -2155,6 +2156,7 @@ en:
     password_expiry: "Your password will expire in %{time_in_words}"
     gmail_gadgets:
       kvp_missing: "Invalid authentication.  Reopen the mail and try again."
+      gvid_success: "Authorization is successfull, please close pop up to continue ..."
       user_missing: "In Freshdesk, your email does not exist.  Add an agent with your email and try again."
       agent_missing: "In Freshdesk, you are not an Agent.  Convert the user to agent and try again."
       agent_not_active: "In Freshdesk, you email might have been deleted or deactivated.  Activate it and try again."
@@ -2226,6 +2228,8 @@ en:
       no_subdomain: There is no subdomain like this. Please try again.
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
       domain_restriction: Domain restriction in place. This email is not allowed.
+      use_admin_cred: Please use an admin credential to enable the link.
+      wrong_admin_cred: Credentials given seems to be wrong.
 
     freshfone:
       credits:
@@ -2443,7 +2447,7 @@ en:
       access_denied: You are not allowed to access this page!
       need_login: You must be logged in to access this page
       insufficient_privilege:
-        admin: You don't have sufficient privilage to change this. Please login as Administrator..!!
+        admin: You don't have sufficient privilege to change this. Please login as Administrator..!!
       login_not_needed: You must be logged out to access this page
       deactivation:
         failure: The %{human_name} could not be deactivated
@@ -6182,8 +6186,8 @@ en:
     installing_text: "Please wait..."
     in_development: In Development
     no_mktp_apps: "No Apps installed"
-    no_mktp_apps_txt: "We've integrated with some of your favorite applications." 
-    check_app_gallery: "Check out the App Gallery to install them!"
+    no_mktp_apps_note: "We've integrated with some of your favorite applications." 
+    no_mktp_apps_note_2: "Click 'Get more Apps' to browse the selection."
     go_to_dev_portal: Go to Developer Portal
     developer_shortcuts: Developer Shortcuts
     custom_app_info: "Did you know, now there is a better way to write and manage and even share your apps to all of Freshdesk community."
@@ -6240,6 +6244,8 @@ en:
       ticket_detail_page: Ticket detail page
       contact_detail_page: Contact detail page
       custom_app_used_in: Custom app displayed on
+      new_ticket_page: New ticket page
+      outbound_email_page: Outbound email page
     whmcs:
       label: "WHMCS"
       products: "Products"

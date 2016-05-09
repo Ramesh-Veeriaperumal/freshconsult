@@ -1,5 +1,7 @@
 
 require_relative '../test_helper'
+require 'sidekiq/testing'
+Sidekiq::Testing.fake!
 
 class TicketsControllerTest < ActionController::TestCase
   include TicketsTestHelper
@@ -37,6 +39,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def setup
     super
+    Sidekiq::Worker.clear_all
     before_all
   end
 
@@ -44,6 +47,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def before_all
     return if @@before_all_run
+    Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
     @@ticket_fields = []
     @@custom_field_names = []
     @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
@@ -76,13 +80,15 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_search_with_feature_enabled
+    warn "Elastic Search is not enabled. It might cause this test \"test_search_with_feature_enabled\" to fail." unless ES_ENABLED
     @account.launch :es_count_writes
-    Sidekiq::Testing.inline!
     params = ticket_params_hash.except(:description).merge(custom_field: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
-    t = create_ticket(params)
+    Sidekiq::Testing.inline! do
+      t = create_ticket(params)
+    end
     @account.launch :api_search_beta
     get :search, controller_params(:status => '2,3', 'test_custom_text' => params[:custom_field]["test_custom_text_#{@account.id}"])
     assert_response 200
@@ -133,7 +139,7 @@ class TicketsControllerTest < ActionController::TestCase
     subject = Faker::Lorem.words(10).join(' ')
     description = Faker::Lorem.paragraph
     @update_group ||= create_group_with_agents(@account, agent_list: [agent.id])
-    params_hash = { description: description, subject: subject, priority: 4, status: 3, type: 'Lead',
+    params_hash = { description: description, subject: subject, priority: 4, status: 7, type: 'Lead',
                     responder_id: agent.id, source: 3, tags: ['update_tag1', 'update_tag2'],
                     due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601, group_id: @update_group.id }
     params_hash
@@ -1625,6 +1631,32 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
   end
 
+  def test_update_with_sla_timer_off_status_and_only_fr_due_by
+    t = ticket
+    time = 4.days.since.iso8601
+    status = create_custom_status
+    params_hash = { status: status.status_id, fr_due_by: time }
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
+  ensure
+    status.destroy
+  end
+
+  def test_update_with_sla_timer_off_status_and_due_by
+    t = ticket
+    time1 = 12.days.since.iso8601
+    time2 = 4.days.since.iso8601
+    status = create_custom_status
+    params_hash = { status: status.status_id, due_by: time1, fr_due_by: time2 }
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field),
+                bad_request_error_pattern('fr_due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
+  ensure
+    status.destroy
+  end
+
   def test_update_numericality_invalid
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: 'yu', responder_id: 'io', product_id: 'x', email_config_id: 'x', group_id: 'g')
@@ -2131,22 +2163,19 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_deleted
     ticket.update_column(:deleted, true)
     put :update, construct_params({ id: ticket.display_id }, source: 2)
-    assert_response :missing
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'PUT'))
+    assert_equal 'GET', response.headers['Allow']
     ticket.update_column(:deleted, false)
   end
 
   def test_destroy_deleted
     ticket.update_column(:deleted, true)
     delete :destroy, construct_params(id: ticket.display_id)
-    assert_response :missing
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'DELETE'))
+    assert_equal 'GET', response.headers['Allow']
     ticket.update_column(:deleted, false)
-  end
-
-  def test_destroy_spammed
-    ticket.update_column(:spam, true)
-    delete :destroy, construct_params(id: ticket.display_id)
-    assert_response :missing
-    ticket.update_column(:spam, false)
   end
 
   def test_restore_not_deleted
@@ -2580,7 +2609,9 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.update_column(:spam, true)
     delete :destroy, controller_params(id: t.display_id)
-    assert_response :missing
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'DELETE'))
+    assert_equal 'GET', response.headers['Allow']
     t.update_column(:spam, false)
   end
 
@@ -2588,7 +2619,9 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.update_column(:spam, true)
     put :update, construct_params({ id: t.display_id }, update_ticket_params_hash)
-    assert_response :missing
+    assert_response 405
+    response.body.must_match_json_expression(base_error_pattern('method_not_allowed', methods: 'GET', fired_method: 'PUT'))
+    assert_equal 'GET', response.headers['Allow']
     t.update_column(:spam, false)
   end
 

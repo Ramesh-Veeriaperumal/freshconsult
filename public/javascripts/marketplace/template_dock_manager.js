@@ -4,6 +4,10 @@ var TemplateDockManager   = Class.create({
     this.customMessages = customMsgs;
     this.progressInterval;
     this.tabName = tabName;
+    this.isSearched = false;
+    this.appName;
+    this.developedBy;
+
 
     this.bindTemplateEvents();
     this.setupCarousel();
@@ -19,6 +23,7 @@ var TemplateDockManager   = Class.create({
               type: 'get',
               url: jQuery(_searchInput).data("url")+'&query='+encodeURIComponent(term),
               success: function(data) {
+                that.isSearched = false;
                 results = data;
                 if(results.length > 0){
                   response(
@@ -157,6 +162,7 @@ var TemplateDockManager   = Class.create({
       success: function(jqXHR, exception){
         jQuery(that.extensionsWrapper).empty()
                                       .append(JST["marketplace/marketplace_list"](jqXHR));
+        that.isSearched = false;
         jQuery("#query").focus();
       },
       error: function(jqXHR, exception) {
@@ -181,7 +187,7 @@ var TemplateDockManager   = Class.create({
     }
     else{
       var ele = jQuery(el);
-      this.getAppInfo(ele);
+      this.getAppInfo(ele, false);
     }
   },
 
@@ -190,6 +196,7 @@ var TemplateDockManager   = Class.create({
         url;
 
     if(isSuggestion){
+      that.isSearched = false;
       url = obj;
     }else{
       url = jQuery(obj).attr("data-url");
@@ -205,6 +212,17 @@ var TemplateDockManager   = Class.create({
         jQuery(that.extensionsWrapper).empty()
                                     .append(JST["marketplace/marketplace_show"](extensions));
 
+        jQuery.event.trigger({
+          type: "viewed_app_description_page",
+          app_name: extensions.display_name,
+          developed_by: extensions.account,
+          is_suggestion: isSuggestion,
+          is_from_search: that.isSearched,
+          time: new Date()
+        });
+
+        that.appName = extensions.display_name;
+        that.developedBy = extensions.account;
 
         if(!isSuggestion){
           if(jQuery(obj).hasClass("moreinfo-lnk")){
@@ -257,6 +275,7 @@ var TemplateDockManager   = Class.create({
     });
   },
 
+  //install button in install config page
   installApp: function(e){
     e.preventDefault();
     e.stopPropagation();
@@ -284,6 +303,14 @@ var TemplateDockManager   = Class.create({
         },
         success: function(resp_body, statustext, resp){
           if(resp.status == 200){
+            jQuery.event.trigger({
+                type: "successful_installation",
+                message: "Success",
+                app_name: that.appName,
+                developed_by: that.developedBy,
+                time: new Date()
+            });
+
             jQuery('.install-form').remove();
             jQuery('.progress').removeClass('active');
             jQuery('.bar').css("width", "100%");
@@ -325,7 +352,20 @@ var TemplateDockManager   = Class.create({
       success: function(install_extension){
         jQuery(that.extensionsWrapper).empty()
                                       .append(JST["marketplace/marketplace_install"](install_extension));
-        
+
+        that.appName = install_extension.display_name;
+
+        if(jQuery(el).attr("data-developedby") != undefined){
+          that.developedBy = jQuery(el).attr("data-developedby");
+        }
+
+        jQuery.event.trigger({
+            type: "km_install_config_page_loaded",
+            app_name: that.appName,
+            developed_by: that.developedBy,
+            time: new Date()
+        });
+
         if(install_extension.configs == null  ) { // no config
           jQuery(".install-form").hide();
           setTimeout( that.installTrigger, 1000);
@@ -366,6 +406,7 @@ var TemplateDockManager   = Class.create({
       success: function(jqXHR, exception){
         jQuery(that.extensionsWrapper).empty()
                                       .append(JST["marketplace/marketplace_list"](jqXHR));
+        that.isSearched = true;
       },
       error: function(jqXHR, exception) {
         that.showErrorMsg(that.customMessages.no_connection);

@@ -3,7 +3,7 @@ class Solution::Article < ActiveRecord::Base
   self.primary_key= :id
   self.table_name =  "solution_articles"
   belongs_to_account
-  concerned_with :associations, :body_methods
+  concerned_with :associations, :body_methods, :esv2_methods
   
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
@@ -40,6 +40,10 @@ class Solution::Article < ActiveRecord::Base
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_article_meta.new_record?"
   validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   validate :status_in_default_folder
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   alias_method :parent, :solution_article_meta
 
@@ -99,40 +103,6 @@ class Solution::Article < ActiveRecord::Base
   def to_s
     nickname
   end
-  
-  def related(current_portal, size = 10)
-    search_key = "#{tags.map(&:name).join(' ')} #{title}"
-    return [] if search_key.blank? || (search_key = search_key.gsub(/[\^\$]/, '')).blank?
-    begin
-      @search_lang = ({ :language => current_portal.language }) if current_portal and Account.current.features_included?(:es_multilang_solutions)
-      Search::EsIndexDefinition.es_cluster(account_id)
-      options = { :load => true, :page => 1, :size => size, :preference => :_primary_first }
-      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id, @search_lang), options do |search|
-        search.query do |query|
-          query.filtered do |f|
-            f.query { |q| q.string SearchUtil.es_filter_key(search_key), :fields => ['title', 'desc_un_html', 'tags.name'], :analyzer => SearchUtil.analyzer(@search_lang) }
-            f.filter :term, { :account_id => account_id }
-            f.filter :term, { :language_id => (self.language_id || Language.current.id) || Language.for_current_account.id }
-            f.filter :not, { :ids => { :values => [self.id] } }
-            f.filter :or, { :not => { :exists => { :field => :status } } },
-                          { :not => { :term => { :status => Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] } } }
-            f.filter :or, { :not => { :exists => { :field => 'folder.visibility' } } },
-                          { :terms => { 'folder.visibility' => user_visibility } }
-            f.filter :or, { :not => { :exists => { :field => 'folder.customer_folders.customer_id' } } },
-                          { :term => { 'folder.customer_folders.customer_id' => User.current.customer_id } } if User.current && User.current.has_company?
-            f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
-                         { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.pluck(:solution_category_meta_id) } }
-          end
-        end
-        search.from options[:size].to_i * (options[:page].to_i-1)
-      end
-
-      item.results.results.compact
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e)
-      []
-    end
-  end
 
   def user_visibility
     vis_arr = [Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
@@ -151,20 +121,6 @@ class Solution::Article < ActiveRecord::Base
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => options[:except], :root => options[:root]) 
-  end
-
-  def to_indexed_json
-    article_json = as_json(
-            :root => "solution/article",
-            :tailored_json => true,
-            :only => [ :title, :desc_un_html, :user_id, :status, 
-                  :language_id, :account_id, :created_at, :updated_at ],
-            :include => { :tags => { :only => [:name] },
-                          :attachments => { :only => [:content_file_name] }
-                        }
-          )
-    article_json["solution/article"].merge!(meta_attributes)
-    article_json.to_json
   end
 
   def meta_attributes

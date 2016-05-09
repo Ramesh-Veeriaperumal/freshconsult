@@ -42,7 +42,7 @@ class ConversationsController < ApiApplicationController
 
   def ticket_conversations
     return if validate_filter_params
-    ticket_conversations = scoper.visible.exclude_source('meta').where(notable_id: @ticket.id).preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
+    ticket_conversations = @ticket.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
     @ticket_conversations = paginate_items(ticket_conversations)
   end
 
@@ -96,7 +96,7 @@ class ConversationsController < ApiApplicationController
     def can_update?
       # note without source type as 'note' should not be allowed to update
       unless @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
-        render_base_error(:method_not_allowed, 405, methods: 'DELETE', fired_method: env['REQUEST_METHOD'])
+        render_405_error(['DELETE'])
         return false
       end
       true

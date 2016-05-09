@@ -123,16 +123,16 @@ module Mobile::Actions::Ticket
   end
 
   def ticket_sla_status
-    closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account)
+    closed_status = account.onhold_and_closed_statuses_from_cache
     sla_status(self,closed_status);
   end
 
   def ticket_sla_status_type
-      Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account).include?(self.status)
+      account.onhold_and_closed_statuses_from_cache.include?(self.status)
   end
   
   def ticket_subject_style
-    closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account)
+    closed_status = account.onhold_and_closed_statuses_from_cache
     subject_style(self,closed_status)
   end
 

@@ -5,7 +5,7 @@
 		<% if @user_tickets.blank? %>
 			<%= t('contacts.info5', :nick_name => h(@ticket.requester.display_name)) %>
 		<% else %>
-			<% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) %>
+			<% @onhold_and_closed_statuses = current_account.onhold_and_closed_statuses_from_cache %>
 			<table class="tickets" id="tickets_view" width="100%">	
 		    	<tbody id="view_tickets">
 					<%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @user_tickets, 

@@ -16,17 +16,19 @@ survey = CustomSurvey::Survey.seed(:account_id) do |s|
   s.default = true
 end
 
-# CustomSurvey::SurveyQuestion.seed(:account_id) do |q|
-#   q.survey_id = survey.id
-#   q.name = 'default_survey_question'
-#   q.label = 'How would you rate your overall satisfaction for the resolution provided by the agent?'
-#   q.column_name = "cf_int01"
-#   q.position = 1
-#   q.field_type = :custom_survey_radio
-#   q.default = true
-#   q.custom_field_choices_attributes =[
-#             { :position => 1, :_destroy => 0, :value => "Disagree", :face_value => CustomSurvey::Survey::EXTREMELY_UNHAPPY },
-#             { :position => 2, :_destroy => 0, :value => "Neutral", :face_value => CustomSurvey::Survey::NEUTRAL },
-#             { :position => 3, :_destroy => 0, :value => "Agree", :face_value => CustomSurvey::Survey::EXTREMELY_HAPPY }
-#   ]
-# end
+CustomSurvey::SurveyQuestion.seed(:account_id) do |q|
+  q.account_id = account.id
+  q.survey_id = survey.id
+  q.name = 'default_survey_question'
+  q.label = 'How would you rate your overall satisfaction for the resolution provided by the agent?'
+  q.column_name = "cf_int01"
+  q.position = 1
+  q.field_type = :custom_survey_radio
+  q.default = true
+  q.deleted = false
+  q.custom_field_choices_attributes =[
+            { :position => 1, :_destroy => 0, :value => "Extremely dissatisfied", :face_value => CustomSurvey::Survey::EXTREMELY_UNHAPPY },
+            { :position => 2, :_destroy => 0, :value => "Neither satisfied nor dissatisfied", :face_value => CustomSurvey::Survey::NEUTRAL },
+            { :position => 3, :_destroy => 0, :value => "Extremely satisfied", :face_value => CustomSurvey::Survey::EXTREMELY_HAPPY }
+  ]
+end

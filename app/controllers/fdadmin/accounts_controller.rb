@@ -280,26 +280,13 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   end
 
   def single_sign_on
-    sso_link = ""
     account_id = params[:account_id]
     account = Account.find(account_id)
-    manager = account.account_managers.last
-    sso_link = "https://#{account.full_domain}/login/sso?name=#{manager.name}&email=#{manager.email}&hash=#{Digest::MD5.hexdigest(manager.name+manager.email+account.shared_secret)}"
       respond_to do |format|
         format.json do
-          render :json => {:url => sso_link , :status => "success" , :account_id => account.id , :account_name => account.name}
+          render :json => {:url => generate_sso_url(account) , :status => "success" , :account_id => account.id , :account_name => account.name}
         end
       end
-  end
-
-  def sso_time_stamp
-    account_id = params[:account_id]
-    account = Account.find(account_id)
-    respond_to do |format|
-      format.json do
-        render :json => {:url => generate_sso_url(account) , :status => "success" , :account_id => account.id , :account_name => account.name}
-      end
-    end
   end
 
   def check_domain_exists
@@ -363,7 +350,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       sso_hash = OpenSSL::HMAC.hexdigest(
         OpenSSL::Digest.new('MD5'),
         account.shared_secret,
-        manager.name+manager.email+time_stamp)
+        manager.name+account.shared_secret+manager.email+time_stamp)
       "https://#{account.full_domain}/login/sso?name=#{manager.name}&email=#{manager.email}&hash=#{sso_hash}&timestamp=#{time_stamp}"
     end
 

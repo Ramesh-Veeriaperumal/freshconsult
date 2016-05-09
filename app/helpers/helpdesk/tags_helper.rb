@@ -36,6 +36,26 @@ module Helpdesk::TagsHelper
     ).html_safe
   end
 
+  def ticket_tags_count(tag)
+    if tag.account.launched?(:es_count_reads)
+      action_hash = [{"condition" => "helpdesk_tags.id", "operator" => "is_in", "value" => tag.id }]
+      negative_conditions = [{ "condition" => "spam", "operator" => "is", "value" => "true" },{ "condition" => "deleted", "operator" => "is", "value" => "true" }]
+      Search::Filters::Docs.new(action_hash, negative_conditions,false).count(Helpdesk::Ticket)
+    else
+      tag.tickets.visible.size
+    end      
+  end
+
+  def tags_count tag, association
+    if association == "archive_tickets"
+      tag.archive_tickets.size
+    elsif association == "contacts"
+      tag.contacts.visible.size
+    end
+    rescue => e
+      t("many")
+  end
+
 
   def current_tag_sort_order
      params[:sort] || cookies[:tag_sort_key] ||  "activity_desc"

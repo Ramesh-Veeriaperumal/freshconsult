@@ -1,5 +1,5 @@
 (function($) {
-
+$("body").off('.ticket_details');
 var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval, currentStatus;
 var MAX_EMAILS = 50;
 // ----- SAVING REPLIES AS DRAFTS -------- //
@@ -604,6 +604,7 @@ var scrollToError = function(){
 
 		$(this).select2({
 			multiple: true,
+			minimumInputLength: 2,
 			maximumInputLength: 32,
 			data: hash_val,
 			quietMillis: 500,
@@ -895,7 +896,13 @@ var scrollToError = function(){
 					} else {
 						ev.preventDefault();
 						blockConversationForm(_form);
-						submitNewConversation(_form, ev, submitTicketProperties);
+						if(!isFormLocked(_form)) {
+							lockForm(_form);
+							submitNewConversation(_form, ev, submitTicketProperties);
+						} else {
+							//Repeated submission, do something
+							console.log('Duplicate Request Blocked');
+						}
 		      }
 				} else {
 					ev.preventDefault();
@@ -911,7 +918,14 @@ var scrollToError = function(){
 				} else {
 					ev.preventDefault();
 					blockConversationForm(_form);
-					submitNewConversation(_form, ev, afterTktPropertiesUpdate);
+					if(!isFormLocked(_form)) {
+						lockForm(_form);
+						submitNewConversation(_form, ev, afterTktPropertiesUpdate);	
+					} else{
+						//Repeated submission, do something
+						console.log('Duplicate Request Blocked');
+					}
+					
 				}
 			}
 			
@@ -1007,6 +1021,7 @@ var scrollToError = function(){
 
 			},
 			success: function(response, statusCode, xhr) {
+				releaseForm(_form);
 				var statusChangeField = $('#send_and_set');
 								
 				if($('#response_added_alert').length > 0 && _form.parents('#all_notes').length < 1){
@@ -1100,6 +1115,7 @@ var scrollToError = function(){
 			},
 			error: function(response) {
 				
+				releaseForm(_form);
 				_form.find('input[type=submit]').prop('disabled', false);
 
 				if (_form.data('panel')) {
@@ -1114,6 +1130,22 @@ var scrollToError = function(){
 		});
 	}
 
+	/*
+	 * Below functions are introduced to prevent duplicate form submission, that is
+	 * caused due to unknown reason.!
+	 */
+
+	var lockForm = function(_form){
+		_form.data('submitting','true');
+	}
+
+	var releaseForm = function(_form){
+		_form.data('submitting','false');
+	}
+
+	var isFormLocked = function(_form){
+		return (_form.data('submitting') == 'true');
+	}
 
 	var submitTicketProperties = function(callback) {
 		

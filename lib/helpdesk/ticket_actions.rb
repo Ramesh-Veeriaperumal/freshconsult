@@ -254,7 +254,7 @@ module Helpdesk::TicketActions
   
   def add_requester
     @user = current_account.users.new
-    @user.user_emails.build({:primary_role => true}) if current_account.features_included?(:contact_merge_ui)
+    @user.user_emails.build({:primary_role => true})
     render :partial => "contacts/add_requester_form"
   end
 

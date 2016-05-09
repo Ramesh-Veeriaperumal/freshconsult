@@ -17,6 +17,10 @@ class Helpdesk::Subscription < ActiveRecord::Base
 
   # Added to handle sending data to count cluster
   after_commit :es_update_parent, :if => :es_count_enabled?
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   private
     def set_account_id
