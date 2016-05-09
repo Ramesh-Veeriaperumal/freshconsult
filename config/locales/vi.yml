@@ -825,19 +825,6 @@ vi:
         api_url: "API URL"
         api_key: "Mã xác thực"
         widget_title: "tiêu đề tiện ích"
-    screenr:
-      form:
-        recorder_id: "ID ghi nhận"
-        recorder_id_info: "ID ghi nhận là ID duy nhất hiệu lực trong trang chỉnh sửa các ghi nhận"
-        widget_title: "tiêu đề tiện ích"
-        visible_portal_forum_info: "Kích hoạt để làm Bảng ghi nhận tại cổng diễn đàn"
-      settings:
-        enable_screenr_recording: "Kích hoạt để làm Bảng ghi nhận"
-        ticket_interaction: "Trang ticket (Tạo mới, chỉnh sửa, trả lời)"
-        forum_interaction: "Trang diễn đàn (Tạo mới, chỉnh sửa, bình luận)"
-        create_solution: "Giải pháp (Tạo mới, Chỉnh sửa)"
-        for_agents: "Cho các chuyên viên"
-        for_customer: "Cho các khách hàng"
     harvest:
       label: "khai thác"
       desc: "Bạn có thể đăng nhập thời gian dành cho ticket khai thác các dự án, nhiệm vụ  của bạn"

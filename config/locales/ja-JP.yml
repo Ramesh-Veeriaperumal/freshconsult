@@ -1364,7 +1364,6 @@ ja-JP:
         feedbackwidget_users_can: ユーザーは次のことができます：
         feedbackwidget_attach_a_file: ファイルを添付する
         feedbackwidget_screenshot: スクリーンショットを撮る
-        feedbackwidget_screenr_recording: Screenr録画
         feedbackwidget_search_area: アーティクルを検索する
         feedbackwidget_use_https: httpsを使用する
         feedbackwidget_mobile_view: モバイルビュー
@@ -5416,36 +5415,6 @@ ja-JP:
         es: スペイン語
         sv: スウェーデン語
         tr: トルコ語
-    screenr:
-      button_label: スクリーンキャストを録画
-      label: Screenr
-      desc: Screenrを使用してスクリーンキャストを録画し、それをチケット、フォーラム、ソリューションアーティクルに添付することができます。
-      helptext: "</h4>Freshdesk Screenr統合<h4><p><br/>Screenrを統合すると、Freshdeskの使用中にエージェントとカスタマーがスクリーンキャストをキャプチャ＆シェアすることができるようになります。これはエラー報告あるいは手順に関する動画をチケット、フォーラム投稿およびソリューションアーティクルに直接添付するのに使用できます。</p><p>これを有効にすると、フィードバックウィジェット、ディスカッションおよびナレッジベースの横に録画ボタンが表示されます。お望みであれば、ブラウザウィンドウ全体を録画するか、ある特定の部分を録画するかを選択することができます。スクリーンキャストはセッション終了時に自動的に挿入されます。</p><p>この統合はあなたのScreener URL（例：<a>http://yourname.viewcasts.com</a>）、録画IDを入力することにより設定します。録画IDはアカウントにログインすると見つけることができます。</p>"
-      form:
-        recorder_id: 録画ID
-        recorder_id_info: 録画IDは録画編集ページで入手できる一意IDです
-        site_address_info: ""
-        site_address: Screenrサブドメイン
-        widget_title: ウィジェットタイトル
-        visible_agent_forum: エージェント用フォーラム画面録画
-        visible_agent_forum_info: 有効にしてScreenr録画をエージェント用フォーラムで使用できるようにする
-        visible_agent_ticket: エージェントチケット画面録画
-        visible_agent_ticket_info: 有効にしてエージェントチケット画面録画をエージェント用チケットフォームで使用できるようにする
-        visible_solution: ソリューション画面録画
-        visible_solution_info: 有効にしてScreenr録画をソリューションで使用できるようにする
-        visible_portal_ticket: ポータルチケット画面録画
-        visible_portal_ticket_info: 有効にしてScreenr録画をポータルチケット画面で使用できるようにする
-        visible_portal_forum: ポータル用フォーラムチケット画面録画
-        visible_portal_forum_info: 有効にしてScreenr録画をポータルフォーラムで使用できるようにする
-        visible_widget: ウィジェット画面録画
-        visible_widget_info: 有効にしてScreenr録画をフィードバックウィジェットで使用できるようにする
-      settings:
-        enable_screenr_recording: Screenr録画を有効にする
-        ticket_interaction: チケットページ（新規、編集、返信）
-        forum_interaction: フォーラムページ（新規、編集、コメント）
-        create_solution: ソリューション（新規、編集）
-        for_agents: エージェント用
-        for_customer: カスタマー用
     harvest:
       label: Harvest
       desc: チケットに使用された時間をHarvestプロジェクトやタスク内に記録することができます。

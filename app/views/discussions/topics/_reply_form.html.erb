@@ -21,11 +21,6 @@
 					</li>
 
 				</ul>
-				<% if is_application_installed?("screenr") %>
-				<div class="pt10 pull-left">
-						<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
-				</div>
-				<% end %>
 
 				<div class="button-container pull-right">
 					<%= content_tag :button, t('cancel'), :rel => 'topic-reply-cancel' , :class => "btn cancel_btn" %>

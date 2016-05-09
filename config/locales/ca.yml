@@ -1183,7 +1183,6 @@ ca:
         feedbackwidget_users_can: "Els usuaris poden:"
         feedbackwidget_attach_a_file: "Adjuntar un fitxer"
         feedbackwidget_screenshot: "Capturar pantalla"
-        feedbackwidget_screenr_recording: "Screenr gravant"
         feedbackwidget_search_area: "Cercar articles"
         feedbackwidget_use_https: "Utilitzeu https"
         feedbackwidget_mobile_view: "Vista de mòbil"
@@ -4923,36 +4922,6 @@ ca:
         es: Spanish
         sv: Swedish
         tr: Turkish
-    screenr:
-      button_label: "Grava pantalla"
-      label: Screenr
-      desc: "Captura pantalles fent servir l'Screenr i afegeix-les als tiquets, fòrums i alticles amb solucions."
-      helptext: "<h4>Integració amb l'Screener de Freshfesk</h4><p><br/>L'Screenr permet als agents i als clients capturar i compartir pantalles quan fan servir Freshdes. Es pot fer servir per adjuntar error o vídeos tutorials als teus tiquets, publicacions als fòrums i articles de solució directament.</p><p>Un cop activat, podràs veure un botó de gravació al costat del teu giny de valoració, les discussions i la teva base de coneixement. Pots decidir si gravaràs tot el navegador o només una part concreta. La captura de pantalla serà inserida automàticament un cop es completi la teva sessió.</p><p>Pots configurar aquesta integració introduint la teva URL d'Screenr (p.e. <a>http://elteunom.viewcasts.com</a>) i el teu identificador de gravador, que pots obtenir quan inicies sessió al teu compte.</p>"
-      form:
-        recorder_id: "Identificació del registrador"
-        recorder_id_info: "L'identificador de gravador és l'únic identificador disponible en la pàgina d'edició de gravadors"
-        site_address_info: ""
-        site_address: "Subdomini d'Screenr"
-        widget_title: "Títol del giny"
-        visible_agent_forum: "Gràvació de la pantalla del Fòrum per a agents"
-        visible_agent_forum_info: "Activa per fer que Screenr estigui disponible per als agents ens els fòrums"
-        visible_agent_ticket: "Gravació de la pantalla del tiquet per agent"
-        visible_agent_ticket_info: "Activa per fer que Screenr estigui disponible per als agents en el formulari del tiquet"
-        visible_solution: "Gravació de la pantalla de solució"
-        visible_solution_info: "Activa per fer que Screenr estigui disponible a les solucions"
-        visible_portal_ticket: "Gravació de pantalla de tiquet al portal"
-        visible_portal_ticket_info: "Activa per fer que Screenr estigui disponible en el portal del formulari de tiquets"
-        visible_portal_forum: "Captura de pantalla de la consulta al Forum per al portal"
-        visible_portal_forum_info: "Activa per fer que Screenr estigui disponible en el portal del fòrum"
-        visible_widget: "Giny de gravació de pantalla"
-        visible_widget_info: "Activa per fer que Screenr estigui disponible en el giny de valoració"
-      settings:
-        enable_screenr_recording: "Activa la gravació amb Screenr"
-        ticket_interaction: "Pàgina de tiquets (Nou, Edita, Respon)"
-        forum_interaction: "Pàgina del fòrum (nou, edita, comenta)"
-        create_solution: "Solució (Nova, Edita)"
-        for_agents: "Per a agents"
-        for_customer: "Per a clients"
     harvest:
       label: Harvest
       desc: "Pots registrar el temps gastat en tiquets als seus projectes i les seves tasques."

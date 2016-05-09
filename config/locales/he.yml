@@ -1389,7 +1389,6 @@ he:
         feedbackwidget_users_can: "המשתמשים יכולים:"
         feedbackwidget_attach_a_file: "צרף קובץ"
         feedbackwidget_screenshot: "צור צילום מסך"
-        feedbackwidget_screenr_recording: "הקלטה של Screenr"
         feedbackwidget_search_area: "חפש מאמרים"
         feedbackwidget_use_https: "השתמש ב-https"
         feedbackwidget_mobile_view: "תצוגת מכשיר נייד"
@@ -5489,36 +5488,6 @@ he:
         es: ספרדית
         sv: שוודית
         tr: טורקית
-    screenr:
-      button_label: "הקלט שידור מסך"
-      label: Screenr
-      desc: "הקלט שידורי מסך באמצעות Screenr וצרף את ההקלטות לכרטיסים, פורומים ומאמרי פתרונות."
-      helptext: "<h4>השילוב Freshdesk Screenr</h4><p><br/>השילוב Screenr מאפשר לסוכנים וללקוחות ללכוד ולשתף שידורי מסך כאשר הם משתמשים ב-Freshdesk. ניתן להשתמש בו כדי לצרף ישירות דוחות שגיאות או סרטוני וידאו עם הנחיות לכרטיסים, לפוסטים בפורומים ולמאמרי פתרונות.</p><p>לאחר ששילוב זה הופעל, תוכל לראות לחצן הקלטה לאורך וידג'ט המשוב, הדיונים ומאגר הידע שלך. תוכל לבחור להקליט את חלון הדפדפן כולו, או לבחור אזור ספציפי של החלון, כרצונך. שידור המסך יתווסף באופן אוטומטי בסיום ההפעלה.</p><p>תוכל להגדיר שילוב זה על-ידי הזנת כתובת ה-URL של ה-Screener (לדוגמה <a>http://yourname.viewcasts.com</a>) ומזהה ההקלטה, שאותם תוכל למצוא כאשר תתחבר לחשבון שלך.</p>"
-      form:
-        recorder_id: "מזהה הקלטה"
-        recorder_id_info: "מזהה ההקלטה הוא המזהה הייחודי הזמין בדף לעריכת הקלטות"
-        site_address_info: ""
-        site_address: "דומיין משני של Screener"
-        widget_title: "כותרת וידג'ט"
-        visible_agent_forum: "הקלטת מסך הפורום עבור סוכנים"
-        visible_agent_forum_info: "הפוך את Screenr Recorder לזמין בפורומים לסוכנים"
-        visible_agent_ticket: "הקלטת מסך כרטיס של סוכן"
-        visible_agent_ticket_info: "הפוך את Screenr Recorder לזמין בטופס כרטיס לסוכנים"
-        visible_solution: "הקלטת מסך פתרון"
-        visible_solution_info: "הפוך את Screenr Recorder לזמין בפתרונות"
-        visible_portal_ticket: "הקלטת מסך של כרטיס פורטל"
-        visible_portal_ticket_info: "הפוך את Screenr Recorder לזמין בטופס כרטיס בפורטל"
-        visible_portal_forum: "הקלטת מסך של כרטיס פורום עבור פורטל"
-        visible_portal_forum_info: "הפוך את מקליט המסכים לזמין בפורום בפורטל"
-        visible_widget: "הקלטת מסך וידג'ט"
-        visible_widget_info: "הפוך את Screenr Recorder לזמין בווידג'ט של המשוב"
-      settings:
-        enable_screenr_recording: "אפשר הקלטה של Screenr"
-        ticket_interaction: "דף כרטיסים (חדש, ערוך, השב)"
-        forum_interaction: "דף פורום (חדש, ערוך, תגובה)"
-        create_solution: "פתרון (חדש, ערוך)"
-        for_agents: "עבור סוכנים"
-        for_customer: "עבור לקוחות"
     harvest:
       label: Harvest
       desc: "תוכל לרשום את הזמן שהוקדש לכרטיסים בתוך פרויקטים ומשימות של Harvest."

@@ -1182,7 +1182,6 @@ zh-CN:
         feedbackwidget_users_can: 用户可以
         feedbackwidget_attach_a_file: 添加附件
         feedbackwidget_screenshot: 屏幕截图
-        feedbackwidget_screenr_recording: Screenr录制
         feedbackwidget_search_area: 搜索文章
         feedbackwidget_use_https: 使用https
         feedbackwidget_mobile_view: 移动端视图
@@ -4916,36 +4915,6 @@ zh-CN:
         es: 西班牙语
         sv: 瑞典语
         tr: 土耳其语
-    screenr:
-      button_label: 录制屏幕
-      label: Screenr
-      desc: 使用Screenr录制屏幕并添加到工单、论坛或解决方案文章里。
-      helptext: "<h4>集成Screenr</h4><p><br/>与Screenr集成，可以帮助客服和客户在使用Freshdesk时捕获和共享屏幕录像。可用于在工单、论坛和解决方案中添加错误报告或指导视频。</p><p>启用集成后，将在反馈控件、论坛和知识库页面显示录制按钮。可选择录制整个浏览器窗口或选择某一个区域。</p><p>配置集成，须输入Screener URL地址(例如<a>http://yourname.viewcasts.com</a>)和录制ID。</p>"
-      form:
-        recorder_id: 录制ID
-        recorder_id_info: 录制ID是编辑录制页面中可用的唯一ID
-        site_address_info: ""
-        site_address: Screenr子域名
-        widget_title: 控件标题
-        visible_agent_forum: 客服论坛屏幕录制
-        visible_agent_forum_info: "启用以允许客服在论坛使用Screenr Recorder"
-        visible_agent_ticket: 客服工单屏幕录制
-        visible_agent_ticket_info: "启用以允许客服在工单表单页面使用Screenr Recorder"
-        visible_solution: 解决方案屏幕录制
-        visible_solution_info: "启用以在解决方案页面使用Screenr Recorder"
-        visible_portal_ticket: 门户工单屏幕录制
-        visible_portal_ticket_info: "启用以在门户工单表单页面使用Screenr Recorder"
-        visible_portal_forum: 论坛工单屏幕录制
-        visible_portal_forum_info: "启用以在门户论坛使用Screenr Recorder"
-        visible_widget: 控件屏幕录制
-        visible_widget_info: "启用以在反馈控件使用Screenr Recorder"
-      settings:
-        enable_screenr_recording: 启用Screenr录制
-        ticket_interaction: 工单页面(新建、编辑、回复)
-        forum_interaction: 论坛页面(新建、编辑、回复)
-        create_solution: 解决方案(新建、编辑)
-        for_agents: 对于客服
-        for_customer: 对于客户
     harvest:
       label: Harvest
       desc: 您可以在Harvest的项目和任务中记录处理工单花费的时间。

@@ -1495,16 +1495,6 @@ module ApplicationHelper
   end
 # helpers for fresfone callable links -- ends
 
-  def screenr_visible_in?(current_page, allowed_pages)
-    @screenr_configs_hash ||= get_app_config("screenr")
-    (allowed_pages || []).each do |check_page|
-      return true if current_page == check_page && (@screenr_configs_hash.has_key?(:"visible_#{check_page}") ? @screenr_configs_hash[:"visible_#{check_page}"] == '1' : true )
-    end
-    return false
-
-    location=="agent_ticket" && configs_hash[:visible_agent_ticket]=="1"
-  end
-
   def ilos_widget( entity_id, location)
     ilos_id = (location == "portal_ticket" || location == "portal_forum") ? "ilos-btn-portal" : "ilos-btn-agent"
     ilos_widget_html =  

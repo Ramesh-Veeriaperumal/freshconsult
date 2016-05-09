@@ -1181,7 +1181,6 @@ fi:
         feedbackwidget_users_can: "Käyttäjät voivat:"
         feedbackwidget_attach_a_file: "Liitä tiedosto"
         feedbackwidget_screenshot: "Ota kuvakaappaus"
-        feedbackwidget_screenr_recording: "Screenr Recording"
         feedbackwidget_search_area: "Hae artikkeleita"
         feedbackwidget_use_https: "Käytä https"
         feedbackwidget_mobile_view: Mobiilinäkymä
@@ -4914,36 +4913,6 @@ fi:
         es: Spanish
         sv: Swedish
         tr: Turkish
-    screenr:
-      button_label: "Record Screencast"
-      label: Screenr
-      desc: "Record screencasts using Screenr and attach it to tickets, forums and solution articles."
-      helptext: "<h4>Freshdesk Screenr Integration</h4><p><br/>The Screenr integration lets agents and customers capture and share screencasts while they are using Freshdesk. It can be used to attach error reports or instructional videos to your tickets, forum posts and solution articles directly.</p><p>Once enabled, you will be able to see a record button alongside your feedback widget, discussions, and your knowledge base. You can choose to record your entire browser window, or select a specific section of it if you want. They screencast will get inserted automatically once your session is complete.</p><p>You can setup this integration by entering your Screener URL (e.g. <a>http://yourname.viewcasts.com</a>) and your Recorder ID, which can be found once you login to your account.</p>"
-      form:
-        recorder_id: "Recorder ID"
-        recorder_id_info: "Recorder ID is the unique ID available in the edit recorders page"
-        site_address_info: ""
-        site_address: "Screenr Subdomain"
-        widget_title: "Widgetin nimi"
-        visible_agent_forum: "Forum Screen Recording for Agents"
-        visible_agent_forum_info: "Enable to make Screenr Recorder available in Forums for Agents"
-        visible_agent_ticket: "Agent Ticket Screen Recording"
-        visible_agent_ticket_info: "Enable to make Screenr Recorder available in Ticket form for Agents"
-        visible_solution: "Solution Screen Recording"
-        visible_solution_info: "Enable to make Screenr Recorder available in Solutions"
-        visible_portal_ticket: "Portal ticket Screen Recording"
-        visible_portal_ticket_info: "Enable to make Screenr Recorder available in portal ticket form"
-        visible_portal_forum: "Forum ticket Screen Recording for portal"
-        visible_portal_forum_info: "Enable to make Screenr Recorder available in portal forum"
-        visible_widget: "Widget Screen Recording"
-        visible_widget_info: "Enable to make Screenr Recorder available in Feedback Widget"
-      settings:
-        enable_screenr_recording: "Enable Screenr Recording"
-        ticket_interaction: "Tikettisivu (uusi, muokkaa, vastaa)"
-        forum_interaction: "Forum page (New, Edit, Comment)"
-        create_solution: "Ratkaisu (uusi, muokkaa)"
-        for_agents: Edustajille
-        for_customer: Asiakkaille
     harvest:
       label: Harvest
       desc: "Voit kirjata tiketteihin käytetyn ajan Harvest-projekteihin ja -tehtäviin."

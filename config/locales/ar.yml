@@ -1412,7 +1412,6 @@ ar:
         feedbackwidget_users_can: "يمكن للمستخدمين:"
         feedbackwidget_attach_a_file: "إرفاق ملف"
         feedbackwidget_screenshot: "التقاط لقطة شاشة"
-        feedbackwidget_screenr_recording: "تسجيل Screenr"
         feedbackwidget_search_area: "مقالات البحث"
         feedbackwidget_use_https: "استخدام https"
         feedbackwidget_mobile_view: "طريقة عرض الجوال"
@@ -5560,36 +5559,6 @@ ar:
         es: الإسبانية
         sv: السويدية
         tr: التركية
-    screenr:
-      button_label: "التسجيل الرقمي لمخرجات الشاشة"
-      label: Screenr
-      desc: "قم بالتسجيل الرقمي لمخرجات الشاشة باستخدام Screenr وإرفاقه بالبطاقات والمنتديات ومقالات الحل."
-      helptext: "<h4>تكامل Freshdesk Screenr</h4><p><br/>يتيح تكامل Screenr للوكلاء والعملاء التقاط تسجيلات رقمية لمخرجات الشاشة ومشاركتها أثناء استخدام Freshdesk. يمكن استخدامه لإرفاق تقارير خطأ أو مقاطع فيديو تعليمية لبطاقاتك ومنشورات المنتدى ومقالات الحل مباشرةً.</p><p>بمجرد تمكينه، ستتمكن من رؤية زر تسجيل على امتداد عنصر واجهة مستخدم الملاحظات والمناقشات وقاعدة المعارف لديك. يمكنك اختيار إما تسجيل نافذة المستعرض الخاص بك بالكامل، أو تحديد جزء محدد منه إذا أردت. سيتم إدراج التسجيلات الرقمية لمخرجات الشاشة تلقائيًا بمجرد اكتمال الجلسة.</p><p>يمكنك إعداد هذا التكامل من خلال إدخال عنوان URL لـ Screener (على سبيل المثال، <a>http://yourname.viewcasts.com</a>) ومعرف المسجل الخاص بك، والذي يمكن العثور عليه بمرد تسجيل الدخول إلى حسابك.</p>"
-      form:
-        recorder_id: "معرف المسجل"
-        recorder_id_info: "معرف المسجل هو المعرف الفريد المتوفر في صفحة تحرير المسجلات"
-        site_address_info: ""
-        site_address: "المجال الفرعي لـ Screenr"
-        widget_title: "عنوان عنصر واجهة المستخدم"
-        visible_agent_forum: "تسجيل شاشة المنتدى لكافة الوكلاء"
-        visible_agent_forum_info: "تمكين توفير مسجل Screenr في المنتديات للوكلاء"
-        visible_agent_ticket: "تسجيل شاشة بطاقة الوكيل"
-        visible_agent_ticket_info: "تمكين توفير مسجل Screenr في البطاقات الواردة من الوكلاء"
-        visible_solution: "تسجيل شاشة الحل"
-        visible_solution_info: "تمكين توفير مسجل Screenr في الحلول"
-        visible_portal_ticket: "تسجيل شاشة بطاقة المدخل"
-        visible_portal_ticket_info: "تمكين توفير مسجل Screenr في نموذج بطاقة المدخل"
-        visible_portal_forum: "تسجيل شاشة بطاقة المنتدى للمدخل"
-        visible_portal_forum_info: "تمكين توفير مسجل Screenr في منتدى المدخل"
-        visible_widget: "تسجيل شاشة عنصر واجهة المستخدم"
-        visible_widget_info: "تمكين توفير مسجل Screenr في عنصر واجهة مستخدم Feedback"
-      settings:
-        enable_screenr_recording: "تمكين تسجيل Screenr"
-        ticket_interaction: "صفحة البطاقات (جديد، تحرير، رد)"
-        forum_interaction: "صفحة المنتدى (جديد، تحرير، تعليق)"
-        create_solution: "الحل (جديد، تحرير)"
-        for_agents: للعملاء
-        for_customer: للعملاء
     harvest:
       label: Harvest
       desc: "يمكنك تسجيل الوقت المنقضي على البطاقات في مشاريع ومهام Harvest."

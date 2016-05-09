@@ -1364,7 +1364,6 @@ sv-SE:
         feedbackwidget_users_can: "Användare kan:"
         feedbackwidget_attach_a_file: "Bifoga en fil"
         feedbackwidget_screenshot: "Ta skärmbild"
-        feedbackwidget_screenr_recording: Screenr-inspelning
         feedbackwidget_search_area: "Söka i artiklar"
         feedbackwidget_use_https: "Använd https"
         feedbackwidget_mobile_view: Mobilformat
@@ -5424,36 +5423,6 @@ sv-SE:
         es: Spanska
         sv: Svenska
         tr: Turkiska
-    screenr:
-      button_label: "Spela in skärmklipp"
-      label: Screenr
-      desc: "Spela in skärmklipp med hjälp av Screenr och lägg till dem i ärenden, forum, och lösningsartiklar."
-      helptext: "<h4>Screenr-integrering med Freshdesk</h4><p><br/>Screenr-integreringen låter representanter och kunder spela in och dela skärmklipp medan de använder Freshdesk. På så sätt kan man bifoga felrapporter eller instruktionsvideor direkt i ärenden, foruminlägg och lösningsartiklar.</p><p>När funktionen aktiverats ser du en inspelningsknapp bredvid din feedback-widget, dina diskussioner och din kunskapsdatabas. Du kan välja att spela in hela webbläsarfönstret eller välja en specifik del. Skärmklippet kommer att infogas automatiskt när din session är slutförd.</p><p>Du kan ställa in den här integreringen genom att ange din Screener-URL (m.a.o. <a>http://dittnamn.viewcasts.com</a>) och ditt inspelnings-ID. Du hittar dessa när du har loggat in på ditt konto.</p>"
-      form:
-        recorder_id: Inspelnings-ID
-        recorder_id_info: "Ditt inspelnings-ID är ett unikt ID som finns på sidan Redigera inspelare"
-        site_address_info: ""
-        site_address: "Underdomän för Screenr"
-        widget_title: Widgetrubrik
-        visible_agent_forum: "Skärmklipp för representanter i forum"
-        visible_agent_forum_info: "Aktivera Screenr-inspelningar i forum för representanter"
-        visible_agent_ticket: "Skärmklipp för representanter i ärenden"
-        visible_agent_ticket_info: "Aktivera Screenr-inspelningar i ärenden för representanter"
-        visible_solution: "Skärmklipp för lösningar"
-        visible_solution_info: "Aktivera Screenr-inspelningar i lösningar"
-        visible_portal_ticket: "Skärmklipp för portal"
-        visible_portal_ticket_info: "Aktivera Screenr-inspelningar i ärendeformuläret för portalen"
-        visible_portal_forum: "Skärmklipp i forumärende för portal"
-        visible_portal_forum_info: "Aktivera Screenr-inspelningar i portalens forum"
-        visible_widget: "Skärmklipp för widgets"
-        visible_widget_info: "Aktivera Screenr-inspelningar för feedback-widgeten"
-      settings:
-        enable_screenr_recording: "Aktivera Screenr-inspelningar"
-        ticket_interaction: "Ärendesida (ny, redigera, svara)"
-        forum_interaction: "Forumsida (ny, redigera, kommentera)"
-        create_solution: "Lösning (ny, redigera)"
-        for_agents: "För representanter"
-        for_customer: "För kunder"
     harvest:
       label: Harvest
       desc: "Du kan logga använd tid på ärenden till dina Harvestprojekt och Harvestuppgifter."

@@ -1185,7 +1185,6 @@ et:
         feedbackwidget_users_can: "Kasutajad saavad:"
         feedbackwidget_attach_a_file: "Manusta fail"
         feedbackwidget_screenshot: "Tee kuvatõmmis"
-        feedbackwidget_screenr_recording: "Screenri salvestus"
         feedbackwidget_search_area: "Otsi artikleid"
         feedbackwidget_use_https: "Kasuta HTTPSi"
         feedbackwidget_mobile_view: Mobiilivaade
@@ -4919,36 +4918,6 @@ et:
         es: Spanish
         sv: Swedish
         tr: Turkish
-    screenr:
-      button_label: "Tee ekraanisalvestus"
-      label: Screenr
-      desc: "Tee Screenri abil ekraanisalvestusi ning manusta neid taotlustele, foorumitele ja lahendusartiklitele."
-      helptext: "<h4>Freshdeski ja Screenri integreerimine</h4><p><br/>Screenri integreerimisel saavad lahendajad ja kliendid Freshdeski kasutamise ajal ekraanisalvestusi teha ja jagada. Selle abil saab taotlustele, foorumipostitustele ja lahendusartiklitele otse veaaruandeid ja õppevideosid manustada.</p><p>Kui see funktsioon on lubatud, näed oma tagasisidevidina, arutluste ja teadmistebaasi kõrval salvestamisnuppu. Sa saad salvestada kogu oma brauseriakna või valida ainult kindla osa, mida salvestada soovid. Ekraanisalvestus sisestatakse automaatselt, kui su seanss on läbi.</p><p>Selle integratsiooni seadistamiseks pead sisestama oma Screenri URLi (nt <a>http://sinunimi.ekraanisalvestused.com</a>) ja oma salvestaja ID, mille leiad siis, kui oma kontole sisse logid.</p>"
-      form:
-        recorder_id: "Salvestaja ID"
-        recorder_id_info: "Salvestaja ID on kordumatu ID, mis on saadaval salvestajate redigeerimise lehel."
-        site_address_info: ""
-        site_address: "Screenri alamdomeen"
-        widget_title: "Vidina nimi"
-        visible_agent_forum: "Foorumikuva salvestamine Lahendajatele"
-        visible_agent_forum_info: "Luba see funktsioon, et Screenri salvestaja oleks foorumites Lahendajatele saadaval."
-        visible_agent_ticket: "Lahendaja taotluskuva salvestamine"
-        visible_agent_ticket_info: "Luba see funktsioon, et Screenri salvestaja oleks taotlusvormil Lahendajatele saadaval"
-        visible_solution: "Lahendusekuva salvestamine"
-        visible_solution_info: "Luba see funktsioon, et Screenri salvestaja oleks lahenduste all saadaval."
-        visible_portal_ticket: "Portaali taotluskuva salvestamine"
-        visible_portal_ticket_info: "Luba see funktsioon, et Screenri salvestaja oleks portaali taotlusvormil saadaval."
-        visible_portal_forum: "Foorumi taotluskuva salvestamine portaali tarbeks"
-        visible_portal_forum_info: "Luba see funktsioon, et Screenri salvestaja oleks portaali foorumis saadaval."
-        visible_widget: "Vidinakuva salvestamine"
-        visible_widget_info: "Luba see funktsioon, et Screenri salvestaja oleks tagasisidevidinas saadaval."
-      settings:
-        enable_screenr_recording: "Luba Screenri salvestamine"
-        ticket_interaction: "Piletite leht (uus, redigeeri, vasta)"
-        forum_interaction: "Foorumi leht (uus, redigeeri, kommenteeri)"
-        create_solution: "Lahendus (uus, redigeeri)"
-        for_agents: Lahendajatele
-        for_customer: Klientidele
     harvest:
       label: Harvest
       desc: "Sa saad taotlustele kulutatud aja registreerida oma Harvesti projektide ja ülesannete all."

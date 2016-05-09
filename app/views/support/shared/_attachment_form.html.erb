@@ -105,33 +105,7 @@
   <!-- screenshot-->
   <% if @widget_form && widget_option(:screenshot) %>
     <div class="span5 omega align-right <%= cloud_files_installed? ? 'screenshot-wrapper-20' : 'screenshot-wrapper-30' %>" >
-      <% if is_application_installed?("screenr") && widget_option(:screenr_recording)%>
-        <div class="screenshot-wrap controls">
-          <div class="ie8plusonly pull-right">        
-            <div class="dropdown">
-              <div class="dropdown-toggle attach-link" data-toggle="dropdown" href="#">
-                Screen Capture<b class="caret"></b>
-              </div>
-              <ul class="dropdown-menu screenr-dropdown align-left" role="menu" aria-labelledby="dLabel">
-                <li class="portal-attach">
-                  <div id="takescreen-btn">
-                    <a href="#"><i class="wicon-camera"></i> <span id="screenshot-value" style="display:none;"><%=t('.feedback_widgets_screenshot')%></span></a>
-                    <span id="screenshot-loader"><img src="/assets/animated/ajax-loader.gif"></span>
-                  </div>
-                </li>
-                <li>
-                  <%= render :partial => "shared/screenr_recorder", :locals => { :location => "widget" } %>
-                </li>
-              </ul>
-            </div>
-            <div class="flash" style="display:none"></div>
-            <div id="screenshot-wrap" style="display:none">
-              <canvas class="f-screenshot" id="f-screenshot"></canvas>
-              <a href="#" class="close screenshot-remove" onClick="remove_screenshot()">&times;</a>
-            </div>
-          </div>
-        </div>
-      <% else %>
+      
         <div class="screenshot-wrap controls">
           <div class="ie8plusonly">
             <div id="takescreen-btn">
@@ -146,7 +120,6 @@
             </div>
           </div>
         </div>
-      <% end %>      
     </div>
   <% end %>
   <!--screenshot end -->

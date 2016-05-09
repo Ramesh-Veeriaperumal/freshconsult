@@ -1442,7 +1442,6 @@ nl:
         feedbackwidget_users_can: "Gebruikers kunnen:"
         feedbackwidget_attach_a_file: "Bestanden bijvoegen"
         feedbackwidget_screenshot: "Schermopname maken"
-        feedbackwidget_screenr_recording: Screenr-opname
         feedbackwidget_search_area: "Artikelen zoeken"
         feedbackwidget_use_https: "HTTPS gebruiken"
         feedbackwidget_mobile_view: "Mobiele weergave"
@@ -1467,7 +1466,6 @@ nl:
         feedbackwidget_users_can: Formulieropties
         feedbackwidget_attach_a_file: "Bestand bijvoegen"
         feedbackwidget_screenshot: "Schermopname maken"
-        feedbackwidget_screenr_recording: Screenr-opname
         feedbackwidget_search_area: "Artikelen zoeken"
         feedbackwidget_use_https: "HTTPS gebruiken"
         feedbackwidget_mobile_view: "Mobiele weergave inschakelen"
@@ -6040,36 +6038,6 @@ nl:
         es: Spaans
         sv: Zweeds
         tr: Turks
-    screenr:
-      button_label: "Screencast opnemen"
-      label: Screenr
-      desc: "U kunt screencasts vastleggen met Screenr en deze toevoegen aan tickets, forums en oplossingsartikelen."
-      helptext: "<h4>Integratie met Freshdesk Screenr</h4><p><br/>Als u Screenr integreert, kunnen medewerkers en klanten tijdens het gebruik van Freshdesk screencasts vastleggen en delen. U kunt Screenr gebruiken om foutrapporten of instructievideo's rechtstreeks aan uw tickets, forumberichten en oplossingsartikelen te koppelen.</p><p>Zodra Screenr is ingeschakeld, wordt naast uw feedbackwidget, discussies en kennisbank een opnameknop weergegeven. U kunt het volledige browservenster of een bepaald gedeelte van het venster opnemen. De screencast wordt automatisch ingevoegd als de sessie is voltooid.</p><p>U kunt deze integratie instellen door uw Screener-URL (bijvoorbeeld <a>http://uwnaam.viewcasts.com</a>) en uw recorder-id (wordt weergegeven wanneer u zich bij uw account aanmeldt) in te voeren.</p>"
-      form:
-        recorder_id: Recorder-id
-        recorder_id_info: "Het recorder-id is het unieke id dat op de pagina voor het bewerken van recorders wordt weergeven."
-        site_address_info: ""
-        site_address: Screenr-subdomein
-        widget_title: Widgettitel
-        visible_agent_forum: "Forumschermopname voor medewerkers"
-        visible_agent_forum_info: "Inschakelen om Screenr-recorder beschikbaar te maken in forums voor medewerkers"
-        visible_agent_ticket: "Opname ticketscherm medewerker"
-        visible_agent_ticket_info: "Inschakelen om Screenr-recorder beschikbaar te maken in tickets voor medewerkers"
-        visible_solution: "Opname oplossingsscherm"
-        visible_solution_info: "Inschakelen om Screenr-recorder beschikbaar te maken in oplossingen"
-        visible_portal_ticket: "Opname portaalticketscherm"
-        visible_portal_ticket_info: "Inschakelen om Screenr-recorder beschikbaar te maken in portaalticketformulier"
-        visible_portal_forum: "Opname forumticketscherm voor portaal"
-        visible_portal_forum_info: "Inschakelen om Screenr-recorder beschikbaar te maken in portaalforum"
-        visible_widget: "Opname widgetscherm"
-        visible_widget_info: "Inschakelen om Screenr-recorder beschikbaar te maken in feedbackwidget"
-      settings:
-        enable_screenr_recording: "Screenr-opname inschakelen"
-        ticket_interaction: "Ticketpagina (nieuw, bewerken en beantwoorden)"
-        forum_interaction: "Forumpagina (nieuw, bewerken en opmerking toevoegen)"
-        create_solution: "Oplossing (nieuw, bewerken)"
-        for_agents: "Voor medewerkers"
-        for_customer: "Voor klanten"
     ilos:
       label: "Ilos videos"
       desc: "Screencasts opnemen en delen voor tickets, forums en oplossingsartikelen."

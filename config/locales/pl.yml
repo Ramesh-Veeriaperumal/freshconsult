@@ -1388,7 +1388,6 @@ pl:
         feedbackwidget_users_can: "Użytkownicy mogą:"
         feedbackwidget_attach_a_file: "Dołączać plik"
         feedbackwidget_screenshot: "Zrobić zrzut ekranu"
-        feedbackwidget_screenr_recording: "Nagrywać w Screenr"
         feedbackwidget_search_area: "Szukać artykułów"
         feedbackwidget_use_https: "Używać https"
         feedbackwidget_mobile_view: "Wyświetlać w urządzeniu przenośnym"
@@ -5488,36 +5487,6 @@ pl:
         es: hiszpański
         sv: szwedzki
         tr: turecki
-    screenr:
-      button_label: "Rejestruj Screencast"
-      label: Screenr
-      desc: "Rejestruj filmy screencast, korzystając z Screenr i dołączaj je do zgłoszeń, wstawiaj na fora oraz do artykułów z rozwiązaniami."
-      helptext: "<h4>Dodatek Screenr w systemie Freshdesk</h4><p><br/>Dodatek Screenr umożliwia konsultantom i klientom rejestrowanie i udostępnianie filmów screencast podczas korzystania z systemu Freshdesk. Można go użyć, aby dołączyć raport o błędach lub filmy instruktażowe do zgłoszenia, wpisu na forum lub artykułu z rozwiązaniem.</p><p>Po włączeniu dodatku użytkownik będzie widzieć przycisk nagrywania przy widżecie opinii, dyskusjach oraz w bazie wiedzy. Możesz zdecydować się na zapis całego okna przeglądarki lub wybrać określoną sekcję. Filmy screencast będą wstawiane automatycznie po zakończeniu sesji.</p><p>Dodatek można skonfigurować, wstawiając URL do Screener (np. <a>http://yourname.viewcasts.com</a>) oraz ID nagrywarki, które dostępne jest po zalogowaniu się na swoim koncie.</p>"
-      form:
-        recorder_id: "ID nagrywarki"
-        recorder_id_info: "ID nagrywarki to unikalne ID dostępne na stronie edycji nagrywarek"
-        site_address_info: ""
-        site_address: "Poddomena Screenr"
-        widget_title: "Tytuł widżeta"
-        visible_agent_forum: "Nagrywanie zrzutów na forum dla konsultantów"
-        visible_agent_forum_info: "Włącz tę opcję, aby udostępnić nagrywarkę Screenr na forum dla konsultantów"
-        visible_agent_ticket: "Nagrywanie zrzutów do zgłoszeń przez konsultantów"
-        visible_agent_ticket_info: "Włącz tę opcję, aby udostępnić konsultantom nagrywarkę Screenr w formularzu zgłoszenia"
-        visible_solution: "Nagrywanie zrzutów do rozwiązań"
-        visible_solution_info: "Włącz tę opcję, aby udostępnić nagrywarkę Screenr w sekcji rozwiązań"
-        visible_portal_ticket: "Nagrywanie zrzutów w portalu zgłoszeń"
-        visible_portal_ticket_info: "Włącz tę opcję, aby udostępnić nagrywarkę Screenr w formularzu portalu zgłoszeń"
-        visible_portal_forum: "Nagrywanie zrzutów na forum zgłoszeń"
-        visible_portal_forum_info: "Włącz tę opcję, aby udostępnić nagrywarkę Screenr na forum portalu"
-        visible_widget: "Nagrywanie zrzutów w widżecie"
-        visible_widget_info: "Włącz tę opcję, aby udostępnić nagrywarkę Screenr w widżecie opinii"
-      settings:
-        enable_screenr_recording: "Włącz nagrywanie Screenr"
-        ticket_interaction: "Strona zgłoszeń (Nowe, Edytuj, Odpowiedz)"
-        forum_interaction: "Strona forum (Nowe, Edytuj, Skomentuj)"
-        create_solution: "Rozwiązanie (Nowe, Edytuj)"
-        for_agents: "Dla konsultantów"
-        for_customer: "Dla klientów"
     harvest:
       label: Harvest
       desc: "W projektach oraz zadaniach Harvest możesz rejestrować czas, który spędziłeś na zgłoszeniach."
