@@ -199,6 +199,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/spotlight", :only => [:solutions]
     resource :"helpdesk/ticket", :only => [:get_solution_detail]
     resource :"solution/draft", :only => [:index]
+
+    # Used by V2 API
+    resource :"api_solutions/category", :only => [:index, :show]
+    resource :"api_solutions/folder", :only => [:category_folders, :show]
+    resource :"api_solutions/article", :only => [:folder_articles, :show]
   end
 
   publish_solution do
@@ -206,18 +211,28 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/tag_use"
     resource :solutions_uploaded_image, :only => [:create, :create_file]
     resource :"solution/draft", :only => [:autosave, :publish, :attachments_delete, :destroy]
+
+    # Used by V2 API
+    resource :"api_solutions/article", :only => [:create, :update]
   end
 
   delete_solution do
     resource :"solution/article", :only => [:destroy, :reset_ratings], :owned_by =>
                                   { :scoper => :solution_articles }
     resource :"solution/draft", :only => [:destroy]
+
+    # Used by V2 API
+    resource :"api_solutions/article", :only => [:destroy], :owned_by => { :scoper => :solution_articles }
   end
 
   manage_solutions do
     resource :"solution/category", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder, :move_to, :move_back, :visible_to]
     resource :"solution/article", :only => [:translate_parents]
+
+    # Used by V2 API
+    resource :"api_solutions/category", :only => [:create, :update, :destroy]
+    resource :"api_solutions/folder", :only => [:create, :update, :destroy]
   end
 
   # ************** FORUMS **************************
@@ -505,6 +520,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_sla_policy", :only => [:index, :update]
     resource :"api_product", :only => [:index, :show]
+    resource :"helpdesk_setting", :only => [:index]
   end
 
   manage_account do

@@ -5,8 +5,8 @@ module ErrorConstants
     invalid_field: ['invalid_field'],
     datatype_mismatch: %w(datatype_mismatch per_page_invalid array_datatype_mismatch),
     invalid_size: ['invalid_size'],
-    incompatible_field: ['incompatible_field'],
-    inaccessible_field: ['inaccessible_field', 'require_feature_for_attribute'],
+    incompatible_field: %w(incompatible_field multiple_portals_required cant_set_company_ids cant_set_art_type attribute_not_required),
+    inaccessible_field: ['inaccessible_field', 'require_feature_for_attribute', 'require_feature_to_suppport_the_request'],
     inaccessible_value: ['inaccessible_value']
   }.freeze
 
