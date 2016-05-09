@@ -109,6 +109,8 @@ defaults: &defaults
     - [partners_event_queue]
     - [scheduled_reports]
     - [scheduled_reports_cleanup]
+    - [account_info_to_dynamo]
+
 development:
   <<: *defaults
 
