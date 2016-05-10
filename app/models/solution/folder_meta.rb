@@ -126,6 +126,13 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def clear_customer_folders
 	  customer_folders.destroy_all if (visibility_changed? and visibility_was == VISIBILITY_KEYS_BY_TOKEN[:company_users])
 	end
+  
+	def visible?(user)
+	  return true if (user and user.privilege?(:view_solutions))
+	  return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
+	  return true if (user and (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
+	  return true if (user && (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && user.company  && customer_folders.map(&:customer_id).include?(user.company.id))
+	end
 
 	private
 
@@ -189,13 +196,6 @@ class Solution::FolderMeta < ActiveRecord::Base
 		else
 		  [VISIBILITY_KEYS_BY_TOKEN[:anyone]]
 		end
-	end
-
-	def visible?(user)
-	  return true if (user and user.privilege?(:view_solutions))
-	  return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
-	  return true if (user and (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
-	  return true if (user && (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && user.company  && customer_folders.map(&:customer_id).include?(user.company.id))
 	end
 
 	def visible_in? portal
