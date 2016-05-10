@@ -4,6 +4,7 @@ module BigBrother
     if self.respond_to?(:account_id)
       log_activerecord
     end
+    track_models if TRACKED_MODELS.include?(self.class.to_s)
   end
 
   def self.included(receiver)
@@ -29,6 +30,11 @@ module BigBrother
 
   def init_logger
     @@big_brother_logger ||= CustomLogger.new("#{Rails.root}/log/big_brother.log")
+  end
+
+  def track_models
+    statsd_increment(get_shard_name,"#{camel_to_table}_creation_counter")
+    statsd_increment(get_shard_name,"#{TRACKED_TICKET_SOURCE[self.source]}_ticket_creation_counter") if  self.class.to_s == "Helpdesk::Ticket" && TRACKED_TICKET_SOURCE.has_key?(self.source)
   end
 
 end

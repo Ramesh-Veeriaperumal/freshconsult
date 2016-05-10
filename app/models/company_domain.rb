@@ -35,13 +35,12 @@ class CompanyDomain < ActiveRecord::Base
     end 
 
     def map_contacts_to_company
-      Users::UpdateCompanyId.perform_async({ :domain => self.domain,
+      Users::UpdateCompanyId.perform_async({ :domains => self.domain,
                                              :company_id => self.company_id }) 
     end
 
     def nullify_contact_mapping
-      Users::UpdateCompanyId.perform_async({ :domain => self.domain,
-                                             :company_id => nil,
-                                             :current_company_id => self.company_id })
+      Users::UpdateCompanyId.perform_async({ :domains => self.domain, :company_id => nil,
+        :current_company_id => self.company_id }) if self.company.present?
     end
 end

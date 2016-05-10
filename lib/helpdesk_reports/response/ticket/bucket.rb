@@ -6,9 +6,14 @@ class HelpdeskReports::Response::Ticket::Bucket < HelpdeskReports::Response::Tic
     return unless result_present? # Check if result is present or it is a No Data scenario
     buckets = Set.new
     processed_result["tickets_count"] = {}
+    total_interaction_count = {}
     raw_result.each do |row|
       row.each do |bucketing, result|
         bucket_type, bucket = bucketing.split("|")
+        if bucket == "total_count"
+          total_interaction_count[bucket_type] = result.to_i
+          next
+        end
         buckets << bucket_type
         
         processed_result[bucket_type] ||= {}
@@ -19,7 +24,7 @@ class HelpdeskReports::Response::Ticket::Bucket < HelpdeskReports::Response::Tic
       end
     end
     add_bucket_value_map(buckets)
-    average_interactions(buckets) if report_type.downcase == :glance   #remove downcase once scheduled reports is implemented
+    average_interactions(buckets, total_interaction_count) if report_type == :glance
   end
   
   def result_present?
@@ -37,19 +42,12 @@ class HelpdeskReports::Response::Ticket::Bucket < HelpdeskReports::Response::Tic
   end
 
   #calculates average for agent and customer responses
-  #total_interactions is calculated by aggregating the product of no. of responses and no. of tickets for each response
-  #average interactions = total_interactions/timerange.  Average is being displayed as a float value
-  def average_interactions buckets
+  #average interactions = total_interaction_count/ticket_count.  Average is displayed as a float value
+  def average_interactions buckets, total_interaction_count
     processed_result["average_interactions"] = Hash.new(0)
-    total_interactions = Hash.new(0)
     buckets.each do |bucket_type|
-      ReportsAppConfig::BUCKET_QUERY[bucket_type.to_sym].each do |bucket|
-        total_interactions[bucket_type] += processed_result[bucket_type][bucket['label'].to_s] * bucket['value'] 
-      end
-      if processed_result["tickets_count"][bucket_type] != 0
-        processed_result["average_interactions"][bucket_type] = 
-            (total_interactions[bucket_type].to_f / processed_result["tickets_count"][bucket_type]).round(1) 
-      end
+      processed_result["average_interactions"][bucket_type] =
+          (total_interaction_count[bucket_type].to_f / processed_result["tickets_count"][bucket_type]).round(1) if processed_result["tickets_count"][bucket_type] != 0
     end
   end
   

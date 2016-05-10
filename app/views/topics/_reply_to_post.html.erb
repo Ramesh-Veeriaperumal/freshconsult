@@ -10,11 +10,6 @@
 		<li>
 			<%= render :partial=> "/forum_shared/attachment_form" %>
 		</li>
-		<% if is_application_installed?("screenr") %>
-		  <li>
-	      <%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
-	  </li>
-	  	<% end %>
 		<li class="alignright">
 		  <%= link_to_function t('cancel'), "$('reply').hide()", :class => "btn" %>
 		  <%= submit_tag t('topic.post_comment'), :class => "btn btn-primary", :id => "post-submit-button"  %> 

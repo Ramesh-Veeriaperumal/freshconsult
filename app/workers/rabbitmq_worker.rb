@@ -51,8 +51,8 @@ class RabbitmqWorker
   end
   
   def reports_routing_key?(exchange, key)
-    ((exchange.include?("tickets") || exchange.include?("notes")) && key[2] == "1") || 
-      ((exchange.include?("archive_tickets") || exchange.include?("accounts")) && key[0] == "1")
+    ((exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[2] == "1") || 
+      ((exchange.starts_with?("archive_tickets") || exchange.starts_with?("accounts")) && key[0] == "1")
   end
 
   # Key will be like 1.1.1 (Possibility of additional 1s appended in future)
@@ -62,12 +62,12 @@ class RabbitmqWorker
   # Exchange will be like tickets_0, tickets_1
   #
   def search_routing_key?(exchange, key)
-    ((exchange.include?("tickets") || exchange.include?("notes")) && key[4] == "1") || 
-    ((exchange.include?("archive_tickets") || exchange.include?("accounts")) && key[2] == "1") || 
+    ((exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[4] == "1") || 
+    ((exchange.starts_with?("archive_tickets") || exchange.starts_with?("accounts")) && key[2] == "1") || 
     ((
-      exchange.include?("archive_notes") || exchange.include?("articles") || 
-      exchange.include?("topics") || exchange.include?("posts") || exchange.include?("tags") || 
-      exchange.include?("companies") || exchange.include?("users") || exchange.include?("tag_uses")
+      exchange.starts_with?("archive_notes") || exchange.starts_with?("articles") || 
+      exchange.starts_with?("topics") || exchange.starts_with?("posts") || exchange.starts_with?("tags") || 
+      exchange.starts_with?("companies") || exchange.starts_with?("users") || exchange.starts_with?("tag_uses")
     ) && key[0] == "1")
   end
 

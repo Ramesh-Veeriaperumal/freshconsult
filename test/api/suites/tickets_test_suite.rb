@@ -15,12 +15,12 @@ require_relative '../unit/time_entries_dependency_test.rb'
 require_relative '../unit/time_entry_validation_test.rb'
 require_relative '../unit/time_entry_filter_validation_test.rb'
 
-#flows
+# flows
 require_relative '../integration/flows/conversations_flow_test.rb'
 require_relative '../integration/flows/tickets_flow_test.rb'
 require_relative '../integration/flows/time_entries_flow_test.rb'
 
-#queries
+# queries
 # require_relative 'integration/queries/conversations_queries_test.rb'
 # require_relative 'integration/queries/tickets_queries_test.rb'
 # require_relative 'integration/queries/time_entries_queries_test.rb'

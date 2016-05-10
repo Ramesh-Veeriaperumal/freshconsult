@@ -1,7 +1,6 @@
 require_relative '../../test_helper'
 
 class ApiContactsFlowTest < ActionDispatch::IntegrationTest
-  include ContactFieldsHelper
   include UsersTestHelper
 
   def get_user
@@ -31,6 +30,13 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
       end
       assert_response 415
       response.body.must_match_json_expression(un_supported_media_type_error_pattern)
+    end
+  end
+
+  def test_multipart_form_data
+    skip_bullet do
+      post('/api/v2/contacts', v2_multipart_payload, @write_headers.merge('CONTENT_TYPE' => 'multipart/form-data'))
+      assert_response 201
     end
   end
 

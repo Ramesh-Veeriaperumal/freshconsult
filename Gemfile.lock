@@ -892,8 +892,6 @@ GEM
       savon (>= 0.8.2, < 0.9.8)
     sax-machine (0.1.0)
       nokogiri (> 0.0.0)
-    sidekiq (3.4.1)
-      celluloid (~> 0.16.0)
     shoryuken (2.0.4)
       aws-sdk-core (~> 2)
       celluloid (~> 0.16)

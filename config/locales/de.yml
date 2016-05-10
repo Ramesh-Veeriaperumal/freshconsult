@@ -1320,9 +1320,9 @@ de:
         send_test_mail_info2: "Hier finden Sie heraus, <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>wie es gemacht wird</a>."
         title_message: "Schnelleinrichtung Ihres Kundensupport in vier Schritten..."
         support_email_title: Support-<br>E-Mail
-        agents_title_1: Bearbeiter&lt;br&gt;hinzufügen
+        adding_agents: Bearbeiter<br>hinzufügen
         rebrand_title: "Logo <br>und Farben"
-        social_title_1: Soziale&lt;br&gt;Medien
+        going_social: Soziale<br>Medien
         skip_text: "Nein danke, bringe mich zu meinem Helpdesk."
         back_link: Zurück
         next_link: Weiter
@@ -1444,7 +1444,6 @@ de:
         feedbackwidget_users_can: "Benutzer können:"
         feedbackwidget_attach_a_file: "Eine Datei anhängen"
         feedbackwidget_screenshot: "Screenshot erstellen"
-        feedbackwidget_screenr_recording: Screenr-Aufzeichnung
         feedbackwidget_search_area: "Artikel durchsuchen"
         feedbackwidget_use_https: "HTTPS verwenden"
         feedbackwidget_mobile_view: "Mobile Ansicht"
@@ -1469,7 +1468,6 @@ de:
         feedbackwidget_users_can: Formularoptionen
         feedbackwidget_attach_a_file: "Eine Datei anhängen"
         feedbackwidget_screenshot: "Screenshot erstellen"
-        feedbackwidget_screenr_recording: Screenr-Aufzeichnung
         feedbackwidget_search_area: "Artikel durchsuchen"
         feedbackwidget_use_https: "HTTPS verwenden"
         feedbackwidget_mobile_view: "Mobile Ansicht aktivieren"
@@ -6043,36 +6041,6 @@ de:
         es: Spanisch
         sv: Schwedisch
         tr: Türkisch
-    screenr:
-      button_label: "Screencast aufzeichnen"
-      label: Screenr
-      desc: "Zeichnen Sie Screencasts mithilfe von Screenr auf und hängen Sie sie an Tickets, Foren und Lösungsartikel an."
-      helptext: "<h4>Screenr-Integration in Freshdesk</h4><p><br/>Durch die Screenr-Integration können Bearbeiter und Kunden Screencasts aufzeichnen und austauschen, während sie Freshdesk nutzen. Screencasts können verwendet werden, um Fehlerberichte oder Anweisungsvideos direkt an Ihre Tickets, Forenbeiträge und Lösungsartikel anzuhängen.</p><p>Nach der Aktivierung wird Ihrem Feedback-Widget, Diskussionen und Ihrer Wissensdaten eine Aufzeichnungsschaltfläche hinzugefügt. Sie können wählen, das gesamte Browser-Fenster oder nur einen bestimmten Bereich aufzuzeichnen. Der Screencast wird automatisch eingefügt, sobald Ihre Sitzung abgeschlossen ist. </p><p>Sie können diese Integration einrichten, indem Sie Ihre Screenr-URL (z. B. <a>http://yourname.viewcasts.com</a>) und Ihre Aufzeichner-ID einfügen. Diese wird Ihnen nach der Anmeldung in Ihrem Konto angezeigt.</p>"
-      form:
-        recorder_id: Aufzeichner-ID
-        recorder_id_info: "Die Aufzeichner-ID ist einzigartig und wird auf der Seite zur Bearbeitung der Aufzeichner angezeigt."
-        site_address_info: ""
-        site_address: Screenr-Subdomäne
-        widget_title: Widget-Titel
-        visible_agent_forum: "Aufzeichnung des Forenbildschirms für Bearbeiter"
-        visible_agent_forum_info: "Aktivieren Sie diese Option, um den Screen-Aufzeichner für Bearbeiter in Foren verfügbar zu machen."
-        visible_agent_ticket: "Bildschirmaufzeichnung des Bearbeitertickets"
-        visible_agent_ticket_info: "Aktivieren Sie diese Option, um den Screenr-Aufzeichner für Bearbeiter im Ticketformular verfügbar zu machen."
-        visible_solution: "Aufzeichnung des Lösungsbildschirms"
-        visible_solution_info: "Aktivieren Sie diese Option, um den Screenr-Aufzeichner in Lösungen verfügbar zu machen."
-        visible_portal_ticket: "Bildschirmaufzeichnung des Portal-Tickets"
-        visible_portal_ticket_info: "Aktivieren Sie diese Option, um den Screenr-Aufzeichner im Portal-Ticket-Formular verfügbar zu machen."
-        visible_portal_forum: "Bildschirmaufzeichnung für Forum-Ticket im Portal"
-        visible_portal_forum_info: "Aktivieren Sie diese Option, um den Screenr-Aufzeichner im Portalforum verfügbar zu machen."
-        visible_widget: Widget-Bildschirmaufzeichnung
-        visible_widget_info: "Aktivieren Sie diese Option, um den Screenr-Aufzeichner im Feedback-Widget verfügbar zu machen."
-      settings:
-        enable_screenr_recording: "Screenr-Aufzeichnung aktivieren"
-        ticket_interaction: "Seite „Tickets“ (Neu, Bearbeiten, Antworten)"
-        forum_interaction: "Seite „Forum“ (Neu, Bearbeiten, Kommentar)"
-        create_solution: "Lösung (Neu, Bearbeiten)"
-        for_agents: "Für Bearbeiter"
-        for_customer: "Für Kunden"
     ilos:
       label: ilos-Videos
       desc: "Screencasts zu Tickets, Foren und Lösungsartikeln aufzeichnen und freigeben."

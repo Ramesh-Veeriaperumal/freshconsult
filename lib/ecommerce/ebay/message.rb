@@ -41,7 +41,7 @@ class Ecommerce::Ebay::Message
   end
 
   def subject_external_id_match(msg)
-    (@ticket.requester.external_id.gsub("#{EBAY_PREFIX}-","") == msg[:send_to_name] and @ticket.subject == msg[:subject].gsub(EBAY_SUBJECT_REPLY, ''))      
+    (@ticket.requester.external_id.gsub("#{EBAY_PREFIX}-","") == msg[:send_to_name] && msg[:subject].include?(@ticket.subject))      
   end
 
 end

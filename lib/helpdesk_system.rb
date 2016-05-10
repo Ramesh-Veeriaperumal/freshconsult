@@ -13,9 +13,9 @@ module HelpdeskSystem
         session.delete(:return_to) 
         render :json => current_user ? {:access_denied => true} : {:require_login => true}}
       format.js { 
-        render :update do |page| 
-          page.redirect_to :url => send(Helpdesk::ACCESS_DENIED_ROUTE)
-        end
+        flash[:notice] = access_denied_message
+        redirect_url = send(Helpdesk::ACCESS_DENIED_ROUTE)
+        render :js => "window.location.href='"+ redirect_url +"'"
       }
       format.widget {
         render :text =>  access_denied_message

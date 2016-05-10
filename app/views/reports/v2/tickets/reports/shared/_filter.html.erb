@@ -1,6 +1,5 @@
  <%
-  date_by_plan = default_date_range(@date_lag_by_plan)
-  date_range = date_range_val(date_by_plan[0], date_by_plan[1])
+    date_range = date_range_val(30.days.ago,1.days.ago)
 %>
 <div class="report-filters-container animated hide" id="report-filters">
  	<ul class="unstyled">

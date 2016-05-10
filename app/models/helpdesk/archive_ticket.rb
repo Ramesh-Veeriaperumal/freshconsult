@@ -325,6 +325,10 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     end
   end
 
+  def to_param 
+    display_id ? display_id.to_s : nil
+  end
+
   def portal_host
     (self.product && !self.product.portal_url.blank?) ? self.product.portal_url : account.host
   end
@@ -338,7 +342,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     attachments.each_with_index.map { |a, i|
       "#{i+1}. <a href='#{Rails.application.routes.url_helpers.helpdesk_attachment_url(a, :host => portal_host)}'>#{a.content_file_name}</a>"
       }.join("<br />")
-  end
+  end 
 
   def encode_display_id
     "[#{ticket_id_delimiter}#{display_id}]"

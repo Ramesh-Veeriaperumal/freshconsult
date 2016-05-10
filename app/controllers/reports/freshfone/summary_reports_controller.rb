@@ -3,29 +3,33 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
   include Reports::FreshfoneReport
   #Added for export csv, call to methods using send
   include Reports::Freshfone::SummaryReportsHelper
+  include HelpdeskReports::Helper::ControllerMethods
   include ReportsHelper
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include HelpdeskReports::Helper::ScheduledReports
 
   before_filter :access_denied, :unless => :freshfone_reports?
-  before_filter :set_report_type
-  before_filter :load_cached_filters, :report_filter_data_hash, :only => [:index]
-  before_filter :set_cached_filters, :only => [:generate]
-  before_filter :set_selected_tab, :build_criteria
-  before_filter :set_filter, :only => [:index, :generate]
-  before_filter :max_limit?, :only => [:save_reports_filter]
-  before_filter :construct_filters,        :only => [:save_reports_filter,:update_reports_filter]
+  before_filter :set_report_type, :set_selected_tab
+  before_filter :build_criteria,                   :except => [:export_pdf]
+  before_filter :set_filter,                       :only   => [:index, :generate]
+  before_filter :save_report_max_limit?,           :only   => [:save_reports_filter]
+  before_filter :construct_report_filters,         :only   => [:save_reports_filter,:update_reports_filter]
 
   around_filter :run_on_slave , :except => [:save_reports_filter,:update_reports_filter,:delete_reports_filter]
 
+  helper_method :enable_schedule_report?
 
   attr_accessor :report_type
 
   def index
+    load_cached_filters
+    report_filter_data_hash
     #Render default index erb
   end
 
   def generate
+    set_cached_filters
     #Render default rjs
   end
 
@@ -36,55 +40,29 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
             :disposition => "attachment; filename=phone_summary_report.csv"
   end
 
+  def export_pdf
+    params.merge!(:report_type => report_type)
+    Reports::Export.perform_async(params)
+    render json: nil, status: :ok
+  end
+  
   def save_reports_filter
-    report_filter = current_user.report_filters.build(
-      :report_type => @report_type_id,
-      :filter_name => @filter_name,
-      :data_hash   => @data_map
-    )
-    report_filter.save
-    
-    render :json => {:text=> "success", 
-                     :status=> "ok",
-                     :id => report_filter.id,
-                     :filter_name=> @filter_name,
-                     :data=> @data_map }.to_json
+    common_save_reports_filter    
   end
 
   def update_reports_filter
-    id = params[:id].to_i
-    report_filter = current_user.report_filters.find(id)
-    report_filter.update_attributes(
-      :report_type => @report_type_id,
-      :filter_name => @filter_name,
-      :data_hash   => @data_map
-    )
-    render :json => {:text=> "success", 
-                     :status=> "ok",
-                     :id => report_filter.id,
-                     :filter_name=> @filter_name,
-                     :data=> @data_map }.to_json
+    common_update_reports_filter
   end
 
   def delete_reports_filter
-    id = params[:id].to_i
-    report_filter = current_user.report_filters.find(id)
-    report_filter.destroy 
-    render json: "success", status: :ok
+    common_delete_reports_filter
   end
-
 
   private 
   
     def run_on_slave(&block)
       Sharding.run_on_slave(&block)
     end 
-
-    def set_filter
-      @calls = filter(@start_date,@end_date)
-      previous_time_range #setting the date range to previous time period 
-      @old_calls = filter(@prev_start_time,@prev_end_time)
-    end
 
     def csv_hash
       headers = { "Agent" => :agent_name,
@@ -97,6 +75,12 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
     end
 
     def csv_string(headers)
+      csv_row_limit = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
+      csv_size = @calls.size
+      if (csv_size > csv_row_limit)
+        @calls.slice!(csv_row_limit..(csv_size - 1)) 
+        exceeds_row_limit = true
+      end
       CSVBridge.generate do |csv|
         csv << headers
         headers.shift #agent_name field removed to make a common method call send
@@ -107,6 +91,7 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
           end
           csv << csv_data
         end
+        csv << t('helpdesk_reports.export_exceeds_row_limit_msg', :row_max_limit => csv_row_limit) if exceeds_row_limit
       end
     end
 
@@ -121,7 +106,8 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
     end
 
     def set_report_type
-      @report_type = "phone_summary"
+      @report_type         = :phone_summary
+      @user_time_zone_abbr = Time.zone.now.zone
     end
 
     def date_time_fields

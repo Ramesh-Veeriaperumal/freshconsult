@@ -22,8 +22,8 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
   end
 
   def merging_current_historic_data
-    @current  = [] if (@current.is_a?(Hash) && @current["error"])   || @current.empty? #Handling the edge cases
-    @historic = [] if (@historic.is_a?(Hash) && @historic["error"]) || @historic.empty?
+    @current  = [] if (@current.is_a?(Hash) && @current["errors"])   || @current.empty? #Handling the edge cases
+    @historic = [] if (@historic.is_a?(Hash) && @historic["errors"]) || @historic.empty?
     @result = (@current + @historic).group_by{|h| h["group_id"]}.map{ |k,v| v.reduce(:merge)}
   end
 

@@ -27,12 +27,6 @@
       <% end
     end %>
     <% end %>
-
-  <% if is_application_installed?("screenr") %>
-    <div class="controls">
-      <%= render :partial => "shared/screenr_recorder", :locals => { :location => "portal_ticket" } %>
-    </div>
-  <% end %>
      
   <% if feature?(:captcha) && !logged_in? %>
     <div class="control-group">

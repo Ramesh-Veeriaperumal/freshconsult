@@ -27,7 +27,7 @@ class Social::Dynamo::Feed::Facebook < Social::Dynamo::Feed::Base
   
   def update_fd_links(table_name, parent_feed_id, hash)
     parent_interaction = Social::Dynamo::Interaction.new.get_feed_interaction(hash, parent_feed_id)   
-    if parent_interaction.present?
+    if parent_interaction && parent_interaction.present?
       interactions = parent_interaction["feed_ids"][:ss]
       interactions.each do |interaction|
         attributes = fd_attributes(interaction)

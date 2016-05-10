@@ -121,13 +121,6 @@ module HelpdeskReports::Constants::Ticket
     "qtr"       => 4
   }     
   
-  # Constraint on date_range by subscription plan (Restrict query to x days from today)
-  DATE_LAG_CONSTRAINT = {
-    "Estate Classic" => 0,
-    "Estate" => 0,
-    "Forest" => 0
-  }
-
   DEFAULT_TIME_ZONE = "Pacific Time (US & Canada)"   
 
   NOT_APPICABLE = "None"
@@ -142,6 +135,6 @@ module HelpdeskReports::Constants::Ticket
   
   TICKET_LIST_LIMIT = 25
   
-  MAX_ALLOWED_DAYS = 731 # Span of 2 years
+  MAX_ALLOWED_DAYS = 735 # Span of 2 years
 
 end

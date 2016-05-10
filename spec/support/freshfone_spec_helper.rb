@@ -56,9 +56,10 @@ module FreshfoneSpecHelper
               :caller_type => 0 )
   end
 
-  def create_freshfone_call(call_sid = "CA2db76c748cb6f081853f80dace462a04", call_type = Freshfone::Call::CALL_TYPE_HASH[:incoming])
+  def create_freshfone_call(call_sid = "CA2db76c748cb6f081853f80dace462a04", call_type = Freshfone::Call::CALL_TYPE_HASH[:incoming],
+                            call_status = Freshfone::Call::CALL_STATUS_HASH[:default])
     @freshfone_call = @account.freshfone_calls.new(:freshfone_number_id => @number.id, 
-                                      :call_status => 0, :call_type => call_type, :agent => @agent,
+                                      :call_status => call_status, :call_type => call_type, :agent => @agent,
                                       :params => { :CallSid => call_sid })
     @freshfone_call.account.features.reload
     @freshfone_call.save!
@@ -98,6 +99,13 @@ module FreshfoneSpecHelper
     if @freshfone_user.blank?
       @freshfone_user = Freshfone::User.create({ :account => @account, :presence => presence, :user => agent })
     end
+  end
+
+  def create_agent_conference_call(agent, status = Freshfone::SupervisorControl::CALL_STATUS_HASH[:default], call_sid = 'AGENTCONFCALL')
+    @agent_conference_call = @freshfone_call.supervisor_controls.create( supervisor: @account.users.find(agent),
+        supervisor_control_type: Freshfone::SupervisorControl::CALL_TYPE_HASH[:agent_conference],
+        sid: call_sid,
+        supervisor_control_status: status)
   end
 
   def create_online_freshfone_user

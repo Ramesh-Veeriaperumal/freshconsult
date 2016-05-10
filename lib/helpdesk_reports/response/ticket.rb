@@ -19,7 +19,7 @@ class HelpdeskReports::Response::Ticket
   private
   
   def error_result
-    { "error" => result["errors"]}
+    { "errors" => result["errors"]}
   end
   
   def query_result
@@ -31,7 +31,7 @@ class HelpdeskReports::Response::Ticket
   end
   
   def klass(query_type)
-    HelpdeskReports::Response::Ticket.const_get(query_type)
+    "HelpdeskReports::Response::Ticket::#{query_type}".constantize
   end
   
 end

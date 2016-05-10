@@ -13,6 +13,8 @@ module HelpdeskReports
         @s3_path        = args[:s3_path]
         @csv_hash       = args[:export_fields]
         @headers        = delete_invisible_fields
+        @exceeds_limit  = args[:exceeds_limit]
+        @csv_row_limit  = args[:records_limit]
       end
 
       def perform
@@ -22,6 +24,7 @@ module HelpdeskReports
             ticket_data = CSVBridge.generate do |csv|
               csv << csv_headers
               fetch_tickets_data(csv)
+              csv << t('helpdesk_reports.export_exceeds_row_limit_msg', :row_max_limit => @csv_row_limit) if @exceeds_limit
             end
             file_path = build_file(ticket_data, TYPES[:csv], TICKET_EXPORT_TYPE ) if ticket_data.present?
             options   = build_options_for_email

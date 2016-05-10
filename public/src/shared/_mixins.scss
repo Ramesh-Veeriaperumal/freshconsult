@@ -1,7 +1,10 @@
 
 // Formatting used for solutions in Portals as well - Copied from there directly.
 @mixin portal-text-formatting(){
-    font-size: 13px;
+    & {
+      text-align: initial;
+      font-size: 13px;
+    }
     p, li, div{ 
       font-size: 13px;
       line-height: 18px;

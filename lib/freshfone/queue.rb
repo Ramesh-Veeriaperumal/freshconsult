@@ -18,6 +18,7 @@ module Freshfone::Queue
 
   def bridge_queued_call(agent = nil)
     @available_agent ||= (agent or default_client).to_s # if @available_agent.blank?
+    Rails.logger.info "Bridge Queued Call :: Account :: #{current_account.id} :: Agent :: #{@available_agent}"
     @priority_call = nil
     if queued_members.list.any?
       check_for_priority_calls
@@ -26,21 +27,26 @@ module Freshfone::Queue
   end
 
   def bridge_priority_call
+    Rails.logger.info "Priority Dequeue :: Account :: #{current_account.id}  :: Agent :: #{@available_agent}"
     begin
       member = queued_members.get(@priority_call)
+      Rails.logger.info "Priority Dequeue :: Account :: #{current_account.id} :: CallSid :: #{@priority_call}"
       member.update(:url => "#{host}/freshfone/queue/dequeue?client=#{@available_agent}")
     rescue Twilio::REST::RequestError => e
       Rails.logger.error "Error trying to dequeue Priority call: #{e.message}"
-      agent_hunted_call ? remove_call_sid_from_agent_queue : 
+      agent_hunted_call ? remove_call_sid_from_agent_queue :
         remove_call_sid_from_group_queue
       bridge_queued_call
     end
   end
 
   def bridge_normal_call
-    if default_queue_call
-      member = queued_members.get(default_queue_call)
+    Rails.logger.info "Simple Dequeue :: Account :: #{current_account.id} :: Agent :: #{@available_agent}"
+    simple_queue_call = default_queue_call
+    if simple_queue_call
+      member = queued_members.get(simple_queue_call)
       begin
+        Rails.logger.info "Simple Dequeue :: Account :: #{current_account.id} :: CallSid :: #{simple_queue_call}"
         member.update(:url => "#{host}/freshfone/queue/dequeue")
       rescue Twilio::REST::RequestError => e
         Rails.logger.error "Error trying to dequeue call: #{e.message}"
@@ -51,37 +57,46 @@ module Freshfone::Queue
   end
 
   def remove_call_sid_from_default_queue
+    Rails.logger.info "Simple Queue Removal :: Account :: #{current_account.id} :: Agent :: #{@available_agent}"
     queued_calls = get_key(default_queue_key)
     if queued_calls
       calls = JSON.parse(queued_calls)
+      Rails.logger.info "Simple Queue Before Removal :: Account :: #{current_account.id} :: Key :: #{default_queue_key} :: Value :: #{calls.inspect}"
       calls.delete(calls.first)
+      Rails.logger.info "Simple Queue After Removal :: Account :: #{current_account.id} :: Key :: #{default_queue_key} :: Value :: #{calls.inspect}"
       set_key(default_queue_key, calls.to_json)
     end
   end
 
   def remove_call_sid_from_agent_queue
+    Rails.logger.info "Agent Queue Removal :: Account :: #{current_account.id} :: Agent :: #{@available_agent}"
     agent_queue = get_key(agent_queue_key)
     if agent_queue
       calls = JSON.parse(agent_queue)
+      Rails.logger.info "Agent Queue Before Removal :: Account :: #{current_account.id} :: Key :: #{agent_queue_key} :: Value :: #{calls.inspect}"
       if calls.keys.include? @available_agent
         hunted_agent_calls = calls[@available_agent]
         hunted_agent_calls.delete(hunted_agent_calls.first)
         calls[@available_agent] = hunted_agent_calls
       end
+      Rails.logger.info "Agent Queue After Removal :: Account :: #{current_account.id} :: Key :: #{agent_queue_key} :: Value :: #{calls.inspect}"
       set_key(agent_queue_key, calls.to_json)
     end
   end
 
   def remove_call_sid_from_group_queue
+    Rails.logger.info "Group Queue Removal :: Account :: #{current_account.id} :: Agent :: #{@available_agent}"
     group_queue = get_key(group_queue_key)
     agent = current_account.users.technicians.find_by_id(@available_agent)
     agent_groups = agent.agent_groups.collect{|ag| ag.group_id}
     if group_queue
       group_calls = JSON.parse(group_queue)
+      Rails.logger.info "Group Queue Before Removal :: Account :: #{current_account.id} :: Key :: #{group_queue_key} :: Value :: #{group_calls.inspect}"
       hunted_group = group_calls.keys.select{|group| agent_groups.include? group.to_i }.first
       hunted_group_calls = group_calls[hunted_group]
       hunted_group_calls.delete(hunted_group_calls.first)
       group_calls[hunted_group] = hunted_group_calls
+      Rails.logger.info "Group Queue After Removal :: Account :: #{current_account.id} :: Key :: #{group_queue_key} :: Value :: #{group_calls.inspect}"
       set_key(group_queue_key, group_calls.to_json)
     end
   end
@@ -91,32 +106,40 @@ module Freshfone::Queue
   end
 
   def agent_hunted_call
+    Rails.logger.info "Inside Agent Hunt :: Account :: #{current_account.id} :: Agent :: #{@available_agent}"
     agent_queue = get_key(agent_queue_key)
     if agent_queue
       agent_calls = JSON.parse(agent_queue)
+      Rails.logger.info "Agent Hunt :: Account :: #{current_account.id} :: Key :: #{agent_queue_key} :: Value :: #{agent_calls.inspect}"
       if agent_calls.keys.include? @available_agent
         hunted_agent_calls = agent_calls[@available_agent]
         @priority_call = hunted_agent_calls ? hunted_agent_calls.first : nil
+        Rails.logger.info "Agent Hunt :: Account :: #{current_account.id} :: Selected CallSid :: #{@priority_call.inspect}"
       end
     end
   end
 
   def group_hunted_call
+    Rails.logger.info "Inside Group Hunt :: Account :: #{current_account.id} :: Agent :: #{@available_agent}"
     agent = current_account.users.technicians.find_by_id(@available_agent)
     agent_groups = agent.agent_groups.collect{|ag| ag.group_id}
     group_queue = get_key(group_queue_key)
     if group_queue
       group_calls = JSON.parse(group_queue)
+      Rails.logger.info "Group Hunt :: Account :: #{current_account.id} :: Key :: #{group_queue_key} Value :: #{group_calls.inspect}"
       hunted_group = group_calls.keys.select{|group| agent_groups.include? group.to_i }.first
       hunted_group_calls = group_calls[hunted_group]
       @priority_call = hunted_group_calls ? hunted_group_calls.first : nil
+      Rails.logger.info "Group Hunt :: Account :: #{current_account.id} :: Selected CallSid :: #{@priority_call.inspect}"
     end
   end
 
   def default_queue_call
+    Rails.logger.info "Inside Simple Hunt :: Account :: #{current_account.id} :: Agent :: #{@available_agent}"
     queued_calls = get_key(default_queue_key)
     if queued_calls
       calls = JSON.parse(queued_calls)
+      Rails.logger.info "Simple Hunt :: Account :: #{current_account.id} :: Key :: #{default_queue_key} :: Value :: #{calls.inspect}"
       calls.first
     end
   end
@@ -129,9 +152,11 @@ module Freshfone::Queue
   def normal_queue
     calls = get_key(default_queue_key)
     waiting_calls = (calls) ? JSON.parse(calls) : []
+    Rails.logger.info "Simple Queue Before Adding :: Account :: #{current_account.id} :: Key :: #{default_queue_key} Value :: #{waiting_calls.inspect}"
     unless waiting_calls.include? params[:CallSid]
-      waiting_calls << params[:CallSid] 
+      waiting_calls << params[:CallSid]
       set_key(default_queue_key, waiting_calls.to_json)
+      Rails.logger.info "Simple Queue After Adding :: Account :: #{current_account.id} :: Key :: #{default_queue_key} Value :: #{waiting_calls.inspect}"
     end
   end
 
@@ -139,10 +164,12 @@ module Freshfone::Queue
     priority_queue_key = send("#{params[:hunt_type]}_queue_key")
     calls = get_key(priority_queue_key)
     waiting_calls = (calls) ? JSON.parse(calls) : {}
-    waiting_calls[params[:hunt_id]] ||= [] 
+    waiting_calls[params[:hunt_id]] ||= []
+    Rails.logger.info "Priority Queue Before Adding :: Account :: #{current_account.id} :: Key :: #{priority_queue_key} :: Value :: #{waiting_calls.inspect}"
     unless waiting_calls[params[:hunt_id]].include? params[:CallSid]
       waiting_calls[params[:hunt_id]] << params[:CallSid] 
       set_key(priority_queue_key, waiting_calls.to_json)
+      Rails.logger.info "Priority Queue After Adding :: Account :: #{current_account.id} :: Key :: #{priority_queue_key} :: Value :: #{waiting_calls.inspect}"
     end
   end
 

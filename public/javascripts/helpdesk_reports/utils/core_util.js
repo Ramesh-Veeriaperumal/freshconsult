@@ -76,14 +76,14 @@ HelpdeskReports.CoreUtil = {
     },
     setFilterDisplayData: function () {
         //Incase of sprout plan populte the seperate label in header
-         if(HelpdeskReports.locals.is_non_sprout_plan == 'true'){
+         if(HelpdeskReports.locals.is_non_sprout_plan){
             var tmpl = JST["helpdesk_reports/templates/filter_data_template"]({ 
                 data: HelpdeskReports.locals.select_hash 
             });
             jQuery("#filter_text").html(tmpl);
             trigger_event("report_refreshed",{});
         } else{
-            jQuery(".date-value").html(jQuery("#date_range").val());
+            jQuery(".date-value").html(jQuery("#sprout-datepicker").val());
         }
 
     },
@@ -287,6 +287,11 @@ HelpdeskReports.CoreUtil = {
     dateChanged: function () {
         var locals    = HelpdeskReports.locals;
         var date      = jQuery('#date_range').val();
+        if(HelpdeskReports.locals.is_non_sprout_plan){
+            date  = jQuery('#date_range').val();
+        } else {
+            date = jQuery('#sprout-datepicker').val();
+        }
         //var preRanges = locals.presetRangesSelected;
         locals.date_range = date;
         if(locals.params != undefined) {
@@ -402,8 +407,9 @@ HelpdeskReports.CoreUtil = {
         jQuery('#reports_wrapper').on('keypress.helpdesk_reports keyup.helpdesk_reports keydown.helpdesk_reports', "#date_range", function (ev) {
             _this.actions.disableKeyPress(ev);
         });
-        jQuery(document).on("presetRangesSelected", function(event,status) {
-            HelpdeskReports.locals.presetRangesSelected = status;
+        jQuery(document).on("presetRangesSelected", function(event,data) {
+            HelpdeskReports.locals.presetRangesSelected = data.status;
+            HelpdeskReports.locals.presetRangesPeriod = data.period;
         });
         jQuery('#reports_wrapper').on('mousemove.helpdesk_reports', '.report-filters-container', function(event) {
             event.preventDefault();
@@ -701,7 +707,9 @@ HelpdeskReports.CoreUtil = {
         var tmpl = JST["helpdesk_reports/templates/multiselect_tmpl"](field_hash);
         jQuery(tmpl).appendTo('#active-report-filters');
 
-        var config = {};
+        var config = {
+            maximumSelectionSize: _this.MULTI_SELECT_SELECTION_LIMIT
+        };
         if(jQuery.inArray(field_hash.condition,_this.filter_remote) != -1){
             config = _this.getRemoteFilterConfig(field_hash.condition,false);
         }
@@ -911,20 +919,69 @@ HelpdeskReports.CoreUtil = {
         }
         return finaldate;
     },   
+    convertPresetRangesToDate : function(period,diff) {
+        
+        var dateFormat = getDateFormat('mediumDate').toUpperCase();   
+        var date_lag   = HelpdeskReports.locals.date_lag;
+        var date_const = Helpkit.DateRange;
+        moment.lang('en');
+        var date_ranges = this.getDateRangeDefinition(dateFormat,date_lag);
+
+        //For exisiting saved reports
+        if(period == undefined) {
+            return this.convertDateDiffToDate(diff);
+        }
+        
+        if(period == date_const.TODAY){
+            return date_ranges['endDate'];
+        } else if(period == date_const.YESTERDAY) {
+            return date_ranges['1'];
+        } else if(period == date_const.LAST_7){
+            return date_ranges[7] + " - " + date_ranges['endDate'];
+        } else if(period == date_const.LAST_30) {
+            return date_ranges[30] + " - " + date_ranges['endDate'];
+        } else if(period == date_const.LAST_90) {
+            return date_ranges[90] + " - " + date_ranges['endDate'];
+        } else if(period == date_const.THIS_WEEK) {
+            var end_date        = date_ranges['endDate'];
+            var this_week_start = date_ranges['this_week_start'];
+            var this_week_end   = Date.parse(end_date) <= Date.parse(this_week_start) ? this_week_start : end_date;                    
+            return this_week_start + " - " + this_week_end;
+        } else if(period == date_const.PREVIOUS_WEEK) {
+            return date_ranges['previous_week_start'] + " - " + date_ranges['previous_week_end'];
+        } else if(period == date_const.THIS_MONTH) {
+            var end_date         = date_ranges['endDate'];
+            var this_month_start = date_ranges['this_month_start'];
+            var this_month_end   = Date.parse(end_date) <= Date.parse(this_month_start) ? this_month_start : end_date;                    
+            return this_month_start + " - " + this_month_end;
+        } else if(period == date_const.PREVIOUS_MONTH) {
+            return date_ranges['previous_month_start'] + " - " + date_ranges['previous_month_end'];
+        } else if(period == date_const.LAST_3_MONTHS) {
+            var end_date      = date_ranges['endDate'];
+            var three_month_start = date_ranges['last_3_months'];
+            var three_month_end   = Date.parse(end_date) <= Date.parse(three_month_start) ? three_month_start : end_date;                    
+            return three_month_start + " - " + three_month_end;
+        } else if(period == date_const.LAST_6_MONTHS) {
+            var end_date      = date_ranges['endDate'];
+            var six_month_start = date_ranges['last_6_months'];
+            var six_month_end   = Date.parse(end_date) <= Date.parse(six_month_start) ? six_month_start : end_date;                    
+            return six_month_start + " - " + six_month_end;
+        } else if(period == date_const.THIS_YEAR) {
+            var end_date        = date_ranges['endDate'];
+            var this_year_start = date_ranges['this_year_start'];
+            var this_year_end   = Date.parse(end_date) <= Date.parse(this_year_start) ? this_year_start : end_date;                    
+            return this_year_start + " - " + this_year_end;
+        } 
+    },
     calculateDateLag: function () {
         var date_lag = HelpdeskReports.locals.date_lag;
+        var dateFormat = getDateFormat('mediumDate').toUpperCase();   
         date = {};
         if (date_lag === undefined) {
             date_lag = 0;   
         }
         moment.lang('en');
-        date = {
-            1:       moment.tz(new Date(),HelpdeskReports.locals.account_time_zone).subtract((1   + date_lag),"days").format("MM-DD-YYYY"), 
-            7:       moment.tz(new Date(),HelpdeskReports.locals.account_time_zone).subtract((6   + date_lag),"days").format("MM-DD-YYYY"),
-            30:      moment.tz(new Date(),HelpdeskReports.locals.account_time_zone).subtract((29  + date_lag),"days").format("MM-DD-YYYY"),
-            90:      moment.tz(new Date(),HelpdeskReports.locals.account_time_zone).subtract((89  + date_lag),"days").format("MM-DD-YYYY"),
-            endDate:  moment.tz(new Date(),HelpdeskReports.locals.account_time_zone).subtract(date_lag,"days").format("MM-DD-YYYY")
-        }
+        date = this.getDateRangeDefinition(dateFormat,date_lag);
         HelpdeskReports.locals.endDate = date.endDate;
 
         return date;
@@ -932,8 +989,60 @@ HelpdeskReports.CoreUtil = {
     constructDateRangePicker: function () {
 
         var date = this.calculateDateLag();
-        var previous_value = jQuery("#date_range").val(); //saved filter
-        var presetRanges = [{
+            if(HelpdeskReports.locals.is_non_sprout_plan){
+                var presetRanges = [{
+                    text: I18n.t('helpdesk_reports.this_week'),
+                    dateStart: date.this_week_start,
+                    dateEnd: Date.parse(date.endDate) <= Date.parse(date.this_week_start) ? date.this_week_start : date.endDate,
+                    period : "this_week"
+                },{
+                    text: I18n.t('helpdesk_reports.previous_week'),
+                    dateStart: date.previous_week_start,
+                    dateEnd: date.previous_week_end,
+                    period : "previous_week"
+                },{
+                    text: I18n.t('helpdesk_reports.last_num_days',{ num: 7 }),
+                    dateStart: date[7],
+                    dateEnd: date.endDate,
+                    period : "last_7"
+                },{
+                    text: I18n.t('helpdesk_reports.this_month'),
+                    dateStart: date.this_month_start,
+                    dateEnd: Date.parse(date.endDate) <= Date.parse(date.this_month_start) ? date.this_month_start : date.endDate,
+                    period : "this_month"
+                },{
+                    text: I18n.t('helpdesk_reports.previous_month'),
+                    dateStart: date.previous_month_start,
+                    dateEnd: date.previous_month_end,
+                    period : "previous_month"
+                },{
+                    text: I18n.t('helpdesk_reports.last_num_days',{ num: 30 }),
+                    dateStart: date[30],
+                    dateEnd: date.endDate,
+                    period : "last_30"
+                },{
+                    text: I18n.t('helpdesk_reports.last_num_months',{ num : '3'}),
+                    dateStart: date.last_3_months,
+                    dateEnd: Date.parse(date.endDate) <= Date.parse(date.last_3_months) ? date.last_3_months : date.endDate ,
+                    period : "last_3_months"
+                },{
+                    text: I18n.t('helpdesk_reports.last_num_days',{ num: 90 }),
+                    dateStart: date[90],
+                    dateEnd: date.endDate,
+                    period : "last_90"
+                },{
+                    text: I18n.t('helpdesk_reports.last_num_months',{ num : '6'}),
+                    dateStart: date.last_6_months,
+                    dateEnd: Date.parse(date.endDate) <= Date.parse(date.last_6_months) ? date.last_6_months : date.endDate,
+                    period : "last_6_months"
+                },{
+                    text: I18n.t('helpdesk_reports.this_year'),
+                    dateStart: date.this_year_start, 
+                    dateEnd: Date.parse(date.endDate) <= Date.parse(date.this_year_start) ? date.this_year_start : date.endDate,
+                    period : "this_year"
+                }];
+            }else{
+                var presetRanges = [{
                     text: I18n.t('helpdesk_reports.last_num_days',{ num: 7 }),
                     dateStart: date[7],
                     dateEnd: date.endDate
@@ -946,27 +1055,31 @@ HelpdeskReports.CoreUtil = {
                     dateStart: date[90],
                     dateEnd: date.endDate
                 }];
-
+            }
             if(HelpdeskReports.locals.date_lag == 0){
                 presetRanges.unshift({
                     text: I18n.t('helpdesk_reports.today'),
                     dateStart: date.endDate,
-                    dateEnd: date.endDate
+                    dateEnd: date.endDate,
+                    period : 'today'
                 },{
                     text: I18n.t('helpdesk_reports.yesterday'),
                     dateStart: date[1],
-                    dateEnd: date[1]
+                    dateEnd: date[1],
+                    period : 'yesterday'
                 });
             }else{
                 presetRanges.unshift({
                     text: I18n.t('helpdesk_reports.yesterday'),
                     dateStart: date.endDate,
-                    dateEnd: date.endDate
+                    dateEnd: date.endDate,
+                    period : 'yesterday'
                 });
             }
+
         var config = {
                 earliestDate: Date.parse('01/01/2010'),
-                latestDate: Date.parse(date.endDate),
+                latestDate: Date.parse(date.end_date_with_no_lag),
                 presetRanges: presetRanges,
                 presets: {
                     dateRange: I18n.t('helpdesk_reports.date_range')
@@ -981,7 +1094,7 @@ HelpdeskReports.CoreUtil = {
             };
 
         //Different date pickers for sprout plan & others
-        if(HelpdeskReports.locals.is_non_sprout_plan == 'true'){
+        if(HelpdeskReports.locals.is_non_sprout_plan){
             config.onChange = function() {
                 trigger_event("filter_changed",{});
             };
@@ -989,15 +1102,19 @@ HelpdeskReports.CoreUtil = {
         } else{
             //Hide the appliced filter details as there is only date for sprout plan
             jQuery("#filter_text").addClass('hide');
+            var previous_value = jQuery('#sprout-datepicker').val();
 
             config.onClose = function(){
                     //populate the input field with val
-                    var selected_value = jQuery(picker).val();
-                    if( selected_value != '' && selected_value != previous_value){
-                        jQuery("#date_range").val(selected_value);
-                        previous_value = selected_value;
-                        jQuery("[data-action='reports-submit']").trigger('click.helpdesk_reports');
-                    }
+                    setTimeout(function(){
+                        var selected_value = jQuery(picker).val();
+                        if( selected_value != '' && selected_value != previous_value){
+                            jQuery("#sprout-datepicker").val(selected_value);
+                            previous_value = selected_value;
+                            jQuery("[data-action='reports-submit']").trigger('click.helpdesk_reports');
+                        }    
+                    },100);
+                    
             };
             var picker = jQuery("#sprout-datepicker").daterangepicker(config);
         }
@@ -1330,6 +1447,8 @@ HelpdeskReports.CoreUtil = {
     flushSavedUtil : function(){
         HelpdeskReports.SavedReportUtil.initialized = false;
         jQuery(document).off('.save_reports');
+        //Delete the dialog content
+        jQuery('#report-dialog-save').remove();
     },
     flushCharts: function () {
         if (Highcharts && Highcharts.charts && Highcharts.charts.length) {
@@ -1348,7 +1467,7 @@ HelpdeskReports.CoreUtil = {
         body.stop().animate({scrollTop:0}, '500', 'swing');
     },
     adjustFilterButton : function() {
-        if(HelpdeskReports.locals.is_non_sprout_plan == "true") {
+        if(HelpdeskReports.locals.is_non_sprout_plan) {
             var lang = jQuery("html").attr("lang");
             if(lang && lang == "zh-TW") {
                 jQuery(".edit-filter").removeClass('span1').addClass('span2');
@@ -1421,5 +1540,26 @@ HelpdeskReports.CoreUtil = {
             diff = (Date.parse(HelpdeskReports.locals.endDate)-Date.parse(date_range[0])) / (36e5 * 24);
         }
         return diff;
+    },
+    getDateRangeDefinition : function(dateFormat,date_lag){
+
+        var timezone = HelpdeskReports.locals.account_time_zone;
+        return {
+            1:                    moment.tz(new Date(),timezone).subtract(1,'days').format(dateFormat), 
+            7:                    moment.tz(new Date(),timezone).subtract((6   + date_lag),"days").format(dateFormat),
+            30:                   moment.tz(new Date(),timezone).subtract((29  + date_lag),"days").format(dateFormat),
+            90:                   moment.tz(new Date(),timezone).subtract((89  + date_lag),"days").format(dateFormat),
+            endDate:              moment.tz(new Date(),timezone).subtract(date_lag,"days").format(dateFormat),
+            end_date_with_no_lag: moment.tz(new Date(),timezone).format(dateFormat),
+            this_week_start:      moment.tz(new Date(),timezone).startOf('isoWeek').format(dateFormat),
+            previous_week_start:  moment.tz(new Date(),timezone).subtract(1, 'weeks').startOf('isoWeek').format(dateFormat),
+            previous_week_end:    moment.tz(new Date(),timezone).subtract(1, 'weeks').endOf('isoWeek').format(dateFormat),
+            this_month_start:     moment.tz(new Date(),timezone).startOf('month').format(dateFormat),
+            previous_month_start: moment.tz(new Date(),timezone).subtract(1,'months').startOf('month').format(dateFormat),
+            previous_month_end:   moment.tz(new Date(),timezone).subtract(1,'months').endOf('month').format(dateFormat),
+            last_3_months:        moment.tz(new Date(),timezone).subtract(date_lag,"days").subtract(2,'months').startOf('month').format(dateFormat),
+            last_6_months:        moment.tz(new Date(),timezone).subtract(date_lag,"days").subtract(5,'months').startOf('month').format(dateFormat),
+            this_year_start:      moment.tz(new Date(),timezone).startOf('year').format(dateFormat),
+        };
     }
 };

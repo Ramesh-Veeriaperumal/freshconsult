@@ -3,6 +3,8 @@ class Social::FacebookPageMapping < ActiveRecord::Base
 	include MemcacheKeys
 
 	self.primary_key = :facebook_page_id
+  
+  attr_accessible :account_id
 
 	not_sharded
 

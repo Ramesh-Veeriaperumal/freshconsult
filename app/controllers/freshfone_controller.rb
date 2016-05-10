@@ -10,6 +10,7 @@ class FreshfoneController < FreshfoneBaseController
 	before_filter :indian_number_incoming_fix, :only => [:voice, :ivr_flow]
 	before_filter :invalid_number_incoming_fix, :only => [:voice, :ivr_flow]
 	before_filter :set_native_mobile, :only => :create_ticket
+	before_filter :validate_ticket_creation, only: [:create_ticket]
 	before_filter :apply_conference_mode, :only => [:voice, :ivr_flow]
 		
 	def voice

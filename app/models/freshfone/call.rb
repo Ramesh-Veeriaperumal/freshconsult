@@ -136,6 +136,16 @@ class Freshfone::Call < ActiveRecord::Base
     }
   }
 
+  scope :ongoing_by_caller, lambda { |caller_id|
+    {
+      :conditions => ["caller_number_id = ? and call_status in (?)", caller_id,
+        [CALL_STATUS_HASH[:'in-progress'], CALL_STATUS_HASH[:'on-hold'],
+        CALL_STATUS_HASH[:connecting], CALL_STATUS_HASH[:default]]], 
+      :order => "freshfone_calls.id DESC",
+      :include => [:freshfone_number]    
+    }
+  }
+
   scope :agent_progress_calls, lambda { |user_id|
     {:conditions => ["user_id = ? and (call_status in (?) and created_at > ? and created_at < ?)",
           user_id, [CALL_STATUS_HASH[:default], CALL_STATUS_HASH[:'in-progress'], CALL_STATUS_HASH[:'on-hold'], CALL_STATUS_HASH[:connecting]], 4.hours.ago.to_s(:db), Time.zone.now.to_s(:db)
@@ -210,6 +220,16 @@ class Freshfone::Call < ActiveRecord::Base
 
   def can_be_connected?
     ringing? or queued?
+  end
+
+  def ongoing?
+    onhold? or inprogress?
+  end
+
+  def can_add_agent?
+    ongoing? &&
+      supervisor_controls.agent_conference_calls(Freshfone::SupervisorControl::CALL_STATUS_HASH[:'in-progress'])
+                         .blank?
   end
 
   def recording_deleted_by

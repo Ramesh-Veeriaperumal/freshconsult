@@ -13,7 +13,7 @@ class HelpdeskReports::Formatter::Ticket
   end
   
   def klass
-    HelpdeskReports::Formatter::Ticket.const_get(report_type.classify)
+    "HelpdeskReports::Formatter::Ticket::#{report_type.to_s.classify}".constantize
   end
 
 end

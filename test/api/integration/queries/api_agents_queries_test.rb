@@ -9,9 +9,9 @@ class ApiAgentsQueriesTest < ActionDispatch::IntegrationTest
       api_index: 2,
       api_me: 2,
 
-      show: 13,
-      index: 13,
-      me: 13
+      show: 11,
+      index: 11,
+      me: 11
     }
 
     id = Agent.first.user.id

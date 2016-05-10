@@ -29,6 +29,16 @@ module Freshfone::NodeNotifier
     publish(message, channel)
   end
 
+  def notify_agent_conference_status(current_call, node_event, call_status = nil)
+    channel = "conference/#{@current_account.id}/calls/#{node_event}"
+    message = {
+      call_sid: current_call.call_sid,
+      agent: current_call.user_id,
+      call_status: call_status
+    }
+    publish(message, channel)
+  end
+
   def notify_transfer_reconnected(current_call)
     channel = "conference/#{@current_account.id}/calls/transfer_reconnected"
     message ={

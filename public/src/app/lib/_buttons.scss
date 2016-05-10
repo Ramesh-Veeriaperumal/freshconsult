@@ -518,22 +518,23 @@ div.action_buttons:hover{
   .off-label span{ @include padding-left(12px); }
 }
 
-/* Tourmyapp admin help button */
-.guided-tour-button{
+/*Inline Manual Tour Link Styles*/
+
+.inm_tour_button{
+  font-weight: 600;
   border: 1px solid #CCC;
-  display: block;
-  @include border-radius(20px);
-  height: auto;
-  padding: 6px 0 7px 33px;
-  background-image: inline-image("cdn-ignored/inline-images/tourmyapp-btn-arrow.png");
+  @include border-radius(5px);
+  @include padding(10px 10px 10px 40px);
+  background-image: inline-image('cdn-ignored/inline-images/inm-tour2x.png');
   background-repeat: no-repeat;
-  background-position: 7px 6px;
-  font-weight:bold;
-  display: block;
-  line-height:20px;
+  @if $rtl{ 
+    background-position: 98% 50%;
+    }
+  @else{
+    background-position: 2% 50%;
+  }
+  background-size: 25px 25px;
+  line-height: 20px;
+  display:block;
 }
-.guided-tour-button:hover, .tourmyapp .tourmyapp-content a:hover { 
-  border-color: darken(#CCC, 5%); 
-  text-decoration:none; 
-  color:$linkColorHover;
-}
+

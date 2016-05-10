@@ -37,4 +37,11 @@ class Ecommerce::EbayAccount < Ecommerce::Account
     end
   end
 
+  def renew_token?
+    return false unless self.configs[:hard_expiration_time]
+    expire_time = Time.parse(self.configs[:hard_expiration_time])
+    return true if Time.now.utc > expire_time
+    expire_time - Time.now.utc < 3.months.to_i
+  end
+
 end

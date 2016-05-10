@@ -241,7 +241,7 @@ class Helpdesk::DashboardController < ApplicationController
 
   def round_robin_filter
     if params[:group_id].present?
-      @group = current_account.groups.find_by_id(params[:group_id])
+      @group = current_user.accessible_roundrobin_groups.find_by_id(params[:group_id])
       if @group
         set_others_redis_key(round_robin_filter_key,params[:group_id], 86400 * 7)
         @current_group_filter = params[:group_id]
@@ -250,7 +250,7 @@ class Helpdesk::DashboardController < ApplicationController
       @current_group_filter = get_others_redis_key(round_robin_filter_key)
 
       if @current_group_filter
-        @group = current_account.groups.round_robin_groups.find_by_id(@current_group_filter) 
+        @group = current_user.accessible_roundrobin_groups.find_by_id(@current_group_filter) 
         unless @group
           @current_group_filter = nil 
           remove_others_redis_key(round_robin_filter_key)
@@ -258,7 +258,7 @@ class Helpdesk::DashboardController < ApplicationController
       end
     end
     unless @group
-      @group = current_account.groups.round_robin_groups.first
+      @group = current_user.accessible_roundrobin_groups.first
       if @group
         @current_group_filter = @group.id 
         set_others_redis_key(round_robin_filter_key,@group.id, 86400 * 7)

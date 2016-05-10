@@ -2,8 +2,6 @@ require_relative '../../test_helper'
 
 class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
   include CompaniesTestHelper
-  include CompanyHelper
-  include ContactFieldsHelper
 
   JSON_ROUTES = Rails.application.routes.routes.select do |r|
     r.path.spec.to_s.starts_with('/api/companies/') &&

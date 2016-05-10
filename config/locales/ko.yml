@@ -1237,9 +1237,9 @@ ko:
         send_test_mail_info2: "<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>이메일 전달 규칙을 확인하는 방법</a>을 참조하십시오."
         title_message: "귀하의 고객 지원 서비스를 네 단계로 점프스타트하십시오."
         support_email_title: "지원<br> 이메일"
-        agents_title_1: "에이전트&lt;br&gt; 추가"
+        adding_agents: "에이전트<br> 추가"
         rebrand_title: "로고 <br>및 색상"
-        social_title_1: "SNS&lt;br&gt; 사용"
+        going_social: "SNS<br> 사용"
         skip_text: "아니요. 괜찮습니다. 제 헬프데스크로 보내 주십시오."
         back_link: 돌아가기
         next_link: 다음
@@ -1361,7 +1361,6 @@ ko:
         feedbackwidget_users_can: "사용자 수행 가능 작업"
         feedbackwidget_attach_a_file: "파일 첨부"
         feedbackwidget_screenshot: "스크린샷 찍기"
-        feedbackwidget_screenr_recording: "Screenr 기록"
         feedbackwidget_search_area: "항목 검색"
         feedbackwidget_use_https: "https 사용"
         feedbackwidget_mobile_view: "모바일 보기"
@@ -5415,36 +5414,6 @@ ko:
         es: 스페인어
         sv: 스웨덴어
         tr: 터키어
-    screenr:
-      button_label: "스크린캐스트 기록"
-      label: Screenr
-      desc: "Screenr로 스크린캐스트를 기록하여 티켓, 포럼 및 솔루션 글(기사)에 첨부하십시오."
-      helptext: "<h4>Freshdesk Screenr 통합</h4><p><br/>Screenr 통합을 통해 에이전트와 고객은 Freshdesk를 사용하는 동안 스크린캐스트를 캡처하고 공유할 수 있습니다. 이로써 오류 보고서 또는 지침 비디오를 티켓, 포럼 게시글 및 솔루션 글(기사)에 바로 첨부할 수 있습니다.</p><p>활성화되고 나면 기록 버튼이 피드백 위젯, 토론 및 기술 자료 옆에 나란히 표시됩니다. 전체 브라우저 윈도우를 기록할 수도 있고 원하는 경우 그 중 특정 부분을 선택할 수도 있습니다. 세션이 완료되면 스크린캐스트는 자동으로 삽입됩니다.</p><p>이 통합은 Screener URL(예: <a>http://yourname.viewcasts.com</a>) 및 기록기 ID(계정으로 로그인하면 확인 가능)를 입력하면 설정할 수 있습니다.</p>"
-      form:
-        recorder_id: "기록기 ID"
-        recorder_id_info: "기록기 ID는 편집 기록기 페이지에서 사용할 수 있는 고유한 ID입니다."
-        site_address_info: ""
-        site_address: "Screenr 하위 도메인"
-        widget_title: "위젯 제목"
-        visible_agent_forum: "포럼 화면 기록(에이전트)"
-        visible_agent_forum_info: "포럼에서 Screenr 기록기 사용 가능하도록 활성화(에이전트)"
-        visible_agent_ticket: "에이전트 티켓 화면 기록"
-        visible_agent_ticket_info: "티켓에서 Screenr 기록기 사용 가능하도록 활성화(에이전트)"
-        visible_solution: "솔루션 화면 기록"
-        visible_solution_info: "솔루션에서 Screenr 기록기 사용 가능하도록 활성화"
-        visible_portal_ticket: "포털 티켓 화면 기록"
-        visible_portal_ticket_info: "포털 티켓 양식에서 Screenr 기록기 사용 가능하도록 활성화"
-        visible_portal_forum: "포럼 티켓 화면 기록(포털)"
-        visible_portal_forum_info: "포털 포럼에서 Screenr 기록기 사용 가능하도록 활성화"
-        visible_widget: "위젯 화면 기록"
-        visible_widget_info: "피드백 위젯에서 Screenr 기록기 사용 가능하도록 활성화"
-      settings:
-        enable_screenr_recording: "Screenr 기록 활성화"
-        ticket_interaction: "티켓 페이지(새로 만들기, 편집, 응답)"
-        forum_interaction: "포럼 페이지(새로 만들기, 편집, 코멘트)"
-        create_solution: "솔루션(새로 만들기, 편집)"
-        for_agents: 에이전트용
-        for_customer: 고객용
     harvest:
       label: 하베스트(Harvest)
       desc: "하베스트(Harvest) 프로젝트와 태스크에 티켓에 사용한 시간 로그를 보낼 수 있습니다."

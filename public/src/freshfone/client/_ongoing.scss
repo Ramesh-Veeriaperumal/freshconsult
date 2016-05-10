@@ -20,11 +20,22 @@
   }
 }
 
+.freshfone_widget {
+	.add_agent_call {
+	  .hold,.transfer_call,.ongoingDialpad{
+	    visibility: hidden;
+	  }
+	  .mute {
+	    border-right: 1px solid #ccc;
+	  }
+	}
+}
+
 .ongoing {
 	margin: 1px 1px;
 	height: 32px;
 	padding-left: 36px;
-	@include border-radius(6px);
+	@include border-bottom-right-radius(6px);
 	background-color: $ongoing-background;
 	direction: ltr;
 	[class*="#{$font-class}"]{
@@ -34,12 +45,14 @@
 		a {
 			height: 32px;
 			background-color:$ongoing-tabs-background;
-			&.active {
-				background-color: $ongoing-active-tabs-background;
-			}
-			&:hover{
-				background-color: $ongoing-hover-tabs-background;
-			}
+	  }
+	}
+	.mute, .hold, .ongoingDialpad {
+		&:active {
+			background-color: $ongoing-active-tabs-background;
+		}
+		&:hover{
+			background-color: $ongoing-hover-tabs-background;
 		}
 	}
 	.end_call {
@@ -51,7 +64,7 @@
 		width: 85px;
 		height: 32px;
 		padding-left: 12px;
-		@include border-left-radius(4px);
+		@include border-bottom-left-radius(4px);
 		text-align: left;
 		i.#{$font-class}cross{
 			color: #fff;
@@ -107,6 +120,21 @@
 	.transfer_call, .mute, .hold{
 		margin-right: 1px;
 	}
+	.transfer_call.active {
+	  &:hover {
+	    background-color: #333;
+	  }
+	}
+	.transfer_call {
+		&.transfer-disabled {
+			pointer-events: none;
+			opacity: 0.2;
+		}
+	  &:hover {
+	    background-color: $ongoing-hover-tabs-background;
+	  }
+	}
+	
 	.transfer_call.transferring_state, .mute.active, .hold.active{
 		background-color: #ff9105;
 		@include animation(glow 1s infinite);
@@ -148,14 +176,21 @@
 		width: $ongoing-popup-width;
 		right: $ongoing-popup-right;
 		position: fixed;
-		bottom: 41px;
-		border-radius: 4px;
+		bottom: 38px;
+		@include border-radius(4px 4px 0px 0px);
 		border: $ongoing-context-border;
 		background-color: $transfer-call-background;
 		box-shadow: $ongoing-box-shadow;
 		z-index: $ongoing-popup-z-index;
 		.list-component{
-			height: 260px;
+			height: 246px;
+			.adding_agent_state {
+				li {
+				  .add_agent {
+				    display: none;
+				  }
+				}
+			}
 		}
 		.search {
 			width: 100%;
@@ -174,6 +209,8 @@
 		@include float(left);
 		height: 100%;
 		border: 0;
+		@include margin-left(3px);
+		width: 32px;
 		img {
 			width: 25px;
 			height: 25px;
@@ -198,38 +235,73 @@
 		overflow: auto;
 		li {
 			@include clear(both);
-			border-bottom: 1px solid $available-agent-border;
-			height: 35px;
 			padding: 7px;
 			@include box-sizing(border-box);
-			cursor:pointer;
 			background: rgba(255,255,255,0.2);
+			height: 40px;
 		}
 		li.transfer-active{
 			background-color: darken($transfer-call-background, 5%);
+			.agents_count{
+				display: block;
+			}
 		}
 		.avatar{
 			width:40px;
 			font-size: 20px;
 		}
-
 	}
 	ul.available_agents_list, ul.available_numbers_list{
-		max-height: 82%;
+		height: 81%;
+	}
+
+	.available_numbers_list, .search-number-label,.available_agents_list{
+		li.transfer-external-selected, li.transfer-active{
+			.transfer,.add_agent{
+				@include border-radius(50%);
+				border: 1px solid #ddd;
+				text-align: center;
+				background-color: #fff;
+				@include padding(5px);
+				width: 16px;
+				height: 15px;
+				margin-top: -2px;
+				&:hover {
+				 background: #046c11;
+				 color: #fff;
+				 border: 1px solid #046c11;
+				}
+			}
+		}
+		.call-actions{
+			display: none;
+			@include margin-right(11px);
+		}
 	}
 	.available_agents_list{
 		li.transfer-active{
-			.transfer-agent-onover-icon{
-				display: inline-block;
-		  	background: green;
-		  	position: relative;
+			.call-actions{
+				display: block;
 			}
-			.available_agents_avatar {
+			.transfer{
+			 	font-size: 12px;
+			 	@include margin-left(1px);
+			 }
+			.add_agent{
+				font-size: 17px;
+				@include margin-right(7px);
+			}
+		}
+		li.group-transfer, li.adding_agent_state{
+			.add_agent{
 				display: none;
 			}
 		}
-		.transfer-agent-onover-icon{
-			display: none;
+		.agents_count {
+			float: right;
+			width: 65px;
+			margin-top: 4px;
+			color: #999;
 		}
 	}
 	.available_agents_searchicon {
@@ -237,21 +309,15 @@
 	 @include left(15px);
 		top: 15px;
 	}
+	.available_agents_name {
+		width: 160px;
+		height: 20px;
+	}
 	.available_agents_name, .agent-group-name {
-		@include margin(2px 0 0 5px);
-		width: 190px;
+		@include margin(3px 0 0 -5px);
 		font-weight: 500;
 		color: $available-agent-name;
-		@include padding-left(35px);	
 		font-size: 13px;
-		.available_group_agents_name{
-			float: left;
-		}
-		.agents_count{
-			float: right;
-			font-weight: normal;
-			margin-right: -65px;
-		}
 	}
 
 	@include keyframes(glow-inner-circle) {
@@ -801,9 +867,9 @@
 		position: absolute; 
 		top: 15px; 
 		border-width: 5px;
- 		@include left(26px); 
+ 		@include left(22px); 
 	}
-	.transfer-onover-icons,.transfer-phone-icons,.transfer-agent-onover-icon{
+	.transfer-phone-icons{
 		background: #ccc;
 		border-radius:50%;
 		padding:  4px 2px 0px;
@@ -813,8 +879,8 @@
 		height: 20px;
 		text-align: center;
 		color:#fff;
-	}
-	.transfer-phone-icons{
+		border: 0;
+		@include margin(0px 7px 0px 3px);
 		display: inline-block;
 	}
 	.available_numbers_list li{
@@ -825,19 +891,14 @@
 	}
 	.available_numbers_list, .search-number-label{
 		li.transfer-external-selected{
-			.transfer-onover-icons{
-				display:inline-block;
+			.call-actions{
+				display: block;
+				@include margin-right(11px);
 			}
-			span.transfer-phone-icons{
-				display: none;
-			}		
+			.transfer{
+				@include padding(6px 5px 5px 5px);
+			}
 		}
-	}
-	.transfer-onover-icons{
-		display: none;
-		background: green;
-		position: absolute;
-		top: 8px;
 	}
 }
 

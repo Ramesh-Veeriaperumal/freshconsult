@@ -15,10 +15,12 @@ module Facebook
       end
       
       def add
+        return unless self.feed_id 
         update_like_in_redis(redis_key, 1)
       end
           
       def remove
+        return unless self.feed_id
         update_like_in_redis(redis_key, -1)
       end
       
