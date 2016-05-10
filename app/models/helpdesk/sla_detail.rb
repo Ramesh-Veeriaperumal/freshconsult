@@ -140,15 +140,17 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     end
 
     def on_status_change_bhrs(ticket, due_by_type, calendar)
-      sla_timer = ticket.ticket_states.sla_timer_stopped_at
+      due_by_value = due_by_type.in_time_zone(Time.zone)
+      sla_timer = ticket.ticket_states.sla_timer_stopped_at.in_time_zone(Time.zone)
       bhrs_during_elapsed_time =  sla_timer.business_time_until(
         Time.zone.now,calendar)
-      if due_by_type > sla_timer
+      if due_by_value > sla_timer
         business_minute = bhrs_during_elapsed_time.div(60).business_minute
         business_minute.business_calendar_config = calendar
-        business_minute.after(due_by_type) 
+        Rails.logger.info "Acc id:: #{ticket.account_id}, Ticket id:: #{ticket.id}, Business Minute:::: #{business_minute.inspect}, Value:: #{due_by_value.inspect}, Zone:: #{Time.zone.name}"
+        business_minute.after(due_by_value) 
       else
-        due_by_type
+        due_by_value
       end
     end 
 
