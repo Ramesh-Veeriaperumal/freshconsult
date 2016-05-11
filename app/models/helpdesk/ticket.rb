@@ -771,12 +771,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (self.product && !self.product.portal_url.blank?) ? self.product.portal_url : account.host
   end
 
-  def solution_article_host article
-    portal = (self.product && self.product.portal) || Account.current.main_portal
-    (portal.has_solution_category?(article.solution_folder_meta.solution_category_meta.id) && portal.portal_url ) ||
-      (article.solution_folder_meta.solution_category_meta.portals.first && 
-        article.solution_folder_meta.solution_category_meta.portals.first.portal_url ) ||
-      false #returning false if category is an orphan
+  def article_url_options(article)
+    art_portal = (self.product && self.product.portal) || Account.current.main_portal
+    unless art_portal.has_solution_category?(article.solution_folder_meta.solution_category_meta.id)
+      art_portal = article.solution_folder_meta.solution_category_meta.portals.first
+    end
+    
+    (art_portal && { :host => art_portal.host, :protocol => art_portal.url_protocol }) || {}
   end
 
   def microresponse_only?

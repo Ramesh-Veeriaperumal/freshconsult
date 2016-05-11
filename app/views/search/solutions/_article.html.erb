@@ -1,6 +1,6 @@
 <% 
 unless article.nil?
-  url_opts = { :host => @ticket.solution_article_host(article) }
+  url_opts = @ticket.article_url_options(article)
   url_opts.merge!({ :url_locale => article.language.code }) if current_account.multilingual?
   article_url = url_opts[:host].present? && support_solutions_article_url(article, url_opts)
   
