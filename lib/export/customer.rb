@@ -4,6 +4,10 @@ class Export::Customer
   include Rails.application.routes.url_helpers
   include Export::Util
 
+  VALUE_MAPPING = {
+    "Language" => "language_name"
+  }
+
   def initialize(csv_hash, portal_url, type)
     @csv_hash = csv_hash
     @items = Account.current.send(type.pluralize)
@@ -43,11 +47,7 @@ class Export::Customer
       @items.each do |record|
         csv_data = []
         @headers.each do |val|
-          if val == "Language"
-            csv_data << record.send("language_name") if record.respond_to?("language_name")
-          else
-            csv_data << record.send(@csv_hash[val]) if record.respond_to?(@csv_hash[val])
-          end
+          csv_data << strip_equal(record.send(VALUE_MAPPING.fetch(val, @csv_hash[val]))) if record.respond_to?(VALUE_MAPPING.fetch(val, @csv_hash[val]))
         end
         csv << csv_data if csv_data.any?
       end

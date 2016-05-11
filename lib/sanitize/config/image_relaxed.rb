@@ -27,7 +27,7 @@ class Sanitize
         a abbr acronym address audio b bdo blockquote br caption cite code col colgroup dd del details dfn dl div
         dt em font figcaption figure h1 h2 h3 h4 h5 h6 hgroup hr i img ins kbd li mark
         ol p pre q rp rt ruby s samp section summary small strike strong sub sup table tbody td
-        tfoot th thead time tr tt u ul var wbr span iframe source
+        tfoot th thead time tr tt u ul var wbr span source video
       ],
       :remove_contents => [ 'style','title','script'],
       :attributes => {
@@ -47,13 +47,15 @@ class Sanitize
         'time'       => ['datetime', 'pubdate'],
         'ul'         => ['type'],
         'div'        => ['class'],
-        'iframe'     => ['src', 'width', 'height', 'frameborder', 'allowfullscreen'],
         'source'     => ['src', 'type'],
         'audio'      => ['controls', 'width', 'height'],
+        'video'      => ['src', 'width', 'height', 'crossorigin', 'poster', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted', 'controls'],
         'pre'        => ['rel','code-brush'],
         'font'       => ['color']
       },
-
+      :add_attributes => {
+        'a' => {'rel' => 'noreferrer'}
+      },
       :protocols => {
         'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', :relative],'target' => ['_blank','_self','_parent','_top',:relative]},
         'blockquote' => {'cite' => ['http', 'https', :relative]},
@@ -62,7 +64,6 @@ class Sanitize
         'ins'        => {'cite' => ['http', 'https', :relative]},
         'q'          => {'cite' => ['http', 'https', :relative]},
         'source'     => {'src'	=> ['http', 'https']},
-        'iframe'     => {'src'  => ['http', 'https', :relative]}
       }
     }
   end

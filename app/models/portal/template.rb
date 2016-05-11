@@ -18,6 +18,8 @@ class Portal::Template < ActiveRecord::Base
   before_create :set_defaults
   after_commit :clear_memcache_cache
 
+  xss_sanitize :only => [:header, :footer, :layout, :head],  :html_sanitize => [:header, :footer, :layout, :head]
+
   TEMPLATE_MAPPING = [ 
     [:header,  "portal/header.portal"],    
     [:footer,  "portal/footer.portal"],

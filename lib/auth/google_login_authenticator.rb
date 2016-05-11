@@ -15,8 +15,8 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
 
     random_key = SecureRandom.hex
     set_redis_for_sso(random_key)
-    domain_arg = domain(native_mobile_flag)
-    @result.redirect_url = construct_redirect_url(@origin_account, domain_arg, random_key, native_mobile_flag)
+    domain_arg = domain
+    @result.redirect_url = redirect_url(@origin_account, domain_arg, random_key, native_mobile_flag)
     @result
   end
 
@@ -37,7 +37,21 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
 
   private
     def construct_state_params env
-      "portal_domain%3D#{env['HTTP_HOST']}"
+      csrf_token = Base64.encode64(env['rack.session']["_csrf_token"])
+      "portal_domain%3D#{env['HTTP_HOST']}%26at%3D#{csrf_token}"
+    end
+
+    def redirect_url(account, domain_arg, random_key, native_mobile_flag)
+      protocol = construct_protocol(account, native_mobile_flag)
+      protocol + "://" + sso_login_path(domain_arg) + construct_params(domain_arg, random_key) + "&at=#{csrf_token_from_state_params}"
+    end
+
+    def sso_login_path domain_arg
+      domain_arg + (Rails.env.development? ? ":3000" : "") + "/sso/portal_google_sso"
+    end
+
+    def csrf_token_from_state_params
+      @state_params["at"].present? ? @state_params["at"][0] : nil
     end
 
 end
