@@ -161,7 +161,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
               data = data.utc.strftime(date_format)
             end
           end
-          record << escape_html(data)
+          record << escape_html(strip_equal(data))
         rescue Exception => e
           NewRelic::Agent.notice_error(e,{:custom_params => {:ticket_id => item.id }})
           Rails.logger.info "Exception in tickets export::: Ticket:: #{item}, data:: #{data}"
