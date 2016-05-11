@@ -31,17 +31,12 @@ class PasswordResetsController < SupportController
         }
       end	    
     else
-	  message = t(:'flash.password_resets.email.user_not_found')
+	  message = t(:'flash.password_resets.email.success')
       respond_to do |format|
         format.html {
           flash[:notice] = message	  
-	      if mobile?
     	    redirect_to root_url
-      	  else
-        	# render :action => :new
-	        redirect_to support_login_path(:anchor => "forgot_password")
-		  end
-		}
+    		}
         format.nmobile {
           render :json => {:server_response => message, :reset_password => 'failure'}
         }
