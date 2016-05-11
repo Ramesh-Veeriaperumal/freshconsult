@@ -10,7 +10,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Conversations::Twitter
   include Facebook::TicketActions::Util
   include Helpdesk::Activities
-  include Helpdesk::Permissions
+  include Helpdesk::Permissible
   include Redis::RedisKeys
   include Redis::TicketsRedis
   include Social::Util

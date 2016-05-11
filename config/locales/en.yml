@@ -197,6 +197,9 @@ en:
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
   attachment_limit_failed_message: One or more attachments discarded since the %{size} limit was exceeded.
+  cc_dropped_message: The following cc's are dropped due to moderation - %{emails}
+  emails_dropped_message: The following emails are dropped due to moderation - %{emails}
+  emails_added_to_cc: Email(s) successfully added to CC.
   attach_file_local: Attach a file from your computer
   attach_file: Attach a file
   dropbox_attach_label: Attach from
@@ -952,6 +955,9 @@ en:
         simple_none: "None"
         auto_suggest_solutions: "Auto suggest solutions while creating a new ticket"
         auto_suggest_solutions_help: "This also applies to the search feature inside feedback widget."
+        restricted_login_signup: "Sign up and login has been restricted to specific domains"
+        important: "Important"
+        view_settings: "View Settings"
         captcha: "Enable CAPTCHA to help avoid spam"
         forum_captcha: "Logged in users should enter CAPTCHA to create topic"
         view_solutions: "Who can view solutions"
@@ -1536,7 +1542,9 @@ en:
         recharge_quantity: "Recharge quantity:"
         day_passes: "Day Passes"
         helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
-    widget_config:
+    widget_config:    
+      errors:
+        invalid_requester: Invalid Requester
       index:
         feedbackwidget_embedded_tab: Embedded Widget
         feedbackwidget_popup_tab: Popup Widget
@@ -2266,6 +2274,7 @@ en:
       tickets:
         create:
           success: Your ticket has been created.
+          success_cc_drop: Your ticket has been created, but the following ccs were dropped due to moderation.
       create:
         success: "Portal has been enabled for '%{product_name}'"
         failure: "Portal could not be enabled"
@@ -2482,6 +2491,9 @@ en:
         success: Instructions to reset your password have been emailed to you. Please check your email.
     login:
       verify_credentials: Couldn't log you in. Please verify your credentials
+      login_permission_denied: Sorry! You do not have enough permission to access this page. 
+      signup_permission_denied: Sorry! You do not have enough permission to access this page.
+      contact_administrator: Pease contact your Account Administrator.
       sso:
         expected_params: "One or more of the expected parameters name, email, and hash are missing."
         invalid_time_entry: "Invalid time entry"
@@ -2862,6 +2874,8 @@ en:
       info2: You probably want your customers and support agents to access your support portal in your own domain. You can point your support URL at yourcompany.freshdesk.com to your own domain, like support.mycompany.com.
       info3: "All basic settings of your helpdesk can be customized here such as - language, time zone and colour schemes."
       info4: The 'Edit Portal' option will let you configure the portal for your product.
+      info5: You can restrict the access to your helpdesk to the contacts that you add and to certain domains. Others will not be able to sign up, log in or submit tickets. You can read more about it
+      info6: here.
     cancel:
       cancel_account: Cancel your Freshdesk account
       info_text: Please take a moment to tell us why you want to cancel your account. Perhaps we could still help...
@@ -4348,6 +4362,7 @@ en:
   file_url: Full XML Export URL
   how_to: Question
   customers: Customers
+  enter_valid_domains: "is invalid. Enter valid domains"
   companies:
     no_contacts: '%{no_contacts} contacts'
     add_contact: 'Add Contact'
@@ -5063,6 +5078,8 @@ en:
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
     info8: More info regarding this company like address, phone number, website etc
+    info13: Contacts whose email addresses contain these domains will automatically associated to this company
+    info14: Contacts whose email addresses contain these domains will be whitelisted and automatically associated to this company
     info12: "eg: mycompany1.com, mycompany2.com"
     errors:
       required_field: cannot be blank
@@ -5142,6 +5159,20 @@ en:
     change_favicon: "Change favicon"
     use_default: "Use default"
     last_published: "Portal was last published %{last_published} ago"
+    anyone: "Anyone"
+    users_from_domains: "Users from selected domains"    
+    search_domain: Search Domain
+    company_domain: Company Domains
+    domains_allowed: Only customers from these domains will be allowed to sign up and log in.
+    twitter_disabled: Twitter login will be disabled for customers and agents for security purposes.
+    important: Important
+    includes_contacts_company_domain: (includes existing contacts and company domains)
+    permission: 
+      helpdesk_restrictions: Helpdesk restrictions
+      who_can_create: Who can log in (or) sign up (or) create tickets?
+      users_from_selected_domains: Users from whitelisted domains
+      includes_existing_contacts: includes existing contacts
+      users_from_any_domain: Users from any domain
   lead: Lead
   comments: Comments
   forum_confirm_msg1: Are you sure you want to delete this category?
@@ -5641,6 +5672,7 @@ en:
         article_feedback: Article Feedback
         my_article_feedback: My Articles Feedback
         archived: Archive
+        invalid_requester: Invalid requester
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
@@ -7261,6 +7293,7 @@ en:
   no_of_seconds: "%{seconds} seconds"
   change_deleted_status_msg: "Please change the status as the current status is deleted"
   ticket_cc_email_more: "more"
+  dropped_due_to_moderation: Dropped due to moderation
   fwd_to: "Forward"
   add_cc: Add Cc
   add_a_cc: Add a CC
@@ -7296,7 +7329,7 @@ en:
   error_in_plan: "Error changing the plan"
   change_free_plan: "Change your Free plan"
   billing_info: "Subscription information"
-  forwarded_email: "Forwarded email"
+  forwarded_email: "Forwarded email" 
   forwarded_to: "Forwarded to"
   replied_to: "Replied to"
   notified_to: "Notified to"

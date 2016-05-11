@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160418103445) do
+ActiveRecord::Schema.define(:version => 20160511101516) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1911,6 +1911,15 @@ ActiveRecord::Schema.define(:version => 20160418103445) do
 
   add_index "helpdesk_notes", ["account_id", "notable_type", "notable_id"], :name => "index_helpdesk_notes_on_notables"
   execute "ALTER TABLE helpdesk_notes ADD PRIMARY KEY (id,account_id)"
+
+  create_table "helpdesk_permissible_domains", :force => true do |t|
+    t.string   "domain"
+    t.integer  "account_id",   :limit => 8
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "helpdesk_permissible_domains", ["account_id", "domain"], :name => "index_helpdesk_permissible_domains_on_account_id_and_domain"
 
   create_table "helpdesk_picklist_values", :force => true do |t|
     t.integer  "pickable_id",   :limit => 8

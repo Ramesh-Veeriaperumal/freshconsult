@@ -34,6 +34,31 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 		:int_nc03
 	end
 
+	def cc_emails
+		emails = read_attribute(:cc_emails)
+		if emails.is_a? Array
+		  	emails
+		else
+		  	emails[:cc_emails]
+		end    
+	end
+
+	def cc_emails=(emails)
+		if emails.is_a? Array
+		    emails = { :cc_emails => emails, :dropped_cc_emails => []}
+		end
+		write_attribute(:cc_emails, emails)
+	end
+
+	def cc_emails_hash
+		emails = read_attribute(:cc_emails)
+		if emails.is_a?(Array)     
+		  {:cc_emails => emails, :dropped_cc_emails => []}
+		else
+		  emails
+		end
+	end
+
 	def cc_and_bcc_emails_count
 		if ((!cc_emails.blank? && cc_emails.is_a?(Array) && cc_emails.count >= TicketConstants::MAX_EMAIL_COUNT) || 
 				(!bcc_emails.blank? && bcc_emails.is_a?(Array) && bcc_emails.count >= TicketConstants::MAX_EMAIL_COUNT) ||

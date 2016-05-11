@@ -2,7 +2,7 @@
 class Helpdesk::TimeSheetsController < ApplicationController
 
   include CustomerDeprecationMethods::NormalizeParams
-  include Helpdesk::Permissions
+  include Helpdesk::Permissible
 
   before_filter { |c| c.requires_feature :timesheets }
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 

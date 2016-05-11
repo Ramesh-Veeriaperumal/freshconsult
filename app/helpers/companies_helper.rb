@@ -11,8 +11,9 @@ module CompaniesHelper
     if form_builder.nil? 
       show_field field,field_value
     else
+      bottom_note = form_company_bottom_note(field)
       CustomFields::View::DomElement.new(form_builder, :company, :company_form, field, field.label, field.dom_type, 
-            field.required_for_agent, true, field_value, field.dom_placeholder, field.bottom_note).construct
+            field.required_for_agent, true, field_value, field.dom_placeholder, bottom_note).construct
     end
   end
 
@@ -28,4 +29,14 @@ module CompaniesHelper
     activities = @company_tickets
     activities = activities.take(10)
   end
+
+  private
+
+  def form_company_bottom_note field
+    if current_account.restricted_helpdesk? && (field.field_type == :default_domains)
+      return I18n.t("company.info14")
+    end
+    field.bottom_note
+  end
+  
 end

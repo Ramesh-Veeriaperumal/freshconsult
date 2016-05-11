@@ -24,6 +24,7 @@ class OmniauthCallbacksController < ApplicationController
     flash[:notice] = result.flash_message if result.flash_message.present?
     render result.render and return if result.render.present?
     return failure if result.failed?
+    invalid_nmobile if result.invalid_nmobile.present?
     redirect_to result.redirect_url || root_url(:host => origin_account.host)
   end
 
@@ -102,6 +103,10 @@ class OmniauthCallbacksController < ApplicationController
     portal = (@portal_id ? Portal.find(@portal_id) : account.main_portal)
     port = ''
     @portal_url = "#{portal.url_protocol}://#{portal.host}#{port}"
+  end
+
+  def invalid_nmobile
+    cookies["mobile_access_token"] = { :value => 'customer', :http_only => true } 
   end
 
 end

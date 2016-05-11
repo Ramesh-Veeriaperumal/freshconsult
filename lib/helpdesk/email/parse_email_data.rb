@@ -1,5 +1,6 @@
 module Helpdesk::Email::ParseEmailData
 	include ParserUtil
+	include Helpdesk::Permission::Ticket
 	include AccountConstants
 
 	attr_accessor :reply_to_email, :recipients
@@ -128,10 +129,12 @@ module Helpdesk::Email::ParseEmailData
 		account.email_configs.find_by_to_email(to_email[:email])
 	end
 
-  def get_user from_email, email_config, email_body
+  def get_user from_email, email_config, email_body, force_create = false
     existing_user(from_email)
     unless user
-      create_new_user from_email, email_config, email_body
+    	if force_create || can_create_ticket?(from_email[:email])
+      		create_new_user from_email, email_config, email_body, true
+      	end
     end
     set_current_user
   end
@@ -140,15 +143,17 @@ module Helpdesk::Email::ParseEmailData
     self.user = account.user_emails.user_for_email(from_email[:email])
   end
 
-  def create_new_user from_email, email_config, email_body
-    self.user = account.contacts.new
-    signup_status = user.signup!({:user => user_params(from_email), :email_config => email_config},
-                                  get_portal(email_config))
-    detect_user_language(signup_status, email_body)
+  def create_new_user from_email, email_config, email_body, force_create = false
+  	if force_create || can_create_ticket?(from_email[:email])
+	    self.user = account.contacts.new
+	    signup_status = user.signup!({:user => user_params(from_email), :email_config => email_config},
+	                                  get_portal(email_config))
+	    detect_user_language(signup_status, email_body)
+	end
   end
 
   def set_current_user
-    user.make_current
+    user.make_current if user
   end
 
 	def user_params from_email
@@ -180,6 +185,11 @@ module Helpdesk::Email::ParseEmailData
 	def get_portal email_config
 		(email_config && email_config.product) ? email_config.product.portal : account.main_portal
 	end
+
+  def permissible_ccs(user, cc_emails, account)
+    cc_emails, self.common_email_data[:dropped_cc_emails] = fetch_permissible_cc(user, cc_emails, account)
+    cc_emails.split(",") 
+  end
 
 	alias_method :parse_recipients, :parse_recipients_new
 

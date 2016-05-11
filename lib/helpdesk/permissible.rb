@@ -1,4 +1,4 @@
-module Helpdesk::Permissions
+module Helpdesk::Permissible
 
   def verify_ticket_permission(ticket)    
     verified = true

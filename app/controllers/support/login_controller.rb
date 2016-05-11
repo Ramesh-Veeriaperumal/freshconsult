@@ -3,6 +3,7 @@ class Support::LoginController < SupportController
 	include Redis::RedisKeys
 	include Redis::TicketsRedis
 	include SsoUtil
+  include Helpdesk::Permission::User
 	MAX_ATTEMPT = 3
 	SUB_DOMAIN = "freshdesk.com"
 
@@ -10,6 +11,7 @@ class Support::LoginController < SupportController
 	skip_before_filter :check_account_state
 	after_filter :set_domain_cookie, :only => :create
   skip_after_filter :set_last_active_time
+  before_filter :set_custom_flash_message
 	
 	def new
 		if current_account.sso_enabled? and check_request_referrer 
@@ -119,6 +121,10 @@ class Support::LoginController < SupportController
         #redirect to SSO login page
         sso_login_page_redirect
       end
+    end
+
+    def set_custom_flash_message      
+      flash[:notice] = login_access_denied_message if params[:restricted_helpdesk_login_fail]
     end
 
 end
