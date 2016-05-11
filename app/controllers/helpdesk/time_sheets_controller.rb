@@ -6,11 +6,11 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
   before_filter { |c| c.requires_feature :timesheets }
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
-  before_filter :load_ticket, :only => [:new, :create, :index, :edit, :update, :toggle_timer] 
+  before_filter :load_ticket, :only => [:new, :create, :index, :show, :edit, :update, :destroy, :toggle_timer] 
   before_filter :create_permission, :only => :create 
   before_filter :validate_params, :only => [:create, :update]
   before_filter :timer_permission, :only => :toggle_timer
-  before_filter :verify_permission, :only => [:create, :index, :show, :edit, :update, :destroy, :toggle_timer ] 
+  before_filter :verify_permission, :only => [:new, :create, :index, :show, :edit, :update, :destroy, :toggle_timer ] 
   before_filter :check_agents_in_account, :only =>[:create]
   before_filter :set_mobile, :only =>[:index , :create , :update , :show]
   before_filter :set_native_mobile , :only => [:create , :index, :destroy]
@@ -170,7 +170,7 @@ private
   end
   
   def load_ticket
-    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id]) if params[:ticket_id]
   end
   
   # possible dead code
@@ -315,9 +315,10 @@ private
   end
 
   def verify_permission
-    if @ticket || (@time_entry && @time_entry.workable.is_a?(Helpdesk::Ticket))
-      ticket = @ticket || @time_entry.workable
-      verify_ticket_permission(ticket)
+    verify_ticket_permission(@ticket) if params[:ticket_id]
+    if @time_entry && @time_entry.workable.is_a?(Helpdesk::Ticket)
+      time_entry_ticket = @time_entry.workable
+      verify_ticket_permission(time_entry_ticket)
     end
   end
 

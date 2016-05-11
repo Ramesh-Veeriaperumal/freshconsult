@@ -1846,7 +1846,13 @@ Helpkit::Application.routes.draw do
       end
       resources :tag_uses
       resources :reminders
-      resources :time_sheets
+
+      resources :time_sheets do
+        member do
+          put :toggle_timer
+        end
+      end
+
       resources :mobihelp_info, :only => :index
     end
     
