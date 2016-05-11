@@ -1,0 +1,13 @@
+JSON.generate(@items.map do |category|
+	parent = category.parent
+ 	response_hash = {
+		id: parent.id,
+		name: category.name,
+		description: category.description,
+		created_at: category.created_at,
+		updated_at: category.updated_at
+	}
+ 	response_hash.merge!(visible_in: parent.portal_ids) if category.portal_ids_visible?
+  response_hash
+end
+)

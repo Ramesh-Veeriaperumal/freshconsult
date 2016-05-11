@@ -6,6 +6,6 @@ class Solutions::ArticleDecorator < ApiDecorator
   end
 
   def parent
-  	@parent ||= record.parent
+  	record.parent
   end
 end
