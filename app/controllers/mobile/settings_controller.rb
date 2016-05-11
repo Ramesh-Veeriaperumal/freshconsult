@@ -7,7 +7,7 @@ class Mobile::SettingsController < ApplicationController
   skip_before_filter :require_user, :only => :mobile_login
 
   skip_filter :select_shard, :only => :mobile_login
-  skip_before_filter :determine_pod , :only => :mobile_login
+  before_filter :determine_pod , :only => :mobile_login
   skip_before_filter :unset_current_account, :set_current_account , :only => :mobile_login
   skip_before_filter :check_account_state, :only => :mobile_login
   skip_before_filter :set_time_zone, :check_day_pass_usage  , :only => :mobile_login
@@ -73,6 +73,16 @@ class Mobile::SettingsController < ApplicationController
 
   def mobile_configurations
     render :json => {userdetail: current_user.as_config_json.merge(current_account.as_config_json),ff_nodeurl: FreshfoneConfig['node_url']}
+  end
+
+  private
+  def determine_pod
+   shard = ShardMapping.lookup_with_domain(params[:cname])
+   return if shard.nil? or shard.pod_info.blank?
+   if shard.pod_info != PodConfig['CURRENT_POD']
+     Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
+     redirect_to_pod(shard)
+   end
   end
 
 end

@@ -31,9 +31,11 @@
 </ul>
 
 <%= javascript_tag do %>
+var Helpkit = Helpkit || {};
 var freshchat_i18n = {"filter_title": "<%=t('reports.freshchat.filter_by_title')%>", "time_period": "<%=t('reports.freshchat.time_period')%>", "widget": "<%=t('reports.freshchat.widget')%>", "group": "<%=t('reports.freshchat.group')%>", type: "<%=t('reports.freshchat.chat_type')%>","today": "<%=t('reports.date_ranges.today')%>","yesterday": "<%=t('reports.date_ranges.yesterday')%>", "this_week": "<%=t('reports.date_ranges.last_7_days') %>", "this_month": "<%= t('reports.date_ranges.last_30_days') %>", "three_months": "<%= t('reports.date_ranges.last_90_days') %>", "custom_days": "<%= t('reports.date_ranges.custom') %>", "total_chats": "<%=t('reports.freshchat.total_chats')%>", "num_of_chats": "<%=t('reports.freshchat.num_of_chats')%>", "answered_chats": "<%=t('reports.freshchat.answered_chats')%>", "missed_chats": "<%=t('reports.freshchat.missed_chats')%>", "avg_handle_time": "<%=t('reports.freshchat.avg_handle_time')%>", "num_of_transfer": "<%=t('reports.freshchat.num_of_transfer')%>","avg_time_queue": "<%=t('reports.freshchat.avg_time_queue')%>","no_data":"<%=t('reports.no_data')%>"};
 
 var freshchat_agents = <%= @agents_list %>
+
 
 jQuery(document).ready(function() {
   var URL      = "<%=ChatConfig['communication_url']%>";
@@ -43,8 +45,15 @@ jQuery(document).ready(function() {
   chatReport.initializeReport(CHAT_ENV, URL, FC_HTTP_ONLY);
 });
 
-  var Helpkit = Helpkit || {};
   Helpkit.report_filter_data = <%= @report_filter_data.to_json.html_safe %>;
   Helpkit.report_filter_data = Helpkit.report_filter_data || [];
+  Helpkit.enable_schedule_report = <%= enable_schedule_report? %>;
   Helpkit.report_type = "chat_summary";
+  current_user = {
+    mail : '<%= current_user.email %>',
+    id : '<%= current_user.id %>',
+    time_zone : '<%= @user_time_zone_abbr %>',
+    name : '<%= current_user.name %>'
+  }
+  day_names = <%=t('date.day_names').to_json.html_safe%>;
 <% end %>

@@ -8,8 +8,8 @@
                       "data-show-pseudo-reply" => 'true',
                       "data-destroy-editor" => 'true',
                       "data-fetch-latest" => 'true',
-                      "data-cnt-id" => cntid
-
+                      "data-cnt-id" => cntid,
+                      "data-submitting" => 'false'
                     } do |f| %>
     <%= content_tag( :div, t("ticket.note_form.form_title"), :class => "form_title" ) %>
     <div class="list_agents_replying" class="hide"></div>

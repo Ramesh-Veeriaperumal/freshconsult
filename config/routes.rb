@@ -302,8 +302,8 @@ Helpkit::Application.routes.draw do
   match '/contacts/filter/:state(/*letter)' => 'contacts#index', :format => false
   resources :groups do
     collection do
-      get :index
-      post :toggle_roundrobin
+      get  :index
+      get  :enable_roundrobin_v2
     end
   end
 
@@ -411,6 +411,15 @@ Helpkit::Application.routes.draw do
         post :cancel_transfer
         post :resume_transfer
         get :disconnect_agent
+      end
+    end
+
+    resources :agent_conference do
+      collection do
+        post :add_agent
+        post :success
+        post :status
+        post :cancel
       end
     end
 
@@ -1508,6 +1517,7 @@ Helpkit::Application.routes.draw do
           post :save_reports_filter
           post :update_reports_filter
           post :delete_reports_filter
+          post :export_pdf
         end
       end
     end
@@ -1519,6 +1529,7 @@ Helpkit::Application.routes.draw do
           post :save_reports_filter
           post :update_reports_filter
           post :delete_reports_filter
+          post :export_pdf
         end
       end
     end
@@ -1538,6 +1549,7 @@ Helpkit::Application.routes.draw do
       post :report_filter
       post :export_csv
       post :generate_pdf
+      post :export_pdf
       post :save_reports_filter
       post :update_reports_filter
       post :delete_reports_filter

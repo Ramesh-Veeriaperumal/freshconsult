@@ -22,9 +22,8 @@
 	jQuery(document).ready(function () {
 	    var locals = HelpdeskReports.locals;
 	    locals.chart_hash = <%= @data.to_json.html_safe %>;
-
+	    var last_dump_time = <%= @last_dump_time ? t('helpdesk_reports.last_updated',{last_dump_time: @last_dump_time}).to_json.html_safe : false %>
 	    var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
-
 	    if (err) {
 	    	var div = ["reports_container"];
 	        HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
@@ -38,5 +37,13 @@
 	    var default_metric = constants.default_metric;
         jQuery(".glance-chart #solution_link").attr('href',constants.metrics[HelpdeskReports.locals.active_metric].solution_url);
         jQuery(".glance-chart .active-metric-title").html(constants.metrics[HelpdeskReports.locals.active_metric].name);
+        if (last_dump_time){
+        	jQuery("#last-updated").html(last_dump_time);	
+        	jQuery(".reports-title").addClass('updated-time')
+        } else{
+        	jQuery(".reports-title").removeClass('updated-time')
+        }
+       	
+
 	});
 </script>

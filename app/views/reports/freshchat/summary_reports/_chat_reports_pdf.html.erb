@@ -1,0 +1,94 @@
+<!--Copyright © 2014 Freshdesk Inc. All Rights Reserved.-->
+<div class="report-page reports-main" id="report-page">
+  <div class="report-content-wrapper" id="">
+    <!--report header-->
+    <div class="row-fluid reports-header">
+      <div class="reports-title span12">
+        <span class="report-icon">
+            <i class="fsize-36 ficon-live_chat"></i>
+        </span>
+        <span class="report-title-block"  >
+          <span id="report-title">
+            <% if (params[:filter_name]) %>
+              <%= "#{t('helpdesk_reports.chat_summary.title')} - #{params[:filter_name]}" %>
+            <% else %>
+              <%=t('helpdesk_reports.chat_summary.title')%>
+            <% end %>
+          </span>
+        </span>
+      </div>
+      <div class="reports-filter span12" id="report-filter-details">
+          <div class="filter-type span11">
+            <ul class="inline" id="filter_container">
+            </ul>
+          </div>
+      </div>
+    </div>
+
+    <div class="row-fluid  report-summary" id="metric_container">
+      <div>
+       <h3 class="header-lead"><span><%= t('helpdesk_reports.summary') %></span>
+        </h3>
+         <div class="row-fluid report-summary-wrapper" id="chat_metrics">
+          
+        </div>
+      </div>
+      <div>
+       <h3 class="header-lead"><span><%= t('helpdesk_report.chats') %></span>
+        </h3>
+         <div class="row-fluid report-summary-wrapper" id="freshchat_line_chart">
+          
+        </div>
+      </div>
+      <div class="row-fluid control-group">
+      <div class="vertical-alignment time-sheet-top-margin">
+        <strong><%=t('reports.freshchat.agent_chat_summary')%></strong>
+      </div>
+      </div>
+      <div class="grid-pdf report-pdf row-fluid"> 
+          <table class = "table-print-pdf" width="100%" id="agent_summary">
+            <thead>
+            <tr style="text-align:left">
+              <% table_headers.keys.each do |header|
+                concat content_tag :th, h(table_headers[header]), :class => header
+               end %>
+            </tr>
+           </thead>
+         </table>
+      </div>
+      <!--end call list-->
+
+    </div>
+    
+  </div>
+</div>
+
+<% row_limit = params[:scheduled_report] ? HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:schedule][:pdf] : HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:pdf] %>
+
+<div class="export-exceeds-row-limit" id="export-exceeds-limit-msg" >
+  <%= t('helpdesk_reports.export_exceeds_row_limit_msg', row_max_limit: row_limit)%>
+</div>
+
+<%= javascript_tag do %>
+
+  var freshchat_i18n = {"filter_title": "<%=t('reports.freshchat.filter_by_title')%>", "time_period": "<%=t('reports.freshchat.time_period')%>", "widget": "<%=t('reports.freshchat.widget')%>", "group": "<%=t('reports.freshchat.group')%>", type: "<%=t('reports.freshchat.chat_type')%>",  "custom_days": "<%= t('reports.date_ranges.custom') %>", "total_chats": "<%=t('reports.freshchat.total_chats')%>", "num_of_chats": "<%=t('reports.freshchat.num_of_chats')%>", "answered_chats": "<%=t('reports.freshchat.answered_chats')%>", "missed_chats": "<%=t('reports.freshchat.missed_chats')%>", "avg_handle_time": "<%=t('reports.freshchat.avg_handle_time')%>", "num_of_transfer": "<%=t('reports.freshchat.num_of_transfer')%>","avg_time_queue": "<%=t('reports.freshchat.avg_time_queue')%>","no_data":"<%=t('reports.no_data')%>"};
+
+  jQuery(document).ready(function() {
+    var URL      = "<%=ChatConfig['communication_url']%>";
+    var CHAT_ENV    = "<%= Rails.env -%>";
+    var FC_HTTP_ONLY = ((<%=ChatConfig['http_only']%> == "1")? true : false);
+    <%
+      site_id = Account.current.chat_setting.display_id
+      user_id = User.current.id
+      params.merge!({:table_row_max_limit => row_limit }) 
+    %> 
+    window.chatReportData = window.chatReportData || {};
+    chatReportData.site_id = "<%= site_id %>";
+    chatReportData.user_id = "<%= user_id  %>";
+    chatReportData.livechat_token = "<%= livechat_token(site_id,user_id) %>";
+    chatReportData.freshchat_agents =<%= Hash[Account.current.agents_from_cache.map { |c| [c.user.id,c.user.name] }].to_json.html_safe %>;
+    var params = <%= params.to_json.html_safe %>;
+    chatReport.initializePDFReport(CHAT_ENV, URL, FC_HTTP_ONLY,params);
+  });
+
+<% end %>

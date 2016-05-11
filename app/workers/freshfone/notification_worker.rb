@@ -41,6 +41,12 @@ module Freshfone
             disconnect_other_agents('canceled')
           when "complete_other_agents"
             disconnect_other_agents('completed')
+          when "browser_agent_conference"
+            notify_browser_agent_conference
+          when "mobile_agent_conference"
+            notify_mobile_agent_conference
+          when "cancel_agent_conference"
+            notify_cancel_agent_conference
         end
         Rails.logger.info "Completion time :: #{Time.now.strftime('%H:%M:%S.%L')}"
       rescue Exception => e
@@ -125,6 +131,48 @@ module Freshfone
         update_and_validate_pinged_agents(current_call.children.last, agent_call)
         set_browser_sid(agent_call.sid, current_call.call_sid)
       end
+    end
+
+    def notify_browser_agent_conference
+      current_call = current_account.freshfone_calls.find(params[:call_id])
+      return unless current_call.can_add_agent?
+      Rails.logger.info "Notify Browser Add Agent for User Id :: #{agent}
+                         Account Id :: #{current_account.id}"
+      self.current_number = current_call.freshfone_number
+      call_params = {
+        url:               agent_conference_accept_url(params[:call_id],
+                                                params[:add_agent_call_id]),
+        status_callback:   agent_conference_status_url(params[:call_id],
+                                                params[:add_agent_call_id]),
+        to:                "client:#{agent}",
+        from:              browser_caller_id(current_call.caller_number),
+        timeLimit:         ::Freshfone::Credit.call_time_limit(current_account,
+                                                               current_call),
+        timeout:           current_number.ringing_time
+      }
+      make_agent_conference_call(call_params, params[:add_agent_call_id], current_call)
+    end
+
+    def notify_mobile_agent_conference
+      current_call = current_account.freshfone_calls.find(params[:call_id])
+      return unless current_call.can_add_agent?
+      Rails.logger.info "Notify Mobile Add Agent for User Id :: #{agent}
+                         Account Id :: #{current_account.id}"
+      from = current_call.number
+      to = current_account.users.find(agent).available_number
+      call_params = {
+        url:             agent_conference_accept_url(params[:call_id],
+                                              params[:add_agent_call_id]),
+        status_callback: agent_conference_status_url(params[:call_id],
+                                              params[:add_agent_call_id]),
+        to:              to_number(from, to, agent),
+        from:            from,
+        timeLimit:       ::Freshfone::Credit.call_time_limit(current_account,
+                                                             current_call),
+        timeout:         current_call.freshfone_number.ringing_time,
+        if_machine:      'hangup'
+      }
+      make_agent_conference_call(call_params, params[:add_agent_call_id], current_call)
     end
 
     def notify_mobile_transfer
@@ -261,6 +309,23 @@ module Freshfone
       agent_api_call.update(:status => "completed")
     end
 
+    def notify_cancel_agent_conference
+      begin
+        current_call = current_account.freshfone_calls.find(params[:call_id])
+        add_agent_twilio_call = current_account.freshfone_subaccount.calls
+                                               .get(params[:add_agent_call_sid])
+        add_agent_twilio_call.update(status: :canceled)
+        Rails.logger.info "cancel add agent :: #{params[:add_agent_call_sid]}
+                for account :: #{current_account.id}"
+      rescue Exception => e
+        Rails.logger.error "Error in cancel add agent for account
+          #{current_account.id} for call #{params[:add_agent_call_sid]}\n
+          #{e.backtrace.join("\n\t")}"
+        call_actions.handle_failed_cancel_agent_conference current_call
+        raise e
+      end
+    end
+
     def update_and_validate_pinged_agents(call, agent_api_call)
       Rails.logger.info "agent call sid update :: Call => #{call.id} :: agent => #{agent} :: call_sid => #{agent_api_call.sid}"
       add_pinged_agents_call(call.id, agent_api_call.sid)
@@ -296,6 +361,21 @@ module Freshfone
         raise "Self calling exception from #{from} to #{to} #{"For User:: #{agent_id}" if agent_id.present?}"
       end
       to
+    end
+
+    def make_agent_conference_call(params, add_agent_call_id, current_call)
+      begin
+        agent_call = telephony.make_call(params)
+        current_call.supervisor_controls.find(add_agent_call_id)
+                    .update_details(sid: agent_call.sid,
+                                    status: Freshfone::SupervisorControl::CALL_STATUS_HASH[:ringing])
+      rescue Exception => e
+        Rails.logger.error "Error in add agent call for account
+          #{current_account.id} for call #{current_call.id} and
+          add agent call #{add_agent_call_id}\n #{e.backtrace.join("\n\t")}"
+        call_actions.handle_failed_agent_conference current_call, add_agent_call_id
+        raise e
+      end
     end
   end
 end

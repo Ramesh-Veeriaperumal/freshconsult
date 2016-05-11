@@ -20,6 +20,10 @@ RSpec.describe Freshfone::SupervisorControl do
     @freshfone_call = create_freshfone_call
   end
 
+  after(:each) do
+    @supervisor_control.destroy
+  end
+
  it 'should have an active supervisor' do
     @supervisor_control= create_supervisor_call @freshfone_call
     @freshfone_call.supervisor_controls.active.first.should_not be_blank

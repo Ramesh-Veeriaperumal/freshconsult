@@ -1,6 +1,6 @@
 Dir['test/api/functional/api_discussions/*_test.rb'].each { |file| require "./#{file}" }
 
-#Unit
+# Unit
 require_relative '../unit/api_comment_validation_test.rb'
 require_relative '../unit/api_comments_dependency_test.rb'
 require_relative '../unit/category_validation_test.rb'
@@ -11,10 +11,10 @@ require_relative '../unit/topic_validation_test.rb'
 require_relative '../unit/topics_dependency_test.rb'
 require_relative '../unit/monitor_validation_test.rb'
 
-#Flows
+# Flows
 require_relative '../integration/flows/api_discussions_flow_test.rb'
 
-#Queries
+# Queries
 # require_relative 'integration/queries/api_comments_queries_test.rb'
 # require_relative 'integration/queries/categories_queries_test.rb'
 # require_relative 'integration/queries/forums_queries_test.rb'

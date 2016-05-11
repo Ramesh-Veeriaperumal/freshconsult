@@ -40,6 +40,10 @@ var FreshfoneWidget;
 			this.contextSlide = '.context_slide';
 			this.$contextSlide = $(this.contextSlide);
 			this.$ticketsLoading = $('.tickets-loading');
+			this.$addAgentContextContainer = $('.add-agent-container');
+			this.$freshfoneAddAgentContext = $('#freshfone_add_agent');
+			this.$addAgentInfo = $('.add-agent-info');
+			this.$freshfoneAvailableAgents = $('#freshfone_available_agents');
 			this.callerUserId = "";
 			this.widgetLoaded = false;
 			freshfoneSupervisorCall.intializeWidgets();
@@ -61,6 +65,9 @@ var FreshfoneWidget;
 				this.hideAllWidgets();
 				freshfoneSupervisorCall.showWidgets();
 			} else {
+				if(freshfone.isAgentConferenceEnabled) {
+					this.disableAgentConferenceSetup();
+				}
 				this.showOutgoing();
 				this.$dialNumber.val(this.$lastDial.val());
 				this.freshfonecalls.updateCountriesPreferred();
@@ -79,11 +86,36 @@ var FreshfoneWidget;
 		showOngoing: function () {
 			var self = this;
 			this.hideAllWidgets();
+			if(freshfone.isAgentConferenceEnabled) {
+				this.bindForAgentConference();
+			}
 			this.ongoingCallWidget.show('slide',{direction: 'down', duration:300},function(){self.loadContextContainer();});
 			this.desktopNotifierWidget.show('slide',{direction:'down',duration:300});
 			this.bindEventsForTransferAndDial();
 			this.bindPageClose();
 			this.bindDeskNotifierButton();
+		},
+		bindForAgentConference: function() {
+			this.disableAgentConferenceSetup();
+			if (this.freshfonecalls.isAgentConference) {
+				this.ongoingCallWidget.addClass("add_agent_call");
+				this.$contextContainer.find('.add_call_note').hide();
+				this.showOngoingAgentConferenceCall();
+			}
+			this.ongoingCallWidget.find('.transfer_call').removeClass("transfer-disabled");
+		},
+		showOngoingAgentConferenceCall: function() {
+			this.$freshfoneAddAgentContext.show();
+			this.$addAgentInfo.removeClass("adding_agent_state");
+			this.freshfonecalls.freshfoneUserInfo.agentConferenceInfo();
+			$(".add-agent-progress-bar").hide();
+			$(".add-agent-status div").hide();
+			$('.add-agent-status .receiver-in-call').show();
+		},
+		disableAgentConferenceSetup: function() {
+			this.ongoingCallWidget.removeClass("add_agent_call");
+			this.$contextContainer.find('.add_call_note').show();	
+			this.$freshfoneAddAgentContext.addClass("hide");
 		},
 		bindEventsForTransferAndDial: function(){
 			var self = this;
@@ -100,7 +132,7 @@ var FreshfoneWidget;
 			$('[href="#freshfone_available_agents"],[href="#ongoing_dialpad"], .popupbox-tabs.ongoing li').on('hidden',function(e){
 				if($('.popupbox-tabs.ongoing').is(':visible')){
 					self.$contextContainer.show();
-					$('.transfer_call').attr('title', freshfone.transfer_call);
+					$('.transfer_call').attr('title', freshfone.add_or_transfer_call);
 					$('.ongoingDialpad').attr('title', freshfone.dialpad);
 				}
 			});
@@ -219,6 +251,8 @@ var FreshfoneWidget;
 			this.$contextContainer.hide();
 			this.desktopNotifierWidget.hide();
 			freshfoneSupervisorCall.hideWidgets();
+			this.$freshfoneAddAgentContext.hide();
+			this.$freshfoneAvailableAgents.find('#online-agents-list li').removeClass("adding_agent_state");
 		},
 		closeRecentTickets: function(){
 			if(this.$recentTicketsContent.css('display')!="none")

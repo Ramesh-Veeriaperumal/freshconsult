@@ -39,9 +39,11 @@ var freshfonetimer,
 	// End ongoing call
 	$(document).on('click', '.end_call', function (e) {
 		e.preventDefault();
+		var addAgentCall = freshfonecalls.isAgentConference;
 		freshfonecalls.hangup();
 		freshfoneDialpadEvents.hideContactDetails();
-		if (freshfonecalls.dontShowEndCallForm()) {
+		//Checking isAgentConference when freshfonecalls init() is called in hangup()
+		if (freshfonecalls.dontShowEndCallForm() || addAgentCall) {
 			freshfoneuser.resetStatusAfterCall();
 			freshfoneuser.updatePresence();
 			return freshfonewidget.handleWidgets();

@@ -477,9 +477,9 @@ sk:
         send_test_mail_info2: "Tu je uvedené<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>ako to urobiť</a>."
         title_message: "Naštartujte Vašu podporu v štyroch krokoch..."
         support_email_title: "E-mail<br> podpory"
-        agents_title_1: "Pridanie<br> agentov"
+        adding_agents: "Pridanie<br> agentov"
         rebrand_title: "Logo <br>&amp; farby"
-        social_title_1: "Zapojte <br>sa do sociálnych sietí"
+        going_social: "Zapojte <br>sa do sociálnych sietí"
         skip_text: "Nie ďakujem, presmerujte ma na môj helpdesk."
         back_link: Späť
         next_link: Ďalší

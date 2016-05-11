@@ -323,4 +323,13 @@ RSpec.describe Freshfone::HoldController do
     expect(response.status).to eq(200)
     expect(response.body).to eq(' ')
   end
+
+  it 'should render error when agent conference call is put on hold' do
+    @freshfone_call.update_attributes!(:call_status => Freshfone::Call::CALL_STATUS_HASH[:'in-progress'])
+    create_dummy_freshfone_users(1, Freshfone::User::PRESENCE[:online])
+    create_agent_conference_call(@dummy_users[0],
+         Freshfone::SupervisorControl::CALL_STATUS_HASH[:'in-progress'], 'HOLDCONFCALL')
+    get :add, CallSid:  @agent_conference_call.sid
+    expect(json[:status]).to eql('error')
+  end
 end

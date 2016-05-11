@@ -1,0 +1,16 @@
+Hi <%=@user.name%>,
+
+			Sorry your pdf File size > 10MB. 
+
+			Scheduled report name : <%= @filter_name %>
+			
+			Filters applied:
+	  		Date Range : <%=@date_range%>
+	 		  <% @filters.each do |f| %>
+	   			 <%=f["name"]%> : <%= f["value"] %>
+	 			<%end%>
+
+
+Regards,
+
+<%= @user.account.helpdesk_name %> Support 

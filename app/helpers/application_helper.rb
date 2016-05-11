@@ -271,7 +271,8 @@ module ApplicationHelper
           output << %(<li class="divider"></li>)
         else
           li_opts = (item[3].present?) ? options.merge(item[3]) : options
-          output << %(<li>#{"<span class='icon ticksymbol'></span>" if item[2]}#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
+          option_link = link_to(item[0], item[1], li_opts, "tabindex" => "-1")
+          output << ( item[2] ? %(<li class="selected" ><span class='icon ticksymbol'></span>#{option_link}</li>) : %(<li>#{option_link}</li>) )
         end
       end
     end
@@ -344,16 +345,16 @@ module ApplicationHelper
 
   def navigation_tabs
     tabs = [
-      ['/home',               :home,        !privilege?(:manage_tickets) ],
+      ['/home',               :home,          !privilege?(:manage_tickets) ],
       ['/helpdesk/dashboard',  :dashboard,    privilege?(:manage_tickets)],
       ['/helpdesk/tickets',    :tickets,      privilege?(:manage_tickets)],
       social_tab,
-      ['/solution/categories', :solutions,   privilege?(:view_solutions)],
-      ['/discussions',        :forums,       forums_visibility?],
-      ['/contacts',           :customers,    privilege?(:view_contacts)],
-      ['/support/tickets',     :checkstatus, !privilege?(:manage_tickets)],
-      ['/reports',            :reports,      privilege?(:view_reports) ],
-      ['/admin/home',         :admin,        privilege?(:view_admin)],
+      ['/solution/categories', :solutions,    privilege?(:view_solutions)],
+      ['/discussions',        :forums,        forums_visibility?],
+      ['/contacts',           :customers,     privilege?(:view_contacts)],
+      ['/support/tickets',     :checkstatus,  !privilege?(:manage_tickets)],
+      ['/reports',            :reports,       privilege?(:view_reports) ],
+      ['/admin/home',         :admin,         privilege?(:view_admin)],
     ]
 
 #    history_active = false;
@@ -1325,7 +1326,7 @@ module ApplicationHelper
     def forums_visibility?
       feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
     end
-    
+
     def social_tab
       view_social_tab = can_view_social?
       handles_present = handles_associated?
@@ -1352,12 +1353,12 @@ module ApplicationHelper
     end
 
     def can_view_welcome_page?
-      privilege?(:view_admin) && can_view_social? && social_enabled?
+      privilege?(:admin_tasks) && can_view_social? && social_enabled?
     end
 
-  def tour_button(text, tour_id)
-    link_to(text, '#', :rel => 'guided-tour', "data-tour-id" => tour_id, :class=> 'guided-tour-button')
-  end
+    def inm_tour_button(text,topic_id)
+      link_to(text, '#', :rel => 'guided-inlinemanual', "data-topic-id" => topic_id, :class=> 'inm_tour_button')
+    end
 
   def check_fb_reauth_required
     fb_page = current_account.fb_reauth_check_from_cache
@@ -1494,16 +1495,6 @@ module ApplicationHelper
   end
 # helpers for fresfone callable links -- ends
 
-  def screenr_visible_in?(current_page, allowed_pages)
-    @screenr_configs_hash ||= get_app_config("screenr")
-    (allowed_pages || []).each do |check_page|
-      return true if current_page == check_page && (@screenr_configs_hash.has_key?(:"visible_#{check_page}") ? @screenr_configs_hash[:"visible_#{check_page}"] == '1' : true )
-    end
-    return false
-
-    location=="agent_ticket" && configs_hash[:visible_agent_ticket]=="1"
-  end
-
   def ilos_widget( entity_id, location)
     ilos_id = (location == "portal_ticket" || location == "portal_forum") ? "ilos-btn-portal" : "ilos-btn-agent"
     ilos_widget_html =  
@@ -1613,16 +1604,28 @@ module ApplicationHelper
 
   def show_onboarding?
     user_trigger = !is_assumed_user? && current_user.login_count <= 2  && current_user.agent.onboarding_completed? 
-    (current_user.privilege?(:view_admin))  ?  user_trigger && current_account.subscription.trial?  :  user_trigger
+    (current_user.privilege?(:admin_tasks))  ?  user_trigger && current_account.subscription.trial?  :  user_trigger
   end
 
   def inlinemanual_topic_id
-    topic = (current_user.privilege?(:view_admin)) ? 'admin_topic' : 'agent_topic'
+    topic = (current_user.privilege?(:admin_tasks)) ? 'admin_topic' : 'agent_topic'
     User::INLINE_MANUAL[topic]
   end
 
   def outgoing_callers
     current_account.freshfone_caller_id
+  end
+
+  def inline_manual_people_tracing
+    {
+      :uid      => current_user.id,
+      :email    => current_user.email,
+      :username => current_account.full_domain,
+      :name     => current_user.name,
+      :created  => current_account.created_at.to_i,
+      :updated  => current_user.last_login_at.to_i,
+      :roles    => (current_user.privilege?(:admin_tasks)) ? 'admin' : 'agent'
+    }
   end
 
 end

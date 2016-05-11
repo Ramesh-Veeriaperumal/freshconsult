@@ -364,6 +364,7 @@ javascripts:
     - public/javascripts/freshfone/freshfone_logger.js
     - public/javascripts/freshfone/freshfone_monitor.js
     - public/javascripts/freshfone/components/freshfone_conference_connection.js
+    - public/javascripts/freshfone/components/agent_conference.js
 
   freshfone_call_history:
     - public/javascripts/report/daterangepicker.jQuery.js

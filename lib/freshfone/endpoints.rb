@@ -28,10 +28,6 @@ module Freshfone::Endpoints
     "#{host}/freshfone/voice?caller_sid=#{call_id}&agent_id=#{agent_id}&leg_type=disconnect"
   end
 
-  def connect_agent_url
-    "#{host}/freshfone/voice?caller_sid=#{params[:caller_sid] || params[:call]}&agent_id=#{params[:agent_id] || params[:agent]}&leg_type=connect"
-  end
-
   def mobile_transfer_accept_url(call_id, source_agent_id, target_agent_id)
     "#{host}/freshfone/forward/transfer_initiate?call=#{call_id}&agent_id=#{target_agent_id}&transferred_from=#{source_agent_id}"
   end
@@ -156,6 +152,14 @@ module Freshfone::Endpoints
 
   def transfer_status_url(call_id, agent_id)
     "#{client_status_url(call_id, agent_id)}&transfer_call=true"
+  end
+
+  def agent_conference_accept_url(call_id, add_agent_call_id)
+    "#{host}/freshfone/agent_conference/success?call=#{call_id}&add_agent_call_id=#{add_agent_call_id}"
+  end
+
+  def agent_conference_status_url(call_id, add_agent_call_id)
+    "#{host}/freshfone/agent_conference/status?call=#{call_id}&add_agent_call_id=#{add_agent_call_id}"
   end
 
   def round_robin_call_status_url(current_call, agent_id, fwd_call = false)

@@ -196,7 +196,7 @@
 		</div>
 	</div>
 	
-	<% if current_account.launched?(:freshfone_caller_id_masking) %>
+	<% if current_account.features?(:freshfone_caller_id_masking) %>
 	  <div class="control-group">
 			<label class="control-label settings-label"><%=t('freshfone.admin.numbers.caller_id.call_id_mask')%></label>
 			<div class="controls">
@@ -228,7 +228,7 @@
 		</div>
 	<% end %> 
 
-	<% if current_account.launched?(:freshfone_caller_id_masking) %>
+	<% if current_account.features?(:freshfone_caller_id_masking) %>
 		<%= render :partial => "/freshfone/outgoing_callers_id", :locals => { :settings => true } %>
 	<% end %>	
 	

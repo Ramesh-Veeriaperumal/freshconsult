@@ -1265,9 +1265,9 @@ uk:
         send_test_mail_info2: "Тут наведені <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>інструкції по використанню</a>."
         title_message: "Усього чотири кроки, і пітримка клієнтів готова до роботи..."
         support_email_title: "Електронна пошта <br> служби підтримки"
-        agents_title_1: "Додавання &lt;br&gt; агентів"
+        adding_agents: "Додавання <br> агентів"
         rebrand_title: "Логотип <br> та кольори"
-        social_title_1: "Інтеграція з &lt;br&gt; соціальними мережами"
+        going_social: "Інтеграція з <br> соціальними мережами"
         skip_text: "Ні, перемістіть мене на мою сторінку служби підтримки."
         back_link: Назад
         next_link: Далі
@@ -1389,7 +1389,6 @@ uk:
         feedbackwidget_users_can: "Користувачі можуть:"
         feedbackwidget_attach_a_file: "Вкладати файли"
         feedbackwidget_screenshot: "Робити знімки екрану"
-        feedbackwidget_screenr_recording: "Запис екрану за допомогою Screenr"
         feedbackwidget_search_area: "Пошук статей"
         feedbackwidget_use_https: "Використовувати https"
         feedbackwidget_mobile_view: "Мобільна версія"
@@ -5492,36 +5491,6 @@ uk:
         es: Spanish
         sv: Swedish
         tr: Turkish
-    screenr:
-      button_label: "Запис з екрану"
-      label: Screenr
-      desc: "Робіть записи з екрану за допомогою Screenr і додайте їх до заявок, на форуми і в статті з рішеннями."
-      helptext: "<h4>Інтеграція Screenr у Freshdesk </h4><p><br/> Інтеграція Screenr дозволяє агентам і клієнтам записувати вміст екрану і ділитися ним у Freshdesk. Такі записи можна додавати до звітів про помилки, а також в якості пояснюючих відеороликів безпосередньо до заявок, записам на форумах і статтям з рішеннями.</p><p> Після включення цієї функції поряд з віджетом для відгуків, обговореннями і базою знань з'явиться кнопка запису. Можна вибрати як запис всього вікна браузера, так і окремої його частини. Запис з екрана буде автоматично додаватися після завершення сеансу. </p><p>Для налаштування цього сервісу введіть URL Screenr (наприклад, <a>http://вашеімя.viewcasts.com</a>) і ідентифікатор Recorder, який відображається після входу в обліковий запис.</p>"
-      form:
-        recorder_id: "Ідентифікатор Recorder"
-        recorder_id_info: "Ідентифікатор Recorder - це унікальний ідентифікатор, доступний на сторінці редагування засобів запису"
-        site_address_info: ""
-        site_address: "Субдомен Screenr"
-        widget_title: "Заголовок віджету"
-        visible_agent_forum: "Запис з екрану форуму для агентів"
-        visible_agent_forum_info: "Дозволити робити Screenr Recorder доступним для агентів на форумах"
-        visible_agent_ticket: "Запис екрану заявки для агентів"
-        visible_agent_ticket_info: "Дозволити робити Screenr Recorder доступним для агентів в формах заявок"
-        visible_solution: "Запис екрану рішень"
-        visible_solution_info: "Дозволити робити Screenr Recorder доступним для запису рішень"
-        visible_portal_ticket: "Запис екрану заявки на порталі"
-        visible_portal_ticket_info: "Дозволити робити Screenr Recorder доступним в формах заявок на порталі"
-        visible_portal_forum: "Запис екрану заявки на форумі"
-        visible_portal_forum_info: "Дозволити робити Screenr Recorder доступним на форумі порталу"
-        visible_widget: "Запис екрану віджета"
-        visible_widget_info: "Дозволити робити Screenr Recorder доступним для віджета для відгуків"
-      settings:
-        enable_screenr_recording: "Дозволити запис з екрану за допомогою Screenr"
-        ticket_interaction: "Сторінка заявок (створення, редагування та додавання відповідей)"
-        forum_interaction: "Сторінка форумів (створення, редагування та додавання коментарів)"
-        create_solution: "Рішення (створення та редагування)"
-        for_agents: "Для агентів"
-        for_customer: "Для клієнтів"
     harvest:
       label: Harvest
       desc: "Ви можете вести облік часу, витраченого на заявки, в проектах і завданнях Harvest."

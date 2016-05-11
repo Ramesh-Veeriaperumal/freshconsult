@@ -14,6 +14,7 @@ module Facebook
         convert_post_to_ticket    = false
         push_post_tree_to_dynamo  = parent_in_dynamo ? false : !parent_post_in_dynamo?
         
+        
         #Reply is not converted to a note as yet
         if self.fd_item.nil?
           fb_post    = fd_post_obj(self.koala_comment.parent_post_id) 
@@ -29,15 +30,15 @@ module Facebook
             convert_post_to_ticket = false
           #Parent Post is converted to a ticket, but the parent comment is not added as a note (edge case)
           elsif fb_post
-            fetch_and_process_comment(can_dynamo_push)
+            fetch_and_process_comment(fb_post, can_dynamo_push)
             can_dynamo_push = false
           else
-            convert_post_to_ticket = convert_post?(!push_post_tree_to_dynamo) unless parent_in_dynamo
+            convert_post_to_ticket = convert_post?(!push_post_tree_to_dynamo) 
           end
           
         end
-        
-        unless parent_in_dynamo
+      
+        if push_post_tree_to_dynamo || convert_post_to_ticket
           process_post(convert_post_to_ticket, push_post_tree_to_dynamo) 
           
           #If post is fetched from Dynamo or DB the current note will not be converted to a fd_item         
@@ -57,10 +58,10 @@ module Facebook
       private 
       
       #Post is a ticket but the parent comment is not converted to a note
-      def fetch_and_process_comment(can_dynamo_push)
+      def fetch_and_process_comment(fb_post, can_dynamo_push)
         #Explicitly logging second call made within the exception handler
         self.fan_page.log_api_hits
-        Facebook::Core::Comment.new(self.fan_page, in_reply_to).process(true, can_dynamo_push)
+        Facebook::Core::Comment.new(self.fan_page, in_reply_to).process(fb_post.postable, can_dynamo_push)
       end
       
     end

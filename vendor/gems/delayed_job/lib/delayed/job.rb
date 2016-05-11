@@ -101,25 +101,34 @@ module Delayed
 
     # Try to run one job. Returns true/false (work done/work failed) or nil if job can't be locked.
     def run_with_lock(max_run_time, worker_name)
-      Rails.logger.info "* [JOB] aquiring lock on #{name} -- #{worker_name}"
-      unless lock_exclusively!(max_run_time, worker_name)
-        # We did not get the lock, some other worker process must have
-        Rails.logger.warn "* [JOB] failed to aquire exclusive lock for #{name}"
-        return nil # no work done
-      end
-      Rails.logger.info "* [JOB] aquired lock on #{name} -worker_name- #{worker_name}  -payload- #{payload_object}"
-      begin
-        runtime =  Benchmark.realtime do
-          invoke_job # TODO: raise error if takes longer than max_run_time
-          destroy
+      Rails.logger.tagged SecureRandom.hex(20) do
+        Rails.logger.info "* [JOB] aquiring lock on #{name} -- #{worker_name} with MAX_RUN_TIME = #{max_run_time}"
+        unless lock_exclusively!(max_run_time, worker_name)
+          # We did not get the lock, some other worker process must have
+          Rails.logger.warn "* [JOB] failed to aquire exclusive lock for #{name}"
+          return nil # no work done
         end
-        # TODO: warn if runtime > max_run_time ?
-        Rails.logger.info "* [JOB] #{name} completed after %.4f" % runtime
-        return true  # did work
-      rescue Exception => e
-        reschedule e.message, e.backtrace
-        log_exception(e)
-        return false  # work failed
+        Rails.logger.info "* [JOB] aquired lock on #{name} -worker_name- #{worker_name}  -payload- #{payload_object}"
+        begin
+          runtime =  Benchmark.realtime do
+            Timeout::timeout(max_run_time) do
+              invoke_job
+            end
+            destroy
+          end
+          # TODO: warn if runtime > max_run_time ?
+          Rails.logger.info "* [JOB] #{name} completed after %.4f -- by worker - #{worker_name}" % runtime
+          return true  # did work
+        rescue Timeout::Error => e
+          NewRelic::Agent.notice_error(e, {:description => "Maximum run time - #{max_run_time} reached for [JOB] #{name} -- #{worker_name}"})
+          reschedule e.message, e.backtrace
+          log_exception(e)
+          return false
+        rescue Exception => e
+          reschedule e.message, e.backtrace
+          log_exception(e)
+          return false  # work failed
+        end
       end
     end
 
@@ -167,7 +176,7 @@ module Delayed
 
     # Find a few candidate jobs to run (in case some immediately get locked by others).
     # Return in random order prevent everyone trying to do same head job at once.
-    def self.find_available(limit = 5, max_run_time = MAX_RUN_TIME)
+    def self.find_available(limit = 5, max_run_time = self::MAX_RUN_TIME)
 
       time_now = db_time_now
 
@@ -196,8 +205,7 @@ module Delayed
 
     # Run the next job we can get an exclusive lock on.
     # If no jobs are left we return nil
-    def self.reserve_and_run_one_job(max_run_time = MAX_RUN_TIME)
-
+    def self.reserve_and_run_one_job(max_run_time = self::MAX_RUN_TIME)
       # We get up to 5 jobs from the db. In case we cannot get exclusive access to a job we try the next.
       # this leads to a more even distribution of jobs across the worker processes
       find_available(5, max_run_time).each do |job|

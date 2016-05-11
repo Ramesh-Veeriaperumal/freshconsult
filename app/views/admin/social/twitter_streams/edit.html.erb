@@ -14,7 +14,7 @@
     <%= submit_tag t('admin.social.streams.update') , :class => "btn btn-primary mrt", :id => "update_stream" %>
   </div>
 
-  <h3 class="title"><%= t('.title')%></h3><hr />
+  <h3 class="lead"><%= t('.title')%></h3><hr />
   
   <% unless @twitter_stream.default_stream? %>
       <%= render :partial => 'form', :locals => { :twitter_stream => @twitter_stream } %>

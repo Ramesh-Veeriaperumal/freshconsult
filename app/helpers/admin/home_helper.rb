@@ -21,10 +21,8 @@
         :url                           =>   "/admin/social/streams",
         :privilege                     =>   feature?(:twitter) && privilege?(:admin_tasks)
       },
-      :"facebook-setting"              =>   {
-        :url                           =>   "/social/facebook",
-        :privilege                     =>   current_account.features?(:facebook) && privilege?(:admin_tasks)
-      },
+      :"facebook-setting"              =>   facebook_settings,
+      
       :feedback                        =>   {
         :url                           =>   "/admin/widget_config",
         :privilege                     =>   privilege?(:admin_tasks)
@@ -55,7 +53,7 @@
       },
       :group                           =>   {
         :url                           =>   "/groups",
-        :privilege                     =>   privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:manage_availability) || privilege?(:admin_tasks)
       },
       :role                            =>   {
         :url                           =>   "/admin/roles",
@@ -95,7 +93,7 @@
       },
       :scenario                        =>   {
         :url                           =>   "/helpdesk/scenario_automations",
-        :privilege                     =>   feature?(:scenario_automations) && privilege?(:manage_scenario_automation_rules)
+        :privilege                     =>   feature?(:scenario_automations) && (privilege?(:manage_scenario_automation_rules) || privilege?(:view_admin))
       },
       :"email-notifications"           =>   {
         :url                           =>   "/admin/email_notifications",
@@ -103,7 +101,7 @@
       },
       :"canned-response"               =>   {
         :url                           =>   "/helpdesk/canned_responses/folders",
-        :privilege                     =>   privilege?(:manage_canned_responses)
+        :privilege                     =>   privilege?(:manage_canned_responses) || privilege?(:view_admin)
       },
       :"survey-settings"               =>   {
         :url                           =>   current_account.new_survey_enabled? ? "/admin/custom_surveys" : "/admin/surveys",
@@ -427,6 +425,17 @@ HTML
         "alert-message block-message warning full-width")
     end
     return
+  end
+  
+  private
+  
+  def facebook_settings
+    fb_feature = current_account.features?(:facebook) && privilege?(:admin_tasks)
+    url = (fb_feature && current_account.features?(:social_revamp)) ? "/admin/social/facebook_streams" : "/social/facebook"
+    {
+      :url        => url,
+      :privilege  => fb_feature
+    }
   end
 
 end

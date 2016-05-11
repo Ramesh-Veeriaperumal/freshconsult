@@ -120,7 +120,7 @@ module Helpdesk::TicketFilterMethods
 
   def can_manage? view
     return false unless view[:id].is_a? Numeric
-    privilege?(:view_admin) or view[:user_id] == current_user.id
+    privilege?(:admin_tasks) or view[:user_id] == current_user.id
   end
 
   def save_link view

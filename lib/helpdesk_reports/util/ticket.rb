@@ -2,7 +2,7 @@ module HelpdeskReports::Util::Ticket
   include HelpdeskReports::Constants
 
   def reverse_mapping_required? field
-    return true if valid_field_name?(field) and [:GLANCE, :CUSTOMER_REPORT].include? report_type
+    return true if valid_field_name?(field) and [:glance, :customer_report].include? report_type
     false
   end
   

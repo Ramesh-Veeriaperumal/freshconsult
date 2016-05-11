@@ -651,6 +651,16 @@ $survey-types: happy #82af56, neutral #f3ca6e, sad #ee715e;
 			    text-align: center;
 			    margin-right: 4px;
 			}
+
+			&.calendar,&.edit{
+				width: 30px;
+			    font-size: 18px;
+			    display: inline-block;
+			    text-align: center;
+			}
+			&.scheduled{
+				color : green;
+			}
 		}
 	}
 }
@@ -661,7 +671,6 @@ $survey-types: happy #82af56, neutral #f3ca6e, sad #ee715e;
 	font-weight: 600;
 }
 p.visibility {
-    color: #d3d3d3;
-    margin-top: -10px;
-    margin-bottom: 20px;
+    color: gray;
+    margin-top: 5px;
 }

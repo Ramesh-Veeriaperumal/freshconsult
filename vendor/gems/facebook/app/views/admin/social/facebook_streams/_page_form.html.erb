@@ -1,0 +1,42 @@
+<div class="adm-social adm-bg bdr clearfix">
+  <div class="smedia-spec row-fluid">
+    
+    <div class="span1 ml0">
+      <div class="profile-logo pull-left"><%= image_tag(facebook_page.page_img_url, size: "50x50") %></div>
+    </div>
+    
+    <div class="span11 pl20">
+      <div>
+        <div class="profile-name pull-left"><%= link_to "#{facebook_page.page_name}", "http://facebook.com/#{facebook_page.page_id}", :target => "_blank", :class => "title" %> <span><%= facebook_page.page_name %></span></div>
+        <div class="social-brand pull-right"><%= font_icon "facebook", :size => 48 %></div>
+      </div>
+      
+      <div class="adm-p">
+        <div class="row-fluid">
+          <div class='form_data span11 mlt mt20'>
+            <% if current_account.products.any? %>
+              <div class="control-group span4">
+                <label><%= t('.link_to_product') %></label>
+                <%= collection_select(:social_facebook_page, :product_id, current_account.products, :id, :name, { :include_blank => 'Default Product', :selected => facebook_page.product_id }, :class => 'select2-container select2 span12')%>
+              </div>
+            <% end %>
+            
+            <div class="control-group span8" style="display:none">
+              <label><%= t('.visible_to') %> <span class="field-important ">*</span></label>
+              <%= visibility_options(facebook_page)%>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    </div>
+    
+  </div>
+  
+  
+</div>
+
+
+
+
+           

@@ -5,7 +5,7 @@ module Facebook
       def self.has_permissions? token
         fb_user = Koala::Facebook::API.new(token)
         permissions = fb_user.get_connections('me','permissions').first
-        (Facebook::Oauth::Constants::PAGE_TAB_PERMISSION - permissions.keys).empty?
+        (Facebook::Oauth::Constants::PAGE_TAB_PERMISSIONS - permissions.keys).empty?
       end
 
       def self.read_facebook signed_request

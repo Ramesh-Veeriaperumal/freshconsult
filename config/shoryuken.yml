@@ -10,3 +10,4 @@ aws:
 :queues:
   - <%= SQS[:search_etl_queue] %>
   - <%= ES_V2_QUEUE_KEY % { cluster: 'cluster1' } %>
+  - <%= SQS[:facebook_realtime_queue] %>

@@ -670,17 +670,6 @@ hu:
         freshbooks_note: "Megjegyzések szöveg"
         api_url: "API URL"
         widget_title: "Modul neve"
-    screenr:
-      helptext: "<h4>Freshdesk Screenr Integration</h4><p><br/>The Screenr integration lets agents and customers capture and share screencasts while they are using Freshdesk. It can be used to attach error reports or instructional videos to your tickets, forum posts and solution articles directly.</p><p>Once enabled, you will be able to see a record button alongside your feedback widget, discussions, and your knowledge base. You can choose to record your entire browser window, or select a specific section of it if you want. They screencast will get inserted automatically once your session is complete.</p><p>You can setup this integration by entering your Screener URL (e.g. <a>http://yourname.viewcasts.com</a>) and your Recorder ID, which can be found once you login to your account.</p>"
-      form:
-        recorder_id: "Felvevő ID"
-        widget_title: "Modul cím"
-      settings:
-        ticket_interaction: "Kérelmek oldal (Új, Szerkesztés, Válasz)"
-        forum_interaction: "Fórum oldal (Új, Szerkesztés, Komment)"
-        create_solution: "Megoldás (Új, Szerkesztés)"
-        for_agents: Ügyintézőknek
-        for_customer: Ügyfeleknek
     harvest:
       helptext: "<h4>Harvest Integration Help</h4><p><br/>To integrate Harvest with Freshdesk, type in your <b>Domain name</b> and click on Enable.<br/><br/>Click on a ticket, go to the <b>Time Sheet tab</b>.  You can then type in your Harvest <b>Username</b> and <b>Password</b> to login. Now you can add your time tracking entry into Harvest.<br/><br/>Note: You can click on <b>Remember me</b>, so that you do not have to type in your Harvest credentials each time."
       form:
@@ -1115,7 +1104,7 @@ hu:
       index:
         congratulations: "Gratulálunk! Az Ön Freshdesk-je kész!"
         support_email_title: Ügyfélszolgálati<br>email
-        agents_title_1: "Ügyintézők<br> hozzáadása"
+        adding_agents: "Ügyintézők<br> hozzáadása"
         rebrand_title: "Logo <br>& színek"
         back_link: Vissza
         next_link: Következő
