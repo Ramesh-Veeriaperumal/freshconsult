@@ -23,4 +23,6 @@ module Integrations
 	icontact_key_hash = hash["app"]["icontact"]
 	ICONTACT_APP_ID = icontact_key_hash["app_id"]
 	#========================================================
+  cloud_elements_hash = hash["app"]["cloud_elements"]
+  CLOUD_ELEMENTS_AUTH_HEADER = cloud_elements_hash["auth_header"]
 end

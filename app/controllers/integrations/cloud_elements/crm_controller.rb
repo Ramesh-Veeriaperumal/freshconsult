@@ -21,9 +21,10 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
   rescue => e
     #catch timeout error
     [el_response, fd_response].each do |response|
-      delete_element_instance_error @installed_app, request.user_agent, response['id'] if response.present?
+      delete_element_instance_error @installed_app, request.user_agent, response['id'] if response.present? and response['id'].present?
     end
-    delete_formula_instance_error @installed_app, request.user_agent, formula_resp['id'] if formula_resp.present?
+    delete_formula_instance_error @installed_app, request.user_agent, formula_resp['id'] if formula_resp.present? and formula_resp['id'].present?
+
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
     flash[:error] = t(:'flash.application.update.error')
     redirect_to integrations_applications_path
@@ -77,8 +78,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
     def fd_payload
       json_payload = JSON.parse(File.read("lib/integrations/cloud_elements/freshdesk.json"))
-      event_poller_config = File.read("lib/integrations/cloud_elements/event_poller.json")
-      json_payload['configuration']['event.poller.configuration'] = event_poller_config
       api_key = current_user.single_access_token
       subdomain = current_account.domain
       JSON.generate(json_payload) % {:api_key => api_key, :subdomain => "e753ba00", :fd_instance_name => "freshdesk_#{element}_#{current_account.id}" }
@@ -417,14 +416,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       Integrations::CloudElementsController.delete_formula_instance(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
       Integrations::CloudElementsController.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => element_instance_id }))
       Integrations::CloudElementsController.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => fd_instance_id }))
-    end
-
-    def build_configs
-      arr =[] 
-      params.each do |key, value|
-        arr << "#{key}=#{value}"
-      end
-      arr.join("&")
     end
 
     def delete_element_instance_error installed_app, user_agent, element_instance_id

@@ -21,8 +21,13 @@ include Integrations::Constants
 						refresh_token = inst_app[:configs][:inputs]['refresh_token']
 					end
 				
-				## REFRESH THE "ACCESS TOKEN" USING THE "REFRESH TOKEN"
-					access_token = get_oauth2_access_token(app.oauth_provider, refresh_token, app_name)
+					if current_account.features?(:cloud_elements_crm_sync) and inst_app.configs_element_token.present?
+						element_instance = service_obj(inst_app, {}, inst_app.configs_element_instance_id).receive(:get_element_instance)
+						access_token = OpenStruct.new({:token => element_instance["configuration"]["oauth.user.token"]})
+					else
+					## REFRESH THE "ACCESS TOKEN" USING THE "REFRESH TOKEN"
+						access_token = get_oauth2_access_token(app.oauth_provider, refresh_token, app_name)
+					end
 				
 				## STORE THE NEW "ACCESS TOKEN" IN DATABASE.
 					if(app.user_specific_auth?)

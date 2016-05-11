@@ -12,7 +12,7 @@
     "event.notification.callback.url": "%{callback_url}/integrations/sync/crm/event_notification"
     },
 
-    "tags" : ["SFDC Shared Token Example"], 
+    "tags" : [], 
 
     "name" : "%{element_name}",
     "externalAuthentication": "initial"

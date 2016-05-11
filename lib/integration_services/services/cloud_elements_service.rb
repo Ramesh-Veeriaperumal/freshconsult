@@ -21,6 +21,10 @@ module IntegrationServices::Services
       element_instance_resource.delete_instance
     end
 
+    def receive_get_element_instance
+      element_instance_resource.get_instance
+    end
+
     def receive_contact_metadata
       contact_resource.get_fields
     end

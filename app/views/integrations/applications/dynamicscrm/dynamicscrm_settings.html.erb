@@ -3,16 +3,9 @@
       <%=t("integrations.dynamicscrm.helptext").html_safe%>
   </div>
 <%- end %>
-  <%if current_account.features?(:cloud_elements_crm_sync) and @installed_app.present? 
-    configs={}
-    options = @installed_app.configs[:inputs] #JSON.parse(CGI.unescape params["configs"])
-    options.each do |key, value|
-      value = @installed_app.configsdecrypt_password if key.eql? "password"
-      configs[key] = value
-    end
-    configs["dynamicscrm_url"] = params["dynamicscrm_url"]
-  end%>
-	<h3 class="lead"><%=t("integrations.dynamicscrm.form.dynamicscrm_settings")%></h3>
+
+  <h3 class="lead"><%=t("integrations.dynamicscrm.form.dynamicscrm_settings")%></h3>
+
   <%= form_tag("/integrations/dynamicscrm/settings_update", :method=> "post")  do %>
    <% default_fields = ["Name", "Position", "Company"]%>
    <% crm_instance_types = Integrations::Constants::CRM_INSTANCE_TYPES %>
@@ -52,18 +45,6 @@
           type="password">
           <span class="seperator"></span>
         </div>
-
-        <%if current_account.features?(:cloud_elements_crm_sync)%>
-        <div class="fields">
-          <label for="configs_dynamicscrm_url"> <%=t('integrations.dynamicscrm.form.dynamicscrm_url')%>  <span class="required_star">*</span></label><input aria-required="true" class=" required text" id="configs_dynamics_url" name="configs[dynamicscrm_url]" size="30"
-          <%if defined?(configs["dynamicscrm_url"]) %>
-            value = "<%= configs["dynamicscrm_url"] %>"
-          <%end%>
-          type="text">
-          <div class="info-data"> <%=t('integrations.dynamicscrm.form.dynamics_url_info')%> </div>
-          <span class="seperator"></span>
-        </div>
-        <%end%>
 
         <div class="fields">
           <label for="configs_organization_name"> <%=t('integrations.dynamicscrm.form.organization_name')%> <span class="required_star">*</span></label><input aria-required="true" class=" required   text" id="configs_organization_name" name="configs[organization_name]" size="30"

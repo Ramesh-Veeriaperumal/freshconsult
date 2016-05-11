@@ -6,7 +6,6 @@ class Integrations::SalesforceController < Admin::AdminController
 
 
   def new
-    redirect_to "/integrations/sync/crm/instances?state=sfdc&step=new" and return if cloud_elements_feature?
     @installed_app = current_account.installed_applications.build(:application => @application)
     @installed_app.configs = { :inputs => {} }
     @installed_app.configs[:inputs] = get_app_configs
@@ -43,6 +42,11 @@ class Integrations::SalesforceController < Admin::AdminController
     if cloud_elements_feature?
       redirect_to "/integrations/sync/crm/edit?state=sfdc" and return if @installed_app.configs[:inputs]["element_token"].present?
       redirect_to "/integrations/sync/crm/instances?state=sfdc&step=edit" and return
+    elsif @installed_app.configs[:inputs]["element_token"].present?
+     Integrations::CloudElements::CrmController.destroy_ce_instances( @installed_app, request.user_agent )
+     ce_configs = ["element_token", "element_instance_id", "fd_instance_id", "crm_to_helpdesk_formula_instance", "enble_sync", "companies", "contacts"]
+     @installed_app.configs[:inputs] = @installed_app.configs[:inputs].except(*ce_configs)
+     @installed_app.save!
     end
     @salesforce_config = fetch_metadata_fields
     @action = 'update'

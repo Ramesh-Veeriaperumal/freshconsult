@@ -90,4 +90,9 @@ module Integrations::OauthHelper
       return 'Bearer %s' if app_name=='surveymonkey'
       'OAuth %s'
     end
+
+    def service_obj installed_app, payload ={}, element_token
+      metadata = {:user_agent => "Freshdesk", :element_instance_id => element_token }
+      IntegrationServices::Services::CloudElementsService.new( installed_app, payload, metadata)
+    end
 end

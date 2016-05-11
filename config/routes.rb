@@ -664,13 +664,8 @@ Helpkit::Application.routes.draw do
         post :install
     end
 
-    #check
-    namespace :cloud_elements do
-       get :oauth_url
-       get :settings
-    end
-
     namespace :cloud_elements, :path => "sync" do
+      get :oauth_url
       namespace :crm do
         get :instances
         post :install
