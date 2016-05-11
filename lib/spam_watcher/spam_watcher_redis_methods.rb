@@ -73,14 +73,14 @@ class SpamWatcherRedisMethods
       subject = "Ignore the mail , user has been autoblocked"
       spam_alert(account,user,table_name,operation,subject,0)
       deleted_users = [user]
-      SubscriptionNotifier.deliver_admin_spam_watcher(account, deleted_users, 1)
+      #SubscriptionNotifier.deliver_admin_spam_watcher(account, deleted_users, 1)
     end
 
     def check_spam(account, user, table_name)
       if has_cmrr(account) 
         if !user.agent?
           operation = "deleted"
-          delete_user(user)
+          # delete_user(user)
           spam_alert(account,user,table_name,operation,nil,0)
         else
           return
@@ -90,8 +90,8 @@ class SpamWatcherRedisMethods
           operation = "noticed spamming,"
           spam_alert(account,user,table_name,operation,nil,1)
         else
-          delete_user(user)
-          block_spam_user(user)
+          #delete_user(user)
+          #block_spam_user(user)
           send_notification(account,user,table_name)
         end
       end
