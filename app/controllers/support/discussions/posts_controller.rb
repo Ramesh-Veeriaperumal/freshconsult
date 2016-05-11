@@ -17,7 +17,7 @@ class Support::Discussions::PostsController < SupportController
  	before_filter :verify_topic_user, :only => [:toggle_answer]
 
 	def create
-		if @topic.locked? and !@topic.published?
+		if @topic.locked? || !@topic.published?
 			respond_to do |format|
 				format.html do
 					flash[:notice] = 'This topic is locked.'
