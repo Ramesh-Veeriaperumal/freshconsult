@@ -47,7 +47,7 @@ class Flexifield < ActiveRecord::Base
   end
 
   def set_ff_value ff_alias, ff_value, ff_field = nil
-    ff_field ||= to_ff_field ffalias
+    ff_field ||= to_ff_field ff_alias
     if ff_field       
       ff_value = nil if ff_value.blank?
       write_attribute ff_field, ff_value
