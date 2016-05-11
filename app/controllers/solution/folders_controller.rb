@@ -155,7 +155,7 @@ class Solution::FoldersController < ApplicationController
     end
 
     def valid_customers(customer_ids)
-      current_account.companies.where({ :id => customer_ids.split(',') }).pluck(:id) if customer_ids.present?
+      current_account.companies.where({ :id => customer_ids.to_s.split(',') }).pluck(:id) if customer_ids.present?
     end
 
     def change_visibility
