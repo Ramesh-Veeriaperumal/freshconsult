@@ -20,8 +20,6 @@ class Support::Solutions::ArticlesController < SupportController
   newrelic_ignore :only => [:thumbs_up,:thumbs_down]
   before_filter :load_vote, :only => [:thumbs_up,:thumbs_down]
 
-  skip_before_filter :verify_authenticity_token, :only => [:thumbs_up,:thumbs_down]
-
   before_filter :generate_ticket_params, :only => :create_ticket
   after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket, :if => :no_error
 
