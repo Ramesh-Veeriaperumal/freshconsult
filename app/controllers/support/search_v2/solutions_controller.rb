@@ -20,12 +20,12 @@ class Support::SearchV2::SolutionsController < SupportController
         es_params[:search_term] = ("#{@article.tags.map(&:name).join(' ')} #{@article.title}").gsub(/[\^\$]/, '')
         return [] if es_params[:search_term].blank?
 
-        es_params[:language_id]         = Language.for_current_account.id
+        es_params[:language_id]         = Language.current.try(:id) || Language.for_current_account.id
         es_params[:article_id]          = @article.id
         es_params[:article_status]      = Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft]
         es_params[:article_visibility]  = @article.user_visibility
         es_params[:article_company_id]  = User.current.try(:company_id)
-        es_params[:article_category_id] = current_portal.portal_solution_categories.map(&:solution_category_id)
+        es_params[:article_category_id] = current_portal.portal_solution_categories.map(&:solution_category_meta_id)
 
         es_params[:size]                = @size
         es_params[:from]                = @offset

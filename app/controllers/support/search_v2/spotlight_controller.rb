@@ -69,10 +69,10 @@ class Support::SearchV2::SpotlightController < SupportController
         end
 
         if searchable_klasses.include?('Solution::Article')
-          es_params[:language_id]               = Language.for_current_account.id
+          es_params[:language_id]               = Language.current.try(:id) || Language.for_current_account.id
           es_params[:article_status]            = SearchUtil::DEFAULT_SEARCH_VALUE.to_i
           es_params[:article_visibility]        = visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN)
-          es_params[:article_category_id]       = current_portal.portal_solution_categories.map(&:solution_category_id)
+          es_params[:article_category_id]       = current_portal.portal_solution_categories.map(&:solution_category_meta_id)
           es_params[:article_company_id]        = current_user.company_id if current_user
         end
 
@@ -171,7 +171,7 @@ class Support::SearchV2::SpotlightController < SupportController
 
     def solution_result article
       { 'title' => article.es_highlight('title').html_safe,
-        'group' => h(article.folder.name),
+        'group' => h(article.solution_folder_meta.name),
         'desc' => article.es_highlight('desc_un_html').html_safe,
         'type' => "ARTICLE",
         'url' => support_solutions_article_path(article) }

@@ -4,6 +4,7 @@ class Search::V2::SolutionsController < ApplicationController
 
   include Search::SearchResultJson
   include Search::V2::AbstractController
+  helper Search::SearchHelper
 
   before_filter :load_ticket, :only => [:related_solutions, :search_solutions]
     
@@ -27,7 +28,7 @@ class Search::V2::SolutionsController < ApplicationController
     
     def construct_es_params
       super.tap do |es_params|
-        es_params[:language_id]         = Language.for_current_account.id
+        es_params[:language_id]         = params[:language_id] || Language.for_current_account.id
         es_params[:article_category_id] = params[:category_id].to_i if params[:category_id].present?
         es_params[:article_folder_id]   = params[:folder_id].to_i if params[:folder_id].present?
         es_params[:sort_by]             = @search_sort
