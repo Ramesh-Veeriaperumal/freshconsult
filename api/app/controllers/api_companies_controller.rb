@@ -27,25 +27,9 @@ class ApiCompaniesController < ApiApplicationController
 
   private
 
-    def validate_filter_params
-      params.permit(*CompanyConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @company_filter = CompanyFilterValidation.new(params, nil, string_request_params?)
-      render_errors(@company_filter.errors, @company_filter.error_options) unless @company_filter.valid?
-    end
-
     def load_objects
       # preload(:flexifield, :company_domains) will avoid n + 1 query to company field data & company domains
       super scoper.preload(:flexifield, :company_domains).order(:name)
-      # includes(:flexifield) will avoid n + 1 query to company field data.
-      super companies_filter(scoper).includes(:flexifield).order(:name)
-    end
-
-    def companies_filter(companies)
-      @company_filter.conditions.each do |key|
-        clause = companies.company_filter(@company_filter)[key.to_sym] || {}
-        companies = companies.where(clause[:conditions]).joins(clause[:joins])
-      end
-      companies
     end
 
     def scoper

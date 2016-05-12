@@ -244,14 +244,6 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json(pattern.ordered!)
   end
 
-  def test_company_filter_company_name
-    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
-    get :index, controller_params(name: company.name)
-    assert_response 200
-    response = parse_response @response.body
-    assert_equal 1, response.size
-  end
-
   def test_company_with_pagination_enabled
     3.times do
       create_company

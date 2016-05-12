@@ -41,7 +41,7 @@ group :development, :test do
   # gem "debugger", "~> 1.6.8"
   gem 'pry'
   gem 'pry-byebug'
-  # gem 'pry-nav'
+  gem 'pry-nav'
   gem 'binding_of_caller'
   gem 'meta_request'
   gem 'fake_sqs'
@@ -180,7 +180,7 @@ gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/cust
 
 gem "jwt", "1.0.0" #could not use latest gem version(1.2.0) since twilio-ruby gem is using 1.0.0
 
-group :production,:test,:staging,:development do
+group :production,:test,:staging do
   gem "tire", :git => "git@github.com:freshdesk/retire.git"
 end
 
@@ -221,9 +221,7 @@ group :development, :test do
   gem "forgery","0.5.0"
   gem 'factory_girl_rails', '4.4.0'
   gem 'webrick', '1.3.1'
-  gem 'thin'
   gem 'jasmine'
-  gem 'puma'
 end
 
 group :test do

@@ -1,6 +1,6 @@
 module ApiWebhooks::PlaceholderMethods
 
-  def ticket_placeholder
+	def ticket_placeholder
     place_holders = [
       ['{{ticket.id}}','ticket_display_id'],
       ['{{ticket.raw_id}}','ticket_id'],
