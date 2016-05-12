@@ -2493,7 +2493,7 @@ en:
       verify_credentials: Couldn't log you in. Please verify your credentials
       login_permission_denied: Sorry! You do not have enough permission to access this page. 
       signup_permission_denied: Sorry! You do not have enough permission to access this page.
-      contact_administrator: Pease contact your Account Administrator.
+      contact_administrator: Please contact your Account Administrator.
       sso:
         expected_params: "One or more of the expected parameters name, email, and hash are missing."
         invalid_time_entry: "Invalid time entry"
