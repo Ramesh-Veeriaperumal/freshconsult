@@ -21,7 +21,7 @@ module Utils
     end
 
     def body_html_with_formatting(body)
-      body_html = Rinku.auto_link(body) { |text| truncate(text, :length => 100) }
+      body_html = Rinku.auto_link(body, :all, 'rel="noreferrer"') { |text| truncate(text, :length => 100) }
       textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [ :hard_breaks ])
       textilized.hard_breaks = true if textilized.respond_to?("hard_breaks=")
       white_list(textilized.to_html)

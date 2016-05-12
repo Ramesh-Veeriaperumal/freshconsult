@@ -647,7 +647,8 @@ Helpkit::Application.routes.draw do
     collection do
       get :login
       get :facebook
-      get :google_login
+      get :portal_google_sso
+      get :marketplace_google_sso
     end
   end
 
@@ -1015,7 +1016,7 @@ Helpkit::Application.routes.draw do
       end
       member do
         put :make_primary
-        get :deliver_verification
+        put :deliver_verification
         put :test_email
       end
     end
@@ -1052,7 +1053,7 @@ Helpkit::Application.routes.draw do
 
     resources :data_export do
       collection do
-        get :export
+        post :export
       end
     end
 
@@ -1075,7 +1076,7 @@ Helpkit::Application.routes.draw do
           get :show
           put :update
           put :soft_reset
-          get :restore_default
+          put :restore_default
           get :publish
           get :clear_preview
         end
@@ -1859,7 +1860,13 @@ Helpkit::Application.routes.draw do
       end
       resources :tag_uses
       resources :reminders
-      resources :time_sheets
+
+      resources :time_sheets do
+        member do
+          put :toggle_timer
+        end
+      end
+
       resources :mobihelp_info, :only => :index
     end
     
@@ -2657,7 +2664,6 @@ Helpkit::Application.routes.draw do
           put :add_feature
           put :change_url
           get :single_sign_on
-          get :sso_time_stamp
           put :change_account_name
           put :ublock_account
           put :remove_feature

@@ -25,14 +25,14 @@ class Social::Twitter::Mention
       user   = get_twitter_user(@sender.screen_name)
 
       if twt.in_reply_to_status_id.blank?
-        add_as_ticket twt , twt_handle , :mention
+        add_as_ticket twt , twt_handle , :mention, {}, nil, user
       else
         tweet = account.tweets.find_by_tweet_id(twt.in_reply_to_status_id)
         unless tweet.blank?
           ticket = tweet.get_ticket
           add_as_note twt , twt_handle , :mention , ticket, user
         else
-          add_as_ticket twt , twt_handle , :mention
+          add_as_ticket twt , twt_handle , :mention, {}, nil, user
         end
       end
     end

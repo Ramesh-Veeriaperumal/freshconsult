@@ -2856,6 +2856,7 @@ en:
   current_free_plan: Current Free Plan
   medium: "Medium"
   suspended_plan_admin_info: Your account has been suspended please contact your account administrator (%{email})
+  suspended_plan_admin_info_new: Your account has been suspended please contact your account administrator
   delete_confirm_scenario: Are you sure you want to delete this scenario?
   days: Days
   basic_brief: For Small teams

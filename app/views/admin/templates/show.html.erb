@@ -91,7 +91,7 @@
       <br />
       <div>
         <%= link_to t("portalcss.reset_all_changes"), restore_default_admin_portal_template_path, 
-          :confirm => t("portalcss.reset_all_confirm_message"), :class => "btn btn-danger" %>
+          :confirm => t("portalcss.reset_all_confirm_message"), :class => "btn btn-danger", :method => :put %>
         <p class="text_red">
           <b>Warning:</b> This will reset ALL portal customizations to default.
         </p>

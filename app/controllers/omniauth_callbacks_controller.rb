@@ -17,7 +17,8 @@ class OmniauthCallbacksController < ApplicationController
       :portal_url => @ignore_build.blank? ? portal_url : nil,
       :app => app,
       :omniauth => @omniauth,
-      :user_id => @user_id
+      :user_id => @user_id,
+      :state_params => @state_params
     )
 
     result = authenticator.after_authenticate(params)
@@ -72,11 +73,11 @@ class OmniauthCallbacksController < ApplicationController
   end
 
   def assign_state_variables origin
-    state_params = CGI.parse(URI.decode(params[:state]))
-    if state_params["ignore_build"].present?
+    @state_params = CGI.parse(URI.decode(params[:state]))
+    if @state_params["ignore_build"].present?
       @ignore_build = true
     else
-      @domain = (state_params["portal_domain"].presence || state_params["full_domain"].presence)[0]
+      @domain = (@state_params["portal_domain"].presence || @state_params["full_domain"].presence)[0]
       domain_mapping = DomainMapping.find_by_domain(@domain)
       if domain_mapping.present?
         @account_id =  domain_mapping.account_id

@@ -3,7 +3,7 @@ module GoogleLoginHelper
   include Redis::OthersRedis
   include Helpdesk::Permission::User
 
-  def verify_domain_user account, nmobile, options = {}
+  def verify_domain_user account, nmobile=false, options = {}
     domain_user = account.user_emails.user_for_email(email)
     if domain_user.blank?
       domain_user = create_user(account, name, email, nmobile) if valid_google_auth_user?(account, email, options)
@@ -24,16 +24,11 @@ module GoogleLoginHelper
     set_others_redis_key(redis_oauth_key, uid, 300)
   end
 
-  def construct_redirect_url(account, domain_arg, random_key, native_mobile_flag=false)
-    protocol = construct_protocol(account, native_mobile_flag)
-    protocol + "://" + construct_sso_path(domain_arg) + construct_params(domain_arg, random_key)
-  end
-
   private
 
-    def domain native_mobile_flag=false
-      return @origin_account.full_domain if native_mobile_flag.present?
-      URI.parse(@portal_url).host || @origin_account.full_domain
+    def domain
+      return URI.parse(@portal_url).host if @portal_url.present?
+      Account.current.full_domain
     end
 
     def email
@@ -77,7 +72,7 @@ module GoogleLoginHelper
       if nmobile.present?
         @origin_account.full_domain
       else
-        domain(false)
+        domain
       end
     end
 
@@ -93,14 +88,10 @@ module GoogleLoginHelper
       user
     end
 
-    def construct_protocol account, native_mobile_flag
+    def construct_protocol account, native_mobile_flag=false
       return "http" if Rails.env.development?
       return "https" if native_mobile_flag.present?
       account.url_protocol
-    end
-
-    def construct_sso_path domain_arg
-      domain_arg + (Rails.env.development? ? ":3000" : "") + "/sso/google_login"
     end
 
     def construct_params domain_arg, random_key
