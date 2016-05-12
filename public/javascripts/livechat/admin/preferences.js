@@ -7,18 +7,8 @@ window.liveChat.preferenceSettings = function($){
 			var _widget = window.liveChat.adminSettings.currentWidget;
 			var business_calendar = _widget.business_calendar;
 
-			// business calendar
-			if(business_calendar == null || business_calendar == "null" || business_calendar == 0){ // Set 24x7
-				$("#chat_anytime").prop('checked', true);
-				$("#chat_business_options").hide();
-			}else{
-				$("#chat_business_hours").prop('checked', true);
-				$("#chat_business_options").show();
-			}
-
 			//offline chat
-			var elementPrefix = _widget.offline_chat.show == 1 ? "show" : "hide";
-			$("#"+elementPrefix+"_offline_chat_window").prop('checked', true);
+			var offline_settings = _widget.offline_chat.show;
 
 			// Proactive chat
 			if(_widget.proactive_chat == 1){
@@ -41,6 +31,7 @@ window.liveChat.preferenceSettings = function($){
 			
 			$('.proactive_time_display').html(self.timeConversion());
 
+			// business calendar
 			if(business_calendar == null || business_calendar == "null" || business_calendar == 0){ // Set 24x7
 				$("#chat_anytime").prop('checked', true);
 				$("#chat_business_options").hide();
@@ -92,14 +83,16 @@ window.liveChat.preferenceSettings = function($){
 
 		preferencesSave: function (){
 			var self = this;
-      var _widget = window.liveChat.adminSettings.currentWidget;
+      		var _widget = window.liveChat.adminSettings.currentWidget;
+
 			var show_chat_hours = $("input[name='show_chat_hours']:checked").val();
+			_widget.offline_chat.show = show_chat_hours != 0 ? 0 : 1;
 
 			if(show_chat_hours != 0 && $("#business_calendar_id").length > 0){
 				show_chat_hours = $("#business_calendar_id").val();
 			}
 
-			var data = {'siteId': window.SITE_ID, routing: {}};
+			var data = { routing: {} };
 			data.business_calendar_id = show_chat_hours;
 			data.show_on_portal = $("#show_on_portal").is(":checked") ? 1 : 0;
 			data.portal_login_required = $("#portal_login_required").is(":checked") ? 1 : 0;
@@ -113,12 +106,12 @@ window.liveChat.preferenceSettings = function($){
 			data.proactive_chat = ($("#proactive_chat").is(":checked") ? 1 : CHAT_CONSTANTS.HIDE);
 			data.proactive_time = $("#proactive_time").val();
 			data.offline_chat = _widget.offline_chat;
-			data.offline_chat['show'] = $("input[name='offline_chat_window']:checked").val();
+			data.offline_chat['show'] = _widget.offline_chat.show;
 
 			$.ajax({
 				type: "PUT",
 				url: "/admin/chat_widgets/"+_widget.id,
-				data: data,
+				data: { attributes : data },
 				dataType: "json",
 				success: function(resp){
 					window.liveChat.adminSettings.currentWidget = $.extend({}, _widget, data);
@@ -151,7 +144,7 @@ window.liveChat.preferenceSettings = function($){
 				$.ajax({
 					type: "GET",
 					url: "/livechat/get_groups",
-					data: {"widget_id": _widget.widget_id},
+					data: { "widget_id": _widget.widget_id },
 					dataType: "json",
 					success: function(resp){
 						if(resp.groups){
@@ -223,7 +216,6 @@ window.liveChat.preferenceSettings = function($){
 			var timer =mins + seconds + "<span class='caret'></span>"; 
 			return timer;
 		},
-
 
 		showMsg: function(response){
 			$(".chat_setting_save").removeAttr('disabled');

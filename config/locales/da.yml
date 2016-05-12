@@ -1526,7 +1526,7 @@ da:
         import: "Importer data fra Zendesk"
         agent: Agenter
         feedback: "Feedback widget"
-        freshchat: Freshchat
+        livechat: Live Chat
         integrations: Integrationer
         dispatcher: Dispatch'r
         supervisor: Supervisor
@@ -2374,8 +2374,8 @@ da:
       source_change:
         short: "{{user_path}} ændrede kilden til {{source_name}}"
         long: "{{user_path}} ændrede kilden for supportsagen {{notable_path}} kilde til {{source_name}}"
-  freshchat:
-    title: Freshchat
+  livechat:
+    title: Live Chat
     widget: Widget
     messages: Beskeder
     set_default_msgs: "Indstil standard beskeder"
@@ -2440,7 +2440,7 @@ da:
     connecting_msg: "Venter på en medarbejder"
     ignore_msg: "Det ser ud til at alle vore medarbejdere er optaget lige nu! Du er meget velkommen til at  <a href='$/support/tickets/new' id='ticket_page_link' target='_blank'>skrive en besked til os,</a> så vender vi tilbage hurtigst muligt."
     installation: Installation
-    intro: "Ekstraordinær kundeservice handler om at være der for kunden,  før han har et problem. Med Freshchat kan dine agenter chatte med hinanden uden at forlade Freshdesk (endelig!), og de kan også give øjeblikkelig svar til dine potentielle kunder. Det er endnu en fjer i din hat, en kanal, designet til at bringe dig tættere på dine brugere og besøgende."
+    intro: "Ekstraordinær kundeservice handler om at være der for kunden,  før han har et problem. Med Live Chat kan dine agenter chatte med hinanden uden at forlade Freshdesk (endelig!), og de kan også give øjeblikkelig svar til dine potentielle kunder. Det er endnu en fjer i din hat, en kanal, designet til at bringe dig tættere på dine brugere og besøgende."
     logged_in_users: "Kun for brugere, der er logget ind"
     portal_desc: "Støt dine kunder i realtid via din Freshdesk portal, bortset fra at chatte med dem på din hjemmeside."
     loading_new_archives: "Indlæser nye arkiver ..."
@@ -3261,8 +3261,8 @@ da:
   is_expiring_today: "udløber i dag"
   feedbackwidget_help_para1: "Saml feedback fra dine kunder ved at tilføje en support-fane på dine hjemmesider."
   chatwidget_help_content:
-    title: Freshchat
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Lær mere om at bruge Freshchat gennem Freshdesk</a>"
+    title: Live Chat
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Lær mere om at bruge Live Chat gennem Freshdesk</a>"
   low: Lav
   agents: Agenter
   header:

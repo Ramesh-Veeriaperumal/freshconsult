@@ -6,23 +6,23 @@
   </li>
   <li>
     <form id ="archive_filter">
-      <label class="control-label"><%=t('freshchat.keyword')%></label>  
+      <label class="control-label"><%=t('livechat.keyword')%></label>  
       <input class="ff_item date_range" id="filter_keyword" type="text" value="" />
-      <label class="control-label"><%=t('freshchat.widget')%></label>  
-      <%= select_tag :widget_filter, options_for_select([[t('freshchat.all'),"0"]] + @widgetsSelectOption,"0"), :class => 'select2',:multiple => true %>
+      <label class="control-label"><%=t('livechat.widget')%></label>  
+      <%= select_tag :widget_filter, options_for_select([[t('livechat.all'),"0"]] + @widgetsSelectOption,"0"), :class => 'select2',:multiple => true %>
       <label class="control-label"><%=t('filter_options.created_date_range')%></label>
       <input class="ff_item date_range" id="date_range" type="text" value="<%=@dateRange%>" />
       <label class="error" id="date_range_error"><%=t('validation.required')%></label>
       <label class="control-label"><%=t('filter_options.responder_id')%></label>  
-      <%= select_tag :agent_filter, options_for_select([[t('freshchat.all'),"0"]] + @agentsAvailable,"0"), :class => 'select2',:multiple =>true%>
-      <label class="control-label"><%=t('freshchat.chat_type')%></label>  
+      <%= select_tag :agent_filter, options_for_select([[t('livechat.all'),"0"]] + @agentsAvailable,"0"), :class => 'select2',:multiple =>true%>
+      <label class="control-label"><%=t('livechat.chat_type')%></label>  
       <%= select_tag :type_filter, options_for_select(ChatSetting::FILTER_TYPES, :selected => 0), :class => 'select2'%>
       <input type="hidden" id="visitor_id" type="text" value="" />
       <input type="hidden" id="agent_ids" type="text" value="" />
     </form>
   </li> 
   <li class="filter-actions">
-    <a class="btn btn-primary" id="submit" href="javascript:void(0)"><%=t('freshchat.filter')%></a>
-    <a class="btn" id="cancel" href="javascript:void(0)"><%=t("freshchat.close")%></a>
+    <a class="btn btn-primary" id="submit" href="javascript:void(0)"><%=t('livechat.filter')%></a>
+    <a class="btn" id="cancel" href="javascript:void(0)"><%=t('livechat.close')%></a>
   </li>
 </ul>

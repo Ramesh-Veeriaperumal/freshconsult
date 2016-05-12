@@ -1726,7 +1726,7 @@ it:
         import: "Importa i dati da Zendesk"
         agent: Agenti
         feedback: "Widget di feedback"
-        freshchat: "Chat live"
+        livechat: "Chat live"
         integrations: Integrazioni
         dispatcher: Distributore
         supervisor: Supervisore
@@ -5993,7 +5993,7 @@ it:
         filter_by: "Visualizzazioni soddisfazione"
         view_report_date: "Visualizza report durante"
         helptext: "<b>Perché utilizzare il report soddisfazione clienti?</b><p>Il report soddisfazione clienti fornisce un'istantanea della qualità di assistenza degli agenti del supporto clienti.<br>Il report aiuta a valutare il livello di appagamento dei clienti, che è rappresentato come valore percentuale (soddisfatti, indifferenti e delusi), che ogni addetto al supporto deve tenere in considerazione.<br><br><b>Cos'altro si può fare?</b><br><p><ol class='ml15'><li>Filtrare i risultati del report per addetti, gruppi o aziende</li><li>Visualizzare i report relativi a un determinato periodo</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Riepilogo Chat live"
       filter_by_title: "Filtra per"
       time_period: "Periodo di tempo"
@@ -6957,7 +6957,7 @@ it:
         additional_info: "Potrai acquistare numeri, effettuare e ricevere chiamate una volta che avrai abilitato il canale del telefono nel tuo account"
         button_text: "Richiesta per il telefono"
         video_title: "Guarda il video per scoprire ciò che puoi fare con il canale telefonico"
-  freshchat:
+  livechat:
     feature_request:
       title: "Benvenuti in Chat live"
       heading: "Supporto ai clienti con Chat live"
@@ -7034,7 +7034,7 @@ it:
     bottom_left: "In basso a sinistra"
     bottom_right: "In basso a destra"
     integrate_msg: "Copia e incolla questo codice prima dell'ultimo </body> tag sul tuo sito web o app"
-    integrate_freshchat_title: "Integra Chat live nel tuo sito web e nelle applicazioni"
+    integrate_livechat_title: "Integra Chat live nel tuo sito web e nelle applicazioni"
     custom_chat_window: "Personalizza la tua finestra della chat"
     text_placeholder: "Il tuo messaggio"
     chatbox_bgcolor: "Colore finestra"
@@ -7177,7 +7177,7 @@ it:
     intro_title: "Perché scegliere Chat live"
     intro: "Perché una soluzione di chat live integrata ti permette di visualizzare e chattare con gli utenti sul tuo sito web, nel software online o nel portale di supporto direttamente all'interno di Freshdesk. Al termine di una sessione di chat, è possibile scegliere di convertire la conversazione in un ticket e proseguire il follow up con il visitatore via e-mail oppure archiviare la trascrizione della chat."
     enable_chat: "Abilita Chat live"
-    learn_freshchat: "Maggiori informazioni su Chat live"
+    learn_livechat: "Maggiori informazioni su Chat live"
     support_portal: "Chat sul canale di supporto"
     logged_in_users: "Solo utenti connessi"
     everyone: Tutti

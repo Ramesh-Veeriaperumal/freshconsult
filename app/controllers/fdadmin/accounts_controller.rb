@@ -39,7 +39,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info = {}
     account = Account.find(params[:account_id])
     feature_info[:social] = fetch_social_info(account)
-    feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.display_id?) }
+    feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.site_id?) }
     feature_info[:mailbox] = account.features?(:mailbox)
     feature_info[:freshfone] = account.features?(:freshfone)
     respond_to do |format|

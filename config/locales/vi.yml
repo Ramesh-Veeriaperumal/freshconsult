@@ -1825,7 +1825,7 @@ vi:
         import: "Nhập dữ liệu từ Zendesk"
         agent: "các chuyên viên"
         feedback: "chi tiết phản hồi"
-        freshchat: Freshchat
+        livechat: Live Chat
         integrations: "hội nhập"
         dispatcher: Dispatch'r
         supervisor: "Người giám sát"
@@ -3029,8 +3029,8 @@ vi:
         short: "{{user_path}} cập nhật nguồn vào {{source_name}}"
         without_user: "cập nhật nguồn <strong>{{source_name}}</strong>"
         long: "{{user_path}} cập nhật ticket vào nguồn {{notable_path}} đến {{source_name}}"
-  freshchat:
-    title: Freshchat
+  livechat:
+    title: Live Chat
     messages: "Các tin nhắn"
     set_default_msgs: "Cài tin nhắn mặc định"
     minimize_chat_title: "Biệt hiệu khi thu nhỏ chat"
@@ -3070,7 +3070,7 @@ vi:
     bottom_left: "Phía trái bên dưới"
     bottom_right: "Phía phải bên dưới"
     integrate_msg: "Copy và dán mã này trước thẻ cuối cùng trong website hoặc app </body>"
-    integrate_freshchat_title: "Mở rộng Freshchat qua website hoặc ứng dụng của bạn"
+    integrate_livechat_title: "Mở rộng Live Chat qua website hoặc ứng dụng của bạn"
     custom_chat_window: "Điều chỉnh cửa sổ trò chuyện của bạn"
     text_placeholder: "Tin nhắn của bạn"
     chatbox_bgcolor: "Màu cửa sổ"
@@ -3168,7 +3168,7 @@ vi:
     chatsettings_save: "Thay đổi của bạn chưa được lưu. Lưu thay đổi?"
     transfer_accepted_msg: "Khách chuyển đổi được chấp nhận"
     transfer_request_timeout_msg: "hết giờ yêu cầu chuyển đổi"
-    integrate_freshchat_info: "Ghi chú: Cửa sổ trò chuyện sẽ xuất hiện khi chuyên viên đang trực tuyến."
+    integrate_livechat_info: "Ghi chú: Cửa sổ trò chuyện sẽ xuất hiện khi chuyên viên đang trực tuyến."
     click_to_go_online: "Hiện tại bạn đang tắt trực tuyến <br> chọn để trực tuyến"
     click_to_go_offline: "Hiện tại bạn đang trực tuyến <br> chọn để tắt trực tuyến"
     fetching: "Vui lòng chờ"
@@ -4206,9 +4206,9 @@ vi:
   favicon: "biểu tượng favicon"
   is_expiring_today: "hết hạn hôm nay"
   chatwidget_help_content:
-    title: Freshchat
-    info1: "Freshchat để bạn xem và trò chuyện với user trên website, phần mềm trực tuyến, hay cổng hỗ trợ sẽ được chuyến hướng đến Freshdesk. Bạn có thể đặc chế cho tất cả các cửa sổ trò chuyện (bao gồm cả đoạn văn mặc định, màu sắc...) và "
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Thêm thông tin sử dụng Freshchat trong Freshdesk</a>"
+    title: Live Chat
+    info1: "Live Chat để bạn xem và trò chuyện với user trên website, phần mềm trực tuyến, hay cổng hỗ trợ sẽ được chuyến hướng đến Freshdesk. Bạn có thể đặc chế cho tất cả các cửa sổ trò chuyện (bao gồm cả đoạn văn mặc định, màu sắc...) và "
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Thêm thông tin sử dụng Live Chat trong Freshdesk</a>"
   low: Thấp
   agents: "Chuyên Viên"
   header:

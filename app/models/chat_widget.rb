@@ -1,4 +1,5 @@
 class ChatWidget < ActiveRecord::Base
+  include ChatHelper
   self.primary_key = :id
 		belongs_to_account
 		belongs_to :chat_setting
@@ -9,13 +10,13 @@ class ChatWidget < ActiveRecord::Base
 		attr_protected :account_id
 		def destroy_widget
       if account.features?(:chat)
-        site_id = chat_setting.display_id
         chat_widget = product.chat_widget
+        site_id = account.chat_setting.site_id
         if chat_widget && chat_widget.widget_id
-          Resque.enqueue(Workers::Livechat, 
+          LivechatWorker.perform_async(
             {
-              :worker_method => "delete_widget", 
-              :widget_id => chat_widget.widget_id, 
+              :worker_method => "delete_widget",
+              :widget_id => chat_widget.widget_id,
               :siteId => site_id
             }
           )

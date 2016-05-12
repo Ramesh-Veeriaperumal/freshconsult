@@ -9,11 +9,15 @@ window.liveChat.visitorFormSettings = function($){
 			var form_details = _widget.prechat_fields;
 			var prechat_form = _widget.prechat_form;
 			var prechat_msg = _widget.prechat_message;
+			var _defaultMessages = _widget.defaultMessages;
+			var prechat_fields	= _defaultMessages.prechat_fields;
 
 			var form_details_list = [];
 			var show = _widget.show, required = _widget.required;
-			var labels = {'name': _widget['name_label'], 'phone': _widget['phone_label'], 'email': _widget['mail_label'], 'textfield': _widget['textfield_label'], 'dropdown': _widget['dropdown_label']};
-			var offline_chat_form = liveChat.adminSettings.currentWidget['offline_chat']['form'];
+			var labels = {'name': prechat_fields['name']['title'], 'phone': prechat_fields['phone']['title'], 'email': prechat_fields['email']['title'], 'textfield': prechat_fields['textfield']['title'], 'dropdown': prechat_fields['dropdown']['title']};
+			var offline_chat_form = liveChat.adminSettings.currentWidget.offline_chat.form;
+			var default_offline_chat_form = _defaultMessages.offline_chat.form;
+			var old_dropdown_choices ;
 
 			if(prechat_form == 1){
 				$("#prechat_form").prop('checked', true);
@@ -31,10 +35,16 @@ window.liveChat.visitorFormSettings = function($){
 			});
 
 			$("#prechat_message").val(prechat_msg);
-
-			$("#missed_chat_name").val(offline_chat_form['name']);
-			$("#missed_chat_email").val(offline_chat_form['email']);
-			$("#missed_chat_message").val(offline_chat_form['message']);
+			$("#prechat_message").attr("placeholder",_defaultMessages.prechat_message);
+			
+			if(offline_chat_form){
+				$("#missed_chat_name").val(offline_chat_form['name']);
+				$("#missed_chat_email").val(offline_chat_form['email']);
+				$("#missed_chat_message").val(offline_chat_form['message']);
+			}
+			$("#missed_chat_name").attr("placeholder",default_offline_chat_form['name']);
+			$("#missed_chat_email").attr("placeholder",default_offline_chat_form['email']);
+			$("#missed_chat_message").attr("placeholder",default_offline_chat_form['message']);
 
 			for(var k in form_details){
 				var list = '<li class="inline-field" data-type="'+k+'"><i class="ficon-rearrange"></i>';
@@ -117,7 +127,7 @@ window.liveChat.visitorFormSettings = function($){
 					prechat_form_details[fieldName] = {};
 					fieldValue = $(this).find('input:text').val();
 					prechat_form_details[fieldName]['title'] = fieldValue;
-					var fieldShow = $(this).find('input:checked:last').val();
+					var fieldShow = $(this).find('input:checked:last').val() || '0';
 	 				prechat_form_details[fieldName]['show'] = fieldShow;
 					if(fieldName == "dropdown"){
 						var dropList = self.dropdownChoices();
@@ -151,13 +161,6 @@ window.liveChat.visitorFormSettings = function($){
 			var self 					= this;
 			var _widget 		 	= liveChat.adminSettings.currentWidget;
 			var _routing 		 	= window.liveChat.routingSettings;
-			var data = {	
-					"siteId" 			: window.SITE_ID, 
-					"widget_id"		: _widget.widget_id, 
-					"attributes"	: params,
-					"token"				: LIVECHAT_TOKEN,
-					"userId"			: CURRENT_USER.id
-			 };
 			if(CURRENT_ACCOUNT.chat_routing && params.prechat_fields && self.dropdownIsChanged){
 				var newRouting = {};
 				var newRoutingChoices = {};
@@ -183,12 +186,12 @@ window.liveChat.visitorFormSettings = function($){
 				}
 				newRouting.choices = newRoutingChoices;
 				newRouting.dropdown_based = $("#dropdown_routing_enable").is(":checked") ? true : false;
-				data.attributes.routing = newRouting;
+				params.routing = newRouting;
 			}
 			$.ajax({
-				type: "POST",
-				url: window.liveChat.URL + "/widgets/update",
-				data: data,
+				type: "PUT",
+				url: "/admin/chat_widgets/"+_widget.id,
+				data: { attributes : params },
 				dataType: "json",
 				success: function(resp){
 					if(resp.status == "success"){
@@ -205,15 +208,6 @@ window.liveChat.visitorFormSettings = function($){
 				}
 			});
 		},        
-		defaultPrechatFields: function(){
-	    return {
-	      name      : { "title" : CHAT_I18n.name, "show" : "2" },
-	      email     : { "title" : CHAT_I18n.email, "show" : "2" },
-	      phone     : { "title" : CHAT_I18n.phone, "show" : "0" },
-	      textfield : { "title" : CHAT_I18n.textfield, "show" : "0" },
-	      dropdown  : { "title" : CHAT_I18n.dropdown, "show" : "0", "options" : ["list1","list2","list3"]}
-	    }
-	  },
 		
 		getdropdownOptions: function(){
 			var dropOptions = $('#prechat_dropdown_input textarea').val().split(/\n/);
@@ -247,6 +241,7 @@ window.liveChat.visitorFormSettings = function($){
 
 		setdropdownOptions: function(){
 			var choices = this.dropdownChoices();
+			old_dropdown_choices = choices;
 			$('#prechat_dropdown_input textarea').val(choices.join('\n'));
 		},
 
@@ -259,10 +254,10 @@ window.liveChat.visitorFormSettings = function($){
 				}else{
 					msg = CHAT_I18n.update_error_msg;
 				}
-				window.liveChat.widgetSettings.pendingChanges = 1;
+				window.liveChat.widgetSettings.pendingChanges = true;
 			}else{
 				msg = CHAT_I18n.update_success_msg;
-				window.liveChat.widgetSettings.pendingChanges = 0;
+				window.liveChat.widgetSettings.pendingChanges = false;
 			}
 
 			$("#chat_settings_notice").text(msg).show();
@@ -289,7 +284,8 @@ window.liveChat.visitorFormSettings = function($){
 			});
 
 			$("#prechat_dropdown_input input").on('click', function(){
-				self.dropdownIsChanged = true;
+				var currentChoices = $('#prechat_dropdown_input textarea').val().split('\n');
+				self.dropdownIsChanged = window.liveChat.widgetSettings.pendingChanges = !_.isEqual(currentChoices, old_dropdown_choices);
 				$("#prechat_dropdown_choice").show();
 				$("#prechat_dropdown_input").hide();
 				var drplist = self.getdropdownOptions();

@@ -75,8 +75,8 @@ class Product < ActiveRecord::Base
         # Updating name in widgets table of Freshchat DB.
         #####
         Rails.logger.debug " Sending the Product Data to FreshChat through Resque"
-        Resque.enqueue(Workers::Livechat, { :worker_method => "update_widget", 
-                                             :siteId => account.chat_setting.display_id,
+        LivechatWorker.perform_async({ :worker_method => "update_widget",
+                                             :siteId => account.chat_setting.site_id,
                                              :widget_id => chat_widget.widget_id,
                                              :attributes => { :name => name}
                                             })

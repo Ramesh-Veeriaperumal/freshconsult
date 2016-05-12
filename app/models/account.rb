@@ -128,7 +128,7 @@ class Account < ActiveRecord::Base
   end
 
   def freshchat_enabled?
-    features?(:chat) and !chat_setting.display_id.blank?
+    features?(:chat) and !chat_setting.site_id.blank?
   end
 
   def freshchat_routing_enabled?

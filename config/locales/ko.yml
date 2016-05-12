@@ -1723,7 +1723,7 @@ ko:
         import: "젠데스크에서 데이터 가져오기"
         agent: 에이전트
         feedback: "피드백 위젯"
-        freshchat: "실시간 채팅"
+        livechat: "실시간 채팅"
         integrations: 통합
         dispatcher: 디스패처
         supervisor: 슈퍼바이저
@@ -5996,7 +5996,7 @@ ko:
         filter_by: "만족도 보기"
         view_report_date: "다음 기간의 보고서 보기"
         helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral &amp; unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "실시간 채팅 요약"
       filter_by_title: "필터링 기준:"
       time_period: 기간
@@ -6963,7 +6963,7 @@ ko:
         additional_info: "전화 채널이 계정에서 활성화되면 번호를 구입하여 전화를 걸고 받을 수 있습니다."
         button_text: "전화 요청"
         video_title: "동영상을 시청하여 전화 채널로 수행할 수 있는 작업에 대해 알아보기"
-  freshchat:
+  livechat:
     feature_request:
       title: "실시간 채팅에 오신 것을 환영합니다"
       heading: "실시간 채팅으로 고객 지원"
@@ -7040,7 +7040,7 @@ ko:
     bottom_left: "좌측 하단"
     bottom_right: "우측 하단"
     integrate_msg: "Copy &amp; paste this code before the last </body> tag on your website or app"
-    integrate_freshchat_title: "실시간 채팅을 웹사이트 및 애플리케이션에 통합"
+    integrate_livechat_title: "실시간 채팅을 웹사이트 및 애플리케이션에 통합"
     custom_chat_window: "채팅 창"
     text_placeholder: "나의 메시지"
     chatbox_bgcolor: "창 색상"
@@ -7183,7 +7183,7 @@ ko:
     intro_title: "왜 실시간 채팅인가?"
     intro: "Freshdesk의 통합된 실시간 채팅 솔루션을 사용하면 Freshdesk 내에서 웹사이트, 온라인 소프트웨어 또는 지원 채널의 사용자를 바로 확인하고 채팅을 할 수 있습니다. 웹사이트 방문객과 선제적으로 채팅을 시작할 수도 있습니다. 채팅 세션이 끝나면 대화를 티켓으로 변환하거나 이메일을 통해 방문객과 추후 연락을 하거나 채팅 기록을 아카이브할 수 있습니다."
     enable_chat: "실시간 채팅 활성화"
-    learn_freshchat: "실시간 채팅에 대해 자세히 알아보기"
+    learn_livechat: "실시간 채팅에 대해 자세히 알아보기"
     support_portal: "지원 포털에서 채팅"
     logged_in_users: "로그인한 사용자 전용"
     everyone: 모두
