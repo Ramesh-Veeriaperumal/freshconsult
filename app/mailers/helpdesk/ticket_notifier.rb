@@ -123,7 +123,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
 
     cc_emails.concat(options[:additional_emails]) if options[:additional_emails].present?
-    cc_emails = fetch_valid_emails(cc_emails, {:ignore_emails => options[:ignore_emails]}) if options[:ignore_emails].present?
+    ignore_emails = (options[:ignore_emails] || []) + [ticket.account.kbase_email]
+    cc_emails = fetch_valid_emails(cc_emails, {:ignore_emails => ignore_emails}) if ignore_emails.present?
     
     return if cc_emails.to_a.count == 0
     cc_emails = get_email_array cc_emails.join(",")
