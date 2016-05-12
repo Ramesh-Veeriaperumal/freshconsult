@@ -36,10 +36,10 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
 	def cc_emails
 		emails = read_attribute(:cc_emails)
-		if emails.is_a? Array
+		if (emails.is_a? Array) || (emails.is_a? String)
 		  	emails
 		else
-		  	emails[:cc_emails]
+		  	emails[:cc_emails] if emails.present?
 		end    
 	end
 
@@ -52,7 +52,7 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
 	def cc_emails_hash
 		emails = read_attribute(:cc_emails)
-		if emails.is_a?(Array)     
+		if emails.is_a?(Array) || emails.is_a?(String)  || emails.blank?  
 		  {:cc_emails => emails, :dropped_cc_emails => []}
 		else
 		  emails
