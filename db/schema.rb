@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160413071150) do
+ActiveRecord::Schema.define(:version => 20160418103445) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1761,6 +1761,7 @@ ActiveRecord::Schema.define(:version => 20160413071150) do
     t.integer  "import_id",            :limit => 8
     t.integer  "ticket_assign_type",                :default => 0
     t.integer  "business_calendar_id", :limit => 8
+    t.boolean  "toggle_availability",               :default => false
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
@@ -2711,6 +2712,40 @@ ActiveRecord::Schema.define(:version => 20160413071150) do
   end
 
   add_index "roles", ["account_id", "name"], :name => "index_roles_on_account_id_and_name", :unique => true
+
+  create_table "scheduled_tasks", :force => true do |t|
+    t.integer  "account_id",           :limit => 8
+    t.integer  "user_id",              :limit => 8
+    t.integer  "schedulable_id",       :limit => 8
+    t.string   "schedulable_type"
+    t.integer  "status",               :limit => 2, :null => false, :default => 0
+    t.datetime "next_run_at"
+    t.datetime "last_run_at"
+    t.integer  "frequency",            :limit => 2
+    t.integer  "repeat_frequency",     :limit => 2
+    t.integer  "day_of_frequency",     :limit => 2
+    t.integer  "minute_of_day"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.integer  "consecutive_failuers", :limit => 2
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
+  end
+
+  add_index "scheduled_tasks", ["next_run_at", "status", "account_id"], :name => "index_scheduled_tasks_on_next_run_at_and_status_and_account_id"
+  add_index "scheduled_tasks", ["account_id", "schedulable_type", "user_id"], :name => "index_scheduled_tasks_on_account_id_schedulable_type_and_user_id"
+
+  create_table "schedule_configurations", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.integer  "scheduled_task_id", :limit => 8
+    t.integer  "notification_type", :limit => 2
+    t.text     "config_data",       :limit => 16777215
+    t.text     "description",       :limit => 16777215
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+  end
+
+  add_index "schedule_configurations", ["account_id", "scheduled_task_id"], :name => "index_schedule_configuration_on_account_id_and_scheduled_task_id"
 
   create_table "scoreboard_levels", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -3807,8 +3842,8 @@ ActiveRecord::Schema.define(:version => 20160413071150) do
     t.integer  "user_id",    :limit => 8
     t.integer  "company_id", :limit => 8
     t.integer  "account_id", :limit => 8
-    t.boolean  "default"
-    t.boolean  "client_manager"
+    t.boolean  "default",    :default => 0
+    t.boolean  "client_manager", :default => 0
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

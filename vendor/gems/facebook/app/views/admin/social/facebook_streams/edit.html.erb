@@ -1,0 +1,43 @@
+<% content_for :sidebar do -%>&nbsp;<%-end %>
+
+<% content_for :helpcard do %>
+  <%= render :partial => "edit_helpnote" %>
+<% end %>
+
+<%= form_for @facebook_stream, :url => admin_social_facebook_stream_path(@facebook_stream), :html => { :method => :put, :rel => "validate" } do |f| %>
+
+  <div class="floatr">
+    <%= link_to(t('.cancel'), :admin_social_facebook_streams , :class => "btn" ) %>
+    <%= submit_tag t('.update') , :class => "btn btn-primary mrt", :id => "update_stream" %>
+  </div>
+
+  <h3 class="lead"><%= t('.edit_stream')%></h3><hr />
+  
+  <%= render :partial => 'page_form', :locals => { :facebook_page => @facebook_page } %>
+  
+  <div class="adm-social sts">
+   <h4 class="adm-title"><%= t('admin.social.ticket_rules.title') %></h3>
+    <div class="rules-wrapper">
+      
+      <div class="head">
+        <label class="label-bold">&nbsp;<%= t('.tke_rule_breif_desc') %></label>
+      </div>
+      <div id = "ticket_rules" class="adm-social sts adm-bg-color">
+        <%= render :partial => 'ticket_rules', :locals => { :ticket_rule => @ticket_rules.first } %>
+      </div>
+      
+    </div>
+    
+    <% if @facebook_stream.default_stream? %>
+      <div class="rules-wrapper">
+        <%= render :partial => 'convert_dm',  :locals => { :facebook_page => @facebook_page } %>
+      </div>
+    <% end %>
+    
+    <% if current_account.features?(:facebook_page_tab) %>
+      <%= render :partial => 'page_tab'%>
+    <% end %>
+    
+  </div>
+
+<% end %>

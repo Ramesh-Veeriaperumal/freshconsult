@@ -4,7 +4,7 @@ class ApiApplicationController < MetalApiController
   rescue_from StandardError, with: :render_500
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
   rescue_from ShardNotFound, with: :record_not_found
-  rescue_from DomainNotReady, with: :route_not_found
+  rescue_from DomainNotReady, with: :record_not_found
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
   rescue_from RangeError, with: :range_error
@@ -23,7 +23,7 @@ class ApiApplicationController < MetalApiController
   # All before filters should be here. Should not be moved to concern. As the order varies for API and Web
   around_filter :select_shard
   prepend_before_filter :determine_pod
-  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_shard_for_payload
+  before_filter :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_shard_for_payload
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :check_account_state
@@ -154,6 +154,8 @@ class ApiApplicationController < MetalApiController
       if e.is_a?(ShardNotFound)
         Rails.logger.error("API V2 request for invalid host. Host: #{request.host}")
         head 404
+      elsif e.is_a?(DomainNotReady)
+        render_base_error(:domain_not_ready, 404)
       else
         notify_new_relic_agent(e, description: 'ActiveRecord::RecordNotFound error occured while processing api request')
         Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
@@ -475,8 +477,13 @@ class ApiApplicationController < MetalApiController
       false
     end
 
-    def set_current_account # this method is redefined because of api_current_user
-      current_account.make_current
+    def set_current_account
+      if Account.current # This would be present because of fd_api_throttler.
+        @current_account = Account.current # setting instance variables
+        @current_portal = @current_account.main_portal_from_cache # setting instance variables
+      else
+        current_account.make_current
+      end
       User.current = api_current_user
     rescue ActiveRecord::RecordNotFound, ShardNotFound
       Rails.logger.error("API V2 request for invalid account. Host: #{request.host}")
@@ -574,10 +581,6 @@ class ApiApplicationController < MetalApiController
 
     def index?
       @index ||= current_action?('index')
-    end
-
-    def search?
-      @search ||= current_action?('search')
     end
 
     def current_action?(action)

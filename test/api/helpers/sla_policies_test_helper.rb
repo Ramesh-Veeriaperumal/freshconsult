@@ -1,3 +1,4 @@
+['company_helper.rb', 'sla_policies_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module SlaPoliciesTestHelper
   include CompanyHelper
   include SlaPoliciesHelper

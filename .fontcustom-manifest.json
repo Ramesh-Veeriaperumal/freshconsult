@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "254d0f449e7e14afb1b839c4c79a2f2a1b3ce4e8de41b1a5c5a1349f773c51e2",
-    "current": "254d0f449e7e14afb1b839c4c79a2f2a1b3ce4e8de41b1a5c5a1349f773c51e2"
+    "previous": "0379f3d3310601560cdd6c7db7b2137de29bcc303fd284d90bb78bf025b813c2",
+    "current": "0379f3d3310601560cdd6c7db7b2137de29bcc303fd284d90bb78bf025b813c2"
   },
   "fonts": [
-    "public/assets/glyphs_254d0f449e7e14afb1b839c4c79a2f2a.ttf",
-    "public/assets/glyphs_254d0f449e7e14afb1b839c4c79a2f2a.svg",
-    "public/assets/glyphs_254d0f449e7e14afb1b839c4c79a2f2a.woff",
-    "public/assets/glyphs_254d0f449e7e14afb1b839c4c79a2f2a.eot"
+    "public/assets/glyphs_0379f3d3310601560cdd6c7db7b2137d.ttf",
+    "public/assets/glyphs_0379f3d3310601560cdd6c7db7b2137d.svg",
+    "public/assets/glyphs_0379f3d3310601560cdd6c7db7b2137d.woff",
+    "public/assets/glyphs_0379f3d3310601560cdd6c7db7b2137d.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -17,6 +17,10 @@
     "account": {
       "codepoint": 61696,
       "source": "public/glyphs/vectors/account.svg"
+    },
+    "add-call": {
+      "codepoint": 61979,
+      "source": "public/glyphs/vectors/add-call.svg"
     },
     "agent": {
       "codepoint": 61697,
@@ -30,9 +34,9 @@
       "codepoint": 61873,
       "source": "public/glyphs/vectors/agent-fchat-on.svg"
     },
-    "agent-summary": {
-      "codepoint": 61883,
-      "source": "public/glyphs/vectors/agent-summary.svg"
+    "agent_summary": {
+      "codepoint": 61980,
+      "source": "public/glyphs/vectors/agent_summary.svg"
     },
     "alert": {
       "codepoint": 61955,
@@ -262,6 +266,10 @@
       "codepoint": 61737,
       "source": "public/glyphs/vectors/cross.svg"
     },
+    "cross-filled": {
+      "codepoint": 61981,
+      "source": "public/glyphs/vectors/cross-filled.svg"
+    },
     "cross-round": {
       "codepoint": 61974,
       "source": "public/glyphs/vectors/cross-round.svg"
@@ -290,17 +298,13 @@
       "codepoint": 61740,
       "source": "public/glyphs/vectors/customer-portal.svg"
     },
-    "customer-report": {
-      "codepoint": 61886,
-      "source": "public/glyphs/vectors/customer-report.svg"
-    },
     "customer-satisfaction": {
       "codepoint": 61887,
       "source": "public/glyphs/vectors/customer-satisfaction.svg"
     },
-    "customer_reports": {
-      "codepoint": 61929,
-      "source": "public/glyphs/vectors/customer_reports.svg"
+    "customer_report": {
+      "codepoint": 61982,
+      "source": "public/glyphs/vectors/customer_report.svg"
     },
     "customer_satisfaction": {
       "codepoint": 61930,
@@ -578,6 +582,10 @@
       "codepoint": 61779,
       "source": "public/glyphs/vectors/gear.svg"
     },
+    "glance": {
+      "codepoint": 61983,
+      "source": "public/glyphs/vectors/glance.svg"
+    },
     "googleplus": {
       "codepoint": 61780,
       "source": "public/glyphs/vectors/googleplus.svg"
@@ -586,9 +594,9 @@
       "codepoint": 61781,
       "source": "public/glyphs/vectors/group.svg"
     },
-    "group-summary": {
-      "codepoint": 61889,
-      "source": "public/glyphs/vectors/group-summary.svg"
+    "group_summary": {
+      "codepoint": 61984,
+      "source": "public/glyphs/vectors/group_summary.svg"
     },
     "grouping-disable": {
       "codepoint": 61782,
@@ -617,10 +625,6 @@
     "helpdesk-settings": {
       "codepoint": 61899,
       "source": "public/glyphs/vectors/helpdesk-settings.svg"
-    },
-    "helpdesk_at_glance": {
-      "codepoint": 61931,
-      "source": "public/glyphs/vectors/helpdesk_at_glance.svg"
     },
     "ie": {
       "codepoint": 61785,
@@ -822,13 +826,9 @@
       "codepoint": 61818,
       "source": "public/glyphs/vectors/pencil.svg"
     },
-    "performance-distribution": {
-      "codepoint": 61891,
-      "source": "public/glyphs/vectors/performance-distribution.svg"
-    },
-    "performance_distributions": {
-      "codepoint": 61933,
-      "source": "public/glyphs/vectors/performance_distributions.svg"
+    "performance_distribution": {
+      "codepoint": 61985,
+      "source": "public/glyphs/vectors/performance_distribution.svg"
     },
     "phone": {
       "codepoint": 61819,
@@ -990,14 +990,6 @@
       "codepoint": 61844,
       "source": "public/glyphs/vectors/star-o.svg"
     },
-    "summary-1": {
-      "codepoint": 61935,
-      "source": "public/glyphs/vectors/summary-1.svg"
-    },
-    "summary-2": {
-      "codepoint": 61936,
-      "source": "public/glyphs/vectors/summary-2.svg"
-    },
     "supervisor": {
       "codepoint": 61845,
       "source": "public/glyphs/vectors/supervisor.svg"
@@ -1038,10 +1030,6 @@
       "codepoint": 61850,
       "source": "public/glyphs/vectors/ticket-fields.svg"
     },
-    "ticket-volume": {
-      "codepoint": 61892,
-      "source": "public/glyphs/vectors/ticket-volume.svg"
-    },
     "ticket_volume": {
       "codepoint": 61937,
       "source": "public/glyphs/vectors/ticket_volume.svg"
@@ -1057,6 +1045,10 @@
     "timeline-ticket": {
       "codepoint": 61852,
       "source": "public/glyphs/vectors/timeline-ticket.svg"
+    },
+    "transfer-round": {
+      "codepoint": 61986,
+      "source": "public/glyphs/vectors/transfer-round.svg"
     },
     "trash": {
       "codepoint": 61853,

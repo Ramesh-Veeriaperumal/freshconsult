@@ -1305,9 +1305,9 @@ ro:
         send_test_mail_info2: "Aici este  <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>cum poti face</a>."
         title_message: "Mergi la incepe asistenta clienti in patru pasi..."
         support_email_title: "Asistenta<br> e-mail"
-        agents_title_1: "Adaugand&lt;br&gt; agenti"
+        adding_agents: "Adaugand<br> agenti"
         rebrand_title: "Logo <br>&amp; culori"
-        social_title_1: "Mergi la&lt;br&gt; social"
+        going_social: "Mergi la<br> social"
         skip_text: "Nu multumesc, du-ma la helpdesk-ul meu."
         back_link: Inapoi
         next_link: Urmatorul
@@ -1429,7 +1429,6 @@ ro:
         feedbackwidget_users_can: "Utilizatorii pot:"
         feedbackwidget_attach_a_file: "Atașați un fișier"
         feedbackwidget_screenshot: "Fa captură de ecran"
-        feedbackwidget_screenr_recording: "Inregistrare ecran"
         feedbackwidget_search_area: "Cautare articole"
         feedbackwidget_use_https: "Utilizeaza https"
         feedbackwidget_mobile_view: "Vezi mobil"
@@ -1454,7 +1453,6 @@ ro:
         feedbackwidget_users_can: "Form options"
         feedbackwidget_attach_a_file: "Attach a file"
         feedbackwidget_screenshot: "Take Screenshot"
-        feedbackwidget_screenr_recording: "Screenr Recording"
         feedbackwidget_search_area: "Search Articles"
         feedbackwidget_use_https: "Use https"
         feedbackwidget_mobile_view: "Enable mobile view"
@@ -5969,36 +5967,6 @@ ro:
         es: Spanish
         sv: Swedish
         tr: Turkish
-    screenr:
-      button_label: "Record Screencast"
-      label: Screenr
-      desc: "Record screencasts using Screenr and attach it to tickets, forums and solution articles."
-      helptext: "<h4>Freshdesk Screenr Integration</h4><p><br/>The Screenr integration lets agents and customers capture and share screencasts while they are using Freshdesk. It can be used to attach error reports or instructional videos to your tickets, forum posts and solution articles directly.</p><p>Once enabled, you will be able to see a record button alongside your feedback widget, discussions, and your knowledge base. You can choose to record your entire browser window, or select a specific section of it if you want. They screencast will get inserted automatically once your session is complete.</p><p>You can setup this integration by entering your Screener URL (e.g. <a>http://yourname.viewcasts.com</a>) and your Recorder ID, which can be found once you login to your account.</p>"
-      form:
-        recorder_id: "Recorder ID"
-        recorder_id_info: "Recorder ID is the unique ID available in the edit recorders page"
-        site_address_info: ""
-        site_address: "Screenr Subdomain"
-        widget_title: "Widget Title"
-        visible_agent_forum: "Forum Screen Recording for Agents"
-        visible_agent_forum_info: "Enable to make Screenr Recorder available in Forums for Agents"
-        visible_agent_ticket: "Agent Ticket Screen Recording"
-        visible_agent_ticket_info: "Enable to make Screenr Recorder available in Ticket form for Agents"
-        visible_solution: "Solution Screen Recording"
-        visible_solution_info: "Enable to make Screenr Recorder available in Solutions"
-        visible_portal_ticket: "Portal ticket Screen Recording"
-        visible_portal_ticket_info: "Enable to make Screenr Recorder available in portal ticket form"
-        visible_portal_forum: "Forum ticket Screen Recording for portal"
-        visible_portal_forum_info: "Enable to make Screenr Recorder available in portal forum"
-        visible_widget: "Widget Screen Recording"
-        visible_widget_info: "Enable to make Screenr Recorder available in Feedback Widget"
-      settings:
-        enable_screenr_recording: "Enable Screenr Recording"
-        ticket_interaction: "Tickets page (New, Edit, Reply)"
-        forum_interaction: "Forum page (New, Edit, Comment)"
-        create_solution: "Solution (New, Edit)"
-        for_agents: "For Agents"
-        for_customer: "For Customers"
     ilos:
       label: "ilos videos"
       desc: "Record and share screencasts on tickets, forums, and solution articles."

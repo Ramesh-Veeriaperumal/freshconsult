@@ -7,7 +7,6 @@ module Ecommerce::Ebay::Constants
   EBAY_SUCCESS_MSG            =  "Success"
   EBAY_ERROR_MSG              =  "Failure"
   EBAY_SCHEDULE_AFTER         =  4.hours
-  EBAY_SUBJECT_REPLY          =  'Re: '
   EBAY_TAG                    =  "eBay"
   EBAY_MAXIMUM_RETRY          =  5
   EBAY_REPLY_MSG_LENGTH       =  2000

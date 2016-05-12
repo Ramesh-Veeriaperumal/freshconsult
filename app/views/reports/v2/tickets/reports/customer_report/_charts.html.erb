@@ -14,7 +14,8 @@
 	jQuery(document).ready(function () {
 	    var locals = HelpdeskReports.locals;
 	    locals.chart_hash = <%= @data.to_json.html_safe %>;
-
+	    var last_dump_time = <%= @last_dump_time ? t('helpdesk_reports.last_updated',{last_dump_time: @last_dump_time}).to_json.html_safe : false %>
+	    
 	    var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
 
 	    if (err) {
@@ -23,6 +24,13 @@
 	    } else {
 	    	HelpdeskReports.ChartsInitializer.CustomerReport.init(locals.chart_hash);
 	    }
+	    if (last_dump_time){
+        	jQuery("#last-updated").html(last_dump_time);	
+        	jQuery(".reports-title").addClass('updated-time')
+        } else{
+        	jQuery(".reports-title").removeClass('updated-time')
+        }
+
 
 	});
 </script>

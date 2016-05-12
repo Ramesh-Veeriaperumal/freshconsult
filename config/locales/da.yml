@@ -801,12 +801,6 @@ da:
         api_url_info: "Indtast den komplette API URL med https. Fx: https://example.freshbooks.com/api/2.1/xml-in"
         api_key: Autentificeringstoken
         widget_title: "Widget Titel"
-    screenr:
-      button_label: "Optag Screencast"
-      label: Screenr
-      form:
-        site_address: "Screenr Subdomæne"
-        widget_title: "Widget Titel"
     harvest:
       label: Harvest
       desc: "Du kan logge tid brugt på billetter i dine Harvest projekter og opgaver."

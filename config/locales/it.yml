@@ -1240,9 +1240,9 @@ it:
         send_test_mail_info2: "Ecco <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>la procedura</a>."
         title_message: "Inizia subito l'assistenza ai clienti in quattro passaggi..."
         support_email_title: "E-mail<br> di supporto"
-        agents_title_1: "Aggiunta&lt;br&gt; agenti"
+        adding_agents: "Aggiunta<br> agenti"
         rebrand_title: "Logo <br>e colori"
-        social_title_1: "Reti&lt;br&gt; Social"
+        going_social: "Reti<br> Social"
         skip_text: "No grazie, indirizzami al mio helpdesk."
         back_link: Indietro
         next_link: Avanti
@@ -1364,7 +1364,6 @@ it:
         feedbackwidget_users_can: "Gli utenti possono:"
         feedbackwidget_attach_a_file: "Allegare un file"
         feedbackwidget_screenshot: "Acquisire una schermata"
-        feedbackwidget_screenr_recording: "Registrazione Screenr"
         feedbackwidget_search_area: "Cercare articoli"
         feedbackwidget_use_https: "Usare https"
         feedbackwidget_mobile_view: "Visualizzazione da cellulare"
@@ -5418,36 +5417,6 @@ it:
         es: Spagnolo
         sv: Svedese
         tr: Turco
-    screenr:
-      button_label: "Registra screencast"
-      label: Screenr
-      desc: "Registra screencast tramite Screenr e allegali a ticket, forum e articoli sulle soluzioni."
-      helptext: "<h4>Integrazione di Screenr in Freshdesk</h4><p><br/>L'integrazione di Screenr consente ad agenti e clienti di acquisire e condividere gli screencast mentre utilizzano Freshdesk. Può essere utilizzata per allegare report di errore o video informativi direttamente ai tuoi ticket, post del forum e articoli sulle soluzioni.</p><p>Una volta abilitata, vedrai un pulsante di registrazione vicino al tuo widget di feedback, alle discussioni e al knowledge base. Puoi scegliere di registrare l'intera finestra del browser o selezionare una sezione specifica. Gli screencast verranno inseriti in automatico al termine della sessione.</p><p>Puoi configurare l'integrazione inserendo l'URL di Screenr (ad es. <a>http://tuonome.viewcasts.com</a>) e il tuo ID registrazione, disponibili al momento di accedere all'account.</p>"
-      form:
-        recorder_id: "ID recorder"
-        recorder_id_info: "ID recorder è il tuo ID univoco, disponibile nella pagina di modifica dei recorder."
-        site_address_info: ""
-        site_address: "Dominio secondario Screenr"
-        widget_title: "Titolo widget"
-        visible_agent_forum: "Forum registrazione schermo per gli agenti"
-        visible_agent_forum_info: "Abilita per rendere Screenr Recorder disponibile nei forum per gli agenti"
-        visible_agent_ticket: "Registrazione schermo ticket agente"
-        visible_agent_ticket_info: "Abilita per rendere Screenr Recorder disponibile nel modulo ticket per gli agenti"
-        visible_solution: "Registrazione schermo soluzioni"
-        visible_solution_info: "Abilita per rendere Screenr Recorder disponibile da Soluzioni"
-        visible_portal_ticket: "Registrazione schermo portale ticket"
-        visible_portal_ticket_info: "Abilita per rendere Screenr Recorder disponibile nel modulo portale ticket"
-        visible_portal_forum: "Registrazione schermo ticket forum per il portale"
-        visible_portal_forum_info: "Abilita per rendere Screenr Recorder disponibile nel forum del portale"
-        visible_widget: "Widget registrazione schermo"
-        visible_widget_info: "Abilita per rendere Screenr Recorder disponibile nel widget di feedback"
-      settings:
-        enable_screenr_recording: "Abilita registrazione Screenr"
-        ticket_interaction: "Pagina ticket (nuovo, modifica, rispondi)"
-        forum_interaction: "Pagina forum (nuovo, modifica, commenta)"
-        create_solution: "Soluzione (nuovo, modifica)"
-        for_agents: "Per gli agenti"
-        for_customer: "Per i clienti"
     harvest:
       label: Harvest
       desc: "È possibile registrare il tempo impiegato nei ticket nei progetti e attività di Harvest."

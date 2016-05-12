@@ -24,9 +24,6 @@
           <% unless local_assigns[:no_attachments] %>
             <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
           <% end %>
-          <% if is_application_installed?("screenr") %>
-              <%= render :partial => "shared/screenr_recorder" , :locals => { :location => "agent_ticket" } %>
-          <% end %>
         </li>
     </ul>
 </div>

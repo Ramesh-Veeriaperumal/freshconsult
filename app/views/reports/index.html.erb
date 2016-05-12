@@ -3,9 +3,9 @@
   <div class="admin-header">
     <div class="report-head report">
       <div class="report-link-block pull-right">
-        <a href="#report-demo" rel="freshdialog" id="demo_link"
-          data-backdrop="static"  data-width="680" data-template-footer="false" data-title=""
-        ><%= t('helpdesk_reports.reports_in_action')%>
+        <a href="#" rel="guided-inlinemanual" 
+          data-topic-id="13753">
+          <%= t('helpdesk_reports.reports_in_action')%>
         </a>
         <% if current_account.old_reports_enabled? %>
           <span class="seperator_reports"> | </span>
@@ -22,7 +22,7 @@
               <% if feature?(:advanced_reporting) %>
                 <li>
                      <a href="/reports/v2/glance" data-pjax="#body-container" >
-                        <div class="img-outer"><i class="fsize-36 ficon-helpdesk_at_glance"></i></div>
+                        <div class="img-outer"><i class="fsize-36 ficon-glance"></i></div>
                         <div class="report-icon-text"><%= t('helpdesk_reports.glance.index_title').html_safe %></div>
                      </a>
                 </li>
@@ -30,7 +30,7 @@
               <% if feature?(:enterprise_reporting) %>
                   <li>
                      <a href="/reports/v2/ticket_volume" data-pjax="#body-container">
-                        <div class="img-outer"><i class="fsize-36 ficon-ticket-volume"></i></div>
+                        <div class="img-outer"><i class="fsize-36 ficon-ticket_volume"></i></div>
                         <div class="report-icon-text"><%= t('helpdesk_reports.ticket_volume.title') %></div>
                      </a>
                   </li>
@@ -59,20 +59,20 @@
            <ul class="report_icon">
               <li>
                <a href="/reports/v2/agent_summary" data-pjax="#body-container">
-                  <div class="img-outer"><i class="fsize-36 ficon-summary-1"></i></div>
+                  <div class="img-outer"><i class="fsize-36 ficon-agent_summary"></i></div>
                   <div class="report-icon-text"><%= t('helpdesk_reports.agent_summary.title')%></div>
                </a>
             </li>
             <li>
                <a href="/reports/v2/group_summary" data-pjax="#body-container">
-                  <div class="img-outer"><i class="fsize-36 ficon-summary-2"></i></div>
+                  <div class="img-outer"><i class="fsize-36 ficon-group_summary"></i></div>
                   <div class="report-icon-text"><%= t('helpdesk_reports.group_summary.title') %></div>
                </a>
             </li>
              <%if feature?(:enterprise_reporting) %>
                 <li>
                    <a href="/reports/v2/performance_distribution" data-pjax="#body-container">
-                      <div class="img-outer"><i class="fsize-36 ficon-performance-distribution"></i></div>
+                      <div class="img-outer"><i class="fsize-36 ficon-performance_distribution"></i></div>
                       <div class="report-icon-text"><%= t('helpdesk_reports.performance_distribution.title') %></div>
                    </a>
                 </li>
@@ -94,7 +94,7 @@
                <% if feature?(:enterprise_reporting) %>
                   <li>
                      <a href="/reports/v2/customer_report" data-pjax="#body-container">
-                        <div class="img-outer"><i class="fsize-36 ficon-customer_reports"></i></div>
+                        <div class="img-outer"><i class="fsize-36 ficon-customer_report"></i></div>
                         <div class="report-icon-text"><%= t('helpdesk_reports.customer_report.title') %></div>
                      </a>
                   </li>
@@ -111,35 +111,3 @@
     </div>
   <% end %>
 </div>
-<div id="report-demo" class="hide row-fluid">
-  <iframe id="video_iframe" width="650" height="366" frameborder="0" allowfullscreen></iframe>
-</div>
-<script>
-jQuery(document).ready(function() {
-
-  var video_url = "//fast.wistia.net/embed/iframe/i0f0lofova?videoFoam=true&autoPlay=true";
-
-  jQuery(document).on('click',"#report-demo [data-dismiss='modal']",function(){ 
-      resetVideo(); 
-  });
-  jQuery(document).keyup(function(e) {
-      if (e.keyCode == 27) { 
-        resetVideo();   
-      }
-  });
-
-  function resetVideo(){
-      var iframe = jQuery("#video_iframe")[0];
-      if(iframe != undefined) {
-          var url = iframe.src;
-          iframe.src = '';  
-      }
-  }
-
-  jQuery("#demo_link").on('click',function(){
-      var iframe = jQuery("#video_iframe")[0];
-      var url = iframe.src;
-      iframe.src = video_url;
-  });
-});
-</script>

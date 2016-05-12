@@ -1080,9 +1080,9 @@ sl:
         send_test_mail_info2: "Tukaj si poglejte <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'> kako lahko to naredite </a>."
         title_message: "V 4 korakih do podpore vaših kupcev"
         support_email_title: "Podpora <br> e-pošta"
-        agents_title_1: "Dodajanje &lt;br&gt; Agentov"
+        adding_agents: "Dodajanje <br> Agentov"
         rebrand_title: "Logo <br> &amp; barve"
-        social_title_1: "Uporaba &lt;br&gt; socialnih omrežij"
+        going_social: "Uporaba <br> socialnih omrežij"
         skip_text: "Ne hvala, pojdi na mojo podporo."
         back_link: Nazaj
         next_link: Naprej
@@ -1204,7 +1204,6 @@ sl:
         feedbackwidget_users_can: "Uporabniki lahko:"
         feedbackwidget_attach_a_file: "Pripnite datoteko"
         feedbackwidget_screenshot: "Naredite sliko ekrana"
-        feedbackwidget_screenr_recording: "Screenr Recording"
         feedbackwidget_search_area: "Išči po člankih"
         feedbackwidget_use_https: "Uporabi https"
         feedbackwidget_mobile_view: "Mobile View"
@@ -4974,36 +4973,6 @@ sl:
         es: Spanish
         sv: Swedish
         tr: Turkish
-    screenr:
-      button_label: "Record Screencast"
-      label: Screenr
-      desc: "Record screencasts using Screenr and attach it to tickets, forums and solution articles."
-      helptext: "<h4>Freshdesk Screenr Integration</h4><p><br/>The Screenr integration lets agents and customers capture and share screencasts while they are using Freshdesk. It can be used to attach error reports or instructional videos to your tickets, forum posts and solution articles directly.</p><p>Once enabled, you will be able to see a record button alongside your feedback widget, discussions, and your knowledge base. You can choose to record your entire browser window, or select a specific section of it if you want. They screencast will get inserted automatically once your session is complete.</p><p>You can setup this integration by entering your Screener URL (e.g. <a>http://yourname.viewcasts.com</a>) and your Recorder ID, which can be found once you login to your account.</p>"
-      form:
-        recorder_id: "Recorder ID"
-        recorder_id_info: "Recorder ID is the unique ID available in the edit recorders page"
-        site_address_info: ""
-        site_address: "Screenr Subdomain"
-        widget_title: "Widget Title"
-        visible_agent_forum: "Forum Screen Recording for Agents"
-        visible_agent_forum_info: "Enable to make Screenr Recorder available in Forums for Agents"
-        visible_agent_ticket: "Agent Ticket Screen Recording"
-        visible_agent_ticket_info: "Enable to make Screenr Recorder available in Ticket form for Agents"
-        visible_solution: "Solution Screen Recording"
-        visible_solution_info: "Enable to make Screenr Recorder available in Solutions"
-        visible_portal_ticket: "Portal ticket Screen Recording"
-        visible_portal_ticket_info: "Enable to make Screenr Recorder available in portal ticket form"
-        visible_portal_forum: "Forum ticket Screen Recording for portal"
-        visible_portal_forum_info: "Enable to make Screenr Recorder available in portal forum"
-        visible_widget: "Widget Screen Recording"
-        visible_widget_info: "Enable to make Screenr Recorder available in Feedback Widget"
-      settings:
-        enable_screenr_recording: "Enable Screenr Recording"
-        ticket_interaction: "Tickets page (New, Edit, Reply)"
-        forum_interaction: "Forum page (New, Edit, Comment)"
-        create_solution: "Solution (New, Edit)"
-        for_agents: "For Agents"
-        for_customer: "For Customers"
     harvest:
       label: Poročanje
       desc: "Vnos porabljenega časa na zahtevkih lahko vneste Poročanje projektov in nalog."

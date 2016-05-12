@@ -58,14 +58,6 @@
             :cloud_files => active_attachments(:cloud_files, @article), 
             :regular => active_attachments(:attachments, @article) }
         } %>
-    <% if is_application_installed?("screenr") %>
-      <div class="control-group">
-        <div class="controls">
-            <%= render :partial => "shared/screenr_recorder", :locals => { :location => "solution" } %>
-        </div>
-  
-      </div>
-    <% end %>
 
     <% if !@article.new_record? && @article_meta.solution_folder_meta.is_default? %>
       <div class="row-fluid select-folder">

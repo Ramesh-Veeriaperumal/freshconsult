@@ -4,12 +4,6 @@
 		<p class="span12">
 			<%= f.rich_editor :body_html, "editor-type" => :forum, :class=>"required", :height => "150px" %>
 		</p>
-		<div class="span12">
-			<br/>
-			<% if is_application_installed?("screenr") %>
-		      	<%= render :partial => "shared/screenr_recorder", :locals => { :location => "portal_forum" } %>
-		  <% end %>
-		</div>
 	</div>
 	<hr />
 	<div>

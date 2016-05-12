@@ -61,14 +61,6 @@
 		</div>
 	</div>
 	<%end%>
-	<div class="control-group">
-		<div class="controls">
-			<% if is_application_installed?("screenr") %>
-			  <%= render :partial => "shared/screenr_recorder", :locals => { :location => "portal_forum" } %>
-			<% end %>
-		</div>
-	</div>
-
 	<% if @topic.new_record? && !current_account.features_included?(:forum_captcha_disable)%>
 		<div class="control-group"> 
 	    	<%= content_tag( :label, t('ticket.verify_human'), :class => "control-label" ) %>

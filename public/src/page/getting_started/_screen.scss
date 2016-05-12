@@ -907,3 +907,25 @@ p{
 .email-textbox{
   position: relative;
 }
+
+// Fix for Dutch and Lengthy languages
+:lang(nl), :lang(ru-RU), :lang(de), :lang(fr), :lang(id), 
+:lang(tr), :lang(ja-JP), :lang(ca), :lang(cs), :lang(et),
+:lang(hu), :lang(pl), :lang(uk){
+  .navigation a{
+    @include size(95px, 95px);
+    @include margin-right(10px);
+    span{ font-size: 11px}
+  }
+}
+:lang(ru-RU), :lang(uk){
+    .navigation a{
+      @include size(100px, 100px);
+      span{ font-size: 9px};
+    }
+}
+:lang(ja-JP), :lang(ro), :lang(ru-RU), :lang(uk){
+  .getting-started-header{
+    .header-left{ padding: 35px 0 20px 0;}
+  }
+}

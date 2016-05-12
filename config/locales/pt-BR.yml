@@ -1240,9 +1240,9 @@ pt-BR:
         send_test_mail_info2: "Veja <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>como fazer isso</a>."
         title_message: "Inicie o atendimento a seus clientes em apenas 4 passos..."
         support_email_title: "E-mail de<br> suporte"
-        agents_title_1: "Adicionando&lt;br&gt; analistas"
+        adding_agents: "Adicionando<br> analistas"
         rebrand_title: "Logotipo<br> e cores"
-        social_title_1: "Redes&lt;br&gt; sociais"
+        going_social: "Redes<br> sociais"
         skip_text: "Não, obrigado! Quero ir direto para o helpdesk."
         back_link: Voltar
         next_link: Avançar
@@ -1364,7 +1364,6 @@ pt-BR:
         feedbackwidget_users_can: "Os usuários podem:"
         feedbackwidget_attach_a_file: "Anexar um arquivo"
         feedbackwidget_screenshot: "Obter captura de tela"
-        feedbackwidget_screenr_recording: "Gravação do Screenr"
         feedbackwidget_search_area: "Pesquisar artigos"
         feedbackwidget_use_https: "Usar https"
         feedbackwidget_mobile_view: "Exibição para dispositivo móvel"
@@ -5422,36 +5421,6 @@ pt-BR:
         es: Espanhol
         sv: Sueco
         tr: Turco
-    screenr:
-      button_label: "Gravar screencast"
-      label: Screenr
-      desc: "Grave screencasts com o Screenr e anexe-os aos tickets, fóruns e artigos de solução."
-      helptext: "<h4>Integração do Screenr com o Freshdesk</h4><p><br/>A integração do Screenr permite que analistas e clientes capturem e compartilhem screencasts enquanto estão usando o Freshdesk. O Screenr pode ser usado para anexar relatórios de erros ou vídeos de instruções para seus tickets, posts do fórum e artigos de solução.</p><p>Quando o Screenr estiver habilitado, você poderá ver um botão Gravar ao lado do widget de feedback, das discussões e de sua base de dados de conhecimento. Você pode escolher gravar a janela inteira do navegador ou selecionar uma seção específica dela, se preferir. O screencast será inserido automaticamente assim que a sessão for concluída.</p><p>É possível configurar essa integração inserindo sua URL do Screener (por exemplo, <a>http://yourname.viewcasts.com</a>) e sua ID de gravador, que pode ser encontrada assim que você fizer login em sua conta.</p>"
-      form:
-        recorder_id: "ID de gravador"
-        recorder_id_info: "A ID de gravador é a ID exclusiva disponível na página de edição de gravadores"
-        site_address_info: ""
-        site_address: "Subdomínio do Screenr"
-        widget_title: "Título do widget"
-        visible_agent_forum: "Gravação da tela do fórum para analistas"
-        visible_agent_forum_info: "Habilite para tornar o Gravador do Screenr disponível nos fóruns para os agentes"
-        visible_agent_ticket: "Gravação da tela do ticket do agente"
-        visible_agent_ticket_info: "Habilite para tornar o Gravador do Screenr disponível no formulário de ticket para os agentes"
-        visible_solution: "Gravação da tela de solução"
-        visible_solution_info: "Habilite para tornar o Gravador do Screenr disponível em Soluções"
-        visible_portal_ticket: "Gravação da tela do ticket do portal"
-        visible_portal_ticket_info: "Habilite para tornar o Gravador do Screenr disponível no formulário de ticket do portal"
-        visible_portal_forum: "Gravação da tela do ticket do fórum para o portal"
-        visible_portal_forum_info: "Habilite para tornar o Gravador do Screenr disponível no fórum do portal"
-        visible_widget: "Gravação da tela do widget"
-        visible_widget_info: "Habilite para tornar o Gravador do Screenr disponível no widget de feedback"
-      settings:
-        enable_screenr_recording: "Habilitar gravação do Screenr"
-        ticket_interaction: "Página Tickets (Novo, Editar, Responder)"
-        forum_interaction: "Página Fórum (Novo, Editar, Comentar)"
-        create_solution: "Solução (Novo, Editar)"
-        for_agents: "Para analistas"
-        for_customer: "Para clientes"
     harvest:
       label: Harvest
       desc: "Você também pode registrar o tempo gasto nos tickets, em seus projetos e tarefas Harvest."

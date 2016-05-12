@@ -1,7 +1,6 @@
 module Va::Webhook::Trigger
 
   include Va::Webhook::Util
-  include Va::Webhook::ThrottlerUtil
   include Redis::RedisKeys
   include Redis::OthersRedis
 
@@ -29,16 +28,7 @@ module Va::Webhook::Trigger
       :webhook_limit => Account.current.account_additional_settings_from_cache.webhook_limit
     }
     
-    if redis_key_exists?(WEBHOOK_V1_ENABLED)
-      ::WebhookV1Worker.perform_async(throttler_args)
-    elsif Account.current.premium_webhook_throttler?
-      Throttler::PremiumWebhookThrottler.perform_async({
-        :args => throttler_args
-      })
-    else
-      Throttler::WebhookThrottler.perform_async({
-        :args => throttler_args
-      })
-    end
+    ::WebhookV1Worker.perform_async(throttler_args)
+    
   end
 end

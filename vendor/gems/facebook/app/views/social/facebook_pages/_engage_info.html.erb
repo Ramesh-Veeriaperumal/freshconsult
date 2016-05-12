@@ -8,10 +8,9 @@
         <h2 class="title"><%=t('.engage_customers')%></h2>
        	<p class="info-data">
        		<%=t('.associate_account', :account_name => current_account.name).html_safe%>
-
         </p>
         <% if @new_fb_pages %>
-          <%= link_to t('facebook.add_page'), "#pages_dialog", :id => "new_page_dialog", :class => "btn btn-primary btn-large", :rel => "freshdialog", "data-width" => "600px", "data-submit-label" => "Associate", :title => "Associate Facebook Page" %>
+          <%= link_to t('facebook.add_page'), "#pages_dialog", :id => "new_page_dialog", :class => "btn btn-primary btn-large", :rel => "freshdialog", "data-width" => "600px", "data-submit-label" => "Associate", :title => "Associate" %>
         <% else %>
           <a href="<%= @fb_client.authorize_url(session[:state]) %>" class="btn btn-primary btn-large"><%=t('.add_facebook')%></a>
         <% end %>

@@ -28,7 +28,7 @@
 							 	<i class='header-icon-freshfone <%= freshfone_presence_status_class %>'></i>
 			  			</a>
 			  		<% end %>
-			  		<% if feature?(:round_robin) && !feature?(:disable_rr_toggle) && current_user.in_round_robin? %>
+			  		<% if current_user.toggle_availability? %>
 			  		<%
 			  			availabilty_tooltip = ""
 			  			if current_user.available?
@@ -128,7 +128,7 @@
 			<div class="wrapper-shadow">
 				 <div class="top_nav">
 					<div class="nav_right">
-					<% if (current_user && current_user.agent?) && (!(privilege?(:manage_canned_responses)) || !(privilege?(:manage_scenario_automation_rules)))%>
+					<% if (current_user && current_user.agent?) && !privilege?(:view_admin) && (!(privilege?(:manage_canned_responses)) || !(privilege?(:manage_scenario_automation_rules)))%>
 						<div class="dropdown nav_settings">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 								<span class='ficon-gear'></span>

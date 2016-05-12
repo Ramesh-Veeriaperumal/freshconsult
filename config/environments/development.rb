@@ -40,8 +40,10 @@ Helpkit::Application.configure do
   # No Digest paths for Development environment
   config.assets.digest = false
 
+  config.log_tags = [:uuid]
+
   # Expands the lines which load the assets
-  config.assets.debug = true
+  config.assets.debug = false
 
   config.middleware.insert_before Rails::Rack::Logger, Middleware::DisableAssetsLogger
   config.reload_plugins = true

@@ -13,12 +13,6 @@
 	    <div class="control-group">
 	    	<%= render :partial => "/support/shared/attachment_form", :locals => 
 	    		{ :attach_id => @ticket.display_id , :nsc_param => "helpdesk_note" } %>
-	    	<% if is_application_installed?("screenr") %>
-			  <div class="span12">
-		      	<%= render :partial => "shared/screenr_recorder", :locals => { :location => "portal_ticket" }%>
-		  	  </div>
-			  <br />
-		  	<% end %>
 		</div>
     
     <% if is_application_installed?(Integrations::Constants::APP_NAMES[:ilos]) %>

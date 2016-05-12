@@ -1,16 +1,19 @@
 class Reports::CustomSurveyReportsController < ApplicationController
 
+  include Reports::CustomSurveyReport
+  include ApplicationHelper
+  include HelpdeskReports::Helper::ControllerMethods
+
   before_filter { |c| current_account.new_survey_enabled? }
 
   before_filter :set_report_type
   before_filter :set_selected_tab, :report_filter_data_hash, :only => :index
-  before_filter :max_limit?,                                 :only => [:save_reports_filter]
-  before_filter :construct_filters,                          :only => [:save_reports_filter,:update_reports_filter]
+  before_filter :save_report_max_limit?,                     :only   => [:save_reports_filter]
+  before_filter :construct_report_filters,                   :only   => [:save_reports_filter,:update_reports_filter]
   
-  around_filter :run_on_slave,                             :except => [:save_reports_filter,:update_reports_filter,:delete_reports_filter]
+  around_filter :run_on_slave,                               :except => [:save_reports_filter,:update_reports_filter,:delete_reports_filter]
   
-  include Reports::CustomSurveyReport
-  include ApplicationHelper
+  helper_method :enable_schedule_report?
 
   attr_accessor :report_type
   
@@ -57,8 +60,9 @@ class Reports::CustomSurveyReportsController < ApplicationController
     )
     report_filter.save
     
-    render :json => {:text=> "success", 
-                     :status=> "ok",
+    #Disabling the schedule for custom survey
+    @data_map[:schedule_config] = {enabled: false}
+    render :json => {:status=> 200,
                      :id => report_filter.id,
                      :filter_name=> @filter_name,
                      :data=> @data_map }.to_json
@@ -72,18 +76,15 @@ class Reports::CustomSurveyReportsController < ApplicationController
       :filter_name => @filter_name,
       :data_hash   => @data_map
     )
-    render :json => {:text=> "success", 
-                     :status=> "ok",
+    @data_map[:schedule_config] = {enabled: false}
+    render :json => {:status=> 200,
                      :id => report_filter.id,
                      :filter_name=> @filter_name,
                      :data=> @data_map }.to_json
   end
 
   def delete_reports_filter
-    id = params[:id].to_i
-    report_filter = current_user.report_filters.find(id)
-    report_filter.destroy 
-    render json: "success", status: :ok
+    common_delete_reports_filter
   end
 
   private
@@ -93,7 +94,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
     end 
 
     def set_report_type
-      @report_type = "satisfaction_survey"
+      @report_type = :satisfaction_survey
     end
 
     def page_limit
@@ -224,5 +225,10 @@ class Reports::CustomSurveyReportsController < ApplicationController
       params[:page] = 1 if params[:page].blank?
       params[:page]
     end
+
+    def enable_schedule_report?
+      false #Disabling schedule report for custom survey
+    end
+
 
 end

@@ -89,17 +89,23 @@ describe 'BusyResolve' do
     @freshfone_user.busy!
     @freshfone_user.update_attributes!(:incoming_preference => Freshfone::User::INCOMING[:not_allowed])
     Freshfone::Jobs::BusyResolve.stubs(:no_active_calls).returns(true)
+    Freshfone::Jobs::BusyResolve.stubs(:active_supervisor_calls?).returns(true)
     Freshfone::Jobs::BusyResolve.perform(:agent_id => @freshfone_user.user_id)
     freshfone_user = @account.freshfone_users.find_by_user_id(@agent)
     freshfone_user.should be_offline
+    Freshfone::Jobs::BusyResolve.unstub(:no_active_calls)
+    Freshfone::Jobs::BusyResolve.unstub(:active_supervisor_calls?)
   end
 
   it 'should not reset presence of the user if found to be in a call' do
     @freshfone_user.busy!
     Freshfone::Jobs::BusyResolve.stubs(:no_active_calls).returns(false)
+    Freshfone::Jobs::BusyResolve.stubs(:active_supervisor_calls?).returns(false)
     Freshfone::Jobs::BusyResolve.perform(:agent_id => @freshfone_user.user_id)
     freshfone_user = @account.freshfone_users.find_by_user_id(@agent)
     freshfone_user.should be_busy
+    Freshfone::Jobs::BusyResolve.unstub(:no_active_calls)
+    Freshfone::Jobs::BusyResolve.unstub(:active_supervisor_calls?)
   end
 end
 
@@ -123,6 +129,7 @@ describe 'UsageTrigger' do
 		expect(freshfone_account.freshfone_usage_triggers.count).to eq(2)
 		trigger = mock
 		trigger.stubs(:delete)
+		trigger.stubs(:current_value)
 		Freshfone::Jobs::UsageTrigger.stubs(:get_trigger).returns(trigger)
 		freshfone_account.do_security_whitelist
 		Resque.inline = false

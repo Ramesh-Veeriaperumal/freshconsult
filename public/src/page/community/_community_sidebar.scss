@@ -78,6 +78,7 @@ $sidebar-width: 284px;
 
 .cm-sb-list{
 	overflow:auto;
+	transform: translateZ(0); //Hack for scroll bar issue in chrome
 	.disabled a {
 		color: #EEE;
 	}

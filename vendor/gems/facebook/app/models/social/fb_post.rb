@@ -5,8 +5,9 @@ class Social::FbPost < ActiveRecord::Base
   
   include Facebook::Constants
   
-  
   has_ancestry :orphan_strategy => :rootify
+  
+  attr_accessible :post_id, :facebook_page_id, :msg_type, :post_attributes, :ancestry
   
   belongs_to :postable, :polymorphic => true
   belongs_to_account

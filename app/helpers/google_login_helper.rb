@@ -22,7 +22,7 @@ module GoogleLoginHelper
     set_others_redis_key(redis_oauth_key, uid, 300)
   end
 
-  def construct_redirect_url(account, domain_arg, random_key, native_mobile_flag)
+  def construct_redirect_url(account, domain_arg, random_key, native_mobile_flag=false)
     protocol = construct_protocol(account, native_mobile_flag)
     protocol + "://" + construct_sso_path(domain_arg) + construct_params(domain_arg, random_key)
   end

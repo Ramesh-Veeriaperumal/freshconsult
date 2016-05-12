@@ -22,16 +22,22 @@ body {
 .alert-message {
 	line-height: 22px;
 	padding: 10px;
-	background-color: #fcfec7;
+	background-color: #fcf8e3;
+	color: #8a6d3b;
 	margin-top: 10px;
-	margin-bottom: 10px;
-	font-size: 14px;
+	margin-bottom: 20px;
+	font-size: 13px;
 	font-weight: 400;
-	border-top: 1px solid #bbb;
-	border-bottom: 1px solid #bbb;
+	border: 1px solid #faebcc;
+	border-radius: 4px;
+	box-sizing: border-box;
 	&.warning{
-		background-color: #FFE7E7;
-		color: #000000;
+		background-color: #f2dede;
+		color: #a94442;
+		border: 1px solid #ebccd1;
+	}
+	.divider{
+		border-right: 1px #ccc solid;
 	}
 }
 .request_details .details{
@@ -3902,6 +3908,7 @@ $adm-bdr:#F0F0F0;
 		background: $adm-bg;
 		margin-bottom: 20px;
 	}
+  &.adm-bg-color{ background-color: $adm-bg;}
 	&.bdr{
 		border: solid 1px $adm-bdr;
 		border-radius: 4px;
@@ -3967,7 +3974,7 @@ $adm-bdr:#F0F0F0;
 		}
 		.profile-name{
 			font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-			@include margin-left(42px);
+			// @include margin-left(20px);
 			font-size: 18px;
 			a{
 				font-weight: bold;
@@ -4224,6 +4231,25 @@ $adm-bdr:#F0F0F0;
 	}
 }
 
+.fb-user {
+  padding: 10px;
+}
+
+.fb-select-all {
+	padding-bottom: 10px;
+  padding-left: 10px;
+}
+
+.rules-container-optimal, .rules-container-broad {
+	display: none;
+}
+
+.fb-form-tkt-rules{
+  label{ 
+    cursor: pointer;
+    &>span {font-weight: 600;}
+  }
+}
 // Admin Social styles end
 // =======================
 
@@ -4248,7 +4274,7 @@ $adm-bdr:#F0F0F0;
 	display:inline-block;
 	width:80px;
 	font-weight:bold;
-	word-break: break-all;
+	word-break: break-word;
 }
 
 // End
@@ -4358,4 +4384,20 @@ $adm-bdr:#F0F0F0;
 		@include right(0px);
 		top: 1px;
 	}
+}
+/* Enable button for Roundrobin V2 in groups page */
+.group-info-btn{
+  display: inline-block;
+  border: 1px solid #ccc;
+  @include border-radius(5px);
+}
+
+ .alert-message #group-rr-enable {
+  text-align: center;
+  @include margin-left(0);
+  width: 17.02128%;
+  a {
+    max-width: 80%;
+    word-wrap: break-word
+  }
 }

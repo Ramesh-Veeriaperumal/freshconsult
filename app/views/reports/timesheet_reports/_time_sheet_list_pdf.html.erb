@@ -1,0 +1,79 @@
+<div class="report-page time-sheet-summary reports-main" id="report-page" style="background:white">
+  <div class="report-content-wrapper" id="">
+    <!--report header-->
+    <div class="reports-header row-fluid">
+      <div class="reports-title span12">
+        <span class="report-icon"></span>
+        <span class="report-title-block">
+          <span id="report-title">
+            <% if (params[:filter_name]) %>
+              <%="#{t('helpdesk_reports.timesheet_reports.title')} - #{params[:filter_name]}" %>
+            <% else %>
+              <%=t('helpdesk_reports.timesheet_reports.title')%>
+            <% end %>
+          </span>
+        </span>
+      </div>
+      <div class="reports-filter span12" id="report-filter-details">    
+        <div class="filter-type span11">
+          <ul>
+            <li><%=t('reports.time_sheets.filter_by_title')%>:</li>
+            <li><%=t('reports.time_sheets.time_period')%> : <strong><%= report_date%></strong></li>
+              <% select_hash.each do |filter_option| %>
+                <li> <%= filter_option['label'] %> : <strong> <%= filter_option['text'] %> </strong></li>
+              <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="row-fluid  report-summary" id="metric_container">
+      <div>
+        <h3 class="header-lead"><span><%=t('adv_reports.summary')%> </span></h3>
+        <div class="row-fluid report-summary-wrapper">
+          <%=render :partial =>"reports/timesheet_reports/time_sheets_metric.html.erb", :locals => {:timesheet_data => time_sheet_data, :old_timesheet_data => old_time_sheet_data, :activity_data_hash_var => activity_data_hash } %>
+        </div>
+      </div>
+      <% grp_data = Helpdesk::TimeSheet.group_by_options.collect {|grp| grp[1] if !(headers.include?(grp[1])) } %>
+      <div class="row-fluid control-group">
+        <div class="vertical-alignment">
+          <strong><%=t('helpdesk.time_sheets.group_by')%>: </strong>
+        </div>
+        <div class="vertical-alignment">
+          <%= Helpdesk::TimeSheet.group_by_options.select { |ele| ele[0] if ele[1] == params[:group_by].to_sym}[0][0] %>
+        </div>
+      </div>
+      <div class="grid-pdf report-pdf row-fluid grid-pdf-column-border report-pdf-column-border"> 
+        <table class = "table-print-pdf" width="100%">
+          <thead>
+            <tr style="text-align:left">
+              <%colspan = 8%>
+              <% headers.each do |header| %>
+                <% concat content_tag :th, h(Helpdesk::TimeSheet.report_list[header]), :class => header %>
+              <% end %>
+            </tr>
+          </thead>
+          <% if time_sheets.size > 0 %>
+            <% row_max_limit = params[:scheduled_report] ? HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:schedule][:pdf] : HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:pdf] %>
+            <% exceeds_row_limit = (time_sheets.values.flatten.size > row_max_limit) ? true : false %>
+            <%= render :partial => "reports/timesheet_reports/time_sheet_pdf.html.erb", :object => time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data, :headers => headers, :account_id => params[:account_id], :time_sheet => time_sheets, :row_max_limit => row_max_limit, :exceeds_row_limit => exceeds_row_limit} %>
+          <%else%>
+            <tr style="text-align:center">
+              <td colspan="<%=(colspan+1)%>">           
+                <div class="list-noinfo"><%=t('helpdesk.time_sheets.report.no_timeentry')%></div>
+              </td>         
+            </tr>
+          <%end%>   
+        </table>
+      </div>
+      <!--end time_sheet_list-->
+    </div>
+  </div>
+</div>
+
+<% if exceeds_row_limit %>
+  <div class="export-exceeds-row-limit">
+    <%= t('helpdesk_reports.export_exceeds_row_limit_msg', row_max_limit: row_max_limit)%>
+  </div>
+<% end %>
+
+

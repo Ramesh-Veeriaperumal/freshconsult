@@ -69,8 +69,6 @@ defaults: &defaults
     - [tag_uses_destroy]
     - [bulk_scenario]
     - [github]
-    - [webhook_throttler]
-    - [webhook_worker]
     - [webhook_v1_worker]
     - [report_export_queue]
     - [update_users_company_id]
@@ -90,11 +88,11 @@ defaults: &defaults
     - [active_dispatcher]
     - [merge_tickets]
     - [merge_tickets_attachments]
-    - [premium_webhook_throttler]
-    - [premium_webhook_worker]
     - [marketplace_apps]
     - [pod_route_update]
     - [agent_destroy_cleanup]
+    - [delete_spam_tickets]
+    - [suspended_accounts_deletion]
     - [helpdesk_ticket_body_queue]
     - [helpdesk_note_body_queue]
     - [helpdesk_update_ticket_body_queue]
@@ -110,6 +108,10 @@ defaults: &defaults
     - [long_running_ticket_export]
     - [chargebee_add_subscription]
     - [partners_event_queue]
+    - [scheduled_reports]
+    - [scheduled_reports_cleanup]
+    - [account_info_to_dynamo]
+
 development:
   <<: *defaults
 

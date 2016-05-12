@@ -127,6 +127,9 @@ class Account < ActiveRecord::Base
     freshchat_enabled? and features?(:chat_routing)
   end
 
+  def supervisor_feature_launched?
+    features?(:freshfone_call_monitoring) || features?(:agent_conference)
+  end
   #Temporary feature check methods - using redis keys - starts here
   def compose_email_enabled?
     !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
@@ -275,10 +278,6 @@ class Account < ActiveRecord::Base
 
   def premium_email?
     ismember?(PREMIUM_EMAIL_ACCOUNTS, self.id)
-  end
-
-  def premium_webhook_throttler?
-    ismember?(PREMIUM_WEBHOOK_THROTTLER, self.id)
   end
 
   def premium_gamification_account?

@@ -64,8 +64,7 @@ class HelpdeskReports::Request::Ticket
   end
 
   def add_time_zone_condition
-    time_zone = Account.current.time_zone
-    time_zone = time_zone.present? ? time_zone : DEFAULT_TIME_ZONE
+    time_zone = Account.current.time_zone || DEFAULT_TIME_ZONE
     req_params.merge!(time_zone: time_zone)
   end
   

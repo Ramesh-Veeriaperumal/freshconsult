@@ -1,19 +1,32 @@
 class SAAS::SubscriptionActions
 
-  FEATURES = [ :customer_slas, :multiple_business_hours, :multi_product, :facebook, :twitter, 
+  DROP_DATA_FEATURES  = [ :customer_slas, :multiple_business_hours, :multi_product, :facebook, :twitter, 
                 :custom_domain, :multiple_emails, :css_customization, :custom_roles, 
-                :dynamic_content, :mailbox, :dynamic_sections, :custom_survey, :multi_language ]
+                :dynamic_content, :mailbox, :dynamic_sections, :custom_survey, :round_robin, :multi_language ]
+
+  ADD_DATA_FEATURES   = [:round_robin]
+
+  DROP  = "drop"
+  ADD   = "add"
 
   def change_plan(account, old_subscription, existing_addons)
     update_features(account, old_subscription, existing_addons)
-    drop_feature_data(account)
+
+    drop_data_features = DROP_DATA_FEATURES.select { |feature| feature unless account.features?(feature) }
+    add_data_features = ADD_DATA_FEATURES.select { |feature| feature if account.features?(feature) }
+
+    drop_feature_data(drop_data_features)
+    add_feature_data(add_data_features)
   end
-  
-  def drop_feature_data(account)
-    features_to_drop = FEATURES.select { |feature_id| feature_id unless account.features?(feature_id) }
-    PlanChangeWorker.perform_async(features_to_drop)
+
+  def drop_feature_data(drop_data_features)
+    PlanChangeWorker.perform_async({:features => drop_data_features, :action => DROP})
   end
-  
+
+  def add_feature_data(add_data_features)
+    PlanChangeWorker.perform_async({:features => add_data_features, :action => ADD})
+  end
+
   private
     def update_features(account, old_subscription, existing_addons)
       new_addons = account.addons

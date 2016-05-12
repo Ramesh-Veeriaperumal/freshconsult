@@ -266,7 +266,8 @@ include Mobile::Actions::Push_Notifier
     end
 
     def can_turn_off_round_robin?
-      current_user && current_user.agent? && current_user.agent.available? && current_account.features?(:round_robin) && !current_account.features?(:disable_rr_toggle) 
+      current_user && current_user.agent? && 
+      current_user.agent.available? && current_user.agent.toggle_availability?
     end
     
     def note_failed_login

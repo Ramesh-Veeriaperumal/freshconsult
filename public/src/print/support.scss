@@ -64,7 +64,7 @@ a {
 }
 
 /* showing only external links */
-a[href^="http://"], a[href^="https://"] {
+a[href^="http://"]:not(.image-enlarge-link), a[href^="https://"]:not(.image-enlarge-link) {
 	&:after {
 		content: " (" attr(href) ")";
 		font-size: 90%;

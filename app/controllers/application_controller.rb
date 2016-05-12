@@ -71,8 +71,8 @@ class ApplicationController < ActionController::Base
             flash[:notice] = t('suspended_plan_info')
             return redirect_to(subscription_url)
           else
-            flash[:notice] = t('suspended_plan_admin_info', :email => current_account.admin_email) 
-            redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+            flash[:notice] = t('suspended_plan_admin_info_new')
+            redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
           end
         }
       end

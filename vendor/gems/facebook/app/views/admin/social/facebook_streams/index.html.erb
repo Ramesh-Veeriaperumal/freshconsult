@@ -1,0 +1,35 @@
+<% content_for :sidebar do -%>&nbsp;<%-end %>
+
+<% content_for :helpcard do %>
+  <%= render :partial => "index_helpnote" %>
+<% end %>
+
+<% unless @facebook_pages.empty? %>
+  <% if @associated_fb_pages %>
+    <%= link_to t('.add_page').html_safe, "#pages_dialog", :id => "new_page_dialog", :class => "btn btn-primary pull-right special medium", :rel => "freshdialog", "data-width" => "600px", "data-submit-label" => "Associate", :title =>  "Associate Facebook Page" %>
+  <% else %>
+    <div class="floatr">
+      <%= link_to t('.new_page'), @auth_redirect_url , :class => "btn btn-primary mrt" %> 
+    </div>
+  <% end %>
+  <h3 class="lead"><%=t('.pages')%></h3><hr />
+  <% unless @facebook_pages.empty? %>
+    <%= render :partial => "streams", :locals => { :user_pages => @facebook_pages } %>
+  <% end %>
+<% else %>
+  <%= render :partial => "engage_info"  %>
+<% end %>
+
+
+<!-- Partial to render the associated Facebook Pages with every signed in user -->
+<div id="pages_dialog" class="hide">
+  <% if @associated_fb_pages %>
+    <%= render :partial => 'enable_facebook_page'%>
+  <% end %>
+</div>
+
+<% content_for :onload_script do %>
+  if(jQuery('#got_pages').length){
+    jQuery('#new_page_dialog').trigger('click');
+  }
+<% end %>

@@ -13,7 +13,6 @@ class Agent < ActiveRecord::Base
   accepts_nested_attributes_for :user
   before_update :create_model_changes
   after_commit :enqueue_round_robin_process, on: :update
-
   after_commit :nullify_tickets, :destroy_agent_canned_responses, :destroy_agent_scenarios, :agent_destroy_cleanup, on: :destroy
   
   validates_presence_of :user_id
@@ -82,10 +81,18 @@ class Agent < ActiveRecord::Base
     end.compact
   end
 
-  #This method returns true if atleast one of the groups that he belongs to has round robin feature
+  def allow_availability_toggle?
+    !self.groups.empty? && self.groups.where(:toggle_availability => false, :ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin]).count('1') == 0
+  end
+
   def in_round_robin?
-    return self.agent_groups.count(:conditions => ['ticket_assign_type = ?',
-                                                   Group::TICKET_ASSIGN_TYPE[:round_robin]], :joins => :group) > 0
+    self.agent_groups.count(:conditions => ['ticket_assign_type = ?',
+                                             Group::TICKET_ASSIGN_TYPE[:round_robin]], :joins => :group) > 0
+  end
+
+  def toggle_availability?
+    return false if(!account.features?(:round_robin) || !in_round_robin?)
+    allow_availability_toggle? ? true : false
   end
 
   def group_ticket_permission

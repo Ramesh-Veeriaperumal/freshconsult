@@ -403,8 +403,11 @@
 
 
 // Formatting used for solutions
-@mixin text-formatting(){
-    font-size: 13px;
+@mixin text-formatting(){    
+    & {
+      text-align: initial;
+      font-size: 13px;
+    }
     p, li, div{
       font-size: 13px;
       line-height: 18px;

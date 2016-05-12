@@ -13,19 +13,19 @@
 				  <li><%=t('adv_reports.glance.report_view')%></li>
 				</ul>
 				<div class="pull-right solution-link">
-					<% if @report_type == 'ticket_volume'%>
+					<% if @report_type == :ticket_volume%>
 						<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/213203"><%=t('helpdesk_reports.solution_article_text') %></a>
 					<% end %>
-					<% if @report_type == 'performance_distribution'%>
+					<% if @report_type == :performance_distribution%>
 						<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/213226"><%=t('helpdesk_reports.solution_article_text') %></a>
 					<% end %>
-					<% if @report_type == 'agent_summary'%>
+					<% if @report_type == :agent_summary%>
 						<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/213169"><%=t('helpdesk_reports.solution_article_text') %></a>
 					<% end %>
-					<% if @report_type == 'group_summary'%>
+					<% if @report_type == :group_summary%>
 						<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/213172"><%=t('helpdesk_reports.solution_article_text') %></a>
 					<% end %>
-					<% if @report_type == 'customer_report'%>
+					<% if @report_type == :customer_report%>
 						<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/214629"><%=t('helpdesk_reports.solution_article_text') %></a>
 					<% end %>
 				</div>
@@ -45,7 +45,7 @@
 	
 	<%= render :partial => "reports/v2/tickets/reports/shared/tickets" %>
 
-	<% if @report_type == 'glance'%>
+	<% if @report_type == :glance%>
 		<div class="view-more-metrics hide" id="view_more_wrapper">
 			<div class="title">
 				<span id="view_title" class="view_title"></span>
@@ -84,17 +84,24 @@
 jQuery(document).ready(function(){
 	window.HelpdeskReports = window.HelpdeskReports || {};
 	HelpdeskReports.locals = HelpdeskReports.locals || {};
-	HelpdeskReports.locals.report_type = "<%= @report_type %>";
+	HelpdeskReports.locals.report_type = '<%= @report_type %>';
 	HelpdeskReports.locals.report_field_hash = <%= @show_options.to_json.html_safe %>;
 	HelpdeskReports.locals.field_name_mapping = <%= @label_hash.to_json.html_safe %>;
 	HelpdeskReports.locals.date_lag = <%= @date_lag_by_plan %>;
 	HelpdeskReports.locals.account_time_zone = '<%= @account_time_zone %>';
-	HelpdeskReports.locals.enable_ticket_list = <%= @enable_ticket_list_by_plan %>;
+	HelpdeskReports.locals.enable_ticket_list = <%= @enable_ticket_list %>;
+	HelpdeskReports.locals.enable_schedule_report = <%= enable_schedule_report? %>;
 	HelpdeskReports.locals.report_options_hash = <%= @nf_hash.to_json.html_safe %>;
 	HelpdeskReports.locals.base_task_list_title = "<%=t('helpdesk_reports.tickets') %>";
-	HelpdeskReports.locals.is_non_sprout_plan = '<%= current_account.subscription.non_sprout_plan? || feature?(:advanced_reporting) %>';
+	HelpdeskReports.locals.is_non_sprout_plan = <%= current_account.subscription.non_sprout_plan? || feature?(:advanced_reporting) %>;
 	full_domain = '<%= current_account.full_domain %>';
 	HelpdeskReports.locals.report_filter_data = <%=  @report_filter_data.to_json.html_safe %>;
-	
+	current_user = {
+		mail : '<%= current_user.email %>',
+		id : '<%= current_user.id %>',
+		time_zone : '<%= @user_time_zone_abbr %>',
+		name : '<%= current_user.name %>'
+	};
+	day_names = <%=t('date.day_names').to_json.html_safe%>;
 });
 </script>

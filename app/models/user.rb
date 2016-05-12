@@ -133,6 +133,10 @@ class User < ActiveRecord::Base
     !deleted? and !spam? and !blocked? and !email.blank? and !agent?
   end
 
+  def allow_password_reset?
+    !deleted? and !spam? and !blocked? and !email.blank?
+  end
+
   def is_user_social(profile_size)
     if fb_profile_id
       profile_size = (profile_size == :medium) ? "large" : "square"
@@ -203,10 +207,10 @@ class User < ActiveRecord::Base
       
       #return self.find(options[:id]) if options.key?(:id)
       return UserEmail.user_for_email(options[:email]) if options.key?(:email)
-      return self.find_by_twitter_id(options[:twitter_id]) if options.key?(:twitter_id)
-      return self.find_by_fb_profile_id(options[:fb_profile_id]) if options.key?(:fb_profile_id)
-      return self.find_by_external_id(options[:external_id]) if options.key?(:external_id)
-      return self.find_by_phone(options[:phone]) if options.key?(:phone)
+      return self.where(twitter_id: options[:twitter_id]).first if options.key?(:twitter_id)
+      return self.where(fb_profile_id: options[:fb_profile_id]).first if options.key?(:fb_profile_id)
+      return self.where(external_id: options[:external_id]).first if options.key?(:external_id)
+      return self.where(phone: options[:phone]).first if options.key?(:phone)
     end 
 
     def update_posts_count
@@ -775,6 +779,14 @@ class User < ActiveRecord::Base
 
   def company_id
     self.customer_id
+  end
+
+  def accessible_groups
+    privilege?(:admin_tasks) ? Account.current.groups : self.groups
+  end
+
+  def accessible_roundrobin_groups
+    self.accessible_groups.round_robin_groups
   end
 
   private
