@@ -56,6 +56,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   def self.enqueue(export_params)
     # Not using the methods in RedisOthers to avoid the include /extend problem
     # class methods vs instance methods issue
+    export_params = export_params.except(:authenticity_token, :action, :controller, :utf8)
     if $redis_others.perform_redis_op("exists", TICKET_EXPORT_SIDEKIQ_ENABLED)
       if $redis_others.perform_redis_op("sismember", PREMIUM_TICKET_EXPORT, Account.current.id)
         Tickets::Export::PremiumTicketsExport.perform_async(export_params)
