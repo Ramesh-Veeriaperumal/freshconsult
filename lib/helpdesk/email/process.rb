@@ -55,14 +55,14 @@ class Helpdesk::Email::Process
     if account.features?(:domain_restricted_access)
       wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
       return unless Array.wrap(wl_domain).include?(common_email_data[:from][:domain])
-    end
-    construct_html_param
+    end    
     if (common_email_data[:from][:email] =~ EMAIL_VALIDATOR).nil?
       error_msg = "Invalid email address found in requester details - #{common_email_data[:from][:email]} for account : #{account.id}"
       Rails.logger.debug error_msg
       NewRelic::Agent.notice_error(Exception.new(error_msg))
       return
     end
+    construct_html_param
     self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data
 
     return if ((user.nil? && !account.restricted_helpdesk?) or (user && user.blocked?))

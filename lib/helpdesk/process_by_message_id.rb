@@ -2,6 +2,8 @@ module Helpdesk::ProcessByMessageId
   include Redis::RedisKeys
   include Redis::OthersRedis
 
+  TEXT_IN_BRACKETS = /<([^>]+)/
+
   def ticket_from_headers from_email, account
     ticket = parent_ticket(from_email, account)
   end
@@ -15,10 +17,18 @@ module Helpdesk::ProcessByMessageId
   end
 
   def message_id
-    headers = params[:headers]
-    if (headers =~ /message-id: <([^>]+)/i)
-      result = $1
-    end
+    @email_message_id ||= lambda do 
+      if params[:message_id].present? && params[:message_id] =~ /#{TEXT_IN_BRACKETS}/i
+        $1
+      elsif params[:headers] =~ /^message-id: #{TEXT_IN_BRACKETS}/i
+        $1
+      elsif params[:headers] =~ /^x-ms-tnef-correlator: #{TEXT_IN_BRACKETS}/i
+        $1
+      elsif params[:headers] =~ /message-id: #{TEXT_IN_BRACKETS}/i
+        Rails.logger.debug "Message-id match found in the middle of header text - #{$1}"
+        $1
+      end
+    end.call
   end
 
   def zendesk_email
@@ -33,10 +43,13 @@ module Helpdesk::ProcessByMessageId
   end
 
   def in_reply_to
-    headers = params[:headers]
-    if (headers =~ /in-reply-to: <([^>]+)/i)
-      result = $1
-    end
+    @email_in_reply_to ||= lambda do 
+      if params[:in_reply_to].present? && params[:in_reply_to] =~ /#{TEXT_IN_BRACKETS}/i
+        $1
+      elsif params[:headers] =~ /in-reply-to: #{TEXT_IN_BRACKETS}/i
+        $1
+      end
+    end.call
   end
 
   def all_message_ids
@@ -83,13 +96,20 @@ module Helpdesk::ProcessByMessageId
     end
 
     def references
-      @references = get_references || []
+      @email_references ||= params[:references].present? ? scan_quoted_message_ids(params[:references]) : (get_references || [])
     end
 
     def get_references
       headers = params[:headers]
-      if (headers =~ /references: (.+)/im)
-        result = $1.scan(/<([^>]+)/).flatten
+      reference_text = ""
+      headers.gsub("\r\n", "\n").split("\n").map do |line| 
+        break if (reference_text.present? && line =~ /(.+): /)
+        reference_text << ($1 || line) if line =~ /^references: (.+)/i or reference_text.present?
       end
+      scan_quoted_message_ids(reference_text) if reference_text.present?
+    end
+
+    def scan_quoted_message_ids(text)
+      text.squish.scan(/#{TEXT_IN_BRACKETS}/).flatten
     end
 end
