@@ -85,10 +85,13 @@ class Solution::ArticlesController < ApplicationController
 
   def update
     unless (UPDATE_FLAGS & params.keys.map(&:to_sym)).any?
+      # Should not be necessary when V1 api is removed.
+      api_publish_article if (params[:solution_article] && params[:solution_article][:status] == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] && 
+                params[:publish].blank?)
       update_article
-      return 
+    else
+      send("article_#{(UPDATE_FLAGS & params.keys.map(& :to_sym)).first}")
     end
-    send("article_#{(UPDATE_FLAGS & params.keys.map(& :to_sym)).first}")
   end
 
   def destroy
@@ -505,7 +508,7 @@ class Solution::ArticlesController < ApplicationController
     
     def set_parent_for_old_params
       return unless params[:solution_article].present?
-      params[:solution_article][:folder_id] = params[:folder_id]
+      params[:solution_article][:folder_id] = params[:folder_id] if params[:solution_article][:folder_id].blank?
       params[:solution_article][:id] = params[:id] if params[:id].present?
     end
 
@@ -515,5 +518,12 @@ class Solution::ArticlesController < ApplicationController
       # So when he hits the url directly to add new version, we render 404.
       return unless current_account.multilingual?
       render_404 unless privilege?(:publish_solution) || @article.present?
+    end
+
+    def api_publish_article
+      if @article && @article.draft.present?
+        @article.draft.update_attributes(params[:solution_article].slice(:title, :description))
+        @article.draft.publish!
+      end
     end
 end
