@@ -38,7 +38,6 @@ class GroupsController < Admin::AdminController
   end
 
   def create
-    @group.agent_ids = agents_data.blank? ? [] : agents_data.split(',');
     if @group.save
       respond_to do |format|
         format.html { redirect_to :action => 'index' }
