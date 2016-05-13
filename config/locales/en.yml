@@ -773,6 +773,7 @@ en:
           import_visitor_posts: "Convert all Visitor Posts to tickets"
           import_company_posts: "For company posts, convert individual visitor comments to tickets when they have these keywords"
           assign_to_gp: "Assign tickets to group"
+          include_helptext: "examples: support, help, refund, order"
         convert_dm:
           header: "Convert all Messages to tickets"
           threading_interval: "Set Ticket Threading Interval"
