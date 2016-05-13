@@ -62,6 +62,7 @@ class Helpdesk::Email::Process
       NewRelic::Agent.notice_error(Exception.new(error_msg))
       return
     end
+    check_tnef_message_id
     construct_html_param
     self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data
 
@@ -74,6 +75,19 @@ class Helpdesk::Email::Process
                                common_email_data[:subject],
                                params["Message-Id"][1..-2])
     assign_to_ticket_or_kbase
+  end
+
+  def check_tnef_message_id
+    return if params["Message-Id"].present?
+    begin
+      msg_ar = JSON.parse(params["message-headers"]).select{|e| e[0] =~ /x-ms-tnef-correlator/i }.flatten
+    rescue Exception => e
+      msg_ar = []
+    end
+    if msg_ar.present? && msg_ar.length == 2 && msg_ar[1] =~ /<+([^>]+)/
+      params["Message-Id"] = "<" << $1 << ">"
+      Rails.logger.info "Fetched message-id from x-ms-tnef-correlator header: #{params["Message-Id"]}"
+    end
   end
 
   def get_necessary_details
