@@ -75,9 +75,12 @@ window.App.Admin = window.App.Admin || {};
 					activeClass: (visible ? "active" : ""),
 					disabled: (visible ? '' : 'disabled')
 				},
-				newLangEl = $.tmpl(this.langTemplate, tempateVariables).prependTo('#manage_languages_form .selected-languages');
+				newLangEl = $.tmpl(this.langTemplate, tempateVariables);
       if (newAddition) {
+        $(newLangEl).prependTo('#manage_languages_form .selected-languages');
         $(newLangEl).animateHighlight();
+      } else {
+        $(newLangEl).appendTo('#manage_languages_form .selected-languages');
       }
     },
     

@@ -29,7 +29,7 @@ class Account < ActiveRecord::Base
   end
 
   def supported_languages_objects
-    @supported_languages_objects ||= supported_languages.map { |l| Language.find_by_code(l) }
+    @supported_languages_objects ||= (supported_languages || []).map { |l| Language.find_by_code(l) }.sort_by(&:name)
   end
 
   def all_language_objects
@@ -45,7 +45,7 @@ class Account < ActiveRecord::Base
   end
 
   def portal_languages_objects
-    @portal_languages_objects ||= (portal_languages || []).map { |l| Language.find_by_code(l) }
+    @portal_languages_objects ||= (portal_languages || []).map { |l| Language.find_by_code(l) }.sort_by(&:name)
   end
 
   def all_portal_language_objects
