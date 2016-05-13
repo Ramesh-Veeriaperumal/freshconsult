@@ -8,17 +8,15 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   include Helpdesk::Utils::Attachment
 
+  BINARY_TYPE = "application/octet-stream"
+
   MIME_TYPE_MAPPING = {"ppt" => "application/vnd.ms-powerpoint",
                        "doc" => "application/msword",
                        "xls" => "application/vnd.ms-excel",
                        "pdf" => "application/pdf",
                        "docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                        "xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                       "pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                       "html" => "text/plain",
-                       "htm" => "text/plain",
-                       "shtml" => "text/plain",
-                       "ehtml" => "text/plain"
+                       "pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation"
                       }
 
   MAX_DIMENSIONS = 16000000
@@ -106,7 +104,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def set_content_type
-    mime_content_type = lookup_by_extension(File.extname(self.content_file_name).gsub('.',''))
+    file_ext = File.extname(self.content_file_name).gsub('.','')
+    mime_content_type = ATTACHMENT_WHITELIST.include?(file_ext) ? lookup_by_extension(file_ext) : BINARY_TYPE
     self.content_content_type = mime_content_type unless mime_content_type.blank?
   end
 
