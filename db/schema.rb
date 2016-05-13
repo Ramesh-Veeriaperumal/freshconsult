@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160511101516) do
+ActiveRecord::Schema.define(:version => 20160512085738) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -376,6 +376,7 @@ ActiveRecord::Schema.define(:version => 20160511101516) do
 
   create_table "chat_settings", :force => true do |t|
     t.integer  "account_id", :limit => 8
+    t.string   "site_id"
     t.string   "display_id"
     t.datetime "created_at"
     t.datetime "updated_at"

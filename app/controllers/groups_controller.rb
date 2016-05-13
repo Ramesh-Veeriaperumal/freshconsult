@@ -38,7 +38,6 @@ class GroupsController < Admin::AdminController
   end
 
   def create
-    #  adding to send the agent ids groups mapping to livechat.
     @group.agent_ids = agents_data.blank? ? [] : agents_data.split(',');
     if @group.save
       respond_to do |format|
@@ -61,9 +60,6 @@ class GroupsController < Admin::AdminController
   end
 
   def update
-    #  adding to send the agent ids groups mapping to livechat.
-    agents_data = params[:group][:agent_list]
-    @group.agent_ids = agents_data.blank? ? [] : agents_data.split(',');
     respond_to do |format|
       if @group.update_attributes(@filtered_group_params)
         format.html do
