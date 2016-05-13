@@ -194,12 +194,13 @@ function fillLabels(){
       content for field mapping starts here.
   */
   var fdTypeValidator= <%= raw @element_config['fd_validator'].to_json%>;
-  var sfTypeValidator= <%= raw @element_config['element_validator'].to_json%>;
+  var crmTypeValidator= <%= raw @element_config['element_validator'].to_json%>;
   var maximumSelectionSizeContact = 10;
+  var customModule = "sync";
 
   jQuery(function(){
-   jQuery('[rel="construct_contact_rules"]').syncConstructRules({fdTypeValidator, sfTypeValidator, maximumSelectionSizeContact});
-   jQuery('[rel="construct_company_rules"]').syncConstructRules({fdTypeValidator, sfTypeValidator, maximumSelectionSizeContact});
+   jQuery('[rel="construct_contact_rules"]').constructRules({fdTypeValidator, crmTypeValidator, maximumSelectionSizeContact, customModule});
+   jQuery('[rel="construct_company_rules"]').constructRules({fdTypeValidator, crmTypeValidator, maximumSelectionSizeContact, customModule});
   });
 
   jQuery('#company-mapping-btn, #contact-mapping-btn').on('click', function(){

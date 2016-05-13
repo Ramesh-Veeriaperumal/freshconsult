@@ -2,6 +2,7 @@
     "use strict";
 
     var ConstructRules = function($this, options){
+        var option = false;
         this.$currentElement = $this;
         this.options = $.extend({}, $.fn.constructRules.defaults, options, $this.data());
         this.$scriptElement =  $(this.options.renderTemplate)
@@ -9,6 +10,10 @@
         this.inputAttrName = {};
         this.default_data = [];
         this.default_data_key = {};
+        this.dropdown1_validator = options.fdTypeValidator;
+        this.dropdown2_validator = options.crmTypeValidator;
+        this.maximumSize = options.maximumSelectionSizeContact;
+        this.customModule = options.customModule;
         this.data_type = [];
         this.init();
     }
@@ -38,7 +43,11 @@
                 self.inputArea[$(this).attr('rel')] ? "" : self.inputArea[$(this).attr('rel')] = {};
                 
                 for (var i = options.length - 1; i >= 0; i--) {
-                    options_data.push({ 'text' : options[i].innerHTML , 'id' : options[i].value, disabled: false });
+                    if(self.customModule == "sync"){
+                        options_data.push({ 'text' : options[i].innerHTML , 'id' : options[i].value, 'type' : $(options[i]).data('fieldType'), disabled: false });
+                    }else{
+                        options_data.push({ 'text' : options[i].innerHTML , 'id' : options[i].value, disabled: false });
+                    }
                 };
                 
                 self.inputArea[$(this).attr('rel')][$(this).attr('rel') + "_" + element_count] = options_data;
@@ -87,8 +96,14 @@
                 list_element  = last_list.children().children('input'),
                 add_new_list = true;
             this.$currentElement.children('.rules_list_wrapper').find('.error').remove();
+            var self = this;
             $.each(last_list, function(index, list_element){
-                 list_element = $(list_element).children().children('input:not(:hidden)')
+                if(self.customModule == "sync"){
+                    //input:not(:hidden) will only return an empty array
+                    list_element = $(list_element).children().children('input:hidden');
+                }else{
+                    list_element = $(list_element).children().children('input:not(:hidden)')                    
+                }
 
                 $.each(list_element, function(i,element){
                     if (element.value == null || element.value == ""){
@@ -143,8 +158,8 @@
 
             if(this.inputArea['dropdown'] != undefined && this.inputArea['dropdown'] != "") {
                 $.each(this.inputArea['dropdown'], function(key, object){
-
-                    if(object.size() == self.$currentElement.children('.rules_list_wrapper').children().size()){
+                    var size = self.$currentElement.children('.rules_list_wrapper').children().size();
+                    if(object.size() == size|| (self.customModule == "sync" && size == self.maximumSize)){
                         self.$currentElement.children('.add_menu_wrapper').find('.add_new_list').hide();
                         self.$currentElement.children('.add_menu_wrapper').find('.empty_list_alert').css('display','table-row');
                         return false;
@@ -189,10 +204,18 @@
                 var hidden_input = $(list).find('input.' + $(element).data('currentType'))
 
                 if (!list.next().get(0)) {
-                    self.bindSelect2(hidden_input,element);
+                    if(self.customModule == "sync"){
+                        self.bindSyncSelect2(hidden_input,element);
+                    }else{
+                        self.bindSelect2(hidden_input,element);
+                    }
                     return false;
                 }
-                self.bindSelect2(hidden_input,element);
+                if(self.customModule == "sync"){
+                    self.bindSyncSelect2(hidden_input,element);
+                }else{
+                    self.bindSelect2(hidden_input,element);
+                }
                 
                 return refresh_all_data(list.next())
             }
@@ -202,6 +225,7 @@
         },
         onChangeSelect2: function(element){
 
+            jQuery(element).next('.error').remove();
             var select2_data = $(element).select2('data');
             var old_value = $(element).data('oldValue');
             var object = this.inputArea[$(element).attr('rel')][$(element).data('current-type')];
@@ -272,16 +296,91 @@
  
             $(hidden_input).select2('val', select2_data)
         },
+        bindSyncSelect2: function(hidden_input, element){
+            var self = this;
+            var select2_data = $(hidden_input).select2('data');
+            var hidden_sibling_input = $(hidden_input).parent().siblings().find('input[rel]');
+            var select2_sibling_data = hidden_sibling_input.select2('data');
+            if(select2_sibling_data && select2_sibling_data['type']){
+                var array = self.getValueWithType(element, select2_sibling_data['type']);
+            }
+            else{
+                var array = self.getValue(element);        
+            }            
+
+            $(hidden_input).select2("destroy");
+            
+            if(select2_data){
+                $(hidden_input).select2({
+                    data: array,
+                    allowClear : true,
+                    initSelection: function (element, callback) {
+
+                        callback(select2_data);
+                    }
+                }).off().on('change', function(ev){
+                    self.onChangeSelect2(this);
+                }).data('oldValue', select2_data);
+
+                $(hidden_input).select2('val', select2_data);
+                self.bindSiblingSelect2(hidden_sibling_input, select2_data['type']);
+            }else{
+                $(hidden_input).select2({
+                    data: array,
+                    allowClear : false,
+                    placeholder: "Select",
+                }).off().on('change', function(ev){
+                    self.onChangeSelect2(this);
+                }).data('oldValue', array[0]);
+            }
+        },
+        bindSiblingSelect2: function(hidden_input, type){
+            var self = this;
+            var select2_data = $(hidden_input).select2('data');
+
+            if(select2_data == null){
+                var select2_data = self.getValueWithType(hidden_input, type); 
+                var placeholder_value = "Select";
+                if(select2_data.length== 0){
+                    placeholder_value = "No Matching data..."
+                }
+                $(hidden_input).select2({
+                    data: select2_data,
+                    allowClear : false,
+                    placeholder: placeholder_value,
+                }).off().on('change', function(ev){
+                    self.onChangeSelect2(this);
+                }).data('oldValue', select2_data[0]);
+            }
+            else{
+                if(select2_data['type']){
+                    var array = self.getValueWithType(hidden_input, type); 
+                    // array.push(select2_data);
+                    $(hidden_input).select2("destroy");
+                    $(hidden_input).select2({
+                        data: array,
+                        allowClear : true,
+                        initSelection: function (element, callback) {
+                            callback(select2_data);
+                        }
+                    }).off().on('change', function(ev){
+                        self.onChangeSelect2(this);
+                    }).data('oldValue', select2_data);
+                }
+            }
+        },
         removeList: function(ev){
             var self = this;
             var list_element = $(ev.target).parent().siblings().find('[rel="dropdown"]');
             if(list_element.val() != ""){
                 list_element.each(function(index, element){
                     var select2_data = $(element).select2('data');
-                    self.setDisable(element,select2_data)
+                    if(select2_data != null){
+                        self.setDisable(element,select2_data);
+                    }
                 })
-            }
 
+            }
             $(ev.target).parent().parent().remove();
             self.$currentElement.children('.add_menu_wrapper').find('.prev_empty_notify').removeClass('inline');
             this.checkAddButtonForDropdown();
@@ -364,6 +463,32 @@
                 $overlay.find('[type="text"]').attr('disabled', 'disabled');
             }
             this.bindRemove();
+        },
+        getValueWithType: function(element, type){
+            var data = [];
+            var validator = {};
+            if($(element).data('currentType') == 'dropdown_1'){
+                validator= this.dropdown1_validator;
+            }
+            else{
+                validator= this.dropdown2_validator;
+            }
+
+            var val_keys = Object.keys(validator);
+            var validDataTypes = [];
+            for(var i=0; i<val_keys.length; i++){
+                if(validator[val_keys[i]].indexOf(type) != -1){
+                    validDataTypes.push(val_keys[i]);
+                }
+            }
+
+            $.each(this.inputArea[$(element).attr('rel')][$(element).data('currentType')], function(key, object){
+                if(object['disabled'] == false && validDataTypes.indexOf(object['type']) != -1){ 
+                    data.push(object);
+                }
+            })
+
+            return data;
         }
     }
 

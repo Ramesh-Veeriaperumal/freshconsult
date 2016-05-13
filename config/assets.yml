@@ -136,7 +136,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.autosuggester.js
     - public/javascripts/integrations/construct_rule.js
     - public/javascripts/marketplace/freshapp.js
-    - public/javascripts/integrations/sync_construct_rule.js
 
   # Code editor for portal cms
   codemirror:

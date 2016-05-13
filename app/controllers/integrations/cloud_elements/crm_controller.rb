@@ -19,12 +19,10 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     flash[:notice] = t(:'flash.application.install.cloud_element_success')
     render_settings
   rescue => e
-    #catch timeout error
     [el_response, fd_response].each do |response|
       delete_element_instance_error @installed_app, request.user_agent, response['id'] if response.present? and response['id'].present?
     end
     delete_formula_instance_error @installed_app, request.user_agent, formula_resp['id'] if formula_resp.present? and formula_resp['id'].present?
-
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
     flash[:error] = t(:'flash.application.update.error')
     redirect_to integrations_applications_path
@@ -33,6 +31,9 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
   def install
     @installed_app.set_configs get_metadata_fields
     @installed_app.save!
+    if (element.eql? "salesforce") && current_account.features?(:salesforce_sync) && salesforce_sync_option?
+      salesforce_service_obj.receive(:install)
+    end
     flash[:notice] = t(:'flash.application.update.success')
     redirect_to integrations_applications_path
   rescue => e
@@ -57,6 +58,21 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
   def update
     @installed_app.set_configs get_metadata_fields
     @installed_app.save!
+    if (element.eql? "salesforce") && current_account.features?(:salesforce_sync)
+      va_rules = @installed_app.va_rules
+      if salesforce_sync_option? && va_rules.blank?
+        salesforce_service_obj.receive(:install)
+      elsif va_rules.present?
+        va_rules.each do |v_r|
+          v_r.update_attribute(:active,salesforce_sync_option?) 
+        end
+      end
+    else
+      va_rules = @installed_app.va_rules
+      va_rules.each do |v_r|
+          v_r.update_attribute(:active, false) 
+      end
+    end
     flash[:notice] = t(:'flash.application.update.success')
     redirect_to integrations_applications_path
   rescue => e
@@ -330,6 +346,9 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       config_hash['lead_labels'] = params['lead_labels'] unless params[:leads].nil?
       config_hash['account_labels'] = params['account_labels'] unless params[:accounts].nil?
       config_hash = get_opportunity_params config_hash if element.eql? "salesforce"
+      if element.eql? "salesforce" and current_account.features?(:salesforce_sync)
+        config_hash['salesforce_sync_option'] = params["salesforce_sync_option"]["value"]
+      end
       config_hash['companies'] = get_selected_field_arrays(params[:inputs][:companies])
       config_hash['contacts'] = get_selected_field_arrays(params[:inputs][:contacts])
       config_hash
@@ -444,5 +463,12 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       JSON.parse(File.read("lib/integrations/cloud_elements/crm/#{element}/constant.json"))
     end
 
+    def salesforce_service_obj
+      @salesforce_obj ||= IntegrationServices::Services::SalesforceService.new(@installed_app, {},:user_agent => request.user_agent)
+    end
+
+    def salesforce_sync_option?
+      @installed_app.configs_salesforce_sync_option.to_s.to_bool
+    end
 
 end
