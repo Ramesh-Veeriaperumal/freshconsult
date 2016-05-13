@@ -14,8 +14,8 @@ class Group < ActiveRecord::Base
   after_commit :update_round_robin_list, on: :update
   after_commit :delete_round_robin_list, :nullify_tickets, on: :destroy
   before_save  :reset_toggle_availability, :create_model_changes
-  after_commit  ->(obj) { obj.update_group_in_liveChat } , on: :create
-  after_commit  ->(obj) { obj.update_group_in_liveChat } , on: :update
+  # after_commit  ->(obj) { obj.update_group_in_liveChat } , on: :create
+  # after_commit  ->(obj) { obj.update_group_in_liveChat } , on: :update
   after_commit  :destroy_group_in_liveChat, on: :destroy
 
   attr_accessor :agent_ids
@@ -223,19 +223,19 @@ class Group < ActiveRecord::Base
     {:id => id, :user_id => user_id, :_destroy => id.present?}
   end
   
-  protected
-
-  def update_group_in_liveChat
-    siteId = account.chat_setting.site_id
-    group_agents = []
-    if account.features?(:chat) && siteId
-      self.agent_ids.each{ | agent_id| group_agents << {site_id: siteId, group_id: self.id, agent_id: agent_id}}
-      # agent_groups.each{ |agentGroup| group_agents << {site_id: siteId, group_id: self.id, agent_id: agentGroup.user_id}}
-      LivechatWorker.perform_async({:worker_method => "create_group",
-                                          :siteId => siteId, :group_id => self.id, group_agents: group_agents.to_json,
-                                          :name => self.name, :business_calendar_id => self.business_calendar_id})
-    end
-  end
+  # protected
+  # Livechat: Code Commenting out - Will be use it later 
+  # def update_group_in_liveChat
+  #   siteId = account.chat_setting.site_id
+  #   group_agents = []
+  #   if account.features?(:chat) && siteId
+  #     self.agent_ids.each{ | agent_id| group_agents << {site_id: siteId, group_id: self.id, agent_id: agent_id}}
+  #     # agent_groups.each{ |agentGroup| group_agents << {site_id: siteId, group_id: self.id, agent_id: agentGroup.user_id}}
+  #     LivechatWorker.perform_async({:worker_method => "create_group",
+  #                                         :siteId => siteId, :group_id => self.id, group_agents: group_agents.to_json,
+  #                                         :name => self.name, :business_calendar_id => self.business_calendar_id})
+  #   end
+  # end
 
   private
 

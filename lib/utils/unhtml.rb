@@ -15,7 +15,7 @@ module Utils
         unless text.at_css("body").blank?
           text.xpath("//del").each { |div|  div.name= "span";}
           text.xpath("//p").each { |div|  div.name= "div";}
-          item.send(:write_attribute , "#{body}_html", Rinku.auto_link(text.at_css("body").inner_html, :urls))
+          item.send(:write_attribute , "#{body}_html", Rinku.auto_link(text.at_css("body").inner_html, :urls, 'rel="noreferrer"'))
         end
       end
     end
