@@ -33,7 +33,7 @@ module Utils
         html_doc.xpath("//del").each { |div|  div.name= "span";}
         html_doc.xpath("//p").each { |div|  div.name= "div";}
       end
-      Rinku.auto_link(html_doc.at_css("body").inner_html, :urls)
+      Rinku.auto_link(html_doc.at_css("body").inner_html, :urls, 'rel="noreferrer"')
     end
 
   end
