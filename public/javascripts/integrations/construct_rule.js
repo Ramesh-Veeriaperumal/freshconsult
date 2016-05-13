@@ -372,14 +372,20 @@
         removeList: function(ev){
             var self = this;
             var list_element = $(ev.target).parent().siblings().find('[rel="dropdown"]');
-            if(list_element.val() != ""){
+            if(this.customModule == "sync"){
                 list_element.each(function(index, element){
                     var select2_data = $(element).select2('data');
                     if(select2_data != null){
                         self.setDisable(element,select2_data);
                     }
                 })
-
+            }else{
+                if(list_element.val() != ""){
+                    list_element.each(function(index, element){
+                        var select2_data = $(element).select2('data');
+                        self.setDisable(element,select2_data)
+                    })
+                }
             }
             $(ev.target).parent().parent().remove();
             self.$currentElement.children('.add_menu_wrapper').find('.prev_empty_notify').removeClass('inline');
