@@ -147,9 +147,9 @@ window.liveChat.visitorFormSettings = function($){
 
 			data.offline_chat = _widget.offline_chat;
 			var form = {};
-			form['name'] = $("#missed_chat_name").val() || CHAT_I18n.name;
-			form['email'] = $("#missed_chat_email").val() || CHAT_I18n.email;
-			form['message'] = $("#missed_chat_message").val() || CHAT_I18n.message;
+			form['name'] = $("#missed_chat_name").val() || "";
+			form['email'] = $("#missed_chat_email").val() || "";
+			form['message'] = $("#missed_chat_message").val() || "";
 			data.offline_chat['form'] = form;
 
 			if(valid){
