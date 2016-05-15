@@ -10,10 +10,11 @@ describe Solution::FoldersController do
     @test_folder_meta = create_folder( {:category_id => @test_category_meta.id } )
     @test_folder_meta2 = create_folder( {:category_id => @test_category_meta.id } )
     @companies_array = []
-    251.times do
+    until @companies_array.uniq.length > 252 do
       company = create_company
       @companies_array << company.id
     end
+    @companies_array = @companies_array.uniq.compact
   end
 
   before(:each) do
@@ -217,14 +218,14 @@ describe Solution::FoldersController do
         end
 
         it "should change visibility: replace existing companies" do
-          put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => [@company1.id, @company2.id], :addToExisting => 0
+          put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => [@company1.id, @company2.id].join(","), :addToExisting => 0
           [@test_folder_meta3, @test_folder_meta4].each do |folder|
             folder.reload
             folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users])
             folder.customer_ids.should include(@company2.id, @company1.id)
           end
 
-          put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => [@company1.id], :addToExisting => 0
+          put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => [@company1.id].join(","), :addToExisting => 0
           [@test_folder_meta3, @test_folder_meta4].each do |folder|
             folder.reload
             folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users])
@@ -233,7 +234,7 @@ describe Solution::FoldersController do
         end
 
         it "should change visibility: add to existing companies" do
-          put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => [@company2.id], :addToExisting => 1
+          put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => [@company2.id].join(","), :addToExisting => 1
           [@test_folder_meta3, @test_folder_meta4].each do |folder|
             folder.reload
             folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users])
@@ -243,7 +244,7 @@ describe Solution::FoldersController do
 
         it "should not change the visibility when company limit exceeds: replace existing companies" do
           put :visible_to, :folderIds => @folder_ids_1, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]
-          put :visible_to, :folderIds => @folder_ids_1, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => @companies_array, :addToExisting => 0
+          put :visible_to, :folderIds => @folder_ids_1, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => @companies_array.join(","), :addToExisting => 0
           expect(flash[:error]).to be_present
           expect(flash[:notice]).to_not be_present
           [@test_folder_meta5, @test_folder_meta6].each do |folder|
@@ -259,7 +260,8 @@ describe Solution::FoldersController do
             :id => @test_folder_meta6.id,
             :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
           }
-          put :visible_to, :folderIds => @folder_ids_1, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => @companies_array.first(250), :addToExisting => 1
+          put :visible_to, :folderIds => @folder_ids_1, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users],
+           :companies => @companies_array.first(250).join(","), :addToExisting => 1
           expect(flash[:error]).to be_present
           expect(flash[:notice]).to be_present
           @test_folder_meta5.reload

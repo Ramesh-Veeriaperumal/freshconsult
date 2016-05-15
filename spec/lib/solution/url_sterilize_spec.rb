@@ -64,6 +64,7 @@ describe Solution::UrlSterilize do
 
     it "should be replaced with equivalents in urls" do
       article = @special_article_meta.primary_article
+      article.user.make_current
       titles_and_paths.each do |title, url|
         article.update_attributes(:title => title)
         expect(solution_article_path(article, :url_locale => article.language.code)).to include("#{@special_article_meta.id}-#{url_encode(url)}")

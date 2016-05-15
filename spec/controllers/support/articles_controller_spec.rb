@@ -45,27 +45,36 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   it "should increment thumbs up for non logged in users" do
     likes = @public_article2.thumbs_up
+    meta_likes = @public_article_meta2.thumbs_up
     put :thumbs_up, :id => @public_article_meta2.id, :url_locale => @public_article2.language.to_key
     @public_article2.reload
+    @public_article_meta2.reload
     @public_article2.thumbs_up.should eql(likes + 1)   
+    @public_article_meta2.thumbs_up.should eql(meta_likes + 1)
     response.code.should be_eql("200")
   end
 
   it "should not increment thumbs up for an agent" do
     log_in(@agent)
     likes = @public_article2.thumbs_up
-    put :thumbs_up, :id => @public_article2.id
+    meta_likes = @public_article_meta2.thumbs_up
+    put :thumbs_up, :id => @public_article_meta2.id
     @public_article2.reload
+    @public_article_meta2.reload
     @public_article2.thumbs_up.should eql(likes)
+    @public_article_meta2.thumbs_up.should eql(meta_likes)
     response.code.should be_eql("200")
   end
 
   it "should increment thumbs up for logged in user's first vote and store in votes table" do
     log_in(@user)
     likes = @public_article2.thumbs_up
-    put :thumbs_up, :id => @public_article2.id
+    meta_likes = @public_article_meta2.thumbs_up
+    put :thumbs_up, :id => @public_article_meta2.id
     @public_article2.reload
+    @public_article_meta2.reload
     @public_article2.thumbs_up.should eql(likes + 1)
+    @public_article_meta2.thumbs_up.should eql(likes + 1)
     vote = @public_article2.votes.find_by_user_id(@user.id)
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article2.id
@@ -74,25 +83,33 @@ RSpec.describe Support::Solutions::ArticlesController do
     response.code.should be_eql("200")
   end
 
-  it "should increment thumbs up" do
+  it "should not increment thumbs up for logged in user's second vote" do
     log_in(@user)
-    put :thumbs_up, :id => @public_article2.id
+    put :thumbs_up, :id => @public_article_meta2.id
     @public_article2.reload
+    @public_article_meta2.reload
     likes = @public_article2.thumbs_up
-    put :thumbs_up, :id => @public_article2.id
+    meta_likes = @public_article_meta2.thumbs_up
+    put :thumbs_up, :id => @public_article_meta2.id
     @public_article2.reload
+    @public_article_meta2.reload
     @public_article2.thumbs_up.should eql(likes)
+    @public_article_meta2.thumbs_up.should eql(meta_likes)
     response.code.should be_eql("200")
   end
 
   it "should increment thumbs down" do
     log_in(@user)
-    put :thumbs_down, :id => @public_article2.id
+    put :thumbs_down, :id => @public_article_meta2.id
     @public_article2.reload
+    @public_article_meta2.reload
     likes = @public_article2.thumbs_up
     dislikes = @public_article2.thumbs_down
-    put :thumbs_up, :id => @public_article2.id
+    meta_likes = @public_article_meta2.thumbs_up
+    meta_dislikes = @public_article_meta2.thumbs_down
+    put :thumbs_up, :id => @public_article_meta2.id
     @public_article2.reload
+    @public_article_meta2.reload
     vote = @public_article2.votes.find_by_user_id(@user.id)
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article2.id
@@ -100,13 +117,18 @@ RSpec.describe Support::Solutions::ArticlesController do
     vote.vote?.should eql true
     @public_article2.thumbs_up.should eql(likes + 1)
     @public_article2.thumbs_down.should eql(dislikes - 1)
+    @public_article_meta2.thumbs_up.should eql(meta_likes + 1)
+    @public_article_meta2.thumbs_down.should eql(meta_dislikes - 1)
   end
 
   it "should increment thumbs down for non logged in users" do
     dislikes = @public_article3.thumbs_down
-    put :thumbs_down, :id => @public_article3.id, :format => "html" 
+    meta_dislikes = @public_article_meta3.thumbs_down
+    put :thumbs_down, :id => @public_article_meta3.id, :format => "html" 
     @public_article3.reload
+    @public_article_meta3.reload
     @public_article3.thumbs_down.should eql(dislikes + 1)
+    @public_article_meta3.thumbs_down.should eql(meta_dislikes + 1)
     response.should render_template("support/solutions/articles/_feedback_form")    
     response.code.should be_eql("200")
   end
@@ -114,18 +136,24 @@ RSpec.describe Support::Solutions::ArticlesController do
   it "should not increment thumbs down for an agent" do
     log_in(@agent)
     dislikes = @public_article3.thumbs_down
-    put :thumbs_down, :id => @public_article3.id
+    meta_dislikes = @public_article_meta3.thumbs_down
+    put :thumbs_down, :id => @public_article_meta3.id
     @public_article3.reload
+    @public_article_meta3.reload
     @public_article3.thumbs_down.should eql(dislikes)
+    @public_article_meta3.thumbs_down.should eql(meta_dislikes)
     response.code.should be_eql("200")
   end
 
   it "should increment thumbs down for logged in user's first vote and store in votes table" do
     log_in(@user)
     dislikes = @public_article3.thumbs_down
-    put :thumbs_down, :id => @public_article3.id
+    meta_dislikes = @public_article_meta3.thumbs_down
+    put :thumbs_down, :id => @public_article_meta3.id
     @public_article3.reload
+    @public_article_meta3.reload
     @public_article3.thumbs_down.should eql(dislikes + 1)
+    @public_article_meta3.thumbs_down.should eql(meta_dislikes + 1)
     vote = @public_article3.votes.find_by_user_id(@user.id)
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article3.id
@@ -136,23 +164,30 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   it "should not increment thumbs down for logged in user's second vote if existing vote is a dislike" do
     log_in(@user)
-    put :thumbs_down, :id => @public_article3.id
+    put :thumbs_down, :id => @public_article_meta3.id
     @public_article3.reload
+    @public_article_meta3.reload
     dislikes = @public_article3.thumbs_down
-    put :thumbs_down, :id => @public_article3.id
+    meta_dislikes = @public_article_meta3.thumbs_down
+    put :thumbs_down, :id => @public_article_meta3.id
     @public_article3.reload
+    @public_article_meta3.reload
     @public_article3.thumbs_down.should eql(dislikes)
+    @public_article_meta3.thumbs_down.should eql(meta_dislikes)
     response.code.should be_eql("200")
   end
 
   it "should increment thumbs down and decrement thumbs up for logged in user's second vote if existing vote is a like" do
     log_in(@user)
-    put :thumbs_up, :id => @public_article3.id
+    put :thumbs_up, :id => @public_article_meta3.id
     @public_article3.reload
     likes = @public_article3.thumbs_up
     dislikes = @public_article3.thumbs_down
-    put :thumbs_down, :id => @public_article3.id
+    meta_likes = @public_article_meta3.thumbs_up
+    meta_dislikes = @public_article_meta3.thumbs_down
+    put :thumbs_down, :id => @public_article_meta3.id
     @public_article3.reload
+    @public_article_meta3.reload
     vote = @public_article3.votes.find_by_user_id(@user.id)
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article3.id
@@ -160,6 +195,8 @@ RSpec.describe Support::Solutions::ArticlesController do
     vote.vote?.should eql false
     @public_article3.thumbs_up.should eql(likes - 1)
     @public_article3.thumbs_down.should eql(dislikes + 1)
+    @public_article_meta3.thumbs_up.should eql(likes - 1)
+    @public_article_meta3.thumbs_down.should eql(dislikes + 1)
   end
 
   it "should redirect to login page if there is no open solutions feature " do
@@ -169,7 +206,7 @@ RSpec.describe Support::Solutions::ArticlesController do
       :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )    
     get 'show', id: article_meta.id
     response.body.should_not =~ /#{name}/
-    response.should redirect_to(login_url)
+    response.should redirect_to(login_path)
   end
 
   it "should not show article and redirect to support solutions home if its folder is visible only to Agents" do
@@ -182,7 +219,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     @account.features.open_solutions.destroy
     get 'show', id: @test_article_meta2
     response.body.should_not =~ /article2 with status as draft/
-    response.should redirect_to(login_url)
+    response.should redirect_to(login_path)
   end
 
   it "should handle unknown actions" do
@@ -239,7 +276,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     test_article = test_article_meta.primary_article
 		user_count = @account.users.count
     ticket_count = test_article.article_ticket.count
-    post :create_ticket, :id => test_article.id,
+    post :create_ticket, :id => test_article_meta.id,
       :helpdesk_ticket => { :email => 'example@example' },
       :helpdesk_ticket_description => Faker::Lorem.paragraph,
       :message => [1]
@@ -267,10 +304,11 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   it "should increase hit count on get 'hit'" do
     log_in(@user)
-    hit_count = @public_article1.hits
-    get :hit, :id => @public_article1.id
-    @public_article1.reload
-    @public_article1.hits.should be_eql(hit_count + 1)
+    hit_count = @public_article_meta1.hits
+    primary_hit_count = @public_article_meta1.primary_article.hits
+    get :hit, :id => @public_article_meta1.id
+    @public_article_meta1.reload
+    @public_article_meta1.primary_article.hits.should be_eql(hit_count + 1)
   end
 
   describe "draft preview" do
@@ -367,7 +405,7 @@ RSpec.describe Support::Solutions::ArticlesController do
       log_in(@agent)
       get 'show', :id => @draft_article, :status => "preview"
       response.body.should =~ /#{@draft_article.title}/
-      response.body.should =~ /#{@draft_article.description}/
+      response.body.should =~ /#{@draft_article.current_article.description}/
     end
   end
 
@@ -386,7 +424,7 @@ RSpec.describe Support::Solutions::ArticlesController do
       log_in(@user1)
       hit_count = @test_article_for_hits.reload.hits
       meta_hit_count = @meta_object.reload.hits
-      get :hit, :id => @test_article_for_hits.id
+      get :hit, :id => @meta_object.id
       @test_article_for_hits.reload
       @meta_object.reload
       @test_article_for_hits.hits.should be_eql(hit_count + 1)
@@ -399,7 +437,7 @@ RSpec.describe Support::Solutions::ArticlesController do
       $redis_others.set("SOLUTION_META:HITS:%{#{@account.id}}:%{#{@meta_object.id}}", Solution::ArticleMeta::HITS_CACHE_THRESHOLD - 1)
       hit_count = @test_article_for_hits.reload.hits
       meta_hit_count = @meta_object.reload.hits
-      get :hit, :id => @test_article_for_hits.id
+      get :hit, :id => @meta_object.id
       @test_article_for_hits.reload
       @meta_object.reload
       @test_article_for_hits.hits.should be_eql(hit_count + 1)
@@ -410,7 +448,7 @@ RSpec.describe Support::Solutions::ArticlesController do
       log_in(@user1)
       likes = @test_article_for_hits.reload.thumbs_up
       meta_likes = @meta_object.reload.thumbs_up
-      put :thumbs_up, :id => @test_article_for_hits.id
+      put :thumbs_up, :id => @meta_object.id
       @test_article_for_hits.reload.thumbs_up.should eql(likes+1)
       @meta_object.reload.thumbs_up.should eql(meta_likes+1)
       response.code.should be_eql("200")
@@ -420,7 +458,7 @@ RSpec.describe Support::Solutions::ArticlesController do
       log_in(@user2)
       dislikes = @test_article_for_hits.reload.thumbs_down
       meta_dislikes = @meta_object.reload.thumbs_down
-      put :thumbs_down, :id => @test_article_for_hits.id
+      put :thumbs_down, :id => @meta_object.id
       @test_article_for_hits.reload.thumbs_down.should eql(dislikes+1)
       @meta_object.reload.thumbs_down.should eql(meta_dislikes+1)
       response.code.should be_eql("200")
@@ -431,12 +469,12 @@ RSpec.describe Support::Solutions::ArticlesController do
       test_article_for_decr_meta = create_article({:folder_id => @test_folder_meta1.id, :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"})
       test_article_for_decr = test_article_for_decr_meta.primary_article
       meta_object = test_article_for_decr.reload.solution_article_meta
-      put :thumbs_up, :id => test_article_for_decr.id
+      put :thumbs_up, :id => meta_object.id
       likes = test_article_for_decr.reload.thumbs_up
       meta_likes = meta_object.reload.thumbs_up
       dislikes = test_article_for_decr.thumbs_down
       meta_dislikes = meta_object.thumbs_down
-      put :thumbs_down, :id => test_article_for_decr.id
+      put :thumbs_down, :id => meta_object.id
       test_article_for_decr.reload
       meta_object.reload
       test_article_for_decr.thumbs_up.should eql(likes - 1)

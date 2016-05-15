@@ -6,9 +6,10 @@ describe Solution::Article do
 
 		before(:all) do
 			@agent1 = add_test_agent
-	    	@agent2 = add_test_agent
-		    @test_category_meta = create_category
-		    @test_folder_meta = create_folder({:visibility => 1, :category_id => @test_category_meta.id})
+			@agent2 = add_test_agent
+			@test_category_meta = create_category
+			@test_folder_meta = create_folder({:visibility => 1, :category_id => @test_category_meta.id})
+			@agent1.make_current
 		end	
 
 		before(:each) do

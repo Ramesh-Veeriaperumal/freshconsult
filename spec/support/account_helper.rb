@@ -128,6 +128,7 @@ module AccountHelper
   end
 
   def create_enable_multilingual_feature
+    @account.reload
     supported_languages = pick_languages(@account.language, 3)
     @account.account_additional_settings.update_attributes({:supported_languages => supported_languages})
     @account.account_additional_settings.update_attributes(:additional_settings => {:portal_languages=> supported_languages.sample(2)})
@@ -145,6 +146,7 @@ module AccountHelper
   def destroy_enable_multilingual_feature
     @account.account_additional_settings.update_attributes({:supported_languages => []})
     @account.features.enable_multilingual.destroy if @account.features?(:enable_multilingual)
+    @account.reload
   end
 
   def pick_a_language
@@ -163,6 +165,7 @@ module AccountHelper
     @account.launch(:translate_solutions)
     create_enable_multilingual_feature
     @account.features.multi_language.create
+    @account.reload
   end
   
 end

@@ -14,14 +14,15 @@ module SolutionsHelper
   end
 
   def create_folder(params = {})
-    params = create_solution_folder_alone(solution_default_params(:folder, :name, {
+    f_params = create_solution_folder_alone(solution_default_params(:folder, :name, {
         :name => params[:name],
         :description => params[:description]
       }).merge({
         :category_id => params[:category_meta_id] || params[:category_id],
         :visibility => params[:visibility]
       }))
-    folder_meta = Solution::Builder.folder(params)
+    f_params[:solution_folder_meta][:is_default] = params[:is_default] if params[:is_default].present?
+    folder_meta = Solution::Builder.folder(f_params)
     folder_meta
   end
 
@@ -175,6 +176,8 @@ module SolutionsHelper
                       :language=>"en",
                       :forum_category_ids => (params[:forum_category_ids] || [""]),
                       :solution_category_metum_ids => (params[:solution_category_ids] || [""]),
+                      :solution_category_metum_ids => (params[:solution_category_metum_ids] || 
+                              params[:solution_category_ids] || [""]),
                       :account_id => @account.id,
                       :preferences=> { 
                         :logo_link=>"", 
@@ -187,3 +190,34 @@ module SolutionsHelper
     test_portal
   end
 end
+
+class Solution::Builder
+
+	OBJECTS = [:solution_category, :solution_folder, :solution_article]
+
+	class << self
+
+		OBJECTS.each do |obj|
+			define_method obj.to_s.split("_")[1] do |args = {}|
+        return Solution::Object.new(HashWithIndifferentAccess.new(args), obj).object unless Language.current?
+        current_lang = Language.current
+        Language.reset_current
+        solution_obj = Solution::Object.new(HashWithIndifferentAccess.new(args), obj).object
+        current_lang.make_current
+        solution_obj
+			end
+		end
+    
+    def article_with_current_user(args = {}) 
+      return article_without_current_user(args) if User.current
+      article_key = args[:solution_article_meta].select {|k,v| k =~ /.*_article/}.first.first
+      Account.current.users.find(args[:solution_article_meta][article_key][:user_id]).make_current
+      solution_obj = article_without_current_user(args)
+      User.reset_current_user
+      solution_obj
+    end
+    
+    alias_method_chain :article, :current_user
+  end
+end
+

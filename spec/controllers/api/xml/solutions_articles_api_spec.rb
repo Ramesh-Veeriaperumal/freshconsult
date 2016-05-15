@@ -34,7 +34,9 @@ RSpec.describe Solution::ArticlesController do
           "description"=>Faker::Lorem.sentence(3), 
           "folder_id"=> @solution_folder.id,
           "thumbs_up" => votes_val,
-          "thumbs_down" => votes_val
+          "thumbs_down" => votes_val,
+          "status" => 2,
+          "art_type" => 1
         }
     }
     post :create, params.merge!(:category_id=>@solution_category.id,:folder_id=>@solution_folder.id,
@@ -130,7 +132,7 @@ RSpec.describe Solution::ArticlesController do
       "solution_article"=>
         {
           "title"=>Faker::Lorem.sentence(2),
-          "status"=>"2", 
+          "status"=>2, 
           "art_type"=>2, 
           "description"=>Faker::Lorem.sentence(3), 
           "folder_id"=> @solution_folder.id

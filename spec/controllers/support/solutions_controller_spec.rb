@@ -33,20 +33,20 @@ describe Support::SolutionsController do
     @account.features.open_solutions.destroy
     get 'index'
     response.body.should_not =~ /#{@test_folder_meta3.name}/
-    response.should redirect_to(login_url)    
+    response.should redirect_to(login_path)    
   end
 
   it "should not show folder without logging in" do
     get 'index'
     response.body.should_not =~ /#{@test_folder_meta2.name}/
-    response.should redirect_to(login_url)    
+    response.should redirect_to(login_path)    
   end
 
   it "should not show solutions" do
     @account.features.open_solutions.destroy
     get 'index'
     response.body.should_not =~ /Solutions/ 
-    response.should redirect_to(login_url)    
+    response.should redirect_to(login_path)
   end
 
   it "should show category" do
@@ -100,8 +100,8 @@ describe Support::SolutionsController do
   end
 
   it "should render 404 for default category" do
+    default_category = @account.solution_category_meta.where(:is_default => true).first
     log_in(@user)
-    default_category = create_category({:is_default => true})
     get 'show', id: default_category.id
     response.status.should eql(404)
   end

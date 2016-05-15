@@ -52,7 +52,7 @@ describe Support::Solutions::FoldersController do
                              :visibility => 1,
                              :category_id => @test_category_meta.id,
                              :is_default => true } )
-    get 'show', id: default_folder_meta
+    get 'show', id: default_folder_meta.id
     response.status.should eql(404)
   end
 

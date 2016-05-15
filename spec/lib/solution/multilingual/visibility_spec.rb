@@ -189,7 +189,7 @@ describe 'Visibility', :type => :request do
 		@new_agent.make_current
 		unpublished_article = Solution::Builder.article(article_params)
 		User.reset_current_user
-		published_article = @folder1.solution_article_meta.published.first
+		published_article = @folder1.reload.solution_article_meta.published.first
 		get "http://#{@account.full_domain}/#{@lang_ver.code}/support/solutions/folders/#{@folder1.id}"
 		@account.make_current
 		response.body.should =~ /#{@folder1.send("#{@lang_ver.to_key}_folder").name}/
