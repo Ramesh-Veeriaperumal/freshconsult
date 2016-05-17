@@ -87,7 +87,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
       begin
         if ((to_email[:email] == kbase_email) || (parse_cc_email && parse_cc_email.include?(kbase_email)))
-          create_article(account, from_email, to_email) if user.present?
+          create_article(account, from_email, to_email)
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
