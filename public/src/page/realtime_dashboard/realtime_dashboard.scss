@@ -319,7 +319,7 @@
         display: inline-block;
         position: relative;
       }
-      .trophy{ left: 10px;}
+      .trophy{ @include left(10px);}
       .preview_pic{
         @include size(34px, 34px);
         top: 4px;
