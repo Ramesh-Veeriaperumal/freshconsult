@@ -30,7 +30,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 				redirect_to :action => :index
 			end
 		rescue Exception => e
-			if e.message == "PhoneNumber Requires a Local Address" || e.code == 21615 # checking either in case twilio changes the error message
+			if e.message == "PhoneNumber Requires a Local Address" || (e.respond_to?(:code) && e.code == 21615) # checking either in case twilio changes the error message
 				Rails.logger.debug "Account #{current_account.id} provided an invalid local address for #{params[:country]}.\nParams:\n#{params.to_json}"
 				flash[:notice] = t('flash.freshfone.number.unsuccessful_purchase')
 				render :json => { :success => false, 
@@ -84,7 +84,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 		end
 
 		def trial_modifications
-			return unless trial_params? && onboarding_enabled?
+			return unless trial_params?
 			current_account.features.freshfone.create unless current_account.features?(:freshfone)
 		end
 

@@ -283,8 +283,6 @@ namespace :freshfone do
           next if account.blank?
           account.make_current
           ff_account.expire
-          account.rollback(:freshfone_onboarding) if
-            account.launched?(:freshfone_onboarding)
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account, message: "Freshfone Account Trial Expired For Account :: #{ff_account.account_id}")
         rescue Exception => e

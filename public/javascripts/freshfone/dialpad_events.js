@@ -64,6 +64,14 @@ var FreshfoneDialpadEvents
 	  	});
 		},
 
+		setActiveElement: function(customerId){
+			var container = this.currentContainer();
+			var activeElem = container.find('.active-element');
+			var contactElem = container.find('.search_result_container #ff_contact_id_'+customerId);
+			this.makeActive(activeElem,contactElem);
+			this.scrollTo(container,contactElem);
+ 		},
+
 		bindNumberChangeEvent: function(){
 			var self = this;
 			this.$number.on('input',function(e){

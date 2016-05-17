@@ -2710,7 +2710,6 @@ Helpkit::Application.routes.draw do
           put :update_timeouts_and_queue
           get :fetch_numbers
           put :twilio_port_away
-          put :enable_freshfone
           put :activate_trial
           put :launch_feature
         end
