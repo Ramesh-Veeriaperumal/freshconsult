@@ -1,0 +1,13 @@
+JSON.generate(@items.map do |sla_policy|
+  {
+    id: sla_policy.id,
+    name: sla_policy.name,
+    description: sla_policy.description,
+    active: sla_policy.active,
+    is_default: sla_policy.is_default,
+    position: sla_policy.position,
+    applicable_to: SlaPolicyDecorator.pluralize_conditions(sla_policy.conditions),
+    created_at: sla_policy.created_at.try(:utc),
+    updated_at: sla_policy.updated_at.try(:utc)
+  }
+end)

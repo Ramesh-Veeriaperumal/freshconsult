@@ -1,0 +1,15 @@
+JSON.generate(@items.map do |ts|
+  {
+    billable: ts.billable,
+    note: ts.note,
+    id: ts.id,
+    timer_running: ts.timer_running,
+    agent_id: ts.user_id,
+    ticket_id: @ticket.try(:display_id) || ts.workable.display_id,
+    time_spent: TimeEntryDecorator.format_time_spent(ts.time_spent),
+    executed_at: ts.executed_at.try(:utc),
+    start_time: ts.start_time.try(:utc),
+    created_at: ts.created_at.try(:utc),
+    updated_at: ts.updated_at.try(:utc)
+  }
+end)
