@@ -314,6 +314,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     previous_updated_at_for_api_v1 = ticket.updated_at
     existing_tags = ticket.tag_names.join(',')
     tags = existing_tags.present? ? "#{existing_tags},#{Faker::Name.name}" : "#{Faker::Name.name}"
+    sleep 1
     skip_bullet do
       put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: tags  } }.to_json, @write_headers
     end
