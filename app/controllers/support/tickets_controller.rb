@@ -154,19 +154,18 @@ class Support::TicketsController < SupportController
 
     # Used for scoping of filters
     def ticket_scope
-      byebug
       # to be reconsidered while implementing features for one contact multi company
-      requested_item = current_user
+      @requested_item = current_user
 
       if privilege?(:client_manager) && @company
         if @requested_by.to_i == 0
           return current_user.company.try(:all_tickets) || current_user.tickets
         else 
           requested_for = current_account.users.find_by_id(@requested_by)
-          requested_item = requested_item.company.presence == @company ? requested_for : current_user
+          @requested_item = requested_for.company.presence == @company ? requested_for : current_user
         end
       end
-      requested_item.tickets
+      @requested_item.tickets
     end
 
     def check_user_permission

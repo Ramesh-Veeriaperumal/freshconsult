@@ -45,13 +45,6 @@
 			<%end%>
 		</div>
 	</div>
-	<% if is_application_installed?("screenr") %>
-	  <div class="control-group">
-	  	<div class="controls">
-			<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
-		</div>
-	  </div>
-	<% end %>
 </div>
 
 <%= javascript_tag do %>

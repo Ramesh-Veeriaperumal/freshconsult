@@ -1065,9 +1065,9 @@ nb-NO:
         send_test_mail_info2: "Her ser du <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>hvordan du kan gjøre det</a>."
         title_message: "Hurtigstart din kundeservice i 4 steg..."
         support_email_title: "Support<br> e-post"
-        agents_title_1: "Legg til<br> Agenter"
+        adding_agents: "Legg til<br> Agenter"
         rebrand_title: Logo<br>farger
-        social_title_1: "Gå<br> Sosialt"
+        going_social: "Gå<br> Sosialt"
         skip_text: "Nei takk, send meg til min helpdesk"
         back_link: Tilbake
         next_link: Neste

@@ -1082,9 +1082,9 @@ cs:
         send_test_mail_info2: "<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>Zde je uvedeno</a>, jak to udělat."
         title_message: "Nastartujte vaši podporu ve čtyřech krocích..."
         support_email_title: "E-mail<br> podpory"
-        agents_title_1: "Přidání&lt;br&gt; zástupců"
+        adding_agents: "Přidání<br> zástupců"
         rebrand_title: "Logo <br>&amp; barvy"
-        social_title_1: "Zapojte &lt;br&gt;se do sociálních sítí"
+        going_social: "Zapojte <br>se do sociálních sítí"
         skip_text: "Ne děkuji, vemte mne na můj helpdesk."
         back_link: Zpět
         next_link: Další
@@ -1206,7 +1206,6 @@ cs:
         feedbackwidget_users_can: "Uživatel může:"
         feedbackwidget_attach_a_file: "Přiložit soubor"
         feedbackwidget_screenshot: "Vytvořit snímek obrazovky"
-        feedbackwidget_screenr_recording: "Záznam pomocí Screenr"
         feedbackwidget_search_area: "Vyhledat mezi články"
         feedbackwidget_use_https: "Použít https"
         feedbackwidget_mobile_view: "Mobilní pohled"
@@ -4973,36 +4972,6 @@ cs:
         es: Spanish
         sv: Swedish
         tr: Turkish
-    screenr:
-      button_label: "Záznam z obrazovky"
-      label: Screenr
-      desc: "Zaznamenejte dění na obrazovce pomocí služby Screenr a přidejte tento záznam k požadavku, na fórum nebo do článku s řešením."
-      helptext: "<h4>Integrace Screenr do FreshDesk</h4><p><br/>Doplněk Screenr umožňuje   zástupcům a zákazníkům při používání FreshDesku snímat a sdílet dění na obrazovce.Lze jej použít pro jednoduché a rychlé přiložení chybového hlášení nebo instruktážního videa k vašemu požadavku, příspěvku do fóra nebo článku s řešením.</p><p> Když jej povolíte, objeví se u panelu pro zpětnou vazbu, diskuse a znalostní databáze tlačítko Záznam. Můžete si zvolit, zda se bude nahrávat celé okno, nebo zvolený výřez obrazovky. Záznam obrazovky bude vložen automaticky po skončení práce.</p><p>Tento doplněk se nastavuje zadáním URL do Screenr (např. <a>http://yourname.viewcast.com</a>) a ID Záznamu, které získáte po přihlášení ke službě Screenr.</p>"
-      form:
-        recorder_id: "ID Záznamu"
-        recorder_id_info: "ID Záznamu je unikátní ID, které získáte při editaci záznamové stránky"
-        site_address_info: ""
-        site_address: "Subdoména služby Screenr"
-        widget_title: "Název aplikace"
-        visible_agent_forum: "Záznam obrazovky pro fórum"
-        visible_agent_forum_info: "Zvolte \"Povolit\" aby byla služba Screenr dostupná ve fóru pro zástupce"
-        visible_agent_ticket: "Záznam obrazovky pro Požadavky"
-        visible_agent_ticket_info: "Zvolte \"Povolit\" aby byla služba Screenr dostupná ve formuláři požadavků pro zástupce"
-        visible_solution: "Záznam obrazovky pro Řešení"
-        visible_solution_info: "Zvolte \"Povolit\" aby byla služba Screenr dostupná v Řešení"
-        visible_portal_ticket: "Záznam obrazovky pro Portál požadavků"
-        visible_portal_ticket_info: "Zvolte \"Povolit\" aby byla služba Screenr dostupná Portále požadavků"
-        visible_portal_forum: "Forum ticket Screen Recording for portal"
-        visible_portal_forum_info: "Zvolte \"Povolit\" aby byla služba Screenr dostupná na Portále pro fóra"
-        visible_widget: "Aplikace pro záznam obrazovky"
-        visible_widget_info: "Zvolte \"Povolit\" aby byla služba Screenr dostupná na panelu pro Zpětnou vazbu"
-      settings:
-        enable_screenr_recording: "Povolit službu Screenr"
-        ticket_interaction: "Stránka požadavků (Nový, Upravit, Odpovědět)"
-        forum_interaction: "Stránka fór (Nové, Upravit, Komentovat)"
-        create_solution: "Řešení (Nové, Upravit)"
-        for_agents: "Pro zástupce"
-        for_customer: "Pro zákazníky"
     harvest:
       label: Harvest
       desc: "Čas strávený na požadavcích můžete protokoĺovat do svých projektů a úkolů Harvest."

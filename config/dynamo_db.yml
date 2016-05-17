@@ -39,17 +39,17 @@ production:
     suffix: production
     start_read_capacity: 10
     final_read_capacity: 20
-    write_capacity: 25
+    write_capacity: 50
   interactions:
     suffix: production
     start_read_capacity: 10
     final_read_capacity: 20
-    write_capacity: 25
+    write_capacity: 50
   unprocessed_feed:
     suffix: production
     start_read_capacity: 10
     final_read_capacity: 20
-    write_capacity: 25
+    write_capacity: 50
 
 
 test:

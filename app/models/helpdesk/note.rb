@@ -345,13 +345,13 @@ class Helpdesk::Note < ActiveRecord::Base
       cc_email_hash_value = notable.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : notable.cc_email_hash
       if fwd_email? || reply_to_forward?
         fwd_emails = self.to_emails | self.cc_emails | self.bcc_emails | cc_email_hash_value[:fwd_emails]
-        fwd_emails.delete_if {|email| (parse_email(email)[:email].downcase == notable.requester.email.downcase)}
+        fwd_emails.delete_if {|email| (notable.requester.email.present? && parse_email(email)[:email].downcase == notable.requester.email.downcase)}
         cc_email_hash_value[:fwd_emails]  = fwd_emails
       else
         cc_email_hash_value[:reply_cc] = self.cc_emails.reject {|email| (parse_email(email)[:email].downcase == notable.requester.email.downcase)}
         tkt_cc_emails = self.cc_emails | cc_email_hash_value[:cc_emails]
         cc_emails = tkt_cc_emails.map { |email| parse_email(email)[:email].downcase }.compact.uniq
-        cc_emails.delete_if {|email| (email == notable.requester.email.downcase)}
+        cc_emails.delete_if {|email| (notable.requester.email.present? && email == notable.requester.email.downcase)}
         cc_email_hash_value[:cc_emails] = cc_emails
       end
       notable.cc_email = cc_email_hash_value    

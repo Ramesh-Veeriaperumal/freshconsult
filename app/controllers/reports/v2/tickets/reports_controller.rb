@@ -226,7 +226,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     tickets.each do |t|
       res << {
         :id         => t.display_id,
-        :subject    => t.subject,
+        :subject    => escape_keys(t.subject),
         :status     => status_hash[t.status],
         :priority   => priority_hash[t.priority],
         :requester  => user_data[:users][t.requester_id],

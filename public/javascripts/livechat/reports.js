@@ -70,7 +70,7 @@ var chatReport = function(){
 			});
 
 			total = data.length;
-			var transfers = chatReportData.is_pdf ? transfer.length - duplicateCount(transfer) : _.unique(transfer).length;
+			var transfers = chatReportData.is_pdf ? webkitUniqueCount(transfer) : _.unique(transfer).length;
 			answered = total - missed - transfers;
 			return [total, answered, missed];
 		}
@@ -232,14 +232,16 @@ var chatReport = function(){
 		return duration_formatted ;
 	}
 
-	var duplicateCount = function(transfer_array){
-		var duplicate_transfer_count = 0;
+	//webkitUniqueCount provides count of unqiue elements in array.
+	//_.unique or $.unique fails in webkit(pdf) because of prototype.js 1.6.0.1  
+	var webkitUniqueCount = function(transfer_array){
+		var unique_length = transfer_array.length;
 		for(i =0 ;i < transfer_array.length; i++){
 			if (transfer_array.indexOf(transfer_array[i]) != i){
-				duplicate_transfer_count++;
+				unique_length--;
 			}
 		}
-		return duplicate_transfer_count;
+		return unique_length;
 	}
 
 	var showMetrics = function(data, chatType){
@@ -310,8 +312,8 @@ var chatReport = function(){
 			prev_avg = Math.floor(prev_avg/pavg_count);
 		}
 		if (chatReportData.is_pdf){	 // _.unique method fails in webkit because of prototype.js version 1.6.0.1
-			cur_transfer_count = cur_transfer.length - duplicateCount(cur_transfer);
-			prev_transfer_count = prev_transfer.length - duplicateCount(prev_transfer);
+			cur_transfer_count = webkitUniqueCount(cur_transfer);
+			prev_transfer_count = webkitUniqueCount(prev_transfer);
 		} else {
 			cur_transfer_count = _.unique(cur_transfer).length;
 			prev_transfer_count = _.unique(prev_transfer).length;

@@ -48,7 +48,6 @@ class Subscription < ActiveRecord::Base
 
   after_update :add_to_crm
   after_update :update_reseller_subscription
-  after_update :delete_scheduled_reports_on_downgrade
   after_commit :update_social_subscription, :add_free_freshfone_credit, on: :update
   after_commit :clear_account_susbcription_cache
   attr_accessor :creditcard, :address, :billing_cycle
@@ -509,10 +508,4 @@ class Subscription < ActiveRecord::Base
       MemcacheKeys.delete_from_cache key
     end
 
-    def delete_scheduled_reports_on_downgrade
-      return if trial?
-      if subscription_plan_id_changed?
-        Reports::ScheduledReportsCleanup.perform_async({:account_id => account_id})
-      end
-    end
  end
