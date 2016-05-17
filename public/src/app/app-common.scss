@@ -3769,6 +3769,7 @@ $adm-bdr:#F0F0F0;
 		background: $adm-bg;
 		margin-bottom: 20px;
 	}
+  &.adm-bg-color{ background-color: $adm-bg;}
 	&.bdr{
 		border: solid 1px $adm-bdr;
 		border-radius: 4px;
@@ -3834,7 +3835,7 @@ $adm-bdr:#F0F0F0;
 		}
 		.profile-name{
 			font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-			@include margin-left(42px);
+			// @include margin-left(20px);
 			font-size: 18px;
 			a{
 				font-weight: bold;
@@ -4091,6 +4092,25 @@ $adm-bdr:#F0F0F0;
 	}
 }
 
+.fb-user {
+  padding: 10px;
+}
+
+.fb-select-all {
+	padding-bottom: 10px;
+  padding-left: 10px;
+}
+
+.rules-container-optimal, .rules-container-broad {
+	display: none;
+}
+
+.fb-form-tkt-rules{
+  label{ 
+    cursor: pointer;
+    &>span {font-weight: 600;}
+  }
+}
 // Admin Social styles end
 // =======================
 
@@ -4115,7 +4135,7 @@ $adm-bdr:#F0F0F0;
 	display:inline-block;
 	width:80px;
 	font-weight:bold;
-	word-break: break-all;
+	word-break: break-word;
 }
 
 // End

@@ -167,5 +167,14 @@ RSpec.describe Freshfone::ConferenceTransferController  do
     expect(json[:status]).to eql('error')
   end
 
-
+  it 'should render error when agent conference call is transfered' do
+    create_freshfone_conf_call('CTRANSFER', Freshfone::Call::CALL_STATUS_HASH[:'in-progress'])
+    request.env["HTTP_ACCEPT"] = "application/json"
+    log_in(@agent)
+    create_dummy_freshfone_users(1, Freshfone::User::PRESENCE[:online])
+    create_agent_conference_call(@dummy_users[0],
+            Freshfone::SupervisorControl::CALL_STATUS_HASH[:'in-progress'])
+    post :initiate_transfer, initiate_transfer_params('', false, @agent_conference_call.sid)
+    expect(json[:status]).to eql('error')
+  end
 end

@@ -41,7 +41,7 @@ class TopicObserver < ActiveRecord::Observer
 
   def after_publishing(topic)
     monitor_topic(topic)
-    create_ticket(topic) if topic.forum.convert_to_ticket? and !topic.user.agent?
+    create_ticket(topic) if topic.forum.convert_to_ticket? and !topic.user.agent? and !topic.ticket
     create_activity(topic, 'new_topic')
   end
 

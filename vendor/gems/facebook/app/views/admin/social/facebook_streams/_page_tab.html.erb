@@ -1,0 +1,83 @@
+  <% content_for :onload_script do %> 
+
+    jQuery('#tab_config').on('click', function(ev){
+      ev.preventDefault();
+      jQuery('.fb_changed').removeAttr('disabled').data("updated", true);
+      jQuery('#before_configure').fadeOut(200, function() {
+        jQuery('#configure').fadeIn('fast');
+      });
+
+    });
+
+    jQuery('.cancel_fb').on('click', function(ev){
+      ev.preventDefault();
+      jQuery('.fb_changed').removeData('updated');
+      jQuery('#configure').fadeOut(200, function() {
+        jQuery('#before_configure').fadeIn('fast');
+      });
+
+      jQuery('.fb_changed').prop('disabled', true);
+    });
+
+    jQuery('#after_config').on('input', function(ev){
+      jQuery('.fb_changed').data("updated", true);
+    });
+
+    jQuery("#fb_form").on('submit', function(ev){
+      jQuery('.fb_changed').prop('disabled', !jQuery('.fb_changed').data("updated"));
+    });
+  <% end %>
+  <span class="seperator"></span>
+  <h3 class="sub-lead"><%= t('facebook_tab.page_tab_head').html_safe %></h3>
+  <div class="info-data"><%= t('facebook_tab.config_info').html_safe %></div>
+  <div class="fb_tab_container">
+  
+  <!-- This condition is for new Users -->
+  <% if @page_tab.nil? && @facebook_page.page_token_tab.nil? %>
+    <%unless @edit_tab%>
+    <p class="pt10 pl20"><%= t('.configure_tab_auth' ,:page_tab_url => @page_tab_url ).html_safe%> </p>
+    <div class="fb_tab_pic"></div>
+    <%end%>
+
+  <!-- This condition is new user and existing user and his page token is expired 
+       * This applies for migrated users also 
+   -->
+  <% elsif @page_tab.nil? %>
+   <div class=".fb_info_text"><%= t('.reauth',:page_tab_url => @page_tab_url).html_safe%></div>
+  <% else %>
+  
+  <!-- This condition is executed if the user has a page tab added  -->
+    <% unless @page_tab.blank? %>
+       <%= content_tag(:div, t('facebook_tab.no_ssl').html_safe, :class=>"fb_info_text") unless current_account.ssl_enabled? %>
+        <div id="after_config" class="row-fluid">
+          <label class="control-label span2"><%= t('facebook_tab.tab_name').html_safe %></label>
+          <div class="fb_field span9">
+            <%= text_field_tag "custom_name", @page_tab["name"], :class => "required auto fb_changed", :disabled => !current_account.ssl_enabled?, :size => "40" %>
+          </div>
+          <%= link_to t('facebook_tab.remove_tab').html_safe, remove_admin_social_tab_path(@facebook_page), :class=>"remove_fb", :method => 'delete' %>
+        </div>
+  
+    <% else %>
+      <div id="before_configure" class="<%= 'hide' if @edit_tab %>">
+          <a href="#" id="tab_config"><span class="fb_add"></span><b><%= t('facebook_tab.configure_tab').html_safe %></b></a>
+          <div class="fb_tab_pic"></div>
+      </div>
+      <div id="configure" class="<%= 'hide' unless @edit_tab %>">
+          <div id="after_config" class="row-fluid">
+            <% if current_account.ssl_enabled? %>
+              <%= hidden_field_tag "add_tab", "1" %>
+              <label class="control-label span2"><%= t('facebook_tab.tab_name').html_safe %></label>
+              <div class="fb_field span9">
+                <%= text_field_tag "custom_name", "Support", :class => "required auto fb_changed", :size => "40" %>
+                <a class="cancel_fb no_tab" href="#"><%= t('cancel').html_safe %></a>
+              </div>
+            <% else %>
+              <div class="fb_info_text"><%= t('facebook_tab.no_ssl').html_safe %></div>
+              <a class="pull-right cancel_fb" href="#"><%= t('facebook_tab.got_it').html_safe %></a>
+            <% end %>
+          
+          </div>
+      </div>
+    <% end %>
+  <% end %>
+  </div>

@@ -229,7 +229,7 @@ Helpkit.ScheduleUtil = {
     		var data = {
     			report_name : jQuery("#filter_name_save").val(),
     			schedule : jQuery(".frequency option[value='" + frequency + "']").text(),
-                username : current_user.name
+                // username : current_user.name
     		}
             jQuery(".desc").val(I18n.t('helpdesk_reports.saved_report.desc',data));
 	    },

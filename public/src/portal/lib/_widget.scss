@@ -332,25 +332,6 @@ body, .feedback-wrapper{
 			color: $linkColorHover;
 		}
 	}
-	.screenr-dropdown{
-		.btn-record:before{
-			@include margin(3px 4px 0 -6px);
-		}
-		.portal-attach{
-			.wicon-camera {
-				position: absolute;
-			 @include left(5px);
-				top:5px;
-			}
-			a{
-				@include padding-left(27px);
-				display: inline-block;
-				width: 100%;
-				margin: 0;
-				position: relative;
-			}
-		}
-	}
 }
 
 .alert-invalid{
@@ -410,16 +391,6 @@ body, .feedback-wrapper{
 	}
 }
 
-.accomadate-screenr-padding{
-	@include padding(40px 0 0 0);
-}
-
-.modify-screenr-bar{
-	width: 55.25% !important;
-	height: 35px !important;
-	position: absolute !important;
-	@include margin(41px 0 0 20px !important);
-}
 @include at-breakpoint($media-mobile){
 	.modal-panel-active{
 		.modal-body, .modal-footer, .modal-panel{

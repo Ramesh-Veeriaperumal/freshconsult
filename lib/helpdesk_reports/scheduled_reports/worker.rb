@@ -14,14 +14,14 @@ class HelpdeskReports::ScheduledReports::Worker
   def perform
     build_date_range
     params = old_report? ? build_params_old_report : build_params
-    trigger_export(params, @date_range.nil?)
+    trigger_export(params)
   end
   
 private
 
-  def trigger_export(params, no_data = false)
+  def trigger_export(params)
     class_name = old_report? ? report_type.to_s.camelcase : 'Report'
-    "HelpdeskReports::Export::#{class_name}".constantize.new(params, task).perform(no_data)
+    "HelpdeskReports::Export::#{class_name}".constantize.new(params, task).perform
   end
 
   def old_report?
@@ -34,19 +34,14 @@ private
       report_type: report_type,
       filter_name: report_filter.filter_name,
       data_hash: report_filter.data_hash,
-      # account_id: report_filter.account_id,
-      # user_id: report_filter.user_id
     }
   end
 
   def build_params
-    extra_options = {
-      date_range: date_range,
-      filter_name: report_filter.filter_name,
-    }
-    options = report_filter.data_hash.merge(extra_options)
-    param_constructor = HelpdeskReports::ParamConstructor.const_get(report_type.to_s.camelcase).new(options)
-    params = param_constructor.build_pdf_params
+    report_filter.data_hash[:date_range] = date_range
+    report_filter.data_hash[:filter_name] = report_filter.filter_name
+    param_constructor = "HelpdeskReports::ParamConstructor::#{report_type.to_s.camelcase}".constantize.new(report_filter.data_hash)
+    param_constructor.build_pdf_params
   end
   
   def build_date_range
@@ -87,12 +82,7 @@ private
       else
         start_day = lagged_time - report_filter.data_hash[:date]["date_range"].to_i.days
     end
-    end_day = start_day if end_day < start_day
-    if(start_day.nil?)
-      @date_range = date_format(end_day)
-    else
-      @date_range = "#{date_format(start_day)} - #{date_format(end_day)}"
-    end
+    @date_range = (end_day < start_day) ? nil : "#{date_format(start_day)} - #{date_format(end_day)}"
   end
 
   def build_normal_date_range

@@ -3,21 +3,20 @@ class Social::FacebookPage < ActiveRecord::Base
   include Social::Constants
   include MixpanelWrapper
 
-  before_create :create_mapping
+  before_create  :create_mapping
   before_destroy :unregister_stream_subscription
-  after_destroy :remove_mapping
+  after_destroy  :remove_mapping
 
   after_commit :subscribe_realtime, :send_mixpanel_event, on: :create
   after_commit :build_default_streams,  on: :create,  :if => :facebook_revamp_enabled?
   after_commit :delete_default_streams, on: :destroy, :if => :facebook_revamp_enabled?
-  after_commit :update_ticket_rules,    on: :update,  :if => :facebook_revamp_enabled?
 
   after_update :fetch_fb_wall_posts
   after_commit :clear_cache
 
-  def cleanup(push_to_resque=false)
+  def cleanup(push_to_sidekiq = false)
     unsubscribe_realtime
-    if push_to_resque
+    if push_to_sidekiq
       Social::FacebookDelta.perform_async({ :page_id => self.page_id, :discard_feed => true })
     else
       Social::FacebookDelta.new.add_feeds_to_sqs(self.page_id, true)
@@ -47,52 +46,21 @@ class Social::FacebookPage < ActiveRecord::Base
   
   private
   
-  def build_stream(name, type, options = nil)
-    stream_params = facebook_stream_params(name, type, options)
+  def build_stream(name, type)
+    stream_params = facebook_stream_params(name, type)
     stream = facebook_streams.build(stream_params)
     stream.save
   end
   
-  def update_ticket_rules
-    update_default_steam_for_changes 
-    update_dm_steam_for_changes
-  end
-  
-  def update_default_steam_for_changes
-    default_stream.update_ticket_rule if default_tkt_rule_changed? or product_changed?
-  end
-  
-  def update_dm_steam_for_changes
-    dm_stream.update_ticket_rule if dm_tkt_rule_changed? or product_changed?
-  end
-
-  def data(type, options)
-    data = {
-        :kind => type
-    }
-    data.merge!(options) if options
-    data
-  end
-  
-  def default_tkt_rule_changed?
-    (self.previous_changes.keys & ["import_visitor_posts", "import_company_posts"]).present?
-  end
-  
-  def dm_tkt_rule_changed?
-    self.previous_changes.keys.include?("import_dms")
-  end
-  
-  def product_changed?
-    self.previous_changes.keys.include?("product_id")
-  end
-  
-  def facebook_stream_params(name, type, options)
+  def facebook_stream_params(name, type)
     params = {
       :name     => name,
       :includes => [],
       :excludes => [],
       :filter   => {},
-      :data     => data(type, options)
+      :data     =>  {
+        :kind => type
+      }
     }
     params.merge!({
         :accessible_attributes => {
@@ -103,19 +71,14 @@ class Social::FacebookPage < ActiveRecord::Base
   end
   
   def delete_default_streams
-    streams = facebook_streams
-    streams.each do |stream|
-      if stream.data[:kind] != FB_STREAM_TYPE[:custom]
-        stream.destroy
-      end
-    end
+    self.facebook_streams.destroy_all
   end
   
   def create_mapping
     fb_page_mapping = Social::FacebookPageMapping.find_by_facebook_page_id(page_id)
     
     if fb_page_mapping
-      errors.add(:base,"Facebook page already in use") 
+      errors.add(:base, "Facebook page already in use") 
     else
       facebook_page_mapping = Social::FacebookPageMapping.new(:account_id => account_id)
       facebook_page_mapping.facebook_page_id = page_id
@@ -129,9 +92,9 @@ class Social::FacebookPage < ActiveRecord::Base
   end
 
 
-  # unsubscribing the realtime feed and pushing into the resque
+  # Unsubscribing the realtime feed and pushing into the sidekiq
   def unregister_stream_subscription
-    # delete entries from dynamo here true means pushing to resque
+    # Delete entries from dynamo here true means pushing to sidekiq
     cleanup(true)
   end
 
@@ -140,11 +103,7 @@ class Social::FacebookPage < ActiveRecord::Base
   end
 
   def fetch_fb_wall_posts
-    #remove the code for checking
-    if fetch_delta?
-      Facebook::PageTab::Configure.new(self).execute("subscribe_realtime") unless self.realtime_subscription
-      Social::FacebookDelta.perform_async({ :page_id => self.page_id }) if self.company_or_visitor?
-    end
+    Social::FacebookDelta.perform_async({ :page_id => self.page_id }) if fetch_delta?
   end
 
   def send_mixpanel_event

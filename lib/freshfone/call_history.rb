@@ -35,6 +35,7 @@ module Freshfone::CallHistory
   		end 
   	params[:data_hash] = ActiveSupport::JSON.encode filters  
   	@cached_filters['data_hash'] = params[:data_hash]   
+  	params[:number_id] = @cached_filters['number_id'] if @cached_filters['number_id'].present?
 	end
 
 	def get_date_range(type, custom_value)

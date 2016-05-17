@@ -21,10 +21,8 @@
         :url                           =>   "/admin/social/streams",
         :privilege                     =>   feature?(:twitter) && privilege?(:admin_tasks)
       },
-      :"facebook-setting"              =>   {
-        :url                           =>   "/social/facebook",
-        :privilege                     =>   current_account.features?(:facebook) && privilege?(:admin_tasks)
-      },
+      :"facebook-setting"              =>   facebook_settings,
+      
       :feedback                        =>   {
         :url                           =>   "/admin/widget_config",
         :privilege                     =>   privilege?(:admin_tasks)
@@ -427,6 +425,17 @@ HTML
         "alert-message block-message warning full-width")
     end
     return
+  end
+  
+  private
+  
+  def facebook_settings
+    fb_feature = current_account.features?(:facebook) && privilege?(:admin_tasks)
+    url = (fb_feature && current_account.features?(:social_revamp)) ? "/admin/social/facebook_streams" : "/social/facebook"
+    {
+      :url        => url,
+      :privilege  => fb_feature
+    }
   end
 
 end

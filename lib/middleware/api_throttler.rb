@@ -85,7 +85,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   def by_pass_throttle?
     return true if  SKIPPED_SUBDOMAINS.include?(@sub_domain)
     return true unless @mobihelp_auth.blank?
-    return true if @mobile_user_agent[/#{AppConfig['app_name']}_Native/].present? 
+    return true if !@mobile_user_agent.blank? && @mobile_user_agent[/#{AppConfig['app_name']}_Native/].present? 
 
     SKIPPED_PATHS.each{|p| return true if @path_info.include? p}
     return false if API_FORMATS.any?{|x| @api_path.include?(x)}

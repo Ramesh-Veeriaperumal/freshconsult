@@ -33,7 +33,7 @@ class Freshfone::CallTransferController < FreshfoneBaseController
 		available_agents_groups = current_account.agent_groups.find(:all,:include => :group).group_by(&:group)
 		@available_groups = available_agents_groups.map do |group, agent_groups|
 			{
-				:available_group_agents_name => group.name,
+				:available_agents_name => group.name,
 				:sortname => "G_#{group.name}",#to order agents,groups correspondingly
 				:available_agents_avatar => view_context.group_avatar,
 				:agents_count => t("freshfone.widget.agents_count_in_group", :count => agent_groups.length),

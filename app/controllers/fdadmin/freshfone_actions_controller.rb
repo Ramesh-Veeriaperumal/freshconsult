@@ -542,7 +542,7 @@ module Fdadmin
 
     def validate_ringing_time
       if !params[:ringing_time].blank?
-        if params[:ringing_time].to_i > 999 || params[:ringing_time].to_i < 30
+        if params[:ringing_time].to_i > 999 || params[:ringing_time].to_i < 10
           return render json: { status: 'validationerror',
                                 reason: 'Ringing Timeout values should be in range between 30 and 999 seconds' }
         end

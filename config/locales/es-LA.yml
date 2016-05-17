@@ -1314,9 +1314,9 @@ es-LA:
         send_test_mail_info2: "Aqui se muestra<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>cómo puedes hacerlo.</a>"
         title_message: "Comienza inmediatamente tu soporte al cliente en solo cuatro pasos..."
         support_email_title: "Correo electrónico de soporte<br>"
-        agents_title_1: "Cómo agregar agentes&lt;br&gt;"
+        adding_agents: "Cómo agregar agentes<br>"
         rebrand_title: "Logotipo <br>y colores"
-        social_title_1: Socialización&lt;br&gt;
+        going_social: "Socialización<br>;"
         skip_text: "No, gracias, llévame a mi helpdesk."
         back_link: Volver
         next_link: Siguiente
@@ -1438,7 +1438,6 @@ es-LA:
         feedbackwidget_users_can: "Los usuarios pueden realizar lo siguiente:"
         feedbackwidget_attach_a_file: "Adjuntar un archivo"
         feedbackwidget_screenshot: "Tomar captura de pantalla"
-        feedbackwidget_screenr_recording: "Grabación de Screenr"
         feedbackwidget_search_area: "Buscar artículos"
         feedbackwidget_use_https: "Usar https."
         feedbackwidget_mobile_view: "Vista para dispositivos móviles"
@@ -1463,7 +1462,6 @@ es-LA:
         feedbackwidget_users_can: "Opciones de formulario"
         feedbackwidget_attach_a_file: "Adjuntar un archivo"
         feedbackwidget_screenshot: "Tomar captura de pantalla"
-        feedbackwidget_screenr_recording: "Grabación de Screenr"
         feedbackwidget_search_area: "Buscar artículos"
         feedbackwidget_use_https: "Usar https"
         feedbackwidget_mobile_view: "Habilitar vista para dispositivos móviles"
@@ -6037,36 +6035,6 @@ es-LA:
         es: Español
         sv: Sueco
         tr: Turco
-    screenr:
-      button_label: "Grabar presentación en pantalla"
-      label: Screenr
-      desc: "Registra grabaciones de pantalla con Screenr y adjúntalas a los tickets, foros y artículos de soluciones."
-      helptext: "<h4>Integración de Freshdesk con Screenr</h4><p><br/>La integración con Screenr permite a los agentes y clientes capturar y compartir presentaciones en pantalla mientras usan Freshdesk. Se puede utilizar para adjuntar informes de errores o videos instructivos a los tickets, publicaciones en foros y artículos de soluciones directamente.</p><p>Una vez habilitada, podrás ver un botón de grabación junto a tu widget de comentarios, tus discusiones y tu base de conocimientos. Puedes elegir grabar toda la ventana del explorador o seleccionar un área específica de ella, si lo deseas. La presentación en pantalla se insertará automáticamente una vez que se complete tu sesión.</p><p>Puedes configurar esta integración al introducir tu dirección URL de Screenr (por ej. <a>http://tunombre.viewcasts.com</a>) y tu ID de grabador, que puedes encontrar una vez que inicies sesión en tu cuenta.</p>"
-      form:
-        recorder_id: "ID de grabador"
-        recorder_id_info: "El ID de grabador es el ID único disponible en la página de edición de grabadores."
-        site_address_info: ""
-        site_address: "Subdominio de Screenr"
-        widget_title: "Título del widget"
-        visible_agent_forum: "Grabación de pantalla de foros para agentes"
-        visible_agent_forum_info: "Habilitar para que el grabador de Screenr esté disponible en los foros para los agentes"
-        visible_agent_ticket: "Grabación de pantalla de tickets para agentes"
-        visible_agent_ticket_info: "Habilitar para que el grabador de Screenr esté disponible en los formularios de tickets para los agentes"
-        visible_solution: "Grabación de pantalla de soluciones"
-        visible_solution_info: "Habilitar para que el grabador de Screenr esté disponible en las soluciones"
-        visible_portal_ticket: "Grabación de pantalla de tickets del portal"
-        visible_portal_ticket_info: "Habilitar para que el grabador de Screenr esté disponible en el formulario de tickets del portal"
-        visible_portal_forum: "Grabación de pantalla de tickets de foros para el portal"
-        visible_portal_forum_info: "Habilitar para que el grabador de Screenr esté disponible en el formulario de tickets de foros del portal"
-        visible_widget: "Grabación de pantalla del widget"
-        visible_widget_info: "Habilitar para que el grabador de Screenr esté disponible en el widget de comentarios"
-      settings:
-        enable_screenr_recording: "Habilitar grabación de Screenr"
-        ticket_interaction: "Página de tickets (Nuevo, Editar, Responder)"
-        forum_interaction: "Página de foros (Nuevo, Editar, Comentar)"
-        create_solution: "Solución (Nueva, Editar)"
-        for_agents: "Para agentes"
-        for_customer: "Para clientes"
     ilos:
       label: "ilos videos"
       desc: "Registra y comparte grabaciones de pantalla en tickets, foros y artículos de soluciones."

@@ -224,7 +224,7 @@ class Discussions::TopicsController < ApplicationController
 		def assign_user
 			@creating_user ||= begin
 				user = nil
-				if privilege?(:view_admin)
+				if privilege?(:admin_tasks)
 					unless (topic_param[:import_id].blank? && params[:email].blank?)
 						user = current_account.all_users.where(email: params[:email]).first
 					end

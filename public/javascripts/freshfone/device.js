@@ -6,6 +6,9 @@
 	// private methods
 	function previewMode() { return (freshfonecalls.tConn.message || {}).preview; }
 	function recordingMode() { return (freshfonecalls.tConn.message || {}).record; }
+	function canTrackQuality() { return !freshfonecalls.isAgentConference && 
+		                         freshfone.isCallQualityMetricsEnabled && 
+		                         freshfonecalls.freshfone_monitor; }
 	if (typeof (Twilio) !== "undefined") {
 		Twilio.Device.ready(function (device) {
 			if(freshfonecalls.lastAction){
@@ -84,7 +87,7 @@
 			
 
 		Twilio.Device.disconnect(function (conn) {
-			if(freshfone.isCallQualityMetricsEnabled && freshfonecalls.freshfone_monitor){
+			if(canTrackQuality()){
 				freshfonecalls.freshfone_monitor.stopLogging();
 			}
 			freshfoneNotification.resetJsonFix();
@@ -136,6 +139,9 @@
 							freshfoneendcall.showEndCallForm();
 						freshfonecalls.freshfoneCallTransfer.resetTransferState();
 						jQuery('.popupbox-tabs .transfer_call').trigger('click');
+					}
+					if(freshfonecalls.isAgentConference) {
+						freshfonewidget.handleWidgets();
 					}
 					freshfoneuser.resetStatusAfterCall();
 					freshfoneuser.updatePresence();

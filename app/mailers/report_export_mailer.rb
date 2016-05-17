@@ -8,7 +8,7 @@ class ReportExportMailer < ActionMailer::Base
     if options[:file_path].present?
       attachment_file_name = get_attachment_file_name(options[:file_path])
       #encode64 to override the default '990 characters per row' limit on attached files
-      attachments[attachment_file_name] = { :data=> ActiveSupport::Base64.encode64(File.read(options[:file_path])), :encoding => 'base64' }
+      attachments[attachment_file_name] = { :data=> Base64.encode64(File.read(options[:file_path])), :encoding => 'base64' }
     else
       @export_url = options[:export_url]
     end

@@ -57,7 +57,8 @@ class AccountsController < ApplicationController
    @signup = Signup.new(params[:signup])
    
    if @signup.save
-   @signup.account.agents.first.user.reset_perishable_token! 
+    @signup.account.agents.first.user.reset_perishable_token! 
+      add_account_info_to_dynamo
       add_to_crm
       respond_to do |format|
         format.html {
@@ -299,6 +300,10 @@ class AccountsController < ApplicationController
         params[:signup][:contact_first_name] = params[:user][:first_name]
         params[:signup][:contact_last_name] = params[:user][:last_name]
       end
+    end
+
+    def add_account_info_to_dynamo
+      AccountInfoToDynamo.perform_async({email: params[:signup][:user_email]})
     end
 
     def add_to_crm

@@ -79,6 +79,9 @@ var FreshfoneConnection;
 				success: function (data) { 
 					if(data.can_accept) {
 						self.freshfoneNotification.setDirectionIncoming();
+						if(data.agent_conference) {
+							freshfonecalls.setAgentConferenceParams(data.agent_conference);
+						}
 						self.connection.accept();
 					}else{
 						self.reject();

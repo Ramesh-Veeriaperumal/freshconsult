@@ -10,6 +10,7 @@ module TwilioMaster
 		:hold => [ :initiate, :wait, :unhold, :transfer_unhold, :transfer_fallback_unhold, :quit ],
 		:conference_call => [ :status, :in_call, :update_recording ],
 		:conference_transfer => [ :transfer_agent_wait, :transfer_source_redirect, :transfer_success ],
+		:agent_conference => [ :success, :status],
 		:call_transfer => [:transfer_incoming_call, :transfer_outgoing_call, :transfer_incoming_to_group, 
 			:transfer_outgoing_to_group, :transfer_incoming_to_external, :transfer_outgoing_to_external],
 		:device => [:record],

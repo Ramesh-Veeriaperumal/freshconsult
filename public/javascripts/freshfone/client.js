@@ -43,6 +43,8 @@ var globalconn;
 
 		//Load Transfer agents
 		$widget.find('[href="#freshfone_available_agents"],[href="#freshfone_agents_list"]').on('shown', function (e) {
+			$("#freshfone_available_agents").find('.available_agents_list')
+			                                .toggleClass("adding_agent_state",freshfonecalls.isAgentConferenceActive);
 			freshfonesocket.loadAvailableAgents();
 		});
 

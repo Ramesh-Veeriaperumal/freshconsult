@@ -61,6 +61,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings ]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
+    resource :"freshfone/agent_conference", :only => [:add_agent, :success, :cancel]
     resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :wrap_call]
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
@@ -430,10 +431,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/business_calendar"
     resource :"social/twitter_handle", :only => [:index, :edit, :update, :destroy, :signin, :authdone, :search]
     resource :"social/streams"
+    resource :"admin/social/facebook_stream", :only => [:index, :edit, :update]
+    resource :"admin/social/facebook_page", :only => [:destroy, :enable_pages]
     resource :"social/welcome"
     resource :"contact", :only => [:change_password, :update_password]
     resource :"social/facebook_page"
-    resource :"social/facebook_tab"
+    resource :"admin/social/facebook_tab", :only => [:remove]
     resource :"admin/survey"
     resource :"admin/custom_survey"
     resource :group
@@ -477,6 +480,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
     resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
     resource :"integrations/github", :only => [:new, :install, :edit, :update, :oauth_install]
+    resource :"integrations/marketplace/quickbooks_sso", :only => [:landing]
+    resource :"integrations/marketplace/shopify", :only => [:landing]
     resource :"integrations/salesforce"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
     resource :"admin/integrations/freshplug"

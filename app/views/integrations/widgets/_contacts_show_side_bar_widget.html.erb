@@ -13,6 +13,7 @@
 <script type="text/javascript">
   Fjax.afterNextPage = function () {
     contactDom.destroy();
+    jQuery('body').off('click.contact-sidebar');
   }
 </script>
 

@@ -3,8 +3,8 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
   include HelpdeskReports::Constants::Export
 
 
-  def perform(no_data = false)
-    email_export nil if no_data
+  def perform
+    return email_export(nil) if date_range.nil?
     file_path = build_export
     email_export file_path
   end

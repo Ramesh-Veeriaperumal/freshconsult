@@ -2,8 +2,7 @@
 	<div class="freshfone-notifier-container" id="freshfone_notification_container">
 		<script id="incomingWidget" type="text/x-jquery-tmpl">
 			<div class="notifier">
-			<div class="transfer-details">
-					
+			<div class="call-meta-notifier">					
 			</div>
 				<div class='incoming-details'>
 					<div class='user_image'>
@@ -71,9 +70,20 @@
 </script>
 <script id='freshfone-transfer-call-notifier' type = "text/x-jquery-tmpl">
 	<div class="transferNotifier">
-		<i class="ficon-arrow-right-2 fsize-18 ff-arrow-direction"></i>
+		<i class="ficon-transfer-round fsize-18 ff-arrow-direction"></i>
 		<div class="transfer-agent-name ellipsis"> <%= t('freshfone.widget.transfer.tranfer_via') %> ${user_name}</div>
 		<div class="transfer_agent">
+			<div class="user_avatar"> {{html user_hover}} </div>
+		</div>
+	</div>
+</script>
+<script id='freshfone-add-agent-notifier' type = "text/x-jquery-tmpl">
+	<div class="add_agent_notifier">
+		<i class="ficon-add-call pull-left add-agent-label"></i>
+		<div class="add-agent-name ellipsis">
+			<%= t('freshfone.widget.transfer.tranfer_via') %> <span class="agent_name">${user_name}</span>
+		</div>
+		<div class="add_agent">
 			<div class="user_avatar"> {{html user_hover}} </div>
 		</div>
 	</div>

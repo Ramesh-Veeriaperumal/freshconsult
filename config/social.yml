@@ -9,7 +9,7 @@ staging:
  dynamo_timeout: 10
 
 production:
- dynamo_timeout: 10
+ dynamo_timeout: 50
 
 test:
  <<: *defaults

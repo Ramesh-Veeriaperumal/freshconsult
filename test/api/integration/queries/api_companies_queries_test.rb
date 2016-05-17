@@ -16,8 +16,8 @@ class ApiCompaniesQueriesTest < ActionDispatch::IntegrationTest
         create: 22,
         show: 16,
         index: 16,
-        update: 25,
-        destroy: 19
+        update: 26,
+        destroy: 20
       }
 
       # create

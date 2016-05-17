@@ -13,6 +13,14 @@ module Facebook
         Account.current.facebook_posts.find_by_post_id(feed_id)  
       end      
       
+      def ticket_attributes  
+        group_id = Account.current.features?(:social_revamp) ? @fan_page.default_stream.ticket_rules.first.group_id :  @fan_page.group_id
+        {
+          :group_id   => group_id,
+          :product_id => @fan_page.product_id
+        }
+      end  
+      
       def facebook_user(profile)
         profile ||= {}
         profile.symbolize_keys!

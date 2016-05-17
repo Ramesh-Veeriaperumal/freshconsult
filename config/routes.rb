@@ -414,6 +414,15 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :agent_conference do
+      collection do
+        post :add_agent
+        post :success
+        post :status
+        post :cancel
+      end
+    end
+
     resources :hold do
       collection do
         get  :add
@@ -653,7 +662,6 @@ Helpkit::Application.routes.draw do
       member do
         put :install
         delete :uninstall
-        get :uninstall
       end
     end
 
@@ -2653,7 +2661,6 @@ Helpkit::Application.routes.draw do
           put :add_feature
           put :change_url
           get :single_sign_on
-          get :sso_time_stamp
           put :change_account_name
           put :ublock_account
           put :remove_feature

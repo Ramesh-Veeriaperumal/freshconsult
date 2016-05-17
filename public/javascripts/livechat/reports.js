@@ -70,7 +70,7 @@ var chatReport = function(){
 			});
 
 			total = data.length;
-			var transfers = transfer.length - $.unique(transfer).length;
+			var transfers = chatReportData.is_pdf ? webkitUniqueCount(transfer) : _.unique(transfer).length;
 			answered = total - missed - transfers;
 			return [total, answered, missed];
 		}
@@ -232,6 +232,18 @@ var chatReport = function(){
 		return duration_formatted ;
 	}
 
+	//webkitUniqueCount provides count of unqiue elements in array.
+	//_.unique or $.unique fails in webkit(pdf) because of prototype.js 1.6.0.1  
+	var webkitUniqueCount = function(transfer_array){
+		var unique_length = transfer_array.length;
+		for(i =0 ;i < transfer_array.length; i++){
+			if (transfer_array.indexOf(transfer_array[i]) != i){
+				unique_length--;
+			}
+		}
+		return unique_length;
+	}
+
 	var showMetrics = function(data, chatType){
 		var current = data.current;
 		var previous = data.previous;
@@ -299,9 +311,13 @@ var chatReport = function(){
 		if(prev_avg > 0 && pavg_count > 0){
 			prev_avg = Math.floor(prev_avg/pavg_count);
 		}
-
-		cur_transfer_count = cur_transfer.length - _.unique(cur_transfer, function(chat){ return chat.transfer_id}).length;
-		prev_transfer_count = prev_transfer.length - _.unique(prev_transfer, function(chat){ return chat.transfer_id}).length;
+		if (chatReportData.is_pdf){	 // _.unique method fails in webkit because of prototype.js version 1.6.0.1
+			cur_transfer_count = webkitUniqueCount(cur_transfer);
+			prev_transfer_count = webkitUniqueCount(prev_transfer);
+		} else {
+			cur_transfer_count = _.unique(cur_transfer).length;
+			prev_transfer_count = _.unique(prev_transfer).length;
+		}
 
 		cur_answered = current.length - cur_missed - cur_transfer_count;
 		prev_answered = previous.length - prev_missed - prev_transfer_count;
@@ -503,7 +519,7 @@ var chatReport = function(){
 			var fromDateUTC = frm.toUTCString();
 			var toDateUTC = to.toUTCString();
  		}
- 		window.chatReportData = window.chatReportData || {};
+ 		
 		var data = { site_id: chatReportData.site_id, fromDateUTC: fromDateUTC, toDateUTC: toDateUTC, chat_type: chatType, 
 									auth_token: chatReportData.livechat_token, user_id: chatReportData.user_id};
 
@@ -969,6 +985,8 @@ var chatReport = function(){
 	return {
 
 		initializeReport : function(CHAT_ENV, URL, FC_HTTP_ONLY){
+			window.chatReportData = window.chatReportData || {};
+			chatReportData['is_pdf'] = false;
 			if(typeof CHAT_ENV != 'undefined' && CHAT_ENV == 'development'){
 				window.csURL = "http://"+URL+":4000"; 
 			}else{
@@ -984,6 +1002,8 @@ var chatReport = function(){
 			savedReportUtil.initSavedReports();
 		},
 		initializePDFReport : function(CHAT_ENV, URL, FC_HTTP_ONLY, params){
+			window.chatReportData = window.chatReportData || {};
+			chatReportData['is_pdf'] = true;
 			if(typeof CHAT_ENV != 'undefined' && CHAT_ENV == 'development'){
 				window.csURL = "http://"+URL+":4000"; 
 			}else{

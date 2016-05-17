@@ -12,7 +12,7 @@ class Freshfone::CallHistoryController < ApplicationController
 	before_filter :fetch_blacklist, :only => [:index, :custom_search, :children]
 	before_filter :check_export_range, :only => [:export]
 	
-	before_filter :fetch_current_call, :only =>[:destroy_recording], if: 'privilege?(:view_admin)'
+	before_filter :fetch_current_call, :only =>[:destroy_recording], if: 'privilege?(:admin_tasks)'
 	def index
 		@all_freshfone_numbers = current_account.all_freshfone_numbers.order("deleted ASC").all
 	end
@@ -98,8 +98,10 @@ class Freshfone::CallHistoryController < ApplicationController
 		end
 
 		def cache_filter_params
-			set_others_redis_hash(calls_filter_key, filter_hash)
-			set_others_redis_expiry(calls_filter_key,86400*7)
+			if !is_native_mobile?
+				set_others_redis_hash(calls_filter_key, filter_hash)
+				set_others_redis_expiry(calls_filter_key,86400*7)
+			end
 		end
 
 		def filter_hash
@@ -109,8 +111,7 @@ class Freshfone::CallHistoryController < ApplicationController
 		def load_cached_filters
 			 if redis_key_exists?(calls_filter_key)
 					@cached_filters = get_others_redis_hash(calls_filter_key)
-					prepare_filters(@cached_filters)
-				  params[:number_id] = @cached_filters['number_id']
+					prepare_filters(@cached_filters) if @cached_filters['data_hash'].present?
 			 end
 		end
 

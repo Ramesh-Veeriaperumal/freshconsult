@@ -59,7 +59,7 @@ class Freshfone::AutocompleteController < ApplicationController
 				  :value => contact.name,
 				  :phone => contact.phone,
 				  :mobile => contact.mobile,
-				  :company => contact.customer_id ? contact.company.name : nil,
+				  :company => contact.company.present? ? contact.company.name : nil,
 				  :custom_field => contact_custom_field(contact), 
 				  :custom_name => custom_field_column_names
 				} 
