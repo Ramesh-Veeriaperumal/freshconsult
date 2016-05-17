@@ -4,7 +4,6 @@ class Admin::FreshfoneController < Admin::AdminController
 	include Redis::IntegrationsRedis
 
 	before_filter :load_numbers, :only => [:index, :search]
-	before_filter :trial_render, :only => [:index]
 	before_filter :validate_freshfone_state, :only => [:search]
 	before_filter :validate_trial, :only => [:search]
 	before_filter :validate_params, :only => [:available_numbers]
@@ -71,8 +70,7 @@ class Admin::FreshfoneController < Admin::AdminController
 	private
 
 		def validate_params
-			@freshfone_subscription = 'trial' if onboarding_enabled? ||
-					trial_numbers_empty?
+			@freshfone_subscription = 'trial' if trial_numbers_empty?
 			search_options = load_search_options
 			params[:type] = load_type(search_options)
 			params[:search_options] = search_options
@@ -94,22 +92,16 @@ class Admin::FreshfoneController < Admin::AdminController
 		end
 
 		def validate_freshfone_state
-			return if onboarding_enabled?
-			requires_feature(:freshfone)
+			!in_trial_states? || requires_feature(:freshfone)
 		end
 
 		def validate_trial
-			if trial_conditions?
-				@freshfone_subscription = 'trial'
-				return
-			elsif (trial? && !trial_number_purchase_allowed?) || trial_expired?
-				return redirect_to admin_freshfone_numbers_path
-			end
+			return redirect_to admin_freshfone_numbers_path unless number_search_allowed?
+			@freshfone_subscription = 'trial' if trial_subscription?
 		end
 
 		def trial_conditions?
-			onboarding_valid? ||
-				trial_numbers_empty? || trial_number_purchase_allowed?
+			!in_trial_states? || trial_numbers_empty? || trial_number_purchase_allowed?
 		end
 
 		def load_numbers
@@ -122,11 +114,6 @@ class Admin::FreshfoneController < Admin::AdminController
 
 		def activation_key
 			FRESHFONE_ACTIVATION_REQUEST % { :account_id => current_account.id }
-		end
-
-		def trial_render
-			return render :trial_index if
-				onboarding_valid? || trial_numbers_empty?
 		end
 
 		def trial_number_purchase_allowed?
@@ -148,7 +135,15 @@ class Admin::FreshfoneController < Admin::AdminController
 			'local'
 		end
 
-		def onboarding_valid?
-			onboarding_enabled? && !in_trial_states?
+		# added this extra trial? check to handle the case when
+    # error(like invalid address) occurs while the number purchase, for trial freshfone accounts so that we can go to search page again
+		def trial_subscription?
+			trial_conditions? && (!current_account.features?(:freshfone) || trial?) 
+		end
+
+		def number_search_allowed?
+			!current_account.features?(:freshfone) ||
+			(trial_number_purchase_allowed? && !trial_exhausted?) ||
+			current_account.freshfone_credit.present?
 		end
 end
