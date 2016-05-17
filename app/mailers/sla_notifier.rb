@@ -12,6 +12,8 @@ class SlaNotifier < ActionMailer::Base
 			"Auto-Submitted"           => "auto-generated", 
 			"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
 		}
+		headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
+		
 		mail(headers) do |part|
 			part.text do
 				@body = Helpdesk::HTMLSanitizer.plain(params[:email_body])

@@ -3,10 +3,11 @@ class SsoController < ApplicationController
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  skip_before_filter :check_privilege
-  before_filter :set_current_user, :only =>[:google_login]
   skip_before_filter :check_privilege, :verify_authenticity_token
+  before_filter :check_csrf_token, :only => [:portal_google_sso]
+  before_filter :set_current_user, :only =>[:portal_google_sso, :marketplace_google_sso]
   skip_after_filter :set_last_active_time
+  before_filter :form_authenticity_token, :only => :mobile_app_google_login, :if => :is_native_mobile?
 
 
   def mobile_app_google_login
@@ -48,14 +49,14 @@ class SsoController < ApplicationController
     redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}&state=#{params[:portal_type]}"
   end
 
-  def google_login
+  def portal_google_sso
     protocol = (current_account.ssl_enabled? || is_native_mobile?) ? "https" : "http"
-    if @current_user.nil? || @current_user.deleted
-      user_deleted
-    else
-      make_user_active
-      create_user_session(protocol)
-    end
+    login_using_google(protocol)
+  end
+
+  def marketplace_google_sso
+    protocol = current_account.url_protocol
+    login_using_google(protocol)
   end
 
   private
@@ -63,15 +64,32 @@ class SsoController < ApplicationController
     def set_current_user
       redis_oauth_key = GOOGLE_OAUTH_SSO % {:random_key => params['sso']}
       uid = get_others_redis_key(redis_oauth_key)
-      auth = Authorization.find_by_provider_and_uid_and_account_id("google", uid, current_account.id)
+      auth = current_account.authorizations.where(:uid => uid, :provider => 'google').first
       user_id = auth.present? ? auth.user_id : nil
       @current_user = user_id.present? ? current_account.users.find_by_id(user_id) : nil
       remove_others_redis_key(redis_oauth_key) if @current_user.present?
     end
 
+    def check_csrf_token
+      decoded_token = Base64.decode64(params["at"])
+      unless session["_csrf_token"] == decoded_token
+        flash[:notice] = t('google_signup.signup_google_error.error_message')
+        redirect_to current_account.url_protocol+"://"+portal_url 
+      end
+    end
+
     def user_deleted
       flash[:notice] = t('google_signup.signup_google_error.error_message')
       redirect_to login_url
+    end
+
+    def login_using_google protocol
+      if @current_user.nil? || @current_user.deleted
+        user_deleted
+      else
+        make_user_active
+        create_user_session(protocol)
+      end
     end
 
     def create_user_session(protocol)

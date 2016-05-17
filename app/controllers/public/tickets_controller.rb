@@ -39,18 +39,18 @@ class Public::TicketsController < ApplicationController
    end
 
    def check_scope
-    # # To avoid 2 redirects.  
-    return unless current_user && current_user.agent?  
+    return unless current_user
     case 
+    when @ticket.is_a?(Helpdesk::Ticket) && (current_user.customer? || @ticket.restricted_in_helpdesk?(current_user))
+      redirect_to support_ticket_url(@ticket)
+    when @ticket.is_a?(Helpdesk::ArchiveTicket) && (current_user.customer? || @ticket.restricted_in_helpdesk?(current_user))
+      redirect_to support_archive_ticket_url(@ticket.display_id)
     when @ticket.is_a?(Helpdesk::Ticket) && @ticket.accessible_in_helpdesk?(current_user)
       redirect_to helpdesk_ticket_url(@ticket, :format => params[:format])
-    when @ticket.is_a?(Helpdesk::Ticket) && @ticket.restricted_in_helpdesk?(current_user)
-      redirect_to support_ticket_url(@ticket)
     when @ticket.is_a?(Helpdesk::ArchiveTicket) && @ticket.accessible_in_helpdesk?(current_user)
       redirect_to helpdesk_archive_ticket_url(@ticket.display_id, :format => params[:format])
-    when @ticket.is_a?(Helpdesk::ArchiveTicket) && @ticket.restricted_in_helpdesk?(current_user)
-      redirect_to support_archive_ticket_url(@ticket.display_id)
     end
+    
    end
 
   def set_selected_tab

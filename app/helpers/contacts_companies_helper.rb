@@ -49,7 +49,9 @@ module ContactsCompaniesHelper
       when :url
         value = content_tag(:a, field_value, :href => field_value, :target => '_blank', :class => 'field-value ellipsis')
       when :phone_number
-        value = strange_number?(field_value) ? content_tag(:p,field_value, :class => 'field_value strikethrough') : content_tag(:p, field_value, :class => 'field-value can-make-calls break-word', :'data-phone-number' => field_value)
+        value = strange_number?(field_value) ? content_tag(:p,field_value, :class => 'field_value strikethrough') : content_tag(:p, field_value, :class => 'field-value can-make-calls break-word', :'data-phone-number' => field_value,
+          :'data-contact-id' => @user.present? ? @user.id : nil,
+          :'data-deleted' => @user.present? && @user.deleted)
       else
         value = content_tag(:p, field_value, :class => 'field-value break-word')
     end

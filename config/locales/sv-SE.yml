@@ -1726,7 +1726,7 @@ sv-SE:
         import: "Importera data från Zendesk"
         agent: Representanter
         feedback: Feedback-widget
-        freshchat: Live-chatt
+        livechat: Live-chatt
         integrations: Integrationer
         dispatcher: Avsändare
         supervisor: Övervakaren
@@ -5999,7 +5999,7 @@ sv-SE:
         filter_by: Nöjdhetsvyer
         view_report_date: "Se rapporter under"
         helptext: "<b>Varför använda kundnöjdhetsrapporter?</b><p>Kundnöjdhetsrapporter ger dig en översikt av dina kundrepresentanters serviceprestationer.<br>Rapporten hjälper dig att förstå hur pass nöjda dina kunder är. Informationen presenteras med hjälp av ett procentvärde (nöjda, neutrala, missnöjda) för varje representant.<br><br><b>Vad kan du göra mer?</b><br><p><ol class='ml15'><li>Filtrera resultaten i rapporten efter representant, grupp eller företag.</li><li>Visa rapporter för en viss tidsperiod.</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: Live-chattsammanfattning
       filter_by_title: "Filtrerat efter"
       time_period: Tidsintervall
@@ -6964,7 +6964,7 @@ sv-SE:
         additional_info: "Du kan köpa nummer, ringa och ta emot samtal när telefonkanalen aktiveras på ditt konto"
         button_text: "Ärende för telefon"
         video_title: "Titta på videon för att se vad du kan göra med telefonkanalen"
-  freshchat:
+  livechat:
     feature_request:
       title: "Välkommen till live-chatt"
       heading: "Ge dina kunder support med live-chatt"
@@ -7041,7 +7041,7 @@ sv-SE:
     bottom_left: "Nederkant vänster"
     bottom_right: "Nederkant höger"
     integrate_msg: "Kopiera och klistra in den här koden innan den sista </body> taggen på din webbplats eller app"
-    integrate_freshchat_title: "Integrera live-chatt på din webbplats och i dina appar"
+    integrate_livechat_title: "Integrera live-chatt på din webbplats och i dina appar"
     custom_chat_window: "Anpassa ditt chattfönster"
     text_placeholder: "Ditt meddelande"
     chatbox_bgcolor: Fönsterfärg
@@ -7184,7 +7184,7 @@ sv-SE:
     intro_title: "Varför live-chatt?"
     intro: "Freshdesks integrerade live-chattslösning låter dig se och chatta med användare på din webbplats, online eller på supportportalen direkt från Freshdesk. Du kan proaktivt börja chatta med dina webbplatsbesökare också. Då du avslutat en chattversion kan du välja att konvertera konversationen till ett ärende och fortsätta att följa upp besökaren per e-post eller arkivera chattkopian. "
     enable_chat: "Aktivera live-chatt"
-    learn_freshchat: "Läs mer om live-chatt"
+    learn_livechat: "Läs mer om live-chatt"
     support_portal: "Chatt i supportportal"
     logged_in_users: "Endast inloggade användare"
     everyone: Alla

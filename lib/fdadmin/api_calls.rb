@@ -31,6 +31,7 @@ module Fdadmin::APICalls
     rescue Exception => e
       Rails.logger.debug "Exception in Response for #{request_url} : : : : #{e.inspect} "
       NewRelic::Agent.notice_error(e,{:description => "POD api call failed :#{url_params}"})
+      raise e
     end
     return response
   end

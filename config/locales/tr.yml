@@ -1531,7 +1531,7 @@ tr:
         import: "Data'yı Zendesk'ten taşı"
         agent: Temsilciler
         feedback: "Geribildirim Butonu"
-        freshchat: "Canlı Sohbet"
+        livechat: "Canlı Sohbet"
         integrations: Birleştirmeler
         dispatcher: Gönderen
         supervisor: Denetmen
@@ -2352,7 +2352,7 @@ tr:
   change_my_plan: "Plan Seçmelisiniz..."
   make_payment: "Ödeme Yap"
   add_new_email: "Yeni e-posta ekle"
-  chatwidget_title: Freshchat.
+  chatwidget_title: Live Chat.
   feedbackwidget_title: "Geri bildirim aracı"
   errors_in_your_address: "Burada bir sorun ile karşılaşıldı:"
   set_priority_as: "Önceliği Ayarla"
@@ -3296,7 +3296,7 @@ tr:
     feedback_message_4: "Eksik ve kırık link"
   import_updated: Güncellendi.
   feedbackwidget_intro: "Freshdesk widget'ınızı aşağıdaki özelleştirme ve gerçek zamanlı önizlemesini görün."
-  chatwidget_intro: "Freshchat widget'ınızı aşağıdaki özelleştirme ve gerçek zamanlı önizlemesini görün."
+  chatwidget_intro: "Live Chat widget'ınızı aşağıdaki özelleştirme ve gerçek zamanlı önizlemesini görün."
   save: Kaydet
   import_added_newly: "Yeni eklendi"
   quick_create: "Hızlı Oluştur"
@@ -3398,10 +3398,10 @@ tr:
   is_expiring_today: "Bugün süresi doluyor"
   feedbackwidget_help_para1: "The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget."
   chatwidget_help_content:
-    title: Freshchat
-    info1: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site."
+    title: Live Chat
+    info1: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site."
     info2: "Each chat session will capture meta information about visitors including their location, device, etc and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Learn more about using live chat inside Freshdesk</a>"
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Learn more about using Live Chat inside Freshdesk</a>"
   low: Düşük
   agents: Adminler
   header:
@@ -5421,8 +5421,8 @@ tr:
         filter_by: "Satisfaction Views"
         view_report_date: "View reports during"
         helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
-    freshchat:
-      report_title: "Freshchat Özeti"
+    livechat:
+      report_title: "Live Chat Özeti"
       filter_by_title: "Filtered by"
       time_period: "Zaman Aralığı."
       widget: Araç
@@ -6284,21 +6284,21 @@ tr:
         error_message: "Şuanda talebinizi gerçekleştiremiyoruz.Lütfen daha sonra tekrar deneyiniz."
         additional_note: "Freshfone talebi iki iş günü alacaktır"
         button_label: "Freshfone Talebi"
-  freshchat:
+  livechat:
     feature_request:
-      title: "Freshchat'e Hoşgeldiniz"
-      heading: "Müşterilerinize Freshchat ile destek verin"
+      title: "Live Chat'e Hoşgeldiniz"
+      heading: "Müşterilerinize Live Chat ile destek verin"
       info1: "Canlı sohbet araçlarını kendi markan ve işin için özelleştir"
       info2: "Destek portalı ve web sitesi için canlı sohbet etkinleştirin"
       info3: "Tüm mesajlaşma dökümlerini izle ve onları bildirimlere dönüştür"
       read_more: "Daha Fazlasını Oku"
-      email_subject: "%{account_name} 'dan Freshchat Özelliği Talepleri"
-      email_message: "Freshchat Özelliği Gerekli"
-      success_message: "Freshchat'e gösterdiğiniz ilgi için teşekkürler. Sizlere en yakın zamanda dönüş yapacağız."
+      email_subject: "%{account_name} 'dan Live Chat Özelliği Talepleri"
+      email_message: "Live Chat Özelliği Gerekli"
+      success_message: "Live Chat'e gösterdiğiniz ilgi için teşekkürler. Sizlere en yakın zamanda dönüş yapacağız."
       error_message: "Özür dileriz, Talebinizi şu an için gerçekleştirememekteyiz. Lütfen daha sonra tekrar deneyiniz."
-      additional_note: "Freshchat talepleri iki iş günü alacaktır."
-      button_label: "Freshchat Talebi"
-    title: Freshchat
+      additional_note: "Live Chat talepleri iki iş günü alacaktır."
+      button_label: "Live Chat Talebi"
+    title: Live Chat
     widget: Araç
     messages: Mesajlar
     set_default_msgs: "Varsayılan Mesajlar"
@@ -6362,7 +6362,7 @@ tr:
     bottom_left: "Sol Alt"
     bottom_right: "Sağ Alt"
     integrate_msg: "Web sitene yada uygulamana bu kodu son </body> etiketten önce kopyala ve yapıştır."
-    integrate_freshchat_title: "Web sitenize ve uygulamalarınıza Freshchati entegre edin."
+    integrate_livechat_title: "Web sitenize ve uygulamalarınıza Live Chati entegre edin."
     custom_chat_window: "Sohbet penceresi"
     text_placeholder: Mesajınız
     chatbox_bgcolor: "Pencere rengi"
@@ -6479,7 +6479,7 @@ tr:
     chatsettings_save: "Değişiklikleriniz kaydedilmedi. Değişiklikler kaydedilsin mi ?"
     transfer_accepted_msg: "Ziyaretçi aktarımı kabul edildi."
     transfer_request_timeout_msg: "Aktarım talebi zaman aşımına uğradı."
-    integrate_freshchat_info: "Not : Sohbet penceresi sadece temsilciler çevirim içi olduğunda gözükecek."
+    integrate_livechat_info: "Not : Sohbet penceresi sadece temsilciler çevirim içi olduğunda gözükecek."
     click_to_go_online: "Ziyaretçi Sohbeti kabul edilmiyor"
     click_to_go_offline: "Ziyaretçi sohbeti kabul ediliyor"
     fetching: "Lütfen bekleyin"
@@ -6503,10 +6503,10 @@ tr:
     installation: "Widget kodu"
     visitor_form: "Visitor Form"
     preferences: Preferences
-    intro_title: "Neden Freshchat?"
-    intro: "Klasik müşteri servisleri müşteri için vardır, daha müşteri sorun yaşamadan ortaya çıkmıştır. Freshchat ile, temsilcileriniz freshdesk başından ayrılmadan birbirleriyle konuşabilirler, ayrıca sistemi ziyaret eden kişiler ilede anında iletişime geçerek hızlı cevap verebilirler."
-    enable_chat: "Freshchat Kullanılabilir"
-    learn_freshchat: "Freshchat hakkında daha fazlasını öğren"
+    intro_title: "Neden Live Chat?"
+    intro: "Klasik müşteri servisleri müşteri için vardır, daha müşteri sorun yaşamadan ortaya çıkmıştır. Live Chat ile, temsilcileriniz freshdesk başından ayrılmadan birbirleriyle konuşabilirler, ayrıca sistemi ziyaret eden kişiler ilede anında iletişime geçerek hızlı cevap verebilirler."
+    enable_chat: "Live Chat Kullanılabilir"
+    learn_livechat: "Live Chat hakkında daha fazlasını öğren"
     support_portal: "Destek paneli üzerinden mesaj gönder"
     logged_in_users: "Sadece kayıtlı üyeler"
     everyone: Herkes

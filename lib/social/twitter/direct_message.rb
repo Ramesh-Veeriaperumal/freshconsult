@@ -47,7 +47,7 @@ class Social::Twitter::DirectMessage
     if last_reply && (Time.zone.now < (last_reply.created_at + twt_handle.dm_thread_time.seconds))
       add_as_note(twt, twt_handle, :dm, previous_ticket, user,  action_data)
     else
-      add_as_ticket(twt, twt_handle, :dm, action_data)
+      add_as_ticket(twt, twt_handle, :dm, action_data, nil, user)
     end
     update_dynamo_for_dm(account, twt, default_stream) if default_stream # Make dynamo call last after note or ticket creation
     User.reset_current_user

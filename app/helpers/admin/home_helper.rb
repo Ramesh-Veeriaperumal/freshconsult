@@ -8,7 +8,7 @@
         :url                           =>   "/admin/email_configs",
         :privilege                     =>   privilege?(:manage_email_settings)
       },
-      :freshchat                       =>   {
+      :livechat                        =>   {
         :url                           =>   "/admin/chat_widgets",
         :pjax                          =>   true,
         :privilege                     =>   privilege?(:admin_tasks) && current_account.features?(:chat)
@@ -194,7 +194,7 @@
   ######### Admin groups & Associated admin items Constant ########
 
     ADMIN_GROUP = {
-      :"support-channels"       =>    ["email", "portals", "freshchat", "phone-channel", "twitter", "facebook-setting", "feedback", "mobihelp", "ecommerce"],
+      :"support-channels"       =>    ["email", "portals", "livechat", "phone-channel", "twitter", "facebook-setting", "feedback", "mobihelp", "ecommerce"],
       :"general-settings"       =>    ["helpdesk-settings", "ticket-fields", "customer-fields", "agent", "group", "role", "security", "sla",
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response",
@@ -221,7 +221,7 @@
           :open_keywords          =>      [:configure_support_email, :Personalized_email_replies, :remove_ticket_id, :reply_to_email],
           :closed_keywords        =>      [:multiple_mailboxes,:custom_mailbox]
       },
-      :freshchat                  =>      {
+      :livechat                   =>      {
           :open_keywords          =>      [:chat_integration]
       },
       :"phone-channel"            =>      {

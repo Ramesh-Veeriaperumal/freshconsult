@@ -35,7 +35,7 @@ module MailgunHelper
 	end
 
 	def set_essentials options
-		self.from = random_email
+		self.from = options[:from] || random_email
 		self.to = generate_emails(rand(5), options[:email_config], options[:include_to])
 		self.cc = generate_emails(rand(10), options[:include_cc])
 		self.reply_to = options[:reply]

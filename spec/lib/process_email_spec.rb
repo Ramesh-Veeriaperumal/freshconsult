@@ -37,6 +37,81 @@ RSpec.describe Helpdesk::ProcessEmail do
 	#When checking for attachments please check for those above 15MB too.
 	#Also check S3.yml and change the test credentials to that in staging.
 
+  describe "Restricted helpdesk Negative tests" do
+
+    before(:all) do
+      @account.launch(:restricted_helpdesk)
+      @account.features.restricted_helpdesk.create
+    end
+  
+    after(:all) do
+      @account.features.restricted_helpdesk.destroy
+      @account.rollback(:restricted_helpdesk)
+    end
+
+    it "Should not create ticket for invalid requester email" do 
+      from = "user@restrictedhelpdesk.com"
+      email = new_email({:email_config => @account.primary_email_config.to_email, :reply => "", :from => from})
+      Helpdesk::ProcessEmail.new(email).perform
+
+      @account.tickets.size.should eql @ticket_size
+    end
+
+    it "Should not create ticket for invalid reply-to based requester" do 
+      email_id = "user@restrictedhelpdesk.com"
+      email = new_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
+      Helpdesk::ProcessEmail.new(email).perform
+
+      @account.reload
+      @account.tickets.size.should eql @ticket_size
+    end
+
+  end
+
+  describe "Restricted helpdesk positive tests" do
+
+    before(:all) do
+      @account.launch(:restricted_helpdesk)
+      @account.features.restricted_helpdesk.create
+    end
+  
+    after(:all) do
+      @account.features.restricted_helpdesk.destroy
+      @account.rollback(:restricted_helpdesk)
+    end
+
+    it "Should create ticket for valid requester email, which is present in permissible domains" do 
+      @account.helpdesk_permissible_domains.create(:domain => "restrictedhelpdesk.com")
+      from = "user1@restrictedhelpdesk.com"
+      email = new_email({:email_config => @account.primary_email_config.to_email, :reply => "", :from => from})
+      Helpdesk::ProcessEmail.new(email).perform
+
+      ticket_incremented?(@ticket_size)
+      @account.helpdesk_permissible_domains.where(:domain => "restrictedhelpdesk.com").delete_all
+    end
+
+    it "Should create ticket for existing contact" do
+      user = add_new_user(@account, {:email => "user2@restrictedhelpdesktest.com"})
+      from = user.email
+      email = new_email({:email_config => @account.primary_email_config.to_email, :reply => "", :from => from})
+      Helpdesk::ProcessEmail.new(email).perform
+
+      ticket_incremented?(@ticket_size)
+    end
+
+    it "Should create ticket for valid requester email, which is present in company domains" do
+      company = Company.create(:name => "Test Restricted Company", :domains => "restrictedhelpdeskcompany.com")
+
+      user = add_new_user(@account, {:email => "user3@restrictedhelpdeskcompany.com"})
+      from = user.email
+
+      email = new_email({:email_config => @account.primary_email_config.to_email, :reply => "", :from => from})
+      Helpdesk::ProcessEmail.new(email).perform
+      
+      ticket_incremented?(@ticket_size)
+    end
+  end
+
 	describe "Create ticket" do
 		it "Reply-To Based requester" do
 			email_id = Faker::Internet.email

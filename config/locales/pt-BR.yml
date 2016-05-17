@@ -1726,7 +1726,7 @@ pt-BR:
         import: "Importar dados do Zendesk"
         agent: Analistas
         feedback: "Widget de feedback"
-        freshchat: "Chat em tempo real"
+        livechat: "Chat em tempo real"
         integrations: Integrações
         dispatcher: Distribuidor
         supervisor: Supervisor
@@ -6010,7 +6010,7 @@ pt-BR:
         filter_by: "Visualizações de satisfação"
         view_report_date: "Visualizar relatórios durante"
         helptext: "<b>Por que gerar um relatório de satisfação do cliente?</b><p>O relatório de satisfação do cliente permite que você tenha uma ideia da qualidade do serviço de seus analistas no suporte ao cliente.<br>O relatório ajuda você a entender o nível de satisfação de seus clientes, que é representado por um percentual (satisfeito, neutro e insatisfeito) em relação a cada analista de suporte.<br><br><b>O que mais você pode fazer?</b><br><p><ol class='ml15'><li>Filtrar os resultados do relatório por analista, grupo ou empresa.</li><li>Visualizar os relatórios de a um determinado período.</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Resumo do chat em tempo real"
       filter_by_title: "Filtrado por"
       time_period: Período
@@ -6974,7 +6974,7 @@ pt-BR:
         additional_info: "Você poderá comprar números e fazer e receber chamadas assim que o canal de telefone estiver habilitado em sua conta"
         button_text: "Solicitação de telefone"
         video_title: "Assista ao vídeo para descobrir o que pode fazer com o canal de telefone"
-  freshchat:
+  livechat:
     feature_request:
       title: "Bem-vindo ao chat em tempo real"
       heading: "Ofereça suporte para seus clientes com o chat em tempo real"
@@ -7051,7 +7051,7 @@ pt-BR:
     bottom_left: "Parte inferior esquerda"
     bottom_right: "Parte inferior direita"
     integrate_msg: "Copie e cole este código antes da última tag </body> em seu site ou aplicativo"
-    integrate_freshchat_title: "Integrar o chat em tempo real com seu site e seus aplicativos"
+    integrate_livechat_title: "Integrar o chat em tempo real com seu site e seus aplicativos"
     custom_chat_window: "Janela do chat"
     text_placeholder: "Sua mensagem"
     chatbox_bgcolor: "Cor da janela"
@@ -7194,7 +7194,7 @@ pt-BR:
     intro_title: "Por que o chat em tempo real?"
     intro: "O chat em tempo real integrado do Freshdesk permite que você visualize e converse com seus usuários em seu site, no software on-line ou no portal de suporte diretamente do Freshdesk. Você também pode iniciar um chat proativamente com os visitantes do seu site. Ao encerrar uma sessão de chat, você pode optar por converter a conversa em um ticket e continuar acompanhando o problema com o visitante por e-mail ou arquivar a transcrição do chat"
     enable_chat: "Habilitar chat em tempo real"
-    learn_freshchat: "Saiba mais sobre o chat em tempo real"
+    learn_livechat: "Saiba mais sobre o chat em tempo real"
     support_portal: "Chat no portal de suporte"
     logged_in_users: "Somente os usuários conectados"
     everyone: Todos

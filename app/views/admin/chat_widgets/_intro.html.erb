@@ -1,10 +1,10 @@
 <div id="chat_intro" class="chat-intro">
 	<div class="freshchat-content">
-		<h2><%=t('freshchat.intro_title')%></h2><br>
-		<p><%=t('freshchat.intro')%></p>
-			<button class ="btn btn-primary" id = "chat_initial_enable"> <%=t('freshchat.enable_chat')%></button>
+		<h2><%=t('livechat.intro_title')%></h2><br>
+		<p><%=t('livechat.intro')%></p>
+			<button class ="btn btn-primary" id = "chat_initial_enable"> <%=t('livechat.enable_chat')%></button>
 			<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/181689-getting-started-with" >
-				<%= t('freshchat.learn_freshchat') %>
+				<%= t('livechat.learn_livechat') %>
 			</a>
 		</p>
 	</div>
@@ -14,31 +14,11 @@
       (function($){
         $(document).one('ready pjax:success' ,function(){
           $('body').on('click',"#chat_initial_enable",function(){
-            jQuery(this).button('Enabling');
-            var data = {  
-              "id"                : <%= current_account.id %>, 
-              "user_id"           : <%= current_user.id %>, 
-              "siteId"            : window.SITE_ID,
-              "domain"            : '<%= current_account.full_domain %>', 
-              "url"               : window.location.hostname , 
-              "protocol"          : window.location.protocol, 
-              "widget_site_url"   : '<%= current_account.full_domain %>',
-              "name"              : '<%= current_account.main_portal.name %>', 
-              "prechat_message"   : "<%=t('freshchat.prechat_message').html_safe%>",
-              "widget_preferences": <%= default_preferences %>,
-              "prechat_fields"    : <%= default_prechat_fields %>,
-              "active"            : false,
-              "token"             : '<%= livechat_partial_token(current_user.id) %>',
-              "non_availability_message" : <%= default_non_avail_message %>,
-              "offline_chat"      : <%= default_offline_chat %>,
-              "expires_at"        : '<%= current_account.subscription.next_renewal_at.utc %>',
-              "suspended"         : <%= !current_account.active? %>
-            };
-            
+            jQuery(this).attr("disabled", "disabled").text("<%=t('livechat.enabling')%>");
             $.ajax({
               type: "POST",
-              url: window.liveChat.URL+"/sites/create",
-              data: data,
+              url: "/livechat/enable",
+              data: {},
               dataType: "json",
               success: function(resp){
                 if(resp.status == "success"){
@@ -50,4 +30,3 @@
         });
       })(jQuery);
     <%end%>
-		

@@ -14,7 +14,7 @@
 
   (function($){
     $(document).one('ready pjax:success' ,function(){
-      window.liveChat.adminSettings.initializeWidget(<%= freshchat_setting @widget%>);
+      window.liveChat.adminSettings.initializeWidget(<%= livechat_setting @widget%>);
     });
   })(jQuery);
 <%end%>

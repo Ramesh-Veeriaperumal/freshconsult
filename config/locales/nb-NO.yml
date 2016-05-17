@@ -2122,7 +2122,7 @@ nb-NO:
   portal_signup: "Tillat brukere å logge inn fra brukerportalen"
   portal_captcha: "Gjør Captcha obligatorisk når man legger inn ny sak uten å være logget inn"
   to_email: "Til e-post"
-  freshchat:
+  livechat:
     begin_chat: "Start samtale"
     date_invalid: "ugyldig dato"
     joining_chat: "Bli med i samtalen"
