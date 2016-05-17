@@ -177,6 +177,7 @@ module Search::SearchResultJson
 	def solution_article_json article
 		return suggest_json(%{#{article.es_highlight('title').html_safe}},
 							solution_article_path(article), article) if @suggest
+		author = article.modified_by ? article.recent_author : article.user
 		to_ret = {
 			:id => article.id,
 			:result_type => 'solution_article',
@@ -185,9 +186,9 @@ module Search::SearchResultJson
 			:folder_name => h(article.solution_folder_meta.send("#{article.language.to_key}_folder").name),
 			:folder_path => solution_folder_path(article.solution_folder_meta),
 			:description => article.es_highlight('desc_un_html'),
-			:user_name => h(article.user.name),
-			:user_path => user_path(article.user),
-			:info => %{#{time_ago_in_words(article.created_at)} #{t('search.ago')}},
+			:user_name => h(author.name),
+			:user_path => user_path(author),
+			:info => %{#{time_ago_in_words(article.modified_at || article.created_at)} #{t('search.ago')}},
 			:views => humanize_stats(article.hits),
 			:up_votes => humanize_stats(article.thumbs_up),
 			:down_votes => humanize_stats(article.thumbs_down)
