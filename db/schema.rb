@@ -1920,7 +1920,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.datetime "updated_at",   :null => false
   end
 
-  add_index "helpdesk_permissible_domains", ["account_id", "domain"], :name => "index_helpdesk_permissible_domains_on_account_id_and_domain"
+  add_index "helpdesk_permissible_domains", ["account_id", "domain"], :name => "index_helpdesk_permissible_domains_on_account_id_and_domain", :length => {"account_id"=>nil, "domain"=>20}
 
   create_table "helpdesk_picklist_values", :force => true do |t|
     t.integer  "pickable_id",   :limit => 8

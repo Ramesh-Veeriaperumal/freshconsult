@@ -13,7 +13,7 @@ class CreateHelpdeskPermissibleDomains < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :helpdesk_permissible_domains, [:account_id, :domain]
+    add_index(:helpdesk_permissible_domains, [:account_id, :domain], :length => {:account_id=>nil, :domain => 20})
   end
 
   def down
