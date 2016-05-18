@@ -104,7 +104,7 @@ class OmniauthCallbacksController < ApplicationController
     object = @portal_id.present? ? Portal.find(@portal_id) : account
     port = ''
     if object.is_a?(Account)
-      @portal_url = account.full_url
+      @portal_url = "#{object.url_protocol}://#{object.full_domain}"
     elsif object.is_a?(Portal)
       @portal_url = "#{object.url_protocol}://#{object.host}#{port}"
     end
