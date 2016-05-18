@@ -34,14 +34,13 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey ],
+        :custom_domain, :multiple_emails, :advanced_reporting ],
       :inherits => [ :sprout ]
     },
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat,
-        :custom_survey ],
+        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat ],
       :inherits => [ :blossom ]
     },
 
@@ -90,7 +89,7 @@ class Account < ActiveRecord::Base
     :report_field_regenerate => false, :reports_regenerate_data => false, 
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => false, :es_multilang_solutions => false,
-    :sort_by_customer_response => false, :survey_links => true
+    :sort_by_customer_response => false, :survey_links => true, :default_survey => false, :custom_survey => false
   }
 
 
