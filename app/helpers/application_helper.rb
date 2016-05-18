@@ -1441,7 +1441,7 @@ module ApplicationHelper
 		#link_to h(number), "tel:#{number}", { :'data-phone-number' => "#{number}",
 		#																	 :'data-freshfone-number-id' => freshfone_number_id,
     #																	 :class => "can-make-calls #{class_name}" }
-    content_tag(:span , can_show_number ? number : nil, { :'data-phone-number' => "#{number}",
+    content_tag(:span , can_show_number ? h(number) : nil, { :'data-phone-number' => "#{h(number)}",
                                   :'data-freshfone-number-id' => freshfone_number_id,
                                   :'data-contact-id' => contact.present? ? contact.id : nil,
                                   :'data-deleted' => contact.present? && contact.deleted,
