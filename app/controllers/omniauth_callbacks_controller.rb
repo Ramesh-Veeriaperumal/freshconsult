@@ -59,10 +59,10 @@ class OmniauthCallbacksController < ApplicationController
     origin = CGI.parse(origin) if origin.present?
     @app_name ||= Integrations::Constants::PROVIDER_TO_APPNAME_MAP["#{@provider}"] if @provider.present?
 
-    if origin.present? && origin.has_key?('id')
-      assign_default_variables(origin)
-    elsif params[:state].present?
+    if params[:state].present?
       assign_state_variables(origin)
+    elsif origin.present? && origin.has_key?('id')
+      assign_default_variables(origin)
     end
   end
 
