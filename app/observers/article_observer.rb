@@ -8,7 +8,6 @@ class ArticleObserver < ActiveRecord::Observer
 		set_un_html_content(article)
 		modify_date_and_author(article) if (article.article_body.changed? || article.title_changed?)
 		article.article_changes
-        set_default_status(article)
 		create_draft_for_article(article)
 		article.seo_data ||= {}
 	end
@@ -17,6 +16,10 @@ class ArticleObserver < ActiveRecord::Observer
 		article.create_activity('published_article') if article.published? and article.status_changed?
 		article.create_activity('unpublished_article') if !article.published? and article.status_changed?
 	end
+
+  def before_validation(article)
+    set_default_status(article)
+  end
 
 private
 
