@@ -101,9 +101,13 @@ class OmniauthCallbacksController < ApplicationController
 
   def portal_url
     account = origin_account
-    portal = (@portal_id ? Portal.find(@portal_id) : account.main_portal)
+    object = @portal_id.present? ? Portal.find(@portal_id) : account
     port = ''
-    @portal_url = "#{portal.url_protocol}://#{portal.host}#{port}"
+    if object.is_a?(Account)
+      @portal_url = account.full_url
+    elsif object.is_a?(Portal)
+      @portal_url = "#{object.url_protocol}://#{object.host}#{port}"
+    end
   end
 
   def invalid_nmobile
