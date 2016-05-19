@@ -4,8 +4,8 @@ require "open-uri"
 module HelpdeskControllerMethods
   include Helpdesk::NoteActions
   include CloudFilesHelper
-  include Helpdesk::Permissions
-
+  include Helpdesk::Permissible
+  
   def self.included(base)
     base.send :before_filter, :build_item,          :only => [:new, :create]
     base.send :before_filter, :load_item,           :only => [:show, :edit, :update ]

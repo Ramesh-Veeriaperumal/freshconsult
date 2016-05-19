@@ -114,6 +114,9 @@ class AgentsController < ApplicationController
   def create    
     @user  = current_account.users.new #by Shan need to check later        
     @agent = current_account.agents.new(params[nscname]) 
+
+    #for live chat sync
+    @agent.agent_role_ids = params[:user][:role_ids]
     #check_agent_limit
     if @user.signup!(:user => params[:user])       
       @agent.user_id = @user.id
@@ -168,9 +171,13 @@ class AgentsController < ApplicationController
     @agent.occasional = params[:agent][:occasional]
     #check_agent_limit
     @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id] if gamification_feature?(current_account)
-    @user = current_account.all_users.find(@agent.user_id)
-    
-    if @agent.update_attributes(params[nscname])            
+    # @user = current_account.all_users.find(@agent.user_id)
+    @user = @agent.user
+    @agent.user.attributes = params[:user]
+    #for live chat sync
+    @agent.agent_role_ids = params[:user][:role_ids]
+
+    if @agent.update_attributes(params[nscname])
         if @user.update_attributes(params[:user])
           respond_to do |format|
             format.html { flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')

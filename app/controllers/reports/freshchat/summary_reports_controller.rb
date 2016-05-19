@@ -13,21 +13,27 @@ class Reports::Freshchat::SummaryReportsController < ApplicationController
   attr_accessor :report_type
 
   def index
-  #Render default index erb
-    @table_headers = get_chat_table_headers
+    #Render default index erb
+    @table_headers =  { 
+      :agent_name => t('reports.livechat.agent'),
+      :answered_chats => t('reports.livechat.answered_chats'),
+      :avg_handle_time => t('reports.livechat.avg_handle_time'),
+      :total_duration => t('reports.livechat.total_duration')
+    }
+
     @date_range = "#{7.days.ago.strftime("%d %b %Y")} - #{0.days.ago.strftime("%d %b %Y")}"
     @agents_list = Hash[current_account.agents_from_cache.map { |c| [c.user.id,c.user.name] }].to_json.html_safe
-    @widget_ids = current_account.chat_widgets.reject{|c| c.widget_id ==nil}.collect{ |c| [c.name, c.widget_id] }.unshift([t('reports.freshchat.deleted'), "deleted"]).unshift([t('reports.freshchat.all'), "all"])
+    @widget_ids = current_account.chat_widgets.reject{|c| c.widget_id ==nil}.collect{ |c| [c.name, c.widget_id] }.unshift([t('reports.livechat.deleted'), "deleted"]).unshift([t('reports.livechat.all'), "all"])
     @main_widget = current_account.chat_widgets.find(:first, :conditions => {:main_widget => true}).widget_id
-    @chat_types = [[t('reports.freshchat.all'), "0"], [t('reports.freshchat.chat_type_visitor'), "1"], [t('reports.freshchat.chat_type_agent'), "2"], [t('reports.freshchat.chat_type_proactive'), "3"]]
+    @chat_types = [[t('reports.livechat.all'), "0"], [t('reports.livechat.chat_type_visitor'), "1"], [t('reports.livechat.chat_type_agent'), "2"], [t('reports.livechat.chat_type_proactive'), "3"]]
   end
 
   def export_pdf   
     params.merge!(:report_type   => report_type)    
     Reports::Export.perform_async(params)   
-    render json: nil, status: :ok   
-  end
-
+    render json: nil, status: :ok 
+  end  
+	  
   def save_reports_filter
     common_save_reports_filter    
   end

@@ -5,14 +5,13 @@ class Auth::GoogleGadgetAuthenticator < Auth::Authenticator
   
   def after_authenticate(params)
     return non_hd_account if google_domain.blank?
-    state_params = params["state"].present? ? CGI.parse(URI.decode(params["state"])) : nil
     account_id = account_from_google_domain
-    if state_params.present? && state_params["gv_id"].present? #Individual agent OAuth2 and viewer id link case
+    if @state_params.present? && @state_params["gv_id"].present? #Individual agent OAuth2 and viewer id link case
       @origin_account.make_current
-      link_google_viewer_id(state_params)
+      link_google_viewer_id(@state_params)
     elsif account_id.present?
       Sharding.select_shard_of(account_id) do
-        sso(account_id, params)
+        sso(account_id)
       end
     else
       onboard

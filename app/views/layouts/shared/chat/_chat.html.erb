@@ -17,7 +17,7 @@
 		fc_JS.type = 'text/javascript';
 		fc_JS.src = ((fc_isSecured) ? asset.cloudfront : asset.js)+'/js/'+jsload+'.js';
 		document.body.appendChild(fc_JS);
-		window.freshchat_setting = '<%=encoded_freshchat_setting%>';
+		window.livechat_setting = '<%=encoded_livechat_setting%>';
 		<% if current_user %>
 			window.FRESHCHAT_VISITORINFO = {name:"<%= current_user.name%>",email:"<%= current_user.email%>"};
 		<% end %>

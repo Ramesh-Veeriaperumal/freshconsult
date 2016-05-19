@@ -4,7 +4,7 @@ var ASSET_URL       = <%= ChatConfig['asset_url'].to_json.html_safe %>;
 var CS_URL          = "<%= ChatConfig['communication_url']%>";
 var CHAT_ENV        = "<%= Rails.env -%>";
 var FC_HTTP_ONLY    = ((<%=ChatConfig['http_only']%> == "1")? true : false);
-var _url = "https://"+CS_URL+":443"; 
+var _url = "https://"+CS_URL+":443";
 
 if(window.location && window.location.protocol=="http:" && (window.liveChat.ieVersionCompatability || FC_HTTP_ONLY)){
     _url = "http://"+CS_URL+":80";
@@ -18,12 +18,13 @@ window.liveChat.URL = _url;
 
 <%if current_user && chat_activated? && !(is_assumed_user?) %>
 <script>
-    var WEB_ROOT        = "//<%=current_account.full_domain%>";
+    var WEB_ROOT        = window.location.protocol + "//"+ window.location.host ;
     var CHAT_DEBUG      = "<%= ChatConfig['chat_debug']%>";
-    var SITE_ID         = '<%= current_account.chat_setting.display_id%>';
+    var LIVECHAT_APP_ID = "<%= ChatConfig['app_id']%>";
+    var SITE_ID         = '<%= current_account.chat_setting.site_id%>';
     var CHAT_CONSTANTS  = <%= ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe %>;
     var CHAT_I18n       = <%= i18n_text %>;
-    var LIVECHAT_TOKEN  = '<%= livechat_token(current_account.chat_setting.display_id, current_user.id) %>';
+    var LIVECHAT_TOKEN  = '<%= livechat_token(current_account.chat_setting.site_id, current_user.id) %>';
 
     var CURRENT_USER    = {
             'id'        : '<%=current_user.id%>',
@@ -31,6 +32,7 @@ window.liveChat.URL = _url;
             'isAdmin'   : <%=current_user.privilege?(:admin_tasks)%>,
             'email'     : '<%=current_user.email%>',
             'groups'    : <%=current_user.agent_groups.collect{|g| g.group_id}.to_json%>,
+            'language'  : '<%=current_user.language%>',
             'time_zone_offset' : '<%=Time.now.in_time_zone(current_user.time_zone).utc_offset %>'
     };
     var CURRENT_ACCOUNT = {
@@ -38,7 +40,7 @@ window.liveChat.URL = _url;
             'name'       : '<%=current_account.name%>',
             'domain'     : '<%=current_account.full_domain%>',
             'product_id' : '<%=current_portal.product ? current_portal.product.id : ""%>',
-            'chat_enabled': <%=current_account.chat_setting.active%>,
+            'chat_enabled': <%=current_account.chat_setting.enabled%>,
             'widget_id'  : '<%=current_chat_widget.widget_id%>',
             'chat_routing': <%=feature?(:chat_routing)%>,
             'cobrowsing': <%=feature?(:cobrowsing)%>
@@ -55,9 +57,9 @@ window.liveChat.URL = _url;
         fc_CSS.setAttribute('type','text/css');
         fc_CSS.setAttribute('href', css_url+'/css/chat.css');
         document.getElementsByTagName('head')[0].appendChild(fc_CSS);
-        <%if current_account.chat_setting.active %>
+        <%if current_account.chat_setting.enabled %>
             jQuery.getScript(url+"/js/chat.js");
-            <%if Rails.env == 'development' %>  
+            <%if Rails.env == 'development' %>
                 jQuery.getScript(url+"/js/agent-devtools.js");
             <%end%>
         <%end%>

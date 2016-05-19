@@ -1751,7 +1751,7 @@ uk:
         import: "Імпортувати дані "
         agent: Агенти
         feedback: "Віджет для відгуків"
-        freshchat: "Live Chat"
+        livechat: "Live Chat"
         integrations: "Сервіси, які інтегруються"
         dispatcher: Диспетчер
         supervisor: Супервайзер
@@ -3802,7 +3802,7 @@ uk:
       description_counter_message: "Best SEO pages recommend 150-160 characters for description."
   import_updated: Оновлено
   feedbackwidget_intro: "Налаштуйте ваш віджет Freshdesk нижче і скористайтеся попереднім переглядом в реальному часі."
-  chatwidget_intro: "Налаштуйте ваш віджет Freshchat нижче і скористайтеся передпереглядом в реальному часі."
+  chatwidget_intro: "Налаштуйте ваш віджет Live Chat нижче і скористайтеся передпереглядом в реальному часі."
   save: Зберегти
   import_added_newly: "Нещодавно додані"
   quick_create: "Quick Create"
@@ -3905,9 +3905,9 @@ uk:
   feedbackwidget_help_para1: "Віджети для відгуків дозволяють вбудовувати форму заявок безпосередньо в сайт або продукт. Можна налаштувати зовнішній вигляд, а також розташування віджета на вашому веб-сайті. Щоб почати використовувати віджет для відгуків,  скопіюйте його і вставте створенний для вбудовування код у ваш веб-сайт або додаток."
   chatwidget_help_content:
     title: "Live Chat"
-    info1: "Freshchat дозволяє вам переглядати відомості про користувачів і спілкуватися з ними в чаті на вашому веб-сайті, в онлайновому ПО або на порталі підтримки безпосередньо через Freshdesk. Можна налаштувати всі параметри вікна чату (у тому числі тексти за замовчанням, кольори і т. д.) і навіть заздалегідь починати сеанси чату, якщо відвідувачі проводять на вашому сайті більше часу, чим необхідно."
+    info1: "Live Chat дозволяє вам переглядати відомості про користувачів і спілкуватися з ними в чаті на вашому веб-сайті, в онлайновому ПО або на порталі підтримки безпосередньо через Freshdesk. Можна налаштувати всі параметри вікна чату (у тому числі тексти за замовчанням, кольори і т. д.) і навіть заздалегідь починати сеанси чату, якщо відвідувачі проводять на вашому сайті більше часу, чим необхідно."
     info2: "На всіх сеансах чату записується метаінформація про відвідувачів, у тому числі їх місцерозташування, які пристрої використовуються, історія надання підтримки і так далі. Після завершення сеансу чату можна перетворити розмову в заявку і продовжити надавати відвідувачеві підтримку по електронній пошті або заархівувати історію спілкування в чаті."
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" > Дізнайтеся більше про використання Freshchat всередині Freshdesk</a>"
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" > Дізнайтеся більше про використання Live Chat всередині Freshdesk</a>"
   low: Низький
   agents: Агенти
   header:
@@ -6067,7 +6067,7 @@ uk:
         filter_by: "Огляд задоволеності"
         view_report_date: "Подивитися звіти за"
         helptext: "<b>Навіщо необхідний звіт про задоволеность клієнтів?</b><p>Звіт про задоволеність клієнтів дозволяє оцінити якість обслуговування агентами служби підтримки клієнтів.<br>Завдяки звітам можна скласти індекс задоволеності клієнтів у вигляді відсоткового значення (задоволені, нейтральні або незадоволені клієнти) щодо кожного агенту служби підтримки.<br><br><b>Що ще можна робити?</b><br><p><ol class='ml15'><li>Фільтрувати результати звітів по агентам, групам або компаніям</li><li>Переглядайте звіти за певний проміжок часу</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Live Chat Summary"
       filter_by_title: "Filtered by"
       time_period: "Time Period"
@@ -7031,12 +7031,12 @@ uk:
         additional_info: "You will be able to purchase numbers, make and take calls once the phone channel is enabled in your account"
         button_text: "Request for phone"
         video_title: "Watch the video to find out what you can do with the phone channel"
-  freshchat:
+  livechat:
     feature_request:
       title: "Welcome to Live Chat"
       heading: "Support your customers with Live Chat"
-      info1: "Customize live chat widget for your brand and business"
-      info2: "Enable live chat for your support portal and website"
+      info1: "Customize Live Chat widget for your brand and business"
+      info2: "Enable Live Chat for your support portal and website"
       info3: "Track all chat transcripts and convert them to tickets"
       read_more: "Read more"
       email_subject: "Request for Live Chat Feature from %{account_name}"
@@ -7108,7 +7108,7 @@ uk:
     bottom_left: "Знизу зліва"
     bottom_right: "Знизу справа"
     integrate_msg: "Копіювати цей код і вставити його перед останнім </body> тегом на вашому веб-сайті або в додатку"
-    integrate_freshchat_title: "Інтегрувати Freshchat в ваш веб-сайт або додаток"
+    integrate_livechat_title: "Інтегрувати Live Chat в ваш веб-сайт або додаток"
     custom_chat_window: "Налагодити вікно чату"
     text_placeholder: "Ваше повідомлення"
     chatbox_bgcolor: "Колір вікна"
@@ -7249,9 +7249,9 @@ uk:
     visitor_form: "Visitor Form"
     preferences: Preferences
     intro_title: "Чому Freshchart?"
-    intro: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
+    intro: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
     enable_chat: "Enable Live Chat"
-    learn_freshchat: "Learn more about Live Chat"
+    learn_livechat: "Learn more about Live Chat"
     support_portal: "Чат на порталі підтримки"
     logged_in_users: "Logged in users only"
     everyone: Усі

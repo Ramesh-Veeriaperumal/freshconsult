@@ -11,13 +11,13 @@ module Social::Twitter::TicketActions
     fd_items = process_feeds(feeds, current_feed_hash)
   end
 
-  def add_as_ticket(twt, twt_handle, twt_type, options={},archived_ticket = nil)
+  def add_as_ticket(twt, twt_handle, twt_type, options={},archived_ticket = nil, user)
     tkt_hash = construct_params(twt, options)
     account  = Account.current
     
     ticket   = account.tickets.build(
       :subject    =>  Helpdesk::HTMLSanitizer.plain(tkt_hash[:body]) ,
-      :twitter_id =>  tkt_hash[:sender] ,
+      :twitter_id =>  user.twitter_id,
       :product_id => options[:product_id] || twt_handle.product_id,
       :group_id   => options[:group_id] || ( twt_handle.product ? twt_handle.product.primary_email_config.group_id : nil),
       :source     => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
@@ -32,6 +32,7 @@ module Social::Twitter::TicketActions
         :description_html => tkt_hash[:body]
       }
     )
+    ticket.requester = user
     ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) if archived_ticket
     if ticket.save_ticket
       Rails.logger.debug "This ticket has been saved - #{tkt_hash[:tweet_id]}"

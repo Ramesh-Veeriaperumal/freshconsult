@@ -1,7 +1,7 @@
 class Helpdesk::SubscriptionsController < ApplicationController
 
   include ActionView::Helpers::TextHelper
-  include Helpdesk::Permissions
+  include Helpdesk::Permissible
 
   before_filter :load_parent_ticket, :verify_permission , :except => :unwatch_multiple
   before_filter :set_native_mobile, :only => [:create_watchers, :unwatch,:index]

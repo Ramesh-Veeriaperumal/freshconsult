@@ -353,14 +353,20 @@ var FreshfoneEndCall;
 		initRequesterValue: function () {
 			this.$requesterName.removeData('requester_id');
 			var initData = this.$requesterName.val(),self = this;
-				if(initData.blank() || freshfonewidget.checkForStrangeNumbers(initData)) { return;}
+			if(initData.blank() || freshfonewidget.checkForStrangeNumbers(initData)) { return;}
+
+			if(this.freshfonecalls.callerInfo && this.freshfonecalls.callerInfo.id){
+				self.$requesterName.select2("data",this.freshfonecalls.callerInfo);
+			}
+			else if(this.callerId){
 				$.ajax({
-				url: freshfone.requester_autocomplete_path,
-				quietMillis: 1000,
-				data: {q: initData},
+					url: freshfone.requester_autocomplete_path,
+					quietMillis: 1000,
+					data: {customer_id: this.callerId},
 				}).done(function(data) {
 					self.$requesterName.select2("data",data.results[0]);
 				});
+			}
 		},
     updateCallWorkTime: function() { 
       var self = this;

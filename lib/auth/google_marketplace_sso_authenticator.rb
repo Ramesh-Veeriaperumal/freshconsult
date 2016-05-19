@@ -8,7 +8,7 @@ class Auth::GoogleMarketplaceSsoAuthenticator < Auth::Authenticator
       onboard
     else
       Sharding.select_shard_of(account_id) do
-        sso(account_id, params)
+        sso(account_id)
       end
     end
     @result

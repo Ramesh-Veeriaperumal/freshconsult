@@ -1469,7 +1469,7 @@ hu:
         import: "Adatok importálása a Zendesk-ről"
         agent: Ügyintézők
         feedback: "Elégedettségmérő module"
-        freshchat: Freshchat
+        livechat: Live Chat
         integrations: Addonok
         dispatcher: Dispatch'r
         supervisor: Supervisor
@@ -2194,8 +2194,8 @@ hu:
         without_user: "visszaállította a kérelmet"
       ticket_type_change:
         without_user: "kérelem típusa a következőre módosult: <strong>{{ticket_type}}</strong>"
-  freshchat:
-    title: Freshchat
+  livechat:
+    title: Live Chat
     widget: Modul
     messages: Üzenetek
     set_default_msgs: "Alapértelmezett üzenetek"
@@ -2283,7 +2283,7 @@ hu:
     saving: Mentés...
     begin_chat: "Chat indítása"
     chatsettings_save: "A változtatások még nincsenek mentve. Menti őket?"
-    integrate_freshchat_info: "Megjegyzés: A chat ablak csak akkor jelenik meg, ha az ügyintéző online."
+    integrate_livechat_info: "Megjegyzés: A chat ablak csak akkor jelenik meg, ha az ügyintéző online."
     click_to_go_online: "Ön offline jelenleg <br> Kattintson ide ha online szeretne lenni"
     click_to_go_offline: "Ön jelenleg online <br> Kattintson ide ha ki szeretne jelentkezni"
     fetching: "Kérjük várjon"
@@ -2934,7 +2934,7 @@ hu:
     char_count: karakterek
     meta_keywords_message: "A kulcsszavakat vesszővel (,) válassza el egymástól"
   import_updated: Frissítve
-  chatwidget_intro: "Szerkessze a Freshchat modult és nézze meg előnézetben, hogy hogy néz ki"
+  chatwidget_intro: "Szerkessze a Live Chat modult és nézze meg előnézetben, hogy hogy néz ki"
   save: Mentés
   import_added_newly: "Újonnan hozzáadott"
   import_warning_info: "If we encounter an already existing contact's email during import, then the other details of the contact will be updated."
@@ -2988,8 +2988,8 @@ hu:
   is_expiring_today: "lejár ma"
   feedbackwidget_help_para1: "The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget."
   chatwidget_help_content:
-    title: Freshchat
-    info1: "Freshchat lets you view and chat with users on your wesbite, online software, or support portal directly from within Freshdesk. You can customize the look, feel and default messages that users should see when you chat with them, and even proactively initiate chat sessions when visitors spend more time on your site."
+    title: Live Chat
+    info1: "Live Chat lets you view and chat with users on your wesbite, online software, or support portal directly from within Freshdesk. You can customize the look, feel and default messages that users should see when you chat with them, and even proactively initiate chat sessions when visitors spend more time on your site."
     info2: "Each chat session will also capture meta information about where visitors are chatting with you from, their device, and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
   low: Alacsony
   agents: Ügyintézők

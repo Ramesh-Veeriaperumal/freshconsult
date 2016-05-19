@@ -14,8 +14,8 @@ class Group < ActiveRecord::Base
   after_commit :update_round_robin_list, on: :update
   after_commit :delete_round_robin_list, :nullify_tickets, on: :destroy
   before_save  :reset_toggle_availability, :create_model_changes
+  after_commit  :destroy_group_in_liveChat, on: :destroy
 
-  after_destroy :remove_group_from_chat_routing
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
 
@@ -259,10 +259,11 @@ class Group < ActiveRecord::Base
                                :group_id => self.id}
   end
 
-  def remove_group_from_chat_routing
-    siteId = account.chat_setting.display_id
+  def destroy_group_in_liveChat
+    siteId = account.chat_setting.site_id
     if account.features?(:chat) && siteId
-      Resque.enqueue(Workers::Livechat, {:worker_method => "remove_group_from_routing", :siteId => siteId, :group_id => id})
+      LivechatWorker.perform_async({:worker_method =>"delete_group",
+                                          :siteId => siteId, :group_id => self.id})
     end
   end
 

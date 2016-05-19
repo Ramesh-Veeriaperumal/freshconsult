@@ -28,7 +28,7 @@ module SupportTicketControllerMethods
       respond_to do |format|
         format.html {
           flash.keep(:notice)
-          flash[:notice] = I18n.t(:'flash.portal.tickets.create.success')
+          flash[:notice] = create_ticket_flash_message
           redirect_to redirect_url
         } 
         format.json {
@@ -72,6 +72,16 @@ module SupportTicketControllerMethods
   
     def check_email_scoper # possible dead code
       current_account.all_users
+    end
+
+    def create_ticket_flash_message
+      if params[:dropped_cc_emails].present?
+        message = [I18n.t(:'flash.portal.tickets.create.success_cc_drop')]
+        message << h(params[:dropped_cc_emails])
+        message.join("<br/>")
+      else
+        I18n.t(:'flash.portal.tickets.create.success')
+      end
     end
 
 end

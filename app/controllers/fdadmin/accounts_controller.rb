@@ -27,7 +27,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
     account_summary[:shard] = shard_info.shard_name
     account_summary[:pod] = shard_info.pod_info
-    account_summary[:freshfone_feature] = account.features?(:freshfone) || account.launched?(:freshfone_onboarding)
+    account_summary[:freshfone_feature] = account.features?(:freshfone)
     respond_to do |format|
       format.json do
         render :json => account_summary
@@ -39,7 +39,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info = {}
     account = Account.find(params[:account_id])
     feature_info[:social] = fetch_social_info(account)
-    feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.display_id?) }
+    feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.site_id?) }
     feature_info[:mailbox] = account.features?(:mailbox)
     feature_info[:freshfone] = account.features?(:freshfone)
     respond_to do |format|
