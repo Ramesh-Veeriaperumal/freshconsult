@@ -85,14 +85,13 @@ class TicketsController < ApiApplicationController
     end
 
     def sideload_associations
-      @include_validation.include_array.each do |association|
-        instance_variable_set("@#{association}", send(association))
-        increment_api_credit_by(1) # for embedded associations
-      end
+      @include_validation.include_array.each { |association| increment_api_credit_by(1) }
     end
 
     def decorator_options
-      super({ name_mapping: (@name_mapping || get_name_mapping) })
+      options =  { name_mapping: (@name_mapping || get_name_mapping) }
+      options.merge!(sideload_options: sideload_options.to_a) if index? || show?
+      super(options)
     end
 
     def get_name_mapping
@@ -100,6 +99,10 @@ class TicketsController < ApiApplicationController
       # We want to avoid memcache call to get custom_field keys and hence following below approach.
       mapping = Account.current.ticket_field_def.ff_alias_column_mapping
       mapping.each_with_object({}) { |(ff_alias, column), hash| hash[ff_alias] = TicketDecorator.display_name(ff_alias) } if @item || @items.present?
+    end
+
+    def sideload_options
+      index? ? @ticket_filter.include_array : @include_validation.include_array
     end
 
     def set_custom_errors(item = @item)
@@ -128,28 +131,6 @@ class TicketsController < ApiApplicationController
       if ApiTicketConstants::NO_PARAM_ROUTES.include?(action_name) && params[cname].present?
         render_request_error :no_content_required, 400
       end
-    end
-
-    # needed for side loading association
-    def conversations
-      # eager_loading note_old_body is unnecessary if all conversations are retrieved from cache.
-      # There is no best solution for this
-      @item.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at).limit(ConversationConstants::MAX_INCLUDE)
-    end
-
-    # used in side loading association
-    def requester
-      @item.requester
-    end
-
-    # used in side loading association
-    def company
-      @item.company
-    end
-
-    # used in side loading association
-    def stats
-      @item.ticket_states
     end
 
     def paginate_options(is_array = false)
