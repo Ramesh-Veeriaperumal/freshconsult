@@ -70,7 +70,8 @@ var chatReport = function(){
 			});
 
 			total = data.length;
-			var transfers = chatReportData.is_pdf ? webkitUniqueCount(transfer) : _.unique(transfer).length;
+			var total_transfer = transfer.length;
+			var transfers = chatReportData.is_pdf ? (total_transfer - webkitUniqueCount(transfer)) : (total_transfer - _.unique(transfer).length);
 			answered = total - missed - transfers;
 			return [total, answered, missed];
 		}
@@ -312,11 +313,11 @@ var chatReport = function(){
 			prev_avg = Math.floor(prev_avg/pavg_count);
 		}
 		if (chatReportData.is_pdf){	 // _.unique method fails in webkit because of prototype.js version 1.6.0.1
-			cur_transfer_count = webkitUniqueCount(cur_transfer);
-			prev_transfer_count = webkitUniqueCount(prev_transfer);
+			cur_transfer_count = cur_transfer.length - webkitUniqueCount(cur_transfer);
+			prev_transfer_count = prev_transfer.length - webkitUniqueCount(prev_transfer);
 		} else {
-			cur_transfer_count = _.unique(cur_transfer).length;
-			prev_transfer_count = _.unique(prev_transfer).length;
+			cur_transfer_count = cur_transfer.length - _.unique(cur_transfer).length;
+			prev_transfer_count = prev_transfer.length - _.unique(prev_transfer).length;
 		}
 
 		cur_answered = current.length - cur_missed - cur_transfer_count;

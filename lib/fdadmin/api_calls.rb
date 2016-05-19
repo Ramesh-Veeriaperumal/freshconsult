@@ -7,7 +7,7 @@ module Fdadmin::APICalls
       :post,
       request_parameters,
       PodConfig['pod_paths']['pod_endpoint'],
-    "#{AppConfig['freshops_subdomain']['global']}.#{AppConfig['base_domain'][Rails.env]}")
+    "#{AppConfig["freshops_subdomain"][PodConfig['GLOBAL_POD']]}.#{AppConfig['base_domain'][Rails.env]}")
   end
 
   def self.make_api_request_to_global(request_type,url_params,path_key,domain)
