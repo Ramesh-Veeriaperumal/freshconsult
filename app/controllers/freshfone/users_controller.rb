@@ -121,7 +121,7 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def current_outgoing_call
-			@outgoing_call ||= current_user.freshfone_calls.call_in_progress
+			@outgoing_call ||= current_user.freshfone_calls.outgoing_in_progress_calls
 		end
 
 		def incoming_sid
