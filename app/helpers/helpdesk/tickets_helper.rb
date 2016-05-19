@@ -12,6 +12,7 @@ module Helpdesk::TicketsHelper
   include Helpdesk::TicketsHelperMethods
   include MetaHelperMethods
   include Helpdesk::TicketFilterMethods
+  include ParserUtil
   include Marketplace::ApiHelper
   
   include HelpdeskAccessMethods
@@ -322,6 +323,35 @@ module Helpdesk::TicketsHelper
     end
     html.html_safe
   end
+
+  def multiple_cc_emails_container cc_emails_hash
+    html  = ""
+    label = "Cc: "
+    cc_emails_hash[:cc_emails] = cc_emails_hash.blank? ? [] : (cc_emails_hash[:tkt_cc] || cc_emails_hash[:cc_emails])
+    if cc_emails_hash[:cc_emails].present? || cc_emails_hash[:dropped_cc_emails].present?
+      html << (label + ticket_cc_info(cc_emails_hash) ).html_safe
+    end
+    html
+  end
+
+  def ticket_popover_details ticket
+    return "" if ticket.cc_email_hash.blank?
+     if ticket.cc_email_hash[:tkt_cc].present? || ticket.cc_email_hash[:dropped_cc_emails].present?
+      cc_emails_string =  CcViewHelper.new(nil, ticket.cc_email_hash[:tkt_cc], ticket.cc_email_hash[:dropped_cc_emails]).cc_agent_hover_content
+    end
+    cc_array = []
+    cc_array << [t('to'), form_email_strings(ticket.to_email)] if ticket.to_email.present?
+    cc_array << [t('helpdesk.shared.cc'), "#{cc_emails_string}"] if cc_emails_string.present?
+    cc_array.map{|c| "<dt>#{c.first} : </dt><dd>#{c.last}</dd>"}.join("")
+  end
+
+  def form_email_strings arr
+    parse_to_comma_sep_emails(arr).split(",").join(",<br />")
+  end
+
+  def form_striked_email_strings arr
+    arr.present? ? "<br /><span class='tooltip' data-original-title='Dropped due to moderation'>, <del>#{form_email_strings(arr)}</del></span>" : ""
+  end
   
   def visible_page_numbers(options,current_page,total_pages)
     inner_window, outer_window = options[:inner_window].to_i, options[:outer_window].to_i
@@ -581,6 +611,12 @@ module Helpdesk::TicketsHelper
   def is_invoice_disabled?(installed_app)
     Integrations::Constants::INVOICE_APPS.include?(installed_app.application.name) && !installed_app.configs_invoices.to_s.to_bool
   end
+
+  private 
+
+    def ticket_cc_info cc_emails_hash
+      CcViewHelper.new(nil, cc_emails_hash[:cc_emails], cc_emails_hash[:dropped_cc_emails]).cc_agent_inline_content.html_safe
+    end
 
 end
 

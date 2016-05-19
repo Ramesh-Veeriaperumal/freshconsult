@@ -1528,7 +1528,7 @@ fi:
         import: "Tuo tiedot Zendeskistä"
         agent: Edustajat
         feedback: Widget
-        freshchat: Freshchat
+        livechat: Live Chat
         integrations: Integroinnit
         dispatcher: Lähettäminen
         supervisor: Valvoja
@@ -3394,10 +3394,10 @@ fi:
   is_expiring_today: "päättyy tänään"
   feedbackwidget_help_para1: "Kerää palautetta asiakkailtasi lisäämällä tukivälilehti omalle verkkosivuillesi."
   chatwidget_help_content:
-    title: Freshchat
-    info1: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site."
+    title: Live Chat
+    info1: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site."
     info2: "Each chat session will capture meta information about visitors including their location, device, etc and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Learn more about using live chat inside Freshdesk</a>"
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Learn more about using Live Chat inside Freshdesk</a>"
   low: Matala
   agents: Edustajat
   header:
@@ -5415,7 +5415,7 @@ fi:
         filter_by: Tyytyväisyyskatselmukset
         view_report_date: "Katsele raportteja ajalta"
         helptext: "<b>Miksi valita asiakastyytyväisyysraportti?</b><p>Asiakastyytyväisyysraportti antaa sinulle tilannekatsauksen asiakastuen edustajien palvelun laadusta.<br>Raportti auttaa sinua ymmärtämään asiakkaidesi tyytyväisyyden määrän. Jokainen tukiedustaja saa tietää tiedot prosenttiarvoina (tyytyväinen, neutraali & tyytymätön).<br><br><b>Mitä muuta voin tehdä?</b><br><p><ol class='ml15'><li>Suodata raportin tulokset edustajien, ryhmän tai yrityksen näkökulman mukaan</li> <br><li>Katsele tietyn aikarajan sisäisiä raportteja</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Live Chat Summary"
       filter_by_title: "Filtered by"
       time_period: "Time Period"
@@ -6275,12 +6275,12 @@ fi:
         error_message: "Sorry we can not make your request right now. Try again later."
         additional_note: "Freshfone request will take two business days"
         button_label: "Request for Freshfone"
-  freshchat:
+  livechat:
     feature_request:
       title: "Welcome to Live Chat"
       heading: "Support your customers with Live Chat"
-      info1: "Customize live chat widget for your brand and business"
-      info2: "Enable live chat for your support portal and website"
+      info1: "Customize Live Chat widget for your brand and business"
+      info2: "Enable Live Chat for your support portal and website"
       info3: "Track all chat transcripts and convert them to tickets"
       read_more: "Read more"
       email_subject: "Request for Live Chat Feature from %{account_name}"
@@ -6289,7 +6289,7 @@ fi:
       error_message: "Sorry we can not make your request right now. Try again later."
       additional_note: "Live Chat request will take two business days"
       button_label: "Request for Live Chat"
-    title: Freshchat
+    title: Live Chat
     widget: Widget
     messages: Viestit
     set_default_msgs: oletusviestit
@@ -6353,7 +6353,7 @@ fi:
     bottom_left: "Ala vasen"
     bottom_right: "Ala oikea"
     integrate_msg: "Copy & paste this code before the last </body> tag on your website or app"
-    integrate_freshchat_title: "Integrate live chat into your website and applications"
+    integrate_livechat_title: "Integrate Live Chat into your website and applications"
     custom_chat_window: "Chat window"
     text_placeholder: Viestisi
     chatbox_bgcolor: "Ikkunan väri"
@@ -6470,7 +6470,7 @@ fi:
     chatsettings_save: "Your changes have not been saved. Save changes?"
     transfer_accepted_msg: "Vierailijan siirto hyväksytty"
     transfer_request_timeout_msg: "Transfer request timed out"
-    integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
+    integrate_livechat_info: "Note: Chat window will appear only when agents are online."
     click_to_go_online: "Not accepting visitor chats"
     click_to_go_offline: "Accepting visitor chats"
     fetching: "Odota hetki"
@@ -6494,10 +6494,10 @@ fi:
     installation: Asennus
     visitor_form: "Visitor Form"
     preferences: Preferences
-    intro_title: "Miksi Freshchat?"
-    intro: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
+    intro_title: "Miksi Live Chat?"
+    intro: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
     enable_chat: "Enable Live Chat"
-    learn_freshchat: "Learn more about Live Chat"
+    learn_livechat: "Learn more about Live Chat"
     support_portal: "Chat on support portal"
     logged_in_users: "Vain kirjautuneet käyttäjät"
     everyone: Kaikki

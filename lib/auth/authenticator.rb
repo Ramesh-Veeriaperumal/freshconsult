@@ -25,6 +25,7 @@ class Auth::Authenticator
     @current_account = options[:current_account]
     @omniauth = options[:omniauth]
     @user_id = options[:user_id]
+    @state_params = options[:state_params]
   end
 
   def name

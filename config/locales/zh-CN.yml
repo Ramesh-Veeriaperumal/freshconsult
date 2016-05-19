@@ -1529,7 +1529,7 @@ zh-CN:
         import: 从Zendesk导入数据
         agent: 客服
         feedback: 反馈控件
-        freshchat: Freshchat
+        livechat: Live Chat
         integrations: 集成
         dispatcher: 分派器
         supervisor: 主管
@@ -3294,7 +3294,7 @@ zh-CN:
     feedback_message_4: 缺失/断开的链接
   import_updated: 已更新
   feedbackwidget_intro: 定制并预览反馈控件。
-  chatwidget_intro: 定制Freshchat控件并预览实时的效果。
+  chatwidget_intro: 定制Live Chat控件并预览实时的效果。
   save: 保存
   import_added_newly: 最近添加
   quick_create: 快速创建
@@ -3396,10 +3396,10 @@ zh-CN:
   is_expiring_today: 今天到期
   feedbackwidget_help_para1: 利用反馈控件，可以在网站或产品中嵌入一个表单。您可以更改表单的外观以及放置的位置。定制完成后，复制生成的代码，嵌入到您的网站或应用程序中。
   chatwidget_help_content:
-    title: Freshchat
-    info1: 利用Freshchat，您可以从Freshdesk内部与网站、在线软件或服务支持门户的用户聊天。您可以定制聊天窗口(包括默认文本消息、颜色等等)，当访客在站点停留时间较长时，还可以主动发起聊天。
+    title: Live Chat
+    info1: 利用Live Chat，您可以从Freshdesk内部与网站、在线软件或服务支持门户的用户聊天。您可以定制聊天窗口(包括默认文本消息、颜色等等)，当访客在站点停留时间较长时，还可以主动发起聊天。
     info2: 每个聊天会话都可以获取有关访客的基本信息，包括所在的地域、所用的设备以及历史服务支持信息。聊天结束后，您还可以选择将对话转成工单，继续通过邮件跟踪处理，或将聊天记录存档。
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >了解更多关于如何使用Freshchat</a>"
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >了解更多关于如何使用Live Chat</a>"
   low: 低
   agents: 客服数量
   header:
@@ -5419,8 +5419,8 @@ zh-CN:
         filter_by: 满意视图
         view_report_date: 查看报表
         helptext: "<b>客户满意度报表是什么？</b><p>客户满意度报表能够展示客服的服务支持质量。<br>帮助您了解客户是否满意。<br><br><b>您还可以做什么？</b><br><p><ol class='ml15'><li>按照客服、组或整个帮助台，查看报表结果</li><li>查看指定时间的报表</li></ol></p></p>"
-    freshchat:
-      report_title: Freshchat汇总
+    livechat:
+      report_title: Live Chat汇总
       filter_by_title: 过滤方式
       time_period: 时间段
       widget: 控件
@@ -6282,21 +6282,21 @@ zh-CN:
         error_message: 抱歉，我们无法立即处理您的请求。请稍后重试。
         additional_note: Freshfone请求将需要两个工作日处理
         button_label: 请求Freshfone
-  freshchat:
+  livechat:
     feature_request:
-      title: 欢迎使用Freshchat
+      title: 欢迎使用Live Chat
       heading: 利用Freshfone支持您的客户
       info1: 针对您的品牌和企业自定义实时聊天
       info2: 为您的支持门户和网站启用实时聊天
       info3: 追踪所有聊天记录并将其转换成工单
       read_more: 了解更多
-      email_subject: "来自%{account_name}的Freshchat功能请求"
-      email_message: 需要Freshchat功能
-      success_message: 感谢您关注Freshchat。我们将很快与您联系。
+      email_subject: "来自%{account_name}的Live Chat功能请求"
+      email_message: 需要Live Chat功能
+      success_message: 感谢您关注Live Chat。我们将很快与您联系。
       error_message: 抱歉，我们无法立即处理您的请求。请稍后重试。
-      additional_note: Freshchat请求将需要两个工作日处理
-      button_label: Freshchat请求
-    title: Freshchat
+      additional_note: Live Chat请求将需要两个工作日处理
+      button_label: Live Chat请求
+    title: Live Chat
     widget: 控件
     messages: 消息
     set_default_msgs: 默认消息
@@ -6360,7 +6360,7 @@ zh-CN:
     bottom_left: 左下
     bottom_right: 右下
     integrate_msg: 将此段代码复制到网站或应用中最后一个</body>标签之前。
-    integrate_freshchat_title: 将Freshchat集成到您的网站和应用程序中
+    integrate_livechat_title: 将Live Chat集成到您的网站和应用程序中
     custom_chat_window: 聊天窗口
     text_placeholder: 您的消息
     chatbox_bgcolor: 窗口颜色
@@ -6477,7 +6477,7 @@ zh-CN:
     chatsettings_save: 尚未保存更改。保存吗？
     transfer_accepted_msg: 已接受访客转交
     transfer_request_timeout_msg: 转交请求超时
-    integrate_freshchat_info: 提示：聊天窗口仅在客服在线时显示
+    integrate_livechat_info: 提示：聊天窗口仅在客服在线时显示
     click_to_go_online: 未接受访客的聊天
     click_to_go_offline: 接受访客的聊天
     fetching: 请稍候
@@ -6501,10 +6501,10 @@ zh-CN:
     installation: 控件代码
     visitor_form: "Visitor Form"
     preferences: Preferences
-    intro_title: 为什么使用Freshchat？
-    intro: 因为卓越的客户服务是随时为客服服务，甚至是在客户发现问题之前。使用Freshchat，您的客服不仅可以在不离开Freshdesk的情况下彼此聊天，他们还可以实时与访客互动并立即提供解答。这是您的另一个有力工具，它是专门用于拉近您与用户关系的渠道。
-    enable_chat: 启用Freshchat
-    learn_freshchat: 详细了解Freshchat
+    intro_title: 为什么使用Live Chat？
+    intro: 因为卓越的客户服务是随时为客服服务，甚至是在客户发现问题之前。使用Live Chat，您的客服不仅可以在不离开Freshdesk的情况下彼此聊天，他们还可以实时与访客互动并立即提供解答。这是您的另一个有力工具，它是专门用于拉近您与用户关系的渠道。
+    enable_chat: 启用Live Chat
+    learn_livechat: 详细了解Live Chat
     support_portal: 在服务支持门户上聊天
     logged_in_users: 仅限已登录的用户
     everyone: 所有人

@@ -472,7 +472,7 @@ span.fb_add
 	.recent-chats{		
 		li{
 			&:before{
-				@extend .#{$font-class-name}comments;
+				@extend .#{$font-class-name}agent-fchat-on;
 			}
 		}
 	}
@@ -531,7 +531,7 @@ span.fb_add
 // Chat conversation in ticket page
 .conversation_wrap{
   &:after{
-    @extend .#{$font-class-name}comments:before;
+    @extend .#{$font-class-name}agent-fchat-on:before;
   }
 }
 

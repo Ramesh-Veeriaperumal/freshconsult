@@ -328,14 +328,14 @@ class Freshfone::Call < ActiveRecord::Base
   
   def initialize_ticket(params)
     self.params = params
-    self.customer_id = params[:custom_requester_id] if customer_id.blank?
+    self.customer_id = load_requester(params)
     self.notable.attributes = {
       :account_id => account_id,
       :ticket_body_attributes => { :description_html => description_html(true) },
       :email => params[:requester_email],
       :name => requester_name,
-      :phone => params[:phone_number].present? ? params[:phone_number] : caller_number,
-      :requester_id => params[:custom_requester_id] || customer_id,
+      :phone => get_phone_number(params[:phone_number]),
+      :requester_id => customer_id,
       :responder => params[:agent],
       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
       :subject => ticket_subject,
@@ -343,6 +343,28 @@ class Freshfone::Call < ActiveRecord::Base
     }
     self.notable.build_ticket_and_sanitize
     self
+  end
+
+  def load_requester(params)
+    return params[:custom_requester_id] if params[:custom_requester_id].present?
+    return customer_id if params[:voicemail]
+    
+    email = params[:requester_email]
+    requester = account.users.new
+    requester.signup!({
+      user: { 
+        name: requester_name, 
+        email: email, 
+        phone: get_phone_number(params[:phone_number]),
+        active: email.blank?} 
+      }, nil, email.present?)
+    
+    requester.present? ? requester.id : "" # returning id if created successfully, otherwise passing empty string, so that appropriate requester will be loaded in ticket callbacks 
+  end
+
+  def get_phone_number(number)
+    return number if number.present?
+    caller_number
   end
   
   def initialize_notes(params)

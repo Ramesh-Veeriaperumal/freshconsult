@@ -1,6 +1,6 @@
 class Support::NotesController < ApplicationController
 
-  skip_before_filter :check_privilege, :verify_authenticity_token
+  skip_before_filter :check_privilege
   include SupportNoteControllerMethods
   
   before_filter :set_mobile , :only => [:create]

@@ -72,7 +72,7 @@
         <% end %>
     <div class="info"> 
       <%= content_tag :div, multiple_emails_container(@to_emails, "To: ") unless @ticket.cc_email_hash.blank? or @to_emails.blank? %>
-      <%= content_tag :div, multiple_emails_container(@ticket.ticket_cc, "Cc: ") unless @ticket.cc_email_hash.blank? %>
+      <%= content_tag :div, multiple_cc_emails_container(@ticket.cc_email_hash) unless @ticket.cc_email_hash.blank? %>
     </div> 
   </div>
   <div rel="image-enlarge" id="ticket_original_request" class="request_archive_mail">

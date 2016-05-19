@@ -1726,7 +1726,7 @@ ja-JP:
         import: Zendeskからデータをインポートする
         agent: エージェント
         feedback: フィードバック・ウィジェット
-        freshchat: ライブチャット
+        livechat: ライブチャット
         integrations: 統合
         dispatcher: Dispatch'r
         supervisor: 監督
@@ -5993,7 +5993,7 @@ ja-JP:
         filter_by: 満足度ビュー
         view_report_date: の間のレポートを見る
         helptext: "<b>カスタマー満足度報告を使用する理由は?</b><p>カスタマー満足度報告を使用すると、カスタマーサポートエージェントのサービスの質を一目で知ることができます。<br>報告は一人ひとりのサポートエージェントに関連したカスタマーの満足度を知ることに役立ち、これはパーセンテージバリュー（嬉しい、普通、嬉しくない）で表示されます。<br><br><b>他には何ができますか？</b><br><p><ol class='ml15'><li>報告結果をエージェント、グループまたは会社ごとにフィルターすることができます</li><li>時間枠を特定して報告を表示することもできます</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: ライブチャットの概要
       filter_by_title: "次の項目でフィルタ:"
       time_period: 期間
@@ -6960,7 +6960,7 @@ ja-JP:
         additional_info: アカウントで電話チャンネルが有効になると、番号を購入して電話の発信と着信が可能になります
         button_text: 電話のリクエスト
         video_title: 電話チャンネルでできることについて解説したビデオをご覧ください
-  freshchat:
+  livechat:
     feature_request:
       title: ライブチャットへようこそ
       heading: ライブチャットでカスタマーをサポート
@@ -7037,7 +7037,7 @@ ja-JP:
     bottom_left: 左下
     bottom_right: 右下
     integrate_msg: このコードをコピーし、あなたのウェブサイトあるいはアプリの最後の</body>タグの前に貼り付けます。
-    integrate_freshchat_title: ライブチャットをウェブサイトやアプリケーションに統合
+    integrate_livechat_title: ライブチャットをウェブサイトやアプリケーションに統合
     custom_chat_window: チャットウィンドウ
     text_placeholder: メッセージ
     chatbox_bgcolor: ウィンドウカラー
@@ -7180,7 +7180,7 @@ ja-JP:
     intro_title: ライブチャットを選ぶ理由は？
     intro: Freshdeskのライブチャットを使用すると、ご自身のウェブサイト、オンラインソフトウェア、あるいはサポートポータルに直接Freshdeskのチャットを表示し、ユーザーとチャットを行うことができます。ウェブサイトのビジターが要求する前から予測的にチャットを開始することもできます。チャットの終了後、その会話をチケットに変換し、メールで引き続きビジターをフォローするよう選択できます。あるいは、チャットのやり取りをアーカイブすることも可能です。
     enable_chat: ライブチャットを有効にする
-    learn_freshchat: ライブチャットについて詳細を見る
+    learn_livechat: ライブチャットについて詳細を見る
     support_portal: サポートポータルでチャット
     logged_in_users: ログインされたユーザーのみ
     everyone: 全員

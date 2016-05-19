@@ -288,7 +288,8 @@
 
 	    	},
 			createTicketHelpkit:function(data){
-				if(data.status === "error"){
+				console.log('data$$$$::',data);
+				if(data){
 					this.flashNotice("ticket",false);
 					this.closeWindow(null,null,true);
 					return false;
@@ -327,8 +328,9 @@
 					dataType: 'json',
 					data: {"ticket":ticket},
 					success: function(response){
+						console.log('response',response);
 						that.flashNotice("ticket",response.status,response.ticket_id);
-						if(response.status === true){
+						if(response){
 							var options = {
 								ticketId : response.ticket_id,
 								ongoingChat : data.ongoingChat,
@@ -355,7 +357,7 @@
 					}else{
 						msgclass = "background:rgba(255,255,255,0.5);";
 					}
-					var photo = msgObj.photo? window.location.protocol+WEB_ROOT+msgObj.photo : window.location.protocol+WEB_ROOT+'/images/fillers/profile_blank_thumb.gif';
+					var photo = msgObj.photo? WEB_ROOT + msgObj.photo : WEB_ROOT + '/images/fillers/profile_blank_thumb.gif';
 					var descriptionTemplate = window.JST["freshchat/templates/ticket_description"];
 					resObj =  descriptionTemplate({msg:msgObj.msg, name:msgObj.name, date:moment(msgObj.createdAt).format("hh:mm A"), 
 								photo:photo, cls: msgclass});

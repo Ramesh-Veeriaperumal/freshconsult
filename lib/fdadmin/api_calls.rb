@@ -7,7 +7,7 @@ module Fdadmin::APICalls
       :post,
       request_parameters,
       PodConfig['pod_paths']['pod_endpoint'],
-    "#{AppConfig['freshops_subdomain']['global']}.#{AppConfig['base_domain'][Rails.env]}")
+    "#{AppConfig["freshops_subdomain"][PodConfig['GLOBAL_POD']]}.#{AppConfig['base_domain'][Rails.env]}")
   end
 
   def self.make_api_request_to_global(request_type,url_params,path_key,domain)
@@ -31,6 +31,7 @@ module Fdadmin::APICalls
     rescue Exception => e
       Rails.logger.debug "Exception in Response for #{request_url} : : : : #{e.inspect} "
       NewRelic::Agent.notice_error(e,{:description => "POD api call failed :#{url_params}"})
+      raise e
     end
     return response
   end

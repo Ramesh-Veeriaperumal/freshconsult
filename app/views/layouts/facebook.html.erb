@@ -6,9 +6,9 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
 		<title><%= h(page_title) %></title>
-		<meta name="description" content="<%= page_description %>">
+		<meta name="description" content="<%= @page_meta[:description] %>">
 		<meta name="author" content="">
-		<meta name="keywords" content="<%= page_keywords %>">
+		<meta name="keywords" content="<%= @page_meta[:keywords] %>">
 		
 	    <link rel="apple-touch-icon" href="/assets/touch/touch-icon-iphone.png" />
 		<link rel="apple-touch-icon" sizes="72x72" href="/assets/touch/touch-icon-ipad.png" />
@@ -17,8 +17,10 @@
 
 		<meta name="viewport" content="width=device-width,user-scalable=no" />
 		<meta name="viewport" content="initial-scale = 1.0">
-		<% unless page_canonical.blank? %>
-			<link rel="canonical" href="<%= page_canonical %>" />
+		
+		<% unless @page_meta[:canonical].blank? %>
+			<% @page_meta[:canonical].sub!(/facebook\//, "") %>
+			<link rel="canonical" href="<%= @page_meta[:canonical] %>" />
 		<% end %>
 
 		<!-- Adding meta tag for CSRF token -->

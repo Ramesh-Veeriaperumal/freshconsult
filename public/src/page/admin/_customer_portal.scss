@@ -1,6 +1,10 @@
 
 .customer-portal{
 	.portal-section{
+		.moderation-info{
+			@include border-left(1px solid #ddd);
+			@include padding-left(20px);
+		}
 		margin-bottom: 40px;
 		.heading{
 			font-size: 18px;

@@ -97,10 +97,10 @@
 								var thankyou_url = '/widgets/feedback_widget/thanks?widgetType=';
 								thankyou_url += $.urlParam('widgetType');
 								if($('#submit_message').val()) {
-									thankyou_url += "&submit_message=" + encodeURI($('#submit_message').val());
+									thankyou_url += "&submit_message=" + encodeURIComponent($('#submit_message').val());
 								}
 
-								thankyou_url += "&retainParams=" + encodeURI($('#retainParams').val());
+								thankyou_url += "&retainParams=" + encodeURIComponent($('#retainParams').val());
 								window.location = thankyou_url;
 							}else {
 								$('#errorExplanation').removeClass('hide');

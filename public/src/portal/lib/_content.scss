@@ -759,3 +759,76 @@ hr.content-divider{
 //----------------------------------------------------------------------------------------------------------
 //											Fresh Suggestions styles end
 //----------------------------------------------------------------------------------------------------------
+
+
+
+.ticket-main{
+	.user-details{
+		h4.user-name{
+			display: inline;
+		}
+		.popover{
+			left: 22px !important;
+			max-height: 180px;
+			overflow: auto;
+		}
+		.ticket_cc, .note_cc{
+			max-width: 75%;
+			cursor: pointer;
+			display: inline-block;
+		}
+		.arrow{
+			top: -2px;
+		    @include left(50%);
+		    @include margin-left(-8px);
+		    @include border-left(9px solid transparent);
+		    @include border-right(9px solid transparent);
+		    border-bottom: 9px solid #ccc;
+		    &:after{
+				content: " ";
+			    display: block;
+			    position: absolute;
+			    width: 0px;
+			    height: 0px;
+			    @include border-left(8px solid transparent);
+			    @include border-right(8px solid transparent);
+			    border-bottom: 9px solid #fff;
+			    @include left(-8px);
+			    top: 1px;
+			}
+		}
+
+		.popover-inner{
+		    background: white;
+	    	border: 1px solid #ccc;
+		}
+		.popover-title{
+			display: none;
+		}
+	}
+
+	.email-details{
+		max-height: 200px;
+		max-width: 400px;
+		word-wrap: break-word;
+		overflow: auto;
+		margin: 0 -14px;
+		padding: 0 10px;
+		color: #333;
+		position: relative;
+		box-sizing: border-box;
+		.emailcc{
+			position: absolute;
+			left: 10px;
+		}
+		.emaillist{
+			@include padding-left(24px);
+			display: block;
+		}
+		
+		del{
+			color: #999;
+		}
+	}
+
+}

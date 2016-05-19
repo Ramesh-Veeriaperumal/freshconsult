@@ -72,20 +72,20 @@ class Helpdesk::Note < ActiveRecord::Base
 
   	def validate_schema_less_note
       return unless human_note_for_ticket?
-      emails = [schema_less_note.to_emails, schema_less_note.cc_emails, schema_less_note.bcc_emails]
+      emails = [schema_less_note.to_emails, schema_less_note.bcc_emails]
       if email_conversation?
         if schema_less_note.to_emails.blank?
           schema_less_note.to_emails = notable.from_email
           schema_less_note.from_email ||= account.primary_email_config.reply_email
         end
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
-        schema_less_note.cc_emails = fetch_valid_emails(schema_less_note.cc_emails)
         schema_less_note.bcc_emails = fetch_valid_emails(schema_less_note.bcc_emails)
       elsif reply_to_forward?
-        schema_less_note.to_emails, schema_less_note.cc_emails, schema_less_note.bcc_emails = reset_emails(emails)
+        schema_less_note.to_emails, schema_less_note.bcc_emails = reset_emails(emails)
       elsif note?
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
       end
+      schema_less_note.cc_emails = format_cc_emails_hash
     end
 
     def update_content_ids
@@ -358,6 +358,12 @@ class Helpdesk::Note < ActiveRecord::Base
         return false
       end
       return true
+    end
+
+    def format_cc_emails_hash
+      {   :cc_emails => fetch_valid_emails(schema_less_note.cc_emails_hash[:cc_emails]),
+          :dropped_cc_emails => fetch_valid_emails(schema_less_note.cc_emails_hash[:dropped_cc_emails]) 
+        }
     end
 
     def add_client_manager_cc

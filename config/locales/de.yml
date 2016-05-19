@@ -1887,7 +1887,7 @@ de:
         import: "Daten aus Zendesk importieren"
         agent: Bearbeiter
         feedback: Feedback-Widget
-        freshchat: Live-Chat
+        livechat: Live-Chat
         integrations: Integrationen
         dispatcher: Verteiler
         supervisor: Supervisor
@@ -6855,7 +6855,7 @@ de:
         filter_by: Zufriedenheitsansichten
         view_report_date: "Berichte anzeigen während"
         helptext: "<b>Wozu einen Kundenzufriedenheitsbericht? </b><p>Mit einem Kundenzufriedenheitsbericht erhalten Sie einen Einblick in die Servicequalität Ihrer Kundenservice-Bearbeiter.<br>Mithilfe des Berichts können Sie besser verstehen, wie zufrieden Ihre Kunden sind. Die Zufriedenheit mit den einzelnen Bearbeitern wird anhand eines Prozentwertes dargestellt (zufrieden, neutral und unzufrieden).<br><br><b>Was können Sie noch tun?</b><br><p><ol class='ml15'><li>Filtern Sie die Berichtsergebnisse nach Bearbeiter, Gruppe oder Unternehmen.</li><li>Zeigen Sie die Berichte an, die innerhalb eines gewissen Zeitraums erstellt wurden.</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Übersicht - Live-Chat"
       filter_by_title: "Gefiltert nach"
       time_period: Zeitraum
@@ -8139,7 +8139,7 @@ de:
         additional_info: "Sobald Ihr Telefonkanal in Ihrem Konto aktiviert ist, werden Sie Nummern erwerben sowie Anrufe tätigen und entgegennehmen können."
         button_text: "Anfrage für Telefon"
         video_title: "Schauen Sie sich das Video an, um zu erfahren, welche Funktionen Ihnen im Telefonkanal bereitstehen."
-  freshchat:
+  livechat:
     feature_request:
       title: "Willkommen bei Live-Chat"
       heading: "Ihre Kunden mit Live-Chat betreuen"
@@ -8216,7 +8216,7 @@ de:
     bottom_left: "Unten links"
     bottom_right: "Unten rechts"
     integrate_msg: "Kopieren Sie diesen Code und fügen Sie Ihn vor dem letzten Tag </body> auf Ihrer Website oder in Ihrer App ein."
-    integrate_freshchat_title: "Integrieren Sie Live-Chat in Ihre Website und Anwendungen"
+    integrate_livechat_title: "Integrieren Sie Live-Chat in Ihre Website und Anwendungen"
     custom_chat_window: Chat-Fenster
     text_placeholder: "Ihre Nachricht"
     chatbox_bgcolor: Fensterfarbe
@@ -8359,7 +8359,7 @@ de:
     intro_title: "Warum Live-Chat?"
     intro: "Die integrierte Live-Chat-Lösung von Freshdesk ermöglicht Ihnen, Benutzer Ihrer Website, der Online-Software oder des Supportkanals zu sehen und mit ihnen über Freshdesk direkt zu chatten. Sie können auch proaktv beginnen, mit Besuchern der Website zu chatten. Sobald ein Chat beendet ist, können Sie entscheiden, die Kommunikation in ein Ticket zu wandeln und mit dem Benutzer via E-Mail in Kontakt zu bleiben oder die Chat-Transkription zu archivieren."
     enable_chat: "Live-Chat aktivieren"
-    learn_freshchat: "Mehr über Live-Chat erfahren"
+    learn_livechat: "Mehr über Live-Chat erfahren"
     support_portal: "Im Support-Portal chatten"
     logged_in_users: "Nur angemeldete Benutzer"
     everyone: Jeder

@@ -213,7 +213,8 @@ module IntegrationServices
         "192.168.0.0/16",
         "224.0.0.0/4",
         "fc00::/7",
-        "fe80::/10"].collect do |a|
+        "fe80::/10",
+        "::1"].collect do |a|
         IPAddr.new(a)
       end
 

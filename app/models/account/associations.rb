@@ -293,6 +293,10 @@ class Account < ActiveRecord::Base
 
   has_many :subscription_invoices
   has_many :user_companies
+
+  has_many :helpdesk_permissible_domains, :dependent => :destroy
+  accepts_nested_attributes_for :helpdesk_permissible_domains, allow_destroy: true
+
   has_many :scheduled_tasks, :class_name => 'Helpdesk::ScheduledTask'
   has_many :outgoing_email_domain_categories, :dependent => :destroy
   has_many :authorizations, :class_name => '::Authorization'

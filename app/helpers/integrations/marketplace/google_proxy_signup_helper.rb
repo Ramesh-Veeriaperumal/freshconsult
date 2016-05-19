@@ -1,15 +1,15 @@
 module Integrations::Marketplace::GoogleProxySignupHelper
-  include GoogleLoginHelper
+  include Integrations::GoogleAppsHelper
 
   def google_sso proxy_auth_user
     create_google_remote_account(@account, @remote_id, proxy_auth_user)
     user = @account.users.find_by_email(@email) || new_user(@account, @name, @email)
     create_auth(user, @uid, @account.id)
-    domain = @account.full_domain
+    domain_arg = @account.full_domain
     random_key = SecureRandom.hex
     set_redis_sso(random_key, @uid)
-    redirect_url = construct_redirect_url(@account, domain, random_key)
-    redirect_to "#{redirect_url}"
+    url = redirect_url(@account, domain_arg, random_key)
+    redirect_to "#{url}"
   end
 
   private

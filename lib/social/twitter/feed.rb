@@ -56,12 +56,12 @@ class Social::Twitter::Feed
         notable  = add_as_note(feed_obj, handle, :mention, ticket, user, action_data)
       else 
         archive_ticket  = tweet.get_archive_ticket
-        notable = add_as_ticket(feed_obj, handle, :mention, action_data, archive_ticket) 
+        notable = add_as_ticket(feed_obj, handle, :mention, action_data, archive_ticket, user) 
       end
     else
       if action_data[:convert]
         user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
-        notable = add_as_ticket(feed_obj, handle, :mention, action_data) 
+        notable = add_as_ticket(feed_obj, handle, :mention, action_data, nil, user) 
       end
     end
     notable

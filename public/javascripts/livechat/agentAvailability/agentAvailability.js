@@ -154,7 +154,9 @@
               return new Date(model.attributes[that.filterBy]).getTime() * -1; // -1 for getting reverse array with null values at last
             }
           }), function(model){
-            return !model.attributes.onGoingChatCount;
+            if(model.attributes.status){
+              return !model.attributes.onGoingChatCount;
+            }
           });
         }
       }

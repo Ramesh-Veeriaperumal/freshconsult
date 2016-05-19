@@ -65,7 +65,9 @@ module Freshfone::TicketActions
 	private
 		def build_ticket(args)
 			current_call.notable = Account.current.tickets.build
-			current_call.initialize_ticket(args)
+			ActiveRecord::Base.transaction do
+				current_call.initialize_ticket(args)
+			end
 		end
 
 		def build_note(args)

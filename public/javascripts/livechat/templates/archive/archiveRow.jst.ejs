@@ -5,7 +5,7 @@
 </td>
 <td class="connection span1">
 	<span class="tooltip" >
-		<span class="<% if(modelJson.missed === true ) { 
+		<span class="<% if(modelJson.missed == true ) { 
 								print ("ficon-no-arrow-right");
 							} else if(parseInt(modelJson.initiated_by) === 2){ 
 								print("ficon-arrow-left-2")
@@ -22,7 +22,7 @@
 	  		widgetName = window.liveChat.widgetList[modelJson.widget_id];
 	  	}
   %> 
-	<%if(modelJson.missed === true ) { %>
+	<%if(modelJson.missed == true ) { %>
 			<strong class="text-wrap tooltip" data-original-title="<%=(widgetName.length > 15) ? widgetName : '' %>" > <%=widgetName%></strong>
 	<% } else {%> 
 		<% var agentName = window.userCollection.getTitle(parseInt(modelJson.agent_id)); %>
@@ -42,8 +42,8 @@
 <td class="options span3">
 	<% if(modelJson.type==="visitor"){
 		 if(modelJson.external_id != null) {
-			if(modelJson.inConversation !== true && modelJson.closed !== true && modelJson.last_msg_at) { %>
-		<a id ="add-note" href="#" class="btn btn-default btn-round" data-chat-id="<%=modelJson.id%>" title=<%= CHAT_I18n.add_note %>  >
+			if(!modelJson.inConversation && !modelJson.closed && modelJson.last_msg_at) { %>
+		<a id ="add-note" href="#" class="btn btn-default btn-round" data-chat-id="<%=modelJson.id%>" title="<%= CHAT_I18n.add_note %>"  >
 			<span class="ficon-file-edit fsize-14"></span>
 		</a>
 		<% } %>

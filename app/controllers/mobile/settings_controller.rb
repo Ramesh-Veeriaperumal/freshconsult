@@ -33,15 +33,23 @@ class Mobile::SettingsController < ApplicationController
         if sha_generated == request_data['id'] 
           domain_mapping = ShardMapping.lookup_with_domain(params[:cname])
           unless domain_mapping.nil? 
-            Sharding.select_shard_of(domain_mapping.account_id) do
-              Sharding.run_on_slave do
-                account = Account.find(domain_mapping.account_id)
-                unless account.nil?
-                  full_domain = account.full_domain
-                  sso_enabled = account.sso_enabled? 
-                  sso_logout_url = account.sso_logout_url
+            if (domain_mapping.pod_info == PodConfig['CURRENT_POD'])
+              Sharding.select_shard_of(domain_mapping.account_id) do
+                Sharding.run_on_slave do
+                  account = Account.find(domain_mapping.account_id)
+                  unless account.nil?
+                    full_domain = account.full_domain
+                    sso_enabled = account.sso_enabled? 
+                    sso_logout_url = account.sso_logout_url
+                  end
                 end
               end
+            else
+              request_parameters = {:account_id => domain_mapping.account_id , :target_method => :fetch_mobile_login_info}
+              response = connect_main_pod(request_parameters,domain_mapping.pod_info)
+              sso_enabled = response['account_id']['sso_enabled']
+              sso_logout_url = response['account_id']['sso_logout_url']
+              full_domain = response['account_id']['full_domain']
             end
           end
           result_code = MOBILE_API_RESULT_SUCCESS  #Success
@@ -76,13 +84,12 @@ class Mobile::SettingsController < ApplicationController
   end
 
   private
-  def determine_pod
-   shard = ShardMapping.lookup_with_domain(params[:cname])
-   return if shard.nil? or shard.pod_info.blank?
-   if shard.pod_info != PodConfig['CURRENT_POD']
-     Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
-     redirect_to_pod(shard)
-   end
+  def connect_main_pod(request_parameters,pod_info)
+    Fdadmin::APICalls.make_api_request_to_global(
+      :post,
+      request_parameters,
+      PodConfig['pod_paths']['pod_endpoint'],
+    "#{AppConfig["freshops_subdomain"][pod_info]}.#{AppConfig['base_domain'][Rails.env]}")
   end
 
 end

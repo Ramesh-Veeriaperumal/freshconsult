@@ -2,8 +2,15 @@ class Role < ActiveRecord::Base
   self.primary_key = :id
   
   include Authority::FreshdeskRails::ModelHelpers
+  include Chat::Constants
+
   before_destroy :destroy_user_privileges
   after_update :update_user_privileges
+
+# uncomment for chat privileges phase 2
+  # after_commit  ->(obj) { obj.update_liveChat_role } , on: :create
+  # after_commit  ->(obj) { obj.update_liveChat_role } , on: :update
+  # after_commit  :destroy_liveChat_role , on: :destroy
 
   #Acutal recalculationg of privilege masks part should be
   #moved to background processing.
@@ -43,6 +50,14 @@ class Role < ActiveRecord::Base
     self.privileges = Role.privileges_mask(privilege_data.uniq).to_s
   end
 
+  def privilege_list
+      privileges = []
+      PRIVILEGES_BY_NAME.each do |privilege|
+        privileges.push(privilege) if self.privilege?(privilege)
+      end
+      privileges
+  end
+
   def self.privileges_mask(privilege_data)
     (privilege_data & PRIVILEGES_BY_NAME).map { |r| 2**PRIVILEGES[r] }.sum
   end
@@ -57,6 +72,10 @@ class Role < ActiveRecord::Base
     options.merge!(API_OPTIONS)
     #(options[:methods] ||= []).push(:system_role)
     super options
+  end
+
+  def chat_privileges
+    CHAT_PRIVILEGES & self.privilege_list
   end
 
   def system_role
@@ -96,6 +115,22 @@ class Role < ActiveRecord::Base
 
     view_admin_enabled ? [:manage_availability] : [:view_admin, :manage_availability]
   end
+  # protected
+  #
+  #   def update_liveChat_role
+  #     siteId = account.chat_setting.site_id
+  #     chat_privileges_list = CHAT_PRIVILEGES & self.privilege_list
+  #       LivechatWorker.perform_async({:worker_method => "create_role", :siteId => siteId,
+  #                       :name => self.name, :default_role => self.default_role, :external_id => self.id,
+  #                       :privilege_list => chat_privileges_list.map(&:to_s)})
+  #   end
+  #
+  #   def destroy_liveChat_role(siteId = nil)
+  #     siteId = siteId.nil? ? account.chat_setting.site_id : siteId
+  #     if account.features?(:chat) && siteId
+  #       LivechatWorker.perform_async({:worker_method => "delete_role", :siteId => siteId, :name=> self.name})
+  #     end
+  #   end
 
   private
     def destroy_user_privileges

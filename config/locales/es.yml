@@ -1860,7 +1860,7 @@ es:
         import: "Importar datos desde Zendesk"
         agent: Agentes
         feedback: "Botón de contacto"
-        freshchat: "Chat en linea"
+        livechat: "Chat en linea"
         integrations: Integraciones
         dispatcher: Despachador
         supervisor: Supervisor
@@ -4150,7 +4150,7 @@ es:
   feedbackwidget_help_para1: "Capture la opinión de sus clientes agregando un botón de soporte a su sitio en la web."
   chatwidget_help_content:
     title: "Chat en Linea"
-    info1: "Porque un servicios excepcional al cliente significa permancer ahí junto a él, incluso antes de que tenga un problema. Con Freshchat, no sólo pueden tus agentes mantener conversación entre ellos sin abandonar Freshdesk, además pueden comunicarse con tus clientes en tiempo real y darles respuestas inmediatas. Es una flecha adicional en tu carcaj, un canal especialmente diseñado para estar más cerca de tus usuarios."
+    info1: "Porque un servicios excepcional al cliente significa permancer ahí junto a él, incluso antes de que tenga un problema. Con Live Chat, no sólo pueden tus agentes mantener conversación entre ellos sin abandonar Freshdesk, además pueden comunicarse con tus clientes en tiempo real y darles respuestas inmediatas. Es una flecha adicional en tu carcaj, un canal especialmente diseñado para estar más cerca de tus usuarios."
     info2: "Cada sesion de chat captura informatio tipo META sobre el visitante como su localizacion, el dispositivo, etc. Tambien su historial de ayuda con su sitio, cuando se finaliza la sesion de chat se puede seleccionar convertir la conversacion en un ticket y continuar conectado con el cliente via email o archivar la transcripcion del chat"
     info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Aprende mas sobre el Chat en linea  ingresando a Freshdesk</a>"
   low: Bajo
@@ -6690,7 +6690,7 @@ es:
         filter_by: "Vistas de satisfaccion"
         view_report_date: "Vista de informe durante"
         helptext: "<b>¿Para qué sirve el informe de satisfacción del cliente?</b><p>El informe de satisfacción del cliente te ofrece una instantánea de la calidad del servicio de los agentes de atención al cliente.<br>El informe te ayuda a descubrir el  cociente de felicidad de los clientes, representado por un valor porcentual (contento, neutral y no contento) por cada agente de asistencia.<br><br><b>¿Qué otras cosas puedes hacer?</b><br><p><ol class='ml15'><li>Filtrar los resultados por agente, grupo o empresa</li><li>Ver informes de un marco temporal concreto</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Sumario del Chat"
       filter_by_title: "Filtrar por"
       time_period: "Periodo de tiempo"
@@ -7919,7 +7919,7 @@ es:
         additional_info: "Usted será capaz de comprar los números, hacer y recibir llamadas de teléfono una vez que el canal está habilitado en su cuenta"
         button_text: "Solicitud de telefono"
         video_title: "Vea el video para saber lo que puede hacer con el canal telefónico"
-  freshchat:
+  livechat:
     feature_request:
       title: "Bienvenido al Chat En linea"
       heading: "Entrega ayuda a tus clientes con chat en linea"
@@ -7996,7 +7996,7 @@ es:
     bottom_left: "Abajo a la Izquierda"
     bottom_right: "Abajo a la derecha"
     integrate_msg: "Copia y pega este código antes de la última etiqueta </body> en tu sitio web o aplicación"
-    integrate_freshchat_title: "Integra el Chat en linea en tu sitio web y aplicaciones"
+    integrate_livechat_title: "Integra el Chat en linea en tu sitio web y aplicaciones"
     custom_chat_window: "Ventana de chat"
     text_placeholder: "Su mensaje "
     chatbox_bgcolor: "Color de la ventana"
@@ -8139,7 +8139,7 @@ es:
     intro_title: "¿Por qué Chat en Linea?"
     intro: "Ahora Freshdesk integra el Chat en Linea, Con el, no sólo pueden tus agentes mantener conversación entre ellos sin abandonar Freshdesk, además pueden comunicarse con tus clientes en tiempo real y darles respuestas imediatas.Tambien puede iniciar el chat de modo practivo en tus sitios y cuando el chat termina, puedes seleccionar convertir la conversacion en ticket para continuar comunicandote por email con el cliente o archivar la transcripcion"
     enable_chat: "Activar Chat en Linea"
-    learn_freshchat: "Saber más sobre el Chat en linea"
+    learn_livechat: "Saber más sobre el Chat en linea"
     support_portal: "Chat en el portal de soporte"
     logged_in_users: "Solamente usuarios registrados"
     everyone: Todos

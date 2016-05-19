@@ -48,7 +48,7 @@ module ActionMailerCallbacks
 
     def reset_smtp_settings(mail)
       begin
-        category_id = get_category_id
+        category_id = get_category_header(mail) || get_category_id
       rescue Exception => e
         Rails.logger.debug "Exception occurred while getting category id : #{e} - #{e.message} - #{e.backtrace}"
         NewRelic::Agent.notice_error(e)
@@ -65,6 +65,10 @@ module ActionMailerCallbacks
       else 
         Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
       end
+    end
+
+    def get_category_header(mail)
+      mail.header["X-FD-Email-Category"].to_s.to_i if mail.present? and mail.header["X-FD-Email-Category"].present?
     end
   end
 end
