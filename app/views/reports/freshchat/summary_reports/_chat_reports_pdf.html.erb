@@ -42,7 +42,7 @@
       </div>
       <div class="row-fluid control-group">
       <div class="vertical-alignment time-sheet-top-margin">
-        <strong><%=t('reports.freshchat.agent_chat_summary')%></strong>
+        <strong><%=t('reports.livechat.agent_chat_summary')%></strong>
       </div>
       </div>
       <div class="grid-pdf report-pdf row-fluid"> 
@@ -71,14 +71,14 @@
 
 <%= javascript_tag do %>
 
-  var freshchat_i18n = {"filter_title": "<%=t('reports.freshchat.filter_by_title')%>", "time_period": "<%=t('reports.freshchat.time_period')%>", "widget": "<%=t('reports.freshchat.widget')%>", "group": "<%=t('reports.freshchat.group')%>", type: "<%=t('reports.freshchat.chat_type')%>",  "custom_days": "<%= t('reports.date_ranges.custom') %>", "total_chats": "<%=t('reports.freshchat.total_chats')%>", "num_of_chats": "<%=t('reports.freshchat.num_of_chats')%>", "answered_chats": "<%=t('reports.freshchat.answered_chats')%>", "missed_chats": "<%=t('reports.freshchat.missed_chats')%>", "avg_handle_time": "<%=t('reports.freshchat.avg_handle_time')%>", "num_of_transfer": "<%=t('reports.freshchat.num_of_transfer')%>","avg_time_queue": "<%=t('reports.freshchat.avg_time_queue')%>","no_data":"<%=t('reports.no_data')%>"};
+  var freshchat_i18n = {"filter_title": "<%=t('reports.livechat.filter_by_title')%>", "time_period": "<%=t('reports.livechat.time_period')%>", "widget": "<%=t('reports.livechat.widget')%>", "group": "<%=t('reports.livechat.group')%>", type: "<%=t('reports.livechat.chat_type')%>", "this_week": "<%=t('reports.date_ranges.last_7_days') %>", "this_month": "<%= t('reports.date_ranges.last_30_days') %>", "three_months": "<%= t('reports.date_ranges.last_90_days') %>","today": "<%=t('reports.date_ranges.today')%>","yesterday": "<%=t('reports.date_ranges.yesterday')%>", "custom_days": "<%= t('reports.date_ranges.custom') %>", "total_chats": "<%=t('reports.livechat.total_chats')%>", "num_of_chats": "<%=t('reports.livechat.num_of_chats')%>", "answered_chats": "<%=t('reports.livechat.answered_chats')%>", "missed_chats": "<%=t('reports.livechat.missed_chats')%>", "avg_handle_time": "<%=t('reports.livechat.avg_handle_time')%>", "num_of_transfer": "<%=t('reports.livechat.num_of_transfer')%>","avg_time_queue": "<%=t('reports.livechat.avg_time_queue')%>","no_data":"<%=t('reports.no_data')%>"};
 
   jQuery(document).ready(function() {
     var URL      = "<%=ChatConfig['communication_url']%>";
     var CHAT_ENV    = "<%= Rails.env -%>";
     var FC_HTTP_ONLY = ((<%=ChatConfig['http_only']%> == "1")? true : false);
     <%
-      site_id = Account.current.chat_setting.display_id
+      site_id = Account.current.chat_setting.site_id
       user_id = User.current.id
       params.merge!({:table_row_max_limit => row_limit }) 
     %> 
