@@ -36,7 +36,6 @@
 				if(window._.isEmpty(this.chat.external_id)){
 					this.render();
 				}else{
-
 					this.ticket.existingExternalId = this.chat.external_id;
 					this.getMessagesFromLivechat("note",this.addNote.bind(this));
 				}
@@ -58,7 +57,7 @@
 
 			},
 			addNote: function(data){
-				if(this.ticket.existingExternalId == null || (data.status ==="error")){
+				if(!data || this.ticket.existingExternalId == null){
 	          		this.flashNotice('note',false);	
 					this.closeWindow(null,null,true);
 					return false;
@@ -140,7 +139,7 @@
 			},
 			showNewTicketOption: function(event){
 				var visitorName = (this.visitor.name || this.visitor.visitor_id);
-				var visitorEmail = this.visitor.email;
+				var visitorEmail = this.visitor.email && this.visitor.email !== "null"? this.visitor.email : "" ;
 				// Ticket Subject
 				this.ticket.ticketSubject = window.CHAT_I18n.ticket_subject.replace("$1",visitorName)
 	                                                 .replace("$2", moment(this.chat.created_at).format("ddd, Do MMM YYYY"));
@@ -183,25 +182,20 @@
 					if(chatModel){
 						chatModel.requestChatClose(externalId);
 					}else if(options){
-	        			var request = { 
-	        				action : "chat/updateExternalId",
-	        				data: {
-	        					siteId 	: window.SITE_ID,
-	        					code 	: "fd",
-	        					chatId 	: options.chatId,
-	        					userId 	: window.CURRENT_USER.id,
-	        					token 	: LIVECHAT_TOKEN,
-	        					closed  : true
-	        				}
-	        			}
-	        			if(externalId){
-	        				request.data.externalId = externalId;
-	        			}
-	        			if(options.ongoingChat){
-	        				request.data.ongoingChat = options.ongoingChat;
-	        			}
-	        			request.data = jQuery.param(request.data);
-						window.liveChat.jsonpRequest(request);
+						var requestData = {};
+						var attributes = {
+							siteId	:	SITE_ID,
+							userId	: CURRENT_USER.id,
+							chatId	:	options.chatId
+						}
+						if(externalId){
+							attributes.external_id = externalId;
+						}
+						if(options.ongoingChat){
+							attributes.ongoingChat = options.ongoingChat;
+						}
+						requestData.attributes = attributes;
+						window.liveChat.request("chats/" + options.chatId , "PUT", requestData);
 					}
 				}else{
 					window.chatCollection.disableChatTab(this.chat.chat_id,false);
@@ -226,19 +220,14 @@
 			},
 			getMessagesFromLivechat: function(type, callback){
 				var chat = this.chat;
-	      		var data = {
-	      			siteId :window.SITE_ID,
-	      			chatId:(chat.chat_id || chat.id ), 
-	      			userId: CURRENT_USER.id,
-	      			linked : true, 
-	      			excludeOngoing : this.excludeOngoing,
-	      			token : window.LIVECHAT_TOKEN
-	      		};
-	        	var request = {
-	        		action : "chat/getUnmarkedMsgs",
-	        		data  : jQuery.param(data)
-	        	}
-	        	window.liveChat.jsonpRequest(request, callback);
+				var chatId = chat.chat_id || chat.id;
+	      var requestData = {
+    			linked : true, 
+    			excludeOngoing : this.excludeOngoing,
+    		};
+      	window.liveChat.request('chats/' + chatId + '/getUnmarkedMsgs', 'GET', requestData, function(err, data){
+      		callback(data);
+      	});
 			},
 
 			// TODO : Error icon css correction
@@ -301,7 +290,7 @@
 
 	    	},
 			createTicketHelpkit: function(data){
-				if(data.status === "error"){
+				if(!data){
 					this.flashNotice("ticket",false);
 					this.closeWindow(null,null,true);
 					return false;
@@ -376,7 +365,7 @@
 					}else{
 						msgclass = "background:rgba(255,255,255,0.5);";
 					}
-					var photo = msgObj.photo? window.location.protocol+WEB_ROOT+msgObj.photo : window.location.protocol+WEB_ROOT+'/images/fillers/profile_blank_thumb.gif';
+					var photo = msgObj.photo? WEB_ROOT + msgObj.photo : WEB_ROOT + '/images/fillers/profile_blank_thumb.gif';
 					var descriptionTemplate = window.JST["livechat/templates/tickets/ticketDescription"];
 					resObj =  descriptionTemplate({msg:msgObj.msg, name:msgObj.name, photo:photo, cls: msgclass});
 					conversation += resObj;

@@ -58,9 +58,13 @@ class UserEmail < ActiveRecord::Base
     find(:first, :conditions => [conditions_sql, *conditions_subs])
   end
 
-  def self.user_for_email(email)
+  def self.user_for_email(email, account = Account.current)
     user_email = where(email: email).first
     user_email ? user_email.user : nil
+  end
+
+  def self.existing_emails_for_emails(emails, account = Account.current)
+    self.where(:email => emails).pluck(:email)
   end
 
   def reset_perishable_token

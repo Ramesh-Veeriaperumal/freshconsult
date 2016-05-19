@@ -18,6 +18,7 @@ class EmailConfigNotifier < ActionMailer::Base
     mail(headers) do |part|
       part.html { render "activation_instructions.html" }
     end.deliver
+    Rails.logger.info "Sending activation instructions for email_config - #{email_config.reply_email} - #{@activation_url.to_s}"
   end
   
   def test_email(email_config)

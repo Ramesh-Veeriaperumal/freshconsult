@@ -39,6 +39,7 @@
                                   :title => t('email_configs.unverified_info1')) %> -
 						      <%= link_to(t("email_configs.send_verification_email"),
                                   deliver_verification_admin_email_config_path(email_config),
+                                  :method => :put,
                                   :class => "btn btn-mini product_send_act",
                                   "data-loading-text" => t('admin.getting_started.index.next_please_wait') ) %>
       		    </small>

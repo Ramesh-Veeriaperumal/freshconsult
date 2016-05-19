@@ -1856,7 +1856,7 @@ zh-TW:
         import: 從Zendesk匯入資料
         agent: 客服
         feedback: 反饋的插件
-        freshchat: 即時聊天
+        livechat: 即時聊天
         integrations: 整合
         dispatcher: "分派; 分發"
         supervisor: "主管; 監督"
@@ -6694,7 +6694,7 @@ zh-TW:
         helptext: |-
             <b>為什麼需要客戶滿意度報告？</b>
             <p>客戶滿意度報告能夠展示客服服務支援的質量。<br>此報告幫助您瞭解您的客戶的滿意指數（滿意、尚可＆不滿意）以百分比值呈現，適用於每一個支援服務客服。<br><br><b>您還可以做什麼？</b><br><p><ol class='ml15'><li>按照客服、群組或公司來篩選報告結果</li><li>查看特定時間區段的報告</li></ol></p></p>
-    freshchat:
+    livechat:
       report_title: 即時聊天摘要
       filter_by_title: 篩選
       time_period: 時間區間
@@ -7927,7 +7927,7 @@ zh-TW:
         additional_info: 一旦手機頻道在您的帳戶中啟用，你將能夠購買電話號碼、撥打和接聽電話。
         button_text: 申請電話
         video_title: 觀看此影片，看看你可以用手機頻道做什麼
-  freshchat:
+  livechat:
     feature_request:
       title: 歡迎來到即時聊天
       heading: 透過即時聊天提供支援服務給客戶
@@ -8004,7 +8004,7 @@ zh-TW:
     bottom_left: 左下
     bottom_right: 右下
     integrate_msg: "您的網站或應用程式, 複製和貼上此代碼在最後</body>標籤前。"
-    integrate_freshchat_title: 整合即時聊天到您的網站和應用程式
+    integrate_livechat_title: 整合即時聊天到您的網站和應用程式
     custom_chat_window: 聊天視窗
     text_placeholder: 您的留言
     chatbox_bgcolor: 視窗顏色
@@ -8147,7 +8147,7 @@ zh-TW:
     intro_title: 為何要線上即時聊天？
     intro: Freshdesk整合的即時聊天解決方案，讓您可以查看來自您的網站、線上軟體、直接來自Freshdesk支援門戶網站的用戶，且與他們通訊。你也可以主動開始與您的網站訪問者聊天了。一旦你完成一個聊天會話，你可以選擇將談話轉換成一張票，並繼續追蹤訪問者通過電子郵件，或存檔的聊天記錄。
     enable_chat: 啟用即時線上聊天
-    learn_freshchat: 了解更多關於線上即時聊天
+    learn_livechat: 了解更多關於線上即時聊天
     support_portal: 在支援服務網站的即時通訊
     logged_in_users: 僅供已登入用戶
     everyone: 每個人

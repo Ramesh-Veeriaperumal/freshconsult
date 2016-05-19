@@ -14,7 +14,7 @@ class Integrations::IlosController < ApplicationController
     display_id = @video_params['resource_id']
     private_note = @video_params['private_note']
     incoming = @video_params['incoming'].to_bool
-    note_desc_html = %Q{<div class='ilos_frame'>#{@note_desc}<br><br><a href='#{video_url}' class='video_link' target='blank'>#{note_link}</a><br><br>#{@iframe_html}</div>}
+    note_desc_html = %Q{<div class='ilos_frame'>#{@note_desc}<br><br><a href='#{video_url}' class='video_link' target='blank'>#{note_link}</a><br><br>#{@video_tag_html}</div>}
     @ticket = current_account.tickets.find_by_display_id(display_id)
     note = @ticket.notes.build(
         :private => private_note,
@@ -35,7 +35,7 @@ class Integrations::IlosController < ApplicationController
     topic_id = @video_params['resource_id']
     @topic = current_account.topics.find(topic_id)
     user = get_user
-    note_desc_html = %Q{<div class='ilos_frame'><p>#{@note_desc}</p><br>#{@iframe_html}</div>}
+    note_desc_html = %Q{<div class='ilos_frame'><p>#{@note_desc}</p><br>#{@video_tag_html}</div>}
 
     if user.agent?
       post = @topic.posts.build(
@@ -70,7 +70,7 @@ class Integrations::IlosController < ApplicationController
     @article = current_account.solution_articles.find(article_id)
     @draft = @article.draft.presence || @article.create_draft_from_article
     get_user
-    note_desc_html = %Q{<div class='ilos_frame'><p>#{@note_desc}</p><br>#{@iframe_html}</div>}
+    note_desc_html = %Q{<div class='ilos_frame'><p>#{@note_desc}</p><br>#{@video_tag_html}</div>}
     @draft.description += note_desc_html
     if @draft.save! 
       render :text => t('integrations.ilos.messages.ilos_success')
@@ -87,7 +87,7 @@ class Integrations::IlosController < ApplicationController
   end
 
   def popupbox
-    render :partial => integrations_ilos_popupbox_path, :locals => { :ilos_entity_id => params[:ilos_entity_id], :location => params[:location] } 
+    render :partial => integrations_ilos_popupbox_path, :locals => { :ilos_entity_id => params[:ilos_entity_id], :location => params[:location] }
   end
 
   private
@@ -107,16 +107,8 @@ class Integrations::IlosController < ApplicationController
 
   def video_params
     @video_params = params[:video_endpoint_extras]
-    @iframe_html = handle_ilos_iframe
+    @video_tag_html = "<video src='https://app.ilosvideos.com/file/view/video/#{params[:randtag]}' width='580px' height='340px' controls/>";
     @note_desc = @video_params['video_desc'].presence || t('integrations.ilos.messages.default_video_desc')
-  end
-
-  def handle_ilos_iframe
-    nok_dom = Nokogiri::HTML::DocumentFragment.parse(params[:iframe])
-    iframe_dom = nok_dom.at_css "iframe"
-    iframe_dom.attributes['width'].value = '580px'
-    iframe_dom.attributes['height'].value = '340px'
-    nok_dom.to_html
   end
 
   def get_params_body_hash

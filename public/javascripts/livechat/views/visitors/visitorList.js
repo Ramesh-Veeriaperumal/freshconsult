@@ -32,9 +32,6 @@ liveChat.visitorListView = function(){
       }.bind(this),180);
     },
     saveFilteredCollection : function(visitors){
-      if(this.type == 'newVisitor'){
-        visitors.values = jQuery.map(visitors.values,JSON.parse);
-      }
       this.filteredCollection.reset(visitors.values,{merge: true});
       this.filteredCollection.sort({silent: true});
       this.collection.saveCount(visitors.count);

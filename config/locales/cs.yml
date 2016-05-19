@@ -1553,7 +1553,7 @@ cs:
         import: "Importovat data ze Zendesku"
         agent: Zástupci
         feedback: "Panel pro zpětnou vazbu"
-        freshchat: Freshchat
+        livechat: Live Chat
         integrations: Aplikace
         dispatcher: Dispečer
         supervisor: Supervizor
@@ -3447,10 +3447,10 @@ cs:
   is_expiring_today: "vyprší dnes"
   feedbackwidget_help_para1: "Tento Panel pro vyvolání formuláře požadavku si může upravit dle libosti a umístit kdekoli na vašich stránkách - stačí zkopírovat HTML kód a vložit jej kam potřebujete - tak bude formulář na odeslání požadavku na podporu dostupný všude."
   chatwidget_help_content:
-    title: Freshchat
+    title: Live Chat
     info1: "FreshChat vám umožní vidět se a hovořit s uživatelem přímo z prostředí FreshDesk. Můžete si upravit podobu, chování a základní zprávy které uživatel při rozhovoru uvidí, případně můžete proaktivně iniciovat rozhovor pokud návštěvník tráví delší čas prohlížením vašich stránek."
     info2: "Z každého rozhovoru budou získána metadata o návštevnících včetně jejich pozice, zařízení atd. včetně historie jejich podpory vámi. Po skončení rozhovoru si můžete zvolit, zda jej převedete na požadavek a dále budete komunikovat s návštěvníkem po e-mailu, nebo zda si přepis rozhovoru budete jen archivovat."
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Další informace o použití Freshchat v rámci Freshdesk</a>"
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Další informace o použití Live Chat v rámci Freshdesk</a>"
   low: Nízká
   agents: Zástupci
   header:
@@ -5474,7 +5474,7 @@ cs:
         filter_by: "Pohledy se spokojeností zákazníků"
         view_report_date: "Vyberte časové období"
         helptext: "<b>K čemu Výkaz spokojenosti zákazníků?</b><p>Výkaz spokojenosti zákazníků vám dává obrázek o kvalitě služeb podávaných vašimi zástupci.<br>Tento report vám pomůže porozumět úrovni spokojenosti vašich zákazníků, která je reprezentována jako procento počtu hodnocení (spokojený, neutrální, nespokojený) daného zástupce.<br><br><b>A co ještě můžete dělat?</b><br><p><ol class='ml15'><li>Filtrovat výsledky v zívislosti na zástupci, skupině či společnosti</li><li>filtrovat výsledky za zvolené období</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Live Chat Summary"
       filter_by_title: "Filtered by"
       time_period: "Time Period"
@@ -6334,21 +6334,21 @@ cs:
         error_message: "Omlouváme se, ale teď nemůžeme vyřídit výš požadavek. Prosíme - zkuste to později."
         additional_note: "Vyřízení požadavku z Freshfone zabere 2 pracovní dny"
         button_label: "Požadavek na Freshfone"
-  freshchat:
+  livechat:
     feature_request:
-      title: "Vítejte na Freshchat"
-      heading: "Podporujte své zákazníky pomocí Freshchat"
+      title: "Vítejte na Live Chat"
+      heading: "Podporujte své zákazníky pomocí Live Chat"
       info1: "Upravte panel pro živý rozhovor pro potřeby svých značek a obchodu"
       info2: "Povolte živý rozhovor pro svůj portál podpory a webové stránky"
       info3: "Projít všechny přepisy rozhovorů a konvertovat je do požadavků"
       read_more: "Přečíst více"
-      email_subject: "Požadavek na funkci Freshchat od %{account_name}"
-      email_message: "Potřebuji funkci Freshchat"
+      email_subject: "Požadavek na funkci Live Chat od %{account_name}"
+      email_message: "Potřebuji funkci Live Chat"
       success_message: "Děkujeme vám za zájem o Freschat. Brzy se vám ozveme."
       error_message: "Omlouváme se, ale teď nemůžeme vyřídit výš požadavek. Prosíme - zkuste to později."
-      additional_note: "Vyřízení požadavku z Freshchat zabere 2 pracovní dny"
-      button_label: "Požadavek na Freshchat"
-    title: Freshchat
+      additional_note: "Vyřízení požadavku z Live Chat zabere 2 pracovní dny"
+      button_label: "Požadavek na Live Chat"
+    title: Live Chat
     widget: "FreshChat panel"
     messages: Zprávy
     set_default_msgs: "Implicitní zpráva"
@@ -6412,7 +6412,7 @@ cs:
     bottom_left: "Vlevo dole"
     bottom_right: "Vpravo dole"
     integrate_msg: "Kopírujte a vložte tento kód před poslední tag </body> na vašem webu nebo aplikaci"
-    integrate_freshchat_title: "Integrujte Freshchat do vašich webových stránek a aplikací"
+    integrate_livechat_title: "Integrujte Live Chat do vašich webových stránek a aplikací"
     custom_chat_window: "Okno rozhovoru"
     text_placeholder: "Vaše zpráva"
     chatbox_bgcolor: "Barva okna"
@@ -6529,7 +6529,7 @@ cs:
     chatsettings_save: "Chcete uložit provedené změny?"
     transfer_accepted_msg: "Akceptován transfer návštěvníka"
     transfer_request_timeout_msg: "Čas na požadavek přesunu byl vyčerpán"
-    integrate_freshchat_info: "Poznámka: okno rozhovoru je viditelné pouze tehdy, když je zástupce online."
+    integrate_livechat_info: "Poznámka: okno rozhovoru je viditelné pouze tehdy, když je zástupce online."
     click_to_go_online: "Not accepting visitor chats"
     click_to_go_offline: "Accepting visitor chats"
     fetching: "Prosím čekejte"
@@ -6554,9 +6554,9 @@ cs:
     visitor_form: "Visitor Form"
     preferences: Preferences
     intro_title: "Proč právě Frechchat?"
-    intro: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
+    intro: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
     enable_chat: "Enable Live Chat"
-    learn_freshchat: "Learn more about Live Chat"
+    learn_livechat: "Learn more about Live Chat"
     support_portal: "Konverzujte na portále podpory"
     logged_in_users: "Pouze přihlášení uživatelé"
     everyone: Kdokoli

@@ -6,15 +6,14 @@ liveChat.admin_short_codes = (function(){
       _new_code_dom_fragment : window.JST["livechat/templates/shortcodes/shortCodes"],
       _auth_params: null,
       _action_urls: {
-          create   : { type: "POST", url: "shortcodes/create"},
-          getCodes : {type: "GET", url: "shortcodes/getCodes"},
-          update   : {type: "POST", url: "shortcodes/update"},
-          destroy  : {type: "POST", url: "shortcodes/destroy"}
+          create   : {type: "POST", url: "shortcodes"},
+          getCodes : {type: "GET", url: "shortcodes"},
+          update   : {type: "PUT", url: "shortcodes/:id"},
+          destroy  : {type: "DELETE", url: "shortcodes/:id"}
       },
       _error_messages: {
           CODE_EMPTY : "Code cannot be empty.",
           ER_DUP_ENTRY : "Trying to add or update duplicate code.",
-          
         },
       _trim_size: 45,
       _valid_code: new RegExp((/[`~,.<_>;':"/[\]|{}()!@#$%^&*?=\s+]/)),
@@ -46,7 +45,9 @@ liveChat.admin_short_codes = (function(){
         });
 
         jQuery('.fc-sc-edit').live('click',function(){
-          jQuery(this).parents('.fc-item').addClass('editing').removeClass("error");
+          var _parent = jQuery(this).parents('.fc-item');
+          _parent.addClass('editing').removeClass("error");
+          _parent.find(".short_code_message").val(_parent.find(".message_view").text());
         });
 
         jQuery('.fc-sc-save').live('click',function(){
@@ -55,21 +56,20 @@ liveChat.admin_short_codes = (function(){
           var _message = _parent.find('.short_code_message').val();
           var _params = {};
 
-          if(!_module.validateCode(_key.trim())){
+          if(!_module.validateCode(_key.trim()) || !_module.validateMessage(_message.trim())){
             _module.showAlertMsg(_parent,_module._error_messages.CODE_EMPTY);
             return false;
           }
 
-          _params.data = {site_id : window.SITE_ID, code: _key, message: _message};
+          _params.data = { attributes : { code: _key, message: _message } };
           _params.selector_id = _parent.attr("id");
           _params.action = _module._action_urls.update;
 
           if(_parent.attr("data-action") == 'update'){
-            _params.data.id = _parent.attr("id");
-            _module.ajaxCall(_params,_module.updateShortCodeId,_parent);
+            _module.ajaxCall(_params, _module.updateShortCodeId, _parent, _parent.attr("id"));
           }else{
             _params.action = _module._action_urls.create;
-            _module.ajaxCall(_params,_module.createShortCodeId,_parent);
+            _module.ajaxCall(_params, _module.createShortCodeId, _parent);
           }
         });
 
@@ -93,9 +93,9 @@ liveChat.admin_short_codes = (function(){
                 _params = {},
                 _code_id =  _parent.attr("id");
             _params.action = _module._action_urls.destroy;
-            _params.data = {site_id : window.SITE_ID, id: _code_id};
+            _params.data = {};
             _params.selector_id = _parent.attr("id");
-            _module.ajaxCall(_params,_module.deleteShortCode,_parent);
+            _module.ajaxCall(_params, _module.deleteShortCode, _parent,  _code_id);
           }          
         });
 
@@ -105,8 +105,6 @@ liveChat.admin_short_codes = (function(){
       getCodes: function(){
         var _params = {
           action: _module._action_urls.getCodes,
-          data: {site_id : window.SITE_ID},
-          dataType: "jsonp",
           selector_id: "short_codes_container"
         };
         _module.ajaxCall(_params,_module.buildDom,[]);
@@ -117,28 +115,28 @@ liveChat.admin_short_codes = (function(){
         jQuery("#"+short_code_id).remove();
       },
       //create new record callback
-      createShortCodeId: function(resp,short_code_id){
-        var _parent_elm = jQuery("#"+short_code_id).attr("id",resp.result.id).attr("data-action","update");
-        _parent_elm.find(".code_view").html(resp.result.code);
-        _parent_elm.find(".message_view").html(escapeHtml(resp.result.message));
+      createShortCodeId: function(shortcode, short_code_id){
+        var _parent_elm = jQuery("#"+short_code_id).attr("id",shortcode.id).attr("data-action","update");
+        _parent_elm.find(".code_view").html(shortcode.code);
+        _parent_elm.find(".message_view").html(shortcode.message);
         _parent_elm.find(".error-label").remove();
         _parent_elm.removeClass('editing');
-        _parent_elm.find('.short_code_key').val(resp.result.code);
-        _parent_elm.find('.short_code_message').val(resp.result.message);
+        _parent_elm.find('.short_code_key').val(shortcode.code);
+        _parent_elm.find('.short_code_message').val(shortcode.message);
         jQuery('#short_code_add').removeClass('disabled');
       },
       //update record callback
       updateShortCodeId: function(resp,short_code_id){
         var _parent_elm = jQuery("#"+short_code_id);
         _parent_elm.find(".code_view").html(_parent_elm.find('.short_code_key').val());
-        _parent_elm.find(".message_view").html(escapeHtml(_parent_elm.find('.short_code_message').val()));
+        _parent_elm.find(".message_view").html(fc_helper.escapeHtml(_parent_elm.find('.short_code_message').val()));
         _parent_elm.find(".error-label").remove();
         _parent_elm.removeClass('editing');
       },
       //get records call back
       buildDom: function(resp,container_id){
         var _dom_fragment = "";
-        var _short_codes = resp.result;
+        var _short_codes = resp;
         var _container_elm = jQuery("#"+container_id);
         for (var i=0; i < _short_codes.length; i++){
           var _code_obj = _short_codes[i];
@@ -149,6 +147,10 @@ liveChat.admin_short_codes = (function(){
 
       validateCode: function(code){
         return (code.length > 0 && code.length <= 10 && !_module._valid_code.test(code));
+      },
+      
+      validateMessage: function(code){
+        return (code.length > 0 && code.length <= 255);
       },
 
       showAlertMsg: function(elem, msg){
@@ -166,31 +168,17 @@ liveChat.admin_short_codes = (function(){
         return _str;
       },
 
-      ajaxCall: function(params,callback,parent_elem){
+      ajaxCall: function(params, callback, parent_elem, id){
         parent_elem.length > 0 ? parent_elem.addClass("sloading") : "";
-        params.data.user_id = _module._auth_params.user_id;
-        params.data.token = _module._auth_params.token;
-        jQuery.ajax({
-          type: params.action.type,
-          url: window.csURL + "/" + params.action.url,
-          data: params.data,
-          dataType: params.dataType ? params.dataType : "json",
-          cache: false,
-          success: function( response ) {
-              if(response.status == 'success' && _.isFunction(callback)){
-                  callback(response,params.selector_id);
-                  parent_elem.length > 0 ? parent_elem.removeClass("sloading") : "";
-              }
-              else if(response.status == 'error'){
-                var _msg = _module._error_messages[response.error_message.error_code];
-                _module.showAlertMsg(parent_elem,_msg);
-                parent_elem.length > 0 ? parent_elem.removeClass("sloading") : "";
-              }
-          },
-          error: function (httpReq, status, exception) {
-              console.log("error getting " +params.action, exception);
-              _module.showAlertMsg(parent_elem,exception);
+        var path = params.action.url.replace(':id', id);
+        window.liveChat.request(path, params.action.type, params.data, function(err, response) {
+          if(err){
+            var _msg = _module._error_messages['ER_DUP_ENTRY']+ ' \/ ' +_module._error_messages['CODE_EMPTY'];
+            _module.showAlertMsg(parent_elem,_msg);
+          }else if(response){
+            callback(response, params.selector_id);
           }
+          parent_elem.length > 0 ? parent_elem.removeClass("sloading") : "";
         });
       }
     };
@@ -209,7 +197,6 @@ liveChat.admin_short_codes = (function(){
           _module._error_messages = opts._i18n_msg.error_msg;  
           _module.i18n =  {code: opts._i18n_msg.title, message: opts._i18n_msg.message, confirm: opts._i18n_msg.confirm};
         }
-        _module._auth_params = { user_id: opts._agent_id, token: opts._token};
         _module.bindEvents();
         _module.getCodes();
       }

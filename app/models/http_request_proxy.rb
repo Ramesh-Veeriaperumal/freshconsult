@@ -4,6 +4,19 @@ class HttpRequestProxy
   include HttpProxyMethods
   include Fdadmin::ApiCallConstants
 
+  PROHIBITED_ADDRESSES = [
+    "0.0.0.0/8",
+    "255.255.255.255/32",
+    "127.0.0.0/8",
+    "10.0.0.0/8",
+    "169.254.0.0/16",
+    "172.16.0.0/12",
+    "192.168.0.0/16",
+    "224.0.0.0/4",
+    "fc00::/7",
+    "fe80::/10",
+    "::1"].map {|a| IPAddr.new(a) }.freeze
+
   TIMEOUT = 4
 
   def fetch(params, request)
@@ -74,6 +87,7 @@ class HttpRequestProxy
       options[:headers] = options[:headers].merge(customHeaders) unless (customHeaders.nil? or customHeaders.empty?)
       timeout = params[:timeout].to_i
       options[:timeout] = timeout.between?(1, TIMEOUT)  ? timeout : TIMEOUT #Returns status code 504 on timeout expiry
+      verify_url(remote_url, encode_url)
       begin
         if (params[:auth_type] == 'OAuth1')
           send_req_options = Hash.new
@@ -118,6 +132,7 @@ class HttpRequestProxy
       Rails.logger.error("Error while processing proxy request #{params.inspect}. \n#{e.message}\n#{e.backtrace.join("\n")}")  # TODO make sure any password/apikey sent in the url is not printed here.
       response_body = '{"result":"error"}'
       response_code = 500  # Internal server error
+      NewRelic::Agent.notice_error(e)
     end
     response_type = accept_type if response_type.blank?
     begin
@@ -135,6 +150,18 @@ class HttpRequestProxy
      Rails.logger.error("Error while parsing remote response.")
     end
     return {:text=>response_body, :content_type => response_type, :status => response_code, 'x-headers' => x_headers}
+  end
+
+  def verify_url(url_to_check, encode_url)
+    url_to_check = URI.encode(url_to_check) if encode_url
+    uri = URI.parse(url_to_check)
+
+    ip_to_check = IPSocket::getaddress(uri.host)
+    PROHIBITED_ADDRESSES.each do |addr|
+      if addr === ip_to_check
+        raise "Invalid local address #{uri.host}"
+      end
+    end
   end
   
 end

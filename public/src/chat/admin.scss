@@ -3,6 +3,9 @@
 
 $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 
+.lc-msg-archives{
+	padding:20px 0;
+}
 .freshchat_admin_content{
 	@include margin-left(150px);
 	.info-data{
@@ -139,7 +142,6 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 	.conversation{
 		background: #fff;
 		min-height: 600px;
-    @include padding(20px);
     @include border-right(1px solid #eee);
 	}
 	.profile-options{
@@ -150,8 +152,8 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
     .info{
     	margin-top: 20px;
     	li{
-    		padding-bottom: 10px;
-    		i{
+    		padding-top: 6px;
+    		i {
     			display: inline-block;
     			width: 15px;
     			height: 15px;
@@ -159,6 +161,9 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
     			@include margin-right(5px);
     			color:#9A9A9A;
     		}
+    	}
+    	li.lc-info-ip {
+    		padding-top: 2px;
     	}
     }
     .editing{
@@ -189,8 +194,9 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 			@include border-radius(5px);
 		}
 	}
-	.#{$font-class}comments{
+	.#{$font-class}agent-fchat-on{
 		@include margin-right(10px);
+		vertical-align: middle;
 	}
 	.options{
 		@include text-align(right);
@@ -201,7 +207,6 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 	}
 	.conversation_wrap{
 		padding: 0;
-		border: 1px solid #eee;
 		border-top: none;
 		&:before,
 		&:after{
@@ -217,6 +222,34 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 					display: block;
 				}
 			}
+		}
+		.system-msg{
+			@include padding(10px 10px 10px 28px);
+	    border-top: 1px solid #eee;
+	    color: #E1C893;
+	    font-weight: 500;
+	    font-size: 12px;
+	    .lc-bulls{
+				margin: 0 20px 0 -10px;
+			  font-size: 24px;
+			  display: inline-block;
+			  line-height: 0;
+			  position: relative;
+			  top: -6px;
+	    }
+	    .lc-msg{
+		    font-size: 12px;
+				font-weight: normal;
+		    line-height: 0;
+		    position: relative;
+		    margin-right: 15px;
+	    }
+	    &.transcript-pagebreak{
+	    	border-top: 1px solid #9F9F9F;
+	    }
+	    &+ .system-msg{
+	    	border-top: none;
+	    }
 		}
 	}
 	.pad-l{
@@ -325,7 +358,7 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 	}
 }
 .fc-archive-title{
-	.#{$font-class}comments{
+	.#{$font-class}agent-fchat-on{
 		padding-right: 10px;
 		vertical-align: middle;
 	}
@@ -358,5 +391,11 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 	  margin-top: 0;
 	  font-size: 12px;
 	  margin-left: 37px;
+		.lc-grey{
+			color:#888;
+		}
 	}
+}
+.lc-info-ip{
+	padding-left: 20px;
 }

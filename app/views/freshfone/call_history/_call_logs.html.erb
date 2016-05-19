@@ -118,7 +118,7 @@
 	 <% if current_account_freshfone_numbers.any? %>
 	<td class="width3">
 		<div class="call_user pull-right">
-				<%= is_strange_number.present? ? cannot_make_calls() : can_make_calls(call.caller_number,"",call.freshfone_number_id) %>
+				<%= is_strange_number.present? ? cannot_make_calls() : can_make_calls(call.caller_number,call.customer,"",call.freshfone_number_id) %>
 			</div>
 		<div class="assigned_ticket <%='converted_ticket' if call.notable_present? %> btn-round pull-right tooltip" 
 		title="<%= call.notable_present? ? 

@@ -8,7 +8,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::Call::EndCallActions
 	
 	include Freshfone::Search
-	before_filter :load_user_by_phone, :only => [:caller_data]
+	before_filter :load_customer, :only => [:caller_data]
 	before_filter :set_native_mobile, :only => [:caller_data]
 	before_filter :populate_call_details, :only => [:status]
 	before_filter :set_abandon_state, :only => [:status]
@@ -36,8 +36,9 @@ class Freshfone::CallController < FreshfoneBaseController
 					:locals => { :user => @user }),
 		      :user_name => caller_lookup(params[:PhoneNumber],@user),
   	 		  :user_id => (@user || {})[:id],
-          :call_meta => call_meta,
-          :caller_card => caller_card
+          :call_meta => call_meta, :caller_card => caller_card,
+          :email => (@user || {})[:email],  :mobile => (@user || {})[:mobile],
+          :phone => (@user || {})[:phone]
     		}
       }
 	  end
@@ -80,10 +81,14 @@ class Freshfone::CallController < FreshfoneBaseController
 		end
 	end
 
-	private
-		def load_user_by_phone
-			@user = search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
-		end
+  private
+    def load_customer
+      if params[:customerId].present?
+        @user = current_account.all_users.find_by_id(params[:customerId])
+      else
+        @user = search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
+      end
+    end
 
 		def call_meta	
 	    #Yet to handle the scenario where multiple calls at the same time 

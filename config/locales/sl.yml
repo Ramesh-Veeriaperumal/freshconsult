@@ -1551,7 +1551,7 @@ sl:
         import: "Uvozite podatke iz Zendesk"
         agent: Agenti
         feedback: "Modul za pridobivanje mnenja"
-        freshchat: FreshChat
+        livechat: FreshChat
         integrations: Integracije
         dispatcher: Dispatch'r
         supervisor: Nadzornik
@@ -3346,7 +3346,7 @@ sl:
     feedback_message_4: "Missing/broken link"
   import_updated: Spremenjeno
   feedbackwidget_intro: "Spodaj uredite vaš freshdesk modul in preglejte spremembe v realnem času"
-  chatwidget_intro: "Spodaj lahko prilagodite in opazujete spremembe vašega Freshchat modula"
+  chatwidget_intro: "Spodaj lahko prilagodite in opazujete spremembe vašega Live Chat modula"
   save: Shrani
   import_added_newly: "Dodano zadnje"
   quick_create: "Quick Create"
@@ -5477,7 +5477,7 @@ sl:
         filter_by: "Pregled zadovoljstva"
         view_report_date: "Poglej poročila med"
         helptext: "<b>Uporabnost poročila zadovoljstva kupcev?</b><p>Poročilo vam ponudi vpogled v kvaliteto dela vaših agentov.<br> Poročilo vam omogoča razumeti nivo zadovoljstva vaših kupcev, ki je izražena s procenti vrednosti (zadovoljni, nevtralno & nezadovoljni) za vsakega agenta.<br><br><b>Kaj še lahko naredite?</b> <br> <p style='margin-left:15px;'>1.Filtrirajta rezultate po Agentu, Skupini ali Podjetju <br>2.Oglejte si poročilo za določeno časovno območje</p></p>"
-    freshchat:
+    livechat:
       report_title: "Live Chat Summary"
       filter_by_title: "Filtered by"
       time_period: "Time Period"
@@ -6339,12 +6339,12 @@ sl:
         error_message: "Sorry we can not make your request right now. Try again later."
         additional_note: "Freshfone request will take two business days"
         button_label: "Request for Freshfone"
-  freshchat:
+  livechat:
     feature_request:
       title: "Welcome to Live Chat"
       heading: "Support your customers with Live Chat"
-      info1: "Customize live chat widget for your brand and business"
-      info2: "Enable live chat for your support portal and website"
+      info1: "Customize Live Chat widget for your brand and business"
+      info2: "Enable Live Chat for your support portal and website"
       info3: "Track all chat transcripts and convert them to tickets"
       read_more: "Read more"
       email_subject: "Request for Live Chat Feature from %{account_name}"
@@ -6417,7 +6417,7 @@ sl:
     bottom_left: "Spodaj levo"
     bottom_right: "Spodaj desno"
     integrate_msg: "Copy & paste this code before the last </body> tag on your website or app"
-    integrate_freshchat_title: "Integrate live chat into your website and applications"
+    integrate_livechat_title: "Integrate Live Chat into your website and applications"
     custom_chat_window: "Prilagodi pogovorno okno"
     text_placeholder: "Vaše sporočilo"
     chatbox_bgcolor: "Barva okna"
@@ -6524,7 +6524,7 @@ sl:
     chat_loadmore: "Naloži dodatno.."
     chat_viewmore: "View More..."
     ticket_subject: "Pogovor z  $1 o $2"
-    ticket_description: "Prepis pogovora kreiran via Freshchat. Pogovor je tekel med <b>$1</b>$2a in <b>$3</b>."
+    ticket_description: "Prepis pogovora kreiran via Live Chat. Pogovor je tekel med <b>$1</b>$2a in <b>$3</b>."
     ticket_title: "Naziv Zahtevka"
     requester_name: "Ime Zahtevnika"
     requester_email: "ePošta Zahtevnika"
@@ -6534,7 +6534,7 @@ sl:
     chatsettings_save: "Your changes have not been saved. Save changes?"
     transfer_accepted_msg: "Visitor transfer accepted"
     transfer_request_timeout_msg: "Transfer request timed out"
-    integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
+    integrate_livechat_info: "Note: Chat window will appear only when agents are online."
     click_to_go_online: "Not accepting visitor chats"
     click_to_go_offline: "Accepting visitor chats"
     fetching: "Please wait"
@@ -6559,9 +6559,9 @@ sl:
     visitor_form: "Visitor Form"
     preferences: Preferences
     intro_title: "Why Live Chat?"
-    intro: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
+    intro: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
     enable_chat: "Enable Live Chat"
-    learn_freshchat: "Learn more about Live Chat"
+    learn_livechat: "Learn more about Live Chat"
     support_portal: "Chat on support portal"
     logged_in_users: "Logged in users only"
     everyone: Everyone

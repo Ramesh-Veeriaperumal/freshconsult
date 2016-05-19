@@ -54,6 +54,11 @@ class Helpdesk::Email::HandleTicket
     self.class.trace_execution_scoped(['Custom/Mailgun/ticket_attachments']) do
       ticket.attachments, ticket.inline_attachments = build_attachments(ticket)
     end
+    
+    unless email[:dropped_cc_emails].blank?
+      ticket.cc_email[:dropped_cc_emails] = email[:dropped_cc_emails]
+    end
+
     self.class.trace_execution_scoped(['Custom/Mailgun/tickets']) do
       return if large_email(start_time) && duplicate_email?(email[:from][:email],
                                                             email[:to][:email],
@@ -83,7 +88,11 @@ class Helpdesk::Email::HandleTicket
     self.class.trace_execution_scoped(['Custom/Mailgun/note_attachments']) do
       note.attachments, note.inline_attachments = build_attachments(note)
     end
-    
+
+    unless email[:dropped_cc_emails].blank?
+      note.cc_emails = {:cc_emails => note.cc_emails, :dropped_cc_emails => email[:dropped_cc_emails]}
+    end
+
     self.class.trace_execution_scoped(['Custom/Mailgun/notes']) do
       note.notable = ticket
       return if large_email(start_time) && duplicate_email?(email[:from][:email],

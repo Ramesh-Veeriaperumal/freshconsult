@@ -41,8 +41,8 @@
 				                end
 				              %>
 				  						<a id="folder<%= folder.id %>" href= "<%= helpdesk_canned_responses_folders_path %>/<%= folder.id %>" data-folder="<%= folder.id %>" data-pjax="#body-container"
-				  						data-name="<%= folder.display_name %>"
-				  						class="catch js-pjax <%= "default-folder" unless !(folder.is_default)%>"><%= folder.display_name %> (<%= count %>)
+				  						data-name="<%= CGI.escapeHTML(folder.display_name).html_safe %>"
+				  						class="catch js-pjax <%= "default-folder" unless !(folder.is_default)%>"><%= CGI.escapeHTML(folder.display_name).html_safe %> (<%= count %>)
 				  						</a>
 				  					</li>
 									<%end%>
@@ -52,7 +52,7 @@
 							<%else%>
 							<%= t('canned_folders.viewing') %>
 							<%count = current_account.canned_responses.only_me(current_user).count(:conditions => {:folder_id => @pfolder.id})%>
-							<b ><%= @pfolder.display_name %> (<%= count %>)</b>
+							<b ><%= CGI.escapeHTML(@pfolder.display_name) %> (<%= count %>)</b>
 							<%end%>
 							<% if privilege?(:manage_canned_responses) %>
 								<div id="folder-controls">
@@ -260,7 +260,7 @@
     }
   }
 
-  jQuery(".presence_in_list").data("list", <%= raw @ca_res_folders.map(&:name).map(&:downcase).to_json%>)
+  jQuery(".presence_in_list").data("list", <%= raw @ca_res_folders.map(&:name).map(&:downcase).map{|x| CGI.escapeHTML(x)}.to_json%>)
 <% end %>
 
 <script src="/javascripts/app/ca_admin_view.js" type="text/javascript"></script>
