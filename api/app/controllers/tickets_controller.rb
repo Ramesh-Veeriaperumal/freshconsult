@@ -146,14 +146,24 @@ class TicketsController < ApiApplicationController
     end
 
     def tickets_filter
-      tickets = scoper.where(deleted: false).permissible(api_current_user)
       filter = Helpdesk::Ticket.filter_conditions(@ticket_filter, api_current_user)
-      @ticket_filter.conditions.each do |key|
-        clause = filter[key.to_sym] || {}
+      filter_conditions = @ticket_filter.conditions.map!(&:to_sym)
+      tickets = scoper.where(default_conditions(filter_conditions)).permissible(api_current_user)
+      filter_conditions.each do |key|
+        clause = filter[key] || {}
         tickets = tickets.where(clause[:conditions]).joins(clause[:joins])
         # method chaining is done here as, clause[:conditions] could be an array or a hash
       end
       tickets
+    end
+
+    def default_conditions(filter_conditions)
+      # For spam filter, spam: true condition from model method #filter_conditions would override spam: false set here. And deleted: false would be set.
+      # For deleted filter, spam is a don't care and deleted: true from model method #filter_conditions would override deleted: false set here.
+      # For all others spam: false and deleted: false would be set.
+      conditions = { deleted: false }
+      conditions.merge!(spam: false) unless filter_conditions.include?(:deleted)
+      conditions
     end
 
     def validate_filter_params

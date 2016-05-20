@@ -68,6 +68,17 @@ module TestClassMethods
     [QueryCounter.total_query_count, QueryCounter.api_query_count, QueryCounter.queries]
   end
 
+  def trace_query(pattern, block)
+    QueryCounter.queries = []
+    block.call
+    QueryCounter.queries.find { |q| q.match(pattern) }
+  end
+
+  def trace_query_condition(pattern, from, to, &block)
+    query = trace_query(pattern, block)
+    query.partition(from).last.partition(to).first
+  end
+
   def count_queries
     QueryCounter.total_query_count = 0
     yield
