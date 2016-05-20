@@ -17,6 +17,10 @@ class Admin::DataImport < ActiveRecord::Base
   IMPORT_TYPE = {:zendesk => 1, :contact => 2, :company => 3}
   ZEN_IMPORT_STATUS = { :started => 1 , :completed => 2 }
 
+  def blocked!
+    self.update_attributes(:status => false)
+  end
+
   private
 
 	  def clear_key
