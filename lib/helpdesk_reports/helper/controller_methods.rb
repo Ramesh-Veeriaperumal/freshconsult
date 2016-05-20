@@ -126,10 +126,10 @@ module HelpdeskReports::Helper::ControllerMethods
 
   def get_chat_table_headers
     { 
-      :agent_name      => I18n.t('reports.freshchat.agent'),
-      :answered_chats  => I18n.t('reports.freshchat.answered_chats'),
-      :avg_handle_time => I18n.t('reports.freshchat.avg_handle_time'),
-      :total_duration  => I18n.t('reports.freshchat.total_duration')
+      :agent_name      => I18n.t('reports.livechat.agent'),
+      :answered_chats  => I18n.t('reports.livechat.answered_chats'),
+      :avg_handle_time => I18n.t('reports.livechat.avg_handle_time'),
+      :total_duration  => I18n.t('reports.livechat.total_duration')
     }
   end
   

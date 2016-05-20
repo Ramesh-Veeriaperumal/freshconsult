@@ -59,7 +59,7 @@ var FreshfoneContactSearch;
 			return result_string;
 		},
 
-		getSearchResults: function(string, customerId=null, isDeleted=false){
+		getSearchResults: function(string, customerId, isDeleted){
 		  var self = this;
 		  $.ajax({ 
 	  		url: '/freshfone/autocomplete/customer_contact',

@@ -213,7 +213,7 @@ var FreshfoneDialpadEvents
 			if (this.isNumeric(searchString)) { 
 				searchString = freshfonecalls.addDialCode(searchString);
 			}
-	    freshfoneContactSearch.getSearchResults(searchString);      
+	    freshfoneContactSearch.getSearchResults(searchString, null, false);      
 		},
 
 		getContactDetails: function(contactElement,$item){

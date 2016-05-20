@@ -314,7 +314,9 @@ private
   end
 
   def verify_permission
-    verify_ticket_permission(@ticket) if params[:ticket_id]
+    #IOS app sends ticket id instead of display id, but android app sends display_id (which is correct).
+    #Hack should be removed once they fix this.
+    verify_ticket_permission(@ticket) if params[:ticket_id] and !is_native_mobile?
     if @time_entry && @time_entry.workable.is_a?(Helpdesk::Ticket)
       time_entry_ticket = @time_entry.workable
       verify_ticket_permission(time_entry_ticket)
