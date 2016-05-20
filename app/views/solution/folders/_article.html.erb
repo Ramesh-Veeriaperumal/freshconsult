@@ -25,7 +25,7 @@
 						<%= humanize_stats(article.aggregated_thumbs_down) %>
 					</span>
 				</div>
-				<% if article.any_supported_draft_present? || article.draft.present? %>
+				<% if article.any_supported_draft_present? || article.primary_article.draft.present? %>
 					<div class="span2 pull-right mt9 text-center article-info">
 						<%= draft_label_popover(article) %>
 					</div>
@@ -34,9 +34,11 @@
 			<%= language_flags(article, true) %>
 			<div class="span6 comm-item-main clear-left-margin">
 				<%= font_icon "book-hollow", :size => 16, :class => "solution-icon" %>
-				<div class="comm-item-title ellipsis tooltip" title="<%= (article.draft || article).title if (article.draft || article).title.length > 75 %>">
+				<div class="comm-item-title ellipsis tooltip" 
+							title="<%= article_tooltip_title(article) %>">
 					<!-- Referring to primary article to avoid error in bulk actions. -->
 					<%= pjax_link_to(h((article.primary_article.draft || article).title), solution_article_path(article)) %>
+					<%= pjax_link_to(h(article_title(article)), solution_article_path(article)) %>
 				</div>
 				<div class="comm-item-details muted">
 					<%= article_history(article.primary_article) %>

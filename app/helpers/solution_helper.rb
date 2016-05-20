@@ -503,4 +503,14 @@ module SolutionHelper
     [t("activerecord.attributes.#{attr}", :default => "#{attr.to_s.gsub('.', '_').humanize}"),
       msg].join(' ')
   end
+
+  def article_title(meta)
+  	(meta.primary_article.draft || meta.primary_article).title
+  end
+
+  def article_tooltip_title(meta)
+  	title = article_title(meta)
+  	title.length > 75 && title
+	end
+
 end
