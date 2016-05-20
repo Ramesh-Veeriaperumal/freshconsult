@@ -6,6 +6,8 @@ module ContactConstants
 
   STATES = %w( verified unverified deleted blocked ).freeze
 
+  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w( company_id custom_field ).freeze
+
   INDEX_FIELDS = %w( state email phone mobile company_id ).freeze
 
   SCOPE_BASED_ON_ACTION = {
@@ -40,5 +42,5 @@ module ContactConstants
     update: [:json, :multipart_form]
   }.freeze
 
-  FIELD_MAPPINGS = { company_name: :company_id, tag_names: :tags, company: :company_id, 'primary_email.email'.to_sym => :email, base: :email }.freeze
+  FIELD_MAPPINGS = { company_name: :company_id, company: :company_id, :"primary_email.email" => :email, base: :email }.freeze
 end.freeze

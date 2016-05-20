@@ -31,9 +31,10 @@ class TicketsController < ApiApplicationController
   def update
     assign_protected
     # Assign attributes required as the ticket delegator needs it.
-    @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
+    custom_fields = params[cname][:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
+    @item.assign_attributes(validatable_delegator_attributes)
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field])
+    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: custom_fields)
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     else
@@ -79,6 +80,14 @@ class TicketsController < ApiApplicationController
     end
 
   private
+
+    # Same as http://apidock.com/rails/Hash/extract! without the shortcomings in http://apidock.com/rails/Hash/extract%21#1530-Non-existent-key-semantics-changed-
+    # extract the keys from the hash & delete the same in the original hash to avoid repeat assignments
+    def validatable_delegator_attributes
+      params[cname].select do |key, value|
+        (params[cname].delete(key); true) if ApiTicketConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(key)
+      end
+    end
 
     def feature_name
       FeatureConstants::TICKETS
