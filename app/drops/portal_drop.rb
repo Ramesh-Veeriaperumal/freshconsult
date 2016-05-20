@@ -192,8 +192,7 @@ class PortalDrop < BaseDrop
   end
 
   def recent_articles
-    @recent_articles ||= (source.main_portal ? source.account.published_articles.newest(10) :
-      source.account.solution_articles.articles_for_portal(source).visible.newest(10))
+    @recent_articles ||= source.account.solution_articles.articles_for_portal(source).visible.newest(10)
   end
 
   # !MODEL-ENHANCEMENT Need to make published articles for a 
@@ -212,9 +211,7 @@ class PortalDrop < BaseDrop
   end
 
   def recent_articles_through_meta
-    @recent_articles ||= (source.main_portal ?
-      source.account.solution_article_meta.visible_to_all.published.newest(10) :
-      source.account.solution_article_meta.for_portal(source).published.newest(10))
+    @recent_articles ||= source.account.solution_article_meta.for_portal(source).published.newest(10)
   end
 
   def articles_count_through_meta
