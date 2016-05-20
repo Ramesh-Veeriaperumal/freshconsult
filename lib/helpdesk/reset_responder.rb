@@ -12,17 +12,11 @@ module Helpdesk
         user = account.all_users.find_by_id(user_id)
         return if user.nil?
         
-        account.tickets.where(responder_id: user.id).select(:id).find_in_batches(batch_size: BATCH_LIMIT) do |tickets|
-          ticket_ids = tickets.map(&:id)
-          account.tickets.where(id: ticket_ids).update_all(responder_id: nil)
-        end
+        account.tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {})
 
         return unless account.features?(:archive_tickets)
 
-        account.archive_tickets.where(responder_id: user.id).select(:id).find_in_batches(batch_size: BATCH_LIMIT) do |tickets|
-          ticket_ids = tickets.map(&:id)
-          account.archive_tickets.where(id: ticket_ids).update_all(responder_id: nil)
-        end
+        account.archive_tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {})
 
       rescue Exception => e
         puts e.inspect, args.inspect

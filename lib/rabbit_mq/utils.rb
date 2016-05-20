@@ -108,5 +108,5 @@ module RabbitMq::Utils
   end
 
   # Need this to invoke without AR objects
-  module_function :generate_uuid, :manual_publish_to_xchg
+  module_function :generate_uuid, :manual_publish_to_xchg, :handle_sidekiq_fail
 end

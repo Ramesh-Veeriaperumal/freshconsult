@@ -31,7 +31,7 @@ class Import::Attachment
         
         if attachment.save!
           @item.update_es_index
-          @item.sqs_manual_publish if Account.current.features?(:es_v2_writes)
+          @item.sqs_manual_publish
         end
       rescue Timeout::Error => ex
         raise Timeout::Error, "Timeout on attachment import"

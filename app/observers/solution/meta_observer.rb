@@ -9,9 +9,9 @@ class Solution::MetaObserver < ActiveRecord::Observer
 		klass.where({
 				:id => meta_obj.id, 
 				:account_id => meta_obj.account_id
-			}).update_all({
+			}).update_all_with_publish({
 				:parent_id => meta_obj.id,
 				:language_id => Language.for_current_account.id
-			})
+			}, ['parent_id != ? or parent_id is null', meta_obj.id])
 	end
 end

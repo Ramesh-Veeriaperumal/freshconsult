@@ -29,7 +29,7 @@ class Users::UpdateCompanyId < BaseWorker
         last_user_id = user_ids.last
         company_id ? create_user_companies(users, company_id) : 
                      destroy_user_companies(account, user_ids, current_company_id)
-        updated_users = users.update_all(:customer_id => company_id)
+        updated_users = users.update_all_with_publish({ :customer_id => company_id }, {})
         user_ids.each_slice(TICKET_UPDATE_LIMIT) do |ids|
           Tickets::UpdateCompanyId.perform_async({ :user_ids => ids, :company_id => company_id })
         end

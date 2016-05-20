@@ -39,6 +39,7 @@ defaults: &defaults
     - [rabbitmq_publish]
     - [plan_change]
     - [update_tickets_company]
+    - [update_all_callbacks]
     - [reports_no_activity]
     - [es_alias_queue]
     - [es_index_queue]

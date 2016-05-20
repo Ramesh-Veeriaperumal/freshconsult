@@ -10,13 +10,10 @@ class Community::HandleLanguageChange < BaseWorker
 		SOLUTION_CLASSES.each do |klass|
 			klass.constantize.find_in_batches(:batch_size => 100, :conditions => {:account_id => Account.current.id}) do |objects|
 				klass.constantize.where(
-					:id => objects.map(&:id), :account_id => Account.current.id).update_all(:language_id => language_id)
+					:id => objects.map(&:id), :account_id => Account.current.id).update_all_with_publish({ :language_id => language_id })
 
 				if klass == "Solution::Article"
 					objects.map(&:update_es_index)
-					
-					# For ES-v2
-					objects.map(&:sqs_manual_publish) if Account.current.features?(:es_v2_writes)
 				end
 			end
 		end
