@@ -17,8 +17,8 @@ describe 'Visibility', :type => :request do
 		@account.account_additional_settings.save
 		@account.reload
 		Language.reset_current
-		@lang_ver = @account.supported_languages_objects.first
-		@non_portal_lang = @account.supported_languages_objects.last
+		@lang_ver = @account.portal_languages_objects.last
+		@non_portal_lang = (@account.supported_languages_objects - @account.portal_languages_objects).first
 		params = create_solution_category_alone(solution_default_params(:category).merge({
               :lang_codes => [@lang_ver.to_key, @non_portal_lang.to_key] + [:primary]
              }))
