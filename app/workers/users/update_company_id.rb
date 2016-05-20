@@ -39,7 +39,8 @@ class Users::UpdateCompanyId < BaseWorker
 
   def create_user_companies(users, company_id)
     users.preload(:user_companies).each do |user|
-      user.user_companies.create(:company_id => company_id) unless user.user_companies.present?
+      user.user_companies.create(:company_id => company_id, :default => true, 
+        :client_manager => user.privilege?(:client_manager)) unless user.user_companies.present?
     end
   end
 
