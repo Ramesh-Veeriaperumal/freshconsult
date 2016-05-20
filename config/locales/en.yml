@@ -7647,11 +7647,11 @@ en:
       schedule_header: Schedule Report
       read_more: How to schedule report?
       schedule_success: Report has been scheduled successfully.
-      limit_exceeded_message: You have exceeded the maximum limit. You are allowed to create %{count} saved filters per report
+      limit_exceeded_message: You can only save %{count} filters per report. Please delete a saved report and try again.
       tooltip: Scheduled every %{period}
       save: Save
       cancel: Cancel
-      desc: "Hello, \n\nPlease find a copy of %{report_name} - %{schedule} report with this email.\n\n\n Thanks"
+      desc: "Hi, \n\nHere is your %{schedule} %{report_name} report.\n\nHappy number crunching!"
       message:
         week_tmpl: "%{name} for <strong>last %{day}</strong> to <strong>%{previous_day}</strong> will be sent along with below email <strong>every %{day}</strong> at <strong>%{time}</strong> time"
         week_friday_tmpl: "%{name} for <strong>last %{day}</strong> to <strong> this %{previous_day}</strong> will be sent along with below email <strong>every %{day}</strong> at <strong>%{time}</strong> time"
@@ -7659,16 +7659,16 @@ en:
         monthly_tmpl: "%{name} for <strong>last month</strong> will be sent along with below email <strong>first of every month</strong> at <strong>%{time}</strong> time"        
     scheduled_reports:
       dialog:
-        email : Email
-        generate_report : Generate report
-        on : On
-        subject : Subject
-        desc : Description
+        email: Email
+        generate_report: Generate report
+        on: On
+        subject: Subject
+        desc: Description
       errors:
         emails_limit: You can add maximum %{num} emails
         invalid_email: Invalid emails
-        acc_max_limit: An account can have maximum of %{count} scheduled tasks
-        user_max_limit: A user can create maximum of %{count} scheduled tasks
+        acc_max_limit: You can only schedule %{count} reports per account. Please delete a schedule and try again.
+        user_max_limit: You can only create %{count} schedules. Please delete a schedule and try again.
         general: Some of the fields in form are invalid
         disabled : Reports with custom date ranges cannot be scheduled
         invalid_frequency: Invalid frequency
@@ -7812,7 +7812,7 @@ en:
       first_response_sla_violated: All first response SLA violated tickets
       resolution_sla_compliant: All resolution SLA compliant tickets
       resolution_sla_violated: All resolution SLA violated tickets
-      no_tickets: No Tickets to display
+      no_tickets: No tickets to display
       compliant: Compliant
       violated: Violated
     v2_helptext:

@@ -33,7 +33,7 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
             :conditions => [ 'next_run_at BETWEEN ? AND ?', from, till ],
             :include => [:user, :account] }}
 
-  INACTIVE_STATUS = [ STATUS_NAME_TO_TOKEN[:disabled], STATUS_NAME_TO_TOKEN[:expired] ]
+  scope :active_tasks, lambda{ {:conditions => ['status NOT IN (?)', INACTIVE_STATUS] } }
 
   STATUS_NAME_TO_TOKEN.each_pair do |k, v|
     define_method("#{k}?") do

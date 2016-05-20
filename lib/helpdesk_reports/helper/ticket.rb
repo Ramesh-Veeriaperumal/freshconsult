@@ -50,6 +50,7 @@ module HelpdeskReports::Helper::Ticket
     res = {report_type: report_type}
 
     if [:agent_summary, :group_summary].include?(report_type)
+        res.merge!(csv_export: pdf_export)
         group_ids, agent_ids = []
         param = @query_params[0]
         param[:filter].each do |f|

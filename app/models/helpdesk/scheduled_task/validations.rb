@@ -8,6 +8,8 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
   validates_inclusion_of :minute_of_day, :in => 0..1440, :allow_nil => true
 
   validate :scheduled_reports_constraints, :on => :create, :if => :scheduled_report?
+  validate :scheduled_reports_constraints, :on => :update, :if => Proc.new { scheduled_report? && inactive_to_active? }
+
   validate :scheduled_reports_frequency, :if => :scheduled_report?
   
 private
@@ -37,6 +39,10 @@ private
   def allowed_frequencies
     #Includes daily, weekly & monthly
     FREQUENCY_TOKEN_TO_NAME.keys.last(3)
+  end
+
+  def inactive_to_active?
+    status_was.in?(INACTIVE_STATUS) && !status.in?(INACTIVE_STATUS)
   end
   
 end
