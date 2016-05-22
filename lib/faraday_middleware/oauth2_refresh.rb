@@ -36,7 +36,7 @@ module FaradayMiddleware
           current_account = Account.current
           app = Integrations::Application.where(:name => "salesforce").first
           installed_app = current_account.installed_applications.where(:application_id => app.id).first
-          if current_account.features?(:cloud_elements_crm_sync) and installed_app.try(:configs_element_token)          
+          if current_account.features?(:salesforce_crm_sync) and installed_app.try(:configs_element_token)          
             element_instance = service_obj(installed_app, {}, installed_app.configs_element_instance_id).receive(:get_element_instance)
             @new_token =  element_instance["configuration"]["oauth.user.token"]
           else

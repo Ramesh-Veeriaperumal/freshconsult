@@ -160,7 +160,7 @@ class Integrations::SalesforceController < Admin::AdminController
   end
 
   def cloud_elements_feature?
-    current_account.features?(:cloud_elements_crm_sync)
+    current_account.features?(:salesforce_crm_sync)
   end
 
 end

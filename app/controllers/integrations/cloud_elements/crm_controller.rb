@@ -19,10 +19,10 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     flash[:notice] = t(:'flash.application.install.cloud_element_success')
     render_settings
   rescue => e
+    delete_formula_instance_error @installed_app, request.user_agent, formula_resp['id'] if formula_resp.present? and formula_resp['id'].present?
     [el_response, fd_response].each do |response|
       delete_element_instance_error @installed_app, request.user_agent, response['id'] if response.present? and response['id'].present?
     end
-    delete_formula_instance_error @installed_app, request.user_agent, formula_resp['id'] if formula_resp.present? and formula_resp['id'].present?
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
     flash[:error] = t(:'flash.application.update.error')
     redirect_to integrations_applications_path
@@ -96,7 +96,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       json_payload = JSON.parse(File.read("lib/integrations/cloud_elements/freshdesk.json"))
       api_key = current_user.single_access_token
       subdomain = current_account.domain
-      JSON.generate(json_payload) % {:api_key => api_key, :subdomain => "e753ba00", :fd_instance_name => "freshdesk_#{element}_#{current_account.id}" }
+      JSON.generate(json_payload) % {:api_key => api_key, :subdomain => "9c6d8386", :fd_instance_name => "freshdesk_#{element}_#{current_account.id}" }
     end
 
     def instance_hash
@@ -113,7 +113,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
         end
       end
       portal = current_account.main_portal
-      hash[:callback_url] = "https://e753ba00.ngrok.io" # "#{portal.url_protocol}://#{portal.host}"
+      hash[:callback_url] = "https://9c6d8386.ngrok.io" # "#{portal.url_protocol}://#{portal.host}"
       hash[:element_name] = "#{element}_#{current_account.id}"
       hash
     end
@@ -147,8 +147,8 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     def fd_metadata_fields
       contact_metadata = current_account.contact_form.fields
       company_metadata = current_account.company_form.fields
-      contact_hash = fd_fields_hash( contact_metadata, "contact" )
-      account_hash = fd_fields_hash( company_metadata, "company" )
+      contact_hash = fd_fields_hash( contact_metadata)
+      account_hash = fd_fields_hash( company_metadata)
       @element_config['element'] = element
       @element_config['fd_contact'] = contact_hash['fields_hash']
       @element_config['fd_contact_types'] = contact_hash['data_type_hash']
@@ -167,20 +167,15 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       {'fields_hash' => fields_hash, 'data_type_hash' => data_type_hash }
     end
 
-    def fd_fields_hash(object, type)
+    def fd_fields_hash(object)
       fields_hash = {}
       data_type_hash = {}
-      if type.eql? "contact"
-        data_types = CONTACT_TYPES
-      else
-        data_types = COMPANY_TYPES
-      end
       #To remove those custom fields that we will be syncing from the customers view
       custom_fields = ["cf_sf_accountid", "cf_sf_contactid"]
       object.each do |field|
         unless custom_fields.include? field[:name]
           fields_hash[field[:name]] = field[:label]
-          data_type_hash[field[:label]] = data_types[field[:field_type].to_s]
+          data_type_hash[field[:label]] = field.dom_type.to_s
         end
       end
       {'fields_hash' => fields_hash, 'data_type_hash' => data_type_hash }

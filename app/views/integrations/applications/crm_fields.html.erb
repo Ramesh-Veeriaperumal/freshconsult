@@ -229,13 +229,12 @@ function fillLabels(){
     jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
       var FDContactSelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
       var SFContactSelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
-      if(FDContactSelected.toLowerCase() == "select"){
-
+      if(FDContactSelected.toLowerCase() == "select" || FDContactSelected.toLowerCase() == "no matching data..."){
         jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
         valid = false;
         return false;
       } 
-      if(SFContactSelected.toLowerCase() == "select" ){
+      if(SFContactSelected.toLowerCase() == "select" || SFContactSelected.toLowerCase() == "no matching data..." ){
         jQuery(this).find('[data-refer-key=sf_field]').after("<p class='error'>Field is required. </p>");
         valid = false;
         return false;
@@ -247,13 +246,12 @@ function fillLabels(){
       jQuery('#construct_company_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
         var FDCompanySelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
         var SFCompanySelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
-        if(FDCompanySelected.toLowerCase() == "select"){
-
+        if(FDCompanySelected.toLowerCase() == "select" || FDCompanySelected.toLowerCase() == "no matching data..." ){
           jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
           valid = false;
           return false;
         } 
-        if(SFCompanySelected.toLowerCase() == "select" ){
+        if(SFCompanySelected.toLowerCase() == "select" || SFCompanySelected.toLowerCase() == "no matching data..." ){
           jQuery(this).find('[data-refer-key=sf_field]').after("<p class='error'>Field is required. </p>");
           valid = false;
           return false;
