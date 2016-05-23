@@ -1937,6 +1937,18 @@ en:
         default_group : Default Group
     roles:
       title: Agent Roles
+      agent_label: Agent
+      agents_label: Agents
+      no_agent_label: No Agent
+      add_agent_label: Add Agent
+      add_label: Add
+      no_label: No
+      done_label: Done
+      manage_label: Manage
+      save_label: Save
+      saving_label: Saving...
+      no_agent_added: No Agent added
+      cancel_label: Cancel
       new: New Role
       edit: Edit Role
       default_role: Default Role

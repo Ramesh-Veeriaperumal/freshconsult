@@ -1,0 +1,31 @@
+<%
+if((@role and @role.default_role?))
+  label = t('admin.roles.save_label')
+  loading_label = t('admin.roles.saving_label')
+elsif(params[:action] == 'new' or params[:action] == 'edit')
+  label = t('admin.roles.done_label')
+  loading_label = t('admin.roles.done_label')
+else
+  label = t('admin.roles.save_label')
+  loading_label = t('admin.roles.saving_label')
+end
+%>
+<div id="manage-agents"></div>
+<div id="popup-content" class="hide">
+  <div class="manage-agent-wrapper">
+    <div class="add-agent-wrapper">
+        <div class="add-agent-box">
+            <span class="rounded-add-icon add-agent-icon"></span>
+            <select data-action="add-agent" multiple="true"
+            class="agent-select-list" placeholder="<%= t('admin.roles.add_agent_label') %>">
+            </select>
+        </div>
+        <div class="agent-list-wrapper">
+        </div>
+    </div>
+    <div class="button-container">
+    <a class="close btn" href="javascript:void(0)" data-action="cancelmodal"><%= t('admin.roles.cancel_label') %></a>
+    <button class="btn btn-primary disabled" data-label="<%= label %>" data-loading="<%= loading_label %>" data-action="submitmodal"><%= label %></button>
+    </div>
+</div>
+</div>

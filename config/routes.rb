@@ -1170,7 +1170,14 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :roles
+    resources :roles do 
+      collection do 
+        get :profile_image
+        get :users_list
+        post :update_agents
+      end
+    end
+
     namespace :social do
       resources :streams, :only => :index do
         collection do

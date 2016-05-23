@@ -72,7 +72,7 @@ module Cache::Memcache::Account
 
   def agents_details_from_cache
     key = agents_details_memcache_key
-    MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name").all }
+    MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name,email").all }
   end  
 
   def groups_from_cache
