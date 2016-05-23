@@ -4,7 +4,6 @@ class ArticleObserver < ActiveRecord::Observer
 	require 'nokogiri'
 
 	def before_save(article)
-		remove_script_tags(article)
 		set_un_html_content(article)
 		modify_date_and_author(article) if (article.article_body.changed? || article.title_changed?)
 		article.article_changes
@@ -22,18 +21,6 @@ class ArticleObserver < ActiveRecord::Observer
   end
 
 private
-
-	def remove_tag response, tag
-	    doc = Nokogiri::HTML.parse(response)
-	    node = doc.search(tag)
-	    node.remove
-	    doc.css('body').inner_html
-  	end
-
-  	def remove_script_tags(article)
-  		description = remove_tag(article.description, 'script') 
-  		article.description = description
-  	end
 
 		def set_un_html_content(article)
 			article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
