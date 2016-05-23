@@ -20,7 +20,7 @@ class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
         show: 15,
         index: 15,
         destroy: 20,
-        make_agent: 37
+        make_agent: 45
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
