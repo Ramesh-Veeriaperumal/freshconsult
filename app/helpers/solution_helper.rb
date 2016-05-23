@@ -369,7 +369,7 @@ module SolutionHelper
 	def primary_preview(primary, identifier, current_obj = nil)
 		return unless primary.present? && primary != current_obj
 		"<b class='muted'>#{Language.for_current_account.name}:</b>
-		<span class='muted'>#{primary.send(identifier)}<span>".html_safe unless primary.send(identifier).blank?
+		<span class='muted'>#{h(primary.send(identifier))}<span>".html_safe unless primary.send(identifier).blank?
 	end
 
 	def dynamic_text_box(f, language, form, options = {})
@@ -494,7 +494,7 @@ module SolutionHelper
 		modified_flag = article.published? && article.modified_at.present? && (article.created_at != article.modified_at)
 		time = modified_flag ? article.modified_at : article.created_at
 		op = modified_flag ? t('solution.general.last_published') : t('solution.general.created_by')
-		op << " #{modified_flag && article.modified_by.present? ? article.recent_author.name : article.user.name}, "
+		op << " #{modified_flag && article.modified_by.present? ? h(article.recent_author.name) : h(article.user.name)}, "
 		op << "<abbr data-livestamp=#{time.to_i}>#{formated_date(time)}</abbr>"
 		op.html_safe
 	end
