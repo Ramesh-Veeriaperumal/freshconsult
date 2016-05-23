@@ -47,14 +47,14 @@ class TicketDecorator < ApiDecorator
   def conversations
     if @sideload_options.include?('conversations')
       ticket_conversations = record.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at).limit(ConversationConstants::MAX_INCLUDE)
-      ticket_conversations.map{|conversation| ConversationDecorator.new(conversation, ticket: record).construct_json}
+      ticket_conversations.map { |conversation| ConversationDecorator.new(conversation, ticket: record).construct_json }
     end
   end
 
   def company
     if @sideload_options.include?('company')
       company = record.company
-      company ?  { id: company.id, name: company.name } : { }
+      company ? { id: company.id, name: company.name } : {}
     end
   end
 

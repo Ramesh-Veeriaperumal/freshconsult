@@ -31,6 +31,9 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   scope :timer_active , :conditions =>["timer_running=?" , true]
 
+  ## ** Methods used by API V1 filters starts here.****
+  ## If there are any conditions changed here in any one of scopes, relevant conditions should be changed in self.filter_conditions(filter_options=FILTER_OPTIONS) also.
+
   scope :created_at_inside, lambda { |start, stop|
     { :conditions => 
       [" helpdesk_time_sheets.executed_at >= ? and helpdesk_time_sheets.executed_at <= ?", 
@@ -73,6 +76,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :conditions => {:helpdesk_schema_less_tickets=>{:product_id=>products}}
      } unless products.blank?
   }
+
+  ## ** Methods used by API V1 filters ends here.****
 
   #************************** Archive scope start here *****************************#
   scope :archive_by_group , lambda  { |group|
@@ -159,8 +164,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       },
       
       company_id: {
-        joins: ["INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id AND `helpdesk_tickets`.account_id = `users`.account_id"],
-        conditions: {:users => {:customer_id => filter_options[:company_id]}}
+        conditions: { helpdesk_tickets:  { owner_id: filter_options[:company_id] } }
       }
     }
   end

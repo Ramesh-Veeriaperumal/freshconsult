@@ -2,7 +2,7 @@ class ConversationsController < ApiApplicationController
   include TicketConcern
   include CloudFilesHelper
   include Conversations::Email
-  decorate_views({decorate_objects: [:ticket_conversations], decorate_object: [:create, :update, :reply]})
+  decorate_views(decorate_objects: [:ticket_conversations], decorate_object: [:create, :update, :reply])
 
   before_filter :can_send_user?, only: [:create, :reply]
 
@@ -54,7 +54,7 @@ class ConversationsController < ApiApplicationController
   private
 
     def decorator_options
-      super({ticket: @ticket})
+      super({ ticket: @ticket })
     end
 
     def after_load_object

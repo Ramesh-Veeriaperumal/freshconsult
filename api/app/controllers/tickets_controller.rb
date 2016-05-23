@@ -31,9 +31,10 @@ class TicketsController < ApiApplicationController
   def update
     assign_protected
     # Assign attributes required as the ticket delegator needs it.
-    @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
+    custom_fields = params[cname][:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
+    @item.assign_attributes(validatable_delegator_attributes)
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field])
+    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: custom_fields)
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     else
@@ -79,6 +80,14 @@ class TicketsController < ApiApplicationController
     end
 
   private
+
+    # Same as http://apidock.com/rails/Hash/extract! without the shortcomings in http://apidock.com/rails/Hash/extract%21#1530-Non-existent-key-semantics-changed-
+    # extract the keys from the hash & delete the same in the original hash to avoid repeat assignments
+    def validatable_delegator_attributes
+      params[cname].select do |key, value|
+        (params[cname].delete(key); true) if ApiTicketConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(key)
+      end
+    end
 
     def feature_name
       FeatureConstants::TICKETS
@@ -146,14 +155,24 @@ class TicketsController < ApiApplicationController
     end
 
     def tickets_filter
-      tickets = scoper.where(deleted: false).permissible(api_current_user)
       filter = Helpdesk::Ticket.filter_conditions(@ticket_filter, api_current_user)
-      @ticket_filter.conditions.each do |key|
-        clause = filter[key.to_sym] || {}
+      filter_conditions = @ticket_filter.conditions.map!(&:to_sym)
+      tickets = scoper.where(default_conditions(filter_conditions)).permissible(api_current_user)
+      filter_conditions.each do |key|
+        clause = filter[key] || {}
         tickets = tickets.where(clause[:conditions]).joins(clause[:joins])
         # method chaining is done here as, clause[:conditions] could be an array or a hash
       end
       tickets
+    end
+
+    def default_conditions(filter_conditions)
+      # For spam filter, spam: true condition from model method #filter_conditions would override spam: false set here. And deleted: false would be set.
+      # For deleted filter, spam is a don't care and deleted: true from model method #filter_conditions would override deleted: false set here.
+      # For all others spam: false and deleted: false would be set.
+      conditions = { deleted: false }
+      conditions.merge!(spam: false) unless filter_conditions.include?(:deleted)
+      conditions
     end
 
     def validate_filter_params

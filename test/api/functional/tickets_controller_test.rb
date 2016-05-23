@@ -2404,6 +2404,24 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.size
   end
 
+  def test_index_with_spam_and_deleted
+    pattern = /SELECT  `helpdesk_tickets`.* FROM/
+    from = 'WHERE '
+    to = ' ORDER BY'
+    query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam', updated_since: '2009-09-09') }
+    assert_equal "`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`spam` = 1 AND (helpdesk_tickets.updated_at >= '2009-09-09 00:00:00')", query
+    query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'deleted', updated_since: '2009-09-09') }
+    assert_equal "`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 1 AND `helpdesk_schema_less_tickets`.`boolean_tc02` = 0 AND (helpdesk_tickets.updated_at >= '2009-09-09 00:00:00')", query
+    query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam') }
+    assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`spam` = 1', query
+    query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam', requester_id: 1) }
+    assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`requester_id` = 1 AND `helpdesk_tickets`.`spam` = 1', query
+    query = trace_query_condition(pattern, from, to) { get :index, controller_params }
+    assert_match /`helpdesk_tickets`\.`account_id` = 1 AND `helpdesk_tickets`\.`deleted` = 0 AND `helpdesk_tickets`\.`spam` = 0 AND \(helpdesk_tickets.created_at > '.*'\)$/, query
+    query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam', company_id: 1) }
+    assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `users`.`customer_id` = 1 AND `helpdesk_tickets`.`spam` = 1', query
+  end
+
   def test_index_with_deleted
     tkts = Helpdesk::Ticket.select { |x| x.deleted && !x.schema_less_ticket.boolean_tc02 }
     t = ticket

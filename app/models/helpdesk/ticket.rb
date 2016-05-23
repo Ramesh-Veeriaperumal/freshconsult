@@ -981,7 +981,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def self.filter_conditions(ticket_filter = nil, current_user = nil)
     {
       default: {
-        conditions: ['helpdesk_tickets.created_at > ? AND helpdesk_tickets.spam = ?', created_in_last_month , false ]
+        conditions: ['helpdesk_tickets.created_at > ?', created_in_last_month ]
       },
       spam: {
         conditions: { spam: true }
@@ -991,21 +991,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
         joins: :schema_less_ticket
       },
       new_and_my_open: {
-        conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)], spam: false }
+        conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)] }
       },
       watching: {
-          :conditions => {helpdesk_subscriptions: {user_id: current_user.id}, spam: false},
+          :conditions => {helpdesk_subscriptions: {user_id: current_user.id}},
           :joins => :subscriptions
       },
       requester_id: {
-        conditions: { requester_id: ticket_filter.try(:requester_id), spam: false }
+        conditions: { requester_id: ticket_filter.try(:requester_id) }
       },
       company_id: { 
-        conditions: { users: { customer_id: ticket_filter.try(:company_id) }, spam: false },
+        conditions: { users: { customer_id: ticket_filter.try(:company_id) } },
         joins: :requester
       },
       updated_since: {
-        conditions: ['helpdesk_tickets.updated_at >= ? AND helpdesk_tickets.spam = ?', ticket_filter.try(:updated_since).try(:to_time).try(:utc), false]
+        conditions: ['helpdesk_tickets.updated_at >= ?', ticket_filter.try(:updated_since).try(:to_time).try(:utc)]
       }
     }
   end

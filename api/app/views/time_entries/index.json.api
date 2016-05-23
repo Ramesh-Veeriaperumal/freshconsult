@@ -1,15 +1,16 @@
-JSON.generate(@items.map do |ts|
+JSON.generate(@items.map do |time_entry|
   {
-    billable: ts.billable,
-    note: ts.note,
-    id: ts.id,
-    timer_running: ts.timer_running,
-    agent_id: ts.user_id,
-    ticket_id: @ticket.try(:display_id) || ts.workable.display_id,
-    time_spent: TimeEntryDecorator.format_time_spent(ts.time_spent),
-    executed_at: ts.executed_at.try(:utc),
-    start_time: ts.start_time.try(:utc),
-    created_at: ts.created_at.try(:utc),
-    updated_at: ts.updated_at.try(:utc)
+    billable: time_entry.billable,
+    note: time_entry.note,
+    id: time_entry.id,
+    timer_running: time_entry.timer_running,
+    agent_id: time_entry.user_id,
+    ticket_id: @ticket.try(:display_id) || time_entry.workable.display_id,
+    company_id: defined?(@ticket) ? @ticket.try(:company_id) : time_entry.workable.company_id,
+    time_spent: TimeEntryDecorator.format_time_spent(time_entry.time_spent),
+    executed_at: time_entry.executed_at.try(:utc),
+    start_time: time_entry.start_time.try(:utc),
+    created_at: time_entry.created_at.try(:utc),
+    updated_at: time_entry.updated_at.try(:utc)
   }
 end)
