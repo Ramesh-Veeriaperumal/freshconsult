@@ -2,7 +2,7 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
   include HelpdeskReports::Helper::PlanConstraints
   
   validates_inclusion_of :status, :in => STATUS_TOKEN_TO_NAME.keys
-  validates_inclusion_of :frequency, :in => STATUS_TOKEN_TO_NAME.keys, :allow_nil => true
+  validates_inclusion_of :frequency, :in => FREQUENCY_TOKEN_TO_NAME.keys, :allow_nil => true
   validates_inclusion_of :day_of_frequency, :in => 0..31, :allow_nil => true
   validates_inclusion_of :repeat_frequency, :in => 1..30, :allow_nil => true
   validates_inclusion_of :minute_of_day, :in => 0..1440, :allow_nil => true

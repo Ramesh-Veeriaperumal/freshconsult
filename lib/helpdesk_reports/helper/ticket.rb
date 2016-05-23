@@ -261,11 +261,11 @@ module HelpdeskReports::Helper::Ticket
     scope = Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]
     case scope
     when :group_tickets
-      scoped_group_ids = current_user.agent.agent_groups.collect(&:group_id)
+      scoped_group_ids = User.current.agent.agent_groups.collect(&:group_id)
       scoped_group_ids.present? ? validate_filter("group_id", scoped_group_ids)
-                                : validate_filter("agent_id", [current_user.id])
+                                : validate_filter("agent_id", [User.current.id])
     when :assigned_tickets
-      validate_filter "agent_id", [current_user.id]
+      validate_filter "agent_id", [User.current.id]
     end
   end
 
