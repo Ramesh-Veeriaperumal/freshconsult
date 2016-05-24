@@ -129,7 +129,7 @@ gem 'rforce'
 gem 'chargebee', "~> 1.5.1"
 
 gem 'encryptor', '1.1.3'
-gem "dalli"
+gem "dalli", :git => "git://github.com/freshdesk/dalli.git", :branch => "fd_master"
 #gem 'memcache-client', '1.8.5', :git => "git://github.com/mperham/memcache-client.git"
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
