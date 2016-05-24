@@ -4,7 +4,7 @@
       <h4 class="cat-title-border">
         <%= font_icon( (category['portal_solution_categories'].empty? ? 'categories-orphan' : 'cube'), :class => "cat-title-icon #{'tooltip' if category['portal_solution_categories'].empty?}",
         :"data-original-title" => (category['portal_solution_categories'].empty? ? t('solution.unassociated') : "") ) %>
-        <%= pjax_link_to  "#{h(category[:name]).truncate(45)}".html_safe, 
+        <%= pjax_link_to  category[:name].truncate(45), 
                           solution_category_path(:id =>category[:id]), 
                           :class => 'tooltip', 
                           :title => (h(category[:name]) if category[:name].length > 45) %>        
@@ -12,7 +12,7 @@
       <ul>      
         <% category[:folders].first(5).each do |folder| %>
           <li>
-            <%= pjax_link_to h(folder[:name].truncate(50)), solution_folder_path(folder[:id]),
+            <%= pjax_link_to folder[:name].truncate(50), solution_folder_path(folder[:id]),
                 :class => 'tooltip', :title => (h(folder[:name]) if folder[:name].length > 50) %>
             <span class="muted">
               (<%= folder[:article_count] %>)

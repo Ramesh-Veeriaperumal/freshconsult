@@ -78,12 +78,15 @@ module Solution::ArticlesHelper
     ).html_safe
   end
 
-  def company_visibility_tooltip(folder)
-    company_names = folder.customers.first(5).map(&:name).join(', ')
-    count = folder.customers.size - 5
-    company_names += t('solution.folders.visibility.extra_companies', :count => count) if count > 0
-    %(<span #{ "class=\"tooltip\" data-placement=\"right\" title=\"#{company_names}\"" if folder.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]}>
-        #{Solution::Constants::VISIBILITY_NAMES_BY_KEY[folder.visibility]}
+  def company_visibility_tooltip(folder_meta)
+    span_attributes = ""
+    if folder_meta.has_company_visiblity?
+      company_names = folder_meta.customers.first(5).map(&:name).join(', ')
+      company_names += t('solution.folders.visibility.extra_companies', :count => count) if folder_meta.customers.size > 5
+      span_attributes = "class='tooltip' data-placement='right' title='#{h(company_names)}'"
+    end
+    %(<span #{ span_attributes }>
+        #{ folder_meta.visibility_type }
       </span>).html_safe
   end
 
