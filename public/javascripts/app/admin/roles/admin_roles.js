@@ -32,14 +32,14 @@ var SubmitHandler = SubmitHandler || (function(){
 			select2: []
 		}
 	}
-	
+
 	submitObj.resetChanges = function(){
 		submitObj.changes = {
 			added_agent: [],
 			removed_agent: []
 		}
 	}
-	
+
 	submitObj.triggerSave = function(){
 		var text = jQuery('[data-action="submitmodal"]').data().loading;
 		jQuery('[data-action="submitmodal"]').text(text).addClass('disabled');
@@ -51,9 +51,9 @@ var SubmitHandler = SubmitHandler || (function(){
 	 * @param  {[Integer]}   roleid      [Role ID]
 	 * @param  {Integer} cb           	 [Decides form submit(1) or ajax submit(0) ]
 	 * @param  {[string]}   label 		 [Label handler input]
-	 * @return {[void]}                  
+	 * @return {[void]}
 	 */
-	
+
 	submitObj.modifyAndSubmit = function(modifiedData, roleid, cb, label){
 
 		submitObj.syncData(modifiedData);
@@ -80,7 +80,7 @@ var SubmitHandler = SubmitHandler || (function(){
 
 	function _checkCurrentModified(data){
 		// Check both and remove dulicate from both array
-		var _added = data.added_agent.length === 0 ? [] : data.added_agent.slice(), 
+		var _added = data.added_agent.length === 0 ? [] : data.added_agent.slice(),
 			_removed = data.removed_agent.length === 0 ? [] : data.removed_agent.slice();
 
 		var added = _added.filter(function(val, i){
@@ -133,7 +133,7 @@ var SubmitHandler = SubmitHandler || (function(){
 			data: { add_user_ids: data.added_agent, delete_user_ids: data.removed_agent, id: id }
 		}).success(function(result){
 			if(result.status){
-				var updatedCount = jQuery("#manage-agents .agent-list-wrapper").children('.agent-list').length;
+				var updatedCount = jQuery("#manage-agents .agent-list-wrapper").children('.roles-agent-list').length;
 				jQuery("#manage-agents").modal('hide');
 				SubmitHandler.resetChanges();
 				window['LabelHandler'][label](id, updatedCount);
@@ -154,7 +154,7 @@ var SubmitHandler = SubmitHandler || (function(){
 /******************************************* End of Submit handler **************************************/
 
 /**
- * Select2Handler - Adding and removing data in the agent list 
+ * Select2Handler - Adding and removing data in the agent list
  * 					Enabling and disabling submit button.
  */
 
@@ -220,8 +220,8 @@ var Select2Handler = Select2Handler || (function(){
 	}
 
 	function _removeAgent($domobj){
-		var _id = $domobj.parents('.agent-list').attr('id');
-		$domobj.parents('.agent-list').remove();
+		var _id = $domobj.parents('.roles-agent-list').attr('id');
+		$domobj.parents('.roles-agent-list').remove();
 		var name = DataStore.get('agent').findById(parseInt(_id, 10)).name;
 		var option = jQuery('<option />').text(name).val(_id);
 		jQuery('select.agent-select-list').prepend(option);
@@ -246,7 +246,7 @@ var Select2Handler = Select2Handler || (function(){
 
 	function _checkNoAgent(){
 		var noAgentTemplate = "<div class='no-agent-info'>"+I18n.t('admin.roles.no_agent_added')+"</div>";
-		var len = jQuery(".agent-list-wrapper").children('.agent-list').length;
+		var len = jQuery(".agent-list-wrapper").children('.roles-agent-list').length;
 		if(len === 0){
 			jQuery(".agent-list-wrapper").html(noAgentTemplate);
 		}else{
@@ -255,7 +255,7 @@ var Select2Handler = Select2Handler || (function(){
 	}
 
 	function _enableButton(){
-		if(Select2Handler.agent.added_agent.length !== 0 || Select2Handler.agent.removed_agent.length !== 0 
+		if(Select2Handler.agent.added_agent.length !== 0 || Select2Handler.agent.removed_agent.length !== 0
 			|| SubmitHandler.changes.added_agent.length !== 0 || SubmitHandler.changes.removed_agent.length !== 0){
 			jQuery('#manage-agents [data-action="submitmodal"]').removeClass('disabled');
 		}else{
@@ -378,7 +378,7 @@ AdminRoles.edit = AdminRoles.edit || {
 			this.customRole();
 		}
 	},
-	
+
 	defaultRole: function(){
 		jQuery(document).on("hidden", '#manage-agents', function(){
 			jQuery("#manage-agents").modal('destroy');
@@ -412,7 +412,7 @@ AdminRoles.edit = AdminRoles.edit || {
 		jQuery(document).on('click', '[data-action="submitmodal"]', function(){
 			var roleid = jQuery("#roleid").val();
 			SubmitHandler.modifyAndSubmit(Select2Handler.agent, roleid, 1, 'index');
-			var updatedCount = jQuery("#manage-agents .agent-list-wrapper").children('.agent-list').length;
+			var updatedCount = jQuery("#manage-agents .agent-list-wrapper").children('.roles-agent-list').length;
 			LabelHandler.default(roleid, updatedCount);
 			UpdateAgentCount();
 			jQuery("#manage-agents").modal('hide');
@@ -447,7 +447,7 @@ AdminRoles.new = AdminRoles.new || {
 		jQuery(document).on('click', '[data-action="submitmodal"]', function(){
 			SubmitHandler.modifyAndSubmit(Select2Handler.agent, '', 1, 'new');
 			var roleid = jQuery("#roleid").val();
-			var updatedCount = jQuery("#manage-agents .agent-list-wrapper").children('.agent-list').length;
+			var updatedCount = jQuery("#manage-agents .agent-list-wrapper").children('.roles-agent-list').length;
 			LabelHandler.default(roleid, updatedCount);
 			UpdateAgentCount();
 			jQuery("#manage-agents").modal('hide');
