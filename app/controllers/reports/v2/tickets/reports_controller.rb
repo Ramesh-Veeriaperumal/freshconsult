@@ -3,20 +3,22 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   include HelpdeskReports::Helper::Ticket
   include ApplicationHelper
   include ExportCsvUtil
-  include HelpdeskV2ReportsHelper
-  helper HelpdeskV2ReportsHelper
+  include HelpdeskReports::Helper::ControllerMethods
+  include HelpdeskReports::Helper::ScheduledReports
   
   before_filter :check_account_state, :ensure_report_type_or_redirect, 
-                :date_lag_constraint, :ensure_ticket_list,              :except => [:download_file]              
+                :plan_constraints,                                      :except => [:download_file]              
   before_filter :pdf_export_config, :report_filter_data_hash,           :only   => [:index, :fetch_metrics]
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index, :export_report, :email_reports]
   before_filter :normalize_params, :validate_params, :validate_scope, 
                 :only_ajax_request,                                     :except => [:index, :configure_export, :export_report, :download_file,
                                                                                     :save_reports_filter, :delete_reports_filter]
   before_filter :pdf_params,                                            :only   => [:export_report]
-  before_filter :max_limit?,                                            :only   => [:save_reports_filter]
-  before_filter :construct_filters,                                     :only   => [:save_reports_filter,:update_reports_filter]
+  before_filter :save_report_max_limit?,                                :only   => [:save_reports_filter]
+  before_filter :construct_report_filters,                              :only   => [:save_reports_filter,:update_reports_filter]
   
+  helper_method :enable_schedule_report?
+
   wrap_parameters false
   
   attr_accessor :report_type
@@ -58,6 +60,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     @query_params[:report_type] = report_type
     @query_params[:portal_url]  = main_portal? ? current_account.host : current_portal.portal_url
     @query_params[:query_hash]  = request_object.fetch_req_params
+    @query_params[:records_limit] = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
     
     if generate_data_exports_id
       status_code = :ok
@@ -70,7 +73,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
   
   def export_report
-    if ["agent_summary", "group_summary"].include?(report_type)
+    if [:agent_summary, :group_summary].include?(report_type)
       export_report_csv
     else
       generate_pdf
@@ -79,47 +82,21 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   
   def email_reports
     email_report_params
-    HelpdeskReports::Workers::Export.perform_async(params)
+    Reports::Export.perform_async(params)
     render json: nil, status: :ok
   end
 
   def save_reports_filter
-    report_filter = current_user.report_filters.build(
-      :report_type => @report_type_id,
-      :filter_name => @filter_name,
-      :data_hash   => @data_map
-    )
-    report_filter.save
-    
-    render :json => {:text=> "success", 
-                     :status=> "ok",
-                     :id => report_filter.id,
-                     :filter_name=> @filter_name,
-                     :data=> @data_map }.to_json
+    common_save_reports_filter    
   end
 
   def update_reports_filter
-    id = params[:id].to_i
-    report_filter = current_user.report_filters.find(id)
-    report_filter.update_attributes(
-      :report_type => @report_type_id,
-      :filter_name => @filter_name,
-      :data_hash   => @data_map
-    )
-    render :json => {:text=> "success", 
-                     :status=> "ok",
-                     :id => report_filter.id,
-                     :filter_name=> @filter_name,
-                     :data=> @data_map }.to_json
+    common_update_reports_filter
   end
 
   def delete_reports_filter
-    id = params[:id].to_i
-    report_filter = current_user.report_filters.find(id)
-    report_filter.destroy 
-    render json: "success", status: :ok
+    common_delete_reports_filter
   end
-
   
   def download_file
     path = "data/helpdesk/#{params[:report_export]}/#{params[:type]}/#{Rails.env}/#{current_user.id}/#{params[:date]}/#{params[:file_name]}.#{params[:format]}"
@@ -140,8 +117,8 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
 
   def ensure_report_type_or_redirect
-    @report_type = params[:report_type]
-    redirect_to reports_path unless REPORT_TYPE_BY_NAME.include?(report_type) && has_scope?(report_type)
+    @report_type = params[:report_type].to_sym if params[:report_type]
+    redirect_to reports_path unless LIST_REPORT_TYPES.include?(report_type) && has_scope?(report_type)
   end
 
   def build_and_execute
@@ -153,13 +130,17 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     end
         
     response = bulk_request requests
-    
+
     @results = []
     response.each do |res|
-      index = res["index"].to_i
-      param = requests[index].fetch_req_params
-      query_type = requests[index].query_type
-      @results << HelpdeskReports::Response::Ticket.new(res, param, query_type, report_type, @pdf_export.present?)   
+      if res["last_dump_time"]
+        @last_dump_time = set_last_dump_time(res["last_dump_time"]).to_i
+      else
+        index = res["index"].to_i
+        param = requests[index].fetch_req_params
+        query_type = requests[index].query_type
+        @results << HelpdeskReports::Response::Ticket.new(res, param, query_type, report_type, @pdf_export.present?) 
+      end
     end
   end
 
@@ -188,7 +169,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
   
   def formatting_required?
-    FORMATTING_REQUIRED.include?(report_type.to_sym) && !ticket_list_query?
+    FORMATTING_REQUIRED.include?(report_type) && !ticket_list_query?
   end
   
   def generate_pdf
@@ -228,7 +209,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
         archive_tkt = current_account.archive_tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
         begin
           tickets = tkt.find_all_by_id(id_list[:non_archive], :select => ticket_list_columns)
-          archive_tickets = archive_tkt.find_all_by_id(id_list[:archive], :select => ticket_list_columns)
+          archive_tickets = archive_tkt.find_all_by_ticket_id(id_list[:archive], :select => ticket_list_columns)
         rescue Exception => e
           Rails.logger.error "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets. \n#{e.inspect}\n#{e.message}\n#{e.backtrace.join("\n\t")}"
           NewRelic::Agent.notice_error(e,{:description => "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets"}) 
@@ -245,7 +226,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     tickets.each do |t|
       res << {
         :id         => t.display_id,
-        :subject    => t.subject,
+        :subject    => escape_keys(t.subject),
         :status     => status_hash[t.status],
         :priority   => priority_hash[t.priority],
         :requester  => user_data[:users][t.requester_id],
@@ -304,6 +285,6 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       DEFAULT_REPORTS.include?(report_type)
     end 
   end
-  
+
 end
 

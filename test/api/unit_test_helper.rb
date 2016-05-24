@@ -3,24 +3,22 @@ file_name = File.expand_path('../../../config/infra_layer.yml', __FILE__)
 require File.expand_path('../../../test/api/helpers/simple_cov_setup', __FILE__)
 
 def load_environment(file_name)
-	begin
-	puts "Switching ON API Layer"
-	change_api_layer(file_name, true)
-	require File.expand_path('../../../config/environment', __FILE__)
-	ensure
-		puts "Switching OFF API Layer"
-		change_api_layer(file_name, false)
-	end
+  puts 'Switching ON API Layer'
+  change_api_layer(file_name, true)
+  require File.expand_path('../../../config/environment', __FILE__)
+   ensure
+     puts 'Switching OFF API Layer'
+     change_api_layer(file_name, false)
 end
 
 def change_api_layer(file_name, new_value)
-	text = File.read(file_name)
-	pattern = new_value ? /API_LAYER: false/ : /API_LAYER: true/
-	new_contents = text.gsub(pattern, "API_LAYER: #{new_value}")
-	# To merely print the contents of the file, use:
-	puts new_contents
-	# To write changes to the file, use:
-	File.open(file_name, "w") {|file| file.puts new_contents }
+  text = File.read(file_name)
+  pattern = new_value ? /API_LAYER: false/ : /API_LAYER: true/
+  new_contents = text.gsub(pattern, "API_LAYER: #{new_value}")
+  # To merely print the contents of the file, use:
+  puts new_contents
+  # To write changes to the file, use:
+  File.open(file_name, 'w') { |file| file.puts new_contents }
 end
 
 load_environment(file_name)

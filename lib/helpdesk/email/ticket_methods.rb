@@ -13,7 +13,7 @@ module Helpdesk::Email::TicketMethods
       email_from_text[:cc_emails].reject!{ |cc_email| kbase_email?(cc_email) or requester_email?(cc_email) }
       email[:cc].concat(email_from_text[:cc_emails]).uniq!
       email[:to_emails].concat(email_from_text[:cc_emails])
-      get_user(email_from_text , email[:email_config], email[:text])
+      get_user(email_from_text , email[:email_config], email[:text], true)
     end
   end
 

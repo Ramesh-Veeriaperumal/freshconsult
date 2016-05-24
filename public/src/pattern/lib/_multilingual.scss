@@ -2,6 +2,7 @@
 
 // -- Russian, German & French
 :lang(ru-RU), :lang(de), :lang(fr){
+
   ul.header-tabs li a {
     padding: 8px 13px;
   }
@@ -24,7 +25,6 @@
   .solution-details .sidebar-section .title-wrapper .edit{
     width: auto;
   }
-  //SLA Policies
   .sla_policy_form{
     .grid table.sla_policies tr.escalations td.escalations-time-holder{
       width: 335px;
@@ -93,8 +93,8 @@
   }
 }
 
-//German
-:lang(de){
+//German, spanish (LATAM)
+:lang(de),:lang(es-LA){
   .sla_policy_form{
     .grid table.sla_policies tr.escalations td.escalations-time-holder{
       width: 230px;

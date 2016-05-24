@@ -17,13 +17,15 @@ class OmniauthCallbacksController < ApplicationController
       :portal_url => @ignore_build.blank? ? portal_url : nil,
       :app => app,
       :omniauth => @omniauth,
-      :user_id => @user_id
+      :user_id => @user_id,
+      :state_params => @state_params
     )
 
     result = authenticator.after_authenticate(params)
     flash[:notice] = result.flash_message if result.flash_message.present?
     render result.render and return if result.render.present?
     return failure if result.failed?
+    invalid_nmobile if result.invalid_nmobile.present?
     redirect_to result.redirect_url || root_url(:host => origin_account.host)
   end
 
@@ -57,10 +59,10 @@ class OmniauthCallbacksController < ApplicationController
     origin = CGI.parse(origin) if origin.present?
     @app_name ||= Integrations::Constants::PROVIDER_TO_APPNAME_MAP["#{@provider}"] if @provider.present?
 
-    if origin.present? && origin.has_key?('id')
-      assign_default_variables(origin)
-    elsif params[:state].present?
+    if params[:state].present?
       assign_state_variables(origin)
+    elsif origin.present? && origin.has_key?('id')
+      assign_default_variables(origin)
     end
   end
 
@@ -71,11 +73,11 @@ class OmniauthCallbacksController < ApplicationController
   end
 
   def assign_state_variables origin
-    state_params = CGI.parse(URI.decode(params[:state]))
-    if state_params["ignore_build"].present?
+    @state_params = CGI.parse(URI.decode(params[:state]))
+    if @state_params["ignore_build"].present?
       @ignore_build = true
     else
-      @domain = (state_params["portal_domain"].presence || state_params["full_domain"].presence)[0]
+      @domain = (@state_params["portal_domain"].presence || @state_params["full_domain"].presence)[0]
       domain_mapping = DomainMapping.find_by_domain(@domain)
       if domain_mapping.present?
         @account_id =  domain_mapping.account_id
@@ -99,9 +101,17 @@ class OmniauthCallbacksController < ApplicationController
 
   def portal_url
     account = origin_account
-    portal = (@portal_id ? Portal.find(@portal_id) : account.main_portal)
+    object = @portal_id.present? ? Portal.find(@portal_id) : account
     port = ''
-    @portal_url = "#{portal.url_protocol}://#{portal.host}#{port}"
+    if object.is_a?(Account)
+      @portal_url = "#{object.url_protocol}://#{object.full_domain}"
+    elsif object.is_a?(Portal)
+      @portal_url = "#{object.url_protocol}://#{object.host}#{port}"
+    end
+  end
+
+  def invalid_nmobile
+    cookies["mobile_access_token"] = { :value => 'customer', :http_only => true } 
   end
 
 end

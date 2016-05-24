@@ -8,7 +8,7 @@ class HelpdeskReports::Response::Ticket::Base
   def initialize result, date_range, report_type, query_type, pdf_export
     @raw_result       = result
     @date_range       = date_range
-    @report_type      = report_type.upcase.to_sym
+    @report_type      = report_type
     @query_type       = query_type
     @pdf_export       = pdf_export
     dates             = date_range.split("-")
@@ -83,7 +83,7 @@ class HelpdeskReports::Response::Ticket::Base
   end
 
   def sort_group_by_values
-    return unless report_type == :GLANCE && @query_type != :bucket 
+    return unless report_type == :glance && @query_type != :bucket 
     processed_result.each do |gp_by, values|
       values = values.to_a
       next if gp_by == :general 
@@ -162,7 +162,7 @@ class HelpdeskReports::Response::Ticket::Base
   end
 
   def label_for_x_axis year, point, trend
-    timestamp_needed = (report_type == :PERFORMANCE_DISTRIBUTION) #Performance Reports need timestamp values for line chart
+    timestamp_needed = (report_type == :performance_distribution) #Performance Reports need timestamp values for line chart
     case trend
       when "doy"
         date = point.is_a?(Date) ? point : Date.parse(point)

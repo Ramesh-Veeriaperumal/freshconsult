@@ -4,6 +4,7 @@ class Support::TicketsController < SupportController
   include SupportTicketControllerMethods 
   include Support::TicketsHelper
   include ExportCsvUtil
+  include Helpdesk::Permission::Ticket
   
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
@@ -20,8 +21,11 @@ class Support::TicketsController < SupportController
   
   # Ticket object loading
   before_filter :build_tickets, :only => [:index, :filter]
+
   before_filter :verify_ticket_permission, :only => [:show, :update, :close, :add_people]
   before_filter :set_date_filter, :only => [:export_csv]  
+
+  before_filter :check_ticket_permission, :only => [:create]
 
   def show
     return access_denied unless can_access_support_ticket? && visible_ticket?
@@ -97,11 +101,18 @@ class Support::TicketsController < SupportController
   def add_people
     cc_params = fetch_valid_emails(params[:helpdesk_ticket][:cc_email][:reply_cc])
     if cc_params.length <= TicketConstants::MAX_EMAIL_COUNT
+      if current_user.customer?
+        parsed_emails   = permissible_user_emails(cc_params)
+        cc_params       = parsed_emails[:valid_emails].is_a?(Array) ? parsed_emails[:valid_emails] : parsed_emails[:valid_emails].split(",")
+        dropped_emails  = parsed_emails[:dropped_emails]
+      end
       @ticket.cc_email[:reply_cc] = cc_params.delete_if {|x| !valid_email?(x)}
       update_ticket_cc @ticket.cc_email
       @ticket.trigger_cc_changes(@old_cc_hash)
       @ticket.save
-      flash[:notice] = "Email(s) successfully added to CC."
+      message = [I18n.t('emails_added_to_cc')]
+      message << I18n.t('emails_dropped_message', :emails => h(dropped_emails)) if dropped_emails.present?
+      flash[:notice] = message.join("<br/>")
     else
       flash[:error] = "You can add upto #{TicketConstants::MAX_EMAIL_COUNT} CC emails"
     end
@@ -154,17 +165,18 @@ class Support::TicketsController < SupportController
 
     # Used for scoping of filters
     def ticket_scope
-      if privilege?(:client_manager)
+      # to be reconsidered while implementing features for one contact multi company
+      @requested_item = current_user
+
+      if privilege?(:client_manager) && @company
         if @requested_by.to_i == 0
-          current_user.company.try(:all_tickets) || current_user.tickets
-        else
-          @requested_item = current_account.users.find_by_id(@requested_by)
-          @requested_item.tickets
+          return current_user.company.try(:all_tickets) || current_user.tickets
+        else 
+          requested_for = current_account.users.find_by_id(@requested_by)
+          @requested_item = requested_for.company.presence == @company ? requested_for : current_user
         end
-      else
-        @requested_item = current_user
-        @requested_item.tickets
       end
+      @requested_item.tickets
     end
 
     def check_user_permission
@@ -199,5 +211,19 @@ class Support::TicketsController < SupportController
 
     def public_request?
       current_user.nil?
+    end
+
+    def check_ticket_permission
+      if (!current_user) || (current_user && current_user.customer?)
+        unless can_create_ticket?(params[:helpdesk_ticket][:email])
+          flash[:error] = t("helpdesk.tickets.views.invalid_requester")
+          set_portal_page :submit_ticket
+          render :action => :new
+        end
+      end
+      if params[:cc_emails]        
+        params[:cc_emails], dropped_cc_emails = fetch_permissible_cc(current_user, params[:cc_emails], current_account)
+        params[:dropped_cc_emails] = dropped_cc_emails.join(",")
+      end
     end
 end

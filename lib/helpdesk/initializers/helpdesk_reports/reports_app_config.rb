@@ -1,13 +1,17 @@
 module ReportsAppConfig
-  config = YAML::load_file(File.join(Rails.root, 'config/helpdesk_reports', 'reports_app.yml'))[Rails.env]
+
+  def self.load_yml file
+    reports_root = "config/helpdesk_reports".freeze
+    YAML::load_file( File.join(Rails.root, reports_root, file) )
+  end
+
+  config = load_yml('reports_app.yml')[Rails.env]
   
   TICKET_REPORTS_URL = "#{config['host']}#{config['port']}#{config['ticket_reports']}"
-  TIMESHEET_REPORTS_URL = ""
   
-  BUCKET_QUERY = YAML::load_file(File.join(Rails.root, 'config/helpdesk_reports', 'bucket_query.yml'))
+  BUCKET_QUERY = load_yml('bucket_query.yml')
   
-  # Filters that are excluded for specific report_type/subscription_plan combination
-  EXCLUDE_FILTERS = YAML::load_file(File.join(Rails.root, 'config/helpdesk_reports', 'exclude_filters_by_plan.yml'))
+  #Reports constraints for specific report_type/subscription_plan combination
+  REPORT_CONSTRAINTS = load_yml('reports_constraints.yml').freeze
 
-  DISABLE_TICKET_LIST = YAML::load_file(File.join(Rails.root, 'config/helpdesk_reports', 'disable_ticket_list_by_plan.yml'))
 end

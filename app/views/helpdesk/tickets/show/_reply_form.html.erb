@@ -32,7 +32,8 @@
                         "data-cnt-id" => cntid,
                         "data-destroy-editor" => 'true',
                         "data-domhelper-name" => "cnt-reply",
-                        "data-fulltext" => true
+                        "data-fulltext" => true,
+                        "data-submitting" => 'false'
                       } do |f| %>
     <%= f.error_messages %>
 
@@ -120,11 +121,6 @@
           <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
           <% end %>    
       </li>
-        <% if is_application_installed?("screenr")%>
-          <li>
-          <%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_ticket" } %>
-          </li>
-        <% end %>
     </ul>
     
       <!-- reply will be always public -->

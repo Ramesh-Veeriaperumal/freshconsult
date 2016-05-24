@@ -95,9 +95,19 @@ body { background: $background; }
 .theme-tab, .title-highlight{ background-color: $tab_color; color: $tab_ctxt_color;  }
 .theme-tab:before{ border-left-color: $tab_color; }	
 
-.nav_search div.search_bar input, a.new_ticket, .new_ticket_button, ul.header-tabs li a ,.nav_search div.search_bar label.overlabel { color: $tab_ctxt_color; }
-
-
+.nav_search div.search_bar input, 
+a.new_ticket, .new_ticket_button, 
+ul.header-tabs li a,
+.nav_search div.search_bar label.overlabel,
+.nav_settings.dropdown .dropdown-toggle,
+.nav_settings.dropdown.open .dropdown-toggle{ 
+	color: $tab_ctxt_color; 
+}
+.top_nav_bg{
+	[class*="ficon-"]{
+		color: $tab_ctxt_color;
+	}
+}
 .nav_search div.search_bar .search-icon-inactive{
 	background: inline-image($tab_search_image) no-repeat;
 	background-position: 0;

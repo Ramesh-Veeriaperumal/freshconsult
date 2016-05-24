@@ -132,7 +132,10 @@ module MemcacheKeys
 
   ACCOUNT_PASSWORD_POLICY = "v1/ACCOUNT_PASSWORD_POLICIES:%{account_id}:%{user_type}"
 
+  HELPDESK_PERMISSIBLE_DOMAINS = "v1/HELPDESK_PERMISSIBLE_DOMAINS:%{account_id}"
+
   LEADERBOARD_MINILIST_REALTIME = "v2/LEADERBOARD_MINILIST_REALTIME:%{account_id}:%{agent_type}"
+
 
   class << self
 

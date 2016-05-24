@@ -12,7 +12,7 @@ class TicketValidationTest < ActionView::TestCase
     (2...7).map do |x|
       h = Helpdesk::TicketStatus.new
       h.status_id = x
-      h.stop_sla_timer = true if [3,4,5,6].include?(x)
+      h.stop_sla_timer = true if [3, 4, 5, 6].include?(x)
       statuses << h
     end
     statuses

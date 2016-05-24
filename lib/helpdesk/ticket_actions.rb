@@ -12,11 +12,10 @@ module Helpdesk::TicketActions
   def create_the_ticket(need_captcha = nil, skip_notifications = nil)
 
     cc_emails = fetch_valid_emails(params[:cc_emails])
-
-    #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
-    ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails , :fwd_emails => [], :reply_cc => cc_emails.dup, :tkt_cc => cc_emails.dup})
     
-    @ticket = current_account.tickets.build(ticket_params)
+    @ticket = current_account.tickets.build(params[:helpdesk_ticket])
+    #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
+    @ticket.cc_email = {:cc_emails => cc_emails , :fwd_emails => [], :reply_cc => cc_emails.dup, :tkt_cc => cc_emails.dup}
     set_default_values
     # The below is_native_mobile? check is valid for iPhone app version 1.0.0 and Android app update 1.0.3 
     # Once substantial amout of users have upgraded from these version, we need to remove 
@@ -37,7 +36,7 @@ module Helpdesk::TicketActions
 
   def handle_screenshot_attachments
     decoded_file = Base64.decode64(params[:screenshot][:data])
-    file = Tempfile.new(params[:screenshot][:name]) 
+    file = Tempfile.new([params[:screenshot][:name], '.png']) 
     file.binmode
     file.write decoded_file
     attachment = @ticket.attachments.build(:content => file, :account_id => @ticket.account_id)

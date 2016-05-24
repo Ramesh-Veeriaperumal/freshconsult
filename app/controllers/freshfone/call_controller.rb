@@ -8,7 +8,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::Call::EndCallActions
 	
 	include Freshfone::Search
-	before_filter :load_user_by_phone, :only => [:caller_data]
+	before_filter :load_customer, :only => [:caller_data]
 	before_filter :set_native_mobile, :only => [:caller_data]
 	before_filter :populate_call_details, :only => [:status]
 	before_filter :set_abandon_state, :only => [:status]
@@ -36,8 +36,9 @@ class Freshfone::CallController < FreshfoneBaseController
 					:locals => { :user => @user }),
 		      :user_name => caller_lookup(params[:PhoneNumber],@user),
   	 		  :user_id => (@user || {})[:id],
-          :call_meta => call_meta,
-          :caller_card => caller_card
+          :call_meta => call_meta, :caller_card => caller_card,
+          :email => (@user || {})[:email],  :mobile => (@user || {})[:mobile],
+          :phone => (@user || {})[:phone]
     		}
       }
 	  end
@@ -57,7 +58,9 @@ class Freshfone::CallController < FreshfoneBaseController
 	def inspect_call
 		key = FRESHFONE_CLIENT_CALL % { :account_id => current_account.id }
 		status = add_to_set(key, params[:call_sid])
-		render :json => { :can_accept => (status) ? 1 : 0 }
+		result = { can_accept: ((status) ? 1 : 0) }
+		result[:agent_conference] = agent_conference_details if status
+		render :json => result
 	end
 
 	def caller_recent_tickets 	
@@ -78,26 +81,31 @@ class Freshfone::CallController < FreshfoneBaseController
 		end
 	end
 
-	private
-		def load_user_by_phone
-			@user = search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
-		end
+  private
+    def load_customer
+      if params[:customerId].present?
+        @user = current_account.all_users.find_by_id(params[:customerId])
+      else
+        @user = search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
+      end
+    end
 
 		def call_meta	
 	    #Yet to handle the scenario where multiple calls at the same time 
 	    #from the same number targeting different groups.
 			return if caller.blank?
-			call = current_account.freshfone_calls.first( :include => [:freshfone_number], 
-							:conditions => {:caller_number_id => caller.id}, :order => "freshfone_calls.id DESC") 
-
+			call = current_account.freshfone_calls.ongoing_by_caller(caller.id).first
+			
 			if call.present?
-				{ :number => call.freshfone_number.number_name,
-					:ringing_time => call.freshfone_number.ringing_time,
-					:transfer_agent => get_transfer_agent(call),
-					:group 	=> (call.group.present?) ? call.group.name : "",
-					:company_name => (@user.present? && @user.company_name.present?) ? @user.company_name : ""
-				}
+				call_data = { :number => call.freshfone_number.number_name,
+											:ringing_time => call.freshfone_number.ringing_time,
+											:transfer_agent => get_transfer_agent(call),
+											:group 	=> (call.group.present?) ? call.group.name : "",
+											:company_name => (@user.present? && @user.company_name.present?) ? @user.company_name : "",
+										}
+        call_data[:agent_conference] = agent_conference_meta(call) if agent_conference_launched?
 			end
+			call_data
 		end
 
 		def caller 
@@ -177,17 +185,44 @@ class Freshfone::CallController < FreshfoneBaseController
 			super
 		end
 
-		def get_transfer_agent(call)
-			return false unless (call.meta.present? && call.meta.transfer_by_agent.present?)
-			user = current_account.users.find_by_id(call.meta.transfer_by_agent) 
-			return false unless user.present?
-			avatar = view_context.user_avatar(user, :thumb, "preview_pic small circle")
-			 {
-				:user_id => user.id,
-				:user_hover => avatar,
-				:user_name => user.name
-			}
-		end
+ def get_transfer_agent(call)
+   return false unless call.meta.present? && call.meta.transfer_by_agent.present? && call.default?
+   user = current_account.users.find_by_id(call.meta.transfer_by_agent)
+   return false unless user.present?
+   build_avatar(user)
+ end
+
+ def agent_conference_meta(call)
+   return false unless agent_conference_call?(call)
+   return false unless call.agent.present?
+   build_avatar(call.agent)
+ end
+
+ def agent_conference_details
+   return unless agent_conference_launched?
+   agent_conference_call = agent_conference_call_by_sid(params[:call_sid])
+   return unless agent_conference_call.present?
+   build_avatar(agent_conference_call.call.agent).merge!(is_receiver: true)
+ end
+
+ def build_avatar(user)
+   avatar = view_context.user_avatar(user, :thumb, 'preview_pic small circle')
+   { user_id: user.id, user_hover: avatar, user_name: user.name }
+ end
+
+ def agent_conference_call?(call)
+   @agent_conference_call ||= call.supervisor_controls
+                                  .agent_conference_calls(Freshfone::SupervisorControl::CALL_STATUS_HASH[:ringing])
+                                  .find_by_supervisor_id(agent.id).present?
+ end
+
+ def agent_conference_call_by_sid(sid)
+ 	  current_account.supervisor_controls.find_by_sid(params[:call_sid])
+ end
+
+ def agent_conference_launched?
+ 	current_account.features?(:agent_conference)
+ end
 
 		def in_progress?
 			params[:CallStatus] == 'in-progress'

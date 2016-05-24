@@ -4,7 +4,7 @@ class MonitorshipsController < ApplicationController
 
   before_filter :access_denied, :unless => :logged_in?
 
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:toggle,:is_following]
+  skip_before_filter :check_privilege, :only => [:toggle,:is_following]
   before_filter :unprocessable_entity, :unless => :valid_request
   before_filter :fetch_monitorship, :only => :toggle
   before_filter :load_parent , :only => [:followers, :toggle]  

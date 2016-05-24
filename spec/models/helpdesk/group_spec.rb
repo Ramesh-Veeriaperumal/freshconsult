@@ -54,6 +54,21 @@ describe Group do
 
 	end
 
+	it "should turn on avaialbility toggle for a group only if ticket assign type is roundrobin"  do
+	    @group7 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin], 
+	    																 :toggle_availability => 1,
+	    																 :name =>  Faker::Name.name})
+	    @group7.toggle_availability.should be true
+	    @group8 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:defa], 
+	    																 :toggle_availability => 1,
+	    																 :name =>  Faker::Name.name})
+	    @group8.round_robin_enabled?.should be false
+	    @group8.toggle_availability?.should be false
+	
+	end
+
+
+
 	it "should create a list if group is created with round robon" do
 		@group6 = create_group(@account,{:ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin],
 	    								:name =>  Faker::Name.name})

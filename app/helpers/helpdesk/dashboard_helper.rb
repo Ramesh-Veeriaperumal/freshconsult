@@ -120,15 +120,16 @@ module Helpdesk::DashboardHelper
         ))
   end
 
-  def group_list_filter
-    filter_list = current_account.groups.round_robin_groups.map{ |grp|
-      [grp.name,"?group_id=#{grp.id}",false]
+  def group_list_filter(selected_group)
+    filter_list = current_user.accessible_roundrobin_groups.order("name").map{ |grp|
+      selected = (selected_group && selected_group.id == grp.id ? true : false)
+      [grp.name,"?group_id=#{grp.id}",selected]
     }
     dropdown_menu(filter_list, TOOLBAR_LINK_OPTIONS)
   end
 
   def chat_activated?
-    !current_account.subscription.suspended? && feature?(:chat) && !!current_account.chat_setting.display_id
+    !current_account.subscription.suspended? && feature?(:chat) && !!current_account.chat_setting.site_id
   end
 
   def chat_active?
@@ -154,10 +155,10 @@ module Helpdesk::DashboardHelper
   end
 
   def available_rr_agents_count
-    group_ids = current_account.groups.round_robin_groups.select(:id).map(&:id)
+    group_ids = current_user.accessible_roundrobin_groups.pluck(:id)
     return 0 if group_ids.blank?
-    user_ids = current_account.agent_groups.where(group_id:group_ids).select(&:user_id).map(&:user_id).uniq
-    user_ids.present? ? current_account.agents.where(available:true,user_id:user_ids).count :  0
+    user_ids = current_account.agent_groups.where(:group_id => group_ids).pluck(:user_id).uniq
+    user_ids.present? ? current_account.available_agents.where(:user_id => user_ids).count :  0
   end
 
   def current_group
@@ -166,9 +167,9 @@ module Helpdesk::DashboardHelper
 
   def round_robin?
     @round_robin_enabled ||=
-      current_user.privilege?(:admin_tasks) and
+      (current_user.privilege?(:admin_tasks) or current_user.privilege?(:manage_availability)) and
       current_account.features?(:round_robin) and
-      current_account.groups.round_robin_groups.any?      
+      current_user.accessible_groups.round_robin_groups.any?
   end
 
   def freshfone_active?
@@ -269,3 +270,4 @@ module Helpdesk::DashboardHelper
     'hide' unless (!freshfone_trial_states? && freshfone_below_threshold?)
   end
 end
+

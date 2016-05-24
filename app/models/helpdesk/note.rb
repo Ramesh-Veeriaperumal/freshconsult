@@ -31,7 +31,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
 
-  delegate :to_emails, :cc_emails, :bcc_emails, :subject, :to => :schema_less_note
+  delegate :to_emails, :cc_emails, :bcc_emails, :subject, :cc_emails_hash, :to => :schema_less_note
 
   scope :newest_first, :order => "created_at DESC"
   scope :visible, :conditions => { :deleted => false } 
@@ -345,13 +345,13 @@ class Helpdesk::Note < ActiveRecord::Base
       cc_email_hash_value = notable.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : notable.cc_email_hash
       if fwd_email? || reply_to_forward?
         fwd_emails = self.to_emails | self.cc_emails | self.bcc_emails | cc_email_hash_value[:fwd_emails]
-        fwd_emails.delete_if {|email| (email == notable.requester.email)}
+        fwd_emails.delete_if {|email| (notable.requester.email.present? && parse_email(email)[:email].downcase == notable.requester.email.downcase)}
         cc_email_hash_value[:fwd_emails]  = fwd_emails
       else
-        cc_email_hash_value[:reply_cc] = self.cc_emails.reject {|email| (email == notable.requester.email)}
+        cc_email_hash_value[:reply_cc] = self.cc_emails.reject {|email| (parse_email(email)[:email].downcase == notable.requester.email.downcase)}
         tkt_cc_emails = self.cc_emails | cc_email_hash_value[:cc_emails]
-        cc_emails = tkt_cc_emails.map { |email| parse_email(email)[:email] }.compact.uniq
-        cc_emails.delete_if {|email| (email == notable.requester.email)}
+        cc_emails = tkt_cc_emails.map { |email| parse_email(email)[:email].downcase }.compact.uniq
+        cc_emails.delete_if {|email| (notable.requester.email.present? && email == notable.requester.email.downcase)}
         cc_email_hash_value[:cc_emails] = cc_emails
       end
       notable.cc_email = cc_email_hash_value    

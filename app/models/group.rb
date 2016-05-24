@@ -10,26 +10,26 @@ class Group < ActiveRecord::Base
   include AccountOverrider
 
   after_commit :clear_cache
-  after_commit  :create_round_robin_list, on: :create, :if => :round_robin_enabled?
-  after_commit  :update_round_robin_list, on: :update
-  after_commit  :delete_round_robin_list, :nullify_tickets, on: :destroy
-  before_save :create_model_changes
+  after_commit :create_round_robin_list, on: :create, :if => :round_robin_enabled?
+  after_commit :update_round_robin_list, on: :update
+  after_commit :delete_round_robin_list, :nullify_tickets, on: :destroy
+  before_save  :reset_toggle_availability, :create_model_changes
+  after_commit  :destroy_group_in_liveChat, on: :destroy
 
-  after_destroy :remove_group_from_chat_routing
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
-  
-   has_many :agent_groups , :class_name => "AgentGroup", :foreign_key => "group_id", :dependent => :destroy
-   
-   has_many :agents, :through => :agent_groups, :source => :user , :conditions => ["users.deleted=?", false]
 
-   has_many :tickets, :class_name => 'Helpdesk::Ticket'
-   has_many :email_configs, :dependent => :nullify
-   
-   belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
-   belongs_to :business_calendar
-   
-   has_and_belongs_to_many :accesses, 
+  has_many :agent_groups , :class_name => "AgentGroup", :foreign_key => "group_id", :dependent => :destroy
+
+  has_many :agents, :through => :agent_groups, :source => :user , :conditions => ["users.deleted=?", false]
+
+  has_many :tickets, :class_name => 'Helpdesk::Ticket'
+  has_many :email_configs, :dependent => :nullify
+
+  belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
+  belongs_to :business_calendar
+
+  has_and_belongs_to_many :accesses, 
     :class_name => 'Helpdesk::Access',
     :join_table => 'group_accesses',
     :insert_sql => proc { |record|
@@ -38,28 +38,29 @@ class Group < ActiveRecord::Base
         ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
      }
     }
-  
-   has_many :freshfone_number_groups, :class_name => "Freshfone::NumberGroup",
-              :foreign_key => "group_id", :dependent => :delete_all
 
-   has_many   :ecommerce_accounts, :class_name => 'Ecommerce::Account', :dependent => :nullify
+  has_many :freshfone_number_groups, :class_name => "Freshfone::NumberGroup",
+            :foreign_key => "group_id", :dependent => :delete_all
 
-   attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
-                   :ticket_assign_type, :business_calendar_id,
-                   :added_list, :removed_list, :agent_groups_attributes
-   
-   accepts_nested_attributes_for :agent_groups
-   scope :active_groups_in_account, lambda { |account_id|
-     { :joins => "inner join agent_groups on agent_groups.account_id = #{account_id} and
-                   agent_groups.group_id = groups.id and groups.account_id = #{account_id}
-                   inner join users ON agent_groups.account_id = #{account_id} and
-                   agent_groups.user_id = users.id and users.account_id = #{account_id}
-                   and users.helpdesk_agent = 1 and users.deleted = 0",
+  has_many   :ecommerce_accounts, :class_name => 'Ecommerce::Account', :dependent => :nullify
+
+  attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
+                   :ticket_assign_type, :toggle_availability, :business_calendar_id, :agent_groups_attributes
+
+  accepts_nested_attributes_for :agent_groups, :allow_destroy => true
+
+  scope :active_groups_in_account, lambda { |account_id|
+      sanitize_joins = sanitize_sql_array(["inner join agent_groups on agent_groups.account_id = :account_id and
+                   agent_groups.group_id = groups.id and groups.account_id = :account_id
+                   inner join users ON agent_groups.account_id = :account_id and
+                   agent_groups.user_id = users.id and users.account_id = :account_id
+                   and users.helpdesk_agent = 1 and users.deleted = 0", :account_id => account_id])
+      { :joins => sanitize_joins,
        :group => "agent_groups.group_id" }
     }
-   liquid_methods :name
+  liquid_methods :name
 
-   scope :round_robin_groups, :conditions => { :ticket_assign_type => true}
+  scope :round_robin_groups, :conditions => { :ticket_assign_type => true}, :order => :name
 
   API_OPTIONS = {
     :except  => [:account_id,:email_on_assign,:import_id],
@@ -169,7 +170,7 @@ class Group < ActiveRecord::Base
   end
 
   def round_robin_enabled?
-    (ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin]) and self.account.features_included?(:round_robin)
+    (ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin]) and Account.current.features?(:round_robin)
   end
 
   def round_robin_queue
@@ -192,6 +193,30 @@ class Group < ActiveRecord::Base
         $redis_others.lpush(round_robin_key,user_id) if add
       end
     }
+  end
+
+  def build_agent_groups_attributes(agent_list)
+    old_user_ids    = self.new_record? ? [] : self.agent_groups.pluck(:user_id)
+    agent_list      = agent_list.split(',').map(&:to_i)
+    add_user_ids    = Account.current.agents.where(:user_id => agent_list - old_user_ids).pluck(:user_id)
+    delete_user_ids = old_user_ids - agent_list
+
+    agent_groups_array = []
+    if delete_user_ids.present?
+      agent_groups.where(:user_id => delete_user_ids).map { |agent_group|
+        agent_groups_array << build_agent_groups_hash(agent_group.user_id, agent_group.id)
+      }
+    end
+    if add_user_ids.present?
+      add_user_ids.map { |user_id|
+        agent_groups_array << build_agent_groups_hash(user_id)
+      }
+    end
+    self.agent_groups_attributes = agent_groups_array if agent_groups_array.present?
+  end
+
+  def build_agent_groups_hash(user_id, id = nil)
+    {:id => id, :user_id => user_id, :_destroy => id.present?}
   end
 
   private
@@ -219,6 +244,11 @@ class Group < ActiveRecord::Base
     @model_changes.symbolize_keys!
   end 
 
+  def reset_toggle_availability
+    self.toggle_availability = false if self.ticket_assign_type == TICKET_ASSIGN_TYPE[:default]
+    true
+  end  
+
   def old_round_robin_key
     GROUP_AGENT_TICKET_ASSIGNMENT % {:account_id => self.account_id, 
                             :group_id => self.id}
@@ -229,10 +259,11 @@ class Group < ActiveRecord::Base
                                :group_id => self.id}
   end
 
-  def remove_group_from_chat_routing
-    siteId = account.chat_setting.display_id
+  def destroy_group_in_liveChat
+    siteId = account.chat_setting.site_id
     if account.features?(:chat) && siteId
-      Resque.enqueue(Workers::Livechat, {:worker_method => "remove_group_from_routing", :siteId => siteId, :group_id => id})
+      LivechatWorker.perform_async({:worker_method =>"delete_group",
+                                          :siteId => siteId, :group_id => self.id})
     end
   end
 

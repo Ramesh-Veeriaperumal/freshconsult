@@ -1,20 +1,28 @@
 window.liveChat = window.liveChat || {};
 
-window.liveChat.jsonpRequest = function (request, callback) {  
+window.liveChat.request = function (action, type, data, callback) {  
+    var siteInfo = { siteId: SITE_ID, 
+                     code: "fd", 
+                     token: LIVECHAT_TOKEN, 
+                     appId  : LIVECHAT_APP_ID };
+
+    if(window.CURRENT_USER && CURRENT_USER.id){
+        siteInfo.userId = CURRENT_USER.id;
+    }
+    var requestData = jQuery.extend( siteInfo, data );
     jQuery.ajax({
-        type: "GET",
-        url: window.liveChat.URL + "/" + request.action + "?callback=?",
-        data: request.data,
-        dataType: "jsonp",
-        crossDomain: true,
+        type: type,
+        url: window.liveChat.URL + "/" + action,
+        data: requestData,
+        dataType: "json",
         cache: false,
         success: function( response ) {
-            if(_.isFunction(callback)){
-                callback(response);
-            }
+            response = response && response.data ? response.data : {};
+            _.isFunction( callback ) && callback( null, response );
         },
         error: function (httpReq, status, exception) {
-            console.log("error getting " +request.name, exception);
+            console.log("error getting " +action, exception);
+            _.isFunction( callback ) && callback( exception, null );
         }
     });
 };

@@ -83,6 +83,7 @@ class User < ActiveRecord::Base
       :occasional => false  } #no direct use, need this in account model for pass through.
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
+  has_many :groups, :through => :agent_groups
 
   has_many :achieved_quests, :dependent => :delete_all
 
@@ -93,7 +94,7 @@ class User < ActiveRecord::Base
   #accepts_nested_attributes_for :agent
   accepts_nested_attributes_for :google_contacts  # Added to save the company while importing user from google contacts.
 
-  delegate :available?, :in_round_robin?, :to => :agent, :allow_nil => true
+  delegate :available?, :toggle_availability?, :to => :agent, :allow_nil => true
 
   # SavageBeast associations moved here
   has_many :moderatorships, :dependent => :destroy
@@ -128,4 +129,6 @@ class User < ActiveRecord::Base
   has_one :forum_moderator , :class_name => 'ForumModerator' , :foreign_key => "moderator_id", :dependent => :destroy
 
   has_many :ebay_questions, :class_name => 'Ecommerce::EbayQuestion'
+  
+  has_many :scheduled_tasks, :class_name => 'Helpdesk::ScheduledTask'
 end

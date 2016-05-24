@@ -13,7 +13,7 @@ class PasswordResetsController < SupportController
   def create
     @user = current_account.user_emails.user_for_email(params[:email])
     if @user
-      if @user.active? || @user.agent? || user_activation_enabled
+      if (@user.active? || @user.agent? || user_activation_enabled) && @user.allow_password_reset?
         @user.deliver_password_reset_instructions! current_portal 
         message      = t(:'flash.password_resets.email.success')
         redirect_url = root_url
@@ -31,17 +31,12 @@ class PasswordResetsController < SupportController
         }
       end	    
     else
-	  message = t(:'flash.password_resets.email.user_not_found')
+	  message = t(:'flash.password_resets.email.success')
       respond_to do |format|
         format.html {
           flash[:notice] = message	  
-	      if mobile?
     	    redirect_to root_url
-      	  else
-        	# render :action => :new
-	        redirect_to support_login_path(:anchor => "forgot_password")
-		  end
-		}
+    		}
         format.nmobile {
           render :json => {:server_response => message, :reset_password => 'failure'}
         }
@@ -71,7 +66,12 @@ class PasswordResetsController < SupportController
   private
     def load_user_using_perishable_token
       @user = current_account.users.find_using_perishable_token(params[:id],1.weeks)
-      unless @user
+      if @user
+        unless @user.allow_password_reset?
+          flash[:notice] = t(:'flash.password_resets.email.not_allowed')
+          redirect_to login_path
+        end
+      else
         flash[:notice] = t(:'flash.password_resets.update.invalid_token')
         redirect_to root_url
       end

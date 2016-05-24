@@ -1,18 +1,25 @@
 <!-- Save Report Dialog -->
 <div id="report-dialog-save" class="hide row-fluid">
-	<p class="visibility"><%= t('helpdesk_reports.saved_report.dialog_sub_header') %></p>
-	<label class="field_title"><%= t('helpdesk_reports.saved_report.title') %></label>
-	<input class="required text" id="filter_name_save" autofocus name="filter_name_save" autofocus size="30" type="text" value="">
-	<p class="hide missing_field"><%= t('helpdesk_reports.saved_report.error_missing_title') %></p>
-	<p class="hide unavailable_field"><%= t('helpdesk_reports.saved_report.error_title_unavailable') %></p>
-</div>
-<!-- Edit Report Dialog -->
-<div id="report-dialog-edit" class="hide row-fluid">
-	<p class="visibility"><%= t('helpdesk_reports.saved_report.dialog_sub_header') %></p>
-	<label class="field_title"><%= t('helpdesk_reports.saved_report.title') %></label>
-	<input class="required text" id="filter_name_edit" autofocus name="filter_name_edit" autofocus size="30" type="text" value="">
-	<p class="hide missing_field"><%= t('helpdesk_reports.saved_report.error_missing_title') %></p>
-	<p class="hide unavailable_field"><%= t('helpdesk_reports.saved_report.error_title_unavailable') %></p>
+	<div class="dialog_container">
+		<p class="visibility hide"><%= t('helpdesk_reports.saved_report.dialog_sub_header') %></p>
+		<div class="title_section">
+			<span class="pull-left">
+				<span class="field_title"><%= t('helpdesk_reports.saved_report.title') %></span><span class="colon_seperator hide"> - </span>
+				<span class="hide default_report_name"></span>
+			</span>
+			<span class="pull-right">
+				<a class="read_more" href="https://support.freshdesk.com/solution/articles/218139" target="_blank"><%= t('helpdesk_reports.saved_report.read_more') %></a>
+			</span>
+			<div class="clear"></div>
+		</div>
+		<input class="required text" id="filter_name_save" autofocus name="filter_name_save" autofocus size="30" type="text" value="">
+		<p class="hide missing_field"><%= t('helpdesk_reports.saved_report.error_missing_title') %></p>
+		<p class="hide unavailable_field"><%= t('helpdesk_reports.saved_report.error_title_unavailable') %></p>
+	    <p class="disabled hide"><%= t('helpdesk_reports.scheduled_reports.errors.disabled') %></p>
+		<% if enable_schedule_report? %>
+			<%= render :partial => "reports/shared/schedule_form"%>	
+		<% end %>			
+	</div>
 </div>
 <div id="report-dialog-delete" class="hide row-fluid">
 	<p><%= t('helpdesk_reports.saved_report.delete_cnfm_message') %></p>	

@@ -40,6 +40,10 @@ module EmailHelper
 		I18n.t('attachment_limit_failed_message', :size => number_to_human_size(size)).html_safe
 	end
 
+  def invalid_ccs_message ccs
+    I18n.t('cc_dropped_message', :emails => h(ccs.join(", ")))
+  end
+
   def large_email(time=nil)
     @large_email ||= (Time.now.utc - (time || start_time)).to_i > REQUEST_TIMEOUT
   end

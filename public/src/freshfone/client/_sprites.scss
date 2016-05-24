@@ -91,15 +91,15 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 			}
 		}
 		.mute{
-			.#{$font-class}ff-mute{
+			.#{$font-class}ff-mic{
 				display:none;
 			}
 			&.active{
 				.#{$font-class}ff-mute{
-					display:block;
+					display:none;
 				}
 				.#{$font-class}ff-mic{
-					display:none;
+					display:block;
 				}
 			}
 	
@@ -112,7 +112,7 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 				.#{$font-class}cross{
 					display:block;
 				}
-				.#{$font-class}arrow-right-2{
+				.#{$font-class}user{
 					display:none;
 				}
 			}
@@ -120,7 +120,7 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 				.#{$font-class}cross{
 					display:none;
 				}
-				.#{$font-class}arrow-right-2{
+				.#{$font-class}user{
 					display:block;
 				}
 			}

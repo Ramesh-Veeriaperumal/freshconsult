@@ -978,8 +978,8 @@ id:
         congratulations: "Selamat! Freshdesk anda sudah siap!"
         send_test_mail_info2: "Ini dia <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>bagaimana anda bisa melakukannya</a>."
         title_message: "Memulai dukungan pelanggan anda dalam empat langkah..."
-        agents_title_1: "Menambahkan<br> Agen"
-        social_title_1: "Pergi<br> Ke media sosial"
+        adding_agents: "Menambahkan<br> Agen"
+        going_social: "Pergi<br> Ke media sosial"
         skip_text: "Tidak terimakasih, bawa saya ke helpdesk."
         back_link: Kembali
         next_link: Lanjut

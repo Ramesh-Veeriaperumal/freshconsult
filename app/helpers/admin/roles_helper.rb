@@ -99,6 +99,7 @@ module Admin::RolesHelper
               :children =>
                              
                  [{ :dom_type => "check_box", :id => "manage_users" },
+                  { :dom_type => "check_box", :id => "manage_availability" },
                   { :dom_type => "check_box", :id => "manage_canned_responses" },
                   { :dom_type => "check_box", :id => "manage_dispatch_rules" },
                   { :dom_type => "check_box", :id => "manage_supervisor_rules" },
@@ -113,6 +114,7 @@ module Admin::RolesHelper
                              
                  [{ :dom_type => "hidden_field", :id => "view_admin" },
                   { :dom_type => "hidden_field", :id => "manage_users" },
+                  { :dom_type => "hidden_field", :id => "manage_availability" },
                   { :dom_type => "hidden_field", :id => "manage_canned_responses" },
                   { :dom_type => "hidden_field", :id => "manage_dispatch_rules" },
                   { :dom_type => "hidden_field", :id => "manage_supervisor_rules" },

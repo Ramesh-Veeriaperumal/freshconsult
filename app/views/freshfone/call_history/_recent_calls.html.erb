@@ -1,5 +1,5 @@
 <% is_strange_number = strange_number_class(call.caller_number) %>
-<div class="recent_call_entry <%= is_strange_number.blank? ? 'make-call' : '' %>" data-phone-number=<%= call.caller_number %>>
+<div class="recent_call_entry <%= is_strange_number.blank? ? 'make-call' : '' %>" data-phone-number=<%= call.caller_number %> data-contact-id=<%= call.customer_id %>>
 	<div class="recent_calls_direction <%= call_direction_class(call) %>"></div>
 	<div class="recent_calls_caller_details">
 		<div class='ff_profile_img hide'>

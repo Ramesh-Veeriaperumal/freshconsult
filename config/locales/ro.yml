@@ -1305,9 +1305,9 @@ ro:
         send_test_mail_info2: "Aici este  <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>cum poti face</a>."
         title_message: "Mergi la incepe asistenta clienti in patru pasi..."
         support_email_title: "Asistenta<br> e-mail"
-        agents_title_1: "Adaugand&lt;br&gt; agenti"
+        adding_agents: "Adaugand<br> agenti"
         rebrand_title: "Logo <br>&amp; culori"
-        social_title_1: "Mergi la&lt;br&gt; social"
+        going_social: "Mergi la<br> social"
         skip_text: "Nu multumesc, du-ma la helpdesk-ul meu."
         back_link: Inapoi
         next_link: Urmatorul
@@ -1429,7 +1429,6 @@ ro:
         feedbackwidget_users_can: "Utilizatorii pot:"
         feedbackwidget_attach_a_file: "Atașați un fișier"
         feedbackwidget_screenshot: "Fa captură de ecran"
-        feedbackwidget_screenr_recording: "Inregistrare ecran"
         feedbackwidget_search_area: "Cautare articole"
         feedbackwidget_use_https: "Utilizeaza https"
         feedbackwidget_mobile_view: "Vezi mobil"
@@ -1454,7 +1453,6 @@ ro:
         feedbackwidget_users_can: "Form options"
         feedbackwidget_attach_a_file: "Attach a file"
         feedbackwidget_screenshot: "Take Screenshot"
-        feedbackwidget_screenr_recording: "Screenr Recording"
         feedbackwidget_search_area: "Search Articles"
         feedbackwidget_use_https: "Use https"
         feedbackwidget_mobile_view: "Enable mobile view"
@@ -1868,7 +1866,7 @@ ro:
         import: "Datele de import din Zendesk"
         agent: Agenti
         feedback: "Feedback widget"
-        freshchat: "Live Chat"
+        livechat: "Live Chat"
         integrations: Integrari
         dispatcher: Dispatch'r
         supervisor: Supervizor
@@ -4182,9 +4180,9 @@ ro:
   feedbackwidget_help_para1: "Feedback-ul widget-ului va permite sa incorporati direct un formular tichet in website-ul sau produsul dvs.. Puteti sa personalizati aspectul, precum si plasarea widget-ului in website-ul dvs.. Odata ce ati facut, copiati si lipiti codul integrat, generat in website-ul sau aplicatia dvs. pentru a incepe sa folositi Feedback Widget."
   chatwidget_help_content:
     title: "Live Chat"
-    info1: "Solutiile live chat integrate ale Freshdesk-ului iti permit sa vezi si sa vorbesti cu utilizatorii din website, softul online sau direct din portalul de suport din Freshdesk. Puteti personaliza intreaga fereastra de chat (incluzand texte implicite, culoarea, etc.) si chiar de a initia proactiv sesiuni de chat atunci cand vizitatorii petrec mai mult timp pe site-ul dvs.."
+    info1: "Solutiile Live Chat integrate ale Freshdesk-ului iti permit sa vezi si sa vorbesti cu utilizatorii din website, softul online sau direct din portalul de suport din Freshdesk. Puteti personaliza intreaga fereastra de chat (incluzand texte implicite, culoarea, etc.) si chiar de a initia proactiv sesiuni de chat atunci cand vizitatorii petrec mai mult timp pe site-ul dvs.."
     info2: "Fiecare sesiune de chat va aduna meta informatii despre vizitatori incluzand locatia lor, dispozitivul, etc si istoricul lor de suport cu tine. Odata ce ati terminat o sesiune de chat, puteti alege sa convertiti conversatia intr-un tichet si sa continuati sa-l urmariti cu vizitatorul pe email, sau sa arhivati transcrierea chat-ului."
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Aflați mai multe despre utilizarea live chat în interiorul Freshdesk</a>"
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Aflați mai multe despre utilizarea Live Chat în interiorul Freshdesk</a>"
   low: Scazut
   agents: Agenti
   header:
@@ -5969,36 +5967,6 @@ ro:
         es: Spanish
         sv: Swedish
         tr: Turkish
-    screenr:
-      button_label: "Record Screencast"
-      label: Screenr
-      desc: "Record screencasts using Screenr and attach it to tickets, forums and solution articles."
-      helptext: "<h4>Freshdesk Screenr Integration</h4><p><br/>The Screenr integration lets agents and customers capture and share screencasts while they are using Freshdesk. It can be used to attach error reports or instructional videos to your tickets, forum posts and solution articles directly.</p><p>Once enabled, you will be able to see a record button alongside your feedback widget, discussions, and your knowledge base. You can choose to record your entire browser window, or select a specific section of it if you want. They screencast will get inserted automatically once your session is complete.</p><p>You can setup this integration by entering your Screener URL (e.g. <a>http://yourname.viewcasts.com</a>) and your Recorder ID, which can be found once you login to your account.</p>"
-      form:
-        recorder_id: "Recorder ID"
-        recorder_id_info: "Recorder ID is the unique ID available in the edit recorders page"
-        site_address_info: ""
-        site_address: "Screenr Subdomain"
-        widget_title: "Widget Title"
-        visible_agent_forum: "Forum Screen Recording for Agents"
-        visible_agent_forum_info: "Enable to make Screenr Recorder available in Forums for Agents"
-        visible_agent_ticket: "Agent Ticket Screen Recording"
-        visible_agent_ticket_info: "Enable to make Screenr Recorder available in Ticket form for Agents"
-        visible_solution: "Solution Screen Recording"
-        visible_solution_info: "Enable to make Screenr Recorder available in Solutions"
-        visible_portal_ticket: "Portal ticket Screen Recording"
-        visible_portal_ticket_info: "Enable to make Screenr Recorder available in portal ticket form"
-        visible_portal_forum: "Forum ticket Screen Recording for portal"
-        visible_portal_forum_info: "Enable to make Screenr Recorder available in portal forum"
-        visible_widget: "Widget Screen Recording"
-        visible_widget_info: "Enable to make Screenr Recorder available in Feedback Widget"
-      settings:
-        enable_screenr_recording: "Enable Screenr Recording"
-        ticket_interaction: "Tickets page (New, Edit, Reply)"
-        forum_interaction: "Forum page (New, Edit, Comment)"
-        create_solution: "Solution (New, Edit)"
-        for_agents: "For Agents"
-        for_customer: "For Customers"
     ilos:
       label: "ilos videos"
       desc: "Record and share screencasts on tickets, forums, and solution articles."
@@ -6752,7 +6720,7 @@ ro:
         filter_by: "Satisfaction Views"
         view_report_date: "View reports during"
         helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Live Chat Summary"
       filter_by_title: "Filtered by"
       time_period: "Time Period"
@@ -7982,12 +7950,12 @@ ro:
         additional_info: "You will be able to purchase numbers, make and take calls once the phone channel is enabled in your account"
         button_text: "Request for phone"
         video_title: "Watch the video to find out what you can do with the phone channel"
-  freshchat:
+  livechat:
     feature_request:
       title: "Welcome to Live Chat"
       heading: "Support your customers with Live Chat"
-      info1: "Customize live chat widget for your brand and business"
-      info2: "Enable live chat for your support portal and website"
+      info1: "Customize Live Chat widget for your brand and business"
+      info2: "Enable Live Chat for your support portal and website"
       info3: "Track all chat transcripts and convert them to tickets"
       read_more: "Read more"
       email_subject: "Request for Live Chat Feature from %{account_name}"
@@ -8059,7 +8027,7 @@ ro:
     bottom_left: "Bottom Left"
     bottom_right: "Bottom Right"
     integrate_msg: "Copy & paste this code before the last </body> tag on your website or app"
-    integrate_freshchat_title: "Integrate live chat into your website and applications"
+    integrate_livechat_title: "Integrate Live Chat into your website and applications"
     custom_chat_window: "Chat window"
     text_placeholder: "Your Message"
     chatbox_bgcolor: "Window Color"
@@ -8200,9 +8168,9 @@ ro:
     visitor_form: "Visitor Form"
     preferences: Preferences
     intro_title: "Why Live Chat?"
-    intro: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
+    intro: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
     enable_chat: "Enable Live Chat"
-    learn_freshchat: "Learn more about Live Chat"
+    learn_livechat: "Learn more about Live Chat"
     support_portal: "Chat on support portal"
     logged_in_users: "Logged in users only"
     everyone: Everyone

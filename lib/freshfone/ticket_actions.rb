@@ -65,7 +65,9 @@ module Freshfone::TicketActions
 	private
 		def build_ticket(args)
 			current_call.notable = Account.current.tickets.build
-			current_call.initialize_ticket(args)
+			ActiveRecord::Base.transaction do
+				current_call.initialize_ticket(args)
+			end
 		end
 
 		def build_note(args)
@@ -100,4 +102,8 @@ module Freshfone::TicketActions
 		def agent_with_active_call?
 			current_account.freshfone_calls.agent_active_calls(agent.id).present?
 		end
+
+    def validate_ticket_creation
+      return render json: { status: :error } if current_call.blank?
+    end
 end

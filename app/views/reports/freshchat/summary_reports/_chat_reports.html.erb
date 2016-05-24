@@ -18,33 +18,33 @@
         <% if current_account.subscription.non_sprout_plan? %>
           <%= render :partial => "reports/shared/save_report_controls"%>
         <% end %>
+        <button class="generate-pdf-button" id="email_pdf" name="button" onclick="this.blur();">
+          <%= t('helpdesk_reports.export.email_report_pdf')%>
+        </button>
       </div>
       <div class="reports-filter span12" id="report-filter-details">
           <div class="span1 edit-filter report-filter-slide-btn">
-                        <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding">Edit</a>
+                        <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding"><%=t('helpdesk_reports.edit_filter') %></a>
           </div>
           <div class="filter-type span11">
             <ul class="inline" id="filter_container">
             </ul>
           </div>
           <div class="reports-menu hide" id="reports_type_menu">
-            <ul>
-              <%= reports_sub_menu %>
-            </ul>
           </div>
       </div>
     </div>
 
     <div class="row-fluid  report-summary" id="metric_container">
       <div>
-       <h3 class="header-lead"><span>Summary </span><a href='<%=Reports::Constants::REPORT_ARTICAL_LINKS[:freshchat_summary]%>' target="_blank" class="report-help-icon pull-right">?</a>
+       <h3 class="header-lead"><span><%= t('helpdesk_reports.summary') %> </span><a href='<%=Reports::Constants::REPORT_ARTICAL_LINKS[:freshchat_summary]%>' target="_blank" class="report-help-icon pull-right">?</a>
         </h3>
          <div class="row-fluid report-summary-wrapper" id="chat_metrics">
           
         </div>
       </div>
       <div>
-       <h3 class="header-lead"><span>Chats </span><a href='<%=Reports::Constants::REPORT_ARTICAL_LINKS[:freshchat_summary]%>' target="_blank" class="report-help-icon pull-right">?</a>
+       <h3 class="header-lead"><span><%= t('helpdesk_reports.chats') %> </span><a href='<%=Reports::Constants::REPORT_ARTICAL_LINKS[:freshchat_summary]%>' target="_blank" class="report-help-icon pull-right">?</a>
         </h3>
          <div class="row-fluid report-summary-wrapper" id="freshchat_line_chart">
           
@@ -52,10 +52,13 @@
       </div>
       <div class="row-fluid control-group">
       <div class="vertical-alignment time-sheet-top-margin">
-        <strong><%=t('reports.freshchat.agent_chat_summary')%></strong>
+        <strong><%=t('reports.livechat.agent_chat_summary')%></strong>
       </div>
         <span class="pull-right time-sheet-top-margin">
             <a href="javascript:void(0);" id='export_as_csv'><%=t('export_to_CSV')%></a>
+            <form id="pdf_form" method="post" action="<%= export_pdf_reports_freshchat_summary_reports_url %>" target="_blank">
+        <input type="hidden" name="pdf_args" class="serialize" id="pdf_args" value="" />
+      </form>
         </span>
       </div>
       <div class="grid report row-fluid"> 
@@ -65,7 +68,6 @@
                 concat content_tag :th, h(@table_headers[header]), :class => header
                end %>
             </tr>
-           
          </table>
       </div>
       <!--end call list-->
@@ -94,5 +96,24 @@
               }
         });
   });
+
+   jQuery("#email_pdf").on('click.helpdesk_reports',function(){
+
+     var params = getPdfParams();
+     
+     jQuery.ajax({
+            url: "<%=export_pdf_reports_freshchat_summary_reports_url%>",
+            type: "POST",
+            contentType: 'application/json',
+            data: Browser.stringify(params),
+            success: function(data){ 
+                 var msg = "<%= t('adv_reports.report_export_success') %>";
+                 var text = "<span id='email-reports-msg'>"+msg+"</span>";
+                 showResponseMessage(text);  
+              }
+        });
+
+});
+
       
 <% end %>

@@ -40,7 +40,10 @@ module Ecommerce::Ebay::Util
 
   def tag_ecommerce_user(user, tag_name)
     tag = Account.current.tags.find_by_name(tag_name) || Account.current.tags.new(:name => tag_name)
-    user.tags << tag
+    begin
+      user.tags << tag
+    rescue ActiveRecord::RecordInvalid => e
+    end
   end
 
 end

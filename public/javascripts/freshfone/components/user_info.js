@@ -24,12 +24,13 @@ var FreshfoneUserInfo;
 		setRequestObject: function (requestObject) {
 			this.requestObject = requestObject;
 		},
-		userInfo: function (number, outgoing, requestObject) {
+		userInfo: function (number, outgoing, requestObject, customerId) {
 			this.customerNumber = number;
 			this.isOutgoing = outgoing;
 			if (requestObject) { this.requestObject = requestObject; }
 			var params = {
 				PhoneNumber : this.customerNumber,
+				customerId : customerId,
 				outgoing : this.isOutgoing,
 				callerName: null,
 				formattedNumber: this.formattedNumber(),
@@ -49,6 +50,9 @@ var FreshfoneUserInfo;
 				async: true,
 				success: function (data) {
 					if (data) {
+						freshfonecalls.callerInfo = {id: data.user_id,
+							value: data.user_name, email: data.email,
+							phone: data.phone, mobile: data.mobile, user_result: true};
 						self.requestObject.callerName = data.user_name;
 						self.requestObject.callerId = data.user_id;
 						self.requestObject.avatar = data.user_hover || false;
@@ -57,6 +61,7 @@ var FreshfoneUserInfo;
 						if(data.call_meta){
 							self.requestObject.transferAgentName = data.call_meta.transfer_agent.user_name;
 							self.requestObject.ffNumberName = (data.call_meta || {}).number || "";
+							self.requestObject.addAgentParams = data.call_meta.agent_conference; 
 						}	
 						
 					}
@@ -72,6 +77,8 @@ var FreshfoneUserInfo;
 							if (data.call_meta.transfer_agent) {
 								freshfonecalls.setIsIncomingTransfer(true);
 								self.fillTransferAgent(data.call_meta.transfer_agent);
+							}else if (data.call_meta.agent_conference) {
+								self.fillAddAgent(data.call_meta.agent_conference);
 							}else{
 								freshfonecalls.setIsIncomingTransfer(false);
 							}
@@ -139,9 +146,11 @@ var FreshfoneUserInfo;
 			var template = this.requestObject.callerName ? this.$contactTemplate.clone() : this.$contactTemplateNameless.clone();
 			var metaTemplate = this.$callMetaTemplate.clone();
 			this.requestObject.$userInfoContainer.find('.customer-info').html(template.tmpl(params));
-			this.requestObject.$userInfoContainer.find('.call-meta').html(metaTemplate.tmpl(params.callMeta));
+			if(!this.requestObject.addAgentParams) {
+				this.requestObject.$userInfoContainer.find('.call-meta').html(metaTemplate.tmpl(params.callMeta));
+			}
 			if (this.requestObject.avatar) {
-				var avatar = $(this.requestObject.avatar).find('img');
+				var avatar = this.setAgentAvatar($(this.requestObject.avatar));
 				this.requestObject.$userInfoContainer.find('.user_avatar')
 					.html(avatar);
 			} else {
@@ -149,13 +158,23 @@ var FreshfoneUserInfo;
 			}
 			this.requestObject.createDesktopNotification();
 		},
+		setAgentAvatar: function(object) {
+			if (object.find('img').length) {
+				return object.find('img');	
+			}
+			return object.find('.preview_pic');
+		},
 		setBlankProfileImage: function () {
 			this.requestObject.$userInfoContainer.find('.incoming-details .user_avatar')
 				.html($('<img />').attr('src', PROFILE_BLANK_THUMB_PATH));
 		},
 		fillTransferAgent: function (params) {
 			var template = $("#freshfone-transfer-call-notifier").clone();
-			this.requestObject.$userInfoContainer.find('.transfer-details').html(template.tmpl(params));
+			this.requestObject.$userInfoContainer.find('.call-meta-notifier').html(template.tmpl(params));
+		},
+		fillAddAgent: function (params) {
+			var template = $("#freshfone-add-agent-notifier").clone();
+			this.requestObject.$userInfoContainer.find('.call-meta-notifier').html(template.tmpl(params));
 		},
 		userContactHover: function () {
 			var template = "<span><div class='infoblock'><div class='preview_pic' size_type='thumb'></div><div class='user_name ${strangeNumber}'>${number}</div></div></span>",
@@ -177,6 +196,10 @@ var FreshfoneUserInfo;
 			this.requestObject.$userInfoContainer.find('.transfer-meta')
 			.html(metaTemplate.tmpl(params))
 			.toggle(true);
+		},
+		agentConferenceInfo: function() {
+			var temp = $("#add-agent-info-template").clone();
+			$('.add-agent-info').html(temp.tmpl(freshfonecalls.agentConferenceParams));
 		}
 	};
 }(jQuery));

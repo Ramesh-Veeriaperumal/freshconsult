@@ -1,5 +1,5 @@
 <% @page_title = "Dashboard" %>
-<% if current_user && current_user.privilege?(:view_admin) %>
+<% if current_user && current_user.privilege?(:admin_tasks) %>
     <%= check_fb_reauth_required  %>
     <%= check_twitter_reauth_required %>
 <% end %>

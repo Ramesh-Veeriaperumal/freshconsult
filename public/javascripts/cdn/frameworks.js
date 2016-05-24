@@ -54,6 +54,7 @@
 //= require frameworks/plugins/jquery.autosuggester.js
 //= require integrations/construct_rule.js
 //= require frameworks/plugins/collapseButton.js
+//= require marketplace/freshapp.js
 //= require frameworks/plugins/jquery.dataTables.js
 //= require frameworks/plugins/dataTable.fixedColumns.js
 //= require marketplace/freshapp.js

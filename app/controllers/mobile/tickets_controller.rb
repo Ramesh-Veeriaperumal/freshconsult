@@ -190,6 +190,7 @@ class Mobile::TicketsController < ApplicationController
       if is_num?(params[:filter_name])
         @ticket_filter = current_account.ticket_filters.find_by_id(params[:filter_name])
         @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
+        @ticket_filter.attributes['data']['wf_per_page'] = params[:wf_per_page]
         params.merge!(@ticket_filter.attributes["data"])
       end
       filter_tickets = filter_scope.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')

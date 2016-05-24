@@ -5,7 +5,7 @@ class Product < ActiveRecord::Base
 
   before_destroy :remove_primary_email_config_role
   validates_uniqueness_of :name , :case_sensitive => false, :scope => :account_id
-  xss_sanitize :only => [:name, :description], :plain_sanitizer => [:name], :html_sanitize => [:description]
+  xss_sanitize :only => [:name, :description], :html_sanitize => [:name, :description]
 
   after_create :create_chat_widget
 
@@ -75,8 +75,8 @@ class Product < ActiveRecord::Base
         # Updating name in widgets table of Freshchat DB.
         #####
         Rails.logger.debug " Sending the Product Data to FreshChat through Resque"
-        Resque.enqueue(Workers::Livechat, { :worker_method => "update_widget", 
-                                             :siteId => account.chat_setting.display_id,
+        LivechatWorker.perform_async({ :worker_method => "update_widget",
+                                             :siteId => account.chat_setting.site_id,
                                              :widget_id => chat_widget.widget_id,
                                              :attributes => { :name => name}
                                             })

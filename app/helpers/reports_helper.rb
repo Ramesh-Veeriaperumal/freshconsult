@@ -2,7 +2,6 @@ module ReportsHelper
   
   include Redis::RedisKeys
   include Redis::OthersRedis
-  include Reports::CommonHelperMethods
   
   def current_start_time
     

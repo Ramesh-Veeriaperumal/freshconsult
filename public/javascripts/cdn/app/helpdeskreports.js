@@ -6,6 +6,8 @@
 //= require helpdesk_reports/highcharts/border_radius_plugin
 //= require_tree ../../helpdesk_reports/templates
 //= require helpdesk_reports/reports_constants
+//= require helpdesk_reports/date_constants
+//= require app/schedule_util.js
 //= require_tree ../../helpdesk_reports/utils
 //= require_tree ../../helpdesk_reports/initializers
 //= require app/kissmetrics

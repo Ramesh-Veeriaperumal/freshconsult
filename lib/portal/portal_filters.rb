@@ -101,7 +101,7 @@ module Portal::PortalFilters
 	end
 
 	def login_via_twitter label
-		link_to(label, "/auth/twitter", :class => "btn btn-twitter") if Account.current.features? :twitter_signin
+		link_to(label, "/auth/twitter", :class => "btn btn-twitter") if allow_login_via_twitter?
 	end
 
 	def login_via_facebook label
@@ -126,5 +126,11 @@ module Portal::PortalFilters
 			_output << %( "#{I18n.t('ticket.assigned_agent')}: <span class='emphasize'> #{ ticket['agent']['name'] } </span>" )
 		end
 		_output.join(" ").html_safe
+	end
+
+	private
+
+	def allow_login_via_twitter?
+		Account.current.features?(:twitter_signin) && !Account.current.restricted_helpdesk?
 	end
 end

@@ -1061,9 +1061,9 @@ et:
         send_test_mail_info2: "Siin on kirjas <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>, kuidas sa seda teha saad</a>."
         title_message: "Käivita oma klienditugi nelja sammuga..."
         support_email_title: "Klienditoe<br> e-posti aadress"
-        agents_title_1: "Lisa&lt;br&gt; Lahendajaid"
+        adding_agents: "Lisa<br> Lahendajaid"
         rebrand_title: "Logo <br>&amp; värvid"
-        social_title_1: "Mine&lt;br&gt; sotsiaalvõrgustikesse"
+        going_social: "Mine<br> sotsiaalvõrgustikesse"
         skip_text: "Tänan, ei. Vii mind minu kasutajatoe keskkonda."
         back_link: Tagasi
         next_link: Edasi
@@ -1185,7 +1185,6 @@ et:
         feedbackwidget_users_can: "Kasutajad saavad:"
         feedbackwidget_attach_a_file: "Manusta fail"
         feedbackwidget_screenshot: "Tee kuvatõmmis"
-        feedbackwidget_screenr_recording: "Screenri salvestus"
         feedbackwidget_search_area: "Otsi artikleid"
         feedbackwidget_use_https: "Kasuta HTTPSi"
         feedbackwidget_mobile_view: Mobiilivaade
@@ -1533,7 +1532,7 @@ et:
         import: "Impordi andmeid Zendeskist"
         agent: Lahendajad
         feedback: Tagasisidevidin
-        freshchat: Freshchat
+        livechat: Live Chat
         integrations: Integratsioonid
         dispatcher: Dispetšer
         supervisor: Järelevaataja
@@ -3298,7 +3297,7 @@ et:
     feedback_message_4: "Missing/broken link"
   import_updated: Uuendatud
   feedbackwidget_intro: "Kohanda oma Freshdeski vidinat allpool ja vaata reaalajas eelvaadet."
-  chatwidget_intro: "Kohanda oma Freshchati vidinat allpool ja vaata reaalajas eelvaadet."
+  chatwidget_intro: "Kohanda oma Live Chati vidinat allpool ja vaata reaalajas eelvaadet."
   save: Salvesta
   import_added_newly: "Just lisatud"
   quick_create: "Quick Create"
@@ -3400,10 +3399,10 @@ et:
   is_expiring_today: "aegub täna"
   feedbackwidget_help_para1: "Tagasisidevidin võimaldab sul  taotluse vormi otse oma veebilehele või tootele manustada. Sa saad oma veebilehel selle vidina väljanägemist, tunnetust ja asetust kohandada. Kui see on tehtud, kopeeri genereeritud manuskood ja kleebi see oma veebilehele või rakendusse, et saaksid tagasisidevidinat kasutama hakata."
   chatwidget_help_content:
-    title: Freshchat
-    info1: "Freshchat võimaldab sul oma veebilehel, võrgutarkvaras või tugiportaalis oma kasutajaid vaadata ja nendega otse Freshdeski keskkonnast suhelda. Sa saad kohandada kogu vestlusakent (sh vaiketekste, värvi jne) ja isegi ennetavalt vestlusseansse algatada, kui külalised su veebilehel rohkem aega veedavad."
+    title: Live Chat
+    info1: "Live Chat võimaldab sul oma veebilehel, võrgutarkvaras või tugiportaalis oma kasutajaid vaadata ja nendega otse Freshdeski keskkonnast suhelda. Sa saad kohandada kogu vestlusakent (sh vaiketekste, värvi jne) ja isegi ennetavalt vestlusseansse algatada, kui külalised su veebilehel rohkem aega veedavad."
     info2: "Iga vestlusseansi ajal kogutakse su külaliste kohta metaandmeid nagu nende asukoht, kasutatav seade jne ja uuritakse nende tausta seoses sinu ettevõttega. Kui sa oled vestlusseansi lõpetanud, võid vestluse taotluseks konvertida ja külalisega edaspidi e-kirjade teel suhelda või vestluse transkriptsiooni hoopis arhiveerida."
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Loe lähemalt Freshdeski keskkonnas Freshchati kasutamise kohta</a>"
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Loe lähemalt Freshdeski keskkonnas Live Chati kasutamise kohta</a>"
   low: Madal
   agents: Lahendajad
   header:
@@ -4919,36 +4918,6 @@ et:
         es: Spanish
         sv: Swedish
         tr: Turkish
-    screenr:
-      button_label: "Tee ekraanisalvestus"
-      label: Screenr
-      desc: "Tee Screenri abil ekraanisalvestusi ning manusta neid taotlustele, foorumitele ja lahendusartiklitele."
-      helptext: "<h4>Freshdeski ja Screenri integreerimine</h4><p><br/>Screenri integreerimisel saavad lahendajad ja kliendid Freshdeski kasutamise ajal ekraanisalvestusi teha ja jagada. Selle abil saab taotlustele, foorumipostitustele ja lahendusartiklitele otse veaaruandeid ja õppevideosid manustada.</p><p>Kui see funktsioon on lubatud, näed oma tagasisidevidina, arutluste ja teadmistebaasi kõrval salvestamisnuppu. Sa saad salvestada kogu oma brauseriakna või valida ainult kindla osa, mida salvestada soovid. Ekraanisalvestus sisestatakse automaatselt, kui su seanss on läbi.</p><p>Selle integratsiooni seadistamiseks pead sisestama oma Screenri URLi (nt <a>http://sinunimi.ekraanisalvestused.com</a>) ja oma salvestaja ID, mille leiad siis, kui oma kontole sisse logid.</p>"
-      form:
-        recorder_id: "Salvestaja ID"
-        recorder_id_info: "Salvestaja ID on kordumatu ID, mis on saadaval salvestajate redigeerimise lehel."
-        site_address_info: ""
-        site_address: "Screenri alamdomeen"
-        widget_title: "Vidina nimi"
-        visible_agent_forum: "Foorumikuva salvestamine Lahendajatele"
-        visible_agent_forum_info: "Luba see funktsioon, et Screenri salvestaja oleks foorumites Lahendajatele saadaval."
-        visible_agent_ticket: "Lahendaja taotluskuva salvestamine"
-        visible_agent_ticket_info: "Luba see funktsioon, et Screenri salvestaja oleks taotlusvormil Lahendajatele saadaval"
-        visible_solution: "Lahendusekuva salvestamine"
-        visible_solution_info: "Luba see funktsioon, et Screenri salvestaja oleks lahenduste all saadaval."
-        visible_portal_ticket: "Portaali taotluskuva salvestamine"
-        visible_portal_ticket_info: "Luba see funktsioon, et Screenri salvestaja oleks portaali taotlusvormil saadaval."
-        visible_portal_forum: "Foorumi taotluskuva salvestamine portaali tarbeks"
-        visible_portal_forum_info: "Luba see funktsioon, et Screenri salvestaja oleks portaali foorumis saadaval."
-        visible_widget: "Vidinakuva salvestamine"
-        visible_widget_info: "Luba see funktsioon, et Screenri salvestaja oleks tagasisidevidinas saadaval."
-      settings:
-        enable_screenr_recording: "Luba Screenri salvestamine"
-        ticket_interaction: "Piletite leht (uus, redigeeri, vasta)"
-        forum_interaction: "Foorumi leht (uus, redigeeri, kommenteeri)"
-        create_solution: "Lahendus (uus, redigeeri)"
-        for_agents: Lahendajatele
-        for_customer: Klientidele
     harvest:
       label: Harvest
       desc: "Sa saad taotlustele kulutatud aja registreerida oma Harvesti projektide ja ülesannete all."
@@ -5453,7 +5422,7 @@ et:
         filter_by: Rahuloluvaated
         view_report_date: "Vaata aruandeid kuupäevaga"
         helptext: "<b>Miks on rahuloluaruanded vajalikud?</b><p>Klientide rahulolu puudutav aruanne annab sulle aimu sinu kliendituge pakkuvate agentide töökvaliteedist.<br>Aruandest saad sa teada oma klientide rahulolukoefitsiendi, mis on väljendatud protsentides (õnnelik, neutraalne ja õnnetu) iga lahendaja puhul eraldi.<br><br><b>Mida sa veel teha saad?</b><br><p><ol class='ml15'><li>Filtreeri aruande tulemusi lahendajate, gruppide või ettevõtete põhjal</li><li>Vaata kindlat ajavahemikku puudutavaid aruandeid</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Live Chat Summary"
       filter_by_title: "Filtered by"
       time_period: Ajavahemik
@@ -6316,21 +6285,21 @@ et:
         error_message: "Vabandame, aga me ei saa praegu su soovi täita. Palun proovi hiljem uuesti."
         additional_note: "Freshfone'i nõude töötlemine võtab kaks tööpäeva."
         button_label: "Küsi Freshfone'i"
-  freshchat:
+  livechat:
     feature_request:
-      title: "Tere tulemast Freshchatti!"
-      heading: "Paku kliendituge Freshchati abil"
+      title: "Tere tulemast Live Chatti!"
+      heading: "Paku kliendituge Live Chati abil"
       info1: "Kohanda reaalajas vestluse vidin oma tootemargi ja ettevõtte järgi"
       info2: "Luba reaalajas vestlus oma tugiportaalis ja veebilehel"
       info3: "Jälgi kõiki vestluste transkriptsioone ja konverdi need taotlusteks"
       read_more: "Loe lähemalt"
-      email_subject: "Küsi Freshchati funktsiooni siit: %{account_name}"
-      email_message: "Vajan Freshchati funktsiooni"
-      success_message: "Täname sind Freshchati vastu huvi tundmast. Me võtame sinuga peagi ühendust."
+      email_subject: "Küsi Live Chati funktsiooni siit: %{account_name}"
+      email_message: "Vajan Live Chati funktsiooni"
+      success_message: "Täname sind Live Chati vastu huvi tundmast. Me võtame sinuga peagi ühendust."
       error_message: "Vabandame, me ei saa praegu su soovi täita. Palun proovi hiljem uuesti."
-      additional_note: "Freshchati nõude töötlemine võtab kaks tööpäeva."
-      button_label: "Küsi Freshchatti"
-    title: Freshchat
+      additional_note: "Live Chati nõude töötlemine võtab kaks tööpäeva."
+      button_label: "Küsi Live Chatti"
+    title: Live Chat
     widget: Vidin
     messages: Sõnumid
     set_default_msgs: Vaikesõnumid
@@ -6394,7 +6363,7 @@ et:
     bottom_left: "Alumine vasakpoolne"
     bottom_right: "Alumine parempoolne"
     integrate_msg: "Kopeeri ja kleebi see kood enne viimast </body> vahekaarti sinu veebilehel või rakenduses"
-    integrate_freshchat_title: "Integreeri Freshchat oma veebilehe ja rakendustega"
+    integrate_livechat_title: "Integreeri Live Chat oma veebilehe ja rakendustega"
     custom_chat_window: Vestlusaken
     text_placeholder: "Sinu sõnum"
     chatbox_bgcolor: "Akna värv"
@@ -6511,7 +6480,7 @@ et:
     chatsettings_save: "Sinu muudatused ei ole salvestatud. Kas soovid muudatused salvestada?"
     transfer_accepted_msg: "Külalise teisaldamine on heaks kiidetud"
     transfer_request_timeout_msg: "Teisaldamisnõude ajalõpp"
-    integrate_freshchat_info: "Märkus: vestlusaken ilmub ainult siis, kui lahendajad on võrgus."
+    integrate_livechat_info: "Märkus: vestlusaken ilmub ainult siis, kui lahendajad on võrgus."
     click_to_go_online: "Not accepting visitor chats"
     click_to_go_offline: "Accepting visitor chats"
     fetching: "Palun oota"
@@ -6535,10 +6504,10 @@ et:
     installation: "Widget Code"
     visitor_form: "Visitor Form"
     preferences: Preferences
-    intro_title: "Miks valida Freshchat?"
-    intro: "Sest erakordne klienditeenindus tähendab alati kliendi jaoks olemas olemist, isegi enne probleemi teket. Freshchatis saavad sinu lahendajad Freshdeskist lahkumata omavahel vestelda, aga ka külalistega reaalajas tegeleda ja koheseid vastuseid anda. See on sulle järjekordne salarelv - kanal, mille eesmärk on sind su kasutajatega lähedasemaks muuta."
-    enable_chat: "Luba Freshchat"
-    learn_freshchat: "Loe lähemalt Freshchati kohta"
+    intro_title: "Miks valida Live Chat?"
+    intro: "Sest erakordne klienditeenindus tähendab alati kliendi jaoks olemas olemist, isegi enne probleemi teket. Live Chatis saavad sinu lahendajad Freshdeskist lahkumata omavahel vestelda, aga ka külalistega reaalajas tegeleda ja koheseid vastuseid anda. See on sulle järjekordne salarelv - kanal, mille eesmärk on sind su kasutajatega lähedasemaks muuta."
+    enable_chat: "Luba Live Chat"
+    learn_livechat: "Loe lähemalt Live Chati kohta"
     support_portal: "Vestle tugiportaalis"
     logged_in_users: "Ainult sisse logitud kasutajad"
     everyone: Kõik

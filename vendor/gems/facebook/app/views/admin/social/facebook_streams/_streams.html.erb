@@ -1,0 +1,37 @@
+<% user_pages.each do |profile_id, user_page_grp| %>
+  <div class = "fb-user"> 
+    <%= t('.associated_user') %>: <%= @fb_client.profile_name(profile_id, user_page_grp["facebook_pages"].first[:page])%> 
+  </div>
+  <div class="list-page">
+    <div class="list-page-body">
+    
+        <table class="adm-social table table-striped agent-list-page">
+          <% user_page_grp["facebook_pages"].each do |fb_page|%>
+          <% page = fb_page[:page]%>
+          <% stream  = fb_page[:stream] %>
+          <tr>
+            <td class="text-left">
+              <span class="adm-uimg"> <%= image_tag(page.page_img_url, size: "25x25") %> </span>
+            </td>
+            <td class="text-left">
+              <%= link_to stream.name, edit_admin_social_facebook_stream_url(stream) %>
+              <% if page.reauth_required? %>
+                  <%= link_to t('.reauthorize'), @auth_redirect_url , :class => "label label-important align-fix" %>
+              <%end%>
+            </td>
+            <td class="text-left" style="display:none">
+              <% if stream.accessible %>
+                <%= stream.accessible.global_access_type? ? t('admin.social.streams.visibility.all'): stream.groups.map {|g| g.name }.join(' , ')%>
+              <% end %>
+            </td>
+            <td class="text-left adm-options">
+              <%= link_to( t('edit'), edit_admin_social_facebook_stream_url(stream), :class => 'btn btn-mini') %>
+              <% str = font_icon "trash-o", :size => 14; %>
+              <%= link_to(str, admin_social_facebook_page_path(page), :method => 'delete', :class => 'btn btn-mini delete_agent_btn', :confirm => t('social.facebook_pages.index.remove_facebook_page'))%>
+            </td>
+          </tr>
+          <% end %>
+        </table>
+    </div>
+  </div>
+<% end %>

@@ -19,11 +19,7 @@ Sidekiq.configure_client do |config|
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
-      "Throttler::WebhookThrottler",
-      "Throttler::PremiumWebhookThrottler",
-      "WebhookWorker",
       "WebhookV1Worker",
-      "PremiumWebhookWorker",
       "DevNotificationWorker",
       "PodDnsUpdate",
       "SearchV2::Manager::DisableSearch",
@@ -31,7 +27,8 @@ Sidekiq.configure_client do |config|
       "AccountCleanup::DeleteSpamTicketsCleanup",
       "AccountCleanup::SuspendedAccountsWorker",
       "Social::Gnip::ReplayWorker",
-      "Social::Gnip::RuleWorker"
+      "Social::Gnip::RuleWorker",
+      "Reports::ScheduledReports"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -43,8 +40,10 @@ Sidekiq.configure_client do |config|
       "Export::ContactWorker",
       "Tickets::Export::TicketsExport",
       "Tickets::Export::LongRunningTicketsExport",
-      "Tickets::Export::PremiumTicketsExport"
-
+      "Tickets::Export::PremiumTicketsExport",
+      "Reports::ScheduledReports",
+      "Reports::Export",
+      "LivechatWorker"
     ]
   end
 end
@@ -68,11 +67,7 @@ Sidekiq.configure_server do |config|
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
-      "Throttler::WebhookThrottler",
-      "Throttler::PremiumWebhookThrottler",
-      "WebhookWorker",
       "WebhookV1Worker",
-      "PremiumWebhookWorker",
       "DevNotificationWorker",
       "PodDnsUpdate",
       "SearchV2::Manager::DisableSearch",
@@ -80,7 +75,8 @@ Sidekiq.configure_server do |config|
       "AccountCleanup::DeleteSpamTicketsCleanup",
       "AccountCleanup::SuspendedAccountsWorker",
       "Social::Gnip::ReplayWorker",
-      "Social::Gnip::RuleWorker"
+      "Social::Gnip::RuleWorker",
+      "Reports::ScheduledReports"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -92,7 +88,9 @@ Sidekiq.configure_server do |config|
       "Export::ContactWorker",
       "Tickets::Export::TicketsExport",
       "Tickets::Export::LongRunningTicketsExport",
-      "Tickets::Export::PremiumTicketsExport"
+      "Tickets::Export::PremiumTicketsExport",
+      "Reports::Export",
+      "LivechatWorker"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -108,18 +106,15 @@ Sidekiq.configure_server do |config|
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
-      "Throttler::WebhookThrottler",
-      "Throttler::PremiumWebhookThrottler",
-      "WebhookWorker",
       "WebhookV1Worker",
-      "PremiumWebhookWorker",
       "DevNotificationWorker",
       "SearchV2::Manager::DisableSearch",
       "Gamification::ProcessTicketQuests",
       "AccountCleanup::DeleteSpamTicketsCleanup",
       "AccountCleanup::SuspendedAccountsWorker",
       "Social::Gnip::ReplayWorker",
-      "Social::Gnip::RuleWorker"
+      "Social::Gnip::RuleWorker",
+      "Reports::ScheduledReports"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -131,7 +126,9 @@ Sidekiq.configure_server do |config|
       "Export::ContactWorker",
       "Tickets::Export::TicketsExport",
       "Tickets::Export::LongRunningTicketsExport",
-      "Tickets::Export::PremiumTicketsExport"
+      "Tickets::Export::PremiumTicketsExport",
+      "Reports::Export",
+      "LivechatWorker"
     ]
   end
 end

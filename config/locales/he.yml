@@ -1265,9 +1265,9 @@ he:
         send_test_mail_info2: "כך <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>תוכל לעשות זאת</a>."
         title_message: "התחל לתמוך בלקוחות שלך בארבעה שלבים..."
         support_email_title: "תמיכה<br> דוא\"ל"
-        agents_title_1: "הוספת&lt;br&gt; סוכנים"
+        adding_agents: "הוספת<br> סוכנים"
         rebrand_title: "לוגו <br>&amp צבעים"
-        social_title_1: "שימוש&lt;br&gt; ברשתות החברתיות"
+        going_social: "שימוש<br> ברשתות החברתיות"
         skip_text: "לא תודה, העבר אותי למערכת התמיכה שלי."
         back_link: חזרה
         next_link: הבא
@@ -1389,7 +1389,6 @@ he:
         feedbackwidget_users_can: "המשתמשים יכולים:"
         feedbackwidget_attach_a_file: "צרף קובץ"
         feedbackwidget_screenshot: "צור צילום מסך"
-        feedbackwidget_screenr_recording: "הקלטה של Screenr"
         feedbackwidget_search_area: "חפש מאמרים"
         feedbackwidget_use_https: "השתמש ב-https"
         feedbackwidget_mobile_view: "תצוגת מכשיר נייד"
@@ -1752,7 +1751,7 @@ he:
         import: "יבא נתונים מ-Zendesk"
         agent: סוכנים
         feedback: "וידג'ט משוב"
-        freshchat: "צ'אט חי"
+        livechat: "צ'אט חי"
         integrations: שילובים
         dispatcher: משגר
         supervisor: מפקח
@@ -5489,36 +5488,6 @@ he:
         es: ספרדית
         sv: שוודית
         tr: טורקית
-    screenr:
-      button_label: "הקלט שידור מסך"
-      label: Screenr
-      desc: "הקלט שידורי מסך באמצעות Screenr וצרף את ההקלטות לכרטיסים, פורומים ומאמרי פתרונות."
-      helptext: "<h4>השילוב Freshdesk Screenr</h4><p><br/>השילוב Screenr מאפשר לסוכנים וללקוחות ללכוד ולשתף שידורי מסך כאשר הם משתמשים ב-Freshdesk. ניתן להשתמש בו כדי לצרף ישירות דוחות שגיאות או סרטוני וידאו עם הנחיות לכרטיסים, לפוסטים בפורומים ולמאמרי פתרונות.</p><p>לאחר ששילוב זה הופעל, תוכל לראות לחצן הקלטה לאורך וידג'ט המשוב, הדיונים ומאגר הידע שלך. תוכל לבחור להקליט את חלון הדפדפן כולו, או לבחור אזור ספציפי של החלון, כרצונך. שידור המסך יתווסף באופן אוטומטי בסיום ההפעלה.</p><p>תוכל להגדיר שילוב זה על-ידי הזנת כתובת ה-URL של ה-Screener (לדוגמה <a>http://yourname.viewcasts.com</a>) ומזהה ההקלטה, שאותם תוכל למצוא כאשר תתחבר לחשבון שלך.</p>"
-      form:
-        recorder_id: "מזהה הקלטה"
-        recorder_id_info: "מזהה ההקלטה הוא המזהה הייחודי הזמין בדף לעריכת הקלטות"
-        site_address_info: ""
-        site_address: "דומיין משני של Screener"
-        widget_title: "כותרת וידג'ט"
-        visible_agent_forum: "הקלטת מסך הפורום עבור סוכנים"
-        visible_agent_forum_info: "הפוך את Screenr Recorder לזמין בפורומים לסוכנים"
-        visible_agent_ticket: "הקלטת מסך כרטיס של סוכן"
-        visible_agent_ticket_info: "הפוך את Screenr Recorder לזמין בטופס כרטיס לסוכנים"
-        visible_solution: "הקלטת מסך פתרון"
-        visible_solution_info: "הפוך את Screenr Recorder לזמין בפתרונות"
-        visible_portal_ticket: "הקלטת מסך של כרטיס פורטל"
-        visible_portal_ticket_info: "הפוך את Screenr Recorder לזמין בטופס כרטיס בפורטל"
-        visible_portal_forum: "הקלטת מסך של כרטיס פורום עבור פורטל"
-        visible_portal_forum_info: "הפוך את מקליט המסכים לזמין בפורום בפורטל"
-        visible_widget: "הקלטת מסך וידג'ט"
-        visible_widget_info: "הפוך את Screenr Recorder לזמין בווידג'ט של המשוב"
-      settings:
-        enable_screenr_recording: "אפשר הקלטה של Screenr"
-        ticket_interaction: "דף כרטיסים (חדש, ערוך, השב)"
-        forum_interaction: "דף פורום (חדש, ערוך, תגובה)"
-        create_solution: "פתרון (חדש, ערוך)"
-        for_agents: "עבור סוכנים"
-        for_customer: "עבור לקוחות"
     harvest:
       label: Harvest
       desc: "תוכל לרשום את הזמן שהוקדש לכרטיסים בתוך פרויקטים ומשימות של Harvest."
@@ -6095,7 +6064,7 @@ he:
         filter_by: "תצוגת שביעות רצון"
         view_report_date: "הצג דוחות במהלך"
         helptext: "<b>מדוע דוח שביעות רצון?</b><p>דוח שביעות רצון מעניק לך תמונה כללית של איכות השירות של סוכני התמיכה בלקוחות.<br>הדוח עוזר לך להבין את  מידת שביעות הרצון של הלקוחות, שמיוצגת כערך אחוז (מרוצה, ניטרלי ולא מרוצה) הרלוונטי לכל סוכן תמיכה.<br><br><b>מה עוד תוכל לעשות?</b><br><p><ol class='ml15'><li>לסנן את תוצאות הדוח ביחס לסוכנים, קבוצה או חברה</li><li>להציג דוחות   לפרק זמן מסוים</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "סיכום צ'אט חי"
       filter_by_title: "סונן על-ידי"
       time_period: "פרק זמן"
@@ -7062,7 +7031,7 @@ he:
         additional_info: "תוכל לרכוש מספרים, לבצע שיחות ולקבל שיחות כאשר ערוץ הטלפון מופעל בחשבון שלך"
         button_text: "בקשה לטלפון"
         video_title: "צפה בסרטון כדי לברר מה תוכל לעשות עם ערוץ הטלפון"
-  freshchat:
+  livechat:
     feature_request:
       title: "ברוכים הבאים לצ'אט חי"
       heading: "תמוך בלקוחותיך עם צ'אט חי"
@@ -7139,7 +7108,7 @@ he:
     bottom_left: "למטה שמאלה"
     bottom_right: "למטה ימינה"
     integrate_msg: "העתק והדבק קוד זה לפני תגית </body> האחרונה באתר או באפליקציה שלך"
-    integrate_freshchat_title: "שלב צ'אט חי באתר ובאפליקיות שלך"
+    integrate_livechat_title: "שלב צ'אט חי באתר ובאפליקיות שלך"
     custom_chat_window: "חלון צ'אט"
     text_placeholder: "ההודעה שלך"
     chatbox_bgcolor: "צבע החלון"
@@ -7282,7 +7251,7 @@ he:
     intro_title: "למה צ'אט חי?"
     intro: "פתרון הצ'אט החי המשולב של Freshdesk מאפשר לך להציג ולשוחח בצ'אט עם משתמשים באתר שלך, בתוכנה מקוונת או בפורטל התמיכה ישירות מתוך Freshdesk. תוכל גם להתחיל לשוחח בצ'אט באופן יזום עם מבקרים באתר.  לאחר שתסיים הפעלת צ'אט, תוכל לבחור להמיר את השיחה לכרטיס ולהמשיך במעקב אחר המבקר בדוא\"ל או לאחסן את תעתיק הצ'אט בארכיון."
     enable_chat: "הפעל צ'אט חי"
-    learn_freshchat: "מידע נוסף על צ'אט חי"
+    learn_livechat: "מידע נוסף על צ'אט חי"
     support_portal: "שוחח בצ'אט בפורטל התמיכה"
     logged_in_users: "משתמשים מחוברים בלבד"
     everyone: כולם

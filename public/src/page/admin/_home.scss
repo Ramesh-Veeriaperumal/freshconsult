@@ -102,7 +102,15 @@ $ExactMatch_color: #006063;
 		}
 	}
 }
-
+.admin.support-channels .fsize-36.ficon-livechat {
+	position: relative;
+	&:before {
+		position: absolute;
+		top: 14px;
+		right: 0;
+		left: 0;
+	}
+}
 input[type=text].as-input {
 	width:250px;
 	position: absolute;

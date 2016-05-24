@@ -20,7 +20,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
   def call(env)
     @request      = Rack::Request.new(env)
     @host         = env['HTTP_HOST']
-    @shard        = ShardMapping.lookup_with_domain(@host)
+    @shard        = fetch_shard(env)
 
     if @shard.try(:not_found?)
       Rails.logger.debug "Domain Not Found while throttling :: Host: #{@host}"
@@ -54,6 +54,9 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     set_version_headers unless @status == 404 # Version will not be present if status is 404
     [@status, @headers, @response]
+  ensure
+    unset_current_account
+    unset_shard_in_env(env)
   end
 
   private
@@ -175,5 +178,33 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
       Rails.logger.error("Redis Exception :: Host: #{@host}, Exception: #{e.message}\n#{e.class}\n#{e.backtrace.join("\n")}")
       NewRelic::Agent.notice_error(e, options_hash)
       return
+    end
+
+    # This is the first custom middleware which has account based logic where the api request will hit first.
+    # So setting env & thread variable here and unsetting it in ensure block. Only CorsEnabler is present above this in the chain.
+    # If any middleware is going to be at the top of the chain with account based logic, all this should move there.
+    def fetch_shard(env)
+      shard = ShardMapping.lookup_with_domain(env["HTTP_HOST"])
+      if shard
+        env['SHARD'] = shard
+        # Finding account & setting it in the thread variable also here. So trusted ip & controller will make use of it.
+        # Instead of finding the account repeatedly in trusted_ip & controllers.
+        Sharding.run_on_shard(shard.shard_name) do
+          account = Account.find_by_id(shard.account_id)
+          account ? account.make_current : unset_current_account
+        end
+      else
+        unset_shard_in_env(env)
+        unset_current_account
+      end
+      env['SHARD']
+    end
+
+    def unset_shard_in_env(env)
+      env['SHARD'] = nil
+    end
+
+    def unset_current_account
+      Thread.current[:account] = nil
     end
 end

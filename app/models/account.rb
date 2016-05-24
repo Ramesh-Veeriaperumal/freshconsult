@@ -110,6 +110,14 @@ class Account < ActiveRecord::Base
   def default_survey_enabled?
     features?(:default_survey) && !custom_survey_enabled?
   end
+
+  def permissible_domains
+    helpdesk_permissible_domains.pluck(:domain).join(",")
+  end
+
+  def permissible_domains=(list)
+    self.helpdesk_permissible_domains_attributes = CustomNestedAttributes.new(list, self).helpdesk_permissible_domains_attributes if list.present?
+  end
   
   def custom_survey_enabled?
     features?(:custom_survey)
@@ -120,13 +128,16 @@ class Account < ActiveRecord::Base
   end
 
   def freshchat_enabled?
-    features?(:chat) and !chat_setting.display_id.blank?
+    features?(:chat) and !chat_setting.site_id.blank?
   end
 
   def freshchat_routing_enabled?
     freshchat_enabled? and features?(:chat_routing)
   end
 
+  def supervisor_feature_launched?
+    features?(:freshfone_call_monitoring) || features?(:agent_conference)
+  end
   #Temporary feature check methods - using redis keys - starts here
   def compose_email_enabled?
     !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
@@ -191,6 +202,10 @@ class Account < ActiveRecord::Base
     default_in_op_fields[:company].flatten!
 
     default_in_op_fields.stringify_keys!
+  end
+
+  def restricted_helpdesk?
+    features?(:restricted_helpdesk) && launched?(:restricted_helpdesk)
   end
 
   class << self # class methods
@@ -275,10 +290,6 @@ class Account < ActiveRecord::Base
 
   def premium_email?
     ismember?(PREMIUM_EMAIL_ACCOUNTS, self.id)
-  end
-
-  def premium_webhook_throttler?
-    ismember?(PREMIUM_WEBHOOK_THROTTLER, self.id)
   end
 
   def premium_gamification_account?

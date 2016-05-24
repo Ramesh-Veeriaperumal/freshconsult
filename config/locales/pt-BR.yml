@@ -1240,9 +1240,9 @@ pt-BR:
         send_test_mail_info2: "Veja <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>como fazer isso</a>."
         title_message: "Inicie o atendimento a seus clientes em apenas 4 passos..."
         support_email_title: "E-mail de<br> suporte"
-        agents_title_1: "Adicionando&lt;br&gt; analistas"
+        adding_agents: "Adicionando<br> analistas"
         rebrand_title: "Logotipo<br> e cores"
-        social_title_1: "Redes&lt;br&gt; sociais"
+        going_social: "Redes<br> sociais"
         skip_text: "Não, obrigado! Quero ir direto para o helpdesk."
         back_link: Voltar
         next_link: Avançar
@@ -1364,7 +1364,6 @@ pt-BR:
         feedbackwidget_users_can: "Os usuários podem:"
         feedbackwidget_attach_a_file: "Anexar um arquivo"
         feedbackwidget_screenshot: "Obter captura de tela"
-        feedbackwidget_screenr_recording: "Gravação do Screenr"
         feedbackwidget_search_area: "Pesquisar artigos"
         feedbackwidget_use_https: "Usar https"
         feedbackwidget_mobile_view: "Exibição para dispositivo móvel"
@@ -1727,7 +1726,7 @@ pt-BR:
         import: "Importar dados do Zendesk"
         agent: Analistas
         feedback: "Widget de feedback"
-        freshchat: "Chat em tempo real"
+        livechat: "Chat em tempo real"
         integrations: Integrações
         dispatcher: Distribuidor
         supervisor: Supervisor
@@ -5422,36 +5421,6 @@ pt-BR:
         es: Espanhol
         sv: Sueco
         tr: Turco
-    screenr:
-      button_label: "Gravar screencast"
-      label: Screenr
-      desc: "Grave screencasts com o Screenr e anexe-os aos tickets, fóruns e artigos de solução."
-      helptext: "<h4>Integração do Screenr com o Freshdesk</h4><p><br/>A integração do Screenr permite que analistas e clientes capturem e compartilhem screencasts enquanto estão usando o Freshdesk. O Screenr pode ser usado para anexar relatórios de erros ou vídeos de instruções para seus tickets, posts do fórum e artigos de solução.</p><p>Quando o Screenr estiver habilitado, você poderá ver um botão Gravar ao lado do widget de feedback, das discussões e de sua base de dados de conhecimento. Você pode escolher gravar a janela inteira do navegador ou selecionar uma seção específica dela, se preferir. O screencast será inserido automaticamente assim que a sessão for concluída.</p><p>É possível configurar essa integração inserindo sua URL do Screener (por exemplo, <a>http://yourname.viewcasts.com</a>) e sua ID de gravador, que pode ser encontrada assim que você fizer login em sua conta.</p>"
-      form:
-        recorder_id: "ID de gravador"
-        recorder_id_info: "A ID de gravador é a ID exclusiva disponível na página de edição de gravadores"
-        site_address_info: ""
-        site_address: "Subdomínio do Screenr"
-        widget_title: "Título do widget"
-        visible_agent_forum: "Gravação da tela do fórum para analistas"
-        visible_agent_forum_info: "Habilite para tornar o Gravador do Screenr disponível nos fóruns para os agentes"
-        visible_agent_ticket: "Gravação da tela do ticket do agente"
-        visible_agent_ticket_info: "Habilite para tornar o Gravador do Screenr disponível no formulário de ticket para os agentes"
-        visible_solution: "Gravação da tela de solução"
-        visible_solution_info: "Habilite para tornar o Gravador do Screenr disponível em Soluções"
-        visible_portal_ticket: "Gravação da tela do ticket do portal"
-        visible_portal_ticket_info: "Habilite para tornar o Gravador do Screenr disponível no formulário de ticket do portal"
-        visible_portal_forum: "Gravação da tela do ticket do fórum para o portal"
-        visible_portal_forum_info: "Habilite para tornar o Gravador do Screenr disponível no fórum do portal"
-        visible_widget: "Gravação da tela do widget"
-        visible_widget_info: "Habilite para tornar o Gravador do Screenr disponível no widget de feedback"
-      settings:
-        enable_screenr_recording: "Habilitar gravação do Screenr"
-        ticket_interaction: "Página Tickets (Novo, Editar, Responder)"
-        forum_interaction: "Página Fórum (Novo, Editar, Comentar)"
-        create_solution: "Solução (Novo, Editar)"
-        for_agents: "Para analistas"
-        for_customer: "Para clientes"
     harvest:
       label: Harvest
       desc: "Você também pode registrar o tempo gasto nos tickets, em seus projetos e tarefas Harvest."
@@ -6041,7 +6010,7 @@ pt-BR:
         filter_by: "Visualizações de satisfação"
         view_report_date: "Visualizar relatórios durante"
         helptext: "<b>Por que gerar um relatório de satisfação do cliente?</b><p>O relatório de satisfação do cliente permite que você tenha uma ideia da qualidade do serviço de seus analistas no suporte ao cliente.<br>O relatório ajuda você a entender o nível de satisfação de seus clientes, que é representado por um percentual (satisfeito, neutro e insatisfeito) em relação a cada analista de suporte.<br><br><b>O que mais você pode fazer?</b><br><p><ol class='ml15'><li>Filtrar os resultados do relatório por analista, grupo ou empresa.</li><li>Visualizar os relatórios de a um determinado período.</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Resumo do chat em tempo real"
       filter_by_title: "Filtrado por"
       time_period: Período
@@ -7005,7 +6974,7 @@ pt-BR:
         additional_info: "Você poderá comprar números e fazer e receber chamadas assim que o canal de telefone estiver habilitado em sua conta"
         button_text: "Solicitação de telefone"
         video_title: "Assista ao vídeo para descobrir o que pode fazer com o canal de telefone"
-  freshchat:
+  livechat:
     feature_request:
       title: "Bem-vindo ao chat em tempo real"
       heading: "Ofereça suporte para seus clientes com o chat em tempo real"
@@ -7082,7 +7051,7 @@ pt-BR:
     bottom_left: "Parte inferior esquerda"
     bottom_right: "Parte inferior direita"
     integrate_msg: "Copie e cole este código antes da última tag </body> em seu site ou aplicativo"
-    integrate_freshchat_title: "Integrar o chat em tempo real com seu site e seus aplicativos"
+    integrate_livechat_title: "Integrar o chat em tempo real com seu site e seus aplicativos"
     custom_chat_window: "Janela do chat"
     text_placeholder: "Sua mensagem"
     chatbox_bgcolor: "Cor da janela"
@@ -7225,7 +7194,7 @@ pt-BR:
     intro_title: "Por que o chat em tempo real?"
     intro: "O chat em tempo real integrado do Freshdesk permite que você visualize e converse com seus usuários em seu site, no software on-line ou no portal de suporte diretamente do Freshdesk. Você também pode iniciar um chat proativamente com os visitantes do seu site. Ao encerrar uma sessão de chat, você pode optar por converter a conversa em um ticket e continuar acompanhando o problema com o visitante por e-mail ou arquivar a transcrição do chat"
     enable_chat: "Habilitar chat em tempo real"
-    learn_freshchat: "Saiba mais sobre o chat em tempo real"
+    learn_livechat: "Saiba mais sobre o chat em tempo real"
     support_portal: "Chat no portal de suporte"
     logged_in_users: "Somente os usuários conectados"
     everyone: Todos

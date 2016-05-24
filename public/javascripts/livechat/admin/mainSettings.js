@@ -3,13 +3,11 @@ window.liveChat = window.liveChat || {};
 window.liveChat.mainSettings = function($){
   return {  
     getSiteSettings: function(){
-      var request = { action: "sites/get" };
-      request.data = "&siteId=" + window.SITE_ID + "&userId=" + CURRENT_USER.id + "&token=" + LIVECHAT_TOKEN ;
-      window.liveChat.jsonpRequest(request, function (resp){
-        if(resp.status == "success"){
-          $('.fc-mxc-count span').html(resp.result.site.max_chat);
-          if(resp.result.site.cobrowsing){
-            window.fc_cobrowsing = resp.result.site.cobrowsing;
+      window.liveChat.request('sites/' + window.SITE_ID, 'GET', {}, function(err, resp) {
+        if(resp){
+          $('.fc-mxc-count span').html(resp.max_chat);
+          if(resp.cobrowsing){
+            window.fc_cobrowsing = resp.cobrowsing;
             $("#chat_cobrowsing").prop('checked', true);  
             $("#chat_cobrowsing").trigger('change'); 
           }else{
@@ -18,32 +16,17 @@ window.liveChat.mainSettings = function($){
             $("#chat_cobrowsing").trigger('change');
           }
         }
-       });
+      });
     },
 
     toggleSite: function(toggledState){
       var asset_url = ASSET_URL;
       var js_asset_url = asset_url.js;
-      
-      if(window.location && window.location.protocol=='https:'){
-        js_asset_url = asset_url.cloudfront;
-      }
-
-      var data = {	
-        "siteId"   : window.SITE_ID, 
-        "domain"   : CURRENT_ACCOUNT.domain, 
-        "url"      : window.location.hostname, 
-        "protocol" : window.location.protocol,
-        "status"   : toggledState,
-        "userId"   : CURRENT_USER.id,
-        "token"    : window.LIVECHAT_TOKEN
-      };
-
       $.ajax({
-        type: "POST",
-        url: window.liveChat.URL + "/sites/toggle",
-        data: data,
-        dataType: "json",
+        type: "PUT",
+        url: "/livechat/toggle",
+        data: { attributes: { active : toggledState } },
+        dataType: "json", 
         success: function(resp){
           if(resp.status == "success"){
             if(toggledState){
@@ -67,38 +50,12 @@ window.liveChat.mainSettings = function($){
       });
     },
 
-    toggleCobrowsing: function(toggledState){
-      var self = this;
-      var data = {  
-        "siteId"    : window.SITE_ID, 
-        "domain"    : CURRENT_ACCOUNT.domain, 
-        "url"       : window.location.hostname , 
-        "protocol"  : window.location.protocol,
-        "status"    : toggledState,
-        "userId"    : CURRENT_USER.id,
-        "token"     : LIVECHAT_TOKEN
-      };
-      $.ajax({
-        type: "POST",
-        url: window.liveChat.URL + "/sites/updatecobrowsing",
-        data: data,
-        dataType: "json",
-        success: function(response){}
-      });
-    },
-
     updateSite: function(attributesToBeUpdated){
       var self = this;
-      var data = 	{	
-        "siteId" 		: window.SITE_ID, 
-        "attributes": attributesToBeUpdated,
-        "userId"		: CURRENT_USER.id,
-        "token"			: LIVECHAT_TOKEN
-      };
       $.ajax({
-        type: "POST",
-        url: window.liveChat.URL + "/sites/update",
-        data: data,
+        type: "PUT",
+        url: "/livechat/update_site",
+        data: { attributes: attributesToBeUpdated },
         dataType: "json",
         success: function(response){
           if(response.status == "success"){
@@ -113,26 +70,21 @@ window.liveChat.mainSettings = function($){
 
     renderWidget: function(){
       var self = this;
-      self.getLiveChatWidgetSettings(function(response){
-        if(response.status == "success"){
-          $('#chat_loading').hide();
-          $('#chat_setting').show();
-          var _widget = window.liveChat.adminSettings.currentWidget;
-          window.liveChat.adminSettings.currentWidget = $.extend({}, _widget, response.result);
-          self.parseStringJsonFields();
-          window.liveChat.offlineSettings.setOfflineChatSetting();
-          self._renderWidget();
-        }        
+      self.getLiveChatWidgetSettings(function(err, response){
+        $('#chat_loading').hide();
+        $('#chat_setting').show();
+        var _widget = window.liveChat.adminSettings.currentWidget;
+        delete response.id;
+        window.liveChat.adminSettings.currentWidget = $.extend({}, _widget, response);
+        self.parseStringJsonFields();
+        window.liveChat.offlineSettings.setOfflineChatSetting();
+        self._renderWidget();
       });
     },
 
     getLiveChatWidgetSettings: function(callback){
       var _widget = window.liveChat.adminSettings.currentWidget;
-      var request = { action: "widgets/get" };
-      request.data = "&siteId=" + _widget.fc_id + "&widget_id="+_widget.widget_id + "&userId=" + CURRENT_USER.id + "&token=" + LIVECHAT_TOKEN;
-      window.liveChat.jsonpRequest(request, function (response){
-        callback(response);
-      });
+      window.liveChat.request('widgets/' + _widget.widget_id, 'GET', {}, callback);
     },
 
     parseStringJsonFields: function(){
@@ -151,20 +103,10 @@ window.liveChat.mainSettings = function($){
       var _widgetList = window.liveChat.adminSettings.widgetList;
       var _widget = window.liveChat.adminSettings.currentWidget;
       var widget_id = (widget_id || _widget.widget_id)
-      var data = {	
-        "siteId" 	  : window.SITE_ID, 
-        "domain"	  : CURRENT_ACCOUNT.domain, 
-        "url"		    : window.location.hostname , 
-        "protocol" 	: window.location.protocol,
-        "status" 	  : toggledState,
-        "widget_id"	: widget_id,
-        "userId"	  : CURRENT_USER.id,
-        "token"		  : LIVECHAT_TOKEN
-      };
       $.ajax({
         type: "POST",
-        url: window.liveChat.URL + "/widgets/toggle",
-        data: data,
+        url: "/admin/chat_widgets/toggle",
+        data: { attributes : { active : toggledState }, widget_id : widget_id, id: _widget.id },
         dataType: "json",
         success: function(response){}
       });
@@ -174,28 +116,10 @@ window.liveChat.mainSettings = function($){
       var self = this;
       var _widget = window.liveChat.adminSettings.currentWidget;
       var _widgetList = window.liveChat.adminSettings.widgetList;
-      var data = {  
-                    "id"                : CURRENT_ACCOUNT.id, 
-                    "siteId"            : window.SITE_ID,
-                    "domain"            : CURRENT_ACCOUNT.domain, 
-                    "url"               : window.location.hostname , 
-                    "protocol"          : window.location.protocol, 
-                    "active"            : _widget.active || false,
-                    "external_id"       : _widget.product_id || "",
-                    "site_url"          : _widget.widget_site_url,
-                    "name"              : _widget.name,
-                    "prechat_message"   : CHAT_I18n.prechat_message,
-                    "widget_preferences": window.liveChat.widgetSettings.defaultWidgetMessages(),
-                    "prechat_fields"    : window.liveChat.visitorFormSettings.defaultPrechatFields(),
-                    "token"             : LIVECHAT_TOKEN,
-                    "userId"            : CURRENT_USER.id,
-                    "non_availability_message" : window.liveChat.widgetSettings.defaultNonAvailabilitySettings(),
-                    "offline_chat"      : window.liveChat.offlineSettings.defaultOfflineChat()
-                 };
       $.ajax({
         type: "POST",
-        url: window.liveChat.URL + "/widgets/create",
-        data: data,
+        url: "/admin/chat_widgets/enable",
+        data: { product_id: _widget.product_id, active: triggeredFrom == "index" },
         dataType: "json",
         success: function(response){
           if(response.status == "success"){
@@ -207,7 +131,7 @@ window.liveChat.mainSettings = function($){
               self._renderWidget();
             }else if(triggeredFrom == "index"){
               for(var i=0; i < _widgetList.length; i++){
-                if(_widgetList[i].product_id == response.result.product_id){
+                if(_widgetList[i].product_id == _widget.product_id){
                   _widgetList[i].widget_id = response.result.widget_id;
                 }
               }
@@ -282,6 +206,21 @@ window.liveChat.mainSettings = function($){
     		$('.fc-mxc-count').removeClass('show');
     		$('.fc-mxchat').removeClass('editing');
     	});
+    },
+    bindCobrowsingSetting: function(){
+      var self = this;
+      $('#chat_cobrowsing').on('change', function (){
+        if($("#chat_enable").is(":checked")){
+          var status = $(this).is(":checked") ? true : false;
+          if (status == window.fc_cobrowsing){
+            return;
+          }
+          window.fc_cobrowsing = status;
+          var data = {};
+          data.cobrowsing = status;
+          self.updateSite(data);
+        }
+      });
     }
   }
 }(jQuery);

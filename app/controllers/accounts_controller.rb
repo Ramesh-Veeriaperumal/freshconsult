@@ -4,7 +4,7 @@ class AccountsController < ApplicationController
   include Redis::RedisKeys
   include Redis::TicketsRedis
   include Redis::DisplayIdRedis
-  include MixpanelWrapper
+  include MixpanelWrapper 
   
   layout :choose_layout 
   
@@ -41,6 +41,8 @@ class AccountsController < ApplicationController
   def edit
     @supported_languages_list = current_account.account_additional_settings.supported_languages 
     @ticket_display_id = current_account.get_max_display_id
+    @restricted_helpdesk = current_account.restricted_helpdesk?
+    @restricted_helpdesk_launched = current_account.launched?(:restricted_helpdesk)
     if current_account.features?(:redis_display_id)
       key = TICKET_DISPLAY_ID % { :account_id => current_account.id }
       redis_display_id = get_display_id_redis_key(key).to_i
@@ -57,7 +59,8 @@ class AccountsController < ApplicationController
    @signup = Signup.new(params[:signup])
    
    if @signup.save
-   @signup.account.agents.first.user.reset_perishable_token! 
+    @signup.account.agents.first.user.reset_perishable_token! 
+      add_account_info_to_dynamo
       add_to_crm
       respond_to do |format|
         format.html {
@@ -105,8 +108,10 @@ class AccountsController < ApplicationController
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     params[:account][:main_portal_attributes][:updated_at] = Time.now
-    @account.main_portal_attributes = params[:account][:main_portal_attributes]
+    @account.main_portal_attributes  = params[:account][:main_portal_attributes]
+    @account.permissible_domains = params[:account][:permissible_domains]
     if @account.save
+      enable_restricted_helpdesk(params[:enable_restricted_helpdesk])
       flash[:notice] = t(:'flash.account.update.success')
       redirect_to redirect_url
     else
@@ -301,6 +306,10 @@ class AccountsController < ApplicationController
       end
     end
 
+    def add_account_info_to_dynamo
+      AccountInfoToDynamo.perform_async({email: params[:signup][:user_email]})
+    end
+
     def add_to_crm
       if (Rails.env.production? or Rails.env.staging?)
         Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id, 
@@ -372,6 +381,17 @@ class AccountsController < ApplicationController
         :user_count => current_account.contacts.count,
         :account_created_on => current_account.created_at 
       }
-    end         
+    end      
+
+    def enable_restricted_helpdesk action
+      restricted_helpdesk = @account.restricted_helpdesk?
+      if (action == "create" && !restricted_helpdesk &&  @account.features?(:twitter_signin))
+        @account.features.twitter_signin.destroy
+      end
+      if (action == "create" && !restricted_helpdesk) ||
+           (action == "destroy" && restricted_helpdesk )
+        @account.features.restricted_helpdesk.send(action)
+      end
+    end
 
 end

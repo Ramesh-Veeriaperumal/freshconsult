@@ -32,7 +32,7 @@ class Helpdesk::Email::Process
     shard.pod_info unless shard.blank?
   end
 
-	def perform
+  def perform
     self.start_time = Time.now.utc
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
     return unless shardmapping.present?
@@ -55,22 +55,39 @@ class Helpdesk::Email::Process
     if account.features?(:domain_restricted_access)
       wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
       return unless Array.wrap(wl_domain).include?(common_email_data[:from][:domain])
-    end
-    construct_html_param
+    end    
     if (common_email_data[:from][:email] =~ EMAIL_VALIDATOR).nil?
       error_msg = "Invalid email address found in requester details - #{common_email_data[:from][:email]} for account : #{account.id}"
       Rails.logger.debug error_msg
       NewRelic::Agent.notice_error(Exception.new(error_msg))
       return
     end
+    check_tnef_message_id
+    construct_html_param
     self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data
-    return if (user.nil? or user.blocked?)
+
+    return if ((user.nil? && !account.restricted_helpdesk?) or (user && user.blocked?))
+    self.common_email_data[:cc] = permissible_ccs(user, self.common_email_data[:cc], account)
+
     get_necessary_details
     return if duplicate_email?(common_email_data[:from][:email],
                                common_email_data[:to][:email],
                                common_email_data[:subject],
                                params["Message-Id"][1..-2])
     assign_to_ticket_or_kbase
+  end
+
+  def check_tnef_message_id
+    return if params["Message-Id"].present?
+    begin
+      msg_ar = JSON.parse(params["message-headers"]).select{|e| e[0] =~ /x-ms-tnef-correlator/i }.flatten
+    rescue Exception => e
+      msg_ar = []
+    end
+    if msg_ar.present? && msg_ar.length == 2 && msg_ar[1] =~ /<+([^>]+)/
+      params["Message-Id"] = "<" << $1 << ">"
+      Rails.logger.info "Fetched message-id from x-ms-tnef-correlator header: #{params["Message-Id"]}"
+    end
   end
 
   def get_necessary_details
@@ -87,7 +104,7 @@ class Helpdesk::Email::Process
 
   def assign_to_ticket_or_kbase
     handle_tickets unless kbase?
-    create_article if kbase_email_available?
+    create_article if kbase_email_available? && user.present?
   end
 
   def kbase_email_available?
@@ -99,16 +116,18 @@ class Helpdesk::Email::Process
   end
 
 	def handle_tickets 
-		ticket_data = parse_ticket_metadata.merge(common_email_data) #In parse_email_data
-		ticket_identifier = Helpdesk::Email::IdentifyTicket.new(ticket_data, user, account)
-    ticket = ticket_identifier.belongs_to_ticket
+    ticket_data = parse_ticket_metadata.merge(common_email_data) #In parse_email_data
+    ticket, archive_ticket = fetch_ticket_info(ticket_data, user, account)
     email_handler = Helpdesk::Email::HandleTicket.new(ticket_data, user, account, ticket)
-		ticket ? email_handler.create_note(start_time) : create_archive_link(ticket_identifier,email_handler,start_time)
+    if ticket.present? || (archive_ticket.present? && archive_ticket.is_a?(Helpdesk::Ticket))
+      self.user ||= get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"], true)
+    end
+    return if user.blank?    
+    ticket ? email_handler.create_note(start_time) : create_archive_link(archive_ticket, email_handler, start_time)
 	end
 
-  def create_archive_link(ticket_identifier,email_handler,start_time)
+  def create_archive_link(archive_ticket, email_handler, start_time)
     if account.features?(:archive_tickets)
-      archive_ticket = ticket_identifier.belongs_to_archive
       if archive_ticket && archive_ticket.is_a?(Helpdesk::ArchiveTicket)
         email_handler.archive_ticket = archive_ticket 
       elsif archive_ticket && archive_ticket.is_a?(Helpdesk::Ticket)

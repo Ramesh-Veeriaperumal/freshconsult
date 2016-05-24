@@ -1,3 +1,4 @@
+//= require frameworks/velocity.min.js
 //= require highcharts.src.js
 //= require highcharts-more.js
 //= require adv_reports/report_charts.js

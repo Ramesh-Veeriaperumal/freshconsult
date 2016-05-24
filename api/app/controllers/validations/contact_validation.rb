@@ -115,5 +115,4 @@ class ContactValidation < ApiValidation
     def attributes_to_be_stripped
       ContactConstants::ATTRIBUTES_TO_BE_STRIPPED
     end
-    
 end

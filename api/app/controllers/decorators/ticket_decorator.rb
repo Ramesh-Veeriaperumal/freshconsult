@@ -21,12 +21,24 @@ class TicketDecorator < ApiDecorator
 
   def requester
     if record.association(:requester).loaded?
+      requester = record.requester
       {
-        id: record.requester.id,
-        name: record.requester.name,
-        email: record.requester.email,
-        mobile: record.requester.mobile,
-        phone: record.requester.phone
+        id: requester.id,
+        name: requester.name,
+        email: requester.email,
+        mobile: requester.mobile,
+        phone: requester.phone
+      }
+    end
+  end
+
+  def stats
+    if record.association(:ticket_states).loaded?
+      ticket_states = record.ticket_states
+      {
+        resolved_at: ticket_states.resolved_at.try(:utc),
+        first_responded_at: ticket_states.first_response_time.try(:utc),
+        closed_at: ticket_states.closed_at.try(:utc)
       }
     end
   end

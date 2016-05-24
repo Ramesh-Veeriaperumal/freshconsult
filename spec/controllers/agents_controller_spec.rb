@@ -451,7 +451,7 @@ describe AgentsController do
     response.should be_success
   end
 
-  it "should enable toggle_availability for an agent" do
+  it "should toggle_availability for an agent" do
     user = add_test_agent(@account)
     agent = user.agent
     agent.available = false
