@@ -92,14 +92,15 @@ class Admin::RolesController < Admin::AdminController
     def update_role 
       # To avoid account_admin's user_id inject.  
       account_admin = current_account.technicians.find_by_email(current_account.admin_email)
-      add_user_ids = ([params[:add_user_ids]] || []) - [account_admin.try(:id).to_s]
-      delete_user_ids = ([params[:delete_user_ids]] || []) - [account_admin.try(:id).to_s]
+      params_add_user_ids = params[:add_user_ids].split(',') if params[:add_user_ids]
+      params_delete_user_ids = params[:delete_user_ids].split(',') if params[:delete_user_ids]
+      add_user_ids = (params_add_user_ids || []) - [account_admin.try(:id).to_s]
+      delete_user_ids = (params_delete_user_ids || []) - [account_admin.try(:id).to_s]
       update_role_ids( add_user_ids, true)
       update_role_ids( delete_user_ids)
     end
 
    def update_role_ids list, add = false
-     list = list.kind_of?(Array) ? list : list.split(",") 
      valid_users = current_account.technicians.where(:id => list)
      valid_users.each do |user|
          new_role_ids = add ? user.role_ids.push(@role.id) : user.role_ids - [@role.id]
