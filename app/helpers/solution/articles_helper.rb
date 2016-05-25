@@ -82,7 +82,8 @@ module Solution::ArticlesHelper
     span_attributes = ""
     if folder_meta.has_company_visiblity?
       company_names = folder_meta.customers.first(5).map(&:name).join(', ')
-      company_names += t('solution.folders.visibility.extra_companies', :count => count) if folder_meta.customers.size > 5
+      count = folder_meta.customers.size - 5
+      company_names += t('solution.folders.visibility.extra_companies', :count => count) if count > 0
       span_attributes = "class='tooltip' data-placement='right' title='#{h(company_names)}'"
     end
     %(<span #{ span_attributes }>
