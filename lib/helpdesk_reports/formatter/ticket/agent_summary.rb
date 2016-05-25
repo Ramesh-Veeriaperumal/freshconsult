@@ -70,7 +70,7 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
   end
 
   def deleted_agent_id_name_hash ids 
-     Account.current.users.find_all_by_id(ids, :select => "id, name").collect{ |a| [a.id, a.name]}.to_h
+     Account.current.users.unscoped.where(helpdesk_agent: false).find_all_by_id(ids, :select => "id, name").collect{ |a| [a.id, a.name]}.to_h
   end
 
   def populate_result_in_summary
