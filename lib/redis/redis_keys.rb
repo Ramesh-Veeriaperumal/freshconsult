@@ -150,6 +150,9 @@ module Redis::RedisKeys
   TICKET_EXPORT_SIDEKIQ_ENABLED = "TICKET_EXPORT_SIDEKIQ_ENABLED"
   
   GAMIFICATION_QUEST_COOLDOWN = "GAMIFICATION:QUEST:%{account_id}:%{user_id}"
+  GAMIFICATION_AGENTS_LEADERBOARD = "GAMIFICATION_AGENTS_LEADERBOARD:%{account_id}:%{category}:%{month}"
+  GAMIFICATION_GROUPS_LEADERBOARD = "GAMIFICATION_GROUPS_LEADERBOARD:%{account_id}:%{category}:%{month}"
+  GAMIFICATION_GROUP_AGENTS_LEADERBOARD = "GAMIFICATION_GROUP_AGENTS_LEADERBOARD:%{account_id}:%{category}:%{month}:%{group_id}"
 
 	def newrelic_begin_rescue
 	    begin
