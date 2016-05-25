@@ -59,7 +59,7 @@ module SolutionHelper
 	def category_link(folder, page)
 		truncate_length = ( (page == :folder) ? 70 : 40 )
 		category_name = folder.solution_category_meta.name
-		options = { :title => h(category_name) } if category_name.length > truncate_length
+		options = { :title => category_name } if category_name.length > truncate_length
 		pjax_link_to(truncate(category_name, :length => truncate_length), 
 			 			"/solution/categories/#{folder.solution_category_meta.id}", (options || {}))
 	end
@@ -510,7 +510,7 @@ module SolutionHelper
 
   def article_tooltip_title(meta)
   	title = article_title(meta)
-  	title.length > 75 && title
+  	title.length > 75 ? title : ''
 	end
 
 end
