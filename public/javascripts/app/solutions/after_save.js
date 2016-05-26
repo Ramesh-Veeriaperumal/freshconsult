@@ -59,7 +59,11 @@ window.App.Solutions = window.App.Solutions || {};
 						$('#item_' + element).replaceWith(partial);
 					}
 				} else {
-					$('#item_' + element).remove();
+					if (action === 'create') {
+						pjaxify('/solution/folders/' + element);		
+					} else {
+						$('#item_' + element).remove();
+					}
 				}
 			} else {
 				pjaxify('/solution/folders/' + element);
