@@ -4972,7 +4972,7 @@ en:
     delete_btn: Delete
     status: Status
     source: Source
-    tags: Tag
+    tag_condition: Tag
     verify_human: To verify you are human, please type the given scrambled letters
     edit_btn: Edit
     requester: Requester
