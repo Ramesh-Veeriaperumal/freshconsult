@@ -36,7 +36,7 @@ module Helpdesk::TicketActions
 
   def handle_screenshot_attachments
     decoded_file = Base64.decode64(params[:screenshot][:data])
-    file = Tempfile.new(params[:screenshot][:name]) 
+    file = Tempfile.new([params[:screenshot][:name], '.png']) 
     file.binmode
     file.write decoded_file
     attachment = @ticket.attachments.build(:content => file, :account_id => @ticket.account_id)

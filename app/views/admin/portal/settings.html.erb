@@ -11,26 +11,43 @@
 <%= generate_breadcrumbs(params, f, :redirect_to_admin => true, :force_admin => true, :submit_text => 'save') %>
 
 <div class="portal-section">
-	<%= content_tag( :div,  t('.signup_login'),	   :class => "heading border-none" ) %>
-	<div class="control-group">
-		<div class="control-label"><%= t('.allow_signup') %></div>
-		<div class="controls">
-			<%= feature_radio_button({
-					:signup_link => t('plain_yes'),
-					:default => t('plain_no') }) %>
-		</div>
-	</div>
 
-	<div class="control-group">
-		<div class="control-label"><%= t('.allow_signin') %></div>
-		<div class="controls multiple-check">
-			<%= f.feature_check_box :google_signin, {:id => 'google_signin'} %>
-				<%= label_for(t('.google'), 'google_signin')%>
-			<%= f.feature_check_box :twitter_signin, {:id => 'twitter_signin'} %>
-				<%= label_for(t('.twitter'), 'twitter_signin')%>
-			<%= f.feature_check_box :facebook_signin, {:id => 'facebook_signin'} %>
-				<%= label_for(t('.facebook'), 'facebook_signin')%>
+	<%= content_tag( :div,  t('.signup_login'),	   :class => "heading border-none" ) %>
+	<div class="row">
+		<div class="span8">
+			<div class="control-group">
+				<div class="control-label"><%= t('.allow_signup') %></div>
+				<div class="controls">
+					<%= feature_radio_button({
+							:signup_link => t('plain_yes'),
+							:default => t('plain_no') }) %>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<div class="control-label"><%= t('.allow_signin') %></div>
+				<div class="controls multiple-check">
+					<%= f.feature_check_box :google_signin, {:id => 'google_signin'} %>
+						<%= label_for(t('.google'), 'google_signin')%>
+					<%= f.feature_check_box :twitter_signin, {:id => 'twitter_signin'} %>
+						<%= label_for(t('.twitter'), 'twitter_signin')%>
+					<%= f.feature_check_box :facebook_signin, {:id => 'facebook_signin'} %>
+						<%= label_for(t('.facebook'), 'facebook_signin')%>
+				</div>
+			</div>
 		</div>
+		<% if @restricted_helpdesk %>
+			<div class="span4 moderation-info alert-text">
+				<div class="bold">
+					<span class="ficon ficon-warning"></span> 
+					<strong> <%= t(".important")%> </strong>
+				</div>
+				<div>
+					<%= t(".restricted_login_signup")%>
+				</div>
+				<%= link_to t(".view_settings"), edit_account_path+"#permission" %>
+			</div>
+		<% end %>
 	</div>
 </div>
 
@@ -121,4 +138,16 @@
 	<%= pjax_link_to "#{t('account.cancel')}".html_safe, "/admin/home", { :class => "btn" } %>
 	<%= f.submit t('save'), { :class => "btn btn-primary" } %>
 </div>
+<% end %>
+
+<%= javascript_tag do %>
+	jQuery(document).ready(function(){ 
+		<% if @restricted_helpdesk %>
+			var twitter_signin = jQuery("#twitter_signin")
+			if(twitter_signin.length > 0){
+				twitter_signin.attr("disabled", true);
+				jQuery("label[for='twitter_signin']").addClass("muted");
+			}
+		<% end %>
+	}); 
 <% end %>

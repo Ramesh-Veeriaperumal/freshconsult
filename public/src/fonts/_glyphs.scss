@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_0379f3d3310601560cdd6c7db7b2137d.eot");
-  src: font-url("glyphs_0379f3d3310601560cdd6c7db7b2137d.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_0379f3d3310601560cdd6c7db7b2137d.woff") format("woff"),
-       font-url("glyphs_0379f3d3310601560cdd6c7db7b2137d.ttf") format("truetype"),
-       font-url("glyphs_0379f3d3310601560cdd6c7db7b2137d.svg#glyphs") format("svg");
+  src: font-url("glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.eot");
+  src: font-url("glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.woff") format("woff"),
+       font-url("glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.ttf") format("truetype"),
+       font-url("glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_0379f3d3310601560cdd6c7db7b2137d.svg#glyphs") format("svg");
+    src: font-url("glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.svg#glyphs") format("svg");
   }
 }
 
@@ -190,6 +190,7 @@
 .ficon-linkedin:before,
 .ficon-linux:before,
 .ficon-live_chat:before,
+.ficon-livechat:before,
 .ficon-lock:before,
 .ficon-lock-2:before,
 .ficon-lock-open:before,
@@ -316,19 +317,19 @@
 
 .ficon-abandoned-call:before { content: "\f1e5"; }
 .ficon-account:before { content: "\f100"; }
-.ficon-add-call:before { content: "\f21b"; }
+.ficon-add-call:before { content: "\f21f"; }
 .ficon-agent:before { content: "\f101"; }
 .ficon-agent-fchat-off:before { content: "\f1b0"; }
 .ficon-agent-fchat-on:before { content: "\f1b1"; }
-.ficon-agent_summary:before { content: "\f21c"; }
-.ficon-alert:before { content: "\f203"; }
+.ficon-agent_summary:before { content: "\f21a"; }
+.ficon-alert:before { content: "\f201"; }
 .ficon-all-streams:before { content: "\f102"; }
 .ficon-android:before { content: "\f103"; }
 .ficon-answer-checked:before { content: "\f104"; }
 .ficon-answer-unchecked:before { content: "\f105"; }
 .ficon-apple:before { content: "\f106"; }
-.ficon-apps:before { content: "\f215"; }
-.ficon-archived-ticket:before { content: "\f204"; }
+.ficon-apps:before { content: "\f213"; }
+.ficon-archived-ticket:before { content: "\f203"; }
 .ficon-arrow-click:before { content: "\f1b7"; }
 .ficon-arrow-down:before { content: "\f107"; }
 .ficon-arrow-down-2:before { content: "\f108"; }
@@ -338,13 +339,13 @@
 .ficon-arrow-right-2:before { content: "\f10c"; }
 .ficon-arrow-up:before { content: "\f10d"; }
 .ficon-arrow-up-2:before { content: "\f10e"; }
-.ficon-article:before { content: "\f205"; }
+.ficon-article:before { content: "\f204"; }
 .ficon-available-on-mobile:before { content: "\f1b6"; }
 .ficon-bell:before { content: "\f10f"; }
 .ficon-billing:before { content: "\f110"; }
 .ficon-blank-file:before { content: "\f111"; }
-.ficon-block:before { content: "\f207"; }
-.ficon-blocked-call:before { content: "\f208"; }
+.ficon-block:before { content: "\f20c"; }
+.ficon-blocked-call:before { content: "\f20d"; }
 .ficon-book:before { content: "\f112"; }
 .ficon-book-hollow:before { content: "\f1da"; }
 .ficon-bulb:before { content: "\f113"; }
@@ -359,7 +360,7 @@
 .ficon-caret-up:before { content: "\f11b"; }
 .ficon-categories:before { content: "\f1db"; }
 .ficon-categories-orphan:before { content: "\f1dc"; }
-.ficon-category:before { content: "\f201"; }
+.ficon-category:before { content: "\f223"; }
 .ficon-chat:before { content: "\f1bd"; }
 .ficon-chat-bubble:before { content: "\f11c"; }
 .ficon-chat-disable:before { content: "\f11d"; }
@@ -378,8 +379,8 @@
 .ficon-compose-email:before { content: "\f1c8"; }
 .ficon-conversation:before { content: "\f128"; }
 .ficon-cross:before { content: "\f129"; }
-.ficon-cross-filled:before { content: "\f21d"; }
-.ficon-cross-round:before { content: "\f216"; }
+.ficon-cross-filled:before { content: "\f220"; }
+.ficon-cross-round:before { content: "\f214"; }
 .ficon-crown:before { content: "\f12a"; }
 .ficon-cube:before { content: "\f1dd"; }
 .ficon-cube-filled:before { content: "\f218"; }
@@ -387,27 +388,27 @@
 .ficon-customer-fields:before { content: "\f12b"; }
 .ficon-customer-portal:before { content: "\f12c"; }
 .ficon-customer-satisfaction:before { content: "\f1bf"; }
-.ficon-customer_report:before { content: "\f21e"; }
+.ficon-customer_report:before { content: "\f21b"; }
 .ficon-customer_satisfaction:before { content: "\f1ea"; }
 .ficon-date:before { content: "\f12d"; }
 .ficon-day_pass:before { content: "\f12e"; }
-.ficon-db-calendar:before { content: "\f209"; }
-.ficon-db-feedback:before { content: "\f20a"; }
-.ficon-db-interactions:before { content: "\f20b"; }
-.ficon-db-message:before { content: "\f20c"; }
-.ficon-db-sand-clock:before { content: "\f20d"; }
-.ficon-db-unassigned:before { content: "\f20e"; }
+.ficon-db-calendar:before { content: "\f206"; }
+.ficon-db-feedback:before { content: "\f207"; }
+.ficon-db-interactions:before { content: "\f208"; }
+.ficon-db-message:before { content: "\f209"; }
+.ficon-db-sand-clock:before { content: "\f20a"; }
+.ficon-db-unassigned:before { content: "\f20b"; }
 .ficon-decimal:before { content: "\f1c9"; }
-.ficon-delete:before { content: "\f217"; }
+.ficon-delete:before { content: "\f215"; }
 .ficon-deleted:before { content: "\f1b3"; }
 .ficon-disconnected:before { content: "\f12f"; }
 .ficon-dislike:before { content: "\f130"; }
 .ficon-dispatcher:before { content: "\f131"; }
-.ficon-dot:before { content: "\f213"; }
+.ficon-dot:before { content: "\f212"; }
 .ficon-dots:before { content: "\f132"; }
-.ficon-download:before { content: "\f206"; }
+.ficon-download:before { content: "\f202"; }
 .ficon-dropbox:before { content: "\f133"; }
-.ficon-dropdown-circle:before { content: "\f202"; }
+.ficon-dropdown-circle:before { content: "\f224"; }
 .ficon-dropdown_blank:before { content: "\f134"; }
 .ficon-earth:before { content: "\f135"; }
 .ficon-ecommerce:before { content: "\f1e2"; }
@@ -418,7 +419,7 @@
 .ficon-email-notifications:before { content: "\f13a"; }
 .ficon-email_commands_setting:before { content: "\f13b"; }
 .ficon-eye:before { content: "\f13c"; }
-.ficon-eye-disabled:before { content: "\f214"; }
+.ficon-eye-disabled:before { content: "\f225"; }
 .ficon-facebook:before { content: "\f13d"; }
 .ficon-facebook-lock:before { content: "\f13e"; }
 .ficon-facebook-setting:before { content: "\f13f"; }
@@ -457,13 +458,13 @@
 .ficon-freshfone:before { content: "\f1c0"; }
 .ficon-gamification-settings:before { content: "\f152"; }
 .ficon-gear:before { content: "\f153"; }
-.ficon-glance:before { content: "\f21f"; }
+.ficon-glance:before { content: "\f21c"; }
 .ficon-googleplus:before { content: "\f154"; }
 .ficon-group:before { content: "\f155"; }
-.ficon-group_summary:before { content: "\f220"; }
+.ficon-group_summary:before { content: "\f21d"; }
 .ficon-grouping-disable:before { content: "\f156"; }
 .ficon-grouping-enable:before { content: "\f157"; }
-.ficon-hangup:before { content: "\f20f"; }
+.ficon-hangup:before { content: "\f20e"; }
 .ficon-help:before { content: "\f158"; }
 .ficon-help-icon:before { content: "\f1d9"; }
 .ficon-helpdesk:before { content: "\f1ca"; }
@@ -471,9 +472,9 @@
 .ficon-ie:before { content: "\f159"; }
 .ficon-ilos-icon:before { content: "\f200"; }
 .ficon-import:before { content: "\f15a"; }
-.ficon-incoming-call:before { content: "\f210"; }
+.ficon-incoming-call:before { content: "\f20f"; }
 .ficon-infinity-5:before { content: "\f15b"; }
-.ficon-integrations:before { content: "\f15c"; }
+.ficon-integrations:before { content: "\f216"; }
 .ficon-ios:before { content: "\f15d"; }
 .ficon-left-arrow-thick:before { content: "\f1d6"; }
 .ficon-like:before { content: "\f15e"; }
@@ -481,6 +482,7 @@
 .ficon-linkedin:before { content: "\f160"; }
 .ficon-linux:before { content: "\f161"; }
 .ficon-live_chat:before { content: "\f1ec"; }
+.ficon-livechat:before { content: "\f222"; }
 .ficon-lock:before { content: "\f162"; }
 .ficon-lock-2:before { content: "\f163"; }
 .ficon-lock-open:before { content: "\f164"; }
@@ -510,15 +512,15 @@
 .ficon-notice-o:before { content: "\f173"; }
 .ficon-number:before { content: "\f174"; }
 .ficon-observer:before { content: "\f175"; }
-.ficon-onhold:before { content: "\f212"; }
+.ficon-onhold:before { content: "\f211"; }
 .ficon-open-in-new-window:before { content: "\f176"; }
 .ficon-open-in-portal:before { content: "\f1e0"; }
 .ficon-opera:before { content: "\f177"; }
-.ficon-outgoing-call:before { content: "\f211"; }
+.ficon-outgoing-call:before { content: "\f210"; }
 .ficon-paperplane:before { content: "\f178"; }
 .ficon-paragraph:before { content: "\f179"; }
 .ficon-pencil:before { content: "\f17a"; }
-.ficon-performance_distribution:before { content: "\f221"; }
+.ficon-performance_distribution:before { content: "\f21e"; }
 .ficon-phone:before { content: "\f17b"; }
 .ficon-phone-block:before { content: "\f17c"; }
 .ficon-phone-disable:before { content: "\f17d"; }
@@ -564,16 +566,16 @@
 .ficon-survey-neutral:before { content: "\f1b9"; }
 .ficon-survey-sad:before { content: "\f1ba"; }
 .ficon-survey-settings:before { content: "\f196"; }
-.ficon-tags:before { content: "\f197"; }
+.ficon-tags:before { content: "\f205"; }
 .ficon-text:before { content: "\f198"; }
-.ficon-tick:before { content: "\f21a"; }
+.ficon-tick:before { content: "\f217"; }
 .ficon-ticket:before { content: "\f199"; }
 .ficon-ticket-fields:before { content: "\f19a"; }
 .ficon-ticket_volume:before { content: "\f1f1"; }
 .ficon-time_sheet:before { content: "\f1f2"; }
 .ficon-timeline-forum:before { content: "\f19b"; }
 .ficon-timeline-ticket:before { content: "\f19c"; }
-.ficon-transfer-round:before { content: "\f222"; }
+.ficon-transfer-round:before { content: "\f221"; }
 .ficon-trash:before { content: "\f19d"; }
 .ficon-trash-o:before { content: "\f19e"; }
 .ficon-trash-strike-thru:before { content: "\f19f"; }

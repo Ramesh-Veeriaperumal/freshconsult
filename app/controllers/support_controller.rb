@@ -145,8 +145,8 @@ class SupportController < ApplicationController
                        
       canonical_path = request.original_fullpath.gsub(/\?.*/, '')
       @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{canonical_path}"
+      #additions in canonical URL is removed in the view E.g: /facebook added by FB routing is removed in faceboook view.
       multilingual_meta(page_token) if current_portal.multilingual? 
-
       @meta = HashDrop.new( @page_meta )
     end
 

@@ -4,7 +4,7 @@ class AccountsController < ApplicationController
   include Redis::RedisKeys
   include Redis::TicketsRedis
   include Redis::DisplayIdRedis
-  include MixpanelWrapper
+  include MixpanelWrapper 
   
   layout :choose_layout 
   
@@ -42,6 +42,8 @@ class AccountsController < ApplicationController
   def edit
     @supported_languages_list = current_account.account_additional_settings.supported_languages
     @ticket_display_id = current_account.get_max_display_id
+    @restricted_helpdesk = current_account.restricted_helpdesk?
+    @restricted_helpdesk_launched = current_account.launched?(:restricted_helpdesk)
     if current_account.features?(:redis_display_id)
       key = TICKET_DISPLAY_ID % { :account_id => current_account.id }
       redis_display_id = get_display_id_redis_key(key).to_i
@@ -108,8 +110,10 @@ class AccountsController < ApplicationController
     @account.ticket_display_id = params[:account][:ticket_display_id]
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     params[:account][:main_portal_attributes].delete(:language) if @account.features?(:enable_multilingual)
-    @account.main_portal_attributes = params[:account][:main_portal_attributes]
+    @account.main_portal_attributes  = params[:account][:main_portal_attributes]
+    @account.permissible_domains = params[:account][:permissible_domains]
     if @account.save
+      enable_restricted_helpdesk(params[:enable_restricted_helpdesk])
       flash[:notice] = t(:'flash.account.update.success')
       redirect_to redirect_url
     else
@@ -392,6 +396,17 @@ class AccountsController < ApplicationController
         :user_count => current_account.contacts.count,
         :account_created_on => current_account.created_at 
       }
+    end      
+
+    def enable_restricted_helpdesk action
+      restricted_helpdesk = @account.restricted_helpdesk?
+      if (action == "create" && !restricted_helpdesk &&  @account.features?(:twitter_signin))
+        @account.features.twitter_signin.destroy
+      end
+      if (action == "create" && !restricted_helpdesk) ||
+           (action == "destroy" && restricted_helpdesk )
+        @account.features.restricted_helpdesk.send(action)
+      end
     end
 
     def check_and_enable_multilingual_feature

@@ -1750,7 +1750,7 @@ pl:
         import: "Importuj dane z Zendesk"
         agent: Konsultanci
         feedback: "Widżet opinii"
-        freshchat: "Czat na żywo"
+        livechat: "Czat na żywo"
         integrations: Dodatki
         dispatcher: Dyspozytor
         supervisor: Nadzorca
@@ -6063,7 +6063,7 @@ pl:
         filter_by: "Widoki satysfakcji"
         view_report_date: "Zobacz raporty z okresu"
         helptext: "<b>Do czego służy raport satysfakcji klienta?</b><p>Raport satysfakcji klienta odzwierciedla jakość usług pomocy technicznej świadczonych przez twoich konsultantów.<br>Raport pomaga zrozumieć współczynnik zadowolenia klientów, przedstawiony w formie wartości procentowej (zadowolony, nie ma opinii, niezadowolony) uzyskany przez każdego z twoich konsultantów.<br><br><b>Co więcej możesz zrobić?</b><br><p><ol class='ml15'><li>Przefiltruj wyniki raportu wg konsultantów, grup lub firmy</li><li>Wyświetl raporty za określone ramy czasowe</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Podsumowanie czatu na żywo"
       filter_by_title: "Filtrowane wg"
       time_period: Okres
@@ -7030,7 +7030,7 @@ pl:
         additional_info: "Po aktywacji kanału telefonicznego na koncie będziesz mieć możliwość kupowania numerów, wykonywania i odbierania połączeń"
         button_text: "Wystąp o telefon"
         video_title: "Obejrzyj film demonstrujący możliwości kanału telefonicznego"
-  freshchat:
+  livechat:
     feature_request:
       title: "Witamy w czacie na żywo"
       heading: "Obsługuj swoich klientów za pomocą czatu na żywo"
@@ -7107,7 +7107,7 @@ pl:
     bottom_left: "Lewa dół"
     bottom_right: "Prawa dół"
     integrate_msg: "Skopiuj i wklej ten kod przed ostatnim </body>  znacznikiem na swojej stronie lub aplikacji"
-    integrate_freshchat_title: "Zintegruj usługę czatu na żywo ze swoją stroną internetową i aplikacjami"
+    integrate_livechat_title: "Zintegruj usługę czatu na żywo ze swoją stroną internetową i aplikacjami"
     custom_chat_window: "Spersonalizuj okno czatu"
     text_placeholder: "Twój komunikat"
     chatbox_bgcolor: "Kolor okna"
@@ -7250,7 +7250,7 @@ pl:
     intro_title: "Dlaczego czat na żywo?"
     intro: "Zintegrowane rozwiązanie czatu na żywo umożliwia przeglądanie i rozmawianie z użytkownikami obecnymi na stronie, w oprogramowaniu online lub portalu pomocy technicznej bezpośrednio w systemie Freshdesk. Możesz również aktywnie inicjować rozmowy z odwiedzającymi na stronie. Po zakończeniu sesji czatu można ją przekonwertować na zgłoszenie lub skontaktować się z odwiedzającym za pośrednictwem wiadomości e-mail lub zarchiwizować transkrypcję czatu."
     enable_chat: "Włącz czat na żywo"
-    learn_freshchat: "Dowiedz się więcej na temat czatu na żywo"
+    learn_livechat: "Dowiedz się więcej na temat czatu na żywo"
     support_portal: "Czat na portalu pomocy technicznej"
     logged_in_users: "Tylko zalogowani użytkownicy"
     everyone: Wszyscy

@@ -13,6 +13,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include WhiteListHelper
   include Helpdesk::Utils::Attachment
   include Helpdesk::Utils::ManageCcEmails
+  include Helpdesk::Permission::Ticket
   include Helpdesk::ProcessAgentForwardedEmail
 
   MESSAGE_LIMIT = 10.megabytes
@@ -61,6 +62,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           return
         end
         user = existing_user(account, from_email)
+
         unless user
           text_part
           user = create_new_user(account, from_email, email_config)
@@ -68,8 +70,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           return if user.blocked?
           text_part
         end
-        set_current_user(user)
-        
+        return if (user.blank? && !account.restricted_helpdesk?)
+        set_current_user(user)        
+
         self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/sanitize']) do
           # Workaround for params[:html] containing empty tags
           #need to format this code --Suman
@@ -97,7 +100,26 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   # ITIL Related Methods starts here
 
   def add_to_or_create_ticket(account, from_email, to_email, user, email_config)
-    ticket = fetch_ticket(account, from_email, user)
+    ticket, archive_ticket = process_email_ticket_info(account, from_email, user)
+    if (ticket.present? || archive_ticket.present?) && user.blank?
+      if archive_ticket
+        parent_ticket = archive_ticket.parent_ticket
+        if parent_ticket.is_a?(Helpdesk::Ticket) && can_be_added_to_ticket?(parent_ticket, user, from_email)
+          valid_parent_ticket = true
+        end
+        linked_ticket = archive_ticket.ticket
+        if linked_ticket && can_be_added_to_ticket?(linked_ticket.parent, user, from_email)
+          valid_linked_ticket = true
+          linked_ticket = linked_ticket.parent
+        end
+      end
+      if ticket || valid_parent_ticket || valid_linked_ticket
+        user = create_new_user(account, from_email, email_config, true)
+        set_current_user(user)
+      end
+    end
+    return if user.blank?
+    params[:cc] = permissible_ccs(user, params[:cc], account)
     if ticket
       return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
       primary_ticket = check_primary(ticket,account)
@@ -107,23 +129,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       add_email_to_ticket(ticket, from_email, user)
     else
-      if account.features?(:archive_tickets)
-        archive_ticket = fetch_archived_ticket(account, from_email, user)
-        if archive_ticket
-          self.archived_ticket = archive_ticket
-          parent_ticket = self.archived_ticket.parent_ticket 
-          # If merge ticket change the archive_ticket
-          if parent_ticket && parent_ticket.is_a?(Helpdesk::ArchiveTicket)
-            self.archived_ticket = parent_ticket
-          elsif parent_ticket && parent_ticket.is_a?(Helpdesk::Ticket)
-            return add_email_to_ticket(parent_ticket, from_email, user) if can_be_added_to_ticket?(parent_ticket, user, from_email)
-          end
-          # If not merge check if archive child present
-          linked_ticket = self.archived_ticket.ticket
-          if linked_ticket
-            linked_ticket = linked_ticket.parent if can_be_added_to_ticket?(linked_ticket.parent, user, from_email)
-            return add_email_to_ticket(linked_ticket, from_email, user)
-          end
+      if archive_ticket
+        self.archived_ticket = archive_ticket
+        # If merge ticket change the archive_ticket
+        if parent_ticket && parent_ticket.is_a?(Helpdesk::ArchiveTicket)
+          self.archived_ticket = parent_ticket
+        elsif valid_parent_ticket
+          return add_email_to_ticket(parent_ticket, from_email, user)
+        end
+        # If not merge check if archive child present
+        if valid_linked_ticket
+          return add_email_to_ticket(linked_ticket, from_email, user)
         end
       end
       create_ticket(account, from_email, to_email, user, email_config)
@@ -318,7 +334,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         if e_email[:cc_emails].present?
           params[:cc] = (params[:cc].present?) ? (params[:cc] << ", " << e_email[:cc_emails].join(", ")) : e_email[:cc_emails]
         end
-        user = get_user(account, e_email , email_config) unless e_email.blank?
+        user = get_user(account, e_email , email_config, true) unless e_email.blank?
       end
      
       global_cc = parse_all_cc_emails(account.kbase_email, account.support_emails)
@@ -359,6 +375,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       self.class.trace_execution_scoped(['Custom/Sendgrid/ticket_attachments']) do
         # attachable info will be updated on ticket save
         ticket.attachments, ticket.inline_attachments = create_attachments(ticket, account)
+      end
+
+      unless params[:dropped_cc_emails].blank?
+        ticket.cc_email[:dropped_cc_emails] = params[:dropped_cc_emails]
       end
 
       begin
@@ -548,6 +568,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         note.attachments, note.inline_attachments = create_attachments(note, ticket.account)
       end
 
+      unless params[:dropped_cc_emails].blank?
+        note.cc_emails = {:cc_emails => note.cc_emails, :dropped_cc_emails => params[:dropped_cc_emails]}
+      end
+
       self.class.trace_execution_scoped(['Custom/Sendgrid/notes']) do
         # ticket.save
         note.notable = ticket
@@ -570,16 +594,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def can_be_added_to_ticket?(ticket, user, from_email={})
       ticket and
-      ((user.agent? && !user.deleted?) or
-      (ticket.requester.email and ticket.requester.email.include?(user.email)) or 
-      (ticket.included_in_cc?(user.email)) or
+      ((user && user.agent? && !user.deleted?) or
+      (ticket.requester.email and user and ticket.requester.email.include?(user.email)) or 
+      (user && ticket.included_in_cc?(user.email)) or
       (from_email[:email] == ticket.sender_email) or
+      ticket.included_in_cc?(from_email[:email]) or
       belong_to_same_company?(ticket,user) or
       Account.current.features?(:threading_without_user_check))
     end
     
     def belong_to_same_company?(ticket,user)
-      user.company_id and (user.company_id == ticket.company_id)
+      user and user.company_id and (user.company_id == ticket.company_id)
     end
 
     def text_part
@@ -587,11 +612,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                              Helpdesk::HTMLSanitizer.plain(params[:html])
                                             }
     end
-
-    def get_user(account, from_email, email_config)
+    
+    def get_user(account, from_email, email_config, force_create = false)
       user = existing_user(account, from_email)
-      unless user
-        user = create_new_user(account, from_email, email_config)
+      unless user.present?
+        if force_create || can_create_ticket?(from_email[:email])
+          user = create_new_user(account, from_email, email_config, true)
+        end
       end
       set_current_user(user)
     end
@@ -600,23 +627,25 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       account.user_emails.user_for_email(from_email[:email])
     end
 
-    def create_new_user(account, from_email, email_config)
-      user = account.contacts.new
-      language = (account.features?(:dynamic_content)) ? nil : account.language
-      portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
-      signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-        :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
-      if params[:text]
-        text = text_for_detection
-        args = [user, text]  #user_email changed
-        #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
-        Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
+    def create_new_user(account, from_email, email_config, force_create = false)
+      if force_create || can_create_ticket?(from_email[:email])
+        user = account.contacts.new
+        language = (account.features?(:dynamic_content)) ? nil : account.language
+        portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
+        signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
+          :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
+        if params[:text]
+          text = text_for_detection
+          args = [user, text]  #user_email changed
+          #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
+          Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
+        end
       end
       user
     end
 
     def set_current_user(user)
-      user.make_current
+      user.make_current if user.present?
     end
 
     def text_for_detection
@@ -848,6 +877,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return ticket.parent
     end
   end
+
+  def permissible_ccs(user, cc_emails, account)
+    cc_emails, params[:dropped_cc_emails] = fetch_permissible_cc(user, cc_emails, account)
+    cc_emails
+  end   
 
   alias_method :parse_cc_email, :parse_cc_email_new
   alias_method :parse_to_emails, :parse_to_emails_new

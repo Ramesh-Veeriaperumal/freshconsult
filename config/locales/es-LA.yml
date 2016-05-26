@@ -1881,7 +1881,7 @@ es-LA:
         import: "Importar datos de Zendesk"
         agent: Agentes
         feedback: "Widget de comentarios"
-        freshchat: "Chat activo"
+        livechat: "Chat activo"
         integrations: Integraciones
         dispatcher: Despachador
         supervisor: Supervisor
@@ -6849,7 +6849,7 @@ es-LA:
         filter_by: "Vistas de satisfacción"
         view_report_date: "Ver informes durante"
         helptext: "<b>¿Para qué sirve el informe de satisfacción de clientes?</b><p>El informe de satisfacción de clientes te proporciona un panorama de la calidad del servicio de los agentes de soporte al cliente. <br>El informe te ayuda a comprender el cociente de satisfacción de tus clientes, que se representa como un valor de porcentaje (satisfecho, neutral e insatisfecho) correspondiente a cada agente de soporte. <br><br><b>¿Qué más se puede hacer?</b><br><p><ol class='ml15'><li>Filtrar los resultados del informe con respecto a los agentes, el grupo o la empresa.</li><li>Visualizar los informes de un período determinado.</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Resumen del chat activo"
       filter_by_title: "Filtrado por"
       time_period: Período
@@ -8136,7 +8136,7 @@ es-LA:
         additional_info: "Una vez que el canal de teléfono esté habilitado en tu cuenta, podrás comprar números y realizar y recibir llamadas."
         button_text: "Solicitud de teléfono"
         video_title: "Mira el video para descubrir qué puedes hacer con el canal de teléfono."
-  freshchat:
+  livechat:
     feature_request:
       title: "Bienvenido al chat activo"
       heading: "Brinda soporte a tus clientes con el chat activo"
@@ -8213,7 +8213,7 @@ es-LA:
     bottom_left: "Parte inferior izquierda"
     bottom_right: "Parte inferior derecha"
     integrate_msg: "Copiar y pegar este código antes de la última etiqueta </body> en tu sitio web o aplicación"
-    integrate_freshchat_title: "Integra el chat activo en tu sitio web y aplicaciones."
+    integrate_livechat_title: "Integra el chat activo en tu sitio web y aplicaciones."
     custom_chat_window: "Ventana de chat"
     text_placeholder: "Tu mensaje"
     chatbox_bgcolor: "Color de la ventana"
@@ -8356,7 +8356,7 @@ es-LA:
     intro_title: "Beneficios del chat activo"
     intro: "La solución de chat activo integrada de Freshdesk te permite ver usuarios y hablar con ellos en tu sitio web, software en línea o portal de soporte directamente desde Freshdesk. También puedes comenzar a chatear de manera proactiva con los visitantes del sitio web. Cuando finalices cada sesión de chat, puedes elegir convertirla en un ticket y continuar el seguimiento con el visitante por correo electrónico, o archivar la transcripción del chat."
     enable_chat: "Habilitar chat activo"
-    learn_freshchat: "Más información acerca del chat activo"
+    learn_livechat: "Más información acerca del chat activo"
     support_portal: "Chat en el portal de soporte"
     logged_in_users: "Usuarios que hayan iniciado sesión únicamente"
     everyone: Todos

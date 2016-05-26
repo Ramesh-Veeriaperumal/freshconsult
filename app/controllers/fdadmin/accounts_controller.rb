@@ -11,7 +11,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   
   def show
     account_summary = {}
-    account = Account.find(params[:account_id])
+    account = Account.find_by_id(params[:account_id])
     shard_info = ShardMapping.find(params[:account_id])
     account_summary[:account_info] = fetch_account_info(account) 
     account_summary[:passes] = account.day_pass_config.available_passes
@@ -27,7 +27,9 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
     account_summary[:shard] = shard_info.shard_name
     account_summary[:pod] = shard_info.pod_info
-    account_summary[:freshfone_feature] = account.features?(:freshfone) || account.launched?(:freshfone_onboarding)
+    account_summary[:freshfone_feature] = account.features?(:freshfone)
+    cnt_impt = account.contact_import
+    account_summary[:contact_import] = cnt_impt ? cnt_impt.status : nil
     respond_to do |format|
       format.json do
         render :json => account_summary
@@ -39,7 +41,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info = {}
     account = Account.find(params[:account_id])
     feature_info[:social] = fetch_social_info(account)
-    feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.display_id?) }
+    feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.site_id?) }
     feature_info[:mailbox] = account.features?(:mailbox)
     feature_info[:freshfone] = account.features?(:freshfone)
     respond_to do |format|
@@ -330,6 +332,21 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       format.json do 
         render :json => result
         end
+      end
+    end
+  end
+
+  def contact_import_destroy
+    result = {}
+    account = Account.find_by_id(params[:account_id]) 
+    begin
+      result[:status] = account.contact_import.destroy ? "success" : "failure"
+    rescue Exception => e
+      result[:status] = "failure"
+    end
+    respond_to do |format|
+      format.json do 
+        render :json => result
       end
     end
   end

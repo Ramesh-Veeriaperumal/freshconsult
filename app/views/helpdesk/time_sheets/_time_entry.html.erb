@@ -3,7 +3,7 @@
     <div class="actions">
       <% @ticket ||= time_entry.workable %>
       <%= link_to t(".toggle_timer_#{!time_entry.timer_running}"), 
-                  toggle_timer_helpdesk_time_sheet_path(time_entry), 
+                  toggle_timer_helpdesk_ticket_time_sheet_path(@ticket, time_entry), 
                   :method => :put,
                   :remote => true,
                   :class => 'toggle_timer' %>
@@ -14,7 +14,7 @@
                     "data-submit-label" => t('update'),
                     "id" => "edit_#{time_entry.id}",
                     :title => 'Edit Timesheet' ) unless time_entry.timer_running %>
-      <%= link_to "delete", helpdesk_time_sheet_url(time_entry), 
+      <%= link_to "delete", helpdesk_ticket_time_sheet_path(@ticket, time_entry), 
                   :method => :delete,
                   :remote => true,
                   :confirm => "Delete this time entry?" %>

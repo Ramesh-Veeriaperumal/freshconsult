@@ -155,7 +155,7 @@ module Facebook
       def fetch_parent_data(parent_in_dynamo)
         return if self.koala_post.feed_id.present?
         
-        if parent_in_dynamo
+        if parent_in_dynamo && social_revamp_enabled?
           self.koala_post.fetch_post_from_dynamo(post_id, self.dynamo_helper)
         elsif parent_post.present?
           self.koala_post.fetch_post_from_db(post_id)

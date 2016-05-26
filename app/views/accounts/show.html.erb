@@ -16,12 +16,13 @@
 		<% end %>
 	</div>
 
-	<div class="sidepanel">
-		<h5 class="lead"><%= t(".export_data") %></h5> 
-		<p><%= t('.export_data_text') %></p>
-		<%= link_to "#{t('.export_now')} &rsaquo;".html_safe, export_admin_data_export_index_path, :class => "btn" %>
-	</div>
-
+	<%= form_tag({:action=> :export, :controller => "admin/data_export"}) do %>
+		<div class="sidepanel">
+			<h5 class="lead"><%= t(".export_data") %></h5> 
+			<p><%= t('.export_data_text') %></p>
+			<%= submit_tag "#{t('.export_now')} &rsaquo;".html_safe, { :class => "btn" } %>
+		</div>
+	<% end %>
 <%- end %>
 
 

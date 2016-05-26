@@ -4,14 +4,14 @@
     <div id="chat_header" class="chat-header">
       <h3 class = "lead margin-bottom-5"> <%=t('chatwidget_title')%>
         <div class="pull-right">
-             <span class ="chat_enable_label"><strong><%=t('freshchat.chat_enabled_label')%></strong></span>
-          <%= check_box_tag :chat_enable, 0, current_account.chat_setting.active, :class => 'filter_item', 
-            "data-checked-label" => t('freshchat.text_yes'), 
-            "data-unchecked-label" => t('freshchat.text_no'),
+             <span class ="chat_enable_label"><strong><%=t('livechat.chat_enabled_label')%></strong></span>
+          <%= check_box_tag :chat_enable, 0, current_account.chat_setting.enabled, :class => 'filter_item', 
+            "data-checked-label" => t('livechat.text_yes'), 
+            "data-unchecked-label" => t('livechat.text_no'),
             :id => 'chat_enable' %>
         </div>
       </h3>
-      <p class="small"><%=t('freshchat.widgets_list_info')%></p>
+      <p class="small"><%=t('livechat.widgets_list_info')%></p>
     </div>
     <div id="chat_widgets_list" <% unless @chat_enabled %>class="disable-widgets"<%end%>>
       <div class="list-page">
@@ -20,7 +20,7 @@
           <% @widgets.each do |widget| %>
             <tr id="<%= dom_id(widget)%>">
               <td rel="<%=widget.id%>">
-                <%= check_box_tag :toggle_widget, 0, widget.widget_id && widget.active, :class => 'toggle_widget', :rel => widget.id, "data-checked-label" => t('freshchat.texton'), "data-unchecked-label" => t('freshchat.textoff') %>
+                <%= check_box_tag :toggle_widget, 0, widget.widget_id && widget.active, :class => 'toggle_widget', :rel => widget.id, "data-checked-label" => t('livechat.texton'), "data-unchecked-label" => t('livechat.textoff') %>
                 <%= pjax_link_to(h(widget.product ? widget.product.name : widget.account.name), edit_admin_chat_widget_path(widget), :class => "item_info") %>
               </td>
               <td>
@@ -34,8 +34,9 @@
       </div>
       <div class="row-fluid fc-mxchat">
         <div class="span9">
-          <h5 class="lead small-lead"><%=t('freshchat.maximum_chat_title')%></h5>
-          <p class="muted lead-desc"> <%=t('freshchat.maximum_chat_desc')%></p>
+          <h5 class="lead small-lead"><%=t('livechat.maximum_chat_title')%></h5>
+          <p class="muted lead-desc"> <%=t('livechat.maximum_chat_desc')%></p>
+
         </div>
         <div class="span3 text-right">
           <div class="fc-mxc-count">
@@ -46,26 +47,28 @@
               <% end %>
             </ul>
           </div>
-          <span class="fc-mxc-edit"><%=t('freshchat.maximum_change_label')%></span>
+          <span class="fc-mxc-edit"><%=t('livechat.maximum_change_label')%></span>
           <ul class="fc-mxc-options">
             <li class="fc-mxc-save" title="Save"><i class="ficon icon-tick"></i></li>
             <li class="fc-mxc-cancel" title="Cancel"><i>+</i></li>
           </ul>
         </div>
-        
+
       </div>
 
       <%if feature?(:cobrowsing)%>
       <div class="row-fluid fc-cb">
         <div class="span9">
-          <h5 class="lead small-lead"><%=t('freshchat.cobrowsing')%></h5>
-          <p class="muted lead-desc"><%=t('freshchat.cobrowsing_info')%></p>
+          <h5 class="lead small-lead"><%=t('livechat.cobrowsing')%></h5>
+          <p class="muted lead-desc"><%=t('livechat.cobrowsing_info')%></p>
+
         </div>
         <div class="span3 align-right">
             <span class='chat_cobrowsing_checkbox'>
               <%= check_box_tag :chat_cobrowsing, 1, :class => 'filter_item',
-              "data-checked-label" => t('freshchat.text_yes'),
-              "data-unchecked-label" => t('freshchat.text_no'),
+              "data-checked-label" => t('livechat.text_yes'),
+              "data-unchecked-label" => t('livechat.text_no'),
+
               :id => 'chat_cobrowsing' %>
             </span>
         </div>
@@ -80,7 +83,7 @@
           $(document).one('ready pjax:success' ,function(){
             var widgetList = [];
             <% @widgets.each do |widget| %>
-              widgetList.push(<%= freshchat_setting widget%>);
+              widgetList.push(<%= livechat_setting widget%>);
             <% end%>
             window.liveChat.adminSettings.initializeWidgetList(widgetList);
            

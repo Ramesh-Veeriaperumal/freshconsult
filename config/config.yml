@@ -141,10 +141,9 @@ gateway: brain_tree
 admin_subdomain: admin
 
 freshops_subdomain:
-  global: freshopspoduseast
-  non_global:
-    - freshopspodeuwest
-    - freshopspodeuwest1
+  poduseast: freshopspoduseast
+  podeuwest: freshopspodeuwest
+  podeucentral: freshopspodeucentral
 
 partner_subdomain: partner
 

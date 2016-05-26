@@ -74,16 +74,17 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
   end
 
   def valid_user
-    (user.agent? and !user.deleted? and email[:from][:email].downcase == user.email.downcase) or belongs_to_same_company?
+    (user and user.agent? and !user.deleted? and email[:from][:email].downcase == user.email.downcase) or belongs_to_same_company?
   end
 
   def valid_ticket_contact given_ticket
-    (given_ticket.requester.email and in_requester_email?(given_ticket)) or (given_ticket.included_in_cc?(user.email)) or
-    (email[:from][:email] == given_ticket.sender_email)
+    (given_ticket.requester.email and in_requester_email?(given_ticket)) or (user and given_ticket.included_in_cc?(user.email)) or
+    (email[:from][:email] == given_ticket.sender_email) or
+    given_ticket.included_in_cc?(email[:from][:email])
   end
 
   def in_requester_email? given_ticket
-    given_ticket.requester.email.include?(user.email)
+    user and given_ticket.requester.email.include?(user.email)
   end
 
   def ticket_from_span span
@@ -97,7 +98,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
   end
 
   def belongs_to_same_company?
-    user.company_id and (user.company_id == ticket.company_id)
+    user and user.company_id and (user.company_id == ticket.company_id)
   end
 
   # archive methods

@@ -26,7 +26,7 @@ class PodDnsUpdate
   end
 
   def map_cname_to_domain(domain_config)
-  	route53 = Aws::Route53::Client.new(:access_key_id => PodConfig["access_key_id"],
+  	route53 = AWS::Route53::Client.new(:access_key_id => PodConfig["access_key_id"],
   		:secret_access_key => PodConfig["secret_access_key"],
   		:region => PodConfig["region"])
   	route53.change_resource_record_sets({

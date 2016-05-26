@@ -53,6 +53,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/hootsuite/home"
     resource :"integrations/hootsuite/ticket"
     resource :"integrations/sugarcrm", :only => [:renew_session_id, :check_session_id]
+    resource :"integrations/service_proxy", :only => [:fetch]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -86,7 +87,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/ticket", :only => [:index]
     resource :"search/v2/ticket", :only => [:index]
     resource :"search/v2/spotlight", :only => [:all, :tickets]
-    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups]
+    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups, :update_site, :toggle, :trigger]
+    resource :"chat_widget", :only => [:update, :toggle, :enable] 
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
@@ -301,6 +303,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :user, :only => [:index, :show]
     resource :"search/customer", :only => [:index]
     resource :"search/v2/spotlight", :only => [:customers]
+    resource :"integrations/service_proxy", :only => [:fetch]
 
     # Used by V2 API
     resource :"api_contact", :only => [:index, :show]

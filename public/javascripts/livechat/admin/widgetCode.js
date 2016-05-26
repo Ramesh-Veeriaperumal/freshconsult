@@ -48,8 +48,16 @@ window.liveChat.widgetCode = function($){
 		},
 
 		updateCode: function(){
-			var _widget = window.liveChat.adminSettings.currentWidget;
-      var asset_url = ASSET_URL;
+			var attr = ['widget_preferences','prechat_message','non_availability_message','prechat_fields','offline_chat'];
+
+			var _widget = JSON.parse(JSON.stringify(window.liveChat.adminSettings.currentWidget));
+			delete _widget.defaultMessages;
+			
+			_.each(attr, function(key){
+				delete _widget[key];
+			});
+				
+      		var asset_url = ASSET_URL;
 
 			var url1 		= asset_url.cloudfront;
 			var code 		= "var fc_CSS=document.createElement('link');fc_CSS.setAttribute('rel','stylesheet');"+
@@ -60,7 +68,7 @@ window.liveChat.widgetCode = function($){
 					"var fc_JS=document.createElement('script'); fc_JS.type='text/javascript'; fc_JS.defer=true;"+
 					"fc_JS.src=((fc_isSecured)?'"+url1+"':'"+asset_url.js+"')+'/js/visitor.js';"+
 					"(document.body?document.body:document.getElementsByTagName('head')[0]).appendChild(fc_JS);"+
-					"window.freshchat_setting= '"+Base64.encode(JSON.stringify(_widget))+"';";
+					"window.livechat_setting= '"+Base64.encode(JSON.stringify(_widget))+"';";
 
 			$("#EmbedCode").val("<script type='text/javascript'>"+code+"<"+"/script>");
 		},

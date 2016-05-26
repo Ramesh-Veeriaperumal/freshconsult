@@ -21,6 +21,7 @@ class Portal < ActiveRecord::Base
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
   after_save :update_chat_widget
+  after_commit :update_site_language, :if => :main_portal_language_changes?
   before_save :update_portal_forum_categories
   before_save :save_route_info, :add_default_solution_category
   after_destroy :destroy_route_info
@@ -255,19 +256,36 @@ class Portal < ActiveRecord::Base
 
     def update_chat_widget
       if account.features?(:chat)
-        if product && portal_url_changed?
-          site_id = account.chat_setting.display_id
+        if product && (portal_url_changed? || language_changed?)
+          site_id = account.chat_setting.site_id
           chat_widget = product.chat_widget
           if chat_widget && chat_widget.widget_id
-            Resque.enqueue(Workers::Livechat, 
+            LivechatWorker.perform_async(
               {
                 :worker_method => "update_widget", 
                 :widget_id => chat_widget.widget_id, 
                 :siteId => site_id, 
-                :attributes => { :site_url => portal_url}
+                :attributes => { :site_url => portal_url, :language => language }
               }
             )
           end
+        end
+      end
+    end
+
+    def update_site_language
+      if account.features?(:chat)
+        site_id = account.chat_setting.site_id
+        chat_widget = account.main_chat_widget
+        if chat_widget && chat_widget.widget_id
+          LivechatWorker.perform_async( 
+            {
+              :worker_method => "update_site", 
+              :widget_id => chat_widget.widget_id, 
+              :siteId => site_id, 
+              :attributes => {:language => language}
+            }
+          )
         end
       end
     end

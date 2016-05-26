@@ -149,3 +149,28 @@ function closeableFlash(flash){
   }, 20000);
 }
 
+jQuery(document).ready(function(){
+  
+  var widgetPopup;
+
+  jQuery("[rel=hover-popover]").on('mouseenter',function(ev) {
+    var _this = this;
+    ev.preventDefault();
+    var element = jQuery(this);
+    widgetPopup = element.popover('show');    
+  }).on('mouseleave',function(ev) {
+      var _this = this;
+      setTimeout(function() {
+        if (!jQuery(".popover:hover").length) {
+              jQuery(_this).popover("hide");
+        }
+      }, 200);
+  });
+
+  jQuery(document).on("mouseleave", ".popover", function () {
+    setTimeout(function() {
+      widgetPopup.popover('hide');
+    }, 200);
+  });
+
+});

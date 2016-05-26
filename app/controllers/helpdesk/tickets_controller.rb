@@ -43,7 +43,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   layout :choose_layout
 
-  before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :delete_forever_spam, :execute_bulk_scenario]
+  before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :delete_forever_spam, :execute_bulk_scenario, :unspam, :restore]
   before_filter :scoper_ticket_actions, :only => [ :assign,:close_multiple, :pick_tickets ]
 
   before_filter :load_items, :only => [ :destroy, :restore, :spam, :unspam, :assign,
@@ -55,11 +55,11 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward]
   before_filter :verify_ticket_permission_by_id, :only => [:component]
 
-  before_filter :load_ticket, :verify_permission,
+  before_filter :load_ticket, 
     :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, 
               :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities]
   
-  before_filter :load_ticket_with_notes, :verify_permission, :only => [:show]
+  before_filter :load_ticket_with_notes, :only => [:show]
 
   before_filter :check_outbound_permission, :only => [:edit, :update]
 
@@ -75,6 +75,9 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :handle_send_and_set, :only => [:update_ticket_properties]
   before_filter :validate_manual_dueby, :only => :update
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
+
+  before_filter :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, 
+              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv, :reply_to_forward]
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv, :reply_to_forward]
@@ -376,7 +379,7 @@ class Helpdesk::TicketsController < ApplicationController
       if(params[:redirect] && params[:redirect].to_bool)
         flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice', :formats => [:html], :handlers => [:erb] ).html_safe
       end
-      verify_permission
+      verify_update_properties_permission
       respond_to do |format|
         format.html {
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -1251,19 +1254,28 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def verify_permission
+      if @items.present?
+        @item ||= @items.first
+      end
+      verified = true
       unless current_user && current_user.has_ticket_permission?(@item) && !@item.trashed
+        verified = false
         flash[:notice] = t("flash.general.access_denied")
-        if params['format'] == "widget"
-          return false
-        elsif request.xhr?
-          params[:redirect] = "true"
-        elsif is_native_mobile?
+        if request.xhr? || is_native_mobile?
           render json: {access_denied: true}
         else
           redirect_to helpdesk_tickets_url
         end
       end
-      true
+      verified
+    end
+
+    def verify_update_properties_permission
+      unless current_user && current_user.has_ticket_permission?(@item) && !@item.trashed
+        if request.xhr?
+          params[:redirect] = "true"
+        end
+      end
     end
 
     def verify_ticket_permission_by_id

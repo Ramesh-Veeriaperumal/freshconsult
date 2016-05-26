@@ -34,6 +34,8 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.callerName = null;
 			this.callSid = null;
 			this.number = "";
+			this.customerId = null;
+			this.callerInfo = null;
 			this.error = null;
 			this.errorcode = null;
 			this.transfered = false;
@@ -259,14 +261,15 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		makeOutgoing: function (item) {
 			this.number = formatE164(this.callerLocation(), this.number);
+			this.customerId = item.data('contactId');
 			this.prefillDialerTemplate(item);
 			this.clearMessage();
 			if (this.freshfoneuser.isBusy()) { return this.toggleAlreadyInCallText(true); }
 			if (!this.canDialNumber()) { return this.toggleInvalidNumberText(true); }
-			
-			var params = { PhoneNumber : this.number, phone_country: this.callerLocation(),
-										number_id: this.outgoingNumberId(), agent: this.currentUser, type: "outgoing" };
 
+			var params = { PhoneNumber : this.number, phone_country: this.callerLocation(),
+										number_id: this.outgoingNumberId(), agent: this.currentUser, type: "outgoing"};
+			if(this.customerId){ params.customer_id = this.customerId; }
 			if(!this.call_validation(true)) {
 				return false;
 			}
@@ -277,7 +280,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			$('.call_loader').show();		
 			this.status = callStatus.OUTGOINGINIT;
 			this.setDirectionOutgoing();
-			this.freshfoneUserInfo.userInfo(this.number, true, this);
+			this.freshfoneUserInfo.userInfo(this.number, true, this, this.customerId);
 			this.disableCallButton();
 		},
 		prefillDialerTemplate: function(item) {

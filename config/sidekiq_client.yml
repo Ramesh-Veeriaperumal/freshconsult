@@ -10,6 +10,7 @@ defaults: &defaults
     - [select_all_batcher]
     - [freshfone_notifications]
     - [freshfone_node]
+    - [livechat_queue]
     - [freshfone_trial_worker]
     - [natero_worker]
     - [merge_contacts]

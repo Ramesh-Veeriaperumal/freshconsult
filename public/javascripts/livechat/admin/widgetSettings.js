@@ -8,19 +8,30 @@ window.liveChat.widgetSettings = function($){
 			var self = this;
 			var _widget = liveChat.adminSettings.currentWidget;
 			var _widgetPreferences = _widget.widget_preferences;
+			var _defaultMessages = _widget.defaultMessages;
+			var default_widget_preferences = _defaultMessages.widget_preferences;
+
 			var _nonavailabilityMessage = _widget.non_availability_message;
+			var default_non_availability = _defaultMessages.non_availability_message;
+
 			var _offlineChatMessages = _widget['offline_chat']['messages'];
+			var default_offline_chat_messages = _defaultMessages.offline_chat.messages;
+
 			var bgColor = _widgetPreferences.window_color;
-			var max_title = _widgetPreferences.maximized_title;
-			var max_txt = (max_title != "")? max_title : CHAT_I18n.max_title;
+			var max_title = _widgetPreferences.header;
+			var max_txt = max_title ? max_title : default_widget_preferences["header"];
+			var wc_txt = (_widgetPreferences.welcome_message != "") ? _widgetPreferences.welcome_message : default_widget_preferences["welcome_message"];
+			var input_txt = (_widgetPreferences["text_place"] != "") ? _widgetPreferences["text_place"] : default_widget_preferences["text_place"];
 
 			var positions = ['Bottom Left','Bottom Right'],
 				poslen = positions.length,
 				position = _widgetPreferences.window_position;
 
 			this.setTextColor(bgColor);
-			$("#fc-header").text(max_txt);
+			$("#lc_chat_header").text(max_txt);
+			$("#cw_welcome_msg").text(wc_txt)
 			$("#window_color").val(bgColor).trigger('keyup');
+			$("#inputcontainer").text(input_txt);
 
 			var opt = [];
 			for(var i=0; i<poslen; i++){
@@ -33,20 +44,40 @@ window.liveChat.widgetSettings = function($){
 					
 			$("#window_position").html(opt.join(''));
 			$("#window_offset").val(_widgetPreferences["window_offset"]);
+			$("#window_offset").attr("placeholder",default_widget_preferences["window_offset"] );
 
-			$("#minimized_title").val(_widgetPreferences["minimized_title"]);
-			$("#maximized_title").val(max_title);
+			$("#header_title").val(_widgetPreferences["header"]);
+			$("#header_title").attr("placeholder",default_widget_preferences["header"] );
+
 			$("#welcome_message").val(_widgetPreferences["welcome_message"]);
+			$("#welcome_message").attr("placeholder",default_widget_preferences["welcome_message"] );
+
 			$("#text_place").val(_widgetPreferences["text_place"]);
-			$("#connecting_msg").val(_widgetPreferences["connecting_msg"]);
+			$("#text_place").attr("placeholder",default_widget_preferences["text_place"] );
+
 			$("#wait_message").val(_widgetPreferences["wait_message"]);
-			$("#agent_joined_msg").val(_widgetPreferences["agent_joined_msg"]);
-			$("#agent_left_msg").val(_widgetPreferences["agent_left_msg"]);
+			$("#wait_message").attr("placeholder",default_widget_preferences["wait_message"] );
+
 			$("#thank_message").val(_widgetPreferences["thank_message"]);
+			$("#thank_message").attr("placeholder",default_widget_preferences["thank_message"] );
+
+			$("#end_chat_confirm_msg").val(_widgetPreferences["end_chat_confirm_msg"]);
+			$("#end_chat_confirm_msg").attr("placeholder",default_widget_preferences["end_chat_confirm_msg"] );
+
+			$("#agent_network_disconnect_msg").val(_widgetPreferences["agent_network_disconnect_msg"]);
+			$("#agent_network_disconnect_msg").attr("placeholder",default_widget_preferences["agent_network_disconnect_msg"] );
+
 			$("#agent_transfer_msg_to_visitor").val(_widgetPreferences["agent_transfer_msg_to_visitor"]);
+			$("#agent_transfer_msg_to_visitor").attr("placeholder",default_widget_preferences["agent_transfer_msg_to_visitor"] );
+
 			$("#offline_title").val(_offlineChatMessages["title"]);
+			$("#offline_title").attr("placeholder",default_offline_chat_messages["title"] );
+
 			$("#offline_thank_msg").val(_offlineChatMessages["thank"]);
+			$("#offline_thank_msg").attr("placeholder",default_offline_chat_messages["thank"] );
+
 			$("#offline_thank_header_msg").val(_offlineChatMessages["thank_header"]);
+			$("#offline_thank_header_msg").attr("placeholder",default_offline_chat_messages["thank_header"] );
 
 			$('#window_color').on({
 				change: function (){
@@ -60,49 +91,61 @@ window.liveChat.widgetSettings = function($){
 				}
 			});
 
-			$("#maximized_title").keyup(function() {
+			$("#header_title").keyup(function() {
 				if($(this).val() != ""){
-					$("#fc-header").text($(this).val());
+					$("#lc_chat_header").text($(this).val());
 				}else{
-					$("#fc-header").text(CHAT_I18n.max_title);
+					$("#lc_chat_header").text(default_widget_preferences["header"]);
+				}
+			});
+			
+			$("#welcome_message").keyup(function() {
+				if($(this).val() != ""){
+					$("#cw_welcome_msg").text($(this).val());
+				}else{
+					$("#cw_welcome_msg").text(default_widget_preferences["welcome_message"]);
+				}
+			});
+
+			$("#text_place").keyup(function() {
+				if($(this).val() != ""){
+				    $("#inputcontainer").text($(this).val());
+				}else{
+					$("#inputcontainer").text(default_widget_preferences["text_place"]);
 				}
 			});
 
 			// non_availability_message
+			var non_avail_msg = default_non_availability.text;
+			non_avail_msg = non_avail_msg.replace('# leave us a message #','leave us a message');
+			$("#non_availability_message").attr("placeholder",non_avail_msg);
+			$("#custom_link_url_item").hide();
+			$("#custom_link").prop('checked', false);			
+			$(".offline_messages").show();	
+			$("#custom_link_url").attr("placeholder",default_non_availability.custom_link_url);
+
 			if(_nonavailabilityMessage && _nonavailabilityMessage.text != ""){
 				$("#non_availability_message").val(_nonavailabilityMessage.text);
 				if(_nonavailabilityMessage.customLink == "1" ){
+					$("#non_availability_message").attr("placeholder",default_non_availability.text);
 					$("#custom_link_url").val(_nonavailabilityMessage.customLinkUrl);
+					$("#custom_link").prop('checked', true);
 					$("#custom_link_url_item").show();
 					$(".offline_messages").hide();
-				}else{
-					$("#custom_link_url_item").hide();
-					$("#custom_link").prop('checked', false);
 				}
-			} else {
-				$("#custom_link_url_item").hide();
-				$("#custom_link").prop('checked', false);				
-			}
+			} 
 
 			$("#custom_link").on('change',function(){
 				if($(this).is(":checked")){
+					$("#non_availability_message").attr("placeholder",default_non_availability.text);
 					$("#custom_link_url_item").show();
-					if($("#hide_offline_chat_window").is(':checked')){
-						$(".offline_messages").hide();
-					}
+					$(".offline_messages").hide();	
 				}else{
+					$("#non_availability_message").attr("placeholder",non_avail_msg);
 					$("#custom_link_url_item").hide();
-					$(".offline_messages").show();
+					$(".offline_messages").show();	
 				}
 			});
-
-			$("#hide_offline_chat_window, #show_offline_chat_window").on('change', function(){
-				if($("#custom_link").is(":checked") && $("#hide_offline_chat_window").is(":checked")){
-					$(".offline_messages").hide();
-				}else{
-					$(".offline_messages").show();
-				}
-			});		
 
 			$('#custom_link_url').on('change', function (){
 				self.validateUrl($(this).val());
@@ -131,13 +174,11 @@ window.liveChat.widgetSettings = function($){
 				_widgetPreferences['window_position'] 	= $("#window_position").val();
 				_widgetPreferences['window_offset'] 		= _windowOffset;
 				_widgetPreferences['text_place'] 				= $("#text_place").val();
-				_widgetPreferences['connecting_msg'] 		= $("#connecting_msg").val();
-				_widgetPreferences['agent_left_msg'] 		= $("#agent_left_msg").val();
-				_widgetPreferences['agent_joined_msg']  = $("#agent_joined_msg").val();
-				_widgetPreferences['minimized_title'] 	= $("#minimized_title").val();
-				_widgetPreferences['maximized_title'] 	= $("#maximized_title").val();
+				_widgetPreferences['header'] 	= $("#header_title").val();
 				_widgetPreferences['welcome_message'] 	= $("#welcome_message").val();
 				_widgetPreferences['thank_message'] 		= $("#thank_message").val();
+			    _widgetPreferences['end_chat_confirm_msg']  = $("#end_chat_confirm_msg").val();
+			    _widgetPreferences['agent_network_disconnect_msg']  = $("#agent_network_disconnect_msg").val();
 				_widgetPreferences['wait_message'] 			= $("#wait_message").val();
 				_widgetPreferences["agent_transfer_msg_to_visitor"] = $("#agent_transfer_msg_to_visitor").val();
 				_nonavailabilityPreferences['text'] = _nonavailabilityMessage;
@@ -146,9 +187,9 @@ window.liveChat.widgetSettings = function($){
 
 				_data.offline_chat = liveChat.adminSettings.currentWidget['offline_chat'];
 
-				_offlineMessages['title'] = $("#offline_title").val() || CHAT_I18n.offline_title;
-				_offlineMessages['thank'] = $("#offline_thank_msg").val() || CHAT_I18n.offline_thank_msg;
-				_offlineMessages['thank_header'] = $("#offline_thank_header_msg").val() || CHAT_I18n.offline_thank_header_msg;
+				_offlineMessages['title'] = $("#offline_title").val() || "";
+				_offlineMessages['thank'] = $("#offline_thank_msg").val() || "";
+				_offlineMessages['thank_header'] = $("#offline_thank_header_msg").val() || "";
 
 				_data.offline_chat['messages'] = _offlineMessages
 				_data.widget_preferences = _widgetPreferences;
@@ -158,31 +199,6 @@ window.liveChat.widgetSettings = function($){
 			}
 		},
 
-		defaultWidgetMessages: function(){
-	    return {
-	      window_color  	: "#777777",
-	      window_position : "Bottom Right",
-	      window_offset   : "30",
-	      minimized_title : CHAT_I18n.min_title,
-	      maximized_title : CHAT_I18n.max_title,
-	      text_place      : CHAT_I18n.text_place,
-	      welcome_message : CHAT_I18n.wel_msg,
-	      thank_message   : CHAT_I18n.thank_msg,
-	      wait_message    : CHAT_I18n.wait_msg,
-	      agent_joined_msg: CHAT_I18n.agent_joined_msg,
-	      agent_left_msg  : CHAT_I18n.agent_left_msg,
-	      connecting_msg  : CHAT_I18n.connecting_msg,
-	      agent_transfer_msg_to_visitor : CHAT_I18n.agent_transfer_msg_to_visitor
-	    }
-		},
-
-		defaultNonAvailabilitySettings: function(){
-			return {
-	      text               : CHAT_I18n.non_availability_message,
-	      ticket_link_option : false,
-	     	custom_link_url    : ""
-	    }
-		},
 
 		validateColor: function(color){
 			if(!/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(color)){
@@ -236,18 +252,10 @@ window.liveChat.widgetSettings = function($){
 			var _widget 		 	= liveChat.adminSettings.currentWidget;
 			var _visitorForm 	= window.liveChat.visitorFormSettings;
 			var _routing 		 	= window.liveChat.routingSettings;
-			var data = {	
-					"siteId" 			: window.SITE_ID, 
-					"widget_id"		: widget_id, 
-					"attributes"	: params,
-					"token"				: LIVECHAT_TOKEN,
-					"userId"			: CURRENT_USER.id
-			 };
-
 			$.ajax({
-				type: "POST",
-				url: window.liveChat.URL + "/widgets/update",
-				data: data,
+				type: "PUT",
+				url: "/admin/chat_widgets/"+_widget.id,
+				data: { attributes: params },
 				dataType: "json",
 				success: function(resp){
 					if(resp.status == "success"){

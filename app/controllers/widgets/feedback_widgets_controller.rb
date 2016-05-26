@@ -8,7 +8,10 @@ class Widgets::FeedbackWidgetsController < SupportController
 
   before_filter :build_item, :only => :new
   before_filter :set_native_mobile, :only => [:create]
+  before_filter :check_ticket_permission, :only => [:create]
+
   include SupportTicketControllerMethods
+  include Helpdesk::Permission::Ticket
 
   def new
     respond_to do |format|
@@ -55,5 +58,11 @@ class Widgets::FeedbackWidgetsController < SupportController
       @ticket_fields_def_pos = ["default_requester", "default_subject", "default_description"]
     end
 
-
+    def check_ticket_permission
+      if (!current_user) || (current_user && current_user.customer?)
+        unless can_create_ticket?(params[:helpdesk_ticket][:email])
+          render :json => {:success => false, :error => t('admin.widget_config.errors.invalid_requester') }
+        end
+      end
+    end
 end

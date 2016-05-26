@@ -1885,7 +1885,7 @@ fr:
         import: "Importation de données de Zendesk"
         agent: Agents
         feedback: "Widget commentaire"
-        freshchat: "Chat en direct"
+        livechat: "Chat en direct"
         integrations: Intégrations
         dispatcher: Dispatch'r
         supervisor: Supervisor
@@ -6852,7 +6852,7 @@ fr:
         filter_by: "Rapports de satisfaction"
         view_report_date: "Voir les rapports pour la période"
         helptext: "<b>Pourquoi un rapport de satisfaction clients ? </b><p>Le rapport de satisfaction des clients vous donne un aperçu de la qualité du service proposé par les agents du service d'assistance.<br>Il vous aide à déterminer le pourcentage de clients qui sont satisfaits (satisfait, neutre et insatisfait) pour chaque agent.<br><br><b>Que pouvez vous faire de plus ?</b><br><p><ol class='ml15'><li>Filtrer les résultats du rapport par agents, par groupe ou par société</li><li>Consulter les rapports sur une période donnée</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Chat en direct : résumé"
       filter_by_title: "Filtré par"
       time_period: Période
@@ -8139,7 +8139,7 @@ fr:
         additional_info: "Vous pourrez acheter des numéros et passer des appels une fois le canal téléphonique activé dans votre compte."
         button_text: "Demande de téléphone"
         video_title: "Regardez la vidéo pour découvrir ce que vous pouvez faire avec le canal téléphonique"
-  freshchat:
+  livechat:
     feature_request:
       title: "Bienvenue dans le chat en direct"
       heading: "Apportez une assistance à vos clients avec le chat en direct"
@@ -8216,7 +8216,7 @@ fr:
     bottom_left: "En bas à gauche"
     bottom_right: "En bas à droite"
     integrate_msg: "Copiez-collez ce code avant la dernière balise </body> sur votre site Web ou votre application."
-    integrate_freshchat_title: "Intégrez le chat en direct à votre site Web et à vos applications"
+    integrate_livechat_title: "Intégrez le chat en direct à votre site Web et à vos applications"
     custom_chat_window: "Fenêtre de tchat"
     text_placeholder: "Votre message"
     chatbox_bgcolor: "Couleur de la fenêtre"
@@ -8359,7 +8359,7 @@ fr:
     intro_title: "Pourquoi le chat en direct ?"
     intro: "La solution de chat en direct intégrée de Freshdesk vous permet de voir les utilisateurs de votre site Web, logiciel en ligne ou portail d'assistance directement sur Freshdesk et de discuter avec eux. Vous pouvez également prendre les devants et initier la discussion avec les visiteurs de votre site Web. Une fois la session de chat terminée, choisissez de convertir la conversation en ticket puis continuez à suivre la demande du visiteur par e-mail. Vous pouvez également archiver la transcription du chat."
     enable_chat: "Activer le chat en direct"
-    learn_freshchat: "En savoir plus sur le chat en direct"
+    learn_livechat: "En savoir plus sur le chat en direct"
     support_portal: "Tchat dans le portail d'assistance"
     logged_in_users: "Utilisateurs connectés uniquement"
     everyone: "Tout le monde"

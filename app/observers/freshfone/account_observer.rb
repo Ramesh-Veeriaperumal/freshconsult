@@ -27,7 +27,6 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 			Freshfone::UsageTrigger.remove_calls_usage_triggers(freshfone_account)
 			account = freshfone_account.account
 			insert_freshfone_credit(account)
-			remove_onboarding_feature(account)
 		end
 	end
 
@@ -64,11 +63,6 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 
 		def insert_freshfone_credit(account)
 			account.create_freshfone_credit if account.freshfone_credit.blank?
-		end
-
-		def remove_onboarding_feature(account)
-			account.rollback(:freshfone_onboarding) if
-				account.launched?(:freshfone_onboarding)
 		end
 
 		def trial_removal_preconditions?(freshfone_account)

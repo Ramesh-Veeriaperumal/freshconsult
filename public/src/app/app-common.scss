@@ -4385,6 +4385,26 @@ $adm-bdr:#F0F0F0;
 		top: 1px;
 	}
 }
+
+.rebrand-page{
+	.moderation-info{
+		@include border-left(1px solid #ddd);
+		@include padding-left(30px);
+		ul.moderation-alert{
+			list-style: disc;
+		}
+		.ficon-warning{
+			@include margin-left(-20px);
+		}
+	}
+	.moderation-setting{
+		margin-top: 6px;
+		label{
+			font-weight: 500;
+		}
+	}
+}
+
 /* Enable button for Roundrobin V2 in groups page */
 .group-info-btn{
   display: inline-block;

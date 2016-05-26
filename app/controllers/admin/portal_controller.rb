@@ -13,6 +13,7 @@ class Admin::PortalController < Admin::AdminController
   
   def settings
     @account = current_account
+    @restricted_helpdesk = current_account.restricted_helpdesk?
   end
 
   def create

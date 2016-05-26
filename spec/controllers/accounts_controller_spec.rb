@@ -76,6 +76,33 @@ describe AccountsController do
     check_language_equality
   end
 
+  it "should update create helpdesk permissible domains" do
+    @account.launch(:restricted_helpdesk)
+    @account.features.restricted_helpdesk.create
+    update_params = {"account"=>{"main_portal_attributes"=>{"name"=>"RSpec new account", 
+      "portal_url"=>"", "language"=>"hu", "preferences"=>{"logo_link"=>"", "header_color"=>"#252525", 
+        "tab_color"=>"#006063", "bg_color"=>"#efefef", "contact_info"=>""}, "id"=>"1"}, 
+        "account_additional_settings_attributes"=>{"date_format"=>"1", "id"=>"1"}, 
+        "time_zone"=>"Chennai", "ticket_display_id"=>"100"}, "redirect_url"=>"", "helpdesk_permissible_domains" => "trialurl.com, sampleurl.com"}
+    put :update, update_params
+    @account.helpdesk_permissible_domains.find_by_domain("trialurl.com").should_not be_nil
+    @account.features.restricted_helpdesk.destroy
+    @account.rollback(:restricted_helpdesk)
+  end
+
+  it "should enable restricted_helpdesk feature" do
+    @account.launch(:restricted_helpdesk)
+    @account.features.restricted_helpdesk.destroy
+    update_params = {"account"=>{"main_portal_attributes"=>{"name"=>"RSpec new account", 
+    "portal_url"=>"", "language"=>"hu", "preferences"=>{"logo_link"=>"", "header_color"=>"#252525", 
+      "tab_color"=>"#006063", "bg_color"=>"#efefef", "contact_info"=>""}, "id"=>"1"}, 
+      "account_additional_settings_attributes"=>{"date_format"=>"1", "id"=>"1"}, 
+      "time_zone"=>"Chennai", "ticket_display_id"=>"100"}, "redirect_url"=>"", "enable_restricted_helpdesk" => "create"}
+    @account.features.restricted_helpdesk.should_not be_blank
+    @account.rollback(:restricted_helpdesk)
+    @account.features.restricted_helpdesk.destroy
+  end
+
   it 'should delete main portal logo' do
     @account.main_portal.build_logo(:content => fixture_file_upload('files/image.gif', 'image/gif', :binary), 
      :description => "logo", 

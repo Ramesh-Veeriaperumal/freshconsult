@@ -1435,20 +1435,22 @@ module ApplicationHelper
     favorites.to_json
   end
 # helpers for fresfone callable links -- starts
-	def can_make_phone_calls(number, freshfone_number_id=nil)
-		can_make_calls(number, 'phone-icons', freshfone_number_id, true)
+	def can_make_phone_calls(contact, freshfone_number_id=nil)
+		can_make_calls(contact.phone, contact, 'phone-icons', freshfone_number_id, true)
 	end
 
-	def can_make_mobile_calls(number, freshfone_number_id=nil)
-		can_make_calls(number, 'mobile-icons', freshfone_number_id, true)
+	def can_make_mobile_calls(contact, freshfone_number_id=nil)
+		can_make_calls(contact.mobile, contact, 'mobile-icons', freshfone_number_id, true)
 	end
 
-	def can_make_calls(number, class_name=nil, freshfone_number_id=nil, can_show_number = false)
+	def can_make_calls(number, contact, class_name=nil, freshfone_number_id=nil, can_show_number = false)
 		#link_to h(number), "tel:#{number}", { :'data-phone-number' => "#{number}",
 		#																	 :'data-freshfone-number-id' => freshfone_number_id,
     #																	 :class => "can-make-calls #{class_name}" }
-    content_tag(:span , can_show_number ? number : nil, { :'data-phone-number' => "#{number}",
+    content_tag(:span , can_show_number ? h(number) : nil, { :'data-phone-number' => "#{h(number)}",
                                   :'data-freshfone-number-id' => freshfone_number_id,
+                                  :'data-contact-id' => contact.present? ? contact.id : nil,
+                                  :'data-deleted' => contact.present? && contact.deleted,
                                   :class => "can-make-calls #{class_name}" })
 
 	end

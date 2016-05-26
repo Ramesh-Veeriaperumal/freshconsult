@@ -1,9 +1,11 @@
 class Support::SignupsController < SupportController
 
   include Support::SignupsHelper
+  include Helpdesk::Permission::User
   
-  before_filter { |c| c.requires_feature :signup_link } 
-  before_filter :chk_for_logged_in_usr
+  before_filter { |c| c.requires_feature :signup_link }   
+  before_filter :chk_signup_permission, :only => [:create]
+  before_filter :chk_for_logged_in_usr 
   before_filter :initialize_user
   skip_before_filter :verify_authenticity_token
   before_filter :set_validatable_custom_fields, :remove_noneditable_fields_in_params, :set_user_language,
@@ -67,4 +69,9 @@ class Support::SignupsController < SupportController
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
       end
     end
+
+    def chk_signup_permission
+      redirect_on_signup_permission_fail(current_account, current_portal.id) unless has_signup_permission?(params[:user][:email], current_account)
+    end
+
 end

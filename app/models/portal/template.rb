@@ -140,6 +140,7 @@ class Portal::Template < ActiveRecord::Base
   def validate_preferences
     pref = default_preferences.keys - [:baseFont, :headingsFont, :nonResponsive]
     preferences.each do |key, value|
+      preferences[key] = RailsFullSanitizer.sanitize(value) if value.is_a?(String)
       next if value.blank? || pref.exclude?(key.to_sym)
       errors.add(:base, "Please enter a valid hex color value.") and return false unless value =~ Portal::HEX_COLOR_REGEX
     end

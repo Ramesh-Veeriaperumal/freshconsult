@@ -59,17 +59,7 @@ window.liveChat.adminSettings= function($){
 				  }
 				}
 	    });
-
-			$('#chat_cobrowsing').on('change', function (){
-				if($("#chat_enable").is(":checked")){
-					var status = $(this).is(":checked") ? true : false;
-					if (status == window.fc_cobrowsing){
-						return;
-					}
-					window.fc_cobrowsing = status;
-					window.liveChat.mainSettings.toggleCobrowsing(status);
-				}
-			});
+			window.liveChat.mainSettings.bindCobrowsingSetting();	    
 			window.liveChat.mainSettings.bindMaxChatEvents();
 		}
 	}

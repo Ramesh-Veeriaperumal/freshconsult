@@ -5,7 +5,7 @@ var chatReport = function(){
 	var CLASSES = {"UP_RED":  "report-arrow report-arrow-up report-arrow-red", "UP_GREEN": "report-arrow report-arrow-up report-arrow-green",
 				   "DOWN_RED": "report-arrow report-arrow-down report-arrow-red", "DOWN_GREEN": "report-arrow report-arrow-down report-arrow-green"};
 
-	var METRIC_ICONS = { 'no_of_chats': ['DOWN_GREEN', 'UP_RED'], 'answered_chats': ['UP_GREEN', 'DOWN_RED'], 
+	var METRIC_ICONS = { 'no_of_chats': ['DOWN_GREEN', 'UP_RED'], 'answered_chats': ['UP_GREEN', 'DOWN_RED'],
 						 'missed_chats': ['UP_RED', 'DOWN_GREEN'], 'avg_time': ['UP_RED', 'DOWN_GREEN'], 'transferred_chats': ['DOWN_GREEN', 'UP_RED']
 						};
 
@@ -70,7 +70,8 @@ var chatReport = function(){
 			});
 
 			total = data.length;
-			var transfers = chatReportData.is_pdf ? webkitUniqueCount(transfer) : _.unique(transfer).length;
+			var total_transfer = transfer.length;
+			var transfers = chatReportData.is_pdf ? (total_transfer - webkitUniqueCount(transfer)) : (total_transfer - _.unique(transfer).length);
 			answered = total - missed - transfers;
 			return [total, answered, missed];
 		}
@@ -312,11 +313,11 @@ var chatReport = function(){
 			prev_avg = Math.floor(prev_avg/pavg_count);
 		}
 		if (chatReportData.is_pdf){	 // _.unique method fails in webkit because of prototype.js version 1.6.0.1
-			cur_transfer_count = webkitUniqueCount(cur_transfer);
-			prev_transfer_count = webkitUniqueCount(prev_transfer);
+			cur_transfer_count = cur_transfer.length - webkitUniqueCount(cur_transfer);
+			prev_transfer_count = prev_transfer.length - webkitUniqueCount(prev_transfer);
 		} else {
-			cur_transfer_count = _.unique(cur_transfer).length;
-			prev_transfer_count = _.unique(prev_transfer).length;
+			cur_transfer_count = cur_transfer.length - _.unique(cur_transfer).length;
+			prev_transfer_count = prev_transfer.length - _.unique(prev_transfer).length;
 		}
 
 		cur_answered = current.length - cur_missed - cur_transfer_count;
@@ -329,7 +330,7 @@ var chatReport = function(){
 		metrics.push('<div class="report-summary-header"><ul class="inline">');
 		metrics.push('<li><h1>'+cur_chats+'</h1></li><li><h1>'+cur_answered+'</h1></li>');
 		if(chatType != 2){
-			metrics.push('<li><h1>'+cur_missed+'</h1></li>');	
+			metrics.push('<li><h1>'+cur_missed+'</h1></li>');
 		}
 		metrics.push('<li><h1>'+TimeFormat(cur_avg)+'</h1></li><li><h1>'+TimeFormat(cur_queueTime)+'</h1></li><li><h1>'+cur_transfer_count+'</h1></li></ul></div>');
 		metrics.push('<div class="report-summary-data"><ul class="inline">');
@@ -470,7 +471,7 @@ var chatReport = function(){
 			var toDateUTC = to.toUTCString();
  		}
 
-		var data = {site_id: SITE_ID, fromDateUTC: fromDateUTC, toDateUTC: toDateUTC, chat_type: chatType, 
+		var data = {site_id: SITE_ID, fromDateUTC: fromDateUTC, toDateUTC: toDateUTC, chat_type: chatType,
 									auth_token: LIVECHAT_TOKEN, user_id: CURRENT_USER.id};
 
 		if(widget_id == "deleted") {
@@ -479,23 +480,23 @@ var chatReport = function(){
 			data.widget_id = widget_id;
 		}
 
-		$.ajax({
-			type: "GET",
-			url: window.csURL + "/chat/reports",
-			data: data,
-			dataType: "jsonp",
-			crossDomain: true,
-			cache: false,
-			success: function(resp){
-				showMetrics(resp, chatType);
-				agentSummary(resp);
+		window.liveChat.request("chats/reports", 'GET', data, function(err, data) {
+			if(data){
+				if(data && data.statusCode == 403){
+            console.log("Authorization Error: ",data.statusCode,data.message);
+            jQuery("#noticeajax").html("Authorization Error: "+data.message).show();
+            closeableFlash('#noticeajax');
+						return false;
+        }
+				showMetrics(data, chatType);
+				agentSummary(data);
 				if(savedReportUtil.filterChanged) {
                      savedReportUtil.save_util.controls.hideDeleteAndEditOptions();
                      savedReportUtil.save_util.controls.hideScheduleOptions();
                      savedReportUtil.save_util.controls.showSaveOptions(savedReportUtil.last_applied_saved_report_index); 
                 }
 			}
-		});
+    });
 	}
 
 	var generateReportPDF = function(params){
@@ -520,8 +521,8 @@ var chatReport = function(){
 			var toDateUTC = to.toUTCString();
  		}
  		
-		var data = { site_id: chatReportData.site_id, fromDateUTC: fromDateUTC, toDateUTC: toDateUTC, chat_type: chatType, 
-									auth_token: chatReportData.livechat_token, user_id: chatReportData.user_id};
+		var data = { siteId: chatReportData.site_id, fromDateUTC: fromDateUTC, toDateUTC: toDateUTC, chat_type: chatType, 
+									token: chatReportData.livechat_token, userId: chatReportData.user_id};
 
 		if(widget_id == "deleted") {
 			data.deleted_widgets = "1";
@@ -530,7 +531,7 @@ var chatReport = function(){
 		}
 		$.ajax({
 			type: "GET",
-			url: window.csURL + "/chat/reports",
+			url: window.csURL + "/chat/reports_pdf",
 			data: data,
 			dataType: "jsonp",
 			crossDomain: true,
@@ -562,7 +563,7 @@ var chatReport = function(){
 			});
 
 		//------------------------------------------------------------
-		// Helper Functions 
+		// Helper Functions
 		//------------------------------------------------------------
 		function formatRows(rows){
 			return rows.get().join(tmpRowDelim)
@@ -572,8 +573,8 @@ var chatReport = function(){
 
 		function grabRow(i,row){
 			var $row = $(row);
-			var $cols = $row.find('td'); 
-			if(!$cols.length) $cols = $row.find('th');  
+			var $cols = $row.find('td');
+			if(!$cols.length) $cols = $row.find('th');
 
 			return $cols.map(grabCol)
 						.get().join(tmpColDelim);
@@ -988,12 +989,12 @@ var chatReport = function(){
 			window.chatReportData = window.chatReportData || {};
 			chatReportData['is_pdf'] = false;
 			if(typeof CHAT_ENV != 'undefined' && CHAT_ENV == 'development'){
-				window.csURL = "http://"+URL+":4000"; 
+				window.csURL = "http://"+URL+":4000";
 			}else{
 				window.csURL = "https://"+URL+":443";
 				if(window.location && window.location.protocol=="http:" && (ieVersionCompatability() || FC_HTTP_ONLY)){
 					window.csURL = "http://"+URL+":80";
-				} 
+				}
 			}
 
 			init();
@@ -1060,4 +1061,4 @@ function showResponseMessage(message) {
       jQuery("#noticeajax a").trigger( "click" );  
       msg_dom.find("a").remove();
   }, 1200);
-} 
+}

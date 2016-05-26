@@ -6,6 +6,9 @@
 		if(<%=request.referrer and request.referrer.include?('email_notification')%>){
 			jQuery("#supported_language_list").animateHighlight();
 		}
+
+
+
 		jQuery("#ResetColors").click(function(){
 			jQuery("#HeaderColor").val("#252525").trigger("keyup");
 			jQuery("#TabColor").val("#006063").trigger("keyup");
@@ -28,8 +31,15 @@
 				alert("<%= t('account.same_language_alert')%>");
 				}
     	});
+
+    <% if @restricted_helpdesk %>
+      jQuery(".domains-list").show();
+      jQuery(".moderation-info").show();
+    <% end %>
+
 	}); 
 <% end %>
+
 <div id="admin-account-rebraning-page" class="rebrand-page">
 	<%= form_for @account, :url => { :action => 'update' }, 
 									:html => { :multipart => true ,
@@ -39,7 +49,7 @@
 	<h4 class="lead pb10"><%=t('account.helpdesk')%></h4>
 
 	<%= error_messages_for :account %>
-	
+
 	<div class="row-fluid">
 		<%= f.fields_for :main_portal do |portal| %>
 			<div>
@@ -149,11 +159,53 @@
 													:class => "btn btn-bold", :id => 'edit-portal' %>
 							</div>
 						</div>
+
 					</div>
+
 			</div>
 		<% end %>
 	</div>
+	<% if @restricted_helpdesk_launched %>
 
+		<hr>
+
+		<div id = "permission">
+			<h4 class="pb10" ><%=t('account.permission.helpdesk_restrictions')%></h4>
+			<strong> <%=t('account.permission.who_can_create')%> </strong>
+			<div class="moderation-setting">
+				<%= f.fields_for :account_additional_settings do |settings| %>
+					<label class="radio  disable-moderation">
+						<%= settings.radio_button_tag :enable_restricted_helpdesk, "destroy", !@restricted_helpdesk, :class => "pull-left" %>
+						<%= t('account.permission.users_from_any_domain')%>
+					</label>
+					<label class="radio enable-moderation">
+						<%= settings.radio_button_tag :enable_restricted_helpdesk, "create", @restricted_helpdesk, :class => "pull-left"  %>
+						<%= t('account.permission.users_from_selected_domains')%>
+						<span class="muted"><%= t('account.includes_contacts_company_domain')%></span>
+					</label>
+				<% end %>
+			</div>
+
+
+			<div class="row-fluid">
+				<div class="span8">
+					<div class="domains-list hide">
+					<%= f.text_field :permissible_domains, :class => "select2", :id => "domains-list", :data => {:width => '100%', "select-on-blur" => "true" } %>
+					</div>
+				</div>
+				<div class="span4 moderation-info alert-text hide">
+					<span class="ficon ficon-warning" aria-hidden="true">
+						<%= t("account.important")%>
+					</span>
+					<ul class="moderation-alert">
+            <li>
+              <%= t("account.twitter_disabled")%>
+            </li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	<% end %>
 	<hr>
 	<div class="pull-right">
   		<input type="hidden" name="redirect_url" id="redirect_url" value="" />
@@ -213,4 +265,24 @@
 			this.form.submit()
 		}
 	})
+
+
+	<% if @restricted_helpdesk_launched %>
+
+
+    jQuery("input[type=radio][name=enable_restricted_helpdesk]").change(function(){
+      if(this.value == "create"){
+        jQuery(".domains-list").show();
+        jQuery(".moderation-info").show();
+      }else{
+        jQuery(".domains-list").hide();
+        jQuery(".moderation-info").hide();
+      }
+    })
+
+		
+	<% end %>
+
+
+	
 <% end %>
