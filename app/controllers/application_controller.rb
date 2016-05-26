@@ -55,10 +55,6 @@ class ApplicationController < ActionController::Base
   def set_locale
     I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 
   end
-
-  def set_msg_id
-     Thread.current[:message_uuid] = request.try(:uuid).to_a
-  end
  
   def check_account_state
     unless current_account.active? 

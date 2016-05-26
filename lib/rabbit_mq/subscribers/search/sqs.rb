@@ -8,9 +8,16 @@ module RabbitMq::Subscribers::Search::Sqs
     {}
   end
 
+  # Invoked via sqs_manual_publish_without_feature_check due to alias_method_chain
   def sqs_manual_publish
-    return unless (Account.current and Account.current.features?(:es_v2_writes))
     RabbitMq::Subscribers::Search::SqsUtils.manual_publish(self)
   end
+
+  def sqs_manual_publish_with_feature_check
+    return unless Account.current.try(:features?, :es_v2_writes)
+    sqs_manual_publish_without_feature_check
+  end
+  
+  alias_method_chain :sqs_manual_publish, :feature_check
 
 end

@@ -29,16 +29,14 @@ module Gamification
 				f_criteria = quest.time_condition(end_time)
 				conditions[0] = conditions.empty? ? f_criteria : (conditions[0] + ' and ' + f_criteria)
 				
+				joins = ''
+				joins << %(inner join helpdesk_schema_less_tickets on helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id and helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id ) unless conditions[0].index('helpdesk_schema_less_tickets').nil?
+				joins << %(inner join helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id ) unless conditions[0].index('helpdesk_ticket_states').nil?
+				joins << %(inner join flexifields on helpdesk_tickets.id = flexifields.flexifield_set_id  and helpdesk_tickets.account_id = flexifields.account_id and flexifields.flexifield_set_type = 'Helpdesk::Ticket' ) unless conditions[0].index('flexifields').nil?
+
 				resolv_tkts_in_time = Sharding.run_on_slave { quest_scoper(ticket.account, ticket.responder).count(
 					'helpdesk_tickets.id',
-					:joins => %(inner join helpdesk_schema_less_tickets on helpdesk_tickets.id = 
-									helpdesk_schema_less_tickets.ticket_id
-		              inner join helpdesk_ticket_states on helpdesk_tickets.id = 
-		              helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = 
-		              helpdesk_ticket_states.account_id left join customers on helpdesk_tickets.owner_id = 
-		              customers.id inner join flexifields on helpdesk_tickets.id = 
-		              flexifields.flexifield_set_id  and helpdesk_tickets.account_id = 
-		              flexifields.account_id and flexifields.flexifield_set_type = 'Helpdesk::Ticket'),
+					:joins => joins,
 					:conditions => conditions) }
 
 				quest_achieved = resolv_tkts_in_time >= quest.quest_data[0][:value].to_i

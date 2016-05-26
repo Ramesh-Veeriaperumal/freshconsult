@@ -38,6 +38,7 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
 
   private
     def construct_state_params env
+      env['rack.session']["_csrf_token"] ||= SecureRandom.base64(32)
       csrf_token = Base64.encode64(env['rack.session']["_csrf_token"])
       "portal_domain%3D#{env['HTTP_HOST']}%26at%3D#{csrf_token}"
     end

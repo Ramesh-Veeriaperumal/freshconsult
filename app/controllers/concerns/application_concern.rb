@@ -34,6 +34,10 @@ module Concerns::ApplicationConcern
     Thread.current[:portal] = nil
   end
 
+  def set_msg_id
+    Thread.current[:message_uuid] = request.try(:uuid).to_a
+  end
+
   # See http://stackoverflow.com/questions/8268778/rails-2-3-9-encoding-of-query-parameters
   # See https://rails.lighthouseapp.com/projects/8994/tickets/4807
   # See http://jasoncodes.com/posts/ruby19-rails2-encodings (thanks for the following code, Jason!)

@@ -68,7 +68,11 @@
 
 .agent-roles-list{
    table tr td{
-     width:85%;
+     width:70%;
+     &.manage-agent{
+		width: 15%;
+		text-align: right;
+     }
      &:last-child{
        width:15%;
      }

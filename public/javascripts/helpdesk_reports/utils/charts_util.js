@@ -241,7 +241,10 @@ helpdeskReports.prototype = {
         var pcnt = (value / dataSum) * 100;
         var color = this.points[1].series.color;
         var tooltip_name = this.points[1].series.options.tooltip_name;
-        return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '% '+ I18n.t('helpdesk_reports.chart_title.tickets')+'</p></div>';
+        if(value > 9999) {
+            return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%<span style="color:#efefef;opacity:0.5"> ('+ value + ') </span>' +I18n.t('helpdesk_reports.chart_title.tickets')+'</p></div>';
+        }
+        return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%' +I18n.t('helpdesk_reports.chart_title.tickets')+'</p></div>';
     },
     barChartTooltip: function(){
         var value = this.points[1].y;
@@ -249,7 +252,10 @@ helpdeskReports.prototype = {
         var dataSum = this.points[1].series.options.total;
         var pcnt = (value / dataSum) * 100;
         var color = this.points[1].series.color;
-        return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%</p></div>'
+        if(value > 9999){
+            return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%<span style="color:#efefef;opacity:0.5"> ('+ value +')</span></p></div>'
+        }
+        return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%'+ '</p></div>'
     },
     barChartSeriesTooltip: function () {
         switch(this.series.options.id){

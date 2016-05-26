@@ -10,7 +10,7 @@ class Reports::BuildNoActivity < BaseWorker
     return unless account
     current_date = Time.zone.parse(args[:date].to_s).utc
     Sharding.run_on_slave do
-      account.tickets.use_index("index_helpdesk_tickets_status_and_account_id").unresolved.where(conditions(current_date)).
+      account.tickets.use_index("index_helpdesk_tickets_account_id_and_status").unresolved.where(conditions(current_date)).
                         includes(associations_include).
                         find_in_batches(:batch_size => 300) do |tickets|
         tickets.each do |ticket|

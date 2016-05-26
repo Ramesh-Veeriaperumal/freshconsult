@@ -823,6 +823,10 @@ class User < ActiveRecord::Base
        @all_changes.has_key?(:blocked)
     end
 
+    def privileges_updated?
+      @all_changes.has_key?(:privileges)
+    end
+
     def company_info_updated?
       company_id_updated?
     end

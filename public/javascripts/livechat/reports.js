@@ -521,8 +521,8 @@ var chatReport = function(){
 			var toDateUTC = to.toUTCString();
  		}
  		
-		var data = { site_id: chatReportData.site_id, fromDateUTC: fromDateUTC, toDateUTC: toDateUTC, chat_type: chatType, 
-									auth_token: chatReportData.livechat_token, user_id: chatReportData.user_id};
+		var data = { siteId: chatReportData.site_id, fromDateUTC: fromDateUTC, toDateUTC: toDateUTC, chat_type: chatType, 
+									token: chatReportData.livechat_token, userId: chatReportData.user_id};
 
 		if(widget_id == "deleted") {
 			data.deleted_widgets = "1";
@@ -531,7 +531,7 @@ var chatReport = function(){
 		}
 		$.ajax({
 			type: "GET",
-			url: window.csURL + "/chat/reports",
+			url: window.csURL + "/chat/reports_pdf",
 			data: data,
 			dataType: "jsonp",
 			crossDomain: true,

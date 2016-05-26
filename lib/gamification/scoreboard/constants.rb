@@ -33,6 +33,13 @@ module Gamification
       RESOLUTION_TOKEN_BY_KEY = Hash[*RESOLUTION.map { |i| [i[1], i[0]] }.flatten]
 
       TICKET_CLOSURE = [  FAST_RESOLUTION, ON_TIME_RESOLUTION, LATE_RESOLUTION, FIRST_CALL_RESOLUTION ]
+
+      SCORE_TRIGGER_VS_CATEGORY = {
+        FIRST_CALL_RESOLUTION => :sharpshooter,
+        HAPPY_CUSTOMER => :love,
+        UNHAPPY_CUSTOMER => :love,
+        FAST_RESOLUTION => :speed
+      }
     end
   end
 end
