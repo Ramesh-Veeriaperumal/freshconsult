@@ -39,28 +39,28 @@ module TicketFieldsTestHelper
     status_values
   end
 
-  def create_section_fields(parent_ticket_field_id=3, sections=[{title: 'section1', value_mapping: ['Question', 'Problem'], ticket_fields: ['test_custom_number', 'test_custom_date']}, {title: 'section2', value_mapping: ['Incident'], ticket_fields: ['test_custom_paragraph', 'test_custom_dropdown']}])
+  def create_section_fields(parent_ticket_field_id = 3, sections = [{ title: 'section1', value_mapping: ['Question', 'Problem'], ticket_fields: ['test_custom_number', 'test_custom_date'] }, { title: 'section2', value_mapping: ['Incident'], ticket_fields: ['test_custom_paragraph', 'test_custom_dropdown'] }])
     sections.each do |section|
       sections_fields = section[:ticket_fields].each_with_object([]) do |field, array|
         pos = 0
         ticket_field = field == 'dropdown' ? create_custom_field_dropdown : create_custom_field(field, field)
-        ticket_field.update_attributes(:field_options => {section: true})
-        array << {ticket_field_id: ticket_field.id, parent_ticket_field_id: parent_ticket_field_id, position: (pos + 1)}
+        ticket_field.update_attributes(field_options: { section: true })
+        array << { ticket_field_id: ticket_field.id, parent_ticket_field_id: parent_ticket_field_id, position: (pos + 1) }
       end
-      section_object = FactoryGirl.build(:section, :label => section[:title], 
-                                            :account_id => @account.id
-                                    )
+      section_object = FactoryGirl.build(:section, label: section[:title],
+                                                   account_id: @account.id
+                                        )
       section_object.save
       section_picklist_mappings = []
-      section[:value_mapping].each do |value| 
+      section[:value_mapping].each do |value|
         section_picklist_mappings << FactoryGirl.build(:section_picklist_mapping,  account_id: @account.id,
-                                                                                    section_id: section_object.id,
-                                                                                    picklist_value_id: Helpdesk::PicklistValue.find_by_value(value).id)
+                                                                                   section_id: section_object.id,
+                                                                                   picklist_value_id: Helpdesk::PicklistValue.find_by_value(value).id)
         section_picklist_mappings.last.save
       end
 
       section_fields_record = []
-      sections_fields.each do |field| 
+      sections_fields.each do |field|
         section_fields_record << FactoryGirl.build(:section_field,  account_id: @account.id,
                                                                     section_id: section_object.id,
                                                                     ticket_field_id: field[:ticket_field_id],
@@ -71,7 +71,7 @@ module TicketFieldsTestHelper
     end
   end
 
-  def create_custom_field_dropdown(name='test_custom_dropdown', choices=['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+  def create_custom_field_dropdown(name = 'test_custom_dropdown', choices = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
     return ticket_field_exists if ticket_field_exists
     # ffs_04 is created here
@@ -256,7 +256,7 @@ module TicketFieldsTestHelper
     pattern = ticket_field_pattern(tf)
     sections = tf.dynamic_section_fields.includes(:section).map(&:section).uniq
     section_pattern = sections.each_with_object([]) do |field, array_list|
-      array_list << {title: field.label, choices: field.section_picklist_mappings.map{|x| x.picklist_value.value}, participating_fields: field.section_fields.includes(:ticket_field).map{|x| x.ticket_field.name[0..-3]}}
+      array_list << { title: field.label, choices: field.section_picklist_mappings.map { |x| x.picklist_value.value }, participating_fields: field.section_fields.includes(:ticket_field).map { |x| x.ticket_field.name[0..-3] } }
     end
     pattern.merge!(sections: section_pattern)
     pattern

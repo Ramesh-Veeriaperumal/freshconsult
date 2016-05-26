@@ -1,0 +1,9 @@
+JSON.generate(@items.map do |forum_category|
+  {
+    id: forum_category.id,
+    name: forum_category.name,
+    description: forum_category.description,
+    created_at: forum_category.created_at.try(:utc),
+    updated_at: forum_category.updated_at.try(:utc)
+  }
+end)

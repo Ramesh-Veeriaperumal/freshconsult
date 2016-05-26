@@ -9,7 +9,7 @@ class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
       v1 = {}
       v2_expected = {
         api_create: 3,
-        api_update: 4,
+        api_update: 5,
         api_show: 5,
         api_index: 2,
         api_destroy: 6,
@@ -20,7 +20,7 @@ class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
         show: 15,
         index: 15,
         destroy: 20,
-        make_agent: 44
+        make_agent: 45
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
