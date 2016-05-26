@@ -188,7 +188,7 @@ module Helpdesk::Email::ParseEmailData
 
   def permissible_ccs(user, cc_emails, account)
     cc_emails, self.common_email_data[:dropped_cc_emails] = fetch_permissible_cc(user, cc_emails, account)
-    cc_emails.split(",") 
+    cc_emails.is_a?(Array) ? cc_emails : cc_emails.split(",") 
   end
 
 	alias_method :parse_recipients, :parse_recipients_new

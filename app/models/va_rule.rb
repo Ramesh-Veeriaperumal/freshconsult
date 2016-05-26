@@ -25,7 +25,7 @@ class VaRule < ActiveRecord::Base
 
   attr_accessible :name, :description, :match_type, :active, :filter_data, :action_data, :rule_type, :position
 
-  belongs_to :account
+  belongs_to_account
   
   has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule', :dependent => :destroy
   has_one :installed_application, :class_name => 'Integrations::InstalledApplication', through: :app_business_rule

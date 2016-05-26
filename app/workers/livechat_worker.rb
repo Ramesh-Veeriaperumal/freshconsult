@@ -6,7 +6,7 @@ class LivechatWorker < BaseWorker
 	SUBURL = (Rails.env == "development") ? ":4000" : ""
 	URL = "http://" + ChatConfig['communication_url'] + SUBURL
 
-  sidekiq_options :queue => :livechat_queue, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :livechat_worker, :retry => 0, :backtrace => true, :failures => :exhausted
 
 	def perform(args)
 		args["token"] 					= get_token(args)
