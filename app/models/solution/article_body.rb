@@ -8,6 +8,7 @@ class Solution::ArticleBody < ActiveRecord::Base
 	belongs_to :article, :class_name => "Solution::Article"
 
 	validates_presence_of :account_id
+  attr_accessible :description, :desc_un_html
 
 	xss_sanitize :only => [:description],  :article_sanitizer => [:description]
 end
