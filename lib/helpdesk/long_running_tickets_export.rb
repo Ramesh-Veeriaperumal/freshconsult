@@ -3,6 +3,6 @@ class Helpdesk::LongRunningTicketsExport
   @queue = 'long_running_ticket_export'
 
   def self.perform(export_params)
-  	Helpdesk::TicketsExportWorker.new(export_params).perform
+  	Export::Ticket.new(export_params).perform
   end
 end
