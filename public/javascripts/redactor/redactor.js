@@ -4729,8 +4729,8 @@ $.fn.insertExternal = function(html)
 				}
 				else{
 					quoted_clone = document.createDocumentFragment();
-        				var children = quoted_clone.childNodes;
-				        for (i = 0; i < children.length; i++) {
+        				var children = this.$quoted_area.childNodes;
+				        for (var i = 0; i < children.length; i++) {
 				            quoted_clone.appendChild(children[i].cloneNode(true));
 				        }
 				}
@@ -4745,8 +4745,8 @@ $.fn.insertExternal = function(html)
 			}
 			else{
 					quoted_clone = document.createDocumentFragment();
-        				var children = quoted_clone.childNodes;
-				        for (i = 0; i < children.length; i++) {
+        				var children = this.$quoted_area.childNodes;
+				        for (var i = 0; i < children.length; i++) {
 				            quoted_clone.appendChild(children[i].cloneNode(true));
 				        }
 			}
