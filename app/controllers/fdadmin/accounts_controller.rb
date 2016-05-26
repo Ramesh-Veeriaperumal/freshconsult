@@ -3,8 +3,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include Fdadmin::AccountsControllerMethods
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
-  around_filter :select_slave_shard , :only => [:show, :features, :agents, :tickets, :portal, :user_info]
-  around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on, :sso_time_stamp, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count]
+  around_filter :select_slave_shard , :only => [:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import]
+  around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy]
   before_filter :validate_params, :only => [ :change_api_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
@@ -28,8 +28,6 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:shard] = shard_info.shard_name
     account_summary[:pod] = shard_info.pod_info
     account_summary[:freshfone_feature] = account.features?(:freshfone)
-    cnt_impt = account.contact_import
-    account_summary[:contact_import] = cnt_impt ? cnt_impt.status : nil
     respond_to do |format|
       format.json do
         render :json => account_summary
@@ -349,6 +347,13 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         render :json => result
       end
     end
+  end
+
+  def check_contact_import
+    result = {}
+    account = Account.find(params[:account_id])
+    result[:status] = account.contact_import ? account.contact_import.status : true
+    render :json => {:status => result[:status] }
   end
 
   private 

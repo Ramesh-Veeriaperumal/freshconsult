@@ -2677,7 +2677,9 @@ Helpkit::Application.routes.draw do
           put :whitelist
           put :block_account
           get :user_info
+          get :check_contact_import
           put :reset_login_count
+          post :contact_import_destroy
         end
       end
 
