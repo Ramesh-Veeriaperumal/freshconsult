@@ -4698,7 +4698,7 @@ $.fn.insertExternal = function(html)
  
 		this.$redactor 			= redactor;
 		this.$redactor.$quoted 	= this;
-		this.$quoted_area 		= $(this.$redactor.$el.data("quotedTextarea"));
+		this.$quoted_area 		= document.querySelector(this.$redactor.$el.data("quotedTextarea"));
 		this.$marker 			= $("<span class='"+this.opts.class_name+" tooltip' title='"+this.opts.tooltip_text+"' />")
 		this.$template 			= $(this.opts.template).append(this.$marker);
 		this.$form 				= this.$redactor.$el.get(0).form;
@@ -4713,7 +4713,7 @@ $.fn.insertExternal = function(html)
 			jQuery(this.$redactor.$box).delegate("."+this.opts.class_name, "click.quotedtext", $.proxy(this.insertQuotedText, this));
 		},
 		insertQuotedText: function(){
-			this.$redactor.insertHtmlAtLast(this.getQuotedText());
+			this.$redactor.$editor.append(this.getQuotedText());
 			this.$redactor.syncCode();
 			this.checkQuotedText();
 		},
@@ -4723,12 +4723,34 @@ $.fn.insertExternal = function(html)
 		},
 		syncQuotedText: function(){
 			if(!this.$draft_added){
-				var full_text = this.$redactor.$el.val() + this.$quoted_area.val();
-				this.$redactor.$el.val(full_text);
+				var quoted_clone;
+				if("content" in document.createElement("template")){
+					quoted_clone = document.importNode(this.$quoted_area.content, true);
+				}
+				else{
+					quoted_clone = document.createDocumentFragment();
+        				var children = quoted_clone.childNodes;
+				        for (i = 0; i < children.length; i++) {
+				            quoted_clone.appendChild(children[i].cloneNode(true));
+				        }
+				}
+				this.$redactor.$el.append(quoted_clone);
 			}
 		},
+
 		getQuotedText: function(){
-			return this.$quoted_area.val() + "<p><br /></p>";
+			var quoted_clone;
+			if("content" in document.createElement("template")){
+				quoted_clone = document.importNode(this.$quoted_area.content, true);
+			}
+			else{
+					quoted_clone = document.createDocumentFragment();
+        				var children = quoted_clone.childNodes;
+				        for (i = 0; i < children.length; i++) {
+				            quoted_clone.appendChild(children[i].cloneNode(true));
+				        }
+			}
+			return $('<div></div>').append(quoted_clone).append("<p><br /></p>");
 		},
 		reset: function(){
 			this.$draft_added = false;
