@@ -153,10 +153,6 @@ protected
       end
     end
 
-    def public_request?
-      current_user.nil?
-    end
-
     def check_feature
       unless current_account.features?(:archive_tickets)
         redirect_to support_tickets_url

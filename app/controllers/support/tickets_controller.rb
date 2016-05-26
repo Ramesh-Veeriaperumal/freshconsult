@@ -197,8 +197,4 @@ class Support::TicketsController < SupportController
     def clean_params
       params[:helpdesk_ticket].keep_if{ |k,v| TicketConstants::SUPPORT_PROTECTED_ATTRIBUTES.exclude? k }
     end
-
-    def public_request?
-      current_user.nil?
-    end
 end
