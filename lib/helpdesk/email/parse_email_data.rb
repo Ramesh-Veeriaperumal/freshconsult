@@ -68,7 +68,7 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def valid_from_email? f_email
-	  (f_email[:email] =~ /(noreply)|(no-reply)/i or f_email[:email].blank?) and !reply_to_feature and parse_reply_to_email[:email].present?
+	  	(f_email[:email] =~ /(noreply)|(no-reply)/i or f_email[:email].blank?) and !reply_to_feature and parse_reply_to_email.present? and parse_reply_to_email[:email].present?
 	end
 
 	def parse_to_email
