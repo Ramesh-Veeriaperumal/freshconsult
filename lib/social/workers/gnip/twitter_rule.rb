@@ -36,7 +36,7 @@ class Social::Workers::Gnip::TwitterRule
           if add_response[:response]
             update_db(env, RULE_ACTION[:add], add_response)
           else
-            requeue_gnip_rule(self, env, add_response)
+            requeue_gnip_rule(env, add_response)
           end
         end
       end

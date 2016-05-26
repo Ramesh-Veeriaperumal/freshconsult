@@ -66,7 +66,7 @@ class Freshfone::Number < ActiveRecord::Base
 	HUNT_TYPE = { :simultaneous => 1, :round_robin => 2 }
 	RECORDING_VISIBILITY = {:public_recording => true, :private_recording => false}
 	ALL_NUMBERS = "0" #Used in Call History and Reports for filtering
-	MIN_RINGING_TIME = 30
+	MIN_RINGING_TIME = 10
 	MIN_RR_TIMEOUT = 10
 	MAX_RINGING_TIME = 999
 	PORT_STATE = {:port_in => 1, :port_away => 2}

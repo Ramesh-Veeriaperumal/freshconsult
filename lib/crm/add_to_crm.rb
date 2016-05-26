@@ -41,6 +41,8 @@ class CRM::AddToCRM
 
     def self.perform(account_id)
       CRM::Salesforce.new.update_deleted_account_to_crm(Account.current.id) if Rails.env.production?
+    ensure
+      CRM::FreshsalesUtility.new({ account: Account.current }).account_cancellation if Rails.env.production?
     end
   end
 

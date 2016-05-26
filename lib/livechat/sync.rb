@@ -62,16 +62,29 @@ class Livechat::Sync
   #This method is called from sidekiq backend callbacks
   def on_success(status, options)
     next_methods = options["next_methods"]
-    Livechat::Sync.new.send(next_methods.shift, next_methods, options['siteId']) unless next_methods.blank?
+    account_id = options['account_id']
+    user_id = options['current_user_id']
+
+    Sharding.select_shard_of(account_id) do
+      account = ::Account.find(account_id)
+      account.make_current
+      user = account.users.find_by_id(user_id)
+      user.make_current
+      unless next_methods.blank?
+        Livechat::Sync.new.send(next_methods.shift, next_methods, options['siteId'])
+      end
+    end
   end
 
   def sidekiq_batch(siteId, next_methods)
     batch = Sidekiq::Batch.new
-    batch.on(:success, Livechat::Sync, 'bid' => batch.bid, 'siteId' => siteId, :next_methods => next_methods)
+    batch.on(:success, Livechat::Sync, 'bid' => batch.bid, 
+              'siteId' => siteId, :next_methods => next_methods, 
+              :account_id => ::Account.current.id, :current_user_id => ::User.current.id)
     batch
   end
 
   def current_account
-    Account.current
+    ::Account.current
   end
 end

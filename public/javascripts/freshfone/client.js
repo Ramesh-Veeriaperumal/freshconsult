@@ -63,6 +63,7 @@ var globalconn;
 			if ($(this).data('phoneNumber') !== undefined) {
 				freshfonecalls.recentCaller = 1;
 				freshfonecalls.number = $(this).data('phoneNumber');
+				freshfoneDialpadEvents.$number.data('lastval', freshfonecalls.number);
 				freshfoneContactSearch.getSearchResults(
 					freshfonecalls.number, $(this).data('contactId'),
 					$(this).data('deleted'));

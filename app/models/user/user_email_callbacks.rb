@@ -24,8 +24,8 @@ class User < ActiveRecord::Base
   before_validation :remove_duplicate_emails
 
   #Sanity check. Not enforced in production and test
-  after_commit :verify_details_on_create, on: :create
-  after_commit :verify_details_on_update, on: :update
+  #after_commit :verify_details_on_create, on: :create
+  #after_commit :verify_details_on_update, on: :update
 
   #------User email callbacks ends here------------------------------
 

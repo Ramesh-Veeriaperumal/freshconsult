@@ -512,10 +512,6 @@ function getPdfParams() {
           name : condition,
           value : val.toString()
       }
-      if(condition == "customers_filter") {
-        var source = jQuery('#' + condition).data('select2').opts.data;
-        opt.source = source;
-      }
       form_data.push(opt);
     }
   });

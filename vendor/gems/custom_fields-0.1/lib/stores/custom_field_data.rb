@@ -14,6 +14,10 @@ module Stores
 
         #store this in a variable and define the method normally
         class_eval <<-EOV
+          def self.parent_class
+            eval %Q["#{args[:parent_class]}"]
+          end
+
           def parent_id
             eval %Q["#{args[:parent_id]}"]
           end

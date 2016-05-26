@@ -36,7 +36,7 @@ module Helpdesk::TicketActions
 
   def handle_screenshot_attachments
     decoded_file = Base64.decode64(params[:screenshot][:data])
-    file = Tempfile.new(params[:screenshot][:name]) 
+    file = Tempfile.new([params[:screenshot][:name], '.png']) 
     file.binmode
     file.write decoded_file
     attachment = @ticket.attachments.build(:content => file, :account_id => @ticket.account_id)
@@ -196,6 +196,7 @@ module Helpdesk::TicketActions
   def move_attachments   
     @note.attachments.update_all({:attachable_type =>"Helpdesk::Ticket" , :attachable_id => @item.id})
     @note.inline_attachments.update_all({:attachable_type =>"Inline" , :attachable_id => @item.id})
+    @item.sqs_manual_publish
   end
 
   def move_cloud_files #added to support cloud_file while spliting tickets

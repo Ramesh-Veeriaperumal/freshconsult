@@ -103,7 +103,7 @@ class Support::TicketsController < SupportController
     if cc_params.length <= TicketConstants::MAX_EMAIL_COUNT
       if current_user.customer?
         parsed_emails   = permissible_user_emails(cc_params)
-        cc_params       = parsed_emails[:valid_emails].split(",")
+        cc_params       = parsed_emails[:valid_emails].is_a?(Array) ? parsed_emails[:valid_emails] : parsed_emails[:valid_emails].split(",")
         dropped_emails  = parsed_emails[:dropped_emails]
       end
       @ticket.cc_email[:reply_cc] = cc_params.delete_if {|x| !valid_email?(x)}

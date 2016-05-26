@@ -962,6 +962,13 @@
 		td.agent,td.group{
 			background: #fff !important;
 		}
+
+		td.deleted {
+			font-weight: normal;
+			color: #aaa;
+			font-style: oblique;
+			background: #fff !important;
+		}
 		
 		th{
 			border-top: 1px solid #E5E4E4;
