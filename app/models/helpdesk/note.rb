@@ -301,7 +301,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def load_note_reply_cc
     if self.third_party_response?
-      [self.cc_emails, self.from_email.to_a + self.to_emails.to_a.reject { |e| exclude_emails_list.include?(e) }]
+      [self.cc_emails, self.from_email.to_a + self.to_emails.to_a.reject { |e| exclude_emails_list.include?(parse_email_text(e)[:email]) }]
     elsif (self.reply_to_forward? || self.fwd_email?)
       [self.cc_emails, self.to_emails.to_a]
     else
