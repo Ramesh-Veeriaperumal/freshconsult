@@ -4698,7 +4698,7 @@ $.fn.insertExternal = function(html)
  
 		this.$redactor 			= redactor;
 		this.$redactor.$quoted 	= this;
-		this.$quoted_area 		= document.querySelector(this.$redactor.$el.data("quotedTextarea"));
+		this.$quoted_area 		= $(this.$redactor.$el.data("quotedTextarea"));
 		this.$marker 			= $("<span class='"+this.opts.class_name+" tooltip' title='"+this.opts.tooltip_text+"' />")
 		this.$template 			= $(this.opts.template).append(this.$marker);
 		this.$form 				= this.$redactor.$el.get(0).form;
@@ -4713,7 +4713,14 @@ $.fn.insertExternal = function(html)
 			jQuery(this.$redactor.$box).delegate("."+this.opts.class_name, "click.quotedtext", $.proxy(this.insertQuotedText, this));
 		},
 		insertQuotedText: function(){
-			this.$redactor.$editor.append(this.getQuotedText());
+			if("content" in document.createElement("template")){
+				var quoted_clone = document.importNode(this.$quoted_area[0].content, true);
+				quoted_clone = $('<div></div>').append(quoted_clone).append("<p><br /></p>");
+				this.$redactor.$editor.append(quoted_clone);
+			}
+			else{
+				this.$redactor.insertHtmlAtLast(this.$quoted_area.val() + "<p><br /></p>");
+			}
 			this.$redactor.syncCode();
 			this.checkQuotedText();
 		},
@@ -4723,34 +4730,15 @@ $.fn.insertExternal = function(html)
 		},
 		syncQuotedText: function(){
 			if(!this.$draft_added){
-				var quoted_clone;
 				if("content" in document.createElement("template")){
-					quoted_clone = document.importNode(this.$quoted_area.content, true);
+					var quoted_clone = document.importNode(this.$quoted_area[0].content, true);
+					this.$redactor.$el.append(quoted_clone);
 				}
 				else{
-					quoted_clone = document.createDocumentFragment();
-        				var children = this.$quoted_area.childNodes;
-				        for (var i = 0; i < children.length; i++) {
-				            quoted_clone.appendChild(children[i].cloneNode(true));
-				        }
+					var full_text = this.$redactor.$el.val() + this.$quoted_area.val();
+					this.$redactor.$el.val(full_text);
 				}
-				this.$redactor.$el.append(quoted_clone);
 			}
-		},
-
-		getQuotedText: function(){
-			var quoted_clone;
-			if("content" in document.createElement("template")){
-				quoted_clone = document.importNode(this.$quoted_area.content, true);
-			}
-			else{
-					quoted_clone = document.createDocumentFragment();
-        				var children = this.$quoted_area.childNodes;
-				        for (var i = 0; i < children.length; i++) {
-				            quoted_clone.appendChild(children[i].cloneNode(true));
-				        }
-			}
-			return $('<div></div>').append(quoted_clone).append("<p><br /></p>");
 		},
 		reset: function(){
 			this.$draft_added = false;
