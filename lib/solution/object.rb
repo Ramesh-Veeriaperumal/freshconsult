@@ -59,6 +59,7 @@ class Solution::Object
 
 	def create_parent_translation
 		return if @params["#{PARENT_OF[obj]}_meta"].blank?
+    @params["#{PARENT_OF[obj]}_meta"]['id'] = @meta_obj.parent_id if @meta_obj.parent_id
 		@meta_obj.send("#{PARENT_OF[obj]}_meta=", Solution::Object.new(@params, PARENT_OF[obj], @meta_obj).object)
 	end
   

@@ -19,7 +19,6 @@ class Solution::ArticlesController < ApplicationController
   before_filter :check_create_privilege, :only => [:show]
   before_filter :old_folder, :only => [:move_to]
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
-  before_filter :set_current_folder, :only => [:create]
   # before_filter :check_new_author, :only => [:change_author]
   before_filter :validate_author, :language, :only => [:update]
   before_filter :cleanup_params_for_title, :only => [:show]
@@ -481,16 +480,6 @@ class Solution::ArticlesController < ApplicationController
 
     def merge_cloud_file_attachments
       params[:solution_article_meta][language_scoper.to_sym].merge!({:cloud_file_attachments => params[:cloud_file_attachments]})
-    end
-
-    def set_current_folder
-      begin
-        folder_id = params[:solution_article][:folder_id] || current_account.solution_folders.find_by_is_default(true).id
-        @current_folder = current_account.solution_folders.find(folder_id)
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-        @current_folder = current_account.solution_folders.first
-      end
     end
 
     def check_parent_params
