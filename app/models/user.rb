@@ -481,6 +481,8 @@ class User < ActiveRecord::Base
   def is_client_manager?
     self.privilege?(:client_manager)
   end
+  alias_method :is_client_manager, :is_client_manager?
+
 
   # Marketplace
   def developer?
