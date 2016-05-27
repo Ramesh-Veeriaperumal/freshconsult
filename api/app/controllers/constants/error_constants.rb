@@ -6,7 +6,7 @@ module ErrorConstants
     datatype_mismatch: %w(datatype_mismatch per_page_invalid array_datatype_mismatch),
     invalid_size: ['invalid_size'],
     incompatible_field: ['incompatible_field'],
-    inaccessible_field: ['inaccessible_field', 'require_feature_for_attribute'],
+    inaccessible_field: ['inaccessible_field'],
     inaccessible_value: ['inaccessible_value']
   }.freeze
 

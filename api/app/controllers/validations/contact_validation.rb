@@ -12,7 +12,7 @@ class ContactValidation < ApiValidation
   }.freeze
 
   MANDATORY_FIELD_ARRAY = [:email, :mobile, :phone, :twitter_id].freeze
-  CHECK_PARAMS_SET_FIELDS = MANDATORY_FIELD_ARRAY.map(&:to_s).freeze
+  CHECK_PARAMS_SET_FIELDS =(MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(time_zone language custom_fields)).freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
 
   attr_accessor :avatar, :view_all_tickets, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
@@ -22,6 +22,8 @@ class ContactValidation < ApiValidation
   alias_attribute :customer_id, :company_name
 
   # Default fields validation
+  validates :language, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,  message_options: { attribute: 'language', feature: :multi_language } }, unless: :multi_language_enabled?
+  validates :time_zone, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'time_zone', feature: :multi_timezone } }, unless: :multi_timezone_enabled?
   validates :email, :phone, :mobile, :company_name, :address, :job_title, :twitter_id, :language, :time_zone, :description, :other_emails, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
@@ -61,7 +63,6 @@ class ContactValidation < ApiValidation
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
     @current_email = item.email if item
-    check_params_set(request_params[:custom_fields]) if request_params[:custom_fields].is_a?(Hash)
     fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
   end
 
@@ -108,6 +109,14 @@ class ContactValidation < ApiValidation
         errors[:other_emails] << :cant_add_primary_email
         (self.error_options ||= {}).merge!(other_emails: { email: "#{email}" })
       end
+    end
+
+    def multi_language_enabled?
+      Account.current.features?(:multi_language)
+    end
+
+    def multi_timezone_enabled?
+      Account.current.features?(:multi_timezone)
     end
 
     def attributes_to_be_stripped
