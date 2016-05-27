@@ -15,7 +15,7 @@
 												:autocomplete => "off",
 												:autofocus => true,
 												:value => @category.name,
-												:placeholder => t('solution.categories.enter_version_name', :language_name => @language.name) %>
+												:placeholder => title_placeholder('categories') %>
 				<%= primary_preview(@primary, :name, @category) %>
 			</div>
 		</div>

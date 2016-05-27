@@ -387,7 +387,7 @@ module SolutionHelper
 	                         :autocomplete => "off",
 	                         :autofocus => true,
 	                         :disabled => options[:disabled] || false,
-	                         :placeholder => t("solution.#{f.to_s.pluralize}.enter_version_name", :language_name => language.name))
+	                         :placeholder => title_placeholder(f.to_s.pluralize))
 			if parent_meta && !options[:primary]
 		    op << hidden_field_tag("#{form.object_name}[id]", parent_meta.id)
 		    op << primary_preview(parent_meta.send("primary_#{f}"), :name)
@@ -467,7 +467,7 @@ module SolutionHelper
 	                         :id => "create-category-text",
 	                         :autocomplete => "off",
                            :disabled => true,
-	                         :placeholder => t("solution.categories.enter_version_name", :language_name => @language.name))
+	                         :placeholder => title_placeholder('categories'))
 		end
 		op << %(</div>)
 		op << %(<div class='inline-block'>)
@@ -511,6 +511,11 @@ module SolutionHelper
   def article_tooltip_title(meta)
   	title = article_title(meta)
   	title.length > 75 ? title : ''
+	end
+
+	def title_placeholder(item_type)
+		Account.current.multilingual? ?
+			t("solution.#{item_type}.enter_version_name", :language_name => @language.name) : ''
 	end
 
 end
