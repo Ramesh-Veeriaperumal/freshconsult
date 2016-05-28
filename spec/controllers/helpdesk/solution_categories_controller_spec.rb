@@ -196,4 +196,21 @@ describe Solution::CategoriesController do
     response.should render_template "/solution/shared/_navmenu_content"
   end
 
+  it "should not update the category with id given in meta params" do
+    category_meta_1 = create_category
+    category_meta_2 = create_category
+    category_2_name = category_meta_2.primary_category.name
+    new_name = "#{Faker::Lorem.sentence(3)} - #{Time.now.to_f.to_s}"
+    put :update, :id => category_meta_1.id, 
+      :solution_category_meta => {
+        :id => category_meta_2.id,
+        :primary_category => {
+          :name => new_name
+        }
+      }
+    expect(category_meta_2.reload.primary_category.name).not_to eq(new_name)
+    expect(category_meta_2.primary_category.name).to eq(category_2_name)
+    expect(category_meta_1.reload.primary_category.name).to eq(new_name)
+  end
+
 end

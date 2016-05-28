@@ -498,7 +498,6 @@ class Solution::ArticlesController < ApplicationController
     def set_parent_for_old_params
       return unless params[:solution_article].present?
       params[:solution_article][:folder_id] ||= params[:folder_id]
-      params[:solution_article][:id] = params[:id] if params[:id].present?
     end
 
     def check_create_privilege

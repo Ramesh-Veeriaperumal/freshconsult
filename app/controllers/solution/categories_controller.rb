@@ -67,7 +67,6 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def update
-    params[:solution_category][:id] = params[:id] if params[:solution_category].present?
     @category_meta = Solution::Builder.category(params)
     @category = @category_meta.send(language_scoper)
 

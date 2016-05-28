@@ -335,6 +335,25 @@ describe Solution::FoldersController do
         current_folder.position.should be_eql(reorder_hash[current_folder.id])
       end    
     end
-
   end
+
+
+  it "should not update the folder with id given in meta params" do
+    category_meta = create_category
+    folder_meta_1 = create_folder({:category_id => category_meta.id })
+    folder_meta_2 = create_folder({:category_id => category_meta.id })
+    folder_2_name = folder_meta_2.primary_folder.name
+    new_name = "#{Faker::Lorem.sentence(3)} - #{Time.now.to_f.to_s}"
+    put :update, :id => folder_meta_1.id,
+    :solution_folder_meta => {
+      :id => folder_meta_2.id,
+      :primary_folder => {
+        :name => new_name
+      }
+    }
+    expect(folder_meta_2.reload.primary_folder.name).not_to eq(new_name)
+    expect(folder_meta_2.primary_folder.name).to eq(folder_2_name)
+    expect(folder_meta_1.reload.primary_folder.name).to eq(new_name)
+  end
+
 end

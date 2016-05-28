@@ -241,6 +241,5 @@ class Solution::FoldersController < ApplicationController
     def set_parent_for_old_params
       return unless params[:solution_folder].present?
       params[:solution_folder][:category_id] ||= params[:category_id]
-      params[:solution_folder][:id] = params[:id] if params[:id].present?
     end
 end

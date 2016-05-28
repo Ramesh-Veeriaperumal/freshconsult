@@ -652,6 +652,23 @@ describe Solution::ArticlesController do
     end
   end
 
+  it "should not update the article with id given in meta params" do
+    article_meta_1 = create_article({:folder_id => @test_folder_meta.id})
+    article_meta_2 = create_article({:folder_id => @test_folder_meta.id})
+    article_2_title = article_meta_2.primary_article.title
+    new_title = "#{Faker::Lorem.sentence(3)} - #{Time.now.to_f.to_s}"
+    put :update, :id => article_meta_1.id,
+      :solution_article_meta => {
+        :id => article_meta_2.id,
+        :primary_article => {
+          :title => new_title
+        }
+      }
+    expect(article_meta_2.reload.primary_article.title).not_to eq(new_title)
+    expect(article_meta_2.primary_article.title).to eq(article_2_title)
+    expect(article_meta_1.reload.primary_article.title).to eq(new_title)
+  end
+
   def redirect_path_check(item)
     response.should redirect_to( 
       Account.current.multilingual? ? solution_article_version_path(item, item.language.code) : solution_article_path(item)

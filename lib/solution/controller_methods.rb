@@ -9,7 +9,13 @@ module Solution::ControllerMethods
 
 	def self.included(base)
 		base.send :before_filter, :set_modal, :only => [:new, :edit]
+		base.send :before_filter, :sanitize_item_id, :only => [:update]
 	end
+
+	def sanitize_item_id
+    params[item][:id] = params[:id] if params[nscname].present?
+    params["#{nscname}_meta"][:id] = params[:id] if params["#{nscname}_meta"].present?
+  end
 
 	def show_response meta, scope
 		respond_to do |format|
