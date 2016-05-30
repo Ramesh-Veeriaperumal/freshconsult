@@ -120,10 +120,10 @@
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", 
                                   :style => "display:none;"%>
             <%if  current_browser == "Internet Explorer" %>
-                <%= text_area_tag "quoted_text_html", h(quoted_text(conv_item)), { :id => "#{cntid}-quoted", :class => "hide" } %>
+                <%= text_area_tag "quoted_text_html", h(bind_last_conv(conv_item, @signature, true)), { :id => "#{cntid}-quoted", :class => "hide" } %>
             <% else %>
               <template name = "quoted_text_html" id = "<%= cntid %>-quoted" class="hide">
-                <%= quoted_text(conv_item).html_safe%>
+                <%= h(bind_last_conv(conv_item, @signature, true)) %>
               </template>
             <% end %>
     <% end %>

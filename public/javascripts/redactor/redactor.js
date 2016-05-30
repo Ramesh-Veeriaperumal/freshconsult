@@ -4716,7 +4716,7 @@ $.fn.insertExternal = function(html)
 			if("content" in document.createElement("template")){
 				var quoted_clone = document.importNode(this.$quoted_area[0].content, true);
 				quoted_clone = $('<div></div>').append(quoted_clone).append("<p><br /></p>");
-				this.$redactor.$editor.append(quoted_clone);
+				this.$redactor.$editor.append(quoted_clone.text());
 			}
 			else{
 				this.$redactor.insertHtmlAtLast(this.$quoted_area.val() + "<p><br /></p>");
@@ -4730,14 +4730,16 @@ $.fn.insertExternal = function(html)
 		},
 		syncQuotedText: function(){
 			if(!this.$draft_added){
+				var quoted_clone;
 				if("content" in document.createElement("template")){
 					var quoted_clone = document.importNode(this.$quoted_area[0].content, true);
-					this.$redactor.$el.append(quoted_clone);
+					quoted_clone = $(quoted_clone).text();
 				}
 				else{
-					var full_text = this.$redactor.$el.val() + this.$quoted_area.val();
-					this.$redactor.$el.val(full_text);
+					quoted_clone = this.$quoted_area.val();
 				}
+				var full_text = this.$redactor.$el.val() + quoted_clone;
+				this.$redactor.$el.val(full_text);
 			}
 		},
 		reset: function(){

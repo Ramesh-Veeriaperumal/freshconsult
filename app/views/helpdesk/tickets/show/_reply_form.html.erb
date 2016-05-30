@@ -113,7 +113,7 @@
                 <%= text_area_tag "quoted_text_html", h(quoted_text(conv_item)), { :id => "#{cntid}-quoted", :class => "hide" } %>
             <% else %>
               <template name = "quoted_text_html" id = "<%= cntid %>-quoted" class="hide">
-                <%= quoted_text(conv_item).html_safe%>
+                <%= h(quoted_text(conv_item))%>
               </template>
             <% end %>
         <% end %>        
