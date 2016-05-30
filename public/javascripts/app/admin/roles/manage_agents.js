@@ -30,6 +30,12 @@ var ManageAgents = ManageAgents || (function($){
 		// initial set of loading here
 		_appendContent(name, agentcount, _initmodal);
 		_resetPopup();
+		var $agentSelectBox = jQuery('#manage-agents-content [data-action="add-agent"]');
+		if(id === 1 && jQuery("#is-accadmin").val() === "false"){
+			$agentSelectBox.attr('disabled', true).trigger('change');
+		}else{
+			$agentSelectBox.attr('disabled', false).trigger('change');
+		}
 		if(id){ // Roles already created
 			jQuery("#manage-agents .agent-list-wrapper").addClass('sloading');
 			if(SubmitHandler.data.user.length !== 0 || SubmitHandler.data.select2.length !== 0){
@@ -38,6 +44,11 @@ var ManageAgents = ManageAgents || (function($){
 			}else{
 				_getAgentDetails(id).success(function(data){
 					var constructedData = _constructObject(data, _select2Data);
+					if(id === 1 && jQuery("#is-accadmin").val() === "false"){
+						constructedData['admin'] = true;
+					}else{
+						constructedData['admin'] = false;
+					}
 					var agentData = JST["app/admin/roles/templates/user_list"]({
 						data: constructedData
 					});
@@ -63,6 +74,11 @@ var ManageAgents = ManageAgents || (function($){
 
 	function _getDataFromStore(){
 		SubmitHandler.data.local = true;
+		if(id === 1 && jQuery("#is-accadmin").val() === "false"){
+			SubmitHandler.data['admin'] = true;
+		}else{
+				SubmitHandler.data['admin'] = false;
+		}
 		var localAgent = JST["app/admin/roles/templates/user_list"]({
 			data: SubmitHandler.data
 		});

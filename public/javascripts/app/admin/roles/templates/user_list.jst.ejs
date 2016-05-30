@@ -4,7 +4,7 @@
     <% for (i = 0; i < data.user.length; i++) { %>
             <div class="roles-agent-list" id = "<%= data.user[i] %>">
                 <div class="agent-delete-icon pull-left">
-                    <% if ((!DataStore.get('agent').findById(parseInt(data.user[i])).is_account_admin) && ((data.roles[data.user[i]] && data.roles[data.user[i]].length > 1) || data.local === true)) {%>
+                    <% if ((!DataStore.get('agent').findById(parseInt(data.user[i])).is_account_admin) && ((data.roles[data.user[i]] && data.roles[data.user[i]].length > 1) || data.local === true) && !data.admin) {%>
                         <i class="rounded-minus-icon" data-action="remove-agent"></i>
                      <% } %>
                 </div>
