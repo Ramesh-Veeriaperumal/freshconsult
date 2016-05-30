@@ -14,7 +14,7 @@ class Ryuken::SearchSplitter
       cluster = Search::V2::Tenant.new(Account.current.id).home_cluster
       Ryuken::SearchPoller.perform_async(args.to_json, queue: ES_V2_QUEUE_KEY % { cluster: cluster })
       sqs_msg.delete
-    rescue => e
+    rescue Exception => e
       Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
       NewRelic::Agent.notice_error(e, { arguments: args })
       raise e
