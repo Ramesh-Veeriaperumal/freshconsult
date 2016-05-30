@@ -81,6 +81,9 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                     order: 'desc',
                     type: type == 'pdf' ? 'pdf' : 'page'
                 }
+             if(!(constants.percentage_metrics.indexOf(metric) > -1)) {
+                options.enableTooltip = true;
+             }
             _FD.renderCommonChart(current_hash, options, metric);
 
             if(type == 'pdf'){
@@ -143,6 +146,7 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                 dataLabels: values,
                 sharedTooltip: options.sharedTooltip,
                 enableTooltip: options.enableTooltip,
+                countTooltip : true,
                 minPoint: options.minPoint,
                 suffix: options.suffix,
                 yAxisMaxValue: options.maxValue
