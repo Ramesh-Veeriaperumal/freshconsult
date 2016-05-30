@@ -65,7 +65,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def destroy
-    @folder = meta_scoper.where(:id => params[:id]).first
+    @folder = meta_scoper.find_by_id!(params[:id])
     @folder.destroy unless @folder.is_default?
     
     destroy_response(solution_category_path(@folder.solution_category_meta_id))

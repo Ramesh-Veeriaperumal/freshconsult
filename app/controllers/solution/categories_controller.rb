@@ -143,7 +143,7 @@ class Solution::CategoriesController < ApplicationController
     end
 
     def load_meta
-      @category_meta = meta_scoper.find_by_id(params[:id])
+      @category_meta = meta_scoper.find_by_id!(params[:id])
     end
 
     def find_portal
