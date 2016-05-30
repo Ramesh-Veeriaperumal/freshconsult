@@ -338,9 +338,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result = {}
     account = Account.find_by_id(params[:account_id]) 
     begin
+      account.make_current
       result[:status] = account.contact_import.destroy ? "success" : "failure"
     rescue Exception => e
       result[:status] = "failure"
+    ensure
+      Account.reset_current_account
     end
     respond_to do |format|
       format.json do 
@@ -352,7 +355,14 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   def check_contact_import
     result = {}
     account = Account.find(params[:account_id])
-    result[:status] = account.contact_import ? account.contact_import.status : true
+    begin
+      account.make_current
+      result[:status] = account.contact_import ? account.contact_import.status : true
+    rescue Exception => e
+      result[:status] = "failure"
+    ensure
+      Account.reset_current_account
+    end
     render :json => {:status => result[:status] }
   end
 
