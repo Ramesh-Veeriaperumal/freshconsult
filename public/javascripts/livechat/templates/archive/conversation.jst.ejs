@@ -79,7 +79,7 @@
 										<% 	var today = formattedTimestamp(new Date());
 												var messageCreatedAt = messages[i].createdAt;
 												var createdToday = (today.diff(messageCreatedAt, 'days') === 0);
-												var createdThisYear = (today.diff(messageCreatedAt, 'years') === 0);
+												var createdThisYear = (moment(messageCreatedAt).format('YYYY') === moment().format('YYYY') );
 												var timeFormat = (createdToday ? "hh:mm A" :  (createdThisYear ? "MMMM Do, h:mm a" : "MMMM Do YYYY, h:mm a"));
 												var time = formattedTimestamp(messageCreatedAt, timeFormat);
 												print(time);
