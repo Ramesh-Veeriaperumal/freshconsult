@@ -1,0 +1,39 @@
+JSON.generate(@items.map do |ticket_field|
+  response_hash = {
+    id: ticket_field.id,
+    name: ticket_field.name,
+    label: ticket_field.label,
+    description: ticket_field.description,
+    position: ticket_field.position,
+    required_for_closure: ticket_field.required_for_closure,
+    required_for_agents: ticket_field.required,
+    type: ticket_field.field_type,
+    default: ticket_field.default,
+    customers_can_edit: ticket_field.editable_in_portal,
+    label_for_customers: ticket_field.label_in_portal,
+    required_for_customers: ticket_field.required_in_portal,
+    displayed_to_customers: ticket_field.visible_in_portal,
+    created_at: ticket_field.created_at.try(:utc),
+    updated_at: ticket_field.updated_at.try(:utc)
+  }
+  response_hash.merge!(choices: ticket_field.ticket_field_choices) if ticket_field.ticket_field_choices.present?
+  response_hash.merge!(portal_cc: ticket_field.portal_cc) if ticket_field.default_requester?
+  response_hash.merge!(portal_cc_to: ticket_field.portalcc_to) if ticket_field.default_requester?
+  if ticket_field.field_type == 'nested_field'
+    nested_ticket_fields = ticket_field.nested_ticket_fields.map do |tf_nested_field|
+      {
+        id: tf_nested_field.id,
+        name: tf_nested_field.nested_ticket_field_name,
+        description: tf_nested_field.description,
+        label: tf_nested_field.label,
+        label_in_portal: tf_nested_field.label_in_portal,
+        level: tf_nested_field.level,
+        ticket_field_id: tf_nested_field.ticket_field_id,
+        created_at: tf_nested_field.created_at.try(:utc),
+        updated_at: tf_nested_field.updated_at.try(:utc)
+      }
+    end
+    response_hash.merge!(nested_ticket_fields: nested_ticket_fields)
+  end
+  response_hash
+end)

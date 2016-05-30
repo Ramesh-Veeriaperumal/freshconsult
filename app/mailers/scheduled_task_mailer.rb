@@ -143,6 +143,7 @@ private
     file_name_arr = file_path.split("/").last.split(/[-.]/)
     format = file_name_arr.pop
     file_name_arr.pop #removing secure random code
-    "#{file_name_arr.join("-")}.#{format}".gsub(/_+/,"_")
+    file_name = file_name_arr.first.gsub(/_+/,"_").slice(0,235)
+    "#{file_name}-#{file_name_arr[1..-1].join("-")}.#{format}"
   end
 end

@@ -1,0 +1,28 @@
+
+
+<% if (data.user.length !== 0) { %>
+    <% for (i = 0; i < data.user.length; i++) { %>
+            <div class="roles-agent-list" id = "<%= data.user[i] %>">
+                <div class="agent-delete-icon pull-left">
+                    <% if ((!DataStore.get('agent').findById(parseInt(data.user[i])).is_account_admin) && ((data.roles[data.user[i]] && data.roles[data.user[i]].length > 1) || data.local === true) && !data.admin) {%>
+                        <i class="rounded-minus-icon" data-action="remove-agent"></i>
+                     <% } %>
+                </div>
+                <div class="agent-image pull-left">
+                    <% if (ProfileImage.imageById(parseInt(data.user[i])).profile_img === false) { %>
+                         <div class="preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator( DataStore.get('agent').findById(parseInt(data.user[i])).name )) %>"> <%= DataStore.get('agent').findById(parseInt(data.user[i])).name[0] %></div>
+                    <% }else{ %>
+                        <div class="preview_pic circle">
+                         <img alt="" class="thumb" onerror="imgerror(this)" src=" <%= ProfileImage.imageById(parseInt(data.user[i])).profile_img %>" />
+                        </div>
+                    <% } %>
+
+                </div>
+                <div class="agent-details pull-left">
+                    <a target="_blank" href="/users/<%= data.user[i] %>"> <%= DataStore.get('agent').findById(parseInt(data.user[i])).name %> </a>
+                </div>
+            </div>
+    <% } %>
+<% } else{ %>
+    <div class="no-agent-info"> No Agent added</div>
+<% } %>

@@ -178,7 +178,7 @@ class Agent < ActiveRecord::Base
     site_id = account.chat_setting.site_id
     # role_ids = self.agent_role_ids.null? self.user.roles.collect{ |role| role.id} : self.agent_role_ids
     # :roles => role_ids, need to add in phase 2 for chat privilages
-    if account.features?(:chat) && site_id
+    if account.features?(:chat) && site_id && !(::User.current.blank?)
       c = {:name=>self.user.name, :agent_id=>self.user.id, :site_id => site_id,
            :scope => SCOPE_TOKENS_BY_KEY[self.ticket_permission]}
       LivechatWorker.perform_async({:worker_method =>"create_agent",

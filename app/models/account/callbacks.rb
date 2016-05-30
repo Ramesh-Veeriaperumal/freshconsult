@@ -48,7 +48,7 @@ class Account < ActiveRecord::Base
 
   def update_users_time_zone #Ideally this should be called in after_update
     if time_zone_changed? && !features.multi_timezone?
-      all_users.update_all(:time_zone => time_zone)
+      all_users.update_all_with_publish({ :time_zone => time_zone })
     end
   end
 

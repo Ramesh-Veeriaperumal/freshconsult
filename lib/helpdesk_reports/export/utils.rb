@@ -45,7 +45,7 @@ module HelpdeskReports::Export::Utils
 
   def old_report_params params
     params[:data_hash].symbolize_keys!
-    pdf_params = params[:data_hash][:report_filters].collect{ |filter| filter.values }.to_h
+    pdf_params = params[:data_hash][:report_filters].collect{ |filter| [filter['name'],filter['value']] }.to_h
     pdf_params.merge!(params)
     pdf_params[:select_hash] = params[:data_hash][:select_hash]
     pdf_params[:date_range] ||= params[:data_hash][:date]['date_range'] #temporary. date range for direct export.

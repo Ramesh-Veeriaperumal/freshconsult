@@ -3,15 +3,15 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include Fdadmin::AccountsControllerMethods
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
-  around_filter :select_slave_shard , :only => [:show, :features, :agents, :tickets, :portal, :user_info]
-  around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on, :sso_time_stamp, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count]
+  around_filter :select_slave_shard , :only => [:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import]
+  around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy]
   before_filter :validate_params, :only => [ :change_api_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
   
   def show
     account_summary = {}
-    account = Account.find(params[:account_id])
+    account = Account.find_by_id(params[:account_id])
     shard_info = ShardMapping.find(params[:account_id])
     account_summary[:account_info] = fetch_account_info(account) 
     account_summary[:passes] = account.day_pass_config.available_passes
@@ -332,6 +332,38 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         end
       end
     end
+  end
+
+  def contact_import_destroy
+    result = {}
+    account = Account.find_by_id(params[:account_id]) 
+    begin
+      account.make_current
+      result[:status] = account.contact_import.destroy ? "success" : "failure"
+    rescue Exception => e
+      result[:status] = "failure"
+    ensure
+      Account.reset_current_account
+    end
+    respond_to do |format|
+      format.json do 
+        render :json => result
+      end
+    end
+  end
+
+  def check_contact_import
+    result = {}
+    account = Account.find(params[:account_id])
+    begin
+      account.make_current
+      result[:status] = account.contact_import ? account.contact_import.status : true
+    rescue Exception => e
+      result[:status] = "failure"
+    ensure
+      Account.reset_current_account
+    end
+    render :json => {:status => result[:status] }
   end
 
   private 

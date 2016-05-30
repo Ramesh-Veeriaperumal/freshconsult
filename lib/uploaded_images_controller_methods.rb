@@ -26,7 +26,7 @@ module UploadedImagesControllerMethods
        attr_accessor :content_type, :original_filename
     end
     data_f.content_type = splited_dataURI[:type]
-    data_f.original_filename = "blob" + params["_uniquekey"] + "." + splited_dataURI[:extension]
+    data_f.original_filename = "blob" + CGI.escapeHTML(params["_uniquekey"]) + "." + splited_dataURI[:extension]
    
     @image = current_account.attachments.build({
       :description => "public",
@@ -58,11 +58,11 @@ module UploadedImagesControllerMethods
     end
 
     def success_response
-      { :filelink => @image.content.url, :fileid => @image.id, :uniquekey => params["_uniquekey"] }
+      { :filelink => @image.content.url, :fileid => @image.id, :uniquekey => CGI.escapeHTML(params["_uniquekey"]) }
     end
 
     def error_response
-      { :error => @image.errors.blank? ? [] : @image.errors.full_messages.to_sentence, :uniquekey => params["_uniquekey"] }
+      { :error => @image.errors.blank? ? [] : @image.errors.full_messages.to_sentence, :uniquekey => CGI.escapeHTML(params["_uniquekey"]) }
     end
 
     def check_image?

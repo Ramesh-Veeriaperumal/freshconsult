@@ -1,4 +1,6 @@
-<div id="quest-container" class="panel-row <%= (quest.achieved_by? current_user) ? 'acheived' : '' %>">
+<% acheived_by_user = @user_acheived_quests.present? ? @user_acheived_quests.include?(quest.id) : false %>
+
+<div id="quest-container" class="panel-row <%= (acheived_by_user) ? 'acheived' : '' %>">
 	<div class="floatl">
 		<div class="badges left <%=quest.badge[:classname]%>">
 			<%= content_tag(:strong, quest.points, :class => "label points") unless quest.points.blank? || quest.points == 0 %>
@@ -11,7 +13,7 @@
 				<p class="help-text" title="<%=h(quest.description) %>"><%= h(truncate quest.description, :length => 300) %></p>
 			</div>
 			<div class="span2 alignright">
-				<% if quest.achieved_by? current_user %>
+				<% if acheived_by_user %>
 					<%= content_tag :span, "", :class => "symbol-done-tick" %>
 					<%= content_tag :span, "Achieved", :class => "acheived-text" %>
 				<% end %>

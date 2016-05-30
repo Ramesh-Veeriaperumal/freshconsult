@@ -151,21 +151,20 @@ var savedReportUtil = (function() {
                       _this.save_util.controls.showDeleteAndEditOptions();
                       if(is_preset_selected){
                         _this.save_util.controls.showScheduleOptions(false);
-
-                        var result = Helpkit.ScheduleUtil.isScheduled(
-                          _this.last_applied_saved_report_index,
-                          _this.save_util.default_report_is_scheduled,
-                          _this.save_util.default_index,
-                          Helpkit.report_filter_data
-                          );
-                        if(result.is_scheduled){
-                          Helpkit.ScheduleUtil.displayScheduleStatus(true,result.tooltip_title);
-                        } else{
-                          Helpkit.ScheduleUtil.displayScheduleStatus(false);
-                        }
                       } else{
                         _this.save_util.controls.hideScheduleOptions();
                       }
+                  }
+                  var result = Helpkit.ScheduleUtil.isScheduled(
+                              _this.last_applied_saved_report_index,
+                              _this.save_util.default_report_is_scheduled,
+                              _this.save_util.default_index,
+                              Helpkit.report_filter_data
+                              );
+                  if(result.is_scheduled){
+                    Helpkit.ScheduleUtil.displayScheduleStatus(true,result.tooltip_title);
+                  } else{
+                    Helpkit.ScheduleUtil.displayScheduleStatus(false);
                   }
                 }
             });
@@ -511,10 +510,6 @@ function getPdfParams() {
       var opt = {
           name : condition,
           value : val.toString()
-      }
-      if(condition == "customers_filter") {
-        var source = jQuery('#' + condition).data('select2').opts.data;
-        opt.source = source;
       }
       form_data.push(opt);
     }

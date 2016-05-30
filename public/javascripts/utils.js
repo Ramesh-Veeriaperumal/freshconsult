@@ -1026,3 +1026,12 @@ function nativePlaceholderSupport() {
   return i.placeholder !== undefined;
 }
 
+function uniqueCodeGenerator(name){
+    var namearr = name.split('');
+    var hash = 0;
+    namearr.each(function (char) {
+      hash = char.charCodeAt(0) + ((hash << 5) - hash)
+    });
+    return hash % 10;
+}
+

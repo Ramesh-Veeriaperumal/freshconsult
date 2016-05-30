@@ -98,7 +98,7 @@ class Integrations::Marketplace::SignupController < ApplicationController
   def add_to_crm
     if Rails.env.production?
       Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id, 
-        :signup_id => params[:signup_id] })
+        :signup_id => params[:signup_id], :fs_cookie => params[:fs_cookie] })
     end
   end
 

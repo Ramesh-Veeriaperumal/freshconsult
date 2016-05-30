@@ -85,8 +85,12 @@ def check_for_spam(table,column_name, id_limit, threshold,shard_name)
       end
       ignore_list = user_ids - blocked_users - deleted_users
       puts "deleted_users::::#{deleted_users.inspect}::::#{deleted_users.blank?}"
-      User.update_all({:blocked => true, :blocked_at => Time.zone.now, :deleted => 0 , :deleted_at => nil }, [" id in (?)", blocked_users]) unless blocked_users.blank?
-      User.update_all({:deleted => true , :deleted_at => Time.zone.now }, [" id in (?)", deleted_users]) unless deleted_users.blank?
+
+      # User.update_all({:blocked => true, :blocked_at => Time.zone.now, :deleted => 0 , :deleted_at => nil }, [" id in (?)", blocked_users]) unless blocked_users.blank?
+      User.where(id: blocked_users).update_all_with_publish({ blocked: true, blocked_at: Time.zone.now, deleted: 0 , deleted_at: nil }, ['blocked != ?', true]) unless blocked_users.blank?
+      # User.update_all({:deleted => true , :deleted_at => Time.zone.now }, [" id in (?)", deleted_users]) unless deleted_users.blank?
+      User.where(id: deleted_users).update_all_with_publish({ deleted: true , deleted_at: Time.zone.now }, ['deleted != ?', true]) unless deleted_users.blank?
+
       # ActiveRecord::Base.connection.execute("update users set blocked = 1,blocked_at = '#{current_time.to_s(:db)}', deleted=0 where id IN (#{blocked_users*","}) ") unless blocked_users.blank?
       # ActiveRecord::Base.connection.execute("update users set deleted = 1,deleted_at = '#{current_time.to_s(:db)}' where id IN (#{deleted_users*","}) ") unless deleted_users.blank?
       deliver_spam_alert(table, query_str, {:actual_requesters => user_ids, 

@@ -1170,7 +1170,14 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :roles
+    resources :roles do 
+      collection do 
+        get :profile_image
+        get :users_list
+        post :update_agents
+      end
+    end
+
     namespace :social do
       resources :streams, :only => :index do
         collection do
@@ -2670,7 +2677,9 @@ Helpkit::Application.routes.draw do
           put :whitelist
           put :block_account
           get :user_info
+          get :check_contact_import
           put :reset_login_count
+          post :contact_import_destroy
         end
       end
 

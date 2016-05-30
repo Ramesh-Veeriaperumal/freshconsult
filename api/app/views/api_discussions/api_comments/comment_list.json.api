@@ -1,0 +1,16 @@
+JSON.generate(@comments.map do |comment|
+  {
+    id: comment.id,
+    topic_id: comment.topic_id,
+    forum_id: comment.forum_id,
+    user_id: comment.user_id,
+    answer: comment.answer,
+    published: comment.published,
+    spam: comment.spam,
+    trash: comment.trash,
+    created_at: comment.created_at.try(:utc),
+    updated_at: comment.updated_at.try(:utc),
+    body: comment.body_html,
+    body_text: comment.body
+  }
+end)

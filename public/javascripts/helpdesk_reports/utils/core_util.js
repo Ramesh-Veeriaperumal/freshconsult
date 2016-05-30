@@ -1512,6 +1512,8 @@ HelpdeskReports.CoreUtil = {
         return total_seconds > 3600 ? (h + hrs +' '+min + mins) : (min + mins +' '+sec + secs );
     },
     shortenLargeNumber: function(num, digits) {
+        if (num <= 9999) //Start using abbreviations from 10,000
+            return num;
         var units = ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'],
             decimal;
 

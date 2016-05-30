@@ -9,12 +9,15 @@ class Freshfone::Jobs::BusyResolve
     return unless freshfone_account_active?
     @account = Account.current
     @agent_id = args[:agent_id]
-    Rails.logger.debug "BusyResolve: Checking whether to update 
-      busy state for account #{@account.id} and user #{@agent_id}"
-    remove_busy_statuses if no_active_calls && active_supervisor_calls?
+    Rails.logger.debug "BusyResolve: Checking whether to update busy state for account #{@account.id} and user #{@agent_id}"
+    remove_busy_statuses if no_live_calls?
   end
 
   private
+
+    def self.no_live_calls?
+      no_active_calls && no_active_supervisor_calls?
+    end
 
     def self.freshfone_account_active?
       Account.current.freshfone_account && Account.current.freshfone_account.active?
@@ -30,8 +33,8 @@ class Freshfone::Jobs::BusyResolve
       @active_supervisor_calls = @account.supervisor_controls.supervisor_progress_call(@agent_id)
     end
 
-    def self.active_supervisor_calls?
-      return false unless supervisor_feature_launched? && active_supervisor_calls.any?
+    def self.no_active_supervisor_calls?
+      return true unless supervisor_feature_launched? && active_supervisor_calls.any?
       get_updated_supervisor_call_status @active_supervisor_calls.first
       active_supervisor_calls.blank?
     end

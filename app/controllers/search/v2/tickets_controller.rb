@@ -68,7 +68,7 @@ class Search::V2::TicketsController < ApplicationController
                                                               ).fetch(user_params.merge(ES_V2_BOOST_VALUES[:requester_autocomplete])
                                                                 )
         @requester_ids  = es_results['hits']['hits'].collect { |doc| doc['_id'].to_i }
-      rescue => e
+      rescue Exception => e
         Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
         NewRelic::Agent.notice_error(e)
         @requester_ids  = []

@@ -6,6 +6,7 @@ class Helpdesk::QuestsController < ApplicationController
 
   def index
     @quests = scoper.paginate(:page => params[:page], :per_page => 25)
+    @user_acheived_quests = current_user.achieved_quests.select(:quest_id).where("quest_id in (#{@quests.map(&:id).join(',')})").map(&:quest_id)
     if request.xhr? and !request.headers['X-PJAX']
       render :partial => "quest", :collection => @quests
     end

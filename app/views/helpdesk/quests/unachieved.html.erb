@@ -12,5 +12,5 @@
 </div>
 <%= will_paginate @quests %>
 <% content_for :pagefixed do %> 
-  <%= pageless(@quests.total_pages, "/helpdesk/quests")  %>
+  <%= pageless(@quests.total_pages, "/helpdesk/quests/unachieved")  %>
 <% end %>

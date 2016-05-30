@@ -56,19 +56,83 @@ module Search
           # If anything specfic like retry, can put code here
           #
           def handle_failure(response_from_es)
+            @response = {} #=> Received a non-successful http response.
+
             if response_from_es.timed_out?
-              # Retry?
+              raise Errors::RequestTimedOutException.new(response_from_es.body)
             elsif response_from_es.code == 0
-              # Server not up?
+              raise Errors::ServerNotUpException.new(response_from_es.body)
             elsif response_from_es.code == 400
-              # Raise BadRequestError
+              raise Errors::BadRequestException.new(response_from_es.body)
+            # elsif response_from_es.code == 401
+              # UNAUTHORIZED
+              # raise Errors::DefaultSearchException.new(response_from_es.body)
+            # elsif response_from_es.code == 402
+              # PAYMENT_REQUIRED
+              # raise Errors::DefaultSearchException.new(response_from_es.body)
+            # elsif response_from_es.code == 403
+              # FORBIDDEN
+              # raise Errors::DefaultSearchException.new(response_from_es.body)
+            # elsif response_from_es.code == 404
+              # NOT_FOUND
+              # raise Errors::DefaultSearchException.new(response_from_es.body)
+            # elsif response_from_es.code == 405
+              # METHOD_NOT_ALLOWED
+              # raise Errors::DefaultSearchException.new(response_from_es.body)
+            # elsif response_from_es.code == 406
+              # NOT_ACCEPTABLE
+              # raise Errors::DefaultSearchException.new(response_from_es.body)
+            # elsif response_from_es.code == 407
+              # PROXY_AUTHENTICATION
+              # raise Errors::DefaultSearchException.new(response_from_es.body)
+            # elsif response_from_es.code == 408
+              # REQUEST_TIMEOUT
+              # raise Errors::DefaultSearchException.new(response_from_es.body)
             elsif response_from_es.code == 409
               # Conflict from ES due to OCC failure
               # Silent Ignore
+            # elsif response_from_es.code == 410
+              # GONE
+            # elsif response_from_es.code == 411
+              # LENGTH_REQUIRED
+            # elsif response_from_es.code == 412
+              # PRECONDITION_FAILED
+            # elsif response_from_es.code == 413
+              # REQUEST_ENTITY_TOO_LARGE
+            # elsif response_from_es.code == 414
+              # REQUEST_URI_TOO_LONG
+            # elsif response_from_es.code == 415
+              # UNSUPPORTED_MEDIA_TYPE
+            # elsif response_from_es.code == 416
+              # REQUESTED_RANGE_NOT_SATISFIED
+            # elsif response_from_es.code == 417
+              # EXPECTATION_FAILED
+            # elsif response_from_es.code == 422
+              # UNPROCESSABLE_ENTITY
+            # elsif response_from_es.code == 423
+              # LOCKED
+            # elsif response_from_es.code == 424
+              # FAILED_DEPENDENCY
+            elsif response_from_es.code == 429
+              # TOO_MANY_REQUESTS
+              raise Errors::IndexRejectedException.new(response_from_es.body)
+            # elsif response_from_es.code == 500
+              # INTERNAL_SERVER_ERROR
+            # elsif response_from_es.code == 501
+              # NOT_IMPLEMENTED
+            # elsif response_from_es.code == 502
+              # BAD_GATEWAY
+            # elsif response_from_es.code == 503
+              # SERVICE_UNAVAILABLE
+            # elsif response_from_es.code == 504
+              # GATEWAY_TIMEOUT
+            # elsif response_from_es.code == 505
+              # HTTP_VERSION_NOT_SUPPORTED
+            # elsif response_from_es.code == 506
+              # INSUFFICIENT_STORAGE
+            else
+              raise Errors::DefaultSearchException.new(response_from_es.body)
             end
-            # Received a non-successful http response.
-
-            @response = {}
           end
 
           # Makes request, prepares response and logs it

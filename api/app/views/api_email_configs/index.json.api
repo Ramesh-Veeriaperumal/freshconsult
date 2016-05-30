@@ -1,0 +1,14 @@
+JSON.generate(@items.map do |email_config|
+  {
+    id: email_config.id,
+    name: email_config.name,
+    product_id: email_config.product_id,
+    to_email: email_config.to_email,
+    reply_email: email_config.reply_email,
+    group_id: email_config.group_id,
+    primary_role: email_config.primary_role,
+    active: email_config.active,
+    created_at: email_config.created_at.try(:utc),
+    updated_at: email_config.updated_at.try(:utc)
+  }
+end)

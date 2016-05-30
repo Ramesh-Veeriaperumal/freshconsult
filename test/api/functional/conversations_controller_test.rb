@@ -473,8 +473,8 @@ class ConversationsControllerTest < ActionController::TestCase
     n = note
     put :update, construct_params({ id: n.id }, params)
     assert_response 200
-    match_json(update_note_pattern(params, n.reload))
-    match_json(update_note_pattern({}, n.reload))
+    match_json(update_note_pattern(params, Helpdesk::Note.find(n.id)))
+    match_json(update_note_pattern({}, Helpdesk::Note.find(n.id)))
   end
 
   def test_update_deleted
@@ -724,11 +724,15 @@ class ConversationsControllerTest < ActionController::TestCase
 
   def test_ticket_conversations_eager_loaded_association
     parent_ticket = ticket
+    @controller.stubs(:decorate_objects).returns([])
+    @controller.stubs(:render).returns(true)
     get :ticket_conversations, controller_params(id: parent_ticket.display_id)
-    assert_response 200
-    assert controller.instance_variable_get(:@ticket_conversations).all? { |x| x.association(:attachments).loaded? }
-    assert controller.instance_variable_get(:@ticket_conversations).all? { |x| x.association(:schema_less_note).loaded? }
-    assert controller.instance_variable_get(:@ticket_conversations).all? { |x| x.association(:note_old_body).loaded? }
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:attachments).loaded? }
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:schema_less_note).loaded? }
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:note_old_body).loaded? }
+  ensure
+    @controller.unstub(:decorate_objects)
+    @controller.unstub(:render)
   end
 
   def test_ticket_conversations_with_pagination

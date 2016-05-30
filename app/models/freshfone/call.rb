@@ -189,6 +189,12 @@ class Freshfone::Call < ActiveRecord::Base
     self.active_call.first
   end
 
+  def self.outgoing_in_progress_calls
+    self.where("call_status in (?) and created_at >= ?", 
+       [CALL_STATUS_HASH[:'in-progress'], CALL_STATUS_HASH[:default]],
+       1.minute.ago.to_s(:db)).order('id DESC').first
+  end
+
   CALL_TYPE_HASH.each_pair do |k, v|
     define_method("#{k}?") do
       call_type == v
