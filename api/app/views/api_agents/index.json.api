@@ -1,0 +1,27 @@
+JSON.generate(@items.map do |agent|
+  user = agent.user
+  {
+    available: agent.available,
+    occasional: agent.occasional,
+    id: agent.user_id,
+    signature: agent.signature_html,
+    ticket_scope: agent.ticket_permission,
+    created_at: agent.created_at.try(:utc),
+    updated_at: agent.updated_at.try(:utc),
+    available_since: agent.active_since.try(:utc),
+    contact: {
+      active: user.active,
+      email: user.email,
+      job_title: user.job_title,
+      language: user.language,
+      last_login_at: user.last_login_at.try(:utc),
+      mobile: user.mobile,
+      name: user.name,
+      phone: user.phone,
+      time_zone: user.time_zone,
+      created_at: user.created_at.try(:utc),
+      updated_at: user.updated_at.try(:utc)
+    }
+  }
+end)
+

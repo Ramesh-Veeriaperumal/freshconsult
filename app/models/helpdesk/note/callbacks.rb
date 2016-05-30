@@ -72,20 +72,20 @@ class Helpdesk::Note < ActiveRecord::Base
 
   	def validate_schema_less_note
       return unless human_note_for_ticket?
-      emails = [schema_less_note.to_emails, schema_less_note.cc_emails, schema_less_note.bcc_emails]
+      emails = [schema_less_note.to_emails, schema_less_note.bcc_emails]
       if email_conversation?
         if schema_less_note.to_emails.blank?
           schema_less_note.to_emails = notable.from_email
           schema_less_note.from_email ||= account.primary_email_config.reply_email
         end
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
-        schema_less_note.cc_emails = fetch_valid_emails(schema_less_note.cc_emails)
         schema_less_note.bcc_emails = fetch_valid_emails(schema_less_note.bcc_emails)
       elsif reply_to_forward?
-        schema_less_note.to_emails, schema_less_note.cc_emails, schema_less_note.bcc_emails = reset_emails(emails)
+        schema_less_note.to_emails, schema_less_note.bcc_emails = reset_emails(emails)
       elsif note?
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
       end
+      schema_less_note.cc_emails = format_cc_emails_hash
     end
 
     def update_content_ids
@@ -129,13 +129,14 @@ class Helpdesk::Note < ActiveRecord::Base
           if notable.cc_email.present?
             if user.id == notable.requester_id
               Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
-            elsif notable.included_in_cc?(user.email)
-              additional_emails = [notable.requester.email] unless performed_by_client_manager?
-              # Using cc notification to send notification to requester about new comment by cc
-              Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {:additional_emails => additional_emails,
-                                                                                   :ignore_emails => [user.email]})
             end
           end
+        end
+        if inbound_email? && !self.private? && notable.included_in_cc?(user.email)          
+          additional_emails = [notable.requester.email] if !notable.included_in_cc?(notable.requester.email)
+          # Using cc notification to send notification to requester about new comment by cc
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {:additional_emails => additional_emails,
+                                                                                   :ignore_emails => [user.email]})
         end
         handle_notification_for_agent_as_req if ( !incoming && notable.agent_as_requester?(user.id))
       else    
@@ -358,6 +359,12 @@ class Helpdesk::Note < ActiveRecord::Base
         return false
       end
       return true
+    end
+
+    def format_cc_emails_hash
+      {   :cc_emails => fetch_valid_emails(schema_less_note.cc_emails_hash[:cc_emails]),
+          :dropped_cc_emails => fetch_valid_emails(schema_less_note.cc_emails_hash[:dropped_cc_emails]) 
+        }
     end
 
     def add_client_manager_cc

@@ -136,7 +136,7 @@ class SupportController < ApplicationController
                        :canonical => @page_canonical }
                        
       @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{@current_path}"
-                       
+      #additions in canonical URL is removed in the view E.g: /facebook added by FB routing is removed in faceboook view.
       @meta = HashDrop.new( @page_meta )
     end
 

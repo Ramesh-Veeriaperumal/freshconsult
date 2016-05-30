@@ -27,7 +27,9 @@ module Mobile::Actions::User
       							:is_customer, :user_recent_tickets, :is_client_manager, :company_name,
                     :can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :user_time_zone,
                     :can_view_time_entries, :can_edit_time_entries, :agent_signature,:company_id,:user_emails,:contact_fields,:custom_field ],
-      :include => { :company => { :only => [:id,:name,:account_id,:description,:note,:domains] }},         
+      :include => { :company => { :only => [:id,:name,:account_id,:description,:note,:domains], 
+                    :methods => [:company_custom_fields,:custom_field] },
+                    },         
       :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id,:address,
         :customer_id,:description,:helpdesk_agent,:language,:user_role ]
     }.merge(opts)
@@ -119,6 +121,10 @@ module Mobile::Actions::User
 
   def contact_fields
     Account.current.contact_form.contact_fields
+  end
+
+  def company_custom_fields
+    Account.current.company_form.custom_company_fields
   end
 
 end

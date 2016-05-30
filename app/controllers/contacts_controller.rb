@@ -127,9 +127,10 @@ class ContactsController < ApplicationController
   def unblock
     ids = params[:ids] || Array(params[:id])
     if ids
-      User.update_all({ :blocked => false, :whitelisted => true,:deleted => false, :blocked_at => nil }, 
-        [" id in (?) and (blocked_at IS NULL OR blocked_at <= ?) and (deleted_at IS NULL OR deleted_at <= ?) and account_id = ? ",
-         ids, (Time.now+5.days).to_s(:db), (Time.now+5.days).to_s(:db), current_account.id])
+      User.where(account_id: current_account.id, id: ids)
+      .where('blocked_at IS NULL OR blocked_at <= ?', (Time.now+5.days).to_s(:db))
+      .where('deleted_at IS NULL OR deleted_at <= ?', (Time.now+5.days).to_s(:db))
+      .update_all_with_publish({ blocked: false, whitelisted: true, deleted: false, blocked_at: nil }, {})
       begin
         Resque.enqueue(Workers::RestoreSpamTickets, :user_ids => ids)
       rescue Exception => e

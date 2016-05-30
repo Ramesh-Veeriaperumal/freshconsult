@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
   before_update :update_global_pod_domain 
 
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
-  after_update :update_freshchat_url, :if => :freshchat_enabled?
+  after_update :update_livechat_url_time_zone, :if => :freshchat_enabled?
 
   after_destroy :remove_global_shard_mapping, :remove_from_slave_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
@@ -48,7 +48,7 @@ class Account < ActiveRecord::Base
 
   def update_users_time_zone #Ideally this should be called in after_update
     if time_zone_changed? && !features.multi_timezone?
-      all_users.update_all(:time_zone => time_zone)
+      all_users.update_all_with_publish({ :time_zone => time_zone })
     end
   end
 
@@ -190,13 +190,13 @@ class Account < ActiveRecord::Base
       end
     end
 
-    def update_freshchat_url
-      if full_domain_changed? && !chat_setting.display_id.blank?
-        Resque.enqueue(Workers::Livechat, {
+    def update_livechat_url_time_zone
+      if (full_domain_changed? || time_zone_changed?) && !chat_setting.site_id.blank?
+        LivechatWorker.perform_async({
           :account_id    => id,
-          :worker_method => "update_site", 
-          :siteId        => chat_setting.display_id, 
-          :attributes    => { :site_url => full_domain }
+          :worker_method => "update_site",
+          :siteId        => chat_setting.site_id,
+          :attributes    => { :site_url => full_domain, :timezone => time_zone }
         })
       end
     end

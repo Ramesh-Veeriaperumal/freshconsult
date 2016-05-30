@@ -215,12 +215,12 @@ class BusinessCalendar < ActiveRecord::Base
       if account.features?(:chat)
         widgets = account.chat_widgets.find(:all, :conditions => {:business_calendar_id => id})
         widgets.each do |widget|
-          site_id = account.chat_setting.display_id
-          Resque.enqueue(Workers::Livechat, 
+          site_id = account.chat_setting.site_id
+          LivechatWorker.perform_async(
             {
-              :worker_method => "update_widget", 
-              :widget_id => widget.widget_id, 
-              :siteId => site_id, 
+              :worker_method => "update_widget",
+              :widget_id => widget.widget_id,
+              :siteId => site_id,
               :attributes => { :business_calendar => calendar_data}
             }
           )

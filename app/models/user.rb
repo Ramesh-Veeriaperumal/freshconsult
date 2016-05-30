@@ -481,6 +481,8 @@ class User < ActiveRecord::Base
   def is_client_manager?
     self.privilege?(:client_manager)
   end
+  alias_method :is_client_manager, :is_client_manager?
+
 
   # Marketplace
   def developer?
@@ -821,6 +823,10 @@ class User < ActiveRecord::Base
 
     def blocked_updated?
        @all_changes.has_key?(:blocked)
+    end
+
+    def privileges_updated?
+      @all_changes.has_key?(:privileges)
     end
 
     def company_info_updated?

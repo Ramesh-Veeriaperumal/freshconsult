@@ -77,7 +77,7 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                     enableTooltip: false,
                     cursor: 'default',
                     minPoint: true,
-                    suffix: (constants.percentage_metrics.indexOf(metric) > -1) ? '{value}%' : null,
+                    suffix: (constants.percentage_metrics.indexOf(metric) > -1) ? '{value}%' : undefined,
                     order: 'desc',
                     type: type == 'pdf' ? 'pdf' : 'page'
                 }

@@ -1,18 +1,19 @@
 class Auth::GoogleLoginAuthenticator < Auth::Authenticator
   include GoogleLoginHelper
+  include Helpdesk::Permission::User
 
   def after_authenticate(params)
     @origin_account.make_current
     native_mobile_flag = nmobile?(params)
     begin
-      verify_domain_user(@origin_account, native_mobile_flag)
+      domain_user = verify_domain_user(@origin_account, native_mobile_flag, {restricted_helpdesk_login: true})
     rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
       Rails.logger.debug "Error while Google Login SSO-> #{@origin_account.id} \n #{e.backtrace}"
       @result.flash_message = I18n.t(:'flash.g_app.domain_restriction')
       @result.redirect_url = "#{@portal_url}"
       return @result
     end
-
+    return google_login_invalid_redirect if domain_user.blank?
     random_key = SecureRandom.hex
     set_redis_for_sso(random_key)
     domain_arg = domain
@@ -37,6 +38,7 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
 
   private
     def construct_state_params env
+      env['rack.session']["_csrf_token"] ||= SecureRandom.base64(32)
       csrf_token = Base64.encode64(env['rack.session']["_csrf_token"])
       "portal_domain%3D#{env['HTTP_HOST']}%26at%3D#{csrf_token}"
     end
@@ -52,6 +54,12 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
 
     def csrf_token_from_state_params
       @state_params["at"].present? ? @state_params["at"][0] : nil
+    end
+
+    def google_login_invalid_redirect
+      @result.redirect_url = "#{@portal_url}/support/login?restricted_helpdesk_login_fail=true"
+      @result.invalid_nmobile = true
+      @result
     end
 
 end

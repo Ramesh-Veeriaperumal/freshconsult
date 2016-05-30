@@ -67,6 +67,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     elsif allowed? env
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
+        Rails.logger.error("API V1 Throttled :: Account: #{@account_id}, Host: #{@host}, Count: #{@count}, Time: #{Time.now}")
         remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
         increment_others_redis(key)
         value = get_others_redis_key(key).to_i
@@ -85,7 +86,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   def by_pass_throttle?
     return true if  SKIPPED_SUBDOMAINS.include?(@sub_domain)
     return true unless @mobihelp_auth.blank?
-    return true if @mobile_user_agent[/#{AppConfig['app_name']}_Native/].present? 
+    return true if !@mobile_user_agent.blank? && @mobile_user_agent[/#{AppConfig['app_name']}_Native/].present? 
 
     SKIPPED_PATHS.each{|p| return true if @path_info.include? p}
     return false if API_FORMATS.any?{|x| @api_path.include?(x)}

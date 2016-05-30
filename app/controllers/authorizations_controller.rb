@@ -7,6 +7,7 @@ class AuthorizationsController < ApplicationController
   include Integrations::OauthHelper
   include Integrations::Constants
   include HTTParty
+  include Helpdesk::Permission::User
 
   skip_before_filter :check_privilege, :verify_authenticity_token
   skip_before_filter :set_current_account, :redactor_form_builder, :check_account_state, :set_time_zone,
@@ -146,6 +147,7 @@ class AuthorizationsController < ApplicationController
       @auth = Authorization.find_from_hash(@omniauth,user_account.id)
       fb_profile_id = @omniauth['info']['nickname']
       @current_user = user_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank? and !fb_profile_id.blank?
+      return handle_fb_redirect(user_account, @portal_id) if !@current_user && !has_login_permission?(fb_email, user_account)
       if create_for_sso(@omniauth, user_account)
         curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
         random_hash = Digest::MD5.hexdigest(curr_time)

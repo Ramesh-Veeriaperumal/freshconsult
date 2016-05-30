@@ -171,6 +171,7 @@ namespace :scheduler do
         Social::FacebookPage.current_pod.send(FACEBOOK_TASKS[task_name][:account_method]).each do |fb_page|
           Account.reset_current_account
           account = fb_page.account
+          next unless account
           account.make_current
           next if (check_if_premium?(account) or !fb_page.valid_page?)
           class_constant.perform_async({:fb_page_id => fb_page.id}) 
@@ -191,6 +192,7 @@ namespace :scheduler do
         Social::TwitterHandle.current_pod.send(TWITTER_TASKS[task_name][:account_method]).each do |twitter_handle|
           Account.reset_current_account
           account = twitter_handle.account
+          next unless account
           account.make_current
           next unless twitter_handle.capture_dm_as_ticket
           class_constant.perform_async({:twt_handle_id => twitter_handle.id}) 

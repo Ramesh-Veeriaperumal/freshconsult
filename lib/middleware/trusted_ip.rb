@@ -22,6 +22,8 @@ class Middleware::TrustedIp
     execute_request(env) unless api_request?(req_path)
 
     if env['SHARD'].present?
+      raise DomainNotReady unless env['SHARD'].ok?
+
       Sharding.run_on_shard(env['SHARD'].shard_name) do
         account_id = env['SHARD'].account_id
         if Account.current.try(:id) == account_id

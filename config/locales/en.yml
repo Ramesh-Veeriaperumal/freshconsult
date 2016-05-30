@@ -197,6 +197,9 @@ en:
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
   attachment_limit_failed_message: One or more attachments discarded since the %{size} limit was exceeded.
+  cc_dropped_message: The following cc's are dropped due to moderation - %{emails}
+  emails_dropped_message: The following emails are dropped due to moderation - %{emails}
+  emails_added_to_cc: Email(s) successfully added to CC.
   attach_file_local: Attach a file from your computer
   attach_file: Attach a file
   dropbox_attach_label: Attach from
@@ -770,6 +773,7 @@ en:
           import_visitor_posts: "Convert all Visitor Posts to tickets"
           import_company_posts: "For company posts, convert individual visitor comments to tickets when they have these keywords"
           assign_to_gp: "Assign tickets to group"
+          include_helptext: "examples: support, help, refund, order"
         convert_dm:
           header: "Convert all Messages to tickets"
           threading_interval: "Set Ticket Threading Interval"
@@ -952,6 +956,9 @@ en:
         simple_none: "None"
         auto_suggest_solutions: "Auto suggest solutions while creating a new ticket"
         auto_suggest_solutions_help: "This also applies to the search feature inside feedback widget."
+        restricted_login_signup: "Sign up and login has been restricted to specific domains"
+        important: "Important"
+        view_settings: "View Settings"
         captcha: "Enable CAPTCHA to help avoid spam"
         forum_captcha: "Logged in users should enter CAPTCHA to create topic"
         view_solutions: "Who can view solutions"
@@ -1393,7 +1400,7 @@ en:
 
       thanks_contents:
         title_text: Thank you message for Customer satisfaction rating
-        title_text_v2: Thank you message for customer satisfaction survey
+        title_text_v2: Thank you message for Customer Satisfaction Survey
         solution_article_link_text: Your portal layout will be applied to this page. <a target='_blank' href='https://support.freshdesk.com/solution/articles/217757-customizing-your-thank-you-page'>How to change it?</a>
         message_text: Thank you for your valuable feedback.
         label_text: Add a feedback survey
@@ -1536,7 +1543,9 @@ en:
         recharge_quantity: "Recharge quantity:"
         day_passes: "Day Passes"
         helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
-    widget_config:
+    widget_config:    
+      errors:
+        invalid_requester: Invalid Requester
       index:
         feedbackwidget_embedded_tab: Embedded Widget
         feedbackwidget_popup_tab: Popup Widget
@@ -1928,6 +1937,18 @@ en:
         default_group : Default Group
     roles:
       title: Agent Roles
+      agent_label: Agent
+      agents_label: Agents
+      no_agent_label: No Agent
+      add_agent_label: Add Agent
+      add_label: Add
+      no_label: No
+      done_label: Done
+      manage_label: Manage
+      save_label: Save
+      saving_label: Saving...
+      no_agent_added: No Agent added
+      cancel_label: Cancel
       new: New Role
       edit: Edit Role
       default_role: Default Role
@@ -2014,7 +2035,7 @@ en:
         import: Import data from Zendesk
         agent: Agents
         feedback: Feedback widget
-        freshchat: Live Chat
+        livechat: Live Chat
         integrations: "Integrations"
         apps: Apps
         dispatcher: Dispatch'r
@@ -2266,6 +2287,7 @@ en:
       tickets:
         create:
           success: Your ticket has been created.
+          success_cc_drop: Your ticket has been created, but the following ccs were dropped due to moderation.
       create:
         success: "Portal has been enabled for '%{product_name}'"
         failure: "Portal could not be enabled"
@@ -2482,6 +2504,9 @@ en:
         success: Instructions to reset your password have been emailed to you. Please check your email.
     login:
       verify_credentials: Couldn't log you in. Please verify your credentials
+      login_permission_denied: Sorry! You do not have enough permission to access this page. 
+      signup_permission_denied: Sorry! You do not have enough permission to access this page.
+      contact_administrator: Please contact your Account Administrator.
       sso:
         expected_params: "One or more of the expected parameters name, email, and hash are missing."
         invalid_time_entry: "Invalid time entry"
@@ -2863,6 +2888,8 @@ en:
       info2: You probably want your customers and support agents to access your support portal in your own domain. You can point your support URL at yourcompany.freshdesk.com to your own domain, like support.mycompany.com.
       info3: "All basic settings of your helpdesk can be customized here such as - language, time zone and colour schemes."
       info4: The 'Edit Portal' option will let you configure the portal for your product.
+      info5: You can restrict the access to your helpdesk to the contacts that you add and to certain domains. Others will not be able to sign up, log in or submit tickets. You can read more about it
+      info6: here.
     cancel:
       cancel_account: Cancel your Freshdesk account
       info_text: Please take a moment to tell us why you want to cancel your account. Perhaps we could still help...
@@ -4349,6 +4376,7 @@ en:
   file_url: Full XML Export URL
   how_to: Question
   customers: Customers
+  enter_valid_domains: "is invalid. Enter valid domains"
   companies:
     no_contacts: '%{no_contacts} contacts'
     add_contact: 'Add Contact'
@@ -4381,9 +4409,9 @@ en:
   widget_config_tour_text: Help me get started with the feedback widget
   chatwidget_help_content:
     title: Live Chat
-    info1: Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site.
+    info1: Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site.
     info2: Each chat session will capture meta information about visitors including their location, device, etc and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript.
-    info3: <a href="https://support.freshdesk.com/support/solutions/folders/246519" target="_blank" >Learn more about using live chat inside Freshdesk</a>
+    info3: <a href="https://support.freshdesk.com/support/solutions/folders/246519" target="_blank" >Learn more about using Live Chat inside Freshdesk</a>
   low: Low
   agents: Agents
   header:
@@ -4944,7 +4972,7 @@ en:
     delete_btn: Delete
     status: Status
     source: Source
-    tags: Tag
+    tag_condition: Tag
     verify_human: To verify you are human, please type the given scrambled letters
     edit_btn: Edit
     requester: Requester
@@ -5064,6 +5092,8 @@ en:
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
     info8: More info regarding this company like address, phone number, website etc
+    info13: Contacts whose email addresses contain these domains will automatically associated to this company
+    info14: Contacts whose email addresses contain these domains will be whitelisted and automatically associated to this company
     info12: "eg: mycompany1.com, mycompany2.com"
     errors:
       required_field: cannot be blank
@@ -5143,6 +5173,20 @@ en:
     change_favicon: "Change favicon"
     use_default: "Use default"
     last_published: "Portal was last published %{last_published} ago"
+    anyone: "Anyone"
+    users_from_domains: "Users from selected domains"    
+    search_domain: Search Domain
+    company_domain: Company Domains
+    domains_allowed: Only customers from these domains will be allowed to sign up and log in.
+    twitter_disabled: Twitter login will be disabled for customers and agents for security purposes.
+    important: Important
+    includes_contacts_company_domain: (includes existing contacts and company domains)
+    permission: 
+      helpdesk_restrictions: Helpdesk restrictions
+      who_can_create: Who can log in (or) sign up (or) create tickets?
+      users_from_selected_domains: Users from whitelisted domains
+      includes_existing_contacts: includes existing contacts
+      users_from_any_domain: Users from any domain
   lead: Lead
   comments: Comments
   forum_confirm_msg1: Are you sure you want to delete this category?
@@ -5642,6 +5686,7 @@ en:
         article_feedback: Article Feedback
         my_article_feedback: My Articles Feedback
         archived: Archive
+        invalid_requester: Invalid requester
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
@@ -7112,7 +7157,7 @@ en:
           filter_by: Satisfaction Views
           view_report_date: View reports during
           helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
-      freshchat:
+      livechat:
         report_title: "Live Chat Summary"
         filter_by_title: "Filtered by"
         time_period: "Time Period"
@@ -7262,6 +7307,7 @@ en:
   no_of_seconds: "%{seconds} seconds"
   change_deleted_status_msg: "Please change the status as the current status is deleted"
   ticket_cc_email_more: "more"
+  dropped_due_to_moderation: Dropped due to moderation
   fwd_to: "Forward"
   add_cc: Add Cc
   add_a_cc: Add a CC
@@ -7297,7 +7343,7 @@ en:
   error_in_plan: "Error changing the plan"
   change_free_plan: "Change your Free plan"
   billing_info: "Subscription information"
-  forwarded_email: "Forwarded email"
+  forwarded_email: "Forwarded email" 
   forwarded_to: "Forwarded to"
   replied_to: "Replied to"
   notified_to: "Notified to"
@@ -7613,11 +7659,11 @@ en:
       schedule_header: Schedule Report
       read_more: How to schedule report?
       schedule_success: Report has been scheduled successfully.
-      limit_exceeded_message: You have exceeded the maximum limit. You are allowed to create %{count} saved filters per report
+      limit_exceeded_message: You can only save %{count} filters per report. Please delete a saved report and try again.
       tooltip: Scheduled every %{period}
       save: Save
       cancel: Cancel
-      desc: "Hello, \n\nPlease find a copy of %{report_name} - %{schedule} report with this email.\n\n\n Thanks"
+      desc: "Hi, \n\nHere is your %{schedule} %{report_name} report.\n\nHappy number crunching!"
       message:
         week_tmpl: "%{name} for <strong>last %{day}</strong> to <strong>%{previous_day}</strong> will be sent along with below email <strong>every %{day}</strong> at <strong>%{time}</strong> time"
         week_friday_tmpl: "%{name} for <strong>last %{day}</strong> to <strong> this %{previous_day}</strong> will be sent along with below email <strong>every %{day}</strong> at <strong>%{time}</strong> time"
@@ -7625,16 +7671,16 @@ en:
         monthly_tmpl: "%{name} for <strong>last month</strong> will be sent along with below email <strong>first of every month</strong> at <strong>%{time}</strong> time"        
     scheduled_reports:
       dialog:
-        email : Email
-        generate_report : Generate report
-        on : On
-        subject : Subject
-        desc : Description
+        email: Email
+        generate_report: Generate report
+        on: On
+        subject: Subject
+        desc: Description
       errors:
         emails_limit: You can add maximum %{num} emails
         invalid_email: Invalid emails
-        acc_max_limit: An account can have maximum of %{count} scheduled tasks
-        user_max_limit: A user can create maximum of %{count} scheduled tasks
+        acc_max_limit: You can only schedule %{count} reports per account. Please delete a schedule and try again.
+        user_max_limit: You can only create %{count} schedules. Please delete a schedule and try again.
         general: Some of the fields in form are invalid
         disabled : Reports with custom date ranges cannot be scheduled
         invalid_frequency: Invalid frequency
@@ -7778,7 +7824,7 @@ en:
       first_response_sla_violated: All first response SLA violated tickets
       resolution_sla_compliant: All resolution SLA compliant tickets
       resolution_sla_violated: All resolution SLA violated tickets
-      no_tickets: No Tickets to display
+      no_tickets: No tickets to display
       compliant: Compliant
       violated: Violated
     v2_helptext:
@@ -8582,12 +8628,12 @@ en:
         trial_button_text: "Enable free trial version"
         trial_or: "OR"
         compare_trial_and_full: "Compare full and free trial version"
-  freshchat:
+  livechat:
     feature_request:
       title: "Welcome to Live Chat"
       heading: "Support your customers with Live Chat"
-      info1: "Customize live chat widget for your brand and business"
-      info2: "Enable live chat for your support portal and website"
+      info1: "Customize Live Chat widget for your brand and business"
+      info2: "Enable Live Chat for your support portal and website"
       info3: "Track all chat transcripts and convert them to tickets"
       read_more: "Read more"
       email_subject: "Request for Live Chat Feature from %{account_name}"
@@ -8600,69 +8646,64 @@ en:
     widget: "Widget"
     messages: "Messages"
     set_default_msgs: "Default messages"
-    minimize_chat_title: "Title when chat is minimized"
-    maximize_chat_title: "Title when chat is maximized"
-    welcome: "Welcome Message"
-    thank_title: "Thank you/Closure Message"
-    wait_title: "Wait/On hold Message"
+    header_title: "Header"
+    welcome: "Welcome message"
+    thank_title: "Thank you message"
+    wait_title: "Message while waiting for agent to join"
     is_typing_header: "When agent/visitor <br> starts typing"
     prechat_title: "Pre-chat form"
-    prechat_desc: "Collect personal details about your visitors before you start chatting with them. When this is on, visitors will need to submit the form to begin a chat."
-    prechat_msg: "Pre-Chat Message"
+    prechat_desc: "Collect details about your visitors so you have better context while you are chatting with them. When this is enabled, visitors will need to submit the form to initiate a conversation."
+    prechat_msg: "Pre-chat message"
+    prechat_dropdown_msg: "You can associate your dropdown choices to different groups in the Preferences tab. Chats will be assigned to the specified groups accordingly."
     welcome_tip: "Text will appear at the top of chat window"
     proactive_title: "Proactive chat"
-    minimized_title: "Let's talk!"
-    maximized_title: "Chat in progress"
-    welcome_message: "Hi! How can we help you today?"
-    thank_message: "Thank you for chatting with us. If you have additional questions, feel free to ping us!"
-    wait_message: "One of us will be with you right away, please wait."
     typing_message: "is typing..."
     msgbox_placeholder_title: "Reply box placeholder"
-    msg_waiting_agent_title: "Status Message while waiting for agent"
     msg_joining_agent_title: "Message when agent joins chat"
     msg_leaving_agent_title: "Message when agent leaves chat"
     chat_transfer_msg_title: "Chat transfer message"
+    end_chat_confirm_msg_title: "End chat confirmation message"
+    agent_network_disconnect_msg_title: "Message when agent gets disconnected"
     help_text_wait_onhold_msg: "This message will appear when visitor is waiting for an agent for more than one minute"
-    prechat_message: "We can't wait to talk to you. But first, please tell us a bit about yourself."
-    showform: "Show Pre-chat form"
-    proactive_note: "Note: Pre-chat form will not be shown when a chat is proactively initiated."
-    proactive_time: "Greet when more than %{seconds} on the same page"
-    procative_info: "Automatically initiate chat conversations with visitors if they spend more than a certain amount of time on the same page"
-    chat_availability: "Chat Availability"
+    showform: "Show pre-chat form"
+    proactive_note: "Note: Pre-chat form will not be shown when a chat is proactively initiated. You can still manually add all visitor details."
+    proactive_time: "Initiate chat when more than %{seconds} on the same page"
+    procative_info: "Automatically initiate chat conversations with visitors if they spend more than a certain amount of time on the same page."
+    chat_availability: "Chat availability"
     show_chat_hours: "Show chat"
-    show_chat_hours_msg: "Set the time during which you will be online and available to accept chats. "
+    show_chat_hours_msg: "Set when your chat window will be available to your visitors."
+    chat_hours_msg_note: "Note: Chat window will be hidden outside of this time."
     business_hours: "During business hours"
     anytime: "Always (24/7)"
-    business_calendar: "Select Business Hour"
+    business_calendar: "Select business hour"
     texton: "On"
     textoff: "Off"
     form_details: "Form details"
-    copy_to_clipboard: "Copy to Clipboard"
+    copy_to_clipboard: "Copy to clipboard"
     copied: "Copied!!"
     show: "Show"
     required: "Required"
     name: "Name"
-    phone: "Phone Number"
+    phone: "Phone"
     mail: "Email"
     textfield: "Textfield"
     dropdown: "Dropdown"
-    dropdown_choices: "Dropdown Choices"
+    dropdown_choices: "Dropdown choices"
     dropdown_info: "Enter each choice in a newline"
     edit: "Edit"
     cancel: "Cancel"
     save: "Save"
     done: "Done"
     me: "Me"
-    window_position: "Window Position"
-    window_offset: "Window Offset"
+    window_position: "Position"
+    window_offset: "Offset"
     align_to: "Align to"
     bottom_left: "Bottom Left"
     bottom_right: "Bottom Right"
     integrate_msg: "Copy & paste this code before the last </body> tag on your website or app"
-    integrate_freshchat_title: "Integrate live chat into your website and applications"
+    integrate_livechat_title: "Integrate Live Chat into your website and applications"
     custom_chat_window: "Chat window"
-    text_placeholder: "Your Message"
-    chatbox_bgcolor: "Window Color"
+    chatbox_bgcolor: "Color"
     in_conversation: "In-conversation"
     available_agents: "Available Agents"
     new_visitors: "New Visitors"
@@ -8679,7 +8720,8 @@ en:
     unblock: "Unblock"
     visitor: "Visitor"
     transfer_agent: "Transfer Chat"
-    agent_transfer_msg: "Pick an agent to transfer"
+    no_agents_available: "No Agents Available"
+    agent_transfer_msg: "Pick an agent to transfer your chat"
     search_agent: "Search agent"
     transfer: "Transfer"
     block_visitor: "Block Visitor"
@@ -8701,14 +8743,7 @@ en:
     back: "Back"
     select_location:  "Select Location"
     valid_code: "Please enter a valid color value"
-    visitor_left_chat_msg: "Visitor has left the chat."
-    visitor_disconnect_msg: "Visitor has been disconnected."
-    agent_transfer_accept_msg: "{{agent_name}} has accepted. You can now close this chat."
-    agent_transfer_reject_msg: "{{agent_name}} has rejected your transfer request."
-    agent_transfer_missed_msg: "{{agent_name}} has not picked up the chat. Please try again."
     chat_inactive_for_10_min: "This chat has been inactive for the past 10 minutes. If you have completed your conversation, please close the chat."
-    agent_transfer_waiting_msg: "Waiting for {{agent_name}} to accept"
-    agent_chat_accept_msg: "You have accepted the chat."
     close_chat_tooltip: "End chat"
     minimise_chat_tooltip: "Minimise"
     settings_chat_tooltip: "Options"
@@ -8716,7 +8751,6 @@ en:
     agent_chat_placeholder: "Type your message here"
     visitor_block_notifier_msg: "This visitor has been blocked"
     visitor_unblock_notifier_msg: "This visitor has been unblocked"
-    transfer_accepted_agent_msg: "Chat was transfered from {{agent_name}}"
     last_message: "Last Message..."
     chat_recent_empty_tip: "No recent messages"
     add_agent_to_chat: "No other agents logged in"
@@ -8728,8 +8762,9 @@ en:
     update_success_msg: "Chat settings saved."
     update_error_msg: "Error while updating chat settings."
     recent_messages: "Recent Messages"
+    chat: "Chat"
     agents: "Agents"
-    convert_to_ticket: "Convert to Ticket"
+    convert_to_ticket: "Convert to ticket"
     create_ticket_tip: "Save your chat transcript as a new ticket or add as a note to an existing one"
     note_success: "New note has been added to the ticket"
     note_error: "Error while adding note!"
@@ -8748,6 +8783,7 @@ en:
     info_msg: "Creating chat..."
     join_chat: "Joining chat..."
     chatting_with: "Chatting with"
+    chatted_with: "Chatted with"
     returning_visitor: "Returning Visitor"
     new_visitor: "New Visitor"
     unknown: "Unknown"
@@ -8774,10 +8810,10 @@ en:
     saving: "Saving..."
     begin_chat: "Begin chat"
     chatsettings_save: "Your changes have not been saved. Save changes?"
-    transfer_accepted_msg: "Visitor transfer accepted"
-    transfer_request_timeout_msg: "Transfer request timed out"
     click_to_go_online: "Not accepting visitor chats"
     click_to_go_offline: "Accepting visitor chats"
+    view_recent_conversation: "View recent conversations"
+    view_all_messages: "View all messages"
     fetching: "Please wait"
     loading: "Loading..."
     last_7_days: "Last 7 days"
@@ -8786,42 +8822,37 @@ en:
     date_range: "Date Range"
     date_invalid: Invalid date
     joining_chat: "Joining chat"
+    view_chat_link: "View Chat"
+    end_chat_thank_msg: "Thank you!!!"
+    end_chat_end_title: "End"
+    end_chat_cancel_title: "Cancel"
     cobrowse_request : "Waiting for visitor to accept your request"
-    visitor_cobrowse_request : "Can agent control your current screen? "
-    cobrowsing_start_msg : "Your screenshare session has started"
-    cobrowsing_stop_msg : "Your screensharing session has ended" 
-    cobrowsing_deny_msg : "Your request was declined"
-    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"
-    cobrowsing_controlling_screen : "You are controlling the visitor’s screen"
-    cobrowsing_request_control : "Request visitor for control"
-    cobrowsing_stop_request : "End your screensharing session"
-    cobrowsing_request_control_rejected : "Your request was declined"
-    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"
-    cb_viewing_screen_vi : "Agent can view your screen "
-    cb_controlling_screen_vi : "Agent can control your screen"
+    visitor_cobrowse_request : "Can agent control your current screen? "    
+    cobrowsing_start_msg : "Your screenshare session has started"   
+    cobrowsing_stop_msg : "Your screensharing session has ended"    
+    cobrowsing_deny_msg : "Your request was declined"   
+    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"    
+    cobrowsing_controlling_screen : "You are controlling the visitor’s screen"    
+    cobrowsing_request_control : "Request visitor for control"    
+    cobrowsing_stop_request : "End your screensharing session"    
+    cobrowsing_request_control_rejected : "Your request was declined"   
+    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"    
+    cb_viewing_screen_vi : "Agent can view your screen "    
+    cb_controlling_screen_vi : "Agent can control your screen"    
     cb_give_control_vi :  "Allow agent to control your screen"
-    agent_joined_msg: "{{agent_name}} has joined the chat"
-    agent_transfered_msg: "Your chat has been transferred to {{agent_name}}"
-    agent_reopen_chat_msg: "{{agent_name}} reopened the chat"
-    visitor_side_inactive_msg: "This chat has been inactive for the past 20 minutes."
-    agent_disconnect_msg: "{{agent_name}} has been disconnected"
-    agent_left_msg: "{{agent_name}} has left the chat"
-    agent_transfer_msg_to_visitor: "Your chat has been transferred to {{agent_name}}"
     help_text_agent_msg: "Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and Helpdesk Name in your messages"
-    connecting_msg: "Waiting for an agent"
-    non_availability_message: "Our agents are unavailable right now. Sorry about that, but please leave us a message and we'll get right back."
     date_invalid: Invalid date
     installation: "Widget Code"
     visitor_form: "Visitor Form"
     preferences: "Preferences"
     intro_title: "Why Live Chat?"
-    intro: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
+    intro: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
     enable_chat: "Enable Live Chat"
-    learn_freshchat: "Learn more about Live Chat"
-    support_portal: "Chat on support portal"
-    logged_in_users: "Logged in users only"
+    learn_livechat: "Learn more about Live Chat"
+    support_portal: "Chat for your support portal"
+    logged_in_users: "Only Logged in users"
     everyone: "Everyone"
-    portal_desc: "Support your customers in real-time within your Freshdesk portal."
+    portal_desc: "While the chat widget on your website is visible to everyone, you can enable it on your support portal only for your customers."
     portal_option_info: "Show chat widget for"
     maximum_chat_title: "Maximum number of visitor chats"
     maximum_change_label: "Edit"
@@ -8829,13 +8860,12 @@ en:
     maximum_chat_error: "You have reached the maximum chat limit."
     transfer_limt_exceeded_msg: " has reached his capacity. Please transfer the chat to another agent."
     loading_new_archives: "Loading new archives..."
-    non_availability_msg_header: "Non-availability Message"
-    non_availability_msg_help: "To hyperlink a text enclose the Phrase within '# #'"
+    non_availability_msg_header: "Message when agents are away"
+    non_availability_msg_help: "To hyperlink a phrase in your message that will point to your URL, enclose it within '# #'"
     feedback_widget: "Open feedback widget"
     new_ticket_page: "Goto new ticket page on your support portal"
     custom_link: "Open a custom link"
-    use_custom_link: "Use Custom Link"
-    enter_custom_link: "Enter URL"
+    use_custom_link: "Redirect visitors to a separate page "
     url_error_msg: "Please enter a valid URL"
     widget_option_info: "If feedback widget not available, new ticket page will be opened"
     no_matching_agents: "No matching agents"
@@ -8855,8 +8885,8 @@ en:
     desc: "Descending"
     sort_order: "Sort Order"
     all : "All"
-    visitor_initiated : "Visitor Initiated"
-    agent_initiated : "Agent Initiated"
+    visitor_initiated_chat : "Visitor Initiated"
+    agent_initiated_chat : "Agent Initiated"
     agent_to_agent : "Agent to Agent"
     missed_chat : "Missed"
     spam_chat: "Spam"
@@ -8870,37 +8900,37 @@ en:
     text_no: "No"
     enabled: "Enabled"
     disabled: "Disabled"
-    offline_message: "Offline/Missed Chat Messages"
-    help_offline_title: "Title"
-    offline_title: "Leave us a message!"
-    offline_thank_msg: "Thank you for writing to us. We will get back to you shortly."
-    offline_thank_header_msg: "Thank you!"
-    help_offline_minimized_msg: "Title when chat is minimized"
-    help_offline_maximized_msg: "Title when chat is maximized"
-    help_offline_thank_msg: "Thank you message"
-    help_offline_thank_header_msg: "Thank you header"
-    missed_chat_title: "Missed Chat form"
-    missed_chat_desc: "This form is used to collect the visitor details when you are not available"
-    offline_chat_window: "Offline chat window"
+    offline_message: "Away messages"
+    help_offline_title: "Header"
+    help_offline_minimized_msg: "Chat header (minimised)"
+    help_offline_maximized_msg: "Chat header (maximised)"
+    help_offline_thank_msg: "Confirmation message"
+    help_offline_thank_header_msg: "Header after message is submitted"
+    missed_chat_title: "Missed chat form"
+    missed_chat_desc: "Collect visitor details when you are not available."
+    outside_business_hours: "Outside business hours"
     offline_chat_window_desc: "Applicable during non-business hour or when agents offline."
     hide_offline_chat_window: "Hide chat window"
-    show_offline_chat_window: "Show missed chat form for visitors to leave a message"
+    show_offline_chat_window: "Show non-availability form for visitors to leave a message"
     missed_chat_subject: "Sorry we missed your chat on %{date}"
     missed_chat_content: "Created via Chat. Conversation with %{visitor_name} was missed."
     offline_chat_subject: "Offline message from %{visitor_name} on %{date}"
     offline_chat_content: "Created via Chat. Offline message from %{visitor_name}."
     missed_chat_info: "Chat has been missed.!"
-    change_livechat_tone: "LiveChat Notification Tone"
+    change_livechat_tone: "Incoming chat notification alert"
     message: "Message"
+    enabling: "Enabling"
     unmark_spam: "Mark As Not Spam"
     mark_spam: "Mark As Spam"
     convert: "Convert"
-    add_note: "Add Note"
+    add_note: "Add as note"
     conversation: "Conversation"
     and: "and"
     via_widget: "via"
+    waited_for: "Waited for"
+    duration: "Duration"
     reported: "reported"
-    view_ticket: "view ticket"
+    view_ticket: "View ticket"
     agent_parallel_accept_error: "You have already initiated a chat, please try after a few seconds."
   facebook_tab:
     remove_tab: "Remove page Tab"

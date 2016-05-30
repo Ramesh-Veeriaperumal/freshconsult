@@ -126,11 +126,15 @@
 				if(responsiveWidget != "no") {
 					jQuery("#helpdesk_ticket_subject").after("<a href='#' id='subject-mobile-counter'></a>")
 					jQuery('.mobile-search-icon,#subject-mobile-counter').click(function(ev) {
-						ev.preventDefault()
-						jQuery('.modal-body').toggleClass('modal-body-hide');
-						jQuery('.modal-panel').toggleClass('modal-panel-show');
-						jQuery('.mobile-search-icon').toggleClass('mobile-search-icon-selected');
-						jQuery('#helpdesk_ticket_submit').toggle();
+						if(!jQuery('.feedback-wrapper').hasClass('embedded-wrapper')){
+							ev.preventDefault('#subject-mobile-counter');
+							jQuery('.modal-body').toggleClass('modal-body-hide');
+							jQuery('.modal-panel').toggleClass('modal-panel-show');
+							jQuery('.mobile-search-icon').toggleClass('mobile-search-icon-selected');
+							jQuery('#helpdesk_ticket_submit').toggle();
+						}
+						if(jQuery('.feedback-wrapper').hasClass('embedded-wrapper'))
+					        jQuery('#fs-input').focus();
 					});
 				}
 			});

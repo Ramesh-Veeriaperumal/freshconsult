@@ -1,7 +1,5 @@
 module MemcacheKeys
 
-  LEADERBOARD_MINILIST = "v2/HELPDESK_LEADERBOARD_MINILIST:%{agent_type}:%{account_id}"
-
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
@@ -12,7 +10,7 @@ module MemcacheKeys
 
   ACCOUNT_AGENTS = "v4/ACCOUNT_AGENTS:%{account_id}"
 
-  ACCOUNT_AGENTS_DETAILS = "v2/ACCOUNT_AGENTS_DETAILS:%{account_id}"
+  ACCOUNT_AGENTS_DETAILS = "v3/ACCOUNT_AGENTS_DETAILS:%{account_id}"
 
   ACCOUNT_SUBSCRIPTION = "ACCOUNT_SUBSCRIPTION:%{account_id}"
 
@@ -132,7 +130,10 @@ module MemcacheKeys
 
   ACCOUNT_PASSWORD_POLICY = "v1/ACCOUNT_PASSWORD_POLICIES:%{account_id}:%{user_type}"
 
+  HELPDESK_PERMISSIBLE_DOMAINS = "v1/HELPDESK_PERMISSIBLE_DOMAINS:%{account_id}"
+
   LEADERBOARD_MINILIST_REALTIME = "v2/LEADERBOARD_MINILIST_REALTIME:%{account_id}:%{agent_type}"
+
 
   class << self
 

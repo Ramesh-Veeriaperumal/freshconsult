@@ -7,6 +7,7 @@ class SsoController < ApplicationController
   before_filter :check_csrf_token, :only => [:portal_google_sso]
   before_filter :set_current_user, :only =>[:portal_google_sso, :marketplace_google_sso]
   skip_after_filter :set_last_active_time
+  before_filter :form_authenticity_token, :only => :mobile_app_google_login, :if => :is_native_mobile?
 
 
   def mobile_app_google_login

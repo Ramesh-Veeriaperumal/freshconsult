@@ -129,7 +129,7 @@ module Helpdesk::DashboardHelper
   end
 
   def chat_activated?
-    !current_account.subscription.suspended? && feature?(:chat) && !!current_account.chat_setting.display_id
+    !current_account.subscription.suspended? && feature?(:chat) && !!current_account.chat_setting.site_id
   end
 
   def chat_active?
@@ -270,3 +270,4 @@ module Helpdesk::DashboardHelper
     'hide' unless (!freshfone_trial_states? && freshfone_below_threshold?)
   end
 end
+

@@ -379,7 +379,7 @@ class Helpdesk::TicketsController < ApplicationController
       if(params[:redirect] && params[:redirect].to_bool)
         flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice', :formats => [:html], :handlers => [:erb] ).html_safe
       end
-      verify_permission
+      verify_update_properties_permission
       respond_to do |format|
         format.html {
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -1255,20 +1255,26 @@ class Helpdesk::TicketsController < ApplicationController
     def verify_permission
       if @items.present?
         @item ||= @items.first
-      end      
+      end
+      verified = true
       unless current_user && current_user.has_ticket_permission?(@item) && !@item.trashed
+        verified = false
         flash[:notice] = t("flash.general.access_denied")
-        if params['format'] == "widget"
-          return false
-        elsif request.xhr?
-          params[:redirect] = "true"
-        elsif is_native_mobile?
+        if request.xhr? || is_native_mobile?
           render json: {access_denied: true}
         else
           redirect_to helpdesk_tickets_url
         end
       end
-      true
+      verified
+    end
+
+    def verify_update_properties_permission
+      unless current_user && current_user.has_ticket_permission?(@item) && !@item.trashed
+        if request.xhr?
+          params[:redirect] = "true"
+        end
+      end
     end
 
     def verify_ticket_permission_by_id

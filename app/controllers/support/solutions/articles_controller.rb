@@ -16,7 +16,6 @@ class Support::Solutions::ArticlesController < SupportController
 
   newrelic_ignore :only => [:thumbs_up,:thumbs_down]
   before_filter :load_vote, :only => [:thumbs_up,:thumbs_down]
-
   skip_before_filter :verify_authenticity_token, :only => [:thumbs_up,:thumbs_down]
 
   before_filter :verify_authenticity_token, :only => [:thumbs_up, :thumbs_down], :unless => :public_request?

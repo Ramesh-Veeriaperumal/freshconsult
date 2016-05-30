@@ -63,7 +63,10 @@ var globalconn;
 			if ($(this).data('phoneNumber') !== undefined) {
 				freshfonecalls.recentCaller = 1;
 				freshfonecalls.number = $(this).data('phoneNumber');
-				freshfoneContactSearch.getSearchResults(freshfonecalls.number);
+				freshfoneDialpadEvents.$number.data('lastval', freshfonecalls.number);
+				freshfoneContactSearch.getSearchResults(
+					freshfonecalls.number, $(this).data('contactId'),
+					$(this).data('deleted'));
 				$('#number').intlTelInput("setNumber", freshfonecalls.number)
 										.trigger('input');
 				freshfonecalls.selectFreshfoneNumber($(this).data('freshfoneNumberId'));

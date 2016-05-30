@@ -25,9 +25,9 @@ class EmailConfig < ActiveRecord::Base
   validates_format_of :to_email, :with => AccountConstants::AUTHLOGIC_EMAIL_REGEX, 
                                  :message => I18n.t('activerecord.errors.messages.invalid')
   validate :blacklisted_domain?
-  
-  xss_sanitize  :only => [:to_email,:reply_email], :plain_sanitizer => [:to_email,:reply_email]
-  
+
+  xss_sanitize  :only => [:to_email,:reply_email], :html_sanitize => [:name,:to_email,:reply_email]
+
   before_save :assign_category
 
   def active?

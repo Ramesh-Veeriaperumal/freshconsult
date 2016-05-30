@@ -24,12 +24,13 @@ var FreshfoneUserInfo;
 		setRequestObject: function (requestObject) {
 			this.requestObject = requestObject;
 		},
-		userInfo: function (number, outgoing, requestObject) {
+		userInfo: function (number, outgoing, requestObject, customerId) {
 			this.customerNumber = number;
 			this.isOutgoing = outgoing;
 			if (requestObject) { this.requestObject = requestObject; }
 			var params = {
 				PhoneNumber : this.customerNumber,
+				customerId : customerId,
 				outgoing : this.isOutgoing,
 				callerName: null,
 				formattedNumber: this.formattedNumber(),
@@ -49,6 +50,9 @@ var FreshfoneUserInfo;
 				async: true,
 				success: function (data) {
 					if (data) {
+						freshfonecalls.callerInfo = {id: data.user_id,
+							value: data.user_name, email: data.email,
+							phone: data.phone, mobile: data.mobile, user_result: true};
 						self.requestObject.callerName = data.user_name;
 						self.requestObject.callerId = data.user_id;
 						self.requestObject.avatar = data.user_hover || false;

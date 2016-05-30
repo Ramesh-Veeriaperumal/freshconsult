@@ -72,7 +72,7 @@ module Cache::Memcache::Account
 
   def agents_details_from_cache
     key = agents_details_memcache_key
-    MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name").all }
+    MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name,email").all }
   end  
 
   def groups_from_cache
@@ -272,6 +272,14 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.ecommerce_accounts.reauth_required.present? }
   end
 
+  def helpdesk_permissible_domains_from_cache
+    MemcacheKeys.fetch(permissible_domains_memcache_key) { self.helpdesk_permissible_domains.select(:domain).all }
+  end
+
+  def clear_helpdesk_permissible_domains_from_cache
+    MemcacheKeys.delete_from_cache(permissible_domains_memcache_key(Account.current.id))
+  end
+
   def contact_password_policy_from_cache
     @contact_password_policy_from_cache ||= begin
       key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:contact])
@@ -297,6 +305,10 @@ module Cache::Memcache::Account
   end
 
   private
+    def permissible_domains_memcache_key id = self.id
+      HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
+    end
+
     def ticket_types_memcache_key
       ACCOUNT_TICKET_TYPES % { :account_id => self.id }
     end

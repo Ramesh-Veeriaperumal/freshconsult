@@ -9,11 +9,8 @@ class Import::ContactWorker
   def perform(args)
     args.symbolize_keys!
     acc = Account.current
-    if (
-      acc.subscription.trial? and
-      acc.tickets.count < 10 and
-      !$spam_watcher.perform_redis_op("get", "#{acc.id}-")
-    )
+    if (acc.subscription.trial? and acc.tickets.count < 10 and !$spam_watcher.perform_redis_op("get", "#{acc.id}-"))
+      acc.contact_import.blocked!
       raise SpamAccountError
     end
     Import::Customers::Contact.new(args).import

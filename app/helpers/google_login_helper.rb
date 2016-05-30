@@ -1,15 +1,17 @@
 module GoogleLoginHelper
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Helpdesk::Permission::User
 
-  def verify_domain_user account, nmobile=false
+  def verify_domain_user account, nmobile=false, options = {}
     domain_user = account.user_emails.user_for_email(email)
     if domain_user.blank?
-      domain_user = create_user(account, name, email, nmobile)
+      domain_user = create_user(account, name, email, nmobile) if valid_google_auth_user?(account, email, options)
     elsif !domain_user.active?
       make_user_active domain_user
     end
-    create_auth(domain_user, uid, account.id)
+    create_auth(domain_user, uid, account.id) if domain_user.present?
+    domain_user
   end
 
   def account_from_google_domain
@@ -100,6 +102,11 @@ module GoogleLoginHelper
 
     def nmobile? param_var
       param_var[:format] == "nmobile"
+    end
+
+    def valid_google_auth_user? account, email, options
+      return has_login_permission?(email, account) if options[:restricted_helpdesk_login].present?
+      true
     end
 
 end

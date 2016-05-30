@@ -5,6 +5,10 @@ class Sanitize
       :attributes => {
         'iframe' => ['src', 'width', 'height', 'frameborder', 'allowfullscreen']
       }.merge(HTML_RELAXED[:attributes]),
+<<<<<<< HEAD
+=======
+      :add_attributes => HTML_RELAXED[:add_attributes],
+>>>>>>> origin/prestaging
       :protocols => {
         'iframe' => {'src'  => ['http', 'https', :relative]}
       }.merge(HTML_RELAXED[:protocols]),
@@ -18,7 +22,11 @@ class Sanitize
 
         uri = URI.parse(node['src'])
 
+<<<<<<< HEAD
         node.unlink if uri.host == Account.current.full_domain || Account.current.portals.map(&:portal_url).compact.include?(uri.host)
+=======
+        node.unlink if uri.host.blank? || uri.host == Account.current.full_domain || Account.current.portals.map(&:portal_url).compact.include?(uri.host)
+>>>>>>> origin/prestaging
       end
     }
   end

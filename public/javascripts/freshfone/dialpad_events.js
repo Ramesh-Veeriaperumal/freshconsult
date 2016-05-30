@@ -64,6 +64,15 @@ var FreshfoneDialpadEvents
 	  	});
 		},
 
+		setActiveElement: function(customerId){
+			isSearchBar = true;
+			var container = this.currentContainer();
+			var activeElem = container.find('.active-element');
+			var contactElem = container.find('.search_result_container #ff_contact_id_'+customerId);
+			this.makeActive(activeElem,contactElem);
+			this.scrollTo(container,contactElem);
+ 		},
+
 		bindNumberChangeEvent: function(){
 			var self = this;
 			this.$number.on('input',function(e){
@@ -86,8 +95,8 @@ var FreshfoneDialpadEvents
 			 return;
 			}
 			self.$searchContainer.show(); 
-			if($(this).data("lastval") != searchString){
-				$(this).data("lastval",searchString);
+			if(self.$number.data("lastval") != searchString){
+				self.$number.data("lastval",searchString);
 				addDelay(function(){
 					formattedString = freshfoneContactSearch.replaceSpecChar(searchString);
 					if (freshfoneContactSearch.isValidSearchString(formattedString)){
@@ -204,7 +213,7 @@ var FreshfoneDialpadEvents
 			if (this.isNumeric(searchString)) { 
 				searchString = freshfonecalls.addDialCode(searchString);
 			}
-	    freshfoneContactSearch.getSearchResults(searchString);      
+	    freshfoneContactSearch.getSearchResults(searchString, null, false);      
 		},
 
 		getContactDetails: function(contactElement,$item){

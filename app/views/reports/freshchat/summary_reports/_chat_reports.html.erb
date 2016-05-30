@@ -52,7 +52,7 @@
       </div>
       <div class="row-fluid control-group">
       <div class="vertical-alignment time-sheet-top-margin">
-        <strong><%=t('reports.freshchat.agent_chat_summary')%></strong>
+        <strong><%=t('reports.livechat.agent_chat_summary')%></strong>
       </div>
         <span class="pull-right time-sheet-top-margin">
             <a href="javascript:void(0);" id='export_as_csv'><%=t('export_to_CSV')%></a>
@@ -95,6 +95,13 @@
                   menu.addClass('hide');
               }
         });
+
+    jQuery('#report-page').on('click.helpdesk_reports', function () {
+          var menu = jQuery('#reports_type_menu');
+          if (menu.is(':visible')) {
+              menu.addClass('hide');
+          }
+    });
   });
 
    jQuery("#email_pdf").on('click.helpdesk_reports',function(){

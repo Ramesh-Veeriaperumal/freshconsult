@@ -27,7 +27,7 @@ class ApiApplicationController < MetalApiController
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :check_account_state
-  before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone
+  before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone, :set_msg_id
   before_filter :force_utf8_params
   before_filter :set_cache_buster
   include AuthenticationSystem
@@ -485,6 +485,7 @@ class ApiApplicationController < MetalApiController
         current_account.make_current
       end
       User.current = api_current_user
+      Thread.current[:message_uuid] = request.try(:uuid).to_a
     rescue ActiveRecord::RecordNotFound, ShardNotFound
       Rails.logger.error("API V2 request for invalid account. Host: #{request.host}")
       head 404

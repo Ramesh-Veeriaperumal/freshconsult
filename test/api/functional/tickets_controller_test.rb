@@ -46,9 +46,9 @@ class TicketsControllerTest < ActionController::TestCase
   @@before_all_run = false
 
   def before_all
-    @account.sections.map{ |x| x.destroy }
+    @account.sections.map(&:destroy)
     return if @@before_all_run
-    @account.ticket_fields.custom_fields.each{ |c| c.destroy }
+    @account.ticket_fields.custom_fields.each(&:destroy)
     Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
     @@ticket_fields = []
     @@custom_field_names = []
@@ -2404,6 +2404,24 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.size
   end
 
+  def test_index_with_spam_and_deleted
+    pattern = /SELECT  `helpdesk_tickets`.* FROM/
+    from = 'WHERE '
+    to = ' ORDER BY'
+    query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam', updated_since: '2009-09-09') }
+    assert_equal "`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`spam` = 1 AND (helpdesk_tickets.updated_at >= '2009-09-09 00:00:00')", query
+    query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'deleted', updated_since: '2009-09-09') }
+    assert_equal "`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 1 AND `helpdesk_schema_less_tickets`.`boolean_tc02` = 0 AND (helpdesk_tickets.updated_at >= '2009-09-09 00:00:00')", query
+    query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam') }
+    assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`spam` = 1', query
+    query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam', requester_id: 1) }
+    assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`requester_id` = 1 AND `helpdesk_tickets`.`spam` = 1', query
+    query = trace_query_condition(pattern, from, to) { get :index, controller_params }
+    assert_match /`helpdesk_tickets`\.`account_id` = 1 AND `helpdesk_tickets`\.`deleted` = 0 AND `helpdesk_tickets`\.`spam` = 0 AND \(helpdesk_tickets.created_at > '.*'\)$/, query
+    query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam', company_id: 1) }
+    assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `users`.`customer_id` = 1 AND `helpdesk_tickets`.`spam` = 1', query
+  end
+
   def test_index_with_deleted
     tkts = Helpdesk::Ticket.select { |x| x.deleted && !x.schema_less_ticket.boolean_tc02 }
     t = ticket
@@ -3149,7 +3167,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 'test', Helpdesk::Ticket.last.description
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3163,7 +3181,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('test_custom_date', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead'), bad_request_error_pattern('test_custom_number', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead')])
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3177,7 +3195,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('test_custom_dropdown', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead')])
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3192,7 +3210,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3207,7 +3225,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('test_custom_date', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead'), bad_request_error_pattern('test_custom_number', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead')])
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3222,7 +3240,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('test_custom_dropdown', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead')])
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3240,7 +3258,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3258,7 +3276,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3277,7 +3295,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3296,7 +3314,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3309,7 +3327,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 201
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3322,7 +3340,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 201
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3336,7 +3354,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 
@@ -3350,7 +3368,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
   ensure
     @account.ticket_fields.custom_fields.each do |x|
-      x.update_attributes(:field_options => nil) if ['number', 'date', 'dropdown', 'paragraph'].any? {|b| x.name.include?(b) }
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
   end
 end

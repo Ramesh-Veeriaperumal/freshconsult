@@ -1866,7 +1866,7 @@ ro:
         import: "Datele de import din Zendesk"
         agent: Agenti
         feedback: "Feedback widget"
-        freshchat: "Live Chat"
+        livechat: "Live Chat"
         integrations: Integrari
         dispatcher: Dispatch'r
         supervisor: Supervizor
@@ -4180,9 +4180,9 @@ ro:
   feedbackwidget_help_para1: "Feedback-ul widget-ului va permite sa incorporati direct un formular tichet in website-ul sau produsul dvs.. Puteti sa personalizati aspectul, precum si plasarea widget-ului in website-ul dvs.. Odata ce ati facut, copiati si lipiti codul integrat, generat in website-ul sau aplicatia dvs. pentru a incepe sa folositi Feedback Widget."
   chatwidget_help_content:
     title: "Live Chat"
-    info1: "Solutiile live chat integrate ale Freshdesk-ului iti permit sa vezi si sa vorbesti cu utilizatorii din website, softul online sau direct din portalul de suport din Freshdesk. Puteti personaliza intreaga fereastra de chat (incluzand texte implicite, culoarea, etc.) si chiar de a initia proactiv sesiuni de chat atunci cand vizitatorii petrec mai mult timp pe site-ul dvs.."
+    info1: "Solutiile Live Chat integrate ale Freshdesk-ului iti permit sa vezi si sa vorbesti cu utilizatorii din website, softul online sau direct din portalul de suport din Freshdesk. Puteti personaliza intreaga fereastra de chat (incluzand texte implicite, culoarea, etc.) si chiar de a initia proactiv sesiuni de chat atunci cand vizitatorii petrec mai mult timp pe site-ul dvs.."
     info2: "Fiecare sesiune de chat va aduna meta informatii despre vizitatori incluzand locatia lor, dispozitivul, etc si istoricul lor de suport cu tine. Odata ce ati terminat o sesiune de chat, puteti alege sa convertiti conversatia intr-un tichet si sa continuati sa-l urmariti cu vizitatorul pe email, sau sa arhivati transcrierea chat-ului."
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Aflați mai multe despre utilizarea live chat în interiorul Freshdesk</a>"
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Aflați mai multe despre utilizarea Live Chat în interiorul Freshdesk</a>"
   low: Scazut
   agents: Agenti
   header:
@@ -6720,7 +6720,7 @@ ro:
         filter_by: "Satisfaction Views"
         view_report_date: "View reports during"
         helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Live Chat Summary"
       filter_by_title: "Filtered by"
       time_period: "Time Period"
@@ -7950,12 +7950,12 @@ ro:
         additional_info: "You will be able to purchase numbers, make and take calls once the phone channel is enabled in your account"
         button_text: "Request for phone"
         video_title: "Watch the video to find out what you can do with the phone channel"
-  freshchat:
+  livechat:
     feature_request:
       title: "Welcome to Live Chat"
       heading: "Support your customers with Live Chat"
-      info1: "Customize live chat widget for your brand and business"
-      info2: "Enable live chat for your support portal and website"
+      info1: "Customize Live Chat widget for your brand and business"
+      info2: "Enable Live Chat for your support portal and website"
       info3: "Track all chat transcripts and convert them to tickets"
       read_more: "Read more"
       email_subject: "Request for Live Chat Feature from %{account_name}"
@@ -8027,7 +8027,7 @@ ro:
     bottom_left: "Bottom Left"
     bottom_right: "Bottom Right"
     integrate_msg: "Copy & paste this code before the last </body> tag on your website or app"
-    integrate_freshchat_title: "Integrate live chat into your website and applications"
+    integrate_livechat_title: "Integrate Live Chat into your website and applications"
     custom_chat_window: "Chat window"
     text_placeholder: "Your Message"
     chatbox_bgcolor: "Window Color"
@@ -8168,9 +8168,9 @@ ro:
     visitor_form: "Visitor Form"
     preferences: Preferences
     intro_title: "Why Live Chat?"
-    intro: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
+    intro: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
     enable_chat: "Enable Live Chat"
-    learn_freshchat: "Learn more about Live Chat"
+    learn_livechat: "Learn more about Live Chat"
     support_portal: "Chat on support portal"
     logged_in_users: "Logged in users only"
     everyone: Everyone

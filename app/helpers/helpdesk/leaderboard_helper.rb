@@ -1,23 +1,9 @@
 module Helpdesk::LeaderboardHelper
 		
-	include MemcacheKeys
-
-	def get_memcache_key
-		MemcacheKeys.memcache_local_key(LEADERBOARD_MINILIST)
-	end
-
 	def link_to_agent user
 		return(link_to user.name, user) if current_user && current_user.can_view_all_tickets?
 		user.name
 	end	
-
-	def leaderboard
-		@leaderboard ||= load_leaderboard
-	end
-
-	def customer_satisfaction_enabled?
-		current_account.any_survey_feature_enabled_and_active?
-	end
 
 	def agents_filter
 		current_group = @group ? "#{t('gamification.leaderboard.agents_in')} "+@group.name : "#{t('gamification.leaderboard.all_agents')}"
@@ -56,15 +42,6 @@ module Helpdesk::LeaderboardHelper
 	end
 
 	private
-
-		def load_leaderboard
-			scoreboard = [[ @mvp_scorecard, :mvp],
-				[ @first_call_scorecard, :sharpshooter],
-				[ @fast_scorecard, :speed]]
-			scoreboard.insert(1, [ @customer_champion_scorecard, :love]) if customer_satisfaction_enabled?
-			
-			scoreboard
-		end
 
 		def support_date_range
 			[ "current_month", "last_month", "2_months_ago", "3_months_ago", "select_range" ]

@@ -1,0 +1,14 @@
+<% if (data.count !== 0) { %>
+
+  <a class="popup" data-agentcount="<%=data.count %>" data-title="<%= data.title %>" data-changecount="<%=  data.id %>" data-roleid="<%= data.id %>" href="javascript:void(0)"><%= data.count %>
+  <% if (data.count === 1) { %> Agent <% }else{ %> Agents <% } %>
+  </a>
+
+<% }else{ %>
+  <div class="no-agent">
+  <span class="muted info">No Agent</span>
+  <a class="popup hide" data-agentcount="<%=data.count %>" data-title="<%=  data.title %>" data-changecount="<%= data.id %>" data-roleid="<%= data.id %>" href="javascript:void(0)">
+  Add Agent
+  </a>
+  </div>
+<% } %>

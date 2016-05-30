@@ -71,7 +71,7 @@ freshsales:
       portal_url: "https://fdadmintest.freshmarketeer.com"
     production:
       authentication_token: "1uzGOM_zc-27E1jjJUoTGw"
-      portal_url: "https://freshdesknew.freshsales.io"
+      portal_url: "https://freshdesk.freshsales.io"
 
 marketo:
   development:
@@ -141,10 +141,9 @@ gateway: brain_tree
 admin_subdomain: admin
 
 freshops_subdomain:
-  global: freshopspoduseast
-  non_global:
-    - freshopspodeuwest
-    - freshopspodeuwest1
+  poduseast: freshopspoduseast
+  podeuwest: freshopspodeuwest
+  podeucentral: freshopspodeucentral
 
 partner_subdomain: partner
 

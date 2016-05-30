@@ -1,17 +1,17 @@
 module Freshfone::Search
 	def search_user_with_number(phone_number)
 		return if !ES_ENABLED || phone_number.blank?
-		search_user_using_es(phone_number, ['phone', 'mobile']).first
+		get_es_search_results(phone_number, ['phone', 'mobile']).first
 	end
 
-	def search_requester(requester_name)
+	def search_requester(requester_name, search_non_deleted)
 		return if !ES_ENABLED || requester_name.blank?
-		search_user_using_es(requester_name, ['name', 'email', 'phone', 'mobile'])
+		search_user_using_es(requester_name, ['name', 'email', 'phone', 'mobile'], 10, search_non_deleted)
 	end
 	
-	def search_contact(contact, size = 10)
+	def search_contact(contact, size = 10, search_non_deleted)
 		return if !ES_ENABLED || contact.blank?
-		search_user_using_es(contact, ['name', 'phone', 'mobile', custom_field_data_columns].flatten, size)
+		get_es_search_results(contact, ['name', 'phone', 'mobile', custom_field_data_columns].flatten, size, search_non_deleted)
 	end
 
 	def custom_field_data_columns
@@ -28,7 +28,7 @@ module Freshfone::Search
 				fd.field_type == :custom_phone_number }
 	end
 
-	def search_user_using_es(search_string, fields, size = 10)
+	def search_user_using_es(search_string, fields, size, search_non_deleted=true)
 		Search::EsIndexDefinition.es_cluster(Account.current.id)
 		index_name = Search::EsIndexDefinition.searchable_aliases([User], Account.current.id)
 		Tire.search(index_name, { :load => { User => { :include => [:avatar] } }, :size => size }) do |search|
@@ -36,6 +36,7 @@ module Freshfone::Search
 				q.filtered do |f|
 					f.query { match fields, search_string, :type => :phrase_prefix }
 					f.filter :bool, :should => phone_number_fields
+					f.filter :term, { :deleted => false } if search_non_deleted
 				end
 			end
 			search.sort { by :name, 'asc' }
@@ -63,4 +64,10 @@ module Freshfone::Search
 		number_fileds
 	end
 
+	private
+		def get_es_search_results(search_string, fields, size = 10, search_non_deleted=true)
+			es_response = search_user_using_es(search_string, fields, size) if search_non_deleted
+			return es_response if (es_response.present? && es_response.results.present?)
+			search_user_using_es(search_string, fields, size, false)
+		end
 end

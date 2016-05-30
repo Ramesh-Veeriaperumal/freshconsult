@@ -8,6 +8,7 @@ module TimeEntriesTestHelper
     {
       note: expected_output[:note] || time_entry.note,
       ticket_id: expected_output[:ticket_id] || time_entry.workable.display_id,
+      company_id: expected_output[:company_id] || time_entry.workable.company_id,
       id: Fixnum,
       agent_id: expected_output[:agent_id] || time_entry.user_id,
       billable: (expected_output[:billable] || time_entry.billable).to_s.to_bool,
