@@ -21,7 +21,7 @@ class Search::SolutionsController < Search::SearchController
 
 	def search_solutions
 		article_suggest params[:q]
-		render :layout => false
+    render :partial => "results"
 	end
 
 	protected
