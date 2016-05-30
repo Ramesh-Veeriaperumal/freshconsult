@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
   rescue_from ShardNotFound, :with => :record_not_found
-  rescue_from DomainNotReady, :with => :render_404
+  rescue_from DomainNotReady, :with => :render_domain_not_ready
 
   
   include AuthenticationSystem
@@ -124,6 +124,10 @@ class ApplicationController < ActionController::Base
   
   def run_on_slave(&block)
     Sharding.run_on_slave(&block)
+  end
+
+  def render_domain_not_ready
+    render :file => "#{Rails.root}/public/DomainNotReady.html", :status => 403, :layout => false
   end
 
   def render_404
