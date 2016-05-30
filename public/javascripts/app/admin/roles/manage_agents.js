@@ -1,13 +1,14 @@
 
 /**
- * 
- * Manage Agent - Factory function to init popup and data 
+ *
+ * Manage Agent - Factory function to init popup and data
  * 				  construction for select2 box and agent list
  */
 
 var ManageAgents = ManageAgents || (function($){
 
-	var agentObj = {};
+	var ACCOUNT_ADMIN_TITLE = "Account Administrator",
+			agentObj = {};
 
 	agentObj.init = function(){
 		_bindEvents();
@@ -16,7 +17,7 @@ var ManageAgents = ManageAgents || (function($){
 	return agentObj;
 
 	// PRIVATE
-	
+
 	function _bindEvents(){
 		$(document).on('click', 'a.popup', function(){
 			var data = $(this).data();
@@ -31,7 +32,7 @@ var ManageAgents = ManageAgents || (function($){
 		_appendContent(name, agentcount, _initmodal);
 		_resetPopup();
 		var $agentSelectBox = jQuery('#manage-agents-content [data-action="add-agent"]');
-		if(id === 1 && jQuery("#is-accadmin").val() === "false"){
+		if(name === ACCOUNT_ADMIN_TITLE && jQuery("#is-accadmin").val() === "false"){
 			$agentSelectBox.attr('disabled', true).trigger('change');
 		}else{
 			$agentSelectBox.attr('disabled', false).trigger('change');
@@ -44,7 +45,7 @@ var ManageAgents = ManageAgents || (function($){
 			}else{
 				_getAgentDetails(id).success(function(data){
 					var constructedData = _constructObject(data, _select2Data);
-					if(id === 1 && jQuery("#is-accadmin").val() === "false"){
+					if(name === ACCOUNT_ADMIN_TITLE && jQuery("#is-accadmin").val() === "false"){
 						constructedData['admin'] = true;
 					}else{
 						constructedData['admin'] = false;
@@ -68,17 +69,12 @@ var ManageAgents = ManageAgents || (function($){
 			}else{
 				_getDataFromStore();
 			}
-			
+
 		}
 	}
 
 	function _getDataFromStore(){
 		SubmitHandler.data.local = true;
-		if(id === 1 && jQuery("#is-accadmin").val() === "false"){
-			SubmitHandler.data['admin'] = true;
-		}else{
-				SubmitHandler.data['admin'] = false;
-		}
 		var localAgent = JST["app/admin/roles/templates/user_list"]({
 			data: SubmitHandler.data
 		});
