@@ -13,7 +13,7 @@ class Search::V2::SolutionsController < ApplicationController
   def related_solutions
     @es_search_term = @ticket.subject
     search_and_assign
-    render template: 'search/solutions/related_solutions', :layout => false
+    render partial: 'search/solutions/results'
   end
 
   # Find solutions for insert_solution search
@@ -21,7 +21,7 @@ class Search::V2::SolutionsController < ApplicationController
   #
   def search_solutions
     search_and_assign
-    render template: 'search/solutions/search_solutions', :layout => false
+    render partial: 'search/solutions/results'
   end
   
   private
