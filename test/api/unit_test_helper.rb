@@ -7,15 +7,15 @@ def load_environment(file_name)
   changed = change_api_layer(file_name, true)
   require File.expand_path('../../../config/environment', __FILE__)
   ensure
-   puts 'Switching OFF API Layer'
-   change_api_layer(file_name, false) if changed
+    puts 'Switching OFF API Layer'
+    change_api_layer(file_name, false) if changed
 end
 
 def change_api_layer(file_name, new_value)
   text = File.read(file_name)
   pattern = new_value ? /API_LAYER: false/ : /API_LAYER: true/
-  if (new_value && text =~ /API_LAYER: true/ ) || (new_value.is_a?(FalseClass) && text =~ /API_LAYER: false/)
-    new_value ? puts("API Layer already switched ON") : puts("API Layer already switched OFF")
+  if (new_value && text =~ /API_LAYER: true/) || (new_value.is_a?(FalseClass) && text =~ /API_LAYER: false/)
+    new_value ? puts('API Layer already switched ON') : puts('API Layer already switched OFF')
     puts text
     return false
   else

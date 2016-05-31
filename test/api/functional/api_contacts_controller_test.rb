@@ -524,8 +524,8 @@ class ApiContactsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:features?).with(:multi_timezone).returns(false)
     Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
     put :update, construct_params({ id: sample_user.id },
-                                        language: Faker::Lorem.characters(5),
-                                        time_zone: Faker::Lorem.characters(5))
+                                  language: Faker::Lorem.characters(5),
+                                  time_zone: Faker::Lorem.characters(5))
     match_json([bad_request_error_pattern('language', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'language', feature: :multi_language),
                 bad_request_error_pattern('time_zone', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'time_zone', feature: :multi_timezone)])
     assert_response 400

@@ -24,4 +24,3 @@ JSON.generate(@items.map do |agent|
     }
   }
 end)
-

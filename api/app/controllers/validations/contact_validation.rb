@@ -12,7 +12,7 @@ class ContactValidation < ApiValidation
   }.freeze
 
   MANDATORY_FIELD_ARRAY = [:email, :mobile, :phone, :twitter_id].freeze
-  CHECK_PARAMS_SET_FIELDS =(MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(time_zone language custom_fields)).freeze
+  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(time_zone language custom_fields)).freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
 
   attr_accessor :avatar, :view_all_tickets, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
