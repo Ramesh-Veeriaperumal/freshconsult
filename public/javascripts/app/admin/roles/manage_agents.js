@@ -113,7 +113,7 @@ var ManageAgents = ManageAgents || (function($){
 	function _populateSelect2(data){
 		var options = [];
 		data.each(function(data, index){
-			if(!data.is_account_admin){
+			if(!data.is_account_admin && (data.id !== DataStore.get('current_user').currentData.user.id)){
 				options.push(jQuery('<option>').text(data.name).val(data.id));
 			}
 		});
