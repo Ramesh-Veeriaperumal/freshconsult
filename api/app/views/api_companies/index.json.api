@@ -1,0 +1,12 @@
+JSON.generate(@items.map do |api_company|
+  {
+    id: api_company.id,
+    name: api_company.name,
+    description: api_company.description,
+    note: api_company.note,
+    domains: api_company.domains,
+    created_at: api_company.created_at.try(:utc),
+    updated_at: api_company.updated_at.try(:utc),
+    custom_fields: api_company.custom_fields
+  }
+end)

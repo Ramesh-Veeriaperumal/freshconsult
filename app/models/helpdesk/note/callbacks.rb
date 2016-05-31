@@ -129,13 +129,14 @@ class Helpdesk::Note < ActiveRecord::Base
           if notable.cc_email.present?
             if user.id == notable.requester_id
               Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
-            elsif notable.included_in_cc?(user.email)
-              additional_emails = [notable.requester.email] unless performed_by_client_manager?
-              # Using cc notification to send notification to requester about new comment by cc
-              Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {:additional_emails => additional_emails,
-                                                                                   :ignore_emails => [user.email]})
             end
           end
+        end
+        if inbound_email? && !self.private? && notable.included_in_cc?(user.email)          
+          additional_emails = [notable.requester.email] if !notable.included_in_cc?(notable.requester.email)
+          # Using cc notification to send notification to requester about new comment by cc
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {:additional_emails => additional_emails,
+                                                                                   :ignore_emails => [user.email]})
         end
         handle_notification_for_agent_as_req if ( !incoming && notable.agent_as_requester?(user.id))
       else    

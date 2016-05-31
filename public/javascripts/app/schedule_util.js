@@ -235,7 +235,7 @@ Helpkit.ScheduleUtil = {
 	    },
         populateSubject : function(){
              //populate default values for desc
-            var subject_tmpl = _.template("<%= report_name %> - <%= schedule %>");
+            var subject_tmpl = _.template("Your <%= schedule %> <%= report_name %> Report ");
              
             var frequency = jQuery(".frequency").val(); 
             var data = {

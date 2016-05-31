@@ -101,7 +101,7 @@ class MergeContacts < BaseWorker
       # but just returns the count. We need to manually push the changes to RMQ as it does not trigger callbacks too.
       # Here adding .all to trigger the query(delayed query) and storing the active record objects for which updates need to be sent to RMQ 
       items_to_update_arr = items_to_update.all if REPORTS_TRACKING_CLASS.include?(klass_name)
-      records_updated     = items_to_update.update_all(values)
+      records_updated     = items_to_update.update_all_with_publish(values, {}, { batch_size: BATCH_LIMIT })
       send_updates_to_rmq(items_to_update_arr, klass_name) if REPORTS_TRACKING_CLASS.include?(klass_name)
     end while records_updated == BATCH_LIMIT
   end
@@ -155,7 +155,7 @@ class MergeContacts < BaseWorker
         end
       end
     end
-    @account.send(options[:object]).where({:id => update_ids}).update_all({options[:user] => @parent_user.id}) if update_ids.present?
+    @account.send(options[:object]).where({:id => update_ids}).update_all_with_publish({ options[:user] => @parent_user.id }, ["#{options[:user]} != ?", @parent_user.id]) if update_ids.present?
     @account.send(options[:object]).where({:id => delete_ids}).destroy_all if delete_ids.present?
   end
 end

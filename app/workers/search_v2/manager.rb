@@ -11,34 +11,34 @@ class SearchV2::Manager
       # Push initially bootstrapped data to ES
       #
       Account.current.users.visible.find_in_batches(:batch_size => 300) do |users|
-        users.map(&:sqs_manual_publish)
+        users.map(&:sqs_manual_publish_without_feature_check)
       end
       Account.current.tickets.visible.find_in_batches(:batch_size => 300) do |tickets|
-        tickets.map(&:sqs_manual_publish)
+        tickets.map(&:sqs_manual_publish_without_feature_check)
       end
       Account.current.notes.visible.exclude_source('meta').find_in_batches(:batch_size => 300) do |notes|
-        notes.map(&:sqs_manual_publish)
+        notes.map(&:sqs_manual_publish_without_feature_check)
       end
       Account.current.archive_tickets.find_in_batches(:batch_size => 300) do |archive_tickets|
-        archive_tickets.map(&:sqs_manual_publish)
+        archive_tickets.map(&:sqs_manual_publish_without_feature_check)
       end
       Account.current.archive_notes.exclude_source('meta').find_in_batches(:batch_size => 300) do |archive_notes|
-        archive_notes.map(&:sqs_manual_publish)
+        archive_notes.map(&:sqs_manual_publish_without_feature_check)
       end
       Account.current.solution_articles.visible.find_in_batches(:batch_size => 300) do |articles|
-        articles.map(&:sqs_manual_publish)
+        articles.map(&:sqs_manual_publish_without_feature_check)
       end
       Account.current.topics.find_in_batches(:batch_size => 300) do |topics|
-        topics.map(&:sqs_manual_publish)
+        topics.map(&:sqs_manual_publish_without_feature_check)
       end
       Account.current.posts.find_in_batches(:batch_size => 300) do |posts|
-        posts.map(&:sqs_manual_publish)
+        posts.map(&:sqs_manual_publish_without_feature_check)
       end
       Account.current.companies.find_in_batches(:batch_size => 300) do |companies|
-        companies.map(&:sqs_manual_publish)
+        companies.map(&:sqs_manual_publish_without_feature_check)
       end
       Account.current.tags.find_in_batches(:batch_size => 300) do |tags|
-        tags.map(&:sqs_manual_publish)
+        tags.map(&:sqs_manual_publish_without_feature_check)
       end
 
     end

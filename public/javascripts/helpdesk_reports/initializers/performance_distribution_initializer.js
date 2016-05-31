@@ -45,7 +45,16 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                     data: this.fillArray(this.arrayElementsSum(current_data),current_data.length),
                     color:  REPORT_COLORS["barChartDummy"],
                     states: { hover: { brightness: 0 } },
-                    borderRadius: 5
+                    borderRadius: 5,
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function () {
+                                var ev = this; 
+                                _FD.ticketListEvent(ev,label_key);
+                            }
+                        }
+                    }
                 },{
                     data: current_data,
                     color: this.COLORS[chart_name],

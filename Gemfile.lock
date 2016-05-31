@@ -34,6 +34,13 @@ GIT
     akismetor (1.1)
 
 GIT
+  remote: git://github.com/freshdesk/dalli.git
+  revision: 9fcd7d6858ba3d8fa281e57f34e0176ab5740add
+  branch: fd_master
+  specs:
+    dalli (2.7.0)
+
+GIT
   remote: git://github.com/freshdesk/deadlock_retry.git
   revision: 801e84f45aed2ccde10aa085af0aa94f1bf46975
   specs:
@@ -515,7 +522,6 @@ GEM
     css_parser (1.3.5)
       addressable
     curb (0.8.8)
-    dalli (2.7.0)
     database_cleaner (1.2.0)
     debug_inspector (0.0.2)
     descendants_tracker (0.0.4)
@@ -1029,7 +1035,7 @@ DEPENDENCIES
   country_select!
   curb (~> 0.8.5)
   custom_fields!
-  dalli
+  dalli!
   database_cleaner
   deadlock_retry!
   delayed_job!

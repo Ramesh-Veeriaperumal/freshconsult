@@ -53,7 +53,7 @@ class Search::V2::AutocompleteController < ApplicationController
     search(esv2_autocomplete_models) do |results|
       results.each do |result|
         self.search_results[:results].push(*[{
-          value: result.name
+          value: result.name, id: result.id
         }])
       end
     end

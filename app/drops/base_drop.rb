@@ -24,6 +24,8 @@ class BaseDrop < Liquid::Drop
     @per_page = current_context['per_page'].presence
     @page = current_context['page'].presence
 
+    page_number_sanitize
+
     super
   end
 
@@ -84,5 +86,11 @@ class BaseDrop < Liquid::Drop
     
     def liquify(*records, &block)
       self.class.liquify(@context, *records, &block)
+    end
+
+    def page_number_sanitize
+      return unless @page
+      @page = max_page and return if respond_to?(:max_page, true) && (@page == "last" or @page.to_i > max_page)
+      @page = 1 if @page.to_i.to_s != @page || @page.to_i <= 0
     end
 end

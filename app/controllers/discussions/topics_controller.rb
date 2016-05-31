@@ -2,6 +2,7 @@ class Discussions::TopicsController < ApplicationController
 
 	include CloudFilesHelper
 	helper DiscussionsHelper
+	include Community::AssignUser
 	include Community::Voting
 
 	rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
@@ -40,8 +41,8 @@ class Discussions::TopicsController < ApplicationController
 		
 		associate_ticket if @topic_ticket
 		
-		@topic.user = assign_user
-		@post.user = assign_user
+		@topic.user = @topic_ticket ? @topic_ticket.requester : assign_user
+		@post.user = @topic_ticket ? @topic_ticket.requester : assign_user
 		
 		@post.account_id = current_account.id
 		@post.portal = current_portal.id
@@ -219,22 +220,6 @@ class Discussions::TopicsController < ApplicationController
 			# only admins can move
 			return unless privilege?(:manage_forums)
 			@topic.forum_id = params[:topic][:forum_id] if params[:topic][:forum_id]
-		end
-
-		def assign_user
-			@creating_user ||= begin
-				user = nil
-				if privilege?(:admin_tasks)
-					unless (topic_param[:import_id].blank? && params[:email].blank?)
-						user = current_account.all_users.where(email: params[:email]).first
-					end
-					unless  params[:topic][:user_id].blank?
-						user = current_account.all_users.where(:id => params[:topic][:user_id]).first
-					end
-				end
-				user = @topic_ticket.requester if @topic_ticket
-				user || current_user
-			end
 		end
 
 		def build_attachments

@@ -23,8 +23,6 @@ module Gamification
         unless (user.agent.points.eql? total_score)
           user.agent.update_attribute(:points, total_score)
         end
-
-        user.agent.clear_leaderboard_cache!(Account.current,user)
       end
     end
   end

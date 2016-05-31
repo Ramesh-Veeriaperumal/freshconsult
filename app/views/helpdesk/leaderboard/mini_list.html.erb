@@ -1,30 +1,25 @@
-<% cache("#{get_memcache_key}", :expires_in => 1.hour) do %>
-	<% list_empty = false %>
+<% list_empty = false %>
 
-	<ul class="leaderboard-innerbox">
-		<% leaderboard.each do |score_list| %>
-			<% (score_list[0] || []).each do |score| %>
-				<li class="pull-left">
-					<div class="trophy-wrap">
-						<div class="floatr trophy trophy-<%= score_list[1] %>-small"></div>
-						<a rel="hover-popover"
-							data-content='<div class="span2"> <b> <%= score.user %> </b> is the <%= t("gamification.leaderboard.#{score_list[1]}_trophie_label") %>  for this month. </div>'
-							data-placement="above">
-							<%= user_avatar_with_expiry(score.user,3605) %>
-						</a>
-					</div>
-					<p class="muted clearfix"><%= t("gamification.leaderboard.#{score_list[1]}_trophie_label") %></p>
-				</li>
+<ul class="leaderboard-innerbox">
+	<% @mini_list_leaderboard.each do |category, user| %>
+			<li class="pull-left">
+				<div class="trophy-wrap">
+					<div class="floatr trophy trophy-<%= category %>-small"></div>
+					<a rel="hover-popover"
+						data-content='<div class="span2"> <b> <%= user %> </b> is the <%= t("gamification.leaderboard.#{category}_trophie_label") %>  for this month. </div>'
+						data-placement="left">
+						<%= user_avatar_with_expiry(user,3605) %>
+					</a>
+				</div>
+				<p class="muted clearfix"><%= t("gamification.leaderboard.#{category}_trophie_label") %></p>
+			</li>
 
-			<% list_empty = true %>
-			<% end %>
-		<% end %>
-	</ul>
-	<%= link_to t("helpdesk_quests.view_all"), agents_helpdesk_leaderboard_index_path(), :class => "widget-more-link" %>
-
-	<% unless list_empty %>
-		<script type="text/javascript">jQuery('#mini-leaderboard')
-						.append("<div class='db-empty-msg text-center muted'> <p><%= t('gamification.leaderboard.leaderboard_is_empty') %> </p> </div>")</script>
+		<% list_empty = true %>
 	<% end %>
+</ul>
+<%= link_to t("helpdesk_quests.view_all"), agents_helpdesk_leaderboard_index_path(), :class => "widget-more-link" %>
 
+<% unless list_empty %>
+	<script type="text/javascript">jQuery('#mini-leaderboard')
+					.append("<div class='db-empty-msg text-center muted'> <p><%= t('gamification.leaderboard.leaderboard_is_empty') %> </p> </div>")</script>
 <% end %>

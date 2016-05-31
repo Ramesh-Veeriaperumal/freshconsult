@@ -65,6 +65,7 @@ var FreshfoneDialpadEvents
 		},
 
 		setActiveElement: function(customerId){
+			isSearchBar = true;
 			var container = this.currentContainer();
 			var activeElem = container.find('.active-element');
 			var contactElem = container.find('.search_result_container #ff_contact_id_'+customerId);
@@ -94,8 +95,8 @@ var FreshfoneDialpadEvents
 			 return;
 			}
 			self.$searchContainer.show(); 
-			if($(this).data("lastval") != searchString){
-				$(this).data("lastval",searchString);
+			if(self.$number.data("lastval") != searchString){
+				self.$number.data("lastval",searchString);
 				addDelay(function(){
 					formattedString = freshfoneContactSearch.replaceSpecChar(searchString);
 					if (freshfoneContactSearch.isValidSearchString(formattedString)){

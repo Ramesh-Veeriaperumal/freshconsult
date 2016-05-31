@@ -1517,6 +1517,10 @@ module ApplicationHelper
     current_account.account_additional_settings.email_template_settings.to_json
   end
 
+  def current_browser
+    UserAgent.parse(request.user_agent).browser
+  end
+
   def current_platform
     os = UserAgent.parse(request.user_agent).os || 'windows'
     ['windows', 'mac', 'linux'].each do |v|

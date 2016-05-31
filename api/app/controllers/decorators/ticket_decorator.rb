@@ -7,6 +7,7 @@ class TicketDecorator < ApiDecorator
   def initialize(record, options)
     super(record)
     @name_mapping = options[:name_mapping]
+    @sideload_options = options[:sideload_options]
   end
 
   def utc_format(value)
@@ -20,7 +21,7 @@ class TicketDecorator < ApiDecorator
   end
 
   def requester
-    if record.association(:requester).loaded?
+    if @sideload_options.include?('requester')
       requester = record.requester
       {
         id: requester.id,
@@ -33,13 +34,27 @@ class TicketDecorator < ApiDecorator
   end
 
   def stats
-    if record.association(:ticket_states).loaded?
+    if @sideload_options.include?('stats')
       ticket_states = record.ticket_states
       {
         resolved_at: ticket_states.resolved_at.try(:utc),
         first_responded_at: ticket_states.first_response_time.try(:utc),
         closed_at: ticket_states.closed_at.try(:utc)
       }
+    end
+  end
+
+  def conversations
+    if @sideload_options.include?('conversations')
+      ticket_conversations = record.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at).limit(ConversationConstants::MAX_INCLUDE)
+      ticket_conversations.map { |conversation| ConversationDecorator.new(conversation, ticket: record).construct_json }
+    end
+  end
+
+  def company
+    if @sideload_options.include?('company')
+      company = record.company
+      company ? { id: company.id, name: company.name } : {}
     end
   end
 
