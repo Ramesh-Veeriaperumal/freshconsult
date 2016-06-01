@@ -30,7 +30,7 @@ module HelpdeskReports
         [ {:flexifield => [:flexifield_def]}, {:requester => [:company] }, :archive_ticket_association, :ticket_status, :group, :responder, :tags]
       end
 
-      def generate_ticket_data(tickets = [], list_of_tickets, archive_status)
+      def generate_ticket_data(tickets = [], headers, list_of_tickets, archive_status)
         custom_field_names = Account.current.ticket_fields.custom_fields.map(&:name)
         date_format = Account.current.date_type(:short_day_separated)
 
