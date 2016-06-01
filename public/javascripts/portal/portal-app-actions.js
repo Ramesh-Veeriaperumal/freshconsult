@@ -244,5 +244,8 @@
 					}
 	    	 });
 	    }
+
+	    // Hack for article vote button language support
+	    $.fn.button.defaults.loadingText = lang.loadingText;
 	})
 }(window.jQuery);
