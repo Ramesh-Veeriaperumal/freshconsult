@@ -55,7 +55,7 @@ class Va::Action
       
       puts "From the trigger of Action... Looks like #{action_key} is not supported!"
     rescue Exception => e
-      Rails.logger.debug "For Va::Action #{self} Exception #{e} rescued"
+      Rails.logger.debug "For Va::Action #{self.inspect} Exception #{e} rescued"
     end
   end
   

@@ -134,8 +134,7 @@ module Helpdesk::Email::NoteMethods
     incoming_cc      = email[:cc].reject { |cc| requester_email?(cc) }
     other_recipients = email[:to_emails].reject{|mail| email[:to][:email].include?(mail) or  sup_emails.include?(mail.downcase)}
     new_cc           = incoming_cc.push(other_recipients).flatten
-    in_reply_to = email[:in_reply_to].to_s.include?("notification.freshdesk.com") ? :notification : :default
-    add_to_reply_cc(new_cc, ticket, note, cc_email, in_reply_to)
+    add_to_reply_cc(new_cc, ticket, note, cc_email, email[:references])
     cc_email[:cc_emails] = new_cc | cc_email[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}.compact
     ticket.cc_email = cc_email
   end
