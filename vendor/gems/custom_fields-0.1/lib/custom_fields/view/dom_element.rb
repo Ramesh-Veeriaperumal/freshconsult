@@ -101,7 +101,7 @@ module CustomFields
         end
 
         def construct_url
-          text_field_tag("#{@object_name}[#{@field_name}]", @field_value, 
+          text_field_tag("#{@object_name}[#{@field_name}]", CGI.unescapeHTML(@field_value.to_s), 
                     {:class => "#{@field_class}", 
                       :disabled => @disabled, 
                       :type => 'url'})
@@ -123,7 +123,7 @@ module CustomFields
                 format_date
                 @field_value
               when :url
-                content_tag :a, @field_value, :href => @field_value, :target => '_blank'
+                content_tag :a, CGI.unescapeHTML(@field_value.to_s), :href => @field_value, :target => '_blank'
               when :dropdown_blank
                 CGI.unescapeHTML(@field_value.to_s)
               else 

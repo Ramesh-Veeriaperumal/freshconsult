@@ -16,7 +16,7 @@ module Search
         # Generating a time-based UUID to log and track request and response
         #
         def initialize(uuid)
-          @log_uuid = uuid || Digest::MD5.hexdigest(Time.zone.now.to_s)
+          @log_uuid = uuid || UUIDTools::UUID.timestamp_create.hexdigest
         end
         
         # [01dc7d52106eabd6a8e8d173f8cb9b38] [2015-10-17 18:05:54:271] GET localhost:9200/_search
