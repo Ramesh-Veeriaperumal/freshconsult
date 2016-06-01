@@ -1,0 +1,38 @@
+<div class="list-panel-main">
+	<% if privilege?(:manage_solutions) -%>
+	<div class="sol-details-left">
+		<ul class="list-actions-left category-icon-bg">
+			<li> <%= font_icon(:category, {:size => 24}) %> </li>
+		</ul>
+	</div>
+	<% end %>
+	<div class="sol-details-right">
+		<% if privilege?(:manage_solutions) -%>
+			<ul class="list-actions-right">
+				<li class="list-default-btns">
+					<%= reorder_btn %>
+					<%= new_solutions_button(:category) %>
+				</li>
+			  <li class="list-reorder-btns">
+			    <a href="#" class="btn btn-primary" id="submit_btn"><%= t('save') %></a>
+			    <a href="#" class="btn btn-link" id="cancel_btn"><%= t('cancel') %></a>
+			  </li>
+			</ul>
+		<% end %>
+		<div class="span7 clear-left-margin title-dropdown">
+			<% if current_account.portals.count > 1 %>
+				<h1><%= @portal.portal_name %></h1>
+				<span class="dropdown">
+					<span class='dropdown-toggle' data-toggle="dropdown">
+						<%= link_to t('solution.change_portal'), '', :class => 'change-portal' %>
+					</span>
+					<% options = {:'data-pjax' => "#body-container"} %>
+					<%= dropdown_menu(current_account.portals.map{|p| [p.portal_name, solution_all_categories_path(:portal_id => p.id), p == @portal, ({ :class => 'dropdown-selected' } if p == @portal)] }.compact, options)%>
+				</span>
+			<% else %>
+				<h1><%= t("solution.current_context", :portal_name => @portal.portal_name) %></h1>
+			<% end %>
+			<div class="muted"><%= t("solution.currently_viewing", :portal_name => @portal.portal_name)%></div>
+		</div>
+	</div>
+</div>

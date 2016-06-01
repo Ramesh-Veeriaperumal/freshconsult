@@ -1,7 +1,7 @@
 module ModelControllerMethods
   def self.included(base)
     base.send :before_filter, :build_object, :only => [ :new, :create ]
-    base.send :before_filter, :load_object, :only => [ :show, :edit, :update, :destroy , :restore , :make_agent, :clone_rule]
+    base.send :before_filter, :load_object, :only => [ :show, :edit, :update, :destroy , :restore , :make_agent, :clone_rule, :update_languages, :manage_languages]
   end
   
   def index

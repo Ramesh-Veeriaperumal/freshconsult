@@ -8,34 +8,40 @@ class Solution::Category < ActiveRecord::Base
   self.primary_key = :id
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
-  include Mobihelp::AppSolutionsUtils
-  include Solution::MetaMethods
+  include Solution::Activities
 
-  CACHEABLE_ATTRS = ["id","name","account_id","position","is_default"]
+  belongs_to_account
+
+  belongs_to :solution_category_meta, 
+    :class_name => 'Solution::CategoryMeta', 
+    :foreign_key => "parent_id"
+
+  has_many :solution_folder_meta,
+    :through => :solution_category_meta,
+    :class_name => 'Solution::FolderMeta',
+    :foreign_key => :solution_category_meta_id
+
+  has_many :activities,
+    :class_name => 'Helpdesk::Activity',
+    :as => 'notable'
 
   self.table_name =  "solution_categories"
 
   validates_presence_of :name,:account
-  validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
+  validate :name_uniqueness_validation
+  validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_category_meta.new_record?"
+  
+  after_commit ->(obj) { obj.send(:clear_cache) }, on: :update
 
-  after_create :clear_cache, :add_activity_new
-  after_destroy :clear_cache
-  after_update :clear_cache_with_condition
-
-  after_save    :set_mobihelp_solution_updated_time
-  before_destroy :set_mobihelp_app_updated_time, :add_activity_delete
-
-  concerned_with :associations
-
-  before_create :set_default_portal
-
-  attr_accessible :name, :description, :import_id, :is_default, :portal_ids, :position
-
-  acts_as_list :scope => :account
+  attr_accessible :name, :description, :import_id
 
   scope :customer_categories, {:conditions => {:is_default=>false}}
 
+  alias_method :parent, :solution_category_meta
+  
   include Solution::LanguageMethods
+  
+  SELECT_ATTRIBUTES = ["id"]
 
   def to_s
     name
@@ -64,63 +70,38 @@ class Solution::Category < ActiveRecord::Base
     user.customer? ? {:is_default=>false} : {}
   end
 
-  def to_liquid
-    @solution_category_drop ||= (Solution::CategoryDrop.new self)
+  def primary?
+    (language_id == Language.for_current_account.id)
   end
 
-  def as_cache
-    (CACHEABLE_ATTRS.inject({}) do |res, attribute|
-      res.merge({ attribute => self.send(attribute) })
-    end).with_indifferent_access
+  def available?
+    present?
   end
 
+  def to_param
+    parent_id
+  end
+
+  def stripped_name(name = self.name)
+    (name || "").downcase.strip
+  end
+   
   private
-
-    def set_mobihelp_solution_updated_time
-      self.update_mh_solutions_category_time
-    end
-
-    def set_mobihelp_app_updated_time
-      self.update_mh_app_time
-    end
-
-    def add_activity_delete
-      create_activity('delete_solution_category')
-    end
-
-    def add_activity_new
-      create_activity('new_solution_category')
-    end
   
-    def create_activity(type)
-      activities.create(
-        :description => "activities.solutions.#{type}.long",
-        :short_descr => "activities.solutions.#{type}.short",
-        :account    => account,
-        :user       => User.current,
-        :activity_data  => {
-                    :path => Rails.application.routes.url_helpers.solution_category_path(self),
-                    :url_params => {
-                              :id => id,
-                              :path_generator => 'solution_category_path'
-                            },
-                    :title => name.to_s
-                  }
-      )
+    def name_uniqueness_validation
+      return true unless new_record? || name_changed?
+      conditions = "`solution_categories`.`language_id` = #{self.language_id}"
+      conditions << " AND `solution_categories`.`id` != #{self.id}" unless new_record?
+      if Account.current.solution_categories.
+            where(conditions).pluck(:name).map{|n| stripped_name(n)}.
+            include?(self.stripped_name)
+        errors.add(:name, :taken)
+        return false
+      end
+      return true
     end
 
     def clear_cache(obj=nil)
-      account.clear_solution_categories_from_cache
+      Account.current.clear_solution_categories_from_cache if previous_changes['name'].present? && primary?
     end
-
-    def clear_cache_with_condition
-      account.clear_solution_categories_from_cache if self.name_changed?
-    end
-
-
-    ### MULTILINGUAL SOLUTIONS - META WRITE HACK!!
-    def set_default_portal
-      self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?
-    end
-
 end

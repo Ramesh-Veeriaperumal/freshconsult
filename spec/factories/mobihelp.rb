@@ -3,7 +3,7 @@ if Rails.env.test?
     factory :mobihelp_app, :class => Mobihelp::App do |t|
       sequence(:name) { |n| "Fresh App #{n}" }
       platform 1
-      category_ids ["2"]
+      solution_category_metum_ids ["2"]
       config HashWithIndifferentAccess.new({ :bread_crumbs =>  Mobihelp::App::DEFAULT_BREADCRUMBS_COUNT, :debug_log_count => Mobihelp::App::DEFAULT_LOGS_COUNT, :app_review_launch_count => Mobihelp::App::DEFAULT_APP_REVIEW_LAUNCH_COUNT})
     end
 
@@ -32,7 +32,7 @@ if Rails.env.test?
 
     factory :mobihelp_app_solutions, :class => Mobihelp::AppSolution do |m|
       app_id 1
-      category_id 1
+      solution_category_meta_id 1
       position 1
     end
   end

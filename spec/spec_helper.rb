@@ -114,6 +114,7 @@ Spork.prefork do
     config.include ForumHelper
     config.include ControllerHelper
     config.include UsersHelper
+    config.include SolutionBuilderHelper
     config.include SolutionsHelper
     config.include MobihelpHelper
     config.include CompanyHelper
@@ -142,6 +143,8 @@ Spork.prefork do
     config.include ActionDispatch::TestProcess# to use fixture_file_upload
     config.include ForumDynamoHelper
     config.include ContactFieldsHelper
+    config.include Portal::Helpers::SolutionsHelper
+    config.include Portal::Multilingual
     config.infer_spec_type_from_file_location!
     config.add_setting :account
     config.add_setting :agent
@@ -155,6 +158,7 @@ Spork.prefork do
       RSpec.configuration.timings = []
       Sidekiq::Testing.disable!
       #begin_gc_defragment
+      User.acts_as_authentic_config[:maintain_sessions] = false
     end
 
     config.before(:each, :type => :controller) do

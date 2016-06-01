@@ -3,8 +3,11 @@ class Support::Solutions::ArticlesController < SupportController
   include Helpdesk::TicketActions
   include Solution::Feedback
   include Solution::ArticlesVotingMethods
+  include Solution::PathHelper
 
   before_filter :load_and_check_permission, :except => [:index]
+  
+  before_filter :check_version_availability, :only => [:show]
 
   before_filter :render_404, :unless => :article_visible?, :only => [:show]
 
@@ -36,9 +39,6 @@ class Support::Solutions::ArticlesController < SupportController
   end
   
   def show
-    wrong_portal and return unless(main_portal? || 
-        (current_portal.has_solution_category?(@article.folder.category_id)))
-
     respond_to do |format|
       format.html { 
         draft_preview? ? adapt_article : load_page_meta
@@ -49,7 +49,7 @@ class Support::Solutions::ArticlesController < SupportController
   end
 
   def hit
-    @article.hit! unless agent?
+    @article.current_article.hit! unless agent?
     render_tracker
   end
   
@@ -64,11 +64,13 @@ class Support::Solutions::ArticlesController < SupportController
   end
 
   private
+
     def load_and_check_permission
-      @article = current_account.solution_articles.find(params[:id])
-      unless @article.folder.visible?(current_user)    
+      @solution_item = @article = current_account.solution_article_meta.find_by_id(params[:id])
+      render_404 and return if @article && !parent_exists?
+      if @article && !@article.visible?(current_user)
         unless logged_in?
-          session[:return_to] = solution_category_folder_article_path(@article.folder.category_id, @article.folder_id, @article.id)
+          store_location
           redirect_to login_url
         else
           flash[:warning] = t(:'flash.general.access_denied')
@@ -76,18 +78,24 @@ class Support::Solutions::ArticlesController < SupportController
         end
       end
     end
+    
+    def parent_exists?
+      @article.solution_folder_meta.present? && 
+      @article.solution_folder_meta.solution_category_meta.present?
+    end
 
     def article_visible?
-      return false unless (((current_user && current_user.agent? && privilege?(:view_solutions)) || @article.published?) and @article.visible_in?(current_portal))
+      return false unless @article && (((current_user && current_user.agent? && privilege?(:view_solutions)) || 
+                    @article.current_article.published?) and @article.visible_in?(current_portal))
       draft_preview_agent_filter?
     end
     
-    def load_agent_actions
+    def load_agent_actions      
       @agent_actions = []
-      @agent_actions <<   { :url => edit_solution_article_path(@article),
+      @agent_actions <<   { :url => multilingual_article_path(@article, :anchor => "edit"),
                             :label => t('portal.preview.edit_article'),
                             :icon => "edit" } if privilege?(:manage_solutions)
-      @agent_actions <<   { :url => solution_article_path(@article),
+      @agent_actions <<   { :url => multilingual_article_path(@article),
                             :label => t('portal.preview.view_on_helpdesk'),
                             :icon => "preview" } if privilege?(:view_solutions)
       @agent_actions
@@ -107,7 +115,12 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def draft_preview_agent_filter?
-      return (current_user && current_user.agent? && (@article.draft.present? || !@article.published?) && privilege?(:view_solutions)) if draft_preview?
+      if !current_user && params[:different_portal]
+        store_location
+        redirect_to support_login_path and return true
+      end
+      return (current_user && current_user.agent? && (@article.draft.present? || 
+            !@article.current_article.published?) && privilege?(:view_solutions)) if draft_preview?
       true
     end
 
@@ -144,7 +157,19 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def cleanup_params_for_title
-      params.slice!("id", "format", "controller", "action", "status", "portal_type")
+      params.slice!("id", "format", "controller", "action", "status", "url_locale", "portal_type")
+    end
+
+    def route_name(language)
+      support_solutions_article_path(@solution_item.send("#{language.to_key}_article") || @solution_item, :url_locale => language.code)
+    end
+
+    def unscoped_fetch
+      @article = current_account.solution_article_meta.unscoped_find(params[:id])
+    end
+
+    def default_url
+      support_solutions_article_path(@article.primary_article, :url_locale => current_account.language)
     end
 
 end

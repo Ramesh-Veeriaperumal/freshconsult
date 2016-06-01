@@ -1,0 +1,76 @@
+<% content_for :helpcard do %>
+	<%= render :partial => "languages_helpnote" %>
+<% end %>
+<div class="manage-languages-header">
+	<span class="button-container itil-hide language-form-btns">
+		<%= pjax_link_to(t('cancel'), edit_account_path, :class => "btn" ) %>
+	  <%= submit_tag t('save'), :class => "btn btn-primary", :id => "manage_languages_submit", :form => "manage_languages_form" %>
+	</span>
+	<%= breadcrumbs %>
+</div>
+
+<% multilingual_flag = @account.features_included?(:enable_multilingual) %>
+
+<div class="manage-languages-body">
+	<%= error_messages_for :account %>
+	<div class="form-horizontal">
+		<%= form_for @account, :url => { :action => 'update_languages' }, :html => { :id => "manage_languages_form", :rel => "validate", :data => { :portal_languages => @account.portal_languages }
+			} do |f| %>
+			<div class="row-fluid">
+				<%= f.fields_for :main_portal do |portal| %>
+					<div class="fields">
+						<div class="control-group">
+							<%= portal.label :language, t('account.primary_language'), :class => "control-label"  %>
+							<div class="controls">
+								<div class="row-fluid">
+									<% if multilingual_flag %>
+										<div class="mt5"><%= Language.find_by_code(@account.main_portal.language).name %></div>
+									<% else %>
+										<%= portal.select :language, I18n.available_locales_with_name , 
+													{ :selected =>  @account.main_portal.language.to_sym() },
+													{ :class => "select2 input-medium" } 
+										%>
+									<% end %>
+								</div>
+								<div class="row-fluid multilingual-warning mt5">
+									<%= t('accounts.multilingual_support.warning_msg') %>
+								</div>
+							</div>
+						</div>
+						<%= f.fields_for :account_additional_settings do |settings| %>
+							<div class="control-group" id="supported_language_list">
+								<%= settings.label :supported_languages , t('account.additional_languages') , :class => "control-label caption" %>
+								<div class="controls">
+									<div class="row-fluid">
+										<div class="rounded-add-icon"> </div>
+										<%= settings.select :supported_languages, 
+													options_for_select( I18n.available_locales_with_name.reject { |lang, sym| sym == @account.main_portal.language.to_sym() }, 
+													:selected => @account.reload.supported_languages), 
+													{}, 
+													{ 
+														:multiple => true,
+														:class => "input-xxlarge clear-left-margin secondary-languages-field",
+														"data-placeholder" => t('accounts.multilingual_support.add_languages'),
+														:id => "account_supported_languages",
+														:placeholder => t('accounts.multilingual_support.add_languages')
+													} %>
+									</div>
+									<div class="row-fluid muted mt5 secondary-languages-field">
+										<%= t('accounts.multilingual_support.add_more_languages_msg') %>
+									</div>
+									<div class="row-fluid selected-languages mt20"></div>
+								</div>					
+							</div>
+						<% end %>
+					</div>
+				<% end %>
+		<% end %>
+	</div>
+</div>
+<script type="text/javascript">
+	jQuery('body').one('assetLoaded.fjax', function() {
+		App.Admin.LanguageSettings.INVALID_LANGUAGE_ALERT =  "<%= t('account.same_language_alert')%>";
+		App.Admin.LanguageSettings.msgPortalVisible =  "<%= t('account.visible_in_portal') %>";
+		App.Admin.LanguageSettings.msgPortalHidden =  "<%= t('account.hidden_on_portal') %>";
+	});
+</script>

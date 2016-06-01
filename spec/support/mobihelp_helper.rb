@@ -20,7 +20,8 @@ module MobihelpHelper
   end
 
   def create_mobihelp_app(params = {})
-    mh_app = FactoryGirl.build(:mobihelp_app, :name => (params[:name] || "Fresh App #{Time.now.nsec}"), :category_ids => params[:category_ids])
+    mh_app = FactoryGirl.build(:mobihelp_app, :name => (params[:name] || "Fresh App #{Time.now.nsec}"), 
+        :solution_category_metum_ids => (params[:category_ids] || params[:solution_category_metum_ids]))
     mh_app.save
     Rails.logger.debug("Created mobihelp_app #{mh_app.inspect}");
     mh_app
@@ -54,7 +55,9 @@ module MobihelpHelper
   end
 
   def create_mobihelp_app_solutions(params = {})
-    @mh_solutions = FactoryGirl.build(:mobihelp_app_solutions, :app_id => params[:app_id], :category_id => params[:category_id], :position => params[:position], :account_id => params[:account_id])
+    @mh_solutions = FactoryGirl.build(:mobihelp_app_solutions, :app_id => params[:app_id], 
+        :solution_category_meta_id => (params[:category_id] || params[:solution_category_meta_id]), 
+        :position => params[:position], :account_id => params[:account_id])
     @mh_solutions.save
     Rails.logger.debug("Created mobihelp app solutions : #{@mh_solutions}")
     @mh_solutions
@@ -91,7 +94,13 @@ module MobihelpHelper
 
   def compare_updated_at(record_set1, record_set2)
     (0..(record_set1.length-1)).each do |i|
-      (record_set2[i].updated_at > record_set1[i].updated_at).should be_eql(true)
+      (record_set2[i] > record_set1[i]).should be_eql(true)
+    end
+  end
+  
+  def check_updated_at_equality(record_set1, record_set2)
+    (0..(record_set1.length-1)).each do |i|
+      (record_set2[i] == record_set1[i]).should be_eql(true)
     end
   end
 end

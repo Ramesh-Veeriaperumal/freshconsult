@@ -86,7 +86,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       
       begin
-        if ((to_email[:email] == kbase_email) || (parse_cc_email && parse_cc_email.include?(kbase_email)))
+        if kbase_email_present?(kbase_email)
           create_article(account, from_email, to_email)
         end
       rescue Exception => e
@@ -249,6 +249,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       
       parse_email params[:to]
+    end
+
+    def kbase_email_present? kbase_email
+      return false if auto_generated?(params[:headers])
+      envelope = params[:envelope]
+      return false if envelope.blank?
+      envelope_to = (ActiveSupport::JSON.decode envelope)['to']
+      return false if envelope_to.blank?
+      envelope_to.map {|to_email| parse_email(to_email)[:email]}.include?(kbase_email) 
     end
     
     def parse_from_email account
@@ -431,10 +440,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def check_for_auto_responders(model)
-      headers = params[:headers]
-      if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || (headers =~ /Precedence: auto_reply/) || (headers =~ /Precedence: (bulk|junk)/i)))
-        model.skip_notification = true
-      end
+      model.skip_notification = true if(auto_generated?(params[:headers]))
+    end
+    
+    def auto_generated?(headers)
+      !headers.blank? && (
+        (headers =~ /Auto-Submitted: auto-(.)+/i) || 
+        (headers =~ /Precedence: auto_reply/) || 
+        (headers =~ /Precedence: (bulk|junk)/i)
+      )
     end
 
     def check_support_emails_from(account, model, user, from_email)

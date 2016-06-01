@@ -7,7 +7,7 @@ class SearchV2::IndexOperations
   class UpdateArticleFolder < SearchV2::IndexOperations
     def perform(args)
       args.symbolize_keys!
-      folder = Account.current.folders.find(args[:folder_id])
+      folder = Account.current.solution_folder_meta.find(args[:folder_id])
       folder.articles.find_in_batches do |articles|
         articles.map(&:sqs_manual_publish_without_feature_check)
       end if folder and Account.current.try(:features?, :es_v2_writes)

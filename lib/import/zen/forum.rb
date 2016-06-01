@@ -55,6 +55,12 @@ module Import::Zen::Forum
     else
       category.update_attribute(:import_id , category_prop.import_id )
     end
+    save_solution_category
+ end
+
+ def save_solution_category
+  category =  @current_account.solution_categories.find_by_name("General")
+  Solution::Builder.category({:solution_category_meta => { :name=> "General" }}) unless category
  end
  
  
@@ -148,13 +154,27 @@ module Import::Zen::Forum
  end
 
 
-def save_solution_folder forum_prop
-  category =  @current_account.solution_categories.find_or_create_by_name("General")
-  folder = category.folders.find(:first, :conditions =>['name=? or import_id=?',forum_prop.name,forum_prop.import_id])
+def save_solution_folder forum_prop  
+  category = @current_account.solution_categories.find_by_name("General")
+  if category
+    category_meta = category.solution_category_meta
+  else
+    category_meta = Solution::Builder.category({
+        :solution_category_meta => {
+          :primary_category => {
+            :name => "General"
+          }
+        }
+      })
+  end
+  folder = category_meta.solution_folders.find(:first, :conditions =>['name=? or import_id=?',forum_prop.name,forum_prop.import_id])
   unless folder and folder.import_id.blank?
-    folder_hash = forum_prop.to_hash.merge({:visibility => forum_prop.forum_visibility}).delete_if{|k, v| [:forum_type,:forum_visibility].include? k }
-    folder_hash[:name] = "#{folder_hash[:name]} - #{folder_hash[:import_id]}" if folder
-    folder = category.folders.create(folder_hash)
+    folder_hash = forum_prop.to_hash.merge({
+        :visibility => forum_prop.forum_visibility,
+        :solution_category_meta_id => category_meta.id }).delete_if{|k, v| [:forum_type,:forum_visibility,:category_id].include? k }
+    folder_hash[:primary_folder] = { :name => "#{folder_hash[:name]} - #{folder_hash[:import_id]}" } if folder
+    folder_meta = Solution::Builder.folder({ :solution_folder_meta => folder_hash })
+    folder_meta.primary_folder
   else
     folder.update_attribute(:import_id , forum_prop.import_id )
   end  
@@ -171,11 +191,11 @@ def save_solution_article topic_prop
                                                                                                 :user_id =>user.id,
                                                                                                 :description => convert_inline_images(topic_prop.body),
                                                                                                 :status =>Solution::Article::STATUS_KEYS_BY_TOKEN[:published], 
-                                                                                                :art_type => Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]
+                                                                                                :art_type => Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent],
+                                                                                                :solution_folder_meta_id => sol_folder.parent_id
                                                                                                 })
-    article = sol_folder.articles.build(article_hash)
-    article.account_id = @current_account.id 
-    article.save
+    article_meta = Solution::Builder.article({ :solution_article_meta => article_hash })
+    article = article_meta.primary_article
 
     topic_prop.attachments.each do |attachment|   
         increment_key 'attachments_queued'  

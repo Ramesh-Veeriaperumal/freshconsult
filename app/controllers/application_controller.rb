@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   around_filter :select_shard
   
   prepend_before_filter :determine_pod
-  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account
+  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :reset_language
   before_filter :set_shard_for_payload
   before_filter :set_default_locale, :set_locale, :set_msg_id
   include SslRequirement
@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   #before_filter :logging_details 
   before_filter :remove_pjax_param 
-  after_filter :set_last_active_time
+  after_filter :set_last_active_time, :reset_language
 
   after_filter :remove_rails_2_flash_after
 
@@ -112,6 +112,10 @@ class ApplicationController < ActionController::Base
     rescue ActiveSupport::MessageVerifier::InvalidSignature
       handle_unverified_request
     end    
+  end
+
+  def reset_language
+    Language.reset_current
   end
 
   def show_password_expiry_warning

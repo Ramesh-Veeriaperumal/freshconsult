@@ -171,6 +171,7 @@ gem "premailer", "~> 1.8.0"
 
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'launchparty', "0.1.1", :git => 'git@github.com:freshdesk/launch-party.git', :branch => 'master'
+gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'master'
 
 
 gem "bunny", "1.7.0"
@@ -180,7 +181,7 @@ gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/cust
 
 gem "jwt", "1.0.0" #could not use latest gem version(1.2.0) since twilio-ruby gem is using 1.0.0
 
-group :production,:test,:staging do
+group :production, :staging do
   gem "tire", :git => "git@github.com:freshdesk/retire.git"
 end
 

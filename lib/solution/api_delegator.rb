@@ -70,21 +70,14 @@ module Solution::ApiDelegator
 
   # Removing associations that will be included while generating children_json 
   # to avoid the query to fetch the primary/current object, as it is already loaded using the default scope of the Meta objects
-  def remove_parent_child_options(opts)
+  def remove_parent_child_options(*opts)
+    opts = opts.compact.flatten
     return [] if opts.blank?
 
-    if opts.is_a? Array
-      return opts - CHILD_ASSOCIATIONS[class_api_name].keys
-    end
-
-    if opts.is_a? Hash
-      return opts.except *CHILD_ASSOCIATIONS[class_api_name].keys
-    end
-
-    if (opts.is_a?(String) || opts.is_a?(Symbol)) && CHILD_ASSOCIATIONS[class_api_name].keys.include?(opts.to_sym)
-      return []
-    end
-    opts
+    opts.map {|assoc| 
+      assoc.is_a?(Hash) ? assoc.symbolize_keys.except(*CHILD_ASSOCIATIONS[class_api_name].keys) : 
+        (CHILD_ASSOCIATIONS[class_api_name].keys.include?(assoc.to_sym) ? nil : assoc.to_sym)
+    }.reject(&:blank?)
   end
   
   def json_from_parent(options={})

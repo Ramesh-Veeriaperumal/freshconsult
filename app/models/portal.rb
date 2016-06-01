@@ -8,9 +8,10 @@ class Portal < ActiveRecord::Base
   serialize :preferences, Hash
 
   attr_protected  :account_id
+  attr_accessor :language_list
 
   xss_sanitize  :only => [:name,:language], :plain_sanitizer => [:name,:language]
-  validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
+  validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true, :if => :portal_url_changed?
   validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$",
   :allow_nil => true, :allow_blank => true
   validates_inclusion_of :language, :in => Language.all_codes, :if => :language_changed?
@@ -86,8 +87,8 @@ class Portal < ActiveRecord::Base
     account.forums.in_categories(forum_category_ids)
   end
 
-  def has_solution_category? category_id
-    return true unless portal_solution_categories.find_by_solution_category_id(category_id).nil?
+  def has_solution_category? category_meta_id
+    portal_solution_categories.find_by_solution_category_meta_id(category_meta_id).present?
   end
   
   def has_forum_category? category
@@ -188,17 +189,20 @@ class Portal < ActiveRecord::Base
   def full_name
     main_portal && name.blank? ? Account.current.name : name
   end
-  
+
+  def multilingual?
+    @is_multilingual ||= Account.current.multilingual? && Account.current.portal_languages.present?
+  end
+
   def tickets_url
     main_portal ? "#{Account.current.full_url}/support/tickets" : "#{url_protocol}://#{portal_url}/support/tickets"
   end
-  
 
   private
 
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
     def update_solutions_language
-      Community::HandleLanguageChange.perform_async
+      Community::HandleLanguageChange.perform_async unless account.multilingual?
     end
 
     def main_portal_language_changes?
@@ -308,14 +312,15 @@ class Portal < ActiveRecord::Base
     end
     
     def add_default_solution_category
-      # Remove this method when new solution UI goes out
-      return if account.solution_categories.empty?
-      default_category = account.solution_categories.find_by_is_default(true)
-      self.solution_category_ids = self.solution_category_ids | [default_category.id] if default_category.present?
+      return if account.solution_category_meta.empty?
+      #The above line is needed, as we created portals before soln categories, while creating an account.
+      
+      default_category_meta = account.solution_category_meta.find_by_is_default(true)
+      self.solution_category_metum_ids = self.solution_category_metum_ids | [default_category_meta.id] if default_category_meta.present?
     end
 
     def clear_solution_cache(obj=nil)
-      account.clear_solution_categories_from_cache
+      Account.current.clear_solution_categories_from_cache
     end
 
     # * * * POD Operation Methods Begin * * *

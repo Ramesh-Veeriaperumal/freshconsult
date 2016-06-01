@@ -4,6 +4,7 @@ class Search::V2::SolutionsController < ApplicationController
 
   include Search::SearchResultJson
   include Search::V2::AbstractController
+  helper Search::SearchHelper
 
   before_filter :load_ticket, :only => [:related_solutions, :search_solutions]
     
@@ -12,7 +13,7 @@ class Search::V2::SolutionsController < ApplicationController
   def related_solutions
     @es_search_term = @ticket.subject
     search_and_assign
-    render template: 'search/solutions/related_solutions', :layout => false
+    render partial: 'search/solutions/results'
   end
 
   # Find solutions for insert_solution search
@@ -20,14 +21,14 @@ class Search::V2::SolutionsController < ApplicationController
   #
   def search_solutions
     search_and_assign
-    render template: 'search/solutions/search_solutions', :layout => false
+    render partial: 'search/solutions/results'
   end
   
   private
     
     def construct_es_params
       super.tap do |es_params|
-        es_params[:language_id]         = Language.for_current_account.id
+        es_params[:language_id]         = params[:language_id] || Language.for_current_account.id
         es_params[:article_category_id] = params[:category_id].to_i if params[:category_id].present?
         es_params[:article_folder_id]   = params[:folder_id].to_i if params[:folder_id].present?
         es_params[:sort_by]             = @search_sort

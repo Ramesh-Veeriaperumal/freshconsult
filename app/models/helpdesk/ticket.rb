@@ -765,15 +765,24 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def portal
     (self.product && self.product.portal) || account.main_portal
   end
-  
+
   def portal_host
     (self.product && !self.product.portal_url.blank?) ? self.product.portal_url : account.host
   end
 
-  def solution_article_host article
-    (self.product && !self.product.portal_url.blank? && (self.product.portal.has_solution_category?(article.folder.category_id))) ? self.product.portal_url : account.host
+  def article_url_options(article)
+    art_portal = (self.product && self.product.portal) || Account.current.main_portal
+    unless art_portal.has_solution_category?(article.solution_folder_meta.solution_category_meta.id)
+      art_portal = article.solution_folder_meta.solution_category_meta.portals.first
+    end
+    
+    (art_portal && { :host => art_portal.host, :protocol => art_portal.url_protocol }) || {}
   end
-  
+
+  def microresponse_only?
+    twitter? || facebook? || mobihelp? || ecommerce?
+  end
+
   def portal_name
     (self.product && self.product.portal_name) ? self.product.portal_name : account.portal_name
   end

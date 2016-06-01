@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true */
-/*global  App */
+/*global  App, nativePlaceholderSupport */
 
 window.App = window.App || {};
 (function ($) {
@@ -7,6 +7,12 @@ window.App = window.App || {};
 
   App.Solutions = {
     current_module: '',
+
+    translationDropdownOpts: {
+      dropdownAutoWidth: 'true',
+      dropdownCssClass: 'add-translation-dropdown',
+      minimumResultsForSearch: 7
+    },
 
     onFirstVisit: function (data) {
       this.onVisit(data);
@@ -49,16 +55,37 @@ window.App = window.App || {};
     },
 
     bindHandlers: function () {
-      $('body').on('change.solutionHome', '#solution_folder_visibility', App.Solutions.Folder.setCompanyVisibility);
+      $('body').on('change.solutionHome', '#solution_folder_meta_visibility', App.Solutions.Folder.setCompanyVisibility);
+      $('body').on('click.solutionHome', '.modal-footer [data-dismiss="modal"]', this.resetFormOnCancel);
     },
 
     unBindHandlers: function () {
       $('body').off('.solutionHome');
     },
 
-    configurePlaceholder: function() {
-      if(!nativePlaceholderSupport()){
+    configurePlaceholder: function () {
+      if (!nativePlaceholderSupport()) {
         $('.solutions input.solution-placeholder').placeholder();
+      }
+    },
+
+    formatLangOptions: function (state) {
+      var originalOption = state.element, outdated;
+      return "<span class='language_symbol " + $(originalOption).data('state') + "'>" + "<span class='language_name'>" + $(originalOption).data('code') + "</span></span>" + "<span class='language_label'>" + state.text + "</span>";
+    },
+
+    resetFormOnCancel: function (e) {
+      var form = $('#' + e.target.id).parents('.modal').find('form');
+      App.Solutions.resetModalForm(form);
+    },
+
+    resetModalForm: function (form) {
+      form.resetForm();
+      form.find('.select2').trigger('change');
+      form.find('.error_messages').empty();
+      if (form.find('.company_folders').length > 0) {
+        var customers_input = form.find('.autocomplete_filter [type="hidden"]');
+        customers_input.select2('val', customers_input.data().initialValue);
       }
     },
 

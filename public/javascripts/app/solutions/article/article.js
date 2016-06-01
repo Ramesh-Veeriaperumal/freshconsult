@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true */
-/*global  App, moment, highlight_code, Fjax */
+/*global  App, moment, highlight_code, Fjax, invokeRedactor */
 
 window.App = window.App || {};
 (function ($) {
@@ -16,13 +16,17 @@ window.App = window.App || {};
     autoSave: null,
 
     onVisit: function (data) {
-      if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create") {
+      if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create" || App.namespace === "solution/articles/edit") {
         $('#sticky_redactor_toolbar').removeClass('hide');
         invokeRedactor('solution_article_description', 'solution');
         this.eventsForNewPage();
       } else {
         this.eventsForShowPage();
       }
+      this.dummyActionButtonTriggers();
+      this.formatTranslationDropdown();
+      this.showVersionDropdown();
+      this.versionSelection();
     },
     
     onLeave: function (data) {
@@ -36,12 +40,15 @@ window.App = window.App || {};
     },
 
     eventsForNewPage: function () {
+      this.handleEdit();
       this.bindPropertiesToggle();
       this.formatSeoMeta();
       this.setTagSelector();
       this.dummyActionButtonTriggers();
       this.unsavedContentNotif();
       this.formValidate();
+      this.toggleShowMaster();
+      this.bindForShowMaster();
     },
 
     eventsForShowPage: function () {

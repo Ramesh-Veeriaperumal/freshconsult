@@ -42,6 +42,6 @@ module Solution::ArticlesVotingMethods
   end
 
   def load_vote
-    @vote = @article.votes.find_or_initialize_by_user_id(current_user.id) if current_user
+    @vote = @article.votes.where(:user_id => current_user.id).first_or_initialize if current_user
   end
 end

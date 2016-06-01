@@ -89,6 +89,7 @@ class Search::V2::SpotlightController < ApplicationController
           if (@search_context == :agent_spotlight_solution)
             es_params[:article_category_id] = params[:category_id].to_i if params[:category_id].present?
             es_params[:article_folder_id]   = params[:folder_id].to_i if params[:folder_id].present?
+            es_params[:language_id] = params[:language_id] if params[:language_id].present?
           end
         end
 

@@ -21,7 +21,7 @@
 		<% if privilege?(:manage_solutions) %>
 			<div class="action-btns-bar">
 				<%= link_to( '', 
-							edit_solution_folder_path(@folder),
+							edit_solution_folder_path(@folder_meta),
 							:rel => "freshdialog",
 							:class => font_class('edit',23,'tooltip'),
 							:title => t('folder.edit'),
@@ -30,14 +30,14 @@
 								"target" => "#folder-edit",
 								"close-label" => t('cancel'),
 								"submit-label" => t('save'),
-								"template-footer" => "#{solution_modal_footer(@folder)}"
+								"template-footer" => "#{solution_modal_footer(@folder_meta)}"
 							}) %>
 			</div>
 		<% end %>
 		<div class="category-details span7 <%= 'ml0' unless privilege?(:manage_solutions) %>">
-			<h2 class="list-title ellipsis <%= 'tooltip' if @folder.name.length > 55 %>" folder-id="<%= @folder.id %>" title="<%= @folder.name if @folder.name.length > 55 %>"><%= h(@folder.name) %></h2>
+			<h2 class="list-title ellipsis <%= 'tooltip' if @folder_meta.name.length > 55 %>" folder-id="<%= @folder_meta.id %>" title="<%= @folder_meta.name if @folder_meta.name.length > 55 %>"><%= h(@folder_meta.name) %></h2>
 			<div class="sol-visibility muted">
-				<span class="sol-visibility-label"><%= t('solution.folders.folder_form.visible_to') %>:</span><%= company_visibility_tooltip(@folder) %>
+				<span class="sol-visibility-label"><%= t('solution.folders.folder_form.visible_to') %>:</span><%= company_visibility_tooltip(@folder_meta) %>
 			</div>
 		</div>
 	</div>

@@ -191,9 +191,9 @@ Authority::Authorization::PrivilegeList.build do
   # ************** SOLUTIONS **************************
 
   view_solutions do
-    resource :"solution/category", :only => [:index, :show, :navmenu, :sidebar]
+    resource :"solution/category", :only => [:index, :show, :navmenu, :sidebar, :all_categories]
     resource :"solution/folder", :only => [:index, :show]
-    resource :"solution/article", :only => [:index, :show, :voted_users]
+    resource :"solution/article", :only => [:index, :show, :voted_users, :show_master]
     resource :"search/home", :only => [:solutions]
     resource :"search/solution", :only => [:index]
     resource :"search/v2/spotlight", :only => [:solutions]
@@ -202,7 +202,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   publish_solution do
-    resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder, :properties, :move_to, :move_back]
+    resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder, :properties, :move_to, :move_back, :mark_as_outdated, :mark_as_uptodate]
     resource :"solution/tag_use"
     resource :solutions_uploaded_image, :only => [:create, :create_file]
     resource :"solution/draft", :only => [:autosave, :publish, :attachments_delete, :destroy]
@@ -217,6 +217,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_solutions do
     resource :"solution/category", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder, :move_to, :move_back, :visible_to]
+    resource :"solution/article", :only => [:translate_parents]
   end
 
   # ************** FORUMS **************************
@@ -466,7 +467,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/gamification"
     resource :"admin/quest"
     resource :"helpdesk/sla_policy"
-    resource :account, :only => [:update, :edit, :delete_logo, :delete_favicon]
+    resource :account, :only => [:update, :edit, :delete_logo, :delete_favicon, :manage_languages, :update_languages]
     resource :"admin/template"
     resource :"admin/page"
     resource :"support/preview"

@@ -21,17 +21,17 @@ class Solution::FolderDrop < BaseDrop
   def url
     support_solutions_folder_path(source)
   end
-
+  
   def category
-    source.category
+    source.solution_category_meta
   end
-  
+
   def articles_count
-    @articles_count ||= @source.published_articles.size
+    @articles_count ||= @source.solution_article_meta.published.size
   end
-  
+
   def articles
-    @articles ||= @source.published_articles.filter(@per_page, @page)
-  end 
+    @articles ||= @source.solution_article_meta.published.filter(@per_page, @page)
+  end
   
 end

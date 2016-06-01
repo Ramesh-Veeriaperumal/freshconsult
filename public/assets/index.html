@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_bf37ea89c9e0bfb8c9981f800eabc3a7.eot");
-  src: url("../../assets/glyphs_bf37ea89c9e0bfb8c9981f800eabc3a7.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_bf37ea89c9e0bfb8c9981f800eabc3a7.woff") format("woff"),
-       url("../../assets/glyphs_bf37ea89c9e0bfb8c9981f800eabc3a7.ttf") format("truetype"),
-       url("../../assets/glyphs_bf37ea89c9e0bfb8c9981f800eabc3a7.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.eot");
+  src: url("../../assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.woff") format("woff"),
+       url("../../assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.ttf") format("truetype"),
+       url("../../assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_bf37ea89c9e0bfb8c9981f800eabc3a7.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.svg#glyphs") format("svg");
   }
 }
 
@@ -182,6 +182,7 @@
 .ficon-caret-up:before,
 .ficon-categories:before,
 .ficon-categories-orphan:before,
+.ficon-category:before,
 .ficon-chat:before,
 .ficon-chat-bubble:before,
 .ficon-chat-disable:before,
@@ -229,6 +230,7 @@
 .ficon-dots:before,
 .ficon-download:before,
 .ficon-dropbox:before,
+.ficon-dropdown-circle:before,
 .ficon-dropdown_blank:before,
 .ficon-earth:before,
 .ficon-ecommerce:before,
@@ -239,6 +241,7 @@
 .ficon-email-notifications:before,
 .ficon-email_commands_setting:before,
 .ficon-eye:before,
+.ficon-eye-disabled:before,
 .ficon-facebook:before,
 .ficon-facebook-lock:before,
 .ficon-facebook-setting:before,
@@ -471,6 +474,7 @@
 .ficon-caret-up:before { content: "\f11b"; }
 .ficon-categories:before { content: "\f1db"; }
 .ficon-categories-orphan:before { content: "\f1dc"; }
+.ficon-category:before { content: "\f223"; }
 .ficon-chat:before { content: "\f1bd"; }
 .ficon-chat-bubble:before { content: "\f11c"; }
 .ficon-chat-disable:before { content: "\f11d"; }
@@ -518,6 +522,7 @@
 .ficon-dots:before { content: "\f132"; }
 .ficon-download:before { content: "\f202"; }
 .ficon-dropbox:before { content: "\f133"; }
+.ficon-dropdown-circle:before { content: "\f224"; }
 .ficon-dropdown_blank:before { content: "\f134"; }
 .ficon-earth:before { content: "\f135"; }
 .ficon-ecommerce:before { content: "\f1e2"; }
@@ -528,6 +533,7 @@
 .ficon-email-notifications:before { content: "\f13a"; }
 .ficon-email_commands_setting:before { content: "\f13b"; }
 .ficon-eye:before { content: "\f13c"; }
+.ficon-eye-disabled:before { content: "\f225"; }
 .ficon-facebook:before { content: "\f13d"; }
 .ficon-facebook-lock:before { content: "\f13e"; }
 .ficon-facebook-setting:before { content: "\f13f"; }
@@ -715,7 +721,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (275)</h1>
+      <h1>Font Icons (278)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -1123,6 +1129,15 @@
         </div>
         <div class="usage">
           <span>categories-orphan</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-category" class="ficon-category"></i></span>
+        </div>
+        <div class="usage">
+          <span>category</span>
         </div>
       </div>
       
@@ -1551,6 +1566,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-dropdown-circle" class="ficon-dropdown-circle"></i></span>
+        </div>
+        <div class="usage">
+          <span>dropdown-circle</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-dropdown_blank" class="ficon-dropdown_blank"></i></span>
         </div>
         <div class="usage">
@@ -1636,6 +1660,15 @@
         </div>
         <div class="usage">
           <span>eye</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-eye-disabled" class="ficon-eye-disabled"></i></span>
+        </div>
+        <div class="usage">
+          <span>eye-disabled</span>
         </div>
       </div>
       
