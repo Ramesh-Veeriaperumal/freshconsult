@@ -28,14 +28,16 @@ describe Admin::SurveysController do
     happy_text = Faker::Lorem.sentence
     neutral_text = Faker::Lorem.sentence
     unhappy_text = Faker::Lorem.sentence
-    put :update, :id => @account.survey.id , :survey => {  
+    survey = Account.current.survey
+
+    put :update, :id => survey.id , :survey => {  
                                                 :link_text => link_text, 
                                                 :happy_text => happy_text, 
                                                 :neutral_text => neutral_text, 
                                                 :unhappy_text => unhappy_text, 
                                                 :send_while => 1
                                               }
-    survey = Survey.find(:last)
+    survey.reload
     survey.link_text.should be_eql(link_text)
     survey.happy_text.should be_eql(happy_text)
     survey.neutral_text.should be_eql(neutral_text)

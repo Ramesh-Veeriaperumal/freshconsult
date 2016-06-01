@@ -72,8 +72,7 @@ describe Admin::ProductsController do
   end
 
   it "should not create Product without reply_email" do
-    post :create, { :product => product_params({:name =>"Fresh Org",:enable_portal=>"0"})
-    }
+    post :create, { :product => product_params({:name =>"Fresh Org",:enable_portal=>"0"}) }
     new_product = @account.products.find_by_name("Fresh Org")
     new_product.should be_nil
     response.body.should =~ /New Product/

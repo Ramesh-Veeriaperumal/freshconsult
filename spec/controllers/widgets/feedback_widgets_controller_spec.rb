@@ -30,9 +30,8 @@ describe Widgets::FeedbackWidgetsController do
     now = (Time.now.to_f*1000).to_i
     post :create, widget_params(now)
     @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
-    expect(response.status).to eql(200)
-    result = parse_json(response)
-    expect(result["success"]).to eql(true)
+    body = JSON.parse(response.body)
+    body["success"].should be true
   end
 
   it "should redirect to feedback_widgets/new if ticket creation fails" do
@@ -40,8 +39,9 @@ describe Widgets::FeedbackWidgetsController do
     now = (Time.now.to_f*1000).to_i
     Widgets::FeedbackWidgetsController.any_instance.stubs(:create_the_ticket => false)
     post :create, widget_params(now)    
-    result = parse_json(response)
-    expect(result["success"]).to eql(false)
+    body = JSON.parse(response.body)
+    body["success"].should be false
+    Widgets::FeedbackWidgetsController.any_instance.unstub(:create_the_ticket)
   end
 
   describe "Multilingual Feature" do

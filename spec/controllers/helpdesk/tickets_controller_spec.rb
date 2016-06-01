@@ -171,8 +171,8 @@ RSpec.describe Helpdesk::TicketsController do
   end
 
   it "should create a new outbound email ticket" do
-    now = (Time.now.to_f*1000).to_i
-    @account.features.compose_email.create
+    now = (Time.now.to_f*1000).to_i    
+    @account.features.compose_email.destroy
     post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
                                        :requester_id => "",
                                        :subject => "New Oubound Ticket #{now}",
@@ -189,13 +189,14 @@ RSpec.describe Helpdesk::TicketsController do
     Delayed::Job.last.handler.should_not include("biz_rules_check")                                  
     t = @account.tickets.find_by_subject("New Oubound Ticket #{now}")
     t.cc_email[:cc_email].include?("someone@cc.com")
+    t.outbound_email?.should be true
     t.source.should be_eql(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
     @account.tickets.find_by_subject("New Oubound Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
-    @account.features.compose_email.destroy
   end
 
   it "should create a new outbound email ticket for non feature account but outbound email check should return false" do
     now = (Time.now.to_f*1000).to_i
+    @account.features.compose_email.create
     post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
                                        :requester_id => "",
                                        :subject => "New Oubound Ticket #{now}",
@@ -211,6 +212,7 @@ RSpec.describe Helpdesk::TicketsController do
     Delayed::Job.last.handler.should_not include("biz_rules_check")
     t = @account.tickets.find_by_subject("New Oubound Ticket #{now}")
     t.source.should be_eql(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
+
     t.outbound_email?.should be false
     @account.tickets.find_by_subject("New Oubound Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
 
