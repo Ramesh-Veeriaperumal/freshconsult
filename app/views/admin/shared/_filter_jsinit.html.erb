@@ -140,14 +140,13 @@
                       .append(control);
           }
 
-          var placeholder1 = jQuery("<a class='l_placeholder btn btn-mini btn-flat'><%= t('.insert_placeholder') %></a>")
+          var placeholder1 = jQuery("<div class='placeholder_div row-fluid'></div>").append("<a class='l_placeholder btn btn-mini btn-flat'><%= t('.insert_placeholder') %></a>");
 
           var subject = jQuery('<div class="subject_div row-fluid" />')
                   .append("<label class='span2'><%= t('.subject') %></label>")
                   .append(jQuery('<div class="sub_placeholder"/>')
                   .append(FactoryUI.text("", "email_subject", initFeed["email_subject"], 'insert-placeholder-target').data(
-                  "ignorePlaceholders", 'triggered_event'))
-                  .append(placeholder1))
+                  "ignorePlaceholders", 'triggered_event')));
         
           var body  = jQuery('<div class="body_div row-fluid" />')
                   .append("<label class='span2'><%= t('.body') %></label>")
@@ -155,6 +154,7 @@
                   "ignorePlaceholders", 'triggered_event'))
           c_dom = jQuery("<div class='s_email row-fluid' />")
                 .append(to)
+                .append(placeholder1)
                 .append(subject)
                 .append(body);
         break;  
