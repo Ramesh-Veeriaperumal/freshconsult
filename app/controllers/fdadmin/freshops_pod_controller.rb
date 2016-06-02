@@ -48,6 +48,20 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
     (domain_mapping && domain_mapping.destroy) ? true : false
   end
 
+  def fetch_mobile_login_info
+    mobile_info = {:full_domain => "",:sso_enabled => false ,:sso_logout_url => ""}
+    select_slave_shard do 
+      account = Account.find(params[:account_id])
+      if account
+        account.make_current
+        mobile_info[:full_domain] = account.full_domain
+        mobile_info[:sso_enabled] = account.sso_enabled? 
+        mobile_info[:sso_logout_url] = account.sso_logout_url
+      end
+    end
+    return mobile_info
+  end
+
   def pod_endpoint
     status = send(params[:target_method])
     render :json => {:account_id => status}

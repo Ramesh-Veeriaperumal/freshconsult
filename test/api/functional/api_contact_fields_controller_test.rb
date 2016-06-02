@@ -14,6 +14,25 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     match_json(pattern.ordered!)
   end
 
+  def test_index_with_privilege
+    User.any_instance.stubs(:privilege?).with(:manage_contacts).returns(true).at_most_once
+    get :index, controller_params
+    assert_response 200
+    assert JSON.parse(response.body).count > 1
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_index_without_privilege
+    User.any_instance.stubs(:privilege?).with(:manage_contacts).returns(false).at_most_once
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false).at_most_once
+    get :index, controller_params
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
   def test_contact_field_index_with_all_custom_field_types
     create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Area', editable_in_signup: 'true'))
     create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Metropolitian City', editable_in_signup: 'true'))

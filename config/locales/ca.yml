@@ -1059,9 +1059,9 @@ ca:
         send_test_mail_info2: "Aquí tens <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>com fer-ho</a>."
         title_message: "Posar en marxa la teva atenció a l'usuari en quatre passos ..."
         support_email_title: "Suport<br> correu electrònic"
-        agents_title_1: "Afegint&lt;br&gt; Agents"
+        adding_agents: "Afegint<br> Agents"
         rebrand_title: "Logotip <br>&amp; colors"
-        social_title_1: "Fent-ho&lt;br&gt; Social"
+        going_social: "Fent-ho<br> Social"
         skip_text: "No gràcies, porta'm al meu portal de suport."
         back_link: Enrere
         next_link: següent
@@ -1183,7 +1183,6 @@ ca:
         feedbackwidget_users_can: "Els usuaris poden:"
         feedbackwidget_attach_a_file: "Adjuntar un fitxer"
         feedbackwidget_screenshot: "Capturar pantalla"
-        feedbackwidget_screenr_recording: "Screenr gravant"
         feedbackwidget_search_area: "Cercar articles"
         feedbackwidget_use_https: "Utilitzeu https"
         feedbackwidget_mobile_view: "Vista de mòbil"
@@ -1531,7 +1530,7 @@ ca:
         import: "Importar dades de Zendesk"
         agent: Agents
         feedback: "Giny per feedback"
-        freshchat: "Fresh xat"
+        livechat: "Fresh xat"
         integrations: Integracions
         dispatcher: Despatxador
         supervisor: Supervisor
@@ -3299,7 +3298,7 @@ ca:
     feedback_message_4: "Missing/broken link"
   import_updated: Actualitzat
   feedbackwidget_intro: "Personalitza el teu giny Freshdesk a continuació i veuràs la vista prèvia en temps real."
-  chatwidget_intro: "Personalitza el teu giny Freshchat i veu una vista prèvia en temps real."
+  chatwidget_intro: "Personalitza el teu giny Live Chat i veu una vista prèvia en temps real."
   save: Desa
   import_added_newly: "Afegit recentment"
   quick_create: "Quick Create"
@@ -3402,7 +3401,7 @@ ca:
   feedbackwidget_help_para1: "El giny de retroalimentació permet incrustar un formulari de tiquet directament al teu lloc web o producte. Pot personalitzar l'aparença i col·locació del giny al teu lloc web. Un cop fet això, copia i enganxa el codi d'inserció generats al teu lloc web o aplicació, per començar."
   chatwidget_help_content:
     title: "Fresh Xat"
-    info1: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site."
+    info1: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site."
     info2: "Each chat session will capture meta information about visitors including their location, device, etc and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
     info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Més informació sobre l'ús de Fresh Xat dins Freshdesk</a>"
   low: Baix
@@ -4923,36 +4922,6 @@ ca:
         es: Spanish
         sv: Swedish
         tr: Turkish
-    screenr:
-      button_label: "Grava pantalla"
-      label: Screenr
-      desc: "Captura pantalles fent servir l'Screenr i afegeix-les als tiquets, fòrums i alticles amb solucions."
-      helptext: "<h4>Integració amb l'Screener de Freshfesk</h4><p><br/>L'Screenr permet als agents i als clients capturar i compartir pantalles quan fan servir Freshdes. Es pot fer servir per adjuntar error o vídeos tutorials als teus tiquets, publicacions als fòrums i articles de solució directament.</p><p>Un cop activat, podràs veure un botó de gravació al costat del teu giny de valoració, les discussions i la teva base de coneixement. Pots decidir si gravaràs tot el navegador o només una part concreta. La captura de pantalla serà inserida automàticament un cop es completi la teva sessió.</p><p>Pots configurar aquesta integració introduint la teva URL d'Screenr (p.e. <a>http://elteunom.viewcasts.com</a>) i el teu identificador de gravador, que pots obtenir quan inicies sessió al teu compte.</p>"
-      form:
-        recorder_id: "Identificació del registrador"
-        recorder_id_info: "L'identificador de gravador és l'únic identificador disponible en la pàgina d'edició de gravadors"
-        site_address_info: ""
-        site_address: "Subdomini d'Screenr"
-        widget_title: "Títol del giny"
-        visible_agent_forum: "Gràvació de la pantalla del Fòrum per a agents"
-        visible_agent_forum_info: "Activa per fer que Screenr estigui disponible per als agents ens els fòrums"
-        visible_agent_ticket: "Gravació de la pantalla del tiquet per agent"
-        visible_agent_ticket_info: "Activa per fer que Screenr estigui disponible per als agents en el formulari del tiquet"
-        visible_solution: "Gravació de la pantalla de solució"
-        visible_solution_info: "Activa per fer que Screenr estigui disponible a les solucions"
-        visible_portal_ticket: "Gravació de pantalla de tiquet al portal"
-        visible_portal_ticket_info: "Activa per fer que Screenr estigui disponible en el portal del formulari de tiquets"
-        visible_portal_forum: "Captura de pantalla de la consulta al Forum per al portal"
-        visible_portal_forum_info: "Activa per fer que Screenr estigui disponible en el portal del fòrum"
-        visible_widget: "Giny de gravació de pantalla"
-        visible_widget_info: "Activa per fer que Screenr estigui disponible en el giny de valoració"
-      settings:
-        enable_screenr_recording: "Activa la gravació amb Screenr"
-        ticket_interaction: "Pàgina de tiquets (Nou, Edita, Respon)"
-        forum_interaction: "Pàgina del fòrum (nou, edita, comenta)"
-        create_solution: "Solució (Nova, Edita)"
-        for_agents: "Per a agents"
-        for_customer: "Per a clients"
     harvest:
       label: Harvest
       desc: "Pots registrar el temps gastat en tiquets als seus projectes i les seves tasques."
@@ -5457,7 +5426,7 @@ ca:
         filter_by: "Visualitzacions de satisfacció"
         view_report_date: "Veure informes durant"
         helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Live Chat Summary"
       filter_by_title: "Filtered by"
       time_period: "Time Period"
@@ -6320,12 +6289,12 @@ ca:
         error_message: "Sorry we can not make your request right now. Try again later."
         additional_note: "Freshfone request will take two business days"
         button_label: "Request for Freshfone"
-  freshchat:
+  livechat:
     feature_request:
       title: "Welcome to Live Chat"
       heading: "Support your customers with Live Chat"
-      info1: "Customize live chat widget for your brand and business"
-      info2: "Enable live chat for your support portal and website"
+      info1: "Customize Live Chat widget for your brand and business"
+      info2: "Enable Live Chat for your support portal and website"
       info3: "Track all chat transcripts and convert them to tickets"
       read_more: "Read more"
       email_subject: "Request for Live Chat Feature from %{account_name}"
@@ -6398,7 +6367,7 @@ ca:
     bottom_left: "A baix a l'esquerra"
     bottom_right: "A baix a la dreta"
     integrate_msg: "Copy & paste this code before the last </body> tag on your website or app"
-    integrate_freshchat_title: "Integra Freshchat en el teu web i aplicacions"
+    integrate_livechat_title: "Integra Live Chat en el teu web i aplicacions"
     custom_chat_window: "Chat window"
     text_placeholder: "El teu missatge"
     chatbox_bgcolor: "Color de la finestra"
@@ -6515,7 +6484,7 @@ ca:
     chatsettings_save: "No s'han desat els teus canvis. Vols desar-los?"
     transfer_accepted_msg: "Transferència de visitant acceptada"
     transfer_request_timeout_msg: "Caducitat de la sol·licitud de transferència"
-    integrate_freshchat_info: "Nota: la finestra del xat només apareixerà quan els agents estan en línia."
+    integrate_livechat_info: "Nota: la finestra del xat només apareixerà quan els agents estan en línia."
     click_to_go_online: "Not accepting visitor chats"
     click_to_go_offline: "Accepting visitor chats"
     fetching: "Si us plau, espera"
@@ -6540,9 +6509,9 @@ ca:
     visitor_form: "Visitor Form"
     preferences: Preferences
     intro_title: "Perquè Freschat?"
-    intro: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
+    intro: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
     enable_chat: "Enable Live Chat"
-    learn_freshchat: "Learn more about Live Chat"
+    learn_livechat: "Learn more about Live Chat"
     support_portal: "Xat al portal de suport"
     logged_in_users: "Només usuaris amb la sessió iniciada"
     everyone: Tothom

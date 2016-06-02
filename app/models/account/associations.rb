@@ -101,6 +101,7 @@ class Account < ActiveRecord::Base
   has_many :company_domains
   has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
+  has_many :available_agents, :class_name => 'Agent', :through => :users, :source =>:agent, :conditions =>{:available => true}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false,
                                                                   :users=> { :deleted => false } }
   has_many :all_contacts , :class_name => 'User', :conditions => { :helpdesk_agent => false }
@@ -254,6 +255,7 @@ class Account < ActiveRecord::Base
   has_many :all_freshfone_numbers, :class_name => 'Freshfone::Number', :dependent => :delete_all
   has_many :ivrs, :class_name => 'Freshfone::Ivr'
   has_many :freshfone_calls, :class_name => 'Freshfone::Call'
+  has_many :supervisor_controls, :class_name => 'Freshfone::SupervisorControl'
   delegate :find_by_call_sid, :to => :freshfone_calls
   has_one  :freshfone_credit, :class_name => 'Freshfone::Credit'
   has_many :freshfone_payments, :class_name => 'Freshfone::Payment'
@@ -291,6 +293,11 @@ class Account < ActiveRecord::Base
 
   has_many :subscription_invoices
   has_many :user_companies
+
+  has_many :helpdesk_permissible_domains, :dependent => :destroy
+  accepts_nested_attributes_for :helpdesk_permissible_domains, allow_destroy: true
+
+  has_many :scheduled_tasks, :class_name => 'Helpdesk::ScheduledTask'
   has_many :outgoing_email_domain_categories, :dependent => :destroy
   has_many :authorizations, :class_name => '::Authorization'
 end

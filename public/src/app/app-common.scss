@@ -22,16 +22,22 @@ body {
 .alert-message {
 	line-height: 22px;
 	padding: 10px;
-	background-color: #fcfec7;
+	background-color: #fcf8e3;
+	color: #8a6d3b;
 	margin-top: 10px;
-	margin-bottom: 10px;
-	font-size: 14px;
+	margin-bottom: 20px;
+	font-size: 13px;
 	font-weight: 400;
-	border-top: 1px solid #bbb;
-	border-bottom: 1px solid #bbb;
+	border: 1px solid #faebcc;
+	border-radius: 4px;
+	box-sizing: border-box;
 	&.warning{
-		background-color: #FFE7E7;
-		color: #000000;
+		background-color: #f2dede;
+		color: #a94442;
+		border: 1px solid #ebccd1;
+	}
+	.divider{
+		border-right: 1px #ccc solid;
 	}
 }
 .request_details .details{
@@ -3763,6 +3769,7 @@ $adm-bdr:#F0F0F0;
 		background: $adm-bg;
 		margin-bottom: 20px;
 	}
+  &.adm-bg-color{ background-color: $adm-bg;}
 	&.bdr{
 		border: solid 1px $adm-bdr;
 		border-radius: 4px;
@@ -3828,7 +3835,7 @@ $adm-bdr:#F0F0F0;
 		}
 		.profile-name{
 			font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-			@include margin-left(42px);
+			// @include margin-left(20px);
 			font-size: 18px;
 			a{
 				font-weight: bold;
@@ -4085,6 +4092,25 @@ $adm-bdr:#F0F0F0;
 	}
 }
 
+.fb-user {
+  padding: 10px;
+}
+
+.fb-select-all {
+	padding-bottom: 10px;
+  padding-left: 10px;
+}
+
+.rules-container-optimal, .rules-container-broad {
+	display: none;
+}
+
+.fb-form-tkt-rules{
+  label{
+    cursor: pointer;
+    &>span {font-weight: 600;}
+  }
+}
 // Admin Social styles end
 // =======================
 
@@ -4109,7 +4135,7 @@ $adm-bdr:#F0F0F0;
 	display:inline-block;
 	width:80px;
 	font-weight:bold;
-	word-break: break-all;
+	word-break: break-word;
 }
 
 // End
@@ -4219,4 +4245,169 @@ $adm-bdr:#F0F0F0;
 		@include right(0px);
 		top: 1px;
 	}
+}
+
+.rebrand-page{
+	.moderation-info{
+		@include border-left(1px solid #ddd);
+		@include padding-left(30px);
+		ul.moderation-alert{
+			list-style: disc;
+		}
+		.ficon-warning{
+			@include margin-left(-20px);
+		}
+	}
+	.moderation-setting{
+		margin-top: 6px;
+		label{
+			font-weight: 500;
+		}
+	}
+}
+
+/* Enable button for Roundrobin V2 in groups page */
+.group-info-btn{
+  display: inline-block;
+  border: 1px solid #ccc;
+  @include border-radius(5px);
+}
+
+ .alert-message #group-rr-enable {
+  text-align: center;
+  @include margin-left(0);
+  width: 17.02128%;
+  a {
+    max-width: 80%;
+    word-wrap: break-word
+  }
+}
+
+/*Roles*/
+.add-agent-wrapper{
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	.add-agent-icon{
+		vertical-align: middle;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+		cursor: default;
+	}
+	.add-agent-box{
+    position: relative;
+		border-bottom: 1px solid #ccc;
+		max-height: 35px;
+		.agent-select-list{
+        width: 100%;
+        padding-left: 25px;
+        padding-top: 5px;
+				.select2-choices{
+					border: 0;
+					background: none;
+				}
+				&.select2-container-active .select2-choices {
+					box-shadow: none;
+				}
+		}
+	}
+	.agent-list-wrapper{
+		height: 255px;
+		overflow: scroll;
+		position: relative;
+		background: #f9f9f9;
+		.spinner{
+			@include left(50% !important);
+			top: 50% !important;
+		}
+		.no-agent-info{
+			background: #f9f9f9;
+			height: 255px;
+			position: absolute;
+			top: 0;
+			width: 100%;
+			text-align: center;
+			padding-top: 30%;
+			color: #afafaf;
+			font-size: 16px;
+			@include box-sizing( border-box );
+		}
+		.roles-agent-list{
+				padding: 2px 5px;
+				background: #f9f9f9;
+				border-bottom: 1px solid #ececec;
+				&:after{
+					content: "";
+					display: table;
+					clear: both;
+				}
+				.agent-delete-icon{
+					width: 5%;
+					padding: 15px 5px;
+				}
+				.agent-image{
+					width: 15%;
+					padding: 5px 3px 3px;
+          .thumb{
+            height: 35px;
+            width: 35px;
+            line-height: 35px;
+            font-size: 15px;
+          }
+				}
+				.agent-details{
+					width: 75%;
+					padding: 15px 0;
+				}
+			}
+	}
+}
+
+.modal-roles-header{
+	font-size: 20px;
+	color: #000;
+	font-weight: 300;
+	text-shadow: #FFF 1px 1px 0;
+	overflow: visible;
+	overflow-x: hidden;
+  padding: 3px 0;
+}
+
+.modal-roles-title{
+  margin: 0;
+}
+
+.manage-agent-wrapper{
+    .button-container{
+      padding: 1em 0 0 0;
+    }
+}
+
+.new-role{
+  .popup{
+    padding-top: 5px;
+    display: inline-block;
+  }
+  .label-info-text{
+    font-weight: bold;
+  }
+}
+.manage-agent{
+	.no-agent{
+		&:hover{
+			.info{
+				display: none;
+			}
+			.popup{
+				display: block;
+			}
+		}
+	}
+}
+
+.agent-select-list{
+  &.select2-dropdown-open{
+    border: 1px solid #5897fb;
+    border-bottom: 0;
+  }
 }

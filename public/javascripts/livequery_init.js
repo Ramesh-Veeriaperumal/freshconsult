@@ -230,11 +230,13 @@ $("select.select2").livequery(
 
 $("input.select2").livequery(
 	function(){
-		$(this).select2({tags: [],tokenSeparators: [","],
+		var defaults = {tags: [],tokenSeparators: [","],
 			formatNoMatches: function () {
 			return "  ";
 			}
-		});
+		}
+		
+		$(this).select2($.extend( defaults, $(this).data()));
 	},
 	function(){
 		$(this).select2('destroy');

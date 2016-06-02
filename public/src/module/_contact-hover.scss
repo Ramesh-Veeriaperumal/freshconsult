@@ -46,7 +46,7 @@
 		top: 2px;
 	 @include left(2px);
 	}
-  .user_name{ font-size:1.25em; display: inline-block; font-weight: 200}
+  .user_name{ font-size:1.25em; display: block; font-weight: 200}
   .user_design{
   	margin-bottom:5px;
   	line-height: 1.36;
@@ -57,7 +57,7 @@
     @include padding-left(35px);
     .user_name a{
       word-break: break-all;
-      display: inline-block;
+      display: block;
     }
   }
 }

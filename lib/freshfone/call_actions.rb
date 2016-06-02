@@ -31,15 +31,15 @@ class Freshfone::CallActions
 		)
 	end
 
-	def register_outgoing_call
-		current_account.freshfone_calls.create(
-			:freshfone_number => current_number,
-			:agent => sip_call? ? calling_agent(sip_user_id(params[:From])) : calling_agent,
-			:customer => search_customer_with_number(called_number),
-			:call_type => Freshfone::Call::CALL_TYPE_HASH[:outgoing],
-			:params => params
-		)
-	end
+  def register_outgoing_call
+    current_account.freshfone_calls.create(
+      freshfone_number: current_number,
+      agent: sip_call? ? calling_agent(sip_user_id(params[:From])) : calling_agent,
+      customer: search_customer,
+      call_type: Freshfone::Call::CALL_TYPE_HASH[:outgoing],
+      params: params
+    )
+  end
 
 	def update_agent_leg(call)
 		call.agent = current_account.users.technicians.visible.find(params[:agent_id] || params[:agent]) if call.user_id.blank?
@@ -161,6 +161,16 @@ class Freshfone::CallActions
     end
   end
 
+  def handle_failed_agent_conference(call, add_agent_call_id)
+    call.supervisor_controls.find(add_agent_call_id).update_status(
+      Freshfone::SupervisorControl::CALL_STATUS_HASH[:failed])
+    notify_agent_conference_status call, 'agent_conference_unanswered'
+  end
+
+  def handle_failed_cancel_agent_conference(call)
+    notify_agent_conference_status call, 'agent_conference_connecting'
+  end
+
   def handle_failed_external_transfer_call(call)
     child_call = call.children.last
     child_call_meta = child_call.meta
@@ -246,14 +256,15 @@ class Freshfone::CallActions
 			return params[:CallSid] if current_account.features?(:freshfone_conference)
 			outgoing ? params[:ParentCallSid] : params[:CallSid]
 		end
-		
+
+		#If there are no no-deleted contacts with this number, returning the first deleted contact.
+		#this method was returning first user based on Id for the number, so changed to have ordering based on name
 		def search_customer_with_number(phone_number)
-			# Freshfone::Search.search_user_with_number(phone_number)
-			users_scoper.find_by_phone(phone_number) || users_scoper.find_by_mobile(phone_number)
+			users_scoper.find(:first, :conditions => ['phone = ? or mobile = ?',phone_number, phone_number], :order => "deleted ASC, name ASC")
 		end
 
 		def users_scoper
-			current_account.users
+			current_account.all_users
 		end
 
     def telephony
@@ -283,4 +294,12 @@ class Freshfone::CallActions
       meta.save!
     end
 
+  def search_customer
+    return search_customer_with_id(params[:customer_id]) if params[:customer_id].present?
+    search_customer_with_number(called_number)
+  end
+
+  def search_customer_with_id(customer_id)
+    users_scoper.find(customer_id)
+  end
 end

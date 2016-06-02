@@ -2,13 +2,20 @@ class Social::FacebookPage < ActiveRecord::Base
 
   include Social::Util
   include Facebook::Constants
+  include Facebook::RedisMethods
   include Cache::Memcache::Facebook
   include Facebook::RedisMethods
 
-  self.table_name =  "social_facebook_pages"
+  self.table_name  =  "social_facebook_pages"
   self.primary_key = :id
 
   concerned_with :associations, :constants, :validations, :callbacks
+  
+  attr_accessible :profile_id, :access_token, :page_id, :page_name, :page_token, :page_img_url, :page_link,
+                  :import_visitor_posts, :import_company_posts, :enable_page, :fetch_since,
+                  :dm_thread_time, :message_since, :import_dms, :reauth_required,
+                  :last_error, :realtime_subscription, :page_token_tab 
+
 
   scope :active, :conditions => ["enable_page=?", true]
   scope :reauth_required, :conditions => ["reauth_required=?", true]
@@ -61,8 +68,7 @@ class Social::FacebookPage < ActiveRecord::Base
   end
 
   def default_stream_id
-    stream = self.default_stream
-    stream_id = stream.id if stream
+    self.default_stream.try(:id)
   end
   
   def default_stream
@@ -73,7 +79,7 @@ class Social::FacebookPage < ActiveRecord::Base
     self.facebook_streams.detect{|s| s.data[:kind] == FB_STREAM_TYPE[:dm]}
   end
   
-   def log_api_hits
+  def log_api_hits
     increment_api_hit_count_to_redis(self.page_id)
   end
 end

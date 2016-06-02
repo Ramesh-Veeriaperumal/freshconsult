@@ -80,6 +80,8 @@
         var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %> ;
         var locals = HelpdeskReports.locals;
         locals.chart_hash = <%= @data.to_json.html_safe %> ;
+        var last_dump_time = <%= @last_dump_time ? t('helpdesk_reports.last_updated',{last_dump_time: @last_dump_time}).to_json.html_safe : false %>
+        
         if (!err && locals.chart_hash.length !== 0) {
             HelpdeskReports.ChartsInitializer.GroupSummary.init(locals.chart_hash);
         } else if (!err && locals.chart_hash.length === 0) {
@@ -89,5 +91,12 @@
             var div = ["data_table"];
             HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
         }
+        if (last_dump_time){
+            jQuery("#last-updated").html(last_dump_time);   
+            jQuery(".reports-title").addClass('updated-time')
+        } else{
+            jQuery(".reports-title").removeClass('updated-time')
+        }
+
     });
 </script>

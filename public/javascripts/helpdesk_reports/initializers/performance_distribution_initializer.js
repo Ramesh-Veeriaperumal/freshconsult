@@ -45,7 +45,16 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                     data: this.fillArray(this.arrayElementsSum(current_data),current_data.length),
                     color:  REPORT_COLORS["barChartDummy"],
                     states: { hover: { brightness: 0 } },
-                    borderRadius: 5
+                    borderRadius: 5,
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function () {
+                                var ev = this; 
+                                _FD.ticketListEvent(ev,label_key);
+                            }
+                        }
+                    }
                 },{
                     data: current_data,
                     color: this.COLORS[chart_name],
@@ -217,15 +226,9 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             }
         },
         renderCommonChart: function(hash, trend, length, plot_type, start_value,end_value,charttype){
-            var responseObj   = HelpdeskReports.locals.chart_hash['AVG_RESPONSE_TIME']['doy'];
-            var resolutionObj = HelpdeskReports.locals.chart_hash['AVG_RESOLUTION_TIME']['doy'];
+            var date_obj = Date.parse(HelpdeskReports.locals.date_range.split(" - ")[0]);
+            HelpdeskReports.locals.startTimestamp = (date_obj.getTime() - date_obj.getTimezoneOffset()*60*1000);
             
-            if(responseObj){
-                HelpdeskReports.locals.startTimestamp = _.keys(responseObj)[0];
-            } else if (resolutionObj){
-                HelpdeskReports.locals.startTimestamp = _.keys(resolutionObj)[0];
-            }
-
             var stepValue = Math.ceil(length/11);                
             stepValue = stepValue <= 0 ? 1 : stepValue;
             var I18n_plot_type = (plot_type == 'Hours') ? I18n.t('helpdesk_reports.hours') : I18n.t('helpdesk_reports.mins') ;
@@ -299,9 +302,34 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             jQuery.each(metrics, function (index, value) {
                 _FD.barTrend(hash[value+'_BUCKET'],bucket_name[index])
             });
+            var date_range = HelpdeskReports.locals.date_range;
+            var split = date_range.split("-");
             
-            _FD.responseTimeTrend(hash);
-            _FD.resolutionTimeTrend(hash);
+            if(split.length  == 1) {
+                 _FD.showSimpleStats(hash);
+                 jQuery(".trends").addClass('hide');
+                 jQuery(".stat").removeClass('hide');
+            } else {
+                 jQuery(".trends").removeClass('hide');
+                 jQuery(".stat").addClass('hide');
+                 _FD.responseTimeTrend(hash);
+                 _FD.resolutionTimeTrend(hash);
+            }
+            
+        },
+        showSimpleStats : function(hash) {
+                 var metrics = _FD.constants.metrics;
+                 jQuery.each(metrics, function (index, value) {
+                     var current_data = hash[value];
+                     var time = "";
+                     if(current_data != undefined && current_data.general != undefined){
+                        time = HelpdeskReports.CoreUtil.timeMetricConversion(current_data.general.metric_result);
+                     } else{
+                        time = HelpdeskReports.CoreUtil.timeMetricConversion(0);
+                     } 
+                     jQuery("." + value.toLowerCase() + " .stat .value").html(time);
+                 });
+                
         },
         fillArray: function(value, length) {
             var arr = [];

@@ -17,8 +17,8 @@ class ContactValidationTest < ActionView::TestCase
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?
     errors = contact.errors.full_messages
-    assert errors.include?('Tag names special_chars_present')
-    assert_equal({ email: {}, tag_names: { chars: ',' }, name: {} }, contact.error_options)
+    assert errors.include?('Tags special_chars_present')
+    assert_equal({ email: {}, tags: { chars: ',' }, name: {} }, contact.error_options)
   end
 
   def test_tags_comma_valid
@@ -40,8 +40,8 @@ class ContactValidationTest < ActionView::TestCase
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?
     errors = contact.errors.full_messages
-    assert errors.include?('Tag names datatype_mismatch')
-    assert_equal({ email: {}, tag_names: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String }, name: {} }, contact.error_options)
+    assert errors.include?('Tags datatype_mismatch')
+    assert_equal({ email: {}, tags: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String }, name: {} }, contact.error_options)
     assert errors.count == 1
   end
 
@@ -69,9 +69,9 @@ class ContactValidationTest < ActionView::TestCase
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?
     errors = contact.errors.full_messages
-    assert errors.include?('Tag names datatype_mismatch')
+    assert errors.include?('Tags datatype_mismatch')
     assert errors.include?('Custom fields datatype_mismatch')
-    assert_equal({ email: {}, tag_names: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null'  }, name: {}, custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null'  } }, contact.error_options)
+    assert_equal({ email: {}, tags: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null'  }, name: {}, custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null'  } }, contact.error_options)
     Account.unstub(:current)
   end
 

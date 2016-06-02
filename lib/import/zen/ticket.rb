@@ -75,6 +75,7 @@ def save_ticket ticket_xml
   begin
    display_id_exist = @current_account.tickets.find_by_display_id(@nice_display_id)   
    @ticket.display_id = @nice_display_id   unless display_id_exist
+   @ticket.cc_email = Helpdesk::Ticket.default_cc_hash if @ticket.cc_email.blank?
    @ticket.save_ticket!
   rescue ActiveRecord::StatementInvalid => error
     @save_retry_count =  (@save_retry_count || 5)

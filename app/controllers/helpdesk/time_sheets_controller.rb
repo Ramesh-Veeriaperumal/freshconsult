@@ -2,18 +2,18 @@
 class Helpdesk::TimeSheetsController < ApplicationController
 
   include CustomerDeprecationMethods::NormalizeParams
-  include Helpdesk::Permissions
+  include Helpdesk::Permissible
 
   before_filter { |c| c.requires_feature :timesheets }
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
-  before_filter :load_ticket, :only => [:new, :create, :index, :edit, :update, :toggle_timer] 
+  before_filter :load_ticket, :only => [:new, :create, :index, :show, :edit, :update, :destroy, :toggle_timer] 
   before_filter :create_permission, :only => :create 
   before_filter :validate_params, :only => [:create, :update]
   before_filter :timer_permission, :only => :toggle_timer
-  before_filter :verify_permission, :only => [:create, :index, :show, :edit, :update, :destroy, :toggle_timer ] 
+  before_filter :verify_permission, :only => [:new, :create, :index, :show, :edit, :update, :destroy, :toggle_timer ] 
   before_filter :check_agents_in_account, :only =>[:create]
   before_filter :set_mobile, :only =>[:index , :create , :update , :show]
-  before_filter :set_native_mobile , :only => [:create , :index, :destroy]
+  before_filter :set_native_mobile , :only => [:create , :index, :destroy, :toggle_timer, :update]
 
   rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
 
@@ -81,8 +81,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
     
     @time_entry = scoper.new(time_entry)    #throws unknown attribute error
     if @time_entry.save!
-      nmobile_response = {:success => true} 
-      respond_to_format(@time_entry, nmobile_response)
+      respond_to_format @time_entry
     end
   end
    
@@ -131,8 +130,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
   def destroy
     @time_entry.destroy
-    mobile_response = {:success => true}
-    respond_to_format @time_entry , mobile_response
+    respond_to_format @time_entry
   end
 
 private
@@ -170,7 +168,7 @@ private
   end
   
   def load_ticket
-    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id]) if params[:ticket_id]
   end
   
   # possible dead code
@@ -208,12 +206,13 @@ private
     return (time_entry.time_spent + running_time)
   end
 
-  def respond_to_format result,mobile_response = nil
+  def respond_to_format result
     respond_to do |format|
       format.js
       format.html
       format.nmobile do
-        render :json => mobile_response.to_json and return
+        puts result
+        render :json => {:time_entry_id => result.id, :timer_running => result.timer_running, :time_spent => result.time_spent, :success => true}.to_json() and return
       end
       format.xml do 
         render :xml => result.to_xml and return 
@@ -315,9 +314,12 @@ private
   end
 
   def verify_permission
-    if @ticket || (@time_entry && @time_entry.workable.is_a?(Helpdesk::Ticket))
-      ticket = @ticket || @time_entry.workable
-      verify_ticket_permission(ticket)
+    #IOS app sends ticket id instead of display id, but android app sends display_id (which is correct).
+    #Hack should be removed once they fix this.
+    verify_ticket_permission(@ticket) if params[:ticket_id] and !is_native_mobile?
+    if @time_entry && @time_entry.workable.is_a?(Helpdesk::Ticket)
+      time_entry_ticket = @time_entry.workable
+      verify_ticket_permission(time_entry_ticket)
     end
   end
 

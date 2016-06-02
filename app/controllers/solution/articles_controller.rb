@@ -148,7 +148,7 @@ class Solution::ArticlesController < ApplicationController
 
   def change_author
     @articles = current_account.solution_articles.where(:id => params[:items])
-    @articles.update_all(:user_id => params[:parent_id])
+    @articles.update_all_with_publish({ :user_id => params[:parent_id] }, ['user_id != ?', params[:parent_id]])
     @updated_items = @articles.map(&:id)
 
     flash[:notice] = t("solution.flash.articles_changed_author") if @updated_items

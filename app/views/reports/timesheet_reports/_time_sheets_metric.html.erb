@@ -1,63 +1,63 @@
-
- 
-    <%label = "time_sheet"%>
-    <div class="report-summary-header">
-      <ul class="inline">
-        <li><h1><%=sprintf("%0.02f",(@time_sheet_data[:total_time])/3600) %></h1></li>
-        <li><h1><%=sprintf("%0.02f",@time_sheet_data[:billable]/3600) %></h1></li>        
-        <li><h1><%=sprintf("%0.02f",@time_sheet_data[:non_billable]/3600)%></h1></li>
-       <li class="">
-       <div id="bar_chart_noinfo" class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div>
-       <div id="timesheet_single_stacked_bar_chart" class="example"></div>
-       </li>
-      </ul>
-    </div>  
-    <div class="report-summary-data">
-      <ul class="inline">
-        <li> 
-        <small>
-        <% metric_obj = percentage_change((@old_time_sheet_data[:total_time])/3600,(@time_sheet_data[:total_time])/3600,:hours_tracked)%>
-          <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
-        </small> 
-        </li>
-        <li>
-          <small>
-          <% metric_obj = percentage_change(@old_time_sheet_data[:billable]/3600,@time_sheet_data[:billable]/3600,:billable_hours)%>
-          <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
-          </small> 
-        </li>
-        <li>
-        <small>
-        <% metric_obj = percentage_change(@old_time_sheet_data[:non_billable]/3600,@time_sheet_data[:non_billable]/3600,:non_billable_hours)%>
-        <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
-        </small> 
-        </li>
-        <li>
-          &nbsp;
-        </li>
-      </ul>
+<% @old_time_sheet_data ||= old_timesheet_data %>
+<% @time_sheet_data ||= timesheet_data %>
+<% @activity_data_hash ||= activity_data_hash_var %>
+    
+<%label = "time_sheet"%>
+<div class="metrics">
+  <div class="metric">
+    <label><%=t('reports.time_sheets.total_time')%></label>
+    <h1><%=sprintf("%0.02f",(@time_sheet_data[:total_time])/3600) %></h1>
+    <% metric_obj = percentage_change((@old_time_sheet_data[:total_time])/3600,(@time_sheet_data[:total_time])/3600,:hours_tracked)%>
+      <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
+  </div>
+  <div class="metric">
+    <label><%=t('reports.time_sheets.billable')%></label> 
+    <h1><%=sprintf("%0.02f",@time_sheet_data[:billable]/3600) %></h1>
+    <% metric_obj = percentage_change(@old_time_sheet_data[:billable]/3600,@time_sheet_data[:billable]/3600,:billable_hours)%>
+      <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
+  </div>
+  <div class="metric">
+    <label><%=t('reports.time_sheets.non_billable')%></label> 
+    <h1><%=sprintf("%0.02f",@time_sheet_data[:non_billable]/3600)%></h1>
+    <% metric_obj = percentage_change(@old_time_sheet_data[:non_billable]/3600,@time_sheet_data[:non_billable]/3600,:non_billable_hours)%>
+    <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
+  </div>
+  <div class="metric no-border">
+    <label><%=t('reports.time_sheets.billable_vs_non_billable')%></label>
+    <div id="bar_chart_noinfo" class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div>
+    <div class="comparision_chart">
+        <div class="billable"></div>
+        <div class="billable_value"></div>
     </div>
-    <div class="report-summary-footer">
-      <ul class="inline">
-        <li> <label><%=t('reports.time_sheets.total_time')%></label> </li>
-        <li> <label><%=t('reports.time_sheets.billable')%></label> </li>
-        <li> <label><%=t('reports.time_sheets.non_billable')%></label> </li>
-        <li> <label><%=t('reports.time_sheets.billable_vs_non_billable')%></label> </li>
-      </ul>
-    </div>
- 
+    <div id="timesheet_single_stacked_bar_chart_metric" class="example"></div>
+  </div>
+  <div class="clear"></div>
+</div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
     <%unless @time_sheet_data[:total_time] == 0%>
       jQuery('#bar_chart_noinfo').hide();
-      var singleStakedBar = new single_stacked_bar_chart(
-        {renderTo: 'timesheet_single_stacked_bar_chart',isCustom: true, isPDF: true, chartData:<%=@activity_data_hash['barchart_data'].to_json.html_safe%>}
-      );
       if(<%=@activity_data_hash['barchart_data'].to_json.html_safe%>.length > 0) {
-        singleStakedBar.single_stacked_bar_chart_Graph();
+          var billabale = <%= @activity_data_hash['barchart_data'][1][:data] %>;
+          var non_billable = <%= @activity_data_hash['barchart_data'][0][:data] %>;
+          var total = billabale + non_billable;
+          var billabale_perc = Math.round(( 100 * billabale) / total);
+          var non_billable_perc = Math.round(100 - billabale_perc);
+          var width = billabale_perc + '%';
+          jQuery(".comparision_chart .billable").width(width);
+          jQuery(".comparision_chart .billable_value").html(width);
+
+          //Tooltip
+          jQuery(".comparision_chart").twipsy({
+            html : true,
+            placement : "above",
+            title : function() { 
+
+              return "<div class='metric_tooltip billable'><div class='type'>Billable</div><div class='value'>" + billabale_perc + "%</div></div><div class='metric_tooltip non-billable'><div class='type'>Non-Billable</div><div class='value'>" + non_billable_perc + "%</div></div><div class='clear'></div>" }
+          });
       }
     <%else%>
-      jQuery('#timesheet_single_stacked_bar_chart').hide();
+      jQuery('.comparision_chart').hide();
     <%end%>
   });
 </script>

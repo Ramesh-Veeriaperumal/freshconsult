@@ -302,8 +302,8 @@ Helpkit::Application.routes.draw do
   match '/contacts/filter/:state(/*letter)' => 'contacts#index', :format => false
   resources :groups do
     collection do
-      get :index
-      post :toggle_roundrobin
+      get  :index
+      get  :enable_roundrobin_v2
     end
   end
 
@@ -411,6 +411,15 @@ Helpkit::Application.routes.draw do
         post :cancel_transfer
         post :resume_transfer
         get :disconnect_agent
+      end
+    end
+
+    resources :agent_conference do
+      collection do
+        post :add_agent
+        post :success
+        post :status
+        post :cancel
       end
     end
 
@@ -638,7 +647,8 @@ Helpkit::Application.routes.draw do
     collection do
       get :login
       get :facebook
-      get :google_login
+      get :portal_google_sso
+      get :marketplace_google_sso
     end
   end
 
@@ -653,7 +663,6 @@ Helpkit::Application.routes.draw do
       member do
         put :install
         delete :uninstall
-        get :uninstall
       end
     end
 
@@ -965,8 +974,10 @@ Helpkit::Application.routes.draw do
 
     resources :widget_config, :only => :index
     resources :chat_widgets do
-      member do
-        post :update
+      collection do
+         post :enable
+         post :toggle
+         put :update
       end
     end
 
@@ -1016,7 +1027,7 @@ Helpkit::Application.routes.draw do
       end
       member do
         put :make_primary
-        get :deliver_verification
+        put :deliver_verification
         put :test_email
       end
     end
@@ -1053,7 +1064,7 @@ Helpkit::Application.routes.draw do
 
     resources :data_export do
       collection do
-        get :export
+        post :export
       end
     end
 
@@ -1076,7 +1087,7 @@ Helpkit::Application.routes.draw do
           get :show
           put :update
           put :soft_reset
-          get :restore_default
+          put :restore_default
           get :publish
           get :clear_preview
         end
@@ -1170,7 +1181,14 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :roles
+    resources :roles do 
+      collection do 
+        get :profile_image
+        get :users_list
+        post :update_agents
+      end
+    end
+
     namespace :social do
       resources :streams, :only => :index do
         collection do
@@ -1519,6 +1537,7 @@ Helpkit::Application.routes.draw do
           post :save_reports_filter
           post :update_reports_filter
           post :delete_reports_filter
+          post :export_pdf
         end
       end
     end
@@ -1530,6 +1549,7 @@ Helpkit::Application.routes.draw do
           post :save_reports_filter
           post :update_reports_filter
           post :delete_reports_filter
+          post :export_pdf
         end
       end
     end
@@ -1549,6 +1569,7 @@ Helpkit::Application.routes.draw do
       post :report_filter
       post :export_csv
       post :generate_pdf
+      post :export_pdf
       post :save_reports_filter
       post :update_reports_filter
       post :delete_reports_filter
@@ -1857,7 +1878,13 @@ Helpkit::Application.routes.draw do
       end
       resources :tag_uses
       resources :reminders
-      resources :time_sheets
+
+      resources :time_sheets do
+        member do
+          put :toggle_timer
+        end
+      end
+
       resources :mobihelp_info, :only => :index
     end
     
@@ -2575,12 +2602,6 @@ Helpkit::Application.routes.draw do
   match '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download', :method => :get
   match '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
 
-  resources :chats do
-    collection do
-      post :create_ticket
-      post :add_note
-    end
-  end
 
   #  constraints(lambda {|req| req.subdomain == AppConfig['partner_subdomain'] }) do
   namespace :partner_admin, :as => 'partner' do
@@ -2667,7 +2688,9 @@ Helpkit::Application.routes.draw do
           put :whitelist
           put :block_account
           get :user_info
+          get :check_contact_import
           put :reset_login_count
+          post :contact_import_destroy
         end
       end
 
@@ -2707,7 +2730,6 @@ Helpkit::Application.routes.draw do
           put :update_timeouts_and_queue
           get :fetch_numbers
           put :twilio_port_away
-          put :enable_freshfone
           put :activate_trial
           put :launch_feature
         end
@@ -2879,14 +2901,12 @@ Helpkit::Application.routes.draw do
     collection do
       post :create_ticket
       post :add_note
-      post :chat_note
-      post :missed_chat
-      get :get_groups
-      post :activate
-      post :site_toggle
-      get :agents
-      post :widget_toggle
-      post :widget_activate
+      post :enable
+      get  :get_groups
+      get  :agents
+      put  :toggle
+      put  :update_site
+      put  :trigger
     end
   end
   match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get

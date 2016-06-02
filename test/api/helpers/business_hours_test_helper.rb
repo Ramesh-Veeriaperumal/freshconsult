@@ -1,3 +1,4 @@
+require "#{Rails.root}/spec/support/business_calendars_helper.rb"
 module BusinessHoursTestHelper
   include BusinessCalendarsHelper
   # Patterns

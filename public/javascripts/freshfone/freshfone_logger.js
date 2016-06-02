@@ -21,7 +21,7 @@ var FreshfoneLogger
     },  
 
     logIssue: function (issue, logMessage, severity) {
-      if (freshfone.isDebuggingMode == 'false' || (typeof(clientLogger) == 'undefined') ) {
+      if (!freshfone.isDebuggingMode || (typeof(clientLogger) == 'undefined') ) {
         this.logs = {};
         return ;
       }

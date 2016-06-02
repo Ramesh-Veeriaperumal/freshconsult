@@ -42,12 +42,26 @@ RSpec.describe Freshfone::CallController do
     user_name.should be_eql("RESTRICTED")
   end
 
-  it 'should retrieve caller name accordingly for the strange number' do
+  it 'should load the caller when customer_id is present' do
     log_in(@agent)
-    @caller_number = "+17378742833"
-    get :caller_data, {:PhoneNumber => @caller_number, :format => "json"}
-    user_name = json[:user_name]
-    user_name.should be_eql("RESTRICTED")
+    customer = create_customer
+    create_freshfone_caller
+    freshfone_call = @account.freshfone_calls.create(
+      call_status: Freshfone::Call::CALL_STATUS_HASH[:default], customer_id: customer.id, agent: @agent,
+      params: { CallSid: "CA2db76c748cb6f081853f80dace462a04" })
+    get :caller_data, { PhoneNumber: @caller.number, customerId: freshfone_call.customer_id, format: "json"}
+    expect(json[:user_id]).to be_eql(customer.id)
+    expect(json[:user_name]).to be_eql(customer.name)
+    expect(json[:email]).to be_eql(customer.email)
+  end
+
+  it 'should not load the caller when customer_id is not present' do
+    log_in(@agent)
+    create_freshfone_call
+    create_freshfone_caller
+    get :caller_data, {PhoneNumber: @caller.number, format: "json"}
+    expect(json[:user_id]).to be_nil
+    expect(json[:user_name]).to be_eql(@caller.number)
   end
 
   it 'should update call status and user presence' do
@@ -221,7 +235,7 @@ RSpec.describe Freshfone::CallController do
     log_in(@agent)
     get :inspect_call, {:call_sid => "CDUMMY"}
     tear_down CLIENT_CALL
-    json.should be_eql({:can_accept => 1})
+    json.should be_eql({:can_accept => 1, :agent_conference=>nil})
   end
 
 

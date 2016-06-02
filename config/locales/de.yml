@@ -1320,9 +1320,9 @@ de:
         send_test_mail_info2: "Hier finden Sie heraus, <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>wie es gemacht wird</a>."
         title_message: "Schnelleinrichtung Ihres Kundensupport in vier Schritten..."
         support_email_title: Support-<br>E-Mail
-        agents_title_1: Bearbeiter&lt;br&gt;hinzufügen
+        adding_agents: Bearbeiter<br>hinzufügen
         rebrand_title: "Logo <br>und Farben"
-        social_title_1: Soziale&lt;br&gt;Medien
+        going_social: Soziale<br>Medien
         skip_text: "Nein danke, bringe mich zu meinem Helpdesk."
         back_link: Zurück
         next_link: Weiter
@@ -1444,7 +1444,6 @@ de:
         feedbackwidget_users_can: "Benutzer können:"
         feedbackwidget_attach_a_file: "Eine Datei anhängen"
         feedbackwidget_screenshot: "Screenshot erstellen"
-        feedbackwidget_screenr_recording: Screenr-Aufzeichnung
         feedbackwidget_search_area: "Artikel durchsuchen"
         feedbackwidget_use_https: "HTTPS verwenden"
         feedbackwidget_mobile_view: "Mobile Ansicht"
@@ -1469,7 +1468,6 @@ de:
         feedbackwidget_users_can: Formularoptionen
         feedbackwidget_attach_a_file: "Eine Datei anhängen"
         feedbackwidget_screenshot: "Screenshot erstellen"
-        feedbackwidget_screenr_recording: Screenr-Aufzeichnung
         feedbackwidget_search_area: "Artikel durchsuchen"
         feedbackwidget_use_https: "HTTPS verwenden"
         feedbackwidget_mobile_view: "Mobile Ansicht aktivieren"
@@ -1889,7 +1887,7 @@ de:
         import: "Daten aus Zendesk importieren"
         agent: Bearbeiter
         feedback: Feedback-Widget
-        freshchat: Live-Chat
+        livechat: Live-Chat
         integrations: Integrationen
         dispatcher: Verteiler
         supervisor: Supervisor
@@ -6043,36 +6041,6 @@ de:
         es: Spanisch
         sv: Schwedisch
         tr: Türkisch
-    screenr:
-      button_label: "Screencast aufzeichnen"
-      label: Screenr
-      desc: "Zeichnen Sie Screencasts mithilfe von Screenr auf und hängen Sie sie an Tickets, Foren und Lösungsartikel an."
-      helptext: "<h4>Screenr-Integration in Freshdesk</h4><p><br/>Durch die Screenr-Integration können Bearbeiter und Kunden Screencasts aufzeichnen und austauschen, während sie Freshdesk nutzen. Screencasts können verwendet werden, um Fehlerberichte oder Anweisungsvideos direkt an Ihre Tickets, Forenbeiträge und Lösungsartikel anzuhängen.</p><p>Nach der Aktivierung wird Ihrem Feedback-Widget, Diskussionen und Ihrer Wissensdaten eine Aufzeichnungsschaltfläche hinzugefügt. Sie können wählen, das gesamte Browser-Fenster oder nur einen bestimmten Bereich aufzuzeichnen. Der Screencast wird automatisch eingefügt, sobald Ihre Sitzung abgeschlossen ist. </p><p>Sie können diese Integration einrichten, indem Sie Ihre Screenr-URL (z. B. <a>http://yourname.viewcasts.com</a>) und Ihre Aufzeichner-ID einfügen. Diese wird Ihnen nach der Anmeldung in Ihrem Konto angezeigt.</p>"
-      form:
-        recorder_id: Aufzeichner-ID
-        recorder_id_info: "Die Aufzeichner-ID ist einzigartig und wird auf der Seite zur Bearbeitung der Aufzeichner angezeigt."
-        site_address_info: ""
-        site_address: Screenr-Subdomäne
-        widget_title: Widget-Titel
-        visible_agent_forum: "Aufzeichnung des Forenbildschirms für Bearbeiter"
-        visible_agent_forum_info: "Aktivieren Sie diese Option, um den Screen-Aufzeichner für Bearbeiter in Foren verfügbar zu machen."
-        visible_agent_ticket: "Bildschirmaufzeichnung des Bearbeitertickets"
-        visible_agent_ticket_info: "Aktivieren Sie diese Option, um den Screenr-Aufzeichner für Bearbeiter im Ticketformular verfügbar zu machen."
-        visible_solution: "Aufzeichnung des Lösungsbildschirms"
-        visible_solution_info: "Aktivieren Sie diese Option, um den Screenr-Aufzeichner in Lösungen verfügbar zu machen."
-        visible_portal_ticket: "Bildschirmaufzeichnung des Portal-Tickets"
-        visible_portal_ticket_info: "Aktivieren Sie diese Option, um den Screenr-Aufzeichner im Portal-Ticket-Formular verfügbar zu machen."
-        visible_portal_forum: "Bildschirmaufzeichnung für Forum-Ticket im Portal"
-        visible_portal_forum_info: "Aktivieren Sie diese Option, um den Screenr-Aufzeichner im Portalforum verfügbar zu machen."
-        visible_widget: Widget-Bildschirmaufzeichnung
-        visible_widget_info: "Aktivieren Sie diese Option, um den Screenr-Aufzeichner im Feedback-Widget verfügbar zu machen."
-      settings:
-        enable_screenr_recording: "Screenr-Aufzeichnung aktivieren"
-        ticket_interaction: "Seite „Tickets“ (Neu, Bearbeiten, Antworten)"
-        forum_interaction: "Seite „Forum“ (Neu, Bearbeiten, Kommentar)"
-        create_solution: "Lösung (Neu, Bearbeiten)"
-        for_agents: "Für Bearbeiter"
-        for_customer: "Für Kunden"
     ilos:
       label: ilos-Videos
       desc: "Screencasts zu Tickets, Foren und Lösungsartikeln aufzeichnen und freigeben."
@@ -6887,7 +6855,7 @@ de:
         filter_by: Zufriedenheitsansichten
         view_report_date: "Berichte anzeigen während"
         helptext: "<b>Wozu einen Kundenzufriedenheitsbericht? </b><p>Mit einem Kundenzufriedenheitsbericht erhalten Sie einen Einblick in die Servicequalität Ihrer Kundenservice-Bearbeiter.<br>Mithilfe des Berichts können Sie besser verstehen, wie zufrieden Ihre Kunden sind. Die Zufriedenheit mit den einzelnen Bearbeitern wird anhand eines Prozentwertes dargestellt (zufrieden, neutral und unzufrieden).<br><br><b>Was können Sie noch tun?</b><br><p><ol class='ml15'><li>Filtern Sie die Berichtsergebnisse nach Bearbeiter, Gruppe oder Unternehmen.</li><li>Zeigen Sie die Berichte an, die innerhalb eines gewissen Zeitraums erstellt wurden.</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Übersicht - Live-Chat"
       filter_by_title: "Gefiltert nach"
       time_period: Zeitraum
@@ -8171,7 +8139,7 @@ de:
         additional_info: "Sobald Ihr Telefonkanal in Ihrem Konto aktiviert ist, werden Sie Nummern erwerben sowie Anrufe tätigen und entgegennehmen können."
         button_text: "Anfrage für Telefon"
         video_title: "Schauen Sie sich das Video an, um zu erfahren, welche Funktionen Ihnen im Telefonkanal bereitstehen."
-  freshchat:
+  livechat:
     feature_request:
       title: "Willkommen bei Live-Chat"
       heading: "Ihre Kunden mit Live-Chat betreuen"
@@ -8248,7 +8216,7 @@ de:
     bottom_left: "Unten links"
     bottom_right: "Unten rechts"
     integrate_msg: "Kopieren Sie diesen Code und fügen Sie Ihn vor dem letzten Tag </body> auf Ihrer Website oder in Ihrer App ein."
-    integrate_freshchat_title: "Integrieren Sie Live-Chat in Ihre Website und Anwendungen"
+    integrate_livechat_title: "Integrieren Sie Live-Chat in Ihre Website und Anwendungen"
     custom_chat_window: Chat-Fenster
     text_placeholder: "Ihre Nachricht"
     chatbox_bgcolor: Fensterfarbe
@@ -8391,7 +8359,7 @@ de:
     intro_title: "Warum Live-Chat?"
     intro: "Die integrierte Live-Chat-Lösung von Freshdesk ermöglicht Ihnen, Benutzer Ihrer Website, der Online-Software oder des Supportkanals zu sehen und mit ihnen über Freshdesk direkt zu chatten. Sie können auch proaktv beginnen, mit Besuchern der Website zu chatten. Sobald ein Chat beendet ist, können Sie entscheiden, die Kommunikation in ein Ticket zu wandeln und mit dem Benutzer via E-Mail in Kontakt zu bleiben oder die Chat-Transkription zu archivieren."
     enable_chat: "Live-Chat aktivieren"
-    learn_freshchat: "Mehr über Live-Chat erfahren"
+    learn_livechat: "Mehr über Live-Chat erfahren"
     support_portal: "Im Support-Portal chatten"
     logged_in_users: "Nur angemeldete Benutzer"
     everyone: Jeder

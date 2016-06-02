@@ -170,6 +170,7 @@ module Archive
                                        {:manual_publish => true})
         if archive_ticket_destroy(ticket)
           Helpdesk::ArchiveTicket.where(:id => archive_ticket.id, :account_id => archive_ticket.account_id, :progress => true).update_all(:progress => false)
+          archive_ticket.sqs_manual_publish
         end
       end
 

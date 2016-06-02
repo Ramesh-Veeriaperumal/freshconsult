@@ -46,6 +46,7 @@ module Integrations
     end
 
     def app_updates(method, app_name, configs = nil)
+      return true if Rails.env.development?
       mkt_obj = ::Marketplace::MarketPlaceObject.new
       ni_latest_result = mkt_obj.send(:ni_latest_details, app_name)
       return false if mkt_obj.send(:error_status?, ni_latest_result)

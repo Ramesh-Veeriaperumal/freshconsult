@@ -47,7 +47,7 @@ class Signup < ActivePresenter::Base
     end
 
     def build_roles
-     default_roles_list.each do |role|
+     DEFAULT_ROLES_LIST.each do |role|
       account.roles.build(:name => role[0],
         :default_role => true,
         :privilege_list => role[1],
@@ -84,13 +84,15 @@ class Signup < ActivePresenter::Base
      account.build_agent_password_policy(
        :user_type =>2,
        :policies => FDPasswordPolicy::Constants::DEFAULT_PASSWORD_POLICIES,
-       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS
+       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS,
+       :signup => true
        )
 
       account.build_contact_password_policy(
        :user_type =>1,
        :policies => FDPasswordPolicy::Constants::DEFAULT_PASSWORD_POLICIES,
-       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS
+       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS,
+       :signup => true
        )
 
    end

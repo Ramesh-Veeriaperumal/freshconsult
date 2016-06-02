@@ -63,7 +63,7 @@ module Marketplace::ApiHelper
       script = plug_code_from_cache(installed_plug[:version_id])
 
       liquid_objs = freshplug_liquids(installed_plug)
-      Liquid::Template.parse(script).render(liquid_objs, 
+      Liquid::Template.parse(script.gsub("}}", " | encode_html}}")).render(liquid_objs, 
           :filters => [Integrations::FDTextFilter],
           :registers => { :plug_asset => installed_plug[:version_id]}).html_safe
     end

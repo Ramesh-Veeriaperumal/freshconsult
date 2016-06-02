@@ -16,17 +16,80 @@ var SurveyDateRange = {
                 this.isInitialized=true;
         }
         jQuery("#survey_date_range").attr("values",Date.today().toString("dddd, MMMM dd yyyy"));
+        
+        var dateFormat = getDateFormat('mediumDate').toUpperCase();
+        var date = Helpkit.commonSavedReportUtil.getDateRangeDefinition(dateFormat);
+        
         jQuery("#survey_date_range").daterangepicker({
             earliestDate: Date.parse('1/1/2009'),
             latestDate: new Date(),
             format: "DD MMM, YYYY",
             presetRanges: [
-                {text: SurveyI18N.today, dateStart: 'Today', dateEnd: 'Today' },
-                {text: SurveyI18N.yesterday, dateStart: 'Today-1', dateEnd: 'Today-1' },
-                {text: SurveyI18N.last_7_days, dateStart: 'Today-7', dateEnd: 'Today' },
-                {text: SurveyI18N.last_30_days,dateStart: 'Today-30', dateEnd: 'Today'},
-                {text: SurveyI18N.last_90_days,dateStart: 'Today-90',  dateEnd: 'Today'}
-            ],
+            {   text: I18n.t('helpdesk_reports.today'), 
+                dateStart: 'Today', 
+                dateEnd: 'Today',
+                period : 'today'
+            },
+            {   text: I18n.t('helpdesk_reports.yesterday'), 
+                dateStart: 'Today-1', 
+                dateEnd: 'Today-1',
+                period : 'yesterday' 
+            },
+            {   text: I18n.t('helpdesk_reports.this_week'), 
+                dateStart: date.this_week_start, 
+                dateEnd: 'Today' ,
+                period : "this_week" 
+            },
+            {   text: I18n.t('helpdesk_reports.previous_week'), 
+                dateStart: date.previous_week_start, 
+                dateEnd: date.previous_week_end ,
+                period : "previous_week" 
+            },
+            {   text: I18n.t('helpdesk_reports.last_num_days', { num : 7 }), 
+                dateStart: 'Today-6', 
+                dateEnd: 'Today' ,
+                period : "last_7"
+            },
+            {
+                text: I18n.t('helpdesk_reports.this_month'),
+                dateStart: date.this_month_start,
+                dateEnd: 'Today',
+                period : "this_month"
+            },
+            {
+                text: I18n.t('helpdesk_reports.previous_month'),
+                dateStart: date.previous_month_start,
+                dateEnd: date.previous_month_end,
+                period : "previous_month"
+            },
+            {   text: I18n.t('helpdesk_reports.last_num_days', { num : 30 }),
+                dateStart: 'Today-29', 
+                dateEnd: 'Today',
+                period : "last_30"
+            },
+            {
+                text: I18n.t('helpdesk_reports.last_num_months',{ num : 3 } ),
+                dateStart: date.last_3_months,
+                dateEnd: 'Today',
+                period : "last_3_months"
+            },
+            {   text: I18n.t('helpdesk_reports.last_num_days', { num : 90 }),
+                dateStart: 'Today-89',  
+                dateEnd: 'Today',
+                period : "last_90"
+            },
+            {
+                text: I18n.t('helpdesk_reports.last_num_months', { num : 6 }),
+                dateStart: date.last_6_months,
+                dateEnd: 'Today',
+                period : "last_6_months"
+            },
+            {
+                text: I18n.t('helpdesk_reports.this_year'),
+                dateStart: date.this_year_start,
+                dateEnd: 'Today',
+                period : "this_year"
+            }],
             presets: {
                 dateRange: SurveyI18N.custom_daterange
             },

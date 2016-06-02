@@ -47,9 +47,11 @@ jQuery(document).ready(function() {
         });
     }
 
-    jQuery(document).on("presetRangesSelected", function(event,status) {
-        Helpkit.presetRangesSelected = status;
+    jQuery(document).on("presetRangesSelected", function(event,data) {
+        Helpkit.presetRangesSelected = data.status;
+        Helpkit.presetRangesPeriod = data.period;
     });
+
     savedReportUtil.init();
 });
 
@@ -108,9 +110,11 @@ var savedReportUtil = (function() {
         filterChanged : false,
         bindSavedReportEvents : function() {
             var _this = this;
+
             jQuery(document).on('change', '#customers_filter,.filter_item,.ff_item', function (ev) { 
                  if(ev.target && ev.target.id != "group_by_field"){
                     _this.filterChanged = true; 
+                    _this.save_util.filterChanged = true;
                     _this.setFlag('false');
                  }
             });
@@ -133,11 +137,13 @@ var savedReportUtil = (function() {
             });
             jQuery(document).on("filter_changed",function(ev,data){
                 _this.filterChanged = true;
+                _this.save_util.filterChanged = true;
                 _this.setFlag('false');
             });
             jQuery(document).on("report_refreshed",function(ev,data){
                 if(_this.filterChanged) {
                      _this.save_util.controls.hideDeleteAndEditOptions();
+                     _this.save_util.controls.hideScheduleOptions();
                      _this.save_util.controls.showSaveOptions(_this.last_applied_saved_report_index); 
                 } else{
                   var index = parseInt(jQuery('.active [data-action="select-saved-report"]').attr('data-index'));
@@ -148,6 +154,17 @@ var savedReportUtil = (function() {
                       } else{
                         _this.save_util.controls.hideScheduleOptions();
                       }
+                  }
+                  var result = Helpkit.ScheduleUtil.isScheduled(
+                              _this.last_applied_saved_report_index,
+                              _this.save_util.default_report_is_scheduled,
+                              _this.save_util.default_index,
+                              Helpkit.report_filter_data
+                              );
+                  if(result.is_scheduled){
+                    Helpkit.ScheduleUtil.displayScheduleStatus(true,result.tooltip_title);
+                  } else{
+                    Helpkit.ScheduleUtil.displayScheduleStatus(false);
                   }
                 }
             });
@@ -161,6 +178,7 @@ var savedReportUtil = (function() {
                           //update the last applied filter
                           _this.last_applied_saved_report_index = this.new_id;
                           _this.filterChanged = false;
+                          _this.save_util.filterChanged = false;
                      },error: function () {}
                   },
                   params : _this.getParams()
@@ -185,7 +203,6 @@ var savedReportUtil = (function() {
                     if(condition == "customers_filter") {
                       var source = jQuery('#' + condition).data('select2').opts.data;
                       opt.source = source;
-                      opt.name = "customer_id";
                     }
                     form_data.push(opt);
                 }
@@ -197,12 +214,16 @@ var savedReportUtil = (function() {
           if(Helpkit.presetRangesSelected) {
                params.data_hash.date.date_range = _this.save_util.dateRangeDiff(dateRange);
                params.data_hash.date.presetRange = true;
+               params.data_hash.date.period = Helpkit.presetRangesPeriod;
           } else {
                params.data_hash.date.date_range = dateRange;
                params.data_hash.date.presetRange = false;
           }                   
           params.data_hash.report_filters = form_data;
           params.data_hash.select_hash = Helpkit.select_hash;
+          if(_this.last_applied_saved_report_index == -1 && !_this.filterChanged) {
+            params.data_hash.default_report_is_scheduled = true;
+          }
           return params;
         },
         updateSavedReport : function(isUpdateTitle) {
@@ -210,11 +231,37 @@ var savedReportUtil = (function() {
               
               var current_selected_index = parseInt(jQuery(".reports-menu li.active a").attr('data-index'));
               var params = _this.getParams();
+              var dateRange = jQuery("#date_range").val();
 
-              if(isUpdateTitle) {
-                params.filter_name = _this.save_util.escapeString(jQuery("#filter_name_edit").val());
+              if(current_selected_index == -1) {
+                 current_selected_index = _this.save_util.default_index;
+                 params.data_hash.default_report_is_scheduled = true;
+              }
+
+              if(is_scheduled_op){
+                    params.filter_name = Helpkit.report_filter_data[current_selected_index].report_filter.filter_name;
+                    params.data_hash.schedule_config = Helpkit.ScheduleUtil.getScheduleParams();
+                    params.data_hash.date = Helpkit.report_filter_data[current_selected_index].report_filter.data_hash.date;
               } else {
-                params.filter_name = Helpkit.report_filter_data[current_selected_index].report_filter.filter_name;
+                
+                if(isUpdateTitle) {
+                    params.filter_name = _this.save_util.escapeString(jQuery("#filter_name_save").val());
+                    params.data_hash.schedule_config = Helpkit.report_filter_data[current_selected_index].report_filter.data_hash.schedule_config;
+                    params.data_hash.date = Helpkit.report_filter_data[current_selected_index].report_filter.data_hash.date;
+                  } else {
+                    params.filter_name = Helpkit.report_filter_data[current_selected_index].report_filter.filter_name;
+                    params.data_hash.schedule_config = Helpkit.report_filter_data[current_selected_index].report_filter.data_hash.schedule_config;
+                    params.data_hash.date = {};
+                    
+                    if(Helpkit.presetRangesSelected) {
+                        params.data_hash.date.date_range = _this.save_util.dateRangeDiff(dateRange);
+                        params.data_hash.date.presetRange = true;
+                        params.data_hash.date.period = Helpkit.presetRangesPeriod;
+                      } else {
+                        params.data_hash.date.date_range = dateRange;
+                        params.data_hash.date.presetRange = false;
+                      }
+                  }
               }
               params.id = Helpkit.report_filter_data[current_selected_index].report_filter.id;
 
@@ -262,22 +309,25 @@ var savedReportUtil = (function() {
 
             _this.flushAppliedFilters();
             _this.last_applied_saved_report_index = index;
+            _this.save_util.last_applied_saved_report_index = index;
             var id = -1;
 
             if(index != -1) {
 
                 var filter_hash = hash[index].report_filter;
                 id = filter_hash.id;
-                //Set the date range from saved range
-                var date_hash = filter_hash.data_hash.date;
-                var daterange;
-                //Set the date range from saved range
-                if(date_hash.presetRange) {
-                  daterange = _this.save_util.convertDateDiffToDate(date_hash.date_range);
-                } else {
-                  daterange = date_hash.date_range;
+                if(filter_hash.data_hash.date.presetRange) {
+                    //Set the date range from saved range
+                    var daterange = _this.save_util.convertPresetRangesToDate(filter_hash.data_hash.date.date_range,filter_hash.data_hash.date.period);
+                    jQuery('#date_range').val(daterange);
+                    Helpkit.presetRangesSelected = true;
+                    Helpkit.presetRangesPeriod = filter_hash.data_hash.date.period;
+                    is_preset_selected = true;
+                }else{
+                    jQuery('#date_range').val(filter_hash.data_hash.date.date_range);
+                    Helpkit.presetRangesSelected = false;
+                    is_preset_selected = false;
                 }
-                jQuery('#date_range').val(daterange);
                 
                 if(filter_hash.data_hash.report_filters != null) {
                    
@@ -286,9 +336,9 @@ var savedReportUtil = (function() {
 
                       if(condition == "group_by"){
                           //jQuery("#group_by_field").select2('val',filter_row.value);
-                      } else if(condition == "customer_id") {
-                          _this._constructElasticSearchField("customers_filter",filter_row.source);
-                          jQuery('#customers_filter').select2('val',filter_row.value.split(','));
+                      } else if(condition == "customers_filter") {
+                          _this._constructElasticSearchField(condition,filter_row.source);
+                          jQuery('#'+ condition).select2('val',filter_row.value.split(','));
                       } else {
                           //populate the value
                           var is_saved_param_valid = _this.checkValidityOfSavedParams(condition,filter_row.value);
@@ -307,11 +357,14 @@ var savedReportUtil = (function() {
             } else {
               var default_date_range = _this.save_util.convertDateDiffToDate(29);
               jQuery('#date_range').val(default_date_range);
+              Helpkit.presetRangesSelected = true;
+              Helpkit.presetRangesPeriod = 'last_30';
             }
 
             _this.save_util.setActiveSavedReport(jQuery(".reports-menu li a[data-index=" + index +"]"));
             _this.filterChanged = false;
-            //Set the flag that saved report was used
+             _this.save_util.filterChanged = false;
+              //Set the flag that saved report was used
             _this.setFlag('true');
             jQuery("#submit").trigger('click');
             _this.save_util.cacheLastAppliedReport(id);
@@ -319,8 +372,21 @@ var savedReportUtil = (function() {
             _this.save_util.controls.hideSaveOptions();
             if(index != -1) {
                 _this.save_util.controls.showDeleteAndEditOptions();
+                _this.save_util.controls.showScheduleOptions(false);
             } else{
               _this.save_util.controls.hideDeleteAndEditOptions();
+              _this.save_util.controls.showScheduleOptions(true);
+            }
+            var result = Helpkit.ScheduleUtil.isScheduled(
+              _this.last_applied_saved_report_index,
+              _this.save_util.default_report_is_scheduled,
+              _this.save_util.default_index,
+              Helpkit.report_filter_data
+              );
+            if(result.is_scheduled){
+              Helpkit.ScheduleUtil.displayScheduleStatus(true,result.tooltip_title);
+            } else{
+              Helpkit.ScheduleUtil.displayScheduleStatus(false);
             }
             if(invalid_params_found) {
               //update the filter , removing the invalid params done in above loop
@@ -400,7 +466,6 @@ var savedReportUtil = (function() {
       ]
       
       var display = [];
-
       jQuery.each(filters_name,function(idx,name){
           var selected_options = [];
           selected_options = jQuery('#' + name).select2('data');
@@ -431,3 +496,84 @@ var savedReportUtil = (function() {
       jQuery("#filter_text_others").html(tmpl);
       Helpkit.select_hash = display;
     }
+
+
+function getPdfParams() {
+  var remove = [];
+  var params = {};
+  var form_data = [];//jQuery('#report_filters').serializeArray(); 
+  var filters_name = [ "customers_filter","user_id" ,"billable","products_id","group_id","ticket_type","priority","group_by_field"];
+  params.data_hash = {};
+  jQuery.each(filters_name,function(idx,condition) {
+    var val = jQuery('#' + condition).select2('val');
+    if(val != ""){
+      var opt = {
+          name : condition,
+          value : val.toString()
+      }
+      form_data.push(opt);
+    }
+  });
+  params.data_hash.date = {}
+  params.data_hash.date.date_range = jQuery("#date_range").val();
+  params.data_hash.date.presetRange = false;
+  params.data_hash.report_filters = form_data;
+  params.data_hash.select_hash = Helpkit.select_hash;
+  if(savedReportUtil.last_applied_saved_report_index != -1){
+    params.filter_name = Helpkit.report_filter_data[parseInt(savedReportUtil.last_applied_saved_report_index)].report_filter.filter_name;
+  }
+  return params;
+}
+
+function getFilterTextPDF(){
+  var filters_name = [ "customers_filter","user_id" ,"billable","products_id","group_id","ticket_type","priority"];
+  var labels = [
+    I18n.t('helpdesk.time_sheets.customer'),
+    I18n.t('helpdesk.time_sheets.agent'),
+    I18n.t('helpdesk.time_sheets.billing_type'),
+    I18n.t('helpdesk.time_sheets.group'),
+    I18n.t('helpdesk.time_sheets.product'),
+    I18n.t('helpdesk.time_sheets.ticket_type'),
+    I18n.t('helpdesk.time_sheets.ticket_priority') ]; 
+  var display = [];
+  jQuery.each(filters_name,function(idx,name){
+    var selected_options = [];
+    var txt = "";
+    selected_options = jQuery('#' + name).select2('data');
+    if(selected_options && selected_options.length){
+      jQuery.each(selected_options,function(i,option){
+          if(name != "customers_filter") {
+            txt += option.text; 
+          } else {
+            txt += option.value;
+          }  
+          if(i != selected_options.length -1){
+            txt += ",";
+          }
+      });
+      var data = {
+        label : labels[idx],
+        text : txt
+      }
+      display.push(data);
+    }
+  });
+  Helpkit.select_hash = display;
+}
+
+function showResponseMessage(message) {
+  jQuery("#email-reports-msg").remove();
+  var msg_dom = jQuery("#noticeajax");
+  msg_dom.empty();
+  msg_dom.prepend(message);
+  msg_dom.show();
+  jQuery("<a />").addClass("close").attr("href", "#").appendTo(msg_dom).on('click.helpdesk_reports', function(){
+      msg_dom.fadeOut(600);
+      return false;
+  });
+  setTimeout(function() {    
+      jQuery("#noticeajax a").trigger( "click" );  
+      msg_dom.find("a").remove();
+  }, 1200);
+    
+} 

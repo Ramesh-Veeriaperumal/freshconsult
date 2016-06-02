@@ -51,6 +51,7 @@ helpdesk:
     - resque
     - riak
     - ruby193_monkey_patches
+    - core_ext/active_record/relation
     - secret_token
     - session_store
     - sidekiq
@@ -80,5 +81,6 @@ helpdesk:
     - helpdesk_reports/reports_app_config
     - controller_log_subscriber
     - zero_downtime_migration
-
+    - action_mailer_log_subscriber
+    - email_controller_log_subscriber
 

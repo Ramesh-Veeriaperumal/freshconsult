@@ -9,6 +9,8 @@ class AgentGroup < ActiveRecord::Base
 
   validates_presence_of :user
 
+  attr_accessible :group_id, :user_id
+
   after_commit ->(obj) { obj.clear_cache_agent_group; obj.remove_from_chatgroup_channel }, on: :destroy
   after_commit ->(obj) { obj.clear_cache_agent_group; obj.add_to_chatgroup_channel }, on: :create
   scope :available_agents,
@@ -19,17 +21,17 @@ class AgentGroup < ActiveRecord::Base
         :conditions => ["agents.available = ?",true]
 
   def remove_from_chatgroup_channel
-    Resque.enqueue(Workers::Livechat, {:worker_method =>"group_channel",
-                                        :siteId => account.chat_setting.display_id,
-                                        :agent_id => user_id, :group_id => group_id,
-                                        :type => 'remove'}) if account.freshchat_routing_enabled?
+    LivechatWorker.perform_async({:worker_method =>"group_channel",
+                                  :siteId => account.chat_setting.site_id,
+                                  :agent_id => user_id, :group_id => group_id,
+                                  :type => 'remove'}) if Account.current.freshchat_routing_enabled?
   end
 
   def add_to_chatgroup_channel
-    Resque.enqueue(Workers::Livechat, {:worker_method =>"group_channel",
-                                        :siteId => account.chat_setting.display_id,
-                                        :agent_id => user_id, :group_id => group_id,
-                                        :type => 'add'}) if account.freshchat_routing_enabled?
+    LivechatWorker.perform_async({:worker_method =>"group_channel",
+                                  :siteId => account.chat_setting.site_id,
+                                  :agent_id => user_id, :group_id => group_id,
+                                  :type => 'add'}) if Account.current.freshchat_routing_enabled?
   end
   
 end

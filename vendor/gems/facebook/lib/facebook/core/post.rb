@@ -36,7 +36,7 @@ module Facebook
         insert_post_in_dynamo if can_dynamo_push
         
         #Process comments only either if it has to be converted to a ticket or pushed to Dynamo
-        process_comments(self.fd_item.present?, can_dynamo_push) if (self.fd_item.present? || can_dynamo_push)
+        process_comments(self.fd_item, can_dynamo_push) if (self.fd_item.present? || can_dynamo_push)
         
         #Case happens when process post is called from the child classes
         #Status is in Dynamo but converted to a ticket later because of a visitor comment
@@ -64,13 +64,7 @@ module Facebook
           core_comment.process(convert, can_dynamo_push, true) 
         end
       end
-
-      def ticket_attributes    
-        {
-          :group_id   => @fan_page.group_id,
-          :product_id => @fan_page.product_id
-        }
-      end       
+     
     end
   end
 end

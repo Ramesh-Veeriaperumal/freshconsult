@@ -3,11 +3,19 @@ We have <%=@additional_info[:operation]%> the following user from account with i
 	<b><%=@additional_info[:account_id]%> </b>
 </a> and user id <%=@additional_info[:user_id]%>
 <br/>
+<% if @additional_info[:deleted_flag].to_i == 1%>
+To block or delete the user please visit the following url 
+<a href= <%= "#{@additional_info[:admin_url]}"%> > 
+	<b>here</b> 
+</a>
+<br/><br/>
+<%else%>
 To unblock or undelete the user please visit the following url 
 <a href= <%= "#{@additional_info[:admin_url]}"%> > 
 	<b>here</b> 
 </a>
 <br/><br/>
+<%end%>
 Regards,
 <br/>
 <%=@additional_info[:signature]%>

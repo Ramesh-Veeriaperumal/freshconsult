@@ -101,7 +101,7 @@
 					<%=	link_to('', freshfone_recording || call.recording_url, :type => 'audio/mp3',
 	         :class => 'call_duration', :'data-time' => call.call_duration) %>
 					</div>
-					<% if privilege?(:view_admin) %>
+					<% if privilege?(:admin_tasks) %>
 						<div class="recording_delete hide">
 					 		<span class="btn btn-mini delete_recording_btn tooltip" 
 					 				title="<%= t('freshfone.call_history.recording_delete.tooltip')%>" 
@@ -118,7 +118,7 @@
 	 <% if current_account_freshfone_numbers.any? %>
 	<td class="width3">
 		<div class="call_user pull-right">
-				<%= is_strange_number.present? ? cannot_make_calls() : can_make_calls(call.caller_number,"",call.freshfone_number_id) %>
+				<%= is_strange_number.present? ? cannot_make_calls() : can_make_calls(call.caller_number,call.customer,"",call.freshfone_number_id) %>
 			</div>
 		<div class="assigned_ticket <%='converted_ticket' if call.notable_present? %> btn-round pull-right tooltip" 
 		title="<%= call.notable_present? ? 

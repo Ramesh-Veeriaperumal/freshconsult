@@ -53,6 +53,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/hootsuite/home"
     resource :"integrations/hootsuite/ticket"
     resource :"integrations/sugarcrm", :only => [:renew_session_id, :check_session_id]
+    resource :"integrations/service_proxy", :only => [:fetch]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -61,6 +62,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings ]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
+    resource :"freshfone/agent_conference", :only => [:add_agent, :success, :cancel]
     resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :wrap_call]
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
@@ -85,7 +87,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/ticket", :only => [:index]
     resource :"search/v2/ticket", :only => [:index]
     resource :"search/v2/spotlight", :only => [:all, :tickets]
-    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups]
+    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups, :update_site, :toggle, :trigger]
+    resource :"chat_widget", :only => [:update, :toggle, :enable] 
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
@@ -106,6 +109,11 @@ Authority::Authorization::PrivilegeList.build do
     # Used for API V2
     resource :"conversation", only: [:create, :ticket_conversations]
     resource :"ticket", :only => [:show, :create, :index, :search]
+
+    # This privilege should only be used for API. This should have only read permission. 
+    # Agent who has access to ticket create will obviously know the custom field names.
+    # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
+    resource :api_ticket_field, :only => [:index] 
 	end
 
   reply_ticket do
@@ -294,6 +302,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :user, :only => [:index, :show]
     resource :"search/customer", :only => [:index]
     resource :"search/v2/spotlight", :only => [:customers]
+    resource :"integrations/service_proxy", :only => [:fetch]
 
     # Used by V2 API
     resource :"api_contact", :only => [:index, :show]
@@ -321,6 +330,12 @@ Authority::Authorization::PrivilegeList.build do
     # Used by V2 API
     resource :"api_contact", :only => [:create, :update]
     resource :"api_company", :only => [:create, :update]
+
+    # This privilege should only be used for API. This should have only read permission. 
+    # Agent who has access to contact/company create will obviously know the custom field names.
+    # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as contact/company create.
+    resource :api_contact_field, :only => [:index]
+    resource :api_company_field , :only => [:index]
   end
 
   delete_contact do
@@ -386,6 +401,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_agent", :only => [:show, :index]
   end
 
+  manage_availability do
+    resource :group, :only => [:index, :show, :edit, :update, :toggle_roundrobin]
+    resource :"helpdesk/dashboard",:only => [:agent_status]
+  end
+
   manage_canned_responses do
     resource :"helpdesk/canned_responses/folder"
   end
@@ -414,10 +434,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/business_calendar"
     resource :"social/twitter_handle", :only => [:index, :edit, :update, :destroy, :signin, :authdone, :search]
     resource :"social/streams"
+    resource :"admin/social/facebook_stream", :only => [:index, :edit, :update]
+    resource :"admin/social/facebook_page", :only => [:destroy, :enable_pages]
     resource :"social/welcome"
     resource :"contact", :only => [:change_password, :update_password]
     resource :"social/facebook_page"
-    resource :"social/facebook_tab"
+    resource :"admin/social/facebook_tab", :only => [:remove]
     resource :"admin/survey"
     resource :"admin/custom_survey"
     resource :group
@@ -461,6 +483,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
     resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
     resource :"integrations/github", :only => [:new, :install, :edit, :update, :oauth_install]
+    resource :"integrations/marketplace/quickbooks_sso", :only => [:landing]
+    resource :"integrations/marketplace/shopify", :only => [:landing]
     resource :"integrations/salesforce"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
     resource :"admin/integrations/freshplug"
@@ -473,9 +497,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/marketplace_app"
 
     # Used by API V2
-    resource :api_ticket_field, :only => [:index]
-    resource :"api_contact_field", :only => [:index]
-    resource :"api_company_field", :only => [:index]
+    resource :api_ticket_field, :only => [:index] 
+    resource :api_contact_field, :only => [:index]
+    resource :api_company_field , :only => [:index]
     resource :"api_business_hour", :only => [:index, :show]
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_sla_policy", :only => [:index, :update]

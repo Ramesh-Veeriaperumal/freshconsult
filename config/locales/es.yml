@@ -1301,9 +1301,9 @@ es:
         send_test_mail_info2: "Así es<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>cómo puedes hacerlo</a>."
         title_message: "Inaugura tu ayuda al cliente en cuatro pasos..."
         support_email_title: "e-mail <br> de soporte"
-        agents_title_1: "Añadiendo&lt;br&gt; agentes"
+        adding_agents: "Añadiendo<br> agentes"
         rebrand_title: "Logo<br>y colores"
-        social_title_1: "Vuélvete &lt;br&gt; social"
+        going_social: "Vuélvete <br> social"
         skip_text: "No gracias, llévame a mi propio servicio de asistencia."
         back_link: Atrás
         next_link: Sig.
@@ -1425,7 +1425,6 @@ es:
         feedbackwidget_users_can: "El usuario puede:"
         feedbackwidget_attach_a_file: "Adjuntar Archivo"
         feedbackwidget_screenshot: "Capturar Pantalla"
-        feedbackwidget_screenr_recording: "Screenr Grabando"
         feedbackwidget_search_area: "Buscar Artículos"
         feedbackwidget_use_https: "Usar https"
         feedbackwidget_mobile_view: "Vista Móvil"
@@ -1450,7 +1449,6 @@ es:
         feedbackwidget_users_can: "Opciones de formulario"
         feedbackwidget_attach_a_file: "Adjuntar archivo"
         feedbackwidget_screenshot: "Hacer captura de pantalla"
-        feedbackwidget_screenr_recording: "Grabación de Screenr"
         feedbackwidget_search_area: "Buscar artículos"
         feedbackwidget_use_https: "Usar https"
         feedbackwidget_mobile_view: "Habilitar vista móvil"
@@ -1862,7 +1860,7 @@ es:
         import: "Importar datos desde Zendesk"
         agent: Agentes
         feedback: "Botón de contacto"
-        freshchat: "Chat en linea"
+        livechat: "Chat en linea"
         integrations: Integraciones
         dispatcher: Despachador
         supervisor: Supervisor
@@ -4152,7 +4150,7 @@ es:
   feedbackwidget_help_para1: "Capture la opinión de sus clientes agregando un botón de soporte a su sitio en la web."
   chatwidget_help_content:
     title: "Chat en Linea"
-    info1: "Porque un servicios excepcional al cliente significa permancer ahí junto a él, incluso antes de que tenga un problema. Con Freshchat, no sólo pueden tus agentes mantener conversación entre ellos sin abandonar Freshdesk, además pueden comunicarse con tus clientes en tiempo real y darles respuestas inmediatas. Es una flecha adicional en tu carcaj, un canal especialmente diseñado para estar más cerca de tus usuarios."
+    info1: "Porque un servicios excepcional al cliente significa permancer ahí junto a él, incluso antes de que tenga un problema. Con Live Chat, no sólo pueden tus agentes mantener conversación entre ellos sin abandonar Freshdesk, además pueden comunicarse con tus clientes en tiempo real y darles respuestas inmediatas. Es una flecha adicional en tu carcaj, un canal especialmente diseñado para estar más cerca de tus usuarios."
     info2: "Cada sesion de chat captura informatio tipo META sobre el visitante como su localizacion, el dispositivo, etc. Tambien su historial de ayuda con su sitio, cuando se finaliza la sesion de chat se puede seleccionar convertir la conversacion en un ticket y continuar conectado con el cliente via email o archivar la transcripcion del chat"
     info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Aprende mas sobre el Chat en linea  ingresando a Freshdesk</a>"
   low: Bajo
@@ -5939,36 +5937,6 @@ es:
         es: Español
         sv: Suizo
         tr: Turko
-    screenr:
-      button_label: "Grabación pantalla"
-      label: Screenr
-      desc: "Grabar pantallas con el empleo de Sreenr y vinculación a los tickets, artículos y soluciones en el foro."
-      helptext: "<h4>Integración de Freshdesk con Screenr</h4><p><br/>La integración con Screenr permite a los agentes y clientes, capturar y compartir captura de pantallas mientras están empleando Freshdesk. Se puede emplear para adjuntar informes de error o videos de instrucción a tus tickets, publicaciones de soluciones directamente en los foros y artículos.</p><p>Una vez activado, podras ver un botón de grabación en tu widget de feedback, discusiones, y tu base de conocimiento. Podrás elegir grabar tu ventana completa, o una sección específica. La grabación se insertará automáticamente una vez que tu sesión se ha completado. </p><p>Puedes configurar esta integración, accediendo a la URL de Screener (e.j. <a>http://tunombre.viewcasts.com</a>) y tu ID de Grabación, que lo localizarás una vez te hayas registrado en tu cuenta.</p>"
-      form:
-        recorder_id: "ID de Grabación"
-        recorder_id_info: "El ID de Grabación es el ID único disponible para acceder a la página de edición de grabaciones"
-        site_address_info: ""
-        site_address: "Subdominio Screenr"
-        widget_title: "Título del Widget"
-        visible_agent_forum: "Foro de Gragación de Pantalla para Agentes"
-        visible_agent_forum_info: "Disponible para hacer el Grabador Screenr accesible a los Agentes en Foros"
-        visible_agent_ticket: "Agente Grabando Pantalla de Ticket"
-        visible_agent_ticket_info: "Disponible para hacer el Grabador Screenr accesible a los agentes en el formulario del Ticket"
-        visible_solution: "Grabando Ventana de Solución"
-        visible_solution_info: "Disponilbe para hacer el Grabador Screener accesible desde Soluciones"
-        visible_portal_ticket: "Grabando Pantalla del Portal de ticket"
-        visible_portal_ticket_info: "Disponilbe para hacer el Grabador Screener accesible desde formulairos en el portal de tickets"
-        visible_portal_forum: "Grabando pantalla del portal de tickets para el Foro"
-        visible_portal_forum_info: "Disponilbe para hacer el Grabador Screener accesible desde el foro del portal"
-        visible_widget: "Grabando Ventana del Widget"
-        visible_widget_info: "Disponilbe para hacer el Grabador Screener accesible desde el Widget de Feedback"
-      settings:
-        enable_screenr_recording: "Disponible el Grabador Screenr"
-        ticket_interaction: "Página de Tickets (Nuevo, Editar, Respuesta)"
-        forum_interaction: "Página del Foro (Nuevo, Ediar, Comentario)"
-        create_solution: "Solución (Nuevo, Editar)"
-        for_agents: "Para Agentes"
-        for_customer: "Para Clientes"
     ilos:
       label: "Ilos videos"
       desc: "Graba y comparte pantallas en los tickets, foros y artículos de solución."
@@ -6722,7 +6690,7 @@ es:
         filter_by: "Vistas de satisfaccion"
         view_report_date: "Vista de informe durante"
         helptext: "<b>¿Para qué sirve el informe de satisfacción del cliente?</b><p>El informe de satisfacción del cliente te ofrece una instantánea de la calidad del servicio de los agentes de atención al cliente.<br>El informe te ayuda a descubrir el  cociente de felicidad de los clientes, representado por un valor porcentual (contento, neutral y no contento) por cada agente de asistencia.<br><br><b>¿Qué otras cosas puedes hacer?</b><br><p><ol class='ml15'><li>Filtrar los resultados por agente, grupo o empresa</li><li>Ver informes de un marco temporal concreto</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Sumario del Chat"
       filter_by_title: "Filtrar por"
       time_period: "Periodo de tiempo"
@@ -7951,7 +7919,7 @@ es:
         additional_info: "Usted será capaz de comprar los números, hacer y recibir llamadas de teléfono una vez que el canal está habilitado en su cuenta"
         button_text: "Solicitud de telefono"
         video_title: "Vea el video para saber lo que puede hacer con el canal telefónico"
-  freshchat:
+  livechat:
     feature_request:
       title: "Bienvenido al Chat En linea"
       heading: "Entrega ayuda a tus clientes con chat en linea"
@@ -8028,7 +7996,7 @@ es:
     bottom_left: "Abajo a la Izquierda"
     bottom_right: "Abajo a la derecha"
     integrate_msg: "Copia y pega este código antes de la última etiqueta </body> en tu sitio web o aplicación"
-    integrate_freshchat_title: "Integra el Chat en linea en tu sitio web y aplicaciones"
+    integrate_livechat_title: "Integra el Chat en linea en tu sitio web y aplicaciones"
     custom_chat_window: "Ventana de chat"
     text_placeholder: "Su mensaje "
     chatbox_bgcolor: "Color de la ventana"
@@ -8171,7 +8139,7 @@ es:
     intro_title: "¿Por qué Chat en Linea?"
     intro: "Ahora Freshdesk integra el Chat en Linea, Con el, no sólo pueden tus agentes mantener conversación entre ellos sin abandonar Freshdesk, además pueden comunicarse con tus clientes en tiempo real y darles respuestas imediatas.Tambien puede iniciar el chat de modo practivo en tus sitios y cuando el chat termina, puedes seleccionar convertir la conversacion en ticket para continuar comunicandote por email con el cliente o archivar la transcripcion"
     enable_chat: "Activar Chat en Linea"
-    learn_freshchat: "Saber más sobre el Chat en linea"
+    learn_livechat: "Saber más sobre el Chat en linea"
     support_portal: "Chat en el portal de soporte"
     logged_in_users: "Solamente usuarios registrados"
     everyone: Todos

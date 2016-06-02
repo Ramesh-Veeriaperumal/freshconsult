@@ -25,6 +25,10 @@
 		border-radius: 8px;
 		.reports-title{
 			padding: 12px 0;
+			
+			&.updated-time{
+				padding: 12px 0 28px 0;	
+			}
 			.report-icon{
 				padding: 0 15px 0 20px;
 				display: inline-block;
@@ -54,6 +58,15 @@
 					cursor: pointer;
 					padding-top: 2px;
 				}
+			}
+			#last-updated {
+				position: absolute;
+    			top: 42px;
+				color : #555555;
+    			.instance{
+    				font-weight: 500;
+    			}
+    			font-style : normal !important;
 			}
 			.selected-menu-logo{
 				text-align: center;
@@ -868,6 +881,16 @@
 		.trend-type{
 			margin: 20px 0 0;
 		}
+		.stat{
+			font-size: 11px;
+			font-weight: 500;
+			color : #999;
+			@include float(right);
+			.value{
+				color: #333;
+				font-size: 13px;
+			}
+		}
 	}
 	.full-chart-container{
 		margin: 30px 0;
@@ -937,6 +960,13 @@
 		}
 
 		td.agent,td.group{
+			background: #fff !important;
+		}
+
+		td.deleted {
+			font-weight: normal;
+			color: #aaa;
+			font-style: oblique;
 			background: #fff !important;
 		}
 		
@@ -1645,6 +1675,15 @@ html[dir="rtl"]{
 			    text-align: center;
 			    margin-right: 4px;
 			}
+			&.calendar,&.edit{
+				width: 30px;
+			    font-size: 18px;
+			    display: inline-block;
+			    text-align: center;
+			}
+			&.scheduled{
+				color : green;
+			}
 		}
 	}
 }
@@ -1654,8 +1693,101 @@ html[dir="rtl"]{
 .field_title{
 	font-weight: 600;
 }
-p.visibility {
+p.visibility,p.disabled {
     color: gray;
-    margin-top: -10px;
-    margin-bottom: 20px;
+    margin-top: 5px;
+}
+
+p.default_report_name {
+    font-size: 13px;
+    margin: 8px 0;
+}
+/* Schedule report dialog */
+
+#report-dialog-save-content{
+	max-height: 520px;
+	
+	.dialog_container{
+		max-height: 450px;
+		overflow-y : auto;
+	}
+}
+
+.schedule{
+	margin-top : 15px;
+	
+	.title{
+		font-weight: bold;
+		color: #333;
+	}
+	.form{
+		border : 1px solid #eeeeee;
+		border-radius : 4px;
+		margin: 8px 0;
+
+		.message{
+			padding: 12px 8px;
+			background: #f9f6cf;
+			margin-bottom: 8px; 
+		}
+
+		.form-row{
+			display: block;
+			width: 100%;
+			margin: 8px 8px 2px;
+			
+			&.hide{
+				display: none;
+			}
+
+			label{
+				width: 20%;
+				text-align: left;
+				font-size: 13px;
+				color: #333;
+				font-weight: bold;
+				vertical-align: middle;
+				float:left;
+				margin-top: 5px;
+			}
+			.field{
+				float : left;
+				width: 75%;
+			}
+
+			input[type=radio]{
+				margin : 0 6px;
+			}
+
+			&::after{
+				display: block;
+				content : '';
+				clear : both;
+			}
+			&.runat{
+				display: none;
+			}
+			.inner-label{
+				float: left;
+    			margin: 6px 10px;
+    			font-weight: 500;
+			}
+
+			.tzone{
+				float: left;
+    			margin: 6px 10px;
+			}
+
+			.weekly {
+			    margin-top: 6px;
+			}
+		}
+
+		.bold{
+			font-weight: bold;
+		}
+	}
+	a.toggle-button{
+		margin-left: 0px !important;
+	}
 }

@@ -80,7 +80,7 @@ HTML
 	    if report_type == "phone_summary"
 	   	  current_account.features_included?(:freshfone) && !current_account.freshfone_numbers.empty?
 	   	elsif report_type == "chat_summary"
-	   	  !current_account.subscription.suspended? && current_account.features_included?(:chat) && current_account.chat_setting.display_id
+	   	  !current_account.subscription.suspended? && current_account.features_included?(:chat) && current_account.chat_setting.site_id
 	   	elsif report_type == "timesheet_reports"
 	   	  current_account.features_included?(:timesheets) && privilege?(:view_time_entries)
 	   	elsif report_type == "satisfaction_survey"

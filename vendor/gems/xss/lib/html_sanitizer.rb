@@ -13,6 +13,7 @@ module HtmlSanitizer
         :full_sanitizer => (options[:full_sanitizer] || []),
         :plain_sanitizer => (options[:plain_sanitizer] || []),
         :article_sanitizer => (options[:article_sanitizer] || []),
+        :post_sanitizer => (options[:post_sanitizer] || []),
         :decode_calm_sanitizer => (options[:decode_calm_sanitizer] || [])
       }
       
@@ -35,6 +36,8 @@ module HtmlSanitizer
         generate_setters_plain_sanitizer(column)
       elsif xss_terminate_options[:article_sanitizer].include?(column)
         generate_setters_article_sanitizer(column)
+      elsif xss_terminate_options[:post_sanitizer].include?(column)
+        generate_setters_post_sanitizer(column)
       elsif xss_terminate_options[:decode_calm_sanitizer].include?(column)
         generate_setters_decode_calm_sanitizer(column)
       else
@@ -75,6 +78,14 @@ module HtmlSanitizer
       class_eval %Q(
         def #{attr_name.to_s}=(value)
           write_attribute("#{attr_name.to_sym}",Helpdesk::HTMLSanitizer.sanitize_article(value))
+        end
+      )
+    end
+
+    def generate_setters_post_sanitizer(attr_name)
+      class_eval %Q(
+        def #{attr_name.to_s}=(value)
+          write_attribute("#{attr_name.to_sym}",Helpdesk::HTMLSanitizer.sanitize_post(value))
         end
       )
     end

@@ -12,12 +12,12 @@ class WebhookV1Worker < ::BaseWorker
 
   def perform(args)
     args.symbolize_keys!
-    response = HttpRequestProxy.new.fetch_using_req_params(
+    @response = HttpRequestProxy.new.fetch_using_req_params(
       args[:params].symbolize_keys,
       args[:auth_header].symbolize_keys,
       args[:custom_headers]
     )
-    case response[:status]
+    case @response[:status]
     when SUCCESS
     when REDIRECTION
       Rails.logger.debug "Redirected : Won't be re-enqueued and pursued"
@@ -33,7 +33,8 @@ class WebhookV1Worker < ::BaseWorker
   rescue => e
     NewRelic::Agent.notice_error(e, {
       :custom_params => {
-        :description =>"Sidekiq Observer Webhook execution error"
+        :description =>"Sidekiq Observer Webhook execution error",
+        :args => args
       }})
   end
 
@@ -82,6 +83,7 @@ class WebhookV1Worker < ::BaseWorker
             rule_details(executing_rule), 
             args[:params]["domain"]
           )
+          Rails.logger.info "Webhook retry failure for account id - #{args[:account_id]} ::: Rule - #{rule_details(executing_rule).inspect} ::: Error - #{@response[:status]}: #{@response[:text]}"
         elsif executing_rule.api_webhook_rule?
           executing_rule.active = false
           executing_rule.save!

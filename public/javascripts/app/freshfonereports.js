@@ -56,6 +56,7 @@ window.App.Freshfone = window.App.Freshfone || {};
                 
                 if(_this.filterChanged) {
                      _this.save_util.controls.hideDeleteAndEditOptions();
+                     _this.save_util.controls.hideScheduleOptions();
                      _this.save_util.controls.showSaveOptions(_this.last_applied_saved_report_index); 
                 }
               }
@@ -179,6 +180,7 @@ window.App.Freshfone = window.App.Freshfone || {};
         var _this = this;
         jQuery(document).on('change', '.filter_item,.ff_item', function () { 
              _this.filterChanged = true;
+             _this.save_util.filterChanged = true;
         });
 
         jQuery(document).on("save.report",function() {
@@ -194,14 +196,13 @@ window.App.Freshfone = window.App.Freshfone || {};
           _this.discardChanges();
         });
         jQuery(document).on("apply.report",function(ev,data) {
-          setTimeout(function(){
-            jQuery('[data-action="pop-report-type-menu"]').trigger('click');
-          },0);
           _this.applySavedReport(data.index);
         });
-        jQuery(document).on("presetRangesSelected", function(event,status) {
-            Helpkit.presetRangesSelected = status;
+        jQuery(document).on("presetRangesSelected", function(event,data) {
+            Helpkit.presetRangesSelected = data.status;
+            Helpkit.presetRangesPeriod = data.period;
             _this.filterChanged = true;
+            _this.save_util.filterChanged = true;
         });
     },
     saveReport : function() {
@@ -214,6 +215,7 @@ window.App.Freshfone = window.App.Freshfone || {};
                 success: function () {
                     //update the last applied filter
                     _this.last_applied_saved_report_index = this.new_id;
+                    _this.save_util.filterChanged = false;
                     _this.filterChanged = false;
 
                 },
@@ -229,11 +231,37 @@ window.App.Freshfone = window.App.Freshfone || {};
           
           var current_selected_index = parseInt(jQuery(".reports-menu li.active a").attr('data-index'));
           var params = _this.getParams();
+          var dateRange = jQuery("#date_range").val();
 
-          if(isUpdateTitle) {
-            params.filter_name = _this.save_util.escapeString(jQuery("#filter_name_edit").val());
+          if(current_selected_index == -1) {
+             current_selected_index = _this.save_util.default_index;
+             params.data_hash.default_report_is_scheduled = true;
+          }
+
+          if(is_scheduled_op){
+                    params.filter_name = Helpkit.report_filter_data[current_selected_index].report_filter.filter_name;
+                    params.data_hash.schedule_config = Helpkit.ScheduleUtil.getScheduleParams();
+                    params.data_hash.date = Helpkit.report_filter_data[current_selected_index].report_filter.data_hash.date;
           } else {
-            params.filter_name = Helpkit.report_filter_data[current_selected_index].report_filter.filter_name;
+            
+            if(isUpdateTitle) {
+                params.filter_name = _this.save_util.escapeString(jQuery("#filter_name_save").val());
+                params.data_hash.schedule_config = Helpkit.report_filter_data[current_selected_index].report_filter.data_hash.schedule_config;
+                params.data_hash.date = Helpkit.report_filter_data[current_selected_index].report_filter.data_hash.date;
+              } else {
+                params.filter_name = Helpkit.report_filter_data[current_selected_index].report_filter.filter_name;
+                params.data_hash.schedule_config = Helpkit.report_filter_data[current_selected_index].report_filter.data_hash.schedule_config;
+                params.data_hash.date = {};
+                
+                if(Helpkit.presetRangesSelected) {
+                    params.data_hash.date.date_range = _this.save_util.dateRangeDiff(dateRange);
+                    params.data_hash.date.presetRange = true;
+                    params.data_hash.date.period = Helpkit.presetRangesPeriod;
+                  } else {
+                    params.data_hash.date.date_range = dateRange;
+                    params.data_hash.date.presetRange = false;
+                  }
+              }
           }
           params.id = Helpkit.report_filter_data[current_selected_index].report_filter.id;
 
@@ -296,6 +324,9 @@ window.App.Freshfone = window.App.Freshfone || {};
            });
           params.data_hash.report_filters = form_data;
           params.data_hash.select_hash = select_hash;
+          if(_this.last_applied_saved_report_index == -1 && !_this.filterChanged) {
+            params.data_hash.default_report_is_scheduled = true;
+          }
           return params;
     },
     deleteSavedReport : function() {
@@ -324,9 +355,11 @@ window.App.Freshfone = window.App.Freshfone || {};
         var hash = Helpkit.report_filter_data;
         var _this = this;
         var invalid_params_found = false;
+        var is_preset_selected = false;
 
         _this.flushAppliedFilters();
         _this.last_applied_saved_report_index = index;
+        _this.save_util.last_applied_saved_report_index = index;
         var id = - 1;
 
         if(index != -1) {
@@ -339,9 +372,14 @@ window.App.Freshfone = window.App.Freshfone || {};
             var daterange;
             //Set the date range from saved range
             if(date_hash.presetRange) {
-              daterange = _this.save_util.convertDateDiffToDate(date_hash.date_range);
+              daterange = _this.save_util.convertPresetRangesToDate(date_hash.date_range,date_hash.period);
+              Helpkit.presetRangesSelected = true;
+              Helpkit.presetRangesPeriod = filter_hash.data_hash.date.period;
+              is_preset_selected = true;
             } else {
               daterange = date_hash.date_range;
+              Helpkit.presetRangesSelected = false;
+              is_preset_selected = false;
             }
             jQuery('#date_range').val(daterange);
             
@@ -369,14 +407,34 @@ window.App.Freshfone = window.App.Freshfone || {};
         _this.save_util.setActiveSavedReport(jQuery(".reports-menu li a[data-index=" + index +"]"));
         _this.save_util.cacheLastAppliedReport(id);
         _this.filterChanged = false;
+        _this.save_util.filterChanged = false;
 
         jQuery("#submit").trigger('click');
 
         _this.save_util.controls.hideSaveOptions();
         if(index != -1) {
             _this.save_util.controls.showDeleteAndEditOptions();
+            _this.save_util.controls.showScheduleOptions(false);
+
+            if(is_preset_selected){
+              _this.save_util.controls.showScheduleOptions(false);
+            } else{
+              _this.save_util.controls.hideScheduleOptions();
+            }
         } else{
           _this.save_util.controls.hideDeleteAndEditOptions();
+          _this.save_util.controls.showScheduleOptions(true);
+        }
+        var result = Helpkit.ScheduleUtil.isScheduled(
+          _this.last_applied_saved_report_index,
+          _this.save_util.default_report_is_scheduled,
+          _this.save_util.default_index,
+          Helpkit.report_filter_data
+          );
+        if(result.is_scheduled){
+          Helpkit.ScheduleUtil.displayScheduleStatus(true,result.tooltip_title);
+        } else{
+          Helpkit.ScheduleUtil.displayScheduleStatus(false);
         }
         if(invalid_params_found) {
           //update the filter , removing the invalid params done in above loop
@@ -397,3 +455,78 @@ window.App.Freshfone = window.App.Freshfone || {};
     }
   };
 })(jQuery);
+
+function getPdfParams() {
+  var params = {};
+  var form_data = [];
+  var select_hash = [];  
+  var filters_arr = [ "freshfone_number" , "group_id" , "call_type" , "business_hours" ];
+  var labels = [ I18n.t('reports.freshfone.number'),
+                 I18n.t('reports.freshfone.group'),
+                 I18n.t('reports.freshfone.call_type'),
+                 I18n.t('reports.freshfone.business_hours') ] ;
+
+  var dateRange = jQuery("#date_range").val();
+  params.data_hash = {};
+  params.data_hash.date = {};
+  params.data_hash.date.date_range = dateRange;
+  params.data_hash.date.presetRange = false;
+
+  jQuery.each(filters_arr,function(idx,condition) {
+    var cmp = jQuery("[name='" + condition + "']").select2('data');
+    if(cmp != null) {
+      var val = cmp.id;
+      var text = cmp.value || cmp.text;
+      if(val != "") {
+        var opt = {
+            name : condition,
+            value : val
+        }
+        var select_obj = {
+             name : labels[idx],
+             value : text
+        }
+        form_data.push(opt);
+        select_hash.push(select_obj);
+      }  
+      else{
+        if (condition == 'freshfone_number'){
+          var opt = {
+            name : condition,
+            value : "0"
+          }
+          var select_obj = {
+               name : labels[idx],
+               value : text
+          }
+          form_data.push(opt);
+          select_hash.push(select_obj);
+        }
+      }
+    }
+
+  });
+  params.data_hash.report_filters = form_data;
+  params.data_hash.select_hash = select_hash;
+  if(App.Freshfonereports.last_applied_saved_report_index != -1){
+    params.filter_name = Helpkit.report_filter_data[parseInt(App.Freshfonereports.last_applied_saved_report_index)].report_filter.filter_name;
+  }
+  return params;
+}
+
+function showResponseMessage(message) {
+  jQuery("#email-reports-msg").remove();
+  var msg_dom = jQuery("#noticeajax");
+  msg_dom.empty();
+  msg_dom.prepend(message);
+  msg_dom.show();
+  jQuery("<a />").addClass("close").attr("href", "#").appendTo(msg_dom).on('click.helpdesk_reports', function(){
+      msg_dom.fadeOut(600);
+      return false;
+  });
+  setTimeout(function() {    
+      jQuery("#noticeajax a").trigger( "click" );  
+      msg_dom.find("a").remove();
+  }, 1200);
+        
+}

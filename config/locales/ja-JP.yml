@@ -1240,9 +1240,9 @@ ja-JP:
         send_test_mail_info2: "こちらから<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>手順</a>をご覧ください。"
         title_message: 4つのステップでカスタマーサポートを活性化・・・
         support_email_title: "サポート<br> メールアドレス"
-        agents_title_1: エージェントを&lt;br&gt;追加中
+        adding_agents: エージェントを<br>追加中
         rebrand_title: "ロゴ <br>&amp; 色"
-        social_title_1: ソーシャル&lt;br&gt;活用
+        going_social: ソーシャル<br>活用
         skip_text: いいえ結構です、ヘルプデスクへ移動してください。
         back_link: 戻る
         next_link: 次
@@ -1364,7 +1364,6 @@ ja-JP:
         feedbackwidget_users_can: ユーザーは次のことができます：
         feedbackwidget_attach_a_file: ファイルを添付する
         feedbackwidget_screenshot: スクリーンショットを撮る
-        feedbackwidget_screenr_recording: Screenr録画
         feedbackwidget_search_area: アーティクルを検索する
         feedbackwidget_use_https: httpsを使用する
         feedbackwidget_mobile_view: モバイルビュー
@@ -1727,7 +1726,7 @@ ja-JP:
         import: Zendeskからデータをインポートする
         agent: エージェント
         feedback: フィードバック・ウィジェット
-        freshchat: ライブチャット
+        livechat: ライブチャット
         integrations: 統合
         dispatcher: Dispatch'r
         supervisor: 監督
@@ -5416,36 +5415,6 @@ ja-JP:
         es: スペイン語
         sv: スウェーデン語
         tr: トルコ語
-    screenr:
-      button_label: スクリーンキャストを録画
-      label: Screenr
-      desc: Screenrを使用してスクリーンキャストを録画し、それをチケット、フォーラム、ソリューションアーティクルに添付することができます。
-      helptext: "</h4>Freshdesk Screenr統合<h4><p><br/>Screenrを統合すると、Freshdeskの使用中にエージェントとカスタマーがスクリーンキャストをキャプチャ＆シェアすることができるようになります。これはエラー報告あるいは手順に関する動画をチケット、フォーラム投稿およびソリューションアーティクルに直接添付するのに使用できます。</p><p>これを有効にすると、フィードバックウィジェット、ディスカッションおよびナレッジベースの横に録画ボタンが表示されます。お望みであれば、ブラウザウィンドウ全体を録画するか、ある特定の部分を録画するかを選択することができます。スクリーンキャストはセッション終了時に自動的に挿入されます。</p><p>この統合はあなたのScreener URL（例：<a>http://yourname.viewcasts.com</a>）、録画IDを入力することにより設定します。録画IDはアカウントにログインすると見つけることができます。</p>"
-      form:
-        recorder_id: 録画ID
-        recorder_id_info: 録画IDは録画編集ページで入手できる一意IDです
-        site_address_info: ""
-        site_address: Screenrサブドメイン
-        widget_title: ウィジェットタイトル
-        visible_agent_forum: エージェント用フォーラム画面録画
-        visible_agent_forum_info: 有効にしてScreenr録画をエージェント用フォーラムで使用できるようにする
-        visible_agent_ticket: エージェントチケット画面録画
-        visible_agent_ticket_info: 有効にしてエージェントチケット画面録画をエージェント用チケットフォームで使用できるようにする
-        visible_solution: ソリューション画面録画
-        visible_solution_info: 有効にしてScreenr録画をソリューションで使用できるようにする
-        visible_portal_ticket: ポータルチケット画面録画
-        visible_portal_ticket_info: 有効にしてScreenr録画をポータルチケット画面で使用できるようにする
-        visible_portal_forum: ポータル用フォーラムチケット画面録画
-        visible_portal_forum_info: 有効にしてScreenr録画をポータルフォーラムで使用できるようにする
-        visible_widget: ウィジェット画面録画
-        visible_widget_info: 有効にしてScreenr録画をフィードバックウィジェットで使用できるようにする
-      settings:
-        enable_screenr_recording: Screenr録画を有効にする
-        ticket_interaction: チケットページ（新規、編集、返信）
-        forum_interaction: フォーラムページ（新規、編集、コメント）
-        create_solution: ソリューション（新規、編集）
-        for_agents: エージェント用
-        for_customer: カスタマー用
     harvest:
       label: Harvest
       desc: チケットに使用された時間をHarvestプロジェクトやタスク内に記録することができます。
@@ -6024,7 +5993,7 @@ ja-JP:
         filter_by: 満足度ビュー
         view_report_date: の間のレポートを見る
         helptext: "<b>カスタマー満足度報告を使用する理由は?</b><p>カスタマー満足度報告を使用すると、カスタマーサポートエージェントのサービスの質を一目で知ることができます。<br>報告は一人ひとりのサポートエージェントに関連したカスタマーの満足度を知ることに役立ち、これはパーセンテージバリュー（嬉しい、普通、嬉しくない）で表示されます。<br><br><b>他には何ができますか？</b><br><p><ol class='ml15'><li>報告結果をエージェント、グループまたは会社ごとにフィルターすることができます</li><li>時間枠を特定して報告を表示することもできます</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: ライブチャットの概要
       filter_by_title: "次の項目でフィルタ:"
       time_period: 期間
@@ -6991,7 +6960,7 @@ ja-JP:
         additional_info: アカウントで電話チャンネルが有効になると、番号を購入して電話の発信と着信が可能になります
         button_text: 電話のリクエスト
         video_title: 電話チャンネルでできることについて解説したビデオをご覧ください
-  freshchat:
+  livechat:
     feature_request:
       title: ライブチャットへようこそ
       heading: ライブチャットでカスタマーをサポート
@@ -7068,7 +7037,7 @@ ja-JP:
     bottom_left: 左下
     bottom_right: 右下
     integrate_msg: このコードをコピーし、あなたのウェブサイトあるいはアプリの最後の</body>タグの前に貼り付けます。
-    integrate_freshchat_title: ライブチャットをウェブサイトやアプリケーションに統合
+    integrate_livechat_title: ライブチャットをウェブサイトやアプリケーションに統合
     custom_chat_window: チャットウィンドウ
     text_placeholder: メッセージ
     chatbox_bgcolor: ウィンドウカラー
@@ -7211,7 +7180,7 @@ ja-JP:
     intro_title: ライブチャットを選ぶ理由は？
     intro: Freshdeskのライブチャットを使用すると、ご自身のウェブサイト、オンラインソフトウェア、あるいはサポートポータルに直接Freshdeskのチャットを表示し、ユーザーとチャットを行うことができます。ウェブサイトのビジターが要求する前から予測的にチャットを開始することもできます。チャットの終了後、その会話をチケットに変換し、メールで引き続きビジターをフォローするよう選択できます。あるいは、チャットのやり取りをアーカイブすることも可能です。
     enable_chat: ライブチャットを有効にする
-    learn_freshchat: ライブチャットについて詳細を見る
+    learn_livechat: ライブチャットについて詳細を見る
     support_portal: サポートポータルでチャット
     logged_in_users: ログインされたユーザーのみ
     everyone: 全員

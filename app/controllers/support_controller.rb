@@ -136,7 +136,7 @@ class SupportController < ApplicationController
                        :canonical => @page_canonical }
                        
       @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{@current_path}"
-                       
+      #additions in canonical URL is removed in the view E.g: /facebook added by FB routing is removed in faceboook view.
       @meta = HashDrop.new( @page_meta )
     end
 
@@ -229,7 +229,11 @@ class SupportController < ApplicationController
 
   private
 
-  def agent?
-    current_user && current_user.agent?
-  end
+    def agent?
+      current_user && current_user.agent?
+    end
+
+    def public_request?
+      current_user.nil?
+    end
 end

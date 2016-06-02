@@ -14,6 +14,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		this.ALLOWED_DIGITS = 50;
 		this.cached = {};
 		this.freshfoneCallTransfer = {};
+		this.freshfoneAgentConference = {};
 		this.exceptionalNumber=false;
 		this.recentCaller = 0;
 		this.callInitiationTime = null;
@@ -33,6 +34,8 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.callerName = null;
 			this.callSid = null;
 			this.number = "";
+			this.customerId = null;
+			this.callerInfo = null;
 			this.error = null;
 			this.errorcode = null;
 			this.transfered = false;
@@ -41,6 +44,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.group_id = null;
 			this.resetCallTransferTimer();
 			this.isIncomingTransfer = false;
+			this.isAgentConference = false;
+			this.isAgentConferenceActive = false;
+			this.agentConferenceParams = null;
 		},
 		resetFlags: function() {
 			this.errorcode = null;
@@ -143,6 +149,10 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		setIsIncomingTransfer: function(flag){
 			this.isIncomingTransfer = flag;
+		},
+		setAgentConferenceParams: function(params){
+			this.isAgentConference = true;
+			this.agentConferenceParams = params;
 		},
 		saveCallNotes: function(){
 			var self = this;
@@ -251,14 +261,15 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		makeOutgoing: function (item) {
 			this.number = formatE164(this.callerLocation(), this.number);
+			this.customerId = item.data('contactId');
 			this.prefillDialerTemplate(item);
 			this.clearMessage();
 			if (this.freshfoneuser.isBusy()) { return this.toggleAlreadyInCallText(true); }
 			if (!this.canDialNumber()) { return this.toggleInvalidNumberText(true); }
-			
-			var params = { PhoneNumber : this.number, phone_country: this.callerLocation(),
-										number_id: this.outgoingNumberId(), agent: this.currentUser, type: "outgoing" };
 
+			var params = { PhoneNumber : this.number, phone_country: this.callerLocation(),
+										number_id: this.outgoingNumberId(), agent: this.currentUser, type: "outgoing"};
+			if(this.customerId){ params.customer_id = this.customerId; }
 			if(!this.call_validation(true)) {
 				return false;
 			}
@@ -269,7 +280,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			$('.call_loader').show();		
 			this.status = callStatus.OUTGOINGINIT;
 			this.setDirectionOutgoing();
-			this.freshfoneUserInfo.userInfo(this.number, true, this);
+			this.freshfoneUserInfo.userInfo(this.number, true, this, this.customerId);
 			this.disableCallButton();
 		},
 		prefillDialerTemplate: function(item) {
@@ -377,6 +388,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.freshfoneCallTransfer = new FreshfoneCallTransfer(this, id, group_id, external_number);
             this.saveCallNotes();
 		},
+		addAgent: function (id) {
+			this.freshfoneAgentConference = new FreshfoneAgentConference(this, id);
+		},
 		isTransfering: function(){
 			var status = $(".transfer-status").children(":visible").data("status");
 			return ($.inArray(status, TRANSFERING_STATUS) > -1 ) ? true : false ;
@@ -384,7 +398,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 
 		dontShowEndCallForm: function () {
 			if(freshfone.isConferenceMode){
-				return (this.tConn.message || {}).preview || this.callError()  || this.isTransfering();
+				return (this.tConn.message || {}).preview || this.callError()  || this.isTransfering() || this.isAgentConference;
 			}
 			return (this.tConn.message || {}).preview || this.callError() || this.transfered;
 		},

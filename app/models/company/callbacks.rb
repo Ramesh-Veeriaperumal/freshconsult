@@ -1,9 +1,11 @@
 class Company < ActiveRecord::Base
   
   after_commit :clear_cache
+  after_commit :nullify_contact_mapping, on: :destroy
   
   before_create :check_sla_policy
   before_update :check_sla_policy, :backup_company_changes
+
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -24,5 +26,11 @@ class Company < ActiveRecord::Base
       @model_changes = self.changes.clone.to_hash
       @model_changes.merge!(flexifield.changes)
       @model_changes.symbolize_keys!
+    end
+
+    def nullify_contact_mapping
+      Users::UpdateCompanyId.perform_async({ :domains => nil,
+                                             :company_id => nil,
+                                             :current_company_id => self.id })
     end
 end

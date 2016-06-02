@@ -94,7 +94,6 @@ module Helpkit
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
     config.middleware.use "Middleware::TrustedIp"
-    config.middleware.insert_before ActionDispatch::ParamsParser, "Middleware::ApiRequestInterceptor"
     config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
       # during the ddos attack uncomment the below line
       # r.define_rule(:match => ".*", :type => :frequency, :metric => :rph, :limit => 200, :frequency_limit => 12, :per_ip => true ,:per_url => true )
@@ -131,7 +130,8 @@ module Helpkit
     # TODO-RAILS3 need to rewritten all lib files and adding requires if need to make it thread safe
     # http://hakunin.com/rails3-load-paths
     config.autoload_paths += Dir["#{config.root}/lib/"]
-    config.autoload_paths += Dir["#{config.root}/api/**/*"]
+    # http://blog.arkency.com/2014/11/dont-forget-about-eager-load-when-extending-autoload/
+    config.eager_load_paths += Dir["#{config.root}/api/**/*"]
     # config.autoload_paths += %W(#{config.root}/api/app/validators/)
     # make sure to uncomment this for sidekiq workers
     config.eager_load_paths += Dir["#{config.root}/lib/"] unless Rails.env.development?

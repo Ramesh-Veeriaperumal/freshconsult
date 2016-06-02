@@ -14,6 +14,7 @@ class Integrations::Marketplace::SignupController < ApplicationController
   before_filter :load_account, :only => [:associate_account, :associate_account_using_proxy]
   before_filter :build_signup_param, :only => [:create_account]
 
+  UNVERIFIED_EMAIL_APPS = %w(quickbooks)
   def associate_account
     @account.make_current
     if @email_not_reqd
@@ -22,7 +23,7 @@ class Integrations::Marketplace::SignupController < ApplicationController
       login_user = get_user(@account, @email)
     end
     request_params = params['request_params'].merge({:remote_id => @remote_id})
-    if login_user.present?
+    if login_user.present? && UNVERIFIED_EMAIL_APPS.exclude?(@app_name)
       verify_user_and_redirect(login_user)
     elsif proxy_auth_app?(@app_name) && login_user.blank?
       flash.now[:notice] = t(:'flash.g_app.use_admin_cred')
@@ -97,7 +98,7 @@ class Integrations::Marketplace::SignupController < ApplicationController
   def add_to_crm
     if Rails.env.production?
       Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id, 
-        :signup_id => params[:signup_id] })
+        :signup_id => params[:signup_id], :fs_cookie => params[:fs_cookie] })
     end
   end
 

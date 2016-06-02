@@ -10,7 +10,6 @@ module Fdadmin
                                                         :refund_credits,
                                                         :new_freshfone_account,
                                                         :fetch_numbers,
-                                                        :enable_freshfone,
                                                         :launch_feature]
     before_filter :validate_triggers, only: [:update_usage_triggers]
     before_filter :validate_timeout_and_queue,
@@ -384,24 +383,6 @@ module Fdadmin
       end
     end
 
-    def enable_freshfone
-      result = { account_id: @account.id, account_name: @account.name}
-      begin
-        enable_status = add_freshfone_feature
-        result.merge!(enable_status)
-      rescue => e
-        Rails.logger.error "Error occurred in enabling freshfone feature for Account :: #{@account.id}\n
-                            The Exception is #{e.message}\n#{e.backtrace.join("\n\t")}"
-        result[:status] = 'error'
-      ensure
-        respond_to do |format|
-          format.json do
-            render json: result
-          end
-        end
-      end
-    end
-
     def activate_trial
       result = { account_id: @account.id, account_name: @account.name }
       freshfone_account = @account.freshfone_account
@@ -542,7 +523,7 @@ module Fdadmin
 
     def validate_ringing_time
       if !params[:ringing_time].blank?
-        if params[:ringing_time].to_i > 999 || params[:ringing_time].to_i < 30
+        if params[:ringing_time].to_i > 999 || params[:ringing_time].to_i < 10
           return render json: { status: 'validationerror',
                                 reason: 'Ringing Timeout values should be in range between 30 and 999 seconds' }
         end
@@ -565,22 +546,6 @@ module Fdadmin
                                 reason: 'Maximum queue length should be less than 1000' }
         end
       end
-    end
-
-    def add_freshfone_feature
-      return { status: 'notice' } if @account.features?(:freshfone) || @account.launched?(:freshfone_onboarding)
-      @account.features.freshfone.create
-      if @account.freshfone_credit.blank? 
-        @account.create_freshfone_credit(available_credit: PROMOTIONAL_CREDITS)
-        @account.freshfone_payments.create(status_message: 'promotional',
-                                           purchased_credit: PROMOTIONAL_CREDITS,
-                                           status: true)
-        result = { status: 'success' }
-      else
-        result = { status: 'credit_present_notice',
-                   reason: 'Freshfone feature enabled and Credits already exist' }
-      end
-      result
     end
 
     def validate_freshfone_account

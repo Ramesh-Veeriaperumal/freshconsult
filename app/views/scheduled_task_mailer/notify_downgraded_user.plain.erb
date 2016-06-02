@@ -1,0 +1,13 @@
+Hi <%= @user.name %>,
+
+The scheduled report that you created for <%=@task.schedulable.filter_name%> is still being sent to the below agents who were deleted/ downgraded to contact recently: 
+  <%@options[:agent_downgraded].each do |user|%>
+  <%= user.email %>
+  <%end%>
+
+Please update the configuration if you wish to stop sending this report to the above emails in the future.
+
+<%= "#{@user.account.full_url}/reports/v2/#{HelpdeskReports::Constants::Common::REPORT_ENUM_TO_TYPE[@task.schedulable.report_type]}"%>
+
+Regards,
+Freshdesk Support Team

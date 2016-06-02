@@ -13,6 +13,8 @@ window.liveChat.conversationView = function(){
 			},
 			events :{
 				"click #archive-page-link"	: "navigateArchive",
+				"click #conversation-previous-msg"	: "renderRelatedMessages",
+				"click #conversation-next-msg"	: "renderRelatedMessages",
 				"keydown input"	: "showVisitorEdit",
 				"click #save-visitor-detail"	: "saveVisitorDetail",
 				"click #cancel-visitor-detail" : "resetVisitorDetail",
@@ -135,7 +137,8 @@ window.liveChat.conversationView = function(){
 					var chatData = archiveModel.attributes;
 					this.$el.html(this.conversationTemplate({
 						chatData :chatData,
-						messages : messages
+						messages : messages,
+						constants: this.collection.messageType,
 					}));
 					window.removeLoaderPage();
 					if(chatData.type ==="visitor"){
@@ -143,6 +146,19 @@ window.liveChat.conversationView = function(){
 					}
 				}
 			},
+			
+			renderRelatedMessages:function(event){
+				event.preventDefault();
+				var chatsArray = this.archiveModel.attributes.chatsArray;
+				var chatId = jQuery(event.currentTarget).data('chatId');
+				var messageId = jQuery(event.currentTarget).data('messageId');
+				if(event.currentTarget.id === "conversation-previous-msg"){
+					this.archiveModel.fetchRelatedMessages(chatId, messageId, chatsArray, "prev");
+				} else if(event.currentTarget.id === "conversation-next-msg"){
+					this.archiveModel.fetchRelatedMessages(chatId, messageId, chatsArray, "next");
+				}
+			},
+			
 			loadVisitorDetail : function(archiveModel){
 				var visitorId = archiveModel.attributes.participant_id;
 				var visitorModel = window.visitorCollection.updateOrCreate({visitor_id:visitorId},{usedIn:'archive'});
@@ -180,20 +196,13 @@ window.liveChat.conversationView = function(){
 					 *       visitorData, userAgent, recentChats
 					 */
 					var visitorData = this.parseVisitor(visitorModel);
-					
 					jQuery('#chat-title').html(visitorData.name);
-
 					this.$el.find('#visitor_details').html(this.visitorTemplate(visitorData));
 					this.$el.find('#visitor_details').removeClass('sloading');
 				}
 			},
 			parseVisitor : function(visitorModel){
 				var visitorData = visitorModel.toJSON();
-				var userAgent = null;
-	  			userAgent = (visitorData.useragent) ? JSON.parse(visitorData.useragent) : null;
-	  			if(userAgent && !userAgent.title && userAgent.page){
-	    			userAgent.title = this.urlParser(userAgent.page);
-	  			}
 	  			var recentChats = visitorData.recentChats;
 
 		  		// The Current conversation should not be shown in recent chats. So filtering it out.
@@ -231,7 +240,6 @@ window.liveChat.conversationView = function(){
 				}
 				return {
 					visitorData : visitorData,
-					userAgent : userAgent,
 					recentChats : recentChats
 				};
 			},

@@ -32,7 +32,8 @@
                         "data-cnt-id" => cntid,
                         "data-destroy-editor" => 'true',
                         "data-domhelper-name" => "cnt-reply",
-                        "data-fulltext" => true
+                        "data-fulltext" => true,
+                        "data-submitting" => 'false'
                       } do |f| %>
     <%= f.error_messages %>
 
@@ -108,7 +109,13 @@
                               :"data-domhelper-name" => "#{cntid}-body",
                               :"data-quoted-textarea" => "##{cntid}-quoted", :"data-wrap-font-family" => true %>
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", :style => "display:none;" %>
-            <%= text_area_tag "quoted_text_html", h(quoted_text(conv_item)), { :id => "#{cntid}-quoted", :class => "hide" } %>
+            <%if  current_browser == "Internet Explorer" %>
+                <%= text_area_tag "quoted_text_html", h(quoted_text(conv_item)), { :id => "#{cntid}-quoted", :class => "hide" } %>
+            <% else %>
+              <template name = "quoted_text_html" id = "<%= cntid %>-quoted" class="hide">
+                <%= h(quoted_text(conv_item))%>
+              </template>
+            <% end %>
         <% end %>        
       </li>
       <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">
@@ -120,11 +127,6 @@
           <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
           <% end %>    
       </li>
-        <% if is_application_installed?("screenr")%>
-          <li>
-          <%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_ticket" } %>
-          </li>
-        <% end %>
     </ul>
     
       <!-- reply will be always public -->

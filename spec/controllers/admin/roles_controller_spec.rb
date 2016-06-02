@@ -128,4 +128,51 @@ describe Admin::RolesController do
 		new_role = @account.roles.find_by_id(@test_role_1.id)
 		new_role.should be_nil
 	end
+
+	it "should render the correct user_list json" do
+		post :users_list,{ :id => @test_role.id } 
+		role = response.body.split(",").second.include?("#{@test_role.id}")
+		role.should be_truthy
+	end
+
+	it "should not contain account_admin in custom Role" do
+		admin_user = @account.users.find_by_email(@account.admin_email)
+		@test_role.user_ids.include?(admin_user.id).should_not be_truthy
+	end
+
+	it "should not contain account_admin in Supervisor" do
+		admin_user = @account.users.find_by_email(@account.admin_email)
+		default_role = @account.roles.find_by_name("Supervisor")
+		default_role.user_ids.include?(admin_user.id).should_not be_truthy
+	end
+	
+	it "should not allow account_admin to be added to new role" do 
+		admin_user = @account.users.find_by_email(@account.admin_email)
+		post :create, {:role =>{:name => "new_role_1", :description => Faker::Lorem.paragraph, 
+						:privilege_list => [ "view_forums", "view_contacts", "view_reports", "", "0", "0", "0", "0"]}, 
+						:add_user_ids => [admin_user.id] 
+						}
+		new_role_1 = @account.roles.find_by_name("new_role_1")
+		new_role_1.user_ids.include?(admin_user.id).should_not be_truthy				
+	end
+
+	it "should accept agent addition on creation of new Role" do
+		post :create, {:role =>{:name => "new_role", :description => Faker::Lorem.paragraph, 
+						:privilege_list => [ "view_forums", "view_contacts", "view_reports", "", "0", "0", "0", "0"]}, 
+						:add_user_ids => [@new_user.id] 
+						}
+		new_role = @account.roles.find_by_name("new_role")
+		@new_user.role_ids.include?(new_role.id).should be_truthy
+	end
+
+	it "should update agents in roles" do
+		@new_user1 = add_test_agent(@account)
+		put :update, {
+			:id => @test_role.id,
+			:role => {:name => "", :description => Faker::Lorem.paragraph,
+				:privilege_list => [ "view_forums", "view_contacts", "view_reports", "", "0", "0", "0", "0"]}, :add_user_ids => [@new_user1.id], :delete_user_ids => [@new_user.id]
+			}
+		@new_user1.role_ids.include?(@test_role.id).should be_truthy
+		@new_user.role_ids.include?(@test_role.id).should_not be_truthy
+	end
 end

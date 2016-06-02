@@ -70,10 +70,10 @@ module Facebook
       end
 
       def add_as_ticket(thread)
-        group_id = @fan_page.product.primary_email_config.group_id unless @fan_page.product.blank?
         messages = thread[:messages].symbolize_keys!
         messages = new_data_set(messages)
-        message  = messages.last 
+        message  = messages.last
+        group_id = Account.current.features?(:social_revamp) ? @fan_page.dm_stream.ticket_rules.first.group_id : @fan_page.group_id
         
         return if !message or @account.facebook_posts.exists?(:post_id => message[:id])
 

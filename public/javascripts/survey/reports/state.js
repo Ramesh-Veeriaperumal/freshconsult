@@ -168,8 +168,9 @@ var SurveyState = {
         jQuery(document).on("discard_changes.report",function() {
           SurveyState.discardChanges();
         });
-        jQuery(document).on("presetRangesSelected", function(event,status) {
-            Helpkit.presetRangesSelected = status;
+        jQuery(document).on("presetRangesSelected", function(event,data) {
+            Helpkit.presetRangesSelected = data.status;
+            Helpkit.presetRangesPeriod = data.period;
         });
     },
     formatFilterData: function(){
@@ -194,12 +195,14 @@ var SurveyState = {
         if(index != -1) {
             var hash = Helpkit.report_filter_data;
             SurveyState.last_applied_saved_report_index = index;
+            SurveyState.save_util.last_applied_saved_report_index = index;
             var data_hash = jQuery.extend(true,{},hash[index].report_filter.data_hash);
              if(data_hash.date.presetRange) {
               data_hash.date.date_range  = SurveyDateRange.convertDiffToTimestamp(data_hash.date.date_range);
             } 
             SurveyState.save_util.setActiveSavedReport(jQuery(".reports-menu li a[data-index=" + index +"]"));
             SurveyState.filterChanged = false;
+            SurveyState.save_util.filterChanged = false;
             SurveyState.save_util.controls.hideSaveOptions();
             SurveyState.save_util.controls.showDeleteAndEditOptions();
             SurveyState.fetch(data_hash);
@@ -216,7 +219,7 @@ var SurveyState = {
                     //update the last applied filter
                     SurveyState.last_applied_saved_report_index = this.new_id;
                     SurveyState.filterChanged = false;
-
+                    SurveyState.save_util.filterChanged = false;
                 }
               },
               params : SurveyState.formatFilterData()
@@ -240,8 +243,12 @@ var SurveyState = {
           var current_selected_index = parseInt(jQuery(".reports-menu li.active a").attr('data-index'));
           var params = SurveyState.formatFilterData();
 
+          params.data_hash.schedule_config = {
+                enabled : false
+          }
+
           if(isUpdateTitle) {
-            params.filter_name = jQuery("#filter_name_edit").val();
+            params.filter_name = jQuery("#filter_name_save").val();
           } else {
             params.filter_name = Helpkit.report_filter_data[current_selected_index].report_filter.filter_name;
           }
@@ -252,7 +259,8 @@ var SurveyState = {
               url: SurveyState.CONST.base_url + SurveyState.CONST.update_report,
               callbacks : {
                  success: function () {
-                    SurveyState.filterChanged = false
+                    SurveyState.filterChanged = false;
+                    SurveyState.save_util.filterChanged = false;
                }
               },
               params : params

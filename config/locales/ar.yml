@@ -1288,9 +1288,9 @@ ar:
         send_test_mail_info2: "هنا <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>كيفية قيامك بذلك</a>."
         title_message: "البدء السريع لدعم العملاء في أربعة خطوات..."
         support_email_title: "دعم<br> البريد الإلكتروني"
-        agents_title_1: "إضافة&lt;br&gt; وكلاء"
+        adding_agents: "إضافة<br> وكلاء"
         rebrand_title: "الشعار <br>والألوان"
-        social_title_1: "استخدام&lt;br&gt; الشبكة الاجتماعية"
+        going_social: "استخدام<br> الشبكة الاجتماعية"
         skip_text: "لا شكرًا، الانتقال إلى مكتب الدعم الخاص بي."
         back_link: الخلف
         next_link: التالي
@@ -1412,7 +1412,6 @@ ar:
         feedbackwidget_users_can: "يمكن للمستخدمين:"
         feedbackwidget_attach_a_file: "إرفاق ملف"
         feedbackwidget_screenshot: "التقاط لقطة شاشة"
-        feedbackwidget_screenr_recording: "تسجيل Screenr"
         feedbackwidget_search_area: "مقالات البحث"
         feedbackwidget_use_https: "استخدام https"
         feedbackwidget_mobile_view: "طريقة عرض الجوال"
@@ -1775,7 +1774,7 @@ ar:
         import: "استيراد بيانات من Zendesk"
         agent: الوكلاء
         feedback: "عنصر واجهة مستخدم الملاحظات"
-        freshchat: Freshchat
+        livechat: Live Chat
         integrations: التكاملات
         dispatcher: Dispatch'r
         supervisor: مشرف
@@ -3865,7 +3864,7 @@ ar:
       description_counter_message: "توصي أفضل صفحات SEO بأن يتراوح الوصف بين 150 و160 حرفًا."
   import_updated: "تم تحديثه"
   feedbackwidget_intro: "قم بتخصيص عنصر واجهة مستخدم freshdesk أدناه وشاهد معاينة في الوقت الفعلي."
-  chatwidget_intro: "قم بتخصيص عنصر واجهة مستخدم Freshchat أدناه وشاهد معاينة في الوقت الفعلي."
+  chatwidget_intro: "قم بتخصيص عنصر واجهة مستخدم Live Chat أدناه وشاهد معاينة في الوقت الفعلي."
   save: حفظ
   import_added_newly: "تمت إضافته حديثًا"
   quick_create: "إنشاء سريعة"
@@ -3967,8 +3966,8 @@ ar:
   is_expiring_today: "تنتهي صلاحيته اليوم"
   feedbackwidget_help_para1: "يتيح لك عنصر واجهة مستخدم الملاحظات تضمين نموذج بطاقة في موقع الويب أو المنتج مباشرة. يمكنك تخصيص مظهر عنصر واجهة المستخدم ومكانه على موقع الويب. بمجرد الانتهاء، قم بنسخ رمز التضمين الذي تم إنشاؤه في موقع الويب أو التطبيق، لبدء استخدام عنصر واجهة مستخدم الملاحظات."
   chatwidget_help_content:
-    title: Freshchat
-    info1: "يتيح لك Freshchat عرض المستخدمين والمحادثة معهم على موقعك أو على البرنامج عبر الإنترنت أو على مدخل الدعم مباشرة من داخل Freshdesk. يمكنك تخصيص نافذة المحادثة بالكامل (بما في ذلك النصوص الافتراضية واللون وغير ذلك) وحتى بدء جلسات محادثة استباقية عندما يقضي الزائرين مزيد من الوقت على موقعك."
+    title: Live Chat
+    info1: "يتيح لك Live Chat عرض المستخدمين والمحادثة معهم على موقعك أو على البرنامج عبر الإنترنت أو على مدخل الدعم مباشرة من داخل Freshdesk. يمكنك تخصيص نافذة المحادثة بالكامل (بما في ذلك النصوص الافتراضية واللون وغير ذلك) وحتى بدء جلسات محادثة استباقية عندما يقضي الزائرين مزيد من الوقت على موقعك."
     info2: "سوف تلتقط كل جلسة محادثة معلومات تعريفية حول الزائرين بما في ذلك الموقع والجهاز وغير ذلك وسجل محفوظات الدعم معك. بمجرد الانتهاء من جلسة محادثة، يمكنك اختيار تحويل المحادثة إلى بطاقة والاستمرار في متابعة الزائر عبر البريد الإلكتروني، أو أرشفة البرنامج النصي للمحادثة."
     info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >تعلم المزيد حول استخدام المحادثة الحية في Freshdesk</a>"
   low: منخفض
@@ -5560,36 +5559,6 @@ ar:
         es: الإسبانية
         sv: السويدية
         tr: التركية
-    screenr:
-      button_label: "التسجيل الرقمي لمخرجات الشاشة"
-      label: Screenr
-      desc: "قم بالتسجيل الرقمي لمخرجات الشاشة باستخدام Screenr وإرفاقه بالبطاقات والمنتديات ومقالات الحل."
-      helptext: "<h4>تكامل Freshdesk Screenr</h4><p><br/>يتيح تكامل Screenr للوكلاء والعملاء التقاط تسجيلات رقمية لمخرجات الشاشة ومشاركتها أثناء استخدام Freshdesk. يمكن استخدامه لإرفاق تقارير خطأ أو مقاطع فيديو تعليمية لبطاقاتك ومنشورات المنتدى ومقالات الحل مباشرةً.</p><p>بمجرد تمكينه، ستتمكن من رؤية زر تسجيل على امتداد عنصر واجهة مستخدم الملاحظات والمناقشات وقاعدة المعارف لديك. يمكنك اختيار إما تسجيل نافذة المستعرض الخاص بك بالكامل، أو تحديد جزء محدد منه إذا أردت. سيتم إدراج التسجيلات الرقمية لمخرجات الشاشة تلقائيًا بمجرد اكتمال الجلسة.</p><p>يمكنك إعداد هذا التكامل من خلال إدخال عنوان URL لـ Screener (على سبيل المثال، <a>http://yourname.viewcasts.com</a>) ومعرف المسجل الخاص بك، والذي يمكن العثور عليه بمرد تسجيل الدخول إلى حسابك.</p>"
-      form:
-        recorder_id: "معرف المسجل"
-        recorder_id_info: "معرف المسجل هو المعرف الفريد المتوفر في صفحة تحرير المسجلات"
-        site_address_info: ""
-        site_address: "المجال الفرعي لـ Screenr"
-        widget_title: "عنوان عنصر واجهة المستخدم"
-        visible_agent_forum: "تسجيل شاشة المنتدى لكافة الوكلاء"
-        visible_agent_forum_info: "تمكين توفير مسجل Screenr في المنتديات للوكلاء"
-        visible_agent_ticket: "تسجيل شاشة بطاقة الوكيل"
-        visible_agent_ticket_info: "تمكين توفير مسجل Screenr في البطاقات الواردة من الوكلاء"
-        visible_solution: "تسجيل شاشة الحل"
-        visible_solution_info: "تمكين توفير مسجل Screenr في الحلول"
-        visible_portal_ticket: "تسجيل شاشة بطاقة المدخل"
-        visible_portal_ticket_info: "تمكين توفير مسجل Screenr في نموذج بطاقة المدخل"
-        visible_portal_forum: "تسجيل شاشة بطاقة المنتدى للمدخل"
-        visible_portal_forum_info: "تمكين توفير مسجل Screenr في منتدى المدخل"
-        visible_widget: "تسجيل شاشة عنصر واجهة المستخدم"
-        visible_widget_info: "تمكين توفير مسجل Screenr في عنصر واجهة مستخدم Feedback"
-      settings:
-        enable_screenr_recording: "تمكين تسجيل Screenr"
-        ticket_interaction: "صفحة البطاقات (جديد، تحرير، رد)"
-        forum_interaction: "صفحة المنتدى (جديد، تحرير، تعليق)"
-        create_solution: "الحل (جديد، تحرير)"
-        for_agents: للعملاء
-        for_customer: للعملاء
     harvest:
       label: Harvest
       desc: "يمكنك تسجيل الوقت المنقضي على البطاقات في مشاريع ومهام Harvest."
@@ -6166,7 +6135,7 @@ ar:
         filter_by: "طرق عرض الرضى"
         view_report_date: "عرض تقارير خلال"
         helptext: "<b>ما أهمية تقرير رضى العميل؟</b><p>يعطيك تقرير رضى العميل لقطة على جودة خدمة دعم العملاء لديك.<br>يساعدك التقرير في فهم مدى سعادة عملائك، والتي تمثل بقيمة مئوية (سعيد ومحايد وغير سعيد) مناسبة لكل وكيل دعم.<br><br><b>ما الذي يمكنك القيام به أكثر من ذلك؟</b><br><p><ol class='ml15'><li>تصفية نتائج التقرير فيما يتعلق بالوكلاء أو مجموعة أو شركة</li><li>عرض تقارير لإطار زمني محدد</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "ملخص المحادثة الحية"
       filter_by_title: "التصفية حسب"
       time_period: "الفترة الزمنية"
@@ -7130,21 +7099,21 @@ ar:
         additional_info: "حال تمكين قناة الهاتف في حسابك سيكون بإمكانك شراء الأرقام و إجراء المكالمات."
         button_text: "طلب هاتف"
         video_title: "شاهد الفيديو لتتعلم المزيد حول قناة الهاتف"
-  freshchat:
+  livechat:
     feature_request:
-      title: "مرحبًا بك في Freshchat"
-      heading: "ادعم عملائك من خلال Freshchat"
+      title: "مرحبًا بك في Live Chat"
+      heading: "ادعم عملائك من خلال Live Chat"
       info1: "تخصيص عنصر واجهة مستخدم محادثة مباشرة لعلامتك التجارية وشركتك"
       info2: "تمكين المحادثة المباشرة لمدخل الدعم وموقع ويب الخاص بك"
       info3: "تعقب كافة نسخ المحادثة وتحويلها إلى بطاقات"
       read_more: "قراءة المزيد"
-      email_subject: "طلب ميزة Freshchat من %{account_name}"
-      email_message: "يلزم ميزة Freshchat"
-      success_message: "شكرًا لاستخدامك Freshchat. سنعود إليك لاحقًا."
+      email_subject: "طلب ميزة Live Chat من %{account_name}"
+      email_message: "يلزم ميزة Live Chat"
+      success_message: "شكرًا لاستخدامك Live Chat. سنعود إليك لاحقًا."
       error_message: "عذرًا، لا يمكننا تنفيذ طلبك الآن. حاول مرة أخرى لاحقًا."
-      additional_note: "سيستغرق طلب Freshchat يومي عمل"
-      button_label: "طلب Freshchat"
-    title: Freshchat
+      additional_note: "سيستغرق طلب Live Chat يومي عمل"
+      button_label: "طلب Live Chat"
+    title: Live Chat
     widget: "عنصر واجهة مستخدم"
     messages: رسائل
     set_default_msgs: "رسائل افتراضية"
@@ -7207,7 +7176,7 @@ ar:
     bottom_left: "أسفل اليسار"
     bottom_right: "أسفل اليمين"
     integrate_msg: "قم بنسخ هذا الرمز ولصقه قبل الأخير </body> وضع علامة على موقع الويب أو التطبيق"
-    integrate_freshchat_title: "تكامل Freshchat في موقع الويب والتطبيقات الخاصة بك"
+    integrate_livechat_title: "تكامل Live Chat في موقع الويب والتطبيقات الخاصة بك"
     custom_chat_window: "نافذة المحادثة"
     text_placeholder: رسالتك
     chatbox_bgcolor: "لون النافذة"
@@ -7347,10 +7316,10 @@ ar:
     installation: تثبيت
     visitor_form: "نموذج الزائر"
     preferences: التفضيلات
-    intro_title: "ما أهمية استخدام Freshchat؟"
-    intro: "لتقديم خدمة استثنائية للعميل، حتى قبل حدوث المشكلة. من خلال Freshchat، ليس فقط بإمكان وكلائك المحادثة مع بعضهم البعض دون مغادرة Freshdesk، لكن يمكنهم أيضًا الانضمام إلى زائريك في الوقت الفعلي وتقديم إجابات فورية. وهي سهم آخر في جعبتك، حيث أنها قناة مصممة خصيصًا للتقرب من مستخدميك."
-    enable_chat: "تمكين Freshchat"
-    learn_freshchat: "التعرف على المزيد حول Freshchat"
+    intro_title: "ما أهمية استخدام Live Chat؟"
+    intro: "لتقديم خدمة استثنائية للعميل، حتى قبل حدوث المشكلة. من خلال Live Chat، ليس فقط بإمكان وكلائك المحادثة مع بعضهم البعض دون مغادرة Freshdesk، لكن يمكنهم أيضًا الانضمام إلى زائريك في الوقت الفعلي وتقديم إجابات فورية. وهي سهم آخر في جعبتك، حيث أنها قناة مصممة خصيصًا للتقرب من مستخدميك."
+    enable_chat: "تمكين Live Chat"
+    learn_livechat: "التعرف على المزيد حول Live Chat"
     support_portal: "محادثة على مدخل الدعم"
     logged_in_users: "المستخدمون المسجلين الدخول فقط"
     everyone: الكل

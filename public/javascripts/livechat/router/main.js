@@ -75,6 +75,7 @@ window.liveChat.archiveRouter = function(){
 			}
 			if(this.archiveView.isVisible === false){
 				this.archiveView.show();
+				window.showLoaderPage();
 			}
 		},
 		loadVisitor : function (type){

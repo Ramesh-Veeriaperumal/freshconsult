@@ -1057,9 +1057,9 @@ fi:
         send_test_mail_info2: "Tämän <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'> avullä näet, kuinka voit tehdä sen </a>."
         title_message: "Näillä neljällä vaiheella otat asiakastukesi käyttöön... "
         support_email_title: Tuki<br>sähköposti
-        agents_title_1: "Lisätään&lt;br&gt; edustajia"
+        adding_agents: "Lisätään<br> edustajia"
         rebrand_title: "Logo <br>&amp; värit"
-        social_title_1: "Ryhdy&lt;br&gt; sosiaaliseksi"
+        going_social: "Ryhdy<br> sosiaaliseksi"
         skip_text: "Ei kiitos, vie minut käyttätukeeni."
         back_link: Takaisin
         next_link: Seuraava
@@ -1181,7 +1181,6 @@ fi:
         feedbackwidget_users_can: "Käyttäjät voivat:"
         feedbackwidget_attach_a_file: "Liitä tiedosto"
         feedbackwidget_screenshot: "Ota kuvakaappaus"
-        feedbackwidget_screenr_recording: "Screenr Recording"
         feedbackwidget_search_area: "Hae artikkeleita"
         feedbackwidget_use_https: "Käytä https"
         feedbackwidget_mobile_view: Mobiilinäkymä
@@ -1529,7 +1528,7 @@ fi:
         import: "Tuo tiedot Zendeskistä"
         agent: Edustajat
         feedback: Widget
-        freshchat: Freshchat
+        livechat: Live Chat
         integrations: Integroinnit
         dispatcher: Lähettäminen
         supervisor: Valvoja
@@ -3395,10 +3394,10 @@ fi:
   is_expiring_today: "päättyy tänään"
   feedbackwidget_help_para1: "Kerää palautetta asiakkailtasi lisäämällä tukivälilehti omalle verkkosivuillesi."
   chatwidget_help_content:
-    title: Freshchat
-    info1: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site."
+    title: Live Chat
+    info1: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site."
     info2: "Each chat session will capture meta information about visitors including their location, device, etc and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Learn more about using live chat inside Freshdesk</a>"
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Learn more about using Live Chat inside Freshdesk</a>"
   low: Matala
   agents: Edustajat
   header:
@@ -4914,36 +4913,6 @@ fi:
         es: Spanish
         sv: Swedish
         tr: Turkish
-    screenr:
-      button_label: "Record Screencast"
-      label: Screenr
-      desc: "Record screencasts using Screenr and attach it to tickets, forums and solution articles."
-      helptext: "<h4>Freshdesk Screenr Integration</h4><p><br/>The Screenr integration lets agents and customers capture and share screencasts while they are using Freshdesk. It can be used to attach error reports or instructional videos to your tickets, forum posts and solution articles directly.</p><p>Once enabled, you will be able to see a record button alongside your feedback widget, discussions, and your knowledge base. You can choose to record your entire browser window, or select a specific section of it if you want. They screencast will get inserted automatically once your session is complete.</p><p>You can setup this integration by entering your Screener URL (e.g. <a>http://yourname.viewcasts.com</a>) and your Recorder ID, which can be found once you login to your account.</p>"
-      form:
-        recorder_id: "Recorder ID"
-        recorder_id_info: "Recorder ID is the unique ID available in the edit recorders page"
-        site_address_info: ""
-        site_address: "Screenr Subdomain"
-        widget_title: "Widgetin nimi"
-        visible_agent_forum: "Forum Screen Recording for Agents"
-        visible_agent_forum_info: "Enable to make Screenr Recorder available in Forums for Agents"
-        visible_agent_ticket: "Agent Ticket Screen Recording"
-        visible_agent_ticket_info: "Enable to make Screenr Recorder available in Ticket form for Agents"
-        visible_solution: "Solution Screen Recording"
-        visible_solution_info: "Enable to make Screenr Recorder available in Solutions"
-        visible_portal_ticket: "Portal ticket Screen Recording"
-        visible_portal_ticket_info: "Enable to make Screenr Recorder available in portal ticket form"
-        visible_portal_forum: "Forum ticket Screen Recording for portal"
-        visible_portal_forum_info: "Enable to make Screenr Recorder available in portal forum"
-        visible_widget: "Widget Screen Recording"
-        visible_widget_info: "Enable to make Screenr Recorder available in Feedback Widget"
-      settings:
-        enable_screenr_recording: "Enable Screenr Recording"
-        ticket_interaction: "Tikettisivu (uusi, muokkaa, vastaa)"
-        forum_interaction: "Forum page (New, Edit, Comment)"
-        create_solution: "Ratkaisu (uusi, muokkaa)"
-        for_agents: Edustajille
-        for_customer: Asiakkaille
     harvest:
       label: Harvest
       desc: "Voit kirjata tiketteihin käytetyn ajan Harvest-projekteihin ja -tehtäviin."
@@ -5446,7 +5415,7 @@ fi:
         filter_by: Tyytyväisyyskatselmukset
         view_report_date: "Katsele raportteja ajalta"
         helptext: "<b>Miksi valita asiakastyytyväisyysraportti?</b><p>Asiakastyytyväisyysraportti antaa sinulle tilannekatsauksen asiakastuen edustajien palvelun laadusta.<br>Raportti auttaa sinua ymmärtämään asiakkaidesi tyytyväisyyden määrän. Jokainen tukiedustaja saa tietää tiedot prosenttiarvoina (tyytyväinen, neutraali & tyytymätön).<br><br><b>Mitä muuta voin tehdä?</b><br><p><ol class='ml15'><li>Suodata raportin tulokset edustajien, ryhmän tai yrityksen näkökulman mukaan</li> <br><li>Katsele tietyn aikarajan sisäisiä raportteja</li></ol></p></p>"
-    freshchat:
+    livechat:
       report_title: "Live Chat Summary"
       filter_by_title: "Filtered by"
       time_period: "Time Period"
@@ -6306,12 +6275,12 @@ fi:
         error_message: "Sorry we can not make your request right now. Try again later."
         additional_note: "Freshfone request will take two business days"
         button_label: "Request for Freshfone"
-  freshchat:
+  livechat:
     feature_request:
       title: "Welcome to Live Chat"
       heading: "Support your customers with Live Chat"
-      info1: "Customize live chat widget for your brand and business"
-      info2: "Enable live chat for your support portal and website"
+      info1: "Customize Live Chat widget for your brand and business"
+      info2: "Enable Live Chat for your support portal and website"
       info3: "Track all chat transcripts and convert them to tickets"
       read_more: "Read more"
       email_subject: "Request for Live Chat Feature from %{account_name}"
@@ -6320,7 +6289,7 @@ fi:
       error_message: "Sorry we can not make your request right now. Try again later."
       additional_note: "Live Chat request will take two business days"
       button_label: "Request for Live Chat"
-    title: Freshchat
+    title: Live Chat
     widget: Widget
     messages: Viestit
     set_default_msgs: oletusviestit
@@ -6384,7 +6353,7 @@ fi:
     bottom_left: "Ala vasen"
     bottom_right: "Ala oikea"
     integrate_msg: "Copy & paste this code before the last </body> tag on your website or app"
-    integrate_freshchat_title: "Integrate live chat into your website and applications"
+    integrate_livechat_title: "Integrate Live Chat into your website and applications"
     custom_chat_window: "Chat window"
     text_placeholder: Viestisi
     chatbox_bgcolor: "Ikkunan väri"
@@ -6501,7 +6470,7 @@ fi:
     chatsettings_save: "Your changes have not been saved. Save changes?"
     transfer_accepted_msg: "Vierailijan siirto hyväksytty"
     transfer_request_timeout_msg: "Transfer request timed out"
-    integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
+    integrate_livechat_info: "Note: Chat window will appear only when agents are online."
     click_to_go_online: "Not accepting visitor chats"
     click_to_go_offline: "Accepting visitor chats"
     fetching: "Odota hetki"
@@ -6525,10 +6494,10 @@ fi:
     installation: Asennus
     visitor_form: "Visitor Form"
     preferences: Preferences
-    intro_title: "Miksi Freshchat?"
-    intro: "Freshdesk's integrated live chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
+    intro_title: "Miksi Live Chat?"
+    intro: "Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can proactively start chatting with your website visitors too. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript."
     enable_chat: "Enable Live Chat"
-    learn_freshchat: "Learn more about Live Chat"
+    learn_livechat: "Learn more about Live Chat"
     support_portal: "Chat on support portal"
     logged_in_users: "Vain kirjautuneet käyttäjät"
     everyone: Kaikki

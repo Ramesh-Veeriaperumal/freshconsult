@@ -1297,9 +1297,9 @@ zh-TW:
         send_test_mail_info2: "這裡是<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>我們如何才能做到</a>。"
         title_message: 迅速啟動您的客戶服務支援的四個步驟...
         support_email_title: 支援<br>電子郵件
-        agents_title_1: 添加&lt;br&gt;客服
+        adding_agents: 添加<br>客服
         rebrand_title: "Logo<br>&amp; 顏色"
-        social_title_1: 前往&lt;br&gt;社群
+        going_social: 前往<br>社群
         skip_text: 不，謝謝，帶我去我的幫助台。
         back_link: 返回
         next_link: 下一頁
@@ -1421,7 +1421,6 @@ zh-TW:
         feedbackwidget_users_can: 使用者可以：
         feedbackwidget_attach_a_file: 附加一個檔案
         feedbackwidget_screenshot: 擷取截圖
-        feedbackwidget_screenr_recording: Screenr記錄
         feedbackwidget_search_area: 搜尋文章
         feedbackwidget_use_https: 使用https
         feedbackwidget_mobile_view: 手機瀏覽
@@ -1446,7 +1445,6 @@ zh-TW:
         feedbackwidget_users_can: 表格選項
         feedbackwidget_attach_a_file: 附加一個檔案
         feedbackwidget_screenshot: 截圖
-        feedbackwidget_screenr_recording: Screenr記錄
         feedbackwidget_search_area: 搜尋文章
         feedbackwidget_use_https: 使用https
         feedbackwidget_mobile_view: 啟用手機瀏覽
@@ -1858,7 +1856,7 @@ zh-TW:
         import: 從Zendesk匯入資料
         agent: 客服
         feedback: 反饋的插件
-        freshchat: 即時聊天
+        livechat: 即時聊天
         integrations: 整合
         dispatcher: "分派; 分發"
         supervisor: "主管; 監督"
@@ -5935,36 +5933,6 @@ zh-TW:
         es: 西班牙語
         sv: 瑞典語
         tr: 土耳其語
-    screenr:
-      button_label: "錄製屏幕 (Record Screencast)"
-      label: Screenr
-      desc: 使用Screenr錄製屏幕並添加到工單、論壇或解決方案的文章裡。
-      helptext: "<h4>Screenr整合Freshdesk</h4><p><br/>與Screenr整合，可以幫助客服和客戶在使用Freshdesk時獲取和共享屏幕錄像。可用於工單、論壇和解決方案中直接附加錯誤報告或指導視頻。</p><p>一旦啟用後，將在反饋控件、論壇和知識庫中顯示錄製按鈕。可以選擇錄製整個瀏覽器視窗或選擇某一個您需要的特定區塊。一旦您的多層協定完成後，錄製屏幕會自動插入。</p><p>您可以輸入您的Screenr URL 網址（例如：<a>http://yourname.viewcasts.com</a>)和您的錄製ID來設定這個整合，當您登入您的帳戶就可以看到。</p>"
-      form:
-        recorder_id: 錄製的ID
-        recorder_id_info: 錄製的ID是在編輯錄製頁面中唯一可用的ID
-        site_address_info: ""
-        site_address: "Screenr 子網域"
-        widget_title: 控件標題
-        visible_agent_forum: 客服的論壇屏幕錄製
-        visible_agent_forum_info: 啟用它，讓您的客服可以在論壇上錄製屏幕。
-        visible_agent_ticket: 客服工單屏幕錄製
-        visible_agent_ticket_info: 啟用它，讓客服可以在工單表單上錄製屏幕
-        visible_solution: 解決方案的屏幕錄製
-        visible_solution_info: 啟用它，可以在解決方案上錄製屏幕。
-        visible_portal_ticket: 門戶網站工單屏幕錄製
-        visible_portal_ticket_info: 啟用它，可以在門戶網站的工單表單上錄製屏幕。
-        visible_portal_forum: 門戶網站上論壇工單的屏幕錄製
-        visible_portal_forum_info: 啟用它，可以在門戶網站的論壇上錄製屏幕。
-        visible_widget: 屏幕錄製的控件
-        visible_widget_info: 啟用它，您可以在反饋意見的控件上錄製屏幕。
-      settings:
-        enable_screenr_recording: 啟用Screenr錄製
-        ticket_interaction: 工單頁面(新建、編輯、回覆）
-        forum_interaction: 論壇頁面(新建、編輯、評論）
-        create_solution: 解決方案(新建、編輯）
-        for_agents: 對於客服
-        for_customer: 對於客戶
     ilos:
       label: "ilos 影音"
       desc: 在工單、論壇和解決方案文章上記錄與分享截圖。
@@ -6726,7 +6694,7 @@ zh-TW:
         helptext: |-
             <b>為什麼需要客戶滿意度報告？</b>
             <p>客戶滿意度報告能夠展示客服服務支援的質量。<br>此報告幫助您瞭解您的客戶的滿意指數（滿意、尚可＆不滿意）以百分比值呈現，適用於每一個支援服務客服。<br><br><b>您還可以做什麼？</b><br><p><ol class='ml15'><li>按照客服、群組或公司來篩選報告結果</li><li>查看特定時間區段的報告</li></ol></p></p>
-    freshchat:
+    livechat:
       report_title: 即時聊天摘要
       filter_by_title: 篩選
       time_period: 時間區間
@@ -7959,7 +7927,7 @@ zh-TW:
         additional_info: 一旦手機頻道在您的帳戶中啟用，你將能夠購買電話號碼、撥打和接聽電話。
         button_text: 申請電話
         video_title: 觀看此影片，看看你可以用手機頻道做什麼
-  freshchat:
+  livechat:
     feature_request:
       title: 歡迎來到即時聊天
       heading: 透過即時聊天提供支援服務給客戶
@@ -8036,7 +8004,7 @@ zh-TW:
     bottom_left: 左下
     bottom_right: 右下
     integrate_msg: "您的網站或應用程式, 複製和貼上此代碼在最後</body>標籤前。"
-    integrate_freshchat_title: 整合即時聊天到您的網站和應用程式
+    integrate_livechat_title: 整合即時聊天到您的網站和應用程式
     custom_chat_window: 聊天視窗
     text_placeholder: 您的留言
     chatbox_bgcolor: 視窗顏色
@@ -8179,7 +8147,7 @@ zh-TW:
     intro_title: 為何要線上即時聊天？
     intro: Freshdesk整合的即時聊天解決方案，讓您可以查看來自您的網站、線上軟體、直接來自Freshdesk支援門戶網站的用戶，且與他們通訊。你也可以主動開始與您的網站訪問者聊天了。一旦你完成一個聊天會話，你可以選擇將談話轉換成一張票，並繼續追蹤訪問者通過電子郵件，或存檔的聊天記錄。
     enable_chat: 啟用即時線上聊天
-    learn_freshchat: 了解更多關於線上即時聊天
+    learn_livechat: 了解更多關於線上即時聊天
     support_portal: 在支援服務網站的即時通訊
     logged_in_users: 僅供已登入用戶
     everyone: 每個人

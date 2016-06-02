@@ -443,13 +443,6 @@ window.xhrPool = [];
                 fd_active_drop_box = $(this);
             });
 
-         $('[rel=guided-tour]').live('click',function(ev) {
-          ev.preventDefault();
-          try {
-            tour.run($(this).data('tour-id'),true);
-          } catch(e) { }
-        });
-
         $(document).on('click', '[rel=guided-inlinemanual]',function(ev) {
           ev.preventDefault();
           try {

@@ -2,7 +2,7 @@ module Helpdesk::HTMLSanitizer
    
   def self.clean(html)
     if html
-      tokenized_html = Account.current.features?(:tokenize_emoji) ? html.tokenize_emoji : html
+      tokenized_html = (Account.current.present? and Account.current.features?(:tokenize_emoji)) ? html.tokenize_emoji : html
       begin
         Sanitize.clean(tokenized_html, Sanitize::Config::IMAGE_RELAXED)
       rescue Exception => e
@@ -21,6 +21,16 @@ module Helpdesk::HTMLSanitizer
         Sanitize.clean(html, Sanitize::Config::ARTICLE_WHITELIST) 
       rescue Exception => e
         Sanitize.clean(html, Sanitize::Config::HTML_RELAXED) 
+      end
+    end
+  end
+
+  def self.sanitize_post(html)
+    if html
+      begin
+        Sanitize.clean(Rinku.auto_link(html, :urls), Sanitize::Config::POST_WHITELIST) 
+      rescue Exception => e
+        Sanitize.clean(Rinku.auto_link(html, :urls), Sanitize::Config::HTML_RELAXED) 
       end
     end
   end

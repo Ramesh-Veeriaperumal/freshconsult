@@ -41,6 +41,17 @@ class Social::Stream < ActiveRecord::Base
   def excludes_to_s
     excludes.blank? ? "" : excludes.join(",")
   end
+  
+
+  def update_ticket_action_data(product_id, group_id = nil)
+    action_data = {
+      :product_id => product_id,
+      :group_id   => group(group_id)
+    }
+    unless (self.ticket_rules.first.action_data == action_data)
+      self.ticket_rules.first.update_attributes(:action_data => action_data)
+    end
+  end
 
   def user_access?(user)
     return true if accessible.global_access_type?

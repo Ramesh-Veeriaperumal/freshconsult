@@ -175,6 +175,7 @@ var Redactor = function(element, options)
 
 		lang: 'en',
 		direction: 'ltr', // ltr or rtl
+		mixedDirectionSupport: true,
 
 		callback: false, // function
 		keyupCallback: false, // function
@@ -1002,6 +1003,16 @@ Redactor.prototype = {
 		this.execCommand(cmd, value);
 	    $.event.trigger({ type:"textInserted", message:"success", time:new Date() });
 	},
+	findDirection: function(block){
+	        var weakChars       = '\u0000-\u0040\u005B-\u0060\u007B-\u00BF\u00D7\u00F7\u02B9-\u02FF\u2000-\u2BFF\u2010-\u2029\u202C\u202F-\u2BFF',
+      			rtlChars        = '\u0591-\u07FF\u200F\u202B\u202E\uFB1D-\uFDFD\uFE70-\uFEFC',
+      			weekCharCheck = new RegExp('^['+weakChars+']*$'),
+      			rtlDirCheck     = new RegExp('^['+weakChars+']*['+rtlChars+']');
+		if(weekCharCheck.test(block)){
+			return;
+		}
+		return (rtlDirCheck.test(block)) ? 'rtl' : 'ltr';
+	},
 	wrapElementWithFont: function(content){
 		var temp_div = $("<div />");
 		var	div = $("<div />")
@@ -1009,6 +1020,14 @@ Redactor.prototype = {
 			div.html(content)
 		temp_div.append(div)
 
+		return temp_div.html();
+	},
+	removeWeakAttr: function(content){
+		var temp_div = $("<div />");
+		var	div = $("<div />")
+			div.html(content)
+		temp_div.append(div)
+		temp_div.find('[weak]').removeAttr('weak');
 		return temp_div.html();
 	},
 	changesInTextarea: function(){
@@ -1022,6 +1041,9 @@ Redactor.prototype = {
 			content = this.wrapElementWithFont(content);
 		}
 
+		if(this.opts.mixedDirectionSupport){
+			content = this.removeWeakAttr(content);
+		}
 		this.$el.val(content);
 	},
 	removeCursorImage: function() {
@@ -1155,6 +1177,18 @@ Redactor.prototype = {
 				this.syncCode();
 			}
 
+			if(this.opts.mixedDirectionSupport ){
+				var text_node =  $(this.getCurrentNode());
+				var parent = text_node.closest("p,div,blockquote");
+				var blockText =  parent.text();
+	    			if(!parent.is('.redactor_editor') && (!parent.attr('dir') || parent.attr('weak'))&& blockText!='' ){
+		    			var dir=this.findDirection(blockText);
+					if(dir){
+						parent.attr('dir',dir);
+						parent.removeAttr('weak');
+					}
+				}
+			}
 
 		}, this));		
 	},
@@ -1310,7 +1344,6 @@ Redactor.prototype = {
 			{
 				return this.safariShiftKeyEnter(e, key);
 			}
-
 		}, this));		
 	},
 	build: function(mobile)
@@ -3083,6 +3116,19 @@ Redactor.prototype = {
 				$(e.target).removeAttr("style");
 			}
 			this.setInlineAttributes(e);
+			if(this.opts.mixedDirectionSupport){
+				var textNode = $(e.target)
+		  		var blockText =  textNode.text();
+		  		if(textNode.is("p,div:not(.redactor_editor),blockquote")){
+					var dir=this.findDirection(blockText);
+					if(dir){
+						textNode.attr('dir',dir); 
+					}
+					else{
+						textNode.attr('weak',true);
+					}
+				}
+			}
 		}, this));
 	},
 	
@@ -4667,7 +4713,14 @@ $.fn.insertExternal = function(html)
 			jQuery(this.$redactor.$box).delegate("."+this.opts.class_name, "click.quotedtext", $.proxy(this.insertQuotedText, this));
 		},
 		insertQuotedText: function(){
-			this.$redactor.insertHtmlAtLast(this.getQuotedText());
+			if("content" in document.createElement("template")){
+				var quoted_clone = document.importNode(this.$quoted_area[0].content, true);
+				quoted_clone = $('<div></div>').append(quoted_clone).append("<p><br /></p>");
+				this.$redactor.$editor.append(quoted_clone.text());
+			}
+			else{
+				this.$redactor.insertHtmlAtLast(this.$quoted_area.val() + "<p><br /></p>");
+			}
 			this.$redactor.syncCode();
 			this.checkQuotedText();
 		},
@@ -4677,12 +4730,17 @@ $.fn.insertExternal = function(html)
 		},
 		syncQuotedText: function(){
 			if(!this.$draft_added){
-				var full_text = this.$redactor.$el.val() + this.$quoted_area.val();
+				var quoted_clone;
+				if("content" in document.createElement("template")){
+					var quoted_clone = document.importNode(this.$quoted_area[0].content, true);
+					quoted_clone = $(quoted_clone).text();
+				}
+				else{
+					quoted_clone = this.$quoted_area.val();
+				}
+				var full_text = this.$redactor.$el.val() + quoted_clone;
 				this.$redactor.$el.val(full_text);
 			}
-		},
-		getQuotedText: function(){
-			return this.$quoted_area.val() + "<p><br /></p>";
 		},
 		reset: function(){
 			this.$draft_added = false;

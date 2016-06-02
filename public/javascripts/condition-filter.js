@@ -627,7 +627,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				});
 
 			jQuery(parentDom).find('.webhook input[name=need_authentication]')
-				.live("change", function(){	jQuery(this).parent().parent().parent().find('.credentials').slideToggle();	});
+				.live("change", function(){	jQuery(this).parent().parent().parent().parent().find('.credentials').slideToggle();	});
 
 			jQuery(parentDom).find('.webhook .headers_toggle')
 				.live("click", function(){	

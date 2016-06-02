@@ -1,0 +1,139 @@
+<div class="form-horizontal">
+  
+  <%= hidden_field_tag "social_ticket_rule[][ticket_rule_id]", ticket_rule.id %>
+  
+  <div class="row-fluid">
+    <div class='form_data span11 mlt'>
+      <div class="control-group fb-form-tkt-rules">
+        
+        <!-- Rule Type - Strict -->
+        <div class="radio pl0 mt20">
+          <label>
+            <%= radio_button_tag 'social_ticket_rule[][rule_type]', 1, ticket_rule.strict? , :class => "fb-rule-settings"%> 
+             <span class="pl5"><%= t(".do_not_convert") %></span>
+          </label>
+          <p class="help-block pl20"><%= t('.do_not_convert_help') %></p>
+        </div>
+        
+        <!-- Rule Type - Optimal -->
+        <div class="radio pl0 mt20">
+          <label>
+            <%= radio_button_tag 'social_ticket_rule[][rule_type]', 2, ticket_rule.optimal? , :class => "fb-rule-settings"%>
+            <span class="pl5"><%= t(".convert_only_relevant") %></span>
+          </label> 
+        </div>
+        
+        <div class="mt20">
+          <div class = "rule-settings">           
+            <div class = "rules-container-optimal pl20">  
+               
+              <%= hidden_field_tag "default_keywords", "#{Facebook::Constants::DEFAULT_KEYWORDS.join(',')}"%>
+               
+              <div class="checkbox">
+                <label><%= check_box_tag 'social_ticket_rule[][import_visitor_posts]', true, ticket_rule.import_visitor_posts? %>&nbsp;<%= t(".convert_visitor") %></label>  
+              </div>
+              <div class="checkbox">
+                <label><%= check_box_tag 'social_ticket_rule[][import_company_comments]', true, ticket_rule.import_company_comments? %>&nbsp;<%= t(".convert_company") %></label>
+              </div>
+              
+              <div class="form-group clearfix pl20">
+                <%= text_field_tag "social_ticket_rule[][includes]", ticket_rule.include_keys, :class => 'text social_ticket_rule_includes form-control span12', :placeholder => t('.include_helptext') %> 
+              </div>
+              
+              <div class="control-group mt10">
+                <label class="mt10 pl5">
+                  <%= t('.assign_to_gp')%>
+                  <%= select_tag "social_ticket_rule[][group_id]", options_for_select(current_account.groups.collect{ |c| [c.name, c.id]}.insert(0, '...'), ticket_rule.group_id), {:class => "select2-container span4 ml10"} %>
+                </label> 
+              </div>
+              
+            </div>
+          </div> 
+        </div>
+        
+        <!-- Rule Type - Broad -->
+        <div class="clearfix">
+          <div class="radio pl0">
+            <label>
+              <%= radio_button_tag 'social_ticket_rule[][rule_type]', 3, ticket_rule.broad?, :class => "fb-rule-settings" %>
+              <span class="pl5"><%= t(".convert_everything") %></span>
+            </label>
+            <p class="help-block pl20"><%= t('.convert_everything_help') %>
+          </div>
+          
+          <div class = "rules-container-broad">
+            <div class="control-group">
+              <label class="mt10 pl5">
+                <%= t('.assign_to_gp')%>
+                <%= select_tag "social_ticket_rule[][group_id]", options_for_select(current_account.groups.collect{ |c| [c.name, c.id]}.insert(0, '...'), ticket_rule.group_id), {:class => "select2-container span4 ml10"} %>
+                
+              </label>
+            </div>
+          </div>
+        </div>    
+
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<script type="text/javascript">
+
+  jQuery(document).ready(function(){
+    rule_value = jQuery("input[name='social_ticket_rule[][rule_type]']:checked").val();
+    toggle_settings(rule_value, false)
+  });
+
+  jQuery(".social_ticket_rule_includes").select2({
+      tags: [],
+      tokenSeparators: [","],
+      formatNoMatches: function () {
+          return "  ";
+      }
+  });
+
+  jQuery("input[type=radio][name='social_ticket_rule[][rule_type]']").change(function() {
+    toggle_settings(this.value, true);
+  });
+
+  function toggle_optimal_settings(disable){
+    display = (disable == true) ? 'none' : 'block'
+    jQuery('.rules-container-optimal').css('display', display);
+    jQuery('.rules-container-optimal input[type=checkbox]').prop('disabled', disable);
+    jQuery('.rules-container-optimal #s2id_autogen1').prop('disabled', disable);
+    jQuery('.rules-container-optimal #social_ticket_rule__group_id').prop('disabled', disable);
+  }
+  
+  function toggle_broad_settings(disable){
+    display = (disable == true) ? 'none' : 'block'
+    jQuery('.rules-container-broad').css('display', display);
+    jQuery('.rules-container-broad #social_ticket_rule__group_id').prop('disabled', disable);
+  }
+  
+  function toggle_settings(rule_value, populate_default){
+    if (rule_value == 1) {
+      toggle_optimal_settings(true);
+      toggle_broad_settings(true);
+    }
+    else if (rule_value == 2) {
+      jQuery('.rules-container-optimal').fadeToggle("slow","linear").css('display', 'block');
+      if(populate_default == true){
+        jQuery('.rules-container-optimal input[type=checkbox]').prop('checked', true);
+        var keywords = jQuery('.rules-container-optimal #s2id_social_ticket_rule__includes').select2('data');
+        if(keywords.length == 0){
+          var default_keywords = jQuery('.rules-container-optimal #default_keywords').val().split(",");
+          jQuery('.rules-container-optimal #s2id_social_ticket_rule__includes').select2('val', default_keywords)
+        }    
+      }
+      toggle_broad_settings(true);
+      toggle_optimal_settings(false);
+    }
+    else if (rule_value == 3) {
+      jQuery('.rules-container-broad').fadeToggle("slow","linear").css('display', 'block');
+      toggle_optimal_settings(true);
+      toggle_broad_settings(false);
+    }
+  }
+  
+</script>

@@ -30,7 +30,7 @@ class CRM::Freshsales
 
     def self.handle_data_sync(freshsales, args)
       begin
-        freshsales.push_signup_data
+        freshsales.push_signup_data(args)
       rescue => e
         NewRelic::Agent.notice_error(e, { description: "Error occured while pushing Signup data to Freshsales 
           AccountID::#{Account.current.id}" })
@@ -85,6 +85,8 @@ class CRM::Freshsales
           freshsales.account_downgrade(old_cmrr)
         when trial_expired?(subscription, old_subscription)
           freshsales.account_trial_expiry
+        when trial_extended?(subscription, old_subscription)
+          freshsales.account_trial_extension
         when state_changed?(subscription, old_subscription)
           freshsales.subscription_state_change(old_cmrr, old_subscription[:state].to_sym, payments_count)
         end
@@ -115,6 +117,10 @@ class CRM::Freshsales
 
     def self.trial_expired?(subscription, old_subscription)
       (old_subscription[:state] == TRIAL) && (subscription[:state] == SUSPENDED)
+    end
+
+    def self.trial_extended?(subscription, old_subscription)
+      (old_subscription[:state] == SUSPENDED) && (subscription[:state] == TRIAL)
     end
 
     def self.state_changed?(subscription, old_subscription)

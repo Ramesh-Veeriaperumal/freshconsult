@@ -6,7 +6,7 @@ namespace :reports do
   task :build_no_activity => :environment do
     Sharding.run_on_all_slaves do
       Account.reset_current_account
-      Account.active_accounts.find_in_batches do |accounts|
+      Account.find_in_batches do |accounts|
         accounts.each do |account|
           begin
             account.make_current
@@ -33,10 +33,14 @@ namespace :reports do
       message    = JSON.parse(sqs_msg.body)
       account_id = message["account_id"]
       export_id  = message["export_id"]
+      user_id = message["user_id"]
       begin
         Sharding.select_shard_of(account_id) do
           account = Account.find_by_id(account_id)
-          if account && account.make_current
+          user = User.find_by_id(user_id)
+          if (account && user)
+            account.make_current
+            user.make_current
             current_export = account.data_exports.find(export_id)
             if (current_export && current_export.status == 1)
               current_export.file_created!

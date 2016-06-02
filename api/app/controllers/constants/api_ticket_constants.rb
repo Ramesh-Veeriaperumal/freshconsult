@@ -11,13 +11,14 @@ module ApiTicketConstants
                   ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include']
-  ALLOWED_INCLUDE_PARAMS = %w(conversations requester company)
-  SIDE_LOADING = ['requester']
+  ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats)
+  SIDE_LOADING = ['requester', 'stats']
+  INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
   ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
   DEFAULT_ORDER_TYPE = TicketsFilter::DEFAULT_SORT_ORDER
-  DELEGATOR_ATTRIBUTES = [:group_id, :responder_id, :product_id, :email_config_id, :custom_field, :requester_id, :status, :facebook_id, :ticket_type].freeze
+  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(group_id responder_id product_id email_config_id custom_field requester_id status facebook_id ticket_type).freeze
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze
   SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :chat, :mobihelp, :feedback_widget).values.freeze
 

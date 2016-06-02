@@ -5,6 +5,7 @@ class Agent < ActiveRecord::Base
   include Cache::Memcache::Agent
   include Agents::Preferences
   include Social::Ext::AgentMethods
+  include Chat::Constants
 
   concerned_with :associations, :constants
 
@@ -13,14 +14,17 @@ class Agent < ActiveRecord::Base
   accepts_nested_attributes_for :user
   before_update :create_model_changes
   after_commit :enqueue_round_robin_process, on: :update
-
   after_commit :nullify_tickets, :destroy_agent_canned_responses, :destroy_agent_scenarios, :agent_destroy_cleanup, on: :destroy
   
+  after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :create
+  after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update
   validates_presence_of :user_id
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
     :scoreboard_level_id, :user_attributes, :group_ids
+
+  attr_accessor :agent_role_ids
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
@@ -82,10 +86,18 @@ class Agent < ActiveRecord::Base
     end.compact
   end
 
-  #This method returns true if atleast one of the groups that he belongs to has round robin feature
+  def allow_availability_toggle?
+    !self.groups.empty? && self.groups.where(:toggle_availability => false, :ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin]).count('1') == 0
+  end
+
   def in_round_robin?
-    return self.agent_groups.count(:conditions => ['ticket_assign_type = ?',
-                                                   Group::TICKET_ASSIGN_TYPE[:round_robin]], :joins => :group) > 0
+    self.agent_groups.count(:conditions => ['ticket_assign_type = ?',
+                                             Group::TICKET_ASSIGN_TYPE[:round_robin]], :joins => :group) > 0
+  end
+
+  def toggle_availability?
+    return false if(!account.features?(:round_robin) || !in_round_robin?)
+    allow_availability_toggle? ? true : false
   end
 
   def group_ticket_permission
@@ -148,7 +160,7 @@ class Agent < ActiveRecord::Base
   def nullify_tickets
     Helpdesk::ResetResponder.perform_async({:user_id => self.user_id })
   end
-
+  
   def reset_gamification
     destroy_achieved_quests
     destroy_support_scores
@@ -157,6 +169,21 @@ class Agent < ActiveRecord::Base
 
   def update_last_active(force=false)
     touch(:last_active_at) if force or last_active_at.nil? or ((Time.now - last_active_at) > 4.hours)
+  end
+
+  protected
+    # adding the agent role ids through virtual attr agent_role_ids.
+    # reason is this callback is getting executed before user roles update.
+  def update_agent_to_livechat
+    site_id = account.chat_setting.site_id
+    # role_ids = self.agent_role_ids.null? self.user.roles.collect{ |role| role.id} : self.agent_role_ids
+    # :roles => role_ids, need to add in phase 2 for chat privilages
+    if account.features?(:chat) && site_id && !(::User.current.blank?)
+      c = {:name=>self.user.name, :agent_id=>self.user.id, :site_id => site_id,
+           :scope => SCOPE_TOKENS_BY_KEY[self.ticket_permission]}
+      LivechatWorker.perform_async({:worker_method =>"create_agent",
+                                        :siteId => site_id, :agent_data => [c].to_json})
+    end
   end
 
   private

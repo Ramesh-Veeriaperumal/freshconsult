@@ -7,13 +7,13 @@ class ChatSetting < ActiveRecord::Base
     ]
 
   FILTER_TYPES = [
-    [ I18n.t("freshchat.all"), 0],
-    [ I18n.t("freshchat.visitor_initiated"), 1],
-    [ I18n.t("freshchat.agent_initiated"), 2],
-    [ I18n.t("freshchat.proactive_title"), 3],
-    [ I18n.t("freshchat.agent_to_agent"), 4],
-    [ I18n.t("freshchat.missed_chat"), 5],
-    [ I18n.t("freshchat.spam_chat"), 6]
+    [ I18n.t("livechat.all"), 0],
+    [ I18n.t("livechat.visitor_initiated_chat"), 1],
+    [ I18n.t("livechat.agent_initiated_chat"), 2],
+    [ I18n.t("livechat.proactive_title"), 3],
+    [ I18n.t("livechat.agent_to_agent"), 4],
+    [ I18n.t("livechat.missed_chat"), 5],
+    [ I18n.t("livechat.spam_chat"), 6]
   ]
     
   CHAT_CONSTANTS_BY_KEY = Hash[*CHAT_CONSTANTS.map { |i| [i[0], i[1]] }.flatten]

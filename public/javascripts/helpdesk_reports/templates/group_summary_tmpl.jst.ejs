@@ -8,8 +8,10 @@
 	};
 
 	var groupTdTmpl = function (data, i, j, group_metrics) {
-		var metric_data, td_class;
+		var metric_data, td_class,tooltip_tmpl = "";
 		var current_data = data[i][group_metrics[j]];
+		var enable_tooltip = false;
+
 		if (consts.percentage_metrics.indexOf(group_metrics[j]) > -1) {
 			metric_data = HelpdeskReports.CoreUtil.addsuffix(current_data);
 			td_class = (typeof current_data !== 'number') ? 'disable' : ( HelpdeskReports.locals.enable_ticket_list ? '' : 'disable');
@@ -19,11 +21,20 @@
 		} else { 
 			metric_data = HelpdeskReports.CoreUtil.shortenLargeNumber(current_data, 1);
 			td_class = (typeof current_data !== 'number') ? 'disable' : ( HelpdeskReports.locals.enable_ticket_list ? '' : 'disable');
+			enable_tooltip = true;
 		}
 
 		var tmpl =  "<td data-group-id=" + data[i]['group_id'] + " class='" + td_class + "' data-metric-name=" + group_metrics[j];
 		tmpl += " data-order = '" + current_data + "'";
-		tmpl += ">" + metric_data + "</td>";
+		tmpl += tooltip_tmpl;
+		tmpl += ">";
+		if(enable_tooltip && current_data > 9999) {
+			tmpl += '<span class="tooltip" data-placement="above" data-original-title="'+ current_data +'" twipsy-content-set="true">' + metric_data + '</span>';
+		} else {
+			tmpl += metric_data;
+		}
+
+		tmpl += "</td>";
 		return tmpl;
 	};
 

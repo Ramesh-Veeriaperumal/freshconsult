@@ -1,4 +1,9 @@
 
+@include keyframes(blinker) {  
+  30% { opacity: 0.3; }
+  80% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
 .grey_widget_background {
 	direction:ltr;
 	position: fixed;
@@ -67,7 +72,7 @@
 }
 .freshfone-context-container{
 	position: fixed;
-    bottom: 41px;
+    bottom: 34px;
     min-height: 100px;
     min-width: $ongoing-popup-width;
     max-width: $ongoing-popup-width;
@@ -131,6 +136,116 @@
     	.caller-location{
     	    font-weight: 500;
     	}
+    }
+    .add-agent-context{
+        height: 30px;
+        border-bottom: 1px solid #aaa;
+        @include padding(10px 10px 5px 0px);
+        @include border-radius(5px 5px 0px 0px);
+        background-color: #f8f8f8;
+      .add-agent-progress-bar {
+        float: left;
+        position: absolute;
+        border: 2px solid #D5C28C;
+        width: 0px;
+        @include border-radius(2px 2px 0px 0px);
+        top: 45px;
+        left: -1px;  
+      }
+      .progress-bar-placer {
+        position: relative;
+        top: -14px;
+      }
+      .progress-bar-active{
+        width: 300px;
+        transition-duration: 60000ms;
+      }
+      .progress-bar-busy {
+        width: 323px;
+        border: 2px solid #Ab301e;
+      }
+      .add-agent-info { 
+        text-overflow: ellipsis;
+        padding-top: 4px;
+        .agent_name {
+          font-weight: 700;
+        }
+        .add-agent-label{
+          @include padding(0px 0px 2px 1px);
+          width: 15px;
+          font-size: 16px;
+          color: #888;
+          @include margin(1px 7px 0px 0px);
+        }
+        .add-agent-placer{
+          @include padding-left(10px);
+        }
+        .add_agent_img{
+          .preview_pic,img {
+            @include right(-10px);
+            top:3px;
+            width: 26px;
+            height: 26px;
+            line-height: 25px;
+            font-size: 14px;
+            font-weight: 400;
+            margin-top: -8px;
+            right: -3%;
+            float: right;
+            @include border-radius(50%);
+          }
+          img {
+            margin-top: 0px;
+          }
+        }
+        .add-agent-status{
+          @include margin-left(1px);
+          .busy,.no-answer {
+            color: #Ab301e;
+          }
+          .connected {
+            color: #046c11;
+          }
+          .in_progress {
+            @include animation(blinker 0.8s infinite);
+          }
+        }
+        .cancel_add_agent{
+            text-align: center;
+            background-color: #fff;
+            font-size: 34px;
+            margin-top: -8px;
+            float: left;
+            height: 26px;
+            width: 24px;
+            background-color: #f8f8f8;
+            i {
+             color: #555;
+            }
+          &:hover {
+            .#{$font-class}cross-filled {
+              display: block;
+            }
+            .#{$font-class}cross-round {
+             display: none;
+            }
+          }
+          .#{$font-class}cross-filled {
+            display: none;
+          }
+          .#{$font-class}cross-round {
+            display: block;
+          }
+        }
+        .cancel_add_agent, .add-agent-label{
+          display: none;
+        }
+      }
+      .adding_agent_state{
+        .cancel_add_agent, .add-agent-label{
+          display: block;
+        }
+      }
     }
     .recent-tickets .header_text, .add_call_note .header_text{
    		&.opened .triangle{

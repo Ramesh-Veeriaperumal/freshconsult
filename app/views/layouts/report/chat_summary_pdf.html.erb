@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<%= wicked_pdf_stylesheet_link_tag :'cdn/reports' %>
+<%= wicked_pdf_stylesheet_link_tag :'cdn/pattern'  %>
+<%= wicked_pdf_stylesheet_link_tag :'cdn/common_pdf' %>
+
+<%= wicked_pdf_javascript_include_tag 'cdn/defaults-old-reports-hack'  %>
+<%= wicked_pdf_javascript_include_tag 'cdn/frameworks'  %>
+<%= wicked_pdf_javascript_include_tag 'cdn/app/helpdesk_livechat_reports_pdf'  %>
+<%= wicked_pdf_javascript_include_tag 'cdn/livechat_reports_pdf'  %>
+	<%= render :partial => "reports/freshchat/summary_reports/chat_reports_pdf.html.erb", :formats => [:html], 
+															:locals => {:params => params, :table_headers => table_headers} %>
+ 

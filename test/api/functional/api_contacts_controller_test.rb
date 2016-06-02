@@ -1,6 +1,5 @@
 require_relative '../test_helper'
 class ApiContactsControllerTest < ActionController::TestCase
-  include ContactFieldsHelper
   include UsersTestHelper
 
   def wrap_cname(params)
@@ -909,7 +908,6 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('description', :datatype_mismatch, code: :missing_field, expected_data_type: String),
                 bad_request_error_pattern('twitter_id', :datatype_mismatch, code: :missing_field, expected_data_type: String),
                 bad_request_error_pattern('phone', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('tags', :datatype_mismatch, code: :missing_field, expected_data_type: Array),
                 bad_request_error_pattern('company_id', :missing_field),
                 bad_request_error_pattern('language', :not_included,
                                           list: I18n.available_locales.map(&:to_s).join(','), code: :missing_field),
@@ -1183,5 +1181,54 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 200
   ensure
     cf_sample_field.update_attribute(:required_for_agent, false)
+  end
+
+  def test_update_contact_with_invalid_custom_url_and_custom_date
+    sample_user = get_user
+    put :update, construct_params({ id: sample_user.id },   name: Faker::Lorem.characters(15),
+                                                            email: Faker::Internet.email,
+                                                            custom_fields: { 'sample_url' => 'aaaa', 'sample_date' => '2015-09-09T08:00' })
+    assert_response 400
+    match_json([bad_request_error_pattern('sample_date', :invalid_date, accepted: 'yyyy-mm-dd'),
+                bad_request_error_pattern('sample_url', :invalid_format, accepted: 'valid URL')])
+  end
+
+  def test_update_contact_without_required_custom_fields
+    cf_sample_field = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'RequiredField', editable_in_signup: 'true', required_for_agent: true))
+    user = add_new_user(@account)
+    put :update, construct_params({ id: user.id },  name: Faker::Lorem.characters(15),
+                                                    email: Faker::Internet.email)
+
+    assert_response 400
+    match_json([bad_request_error_pattern('requiredfield', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+    ensure
+      cf_sample_field.update_attribute(:required_for_agent, false)
+  end
+
+  def test_update_contact_with_invalid_custom_fields
+    comp = get_company
+    sample_user = get_user
+    put :update, construct_params({ id: sample_user.id }, name: Faker::Lorem.characters(15),
+                                                          email: Faker::Internet.email,
+                                                          view_all_tickets: true,
+                                                          company_id: comp.id,
+                                                          language: 'en',
+                                                          custom_fields: { 'check_me' => 'aaa', 'doj' => 2010 })
+    assert_response 400
+    match_json([bad_request_error_pattern('check_me', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('doj', :invalid_date, accepted: 'yyyy-mm-dd')])
+  end
+
+  def test_update_contact_with_invalid_dropdown_field
+    comp = get_company
+    sample_user = get_user
+    put :update, construct_params({ id: sample_user.id },  name: Faker::Lorem.characters(15),
+                                                           email: Faker::Internet.email,
+                                                           view_all_tickets: true,
+                                                           company_id: comp.id,
+                                                           language: 'en',
+                                                           custom_fields: { 'choose_me' => 'Choice 4' })
+    assert_response 400
+    match_json([bad_request_error_pattern('choose_me', :not_included, list: 'Choice 1,Choice 2,Choice 3')])
   end
 end

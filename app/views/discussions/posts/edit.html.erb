@@ -9,10 +9,6 @@
 	<%= f.rich_editor 	:body_html, 
 						:class => "required_redactor", :height => "150px", 
 						:index => @post.id, 'editor-type' => :forum  %>
-	<% if is_application_installed?("screenr") %>
-		<br>
-			<%= render :partial => "shared/screenr_recorder", :locals => { :location => "agent_forum" } %>
-		<% end %>
 	<div class="button-container">
 		<%= submit_tag t('cancel'), {
 					:name => 'reset',

@@ -2,8 +2,8 @@ json.extract! @item, :id, :user_id, :from_email, :cc_emails, :bcc_emails
 
 json.set! :body, @item.body_html
 json.set! :body_text, @item.body
-json.set! :ticket_id, @item.notable.display_id
-json.set! :to_emails, @item.schema_less_note.try(:to_emails)
+json.set! :ticket_id, @item.ticket.display_id
+json.set! :to_emails, @item.to_emails
 
 json.set! :attachments do
   json.array! @item.attachments do |att|

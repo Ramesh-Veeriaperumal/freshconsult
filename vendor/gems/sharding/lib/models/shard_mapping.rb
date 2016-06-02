@@ -8,7 +8,7 @@ class ShardMapping < ActiveRecord::Base
   STATUS_CODE = {:partial => 206, :ok => 200, :not_found => 404, :blocked => 403}
 
   has_many :domains,:class_name => 'DomainMapping',:dependent => :destroy,:foreign_key => :account_id
-  has_many :facebook_pages, :class_name => 'FacebookPageMapping', :dependent => :destroy, :foreign_key => :account_id
+  has_many :facebook_pages, :class_name => 'Social::FacebookPageMapping', :dependent => :destroy, :foreign_key => :account_id
   has_one :google_domain,:class_name => 'GoogleDomain', :dependent => :destroy, :foreign_key => :account_id
 
   after_update :clear_cache, :update_routes

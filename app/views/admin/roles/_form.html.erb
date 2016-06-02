@@ -1,19 +1,34 @@
+<% remove_manage_availability = !current_account.features?(:round_robin) %>
 <%= error_messages_for :role %>
 <div class="row-fluid new-role">
 	<div>
 		<ul class="clearfix unstyled">
  			<li class="row-fluid">
- 				<%= role_form.label :name, t('name'), :class =>'control-label span2' %> 
+ 				<%= role_form.label :name, t('name'), :class =>'control-label span2' %>
 				<div class="span10">
 					<%= role_form.text_field :name , :class => "text required span10", :placeholder => t('admin.roles.role_name')%>
 				</div>
-			</li>	
+			</li>
 			<li class="row-fluid">
-				<%= role_form.label :description, t('description'), :class =>'control-label span2' %> 
+				<%= role_form.label :description, t('description'), :class =>'control-label span2' %>
 				<div class="span10">
-					<%= role_form.text_area :description , :class => "text span10", :cols => "40", :rows => "5", 						:placeholder => t('admin.roles.role_description')%>		
+					<%= role_form.text_area :description , :class => "text span10", :cols => "40", :rows => "5", 						:placeholder => t('admin.roles.role_description')%>
 				</div>
-			</li>	
+			</li>
+      <li class="row-fluid">
+        <%= role_form.label :agents, t('agents'), :class =>'control-label span2' %>
+        <div class="span10">
+					<% label = (@role.users.count == 0 ? t('admin.roles.add_label') : t('admin.roles.manage_label')) %>
+					<a class="popup" data-agentcount="<%= @role.users.count %>" data-roleid="<%= @role.id %>" href="javascript:void(0)" data-title="<%= @role.name %>">
+         <span data-changecount="<%= @role.id %>" >
+          <% if @role.users.count == 0 %>
+            <%= t('admin.roles.no_agent_label') %></span> - <span class="label-info-text"><%= label %></span>
+          <% else %>
+           <%= pluralize(@role.users.count, t('admin.roles.agent_label'), t('admin.roles.agents_label')) %> </span> - <span class="label-info-text"><%= label %></span>
+          <% end %>
+					</a>
+        </div>
+      </li>
 		</ul>
 		<div>
 			<p class="lead-title lead">
@@ -36,6 +51,9 @@
   <%= build_role_form %>
   
   <%= hidden_field_tag "role[privilege_list][]"%>
+  <%= hidden_field_tag "add_user_ids" %>
+  <%= hidden_field_tag "delete_user_ids" %>
+  
 </div>
 <div class="button-container pull-right clearfix itil-hide">
   <% unless @role.default_role? %>
@@ -48,6 +66,10 @@
   /* Scroll functionality */
   
   jQuery(function(){ // document ready
+    if(<%= remove_manage_availability %>) {
+      jQuery(".operational_admin#manage_availability").parent().remove();
+      jQuery(".admin_tasks#manage_availability").parent().remove();
+    }
   	jQuery('a[href*=#]:not([href=#])').click(function() {
   	    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') 
   	        || location.hostname == this.hostname) {

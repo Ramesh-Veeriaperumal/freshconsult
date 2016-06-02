@@ -4,5 +4,5 @@
       	<%= @group.nil? ? t('helpdesk.dashboard.round_robin.all_agents') : @group.name %></b><b class="caret">
       </b>
   </a>
-  <%= group_list_filter %>
+  <%= group_list_filter(@group) %>
 </li>

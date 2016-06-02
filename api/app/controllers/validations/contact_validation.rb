@@ -2,7 +2,6 @@ class ContactValidation < ApiValidation
   DEFAULT_FIELD_VALIDATIONS = {
     job_title:  { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     language: { custom_inclusion: { in: ContactConstants::LANGUAGES } },
-    tag_names:  { data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true } },
     time_zone: { custom_inclusion: { in: ContactConstants::TIMEZONES } },
     phone: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     mobile: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
@@ -17,14 +16,13 @@ class ContactValidation < ApiValidation
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
 
   attr_accessor :avatar, :view_all_tickets, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
-                :language, :mobile, :name, :other_emails, :phone, :tag_names, :time_zone, :twitter_id, :address, :description
+                :language, :mobile, :name, :other_emails, :phone, :tags, :time_zone, :twitter_id, :address, :description
 
   alias_attribute :company_id, :company_name
   alias_attribute :customer_id, :company_name
-  alias_attribute :tags, :tag_names
 
   # Default fields validation
-  validates :email, :phone, :mobile, :company_name, :tag_names, :address, :job_title, :twitter_id, :language, :time_zone, :description, :other_emails, default_field:
+  validates :email, :phone, :mobile, :company_name, :address, :job_title, :twitter_id, :language, :time_zone, :description, :other_emails, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: DEFAULT_FIELD_VALIDATIONS
@@ -33,6 +31,7 @@ class ContactValidation < ApiValidation
   validates :name, data_type: { rules: String, required: true }
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
+  validates :tags, data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true }
 
   validate :contact_detail_missing, if: :email_mandatory?, on: :create
 
@@ -61,7 +60,6 @@ class ContactValidation < ApiValidation
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
-    @tag_names = item.tag_names.split(',') if item && !request_params.key?(:tags)
     @current_email = item.email if item
     check_params_set(request_params[:custom_fields]) if request_params[:custom_fields].is_a?(Hash)
     fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
@@ -115,5 +113,4 @@ class ContactValidation < ApiValidation
     def attributes_to_be_stripped
       ContactConstants::ATTRIBUTES_TO_BE_STRIPPED
     end
-    
 end

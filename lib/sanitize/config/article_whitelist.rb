@@ -1,10 +1,10 @@
 class Sanitize
   module Config
     ARTICLE_WHITELIST = {
-      :elements => HTML_RELAXED[:elements] + ['object', 'param', 'embed', 'canvas', 'video', 'track'],
+      :elements => HTML_RELAXED[:elements] + ['iframe', 'object', 'param', 'embed', 'canvas', 'video', 'track'],
       :attributes => {
         :all => HTML_RELAXED[:attributes][:all] + ['name'],
-        'iframe' => HTML_RELAXED[:attributes]['iframe'] + ['align'],
+        'iframe' => ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'align'],
         'audio' => HTML_RELAXED[:attributes]['audio'] + ['src', 'crossorigin', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted'],
         'source' => HTML_RELAXED[:attributes]['source'] + ['media'],
         'object' => ['type', 'data', 'height', 'width', 'typemustmatch', 'form', 'classid', 'codebase'],
@@ -24,16 +24,25 @@ class Sanitize
         'th' => HTML_RELAXED[:attributes]['th'] + ['bgcolor'],
         'tr' => ['bgcolor'],
         'tbody' => ['bgcolor']
-      }.merge(HTML_RELAXED[:attributes].except('iframe','object','param','embed','video','audio','source','track','font', 'td', :all)),
+      }.merge(HTML_RELAXED[:attributes].except('object','param','embed','video','audio','source','track','font', 'td', :all)),
 
       :protocols => {
-        'img' => { 'src' => HTML_RELAXED[:protocols]['img']['src'] + ['data', 'cid'] }
+        'img' => { 'src' => HTML_RELAXED[:protocols]['img']['src'] + ['data', 'cid'] },
+        'iframe' => {'src'  => ['http', 'https', :relative]}
       }.merge(HTML_RELAXED[:protocols].except('img')),
       :remove_contents => HTML_RELAXED[:remove_contents],
       :transformers => lambda do |env|
         node      = env[:node]
         
         return if env[:is_whitelisted] || !node.element? || ARTICLE_WHITELIST[:elements].exclude?(node.name)
+
+        if node.name == 'iframe'
+          uri = URI.parse(node['src'])
+          if uri.host.blank? || uri.host == Account.current.full_domain || Account.current.portals.map(&:portal_url).compact.include?(uri.host)
+            node.unlink
+            return
+          end
+        end
 
         data_attrs = node.attribute_nodes.select{|a_n| a_n.name =~ /^data-/ }
         

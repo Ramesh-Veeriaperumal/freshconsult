@@ -22,7 +22,7 @@ var FreshfoneContactSearch;
 			var self = this;
 			this.$searchList.on('mouseover', '.search-result', function(){
 			 	var $prevElem = self.$searchList.find('.active-element');	
-				freshfoneDialpadEvents.makeActive($prevElem,$(this)); 	
+				freshfoneDialpadEvents.makeActive($prevElem,$(this));
 
 	  	}).on('click', '.search-result', function(){
 	  		if($(this).hasClass('do-not-make-call')) { return; }
@@ -59,17 +59,21 @@ var FreshfoneContactSearch;
 			return result_string;
 		},
 
-		getSearchResults: function(string){
+		getSearchResults: function(string, customerId, isDeleted){
 		  var self = this;
 		  $.ajax({ 
 	  		url: '/freshfone/autocomplete/customer_contact',
 	  		method: 'GET',
 	  		allowClear: true,
-	  		data: { q: string },
+	  		data: { q: string,
+	  						is_deleted: isDeleted},
 	  		dataType : "html",
 				success: function(data){
 					self.$searchList.find('.search_result_container').html(data);
 					self.appendNoResults(string);
+					if(customerId){
+						freshfoneDialpadEvents.setActiveElement(customerId);
+					}
 				}
 			});	
 		},

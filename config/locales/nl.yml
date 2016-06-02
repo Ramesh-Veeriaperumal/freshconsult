@@ -1318,9 +1318,9 @@ nl:
         send_test_mail_info2: "Hier leest u <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>welke stappen u moet uitvoeren</a>."
         title_message: "Voer de volgende vier stappen uit om met de klantondersteuning te beginnen..."
         support_email_title: "E-mailadres voor<br> ondersteuning"
-        agents_title_1: Medewerkers&lt;br&gt;toevoegen
         rebrand_title: "Logo<br>en kleuren"
-        social_title_1: Sociale&lt;br&gt;media
+        adding_agents: "Medewerkers <br> toevoegen"
+        going_social: "Sociale<br> media"
         skip_text: "Nee bedankt, ik wil mijn helpdesk weergeven."
         back_link: Terug
         next_link: Volgende
@@ -1442,7 +1442,6 @@ nl:
         feedbackwidget_users_can: "Gebruikers kunnen:"
         feedbackwidget_attach_a_file: "Bestanden bijvoegen"
         feedbackwidget_screenshot: "Schermopname maken"
-        feedbackwidget_screenr_recording: Screenr-opname
         feedbackwidget_search_area: "Artikelen zoeken"
         feedbackwidget_use_https: "HTTPS gebruiken"
         feedbackwidget_mobile_view: "Mobiele weergave"
@@ -1467,7 +1466,6 @@ nl:
         feedbackwidget_users_can: Formulieropties
         feedbackwidget_attach_a_file: "Bestand bijvoegen"
         feedbackwidget_screenshot: "Schermopname maken"
-        feedbackwidget_screenr_recording: Screenr-opname
         feedbackwidget_search_area: "Artikelen zoeken"
         feedbackwidget_use_https: "HTTPS gebruiken"
         feedbackwidget_mobile_view: "Mobiele weergave inschakelen"
@@ -1887,7 +1885,7 @@ nl:
         import: "Gegevens importeren uit Zendesk"
         agent: Medewerkers
         feedback: Feedbackwidget
-        freshchat: Livechat
+        livechat: Live Chat
         integrations: Integraties
         dispatcher: Dispatch'r
         supervisor: Supervisor
@@ -2817,7 +2815,7 @@ nl:
   change_my_plan: "Dit abonnement kiezen..."
   make_payment: Betalen
   add_new_email: "Nieuw e-mailadres toevoegen"
-  chatwidget_title: Livechat
+  chatwidget_title: Live Chat
   feedbackwidget_title: Feedbackwidget
   errors_in_your_address: "Er zijn fouten gevonden in uw adres:"
   set_priority_as: "Prioriteit instellen als"
@@ -4208,7 +4206,7 @@ nl:
   is_expiring_today: "vervalt vandaag"
   feedbackwidget_help_para1: "Met de feedbackwidget kunt u ticketformulieren rechtstreeks in uw website of product invoegen. U kunt het uiterlijk en de plaatsing van de widget op uw website aanpassen. Als u dit hebt gedaan en de feedbackwidget wilt gaan gebruiken, kopieert u de gegenereerde invoegcode en plakt u deze in uw website of app."
   chatwidget_help_content:
-    title: Livechat
+    title: Live Chat
     info1: "Met de geïntegreerde oplossing voor livechats kunt u in Freshdesk de gebruikers op uw website, in de onlinesoftware of in uw ondersteuningsportaal bekijken en met ze chatten. U kunt het volledige chatvenster aanpassen (waaronder de standaardteksten, de standaardkleuren, enzovoort) en zelfs proactief chatsessies starten wanneer bezoekers meer tijd op uw site doorbrengen."
     info2: "Voor elke chatsessie worden metagegevens over bezoekers vastgelegd, bijvoorbeeld over de locatie, het apparaat, enzovoort, en wordt de ondersteuningsgeschiedenis met u vastgelegd. Nadat u een chatsessie hebt beëindigd, kunt u het gesprek omzetten in een ticket en de bezoeker via e-mail opvolgen of het chattranscript archiveren."
     info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Meer informatie over het gebruik van livechat in Freshdesk</a>"
@@ -5171,7 +5169,7 @@ nl:
       phone: Telefoon
       global_view: "Algemene weergave"
       my_view: "Mijn weergave"
-      live_chat: Livechat
+      live_chat: Live Chat
       in_conversation: "In gesprek"
       returning_visitors: "Terugkerende bezoekers"
       visitors: Bezoekers
@@ -5209,7 +5207,7 @@ nl:
         no_queue_calls: "Geen gesprekken in wachtrij"
         no_active_calls: "Geen gesprekken in behandeling"
       livechat:
-        chat: Livechat
+        chat: Live Chat
         accepting: Aannemen
         not_accepting: "Niet aannemen"
         offline: Offline
@@ -6040,36 +6038,6 @@ nl:
         es: Spaans
         sv: Zweeds
         tr: Turks
-    screenr:
-      button_label: "Screencast opnemen"
-      label: Screenr
-      desc: "U kunt screencasts vastleggen met Screenr en deze toevoegen aan tickets, forums en oplossingsartikelen."
-      helptext: "<h4>Integratie met Freshdesk Screenr</h4><p><br/>Als u Screenr integreert, kunnen medewerkers en klanten tijdens het gebruik van Freshdesk screencasts vastleggen en delen. U kunt Screenr gebruiken om foutrapporten of instructievideo's rechtstreeks aan uw tickets, forumberichten en oplossingsartikelen te koppelen.</p><p>Zodra Screenr is ingeschakeld, wordt naast uw feedbackwidget, discussies en kennisbank een opnameknop weergegeven. U kunt het volledige browservenster of een bepaald gedeelte van het venster opnemen. De screencast wordt automatisch ingevoegd als de sessie is voltooid.</p><p>U kunt deze integratie instellen door uw Screener-URL (bijvoorbeeld <a>http://uwnaam.viewcasts.com</a>) en uw recorder-id (wordt weergegeven wanneer u zich bij uw account aanmeldt) in te voeren.</p>"
-      form:
-        recorder_id: Recorder-id
-        recorder_id_info: "Het recorder-id is het unieke id dat op de pagina voor het bewerken van recorders wordt weergeven."
-        site_address_info: ""
-        site_address: Screenr-subdomein
-        widget_title: Widgettitel
-        visible_agent_forum: "Forumschermopname voor medewerkers"
-        visible_agent_forum_info: "Inschakelen om Screenr-recorder beschikbaar te maken in forums voor medewerkers"
-        visible_agent_ticket: "Opname ticketscherm medewerker"
-        visible_agent_ticket_info: "Inschakelen om Screenr-recorder beschikbaar te maken in tickets voor medewerkers"
-        visible_solution: "Opname oplossingsscherm"
-        visible_solution_info: "Inschakelen om Screenr-recorder beschikbaar te maken in oplossingen"
-        visible_portal_ticket: "Opname portaalticketscherm"
-        visible_portal_ticket_info: "Inschakelen om Screenr-recorder beschikbaar te maken in portaalticketformulier"
-        visible_portal_forum: "Opname forumticketscherm voor portaal"
-        visible_portal_forum_info: "Inschakelen om Screenr-recorder beschikbaar te maken in portaalforum"
-        visible_widget: "Opname widgetscherm"
-        visible_widget_info: "Inschakelen om Screenr-recorder beschikbaar te maken in feedbackwidget"
-      settings:
-        enable_screenr_recording: "Screenr-opname inschakelen"
-        ticket_interaction: "Ticketpagina (nieuw, bewerken en beantwoorden)"
-        forum_interaction: "Forumpagina (nieuw, bewerken en opmerking toevoegen)"
-        create_solution: "Oplossing (nieuw, bewerken)"
-        for_agents: "Voor medewerkers"
-        for_customer: "Voor klanten"
     ilos:
       label: "Ilos videos"
       desc: "Screencasts opnemen en delen voor tickets, forums en oplossingsartikelen."
@@ -6884,8 +6852,8 @@ nl:
         filter_by: Tevredenheidsweergaven
         view_report_date: "Rapporten weergeven gedurende"
         helptext: "<b>Klanttevredenheidsrapporten</b><p>Met een klanttevredenheidsrapport kunt u een momentopname maken van de kwaliteit van dienstverlening van uw klantondersteuningsmedewerkers.<br>Het rapport helpt u inzicht te krijgen in het tevredenheidsquotiënt van uw klanten, dat voor alle ondersteuningsmedewerkers wordt weergegeven als percentagewaarde (tevreden, neutraal en ontevreden).<br><br><b>Wat u nog meer kunt doen</b><br><p><ol class='ml15'><li>De rapportresultaten filteren op medewerker, groep of bedrijf</li><li>Rapporten voor een bepaalde tijdsperiode bekijken</li></ol></p></p>"
-    freshchat:
-      report_title: Livechatoverzicht
+    livechat:
+      report_title: Live Chatoverzicht
       filter_by_title: "Gefilterd op"
       time_period: Tijdsperiode
       widget: Widget
@@ -8171,7 +8139,7 @@ nl:
         additional_info: "Als het telefoonkanaal is ingeschakeld voor uw account, kunt u nummers aanschaffen en gesprekken starten en aannemen."
         button_text: "Aanvraag voor telefoon"
         video_title: "Bekijk de video voor meer informatie over de mogelijkheden van het telefoonkanaal,"
-  freshchat:
+  livechat:
     feature_request:
       title: "Welkom bij livechat"
       heading: "Ondersteun uw klanten met livechat"
@@ -8180,12 +8148,12 @@ nl:
       info3: "Houd alle chattranscipties bij en zet deze om in tickets"
       read_more: "Meer lezen"
       email_subject: "Aanvraag voor livechatfunctie van %{account_name}"
-      email_message: "Livechatfunctie nodig"
+      email_message: "Live Chatfunctie nodig"
       success_message: "Bedankt voor uw interesse in livechat. We nemen snel contact met u op."
       error_message: "Uw aanvraag kan momenteel niet worden gemaakt. Probeer het later opnieuw."
       additional_note: "Een livechataanvraag neemt twee werkdagen in beslag."
-      button_label: Livechataanvraag
-    title: Livechat
+      button_label: Live Chataanvraag
+    title: Live Chat
     widget: Widget
     messages: Berichten
     set_default_msgs: Standaardberichten
@@ -8248,7 +8216,7 @@ nl:
     bottom_left: Linksonder
     bottom_right: Rechtsonder
     integrate_msg: "Kopieer deze code en plak de code vóór de laatste </body> -tag op uw website of app."
-    integrate_freshchat_title: "Livechat integreren in uw website en toepassingen"
+    integrate_livechat_title: "Live Chat integreren in uw website en toepassingen"
     custom_chat_window: Chatvenster
     text_placeholder: "Uw bericht"
     chatbox_bgcolor: Vensterkleur
@@ -8390,8 +8358,8 @@ nl:
     preferences: Voorkeuren
     intro_title: "Waarom livechat?"
     intro: "Met de geïntegreerde oplossing voor livechats in Freshdesk kunt u gebruikers vanuit Freshdesk op uw website, in de onlinesoftware of in het ondersteuningsportaal bekijken en ermee chatten. U kunt ook proactief een chatsessie met websitebezoekers starten. Als u een chatsessie hebt afgerond, kunt u het gesprek omzetten in een ticket en de bezoeker opvolgen via e-mail, of het chattranscript archiveren."
-    enable_chat: "Livechat inschakelen"
-    learn_freshchat: "Meer informatie over livechat"
+    enable_chat: "Live Chat inschakelen"
+    learn_livechat: "Meer informatie over livechat"
     support_portal: "Chatten in ondersteuningsportaal"
     logged_in_users: "Alleen aangemelde gebruikers"
     everyone: Iedereen

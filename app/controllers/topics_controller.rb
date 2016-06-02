@@ -60,7 +60,7 @@ class TopicsController < ApplicationController
 			assign_protected
 			@post       = @topic.posts.build(post_param)
 			@post.topic = @topic
-			if privilege?(:view_admin)
+			if privilege?(:admin_tasks)
 				@post.user = (topic_param[:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
 			end
 			@post.user  ||= current_user
@@ -196,17 +196,17 @@ class TopicsController < ApplicationController
 
 		def assign_protected
 			if @topic.new_record?
-				if privilege?(:view_admin)
+				if privilege?(:admin_tasks)
 					@topic.user = (topic_param[:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
 				end
 				@topic.user ||= current_user
 			end
 			@topic.account_id = current_account.id
 			# admins and moderators can sticky and lock topics
-			return unless privilege?(:view_admin) or current_user.moderator_of?(@topic.forum)
+			return unless privilege?(:admin_tasks) or current_user.moderator_of?(@topic.forum)
 			@topic.sticky, @topic.locked = params[:topic][:sticky], params[:topic][:locked]
 			# only admins can move
-			return unless privilege?(:view_admin)
+			return unless privilege?(:admin_tasks)
 			@topic.forum_id = params[:topic][:forum_id] if params[:topic][:forum_id]
 		end
 

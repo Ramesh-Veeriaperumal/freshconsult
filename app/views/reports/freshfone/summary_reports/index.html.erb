@@ -39,10 +39,15 @@
         <% if current_account.subscription.non_sprout_plan? %>
           <%= render :partial => "reports/shared/save_report_controls"%>
         <% end %>
+        <button class="generate-pdf-button" id="export_pdf" name="button" onclick="this.blur();">
+          <%= t('helpdesk_reports.export.email_report_pdf') %>
+        </button>
+
       </div>
       <div class="reports-filter span12" id="report-filter-details">
         <div class="span1 edit-filter report-filter-slide-btn">
-            <a class="btn btn-primary reports-metrics" href="#report-filter-edit" data-parent="#report-page" id="sliding">Edit</a>
+            <a class="btn btn-primary reports-metrics" href="#report-filter-edit" data-parent="#report-page" id="sliding">
+              <%= t('helpdesk_reports.edit_filter')%></a>
         </div>
         <div class="span11 filter-type filter-container" id="filter_container">
           <%= render :partial => 'filter_header' %>
@@ -93,9 +98,39 @@
                     menu.addClass('hide');
                 }
           });
+
+    jQuery('#report-page').on('click.helpdesk_reports', function () {
+            var menu = jQuery('#reports_type_menu');
+            if (menu.is(':visible')) {
+                menu.addClass('hide');
+            }
+    });
   });
   
   var Helpkit = Helpkit || {};
   Helpkit.report_filter_data = <%= @report_filter_data.to_json.html_safe %>;
   Helpkit.report_type = "phone_summary"
+  jQuery("#export_pdf").on('click.helpdesk_reports',function(){
+    var params = getPdfParams();
+    jQuery.ajax({
+            url: "<%=export_pdf_reports_freshfone_summary_reports_url%>",
+            type: "POST",
+            contentType: 'application/json',
+            data: Browser.stringify(params),
+            success: function(){ 
+                 var msg = "<%= t('adv_reports.report_export_success') %>";
+                 var text = "<span id='email-reports-msg'>"+msg+"</span>";
+                 showResponseMessage(text);
+              }
+        });
+  });
+  Helpkit._token = "<%= form_authenticity_token %>";
+  Helpkit.enable_schedule_report = <%= enable_schedule_report? %>;
+  current_user = {
+    mail : '<%= current_user.email %>',
+    id : '<%= current_user.id %>',
+    time_zone : '<%= @user_time_zone_abbr %>',
+    name : '<%= current_user.name %>'
+  }
+  day_names = <%=t('date.day_names').to_json.html_safe%>;
 <%end%>

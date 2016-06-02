@@ -1,26 +1,6 @@
 module Helpdesk
   module Roles
-    
-    def default_roles_list
-    [  
-      [ "Account Administrator",
-        ACCOUNT_ADMINISTRATOR,
-        "Has complete control over the help desk including access to Account or Billing related information, and receives Invoices."],
-      
-      [ "Administrator",
-        ADMINISTRATOR,
-        "Can configure all features through the Admin tab, but is restricted from viewing Account or Billing related information."],
-      
-      [ "Supervisor",
-        SUPERVISOR,
-        "Can perform all agent related activities and access reports, but cannot access or change configurations in the Admin tab."],
-      
-      [ "Agent",
-        AGENT,
-        "Can log, view, reply, update and resolve tickets and manage contacts."],
-     ]
-    end
-        
+
     ACCOUNT_ADMINISTRATOR = [
       :manage_tickets,
       :reply_ticket,
@@ -48,6 +28,7 @@ module Helpdesk
       :view_reports,
       :view_admin,
       :manage_users,
+      :manage_availability,
       :manage_canned_responses,
       :manage_dispatch_rules,
       :manage_supervisor_rules,
@@ -159,6 +140,7 @@ module Helpdesk
       :view_reports,
       :view_admin,
       :manage_users,
+      :manage_availability,
       :manage_canned_responses,
       :manage_dispatch_rules,
       :manage_supervisor_rules,
@@ -255,6 +237,8 @@ module Helpdesk
       :manage_solutions,
       :view_forums,
       :manage_forums,
+      :view_admin,
+      :manage_availability,
       :create_topic,
       :edit_topic,
       :delete_topic,
@@ -415,5 +399,30 @@ module Helpdesk
       :livechat_accept_chat,
       :livechat_initiat_agent_chat
     ]
+
+    DEFAULT_ROLES_LIST = 
+    [  
+      [ "Account Administrator",
+        ACCOUNT_ADMINISTRATOR,
+        "Has complete control over the help desk including access to Account or Billing related information, and receives Invoices.",
+        :account_administrator],
+      
+      [ "Administrator",
+        ADMINISTRATOR,
+        "Can configure all features through the Admin tab, but is restricted from viewing Account or Billing related information.",
+        :administrator],
+      
+      [ "Supervisor",
+        SUPERVISOR,
+        "Can perform all agent related activities, access reports and see unresolved tickets dashboard.",
+        :supervisor],
+      
+      [ "Agent",
+        AGENT,
+        "Can log, view, reply, update and resolve tickets and manage contacts.",
+        :agent],
+     ]
+
+    DEFAULT_ROLES_PRIVILEGE_BY_KEY = DEFAULT_ROLES_LIST.inject({}) {|hash,r| hash[r[3]] = r[1]; hash }
   end
 end

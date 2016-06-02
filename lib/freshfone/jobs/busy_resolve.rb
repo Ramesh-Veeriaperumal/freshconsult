@@ -9,25 +9,48 @@ class Freshfone::Jobs::BusyResolve
     return unless freshfone_account_active?
     @account = Account.current
     @agent_id = args[:agent_id]
-    Rails.logger.debug "BusyResolve: Checking whether to update 
-      busy state for account #{@account.id} and user #{@agent_id}"
-    remove_busy_statuses if no_active_calls
+    Rails.logger.debug "BusyResolve: Checking whether to update busy state for account #{@account.id} and user #{@agent_id}"
+    remove_busy_statuses if no_live_calls?
   end
 
   private
+
+    def self.no_live_calls?
+      no_active_calls && no_active_supervisor_calls?
+    end
 
     def self.freshfone_account_active?
       Account.current.freshfone_account && Account.current.freshfone_account.active?
     end
 
     def self.no_active_calls
-      return true if in_progress_calls.empty?
+      return true if in_progress_calls.blank?
       get_updated_call_status @calls_in_progress.first
-      in_progress_calls.empty?
+      in_progress_calls.blank?
+    end
+
+    def self.active_supervisor_calls
+      @active_supervisor_calls = @account.supervisor_controls.supervisor_progress_call(@agent_id)
+    end
+
+    def self.no_active_supervisor_calls?
+      return true unless supervisor_feature_launched? && active_supervisor_calls.any?
+      get_updated_supervisor_call_status @active_supervisor_calls.first
+      active_supervisor_calls.blank?
     end
 
     def self.in_progress_calls
       @calls_in_progress = @account.freshfone_calls.agent_progress_calls(@agent_id)
+    end
+
+    def self.supervisor_feature_launched?
+      Account.current.supervisor_feature_launched?
+    end
+
+    def self.get_updated_supervisor_call_status call
+      twilio_call_status = get_twilio_call_status(call.sid, 'supervisor_call')
+      call.update_attributes(supervisor_control_status: twilio_call_status) if
+        twilio_call_status != Freshfone::SupervisorControl::CALL_STATUS_HASH[:'in-progress']
     end
 
     def self.get_updated_call_status call
@@ -36,10 +59,11 @@ class Freshfone::Jobs::BusyResolve
         twilio_call_status == Freshfone::Call::CALL_STATUS_STR_HASH['in-progress']
     end
 
-    def self.get_twilio_call_status(sid)
+    def self.get_twilio_call_status(sid, type = nil)
       begin
         status = @account.freshfone_subaccount.calls.get(sid).status
-        Freshfone::Call::CALL_STATUS_STR_HASH[status]
+        return Freshfone::Call::CALL_STATUS_STR_HASH[status] if type.blank?
+        Freshfone::SupervisorControl::CALL_STATUS_HASH[status.to_sym]
       rescue => e
         Rails.logger.debug "Twilio api request error in BusyResolve
         for account #{@account.id} and user #{@agent_id} => #{e}"

@@ -136,6 +136,16 @@ class Freshfone::Call < ActiveRecord::Base
     }
   }
 
+  scope :ongoing_by_caller, lambda { |caller_id|
+    {
+      :conditions => ["caller_number_id = ? and call_status in (?)", caller_id,
+        [CALL_STATUS_HASH[:'in-progress'], CALL_STATUS_HASH[:'on-hold'],
+        CALL_STATUS_HASH[:connecting], CALL_STATUS_HASH[:default]]], 
+      :order => "freshfone_calls.id DESC",
+      :include => [:freshfone_number]    
+    }
+  }
+
   scope :agent_progress_calls, lambda { |user_id|
     {:conditions => ["user_id = ? and (call_status in (?) and created_at > ? and created_at < ?)",
           user_id, [CALL_STATUS_HASH[:default], CALL_STATUS_HASH[:'in-progress'], CALL_STATUS_HASH[:'on-hold'], CALL_STATUS_HASH[:connecting]], 4.hours.ago.to_s(:db), Time.zone.now.to_s(:db)
@@ -179,6 +189,12 @@ class Freshfone::Call < ActiveRecord::Base
     self.active_call.first
   end
 
+  def self.outgoing_in_progress_calls
+    self.where("call_status in (?) and created_at >= ?", 
+       [CALL_STATUS_HASH[:'in-progress'], CALL_STATUS_HASH[:default]],
+       1.minute.ago.to_s(:db)).order('id DESC').first
+  end
+
   CALL_TYPE_HASH.each_pair do |k, v|
     define_method("#{k}?") do
       call_type == v
@@ -210,6 +226,16 @@ class Freshfone::Call < ActiveRecord::Base
 
   def can_be_connected?
     ringing? or queued?
+  end
+
+  def ongoing?
+    onhold? or inprogress?
+  end
+
+  def can_add_agent?
+    ongoing? &&
+      supervisor_controls.agent_conference_calls(Freshfone::SupervisorControl::CALL_STATUS_HASH[:'in-progress'])
+                         .blank?
   end
 
   def recording_deleted_by
@@ -308,14 +334,14 @@ class Freshfone::Call < ActiveRecord::Base
   
   def initialize_ticket(params)
     self.params = params
-    self.customer_id = params[:custom_requester_id] if customer_id.blank?
+    self.customer_id = load_requester(params)
     self.notable.attributes = {
       :account_id => account_id,
       :ticket_body_attributes => { :description_html => description_html(true) },
       :email => params[:requester_email],
       :name => requester_name,
-      :phone => params[:phone_number].present? ? params[:phone_number] : caller_number,
-      :requester_id => params[:custom_requester_id] || customer_id,
+      :phone => get_phone_number(params[:phone_number]),
+      :requester_id => customer_id,
       :responder => params[:agent],
       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
       :subject => ticket_subject,
@@ -323,6 +349,28 @@ class Freshfone::Call < ActiveRecord::Base
     }
     self.notable.build_ticket_and_sanitize
     self
+  end
+
+  def load_requester(params)
+    return params[:custom_requester_id] if params[:custom_requester_id].present?
+    return customer_id if params[:voicemail]
+    
+    email = params[:requester_email]
+    requester = account.users.new
+    requester.signup!({
+      user: { 
+        name: requester_name, 
+        email: email, 
+        phone: get_phone_number(params[:phone_number]),
+        active: email.blank?} 
+      }, nil, email.present?)
+    
+    requester.present? ? requester.id : "" # returning id if created successfully, otherwise passing empty string, so that appropriate requester will be loaded in ticket callbacks 
+  end
+
+  def get_phone_number(number)
+    return number if number.present?
+    caller_number
   end
   
   def initialize_notes(params)
