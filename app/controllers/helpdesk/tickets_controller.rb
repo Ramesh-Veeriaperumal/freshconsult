@@ -693,7 +693,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def create
-    if !params[:topic_id].blank?
+    if (!params[:topic_id].blank? && find_topic) && (@topic.ticket.nil? || (@topic.ticket.present? && @topic.ticket.deleted))
       @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
