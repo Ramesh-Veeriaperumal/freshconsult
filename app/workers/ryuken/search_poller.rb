@@ -22,7 +22,7 @@ class Ryuken::SearchPoller
         Search::V2::Operations::DocumentAdd.new(search_payload).perform
       end
       sqs_msg.delete
-    rescue => e
+    rescue Exception => e
       Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
       NewRelic::Agent.notice_error(e, { arguments: args })
       raise e

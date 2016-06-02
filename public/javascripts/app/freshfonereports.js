@@ -196,9 +196,6 @@ window.App.Freshfone = window.App.Freshfone || {};
           _this.discardChanges();
         });
         jQuery(document).on("apply.report",function(ev,data) {
-          setTimeout(function(){
-            jQuery('[data-action="pop-report-type-menu"]').trigger('click');
-          },0);
           _this.applySavedReport(data.index);
         });
         jQuery(document).on("presetRangesSelected", function(event,data) {
