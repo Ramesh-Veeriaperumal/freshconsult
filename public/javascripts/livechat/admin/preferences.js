@@ -89,7 +89,7 @@ window.liveChat.preferenceSettings = function($){
 			var self = this;
 			var _widget = window.liveChat.adminSettings.currentWidget;
 			var business_calendar_id = "";
-			_widget.offline_chat.show = $("#chat_anytime").is(":checked");
+			_widget.offline_chat.show  = $("#chat_agents_online").is(":checked") ? 2 : $("#chat_anytime").is(":checked") ? 1 : 0;
 
 			if($("#chat_business_hours").is(":checked")){
 				if($("#business_calendar_id").length > 0){
