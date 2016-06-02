@@ -47,7 +47,7 @@ module Solution::ControllerMethods
 	end
 
 	def set_modal
-		@modal = true if request.xhr?
+		@modal = true if request.xhr? && request.headers['X-PJAX'].nil?
 	end
 
 	def post_response(meta, object)

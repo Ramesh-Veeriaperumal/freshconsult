@@ -4397,6 +4397,12 @@ en:
     info25: "Draft articles will be visible only to agents."
     info26: "<b>My Drafts</b> lists all articles which you last edited and saved as a draft."
     info27: "<b>All Drafts</b> lists all the articles in draft status. If you have multiple portals set up, you can filter draft articles from any specific portal by selecting the option in the dropdown list."
+    info28: "A knowledge base portal serves as a one stop shop for your customers to find answers to their questions instantly. It can help you deflect common questions by providing a way for customers to help themselves."
+    info29: "The Freshdesk Knowledge Base has a 3 level hierarchy: <b>Category --> Folder --> Article </b>"
+    info30: "If you use multiple products, the categories you create can be made visible in their respective product portals."
+    info31: "You can chose to make your folders visible to different groups of people (<b>All, Logged in users, Agents & Selected companies</b>)."
+    kb: "Knowledge Base"
+    tour_v2: "Help me set up my knowledge base"
     kbase_email_msg: "All emails sent by agents to <b>%{email}</b> will be stored as a draft here."
     folder: Folder
     solution_meta: Meta tags for search engines

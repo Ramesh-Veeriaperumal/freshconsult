@@ -89,7 +89,11 @@ module SolutionHelper
 					if privilege?(:publish_solution)
 						btn_dropdown_menu(article, [category, folder], opts)
 					else
-						btn_dropdown_menu(folder, [category], opts)
+						opts = { 
+							"data-modal-title" => "#{t("solution.add_folder")}#{language_label}", 
+							"data-target" => "#new-fold"
+						}
+						btn_dropdown_menu(folder, [category], opts.merge(default_new_btn_opts))
 					end
 			end
 		elsif privilege?(:publish_solution)
