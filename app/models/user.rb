@@ -187,7 +187,10 @@ class User < ActiveRecord::Base
             true, (Time.zone.now+5.days).to_s(:db), true, (Time.zone.now+5.days).to_s(:db) ]
       end
       
-      conditions[0] = "#{conditions[0]} and name like '#{letter}%' " unless letter.blank?
+      unless letter.blank?
+        conditions[0] = "#{conditions[0]} and name like ? "
+        conditions.push("#{letter}%")
+      end
       conditions
     end
 
