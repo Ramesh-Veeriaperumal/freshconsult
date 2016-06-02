@@ -250,6 +250,11 @@ class Solution::Article < ActiveRecord::Base
   def to_liquid
     @solution_article_drop ||= Solution::ArticleVersionDrop.new self
   end
+  
+  def folder_id
+    # To make Gamification work
+    @folder_id ||= solution_article_meta.solution_folder_meta_id
+  end
 
   private
 
