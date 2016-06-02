@@ -51,7 +51,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   
   has_many :public_notes,
     :class_name => 'Helpdesk::ArchiveNote',
-    :conditions => { :private =>  false }
+    :conditions => { :private =>  false, :deleted => false  }
   
   has_flexiblefields :class_name => 'Flexifield', :as => :flexifield_set
   has_many_attachments
