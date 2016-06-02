@@ -3,6 +3,6 @@ class Tickets::Export::PremiumTicketsExport
 	sidekiq_options :queue => :premium_ticket_export, :retry => 0, :backtrace => true, :failures => :exhausted
 
 	def perform(export_params)
-		Helpdesk::TicketsExportWorker.new(export_params).perform
+		Export::Ticket.new(export_params).perform
 	end
 end

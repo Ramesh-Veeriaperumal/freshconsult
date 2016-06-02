@@ -239,7 +239,7 @@ module Helpdesk::TicketsHelper
 
   def bind_last_conv(item, signature, forward = false, quoted = true)    
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-    default_reply = (signature.blank?)? "<p/><br/>": "<p/><p><br></br></p><p></p><p></p>
+    default_reply = (signature.blank?)? "<p/><p/><br/>": "<p/><p><br></br></p><p></p><p></p>
 <div>#{signature}</div>"
     quoted_text = ""
 

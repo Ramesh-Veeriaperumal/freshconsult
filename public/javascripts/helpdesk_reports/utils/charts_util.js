@@ -246,6 +246,11 @@ helpdeskReports.prototype = {
         }
         return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%' +I18n.t('helpdesk_reports.chart_title.tickets')+'</p></div>';
     },
+    countTooltip : function(){
+        if(this.y && this.y > 9999) {
+           return '<div class="tooltip"><p style="margin:0;color:#63b3f5;">'+ this.y + ' tickets </p></div>';
+        }
+    },
     barChartTooltip: function(){
         var value = this.points[1].y;
         if (value == 0 ) return false;
@@ -653,7 +658,22 @@ miniLineChart.prototype.miniLineChartGraph = function () {
 }
 
 
-function barChart(opts) {
+function barChart(opts) { 
+
+    if(opts['enableTooltip'] == true && opts['countTooltip']) {
+        formatter = this.countTooltip;
+    } else {
+        if(opts['sharedTooltip'] == true) {
+            if(opts['performanceDistTooltip']) {
+                formatter = this.performanceDistributionBarChartTooltip
+            } else {
+                formatter = this.barChartTooltip;
+            }
+        } else {
+            formatter = this.barChartSLATooltip;
+        }
+    }
+
     helpdeskReports.call(this, {
         chart: {
             renderTo: opts['renderTo'],
@@ -735,7 +755,8 @@ function barChart(opts) {
         tooltip: {
             useHTML: true,
             shared: opts['sharedTooltip'],
-            formatter: opts['sharedTooltip'] == true ? ( opts['performanceDistTooltip'] ? this.performanceDistributionBarChartTooltip : this.barChartTooltip) : this.barChartSLATooltip,
+            formatter: formatter,
+            //opts['sharedTooltip'] == true ? ( opts['performanceDistTooltip'] ? this.performanceDistributionBarChartTooltip : this.barChartTooltip) : this.barChartSLATooltip,
             followPointer: true,
             enabled: opts['enableTooltip'] == true ? true : false,
             backgroundColor: REPORT_COLORS['tooltip_bg'],

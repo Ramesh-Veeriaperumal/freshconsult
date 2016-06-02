@@ -459,7 +459,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def time_tracked
-    time_sheets.sum(&:running_time)
+    time_sheets.map(&:running_time).sum
   end
 
   def billable_hours
@@ -572,8 +572,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticket_survey_results
-     recent_survey = survey_results.last(:order => "id")
-     recent_survey.text if recent_survey
+     survey_results.sort_by(&:id).last.try(:text)
   end
   
   def subject_or_description

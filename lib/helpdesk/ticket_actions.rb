@@ -97,7 +97,7 @@ module Helpdesk::TicketActions
       remove_tickets_redis_key(export_redis_key)
       create_ticket_export_fields_list(params[:export_fields].keys)
       params[:portal_url] = main_portal? ? current_account.host : current_portal.portal_url
-      Helpdesk::TicketsExportWorker.enqueue(params)
+      Export::Ticket.enqueue(params)
       flash[:notice] = t("export_data.ticket_export.info")
       redirect_to helpdesk_tickets_path
     # else

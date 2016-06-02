@@ -1,4 +1,4 @@
-class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
+class Export::Ticket < Struct.new(:export_params)
   include Helpdesk::Ticketfields::TicketStatus
   include ExportCsvUtil
   include Rails.application.routes.url_helpers
@@ -6,30 +6,6 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   include Redis::RedisKeys
   
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
-  
-  # Temporary workaround for '.' in values
-  # Need to check and remove with better fix after Rails 3 migration
-  PRELOAD_ASSOCIATIONS = [
-                          { :flexifield => { 
-                                              :flexifield_def => :flexifield_def_entries 
-                                            }},
-                          # { :requester => :user_emails },
-                          # { :responder => :user_emails },
-                          { :schema_less_ticket => :product }, 
-                          :tags,
-                          :ticket_old_body,
-                          :ticket_states,
-                          :ticket_status,
-                          :time_sheets
-                        ]
-
-  PRELOAD_ARCHIVE_TICKET_ASSOCIATIONS = [
-                          { :flexifield => { :flexifield_def => :flexifield_def_entries }},
-                          # { :requester => :user_emails },
-                          # { :responder => :user_emails },
-                          :ticket_status,
-                          :time_sheets
-                        ]
 
   def perform
     begin
@@ -76,6 +52,7 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     export_params.symbolize_keys!
     file_formats = ['csv', 'xls']
     export_params[:format] = file_formats[0] unless file_formats.include? export_params[:format]
+    delete_invisible_fields
   end
 
   def set_current_user
@@ -92,11 +69,10 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
 
   def csv_export
     csv_hash = export_params[:export_fields]
-    record_headers = delete_invisible_fields
     csv_string = CSVBridge.generate do |csv|
-      csv_headers = record_headers.collect {|header| csv_hash[header]}
+      csv_headers = @headers.collect {|header| csv_hash[header]}
       csv << csv_headers
-      ticket_data(csv,record_headers)
+      ticket_data(csv)
     end
     csv_string 
   end
@@ -104,27 +80,25 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   def xls_export
     require 'erb'
     @xls_hash = export_params[:export_fields]
-    @headers = delete_invisible_fields 
-    @records = ticket_data(@headers)
+    ticket_data
     path =  "#{Rails.root}/app/views/support/tickets/export_csv.xls.erb"
     ERB.new(File.read(path)).result(binding)
   end
 
-  def ticket_data(records=[],headers)
+  def ticket_data(records=[])
     @no_tickets = true
     # Initializing for CSV with Record headers.
     @records = records
 
     if export_params[:archived_tickets]
       Account.current.archive_tickets.permissible(User.current).find_in_batches(archive_export_query) do |items|
-        add_to_records(headers, items)  
+        add_to_records(items)  
       end
     else
       Account.current.tickets.permissible(User.current).find_in_batches(export_query) do |items|
-        add_to_records(headers, items)  
+        add_to_records(items)  
       end
     end
-    @records
   end
 
   def export_query
@@ -135,30 +109,21 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     }
   end
 
-  def add_to_records(headers, items)
+  def add_to_records(items)
     @no_tickets = false
-    @records ||= []
-    custom_field_names = Account.current.ticket_fields.custom_fields.map(&:name)
+    @custom_field_names = Account.current.ticket_fields.custom_fields.pluck(:name)
     date_format = Account.current.date_type(:short_day_separated)
-
-    # Temporary workaround for '.' in values
-    # Need to check and remove with better fix after Rails 3 migration
-
-    if export_params[:archived_tickets]
-      ActiveRecord::Associations::Preloader.new(items, PRELOAD_ARCHIVE_TICKET_ASSOCIATIONS).run
-    else
-      ActiveRecord::Associations::Preloader.new(items, PRELOAD_ASSOCIATIONS).run
-    end
+    ActiveRecord::Associations::Preloader.new(items, preload_associations).run
 
     items.each do |item|
       record = []
-      headers.each do |val|
+      @headers.each do |val|
         begin
           data = export_params[:archived_tickets] ? fetch_field_value(item, val) : item.send(val)
           if data.present?
             if DATE_TIME_PARSE.include?(val.to_sym)
               data = parse_date(data)
-            elsif custom_field_names.include?(val) && data.is_a?(Time)
+            elsif @custom_field_names.include?(val) && data.is_a?(Time)
               data = data.utc.strftime(date_format)
             end
           end
@@ -170,6 +135,20 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
       end
       @records << record
     end
+  end
+
+  def preload_associations
+    associations = []
+    @headers.each do |val|
+      if val.eql?("product_name")
+        associations << { :schema_less_ticket => :product }
+      elsif @custom_field_names.include?(val)
+        associations << { :flexifield => { :flexifield_def => :flexifield_def_entries } }
+      elsif Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
+        associations << Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
+      end
+    end
+    associations.uniq
   end
 
   def fetch_field_value(item, field)
@@ -190,11 +169,10 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   end
 
   def delete_invisible_fields
-    headers = export_params[:export_fields].keys
-    headers.delete_if{|header_key|
+    @headers = export_params[:export_fields].keys
+    @headers.delete_if{|header_key|
       !allowed_fields.include?(header_key)
     }
-    headers
   end
 
   def parse_date(date_time)
