@@ -7095,6 +7095,23 @@ en:
         login: "Login"
         email: "Email"
         password: "Password"
+    freshsales:
+      label: "Freshsales"
+      helptext: "<h4>Freshsales Integration Help</h4><p><br/> Once you enable this integration, your agents can access Freshsales contact information right inside the Freshdesk ticket & contact pages. <br /><br /> Please note that your agents can only view those fields that are configured by you in the settings page and the search function is based on the email address mapping."
+      desc: "You can view contact information from Freshsales in Freshdesk."
+      form:
+        freshsales_settings: "Freshsales Settings"
+        domain: "Account Domain"
+        auth_token: "Authentication Token"
+        domain_info: "Enter your freshsales domain without https. Ex: example.freshsales.com"
+        auth_token_info: "Enter your authentication token"
+        error: "Please verify your settings and try again"
+        select: "Select an option"
+        contact: "Contact Fields"
+        lead: "Lead Fields"
+        account: "Account Fields"
+        deal: "Deal Fields"
+        deal_settings: "Agents can create/link or unlink deals from the ticket"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."

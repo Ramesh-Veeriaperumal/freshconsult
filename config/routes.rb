@@ -919,6 +919,14 @@ Helpkit::Application.routes.draw do
       get :install
     end
 
+    namespace :freshsales do
+      get :new
+      post :settings_update
+      post :install
+      get :edit
+      put :update
+    end
+    
     resources :marketplace_apps, :only => [:edit] do
       member do
         post :install

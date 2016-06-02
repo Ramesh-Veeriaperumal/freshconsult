@@ -487,6 +487,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/marketplace/quickbooks_sso", :only => [:landing]
     resource :"integrations/marketplace/shopify", :only => [:landing]
     resource :"integrations/salesforce"
+    resource :"integrations/freshsale"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
     resource :"admin/integrations/freshplug"
     resource :"admin/marketplace/extension"

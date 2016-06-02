@@ -725,7 +725,7 @@ SalesforceWidget.prototype= {
   bindParagraphReadMoreEvents:function(){
     var i = 1;
     jQuery(".para-less").each(function(){
-      if(jQuery(this).actual('height') > 42){ // This event uses jquery.actual.min.js plugin to find the height of hidden element
+      if(jQuery(this).actual('height') > 48){ // This event uses jquery.actual.min.js plugin to find the height of hidden element
         jQuery(this).addClass('para-min-lines');
         jQuery(this).attr('tabIndex',i);
         jQuery(this).next(".toggle-para").addClass('active-para').removeClass('hide');
