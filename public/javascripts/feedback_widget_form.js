@@ -48,7 +48,11 @@
 
 		$.urlParam = function(name){
 			var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-			return results[1] || 0;
+			if(results != null && results.length == 2){
+				return results[1];	
+			} else{
+				return 0;
+			}
 		};
 
  		jQuery("#fd_feedback_widget").validate({
