@@ -16,10 +16,14 @@ class AccountsController < ApplicationController
     :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
-  skip_before_filter :check_day_pass_usage, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
-  skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
-  skip_before_filter :ensure_proper_protocol, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
-  skip_before_filter :determine_pod, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
+  skip_before_filter :check_day_pass_usage, 
+    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages]
+  skip_filter :select_shard, 
+    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
+  skip_before_filter :ensure_proper_protocol, 
+    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
+  skip_before_filter :determine_pod, 
+    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
 
   around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages]
 
@@ -27,7 +31,7 @@ class AccountsController < ApplicationController
   before_filter :build_metrics, :only => [ :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
   before_filter :build_plan, :only => [:new, :create]
-  before_filter :admin_selected_tab, :only => [:show, :edit, :cancel ]
+  before_filter :admin_selected_tab, :only => [:show, :edit, :cancel, :manage_languages  ]
   before_filter :validate_custom_domain_feature, :only => [:update]
   before_filter :build_signup_param, :only => [:new_signup_free]
   before_filter :build_signup_contact, :only => [:new_signup_free]
