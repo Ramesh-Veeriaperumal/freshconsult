@@ -8828,6 +8828,7 @@ en:
     business_hours: "During business hours"
     anytime: "Always (24/7)"
     business_calendar: "Select business hour"
+    show_widget: "When agents are online and accepting chats"
     texton: "On"
     textoff: "Off"
     form_details: "Form details"

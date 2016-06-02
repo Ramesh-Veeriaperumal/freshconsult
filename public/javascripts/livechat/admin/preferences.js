@@ -33,7 +33,11 @@ window.liveChat.preferenceSettings = function($){
 
 			// business calendar
 			if(business_calendar == null || business_calendar == "null" || business_calendar == 0){ // Set 24x7
-				$("#chat_anytime").prop('checked', true);
+				if(offline_settings == "1"){
+					$("#chat_anytime").prop('checked', true);
+				}else{
+					$("#chat_agents_online").prop('checked',true);
+				}
 				$("#chat_business_options").hide();
 			}else{
 				$("#chat_business_hours").prop('checked', true);
@@ -83,17 +87,20 @@ window.liveChat.preferenceSettings = function($){
 
 		preferencesSave: function (){
 			var self = this;
-      		var _widget = window.liveChat.adminSettings.currentWidget;
+			var _widget = window.liveChat.adminSettings.currentWidget;
+			var business_calendar_id = "";
+			_widget.offline_chat.show = $("#chat_anytime").is(":checked");
 
-			var show_chat_hours = $("input[name='show_chat_hours']:checked").val();
-			_widget.offline_chat.show = show_chat_hours != 0 ? 0 : 1;
-
-			if(show_chat_hours != 0 && $("#business_calendar_id").length > 0){
-				show_chat_hours = $("#business_calendar_id").val();
+			if($("#chat_business_hours").is(":checked")){
+				if($("#business_calendar_id").length > 0){
+				 	business_calendar_id = $("#business_calendar_id").val();
+				}else{
+					business_calendar_id = $("#chat_business_hours").val();
+				}
 			}
 
 			var data = { routing: {} };
-			data.business_calendar_id = show_chat_hours;
+			data.business_calendar_id = business_calendar_id;
 			data.show_on_portal = $("#show_on_portal").is(":checked") ? 1 : 0;
 			data.portal_login_required = $("#portal_login_required").is(":checked") ? 1 : 0;
 			data.product_id = _widget.product_id;
@@ -271,11 +278,10 @@ window.liveChat.preferenceSettings = function($){
 			});
 
 			$("input[name='show_chat_hours']").on('click', function(){
-				var value = $("input[name='show_chat_hours']:checked").val();
-				if(value == 0){
-					$("#chat_business_options").hide();
-				}else{
+				if($("#chat_business_hours").is(":checked")){
 					$("#chat_business_options").show();
+				}else{
+					$("#chat_business_options").hide();
 				}
 			});
 	  }
