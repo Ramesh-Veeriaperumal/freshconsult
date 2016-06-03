@@ -11,19 +11,6 @@ module EmailHelper
   REQUEST_TIMEOUT = 25
   SENDGRID_RETRY_TIME = 4.hours
 
-  #Third element represents reply_cc override. For any new message id, provide true to override the reply_cc
-  MESSAGE_SOURCE_IDENTIFIERS = [
-    [:automation,    "automation.freshdesk.com",     false],
-    [:notification,  "notification.freshdesk.com",   false],
-    [:outbound,      "outbound-email.freshdesk.com", true ],
-    [:forward,       "forward.freshdesk.com",        true ],
-    [:default,       "email.freshdesk.com",          true ]
-  ]
-
-  MESSAGE_IDS_BY_KEY = Hash[*MESSAGE_SOURCE_IDENTIFIERS.map { |i| [i[0], i[1]] }.flatten]
-
-  AUTOMATED_EMAIL_MESSAGE_IDS = MESSAGE_SOURCE_IDENTIFIERS.reject{|message_id| message_id[2]}
-
   def verify_inline_attachments(item, content_id)
     content = "\"cid:#{content_id}\""
     if item.is_a? Helpdesk::Ticket
