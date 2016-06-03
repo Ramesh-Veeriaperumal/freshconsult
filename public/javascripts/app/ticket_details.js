@@ -861,17 +861,17 @@ var scrollToError = function(){
 					return false;
 				}
 			}
-			if (_form.find('input[name="helpdesk_note[to_emails][]"]').length > MAX_EMAILS) {
+			if (_form.find('input[name="helpdesk_note[to_emails][]"]').length >= MAX_EMAILS) {
 				alert('You can add upto ' + MAX_EMAILS + ' TO emails');
 				return false;
 			}
 
-			if (_form.find('input[name="helpdesk_note[cc_emails][]"]').length > MAX_EMAILS) {
+			if (_form.find('input[name="helpdesk_note[cc_emails][]"]').length >= MAX_EMAILS) {
 				alert('You can add upto ' + MAX_EMAILS + ' CC emails');
 				return false;
 			}
 
-			if (_form.find('input[name="helpdesk_note[bcc_emails][]"]').length > MAX_EMAILS) {
+			if (_form.find('input[name="helpdesk_note[bcc_emails][]"]').length >= MAX_EMAILS) {
 				alert('You can add upto ' + MAX_EMAILS + ' BCC emails');
 				return false;
 			}
