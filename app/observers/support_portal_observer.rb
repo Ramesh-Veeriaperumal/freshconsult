@@ -4,7 +4,7 @@ class SupportPortalObserver < ActiveRecord::Observer
 	ForumCategory, Forum, Solution::Category, Solution::Folder, Solution::Article, Solution::ArticleBody,
 	Solution::CategoryMeta, Solution::FolderMeta, Solution::ArticleMeta, 
 	Portal::Page, ChatSetting, ChatWidget, BusinessCalendar, PortalSolutionCategory, PortalForumCategory,
-	Subscription
+	Subscription, AccountAdditionalSettings
 
 	include Redis::RedisKeys
 	include Redis::PortalRedis

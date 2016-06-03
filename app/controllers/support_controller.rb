@@ -271,7 +271,10 @@ class SupportController < ApplicationController
     end
 
   def redirect_to_locale
-    redirect_to request.fullpath.prepend("/#{Language.current.code}") if current_account.multilingual? && !facebook? && (params[:url_locale] != Language.current.code)
+    if current_account.multilingual? && !facebook? && (params[:url_locale] != Language.current.code)
+      flash.keep 
+      redirect_to request.fullpath.prepend("/#{Language.current.code}") 
+    end
   end
 
   def override_default_locale
