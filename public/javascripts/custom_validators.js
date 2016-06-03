@@ -387,7 +387,7 @@ $.validator.addClassRules("field_maxlength", { field_maxlength: 255 });
 $.validator.addMethod("two_decimal",function(value, element) {
 
     return (value.trim() == '') ||  /^\d+(\.\d{0,2})?$/i.test(value);
-},"Value cannot have more than 2 decimal digits.");
+},"Value cannot have more than 2 decimal digits");
 $.validator.addClassRules("decimal", { number: true , two_decimal: true});
 
 $.validator.addMethod("require_from_group", function(value, element, options) {
