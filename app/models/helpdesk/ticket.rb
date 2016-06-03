@@ -1059,6 +1059,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.cc_email_will_change! if cc_changed
   end
 
+  def va_rules_after_save_actions
+    @va_rules_after_save_actions ||= []
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?
