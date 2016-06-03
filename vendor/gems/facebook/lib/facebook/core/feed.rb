@@ -3,7 +3,7 @@ module Facebook
     class Feed
       
       include Social::Util   
-      
+      include Facebook::Util
       include Facebook::Constants
       include Facebook::Exception::Handler
       
@@ -130,12 +130,12 @@ module Facebook
       end
       
       def convert_to_ticket?
-        return (post? && self.fan_page.import_visitor_posts) unless social_revamp_enabled?
+        return (!user_blocked?(sender_id) && post? && self.fan_page.import_visitor_posts) unless social_revamp_enabled?
         
         default_stream = self.fan_page.default_stream
         ticket_rule    = default_stream.ticket_rules.first
         
-        ticket_rule.convert_fb_feed_to_ticket?(post?, status?, visitor_comment?, message)
+        !user_blocked?(sender_id) && ticket_rule.convert_fb_feed_to_ticket?(post?, status?, visitor_comment?, message)
       end
       
       #Checks if feed is already present in Dynamo
