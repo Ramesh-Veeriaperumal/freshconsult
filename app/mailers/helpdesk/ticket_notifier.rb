@@ -129,7 +129,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     cc_emails = fetch_valid_emails(cc_emails, {:ignore_emails => ignore_emails}) if ignore_emails.present?
     
     return if cc_emails.to_a.count == 0
-    cc_emails = get_email_array cc_emails.join(",")
+
+    #ignoring support emails
+    cc_emails  = get_email_array cc_emails.join(",")
+    support_emails_in_cc = ticket.account.all_email_configs.pluck(:reply_email)
+    cc_emails = cc_emails - support_emails_in_cc
+
+    return if cc_emails.to_a.count == 0
+
     db_users = ticket.account.users.where(:email => cc_emails)
     db_users_email = db_users.map(&:email).map(&:downcase)
     non_db_user_ccs = cc_emails - db_users_email
