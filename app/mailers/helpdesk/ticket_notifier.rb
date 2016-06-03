@@ -116,6 +116,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def self.send_cc_email(ticket, comment=nil, options={})
+    cc_emails = []
     if comment
       cc_emails = ticket.cc_email[:reply_cc] if (ticket.cc_email.present? && ticket.cc_email[:reply_cc].present?)
       e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
