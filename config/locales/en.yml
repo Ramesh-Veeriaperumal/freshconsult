@@ -240,8 +240,8 @@ en:
   before_two: Before 2 Hours
   before_one: Before 1 Hour
   before_half: Before 30 Minutes
-  add_more_lang: Add supported languages to your helpdesk.
-  support_multi_languge: Supporting customers across more than one language?
+  add_more_lang: Add 'supported languages' to your helpdesk.
+  support_multi_languge: "Supporting customers in multiple languages?"
   many: many
   user:
     company: Company
