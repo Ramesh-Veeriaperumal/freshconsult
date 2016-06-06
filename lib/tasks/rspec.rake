@@ -1,4 +1,5 @@
 if Rails.env.test?
+
   rspec_gem_dir = nil
   Dir["#{Rails.root}/vendor/gems/*"].each do |subdir|
     rspec_gem_dir = subdir if subdir.gsub("#{Rails.root}/vendor/gems/","") =~ /^(\w+-)?rspec-(\d+)/ && File.exist?("#{subdir}/lib/spec/rake/spectask.rb")
@@ -15,15 +16,10 @@ if Rails.env.test?
     $LOAD_PATH.unshift("#{rspec_plugin_dir}/lib")
   end
 
+  #WebMock.allow_net_connect!
+
   FacebookTests = [
-    "spec/lib/facebook/comment_spec.rb", 
-    "spec/lib/facebook/post_spec.rb",
-    "spec/lib/facebook/facebook_core_message_spec.rb",
-    "spec/lib/facebook/status_spec.rb",
-    "spec/controllers/social/facebook_pages_controller_spec.rb",
-    "spec/lib/facebook/facebook_core_message_spec.rb",
-    "spec/lib/facebook/facebook_worker_facebookmessage_spec.rb",
-    "spec/lib/facebook/reply_to_comment_spec.rb"
+    "spec/controllers/social/facebook_pages_controller_spec.rb"
   ]
 
   GnipTests = [
@@ -35,8 +31,8 @@ if Rails.env.test?
   ]
 
   TwitterTests = [
-    "spec/lib/social/twitter/*_spec.rb", 
-    "spec/models/social/twitter_*_spec.rb", 
+    "spec/lib/social/twitter/*_spec.rb",
+    "spec/models/social/twitter_*_spec.rb",
     "spec/controllers/social/*_spec.rb",
     "spec/controllers/admin/social/*_spec.rb",
     "spec/controllers/mobile/freshsocial/*_spec.rb"
@@ -50,15 +46,15 @@ if Rails.env.test?
     "spec/models/helpdesk/ticket_spec.rb"
   ]
 
-  EmailTests = [ 
-    "spec/lib/*_email_spec.rb", 
+  EmailTests = [
+    "spec/lib/*_email_spec.rb",
     "spec/lib/email_commands_spec.rb",
     "spec/controllers/email_controller_spec.rb",
     "spec/controllers/mailgun_controller_spec.rb"
   ]
 
   MobihelpTests = [
-    "spec/controllers/support/mobihelp/tickets_controller_spec.rb", 
+    "spec/controllers/support/mobihelp/tickets_controller_spec.rb",
     "spec/controllers/mobihelp/devices_controller_spec.rb",
     "spec/controllers/mobihelp/solutions_controller_spec.rb",
     "spec/controllers/admin/mobihelp/apps_controller_spec.rb",
@@ -66,8 +62,8 @@ if Rails.env.test?
     "spec/controllers/mobihelp/articles_controller_spec.rb"
   ]
 
-  IntegrationTests = [ 
-    "spec/controllers/integrations/gmail_gadgets_controller_spec.rb", 
+  IntegrationTests = [
+    #"spec/controllers/integrations/gmail_gadgets_controller_spec.rb",
     "spec/controllers/integrations/google_accounts_controller_spec.rb",
     "spec/controllers/integrations/logmein_controller_spec.rb",
     "spec/controllers/integrations/jira_issue_controller_spec.rb",
@@ -96,11 +92,11 @@ if Rails.env.test?
     "spec/models/freshfone/*_spec.rb"
   ]
 
-  FreshfoneReportsTests = [ 
+  FreshfoneReportsTests = [
     "spec/controllers/reports/freshfone/summary_reports_controller_spec.rb"
-  ]  
+  ]
 
-  APITests = [ 
+  APITests = [
     "spec/controllers/api/json/**/*_spec.rb",
     "spec/controllers/api/xml/**/*_spec.rb"
   ]
@@ -139,9 +135,14 @@ if Rails.env.test?
     "spec/controllers/support/solutions_controller_spec.rb",
     "spec/controllers/support/folders_controller_spec.rb",
     "spec/lib/language_spec.rb",
+    "spec/lib/solution/cache_spec.rb",
+    "spec/lib/solution/builder_spec.rb",
+    "spec/lib/solution/binarize_spec.rb",
+    "spec/lib/solution/url_sterilize_spec.rb",
     "spec/controllers/helpdesk/solution_articles_controller_spec.rb",
     "spec/controllers/helpdesk/solution_folders_controller_spec.rb",
     "spec/controllers/helpdesk/solution_categories_controller_spec.rb",
+    "spec/controllers/solutions/drafts_controller_spec.rb",
     "spec/controllers/api/json/solutions_articles_api_spec.rb",
     "spec/controllers/api/json/solutions_category_api_spec.rb",
     "spec/controllers/api/json/solutions_folders_api_spec.rb",
@@ -150,17 +151,14 @@ if Rails.env.test?
     "spec/controllers/api/xml/solutions_folders_api_spec.rb",
     "spec/controllers/mobihelp/articles_controller_spec.rb",
     "spec/controllers/mobihelp/solutions_controller_spec.rb",
-    "spec/controllers/solutions/drafts_controller_spec.rb",
-    "spec/lib/solution/cache_spec.rb",
-    "spec/lib/solution/url_sterilize_spec.rb",
     "spec/models/solution/category_spec.rb",
     "spec/models/solution/folder_spec.rb",
     "spec/models/solution/article_spec.rb",
     "spec/models/solution/draft_spec.rb",
-    "spec/lib/solution/multilingual_spec.rb"
+    "spec/lib/solution/multilingual/*_spec.rb"
   ]
 
-  HelpdeskTests = [ 
+  HelpdeskTests = [
     "spec/controllers/accounts_controller_spec.rb",
     "spec/controllers/home_controller_spec.rb",
     "spec/controllers/account_configurations_controller_spec.rb",
@@ -184,12 +182,11 @@ if Rails.env.test?
     "spec/controllers/negative/**/*_spec.rb",
     "spec/controllers/wf_filters_controller_spec.rb",
     "spec/controllers/domain_search_controller_spec.rb",
-    "spec/controllers/rabbit_mq_controller_spec.rb",
     "spec/models/helpdesk/mysql_*_spec.rb",
     "spec/models/va_rule_spec.rb",
     "spec/lib/webhook_helper_methods_spec.rb",
     "spec/controllers/notification/product_notification_controller_spec.rb",
-    "spec/lib/workers/throttler_spec.rb",
+    #"spec/lib/workers/throttler_spec.rb",
     "spec/lib/zen_import_redis_spec.rb",
     "spec/lib/detect_user_language_spec.rb",
     "spec/controllers/solution_uploaded_images_controller_spec.rb",
@@ -203,14 +200,14 @@ if Rails.env.test?
     "spec/lib/middleware/global_restriction_spec.rb",
     "spec/lib/middleware/trusted_ip_spec.rb",
     "spec/lib/spam_watcher_spec.rb"
-  ]    
+  ]
 
   BillingTests = [
     "spec/controllers/subscriptions_controller_spec.rb",
     "spec/controllers/billing/billing_controller_spec.rb",
     "spec/controllers/partner_admin/affiliates_controller_spec.rb",
     "spec/controllers/admin/day_passes_controller_spec.rb"
-  ]       
+  ]
 
   FunctionalTests = [
     "spec/lib/gamification/quests/ticket_quest_spec.rb",
@@ -218,7 +215,7 @@ if Rails.env.test?
     "spec/lib/gamification/quests/process_topic_quests_spec.rb",
     "spec/lib/gamification/quests/process_post_quests_spec.rb",
     "spec/lib/gamification/scores/ticket_and_agent_score_spec.rb"
-  ] 
+  ]
 
   MobileAppTests = [
     "spec/controllers/mobile/*_spec.rb",
@@ -236,15 +233,13 @@ if Rails.env.test?
     "spec/controllers/admin/va_rules_controller_spec.rb",
     "spec/controllers/admin/supervisor_rules_controller_spec.rb"
   ]
-    
+
   UnitTests = [ APITests, BillingTests, EmailTests,  ForumTests, FunctionalTests,
-                GnipTests, HelpdeskTests,MiddlewareSpecs, MobihelpTests, MobileAppTests, ModelTests, 
-                 XssTests, ChatTests, IntegrationTests, VaRulesTests, TwitterTests]
+                GnipTests, HelpdeskTests,MiddlewareSpecs, MobihelpTests, MobileAppTests, ModelTests,
+                 XssTests, ChatTests, IntegrationTests, TwitterTests, FacebookTests, FreshfoneTests, FreshfoneReportsTests].flatten.uniq
+                 #FacebookTests, SolutionTests, VaRulesTests
 
-  UnitTests.flatten!.uniq!
-
-  AllTests = [UnitTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests]
-  AllTests.flatten!.uniq!
+  AllTests  = [UnitTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests, ForumDynamoTests].flatten.uniq
 
   # Don't load rspec if running "rake gems:*"
   unless ARGV.any? {|a| a =~ /^gems/}
@@ -389,92 +384,72 @@ if Rails.env.test?
             end
           end
         end
-
-        task :reset do
-          require 'faker'
-          require 'simplecov'
-          require 'active_record'
-          # load 'Rakefile'
-          config = YAML::load(IO.read(File.join(Rails.root, 'config/database.yml')))
-          ActiveRecord::Base.establish_connection(config["test"])
-          ActiveRecord::Migration.create_table "subscription_plans", :force => true do |t|
-            t.string   "name"
-            t.decimal  "amount",          :precision => 10, :scale => 2
-            t.datetime "created_at"
-            t.datetime "updated_at"
-            t.integer  "renewal_period",                                 :default => 1
-            t.decimal  "setup_amount",    :precision => 10, :scale => 2
-            t.integer  "trial_period",                                   :default => 1
-            t.integer  "free_agents"
-            t.decimal  "day_pass_amount", :precision => 10, :scale => 2
-            t.boolean  "classic",                                        :default => false
-            t.text     "price"
-          end
-          Rake::Task["db:schema:load".to_sym].invoke
-          Rake::Task["db:create_reporting_tables".to_sym].invoke
-          Rake::Task["db:create_trigger".to_sym].invoke
-          Rake::Task["db:perform_table_partition".to_sym].invoke
-        end
       end
 
       namespace :helpdesk do
         desc "Runs all helpdesk tests"
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(HelpdeskTests)
         end
-      end    
+      end
 
       namespace :social do
         desc "Runs all twitter tests"
-        RSpec::Core::RakeTask.new(:twitter) do |t|
+        RSpec::Core::RakeTask.new(:twitter => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(TwitterTests+GnipTests)
         end
 
-        RSpec::Core::RakeTask.new(:facebook) do |t|
+        RSpec::Core::RakeTask.new(:facebook => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(FacebookTests)
         end
-      end    
+      end
 
       namespace :freshfone do
         desc "Running all Freshfone Testss"
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(FreshfoneTests)
         end
-      end    
+      end
 
       namespace :freshchat do
         desc "Running all FreshChat Tests"
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(ChatTests)
         end
-      end      
+      end
 
       namespace :freshfone_reports do
         desc "Running all freshfone summary reports tests"
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(FreshfoneReportsTests)
         end
       end
 
       namespace :unit_tests do
-        desc "Running all integration tests"
-        Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
-        RSpec::Core::RakeTask.new(:all) do |t|
+        desc "Running all unit tests"
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(UnitTests).uniq
         end
       end
 
+      namespace :unit_tests_tmp do
+        desc "Running all unit tests"
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
+          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+          t.pattern = FileList.new(UnitTests).reject{|x| ["va_rule_spec","ecommerce","marketplace","integration","community","topic","solution","facebook","discussion","forum","fone"].any?{ |n| x.include?(n) } }.uniq
+        end
+      end
+
       namespace :email_tests do
         desc "Running all email tests"
-        Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(EmailTests)
         end
@@ -482,8 +457,7 @@ if Rails.env.test?
 
       namespace :forum_tests do
         desc "Running all forum tests"
-        Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(ForumTests)
         end
@@ -491,8 +465,7 @@ if Rails.env.test?
 
       namespace :forum_dynamo_tests do
         desc "Running all forum tests"
-        Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(ForumDynamoTests)
         end
@@ -500,8 +473,7 @@ if Rails.env.test?
 
       namespace :va_rules do
         desc "Running all VA rules tests"
-        Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(VaRulesTests)
         end
@@ -509,7 +481,7 @@ if Rails.env.test?
 
       namespace :integrations do
         desc "Running all freshdesk integrations tests"
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(IntegrationTests)
         end
@@ -517,7 +489,7 @@ if Rails.env.test?
 
       namespace :mobihelp do
         desc "Running all mobihelp tests"
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(MobihelpTests)
         end
@@ -525,7 +497,7 @@ if Rails.env.test?
 
       namespace :mobile do
         desc "Running all Mobile app tests"
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(MobileAppTests)
         end
@@ -533,8 +505,7 @@ if Rails.env.test?
 
       namespace :community_tests do
         desc "Running all community tests"
-        Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(ForumTests+SolutionTests).uniq
         end
@@ -542,16 +513,15 @@ if Rails.env.test?
 
       namespace :solution_tests do
         desc "Running all solution tests"
-        Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(SolutionTests).uniq
         end
       end
-      
+
       namespace :api do
         desc "Running all api tests"
-        RSpec::Core::RakeTask.new(:all) do |t|
+        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(APITests)
         end
@@ -559,16 +529,18 @@ if Rails.env.test?
 
       namespace :all do
         desc "Running all the tests"
-        RSpec::Core::RakeTask.new(:tests) do |t|
+        RSpec::Core::RakeTask.new(:tests => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(AllTests)
         end
 
-        RSpec::Core::RakeTask.new(:model) do |t|
+        RSpec::Core::RakeTask.new(:model => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(ModelTests)
         end
       end
     end
   end
+
+
 end

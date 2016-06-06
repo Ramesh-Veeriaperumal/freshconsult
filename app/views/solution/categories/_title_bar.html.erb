@@ -5,7 +5,7 @@
 		</ul>
 	</div>
 	<div class="sol-details-right">
-		<% unless @category.is_default? -%>
+		<% unless @category_meta.is_default? -%>
 			<ul class="list-actions-right">
 				<li class="list-default-btns">
 					<%= reorder_btn if privilege?(:manage_solutions) %>
@@ -19,7 +19,7 @@
 			<% if privilege?(:manage_solutions) %>
 				<div class="action-btns-bar">
 					<%= link_to( '', 
-								edit_solution_category_path(@category),
+								edit_solution_category_path(@category_meta),
 								:rel => "freshdialog",
 								:class => font_class('edit',23,'tooltip'),
 								:title => t('category.edit'),
@@ -28,15 +28,20 @@
 									"target" => "#category-edit",
 									"close-label" => t('cancel'),
 									"submit-label" => t('save'),
-									"template-footer" => "#{solution_modal_footer(@category)}"	
+									"template-footer" => "#{solution_modal_footer(@category_meta)}"	
 								}) %>
 				</div>
 			<% end %>
 		<% end %>
 		<div class="category-details span7 <%= 'ml0' unless privilege?(:manage_solutions) %>">
-			<h2 class="list-title ellipsis <%= 'tooltip' if @category.name.length > 55 %>" title="<%= h(@category.name)  if @category.name.length > 55 %>"><%= h(@category.name) %></h2>
+			<h2 class="list-title ellipsis <%= 'tooltip' if @category_meta.name.length > 55 %>" title="<%= h(@category_meta.name)  if @category_meta.name.length > 55 %>"><%= h(@category_meta.name) %></h2>
 			<div class="sol-visibility muted">
-				<span class="muted sol-visibility-label"><%= t('solution_category.product_portal_visibility') %>:</span><%= portals_for_category(@category) %>
+				<% if @category_meta.portal_solution_categories.size > 0 %>
+					<span class="muted sol-visibility-label">
+						<%= t('solution_category.product_portal_visibility') %>:
+					</span>
+				<% end %>
+				<%= portals_for_category(@category_meta) %>
 			</div>
 		</div>
 	</div>

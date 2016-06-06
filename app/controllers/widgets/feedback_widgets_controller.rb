@@ -2,6 +2,10 @@ class Widgets::FeedbackWidgetsController < SupportController
 
   skip_before_filter :check_privilege
   skip_before_filter :verify_authenticity_token
+  
+  skip_before_filter :set_language, :redirect_to_locale
+  #Because multilingual is NOT applicable to widgets at the moment
+
   before_filter :build_item, :only => :new
   before_filter :set_native_mobile, :only => [:create]
   before_filter :check_ticket_permission, :only => [:create]

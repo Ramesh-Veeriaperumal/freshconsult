@@ -94,7 +94,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
     def generate_file
       @layout = "layouts/report/v2/#{report_type}_pdf.html"
       file = file_format == TYPES[:csv] ? export_summary_report : build_pdf
-      build_file(file, file_format, PDF_EXPORT_TYPE)
+      build_file(file, file_format, report_type, PDF_EXPORT_TYPE)
     end
 
     def build_pdf

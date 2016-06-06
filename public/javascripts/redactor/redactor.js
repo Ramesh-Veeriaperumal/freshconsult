@@ -2052,7 +2052,7 @@ Redactor.prototype = {
 			html = html.replace(/p(.*?)class=MsoListParagraphCxSpMiddle ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpMiddle" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 			html = html.replace(/p(.*?)class=MsoListParagraphCxSpLast ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpLast" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 			// one line
-			html = html.replace(/p(.*?)class="MsoListParagraph" ([\w\W]*?)\/p/gi, this.removeIndentForList);
+			html = html.replace(/p(.*?)class=MsoListParagraph ([\w\W]*?)\/p|p(.*?)class="MsoListParagraph" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 
 			// remove ms word tags
 			html = html.replace(/<o:p(.*?)>([\w\W]*?)<\/o:p>/gi, '$2');
@@ -2202,7 +2202,11 @@ Redactor.prototype = {
 			container.css('background-color', value);
 		},
 		'font-family': function (container, value, options) {
-			container.css('font-family', value + "," + options.wrapFontSettings["font-family"]);
+			if(options.setFontSettings){
+				container.css('font-family', value + "," + options.wrapFontSettings["font-family"]);
+			} else {
+				container.css('font-family', value);
+			}
 		},
 		'background': function (container, value) {
 			var _testCondition = ($.browser.msie || $.browser.mozilla);

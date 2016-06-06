@@ -114,6 +114,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def self.send_cc_email(ticket, comment=nil, options={})
+    cc_emails = []
     if comment
       cc_emails = ticket.cc_email[:reply_cc] if (ticket.cc_email.present? && ticket.cc_email[:reply_cc].present?)
       e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
@@ -123,10 +124,18 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
 
     cc_emails.concat(options[:additional_emails]) if options[:additional_emails].present?
-    cc_emails = fetch_valid_emails(cc_emails, {:ignore_emails => options[:ignore_emails]}) if options[:ignore_emails].present?
+    ignore_emails = (options[:ignore_emails] || []) + [ticket.account.kbase_email]
+    cc_emails = fetch_valid_emails(cc_emails, {:ignore_emails => ignore_emails}) if ignore_emails.present?
     
     return if cc_emails.to_a.count == 0
-    cc_emails = get_email_array cc_emails.join(",")
+
+    #ignoring support emails
+    cc_emails  = get_email_array cc_emails.join(",")
+    support_emails_in_cc = ticket.account.all_email_configs.pluck(:reply_email)
+    cc_emails = cc_emails - support_emails_in_cc
+
+    return if cc_emails.to_a.count == 0
+
     db_users = ticket.account.users.where(:email => cc_emails)
     db_users_email = db_users.map(&:email).map(&:downcase)
     non_db_user_ccs = cc_emails - db_users_email

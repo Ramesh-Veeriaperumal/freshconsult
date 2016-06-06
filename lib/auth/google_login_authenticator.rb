@@ -30,7 +30,6 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
         env['omniauth.strategy'].options[:state] = construct_state_params(env) unless env["PATH_INFO"].split("/")[3] == "callback"
       },
       :scope => "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
-      :prompt => "select_account",
       :access_type => "online",
       :redirect_uri => "#{AppConfig['integrations_url'][Rails.env]}/auth/google_login/callback",
       :name => "google_login")

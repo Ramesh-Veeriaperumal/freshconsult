@@ -20,7 +20,6 @@ class Auth::GoogleMarketplaceSsoAuthenticator < Auth::Authenticator
       Integrations::OAUTH_CONFIG_HASH["google_oauth2"]["consumer_token"],
       Integrations::OAUTH_CONFIG_HASH["google_oauth2"]["consumer_secret"],
       :scope        => "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
-      :prompt       => "select_account consent",
       :access_type  => "online",
       :state        => "ignore_build%3Dtrue",
       :redirect_uri => "#{AppConfig['integrations_url'][Rails.env]}/auth/google_marketplace_sso/callback",

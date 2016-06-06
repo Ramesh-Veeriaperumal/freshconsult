@@ -167,6 +167,14 @@ GIT
       mimemagic (~> 0.2, >= 0.2.1)
 
 GIT
+  remote: git@github.com:freshdesk/binarize.git
+  revision: 1a7933b0853c33d8b6ba877493822fe2db34421c
+  branch: master
+  specs:
+    binarize (0.1.1)
+      activerecord (>= 3)
+
+GIT
   remote: git@github.com:freshdesk/fd_rate_limiter.git
   revision: 30a7b6deb34c992e84498facdec397527c551b47
   branch: dynamic_rules
@@ -481,6 +489,7 @@ GEM
       debug_inspector (>= 0.0.1)
     braintree (2.10.0)
       builder
+    brakeman (3.3.0)
     buftok (0.2.0)
     builder (3.0.4)
     bullet (4.14.4)
@@ -734,8 +743,8 @@ GEM
       mime-types
     parser (2.2.2.1)
       ast (>= 1.1, < 3.0)
-    pg (0.17.1)
     patron (0.5.0)
+    pg (0.17.1)
     phantomjs (1.9.8.0)
     polyglot (0.3.3)
     powerbar (1.0.12)
@@ -905,6 +914,12 @@ GEM
       json
       redis (>= 3.0.6)
       redis-namespace (>= 1.3.1)
+    sidekiq (3.4.1)
+      celluloid (~> 0.16.0)
+      connection_pool (>= 2.1.1)
+      json
+      redis (>= 3.0.6)
+      redis-namespace (>= 1.3.1)
     sidekiq-pro (2.0.5)
       sidekiq (>= 3.3.2)
     signet (0.5.1)
@@ -1022,8 +1037,10 @@ DEPENDENCIES
   aws-sdk (~> 1.11.3)
   aws-sdk-resources (~> 2)
   better_errors (~> 1.1.0)
+  binarize (= 0.1.1)!
   binding_of_caller
   braintree (= 2.10.0)
+  brakeman
   bullet
   bunny (= 1.7.0)
   business_time!

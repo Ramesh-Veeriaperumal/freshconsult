@@ -37,7 +37,7 @@ module SupportTicketControllerMethods
       end
     else
       logger.debug "Ticket Errors is #{@ticket.errors}"
-      @params = params
+      @params = fetch_params
       set_portal_page :submit_ticket
       render :action => :new
     end
@@ -82,6 +82,12 @@ module SupportTicketControllerMethods
       else
         I18n.t(:'flash.portal.tickets.create.success')
       end
+    end
+
+    def fetch_params
+      # To avoid reflected xss - we assign sanitized description
+      params["helpdesk_ticket"]["ticket_body_attributes"]["description_html"] = @ticket.description_html
+      params
     end
 
 end

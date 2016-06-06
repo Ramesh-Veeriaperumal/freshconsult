@@ -60,13 +60,16 @@ module Freshfone::Jobs
 					end
 					#Ignoring recordings of duration less than 5 seconds
 					if @recording_duration.to_i < 5
+						Rails.logger.debug "Recording Less Than 5 Seconds Found For Account :: #{@account.id}, Call :: #{@call.call_sid}, Recording Sid :: #{@recording_sid}"
 					 	@call.recording_url = nil
 					 	@call.save
-					 	@recording.delete
+					 	delete_recording
 					else
+						Rails.logger.debug "Building Recording For Account :: #{@account.id}, Call :: #{@call.call_sid}, Recording Sid :: #{@recording_sid}"
 						set_status_voicemail if args[:voicemail]
 						download_data
 						build_recording_audio
+						delete_recording if @call.recording_audio
 					end
 				rescue Exception => e
 					if args[:attempt].present?
@@ -108,7 +111,7 @@ module Freshfone::Jobs
 
 			def self.download_data
 				begin
-					@data = RemoteFile.new(@file_url,'','',@file_name).fetch
+					@data = RemoteFile.new(@file_url,'','',"#{@file_name}.mp3").fetch
 				rescue OpenURI::HTTPError => e
 					Rails.logger.error "Error in in Call Recording attachment Job Account Id: #{@account.id} Call id: #{@call.id}\n Exception: #{e.message}\n Stacktrace: #{e.backtrace.join('\n\t')}"
 					raise e if e.io.status.present? && e.io.status[0] != '404' # preventing retry of recordings which are not found
@@ -142,6 +145,11 @@ module Freshfone::Jobs
 					Rails.logger.debug "Error in freshfone record attachment  for 
 					account => #{@account.id} call sid => #{@call.call_sid} raise from release_data"
 				end
+			end
+
+			def self.delete_recording
+				@recording.delete
+				Rails.logger.debug "Deleting Call Recording For Account :: #{@account.id}, Call :: #{@call.call_sid}, Recording Sid :: #{@recording_sid}"
 			end
 	end
 end

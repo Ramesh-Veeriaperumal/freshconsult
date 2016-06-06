@@ -13,7 +13,7 @@ describe CustomersController do
   end
 
   SKIPPED_KEYS = [  :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, 
-                    :delta, :import_id ]
+                    :delta, :import_id, :custom_field, :domains ]
 
   it "should redirect if new action is invoked" do
     get :new
@@ -45,7 +45,7 @@ describe CustomersController do
     created_company = @account.companies.find_by_name(@company_name)
     created_company.should be_an_instance_of(Company)
 
-    company[:customer][:domains] = ",#{company[:customer][:domains]},"
+    #company[:customer][:domains] = ",#{company[:customer][:domains]},"
     company_attributes(created_company, SKIPPED_KEYS).should be_eql(company[:customer])
   end
 
@@ -57,7 +57,7 @@ describe CustomersController do
     updated_company = @account.companies.find_by_name(@company_name)
     updated_company.should be_an_instance_of(Company)
 
-    another_company[:customer][:domains] = ",#{another_company[:customer][:domains]},"
+    #another_company[:customer][:domains] = ",#{another_company[:customer][:domains]},"
     company_attributes(updated_company, SKIPPED_KEYS).should be_eql(another_company[:customer])
   end
 

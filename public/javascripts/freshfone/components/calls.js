@@ -261,7 +261,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		makeOutgoing: function (item) {
 			this.number = formatE164(this.callerLocation(), this.number);
-			this.customerId = item.data('contactId');
+			if(item){
+				this.customerId = item.data('contactId');
+			}
 			this.prefillDialerTemplate(item);
 			this.clearMessage();
 			if (this.freshfoneuser.isBusy()) { return this.toggleAlreadyInCallText(true); }

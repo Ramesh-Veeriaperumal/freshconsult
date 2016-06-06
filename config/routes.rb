@@ -919,6 +919,14 @@ Helpkit::Application.routes.draw do
       get :install
     end
 
+    namespace :freshsales do
+      get :new
+      post :settings_update
+      post :install
+      get :edit
+      put :update
+    end
+    
     resources :marketplace_apps, :only => [:edit] do
       member do
         post :install
@@ -1673,8 +1681,11 @@ Helpkit::Application.routes.draw do
       delete :delete_logo
       delete :delete_favicon
       get :new_signup_free
+      put :update_languages
     end
   end
+
+  match '/admin/manage_languages' => 'accounts#manage_languages', :as => :manage_languages
 
   resource :accounts do
     collection do
@@ -1973,6 +1984,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/filter/customer/:customer_id' => 'tickets#index', :as => :customer_filter
     match '/tickets/filter/company/:company_id' => 'tickets#index', :as => :company_filter
     match '/tickets/get_solution_detail/:id' => 'tickets#get_solution_detail'
+    match '/tickets/get_solution_detail/:id/:language' => 'tickets#get_solution_detail'
     match '/tickets/filter/tags/:tag_id' => 'tickets#index', :as => :tag_filter
     match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter
     match '/tickets/dashboard/:filter_type/:filter_key' => 'tickets#index', :as => :dashboard_filter
@@ -2071,7 +2083,8 @@ Helpkit::Application.routes.draw do
             put :reorder
             put :move_to
             put :move_back
-            put :change_author
+            put :mark_as_outdated
+            put :mark_as_uptodate
           end
 
           member do
@@ -2082,6 +2095,7 @@ Helpkit::Application.routes.draw do
             put :reset_ratings
             get :properties
             get :voted_users
+            put :translate_parents
           end
           resources :tag_uses
         end
@@ -2102,7 +2116,8 @@ Helpkit::Application.routes.draw do
         put :reorder
         put :move_to
         put :move_back
-        put :change_author
+        put :mark_as_outdated
+        put :mark_as_uptodate
       end
 
       member do
@@ -2113,20 +2128,24 @@ Helpkit::Application.routes.draw do
         put :reset_ratings
         get :properties
         get :voted_users
+        get :show_master
+        put :translate_parents
       end
       
-      resources :tag_uses, :drafts
+      resources :tag_uses
       match '/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :attachments_delete, :via => :delete
     end
 
-    resources :drafts, :only => [:index] do
-      member do
-        post :autosave
-        post :publish
-      end
-    end
-    match '/drafts/:type' => "drafts#index", :as => :my_drafts, :via => :get
+    resources :drafts, :only => [:index]
+    get '/drafts/:type' => "drafts#index", :as => :my_drafts
+    post 'drafts/:article_id/:language_id/autosave' => "drafts#autosave", :as => :draft_autosave
+    post 'drafts/:article_id/:language_id/publish' => "drafts#publish", :as => :draft_publish
+    delete 'drafts/:article_id/:language_id/delete' => "drafts#destroy", :as => :draft_delete
+    delete 'drafts/:article_id/:language_id/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :draft_attachments_delete
 
+    match '/articles/:id/:language' => "articles#show", :as => :article_version, :via => :get
+    match '/articles/:id/:language' => "articles#update", :as => :article_version, :via => :put
+    match '/all_categories/(:portal_id)' => "categories#all_categories", :as => :all_categories, :via => :get
   end
 
   resources :posts, :as => 'all' do
@@ -2301,7 +2320,7 @@ Helpkit::Application.routes.draw do
     :controller => 'monitorships', :action => 'toggle',
     :as => :toggle_monitorship
 
-
+  filter :locale
 
   namespace :support do
     match 'home' => 'home#index', :as => :home

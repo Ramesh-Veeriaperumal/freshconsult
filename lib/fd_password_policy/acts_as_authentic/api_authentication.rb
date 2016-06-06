@@ -3,7 +3,6 @@ module FDPasswordPolicy
     module ApiAuthentication
       def self.included(klass)
         klass.class_eval do
-          extend Config
           add_acts_as_authentic_module(Methods)
 
         end

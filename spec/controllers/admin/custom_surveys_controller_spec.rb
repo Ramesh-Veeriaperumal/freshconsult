@@ -43,87 +43,83 @@ describe Admin::CustomSurveysController do
   end
 
   it "should create a survey with 2 choices" do
-        post :create ,  :survey => {"default" => false,"choices" => [["Strongly Agree", 103],["Strongly Disagree", -103]],
-                        "title_text" => "dummy","link_text" => " How would you rate your overall satisfaction for the resolution provided by the agent?",
-                        "choice" => "2","send_while" => "1","thanks_text" => "Thank you for your valuable feedback. Please help us to serve you better by answering few more questions..",
-                        "feedback_response_text" => "","can_comment" => true,"active" => false}.to_json,
-                        :jsonData => [{"name" =>  "Q1", "type" => "survey_radio", "field_type"=> "custom_survey_radio", 
-                        "label" => "Are you satisfied with our customer support experience?", 
-                        "choices" => [["Strongly Agree", 103, 1], ["Strongly Disagree", -103, 2]], "action" => "create"}].to_json   
-          active_survey= @account.custom_surveys.where(:title_text => "dummy").first 
+        post :create ,  :survey => fake_survey_data("Survey with 2 choices"),
+                        :jsonData => fake_survey_json_data(2)
+          active_survey= @account.custom_surveys.where(:title_text => "Survey with 2 choices").first 
           active_survey.id.should_not eql nil
   end
+
   it "should create a survey with 3 choices" do
-    post :create ,  :survey => {"default" => false,"choices" => [["Strongly Agree", 103],["Neutral",100],["Strongly Disagree", -103]],
-                        "title_text" => "dummy_choices3","link_text" => " How would you rate your overall satisfaction for the resolution provided by the agent?",
-                        "choice" => "3","send_while" => "1","thanks_text" => "Thank you for your valuable feedback. Please help us to serve you better by answering few more questions..",
-                        "feedback_response_text" => "","can_comment" => true,"active" => false}.to_json,
-                        :jsonData => [{"name" =>  "Q1", "type" => "survey_radio", "field_type"=> "custom_survey_radio", 
-                        "label" => "Are you satisfied with our customer support experience?", 
-                        "choices" => [["Strongly Agree", 103, 1],["Neutral",100,2],["Strongly Disagree", -103, 3]], "action" => "create"}].to_json   
-    active_survey= @account.custom_surveys.where(:title_text => "dummy_choices3").first 
-    active_survey.id.should_not eql nil
+        post :create ,  :survey => fake_survey_data("Survey with 3 choices"),
+                        :jsonData => fake_survey_json_data(3)
+          active_survey= @account.custom_surveys.where(:title_text => "Survey with 3 choices").first 
+          active_survey.id.should_not eql nil
   end
 
-
-it "should create a survey with 5 choices" do
-    post :create ,  :survey => {"default" => false, "choices" => [["Strongly Agree", 103],["Some What Agree",102],["Neutral",100],["Some What Disagree",-102],["Strongly Disagree", -103]],
-                        "title_text" => "dummy_choices5","link_text" => " How would you rate your overall satisfaction for the resolution provided by the agent?",
-                        "choice" => "5","send_while" => "1","thanks_text" => "Thank you for your valuable feedback. Please help us to serve you better by answering few more questions..",
-                        "feedback_response_text" => "","can_comment" => true,"active" => false}.to_json,
-                        :jsonData => [{"name" =>  "Q1", "type" => "survey_radio", "field_type"=> "custom_survey_radio", 
-                        "label" => "Are you satisfied with our customer support experience?", 
-                        "choices" => [["Strongly Agree", 103,1],["Some What Agree",102,2],["Neutral",100,3],["Some What Disagree",-102,4],["Strongly Disagree", -103,5]], "action" => "create"}].to_json   
-    active_survey= @account.custom_surveys.where(:title_text => "dummy_choices5").first 
-    active_survey.id.should_not eql nil
+  it "should create a survey with 5 choices" do
+        post :create ,  :survey => fake_survey_data("Survey with 5 choices"),
+                        :jsonData => fake_survey_json_data(5)
+          active_survey= @account.custom_surveys.where(:title_text => "Survey with 5 choices").first 
+          active_survey.id.should_not eql nil
   end
 
   it "should create a survey with 7 choices" do
-    post :create ,  :survey => {"default" => false,"choices" => [["Strongly Agree", 103],["Some What Agree",102],["Agree",101],["Neutral",100],["Disagree",-101],
-                        ["Some What Disagree",-102],["Strongly Disagree", -103]],
-                        "title_text" => "dummy_choices7","link_text" => " How would you rate your overall satisfaction for the resolution provided by the agent?",
-                        "choice" => "7","send_while" => "1","thanks_text" => "Thank you for your valuable feedback. Please help us to serve you better by answering few more questions..",
-                        "feedback_response_text" => "","can_comment" => true,"active" => false}.to_json,
-                        :jsonData => [{"name" =>  "Q1", "type" => "survey_radio", "field_type"=> "custom_survey_radio", 
-                        "label" => "Are you satisfied with our customer support experience?", 
-                        "choices" => [["Strongly Agree", 103,1],["Some What Agree",102,2],["Agree",101,3],
-                                      ["Neutral",100,4],["Disagree",-101,5],["Some What Disagree",-102,6],
-                                      ["Strongly Disagree", -103,7]], "action" => "create"}].to_json   
-    active_survey= @account.custom_surveys.where(:title_text => "dummy_choices7").first 
-    active_survey.update_attributes(:default => false)
-    active_survey.id.should_not eql nil
+        post :create ,  :survey => fake_survey_data("Survey with 7 choices", true),
+                        :jsonData => fake_survey_json_data(7)
+          active_survey= @account.custom_surveys.where(:title_text => "Survey with 7 choices").first 
+          active_survey.id.should_not eql nil
   end
 
   it "should update the customer satisfaction survey settings" do
-      active_survey= @account.custom_surveys.where(:active => true).first
-      choice = 2
-      survey_result = active_survey.survey_results.last
-      unless survey_result.blank?
+      active_survey = @account.custom_surveys.where(:title_text => "Survey with 7 choices").last
       put :update , {:id => active_survey.id ,
-                      :survey => {"default" => false,
-                                  "link_text" => "How would you rate your overall satisfaction for the resolution provided by the agent?",
-                                  "title_text" => "Default Survey",
-                                  "send_while" => 2,
-                                  "active" => true,
-                                  "thanks_text" =>  "Thank you for your valuable feedback.",
-                                  "feedback_response_text"=> "dhankie",
-                                  "can_comment" => true,
-                                  "choices" => [["Strongly Agree Updated", 103],["Strongly Disagree Updated", -103]] ,    
-                                  "choice" => choice}.to_json,
-                      :jsonData =>[{"name" => "Q1", "type" => "survey_radio" , 
-                                    "field_type" => "custom_survey_radio",
-                                    "label" => "question1" , "id" => nil , 
-                                    "action" => "update",
-                                    "choices" => [["Strongly Agree update", 103, 1], ["Strongly Disagree update", -103, 2]]}].to_json }
-      end
-      survey = @account.custom_surveys.find(active_survey.id)
-      survey.title_text.should eql "Default Survey"
-      survey.send_while.should eql 2
+                      :survey => fake_survey_data("Survey with 7 choices edited"),
+                      :jsonData => fake_survey_json_data(7)
+                    }
+
+      active_survey.reload
+      active_survey.title_text.should eql "Survey with 7 choices edited"
+      active_survey.send_while.should eql 3
   end
 
   it "should delete a survey" do
-      survey= @account.custom_surveys.where(:title_text => "dummy_choices7").first  
+      survey = @account.custom_surveys.where(:title_text => "Survey with 5 choices").first  
       delete :destroy, {:id=>survey.id}
-      @account.surveys.find_by_id(survey.id).should be_nil
+
+      survey.reload
+      survey.should_not be_nil
+      survey.deleted.should be true
+  end
+
+  def fake_survey_data(name, active=false)
+    { 
+      "title_text"              =>  name, 
+      "thanks_text"             =>  "Thank you for ur feedback", 
+      "comments_text"           =>  "Add more details about customer  experience.", 
+      "feedback_response_text"  =>  "Thank you. Your feedback has been submitted.", 
+      "send_while"              =>  "3", 
+      "can_comment"             =>  true, 
+      "active"                  =>  active
+    }.to_json
+  end
+
+  def fake_survey_json_data(num_choices)    
+    [
+      {"type"=>"survey_radio", "field_type"=>"custom_survey_radio", "label"=>"Hello How are you ?", "id"=>nil, 
+        "custom_field_choices_attributes"=> fake_choices(num_choices.to_s), 
+      "action"=>"create", "default"=>true, "position"=>1},
+      {"type"=>"survey_radio", "field_type"=>"custom_survey_radio", "id"=>nil, "action"=>"create", "default"=>false, 
+        "custom_field_choices_attributes"=>[{"value"=>"Strongly Disagree", "face_value"=>-103, "position"=>1, "_destroy"=>0}, {"value"=>"Neutral", "face_value"=>100, "position"=>2, "_destroy"=>0}, {"value"=>"Strongly Agree", "face_value"=>103, "position"=>3, "_destroy"=>0}], 
+      "label"=>"Are you satisfied with our customer support experience?", "position"=>2} 
+    ].to_json
+  end
+
+  def fake_choices(num)
+    { 
+      "2" => [{"value"=>"Strongly Disagree1", "face_value"=>-103, "position"=>1, "_destroy"=>0}, {"value"=>"Strongly Agree3", "face_value"=>103, "position"=>2, "_destroy"=>0}],
+      "3" => [{"value"=>"Strongly Disagree1", "face_value"=>-103, "position"=>1, "_destroy"=>0}, {"value"=>"Neutral2", "face_value"=>100, "position"=>2, "_destroy"=>0}, {"value"=>"Strongly Agree3", "face_value"=>103, "position"=>3, "_destroy"=>0}],
+      "5" => [{"value"=>"Strongly Disagree1", "face_value"=>-103, "position"=>1, "_destroy"=>0}, {"value"=>"Some What Disagree", "face_value"=>-102, "position"=>2, "_destroy"=>0}, {"value"=>"Neutral2", "face_value"=>100, "position"=>3, "_destroy"=>0}, {"value"=>"Some What Agree", "face_value"=>102, "position"=>4, "_destroy"=>0}, {"value"=>"Strongly Agree3", "face_value"=>103, "position"=>5, "_destroy"=>0}],
+      "7" => [{"value"=>"Strongly Disagree1", "face_value"=>-103, "position"=>1, "_destroy"=>0}, {"value"=>"Some What Disagree", "face_value"=>-102, "position"=>2, "_destroy"=>0}, {"value"=>"Disagree", "face_value"=>-101, "position"=>3, "_destroy"=>0}, {"value"=>"Neutral2", "face_value"=>100, "position"=>4, "_destroy"=>0}, {"value"=>"Agree", "face_value"=>101, "position"=>5, "_destroy"=>0}, {"value"=>"Some What Agree", "face_value"=>102, "position"=>6, "_destroy"=>0}, {"value"=>"Strongly Agree3", "face_value"=>103, "position"=>7, "_destroy"=>0}]      
+    }[num]
   end
 end

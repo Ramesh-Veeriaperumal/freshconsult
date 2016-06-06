@@ -52,8 +52,10 @@ module Portal::Helpers::Article
 		output << %(<div class="cs-g-c">)
 		output << %(<section class="article-list">)
 		output << %(<h3 class="list-lead">#{I18n.t('portal.article.related_articles')}</h3>)
+		url = "/support/search/articles/#{article.id}/related_articles?container=#{container}&limit=#{limit}"
+		url.prepend("/#{Language.current.code}") if Account.current.multilingual?
 		output << %(<ul rel="remote" 
-			data-remote-url="/support/search/articles/#{article.id}/related_articles?container=#{container}&limit=#{limit}" 
+			data-remote-url="#{url}" 
 			id="related-article-list"></ul>)
 		output << %(</section></div></div>)
 		output.join("")	
@@ -81,7 +83,8 @@ HTML
 		unless article.voted_by_user?
 			output << %(<p class="article-vote" id="voting-container" 
 											data-user-id="#{User.current.id if User.current}" 
-											data-article-id="#{article.id}">
+											data-article-id="#{article.id}"
+											data-language="#{Language.current.code}">
 										#{t('feedback.title')})
 			output << article_voting_up(article)
 			output << %(<span class="vote-down-container">)
@@ -101,6 +104,7 @@ HTML
 									data-remote="true" data-method="put" data-update="#voting-container" 
 									data-user-id="#{User.current.id if User.current}"
 									data-article-id="#{article.id}"
+									data-language="#{Language.current.code}"
 									data-update-with-message="#{t('feedback.up_vote_thank_you_message')}">
 								#{t('feedback.upvote')})				
 		output << %(</span>)
@@ -113,6 +117,7 @@ HTML
 									data-remote="true" data-method="put" data-update="#vote-feedback-form" 
 									data-user-id="#{User.current.id if User.current}"
 									data-article-id="#{article.id}"
+									data-language="#{Language.current.code}"
 									data-hide-dom="#voting-container" data-show-dom="#vote-feedback-container">
 								#{t('feedback.downvote')})
 		output << %(</span>)

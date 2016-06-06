@@ -56,7 +56,7 @@ module HelpdeskReports
         begin
           yield if block_given?
         rescue Exception => e
-          Rails.logger.debug {"Reports Export exception for #{Account.current.id} : #{e.inspect}\n #{e.backtrace.join("\n")}"}
+          Rails.logger.error {"Reports Export exception for #{Account.current.id} : #{e.inspect}\n #{e.backtrace.join("\n")}"}
           NewRelic::Agent.notice_error(e)
           subj_txt = "Helpkit - Error | Reports Export exception for #{Account.current.id}"
           message  = "#{e.inspect}\n #{e.backtrace.join("\n")}"

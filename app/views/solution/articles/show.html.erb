@@ -1,39 +1,54 @@
-<% content_for :sidebar do %>
-	<div class="solution-sidebar">
-		<%= render partial: "sidebar" %>
+<% if missing_translations?(@article) && (!@article.new_record?  or !privilege?(:manage_solutions)) %>
+	<div class="hide never-close" id="add-translations">
+		<%= render :partial => "add_translations" %>
 	</div>
+<% else %>
+	<% content_for :sidebar do %>
+		<div class="solution-sidebar">
+			<%= not_in_portal_notification(@article) %>
+			<% if @article.new_record? %>
+				<%= render partial: "new_translation_helpnote" %>
+			<% else %>
+				<%= render partial: "sidebar" %>
+			<% end %>
+		</div>
+	<% end %>
 <% end %>
 
 <div class="solutions">
 
-	<% content_for :layoutType do %>community solutions<% end %>
+	<% content_for :layoutType do %><%= solution_body_classes %><% end %>
 	<% content_for :sticky_title do %>
+		<%= render :partial => "show_master" if Account.current.multilingual? && !@article.is_primary? %>
+		<div class="language-tabs">
+			<%= render :partial => "language_tabs" if Account.current.multilingual? %>
+      <div class="clearfix"></div>
+		</div>
 		<div class="solution-header draft-notif" id="solution-notification-bar">
 			<%= render :partial => 'notification_bar' %>
 		</div>
+
 	<% end %>
 	<% content_for :sticky_right do %>
-	  <%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) if @article.published? %>
+	  <%= preview_portal(support_solutions_article_path(@article, path_url_locale), @article.solution_folder_meta.solution_category_meta) if @article.published? %>
 	  <% if privilege?(:publish_solution) %>
-      <% unless @article.draft.present? && @article.draft.locked? %>
+      <% unless @article.new_record? || (@article.draft.present? && @article.draft.locked?) %>
     	  <div class="pagination-right edit-container">
     	    <a href="javascript:void(0)" class="btn btn-primary article-edit-btn"><%= t('edit') %></a>
     	  </div>
       <% end %>
     <% end %>
-    <div class="pagination-right breadcrumb-btns hide">
+    <div class="pagination-right breadcrumb-btns <%= 'hide' unless @article.new_record? %>">
       <%= article_btns('save-btn', 'publish-btn') %>
     </div>
 	<% end %>
-	<%= render :partial => '/solution/shared/sticky', 
+	<%= render :partial => '/solution/shared/sticky',
 						 :locals => { :page => :article, :sticky_class => 'article-sticky', :toolbar => true} %>
 
 	<!-- Solution page content -->
 	<div class="solution-content">
-		<%= render :partial => "view" %>
-		<% unless @article.draft.present? && @article.draft.locked? %>
-			<%= render :partial => "article_form" %>
-		<% end %>
+		<%= render :partial => "view" unless @article_meta.present? && @article.new_record? %>
+		<%= render :partial => "article_form" unless @article.draft.present? && @article.draft.locked? %>
 	</div>
 
 </div>
@@ -48,7 +63,12 @@
 			somethingWrong: "<%= escape_javascript(t('solution.general.something_wrong')).html_safe %>",
 			maxInput: "<%= escape_javascript(t('solution.articles.tag_max_len')).html_safe %>",
 			articleDeleted: "<%= escape_javascript(t('solution.articles.article_deleted')).html_safe %>",
-			back: "<%= escape_javascript(t('back')).html_safe %>"
-		};
+			back: "<%= escape_javascript(t('back')).html_safe %>",
+			addTranslationsTitle: "<%= escape_javascript(t('solution.articles.missing_translations.title')).html_safe %>"
+    };
+		<%= 'App.namespace = "solution/articles/new";'.html_safe if @article_meta.present? && @article.new_record? %>
+		<% if missing_translations?(@article) && (!@article.new_record?  or !privilege?(:manage_solutions)) %>
+			App.Solutions.Article.triggerTranslationsModal();
+		<% end %>
 	});
 </script>
