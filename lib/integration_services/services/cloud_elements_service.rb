@@ -21,10 +21,6 @@ module IntegrationServices::Services
       element_instance_resource.delete_instance
     end
 
-    def receive_get_element_instance
-      element_instance_resource.get_instance
-    end
-
     def receive_contact_metadata
       contact_resource.get_fields
     end
@@ -33,20 +29,8 @@ module IntegrationServices::Services
       account_resource.get_fields
     end
 
-    def receive_lead_metadata
-      lead_resource.get_fields
-    end
-
-    def receive_opportunity_metadata
-      opportunity_resource.get_fields
-    end
-
-    def receive_opportunity_field_properties
-     opportunity_resource.get_field_properties
-    end
-
     def receive_create_instance_object_definition
-        object_resource.create_instance_level_object_definition
+      object_resource.create_instance_level_object_definition
     end
 
     def receive_update_instance_object_definition
@@ -101,14 +85,6 @@ module IntegrationServices::Services
 
       def account_resource
         @account_resource ||= IntegrationServices::Services::CloudElements::Hub::Crm::AccountResource.new(self)
-      end
-
-      def lead_resource
-        @lead_resource ||= IntegrationServices::Services::CloudElements::Hub::Crm::LeadResource.new(self)
-      end
-
-      def opportunity_resource
-        @opportunity_resource ||= IntegrationServices::Services::CloudElements::Hub::Crm::OpportunityResource.new(self)
       end
 
   end

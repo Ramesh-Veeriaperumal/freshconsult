@@ -36,7 +36,8 @@ module Integrations::Constants
     :infusionsoft => "infusionsoft",
     :pivotal_tracker => "pivotal_tracker",
     :twitter => "twitter",
-    :facebook => "facebook"
+    :facebook => "facebook",
+    :salesforce_sync => "salesforce_sync"
   }
 
   CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft]
@@ -90,7 +91,8 @@ module Integrations::Constants
     "box" => "box",
     "mailchimp" => "mailchimp",
     "constantcontact" => "constantcontact",
-    "surveymonkey" => "surveymonkey"
+    "surveymonkey" => "surveymonkey",
+    "salesforce_sync" => "salesforce_sync"
   }
 
 end

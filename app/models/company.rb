@@ -103,20 +103,6 @@ class Company < ActiveRecord::Base
     all_tickets.joins(:requester).where('users.deleted =?', false)
   end
 
-  class << self
-    # Used by API V2
-    def company_filter(company_filter)
-      {
-        all: {
-          conditions: {}
-        },
-        name: {
-          conditions: { name: company_filter.name }
-        }
-      }
-    end
-  end
-
   private
 
     def domains_array(domains)

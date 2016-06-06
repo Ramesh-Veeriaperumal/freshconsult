@@ -8,6 +8,7 @@
         <% next if exists_in_installed_apps?(application, @installed_applications).blank? %>
       <% end %>
       <%next if (!feature?(:timesheets) && (application.name == 'harvest' or application.name == 'workflow_max'))%>
+      <%next if (!feature?(:salesforce_crm_sync) && application.name == 'salesforce_sync')%>
         <% if application.system_app? %>
           <li class="app-native">
             <div class="application">

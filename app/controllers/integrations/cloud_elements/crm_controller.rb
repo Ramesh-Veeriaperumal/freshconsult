@@ -1,5 +1,6 @@
 class Integrations::CloudElements::CrmController < Integrations::CloudElementsController
   include Integrations::CloudElements::Crm::Constant
+  before_filter :check_feature, :only => [:instances]
   before_filter :verify_authenticity, :only => [:instances, :install, :edit, :update]
   before_filter :build_installed_app, :only => [:instances]
   before_filter :load_installed_app, :only => [:install, :edit, :update]
@@ -24,16 +25,13 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       delete_element_instance_error @installed_app, request.user_agent, response['id'] if response.present? and response['id'].present?
     end
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
-    flash[:error] = t(:'flash.application.update.error')
-    redirect_to integrations_applications_path
+    flash[:error] = t(:'flash.application.install.error')
+    redirect_to integrations_applications_path 
   end
 
   def install
     @installed_app.set_configs get_metadata_fields
     @installed_app.save!
-    if (element.eql? "salesforce") && current_account.features?(:salesforce_sync) && salesforce_sync_option?
-      salesforce_service_obj.receive(:install)
-    end
     flash[:notice] = t(:'flash.application.update.success')
     redirect_to integrations_applications_path
   rescue => e
@@ -58,21 +56,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
   def update
     @installed_app.set_configs get_metadata_fields
     @installed_app.save!
-    if (element.eql? "salesforce") && current_account.features?(:salesforce_sync)
-      va_rules = @installed_app.va_rules
-      if salesforce_sync_option? && va_rules.blank?
-        salesforce_service_obj.receive(:install)
-      elsif va_rules.present?
-        va_rules.each do |v_r|
-          v_r.update_attribute(:active,salesforce_sync_option?) 
-        end
-      end
-    else
-      va_rules = @installed_app.va_rules
-      va_rules.each do |v_r|
-          v_r.update_attribute(:active, false) 
-      end
-    end
     flash[:notice] = t(:'flash.application.update.success')
     redirect_to integrations_applications_path
   rescue => e
@@ -95,17 +78,17 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     def fd_payload
       json_payload = JSON.parse(File.read("lib/integrations/cloud_elements/freshdesk.json"))
       api_key = current_user.single_access_token
-      subdomain = current_account.domain
-      JSON.generate(json_payload) % {:api_key => api_key, :subdomain => "9c6d8386", :fd_instance_name => "freshdesk_#{element}_#{current_account.id}" }
+      subdomain = (Rails.env.eql? "development") ? "1a7f07ed" : current_account.domain # mention ngrok for development environment.
+      JSON.generate(json_payload) % {:api_key => api_key, :subdomain => subdomain, :fd_instance_name => "freshdesk_#{element}_#{subdomain}_#{current_account.id}" }
     end
 
     def instance_hash
       hash = {}
       case element
-      when "salesforce"
-        hash[:refresh_token] = (params["step"].eql? "new") ? get_metadata_from_redis["refresh_token"] : @installed_app.configs[:inputs]["refresh_token"]
-        hash[:api_key] = Integrations::OAUTH_CONFIG_HASH["salesforce"]["consumer_token"]
-        hash[:api_secret] = Integrations::OAUTH_CONFIG_HASH["salesforce"]["consumer_secret"]
+      when "salesforce_sync"
+        hash[:refresh_token] = get_metadata_from_redis["refresh_token"]
+        hash[:api_key] = Integrations::OAUTH_CONFIG_HASH["salesforce_sync"]["consumer_token"]
+        hash[:api_secret] = Integrations::OAUTH_CONFIG_HASH["salesforce_sync"]["consumer_secret"]
       else
         constant_file = read_constant_file
         constant_file['parameters'].each do |param|
@@ -113,8 +96,8 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
         end
       end
       portal = current_account.main_portal
-      hash[:callback_url] = "https://9c6d8386.ngrok.io" # "#{portal.url_protocol}://#{portal.host}"
-      hash[:element_name] = "#{element}_#{current_account.id}"
+      hash[:callback_url] = (Rails.env.eql? "development") ? "https://1a7f07ed.ngrok.io" : "#{portal.url_protocol}://#{portal.host}" # mention ngrok for development environment.
+      hash[:element_name] = "#{element}_#{current_account.domain}_#{current_account.id}"
       hash
     end
 
@@ -182,7 +165,8 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def render_settings
-      render :template => "integrations/applications/crm_fields"
+      template = ( MAPPING_ELEMENTS.include? element.to_sym) ? "integrations/applications/crm_sync" : "integrations/applications/crm_fields"
+      render :template => template
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
       flash[:error] = t(:'flash.application.update.error')
@@ -192,7 +176,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     def get_app_configs( element_token, element_instance_id, fd_instance_id, formula_instance_id )
       element_config = default_mapped_fields
       config_hash = Hash.new
-      config_hash = get_metadata_from_redis if params["step"].eql? "new"
+      config_hash = get_metadata_from_redis
       config_hash['element_token'] = element_token
       config_hash['element_instance_id'] = element_instance_id
       config_hash['fd_instance_id'] = fd_instance_id
@@ -200,17 +184,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       config_hash['enble_sync'] = nil
       config_hash['companies'] = get_selected_field_arrays(element_config['existing_companies'])
       config_hash['contacts'] = get_selected_field_arrays(element_config['existing_contacts'])
-      configs_inputs = @installed_app.configs[:inputs]
-      if configs_inputs.blank?
-        element_config['objects'].each do |object|
-          config_hash["#{object}_fields"] = element_config['default_fields'][object].join(",")
-          config_hash["#{object}_labels"] = element_config['default_labels'][object].join(",")
-        end
-      end
-      case element
-      when "salesforce"
-        config_hash['opportunity_view'] = "0" if configs_inputs.blank?
-      end
       config_hash
     end
 
@@ -307,11 +280,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       formula_id = CRM_TO_HELPDESK_FORMULA_ID[element.to_sym]
       metadata = @metadata.merge({:formula_id => formula_id})
       payload = formula_instance_payload( "#{element}=>freshdesk:#{current_account.id}", element_instance_id, fd_instance_id )
-      create_formula_instance(payload, metadata)
-    rescue => e
-      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
-      flash[:error] = t(:'flash.application.install.error')
-      redirect_to integrations_applications_path and return 
+      create_formula_instance(payload, metadata) 
     end
 
     def update_formula_inst
@@ -334,42 +303,8 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     def get_metadata_fields
       config_hash = Hash.new 
       config_hash['enble_sync'] = params[:enble_sync]
-      config_hash['contact_fields'] = params[:contacts].join(",") unless params[:contacts].nil?
-      config_hash['lead_fields'] = params[:leads].join(",") unless params[:leads].nil?
-      config_hash['account_fields'] = params[:accounts].join(",") unless params[:accounts].nil?
-      config_hash['contact_labels'] = params['contact_labels'] unless params[:contacts].nil?
-      config_hash['lead_labels'] = params['lead_labels'] unless params[:leads].nil?
-      config_hash['account_labels'] = params['account_labels'] unless params[:accounts].nil?
-      config_hash = get_opportunity_params config_hash if element.eql? "salesforce"
-      if element.eql? "salesforce" and current_account.features?(:salesforce_sync)
-        config_hash['salesforce_sync_option'] = params["salesforce_sync_option"]["value"]
-      end
       config_hash['companies'] = get_selected_field_arrays(params[:inputs][:companies])
       config_hash['contacts'] = get_selected_field_arrays(params[:inputs][:contacts])
-      config_hash
-    end
-
-    def get_opportunity_params(config_hash)
-      config_hash['opportunity_view'] = params[:opportunity_view][:value]
-      if config_hash['opportunity_view'].to_bool
-        config_hash['opportunity_fields'] = params[:opportunities].join(",") unless params[:opportunities].nil?
-        config_hash['opportunity_labels'] = params[:opportunity_labels]
-        config_hash['agent_settings'] = params[:agent_settings][:value]
-        if config_hash['agent_settings'].to_bool
-          metadata = @metadata.merge({ :object => 'Opportunity', :field => 'StageName', :element_token => @installed_app.configs[:inputs]['element_token'] })
-          resp = service_obj({}, metadata).receive(:opportunity_field_properties)['pickListValues']
-          stage_name_picklist_values = []
-          resp.each do |value|
-            stage_name_picklist_values.push([value, value])
-          end
-          config_hash["opportunity_stage_choices"] = stage_name_picklist_values
-        else
-          @installed_app.configs[:inputs].delete("opportunity_stage_choices")
-        end
-      else
-        opportunity_configs = [ "opportunity_fields", "opportunity_labels", "agent_settings", "opportunity_stage_choices" ]
-        @installed_app.configs[:inputs] = @installed_app.configs[:inputs].except(*opportunity_configs)
-      end
       config_hash
     end
 
@@ -411,8 +346,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       file = read_constant_file
       @element_config['existing_companies'] = file['existing_companies']
       @element_config['existing_contacts'] = file['existing_contacts']
-      @element_config['default_fields'] = file['default_fields']
-      @element_config['default_labels'] = file['default_labels']
       @element_config['element_validator'] = file['validator']
       @element_config['fd_validator'] = file['fd_validator']
       @element_config['objects']= file['objects'].keys
@@ -427,26 +360,29 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       app_name = installed_app.application.name
       formula_id = CRM_TO_HELPDESK_FORMULA_ID[app_name.to_sym]
       metadata = {:user_agent => user_agent}
-      Integrations::CloudElementsController.delete_formula_instance(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
-      Integrations::CloudElementsController.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => element_instance_id }))
-      Integrations::CloudElementsController.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => fd_instance_id }))
+      cloud_elements_con = Integrations::CloudElementsController.new
+      cloud_elements_con.delete_formula_instance(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
+      cloud_elements_con.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => element_instance_id }))
+      cloud_elements_con.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => fd_instance_id }))
     end
 
     def delete_element_instance_error installed_app, user_agent, element_instance_id
       app_name = installed_app.application.name
       metadata = {:user_agent => user_agent}
-      Integrations::CloudElementsController.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => element_instance_id }))
+      cloud_controller = Integrations::CloudElementsController.new
+      cloud_controller.delete_element_instance(installed_app, {}, metadata.merge({ :element_instance_id => element_instance_id }))
     end
 
     def delete_formula_instance_error installed_app, user_agent, formula_instance_id
       app_name = installed_app.application.name
       formula_id = CRM_TO_HELPDESK_FORMULA_ID[app_name.to_sym]
       metadata = {:user_agent => user_agent}
-      Integrations::CloudElementsController.delete_formula_instance(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
+      cloud_controller = Integrations::CloudElementsController.new
+      cloud_controller.delete_formula_instance(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
     end
 
     def get_metadata_from_redis
-      key_options = { :account_id => current_account.id, :provider => "salesforce"}
+      key_options = { :account_id => current_account.id, :provider => "salesforce_sync"}
       kv_store = Redis::KeyValueStore.new(Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options))
       kv_store.group = :integration
       app_config = JSON.parse(kv_store.get_key)
@@ -458,12 +394,21 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       JSON.parse(File.read("lib/integrations/cloud_elements/crm/#{element}/constant.json"))
     end
 
-    def salesforce_service_obj
-      @salesforce_obj ||= IntegrationServices::Services::SalesforceService.new(@installed_app, {},:user_agent => request.user_agent)
-    end
-
     def salesforce_sync_option?
       @installed_app.configs_salesforce_sync_option.to_s.to_bool
     end
 
+    def check_feature
+      feature = true
+
+      case element
+      when "salesforce_sync"
+        feature = current_account.features?(:salesforce_crm_sync)
+      end
+
+      unless feature
+        flash[:error] = t(:'flash.application.install.no_feature_error')
+        redirect_to integrations_applications_path and return
+      end 
+    end
 end

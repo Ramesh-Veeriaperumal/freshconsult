@@ -1,17 +1,7 @@
 class Integrations::CloudElementsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter :verify_authenticity, :build_installed_app, :only => [:oauth_url]
-
-  def oauth_url
-    metadata = @metadata.merge({:element => params[:state]})
-    response = service_obj({}, metadata).receive(:oauth_url)
-    redirect_url = response['oauthUrl']
-    redirect_to redirect_url
-    rescue => e
-      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
-      flash[:error] = t(:'flash.application.install.error')
-      redirect_to integrations_applications_path
-  end
+  include Integrations::CloudElements::CloudElementsUtil
 
   private
 
@@ -40,11 +30,6 @@ class Integrations::CloudElementsController < ApplicationController
       service_obj(payload, metadata).receive(:create_element_instance)
     end
 
-    def self.delete_element_instance installed_app, payload, metadata
-      service_obj = IntegrationServices::Services::CloudElementsService.new( installed_app, payload, metadata)
-      service_obj.receive(:delete_element_instance)
-    end
-
     def instance_object_definition payload, metadata
       if metadata[:method] == 'post'
         service_obj(payload, metadata).receive(:create_instance_object_definition)
@@ -67,11 +52,6 @@ class Integrations::CloudElementsController < ApplicationController
 
     def update_formula_instance payload, metadata
       service_obj(payload, metadata).receive(:update_formula_instance)
-    end
-
-    def self.delete_formula_instance installed_app, payload, metadata
-      service_obj = IntegrationServices::Services::CloudElementsService.new( installed_app, payload, metadata)
-      service_obj.receive(:delete_formula_instance)
     end
 
     def verify_authenticity

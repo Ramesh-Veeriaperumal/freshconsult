@@ -39,15 +39,6 @@ class Integrations::SalesforceController < Admin::AdminController
   end
 
   def edit
-    if cloud_elements_feature?
-      redirect_to "/integrations/sync/crm/edit?state=sfdc" and return if @installed_app.configs[:inputs]["element_token"].present?
-      redirect_to "/integrations/sync/crm/instances?state=sfdc&step=edit" and return
-    elsif @installed_app.configs[:inputs]["element_token"].present?
-     Integrations::CloudElements::CrmController.destroy_ce_instances( @installed_app, request.user_agent )
-     ce_configs = ["element_token", "element_instance_id", "fd_instance_id", "crm_to_helpdesk_formula_instance", "enble_sync", "companies", "contacts"]
-     @installed_app.configs[:inputs] = @installed_app.configs[:inputs].except(*ce_configs)
-     @installed_app.save!
-    end
     @salesforce_config = fetch_metadata_fields
     @action = 'update'
     render :template => "integrations/applications/salesforce_fields"
@@ -158,9 +149,4 @@ class Integrations::SalesforceController < Admin::AdminController
     raise "OAuth Token is nil" if app_config["oauth_token"].nil?
     app_config
   end
-
-  def cloud_elements_feature?
-    current_account.features?(:salesforce_crm_sync)
-  end
-
 end

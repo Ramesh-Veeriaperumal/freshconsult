@@ -1,6 +1,6 @@
 
 {
-    "objects" : {"contact" : "Contact", "account" : "Account", "lead" : "Lead", "opportunity" : "Opportunity" },
+    "objects" : {"contact" : "Contact", "account" : "Account" },
 
     "delete_fields": {"contact_fields": "FD_ContactId__c", "contact_fields_types": "FD_ContactId", 
                       "account_fields": "FD_AccountId__c", "account_fields_types": "FD_AccountId"}, 
@@ -8,12 +8,6 @@
     "existing_companies" : [{"fd_field" : "name", "sf_field" : "Name"}],
 
     "existing_contacts" : [{"fd_field" : "name", "sf_field" : "Name"}, {"fd_field" : "email", "sf_field" : "Email"}, {"fd_field" : "mobile", "sf_field" : "MobilePhone"}, {"fd_field" : "phone", "sf_field" : "Phone"}],
-
-    "default_fields" : {"contact": ["Name"], "account" : ["Name"], "lead" : ["Name"], 
-    					"opportunity": ["Name", "StageName", "CloseDate"]},
-
-    "default_labels" : {"contact": ["Full Name"], "account": ["Account Name"], "lead": ["Full Name"] , 
-    					"opportunity": ["Name", "Stage", "Close Date"]},
 
     "validator": {"string": ["text"], "textarea": ["paragraph"], "boolean": ["checkbox"], 
                   "reference":[], "phone":["phone_number"], "picklist":["dropdown, dropdown_blank"], "multipicklist":["dropdown, dropdown_blank"],

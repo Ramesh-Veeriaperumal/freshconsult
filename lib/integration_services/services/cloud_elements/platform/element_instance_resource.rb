@@ -13,19 +13,11 @@ module IntegrationServices::Services
       def delete_instance
         request_url = "#{cloud_elements_api_url}/instances/#{@service.meta_data[:element_instance_id]}"
         response = http_delete request_url
-        process_response(response, 200) do |resp|
+        process_response(response, 200, 404) do |resp|
           return resp
         end
       end
 
-      def get_instance
-       request_url = "#{cloud_elements_api_url}/instances/#{@service.meta_data[:element_instance_id]}"
-       response = http_get request_url
-       process_response(response, 200) do |element_instance|
-        return element_instance
-       end
-     end
-        
     end
   end
 end

@@ -25,7 +25,6 @@ class OmniauthCallbacksController < ApplicationController
     flash[:notice] = result.flash_message if result.flash_message.present?
     render result.render and return if result.render.present?
     return failure if result.failed?
-    result.redirect_url= "#{@portal_url}/integrations/sync/crm/instances?state=sfdc&step=new" if current_account.features?(:salesforce_crm_sync) and params[:provider].eql? "salesforce"
     invalid_nmobile if result.invalid_nmobile.present?
     redirect_to result.redirect_url || root_url(:host => origin_account.host)
   end

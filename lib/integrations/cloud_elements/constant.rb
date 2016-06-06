@@ -1,6 +1,6 @@
 module Integrations::CloudElements::Constant
 
   APP_NAMES = {
-        :sfdc => 'salesforce'
+        :sfdc => 'salesforce_sync'
     }
 end
