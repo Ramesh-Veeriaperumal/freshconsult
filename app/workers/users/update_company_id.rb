@@ -5,7 +5,7 @@ class Users::UpdateCompanyId < BaseWorker
                   :backtrace => true, 
                   :failures => :exhausted
 
-  USER_FETCH_LIMIT = 500
+  USER_FETCH_LIMIT = 100
   TICKET_UPDATE_LIMIT = 50
 
   def perform(args)
