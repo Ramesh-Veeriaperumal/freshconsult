@@ -206,7 +206,7 @@ class Portal < ActiveRecord::Base
     end
 
     def main_portal_language_changes?
-      main_portal and @portal_changes.has_key?(:language)
+      main_portal && @portal_changes && @portal_changes.has_key?(:language)
     end
 
     def backup_portal_changes
