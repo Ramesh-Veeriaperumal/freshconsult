@@ -18,7 +18,6 @@ class Freshfone::ForwardController < FreshfoneBaseController
   before_filter :transfer_ignored, :only => [:transfer_complete], :if => :check_transfer_ignored?
   before_filter :set_child_call_status, :only => [:transfer_initiate]
   before_filter :check_child_call_status, :only => [:transfer_complete]
-  after_filter  :cancel_browser_agents, only: [:initiate], if: :new_notifications?
 
   include Freshfone::Call::BranchDispatcher
 
@@ -142,8 +141,13 @@ class Freshfone::ForwardController < FreshfoneBaseController
       super
     end
 
-    def update_transfer_leg_call_meta(child)
-      call_actions.update_agent_leg_response(params[:agent_id], params[:CallStatus], child)
+    def update_transfer_leg_call_meta
+      transfer_call_leg = current_call.children.last
+      if params[:external_transfer].blank?
+         call_actions.update_agent_leg_response(params[:agent_id], "busy", transfer_call_leg)
+      else
+        call_actions.update_external_transfer_leg_response(params[:external_number], "busy", transfer_call_leg)
+      end
     end
 
     def set_dial_call_sid
@@ -179,13 +183,12 @@ class Freshfone::ForwardController < FreshfoneBaseController
     end
 
     def transfer_ignored
+      update_transfer_leg_call_meta
       transferred_call = current_call.children.last
+      notifier.notify_source_agent_to_reconnect(transferred_call) if transferred_call.meta.all_agents_missed?
       params[:CallStatus] = 'no-answer' if answered_by_machine?
-      update_transfer_leg_call_meta(transferred_call)
       params[:DialCallStatus] = params[:CallStatus]
       transferred_call.update_call(params)
-      notifier.notify_source_agent_to_reconnect(transferred_call) if
-        !transferred_call.canceled? && transferred_call.meta.all_agents_missed?
       render :xml => telephony.call_ignored(params) and return
     end
 
@@ -236,10 +239,5 @@ class Freshfone::ForwardController < FreshfoneBaseController
 
     def validate_trial
       return render :xml => telephony.reject('Trial Restriction')
-    end
-
-    def cancel_browser_agents
-      return if current_call.user_id != (params[:agent_id].to_i)
-      call_actions.cancel_browser_agents(current_call)
     end
 end

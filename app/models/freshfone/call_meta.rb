@@ -84,7 +84,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
   
   def update_pinged_agents_with_response(user_id, response)
     pinged_agents.each do |agent|
-      agent.merge!(response: PINGED_AGENT_RESPONSE_HASH[response.to_sym]) if agent[:id] == user_id.to_i && agent[:response].blank?
+      agent.merge!({:response => PINGED_AGENT_RESPONSE_HASH[response.to_sym]}) if agent[:id] == user_id.to_i && agent[:response].blank?
     end
     save!
   end
@@ -147,14 +147,6 @@ class Freshfone::CallMeta < ActiveRecord::Base
     false
   end
 
-  def missed_response_present?(user_id)
-    pinged_agents.each do |agent|
-      return MISSED_RESPONSE_HASH.values.include?(agent[:response]) if
-        agent[:id] == user_id.to_i
-    end
-    false
-  end
-
   def update_device_meta(device_type, meta_info)
     self.device_type = device_type
     self.meta_info[:agent_info] = meta_info
@@ -169,33 +161,10 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   def update_feedback(params)
     meta_info[:quality_feedback] = build_feedback_params(params)
-    save! if meta_info[:quality_feedback].present?
-  end
-
-  def cancel_browser_agents
-    pinged_agents.each do |agent|
-      agent[:response] = PINGED_AGENT_RESPONSE_HASH[:canceled] if
-        browser_agent?(agent) && agent[:response].blank?
-    end
     save!
   end
 
-  def agent_pinged_and_no_response?(user_id)
-    pinged_agents.each do |agent|
-      return true if agent[:id] == user_id && agent[:response].blank?
-    end
-    false
-  end
-
-  def simple_or_group_hunt?
-    simple_routing_hunt? || group_hunt?
-  end
-
   private
-
-    def browser_agent?(agent)
-      agent[:device_type] == :browser
-    end
 
     def build_feedback_params(params)
       result = {}

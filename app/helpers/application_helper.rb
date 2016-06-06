@@ -1455,12 +1455,8 @@ module ApplicationHelper
 
 	end
 
-  def account_numbers
-    @account_numbers ||= current_account.freshfone_numbers
-  end
-
 	def current_account_freshfone_numbers
-		@current_account_freshfone_numbers ||= account_numbers.accessible_freshfone_numbers(current_user)
+		@current_account_freshfone_numbers ||= current_account.freshfone_numbers.accessible_freshfone_numbers(current_user)
 	end
 
   def current_account_freshfone_number_hash

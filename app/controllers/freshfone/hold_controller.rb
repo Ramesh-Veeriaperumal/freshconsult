@@ -8,7 +8,6 @@ class Freshfone::HoldController < FreshfoneBaseController
   before_filter :reset_resume_call, :only =>[:add, :wait, :remove, :unhold]
   before_filter :initialize_hold, :only => [:wait]
   before_filter :update_child_leg, :only => [:transfer_unhold]
-  before_filter :cancel_browser_agents, only: [:transfer_fallback_unhold, :transfer_unhold]
 
   def add
     begin
@@ -81,8 +80,8 @@ class Freshfone::HoldController < FreshfoneBaseController
   end
 
   def quit
-    current_call.add_to_hold_duration(params[:QueueTime])
-    render xml: telephony.no_action
+    current_call.add_to_hold_duration(params['QueueTime'])
+    render :xml => telephony.no_action
   end
 
   def transfer_unhold
@@ -136,9 +135,6 @@ class Freshfone::HoldController < FreshfoneBaseController
       super
     end
 
-    def cancel_browser_agents
-      call_actions.cancel_browser_agents(current_call.children.last)
-    end
 
   def error_handler(format=nil, message="")
     current_call.disconnect_agent
@@ -157,11 +153,11 @@ class Freshfone::HoldController < FreshfoneBaseController
     current_call.is_root? ? current_call.call_sid : current_call.dial_call_sid
   end
 
-    def reset_resume_call#setting the parent call as current for resumed case for hold and wait.
-      return if current_call.blank?
-      #need to check if current call is child
-      set_current_call(current_call.parent) if (current_call.busy? || current_call.noanswer? ||  current_call.canceled? || current_call.ringing? || current_call.failed?)
-    end
+  def reset_resume_call#setting the parent call as current for resumed case for hold and wait.
+    return if current_call.blank?
+    #need to check if current call is child
+    set_current_call(current_call.parent) if (current_call.busy? || current_call.noanswer? ||  current_call.canceled? || current_call.ringing?)
+  end
 
   def valid_call?
     (current_call.inprogress? || current_call.canceled?)

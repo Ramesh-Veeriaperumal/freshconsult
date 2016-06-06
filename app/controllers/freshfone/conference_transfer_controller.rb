@@ -12,8 +12,8 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
   before_filter :initialize_transfer, :only => [:initiate_transfer]
   before_filter :update_conference_sid, :only => [:transfer_agent_wait]
   before_filter :select_current_call, :only => [:initiate_transfer]
-  before_filter :cancel_child_call, :only => [:transfer_success], if: :call_in_progress? #checking for parent call is in progress, if so then child is canceled.
-  before_filter :transfer_answered, :only => [:transfer_success], unless: :intended_agent_for_transfer?
+  before_filter :set_child_call_status, :only => [:transfer_success]
+  before_filter :handle_simultaneous_answer, :only => [:transfer_success]
   after_filter :remove_conf_transfer_job, :only => [:transfer_success]
   before_filter :check_current_call, :only => [:cancel_transfer, :resume_transfer]
   
@@ -29,7 +29,18 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
   end
 
   def transfer_success
-    render xml: handle_transfer_success
+    begin
+      notifier.notify_transfer_success(current_call)
+      notifier.cancel_other_agents transfer_leg
+      current_call.completed!
+      render :xml => telephony.initiate_agent_conference({
+                      :wait_url => target_agent_wait_url, 
+                      :sid => params[:CallSid] })
+    rescue Exception => e
+      Rails.logger.error "Error in conference transfer success for #{current_account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+      current_call.cleanup_and_disconnect_call
+      empty_twiml
+    end
   end
 
   def complete_transfer
@@ -85,6 +96,11 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
       clear_client_calls
     end
 
+    def transfer_leg
+      agent_id = split_client_id(params[:To])
+      transfer_leg = fetch_and_update_child_call(params[:call], params[:CallSid], agent_id)
+    end
+
     def clear_client_calls
       key = FRESHFONE_CLIENT_CALL % { :account_id => current_account.id }
       remove_from_set(key, current_call.call_sid)
@@ -112,6 +128,27 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
 
     def check_current_call
       render :json => {:status => :error} and return if current_call.blank?
+    end
+
+    def set_child_call_status
+      return unless current_call.inprogress? #checking for parent call is in progress, if so then child is canceled.
+      current_call.children.last.canceled!
+      empty_twiml and return
+    end
+
+    def handle_simultaneous_answer
+        incoming_answered and return unless intended_agent?
+    end
+
+    def incoming_answered
+      @transfer_leg_call.meta.update_pinged_agents_with_response(get_agent_id, "canceled") if @transfer_leg_call.meta.present?
+      render :xml => telephony.incoming_answered(@transfer_leg_call.agent) 
+    end
+
+    def intended_agent?
+      @transfer_leg_call = current_call.children.last
+      return true if @transfer_leg_call.user_id.blank?
+      @transfer_leg_call.user_id.to_s == get_agent_id
     end
 
     def get_agent_id

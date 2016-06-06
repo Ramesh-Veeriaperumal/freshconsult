@@ -60,6 +60,11 @@ module Freshfone::NodeNotifier
   def publish(message, channel)
     Rails.logger.debug "Freshfone Node sidekiq: #{@current_account.id} : #{channel}"
     Rails.logger.debug message
+    options = {
+      :channel => channel,
+      :message => message,
+      :freshfone_node_session => freshfone_node_session
+    }
     message.merge!({:enqueued_time => Time.now})
     Freshfone::NodeWorker.perform_async(message, channel, freshfone_node_session)
   end

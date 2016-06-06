@@ -7,7 +7,7 @@ module Freshfone::FreshfoneUtil
   end
 
   def split_client_id(caller_id)
-    caller_id.match(/client:(\d+)/) ? $1 : nil if caller_id.present?
+    caller_id.match(/client:(\d+)/) ? $1 : nil
   end
 
   def sip_user_id(caller_id=params[:From])
@@ -89,11 +89,13 @@ module Freshfone::FreshfoneUtil
   end
 
   def update_conf_meta
-    return if current_call.blank?
+    call = current_user.freshfone_calls.call_in_progress
+    call = current_account.freshfone_calls.find_by_call_sid(outgoing? ? current_call_sid : incoming_sid) if call.blank?
+    return if call.blank?
     user_agent = request.env["HTTP_USER_AGENT"]
-    current_call.meta = Freshfone::CallMeta.new( :account_id => current_account.id, :call_id => current_call.id) if current_call.meta.blank?
-    call_meta = current_call.meta
-    call_meta.transfer_by_agent = transfering_agent_id(current_call) if call_meta.transfer_by_agent.blank?
+    call.meta = Freshfone::CallMeta.new( :account_id => current_account.id, :call_id => call.id) if call.meta.blank?
+    call_meta = call.meta
+    call_meta.transfer_by_agent = transfering_agent_id(call) if call_meta.transfer_by_agent.blank?
     call_meta.meta_info = {:agent_info => user_agent} if call_meta.meta_info.blank?
     call_meta.device_type = (is_native_mobile? ? mobile_device(user_agent) : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser]) if call_meta.device_type.blank?
     call_meta.save
@@ -262,22 +264,16 @@ module Freshfone::FreshfoneUtil
   end
 
   def transfer_call?
-    current_call.transferred_leg? ||
-      params[:transfer_call].present? || params[:external_transfer].present?
+    params[:transfer_call].present? || params[:external_transfer].present?
   end
 
   def agent_connected?
-    current_call.user_id.present? &&
-      current_call.user_id.to_s == (params[:agent_id] || params[:agent])
-  end
-
-  def new_notifications?
-    ::Account.current.launched?(:freshfone_new_notifications)
+    current_call.user_id.present? && current_call.user_id.to_s == params[:agent_id]
   end
 
   private
     def invalid_number_incoming_fix
-      return if agent_leg? || agent_transfer_leg? || params[:From].blank? || sip_call? || supervisor?
+      return if params[:From].blank? || sip_call? || supervisor?
       if !outgoing? && invalid_number?(params[:From]) && !strange_number?(params[:From])
         Rails.logger.info "Number :: #{params[:From]} is an Invalid Number, of CallSid :: #{params[:CallSid]} for Account :: #{current_account.id}"
         params[:From] = "+#{STRANGE_NUMBERS.invert['ANONYMOUS'].to_s}"
@@ -286,32 +282,5 @@ module Freshfone::FreshfoneUtil
 
     def outgoing?
       current_account.features?(:freshfone_conference) ? params[:From].present? && params[:PhoneNumber].present? && params[:From].match(/(client:)/) : params[:To].blank? 
-    end
-
-    def agent_leg?
-      params[:type] == "agent_leg"
-    end
-
-    def agent_transfer_leg?
-      params[:type] == "agent_transfer_leg"
-    end
-
-    def intended_agent?
-      return true if current_call.user_id.blank?
-      current_call.user_id.to_s == (params[:agent] || params[:agent_id])
-    end
-
-    def handle_simultaneous_answer
-      Rails.logger.info "Handle Simultaneous Answer For Account Id :: #{current_account.id}, Call Id :: #{current_call.id}, CallSid :: #{params[:CallSid]}, AgentId :: #{params[:agent] || params[:agent_id]}"
-      return incoming_answered unless intended_agent?
-      current_call.noanswer? ? telephony.incoming_missed : incoming_answered
-    end
-
-    def incoming_answered
-      telephony.incoming_answered(current_call.agent)
-    end
-
-    def remove_notification_failure_recovery(account_id, call_id)
-      Resque.remove_delayed(Freshfone::NotificationFailureRecovery, {:account_id => account_id, :call_id => call_id})
     end
 end

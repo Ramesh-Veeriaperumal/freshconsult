@@ -136,11 +136,6 @@ class Freshfone::CallActions
     call.meta.update_external_transfer_call_response(number, response) if external_transfer?
   end
 
-  def cancel_browser_agents(call)
-    call_meta = call.meta
-    call_meta.cancel_browser_agents if call_meta.present?
-  end
-
   def handle_failed_incoming_call(call, agent_id)
     call_meta = call.meta
     return if call_meta.blank?

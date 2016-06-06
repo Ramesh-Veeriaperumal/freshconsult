@@ -46,7 +46,6 @@
 												Freshfone::User::PRESENCE[:offline] %>";
   <% freshfone_account = current_account.freshfone_account %>
 	freshfone.isAgentConferenceEnabled = <%= current_account.features?(:agent_conference)%>;
-  <% freshfone_numbers = current_account_freshfone_numbers %>
 	freshfone.below_threshold = <%= !freshfone_trial_states? && freshfone_below_threshold? %>;
 	freshfone.available_on_phone = <%= current_user.available_on_phone? || false %>;
 	freshfone.recent_calls_path = "<%= recent_calls_freshfone_call_history_index_path %>";
@@ -75,8 +74,6 @@
 	freshfone.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';
 	freshfone.numbersHash = <%= Hash[*current_account_freshfone_number_hash.collect(&:reverse).flatten].to_json.html_safe %>;
 	freshfone.namesHash = <%= Hash[*current_account_freshfone_names.flatten].to_json.html_safe %>;
-	freshfone.ringingTimeOutHash = <%= Hash[*freshfone_numbers.map { |n| [n.id, n.ringing_time] }.flatten].to_json.html_safe %>;
-	freshfone.rrTimeOutHash = <%= Hash[*freshfone_numbers.map { |n| [n.id, n.rr_timeout] }.flatten].to_json.html_safe%>;
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_index_path %>';
 	freshfone.isDebuggingMode = <%= current_account.features?(:client_debugging)%>;
 	freshfone.isConferenceMode = <%= current_account.features?(:freshfone_conference)%>;
@@ -84,9 +81,8 @@
 	freshfone.isCallQualityMetricsEnabled = <%= current_account.features?(:call_quality_metrics)%>;
 	freshfone.agent_count = "<%= t('freshfone.widget.agents_count.one') %>";
 	freshfone.agents_count = "<%= t('freshfone.widget.agents_count.other') %>";
-	freshfone.newNotifications = <%=current_account.launched?(:freshfone_new_notifications) %>;
 	
-  freshfone.ringingTime = <%= freshfone_numbers.present? ?  freshfone_numbers.first.ringing_time : 30 %>;
+  freshfone.ringingTime = <%= current_account_freshfone_numbers.present? ?  current_account_freshfone_numbers.first.ringing_time : 30 %>;
   freshfone.isAdmin = <%= current_user.privilege?(:admin_tasks) %>
   freshfone.current_user_details = {
           'id'        : '<%=current_user.id%>',
@@ -101,11 +97,6 @@
 	  	url: '<%= audio_path("/assets/call_disconnected_due_to_network.mp3") %>'
 	  });
 	  freshfone.networkErrorSound.load();
-    freshfone.callRingingSound = soundManager.createSound({
-      id: "freshfoneCallRingingSound",
-      url: '<%= audio_path("/assets/incoming.mp3") %>'
-    });
-    freshfone.callRingingSound.load();
   });
   freshfone.isActiveOrTrial = <%= freshfone_active_or_trial? %>;
   freshfone.strangeNumbers = <%= Freshfone::CallerLookup::STRANGE_NUMBERS.to_json.html_safe %>;

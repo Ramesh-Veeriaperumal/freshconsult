@@ -9,7 +9,7 @@ class Freshfone::Initiator
                   Freshfone::Initiator::Transfer,
                   Freshfone::Initiator::Record,
                   Freshfone::Initiator::Sip,
-                  Freshfone::Initiator::Supervisor
+                  Freshfone::Initiator::Supervisor,
                ]
 
   attr_accessor :params, :call_resolver, :current_account
@@ -28,8 +28,7 @@ class Freshfone::Initiator
   def resolve_call
     validation_error = validate_call
     return telephony.reject(validation_error) if validation_error
-    call_resolver = CALL_TYPES.detect { 
-      |type| type.match?(params) }.new(params, current_account, @current_number)
+    call_resolver = CALL_TYPES.detect { |type| type.match?(params) }.new(params, current_account, @current_number)
     return call_resolver.process
   end
 
