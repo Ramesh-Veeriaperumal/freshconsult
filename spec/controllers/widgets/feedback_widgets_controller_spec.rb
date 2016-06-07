@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Widgets::FeedbackWidgetsController do
   setup :activate_authlogic
+  include AccountHelper
   self.use_transactional_fixtures = false
 
   before(:all) do
@@ -29,7 +30,8 @@ describe Widgets::FeedbackWidgetsController do
     now = (Time.now.to_f*1000).to_i
     post :create, widget_params(now)
     @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
-    response.should render_template "widgets/feedback_widgets/thanks"
+    body = JSON.parse(response.body)
+    body["success"].should be true
   end
 
   it "should redirect to feedback_widgets/new if ticket creation fails" do
@@ -37,7 +39,28 @@ describe Widgets::FeedbackWidgetsController do
     now = (Time.now.to_f*1000).to_i
     Widgets::FeedbackWidgetsController.any_instance.stubs(:create_the_ticket => false)
     post :create, widget_params(now)    
-    response.should render_template "widgets/feedback_widgets/new"
+    body = JSON.parse(response.body)
+    body["success"].should be false
+    Widgets::FeedbackWidgetsController.any_instance.unstub(:create_the_ticket)
+  end
+
+  describe "Multilingual Feature" do
+
+    it "should render new html template without redirect when Multilingual is enabled for the account" do
+      destroy_enable_multilingual_feature if @account.multilingual?
+      get 'new', { :format => 'html' }
+      expect(response.status).to eql(200)
+      expect(response).to render_template("widgets/feedback_widgets/new")
+      expect(response.status).not_to eql(302) #making sure it's not a redirect
+    end
+
+    it "should render new html template without redirect when Multilingual is enabled for the account" do
+      enable_multilingual unless @account.multilingual?
+      get 'new', { :format => 'html' }
+      expect(response.status).to eql(200)
+      expect(response).to render_template("widgets/feedback_widgets/new")
+      expect(response.status).not_to eql(302) #making sure it's not a redirect
+    end
   end
 
 end

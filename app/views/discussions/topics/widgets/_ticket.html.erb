@@ -1,6 +1,6 @@
 <div class="widget">
 
-	<% unless @topic.ticket.present? %>
+	<% if @topic.ticket.nil? || @topic.ticket.deleted %>
 		<strong><%= link_to t('discussions.topics.convert_to_ticket'), new_helpdesk_ticket_path(:topic_id => @topic.id) %></strong>
 
 	<% else %>

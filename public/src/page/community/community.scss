@@ -457,6 +457,37 @@ body.community.moderation.cs-always-show {
 		max-height: 450px;
 	}	
 }
+
+#add-translations {
+
+	.modal-body {
+		padding: 10px 0px;
+
+		.form-horizontal {
+			padding: 20px 20px 0px;
+
+			.control-label {
+				width: 100px;
+			}
+
+			.controls {
+				@include margin-left(100px);
+			}
+		}
+
+		.permission-denied {
+			padding: 35px;
+		}
+
+		.add-translations-btn {
+			@include float(right);
+		}
+	}
+	.modal-footer {
+		display: none;
+	}
+}
+
 .artical-list {
 	.article-title {
 		.unpublished-title{

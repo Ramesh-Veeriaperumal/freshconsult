@@ -1,3 +1,14 @@
+.solutions.multilingual {
+  #sticky_redactor_toolbar {
+    .redactor_toolbar {
+      top: 145px;
+    }
+    &.has-notification .redactor_toolbar {
+      top: 180px;
+    }
+  }
+  
+}
 .pseudo-circle{
   content: '';
   position: absolute;

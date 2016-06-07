@@ -81,13 +81,20 @@
   	line-height: 23px;
 		box-sizing: border-box;
 	}
-	.search-hide{
+	.search-lang{
 		cursor: pointer;
-		position: absolute;
-		@include right(14px);
-		top: 27px;
-		font-size: 22px;
-		color: #565656;
+    position: absolute;
+    right: 14px;
+    top: 27px;
+    #s2id_language_select{
+    	position: relative;
+    	top: -5px;
+    }
+    .search-hide{
+			font-size: 22px;
+			color: #565656;
+			padding-left: 10px;
+		}
 	}
 
 	.community-search::-webkit-input-placeholder {

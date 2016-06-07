@@ -64,27 +64,36 @@
 							</div>
 						</div>
 
-						<div class="control-group">
-							<%= portal.label :language, t('account.primary_language'), :class => "control-label"  %>
-							<div class="controls">
-								<%= portal.select :language, I18n.available_locales_with_name , {:selected =>  @account.main_portal.language.to_sym() }%>
-							</div>
-						</div>
+						<%= render :partial => "languages", :locals => { :portal => portal } %>
 						
 						<%= f.fields_for :account_additional_settings do |settings| %>
-							<% if feature?(:dynamic_content) %>
+							<% if @account.features_included?(:multi_language) && !@account.launched?(:translate_solutions) %>
 								<div class="control-group" id="supported_language_list">
-									<%= settings.label :supported_languages , t('account.additional_languages') , :class => "control-label caption" %>
+									<%= settings.label :supported_languages , 
+												t('account.additional_languages') , 
+												:class => "control-label caption" 
+									%>
 									<div class="controls">
 										<div class="row-fluid">
-											<%= settings.select :supported_languages, options_for_select( I18n.available_locales_with_name.reject { |lang, sym| sym == @account.main_portal.language.to_sym() }, :selected => @supported_languages_list ? @supported_languages_list.collect(&:to_sym) : []), {}, { :multiple => true, "data-placeholder"=>"select language", :class => "select2 span9 clear-left-margin" } %>
+											<%= settings.select :supported_languages, 
+												options_for_select( 
+													I18n.available_locales_with_name.reject { |lang, sym| sym == @account.main_portal.language.to_sym() },
+													:selected => @supported_languages_list ? @supported_languages_list.collect(&:to_sym) : []
+												),
+												{}, 
+												{ 
+													:multiple => true, 
+													"data-placeholder"=>"select language", 
+													:class => "select2 span9 clear-left-margin" 
+												} 
+											%>
 										</div>
 										<div class="muted">
 											<%=t('account.info6')%>
-										</div>	
-									</div>					
+										</div>
+									</div>
 								</div>
-							<%end%>	
+							<% end %>
 							<div class="control-group">
 								<%= settings.label :date_format, t('account.date_format'), :class => "control-label"  %>
 								<div class="controls">

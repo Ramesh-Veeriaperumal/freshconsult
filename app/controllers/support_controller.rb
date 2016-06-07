@@ -3,6 +3,9 @@ class SupportController < ApplicationController
   skip_before_filter :check_privilege, :set_cache_buster
   layout :resolve_layout
   before_filter :portal_context
+  before_filter :strip_url_locale
+  before_filter :set_language
+  before_filter :redirect_to_locale
   around_filter :run_on_slave , :only => [:index,:show],
     :if => proc {|controller| 
       path = controller.controller_path
@@ -11,6 +14,8 @@ class SupportController < ApplicationController
   
   include Redis::RedisKeys
   include Redis::PortalRedis
+  include Portal::Helpers::SolutionsHelper
+  include Portal::Multilingual
 
   caches_action :show, :index, :new,
   :if => proc { |controller|
@@ -24,7 +29,8 @@ class SupportController < ApplicationController
     controller.send('flash').keys.blank?
   }, 
   :cache_path => proc { |c| 
-    Digest::SHA1.hexdigest("#{c.send(:current_portal).cache_prefix}#{c.request.fullpath}#{params[:portal_type]}")
+    cache_path = c.request.original_fullpath.gsub(/\?.*/, '')
+    Digest::SHA1.hexdigest("#{c.send(:current_portal).cache_prefix}#{cache_path}#{params[:portal_type]}")
   }
   
   def cache_enabled?
@@ -77,6 +83,8 @@ class SupportController < ApplicationController
       @facebook_portal = facebook?
       
       @skip_liquid_compile = false
+      
+      configure_language_switcher
       
       # Setting up page layout variable
       process_page_liquid page_token
@@ -135,9 +143,19 @@ class SupportController < ApplicationController
                        :keywords => @page_keywords,
                        :canonical => @page_canonical }
                        
-      @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{@current_path}"
+      canonical_path = request.original_fullpath.gsub(/\?.*/, '')
+      @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{canonical_path}"
       #additions in canonical URL is removed in the view E.g: /facebook added by FB routing is removed in faceboook view.
+      multilingual_meta(page_token) if current_portal.multilingual? 
       @meta = HashDrop.new( @page_meta )
+    end
+
+    def multilingual_meta page_token
+      return unless [ :solution_home, :solution_category, :article_list, :article_view ].include?(page_token)
+      @page_meta[:multilingual_meta] = alternate_version_languages.inject({}) do |result,language|
+        result[language.code] = alternate_version_url(language) unless language == Language.current
+        result
+      end
     end
 
     def process_page_liquid(page_token)      
@@ -228,6 +246,21 @@ class SupportController < ApplicationController
     end
 
   private
+  
+  def strip_url_locale
+    # request.fullpath will return the current path without the url_locale
+    # We are redirecting to fullpath here cos users shouldn't be able to access language specific urls when ... 
+    # multilingual feature is not enabled.
+    redirect_to request.fullpath if params[:url_locale].present? && !current_account.multilingual?
+  end
+
+  def set_language
+    Language.for_current_account.make_current and return unless current_account.multilingual?
+    Language.set_current(
+      request_language: http_accept_language.compatible_language_from(I18n.available_locales), 
+      url_locale: params[:url_locale])
+    override_default_locale
+  end
 
     def agent?
       current_user && current_user.agent?
@@ -236,4 +269,34 @@ class SupportController < ApplicationController
     def public_request?
       current_user.nil?
     end
+
+  def redirect_to_locale
+    if current_account.multilingual? && !facebook? && (params[:url_locale] != Language.current.code)
+      flash.keep 
+      redirect_to request.fullpath.prepend("/#{Language.current.code}") 
+    end
+  end
+
+  def override_default_locale
+    # We should not override the locale if the logged in user's language is not present in the portal languages.
+    # We show the labels in user's language and the articles in Language.current.
+    return if current_user.present? && !current_account.valid_portal_language?(Language.for_current_user)
+    #We are doing this for non-logged in users as it's better we show them everything(not only solutions) 
+    # in the current locale i.e Language.current instead of the account's language.
+    I18n.locale = Language.current.code.to_sym
+  end
+
+  def alternate_version_languages
+    return current_account.all_portal_language_objects unless @solution_item
+    @solution_item.portal_available_versions
+  end
+
+  def check_version_availability
+    return unless current_account.multilingual?
+    return if @solution_item && @solution_item.current_available?
+    render_404 and return if unscoped_fetch.blank?
+    flash[:warning] = version_not_available_msg(controller_name.singularize)
+    redirect_to support_home_path
+  end
+
 end

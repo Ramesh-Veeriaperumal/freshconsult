@@ -1,33 +1,54 @@
 <div class="form-horizontal">
-	<%= f.error_messages %>
+	<div 
+      class="error_messages" 
+      id="error_messages_<%= @category_meta.new_record? ? 'new_category' : "#{@category_meta.id}_l#{@language.id}"%>">
+    <%= f.error_messages %>
+  </div>
+  
 	<div class="control-group">
-		<%= f.label(:name, "#{t('solution_category.name')} <span class='required_star'>*</span>".html_safe, {:class =>'control-label'}) %>
-		<div class="controls">
-			<%= f.text_field :name, 
-											:class => "text required",
-											:autocomplete => "off",
-											:autofocus => true %>
+
+		<%= f.fields_for(association, @category) do |associated_category| %>
+			<%= associated_category.label(:name, "#{t('solution_category.name')} <span class='required_star'>*</span>".html_safe, {:class =>'control-label'}) %>
+			<div class="controls">
+				<%= associated_category.text_field :name, 
+												:class => "text required",
+												:autocomplete => "off",
+												:autofocus => true,
+												:value => @category.name,
+												:placeholder => title_placeholder('categories') %>
+				<%= primary_preview(@primary, :name, @category) %>
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<%= f.label(:description, t('description'), {:class =>'control-label'}) %>
-		<div class="controls">
-			<%= f.text_area :description, :rows => 7 %>
+		<div class="control-group">
+			<%= associated_category.label(:description, t('description'), {:class =>'control-label'}) %>
+			<div class="controls">
+				<%= associated_category.text_area :description, :rows => 7, :value => @category.description %>
+				<%= primary_preview(@primary, :description, @category) %>
+			</div>
 		</div>
-	</div>
+	<% end %>
 	<% if current_account.portals.count > 1 %>
 	<div class="control-group">
-		<label class="control-label"><%= t("solution_category.product_portal_visibility").html_safe %></label>
+		<label class="control-label"><%= t("solution_category.visibile_in_portal").html_safe %></label>
 		<div class="controls">
-			<input type="hidden" name="product_ids" value="" />
-			<%= f.collection_select :portal_ids, current_account.portals, 
+			<% if @primary && @primary != @category %>
+				<div class="pt5">
+					<%= portals_for_category(@category_meta) %>
+				</div>
+			<% else %>
+				<%= f.collection_select :portal_ids, current_account.portals, 
 																:id, :portal_name, 
 																{
-																	:selected => @category.new_record? ? current_portal.id : @category.portals.map(&:id)
+																	:selected => @category.new_record? ? @portal.id : @category_meta.portals.map(&:id)
 																}, 
 																:class => "select2 input-xlarge portal_visibility_required", :multiple => true, 
 																:placeholder => t("solution_category.select_solution_category").html_safe %>
+				<div class="muted mt4"> 
+					<%= t('solution.categories.visibility_help_text') %>
+				</div>
+			<% end %>
 		</div>
 	</div>
 	<% end %>
+	<%= dynamic_hidden_fields(:category) %>
 </div>

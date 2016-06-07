@@ -33,6 +33,7 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   concerned_with :attributes, :s3, :esv2_methods
   
   scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
+  scope :visible, :conditions => { :deleted => false }
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last

@@ -8,8 +8,6 @@ class Solution::Article < ActiveRecord::Base
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
 
-  include Solution::MetaMethods
-
   belongs_to :recent_author, :class_name => 'User', :foreign_key => "modified_by"
   has_one :draft, :dependent => :destroy
 
@@ -23,35 +21,31 @@ class Solution::Article < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Solution::UrlSterilize
+  include Solution::Activities
 
   spam_watcher_callbacks
   rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
   
   acts_as_voteable
   
-  
   serialize :seo_data, Hash
   
   attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed
 
-  attr_accessible :title, :description, :user_id, :folder_id, :status, :art_type, 
-    :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data, :position
-  
-  acts_as_list :scope => :folder
-
-  #zero_downtime_migration_methods :methods => {:remove_columns => [ "description", "desc_un_html"] }
-  
-  after_save      :set_mobihelp_solution_updated_time, :if => :content_changed?
-  before_destroy  :set_mobihelp_solution_updated_time
+  attr_accessible :title, :description, :user_id, :status, :import_id, :seo_data, :outdated
 
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
+  validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_article_meta.new_record?"
+  validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   validate :status_in_default_folder
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
+
+  alias_method :parent, :solution_article_meta
 
   scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
   scope :newest, lambda {|num| {:limit => num, :order => 'modified_at DESC'}}
@@ -62,7 +56,12 @@ class Solution::Article < ActiveRecord::Base
 
   scope :articles_for_portal, lambda { |portal| articles_for_portal_conditions(portal) }
 
+  delegate :visible_in?, :to => :solution_folder_meta
+  delegate :visible?, :to => :solution_folder_meta
+  
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
+  
+  SELECT_ATTRIBUTES = ["id", "thumbs_up", "thumbs_down"]
 
   def self.articles_for_portal_conditions(portal)
     { :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',
@@ -82,10 +81,19 @@ class Solution::Article < ActiveRecord::Base
   def published?
     status == STATUS_KEYS_BY_TOKEN[:published]
   end
+
+  def draft_present?
+    draft.present?
+  end
+
+  def available?
+    present?
+  end
   
   def to_param
+    return parent_id if new_record?
     title_param = sterilize(title[0..100])
-    id ? "#{id}-#{title_param.downcase.gsub(/[<>#%{}|()*+_\\^~\[\]`\s,=&:?;'@$"!.\/(\-\-)]+/, '-')}" : nil
+    parent_id ? "#{parent_id}-#{title_param.downcase.gsub(/[<>#%{}|()*+_\\^~\[\]`\s,=&:?;'@$"!.\/(\-\-)]+/, '-')}" : nil
   end
 
   def nickname
@@ -127,19 +135,17 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def as_json(options={})
-    return super(options) if (options[:tailored_json].present? || 
-        (Account.current.launched?(:solutions_meta_read) && Infra['SUPPORT_LAYER']))
+    return super(options) if (options[:tailored_json].present?)
+    old_options = options.dup
     options.merge!(Solution::Constants::API_OPTIONS)
+    options[:except] += (old_options[:except] || [])
+    options[:except].each {|ex| options[:include].delete(ex)}
     super options
   end
 
   # Added for portal customisation drop
   def self.filter(_per_page = self.per_page, _page = 1)
     paginate :per_page => _per_page, :page => _page
-  end
-  
-  def to_liquid
-    @solution_article_drop ||= Solution::ArticleDrop.new self
   end
   
   def article_title
@@ -158,6 +164,10 @@ class Solution::Article < ActiveRecord::Base
     @article_changes ||= self.changes.clone
   end
 
+  def meta_class
+    "Solution::ArticleMeta".constantize
+  end
+
   VOTE_TYPES.each do |method|
     define_method "toggle_#{method}!" do
       self.class.update_counters(self.id, method => 1, (VOTE_TYPES - [method]).first => -1 )
@@ -173,6 +183,13 @@ class Solution::Article < ActiveRecord::Base
       self.sqs_manual_publish #=> Publish to ES
       queue_quest_job if (method == :thumbs_up && self.published?)
       return true
+    end
+    
+    define_method "#{method}=" do |value|
+      logger.warn "WARNING!! Assigning #{method.to_s} in this manner is not advised. Please make use of object.#{method.to_s}!"
+      return unless new_record?
+      solution_article_meta.send("#{method}=", (solution_article_meta.send("#{method}") + value))
+      super(value) 
     end
   end
 
@@ -202,12 +219,15 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def build_draft_from_article(opts = {})
-    draft = self.account.solution_drafts.build(draft_attributes(opts))
+    draft = self.account.solution_drafts.build
+    draft_attributes(opts).each do |k, v|
+      draft.send("#{k}=", v)
+    end
     draft
   end
 
   def draft_attributes(opts = {})
-    draft_attrs = opts.merge(:article => self, :category_meta => folder.solution_category_meta)
+    draft_attrs = opts.merge(:article_id => self.id, :category_meta_id => solution_folder_meta.solution_category_meta_id)
     Solution::Draft::COMMON_ATTRIBUTES.each do |attribute|
       draft_attrs[attribute] = self.send(attribute)
     end
@@ -220,11 +240,20 @@ class Solution::Article < ActiveRecord::Base
 
   def publish!
     set_status(true)
-    save
+    published = save
+    # Triggering mobihelp callback manually as this update won't trigger article_meta's callbacks.
+    # We do it only for the primary article as we don't support multilingual functionality in mobihelp right now
+    solution_article_meta.set_mobihelp_solution_updated_time if (is_primary? && published)
+    published
+  end
+
+  def to_liquid
+    @solution_article_drop ||= Solution::ArticleVersionDrop.new self
   end
   
-  def visible_in? portal
-    folder.visible_in?(portal)
+  def folder_id
+    # To make Gamification work
+    @folder_id ||= solution_article_meta.solution_folder_meta_id
   end
 
   private
@@ -234,19 +263,9 @@ class Solution::Article < ActiveRecord::Base
         :account_id => self.account_id })
     end
 
-    def set_mobihelp_solution_updated_time
-      self.reload
-      folder.category.update_mh_solutions_category_time
-    end
-
-    def content_changed?
-      all_fields = [:modified_at, :status, :position]
-      changed_fields = self.changes.symbolize_keys.keys
-      (changed_fields & all_fields).any? or tags_changed
-    end
-
     def status_in_default_folder
-      if status == STATUS_KEYS_BY_TOKEN[:published] and self.folder.is_default
+      parent = self.solution_folder_meta
+      if status == STATUS_KEYS_BY_TOKEN[:published] && (parent.present? && parent.is_default?)
         errors.add(:status, I18n.t('solution.articles.cant_publish'))
       end
     end

@@ -66,9 +66,12 @@ module AccountHelper
     Agent.destroy_all
     Helpdesk::Ticket.destroy_all
     AgentGroup.destroy_all
+    Solution::CategoryMeta.destroy_all
     Solution::Category.destroy_all
-    Solution::Folder.destroy_all  
-    Solution::Article.destroy_all  
+    Solution::FolderMeta.destroy_all
+    Solution::Folder.destroy_all
+    Solution::ArticleMeta.destroy_all
+    Solution::Article.destroy_all 
   end
 
   def update_currency
@@ -122,6 +125,47 @@ module AccountHelper
     post :new_signup_free, signup_params
     Resque.inline = false
     Billing::Subscription.any_instance.unstub(:create_subscription)
+  end
+
+  def create_enable_multilingual_feature
+    @account.reload
+    supported_languages = pick_languages(@account.language, 3)
+    @account.account_additional_settings.update_attributes({:supported_languages => supported_languages})
+    @account.account_additional_settings.update_attributes(:additional_settings => {:portal_languages=> supported_languages.sample(2)})
+    @account.features.enable_multilingual.create unless @account.features?(:enable_multilingual)
+    find_account_and_make_current
+    Sidekiq::Testing.inline! do
+      Community::SolutionBinarizeSync.perform_async
+    end
+  end
+
+  def find_account_and_make_current
+    @account = Account.find(@account.id).make_current
+  end
+
+  def destroy_enable_multilingual_feature
+    @account.account_additional_settings.update_attributes({:supported_languages => []})
+    @account.features.enable_multilingual.destroy if @account.features?(:enable_multilingual)
+    @account.reload
+  end
+
+  def pick_a_language
+    (Language.all_codes.reject{ |l| l == @account.language }).sample.dup
+  end
+
+  def pick_languages(primary_lang, n)
+    (Language.all_codes.map{ |lang| lang.dup }.reject{ |l| (l == @account.language || l == primary_lang) }).sample(n)
+  end
+
+  def pick_a_unsupported_language
+    (Language.all_codes - @account.all_languages).sample.dup
+  end
+
+  def enable_multilingual
+    @account.launch(:translate_solutions)
+    create_enable_multilingual_feature
+    @account.features.multi_language.create
+    @account.reload
   end
   
 end

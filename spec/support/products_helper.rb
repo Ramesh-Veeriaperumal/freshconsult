@@ -23,7 +23,7 @@ module ProductsHelper
 												:language=>"en",
 												:product_id => test_product.id, 
 												:forum_category_ids => (option[:forum_category_ids] || [""]),
-												:solution_category_ids => [""],
+												:solution_category_metum_ids => [""],
 												:account_id => @account.id,
 												:logo_attributes => { :content => 
 													fixture_file_upload('files/image4kb.png', 'image/png')},
@@ -56,7 +56,7 @@ module ProductsHelper
 			:portal_url=>option[:portal_url] || "", 
 			:language=>option[:language] || "en", 
 			:forum_category_ids=>[""], 
-			:solution_category_ids=>[""], 
+			:solution_category_metum_ids=>[""], 
 	    :preferences =>
 	    	{ 
 	    		:logo_link=>"", 

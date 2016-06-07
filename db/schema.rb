@@ -272,13 +272,13 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.boolean  "private",                        :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "deleted",                        :default => false
   end
 
   add_index "archive_notes", ["account_id", "archive_ticket_id"], :name => "index_archive_notes_on_account_id_and_archive_ticket_id"
   add_index "archive_notes", ["account_id", "user_id"], :name => "index_archive_notes_on_account_id_and_user_id"
   add_index "archive_notes", ["account_id", "note_id"], :name => "index_archive_notes_on_account_id_and_note_id"
-  add_index "archive_notes", ["id"], :name => "index_on_id"
-  execute "ALTER TABLE archive_notes ADD PRIMARY KEY (account_id,id)"
+  execute "ALTER TABLE archive_notes ADD PRIMARY KEY (id,account_id)"
 
   create_table "archive_ticket_associations", :id => false, :force => true do |t|
     t.integer "id",                :limit => 8,                         :null => false
@@ -331,9 +331,8 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   add_index "archive_tickets", ["account_id", "ticket_id", "progress"], :name => "index_on_account_id_and_ticket_id_and_progress"
   add_index "archive_tickets", ["account_id", "ticket_type"], :name => "index_archive_tickets_on_account_id_and_ticket_type", :length => {"account_id"=>nil, "ticket_type"=>10}
   add_index "archive_tickets", ["account_id", "updated_at"], :name => "index_archive_tickets_on_account_id_and_updated_at"
-  add_index "archive_tickets", ["id"], :name => "index_on_id"
   add_index "archive_tickets", ["account_id", "display_id"], :name => "index_archive_tickets_on_account_id_and_display_id", :unique => true
-  execute "ALTER TABLE archive_tickets ADD PRIMARY KEY (account_id,id)"
+  execute "ALTER TABLE archive_tickets ADD PRIMARY KEY (id,account_id)"
 
   create_table "authorizations", :force => true do |t|
     t.string   "provider"
@@ -2430,7 +2429,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   create_table "mobihelp_app_solutions", :force => true do |t|
     t.integer  "account_id",  :limit => 8, :null => false
     t.integer  "app_id",      :limit => 8, :null => false
-    t.integer  "category_id", :limit => 8, :null => false
+    t.integer  "category_id", :limit => 8
     t.integer  "position",                 :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -2989,6 +2988,10 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.integer  "account_id",              :limit => 8,                :null => false
     t.datetime "created_at",                                          :null => false
     t.datetime "updated_at",                                          :null => false
+    t.string   "available"
+    t.string   "draft_present"
+    t.string   "published"
+    t.string   "outdated"
   end
 
   add_index "solution_article_meta", ["account_id", "solution_folder_meta_id", "created_at"], :name => "index_article_meta_on_account_id_folder_meta_and_created_at"
@@ -3045,7 +3048,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.integer  "language_id"
   end
 
-  add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
+  add_index "solution_categories", ["account_id", "language_id", "name"], :name => "index_solution_categories_on_account_id_language_id_and_name", :unique => true
   add_index "solution_categories", ["account_id", "parent_id", "language_id"], :name => "index_solution_categories_on_account_id_parent_id_and_language"
   add_index "solution_categories", ["account_id", "parent_id", "position"], :name => "index_solution_categories_on_account_id_parent_id_and_position"
 
@@ -3055,6 +3058,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.integer  "account_id", :limit => 8
     t.datetime "created_at",                                 :null => false
     t.datetime "updated_at",                                 :null => false
+    t.string   "available"
   end
 
   add_index "solution_category_meta", ["account_id"], :name => "index_solution_category_meta_on_account_id"
@@ -3107,6 +3111,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.integer  "account_id",                :limit => 8,                    :null => false
     t.datetime "created_at",                                                :null => false
     t.datetime "updated_at",                                                :null => false
+    t.string   "available"
   end
 
   add_index "solution_folder_meta", ["account_id", "solution_category_meta_id", "position"], :name => "index_folder_meta_on_account_id_category_meta_and_position"
@@ -3128,7 +3133,6 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
 
   add_index "solution_folders", ["account_id", "category_id", "position"], :name => "index_solution_folders_on_acc_cat_pos"
   add_index "solution_folders", ["account_id", "parent_id", "language_id"], :name => "index_solution_folders_on_account_id_parent_id_and_language"
-  add_index "solution_folders", ["category_id", "name"], :name => "index_solution_folders_on_category_id_and_name", :unique => true
   add_index "solution_folders", ["category_id", "position"], :name => "index_solution_folders_on_category_id_and_position"
 
   create_table "subscription_addon_mappings", :force => true do |t|

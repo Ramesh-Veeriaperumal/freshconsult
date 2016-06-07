@@ -221,6 +221,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     NewRelic::Agent.notice_error(e)
    end
     save #Should move this to unless block.. by Shan
+    self.va_rules_after_save_actions.each do |action|
+      klass = action[:klass].constantize
+      klass.send(action[:method], action[:args])
+    end
   end
 
   #To be removed after dispatcher redis check removed

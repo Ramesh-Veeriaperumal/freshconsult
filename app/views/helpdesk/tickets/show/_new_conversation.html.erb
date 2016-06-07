@@ -10,10 +10,11 @@
 		      							:id => "canned_response_show", "data-target" => "#canned_responses",
 		      							:title => t(:'ticket.canned_responses.ca_responses')) %>
 					<%= link_to( t('solution.title_singular'), 
-												"/search/related_solutions/ticket/#{@ticket.id}", 
+												"#related_solutions", 
 												:title => t(:'ticket.suggested_solutions.title'), :rel => 'freshdialog',
 												"data-target" => "#related_solutions", "data-template-footer" => '', 
 												:id => "suggested_solutions_show") %>
+					<%= render :partial => "/search/solutions/related_solutions" %>
 				</div>
         <% if privilege?(:reply_ticket) %>
        		<%= render(	:partial => '/helpdesk/tickets/show/reply_form', 

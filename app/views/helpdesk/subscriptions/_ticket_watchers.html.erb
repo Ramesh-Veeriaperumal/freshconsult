@@ -20,7 +20,8 @@
           options_for_select(agent_list.map {|k, v| [v, k.to_s]}), { 
               :multiple => true, 
               :class => "select2 watcher_input",
-              "data-placeholder" => t('helpdesk.tickets.add_watcher.pick_agents')
+              "data-placeholder" => t('helpdesk.tickets.add_watcher.pick_agents'),
+              "data-container-css-class" => "ticket-add-watcher"
           } %>
   </div>
 </div>

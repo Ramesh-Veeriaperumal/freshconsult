@@ -9,8 +9,8 @@ module Community::HitMethods
 			self.class.update_counters(self.id, :hits => current_klass::HITS_CACHE_THRESHOLD)
 			decrement_others_redis(hit_key, current_klass::HITS_CACHE_THRESHOLD)
 		end
-		return true unless self.respond_to?(:meta_association)
-		self.meta_object.hit! unless self.meta_object.new_record?
+		return true unless self.respond_to?(:language)
+		self.parent.hit!
 		true
 	end
 

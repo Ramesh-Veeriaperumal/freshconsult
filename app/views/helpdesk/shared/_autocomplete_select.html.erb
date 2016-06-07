@@ -96,7 +96,7 @@ jQuery(document).ready(function() {
   jQuery(".ticket_list #<%= dom_id %>_filter").on("change", function(){
     toggle_save_and_refresh();
   });  
-
+  jQuery("#<%= dom_id %>_filter").data('initialValue', [<%=hash_val.join(",").html_safe %>]);
 });
 
 </script>

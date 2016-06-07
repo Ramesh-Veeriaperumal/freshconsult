@@ -32,9 +32,9 @@ module Solution::Feedback
 		end
 
 		def link_to_article
-			"<a href='#{solution_category_folder_article_url(@article.folder.category_id, @article.folder_id, @article, 
-				:host => @article.account.host, 
-				:protocol => @article.account.url_protocol)}'> #{h(@article.title)}</a>"
+      (Portal.current || Account.current).multilingual? ?
+			   "<a href='#{solution_article_version_url(@article.parent_id, "#{Language.current.code}")}'> #{h(@article.title)}</a>" :
+         "<a href='#{solution_article_url(@article.parent_id)}'> #{h(@article.title)}</a>" 
 		end
 
 		def add_watcher
@@ -46,7 +46,7 @@ module Solution::Feedback
 		end
 
 		def add_to_article_ticket
-			article_ticket = @ticket.build_article_ticket(:article_id => @article.id)
+			article_ticket = @ticket.build_article_ticket(:article_id => @article.current_article.id)
 			article_ticket.save
 		end
 

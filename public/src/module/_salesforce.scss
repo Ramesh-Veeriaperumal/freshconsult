@@ -164,7 +164,7 @@
 // ------------------------------------------------------------------------------------------------------------
 //                        Salesforce 
 // ------------------------------------------------------------------------------------------------------------
-.salesforce_contacts_widget_bg{
+.salesforce_contacts_widget_bg, .freshsales_contacts_widget_bg{
   ul{
     list-style:disc inside;
     @include margin-left(1px);
@@ -187,9 +187,11 @@
     }
   }
   
-  .opportunity_create{ margin-top: -15px;}
+  .opportunity_create, .deal_create { 
+    margin-top: -15px;
+  }
 
-  .opp-flag{
+  .opp-flag, .deal-flag{
     display: inline-block;
     background-color: #dadada;
     padding: 2px 4px;
@@ -258,7 +260,7 @@
   display: inline-block;
 }
 
-.salesforce-widget{
+.salesforce-widget, .freshsales-widget{
   @include clear(both);
   div{
     @include clear(both);
@@ -342,7 +344,7 @@
     color:#808080;
 }
 
-.opportunity_details {
+.opportunity_details, .deal_details {
   div {
     span {
       font-weight: 400;
@@ -354,9 +356,14 @@
   }
 }
 
-.opportunity-form-contents {
+.opportunity-form-contents, .deal-form-contents {
   label {
     padding-top: 3px;
+  }
+  .stagefield {
+    .select2-container {
+      display: block;
+    }
   }
   .datefield {
     input {

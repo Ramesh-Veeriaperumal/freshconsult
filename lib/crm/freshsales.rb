@@ -6,6 +6,8 @@ class CRM::Freshsales
     extend Resque::AroundPerform
 
     def self.perform(args={})
+      return if Rails.env.test?
+      
       account = Account.current
       account_subscription = account.subscription
 

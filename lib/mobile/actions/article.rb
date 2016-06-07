@@ -5,13 +5,16 @@ module Mobile::Actions::Article
 		:tailored_json => true
   	}
 
-
   def to_mob_json
-  	as_json JSON_OPTIONS
+  	hash = as_json(JSON_OPTIONS)
+		hash["article"]["id"] = self.parent_id
+		hash
   end
 
   def to_mob_json_search
-  	as_json JSON_OPTIONS
+		hash = as_json(JSON_OPTIONS)
+		hash["article"]["id"] = self.parent_id
+		hash
   end
 
 end

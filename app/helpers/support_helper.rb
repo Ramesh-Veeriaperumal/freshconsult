@@ -6,6 +6,8 @@ module SupportHelper
   include Portal::Helpers::DiscussionsHelper
   include Portal::Helpers::DiscussionsVotingHelper
   include Portal::Helpers::Article
+  include Portal::Helpers::SolutionsHelper
+
 
   # TODO-RAILS3 the below helpers are added to use liquids truncate
   # HACK Need to scope down liquid helpers and include only the required ones
@@ -62,7 +64,7 @@ module SupportHelper
 
     output << %( <meta name="keywords" content="#{ meta['keywords'] }" /> ) if meta['keywords'].present?
     output << %( <link rel="canonical" href="#{ meta['canonical'] }" /> ) if meta['canonical'].present?
-
+    output << multilingual_meta_tags(meta['multilingual_meta']) if meta['multilingual_meta'].present?
     output.join('')
   end
 
@@ -79,6 +81,8 @@ module SupportHelper
 	# Top page login, signup and user welcome information
 	def welcome_navigation portal
 		output = []
+
+		output << language_list(portal)
 
 		# Showing welcome text before login link
 		output << %(<div class="welcome">#{ t('header.welcome') })
@@ -827,6 +831,21 @@ module SupportHelper
   def archived_ticket? ticket
     ticket and ticket.is_a?(Helpdesk::ArchiveTicket)
   end
+
+	def language_list portal
+		return "" if portal.language_list.blank?
+		output = ""
+		output << %(<div class="banner-language-selector pull-right" data-tabs="tabs" 
+								data-toggle='tooltip' data-placement="bottom" title="#{Language.current.name if Language.current.name.length > 10}">)
+		output << %(<ul class="language-options" role="tablist">)
+		output << %(<li class="dropdown">)
+		output << %(<h5 class="dropdown-toggle" data-toggle="dropdown">)
+		output << %(<span>#{Language.current.name.truncate(10)}</span>)
+		output << %(<span class="caret"></span></h5>)
+		output << dropdown_menu(portal.language_list)
+		output << %(</div></li></ul>)
+		output.html_safe
+	end
 
 	private
 

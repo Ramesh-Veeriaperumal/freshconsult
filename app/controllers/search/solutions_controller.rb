@@ -1,13 +1,13 @@
 class Search::SolutionsController < Search::SearchController
 
-	before_filter :load_ticket, :only => [:related_solutions, :search_solutions]
+	before_filter :load_ticket, :sanitize_lang_param, :only => [:related_solutions, :search_solutions]
 
 	def related_solutions
 		article_suggest @ticket.subject
 		article_suggest @ticket.description if @result_set.blank?
 		respond_to do |format|
 			format.js do
-				render :layout => false
+				render :partial => "results"
 			end
       format.json do
         array = []
@@ -21,7 +21,7 @@ class Search::SolutionsController < Search::SearchController
 
 	def search_solutions
 		article_suggest params[:q]
-		render :layout => false
+    render :partial => "results"
 	end
 
 	protected
@@ -40,7 +40,7 @@ class Search::SolutionsController < Search::SearchController
 			unless search_in.blank?
 				f.filter :term,  { 'folder.category_id' => params[:category_id] } if params[:category_id]
 				f.filter :term,  { 'folder_id' => params[:folder_id] } if params[:folder_id]
-				f.filter :term,  { 'language_id' => Language.for_current_account.id }
+				f.filter :term,  { 'language_id' => (params[:language_id] || Language.for_current_account.id) }
 			end
 		end
 
@@ -70,6 +70,7 @@ class Search::SolutionsController < Search::SearchController
 		def load_ticket
 			@ticket = current_account.tickets.find_by_id(params[:ticket])
 			@ticket = current_account.tickets.find_by_display_id(params[:ticket]) if is_native_mobile?
+			render_404 unless @ticket
 		end
 
 		# Hack for getting language and hitting corresponding alias
@@ -78,5 +79,9 @@ class Search::SolutionsController < Search::SearchController
 			if params[:language].present? and current_account.features_included?(:es_multilang_solutions)
 				@search_lang = ({ :language => params[:language] })
 			end
+		end
+		
+		def sanitize_lang_param
+			params.delete(:language_id) unless (current_account.multilingual? && Language.all_ids.include?(params[:language_id].to_i))
 		end
 end

@@ -63,13 +63,19 @@ window.App.Solutions = window.App.Solutions || {};
 					data: {
 						reorderlist: $this.positionHash(),
 						category_id: $('#reorder_category_id').val(),
-						folder_id: $('#reorder_folder_id').val()
+						folder_id: $('#reorder_folder_id').val(),
+						portal_id: $('#reorder_portal_id').val()
 					},
 					success: function () {
 						$('.comm-items ul').data('list_item', $('.comm-items ul').html());
 						$this.showSearch();
 						$this.enableBulkAction();
-						// App.Discussions.Sidebar.reload();
+						if (App.namespace != "solution/folders/show") {
+						  // Not needed for Folder show page, as article reordering is not going to affect
+						  // the NavMenu order (we only show article counts)
+						  App.Solutions.NavMenu.reload();
+						}
+
 						$('body').trigger('reorder');
 					}
 				});
@@ -120,8 +126,7 @@ window.App.Solutions = window.App.Solutions || {};
 			this.submitUrl = '';
 			$('body').off('.solutions.reorder');
 
-			if ($('.comm-items ul').data( "ui-sortable" ))
-			{
+			if ($('.comm-items ul').data("ui-sortable")) {
 				$('.comm-items ul').sortable("destroy");
 			}
 		}

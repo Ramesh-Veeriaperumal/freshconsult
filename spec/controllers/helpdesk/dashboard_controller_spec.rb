@@ -60,7 +60,7 @@ describe Helpdesk::DashboardController do
 
   it "should display the latest ticket summary" do
     get :latest_summary
-    response.body.should =~ /Ticket summary/
+    response.body.should =~ /Ticket Summary/
     response.body.should =~ /Overdue/
     response.body.should =~ /Due Today/
     response.body.should =~ /On Hold/

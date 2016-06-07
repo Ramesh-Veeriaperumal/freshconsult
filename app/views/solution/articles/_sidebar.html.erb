@@ -1,10 +1,9 @@
 <div class="solution-details">
-	
 	<div id="sidebar-prop">
 		<%= render :partial => 'sidebar_properties' %>
 	</div>
 		
-	<% if @article.tickets.unresolved.present? %>
+	<% if current_user.can_view_all_tickets? && @article.tickets.unresolved.present? %>
 		<div class="sidebar-section feedback">
 			<div class="title-wrapper">
 				<p class="leads span2"><%= t('solution.general.feedback') %></p>
@@ -29,26 +28,10 @@
 			</div>
 		</div>
 	<% end %>
-
+	
 	<div class="sidebar-section analytics">
-		<div class="title-wrapper">
-			<p class="leads span2"><%= t('solution.general.analytics') %></p>
-		</div>
-		<div class="section">
-			<h5 class="leads"><%= t('solution.articles.views') %></h5>
-			<div class="<%= 'muted' unless @article.hits > 0 %>">
-				<%= font_icon :"file-visible" if @article.hits > 0 %>
-				<%= t('discussions.topics.title_meta.hits', :count => @article.hits) %>
-			</div>
-
-			<br/>
-			<h5 class="leads"><%= t('solution.articles.votes') %></h5>
-			<p id="article_voting"> 
-			 	<%= render :partial => "voting", :object => @article %> 
-			</p>
-		</div>
+		<%= render :partial => 'sidebar_analytics' %>
 	</div>
-
   <% if is_application_installed?(Integrations::Constants::APP_NAMES[:ilos]) %> 
     <% ilos_app_config = get_app_config(Integrations::Constants::APP_NAMES[:ilos]) %>
     <% if ilos_app_config[:visible_solution].to_bool %>
@@ -62,7 +45,6 @@
       </div>
     <% end %>
   <% end %>
-
 </div>
 <div id="article-likes"> </div>
 <div id="article-dislikes"> </div>

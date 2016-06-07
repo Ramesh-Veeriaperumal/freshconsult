@@ -49,7 +49,6 @@ RSpec.describe Helpdesk::LeaderboardController do
 
 	it "should display Leaderboard Mini_list" do
 		get :mini_list
-		response.body.should =~ /Leaderboard/
 		response.body.should =~ /Most Valuable Player/
 		response.body.should =~ /Sharpshooter/
 		response.body.should =~ /#{ERB::Util.html_escape(@agent_2.name)}/
@@ -133,7 +132,6 @@ RSpec.describe Helpdesk::LeaderboardController do
 								:scorable_type=> "Helpdesk::Ticket" } )
 
 		get :mini_list
-		response.body.should =~ /Leaderboard/
 		response.body.should =~ /Sharpshooter/
 		response.body.should =~ /Customer Wow Champion/
 		response.body.should =~ /#{ERB::Util.html_escape @agent_1.name}/

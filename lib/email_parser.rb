@@ -10,6 +10,7 @@ module EmailParser
     emails = []
 
     ignore_emails = options[:ignore_emails].to_a
+    ignore_emails = ignore_emails.map(&:downcase) if ignore_emails.present?
 
     addresses.each do |add|
       begin
