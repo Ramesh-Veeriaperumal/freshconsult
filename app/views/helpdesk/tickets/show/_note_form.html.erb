@@ -60,8 +60,9 @@
     <%= hidden_field_tag :last_note_id,'', :value => @last_note_id, :class => "last_note_id" %>
 
     <div id="toggle-note-visibility">
-      <label><%= t("helpdesk.tickets.note.public_note_tip") %></label>
-      <%= f.check_box(:private, :checked => true, :disabled => @ticket.mobihelp?, :class => 'tooltip', "rel" => "toggle",  "data-checked-label" => t("plain_no"), "data-unchecked-label" => t("plain_yes") )  %>
+      <label>
+      <%= f.check_box(:private, :checked => true, :disabled => @ticket.mobihelp?, :class => 'tooltip', "rel" => "",  "data-checked-label" => t("plain_no"), "data-unchecked-label" => t("plain_yes") )  %>
+      <%= t("helpdesk.tickets.note.public_note_tip") %></label>
     </div>
 
 
