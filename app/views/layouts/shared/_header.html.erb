@@ -101,9 +101,11 @@
 					<%= link_to t('header.signout').html_safe, logout_path, :class => "link" %>
 				</div>    
 				<% if current_user.agent? %>
+          <% unless Rails.env.development? %>
 					<div id="product_notify_header" class="header-notification-wrapper" rel="remote-load" 
 			    		data-url="/notification/product_notification">
 			    </div>
+          <% end %>
 			    <% unless freshfone_trial? || freshfone_trial_expired? %>
 				    <div class="ff_presence_options hide" id="FreshfonePresenceOptions">
 	  					<div class="availabilityOnPhone" data-to_phone='false' id="availableOnBrowser">
@@ -116,7 +118,7 @@
 	  					</div>
 	  				</div>
   				<%end%>
-		    	<% end %>
+		    <% end %>
 			<% end %>
 		</div>
 	</div>

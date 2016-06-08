@@ -55,6 +55,11 @@ end
     <% end %>
 
     <div class="<%= clazz %>">
+      <% if note.deleted? %>
+      <div class="tag">
+        <%= t("helpdesk.tickets.note.deleted_note").html_safe %>
+      </div>
+      <% end %>
       <div class="author-mail-detail cc_bcc_info">
         <% kind %>
         <%= t("helpdesk.tickets.note.created_on_live.#{kind}", 

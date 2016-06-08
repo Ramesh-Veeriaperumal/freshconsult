@@ -118,7 +118,7 @@
                 var id = getConversationId();
                 $('#' + id + ' .dialog-btn').trigger("click");
                 $('#' + id + ' .dialog-btn').blur();
-            }else if($('.modal:visible').get(0)){
+            }else if($('.modal:visible').get(0) && $('.modal:visible').find('.never-close').length < 1){
                 $('.modal:visible').modal('hide');
             }else if($('#redactor_modal:visible').get(0)){
                 $('#redactor_modal').modal('hide');

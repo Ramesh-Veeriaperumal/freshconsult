@@ -14,11 +14,11 @@ describe CompaniesController do
   end
 
   SKIPPED_KEYS = [  :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, 
-                    :delta, :import_id, :domains ]
+                    :delta, :import_id, :domains, :custom_field  ]
 
   it "should create a new company" do
     # fails 'cause of recent hack - prefixing and suffixing domains with comma
-    pending("pending relese")
+    #pending("pending relese")
     company = fake_a_company
     post :create, company
     created_company = @account.companies.find_by_name(@company_name)
@@ -37,7 +37,7 @@ describe CompaniesController do
 
   it "should update a company" do
     # fails 'cause of recent hack - prefixing and suffixing domains with comma
-    pending("pending relese")
+    #pending("pending relese")
     company = create_company
     another_company = fake_a_company
     put :update, another_company.merge(:id => company.id)

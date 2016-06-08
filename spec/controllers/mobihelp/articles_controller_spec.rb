@@ -141,4 +141,47 @@ describe Mobihelp::ArticlesController do
       result["success"].should be true
     end
   end
+  
+  describe "it should vote up/down only primary article" do
+    before(:all) do
+      @account.account_additional_settings.update_attributes({:supported_languages => pick_languages(@account.language, 3)})
+      @account.reload
+      @lang_ver = @account.supported_languages_objects.first
+      @test_category.send("build_#{@lang_ver.to_key}_category",{:name => "Mobihelp articles category in #{@lang_ver.code}" } )
+      @test_category.save
+      @test_folder.send("build_#{@lang_ver.to_key}_folder",
+                {:name => "Mobihelp articles folder in #{@lang_ver.code}" } )
+      @test_folder.save
+      agent = add_test_agent(@account)
+      agent.make_current
+      @article_version = @test_article.send("build_#{@lang_ver.to_key}_article",
+            {:title => "Mobihelp #{@lang_ver.to_key} title", :description => "Mobihelp #{@lang_ver.to_key} description",
+            :status => 2, :user_id => agent.id})
+      @article_version.save
+      User.reset_current_user
+    end
+    
+    before(:each) do
+      @test_article.reload
+      @old_parent = @test_article.dup
+      @old_primary = @test_article.primary_article.dup
+      @old_version = @article_version.dup
+    end
+    
+    after(:each) do
+      @test_article.reload
+      current_vote_type = controller.action_name
+      @test_article.send(current_vote_type).should be_eql(@old_parent.send(current_vote_type) + 1)
+      @test_article.primary_article.send(current_vote_type).should be_eql(@old_primary.send(current_vote_type) + 1)
+      @old_version.send(current_vote_type).should be_eql(@article_version.send(current_vote_type))
+    end
+    
+    it "should vote up only the primary article and not any other version" do
+      put :thumbs_up, :id => @test_article.id
+    end
+    
+    it "should vote down only the primary article and not any other version" do
+      put :thumbs_down, :id => @test_article.id
+    end
+  end
 end

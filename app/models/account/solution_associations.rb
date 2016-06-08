@@ -14,11 +14,11 @@ class Account < ActiveRecord::Base
 
   has_many :portal_solution_categories, :class_name => "PortalSolutionCategory"
 
-  has_many :solution_categories, :class_name =>'Solution::Category', :include =>:folders, :order => "solution_categories.position"
+  has_many :solution_categories, :class_name =>'Solution::Category', :order => "solution_categories.position"
 
   has_many :solution_articles, :class_name =>'Solution::Article'
 
-  has_many :solution_folders, :class_name =>'Solution::Folder', :through => :solution_categories, :order => "solution_folders.category_id, solution_folders.position"
+  has_many :solution_folders, :class_name =>'Solution::Folder', :order => "solution_folders.parent_id"
 
   has_many :public_folders, :through => :solution_categories, :order => "solution_folders.category_id, solution_folders.position"
 

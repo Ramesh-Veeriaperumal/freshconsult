@@ -1,4 +1,4 @@
-<% content_for :layoutType do %>community solutions<% end %>
+<% content_for :layoutType do %><%= solution_body_classes %><% end %>
 <% content_for :sidebar do %>
 	<%= content_tag :div, "", :rel => "remote", :id=> "solution-home-sidebar",
 			  "data-remote-url" => '/solution/categories/sidebar' %>
@@ -8,9 +8,8 @@
 <% end %>
 <% content_for :sticky_right do %>
 		<div class="pull-right itil-hide">
-			<%= link_to t('reorder').html_safe,'#', 
-			    :id => "categories_reorder_button", :class => "btn" if (@categories.size > 2 && privilege?(:manage_solutions))%>
-			<%= new_solutions_button(:category) %>
+			<%= pjax_link_to(t('solution_category.manage_categories'), solution_all_categories_path, :class => "btn") %> 
+			<%= new_solutions_button %>
 		</div>
 <% end %>
 <%= render :partial => '/solution/shared/sticky', :locals => { :sticky_class => "sol-sticky solution-home-header",
@@ -36,14 +35,4 @@
 		</div>
 	<% end %>
 </div>
-<% if privilege?(:manage_solutions) and @categories.size > 2 %>	
-	<%= render :partial => "/shared/reorder_list", 
-							:locals => { 
-									:items => current_portal.portal_solution_categories.includes(:solution_category).reject { |pc| pc.solution_category.is_default?},
-									:action_url => reorder_solution_categories_path, 
-									:title => :name, 
-									:container_id => "categories_sort", 
-									:reorder_id => "categories_reorder_button", 
-									:list_id => "categories_list"
-							} %>
-<% end %>
+

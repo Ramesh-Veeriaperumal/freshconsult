@@ -34,7 +34,7 @@ module Solution::Constants
  # Solution folder visiblity constants moved to here
 
  VISIBILITY = [
-  [ :anyone,       I18n.t("solutions.visibility.all"),          1 ], 
+  [ :anyone,       I18n.t("solutions.visibility.all_users"),       1 ], 
   [ :logged_users, I18n.t("solutions.visibility.logged_in_users"), 2 ],
   [ :agents,       I18n.t("solutions.visibility.agents"),          3 ],
   [ :company_users ,I18n.t("solutions.visibility.select_company") , 4]
@@ -56,5 +56,15 @@ module Solution::Constants
                           }
                   }
   }
+
+  HUMANIZE_STATS = {
+    :thousand => "K+", 
+    :million => "M+", 
+    :billion => "B+",
+    :trillion => "T+",
+    :quadrillion => "Q+"
+  }
+
+  COMPANIES_LIMIT = 250
 
 end

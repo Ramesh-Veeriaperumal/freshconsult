@@ -20,10 +20,10 @@ describe UserSessionsController do
   it "should login an agent" do
     # @agent.password_salt = "8tIx1P2ZDIirkDijXly6";
     # @agent.crypted_password = "79a1bb96c3b4fbe540171e6b7a6d532e52f4365078d2ade1c1f082b35e9b2c858710b62b95b285ed1f620ca738c8d2c1ef7f138839ad23cd3320d595b3eeb9ac";
-    @agent.password = "test"
+    @agent.password = "test123456"
     @agent.save!
     @agent.reload
-    post :create, {"user_session"=>{"email"=>"#{@agent.email}", "password"=>"test", "remember_me"=>"0"}}
+    post :create, {"user_session"=>{"email"=>"#{@agent.email}", "password"=>"test123456", "remember_me"=>"0"}}
     json_response.should include("login","auth_token")
     json_response["auth_token"].should be_eql(@agent.single_access_token)
     json_response["login"].should be_eql("success")
@@ -31,10 +31,15 @@ describe UserSessionsController do
 
   it "should login an occasional agent" do
     user = add_test_agent(@account)
-    user.agent.update_attributes(:occasional => true, :password => "test")
+    user.password = "test567890"
+    user.save!
+
+    agent = user.agent
+    agent.update_column(:occasional, true) 
+
     @account.subscription.update_attributes(:state => "active")
 
-    post :create, {"user_session"=>{"email"=>"#{user.email}", "password"=>"test", "remember_me"=>"0"}}
+    post :create, {"user_session"=>{"email"=>"#{user.email}", "password"=>"test567890", "remember_me"=>"0"}}
     
     json_response.should include("login","auth_token")
     json_response["auth_token"].should be_eql(user.single_access_token)
@@ -52,18 +57,25 @@ describe UserSessionsController do
   
   it "should return error messages for wrong password" do
     post :create, {"user_session"=>{"email"=>"#{@agent.email}", "password"=>"wrong", "remember_me"=>"0"}}
-    response.body.should include("'message' : 'Email/Password combination is not valid'")
-    response.body.should include("'login':'failed'")
+
+    result = JSON.parse(response.body)
+    result["message"].should eql 'The email and password you entered does not match'
+    result["login"].should eql 'failed'
   end
 
   it "should not login an occasional agent when there are no daypasses left" do
     user = add_test_agent(@account)
-    user.agent.update_attributes(:occasional => true, :password => "test")
+    user.password = "test1356789"
+    user.save!
+
+    agent = user.agent
+    agent.update_column(:occasional, true) 
+
     @account.subscription.update_attributes(:state => "active")
     @account.day_pass_config.update_attributes(:available_passes => 0)
 
-    post :create, {"user_session"=>{"email"=>"#{user.email}", "password"=>"test", "remember_me"=>"0"}}    
-    flash[:notice].should == I18n.t('agent.insufficient_day_pass')
+    post :create, {"user_session"=>{"email"=>"#{user.email}", "password"=>"test1356789", "remember_me"=>"0"}}    
+    flash[:notice].should eql "Unable to allocate a day pass for you, please contact your administrator."
   end
 
 end

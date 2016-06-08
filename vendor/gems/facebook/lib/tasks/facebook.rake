@@ -45,6 +45,7 @@ namespace :facebook do
     raise_sns_notification(subject, message)
     Rails.logger.error "Sleeping the process due to APP RATE LIMT"
     sleep(APP_RATE_LIMIT_EXPIRY)
+    wait_on_poll if app_rate_limit_reached?
   end
 
 

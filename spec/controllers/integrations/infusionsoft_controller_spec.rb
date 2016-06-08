@@ -60,6 +60,6 @@ describe Integrations::InfusionsoftController do
     @installed_app = @account.installed_applications.with_name('infusionsoft').first
     MemcacheKeys.delete_from_cache("fetch_infusionsoft_users:#{@account.id}:#{@installed_app.id}")
     post :fetch_user, {:controller => "integrations/infusionsoft", :action => "fetch_user", :app_name => "infusionsoft",:domain => "https://api.infusionsoft.com",:rest_url => "/crm/xmlrpc/v1?access_token=", :body => "<?xml version='1.0' encoding='UTF-8'?><methodCall><methodName>DataService.findByField</methodName><params><param><value><string>privateKey</string></value></param><param><value><string>User</string></value></param><param><value><int>1000</int></value></param><param><value><int>0</int></value></param><param><value><string>Id</string></value></param><param><value><string>%</string></value></param><param><value><array><data><value><string>FirstName</string></value></data></array></value></param></params></methodCall>", :content_type => "application/xml", :method=> "post"}
-    MemcacheKeys.get_from_cache("fetch_infusionsoft_users:#{@account.id}:#{@installed_app.id}").should eql nil
+    MemcacheKeys.get_from_cache("fetch_infusionsoft_users:#{@account.id}:#{@installed_app.id}").should be_instance_of NullObject
   end
 end

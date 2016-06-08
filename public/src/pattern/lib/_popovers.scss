@@ -1,7 +1,7 @@
 //
 // Popovers
 // --------------------------------------------------
-// No need RTL, handled in js 
+// No need RTL, handled in js
 
 
 .popover {
@@ -52,6 +52,7 @@
       width:0; height:0;
     }
   }
+  /*
   &.above{
     .arrow {
       bottom: -1px;
@@ -169,6 +170,7 @@
       }
     }
   }
+  */
   .negtive-margin{
     margin:-27px;
   }

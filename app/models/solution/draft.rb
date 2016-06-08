@@ -9,8 +9,6 @@ class Solution::Draft < ActiveRecord::Base
   belongs_to :article, :class_name => "Solution::Article", :readonly => false
   belongs_to :category_meta, :class_name => "Solution::CategoryMeta"
   
-  has_one :folder, :through => :article
-  
   has_one :draft_body, :class_name => "Solution::DraftBody", :autosave => true, :dependent => :destroy
   has_many_attachments
   has_many_cloud_files
@@ -27,19 +25,23 @@ class Solution::Draft < ActiveRecord::Base
   before_destroy :discard_notification, :add_activity_delete
   after_create :add_activity_new
 
-  attr_protected :account_id, :status, :user_id
+  attr_accessible :title, :meta, :description
   attr_accessor :discarding, :publishing
 
   alias_attribute :modified_by, :user_id
 
   default_scope :order => "modified_at DESC"
 
-  scope :as_list_view, :include => [:user, :folder, :category_meta]
+  scope :as_list_view, :include => { 
+    :user => [], 
+    :article => {:solution_article_meta => {:solution_folder_meta => :primary_folder}},
+    :category_meta => []
+  }
   scope :for_sidebar, :include => [:user]
   
   scope :by_user, lambda { |user|
      { 
-       :conditions => ["user_id = ?", user.id ]
+       :conditions => ["solution_drafts.user_id = ?", user.id ]
      }
   }
 
@@ -48,6 +50,13 @@ class Solution::Draft < ActiveRecord::Base
       :conditions => {
         :category_meta_id => portal.portal_solution_categories.map(&:solution_category_meta_id)
       }
+    }
+  }
+
+  scope :in_applicable_languages, lambda {
+    {
+      :joins => [:article],
+      :conditions => ['solution_articles.language_id in (?)', Account.current.all_language_ids]
     }
   }
 
@@ -82,10 +91,10 @@ class Solution::Draft < ActiveRecord::Base
     self.updated_at > (Time.now.utc - LOCKDOWN_PERIOD)
   end
 
-  def lock_for_editing!
+  def lock_for_editing
     return false if self.locked?
     self.status, self.user_id = STATUS_KEYS_BY_TOKEN[:editing], User.current.id
-    save
+    true
   end
 
   def unlock
@@ -115,6 +124,10 @@ class Solution::Draft < ActiveRecord::Base
     add_activity_publish 
     self.reload
     self.destroy
+  end
+  
+  def folder
+    article.solution_article_meta.solution_folder_meta.primary_folder
   end
 
   def to_s
@@ -164,18 +177,22 @@ class Solution::Draft < ActiveRecord::Base
     end
 
     def create_activity(type)
+      type << "_translation" if article.translation_activity?
+      path = Rails.application.routes.url_helpers.solution_article_path(article)
+      path << "/#{article.url_locale}" if article.translation_activity?
       article.activities.create(
         :description => "activities.solutions.#{type}.long",
         :short_descr => "activities.solutions.#{type}.short",
         :account    => account,
         :user       => User.current,
         :activity_data  => {
-                    :path => Rails.application.routes.url_helpers.solution_article_path(article_id),
+                    :path => path,
                     :url_params => {
                               :id => article_id,
                               :path_generator => 'solution_article_path'
                             },
-                    :title => article.to_s
+                    :title => article.to_s,
+                    'eval_args' => (article.translation_activity? ? { 'language_name' => ['language_name', article.language_id] } : nil)
                   }
       )
     end

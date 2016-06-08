@@ -1,4 +1,4 @@
-<% content_for :layoutType do %>community solutions<% end %>
+<% content_for :layoutType do %><%= solution_body_classes %><% end %>
 
 <% content_for :sticky_left do %>
 		<%= pjax_link_to t('solution.draft.my_drafts'), solution_drafts_path, 
@@ -23,7 +23,7 @@
 <div id="drafts-section">
 
 	<% unless (@drafts.size == 0) %>
-		<div class="solution-drafts">
+		<div class="solution-drafts <%= "view-links" unless edit_privilege?(:article) %>">
 			<%= render :partial => 'draft', :collection => @drafts %>
 		</div>
 		<%= will_paginate @drafts, :renderer => BootstrapPaginationRenderer,
@@ -39,6 +39,6 @@
 
 <% content_for :helpcard do %>
 	<h3 class="lead"><%= t('solution.draft.name').html_safe %></h3>
-	<%= helpcard_content([22, 23, 24], 'solution.info' ) %>
-	<%= t('solution.kbase_email_info', :email => current_account.kbase_email).html_safe %>
+	<%= helpcard_content([25, 26, 27], 'solution.info' ) %>
+	<%= t('solution.kbase_email_msg', :email => current_account.kbase_email).html_safe %>
 <% end %>

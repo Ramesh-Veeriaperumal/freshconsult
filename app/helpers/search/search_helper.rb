@@ -44,4 +44,20 @@ module Search::SearchHelper
 	def current_filter
 		request.path.split('/').last
 	end
+  
+  def insert_link_params(article, url)
+    [
+      article.parent_id, 
+      url,
+      escape_javascript(article.title)
+    ].collect {|s| "'#{s}'"}.join(', ')
+  end
+  
+  def insert_content_params(article, url)
+    [
+      article.parent_id, 
+      url,
+      (current_account.multilingual? && article.language.code) || nil
+    ].compact.collect {|s| "'#{s}'"}.join(', ')
+  end
 end

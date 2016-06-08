@@ -29,6 +29,10 @@
         @ticket.autoreply
         round_robin unless @ticket.spam? || @ticket.deleted?
         @ticket.save
+        @ticket.va_rules_after_save_actions.each do |action|
+          klass = action[:klass].constantize
+          klass.send(action[:method], action[:args])
+        end
       }
     rescue Exception => e
       NewRelic::Agent.notice_error(e)

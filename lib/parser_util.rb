@@ -103,6 +103,7 @@ module ParserUtil
     return [] if addresses.blank?
 
     ignore_emails = options[:ignore_emails].to_a
+    ignore_emails = ignore_emails.map(&:downcase) if ignore_emails.present?
 
     addresses = addresses.collect do |address|
       next if address.blank?

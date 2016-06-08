@@ -70,7 +70,7 @@ RSpec.describe Social::TwitterStream do
   end
 
   it "should delete the gnip rule for default stream if account is suspended" do
-    Resque.inline = true
+    Resque.inline = false
     @handle.account.subscription.update_attributes(:state => "trial") 
     @handle.reload
     
@@ -90,7 +90,7 @@ RSpec.describe Social::TwitterStream do
       stream = Social::Stream.find_by_id(stream_id)
       stream.should be_nil
     end
-    Resque.inline = false
+    #Resque.inline = false
   end
   
   it "should create a gnip rule for default stream if state is changed from suspended to active " do

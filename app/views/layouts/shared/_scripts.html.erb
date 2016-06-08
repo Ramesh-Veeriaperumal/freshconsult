@@ -34,4 +34,7 @@
 	
 	// Date formats
 	var DATE_FORMATS = <%= AccountConstants::DATA_DATEFORMATS.to_json.html_safe %>;
+
+	var lang = { loadingText: "<%= t('please_wait') %>" };
+
 <%- end -%>

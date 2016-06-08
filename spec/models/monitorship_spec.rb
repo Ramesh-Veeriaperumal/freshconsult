@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Monitorship do
 
+	self.use_transactional_fixtures = false
+	
 	before(:all) do
 		@admin = get_admin
 		@product = create_product({:email => "test_product@localhost.freshpo.com",:portal_name=> "New test_product portal", 

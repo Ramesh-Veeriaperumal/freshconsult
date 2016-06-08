@@ -144,10 +144,10 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
       sla_timer = ticket.ticket_states.sla_timer_stopped_at.in_time_zone(Time.zone)
       bhrs_during_elapsed_time =  sla_timer.business_time_until(
         Time.zone.now,calendar)
+      Rails.logger.info "Acc id:: #{ticket.account_id}, Ticket id:: #{ticket.id}, Value:: #{due_by_value.inspect}, sla_timer:: #{sla_timer.inspect} Zone:: #{Time.zone.name}"
       if due_by_value > sla_timer
         business_minute = bhrs_during_elapsed_time.div(60).business_minute
         business_minute.business_calendar_config = calendar
-        Rails.logger.info "Acc id:: #{ticket.account_id}, Ticket id:: #{ticket.id}, Business Minute:::: #{business_minute.inspect}, Value:: #{due_by_value.inspect}, Zone:: #{Time.zone.name}"
         business_minute.after(due_by_value) 
       else
         due_by_value

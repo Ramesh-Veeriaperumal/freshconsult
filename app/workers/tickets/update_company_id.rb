@@ -8,7 +8,7 @@ class Tickets::UpdateCompanyId < BaseWorker
   include RabbitMq::Helper
 
   TICKET_TYPES = ["tickets", "archive_tickets"]
-  TICKET_LIMIT = 500
+  TICKET_LIMIT = 100
 
   def perform(args)
     args.symbolize_keys!
@@ -22,9 +22,9 @@ class Tickets::UpdateCompanyId < BaseWorker
         condition << " AND id > #{last_ticket_id}" if last_ticket_id
         tickets = Account.current.send(tkts).where(["requester_id in (?) AND #{condition}", 
                                                  user_ids, company_id]).limit(TICKET_LIMIT)
-        if execute_on_db { tickets.count } > 0
+        if execute_on_db { tickets.length } > 0
           last_ticket_id = execute_on_db { tickets.last.id if tickets.last }
-          updated_tickets = tickets.update_all(:owner_id => company_id)
+          updated_tickets = Account.current.send(tkts).where("id in (?)", tickets.map(&:id)).update_all(:owner_id => company_id)
           execute_on_db { send_updates_to_rmq(tickets, tickets.klass.name) }
 
           #=> Needing this to publish to search until another way found.
