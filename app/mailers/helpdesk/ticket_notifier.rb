@@ -6,10 +6,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   include Redis::RedisKeys
   include Redis::OthersRedis
-
+  
   layout "email_font"
-
-  MESSAGE_SOURCE = EmailHelper::MESSAGE_IDS_BY_KEY
 
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
@@ -116,6 +114,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def self.send_cc_email(ticket, comment=nil, options={})
+    cc_emails = []
     if comment
       cc_emails = ticket.cc_email[:reply_cc] if (ticket.cc_email.present? && ticket.cc_email[:reply_cc].present?)
       e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
@@ -129,7 +128,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     cc_emails = fetch_valid_emails(cc_emails, {:ignore_emails => ignore_emails}) if ignore_emails.present?
     
     return if cc_emails.to_a.count == 0
-    cc_emails = get_email_array cc_emails.join(",")
+
+    #ignoring support emails
+    cc_emails  = get_email_array cc_emails.join(",")
+    support_emails_in_cc = ticket.account.all_email_configs.pluck(:reply_email)
+    cc_emails = cc_emails - support_emails_in_cc
+
+    return if cc_emails.to_a.count == 0
+
     db_users = ticket.account.users.where(:email => cc_emails)
     db_users_email = db_users.map(&:email).map(&:downcase)
     non_db_user_ccs = cc_emails - db_users_email
@@ -167,7 +173,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     private_tag = params[:private_comment] ? "private-" : ""
 
     #Store message ID in Redis for new ticket notifications to improve threading
-    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@#{private_tag}#{MESSAGE_SOURCE[:notification]}"
+    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@#{private_tag}notification.freshdesk.com"
 
     headers = email_headers(params[:ticket], message_id, true, private_tag.present?).merge({
       :subject    =>  params[:subject],
@@ -281,7 +287,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     bcc_emails = validate_emails(note.bcc_emails, note)
     cc_emails = validate_emails(note.cc_emails, note)
 
-    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@#{MESSAGE_SOURCE[:forward]}"
+    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
     
     headers = email_headers(ticket, message_id, false, true).merge({
       :subject    =>  fwd_formatted_subject(ticket),
@@ -325,7 +331,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     bcc_emails = validate_emails(note.bcc_emails, note)
     cc_emails = validate_emails(note.cc_emails, note)
 
-    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@#{MESSAGE_SOURCE[:forward]}"
+    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
     
     headers = email_headers(ticket, nil, false).merge({
       :subject    =>  formatted_subject(ticket),
@@ -363,9 +369,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def email_to_requester(ticket, content, sub=nil)
     ActionMailer::Base.set_email_config ticket.reply_email_config
 
-    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@#{MESSAGE_SOURCE[:automation]}"
-
-    headers   = email_headers(ticket, message_id).merge({
+    headers   = email_headers(ticket, nil).merge({
       :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
       :to         =>  ticket.from_email,
       :from       =>  ticket.friendly_reply_email,
@@ -393,9 +397,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def internal_email(ticket, receips, content, sub=nil)
     ActionMailer::Base.set_email_config ticket.reply_email_config
 
-    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@#{MESSAGE_SOURCE[:automation]}"
-
-    headers = email_headers(ticket, message_id).merge({
+    headers = email_headers(ticket, nil).merge({
       :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
       :to         =>  receips,
       :from       =>  ticket.friendly_reply_email,
@@ -436,7 +438,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     bcc_emails = validate_emails(account_bcc_email(ticket), ticket)
 
     #Store message ID in Redis for outbound email to improve threading
-    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@#{MESSAGE_SOURCE[:outbound]}"
+    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@outbound-email.freshdesk.com"
 
     headers = email_headers(ticket, message_id, false).merge({
       :subject    =>  ticket.subject,
@@ -496,7 +498,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     def email_headers(ticket, message_id, auto_submitted=true, suppress_references=false)
       #default message id
-      message_id = message_id || "#{Mail.random_tag}.#{::Socket.gethostname}@#{MESSAGE_SOURCE[:default]}"
+      message_id = message_id || "#{Mail.random_tag}.#{::Socket.gethostname}@email.freshdesk.com"
 
       headers = {
         "Message-ID"  =>  "<#{message_id}>",

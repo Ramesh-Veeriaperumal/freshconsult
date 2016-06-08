@@ -8,7 +8,7 @@ module HelpdeskReports::Export::Utils
     I18n.locale =  (User.current && User.current.language) ? User.current.language : I18n.default_locale
   end
   
-  def build_file file_string, format, report_type, compress=false, scheduled_report=false
+  def build_file file_string, format, report_type, export_type, compress=false, scheduled_report=false
     report_name = REPORTS_NAME_MAPPING[report_type]
     filter_name = (defined?(params) && params[:filter_name]) ? "#{report_name}_#{params[:filter_name]}" : report_name 
     filter_name = filter_name.gsub(" ","_").underscore
@@ -25,7 +25,7 @@ module HelpdeskReports::Export::Utils
       file_path = generate_file_path("bi_reports", file_name)
     end
     set_attachment_method(file_path) unless scheduled_report
-    upload_file(file_path, file_name) if @attachment_via_s3
+    upload_file(file_path, file_name, export_type) if @attachment_via_s3
     file_path
   end
 
@@ -59,7 +59,7 @@ module HelpdeskReports::Export::Utils
     file_name = "batch_#{batch_id}.#{format}"
     file_path = "#{export_path(export_id)}/#{file_name}"
     write_file file_string, file_path
-    upload_file(file_path, file_name, export_id)
+    upload_file(file_path, file_name, TICKET_EXPORT_TYPE ,export_id)
     File.delete(file_path)
   end
 
@@ -79,11 +79,11 @@ module HelpdeskReports::Export::Utils
     file_path
   end
   
-  def upload_file(file_path, file_name, export_id=nil)
+  def upload_file(file_path, file_name, export_type ,export_id=nil)
     if export_id
       path = s3_export_path(export_id, file_name)
     else
-      path = "data/helpdesk/#{TICKET_EXPORT_TYPE}/#{Rails.env}/#{User.current.id}/#{@today}/#{file_name}"
+      path = "data/helpdesk/#{export_type}/#{Rails.env}/#{User.current.id}/#{@today}/#{file_name}"
     end
     file = File.open(file_path)
     write_options = { :content_type => file.content_type,:acl => "public-read" }

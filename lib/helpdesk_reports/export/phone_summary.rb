@@ -19,7 +19,7 @@ class HelpdeskReports::Export::PhoneSummary < HelpdeskReports::Export::Report
     return nil if @calls.empty? && @old_calls.empty?
 
     file = build_pdf
-    build_file(file, file_format, PDF_EXPORT_TYPE)
+    build_file(file, file_format, report_type, PDF_EXPORT_TYPE)
   end
 
   def locals_option
