@@ -220,3 +220,13 @@
     }
   }
 }
+
+@media (max-width: 767px){
+  .modal{
+    margin-left: 0 !important;
+    margin: 0 auto !important;
+    &.fade.in{
+      top: 20px;
+    }
+  }
+}
