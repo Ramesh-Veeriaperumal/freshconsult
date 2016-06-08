@@ -124,6 +124,7 @@ var FreshfoneUserInfo;
 			freshfonewidget.callerUserId =  this.requestObject.callerId;
 			$('.caller-context-details').html(callerCard);
 			$('.caller-number').html(self.formattedNumber());
+			$('.minimised-ongoing-dialpad').html(this.requestObject.callerName)
 		},
 		formattedNumber: function () {
 			return formatInternational(this.callerLocation(), this.customerNumber)
