@@ -44,7 +44,7 @@ class Export::Customer
 
     def map_csv csv
       Sharding.run_on_slave do
-        Account.current.send(@type.pluralize).find_in_batches(:batch_size => 300) do |items|
+        Account.current.send(@type.pluralize).preload(:flexifield).find_in_batches(:batch_size => 300) do |items|
           items.each do |record|
             csv_data = []
             @headers.each do |val|
