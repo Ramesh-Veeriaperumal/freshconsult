@@ -4550,3 +4550,33 @@ $adm-bdr:#F0F0F0;
     border-bottom: 0;
   }
 }
+/*-----------------Date picker custom clear Button-----------------------*/
+.input-date-field {
+input.date {
+	width:100%;
+}
+.dateClear {
+	top: 3px;
+    position: absolute;
+    right: 9px;
+    padding: 5px;    
+    cursor: pointer;
+}
+.dateClear {
+	.ficon-cross:before {
+	  font-size: 1.2em;
+      color: #999999;
+  }
+}
+
+}
+.conditionset {
+	.dateClear {
+		top: 7px;
+	    position: absolute;
+	    right: 9px;
+	    padding: 5px;    
+	    cursor: pointer;
+	}
+}
+

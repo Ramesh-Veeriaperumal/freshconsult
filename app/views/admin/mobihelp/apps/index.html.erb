@@ -1,40 +1,65 @@
-<% content_for :helpcard do -%>
-  <%= render :partial => "helpnote" unless @applist.empty? %>
-<%-end %>
+<% unless @applist.empty? %>
+  <% content_for :helpcard do %>
+    <%= render :partial => "helpnote" %>
+  <% end %>
+<% else %>
+  <% content_for :sidebar do %>
+    &nbsp;
+  <% end %>
+<% end %>
 
 <ul class="breadcrumb">
   <li><%= link_to t('header.tabs.admin').html_safe, admin_home_index_path %> <span class="divider">/</span></li>
   <li class="active"><%= "#{t('admin.mobihelp.human_name')}" %></li>
 </ul>
 
-<% @applist.empty? ? @page_title = t('admin.mobihelp.apps.index.no_app.title') : @page_title = t('admin.mobihelp.apps.index.title') %>
+<% @applist.empty? ? @page_title = t('admin.hotline.heading1') : @page_title = t('admin.hotline.heading1') %>
 
-<div class="list-page mobihelp-apps" id="app-index">
-  <div class="list-page-header">
+<div class="list-page mobihelp-apps p20" id="app-index">
     <div class="row-fluid">
-      <div class="span6">
+      <div>
         <%= content_tag :h3, @page_title, :class => "lead" %>
       </div>
-      <div class="btn-group dropdown pull-right">
-        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><%= t('admin.mobihelp.apps.index.new_app') %>
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          <%Mobihelp::App::PLATFORM_NAMES_BY_ID.each do |k,v| %>
-            <li><%= link_to v, new_admin_mobihelp_app_path(:platform => k)%></li>
-          <%end%>
-        </ul>
-      </div>
     </div>
-  </div>
+    
+    <div class="row-fluid">
+      <div class="span7">
+        <% if @applist.empty? %>
+            <%= render :partial => "no_app" %>
+        <% else %>
+        <%= render :partial => "no_app_collapsed" %>
+          
+        <% end %>
+      </div>
+      <% if @applist.empty? %>
+        <div class="span5 text-center">
+          <div class="phone-frame pull-right">
+            <div class="hotline_demo"></div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+</div>
 
-  <% if @applist.empty? %>
-    <%= render :partial => "no_app" %>
-  <% else %>
+
+<!-- List section -->
+<div class="clearfix"></div>
+<% if @applist.present? %>
+  <h3 class="lead pt20"><%= t('admin.hotline.list_title') %></h3>
+  <div class="list-page">
     <div class="list-page-body product-list" id="multi-product-list">
       <table class="table table-striped">
         <%= render(:partial => "app", :collection => @applist) %>
       </table>
     </div>
-  <% end %>
-</div>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+  jQuery(function(){
+  jQuery("#more-details-expand").click(function () {
+    jQuery(".toggle-info").fadeToggle("fast");
+    (jQuery(".change-txt").text() === "More") ? jQuery(".change-txt").text("Less") : jQuery(".change-txt").text("More");
+  });
+  });
+</script>

@@ -731,3 +731,23 @@ label.required:after{
     }
   }
 }
+/*-----------------Date picker custom clear Button-----------------------*/
+.support-date-field{
+input.date {
+  width:100%;
+}
+.dateClear {
+  top: 3px;
+    position: absolute;
+    right: 9px;
+    padding: 5px;    
+    cursor: pointer;
+}
+.dateClear {
+  .ficon-cross:before {
+    font-size: 1.2em;
+      color: #999999;
+  }
+}
+
+}
