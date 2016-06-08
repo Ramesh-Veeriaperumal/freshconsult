@@ -2,10 +2,18 @@ class Solution::ArticleDrop < BaseDrop
   
   include Rails.application.routes.url_helpers
   
-  self.liquid_attributes += [ :title , :status , :thumbs_up , :thumbs_down ]
+  self.liquid_attributes += [:title , :status]
   
   def initialize(source)
     super source
+  end
+  
+  def title
+    source.title
+  end
+  
+  def status
+    source.status
   end
   
   def body
@@ -49,11 +57,19 @@ class Solution::ArticleDrop < BaseDrop
   end
   
   def folder
-    source.folder
+    source.solution_folder_meta
   end
 
   def category
-    source.folder.category
+    source.solution_folder_meta.solution_category_meta
+  end
+  
+  def thumbs_up
+    source.current_child_thumbs_up
+  end
+  
+  def thumbs_down
+    source.current_child_thumbs_down
   end
 
   def thumbs_up_url

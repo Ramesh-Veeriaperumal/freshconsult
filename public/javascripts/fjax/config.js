@@ -35,9 +35,9 @@ window.Fjax = window.Fjax || {};
 			"/solution": 'solutions',
 
 			"/admin": 'admin',
+			"/account/update_languages": 'admin',
 
 			"/search": 'search',
-
 			"/phone/call_history": 'freshfonecallhistory',
 			"/phone/dashboard": 'freshfonedashboard',
 

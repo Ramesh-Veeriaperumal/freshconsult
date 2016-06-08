@@ -10,7 +10,7 @@ class HelpdeskReports::Export::ChatSummary < HelpdeskReports::Export::Report
   def build_export
     @layout = "layouts/report/chat_summary_pdf.html.erb"
     file = build_pdf
-    build_file(file, file_format, PDF_EXPORT_TYPE)
+    build_file(file, file_format, report_type, PDF_EXPORT_TYPE)
   end
 
   def locals_option

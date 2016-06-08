@@ -12,8 +12,13 @@ describe HealthCheckController do
     stub_s3_writes
   end
 
-  it "should show success in index" do
-    get :index, { :format => 'json' }
-    response.body.should =~ /success/
+  it "should show success in verify_credential" do
+    get :verify_credential, { :format => 'json' }
+    JSON.parse(response.body)["success"].should be true
+  end
+
+  it "should show success in verify_domain" do
+    get :verify_domain, { :format => 'json' }
+    JSON.parse(response.body)["success"].should be true
   end
 end

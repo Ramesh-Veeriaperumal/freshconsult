@@ -19,7 +19,7 @@ if Rails.env.test?
       sequence(:name) { |n| "Foo#{n}" }
       description {Faker::Lorem.sentence(2)}
       note {Faker::Lorem.sentence(2)}
-      domains {Faker::Internet.domain_name}
+      domains {"#{Time.now.to_f}.#{Faker::Internet.domain_name}"}
     end
     
     factory :customer do |p|

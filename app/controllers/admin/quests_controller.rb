@@ -155,14 +155,22 @@ class Admin::QuestsController < Admin::AdminController
       [
         { :name => -1, :value => "#{I18n.t('click_to_select_filter')}" },
         { :name => "folder_id", :value => I18n.t('quests.solution_folder'), :domtype => "optgroup", 
-          :choices => Solution::Category.folder_names(current_account).collect{ |category|  
-            [CGI.escapeHTML(category[0]),category[1].collect{ |folder|
-               [folder[0],CGI.escapeHTML(folder[1])]
-              }]
-            }, :operatortype => "choicelist" },
+          :choices => folder_names, 
+          :operatortype => "choicelist" },
         { :name => "thumbs_up", :value => I18n.t('quests.solution_likes'), :domtype => "number", 
           :operatortype => 'greater' }
       ]
+    end
+    
+    def folder_names
+      current_account.solution_category_meta.includes(:primary_category, :solution_folder_meta => :primary_folder).reject(&:is_default).collect do |cat|
+        [
+          CGI.escapeHTML(cat.primary_category.name),
+          cat.solution_folder_meta.collect do |fm|
+            [fm.id, CGI.escapeHTML(fm.primary_folder.name)]
+          end
+        ]
+      end
     end
     
     def forum_filters

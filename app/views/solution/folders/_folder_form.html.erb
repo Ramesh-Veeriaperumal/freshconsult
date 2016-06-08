@@ -1,41 +1,90 @@
 <ul id="folder-form-container" class="form-horizontal">  
-    <%= f.error_messages %>
+  <div 
+      class="error_messages" 
+      id="error_messages_<%= @folder_meta.new_record? ? 'new_folder' : "#{@folder_meta.id}_l#{@language.id}"%>">
+    <%= error_messages_for :folder_meta %>
+  </div>
+
+  <%= f.fields_for(association, @folder) do |associated_folder| %>
+		<li class="control-group">
+	    	<%= associated_folder.label(:name, "#{t('name')} <span class='required_star'>*</span>".html_safe,{:class => 'control-label'}) %>
+	    	<div class="controls">
+	    		<%= associated_folder.text_field :name,
+	                         :class => "required",
+	                         :autocomplete => "off",
+	                         :autofocus => true, 
+	                         :placeholder => title_placeholder('folders') %>
+					<%= primary_preview(@primary, :name, @folder) %>
+	    	</div>
+		</li>
+		<li class="control-group">
+			<%= associated_folder.label(:description, t('description'), { :class => 'control-label'}) %>
+			<div class="controls">
+		 		<%= associated_folder.text_area :description, :class => "smallpara" %>
+		 		<%= primary_preview(@primary, :description, @folder) %>
+		 	</div>
+		</li>  
+	<% end %>
+	
 	<li class="control-group">
-    	<%= f.label(:name, "#{t('name')} <span class='required_star'>*</span>".html_safe,{:class => 'control-label'}) %>
-    	<div class="controls">
-    		<%= f.text_field :name,
-                         :class => "required",
-                         :autocomplete => "off",
-                         :autofocus => true %>
-    	</div>
-	</li>
-	<li class="control-group">
-		<%= f.label(:description, t('description'), { :class => 'control-label'}) %>
+		<%= f.label(:solution_category_meta_id, t('.category'), { :class => 'control-label'}) %>
 		<div class="controls">
-	 		<%= f.text_area :description, :class => "smallpara" %>
-	 	</div>
-	</li>  
-	<li class="control-group">
-		<%= f.label(:category_id, t('.category'), { :class => 'control-label'}) %>
-		<div class="controls">
-	 		<%= f.select :category_id, current_account.solution_categories.reject(&:is_default?).collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-large" } %>
+			<div class="row-fluid">
+			<% if @folder_meta.present? && (@primary && @primary != @folder) %>
+				<%= f.fields_for(:solution_category_meta, @category_meta) do |category_fields| %>
+					<%= dynamic_text_box(:category, @language, category_fields) %>
+				<% end %>
+			<% else %>
+				<div class="span6 solution_folder_meta_solution_category_meta">
+				<% selected_value = (@folder_meta && @folder_meta.solution_category_meta_id) || params[:category_id] %>
+				<%= f.select :solution_category_meta_id, current_account.solution_category_meta.includes(:primary_category).reject(&:is_default?).collect{|c|[c.name, c.id]}, 
+						{ :selected => selected_value }, 
+						{ 
+							:class => "select2 required input-large", 
+							:name => "solution_folder_meta[solution_category_meta_id]",
+							:"data-original-value" => selected_value
+						}  %>
+				</div>
+				<% if @folder_meta.new_record? %>
+					<div class="inline-block">
+						<%= category_create_new(f) %>
+					</div>
+				<% elsif current_account.multilingual? %>
+					<div class="span6">
+						<span class="check-translations hide muted">
+							<%= t('solution.folders.folder_form.check_translations') %>
+						</span>
+					</div>
+				<% end %>
+			<% end %>
+			</div>
 	 	</div>
 	</li>
 	<li class="companies_select control-group">
   	<%= f.label :visibility, t('.visible_to'),{:class =>'control-label'} %>
   	<div class="controls">
-  		<div class="row-fluid">
-	    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, {}, { :class => "select select2 input-large" } %>
-    	</div>
-    	<br>
-    	<div class="row-fluid company_folders <%= 'hide' if @folder.visibility != 4 %>">
-				<%= render_autocomplete({
-								:selected_values => selected_companies(@customer_id),
-								:type => :companies,
-								:dom_id => "folder_customers",
-								:max_limit => 250
-				}) %>
-			</div>
+  		<% if @folder_meta.present? && (@primary && @primary != @folder) %>
+  			<div class="pt5">
+  				<%= company_visibility_tooltip(@folder_meta) %>
+  			</div>
+			<% else %>
+				<div class="row-fluid">
+		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, { :selected => @folder_meta && @folder_meta.visibility }, { :class => "select select2 input-large" } %>
+	    	</div>
+	    	<div class="muted mt4">
+	    		<%= t('solutions.visibility.help_text') %>
+	    	</div>
+	    	<br>
+	    	<div class="row-fluid company_folders <%= 'hide' if @folder_meta.visibility != Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users] %>">
+					<%= render_autocomplete({
+									:selected_values => selected_companies(@customer_id),
+									:type => :companies,
+									:dom_id => "folder_customers_#{@folder_meta.id}",
+									:max_limit => Solution::Constants::COMPANIES_LIMIT
+					}) %>
+				</div>
+			<% end %>
   	</div>
   </li>
+  <%= dynamic_hidden_fields(:folder) %>
 </ul>

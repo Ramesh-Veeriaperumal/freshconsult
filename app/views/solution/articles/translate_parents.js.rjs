@@ -1,0 +1,1 @@
+page << "pjaxify('/solution/articles/#{params[:id]}/#{params[:language]}')"

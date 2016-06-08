@@ -1,7 +1,7 @@
 <div class="control-group row-fluid pt2">
 	<div class="controls span12">
 		<div class="span4">
-			<%= fields_for :tags  do |tag| %>
+			<%= article_version.fields_for :tags  do |tag| %>
 				<%= tag.label(:name, t('tag.title'),:class =>"control-label") %>
 				<%= tag.text_field :name, 
 													 :class => "article-tags span12",
@@ -9,28 +9,66 @@
 													  %>
 			<% end %>
 		</div>
-		<div class="span4">
-			<%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
-			<%= f.select :folder_id , 
-						option_groups_from_collection_for_select(
-								current_account.solution_categories.reject(&:is_default), 
-								:folders, :name, :id, :name, 
-								@article.folder_id
-						), 
-						{ :include_blank => true },
-						:class => "select2 span12 required",
-						:placeholder => t('solution.folders.choose_folder')
-			%>
-		</div>
-		<div class="span4">
-			<%= f.label :name, t('solution.articles.type'),:class =>"control-label" %>
-			<div class="span12 pt3">
-				<% Solution::Article::TYPE_NAMES_BY_KEY.each do |val, type| %>
-					<%= f.radio_button :art_type, val, :checked => (val == (@article.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
-					<%= f.label :art_type, t(type), :value => val %>
-				<% end %>
+		<% if @article_meta.new_record? %>
+			<div class="span4">
+				<%= f.label(:solution_folder_meta_id, folder_create_new, {
+						:class => "control-label", 
+						:for => "s2id_solution_article_meta_solution_folder_meta_id"}) %>
+				<%= f.select :solution_folder_meta_id, 
+							option_groups_from_collection_for_select(
+									current_account.solution_category_meta.includes(:primary_category, :solution_folder_meta => :primary_folder).reject(&:is_default), 
+									:solution_folder_meta, :name, :id, :name, 
+									@article_meta.solution_folder_meta_id
+							), 
+							{ :include_blank => true },
+							:class => "select2 span12 required",
+							:placeholder => t('solution.folders.choose_folder')
+				%>
 			</div>
-		</div>
+			<div class="span4">
+				<%= f.label :art_type, t('solution.articles.type'),:class =>"control-label" %>
+				<div class="span12 pt3">
+					<% Solution::Article::TYPE_NAMES_BY_KEY.each do |val, type| %>
+						<%= f.radio_button :art_type, val, :checked => (val == (@article_meta.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
+						<%= f.label :art_type, t(type), :value => val %>
+					<% end %>
+				</div>
+			</div>
+		<% elsif @article.new_record? %>
+
+			<%= f.fields_for(:solution_folder_meta, @folder_meta) do |folder_fields| %>
+    
+        <%= folder_fields.fields_for(:solution_category_meta, @category_meta) do |category_fields| %>
+          <div class="span4">
+            <% nested_category_id = "solution_article_meta_solution_folder_meta_solution_category_meta_#{@language.to_key}_category_name" %>
+            <%= category_fields.label(:category_id, t('solution.category'), { 
+            	:class => 'control-label',
+            	:for => "solution_article_meta_solution_folder_meta_solution_category_meta_#{@language.to_key}_category_name"
+            }) %>
+            <%= dynamic_text_box(:category, @language, category_fields, :id => nested_category_id) %>
+            <% if @article_meta.errors.messages[:"category.name"].present? %>
+              <label for="<%= nested_category_id %>" class="error">
+                <%= full_error(:"category.name", @article_meta.errors.messages[:"category.name"]) %>
+              </label>
+            <% end %>
+          </div>
+        <% end %>
+
+        <div class="span4">
+          <% nested_folder_id = "solution_article_meta_solution_folder_meta_#{@language.to_key}_folder_name" %>
+          <%= folder_fields.label(:folder_id, t('solution.folder'), { 
+          			:class => 'control-label', 
+          			:for => "solution_article_meta_solution_folder_meta_#{@language.to_key}_folder_name"}) %>
+          <%= dynamic_text_box(:folder, @language, folder_fields, :id => nested_folder_id) %>
+          <% if @article_meta.errors.messages[:"folder.name"].present? %>
+            <label for="<%= nested_folder_id %>" class="error">
+              <%= full_error(:"folder.name", @article_meta.errors.messages[:"folder.name"]) %>
+            </label>
+          <% end %>
+        </div>
+      <% end %>
+
+		<% end %>
 	</div>
 </div>
 
@@ -39,7 +77,7 @@
   <a><%= t('solution.solution_meta') %></a>
 </div>
 <div id="solution-properties-seo" class="hide">
-	<%= f.fields_for :seo_data  do |s| %>
+	<%= article_version.fields_for :seo_data  do |s| %>
 						
 		<div class="control-group">
 			<%= s.label(:meta_title, t('solution.solution_meta_title'), :class => 'control-label') %>
@@ -59,7 +97,7 @@
 	    	<%= s.text_area  :meta_description, :rel => "charcounter", 
 					'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
 					:value => (@article.seo_data || {})[:meta_description], 
-					:class => "solution-properties-description" %>
+					:class => "solution-properties-description", :id => :solution_article_seo_data_meta_description %>
 				<div class="muted">
 		    		<%= t('solution.article_properties.description_counter_message') %>
 	  		</div>

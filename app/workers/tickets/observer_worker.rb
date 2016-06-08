@@ -18,6 +18,10 @@ module Tickets
           end
           evaluate_on.round_robin_on_ticket_update(current_events) if evaluate_on.rr_allowed_on_update?
           evaluate_on.save!
+          evaluate_on.va_rules_after_save_actions.each do |action|
+            klass = action[:klass].constantize
+            klass.send(action[:method], action[:args])
+          end
         else
           puts "Skipping observer worker for : Account id:: #{Account.current.id}, Ticket id:: #{args['ticket_id']}, User id:: #{args['doer_id']}"            
         end

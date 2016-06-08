@@ -57,7 +57,19 @@ describe Billing::BillingController do
     plan = SubscriptionPlan.find_by_name("Sprout")
     @account.subscription.subscription_plan = plan
     @account.subscription.convert_to_free
-    Billing::Subscription.new.activate_subscription(@account.subscription)
+    address = {
+      :billing_address => 
+      {
+        :first_name => "Hi",
+        :last_name => "Hello",
+        :line1 => "Hello World", 
+        :city => "Chennai", 
+        :state => "TN",
+        :zip => "121212", 
+        :country => "India"
+      }
+    }
+    Billing::Subscription.new.activate_subscription(@account.subscription, address)
     @account.subscription.save!
     @account.subscription.reload
   

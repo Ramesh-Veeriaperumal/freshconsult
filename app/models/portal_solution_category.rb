@@ -5,12 +5,12 @@ class PortalSolutionCategory < ActiveRecord::Base
 	belongs_to :portal
 	belongs_to :solution_category, :class_name => 'Solution::Category'
 	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta'
-  attr_accessible :portal_id, :solution_category_id, :account_id, :position
+  attr_accessible :portal_id, :solution_category_id, :position
 	acts_as_list :scope => :portal
 
 	delegate :name, :to => :solution_category
 
-  after_update :clear_cache, :if => :position_changed?
+  after_commit ->(obj) { obj.send(:clear_cache_with_condition) }, on: :update
 
   CACHEABLE_ATTRS = ["portal_id","position"]
   
@@ -26,7 +26,11 @@ class PortalSolutionCategory < ActiveRecord::Base
   end
 
   def clear_cache
-    account.clear_solution_categories_from_cache
+    Account.current.clear_solution_categories_from_cache
+  end
+
+  def clear_cache_with_condition
+    clear_cache if previous_changes['position'].present?
   end
 
 end

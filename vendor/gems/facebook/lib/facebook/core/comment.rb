@@ -144,11 +144,11 @@ module Facebook
           return false if ticket_rule.strict?
           
           fetch_parent_data(parent_in_dynamo)
-          ticket_rule.convert_fb_feed_to_ticket?(self.koala_post.by_visitor?, self.koala_post.by_company?, self.koala_comment.by_visitor?, "")
+          !user_blocked?(self.koala_post.requester_fb_id) && ticket_rule.convert_fb_feed_to_ticket?(self.koala_post.by_visitor?, self.koala_post.by_company?, self.koala_comment.by_visitor?, "")
         else
           return false unless (self.fan_page.import_company_posts || self.fan_page.import_visitor_posts)
           fetch_parent_data(parent_in_dynamo)
-          return (can_convert_company_post || can_convert_visitor_post) 
+          return !user_blocked?(self.koala_post.requester_fb_id) && (can_convert_company_post || can_convert_visitor_post) 
         end
       end  
       

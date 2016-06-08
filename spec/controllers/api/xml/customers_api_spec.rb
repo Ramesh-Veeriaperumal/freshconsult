@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe CustomersController do
 
-  SKIPPED_KEYS = [ :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, :delta, :import_id, :custom_field]
+  SKIPPED_KEYS = [ :created_at, :updated_at, :sla_policy_id, :id, :cust_identifier, :account_id, :delta, :import_id, :custom_field, :domains]
 
   setup :activate_authlogic
   self.use_transactional_fixtures = false

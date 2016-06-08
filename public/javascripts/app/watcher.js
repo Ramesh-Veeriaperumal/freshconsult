@@ -66,7 +66,7 @@ window.App.Tickets = window.App.Tickets || {};
         jQuery("#monitor a").addClass("monitor_active").removeClass("monitor");
       }
 
-      jQuery(".select2-search-choice").hide();
+      jQuery(".ticket-add-watcher .select2-search-choice").hide();
       jQuery(".watcher_input").focus();
     },
     removeWatcher: function () {

@@ -74,6 +74,7 @@ class Solution::Article < ActiveRecord::Base
             f.query { |q| q.string SearchUtil.es_filter_key(search_key), :fields => ['title', 'desc_un_html', 'tags.name'], :analyzer => SearchUtil.analyzer(@search_lang) }
             f.filter :term, { :account_id => account_id }
             f.filter :not, { :ids => { :values => [self.id] } }
+            f.filter :term, {:language_id => Language.current.id}
             f.filter :or, { :not => { :exists => { :field => :status } } },
                           { :not => { :term => { :status => Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] } } }
             f.filter :or, { :not => { :exists => { :field => 'folder.visibility' } } },
@@ -81,7 +82,7 @@ class Solution::Article < ActiveRecord::Base
             f.filter :or, { :not => { :exists => { :field => 'folder.customer_folders.customer_id' } } },
                           { :term => { 'folder.customer_folders.customer_id' => User.current.customer_id } } if User.current && User.current.has_company?
             f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
-                         { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_id) } }
+                         { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_meta_id) } }
           end
         end
         search.from options[:size].to_i * (options[:page].to_i-1)

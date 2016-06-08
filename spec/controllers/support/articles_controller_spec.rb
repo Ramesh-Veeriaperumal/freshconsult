@@ -5,92 +5,76 @@ RSpec.describe Support::Solutions::ArticlesController do
   self.use_transactional_fixtures = false
 
   before(:all) do
+    @account.launch(:meta_read)
+    @account.make_current
     @user = create_dummy_customer
     @now = (Time.now.to_f*1000).to_i
-    @test_category = create_category( {:name => "test category #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-    @test_folder1 = create_folder( {:name => "folder1 #{Faker::Name.name} visible to logged in customers", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 2,
-      :category_id => @test_category.id } )
-    @test_folder2 = create_folder( {:name => "folder2 #{Faker::Name.name} visible to agents", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 3,
-      :category_id => @test_category.id } )
+    @test_category_meta = create_category
+    @test_folder_meta1 = create_folder({ :visibility => 2, :category_id => @test_category_meta.id })
+    @test_folder_meta2 = create_folder({ :visibility => 3, :category_id => @test_category_meta.id })
 
-    @public_folder  = create_folder({
-                                      :name => "Public #{Faker::Name.name} visible to All", 
-                                      :description => "#{Faker::Lorem.sentence(3)}", 
-                                      :visibility => 1,
-                                      :category_id => @test_category.id 
-                                    })
+    @public_folder_meta  = create_folder({ :visibility => 1, :category_id => @test_category_meta.id })
 
-    @test_article1 = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
-      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
-    @test_article2 = create_article( {:title => "article2 #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
-      :status => "1", :art_type => "1", :user_id => "#{@agent.id}" } )
-    @test_article3 = create_article( {:title => "article3 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder2.id, 
-      :status => "2", :art_type => "1", :user_id => "#{@agent.id}" } )
+    @test_article_meta1 = create_article({ :folder_id => @test_folder_meta1.id, :status => "2", :art_type => "1", :user_id => "#{@agent.id}" })
+    @test_article_meta2 = create_article({ :folder_id => @test_folder_meta1.id, :status => "1", :art_type => "1", :user_id => "#{@agent.id}" })
+    @test_article_meta3 = create_article({ :folder_id => @test_folder_meta2.id, :status => "2", :art_type => "1", :user_id => "#{@agent.id}" })
 
-    @public_article1 = create_article({
-      :title => Faker::Name.name,
-      :description => Faker::Lorem.sentence(10),
-      :folder_id => @public_folder.id,
-      :status => 2,
-      :art_type => 1,
-      :user_id => @agent.id
-    })
+    @public_article_meta1 = create_article({ :folder_id => @public_folder_meta.id, :status => 2, :art_type => 1, :user_id => @agent.id })
+    @public_article_meta2 = create_article({ :folder_id => @public_folder_meta.id, :status => 2, :art_type => 1, :user_id => @agent.id })
+    @public_article_meta3 = create_article({ :folder_id => @public_folder_meta.id, :status => 2, :art_type => 1, :user_id => @agent.id })
 
-
-    @public_article2 = create_article({
-      :title => Faker::Name.name,
-      :description => Faker::Lorem.sentence(10),
-      :folder_id => @public_folder.id,
-      :status => 2,
-      :art_type => 1,
-      :user_id => @agent.id
-    })
-
-
-    @public_article3 = create_article({
-      :title => Faker::Name.name,
-      :description => Faker::Lorem.sentence(10),
-      :folder_id => @public_folder.id,
-      :status => 2,
-      :art_type => 1,
-      :user_id => @agent.id
-    })
+    @test_article1 = @test_article_meta1.primary_article
+    @test_article2 = @test_article_meta2.primary_article
+    @test_article3 = @test_article_meta3.primary_article
+    @public_article1 = @public_article_meta1.primary_article
+    @public_article2 = @public_article_meta2.primary_article
+    @public_article3 = @public_article_meta3.primary_article
   end
 
   before(:each) do
     @account.features.open_solutions.create
+    @account.reload
   end
 
   it "should redirect to support home if index is hit" do
     log_in(@user)
-    get :index, :category_id => @test_category.id, :folder_id => @test_folder1.id, :id => @test_article1.id
+    get :index, :category_id => @test_category_meta.id, :folder_id => @test_folder_meta1.id, :id => @test_article_meta1.id, :url_locale => @test_article1.language.to_key
     response.should redirect_to("#{support_solutions_path}")
   end
 
 
   it "should increment thumbs up for non logged in users" do
     likes = @public_article2.thumbs_up
-    put :thumbs_up, :id => @public_article2.id  
+    meta_likes = @public_article_meta2.thumbs_up
+    put :thumbs_up, :id => @public_article_meta2.id, :url_locale => @public_article2.language.to_key
     @public_article2.reload
+    @public_article_meta2.reload
     @public_article2.thumbs_up.should eql(likes + 1)   
+    @public_article_meta2.thumbs_up.should eql(meta_likes + 1)
     response.code.should be_eql("200")
   end
 
   it "should not increment thumbs up for an agent" do
     log_in(@agent)
     likes = @public_article2.thumbs_up
-    put :thumbs_up, :id => @public_article2.id
+    meta_likes = @public_article_meta2.thumbs_up
+    put :thumbs_up, :id => @public_article_meta2.id
     @public_article2.reload
+    @public_article_meta2.reload
     @public_article2.thumbs_up.should eql(likes)
+    @public_article_meta2.thumbs_up.should eql(meta_likes)
     response.code.should be_eql("200")
   end
 
   it "should increment thumbs up for logged in user's first vote and store in votes table" do
     log_in(@user)
     likes = @public_article2.thumbs_up
-    put :thumbs_up, :id => @public_article2.id
+    meta_likes = @public_article_meta2.thumbs_up
+    put :thumbs_up, :id => @public_article_meta2.id
     @public_article2.reload
+    @public_article_meta2.reload
     @public_article2.thumbs_up.should eql(likes + 1)
+    @public_article_meta2.thumbs_up.should eql(likes + 1)
     vote = @public_article2.votes.find_by_user_id(@user.id)
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article2.id
@@ -99,25 +83,33 @@ RSpec.describe Support::Solutions::ArticlesController do
     response.code.should be_eql("200")
   end
 
-  it "should increment thumbs up" do
+  it "should not increment thumbs up for logged in user's second vote" do
     log_in(@user)
-    put :thumbs_up, :id => @public_article2.id
+    put :thumbs_up, :id => @public_article_meta2.id
     @public_article2.reload
+    @public_article_meta2.reload
     likes = @public_article2.thumbs_up
-    put :thumbs_up, :id => @public_article2.id
+    meta_likes = @public_article_meta2.thumbs_up
+    put :thumbs_up, :id => @public_article_meta2.id
     @public_article2.reload
+    @public_article_meta2.reload
     @public_article2.thumbs_up.should eql(likes)
+    @public_article_meta2.thumbs_up.should eql(meta_likes)
     response.code.should be_eql("200")
   end
 
   it "should increment thumbs down" do
     log_in(@user)
-    put :thumbs_down, :id => @public_article2.id
+    put :thumbs_down, :id => @public_article_meta2.id
     @public_article2.reload
+    @public_article_meta2.reload
     likes = @public_article2.thumbs_up
     dislikes = @public_article2.thumbs_down
-    put :thumbs_up, :id => @public_article2.id
+    meta_likes = @public_article_meta2.thumbs_up
+    meta_dislikes = @public_article_meta2.thumbs_down
+    put :thumbs_up, :id => @public_article_meta2.id
     @public_article2.reload
+    @public_article_meta2.reload
     vote = @public_article2.votes.find_by_user_id(@user.id)
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article2.id
@@ -125,32 +117,43 @@ RSpec.describe Support::Solutions::ArticlesController do
     vote.vote?.should eql true
     @public_article2.thumbs_up.should eql(likes + 1)
     @public_article2.thumbs_down.should eql(dislikes - 1)
+    @public_article_meta2.thumbs_up.should eql(meta_likes + 1)
+    @public_article_meta2.thumbs_down.should eql(meta_dislikes - 1)
   end
 
   it "should increment thumbs down for non logged in users" do
     dislikes = @public_article3.thumbs_down
-    put :thumbs_down, :id => @public_article3.id, :format => "html" 
+    meta_dislikes = @public_article_meta3.thumbs_down
+    put :thumbs_down, :id => @public_article_meta3.id, :format => "html" 
     @public_article3.reload
+    @public_article_meta3.reload
     @public_article3.thumbs_down.should eql(dislikes + 1)
-    response.body.should =~ /Your email/
+    @public_article_meta3.thumbs_down.should eql(meta_dislikes + 1)
+    response.should render_template("support/solutions/articles/_feedback_form")    
     response.code.should be_eql("200")
   end
 
   it "should not increment thumbs down for an agent" do
     log_in(@agent)
     dislikes = @public_article3.thumbs_down
-    put :thumbs_down, :id => @public_article3.id
+    meta_dislikes = @public_article_meta3.thumbs_down
+    put :thumbs_down, :id => @public_article_meta3.id
     @public_article3.reload
+    @public_article_meta3.reload
     @public_article3.thumbs_down.should eql(dislikes)
+    @public_article_meta3.thumbs_down.should eql(meta_dislikes)
     response.code.should be_eql("200")
   end
 
   it "should increment thumbs down for logged in user's first vote and store in votes table" do
     log_in(@user)
     dislikes = @public_article3.thumbs_down
-    put :thumbs_down, :id => @public_article3.id
+    meta_dislikes = @public_article_meta3.thumbs_down
+    put :thumbs_down, :id => @public_article_meta3.id
     @public_article3.reload
+    @public_article_meta3.reload
     @public_article3.thumbs_down.should eql(dislikes + 1)
+    @public_article_meta3.thumbs_down.should eql(meta_dislikes + 1)
     vote = @public_article3.votes.find_by_user_id(@user.id)
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article3.id
@@ -161,23 +164,30 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   it "should not increment thumbs down for logged in user's second vote if existing vote is a dislike" do
     log_in(@user)
-    put :thumbs_down, :id => @public_article3.id
+    put :thumbs_down, :id => @public_article_meta3.id
     @public_article3.reload
+    @public_article_meta3.reload
     dislikes = @public_article3.thumbs_down
-    put :thumbs_down, :id => @public_article3.id
+    meta_dislikes = @public_article_meta3.thumbs_down
+    put :thumbs_down, :id => @public_article_meta3.id
     @public_article3.reload
+    @public_article_meta3.reload
     @public_article3.thumbs_down.should eql(dislikes)
+    @public_article_meta3.thumbs_down.should eql(meta_dislikes)
     response.code.should be_eql("200")
   end
 
   it "should increment thumbs down and decrement thumbs up for logged in user's second vote if existing vote is a like" do
     log_in(@user)
-    put :thumbs_up, :id => @public_article3.id
+    put :thumbs_up, :id => @public_article_meta3.id
     @public_article3.reload
     likes = @public_article3.thumbs_up
     dislikes = @public_article3.thumbs_down
-    put :thumbs_down, :id => @public_article3.id
+    meta_likes = @public_article_meta3.thumbs_up
+    meta_dislikes = @public_article_meta3.thumbs_down
+    put :thumbs_down, :id => @public_article_meta3.id
     @public_article3.reload
+    @public_article_meta3.reload
     vote = @public_article3.votes.find_by_user_id(@user.id)
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql @public_article3.id
@@ -185,16 +195,18 @@ RSpec.describe Support::Solutions::ArticlesController do
     vote.vote?.should eql false
     @public_article3.thumbs_up.should eql(likes - 1)
     @public_article3.thumbs_down.should eql(dislikes + 1)
+    @public_article_meta3.thumbs_up.should eql(likes - 1)
+    @public_article_meta3.thumbs_down.should eql(dislikes + 1)
   end
 
   it "should redirect to login page if there is no open solutions feature " do
     name = Faker::Name.name
     @account.features.open_solutions.destroy
-    article = create_article( {:title => "#{name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
+    article_meta = create_article( {:title => "#{name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder_meta1.id, 
       :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )    
-    get 'show', id: article.id
+    get 'show', id: article_meta.id
     response.body.should_not =~ /#{name}/
-    response.should redirect_to(login_url)
+    response.should redirect_to(login_path)
   end
 
   it "should not show article and redirect to support solutions home if its folder is visible only to Agents" do
@@ -205,14 +217,14 @@ RSpec.describe Support::Solutions::ArticlesController do
  
   it "should not show draft article without logging in while open solutions feature is disabled" do
     @account.features.open_solutions.destroy
-    get 'show', id: @test_article2
+    get 'show', id: @test_article_meta2
     response.body.should_not =~ /article2 with status as draft/
-    response.should redirect_to(login_url)
+    response.should redirect_to(login_path)
   end
 
   it "should handle unknown actions" do
     log_in(@user)
-    expect{get :unknownaction, :id => @test_article1.id}.to raise_error(ActionController::RoutingError)  
+    expect{get :unknownaction, :id => @test_article_meta1.id}.to raise_error(ActionController::RoutingError)  
     # response.should redirect_to("#{send(Helpdesk::ACCESS_DENIED_ROUTE)}")
   end
 
@@ -221,7 +233,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     description = Faker::Lorem.paragraph
 
     random_message = rand(4) + 1
-    post :create_ticket, :id => @test_article1.id,
+    post :create_ticket, :id => @test_article_meta1.id,
       :helpdesk_ticket_description => "#{description}",
       :message => [random_message]
     response.code.should be_eql("200")
@@ -236,14 +248,15 @@ RSpec.describe Support::Solutions::ArticlesController do
     
   it "should create ticket and update article_tickets while submitting feedback form for non logged in users" do
     agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => 1, :role => 1 })
-    test_article = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @test_folder1.id, 
+    test_article_meta = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @public_folder_meta.id, 
       :status => "2", :art_type => "1" , :user_id => "#{agent.user_id}"} )
+    test_article = test_article_meta.primary_article
     description = Faker::Lorem.paragraph
     
     agent.user.make_customer
 
 		random_message = rand(1..4)
-    post :create_ticket, :id => test_article.id,
+    post :create_ticket, :id => test_article_meta.id,
       :helpdesk_ticket => { :email => Faker::Internet.email },
       :helpdesk_ticket_description => description,
       :message => [random_message]
@@ -258,13 +271,12 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   it "should not create ticket while submitting feedback form for non logged in users with invalid email" do
 		agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => 1, :role => 1 })
-		test_article = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @test_folder1.id, 
-		 :status => "2", :art_type => "1" , :user_id => "#{agent.id}"} )
-		
+		test_article_meta = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @public_folder_meta.id, 
+		 :status => "2", :art_type => "1" , :user_id => "#{agent.user_id}"} )
+    test_article = test_article_meta.primary_article
 		user_count = @account.users.count
     ticket_count = test_article.article_ticket.count
-
-    post :create_ticket, :id => test_article.id,
+    post :create_ticket, :id => test_article_meta.id,
       :helpdesk_ticket => { :email => 'example@example' },
       :helpdesk_ticket_description => Faker::Lorem.paragraph,
       :message => [1]
@@ -277,9 +289,9 @@ RSpec.describe Support::Solutions::ArticlesController do
   it "should show a published article to user" do
     log_in(@user)
     name = Faker::Name.name
-    article = create_article( {:title => "#{name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
-      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )    
-    get 'show', id: article.id
+    article_meta = create_article( {:title => "#{name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder_meta1.id, 
+      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
+    get 'show', id: article_meta.id
     response.body.should =~ /#{name}/    
   end
 
@@ -292,10 +304,11 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   it "should increase hit count on get 'hit'" do
     log_in(@user)
-    hit_count = @public_article1.hits
-    get :hit, :id => @public_article1.id
-    @public_article1.reload
-    @public_article1.hits.should be_eql(hit_count + 1)
+    hit_count = @public_article_meta1.hits
+    primary_hit_count = @public_article_meta1.primary_article.hits
+    get :hit, :id => @public_article_meta1.id
+    @public_article_meta1.reload
+    @public_article_meta1.primary_article.hits.should be_eql(hit_count + 1)
   end
 
   describe "draft preview" do
@@ -304,35 +317,35 @@ RSpec.describe Support::Solutions::ArticlesController do
       @published_article = create_article( {
                             :title => "Test article",
                             :description => "This article is published.",
-                            :folder_id => @test_folder1.id,
+                            :folder_id => @test_folder_meta1.id,
                             :status => Solution::Article::STATUS_KEYS_BY_TOKEN[:published],
                             :art_type => 1,
                             :user_id => "#{@agent.id}" } )
       @published_article.create_draft_from_article({
                           :title => "Random draft",
                           :description => "I am the draft version.",
-                          :user_id => "#{@agent.id}"} )
-      @published_article_1 = create_article( {
+                          :user_id => "#{@agent.id}"})
+      @published_article_1 = create_article({
                               :title => "Test article",
                               :description => "This article is published.",
-                              :folder_id => @test_folder1.id,
+                              :folder_id => @test_folder_meta1.id,
                               :status => Solution::Article::STATUS_KEYS_BY_TOKEN[:published],
                               :art_type => 1,
-                              :user_id => "#{@agent.id}"} )
+                              :user_id => "#{@agent.id}"})
       @draft_article = create_article( {
                         :title => "Test article",
                         :description => "This article is not published.",
-                        :folder_id => @public_folder.id,
+                        :folder_id => @public_folder_meta.id,
                         :status => Solution::Article::STATUS_KEYS_BY_TOKEN[:draft],
                         :art_type => 1,
                         :user_id => "#{@agent.id}" } )
       @draft_article_1 = create_article( {
                         :title => "Test article",
                         :description => "This article is not published.",
-                        :folder_id => @test_folder1.id,
+                        :folder_id => @test_folder_meta1.id,
                         :status => Solution::Article::STATUS_KEYS_BY_TOKEN[:draft],
                         :art_type => 1,
-                        :user_id => "#{@agent.id}" } )
+                        :user_id => "#{@agent.id}" })
       @test_role = create_role({
                     :name => "New role test #{@now}", 
                     :privilege_list => ["manage_tickets", "edit_ticket_properties", 
@@ -392,28 +405,26 @@ RSpec.describe Support::Solutions::ArticlesController do
       log_in(@agent)
       get 'show', :id => @draft_article, :status => "preview"
       response.body.should =~ /#{@draft_article.title}/
-      response.body.should =~ /#{@draft_article.description}/
+      response.body.should =~ /#{@draft_article.current_article.description}/
     end
   end
 
   describe "Hits and likes should reflect in meta" do
     before(:all) do
-      @test_article_for_hits = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
-      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
-      @test_article_for_hits.build_meta.save if @test_article_for_hits.reload.solution_article_meta.blank?
+      @test_article_for_hits_meta = create_article({ :folder_id => @test_folder_meta1.id, :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"})
+      @test_article_for_hits = @test_article_for_hits_meta.primary_article
       @user1 = create_dummy_customer
       @user2 = create_dummy_customer
       @meta_object = @test_article_for_hits.solution_article_meta
-      @test_article_without_meta = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
-      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
-      @test_article_without_meta.reload
+      @test_article_without_meta_meta = create_article({:folder_id => @test_folder_meta1.id, :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"})
+      @test_article_without_meta = @test_article_without_meta_meta.primary_article
     end
 
     it "should increment hits in meta object" do
       log_in(@user1)
       hit_count = @test_article_for_hits.reload.hits
       meta_hit_count = @meta_object.reload.hits
-      get :hit, :id => @test_article_for_hits.id
+      get :hit, :id => @meta_object.id
       @test_article_for_hits.reload
       @meta_object.reload
       @test_article_for_hits.hits.should be_eql(hit_count + 1)
@@ -426,7 +437,7 @@ RSpec.describe Support::Solutions::ArticlesController do
       $redis_others.set("SOLUTION_META:HITS:%{#{@account.id}}:%{#{@meta_object.id}}", Solution::ArticleMeta::HITS_CACHE_THRESHOLD - 1)
       hit_count = @test_article_for_hits.reload.hits
       meta_hit_count = @meta_object.reload.hits
-      get :hit, :id => @test_article_for_hits.id
+      get :hit, :id => @meta_object.id
       @test_article_for_hits.reload
       @meta_object.reload
       @test_article_for_hits.hits.should be_eql(hit_count + 1)
@@ -437,7 +448,7 @@ RSpec.describe Support::Solutions::ArticlesController do
       log_in(@user1)
       likes = @test_article_for_hits.reload.thumbs_up
       meta_likes = @meta_object.reload.thumbs_up
-      put :thumbs_up, :id => @test_article_for_hits.id
+      put :thumbs_up, :id => @meta_object.id
       @test_article_for_hits.reload.thumbs_up.should eql(likes+1)
       @meta_object.reload.thumbs_up.should eql(meta_likes+1)
       response.code.should be_eql("200")
@@ -447,7 +458,7 @@ RSpec.describe Support::Solutions::ArticlesController do
       log_in(@user2)
       dislikes = @test_article_for_hits.reload.thumbs_down
       meta_dislikes = @meta_object.reload.thumbs_down
-      put :thumbs_down, :id => @test_article_for_hits.id
+      put :thumbs_down, :id => @meta_object.id
       @test_article_for_hits.reload.thumbs_down.should eql(dislikes+1)
       @meta_object.reload.thumbs_down.should eql(meta_dislikes+1)
       response.code.should be_eql("200")
@@ -455,15 +466,15 @@ RSpec.describe Support::Solutions::ArticlesController do
 
     it "should increment thumbs down and decrement thumbs up for logged in user's second vote if existing vote is a like" do
       log_in(@user1)
-      test_article_for_decr = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
-      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
+      test_article_for_decr_meta = create_article({:folder_id => @test_folder_meta1.id, :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"})
+      test_article_for_decr = test_article_for_decr_meta.primary_article
       meta_object = test_article_for_decr.reload.solution_article_meta
-      put :thumbs_up, :id => test_article_for_decr.id
+      put :thumbs_up, :id => meta_object.id
       likes = test_article_for_decr.reload.thumbs_up
       meta_likes = meta_object.reload.thumbs_up
       dislikes = test_article_for_decr.thumbs_down
       meta_dislikes = meta_object.thumbs_down
-      put :thumbs_down, :id => test_article_for_decr.id
+      put :thumbs_down, :id => meta_object.id
       test_article_for_decr.reload
       meta_object.reload
       test_article_for_decr.thumbs_up.should eql(likes - 1)
@@ -475,13 +486,32 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   it "should render 404 for articles not visible in current portal" do
     portal = create_portal
-    category = create_category({:portal_ids => [portal.id]})
-    folder = create_folder({:visibility => 1, :category_id => category.id })
-    article = create_article( { :title => "article #{Faker::Name.name}", 
-                                :description => "#{Faker::Lorem.sentence(3)}", :folder_id => folder.id, 
+    category_meta = create_category({:portal_ids => [portal.id]})
+    folder_meta = create_folder({:visibility => 1, :category_id => category_meta.id })
+    article_meta = create_article( { :title => "article #{Faker::Name.name}", 
+                                :description => "#{Faker::Lorem.sentence(3)}", :folder_id => folder_meta.id, 
                                 :status => "2", :art_type => "1", :user_id => "#{@agent.id}" } )
-    get 'show', :id => article
+    get 'show', :id => article_meta.id
     response.status.should eql(404)
   end
-  
+
+  it "should add meta tags for alterante language versions" do 
+    get 'show', id: @public_article1.id, url_locale: 'en'
+    supported_languages = @public_article1.solution_article_meta.portal_available_versions
+    supported_languages.each do |lang|
+      params = { 
+                  :id=> @public_article1.id, 
+                  :controller => "support/solutions/articles", 
+                  :action => "show", 
+                  :url_locale => "en"
+                }
+      version_url = alternate_version_url(lang, @account.main_portal)
+      response.body.should =~ /hreflang="#{lang}" href="#{version_url}"/
+    end
+  end
+
+  after(:all) do
+    @account.rollback(:meta_read)
+    Language.reset_current
+  end
 end

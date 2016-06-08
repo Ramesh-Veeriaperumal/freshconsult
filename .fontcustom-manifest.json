@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "bf37ea89c9e0bfb8c9981f800eabc3a77dc7f68d731a4cd1e5d351ee696883b4",
-    "current": "bf37ea89c9e0bfb8c9981f800eabc3a77dc7f68d731a4cd1e5d351ee696883b4"
+    "previous": "bcdcab627cb2d8c537a7a040ba8a1d97a3120f1829e4ff6d8ee9dd62bae851e7",
+    "current": "bcdcab627cb2d8c537a7a040ba8a1d97a3120f1829e4ff6d8ee9dd62bae851e7"
   },
   "fonts": [
-    "public/assets/glyphs_bf37ea89c9e0bfb8c9981f800eabc3a7.ttf",
-    "public/assets/glyphs_bf37ea89c9e0bfb8c9981f800eabc3a7.svg",
-    "public/assets/glyphs_bf37ea89c9e0bfb8c9981f800eabc3a7.woff",
-    "public/assets/glyphs_bf37ea89c9e0bfb8c9981f800eabc3a7.eot"
+    "public/assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.ttf",
+    "public/assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.svg",
+    "public/assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.woff",
+    "public/assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -189,6 +189,10 @@
     "categories-orphan": {
       "codepoint": 61916,
       "source": "public/glyphs/vectors/categories-orphan.svg"
+    },
+    "category": {
+      "codepoint": 61987,
+      "source": "public/glyphs/vectors/category.svg"
     },
     "chat": {
       "codepoint": 61885,
@@ -378,6 +382,10 @@
       "codepoint": 61747,
       "source": "public/glyphs/vectors/dropbox.svg"
     },
+    "dropdown-circle": {
+      "codepoint": 61988,
+      "source": "public/glyphs/vectors/dropdown-circle.svg"
+    },
     "dropdown_blank": {
       "codepoint": 61748,
       "source": "public/glyphs/vectors/dropdown_blank.svg"
@@ -417,6 +425,10 @@
     "eye": {
       "codepoint": 61756,
       "source": "public/glyphs/vectors/eye.svg"
+    },
+    "eye-disabled": {
+      "codepoint": 61989,
+      "source": "public/glyphs/vectors/eye-disabled.svg"
     },
     "facebook": {
       "codepoint": 61757,
@@ -1130,6 +1142,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",

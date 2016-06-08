@@ -67,14 +67,19 @@ class Mobile::TicketsController < ApplicationController
       format.nmobile {render json: { tickets: tickets_json, top_view: top_view }} 
     end
   end
-
-  def get_solution_url
-    respond_to do |format|
-      format.nmobile{ 
-        article_url = support_solutions_article_url(@article, :host => @ticket.solution_article_host(@article))
-        render :json => { :solution_url => article_url }}
-    end
-  end
+  
+  # Commenting this method out, as none of the Mobile apps consume it anymore.
+  # Confirmed this with the mobile team (Girish.K)
+  # And the "solution_article_host" method in ticket model has been removed now.
+  # So this action should not exist.
+  # 
+  # def get_solution_url
+  #   respond_to do |format|
+  #     format.nmobile{ 
+  #       article_url = support_solutions_article_url(@article, :host => @ticket.solution_article_host(@article))
+  #       render :json => { :solution_url => article_url }}
+  #   end
+  # end
 
 
   def recent_tickets
