@@ -1,8 +1,7 @@
 module Social
-  class PremiumFacebookWorker < Social::FacebookWorker
+  class PremiumTwitterWorker < Social::TwitterWorker
     
-    
-    sidekiq_options :queue => :premium_facebook, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :premium_twitter, :retry => 0, :backtrace => true, :failures => :exhausted
     
     def perform(args)
       Sharding.select_shard_of(args['account_id']) do
