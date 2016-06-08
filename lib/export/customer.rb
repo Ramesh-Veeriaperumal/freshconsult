@@ -43,13 +43,15 @@ class Export::Customer
   private
 
     def map_csv csv
-      Account.current.send(@type.pluralize).find_in_batches(:batch_size => 300) do |items|
-        items.each do |record|
-          csv_data = []
-          @headers.each do |val|
-            csv_data << strip_equal(record.send(VALUE_MAPPING.fetch(val, @csv_hash[val]))) if record.respond_to?(VALUE_MAPPING.fetch(val, @csv_hash[val]))
+      Sharding.run_on_slave do
+        Account.current.send(@type.pluralize).find_in_batches(:batch_size => 300) do |items|
+          items.each do |record|
+            csv_data = []
+            @headers.each do |val|
+              csv_data << strip_equal(record.send(VALUE_MAPPING.fetch(val, @csv_hash[val]))) if record.respond_to?(VALUE_MAPPING.fetch(val, @csv_hash[val]))
+            end
+            csv << csv_data if csv_data.any?
           end
-          csv << csv_data if csv_data.any?
         end
       end
     end
