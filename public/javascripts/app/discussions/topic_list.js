@@ -135,7 +135,7 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 
 		orderValue: function () {
-			return $("#topic-sort-menu li.active > a").data('value');
+			return $("#topic-sort-menu li.selected > a").data('value');
 		},
 
 		bindForBulkActions: function () {
