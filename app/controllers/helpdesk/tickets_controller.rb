@@ -309,6 +309,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!(current_account.as_json(:only=> [:id], :methods=>[:timesheets_feature]))
         hash.merge!({:subscription => !@subscription.nil?})
         hash.merge!({:reply_emails => @reply_emails})
+        hash.merge!({:selected_email => @selected_reply_email})
         hash.merge!({:to_cc_emails => @to_cc_emails})
         hash.merge!({:bcc_drop_box_email => bcc_drop_box_email.map{|item|[item, item]}})
         hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
