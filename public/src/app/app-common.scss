@@ -4551,6 +4551,24 @@ $adm-bdr:#F0F0F0;
   }
 }
 /*-----------------Date picker custom clear Button-----------------------*/
+.controls {
+	.dateClear {
+	top: 2px;
+    position: absolute;
+    right: 9px;
+    padding: 5px;    
+    cursor: pointer;
+}
+.dateClear {
+	.ficon-cross:before {
+	  font-size: 1.2em;
+      color: #999999;
+  }
+}
+}
+.company_form_date + .dateClear {
+		right: 25px;
+}
 .input-date-field {
 input.date {
 	width:100%;
@@ -4570,6 +4588,7 @@ input.date {
 }
 
 }
+
 .conditionset {
 	.dateClear {
 		top: 7px;
