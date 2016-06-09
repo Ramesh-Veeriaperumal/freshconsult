@@ -54,15 +54,17 @@ var FreshfoneCallTransfer
           self.freshfone_call.transfered = true;
           var ringingTime = (freshfone.ringingTime || 30 )* 1000; // sec to milisec 
           self.resumeFallback = setTimeout(function(){ 
-            if(freshfonecalls.tConn && !self.resumed){
-              console.log('Inside Resume Fallback Timer');
-              self.enableTransferResume(); 
-            }
+            self.enableResume();
           }, ringingTime+(5000)); //adding 5 secs for fallback timeout
         }
       });
     },
-
+    enableResume: function(){
+      if(freshfonecalls.tConn && !this.resumed){
+        console.log('Inside Resume Fallback Timer');
+        this.enableTransferResume(); 
+      }
+    },
     $transferAgent: $('#freshfone_available_agents .transferring_call'),
     $transferList: $('#freshfone_available_agents .transfer-call-header'),
 

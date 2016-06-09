@@ -8,6 +8,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   include Freshfone::CallsRedisMethods
   include Freshfone::SupervisorActions
   
+  before_filter :complete_browser_leg, only: [:status], if: :agent_leg?
   before_filter :complete_supervisor_leg, :only => [:status], :if => :supervisor_leg?
   before_filter :check_conference_feature, :only => [:status]
   before_filter :select_current_call, :only => [:status]
@@ -262,5 +263,21 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
    
     def call_quality_monitoring_enabled?
       render :json => {} unless current_account.features?(:call_quality_metrics)
+    end
+
+    def agent_leg?
+      new_notifications? &&
+        params[:From].present? && split_client_id(params[:From]).present? &&
+        current_call.present? && outgoing_child_leg?
+    end
+
+    def outgoing_child_leg?
+      current_call.incoming? || (current_call.outgoing? && current_call.transferred_leg?)
+    end
+
+    def complete_browser_leg
+      return if current_call.blank?
+      set_agent
+      render xml: agent_call_leg.initiate_disconnect
     end
 end

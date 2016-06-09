@@ -8,7 +8,7 @@ class Freshfone::Initiator::Incoming
   include Freshfone::NumberMethods
 
   def self.match?(params)
-    params[:type] == "incoming"
+    (params[:type] == "incoming") || (params[:type] == "agent_leg")
   end
 
   attr_accessor :params, :current_account, :current_number, :current_call, :freshfone_users,
@@ -119,8 +119,8 @@ class Freshfone::Initiator::Incoming
     end
 
     def agent_leg_of_incoming?
-      params[:caller_sid].present?
-    end
+      params[:type] == "agent_leg" || params[:caller_sid].present?
+    end    
 
     def blacklisted?
       current_account.freshfone_blacklist_numbers.find_by_number(params[:From].gsub(/^\+/, ''))

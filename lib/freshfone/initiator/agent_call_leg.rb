@@ -3,14 +3,13 @@ class Freshfone::Initiator::AgentCallLeg
   include Freshfone::Presence
   include Freshfone::Queue
   include Freshfone::Endpoints
-  include Freshfone::AgentsLoader
   include Freshfone::Disconnect
   include Freshfone::Conference::Branches::RoundRobinHandler
+  include Freshfone::SimultaneousCallHandler
+  include Redis::OthersRedis
 
   attr_accessor :params, :current_account, :current_number, :current_call, :current_user,
-                :notifier, :available_agents, :busy_agents, :freshfone_users, :routing_type
-
-  
+                :available_agents, :busy_agents, :freshfone_users, :routing_type
 
   def initialize(params, current_account, current_number, call_actions, telephony)
     self.params          = params
@@ -19,16 +18,17 @@ class Freshfone::Initiator::AgentCallLeg
     self.freshfone_users = current_account.freshfone_users
     @call_actions        = call_actions
     @telephony           = telephony
-    self.notifier        = Freshfone::Notifier.new(params, current_account)
   end
 
   def process
     begin
-      self.current_call ||= current_account.freshfone_calls.find(params[:caller_sid] || params[:call])
+      self.current_call ||= select_current_call
+      return handle_simultaneous_answer if simultaneous_accept?
+      return browser_agent_leg.process if browser_leg?
       return telephony.no_action unless current_call
-      return resolve_simultaneous_calls if simultaneous_call?
+      return resolve_simultaneous_calls if simultaneous_call? && disconnect_leg?
       return initiate_disconnect if disconnect_leg? || not_in_progress?
-      
+     
       if current_call.ringing? || current_call.queued?
         current_call.update_attributes(
           :call_status => Freshfone::Call::CALL_STATUS_HASH[:connecting], 
@@ -65,15 +65,32 @@ class Freshfone::Initiator::AgentCallLeg
   end
   
   private
+    def simultaneous_accept?
+      simultaneous_accept = !add_member_to_redis_set(simultaneous_accept_key, current_call.id)
+      set_others_redis_expiry(simultaneous_accept_key, 20)
+      simultaneous_accept
+    end
+
+    def simultaneous_accept_key
+       @simultaneous_accept_key ||= FRESHFONE_SIMULTANEOUS_ACCEPT % {:account_id => current_account.id, :call_id => current_call.id }
+    end		
+  
+    def select_current_call
+      return current_account.freshfone_calls.find(call_id) if call_id.present?
+      current_account.freshfone_calls.find_by_dial_call_sid(params[:CallSid]) if params[:CallSid].present? 
+    end
+
+    def call_id
+      params[:caller_sid] || params[:call_id] || params[:call]
+    end
+    
     def handle_simultaneous_answer
       Rails.logger.info "Handle Simultaneous Answer For Account Id :: #{current_account.id}, Call Id :: #{current_call.id}, CallSid :: #{params[:CallSid]}, AgentId :: #{params[:agent_id]}"
       return incoming_answered unless intended_agent?
       current_call.noanswer? ? telephony.incoming_missed : incoming_answered
     end
 
-    def incoming_answered
-      telephony.incoming_answered(current_call.agent)
-    end
+    
 
     def process_call_accept_callbacks
       @call_actions.update_agent_leg(current_call)
@@ -81,11 +98,6 @@ class Freshfone::Initiator::AgentCallLeg
       update_presence_and_publish_call(params) if params[:agent].present?
       @call_actions.update_agent_leg_response(params[:agent_id],'accepted',current_call)
       update_call_meta_for_forward_calls if params[:forward].present?
-    end
-
-    def intended_agent?
-      return true if current_call.user_id.blank?
-      current_call.user_id.to_s == params[:agent_id]
     end
 
     def not_in_progress?
@@ -100,39 +112,13 @@ class Freshfone::Initiator::AgentCallLeg
       params[:leg_type] == "connect"
     end
 
-    def resolve_simultaneous_calls
-      log_simultaneous_call
-      telephony.redirect_call(current_call.call_sid, simultaneous_call_queue_url)
-      telephony.no_action
+    def browser_leg?
+      new_notifications? && params[:forward].blank? &&
+        params[:external_number].blank? && params[:external_transfer].blank? &&
+        params[:forward_call].blank? # checking forward cases alone
     end
 
-    def simultaneous_call?
-      disconnect_leg? && (all_agents_busy? || invalid_call? )
-    end
-
-    def all_agents_busy?
-      self.current_number =  self.current_call.freshfone_number
-      check_available_and_busy_agents
-      available_agents.empty? and busy_agents.any? and params[:CallStatus]=="busy" and !transfer_call?
-    end
-
-    def log_simultaneous_call
-      Rails.logger.debug "Call redirected to queue : Account : #{current_account.id} : agent : 
-                          #{params[:agent_id]} : call : #{current_call.call_sid}"
-      Rails.logger.debug "Redirected call #{current_call.call_sid} :: #{busy_agents.map(&:id)}"
-    end
-
-    def invalid_call? 
-    # Edge case: To prevent incoming call for an agent with a call (bug #15531)
-      return if (available_agents.length != 1)
-      user_id = available_agents.first.user_id
-      current_account.freshfone_calls.agent_active_calls(user_id).present?
-    end
-
-    def telephony
-      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number, current_call)
-      @telephony.current_call ||= current_call
-      @telephony
-    end
-
+    def browser_agent_leg
+      @browser_agent_leg ||= Freshfone::Initiator::BrowserAgentLeg.new(params, current_account, current_number)
+    end	
 end

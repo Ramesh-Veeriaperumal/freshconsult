@@ -17,6 +17,7 @@
 //= require freshfone/freshfone_metrics.js
 //= require freshfone/intlTelInput.js
 //= require freshfone/device.js
+//= require freshfone/device_connect.js
 //= require freshfone/client.js
 //= require freshfone/phoneformatutil.js
 //= require freshfone/dialpad.js
@@ -26,3 +27,5 @@
 //= require freshfone/components/call_transfer.js
 //= require freshfone/freshfone_logger.js
 //= require freshfone/freshfone_monitor.js
+//= require freshfone/components/incoming_connections.js
+//= require freshfone/components/incoming_notifications.js
