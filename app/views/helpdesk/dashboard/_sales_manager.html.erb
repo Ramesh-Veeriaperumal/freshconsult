@@ -8,7 +8,7 @@
 
 			<div class="sp-title span3">
 				<h3 class="title">
-					<%= @details[:Name].html_safe %><br>
+					<%= @details[:display_name].html_safe %><br>
 				</h3>
 				<div>Account Manager</div>
 				<div>Freshdesk</div>
@@ -42,7 +42,7 @@
 				<ul class="unstyled sp-details-list">
 					<li class="inline-field pull-left">
 						<span class="ficon-mail fsize-14 vertical-alignment pr5"></span>
-						<span class="vertical-alignment"> <%= @details[:Email].html_safe %> </span>
+						<span class="vertical-alignment"> <%= @details[:email].html_safe %> </span>
 					</li>
 		  		<li class="inline-field pull-left ml20 pl20">
 		  			<span class="ficon-phone fsize-14 vertical-alignment pr5"></span>
