@@ -87,6 +87,7 @@ class HttpRequestProxy
       options[:headers] = options[:headers].merge(customHeaders) unless (customHeaders.nil? or customHeaders.empty?)
       timeout = params[:timeout].to_i
       options[:timeout] = timeout.between?(1, TIMEOUT)  ? timeout : TIMEOUT #Returns status code 504 on timeout expiry
+      options[:timeout] = 30 if params[:domain].eql? "https://api.workflowmax.com"
       verify_url(remote_url, encode_url)
       begin
         if (params[:auth_type] == 'OAuth1')
