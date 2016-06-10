@@ -24,7 +24,7 @@
               </td>
               <td class="manage-agent">
                 <% if (role.users.count != 0) %>
-                <a class="popup" data-agentcount="<%= role.users.count %>" data-title="<%= role.name %>" data-changecount="<%= role.id %>" data-roleid="<%= role.id  %>" href="javascript:void(0)">
+                <a class="popup" data-isaccadmin="<%= role.privilege?(:manage_account) %>" data-agentcount="<%= role.users.count %>" data-title="<%= role.name %>" data-changecount="<%= role.id %>" data-roleid="<%= role.id  %>" href="javascript:void(0)">
                   <%= pluralize(role.users.count, t('admin.roles.agent_label'), t('admin.roles.agents_label')) %>
                 </a>
                 <% else %>
