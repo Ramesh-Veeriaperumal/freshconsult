@@ -24,7 +24,6 @@ class Solution::ArticlesController < ApplicationController
   before_filter :cleanup_params_for_title, :only => [:show]
   before_filter :language_scoper, :only => [:new]
   before_filter :check_parent_params, :only => [:translate_parents]
-  before_filter :set_parent_for_old_params, :only => [:create, :update]
   
   UPDATE_FLAGS = [:save_as_draft, :publish, :cancel_draft_changes]
 
@@ -495,11 +494,6 @@ class Solution::ArticlesController < ApplicationController
       @article_meta.solution_folder_meta.solution_category_meta_id.to_s != params[:solution_category_meta][:id] if params[:solution_category_meta].present?
     end
     
-    def set_parent_for_old_params
-      return unless params[:solution_article].present?
-      params[:solution_article][:folder_id] ||= params[:folder_id]
-    end
-
     def check_create_privilege
       # The user has 'Create Folder/Category' privilege but not 'Publish Solution'. 
       # UI check : The link to add new version will not be available.

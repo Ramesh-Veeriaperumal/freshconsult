@@ -188,6 +188,10 @@ class Freshfone::Call < ActiveRecord::Base
   def self.call_in_progress
     self.active_call.first
   end
+  
+  def self.recent_in_progress_call
+    self.active_calls.first
+  end
 
   def self.outgoing_in_progress_calls
     self.where("call_status in (?) and created_at >= ?", 
@@ -429,6 +433,15 @@ class Freshfone::Call < ActiveRecord::Base
         INTERMEDIATE_CALL_STATUS, from, to, call_type])
   end
 
+  def self.ringing_calls(from = 4.hours.ago, to = Time.zone.now)
+    where(call_status: CALL_STATUS_HASH[:default]).where(
+      'created_at > ? AND created_at < ?', from, to).includes(:meta, :freshfone_number, :agent).all
+  end
+
+  def self.calls_with_ids(call_ids)
+    where(id: call_ids).includes(:meta).all
+  end
+
   def calculate_cost
     if parent.blank?
       calculator = Freshfone::CallCostCalculator.new({
@@ -467,9 +480,8 @@ class Freshfone::Call < ActiveRecord::Base
       if has_children?
         child = children.last
         if child.present?
-          Freshfone::NotificationWorker.perform_async(
-            { :call_id => child.id }, nil,
-            'complete_other_agents')
+          handle_new_notifications(child) if new_notifications?
+          Freshfone::NotificationWorker.perform_async({ :call_id => child.id }, nil,'complete_other_agents')
         end
         # return
       end
@@ -524,8 +536,7 @@ class Freshfone::Call < ActiveRecord::Base
   end
 
   def add_to_hold_duration(duration)
-    return if duration.blank? || duration == "0"
-    hold_duration = 0 if hold_duration.blank?
+    return if duration.blank? || duration == '0'
     self.increment!(:hold_duration, duration.to_i)
   end
 
@@ -772,4 +783,13 @@ class Freshfone::Call < ActiveRecord::Base
       (params[:force_termination] &&  params[:CallStatus] == 'completed')
     end
 
+    def handle_new_notifications(child) # for disconnecting the child legs when customer ends
+      return child.disconnect_source_agent if child.inprogress? || child.onhold? || child.completed?
+      if child.ringing?
+        child.canceled!
+        child.meta.cancel_browser_agents
+        Freshfone::RealtimeNotifier.perform_async(
+          { :call_id => child.id },child.id, nil,'cancel_other_agents') 
+      end
+    end
 end

@@ -80,7 +80,7 @@ class Mobile::SettingsController < ApplicationController
   end	
 
   def mobile_configurations
-    render :json => {userdetail: current_user.as_config_json.merge(current_account.as_config_json),ff_nodeurl: FreshfoneConfig['node_url']}
+    render :json => {userdetail: current_user.as_config_json.merge(current_account.as_config_json),ff_nodeurl: FreshfoneConfig['node_url'], agent_collision_url: agent_collision_url}
   end
 
   private
@@ -92,4 +92,7 @@ class Mobile::SettingsController < ApplicationController
     "#{AppConfig["freshops_subdomain"][pod_info]}.#{AppConfig['base_domain'][Rails.env]}")
   end
 
+  def agent_collision_url
+    current_account.features?(:collision)? NodeConfig["socket_host"] : nil
+  end 
 end

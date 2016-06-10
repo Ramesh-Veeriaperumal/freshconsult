@@ -78,16 +78,25 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
         id = row["agent_id"].to_i
         if(@agent_ids.include?(id) || @deleted_agent_ids.include?(id))
           agent_name = @agent_ids.include?(id) ? @agent_hash[id] : (@csv_export ? "#{@deleted_agent_hash[id]} (deleted)" : "#{@deleted_agent_hash[id]}")
-          row.merge!("agent_name" => agent_name, "deleted" => @deleted_agent_ids.include?(id))
-          METRICS.each do |key|
-            value    = row[key.downcase]
-            row[key] = value ? value.to_i : NA_PLACEHOLDER_SUMMARY
-            row.delete(key.downcase)
+          is_deleted_agent = @deleted_agent_ids.include?(id)
+          if is_deleted_agent && discard_contacts_with_only_private_note(row)
+            next
+          else
+            row.merge!("agent_name" => agent_name, "deleted" => is_deleted_agent )
+            METRICS.each do |key|
+              value    = row[key.downcase]
+              row[key] = value ? value.to_i : NA_PLACEHOLDER_SUMMARY
+              row.delete(key.downcase)
+            end
           end
         end
       end
 
     @summary.sort_by{|a| a["agent_name"].downcase}
+  end
+
+  def discard_contacts_with_only_private_note(agent_details)
+    agent_details.select{|k,v| ["agent_id","private_notes"].exclude?(k)}.values.count{|a| a.nil?} == 11 
   end
 
 end

@@ -1,19 +1,21 @@
 module Freshfone::Disconnect
   
   def initiate_disconnect
+    return telephony.no_action if current_call.meta.present? && current_call.meta.missed_response_present?(params[:agent] || params[:agent_id]) # for avoiding multiple missed response coming from different tabs for same agent
+    
     params[:CallStatus] = 'no-answer' if params[:AnsweredBy] == 'machine'
 
     perform_agent_cleanup
     
     #Call Redirect handlers
-    handle_agent_missed if current_call.meta.all_agents_missed? 
+    handle_agent_missed if current_call.meta.pinged_agents.present? && current_call.meta.all_agents_missed?
     handle_round_robin_calls if round_robin_call?
   
     perform_call_cleanup
     
     current_call.disconnect_customer if (current_call.onhold? && agent_connected? && !child_ringing?(current_call))#fix for: agent disconnect not ending the customer on hold.
   
-    @telephony.no_action
+    telephony.no_action
   end
   
   private
@@ -38,11 +40,11 @@ module Freshfone::Disconnect
     end
 
     def update_secondary_leg_response
-      @call_actions.update_secondary_leg_response(params[:agent_id] || params[:agent], params[:external_number], params[:CallStatus], current_call)
+      call_actions.update_secondary_leg_response(params[:agent_id] || params[:agent], params[:external_number], params[:CallStatus], current_call)
     end
 
     def reset_outgoing_count
-      remove_device_from_outgoing(split_client_id(params[:From])) if current_call.outgoing?
+      remove_device_from_outgoing(split_client_id(params[:From])) if current_call.outgoing? && split_client_id(params[:From]).present?
     end
 
     def return_missed_transfer
@@ -66,11 +68,14 @@ module Freshfone::Disconnect
 
     def initiate_voicemail
       freshfone_number = current_call.freshfone_number
-      @telephony.redirect_call(current_call.call_sid, redirect_caller_to_voicemail(freshfone_number.id))
+      telephony.redirect_call(current_call.call_sid, redirect_caller_to_voicemail(freshfone_number.id))
     end
 
     def round_robin_call?
-      params[:round_robin_call].present? && !current_call.meta.all_agents_missed? 
+      !current_call.transferred_leg? &&
+        current_number.round_robin? &&
+        current_call.meta.simple_or_group_hunt? &&
+        !current_call.meta.all_agents_missed?
     end
 
     def canceled_call?
@@ -83,4 +88,27 @@ module Freshfone::Disconnect
       child_call.ringing?
     end
 
+    def telephony # creating new telephony if call is for different number
+      self.current_number = current_call.freshfone_number
+      if @telephony.present? && @telephony.current_number == current_number
+        @telephony.current_call ||= current_call
+        return @telephony
+      end
+      @telephony = Freshfone::Telephony.new(
+        params, current_account, current_number, current_call)
+    end
+
+    def notifier
+      self.current_number = current_call.freshfone_number
+      return @notifier if @notifier.present? && @notifier.current_number == current_number
+      @notifier = Freshfone::Notifier.new(
+        params, current_account, current_user, current_number)
+    end
+
+    def call_actions
+      self.current_number = current_call.freshfone_number
+      return @call_actions if @call_actions.present? && @call_actions.current_number == current_number
+      @call_actions = Freshfone::CallActions.new(
+        params, current_account, current_number)
+    end
 end

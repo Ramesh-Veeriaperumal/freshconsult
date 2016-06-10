@@ -96,7 +96,11 @@ module MemcacheKeys
 
   SALES_MANAGER_3_DAYS = "v1/SALES_MANAGER_3_DAYS:%{account_id}"
 
+  FRESH_SALES_MANAGER_3_DAYS = "v1/SALES_MANAGER_3_DAYS:%{account_id}"
+
   SALES_MANAGER_1_MONTH = "v1/SALES_MANAGER_1_MONTH:%{account_id}"
+
+  FRESH_SALES_MANAGER_1_MONTH = "v1/SALES_MANAGER_1_MONTH:%{account_id}"
 
   MOBIHELP_APP = "MOBIHELP_APP:%{account_id}:%{app_key}"
 
