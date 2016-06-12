@@ -14,12 +14,11 @@ class Auth::SalesforceSyncAuthenticator < Auth::Authenticator
   end
 
   def register_middleware(omniauth)
-    omniauth.provider :salesforce_sync,
-                      :setup => lambda { |env|
-      strategy = env["omniauth.strategy"]
-      strategy.options[:client_id] = Integrations::OAUTH_CONFIG_HASH["salesforce_sync"]["consumer_token"]
-      strategy.options[:client_secret] = Integrations::OAUTH_CONFIG_HASH["salesforce_sync"]["consumer_secret"]
-    }
+    omniauth.provider(
+      :salesforce,
+      Integrations::OAUTH_CONFIG_HASH["salesforce_sync"]["consumer_token"],
+      Integrations::OAUTH_CONFIG_HASH["salesforce_sync"]["consumer_secret"],
+      :name         => "salesforce_sync")
   end
 
   def get_redirect_url

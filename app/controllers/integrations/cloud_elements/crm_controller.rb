@@ -95,13 +95,13 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
         end
       end
       portal = current_account.main_portal
-      hash[:callback_url] = (Rails.env.eql? "development") ? "https://865e15f8.ngrok.io" : "#{portal.url_protocol}://#{portal.host}" # mention ngrok for development environment.
+      hash[:callback_url] = (Rails.env.eql? "development") ? "https://rocky29.ngrok.io" : "#{portal.url_protocol}://#{portal.host}" # mention ngrok for development environment.
       hash[:element_name] = "#{element}_#{subdomain}_#{current_account.id}"
       hash
     end
 
     def subdomain
-      (Rails.env.eql? "development") ? "865e15f8" : current_account.domain # mention ngrok for development environment.
+      (Rails.env.eql? "development") ? "rocky29" : current_account.domain # mention ngrok for development environment.
     end
 
     def fetch_metadata_fields(element_token)

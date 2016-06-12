@@ -184,6 +184,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   end
 
   def application_is_ce?
-    @installed_application.configs[:inputs]['element_token'].present?
+    cloud_apps = Integrations::CloudElements::Constant::APP_NAMES.collect{|k,v| v}
+    cloud_apps.include? @installed_application.application.name
   end
 end
