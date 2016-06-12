@@ -78,7 +78,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     def fd_payload
       json_payload = JSON.parse(File.read("lib/integrations/cloud_elements/freshdesk.json"))
       api_key = current_user.single_access_token
-      subdomain = (Rails.env.eql? "development") ? "1a7f07ed" : current_account.domain # mention ngrok for development environment.
       JSON.generate(json_payload) % {:api_key => api_key, :subdomain => subdomain, :fd_instance_name => "freshdesk_#{element}_#{subdomain}_#{current_account.id}" }
     end
 
@@ -96,9 +95,13 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
         end
       end
       portal = current_account.main_portal
-      hash[:callback_url] = (Rails.env.eql? "development") ? "https://1a7f07ed.ngrok.io" : "#{portal.url_protocol}://#{portal.host}" # mention ngrok for development environment.
-      hash[:element_name] = "#{element}_#{current_account.domain}_#{current_account.id}"
+      hash[:callback_url] = (Rails.env.eql? "development") ? "https://865e15f8.ngrok.io" : "#{portal.url_protocol}://#{portal.host}" # mention ngrok for development environment.
+      hash[:element_name] = "#{element}_#{subdomain}_#{current_account.id}"
       hash
+    end
+
+    def subdomain
+      (Rails.env.eql? "development") ? "865e15f8" : current_account.domain # mention ngrok for development environment.
     end
 
     def fetch_metadata_fields(element_token)
@@ -154,7 +157,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       fields_hash = {}
       data_type_hash = {}
       #To remove those custom fields that we will be syncing from the customers view
-      custom_fields = ["cf_sf_accountid", "cf_sf_contactid"]
+      custom_fields = ["cf_crmcontactid", "cf_crmaccountid"]
       object.each do |field|
         unless custom_fields.include? field[:name]
           fields_hash[field[:name]] = field[:label]
@@ -279,7 +282,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     def create_formula_inst( element_instance_id, fd_instance_id )
       formula_id = CRM_TO_HELPDESK_FORMULA_ID[element.to_sym]
       metadata = @metadata.merge({:formula_id => formula_id})
-      payload = formula_instance_payload( "#{element}=>freshdesk:#{current_account.id}", element_instance_id, fd_instance_id )
+      payload = formula_instance_payload( "#{element}_#{subdomain}_#{current_account.id}", element_instance_id, fd_instance_id )
       create_formula_instance(payload, metadata) 
     end
 

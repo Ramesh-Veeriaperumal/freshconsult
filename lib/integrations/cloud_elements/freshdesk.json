@@ -1,9 +1,10 @@
 
 {
-      "element" : { "key" : "freshdeskv2" },
+      "element" : { "key" : "freshdesk" },
 
       "configuration" : {
         "username" : "%{api_key}",
+        "password" : "x",
         "subdomain" : "%{subdomain}",
         "event.notification.enabled" : "false"
       },

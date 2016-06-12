@@ -2,8 +2,8 @@
 {
     "objects" : {"contact" : "Contact", "account" : "Account" },
 
-    "delete_fields": {"contact_fields": "FD_ContactId__c", "contact_fields_types": "FD_ContactId", 
-                      "account_fields": "FD_AccountId__c", "account_fields_types": "FD_AccountId"}, 
+    "delete_fields": {"contact_fields": "FDCONTACTID__c", "contact_fields_types": "FDCONTACTId", 
+                      "account_fields": "FDACCOUNT__c", "account_fields_types": "FDACCOUNTId"}, 
 
     "existing_companies" : [{"fd_field" : "name", "sf_field" : "Name"}],
 

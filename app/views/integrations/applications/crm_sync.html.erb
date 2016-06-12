@@ -40,7 +40,7 @@
                     <div class="contact-tabel-data field-2"> 
                       <a class="center-icon"><%= font_icon "left-direction", { :size => 20 } %></a>
                     </div>
-                    <div class="contact-tabel-data field-3"> <span> <%= @element_config["element"].capitalize%> Contact Fields </span> </div>
+                    <div class="contact-tabel-data field-3"> <span> <%= @element_config["element"].camelize%> Contact Fields </span> </div>
                   </div>
                   <div rel="construct_contact_rules" id="construct_contact_rule" class="rules_wrapper" data-render-template = '.construct_contact' ></div>
                 </div>
@@ -52,7 +52,7 @@
                     <div class="contact-tabel-data field-2">
                       <a class="center-icon"><%= font_icon "left-direction", { :size => 20 } %></a>
                     </div>
-                    <div class="contact-tabel-data field-3"> <span> <%= @element_config["element"].capitalize%> Account Fields </span> </div>
+                    <div class="contact-tabel-data field-3"> <span> <%= @element_config["element"].camelize%> Account Fields </span> </div>
                   </div>
                   <div rel="construct_company_rules" id="construct_company_rule" class="rules_wrapper" data-render-template = '.construct_company' ></div>
                 </div>
