@@ -96,7 +96,7 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
   end
 
   def discard_contacts_with_only_private_note(agent_details)
-    agent_details.select{|k,v| ["agent_id","private_notes"].exclude?(k)}.values.count{|a| a.nil?} == 11 
+    agent_details.select{|k,v| ["agent_id","private_notes"].exclude?(k)}.values.compact.empty?
   end
 
 end
