@@ -37,6 +37,21 @@ namespace :db do
     end
   end
 
+  task :test_setup => :environment do
+    unless Rails.env.production?
+      puts 'Creating tables...'
+      Rake::Task["db:schema:load"].invoke
+  #    Rake::Task["db:migrate"].invoke
+      Rake::Task["db:create_reporting_tables"].invoke unless Rails.env.production?
+      
+      Rake::Task["db:create_trigger"].invoke #To do.. Need to make sure the db account has super privs.
+      Rake::Task["db:perform_table_partition"].invoke
+
+      puts "Populating the default record for global_blacklisted_ips table"
+      PopulateGlobalBlacklistIpsTable.create_default_record
+    end    
+  end
+
   task :create_reporting_tables => :environment do
     puts 'Creating reporting tables...'
     Reports::CreateReportingMonthlyTables.create_tables

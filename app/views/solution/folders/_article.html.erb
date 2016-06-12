@@ -9,38 +9,38 @@
 				<div class="solution-list-checkbox">
 					<input type="checkbox" id="article-<%= article.id %>" name="ids[]" value="<%= article.id %>" class="item_ids_checkbox"/>
 				</div>
-			<% end %>	
-			<div class="span3 pull-right text-right article-list-meta">
-				<span class="span3 align-left meta-component <%= 'faded' if article.hits == 0 %>">
-					<%= font_icon "file-visible" %>
-					<%= article.hits %>
-				</span>
-				<span class="span3 align-left meta-component <%= 'faded' if article.thumbs_up == 0 %>">
-					<%= font_icon "like", :size => 18 %>
-					<%= article.thumbs_up %>
-				</span>
-				<span class="span3 align-left meta-component <%= 'faded' if article.thumbs_down == 0 %>">
-					<%= font_icon "dislike", :size => 18 %>
-					<%= article.thumbs_down %>
-				</span>
-			</div>
-			<div class="span2 pull-right mt6 text-center article-info">
-				<% if article.draft.present? || article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] %>
-					<span class="label">
-						<%= t('solutions.status.draft')%> 
+			<% end %>
+			<div class="article-details">
+				<div class="span3 pull-right text-right article-list-meta">
+					<span class="span4 align-left meta-component <%= 'faded' if article.hits == 0 %>">
+						<%= font_icon "file-visible" %>
+						<%= humanize_stats(article.aggregated_hits) %>
 					</span>
+					<span class="span4 align-left meta-component <%= 'faded' if article.thumbs_up == 0 %>">
+						<%= font_icon "like", :size => 18 %>
+						<%= humanize_stats(article.aggregated_thumbs_up) %>
+					</span>
+					<span class="span4 align-left meta-component <%= 'faded' if article.thumbs_down == 0 %>">
+						<%= font_icon "dislike", :size => 18 %>
+						<%= humanize_stats(article.aggregated_thumbs_down) %>
+					</span>
+				</div>
+				<% if article.any_supported_draft_present? || article.primary_article.draft.present? %>
+					<div class="span2 pull-right mt9 text-center article-info">
+						<%= draft_label_popover(article) %>
+					</div>
 				<% end %>
 			</div>
+			<%= language_flags(article, true) %>
 			<div class="span6 comm-item-main clear-left-margin">
 				<%= font_icon "book-hollow", :size => 16, :class => "solution-icon" %>
-				<div class="comm-item-title ellipsis tooltip" title="<%= article.title if article.title.length > 75 %>">
-					<%= pjax_link_to(h((article.draft || article).title), solution_article_path(article)) %>
+				<div class="comm-item-title ellipsis tooltip" 
+							title="<%= article_tooltip_title(article) %>">
+					<!-- Referring to primary article to avoid error in bulk actions. -->
+					<%= pjax_link_to(h(article_title(article)), solution_article_path(article)) %>
 				</div>
 				<div class="comm-item-details muted">
-					<%= t('solution.details',
-					:user_name => article.user,
-					:created_time => article.created_at.to_i,
-					:time_ago => formated_date(article.created_at) ).html_safe %>
+					<%= article_history(article.primary_article) %>
 				</div>
 			</div>
 		</div>

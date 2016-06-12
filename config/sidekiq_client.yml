@@ -75,6 +75,7 @@ defaults: &defaults
     - [report_export_queue]
     - [update_users_company_id]
     - [update_tickets_company_id]
+    - [solution_binarize_sync]
     - [clear_tickets]
     - [email_notification_spam_queue]
     - [update_user_language]
@@ -112,6 +113,7 @@ defaults: &defaults
     - [scheduled_reports]
     - [scheduled_reports_cleanup]
     - [account_info_to_dynamo]
+    - [parallel_report_exports]
 
 development:
   <<: *defaults

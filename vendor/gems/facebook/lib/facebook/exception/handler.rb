@@ -38,7 +38,7 @@ module Facebook
                     raise_sns_notification(error_params[:error_msg][0..50], error_params) : 
                     update_error_and_notify(error_params)
               else
-                raise_sns_notification(error_params[:error_msg][0..50], error_params)
+                raise_newrelic_error(error_params)
               end
             
             elsif server_error?
@@ -49,7 +49,7 @@ module Facebook
                 raise_sns_notification("Server Error", {:error => "Server Error", :exception => @exception})
               end
             else
-              raise_sns_notification(error_params[:error_msg][0..50], error_params)
+              raise_newrelic_error(error_params)
             end
             
           rescue => @exception

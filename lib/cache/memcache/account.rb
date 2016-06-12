@@ -216,12 +216,12 @@ module Cache::Memcache::Account
   
   def solution_categories_from_cache
     MemcacheKeys.fetch(ALL_SOLUTION_CATEGORIES % { :account_id => self.id }) do
-      self.solution_categories.all(:conditions => {:is_default => false},
-      :include => [:portal_solution_categories, :folders]).collect do |cat|
+      self.solution_category_meta.all(:conditions => {:is_default => false},
+          :include => [:primary_category,{ :solution_folder_meta => [:primary_folder]}, :portal_solution_categories]).collect do |c_meta|
         {
-          :folders => cat.folders.map(&:as_cache),
-          :portal_solution_categories => cat.portal_solution_categories.map(&:as_cache)
-        }.merge(cat.as_cache).with_indifferent_access
+          :folders => c_meta.solution_folder_meta.map(&:as_cache),
+          :portal_solution_categories => c_meta.portal_solution_categories.map(&:as_cache)
+        }.merge(c_meta.as_cache).with_indifferent_access
       end
     end
   end
@@ -335,7 +335,7 @@ module Cache::Memcache::Account
     
     def handles_memcache_key
       ACCOUNT_TWITTER_HANDLES % { :account_id => self.id }
-    end
+    end    
 
     def password_policy_memcache_key(user_type)
       ACCOUNT_PASSWORD_POLICY % { :account_id => self.id, :user_type => user_type}

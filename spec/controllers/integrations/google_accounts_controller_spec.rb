@@ -13,6 +13,10 @@ describe Integrations::GoogleAccountsController do
     @user.deleted = true
     @user.save!
     @account.users.create(:name => "Sathish Babu", :email => "sathish@freshdesk.com")
+    if Account.current.features?(:marketplace)
+      Account.current.features.marketplace.destroy
+      Account.current.features.reload
+    end
     @new_application = FactoryGirl.build(:application, 
                                      :name => "google_contacts", 
                                      :display_name => "integrations.google_contacts.label", 
@@ -62,17 +66,10 @@ describe Integrations::GoogleAccountsController do
   end
 
   it "should update google accounts" do
-    
     post :update, @google_account_attr
 
     google_account = Integrations::GoogleAccount.find_by_email(@email)
     response.should redirect_to(edit_integrations_installed_application_path(@iapp_id))
-  end
-
-  it "should redirect to edit page" do 
-    google_account = Integrations::GoogleAccount.find_by_email(@email)
-    get :edit, :id => google_account
-    response.should render_template "integrations/google_accounts/edit"
   end
 
   it "should delete google account" do
@@ -92,17 +89,6 @@ describe Integrations::GoogleAccountsController do
     response.should redirect_to(edit_integrations_installed_application_path(@iapp_id))
   end
 
-  it "should have redirect to application index when iapp_id is nil" do
-    @google_account_attr.delete(:iapp_id)
-    Rails.logger.debug "\n\n %%%% iapp_id is nil = #{@google_account_attr.inspect} \n\n"
-    post :update, @google_account_attr
-
-    google_account = Integrations::GoogleAccount.find_by_email(@email)
-    @google_account_attr.merge!(:iapp_id => "#{@iapp_id}")
-
-    response.should redirect_to(:controller=> 'applications', :action => 'index')
-  end
-
   it "should have false for overwrite_existing_user" do
     @google_account_attr[:integrations_google_account].delete(:overwrite_existing_user)
     post :update, @google_account_attr
@@ -113,11 +99,6 @@ describe Integrations::GoogleAccountsController do
     Integrations::GoogleAccount.find_by_id(google_account_id).overwrite_existing_user.should be_falsey
     response.should redirect_to(edit_integrations_installed_application_path(@iapp_id))
   end
-
-  # it "should not redirect to edit page" do# failing in master
-  #   invalid_google_account_id = ((Integrations::GoogleAccount.last.id if Integrations::GoogleAccount.last) || 0) + 1
-  #   get :edit, :id => invalid_google_account_id
-  # end
 
   it "should install google contacts" do
     # above destry is a dependent destroy that deleted google_account table, so recreate that again.

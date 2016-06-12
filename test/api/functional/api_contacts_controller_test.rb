@@ -131,6 +131,23 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_create_contact_with_language_and_timezone_without_feature
+    comp = get_company
+    Account.any_instance.stubs(:features?).with(:multi_timezone).returns(false)
+    Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        view_all_tickets: true,
+                                        company_id: comp.id,
+                                        language: Faker::Lorem.characters(5),
+                                        time_zone: Faker::Lorem.characters(5))
+    match_json([bad_request_error_pattern('language', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'language', feature: :multi_language),
+                bad_request_error_pattern('time_zone', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'time_zone', feature: :multi_timezone)])
+    assert_response 400
+  ensure
+    Account.any_instance.unstub(:features?)
+  end
+
   def test_create_contact_with_valid_language_and_timezone
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
@@ -500,6 +517,20 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('tags', :'It should only contain elements that have maximum of 32 characters')])
     assert_response 400
     sample_user.update_attribute(:email, email)
+  end
+
+  def test_update_contact_with_language_and_timezone_without_feature
+    sample_user = get_user
+    Account.any_instance.stubs(:features?).with(:multi_timezone).returns(false)
+    Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
+    put :update, construct_params({ id: sample_user.id },
+                                  language: Faker::Lorem.characters(5),
+                                  time_zone: Faker::Lorem.characters(5))
+    match_json([bad_request_error_pattern('language', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'language', feature: :multi_language),
+                bad_request_error_pattern('time_zone', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'time_zone', feature: :multi_timezone)])
+    assert_response 400
+  ensure
+    Account.any_instance.unstub(:features?)
   end
 
   def test_update_length_valid_with_trailing_space

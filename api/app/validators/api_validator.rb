@@ -96,7 +96,7 @@ class ApiValidator < ActiveModel::EachValidator
 
     def base_error_options
       error_options = (options[:message_options] ? options[:message_options].dup : {})
-      code = error_code
+      code = options[:code] || error_code
       error_options.merge!(code: code) if code
       error_options
     end

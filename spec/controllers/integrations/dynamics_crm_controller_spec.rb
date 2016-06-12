@@ -6,11 +6,15 @@ describe Integrations::DynamicscrmController do
 
   before(:all) do
 
-    @app_config_options = {"domain" => "sumit08@freshdesk.onmicrosoft.com", "password" => "abcd_1234",
-                             "instance_type" => "On-Demand", "organization_name" => "org46253825",
-                             "endpoint" => "https://freshdesk.api.crm5.dynamics.com/XRMServices/2011/Organization.svc",
-                             "email" => "sumit.a@freshdesk.com", "lead_email" => "someonel2@example.com",
-                             "account_email" => "someone9@example.com", "contact_email" => "someone_j@example.com"
+    @app_config_options = { "domain" => "sumit08@freshdesk.onmicrosoft.com", 
+                            "password" => "abcd_1234",
+                            "instance_type" => "On-Demand", 
+                            "organization_name" => "org46253825",
+                            "endpoint" => "https://freshdesk.api.crm5.dynamics.com/XRMServices/2011/Organization.svc",
+                            "email" => "sumit.a@freshdesk.com", 
+                            "lead_email" => "someonel2@example.com",
+                            "account_email" => "someone9@example.com", 
+                            "contact_email" => "someone_j@example.com"
                           }
     @installed_app_config_options = { :inputs => { 'domain' => "sumit08@freshdesk.onmicrosoft.com",
                                       "instance_type" => "On-Demand",
@@ -39,9 +43,13 @@ describe Integrations::DynamicscrmController do
   end
 
   it "On the passing valid credentials and email id it should save values to the DB and show the dynamics_fields page" do
-    post :settings_update, {:controller => "integrations/dynamicscrm", :action =>"settings_update",
-                            :app_name => "dynamicscrm",
-                            :configs => @app_config_options }
+    DynamicsCRM::Client.any_instance.stubs(:authenticate).returns(true)
+    Integrations::Constants::CRM_MODULE_TYPES.each do |m_type|
+      data = {"EntityName"=>"#{m_type}", "MinActiveRowVersion"=>-1,"MoreRecords"=>false, "PagingCookie"=>"<cookie page=\"1\"><contactid last=\"{8632E44A-32FA-E511-80E7-C4346BAC1998}\" first=\"{8632E44A-32FA-E511-80E7-C4346BAC1998}\" /></cookie>", "TotalRecordCount"=>-1, "TotalRecordCountLimitExceeded"=>false, :entities => [{"attributes"=> {"address1_composite"=>"5086 Nottingham Place\r\nDuvall, WA 16982\r\nU.S.", "ownerid"=>{"Id"=>"8e18590e-12ae-4882-b7f1-cc596407feb9", "KeyAttributes"=>nil, "LogicalName"=>"systemuser", "Name"=>"Sumit Agarwal", "RowVersion"=>nil}, "jobtitle"=>"Purchasing Assistant"}, "entity_state"=>nil, "formatted_values"=> {"customertypecode"=>"Default Value", "merged"=>"No"}, "id"=>"8632e44a-32fa-e511-80e7-c4346bac1998","related_entities"=>nil}]}
+      data[:entities][0] = OpenStruct.new(data[:entities].first)
+      DynamicsCRM::Client.any_instance.stubs(:retrieve_multiple).with("#{m_type}", [["emailaddress1", "Equal", @app_config_options["#{m_type}_email"]]]).returns(data)
+    end
+    post :settings_update, {:controller => "integrations/dynamicscrm", :action =>"settings_update", :app_name => "dynamicscrm", :configs => @app_config_options }
     installed_application = @account.installed_applications.with_name("dynamicscrm").first
     installed_application[:configs][:inputs]["domain"].should eql "sumit08@freshdesk.onmicrosoft.com"
     installed_application.configsdecrypt_password.should eql "abcd_1234"
@@ -50,13 +58,13 @@ describe Integrations::DynamicscrmController do
     installed_application[:configs][:inputs]["account_email"].should eql "someone9@example.com"
     #since the passed values are valid it should update the db and should take to the next dynamics_field page
     response.should render_template("integrations/applications/form/crm_custom_fields_form")
+    @account.installed_applications.with_name("dynamicscrm").first.delete
   end
 
   it "On the settings update it should show validation message for wrong user name or password" do
     @app_config_options["domain"] = "sumit@freshdesk.onmicrosoft.com"
-    post :settings_update, {:controller => "integrations/dynamicscrm", :action =>"settings_update",
-                            :app_name => "dynamicscrm",
-                            :configs => @app_config_options }
+    DynamicsCRM::Client.any_instance.stubs(:authenticate).returns(false)
+    post :settings_update, {:controller => "integrations/dynamicscrm", :action =>"settings_update", :app_name => "dynamicscrm", :configs => @app_config_options }
     flash[:error].should eql "Oops, something went wrong! Please verify if you have entered correct values."
   end
 
@@ -65,27 +73,31 @@ describe Integrations::DynamicscrmController do
     @app_config_options["account_email"] = "someone@example.com"
     @app_config_options["contact_email"] = "someone@example.com"
     @app_config_options["lead_email"] = "someone@example.com"
-    post :settings_update, {:controller => "integrations/dynamicscrm", :action =>"settings_update",
-                            :app_name => "dynamicscrm",
-                            :configs => @app_config_options }
+    DynamicsCRM::Client.any_instance.stubs(:authenticate).returns(true)
+    Integrations::Constants::CRM_MODULE_TYPES.each do |m_type|
+      data = {"EntityName"=>"#{m_type}", "MinActiveRowVersion"=>-1, "MoreRecords"=>false, "PagingCookie"=>nil, "TotalRecordCount"=>-1, "TotalRecordCountLimitExceeded"=>false, :entities=>[]}
+      DynamicsCRM::Client.any_instance.stubs(:retrieve_multiple).with("#{m_type}", [["emailaddress1", "Equal", @app_config_options["#{m_type}_email"]]]).returns(data)
+    end
+    post :settings_update, {:controller => "integrations/dynamicscrm", :action =>"settings_update", :app_name => "dynamicscrm", :configs => @app_config_options }
     flash[:error].should include("is not a valid email address for the Entity type")
   end
 
   it "On the settings page it should pass when the lead/account emails are not present" do
-    @app_config_options["account_email"] = "someone9@example.com"
     @app_config_options["contact_email"] = "someone_j@example.com"
-    @app_config_options["lead_email"] = "someonel2@example.com"
-    post :settings_update, {:controller => "integrations/dynamicscrm", :action =>"settings_update",
-                            :app_name => "dynamicscrm",
-                            :configs => @app_config_options }
+    @app_config_options["account_email"] = nil
+    @app_config_options["lead_email"] = nil
+    DynamicsCRM::Client.any_instance.stubs(:authenticate).returns(true)
+    data = {"EntityName"=>"contact", "MinActiveRowVersion"=>-1,"MoreRecords"=>false, "PagingCookie"=>"<cookie page=\"1\"><contactid last=\"{8632E44A-32FA-E511-80E7-C4346BAC1998}\" first=\"{8632E44A-32FA-E511-80E7-C4346BAC1998}\" /></cookie>", "TotalRecordCount"=>-1, "TotalRecordCountLimitExceeded"=>false, :entities => [{"attributes"=> {"address1_composite"=>"5086 Nottingham Place\r\nDuvall, WA 16982\r\nU.S.", "ownerid"=>{"Id"=>"8e18590e-12ae-4882-b7f1-cc596407feb9", "KeyAttributes"=>nil, "LogicalName"=>"systemuser", "Name"=>"Sumit Agarwal", "RowVersion"=>nil}, "jobtitle"=>"Purchasing Assistant"}, "entity_state"=>nil, "formatted_values"=> {"customertypecode"=>"Default Value", "merged"=>"No"}, "id"=>"8632e44a-32fa-e511-80e7-c4346bac1998","related_entities"=>nil}]}
+    data[:entities][0] = OpenStruct.new(data[:entities].first)
+    DynamicsCRM::Client.any_instance.stubs(:retrieve_multiple).with("contact", [["emailaddress1", "Equal", @app_config_options["contact_email"]]]).returns(data)
+    post :settings_update, {:controller => "integrations/dynamicscrm", :action =>"settings_update", :app_name => "dynamicscrm", :configs => @app_config_options }
     flash[:error].should eql nil
     response.should render_template("integrations/applications/form/crm_custom_fields_form")
+    @account.installed_applications.with_name("dynamicscrm").first.delete
   end
 
   it "On the fields page update the user selected values should be updated to DB and integration enabled message should be shown" do
-    new_installed_application = FactoryGirl.build(:installed_application, :application_id => "26",
-                                        :account_id => @account.id,
-                                        :configs => @installed_app_config_options
+    new_installed_application = FactoryGirl.build(:installed_application, :application_id => "31", :account_id => @account.id, :configs => @installed_app_config_options
                                         )
     @installed_application = new_installed_application.save(:validate => false)
     post :fields_update, {:controller => "integrations/dynamicscrm", :action => "fields_update",
@@ -99,16 +111,20 @@ describe Integrations::DynamicscrmController do
                         }
     flash[:notice].should eql "App installed successfully."
     response.status.should eql 302
+    @account.installed_applications.with_name("dynamicscrm").first.delete
   end
 
   it "Fetch details on the ticket/contact page should get a valid json response that has the admin selected fields" do
-    new_installed_application = FactoryGirl.build(:installed_application, :application_id => "26",
-                                        :account_id => @account.id,
-                                        :configs => @installed_app_config_options
-                                        )
+    DynamicsCRM::Client.any_instance.stubs(:authenticate).returns(true)
+    Integrations::Constants::CRM_MODULE_TYPES.each do |m_type|
+      data = {"EntityName"=>"#{m_type}", "MinActiveRowVersion"=>-1,"MoreRecords"=>false, "PagingCookie"=>"<cookie page=\"1\"><contactid last=\"{8632E44A-32FA-E511-80E7-C4346BAC1998}\" first=\"{8632E44A-32FA-E511-80E7-C4346BAC1998}\" /></cookie>", "TotalRecordCount"=>-1, "TotalRecordCountLimitExceeded"=>false, :entities => [{"attributes"=> {"address1_composite"=>"5086 Nottingham Place\r\nDuvall, WA 16982\r\nU.S.", "ownerid"=>{"Id"=>"8e18590e-12ae-4882-b7f1-cc596407feb9", "KeyAttributes"=>nil, "LogicalName"=>"systemuser", "Name"=>"Sumit Agarwal", "RowVersion"=>nil}, "jobtitle"=>"Purchasing Assistant"}, "entity_state"=>nil, "formatted_values"=> {"customertypecode"=>"Default Value", "merged"=>"No"}, "id"=>"8632e44a-32fa-e511-80e7-c4346bac1998","related_entities"=>nil}]}
+      data[:entities][0] = OpenStruct.new(data[:entities].first)
+      data[:entities][0].attributes = OpenStruct.new(data[:entities].first.attributes)
+      DynamicsCRM::Client.any_instance.stubs(:retrieve_multiple).with("#{m_type}", [["emailaddress1", "Equal", "sumit.a@freshdesk.com"]]).returns(data)
+    end
+    new_installed_application = FactoryGirl.build(:installed_application, :application_id => "31", :account_id => @account.id, :configs => @installed_app_config_options)
     @installed_application = new_installed_application.save(:validate => false)
-    post :widget_data, {:controller => "integrations/dynamicscrm", :action => "widget_data",
-                        :app_name => 'dynamicscrm', :email => "sumit.a@freshdesk.com" }
+    post :widget_data, {:controller => "integrations/dynamicscrm", :action => "widget_data", :app_name => 'dynamicscrm', :email => "sumit.a@freshdesk.com" }
     parsed_body = JSON.parse(response.body)
     parsed_body.each do |entity_map|
       entity_name = entity_map["internal_use_entity_type"]
@@ -116,16 +132,18 @@ describe Integrations::DynamicscrmController do
         true.should eql entity_map.has_key?(label)
       end
     end
+    @account.installed_applications.with_name("dynamicscrm").first.delete
   end
 
   it "fetch details should return a blank array when no email is match is found with Dynamics" do
-    new_installed_application = FactoryGirl.build(:installed_application, :application_id => "26",
-                                    :account_id => @account.id,
-                                    :configs => @installed_app_config_options
-                                    )
+    DynamicsCRM::Client.any_instance.stubs(:authenticate).returns(true)
+    Integrations::Constants::CRM_MODULE_TYPES.each do |m_type|
+      data = {"EntityName"=>"#{m_type}", "MinActiveRowVersion"=>-1, "MoreRecords"=>false, "PagingCookie"=>nil, "TotalRecordCount"=>-1, "TotalRecordCountLimitExceeded"=>false, :entities=>[]}
+      DynamicsCRM::Client.any_instance.stubs(:retrieve_multiple).with("#{m_type}", [["emailaddress1", "Equal", "sumit.a@freshdesk.com"]]).returns(data)
+    end
+    new_installed_application = FactoryGirl.build(:installed_application, :application_id => "31", :account_id => @account.id, :configs => @installed_app_config_options)
     @installed_application = new_installed_application.save(:validate => false)
-    get :widget_data, { :controller => "integrations/dynamicscrm", :action => "widget_data",
-                        :app_name => 'dynamicscrm', :email => "bala1@freshdesk.com" }
+    get :widget_data, { :controller => "integrations/dynamicscrm", :action => "widget_data", :app_name => 'dynamicscrm', :email => "sumit.a@freshdesk.com" }
     parsed_body = JSON.parse(response.body)
     true.should eql parsed_body.blank?
   end

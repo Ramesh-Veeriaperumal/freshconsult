@@ -26,7 +26,7 @@ if Rails.env.test?
       time_zone "Chennai"
       sequence(:shared_secret) { |n| "f8c5eb47e87#{n}5f4ffcc19561503fa8d2" }
       sequence(:domain) { |n| "foo#{n}" }
-      plan SubscriptionPlan.find_by_name("Estate")
+      plan 4 #SubscriptionPlan.find_by_name("Estate") Hardcoding this. Otherwise bootstrap doesnt work in test env
     end
 
     factory :dynamic_notification_templates, :class => DynamicNotificationTemplate do

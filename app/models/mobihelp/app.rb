@@ -17,4 +17,8 @@ class Mobihelp::App < ActiveRecord::Base
   def push_notification_enabled?
     self.config[:push_notification].eql? 'true'
   end
+  
+  def category_ids_from_app_solutions
+    app_solutions.pluck(:solution_category_meta_id)
+  end
 end

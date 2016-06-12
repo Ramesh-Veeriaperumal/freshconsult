@@ -1,16 +1,7 @@
 module Solution::ArticlesHelper
-  
-  def breadcrumb
-    output = []
-    output << pjax_link_to(t('solution.title'), solution_categories_path)
-    if @article.folder.is_default?
-      output << pjax_link_to(t('solution.draft.name'), solution_drafts_path)
-    else
-      output << pjax_link_to(@article.folder.category.name, solution_category_path(@article.folder.category))
-      output << pjax_link_to(@article.folder.name, solution_folder_path(@article.folder))
-    end
-    output.join(' ').html_safe
-  end
+
+  include Solution::LanguageTabsHelper
+  include HumanizeHelper
   
   def language_tabs
     %{<div class="tab">
@@ -38,7 +29,8 @@ module Solution::ArticlesHelper
   
   def discard_link
     return unless privilege?(:delete_solution)
-    link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article.id, @article.draft), 
+    link_to(  t('solutions.drafts.discard'), 
+              solution_draft_delete_path(@article.parent_id, @article.language_id),
               :method => 'delete',
               :confirm => t('solution.articles.draft.discard_confirm'),
               :class => 'draft-btn'
@@ -46,46 +38,56 @@ module Solution::ArticlesHelper
   end
 
   def publish_link
-    return if @article.folder.is_default? or !privilege?(:publish_solution)
-    link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), 
+    return if @article.solution_folder_meta.is_default? or !privilege?(:publish_solution)
+    link_to(  t('solutions.drafts.publish'), 
+              solution_draft_publish_path(@article.parent_id, @article.language_id),
               :method => 'post', 
               :class => 'draft-btn') if (@article.draft.present? || @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
   end
   
   def form_data_attrs
-    return {} if @article.new_record?
+    return {
+      :"new-article" => true
+    } if @article.new_record?
     
     {
-      :"autosave-path" => autosave_solution_draft_path(@article.id),
+      :"autosave-path" => solution_draft_autosave_path(@article.parent_id, @article.language_id),
       :timestamp => @article.draft.present? ? @article.draft.updation_timestamp : false,
-      :"default-folder" => @article.folder.is_default,
-      :"draft-discard-url" => "#{solution_article_draft_path(@article.id, @article.draft.present? ? @article.draft : 1)}",
-      :"preview-path" => support_draft_preview_path(@article, 'preview'),
+      :"default-folder" => @article.solution_folder_meta.is_default,
+      :"draft-discard-url" => solution_draft_delete_path(@article.parent_id, @article.language_id),
+      :"preview-path" => draft_portal_preview,
       :"preview-text" =>  t('solution.articles.view_draft'),
-      :"article-id" => @article.id
+      :"article-id" => @article.id,
+      :"orphan-category" => orphan_category?
     }
   end
 
-  def user_votes_stats count, type
-    t_type = (type ==  1) ? 'likes' : 'dislikes'
-    return "0 #{t(t_type)}" if count < 1
-    link_to( "#{count} #{t(t_type)}".html_safe,
-            voted_users_solution_article_path(@article, {:vote => type}),
-            :rel => "freshdialog",
-            :class => "article-#{t_type}",
-            :title => t(t_type), 
-            "data-target" => "#article-#{t_type}",
-            "data-template-footer" => "",
-            "data-width" => "400px" 
-          ).html_safe
+  def user_votes_stats count, type, meta_child
+    t_type = (type ==  1) ? 'like' : 'dislike'
+    content = %(<div class="votes-btn"> #{font_icon(t_type)}#{humanize_stats(count)} </div>)
+    return content.html_safe if count < 1 || !meta_child
+    %(
+      #{link_to( "<div class=\"votes-btn\"> #{font_icon(t_type)}#{humanize_stats(count)} </div>".html_safe,
+        voted_users_solution_article_path(@article_meta.id, {:vote => type, :language_id => @article.language_id}),
+        :rel => "freshdialog",
+        :class => "article-#{t_type}",
+        :title => t(t_type.pluralize), 
+        "data-target" => "#article-#{t_type}",
+        "data-template-footer" => "",
+        "data-width" => "400px" )}
+    ).html_safe
   end
 
-  def company_visibility_tooltip(folder)
-    company_names = folder.customers.first(5).map(&:name).join(', ')
-    count = folder.customers.size - 5
-    company_names += t('solution.folders.visibility.extra_companies', :count => count) if count > 0
-    %(<span #{ "class=\"tooltip\" title=\"#{company_names}\"" if folder.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]}>
-        #{Solution::Constants::VISIBILITY_NAMES_BY_KEY[folder.visibility]}
+  def company_visibility_tooltip(folder_meta)
+    span_attributes = ""
+    if folder_meta.has_company_visiblity?
+      company_names = folder_meta.customers.first(5).map(&:name).join(', ')
+      count = folder_meta.customers.size - 5
+      company_names += t('solution.folders.visibility.extra_companies', :count => count) if count > 0
+      span_attributes = "class='tooltip' data-placement='right' title='#{h(company_names)}'"
+    end
+    %(<span #{ span_attributes }>
+        #{ folder_meta.visibility_type }
       </span>).html_safe
   end
 
@@ -94,6 +96,7 @@ module Solution::ArticlesHelper
   end
 
   def cancel_btn_link
+    return solution_article_path(@article_meta.id) if @article_meta.present? && !@article_meta.new_record? && @article.new_record?
     if params[:folder_id].present?
       solution_folder_path(params[:folder_id])
     elsif params[:category_id].present?
@@ -118,7 +121,7 @@ module Solution::ArticlesHelper
   def article_properties_edit_link(link_text)
     return unless privilege?(:manage_solutions) || privilege?(:publish_solution)
     link_to( link_text, 
-            properties_solution_article_path(@article, {:edit => true}),
+            properties_solution_article_path(@article.parent_id,{:edit => true, :language_id => @article.language_id}),
             :rel => "freshdialog",
             :class => "article-properties",
             :title => t('solution.articles.properties'),
@@ -136,8 +139,36 @@ module Solution::ArticlesHelper
     %(<span> #{t('solution.draft.autosave.save_success')} </span>
       <span title="#{formated_date(@article.draft.updated_at)}" class="tooltip" data-livestamp="#{@article.draft.updation_timestamp}"></span>
       <span class="pull-right">
-        #{link_to t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"),:target => "draft-"+@article.id.to_s}
+        #{link_to t('solution.articles.view_draft'), draft_portal_preview, :target => "draft-"+@article.id.to_s unless orphan_category?}
       </span>).html_safe
   end
-  
+
+  def not_in_portal_notification article
+    if Account.current.multilingual? && !Account.current.all_portal_language_objects.include?(article.language)
+      op = ""
+      op << %(<div class="not-in-portal">) 
+      op << t('solution.articles.language_not_in_portal') + " - "
+      if privilege?(:admin_tasks)
+        op << pjax_link_to(t('solution.articles.change_language_settings', :language_name => article.language.name), manage_languages_path)
+      else
+        op << t('solution.articles.contact_admin').html_safe
+      end
+      op << %(</div>)
+      op.html_safe
+    end
+  end
+
+  def missing_translations? article
+    return false unless Account.current.multilingual?
+    !(article.solution_folder_meta.send("#{article.language.to_key}_available?") && article.parent.solution_category_meta.send("#{article.language.to_key}_available?"))
+  end
+
+  def draft_portal_preview
+    portal_preview_path(support_draft_preview_path(@article, "preview", path_url_locale), @article.solution_folder_meta.solution_category_meta, true)
+  end
+
+  def orphan_category?
+    category = @article.solution_folder_meta.solution_category_meta
+    return true if category.present? && category.portal_ids.empty?
+  end
 end

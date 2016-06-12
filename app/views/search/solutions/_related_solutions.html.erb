@@ -1,0 +1,188 @@
+<div id="related_solutions">
+  <form id="searchmoreform" class="searchmoreform" action="#">
+  	<%= select_tag("language_id", 
+  	options_from_collection_for_select(Account.current.all_portal_language_objects, "id", "name", Language.for_user(@ticket.requester).id), 
+  	{ :class => "select2", 
+  		:id => "language-select",
+  		:"data-initial-language" => Language.for_user(@ticket.requester).id
+  	}) if Account.current.multilingual? %>
+      <input class="text search_text_box" name="solution[search]" id="solution_search" placeholder="Search solutions">
+  	  <span class="searchicon"></span>
+  </form>
+  <div class="dialog-well links" id="all_suggestions">
+    <div id="more_search_results" class="article-list"></div>
+  </div>
+</div>
+<script type="text/javascript">
+
+
+jQuery('body').on("shown","#related_solutions", function(){
+  if (jQuery('[id ^= "default_solution_suggestions"]').length == 0){
+    jQuery('#searchmoreform')
+    	.parentsUntil('.modal')
+    	.siblings('.modal-header')
+    	.append(jQuery('#searchmoreform').detach());
+    var url = "/search/related_solutions/ticket/<%= @ticket.id %>?language_id=<%= Language.for_user(@ticket.requester).id %>"
+    fetchAndDisplayDefaultResults(url, <%= Language.for_user(@ticket.requester).id %>)
+  }
+})
+
+jQuery('.searchicon').on('click', function(){ jQuery('#searchmoreform').submit() });
+
+function respondWithSol(select, sol_id, url, title){	
+	if(select == 'link'){
+		insertLink(url, title);
+	} else {
+    // Instead of title, we will be getting the language_id (if applicable) here.
+		handleSolutionDetail(sol_id, title);
+	}
+}
+
+function insertLink(url, title){
+	var element_id = jQuery('#suggested_solutions_show').data('editorId'),
+			$element = jQuery("#"+element_id),
+			$redactor = $element.data('redactor');
+
+	jQuery('#related_solutions').modal('hide');
+
+	if($redactor){
+		$redactor.restoreSelection();
+	
+		var userSelection = $redactor.getSelection(),
+				selectedText = userSelection.toString ? userSelection.toString() : userSelection.text;
+		
+		if(selectedText){
+			$element.getEditor().focus();
+		} else {
+			selectedText = title
+			$redactor.focusOnCursor();
+		}
+
+		var link = jQuery('<a/>').attr(
+								{ href: url,
+								target: '_blank',
+								style: 'font:inherit;'}).text(selectedText);
+
+		$redactor.execCommand('inserthtml', link.get(0).outerHTML);
+
+		$redactor.syncCode();
+	} else {
+		insertIntoSocialEditor(url, $element)	
+	}
+}
+
+function insertIntoSocialEditor(value, textarea){
+	var textValue = jQuery("<div />").html(value).text();
+	textarea.focus();
+	insertTextAtCursor(textarea.get(0), textValue);
+	textarea.keyup(); // to update the SendTweetCounter value
+}
+
+function handleSolutionDetail(sol_id, title){
+  var content_url = '/helpdesk/tickets/get_solution_detail/' + sol_id;
+  if (title !== undefined) {
+    content_url += '/' + title;
+  }
+  jQuery.ajax({	type: 'POST',
+    url: content_url,
+    success: function(data){ insertSolutionContent(data); }
+  });
+  return true;
+};
+
+function insertSolutionContent(value)
+{
+	var element_id = jQuery('#suggested_solutions_show').data('editorId'),
+		$element = jQuery("#"+element_id);
+
+	jQuery('#related_solutions').modal('hide');
+
+	if($element){
+		//restoreCaretPosition(element_id);//method in ticket show page.
+		$element.data('redactor').insertOnCursorPosition('inserthtml',value);
+		$element.getEditor().focus();
+ 	}
+}
+
+//Method to restore the caret position when editor loses focus.[Suggest solutions]
+function restoreCaretPosition(element_id){
+	range = document.getSelection().getRangeAt(0);
+	var range = document.createRange();
+	focusNode = jQuery('#'+element_id).data('focus_node');
+	focusOffSet = jQuery('#'+element_id).data('focus_node_offSet');
+	if(focusNode == undefined) return;
+	range.setStart(focusNode, focusOffSet);
+	range.setEnd(focusNode, focusOffSet);
+	document.getSelection().removeAllRanges();
+	document.getSelection().addRange(range);
+}
+
+jQuery("div.item").on("mouseover mouseout", function(event) {
+	if ( event.type == "mouseover" ) {
+		jQuery(this).find(".item-menu").show();
+	} else {
+		jQuery(this).find(".item-menu").hide();
+	}
+});
+
+jQuery('#solution_search').on('keyup', function(ev) {
+	if (this.value == '') {
+    var lang_select = jQuery('#language-select');
+  	var lang_id = ((lang_select.length == 0) ? <%= Language.for_current_account.id %> : lang_select.val());
+  	url = '/search/related_solutions/ticket/' + <%=@ticket.id%> + '?language_id=' + lang_id;
+  	fetchAndDisplayDefaultResults(url, lang_id);
+	}else if (ev.keyCode == 13) {
+    jQuery('#searchmoreform').submit();
+	}
+});
+
+jQuery('#language-select').on('change', function(ev){
+	ev.preventDefault();
+	var query = $('solution_search').value;
+	var lang_id = $('language-select').value;
+	if(query.length>0) {
+		url = '/search/search_solutions/ticket/' + <%=@ticket.id%> + '?q='+
+				encodeURIComponent(query) + '&language_id=' + lang_id
+		fetchAndDisplayResults(url)
+	} else {
+		url = '/search/related_solutions/ticket/' + <%=@ticket.id%> + '?language_id=' + lang_id
+		fetchAndDisplayDefaultResults(url, lang_id)
+	}
+	return false;
+})
+
+jQuery("#searchmoreform").on("submit", function(ev){
+	ev.preventDefault();
+	var query = $('solution_search').value;
+	if(query.length>0) {
+		url = '/search/search_solutions/ticket/' + <%=@ticket.id%> + '?q='+encodeURIComponent(query)
+		if($('language-select') !== null){
+			url = url + '&language_id=' + $('language-select').value;
+		}
+		fetchAndDisplayResults(url)
+	}
+	  
+	return false;
+});
+
+function fetchAndDisplayResults(url){
+	jQuery('.request_well').hide();
+	jQuery("#more_search_results").show().html('<div class="m20 p20"> </div>').addClass("sloading loading-small");
+	jQuery('#more_search_results').load(url, function() {
+		jQuery("#more_search_results").removeClass("sloading loading-small");
+	});
+}
+
+function fetchAndDisplayDefaultResults(url, lang_id){
+	jQuery('.request_well').hide();
+	jQuery('#more_search_results').hide();
+	if (jQuery('#default_solution_suggestions_' + lang_id).length === 0){
+		jQuery('#all_suggestions').append("<div id='default_solution_suggestions_" + lang_id + "' class='request_well article-list'></div>")
+		jQuery('#default_solution_suggestions_' + lang_id).html('<div class="m20 p20"> </div>').addClass("sloading loading-small").load(url, function() {
+			jQuery(this).removeClass("sloading loading-small");
+		});
+	}
+	jQuery('#default_solution_suggestions_' + lang_id).show();
+}
+
+</script>

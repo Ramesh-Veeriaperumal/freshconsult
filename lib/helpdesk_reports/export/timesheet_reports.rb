@@ -23,7 +23,7 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
 
     @layout = "layouts/report/timesheet_reports_pdf.html.erb"
     file = build_pdf
-    build_file(file, file_format, PDF_EXPORT_TYPE)
+    build_file(file, file_format, report_type, PDF_EXPORT_TYPE)
   end
 
   def locals_option

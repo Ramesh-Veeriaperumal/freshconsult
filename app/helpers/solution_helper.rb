@@ -1,11 +1,12 @@
 module SolutionHelper
 	include Solution::Cache
+	include Solution::PathHelper
 	
 	def solutions_breadcrumb(page = :home)
 		return if page == :home
 		_output = []
 		_output << pjax_link_to(t('solution.title'), solution_categories_path)
-		if default_category? || new_article_check?
+		if page != :all_category && (default_category? || new_article_check?)
 			if new_article_check?
 				_output << h(t('solution.add_article'))
 			else
@@ -14,36 +15,40 @@ module SolutionHelper
 		else
 			case page
 				when :category
-					_output << truncate(h(@category.name), :length => 120)
+					_output << truncate(h(@category_meta.name), :length => 120)
 				when :folder
-					_output << category_link(@folder, page)
-					_output << truncate(h(@folder.name), :length => 50)
+					_output << category_link(@folder_meta, page)
+					_output << truncate(h(@folder_meta.name), :length => 50)
 				when :article
-					_output << category_link(@article.folder, page)
-					_output << folder_link(@article.folder)
+					_output << category_link(@article_meta.solution_folder_meta, page)
+					_output << folder_link(@article_meta.solution_folder_meta)
 				else
 			end
 		end
-		"<div class='breadcrumb'>#{_output.map{ |bc| "<li>#{bc}</li>" }.join("")}</div>".html_safe
+		"<div class='breadcrumb'>#{_output.map{ |bc| "<li>#{bc}</li>" }.join}</div>".html_safe
 	end
 
 	def new_article_check?
-		@article.present? ? @article.new_record? : false
+		@article_meta.present? && @article_meta.new_record?
 	end
 
 	def search_placeholder(page)
 		case page
 			when :category
-				t('solution.articles.search_in', :search_scope => @category.name)
+				t('solution.articles.search_in', :search_scope => @category_meta.name)
 			when :folder
-				t('solution.articles.search_in', :search_scope => @folder.name)
+				t('solution.articles.search_in', :search_scope => @folder_meta.name)
 			else
 				t('solution.articles.search_all')
 		end
 	end
 
 	def default_category?
-		((@category || (@folder.respond_to?(:category) ? @folder.category : (@article.folder.present? ? @article.folder.category : {}))) || {})[:is_default]
+		category = @category_meta || 
+				(@folder_meta && @folder_meta.solution_category_meta) ||
+				(@article_meta && @article_meta.solution_folder_meta && @article_meta.solution_folder_meta.solution_category_meta) ||
+				{}
+		category[:is_default]
 	end
 
 	def folder_link folder
@@ -53,14 +58,14 @@ module SolutionHelper
 
 	def category_link(folder, page)
 		truncate_length = ( (page == :folder) ? 70 : 40 )
-		category_name = folder.category.name
+		category_name = folder.solution_category_meta.name
 		options = { :title => category_name } if category_name.length > truncate_length
-		pjax_link_to(truncate(folder.category.name, :length => truncate_length), 
-			 			"/solution/categories/#{folder.category_id}", (options || {}))
+		pjax_link_to(truncate(category_name, :length => truncate_length), 
+			 			"/solution/categories/#{folder.solution_category_meta.id}", (options || {}))
 	end
 	
 	def new_solutions_button(default_btn = :article)
-		category = [t('solution.add_category'), new_solution_category_path, false, new_btn_opts(:category)]
+		category = [t('solution.add_category'), new_solution_category_path(btn_default_params(:category)), false, new_btn_opts(:category)]
 		folder    = [t('solution.add_folder'),    new_solution_folder_path(btn_default_params(:folder)), false, new_btn_opts(:folder)]
 		article    = [t("solution.add_article"),    new_solution_article_path(btn_default_params(:article)), false, new_btn_opts(:article)]
 
@@ -68,17 +73,27 @@ module SolutionHelper
 			article = nil unless privilege?(:publish_solution)
 			case default_btn
 				when :category
-					opts = { "data-modal-title" => t("solution.add_category"), "data-target" => "#new-cat" }
+					opts = { 
+						"data-modal-title" => "#{t("solution.add_category")}#{language_label}", 
+						"data-target" => "#new-cat"
+					}
 					btn_dropdown_menu(category, [folder, article], opts.merge(default_new_btn_opts))
 				when :folder
-					opts = { "data-modal-title" => t("solution.add_folder"), "data-target" => "#new-fold" }
+					opts = { 
+						"data-modal-title" => "#{t("solution.add_folder")}#{language_label}", 
+						"data-target" => "#new-fold"
+					}
 					btn_dropdown_menu(folder, [category, article], opts.merge(default_new_btn_opts))
 				else
 					opts = { :"data-pjax" => "#body-container" }
 					if privilege?(:publish_solution)
 						btn_dropdown_menu(article, [category, folder], opts)
 					else
-						btn_dropdown_menu(folder, [category], opts)
+						opts = { 
+							"data-modal-title" => "#{t("solution.add_folder")}#{language_label}", 
+							"data-target" => "#new-fold"
+						}
+						btn_dropdown_menu(folder, [category], opts.merge(default_new_btn_opts))
 					end
 			end
 		elsif privilege?(:publish_solution)
@@ -100,9 +115,13 @@ module SolutionHelper
 	def new_btn_opts(type)
 		case type
 		when :category
-			default_new_btn_opts.merge({ "data-modal-title" => t("solution.add_category"), "data-target" => "#new-cat" })
+			default_new_btn_opts.merge({ 
+				"data-modal-title" => "#{t("solution.add_category")}#{language_label}", 
+				"data-target" => "#new-cat" })
 		when :folder
-			default_new_btn_opts.merge({ "data-modal-title" => t("solution.add_folder"), "data-target" => "#new-fold" })
+			default_new_btn_opts.merge({ 
+				"data-modal-title" => "#{t("solution.add_folder")}#{language_label}", 
+				"data-target" => "#new-fold" })
 		when :article
 			{ :"data-pjax" => "#body-container", :rel => nil }
 		end
@@ -110,10 +129,12 @@ module SolutionHelper
 
 	def btn_default_params(type)
 		case type
+			when :category
+				{:portal_id => params[:portal_id]} if params[:portal_id].present?
 			when :folder
-				{ :category_id => @category.id } if @category.present?
+				{ :category_id => @category_meta.id } if @category_meta.present?
 			when :article
-				@folder.present? ? ({ :folder_id => @folder.id }) : (@category.present? ? { :category_id => @category.id } : nil)
+				@folder_meta.present? ? ({ :folder_id => @folder_meta.id }) : (@category_meta.present? ? { :category_id => @category_meta.id } : nil)
 		end
 	end
 
@@ -129,7 +150,7 @@ module SolutionHelper
 		_op << %(<a href="#" class="btn" id="reorder_btn">
 	             #{font_icon "reorder", :size => 13}
 	             #{t('reorder')}
-					   </a>) if privilege?(:manage_solutions)
+					   </a>)
 		_op.html_safe
 	end
 	
@@ -159,8 +180,15 @@ module SolutionHelper
 		else
 			content << %{
 				<span
-					class="orphan-cat-info">
-				#{t('solution.orphan_category_info')}</span>
+					class="muted">
+				#{t('solution.unassociated_category')}</span>
+				<span
+					class="tooltip"
+					data-html="true"
+					data-placement="right"
+					title="#{t('solution.unassociated_category_info')}">
+					#{ font_icon('unverified', :size => 16, :class => 'ml2 unassociated-category') }
+				</span>
 			}
 			content.html_safe
 		end
@@ -184,10 +212,11 @@ module SolutionHelper
 
 	def sidebar_drafts a
 		%{
-			<li>
+			<li class="#{'multilingual_draft' if current_account.multilingual?}">
+				#{language_icon(a.article.solution_article_meta, a.article.language) if current_account.multilingual?}
         <div class="sidebar-list-item">
           #{pjax_link_to(h(a.title.truncate(27)),
-                          solution_article_path(a.article)
+                          multilingual_article_path(a.article, :anchor => :edit)
                          )}
 	        <div class="muted"> 
 	          #{t('solution.sidebar.drafts.details',
@@ -202,12 +231,13 @@ module SolutionHelper
 
 	def sidebar_drafts_list(drafts, container_id, active='')
 		content = %{<div class='tab-pane sidebar-list #{active}' id="#{container_id}"><ul>}
-    drafts.for_sidebar.first(3).each do |draft|
+    drafts_array = drafts.for_sidebar.first(4)
+    drafts_array.first(3).each do |draft|
       content << sidebar_drafts(draft)
     end
     content << %{</ul>}
     content << pjax_link_to( t('solution.sidebar.view_all'),
-    												drafts_path(container_id), { :class => "view-all"}) if drafts.size > 3
+    												drafts_path(container_id), { :class => "view-all"}) if drafts_array.length > 3
 		content << %{</div>}
 		content.html_safe
 	end
@@ -216,11 +246,12 @@ module SolutionHelper
 		container_id == 'drafts-all' ? solution_my_drafts_path('all') : solution_drafts_path
 	end
 
-
 	def sidebar_feedbacks_list(feedbacks, container_id, active='')
 		filter = (container_id == 'feedbacks-me') ? 'my_article_feedback' : 'article_feedback'
 		content = %{<div class='tab-pane sidebar-list #{active}' id="#{container_id}"><ul>}
-    feedbacks.first(3).each do |feedback|
+    feedbacks_array = feedbacks.first(4)
+    # Fetching the first 4, instead of doing a count query
+    feedbacks_array.first(3).each do |feedback|
       content << article_feedback(feedback)
     end
     content << %{</ul>}
@@ -230,7 +261,7 @@ module SolutionHelper
     												  	:class => "view-all",
     												  	:"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=#{filter}",
     												  	:"data-parallel-placeholder" => "#ticket-leftFilter"
-    												  }) if feedbacks.size > 3
+    												  }) if feedbacks_array.length > 3
 
 		content << %{</div>}
 		content.html_safe
@@ -240,12 +271,170 @@ module SolutionHelper
 		identifier.delete(' ').underscore 
 	end
 
+	def dynamic_hidden_fields f
+		parent_meta = instance_variable_get("@#{f}_meta")
+		op = ""
+		op << hidden_field_tag("solution_#{f}_meta[id]", parent_meta.id) if parent_meta && parent_meta.id.present?
+		op << hidden_field_tag(:language_id,  @language.id)
+		op.html_safe
+	end
+
+	def language_flags(solution_meta, article_flag = false)
+		return "" unless current_account.multilingual?
+		edit = edit_privilege?(solution_meta.class.short_name)
+		content = ""
+		content << "<div class='span5 pull-right mt8 #{"language-bar" if article_flag} #{'view-links' unless edit}'>"
+		content << '<span class="pull-right">'
+		Account.current.all_language_objects.each do |language|
+			content << language_icon(solution_meta, language)
+		end
+		content << '</span>'
+		content << '</div>'
+		content.html_safe
+	end
+
+	def language_icon(solution_meta, language)
+		category = solution_meta.class.short_name
+		return version_view_icon(solution_meta, language) unless edit_privilege?(category)
+		options = { 
+			:class => "language_icon #{language_style(solution_meta, language)} tooltip",
+			:title => language_label_title(language, solution_meta.send("#{language.to_key}_available?")),
+			:id => "version-#{solution_meta.id}-#{language.id}",
+		}
+		options.merge!({:rel => "freshdialog",
+			:data => {
+			"modal-title" => "#{t("solution.edit_#{category}")}#{language_label(language)}",
+			"target" => "#version-#{solution_meta.id}-l#{language.id}",
+			"close-label" => t('cancel'),
+			"submit-label" => t('save')
+		}}) unless category.eql?('article')
+		options.merge!({:"data-pjax" => "#body-container"}) if category.eql?('article')
+		link_to( "<span class='language_name'>#{language.short_code.capitalize}</span>
+							#{ font_icon( (solution_meta.send("#{language.to_key}_available?") ? 'pencil' : 'plus'), :size => 14) }".html_safe, 
+							category.eql?('article') ? 
+							solution_article_version_path(solution_meta.id, language.code, :anchor => 'edit') :
+							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id),
+							options)
+	end
+
+	def version_view_icon(solution_meta, language)
+		category = solution_meta.class.short_name
+		options = { 
+			:class => "language_symbol #{language_style(solution_meta, language)} tooltip",
+			:title => language.name,
+			:id => "version-#{solution_meta.id}-#{language.id}",
+		}
+		if category.eql?('article')
+			options.merge!({:"data-pjax" => "#body-container"})
+			link_to("<span class='language_name'>#{language.short_code.capitalize}</span>".html_safe, 
+								solution_article_version_path(solution_meta.id, language.code),
+								options)
+		else
+			content_tag(:span, "<span class='language_name'>#{language.short_code.capitalize}</span>".html_safe, options)
+		end
+	end
+
+	def edit_privilege?(category)
+		@edit_privilege ||= begin
+			case category.to_sym
+			when :category, :folder
+				privilege?(:manage_solutions)
+			when :article
+				privilege?(:publish_solution)
+			end
+		end
+	end
+
+	def language_label_title language, flag
+		if language.code == Account.current.language
+			t("solution.language_label_titles.primary_edit", :name => language.name)
+		else
+			flag ? t("solution.language_label_titles.supporting_edit", :name => language) : t("solution.language_label_titles.supporting_new", :name => language)
+		end
+	end
+
+	def language_style(meta_obj, language)
+		return 'normal' unless meta_obj
+    classes = []
+    classes << 'unavailable' unless meta_obj.send("#{language.to_key}_available?")
+    if meta_obj.is_a? Solution::ArticleMeta
+      classes << 'unpublished' unless meta_obj.send("#{language.to_key}_published?")
+      classes << 'outdated' if Account.current.language_object != language && meta_obj.send("#{language.to_key}_outdated?")
+      classes << 'draft' if meta_obj.send("#{language.to_key}_draft_present?")
+    end
+    classes.join(' ')
+  end
+
+  def language_label(l = current_account.language_object)
+  	return "" unless current_account.multilingual?
+  	content_tag(:span, l.name, :class => 'label pull-right')
+  end
+
+	def primary_preview(primary, identifier, current_obj = nil)
+		return unless primary.present? && primary != current_obj
+		"<b class='muted'>#{Language.for_current_account.name}:</b>
+		<span class='muted'>#{h(primary.send(identifier))}<span>".html_safe unless primary.send(identifier).blank?
+	end
+
+	def dynamic_text_box(f, language, form, options = {})
+		op = ""
+		parent_meta = instance_variable_get("@#{f}_meta")
+		if parent_meta && !options[:primary] && parent_meta.send("#{language.to_key}_available?")
+			op << "<div class='pt5 span12'>"
+			op << parent_meta.send("#{language.to_key}_#{f}").name
+			op << "</div>"
+		else
+      
+			op << text_field_tag("#{form.object_name}[#{language.to_key}_#{f}][name]", nil,
+	                         :class => "required #{options[:class]}",
+	                         :id => "#{options[:id]}",
+	                         :autocomplete => "off",
+	                         :autofocus => true,
+	                         :disabled => options[:disabled] || false,
+	                         :placeholder => title_placeholder(f.to_s.pluralize))
+			if parent_meta && !options[:primary]
+		    op << hidden_field_tag("#{form.object_name}[id]", parent_meta.id)
+		    op << primary_preview(parent_meta.send("primary_#{f}"), :name)
+			end
+	  end
+    op.html_safe
+	end
+
 	def new_article_btn article
 	  output = %(<div class="btn-group">)
 	  output << pjax_link_to(article[0],article[1],
 	  	                     article[3].merge({:class => "btn btn-primary"}))
 	  output << %(</div>)
 	  output.html_safe
+	end
+
+	def draft_label_popover article_meta
+		op = ""
+		options = {:class => "label"}
+		label = "<span class='draft-label'>#{t('solutions.status.draft')}</span>"
+		return content_tag(:span, label.html_safe, options).html_safe unless current_account.multilingual?
+		options.merge!({ :rel => "draft-qtip", 
+			"data-content-id" => "languages-qtip-contents-#{article_meta.id}"})
+		op << content_tag(:a, label.html_safe, options)
+		op << "<div id='languages-qtip-contents-#{article_meta.id}' class='hide'>"
+		op << languages_popover(article_meta)
+		op << "</div>"
+		op.html_safe
+	end
+
+	def languages_popover article_meta
+		op = ""
+		draft_languages = Account.current.all_language_objects.select { |l| article_meta.send("#{l.to_key}_draft_present?") }
+		draft_languages.first(5).each do |language|
+			op << "<div class='language_item'>"
+			op << "<span class='language_symbol #{language_style(article_meta, language)}'>"
+			op << "<span class='language_name'>#{language.short_code.capitalize}</span>"
+			op << "</span>"
+			op << "<span class='language_label'> #{language.name}</span>"
+			op << "</div>"
+		end
+		op << "<div class='language_item text-center'>+#{t('solution.articles.more_languages', :count => draft_languages.size - 5)}</div>" if draft_languages.size > 5
+		op
 	end
 
 	def category_delete_btn category
@@ -259,7 +448,7 @@ module SolutionHelper
 	def solution_modal_footer object
 		output = %(<div class="modal-footer">)
 		output << %(<div class="pull-left">)
-		if object.is_a?(Solution::Folder)
+		if object.is_a?(Solution::FolderMeta)
 			output << folder_delete_btn(object)
 		else
 			output << category_delete_btn(object)
@@ -267,4 +456,70 @@ module SolutionHelper
 		output << %(</div></div>)
 		output.html_safe
 	end
+	
+	def solution_body_classes
+		"community solutions #{'multilingual' if current_account.multilingual?}"
+	end
+
+	def category_create_new(f)
+		op = ""
+		op << link_to(t('solution.create_new'), '', :id => 'create-new-category', :class => 'inline-block ml15 mt7')
+		op << %(<div class='inline-block mb4'>)
+		f.fields_for(:solution_category_meta) do |category_fields|
+      op << text_field_tag("solution_folder_meta[solution_category_meta][primary_category][name]", nil,
+	                         :class => "required hide input-large",
+	                         :id => "create-category-text",
+	                         :autocomplete => "off",
+                           :disabled => true,
+	                         :placeholder => title_placeholder('categories'))
+		end
+		op << %(</div>)
+		op << %(<div class='inline-block'>)
+		op << link_to(t('cancel'), '', :id => 'cancel-create-new', :class => 'ml15 hide')
+		op << %(</div>)
+		op.html_safe
+	end
+
+	def folder_create_new
+		op = t('solution.folder')
+		if privilege?(:manage_solutions)
+			op << "<span id='create-new'> - "
+			op << link_to(t('solution.create_new'), new_solution_folder_path((btn_default_params(:folder) || {}).merge({ :article => true })), new_btn_opts(:folder))
+			op << "</span>"
+		end
+		op.html_safe
+	end
+
+	def path_url_locale
+		current_account.multilingual? ? { :url_locale => @language.code } : {}
+	end
+
+	def article_history article
+		modified_flag = article.published? && article.modified_at.present? && (article.created_at != article.modified_at)
+		time = modified_flag ? article.modified_at : article.created_at
+		op = modified_flag ? t('solution.general.last_published') : t('solution.general.created_by')
+		op << " #{modified_flag && article.modified_by.present? ? h(article.recent_author.name) : h(article.user.name)}, "
+		op << "<abbr data-livestamp=#{time.to_i}>#{formated_date(time)}</abbr>"
+		op.html_safe
+	end
+  
+  def full_error(attr, msg)
+    [t("activerecord.attributes.#{attr}", :default => "#{attr.to_s.gsub('.', '_').humanize}"),
+      msg].join(' ')
+  end
+
+  def article_title(meta)
+  	(meta.primary_article.draft || meta.primary_article).title
+  end
+
+  def article_tooltip_title(meta)
+  	title = article_title(meta)
+  	title.length > 75 ? title : ''
+	end
+
+	def title_placeholder(item_type)
+		Account.current.multilingual? ?
+			t("solution.#{item_type}.enter_version_name", :language_name => @language.name) : ''
+	end
+
 end

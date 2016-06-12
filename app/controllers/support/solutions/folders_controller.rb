@@ -1,6 +1,7 @@
 class Support::Solutions::FoldersController < SupportController
 	before_filter :scoper, :check_folder_permission
-  before_filter :render_404, :unless => :folder_visible?, :only => :show
+	before_filter :check_version_availability, :only => [:show]
+	before_filter :render_404, :unless => :folder_visible?, :only => :show
 	before_filter { |c| c.check_portal_scope :open_solutions }
 	
 	def show
@@ -8,7 +9,7 @@ class Support::Solutions::FoldersController < SupportController
 		respond_to do |format|
 			format.html {
         (render_404 and return) if @folder.is_default?        
-				load_agent_actions(solution_category_folder_path(@category, @folder), :view_solutions)
+				load_agent_actions(solution_folder_path(@folder), :view_solutions)
 				load_page_meta
 				set_portal_page :article_list
 			}
@@ -18,11 +19,11 @@ class Support::Solutions::FoldersController < SupportController
 	end
 
 	private
-		def scoper
-			@folder = current_account.folders.find_by_id(params[:id])
-			(raise ActiveRecord::RecordNotFound and return) if @folder.nil?
 
-			@category = @folder.category
+		def scoper
+			@solution_item = @folder = current_account.solution_folder_meta.find_by_id(params[:id])
+
+			@category = @folder.solution_category_meta if @folder
 		end
     
     def load_page_meta
@@ -33,11 +34,19 @@ class Support::Solutions::FoldersController < SupportController
       }
     end
 
-		def check_folder_permission			
+		def check_folder_permission
 	    return redirect_to support_solutions_path if !@folder.nil? and !@folder.visible?(current_user)	    	
 	  end
 
     def folder_visible?
-      @folder.visible_in?(current_portal)
+      @folder && @folder.visible_in?(current_portal)
+    end
+
+		def unscoped_fetch
+			@folder = current_account.solution_folder_meta.unscoped_find(params[:id])
+		end
+
+    def default_url
+      support_solutions_folder_path(@folder, :url_locale => current_account.language)
     end
 end

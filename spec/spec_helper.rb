@@ -8,6 +8,11 @@ require 'rspec/collection_matchers'
 require 'sidekiq/testing'
 require 'simplecov-rcov'
 
+# WebMock
+#require 'webmock/rspec'
+#WebMock.allow_net_connect!
+# WebMock
+
 Dir[File.expand_path(File.join(File.dirname(__FILE__),'filters',  '*.rb'))].each {|f| require f}
 
 
@@ -22,7 +27,7 @@ SimpleCov.start do
   add_filter  'search'
   add_filter  'api/'
   add_filter  'vendor/ruby'
-  add_filter  SpecFilter.new({}) #CustomFilter requires atleast one argument. So the ugly empty hash. 
+  add_filter  SpecFilter.new({}) #CustomFilter requires atleast one argument. So the ugly empty hash.
 
   #add_filter '/vendor/'
   add_group  'mailgun',      'lib/helpdesk/email'
@@ -114,6 +119,7 @@ Spork.prefork do
     config.include ForumHelper
     config.include ControllerHelper
     config.include UsersHelper
+    config.include SolutionBuilderHelper
     config.include SolutionsHelper
     config.include MobihelpHelper
     config.include CompanyHelper
@@ -142,19 +148,22 @@ Spork.prefork do
     config.include ActionDispatch::TestProcess# to use fixture_file_upload
     config.include ForumDynamoHelper
     config.include ContactFieldsHelper
+    config.include Portal::Helpers::SolutionsHelper
+    config.include Portal::Multilingual
     config.infer_spec_type_from_file_location!
     config.add_setting :account
     config.add_setting :agent
     config.add_setting :timings
 
-    
+
     config.before(:all) do
-      create_test_account
-      @account = Account.first
+      @account = create_test_account
       @agent = get_admin
       RSpec.configuration.timings = []
       Sidekiq::Testing.disable!
       #begin_gc_defragment
+      main_portal = @account.main_portal
+      main_portal.update_column(:language, "en")
     end
 
     config.before(:each, :type => :controller) do
@@ -169,7 +178,7 @@ Spork.prefork do
       Rails.logger.info "*"*100
       Rails.logger.info name
       @test_start_time = Time.now
-    end     
+    end
 
     config.after(:each) do |x|
       name = "#{x.metadata[:described_class]} #{x.metadata[:description]}"
@@ -178,7 +187,7 @@ Spork.prefork do
         :name => name,
         :duration => @test_end_time - @test_start_time
       })
-      Rails.logger.info "^"*100 
+      Rails.logger.info "^"*100
 
       #reconsider_gc_defragment
     end
@@ -199,13 +208,36 @@ Spork.prefork do
       ES_ENABLED = false
       GNIP_ENABLED = false
       RIAK_ENABLED = false
+
       DatabaseCleaner.clean_with(:truncation,
                                  {:pre_count => true, :reset_ids => false})
+
       $redis_others.flushall
 
       logfile_name = 'log/rspec_file_times.log'
       logfile = "#{File.dirname(__FILE__)}/../#{logfile_name}"
       File.delete(logfile) if File.exist?(logfile)
+
+
+      Aws.config.update(stub_responses: true)
+      AWS.stub!
+      Aws.config.merge!(stub_responses: true, s3: {stub_responses: {head_object: { status_code: 200, headers: {}, body: '', } }})
+
+      ChargeBee::Subscription.stubs(:create).returns(true)
+      ChargeBee::Subscription.stubs(:update).returns(true)
+      ChargeBee::Subscription.stubs(:cancel).returns(true)
+      ChargeBee::Subscription.stubs(:reactivate).returns(true)
+      ChargeBee::Estimate.stubs(:create_subscription).returns(true)
+      ChargeBee::Estimate.stubs(:update_subscription).returns(true)
+      ChargeBee::Card.stubs(:update_card_for_customer).returns(true)
+      ChargeBee::Card.stubs(:delete_card_for_customer).returns(true)
+      ChargeBee::Invoice.stubs(:charge_addon).returns(true)
+      ChargeBee::HostedPage.stubs(:update_payment_method).returns(true)
+      ChargeBee::Customer.stubs(:update).returns(true)
+      ChargeBee::Subscription.stubs(:update).returns(true)
+
+
+      #WebMock.disable_net_connect!(allow_localhost: true, :allow => "www.googleapis.com")
     end
 
     config.after(:suite) do

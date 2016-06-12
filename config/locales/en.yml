@@ -82,6 +82,8 @@ en:
   reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"
+  plain_on: "On"
+  plain_off: "Off"
   add_all: "Add all"
   unspam: "Unspam"
   unblock: "Whitelist"
@@ -238,8 +240,8 @@ en:
   before_two: Before 2 Hours
   before_one: Before 1 Hour
   before_half: Before 30 Minutes
-  add_more_lang: Add supported languages to your helpdesk.
-  support_multi_languge: Supporting customers across more than one language?
+  add_more_lang: Add 'supported languages' to your helpdesk.
+  support_multi_languge: "Supporting customers in multiple languages?"
   many: many
   user:
     company: Company
@@ -1880,6 +1882,7 @@ en:
         portal_settings: Portal Settings
         categories_visible: Portal Categories
         product_label: "Product: %{product_name}"
+        enable_multilingual: "Setup Multilingual Support"
       edit:
         title: Edit Product
         updating: Updating...
@@ -2651,36 +2654,60 @@ en:
       new_article:
         short: "{{user_path}} created a new article"
         long: "{{user_path}} created a new article '{{notable_path}}'"
+      new_article_translation:
+        short: "{{user_path}} created a new article translation in {{language_name}}"
+        long: "{{user_path}} created a new article translation in {{language_name}} '{{notable_path}}'"
       published_article:
-        short: "{{user_path}}'s article has been published"
+        short: "{{user_path}} published an article"
         long: "{{user_path}} published an article '{{notable_path}}'"
+      published_article_translation:
+        short: "{{user_path}} published an article translation in {{language_name}}"
+        long: "{{user_path}} published an article translation in {{language_name}} '{{notable_path}}'"
       unpublished_article:
-        short: "{{user_path}}'s article has been unpublished"
-        long: "{{user_path}}' unpublished an article '{{notable_path}}'"
+        short: "{{user_path}} unpublished an article"
+        long: "{{user_path}} unpublished an article '{{notable_path}}'"
+      unpublished_article_translation:
+        short: "{{user_path}} unpublished an article translation in {{language_name}}"
+        long: "{{user_path}} unpublished an article translation in {{language_name}} '{{notable_path}}'"
       delete_article:
         short: "{{user_path}} has deleted an article"
         long: "{{user_path}} has deleted an article '{{notable_path}}'"
       new_solution_category:
         short: "{{user_path}} created a new solution category"
         long: "{{user_path}} created a new solution category '{{notable_path}}'"
+      new_solution_category_translation:
+        short: "{{user_path}} created a new solution category translation in {{language_name}}"
+        long: "{{user_path}} created a new solution category translation in {{language_name}} '{{notable_path}}'"
       delete_solution_category:
         short: "{{user_path}} has deleted a solution category"
-        long: "{{user_path}} has deleted the solution category '{{notable_path}}'"
+        long: "{{user_path}} has deleted a solution category '{{notable_path}}'"
       new_folder:
         short: "{{user_path}} created a new folder"
         long: "{{user_path}} created a new folder '{{notable_path}}'"
+      new_folder_translation:
+        short: "{{user_path}} created a new folder translation in {{language_name}}"
+        long: "{{user_path}} created a new folder translation in {{language_name}} '{{notable_path}}'"
       delete_folder:
         short: "{{user_path}} has deleted a folder"
-        long: "{{user_path}} has deleted the folder '{{notable_path}}'"
+        long: "{{user_path}} has deleted a folder '{{notable_path}}'"
       new_draft:
         short: "{{user_path}} created a draft for an article"
-        long: "{{user_path}} created a draft for article '{{notable_path}}'"
+        long: "{{user_path}} created a draft for an article '{{notable_path}}'"
+      new_draft_translation:
+        short: "{{user_path}} created a draft for an article translation in {{language_name}}"
+        long: "{{user_path}} created a draft for an article translation in {{language_name}} '{{notable_path}}'"
       published_draft:
         short: "{{user_path}} published the draft of an article"
-        long: "{{user_path}} published the draft of article '{{notable_path}}'"
+        long: "{{user_path}} published the draft of an article '{{notable_path}}'"
+      published_draft_translation:  
+        short: "{{user_path}} published the draft of an article translation in {{language_name}}"
+        long: "{{user_path}} published the draft of an article translation in {{language_name}} '{{notable_path}}'"
       delete_draft:
         short: "{{user_path}} has discarded the draft of an article"
-        long: "{{user_path}} has discarded the draft of article '{{notable_path}}'"
+        long: "{{user_path}} has discarded the draft of an article '{{notable_path}}'"
+      delete_draft_translation:
+        short: "{{user_path}} has discarded the draft of an article translation"
+        long: "{{user_path}} has discarded the draft of an article translation in {{language_name}} '{{notable_path}}'"
     forums:
       new_forum_category:
         short: "{{user_path}} created a new forum category"
@@ -2892,6 +2919,8 @@ en:
       info4: The 'Edit Portal' option will let you configure the portal for your product.
       info5: You can restrict the access to your helpdesk to the contacts that you add and to certain domains. Others will not be able to sign up, log in or submit tickets. You can read more about it
       info6: here.
+      info7: "If you are on the Garden plan or above, you will have the option to set up multilingual support under Languages."
+      info8: "To configure the portal for your product, use the Edit Portal option."
     cancel:
       cancel_account: Cancel your Freshdesk account
       info_text: Please take a moment to tell us why you want to cancel your account. Perhaps we could still help...
@@ -2942,6 +2971,26 @@ en:
       invoice_email_info : Send Invoices to
       invoice_emails : Email
       restore_account: Your account is cancelled and the data will be deleted on <strong>%{delete_at}</strong>. To restore your account, contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
+    multilingual_support:
+      manage_languages: "Manage Languages"
+      title: "Multilingual Support"
+      add_languages: "Add languages"
+      add_more_languages_msg: Add other languages that you support customers in here. You can then translate email notification templates and knowledge base articles for each supported language separately.
+      warning_msg: "Note: Primary language is your default helpdesk language. It cannot be changed once the supported languages are added."
+      supported_languages_validity: "should be valid"
+      portal_languages_validity: "should be a subset of supported languages"
+      portal_language_inclusion: "Supported languages should not include the portal language"
+      more_languages: ", <span class='more-languages'>%{count} more</span>"
+      helpcard:
+        title: "Speak in Your Customer's Language"
+        info1: "Provide a seamless support experience to your global customers from different parts of the world."
+        supported_languages: 
+          title: "<b>Supported Languages</b><br/>"
+          info1: "Adding languages to this list will enable you to translate knowledge base articles and email notifications in the respective languages to support your customers.<br /><br />"
+          info2: "<i>Once you add supported languages, you will not be able to change your primary language.</i>"
+        portal_languages:
+          title: "<b>Visible/Hidden on Portal</b><br />"
+          info1: "When your knowledge base articles are translated to other languages and are ready to go live, you can make that language visible to your customers by clicking on the toggle button (Hidden on Portal/Visible on Portal)<br /><br />"
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   account_configuration:
@@ -3075,9 +3124,9 @@ en:
     confirm_title: <b> Re-enter the %{item_type} name </b>
   delete_permanently: Delete Permanently
   deletion_titles:
-    solution_category: "solution category"
-    solution_folder: "solution folder"
-    solution_article: "solution article"
+    solution_categorymeta: "solution category"
+    solution_foldermeta: "solution folder"
+    solution_articlemeta: "solution article"
     forumcategory: "forum category"
     forum: "forum"
     topic: "topic"
@@ -3094,11 +3143,14 @@ en:
     edit: Edit Solution Category
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
+    info3: No categories in this Portal
     save_and_create: Save and Create Another
     delete_confirm: "Deleting this category will delete all %{folders} folders and %{articles} articles in it."
     product_portal_visibility: Visible in
+    visible_in_portal: Visible in Portal
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
+    manage_categories: Manage
     more_catogories: "See all Categories"
     other_categories: "See other Categories"
     other_categories_info: "Categories that are not associated with this portal"
@@ -3172,6 +3224,7 @@ en:
       down_vote_form_title: "Can you please tell us how we can improve this article?"
       downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
+    new_translation: "New %{language} translation"
     status:
       draft: Draft
       published: Published
@@ -3180,7 +3233,9 @@ en:
       logged_in_users: Logged In Users
       agents: Agents
       all: All
+      all_users: All Users
       select_company: Select Companies
+      help_text: Select the list of users who will have access to this folder
     types:
       permanent: Permanent
       workaround: Workaround
@@ -4074,7 +4129,18 @@ en:
   import_groups: Groups
   solution:
     on: 'on'
-    orphan_category_info: "This category is not associated with any portal"
+    plain_new: New
+    plain_edit: Edit
+    show_languages: Show languages
+    show_analytics: Show analytics
+    create_new: Create New
+    show_master: Show Master
+    language_label_titles:
+      primary_edit: "Edit %{name}"
+      supporting_new: "Add %{name} translation"
+      supporting_edit: "Edit %{name} translation"
+    unassociated_category: "Unassociated Category"
+    unassociated_category_info: "This category will not be visible to your users<br />as it is not associated with any portal"
     sidebar:
       orphan: "Orphan Categories"
       unassociated: "Unassociated Categories"
@@ -4094,9 +4160,21 @@ en:
         status: 'Status : %{status}'
         my_articles: "On My Articles"
         all_articles: "On All Articles"
+      new_translation:
+        title: "Working with article translation"
+        info1: "To quickly translate your articles, use the <b> 'Show Master' </b> option to see a preview of the article in its primary language while you are actively working on another language."
+        info2: "Start adding content along with <b> language-specific attachments </b> to assist your customers in a language that they understand."
+        info3: "To improve discoverability of your articles, you have the option to add <b> language specific meta tags </b> for the article being translated."
     anonymous_votes: "Anonymous (%{count})"
     home: Solutions Home
+    all_categories: All Categories
+    manage_categories: Manage Categories
+    current_context: "%{portal_name} Categories"
+    change_portal: "Change portal"
+    currently_viewing: "Currently viewing %{portal_name} categories"
     add_category: New Category
+    edit_category: Edit Category
+    edit_folder: Edit Folder
     orphan: Orphan
     unassociated: Unassociated
     add_folder: New Folder
@@ -4111,6 +4189,10 @@ en:
         zero: '<b>%{folder_name}</b> was moved to <b>%{category_name}</b> %{undo}'
         one: '<b>%{folder_name}</b> and %{count} other were moved to <b>%{category_name}</b> %{undo}'
         other: '<b>%{folder_name}</b> and %{count} others were moved to <b>%{category_name}</b> %{undo}'
+      folders_move_to_success_multilingual:
+        zero: '<b>%{folder_name}</b> was moved to <b>%{category_name}</b> but ensure the category translations are available %{undo}'
+        one: '<b>%{folder_name}</b> and %{count} other were moved to <b>%{category_name}</b> but ensure the category translations are available %{undo}'
+        other: '<b>%{folder_name}</b> and %{count} others were moved to <b>%{category_name}</b> but ensure the category translations are available %{undo}'
       folders_move_to_error:
         zero: '<b>%{folder_name}</b> was not moved to <b>%{category_name}</b>'
         one: '<b>%{folder_name}</b> and %{count} other were not moved to <b>%{category_name}</b>'
@@ -4121,6 +4203,10 @@ en:
         zero: '<b>%{article_name}</b> was moved to <b>%{folder_name}</b> %{undo}'
         one: '<b>%{article_name}</b> and %{count} other were moved to <b>%{folder_name}</b> %{undo}'
         other: '<b>%{article_name}</b> and %{count} others were moved to <b>%{folder_name}</b> %{undo}'
+      articles_move_to_success_multilingual:
+        zero: '<b>%{article_name}</b> was moved to <b>%{folder_name}</b> but ensure the category/folder translations are available %{undo}'
+        one: '<b>%{article_name}</b> and %{count} other were moved to <b>%{folder_name}</b> but ensure the category/folder translations are available %{undo}'
+        other: '<b>%{article_name}</b> and %{count} others were moved to <b>%{folder_name}</b> but ensure the category/folder translations are available %{undo}'
       articles_move_to_error:
         zero: '<b>%{article_name}</b> was not moved to <b>%{folder_name}</b>'
         one: '<b>%{article_name}</b> and %{count} other were not moved to <b>%{folder_name}</b>'
@@ -4142,18 +4228,33 @@ en:
       article_prop: Article Properties
       feedback: Feedback
       analytics: Analytics
+      mark_as_outdated:
+        text_1: "Mark other translations as outdated"
+        text_2: "in case you have changed this article"
+      outdating: <span class="sloading loading-small"></span>Outdating other translations
+      update_complete: <span class="muted"><i class="ficon-checkmark-round-o fsize-20"></i>Completed</span>
+      mark_as_uptodate:
+        text_1: "Mark this translation as up-to-date"
+        text_2: "in case you have changed this translation"
+      updating: <span class="sloading loading-small"></span>Updating
+      uptodate: "Uptodate"
       unsaved_content: You have unsaved content in this page.
       leave_page_que: Do you want to leave this page?
       something_wrong: Something went wrong!
+    categories:
+      enter_version_name: "Enter Category name in %{language_name}"
+      visibility_help_text: Select the portals in which this category needs to be visible
     folders:
       view_all: "View all folders..."
       choose_folder: Choose folder
       choose_folder_warning: Please select a folder for saving the article
+      enter_version_name: "Enter Folder name in %{language_name}"
       new:
         new_folder: Add Folder
       folder_form:
         category: Category
         visible_to: Visible to
+        check_translations: "Make sure the category is translated in the required languages"
       visibility:
         no_companies: You haven't selected any valid companies.
         success: Successfully changed the visibility.
@@ -4164,6 +4265,7 @@ en:
           other: " and %{count} more companies."
       draft: "All emails sent to kbase@%{domain_name} will be stored here as drafts"
     articles:
+      enter_version_name: "Enter Article title in %{language_name}"
       search_all: Search Articles
       search_in: "Search in %{search_scope}"
       type: Article Type
@@ -4193,6 +4295,8 @@ en:
       unpublished_version: You are viewing an unpublished version of the article.
       att_deleted: One attachment was deleted.
       published_success: 'This article was published succesfully.<a href= "%{url}" target = "_blank"> View on portal </a>'
+      published_success_msg: 'Hurray! The article has been published successfully'
+      published_success_not_in_portal: "Oops! The article has been published but the language isn't visible on the portal"
       published_failure: This article could not be published.
       view_draft: Preview Draft
       restrict_edit: "%{name} is currently editing this article."
@@ -4201,6 +4305,7 @@ en:
       edit_properties: Edit Properties
       prop_updated_msg: The article properties were updated succesfully.
       prop_updated_error: The article properties could not be updated.
+      check_translations: "Make sure the category and folder are translated in the required languages"
       save_and_publish: Save and Publish
       save_as_draft: Save as Draft
       publish: Publish
@@ -4228,6 +4333,20 @@ en:
         dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
         count: "%{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero."
         confirm_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
+      add_translation: "Add Translation"
+      add_primary_info: "You can't create other language translations <br />until you create the article in %{primary_language}"
+      move_to_folder_msg: "You can't create other language translations <br />until you select the folder and click 'Save/Publish'"
+      translations: "Translations"
+      show_all_analytics: "See analytics for all languages"
+      not_in_portal: "This language is not visible on portal"
+      language_not_in_portal: "This article will not show up to your users until the language is made visible on portal"
+      add_language: "Add %{language_name}"
+      change_language_settings: "Change %{language_name} Settings"
+      contact_admin: "<b>Contact your admin</b>"
+      missing_translations:
+        title: "Add missing translation"
+        info: "To continue accessing the article, you need to add translation for Category/Folder name in %{language_name}"
+        permission_denied: "Oops! You don't have the permission to manage Category/Folder, contact your administrator to add translation."
     draft:
       name: Drafts
       all_drafts: All Drafts
@@ -4277,10 +4396,16 @@ en:
     info19: "Article type can be either <b>permanent</b> or <b>workaround</b>."
     info20: "You can attach <b>tags</b> to your articles, which is useful for categorizing articles of a similar kind."
     info21: "Agents can mail solution articles to <b>kbase@defaultportal.com</b> which will be shown under drafts section."
-    info22: "Draft articles will be visible only to agents and can be searched only at the agent side."
-    info23: "<b>My Drafts</b> will list all articles which you last edited and saved as draft."
-    info24: "<b>All Drafts</b> will list all the articles in draft status. In the case of multiple portal setup, you can filter draft articles from any specific portal by selecting the dropdown. "
-    kbase_email_info: "All emails sent by agents to <b>%{email}</b> will be stored here as drafts."
+    info25: "Draft articles will be visible only to agents."
+    info26: "<b>My Drafts</b> lists all articles which you last edited and saved as a draft."
+    info27: "<b>All Drafts</b> lists all the articles in draft status. If you have multiple portals set up, you can filter draft articles from any specific portal by selecting the option in the dropdown list."
+    info28: "A knowledge base portal serves as a one stop shop for your customers to find answers to their questions instantly. It can help you deflect common questions by providing a way for customers to help themselves."
+    info29: "The Freshdesk Knowledge Base has a 3 level hierarchy: <b>Category --> Folder --> Article </b>"
+    info30: "If you use multiple products, the categories you create can be made visible in their respective product portals."
+    info31: "You can chose to make your folders visible to different groups of people (<b>All, Logged in users, Agents & Selected companies</b>)."
+    kb: "Knowledge Base"
+    tour_v2: "Help me set up my knowledge base"
+    kbase_email_msg: "All emails sent by agents to <b>%{email}</b> will be stored as a draft here."
     folder: Folder
     solution_meta: Meta tags for search engines
     solution_meta_title: Title Tag
@@ -4289,7 +4414,7 @@ en:
     title_counter_message: Best SEO pages, recommend a maximum of 72 characters for title.
     description_counter_message: Best SEO pages, recommend a maximum of 150 characters for description.
     char_count: characters
-    meta_keywords_message: Seperate keywords with comma
+    meta_keywords_message: Separate keywords with comma
     user_details: "By <span class='article-user'>%{user}</span>, %{time}"
     feedback_message_1: "Need more information"
     feedback_message_2: "Difficult to understand"
@@ -4298,6 +4423,10 @@ en:
     properties: Properties
     solution_title: Title
     via: via
+    version_not_available:
+      solution: "This category is not available in %{current_language}, view it in <a href='%{url}'>%{helpdesk_language}</a>"
+      folder: "This folder is not available in %{current_language}, view it in <a href='%{url}'>%{helpdesk_language}</a>"
+      article: "This article is not available in %{current_language}, view it in <a href='%{url}'>%{helpdesk_language}</a>"
     article_properties:
       title_counter_message: 'Recommended: 50-60 characters'
       description_counter_message: 'Recommended: 150-160 characters'
@@ -5164,9 +5293,13 @@ en:
     rebrand: Rebrand your Helpdesk
     helpdesk: Helpdesk
     helpdesk_url: Helpdesk/Portal URL
+    languages: Languages
     language: Language
     primary_language: Primary Language
     additional_languages: Supported Languages
+    supported_portal_languages: "Languages visible to users"
+    supported_languages: "Supported Languages (%{count})"
+    portal_languages: "Languages Visible on Portal (%{count})"
     same_language_alert: Supported languages should not include the Portal language.
     settings: "Settings"
     logo_and_colors: "Logo and colors"
@@ -5175,6 +5308,8 @@ en:
     change_favicon: "Change favicon"
     use_default: "Use default"
     last_published: "Portal was last published %{last_published} ago"
+    visible_in_portal: Visible on Portal
+    hidden_on_portal: Hidden on Portal
     anyone: "Anyone"
     users_from_domains: "Users from selected domains"    
     search_domain: Search Domain
@@ -6980,6 +7115,23 @@ en:
         login: "Login"
         email: "Email"
         password: "Password"
+    freshsales:
+      label: "Freshsales"
+      helptext: "<h4>Freshsales Integration Help</h4><p><br/> Once you enable this integration, your agents can access Freshsales contact information right inside the Freshdesk ticket & contact pages. <br /><br /> Please note that your agents can only view those fields that are configured by you in the settings page and the search function is based on the email address mapping."
+      desc: "You can view contact information from Freshsales in Freshdesk."
+      form:
+        freshsales_settings: "Freshsales Settings"
+        domain: "Account Domain"
+        auth_token: "Authentication Token"
+        domain_info: "Enter your freshsales domain without https. Ex: example.freshsales.com"
+        auth_token_info: "Enter your authentication token"
+        error: "Please verify your settings and try again"
+        select: "Select an option"
+        contact: "Contact Fields"
+        lead: "Lead Fields"
+        account: "Account Fields"
+        deal: "Deal Fields"
+        deal_settings: "Agents can create/link or unlink deals from the ticket"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -8690,6 +8842,7 @@ en:
     business_hours: "During business hours"
     anytime: "Always (24/7)"
     business_calendar: "Select business hour"
+    show_widget: "When agents are online and accepting chats"
     texton: "On"
     textoff: "Off"
     form_details: "Form details"

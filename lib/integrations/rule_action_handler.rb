@@ -12,8 +12,7 @@ module Integrations
           :operation_event => "execute_rule",
           :operation_name => "slack",
         }
-        act_on.save
-        Integrations::IntegrationsWorker.perform_async(options)
+        act_on.va_rules_after_save_actions << {klass: "Integrations::IntegrationsWorker", method: :perform_async, args: options}
       end
     end
   end

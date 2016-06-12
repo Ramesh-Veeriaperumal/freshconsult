@@ -47,6 +47,9 @@ window.App.Solutions = window.App.Solutions || {};
       case 'solution/categories/manage':
         $('#community-solutions-sidebar [data-page-name=manage]').parent().addClass('active');
         break;
+      case 'solution/categories/all_categories':
+        $('#community-solutions-sidebar [data-page-name=all_category]').parent().addClass('active');
+        break;
       case 'solution/drafts/index':
         if (window.location.pathname === '/solution/drafts/all') {
           $('#community-solutions-sidebar [data-page-name=all_drafts]').parent().addClass('active');

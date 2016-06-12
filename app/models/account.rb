@@ -21,7 +21,7 @@ class Account < ActiveRecord::Base
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :validations, :callbacks, :rabbitmq, :solution_associations
+  concerned_with :associations, :constants, :validations, :callbacks, :rabbitmq, :solution_associations, :multilingual
 
   include CustomerDeprecationMethods
   
@@ -475,6 +475,10 @@ class Account < ActiveRecord::Base
       additional_settings = { :archive_days => archive_days }
       account_additional_settings.update_attributes(:additional_settings => additional_settings)
     end
+  end
+
+  def portal_languages
+    account_additional_settings.additional_settings[:portal_languages]
   end
 
   protected
