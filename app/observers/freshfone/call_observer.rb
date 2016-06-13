@@ -18,16 +18,18 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     update_caller_data(freshfone_call) if freshfone_call.caller.blank?
 	end
 
-  def after_update(freshfone_call)
-    account = freshfone_call.account
-    freshfone_call.update_metrics if account.features? :freshfone_call_metrics
-    if freshfone_call.call_status_changed?
-      publish_new_call_status(freshfone_call)
-      initiate_tracker(freshfone_call) if
+  def after_update(call)
+    account = call.account
+    call.update_metrics if account.features? :freshfone_call_metrics
+    if call.call_status_changed?
+      publish_new_call_status(call)
+      
+      initiate_tracker(call) if
         account.launched?(:freshfone_call_tracker) && !trial?
-      if freshfone_call.call_ended?
-        trigger_cost_job(freshfone_call)
-        remove_value_from_set(pinged_agents_key(freshfone_call.id, account), freshfone_call.call_sid)
+      update_pinged_agent_status(call) if ongoing_child_call? call 
+      if call.call_ended?
+        trigger_cost_job(call)
+        remove_value_from_set(pinged_agents_key(call.id, account), call.call_sid)
       end
     end
   end
@@ -36,9 +38,16 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     return unless call.send(:transaction_include_action?, :update)
     initiate_subscription_actions(call) if
       call.previous_changes[:total_duration] && trial?
+    if call_not_ringing?(call)
+      Resque.remove_delayed(Freshfone::NotificationFailureRecovery, {:account_id => call.account.id, :call_id => call.id})  if call.noanswer? || call.inprogress? || call.queued?
+    end
   end
 
 	private
+    def call_not_ringing?(call)
+      call.previous_changes[:call_status].last != Freshfone::Call::CALL_STATUS_HASH[:default] if call.previous_changes[:call_status].present?
+    end
+
 		def initialize_data_from_params(freshfone_call)
 			params = freshfone_call.params || {}
 			freshfone_call.business_hour_call = freshfone_call.freshfone_number.working_hours?
@@ -101,6 +110,10 @@ class Freshfone::CallObserver < ActiveRecord::Observer
       options.delete(:country) if options[:country].blank? # sometimes empty country is updated.
       caller.update_attributes(options)
       caller
+    end
+
+    def update_pinged_agent_status(call)
+      call.meta.update_pinged_agents_with_response(call.user_id, :accepted)
     end
 
     def add_cost_job(freshfone_call)
@@ -170,5 +183,10 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     def initiate_subscription_actions(call)
       freshfone_subscription.add_to_calls_minutes(call.call_type, call.total_duration)
       initiate_trial_trigger_worker(call)
+    end
+
+    def ongoing_child_call?(call)
+      call.inprogress? && call.user_id.present? && (
+        call.incoming? || !call.is_root?) # checking not root for outgoing child
     end
 end

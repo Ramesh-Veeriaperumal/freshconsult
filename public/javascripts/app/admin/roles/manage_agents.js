@@ -22,20 +22,20 @@ var ManageAgents = ManageAgents || (function($){
 		$(document).on('click', 'a.popup', function(){
 			var data = $(this).data();
 			$("#roleid").val(data.roleid);
-			_showModal(data.roleid, data.title, data.agentcount);
+			_showModal(data.roleid, data.title, data.agentcount, data.isaccadmin);
 		});
 	}
 
-	function _showModal(id, name, agentcount){
+	function _showModal(id, name, agentcount, isaccadmin){
 
 		// initial set of loading here
 		_appendContent(name, agentcount, _initmodal);
 		_resetPopup();
-		var $agentSelectBox = jQuery('#manage-agents-content [data-action="add-agent"]');
-		if(name === ACCOUNT_ADMIN_TITLE && jQuery("#is-accadmin").val() === "false"){
-			$agentSelectBox.attr('disabled', true).trigger('change');
+		var $agentSelectBox = jQuery('#manage-agents-content .add-agent-box, #manage-agents-content .button-container');
+		if(isaccadmin && jQuery("#is-accadmin").val() === "false"){
+			$agentSelectBox.hide();
 		}else{
-			$agentSelectBox.attr('disabled', false).trigger('change');
+			$agentSelectBox.show();
 		}
 		if(id){ // Roles already created
 			jQuery("#manage-agents .agent-list-wrapper").addClass('sloading');
@@ -45,7 +45,7 @@ var ManageAgents = ManageAgents || (function($){
 			}else{
 				_getAgentDetails(id).success(function(data){
 					var constructedData = _constructObject(data, _select2Data);
-					if(name === ACCOUNT_ADMIN_TITLE && jQuery("#is-accadmin").val() === "false"){
+					if(isaccadmin && jQuery("#is-accadmin").val() === "false"){
 						constructedData['admin'] = true;
 					}else{
 						constructedData['admin'] = false;

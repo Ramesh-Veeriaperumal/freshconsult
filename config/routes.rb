@@ -386,7 +386,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-  resources :conference do
+    resources :conference do
       collection do
         get  :initiate
         post :wait
@@ -398,6 +398,14 @@ Helpkit::Application.routes.draw do
         post :complete_customer_wait_conference
         post :client_accept
         post :connect_agent
+      end
+    end
+
+    resources :agent_leg do
+      collection do
+        post :disconnect_browser_agent
+        put :agent_response
+        post :remove_notification_recovery
       end
     end
 

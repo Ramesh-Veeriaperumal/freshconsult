@@ -449,7 +449,8 @@ module Helpdesk::TicketsHelper
 
     account_data = {
       :account_id => current_user.account_id, 
-      :user_id    => current_user.id
+      :user_id    => current_user.id,
+      :avatar_url => current_user.avatar_url
     }.to_json
     encoded_data = Base64.encode64(aes.update(account_data)+ aes.final)
     return {:data => encoded_data}.to_json.html_safe

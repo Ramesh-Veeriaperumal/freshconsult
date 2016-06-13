@@ -556,6 +556,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 					"call_id" : this.callId
 				}
 			});
+		},
+		canTrackQuality: function(){
+			return !this.isAgentConference && freshfone.isCallQualityMetricsEnabled && this.freshfone_monitor; 
 		}
 
 	};

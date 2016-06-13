@@ -245,6 +245,23 @@ module Cache::Memcache::Account
     end
   end
 
+  def fresh_sales_manager_from_cache
+    if self.created_at > Time.now.utc - 3.days # Logic to handle sales manager change
+      key = FRESH_SALES_MANAGER_3_DAYS % { :account_id => self.id }
+      expiry = 1.day.to_i
+    else
+      key = FRESH_SALES_MANAGER_1_MONTH % { :account_id => self.id }
+      expiry = 30.days.to_i
+    end
+    MemcacheKeys.fetch(key,expiry) do
+      begin
+        CRM::FreshsalesUtility.new({ account: self }).account_manager  
+      rescue  => e
+        CRM::FreshsalesUtility::DEFAULT_ACCOUNT_MANAGER
+      end      
+    end
+  end
+
   def account_additional_settings_from_cache
     key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
     MemcacheKeys.fetch(key) { self.account_additional_settings }

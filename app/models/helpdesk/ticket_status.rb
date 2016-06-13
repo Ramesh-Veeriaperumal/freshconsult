@@ -129,53 +129,48 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     account.onhold_and_closed_statuses_from_cache.include?(status_id)
   end
 
-    def update_tickets_sla
-      tkt_states = tickets.visible
-      tkt_states.each do |t_s|
+  def update_tickets_sla
+    tickets.visible.find_in_batches(:batch_size => 300) do |tkts|
+      tkts.each do |ticket|
         begin
-          fetch_ticket = tickets.visible.find_by_id(t_s.id)
-          next if(fetch_ticket.nil?)
           if (stop_sla_timer? or deleted?)
-            fetch_ticket.ticket_states.sla_timer_stopped_at ||= Time.zone.now
+            ticket.ticket_states.sla_timer_stopped_at ||= Time.zone.now
           else
-            fetch_ticket.ticket_states.sla_timer_stopped_at = nil
+            ticket.ticket_states.sla_timer_stopped_at = nil
           end
-          fetch_ticket.ticket_states.save
+          ticket.ticket_states.save
         rescue Exception => e
             NewRelic::Agent.notice_error(e)
-            Rails.logger.debug "SLA timer stopped at time update failed for Ticket ID : #{t_s.id} on status update"
+            Rails.logger.debug "SLA timer stopped at time update failed for Ticket ID : #{ticket.id} on status update"
             Rails.logger.debug "Error message ::: #{e.message}"
         end
       end
     end
-  
-    def update_tickets_dueby
-      if stop_sla_timer?
-        update_tickets_sla
-      else
-        tkt_states = tickets.visible.find(:all,
-                        :joins => :ticket_states,
-                        :conditions => ['helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL'])
-        tkt_states.each do |t_s|
+  end
+
+  def update_tickets_dueby
+    if stop_sla_timer?
+      update_tickets_sla
+    else
+      tickets.visible.joins(:ticket_states).where("helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL").find_in_batches(:batch_size => 300) do |tkts|
+        tkts.each do |ticket|
           begin
-            fetch_ticket = tickets.visible.find_by_id(t_s.id)
-            next if(fetch_ticket.nil?)
-            sla_timer_stopped_at_time = fetch_ticket.ticket_states.sla_timer_stopped_at
-            if(!sla_timer_stopped_at_time.nil? and fetch_ticket.due_by > sla_timer_stopped_at_time)
-              fetch_ticket.update_dueby(true)
-              # fetch_ticket.send(:update_without_callbacks)
-              fetch_ticket.sneaky_save
+            sla_timer_stopped_at_time = ticket.ticket_states.sla_timer_stopped_at
+            if(!sla_timer_stopped_at_time.nil? and ticket.due_by > sla_timer_stopped_at_time)
+              ticket.update_dueby(true)
+              ticket.sneaky_save
             end
-            fetch_ticket.ticket_states.sla_timer_stopped_at = nil
-            fetch_ticket.ticket_states.save
+            ticket.ticket_states.sla_timer_stopped_at = nil
+            ticket.ticket_states.save
           rescue Exception => e
             NewRelic::Agent.notice_error(e)
-            Rails.logger.debug "Due by time update failed for Ticket ID : #{t_s.id} on status update"
+            Rails.logger.debug "Due by time update failed for Ticket ID : #{ticket.id} on status update"
             Rails.logger.debug "Error message ::: #{e.message}"
           end
         end
       end
     end
+  end
 
   class << self
     include Cache::Memcache::Helpdesk::TicketStatus

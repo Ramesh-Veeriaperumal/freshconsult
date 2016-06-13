@@ -59,8 +59,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
     resource :"freshfone/ivr"
     resource :"freshfone/user"
-    resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings ]
+    resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings, :agent_leg ]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
+    resource :"freshfone/agent_leg", :only => [:agent_response, :disconnect_browser_agent, :remove_notification_recovery]
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
     resource :"freshfone/agent_conference", :only => [:add_agent, :success, :cancel]
     resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :wrap_call]

@@ -86,7 +86,7 @@
             .input-date-field{
               @include float (left );
                width: 300px;
-                  input{
+                  input.date{
                     width: 100%;
                   }
                   label.error{

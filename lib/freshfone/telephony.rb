@@ -161,7 +161,7 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
   end
 
   def initiate_transfer_on_unhold #Can be merged with intiate_unhold action
-    params[:child_sid] = current_call.children.last.dial_call_sid || params[:CallSid]
+    params[:child_sid] = params[:CallSid] || current_call.children.last.dial_call_sid
     hold_queue = current_call.hold_queue
     customer_leg = outgoing_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
     telephony.dequeue(hold_queue, customer_leg, transfer_on_unhold_url(current_call.id), current_account) 

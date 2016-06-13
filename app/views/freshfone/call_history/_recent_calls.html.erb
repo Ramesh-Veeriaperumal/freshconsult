@@ -7,7 +7,7 @@
 		</div>
 		<div class="item_actions">
 			 <span class="user_name result-name <%= !call.customer ? is_strange_number : ''  %> ">
-				 <%= call.customer ? link_to_user(call.customer, {"data-placement" => "topLeft"}) :
+				 <%= call.customer ? link_to_user(call.customer, {"data-placement" => "topRight", "data-offset" => "250"}) :
 				 	 										number_to_phone(call.caller_number) %>
 			 </span>
 		</div>
