@@ -122,6 +122,9 @@ class ApiContactsController < ApiApplicationController
         params_hash[:avatar_attributes] = { content: params_hash.delete(:avatar) }
       end
 
+      # email has to be saved in downcase to maintain consistency between user_emails table and users table
+      params_hash[:email].downcase! if params_hash[:email]
+
       @email_objects = {}
       construct_all_emails(params_hash) if params_hash.key?(:other_emails)
 
@@ -132,14 +135,16 @@ class ApiContactsController < ApiApplicationController
 
     def construct_all_emails(params_hash)
       all_emails = params_hash.delete(:other_emails)
-      primary_email = params_hash.key?(:email) ? params_hash.delete(:email) : @item.email
 
-      all_emails.uniq!
+      # If an existing user has an uppercase email, save it in downcase to maintain constistency with user_emails table
+      primary_email = params_hash.key?(:email) ? params_hash.delete(:email) : @item.email.downcase
 
       if primary_email
         @email_objects[:primary_email] = primary_email
         all_emails << primary_email
       end
+
+      all_emails.map!(&:downcase).uniq!
 
       @email_objects[:old_email_objects]  = current_account.user_emails.where(email: all_emails)
       @email_objects[:new_emails]  = all_emails - @email_objects[:old_email_objects].collect(&:email)
