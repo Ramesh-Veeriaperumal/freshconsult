@@ -1,4 +1,4 @@
-// select2 Hack
+ // select2 Hack
 //-----------------
 
 $SELECT2_DROP_ZINDEX: 99999;
@@ -261,7 +261,7 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 .input-date-field, .support-date-field {
  	.ui-datepicker-trigger {
  		@include left(-1px);
- 		top: 1px;
+ 		top: 3px;
  		background: none;
  		border: 0;
  		position: absolute;

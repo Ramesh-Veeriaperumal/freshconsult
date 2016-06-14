@@ -146,6 +146,10 @@ module Freshfone::Endpoints
     "#{host}/freshfone/conference_transfer/transfer_agent_wait"
   end
 
+  def browser_agent_wait_url(id)
+    "#{host}/freshfone/conference_transfer/transfer_agent_wait?call=#{id}"
+  end
+
   def initiate_hold_url(customer_sid, transfer_options)
     "#{host}/freshfone/hold/initiate?hold_queue=hold_#{customer_sid}#{transfer_options}"
   end

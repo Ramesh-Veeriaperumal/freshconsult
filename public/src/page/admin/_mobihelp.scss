@@ -66,8 +66,55 @@
 		height: 20px;
 	}
 }
-
+.with-list{
+  .hotline-info-list{
+    display: none;
+  }
+}
 .mobihelp-apps{ 
+  background-color: #f8f8f8;
+  border: 1px #ececec solid;
+  border-radius: 6px;
+  p{ color: $gray; line-height: 1.6em}
+  .get-started{
+    font-weight: 600;
+  }
+  .hotline-note{
+    margin-top: 190px;
+  }
+  .toggle-info{
+    position: relative;
+    .hotline_demo-wrap{
+      position: absolute;
+      right: -70%;
+      top: -100px;
+    }
+  }
+  .phone-frame{
+    background-image: image-url("/assets/helpimages/iphone-frame.png");
+    @include size(510px, 252px);
+    position: relative;
+    background-repeat: no-repeat;
+  }
+  .hotline_demo{
+    background-image: image-url("/assets/helpimages/DriveU.gif");
+    background-repeat: no-repeat;
+    @include size(385px, 216px);
+    position: absolute;
+    top: 62px;
+    left: 17px;
+  }
+  .more-details-link{
+    cursor: pointer;
+  }
+
+  .hotline-info-list{
+    margin: 40px 0px;
+    li{
+      padding: 4px 0px;
+      color: $gray;
+    }
+  }
 	.index-app-container{
 		margin-top: 60px;
 		.index-app-span{
@@ -97,31 +144,6 @@
 				@include margin-right(5px);
 				margin-top: -3px;
 			}
-		}
-	}
-}
-
-.create-container{
-	margin-top: 50px;
-	&:nth-child(1){
-		@include margin-left(0);
-	}
-	.create-btn{
-		margin: 0 auto !important;
-		float: none !important;
-		border: 1px solid #2E679B;
-		border-radius: 5px;
-		background-color: #FAFAFA;
-		text-align: center;
-		padding: 20px;
-		font-size: 16px;
-		a{
-			color: #4674A3;
-			padding: 5px;
-			text-decoration: underline;
-		}
-		form{
-			display: inline-block;
 		}
 	}
 }

@@ -255,10 +255,12 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @ticket = ticket
     @account = note.account    
 
-    if ticket.account.new_survey_enabled?
-       @survey_handle = CustomSurvey::SurveyHandle.create_handle(ticket, note, options[:send_survey])
-    else
-       @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey])
+    unless ticket.parent_ticket.present?
+      if ticket.account.new_survey_enabled?
+         @survey_handle = CustomSurvey::SurveyHandle.create_handle(ticket, note, options[:send_survey])
+      else
+         @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey])
+      end
     end
 
     if attachments.present? && attachments.inline.present?

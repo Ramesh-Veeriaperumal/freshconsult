@@ -60,10 +60,24 @@ var FreshfoneConnection;
 		deleteObject: function () {
 			var self = this;
 			if (this.$userInfoContainer) {
-				this.$userInfoContainer.hide('fast', function () {
-					self.$userInfoContainer.remove();
-					self.$userInfoContainer = null;
-				});
+				if (freshfonecalls.isOngoingCall()){
+					this.$userInfoContainer.css({'position': 'fixed'});
+					this.$userInfoContainer.animate({
+					  right: '100%',
+            top : '100%',
+            height: '0',
+            width: '0',
+            opacity: '0'
+					}, 600, function () {
+						self.$userInfoContainer.remove();
+						self.$userInfoContainer = null;
+					});
+				}else{
+					this.$userInfoContainer.fadeOut(function () {
+						self.$userInfoContainer.remove();
+						self.$userInfoContainer = null;
+					});				
+				}
 			}
 			if(this.notification) {
 				this.notification.closeWebNotification();

@@ -259,7 +259,7 @@
 			@include margin-right(10px);
 			font-size:15px;
 			position: absolute;
-			left: 7px;
+			@include left(7px);
 		}
 		a{
 			display:block;

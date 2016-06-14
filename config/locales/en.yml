@@ -984,6 +984,24 @@ en:
         info2: "You can also choose specific solution and forum categories to be listed in the main portal and other portals​.​"
         info3: "Additionally, you can rebrand the look and feel of your helpdesk by uploading your logo and favicon, giv​e​ your helpdesk a name, and customiz​e​ your portal colors."
         info4: "If you would like to set up user permissions and tweak forum moderation settings, click on the 'Settings' tab. Settings cannot be configured for each portal and will be common for all portals that have been created."
+        
+    hotline:
+      heading1: Mobihelp users meet hotline
+      content1:
+        info1:  Hotline is the new mobile support and engagement platform from Freshdesk. It gives you all that Mobihelp had to offer and more in a sick new product.
+      content2:
+        list_title: "With Hotline you get:"
+        list1: In-app chat with push notifications
+        list2: FAQs for mobile apps
+        list3: High speed engagement interface for agents
+        list4: Native integration into Freshdesk
+        list5: Campaign tools and rich messaging
+      content3: 
+        note_title: "Note:"
+        note_info:  "We will continue to support Mobihelp for existing customers, but are discontinuing active development for it. We encourage you to move to Hotline at the earliest."
+      get_started: Get started with Hotline today 
+      list_title: Mobihelp Apps
+          
     mobihelp:
       app_review:
         request_sent: "App Review Request Sent"
@@ -1027,6 +1045,7 @@ en:
           no_app:
             title: Welcome to Mobihelp
             sdk_and_guide: Mobihelp SDK and Integration guide
+            
         new:
           title: New Mobihelp App
         edit:
