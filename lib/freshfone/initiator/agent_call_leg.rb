@@ -66,8 +66,9 @@ class Freshfone::Initiator::AgentCallLeg
   
   private
     def simultaneous_accept?
+      return if params[:CallStatus] != "in-progress"
       simultaneous_accept = !add_member_to_redis_set(simultaneous_accept_key, current_call.id)
-      set_others_redis_expiry(simultaneous_accept_key, 20)
+      set_others_redis_expiry(simultaneous_accept_key, 20) unless simultaneous_accept
       simultaneous_accept
     end
 

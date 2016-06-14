@@ -48,10 +48,15 @@
 	</div>	
 </div>
 <ul class="popupbox-tabs outgoing hide">
-		<li class="dialpad_popup tooltip">
-			<a href="#freshfone_dialpad" class="showDialpad tooltip" data-toggle="popupbox"
-				 data-offset=1 title="<%= t('freshfone.widget.phone_icon') %>"><%= font_icon "ff-phone", :size => 16 %></a>
-		</li>
+	<li class="dialpad_popup tooltip">
+		<a href="#freshfone_dialpad" class="showDialpad tooltip" data-toggle="popupbox"
+			 data-offset=1 title="<%= t('freshfone.widget.phone_icon') %>"><%= font_icon "ff-phone", :size => 16 %></a>
+	</li>
+
+	<div class="browser_alert hide">
+	  <a class="alert_popup" href="#" title="phoneicon" data-placement="above" rel="ff-alert-popover"><i class="ficon-alert active fsize-20"></i></a> 
+	</div>
+
 </ul>	
 <ul class="popupbox-tabs supervisor hide">
 	<li class="no_action">
