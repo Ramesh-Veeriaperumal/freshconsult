@@ -14,6 +14,10 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.where('email is not null and deleted is false').first
   end
 
+  def get_user_with_other_emails
+    @account.user_emails.group(:user_id).having("count(user_id) > 1").first.user
+  end
+
   def get_company
     company = Company.first
     return company if company
@@ -1263,6 +1267,30 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('choose_me', :not_included, list: 'Choice 1,Choice 2,Choice 3')])
   end
 
+  def test_create_contact_with_email_and_other_emails_of_another_contact
+    sample_user = get_user_with_other_emails
+    email = sample_user.email
+    email_array = sample_user.user_emails.map(&:email) - [email]
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: email,
+                                        other_emails: email_array)
+    match_json([bad_request_error_pattern('email', :'Email has already been taken'),
+      bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
+    assert_response 409
+  end
+
+  def test_update_contact_with_email_and_other_emails_of_another_contact
+    sample_user = get_user_with_other_emails
+    email = sample_user.email
+    email_array = sample_user.user_emails.map(&:email) - [email]
+
+    sample_contact = get_user
+    put :update, construct_params({ id: sample_contact.id }, email: email, other_emails: email_array)
+    match_json([bad_request_error_pattern('email', :'Email has already been taken'),
+      bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
+    assert_response 409
+  end
+
   def test_update_contact_with_already_associated_email_in_uppercase
     add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_p_' + Time.zone.now.to_i.to_s + '@sampledomain.com')
     sample_user = User.last
@@ -1326,4 +1354,5 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_match(/.* `email` = '#{email.downcase}', .*/, query)
   end
   
+
 end
