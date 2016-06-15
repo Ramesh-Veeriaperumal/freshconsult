@@ -20,7 +20,7 @@
   <td class="name td-ticket-details <%= 'user-page' if user_page %>">
 		<div class="ticket_subject">
 			<span class="sc-item-cursor priority-border  priority-<%=ticket.priority_key%> shorcuts-info"></span>
-			<h3 class="ticket-description-tip <%= ticket_style %>_ticket" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
+			<h3 class="ticket-description-tip <%= ticket_style %>_ticket hyphernate" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
 				<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket, "data-pjax" => "#body-container" ) %>
 
 				<% if (feature?(:agent_collision) || feature?(:collision)) %>

@@ -611,12 +611,21 @@
 			/*color:#333;*/
 			font-weight:bold;
 		}
-
-      h3{
-		width: 100%;
-		overflow: hidden;
-		word-break: break-all;
-		font-size:16px;
+		
+		//hyphens
+		.hyphernate {
+		    word-break: break-word;
+		    hyphens: auto;
+		}
+		@supports not (hyphens: auto) {
+		    .hyphernate {
+		        word-break: break-all;
+		    }
+		}
+    h3{
+			width: 100%;
+			overflow: hidden;
+			font-size:16px;
 		.ticket_id {
 			color:#888;
 		}
@@ -812,6 +821,9 @@
 .threecol-form .item{
 	@include float(left);
 	width:33%;
+	label.checkbox{
+		font-size: 13px;
+	}
 	.level{
 		@include margin-left(11px);
 	}
