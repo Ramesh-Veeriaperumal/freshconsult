@@ -67,8 +67,8 @@ class Social::TicketRule < ActiveRecord::Base
       includes = filter_data[:includes]
       includes.each do |keyword|
         to_match = tokenize(keyword)
-        match_found = to_match.each.map{|match| feed.downcase.include?(match.strip.downcase)}
-        return true unless match_found.include?(false)
+        match_found = to_match.each.map{|keyword| /\b#{keyword.downcase}\b/.match(feed.downcase)}
+        return true unless match_found.include?(nil)
       end
       return false
     end
