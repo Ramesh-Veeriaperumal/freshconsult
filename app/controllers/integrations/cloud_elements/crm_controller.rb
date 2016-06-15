@@ -234,7 +234,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       account_metadata = @account_metadata.merge({:instance_id => @app_config['fd_instance_id']})
       instance_object_definition( obj_def_payload(@contact_synced), contact_metadata )
       instance_object_definition( obj_def_payload(@account_synced), account_metadata )
-      instance_transformation( fd_trans_payload(@contact_synced,'user','contacts'), contact_metadata )
+      instance_transformation( fd_trans_payload(@contact_synced,'','contacts'), contact_metadata )
       instance_transformation( fd_trans_payload(@account_synced,'customer','accounts'), account_metadata )
     end
 
@@ -264,11 +264,20 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
     def fd_trans_payload obj_synced, fd_obj, obj_name
       arr = Array.new
-      obj_synced.each do |obj|
-        arr.push({
-          "path" => "FD_slave_#{obj['fd_field']}",
-          "vendorPath" => "#{fd_obj}.#{obj['fd_field']}"
-        })
+      if fd_obj.present?
+        obj_synced.each do |obj|
+          arr.push({
+            "path" => "FD_slave_#{obj['fd_field']}",
+            "vendorPath" => "#{fd_obj}.#{obj['fd_field']}"
+          })
+        end
+      else
+        obj_synced.each do |obj|
+          arr.push({
+            "path" => "FD_slave_#{obj['fd_field']}",
+            "vendorPath" => "#{obj['fd_field']}"
+          })
+        end
       end
       parse_trans_payload( arr, obj_name)
     end
@@ -280,14 +289,14 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def create_formula_inst( element_instance_id, fd_instance_id )
-      formula_id = CRM_TO_HELPDESK_FORMULA_ID[element.to_sym]
+      formula_id = Integrations::CRM_TO_HELPDESK_FORMULA_ID[element]
       metadata = @metadata.merge({:formula_id => formula_id})
       payload = formula_instance_payload( "#{element}_#{subdomain}_#{current_account.id}", element_instance_id, fd_instance_id )
       create_formula_instance(payload, metadata) 
     end
 
     def update_formula_inst
-      formula_id = CRM_TO_HELPDESK_FORMULA_ID[element.to_sym]
+      formula_id = Integrations::CRM_TO_HELPDESK_FORMULA_ID[element]
       metadata = @metadata.merge({:formula_id => formula_id, :formula_instance_id => @app_config['crm_to_helpdesk_formula_instance']})
       payload = formula_instance_payload( "#{element}=>freshdesk:#{current_account.id}", @app_config['element_instance_id'], @app_config['fd_instance_id'])
       update_formula_instance(payload, metadata)
@@ -361,7 +370,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       fd_instance_id = installed_app_configs['fd_instance_id']
       formula_instance_id = installed_app_configs['crm_to_helpdesk_formula_instance']
       app_name = installed_app.application.name
-      formula_id = CRM_TO_HELPDESK_FORMULA_ID[app_name.to_sym]
+      formula_id = Integrations::CRM_TO_HELPDESK_FORMULA_ID[app_name]
       metadata = {:user_agent => user_agent}
       cloud_elements_con = Integrations::CloudElementsController.new
       cloud_elements_con.delete_formula_instance(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
@@ -378,7 +387,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
     def delete_formula_instance_error installed_app, user_agent, formula_instance_id
       app_name = installed_app.application.name
-      formula_id = CRM_TO_HELPDESK_FORMULA_ID[app_name.to_sym]
+      formula_id = Integrations::CRM_TO_HELPDESK_FORMULA_ID[app_name]
       metadata = {:user_agent => user_agent}
       cloud_controller = Integrations::CloudElementsController.new
       cloud_controller.delete_formula_instance(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))

@@ -25,4 +25,5 @@ module Integrations
 	#========================================================
   cloud_elements_hash = hash["app"]["cloud_elements"][Rails.env]
   CLOUD_ELEMENTS_AUTH_HEADER = cloud_elements_hash["auth_header"]
+  CRM_TO_HELPDESK_FORMULA_ID = cloud_elements_hash["formula_template_id"]
 end
