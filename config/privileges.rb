@@ -526,6 +526,9 @@ Authority::Authorization::PrivilegeList.build do
   client_manager do
   end
 
+  contractor do
+  end
+
   # Authority::Authorization::PrivilegeList.privileges.each { |privilege| puts privilege}
 
 end

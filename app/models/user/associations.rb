@@ -1,7 +1,24 @@
 class User < ActiveRecord::Base
 
-  belongs_to :company, :foreign_key => 'customer_id'
-  has_many :user_companies, :class_name => 'UserCompany', :dependent => :destroy
+  has_many :user_companies, :class_name => 'UserCompany', 
+                            :dependent => :destroy
+  accepts_nested_attributes_for :user_companies
+  has_one :default_user_company, :class_name => 'UserCompany', :conditions => { :default => true }
+  
+  has_many :companies, :class_name => 'Company', 
+                       :through => :user_companies, 
+                       :foreign_key => 'user_id' do 
+    def sorted
+      to_ret = self.to_a
+      user = proxy_association.owner
+      return [] if to_ret.empty? || !user.default_user_company.present?
+      to_ret.sort_by! { |c| [c.name] }
+      default_company_pos = to_ret.find_index { |c| c.id == user.default_user_company.company_id }
+      to_ret.insert(0, to_ret.delete_at(default_company_pos))
+      to_ret
+    end
+  end
+
   belongs_to :parent, :class_name =>'User', :foreign_key => :string_uc04
 
   has_many :authorizations, :dependent => :destroy

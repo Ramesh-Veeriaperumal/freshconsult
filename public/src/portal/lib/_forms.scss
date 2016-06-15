@@ -600,6 +600,20 @@ label.required:after{
   }
 }
 
+.company_container{
+  @include border-left(1px dotted #333);
+  margin-bottom: 5px;
+}
+
+.company_label{
+  @include padding(0px 0px 21px 18px);
+  margin-top: 17px;
+}
+
+.company_div{
+  padding-top: 20px;
+}
+
 .cc-emails{
   @include clearfix;
   margin-top: 6px;
@@ -732,6 +746,24 @@ label.required:after{
   }
 }
 /*-----------------Date picker custom clear Button-----------------------*/
+.controls {
+   .dateClear {
+   top: 2px;
+     position: absolute;
+     right: 9px;
+     padding: 5px;    
+    cursor: pointer;
+ }
+ .dateClear {
+   .ficon-cross:before {
+     font-size: 1.2em;
+       color: #999999;
+   }
+ }
+ }
+ .company_form_date + .dateClear {
+    right: 25px;
+ }
 .support-date-field{
 input.date {
   width:100%;

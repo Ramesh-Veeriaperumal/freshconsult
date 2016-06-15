@@ -127,12 +127,15 @@ module Helpdesk::TicketActions
   def create_ticket_from_note    
     @source_ticket = current_account.tickets.find_by_display_id(params[:id])
     @note = @source_ticket.notes.find(params[:note_id])   
+    company_id = @note.user.companies.map(&:id).include?(@source_ticket.company_id) ? 
+                  @source_ticket.company_id : @note.user.company_id
     params[:helpdesk_ticket] = {:subject =>@source_ticket.subject ,
                                 :email => @note.user.email,
                                 :priority =>@source_ticket.priority,
                                 :group_id =>@source_ticket.group_id,
                                 :email_config_id => @source_ticket.email_config_id,
                                 :product_id => @source_ticket.product_id,
+                                :company_id => company_id,
                                 :status =>@source_ticket.status,
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             

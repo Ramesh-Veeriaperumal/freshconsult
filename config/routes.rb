@@ -1365,6 +1365,7 @@ Helpkit::Application.routes.draw do
         get :agents
         get :companies
         get :tags
+        get :company_users
       end
     end
 
@@ -2050,6 +2051,7 @@ Helpkit::Application.routes.draw do
     end
     
     match 'commons/group_agents/(:id)' => "commons#group_agents"
+    match 'commons/user_companies' => "commons#user_companies"
 
     
     resources :scenario_automations do

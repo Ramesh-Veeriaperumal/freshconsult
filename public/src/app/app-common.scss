@@ -3605,6 +3605,7 @@ body.popup-body{ min-width: 0px; }
 //							Box Styles End
 //------------------------------------------------------------------------------------------
 
+
 //------------------------------------------------------------------------------------
 //								Contact form changes by prashanth
 //------------------------------------------------------------------------------------
@@ -4386,6 +4387,54 @@ $adm-bdr:#F0F0F0;
 	}
 }
 
+/*Contacts autocomplete style issue */
+.ul-list{
+  border: 1px solid rgba(82, 168, 236, 0.8);
+  border-top: none;
+  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+  background-color: #fff;
+  border-radius: 0 0 5px 5px;
+  box-sizing: border-box;
+}
+.list{
+  background: none;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+.li-selected{
+  background: #3875d7;
+  color: #fff;
+}
+
+.select2ui{
+    &.autocomplete{
+        ul{
+            @extend .ul-list;
+            top: -3px;
+            li{
+                @extend .list;
+                &.selected{
+                    @extend .li-selected;
+                    @include padding( 5px 10px );
+                  }
+            }
+        }
+    }
+}
+
+.contacts .ui-autocomplete {
+    @extend .ul-list;
+    padding: 0;
+    margin-top: -4px !important;;
+  li{
+      @extend .list;
+      &.ui-state-focus{
+          @extend .li-selected;
+      }
+  }
+}
+
 .rebrand-page{
 	.moderation-info{
 		@include border-left(1px solid #ddd);
@@ -4412,7 +4461,7 @@ $adm-bdr:#F0F0F0;
   @include border-radius(5px);
 }
 
- .alert-message #group-rr-enable {
+.alert-message #group-rr-enable {
   text-align: center;
   @include margin-left(0);
   width: 17.02128%;

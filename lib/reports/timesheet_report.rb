@@ -50,7 +50,7 @@ module Reports::TimesheetReport
 
   def filter(start_date,end_date)
        scoper(start_date,end_date).find(:all,:conditions => (select_conditions || {}), 
-         :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester => [:company]]]) # need to ensure - Hari
+         :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester, :company]]) # need to ensure - Hari
 
   end
 
@@ -93,7 +93,7 @@ module Reports::TimesheetReport
 
   def archive_filter(start_date,end_date)
        archive_scoper(start_date,end_date).find(:all,:conditions => (archive_select_conditions || {}), 
-         :include => [:user, :workable => [:product, :group, :ticket_status, :requester => [:company]]]) # need to ensure - Hari
+         :include => [:user, :workable => [:product, :group, :ticket_status, :requester, :company]]) # need to ensure - Hari
   end
 
   def archive_select_conditions

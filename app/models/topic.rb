@@ -161,8 +161,8 @@ class Topic < ActiveRecord::Base
           {}
        else
           { :include => [:forum =>:customer_forums],
-            :conditions =>["forums.forum_visibility in(?) OR (forums.forum_visibility = ? and customer_forums.customer_id =?)" ,
-                           Forum.visibility_array(user) , Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] ,user.company_id]
+            :conditions =>["forums.forum_visibility in(?) OR (forums.forum_visibility = ? and customer_forums.customer_id in (?))" ,
+                           Forum.visibility_array(user) , Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users], user.company_ids_str]
           }
        end
     else

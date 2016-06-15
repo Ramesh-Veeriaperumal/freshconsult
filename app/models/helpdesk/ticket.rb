@@ -79,7 +79,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
         :conditions => ["owner_id = ?",company_id]
   } 
   }
-  
+
+  scope :contractor_tickets, lambda { |user_id, company_ids, operator|
+    if user_id.present?
+      self.where("helpdesk_tickets.requester_id = ? #{operator} helpdesk_tickets.owner_id in (?)", 
+                  user_id, company_ids)
+    else
+      self.where("helpdesk_tickets.owner_id in (?)", company_ids)
+    end
+  }
+
   scope :company_tickets_resolved_on_time,lambda { |company_id| { 
         :joins => %(INNER JOIN helpdesk_ticket_states on 
           helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and 
@@ -1009,8 +1018,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         conditions: { requester_id: ticket_filter.try(:requester_id) }
       },
       company_id: { 
-        conditions: { users: { customer_id: ticket_filter.try(:company_id) } },
-        joins: :requester
+        conditions: { owner_id: ticket_filter.try(:company_id) }
       },
       updated_since: {
         conditions: ['helpdesk_tickets.updated_at >= ?', ticket_filter.try(:updated_since).try(:to_time).try(:utc)]

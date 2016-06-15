@@ -61,10 +61,10 @@ class Forum < ActiveRecord::Base
   def self.visiblity_condition(user)
     condition = "forums.forum_visibility IN (#{self.visibility_array(user).join(",")})"
     condition +=  " OR ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]}
-                    AND forums.id IN (SELECT customer_forums.forum_id from customer_forums
-                                      where customer_forums.customer_id = #{user.customer_id} and
-                                      customer_forums.account_id = #{user.account_id}))"  if (user && user.has_company?)
-                # customer_forums.customer_id = #{user.customer_id} )"  if (user && user.has_company?)
+                      AND forums.id IN (SELECT customer_forums.forum_id from customer_forums
+                                        where customer_forums.customer_id in (#{user.company_ids_str}) and
+                                        customer_forums.account_id = #{user.account_id}))" if (user && user.has_company?)
+                  # customer_forums.customer_id = #{user.customer_id} )"  if (user && user.has_company?)
     condition
   end
 
@@ -207,8 +207,10 @@ class Forum < ActiveRecord::Base
     return true if (user and user.agent?)
     return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
     return true if (user and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
+    company_cdn = user.contractor? ? (user.company_ids & customer_forums.map(&:customer_id)).any? : 
+                    (user.company  && customer_forums.map(&:customer_id).include?(user.company.id))
     return true if (user && (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && 
-      user.company  && customer_forums.map(&:customer_id).include?(user.company.id))
+      company_cdn)
   end
 
   # def set_topic_delta_flag

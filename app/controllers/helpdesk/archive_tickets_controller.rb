@@ -21,7 +21,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
 
   def index
-    @items = current_account.archive_tickets.preload(requester: [:avatar,:company]).permissible(current_user).filter(:params => params, 
+    @items = current_account.archive_tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, 
       :filter => 'Helpdesk::Filters::ArchiveTicketFilter')
     
     respond_to do |format|
@@ -48,7 +48,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   end
 
   def custom_search
-    @items = current_account.archive_tickets.preload(requester: [:avatar,:company]).permissible(current_user).filter(:params => params, 
+    @items = current_account.archive_tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, 
       :filter => 'Helpdesk::Filters::ArchiveTicketFilter')
     
     respond_to do |format|

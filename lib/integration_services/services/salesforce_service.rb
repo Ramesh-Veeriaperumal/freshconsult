@@ -205,7 +205,13 @@ module IntegrationServices::Services
       co_attributes ={}
       fd_user = ticket.requester
       if action == "create" || sf_ticket_det["records"].blank?
-        fd_comp_name = (ticket.requester.company.present?) ? ticket.requester.company.name : FD_COMPANY
+        fd_comp_name = if ticket.company.present?
+          ticket.company.name 
+        elsif fd_user.companies.present?
+          fd_user.companies.first.name
+        else
+          FD_COMPANY
+        end
         co_attributes = assign_contact_det fd_comp_name, fd_user
       end
       ticket_states = ticket.ticket_states

@@ -2,6 +2,8 @@ class Search::AutocompleteController < ApplicationController
 
   USER_ASSOCIATIONS = { User => { :include => [{ :account => :features }, :user_emails] }}
 
+  skip_before_filter :check_privilege, :only => [:company_users]
+
   def agents
     begin
       search_results = search_users(true)
@@ -56,6 +58,23 @@ class Search::AutocompleteController < ApplicationController
     end
 	end
 
+  def company_users
+    begin
+      requesters = { :results => [] }
+      @customer_id = params[:customer_id].to_i
+      if params[:customer_id].present? and current_user.company_ids.include?(@customer_id)
+        search_results = search_users
+        search_results.results.each do |document|
+         requesters[:results].push(*document.search_data)
+        end
+      end
+    rescue
+      requesters = { :results => results.map{|x| x.search_data}.flatten} 
+    ensure
+      respond_with_kbase requesters
+    end
+  end
+
   def tags
     begin
       search_results = search_tags
@@ -109,6 +128,7 @@ class Search::AutocompleteController < ApplicationController
              f.filter :term, { :helpdesk_agent => agent } if agent
              f.filter :term, { :account_id => current_account.id }
              f.filter :term, { :deleted => false }
+             f.filter :term, { :customer_id => customer_id } if @customer_id
            end
          end
          tire_search.sort { by :name, 'asc' }
@@ -157,7 +177,11 @@ class Search::AutocompleteController < ApplicationController
   	end  
 
     def requester_conditions
-      ["name like ? or email like ? or phone like ?","%#{params[:q]}%","%#{params[:q]}%","%#{params[:q]}%"]
+      if @customer_id
+        ["(name like ? or email like ? or phone like ?) and customer_id = ?","%#{params[:q]}%","%#{params[:q]}%","%#{params[:q]}%", params[:customer_id]]
+      else
+        ["name like ? or email like ? or phone like ?","%#{params[:q]}%","%#{params[:q]}%","%#{params[:q]}%"]
+      end
     end	
 
     def tag_results

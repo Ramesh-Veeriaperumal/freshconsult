@@ -75,11 +75,17 @@
 		<div class='contact-info-fields'>
 			<div class='contact-info-fields-content'>
 				<%= user_avatar(@user, :medium, "profile_pic avatar-pic",{:width => "120px"}) %>
-				<div class='user-info'>
-					<h1 class='lead break-word'><%= h(@user.display_name) %></h1>
-					<%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => @user } %>
-				</div>
-				<ul class='show-fields'>
+				<div class="user-info pt10 text-center">
+					<h3 class="lead break-word mb5"><%= h(@user.display_name) %></h3>
+					<% unless @user.job_title.blank? %>
+						<div class="break-word user-job-title" title="<%= h @user.job_title %>">
+					   		<%= h @user.job_title %>
+					   	</div>
+					<% end %>
+         			</div>
+				<ul class="show-fields">
+					<%= render :partial => "helpdesk/tickets/components/company_info", 
+	                     :locals => { :user => @user, :companies => @selected_companies } %>
 					<% view_contact_fields.each do |field| %>
 				    	<%=  render_as_list nil, field %>
 				    <% end %>
@@ -87,7 +93,7 @@
 			</div>
 
 		</div>
-		<div class='contact-edit-fields'>
+		<div class="contact-edit-fields">
 			<% if @user.deleted || (!@user.active? and @user.has_email?) || @user.blocked? %>
 		  		<div class="info-highlight hide">
 			        <% if privilege?(:delete_contact) %>
@@ -102,7 +108,7 @@
 		  		</div>
 			<% end %>
 			<% unless @user.parent.present? %>
-			<div id='updateForm' class='contact-edit-padding clearfix'>
+			<div id="updateForm" class="contact-edit-padding clearfix">
 				<%= form_for @user,
 					:url => {:controller => 'contacts', :action => 'update_description_and_tags'},
 					:html => {

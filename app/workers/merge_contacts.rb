@@ -72,8 +72,10 @@ class MergeContacts < BaseWorker
 
   def move_helpdesk_activities children_ids
     update_by_batches(@account.tickets, 
-                      { :requester_id => @parent_user.id,
-                        :owner_id     => @parent_user.company_id }, 
+                      { :owner_id => @parent_user.company_id }, 
+                      ["requester_id in (?) and owner_id is null", children_ids])
+    update_by_batches(@account.tickets, 
+                      { :requester_id => @parent_user.id }, 
                       ["requester_id in (?)", children_ids])
     move_each_of(["notes"], children_ids)
   end
@@ -86,8 +88,10 @@ class MergeContacts < BaseWorker
 
   def move_archived_tickets(children_ids)
     update_by_batches(@account.archive_tickets, 
-                      { :requester_id => @parent_user.id,
-                        :owner_id     => @parent_user.company_id }, 
+                      { :owner_id => @parent_user.company_id }, 
+                      ["requester_id in (?) and owner_id is null", children_ids])
+    update_by_batches(@account.archive_tickets, 
+                      { :requester_id => @parent_user.id }, 
                       ["requester_id in (?)", children_ids])
     move_each_of(["archive_notes"], children_ids)
   end

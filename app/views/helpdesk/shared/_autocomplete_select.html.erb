@@ -2,7 +2,13 @@
 
 max_limit ||= 3
 container ||= 'customers'
+name = container
 dom_id ||= container
+bulk_action = defined?(bulk_actions) && bulk_actions
+if bulk_action
+  dom_id = "bulk_customers"
+  name = "helpdesk_ticket[company_id]"
+end
 include_none ||= false
 none = I18n.t("filter_options.none")
 none_value = -1
@@ -25,7 +31,7 @@ end
 %>
 
 <div class = "autocomplete_filter">
-  <input type="hidden" id="<%= dom_id %>_filter" name="<%= container %>" />
+  <input type="hidden" id="<%= dom_id %>_filter" name="<%= name %>" />
 </div>
 <script>
 jQuery(document).ready(function() {
@@ -61,15 +67,21 @@ jQuery(document).ready(function() {
         dataType: 'json',
         data: function (term) {
             searchText = term;
-            return { q: term };
+            toRet = { q: term };
+            var company_id = jQuery("#company-list-dropdown .dropdown-toggle").data("company-id") || jQuery("#helpdesk_ticket_company_id").find(":selected").val();
+            if(company_id !== undefined)
+              toRet = { q: term, customer_id: company_id };
+            return toRet;
         },
         results: function (data) {
           var results = [];
           var include_none = <%= include_none %>
           var noneVal = "<%= none %>"
+          var cc_company = jQuery("#cc_emails_filter").length;
 
           jQuery.each(data.results, function(i, item){
-            results.push({id: item.id, value: escapeHtml(item.value), info: item.details});
+            var id_or_val = cc_company ? item.email : item.id;
+            results.push({id: id_or_val, value: escapeHtml(item.value), info: item.details});
           });
           if(include_none && noneVal.toLowerCase().indexOf(searchText.toLowerCase()) > -1){
             results.push({id: -1, value: noneVal})
@@ -91,12 +103,15 @@ jQuery(document).ready(function() {
       return "You can only select " + limit + (limit == 1 ? " <%=container.capitalize.singularize %>" : "   <%=container.capitalize.pluralize %>"); },
   });
 
-  jQuery("#<%= dom_id %>_filter").select2("val",[]);
+  if("<%= bulk_action %>" !== "true") {
+    jQuery("#<%= dom_id %>_filter").select2("val",[]);
 
-  jQuery(".ticket_list #<%= dom_id %>_filter").on("change", function(){
-    toggle_save_and_refresh();
-  });  
-  jQuery("#<%= dom_id %>_filter").data('initialValue', [<%=hash_val.join(",").html_safe %>]);
+    jQuery(".ticket_list #<%= dom_id %>_filter").on("change", function(){
+      toggle_save_and_refresh();
+    });  
+    jQuery("#<%= dom_id %>_filter").data('initialValue', [<%=hash_val.join(",").html_safe %>]);
+  }
+
 });
 
 </script>

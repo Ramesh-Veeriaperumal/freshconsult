@@ -202,19 +202,39 @@
 	}
 	#contacts-table{
 		tr td{
-				width: 32%;
-		    	vertical-align: middle;
-		    	word-wrap: break-word;
-		    	word-break: break-word;
-			    &:first-child{
-			        width:5%;
-				}
-				&:last-child{
-					width: 31%;
+			width: 31%;
+			vertical-align: middle;
+			word-wrap: break-word;
+			word-break: break-word;
+			&:first-child{
+			  width:4%;
+			}
+			&:nth-child(4){
+			  width:16%;
+			}
+			&:last-child{
+				width: 16%;
+			}
+		}
+		.user_actions a:hover{
+			i{
+				color: #333;
+			}
+		}
+		tr:hover{
+			.user_actions{
+				display: block;
+				.btn{
+					box-shadow: none;
+					border: none;
+					background: none;
+					i{@include micro-position(-2px);}
+					.icon-ok{top:-4px;}
 				}
 				.text-info{
 					word-break: break-all;
 				}
+			}
 		}
 		.customers_selector{
 	    	@include margin-left(5px);
@@ -267,6 +287,20 @@
 		margin-top: -24px;
 		@include margin-left(9px);
 	}
+	#companies tr:hover{
+		.item_actions{
+			display: block;
+			a:hover{
+				i{
+					color: #333;
+				}
+			}
+		}
+	}
+	.company-action{
+		color: #999;
+	}
+
 }
 #customers-page{
 	#companies{
@@ -406,38 +440,43 @@ $iconColorList: "ticket" $bg_color_ticket,
 	height: 500px;
 	.contact-info-fields {
 		background-color: #f1f1f1;
-    	background-image: inline-image('/cdn-ignored/inline-images/ribbon-bg.png');
-    	background-size: 20%;
-    	display: table-cell;
+    background-image: inline-image('/cdn-ignored/inline-images/ribbon-bg.png');
+    background-size: 20%;
+    display: table-cell;
 		width: 260px;
 		vertical-align: top;
-	}
-	.profile_pic {
-		text-align: center;
-		margin-top: 20px;
+		.company-icon-wrap{
+			@include size(130px, 130px);
+			background-color: #fff;
+			border-radius: 6px;
+			font-size: 100px;
+			margin: 0 auto;
+			padding-top: 15px;
+			box-sizing: border-box;
+			
+		}
 	}
 	.avatar-text{
 		text-align: right;
-		margin-left: 60px;
- 		@include box-shadow(rgba(0, 0, 0, 0.3) 0 7px 14px -8px);
- 		border-radius: 6px;
+		margin: 20px auto 0px auto;
+		box-shadow: 0 7px 14px -8px rgba(0, 0, 0, 0.3);
+	}
+
+	.user-company-name {
+		font-weight: normal;
 	}
 	.user-info {
-		text-align: center;
 		border-top: none;
-		@include padding(10px 15px);
-		width: 230px;
 		position: relative;
+		padding: 10px 15px;
 		.lead {
-			margin-bottom: 4px;
+			margin-bottom: 5px;
 			font-weight: 500;
-		}
-		.user-job-title, .user-company-name {
-			@include padding(0)
 		}
 		.user-job-title {
 			color: #999;
-			margin-bottom: 3px;
+			margin-bottom: 3px;    
+			padding: 0;
 		}
 		.no-contacts {
 			position: relative;
@@ -555,6 +594,12 @@ $iconColorList: "ticket" $bg_color_ticket,
 				}
 			}
 		}
+	}
+	.show_all{
+		font-weight: bold;
+		color: #06c;
+		cursor: pointer;
+		padding: 5px 2px;
 	}
 }
 
@@ -727,4 +772,105 @@ ul.user_list{
 			word-wrap: break-word;
 		}
 	}
+} 
+
+//------------------------------------------------------------------------------------
+//								Multiple companies changes start
+//------------------------------------------------------------------------------------
+
+.user_comp{
+	background-color: #fbfbfb;
+	border: 1px solid #eaeaea;
+	border-radius: 2px;
+	margin-bottom: -6px;
+
+	.make_company_default{
+		background-color: #fff;
+		border: 1px solid #aaaaaa;
+		border-radius: 50%;
+		display: inline-block;
+		@include size(12px, 12px);
+		@include float(right);
+		@include margin(2px 10px);
+		color: #ccc;
+	}
+
+	.default_company.primary{
+		color: #7ba70f;
+		@include float(right);
+		@include margin-right(10px);
+		cursor: default;
+	}
+
+	.client_manager{
+		@include float(right);
+		cursor: pointer;
+		right: 55px;
+		position: absolute;
+		&.unmanage{ color: #7ba70f;}
+		&.manage{ color: #ccc;}
+	}
+
+	.uc_add_company{
+		@include padding(10px 13px 10px 5px);
+		background-color: #ffffff;
+	}
+
+	ul.companies{
+		li{
+			@include padding(10px 0 10px 5px);
+			border-bottom: 1px solid #dadada;
+			&[data-default-company="true"]{
+				background-color: #fffaee;
+			}
+		}
+		li:has(ficon-checkmark-round){
+			background-color: #fffaee;
+		}
+	}
+
+	input.user_company{
+		width: 74%;
+	}
+
+	.add_pad{ background-color: #98bf47; }
+	.remove_pad{ background-color: #ff9291;}
+
+	.uc_actions{
+		@include border-radius(100%);
+		@include padding(1px 5px);
+		@include margin-right(6px);
+		cursor: pointer;
+		font-weight: bold;
+		color: #ffffff;
+		float: left;
+	}
+
+	.uc_text{
+		display: inline-block;
+		@include margin(0 0 0 5px);
+		width: 75%;
+		word-break: break-word;
+	}
 }
+
+.modal-body {
+	border-bottom: 1px solid #eee;
+	margin-bottom: 6px;
+	.bold{
+		font-weight: 500;
+	}
+
+	.mb-10{
+		margin-bottom: -10px;
+	}
+
+	.rename_fade{
+		background-color: #eee;
+		border: 1px solid #ddd;
+	}
+}
+
+//------------------------------------------------------------------------------------
+//								Multiple companies changes end
+//------------------------------------------------------------------------------------
