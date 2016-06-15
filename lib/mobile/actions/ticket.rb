@@ -39,6 +39,7 @@ module Mobile::Actions::Ticket
      }
   }
 
+  #Will have to remove :selected_reply_email key after release of more app versions.
   def to_mob_json(only_public_notes=false, include_notes=true)
 
     json_inlcude = {

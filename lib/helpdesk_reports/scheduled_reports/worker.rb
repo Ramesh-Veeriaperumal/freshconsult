@@ -82,7 +82,7 @@ private
       else
         start_day = lagged_time - report_filter.data_hash[:date]["date_range"].to_i.days
     end
-    @date_range = (end_day < start_day) ? nil : "#{date_format(start_day)} - #{date_format(end_day)}"
+    @date_range = (end_day.to_date < start_day.to_date) ? nil : "#{date_format(start_day)} - #{date_format(end_day)}"
   end
 
   def build_normal_date_range

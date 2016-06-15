@@ -23,7 +23,7 @@ class Admin::RolesController < Admin::AdminController
   end
   
   def create
-    if build_and_save
+    if role_privilege and build_and_save 
       flash[:notice] = t(:'flash.roles.create.success', :name => @role.name)
       update_role
       respond_to do |format|
@@ -41,7 +41,7 @@ class Admin::RolesController < Admin::AdminController
   end
   
   def update
-    update_role
+    update_role if role_privilege
   	if @role.update_attributes(params[:role])
       flash[:notice] = t(:'flash.roles.update.success', :name => @role.name)
   		respond_to do |format|
@@ -57,6 +57,12 @@ class Admin::RolesController < Admin::AdminController
   def destroy
     @role.destroy
 		redirect_to admin_roles_path
+  end
+
+  def role_privilege
+    params.symbolize_keys
+    acc_admin_privilege = @role ? @role.privilege?(:manage_account) : params[:role]["privilege_list"].include?("manage_account")
+    acc_admin_privilege ? current_user.privilege?(:manage_account) : true 
   end
 
   def profile_image 
@@ -79,7 +85,7 @@ class Admin::RolesController < Admin::AdminController
   end
 
   def update_agents
-      update_role
+      update_role if role_privilege
       render :json => {:status => true}
   end
 

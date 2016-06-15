@@ -13,6 +13,7 @@ var FreshfoneSupervisorCall;
 			this.isSupervisorMute = true;
 			this.bindMute();
 			this.bindEndCall();
+			this.bindMaximizeWidget();
 		},
 		loadDependencies: function (freshfonecalls,freshfonewidget,freshfonetimer,freshfoneuser) {
 			this.freshfonecalls = freshfonecalls;
@@ -24,6 +25,7 @@ var FreshfoneSupervisorCall;
 			this.$supervisorCallContainer = $('.supervisor_call_details');
 			this.$supervisorCallinfo = $('#supervisor_call_info');
 			this.supervisorCallWidget = freshfonewidget.widget.find('.supervisor');
+			this.$supervisorCallContainerMini = $('.minimised-supervisor-dialpad');
 		},
 		startCallTimer : function(){
 			freshfonetimer.startCallTimer( $("#supervisor_call_timings") );
@@ -59,6 +61,7 @@ var FreshfoneSupervisorCall;
 	   		this.supervisorCallWidget.show();
 			this.populateSupervisorCallContainer();
 			this.$supervisorCallContainer.show();
+			this.$supervisorCallContainerMini.hide();      
 			freshfonewidget.bindPageClose();
 		},
 		hideWidgets: function () {
@@ -69,8 +72,15 @@ var FreshfoneSupervisorCall;
 			var selectedCallDom = App.Freshfonedashboard.activeCallsList.get("call_id",this.supervisorCallId);
 			selectedCallDom._values["caller_name"] = selectedCallDom._values["caller_name"].replace("contact-hover","");
 			selectedCallDom._values["agent_name"] = selectedCallDom._values["agent_name"].replace("contact-hover","");
-			var temp = $("#supervisor_call_info_template").clone();
-      		this.$supervisorCallinfo.html(temp.tmpl(selectedCallDom._values));
+			var callerName = $(selectedCallDom.elm).find('.caller_name'),
+					agentName = $(selectedCallDom.elm).find('.agent_name');
+			if(callerName.length){ selectedCallDom._values["caller_name_min"]= callerName[0].textContent}
+			if(agentName.length){ selectedCallDom._values["agent_name_min"]= agentName[0].textContent}
+
+			var temp = $("#supervisor_call_info_template").clone(),
+					tempMinimized = $("#supervisor_call_info_min_template").clone();
+			this.$supervisorCallinfo.html(temp.tmpl(selectedCallDom._values));
+			$('.minimised-supervisor-dialpad').html(tempMinimized.tmpl(selectedCallDom._values))
 		},
      	handleMute: function () {
      		this.isSupervisorMute = this.isSupervisorMute ? false : true ;
@@ -114,6 +124,23 @@ var FreshfoneSupervisorCall;
 	   	},
 	   	resetJoinCallButton: function(){
 	   		App.Freshfonedashboard.SupervisorCallUpdate.resetJoinCallButton();
-	   }
+	   },
+
+		bindMaximizeWidget: function(){
+			$("ul").delegate(".minimised-supervisor-dialpad","click", function(){
+				freshfoneSupervisorCall.maximiseSupervisor();
+			});
+		},
+		minimiseSupervisor: function(){
+			this.$supervisorCallContainer.hide();
+			this.supervisorCallWidget.addClass('-minimised');
+			this.$supervisorCallContainerMini.show();
+		},
+		maximiseSupervisor: function(){
+			this.$supervisorCallContainer.show();
+			this.$supervisorCallContainerMini.hide();
+			this.supervisorCallWidget.removeClass('-minimised');
+			freshfonewidget.minimiseChatWidget();  
+		}
 	};
 }(jQuery));

@@ -124,7 +124,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       args = { :action => action_name, :helpdesk_ticket => params[:helpdesk_ticket] }
       args.merge!(params_for_bulk_action)
       args[:tags] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
-      Tickets::BulkTicketActions.perform_async(args) if args[:helpdesk_ticket] or args[:tags]
+      Tickets::BulkTicketActions.perform_async(args) if args[:helpdesk_ticket].present? or args[:tags].present?
       queue_replies
       respond_to do |format|
         format.html {

@@ -14,7 +14,7 @@ class Reports::BuildNoActivity < BaseWorker
                         includes(associations_include).
                         find_in_batches(:batch_size => 300) do |tickets|
         tickets.each do |ticket|
-          ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY, {:model_changes => {:no_activity => []}})
+          ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY, {:manual_publish => true})
         end
       end
     end

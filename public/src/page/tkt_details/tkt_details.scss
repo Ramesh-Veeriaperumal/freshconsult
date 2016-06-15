@@ -1797,6 +1797,9 @@ ol, ul, li{
 }
 
 .tkt-sidebar{
+	.input-date-field{
+         input.date{ padding: 6px 4px 6px 25px;}
+       } 
 	.requester-avatar-wrap{
 		@include float(left);
 		width: 50px;

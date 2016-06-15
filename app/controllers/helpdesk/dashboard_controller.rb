@@ -123,7 +123,7 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def sales_manager 
-    @details = current_account.sales_manager_from_cache if Rails.env.production?
+    @details = current_account.fresh_sales_manager_from_cache if (Rails.env.production? or Rails.env.staging?)
     render :partial => "sales_manager"
   end
 

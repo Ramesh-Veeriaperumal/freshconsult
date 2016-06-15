@@ -6,7 +6,7 @@ class Community::HandleLanguageChange < BaseWorker
 	SOLUTION_CLASSES = ["Solution::Category", "Solution::Folder", "Solution::Article"]
 
 	def perform
-		language_id = Language.for_current_account.id
+		language_id = Language.find_by_code(Account.current.main_portal.language).id
 		SOLUTION_CLASSES.each do |klass|
 			klass.constantize.find_in_batches(:batch_size => 100, :conditions => {:account_id => Account.current.id}) do |objects|
 				klass.constantize.where(
