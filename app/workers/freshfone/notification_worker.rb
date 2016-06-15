@@ -333,7 +333,7 @@ module Freshfone
     end
 
     def disconnect_other_agents(call_status)
-      agent_calls = get_pinged_agents_call(params[:call_id])
+      agent_calls = get_pinged_agents_call(params[:call_id] || params[:call])
       agent_calls.each do |call|
         terminate_api_call(call, call_status) if call.present? && (call != params[:CallSid])
       end

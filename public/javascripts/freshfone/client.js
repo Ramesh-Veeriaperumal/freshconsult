@@ -21,7 +21,13 @@ var globalconn;
 				freshfoneuser.toggleAvailabilityOnPhone(false);
 			}
 		});
-		
+		$("div").delegate("#minimize-ongoingcall","click", function(){
+			freshfonewidget.minimiseOngoingDialpad();
+		});
+		$("div").delegate(".minimised-ongoing-dialpad","click", function(){
+			freshfonewidget.maximiseOngoingDialpad();
+		});
+
 		// Recent Calls show
 		$widget.find('[href="#freshfone_dialpad"]').on('shown', function (e) {
 			if (freshfone.isTrial && freshfoneSubscription.showDialpadWarnings()){
@@ -39,6 +45,7 @@ var globalconn;
 					$recentCallsContainer.show();
 				}
 			});
+			freshfonewidget.minimiseChatWidget();
 		});
 
 		//Load Transfer agents

@@ -1,6 +1,11 @@
 module TimeZone
   def self.set_time_zone
-    Time.zone = self.find_time_zone
+    begin
+      Time.zone = self.find_time_zone
+    rescue ArgumentError => e
+      NewRelic::Agent.notice_error(e)
+      Rails.logger.debug "Timezone thread exception:: #{Thread.current}"
+    end
   end
 
   def self.find_time_zone

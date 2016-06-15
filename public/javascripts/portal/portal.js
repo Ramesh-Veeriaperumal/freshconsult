@@ -291,6 +291,29 @@
 		        $(this).datepicker('option', 'showOn', "both" );
 		        $(this).datepicker('option', 'buttonText', "<span class='icon-calendar'></span>" );
 		      }
+		      // custom clear button
+			var clearButton =  jQuery(this).siblings('.dateClear');
+			if(clearButton.length === 0) {
+				 clearButton = jQuery('<span class="dateClear" title="Clear Date"><i class="ficon-cross" ></i></div>');
+				jQuery(this).after(clearButton);
+			}
+			if(jQuery(this).val().length === 0) {
+				clearButton.hide();
+			}
+			jQuery(this).on("change",function(){
+				if(jQuery(this).val().length === 0) {
+					clearButton.hide();
+				}
+				else {
+					clearButton.show();
+				}
+
+			});
+			clearButton.on('click', function(e) {
+				 jQuery(this).siblings('input.date').val("");
+				 jQuery(this).hide(); 
+			 });
+		// clear button ends
 		});
 
 		$('[data-toggle=tooltip]').livequery(function() {
