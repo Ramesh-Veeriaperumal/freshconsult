@@ -106,7 +106,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def set_content_type
     file_ext = File.extname(self.content_file_name).gsub('.','')
-    mime_content_type = ATTACHMENT_WHITELIST.include?(file_ext) ? lookup_by_extension(file_ext) : BINARY_TYPE
+    mime_content_type = ATTACHMENT_WHITELIST.include?(file_ext.downcase) ? lookup_by_extension(file_ext.downcase) : BINARY_TYPE
     self.content_content_type = mime_content_type unless mime_content_type.blank?
   end
 
