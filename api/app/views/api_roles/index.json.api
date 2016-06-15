@@ -1,0 +1,11 @@
+JSON.generate(@items.map do |role|
+  response_hash = {
+    id: role.id,
+    name: role.name,
+    description: role.description,
+    default: role.default_role,
+    created_at: role.created_at.try(:utc),
+    updated_at: role.updated_at.try(:utc)
+  }
+  response_hash
+end)

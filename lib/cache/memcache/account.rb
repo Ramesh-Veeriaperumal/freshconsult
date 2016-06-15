@@ -70,6 +70,13 @@ module Cache::Memcache::Account
     end
   end
 
+  def roles_from_cache
+    @roles_from_cache ||= begin
+      key = roles_cache_key
+      MemcacheKeys.fetch(key) { self.roles.find(:all) }
+    end
+  end
+
   def agents_details_from_cache
     key = agents_details_memcache_key
     MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name,email").all }
@@ -332,6 +339,10 @@ module Cache::Memcache::Account
 
     def agents_memcache_key
       ACCOUNT_AGENTS % { :account_id => self.id }
+    end
+
+    def roles_cache_key
+      ACCOUNT_ROLES % { :account_id => self.id }
     end
 
     def agents_details_memcache_key

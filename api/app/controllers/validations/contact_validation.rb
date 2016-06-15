@@ -86,10 +86,10 @@ class ContactValidation < ApiValidation
     alias_method :contact_detail_missing_update, :contact_detail_missing
 
     def validate_avatar
-      ext = File.extname(avatar.original_filename).downcase
-      if ContactConstants::AVATAR_EXT.exclude?(ext)
+      valid_extension, extension = ApiUserHelper.avatar_extension_valid?(avatar)
+      unless valid_extension
         errors[:avatar] << :upload_jpg_or_png_file
-        error_options[:avatar] = { current_extension: ext }
+        error_options[:avatar] = { current_extension: extension }
       end
     end
 
