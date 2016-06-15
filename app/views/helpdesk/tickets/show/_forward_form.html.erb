@@ -116,7 +116,7 @@
     <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
     <% conv_item = conv_id.nil? ? @ticket : @note %>
     <%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
-            <%= ff.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body",  :"data-wrap-font-family" => true, :"data-quoted-textarea" => "##{cntid}-quoted" %>
+            <%= ff.text_area :body_html, :class => "body_html", :id => "#{cntid}-body",  :"data-wrap-font-family" => true, :"data-quoted-textarea" => "##{cntid}-quoted" %>
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", 
                                   :style => "display:none;"%>
             <%if  current_browser == "Internet Explorer" %>
