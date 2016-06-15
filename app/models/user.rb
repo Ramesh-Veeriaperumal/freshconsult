@@ -111,7 +111,9 @@ class User < ActiveRecord::Base
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, 
-                :primary_email_attributes, :tags_updated
+                :primary_email_attributes, :tags_updated, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there. 
+  # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
+  # Hence user.send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
   
   attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes, 
                   :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id, 
@@ -535,6 +537,10 @@ class User < ActiveRecord::Base
       return account.main_portal_from_cache.ssl_enabled? ? 'https' : 'http'
     end
   end
+
+  def can_edit_agent?(agent)
+    !(agent.user.deleted? || (agent.user.privilege?(:manage_account) && !self.privilege?(:manage_account)))
+  end
   
   def to_s
     user_display_text = name.blank? ? (email.blank? ? (phone.blank? ? mobile : phone) : email) : name
@@ -685,10 +691,13 @@ class User < ActiveRecord::Base
       self.helpdesk_agent = true
       self.company = nil
       self.address = nil
-      self.role_ids = [account.roles.find_by_name("Agent").id] 
+      self.role_ids = args[:role_ids].present? ? args[:role_ids] : [account.roles.find_by_name("Agent").id]
       self.tags.clear
       agent = build_agent()
       agent.occasional = !!args[:occasional]
+      agent.group_ids = args[:group_ids] if args.key?(:group_ids) 
+      agent.ticket_permission = args[:ticket_permission] if args.key?(:ticket_permission)
+      agent.signature_html = args[:signature_html] if args.key?(:signature_html)
 
       expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date => 

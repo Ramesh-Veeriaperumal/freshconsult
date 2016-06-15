@@ -39,16 +39,11 @@ class ApiContactsController < ApiApplicationController
   end
 
   def make_agent
-    if @item.email.blank?
-      render_request_error :inconsistent_state, 409
-    elsif (@agent_limit = current_account.subscription.agent_limit) && agent_limit_reached?
-      render_request_error :max_agents_reached, 403, max_count: @agent_limit
+    return if invalid_params_or_state?
+    if @item.make_agent(params[cname])
+      @agent = Agent.find_by_user_id(@item.id)
     else
-      if @item.make_agent
-        @agent = Agent.find_by_user_id(@item.id)
-      else
-        render_errors(@item.errors)
-      end
+      render_errors(@item.errors)
     end
   end
 
@@ -89,10 +84,42 @@ class ApiContactsController < ApiApplicationController
           return false
         end
       end
+    end
 
-      # make_agent route doesn't accept any parameters
-      if action_name == 'make_agent' && params[cname].present?
-        render_request_error :no_content_required, 400
+    def invalid_params_or_state?
+      return true if blank_email? # invalid state because agent can't be created without email.
+      if params[cname].present?
+        invalid_params? 
+      else
+        agent_limit_reached?
+      end
+    end
+
+    def blank_email?
+      if @item.email.blank?
+        render_request_error :inconsistent_state, 409
+      end
+    end
+
+    # returns true if it fails params validation either in data type validation or in delegator validation.
+    def invalid_params?
+      params[cname].permit(*(ContactConstants::MAKE_AGENT_FIELDS))
+      make_agent = MakeAgentValidation.new(params[cname], @item)
+      if make_agent.valid?
+        ParamsHelper.assign_and_clean_params({ ticket_scope: :ticket_permission, signature: :signature_html }, params[cname])
+        agent_delegator = AgentDelegator.new(params[cname].slice(:role_ids, :group_ids))
+        render_errors(agent_delegator.errors, agent_delegator.error_options) if agent_delegator.invalid?
+      else
+        render_errors(make_agent.errors, make_agent.error_options)
+      end
+    end
+
+    # returns true if agent limit is reached for the account. No more full time agents can't be created.
+    # Will return 403 as make_agent action considers full time agent creation if no params in request.
+    def agent_limit_reached?
+      agent_limit_reached, agent_limit = ApiUserHelper.agent_limit_reached?
+      if agent_limit_reached
+        render_request_error :max_agents_reached, 403, max_count: agent_limit 
       end
     end
 
@@ -183,10 +210,6 @@ class ApiContactsController < ApiApplicationController
 
     def assign_protected
       @item.deleted = true if @item.email.present? && @item.email =~ ContactConstants::MAILER_DAEMON_REGEX
-    end
-
-    def agent_limit_reached?
-      current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= @agent_limit
     end
 
     def valid_content_type?
