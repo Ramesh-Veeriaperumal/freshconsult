@@ -39,6 +39,8 @@ class AccountsController < ApplicationController
   before_filter :set_native_mobile, :only => [:new_signup_free]
   before_filter :update_language_attributes, :only => [:update_languages]
   before_filter :validate_portal_language_inclusion, :only => [:update_languages]
+  before_filter(:only => [:manage_languages]) { |c| c.requires_feature :multi_language }
+  before_filter :multilingual_available?, :only => [:manage_languages]
   
   def show
   end   
@@ -439,5 +441,9 @@ class AccountsController < ApplicationController
       @account.main_portal_attributes = params[:account][:main_portal_attributes] unless @account.features?(:enable_multilingual)
       @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages]
       @account.account_additional_settings.additional_settings[:portal_languages] = portal_languages
+    end
+
+    def multilingual_available?
+      render :template => "/errors/non_covered_feature.html", :locals => {:feature => :multi_language} unless @account.launched?(:translate_solutions)
     end
 end
