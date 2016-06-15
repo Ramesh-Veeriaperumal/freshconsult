@@ -2,6 +2,7 @@
 module AutocompleteHelper
 
 	MAX_SELECTION_SIZE = 100
+	MAX_CC_LIMIT = 50
 	AUTOCOMPLETE_DEFAULTS = 	{ 
 								:companies => {
 																:url => "/search/autocomplete/companies",
@@ -12,6 +13,16 @@ module AutocompleteHelper
 																	:url => "/search/autocomplete/requesters",
 																	:container => "requester",
 																	:max_limit => 3
+								},
+								:company_users => {
+																	:url => "/search/autocomplete/company_users",
+																	:container => "user",
+																	:max_limit => 3	
+								},
+								:cc_emails => {
+																	:url => "/search/autocomplete/company_users",
+																	:container => "cc_emails",
+																	:max_limit => MAX_CC_LIMIT	
 								}
 							} 
 
@@ -21,6 +32,6 @@ module AutocompleteHelper
 
 	#For customers repopulation
 	def selected_companies company_ids
-		Account.current.companies_from_cache.select { |c| company_ids.include?(c.id.to_s) } if company_ids
+		Account.current.companies.where("id in (?)", company_ids) if company_ids
 	end
 end

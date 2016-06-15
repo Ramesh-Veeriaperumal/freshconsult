@@ -47,8 +47,8 @@
 						<% else %>
 							<%= t("ticket.ticket_from", :username => requester(ticket)).html_safe %>
 						<% end %>
-						<%= content_tag(:span, ticket.requester.customer.name.presence,
-										:class => "company-name") if ticket.requester.customer.present? && !ticket.requester.agent? %>
+						<%= content_tag(:span, ticket.company.name.presence,
+										:class => "company-name") if ticket.company.present? && !ticket.requester.agent? %>
 					</div>
 					<div class="emphasize">
 						<%= t("ticket.ticket_user_list_status_" + ticket.ticket_states.current_state(ticket.outbound_email?),
