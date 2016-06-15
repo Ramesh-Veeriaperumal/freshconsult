@@ -27,6 +27,12 @@ class Widgets::FeedbackWidgetsController < SupportController
   def create
     check_captcha = params[:check_captcha] == "true"
     widget_response = {}
+    
+    if params[:meta].present?
+      params[:meta][:user_agent] = RailsFullSanitizer.sanitize params[:meta][:user_agent] if params[:meta][:user_agent].present?
+      params[:meta][:referrer] = RailsFullSanitizer.sanitize params[:meta][:referrer] if params[:meta][:referrer].present?
+    end
+
     if create_the_ticket(check_captcha)
       widget_response = {:success => true }
     else
