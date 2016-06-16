@@ -13,6 +13,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   before_filter :redirect_old_slack, :only => [:update], :if => :application_is_slack? #Remove this when slackv1 is obselete.
   after_filter  :destroy_all_slack_rule, :only => [:uninstall], :if =>  :application_is_slack? #Remove this when slackv1 is obselete.
 
+
   def install 
   # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
@@ -177,5 +178,4 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   def application_is_slack? #Remove when slackv1 is obselete
     @installing_application.present? && @installing_application.slack?
   end
-
 end
