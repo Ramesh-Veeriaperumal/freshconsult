@@ -83,7 +83,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end 
   end
 
-  def self.deliver_requester_notification(requester, receips, e_notification, ticket, comment = nil, non_user = false)
+  #The address set with envelope_to will get the mail , irrespective of whatever that is set in to_emails. Use envelope_to with 
+  #this limitation in mind. 
+  def self.deliver_requester_notification(requester, to_emails, e_notification, ticket, comment = nil, non_user = false, cc_mails = nil, smtp_envelope_to = nil)
     if e_notification.requester_notification?
         (requester = comment.try(:user) || ticket.requester) if non_user
         notification_template = e_notification.get_requester_template(requester)
@@ -100,14 +102,23 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                   'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
       params = { :ticket => ticket,
                :notification_type => e_notification.notification_type,
-               :receips => receips,
+               :receips => to_emails,
                :email_body_plain => plain_version,
                :email_body_html => html_version,
                :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe,
                :disable_bcc_notification => e_notification.bcc_disabled?}
+                  
+      if !cc_mails.nil?
+         params[:cc_mails] = cc_mails
+      end
+      
+      if !smtp_envelope_to.nil?
+        params[:smtp_envelope_to] = smtp_envelope_to
+      end
+      
       if(e_notification.notification_type == EmailNotification::NEW_TICKET_CC and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
-        params[:attachments] = ticket.attachments
-        params[:cloud_files] = ticket.cloud_files
+         params[:attachments] = ticket.attachments
+         params[:cloud_files] = ticket.cloud_files
       end
       deliver_email_notification(params) unless receips.nil?
     end
@@ -141,9 +152,22 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     non_db_user_ccs = cc_emails - db_users_email
     db_users.group_by(&:language).each do |language, users|
       i_receips = users.map(&:email).join(", ")
-      deliver_requester_notification(users.first, i_receips, e_notification, ticket, comment)
+       
+        ##Adding the left over CCs to facilitate reply to all##
+       
+       refined_receipts=get_email_array i_receips
+       left_out_ccs=cc_emails - refined_receipts
+             
+      deliver_requester_notification(users.first, i_receips, e_notification, ticket, comment,false,left_out_ccs,i_receips)
     end
-    deliver_requester_notification(nil, non_db_user_ccs.join(", "), e_notification, ticket, comment, true) unless non_db_user_ccs.empty?
+    
+    ##Adding the left over CCs to facilitate reply to all##
+    
+    
+    refined_receipts=get_email_array non_db_user_ccs if !non_db_user_ccs.empty?
+    left_out_ccs=cc_emails - refined_receipts if !refined_receipts.nil?
+    
+    deliver_requester_notification(nil, non_db_user_ccs.join(", "), e_notification, ticket, comment, true,left_out_ccs,i_receips) unless non_db_user_ccs.empty?
   end
 
   def self.internal_receips(e_notification, ticket)
@@ -163,7 +187,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def email_notification(params)
     ActionMailer::Base.set_email_config params[:ticket].reply_email_config
-
+    
     bcc_email = params[:disable_bcc_notification] ? "" : validate_emails(account_bcc_email(params[:ticket]),
                                                                          params[:ticket])
     receips = validate_emails(params[:receips], params[:ticket])
@@ -174,19 +198,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     #Store message ID in Redis for new ticket notifications to improve threading
     message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@#{private_tag}notification.freshdesk.com"
-
+    
     headers = email_headers(params[:ticket], message_id, true, private_tag.present?).merge({
       :subject    =>  params[:subject],
       :to         =>  receips,
       :from       =>  from_email,
       :bcc        =>  bcc_email,
       "Reply-To"  =>  "#{from_email}"
-    })
-
+      })
+    
     inline_attachments   = []
     @ticket              = params[:ticket]
     @body                = params[:email_body_plain]
     @cloud_files           = params[:cloud_files]
+    
 
     if params[:ticket].account.new_survey_enabled?
       @survey_handle = CustomSurvey::SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type], params[:survey_id])
@@ -210,11 +235,32 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         :content => File.read(a.content.to_file.path, :mode => "rb")
       }
     end if params[:attachments].present?
-
-    mail(headers) do |part|
+    
+    if !params[:cc_mails].nil?
+       headers[:cc] = params[:cc_mails].join(", ")
+    end
+      
+     ##Setting the templates for mail usage###
+    message = mail(headers) do |part|
       part.text { render "email_notification.text.plain" }
       part.html { render "email_notification.text.html" }
-    end.deliver
+    end
+    
+    ##Envelope is set for mail cc case. 
+    #Only the people in envelope receive the mail and rest go in cc. 
+    #Facilitates reply-to all feature
+    if !params[:smtp_envelope_to].nil?
+      envelope_mail  = validate_emails(params[:smtp_envelope_to], params[:ticket])
+      if !envelope_mail.nil?
+        message.smtp_envelope_to=envelope_mail
+      end
+    end
+    
+    #End of cc change
+    
+    message.deliver  
+      
+
 
     if params[:notification_type] == EmailNotification::NEW_TICKET and params[:ticket].source != Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
       set_others_redis_key(message_key(params[:ticket].account_id, message_id),
