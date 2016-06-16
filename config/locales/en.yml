@@ -108,7 +108,7 @@ en:
   sales: "Sales"
   preview: "Preview"
   no_agents_in_selected_group: "No agents in selected group"
-  send_feedback: "Send feedback"
+  send_feedback: "Send"
   sidebar_help: "Help"
   support_title: "Support"
   ticket_form:
@@ -3234,12 +3234,13 @@ en:
     skip_notification_no: "No"
   header_logo: Header Logo
   feedback:
-      title: "Was this answer helpful?"
+      title: "Did you find it helpful?"
       up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
       upvote: "Yes"
       downvote: "No"
       link: "Send feedback"
       down_vote_form_title: "Can you please tell us how we can improve this article?"
+      solution_article_author: "is the author of this solution article."
       downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
     new_translation: "New %{language} translation"
@@ -5074,6 +5075,7 @@ en:
       send: Send
       send_satisfaction_survey: Include satisfaction survey
       dm_confirm_message: The user is not following your twitter account. Your response will be sent as a public tweet. Do you want to continue?
+      attachment_missing_alert: It looks like you missed an attachment. Are you sure you want to send this message?
     facebook_form:
       send_and_resolve: Send and Resolve
       send: Send

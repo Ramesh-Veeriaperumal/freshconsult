@@ -206,6 +206,7 @@
 
 					if(localStorage["vote_" + votingContainer.data('article-id') + "_" + votingContainer.data('language') ]) {
 						votingContainer.hide();
+						$("#article-author").hide();
 					}
 				}
 				highlight_code();

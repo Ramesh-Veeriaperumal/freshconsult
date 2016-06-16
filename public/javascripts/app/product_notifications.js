@@ -89,10 +89,10 @@ window.App = window.App || {};
             if(timeStamp != "") {
                 var lastUpdatedDate = $($("#content-notify").children()[0]).data("timeStamp");
                 if(lastUpdatedDate > timeStamp) {
-                    jQuery("#notifiication-icon").addClass("notification_present");
+                    jQuery('#notifiication-icon').click();
                 } 
             } else {
-                 jQuery("#notifiication-icon").addClass("notification_present");
+                 jQuery('#notifiication-icon').click();
             }
         },
         addHref: function (ev, link) {

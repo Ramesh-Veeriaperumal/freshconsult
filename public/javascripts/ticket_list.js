@@ -184,8 +184,28 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 	// 	}
 	// });
 
-    jQuery('.tickets tbody tr .check :checkbox').die();
-    jQuery('.tickets tbody tr .check :checkbox').live('change', function() {
+		var checkboxStore = null;
+		var $checkboxes = jQuery('.tickets tbody tr .check :checkbox');
+		$checkboxes.click(function(e) {
+
+      // Add selection border on click
+      var index = jQuery(this).parent().parent().index();
+      jQuery('#ticket-list').data('menuSelector').setCurrentElement(index);
+
+			if(!checkboxStore) {
+				checkboxStore = this;
+				return;
+			}
+			if(e.shiftKey) {
+				var start = $checkboxes.index(this);
+				var end = $checkboxes.index(checkboxStore);
+				$checkboxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', this.checked).change();
+			}
+			checkboxStore = this;
+		});
+
+    $checkboxes.die();
+    $checkboxes.live('change', function() {
         if (jQuery(this).prop('checked')) {
           jQuery(this).parent().parent().addClass('active');
         } else {
@@ -193,7 +213,7 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
         }
         var select_all_checkbox = jQuery("#helpdesk-select-all");
         var select_all_previous_state = select_all_checkbox.prop('checked');
-        select_all_checkbox.prop('checked', jQuery('.tickets tbody tr .check :checkbox:checked').length == jQuery('.tickets tbody tr .check :checkbox').length);
+        select_all_checkbox.prop('checked', jQuery('.tickets tbody tr .check :checkbox:checked').length == $checkboxes.length);
         if (select_all_previous_state !== select_all_checkbox.prop('checked')){
             select_all_checkbox.trigger("change");
         }

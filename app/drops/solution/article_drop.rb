@@ -102,6 +102,9 @@ class Solution::ArticleDrop < BaseDrop
     source.voted_by_user? portal_user
   end
 
+  def user
+    source.user
+  end
   # def feedback_form
   #   ActionView::Base.new(Rails::Configuration.new.view_path).render_to_string :partial => 
   # end
