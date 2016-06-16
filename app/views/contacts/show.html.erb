@@ -82,13 +82,15 @@
 					   		<%= h @user.job_title %>
 					   	</div>
 					<% end %>
+					<%= render :partial => "helpdesk/tickets/components/company_info", 
+	                     :locals => { :user => @user, :companies => @selected_companies } unless @user.has_multiple_companies_feature? %>
          			</div>
 				<ul class="show-fields">
 					<%= render :partial => "helpdesk/tickets/components/company_info", 
-	                     :locals => { :user => @user, :companies => @selected_companies } %>
+	                     :locals => { :user => @user, :companies => @selected_companies } if @user.has_multiple_companies_feature? %>
 					<% view_contact_fields.each do |field| %>
-				    	<%=  render_as_list nil, field %>
-				    <% end %>
+				    		<%=  render_as_list nil, field %>
+				    	<% end %>
 				</ul>
 			</div>
 
