@@ -7150,7 +7150,7 @@ en:
         freshsales_settings: "Freshsales Settings"
         domain: "Account Domain"
         auth_token: "Authentication Token"
-        domain_info: "Enter your freshsales domain without https. Ex: example.freshsales.com"
+        domain_info: "Enter your freshsales domain without https. Ex: example.freshsales.io"
         auth_token_info: "Enter your authentication token"
         error: "Please verify your settings and try again"
         select: "Select an option"
