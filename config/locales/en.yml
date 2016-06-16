@@ -6051,6 +6051,9 @@ en:
     archived_at: "Archived"
     from: From
     to: To
+    show_additional_fields: Show Additional Fields
+    hide_additional_fields: Hide Additional Fields
+    additional_fields_help: Description fields are moved into additional fields
     view_all_tickets : Export as CSV
     check_uncheck_title: 'Check/Uncheck all'
     data_backup:

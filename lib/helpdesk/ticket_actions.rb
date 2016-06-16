@@ -84,7 +84,7 @@ module Helpdesk::TicketActions
   end
 
   def configure_export
-    @csv_headers = export_fields 
+    @default_csv_headers, @additional_csv_headers = ticket_export_fields
     render :partial => "configure_export"
   end
   
