@@ -1,0 +1,18 @@
+<% headers.each do |head| %>
+  <div class="item <%= head[:type] %>">
+    <label class="checkbox prime">
+    <%= check_box_tag "export_fields[#{head[:value]}]", head[:label], retain_fields && (export_fields_redis.include?(head[:value]) || (!export_fields_redis.any? && head[:selected])) %>
+      <%= head[:label].html_safe %>
+    </label>
+    <%if head[:levels]%>
+      <div class="tree_line">
+        <% head[:levels].each do |level| %>
+          <label class="checkbox level">
+        <%= check_box_tag "export_fields[#{level[:name]}]", level[:label], export_fields_redis.include?(level[:name])  %>
+          <%= level[:label].html_safe %>
+          </label>
+        <% end %>
+       </div>
+    <%end%>
+  </div>
+<% end %>

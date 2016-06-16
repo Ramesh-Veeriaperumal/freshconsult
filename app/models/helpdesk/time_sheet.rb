@@ -116,9 +116,9 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     [ [I18n.t('helpdesk.time_sheets.customer') , :customer_name], 
       [I18n.t('helpdesk.time_sheets.agent') , :agent_name], 
       [I18n.t('helpdesk.time_sheets.group') , :group_name],
-      [I18n.t('helpdesk.time_sheets.product') , :product_name], 
+      ([I18n.t('helpdesk.time_sheets.product') , :product_name] if Account.current.products.any?), 
       [I18n.t('helpdesk.time_sheets.ticket') , :workable], 
-      [I18n.t('helpdesk.time_sheets.executed_at') , :group_by_day_criteria] ]
+      [I18n.t('helpdesk.time_sheets.executed_at') , :group_by_day_criteria] ].flatten
   end                                                                                                                                               
 
   def self.report_list

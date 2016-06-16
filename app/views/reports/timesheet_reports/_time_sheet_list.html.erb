@@ -146,7 +146,7 @@
         setFilterText();
 
         jQuery.ajax({
-            url: '<%=report_filter_timesheet_reports_url%>',
+            url: '/timesheet_reports/report_filter',
             type: "POST",
             data: jQuery('#report_filters').serializeArray(),
             success: function(data){ 

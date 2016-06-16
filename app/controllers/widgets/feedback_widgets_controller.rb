@@ -2,7 +2,7 @@ class Widgets::FeedbackWidgetsController < SupportController
 
   skip_before_filter :check_privilege
   skip_before_filter :verify_authenticity_token
-  
+
   skip_before_filter :set_language, :redirect_to_locale
   #Because multilingual is NOT applicable to widgets at the moment
 
@@ -42,8 +42,12 @@ class Widgets::FeedbackWidgetsController < SupportController
       widget_response = {:success => false, :error => @ticket.errors.full_messages.first }
     end
 
-    # For IE browsers, we are rendering the json response as text instead of json
-    render :text => widget_response.to_json
+    if params[:callback]
+      render :json => widget_response.to_json, :callback => params['callback']
+    else
+      # For IE browsers, we are rendering the json response as text instead of json
+      render :text => widget_response.to_json
+    end
 
   end
 

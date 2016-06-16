@@ -850,3 +850,31 @@
 	border:1px solid #e1e1e1;
 	@include border-radius(5px);
 }
+
+
+.additional-fields-label{
+  @include margin-left(3%);
+  @include padding-left(3%);
+  @include border-left(1px solid #aaa);
+  i{
+    color: #06c;
+  }
+}
+
+label.select-header{
+  display: inline;
+}
+
+.additional-fields{
+  .threecol-form{
+    overflow: hidden;
+    padding: 0 0 5px 0;
+    border-bottom: 1px dashed #aaa;
+  }
+}
+.default-ticket-fields{
+  .threecol-form{
+    overflow: hidden;
+    padding: 10px 0;
+  }
+}

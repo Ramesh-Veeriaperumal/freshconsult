@@ -181,7 +181,7 @@
 <% end %>
 <% content_for :pagefixed do %>
   <script type="text/javascript">
-    jQuery('#HelpdeskFwd_<%=cntid%> select#reply_email_id').live('change',function(e){
+  jQuery('#HelpdeskFwd_<%=cntid%> select#reply_email_id').live('change',function(e){
     var selectObj = jQuery(e.target),
         form = e.target.form,
         fromEmail = selectObj.val();

@@ -1022,14 +1022,6 @@ Redactor.prototype = {
 
 		return temp_div.html();
 	},
-	removeWeakAttr: function(content){
-		var temp_div = $("<div />");
-		var	div = $("<div />")
-			div.html(content)
-		temp_div.append(div)
-		temp_div.find('[weak]').removeAttr('weak');
-		return temp_div.html();
-	},
 	changesInTextarea: function(){
 		var content = this.$editor.html();
 
@@ -1041,9 +1033,6 @@ Redactor.prototype = {
 			content = this.wrapElementWithFont(content);
 		}
 
-		if(this.opts.mixedDirectionSupport){
-			content = this.removeWeakAttr(content);
-		}
 		this.$el.val(content);
 	},
 	removeCursorImage: function() {
@@ -1181,11 +1170,13 @@ Redactor.prototype = {
 				var text_node =  $(this.getCurrentNode());
 				var parent = text_node.closest("p,div,blockquote");
 				var blockText =  parent.text();
-	    			if(!parent.is('.redactor_editor') && (!parent.attr('dir') || parent.attr('weak'))&& blockText!='' ){
+	    			if(!parent.is('.redactor_editor') && blockText!='' ){
 		    			var dir=this.findDirection(blockText);
-					if(dir){
+					if(dir == 'rtl'){
 						parent.attr('dir',dir);
-						parent.removeAttr('weak');
+					}
+					else if(dir == 'ltr'){
+						parent.removeAttr('dir');
 					}
 				}
 			}
@@ -3125,11 +3116,11 @@ Redactor.prototype = {
 		  		var blockText =  textNode.text();
 		  		if(textNode.is("p,div:not(.redactor_editor),blockquote")){
 					var dir=this.findDirection(blockText);
-					if(dir){
+					if(dir == 'rtl'){
 						textNode.attr('dir',dir); 
 					}
-					else{
-						textNode.attr('weak',true);
+					else if(dir == 'ltr'){
+						textNode.removeAttr('dir'); 
 					}
 				}
 			}

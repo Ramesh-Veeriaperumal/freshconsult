@@ -66,9 +66,9 @@ module MailboxValidator
       msg = ""
       begin
         smtp = Net::SMTP.new(args[:server_name], args[:port])
-        if args[:port] == "465"
+        if args[:port].to_i == 465
           smtp.enable_ssl
-        elsif args[:port] == "587"
+        elsif args[:port].to_i == 587
           smtp.enable_starttls
         end
         smtp.start(args[:server_name], args[:user_name], args[:password], args[:authentication]) do |smtp|         

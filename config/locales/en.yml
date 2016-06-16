@@ -108,7 +108,7 @@ en:
   sales: "Sales"
   preview: "Preview"
   no_agents_in_selected_group: "No agents in selected group"
-  send_feedback: "Send feedback"
+  send_feedback: "Send"
   sidebar_help: "Help"
   support_title: "Support"
   ticket_form:
@@ -989,7 +989,7 @@ en:
     hotline:
       heading1: Mobihelp users meet hotline
       content1:
-        info1:  Hotline is the new mobile support and engagement platform from Freshdesk. It gives you all that Mobihelp had to offer and more in a sick new product.
+        info1:  Hotline is the new mobile support and engagement platform from Freshdesk. It gives you all that Mobihelp had to offer and more in a slick new product.
       content2:
         list_title: "With Hotline you get:"
         list1: In-app chat with push notifications
@@ -3234,12 +3234,13 @@ en:
     skip_notification_no: "No"
   header_logo: Header Logo
   feedback:
-      title: "Was this answer helpful?"
+      title: "Did you find it helpful?"
       up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
       upvote: "Yes"
       downvote: "No"
       link: "Send feedback"
       down_vote_form_title: "Can you please tell us how we can improve this article?"
+      solution_article_author: "is the author of this solution article."
       downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
     new_translation: "New %{language} translation"
@@ -3710,7 +3711,12 @@ en:
     helpdesk_software: Help Desk Software
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
+    footer_feedback_subject_placeholder: Tell us how we can make Freshdesk better
+    footer_feedback_thanks: Thank you for your feedback!
+    errors:
+      feedback_subject_required: Cannot be blank.      
     browse_community: Browse Community
+    help_and_support: Help & Support
     privacy_policy: "Privacy Policy"
   tkt_unattended_in_grp: Ticket Unattended in Group
   agent_solves_tkt: Agent Solves the Ticket
@@ -4108,6 +4114,7 @@ en:
       howto:
         one: "has this question"
         other: "have this question"
+      vote: "vote"
       votes: "votes"
       upvote: "up-vote"
       upvoted: "up-voted"
@@ -5073,6 +5080,7 @@ en:
       send: Send
       send_satisfaction_survey: Include satisfaction survey
       dm_confirm_message: The user is not following your twitter account. Your response will be sent as a public tweet. Do you want to continue?
+      attachment_missing_alert: It looks like you missed an attachment. Are you sure you want to send this message?
     facebook_form:
       send_and_resolve: Send and Resolve
       send: Send
@@ -6043,6 +6051,9 @@ en:
     archived_at: "Archived"
     from: From
     to: To
+    show_additional_fields: Show Additional Fields
+    hide_additional_fields: Hide Additional Fields
+    additional_fields_help: Description fields are moved into additional fields
     view_all_tickets : Export as CSV
     check_uncheck_title: 'Check/Uncheck all'
     data_backup:
@@ -7147,7 +7158,7 @@ en:
         freshsales_settings: "Freshsales Settings"
         domain: "Account Domain"
         auth_token: "Authentication Token"
-        domain_info: "Enter your freshsales domain without https. Ex: example.freshsales.com"
+        domain_info: "Enter your freshsales domain without https. Ex: example.freshsales.io"
         auth_token_info: "Enter your authentication token"
         error: "Please verify your settings and try again"
         select: "Select an option"
