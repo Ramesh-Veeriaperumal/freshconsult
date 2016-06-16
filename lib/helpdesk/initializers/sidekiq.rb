@@ -23,6 +23,7 @@ Sidekiq.configure_client do |config|
       "DevNotificationWorker",
       "PodDnsUpdate",
       "SearchV2::Manager::DisableSearch",
+      "CountES::IndexOperations::DisableCountES",
       "Gamification::ProcessTicketQuests",
       "AccountCleanup::DeleteSpamTicketsCleanup",
       "AccountCleanup::SuspendedAccountsWorker",
