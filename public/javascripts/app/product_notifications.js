@@ -89,10 +89,12 @@ window.App = window.App || {};
             if(timeStamp != "") {
                 var lastUpdatedDate = $($("#content-notify").children()[0]).data("timeStamp");
                 if(lastUpdatedDate > timeStamp) {
-                    jQuery('#notifiication-icon').click();
+                	jQuery("#notifiication-icon").addClass("notification_present");
+                  jQuery('#notifiication-icon').click();
                 } 
             } else {
-                 jQuery('#notifiication-icon').click();
+            		jQuery("#notifiication-icon").addClass("notification_present");
+                jQuery('#notifiication-icon').click();
             }
         },
         addHref: function (ev, link) {
@@ -123,6 +125,7 @@ window.App = window.App || {};
                         data: { "_method" : "put" },
                         url: "/profiles/notification_read",
                         success: function () {
+                        		console.log("***************************************");
                             $("#notifiication-icon").removeClass("notification_present");
                         }
                     });
