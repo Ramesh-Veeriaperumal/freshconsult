@@ -5,12 +5,8 @@ module IntegrationServices::Services
       'cloud_elements'
     end
  
-    def server_url
-      "https://staging.cloud-elements.com"
-    end
-
-    def receive_oauth_url
-      cloud_elements_resource.get_oauth_url      
+    def server_url 
+      (["development", "staging"].include? Rails.env) ? "https://staging.cloud-elements.com" : "https://api.cloud-elements.com"
     end
 
     def receive_create_element_instance
@@ -55,6 +51,22 @@ module IntegrationServices::Services
 
     def receive_delete_formula_instance
       formula_resource.delete_instance
+    end
+
+    def receive_uninstall
+      installed_app_configs = installed_app.configs[:inputs]
+      element_instance_id = installed_app_configs['element_instance_id']
+      fd_instance_id = installed_app_configs['fd_instance_id']
+      formula_instance_id = installed_app_configs['crm_to_helpdesk_formula_instance']
+      app_name = installed_app.application.name
+      formula_id = Integrations::CRM_TO_HELPDESK_FORMULA_ID[app_name]
+      metadata = {:user_agent => user_agent}
+      formula_obj = self.class.new(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
+      formula_obj.receive(:delete_formula_instance)
+      [element_instance_id, fd_instance_id].each do |id|
+        element_obj = self.class.new(installed_app, {}, metadata.merge({ :element_instance_id => id }))
+        element_obj.receive(:delete_element_instance)
+      end
     end
 
     private

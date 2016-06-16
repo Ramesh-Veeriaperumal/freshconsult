@@ -6664,15 +6664,15 @@ en:
         account: "Account Fields"
         opportunity: "Opportunity Fields"
         opportunity_settings: "Agents can create/link or unlink opportunities from the ticket"
-    salesforce_sync:
+    salesforce_crm_sync:
       label: "Salesforce Contact Account Sync"
       desc: "You can sync contact and account information between Salesforce crm and Freshdesk."
       helptext: "<h4>Salesforce Sync</h4><p><br/>Select the list of fields need to be synced between Freshdesk and Salesforce. You can select to a max of 10 fields.</p><p><strong>Note:</strong><br/>First four fields are the default fields and cannot be removed.</p>"
       add_fields:
         remove: "Remove"
       form:
-        salesforce_sync_settings_info: ""
-        salesforce_sync_settings: "Salesforce Settings"
+        salesforce_crm_sync_settings_info: ""
+        salesforce_crm_sync_settings: "Salesforce Settings"
         select: "Select an option"
         contact: "Contact Fields"
         account: "Account Fields"

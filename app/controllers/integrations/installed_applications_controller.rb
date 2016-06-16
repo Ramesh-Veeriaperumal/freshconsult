@@ -12,7 +12,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   before_filter :check_jira_authenticity, :only => [:install, :update]
   before_filter :redirect_old_slack, :only => [:update], :if => :application_is_slack? #Remove this when slackv1 is obselete.
   after_filter  :destroy_all_slack_rule, :only => [:uninstall], :if =>  :application_is_slack? #Remove this when slackv1 is obselete.
-  before_filter :destroy_ce_instances, :only => [:uninstall], :if => :application_is_ce?
 
   def install 
   # also updates
@@ -179,12 +178,4 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     @installing_application.present? && @installing_application.slack?
   end
 
-  def destroy_ce_instances
-    Integrations::CloudElements::CrmController.destroy_ce_instances( @installed_application, request.user_agent )
-  end
-
-  def application_is_ce?
-    cloud_apps = Integrations::CloudElements::Constant::APP_NAMES.collect{|k,v| v}
-    cloud_apps.include? @installed_application.application.name
-  end
 end

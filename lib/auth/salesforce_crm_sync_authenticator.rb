@@ -1,4 +1,4 @@
-class Auth::SalesforceSyncAuthenticator < Auth::Authenticator
+class Auth::SalesforceCrmSyncAuthenticator < Auth::Authenticator
 
   def after_authenticate(params)
     access_token = @omniauth.credentials
@@ -16,12 +16,12 @@ class Auth::SalesforceSyncAuthenticator < Auth::Authenticator
   def register_middleware(omniauth)
     omniauth.provider(
       :salesforce,
-      Integrations::OAUTH_CONFIG_HASH["salesforce_sync"]["consumer_token"],
-      Integrations::OAUTH_CONFIG_HASH["salesforce_sync"]["consumer_secret"],
-      :name         => "salesforce_sync")
+      Integrations::OAUTH_CONFIG_HASH["salesforce_crm_sync"]["consumer_token"],
+      Integrations::OAUTH_CONFIG_HASH["salesforce_crm_sync"]["consumer_secret"],
+      :name         => "salesforce_crm_sync")
   end
 
   def get_redirect_url
-    "#{@portal_url}/integrations/sync/crm/instances?state=sfdc"
+    "#{@portal_url}/integrations/sync/crm/instances?state=sfdc&method=post"
   end
 end

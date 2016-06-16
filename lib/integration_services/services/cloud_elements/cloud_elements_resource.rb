@@ -12,10 +12,6 @@ module IntegrationServices::Services
         "#{@service.server_url}/elements/api-v2"
       end
 
-      def authorization_header
-        { 'Authorization' => Integrations::CLOUD_ELEMENTS_AUTH_HEADER + "," + "Element #{@service.meta_data[:element_token]}" }
-      end
-
       def process_response(response, *success_codes, &block)
         if success_codes.include?(response.status)
           yield parse(response.body)

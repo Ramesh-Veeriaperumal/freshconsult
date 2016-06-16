@@ -1,7 +1,4 @@
 class Integrations::CloudElementsController < ApplicationController
-  skip_before_filter :check_privilege, :verify_authenticity_token
-  before_filter :verify_authenticity, :build_installed_app, :only => [:oauth_url]
-  include Integrations::CloudElements::CloudElementsUtil
 
   private
 
@@ -31,7 +28,7 @@ class Integrations::CloudElementsController < ApplicationController
     end
 
     def instance_object_definition payload, metadata
-      if metadata[:method] == 'post'
+      if metadata[:method] == 'post' || !metadata[:update_action]
         service_obj(payload, metadata).receive(:create_instance_object_definition)
       else
         service_obj(payload, metadata).receive(:update_instance_object_definition)
@@ -39,7 +36,7 @@ class Integrations::CloudElementsController < ApplicationController
     end
 
     def instance_transformation payload, metadata 
-      if metadata[:method] == 'post'
+      if metadata[:method] == 'post' || !metadata[:update_action]
         service_obj(payload, metadata).receive(:create_instance_transformation)
       else
         service_obj(payload, metadata).receive(:update_instance_transformation)
