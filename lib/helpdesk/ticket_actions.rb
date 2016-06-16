@@ -62,7 +62,7 @@ module Helpdesk::TicketActions
   end
   
   def split_the_ticket        
-    create_ticket_from_note
+    create_ticket_from_note or return
     update_split_activities
     redirect_to @item
   end
@@ -125,7 +125,11 @@ module Helpdesk::TicketActions
   end
   
   def create_ticket_from_note    
-    @source_ticket = current_account.tickets.find_by_display_id(params[:id])
+    @source_ticket = current_account.tickets.permissible(current_user).find_by_display_id(params[:id])
+    if @source_ticket.blank?
+      flash[:warning] = t('flash.general.access_denied')
+      redirect_to helpdesk_tickets_path and return false
+    end
     @note = @source_ticket.notes.find(params[:note_id])   
     company_id = @note.user.companies.map(&:id).include?(@source_ticket.company_id) ? 
                   @source_ticket.company_id : @note.user.company_id
@@ -191,7 +195,7 @@ module Helpdesk::TicketActions
     else
       puts @item.errors.to_json
     end
-    
+    return true
   end
 
   
