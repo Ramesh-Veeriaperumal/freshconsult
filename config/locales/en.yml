@@ -3711,7 +3711,12 @@ en:
     helpdesk_software: Help Desk Software
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
+    footer_feedback_subject_placeholder: Tell us how we can make Freshdesk better
+    footer_feedback_thanks: Thank you for your feedback!
+    errors:
+      feedback_subject_required: Cannot be blank.      
     browse_community: Browse Community
+    help_and_support: Help & Support
     privacy_policy: "Privacy Policy"
   tkt_unattended_in_grp: Ticket Unattended in Group
   agent_solves_tkt: Agent Solves the Ticket
