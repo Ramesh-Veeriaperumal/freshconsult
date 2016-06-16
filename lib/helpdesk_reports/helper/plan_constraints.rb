@@ -31,12 +31,18 @@ module HelpdeskReports::Helper::PlanConstraints
     @ent_reports_addon ||= Account.current.features_included?(:enterprise_reporting)
   end
 
+  def hide_agent_reporting?
+    return @hide_agent_metrics if defined?(@hide_agent_metrics)
+    @hide_agent_metrics ||= Account.current.features_included?(:euc_hide_agent_metrics)
+  end
+
   def exclude_filters(report_type)  
     excluded_filters  = []
     excluded_filters |= ReportsAppConfig::REPORT_CONSTRAINTS[:global_exclude_filters][report_type] || []
     plan_excludes     = ReportsAppConfig::REPORT_CONSTRAINTS[:plan_exclude_filters][report_type]
     plan_filters      = plan_excludes[plan_group] if plan_excludes
     excluded_filters |= plan_filters || [] 
+    excluded_filters += [:agent_id] if hide_agent_reporting?
   end
 
   def max_limits_by_user?(feature, current_count = nil)

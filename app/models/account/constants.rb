@@ -91,7 +91,8 @@ class Account < ActiveRecord::Base
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => false, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true, :default_survey => false, :custom_survey => false, 
-    :saml_unspecified_nameid => false, :multiple_user_companies => false
+    :saml_unspecified_nameid => false, :multiple_user_companies => false,
+    :euc_hide_agent_metrics => false
   }
 
 

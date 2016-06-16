@@ -24,11 +24,12 @@ module Reports::TimesheetReport
   end
   
   def list_view_items
-   arr = [:workable , :customer_name , :priority_name, 
-          :status_name, :note , :group_by_day_criteria , 
-          :agent_name , :group_name , :hours]
-   arr.push(:product_name) if Account.current.products.any?   
-   arr
+    view_headers = [:workable , :customer_name , :priority_name, :status_name, :note , :group_by_day_criteria , :agent_name,
+                                                                             :group_name , :hours]
+
+    view_headers -= [:agent_name] if Account.current.features_included?(:euc_hide_agent_metrics)
+    view_headers.push(:product_name) if Account.current.products.any? 
+    view_headers
   end
 
   def billable_vs_non_billable(time_sheets)
@@ -134,7 +135,7 @@ module Reports::TimesheetReport
     @start_date = start_date
     @end_date = end_date
     @customer_id = params[:customers] ? params[:customers].split(',') : []
-    @user_id = params[:user_id] || []
+    @user_id = (Account.current.features_included?(:euc_hide_agent_metrics) ? [] : (params[:user_id] || []))
     @headers = list_view_items.delete_if{|item| item == group_by_caluse }
     @billable = billable_and_non? ? [true, false] : [params[:billable].to_s.to_bool]
     @group_id = params[:group_id] || []

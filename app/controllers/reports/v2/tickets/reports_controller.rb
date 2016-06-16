@@ -15,7 +15,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
                                                                                     :save_reports_filter, :delete_reports_filter]
   before_filter :pdf_params,                                            :only   => [:export_report]
   before_filter :save_report_max_limit?,                                :only   => [:save_reports_filter]
-  before_filter :construct_report_filters,                              :only   => [:save_reports_filter,:update_reports_filter]
+  before_filter :construct_report_filters, :schedule_allowed?,          :only   => [:save_reports_filter,:update_reports_filter]
   
   helper_method :enable_schedule_report?
 
@@ -119,6 +119,13 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   def ensure_report_type_or_redirect
     @report_type = params[:report_type].to_sym if params[:report_type]
     redirect_to reports_path unless LIST_REPORT_TYPES.include?(report_type) && has_scope?(report_type)
+  end
+
+  def schedule_allowed?
+    if params['data_hash']['schedule_config']['enabled'] == true 
+      allow = enable_schedule_report? && current_user.privilege?(:export_reports)
+      render json: nil, status: :ok if allow != true
+    end
   end
 
   def build_and_execute
@@ -277,13 +284,15 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
 
   def has_scope?(report_type)
-    if current_account.features_included?(:enterprise_reporting)
+    if (report_type == :agent_summary && hide_agent_reporting?)
+      return false
+    elsif enterprise_reporting?
       ENTERPRISE_REPORTS.include?(report_type)
     elsif current_account.features_included?(:advanced_reporting)
       ADVANCED_REPORTS.include?(report_type)
     else
       DEFAULT_REPORTS.include?(report_type)
-    end 
+    end
   end
 
 end

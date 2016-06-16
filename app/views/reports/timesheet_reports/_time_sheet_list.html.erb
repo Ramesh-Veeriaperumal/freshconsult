@@ -19,10 +19,11 @@
           <%= render :partial => "reports/shared/save_report_controls.html.erb"%>
         <% end %>
         <!-- PDF link -->
-        <button class="generate-pdf-button" id="export_pdf" name="button" onclick="this.blur();">
-          <%= t('helpdesk_reports.export.email_report_pdf')%>
-        </button>
-
+        <% if current_user.privilege?(:export_reports) %> 
+          <button class="generate-pdf-button" id="export_pdf" name="button" onclick="this.blur();">
+            <%= t('helpdesk_reports.export.email_report_pdf')%>
+          </button>
+        <% end %>
       </div>
       <div class="reports-filter span12" id="report-filter-details">
         <% unless generate_pdf_action? %>
@@ -49,7 +50,7 @@
           <%=render :partial =>"reports/timesheet_reports/time_sheets_metric.html.erb" %>
         </div>
       </div>
-      <% grp_data = Helpdesk::TimeSheet.group_by_options.collect {|grp| grp[1] if !(@headers.include?(grp[1])) } %>
+      <% grp_data = [params[:group_by] ? params[:group_by].to_sym : Helpdesk::TimeSheet.group_by_options.first[1]] %>
       <% if generate_pdf_action? %>
         <div class="row-fluid control-group">
           <div class="vertical-alignment">
@@ -68,15 +69,17 @@
           <%= select_tag :group_by_field , options_for_select(Helpdesk::TimeSheet.group_by_options,grp_data),
                   { :multiple => false, :class => "select2 filter_item"}%>
         </div>
-        <span class="pull-right time-sheet-top-margin">
-            <a href="javascript:void(0);" onclick='jQuery("#generate-pdf").trigger("click");' 'id'='export_as_csv'><%=t('export_to_CSV')%></a>
-        </span>
+        <% if current_user.privilege?(:export_reports) %>
+          <span class="pull-right time-sheet-top-margin">
+              <a href="javascript:void(0);" onclick='jQuery("#generate-pdf").trigger("click");' 'id'='export_as_csv'><%=t('export_to_CSV')%></a>
+          </span>
+        <% end %>
       </div>
       <% end %>
         <div class="grid report row-fluid"> 
             <table width="100%">
               <tr>
-              <%colspan = 8%>
+              <%colspan = @headers.length-1%>
                 <% @headers.each do |header|
                   concat content_tag :th, h(Helpdesk::TimeSheet.report_list[header]), :class => header
                  end %>
