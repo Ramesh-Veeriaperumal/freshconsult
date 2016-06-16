@@ -491,7 +491,10 @@ window.xhrPool = [];
       $('.form-unsaved-changes-trigger').on('change', function() {
         $(this).data('formChanged', true);
       });
-      
+
+      $('body').on('focus', 'select.select2', function (ev) {
+        $(ev.target).select2('focus');
+      });      
       
    });
 })(jQuery);
