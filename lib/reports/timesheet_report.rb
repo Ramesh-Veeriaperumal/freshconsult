@@ -24,8 +24,11 @@ module Reports::TimesheetReport
   end
   
   def list_view_items
-   [:workable , :customer_name , :priority_name, :status_name, :note , :group_by_day_criteria , :agent_name, :product_name ,
-                                                                             :group_name , :hours]
+   arr = [:workable , :customer_name , :priority_name, 
+          :status_name, :note , :group_by_day_criteria , 
+          :agent_name , :group_name , :hours]
+   arr.push(:product_name) if Account.current.products.any?   
+   arr
   end
 
   def billable_vs_non_billable(time_sheets)
