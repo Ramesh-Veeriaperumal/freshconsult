@@ -120,7 +120,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
          params[:attachments] = ticket.attachments
          params[:cloud_files] = ticket.cloud_files
       end
-      deliver_email_notification(params) unless receips.nil?
+      deliver_email_notification(params) unless to_emails.nil?
     end
   end
 
@@ -167,7 +167,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     refined_receipts=get_email_array non_db_user_ccs if !non_db_user_ccs.empty?
     left_out_ccs=cc_emails - refined_receipts if !refined_receipts.nil?
     
-    deliver_requester_notification(nil, non_db_user_ccs.join(", "), e_notification, ticket, comment, true,left_out_ccs,i_receips) unless non_db_user_ccs.empty?
+    deliver_requester_notification(nil, non_db_user_ccs.join(", "), e_notification, ticket, comment, true,left_out_ccs,non_db_user_ccs.join(", ")) unless non_db_user_ccs.empty?
   end
 
   def self.internal_receips(e_notification, ticket)
