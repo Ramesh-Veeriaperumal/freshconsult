@@ -11,6 +11,7 @@ module Helpdesk::Permission
       valid_emails(Account.current, emails)
     end
 
+    #todo: to chk possibility of merging fetch_ticket_info & process_email_ticket_info
     def fetch_ticket_info ticket_data, user, account
       ticket_identifier = Helpdesk::Email::IdentifyTicket.new(ticket_data, user, account)
       ticket = ticket_identifier.belongs_to_ticket
@@ -20,10 +21,10 @@ module Helpdesk::Permission
       return ticket, archive_ticket
     end
 
-    def process_email_ticket_info account, from_email, user
-      ticket = fetch_ticket(account, from_email, user)
+    def process_email_ticket_info account, from_email, user, email_config
+      ticket = fetch_ticket(account, from_email, user, email_config)
       if ticket.blank? && account.features?(:archive_tickets)
-        archived_ticket = fetch_archived_ticket(account, from_email, user)
+        archived_ticket = fetch_archived_ticket(account, from_email, user, email_config)
       end
       return ticket, archived_ticket
     end

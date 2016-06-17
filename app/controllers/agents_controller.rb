@@ -90,7 +90,7 @@ class AgentsController < ApplicationController
 
   def toggle_availability
     if params[:id].to_i == current_user.id && current_user.agent.allow_availability_toggle? 
-      @agent = current_user
+      @agent = current_user.agent
     elsif params[:admin] && current_user.privilege?(:manage_availability)
       @agent = current_account.agents.find_by_user_id(params[:id]) 
     end

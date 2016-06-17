@@ -440,11 +440,15 @@ $iconColorList: "ticket" $bg_color_ticket,
 	height: 500px;
 	.contact-info-fields {
 		background-color: #f1f1f1;
-    background-image: inline-image('/cdn-ignored/inline-images/ribbon-bg.png');
-    background-size: 20%;
-    display: table-cell;
+    		background-image: inline-image('/cdn-ignored/inline-images/ribbon-bg.png');
+   		background-size: 20%;
+    		display: table-cell;
 		width: 260px;
 		vertical-align: top;
+		.profile_pic{
+			text-align: center;
+			margin-top: 20px;
+		}
 		.company-icon-wrap{
 			@include size(130px, 130px);
 			background-color: #fff;

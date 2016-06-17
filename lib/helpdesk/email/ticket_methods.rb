@@ -108,7 +108,7 @@ module Helpdesk::Email::TicketMethods
       NewRelic::Agent.notice_error(e)
     end
     cleanup_attachments ticket
-    create_redis_key_for_ticket(ticket_message_id) unless ticket_message_id.nil?
+    store_ticket_threading_info(ticket_message_id) unless ticket_message_id.nil?
   end
 
   def header_processor
@@ -120,11 +120,7 @@ module Helpdesk::Email::TicketMethods
   def header_info_update ticket_message_id
     (ticket.header_info ||= {}).merge!(:message_ids => [ticket_message_id]) unless ticket_message_id.nil?
   end
-
-  def create_redis_key_for_ticket ticket_message_id
-    header_processor.set_ticket_id_with_message_id account, ticket_message_id, ticket
-  end
-  
+    
   private 
   #All recipients are moved to global Cc to have them part of the entire ticket conversation 
   def global_cc
@@ -132,4 +128,15 @@ module Helpdesk::Email::TicketMethods
     additional_to_emails    = email[:to_emails].reject{|mail| email[:to][:email].include?(mail) or sup_emails.include?(mail.downcase)}
     @global_cc ||= additional_to_emails.push(email[:cc]).flatten.compact.uniq 
   end
+
+  def store_ticket_threading_info(message_id)
+    related_ticket_info = header_processor.get_ticket_info_from_redis(account, message_id)
+    if related_ticket_info
+      ticket_id_list = $1 if related_ticket_info =~ /(.+?):/
+    end
+    related_tickets_display_info = ticket_id_list.present? ? ((ticket_id_list.to_s) +","+ (ticket.display_id.to_s)) : ticket.display_id.to_s
+
+    header_processor.set_ticket_id_with_message_id account, message_id, related_tickets_display_info
+  end
+
 end
