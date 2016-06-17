@@ -186,7 +186,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
   def test_updated_at_of_ticket_with_description_update
     # IN API
-    ticket = Helpdesk::Ticket.where(spam: false, deleted: false).first
+    ticket = Helpdesk::Ticket.where(spam: false, deleted: false, source: 1).first
     previous_updated_at = ticket.updated_at
     skip_bullet do
       put "/api/tickets/#{ticket.id}", { description: Faker::Lorem.paragraph }.to_json, @write_headers

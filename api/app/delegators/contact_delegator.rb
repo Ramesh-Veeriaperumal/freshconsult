@@ -1,5 +1,8 @@
 class ContactDelegator < BaseDelegator
-  validates :company, presence: true, if: -> { company_id && changed.include?('customer_id') }
+
+  include ActiveRecord::Validations
+
+  validates_associated :default_user_company, if: -> { company_id }
   validates :custom_field, custom_field: { custom_field: {
     validatable_custom_fields: proc { Account.current.contact_form.custom_drop_down_fields },
     drop_down_choices: proc { Account.current.contact_form.custom_dropdown_field_choices },

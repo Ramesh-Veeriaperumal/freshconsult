@@ -712,10 +712,12 @@ class User < ActiveRecord::Base
 
   def mark_user_company_destroy
     uc = self.default_user_company
-    self.user_companies_attributes = [{ :id => uc.id,
-                                        :company_id => uc.company_id, 
-                                        :user_id => uc.user_id,
-                                        :_destroy => true }]
+    if uc
+      self.user_companies_attributes = [{ :id => uc.id,
+                                          :company_id => uc.company_id, 
+                                          :user_id => uc.user_id,
+                                          :_destroy => true }]
+    end
   end
 
   def company_id
