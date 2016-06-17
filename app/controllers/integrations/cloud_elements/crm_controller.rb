@@ -23,7 +23,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     [el_response, fd_response].each do |response|
       delete_element_instance_error request.user_agent, response['id'] if response.present? and response['id'].present?
     end
-    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application for account: #{current_account.id}, issue: #{e.message}"}})
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application: #{e.message}", :account_id => current_account.id}})
     flash[:error] = t(:'flash.application.install.error')
     redirect_to integrations_applications_path 
   end
@@ -36,7 +36,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     construct_synced_contacts
     render_settings
   rescue => e
-    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application for account: #{current_account.id}, issue: #{e.message}"}})
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application: #{e.message}", :account_id => current_account.id}})
     flash[:error] = t(:'flash.application.update.error')
     redirect_to integrations_applications_path
   end
@@ -47,7 +47,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     flash[:notice] = t(:'flash.application.update.success')
     redirect_to integrations_applications_path
   rescue => e
-    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in updating the application for account: #{current_account.id}, issue: #{e.message}"}})
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in updating the application: #{e.message}", :account_id => current_account.id}})
     flash[:error] = t(:'flash.application.update.error')
     redirect_to integrations_applications_path
   end
@@ -180,7 +180,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       crm_element_object_transformation
       freshdesk_object_transformation
     rescue => e
-      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in updating the application for account: #{current_account.id}, issue: #{e.message}"}})
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in updating the application: #{e.message}", :account_id => current_account.id}})
       flash[:error] = t(:'flash.application.update.error')
       redirect_to integrations_applications_path
     end
@@ -267,7 +267,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       payload = formula_instance_payload( "#{element}_#{subdomain}_#{current_account.id}", @app_config['element_instance_id'], @app_config['fd_instance_id'])
       update_formula_instance(payload, metadata)
     rescue => e
-      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application for account: #{current_account.id}, issue: #{e.message}"}})
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application: #{e.message}", :account_id => current_account.id}})
       flash[:error] = t(:'flash.application.update.error')
       redirect_to integrations_applications_path and return 
     end
