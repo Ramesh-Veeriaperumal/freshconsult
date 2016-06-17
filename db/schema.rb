@@ -2709,6 +2709,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   end
 
   add_index "report_filters", ["account_id", "report_type"], :name => "index_report_filters_account_id_and_report_type"
+  add_index "report_filters", ["account_id", "user_id", "report_type"], :name => "index_report_filters_on_account_user_and_report_type"
 
   create_table "roles", :force => true do |t|
     t.string   "name"
