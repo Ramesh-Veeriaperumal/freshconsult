@@ -44,6 +44,7 @@
 jQuery(document).ready(function() {
   var dateFormat = getDateFormat('mediumDate').toUpperCase();
   var date_lag = 0;
+  moment.lang('en');
   var date = { 
       1:                    moment().subtract((1   + date_lag),"days").format(dateFormat), 
       7:                    moment().subtract((6   + date_lag),"days").format(dateFormat),
