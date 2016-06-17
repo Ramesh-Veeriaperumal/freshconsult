@@ -1,5 +1,7 @@
 class MailgunController < ApplicationController
 
+  include Helpdesk::Email::ParseEmailData
+  include EnvelopeParser
   
   skip_filter :select_shard
   before_filter :access_denied, :unless => :mailgun_verifed
@@ -13,7 +15,13 @@ class MailgunController < ApplicationController
   skip_after_filter :set_last_active_time
 
   def create
-    @process_email.perform
+    recipients = params[:recipient]
+    if recipients.present? && multiple_envelope_to_address?(parse_recipients)
+      process_email_for_each_to_email_address
+    else
+      @process_email = Helpdesk::Email::Process.new(params)
+      @process_email.perform
+    end
     render :nothing => true, :status => 200, :content_type => 'text/html'
   end
 
@@ -36,6 +44,42 @@ class MailgunController < ApplicationController
       if PodConfig['CURRENT_POD'] != pod_info
         Rails.logger.error "Email is not for the current POD."
         redirect_email(pod_info) and return
+      end
+    end
+
+    def determine_pod
+      pod_infos = find_pods
+      unless email_for_current_pod?(pod_infos)
+        Rails.logger.error "Email is not for the current POD."
+        redirect_email(pod_infos.first) and return
+      end
+    end
+
+    def find_pods
+      to_emails = get_emails(params[:recipient])
+      pod_infos = []
+      to_emails.each do |to_email|
+        shard = ShardMapping.fetch_by_domain(to_email[:domain])
+        pod_info = shard.present? ? shard.pod_info : nil
+        pod_infos.push(pod_info)
+      end
+      return pod_infos
+    end
+
+    def email_for_current_pod?(pod_infos)
+      pod_infos.each do |pod_info|
+        return true if PodConfig['CURRENT_POD'] == pod_info
+      end
+      return false
+    end
+
+    def process_email_for_each_to_email_address
+      recipients = parse_recipients
+      recipients.each do |to_address|
+        params[:recipient] = to_address
+        Rails.logger.info "Multiple Recipient case - starting Process email for :#{to_address} "
+        process_email = Helpdesk::Email::Process.new(params)
+        process_email.perform
       end
     end
 

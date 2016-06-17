@@ -20,16 +20,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
   attr_accessor :reply_to_email, :additional_emails,:archived_ticket, :start_time, :actual_archive_ticket
 
-  def determine_pod
-    to_email = parse_to_email
-    shard = ShardMapping.fetch_by_domain(to_email[:domain])
-    shard.pod_info unless shard.blank?
-  end
-
-  def perform
+  def perform(parsed_to_email = Hash.new, skip_encoding = false)
     # from_email = parse_from_email
     self.start_time = Time.now.utc
-    to_email = parse_to_email
+    to_email = parsed_to_email.present? ? parsed_to_email : parse_to_email
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
     return unless shardmapping.present?
     Sharding.select_shard_of(to_email[:domain]) do
@@ -38,7 +32,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       # clip_large_html
       account.make_current
       TimeZone.set_time_zone
-      encode_stuffs
+      encode_stuffs unless skip_encoding
       from_email = parse_from_email(account)
       return if from_email.nil?
       if account.features?(:domain_restricted_access)
@@ -100,7 +94,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   # ITIL Related Methods starts here
 
   def add_to_or_create_ticket(account, from_email, to_email, user, email_config)
-    ticket, archive_ticket = process_email_ticket_info(account, from_email, user)
+    ticket, archive_ticket = process_email_ticket_info(account, from_email, user, email_config)
     if (ticket.present? || archive_ticket.present?) && user.blank?
       if archive_ticket
         parent_ticket = archive_ticket.parent_ticket
@@ -306,11 +300,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       fetch_valid_emails params[:to]
     end
 
-    def fetch_ticket(account, from_email, user)
+    def fetch_ticket(account, from_email, user, email_config)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
       ticket = account.tickets.find_by_display_id(display_id) if display_id
       return ticket if can_be_added_to_ticket?(ticket, user, from_email)
-      ticket = ticket_from_headers(from_email, account)
+      ticket = ticket_from_headers(from_email, account, email_config)
       return ticket if can_be_added_to_ticket?(ticket, user, from_email)
       ticket = ticket_from_email_body(account)
       return ticket if can_be_added_to_ticket?(ticket, user, from_email)
@@ -318,11 +312,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return ticket if can_be_added_to_ticket?(ticket, user, from_email)
     end
 
-    def fetch_archived_ticket(account, from_email, user)
+    def fetch_archived_ticket(account, from_email, user, email_config)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
       archive_ticket = account.archive_tickets.find_by_display_id(display_id) if display_id
       return archive_ticket if can_be_added_to_ticket?(archive_ticket, user, from_email)
-      archive_ticket = archive_ticket_from_headers(from_email, account)
+      archive_ticket = archive_ticket_from_headers(from_email, account, email_config)
       return archive_ticket if can_be_added_to_ticket?(archive_ticket, user, from_email)
       return self.actual_archive_ticket if can_be_added_to_ticket?(self.actual_archive_ticket, user, from_email)
     end
@@ -421,7 +415,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
         NewRelic::Agent.notice_error(e)
       end
-      set_ticket_id_with_message_id account, message_key, ticket
+      store_ticket_threading_info(account, message_key, ticket)
+    end
+
+    def store_ticket_threading_info(account, message_id, ticket)
+      related_ticket_info = get_ticket_info_from_redis(account, message_id)
+      if related_ticket_info
+        ticket_id_list = $1 if related_ticket_info =~ /(.+?):/
+      end
+      related_tickets_display_info = ticket_id_list.present? ? ((ticket_id_list.to_s) +","+ (ticket.display_id.to_s)) : ticket.display_id.to_s
+
+      set_ticket_id_with_message_id account, message_id, related_tickets_display_info
     end
     
     def check_for_spam(ticket)
@@ -455,6 +459,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       model.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(from_email[:email]) == 0}
     end
 
+    #Todo: Check code duplicate available in mailgun controller side - try to merge both & reuse it
     def ticket_from_email_body(account)
       display_span = run_with_timeout(NokogiriTimeoutError) { 
                         Nokogiri::HTML(params[:html]).css("span[title='fd_tkt_identifier']") 
@@ -469,6 +474,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
 
+    #Todo: Check code duplicate available in mailgun controller side - try to merge both & reuse it
     def ticket_from_id_span(account)
       parsed_html = run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(params[:html]) }
       display_span = parsed_html.css("span[style]").select{|x| x.to_s.include?('fdtktid')}
