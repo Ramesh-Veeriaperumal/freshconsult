@@ -296,7 +296,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
       companies = ticket.requester.companies.sorted.collect { |c| [c.name, c.id] }
       if ticket.company_id && !ticket.requester.company_ids.include?(ticket.company_id)
         old_company = account.companies.find_by_id(ticket.company_id)
-        companies.push([old_company.name, old_company.id])
+        companies.push([old_company.name, old_company.id]) if old_company.present?
       end
     end
     companies.present? ? companies : []
