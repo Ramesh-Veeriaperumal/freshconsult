@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
 
   has_many :user_companies, :class_name => 'UserCompany', 
                             :dependent => :destroy
-  accepts_nested_attributes_for :user_companies
+  accepts_nested_attributes_for :user_companies, :allow_destroy => true
   has_one :default_user_company, :class_name => 'UserCompany', :conditions => { :default => true }
   
   has_many :companies, :class_name => 'Company', 

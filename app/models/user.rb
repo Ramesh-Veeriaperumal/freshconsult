@@ -279,8 +279,8 @@ class User < ActiveRecord::Base
   end
 
   def client_manager=(checked)
-    if customer? && company_ids.any?
-      self.user_companies.first.client_manager = (checked == "true" || checked == true)
+    if customer? && default_user_company.present?
+      self.default_user_company.client_manager = (checked == "true" || checked == true)
     end
   end
 
@@ -544,7 +544,7 @@ class User < ActiveRecord::Base
   end
 
   def company_client_manager?
-    user_companies.length == 1 && user_companies.first.client_manager
+    default_user_company.present? && default_user_company.client_manager
   end
 
   # Marketplace
@@ -694,7 +694,7 @@ class User < ActiveRecord::Base
       self.user_companies.present? ? (self.user_companies.first.company_id = comp.id) : 
         self.user_companies.build(:company_id => comp.id, :default => true)
     else
-      self.user_companies.destroy_all
+      mark_user_company_destroy
     end
   end
   
@@ -703,11 +703,23 @@ class User < ActiveRecord::Base
   end
 
   def company_id= id
-    self.user_companies.build(:company_id => id, :default => true) if id && self.user_companies.empty?
+    if id.present?
+      self.build_default_user_company(:company_id => id) unless self.default_user_company.present?
+    else
+      mark_user_company_destroy
+    end
+  end
+
+  def mark_user_company_destroy
+    uc = self.default_user_company
+    self.user_companies_attributes = [{ :id => uc.id,
+                                        :company_id => uc.company_id, 
+                                        :user_id => uc.user_id,
+                                        :_destroy => true }]
   end
 
   def company_id
-    company.id if company
+    default_user_company.company_id if default_user_company.present?
   end
 
   def company_ids
