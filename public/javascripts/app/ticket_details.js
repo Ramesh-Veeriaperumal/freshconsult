@@ -471,7 +471,7 @@ var scrollToError = function(){
 
 
 	if (jQuery('.requester-info-sprite').length < 2) {
-		jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
+		jQuery('.requester-info-sprite').parents('.tkt-tabs').hide();
 	}
 
 	$(document).on("click.ticket_details", '#ticket_original_request a, .details a', function(ev){

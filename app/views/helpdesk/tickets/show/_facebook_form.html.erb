@@ -28,7 +28,7 @@
       </li>       
       <li class="inline-field field clearField continous message">
         <%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
-        <%= ff.text_area :body, { :class => 'required facebook auto-height', :id => "#{id}-#{cntid}-body", :rows => "6" } %>
+        <%= ff.text_area :body, { :class => 'required facebook auto-height', :id => "#{id}-#{cntid}-body", :rows => "6", "data-domhelper-name" => "content-body" } %>
         <% end %>
       </li>
     </ul>
