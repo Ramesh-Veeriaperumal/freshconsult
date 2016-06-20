@@ -79,8 +79,13 @@
 	//For toggling select all/none checkbox when toggling fields -->
 	jQuery('[id^=export_fields]').on('change', function () {
 		var count = 0;
-		jQuery('[id^=export_fields]').each(function(i,ele){ if(ele.checked) count++; });
-		jQuery('#toggle_checks').prop('checked', (jQuery('[id^=export_fields]').length == count));
+		if(jQuery(".additional-fields-label a").data("additionalShown") == true){
+			jQuery('[id^=export_fields]').each(function(i,ele){ if(ele.checked) count++; });
+			jQuery('#toggle_checks').prop('checked', (jQuery('[id^=export_fields]').length == count));
+		}else{
+			jQuery('.default-ticket-fields [id^=export_fields]').each(function(i,ele){ if(ele.checked) count++; });
+			jQuery('#toggle_checks').prop('checked', (jQuery('.default-ticket-fields [id^=export_fields]').length == count));
+		}
 	});
 
   jQuery("#exportFilter").submit(function () {  
@@ -151,10 +156,12 @@
       jQuery(this).text(jQuery(this).data("hide"));
       jQuery(this).data("additionalShown", true);
       jQuery(".additional-fields").show();
+      jQuery("#export_fields_display_id").trigger("change");
     }else{
       jQuery(this).text(jQuery(this).data("show"));
       jQuery(this).data("additionalShown", false);
       jQuery(".additional-fields").hide();
+      jQuery("#export_fields_display_id").trigger("change");
     }
   });
 <% end %>
