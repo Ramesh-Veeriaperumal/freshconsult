@@ -25,6 +25,7 @@
       var appended_val = '<div>' + feedback_subject.val() + '</div>' + '<br/><br/><p>' + 'Account URL: ' + window.current_account_full_domain + '</p><p>' +  'Admin: ' +  window.is_current_user_admin + '</p>';
       feedback_subject.val(appended_val);
       $(form).ajaxSubmit({
+        crossDomain: true,
         dataType: 'jsonp',                       
         success: function(response, status){
           // Resetting the submit button to its default state          

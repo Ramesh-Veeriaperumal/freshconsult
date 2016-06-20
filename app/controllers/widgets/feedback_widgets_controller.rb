@@ -27,7 +27,7 @@ class Widgets::FeedbackWidgetsController < SupportController
   def create
     check_captcha = params[:check_captcha] == "true"
     widget_response = {}
-    
+
     if params[:meta].present?
       params[:meta][:user_agent] = RailsFullSanitizer.sanitize params[:meta][:user_agent] if params[:meta][:user_agent].present?
       params[:meta][:referrer] = RailsFullSanitizer.sanitize params[:meta][:referrer] if params[:meta][:referrer].present?
@@ -49,6 +49,29 @@ class Widgets::FeedbackWidgetsController < SupportController
       render :text => widget_response.to_json
     end
 
+  end
+
+  def jsonp_create
+    # TODO Extract common method
+    widget_response = {}
+
+    if params[:meta].present?
+      params[:meta][:user_agent] = RailsFullSanitizer.sanitize params[:meta][:user_agent] if params[:meta][:user_agent].present?
+      params[:meta][:referrer] = RailsFullSanitizer.sanitize params[:meta][:referrer] if params[:meta][:referrer].present?
+    end
+
+    if create_the_ticket(check_captcha)
+      widget_response = {:success => true }
+    else
+      @feeback_widget_error = true
+      decord_params
+      setup_form
+      widget_response = {:success => false, :error => @ticket.errors.full_messages.first }
+    end
+
+    if params[:callback]
+      render :json => widget_response.to_json, :callback => params['callback']
+    else
   end
 
   private
