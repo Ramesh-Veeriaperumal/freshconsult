@@ -9,15 +9,6 @@
 </div>
 <%= render :partial => 'shared/shortcuts_help_chart' %>
 
-<% if current_account.features?(:client_debugging) %>
-    <script
-      src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
-      data-apikey= <%=AppConfig["client_debugging"]["bugsnag"][Rails.env]["api_key"]%> 
-      data-autonotify="true"
-      >
-    </script>
-    <%= javascript_include_tag :'cdn/client_logger' %>
-<% end %>
 <% if current_user && current_user.agent? %>
 	<% cti_app = current_account.cti_installed_app_from_cache %>
 	<% if cti_app.present? %>
