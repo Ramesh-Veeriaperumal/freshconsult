@@ -52,6 +52,7 @@ class Widgets::FeedbackWidgetsController < SupportController
   end
 
   def jsonp_create
+    check_captcha = params[:check_captcha] == "true"
     # TODO Extract common method
     widget_response = {}
 

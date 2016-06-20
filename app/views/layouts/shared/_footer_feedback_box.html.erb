@@ -2,7 +2,7 @@
 	<div class="span7">
 		<% if current_user %>
 			<%= form_for :footer_feedback,  
-				:url=> "#{AppConfig['feedback_account'][Rails.env]}/widgets/feedback_widget?widgetType=popup",
+				:url=> "#{AppConfig['feedback_account'][Rails.env]}/widgets/feedback_widget/jsonp_create?widgetType=popup",
 				:method => :post, 
 				:html => { :id => "footer_feedback_form", :class => "form_inline"}, 
 				:remote => true do |f| %>
