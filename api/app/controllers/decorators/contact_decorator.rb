@@ -1,5 +1,5 @@
 class ContactDecorator < ApiDecorator
-  delegate :id, :active, :address, :company_id, :deleted, :description, :email, :job_title, :language,
+  delegate :id, :active, :address, :company_id, :deleted, :description, :customer_id, :email, :job_title, :language,
            :mobile, :name, :phone, :time_zone, :twitter_id, :client_manager, :avatar, to: :record
 
   def initialize(record, options)

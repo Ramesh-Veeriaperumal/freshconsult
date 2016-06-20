@@ -218,7 +218,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     "helpdesk_tickets.id,helpdesk_tickets.subject,helpdesk_tickets.requester_id,helpdesk_tickets.responder_id,
      helpdesk_tickets.status,helpdesk_tickets.priority,helpdesk_tickets.due_by,helpdesk_tickets.display_id,
      helpdesk_tickets.frDueBy,helpdesk_tickets.source,helpdesk_tickets.group_id,helpdesk_tickets.isescalated,
-     helpdesk_tickets.ticket_type,helpdesk_tickets.email_config_id"
+     helpdesk_tickets.ticket_type,helpdesk_tickets.email_config_id,helpdesk_tickets.owner_id"
   end
   
   def sql_conditions
