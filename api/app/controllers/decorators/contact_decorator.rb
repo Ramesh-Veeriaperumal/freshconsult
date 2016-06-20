@@ -19,6 +19,6 @@ class ContactDecorator < ApiDecorator
   end
 
   def other_emails
-    (record.user_emails - [record.primary_email]).map(&:email)
+    record.user_emails.reject(&:primary_role).map(&:email)
   end
 end

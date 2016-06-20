@@ -134,7 +134,7 @@ module UsersTestHelper
   end
 
   def other_emails_for_test(contact)
-    contact.reload.emails - [contact.reload.email]
+    contact.user_emails.reject(&:primary_role).map(&:email)
   end
 
   def add_user_email(contact, email, options = {})

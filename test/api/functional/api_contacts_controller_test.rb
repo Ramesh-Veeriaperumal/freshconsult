@@ -1492,5 +1492,18 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_match(/.* `email` = '#{email.downcase}', .*/, query)
   end
   
-
+  def test_update_email_and_pass_other_emails_without_change
+    sample_user = get_user_with_email
+    sample_user.user_emails.build(email: Faker::Internet.email, primary_role: false)
+    sample_user.user_emails.build(email: Faker::Internet.email, primary_role: false)
+    sample_user.save
+    sample_user.reload
+    email_array = sample_user.user_emails.reject{|x| x.primary_role}.map(&:email)
+    email = Faker::Internet.email
+    put :update, construct_params({ id: sample_user.id }, email: email, other_emails: email_array)
+    assert_response 200
+    response = parse_response @response.body
+    assert response["other_emails"].sort == email_array.sort
+    assert response["email"] == email
+  end
 end
