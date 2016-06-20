@@ -53,7 +53,8 @@ stylesheets:
   :livechat_mini_dashboard  => [ "chat/mini-dashboard"],
   :ui_daterangepicker => ["ui.daterangepicker"],
   :remote_configurations  => [ "page/remote-configurations"],
-  :cti => ["cti/cti"]
+  :cti => ["cti/cti"],
+  :freshfone_livechat => ["freshfone_livechat"]
 } %>
 
 <%  @stylesheets_list = []

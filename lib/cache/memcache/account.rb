@@ -72,7 +72,7 @@ module Cache::Memcache::Account
 
   def agents_details_from_cache
     key = agents_details_memcache_key
-    MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name").all }
+    MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name,email").all }
   end  
 
   def groups_from_cache
@@ -216,12 +216,12 @@ module Cache::Memcache::Account
   
   def solution_categories_from_cache
     MemcacheKeys.fetch(ALL_SOLUTION_CATEGORIES % { :account_id => self.id }) do
-      self.solution_categories.all(:conditions => {:is_default => false},
-      :include => [:portal_solution_categories, :folders]).collect do |cat|
+      self.solution_category_meta.all(:conditions => {:is_default => false},
+          :include => [:primary_category,{ :solution_folder_meta => [:primary_folder]}, :portal_solution_categories]).collect do |c_meta|
         {
-          :folders => cat.folders.map(&:as_cache),
-          :portal_solution_categories => cat.portal_solution_categories.map(&:as_cache)
-        }.merge(cat.as_cache).with_indifferent_access
+          :folders => c_meta.solution_folder_meta.map(&:as_cache),
+          :portal_solution_categories => c_meta.portal_solution_categories.map(&:as_cache)
+        }.merge(c_meta.as_cache).with_indifferent_access
       end
     end
   end
@@ -242,6 +242,23 @@ module Cache::Memcache::Account
     end
     MemcacheKeys.fetch(key,expiry) do
       CRM::Salesforce.new.account_owner(self.id)
+    end
+  end
+
+  def fresh_sales_manager_from_cache
+    if self.created_at > Time.now.utc - 3.days # Logic to handle sales manager change
+      key = FRESH_SALES_MANAGER_3_DAYS % { :account_id => self.id }
+      expiry = 1.day.to_i
+    else
+      key = FRESH_SALES_MANAGER_1_MONTH % { :account_id => self.id }
+      expiry = 30.days.to_i
+    end
+    MemcacheKeys.fetch(key,expiry) do
+      begin
+        CRM::FreshsalesUtility.new({ account: self }).account_manager  
+      rescue  => e
+        CRM::FreshsalesUtility::DEFAULT_ACCOUNT_MANAGER
+      end      
     end
   end
 
@@ -335,7 +352,7 @@ module Cache::Memcache::Account
     
     def handles_memcache_key
       ACCOUNT_TWITTER_HANDLES % { :account_id => self.id }
-    end
+    end    
 
     def password_policy_memcache_key(user_type)
       ACCOUNT_PASSWORD_POLICY % { :account_id => self.id, :user_type => user_type}

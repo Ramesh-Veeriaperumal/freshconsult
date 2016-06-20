@@ -73,11 +73,11 @@ module HelpdeskReports::Helper::PlanConstraints
   end
 
   def scheduled_report_user_count
-    @schedule_report_user_count ||= User.current.scheduled_tasks.count
+    @schedule_report_user_count ||= User.current.scheduled_tasks.active_tasks.count
   end
 
   def scheduled_report_account_count
-    @schedule_report_account_count ||= Account.current.scheduled_tasks.count
+    @schedule_report_account_count ||= Account.current.scheduled_tasks.active_tasks.count
   end
 
 end

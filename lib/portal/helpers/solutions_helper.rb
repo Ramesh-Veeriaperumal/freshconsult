@@ -1,0 +1,23 @@
+module Portal::Helpers::SolutionsHelper
+
+  def alternate_version_url(language,portal=nil)
+    portal = current_portal unless portal
+    "#{portal.url_protocol}://#{portal.host}#{route_name(language)}"
+  end
+
+  def multilingual_meta_tags(meta)
+    meta_tags = []
+    meta.each do |lang,url|
+      meta_tags << %( <link rel='alternate' hreflang="#{lang}" href="#{url}"/> )
+    end
+    meta_tags.join('').html_safe
+  end
+  
+  def version_not_available_msg(type)
+    t("solution.version_not_available.#{type}",
+        :url => default_url,
+        :helpdesk_language => Account.current.language_object,
+        :current_language => Language.current
+    ).html_safe
+  end
+end

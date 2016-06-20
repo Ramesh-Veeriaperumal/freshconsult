@@ -1,0 +1,15 @@
+JSON.generate(@items.map do |api_company_field|
+  response_hash = {
+    id: api_company_field.id,
+    name: api_company_field.name,
+    label: api_company_field.label,
+    position: api_company_field.position,
+    required_for_agent: api_company_field.required_for_agent,
+    type: api_company_field.field_type,
+    default: api_company_field.default_field?,
+    created_at: api_company_field.created_at.try(:utc),
+    updated_at: api_company_field.updated_at.try(:utc)
+  }
+  response_hash.merge!(choices: api_company_field.companies_custom_dropdown_choices) if api_company_field.field_type.to_s == 'custom_dropdown'
+  response_hash
+end)

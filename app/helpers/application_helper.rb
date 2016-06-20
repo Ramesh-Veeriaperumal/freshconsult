@@ -464,6 +464,12 @@ module ApplicationHelper
     data
   end
 
+  def language_name id
+    # This method might seem unnecessary, but this is being used while displaying activities,
+    # Where eval_args will have a key :language_name
+    Language.find(id).name
+  end
+
   def formatted_dueby_for_activity(time_in_seconds)
     "#{formated_date(Time.zone.at(time_in_seconds))}".tap do |f_t| f_t.gsub!(' at', ',') end
   end
@@ -1449,8 +1455,12 @@ module ApplicationHelper
 
 	end
 
+  def account_numbers
+    @account_numbers ||= current_account.freshfone_numbers
+  end
+
 	def current_account_freshfone_numbers
-		@current_account_freshfone_numbers ||= current_account.freshfone_numbers.accessible_freshfone_numbers(current_user)
+		@current_account_freshfone_numbers ||= account_numbers.accessible_freshfone_numbers(current_user)
 	end
 
   def current_account_freshfone_number_hash
@@ -1515,6 +1525,10 @@ module ApplicationHelper
 
   def email_template_settings
     current_account.account_additional_settings.email_template_settings.to_json
+  end
+
+  def current_browser
+    UserAgent.parse(request.user_agent).browser
   end
 
   def current_platform

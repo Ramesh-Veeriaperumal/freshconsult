@@ -4,6 +4,7 @@ class ApiCompanyValidation < ApiValidation
     note: { data_type: { rules: String } },
     domains:  { data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String } }, string_rejection: { excluded_chars: [','], allow_nil: true } }
   }.freeze
+  CHECK_PARAMS_SET_FIELDS = %w(custom_fields).freeze
 
   attr_accessor :name, :description, :domains, :note, :custom_fields, :custom_field_types
   validates :description, :domains, :note, default_field:
@@ -25,7 +26,6 @@ class ApiCompanyValidation < ApiValidation
   def initialize(request_params, item)
     super(request_params, item)
     @domains = item.domains.to_s.split(',') if item && !request_params.key?(:domains)
-    check_params_set(request_params[:custom_fields]) if request_params[:custom_fields].is_a?(Hash)
     fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
   end
 

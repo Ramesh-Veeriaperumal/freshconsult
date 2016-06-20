@@ -12,65 +12,46 @@ namespace :scheduled_task do
                          }
   }
 
-  # Crontab should have the following command to run it every x hour
-  # 0     */x     *     *     *  bundle exec rake scheduled_task:trigger_upcoming
-  # Make sure to update constant Helpdesk::ScheduledTask::CRON_FREQUENCY_IN_HOURS
-  # if you update the cron frequency since polling upcoming tasks is dependent on frequency
-
   #######################################################
-  desc "Trigger Upcoming Tasks for accounts"
+  desc "Trigger Upcoming Tasks for accounts every 1 hour"
   #######################################################
 
   task :trigger_upcoming => :environment do
     base_time = Time.now.utc.beginning_of_hour + Helpdesk::ScheduledTask::CRON_FREQUENCY_IN_HOURS
-    log "Trigger Scheduled Tasks - upcoming_tasks | base_time: #{base_time} | local_time - #{Time.now}"
-    @distribution_counter = {}
-    Sharding.run_on_all_slaves do
-      task_count = 0
-      Helpdesk::ScheduledTask.current_pod.upcoming_tasks(base_time).find_in_batches(batch_size: 500) do |tasks|
-        tasks.each do |task|
-          task_count += 1
-          #log("Processing upcoming_tasks", nil, task)
-          enqueue_task(task)
-        end
-      end
-      message = "Processed upcoming_tasks : #{task_count}"
-      log(message)
-      DevNotification.publish(SNS["reports_notification_topic"], "Scheduler(upcoming) | #{message}", message)
-
-    end
-    log "Completed Scheduled Tasks - upcoming_tasks | base_time: #{base_time}"
+    process("upcoming_tasks", base_time)
   end
   
-  # Crontab should have the following command to run it every 30 mins
-  # */30    *     *     *     *  bundle exec rake scheduled_task:trigger_dangling
-  
-  #######################################################
-  desc "Trigger Dangling Tasks for accounts"
-  #######################################################
+  ##########################################################
+  desc "Trigger Dangling Tasks for accounts every 30 minutes"
+  ##########################################################
 
   task :trigger_dangling => :environment do
-    log "Trigger Scheduled Tasks - dangling_tasks"
-    @distribution_counter = {}
-    Sharding.run_on_all_slaves do
-      task_count = 0
-      Helpdesk::ScheduledTask.current_pod.dangling_tasks.find_in_batches(batch_size: 500) do |tasks|
-        tasks.each do |task|
-          task_count += 1
-          #log("Processing dangling_tasks", nil, task)
-          enqueue_task(task)
-        end
-      end
-      message = "Processed dangling_tasks : #{task_count}"
-      log(message)
-      DevNotification.publish(SNS["reports_notification_topic"], "Scheduler(dangling) | #{message}", message)
-
-    end
-    log "Completed Scheduled Tasks - dangling_tasks"
+    process("dangling_tasks")
   end
 
 
 #######################################################
+
+  def process(task_type, base_time = Time.now.utc)
+    log "Trigger Scheduler(#{task_type}) | base_time: #{base_time}"
+    @distribution_counter = {}
+    task_count, offset_id = 0, 0
+    Sharding.run_on_all_slaves do
+      loop do
+        tasks = Helpdesk::ScheduledTask.current_pod.send("#{task_type}", base_time).order('next_run_at DESC').offset(offset_id).limit(500)
+        break if tasks.empty?
+        tasks.each do |task|
+          task_count += 1
+          enqueue_task(task)
+        end
+        offset_id += 500
+      end
+    end
+    subject = "Scheduler(#{task_type}) | processed #{task_count} task"
+    message = subject + " | base_time: #{base_time}"
+    log(message)
+    DevNotification.publish(SNS["reports_notification_topic"], subject, message)
+  end
 
 
   def enqueue_task task

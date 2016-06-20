@@ -43,7 +43,7 @@ class Support::SearchController < SupportController
   end
 
   def related_articles
-    article = current_account.solution_articles.find(params[:article_id])
+    article = current_account.solution_articles.where(:parent_id => params[:article_id], :language_id => Language.current.id).first
     @related_articles = article.related(current_portal, params[:limit])
     @container = params[:container]
     render :layout => false
@@ -134,8 +134,8 @@ class Support::SearchController < SupportController
               if search_in.include?(Solution::Article)
                 f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
                               { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_meta_id) } }
-                f.filter :or, { :not => { :exists => { :field => :language_id } } },
-                              { :term => { :language_id => Language.for_current_account.id } }
+                f.filter :or, { :not => { :exists => { :field => 'language_id' } } },
+                              { :term => { 'language_id' => Language.current.id } }
               end
               if search_in.include?(Topic)
                   f.filter :or, { :not => { :exists => { :field => 'forum.forum_category_id' } } },
@@ -250,6 +250,7 @@ class Support::SearchController < SupportController
       @items.each do |item|
         next if item.nil?
         result = item_based_selection(item)
+        next unless result
         result.merge!('source' => item) if !request.xhr?
         @search_results << result
       end
@@ -265,7 +266,8 @@ class Support::SearchController < SupportController
     def item_based_selection item
       case item.class.name
         when 'Solution::Article'
-          solution_result(item)
+          solution_result(item) if (item.solution_folder_meta.present? && 
+            item.solution_folder_meta.solution_category_meta.present?)
         when 'Topic'
           topic_result(item)
         when 'Helpdesk::Ticket'
@@ -277,7 +279,7 @@ class Support::SearchController < SupportController
 
     def solution_result article
       { 'title' => article.es_highlight('title').html_safe, 
-        'group' => h(article.folder.name), 
+        'group' => h(article.solution_folder_meta.name), 
         'desc' => article.es_highlight('desc_un_html').html_safe,
         'type' => "ARTICLE",
         'url' => support_solutions_article_path(article) }

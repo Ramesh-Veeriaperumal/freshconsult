@@ -1,0 +1,21 @@
+<div class="roles-agent-list" id = "<%= data.id %>">
+	<div class="agent-delete-icon pull-left">
+		<i class="rounded-minus-icon" data-action="remove-agent"></i>
+	</div>
+	<div class="agent-image pull-left">
+		<% if (data.profileImage === false) { %>
+
+			<div class="preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator( DataStore.get('agent').findById(parseInt(data.id)).name )) %>" > <%= data.name[0] %> </div>
+
+		<% } else { %>
+
+			<div class="preview_pic circle">
+				<img alt="<%= data.name %>" class="thumb" onerror="imgerror(this)" src="<%= data.profileImage %>" >
+			</div>
+
+		<% } %>
+	</div>
+	<div class="agent-details pull-left">
+			<a target="_blank" href="/users/<%= data.id %>"><%= data.name %></a>
+	</div>
+</div>

@@ -2052,7 +2052,7 @@ Redactor.prototype = {
 			html = html.replace(/p(.*?)class=MsoListParagraphCxSpMiddle ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpMiddle" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 			html = html.replace(/p(.*?)class=MsoListParagraphCxSpLast ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpLast" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 			// one line
-			html = html.replace(/p(.*?)class="MsoListParagraph" ([\w\W]*?)\/p/gi, this.removeIndentForList);
+			html = html.replace(/p(.*?)class=MsoListParagraph ([\w\W]*?)\/p|p(.*?)class="MsoListParagraph" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 
 			// remove ms word tags
 			html = html.replace(/<o:p(.*?)>([\w\W]*?)<\/o:p>/gi, '$2');
@@ -2202,7 +2202,11 @@ Redactor.prototype = {
 			container.css('background-color', value);
 		},
 		'font-family': function (container, value, options) {
-			container.css('font-family', value + "," + options.wrapFontSettings["font-family"]);
+			if(options.setFontSettings){
+				container.css('font-family', value + "," + options.wrapFontSettings["font-family"]);
+			} else {
+				container.css('font-family', value);
+			}
 		},
 		'background': function (container, value) {
 			var _testCondition = ($.browser.msie || $.browser.mozilla);
@@ -4713,7 +4717,14 @@ $.fn.insertExternal = function(html)
 			jQuery(this.$redactor.$box).delegate("."+this.opts.class_name, "click.quotedtext", $.proxy(this.insertQuotedText, this));
 		},
 		insertQuotedText: function(){
-			this.$redactor.insertHtmlAtLast(this.getQuotedText());
+			if("content" in document.createElement("template")){
+				var quoted_clone = document.importNode(this.$quoted_area[0].content, true);
+				quoted_clone = $('<div></div>').append(quoted_clone).append("<p><br /></p>");
+				this.$redactor.$editor.append(quoted_clone.text());
+			}
+			else{
+				this.$redactor.insertHtmlAtLast(this.$quoted_area.val() + "<p><br /></p>");
+			}
 			this.$redactor.syncCode();
 			this.checkQuotedText();
 		},
@@ -4723,12 +4734,17 @@ $.fn.insertExternal = function(html)
 		},
 		syncQuotedText: function(){
 			if(!this.$draft_added){
-				var full_text = this.$redactor.$el.val() + this.$quoted_area.val();
+				var quoted_clone;
+				if("content" in document.createElement("template")){
+					var quoted_clone = document.importNode(this.$quoted_area[0].content, true);
+					quoted_clone = $(quoted_clone).text();
+				}
+				else{
+					quoted_clone = this.$quoted_area.val();
+				}
+				var full_text = this.$redactor.$el.val() + quoted_clone;
 				this.$redactor.$el.val(full_text);
 			}
-		},
-		getQuotedText: function(){
-			return this.$quoted_area.val() + "<p><br /></p>";
 		},
 		reset: function(){
 			this.$draft_added = false;

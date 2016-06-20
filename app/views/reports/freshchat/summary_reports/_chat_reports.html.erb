@@ -95,6 +95,13 @@
                   menu.addClass('hide');
               }
         });
+
+    jQuery('#report-page').on('click.helpdesk_reports', function () {
+          var menu = jQuery('#reports_type_menu');
+          if (menu.is(':visible')) {
+              menu.addClass('hide');
+          }
+    });
   });
 
    jQuery("#email_pdf").on('click.helpdesk_reports',function(){

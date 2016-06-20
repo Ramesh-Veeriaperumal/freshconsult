@@ -5,6 +5,7 @@ require 'rails/all'
 require 'rack/throttle'
 require 'gapps_openid'
 require File.expand_path('../../lib/facebook_routing', __FILE__)
+require File.expand_path('../../lib/locale_routing', __FILE__)
 require "rate_limiting"
 require "rack/ssl"
 # require "statsd"
@@ -130,7 +131,8 @@ module Helpkit
     # TODO-RAILS3 need to rewritten all lib files and adding requires if need to make it thread safe
     # http://hakunin.com/rails3-load-paths
     config.autoload_paths += Dir["#{config.root}/lib/"]
-    config.autoload_paths += Dir["#{config.root}/api/**/*"]
+    # http://blog.arkency.com/2014/11/dont-forget-about-eager-load-when-extending-autoload/
+    config.eager_load_paths += Dir["#{config.root}/api/**/*"]
     # config.autoload_paths += %W(#{config.root}/api/app/validators/)
     # make sure to uncomment this for sidekiq workers
     config.eager_load_paths += Dir["#{config.root}/lib/"] unless Rails.env.development?

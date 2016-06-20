@@ -114,7 +114,7 @@ class Helpdesk::AttachmentsController < ApplicationController
       # Is the attachment on a solution  If so, it's always downloadable.
 
       elsif ['Solution::Article'].include? @attachment.attachable_type
-        return @attachment.attachable.folder.visible?(current_user)
+        return @attachment.attachable.solution_folder_meta.visible?(current_user)
       elsif ['Post'].include? @attachment.attachable_type
         return @attachment.attachable && @attachment.attachable.forum.visible?(current_user)
       elsif ['Account', 'Portal'].include? @attachment.attachable_type

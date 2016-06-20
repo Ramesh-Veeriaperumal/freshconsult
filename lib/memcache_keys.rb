@@ -1,7 +1,5 @@
 module MemcacheKeys
 
-  LEADERBOARD_MINILIST = "v2/HELPDESK_LEADERBOARD_MINILIST:%{agent_type}:%{account_id}"
-
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
@@ -12,7 +10,7 @@ module MemcacheKeys
 
   ACCOUNT_AGENTS = "v4/ACCOUNT_AGENTS:%{account_id}"
 
-  ACCOUNT_AGENTS_DETAILS = "v2/ACCOUNT_AGENTS_DETAILS:%{account_id}"
+  ACCOUNT_AGENTS_DETAILS = "v3/ACCOUNT_AGENTS_DETAILS:%{account_id}"
 
   ACCOUNT_SUBSCRIPTION = "ACCOUNT_SUBSCRIPTION:%{account_id}"
 
@@ -98,7 +96,11 @@ module MemcacheKeys
 
   SALES_MANAGER_3_DAYS = "v1/SALES_MANAGER_3_DAYS:%{account_id}"
 
+  FRESH_SALES_MANAGER_3_DAYS = "v1/FRESH_SALES_MANAGER_3_DAYS:%{account_id}"
+
   SALES_MANAGER_1_MONTH = "v1/SALES_MANAGER_1_MONTH:%{account_id}"
+
+  FRESH_SALES_MANAGER_1_MONTH = "v1/FRESH_SALES_MANAGER_1_MONTH:%{account_id}"
 
   MOBIHELP_APP = "MOBIHELP_APP:%{account_id}:%{app_key}"
 

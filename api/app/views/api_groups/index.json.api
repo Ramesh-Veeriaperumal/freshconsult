@@ -1,0 +1,14 @@
+JSON.generate(@items.map do |group|
+  response_hash = {
+    id: group.id,
+    name: group.name,
+    description: group.description,
+    escalate_to: group.escalate_to,
+    unassigned_for: group.unassigned_for,
+    business_hour_id: group.business_hour_id,
+    created_at: group.created_at.try(:utc),
+    updated_at: group.updated_at.try(:utc)
+  }
+  response_hash.merge!(auto_ticket_assign: group.auto_ticket_assign)  if group.round_robin_enabled?
+  response_hash
+end)

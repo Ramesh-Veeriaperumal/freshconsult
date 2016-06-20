@@ -1797,6 +1797,9 @@ ol, ul, li{
 }
 
 .tkt-sidebar{
+	.input-date-field{
+         input.date{ padding: 6px 4px 6px 25px;}
+       } 
 	.requester-avatar-wrap{
 		@include float(left);
 		width: 50px;
@@ -2963,12 +2966,17 @@ $collision_delay: 1s;
 	position: absolute;
  	@include right(20px);
 	display: block;
-	width: 300px;
 	top: 20px;
 
+	.select2-container{
+		width: 100px;
+		margin-bottom: 3px;
+	}
+
 	input {
-		width: 100%;
+		width: 200px;
 		box-sizing: border-box;
+		@include margin-left(5px);
 	}
 
 	.searchicon {

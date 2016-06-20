@@ -43,5 +43,12 @@ module IntegrationsHelper
    "controller"=>"widgets/feedback_widgets"} 
   end
 
+  def remove_marketplace_feature
+    if Account.current.features?(:marketplace)
+      Account.current.features.marketplace.destroy
+      Account.current.reload
+    end
+  end
+
 end
 

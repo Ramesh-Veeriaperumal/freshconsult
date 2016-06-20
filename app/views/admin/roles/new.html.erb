@@ -12,3 +12,15 @@
 <%= generate_breadcrumbs(params, role_form) %>
   <%= render :partial => 'form', :locals => { :role_form => role_form} %>
 <% end %>
+<input type="hidden" value="<%= @role.id %>" id="roleid">
+
+<%= render :partial => 'popup' %>
+
+<script type="text/javascript">
+jQuery(window).on('load', function(){
+  ProfileImage.fetch();
+  if(AdminRoles && AdminRoles.new){
+    AdminRoles.new.init();
+  }
+});
+</script>

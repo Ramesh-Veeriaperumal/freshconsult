@@ -15,13 +15,18 @@ class HelpdeskReports::Request::Ticket
   def build_request
     req_params.merge!(account_id: Account.current.id)
     req_params.merge!(report_type: @report_type)
-    req_params.merge!(account_plan: Account.current.plan_name)
+    req_params.merge!(account_plan: current_account_plan)
     req_params.merge!(account_domain: Account.current.full_domain)
     add_bucketing_condition unless req_params[:bucket_conditions].blank?
     add_time_zone_condition
     
     # building list_conditions on trend_graph at helpkit side
     build_list_condition if time_trend_query? and list_query? 
+  end
+
+  #For trial account, sending trial as plan.
+  def current_account_plan
+    Account.current.subscription.state == "trial" ? :trial : Account.current.plan_name
   end
 
   def fetch_req_params

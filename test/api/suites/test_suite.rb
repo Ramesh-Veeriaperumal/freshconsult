@@ -3,15 +3,15 @@ first_argument  = []
 second_argument = []
 modules = ''
 if ARGV.length > 2
-  fail ArgumentError.new('Accepts only maximum of two arguments namely MODULES and INCLUDE_QUERY_TEST')
+  fail ArgumentError, 'Accepts only maximum of two arguments namely MODULES and INCLUDE_QUERY_TEST'
 end
 unless ARGV[0].nil?
   first_argument = ARGV[0].split('=')
-  fail ArgumentError.new('First Argument should starts with INCLUDE_QUERY_TEST=') unless first_argument.first == 'INCLUDE_QUERY_TEST'
+  fail(ArgumentError, 'First Argument should starts with INCLUDE_QUERY_TEST=') unless first_argument.first == 'INCLUDE_QUERY_TEST'
 end
 unless ARGV[1].nil?
   second_argument = ARGV[1].split('=')
-  fail ArgumentError.new('Second Argument should starts with MODULES=') unless second_argument.first == 'MODULES'
+  fail(ArgumentError, 'Second Argument should starts with MODULES=') unless second_argument.first == 'MODULES'
 end
 if second_argument.length == 2
   modules = second_argument.last

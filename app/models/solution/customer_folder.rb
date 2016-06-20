@@ -12,7 +12,7 @@ class Solution::CustomerFolder < ActiveRecord::Base
 	belongs_to :customer, :class_name => 'Company', :foreign_key => 'customer_id'
 	belongs_to :account
 
-	attr_protected :account_id , :folder_id
+  attr_accessible :customer_id
 
 	validates_presence_of :customer_id
 

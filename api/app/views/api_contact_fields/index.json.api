@@ -1,0 +1,20 @@
+JSON.generate(@items.map do |contact_field|
+  response_hash = {
+    editable_in_signup: contact_field.editable_in_signup,
+    id: contact_field.id,
+    name: contact_field.name,
+    label: contact_field.label,
+    position: contact_field.position,
+    required_for_agents: contact_field.required_for_agent,
+    type: contact_field.field_type,
+    default: contact_field.default_field?,
+    customers_can_edit: contact_field.editable_in_portal,
+    label_for_customers: contact_field.label_in_portal,
+    required_for_customers: contact_field.required_in_portal,
+    displayed_for_customers: contact_field.visible_in_portal,
+    created_at: contact_field.created_at.try(:utc),
+    updated_at: contact_field.updated_at.try(:utc)
+  }
+  response_hash.merge!(choices: contact_field.contact_field_choices) unless contact_field.contact_field_choices.blank?
+  response_hash
+end)

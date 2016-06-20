@@ -11,35 +11,40 @@ class AccountsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free,
                      :create, :rebrand, :dashboard, :rabbitmq_exchange_info]
 
-  skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
+  skip_before_filter :set_locale, :except => [:cancel, :show, :edit, :manage_languages]
   skip_before_filter :set_time_zone, :set_current_account,
-    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
+    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
-  skip_before_filter :check_day_pass_usage, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
-  skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
-  skip_before_filter :ensure_proper_protocol, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
-  skip_before_filter :determine_pod, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
+  skip_before_filter :check_day_pass_usage, 
+    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages]
+  skip_filter :select_shard, 
+    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
+  skip_before_filter :ensure_proper_protocol, 
+    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
+  skip_before_filter :determine_pod, 
+    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
 
-  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
+  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages]
 
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
   before_filter :build_plan, :only => [:new, :create]
-  before_filter :admin_selected_tab, :only => [:show, :edit, :cancel ]
+  before_filter :admin_selected_tab, :only => [:show, :edit, :cancel, :manage_languages  ]
   before_filter :validate_custom_domain_feature, :only => [:update]
   before_filter :build_signup_param, :only => [:new_signup_free]
   before_filter :build_signup_contact, :only => [:new_signup_free]
-  before_filter :check_supported_languages, :only =>[:update], :if => :dynamic_content_available?
+  before_filter :check_supported_languages, :only =>[:update], :if => :multi_language_available?
   before_filter :set_native_mobile, :only => [:new_signup_free]
-
+  before_filter :update_language_attributes, :only => [:update_languages]
+  before_filter :validate_portal_language_inclusion, :only => [:update_languages]
   
   def show
   end   
    
   def edit
-    @supported_languages_list = current_account.account_additional_settings.supported_languages 
+    @supported_languages_list = current_account.account_additional_settings.supported_languages
     @ticket_display_id = current_account.get_max_display_id
     @restricted_helpdesk = current_account.restricted_helpdesk?
     @restricted_helpdesk_launched = current_account.launched?(:restricted_helpdesk)
@@ -103,11 +108,12 @@ class AccountsController < ApplicationController
 
   def update
     redirect_url = params[:redirect_url].presence || admin_home_index_path
-    @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages] if dynamic_content_available?
+    @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages] if @account.features?(:multi_language) && !@account.launched?(:translate_solutions)
     @account.account_additional_settings[:date_format] = params[:account][:account_additional_settings_attributes][:date_format] 
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     params[:account][:main_portal_attributes][:updated_at] = Time.now
+    params[:account][:main_portal_attributes].delete(:language) if @account.features?(:enable_multilingual)
     @account.main_portal_attributes  = params[:account][:main_portal_attributes]
     @account.permissible_domains = params[:account][:permissible_domains]
     if @account.save
@@ -160,9 +166,22 @@ class AccountsController < ApplicationController
     end    
   end
 
+  def manage_languages
+  end
+
+  def update_languages
+    if @account.save
+      flash[:notice] = t(:'flash.account.update.success')
+      check_and_enable_multilingual_feature
+      redirect_to edit_account_path
+    else
+      render :action => 'manage_languages'
+    end
+  end
+
   protected
-    def dynamic_content_available?
-      current_account.features?(:dynamic_content)
+    def multi_language_available?
+      current_account.features_included?(:multi_language)
     end
     
     def check_supported_languages
@@ -313,7 +332,7 @@ class AccountsController < ApplicationController
     def add_to_crm
       if (Rails.env.production? or Rails.env.staging?)
         Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id, 
-          :signup_id => params[:signup_id] })
+          :signup_id => params[:signup_id], :fs_cookie => params[:fs_cookie] })
       end
       
     end  
@@ -394,4 +413,31 @@ class AccountsController < ApplicationController
       end
     end
 
+    def check_and_enable_multilingual_feature
+      return if @account.features_included?(:enable_multilingual)
+      if @account.supported_languages.present?
+        @account.features.enable_multilingual.create
+      end
+      Community::SolutionBinarizeSync.perform_async
+    end
+
+    def validate_portal_language_inclusion
+      return unless params[:account][:account_additional_settings_attributes][:supported_languages].present?
+      if params[:account][:account_additional_settings_attributes][:supported_languages].include?(main_portal_language)
+        flash[:error] = t('accounts.multilingual_support.portal_language_inclusion')
+        redirect_to manage_languages_path
+      end
+    end
+
+    def main_portal_language
+      return @account.language unless params[:account][:main_portal_attributes]
+      params[:account][:main_portal_attributes][:language] || @account.language
+    end
+
+    def update_language_attributes
+      portal_languages = (params[:account][:account_additional_settings_attributes][:additional_settings] || {})[:portal_languages] || []
+      @account.main_portal_attributes = params[:account][:main_portal_attributes] unless @account.features?(:enable_multilingual)
+      @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages]
+      @account.account_additional_settings.additional_settings[:portal_languages] = portal_languages
+    end
 end

@@ -131,6 +131,23 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_create_contact_with_language_and_timezone_without_feature
+    comp = get_company
+    Account.any_instance.stubs(:features?).with(:multi_timezone).returns(false)
+    Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        view_all_tickets: true,
+                                        company_id: comp.id,
+                                        language: Faker::Lorem.characters(5),
+                                        time_zone: Faker::Lorem.characters(5))
+    match_json([bad_request_error_pattern('language', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'language', feature: :multi_language),
+                bad_request_error_pattern('time_zone', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'time_zone', feature: :multi_timezone)])
+    assert_response 400
+  ensure
+    Account.any_instance.unstub(:features?)
+  end
+
   def test_create_contact_with_valid_language_and_timezone
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
@@ -500,6 +517,20 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('tags', :'It should only contain elements that have maximum of 32 characters')])
     assert_response 400
     sample_user.update_attribute(:email, email)
+  end
+
+  def test_update_contact_with_language_and_timezone_without_feature
+    sample_user = get_user
+    Account.any_instance.stubs(:features?).with(:multi_timezone).returns(false)
+    Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
+    put :update, construct_params({ id: sample_user.id },
+                                  language: Faker::Lorem.characters(5),
+                                  time_zone: Faker::Lorem.characters(5))
+    match_json([bad_request_error_pattern('language', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'language', feature: :multi_language),
+                bad_request_error_pattern('time_zone', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'time_zone', feature: :multi_timezone)])
+    assert_response 400
+  ensure
+    Account.any_instance.unstub(:features?)
   end
 
   def test_update_length_valid_with_trailing_space
@@ -908,7 +939,6 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('description', :datatype_mismatch, code: :missing_field, expected_data_type: String),
                 bad_request_error_pattern('twitter_id', :datatype_mismatch, code: :missing_field, expected_data_type: String),
                 bad_request_error_pattern('phone', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('tags', :datatype_mismatch, code: :missing_field, expected_data_type: Array),
                 bad_request_error_pattern('company_id', :missing_field),
                 bad_request_error_pattern('language', :not_included,
                                           list: I18n.available_locales.map(&:to_s).join(','), code: :missing_field),
@@ -1182,5 +1212,54 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 200
   ensure
     cf_sample_field.update_attribute(:required_for_agent, false)
+  end
+
+  def test_update_contact_with_invalid_custom_url_and_custom_date
+    sample_user = get_user
+    put :update, construct_params({ id: sample_user.id },   name: Faker::Lorem.characters(15),
+                                                            email: Faker::Internet.email,
+                                                            custom_fields: { 'sample_url' => 'aaaa', 'sample_date' => '2015-09-09T08:00' })
+    assert_response 400
+    match_json([bad_request_error_pattern('sample_date', :invalid_date, accepted: 'yyyy-mm-dd'),
+                bad_request_error_pattern('sample_url', :invalid_format, accepted: 'valid URL')])
+  end
+
+  def test_update_contact_without_required_custom_fields
+    cf_sample_field = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'RequiredField', editable_in_signup: 'true', required_for_agent: true))
+    user = add_new_user(@account)
+    put :update, construct_params({ id: user.id },  name: Faker::Lorem.characters(15),
+                                                    email: Faker::Internet.email)
+
+    assert_response 400
+    match_json([bad_request_error_pattern('requiredfield', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+    ensure
+      cf_sample_field.update_attribute(:required_for_agent, false)
+  end
+
+  def test_update_contact_with_invalid_custom_fields
+    comp = get_company
+    sample_user = get_user
+    put :update, construct_params({ id: sample_user.id }, name: Faker::Lorem.characters(15),
+                                                          email: Faker::Internet.email,
+                                                          view_all_tickets: true,
+                                                          company_id: comp.id,
+                                                          language: 'en',
+                                                          custom_fields: { 'check_me' => 'aaa', 'doj' => 2010 })
+    assert_response 400
+    match_json([bad_request_error_pattern('check_me', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern('doj', :invalid_date, accepted: 'yyyy-mm-dd')])
+  end
+
+  def test_update_contact_with_invalid_dropdown_field
+    comp = get_company
+    sample_user = get_user
+    put :update, construct_params({ id: sample_user.id },  name: Faker::Lorem.characters(15),
+                                                           email: Faker::Internet.email,
+                                                           view_all_tickets: true,
+                                                           company_id: comp.id,
+                                                           language: 'en',
+                                                           custom_fields: { 'choose_me' => 'Choice 4' })
+    assert_response 400
+    match_json([bad_request_error_pattern('choose_me', :not_included, list: 'Choice 1,Choice 2,Choice 3')])
   end
 end

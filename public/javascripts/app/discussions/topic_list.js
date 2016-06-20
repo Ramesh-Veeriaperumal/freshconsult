@@ -130,12 +130,12 @@ window.App.Discussions = window.App.Discussions || {};
 			if (stamp_values) {
 				url = url + '&filter=' + stamp_values;
 			}
-			App.track('Filtered Topics', {stamps_used: stamp_values, order: this.ordervalue});
+			App.track('Filtered Topics', {stamps_used: stamp_values, order: this.orderValue()});
 			pjaxify(url);
 		},
 
 		orderValue: function () {
-			return $("#topic-sort-menu li.active > a").data('value');
+			return $("#topic-sort-menu li.active > a").data('value') || $("#topic-sort-menu li.selected > a").data('value');
 		},
 
 		bindForBulkActions: function () {

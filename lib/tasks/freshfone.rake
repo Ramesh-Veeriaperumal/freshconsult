@@ -212,7 +212,8 @@ namespace :freshfone do
           account.freshfone_account.trial_expire
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
-            message: "Phone Trial has been expired for Account :: #{ff_account.account_id}")
+            message: "Phone Trial has been expired for Account :: #{ff_account.account_id}",
+            recipients: ["freshfone@freshdesk.com","pulkit@freshdesk.com"])
         rescue Exception => e
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
@@ -284,7 +285,7 @@ namespace :freshfone do
           account.make_current
           ff_account.expire
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
-            account, message: "Freshfone Account Trial Expired For Account :: #{ff_account.account_id}")
+            account, message: "Freshfone Account Trial Expired For Account :: #{ff_account.account_id}", recipients: ["freshfone@freshdesk.com","pulkit@freshdesk.com"])
         rescue Exception => e
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
@@ -300,8 +301,23 @@ namespace :freshfone do
   desc "Delete freshfone recordings in Twilio"
   task :freshfone_call_twilio_recording_delete => :environment do
     Sharding.execute_on_all_shards do
-      Freshfone::Account.current_pod.all.each do |account|
-        Freshfone::Cron::CallRecordingAttachmentDelete.delete_twilio_recordings(account)
+      Rails.logger.debug "Triggering call recording delete for shard #{ActiveRecord::Base.current_shard_selection.shard}"
+      Freshfone::Account.current_pod.all.each do |ff_account|
+        ::Account.reset_current_account 
+        next unless valid_shard?(ff_account.account_id)
+        begin
+          account = ff_account.account
+          next if account.blank?
+          account.make_current 
+          Freshfone::Cron::CallRecordingAttachmentDelete.delete_twilio_recordings(account)
+        rescue Exception => e
+          FreshfoneNotifier.deliver_freshfone_ops_notifier(
+            account,
+            subject: "Error On Deleting Freshfone Recording For Account :: #{ff_account.account_id}",
+            message: "Account :: #{ff_account.account_id}<br> Exception Message :: #{e.message}<br>Exception Stacktrace :: #{e.backtrace.join('\n\t')}")
+        ensure
+          ::Account.reset_current_account 
+        end
       end
     end
   end

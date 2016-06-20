@@ -3,7 +3,10 @@ class Solution::ArticlesController < ApplicationController
 
   include Helpdesk::ReorderUtility
   include CloudFilesHelper
+  include Solution::LanguageControllerMethods
   helper SolutionHelper
+  include Solution::FlashHelper
+  include Solution::ControllerMethods
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
@@ -12,42 +15,48 @@ class Solution::ArticlesController < ApplicationController
 
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
-  before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings, :properties]
+  before_filter :load_meta_objects, :only => [:show, :edit, :update, :properties, :destroy, :reset_ratings]
+  before_filter :check_create_privilege, :only => [:show]
   before_filter :old_folder, :only => [:move_to]
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
-  before_filter :set_current_folder, :only => [:create]
-  before_filter :check_new_author, :only => [:change_author]
-  before_filter :validate_author, :only => [:update]
+  # before_filter :check_new_author, :only => [:change_author]
+  before_filter :validate_author, :language, :only => [:update]
   before_filter :cleanup_params_for_title, :only => [:show]
+  before_filter :language_scoper, :only => [:new]
+  before_filter :check_parent_params, :only => [:translate_parents]
   
   UPDATE_FLAGS = [:save_as_draft, :publish, :cancel_draft_changes]
 
   def index
-    redirect_to solution_category_folder_url(params[:category_id], params[:folder_id])
+    redirect_to solution_folder_path(params[:folder_id])
   end
 
   def show
-    @article = current_account.solution_articles.find_by_id!(params[:id])
+    @article = @article_meta.send("build_#{language_scoper}") unless @article
     respond_to do |format|
       format.html {
-        @current_item = @article.draft || @article
-        @page_title = @current_item.title
+        unless @article.new_record?
+          @current_item = @article.draft || @article
+          @page_title = @current_item.title
+        else
+          @page_title = t('solutions.new_translation', :language => language.name)
+        end
       }
-      format.xml  { render :xml => @article }
-      format.json { render :json => @article }
+      format.xml  { render :xml => @article_meta, :include => [:folder] }
+      format.json { render :json => @article_meta, :include => [:folder] }
     end    
   end
 
   def new
     @page_title = t("header.tabs.new_solution")
-    @article = current_account.solution_articles.new
+    @article_meta = current_account.solution_article_meta.new
+    @article = @article_meta.solution_articles.new
     set_article_folder
-    @article.set_status(false)
     respond_to do |format|
       format.html {
         render "new"
       }
-      format.xml  { render :xml => @article }
+      format.xml  { render :xml => @article_meta }
     end
   end
 
@@ -62,62 +71,32 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def create
-    @article = @current_folder.articles.new(params[nscname]) 
-    set_item_user 
-    build_attachments
-    @article.set_status(get_status)
-    @article.tags_changed = set_solution_tags
-    respond_to do |format|
-      if @article.save
-        @article.reload
-        format.html { 
-          flash[:notice] = t('solution.articles.published_success',
-                            :url => support_solutions_article_path(@article)).html_safe if publish?
-          redirect_to @article
-        }
-        format.xml  { render :xml => @article, :status => :created, :location => @article }
-        format.json  { render :json => @article, :status => :created, :location => @article }
-      else
-        format.html { 
-          render "new"
-        }
-        format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-  
-  def save_and_create    
-    logger debug "Inside save and create"    
+    set_common_attributes
+    @article_meta = Solution::Builder.article(params)
+    @article = @article_meta.send(language_scoper)
+    set_tags_changed
+    @article.create_draft_from_article if save_as_draft? && @article_meta.errors.blank?
+    load_article_parents if @article_meta.errors.present?
+    
+    post_response(@article_meta, @article)
   end
 
   def update
     unless (UPDATE_FLAGS & params.keys.map(&:to_sym)).any?
+      # Should not be necessary when V1 api is removed.
+      api_publish_article if (params[:solution_article] && params[:solution_article][:status] == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] && 
+                params[:publish].blank?)
       update_article
-      return 
+    else
+      send("article_#{(UPDATE_FLAGS & params.keys.map(& :to_sym)).first}")
     end
-    send("article_#{(UPDATE_FLAGS & params.keys.map(& :to_sym)).first}")
   end
 
   def destroy
-    @article.destroy
+    @article_meta.destroy
     
-    respond_to do |format|
-      format.html { redirect_to(solution_category_folder_url(params[:category_id],params[:folder_id])) }
-      format.xml  { head :ok }
-      format.json { head :ok }
-    end
+    destroy_response(solution_folder_path(@article_meta.solution_folder_meta_id))
   end
-   
-
-   def delete_tag  #possible dead code
-     logger.debug "delete_tag :: params are :: #{params.inspect} "     
-     article = current_account.solution_articles.find(params[:article_id])     
-     tag = article.tags.find_by_id(params[:tag_id])      
-     raise ActiveRecord::RecordNotFound unless tag
-     Helpdesk::TagUse.find_by_article_id_and_tag_id(article.id, tag.id).destroy
-    flash[:notice] = t(:'flash.solutions.remove_tag.success')
-    redirect_to :back    
-   end
 
   def reset_ratings
     @article.reset_ratings
@@ -130,11 +109,13 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def properties
+    language_scoper
     render :layout => false
   end
 
   def voted_users
-    @article = current_account.solution_articles.find(params[:id], :include =>[:votes => :user])
+    @article_meta = current_account.solution_article_meta.find_by_id!(params[:id])
+    @article = @article_meta.solution_articles.find_by_language_id(params[:language_id], :include =>[:votes => :user])
     render :layout => false
   end
 
@@ -146,19 +127,47 @@ class Solution::ArticlesController < ApplicationController
   def move_back
   end
 
-  def change_author
-    @articles = current_account.solution_articles.where(:id => params[:items])
-    @articles.update_all(:user_id => params[:parent_id])
-    @updated_items = @articles.map(&:id)
+  # def change_author
+  #   @articles = current_account.solution_articles.where(:id => params[:items])
+  #   @articles.update_all(:user_id => params[:parent_id])
+  #   @updated_items = @articles.map(&:id)
 
-    flash[:notice] = t("solution.flash.articles_changed_author") if @updated_items
+  #   flash[:notice] = t("solution.flash.articles_changed_author") if @updated_items
+  # end
+
+  def mark_as_uptodate
+    meta_scoper.find(params[:item_id]).send("#{language.to_key}_article").update_attributes(:outdated => false)
+    respond_to do |format|
+      format.json { head :ok }
+    end
+  end
+
+  def mark_as_outdated
+    @article_meta = meta_scoper.find(params[:item_id])
+    @article_meta.solution_articles.each do |a|
+      next if a.is_primary?
+      a.update_attributes(:outdated => true)
+    end
+    @article_meta.reload
+    respond_to do |format|
+      format.html { render :partial => "language_tabs" }
+    end
+  end
+
+  def show_master
+    @article_meta = current_account.solution_article_meta.find(params[:id].to_i)
+    @item = params[:published].to_bool ? @article_meta.primary_article : @article_meta.draft
+    respond_to do |format|
+      format.html { render :partial => "popover_content" }
+    end
+  end
+
+  def translate_parents
+    @category_meta = Solution::Builder.category(params) if params[:solution_category_meta].present?
+    @folder_meta = Solution::Builder.folder(params) if params[:solution_folder_meta].present?
   end
 
   protected
-
-    def load_article
-      @article = current_account.solution_articles.find(params[:id])
-    end
 
     def scoper #possible dead code
       eval "Solution::#{cname.classify}"
@@ -169,11 +178,15 @@ class Solution::ArticlesController < ApplicationController
     end
     
     def reorder_scoper
-      current_account.solution_articles.find(:all, :conditions => {:folder_id => params[:folder_id] })
+      current_account.solution_folder_meta.find(params[:folder_id]).solution_article_meta
     end
     
     def reorder_redirect_url
       solution_category_folder_url(params[:category_id], params[:folder_id])
+    end
+
+    def meta_scoper
+      current_account.solution_article_meta
     end
 
     def cname #possible dead code
@@ -183,7 +196,25 @@ class Solution::ArticlesController < ApplicationController
     def nscname
       @nscname ||= controller_path.gsub('/', '_').singularize
     end
+
+    def load_meta_objects
+      id = get_meta_id
+      return if id.blank?
+      @article_meta = current_account.solution_article_meta.find_by_id!(id)
+      @article = @article_meta.send(language_scoper)
+      load_article_parents
+    end
+
+    def load_article_parents
+      @folder_meta = @article_meta.solution_folder_meta if @article_meta
+      @category_meta = @folder_meta.solution_category_meta if @folder_meta
+    end
+
+    def get_meta_id
+      params[:id] || params[:article_id] || (params[:solution_article_meta] || {})[:id]
+    end
     
+    # possible dead code
     def set_item_user
       @article.user ||= current_user if (@article.respond_to?('user=') && !@article.user_id)
       @article.account ||= current_account
@@ -204,7 +235,7 @@ class Solution::ArticlesController < ApplicationController
       @article.tags.clear   
       @tags_input.each do |tag|      
         begin
-          @article.tags << Helpdesk::Tag.find_or_initialize_by_name_and_account_id(tag, current_account.id)
+          @article.tags << Helpdesk::Tag.where(:name => tag, :account_id => current_account.id).first_or_initialize
         rescue ActiveRecord::RecordInvalid => e
         end
       end
@@ -213,11 +244,22 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def tags_present?
-      params[:tags] && (params[:tags].is_a?(Hash) && !params[:tags][:name].nil?)
+      tags = get_tags
+      tags && (tags.is_a?(Hash) && !tags[:name].nil?)
+    end
+
+    def get_tags
+      params[:tags] || (params[:solution_article_meta] && params[:solution_article_meta][language_scoper.to_sym][:tags])
     end
 
     def set_tags_input
-      @tags_input = params[:tags][:name].split(',').map(&:strip).uniq   
+      @tags_input = get_tags[:name].split(',').map(&:strip).uniq   
+    end
+    
+    def set_tags_changed
+      params_hash = (params.key?(:solution_article_meta) ? 
+            params[:solution_article_meta][language_scoper.to_sym] : params[:solution_article])
+      params_hash[:tags_changed] = set_solution_tags
     end
 
     def tags_changed?
@@ -251,16 +293,15 @@ class Solution::ArticlesController < ApplicationController
       @draft = @article.draft
       if @draft.present? 
         if update_draft_attributes and @draft.publish!
-          flash[:notice] = t('solution.articles.published_success',
-                               :url => support_solutions_article_path(@article)).html_safe
-          redirect_to solution_article_path(@article)
+          flash[:notice] = flash_message
+          redirect_to multilingual_article_path(@article)
         else
           flash[:error] = show_draft_errors || t('solution.articles.published_failure')
-          redirect_to solution_article_path(@article, :anchor => "edit")
+          redirect_to multilingual_article_path(@article, :anchor => "edit")
         end
         return
       end
-      @article.set_status(true)
+      set_status
       update_article
     end
 
@@ -277,7 +318,7 @@ class Solution::ArticlesController < ApplicationController
         end
       end
       respond_to do |format|
-        format.html { redirect_to :action => "show" }
+        format.html { redirect_to multilingual_article_path(@article) }
         format.js   { 
           flash[:notice] = t('solution.articles.draft.revert_msg');
           render 'draft_reset'
@@ -292,11 +333,11 @@ class Solution::ArticlesController < ApplicationController
         unless update_draft_attributes
           show_draft_errors
           flash[:error] ||= t('solution.articles.draft.save_error')
-          redirect_to solution_article_path(@article, :anchor => "edit")
+          redirect_to multilingual_article_path(@article, :anchor => "edit")
           return
         end    
       end
-      redirect_to solution_article_path(@article)
+      redirect_to multilingual_article_path(@article)
     end
 
     def latest_content?
@@ -304,68 +345,53 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def update_draft_attributes
-      attachment_builder(@draft, params[:solution_article][:attachments], params[:cloud_file_attachments])
+      attachment_builder(@draft, article_params[:attachments], params[:cloud_file_attachments])
       @draft.unlock
-      @draft.article.update_attributes(params[:solution_article].slice(:folder_id)) if params[:solution_article][:folder_id].present?
-      @draft.update_attributes(params[:solution_article].slice(:title, :description))
+      @draft.article.solution_article_meta.update_attributes(params[:solution_article_meta].slice(:solution_folder_meta_id)) if params[:solution_article_meta][:solution_folder_meta_id].present?
+      @draft.update_attributes(article_params.slice(:title, :description))
+    end
+
+    def article_params
+      params[:solution_article_meta][language_scoper]
     end
 
     def update_article
-      build_attachments unless update_properties?
-      @article.tags_changed = set_solution_tags
-      update_params = update_properties? ? params[nscname].except(:title, :description) : params[nscname]
-      respond_to do |format|    
-        if @article.update_attributes(update_params)
-          @article.reload 
-          format.html { 
-            flash[:notice] = t('solution.articles.published_success', 
-              :url => support_solutions_article_path(@article)).html_safe if publish?
-            redirect_to solution_article_path(@article)
-          }
-          format.xml  { render :xml => @article, :status => :created, :location => @article }     
-          format.json  { render :json => @article, :status => :ok, :location => @article }
-          format.js {
-            flash[:notice] = t('solution.articles.prop_updated_msg')
-          }
-        else
-          format.html { render_edit }
-          format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
-          format.js {
-            flash[:notice] = t('solution.articles.prop_updated_error')
-            render 'update_error'
-          }
-        end
-      end
+      set_common_attributes
+      set_tags_changed
+      @article_meta = Solution::Builder.article(params)
+      
+      post_response(@article_meta, @article)
     end
 
     def validate_author
       return unless update_properties?
-      new_author_id = params[:solution_article][:user_id]
+      new_params = params[:solution_article] || article_params
+      new_author_id = new_params[:user_id]
       if new_author_id.present? && @article.user_id != new_author_id
         new_author = current_account.users.find_by_id(new_author_id)
-        params[:solution_article] = params[:solution_article].except(:user_id) unless new_author && new_author.agent?
+        new_params.delete(:user_id) unless new_author && new_author.agent?
       end
     end
 
     def render_edit
       return if !load_draft
-      redirect_to solution_article_path(@article, :anchor => "edit")
+      redirect_to multilingual_article_path(@article, :anchor => "edit")
     end
 
     def bulk_update_folder
-      @articles = current_account.solution_articles.where(:id => params[:items])
-      @articles.map { |a| a.update_attributes(:folder_id => params[:parent_id]) }
-      @updated_items = params[:items].map(&:to_i) & @new_folder.article_ids
+      @articles = meta_scoper.where(:id => params[:items])
+      @articles.map { |a| a.update_attributes(:solution_folder_meta_id => params[:parent_id]) }
+      @updated_items = params[:items].map(&:to_i) & @new_folder.solution_article_metum_ids
       @other_items = params[:items].map(&:to_i) - @updated_items
     end
 
     def old_folder
-      @folder_id = current_account.solution_articles.find(params[:items].first).folder_id
-      @number_of_articles = current_account.folders.find(@folder_id).articles.size
+      @old_folder = meta_scoper.find(params[:items].first).solution_folder_meta
+      @number_of_articles = @old_folder.solution_article_meta.size
     end
 
     def check_new_folder
-      @new_folder = current_account.solution_folders.find_by_id params[:parent_id]
+      @new_folder = current_account.solution_folder_meta.find_by_id params[:parent_id]
       unless @new_folder
         flash[:notice] = t("solution.flash.articles_move_to_fail")
         respond_to do |format|
@@ -374,27 +400,27 @@ class Solution::ArticlesController < ApplicationController
       end
     end
 
-    def check_new_author
-      @new_author = current_account.technicians.find_by_id params[:parent_id]
-      unless @new_author
-        flash[:notice] = t("solution.flash.articles_change_author_fail")
-        respond_to do |format|
-          format.js { render inline: "location.reload();" }
-        end
-      end
-    end
+    # def check_new_author
+    #   @new_author = current_account.technicians.find_by_id params[:parent_id]
+    #   unless @new_author
+    #     flash[:notice] = t("solution.flash.articles_change_author_fail")
+    #     respond_to do |format|
+    #       format.js { render inline: "location.reload();" }
+    #     end
+    #   end
+    # end
 
     def moved_flash_msg
       render_to_string(
-      :inline => t("solution.flash.articles_move_to_success",
+      :inline => t("solution.flash.articles_move_to_success#{'_multilingual' if current_account.multilingual?}",
                       :count => @updated_items.count - 1,
-                      :folder_name => h(@new_folder.name.truncate(30)),
-                      :article_name => h(current_account.solution_articles.find(@updated_items.first).title.truncate(30)),
+                      :folder_name => view_context.pjax_link_to(h(@new_folder.name.truncate(30)), solution_folder_path(@new_folder.id)),
+                      :article_name => h(meta_scoper.find(@updated_items.first).title.truncate(30)),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'articles_undo_bulk',
                                     :data => { 
                                       :items => @updated_items, 
-                                      :parent_id => @folder_id,
+                                      :parent_id => @old_folder.id,
                                       :action_on => 'articles'
                                     })
                   )).html_safe
@@ -404,18 +430,8 @@ class Solution::ArticlesController < ApplicationController
       t("solution.flash.articles_move_to_error",
                       :count => @other_items.count - 1,
                       :folder_name => h(@new_folder.name.truncate(30)),
-                      :article_name => h(current_account.solution_articles.find(@other_items.first).title.truncate(30))
+                      :article_name => h(meta_scoper.find(@other_items.first).title.truncate(30))
         ).html_safe
-    end
-
-    def set_current_folder
-      begin
-        folder_id = params[:solution_article][:folder_id] || current_account.solution_folders.find_by_is_default(true).id
-        @current_folder = current_account.solution_folders.find(folder_id)
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-        @current_folder = current_account.solution_folders.first
-      end
     end
 
     def show_draft_errors
@@ -425,20 +441,71 @@ class Solution::ArticlesController < ApplicationController
       end
     end
 
+    def cleanup_params_for_title
+      params.slice!("id", "format", "controller", "action", "language")
+    end
+
+    def set_common_attributes  
+      set_user_and_status
+      if params[:solution_article_meta].present?
+        merge_cloud_file_attachments
+      end
+    end
+
+    def set_user_and_status
+      if params[:solution_article].present?
+        params[:solution_article][:status] ||= get_status if get_status
+        params[:solution_article][:user_id] = current_user.id
+      else
+        params[:solution_article_meta][language_scoper.to_sym][:user_id] ||= current_user.id
+        set_status
+      end
+    end
+
+    def set_status
+      return if params[:solution_article_meta][language_scoper.to_sym][:status].present?
+      get_status && params[:solution_article_meta][language_scoper.to_sym][:status] = get_status
+    end
+
     def get_status
-      status = params[nscname][:status]
-      return status.to_i == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] if status.present?
-      !save_as_draft?
+      save_as_draft? ? Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] : 
+        (publish? ? Solution::Article::STATUS_KEYS_BY_TOKEN[:published] : nil)
     end
 
     def set_article_folder
       return if params[:folder_id].nil?
-      current_folder = current_account.solution_folders.find(params[:folder_id])
-      @article.folder_id = current_folder.id if current_folder.present?
+      @article_meta.solution_folder_meta_id = (current_account.solution_folder_meta.find_by_id(params[:folder_id]) || {})[:id]
     end
 
-    def cleanup_params_for_title
-      params.slice!("id", "format", "controller", "action")
+    def merge_cloud_file_attachments
+      params[:solution_article_meta][language_scoper.to_sym].merge!({:cloud_file_attachments => params[:cloud_file_attachments]})
     end
 
+    def check_parent_params
+      @article_meta = meta_scoper.find(params[:id])
+      render_404 if incorrect_folder_meta || incorrect_category_meta
+    end
+
+    def incorrect_folder_meta
+      @article_meta.solution_folder_meta_id.to_s != params[:solution_folder_meta][:id] if params[:solution_folder_meta].present?
+    end
+
+    def incorrect_category_meta
+      @article_meta.solution_folder_meta.solution_category_meta_id.to_s != params[:solution_category_meta][:id] if params[:solution_category_meta].present?
+    end
+    
+    def check_create_privilege
+      # The user has 'Create Folder/Category' privilege but not 'Publish Solution'. 
+      # UI check : The link to add new version will not be available.
+      # So when he hits the url directly to add new version, we render 404.
+      return unless current_account.multilingual?
+      render_404 unless privilege?(:publish_solution) || @article.present?
+    end
+
+    def api_publish_article
+      if @article && @article.draft.present?
+        @article.draft.update_attributes(params[:solution_article].slice(:title, :description))
+        @article.draft.publish!
+      end
+    end
 end

@@ -15,6 +15,45 @@
 					<p><%= formated_date(@article.modified_at) %></p>
 			</div>
 		<% end %>
+    
+    <div class="published-label">
+    	<span> 
+    		<%= @article.published? ? t('solutions.status.published') : t('solutions.status.draft') %> 
+    	</span>
+    </div>
+
+    <% if Account.current.multilingual? && (privilege?(:publish_solution) && @article.published?) %>
+	    <% if @article.is_primary? && !@article_meta.all_versions_outdated? %>
+		    <div class="outdate-section">
+					<button type="button" 
+									class="btn btn-link outdate-uptodate" 
+									data-action-type="mark-outdated" 
+									data-item-id="<%= @article_meta.id %>" 
+									data-loading-text="<%= t('solution.general.outdating') %>" 
+									data-complete-text="<%= t('solution.general.update_complete') %>" 
+									data-url="/solution/articles/mark_as_outdated"
+						><span class="outdate-label"><%= t('solution.general.mark_as_outdated.text_1') %></span>
+						<div class="info"><%= t('solution.general.mark_as_outdated.text_2') %></div>
+					</button>
+				</div>
+			<% end %>
+
+			<% unless @article.is_primary? %>
+				<div class="update-section <%= 'hide' unless @article.outdated %>">
+					<button type="button" 
+									class="btn btn-link outdate-uptodate" 
+									data-action-type="mark-uptodate" 
+									data-language-id="<%= @article.language_id %>" 
+									data-item-id="<%= @article_meta.id %>" 
+									data-loading-text="<%= t('solution.general.updating') %>"
+									data-complete-text="<%= t('solution.general.update_complete') %>" 
+									data-url="/solution/articles/mark_as_uptodate"
+						><span class="outdate-label"><%= t('solution.general.mark_as_uptodate.text_1') %></span>
+						<div class="info"><%= t('solution.general.mark_as_uptodate.text_2') %></div>
+					</button>
+				</div>
+			<% end %>
+		<% end %>
 	</div>
 
 	<div class="sidebar-section">
@@ -28,27 +67,32 @@
 		</div>
 
 		<div class="section">
-			<h5 class="leads"><%= t('event.type') %>:</h5> <span><%= t(@article.type_name) %></span>
+			<h5 class="leads"><%= t('event.type') %>:</h5> <span><%= t(@article_meta.type_name) %></span>
 		</div>
 		
-		<% unless @article.folder.is_default? %>
+		<% unless @article_meta.solution_folder_meta.is_default? %>
 			<div class="folder-name section">
 				<h5 class="leads"><%= t('solution.folders.folder_form.category') %>:</h5>
-				<%= pjax_link_to @article.folder.category.name, solution_category_path(@article.folder.category_id) %>
+				<%= pjax_link_to @article_meta.solution_folder_meta.solution_category_meta.send("#{@language.to_key}_category").name, solution_category_path(@article_meta.solution_folder_meta.solution_category_meta.id) %>
 				<p class="muted">
-					<% if @article.folder.category.portals.present? %>
-						<%= t('solution_category.product_portal_visibility') %>: <%= @article.folder.category.portals.map(&:name).join(", ") %>
+					<% if @article_meta.solution_folder_meta.solution_category_meta.portals.present? %>
+						<%= t('solution_category.product_portal_visibility') %>: <%= @article_meta.solution_folder_meta.solution_category_meta.portals.map(&:name).join(", ") %>
 					<% else %>
-						<span class="red"><%= t('solution.orphan_category_info') %></span>
+						<%= t('solution.unassociated_category') %>
+						<span class="tooltip"
+									data-html="true"
+									title="<%= t('solution.unassociated_category_info') %>">
+							<%= font_icon('unverified', :size => 16, :class => 'ml2 warning-icon') %>
+						</span>
 					<% end %>
 				</p>
 			</div>
 			
 			<div class="folder-name section">
 				<h5 class="leads"><%= t('solution.folder') %>:</h5>
-				<%= pjax_link_to @article.folder.name, solution_folder_path(@article.folder_id) %>
+				<%= pjax_link_to @article_meta.solution_folder_meta.send("#{@language.to_key}_folder").name, solution_folder_path(@article_meta.solution_folder_meta.id) %>
 				<p class="muted">
-					<%= t('forum.visible_to') %>: <%= company_visibility_tooltip(@article.folder) %>
+					<%= t('forum.visible_to') %>: <%= company_visibility_tooltip(@article_meta.solution_folder_meta) %>
 				</p>
 			</div>
 		<% else %>
@@ -68,9 +112,5 @@
 				<% end %>
 			</div>
 		</div>
-
-		<!-- <div class="section content-status red">
-			Out dated content
-		</div> -->
 	</div>
 	

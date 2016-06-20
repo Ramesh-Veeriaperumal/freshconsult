@@ -1,29 +1,38 @@
-<% unless article.nil? %>
-	<% article_url = support_solutions_article_url(article, :host => @ticket.solution_article_host(article)) %> 
+<% 
+unless article.nil?
+  url_opts = @ticket.article_url_options(article)
+  url_opts.merge!({ :url_locale => article.language.code }) if current_account.multilingual?
+  article_url = url_opts[:host].present? && support_solutions_article_url(article, url_opts)
+  
+  can_show_link = article_url && 
+        article.solution_folder_meta.visible?(@ticket.requester) && 
+        article.published?
+  
+  unless !can_show_link && @ticket.microresponse_only?
+%>
 	<tr class="show-menu-on-hover">
 		<td>
 			<div class="search-solution-content">
 				<%= content_tag :span, t('solutions.status.draft'), :class => 'draft-label' unless article.published? %>
-				<%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>
+				<%= content_tag :span, "", :class => 'private-icon' unless article.solution_folder_meta.visible?(current_user) %>
 				<%= article.title %>
-				<%= link_to font_icon('open-in-new-window', :size => 13), article_url, :target => "blank", 
-												:title => truncate( article.desc_un_html, :length => 100), :class => "open_in_new" %> 
+				<%= link_to font_icon('open-in-new-window', :size => 13), 
+                    article_url, :target => "blank", 
+										:title => truncate( article.desc_un_html, :length => 100), 
+                    :class => "open_in_new"  if article_url %> 
 			</div>
 			<div class='actions-menu-wrapper'>
 				<div class="actions-menu">
 					<%= t('ticket.insert') %>:
-					<% if article.folder.visible?(@ticket.requester) && article.published? %>
-						<%= link_to_function t('ticket.suggested_solutions.link'), 
-										"respondWithSol('link', '#{article.id}', '#{article_url}', '#{escape_javascript(article.title)}')", 
-										:class => "btn btn-mini btn-flat" %>
-					<% end %>
-					<% unless @ticket.twitter? or @ticket.facebook? or @ticket.mobihelp? or @ticket.ecommerce? %>
-						<%= link_to_function t('ticket.suggested_solutions.content'), 
-										"respondWithSol('content', '#{article.id}', '#{article_url}')", 
-										:class => "btn btn-mini btn-flat" %>
-					<% end %>
+					<%= link_to_function t('ticket.suggested_solutions.link'), 
+                "respondWithSol('link', #{insert_link_params(article, article_url)})", 
+  							:class => "btn btn-mini btn-flat" if can_show_link %>
+					<%= link_to_function t('ticket.suggested_solutions.content'), 
+								"respondWithSol('content', #{insert_content_params(article, article_url)})", 
+								:class => "btn btn-mini btn-flat" unless @ticket.microresponse_only? %>
 				</div>
 			</div>
 		</td>
 	</tr>
-<% end %>
+<% end
+end %>

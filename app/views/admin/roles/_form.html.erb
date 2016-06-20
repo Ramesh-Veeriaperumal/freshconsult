@@ -4,17 +4,31 @@
 	<div>
 		<ul class="clearfix unstyled">
  			<li class="row-fluid">
- 				<%= role_form.label :name, t('name'), :class =>'control-label span2' %> 
+ 				<%= role_form.label :name, t('name'), :class =>'control-label span2' %>
 				<div class="span10">
 					<%= role_form.text_field :name , :class => "text required span10", :placeholder => t('admin.roles.role_name')%>
 				</div>
 			</li>
 			<li class="row-fluid">
-				<%= role_form.label :description, t('description'), :class =>'control-label span2' %> 
+				<%= role_form.label :description, t('description'), :class =>'control-label span2' %>
 				<div class="span10">
-					<%= role_form.text_area :description , :class => "text span10", :cols => "40", :rows => "5", 						:placeholder => t('admin.roles.role_description')%>		
+					<%= role_form.text_area :description , :class => "text span10", :cols => "40", :rows => "5", 						:placeholder => t('admin.roles.role_description')%>
 				</div>
-			</li>	
+			</li>
+      <li class="row-fluid">
+        <%= role_form.label :agents, t('agents'), :class =>'control-label span2' %>
+        <div class="span10">
+					<% label = (@role.users.count == 0 ? t('admin.roles.add_label') : t('admin.roles.manage_label')) %>
+					<a class="popup" data-isaccadmin="<%= @role.privilege?(:manage_account) %>" data-agentcount="<%= @role.users.count %>" data-roleid="<%= @role.id %>" href="javascript:void(0)" data-title="<%= @role.name %>">
+         <span data-changecount="<%= @role.id %>" >
+          <% if @role.users.count == 0 %>
+            <%= t('admin.roles.no_agent_label') %></span> - <span class="label-info-text"><%= label %></span>
+          <% else %>
+           <%= pluralize(@role.users.count, t('admin.roles.agent_label'), t('admin.roles.agents_label')) %> </span> - <span class="label-info-text"><%= label %></span>
+          <% end %>
+					</a>
+        </div>
+      </li>
 		</ul>
 		<div>
 			<p class="lead-title lead">
@@ -33,28 +47,31 @@
 			<li><a href="#admin"><%= t('admin.roles.scroll.administration').html_safe%></a></li>
 		</ul>
 	</div>
-	  
+
   <%= build_role_form %>
-  
+
   <%= hidden_field_tag "role[privilege_list][]"%>
+  <%= hidden_field_tag "add_user_ids" %>
+  <%= hidden_field_tag "delete_user_ids" %>
+
 </div>
 <div class="button-container pull-right clearfix itil-hide">
   <% unless @role.default_role? %>
     <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
-    <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving')%>  
-  <% end %>    
+    <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving')%>
+  <% end %>
 </div>
 
 <%= javascript_tag do %>
   /* Scroll functionality */
-  
+
   jQuery(function(){ // document ready
     if(<%= remove_manage_availability %>) {
       jQuery(".operational_admin#manage_availability").parent().remove();
       jQuery(".admin_tasks#manage_availability").parent().remove();
     }
   	jQuery('a[href*=#]:not([href=#])').click(function() {
-  	    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') 
+  	    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'')
   	        || location.hostname == this.hostname) {
 
   	        var target = jQuery(this.hash);
@@ -68,7 +85,7 @@
   	    }
   	});
   });
-  
+
   (function($) {
     $.fn.toggleDisabled = function(status){
         return this.each(function(){
@@ -83,7 +100,7 @@
               this.checked = true;
             else
               this.checked = false;
-            // recursively call for all child values   
+            // recursively call for all child values
             if($(this).hasClass('nested'))
             {
               $('input.' + this.id).toggleDisabled(status);
@@ -99,7 +116,7 @@
           {
             $('input.' + this.id).toggleDisabled(false);
           }
-          
+
         });
     };
 
@@ -107,16 +124,16 @@
 
       /* If none of the children of operational admin is checked
          then disable operational admin */
-         
+
       if($('input.operational_admin:checked').length == 0)
       {
         $('#operational_admin').prop({'checked': false, 'disabled': true });
       }
-      
+
       /* Before form submit, take all the values from checked
          radio buttons and load it into hidden field with the
          specified name */
-         
+
       $.each($('input:radio:checked'), function() {
         $('<input>').attr({
           type: 'hidden',
@@ -125,17 +142,17 @@
         }).appendTo('#role_form');
         $(this).removeAttr('name');
       });
-      
+
     });
 
     $(document).ready(function() {
-      
+
       /* If element has children and state changes */
-      
+
       $('input.nested:checkbox, input.nested:radio').change(function() {
         $('input.' + this.id).toggleDisabled(this.checked);
       });
-      
+
       /* If radio state changes, then change state of other
          radio buttons in the group, mainly for the admin set */
 
@@ -144,17 +161,17 @@
       });
 
       /* Special case, edit notes */
-      
+
       $('input.permanent_disable').each(function(){
           this.disabled = true;
           this.checked = true;
           if($(this).hasClass('nested'))
             $('input.' + this.id).prop('disabled', false);
       });
-      
+
       /* Load the default values for radio button groups
          on page load */
-         
+
       var radio_groups = {}
       $(":radio").each(function(){
         radio_groups[this.name] = true;

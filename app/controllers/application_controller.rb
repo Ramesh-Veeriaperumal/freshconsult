@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   around_filter :select_shard
   
   prepend_before_filter :determine_pod
-  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account
+  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :reset_language
   before_filter :set_shard_for_payload
   before_filter :set_default_locale, :set_locale, :set_msg_id
   include SslRequirement
@@ -23,14 +23,14 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   #before_filter :logging_details 
   before_filter :remove_pjax_param 
-  after_filter :set_last_active_time
+  after_filter :set_last_active_time, :reset_language
 
   after_filter :remove_rails_2_flash_after
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
   rescue_from ShardNotFound, :with => :record_not_found
-  rescue_from DomainNotReady, :with => :render_404
+  rescue_from DomainNotReady, :with => :render_domain_not_ready
 
   
   include AuthenticationSystem
@@ -54,10 +54,6 @@ class ApplicationController < ActionController::Base
 
   def set_locale
     I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 
-  end
-
-  def set_msg_id
-     Thread.current[:message_uuid] = request.try(:uuid).to_a
   end
  
   def check_account_state
@@ -118,6 +114,10 @@ class ApplicationController < ActionController::Base
     end    
   end
 
+  def reset_language
+    Language.reset_current
+  end
+
   def show_password_expiry_warning
     if current_user and current_user.password_expiry and flash.blank? and web_request? and current_user.login_via_password?
       #get the remaining time for expiry in minutes
@@ -128,6 +128,10 @@ class ApplicationController < ActionController::Base
   
   def run_on_slave(&block)
     Sharding.run_on_slave(&block)
+  end
+
+  def render_domain_not_ready
+    render :file => "#{Rails.root}/public/DomainNotReady.html", :status => 403, :layout => false
   end
 
   def render_404

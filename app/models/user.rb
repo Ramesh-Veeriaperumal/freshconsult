@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
 
-  xss_sanitize  :only => [:name,:email,:language, :job_title, :twitter_id], :plain_sanitizer => [:name,:email,:language, :job_title, :twitter_id]
+  xss_sanitize  :only => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id], :plain_sanitizer => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id]
   scope :contacts, :conditions => { :helpdesk_agent => false }
   scope :technicians, :conditions => { :helpdesk_agent => true }
   scope :visible, :conditions => { :deleted => false }
@@ -187,7 +187,10 @@ class User < ActiveRecord::Base
             true, (Time.zone.now+5.days).to_s(:db), true, (Time.zone.now+5.days).to_s(:db) ]
       end
       
-      conditions[0] = "#{conditions[0]} and name like '#{letter}%' " unless letter.blank?
+      unless letter.blank?
+        conditions[0] = "#{conditions[0]} and name like ? "
+        conditions.push("#{letter}%")
+      end
       conditions
     end
 
@@ -716,6 +719,10 @@ class User < ActiveRecord::Base
   
   def user_tag
     self.tags
+  end
+
+  def language_object
+    Language.find_by_code(language.to_s)
   end
 
   def language_name

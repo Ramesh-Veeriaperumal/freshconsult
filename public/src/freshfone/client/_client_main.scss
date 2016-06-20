@@ -21,27 +21,28 @@
 	bottom: 0;
 	height: 39px;
 	color: #FFF;
- 	@include right(12px);
+ 	@include left(12px);
 	z-index: 1000;
 }
 
 .ff_desktop_notification {
-	position: absolute;
-	right: 335px;
 	top: 2px;
-	background-color: #BBB;
+	background-color: #fff;
 	.desktopNotifier {
-		width: 50px;
+		width: 37px;
 		height: 32px;
 		position: relative;
 		line-height: 32px;
 		cursor: pointer;
 		text-align: center;
 	}
-	border-radius: 5px;
+	@include border-top-right-radius(4px);
+	@include border-top-left-radius(4px);
+	border-bottom: 1px solid #aaa;
 	margin-bottom: 1px;
 	@include box-sizing(border-box);
 	background-repeat: no-repeat;
+  cursor: pointer;
 }
 .popupbox-tabs {
 	max-width: 500px;
@@ -80,7 +81,7 @@
     border: 1px solid #aaa;
     border-radius: 5px;
     background: #fff;
-    right: $ongoing-popup-right;
+    left: $ongoing-popup-left;
     z-index: $ongoing-popup-z-index;
     box-shadow: $ongoing-box-shadow;
     .ff-context-container{
@@ -114,11 +115,12 @@
 		}
     }
     .caller-context{
-    	min-height: 48px; 
-    	color: #999;
-    	font-size: 12px;
-    	border-bottom: 1px solid $ongoing-caller-context-bottom-border;
-		padding: 13px 10px 13px 10px;
+      position: relative;
+      min-height: 48px;
+      color: #999;
+      font-size: 12px;
+      border-bottom: 1px solid $ongoing-caller-context-bottom-border;
+      padding: 13px 10px 13px 10px;
     	.preview_pic img{
     		height: 40px;
     		width: 40px;
@@ -134,7 +136,7 @@
     		font-weight: 500;
     	}
     	.caller-location{
-    	    font-weight: 500;
+    	  font-weight: 500;
     	}
     }
     .add-agent-context{
@@ -193,6 +195,9 @@
             right: -3%;
             float: right;
             @include border-radius(50%);
+          }
+          img {
+            margin-top: 0px;
           }
         }
         .add-agent-status{
@@ -309,7 +314,7 @@
 		.triangle {
 			@include triangle(down, $popup-content-border,  6px);
 			position: absolute;
-			@include right(12px);
+			@include left(12px);
 			top: 99.5%;
 			margin-top: 3px;
 		}

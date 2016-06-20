@@ -33,7 +33,7 @@ module Gamification
 			end
 
 			def self.quest_scoper(account, user)
-				account.solution_articles.visible.by_user(user)
+				account.solution_articles.visible.by_user(user).joins(:solution_article_meta)
 			end
 
 		end

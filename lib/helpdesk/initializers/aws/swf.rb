@@ -1,2 +1,2 @@
 # Credentials for accessing swf is specified at the stack level
-$swf_client = Aws::SWF::Client.new
+$swf_client = Aws::SWF::Client.new unless Rails.env.test?

@@ -1,6 +1,5 @@
 .supervisor {
 	margin: 1px 1px;
-	height: 32px;
 	width: 335px;
 	@include border-radius(6px);
 	background-color: #fff;
@@ -22,7 +21,6 @@
 	.hangup_btn{
 		background-color:$ongoing-end-call-background;
  		width: 50px;
- 		height: 32px;
  		float: left;
 		i.#{$font-class}hangup{
 			color: #fff;
@@ -34,7 +32,7 @@
 	}
 	.divider{
 		width: 183px;
-		height: 32px;
+		height: 26px;
 		background-color: $ongoing-tabs-background;
 		margin-right: 1px;
     	margin-left: 1px;
@@ -45,10 +43,9 @@
 	background-color: $ongoing-end-call-background;
     font-size: 13px;
     color: #FFF;
-    padding-top: 6px;
+    padding-top: 4px;
     position: relative;
 	width: 50px;
-	height: 32px;
 	float: left;
 	border-top-left-radius: 0px;
 	border-bottom-left-radius: 0px;
@@ -56,7 +53,6 @@
 }
 
 #unmute{
-	height: 32px;
 	width: 50px;
 	.#{$font-class}ff-mic{
 		display:none;
@@ -99,7 +95,6 @@
 }
 
 .supervisor_call_details{
-	right: 10px;
 	line-height: normal;
 	margin: 0;
 	direction:ltr;
@@ -112,7 +107,7 @@
 .ff_current_call_details{
 	background-color: #fff;
     height: 70px;
-    width: 320px;
+    width: 315px;
     padding: 10px 5px 10px 10px;
     border-top: 5px;
 	  .ff-call-element {

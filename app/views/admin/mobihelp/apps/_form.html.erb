@@ -13,7 +13,7 @@
       }
       ).trigger("change");
 
-      showItemsInOrder(<%=@app.category_ids.to_json%>, "mobihelp_app_solution_categories");
+      showItemsInOrder(<%=@app.category_ids_from_app_solutions.to_json%>, "mobihelp_app_solution_categories");
     });
   <%- end %>
   <%= javascript_include_tag :'cdn/mobihelp' %>
@@ -48,7 +48,9 @@
         <div class="control-group">
           <%= f.label :solution_categories, t('admin.mobihelp.apps.form.solution_categories').html_safe, :class => "control-label" %>
           <div class="controls category_selection" rel = "ordered_dropdown" id = "mobihelp_app_solution_categories">
-            <%= f.collection_select :category_ids, current_account.solution_categories.reject(&:is_default?), :id, :name, {:selected => @app.category_ids}, :class => "select2 span7", :multiple => true, :placeholder => t("admin.mobihelp.apps.form.select_a_solution_category") %>
+            <%= f.collection_select :category_ids, current_account.solution_category_meta.reject(&:is_default?),
+                :id, :name, {:selected => @app.category_ids_from_app_solutions}, :class => "select2 span7", 
+                :multiple => true, :placeholder => t("admin.mobihelp.apps.form.select_a_solution_category") %>
             <%= content_tag( :div, t("admin.mobihelp.apps.form.solution_categories_info"), :class => "info-data span12" ) %>
           </div>
         </div>

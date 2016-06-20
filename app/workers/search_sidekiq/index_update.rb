@@ -12,8 +12,8 @@ class SearchSidekiq::IndexUpdate < SearchSidekiq::BaseWorker
   class FolderArticles < SearchSidekiq::IndexUpdate
     def perform(args)
       args.symbolize_keys!
-      folder = Account.current.folders.find(args[:folder_id])
-      folder_articles = folder.articles
+      folder = Account.current.solution_folder_meta.find(args[:folder_id])
+      folder_articles = folder.solution_articles
       es_update(folder_articles) unless folder_articles.blank?
     end
   end

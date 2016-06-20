@@ -59,8 +59,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
     resource :"freshfone/ivr"
     resource :"freshfone/user"
-    resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings ]
+    resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings, :agent_leg ]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
+    resource :"freshfone/agent_leg", :only => [:agent_response, :disconnect_browser_agent, :remove_notification_recovery]
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
     resource :"freshfone/agent_conference", :only => [:add_agent, :success, :cancel]
     resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :wrap_call]
@@ -191,9 +192,9 @@ Authority::Authorization::PrivilegeList.build do
   # ************** SOLUTIONS **************************
 
   view_solutions do
-    resource :"solution/category", :only => [:index, :show, :navmenu, :sidebar]
+    resource :"solution/category", :only => [:index, :show, :navmenu, :sidebar, :all_categories]
     resource :"solution/folder", :only => [:index, :show]
-    resource :"solution/article", :only => [:index, :show, :voted_users]
+    resource :"solution/article", :only => [:index, :show, :voted_users, :show_master]
     resource :"search/home", :only => [:solutions]
     resource :"search/solution", :only => [:index]
     resource :"search/v2/spotlight", :only => [:solutions]
@@ -202,7 +203,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   publish_solution do
-    resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder, :properties, :move_to, :move_back]
+    resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder, :properties, :move_to, :move_back, :mark_as_outdated, :mark_as_uptodate]
     resource :"solution/tag_use"
     resource :solutions_uploaded_image, :only => [:create, :create_file]
     resource :"solution/draft", :only => [:autosave, :publish, :attachments_delete, :destroy]
@@ -217,6 +218,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_solutions do
     resource :"solution/category", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder, :move_to, :move_back, :visible_to]
+    resource :"solution/article", :only => [:translate_parents]
   end
 
   # ************** FORUMS **************************
@@ -466,7 +468,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/gamification"
     resource :"admin/quest"
     resource :"helpdesk/sla_policy"
-    resource :account, :only => [:update, :edit, :delete_logo, :delete_favicon]
+    resource :account, :only => [:update, :edit, :delete_logo, :delete_favicon, :manage_languages, :update_languages]
     resource :"admin/template"
     resource :"admin/page"
     resource :"support/preview"
@@ -486,6 +488,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/marketplace/quickbooks_sso", :only => [:landing]
     resource :"integrations/marketplace/shopify", :only => [:landing]
     resource :"integrations/salesforce"
+    resource :"integrations/freshsale"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
     resource :"admin/integrations/freshplug"
     resource :"admin/marketplace/extension"

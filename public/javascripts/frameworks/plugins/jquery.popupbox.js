@@ -6,7 +6,7 @@
 
  // Refactor code into a proper plugin
 (function ($) {
-	
+
 	"use strict";
 	var Popupbox = function (element, settings) {
 		this.realWorldName = "Popupbox";
@@ -45,14 +45,13 @@
 			this.tab_links.removeClass('active');
 
 			this.active_container.find('> div:not(' + targetId + ')').removeClass('active').hide();
-			
+
 			(toggle && this.currentTarget.is(':visible')) ? this.hideTarget() : this.showTarget();
 		},
 // Show target content and container
 		showTarget: function () {
 			this.currentTarget.show();
 			this.active_container.show();
-
 			this.alignShownTarget();
 			this.addShownClass();
 		},
@@ -60,9 +59,11 @@
 		alignShownTarget: function () {
 			var left = this.$element.offset().left,
 				new_positon = left - this.currentTarget.width() + 35;
-			
-			// TODO add bottom 20px too 
-			left = (new_positon <= 0) ? 0 : (new_positon);
+			// TODO add bottom 20px too
+			if(new_positon <= 0){
+				return;
+			}
+			left = new_positon;
 			this.currentTarget.parents('div.popupbox-content').offset({ left: left});
 		},
 // Add active class and trigger shown on element
@@ -86,7 +87,7 @@
 			this.$element.trigger('hidden');
 		},
 
-// Custom Options		
+// Custom Options
 		hidePopupContents : function (elements) {
 			this.active_container.hide().find('> div').hide();
 			this.all_tab_links.removeClass('active');
@@ -102,14 +103,14 @@
 		isAnyContentOpen: function () {
 			return this.active_container.find('> div:visible').length > 0;
 		},
-		
+
 		isClickInsidePlugin: function ($element) {
 			return (!$element.parents('.popupbox-content, .popupbox-tabs').length);
 		},
 
 		bindEscapeKey: function () {
 			var self = this;
-			
+
 			$(document).keyup(function (ev) {
 				if (ev.which == 27 && self.isAnyContentOpen()) {
 					ev.preventDefault();
@@ -117,7 +118,7 @@
 				}
 			});
 		},
-		
+
 		bindClick: function () {
 			var self = this;
 
@@ -144,7 +145,7 @@
 			keyboard: true
 		}, options),
 			popupbox;
-		
+
 		return this.each(function () {
 			var $this = $(this);
 			if ($this.data('popupbox') === undefined) {
@@ -153,19 +154,19 @@
 			} else {
 				popupbox = $this.data('popupbox');
 			}
-	
+
 			if (typeof options === "string") {
 				if (popupbox[options] === undefined) { return false; }
 				popupbox[options]($this);
 				return true;
 			}
-	
+
 			$this.find('a[data-toggle="popupbox"]').bind('click', function (ev) {
 				ev.preventDefault();
-	
+
 				popupbox.toggleTarget(this, true);
 			});
-	
+
 			$(document).ready(function () {
 				popupbox
 					.toggleTarget(popupbox.content_container

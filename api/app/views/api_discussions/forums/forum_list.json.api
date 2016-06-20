@@ -1,0 +1,13 @@
+JSON.generate(@forums.map do |forum|
+  {
+    id: forum.id,
+    name: forum.name,
+    description: forum.description,
+    position: forum.position,
+    forum_category_id: forum.forum_category_id,
+    forum_type: forum.forum_type,
+    forum_visibility: forum.forum_visibility,
+    topics_count: forum.topics_count,
+    comments_count: forum.posts_count
+  }
+end)

@@ -14,8 +14,16 @@ module Solution::LanguageMethods
 		language.code
 	end
 
+	def language_key
+		language.to_key
+	end
+
 	def language_name
 		language.name
 	end
+
+  def is_primary?
+    language == Language.for_current_account
+  end
 
 end

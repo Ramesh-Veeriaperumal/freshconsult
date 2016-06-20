@@ -2,17 +2,17 @@ module Solution::Cache
   def category_collection(portal = current_portal)
     @category_collection ||= begin
       if portal.blank?
-        {:current => all_categories, :others => []}
+        {:current => all_solution_categories, :others => []}
       else
         {
-          :current => all_categories.select {|c,v| visible_in_current_portal?(c[:portal_solution_categories],portal.id) },
-          :others => all_categories.reject {|c,v| visible_in_current_portal?(c[:portal_solution_categories],portal.id) }
+          :current => all_solution_categories.select {|c,v| visible_in_current_portal?(c[:portal_solution_categories],portal.id) },
+          :others => all_solution_categories.reject {|c,v| visible_in_current_portal?(c[:portal_solution_categories],portal.id) }
         }
       end
     end
   end
   
-  def all_categories
+  def all_solution_categories
     @all_categories_from_cache ||= current_account.solution_categories_from_cache
   end
   

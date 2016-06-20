@@ -5,26 +5,32 @@ class Solution::CategoriesController < ApplicationController
   helper AutocompleteHelper
   helper Solution::NavmenuHelper
   helper Solution::ArticlesHelper
+  include Solution::LanguageControllerMethods
+  include Solution::ControllerMethods
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
   before_filter :set_selected_tab, :page_title
-  before_filter :load_category, :only => [:edit, :update, :destroy]
+  before_filter :load_meta, :only => [:edit, :update, :destroy]
   before_filter :load_category_with_folders, :only => [:show]
-  before_filter :set_modal, :only => [:new, :edit]
+  before_filter :find_portal, :only => [:all_categories, :new, :create, :edit, :update]
   before_filter :set_default_order, :only => :reorder
+  before_filter :load_portal_solution_category_ids, :only => [:all_categories, :create, :update]
   
   around_filter :run_on_slave, :only => :sidebar
 
   def index
-    @categories = current_portal.solution_categories.includes(:folders)
+    @categories = current_portal.solution_category_meta.includes(:solution_folder_meta)
 
     respond_to do |format|
       format.html { @page_canonical = solution_categories_url }# index.html.erb
-      format.xml  { render :xml => @categories }
-      format.json  { render :json => @categories.to_json(:except => [:account_id,:import_id],
-                                                         :include => folder_scope) }
+      format.xml  { render :xml => @categories.as_json(:root => false).to_xml(:root => "solution_categories") }
+      format.json  { render :json => @categories.as_json(:include => folder_scope) }
     end
+  end
+
+  def all_categories
+    @categories = @portal.solution_category_meta.includes(:primary_category, :portals).reject(&:is_default)
   end
   
   def navmenu
@@ -32,86 +38,55 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def show
-    @page_title = @category.name
-    respond_to do |format|
-      format.html {
-        redirect_to solution_my_drafts_path('all') if @category.is_default?
-      }
-      format.xml {  render :xml => @category.to_xml(:include => folder_scope) }
-      format.json  { render :json => @category.to_json(:except => [:account_id,:import_id],
-                                                  :include => folder_scope) }
-    end
+    @page_title = @category_meta.name
+    
+    show_response(@category_meta, folder_scope)
   end
   
   def new
     @page_title = t("header.tabs.new_solution_category")
-    @category = current_account.solution_categories.new
-
-    respond_to do |format|
-      format.html { render :layout => false if @modal }
-      format.xml  { render :xml => @category }
-    end
+    @category_meta = current_account.solution_category_meta.new
+    @category = @category_meta.solution_categories.new
+    
+    new_response(@category)
   end
 
   def edit
-    @page_title = @category.name
-    respond_to do |format|
-      if @category.is_default?
-        flash[:notice] = I18n.t('category_edit_not_allowed')
-        format.html {redirect_to :action => "show" }
-      else
-        format.html { render :layout => false if @modal }
-      end
-      format.xml  { render :xml => @category }
-    end
+    @category = @category_meta.send(language_scoper)
+    @primary = @category_meta.primary_category
+    @category = current_account.solution_categories.new unless @category
+    
+    edit_response(@category_meta, @category)
   end
 
   def create
-    @category = current_account.solution_categories.build(params[nscname])
-    
-    respond_to do |format|
-      if @category.save
-        format.html { redirect_to solution_category_path(@category) }
-        format.xml  { render :xml => @category, :status => :created, :location => @category }
-        format.json { render :json => @category, :status => :created, :location => @category }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
-      end
-    end
+    @category_meta = Solution::Builder.category(params)
+    @category = @category_meta.send(language_scoper)
+
+    post_response(@category_meta, @category)
   end
 
   def update
-    respond_to do |format| 
-      if @category.update_attributes(params[nscname])       
-        format.html { redirect_to :action =>"show" }
-        format.xml  { render :xml => @category, :status => :created, :location => @category }     
-        format.json { render :json => @category, :status => :ok, :location => @category }     
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
-      end
-    end
+    @category_meta = Solution::Builder.category(params)
+    @category = @category_meta.send(language_scoper)
+
+    post_response(@category_meta, @category)
   end
 
   def destroy
-    @category.destroy unless @category.is_default?
+    @category_meta.destroy unless @category_meta.is_default?
 
-    respond_to do |format|
-      format.html {  redirect_to :action =>"index" }
-      format.xml  { head :ok }
-      format.json { head :ok }
-    end
+    destroy_response(:action => "index")
   end
 
   def sidebar
-    @drafts = current_account.solution_drafts.preload(:article)
-    @my_drafts = current_account.solution_drafts.by_user(current_user).preload(:article)
+    @drafts = current_account.solution_drafts.in_applicable_languages.preload({:article => :solution_article_meta})
+    @my_drafts = current_account.solution_drafts.by_user(current_user).in_applicable_languages.preload({:article => :solution_article_meta})
     @feedbacks = current_account.
                     tickets.all_article_tickets.unresolved.
-                    preload(:requester, :ticket_status, :article) if current_account.launched?(:solution_home_feedbacks) && current_user.agent.all_ticket_permission
+                    preload(:requester, :ticket_status, :article) if current_user.agent.all_ticket_permission
     @orphan_categories = orphan_categories
-    render :partial => "/solution/categories/sidebar"
+    render :partial => "/solution/categories/sidebar", :formats => [:html]
   end
 
   protected
@@ -125,7 +100,7 @@ class Solution::CategoriesController < ApplicationController
     end
     
     def reorder_scoper
-      current_portal.portal_solution_categories
+      (current_account.portals.find_by_id(params[:portal_id]) || current_portal).portal_solution_categories
     end
     
     def reorder_redirect_url
@@ -133,10 +108,11 @@ class Solution::CategoriesController < ApplicationController
     end
 
   private
+
     def portal_check
       format = params[:format]
       if format.nil? && (current_user.nil? || current_user.customer?)
-        return redirect_to support_solutions_path
+        return redirect_to (params[:id].present? && support_solution_path(params[:id])) || support_solutions_path
       elsif !privilege?(:view_solutions)
         access_denied
       end
@@ -162,16 +138,20 @@ class Solution::CategoriesController < ApplicationController
       current_account.solution_categories
     end
 
-    def load_category
-      @category = account_scoper.find_by_id!(params[:id])
+    def meta_scoper
+      current_account.solution_category_meta
+    end
+
+    def load_meta
+      @category_meta = meta_scoper.find_by_id!(params[:id])
+    end
+
+    def find_portal
+      @portal = (params[:portal_id] && current_account.portals.find_by_id(params[:portal_id])) || current_portal
     end
 
     def load_category_with_folders
-      @category = account_scoper.find_by_id!(params[:id], :include => { :folders => [:customers]})
-    end
-
-    def set_modal
-      @modal = true if request.xhr?
+      @category_meta = meta_scoper.includes(:solution_folder_meta).find_by_id!(params[:id])
     end
 
     def orphan_categories
@@ -185,11 +165,15 @@ class Solution::CategoriesController < ApplicationController
     end
 
     def default_category
-      current_account.solution_categories.where(:is_default => true).first
+      current_account.solution_category_meta.where(:is_default => true).first
     end
 
     def all_drafts
       current_account.solution_articles.all_drafts.includes(
         {:folder => {:category => :portals}})
+    end
+
+    def load_portal_solution_category_ids
+      @portal_solution_category_ids = Hash[@portal.portal_solution_categories.map{|psc| [psc.solution_category_meta_id , psc.id] }]
     end
 end

@@ -1,0 +1,9 @@
+JSON.generate(@items.map do |business_hour|
+  {
+    id: business_hour.id,
+    name: business_hour.name,
+    description: business_hour.description,
+    created_at: business_hour.created_at.try(:utc),
+    updated_at: business_hour.updated_at.try(:utc)
+  }
+end)

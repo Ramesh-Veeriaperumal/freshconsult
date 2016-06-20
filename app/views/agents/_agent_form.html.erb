@@ -257,8 +257,15 @@
 
     $(document).ready(function() {
       <% @roles.each do |role| %>
-          roles[<%= role.id %>] = <%= @agent.user.roles.include?(role) %>;
+        <% if role.name == "Account Administrator" %>
+          <% if current_user.privilege?(:manage_account) %>
+            roles[<%= role.id %>] = <%= @agent.user.roles.include?(role) %>; 
+            role_details[<%= role.id %>] = ["<%= role.name %>", "<%= escape_javascript(role.description)%>"];
+          <% end %>
+        <% else %>
+          roles[<%= role.id %>] = <%= @agent.user.roles.include?(role) %>; 
           role_details[<%= role.id %>] = ["<%= role.name %>", "<%= escape_javascript(role.description)%>"];
+        <%end%>
       <% end %>
 
       <% @groups.each do |group| %>

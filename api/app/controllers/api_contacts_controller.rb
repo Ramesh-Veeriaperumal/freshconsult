@@ -21,8 +21,10 @@ class ApiContactsController < ApiApplicationController
 
   def update
     assign_protected
-    @item.assign_attributes(params[cname].except('tag_names'))
-    contact_delegator = ContactDelegator.new(@item, other_emails: @email_objects[:old_email_objects], custom_fields: params[cname][:custom_field])
+    custom_fields = params[cname][:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
+    # Assign attributes required as the contact delegator needs it.
+    @item.assign_attributes(validatable_delegator_attributes)
+    contact_delegator = ContactDelegator.new(@item, other_emails: @email_objects[:old_email_objects], custom_fields: custom_fields)
     unless contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
       return
@@ -55,6 +57,12 @@ class ApiContactsController < ApiApplicationController
   end
 
   private
+
+    # Same as http://apidock.com/rails/Hash/extract! without the shortcomings in http://apidock.com/rails/Hash/extract%21#1530-Non-existent-key-semantics-changed-
+    # extract the keys from the hash & delete the same in the original hash to avoid repeat assignments
+    def validatable_delegator_attributes
+      params[cname].select { |key, value| (params[cname].delete(key); true) if ContactConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(key) }
+    end
 
     def decorator_options
       super({ name_mapping: (@name_mapping || get_name_mapping) })

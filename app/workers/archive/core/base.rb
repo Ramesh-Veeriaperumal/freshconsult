@@ -117,7 +117,8 @@ module Archive
           :incoming => note.incoming,
           :private => note.send(:private),
           :created_at => note.created_at,
-          :updated_at => note.updated_at
+          :updated_at => note.updated_at,
+          :deleted  => note.deleted
         )
       end
 

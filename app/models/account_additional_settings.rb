@@ -6,7 +6,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   include AccountAdditionalSettings::AdditionalSettings
 
   belongs_to :account
-  serialize :supported_languages
+  serialize :supported_languages, Array
   validates_length_of :email_cmds_delimeter, :minimum => 3, :message => I18n.t('email_command_delimeter_length_error_msg')
   after_update :handle_email_notification_outdate, :if => :had_supported_languages?
   after_initialize :set_default_rlimit
@@ -14,6 +14,8 @@ class AccountAdditionalSettings < ActiveRecord::Base
   serialize :additional_settings, Hash
   serialize :resource_rlimit_conf, Hash
   validate :validate_bcc_emails
+  validate :validate_supported_languages
+  validate :validate_portal_languages, :if => :multilingual?
 
   def handle_email_notification_outdate
     if supported_languages_changed? 
@@ -56,6 +58,26 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def set_default_rlimit
     self.resource_rlimit_conf = self.resource_rlimit_conf.presence || DEFAULT_RLIMIT
+  end
+
+  def validate_supported_languages
+    if ((self.supported_languages || []) - Language.all_codes).present?
+      errors.add(:supported_languages, I18n.t('accounts.multilingual_support.supported_languages_validity'))
+      return false
+    end
+    return true
+  end
+
+  def multilingual?
+    Account.current.multilingual?
+  end
+
+  def validate_portal_languages
+    if ((self.additional_settings[:portal_languages] || []) - (self.supported_languages || [])).present?
+      errors.add(:portal_languages, I18n.t('accounts.multilingual_support.portal_languages_validity'))
+      return false
+    end
+    return true
   end
 
 end

@@ -41,7 +41,10 @@ class PlanChangeWorker
 
   def drop_multiple_business_hours_data(account)
     update_all_in_batches({ :time_zone => account.time_zone }){ |cond| 
-      account.all_users.where(@conditions).limit(@batch_size).update_all(cond)
+      records = account.all_users.where(@conditions).limit(@batch_size)
+      count   = records.update_all(cond)
+      records.map(&:sqs_manual_publish)
+      count
     }
   end
 
@@ -131,12 +134,32 @@ class PlanChangeWorker
     # update_all_in_batches({ :language => account.language }){ |cond| 
     #   account.all_users.where(@conditions).limit(@batch_size).update_all(cond) 
     # }
-    account.account_additional_settings.update_attributes(:supported_languages => [])
+    # Below line has been intentionally commented, as we want to make sure,
+    # when the customer upgrades again, he'll have all the data and config as it was before. [Solution Multilingual Feature]
+    #account.account_additional_settings.update_attributes(:supported_languages => [])
   end
 
   def drop_mailbox_data(account)      
     account.imap_mailboxes.destroy_all
     account.smtp_mailboxes.destroy_all
+  end
+
+  def drop_multi_language_data(account)
+    return true
+    # Below line has been intentionally commented, as we want to make sure,
+    # when the customer upgrades again, he'll have all the data and config as it was before. [Solution Multilingual Feature]
+    # return unless account.features_included?(:enable_multilingual)
+    # { 
+    #   :solution_articles => 'Solution::Article',
+    #   :solution_folders => 'Solution::Folder',
+    #   :solution_categories => 'Solution::Category'
+      
+    # }.each do |solution_entity, entity_class|
+    #   account.send(solution_entity).where(["language_id NOT IN (?)", [Account.current.language_object.id]]).destroy_all
+    # end
+    # account.remove_feature(:enable_multilingual)
+    # new_settings = account.account_additional_settings.additional_settings.merge(:portal_languages => [])
+    # account.account_additional_settings.update_attributes(:additional_settings => new_settings)
   end
 
 =begin

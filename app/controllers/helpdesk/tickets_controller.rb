@@ -309,6 +309,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!(current_account.as_json(:only=> [:id], :methods=>[:timesheets_feature]))
         hash.merge!({:subscription => !@subscription.nil?})
         hash.merge!({:reply_emails => @reply_emails})
+        hash.merge!({:selected_email => @selected_reply_email})
         hash.merge!({:to_cc_emails => @to_cc_emails})
         hash.merge!({:bcc_drop_box_email => bcc_drop_box_email.map{|item|[item, item]}})
         hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
@@ -693,7 +694,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def create
-    if !params[:topic_id].blank?
+    if (!params[:topic_id].blank? && find_topic) && (@topic.ticket.nil? || (@topic.ticket.present? && @topic.ticket.deleted))
       @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
@@ -783,8 +784,9 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def get_solution_detail
-    sol_desc = current_account.solution_articles.find(params[:id])
-    render :text => sol_desc.description || ""
+    language = Language.find_by_code(params[:language]) || Language.for_current_account
+    sol_desc = current_account.solution_article_meta.find(params[:id]).send("#{language.to_key}_article")
+    render :text => Helpdesk::HTMLSanitizer.sanitize_for_insert_solution(sol_desc.description) || ""
   end
 
   def latest_note

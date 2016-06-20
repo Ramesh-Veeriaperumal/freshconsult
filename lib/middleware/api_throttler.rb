@@ -67,6 +67,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     elsif allowed? env
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
+        Rails.logger.error("API V1 Throttled :: Account: #{@account_id}, Host: #{@host}, Count: #{@count}, Time: #{Time.now}")
         remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
         increment_others_redis(key)
         value = get_others_redis_key(key).to_i

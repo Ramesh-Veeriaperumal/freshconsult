@@ -14,7 +14,7 @@ class Va::Condition
     'contact_name'            => 'users.name',
     'company_name'            => 'customers.name',
     'st_survey_rating'        => 'helpdesk_schema_less_tickets.int_tc01',
-    'folder_id'               => 'solution_articles.folder_id',
+    'folder_id'               => 'solution_article_meta.solution_folder_meta_id',
     'thumbs_up'               => 'solution_articles.thumbs_up',
     'forum_id'                => 'topics.forum_id',
     'user_votes'              => 'topics.user_votes'

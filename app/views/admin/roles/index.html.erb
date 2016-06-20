@@ -1,9 +1,13 @@
+ <% content_for :helpcard do %>
+  <%= render :partial => "helpnote_without_tour" %>
+<% end %>
+
 <div class="list-page agent-roles-list">
   <div class="list-page-header">
     <div class="row-fluid">
     		<div class="span6"><h3 class="lead"><%= t('admin.roles.title')%></h3></div>
     		<div class="span6 pull-right pagination-right">
-            <b><%= link_to t('admin.roles.new'), new_admin_role_path(), :class => "btn btn-primary"  %></b> 
+            <b><%= link_to t('admin.roles.new'), new_admin_role_path(), :class => "btn btn-primary"  %></b>
         </div>
     </div>
   </div>
@@ -15,8 +19,22 @@
               <td>
                 <p class="text-info">
                   <strong><%= link_to(role.name, edit_admin_role_path(role), :class => "item_info") %> </strong>
-                  <br/><small class="muted"><%= role.description %></small>
+                  <br/><div class="muted"><%= role.description %></div>
                 </p>
+              </td>
+              <td class="manage-agent">
+                <% if (role.users.count != 0) %>
+                <a class="popup" data-isaccadmin="<%= role.privilege?(:manage_account) %>" data-agentcount="<%= role.users.count %>" data-title="<%= role.name %>" data-changecount="<%= role.id %>" data-roleid="<%= role.id  %>" href="javascript:void(0)">
+                  <%= pluralize(role.users.count, t('admin.roles.agent_label'), t('admin.roles.agents_label')) %>
+                </a>
+                <% else %>
+               <div class="no-agent">
+                  <span class="muted info"><%= t('admin.roles.no_agent_label')%></span>
+                   <a class="popup hide" data-agentcount="<%= role.users.count %>" data-title="<%= role.name %>" data-changecount="<%= role.id %>" data-roleid="<%= role.id  %>" href="javascript:void(0)">
+                    <%= t('admin.roles.add_agent_label')%>
+                    </a>
+               </div>
+               <% end %>
               </td>
               <td>
                 <% unless role.default_role? %>
@@ -26,12 +44,24 @@
               </td>
             </tr>
           <% end %>
-        </table>  
-        <%= will_paginate @roles, 
-              :renderer => BootstrapPaginationRenderer, 
+        </table>
+        <%= will_paginate @roles,
+              :renderer => BootstrapPaginationRenderer,
               :previous_label => "<b class='arrow-left'></b>",
               :next_label => "<b class='arrow-right'></b>",
               :class => "pagination pagination-centered" %>
       <% end %>
   </div>
 </div>
+<input type="hidden" value="" id="roleid">
+
+<%= render :partial => 'popup' %>
+
+<script type="text/javascript">
+jQuery(window).on('load', function(){
+  ProfileImage.fetch();
+  if(AdminRoles && AdminRoles.index){
+    AdminRoles.index.init();
+  }
+});
+</script>
