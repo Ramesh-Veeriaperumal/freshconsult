@@ -35,13 +35,13 @@
       <% if @tickets.present?  && @client_manager_companies.include?(company_details[:id]) %>
         <span class="help-text">
           <%= I18n.t("tickets_filter.raised_by") %>  : 
-        </span>
-        <div class="company-users-filter">
+          <div class="company-users-filter">
           <%= render_autocomplete({ :selected_values => [@requested_by_user].compact, 
                                     :max_limit => 1, 
                                     :type => :company_users, 
                                     :include_none => true }) %>
         </div>
+        </span>
       <% end %>
     <% end %>
   </div>
