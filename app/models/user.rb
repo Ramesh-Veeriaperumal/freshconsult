@@ -691,8 +691,7 @@ class User < ActiveRecord::Base
   def company_name= name
     if name.present?
       comp = account.companies.find_or_create_by_name(name)
-      self.user_companies.present? ? (self.user_companies.first.company_id = comp.id) : 
-        self.user_companies.build(:company_id => comp.id, :default => true)
+      build_or_update_company(comp.id)
     else
       mark_user_company_destroy
     end
@@ -702,21 +701,11 @@ class User < ActiveRecord::Base
     company.name if company
   end
 
-  def company_id= id
-    if id.present?
-      self.build_default_user_company(:company_id => id) unless self.default_user_company.present?
+  def company_id= comp_id
+    if comp_id.present?
+      build_or_update_company(comp_id)
     else
       mark_user_company_destroy
-    end
-  end
-
-  def mark_user_company_destroy
-    uc = self.default_user_company
-    if uc
-      self.user_companies_attributes = [{ :id => uc.id,
-                                          :company_id => uc.company_id, 
-                                          :user_id => uc.user_id,
-                                          :_destroy => true }]
     end
   end
 
@@ -982,4 +971,18 @@ class User < ActiveRecord::Base
       (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
     end
 
+    def build_or_update_company comp_id
+      self.default_user_company.present? ? (self.default_user_company.company_id = comp_id) :
+          self.build_default_user_company(:company_id => comp_id) 
+    end
+
+    def mark_user_company_destroy
+      uc = self.default_user_company
+      if uc
+        self.user_companies_attributes = [{ :id => uc.id,
+                                            :company_id => uc.company_id, 
+                                            :user_id => uc.user_id,
+                                            :_destroy => true }]
+      end
+    end
 end
