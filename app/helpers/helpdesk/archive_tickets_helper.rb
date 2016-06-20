@@ -34,14 +34,12 @@ module Helpdesk::ArchiveTicketsHelper
     tooltip = 'tooltip' if !full_pagination
 
     content = ""
-    options[:previous_label] =  '<i class="pagination-icon"><i class="ficon-arrow-left"></i><i class="ficon-arrow-left"></i></i> ' + t('previous') 
-    options[:next_label] =  t('next') + ' <i class="pagination-icon"><i class="ficon-arrow-right"></i><i class="ficon-arrow-right"></i></i>'
     content << "<div class='toolbar_pagination_full'>" if full_pagination
     if current_page == 1
       content << "<span class='disabled prev_page'>#{options[:previous_label]}</span>"
     else
       content << "<a class='prev_page #{tooltip}' href='/helpdesk/tickets/archived?page=#{(current_page-1)}' 
-                      title='#{t('previous')}'  
+                      title='Previous' 
                       #{shortcut_options('previous') unless full_pagination} >#{options[:previous_label]}</a>"
     end
 
@@ -62,7 +60,7 @@ module Helpdesk::ArchiveTicketsHelper
       content << "<span class='disabled next_page'>#{options[:next_label]}</span>"
     else
       content << "<a class='next_page #{tooltip}' href='/helpdesk/tickets?page=#{(current_page+1)}' 
-                      rel='next' title='#{t('next')}' 
+                      rel='next' title='Next' 
                       #{shortcut_options('next') unless full_pagination} >#{options[:next_label]}</a>"
     end
     content << "</div>" if full_pagination
