@@ -167,6 +167,6 @@ class User < ActiveRecord::Base
   end  
 
   def backup_customer_id
-    self.customer_id = self.default_user_company.present? ? self.default_user_company.company_id : nil
+    self.customer_id = self.default_user_company.present? && !self.default_user_company.marked_for_destruction? ? self.default_user_company.company_id : nil
   end
 end
