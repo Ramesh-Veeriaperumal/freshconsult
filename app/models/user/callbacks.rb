@@ -167,7 +167,7 @@ class User < ActiveRecord::Base
   end  
 
   def backup_customer_id
-    user_comp = self.user_companies.find{ |uc| uc.default }
+    user_comp = self.user_companies.reload.find{ |uc| uc.default }
     self.customer_id = user_comp.is_a?(UserCompany) ? user_comp.company_id : nil
   end
 end
