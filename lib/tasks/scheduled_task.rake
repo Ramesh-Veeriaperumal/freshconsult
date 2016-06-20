@@ -37,10 +37,11 @@ namespace :scheduled_task do
     @distribution_counter = {}
     task_count = 0
     Sharding.run_on_all_slaves do
-      Helpdesk::ScheduledTask.current_pod.send("#{task_type}", base_time).find_in_batches(batch_size: 500) do |tasks| 
-      tasks.each do |task|
-        task_count += 1
-        enqueue_task(task)
+        Helpdesk::ScheduledTask.current_pod.send("#{task_type}", base_time).find_in_batches(batch_size: 500) do |tasks| 
+        tasks.each do |task|
+          task_count += 1
+          enqueue_task(task)
+        end
       end
     end
     subject = "Scheduler(#{task_type}) | processed #{task_count} task"
