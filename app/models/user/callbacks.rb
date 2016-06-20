@@ -119,11 +119,11 @@ class User < ActiveRecord::Base
   end
 
   def set_company_name
-   if (self.company_id.nil? && self.email)      
-       email_domain =  self.email.split("@")[1]
-       comp_id = Account.current.company_domains.find_by_domain(email_domain).try(:company_id)
-       self.company_id = comp_id unless comp_id.nil?    
-   end
+    if (self.company_id.nil? && self.email)      
+      email_domain =  self.email.split("@")[1]
+      comp_id = Account.current.company_domains.find_by_domain(email_domain).try(:company_id)
+      self.company_id = comp_id unless comp_id.nil?
+    end
   end
 
   def decode_name
@@ -167,7 +167,6 @@ class User < ActiveRecord::Base
   end  
 
   def backup_customer_id
-    user_comp = self.user_companies.reload.find{ |uc| uc.default }
-    self.customer_id = user_comp.is_a?(UserCompany) ? user_comp.company_id : nil
+    self.customer_id = self.default_user_company.present? ? self.default_user_company.company_id : nil
   end
 end
