@@ -2,13 +2,15 @@
             :html => {  :method => :post, 
                         :rel => "validate",
                         "data-remote" => true, 
-                        "data-update" => "vote-feedback-container"
-                         } do |f| %>
-  	<%= f.error_messages %>
+                        "data-update" => "vote-feedback-container",
+                        :class => "form-portal" } do |f| %>
+  <div class="span12">
+  	<div class="span9"><%= f.error_messages %></div>
+  </div>
 
   <% unless current_user %>
     <div class="control-group">
-      <label id="requester-label" for="helpdesk_ticket_email" class="control-label muted required "><%= t('your_email') %></label>
+      <label id="requester-label" for="helpdesk_ticket_email" class="control-label required"><%= t('your_email') %></label>
       <div class="controls">
         <input type="email" id="helpdesk_ticket_email" class="required email span8" 
               name="helpdesk_ticket[email]"
@@ -19,7 +21,7 @@
   <% end %>
 
   <div class="control-group">
-    <label id="description-label" class="control-label muted required"><%= t('your_feedback') %></label>
+    <label id="description-label" class="control-label required"><%= t('your_feedback') %></label>
     <div class="controls">
       <div class="align-feedback">
         <% Solution::Feedback::ALLOWED_MESSAGES.each do |i| %>
@@ -40,8 +42,8 @@
   </div>
 
   <div class="form-actions">
-    <%= submit_tag t('send_feedback'), :class => "btn btn-primary btn-toggle", :id => "submit-feedback" -%> 
     <a data-hide-dom="#vote-feedback-container" data-show-dom="#vote-feedback-form-link" class="btn"><%= t('cancel') %></a>
+    <%= submit_tag t('send_feedback'), :class => "btn btn-primary btn-toggle", :id => "submit-feedback" -%> 
   </div>
   <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
   <%= hidden_field_tag "meta[referrer]", h(request.referrer) %>

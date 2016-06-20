@@ -108,7 +108,7 @@ en:
   sales: "Sales"
   preview: "Preview"
   no_agents_in_selected_group: "No agents in selected group"
-  send_feedback: "Send"
+  send_feedback: "Send feedback"
   sidebar_help: "Help"
   support_title: "Support"
   ticket_form:
@@ -3234,13 +3234,12 @@ en:
     skip_notification_no: "No"
   header_logo: Header Logo
   feedback:
-      title: "Did you find it helpful?"
+      title: "Was this answer helpful?"
       up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
       upvote: "Yes"
       downvote: "No"
       link: "Send feedback"
       down_vote_form_title: "Can you please tell us how we can improve this article?"
-      solution_article_author: "is the author of this solution article."
       downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
     new_translation: "New %{language} translation"

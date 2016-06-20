@@ -81,9 +81,6 @@ HTML
 	def article_voting article
 		output = []
 		unless article.voted_by_user?
-			output << %(<div id="article-author">#{profile_image(article.user)})
-			output << %(<span class="muted">#{article.user.first_name} #{t('feedback.solution_article_author')}</span>)
-			output << %(</div>)
 			output << %(<p class="article-vote" id="voting-container" 
 											data-user-id="#{User.current.id if User.current}" 
 											data-article-id="#{article.id}"
