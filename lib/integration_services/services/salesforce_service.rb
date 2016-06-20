@@ -208,7 +208,7 @@ module IntegrationServices::Services
         fd_comp_name = if ticket.company.present?
           ticket.company.name 
         elsif fd_user.companies.present?
-          fd_user.companies.first.name
+          fd_user.company_name
         else
           FD_COMPANY
         end
