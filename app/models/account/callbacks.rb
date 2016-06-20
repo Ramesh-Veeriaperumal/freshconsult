@@ -21,7 +21,7 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
   after_commit :enable_searchv2, :enable_count_es, on: :create
-  after_commit :disable_searchv2, :disable_count_es, on: :destroy
+  after_commit :disable_searchv2, on: :destroy
 
 
   # Callbacks will be executed in the order in which they have been included. 
