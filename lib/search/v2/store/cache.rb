@@ -21,8 +21,7 @@ module Search
         CLUSTER               = "v1/cluster:%{cluster_id}"
         CLUSTER_INFO          = "v1/cluster_info:%{cluster_id}"
         LASTEST_CLUSTER       = "v1/latest_cluster"
-        CLUSTER_INDEX_SPLIT   = "v1/split:%{cluster_id}:%{type}"
-        CLUSTER_INDEX_VERSION = "v1/version:%{cluster_id}:%{type}"
+        CLUSTER_INDEX_SUFFIX  = "v1/index_suffix:%{cluster_id}:%{type}"
 
         # Can add necessary methods from here:
         # https://github.com/mperham/dalli/blob/master/lib/dalli/client.rb
