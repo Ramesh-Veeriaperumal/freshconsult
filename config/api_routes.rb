@@ -8,6 +8,8 @@ Helpkit::Application.routes.draw do
         put :restore
         get :time_entries, to: 'time_entries#ticket_time_entries'
         get :conversations, to: 'conversations#ticket_conversations'
+        get :satisfaction_ratings, to: 'surveys#survey_results'
+        post :satisfaction_ratings, to: 'surveys#create'
         post :reply, to: 'conversations#reply'
         post :notes, to: 'conversations#create'
         post :time_entries, to: 'time_entries#create'
@@ -65,6 +67,13 @@ Helpkit::Application.routes.draw do
     resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy] do
       collection do
         get :me
+      end
+    end
+    
+    resources :surveys, only: [:active_survey, :satisfaction_ratings] do
+      collection do
+        get :active_survey
+        get :satisfaction_ratings, to: 'surveys#index'
       end
     end
 

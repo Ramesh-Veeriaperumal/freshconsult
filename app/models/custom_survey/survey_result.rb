@@ -3,7 +3,7 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
   self.table_name = :survey_results
 
   include Va::Observer::Util
-  
+
   concerned_with :associations, :callbacks
 
   # Survey result types 
@@ -15,6 +15,14 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
 
   def custom_form
     survey # memcache this 
+  end
+
+  def custom_ratings
+    custom_ratings_map = {}
+    survey_questions_map.each_pair do |id, column_name|
+      custom_ratings_map["question_#{id}"] = survey_result_data[column_name.to_sym]
+    end 
+    custom_ratings_map
   end
 
   def custom_field_aliases
@@ -135,6 +143,33 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
       end
     end 
 
+    def self.survey_filter(survey_result_filter)
+      {
+        default: {
+          conditions: ['created_at > ?', created_in_last_month ]
+        },
+        created_since: {
+          conditions: ['created_at > ?', survey_result_filter.created_since ]
+        },
+        user_id: {
+          conditions: { customer_id: survey_result_filter.user_id }
+        }
+      }
+    end
+
+  def self.created_in_last_month
+    # created in last month filter takes up user time zone info also into account.
+    in_user_time_zone { Time.zone.now.beginning_of_day.ago(1.month).utc }
+  end
+
+  def self.in_user_time_zone(&block)
+    old_zone = Time.zone
+    TimeZone.set_time_zone
+    yield
+  ensure
+    Time.zone = old_zone
+  end
+
   private
 
     def question_rating question_column
@@ -158,4 +193,12 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
         end
       end
     end 
+
+    #Map of Survey Question label and column name for easy retrieval of survey_result_data values
+    def survey_questions_map
+      Hash[survey.survey_questions.map do |survey_question| 
+        [survey_question.id, survey_question.column_name]
+       end
+      ]
+    end
 end

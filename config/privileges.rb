@@ -111,6 +111,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"conversation", only: [:create, :ticket_conversations]
     resource :"ticket", :only => [:show, :create, :index, :search]
 
+    resource :"survey", :only => [:create, :survey_results]
+
     # This privilege should only be used for API. This should have only read permission. 
     # Agent who has access to ticket create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
@@ -507,6 +509,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_sla_policy", :only => [:index, :update]
     resource :"api_product", :only => [:index, :show]
+    resource :survey, :only => [:active_survey, :index]
     resource :"api_role", :only => [:index, :show]
   end
 

@@ -37,7 +37,7 @@ class ApiApplicationController < MetalApiController
 
   include DecoratorConcern
 
-  before_filter { |c| c.requires_feature feature_name if feature_name }
+  before_filter { |c| c.requires_feature *feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
 
   # before_load_object and after_load_object are used to stop the execution exactly before and after the load_object call.
@@ -104,9 +104,9 @@ class ApiApplicationController < MetalApiController
 
   protected
 
-    def requires_feature(f) # Should be from cache. Need to revisit.
-      return if Account.current.features?(f)
-      render_request_error(:require_feature, 403, feature: f.to_s.titleize)
+    def requires_feature(*f) # Should be from cache. Need to revisit.
+      return if Account.current.features?(*f)
+      render_request_error(:require_feature, 403, feature: f.join(',').titleize)
     end
 
   private
