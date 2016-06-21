@@ -380,6 +380,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",                  :default => false
+    t.boolean  "enabled",                 :default => false
   end
 
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
