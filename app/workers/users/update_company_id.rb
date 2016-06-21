@@ -25,9 +25,12 @@ class Users::UpdateCompanyId < BaseWorker
     
     Sharding.run_on_slave do 
       account.all_users.joins(joins).where(conditions).select(select_columns).find_in_batches(:batch_size => USER_FETCH_LIMIT) do |users|
-        user_ids = users.map { |user| user.id unless user.contractor? }
+        user_ids = []
+        contractor_ids = []
+        users.map { |user| user.contractor? ? contractor_ids.push(user.id) : user_ids.push(user.id) }
         company_id ? create_user_companies(account, user_ids, company_id) : 
                      destroy_user_companies(account, user_ids, current_company_id) if user_ids.any?
+        destroy_contractor_companies(account, contractor_ids, current_company_id) if !company_id && contractor_ids.present?
         user_ids.each_slice(TICKET_UPDATE_LIMIT) do |ids|
           Tickets::UpdateCompanyId.perform_async({ :user_ids => ids, :company_id => company_id })
         end
@@ -51,4 +54,9 @@ class Users::UpdateCompanyId < BaseWorker
     end
   end
 
+  def destroy_contractor_companies(account, user_ids, company_id)
+    Sharding.run_on_master do 
+      account.user_companies.where(["user_id in (?) and company_id = ?", user_ids, company_id]).destroy_all
+    end
+  end
 end

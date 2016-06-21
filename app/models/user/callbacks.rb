@@ -100,12 +100,8 @@ class User < ActiveRecord::Base
         self.user_companies.each{ |uc| uc.default = false } if default_company_count > 1
         self.user_companies.first.default = true
       end
-      self.default_user_company = self.user_companies.find { |uc| uc.default }
-      unless has_multiple_companies_feature?
-        self.user_companies.each{ |uc| 
-          uc.attributes.merge!({:_destroy => true}) unless uc.default
-        }
-      end
+      default_user_company = self.user_companies.find { |uc| uc.default }
+      self.user_companies = [self.default_user_company] unless has_multiple_companies_feature?
     end
   end
   
@@ -173,11 +169,11 @@ class User < ActiveRecord::Base
   end  
 
   def backup_customer_id
-    if self.default_user_company.present?
-      self.customer_id = !self.default_user_company.marked_for_destruction? ? self.default_user_company.company_id : nil
-    elsif self.user_companies.present?
+    if self.user_companies.length > 1
       user_comp = self.user_companies.find{ |uc| uc.default }
       self.customer_id = user_comp.present? ? user_comp.company_id : nil
+    elsif self.default_user_company.present?
+      self.customer_id = !self.default_user_company.marked_for_destruction? ? self.default_user_company.company_id : nil
     end
   end
 end
