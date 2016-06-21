@@ -35,16 +35,13 @@ namespace :scheduled_task do
   def process(task_type, base_time = Time.now.utc)
     log "Trigger Scheduler(#{task_type}) | base_time: #{base_time}"
     @distribution_counter = {}
-    task_count, offset_id = 0, 0
+    task_count = 0
     Sharding.run_on_all_slaves do
-      loop do
-        tasks = Helpdesk::ScheduledTask.current_pod.send("#{task_type}", base_time).order('next_run_at DESC').offset(offset_id).limit(500)
-        break if tasks.empty?
+        Helpdesk::ScheduledTask.current_pod.send("#{task_type}", base_time).find_in_batches(batch_size: 500) do |tasks| 
         tasks.each do |task|
           task_count += 1
           enqueue_task(task)
         end
-        offset_id += 500
       end
     end
     subject = "Scheduler(#{task_type}) | processed #{task_count} task"

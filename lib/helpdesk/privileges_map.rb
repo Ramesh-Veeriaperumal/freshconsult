@@ -11,10 +11,6 @@ module Helpdesk
 			:admin_tasks => [:livechat_admin_tasks, :livechat_shadow_chat]
 		}
 
-		REPORTS_PRIVILEGE_MAP = {
-			:view_reports => [:export_reports]
-		}
-
 		FORUM_PRIVILEGES_MAP = {
 			:view_forums => [:forum_basic_moderator],
 			:manage_forums => [:forum_advanced_moderator, :forums_exports],
@@ -29,9 +25,7 @@ module Helpdesk
 		}
 
 		CUSTOMER_PRIVILEGE_MAP = {
-			:view_contacts => [:export_customers],
 			:manage_contacts => [:import_customers]
-
 		}
 
 		SOCIAL_PRIVILEGES_MAP = {
@@ -40,7 +34,6 @@ module Helpdesk
 		}
 
 		HELPDESK_PRIVILEGE_MAP = {
-			:manage_tickets => [:export_tickets],
 			:delete_ticket => [:spam_ticket],
 			:edit_note => [:edit_private_note],
 			:edit_ticket_properties => [:assign_agent,:assign_group]
@@ -48,7 +41,7 @@ module Helpdesk
 
 
 		ALL_PRIVILEGES = [HELPDESK_PRIVILEGE_MAP,SOCIAL_PRIVILEGES_MAP,CUSTOMER_PRIVILEGE_MAP,
-			               SOLUTION_PRIVILEGES_MAP,FORUM_PRIVILEGES_MAP,REPORTS_PRIVILEGE_MAP,CHAT_PRIVILEGE_MAP]
+			               SOLUTION_PRIVILEGES_MAP,FORUM_PRIVILEGES_MAP,CHAT_PRIVILEGE_MAP]
 
 		MIGRATION_MAP = ALL_PRIVILEGES.inject({}) do |hash, pr_map|
 							hash.merge!(pr_map) {|key,oldval,newval| oldval | newval}

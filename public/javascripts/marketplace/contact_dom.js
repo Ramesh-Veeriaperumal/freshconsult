@@ -35,21 +35,18 @@ var ContactDom = Class.create({
   },
 
   convertToAgent: function(options){
-    if(options){
-      var id = options;
-      var valid = jQuery.inArray(id, ['fulltime','occasional']);
-      if(valid == 0){
-        jQuery("[data-domhelper-name='convert-agent-fulltime']").trigger("click");
+    var email = domHelper.contact.getContactInfo().user.email;
+    if(email != null){
+      if(options){
+        var id = options;
+        var valid = jQuery.inArray(id, ['fulltime','occasional']);
+        if(valid == 0){
+          jQuery("[data-domhelper-name='convert-agent-fulltime']").trigger("click");
+        }
+        else if(valid == 1){
+          jQuery("[data-domhelper-name='convert-agent-occasional']").trigger("click");
+        }
       }
-      else if(valid == 1){
-        jQuery("[data-domhelper-name='convert-agent-occasional']").trigger("click");
-      }
-    }
-  },
-
-  appendToContactSidebar: function(options){
-    if(options){
-      jQuery("[data-domhelper-name='contact-sidebar']").append(options);
     }
   },
 

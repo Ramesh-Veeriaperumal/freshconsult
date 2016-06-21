@@ -23,11 +23,11 @@ module HelpdeskReports
       end
       
       def ticket_associations_include
-        [ {:flexifield => [:flexifield_def]}, {:requester => [:company] }, :schema_less_ticket, :ticket_status, :group, :responder, :tags ]
+        [ {:flexifield => [:flexifield_def]}, :requester, :company, :schema_less_ticket, :ticket_status, :group, :responder, :tags ]
       end
       
       def archive_associations_include
-        [ {:flexifield => [:flexifield_def]}, {:requester => [:company] }, :archive_ticket_association, :ticket_status, :group, :responder, :tags]
+        [ {:flexifield => [:flexifield_def]}, :requester, :company, :archive_ticket_association, :ticket_status, :group, :responder, :tags]
       end
 
       def generate_ticket_data(tickets = [], headers, list_of_tickets, archive_status)

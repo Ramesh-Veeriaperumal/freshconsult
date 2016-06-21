@@ -10,8 +10,6 @@ var domHelperValidator = domHelperValidator || {};
     getTicketInfo: { signature: "", description: "Returns the ticket information object", helpURL: "getTicketInfo" },
     getContactInfo: { signature: "", description: "Returns the contact information of the requester", helpURL: "getContactInfo" },
     getCustomField: { signature: "", description: "Returns the custom fields of the ticket", helpURL: "getCustomField" },
-    addExtraOption: { signature: "anchor_tag", description: "Adds additional option in the more menu", helpURL: "addExtraOption" },
-    appendToSidebar: { signature: "markup", description: "Appends markup to the sidebar", helpURL: "appendToSidebar" },
     expandConversations: { signature: "", description: "Expands all the collapsed conversations", helpURL: "" },
     hideAttachments: { signature: "", description: "Hides the attachments in the conversation", helpURL: "" },
     showAttachments: { signature: "", description: "Displays the attachments in the conversation if hidden", helpURL: "" },
@@ -41,7 +39,6 @@ var domHelperValidator = domHelperValidator || {};
   dhValidator.contactHelpDetails = {
     getContactInfo: { signature: "", description: "Returns the contact information object", helpURL: "getTicketInfo" },
     getCustomField: { signature: "", description: "Returns the custom fields of user", helpURL: "getCustomField" },
-    appendToContactSidebar: { signature: "markup", description: "Appends custom markup to the sidebar", helpURL: "appendToContactSidebar" },
     convertToAgent: { signature: "agent_type", description: "Converts the contact to a fulltime / occasional agent", helpURL: "convertToAgent" }
   };
 

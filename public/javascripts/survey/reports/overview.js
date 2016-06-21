@@ -29,7 +29,9 @@ var SurveyOverview = {
                 SurveyReport.showReport();
                 SurveyUtil.mapQuestionsResult();
                 jQuery("#survey_report_main_content").html(
-                    JST["survey/reports/template/content_layout"]()
+                    JST["survey/reports/template/content_layout"]({
+                        agentReporting: SurveyReport.agentReporting
+                    })
                 );
                 SurveyChart.create(SurveyUtil.whichSurvey().survey_questions[0]);
                 SurveyTab.renderSidebar();

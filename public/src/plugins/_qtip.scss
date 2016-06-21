@@ -208,11 +208,13 @@
 .ui-tooltip-dark .ui-tooltip-titlebar,
 .ui-tooltip-dark .ui-tooltip-content{
 	border-color: #303030;
-	color: #f3f3f3;
+	color: white;
+	font-size: 11px;
+	font-weight: bold;	
 }
 
 .ui-tooltip-dark .ui-tooltip-content{
-	background-color: #505050;
+	background-color: #101010;
 }
 
 .ui-tooltip-dark .ui-tooltip-titlebar{
@@ -227,9 +229,9 @@
 	border-color: #303030;
 }
 
-
 /*! Cream tooltip style */
 .ui-tooltip-cream .ui-tooltip-titlebar,
+
 .ui-tooltip-cream .ui-tooltip-content{
 	border-color: #F9E98E;
 	color: #A27D35;
@@ -582,4 +584,11 @@
 	.ui-tooltip-content{
 		padding: 15px 16px;
 	}
+}
+
+.ui-tooltip-dark.ui-tooltip-shadow {
+	box-shadow: none;
+}
+.ui-tooltip-dark .ui-tooltip-shadow {
+	box-shadow: none;
 }

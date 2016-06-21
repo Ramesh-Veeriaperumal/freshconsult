@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.eot");
-  src: url("../../assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.woff") format("woff"),
-       url("../../assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.ttf") format("truetype"),
-       url("../../assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_242a4edd73d45f72915a53113084b79a.eot");
+  src: url("../../assets/glyphs_242a4edd73d45f72915a53113084b79a.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_242a4edd73d45f72915a53113084b79a.woff") format("woff"),
+       url("../../assets/glyphs_242a4edd73d45f72915a53113084b79a.ttf") format("truetype"),
+       url("../../assets/glyphs_242a4edd73d45f72915a53113084b79a.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_bcdcab627cb2d8c537a7a040ba8a1d97.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_242a4edd73d45f72915a53113084b79a.svg#glyphs") format("svg");
   }
 }
 
@@ -170,6 +170,7 @@
 .ficon-blocked-call:before,
 .ficon-book:before,
 .ficon-book-hollow:before,
+.ficon-building:before,
 .ficon-bulb:before,
 .ficon-bullhorn:before,
 .ficon-business-hours:before,
@@ -365,6 +366,7 @@
 .ficon-reports-sorting:before,
 .ficon-reports-sorting-asc:before,
 .ficon-reports-sorting-desc:before,
+.ficon-restore:before,
 .ficon-retweet:before,
 .ficon-role:before,
 .ficon-safari:before,
@@ -393,6 +395,7 @@
 .ficon-tick:before,
 .ficon-ticket:before,
 .ficon-ticket-fields:before,
+.ficon-ticket-thin:before,
 .ficon-ticket_volume:before,
 .ficon-time_sheet:before,
 .ficon-timeline-forum:before,
@@ -462,6 +465,7 @@
 .ficon-blocked-call:before { content: "\f20d"; }
 .ficon-book:before { content: "\f112"; }
 .ficon-book-hollow:before { content: "\f1da"; }
+.ficon-building:before { content: "\f226"; }
 .ficon-bulb:before { content: "\f113"; }
 .ficon-bullhorn:before { content: "\f114"; }
 .ficon-business-hours:before { content: "\f115"; }
@@ -657,6 +661,7 @@
 .ficon-reports-sorting:before { content: "\f1e1"; }
 .ficon-reports-sorting-asc:before { content: "\f1e3"; }
 .ficon-reports-sorting-desc:before { content: "\f1e4"; }
+.ficon-restore:before { content: "\f227"; }
 .ficon-retweet:before { content: "\f187"; }
 .ficon-role:before { content: "\f188"; }
 .ficon-safari:before { content: "\f189"; }
@@ -685,6 +690,7 @@
 .ficon-tick:before { content: "\f217"; }
 .ficon-ticket:before { content: "\f199"; }
 .ficon-ticket-fields:before { content: "\f19a"; }
+.ficon-ticket-thin:before { content: "\f228"; }
 .ficon-ticket_volume:before { content: "\f1f1"; }
 .ficon-time_sheet:before { content: "\f1f2"; }
 .ficon-timeline-forum:before { content: "\f19b"; }
@@ -721,7 +727,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (278)</h1>
+      <h1>Font Icons (281)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -1021,6 +1027,15 @@
         </div>
         <div class="usage">
           <span>book-hollow</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-building" class="ficon-building"></i></span>
+        </div>
+        <div class="usage">
+          <span>building</span>
         </div>
       </div>
       
@@ -2781,6 +2796,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-restore" class="ficon-restore"></i></span>
+        </div>
+        <div class="usage">
+          <span>restore</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-retweet" class="ficon-retweet"></i></span>
         </div>
         <div class="usage">
@@ -3028,6 +3052,15 @@
         </div>
         <div class="usage">
           <span>ticket-fields</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-ticket-thin" class="ficon-ticket-thin"></i></span>
+        </div>
+        <div class="usage">
+          <span>ticket-thin</span>
         </div>
       </div>
       

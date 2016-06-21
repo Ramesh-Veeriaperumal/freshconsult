@@ -18,7 +18,10 @@ module ContactsHelper
       end
     else
       UserEmailsHelper::FreshdeskDomElement.new(form_builder, :user, :contact, field, field.label, field.dom_type, 
-              field.required_for_agent, true, field_value, field.dom_placeholder, field.bottom_note, {:account => current_account}).construct
+              field.required_for_agent, true, field_value, field.dom_placeholder, field.bottom_note, 
+              { :account => current_account, 
+                :user_companies => @user_companies, 
+                :contractor => @user.privilege?(:contractor)}).construct
     end
   end
 

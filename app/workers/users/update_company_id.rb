@@ -14,39 +14,49 @@ class Users::UpdateCompanyId < BaseWorker
     company_id = args[:company_id]
     current_company_id = args[:current_company_id]
     account = Account.current
-    cust_id_cdn = company_id ? "customer_id is null" : "customer_id = #{current_company_id}"
-    last_user_id = nil
-    begin
-      # Not using find_in_batches `cause of inability to update_all an array
-      batch_op = last_user_id ? "AND id > #{last_user_id}" : ""
-      condition = "#{cust_id_cdn} and helpdesk_agent = 0 #{batch_op}"
-      users = domains.present? ? account.all_users.where(["SUBSTRING_INDEX(email, '@', -1) = (?) and  #{condition}",
-                                      domains]).limit(USER_FETCH_LIMIT) :
-                                 account.all_users.where(condition).limit(USER_FETCH_LIMIT)
-
-      user_ids = execute_on_db { users.pluck(:id) }
-      updated_users = 0
-      if user_ids.present?
-        last_user_id = user_ids.last
-        company_id ? create_user_companies(users, company_id) : 
-                     destroy_user_companies(account, user_ids, current_company_id)
-        updated_users = users.update_all_with_publish({ :customer_id => company_id }, {})
+    
+    select_columns = ["users.id", "users.privileges"]
+    joins = "left join user_companies ON users.account_id = user_companies.account_id AND users.id = user_companies.user_id"
+    cid = company_id ? "user_companies.id IS NULL" : "user_companies.company_id = #{current_company_id}"
+    company_id_cdn = "#{cid} and helpdesk_agent = 0"
+    conditions = domains.present? ? ["SUBSTRING_INDEX(email, '@', -1) IN (?) and #{company_id_cdn}", 
+                                     domains] :
+                                    company_id_cdn
+    
+    Sharding.run_on_slave do 
+      account.all_users.joins(joins).where(conditions).select(select_columns).find_in_batches(:batch_size => USER_FETCH_LIMIT) do |users|
+        user_ids = []
+        contractor_ids = []
+        users.map { |user| user.contractor? ? contractor_ids.push(user.id) : user_ids.push(user.id) }
+        company_id ? create_user_companies(account, user_ids, company_id) : 
+                     destroy_user_companies(account, user_ids, current_company_id) if user_ids.any?
+        destroy_contractor_companies(account, contractor_ids, current_company_id) if !company_id && contractor_ids.present?
         user_ids.each_slice(TICKET_UPDATE_LIMIT) do |ids|
           Tickets::UpdateCompanyId.perform_async({ :user_ids => ids, :company_id => company_id })
         end
       end
-    end while updated_users == USER_FETCH_LIMIT
+    end
   end
 
-  def create_user_companies(users, company_id)
-    users.preload(:user_companies).each do |user|
-      user.user_companies.create(:company_id => company_id, :default => true, 
-        :client_manager => user.privilege?(:client_manager)) unless user.user_companies.present?
+  def create_user_companies(account, user_ids, company_id)
+    Sharding.run_on_master do 
+      user_ids.each do |user_id|
+        account.user_companies.create(:company_id => company_id, :user_id => user_id, :default => true)
+      end
+      account.users.where("id in (?)", user_ids).update_all(:customer_id => company_id)
     end
   end
 
   def destroy_user_companies(account, user_ids, company_id)
-    account.user_companies.where(["user_id in (?) and company_id = ?", user_ids, company_id]).destroy_all
+    Sharding.run_on_master do 
+      account.user_companies.where(["user_id in (?) and company_id = ?", user_ids, company_id]).destroy_all
+      account.users.where("id in (?)", user_ids).update_all(:customer_id => nil)
+    end
   end
 
+  def destroy_contractor_companies(account, user_ids, company_id)
+    Sharding.run_on_master do 
+      account.user_companies.where(["user_id in (?) and company_id = ?", user_ids, company_id]).destroy_all
+    end
+  end
 end

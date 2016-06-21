@@ -1,29 +1,32 @@
 <div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget">
 		<div class="grid-stack-item-content widget-inner">
-			<% cache("#{achivements_memcache_key}", :expires_in => 1.hour) do %>
-			<div class="widget-content">
-				<ul class="tabs nav-tabs sleek-tab">
-					<li class="active">
-						<a id="agent-tab" data-toggle="tab" href="#leaderboard">
-							<%=t('helpdesk.realtime_dashboard.leader_Board') %>
-						</a>
-					</li>
-					<li class="">
-						<a id="requester-tab" data-toggle="tab" href="#achievements">
-							<%=t('helpdesk.realtime_dashboard.achievements') %>
-						</a>
-					</li>
-				</ul>
-				<div class="tab-content">
-					<div class="tab-pane leaderboard-widget active" id="leaderboard">
-						<%= content_tag :div, "", :rel => "remote", :class => "", :id => "mini-leaderboard",
-											"data-remote-url" => mini_list_helpdesk_leaderboard_index_path() %>
-					</div>
-					<div class="tab-pane" id="achievements"></div>
+			<% content_for :mini_leaderboard do %>
+				<% MemcacheKeys.fetch("#{achivements_memcache_key}", 1.hour) do %>
+					<div class="widget-content">
+						<ul class="tabs nav-tabs sleek-tab">
+							<li class="active">
+								<a id="agent-tab" data-toggle="tab" href="#leaderboard">
+									<%=t('helpdesk.realtime_dashboard.leader_Board') %>
+								</a>
+							</li>
+							<li class="">
+								<a id="requester-tab" data-toggle="tab" href="#achievements">
+									<%=t('helpdesk.realtime_dashboard.achievements') %>
+								</a>
+							</li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane leaderboard-widget active" id="leaderboard">
+								<%= content_tag :div, "", :rel => "remote", :class => "", :id => "mini-leaderboard",
+													"data-remote-url" => mini_list_helpdesk_leaderboard_index_path() %>
+							</div>
+							<div class="tab-pane" id="achievements"></div>
 
-				</div>
-			</div>
-			<% end %>
+						</div>
+					</div>
+					<% end %>
+				<% end %>
+			<%= yield :mini_leaderboard %>
 		</div>
 		<script type="text/javascript">
 			jQuery('body').one('assetLoaded.fjax', function() {

@@ -40,7 +40,6 @@
 <% content_for :onload_script do -%>
 
   invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'ticket');
-  jQuery('input.requester').focus();
   jQuery('#helpdesk_ticket_group_id')
     .on("change", function(e){
       var select_agent = jQuery('#helpdesk_ticket_responder_id')[0];
@@ -58,6 +57,38 @@
                      }
       });
     });
+
+  var $requester_val = "";
+  jQuery("input.requester").on("focusout", function(){ 
+    $requester_val = jQuery("input.requester").val();
+  });
+  jQuery('input.requester').focus();
+
+  jQuery("#helpdesk_ticket_email").blur(function(){
+    var ticket_email = jQuery("#helpdesk_ticket_email").val();
+
+    if($requester_val != jQuery("input.requester").val()){
+      jQuery.ajax({ url: "<%= helpdesk_commons_user_companies_path %>?email="+ticket_email,
+        success: function(data){
+          if(data != false){
+            jQuery('#helpdesk_ticket_company_id').empty();
+            for(var i=0; i<data.length; i++){ 
+              jQuery("<option/>").val(data[i][1]).html(data[i][0]).appendTo("#helpdesk_ticket_company_id");
+            }
+            jQuery('#helpdesk_ticket_company_id').val('').change();
+            jQuery('.default_company').insertAfter(jQuery(".default_requester")).show();
+            jQuery('#helpdesk_ticket_company_id').removeAttr("disabled");
+          }else{
+            jQuery('.default_company').slideUp();
+            jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
+          }
+        }
+      });
+    }
+  });
+
+  if(<%= is_edit %> == true && (jQuery("#helpdesk_ticket_company_id").attr("disabled") != "disabled"))
+    jQuery('.default_company').insertAfter(jQuery(".default_requester")).show();
 
   jQuery("#helpdesk_tags").select2({
     tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),

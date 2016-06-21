@@ -65,21 +65,21 @@ class Support::SearchV2::SpotlightController < SupportController
       super.tap do |es_params|
         if current_user
           es_params[:ticket_requester_id]   = current_user.id
-          es_params[:ticket_company_id]     = current_user.company_id if privilege?(:client_manager)
+          es_params[:ticket_company_id]     = current_user.client_manager_companies.map(&:id)
         end
 
         if searchable_klasses.include?('Solution::Article')
           es_params[:language_id]               = Language.current.try(:id) || Language.for_current_account.id
           es_params[:article_status]            = SearchUtil::DEFAULT_SEARCH_VALUE.to_i
           es_params[:article_visibility]        = visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN)
+          es_params[:article_company_id]        = current_user.company_ids if current_user
           es_params[:article_category_id]       = current_portal.portal_solution_categories.map(&:solution_category_meta_id)
-          es_params[:article_company_id]        = current_user.company_id if current_user
         end
 
         if searchable_klasses.include?('Topic')
           es_params[:topic_visibility]          = visibility_opts(Forum::VISIBILITY_KEYS_BY_TOKEN)
           es_params[:topic_category_id]         = current_portal.portal_forum_categories.map(&:forum_category_id)
-          es_params[:topic_company_id]          = current_user.company_id if current_user
+          es_params[:topic_company_id]          = current_user.company_ids if current_user
         end
 
         es_params[:size] = @size

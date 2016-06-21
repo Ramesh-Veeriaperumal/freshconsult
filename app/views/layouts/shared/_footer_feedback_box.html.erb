@@ -1,0 +1,34 @@
+<div class="footer-content">
+	<div class="span7">
+		<% if current_user %>
+			<%= form_for :footer_feedback,  
+				:url=> "#{AppConfig['feedback_account'][Rails.env]}/widgets/feedback_widget/jsonp_create?widgetType=popup",
+				:method => :post, 
+				:html => { :id => "footer_feedback_form", :class => "form_inline"}, 
+				:remote => true do |f| %>
+				<%= text_area_tag 'helpdesk_ticket_body_faux', nil, :placeholder => t('footer.footer_feedback_subject_placeholder'), :class => "footer-feedback-subject span5", :rows => "1" %>
+				<%= hidden_field_tag "helpdesk_ticket[ticket_body_attributes][description_html]" %>
+				<%= hidden_field_tag "helpdesk_ticket[subject]", value="In-product feedback from " + current_user.name + " (" + current_user.email + ")" %>
+				<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+				<%= hidden_field_tag "meta[referrer]", h(request.referrer) %>
+				<%= hidden_field_tag "helpdesk_ticket[source]", TicketConstants::SOURCE_KEYS_BY_TOKEN[:feedback_widget] %>
+				<%= hidden_field_tag "helpdesk_ticket[email]", current_user.email %>
+				<%= f.submit "Submit", :class => "btn btn-primary hide" %>
+			<% end %>		
+								
+			<div class="footer-feedback-thanks hide"><%= t('footer.footer_feedback_thanks') %></div>
+		<% end %>
+	</div>
+	<div class="footer-help-links pull-right span5">
+	  	<% unless(current_account.subscription.paid_account?) %>
+		  <%= link_to(t('footer.helpdesk_software'), AppConfig['app_website'], :target => "_blank") %>
+		  <%= t('footer.by_freshdesk') %>
+		  <span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
+		<% end %>				 
+		<%= link_to(t('footer.help_and_support'), "#{AppConfig['support_url']}/support/home", :target => "_blank") %>
+		<% if @privacy_policy %>
+			<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
+			<%= link_to(t('footer.privacy_policy'), AppConfig['privacy_policy'], :target => "_blank") %>
+		<% end %>
+	</div>
+</div>

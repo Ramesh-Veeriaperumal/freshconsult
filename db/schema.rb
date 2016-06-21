@@ -380,6 +380,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",                  :default => false
+    t.boolean  "enabled",                 :default => false
   end
 
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
@@ -2709,6 +2710,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   end
 
   add_index "report_filters", ["account_id", "report_type"], :name => "index_report_filters_account_id_and_report_type"
+  add_index "report_filters", ["account_id", "user_id", "report_type"], :name => "index_report_filters_on_account_user_and_report_type"
 
   create_table "roles", :force => true do |t|
     t.string   "name"
@@ -3859,8 +3861,6 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   
   add_index "user_companies", ["account_id", "user_id", "company_id"], 
             :name => "index_user_companies_on_account_id_user_id_company_id"
-  add_index "user_companies", ["account_id", "user_id"], 
-            :name => "index_user_companies_on_account_id_user_id"
   add_index "user_companies", ["account_id", "company_id"], 
             :name => "index_user_companies_on_account_id_company_id"
 

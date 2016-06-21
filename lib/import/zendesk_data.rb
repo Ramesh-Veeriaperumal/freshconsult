@@ -208,7 +208,7 @@ def handle_user_import base_dir
                                 :phone => usr_phone,
                                 :email =>  usr_email,
                                 :twitter_id => nil, 
-                                :customer_id => org_id,
+                                :company_id => org_id,
                                 :import_id => import_id,
                                 :time_zone =>usr_time_zone,
                               }
