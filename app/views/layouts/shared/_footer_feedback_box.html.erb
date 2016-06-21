@@ -6,7 +6,8 @@
 				:method => :post, 
 				:html => { :id => "footer_feedback_form", :class => "form_inline"}, 
 				:remote => true do |f| %>
-				<%= text_area_tag 'helpdesk_ticket[ticket_body_attributes][description_html]', nil, :placeholder => t('footer.footer_feedback_subject_placeholder'), :class => "footer-feedback-subject span5", :rows => "1" %>
+				<%= text_area_tag 'helpdesk_ticket_body_faux', nil, :placeholder => t('footer.footer_feedback_subject_placeholder'), :class => "footer-feedback-subject span5", :rows => "1" %>
+				<%= hidden_field_tag "helpdesk_ticket[ticket_body_attributes][description_html]" %>
 				<%= hidden_field_tag "helpdesk_ticket[subject]", value="In-product feedback from " + current_user.name + " (" + current_user.email + ")" %>
 				<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
 				<%= hidden_field_tag "meta[referrer]", h(request.referrer) %>
@@ -22,8 +23,8 @@
 	  	<% unless(current_account.subscription.paid_account?) %>
 		  <%= link_to(t('footer.helpdesk_software'), AppConfig['app_website'], :target => "_blank") %>
 		  <%= t('footer.by_freshdesk') %>
+		  <span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
 		<% end %>				 
-		<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>						
 		<%= link_to(t('footer.help_and_support'), "#{AppConfig['support_url']}/support/home", :target => "_blank") %>
 		<% if @privacy_policy %>
 			<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
