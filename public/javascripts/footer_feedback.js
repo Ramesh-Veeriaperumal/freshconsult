@@ -5,25 +5,27 @@
 
   var footer_feedback_form = $("#footer_feedback_form");
   var feedback_submit_btn = $('#footer_feedback_submit');
-  var feedback_subject = $('#helpdesk_ticket_ticket_body_attributes_description_html');
+  var feedback_subject = $('#helpdesk_ticket_body_faux');
+  var feedback_body = $('#helpdesk_ticket_ticket_body_attributes_description_html');
   var feedback_thanks = $('.footer-feedback-thanks');
   var feedback_form_validator = footer_feedback_form.validate(
     {
      debug: false,
      rules: {
-        "helpdesk_ticket[ticket_body_attributes][description_html]" : { required: true },
+        "helpdesk_ticket[ticket_body_attributes][description_html_faux]" : { required: true },
      },
      messages: {
-      "helpdesk_ticket[ticket_body_attributes][description_html]": {
+      "helpdesk_ticket[ticket_body_attributes][description_html_faux]": {
         required: window.feedback_subject_required_error
        }
     },
     submitHandler: function(form, btn) {
       feedback_submit_btn.button("loading");
       // Referrer needs to be filled
-      $('#meta_referrer').val(window.location.href);    
+      $('#meta_referrer').val(window.location.href);
       var appended_val = '<div>' + feedback_subject.val() + '</div>' + '<br/><br/><p>' + 'Account URL: ' + window.current_account_full_domain + '</p><p>' +  'Admin: ' +  window.is_current_user_admin + '</p>';
-      feedback_subject.val(appended_val);
+      //feedback_subject.val(appended_val);
+      feedback_body.val(appended_val); 
       $(form).ajaxSubmit({
         crossDomain: true,
         dataType: 'jsonp',                       
@@ -57,13 +59,13 @@
     });
   }); 
 
-  $('body').on('focus.feedback_subject', '#helpdesk_ticket_ticket_body_attributes_description_html', function(){
+  $('body').on('focus.feedback_subject', '#helpdesk_ticket_body_faux', function(){
     if(feedback_subject.val() !== ''){
       expandForm();
     }
   });
 
-  $('body').on('keyup.feedback_subject', '#helpdesk_ticket_ticket_body_attributes_description_html', function(){
+  $('body').on('keyup.feedback_subject', '#helpdesk_ticket_body_faux', function(){
     if(feedback_subject.val() === ''){
       feedback_form_validator.resetForm();        
       resetFormSize();
