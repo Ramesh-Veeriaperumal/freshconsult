@@ -34,6 +34,14 @@ module TestCaseMethods
     @agent.set_password_expiry(password_expiry_date: original_value)
   end
 
+  def sidekiq_inline
+    require 'sidekiq/testing'
+    Sidekiq::Testing.fake!
+    Sidekiq::Testing.inline! do
+      yield
+    end
+  end
+
   def stub_current_account
     Account.stubs(:current).returns(@account)
     yield

@@ -116,7 +116,7 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def current_outgoing_call
-			@outgoing_call ||= current_user.freshfone_calls.outgoing_in_progress_calls
+			@outgoing_call ||= (current_user.freshfone_calls.outgoing_in_progress_calls || {})
 		end
 	
 		def current_incoming_call

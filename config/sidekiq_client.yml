@@ -114,6 +114,7 @@ defaults: &defaults
     - [scheduled_reports_cleanup]
     - [account_info_to_dynamo]
     - [parallel_report_exports]
+    - [count_es_queue]
 
 development:
   <<: *defaults

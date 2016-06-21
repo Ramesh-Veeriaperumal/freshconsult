@@ -77,6 +77,7 @@ class ApplicationController < ActionController::Base
         }
       end
     end
+    cookies[HashedData["state"]] = HashedData[current_account.subscription.state] if current_account.subscription
   end
   
   def set_time_zone

@@ -52,7 +52,7 @@ module UsersHelper
                                     :delta => 1,
                                     :deleted => options[:deleted] || 0,
                                     :blocked => options[:blocked] || 0,
-                                    :customer_id => options[:customer_id] || nil,
+                                    :company_id => options[:customer_id] || nil,
                                     :language => "en")
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
     new_user.save

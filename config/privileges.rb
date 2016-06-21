@@ -13,10 +13,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
     resource :"search/v2/autocomplete", :only => [:requesters, :agents, :companies, :tags]
     resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets,
-                                           :user_ticket, :search_tweets, :custom_search, :export_csv, :latest_ticket_count, :add_requester, :view_ticket,
+                                           :user_ticket, :search_tweets, :custom_search, :latest_ticket_count, :add_requester, :view_ticket,
                                            :spam, :unspam, :execute_scenario, :pick_tickets,
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
-                                           :clear_draft, :save_draft, :prevnext, :component, :custom_search, :configure_export,
+                                           :clear_draft, :save_draft, :prevnext, :component, :custom_search,
                                            :quick_assign, :canned_reponse, :full_paginate, :custom_view_save,
                                            :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario, :execute_bulk_scenario]
     resource :"helpdesk/subscription"
@@ -100,8 +100,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/canned_responses/response"
 
     resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note, 
-                                                    :full_paginate, :configure_export, :export_csv, 
-                                                    :activities, :component, :prevnext]
+                                                    :full_paginate,  :activities, :component, :prevnext]                                                
     resource :"helpdesk/archive_note", :only => [:index, :full_text]
 
     resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
@@ -116,6 +115,11 @@ Authority::Authorization::PrivilegeList.build do
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
     resource :api_ticket_field, :only => [:index] 
 	end
+
+  export_tickets do
+    resource :"helpdesk/ticket", :only => [:configure_export, :export_csv]
+    resource :"helpdesk/archive_ticket", :only => [:configure_export, :export_csv]                                            
+  end
 
   reply_ticket do
     resource :"helpdesk/ticket", :only => [:reply_to_conv]
@@ -297,7 +301,7 @@ Authority::Authorization::PrivilegeList.build do
   # ************** CONTACTS **************************
 
   view_contacts do
-    resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :configure_export, :export_csv, :contact_details_for_ticket]
+    resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :contact_details_for_ticket]
     resource :customer, :only => [:index, :show] #should deprecate
     resource :company,  :only => [:index, :show]
     resource :agent, :only => [:show]
@@ -316,8 +320,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :contact, :only => [:new, :create, :autocomplete, :quick_contact_with_company,
                :create_contact, :update_contact, :update_description_and_tags, :contact_email, :edit, :update, :verify_email]
     resource :customer, :only => [:new, :create, :edit, :update] #should deprecate
-    resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :update_notes, :quick, :sla_policies, 
-                :configure_export, :export_csv]
+    resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :update_notes, :quick, :sla_policies]
     resource :"search/autocomplete", :only => [:companies]
     resource :"search/v2/autocomplete", :only => [:companies]
     resource :customers_import
@@ -352,6 +355,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_company", :only => [:destroy]
   end
 
+
+  export_customers do 
+    resource :contact, :only =>  [:configure_export, :export_csv]
+    resource :company,  :only => [:configure_export, :export_csv]
+  end
+
   # ************** REPORTS **************************
 
 	view_reports do
@@ -374,10 +383,21 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/custom_survey_report"
       resource :"reports/freshfone/summary_report"
       resource :"reports/freshchat/summary_report"
-   	  resource :"reports/timesheet_report"
+   	  resource :"reports/timesheet_report", :only => [:index, :report_filter, :save_reports_filter, :update_reports_filter, :delete_reports_filter]
       resource :"reports/report_filter"
-      resource :"reports/v2/tickets/report"
+      resource :"reports/v2/tickets/report", :only =>[ :index, :fetch_metrics, :fetch_ticket_list, :fetch_active_metric,
+                                                        :save_reports_filter, :update_reports_filter, :delete_reports_filter]
+
       resource :"helpdesk/dashboard", :only => [:unresolved_tickets, :unresolved_tickets_data]
+  end
+
+  # NOTE: Resource(controller action) related to scheduling is not added here because save reports and scheduling reports use the same action
+  # Currently schedule reports uses this privilege as user.privilege and not as owns_object
+  export_reports do
+    resource :"reports/v2/tickets/report", :only => [:configure_export, :export_tickets, :export_report, :email_reports,  :download_file]
+    resource :"reports/timesheet_report", :only => [:export_csv, :generate_pdf, :export_pdf]
+    resource :"reports/freshchat/summary_report", :only => [:export_pdf]
+    resource :"reports/freshfone/summary_report", :only => [:export_pdf, :export_csv]
   end
 
   # ************** ADMIN **************************
@@ -524,6 +544,9 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   client_manager do
+  end
+
+  contractor do
   end
 
   # Authority::Authorization::PrivilegeList.privileges.each { |privilege| puts privilege}

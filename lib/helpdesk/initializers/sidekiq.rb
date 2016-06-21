@@ -23,6 +23,7 @@ Sidekiq.configure_client do |config|
       "DevNotificationWorker",
       "PodDnsUpdate",
       "SearchV2::Manager::DisableSearch",
+      "CountES::IndexOperations::DisableCountES",
       "Gamification::ProcessTicketQuests",
       "AccountCleanup::DeleteSpamTicketsCleanup",
       "AccountCleanup::SuspendedAccountsWorker",
@@ -45,8 +46,7 @@ Sidekiq.configure_client do |config|
       "Tickets::Export::PremiumTicketsExport",
       "Reports::ScheduledReports",
       "Reports::Export",
-      "LivechatWorker",
-      "Reports::ExportsWorker"
+      "LivechatWorker"
     ]
   end
 end
@@ -95,8 +95,7 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::LongRunningTicketsExport",
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
-      "LivechatWorker",
-      "Reports::ExportsWorker"
+      "LivechatWorker"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -136,8 +135,7 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::LongRunningTicketsExport",
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
-      "LivechatWorker",
-      "Reports::ExportsWorker"
+      "LivechatWorker"
     ]
   end
 end

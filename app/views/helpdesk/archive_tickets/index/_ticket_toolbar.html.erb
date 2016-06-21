@@ -8,10 +8,12 @@
                 :method => 'delete', :class => 'padding6 tooltip', :title => t('ticket.empty_trash'), 
                 :id => 'empty_trash' if privilege?(:delete_ticket) %>
           <% elsif @current_view != "spam" %>
-            <a href="/helpdesk/archive_tickets/configure_export" data-target="#export"  rel="freshdialog"  
-                class="padding6" title='<%= t("ticket.export_tickets") %>' data-submit-label="<%= t('export') %>" 
-                data-submit-loading="<%= t('ticket.exporting')%>..." data-width="650px" id='export_tickets' 
-                data-close-label="<%= t('cancel') %>"><%= t('ticket.export')%></a>
+            <% if privilege?(:export_tickets) %>
+              <a href="/helpdesk/archive_tickets/configure_export" data-target="#export"  rel="freshdialog"  
+                  class="padding6" title='<%= t("ticket.export_tickets") %>' data-submit-label="<%= t('export') %>" 
+                  data-submit-loading="<%= t('ticket.exporting')%>..." data-width="650px" id='export_tickets' 
+                  data-close-label="<%= t('cancel') %>"><%= t('ticket.export')%></a>
+            <% end %>
           <% end %>
 
           

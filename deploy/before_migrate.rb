@@ -48,6 +48,7 @@ run "ln -nfs #{shared_path}/config/marketplace.yml #{node[:rel_path]}/config/mar
 run "ln -nfs #{shared_path}/config/ecommerce.yml #{node[:rel_path]}/config/ecommerce.yml"
 run "ln -nfs #{shared_path}/config/third_party_app_config.yml #{node[:rel_path]}/config/third_party_app_config.yml"
 run "ln -nfs #{shared_path}/config/pod_dns_config.yml #{node[:rel_path]}/config/pod_dns_config.yml"
+run "ln -nfs #{shared_path}/config/helpdesk.yml #{node[:rel_path]}/config/helpdesk.yml"
 
 
 #search V2

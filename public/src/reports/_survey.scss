@@ -398,7 +398,7 @@ $survey-types: happy #82af56, neutral #f3ca6e, sad #ee715e;
 		}
 	}
 
-	tr:not(.exclude_none):hover td{
+	&:not(.agentReportingHide) tr:not(.exclude_none):hover td{
 		cursor:pointer;
 		background-color:#f9f9f9 !important;
 	}

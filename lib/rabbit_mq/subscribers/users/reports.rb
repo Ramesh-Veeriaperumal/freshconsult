@@ -1,7 +1,7 @@
 module RabbitMq::Subscribers::Users::Reports
   
   # TODO check the columns that must be considered
-  PROPERTIES_TO_CONSIDER = ["name", "email", "customer_id" ]
+  PROPERTIES_TO_CONSIDER = ["name", "email" ]
   
   def mq_reports_user_properties(action)
     to_rmq_json

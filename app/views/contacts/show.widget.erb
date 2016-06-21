@@ -1,6 +1,11 @@
 <div class="contact-box clearfix">
 		<%= user_avatar(@user, :medium, "profile_pic") %>
 		<h1 class="title"><%= h(@user.display_name) %></h1>
+		<% unless @user.job_title.blank? %>
+			<div class="break-word user-job-title" title="<%= h @user.job_title %>">
+		   		<%= h @user.job_title %>
+		   	</div>
+		<% end %>
 		<%= render :partial => "helpdesk/tickets/components/company_info", :formats => [:html], :locals => { :user => @user } %>
 		<%= render :partial => "/helpdesk/tags/tag_cloud", :formats => [:html], :object => @user.tags %>
 		<div class="user-info">

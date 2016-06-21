@@ -435,18 +435,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
 
       # orgName would be considered as company name.  If the name is removed then the company will not be associated
       orgName = goog_contact_detail[:orgName]
-      if orgName.blank?
-        user.company = nil
-      else
-        company = new_company_list[orgName]
-        company = account.companies.find_by_name(orgName) if company.blank?
-        if company.blank?
-          company = account.companies.new
-          company.name = orgName
-          new_company_list[orgName] = company
-        end
-        user.company = company
-      end
+      user.company_name = orgName if orgName.present?
 
       user.add_tag self.sync_tag # Tag the user with the sync_tag
 #      puts "Complete goog_contact_detail "+goog_contact_detail.inspect + ", sync_tag_id #{sync_tag_id}, user detail "+user.inspect

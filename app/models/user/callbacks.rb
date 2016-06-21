@@ -12,23 +12,19 @@ class User < ActiveRecord::Base
 
   before_update :backup_user_changes, :clear_redis_for_agent
 
-  before_save :set_time_zone
+  before_save :set_time_zone, :set_default_company
   before_save :set_language, :unless => :created_from_email
   before_save :set_contact_name, :update_user_related_changes
-  before_save :set_customer_privilege, :if => :customer?
+  before_save :set_customer_privilege, :set_contractor_privilege, :if => :customer?
   before_save :restrict_domain, :if => :email_changed?
-  before_save :sanitize_contact_name
+  before_save :sanitize_contact_name, :backup_customer_id
 
   after_commit :clear_agent_caches, on: :create, :if => :agent?
   after_commit :update_agent_caches, on: :update
-  after_commit :set_user_company, on: :create, :if => :customer_id?
-  after_commit :update_user_company, on: :update
-  after_commit :update_tickets_company_id, on: :update, :if => :company_id_updated?
 
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
 
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
-  after_commit :update_search_index, on: :update, :if => :company_info_updated?
   #after_commit :discard_contact_field_data, on: :update, :if => [:helpdesk_agent_updated?, :agent?]
   after_commit :delete_forum_moderator, on: :update, :if => :helpdesk_agent_updated?
   after_commit :deactivate_monitorship, on: :update, :if => :blocked_deleted?
@@ -53,10 +49,15 @@ class User < ActiveRecord::Base
     self.time_zone = account.time_zone if time_zone.nil? || validate_time_zone(time_zone) #by Shan temp
   end
 
+  def set_contractor_privilege
+    self.privileges = company_ids.length > 1 ? Role.privileges_mask([:contractor]).to_s : "0" \
+      if has_multiple_companies_feature?
+  end
+
   def set_customer_privilege
     # If the customer has only client_manager privilege and is not associated with
     # any other privilege then dont set privileges to "0"
-    if(!privilege?(:client_manager) || !(abilities.length == 1))
+    if((!company_client_manager? && !privilege?(:contractor)) || (abilities.length == 1))
       destroy_user_roles
     end
   end
@@ -80,30 +81,6 @@ class User < ActiveRecord::Base
     self.flexifield.destroy
   end
 
-  def set_user_company
-    user_companies.create(:company_id => customer_id, 
-                          :default => true, 
-                          :client_manager => privilege?(:client_manager))
-  end
-
-  def update_user_company
-    if company_id_updated? || privileges_updated?
-      if customer_id.present?
-        user_companies.any? ? user_companies.first.update_attributes(:company_id => customer_id,
-                                :default => true, :client_manager => privilege?(:client_manager)) : 
-                              set_user_company
-      elsif @model_changes.key?("customer_id")
-        user_companies.where(:company_id => @model_changes["customer_id"][0]).destroy_all
-      end
-    end
-  end
-
-  # This will also update the ticket's company in reports
-  def update_tickets_company_id
-    Tickets::UpdateCompanyId.perform_async({ :user_ids => id,
-                                             :company_id => @all_changes[:customer_id][1] })
-  end
-
   protected
 
   def discard_blank_email
@@ -114,6 +91,16 @@ class User < ActiveRecord::Base
     secure_string = SecureRandom.base64(User::PASSWORD_LENGTH)
     self.password = secure_string
     self.password_confirmation = secure_string
+  end
+
+  def set_default_company
+    if self.user_companies.present?
+      default_company_count = self.user_companies.select(&:default).count
+      if default_company_count != 1
+        self.user_companies.each{ |uc| uc.default = false } if default_company_count > 1
+        self.user_companies.first.default = true
+      end
+    end
   end
   
   def set_contact_name 
@@ -132,11 +119,11 @@ class User < ActiveRecord::Base
   end
 
   def set_company_name
-   if (self.company_id.nil? && self.email)      
-       email_domain =  self.email.split("@")[1]
-       comp_id = Account.current.company_domains.find_by_domain(email_domain).try(:company_id)
-       self.company_id = comp_id unless comp_id.nil?    
-   end
+    if (self.company_id.nil? && self.email)      
+      email_domain =  self.email.split("@")[1]
+      comp_id = Account.current.company_domains.find_by_domain(email_domain).try(:company_id)
+      self.company_id = comp_id unless comp_id.nil?
+    end
   end
 
   def decode_name
@@ -178,4 +165,8 @@ class User < ActiveRecord::Base
   def sanitize_contact_name
     self.name.gsub!("\"", "") unless self.name.nil?
   end  
+
+  def backup_customer_id
+    self.customer_id = self.default_user_company.present? && !self.default_user_company.marked_for_destruction? ? self.default_user_company.company_id : nil
+  end
 end

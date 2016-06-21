@@ -116,7 +116,7 @@
     <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
     <% conv_item = conv_id.nil? ? @ticket : @note %>
     <%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
-            <%= ff.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body",  :"data-wrap-font-family" => true, :"data-quoted-textarea" => "##{cntid}-quoted" %>
+            <%= ff.text_area :body_html, :class => "body_html", :id => "#{cntid}-body",  :"data-wrap-font-family" => true, :"data-quoted-textarea" => "##{cntid}-quoted" %>
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", 
                                   :style => "display:none;"%>
             <%if  current_browser == "Internet Explorer" %>
@@ -181,7 +181,7 @@
 <% end %>
 <% content_for :pagefixed do %>
   <script type="text/javascript">
-    jQuery('#HelpdeskFwd_<%=cntid%> select#reply_email_id').live('change',function(e){
+  jQuery('#HelpdeskFwd_<%=cntid%> select#reply_email_id').live('change',function(e){
     var selectObj = jQuery(e.target),
         form = e.target.form,
         fromEmail = selectObj.val();

@@ -2284,12 +2284,12 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(responder_id: @agent.id, created_at: Time.zone.now)
+    expected = Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month).update_all(responder_id: @agent.id)
     get :index, controller_params
     assert_response 200
     Agent.any_instance.unstub(:ticket_permission)
     response = parse_response @response.body
-    assert_equal 1, response.size
+    assert_equal expected, response.size
   end
 
   def test_index_with_invalid_sort_params
@@ -2419,7 +2419,7 @@ class TicketsControllerTest < ActionController::TestCase
     query = trace_query_condition(pattern, from, to) { get :index, controller_params }
     assert_match(/`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`\.`deleted` = 0 AND `helpdesk_tickets`\.`spam` = 0 AND \(helpdesk_tickets.created_at > '.*'\)$/, query)
     query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam', company_id: 1) }
-    assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `users`.`customer_id` = 1 AND `helpdesk_tickets`.`spam` = 1', query
+    assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`owner_id` = 1 AND `helpdesk_tickets`.`spam` = 1', query
   end
 
   def test_index_with_deleted
@@ -2468,7 +2468,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_company
     company = create_company
     user = User.first
-    user.update_attributes(customer_id: company.id)
+    sidekiq_inline { user.update_attributes(company_id: company.id) }
     get :index, controller_params(company_id: "#{company.id}")
     assert_response 200
 
@@ -2513,7 +2513,7 @@ class TicketsControllerTest < ActionController::TestCase
     company = Company.first
     user1 = User.first
     user2 = User.first(2).last
-    user1.update_column(:customer_id, company.id)
+    sidekiq_inline { user1.update_attributes(company_id: company.id) }
     user1.reload
 
     expected_size = @account.tickets.where(deleted: 0, spam: 0, requester_id: user1.id).count
@@ -2522,7 +2522,7 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal expected_size, response.size
 
-    user2.update_column(:customer_id, nil)
+    sidekiq_inline { user2.update_attributes(company_id: nil) }
     get :index, controller_params(company_id: company.id, requester_id: "#{user2.id}")
     assert_response 200
     response = parse_response @response.body

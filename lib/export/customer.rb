@@ -5,7 +5,9 @@ class Export::Customer
   include Export::Util
 
   VALUE_MAPPING = {
-    "Language" => "language_name"
+    "Language" => "language_name",
+    "Company" => "company_names_for_export",
+    "Can see all tickets from this company" => "client_managers_for_export"
   }
 
   def initialize(csv_hash, portal_url, type)

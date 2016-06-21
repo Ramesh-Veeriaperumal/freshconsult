@@ -9,8 +9,8 @@ class ForumCategory < ActiveRecord::Base
   end
 
   def self.user_forums_condition
-    condition = "forum_categories.forum_visibility not in (#{Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]},#{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]})"
-    condition += " OR ( forum_visibility =#{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND customer_forums.customer_id = #{User.current.company.id})" if company_specific?(User.current)
+    condition = "forum_categories.forum_visibility not in (#{Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]},#{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]})"    
+    condition += " OR ( forum_visibility =#{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND customer_forums.customer_id in (#{User.current.company_ids_str}))" if company_specific?(User.current)
     condition
   end
 

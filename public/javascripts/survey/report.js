@@ -11,6 +11,7 @@ var SurveyDropDown = {
 }
 
 var SurveyReport = {
+        agentReporting: true,
         init:function(){
             SurveyUtil.mapResults();
             SurveyUtil.reverseChoices();

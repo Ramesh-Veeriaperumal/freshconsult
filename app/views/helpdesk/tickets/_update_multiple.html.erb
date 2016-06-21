@@ -132,7 +132,7 @@
     if( !($('addbulkreply') && $('addbulkreply').checked) ||
       jQuery("#reply-multiple-cnt-reply-multiple-body").valid()) {
       <% unless select_all %>
-        <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select, input:text').get() )".html_safe %>
+        <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select, input:text, input#bulk_customers_filter').get() )".html_safe %>
       <% else %>
         <%= "helpdesk_generic_submit('replymultiple', '#{update_multiple_helpdesk_select_all_ticket_actions_path}', 'put', (jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select, input:text').get()).concat(jQuery('#FilterOptions').serializeArray()))".html_safe %>
       <% end %>
@@ -151,7 +151,7 @@
 });
 
   jQuery("[rel=inputselectbox],[rel=inputtextbox]").die('change');
- jQuery("[rel=inputselectbox],[rel=inputtextbox]").live('change',  function(ev){
+ jQuery("[rel=inputselectbox],[rel=inputtextbox], #bulk_customers_filter").live('change',  function(ev){
     if(jQuery(this).attr('id')=="helpdesk_ticket_group_id")
     {
       if(jQuery('#helpdesk_ticket_responder_id_label').is(':checked'))
@@ -161,6 +161,15 @@
       }
       value=jQuery(this).find(':selected').attr('value');
       groupchange(value);
+    }
+    if(jQuery(this).attr('id')=="bulk_customers_filter"){
+      if(jQuery(this).val() == ""){
+        jQuery(this).parent().parent().find("label").removeClass("active");
+        jQuery(this).parent().parent().find("#helpdesk_ticket_company_id_label").prop("checked", false);
+      } else {
+        jQuery(this).parent().parent().find("#helpdesk_ticket_company_id_label").prop("checked", true);
+        jQuery(this).parent().parent().find("label").addClass("active");
+      }
     }
     if(jQuery(this).val() != ''){
       jQuery(this).parent().find("input").prop("checked", true);

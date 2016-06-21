@@ -33,6 +33,7 @@ class User < ActiveRecord::Base
   scope :visible, :conditions => { :deleted => false }
   scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
+  scope :company_users_via_customer_id, lambda { |cust_id| { :conditions => ["customer_id = ?", cust_id]} }
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash
   alias_attribute :preferences, :text_uc01  
@@ -88,6 +89,7 @@ class User < ActiveRecord::Base
   validate :user_email_presence, :if => :email_required?
   validate :only_primary_email, on: :update, :if => [:agent?]
   validate :max_user_emails
+  validate :max_user_companies, :if => :has_multiple_companies_feature?
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
@@ -110,14 +112,24 @@ class User < ActiveRecord::Base
     primary_email.blank? and self.user_emails.reject(&:marked_for_destruction?).empty?
   end
 
-  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, 
+  def max_user_companies
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_companies')) \
+      if (self.user_companies.length > MAX_USER_COMPANIES)
+  end
+
+  def has_multiple_companies_feature?
+    account.features_included?(:multiple_user_companies)
+  end
+
+  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email,
                 :primary_email_attributes, :tags_updated
   
   attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes, 
                   :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id, 
                   :description, :time_zone, :customer_id, :avatar_attributes, :company_id, 
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language, 
-                  :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04
+                  :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04,
+                  :contractor
 
   def time_zone
     tz = self.read_attribute(:time_zone)
@@ -267,13 +279,22 @@ class User < ActiveRecord::Base
   end
 
   def client_manager=(checked)
-    if customer?
-      self.privileges = ((checked == "true" || checked == true) && company ) ? Role.privileges_mask([:client_manager]) : "0"
+    if customer? && default_user_company.present?
+      self.default_user_company.client_manager = (checked == "true" || checked == true)
     end
   end
 
   def client_manager
-    has_company? ? privilege?(:client_manager) : false
+    has_company? ? company_client_manager? : false
+  end
+
+  def contractor?
+    privilege?(:contractor)
+  end
+
+  def contractor_ticket? ticket
+    privilege?(:contractor) && company_ids.include?(ticket.company_id) && 
+      user_companies.where(:company_id => ticket.company_id).first.client_manager
   end
 
   def chk_email_validation?
@@ -342,6 +363,42 @@ class User < ActiveRecord::Base
     super(params)
   end
 
+  def update_companies(params)
+    if has_multiple_companies_feature?
+      if params[:user][:removed_companies].present?
+        to_be_removed = params[:user][:removed_companies].split(",").uniq
+        remove_ids = to_be_removed.map{ |company_name| companies.find { |c| c.name == company_name}.id }
+        UserCompany.destroy_all(:account_id => account_id, 
+                                :user_id => id, 
+                                :company_id => remove_ids) if remove_ids.any?
+        self.user_companies.reload
+      end
+
+      if params[:user][:added_companies].present?
+        to_be_added = JSON.parse params[:user][:added_companies]
+        to_be_added.each do |comp|
+          new_comp = account.companies.find_or_create_by_name(comp["company_name"])
+          user_companies.build(:company_id => new_comp.id,
+                               :client_manager => comp["client_manager"],
+                               :default => comp["default_company"])
+        end
+      end
+
+      if params[:user][:edited_companies].present?
+        to_be_edited = JSON.parse params[:user][:edited_companies]
+        to_be_edited.each do |comp|
+          u_comp = user_companies.find { |uc| uc.company_id == comp["id"] }
+          if comp["company_name"].present?
+            new_comp = account.companies.find_or_create_by_name(comp["company_name"])
+            u_comp.company_id = new_comp.id
+            u_comp.default = comp["default_company"]
+            u_comp.client_manager = comp["client_manager"]
+          end
+        end
+      end
+    end
+  end
+
   def signup!(params , portal=nil, send_activation=true)
     normalize_params(params[:user]) # hack to facilitate contact_fields & deprecate customer
     params[:user][:tag_names] = params[:user][:tags] unless params[:user].include?(:tag_names)
@@ -355,6 +412,7 @@ class User < ActiveRecord::Base
     self.company_id = params[:user][:company_id] if params[:user].include?(:company_id)
     self.job_title = params[:user][:job_title]
     self.helpdesk_agent = params[:user][:helpdesk_agent] || false
+    update_companies(params) if params[:user][:added_companies].present?
     self.client_manager = params[:user][:client_manager]
     self.role_ids = params[:user][:role_ids] || []
     self.time_zone = params[:user][:time_zone]
@@ -401,7 +459,7 @@ class User < ActiveRecord::Base
   scope :matching_users_from, lambda { |search|
     {
       :select => %(users.id, name, users.account_id, users.string_uc04, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
-        twitter_id, fb_profile_id, phone, mobile, job_title, customer_id),
+        twitter_id, fb_profile_id, phone, mobile, job_title),
       :joins => %(left join user_emails on user_emails.user_id=users.id and 
         user_emails.account_id = users.account_id) % { :str => "%#{search}%" },
       :conditions => %((name like '%<str>s' or user_emails.email 
@@ -482,7 +540,11 @@ class User < ActiveRecord::Base
   
   # Used in mobile
   def is_client_manager?
-    self.privilege?(:client_manager)
+    company_client_manager?
+  end
+
+  def company_client_manager?
+    default_user_company.present? && default_user_company.client_manager
   end
 
   # Marketplace
@@ -594,7 +656,8 @@ class User < ActiveRecord::Base
   # Or if he is allowed to view tickets from his company
   def has_customer_ticket_permission?(ticket)
     (self.id == ticket.requester_id) or 
-    (is_client_manager? && self.company_id && ticket.company_id && (ticket.company_id == self.company_id) )
+    (is_client_manager? && self.company_id && ticket.company_id && (self.company_ids.include?(ticket.company_id)) ) or
+    (self.contractor_ticket? ticket)
   end
   
   def restricted?
@@ -622,15 +685,56 @@ class User < ActiveRecord::Base
   end
 
   def has_company?
-    customer? and company
+    customer? and company_ids.any?
   end
 
   def company_name= name
-    self.company = name.blank? ? nil : account.companies.find_or_create_by_name(name)
+    if name.present?
+      comp = account.companies.find_or_create_by_name(name)
+      build_or_update_company(comp.id)
+    else
+      mark_user_company_destroy
+    end
   end
   
   def company_name
-    company.name unless company.nil?
+    company.name if company
+  end
+
+  def company_id= comp_id
+    if comp_id.present?
+      build_or_update_company(comp_id)
+    else
+      mark_user_company_destroy
+    end
+  end
+
+  def company_id
+    default_user_company.company_id if default_user_company.present?
+  end
+
+  def company_ids
+    user_companies.map(&:company_id)
+  end
+
+  def company_names
+    companies.map(&:name)
+  end
+
+  def company_names_for_export
+    company_names.join(" || ")
+  end
+
+  def client_managers_for_export
+    user_companies.map(&:client_manager).join(" || ")
+  end
+
+  def company_ids_str
+    contractor? ? company_ids.join(",") : company_id
+  end
+
+  def client_manager_companies
+    companies.where("user_companies.client_manager = 1")
   end
 
   def recent_tickets(limit = 5)
@@ -683,10 +787,10 @@ class User < ActiveRecord::Base
       self.user_emails = [self.primary_email]
       self.deleted = false
       self.helpdesk_agent = true
-      self.company = nil
       self.address = nil
       self.role_ids = [account.roles.find_by_name("Agent").id] 
       self.tags.clear
+      self.user_companies.delete_all
       agent = build_agent()
       agent.occasional = !!args[:occasional]
 
@@ -780,8 +884,8 @@ class User < ActiveRecord::Base
   end
   # Hack ends here
 
-  def company_id
-    self.customer_id
+  def company
+    companies.sorted.first
   end
 
   def accessible_groups
@@ -817,10 +921,6 @@ class User < ActiveRecord::Base
     def email_updated?
        @all_changes.has_key?(:email)
     end
-    
-    def company_id_updated?
-      @all_changes.has_key?(:customer_id)
-    end
 
     def deleted_updated?
        @all_changes.has_key?(:deleted)
@@ -828,14 +928,6 @@ class User < ActiveRecord::Base
 
     def blocked_updated?
        @all_changes.has_key?(:blocked)
-    end
-
-    def privileges_updated?
-      @all_changes.has_key?(:privileges)
-    end
-
-    def company_info_updated?
-      company_id_updated?
     end
 
     def clear_redis_for_agent
@@ -879,4 +971,18 @@ class User < ActiveRecord::Base
       (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
     end
 
+    def build_or_update_company comp_id
+      self.default_user_company.present? ? (self.default_user_company.company_id = comp_id) :
+          self.build_default_user_company(:company_id => comp_id) 
+    end
+
+    def mark_user_company_destroy
+      uc = self.default_user_company
+      if uc
+        self.default_user_company_attributes = { :id => uc.id,
+                                            :company_id => uc.company_id, 
+                                            :user_id => uc.user_id,
+                                            :_destroy => true }
+      end
+    end
 end

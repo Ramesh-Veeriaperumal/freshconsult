@@ -611,12 +611,21 @@
 			/*color:#333;*/
 			font-weight:bold;
 		}
-
-      h3{
-		width: 100%;
-		overflow: hidden;
-		word-break: break-all;
-		font-size:16px;
+		
+		//hyphens
+		.hyphernate {
+		    word-break: break-word;
+		    hyphens: auto;
+		}
+		@supports not (hyphens: auto) {
+		    .hyphernate {
+		        word-break: break-all;
+		    }
+		}
+    h3{
+			width: 100%;
+			overflow: hidden;
+			font-size:16px;
 		.ticket_id {
 			color:#888;
 		}
@@ -812,6 +821,9 @@
 .threecol-form .item{
 	@include float(left);
 	width:33%;
+	label.checkbox{
+		font-size: 13px;
+	}
 	.level{
 		@include margin-left(11px);
 	}
@@ -837,4 +849,32 @@
 	padding:5px 8px;
 	border:1px solid #e1e1e1;
 	@include border-radius(5px);
+}
+
+
+.additional-fields-label{
+  @include margin-left(3%);
+  @include padding-left(3%);
+  @include border-left(1px solid #aaa);
+  i{
+    color: #06c;
+  }
+}
+
+label.select-header{
+  display: inline;
+}
+
+.additional-fields{
+  .threecol-form{
+    overflow: hidden;
+    padding: 0 0 5px 0;
+    border-bottom: 1px dashed #aaa;
+  }
+}
+.default-ticket-fields{
+  .threecol-form{
+    overflow: hidden;
+    padding: 10px 0;
+  }
 }

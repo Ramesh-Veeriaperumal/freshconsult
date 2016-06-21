@@ -4,7 +4,8 @@
       "default_source", "default_ticket_type", 
       "default_group", 
       "default_agent", 
-      "default_product"
+      "default_product",
+      "default_company"
   ]
 
   default_fields = []
@@ -57,6 +58,29 @@ default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field
     .append('<option disabled="disabled" value = "<%= @ticket.status %>"> <%= @ticket.status_name %> </option>')
     .val("<%=@ticket.status%>")
   <% end %>
+
+  jQuery("#helpdesk_ticket_email").blur(function(){
+    var ticket_email = jQuery("#helpdesk_ticket_email").val();
+
+    jQuery.ajax({ url: "<%= helpdesk_commons_user_companies_path %>?email="+ticket_email,
+      success: function(data){
+        if(data != false){
+          jQuery('#helpdesk_ticket_company_id').empty();
+          for(var i=0; i<data.length; i++){ 
+            jQuery("<option/>").val(data[i][1]).html(data[i][0]).appendTo("#helpdesk_ticket_company_id");
+          }
+          jQuery('#helpdesk_ticket_company_id').val('').change();
+          jQuery('.default_company label').removeClass("company_field");
+          jQuery('.default_company').insertBefore(jQuery(".default_priority")).show();
+          jQuery('#helpdesk_ticket_company_id').removeAttr("disabled");
+        }else{
+          jQuery('.default_company').slideUp();
+          jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
+        }
+      }
+    });
+  });
+
   // Need to make the code generic to handle the custom dropdown fields sections.
   jQuery("#helpdesk_ticket_ticket_type")
     .on("change", function(e){

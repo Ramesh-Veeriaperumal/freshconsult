@@ -133,7 +133,9 @@ class Solution::FolderMeta < ActiveRecord::Base
 	  return true if (user and user.privilege?(:view_solutions))
 	  return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
 	  return true if (user and (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
-	  return true if (user && (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && user.company  && customer_folders.map(&:customer_id).include?(user.company.id))
+      company_cdn = user.contractor? ? (user.company_ids & customer_folders.map(&:customer_id)).any? : 
+                     (user.company  && customer_folders.map(&:customer_id).include?(user.company.id))
+      return true if (user && (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && company_cdn)
 	end
 
 	private
@@ -181,11 +183,13 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	def self.visibility_condition(user)
 		condition = "`solution_folder_meta`.visibility IN (#{ self.get_visibility_array(user).join(',') })"
-		condition +=  "OR (`solution_folder_meta`.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_users]} " <<
-				"AND `solution_folder_meta`.id in (SELECT solution_customer_folders.folder_meta_id " <<
-				"FROM solution_customer_folders " <<
-				"WHERE solution_customer_folders.customer_id = #{user.company_id} " <<
-				"AND solution_customer_folders.account_id = #{user.account_id}))" if (user && user.has_company?)
+		if (user && user.has_company?)
+			condition +=  "OR (`solution_folder_meta`.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_users]} " <<
+					"AND `solution_folder_meta`.id in (SELECT solution_customer_folders.folder_meta_id " <<
+					"FROM solution_customer_folders " <<
+					"WHERE solution_customer_folders.customer_id in (#{user.company_ids_str}) " <<
+					"AND solution_customer_folders.account_id = #{user.account_id}))"
+		end
 					# solution_customer_folders.customer_id = #{ user.company_id})" if (user && user.has_company?)
 		return condition
 	end

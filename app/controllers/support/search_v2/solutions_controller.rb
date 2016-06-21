@@ -24,7 +24,7 @@ class Support::SearchV2::SolutionsController < SupportController
         es_params[:article_id]          = @article.id
         es_params[:article_status]      = Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft]
         es_params[:article_visibility]  = @article.user_visibility
-        es_params[:article_company_id]  = User.current.try(:company_id)
+        es_params[:article_company_id]  = User.current.try(:company_ids)
         es_params[:article_category_id] = current_portal.portal_solution_categories.map(&:solution_category_meta_id)
 
         es_params[:size]                = @size
