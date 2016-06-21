@@ -4,7 +4,7 @@ class Company < ActiveRecord::Base
   
   has_custom_fields :class_name => 'CompanyFieldData', :discard_blank => false # coz of schema_less_company_columns
 
-  has_many :user_companies, :class_name => 'UserCompany', :dependent => :destroy
+  has_many :user_companies, :class_name => 'UserCompany'
   
   has_many :users, :class_name =>'User', :through => :user_companies, :order => :name, 
                     :foreign_key => 'company_id', :conditions => {:deleted =>false}
