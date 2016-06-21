@@ -100,6 +100,7 @@ class User < ActiveRecord::Base
         self.user_companies.each{ |uc| uc.default = false } if default_company_count > 1
         self.user_companies.first.default = true
       end
+      self.default_user_company = self.user_companies.find { |uc| uc.default }
       unless has_multiple_companies_feature?
         self.user_companies.each{ |uc| 
           uc.attributes.merge!({:_destroy => true}) unless uc.default
