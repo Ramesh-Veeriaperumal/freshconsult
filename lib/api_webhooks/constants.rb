@@ -2,7 +2,7 @@ module ApiWebhooks::Constants
 
   USER_CREATE_ACTION = { :user_action => :create }  
   USER_UPDATE_ACTION = { :user_action => :update }
-  USER_SUBSCRIBE_EVENTS = [ :name, :email, :customer_id, :job_title, :phone, :mobile, 
+  USER_SUBSCRIBE_EVENTS = [ :name, :email, :job_title, :phone, :mobile, 
                             :description, :helpdesk_agent, :address]
 
   TICKET_SUBSCRIBE_EVENTS = [ :status, :priority, :ticket_type, :group_id, :responder_id, :due_by,

@@ -29,6 +29,7 @@
 			_self.html("Access denied");
 		}
 		setTimeout(function(){
+			_self.twipsy('hide');
 			_self.addClass("disabled");
 		}, 10);
 	})
@@ -37,15 +38,17 @@
 	<div class="row-fluid">
 		<div class="span4"><h3 class="lead"><%= @page_title = t('customers') %></h3></div>
 		 <div class="span8 pull-right pagination-right header_buttons align-right" >
-			<%= link_to t('export'), {:action => "configure_export"}, 
-				:rel => "freshdialog", 
-				"data-submit-label" => t('export'),
-				"data-width" => "550",
-				"data-title" => t('contacts.export_title', :type => type.capitalize.pluralize),
-				:title => t('contacts.export_title', :type => type.capitalize.pluralize),
-				"data-close-label" =>  t('cancel') ,
-				"data-submit-loading" => t('please_wait'),
-				"data-target"=>"#customer_export" %>
+		 	<% if privilege?(:export_customers) %>
+				<%= link_to t('export'), {:action => "configure_export"}, 
+					:rel => "freshdialog", 
+					"data-submit-label" => t('export'),
+					"data-width" => "700",
+					"data-title" => t('contacts.export_title', :type => type.capitalize.pluralize),
+					:title => t('contacts.export_title', :type => type.capitalize.pluralize),
+					"data-close-label" =>  t('cancel') ,
+					"data-submit-loading" => t('please_wait'),
+					"data-target"=>"#customer_export" %>
+			<% end %>
 			<% if privilege?(:manage_contacts) %>
 				&middot;  
 	  		 	<%= link_to(t('import'), "/imports/#{type}", :'data-pjax' => "#body-container", :title => t('customer_import.import_csv', :type => type.pluralize.capitalize), :class => " margin-right", :id => "customers_import") %>

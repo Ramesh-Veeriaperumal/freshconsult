@@ -89,15 +89,20 @@ class AgentsController < ApplicationController
   end
 
   def toggle_availability
-    if params[:admin] || current_user.agent.allow_availability_toggle?
-      @agent = current_account.agents.find_by_user_id(params[:id])
+    if params[:id].to_i == current_user.id && current_user.agent.allow_availability_toggle? 
+      @agent = current_user.agent
+    elsif params[:admin] && current_user.privilege?(:manage_availability)
+      @agent = current_account.agents.find_by_user_id(params[:id]) 
+    end
+
+    if @agent.present?
       @agent.toggle(:available)
       @agent.active_since = Time.now.utc
       @agent.save
       Rails.logger.debug "Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{@agent.user.email}, Value:: #{params[:value]}, Time:: #{Time.zone.now} "
       Rails.logger.debug "Supervisor Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{@agent.user.email}, Value:: #{params[:value]}, Time:: #{Time.zone.now} " if params[:admin] and current_user.roles.supervisor.present?
-
     end
+
     respond_to do |format|
       format.html { render :nothing => true}
       format.json  { render :json => {} }

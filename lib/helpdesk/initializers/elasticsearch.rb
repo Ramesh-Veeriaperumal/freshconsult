@@ -6,4 +6,5 @@ if ES_ENABLED
 	Tire.configure { url Es_aws_urls.first }
 
   COUNT_HOST = tire_config[:count_host].first
+  COUNT_V2_HOST = tire_config[:count_v2_host].first
 end

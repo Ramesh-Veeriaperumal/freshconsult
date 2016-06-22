@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
     ]
 
   COMMON_API_OPTIONS = { 
-    :only     => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
+    :only     => [:id,:name,:email,:created_at,:updated_at,:active,:job_title,
                   :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:helpdesk_agent,
                   :fb_profile_id,:external_id,:language,:address]
   }
@@ -34,12 +34,15 @@ class User < ActiveRecord::Base
   USER_SECONDARY_ATTRIBUTES = ["twitter_id", "avatar", "time_zone", "phone", "mobile", "fb_profile_id", "address",
                                 "external_id", "job_title", "language", "description"] #client_manager will be moved directly
 
-  MERGE_VALIDATIONS = [["emails", 5, "emails"], ["twitter_id", 1, "Twitter User"], ["fb_profile_id", 1, "Facebook User"], ["external_id", 1, "Ecommerce User or Mobihelp User"]] #[Attribute, limit, message] ["phone", 1, "Phone User"]
+  MERGE_VALIDATIONS = [["emails", 5, "emails"], ["twitter_id", 1, "Twitter User"], 
+    ["fb_profile_id", 1, "Facebook User"], ["external_id", 1, "Ecommerce User or Mobihelp User"], 
+    ["company_names", 20, "companies"]] #[Attribute, limit, message] ["phone", 1, "Phone User"]
 
   USER_FILTER_TYPES = ["verified","unverified","all","deleted","blocked"]
 
   MAX_USER_EMAILS = 5
   PASSWORD_LENGTH = 4
+  MAX_USER_COMPANIES = 20
 
   ALPHA_NUMERIC_REGEX = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/
   SPECIAL_CHARACTERS_REGEX = /(?=.*([\x20-\x2F]|[\x3A-\x40]|[\x5B-\x60]|[\x7B-\x7E]))/

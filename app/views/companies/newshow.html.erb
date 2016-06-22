@@ -32,23 +32,31 @@
 	<div class='contact-show'>
 		<div class='contact-info-fields'>
 			<div class='contact-info-fields-content'>
-				<div class="profile_pic avatar-pic">
-					<img alt="<%= @company.name %>" src='/images/fillers/company_default_pic.png'>
+				<div class="">
 				</div>
-				<div class='user-info'>
-					<h1 class='lead break-word'><%= h(@company.name) %></h1>
-					<div class='break-word user-job-title'><%= company_description(h(@company.description)) %></div>
+				
+				<div class="profile_pic avatar-pic">
+					<div class="company-icon-wrap">
+						<i alt="<%= @company.name %>" class="ficon-building"></i>
+					</div>
+					<!-- <img alt="<%= @company.name %>" src='/images/fillers/company_default_pic.png'> -->
+				</div>
+				
+				<div class="user-info">
+					<h1 class="lead break-word text-center"><%= h(@company.name) %></h1>
 					<% if @company_users_size > 0 %>
-						<div class='no-contacts'>
-							<div class='border-wrap left'></div>
-							<div class='no-contacts-msg'>
+						<div class="no-contacts text-center">
+							<div class="border-wrap left"></div>
+							<div class="no-contacts-msg">
 								<%= link_to t('companies.no_contacts', :no_contacts => @company_users_size), URI::escape('/contacts/filter/all?query=customer_id is ' + @company.id.to_s), :'data-pjax' => "#body-container" %>
 							</div>
 							<div class='border-wrap right'></div>
 						</div>
 					<% end %>
 				</div>
+				
 				<% no_border_class = @company_users_size > 0 ? 'no-border' : '' %>
+				<div class="break-word user-job-title muted pl20 pr20"><%= company_description(h(@company.description)) %></div>
 				<ul class='show-fields <%= no_border_class %>'>
 					<% view_company_fields.each do |field| %>
 				    	<%=  render_as_list nil, field %>
@@ -123,7 +131,8 @@
 						 data-unique="true" 
 						 data-url="/companies/<%=@company.id%>/sla_policies"></div>
 				</div>
-				<% unless @company_users.empty? %>
+				
+				<% if @company_users_size > 0 %>
 					<div class='sidepanel'>
 						<h4 class="app-title margin-set"><%=t('contacts.title')%> (<%= @company_users_size %>) </h4>
 						<ul class="user_list">	  

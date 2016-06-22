@@ -28,7 +28,7 @@ class UserDrop < BaseDrop
 	end
   
 	def is_client_manager
-		source.privilege?(:client_manager)
+		source.company_client_manager?
 	end
 
 	def firstname

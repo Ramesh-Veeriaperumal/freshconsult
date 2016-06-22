@@ -8,7 +8,7 @@ module Social
         Account.find(args['account_id']).make_current
         super({})
       end
-      rescue ActiveRecord::RecordNotFound, ShardNotFound => e
+      rescue ActiveRecord::RecordNotFound, ActiveRecord::AdapterNotSpecified, ShardNotFound => e
         Rails.logger.debug "#{e.inspect} -- #{args['account_id']}"
     end
     

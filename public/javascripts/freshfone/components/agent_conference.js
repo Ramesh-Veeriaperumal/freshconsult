@@ -133,6 +133,7 @@ var FreshfoneAgentConference;
     },
     bindCancel: function() {
        var self = this;
+      $("#freshfone_add_agent").off('.add_agent');
       $("#freshfone_add_agent").on('click.add_agent', '.cancel_add_agent', function() {    
         self.setStatus('cancelling');
         self.$addAgentInfo.toggleClass("adding_agent_state", false);                                  
@@ -154,7 +155,7 @@ var FreshfoneAgentConference;
       $.ajax({
           type: 'POST',
           url: '/freshfone/agent_conference/cancel',
-          data: { "CallSid" : self.freshfone_call.getCallSid() },
+          data: { "call" : this.freshfone_call.callId },
           error: function () {
             self.cancelError();
           },

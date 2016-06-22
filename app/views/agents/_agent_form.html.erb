@@ -88,9 +88,9 @@
   					<%= label(:user, :phone, "#{t('user.phone_no')}.", :class => "control-label" ) %>
   				  <div class="controls">
   					  <%= text_field(:user, :phone, :class => "text input-medium margin-bottom", 
-                 :value => @agent.user.phone, :placeholder => t('user.work') ) %> 
+                 :value => "#{@agent.user.phone}", :placeholder => t('user.work') ) %> 
               <%= text_field(:user, :mobile, :class => "text input-medium ", 
-                    :value => @agent.user.mobile, :placeholder => t('user.mobile')) %>
+                    :value => "#{@agent.user.mobile}", :placeholder => t('user.mobile')) %>
             </div>
   				</li>
     			<% if gamification_feature?(current_account) %>

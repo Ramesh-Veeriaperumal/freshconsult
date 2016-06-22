@@ -20,7 +20,7 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
-  after_commit :enable_searchv2, on: :create
+  after_commit :enable_searchv2, :enable_count_es, on: :create
   after_commit :disable_searchv2, on: :destroy
 
 
@@ -231,8 +231,16 @@ class Account < ActiveRecord::Base
     def enable_searchv2
       SearchV2::Manager::EnableSearch.perform_async if self.features?(:es_v2_writes)
     end
+
+    def enable_count_es
+      CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) if Account.current.features?(:count_es_writes)
+    end
     
     def disable_searchv2
       SearchV2::Manager::DisableSearch.perform_async(account_id: self.id)
+    end
+
+    def disable_count_es
+      CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id })
     end
 end

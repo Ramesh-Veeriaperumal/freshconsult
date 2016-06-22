@@ -471,7 +471,7 @@ var scrollToError = function(){
 
 
 	if (jQuery('.requester-info-sprite').length < 2) {
-		jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
+		jQuery('.requester-info-sprite').parents('.tkt-tabs').hide();
 	}
 
 	$(document).on("click.ticket_details", '#ticket_original_request a, .details a', function(ev){
@@ -875,6 +875,23 @@ var scrollToError = function(){
 				alert('You can add upto ' + MAX_EMAILS + ' BCC emails');
 				return false;
 			}
+
+			if(_form[0] && _form[0]['helpdesk_note[note_body_attributes][body_html]']){
+				// Attachment Missing Check
+				var replyHtml = _form[0]['helpdesk_note[note_body_attributes][body_html]'].value;
+				var replyText = replyHtml.split('<div class="freshdesk_quote">')[0];
+				
+				if(replyText.toLowerCase().indexOf('attach')>-1){
+				  var attachments = jQuery('input[name="helpdesk_note[attachments][][resource]"]');
+				  if(!(attachments[0] && attachments[0].files.length)){
+				    var missed_attachment_text = TICKET_DETAILS_DATA.attachment_missing_alert;
+				    if(!confirm(missed_attachment_text)){
+				      return false;
+				    }
+				  }
+				}
+			}
+      
 
 			_form.find('input[type=submit]').prop('disabled', true);
 
