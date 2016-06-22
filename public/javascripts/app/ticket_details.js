@@ -880,6 +880,11 @@ var scrollToError = function(){
 				// Attachment Missing Check
 				var replyHtml = _form[0]['helpdesk_note[note_body_attributes][body_html]'].value;
 				var replyText = replyHtml.split('<div class="freshdesk_quote">')[0];
+
+				// Convert the HTML tag to a text string first
+				var temp = document.createElement('DIV');
+				temp.innerHTML = replyText;
+				replyText = temp.innerText;
 				
 				if(replyText.toLowerCase().indexOf('attach')>-1){
 				  var attachments = jQuery('input[name="helpdesk_note[attachments][][resource]"]');
