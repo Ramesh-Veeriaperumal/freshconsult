@@ -115,6 +115,8 @@ defaults: &defaults
     - [account_info_to_dynamo]
     - [parallel_report_exports]
     - [count_es_queue]
+    - [clear_moderation_records]
+    - [empty_moderation_trash]
 
 development:
   <<: *defaults

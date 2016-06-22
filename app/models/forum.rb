@@ -110,7 +110,7 @@ class Forum < ActiveRecord::Base
   after_create :add_activity_new_and_clear_cache
   after_update :clear_cache_with_condition
   before_destroy :add_activity
-  after_destroy :clear_cat_cache
+  after_destroy :clear_cat_cache, :clear_moderation_records
 
   def add_activity_new_and_clear_cache
     create_activity('new_forum')
@@ -280,12 +280,16 @@ class Forum < ActiveRecord::Base
   end
 
   def backup_forum_topic_ids
-    @deleted_topic_ids = self.topics.map(&:id)
+    @deleted_topic_ids = self.topics.pluck(:id)
   end
 
   def unsubscribed_agents
     user_ids = monitors.map(&:id)
     account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+
+  def clear_moderation_records
+    Community::ClearModerationRecords.perform_async(self.id, self.class.to_s, @deleted_topic_ids)
   end
 
   private

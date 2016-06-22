@@ -21,11 +21,11 @@ class ForumSpam < Dynamo
 	def self.delete_account_spam
 		results = self.last_month
 		while(results.present?)
-			last_time = results.last.timestamp
+			last = results.last_evaluated_key
 			results.each do |result|
 				result.destroy
 			end
-			results = self.next(last_time)
+			results = self.next(last)
 		end
 	end
 
