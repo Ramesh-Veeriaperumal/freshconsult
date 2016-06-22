@@ -31,7 +31,7 @@ module Helpdesk::NoteActions
       cc_emails_string = cc_emails_helper.cc_agent_hover_content
     end
     conv_array = []
-    conv_array << [t('Subject'), note.subject] unless note.subject.blank?
+    conv_array << [t('Subject'), h(note.subject)] unless note.subject.blank?
     conv_array << [t('to'), generate_email_strings(note.to_emails)]
     conv_array << [t('helpdesk.shared.cc'), cc_emails_string] if cc_emails_string.present?
     conv_array << [t('helpdesk.shared.bcc'), generate_email_strings(note.bcc_emails)] unless note.bcc_emails.blank?

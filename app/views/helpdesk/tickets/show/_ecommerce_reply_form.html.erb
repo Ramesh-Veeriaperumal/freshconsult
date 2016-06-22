@@ -25,7 +25,7 @@
       </li>
       <li class="inline-field field clearField continous message">
         <%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
-          <%= ff.text_area :body, { :class => 'required ecommerce auto-height', :id => "#{id}-#{cntid}-body", :rows => "10", :"data-ecommerce-count" => 0 } %>
+          <%= ff.text_area :body, { :class => 'required ecommerce auto-height', :id => "#{id}-#{cntid}-body", :rows => "10", :"data-ecommerce-count" => 0, "data-domhelper-name" => "content-body" } %>
           <%= text_area_tag "quoted_text_html", "", { :id => "#{cntid}-quoted", :class => "hide" } %>
         <% end %>
       </li>

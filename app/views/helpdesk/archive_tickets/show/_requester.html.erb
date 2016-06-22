@@ -1,8 +1,8 @@
-<div class="widget clearfix" id="requester_info">
+<div class="widget clearfix" id="requester_info" data-domhelper-name="requester_info">
   <h3 class="title"><%=t('ticket.requestor_info')%></h3>
   <div class="content">
-  <div class="tkt-tabs-wrap">
-    <ul class="tkt-tabs">
+  <div class="tkt-tabs-wrap" data-domhelper-name="tkt-tabs-wrap">
+    <ul class="tkt-tabs" data-domhelper-name="tkt-tabs">
       <li><a href="#contact_info_default" class="requester-info-sprite requester-info-default"></a></li>
     </ul>
   </div>
@@ -27,7 +27,7 @@
 <script>
   jQuery(document).ready(function(){
     if (jQuery('.requester-info-sprite').length < 2) {
-      jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
+      jQuery('.requester-info-sprite').parents('.tkt-tabs').hide();
     }
   })
 </script>

@@ -1,7 +1,7 @@
 module RabbitMq::Keys
    
   # IMPORTANT!!! - Always add new subscribers for the models at the last
-  TICKET_SUBSCRIBERS            = ["auto_refresh", "reports", "search"]
+  TICKET_SUBSCRIBERS            = ["auto_refresh", "reports", "search", "count"]
   NOTE_SUBSCRIBERS              = ["auto_refresh", "reports", "search"]
   ACCOUNT_SUBSCRIBERS           = ["reports"]
   ARCHIVE_TICKET_SUBSCRIBERS    = ["reports", "search"]
@@ -10,7 +10,7 @@ module RabbitMq::Keys
   TOPIC_SUBSCRIBERS             = ["search"]
   POST_SUBSCRIBERS              = ["search"]
   TAG_SUBSCRIBERS               = ["search"]
-  TAG_USE_SUBSCRIBERS           = ["search"]
+  TAG_USE_SUBSCRIBERS           = ["search", "count"]
   COMPANY_SUBSCRIBERS           = ["search"]
   USER_SUBSCRIBERS              = ["search"]
 

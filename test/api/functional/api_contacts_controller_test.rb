@@ -139,6 +139,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     Account.any_instance.stubs(:features?).with(:multi_timezone).returns(false)
     Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
+    Account.any_instance.stubs(:features?).with(:multiple_user_companies).returns(false)
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
                                         view_all_tickets: true,
@@ -447,7 +448,23 @@ class ApiContactsControllerTest < ActionController::TestCase
     params_hash = { company_id: nil }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 200
+    match_json(deleted_contact_pattern(params_hash, sample_user.reload))
     assert sample_user.reload.company_id.nil?
+    assert sample_user.reload.client_manager == false
+  end
+
+  def test_update_contact_with_valid_company_id_again
+    sample_user = get_user
+    comp = get_company
+    params_hash = { company_id: comp.id, view_all_tickets: true, phone: '1234567890' }
+    sample_user.update_attributes(params_hash)
+    sample_user.reload
+    company = Company.create(name: Faker::Name.name, account_id: @account.id)
+    params_hash = { company_id: company.id }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert_response 200
+    match_json(deleted_contact_pattern(sample_user.reload))
+    assert sample_user.reload.company_id == company.id
     assert sample_user.reload.client_manager == false
   end
 
@@ -462,17 +479,14 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('company_id', :absent_in_db, resource: :company, attribute: :company_id)])
   end
 
-  def test_update_client_manager_with_already_invalid_company_id
-    sample_user = get_user_with_email
-    sample_user.update_attribute(:company_id, 10_000)
-    sample_user.update_attribute(:deleted, false)
+  def test_update_client_manager_with_unavailable_company_id_with_existing_company_id
+    sample_user = get_user
+    sample_user.update_attribute(:client_manager, false)
+    sample_user.update_attribute(:company_id, Company.first.id)
     params_hash = { company_id: 10_000 }
     put :update, construct_params({ id: sample_user.id }, params_hash)
-    match_json(deleted_contact_pattern(sample_user.reload))
-    assert_response 200
-    assert_equal 10_000, sample_user.reload.company_id
-  ensure
-    sample_user.update_attribute(:company_id, nil)
+    assert_response 400
+    match_json([bad_request_error_pattern('company_id', :absent_in_db, resource: :company, attribute: :company_id)])
   end
 
   def test_update_email_when_email_is_not_nil
@@ -527,6 +541,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user
     Account.any_instance.stubs(:features?).with(:multi_timezone).returns(false)
     Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
+    Account.any_instance.stubs(:features?).with(:multiple_user_companies).returns(false)
     put :update, construct_params({ id: sample_user.id },
                                   language: Faker::Lorem.characters(5),
                                   time_zone: Faker::Lorem.characters(5))

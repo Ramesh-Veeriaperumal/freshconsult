@@ -14,8 +14,21 @@
 			<% unless contact.job_title.blank? %>
 				<p class="muted mb0"><%= h contact.job_title %></p>
 			<% end %>
-			<% unless contact.company.blank? %>
-			  	<p class="muted mb0"><%= link_to(h(contact.company.name), contact.company, :'data-pjax' => "#body-container") %></p>
+			<% if contact.privilege?(:contractor) %>
+				<p>
+					<% companies = contact.companies %>
+					<% if companies.any? %>
+						<% if contact.companies.length == 1 %>
+							<%= link_to(h(companies.first.name), companies.first, :'data-pjax' => "#body-container", :class => "muted mb0") %>
+						<% else %>
+							<span class="muted mb0"> <%= t("n_companies", :count => contact.companies.length) %> </span>
+						<% end %>
+					<% end %>
+				</p>
+			<% elsif contact.company.present? %>
+			  <p class="muted mb0">
+			  	<%= link_to(h(contact.company.name), contact.company, :'data-pjax' => "#body-container") %>
+			  </p>
 			<% end %> 
 		</div>
 	</td>
@@ -30,30 +43,32 @@
 		<% end %>
 	</td>
 	<td>
-		<div class="user_actions" align="right">
-      <% if privilege?(:delete_contact) %>
-			   <%= link_to(t('unblock').html_safe, {:controller => "contacts", :action => "unblock", :id => contact} , :method => 'get', :class => "btn btn-mini") if contact.spam? || contact.blocked?%>
-			   <%= link_to(t('contacts.restore').html_safe, {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn btn-mini") if contact.deleted? and !contact.spam? and !contact.blocked? and contact.parent.nil? %>
-      <% end %>
-      <% if privilege?(:view_contacts) %>
-			  <%= link_to(t('contacts.send_activation').html_safe, send_invite_activation_path(contact), 
-			  	:class => "btn send-activation btn-mini",
+		<div class="user_actions hide" align="right">
+			<% if privilege?(:delete_contact) %>
+			   <%= link_to(content_tag(:i, "", :class => "ficon-restore fsize-16 contact-action"), {:controller => "contacts", :action => "unblock", :id => contact} , :method => 'get', :class => "btn p7 tooltip", :title => t('unblock').html_safe) if contact.spam? || contact.blocked?%>
+			   <%= link_to(content_tag(:i, "", :class => "ficon-restore fsize-16 contact-action"), {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn p7 tooltip", :title => t('contacts.restore').html_safe) if contact.deleted? and !contact.spam? and !contact.blocked? and contact.parent.nil? %>
+			<% end %>
+			<% if privilege?(:view_contacts) %>
+			  <%= link_to(content_tag(:i, "", :class => "ficon-mail fsize-20 contact-action"), send_invite_activation_path(contact), 
+			  	:class => "btn send-activation p7 tooltip",
 			  	:"data-method" => 'PUT',
-					:"data-loading-text" => t('admin.getting_started.index.next_please_wait').html_safe, 
+					:"data-loading-text" => "<i class='ficon-ellipsis'></i>".html_safe,
 					:remote => true,
 					:"data-type" => "json",
-					:"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>".html_safe) if !contact.active? and !contact.deleted and !contact.spam? and !contact.blocked? and !contact.email.blank? %>
-      <% end %>
-      <% if privilege?(:manage_contacts) %>
-			   <%= link_to(t('edit').html_safe, edit_contact_path(contact), :class => "btn btn-mini", 
-			   	:'data-pjax' => "#body-container") if !contact.deleted? and !contact.spam? and !contact.blocked? %>
-      <% end %>
-      <% if privilege?(:delete_contact) %>
-      			<% if contact != current_user and !contact.deleted? and !contact.spam? and !contact.blocked? %>
-			   		<%= link_to("<i class='icon-trash'></i>".html_safe, {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :class => "btn btn-mini hide", :id => "user_id_"+contact.id.to_s)%>
+					:title => t('contacts.send_activation'),
+					:"data-complete-text" => "<i class='icon-ok'></i>".html_safe) if !contact.active? and !contact.deleted and !contact.spam? and !contact.blocked? and !contact.email.blank? %>
+			<% end %>
+			<% if privilege?(:manage_contacts) %>
+			   <%= link_to(content_tag(:i, "", :class => "ficon-edit fsize-20 contact-action"), edit_contact_path(contact), :class => "p7 tooltip", 
+			   	:'data-pjax' => "#body-container",
+			   	:title => t('contacts.edit_contact')) if !contact.deleted? and !contact.spam? and !contact.blocked? %>
+			<% end %>
+			<% if privilege?(:delete_contact) %>
+						<% if contact != current_user and !contact.deleted? and !contact.spam? and !contact.blocked? %>
+			   		<%= link_to("<i class='ficon-trash-o fsize-20 contact-action'></i>".html_safe, {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :class => "hide", :id => "user_id_"+contact.id.to_s)%>
 			 		<a href="#user-deletion-confirmation" 
 			 				rel="freshdialog"
-			 				class="btn btn-mini delete_user_btn" 
+			 				class="delete_user_btn p7 tooltip" 
 			 				title="<%= t('contacts.delete_contact')%>" 
 			 				data-user="<%=contact.id%>"
 			 				data-submit-label="Confirm"
@@ -62,10 +77,10 @@
 			 				data-close-label="Cancel" 
 			 				data-destroy-on-close="true"
 			 				>
-			 			<i class='icon-trash'></i>
+			 			<i class='ficon-trash-o fsize-20 contact-action'></i>
 			 		</a>
-		 		<% end %>
-      <% end %>
+					<% end %>
+			<% end %>
 		</div>
 	</td>
 </tr>

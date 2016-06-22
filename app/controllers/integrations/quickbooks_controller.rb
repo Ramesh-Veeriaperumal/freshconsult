@@ -35,7 +35,7 @@ class Integrations::QuickbooksController < ApplicationController
 	
 	def create_company
 		requester = current_account.users.find_by_email(params["requester_email"])
-		if (requester.present? && requester.customer_id.nil?)
+		if (requester.present? && requester.company_id.nil?)
 			requester.update_attributes({"company_name" => params["name"]})
 		end
 		render :json => {:name => params["name"]}

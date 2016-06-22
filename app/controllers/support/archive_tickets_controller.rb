@@ -1,4 +1,5 @@
 class Support::ArchiveTicketsController < SupportController
+  helper AutocompleteHelper
   include Support::ArchiveTicketsHelper
   include ExportCsvUtil
   
@@ -86,11 +87,19 @@ protected
     end
   
     def build_tickets
-      @company = current_user.company.presence
-      @filter_users = current_user.company.users if 
-            @company && privilege?(:client_manager) && @company.users.size > 1 
+      if privilege?(:contractor)
+        @companies = current_user.companies.sorted
+        @requested_by_company = current_requested_by_company
+        @requested_company = @companies.find { |c| c.id == @requested_by_company.to_i } if @requested_by_company != 0
+      elsif current_user.company_client_manager?
+        @company = current_user.company.presence
+        @filter_users = current_user.company.users if @company && @company.users.size > 1
+      end
 
       @requested_by = current_requested_by
+      @requested_by_user = current_account.users.find_by_id(@requested_by)
+
+      @client_manager_companies = current_user.client_manager_companies.map(&:id)
 
       @tickets = (params[:start_date].blank? or params[:end_date].blank?) ? 
           ticket_scope : 
@@ -108,16 +117,31 @@ protected
 
     # Used for scoping of filters
     def ticket_scope
-      if privilege?(:client_manager)
-        if @requested_by.to_i == 0
-          current_user.company.archive_tickets || current_user.archive_tickets
+      if current_user.contractor? && @companies.present?
+        @requested_item = current_account.users.find_by_id(@requested_by) if @requested_by.to_i != 0
+        user_id = @requested_by.to_i != 0 ? @requested_by.to_i : nil
+        if @requested_by_company.to_i != 0
+          company_ids = [@requested_by_company]
+          operator = "and"
+          user_id = (@client_manager_companies.include?(@requested_by_company.to_i) ? nil : current_user.id) if !user_id
         else
-          @requested_item = current_account.users.find_by_id(@requested_by)
-          @requested_item.archive_tickets
+          user_id = current_user.id
+          company_ids = current_user.company_ids
+          operator = "or"
+        end
+        current_account.archive_tickets.contractor_tickets(user_id, company_ids, operator)
+      elsif !current_user.contractor? && current_user.company_client_manager?
+        if @requested_by.to_i == 0
+          current_user.company.try(:archive_tickets) || current_user.archive_tickets
+        else
+          requested_for = current_account.users.find_by_id(@requested_by)
+          @requested_item = requested_for.company.presence == @company ? requested_for : current_user
+          @requested_item.archive_tickets.contractor_tickets(nil, current_user.company_id, "or")
         end
       else
         @requested_item = current_user
-        @requested_item.archive_tickets
+        @requested_by_company.to_i == 0 ? @requested_item.archive_tickets : 
+          @requested_item.archive_tickets.contractor_tickets(nil, @requested_by_company.to_i, "or")
       end
     end
 
@@ -140,7 +164,8 @@ protected
   private
     def can_access_support_ticket?
       @ticket && (privilege?(:manage_tickets)  ||  (current_user  &&  ((@ticket.requester_id == current_user.id) || 
-                          ( privilege?(:client_manager) && @ticket.company == current_user.company))))
+                  ( current_user.company_client_manager? && current_user.company_ids.include?(@ticket.company_id)) ||
+                  ( current_user.contractor_ticket? @ticket)))) 
     end
 
     def update_reply_cc cc_hash, old_cc_hash

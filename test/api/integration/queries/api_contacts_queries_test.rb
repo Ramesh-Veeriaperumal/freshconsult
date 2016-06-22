@@ -8,18 +8,18 @@ class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        api_create: 3,
+        api_create: 4,
         api_update: 5,
         api_show: 5,
-        api_index: 2,
+        api_index: 3,
         api_destroy: 6,
         api_make_agent: 6,
 
-        create: 32,
-        update: 32,
-        show: 15,
-        index: 15,
-        destroy: 20,
+        create: 33,
+        update: 34,
+        show: 16,
+        index: 16,
+        destroy: 21,
         make_agent: 47
       }
 

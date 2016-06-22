@@ -25,9 +25,21 @@ var TktDetailDom = Class.create({
   },
 
   openReply: function(options){
-    jQuery("[data-domhelper-name='reply-button']").trigger("click");
-    if(options){
-      jQuery("[data-domhelper-name='cnt-reply-body']").insertHtml(options);
+    if(jQuery("[data-domhelper-name='reply-button']").length){
+      jQuery("[data-domhelper-name='reply-button']").trigger("click");  
+      if(options){
+        var tktInfo = domHelper.ticket.getTicketInfo().helpdesk_ticket;
+        switch(tktInfo.source_name) {
+          case "Twitter":
+          case "Facebook":
+          case "Ecommerce":
+          case "MobiHelp":
+            jQuery("[data-domhelper-name='content-body']").val(jQuery("[data-domhelper-name='content-body']").val() + options);
+            break;
+          default:
+            jQuery("[data-domhelper-name='cnt-reply-body']").insertHtml(options);
+        }
+      }
     }
   },
 
@@ -129,6 +141,7 @@ var TktDetailDom = Class.create({
   },
 
   onReplyClick: function(callback) {
+    // error in phone type -- without reply
     var _that = this;
     jQuery("[data-domhelper-name='reply-button'], [data-domhelper-name='reply-sticky-button']").on('click.ticket_details', function(e) {
       _that.executeCallback(callback, e);
@@ -136,6 +149,7 @@ var TktDetailDom = Class.create({
   },
 
   onFwdClick: function(callback) {
+    // error in phone type -- without reply
     var _that = this;
     jQuery("[data-domhelper-name='fwd-button'], [data-domhelper-name='fwd-sticky-button']").on('click.ticket_details', function(e) {
       _that.executeCallback(callback, e);
@@ -219,9 +233,23 @@ var TktDetailDom = Class.create({
 
   onReplySubmit: function(callback) {
     var _that = this;
-    jQuery("[data-domhelper-name='cnt-reply']").on("submit", function(ev) {
-      _that.executeCallback(callback, ev);
-    });
+    // error in phone type -- without reply
+    var tktInfo = domHelper.ticket.getTicketInfo().helpdesk_ticket;
+      switch(tktInfo.source_name) {
+        case "Twitter":
+        case "Facebook":
+        case "Ecommerce":
+        case "MobiHelp":
+          jQuery("[data-domhelper-name='cnt-reply-form']").on("submit", function(ev) {
+            _that.executeCallback(callback, ev);
+          });
+          break;
+        default:
+          jQuery("[data-domhelper-name='cnt-reply']").on("submit", function(ev) {
+            _that.executeCallback(callback, ev);
+          });
+      }
+    
   },
 
   onFwdSubmit: function(callback) {

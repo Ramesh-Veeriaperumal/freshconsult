@@ -47,10 +47,6 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   def es_fwd_emails
     cc_email_hash[:fwd_emails] if cc_email_hash
   end
-  
-  def company_id
-    requester.company_id if requester
-  end
 
   def tag_names
     tags.map(&:name)

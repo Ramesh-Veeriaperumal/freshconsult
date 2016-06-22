@@ -1,0 +1,16 @@
+<div class="footer-content-centre">
+	<% unless(current_account.subscription.paid_account?) %>
+	  <%= link_to(t('footer.helpdesk_software'), AppConfig['app_website'], :target => "_blank") %>
+	  <%= t('footer.by_freshdesk') %>
+	  <span class="muted"> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; </span>
+	<% end %>
+	<% if current_user %>
+		<%= link_to( t('footer.submit_feedback'), "#{AppConfig['support_url']}/support/tickets/new", :id => 'footer_feedback_widget' ) %>
+	<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
+	<% end %>
+	<%= link_to(t('footer.browse_community'), "#{AppConfig['support_url']}/support/discussions", :target => "_blank") %>
+	<% if @privacy_policy %>
+		<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
+		<%= link_to(t('footer.privacy_policy'), AppConfig['privacy_policy'], :target => "_blank") %>
+	<% end %>
+</div>

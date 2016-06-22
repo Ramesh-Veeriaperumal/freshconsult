@@ -70,7 +70,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   protected
 
-  	def validate_schema_less_note
+    def validate_schema_less_note
       return unless human_note_for_ticket?
       emails = [schema_less_note.to_emails, schema_less_note.bcc_emails]
       if email_conversation?
@@ -126,11 +126,6 @@ class Helpdesk::Note < ActiveRecord::Base
           if performed_by_client_manager?
             Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
           end
-          if notable.cc_email.present?
-            if user.id == notable.requester_id
-              Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
-            end
-          end
         end
         if inbound_email? && !self.private? && notable.included_in_cc?(user.email)          
           additional_emails = [notable.requester.email] if !notable.included_in_cc?(notable.requester.email)
@@ -139,8 +134,15 @@ class Helpdesk::Note < ActiveRecord::Base
                                                                                    :ignore_emails => [user.email]})
         end
         handle_notification_for_agent_as_req if ( !incoming && notable.agent_as_requester?(user.id))
+
+        if notable.cc_email.present?
+          if user.id == notable.requester_id
+            Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
+          end
+        end
+
       else    
-        e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
+        e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)  
         #notify the agents only for notes
         notifying_agents
         #notify the customer if it is public note
@@ -259,15 +261,15 @@ class Helpdesk::Note < ActiveRecord::Base
             ) unless zendesk_import?
     end
 
-	def push_mobile_notification
+  def push_mobile_notification
 
-    	message = { :ticket_id => notable.display_id,
+      message = { :ticket_id => notable.display_id,
                   :status_name => notable.status_name,
                   :subject => truncate(notable.subject, :length => 100),
                   :priority => notable.priority,
                   :time => created_at.to_i }
-		  send_mobile_notification(:response,message) unless notable.spam? || notable.deleted?
-	end
+      send_mobile_notification(:response,message) unless notable.spam? || notable.deleted?
+  end
 
     def notify_ticket_monitor
       return if meta?
@@ -282,7 +284,7 @@ class Helpdesk::Note < ActiveRecord::Base
     def ticket_cc_email_backup
       @prev_cc_email = notable.cc_email.dup unless notable.cc_email.nil?
     end
-		
+    
     # VA - Observer Rule 
     def update_observer_events
       return if user.nil? || meta? || feedback? || !(notable.instance_of? Helpdesk::Ticket)

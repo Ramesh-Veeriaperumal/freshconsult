@@ -26,47 +26,66 @@
 			<input type="text" id="end_date" date="" class="text auto" name="end_date" size="15" />
 		</div>
 		<hr/>
-		<li class="control-group">
-			<label class="control-label">
-				<%= check_box_tag :toggle_checks, '', false, :class => 'tooltip', :"data-placement" => 'below',
-								  :title => t('export_data.check_uncheck_title') %>
-				<strong><%= t('export_data.select_header') %></strong>
-			</label><br/><br/><br/>
-				<div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
-				<div class="threecol-form" id="ticket_fields">
-		 			<% @csv_headers.each do |head| %>
-		 			  	<div class="item <%= head[:type] %>">
-			  				<label class="checkbox prime"> 
-							<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], export_fields_redis.include?(head[:value]) || (!export_fields_redis.any? && head[:selected]) %>
-								<%= head[:label].html_safe %>														
-			  				</label>
-			  				<%if head[:levels]%>
-				  				<div class="tree_line">
-					  				<% head[:levels].each do |level| %>
-						  				<label class="checkbox level"> 
-										<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], export_fields_redis.include?(level[:name])  %>
-											<%= level[:label].html_safe %>
-						  				</label>
-						  			<% end %>
-					  		   </div>
-					  		<%end%>
-		  			    </div>	
-		 			<% end %>
-				</div>
 		<li>
+      <div class="options-header">
+			<label class="select-header">
+          <span class="select-all-label">
+            <%= check_box_tag :toggle_checks, '', false, :class => 'tooltip', :"data-placement" => 'below',
+                    :title => t('export_data.check_uncheck_title') %>
+              <strong><%= t('export_data.select_header') %></strong>
+          </span>
+			</label>
+        <span class="additional-fields-label">
+          <a href="#" data-show="<%= t("export_data.show_additional_fields")%>"
+                      data-hide="<%= t("export_data.hide_additional_fields")%>"
+                      data-additional-shown="false">
+                      <%= t("export_data.show_additional_fields")%></a>
+          <span href="#" id="additional-help-icon" class="tooltip inline-block mt2" title="<%= t('export_data.additional_fields_help') %>" data-placement="right">
+            <i class="ficon-help fsize-20" size="30"></i>
+          </span>
+        </span>
+        </div>
+      <br/>
+      <div class="info-highlight error hide" id="err_no_fields_selected">
+        <%= t('export_data.no_fields_selected') %>
+      </div>
+      <div id="ticket_fields">
+
+        <div class="additional-fields hide">
+          <div class = "threecol-form">
+            <%= render partial: "export_options", :locals => { headers: @additional_csv_headers, retain_fields: false} %>
+          </div>
+        </div>
+        <div class="default-ticket-fields">
+          <div class="threecol-form">
+            <%= render partial: "export_options", :locals => { headers: @default_csv_headers, retain_fields: true} %>
+          </div>
+        </div>
+			</div>
+		</li>
 	</ul>	
 <%end%>
 <%= javascript_tag do %>
 // For Select all/none functionality 
 	jQuery('#toggle_checks').on('change', function () {
-		jQuery('[id^=export_fields]').prop('checked', jQuery(this).is(":checked"));
+    if(jQuery(".additional-fields-label a").data("additionalShown") == true){
+      jQuery('[id^=export_fields]').prop('checked', jQuery(this).is(":checked"));
+    }else{
+      jQuery('.default-ticket-fields [id^=export_fields]').prop('checked', jQuery(this).is(":checked"));
+    }
+
 	});
 
 	//For toggling select all/none checkbox when toggling fields -->
 	jQuery('[id^=export_fields]').on('change', function () {
 		var count = 0;
-		jQuery('[id^=export_fields]').each(function(i,ele){ if(ele.checked) count++; });
-		jQuery('#toggle_checks').prop('checked', (jQuery('[id^=export_fields]').length == count));
+		if(jQuery(".additional-fields-label a").data("additionalShown") == true){
+			jQuery('[id^=export_fields]').each(function(i,ele){ if(ele.checked) count++; });
+			jQuery('#toggle_checks').prop('checked', (jQuery('[id^=export_fields]').length == count));
+		}else{
+			jQuery('.default-ticket-fields [id^=export_fields]').each(function(i,ele){ if(ele.checked) count++; });
+			jQuery('#toggle_checks').prop('checked', (jQuery('.default-ticket-fields [id^=export_fields]').length == count));
+		}
 	});
 
   jQuery("#exportFilter").submit(function () {  
@@ -128,5 +147,21 @@
 	jQuery("#start_date, #end_date").bind('keypress keyup keydown', function(ev) {
 	ev.preventDefault();
    	return false;
+  });
+
+
+  jQuery(".additional-fields-label a").on("click", function(ev){
+    var current_val = jQuery(this).text().trim();
+    if(jQuery(this).data("additionalShown") == false){
+      jQuery(this).text(jQuery(this).data("hide"));
+      jQuery(this).data("additionalShown", true);
+      jQuery(".additional-fields").show();
+      jQuery("#export_fields_display_id").trigger("change");
+    }else{
+      jQuery(this).text(jQuery(this).data("show"));
+      jQuery(this).data("additionalShown", false);
+      jQuery(".additional-fields").hide();
+      jQuery("#export_fields_display_id").trigger("change");
+    }
   });
 <% end %>

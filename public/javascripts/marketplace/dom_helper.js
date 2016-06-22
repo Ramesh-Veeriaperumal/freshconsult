@@ -14,169 +14,128 @@ var domHelper = domHelper || {};
     helpLink = domHelperValidator.ticketHelpLink;
     helpContent = domHelperValidator.ticketHelpDetails;
 
-    // get current ticket data in json format
-    dh.getTicketInfo = function(){
-      return tktDetailDom.getTicketInfo();
-    }
+    domHelper.ticket = {  
+      // get current ticket data in json format
+      getTicketInfo: function(){
+        return tktDetailDom.getTicketInfo();
+      },
 
-    // get requester user info in json format
-    dh.getContactInfo = function() {
-      return tktDetailDom.getContactInfo();
-    }
+      // get requester user info in json format
+      getContactInfo: function() {
+        return tktDetailDom.getContactInfo();
+      },
 
-    //get custom fields of ticket details
-    dh.getCustomField = function() {
-      return tktDetailDom.getCustomField();
-    }
+      //get custom fields of ticket details
+      getCustomField: function() {
+        return tktDetailDom.getCustomField();
+      },
 
-    // open reply box
-    dh.openReply = function(reply_text){
-     tktDetailDom.openReply(reply_text);
-    }
+      // open reply box
+      openReply: function(reply_text){
+       tktDetailDom.openReply(reply_text);
+      },
 
-    dh.openNote = function(note_text){
-      tktDetailDom.openNote(note_text);
-    }
+      openNote: function(note_text){
+        tktDetailDom.openNote(note_text);
+      },
 
-    dh.expandConversations = function(){
-      tktDetailDom.expandConversations();
-    }
+      expandConversations: function(){
+        tktDetailDom.expandConversations();
+      },
 
-    // hide ticket delete
-    dh.hideTicketDelete = function(){
-      tktDetailDom.hideTicketDelete();
-    }
+      // hide ticket delete
+      hideTicketDelete: function(){
+        tktDetailDom.hideTicketDelete();
+      },
 
-    // show ticket delete
-    dh.showTicketDelete = function(){
-      tktDetailDom.showTicketDelete();
-    }
+      // show ticket delete
+      showTicketDelete: function(){
+        tktDetailDom.showTicketDelete();
+      },
 
-    // hide attachments
-    dh.hideAttachments = function(){
-      tktDetailDom.hideAttachments();
-    }
+      // hide attachments
+      hideAttachments: function(){
+        tktDetailDom.hideAttachments();
+      },
 
-    // show attachments
-    dh.showAttachments = function(){
-      tktDetailDom.showAttachments();
-    }
+      // show attachments
+      showAttachments: function(){
+        tktDetailDom.showAttachments();
+      },
 
-    //trigger click on some element
-    dh.triggerClick = function(element){
-      this.domHelperCallValidator("triggerClick", element);
-    }
+      //trigger click on some element
+      triggerClick: function(element){
+        dh.domHelperCallValidator("triggerClick", element);
+      },
 
-    //trigger reload on some element
-    dh.triggerReload = function(element){
-      this.domHelperCallValidator("triggerReload", element);
-    }
+      //trigger reload on some element
+      triggerReload: function(element){
+        dh.domHelperCallValidator("triggerReload", element);
+      },
 
-    //add an option to 'more' dropdown
-    dh.addExtraOption = function(anchor_tag){
-      this.domHelperCallValidator("addExtraOption", anchor_tag);
-    }
+      onReplyClick: function(callback){
+        dh.domHelperCallValidator("onReplyClick", callback, isCallBack);
+      },
 
-    //add custom button in ticket menu
-    dh.addCustomButton = function(anchor_tag){
-      this.domHelperCallValidator("addCustomButton", anchor_tag);
-    }
+      onFwdClick: function(callback) {
+        dh.domHelperCallValidator("onFwdClick", callback, isCallBack);
+      },
 
-    //add custom button in ticket menu
-    dh.appendToSidebar = function(markup){
-      this.domHelperCallValidator("appendToSidebar", markup);
-    }
+      onAddNoteClick: function(callback) {
+        dh.domHelperCallValidator("onAddNoteClick", callback, isCallBack);
+      },
 
-    dh.onReplyClick = function(callback){
-      this.domHelperCallValidator("onReplyClick", callback, isCallBack);
-    }
+      onSubmitClick: function(callback, what) {
+        if(!callback || (typeof callback) != 'function'){
+          dh.displayDomHelperError("onSubmitClick", domHelperValidator.callBkFn);
+        }
+        else if(!what){
+          dh.displayDomHelperError("onSubmitClick", domHelperValidator.missingParams);
+        }
+        else{
+          tktDetailDom.onSubmitClick(callback, what);
+        }
+      },
 
-    dh.onFwdClick = function(callback) {
-      this.domHelperCallValidator("onFwdClick", callback, isCallBack);
-    }
+      onTicketCloseClick: function(callback) {
+        dh.domHelperCallValidator("onTicketCloseClick", callback, isCallBack);
+      },
 
-    dh.onAddNoteClick = function(callback) {
-      this.domHelperCallValidator("onAddNoteClick", callback, isCallBack);
-    }
+      onPrevTicketClick :function(callback) {
+        dh.domHelperCallValidator("onPrevTicketClick", callback, isCallBack);
+      },
 
-    dh.onSubmitClick = function(callback, what) {
-      if(!callback || (typeof callback) != 'function'){
-        this.displayDomHelperError("onSubmitClick", domHelperValidator.callBkFn);
+      onNextTicketClick: function(callback) {
+        dh.domHelperCallValidator("onNextTicketClick", callback, isCallBack);
+      },
+
+      onPriorityChanged: function(callback) {
+        dh.domHelperCallValidator("onPriorityChanged", callback, isCallBack);
+      },
+
+      onStatusChanged: function(callback) {
+        dh.domHelperCallValidator("onStatusChanged", callback, isCallBack);
+      },
+
+      onSourceChanged : function(callback) {
+        dh.domHelperCallValidator("onSourceChanged", callback, isCallBack);
+      },
+
+      onGroupChanged : function(callback) {
+        dh.domHelperCallValidator("onGroupChanged", callback, isCallBack);
+      },
+
+      onAgentChanged : function(callback) {
+        dh.domHelperCallValidator("onAgentChanged", callback, isCallBack);
+      },
+
+      onTypeChanged : function(callback) {
+        dh.domHelperCallValidator("onTypeChanged", callback, isCallBack);
+      },
+
+      onTicketPropertiesUpdated : function(callback) {
+        dh.domHelperCallValidator("onTicketPropertiesUpdated", callback, isCallBack);
       }
-      else if(!what){
-        this.displayDomHelperError("onSubmitClick", domHelperValidator.missingParams);
-      }
-      else{
-        tktDetailDom.onSubmitClick(callback, what);
-      }
-    }
-
-    dh.showConfirm = function(evt, title, msg, ok_label, cancel_label, success_cb, failure_cb){
-      var paramsError = domHelperValidator.checkParamsForError(arguments, "showConfirm", "evt,title,msg,ok_label,cancel_label,success_cb,failure_cb");
-      if(paramsError){
-        console.error(paramsError);
-        console.info(domHelperValidator.errorMessageMap["learnMore"], domHelperValidator.helpURLPrefix + helpContent["showConfirm"]["helpURL"]);
-      }
-      else if((typeof success_cb) != 'function' || (typeof failure_cb) != 'function'){
-        this.displayDomHelperError("showConfirm", callBkFn);
-      }
-      else{
-        tktDetailDom.showConfirm(evt, title, msg, ok_label, cancel_label, success_cb, failure_cb);
-      }
-    }
-
-    dh.showModal = function(evt, title, msg, ok_label, success_cb){
-      var paramsError = domHelperValidator.checkParamsForError(arguments, "showModal", "evt,title,msg,ok_label,success_cb");
-      if(paramsError){
-        console.error(paramsError);
-        console.info(domHelperValidator.errorMessageMap["learnMore"], domHelperValidator.helpURLPrefix + helpContent["showModal"]["helpURL"]);
-      }
-      else if((typeof success_cb) != 'function'){
-        this.displayDomHelperError("showModal", callBkFn);
-      }
-      else{
-        tktDetailDom.showModal(evt, title, msg, ok_label, success_cb);
-      }
-    }
-
-    dh.onTicketCloseClick = function(callback) {
-      this.domHelperCallValidator("onTicketCloseClick", callback, isCallBack);
-    }
-
-    dh.onPrevTicketClick = function(callback) {
-      this.domHelperCallValidator("onPrevTicketClick", callback, isCallBack);
-    }
-
-    dh.onNextTicketClick = function(callback) {
-      this.domHelperCallValidator("onNextTicketClick", callback, isCallBack);
-    }
-
-    dh.onPriorityChanged = function(callback) {
-      this.domHelperCallValidator("onPriorityChanged", callback, isCallBack);
-    }
-
-    dh.onStatusChanged = function(callback) {
-      this.domHelperCallValidator("onStatusChanged", callback, isCallBack);
-    }
-
-    dh.onSourceChanged = function(callback) {
-      this.domHelperCallValidator("onSourceChanged", callback, isCallBack);
-    }
-
-    dh.onGroupChanged = function(callback) {
-      this.domHelperCallValidator("onGroupChanged", callback, isCallBack);
-    }
-
-    dh.onAgentChanged = function(callback) {
-      this.domHelperCallValidator("onAgentChanged", callback, isCallBack);
-    }
-
-    dh.onTypeChanged = function(callback) {
-      this.domHelperCallValidator("onTypeChanged", callback, isCallBack);
-    }
-
-    dh.onTicketPropertiesUpdated = function(callback) {
-      this.domHelperCallValidator("onTicketPropertiesUpdated", callback, isCallBack);
     }
   }
 
@@ -184,26 +143,53 @@ var domHelper = domHelper || {};
     helpLink = domHelperValidator.contactHelpLink;
     helpContent = domHelperValidator.contactHelpDetails;
 
-    // get current contact data in json format
-    dh.getContactInfo = function(){
-      return contactDom.getContactInfo();
-    }
+    domHelper.contact = {  
 
-    //get the custom fields of user
-    dh.getCustomField = function(){
-      return contactDom.getCustomField();
-    }
+      // get current contact data in json format
+      getContactInfo : function(){
+        return contactDom.getContactInfo();
+      },
 
-    //convert contact to agent
-    dh.convertToAgent = function(agent_type){
-      this.domHelperCallValidator("convertToAgent", agent_type);
-    }
+      //get the custom fields of user
+      getCustomField: function(){
+        return contactDom.getCustomField();
+      },
 
-    //add custom button in ticket menu
-    dh.appendToContactSidebar = function(markup){
-      this.domHelperCallValidator("appendToContactSidebar", markup);
+      //convert contact to agent
+      convertToAgent : function(agent_type){
+        dh.domHelperCallValidator("convertToAgent", agent_type);
+      }
     }
   }
+
+  dh.showConfirm = function(evt, title, msg, ok_label, cancel_label, success_cb, failure_cb){
+    var paramsError = domHelperValidator.checkParamsForError(arguments, "showConfirm", "evt,title,msg,ok_label,cancel_label,success_cb,failure_cb");
+    if(paramsError){
+      console.error(paramsError);
+      console.info(domHelperValidator.errorMessageMap["learnMore"], domHelperValidator.helpURLPrefix + helpContent["showConfirm"]["helpURL"]);
+    }
+    else if((typeof success_cb) != 'function' || (typeof failure_cb) != 'function'){
+      this.displayDomHelperError("showConfirm", callBkFn);
+    }
+    else{
+      tktDetailDom.showConfirm(evt, title, msg, ok_label, cancel_label, success_cb, failure_cb);
+    }
+  }
+
+  dh.showModal = function(evt, title, msg, ok_label, success_cb){
+    var paramsError = domHelperValidator.checkParamsForError(arguments, "showModal", "evt,title,msg,ok_label,success_cb");
+    if(paramsError){
+      console.error(paramsError);
+      console.info(domHelperValidator.errorMessageMap["learnMore"], domHelperValidator.helpURLPrefix + helpContent["showModal"]["helpURL"]);
+    }
+    else if((typeof success_cb) != 'function'){
+      this.displayDomHelperError("showModal", callBkFn);
+    }
+    else{
+      tktDetailDom.showModal(evt, title, msg, ok_label, success_cb);
+    }
+  }
+
   dh.help = function(){
     var content = "";
     for(var api in helpContent){

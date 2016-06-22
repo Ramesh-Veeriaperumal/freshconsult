@@ -1,6 +1,7 @@
 class Support::TicketsController < SupportController
   #validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
   helper SupportTicketControllerMethods
+  helper AutocompleteHelper
   include SupportTicketControllerMethods 
   include Support::TicketsHelper
   include ExportCsvUtil
@@ -144,11 +145,19 @@ class Support::TicketsController < SupportController
     end
   
     def build_tickets
-      @company = current_user.company.presence
-      @filter_users = current_user.company.users if 
-            @company && privilege?(:client_manager) && @company.users.size > 1 
+      if privilege?(:contractor)
+        @companies = current_user.companies.sorted
+        @requested_by_company = current_requested_by_company
+        @requested_company = @companies.find { |c| c.id == @requested_by_company.to_i } if @requested_by_company != 0
+      elsif current_user.company_client_manager?
+        @company = current_user.company.presence
+        @filter_users = current_user.company.users if @company && @company.users.size > 1
+      end
 
       @requested_by = current_requested_by
+      @requested_by_user = current_account.users.find_by_id(@requested_by)
+
+      @client_manager_companies = current_user.client_manager_companies.map(&:id)
 
       date_added_ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? 
           ticket_scope : 
@@ -165,18 +174,32 @@ class Support::TicketsController < SupportController
 
     # Used for scoping of filters
     def ticket_scope
-      # to be reconsidered while implementing features for one contact multi company
-      @requested_item = current_user
-
-      if privilege?(:client_manager) && @company
-        if @requested_by.to_i == 0
-          return current_user.company.try(:all_tickets) || current_user.tickets
-        else 
-          requested_for = current_account.users.find_by_id(@requested_by)
-          @requested_item = requested_for.company.presence == @company ? requested_for : current_user
+      if current_user.contractor? && @companies.present?
+        @requested_item = current_account.users.find_by_id(@requested_by) if @requested_by.to_i != 0
+        user_id = @requested_by.to_i != 0 ? @requested_by.to_i : nil
+        if @requested_by_company.to_i != 0
+          company_ids = [@requested_by_company]
+          operator = "and"
+          user_id = (@client_manager_companies.include?(@requested_by_company.to_i) ? nil : current_user.id) if !user_id
+        else
+          user_id = current_user.id
+          company_ids = @client_manager_companies
+          operator = "or"
         end
+        current_account.tickets.contractor_tickets(user_id, company_ids, operator)
+      elsif !current_user.contractor? && current_user.company_client_manager? && @company
+        if @requested_by.to_i == 0
+          current_user.company.try(:all_tickets) || current_user.tickets
+        else
+          requested_for = current_account.users.find_by_id(@requested_by)
+          @requested_item = requested_for.company_ids.include?(@company.id) ? requested_for : current_user
+          @requested_item.tickets.contractor_tickets(nil, current_user.company_id, "or")
+        end
+      else
+        @requested_item = current_user
+        @requested_by_company.to_i == 0 ? @requested_item.tickets : 
+          @requested_item.tickets.contractor_tickets(nil, @requested_by_company.to_i, "or")
       end
-      @requested_item.tickets
     end
 
     def check_user_permission
