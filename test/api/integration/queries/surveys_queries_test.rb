@@ -11,8 +11,8 @@ class SurveysQueriesTest < ActionDispatch::IntegrationTest
       v1 = {}
       v2_expected = {
         api_create: 12,
-        api_index: 3,
-        api_ticket_surveys: 5,
+        api_index: 10,
+        api_ticket_surveys: 12,
 
         create: 72,
         index: 11,
@@ -31,7 +31,7 @@ class SurveysQueriesTest < ActionDispatch::IntegrationTest
       end
 
       v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
-        get('/api/v2/satisfaction_ratings', nil, @write_headers)
+        get('/api/v2/surveys/satisfaction_ratings', nil, @write_headers)
         assert_response 200
       end
       unstub_custom_survey
