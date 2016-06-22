@@ -280,7 +280,7 @@ class User < ActiveRecord::Base
 
   def client_manager=(checked)
     if customer? && default_user_company.present?
-      self.default_user_company.client_manager = (checked == "true" || checked == true)
+      default_user_company.client_manager = (checked == "true" || checked == true)
     end
   end
 
@@ -972,12 +972,12 @@ class User < ActiveRecord::Base
     end
 
     def build_or_update_company comp_id
-      self.default_user_company.present? ? (self.default_user_company.company_id = comp_id) :
-          self.build_default_user_company(:company_id => comp_id) 
+      default_user_company.present? ? (default_user_company.company_id = comp_id) :
+        build_default_user_company(:company_id => comp_id) 
     end
 
     def mark_user_company_destroy
-      uc = self.default_user_company
+      uc = default_user_company
       if uc
         self.default_user_company_attributes = { :id => uc.id,
                                             :company_id => uc.company_id, 
