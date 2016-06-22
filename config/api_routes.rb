@@ -79,6 +79,8 @@ Helpkit::Application.routes.draw do
 
     resources :roles, controller: 'api_roles', only: [:index, :show]
 
+    resources :roles, controller: 'api_roles', only: [:index, :show]
+
     resources :contact_fields, controller: 'api_contact_fields', only: [:index]
 
     resources :products, controller: 'api_products', only: [:index, :show]

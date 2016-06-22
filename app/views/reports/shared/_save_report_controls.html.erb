@@ -40,7 +40,7 @@
 		<i class="ficon-edit edit tooltip" data-placement="above" data-original-title="Edit" twipsy-content-set="true"></i>
 	</a>
 	<!-- Schedule -->
-	<% if enable_schedule_report? %>
+	<% if enable_schedule_report? && current_user.privilege?(:export_reports)%>
 		<a class="vertical-alignment left-border right-border" 
 			data-action="schedule-saved-report" 
 		    href="#report-dialog-save" 

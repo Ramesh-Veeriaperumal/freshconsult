@@ -24,8 +24,8 @@
       <div class="info-data hideForList">       
         <div class="information ellipsis">
           <%= t("ticket.ticket_from", :username => requester(ticket)).html_safe %>
-          <%= content_tag(:span, ticket.requester.customer.name.presence, 
-                  :class => "company-name") if ticket.requester.customer.present? && !ticket.requester.agent? %>
+          <%= content_tag(:span, ticket.company.name.presence, 
+                  :class => "company-name") if ticket.company.present? && !ticket.requester.agent? %>
         </div>
         <div class="emphasize">
         </div>

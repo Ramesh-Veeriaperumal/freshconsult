@@ -44,7 +44,6 @@ window.App = window.App || {};
       this.bindPropertiesToggle();
       this.formatSeoMeta();
       this.setTagSelector();
-      this.dummyActionButtonTriggers();
       this.unsavedContentNotif();
       this.formValidate();
       this.toggleShowMaster();

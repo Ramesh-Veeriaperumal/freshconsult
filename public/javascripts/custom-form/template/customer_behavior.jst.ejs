@@ -1,7 +1,7 @@
 <label class='caption <%= hideIfEmail %>'> <%= translate.get('forCustomer') %> </label>
 <div>
 	<fieldset id="customNestedConfig">
-		<% isDisabled = disabled_customer_data['visible_in_portal'] ? 'disabled' : ''  %>
+		<% isDisabled = disabled_customer_data['visible_in_portal'] || field_type == 'default_company' ? 'disabled' : ''  %>
 		<label class="checkbox <%= isDisabled %>">
 			<% if(isContactEmail) { %>
 				<span class='ficon-checkmark-thick chkbox-img'></span>
@@ -15,7 +15,7 @@
 			<%= translate.get('customerVisible') %> 
 		</label>
 		<fieldset data-nested-value="nestedlvl2" class="nestedChoices" data-disabled-by-default="<%= disabled_customer_data['editable_in_portal'] %>">
-			<% isDisabled = disabled_customer_data['editable_in_portal'] ||!visible_in_portal ? ' disabled' : ' '  %>
+			<% isDisabled = disabled_customer_data['editable_in_portal'] ||!visible_in_portal || field_type == 'default_company' ? ' disabled' : ' '  %>
 			<label class="checkbox <%= isDisabled %> <%= hideIfEmail %>">
 				<input type="checkbox" 
 								toggle_ele="nestedlvl3" 
@@ -41,7 +41,7 @@
 				</fieldset>
 			<% } %>
 			<fieldset data-nested-value="nestedlvl3" class="nestedChoices <%= hideIfEmail %>" data-disabled-by-default="<%= disabled_customer_data['required_in_portal'] %>">
-				<% isDisabled = disabled_customer_data['required_in_portal'] || !(visible_in_portal && editable_in_portal) ? ' disabled' : ' '  %>
+				<% isDisabled = disabled_customer_data['required_in_portal'] || !(visible_in_portal && editable_in_portal) || field_type == 'default_company' ? ' disabled' : ' '  %>
 				<label class="checkbox <%= isDisabled %>">
 					<input type="checkbox" 
 									name="customer-required" 

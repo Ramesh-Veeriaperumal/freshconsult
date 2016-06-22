@@ -15,7 +15,9 @@
 	<div class="unresolved-data-tab hide">
 	<ul class="nav nav-tabs sleek-tab" id="unresolved-tab">
 	  		<li data-groupby = "group_id" data-redirect="group" class="active"><a href="javascript:void(0)" value="g" ><%=t('unresolved_tickets.group_label') %></a></li>
-	  		<li data-groupby = "responder_id" data-redirect="agent" class=""><a href="javascript:void(0)" value="a" ><%=t('unresolved_tickets.agent_label') %></a></li>
+	  		<% unless feature?(:euc_hide_agent_metrics) %>
+		  		<li data-groupby = "responder_id" data-redirect="agent" class=""><a href="javascript:void(0)" value="a" ><%=t('unresolved_tickets.agent_label') %></a></li>
+		  	<% end %>
 	</ul>
 	<div class="unresolved-tickets-wrapper">
 	<table id="unresolved-tickets" class="data-table"> </table>
@@ -34,9 +36,11 @@
 	<li>
 		<%=t('unresolved_tickets.group_label') %> : <strong> {{html Array.prototype.join.call(groupfilter, ", ") }} </strong>
 	</li>
-	<li>
-		<%=t('unresolved_tickets.agent_label') %> : <strong> {{html Array.prototype.join.call(agentfilter, ", ") }} </strong>
-	</li>
+	<% unless feature?(:euc_hide_agent_metrics) %>
+		<li>
+			<%=t('unresolved_tickets.agent_label') %> : <strong> {{html Array.prototype.join.call(agentfilter, ", ") }} </strong>
+		</li>
+	<% end %>
 </script>
 
 <%= javascript_tag do %>

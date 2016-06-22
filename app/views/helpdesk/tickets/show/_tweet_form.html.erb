@@ -10,12 +10,12 @@
 	<input type="hidden" value="<%= @ticket.requester.twitter_id %>" id="requester_twitter_handle" />
 	<%= form_for note, :url => twitter_helpdesk_ticket_conversations_path(@ticket), :html => {
 						:multipart => true,  
-						:id => "HelpdeskTweets",
+						:id => "HelpdeskTweets", 
             :rel => 'tweet_form', 
 						"data-panel" => cntid,
                         "data-show-pseudo-reply" => 'true',
                         "data-fetch-latest" => 'true',
-                        "data-cnt-id" => cntid } do |f| %>
+                        "data-cnt-id" => cntid, "data-domhelper-name" => "cnt-reply-form" } do |f| %>
 		<%= f.error_messages %>
 		<%= hidden_field_tag :tweet, "true", :id => "tweet" %>
 		<%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>  
@@ -36,7 +36,7 @@
 			</li>				
 			<li class="inline-field field clearField continous message">
 				<%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
-					<%= ff.text_area :body, { :class => 'required tweet auto-height', :id => "#{id}-#{cntid}-body", :value =>default_twitter_body_val(@ticket), :rows => "3", "data-tweet-count" => default_twitter_body_val(@ticket).length } %>
+					<%= ff.text_area :body, { :class => 'required tweet auto-height', :id => "#{id}-#{cntid}-body", :value =>default_twitter_body_val(@ticket), :rows => "3", "data-tweet-count" => default_twitter_body_val(@ticket).length, "data-domhelper-name" => "content-body" } %>
 				<% end %>
 			</li>
 		</ul>

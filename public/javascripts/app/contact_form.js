@@ -8,6 +8,10 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
   "use strict";
 
   window.App.Contacts.Contact_form = {
+    addedCompanies: [],
+    removedCompanies: [],
+    editedCompanies: [],
+    triggerElement: "",
 
     onFirstVisit: function (data) {
       this.onVisit(data);
@@ -18,6 +22,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       this.bindCompanySelect2();
       this.bindHandlers();
       this.manageNewEmail();
+      this.manageNewCompany();
     },
 
     bindGroupValidation: function() {
@@ -25,43 +30,58 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     },
 
     bindAutocomplete: function () {
-      $("#user_company_name").autocomplete({
-        source: function (request, response) {
-            $.ajax({
-                url: "/search/autocomplete/companies",
-                data: {
-                    q: request.term
-                },
-                success: function (data) {
-                    response($.map(data.results,
-                    function(item) {
-                        return {
-                            label: escapeHtml(item.value),
+      $('body').on('keyup.contact_form', '.user_company, #user_company_name', function(){
+        $(this).autocomplete({
+          source: function (request, response) {
+              $.ajax({
+                  url: "/search/autocomplete/companies",
+                  data: {
+                      q: request.term
+                  },
+                  success: function (data) {
+                    var $results = [];
+                    var companies = data.results.slice(0,10);
+                    $.map($(".uc_text"), function(item) {$results.push($(item).text())} );
+                    $.map($(".new_company"), function(item) {$results.push($(item).val())} );
+                    response($.map(companies,
+                      function(item) {
+                        var val = escapeHtml(item.value);
+                        if ($.inArray(val, $results) == -1){
+                          return {
+                            label: val,
                             value: item.value
+                          }
                         }
-                    }));
-                }
-            });
-        },
-        minLength: 1,
-        select: function (event, ui) {
-          $("#user_address").focus();
-        },
-        open: function () {
-          $(".ui-menu").css({'display':'block', 'z-index': 10});
-          $(this).removeClass('ui-corner-all');
-        }
-      }).autocomplete("instance")._renderItem = function (ul, item) {
-        return $("<li></li>")
-        .data("autocomplete-item", item)
-        .append("<a>" + item.label + "</a>")
-        .appendTo(ul);
-      };
+                      }));
+                  }
+              });
+          },
+          minLength: 1,
+          select: function (event, ui) {
+            if ($(this).parent().next().length == 0) {
+              $("#user_address").focus();
+              $("#add_new_company").focus();
+            } else{
+              $(this).parent().next().children(".user_company").focus();
+            };
+          },
+          open: function () {
+            $(this).autocomplete("widget").css({'display':'block', 'z-index': 1060});
+            $(this).removeClass('ui-corner-all');
+          }
+        }).autocomplete("instance")._renderItem = function (ul, item) {
+          return $("<li></li>")
+          .data("autocomplete-item", item)
+          .append("<a>" + item.label + "</a>")
+          .appendTo(ul);
+        };
+      });
     },
 
     bindCompanySelect2: function () {
+      var self = this;
       $("input[name='user[tag_names]']").select2({
-        tags: window.App.Contacts.Contact_form.tags_options.split(","),
+        tags: self.tags_options.split(","),
         tokenSeparators: [',']
       });
     },
@@ -76,24 +96,63 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       this.bindCancelEmailClick();
       this.toggleAddNewEmail();
       this.enableClientManager();
+      this.addNewCompany();
+      this.bindClientManagerClick();
+      this.bindDefaultCompanyClick();
+      this.bindDeleteCompanyClick();
+      this.bindRenameCompanyClick();
+      this.bindRemoveCompanyClick();
+      this.bindCompanySubmitClick();
     },
 
     bindContactSubmitClick: function () {
+      var self = this;
       $('body').on('click.contact_form', '#contact_submit', function(ev){
-        if($.trim($('#user_company_name').val()) == '') {
-          $('#user_client_manager').removeAttr('checked');
+        if($("#user_form").valid()) {
+          if($.trim($('#user_company_name').first().val()) == '') {
+            $('#user_client_manager').removeAttr('checked');
+          }
+
+          $("#user_companies [data-new-company='true']").each(function(i, selected){ 
+            var company_name = $.trim($(selected).find("input").val());
+            if(company_name != "" && ($.inArray(company_name, self.selected_companies) == -1)){
+              var obj = self.userCompanyParams($(selected), company_name);
+              self.addedCompanies.push(obj);
+            }
+          });
+
+          $("#user_companies [data-company-edited='true'], [data-company-name-edited='true'], [data-cmanager-edited='true']").not("[data-company-destroyed='true']").each(function(i, selected){ 
+            var obj = self.userCompanyParams($(selected), $(selected).find("p").text());
+            obj["id"] = $(selected).find("p").data('id');
+            self.editedCompanies.push(obj);
+          });
+          
+          $("#user_companies [data-company-destroyed='true']").each(function(i, selected){ 
+            var company_name = $(selected).find("p").text();
+            if($.inArray(company_name, self.selected_companies) !== -1)
+              self.removedCompanies[i] = company_name;
+          });
+
+          $("#added_companies").val(self.addedCompanies.toJSON());
+          $("#removed_companies").val(String(self.removedCompanies));
+          $("#edited_companies").val(self.editedCompanies.toJSON());
         }
       });
+    },
+
+    userCompanyParams: function (element, company_name) {
+      return { "company_name" : company_name,
+        "client_manager" : eval(element.data("client-manager")) || false,
+        "default_company" : eval(element.data("default-company")) || false
+      }
     },
 
     bindCustomerKeyup: function () {
       $("body").on('keyup.contact_form', '#user_company_name', function(ev) {
         var company = this.value.trim();
         if (company != "") {
-            $('#user_client_manager').removeAttr("disabled");
-        }
-        else
-        {
+          $('#user_client_manager').removeAttr("disabled");
+        } else {
           $('#user_client_manager').removeAttr('checked');
           $('#user_client_manager').prop("disabled", true);
         }
@@ -157,7 +216,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       var self = this;
       $('body').on('click.contact_form', '.ue_remove_image', function(){
         if(!$(this).hasClass('disabled')){
-          if(confirm(window.App.Contacts.Contact_form.confirm_text))
+          if(confirm(self.confirm_text))
           {
             $(this).siblings("input[type=hidden].ue_destroy").val(1);
             $(this).parent().addClass('destroyed').hide();
@@ -212,6 +271,125 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
 
     onLeave: function (data) {
       $('body').off('.contact_form');
+    },
+
+    addNewCompany: function () {
+      var self = this;
+      $('body').on('click.contact_form', '#add_new_company', function(ev){
+        if(!$(this).hasClass('disabled')) {
+          var count = $("#user_companies li").not("[data-company-destroyed='true']").length+1;
+          if(count==1) {
+            var className = "ficon-checkmark-round primary";
+            var company_title = self.default_company;
+            var default_comp = true;
+          } else {
+            var className = "make_company_default";
+            var company_title = self.mark_default_company;
+            var default_comp = false;
+          }
+          var client_manager = self.client_manager;
+          $(JST["app/contacts/add_company"]({"count" : count, 
+                                             "class_name" : className,
+                                             "client_manager" : client_manager, 
+                                             "company_title" : company_title,
+                                             "default_comp" : default_comp})).appendTo('ul.companies');
+          $('#user_companies').find('input[type="text"]').last().focus();
+        }
+        self.manageNewCompany();
+      });
+    },
+
+    bindClientManagerClick: function () {
+      var self = this;
+      $('body').on('click.contact_form', ".client_manager", function(){
+        $(this).toggleClass("manage unmanage ficon-ticket-thin ficon-ticket");
+        var parent = $(this).parent();
+        self.toggleEditAttr(parent, "data-cmanager-edited");
+        parent.attr("data-client-manager", !eval(parent.attr("data-client-manager")));
+      });
+    },
+
+    bindDefaultCompanyClick: function () {
+      var self = this;
+      $('body').on('click.contact_form', '.make_company_default', function() {
+        var obj = $("#user_companies [data-default-company='true']");
+        obj.find("span.default_company").removeClass("ficon-checkmark-round primary")
+                                        .addClass("make_company_default")
+                                        .attr("title", self.mark_default_company);
+        self.toggleEditAttr(obj, "data-company-edited");
+        obj.attr("data-default-company", false);
+        $(this).addClass("ficon-checkmark-round primary")
+               .removeClass("make_company_default")
+               .twipsy('hide')
+               .attr("title", self.default_company);
+        self.toggleEditAttr($(this).parent(), "data-company-edited");
+        $(this).parent().attr("data-default-company", true);
+      });
+    },
+
+    toggleEditAttr: function (obj, attrName) {
+      if(obj.find("p").length == 1)
+        var val = !eval(obj.attr(attrName));
+        obj.attr(attrName, val);
+    },
+
+    bindDeleteCompanyClick: function () {
+      var self = this;
+      $('body').on('click.contact_form', '.company_remove', function(){
+        $(this).parent().remove();
+        self.manageNewCompany();
+      });
+    },
+
+    bindRenameCompanyClick: function () {
+      $('body').on("change.contact_form", ".rename_company",function(){
+        $("#rename_text").toggleClass("disabled rename_fade");
+        if($(this).attr("id") == "rename_label"){
+          $("#rename_text").focus();
+        }
+      });
+    },
+
+    bindRemoveCompanyClick: function () {
+      var self = this;
+      $('body').on('shown.contact_form', '#company-delete-confirmation', function(e){
+        $("#rename_text").addClass("disabled rename_fade");
+        var modal = $(this).data('modal');
+        self.triggerElement = $(modal.options.source.siblings('p'));
+        $("#target_company").text(self.triggerElement.text());
+      });
+    },
+
+    bindCompanySubmitClick: function () {
+      var self = this;
+      $('body').on('click.contact_form', "#company-delete-confirmation-submit", function() {
+        if ($("#rename_label").attr('checked') == "checked"){
+          var new_company_name = $("#rename_text").val().trim();
+          if(new_company_name !== ""){
+            self.triggerElement.text(new_company_name);
+            self.triggerElement.parent().attr("data-company-name-edited", true);
+            $('#company-delete-confirmation').modal('hide');
+          }
+        } else {
+          self.triggerElement.parent().attr('data-company-destroyed', true)
+                                      .addClass('hide');
+          if(eval(self.triggerElement.parent().attr("data-default-company")) || false){
+            var obj = $("#user_companies li").not("[data-company-destroyed='true']").first();
+            obj.attr("data-default-company", true)
+               .attr("data-company-edited", true);
+            obj.find(".default_company")
+               .addClass("ficon-checkmark-round primary")
+               .removeClass("make_company_default")
+               .attr("title", self.default_company);
+          }
+          $('#company-delete-confirmation').modal('hide');
+        }
+      });
+    },
+
+    manageNewCompany: function () {
+      var length = $("#user_companies li").not("[data-company-destroyed='true']").length;
+      $('.uc_add_company').toggle(length < 20);
     }
   };
 }(window.jQuery));

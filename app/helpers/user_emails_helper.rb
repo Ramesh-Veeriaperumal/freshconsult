@@ -4,6 +4,8 @@ module UserEmailsHelper
     def initialize(form_builder, object_name, class_name, field, field_label, dom_type, required, enabled,
                       field_value = '', dom_placeholder = '', bottom_note = '', args = {})
     @account = args[:account]
+    @user_companies = args[:user_companies]
+    @contractor = args[:contractor]
     super
     end
 
@@ -15,6 +17,12 @@ module UserEmailsHelper
       if @field_name == "email"
         @field_value = @form_builder.object.user_emails.map(&:email).join(", ")
       end
+      super
+    end
+
+    def construct_text
+      return construct_company_field if @account.features_included?(:multiple_user_companies) && 
+                                        @field_name == "company_name"
       super
     end
 
@@ -70,5 +78,57 @@ HTML
       output.join("").html_safe
     end
 
+    def construct_company_field
+      output = []
+      count = @user_companies.length
+      @user_companies.each_with_index do |user_company, index|
+        company = user_company.company
+        output << %(<li class="uc_list" data-client-manager="#{user_company.client_manager}" data-default-company="#{user_company.default}">)
+        output << content_tag(:a, "", :class => "remove_pad uc_actions ficon-minus fsize-12",
+                                      :target => "_blank",
+                                      :rel => "freshdialog", 
+                                      :title => t('contacts.remove_company'),
+                                      :'data-target' => "#company-delete-confirmation",
+                                      :'data-submit-label' => t('confirm'),
+                                      :'data-submit-class' => "btn btn-primary",
+                                      :'data-width' => "400px",
+                                      :'data-close-label' => t('cancel'),
+                                      :'data-destroy-on-close' => true)
+        output << "<p class='uc_text' data-id='#{company.id}'>#{html_escape company.name}</p>"
+        if user_company.default == true
+          title = t('contacts.default_company')
+          class_name = "ficon-checkmark-round primary"
+        else
+          title = t('contacts.mark_default_company')
+          class_name = "make_company_default"
+        end
+        output << content_tag(:span, "", 
+                      :class => "default_company tooltip fsize-20 ml9 #{class_name}",
+                      :title => title)
+        output << "<i class='fsize-18 tooltip client_manager 
+                        #{user_company.client_manager == true ? "unmanage ficon-ticket" : "manage ficon-ticket-thin"}' 
+                      title='#{t('contacts.client_manager')}'></i>"
+        output << "</li>"
+      end if @user_companies.present?
+      check_box_html = @form_builder.check_box(:contractor, 
+                                              { :class => "activate", 
+                                                :checked => @contractor}, true, false).html_safe
+      output = output.join("").html_safe
+      ret = <<HTML
+        <div id="user_companies" class="user_comp">
+          <ul class="companies">
+            #{output}
+          </ul>
+          <div class="uc_add_company">
+            <a id="add_new_company" href="javascript:void(null);">
+              <span class="add_pad uc_actions ficon-plus fsize-12"></span>
+              <span id="add_company"></span>
+              #{t('add_new_company')}
+            </a>
+          </div>
+        </div>
+HTML
+      ret.html_safe
+    end
   end
 end

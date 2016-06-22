@@ -40,6 +40,7 @@ begin
   #
   SQS_V2_QUEUE_URLS = {
     SQS[:search_etl_queue] => AwsWrapper::SqsV2.queue_url(SQS[:search_etl_queue]),
+    SQS[:count_etl_queue] => AwsWrapper::SqsV2.queue_url(SQS[:count_etl_queue]),
     SQS[:reports_etl_msg_queue] => AwsWrapper::SqsV2.queue_url(SQS[:reports_etl_msg_queue])
   }
 

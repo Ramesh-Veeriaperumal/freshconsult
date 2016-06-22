@@ -86,7 +86,7 @@ class Social::TwitterController < Social::BaseController
     @user[:show_followers] = true unless visible_screen_names == [screen_name]
     unless set_screen_names.include?(screen_name)
       @user[:db] = current_account.users.find_by_twitter_id(screen_name,
-                                                          :select => "name, customer_id, email, phone, mobile, time_zone")
+                                                          :select => "name, company_id, email, phone, mobile, time_zone")
     end
     visible_stream_ids = User.current.visible_twitter_streams.collect(&:id)
     @interactions = pull_user_interactions(params[:user], visible_stream_ids, SEARCH_TYPE[:saved]) unless visible_stream_ids.blank?

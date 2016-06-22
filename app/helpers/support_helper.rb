@@ -361,7 +361,7 @@ module SupportHelper
 					</div> ).html_safe
 			else
 				%( #{ ticket_label object_name, field }
-		   			<div class="controls #{"nested_field" if field.dom_type=="nested_field"} #{"support-date-field" if field.dom_type=="date"}">
+		   			<div class="controls #{"nested_field" if field.dom_type=="nested_field"} #{"support-date-field" if field.dom_type=="date"} #{"company_div" if field.field_type == "default_company" && @ticket.new_record?}">
 		   				#{ ticket_form_element form_builder, :helpdesk_ticket, field, field_value,
 		   																						 { :pl_value_id => pl_value_id } }
 		   			</div> ).html_safe
@@ -370,7 +370,7 @@ module SupportHelper
 
 	def ticket_label object_name, field
 		required = (field[:required_in_portal] && field[:editable_in_portal])
-		element_class = " #{required ? 'required' : '' } control-label #{field[:name]}-label"
+		element_class = " #{required ? 'required' : '' } control-label #{field[:name]}-label #{"company_label" if field.field_type == "default_company" && @ticket.new_record?}"
 		label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class
 	end
 
@@ -385,6 +385,7 @@ module SupportHelper
 
 	    case dom_type
 	      when "requester" then
+	      	@company_cc_in_portal = field.company_cc_in_portal?
 	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
 	      when "widget_requester" then
 	      	render(:partial => "/support/shared/widget_requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
@@ -397,8 +398,11 @@ module SupportHelper
           			field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices,
           			{ :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "dropdown_blank" then
-	        select(object_name, field_name, field.html_unescaped_choices,
-	        		{ :include_blank => "...", :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
+	      	tkt = @ticket if field.field_type == "default_company"
+	      	choices = field.html_unescaped_choices(tkt)
+	      	disabled = true if field.field_type == "default_company" && choices.empty?
+	        select(object_name, field_name, choices,
+	        		{ :include_blank => "...", :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class, :disabled => disabled})
 	      when "nested_field" then
 			nested_field_tag(object_name, field_name, field,
 	        	{:include_blank => "...", :selected => field_value, :pl_value_id => pl_value_id},

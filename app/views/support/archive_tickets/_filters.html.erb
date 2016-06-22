@@ -22,5 +22,28 @@
         <%= user_list %>      
       </span>
     <% end %>
+
+    <% if @companies.present? %>
+      <% company_details = raised_by_company %>
+      <span class="dropdown" id="company-list-dropdown">
+        <a class="dropdown-toggle help-text" data-toggle="dropdown" href="#" data-company-id=<%= company_details[:id] %>>
+          <%= I18n.t("tickets_filter.company") %> : <b><%= company_details[:name] %></b>
+          <i class="caret"></i>
+        </a>
+        <%= company_list %>
+      </span>
+
+      <% if @tickets.present?  && @client_manager_companies.include?(company_details[:id]) %>
+        <span class="help-text">
+          <%= I18n.t("tickets_filter.raised_by") %>  : 
+          <div class="company-users-filter">
+          <%= render_autocomplete({ :selected_values => [@requested_by_user].compact, 
+                                    :max_limit => 1, 
+                                    :type => :company_users, 
+                                    :include_none => true }) %>
+        </div>
+        </span>
+      <% end %>
+    <% end %>
   </div>
 </div>

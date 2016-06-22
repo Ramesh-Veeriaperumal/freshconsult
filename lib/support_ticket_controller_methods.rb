@@ -45,7 +45,8 @@ module SupportTicketControllerMethods
   
   def can_access_support_ticket?
     @ticket && (privilege?(:manage_tickets)  ||  (current_user  &&  ((@ticket.requester_id == current_user.id) || 
-                          ( privilege?(:client_manager) && @ticket.company == current_user.company))))
+                ( current_user.company_client_manager? && current_user.company_ids.include?(@ticket.company_id)) || 
+                (current_user.contractor_ticket? @ticket))))
   end
 
   def visible_ticket?

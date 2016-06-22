@@ -238,8 +238,7 @@ class Solution::FoldersController < ApplicationController
       @customer_id = params["customers"].present? ? params["customers"].split(',') : []
     end
 
-    def set_parent_for_old_params
-      return unless params[:solution_folder].present?
-      params[:solution_folder][:category_id] ||= params[:category_id]
+    def parent_model
+      "category"
     end
 end

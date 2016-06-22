@@ -14,7 +14,10 @@ module Concerns::ApplicationConcern
   end
 
   def set_shard_for_payload  # For log
-    Thread.current[:shard_name_payload] = Thread.current[:shard_selection].shard if Thread.current[:shard_selection]
+    if Thread.current[:shard_selection]
+      Thread.current[:shard_name_payload] = Thread.current[:shard_selection].shard
+      cookies[HashedData["shard_name"]] = HashedData[Thread.current[:shard_selection].shard]
+    end
   end
 
   def unset_shard_for_payload

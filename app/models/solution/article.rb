@@ -137,7 +137,7 @@ class Solution::Article < ActiveRecord::Base
   def as_json(options={})
     return super(options) if (options[:tailored_json].present?)
     old_options = options.dup
-    options.merge!(Solution::Constants::API_OPTIONS)
+    options.merge!(Solution::Constants::API_OPTIONS.deep_dup)
     options[:except] += (old_options[:except] || [])
     options[:except].each {|ex| options[:include].delete(ex)}
     super options

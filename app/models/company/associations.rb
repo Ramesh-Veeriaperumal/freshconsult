@@ -3,12 +3,14 @@ class Company < ActiveRecord::Base
   belongs_to_account
   
   has_custom_fields :class_name => 'CompanyFieldData', :discard_blank => false # coz of schema_less_company_columns
+
+  has_many :user_companies, :class_name => 'UserCompany'
   
-  has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false},
-           :order => :name, :foreign_key => 'customer_id'
+  has_many :users, :class_name =>'User', :through => :user_companies, :order => :name, 
+                    :foreign_key => 'company_id', :conditions => {:deleted =>false}
   
-  has_many :all_users , :class_name =>'User', :order => :name,
-           :foreign_key => 'customer_id'
+  has_many :all_users, :through => :user_companies, :source => :user, :order => :name,
+                        :foreign_key => 'company_id'
 
   has_many :all_tickets ,:class_name => 'Helpdesk::Ticket', :foreign_key => "owner_id"
 
