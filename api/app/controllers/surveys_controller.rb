@@ -21,7 +21,7 @@ class SurveysController < ApiApplicationController
   end
 
   def classic_survey_results(item)
-    item.survey_results.preload({ :survey_remark => {:feedback => { :note_old_body => {} }}}).order('created_at desc')
+    item.survey_results.preload(survey_remark: { feedback: { note_old_body: {} } }).order('created_at desc')
   end
 
   def custom_survey?

@@ -149,7 +149,7 @@ class SurveyResult < ActiveRecord::Base
           conditions: ['created_at > ?', created_in_last_month ]
         },
         created_since: {
-          conditions: ['created_at > ?', survey_result_filter.created_since ]
+          conditions: ['created_at >= ?', survey_result_filter.created_since.try(:to_time).try(:utc) ]
         },
         user_id: {
           conditions: { customer_id: survey_result_filter.user_id }

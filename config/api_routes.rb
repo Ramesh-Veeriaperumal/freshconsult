@@ -70,7 +70,8 @@ Helpkit::Application.routes.draw do
       end
     end
     
-    resources :surveys, only: [:active_survey, :satisfaction_ratings] do
+
+    resources :surveys, only: [] do
       collection do
         get :active_survey
         get :satisfaction_ratings, to: 'surveys#index'

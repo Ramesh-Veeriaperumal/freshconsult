@@ -192,12 +192,19 @@ class SurveysControllerTest < ActionController::TestCase
 
   def test_index_with_created_at_filter
     CustomSurvey::SurveyResult.update_all(created_at: 2.days.ago)
-    CustomSurvey::SurveyResult.first.update_attributes(created_at: DateTime.now)
-    get :index, controller_params(created_since: 1.days.ago.iso8601)
-    pattern = []
+    present_date_time = DateTime.now
+    survey_result = CustomSurvey::SurveyResult.first
+    survey_result.created_at = present_date_time
+    survey_result.save
+    get :index, controller_params(created_since: present_date_time.iso8601)
     assert_response 200
-    match_json(pattern)
     response = parse_response @response.body
-    assert_equal 0, response.size
+    assert_equal 1, response.size
+  end
+
+  def test_view_all_survey_with_invalid_user_ids
+    get :index, controller_params(user_id: 1000)
+    assert_response 400
+    match_json([bad_request_error_pattern('user_id', :absent_in_db, resource: 'contact', attribute: 'user_id')])
   end
 end
