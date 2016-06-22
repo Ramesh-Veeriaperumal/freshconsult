@@ -5080,7 +5080,7 @@ $.fn.insertExternal = function(html)
 		},
 		bindCustomEvent: function() {
 			var self = this;
-			this.$editor.$el.off();
+			this.$editor.$el.off('pasteImage');
 			this.$editor.$el.on('pasteImage', function(ev, data){
 				self.saveImage(data);
 				ev.preventDefault();
