@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160512085738) do
+ActiveRecord::Schema.define(:version => 20160616131121) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2581,6 +2581,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   end
 
   add_index "portal_solution_categories", ["account_id", "portal_id"], :name => "index_portal_solution_categories_on_account_id_and_portal_id"
+  add_index "portal_solution_categories", ["account_id", "solution_category_meta_id"], :name => "portal_solution_categories_on_account_id_category_meta_id"
   add_index "portal_solution_categories", ["portal_id", "solution_category_id"], :name => "index_on_portal_and_soln_categ_id"
   add_index "portal_solution_categories", ["portal_id", "solution_category_meta_id"], :name => "index_portal_solution_categories_on_portal_id_category_meta_id"
 
@@ -3062,6 +3063,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.string   "available"
   end
 
+  add_index "solution_category_meta", ["account_id", "position"], :name => "index_category_meta_on_account_id_position"
   add_index "solution_category_meta", ["account_id"], :name => "index_solution_category_meta_on_account_id"
 
   create_table "solution_customer_folders", :force => true do |t|
