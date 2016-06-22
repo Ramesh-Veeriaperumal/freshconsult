@@ -31,4 +31,14 @@ module CommunityHelper
     end) + draft.send(att_type)
   end
 
+  def inline_manual_classes_for_multilingual
+    classes = []
+    classes << "eligible" if Account.current.features?(:multi_language)
+    if Account.current.multilingual_available?
+      classes << "available" 
+      classes << (Account.current.multilingual? ? "ml-enabled" : "ml-disabled")
+    end
+    classes.join(" ").html_safe
+  end
+
 end
