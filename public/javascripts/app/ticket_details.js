@@ -883,7 +883,7 @@ var scrollToError = function(){
 				
 				if(replyText.toLowerCase().indexOf('attach')>-1){
 				  var attachments = jQuery('input[name="helpdesk_note[attachments][][resource]"]');
-				  if(!(attachments[0] && attachments[0].files.length)){
+				  if(!(attachments[0] && attachments[0].files && attachments[0].files.length)){
 				    var missed_attachment_text = TICKET_DETAILS_DATA.attachment_missing_alert;
 				    if(!confirm(missed_attachment_text)){
 				      return false;
