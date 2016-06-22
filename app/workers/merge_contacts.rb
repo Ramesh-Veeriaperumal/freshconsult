@@ -59,7 +59,7 @@ class MergeContacts < BaseWorker
     move_helpdesk_activities children_ids
     move_forum_activities children_ids
     move_polymorphic_objects children_ids
-    move_archived_tickets children_ids if @account.features?(:archive_tickets)
+    move_archived_tickets children_ids if @account.features_included?(:archive_tickets)
   end
 
   def move_accessory_attributes children_ids

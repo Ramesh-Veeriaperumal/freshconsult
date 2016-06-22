@@ -405,7 +405,7 @@ protected
       @total_user_tickets_size = @total_user_tickets.length
       @user_tickets = @total_user_tickets.take(10)
 
-      if current_account.features?(:archive_tickets)
+      if current_account.features_included?(:archive_tickets)
         @total_archive_user_tickets = current_account.archive_tickets.permissible(current_user).
           requester_active(@user).newest(11).find(:all, :include => [:responder,:requester])
         @total_archive_user_tickets_size = @total_archive_user_tickets.length

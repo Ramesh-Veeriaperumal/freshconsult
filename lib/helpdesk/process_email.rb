@@ -382,7 +382,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                                     to_email[:email], 
                                                     params[:subject], 
                                                     message_id)
-          if account.features?(:archive_tickets) && archived_ticket
+          if account.features_included?(:archive_tickets) && archived_ticket
             ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) 
             # tags = archived_ticket.tags
             # add_ticket_tags(tags,ticket) unless tags.blank?
@@ -468,7 +468,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         display_id = display_span.last.inner_html
         unless display_id.blank?
           ticket = account.tickets.find_by_display_id(display_id.to_i)
-          self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features?(:archive_tickets) && !ticket
+          self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features_included?(:archive_tickets) && !ticket
           return ticket 
         end 
       end
@@ -484,7 +484,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         params[:html] = parsed_html.inner_html
         unless display_id.blank?
           ticket = account.tickets.find_by_display_id(display_id.to_i)
-          self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features?(:archive_tickets) && !ticket
+          self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features_included?(:archive_tickets) && !ticket
           return ticket 
         end 
       end
@@ -870,7 +870,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     parent_ticket_id = ticket.schema_less_ticket.parent_ticket
     if !parent_ticket_id
       return nil
-    elsif account.features?(:archive_tickets) && parent_ticket_id
+    elsif account.features_included?(:archive_tickets) && parent_ticket_id
       parent_ticket = ticket.parent
       unless parent_ticket
         archive_ticket = Helpdesk::ArchiveTicket.find_by_ticket_id(parent_ticket_id)

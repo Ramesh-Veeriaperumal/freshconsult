@@ -1,4 +1,4 @@
-<% if current_account.features?(:archive_tickets) and @ticket.is_a?(Helpdesk::ArchiveTicket) %>
+<% if current_account.features_included?(:archive_tickets) and @ticket.is_a?(Helpdesk::ArchiveTicket) %>
   <%= render :partial => "archived_ticket" %>
 <% else %>
   <%= render :partial => "ticket" %>

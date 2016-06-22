@@ -179,7 +179,7 @@ protected
     end
 
     def check_feature
-      unless current_account.features?(:archive_tickets)
+      unless current_account.features_included?(:archive_tickets)
         redirect_to support_tickets_url
       end
     end

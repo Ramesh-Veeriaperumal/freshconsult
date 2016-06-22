@@ -1392,7 +1392,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_archive_ticket(load_notes = false)
-    raise ActiveRecord::RecordNotFound unless current_account.features?(:archive_tickets)
+    raise ActiveRecord::RecordNotFound unless current_account.features_included?(:archive_tickets)
 
     options = load_notes ? archive_preload_options : {}
     archive_ticket = load_by_param(params[:id], options, true)

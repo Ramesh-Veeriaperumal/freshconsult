@@ -103,7 +103,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     [" archive_tickets.created_at >= ? and archive_tickets.created_at <= ?", start, stop] }
   }
   # do we need this
-  validates_uniqueness_of :display_id, :scope => :account_id
+  # validates_uniqueness_of :display_id, :scope => :account_id
   default_scope where(:progress => false)
 
   def self.agent_permission user

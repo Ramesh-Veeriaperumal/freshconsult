@@ -26,7 +26,7 @@ class EsIndexObserver < ActiveRecord::Observer
 
 	def commit_on_destroy(model)
 		model.update_es_index if [:User,:Post].include? model.class.name.to_sym
-		unless model.account.features?(:archive_tickets)
+		unless model.account.features_included?(:archive_tickets)
 		  model.remove_es_document if [:"Helpdesk::Ticket",:Company,:"Solution::Article",:Topic, :"Helpdesk::Tag", :"Freshfone::Caller", :"Admin::CannedResponses::Response", :"ScenarioAutomation"].include? model.class.name.to_sym
 		else
 	  	if [:Company,:"Solution::Article",:Topic, :"Helpdesk::Tag", :"Freshfone::Caller", :"Admin::CannedResponses::Response", :"ScenarioAutomation"].include? model.class.name.to_sym

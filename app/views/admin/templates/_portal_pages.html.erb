@@ -22,7 +22,7 @@
 					</li>
 				<% end %>	
 				
-				<% if key == :tickets and current_account.features?(:archive_tickets) %>
+				<% if key == :tickets and current_account.features_included?(:archive_tickets) %>
 					<% Portal::Page::ARCHIVE_TICKETS.each do |page| %>
 						<% page_id = Portal::Page::PAGE_TYPE_KEY_BY_TOKEN[page] %>
 						<li>
