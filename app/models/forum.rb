@@ -206,10 +206,11 @@ class Forum < ActiveRecord::Base
   def visible?(user)
     return true if (user and user.agent?)
     return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
-    return true if (user and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
+    return false unless user
+    return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]
     company_cdn = user.contractor? ? (user.company_ids & customer_forums.map(&:customer_id)).any? : 
                     (user.company  && customer_forums.map(&:customer_id).include?(user.company.id))
-    return true if (user && (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && 
+    return true if ((self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && 
       company_cdn)
   end
 
