@@ -1,18 +1,37 @@
 class Integrations::CloudElements::CrmController < Integrations::CloudElementsController
   include Integrations::CloudElements::Crm::Constant
-  before_filter :check_feature, :only => [:instances, :edit, :update]
-  before_filter :verify_authenticity, :only => [:instances, :edit, :update]
-  before_filter :build_installed_app, :only => [:instances]
+  include Integrations::CloudElements::Constant
+  before_filter :check_feature, :verify_authenticity, :except => :event_notification
+  before_filter :build_installed_app, :only => [:instances, :create]
   before_filter :load_installed_app, :only => [:edit, :update]
   before_filter :update_obj_transformation, :only => [:update]
   before_filter :update_formula_inst, :only => [:update]
   
-  def instances
+  def settings
+    build_setting_configs "settings"
+    render :template => "integrations/applications/crm_settings"
+  end
+
+  def create
     el_response = create_element_instance( crm_payload, @metadata )
+    redirect_to "#{request.protocol+request.host_with_port}#{integrations_cloud_elements_crm_instances_path}?state=#{params[:state]}&method=post&id=#{el_response['id']}&token=#{el_response['token']}"
+  rescue => e
+    hash = build_setting_configs "create"
+    flash[:error] = t(:'flash.application.install.cloud_element_settings_failure')
+    render :template => "integrations/applications/crm_settings", :locals => {:configs => hash}
+  end
+
+  def instances
+    if params[:id].present? and params[:token].present?
+      el_response, el_response_id, el_response_token = true, params[:id], params[:token]
+    else
+      el_response = create_element_instance( crm_payload, @metadata )
+      el_response_id, el_response_token = el_response['id'], el_response['token']
+    end
     fd_response = create_element_instance( fd_payload, @metadata )
-    fetch_metadata_fields(el_response['token'])
-    formula_resp = create_formula_inst(el_response['id'], fd_response['id'])
-    app_configs = get_app_configs(el_response['token'], el_response['id'], fd_response['id'], formula_resp['id'])
+    fetch_metadata_fields(el_response_token)
+    formula_resp = create_formula_inst(el_response_id, fd_response['id'])
+    app_configs = get_app_configs(el_response_token, el_response_id, fd_response['id'], formula_resp['id'])
     @installed_app.configs[:inputs].merge!(app_configs)
     @installed_app.save!
     @action = 'update'
@@ -20,9 +39,8 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     render_settings
   rescue => e
     delete_formula_instance_error request.user_agent, formula_resp['id'] if formula_resp.present? and formula_resp['id'].present?
-    [el_response, fd_response].each do |response|
-      delete_element_instance_error request.user_agent, response['id'] if response.present? and response['id'].present?
-    end
+    delete_element_instance_error request.user_agent, el_response_id if el_response.present? and el_response_id.present?
+    delete_element_instance_error request.user_agent, fd_response['id'] if fd_response.present? and fd_response['id'].present?
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application: #{e.message}", :account_id => current_account.id}})
     flash[:error] = t(:'flash.application.install.error')
     redirect_to integrations_applications_path 
@@ -75,6 +93,11 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
         hash[:refresh_token] = get_metadata_from_redis["refresh_token"]
         hash[:api_key] = Integrations::OAUTH_CONFIG_HASH[element]["consumer_token"]
         hash[:api_secret] = Integrations::OAUTH_CONFIG_HASH[element]["consumer_secret"]
+      else
+        constant_file = read_constant_file
+        constant_file["keys"].each do |field|
+          hash[field.to_sym] = params["#{field}_label"]
+        end
       end
       portal = current_account.main_portal
       hash[:callback_url] = (Rails.env.eql? "development") ? "https://freshdesk-ngrok.ngrok.io" : "#{portal.url_protocol}://#{portal.host}" # mention ngrok for development environment.
@@ -157,7 +180,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     def get_app_configs( element_token, element_instance_id, fd_instance_id, formula_instance_id )
       element_config = default_mapped_fields
       config_hash = Hash.new
-      config_hash = get_metadata_from_redis
+      config_hash = get_metadata_from_redis if OAUTH_ELEMENTS.include? element
       config_hash['element_token'] = element_token
       config_hash['element_instance_id'] = element_instance_id
       config_hash['fd_instance_id'] = fd_instance_id
@@ -327,7 +350,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       @element_config['existing_contacts'] = file['existing_contacts']
       @element_config['element_validator'] = file['validator']
       @element_config['fd_validator'] = file['fd_validator']
-      @element_config['objects']= file['objects'].keys
+      @element_config['objects']= file['objects'].keys #check the usage.
       @element_config
     end
 
@@ -355,6 +378,20 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
     def read_constant_file
       JSON.parse(File.read("lib/integrations/cloud_elements/crm/#{element}/constant.json"))
+    end
+
+    def build_setting_configs method
+      constant_file = read_constant_file
+      @keys = constant_file["keys"]
+      @app_name = element
+      @action ="create"
+      if method.eql? "create"
+        hash = {}
+        constant_file["keys"].each do |field|
+          hash[field] = params["#{field}_label"] unless field.eql? "password"
+        end
+        hash
+      end
     end
 
     def check_feature

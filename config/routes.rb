@@ -676,6 +676,8 @@ Helpkit::Application.routes.draw do
     namespace :cloud_elements, :path => "sync" do
       get :oauth_url
       namespace :crm do
+        get :settings
+        post :create
         get :instances
         get :edit
         post :update

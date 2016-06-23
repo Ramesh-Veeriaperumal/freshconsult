@@ -2261,6 +2261,7 @@ en:
         cti_error: "Multiple CTI apps can not be enabled."
         freshfone_alert: "CTI app cannot be enabled when your phone channel is enabled."
         cloud_element_success: "The integration has been enabled with default configuration"
+        cloud_element_settings_failure: "check your configuration and enable again."
         no_feature_error: "Please contact support and enable the crm sync feature first"
       update:
         success: "App updated successfully."

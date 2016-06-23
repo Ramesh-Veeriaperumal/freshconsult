@@ -16,7 +16,7 @@ class Integrations::CloudElementsController < ApplicationController
     end
 
     def element
-      Integrations::CloudElements::Constant::APP_NAMES[params[:state].to_sym]
+      params[:state]
     end
 
     def service_obj payload, metadata

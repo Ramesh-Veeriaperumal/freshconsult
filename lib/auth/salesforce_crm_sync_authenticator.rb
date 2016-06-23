@@ -22,6 +22,6 @@ class Auth::SalesforceCrmSyncAuthenticator < Auth::Authenticator
   end
 
   def get_redirect_url
-    "#{@portal_url}/integrations/sync/crm/instances?state=sfdc&method=post"
+    "#{@portal_url}/integrations/sync/crm/instances?state=salesforce_crm_sync&method=post"
   end
 end

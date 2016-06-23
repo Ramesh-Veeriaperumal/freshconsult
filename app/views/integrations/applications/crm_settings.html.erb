@@ -1,0 +1,55 @@
+<% content_for :helpcard do -%>
+  <div class="helpcard">
+      <%=t("integrations.#{@app_name}.helptext").html_safe%>
+  </div>
+<%- end %>
+<h3 class="lead"><%=t("integrations.#{@app_name}.form.#{@app_name}_settings")%></h3>
+<%= form_tag("/integrations/sync/crm/#{@action}", :method => "post" )  do %>
+	<ul class="ui-form">
+	  <li class="inline-field">
+	  <label class="caption">
+	    <div class="logo application-logo-<%=@app_name%>"></div>
+	    <div class="logo info-data">
+	      <%=t("integrations.#{@app_name}.desc")%>
+	    </div>
+	  </label>
+	  <%= hidden_field_tag :state, "#{@app_name}"%>
+	  <% @keys.each do |field| %>
+			 <%= hidden_field_tag "#{field}_label".to_sym%>
+		  <div class="fields">
+		    <label for="crm_sync"> <%=t("integrations.#{@app_name}.form.#{field}")%> 
+		      <span class="required_star">*</span>
+		    </label>
+		    <input size="30" 
+	        maxlength="70" 
+	        aria-required="true" class="text required"
+	        id="<%=@app_name%>_<%=field%>"
+	        name="configs[<%=field%>]"
+	        <%if defined?(configs["#{field}"]) %>
+	          value = "<%= configs["#{field}"] %>"
+	        <%end%>
+	        <% type = (field.eql? "password") ? "password" : "text" %>
+	        type="<%=type%>">
+	  		<span class="seperator"></span>
+		  </div>
+	  <% end %>
+	</li>
+	</ul>
+
+	<div class="button-container">
+	  <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
+	  <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return buildParams();" %>
+	</div>
+<%end%>
+<script type="text/javascript">
+	function buildParams(){
+		debugger
+		<% @keys.each do |field|%>
+				var value = jQuery("#<%=@app_name%>_<%=field%>").val();
+				jQuery('#<%=field%>_label').val(value);
+		<%end%>
+		return true
+	}
+</script>
+
+
