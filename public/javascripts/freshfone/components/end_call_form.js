@@ -127,7 +127,7 @@ var FreshfoneEndCall;
 			formatSelection: function (result) {
 				self.$requesterEmailDom.toggle(!result.id);
 				self.$requesterEmail.val(result.email);
-				self.$requesterNumber.val(result.phone);
+				self.$requesterNumber.val(result.phone || result.mobile);
 				self.$requesterName.data("requester_id",result.id);
 				self.$requesterName.val(escapeHtml(result.value));
 				return escapeHtml(result.value);

@@ -28,7 +28,7 @@
 		  		<% end %>
 
 		  		<% unless search_record[:mobile].blank? %>
-		  			<li class='phone-details search-result'>
+		  			<li class='phone-details search-result' id="ff_contact_id_<%= search_record[:id] %>">
 					  	<div class="phone-contact result-phone ellipsis"><%= search_record[:mobile] %> </div>
 					  	<div class="phone-type ellipsis"><%=t('freshfone.search.mobile_phone')%></div>
 					  	<div class="ff_call_button pull-right hide">
