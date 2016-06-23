@@ -6677,6 +6677,21 @@ en:
         select: "Select an option"
         contact: "Contact Fields"
         account: "Account Fields"
+    dynamics_crm_sync:
+      label: "Dynamics Contact Account Sync"
+      desc: "You can sync contact and account information between Dynamics crm and Freshdesk."
+      helptext: "<h4>Dynamics Sync</h4><p><br/>Select the list of fields need to be synced between Freshdesk and Dynamics. You can select to a max of 10 fields.</p><p><strong>Note:</strong><br/>First four fields are the default fields and cannot be removed.</p>"
+      add_fields:
+        remove: "Remove"
+      form:
+        dynamics_crm_sync_settings_info: ""
+        dynamics_crm_sync_settings: "Dynamics Settings"
+        select: "Select an option"
+        contact: "Contact Fields"
+        account: "Account Fields"
+        username: "Username"
+        password: "Password"
+        site_url: "Site Url"
     nimble:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."

@@ -1,0 +1,16 @@
+{
+	"element": {
+	"key": "dynamicscrmadfs"
+	},
+	"configuration": {
+		"user.username": "%{username}",
+		"user.password": "%{password}",
+		"dynamics.tenant": "%{site_url}",
+		"document.tagging": false,
+		"event.notification.enabled": "true",
+		"event.vendor.type": "polling",
+		"event.poller.urls": "account contact",
+		"event.notification.callback.url": "%{callback_url}/integrations/cloud_elements/crm/event_notification"
+	},
+"name": "%{element_name}"
+}
