@@ -93,7 +93,7 @@ class User < ActiveRecord::Base
               only: [ :name, :email, :description, :job_title, :phone, :mobile,
                          :twitter_id, :fb_profile_id, :account_id, :deleted,
                          :helpdesk_agent, :created_at, :updated_at ], 
-              include: { company: { only: [:name] },
+              include: { customer: { only: [:name] },
                             user_emails: { only: [:email] }, 
                             flexifield: { only: es_contact_field_data_columns } } }, true
            ).to_json
