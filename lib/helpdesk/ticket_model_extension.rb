@@ -42,7 +42,7 @@ module Helpdesk::TicketModelExtension
 
   def custom_export_fields_order account = Account.current
     shift = default_export_fields_order.keys.length
-    fields = account.ticket_fields.custom_fields.pluck(:name)
+    fields = account.ticket_fields_with_nested_fields.custom_fields.pluck(:name)
     Hash[fields.each_with_index.map {|x,i| [x, i+1+shift]}]
   end
 
