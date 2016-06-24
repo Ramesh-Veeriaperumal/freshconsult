@@ -17,11 +17,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def count_es_columns
-    @@count_es_ff_columns ||= ticket_indexed_fields.concat(count_es_ff_columns).concat(schema_less_columns)
+    @@count_es_columns ||= ticket_indexed_fields.concat(count_es_ff_columns).concat(schema_less_columns)
   end
 
   def count_es_ff_columns
-    Flexifield.column_names.select {|v| v =~ /^ff(s|_date|_int|_decimal|_boolean)/}.map(&:to_sym)
+    @@count_es_ff_columns ||= Flexifield.column_names.select {|v| v =~ /^ff(s|_date|_int|_decimal|_boolean)/}.map(&:to_sym)
   end
 
   def ticket_indexed_fields
@@ -34,10 +34,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :status_updated_at, :sla_timer_stopped_at, :outbound_count, :avg_response_time, :first_resp_time_by_bhrs,
       :resolution_time_by_bhrs, :avg_response_time_by_bhrs
     ]
-  end
-
-  def count_es_flexifield_columns
-    es_flexifield_columns
   end
 
   def schema_less_columns
