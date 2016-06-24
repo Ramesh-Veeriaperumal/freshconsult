@@ -698,7 +698,7 @@ class User < ActiveRecord::Base
   end
   
   def company_name
-    company.name if company
+    default_user_company.company.name if default_user_company.present? && default_user_company.company.present?
   end
 
   def company_id= comp_id
