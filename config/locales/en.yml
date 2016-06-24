@@ -2038,6 +2038,7 @@ en:
         manage_supervisor_rules: Manage Supervisor rules
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
+        manage_ticket_templates: Manage Ticket Templates
         admin_tasks: Play God with Super Admin controls
         manage_account: Include account management
     home:
@@ -2069,6 +2070,7 @@ en:
         customer-fields: Customer Fields
         remote-authentication: Remote Authentication
         scenario: Scenario Automations
+        ticket_template: "Ticket Templates"
         email: Email
         everything: Everything
         support-channels: Support Channels
@@ -2165,6 +2167,7 @@ en:
         event_based_rules: "Event based rules"
         scenario_automations: "Scenario Automations"
         macros: "Macros"
+        template: "Ticket Templates"
         email_notifications: "Email Notifications"
         auto_responses: "Auto responses"
         canned_responses: "Canned Responses"
@@ -3121,7 +3124,7 @@ en:
     edit: Edit Scenario
     shared: Shared
     personal: Personal
-    no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
+    no_scenario: "You don't have any scenarios <a href=%{link}>Create New</a>"
     no_scenario_to_execute: "No Scenarios"
     duplicate_title: Duplicate scenario. Name already exists
     visibility:
@@ -3154,6 +3157,42 @@ en:
   send_email_to_requester: Send Email to Requester
   feedbackwidget_btcustomize: Button customization
   chatwidget_agentsonline: When agents are online
+  ticket_templates:
+    title: "Ticket Templates"
+    select_template: "Select a template"
+    helptext:
+      info1: "Templates allow you to pre-fill new tickets and outgoing emails with a single click. You can save time spent on typing out the same content again and again, and quickly create tickets or send outbound emails."
+      info2: "For example, you can create a template called 'Initiate Refund' by filling the body of the ticket and setting the priority 'medium'. So the next time you receive a phone call about a refund, you can create a medium priority ticket for your customer and initiate the refund request with a single click."
+    new_template: "Add New"
+    create_template: "Create Template"
+    template_note: "Selecting a template will replace <br/>the form with new values."
+    template_info: "Ticket templates help to pre-fill this <br/>form in a single click and are helpful for <br/>recurring issues and communications."
+    new_title: "New Template"
+    edit_title: "Edit Template"
+    properties: "Properties"
+    description: "example: To initiate a refund for all cancellation requests"
+    name: "example: Initiate Refund"
+    apply_template: "Apply Template"
+    no_templates: "You don't have any templates "
+    create_new: "Create New"
+    shared: Shared
+    personal: Personal
+    delete_multiple: "The selected templates have been deleted."
+    partial_delete: "Could not delete the following templates due to an error. Please try again after sometime."
+    delete_templates: Are you sure you want to delete the selected templates?
+    not_available: "Looks like this template is not available anymore. Select another template to apply."
+    warning_message: "Selecting a template will reset the entire form - including the description and attachments."
+    copy_of: "Copy of"
+    apply_on_form: "Applying template..."
+    acc_templ_count: "%{templ_count} of %{total_templ} Templates"
+    total_templ_count: "Reached %{total_templ} Templates"
+    visibility:
+      groups: Agents in group
+      all_agents: All agents
+      me_only: Myself
+      available_for: Available for
+    errors:
+      duplicate_title: "Duplicate template. Title already exists"
   solution_category:
     all: All Categories
     name: Name
@@ -3571,6 +3610,7 @@ en:
     toggle_availability_disabled: If disabled, agents will always be set as “available”. Admins and supervisors can change the agent availability from the dashboard, if necessary.
     toggle_availability_note: "Note: Agents belonging to multiple groups will be able to change their availability only if they have permission to control their availability in all of the groups they belong to."
     round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
+    page_not_found: "This group could not be found. It might have been deleted or the URL mistyped."
     assigntime:
       half: 30 Minutes
       one: 1 Hour
@@ -5526,7 +5566,7 @@ en:
         tickets: Tickets
         recent_tickets: Recent tickets
         archive_tickets: Archived tickets
-        contacts: Contacts  
+        contacts: Contacts
         customer: Customer
         customers: Customers
         article: Article
@@ -6679,7 +6719,7 @@ en:
       send_reply_in_fd: "Notify customer via email"
       add_comment_in_jira: "Add a comment in JIRA"
       update_jira_status: "Update JIRA status"
-      add_attachments_in_jira: "While syncing exclude ticket attachments" 
+      add_attachments_in_jira: "While syncing exclude ticket attachments"
 
     infusionsoft:
       label: "Infusionsoft"
@@ -8045,7 +8085,7 @@ en:
         resolution_violated: The percentage of tickets were not resolved within SLA in the selected time period
         customer_interactions: No. of customer responses made in the selected time period
         agent_interactions: No. of agent responses made in the selected time period
-    ticket_volume: 
+    ticket_volume:
       title: Ticket Volume Trends
       total_received_tickets : Total Received Tickets
       average_received_tickets : Average Received Tickets
@@ -8739,7 +8779,7 @@ en:
           title_text: "Setting up a call center"
           info_text: "In order to start using the phone channel, you will first need to purchase a call-in number to offer your customers. You can purchase a local number in any <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a>. If your customers will be calling you from the US, UK or Canada, you can also offer them a Toll-free dial in number.<br/><br/>You can purchase multiple phone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk. Check out the <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>call rates here</a>.<br/><br/> Once you have purchased a phone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically."
         caller_id:
-          manage_caller_id : "Manage Caller ID "  
+          manage_caller_id : "Manage Caller ID "
           add_another : "/ Add another"
           enter_code : "Pick up your phone and enter the validation code"
           enter_number : "Enter the number you want to add as caller id"
@@ -8757,7 +8797,7 @@ en:
           invalid_number : "Invalid phone number!"
           calling : "Calling "
           call_id_mask : "Mask this number"
-          twilio_errors : 
+          twilio_errors :
             not_allowed : "Sorry there was an issue while adding this number as caller ID. Please try again. If the issue persists contact us at <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>"
             invalid_number : "Sorry it seems that the number is invalid. Please try again. If the issue persists contact us at <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>"
             already_verified : "Phone number already verified for your account!"

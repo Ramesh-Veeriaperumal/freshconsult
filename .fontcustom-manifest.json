@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "242a4edd73d45f72915a53113084b79a1dbc6f40a3ca6297e18de7e20470b1e1",
-    "current": "242a4edd73d45f72915a53113084b79a1dbc6f40a3ca6297e18de7e20470b1e1"
+    "previous": "0c25aa8a416ffed33b0ff858bc0ca56bdc2c7cdba208c4ce4c38805e8b2e1289",
+    "current": "0c25aa8a416ffed33b0ff858bc0ca56bdc2c7cdba208c4ce4c38805e8b2e1289"
   },
   "fonts": [
-    "public/assets/glyphs_242a4edd73d45f72915a53113084b79a.ttf",
-    "public/assets/glyphs_242a4edd73d45f72915a53113084b79a.svg",
-    "public/assets/glyphs_242a4edd73d45f72915a53113084b79a.woff",
-    "public/assets/glyphs_242a4edd73d45f72915a53113084b79a.eot"
+    "public/assets/glyphs_0c25aa8a416ffed33b0ff858bc0ca56b.ttf",
+    "public/assets/glyphs_0c25aa8a416ffed33b0ff858bc0ca56b.svg",
+    "public/assets/glyphs_0c25aa8a416ffed33b0ff858bc0ca56b.woff",
+    "public/assets/glyphs_0c25aa8a416ffed33b0ff858bc0ca56b.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -241,6 +241,10 @@
     "chrome": {
       "codepoint": 61732,
       "source": "public/glyphs/vectors/chrome.svg"
+    },
+    "clone": {
+      "codepoint": 61993,
+      "source": "public/glyphs/vectors/clone.svg"
     },
     "comment-multi": {
       "codepoint": 61733,
@@ -1045,6 +1049,10 @@
     "ticket-thin": {
       "codepoint": 61992,
       "source": "public/glyphs/vectors/ticket-thin.svg"
+    },
+    "ticket_template": {
+      "codepoint": 61994,
+      "source": "public/glyphs/vectors/ticket_template.svg"
     },
     "ticket_volume": {
       "codepoint": 61937,

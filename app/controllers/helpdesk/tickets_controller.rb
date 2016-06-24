@@ -1,4 +1,3 @@
-
 class Helpdesk::TicketsController < ApplicationController
 
   include ActionView::Helpers::TextHelper
@@ -89,6 +88,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :show_password_expiry_warning, :only => [:index, :show]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
+  before_filter :fetch_item_attachments, :only => [:create, :update]
+  before_filter :load_tkt_and_templates, :only => :apply_template
 
   def user_ticket
     if params[:email].present?
@@ -285,7 +286,6 @@ class Helpdesk::TicketsController < ApplicationController
 
     @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
 
-
     respond_to do |format|
       format.html  {
         @ticket_notes       = @ticket_notes.reverse
@@ -371,8 +371,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def compose_email
-    @item.build_ticket_body
-    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+    build_tkt_body
   end
 
   def update_ticket_properties
@@ -564,7 +563,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def unspam
     @items.each do |item|
-      item.spam = false 
+      item.spam = false
       restore_dirty_tags(item)
       item.save
       #mark_requester_deleted(item,false)
@@ -682,14 +681,13 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def new
-    @item.build_ticket_body
-
+    build_tkt_body
     unless @topic.nil?
       @item.subject     = @topic.title
       @item.description_html = @topic.posts.first.body_html
       @item.requester   = @topic.user
     end
-    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] #setting for agent new ticket- as phone
+
     if params['format'] == 'widget'
       render :layout => 'widgets/contacts'
     end
@@ -874,6 +872,43 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def accessible_templates
+    recent_ids = recent_templ_ids
+    if recent_ids.present?
+      recent_templ = fetch_templates(["`ticket_templates`.id IN (?)",recent_ids], recent_ids, RECENT_TEMPLATES)
+    else
+      recent_ids   = ""
+      recent_templ = []
+    end
+    size = ITEMS_TO_DISPLAY - recent_templ.count
+    acc_templ = fetch_templates(["`ticket_templates`.id NOT IN (?)",recent_ids],nil, size, recent_ids)
+    render :json => { :all_acc_templates => acc_templ, :recent_templates => recent_templ }
+  end
+
+  def search_templates
+    search_acc_templ = fetch_templates(["`ticket_templates`.name like ?","%#{params[:search_string]}%"])
+    render :json => { :all_acc_templates => search_acc_templ }
+  end
+
+  def apply_template
+    @template  = current_account.ticket_templates.find_by_id(params[:template_id])
+    @template  = nil unless @template and @template.visible_to_me?
+
+    if @template.present?
+      @all_attachments = @template.all_attachments
+      @cloud_files = @template.cloud_files
+      @template.template_data.each do |key,value|
+        next if compose_email? && invisible_fields?(key)
+        key == "tags" ? (@item[key] = value) : (@item.send("#{key}=",value))
+      end
+    else
+      flash[:notice] = t('ticket_templates.not_available')
+    end
+    respond_to do |format|
+      format.js { render :partial => "/helpdesk/tickets/apply_template" }
+    end
+  end
+
   protected
 
     def item_url
@@ -955,7 +990,7 @@ class Helpdesk::TicketsController < ApplicationController
   def load_note_reply_from_email
     from_emails = @note.load_note_reply_from_email
     @selected_from_email_addr = nil
-    from_emails.each do|from_email| 
+    from_emails.each do|from_email|
       @selected_from_email_addr = @reply_emails.find { |email_config| from_email == parse_email_text(email_config[1])[:email].downcase }
         break if @selected_from_email_addr
     end
@@ -967,13 +1002,13 @@ class Helpdesk::TicketsController < ApplicationController
     def set_trashed_column
       sql_array = ["update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
                     st.ticket_id= t.id and st.account_id=%s and t.account_id=%s
-                    set st.%s = 1 where t.id in (%s)", 
+                    set st.%s = 1 where t.id in (%s)",
                     current_account.id, current_account.id, Helpdesk::SchemaLessTicket.trashed_column, @items.map(&:id).join(',')]
       sql = ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
 
       ActiveRecord::Base.connection.execute(sql)
     end
-    
+
     def render_delete_forever
       flash[:notice] = render_to_string(
           :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))
@@ -981,7 +1016,7 @@ class Helpdesk::TicketsController < ApplicationController
         format.html { redirect_to :back }
         format.nmobile { render :json => {:success => true , :success_message => render_to_string(
           :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))}}
-      end 
+      end
     end
 
     def scoper_ticket_actions
@@ -1380,7 +1415,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_ticket_with_notes
-    return load_ticket if request.format.html? or request.format.nmobile? or request.format.js? 
+    return load_ticket if request.format.html? or request.format.nmobile? or request.format.js?
     @ticket = @item = load_by_param(params[:id], preload_options)
     load_or_show_error(true)
   end
@@ -1459,4 +1494,32 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def load_tkt_and_templates
+    build_item
+    @item.build_flexifield
+    @item.ff_def = Account.current.flexi_field_defs.first.id
+    build_tkt_body
+  end
+
+  def build_tkt_body
+    @item.build_ticket_body
+    source = compose_email? ? :outbound_email : :phone
+    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[source]
+  end
+
+  def compose_email?
+    params[:action].eql?("compose_email") or params[:template_form].eql?("compose_email")
+  end
+
+  def invisible_fields? key
+    ["product_id", "responder_id", "source"].include?(key.to_s)
+  end
+
+  def recent_templ_ids
+    if params[:recent_ids]
+      recent_ids = ActiveSupport::JSON.decode(params[:recent_ids])
+      recent_ids.compact!
+      recent_ids
+    end
+  end
 end

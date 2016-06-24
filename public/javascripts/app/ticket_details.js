@@ -20,7 +20,7 @@ save_draft = function(content, cc_email_list, bcc_email_list) {
 				$(".ticket_show #draft-save")
 					.text(TICKET_DETAILS_DATA['draft']['saved_text'])
 					.attr('data-moment', new Date());
-				$(".ticket_show #reply-draft").removeClass('saving');				
+				$(".ticket_show #reply-draft").removeClass('saving');
 				savingDraft = false;
 				TICKET_DETAILS_DATA['draft']['saved'] = true;
 			}
@@ -106,7 +106,7 @@ showHideDueByDialog = function(showHide){
 	if(showHide){
 		var duedate_container = $("#duedate-dialog-container").detach();
 		$('#due-by-element-parent').append(duedate_container);
-	   
+
 		$("#duedate-dialog-container").show();
 		$("#due-date-dialog").fadeIn();
 		$("#due-date-dialog").position({
@@ -114,7 +114,7 @@ showHideDueByDialog = function(showHide){
 			my: "right top",
 			at: "left top"
 		});
-		
+
 		$("#due-date-dialog").css({top: $("#due-date-dialog").position().top + 30 });
 	}else{
 		$("#due-date-dialog")
@@ -136,7 +136,7 @@ function dueDateSelected(date){
 
 swapEmailNote = function(formid, link){
 	$('#TicketPseudoReply').hide();
-	
+
 
 	if((activeForm != null) && ($(activeForm).get(0).id != formid))
 		$("#"+activeForm.get(0).id).hide();
@@ -153,13 +153,13 @@ swapEmailNote = function(formid, link){
 	} else {
 		//For all other reply forms using redactor.
 		invokeRedactor(formid+"-body",formid);
-		
+
 		if (link && $(link).data('noteType') === 'fwd') {
 			$('.forward_email input').trigger('focus');
-		} 
-		
+		}
+
 		if($.browser.mozilla){
-			$('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
+			$('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing
 		}
 		$('#'+formid+"-body").getEditor().on('blur',function(){
 			try{
@@ -201,13 +201,13 @@ insertIntoConversation = function(value,element_id){
 				$('#send-tweet-cnt-tweet-body')
 						.trigger("focus")
 						.trigger("keydown");
-		});         
+		});
 	}
 
 	$('#canned_responses').modal('hide');
 
 	if($element){
-		if(element_id == "send-tweet-cnt-reply-body" || element_id == "send-fb-post-cnt-reply-body" || element_id == "send-mobihelp-chat-cnt-reply-body" || 
+		if(element_id == "send-tweet-cnt-reply-body" || element_id == "send-fb-post-cnt-reply-body" || element_id == "send-mobihelp-chat-cnt-reply-body" ||
 				element_id == "send-ecommerce-post-cnt-reply-body" ){
 			var textValue = jQuery("<div />").html(value).text();
 			$element.focus();
@@ -218,7 +218,7 @@ insertIntoConversation = function(value,element_id){
 			$element.data('redactor').insertOnCursorPosition('inserthtml',value);
 			$element.getEditor().focus();
 		}
-	}    
+	}
 	return;
 }
 
@@ -270,12 +270,12 @@ $('body').on('click.ticket_details', '.add_attachment', function() {
 	$(this).siblings('.original_input').trigger('click');
 });
 
-// This has been moved as a on click event directly to the cancel button 
+// This has been moved as a on click event directly to the cancel button
 // jQuery('input[type="button"][value="Cancel"]').bind('click', function(){cleardraft();});
 
 // Functions for Select2
 var formatPriority = function(item) {
-	return "<i class='priority_block priority_color_" + item.id + "'></i>" + item.text; 
+	return "<i class='priority_block priority_color_" + item.id + "'></i>" + item.text;
 }
 
 var escapePriority = function (markup) {
@@ -285,7 +285,7 @@ var escapePriority = function (markup) {
 	return markup;
 }
 var defaultSelect2Format = function(item) {
-	return item.text.escapeHTML(); 
+	return item.text.escapeHTML();
 }
 
 var formatTag = function(item) {
@@ -308,11 +308,11 @@ var updateShowMore = function() {
 		loaded_items = TICKET_DETAILS_DATA['loaded_activities'];
 	}
 
-	
+
 	if (loaded_items < total_count) {
 		var remaining_notes = total_count - loaded_items;
 		$('#show_more [rel=count-total-remaining]').text(total_count - loaded_items);
-		
+
 		$('#show_more').removeClass('hide');
 		return true;
 	} else {
@@ -392,73 +392,73 @@ var scrollToError = function(){
 			CalcSelectedDateTime();
 		}
 	});
-		
+
 	$("#due-date-options").change(function(){
 		if(this.value == 'specific')
 			toggleDateCalender(true);
 		else
 			toggleDateCalender(false);
 	});
-	
+
 	$("#due_by_hour, #due_by_minute, #due_by_am_pm").change(CalcSelectedDateTime);
-		
+
 	$("#set-date-time").click(function(){
 		toggleDateCalender(true);
 		$("#due-date-options").val("specific");
 	});
-		
+
 	function toggleDateCalender(showOrHide){
 		if(showOrHide){
 			$("#due-date-button").hide();
 			$("#due-date-calender").slideDown(300);
-		}   
+		}
 		else{
 			$("#due-date-button").show();
 			$("#due-date-calender").slideUp(300);
 		}
 	}
-	
+
 	$("#Pagearea").on('click', '#edit-dueby-time',function(){
 		showHideDueByDialog(true);
 	});
-	
+
 	$("#due-date-overlay").click(function(){
 		showHideDueByDialog(false);
 	});
-	
+
 	function CalcSelectedDateTime() {
-		_date_time = $("#due-date-picker").datepicker("getDate"); 
+		_date_time = $("#due-date-picker").datepicker("getDate");
 		am_pm_val = $("#due_by_am_pm").val();
 		hrs_val = parseInt($("#due_by_hour").val())
-		
+
 		if(hrs_val == 12 && am_pm_val == "AM") hrs_val = 0
 		else if(am_pm_val == "PM" && hrs_val != 12) hrs_val += 12
-		
+
 		_date_time.setHours( hrs_val );
 		_date_time.setMinutes( $("#due_by_minute").val() );
-		
+
 		if (TICKET_DETAILS_DATA['created_on'] > _date_time){
 			$("#calender-buttons").hide();
 			$("#calender-info").show();
 		}else{
 			$("#calender-buttons").show();
 			$("#calender-info").hide();
-		}  
+		}
 		var engMoment = moment(_date_time);
-		return engMoment.lang("en").format("ddd MMM DD YYYY HH:mm:ss") +" GMT"+engMoment.lang("en").format("Z").replace(":","");         
+		return engMoment.lang("en").format("ddd MMM DD YYYY HH:mm:ss") +" GMT"+engMoment.lang("en").format("Z").replace(":","");
 	}
-	
-	$("#DueDateForm").submit(function(){  
+
+	$("#DueDateForm").submit(function(){
 		$("#calender-buttons").addClass("saving-items");
 		_date_time = new Date();
-		
+
 		if($( "#due-date-options" ).val() == "specific"){
 			_date_time = CalcSelectedDateTime();
-		} 
-		 
+		}
+
 		$("#due_by_date_time").val(_date_time);
-							
-		$.post(this.action, $(this).serialize(), 
+
+		$.post(this.action, $(this).serialize(),
 					function(data) {
 						$("#edit-dueby-time-parent").html(data);
 						showHideDueByDialog(false);
@@ -477,7 +477,7 @@ var scrollToError = function(){
 	$(document).on("click.ticket_details", '#ticket_original_request a, .details a', function(ev){
 		this.target = "_blank";
 	})
-	
+
 	$('body.ticket_details ul.tkt-tabs').each(function(){
 		// For each set of tabs, we want to keep track of
 		// which tab is active and it's associated content
@@ -569,9 +569,9 @@ var scrollToError = function(){
 			}
 			$('#timesheets_loading').modal('show');
 			var timesheetsLoading = setInterval(function() {
-				
+
 				if($('#timesheetlist').length) {
-				
+
 					$('#triggerAddTime').trigger('click');
 					$('#timesheets_loading').modal('hide');
 					clearInterval(timesheetsLoading);
@@ -594,7 +594,7 @@ var scrollToError = function(){
 		} else {
 			$(this).select2({
 				minimumResultsForSearch: 10
-			}); 
+			});
 		}
 	});
 
@@ -608,7 +608,7 @@ var scrollToError = function(){
 			maximumInputLength: 32,
 			data: hash_val,
 			quietMillis: 500,
-			ajax: { 
+			ajax: {
         url: '/search/autocomplete/tags',
         dataType: 'json',
         data: function (term) {
@@ -627,9 +627,9 @@ var scrollToError = function(){
 	    initSelection : function (element, callback) {
 	      callback(hash_val);
 	    },
-	    formatInputTooLong: function () { 
+	    formatInputTooLong: function () {
       	return MAX_TAG_LENGTH_MSG; },
-		  createSearchChoice:function(term, data) { 
+		  createSearchChoice:function(term, data) {
 		  	//Check if not already existing & then return
         if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
 	        return { id: term, text: term };
@@ -643,16 +643,16 @@ var scrollToError = function(){
 		twitter_handle= $('#twitter_handle').val();
 		tweet_type = $('#tkt_tweet_type').val();
 		in_reply_to = $('#in_reply_to_handle').val();
-		
+
 		istwitter = $('#cnt-reply').data('isTwitter');
-		if (!istwitter || in_reply_to == "" || twitter_handle == "" || tweet_type == 'dm')        
+		if (!istwitter || in_reply_to == "" || twitter_handle == "" || tweet_type == 'dm')
 			return ;
 
-		$.ajax({   
+		$.ajax({
 			type: 'GET',
 			url: '/social/twitter/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+in_reply_to,
 			contentType: 'application/text',
-			success: function(data){ 
+			success: function(data){
 				if (data.user_follows == true)
 				{
 					$('#not_following_message').hide();
@@ -664,29 +664,29 @@ var scrollToError = function(){
 				}
 			}
 		});
-	});  
-	
+	});
+
 	 // For Twitter Replybox
 	$("body").on("change.ticket_details", '#tweet_type', function (){
 	  var istwitter = $('#cnt-reply').data('isTwitter');
-	  
+
 	  if (!istwitter) return ;
-	   
+
 	  getTweetTypeAndBind();
-	});  
+	});
 
 	function getTweetTypeAndBind(){
 		var reply_type = $('#tweet_type').val(),
 	  		count = (reply_type == 'dm') ? 10000 : 140;
-	  
+
 	  bindNobleCount(count);
 	}
 
 	function bindNobleCount(max_chars){
 	  $('#send-tweet-cnt-reply-body').unbind();
-	  
-	  $('#send-tweet-cnt-reply-body').NobleCount('#SendTweetCounter', { on_negative : "error", max_chars : max_chars }); 
-	  
+
+	  $('#send-tweet-cnt-reply-body').NobleCount('#SendTweetCounter', { on_negative : "error", max_chars : max_chars });
+
 	  var char_val = $("#SendTweetCounter").text();
 	  $('#send-tweet-cnt-reply-body').data("tweet-count", char_val);
 	 }
@@ -729,7 +729,7 @@ var scrollToError = function(){
 		_toggle.addClass('disabled')
 		var showing_notes = $('#all_notes').length > 0;
 		var url = showing_notes ? TICKET_DETAILS_DATA['activities_pagination_url'] : TICKET_DETAILS_DATA['notes_pagination_url'];
-		
+
 		if (showing_notes) {
 			TICKET_DETAILS_DATA['first_activity'] = null;
 			TICKET_DETAILS_DATA['loaded_activities'] = 0;
@@ -748,7 +748,7 @@ var scrollToError = function(){
 				if (updateShowMore()) updatePagination();
 				_toggle.removeClass('loading_activities disabled');
 				trigger_event("activities_toggle",{ current: showing_notes ? 'notes' : 'activities' });
-			}, 
+			},
 			error: function(response) {
 				$('#show_more').removeClass('hide');
 				_toggle.toggleClass('active disabled');
@@ -783,12 +783,12 @@ var scrollToError = function(){
 		if(TICKET_DETAILS_DATA['draft']['saved'] && btn.data('cntId') && btn.data('cntId') == "cnt-reply"){
 			if(!confirm(TICKET_DETAILS_DATA['draft']['clear_text'])){
 				window.AgentCollisionShow.reply_event();
-				return false; 
-			} 
+				return false;
+			}
         }
 		remove_file_size_alert(btn)
 		$('#' + btn.data('cntId')).hide().trigger('visibility');
-		if (btn.data('showPseudoReply')) 
+		if (btn.data('showPseudoReply'))
 			$('#TicketPseudoReply').show();
 
 		var _form = $('#' + btn.data('cntId') + " form");
@@ -811,7 +811,7 @@ var scrollToError = function(){
 		if (btn.data('cntId') == "cnt-reply") {
 			$('#cnt-reply-body').val(TICKET_DETAILS_DATA['draft']['default_reply']);
 		}
-		
+
 		if(_form.attr('rel') == 'tweet_form'){
 			getTweetTypeAndBind();
 		}
@@ -839,7 +839,7 @@ var scrollToError = function(){
 
 	function seperateQuoteText(_form){
 		if(_form.data('fulltext')) {
-			var body_text = jQuery('<div class="hide">'+jQuery('#' + _form.data('cntId') + '-body').val()+'</div>'); 
+			var body_text = jQuery('<div class="hide">'+jQuery('#' + _form.data('cntId') + '-body').val()+'</div>');
 			jQuery("body").append(body_text);
 			jQuery('#' + _form.data('cntId') + '-body-fulltext').val(body_text.html());
 			body_text.find('div.freshdesk_quote').remove();
@@ -849,12 +849,12 @@ var scrollToError = function(){
 	}
 
 	$('body').on('submit.ticket_details', ".conversation_thread .request_panel form", function(ev) {
-		
+
 		var _form = $(this);
 		if (_form.valid()) {
 
 			if (_form.attr('rel') == 'forward_form' || _form.attr('rel') == 'reply_to_forward_form')  {
-				//Check for To Addresses.              
+				//Check for To Addresses.
 				if (_form.find('input[name="helpdesk_note[to_emails][]"]').length == 0 )
 				{
 					alert('No email addresses found');
@@ -950,7 +950,7 @@ var scrollToError = function(){
 					
 				}
 			}
-			
+
 		} else {
 			_form.find('input[type=submit]').prop('disabled', false);
 		}
@@ -958,7 +958,7 @@ var scrollToError = function(){
 
 
     $('body').on('submit.ticket_details', '#custom_ticket_form', function(ev) {
-		ev.preventDefault(); 
+		ev.preventDefault();
 		ev.stopPropagation();
 		var tkt_form = $('#custom_ticket_form');
 		if (tkt_form.valid()) {
@@ -966,7 +966,7 @@ var scrollToError = function(){
 		} else {
 			scrollToError();
 		}
-			
+
 	});
 
 	var handleIEReply = function(_form) {
@@ -1022,7 +1022,7 @@ var scrollToError = function(){
 	}
 
 	var submitNewConversation = function(_form, ev, callback) {
-		
+
 		callback = callback || function(){};
 
 		_form.ajaxSubmit({
@@ -1038,14 +1038,14 @@ var scrollToError = function(){
 				_form.append(input_since);
 				seperateQuoteText(_form);
 				if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
-					stopDraftSaving();				
+					stopDraftSaving();
 				}
 
 			},
 			success: function(response, statusCode, xhr) {
 				releaseForm(_form);
 				var statusChangeField = $('#send_and_set');
-								
+
 				if($('#response_added_alert').length > 0 && _form.parents('#all_notes').length < 1){
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
@@ -1105,13 +1105,13 @@ var scrollToError = function(){
 							stopDraftSaving();
 							$('#cnt-reply-body').val(TICKET_DETAILS_DATA['draft']['default_reply']);
 							_clearDraftDom();
-						}	
+						}
 					} catch(e) {}
 					// The above block has been added so that Redactor errors do not restrict further flow.
-					
+
 
 					_form.find('[rel=ajax_params]').remove();
-						
+
 					_form.find('input[type=submit]').prop('disabled', false);
 					if (_form.data('showPseudoReply')) {
 						$('#TicketPseudoReply').show();
@@ -1129,14 +1129,13 @@ var scrollToError = function(){
 						triggerDraftSaving();
 					}
 				}
-				
+
 				if(_form.attr('rel') == 'tweet_form'){
 					getTweetTypeAndBind();
 				}
-				
+
 			},
 			error: function(response) {
-				
 				releaseForm(_form);
 				_form.find('input[type=submit]').prop('disabled', false);
 
@@ -1170,7 +1169,7 @@ var scrollToError = function(){
 	}
 
 	var submitTicketProperties = function(callback) {
-		
+
 		var tkt_form = $('#custom_ticket_form');
 		var submit = $('#custom_ticket_form .btn-primary');
 		submit.button('loading');
@@ -1209,7 +1208,7 @@ var scrollToError = function(){
 					afterTktPropertiesUpdate();
 				}
 
-				
+
 
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -1225,7 +1224,7 @@ var scrollToError = function(){
 		var fields_to_check = ['priority', 'status', 'group_id', 'ticket_type', 'product', 'source'];
 		for(i in fields_to_check) {
 			if (typeof(fields_to_check[i]) == 'string' && $('.ticket_details #helpdesk_ticket_' + fields_to_check[i]).data('updated')) {
-				postProcess = true;	
+				postProcess = true;
 				break;
 			}
 		}
@@ -1233,10 +1232,10 @@ var scrollToError = function(){
 		var data_hash = {};
 
 		ticket_fields.each(function() {
-			if($(this).data().updated) {	
+			if($(this).data().updated) {
 				var field_name = $(this).attr('name');
         var lbl_val;
-        
+
         if($(this).attr("type") == "checkbox"){
           lbl_val = $(this).is(":checked")
         } else {
@@ -1244,7 +1243,7 @@ var scrollToError = function(){
         }
 
 				data_hash[field_name] = {
-					value: lbl_val, 
+					value: lbl_val,
 					datatype: $(this).get(0).tagName.toLowerCase(),
 					type: field_name.match(/\[.*?\]/)[0] == "[custom_field]" ? "custom_field" : "default" ,
 					required: $(this).hasClass('required'),
@@ -1297,8 +1296,8 @@ var scrollToError = function(){
 		}
 	}
 
-	var openConversation = function(){ 
-		var key = window.location.hash; 
+	var openConversation = function(){
+		var key = window.location.hash;
 		switch (key){
 			case "#reply":
 			    $('#ReplyButton').trigger('click');
@@ -1310,7 +1309,7 @@ var scrollToError = function(){
 			    $('#noteButton').trigger('click')
 			    break;
 		}
-	}    
+	}
 
 	setTimeout(openConversation, 200);
 
@@ -1324,9 +1323,9 @@ var scrollToError = function(){
 		$(this).hide();
 		$('#ReplyButton').click();
 	});
-	
+
 	// Facebook event binding
-	
+
 	$('body').on('click.ticket_details', ".reply-facebook", function(event){
 	    $('#ReplyButton').trigger('click');
 	    note_id = $(this).data('noteId');
@@ -1334,14 +1333,14 @@ var scrollToError = function(){
 	    $("#fb_form_title").html(requester_name);
 	    $("#parent_post_id").val(note_id);
 	  });
-	
+
 	$('body').on('click.ticket_details', "#facebook-cancel-reply", function(event){
 			requester_name = $("#ticket_requester_name").val();
 	    $("#fb_form_title").html(requester_name);
 	    $('#parent_post_id').val('')
 	  });
-	
-	
+
+
 	//For showing canned response and solutions
 
 	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){
@@ -1359,7 +1358,7 @@ var scrollToError = function(){
 		ev.preventDefault();
 		$('#suggested_solutions_show').data('editorId', $(this).data('editorId'));
 		var editorId = $('#suggested_solutions_show').data('editorId');
-		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body' && 
+		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body' &&
 			editorId != 'send-ecommerce-post-cnt-reply-body'){
 			$('#'+editorId).data('redactor').saveSelection();
 		}
@@ -1390,7 +1389,7 @@ var scrollToError = function(){
       jQuery('body').click();
 
       var new_status	= $(this).data('statusVal'),
-      		noteForm	= $(this).parents('form'); 
+      		noteForm	= $(this).parents('form');
       changeStatusTo(new_status);
       handleSendAndSet(new_status);
       $('#send_and_set').data('val', ($(this).data('statusVal')));
@@ -1421,7 +1420,7 @@ var scrollToError = function(){
 			ev.stopPropagation();
 		}
 		if($(this).data('note-type') === 'note'){
-			addNoteAgents();	
+			addNoteAgents();
 		}
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
 	});
@@ -1452,13 +1451,13 @@ var scrollToError = function(){
 	$('#activity_toggle').removeClass('active');
 	jQuery('#activity_toggle').prop('checked', false);
 
-	// Capturing the Unload and making sure everything is fine, before we let the 
+	// Capturing the Unload and making sure everything is fine, before we let the
 	$(window).on('unload.ticket_details',function(e) {
 		var messages = [];
 		if ($('#custom_ticket_form .error:input').length > 0 ) {
 			messages.push('There are errors in the form.');
 		}
-		
+
 		if (TICKET_DETAILS_DATA['updating_properties']) {
 			messages.push('Unsaved changes in the form');
 		}
@@ -1504,8 +1503,8 @@ var scrollToError = function(){
             tkt_prop.data('remoteUrl', false);
 
 			$('body').on('change.ticket_details', '#custom_ticket_form', function(ev) {
-				
-				if (!dontAjaxUpdate) 
+
+				if (!dontAjaxUpdate)
 				{
 					TICKET_DETAILS_DATA['updating_properties'] = true;
 					$(ev.target).data('updated', true);
@@ -1514,9 +1513,9 @@ var scrollToError = function(){
 				dontAjaxUpdate = false;
 			} );
 			trigger_event("sidebar_loaded",{name: "ticket_properties", dom_id: "#TicketProperties"});
-        });	
+        });
 	})()
-	
+
 	trigger_event("ticket_view_loaded",{});
 };
 

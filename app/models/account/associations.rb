@@ -133,7 +133,7 @@ class Account < ActiveRecord::Base
   :rule_type => VAConfig::API_WEBHOOK_RULE, :active => true }, :order => "position"
 
   has_many :scn_automations, :class_name => 'ScenarioAutomation', :conditions =>{
-  :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order => "name"
+  :rule_type => VAConfig::SCENARIO_AUTOMATION }
 
   has_many :all_scn_automations, :class_name => 'VaRule',:conditions => {
   :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order=> "position"
@@ -300,4 +300,6 @@ class Account < ActiveRecord::Base
   has_many :scheduled_tasks, :class_name => 'Helpdesk::ScheduledTask'
   has_many :outgoing_email_domain_categories, :dependent => :destroy
   has_many :authorizations, :class_name => '::Authorization'
+
+  has_many :ticket_templates, :class_name => "Helpdesk::TicketTemplate"
 end

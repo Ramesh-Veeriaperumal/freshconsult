@@ -47,7 +47,8 @@
 	<%= render :partial => "helpdesk/tickets/freshdesk_socket", :locals => {:ticket => @ticket } if current_account.agents_details_from_cache.count > 1%>
 <% end %>
 
-
+<%= render :partial => "/helpdesk/tickets/show/multifile_template"  %>
+<%= render :partial => "/helpdesk/tickets/show/multifile_template_new"  %>
 <script type="text/javascript">
 	Fjax.Assets.plugin('360player');
 jQuery(document).ready(function(){

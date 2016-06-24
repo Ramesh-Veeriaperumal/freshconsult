@@ -38,7 +38,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :email_body_html => html_version,
              :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe}
       if(notification_type == EmailNotification::NEW_TICKET and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
-        params[:attachments] = ticket.attachments
+        params[:attachments] = ticket.all_attachments
         params[:cloud_files] = ticket.cloud_files
       end
       deliver_email_notification(params) if ticket.requester_has_email?
@@ -507,7 +507,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
 
     self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-      ticket.attachments.each do |a|
+      ticket.all_attachments.each do |a|
         attachments[ a.content_file_name] = { 
           :mime_type => a.content_content_type, 
           :content => File.read(a.content.to_file.path, :mode => "rb")

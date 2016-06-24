@@ -138,6 +138,11 @@ module MemcacheKeys
 
   LEADERBOARD_MINILIST_REALTIME = "v2/LEADERBOARD_MINILIST_REALTIME:%{account_id}:%{agent_type}"
 
+  AGENT_NEW_TICKET_FORM = "v1/AGENT_NEW_TICKET_FORM:%{account_id}"
+
+  COMPOSE_EMAIL_FORM = "v1/COMPOSE_EMAIL_FORM:%{account_id}"
+
+  TKT_TEMPLATES_COUNT = "v1/TKT_TEMPLATES_COUNT:%{account_id}"
 
   class << self
 
@@ -197,4 +202,12 @@ module MemcacheKeys
     end
   end
   
+  # Fragment caching based on launch key...
+  def cache_based_on_launch launch_key, memcache_key, &block
+    if Account.current.launched?(launch_key)
+      cache(memcache_key, &block)
+    else
+      block.call
+    end
+  end
 end

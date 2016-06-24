@@ -17,7 +17,7 @@ Authority::Authorization::PrivilegeList.build do
                                            :spam, :unspam, :execute_scenario, :pick_tickets,
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                                            :clear_draft, :save_draft, :prevnext, :component, :custom_search,
-                                           :quick_assign, :canned_reponse, :full_paginate, :custom_view_save,
+                                           :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates,
                                            :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario, :execute_bulk_scenario]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
@@ -94,6 +94,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
     # resource :"helpdesk/common", :only => [:group_agents]
+
+    # ticket_templates
+    resource :"helpdesk/ticket_template"
 
     #canned_response
     resource :"helpdesk/canned_responses/folder", :only => [:index, :show]

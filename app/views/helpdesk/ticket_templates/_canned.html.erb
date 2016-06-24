@@ -1,0 +1,10 @@
+
+<!-- Canned response dialog -->
+
+<div class="hide">
+  <%= link_to( t(:'ticket.canned_responses.ca_response'), 
+                          "/helpdesk/canned_responses/?tkt_cr=true", 
+                          "data-width" => "700", "data-template-footer" => '', :rel => 'freshdialog', 
+                          :id => "canned_response_show", "data-target" => "#canned_responses",
+                          :title => t(:'ticket.canned_responses.ca_responses')) %>
+</div>

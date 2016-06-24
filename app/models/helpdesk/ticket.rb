@@ -633,12 +633,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def description_with_attachments
-    attachments.empty? ? description_html : 
-        "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
+    all_attachments.empty? ? description_html : 
+        "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(all_attachments)}\n"
   end
   
-  def liquidize_attachments(attachments)
-    attachments.each_with_index.map { |a, i| 
+  def liquidize_attachments(all_attachments)
+    all_attachments.each_with_index.map { |a, i| 
       "#{i+1}. <a href='#{Rails.application.routes.url_helpers.helpdesk_attachment_url(a, :host => portal_host)}'>#{a.content_file_name}</a>"
       }.join("<br />") #Not a smart way for sure, but donno how to do this in RedCloth?
   end
@@ -1053,6 +1053,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     return if next_agent.nil? #There is no agent available to assign ticket.
     self.responder_id = next_agent.user_id
+  end
+
+  def all_attachments
+    @all_attachments ||= begin
+      resp_shared_attachments = self.attachments_sharable
+      individual_attachments = self.attachments
+      individual_attachments + resp_shared_attachments
+    end
   end
 
   # Moved here from note.rb

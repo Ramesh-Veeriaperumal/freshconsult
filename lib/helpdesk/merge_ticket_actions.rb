@@ -46,12 +46,12 @@ module Helpdesk::MergeTicketActions
                                               	:source_description_note_id => source_description_note.id })
 		end
 
-    def build_source_description_body_html source_ticket
-      %{#{I18n.t('helpdesk.merge.bulk_merge.target_merge_description1', :ticket_id => source_ticket.display_id, 
-																						      	:full_domain => source_ticket.portal.host)}<br/><br/>
-	    <b>#{I18n.t('Subject')}:</b> #{source_ticket.subject}<br/><br/>
-	    <b>#{I18n.t('description')}:</b><br/>#{source_ticket.description_html}}
-    end
+		def build_source_description_body_html source_ticket
+		  %{#{I18n.t('helpdesk.merge.bulk_merge.target_merge_description1', :ticket_id => source_ticket.display_id, 
+																							      	:full_domain => source_ticket.portal.host)}<br/><br/>
+		    <b>#{I18n.t('Subject')}:</b> #{source_ticket.subject}<br/><br/>
+		    <b>#{I18n.t('description')}:</b><br/>#{source_ticket.description_html}}
+		end
 
 		def move_source_requesters_to_target # Possible dead code
 			cc_email_array = @source_tickets.collect{ |source| [ get_cc_email_from_hash(source), 

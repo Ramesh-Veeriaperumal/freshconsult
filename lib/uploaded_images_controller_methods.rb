@@ -6,9 +6,9 @@ module UploadedImagesControllerMethods
 
   def create
     @image = current_account.attachments.build({
-      :description => "public",
-      :content => params[:image][:uploaded_data],
-      :attachable_type => "#{cname} Upload"
+      :description      => "public",
+      :content          => params[:image][:uploaded_data],
+      :attachable_type  => "#{cname} Upload"
     })
 
     respond_to do |format|
@@ -29,9 +29,9 @@ module UploadedImagesControllerMethods
     data_f.original_filename = "blob" + CGI.escapeHTML(params["_uniquekey"]) + "." + splited_dataURI[:extension]
    
     @image = current_account.attachments.build({
-      :description => "public",
-      :content => data_f,
-      :attachable_type => "#{cname} Upload"
+      :description      => "public",
+      :content          => data_f,
+      :attachable_type  => "#{cname} Upload"
     })
 
     respond_to do |format|
@@ -69,9 +69,9 @@ module UploadedImagesControllerMethods
       unless @image.image? && @image.valid_image?
         @image.errors.clear
         @image.errors.add('ERROR :', 'Image Dimensions are larger than Expected, Please send them as attachments instead')
-        return false
+        false
       else
-        return true
+        true
       end
     end
 

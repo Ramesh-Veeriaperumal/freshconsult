@@ -1,0 +1,15 @@
+<tr id=<%= dom_id(scenario) %>>
+  <td>
+    <strong>
+      <%= link_to(h(scenario.name), edit_helpdesk_scenario_automation_path(scenario), :class => "item_info") %>
+    </strong><br/>
+    <span class="muted"><%= h scenario.description %></span>
+  </td>
+  <td>
+    <div class="item_actions" align="right">
+        <%= link_to(t('clone'),clone_helpdesk_scenario_automation_path(scenario), :class => "btn btn-mini")%>
+        <%= link_to(t('edit'), edit_helpdesk_scenario_automation_path(scenario), :class => "btn btn-mini") %>
+        <%= link_to "<i class='icon-trash'></i>".html_safe, helpdesk_scenario_automation_path(scenario), :confirm => t('confirm_delete_message', :human_name => t('admin.automations.index.human_name')), :method => :delete, :class => "btn btn-mini" %>
+    </div>
+  </td>
+</tr>

@@ -1,0 +1,9 @@
+<li class="text default_tags field">
+	<label for="ticket_tags"><%=t('tag.title')%></label>
+	<input type="hidden" rel="remote-tag" id="helpdesk_ticket_tags_input"
+			name="helpdesk[tags]" value= "<%= values %>" />
+</li>
+
+<script type="text/javascript">
+	var MAX_TAG_LENGTH_MSG = "<%= I18n.t('helpdesk.tickets.show.max_tag_length_msg') %>";
+</script>

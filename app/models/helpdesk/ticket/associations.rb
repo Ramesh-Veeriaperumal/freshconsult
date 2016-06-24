@@ -13,6 +13,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many_cloud_files
 
+  has_many :shared_attachments,
+    :as => :shared_attachable,
+    :class_name => 'Helpdesk::SharedAttachment',
+    :dependent => :destroy
+
+  has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
+
   has_one :ticket_old_body, :class_name => 'Helpdesk::TicketOldBody', 
                             :dependent => :destroy, :autosave => false
                             

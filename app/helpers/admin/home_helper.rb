@@ -95,6 +95,10 @@
         :url                           =>   "/helpdesk/scenario_automations",
         :privilege                     =>   feature?(:scenario_automations) && (privilege?(:manage_scenario_automation_rules) || privilege?(:view_admin))
       },
+      :ticket_template                 =>   {
+        :url                           =>   "/helpdesk/ticket_templates",
+        :privilege                     =>   privilege?(:manage_ticket_templates)
+      },
       :"email-notifications"           =>   {
         :url                           =>   "/admin/email_notifications",
         :privilege                     =>   privilege?(:manage_email_settings)
@@ -197,7 +201,7 @@
       :"support-channels"       =>    ["email", "portals", "livechat", "phone-channel", "twitter", "facebook-setting", "feedback", "mobihelp", "ecommerce"],
       :"general-settings"       =>    ["helpdesk-settings", "ticket-fields", "customer-fields", "agent", "group", "role", "security", "sla",
                                           "business-hours", "multi-product", "tags"],
-      :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response",
+      :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "ticket_template", "email-notifications", "canned-response",
                                           "survey-settings", "gamification-settings", "email_commands_setting", "integrations", "apps"],
       :"account-settings"       =>    ["account", "billing", "import", "day_pass"]
     }
@@ -317,6 +321,7 @@
       :hourly_trigger                         =>    [:automations, :workflows],
       :event_based_rules                      =>    [:automations, :workflows],
       :scenario                               =>    [:macros],
+      :ticket_template                        =>    [:template],
       :"email-notifications"                  =>    [:auto_responses],
       :"canned-response"                      =>    [:predefined_responses],
       :"billing"                              =>    [:choose_plan],
