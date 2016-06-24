@@ -1,6 +1,7 @@
 class Integrations::CloudElements::CrmController < Integrations::CloudElementsController
   include Integrations::CloudElements::Crm::Constant
   include Integrations::CloudElements::Constant
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => :event_notification
   before_filter :check_feature, :verify_authenticity, :except => :event_notification
   before_filter :build_installed_app, :only => [:instances, :create]
   before_filter :load_installed_app, :only => [:edit, :update]
@@ -255,16 +256,18 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       arr = Array.new
       if fd_obj.present?
         obj_synced.each do |obj|
+          vendor_path = (obj['fd_field'].index('cf_') == 0) ? "#{fd_obj}.custom_field.#{obj['fd_field']}" : "#{fd_obj}.#{obj['fd_field']}"
           arr.push({
             "path" => "FD_slave_#{obj['fd_field']}",
-            "vendorPath" => "#{fd_obj}.#{obj['fd_field']}"
+            "vendorPath" => vendor_path
           })
         end
       else
         obj_synced.each do |obj|
+          vendor_path = (obj['fd_field'].index('cf_') == 0) ? "custom_fields.#{obj['fd_field'][3..-1]}" : "#{obj['fd_field']}"
           arr.push({
             "path" => "FD_slave_#{obj['fd_field']}",
-            "vendorPath" => "#{obj['fd_field']}"
+            "vendorPath" => vendor_path
           })
         end
       end
