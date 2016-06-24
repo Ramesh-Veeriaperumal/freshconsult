@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
 
+  belongs_to :company, :foreign_key => 'customer_id'
   has_many :user_companies, :class_name => 'UserCompany', 
                             :dependent => :destroy
   accepts_nested_attributes_for :user_companies, :allow_destroy => true

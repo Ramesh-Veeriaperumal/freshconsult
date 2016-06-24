@@ -10,12 +10,12 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
     Email: 0,
     Facebook: 0,
     Phone: 0,
-    ContactNumber: 1,
-    Limits: {"twitter" : 2, "facebook" : 2, "emails" : 6, "contacts" : 6, "phone" : 2},
+    Mobile: 0,
+    Limits: {"twitter" : 2, "facebook" : 2, "emails" : 6, "mobile phone" : 2, "work phone" : 2},
     
     contactsSearch: new Template(
         '<li class="#{d}"><div class="contactelement" data-id="#{id}" data-name="#{name}" data-email="#{email}" '+
-        'data-twitter="#{twitter}" data-facebook="#{facebook}" data-phone="#{phone}" data-avatar="#{avatar}" '+
+        'data-twitter="#{twitter}" data-facebook="#{facebook}" data-mobile="#{mobile}" data-phone="#{phone}" data-avatar="#{avatar}" '+
         'data-emails="#{user_emails}">'+
         '<span class="round-icon ficon-plus fsize-15"></span>'+
         '<div data-uid="#{id}" class="user-contact contact_merge_element">'+
@@ -131,6 +131,7 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
         "twitter" : element.data("twitter"), 
         "facebook" : element.data("facebook"), 
         "phone" : element.data("phone"),
+        "mobile" : element.data("mobile"),
         "primary" : this.markPrimary
       }
       var email = this.getEmails(userData["emails"]);
@@ -212,28 +213,31 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
         this.Facebook = 1;
       if(data["phone"])
         this.Phone = 1;
+      if(data["mobile"])
+        this.Mobile = 1;
     },
 
     setDefaults: function () {
       this.ErrorString="";this.Twitter=0;this.Email=0;this.Facebook=0;this.Phone=0;
-      this.ContactNumber=1;
+      this.Mobile=0;
     },
 
     modifyValidationValues: function (element, add) {
+
       if(add){
-        this.ContactNumber += 1
         if(element.data("emails").length)
           this.Email += element.data("emails").split(",").length;
         this.Twitter += element.data("twitter");
         this.Facebook += element.data("facebook");
         this.Phone += element.data("phone");
+        this.Mobile += element.data("mobile");
       }else{
-        this.ContactNumber -= 1
         if(element.data("emails").length)
           this.Email -= element.data("emails").split(",").length;
         this.Twitter -= element.data("twitter");
         this.Facebook -= element.data("facebook");
         this.Phone -= element.data("phone");
+        this.Mobile -= element.data("mobile");
       }
     },
 
@@ -248,12 +252,12 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
         this.attributeError("twitter");
       if(this.Facebook >= this.Limits["facebook"])
         this.attributeError("facebook");
-      if(this.ContactNumber >= this.Limits["contacts"])
-        this.attributeError("contacts");
+      if(this.Mobile >= this.Limits["mobile phone"])
+        this.attributeError("mobile phone");
       if(this.Email >= this.Limits["emails"])
         this.attributeError("emails");
-      // if(this.Phone >= this.Limits["phone"])
-      //   this.attributeError("phone");
+      if(this.Phone >= this.Limits["work phone"])
+        this.attributeError("work phone");
       if(this.ErrorString == ""){
         jQuery("p.errors").html("");
         if(jQuery('input[name="target[]"]').length>0)

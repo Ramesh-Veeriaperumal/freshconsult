@@ -13,7 +13,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                     :status_deleted, :product_id, :trashed
                   ],
       :only => ticket_indexed_fields
-      },false).merge(custom_attributes).merge(schema_less_fields).to_json
+      },false).merge(count_es_ff_fields).merge(schema_less_fields).to_json
   end
 
   def count_es_columns
@@ -21,7 +21,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def count_es_ff_columns
-    esv2_ff_columns
+    Flexifield.column_names.select {|v| v =~ /^ff(s|_date|_int|_decimal|_boolean)/}.map(&:to_sym)
   end
 
   def ticket_indexed_fields
@@ -45,7 +45,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def schema_less_fields
-    schema_less_ticket.as_json(root: false, only: Helpdesk::SchemaLessTicket.column_names.select {|v| v =~ /^long|int|datetime|string|boolean_/})
+    schema_less_ticket.as_json(root: false, only: schema_less_columns)
+  end
+
+  def count_es_ff_fields
+    flexifield.as_json(root: false, only: count_es_ff_columns)
   end
 
 

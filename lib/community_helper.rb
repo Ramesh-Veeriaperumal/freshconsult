@@ -1,6 +1,8 @@
 module CommunityHelper
 
   def preview_portal(relative_path, category = nil)
+    category.portals.collect(&:id) if category.present?
+    # Above line added just to preload the portals. The above line is otherwise useless
     return if category.present? && category.portal_ids.empty?
     %(<span class="tooltip pull-right portal-preview-icon" title="#{t('solution.view_on_portal')}">
       #{link_to('<i class="ficon-open-in-portal fsize-21"></i>'.html_safe, portal_preview_path(relative_path, category), :target => "view-portal")}
@@ -29,6 +31,16 @@ module CommunityHelper
     (article.send(att_type).reject do |a|
       (draft.deleted_attachments(att_type) || []).include?(a.id)
     end) + draft.send(att_type)
+  end
+
+  def inline_manual_classes_for_multilingual
+    classes = []
+    classes << "eligible" if Account.current.features?(:multi_language)
+    if Account.current.multilingual_available?
+      classes << "available" 
+      classes << (Account.current.multilingual? ? "ml-enabled" : "ml-disabled")
+    end
+    classes.join(" ").html_safe
   end
 
 end

@@ -22,11 +22,7 @@
 						<div class="mt7"> <%= @folder_meta.send("#{@language.to_key}_folder").name %> </div>
 					<% else %>
 						<%= f.select :solution_folder_meta_id , 
-									option_groups_from_collection_for_select(
-											current_account.solution_category_meta.includes(:primary_category, :solution_folder_meta => :primary_folder).reject(&:is_default), 
-											:solution_folder_meta, :name, :id, :name, 
-											@article_meta.solution_folder_meta_id
-									), 
+									grouped_options_for_select(grouped_options_for_folder_select, @article_meta.solution_folder_meta_id), 
 									{ :include_blank => true },
 									:class => "select2 span3 required",
 									:placeholder => t('solution.folders.choose_folder'),

@@ -114,7 +114,7 @@
     </div>
   <% end %>
 
-	<% if current_account.features?(:archive_tickets) and @ticket.archive_child %>
+	<% if current_account.features_included?(:archive_tickets) and @ticket.archive_child %>
 		<div class="info-highlight">
 			<%= t("helpdesk.tickets.show.archived_ticket") %>
 	    "<%= link_to("#{truncate(@ticket.archive_ticket.subject)}", helpdesk_archive_ticket_path(@ticket.archive_ticket.display_id), :class => "link_to") %>"

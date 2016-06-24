@@ -110,7 +110,7 @@ class Forum < ActiveRecord::Base
   after_create :add_activity_new_and_clear_cache
   after_update :clear_cache_with_condition
   before_destroy :add_activity
-  after_destroy :clear_cat_cache
+  after_destroy :clear_cat_cache, :clear_moderation_records
 
   def add_activity_new_and_clear_cache
     create_activity('new_forum')
@@ -206,10 +206,11 @@ class Forum < ActiveRecord::Base
   def visible?(user)
     return true if (user and user.agent?)
     return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
-    return true if (user and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
+    return false unless user
+    return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]
     company_cdn = user.contractor? ? (user.company_ids & customer_forums.map(&:customer_id)).any? : 
                     (user.company  && customer_forums.map(&:customer_id).include?(user.company.id))
-    return true if (user && (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && 
+    return true if ((self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && 
       company_cdn)
   end
 
@@ -280,12 +281,16 @@ class Forum < ActiveRecord::Base
   end
 
   def backup_forum_topic_ids
-    @deleted_topic_ids = self.topics.map(&:id)
+    @deleted_topic_ids = self.topics.pluck(:id)
   end
 
   def unsubscribed_agents
     user_ids = monitors.map(&:id)
     account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+
+  def clear_moderation_records
+    Community::ClearModerationRecords.perform_async(self.id, self.class.to_s, @deleted_topic_ids)
   end
 
   private

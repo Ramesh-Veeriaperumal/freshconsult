@@ -88,7 +88,7 @@ module Facebook
         end
         
         def permission_error?
-          !@exception.fb_error_code.blank? and @exception.fb_error_code.between?(PERMISSION_ERROR.first,  PERMISSION_ERROR.last)
+          !@exception.fb_error_code.blank? && @exception.fb_error_code.between?(PERMISSION_ERROR.first,  PERMISSION_ERROR.last) && @exception.fb_error_message.include?(PERMISSION_MSG)
         end
         
       end

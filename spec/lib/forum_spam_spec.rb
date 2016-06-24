@@ -92,8 +92,8 @@ describe ForumSpam do
 		for i in [2,3] do
 			last_2_days_posts << create_dynamo_topic("ForumSpam", @forum, {:timestamp => (Time.now - i.day).utc.to_f}).attributes
 		end
-
-		ForumSpam.next((Time.now - 2.day).utc.to_f).records.map(&:attributes).should =~ last_2_days_posts
+		last_evaluated_key = { "account_id" => { :n => "#{@forum.account_id}" }, "timestamp" => { :n => "#{(Time.now - 2.day).utc.to_f}" }}
+		ForumSpam.next(last_evaluated_key).records.map(&:attributes).should =~ last_2_days_posts
 		
 	end
 

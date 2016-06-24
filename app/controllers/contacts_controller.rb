@@ -69,7 +69,7 @@ class ContactsController < ApplicationController
   
   def create   
     if initialize_and_signup!
-      flash[:notice] = t('flash.contacts.create.success')
+      flash[:notice] = @flash_notice || render_to_string(:partial => '/contacts/contact_notice', :formats => [:html], :locals => { :message => t('flash.contacts.create.success') } ).html_safe
       respond_to do |format|
         format.html { redirect_to redirection_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
@@ -96,6 +96,7 @@ class ContactsController < ApplicationController
   end
 
   def create_contact # new method to implement dynamic validations, as many forms post to create action 
+    @flash_notice = t('flash.contacts.create.success')
     create
   end
   
@@ -405,7 +406,7 @@ protected
       @total_user_tickets_size = @total_user_tickets.length
       @user_tickets = @total_user_tickets.take(10)
 
-      if current_account.features?(:archive_tickets)
+      if current_account.features_included?(:archive_tickets)
         @total_archive_user_tickets = current_account.archive_tickets.permissible(current_user).
           requester_active(@user).newest(11).find(:all, :include => [:responder,:requester])
         @total_archive_user_tickets_size = @total_archive_user_tickets.length

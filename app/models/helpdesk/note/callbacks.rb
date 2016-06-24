@@ -357,7 +357,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     # preventing deletion from elastic search
     def deleted_archive_note
-      if Account.current.features?(:archive_tickets) && self.notable && self.notable.archive
+      if Account.current.features_included?(:archive_tickets) && self.notable && self.notable.archive
         return false
       end
       return true

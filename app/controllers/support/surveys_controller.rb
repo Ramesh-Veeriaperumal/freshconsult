@@ -67,14 +67,14 @@ class Support::SurveysController < ApplicationController
       @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
       
       # Display "survey_closed" message for archived tickets
-      if @ticket.blank? and current_account.features?(:archive_tickets) and 
+      if @ticket.blank? and current_account.features_included?(:archive_tickets) and 
           current_account.archive_tickets.find_by_display_id(params[:ticket_id])
         send_error I18n.t('support.surveys.survey_closed') 
       end
     end
 
     def archived_ticket_link
-      @survey_handle.surveyable and current_account.features?(:archive_tickets) and 
+      @survey_handle.surveyable and current_account.features_included?(:archive_tickets) and 
           @survey_handle.surveyable.is_a?(Helpdesk::ArchiveTicket)
     end
     

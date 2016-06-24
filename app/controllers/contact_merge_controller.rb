@@ -98,6 +98,7 @@ class ContactMergeController < ApplicationController
           :twitter => i.twitter_id.present?,
           :facebook => i.fb_profile_id.present?,
           :phone => i.phone.present?, 
+          :mobile => i.mobile.present?,
           :searchKey => i.emails.join(",")+i.name, 
           :avatar =>  i.avatar ? i.avatar.expiring_url("thumb",30.days.to_i) : is_user_social(i, "thumb")
         }

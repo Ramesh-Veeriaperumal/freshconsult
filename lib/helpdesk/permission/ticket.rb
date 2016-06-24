@@ -23,7 +23,7 @@ module Helpdesk::Permission
 
     def process_email_ticket_info account, from_email, user, email_config
       ticket = fetch_ticket(account, from_email, user, email_config)
-      if ticket.blank? && account.features?(:archive_tickets)
+      if ticket.blank? && account.features_included?(:archive_tickets)
         archived_ticket = fetch_archived_ticket(account, from_email, user, email_config)
       end
       return ticket, archived_ticket
