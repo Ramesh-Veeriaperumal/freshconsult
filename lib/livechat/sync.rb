@@ -94,12 +94,15 @@ class Livechat::Sync
       Sharding.select_shard_of(account_id) do
         account = ::Account.find(account_id)
         account.make_current
-        user = user_id.present? ? account.users.find_by_id(user_id) : account.users.find_by_email(account.admin_email)
-        user.make_current
-        unless next_methods.blank?
-          send(next_methods.shift, next_methods, options['siteId'])
-        else
-          LivechatWorker.perform_async({ :worker_method => worker_method, :attributes => options[:attributes]})
+        user = account.users.find_by_id(user_id) if user_id.present?
+        user = account.users.find_by_email(account.admin_email) if !user.present?
+        if user.present?
+          user.make_current
+          unless next_methods.blank?
+            send(next_methods.shift, next_methods, options['siteId'])
+          else
+            LivechatWorker.perform_async({ :worker_method => worker_method, :attributes => options[:attributes]})
+          end
         end
         Account.reset_current_account
         User.reset_current_user
