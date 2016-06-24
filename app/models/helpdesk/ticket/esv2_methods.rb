@@ -54,11 +54,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def es_v2_attachments
     attachments.pluck(:content_file_name)
   end
-  
-  # Tag use callbacks to ES
-  def update_ticket_tags(obj)
-    self.tags_updated = true
-  end
 
   #############################
   ### Count Cluster methods ###

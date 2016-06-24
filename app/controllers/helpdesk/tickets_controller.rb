@@ -17,6 +17,7 @@ class Helpdesk::TicketsController < ApplicationController
   helper Helpdesk::TicketsExportHelper
   helper Helpdesk::SelectAllHelper
   include Helpdesk::TagMethods
+  include Helpdesk::Activities::ActivityMethods
 
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
@@ -56,7 +57,8 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :load_ticket, 
     :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, 
-              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities]
+              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
+              :activities, :activitiesv2, :activities_all]
   
   before_filter :load_ticket_with_notes, :only => [:show]
 
@@ -76,7 +78,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   before_filter :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, 
-              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore]
+              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore, :activitiesv2, :activities_all]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv, :reply_to_forward]
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv, :reply_to_forward]
@@ -481,8 +483,8 @@ class Helpdesk::TicketsController < ApplicationController
     if va_rule.present? and va_rule.visible_to_me? and va_rule.check_user_privilege
       Tickets::BulkScenario.perform_async({:ticket_ids => params[:ids], :scenario_id => params[:scenario_id]})
       va_rule.fetch_actions_for_flash_notice(current_user)
-      actions_executed = Va::ScenarioFlashMessage.activities
-      Va::ScenarioFlashMessage.clear_activities
+      actions_executed = Va::RuleActivityLogger.activities
+      Va::RuleActivityLogger.clear_activities
       respond_to do |format|
         format.html {
           flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice',
@@ -501,7 +503,8 @@ class Helpdesk::TicketsController < ApplicationController
       @item.save
       @item.create_scenario_activity(va_rule.name)
       @va_rule_executed = va_rule
-      actions_executed = Va::ScenarioFlashMessage.activities
+      actions_executed = Va::RuleActivityLogger.activities
+      Va::RuleActivityLogger.clear_activities
       respond_to do |format|
         format.html {
           flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice',
@@ -846,6 +849,47 @@ class Helpdesk::TicketsController < ApplicationController
       render :partial => "helpdesk/tickets/show/activity.html.erb", :collection => @activities
     else
       render :layout => false
+    end
+  end
+
+  def activitiesv2
+    if Account.current.launched?(:activity_ui) and Account.current.features?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
+      type = :tkt_activity
+      @activities_data = new_activities(params, @item, type)
+      @total_activities  ||=  @activities_data[:total_count] 
+       respond_to do |format|
+        format.html{
+          if @activities_data.nil? || @activities_data[:error].present?
+            render nothing: true
+          else
+            @activities = @activities_data[:activity_list].reverse
+            if params[:since_id].present? or params[:before_id].present?
+              render :partial => "helpdesk/tickets/show/custom_activity.html.erb", :collection => @activities
+            else
+              render :layout => false
+            end
+          end
+        }     
+      end
+    else
+      render :nothing => true
+    end
+  end
+
+  def activities_all
+    if request.format != "application/json"
+      activities = {:activity => "Incorrect request format"}
+    else
+      if Account.current.features?(:activity_revamp)
+        params[:event_type] = ::HelpdeskActivities::EventType::ALL
+        params[:limit]      = 200
+        activities = new_activities(params, @item, :test_json)
+      end
+    end
+    respond_to do |format|
+      format.json do
+        render :json => activities
+      end
     end
   end
 

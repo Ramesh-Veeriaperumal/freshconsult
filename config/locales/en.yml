@@ -2637,6 +2637,15 @@ en:
     tweet: "tweet"
     time_entry: "time entry"
     note: "note"
+    supervisor: "Supervisor rule"
+    observer: "Observer rule"
+    business: "Dispatch’r rule"
+    scenario: "Scenario automation"
+    none: "None"
+    subject: "subject"
+    description: "description"
+    set: "Set"
+    rule_executed: "System rule executed"
     tag:
       solutions: "New Solution"
       assigned_to_nobody: "Agent Unassigned"
@@ -2655,6 +2664,10 @@ en:
         new: "Time logged"
         timer_started: "Timer Started"
         timer_stopped: "Timer Stopped"
+        edit: "Timesheet updated"
+        delete: "Timesheet deleted"
+        billable: "Billable"
+        non_billable: "Non-Billable"
       execute_scenario: "Scenario Executed"
       ticket_merge: "Ticket Merged"
       ticket_split: "Ticket Split"
@@ -2668,6 +2681,11 @@ en:
       group_change_none: "Agent Group Changed"
       source_change: "Ticket Source"
       due_date_updated: "Due Date Updated"
+      tag_change: "Tag updated"
+      add_watcher: "Watcher Added"
+      remove_watcher: "Watcher Removed"
+      property_update: "Property Updated"
+      spam: "Marked Spam"
     solutions:
       new_solution:
         short: "{{user_path}} created a new solution"
@@ -2802,12 +2820,15 @@ en:
         short: "{{user_path}} changed priority to {{priority_name}}"
         long: "{{user_path}} changed ticket priority of {{notable_path}} to {{priority_name}}"
         without_user: "updated ticket priority to <strong>{{priority_name}}</strong>"
+        new: "Priority as <strong>%{priority_name}</strong>"
       new_ticket:
         short: "{{user_path}} submitted the ticket"
         long: "{{user_path}} submitted a new ticket {{notable_path}}"
+        new: "Submitted a new ticket"
       new_outbound:
         short: "{{user_path}} created a ticket"
         long: "{{user_path}} created a ticket {{notable_path}}"
+        new: "Sent email and created a new ticket"
       conversation:
         out_email:
           short: "{{user_path}} has sent a {{reply_path}}"
@@ -2827,28 +2848,48 @@ en:
         ecommerce:
           short: "{{user_path}} has sent a {{ecommerce_path}}"
           long: "{{user_path}} has sent a {{ecommerce_path}} to the ticket {{notable_path}}"
-
       timesheet:
         new:
           short: "{{user_path}} added a {{timesheet_path}}"
           long: "{{user_path}} added a {{timesheet_path}} to the ticket {{notable_path}}"
           without_user: "added a {{timesheet_path}}"
+          new: "Added a time entry"
         timer_started:
           short: "{{user_path}} started timer on  {{timesheet_path}}"
           without_user: "started timer on  {{timesheet_path}}"
           long: "{{user_path}} started timer on {{timesheet_path}} to the ticket {{notable_path}}"
+          new: "Started timer on timesheet entry"
         timer_stopped:
           short: "{{user_path}} stopped timer on  {{timesheet_path}}"
           without_user: "stopped timer on  {{timesheet_path}}"
           long: "{{user_path}} stopped timer on {{timesheet_path}} to the ticket {{notable_path}}"
+          new: "Stopped timer on timesheet entry"
+      timesheet_without_time:
+        new: "%{billable} hours for <strong>%{user_path}</strong> on %{date}"
+      timesheet_with_time:
+        new: "%{time_spent} %{billable} hours for <strong>%{user_path}</strong> on %{date}"
+      timesheet_timer_start:
+        new: "Started timer on timesheet with %{timesheet}"
+      timesheet_timer_stop:
+        new: "Stopped timer on timesheet for %{timesheet}"
+      timesheet_create:
+        new: "Created a timesheet with %{timesheet}"
+      timesheet_edit:
+        new: "Edited a timesheet <br> Timesheet with %{old_timesheet} modified to timesheet with %{new_timesheet}"
+      timesheet_delete:
+        new: "Deleted the timesheet with %{timesheet}"
       assigned:
         short: Assigned to {{responder_path}} by {{user_path}}
         without_user: assigned to <strong>{{responder_path}}</strong>
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
+        new: "Agent as <strong>%{responder_path}</strong>"
+      round_robin:
+        new: "Set Agent as <strong>%{responder_path}</strong> via round robin assignment"
       execute_scenario:
         short: "{{user_path}} executed the scenario '{{scenario_name | h}}"
         without_user: "executed the scenario <strong>{{scenario_name | h}}</strong>"
         long: "{{user_path}} executed the scenario '{{scenario_name | h}}' on {{notable_path}}"
+        new: "Executed the scenario <strong>%{scenario_name}</strong>"
       ticket_merge:
         short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
         long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
@@ -2865,18 +2906,26 @@ en:
         short: "{{user_path}} updated status to {{status_name}}"
         without_user: "updated status to <strong>{{status_name}}</strong>"
         long: "{{user_path}} updated ticket status of {{notable_path}} to {{status_name}}"
+        new: "Status as <strong>%{status_name}</strong>"
       deleted:
         short: "{{user_path}} has deleted this ticket"
         without_user: "has deleted the ticket"
         long: "{{user_path}} has deleted the ticket {{notable_path}}"
+        new: "Deleted this ticket"
       restored:
         short: "{{user_path}} has restored this ticket"
         without_user: "has restored the ticket"
         long: "{{user_path}} has restored the ticket {{notable_path}}"
+        new: "Restored this ticket from trash"
+      spam:
+        new: "Flagged this ticket as Spam"
+      unspam:
+        new: "Restored this ticket from Spam"
       product_change:
         short: "{{user_path}} updated product to {{product_name}}"
         without_user: "updated product to <strong>{{product_name}}</strong>"
         long: "{{user_path}} updated product of {{notable_path}} to {{product_name}}"
+        new:  "Product as <strong>%{product_name}</strong>"
       product_change_none:
         short: "{{user_path}} updated product to 'none'"
         without_user: "updated product to <strong>'none'"
@@ -2885,10 +2934,12 @@ en:
         short: "{{user_path}} updated ticket type to {{ticket_type}}"
         without_user: "updated ticket type to <strong>{{ticket_type}}</strong>"
         long: "{{user_path}} updated ticket type of {{notable_path}} to {{ticket_type}}"
+        new: "Type as <strong>%{ticket_type}</strong>"
       group_change:
         short: "{{user_path}} updated group to {{group_name}}"
         without_user: "updated group to <strong>{{group_name}}</strong>"
         long: "{{user_path}} updated group of {{notable_path}} to {{group_name}}"
+        new: "Group as <strong>%{group_name}</strong>"
       group_change_none:
         short: "{{user_path}} updated group to 'none'"
         without_user: "updated group to <strong>'none'</strong>"
@@ -2897,10 +2948,48 @@ en:
         short: "{{user_path}} updated source to {{source_name}}"
         without_user: "updated source to <strong>{{source_name}}</strong>"
         long: "{{user_path}} updated ticket source of {{notable_path}} to {{source_name}}"
+        new: "Source as <strong>%{source_name}</strong>"
       due_date_updated:
         short: "{{user_path}} updated due date to {{due_date_updated}}"
         without_user: "updated due date to <strong>{{due_date_updated}}</strong>"
         long: "{{user_path}} updated due date of {{notable_path}} to {{due_date_updated}}"
+        new: "due by time as <strong>%{due_date_updated}</strong>"
+      requester_change:
+        new: "Requester as <strong>%{requester_name}</strong>"
+      ticket_edit:
+        new: "Edited the <strong>%{fields}</strong>"
+      custom_field_change:
+        new: "%{field_name} as <strong>%{field_value}</strong>"
+      custom_text_field_change:
+        new: "Modified %{text_fields}"
+      added_watcher: 
+        new: "Added watcher(s) <strong>%{watcher_list}</strong>"
+      removed_watcher:
+        new: "Removed watcher <strong>%{watcher_list}</strong>"
+      added_tag:
+        new: "Added tag(s) <strong>%{tag_name}</strong>"
+      removed_tag:
+        new: "Removed tag(s) <strong>%{tag_name}</strong>"
+      add_cc:
+        new: "Added CC %{cc_list}"
+      add_note:
+        new: "Added note(s)"
+      ticket_merge_source:
+        new: "Merged this ticket into %{target_ticket}"
+      ticket_merge_target:
+        new: "Merged %{source_ticket_list} with this ticket"
+      ticket_split_source:
+        new: "Split a response to create a new ticket %{target_ticket}"
+      ticket_split_target:
+        new: "Created this ticket by splitting a response from ticket %{source_ticket}"
+      ticket_import:
+        new: "Ticket imported on %{imported_time}"
+      checkbox_checked:
+        new: "Selected %{checkbox_list}"
+      checkbox_unchecked:
+        new: "Deselected %{checkbox_list}"
+      archive:
+        new: "Ticket archived"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
@@ -5150,7 +5239,14 @@ en:
       user_not_following: This user is not following your twitter account
     activities: Activities
     activity_toggle: Show Activities
+    activity_toggle_v2: Activities
+    activity_toggle_tooltip: Toggle activities
+    show_activities_tooltip: Show activities
+    hide_activities_tooltip: Hide activities
     activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+    user_activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+    deleted_rule: " (deleted rule - %{rule_name})"
+    system_activity_timestamp: "System rule executed <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) %{system_rule}"
     requestor_info: Requestor Info
     view_twitter: View on Twitter
     view_facebook: View on Facebook

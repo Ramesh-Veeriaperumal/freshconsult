@@ -6,6 +6,7 @@ reply_to_fwd_id = "cnt-reply-fwd-#{note.id.to_s()}"
 edit_id = "edit-#{note.id.to_s()}"
 notable_object = @ticket || @parent
 minimizable ||= false
+timestamp_id ||=false
 
 if current_account.new_survey_enabled?
   kind = note.custom_survey_remark.nil? ? note.kind : 'survey'
@@ -26,6 +27,9 @@ end
 
 <div id="<%= note_view_id %>" 
 			data-timestamp="<%= note.created_at.to_i%>" 
+			<% if timestamp_id %>
+			data-activity-id="<%= timestamp_id %>" 
+			<% end %>
 			class="conversation <%= 'minimized minimizable' if minimizable %> <%= 'source_email' if note.email? %>">
 	<% if note.user %>
 	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>

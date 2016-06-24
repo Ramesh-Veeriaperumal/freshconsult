@@ -5,6 +5,7 @@ forward_note_id = "cnt-fwd-#{note.id.to_s()}"
 edit_id = "edit-#{note.id.to_s()}"
 notable_object = @ticket || @parent
 minimizable ||= false
+timestamp_id ||=false
 kind = note.survey_remark.nil? ? note.kind : 'survey'
 
 if current_account.custom_survey_enabled?
@@ -28,6 +29,9 @@ end
 %>
 
 <div id="<%= note_view_id %>" 
+      <% if timestamp_id %>
+        data-activity-id="<%= timestamp_id %>" 
+      <% end %>
       data-timestamp="<%= note.created_at.to_i%>" 
       class="conversation <%= 'minimized minimizable' if minimizable %> <%= 'source_email' if note.email? %>">
   <% if note.user %>

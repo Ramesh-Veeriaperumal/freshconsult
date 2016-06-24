@@ -1752,6 +1752,7 @@ Helpkit::Application.routes.draw do
       member do
         get :latest_note
         get :activities
+        get :activitiesv2
         get :prevnext
         get :component
       end
@@ -1830,6 +1831,8 @@ Helpkit::Application.routes.draw do
         get :print
         get :latest_note
         get :activities
+        get :activitiesv2
+        get :activities_all
         delete :clear_draft
         post :save_draft
         put :update_ticket_properties

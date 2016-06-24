@@ -29,7 +29,12 @@ window.App = window.App || {};
       this.quoteText();
       this.toggleQuotedText();
     },
-
+    paginationScroll : function(){
+      var element = $("[data-activity-id ='"+TICKET_DETAILS_DATA['last_activity_batch']+"']")[0];
+      if(element){
+        $(element)[0].scrollIntoView(false);
+      }
+    },
     updateShowMore : function () {
       //Checking if it is Notes (true) or Activities (false)
       var showing_notes = $('#all_notes').length > 0;
@@ -41,6 +46,7 @@ window.App = window.App || {};
       } else {
         total_count = TICKET_DETAILS_DATA['total_activities'];
         loaded_items = TICKET_DETAILS_DATA['loaded_activities'];
+        this.paginationScroll();
       }
 
       if (loaded_items < total_count) {
@@ -56,7 +62,7 @@ window.App = window.App || {};
     },
 
     updatePagination : function () {
-
+      var self = this;
       var showing_notes = $('#all_notes').length > 0;
 
       //Unbinding the previous handler:
@@ -68,13 +74,17 @@ window.App = window.App || {};
         if (showing_notes)
           href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
         else
-          href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'];
+          href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'] + '&limit=' +  TICKET_DETAILS_DATA['pagination_limit'] +'&event_type='+TICKET_DETAILS_DATA['activity_event_type'];
 
         $.get(href, function(response) {
-          TICKET_DETAILS_DATA['first_activity'] = null;
-          TICKET_DETAILS_DATA['first_note_id'] = null;
+          if(response.trim()!=''){
+            TICKET_DETAILS_DATA['first_activity'] = null;
+            TICKET_DETAILS_DATA['first_note_id'] = null;
+          }
+          TICKET_DETAILS_DATA['last_activity_batch'] = null;
           $('#show_more').removeClass('loading').addClass('hide');
           $('[rel=activity_container]').prepend(response);
+          self.updateShowMore();
           trigger_event("ticket_show_more",{})
           try {
             freshfonePlayerSettings();
@@ -94,10 +104,13 @@ window.App = window.App || {};
       $('body').on('click.archive_ticket_details', '#activity_toggle', function(ev) {
         var _toggle = $(this);
 
-        if (_toggle.hasClass('disabled')) return false;
+        if (_toggle.hasClass('disabled')){
+          _toggle.toggleClass('active');
+          return false;
+        }
         _toggle.addClass('disabled')
         var showing_notes = $('#all_notes').length > 0;
-        var url = showing_notes ? TICKET_DETAILS_DATA['activities_pagination_url'] : TICKET_DETAILS_DATA['notes_pagination_url'];
+        var url = showing_notes ? TICKET_DETAILS_DATA['activities_pagination_url'] + 'limit=' + TICKET_DETAILS_DATA['pagination_limit'] + '&event_type='+TICKET_DETAILS_DATA['activity_event_type']  : TICKET_DETAILS_DATA['notes_pagination_url'];
         
         if (showing_notes) {
           TICKET_DETAILS_DATA['first_activity'] = null;
@@ -107,16 +120,33 @@ window.App = window.App || {};
           TICKET_DETAILS_DATA['total_notes'] = 0;
         }
 
-        $('#show_more').addClass('hide').data('next-page',null);  //Resetting
+        $('#show_more').data('next-page',null);  //Resetting
 
         $.ajax({
           url: url,
           success: function(response) {
-            $('[rel=activity_container]').replaceWith(response);
-            $('#show_more').data('next-page',null);  //Resetting
-            if (self.updateShowMore()) self.updatePagination();
-            _toggle.removeClass('loading_activities disabled');
-            trigger_event("activities_toggle",{ current: showing_notes ? 'notes' : 'activities' });
+            if(response.trim()!=''){
+              $('[rel=activity_container]').replaceWith(response);
+              $('#show_more').data('next-page',null);  //Resetting
+              if (self.updateShowMore()) self.updatePagination();
+              _toggle.removeClass('loading_activities disabled');
+              trigger_event("activities_toggle",{ current: showing_notes ? 'notes' : 'activities' });
+              var _shortcut = ' ( ' + _toggle.data('keybinding') + ' )';
+              if(showing_notes){
+                $("#original_request .commentbox").addClass('minimizable minimized');
+                if(_toggle.data('hide-title'))
+                _toggle.attr('title',_toggle.data('hide-title')+_shortcut);
+              }
+              else{
+                $("#original_request .commentbox").removeClass('minimizable minimized');
+                if(_toggle.data('show-title'))
+                _toggle.attr('title',_toggle.data('show-title')+_shortcut);
+              }
+            }
+            else{
+              _toggle.removeClass('loading_activities disabled active');
+            }
+
           }, 
           error: function(response) {
             $('#show_more').removeClass('hide');
@@ -127,7 +157,7 @@ window.App = window.App || {};
     },
 
     maximizeActivityContainer : function() {
-      $('body').on('click.archive_ticket_details', '[rel=activity_container] .minimizable', function(ev){
+      $('body').on('click.archive_ticket_details', ' .conversation_thread .minimizable', function(ev){
         if ($(ev.target).is('a')) return;
         if(($(this).find(".edit_helpdesk_note").length == 0) || ($(this).find(".edit_helpdesk_note").is(":hidden"))){
           $(this).toggleClass('minimized');

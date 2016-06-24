@@ -12,6 +12,10 @@ module Helpdesk::MergeTicketActions
     @source_tickets.each do |source_ticket|
 			move_source_time_sheets_to_target(source_ticket)
 			move_source_description_to_target(source_ticket)
+			#setting an attr accessor variable for activities
+			source_ticket.activity_type = {:type => "ticket_merge_source", 
+				:source_ticket_id => [source_ticket.display_id], 
+				:target_ticket_id => [@target_ticket.display_id]}
 			close_source_ticket(source_ticket)
 			update_header_info(source_ticket.header_info) if source_ticket.header_info
 		end

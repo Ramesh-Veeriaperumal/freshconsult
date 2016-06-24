@@ -14,7 +14,7 @@ class Helpdesk::Subscription < ActiveRecord::Base
   validates_uniqueness_of :ticket_id, :scope => :user_id
   validates_numericality_of :ticket_id, :user_id
   before_create :set_account_id
-
+  
   # Added to handle sending data to count cluster
   after_commit :es_update_parent, :if => :es_count_enabled?
   
@@ -25,6 +25,20 @@ class Helpdesk::Subscription < ActiveRecord::Base
   private
     def set_account_id
       self.account_id = ticket.account_id
+    end
+
+    def to_rmq_json(keys,action)
+      destroy_action?(action) ? watcher_identifiers : return_specific_keys(watcher_identifiers, keys)
+    end
+
+    def watcher_identifiers
+      @rmq_watcher_identifiers ||= {
+        "id"              =>  id,
+        "user_id"         =>  user_id,
+        "ticket_id"       =>  ticket_id,
+        "account_id"      =>  account_id,
+        "display_id"      =>  ticket.display_id
+      }
     end
 
     def es_update_parent

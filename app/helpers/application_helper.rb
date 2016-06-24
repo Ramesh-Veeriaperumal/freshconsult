@@ -740,6 +740,41 @@ module ApplicationHelper
     end
   end
 
+  def link_to_system_rule(rule)
+    return if rule.blank?
+    case rule[3]
+    when 1
+      system_rule_path = edit_admin_va_rule_path(rule[2])
+      rule_privilege = privilege?(:manage_dispatch_rules)
+    when 4
+      system_rule_path = edit_admin_observer_rule_path(rule[2])
+      rule_privilege = privilege?(:manage_dispatch_rules)
+    when 3
+      system_rule_path = edit_admin_supervisor_rule_path(rule[2])
+      rule_privilege = privilege?(:manage_supervisor_rules)
+    else
+      system_rule_path = '#'
+      rule_privilege = false
+    end
+
+    if rule_privilege && rule[4]
+      content_tag(:div, link_to(rule[0],system_rule_path, :target => "_blank"))
+    elsif rule_privilege
+      content_tag(:div, h(rule[0])+ t("ticket.deleted_rule", :rule_name => h(rule[1])).html_safe, class:"strong")
+    else
+      content_tag(:div, h(rule[0]), class:"strong")
+    end
+  end
+
+  def format_activity_date(timestamp, format)
+    activity_timestamp  = timestamp / ActivityConstants::TIME_MULTIPLIER
+    if format
+      Time.zone.at(activity_timestamp)
+    else
+      activity_timestamp
+    end
+  end
+
   def formated_date(date_time, options={})
     default_options = {
       :format => :short_day_with_time,

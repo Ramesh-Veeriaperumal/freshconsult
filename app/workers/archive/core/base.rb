@@ -172,8 +172,13 @@ module Archive
 
       def delete_ticket(ticket,archive_ticket)
         ticket.archive = true
-        ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY,
-                                       {:manual_publish => true})
+        if Account.current.features?(:activity_revamp)  # for both reports and activities
+          ticket.misc_changes = {:archive => [false, true]}
+          key = RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY 
+        else
+          key = RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY
+        end
+        ticket.manual_publish_to_rmq("update", key, {:manual_publish => true})
         if archive_ticket_destroy(ticket)
           Helpdesk::ArchiveTicket.where(:id => archive_ticket.id, :account_id => archive_ticket.account_id, :progress => true).update_all(:progress => false)
           archive_ticket.sqs_manual_publish
