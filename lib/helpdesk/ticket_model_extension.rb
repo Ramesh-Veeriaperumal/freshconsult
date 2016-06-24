@@ -41,9 +41,20 @@ module Helpdesk::TicketModelExtension
   end
 
   def custom_export_fields_order account = Account.current
+    field_mapping = {}
     shift = default_export_fields_order.keys.length
-    fields = account.ticket_fields_with_nested_fields.custom_fields.pluck(:name)
-    Hash[fields.each_with_index.map {|x,i| [x, i+1+shift]}]
+    i = 1+shift  
+    account.ticket_fields_including_nested_fields.custom_fields.order("helpdesk_ticket_fields.position").each do |custom_field|
+      field_mapping[custom_field.name] = i 
+      i = i + 1
+      if custom_field.field_type == "nested_field"
+        custom_field.nested_ticket_fields.each do |nested_field|
+          field_mapping[nested_field.name] = i
+          i = i + 1
+        end
+      end
+    end
+    field_mapping
   end
 
    def self.csv_headers
