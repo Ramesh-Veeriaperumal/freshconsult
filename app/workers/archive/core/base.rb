@@ -6,7 +6,7 @@ module Archive
     class Base
 
       ASSOCIATIONS_TO_SERIALIZE = {
-        :helpdesk_tickets => [:flexifield, :ticket_old_body, :schema_less_ticket, :ticket_states, :mobihelp_ticket_info, :reminders],  #:subscriptions
+        :helpdesk_tickets => [:flexifield, :ticket_old_body, :schema_less_ticket, :ticket_states, :mobihelp_ticket_info, :reminders,:subscriptions],  #:subscriptions
         :helpdesk_notes => [:survey_remark, :note_old_body, :schema_less_note, :external_note]
       }
 
@@ -20,7 +20,7 @@ module Archive
         :helpdesk_notes => ["social_tweets" => "tweetable", "social_fb_posts" => "postable", "freshfone_calls" => "notable", "helpdesk_attachments" => "attachable", "helpdesk_dropboxes" => "droppable", "helpdesk_shared_attachments" => "shared_attachable" ,"inline_attachments" => "attachable"]
       }
 
-      RAW_MYSQL_TICKET_ASSOCIATION = ["helpdesk_ticket_bodies","helpdesk_schema_less_tickets","helpdesk_ticket_states","mobihelp_ticket_infos","helpdesk_reminders"]  #helpdesk_subscriptions
+      RAW_MYSQL_TICKET_ASSOCIATION = ["helpdesk_ticket_bodies","helpdesk_schema_less_tickets","helpdesk_ticket_states","mobihelp_ticket_infos","helpdesk_reminders","helpdesk_subscriptions"]  #helpdesk_subscriptions
       RAW_MYSQL_TICKET_POLYMORPHIC_ASSOCIATION = {
         "flexifields" => "flexifield_set"
       }
