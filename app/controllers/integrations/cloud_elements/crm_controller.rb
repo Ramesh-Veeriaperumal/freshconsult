@@ -194,7 +194,12 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
     def get_synced_objects
       @contact_synced = params[:inputs][:contacts]
+      @contact_fields, @account_fields = Hash.new, Hash.new
+      @contact_fields['fields_hash'] = current_account.contact_form.fields.map{|field| [field[:name], field.dom_type]}.to_h
+      @contact_fields['seek_fields'] = ["name", "email", "mobile", "phone"]
       @account_synced = params[:inputs][:companies]
+      @account_fields['fields_hash'] = current_account.company_form.fields.map{|field| [field[:name], field.dom_type]}.to_h
+      @account_fields['seek_fields'] = ["name"]
     end
 
     def update_obj_transformation
@@ -213,27 +218,33 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       contact_metadata = @contact_metadata.merge({:instance_id => @app_config['element_instance_id'], :update_action => @app_config['update_action']}) 
       account_metadata = @account_metadata.merge({:instance_id => @app_config['element_instance_id'], :update_action => @app_config['update_action']})
       constant_file = read_constant_file 
-      instance_object_definition( obj_def_payload(@contact_synced), contact_metadata )
-      instance_object_definition( obj_def_payload(@account_synced), account_metadata )
-      instance_transformation( crm_element_trans_payload(@contact_synced, constant_file['objects']['contact']), contact_metadata )
-      instance_transformation( crm_element_trans_payload(@account_synced, constant_file['objects']['account']), account_metadata )
+      instance_object_definition( obj_def_payload(@contact_synced, @contact_fields), contact_metadata )
+      instance_object_definition( obj_def_payload(@account_synced, @account_fields), account_metadata )
+      instance_transformation( crm_element_trans_payload(@contact_synced, constant_file['objects']['contact'], @contact_fields), contact_metadata )
+      instance_transformation( crm_element_trans_payload(@account_synced, constant_file['objects']['account'], @account_fields), account_metadata )
     end
 
     def freshdesk_object_transformation
       contact_metadata = @contact_metadata.merge({:instance_id => @app_config['fd_instance_id'], :update_action => @app_config['update_action']}) 
       account_metadata = @account_metadata.merge({:instance_id => @app_config['fd_instance_id'], :update_action => @app_config['update_action']})
-      instance_object_definition( obj_def_payload(@contact_synced), contact_metadata )
-      instance_object_definition( obj_def_payload(@account_synced), account_metadata )
-      instance_transformation( fd_trans_payload(@contact_synced,'','contacts'), contact_metadata )
-      instance_transformation( fd_trans_payload(@account_synced,'customer','accounts'), account_metadata )
+      instance_object_definition( obj_def_payload(@contact_synced, @contact_fields), contact_metadata )
+      instance_object_definition( obj_def_payload(@account_synced, @account_fields), account_metadata )
+      instance_transformation( fd_trans_payload(@contact_synced,'','contacts', @contact_fields ), contact_metadata )
+      instance_transformation( fd_trans_payload(@account_synced,'customer','accounts', @account_fields), account_metadata )
     end
 
-    def obj_def_payload obj_synced
+    def obj_def_payload obj_synced, obj_fields
       hash = {}
       arr = Array.new
       obj_synced.each do |obj|
+        if obj_fields['seek_fields'].include? obj['fd_field']
+          path = "FD_slave_#{obj['fd_field']}"
+        else
+          type = obj_fields['fields_hash'][obj['fd_field']].to_s
+          path = "FD_slave_#{obj['fd_field']}_type_#{type}"
+        end
         arr.push({
-          'path' => "FD_slave_#{obj['fd_field']}",
+          'path' => path,
           'type' => 'string'      
         })
       end
@@ -241,32 +252,50 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       JSON.generate(hash)
     end
 
-    def crm_element_trans_payload obj_synced, obj_name
+    def crm_element_trans_payload obj_synced, obj_name, obj_fields
       arr = Array.new
       obj_synced.each do |obj|
+        if obj_fields['seek_fields'].include? obj['fd_field']
+          path = "FD_slave_#{obj['fd_field']}"
+        else
+          type = obj_fields['fields_hash'][obj['fd_field']].to_s
+          path = "FD_slave_#{obj['fd_field']}_type_#{type}"
+        end
         arr.push({
-          "path" => "FD_slave_#{obj['fd_field']}",
+          "path" => path,
           "vendorPath" => obj['sf_field']
         })
       end
       parse_trans_payload( arr, obj_name)
     end
 
-    def fd_trans_payload obj_synced, fd_obj, obj_name
+    def fd_trans_payload obj_synced, fd_obj, obj_name, obj_fields
       arr = Array.new
       if fd_obj.present?
         obj_synced.each do |obj|
           vendor_path = (obj['fd_field'].index('cf_') == 0) ? "#{fd_obj}.custom_field.#{obj['fd_field']}" : "#{fd_obj}.#{obj['fd_field']}"
+          if obj_fields['seek_fields'].include? obj['fd_field']
+            path = "FD_slave_#{obj['fd_field']}"
+          else
+            type = obj_fields['fields_hash'][obj['fd_field']].to_s
+            path = "FD_slave_#{obj['fd_field']}_type_#{type}"
+          end
           arr.push({
-            "path" => "FD_slave_#{obj['fd_field']}",
+            "path" => path,
             "vendorPath" => vendor_path
           })
         end
       else
         obj_synced.each do |obj|
           vendor_path = (obj['fd_field'].index('cf_') == 0) ? "custom_fields.#{obj['fd_field'][3..-1]}" : "#{obj['fd_field']}"
+          if obj_fields['seek_fields'].include? obj['fd_field']
+            path = "FD_slave_#{obj['fd_field']}"
+          else
+            type = obj_fields['fields_hash'][obj['fd_field']].to_s
+            path = "FD_slave_#{obj['fd_field']}_type_#{type}"
+          end
           arr.push({
-            "path" => "FD_slave_#{obj['fd_field']}",
+            "path" => path,
             "vendorPath" => vendor_path
           })
         end
