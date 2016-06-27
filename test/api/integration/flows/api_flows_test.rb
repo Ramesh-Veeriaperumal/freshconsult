@@ -274,7 +274,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_authenticating_get_request
-    ApiDiscussions::CategoriesController.any_instance.expects(:authenticate_with_http_basic).never
+    ApiDiscussions::CategoriesController.any_instance.expects(:authenticate_with_http_basic).once
     get '/api/discussions/categories', nil, @headers
   end
 
@@ -1054,5 +1054,33 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     get 'api/agents/me', nil, @headers.merge(headers)
     assert_response 200
     response.body.must_match_json_expression(agent_pattern(@account.all_agents.find(sample_user.agent.id)))
+  end
+
+  def test_get_request_with_both_cookie_and_auth
+    sample_user = add_test_agent(@account)
+    sample_user.password = 'test'
+    sample_user.save
+    headers = set_custom_auth_headers(@headers, sample_user.email, 'test')
+    record = @agent.reload
+    UserSession.any_instance.stubs(:cookie_credentials).returns([record.persistence_token, record.id])
+    get 'api/agents/me', nil, @headers.merge(headers)
+    assert_response 200
+    response.body.must_match_json_expression(agent_pattern(@account.all_agents.find(sample_user.agent.id)))
+  ensure
+    UserSession.any_instance.unstub(:cookie_credentials)
+  end
+
+  def test_get_request_with_only_cookie
+    sample_user = add_test_agent(@account)
+    sample_user.password = 'test'
+    sample_user.save
+    record = sample_user.reload
+    UserSession.any_instance.stubs(:cookie_credentials).returns([record.persistence_token, record.id])
+    headers = @headers.except("HTTP_AUTHORIZATION")
+    get 'api/agents/me', nil, headers
+    assert_response 200
+    response.body.must_match_json_expression(agent_pattern(@account.all_agents.find(sample_user.agent.id)))
+  ensure
+    UserSession.any_instance.unstub(:cookie_credentials)
   end
 end
