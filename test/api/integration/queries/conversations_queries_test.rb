@@ -11,7 +11,7 @@ class ConversationsQueriesTest < ActionDispatch::IntegrationTest
         api_reply: 2,
         api_update: 6,
         api_destroy: 9,
-        api_conversations: 5,
+        api_conversations: 6,
 
         create: 54,
         reply: 52,

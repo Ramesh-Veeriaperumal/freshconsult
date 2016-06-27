@@ -9,13 +9,13 @@ class TopicsQueriesTest < ActionDispatch::IntegrationTest
       v1 = {}
       v2_expected = {
         api_create: 7,
-        api_show: 1,
+        api_show: 2,
         api_update: 9,
         api_destroy: 17,
         api_follow: 3,
         api_unfollow: 7,
-        api_is_following: 1,
-        api_posts: 2,
+        api_is_following: 2,
+        api_posts: 3,
 
         create: 40,
         show: 11,
