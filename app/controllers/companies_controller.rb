@@ -128,7 +128,7 @@ class CompaniesController < ApplicationController
         current_account.tickets.permissible(current_user).all_company_tickets(@company.id).visible.newest(11).preload(:ticket_states,:ticket_status,:responder,:requester)
       @company_tickets = @total_company_tickets.sort_by {|item| -item.created_at.to_i}.take(10)
 
-      if current_account.features?(:archive_tickets)
+      if current_account.features_included?(:archive_tickets)
         @total_company_archive_tickets = 
           current_account.archive_tickets.permissible(current_user).all_company_tickets(@company.id).newest(10).preload(:ticket_status, :responder, :requester)
         @company_archive_tickets = @total_company_archive_tickets.sort_by {|item| -item.created_at.to_i}.take(10)

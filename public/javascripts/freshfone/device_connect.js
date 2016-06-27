@@ -16,7 +16,9 @@ var TwilioConnect;
         this.notification.initializeCall(conn);
       }
       freshfonecalls.resetFlags();
-      this.handleRecordingMode();
+      if (this.recordingMode()) { 
+        return freshfonecalls.setRecordingState(); 
+      }
       freshfoneNotification.resetJsonFix();
       if(this.isOutgoingCall()){
           $('#number').intlTelInput("updatePreferredCountries");
@@ -44,12 +46,6 @@ var TwilioConnect;
 
     isIncoming: function(){
       return !this.isOutgoingCall();
-    },
-    
-    handleRecordingMode : function(){
-      if (this.recordingMode()) { 
-        return freshfonecalls.setRecordingState(); 
-      }
     },
     
     handleCallQualityMetrics : function(conn){

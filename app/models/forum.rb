@@ -110,7 +110,7 @@ class Forum < ActiveRecord::Base
   after_create :add_activity_new_and_clear_cache
   after_update :clear_cache_with_condition
   before_destroy :add_activity
-  after_destroy :clear_cat_cache
+  after_destroy :clear_cat_cache, :clear_moderation_records
 
   def add_activity_new_and_clear_cache
     create_activity('new_forum')
@@ -271,22 +271,26 @@ class Forum < ActiveRecord::Base
   def update_search_index
     SearchSidekiq::IndexUpdate::ForumTopics.perform_async({ :forum_id => id }) if ES_ENABLED
     
-    SearchV2::IndexOperations::UpdateTopicForum.perform_async({ :forum_id => id }) if Account.current.features?(:es_v2_writes)
+    SearchV2::IndexOperations::UpdateTopicForum.perform_async({ :forum_id => id }) if Account.current.features_included?(:es_v2_writes)
   end
 
   def remove_topics_from_es
     SearchSidekiq::RemoveFromIndex::ForumTopics.perform_async({ :deleted_topics => @deleted_topic_ids }) if ES_ENABLED
     
-    SearchV2::IndexOperations::RemoveForumTopics.perform_async({ :forum_id => id }) if Account.current.features?(:es_v2_writes)
+    SearchV2::IndexOperations::RemoveForumTopics.perform_async({ :forum_id => id }) if Account.current.features_included?(:es_v2_writes)
   end
 
   def backup_forum_topic_ids
-    @deleted_topic_ids = self.topics.map(&:id)
+    @deleted_topic_ids = self.topics.pluck(:id)
   end
 
   def unsubscribed_agents
     user_ids = monitors.map(&:id)
     account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+
+  def clear_moderation_records
+    Community::ClearModerationRecords.perform_async(self.id, self.class.to_s, @deleted_topic_ids)
   end
 
   private

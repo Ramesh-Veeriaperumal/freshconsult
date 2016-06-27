@@ -55,6 +55,7 @@ run "ln -nfs #{shared_path}/config/helpdesk.yml #{node[:rel_path]}/config/helpde
 run "ln -nfs #{shared_path}/config/search/boost_values.yml #{node[:rel_path]}/config/search/boost_values.yml"
 run "ln -nfs #{shared_path}/config/search/supported_types.yml #{node[:rel_path]}/config/search/supported_types.yml"
 run "ln -nfs #{shared_path}/config/search/esv2_config.yml #{node[:rel_path]}/config/search/esv2_config.yml"
+run "ln -nfs #{shared_path}/config/search/etl_queue.yml #{node[:rel_path]}/config/search/etl_queue.yml"
 run "ln -nfs #{shared_path}/config/search/dynamo_tables.yml #{node[:rel_path]}/config/search/dynamo_tables.yml"
 
 # Xero Cert files start

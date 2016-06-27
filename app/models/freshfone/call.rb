@@ -256,7 +256,7 @@ class Freshfone::Call < ActiveRecord::Base
   end
 
   def update_metrics
-    call_metrics.process self 
+    call_metrics.process(self) if call_metrics
   end
   
   def update_call_details(params)

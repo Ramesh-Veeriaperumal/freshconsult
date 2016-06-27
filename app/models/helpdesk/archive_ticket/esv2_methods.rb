@@ -31,7 +31,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   # Flexifield columns supported in V2
   #
   def esv2_ff_columns
-    @@es_flexi_txt_cols ||= Flexifield.column_names.select { |v| v =~ /^ff/ }.map(&:to_sym)
+    @@esv2_flexi_txt_cols ||= Flexifield.column_names.select { |v| v =~ /^ff/ }.map(&:to_sym)
   end
 
   # ES v2 specific methods

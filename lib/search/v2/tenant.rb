@@ -46,10 +46,9 @@ module Search
         Store::Data.instance.store_config(id)
         cluster_obj = Cluster.fetch(home_cluster)
         aliases = ES_V2_SUPPORTED_TYPES.each_pair.map do |type, params|
-          index_suffix = [cluster_obj.current_version(type), cluster_obj.current_split(type)].join('_')
           {
             add: (Hash.new.tap do |alias_props|
-              alias_props[:index]           = params[:index_prefix] % { index_suffix: index_suffix }
+              alias_props[:index]           = params[:index_prefix] % { index_suffix: cluster_obj.index_suffix(type) }
               alias_props[:alias]           = self.alias(type)
               alias_props[:routing]         = id
               alias_props[:filter]          = ({ bool: {

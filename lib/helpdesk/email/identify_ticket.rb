@@ -49,7 +49,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
 
   def ticket_parent
     return @par if @set_parent
-    if account.features?(:archive_tickets) && self.ticket
+    if account.features_included?(:archive_tickets) && self.ticket
       parent_ticket_id = ticket.schema_less_ticket.parent_ticket
       if parent_ticket_id
         @par ||= ticket.parent 

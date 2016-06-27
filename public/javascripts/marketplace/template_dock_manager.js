@@ -366,7 +366,7 @@ var TemplateDockManager   = Class.create({
             time: new Date()
         });
 
-        if(install_extension.configs == null  ) { // no config
+        if( !install_extension.configs.length ) { // no config
           jQuery(".install-form").hide();
           setTimeout( that.installTrigger, 1000);
         }
