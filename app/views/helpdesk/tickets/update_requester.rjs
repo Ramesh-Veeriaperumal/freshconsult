@@ -1,0 +1,18 @@
+if @existing_company.present?
+  error_message  = "<label id=\"domain_name-error\" class=\"error\" for=\"domain_name\">#{t('companies.info1')}. #{link_to t('companies.view_company') , company_path(@existing_company) , target: '_blank'}</label>"
+  page << "jQuery('#domain_name-error').remove();"
+  page << "jQuery('#company_domains').parent('.controls').append('#{error_message}');"
+  page << "jQuery('#requester-widget-user-edit-dialog-submit').removeClass('disabled')";
+  page << "jQuery('#requester-widget-user-edit-dialog-submit').removeAttr('disabled');";
+  page << "jQuery('#requester-widget-user-edit-dialog-submit').text('Save')";
+else
+  page << "jQuery('#requester-widget-user-edit-dialog').modal('hide');"
+  page << "jQuery('#requester-widget-user-edit-dialog.modal').remove();"
+  page << "jQuery('#requester-widget-user-edit-dialog form').resetForm();"
+  page.replace_html 'requester-details-info', render(:partial => "contacts/requester_widget", 
+                                              :locals => { :user => @ticket.requester, 
+                                                           :show_recent_tickets => :dialog,
+                                                           :ticket => @ticket
+                                                          })
+  show_ajax_flash page
+end

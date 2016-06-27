@@ -5,22 +5,29 @@
 		width:25px;
     @include border-radius(10%);
 	}
+  .user-job-title{
+    color:#4d4d4d;
+  }
 	.contact-append{
 		margin-bottom: 5px;
-    @include margin-left(-35px);
     @include clear(both);
     color: #333333;
+    overflow: hidden;
+    word-wrap: break-word;
+
     .add-on, .hover-contact-box{
     	font-size: 12px;
     	display: inline-block;
     	vertical-align: top;
     }
-		.add-on{
-			@include text-align(center);
-      width: 20px;
+    .add-on{
+	    @include text-align(left);
+      width: 70px;
       @include margin-right(6px);
-      padding: 2px;
-		} 
+      padding: 2px 0px;
+      text-transform: capitalize;
+      color: #999;
+    } 
     p.merged_user{
         margin-top: 10px;
     }
@@ -46,10 +53,11 @@
 		top: 2px;
 	 @include left(2px);
 	}
-  .user_name{ font-size:1.25em; display: block; font-weight: 200}
+  .user_name{ font-size:14px; display: block; font-weight: 500}
   .user_design{
   	margin-bottom:5px;
   	line-height: 1.36;
+    text-transform: capitalize;
   	a{ color:#999; }
     a:hover{ color:#336699; }
   }

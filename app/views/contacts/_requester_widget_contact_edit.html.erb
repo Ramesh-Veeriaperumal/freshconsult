@@ -1,0 +1,23 @@
+
+<div id="requester-widget-user-edit-dialog" class="requester-widget-user-edit-dialog" style="display:none;">
+  <%= form_for :requester_widget , :remote => true, url: "/helpdesk/tickets/#{ticket.display_id}/update_requester", method: 'put' do |f| %>
+    <%= f.hidden_field :contact_id  , :value => user.id %>
+    <%= f.hidden_field :company_id  , :value => user.company.id if user.company.present? %>
+    <div class="requester-widget-user-fields">
+      <% requester_widget_fields.each do |field| %>
+        <% unless user.company.blank? && field.class != ContactField %>
+          <ul class="field-set">
+            <li class="icon-wrapper">
+              <% if field.class == ContactField  %>
+                <span  data-id="<%= field.id %>" data-type="contact" class="ficon-user"></span>
+              <%else %>
+                <span data-id="<%= field.id %>" data-type="company"  class="ficon-company"></span>
+              <%end %>
+            </li>
+            <%= construct_requester_widget_field f, user, field %>
+          </ul>
+        <% end %>
+      <%end%>
+    </div>
+    <%end%>
+</div>

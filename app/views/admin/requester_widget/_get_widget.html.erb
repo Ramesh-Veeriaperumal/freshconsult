@@ -1,0 +1,64 @@
+<%= javascript_include_tag :'cdn/requester_widget_config_modal' %>
+<div id="requester-widget-config-dialog">
+
+  <%= form_tag('/admin/requester_widget/update_widget', method: "put") do %>
+     <%= hidden_field_tag :requester_widget_config, "" %>
+     <%= hidden_field_tag :deleted_widget_config, "" %>
+  <% end %>
+  <div class="widget-config-subtitle"> <%= t('requester_widget_notice') %></div>
+
+  <div id="requester-widget-config-container">
+
+    <div class="widget-field-lists">
+      <ul class="widget-field-list non-sortable-list">
+         <% default_requester_widget_fields.each do |field| %>
+          <li data-id="<%= field.id %>" data-position="<%= field.position %>"  data-type="<%= field.class == ContactField ? 'contact' : 'company'   %>" >
+            <div class="sort_handle_wrapper"><span class="sort_handle"></span></div>
+            <span class="label-wrapper">      
+              <span class="ficon-<%= field.class == ContactField ? 'user' : 'company'   %>"></span>
+              <span><%= field.label %></span>
+            </span>
+            <i class="rounded-icon disabled rounded-minus-icon"></i>
+          </li>
+         <% end %>
+      </ul>
+
+      <ul class="widget-field-list sortable-list">
+         <% requester_widget_custom_fields.each do |field| %>
+          <li data-id="<%= field.id %>" data-position="<%= field.position %>"  data-type="<%= field.class == ContactField ? 'contact' : 'company'   %>" >
+            <div class="sort_handle_wrapper"><span class="sort_handle"></span></div>
+            <span class="label-wrapper">      
+              <span class="ficon-<%= field.class == ContactField ? 'user' : 'company'   %>"></span>
+              <span><%= field.label %></span>
+            </span>
+            <i class="rounded-icon rounded-minus-icon"></i>
+          </li>
+         <% end %>
+      </ul>
+    </div>
+    <div class="widget-field-add">
+  
+      <div class="disabled-message <%= 'hide' if requester_widget_custom_fields.count < Helpdesk::RequesterWidgetHelper::WIDGET_FIELDS_MAX_COUNT %>">
+        <%= t('requester_widget_limit') %>
+      </div>
+      
+      <div class="select2-wrapper <%= 'hide' if requester_widget_custom_fields.count >= Helpdesk::RequesterWidgetHelper::WIDGET_FIELDS_MAX_COUNT %>">
+      <select class="requester-widget-field-choices js-states form-control" multiple="" tabindex="-1" aria-hidden="true">
+        <optgroup class="contact" label="Contact Fields">
+          <% requester_widget_addable_contact_fields.each do |field| %>
+            <option data-type="contact" data-position="<%= field.position  %>" value="<%= field.id %>"><%= field.label %></option>
+          <% end %>
+        </optgroup>
+        <optgroup class="company" label="Company Fields">
+          <% requester_widget_addable_company_fields.each do |field| %>
+            <option data-type="company" data-position="<%= field.position %>" value="<%= field.id  %>"><%= field.label %></option>
+          <% end %>
+        </optgroup>
+      </select>      
+      <i class="rounded-icon rounded-add-icon"></i>
+      </div>
+    </div>   
+  
+  </div>
+
+</div>

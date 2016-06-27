@@ -3997,6 +3997,10 @@ en:
     segment_api:
       invalid_type: Invalid operation. Check your type.
       email_blank: Email can't be blank
+    email: Email
+    phone: Phone
+    facebook: Facebook
+    twitter: Twitter
   between: Between
   profile_settings: Profile settings
   portal_key: Portal
@@ -9711,9 +9715,19 @@ en:
     loading_label: "Loading"
   email_notification:
     spam_error: "An internal error occured.  Please contact support."
+  requester_widget_more: More
+  requester_widget_less: Less
+  requester_widget_limit: You have selected 10 fields
+  requester_widget_notice: You can select upto 10 fields to show on the ticket details page
+  requester_widget_fields: Requester widget fields
+  requester_widget_edit: Edit
+  requester_widget_edit_req: Edit Requester
+  requester_widget_human_name: requester
+  requester_fields_updated: The requester widget fields have been updated.
   select_requester: "Please select requester"
   associate_n_companies: "Associate a contact with multiple companies?"
   enable_n_companies: "Enable"
   add_new_company: "Add Company"
   more_companies: "%{count} more"
   n_companies: "%{count} companies"
+

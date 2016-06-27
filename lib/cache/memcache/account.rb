@@ -321,6 +321,11 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(key)
   end
 
+  def clear_requester_widget_fields_from_cache
+    key = REQUESTER_WIDGET_FIELDS % { :account_id => current_account.id }
+    MemcacheKeys.delete_from_cache key
+  end
+
   private
     def permissible_domains_memcache_key id = self.id
       HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
